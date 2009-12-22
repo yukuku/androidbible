@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="menuEdisi">Edisi</string>
+    <string name="menuTentang">Tentang</string>
+    <string name="menuTuju">Tuju</string>
+    <string name="hello">Hello World, Alkitab!</string>
+    <string name="app_name">Alkitab</string>
+<string name="menuEdisi_text">Edisi</string>
+</resources>

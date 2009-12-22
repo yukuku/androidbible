@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+		android:title="@string/menuTuju"
+		android:id="@+id/menuTuju"></item>
+	<item
+		android:id="@+id/menuEdisi"
+		android:title="@string/menuEdisi"></item>
+	<item
+		android:id="@+id/menuTentang"
+		android:title="@string/menuTentang"></item>
+</menu>

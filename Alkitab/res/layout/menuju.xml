@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:padding="2dp" android:layout_height="fill_parent" android:layout_width="fill_parent">
+
+<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pasal"></TextView>
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/lPasal" android:text="&lt;lPasal&gt;" android:textAppearance="?android:attr/textAppearanceMedium"></TextView>
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ayat"></TextView>
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/lAyat" android:text="&lt;lAyat&gt;" android:textAppearance="?android:attr/textAppearanceMedium"></TextView>
+</LinearLayout>
+
+
+<TableLayout android:layout_height="wrap_content" android:layout_width="fill_parent">
+
+<TableRow android:id="@+id/TableRow01" android:layout_width="wrap_content" android:layout_height="wrap_content">
+<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/bAngka1" android:text="1" android:minWidth="46sp"></Button>
+<Button android:id="@+id/bAngka2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2" android:minWidth="46sp"></Button>
+<Button android:id="@+id/bAngka3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="3" android:minWidth="46sp"></Button>
+</TableRow>
+
+<TableRow android:id="@+id/TableRow01" android:layout_height="wrap_content">
+<Button android:id="@+id/bAngka4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="4" android:minWidth="46sp"></Button>
+<Button android:id="@+id/bAngka5" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="5" android:minWidth="46sp"></Button>
+<Button android:id="@+id/bAngka6" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="6" android:minWidth="46sp"></Button>
+</TableRow>
+
+<TableRow android:id="@+id/TableRow01" android:layout_width="wrap_content" android:layout_height="wrap_content">
+<Button android:id="@+id/bAngka7" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="7" android:minWidth="46sp"></Button>
+<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="8" android:id="@+id/bAngka8" android:minWidth="46sp"></Button>
+<Button android:id="@+id/bAngka9" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="9" android:minWidth="46sp"></Button>
+</TableRow>
+
+<TableRow android:id="@+id/TableRow01" android:layout_width="wrap_content" android:layout_height="wrap_content">
+<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="46sp" android:text="C" android:id="@+id/bAngkaC"></Button>
+<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/bAngka0" android:text="0" android:minWidth="46sp"></Button>
+<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="46sp" android:text=":" android:id="@+id/bAngkaPindah"></Button>
+</TableRow>
+
+<TableRow android:id="@+id/TableRow02" android:layout_width="wrap_content" android:layout_height="wrap_content"><Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/bOk" android:text="Ok" android:layout_span="3"></Button></TableRow></TableLayout>
+
+
+
+</LinearLayout>
