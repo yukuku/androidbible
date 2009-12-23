@@ -3,6 +3,8 @@ package yuku.alkitab;
 import yuku.alkitab.model.*;
 import android.app.*;
 import android.content.*;
+import android.content.pm.*;
+import android.content.pm.PackageManager.*;
 import android.os.*;
 import android.text.*;
 import android.text.style.*;
@@ -27,6 +29,8 @@ public class IsiActivity extends Activity {
 		
 		tIsi = (TextView) findViewById(R.id.tIsi);
 		scrollIsi = (ScrollView) findViewById(R.id.scrollIsi);
+		
+		tampil(0, 0); // TODO tampilin yang terakhir dong!
 	}
 
 	private int getAyatTop(int ayat) {
@@ -75,6 +79,21 @@ public class IsiActivity extends Activity {
 		} else if (item.getItemId() == R.id.menuEdisi) {
 			Intent intent = new Intent(this, EdisiActivity.class);
 			startActivityForResult(intent, R.id.menuEdisi);
+		} else if (item.getItemId() == R.id.menuTentang) {
+			String verName = "null";
+	    	int verCode = -1;
+	    	
+			try {
+				PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+				verName = packageInfo.versionName;
+				verCode = packageInfo.versionCode;
+			} catch (NameNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    	
+			new AlertDialog.Builder(this).setTitle(R.string.tentang_title).setMessage(
+					Html.fromHtml(getString(R.string.tentang_message, verName, verCode))).show();
 		}
 		
 		return super.onMenuItemSelected(featureId, item);
