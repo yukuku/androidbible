@@ -12,7 +12,7 @@
 		$ayat_offset += strlen($isi);
 		
 		if($pasal_skrg != $pasal_sblm || $skrg_di !== $sblm_di) {
-			$pasal_offset[] = $ayat_offset - 1;	
+			$pasal_offset[] = $ayat_offset;	
 			$pasal_ayat[] = $jml_ayat;
 			$jml_ayat = 0;
 		}
