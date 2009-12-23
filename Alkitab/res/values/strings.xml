@@ -6,4 +6,5 @@
     <string name="hello">Hello World, Alkitab!</string>
     <string name="app_name">Alkitab</string>
 <string name="menuEdisi_text">Edisi</string>
+<string name="judulIsi">%s %d</string>
 </resources>

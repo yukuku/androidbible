@@ -1,9 +1,12 @@
 package yuku.alkitab;
 
+import yuku.alkitab.model.*;
 import android.app.*;
 import android.content.*;
 import android.os.*;
 import android.text.*;
+import android.text.style.*;
+import android.util.*;
 import android.view.*;
 import android.widget.*;
 
@@ -31,12 +34,12 @@ public class IsiActivity extends Activity {
 		return layout.getLineTop(line);
 	}
 
-	private String siapinTampilanAyat() {
-		StringBuilder res = new StringBuilder(5000);
+	private SpannableStringBuilder siapinTampilanAyat() {
+		SpannableStringBuilder res = new SpannableStringBuilder();
 		
 		int c = 0;
 		String pengawal = "";
-		String pengakhir = "\n";
+		String pengakhir = " ";
 		
 		ayat_offset = new int[xayat.length];
 		for (int i = 0; i < xayat.length; i++) {
@@ -44,11 +47,12 @@ public class IsiActivity extends Activity {
 			
 			pengawal = (i+1) + " ";
 			res.append(pengawal).append(xayat[i]).append(pengakhir);
+			res.setSpan(new ForegroundColorSpan(0xff8080ff), c, c + pengawal.length() - 1, 0);
 			
 			c += pengawal.length() + xayat[i].length() + pengakhir.length();
 		}
 		
-		return res.toString();
+		return res;
 	}
 	
 	@Override
@@ -63,6 +67,9 @@ public class IsiActivity extends Activity {
 		if (item.getItemId() == R.id.menuTuju) {
 			Intent intent = new Intent(this, MenujuActivity.class);
 			startActivityForResult(intent, R.id.menuTuju);
+		} else if (item.getItemId() == R.id.menuEdisi) {
+			Intent intent = new Intent(this, EdisiActivity.class);
+			startActivityForResult(intent, R.id.menuEdisi);
 		}
 		
 		return super.onMenuItemSelected(featureId, item);
@@ -77,6 +84,22 @@ public class IsiActivity extends Activity {
 				
 				tampil(pasal, ayat);
 			}
+		} else if (requestCode == R.id.menuEdisi) {
+			if (resultCode == RESULT_OK) {
+				String nama = data.getStringExtra("nama");
+				
+				for (Edisi e : S.xedisi) {
+					if (e.nama.equals(nama)) {
+						S.edisi = e;
+						//# buang kitab2 yang uda kelod
+						S.xkitab = null;
+						S.kitab = null;
+						break;
+					}
+				}
+				
+				S.siapinKitab(getResources());
+			}
 		}
 	}
 
@@ -87,14 +110,34 @@ public class IsiActivity extends Activity {
 		if (ayat < 1) ayat = 1;
 		if (ayat > S.kitab.nayat[pasal-1]) ayat = S.kitab.nayat[pasal-1];
 		
-		// muat data
-		xayat = S.muatTeks(getResources(), pasal);
-
-		String semua = siapinTampilanAyat();
+		// muat data pake async dong.
+		new AsyncTask<Integer, Void, SpannableStringBuilder>() {
+			int pasal;
+			int ayat;
+			
+			@Override
+			protected SpannableStringBuilder doInBackground(Integer... params) {
+				pasal = params[0];
+				ayat = params[1];
+				
+				xayat = S.muatTeks(getResources(), pasal);
+				return siapinTampilanAyat();
+			}
 		
-		tIsi.setText(semua);
-		tIsi.requestLayout();
-		
-		scrollIsi.scrollTo(0, getAyatTop(ayat));
+			@Override
+			protected void onPostExecute(SpannableStringBuilder result) {
+				tIsi.setText(result);
+				setTitle(getString(R.string.judulIsi, S.kitab.judul, pasal, ayat));
+				
+				scrollIsi.post(new Runnable() {
+					@Override
+					public void run() {
+						int y = getAyatTop(ayat);
+						Log.d("alkitab", "y = " + y);
+						scrollIsi.scrollTo(0, y - ViewConfiguration.get(IsiActivity.this).getScaledFadingEdgeLength());
+					}
+				});
+			}
+		}.execute(pasal, ayat);
 	}
 }

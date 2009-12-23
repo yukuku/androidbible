@@ -14,7 +14,7 @@ public class Alkitab extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.isi);
+        setContentView(R.layout.utama);
         
         S.siapinEdisi(getResources());
     }
