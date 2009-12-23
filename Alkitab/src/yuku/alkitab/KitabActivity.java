@@ -8,27 +8,26 @@ import android.view.*;
 import android.widget.*;
 import android.widget.AdapterView.*;
 
-public class EdisiActivity extends Activity {
+public class KitabActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.pilih_edisi);
+		setContentView(R.layout.pilih_kitab);
 		
-		S.siapinEdisi(getResources());
+		S.siapinKitab(getResources());
 		
-		final ArrayAdapter<Edisi> adapter = new ArrayAdapter<Edisi>(this, R.layout.listitem, R.id.lLabel, S.xedisi);
+		final ArrayAdapter<Kitab> adapter = new ArrayAdapter<Kitab>(this, R.layout.listitem, R.id.lLabel, S.xkitab);
 		
-		ListView lsEdisi = (ListView) findViewById(R.id.lsEdisi);
-		lsEdisi.setAdapter(adapter);
+		ListView lsKitab = (ListView) findViewById(R.id.lsKitab);
+		lsKitab.setAdapter(adapter);
 		
-		lsEdisi.setOnItemClickListener(new OnItemClickListener() {
-
+		lsKitab.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Edisi edisi = adapter.getItem(position);
+				Kitab kitab = adapter.getItem(position);
 				
 				Intent intent = new Intent();
-				intent.putExtra("nama", edisi.nama);
+				intent.putExtra("nama", kitab.nama);
 				setResult(RESULT_OK, intent);
 				
 				finish();

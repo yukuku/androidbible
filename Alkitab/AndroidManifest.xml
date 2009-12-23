@@ -15,6 +15,7 @@
     <activity android:name="EdisiActivity" android:label="Edisi"></activity>
 <activity android:name="IsiActivity" android:label="Isi"></activity>
 <activity android:label="Menuju" android:name="MenujuActivity"></activity>
+<activity android:name="KitabActivity"></activity>
 </application>
     <uses-sdk android:minSdkVersion="3" />
 

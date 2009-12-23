@@ -6,6 +6,7 @@ public class Kitab {
 	public int[] nayat;
 	public int npasal;
 	public int[] pasal_offset;
+	public String nama;
 	public String judul;
 	public String file;
 
@@ -17,7 +18,9 @@ public class Kitab {
 		if (awal.equals("Kitab")) {
 			while (true) {
 				String key = sc.next();
-				if (key.equals("judul")) {
+				if (key.equals("nama")) {
+					k.nama = sc.next();
+				} else if (key.equals("judul")) {
 					k.judul = sc.next();
 				} else if (key.equals("file")) {
 					k.file = sc.next();

@@ -61,7 +61,7 @@ public class S {
 		int length = 0;
 
 		try {
-			InputStream in = resources.openRawResource(R.raw.tb_p01); // getRawInt(resources, kitab.file));
+			InputStream in = resources.openRawResource(getRawInt(resources, kitab.file));
 			in.skip(offset);
 
 			if (pasal == kitab.npasal) {

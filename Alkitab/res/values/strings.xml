@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="menuKitab">Kitab</string>
     <string name="menuEdisi">Edisi</string>
     <string name="menuTentang">Tentang</string>
     <string name="menuTuju">Tuju</string>

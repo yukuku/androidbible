@@ -15,6 +15,7 @@ public class IsiActivity extends Activity {
 	int[] ayat_offset;
 	TextView tIsi;
 	ScrollView scrollIsi;
+	int pasal = 0;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +67,11 @@ public class IsiActivity extends Activity {
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if (item.getItemId() == R.id.menuTuju) {
 			Intent intent = new Intent(this, MenujuActivity.class);
+			intent.putExtra("pasal", pasal);
 			startActivityForResult(intent, R.id.menuTuju);
+		} else if (item.getItemId() == R.id.menuKitab) {
+			Intent intent = new Intent(this, KitabActivity.class);
+			startActivityForResult(intent, R.id.menuKitab);
 		} else if (item.getItemId() == R.id.menuEdisi) {
 			Intent intent = new Intent(this, EdisiActivity.class);
 			startActivityForResult(intent, R.id.menuEdisi);
@@ -100,6 +105,18 @@ public class IsiActivity extends Activity {
 				
 				S.siapinKitab(getResources());
 			}
+		} else if (requestCode == R.id.menuKitab) {
+			if (resultCode == RESULT_OK) {
+				String nama = data.getStringExtra("nama");
+				
+				for (Kitab k : S.xkitab) {
+					if (k.nama.equals(nama)) {
+						S.kitab = k;
+						tampil(pasal, 0);
+						break;
+					}
+				}
+			}
 		}
 	}
 
@@ -128,6 +145,7 @@ public class IsiActivity extends Activity {
 			protected void onPostExecute(SpannableStringBuilder result) {
 				tIsi.setText(result);
 				setTitle(getString(R.string.judulIsi, S.kitab.judul, pasal, ayat));
+				IsiActivity.this.pasal = pasal;
 				
 				scrollIsi.post(new Runnable() {
 					@Override
