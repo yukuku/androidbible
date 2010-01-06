@@ -37,7 +37,8 @@
 		$pasal_sblm = $pasal; $ayat_sblm = $ayat;
 		$sblm_di = $kitab;
 	}
+	$pasal_ayat[] = $jml_ayat;
 
-	fwrite($i, "Kitab nama $kitab judul $kitab file k$skrg_di.txt npasal $pasal_sblm nayat $jml_ayat pasal_offset " . join(" ", $pasal_offset) . " uda\n");
+	fwrite($i, "Kitab nama $kitab judul $kitab file k$skrg_di.txt npasal $pasal_sblm nayat " . join(" ", $pasal_ayat) . "  pasal_offset " . join(" ", $pasal_offset) . " uda\n");
 	
 	fclose($g); fclose($f); fclose($i);
