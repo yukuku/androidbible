@@ -1,44 +1,70 @@
 <?php
-	$f = fopen('b_indonesian_baru.txt', 'r');
-	$i = fopen('index.txt', 'w');
-	$skrg_di = -1; $sblm_di = 0;
-	$pasal_offset = array(0);
-	$pasal_ayat = array();
-	$jml_ayat = 0;
-	while($line = fgets($f)) {
-		list(, $kitab, $pasal, $ayat, $isi) = explode("\t", $line);
-		$skrg_di = $kitab;
-		$pasal_skrg = $pasal; $ayat_skrg = $ayat;
-		$ayat_offset += strlen($isi);
-		
-		if($pasal_skrg != $pasal_sblm || $skrg_di !== $sblm_di) {
-			$pasal_offset[] = $ayat_offset;	
-			$pasal_ayat[] = $jml_ayat;
-			$jml_ayat = 0;
-		}
-
-		$jml_ayat++;
-
-		if($sblm_di !== $skrg_di) {
-			if($sblm_di !== 0) {
-				array_pop($pasal_offset);
-				fwrite($i, "Kitab nama $sblm_di judul $sblm_di file k$sblm_di.txt npasal $pasal_sblm nayat " . join(" ", $pasal_ayat) . "  pasal_offset " . join(" ", $pasal_offset) . " uda\n");
-				fclose($g);
-			}
-			$pasal_ayat = array();
-			$jml_ayat = 0;
-			$pasal_offset = array(0); 
-			$ayat_offset = 0;
-			$g = fopen("k$skrg_di.txt", 'w');
-		}
-		fwrite($g, $isi);
-
-		//echo "$kitab $pasal $ayat $isi";
-		$pasal_sblm = $pasal; $ayat_sblm = $ayat;
-		$sblm_di = $kitab;
+	$fn = fopen('tb_nama.txt', 'rb');
+	$nama_kitab = array();
+	while ($line = fgets($fn)) {
+		list($no, $judul) = explode("\t", $line);
+		$no = (int)$no;
+		$nama_kitab[$no] = trim($judul);
 	}
-	$pasal_ayat[] = $jml_ayat;
-
-	fwrite($i, "Kitab nama $kitab judul $kitab file k$skrg_di.txt npasal $pasal_sblm nayat " . join(" ", $pasal_ayat) . "  pasal_offset " . join(" ", $pasal_offset) . " uda\n");
+	fclose($fn);
 	
-	fclose($g); fclose($f); fclose($i);
+	$f = fopen('b_indonesian_baru.txt', 'rb');
+	$i = fopen('tb_index.txt', 'wb');
+	
+	
+	function jumlah($judul, $file, $npasal, $nayat, $pasal_offset) {
+		global $i;
+		fwrite($i, "Kitab nama $judul judul $judul file $file npasal $npasal nayat " . join(" ", $nayat) . "  pasal_offset " . join(" ", $pasal_offset) . " uda\n");
+	}
+	
+	$kitab = 1;
+	$pasal = 1;
+	$nayat = array();
+	$pasal_offset = array(0);
+	$maju = 0;
+	$c = 0;
+	
+	$g = fopen(sprintf("tb_k%02d.txt", $kitab), 'wb');
+	
+	while($line = fgets($f)) {
+		list(, $inkitab, $inpasal, , $isi) = explode("\t", $line);
+		
+		if ($inpasal != $pasal or $inkitab != $kitab) { // end of pasal
+			$nayat[] = $c;
+			if ($inkitab == $kitab) {
+				$pasal_offset[] = $maju;
+			}
+			$c = 0;
+			$pasal = $inpasal;
+		}
+		
+		if ($inkitab != $kitab) { // end of kitab
+			jumlah($nama_kitab[$kitab], sprintf("tb_k%02d", $kitab), count($nayat), $nayat, $pasal_offset);
+			$kitab = $inkitab;
+			$pasal = 1;
+			$nayat = array();
+			$pasal_offset = array(0);
+			$maju = 0;
+			
+			// tutup
+			fclose($g);
+			
+			// buka baru
+			$g = fopen(sprintf("tb_k%02d.txt", $kitab), 'wb');
+		}
+		
+		$c++;
+		$maju += strlen($isi);
+		
+		fwrite($g, $isi);
+	}
+	
+	$nayat[] = $c;
+	$pasal_offset[] = $maju;
+	
+	jumlah($nama_kitab[$kitab], sprintf("tb_k%02d", $kitab), $pasal, $nayat, $pasal_offset);
+	// tutup
+	fclose($g);
+	
+	fclose($f); 
+	fclose($i);
