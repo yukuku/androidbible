@@ -5,6 +5,8 @@ import java.util.*;
 
 import yuku.alkitab.model.*;
 import android.content.res.*;
+import android.os.*;
+import android.util.*;
 
 public class S {
 	public static Edisi[] xedisi;
@@ -38,18 +40,31 @@ public class S {
 		}
 		if (xkitab != null) return;
 
-		InputStream in = resources.openRawResource(getRawInt(resources, edisi.nama + "_index"));
-		Scanner sc = new Scanner(in);
-
-		ArrayList<Kitab> xkitab = new ArrayList<Kitab>();
-
-		while (sc.hasNext()) {
-			Kitab k = Kitab.baca(sc);
-			xkitab.add(k);
+		try {
+			Debug.startMethodTracing("siapinKitab");
+			
+			InputStream is = resources.openRawResource(getRawInt(resources, edisi.nama + "_index"));
+			Utf8Reader in = new Utf8Reader(is);
+			SimpleScanner sc = new SimpleScanner(in, 200);
+	
+			ArrayList<Kitab> xkitab = new ArrayList<Kitab>();
+	
+			
+			while (sc.hasNext()) {
+				Kitab k = Kitab.baca(sc);
+				xkitab.add(k);
+				
+				Log.d("alkitab", "siapinKitab memuat " + k.judul);
+			}
+	
+			S.xkitab = xkitab.toArray(new Kitab[xkitab.size()]);
+			S.kitab = S.xkitab[0]; // TODO selalu pilih edisi pertama
+		} catch (IOException e) {
+			Log.e("alkitab", "siapinKitab", e);
+		} finally {
+			Debug.stopMethodTracing();
 		}
-
-		S.xkitab = xkitab.toArray(new Kitab[xkitab.size()]);
-		S.kitab = S.xkitab[0]; // TODO selalu pilih edisi pertama
+		
 	}
 
 	/**

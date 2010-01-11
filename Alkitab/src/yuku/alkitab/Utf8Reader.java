@@ -5,7 +5,7 @@ import java.io.*;
 /**
  * Kilat
  */
-public class Utf8Reader implements Closeable {
+public class Utf8Reader extends Reader implements Closeable {
 	private InputStream in_;
 	public static final char replacementChar = 0xFFFD;
 
@@ -13,6 +13,7 @@ public class Utf8Reader implements Closeable {
 		in_ = in;
 	}
 
+	@Override
 	public int read() throws IOException {
 		int c0 = in_.read();
 
@@ -52,5 +53,23 @@ public class Utf8Reader implements Closeable {
 	@Override
 	public void close() throws IOException {
 		in_.close();
+	}
+
+	@Override
+	public int read(char[] buf, int offset, int count) throws IOException {
+		int c = 0;
+		
+		for (int i = offset; i < offset + count; i++) {
+			int read = read();
+			
+			if (read == -1) {
+				break;
+			}
+			buf[i] = (char) read;
+			
+			c++;
+		}
+		
+		return c;
 	}
 }

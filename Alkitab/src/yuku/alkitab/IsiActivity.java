@@ -44,7 +44,7 @@ public class IsiActivity extends Activity {
 		
 		int c = 0;
 		String pengawal = "";
-		String pengakhir = " ";
+		String pengakhir = "\n";
 		
 		ayat_offset = new int[xayat.length];
 		for (int i = 0; i < xayat.length; i++) {
@@ -63,6 +63,9 @@ public class IsiActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		new MenuInflater(this).inflate(R.menu.isi, menu);
+		
+		menu.add(0, 0x985801, 0, "gebug 1");
+		menu.add(0, 0x985802, 0, "gebug 2");
 		
 		return true;
 	}
@@ -94,6 +97,15 @@ public class IsiActivity extends Activity {
 	    	
 			new AlertDialog.Builder(this).setTitle(R.string.tentang_title).setMessage(
 					Html.fromHtml(getString(R.string.tentang_message, verName, verCode))).show();
+		} else if (item.getItemId() == 0x985801) { // debug 1
+			CharSequence t = tIsi.getText();
+			SpannableStringBuilder builder = new SpannableStringBuilder(t);
+			builder.append("n");
+			tIsi.setText(builder);
+		} else if (item.getItemId() == 0x985802) { // debug 2
+			CharSequence t = tIsi.getText();
+			Log.w("disyuh", t.subSequence(t.length()-10, t.length()).toString());
+			tIsi.setText(t.subSequence(0, t.length() - 10));
 		}
 		
 		return super.onMenuItemSelected(featureId, item);
@@ -170,11 +182,33 @@ public class IsiActivity extends Activity {
 					@Override
 					public void run() {
 						int y = getAyatTop(ayat);
-						Log.d("alkitab", "y = " + y);
 						scrollIsi.scrollTo(0, y - ViewConfiguration.get(IsiActivity.this).getScaledFadingEdgeLength());
 					}
 				});
+				
+//				int len = result.length();
+//				for (int i = 0; i < len; i += 10) {
+//					String s = "";
+//					for (int j = i; j < i+10 && j < len; j++) {
+//						char c = result.charAt(j);
+//						s += String.format("%02x(%c) ", (int)c, c);
+//					}
+//					Log.d("alki", s);
+//				}
 			}
 		}.execute(pasal, ayat);
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+			tampil(pasal-1, 1);
+			return true;
+		} else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+			tampil(pasal+1, 1);
+			return true;
+		}
+		
+		return super.onKeyDown(keyCode, event);
 	}
 }

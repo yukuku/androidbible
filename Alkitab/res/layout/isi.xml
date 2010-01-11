@@ -5,6 +5,6 @@
     android:layout_height="fill_parent"
     >
 
-<ScrollView android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/scrollIsi"><TextView android:id="@+id/tIsi" android:text="&lt;tIsi&gt; (tampilan isi)" android:layout_height="fill_parent" android:layout_width="fill_parent"></TextView></ScrollView>
+<ScrollView android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/scrollIsi"><TextView android:id="@+id/tIsi" android:text="&lt;tIsi&gt; (tampilan isi)" android:layout_height="wrap_content" android:layout_width="wrap_content"></TextView></ScrollView>
 
 </LinearLayout>

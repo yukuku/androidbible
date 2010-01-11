@@ -1,6 +1,8 @@
 package yuku.alkitab.model;
 
-import java.util.*;
+import java.io.*;
+
+import yuku.alkitab.*;
 
 public class Kitab {
 	public int[] nayat;
@@ -10,7 +12,7 @@ public class Kitab {
 	public String judul;
 	public String file;
 
-	public static Kitab baca(Scanner sc) {
+	public static Kitab baca(SimpleScanner sc) throws IOException {
 		Kitab k = new Kitab();
 
 		String awal = sc.next();
