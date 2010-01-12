@@ -13,6 +13,8 @@ import android.view.*;
 import android.widget.*;
 
 public class IsiActivity extends Activity {
+	private static final String UDAH_DIPERINGATKAN_BETA = "udahDiperingatkanBeta";
+	
 	String[] xayat;
 	int[] ayat_offset;
 	TextView tIsi;
@@ -21,6 +23,7 @@ public class IsiActivity extends Activity {
 	ImageButton bKiri;
 	ImageButton bKanan;
 	int pasal = 0;
+	private SharedPreferences preferences;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +60,27 @@ public class IsiActivity extends Activity {
 				bKanan_click();
 			}
 		});
-				
+		
+		preferences = getSharedPreferences(S.NAMA_PREFERENCES, 0);
+		boolean udahDiperingatkanBeta = preferences.getBoolean(UDAH_DIPERINGATKAN_BETA, false);
+		
 		tampil(0, 0); // TODO tampilin yang terakhir dong!
+		
+		if (! udahDiperingatkanBeta) {
+			new AlertDialog.Builder(this).setMessage(R.string.peringatanBeta_s).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					//Editor editor = preferences.edit();
+					//editor.putBoolean(UDAH_DIPERINGATKAN_BETA, true);
+					//editor.commit();
+				}
+			}).setNegativeButton("No!", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					finish();
+				}
+			}).show();
+		}
 	}
 
 	protected void bTuju_click() {

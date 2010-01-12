@@ -11,6 +11,8 @@ import android.util.*;
 import android.widget.*;
 
 public class S {
+	public static final String NAMA_PREFERENCES = "yuku.alkitab";
+	
 	public static Edisi[] xedisi;
 	public static Edisi edisi;
 	public static Kitab[] xkitab;
