@@ -11,10 +11,12 @@ public class Kitab {
 	public String nama;
 	public String judul;
 	public String file;
+	public int pos;
 
-	public static Kitab baca(BintexReader in) throws IOException {
+	public static Kitab baca(BintexReader in, int pos) throws IOException {
 		Kitab k = new Kitab();
-
+		k.pos = pos;
+		
 		String awal = in.readShortString();
 
 		if (awal.equals("Kitab")) {

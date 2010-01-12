@@ -17,6 +17,9 @@ public class IsiActivity extends Activity {
 	int[] ayat_offset;
 	TextView tIsi;
 	ScrollView scrollIsi;
+	Button bTuju;
+	ImageButton bKiri;
+	ImageButton bKanan;
 	int pasal = 0;
 	
 	@Override
@@ -30,7 +33,50 @@ public class IsiActivity extends Activity {
 		tIsi = (TextView) findViewById(R.id.tIsi);
 		scrollIsi = (ScrollView) findViewById(R.id.scrollIsi);
 		
+		bTuju = (Button) findViewById(R.id.bTuju);
+		bKiri = (ImageButton) findViewById(R.id.bKiri);
+		bKanan = (ImageButton) findViewById(R.id.bKanan);
+		
+		bTuju.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				bTuju_click();
+			}
+		});
+		
+		bKiri.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				bKiri_click();
+			}
+		});
+		
+		bKanan.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				bKanan_click();
+			}
+		});
+				
 		tampil(0, 0); // TODO tampilin yang terakhir dong!
+	}
+
+	protected void bTuju_click() {
+		Intent intent = new Intent(this, MenujuActivity.class);
+		intent.putExtra("pasal", pasal);
+		
+		int line = tIsi.getLayout().getLineForVertical(scrollIsi.getScrollY());
+		int offset = tIsi.getLayout().getOffsetForHorizontal(line, 0);
+		int ayat = 0;
+		for (int i = 1; i < ayat_offset.length; i++) {
+			if (ayat_offset[i] > offset) {
+				ayat = i-1;
+				break;
+			}
+		}
+		intent.putExtra("ayat", ayat+1);
+		
+		startActivityForResult(intent, R.id.menuTuju);
 	}
 
 	private int getAyatTop(int ayat) {
@@ -73,9 +119,7 @@ public class IsiActivity extends Activity {
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if (item.getItemId() == R.id.menuTuju) {
-			Intent intent = new Intent(this, MenujuActivity.class);
-			intent.putExtra("pasal", pasal);
-			startActivityForResult(intent, R.id.menuTuju);
+			bTuju_click();
 		} else if (item.getItemId() == R.id.menuKitab) {
 			Intent intent = new Intent(this, KitabActivity.class);
 			startActivityForResult(intent, R.id.menuKitab);
@@ -91,8 +135,7 @@ public class IsiActivity extends Activity {
 				verName = packageInfo.versionName;
 				verCode = packageInfo.versionCode;
 			} catch (NameNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Log.e("alki-isi", "PackageInfo ngaco", e);
 			}
 	    	
 			new AlertDialog.Builder(this).setTitle(R.string.tentang_title).setMessage(
@@ -117,6 +160,13 @@ public class IsiActivity extends Activity {
 			if (resultCode == RESULT_OK) {
 				int pasal = data.getIntExtra("pasal", 0);
 				int ayat = data.getIntExtra("ayat", 0);
+				int kitab = data.getIntExtra("kitab", AdapterView.INVALID_POSITION);
+				
+				if (kitab == AdapterView.INVALID_POSITION || kitab >= S.xkitab.length || kitab < 0) {
+				} else {
+					// ganti kitab
+					S.kitab = S.xkitab[kitab];
+				}
 				
 				tampil(pasal, ayat);
 			}
@@ -185,16 +235,6 @@ public class IsiActivity extends Activity {
 						scrollIsi.scrollTo(0, y - ViewConfiguration.get(IsiActivity.this).getScaledFadingEdgeLength());
 					}
 				});
-				
-//				int len = result.length();
-//				for (int i = 0; i < len; i += 10) {
-//					String s = "";
-//					for (int j = i; j < i+10 && j < len; j++) {
-//						char c = result.charAt(j);
-//						s += String.format("%02x(%c) ", (int)c, c);
-//					}
-//					Log.d("alki", s);
-//				}
 			}
 		}.execute(pasal, ayat);
 	}
@@ -202,13 +242,21 @@ public class IsiActivity extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-			tampil(pasal-1, 1);
+			bKiri_click();
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-			tampil(pasal+1, 1);
+			bKanan_click();
 			return true;
 		}
 		
 		return super.onKeyDown(keyCode, event);
+	}
+
+	private void bKiri_click() {
+		tampil(pasal-1, 1);
+	}
+	
+	private void bKanan_click() {
+		tampil(pasal+1, 1);
 	}
 }

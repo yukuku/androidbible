@@ -1,8 +1,10 @@
 package yuku.alkitab;
 
+import yuku.alkitab.model.*;
 import android.app.*;
 import android.content.*;
 import android.os.*;
+import android.util.*;
 import android.view.*;
 import android.view.View.*;
 import android.widget.*;
@@ -10,6 +12,14 @@ import android.widget.*;
 public class MenujuActivity extends Activity {
 	TextView aktif;
 	TextView pasif;
+	
+	Button bOk;
+	TextView lPasal;
+	TextView lAyat;
+	Spinner cbKitab;
+	
+	int maxPasal = 0;
+	int maxAyat = 0;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -19,10 +29,36 @@ public class MenujuActivity extends Activity {
 		S.siapinEdisi(getResources());
 		S.siapinKitab(getResources());
 		
-		final Button bOk = (Button) findViewById(R.id.bOk);
+		bOk = (Button) findViewById(R.id.bOk);
+		lPasal = (TextView) findViewById(R.id.lPasal);
+		lAyat = (TextView) findViewById(R.id.lAyat);
+		cbKitab = (Spinner) findViewById(R.id.cbKitab);
+		cbKitab.setAdapter(S.getKitabAdapter(this));
+
+		// set kitab, pasal, ayat kini
+		cbKitab.setSelection(S.kitab.pos);
 		
-		final TextView lPasal = (TextView) findViewById(R.id.lPasal);
-		final TextView lAyat = (TextView) findViewById(R.id.lAyat);
+		cbKitab.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+			}
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				try {
+					Kitab kitab = S.xkitab[position];
+					maxPasal = kitab.npasal;
+					
+					int pasal = cobaBacaPasal();
+					maxAyat = kitab.nayat[pasal-1];
+				} catch (Exception e) {
+					Log.w("alki-menuju", e);
+				}
+				
+				betulinPasalKelebihan();
+				betulinAyatKelebihan();
+			}
+		});
 		
 		bOk.setOnClickListener(new OnClickListener() {
 			@Override
@@ -37,7 +73,10 @@ public class MenujuActivity extends Activity {
 					// biarin 0 aja
 				}
 				
+				int kitab = cbKitab.getSelectedItemPosition();
+				
 				Intent intent = new Intent();
+				intent.putExtra("kitab", kitab);
 				intent.putExtra("pasal", pasal);
 				intent.putExtra("ayat", ayat);
 				setResult(RESULT_OK, intent);
@@ -109,6 +148,46 @@ public class MenujuActivity extends Activity {
 		
 		warnain();
 	}
+	
+	private int cobaBacaPasal() {
+		try {
+			return Integer.parseInt("0" + lPasal.getText().toString());
+		} catch (NumberFormatException e) {
+			return 0;
+		}
+	}
+
+	private int cobaBacaAyat() {
+		try {
+			return Integer.parseInt("0" + lAyat.getText().toString());
+		} catch (NumberFormatException e) {
+			return 0;
+		}
+	}
+
+	private void betulinAyatKelebihan() {
+		int ayat = cobaBacaAyat();
+		
+		if (ayat > maxAyat) {
+			ayat = maxAyat;
+		} else if (ayat <= 0) {
+			ayat = 1;
+		}
+		
+		lAyat.setText(ayat + "");
+	}
+	
+	private void betulinPasalKelebihan() {
+		int pasal = cobaBacaPasal();
+			
+		if (pasal > maxPasal) {
+			pasal = maxPasal;
+		} else if (pasal <= 0) {
+			pasal = 1;
+		}
+		
+		lPasal.setText(pasal + "");
+	}
 
 	private void pencet(String s) {
 		if (aktif != null) {
@@ -122,11 +201,25 @@ public class MenujuActivity extends Activity {
 				return;
 			}
 			
-			try {
-				Integer.parseInt(aktif.getText().toString());
+			if (aktif == lPasal) {
 				aktif.append(s);
-			} catch (NumberFormatException e) {
-				aktif.setText(s);
+				if (cobaBacaPasal() > maxPasal || cobaBacaPasal() <= 0) {
+					aktif.setText(s);
+				}
+				
+				try {
+					Kitab kitab = S.xkitab[cbKitab.getSelectedItemPosition()];
+					int pasal = cobaBacaPasal();
+					
+					maxAyat = kitab.nayat[pasal-1];
+				} catch (Exception e) {
+					Log.w("alki-menuju", e);
+				}
+			} else if (aktif == lAyat) {
+				aktif.append(s);
+				if (cobaBacaAyat() > maxAyat || cobaBacaAyat() <= 0) {
+					aktif.setText(s);
+				}
 			}
 		}
 	}

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="pilihKitab_s">Pilih kitab</string>
+    <string name="menuSejarah">Sejarah</string>
     <string name="menuKitab">Kitab</string>
     <string name="menuEdisi">Edisi</string>
     <string name="menuTentang">Tentang</string>

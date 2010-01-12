@@ -5,8 +5,10 @@ import java.util.*;
 
 import yuku.alkitab.model.*;
 import yuku.bintex.*;
+import android.content.*;
 import android.content.res.*;
 import android.util.*;
+import android.widget.*;
 
 public class S {
 	public static Edisi[] xedisi;
@@ -52,8 +54,9 @@ public class S {
 			ArrayList<Kitab> xkitab = new ArrayList<Kitab>();
 	
 			try {
+				int pos = 0;
 				while (true) {
-					Kitab k = Kitab.baca(in);
+					Kitab k = Kitab.baca(in, pos++);
 					xkitab.add(k);
 					
 					Log.d("alkitab", "siapinKitab memuat " + k.judul);
@@ -119,5 +122,17 @@ public class S {
 		} catch (IOException e) {
 			return new String[] { e.getMessage() };
 		}
+	}
+
+	public static ArrayAdapter<String> getKitabAdapter(Context context) {
+		String[] content = new String[xkitab.length];
+		
+		for (int i = 0; i < xkitab.length; i++) {
+			content[i] = xkitab[i].judul;
+		}
+		
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, content);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		return adapter;
 	}
 }
