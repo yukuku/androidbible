@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:kbbiandroid="http://schemas.android.com/apk/res/yuku.kbbiandroid"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:text="@string/cariKata_v"></TextView>
+	<EditText
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:id="@+id/tCari"
+		android:inputType="text" android:imeOptions="actionSearch"></EditText>
+	<Button
+		android:layout_height="wrap_content"
+		android:id="@+id/bCari"
+		android:text="@string/cari_v"
+		android:layout_width="fill_parent"></Button>
+
+	<com.admob.android.ads.AdView
+		android:id="@+id/ad"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		kbbiandroid:backgroundColor="#000000"
+		kbbiandroid:textColor="#FFFFFF"
+		kbbiandroid:keywords="Android dictionary reference Indonesia Indonesian books"
+		 />
+</LinearLayout>

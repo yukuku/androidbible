@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	package="yuku.kbbiandroid"
+	android:versionName="1.2" android:versionCode="5">
+	<application
+		android:icon="@drawable/icon"
+		android:label="@string/app_name"
+		android:debuggable="false">
+
+
+		<activity
+			android:name="LayarCari">
+			<intent-filter>
+				<action
+					android:name="android.intent.action.MAIN"></action>
+				<category
+					android:name="android.intent.category.LAUNCHER"></category>
+			</intent-filter>
+		</activity>
+		<activity
+			android:name="LayarPilih"></activity>
+
+		<!-- The application's publisher ID assigned by AdMob -->
+		<meta-data
+			android:value="a14b483b1b1bdbd"
+			android:name="ADMOB_PUBLISHER_ID" />
+			
+		<meta-data
+			android:value="a14b4a937ccd30a"
+			android:name="ADMOB_ANALYTICS_ID" />
+			
+		<meta-data
+			android:value="true"
+			android:name="ADMOB_ANALYTICS_REQUEST" />
+	</application>
+	<uses-sdk
+		android:minSdkVersion="3" />
+
+	<!-- AdMob SDK permissions -->
+	<uses-permission
+		android:name="android.permission.INTERNET" />
+	<uses-permission
+		android:name="android.permission.ACCESS_COARSE_LOCATION" />
+</manifest> 

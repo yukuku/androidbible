@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="fill_parent" android:layout_height="wrap_content">
+	<TextView
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:minHeight="?android:attr/listPreferredItemHeight"
+		android:text="(kata)"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:padding="6dp" android:gravity="center_vertical" android:id="@+id/lKata">
+	</TextView>
+</LinearLayout>

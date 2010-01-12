@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cariKata_v">Search for</string>
+    <string name="kataYangDicariGaKetemu_s">The word '%s' could not be found.</string>
+    <string name="kembali_v">Back</string>
+    <string name="cari_v">Search</string>
+    
+    <string name="app_name">KbbiAndroid</string>
+<string name="tentang_n">About</string>
+<string name="tentangMessage_s">&lt;font color='#ff8080'&gt;Kbbi&lt;/font&gt;&lt;font color='#8080ff'&gt;Android&lt;/font&gt; %1$s&lt;br/&gt;by &lt;b&gt;yuku&lt;/b&gt; 2009&lt;br/&gt;&lt;u&gt;www.kejut.com/kbbimobile&lt;/u&gt;&lt;br/&gt;App icon &lt;b&gt;oluss.com&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;Data kamus &lt;i&gt;Hak Cipta © 2008 Pusat Bahasa Departemen Pendidikan Nasional&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;v%1$s %2$d</string>
+<string name="kbbiAndroid_n">KBBI Android</string>
+<string name="hasilPencarian_s">&quot;Search result for '%s'&quot;</string>
+</resources>

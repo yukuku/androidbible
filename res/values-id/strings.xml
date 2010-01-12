@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string
+		name="cariKata_v">Cari Kata</string>
+	<string
+		name="kataYangDicariGaKetemu_s">Kata '%s' tidak ditemukan.</string>
+	<string
+		name="kembali_v">Kembali</string>
+	<string
+		name="cari_v">Cari</string>
+
+	<string
+		name="app_name">KbbiAndroid</string>
+	<string
+		name="tentang_n">Tentang</string>
+	<string
+		name="hasilPencarian_s">&quot;Hasil pencarian '%s'&quot;</string>
+</resources>
