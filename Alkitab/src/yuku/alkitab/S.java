@@ -4,8 +4,8 @@ import java.io.*;
 import java.util.*;
 
 import yuku.alkitab.model.*;
+import yuku.bintex.*;
 import android.content.res.*;
-import android.os.*;
 import android.util.*;
 
 public class S {
@@ -41,28 +41,31 @@ public class S {
 		if (xkitab != null) return;
 
 		try {
-			Debug.startMethodTracing("siapinKitab");
+			//Debug.startMethodTracing("siapinKitab");
 			
-			InputStream is = resources.openRawResource(getRawInt(resources, edisi.nama + "_index"));
-			Utf8Reader in = new Utf8Reader(is);
-			SimpleScanner sc = new SimpleScanner(in, 200);
+//			InputStream is = resources.openRawResource(getRawInt(resources, edisi.nama + "_index"));
+//			Utf8Reader in = new Utf8Reader(is);
+//			SimpleScanner sc = new SimpleScanner(in, 200);
+			InputStream is = resources.openRawResource(getRawInt(resources, edisi.nama + "_index_bt"));
+			BintexReader in = new BintexReader(is);
 	
 			ArrayList<Kitab> xkitab = new ArrayList<Kitab>();
 	
-			
-			while (sc.hasNext()) {
-				Kitab k = Kitab.baca(sc);
-				xkitab.add(k);
-				
-				Log.d("alkitab", "siapinKitab memuat " + k.judul);
+			try {
+				while (true) {
+					Kitab k = Kitab.baca(in);
+					xkitab.add(k);
+					
+					Log.d("alkitab", "siapinKitab memuat " + k.judul);
+				}
+			} catch (IOException e) {
+				Log.d("alkitab", "siapinKitab selesai memuat");
 			}
 	
 			S.xkitab = xkitab.toArray(new Kitab[xkitab.size()]);
 			S.kitab = S.xkitab[0]; // TODO selalu pilih edisi pertama
-		} catch (IOException e) {
-			Log.e("alkitab", "siapinKitab", e);
 		} finally {
-			Debug.stopMethodTracing();
+			//Debug.stopMethodTracing();
 		}
 		
 	}

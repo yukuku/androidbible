@@ -60,7 +60,7 @@
 	}
 	
 	$nayat[] = $c;
-	$pasal_offset[] = $maju;
+	//$pasal_offset[] = $maju;
 	
 	jumlah($nama_kitab[$kitab], sprintf("tb_k%02d", $kitab), $pasal, $nayat, $pasal_offset);
 	// tutup
