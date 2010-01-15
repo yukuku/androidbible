@@ -1,11 +1,15 @@
 package yuku.kbbiandroid;
 
+import java.io.*;
+
+import yuku.laporpakai.*;
 import android.app.*;
 import android.content.*;
 import android.content.pm.*;
 import android.content.pm.PackageManager.*;
 import android.os.*;
 import android.text.*;
+import android.util.*;
 import android.view.*;
 import android.view.View.*;
 import android.view.inputmethod.*;
@@ -49,6 +53,8 @@ public class LayarCari extends Activity {
 				return false;
 			}
 		});
+        
+        laporPakai();
     }
     
     private void bCari_click() {
@@ -88,5 +94,26 @@ public class LayarCari extends Activity {
     	.show();
     	
     	return true;
+    }
+    
+    private void laporPakai() {
+    	Thread thread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Params params = PengumpulData.getInformation(LayarCari.this);
+				params.put("extra/activity", LayarCari.class.getName());
+				params.put("extra/aksi", "onCreate");
+				
+				try {
+					Log.d("PengirimData", "mulai post");
+					byte[] response = PengirimData.postData(params, getString(R.string.laporPakai_url));
+					Log.d("PengirimData", "response = " + new String(response));
+				} catch (IOException e) {
+					Log.i("PengirimData", "gagal post", e);
+				}
+			}
+		});
+    	thread.setPriority(Thread.MIN_PRIORITY);
+    	thread.start();
     }
 }
