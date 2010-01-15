@@ -1,174 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical"
-	android:padding="2dp"
 	android:layout_height="fill_parent"
-	android:layout_width="fill_parent">
-
+	android:layout_width="fill_parent"
+	android:padding="2dp">
 	<LinearLayout
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:layout_width="fill_parent"
-		android:gravity="center_horizontal">
-		<Spinner
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:id="@+id/cbKitab"
-			android:prompt="@string/pilihKitab_s" android:minWidth="200dp"></Spinner>
-	</LinearLayout>
-
-	<TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:minLines="1"></TextView>
-	<LinearLayout
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:layout_width="fill_parent"
-		android:gravity="center_horizontal">
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="Pasal"></TextView>
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:id="@+id/lPasal"
-			android:text="&lt;lPasal&gt;"
-			android:textAppearance="?android:attr/textAppearanceMedium"></TextView>
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:minEms="1"></TextView>
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="Ayat"></TextView>
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:id="@+id/lAyat"
-			android:text="&lt;lAyat&gt;"
-			android:textAppearance="?android:attr/textAppearanceMedium"></TextView>
-
-</LinearLayout>
-
-
-	<TableLayout
-		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:layout_height="fill_parent"
 		android:layout_width="fill_parent">
 
-		<TableRow
+		<LinearLayout
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
+			android:gravity="center_horizontal">
+			<Spinner
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/cbKitab"
+				android:prompt="@string/pilihKitab_s"
+				android:minWidth="200dp"></Spinner>
+		</LinearLayout>
+
+		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:gravity="center_horizontal">
-			<Button
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:id="@+id/bAngka1"
-				android:text="1"
-				android:minWidth="46sp"></Button>
-			<Button
-				android:id="@+id/bAngka2"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="2"
-				android:minWidth="46sp"></Button>
-			<Button
-				android:id="@+id/bAngka3"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="3"
-				android:minWidth="46sp"></Button>
-		</TableRow>
-
-		<TableRow
+			android:minLines="1"></TextView>
+		<LinearLayout
 			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
 			android:gravity="center_horizontal">
-			<Button
-				android:id="@+id/bAngka4"
+			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="4"
-				android:minWidth="46sp"></Button>
-			<Button
-				android:id="@+id/bAngka5"
+				android:text="Pasal "></TextView>
+			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="5"
-				android:minWidth="46sp"></Button>
-			<Button
-				android:id="@+id/bAngka6"
+				android:id="@+id/lPasal"
+				android:text="&lt;lPasal&gt;"
+				android:textAppearance="?android:attr/textAppearanceLarge"></TextView>
+			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="6"
-				android:minWidth="46sp"></Button>
-		</TableRow>
+				android:minEms="1"></TextView>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Ayat "></TextView>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/lAyat"
+				android:text="&lt;lAyat&gt;"
+				android:textAppearance="?android:attr/textAppearanceLarge"></TextView>
+		</LinearLayout>
 
-		<TableRow
+		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:gravity="center_horizontal">
-			<Button
-				android:id="@+id/bAngka7"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="7"
-				android:minWidth="46sp"></Button>
-			<Button
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="8"
-				android:id="@+id/bAngka8"
-				android:minWidth="46sp"></Button>
-			<Button
-				android:id="@+id/bAngka9"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="9"
-				android:minWidth="46sp"></Button>
-		</TableRow>
+			android:minLines="1"></TextView>
 
-		<TableRow
+		<include
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:gravity="center_horizontal">
-			<Button
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:minWidth="46sp"
-				android:text="C"
-				android:id="@+id/bAngkaC"></Button>
-			<Button
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:id="@+id/bAngka0"
-				android:text="0"
-				android:minWidth="46sp"></Button>
-			<Button
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:minWidth="46sp"
-				android:text=":"
-				android:id="@+id/bAngkaPindah"></Button>
-		</TableRow>
-
-		<TableRow
+			layout="@layout/keypad"
+			android:layout_gravity="center_horizontal"></include>
+			
+		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:gravity="center_horizontal">
-			<Button
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:id="@+id/bOk"
-				android:text="Ok"
-				android:layout_span="3"></Button>
-		</TableRow>
-	</TableLayout>
+			android:minLines="1"></TextView>
+
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/bOk"
+			android:text="Ok"
+			android:minWidth="200dp"
+			android:layout_gravity="center_horizontal"></Button>
 
 
-
-
-
+	
 </LinearLayout>
+</ScrollView>
