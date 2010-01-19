@@ -2,17 +2,14 @@ package yuku.alkitab;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -20,13 +17,14 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.util.Log;
+import android.widget.Toast;
 
 public class PengirimFidbek {
-	private final Activity activity;
+	private final IsiActivity activity;
 	private ArrayList<String> xisi;
 	private boolean lagiKirim = false;
 
-	public PengirimFidbek(Activity activity) {
+	public PengirimFidbek(IsiActivity activity) {
 		this.activity = activity;
 	}
 
@@ -113,6 +111,7 @@ public class PengirimFidbek {
 				}
 				
 				berhasil = true;
+				activity.handler.sendEmptyMessage(0);
 			} catch (IOException e) {
 				Log.w("PengirimFidbek", "waktu post", e);
 			}

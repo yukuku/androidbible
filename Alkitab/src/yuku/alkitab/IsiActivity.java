@@ -25,6 +25,13 @@ public class IsiActivity extends Activity {
 	int pasal = 0;
 	private SharedPreferences preferences;
 	
+	Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			Toast.makeText(IsiActivity.this, R.string.fidbekMakasih_s, Toast.LENGTH_SHORT).show();
+		};
+	};
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

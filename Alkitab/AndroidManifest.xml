@@ -33,4 +33,5 @@
 	<uses-sdk
 		android:minSdkVersion="3" />
 
+<uses-permission android:name="android.permission.INTERNET"></uses-permission>
 </manifest> 
