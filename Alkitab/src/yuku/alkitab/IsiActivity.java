@@ -32,6 +32,7 @@ public class IsiActivity extends Activity {
 		
 		S.siapinEdisi(getResources());
 		S.siapinKitab(getResources());
+		S.siapinPengirimFidbek(this);
 		
 		tIsi = (TextView) findViewById(R.id.tIsi);
 		scrollIsi = (ScrollView) findViewById(R.id.scrollIsi);
@@ -67,12 +68,18 @@ public class IsiActivity extends Activity {
 		tampil(0, 0); // TODO tampilin yang terakhir dong!
 		
 		if (! udahDiperingatkanBeta) {
-			new AlertDialog.Builder(this).setMessage(R.string.peringatanBeta_s).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			final View feedback = getLayoutInflater().inflate(R.layout.feedback, null);
+			new AlertDialog.Builder(this).setView(feedback).setPositiveButton("OK", new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					//Editor editor = preferences.edit();
-					//editor.putBoolean(UDAH_DIPERINGATKAN_BETA, true);
-					//editor.commit();
+					EditText tFeedback = (EditText) feedback.findViewById(R.id.tFeedback);
+					String isi = tFeedback.getText().toString();
+					
+					if (isi.length() > 0) {
+						S.pengirimFidbek.tambah(isi);
+					}
+					
+					S.pengirimFidbek.cobaKirim();
 				}
 			}).setNegativeButton("No!", new DialogInterface.OnClickListener() {
 				@Override

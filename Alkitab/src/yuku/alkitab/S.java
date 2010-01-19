@@ -1,14 +1,19 @@
 package yuku.alkitab;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Scanner;
 
-import yuku.alkitab.model.*;
-import yuku.bintex.*;
-import android.content.*;
-import android.content.res.*;
-import android.util.*;
-import android.widget.*;
+import yuku.alkitab.model.Edisi;
+import yuku.alkitab.model.Kitab;
+import yuku.bintex.BintexReader;
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
+import android.util.Log;
+import android.widget.ArrayAdapter;
 
 public class S {
 	public static final String NAMA_PREFERENCES = "yuku.alkitab";
@@ -18,6 +23,8 @@ public class S {
 	public static Kitab[] xkitab;
 	public static Kitab kitab;
 
+	public static PengirimFidbek pengirimFidbek;
+	
 	private static int getRawInt(Resources resources, String rid) {
 		return resources.getIdentifier(rid, "raw", "yuku.alkitab");
 	}
@@ -136,5 +143,11 @@ public class S {
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, content);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		return adapter;
+	}
+
+	public static void siapinPengirimFidbek(Activity activity) {
+		if (pengirimFidbek == null) {
+			pengirimFidbek = new PengirimFidbek(activity);
+		}
 	}
 }
