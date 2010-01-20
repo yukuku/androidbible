@@ -1,19 +1,14 @@
 package yuku.alkitab;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
-import yuku.alkitab.model.Edisi;
-import yuku.alkitab.model.Kitab;
-import yuku.bintex.BintexReader;
-import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
-import android.util.Log;
-import android.widget.ArrayAdapter;
+import yuku.alkitab.model.*;
+import yuku.bintex.*;
+import android.content.*;
+import android.content.res.*;
+import android.util.*;
+import android.widget.*;
 
 public class S {
 	public static final String NAMA_PREFERENCES = "yuku.alkitab";
@@ -145,7 +140,7 @@ public class S {
 		return adapter;
 	}
 
-	public static void siapinPengirimFidbek(Activity activity) {
+	public static void siapinPengirimFidbek(IsiActivity activity) {
 		if (pengirimFidbek == null) {
 			pengirimFidbek = new PengirimFidbek(activity);
 		}

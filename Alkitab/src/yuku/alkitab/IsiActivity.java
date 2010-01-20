@@ -1,8 +1,11 @@
 package yuku.alkitab;
 
+import java.util.*;
+
 import yuku.alkitab.model.*;
 import android.app.*;
 import android.content.*;
+import android.content.SharedPreferences.*;
 import android.content.pm.*;
 import android.content.pm.PackageManager.*;
 import android.os.*;
@@ -13,8 +16,11 @@ import android.view.*;
 import android.widget.*;
 
 public class IsiActivity extends Activity {
-	private static final String UDAH_DIPERINGATKAN_BETA = "udahDiperingatkanBeta";
-	
+	private static final String NAMAPREF_kitabTerakhir = "kitabTerakhir";
+	private static final String NAMAPREF_pasalTerakhir = "pasalTerakhir";
+	private static final String NAMAPREF_ayatTerakhir = "ayatTerakhir";
+	private static final String NAMAPREF_udahDiperingatkanBeta = "udahDiperingatkanBeta";
+
 	String[] xayat;
 	int[] ayat_offset;
 	TextView tIsi;
@@ -23,7 +29,7 @@ public class IsiActivity extends Activity {
 	ImageButton bKiri;
 	ImageButton bKanan;
 	int pasal = 0;
-	private SharedPreferences preferences;
+	SharedPreferences preferences;
 	
 	Handler handler = new Handler() {
 		@Override
@@ -70,9 +76,19 @@ public class IsiActivity extends Activity {
 		});
 		
 		preferences = getSharedPreferences(S.NAMA_PREFERENCES, 0);
-		boolean udahDiperingatkanBeta = preferences.getBoolean(UDAH_DIPERINGATKAN_BETA, false);
+		boolean udahDiperingatkanBeta = preferences.getBoolean(NAMAPREF_udahDiperingatkanBeta, false);
+		int kitabTerakhir = preferences.getInt(NAMAPREF_kitabTerakhir, 0);
+		int pasalTerakhir = preferences.getInt(NAMAPREF_pasalTerakhir, 0);
+		int ayatTerakhir = preferences.getInt(NAMAPREF_ayatTerakhir, 0);
 		
-		tampil(0, 0); // TODO tampilin yang terakhir dong!
+		Log.d("alki", String.format("Akan menuju kitab %d pasal %d ayat %d", kitabTerakhir, pasalTerakhir, ayatTerakhir));
+		
+		// muat kitab
+		if (kitabTerakhir < S.xkitab.length) {
+			S.kitab = S.xkitab[kitabTerakhir];
+		}
+		// muat pasal dan ayat
+		tampil(pasalTerakhir, ayatTerakhir); 
 		
 		if (! udahDiperingatkanBeta) {
 			final View feedback = getLayoutInflater().inflate(R.layout.feedback, null);
@@ -96,12 +112,20 @@ public class IsiActivity extends Activity {
 			}).show();
 		}
 	}
-
-	protected void bTuju_click() {
-		Intent intent = new Intent(this, MenujuActivity.class);
-		intent.putExtra("pasal", pasal);
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
 		
-		int line = tIsi.getLayout().getLineForVertical(scrollIsi.getScrollY());
+		Editor editor = preferences.edit();
+		editor.putInt(NAMAPREF_kitabTerakhir, S.kitab.pos);
+		editor.putInt(NAMAPREF_pasalTerakhir, pasal);
+		editor.putInt(NAMAPREF_ayatTerakhir, getAyatBerdasarSkrol());
+		editor.commit();
+	}
+	
+	private int getAyatBerdasarSkrol() {
+		int line = tIsi.getLayout().getLineForVertical(scrollIsi.getScrollY() + ViewConfiguration.get(IsiActivity.this).getScaledFadingEdgeLength());
 		int offset = tIsi.getLayout().getOffsetForHorizontal(line, 0);
 		int ayat = 0;
 		for (int i = 1; i < ayat_offset.length; i++) {
@@ -110,7 +134,15 @@ public class IsiActivity extends Activity {
 				break;
 			}
 		}
-		intent.putExtra("ayat", ayat+1);
+		return ayat + 1; // karena index mulai dari 0, sedangkan yang direturn mulai dari 1 
+	}
+
+	protected void bTuju_click() {
+		Intent intent = new Intent(this, MenujuActivity.class);
+		intent.putExtra("pasal", pasal);
+		
+		int ayat = getAyatBerdasarSkrol();
+		intent.putExtra("ayat", ayat);
 		
 		startActivityForResult(intent, R.id.menuTuju);
 	}
@@ -181,6 +213,13 @@ public class IsiActivity extends Activity {
 			SpannableStringBuilder builder = new SpannableStringBuilder(t);
 			builder.append("n");
 			tIsi.setText(builder);
+			
+			// dump pref
+			Log.i("alki.gebug1", "semua pref segera muncul di bawah ini");
+			Map<String, ?> all = preferences.getAll();
+			for (Map.Entry<String, ?> entry: all.entrySet()) {
+				Log.i("alki.gebug1", String.format("%s = %s", entry.getKey(), entry.getValue()));
+			}
 		} else if (item.getItemId() == 0x985802) { // debug 2
 			CharSequence t = tIsi.getText();
 			Log.w("disyuh", t.subSequence(t.length()-10, t.length()).toString());

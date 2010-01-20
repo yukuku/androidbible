@@ -1,23 +1,20 @@
 package yuku.alkitab;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
+import java.io.*;
+import java.util.*;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.*;
+import org.apache.http.client.*;
+import org.apache.http.client.entity.*;
+import org.apache.http.client.methods.*;
+import org.apache.http.impl.client.*;
+import org.apache.http.message.*;
 
-import android.app.Activity;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.util.Log;
-import android.widget.Toast;
+import android.content.*;
+import android.content.SharedPreferences.*;
+import android.os.*;
+import android.provider.*;
+import android.util.*;
 
 public class PengirimFidbek {
 	private final IsiActivity activity;
@@ -36,11 +33,9 @@ public class PengirimFidbek {
 	}
 
 	private synchronized void simpan() {
-		if (xisi == null)
-			return;
+		if (xisi == null) return;
 
-		SharedPreferences preferences = activity.getSharedPreferences(
-				S.NAMA_PREFERENCES, 0);
+		SharedPreferences preferences = activity.getSharedPreferences(S.NAMA_PREFERENCES, 0);
 		Editor editor = preferences.edit();
 
 		editor.putInt("nfidbek", xisi.size());
@@ -53,9 +48,8 @@ public class PengirimFidbek {
 
 	public synchronized void cobaKirim() {
 		muat();
-		
-		if (lagiKirim || xisi.size() == 0)
-			return;
+
+		if (lagiKirim || xisi.size() == 0) return;
 		lagiKirim = true;
 
 		new Pengirim().start();
@@ -64,14 +58,12 @@ public class PengirimFidbek {
 	private synchronized void muat() {
 		if (xisi == null) {
 			xisi = new ArrayList<String>();
-			SharedPreferences preferences = activity.getSharedPreferences(
-					S.NAMA_PREFERENCES, 0);
+			SharedPreferences preferences = activity.getSharedPreferences(S.NAMA_PREFERENCES, 0);
 
 			int nfidbek = preferences.getInt("nfidbek", 0);
 
 			for (int i = 0; i < nfidbek; i++) {
-				String isi = preferences
-						.getString("fidbek/" + i + "/isi", null);
+				String isi = preferences.getString("fidbek/" + i + "/isi", null);
 				if (isi != null) {
 					xisi.add(isi);
 				}
@@ -83,33 +75,37 @@ public class PengirimFidbek {
 		@Override
 		public void run() {
 			boolean berhasil = false;
-			
+
 			try {
 				HttpClient client = new DefaultHttpClient();
-				HttpPost post = new HttpPost(
-						"http://www.kejut.com/prog/android/fidbek/kirim.php");
+				HttpPost post = new HttpPost("http://www.kejut.com/prog/android/fidbek/kirim.php");
 				ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-				params.add(new BasicNameValuePair("package/name", activity
-						.getPackageName()));
+				params.add(new BasicNameValuePair("package_name", activity.getPackageName()));
 
 				for (String isi : xisi) {
-					params.add(new BasicNameValuePair("fidbek/isi", isi));
+					params.add(new BasicNameValuePair("fidbek_isi[]", isi));
 				}
-
+				
+				String uniqueId = Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.ANDROID_ID);
+				if (uniqueId == null) {
+					uniqueId = "null;FINGERPRINT=" + Build.FINGERPRINT;
+				}
+				params.add(new BasicNameValuePair("uniqueId", uniqueId));
+				
 				post.setEntity(new UrlEncodedFormEntity(params, "utf-8"));
 				HttpResponse response = client.execute(post);
-				
+
 				HttpEntity entity = response.getEntity();
 				InputStream content = entity.getContent();
-				
+
 				while (true) {
 					byte[] b = new byte[4096];
 					int read = content.read(b);
-					
+
 					if (read <= 0) break;
 					Log.i("PengirimFidbek", new String(b, 0, read));
 				}
-				
+
 				berhasil = true;
 				activity.handler.sendEmptyMessage(0);
 			} catch (IOException e) {
