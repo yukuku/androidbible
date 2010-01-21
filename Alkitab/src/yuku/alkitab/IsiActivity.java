@@ -41,6 +41,7 @@ public class IsiActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.isi);
 		
 		S.siapinEdisi(getResources());
@@ -300,7 +301,11 @@ public class IsiActivity extends Activity {
 			@Override
 			protected void onPostExecute(SpannableStringBuilder result) {
 				tIsi.setText(result);
-				setTitle(getString(R.string.judulIsi, S.kitab.judul, pasal, ayat));
+				
+				String judul = getString(R.string.judulIsi, S.kitab.judul, pasal, ayat);
+				setTitle(judul);
+				bTuju.setText(judul);
+				
 				IsiActivity.this.pasal = pasal;
 				
 				scrollIsi.post(new Runnable() {
