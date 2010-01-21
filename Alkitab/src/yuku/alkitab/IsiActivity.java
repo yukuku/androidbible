@@ -209,6 +209,9 @@ public class IsiActivity extends Activity {
 	    	
 			new AlertDialog.Builder(this).setTitle(R.string.tentang_title).setMessage(
 					Html.fromHtml(getString(R.string.tentang_message, verName, verCode))).show();
+		} else if (item.getItemId() == R.id.menuPilihan) {
+			Intent intent = new Intent(this, PilihanActivity.class);
+			startActivity(intent);
 		} else if (item.getItemId() == 0x985801) { // debug 1
 			CharSequence t = tIsi.getText();
 			SpannableStringBuilder builder = new SpannableStringBuilder(t);

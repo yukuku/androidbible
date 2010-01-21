@@ -7,4 +7,5 @@
 	
 	
 <item android:id="@+id/menuKitab" android:title="@string/menuKitab"></item><item android:id="@+id/menuTentang" android:title="@string/menuTentang"></item>
+<item android:id="@+id/menuPilihan" android:title="@string/menuPilihan"></item>
 </menu>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="pref_ukuranHuruf_label">
+		<item>Super kecil</item>
+		<item>Kecil</item>
+		<item>Agak kecil</item>
+		<item>Sedang</item>
+		<item>Agak besar</item>
+		<item>Besar</item>
+		<item>Super besar</item>
+	</string-array>
+	<string-array name="pref_ukuranHuruf_value">
+		<item>55</item>
+		<item>71</item>
+		<item>83</item>
+		<item>100</item>
+		<item>120</item>
+		<item>140</item>
+		<item>180</item>
+	</string-array>
+</resources>

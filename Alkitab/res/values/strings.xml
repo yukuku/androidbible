@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="menuPilihan">Pilihan</string>
+    <string name="ukuranHuruf_keterangan_s">Perbesar atau perkecil ukuran huruf tampilan teks Alkitab</string>
+    <string name="ukuranHuruf_n">Ukuran Huruf</string>
+    <string name="tampilan_n">Tampilan</string>
     <string name="pilihKitab_s">Pilih kitab</string>
     <string name="menuSejarah">Sejarah</string>
     <string name="menuKitab">Kitab</string>
