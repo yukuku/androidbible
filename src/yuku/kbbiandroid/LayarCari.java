@@ -84,8 +84,7 @@ public class LayarCari extends Activity {
 			verName = packageInfo.versionName;
 			verCode = packageInfo.versionCode;
 		} catch (NameNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e("kbbiandroid", "NameNotFoundException???", e);
 		}
     	
     	new AlertDialog.Builder(this).setTitle(getString(R.string.tentang_n))
