@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="checkForUpdates_s">Check for Updates</string>
     <string name="cariKata_v">Search for</string>
     <string name="kataYangDicariGaKetemu_s">The word '%s' could not be found.</string>
     <string name="kembali_v">Back</string>
@@ -11,4 +12,5 @@
 <string name="kbbiAndroid_n">KBBI Android</string>
 <string name="hasilPencarian_s">&quot;Search result for '%s'&quot;</string>
 <string name="laporPakai_url">http://www.kejut.com/prog/laporpakai/lapor.php</string>
+<string name="marketGaAda_s">The Android Market application is not available. Please check http://www.kejut.com/kbbiandroid for updates.</string>
 </resources>

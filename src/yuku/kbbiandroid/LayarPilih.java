@@ -13,6 +13,7 @@ import android.widget.TextView.*;
 public class LayarPilih extends ListActivity {
 	private String cari_;
 	private Handler handler = new Handler();
+	private CommonMenuHandler commonMenuHandler;
 
 	public LayarPilih() {
 		S.layarPilih = this;
@@ -77,6 +78,19 @@ public class LayarPilih extends ListActivity {
 			dialog.show();
 		}
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		new MenuInflater(this).inflate(R.menu.utama, menu);
+
+		return super.onCreateOptionsMenu(menu);
+	}
+
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+    	if (commonMenuHandler == null) commonMenuHandler = new CommonMenuHandler(this);
+    	return commonMenuHandler.handle(featureId, item);
+    }
 	
 	private class PemberiHint extends Thread {
 		private final String[] kandidat;

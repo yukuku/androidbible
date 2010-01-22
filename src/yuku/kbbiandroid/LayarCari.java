@@ -5,10 +5,7 @@ import java.io.*;
 import yuku.laporpakai.*;
 import android.app.*;
 import android.content.*;
-import android.content.pm.*;
-import android.content.pm.PackageManager.*;
 import android.os.*;
-import android.text.*;
 import android.util.*;
 import android.view.*;
 import android.view.View.*;
@@ -18,6 +15,7 @@ import android.widget.*;
 public class LayarCari extends Activity {
 	Button bCari;
 	EditText tCari;
+	CommonMenuHandler commonMenuHandler;
 	
 	public LayarCari() {
 		S.layarCari = this;
@@ -69,30 +67,15 @@ public class LayarCari extends Activity {
 
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
-    	menu.add(Menu.NONE, Menu.NONE, Menu.NONE, getString(R.string.tentang_n));
+		new MenuInflater(this).inflate(R.menu.utama, menu);
     	
     	return super.onCreateOptionsMenu(menu);
     }
     
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
-    	String verName = "null";
-    	int verCode = -1;
-    	
-		try {
-			PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-			verName = packageInfo.versionName;
-			verCode = packageInfo.versionCode;
-		} catch (NameNotFoundException e) {
-			Log.e("kbbiandroid", "NameNotFoundException???", e);
-		}
-    	
-    	new AlertDialog.Builder(this).setTitle(getString(R.string.tentang_n))
-    	.setMessage(Html.fromHtml(getString(R.string.tentangMessage_s, verName, verCode)))
-    	.setPositiveButton(R.string.kembali_v, null)
-    	.show();
-    	
-    	return true;
+    	if (commonMenuHandler == null) commonMenuHandler = new CommonMenuHandler(this);
+    	return commonMenuHandler.handle(featureId, item);
     }
     
     private void laporPakai() {

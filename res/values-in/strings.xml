@@ -15,4 +15,6 @@
 		name="tentang_n">Tentang</string>
 	<string
 		name="hasilPencarian_s">&quot;Hasil pencarian '%s'&quot;</string>
+<string name="checkForUpdates_s">Periksa Pembaruan</string>
+<string name="marketGaAda_s">Aplikasi Android Market tidak tersedia. Bukalah http://www.kejut.com/kbbiandroid untuk memeriksa pembaruan.</string>
 </resources>
