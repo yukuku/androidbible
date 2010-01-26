@@ -21,7 +21,7 @@ public class IsiActivity extends Activity {
 	private static final String NAMAPREF_kitabTerakhir = "kitabTerakhir";
 	private static final String NAMAPREF_pasalTerakhir = "pasalTerakhir";
 	private static final String NAMAPREF_ayatTerakhir = "ayatTerakhir";
-	private static final String NAMAPREF_udahDiperingatkanBeta = "udahDiperingatkanBeta";
+	private static final String NAMAPREF_terakhirMintaFidbek = "terakhirMintaFidbek";
 
 	String[] xayat;
 	int[] ayat_offset;
@@ -34,13 +34,7 @@ public class IsiActivity extends Activity {
 	SharedPreferences preferences;
 	SharedPreferences pengaturan;
 	Float ukuranAsalHurufIsi;
-	
-	Handler handler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			Toast.makeText(IsiActivity.this, R.string.fidbekMakasih_s, Toast.LENGTH_SHORT).show();
-		};
-	};
+	Handler handler = new Handler();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +78,6 @@ public class IsiActivity extends Activity {
 		});
 		
 		preferences = getSharedPreferences(S.NAMA_PREFERENCES, 0);
-		boolean udahDiperingatkanBeta = preferences.getBoolean(NAMAPREF_udahDiperingatkanBeta, false);
 		int kitabTerakhir = preferences.getInt(NAMAPREF_kitabTerakhir, 0);
 		int pasalTerakhir = preferences.getInt(NAMAPREF_pasalTerakhir, 0);
 		int ayatTerakhir = preferences.getInt(NAMAPREF_ayatTerakhir, 0);
@@ -98,26 +91,48 @@ public class IsiActivity extends Activity {
 		// muat pasal dan ayat
 		tampil(pasalTerakhir, ayatTerakhir); 
 		
-		if (! udahDiperingatkanBeta) {
-			final View feedback = getLayoutInflater().inflate(R.layout.feedback, null);
-			new AlertDialog.Builder(this).setView(feedback).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		final long terakhirMintaFidbek = preferences.getLong(NAMAPREF_terakhirMintaFidbek, 0);
+		final long sekarang = System.currentTimeMillis();
+		if (terakhirMintaFidbek == 0 || (sekarang - terakhirMintaFidbek > 1000*60*60*24)) { // 1 hari ato belom pernah
+			handler.post(new Runnable() {
+				
 				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					EditText tFeedback = (EditText) feedback.findViewById(R.id.tFeedback);
-					String isi = tFeedback.getText().toString();
+				public void run() {
+					final View feedback = getLayoutInflater().inflate(R.layout.feedback, null);
+					TextView lVersi = (TextView) feedback.findViewById(R.id.lVersi);
 					
-					if (isi.length() > 0) {
-						S.pengirimFidbek.tambah(isi);
+					try {
+						PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
+						lVersi.setText(String.format("Alkitab v%s (%d)", info.versionName, info.versionCode));
+					} catch (NameNotFoundException e) {
+						Log.w("alki", e);
 					}
 					
-					S.pengirimFidbek.cobaKirim();
+					new AlertDialog.Builder(IsiActivity.this).setView(feedback)
+					.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							EditText tFeedback = (EditText) feedback.findViewById(R.id.tFeedback);
+							String isi = tFeedback.getText().toString();
+							
+							if (isi.length() > 0) {
+								S.pengirimFidbek.tambah(isi);
+							}
+							
+							S.pengirimFidbek.cobaKirim();
+							
+							Editor editor = preferences.edit();
+							editor.putLong(NAMAPREF_terakhirMintaFidbek, sekarang);
+							editor.commit();
+						}
+					}).setNegativeButton("No!", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							finish();
+						}
+					}).show();
 				}
-			}).setNegativeButton("No!", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					finish();
-				}
-			}).show();
+			});
 		}
 	}
 

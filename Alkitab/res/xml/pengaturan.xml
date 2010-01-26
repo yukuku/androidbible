@@ -9,14 +9,14 @@
 			android:title="@string/ukuranHuruf_n"
 			android:entries="@array/pref_ukuranHuruf_label"
 			android:entryValues="@array/pref_ukuranHuruf_value"
-			android:key="@string/pref_ukuranHuruf_key"></ListPreference>
+			android:key="@string/pref_ukuranHuruf_key" android:defaultValue="100"></ListPreference>
 		<ListPreference
 			android:key="@string/pref_jenisHuruf_key"
 			android:title="@string/jenisHuruf_n"
 			android:summary="@string/jenisHuruf_keterangan_s"
 			android:entries="@array/pref_jenisHuruf_label"
 			android:entryValues="@array/pref_jenisHuruf_value"
-			android:dialogTitle="@string/jenisHuruf_n"></ListPreference>
+			android:dialogTitle="@string/jenisHuruf_n" android:defaultValue="DEFAULT"></ListPreference>
 	<CheckBoxPreference android:summary="@string/boldHuruf_keterangan_s" android:key="@string/pref_boldHuruf_key" android:defaultValue="false" android:title="@string/boldHuruf_n"></CheckBoxPreference>
 </PreferenceCategory>
 </PreferenceScreen>

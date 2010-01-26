@@ -12,9 +12,11 @@ import org.apache.http.message.*;
 
 import android.content.*;
 import android.content.SharedPreferences.*;
+import android.content.pm.PackageManager.*;
 import android.os.*;
 import android.provider.*;
 import android.util.*;
+import android.widget.*;
 
 public class PengirimFidbek {
 	private final IsiActivity activity;
@@ -81,6 +83,14 @@ public class PengirimFidbek {
 				HttpPost post = new HttpPost("http://www.kejut.com/prog/android/fidbek/kirim.php");
 				ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
 				params.add(new BasicNameValuePair("package_name", activity.getPackageName()));
+				
+				int versionCode = 0;
+				try {
+					versionCode = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionCode;
+				} catch (NameNotFoundException e) {
+					Log.w("alki", "package get versioncode", e);
+				}
+				params.add(new BasicNameValuePair("package_versionCode", String.valueOf(versionCode)));
 
 				for (String isi : xisi) {
 					params.add(new BasicNameValuePair("fidbek_isi[]", isi));
@@ -107,7 +117,13 @@ public class PengirimFidbek {
 				}
 
 				berhasil = true;
-				activity.handler.sendEmptyMessage(0);
+				activity.handler.post(new Runnable() {
+					
+					@Override
+					public void run() {
+						Toast.makeText(activity, R.string.fidbekMakasih_s, Toast.LENGTH_SHORT).show();
+					}
+				});
 			} catch (IOException e) {
 				Log.w("PengirimFidbek", "waktu post", e);
 			}
