@@ -8,7 +8,9 @@ import android.content.*;
 import android.content.SharedPreferences.*;
 import android.content.pm.*;
 import android.content.pm.PackageManager.*;
+import android.graphics.*;
 import android.os.*;
+import android.preference.*;
 import android.text.*;
 import android.text.style.*;
 import android.util.*;
@@ -30,6 +32,8 @@ public class IsiActivity extends Activity {
 	ImageButton bKanan;
 	int pasal = 0;
 	SharedPreferences preferences;
+	SharedPreferences pengaturan;
+	Float ukuranAsalHurufIsi;
 	
 	Handler handler = new Handler() {
 		@Override
@@ -54,6 +58,9 @@ public class IsiActivity extends Activity {
 		bTuju = (Button) findViewById(R.id.bTuju);
 		bKiri = (ImageButton) findViewById(R.id.bKiri);
 		bKanan = (ImageButton) findViewById(R.id.bKanan);
+		
+		pengaturan = PreferenceManager.getDefaultSharedPreferences(this);
+		terapkanPengaturan();
 		
 		bTuju.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -113,6 +120,41 @@ public class IsiActivity extends Activity {
 			}).show();
 		}
 	}
+
+	private void terapkanPengaturan() {
+		//# atur ukuran huruf isi berdasarkan pengaturan
+		{
+			if (ukuranAsalHurufIsi == null) {
+				ukuranAsalHurufIsi = tIsi.getTextSize(); // px
+			}
+			Log.d("alki", "ukuran asal huruf px = " + ukuranAsalHurufIsi);
+			String ukuranHuruf_s = pengaturan.getString(getString(R.string.pref_ukuranHuruf_key), "100");
+			int ukuranHuruf = 100;
+			try {
+				ukuranHuruf = Integer.valueOf(ukuranHuruf_s);
+			} catch (NumberFormatException e) {
+			}
+			Log.d("alki", "skala di pengaturan = " + ukuranHuruf);
+			float ukuranBaru = ukuranAsalHurufIsi * ukuranHuruf / 100.f;
+			Log.d("alki", "ukuran baru px = " + ukuranBaru);
+			tIsi.setTextSize(TypedValue.COMPLEX_UNIT_PX, ukuranBaru);
+		}
+		
+		//# atur jenis huruf, termasuk boldnya
+		{
+			String jenisHuruf_s = pengaturan.getString(getString(R.string.pref_jenisHuruf_key), null);
+			Typeface typeface;
+			
+			if (jenisHuruf_s == null) typeface = Typeface.DEFAULT;
+			else if (jenisHuruf_s.equals("SERIF")) typeface = Typeface.SERIF;
+			else if (jenisHuruf_s.equals("SANS_SERIF")) typeface = Typeface.SANS_SERIF;
+			else if (jenisHuruf_s.equals("MONOSPACE")) typeface = Typeface.MONOSPACE;
+			else typeface = Typeface.DEFAULT;
+			
+			boolean boldHuruf_b = pengaturan.getBoolean(getString(R.string.pref_boldHuruf_key), false);
+			tIsi.setTypeface(typeface, boldHuruf_b? Typeface.BOLD: Typeface.NORMAL);
+		}
+	}
 	
 	@Override
 	protected void onPause() {
@@ -150,8 +192,11 @@ public class IsiActivity extends Activity {
 
 	private int getAyatTop(int ayat) {
 		Layout layout = tIsi.getLayout();
-		int line = layout.getLineForOffset(ayat_offset[ayat-1]);
-		return layout.getLineTop(line);
+		if (layout != null) { // jaga2 belum siap
+			int line = layout.getLineForOffset(ayat_offset[ayat-1]);
+			return layout.getLineTop(line);
+		} 
+		return 0;
 	}
 
 	private SpannableStringBuilder siapinTampilanAyat() {
@@ -181,6 +226,8 @@ public class IsiActivity extends Activity {
 		
 		menu.add(0, 0x985801, 0, "gebug 1");
 		menu.add(0, 0x985802, 0, "gebug 2");
+		menu.add(0, 0x985803, 0, "gebug 3 (reset pref)");
+		menu.add(0, 0x985804, 0, "gebug 4 (reset pengaturan)");
 		
 		return true;
 	}
@@ -209,9 +256,9 @@ public class IsiActivity extends Activity {
 	    	
 			new AlertDialog.Builder(this).setTitle(R.string.tentang_title).setMessage(
 					Html.fromHtml(getString(R.string.tentang_message, verName, verCode))).show();
-		} else if (item.getItemId() == R.id.menuPilihan) {
-			Intent intent = new Intent(this, PilihanActivity.class);
-			startActivity(intent);
+		} else if (item.getItemId() == R.id.menuPengaturan) {
+			Intent intent = new Intent(this, PengaturanActivity.class);
+			startActivityForResult(intent, R.id.menuPengaturan);
 		} else if (item.getItemId() == 0x985801) { // debug 1
 			CharSequence t = tIsi.getText();
 			SpannableStringBuilder builder = new SpannableStringBuilder(t);
@@ -228,6 +275,14 @@ public class IsiActivity extends Activity {
 			CharSequence t = tIsi.getText();
 			Log.w("disyuh", t.subSequence(t.length()-10, t.length()).toString());
 			tIsi.setText(t.subSequence(0, t.length() - 10));
+		} else if (item.getItemId() == 0x985803) { // debug 3
+			Editor editor = preferences.edit();
+			editor.clear();
+			editor.commit();
+		} else if (item.getItemId() == 0x985804) { // debug 4
+			Editor editor = pengaturan.edit();
+			editor.clear();
+			editor.commit();
 		}
 		
 		return super.onMenuItemSelected(featureId, item);
@@ -277,6 +332,8 @@ public class IsiActivity extends Activity {
 					}
 				}
 			}
+		} else if (requestCode == R.id.menuPengaturan) {
+			terapkanPengaturan();
 		}
 	}
 

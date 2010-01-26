@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-  xmlns:android="http://schemas.android.com/apk/res/android">
-<PreferenceCategory android:title="@string/tampilan_n">
-<ListPreference android:dialogTitle="@string/ukuranHuruf_n" android:summary="@string/ukuranHuruf_keterangan_s" android:key="pref_ukuranHuruf" android:title="@string/ukuranHuruf_n" android:entries="@array/pref_ukuranHuruf_label" android:entryValues="@array/pref_ukuranHuruf_value"></ListPreference>
-</PreferenceCategory>
-</PreferenceScreen>
