@@ -228,6 +228,7 @@ public class IsiActivity extends Activity {
 			pengawal = (i+1) + " ";
 			res.append(pengawal).append(xayat[i]).append(pengakhir);
 			res.setSpan(new ForegroundColorSpan(0xff8080ff), c, c + pengawal.length() - 1, 0);
+			res.setSpan(new LeadingMarginSpan.Standard(0, 14), c, c + pengawal.length() + xayat[i].length() + pengakhir.length(), 0);
 			
 			c += pengawal.length() + xayat[i].length() + pengakhir.length();
 		}
