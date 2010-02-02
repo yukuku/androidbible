@@ -5,18 +5,7 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 
-	<ScrollView
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:id="@+id/scrollIsi"
-		android:layout_weight="1">
-		<TextView
-			android:id="@+id/tIsi"
-			android:text="&lt;tIsi&gt; (tampilan isi)"
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content" android:padding="3dp"></TextView>
-
-</ScrollView>
+	<ListView android:layout_height="wrap_content" android:id="@+id/lsIsi" android:layout_width="fill_parent" android:layout_weight="1" android:divider="@null"></ListView>
 	<LinearLayout
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent">

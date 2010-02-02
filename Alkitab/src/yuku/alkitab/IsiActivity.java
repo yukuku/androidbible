@@ -16,6 +16,7 @@ import android.text.style.*;
 import android.util.*;
 import android.view.*;
 import android.widget.*;
+import android.widget.TextView.*;
 
 public class IsiActivity extends Activity {
 	private static final String NAMAPREF_kitabTerakhir = "kitabTerakhir";
@@ -24,9 +25,8 @@ public class IsiActivity extends Activity {
 	private static final String NAMAPREF_terakhirMintaFidbek = "terakhirMintaFidbek";
 
 	String[] xayat;
-	int[] ayat_offset;
-	TextView tIsi;
-	ScrollView scrollIsi;
+	//int[] ayat_offset;
+	ListView lsIsi;
 	Button bTuju;
 	ImageButton bKiri;
 	ImageButton bKanan;
@@ -35,6 +35,12 @@ public class IsiActivity extends Activity {
 	SharedPreferences pengaturan;
 	Float ukuranAsalHurufIsi;
 	Handler handler = new Handler();
+	
+	private Float ukuranTeksSesuaiPengaturan_;
+	private Typeface jenisHurufSesuaiPengaturan_;
+	private Integer tebalHurufSesuaiPengaturan_;
+	private AyatAdapter ayatAdapter_ = new AyatAdapter();
+	private int indenParagraf_;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +52,7 @@ public class IsiActivity extends Activity {
 		S.siapinKitab(getResources());
 		S.siapinPengirimFidbek(this);
 		
-		tIsi = (TextView) findViewById(R.id.tIsi);
-		scrollIsi = (ScrollView) findViewById(R.id.scrollIsi);
+		lsIsi = (ListView) findViewById(R.id.lsIsi);
 		
 		bTuju = (Button) findViewById(R.id.bTuju);
 		bKiri = (ImageButton) findViewById(R.id.bKiri);
@@ -140,7 +145,7 @@ public class IsiActivity extends Activity {
 		//# atur ukuran huruf isi berdasarkan pengaturan
 		{
 			if (ukuranAsalHurufIsi == null) {
-				ukuranAsalHurufIsi = tIsi.getTextSize(); // px
+				ukuranAsalHurufIsi = new TextView(this).getTextSize();
 			}
 			Log.d("alki", "ukuran asal huruf px = " + ukuranAsalHurufIsi);
 			String ukuranHuruf_s = pengaturan.getString(getString(R.string.pref_ukuranHuruf_key), "100");
@@ -150,9 +155,11 @@ public class IsiActivity extends Activity {
 			} catch (NumberFormatException e) {
 			}
 			Log.d("alki", "skala di pengaturan = " + ukuranHuruf);
-			float ukuranBaru = ukuranAsalHurufIsi * ukuranHuruf / 100.f;
-			Log.d("alki", "ukuran baru px = " + ukuranBaru);
-			tIsi.setTextSize(TypedValue.COMPLEX_UNIT_PX, ukuranBaru);
+			ukuranTeksSesuaiPengaturan_ = ukuranAsalHurufIsi * ukuranHuruf / 100.f;
+			Log.d("alki", "ukuran baru px = " + ukuranTeksSesuaiPengaturan_);
+			
+			indenParagraf_ = (int) (getResources().getDimension(R.dimen.indenParagraf) * ukuranHuruf / 100.f);
+			Log.d("alki", "indenParagraf_ = " + indenParagraf_);
 		}
 		
 		//# atur jenis huruf, termasuk boldnya
@@ -167,8 +174,13 @@ public class IsiActivity extends Activity {
 			else typeface = Typeface.DEFAULT;
 			
 			boolean boldHuruf_b = pengaturan.getBoolean(getString(R.string.pref_boldHuruf_key), false);
-			tIsi.setTypeface(typeface, boldHuruf_b? Typeface.BOLD: Typeface.NORMAL);
+			
+			jenisHurufSesuaiPengaturan_ = typeface;
+			tebalHurufSesuaiPengaturan_ = boldHuruf_b? Typeface.BOLD: Typeface.NORMAL;
 		}
+		
+		
+		lsIsi.invalidateViews();
 	}
 	
 	@Override
@@ -183,16 +195,17 @@ public class IsiActivity extends Activity {
 	}
 	
 	private int getAyatBerdasarSkrol() {
-		int line = tIsi.getLayout().getLineForVertical(scrollIsi.getScrollY() + ViewConfiguration.get(IsiActivity.this).getScaledFadingEdgeLength());
-		int offset = tIsi.getLayout().getOffsetForHorizontal(line, 0);
-		int ayat = 0;
-		for (int i = 1; i < ayat_offset.length; i++) {
-			if (ayat_offset[i] > offset) {
-				ayat = i-1;
-				break;
-			}
-		}
-		return ayat + 1; // karena index mulai dari 0, sedangkan yang direturn mulai dari 1 
+//		int line = tIsi.getLayout().getLineForVertical(scrollIsi.getScrollY() + ViewConfiguration.get(IsiActivity.this).getScaledFadingEdgeLength());
+//		int offset = tIsi.getLayout().getOffsetForHorizontal(line, 0);
+//		int ayat = 0;
+//		for (int i = 1; i < ayat_offset.length; i++) {
+//			if (ayat_offset[i] > offset) {
+//				ayat = i-1;
+//				break;
+//			}
+//		}
+//		return ayat + 1; // karena index mulai dari 0, sedangkan yang direturn mulai dari 1
+		return 1;
 	}
 
 	protected void bTuju_click() {
@@ -206,31 +219,28 @@ public class IsiActivity extends Activity {
 	}
 
 	private int getAyatTop(int ayat) {
-		Layout layout = tIsi.getLayout();
-		if (layout != null) { // jaga2 belum siap
-			int line = layout.getLineForOffset(ayat_offset[ayat-1]);
-			return layout.getLineTop(line);
-		} 
+//		Layout layout = tIsi.getLayout();
+//		if (layout != null) { // jaga2 belum siap
+//			int line = layout.getLineForOffset(ayat_offset[ayat-1]);
+//			return layout.getLineTop(line);
+//		} 
 		return 0;
 	}
 
-	private SpannableStringBuilder siapinTampilanAyat() {
-		SpannableStringBuilder res = new SpannableStringBuilder();
+	private SpannableStringBuilder[] siapinTampilanAyat() {
+		SpannableStringBuilder[] res = new SpannableStringBuilder[xayat.length];
 		
-		int c = 0;
 		String pengawal = "";
-		String pengakhir = "\n";
 		
-		ayat_offset = new int[xayat.length];
 		for (int i = 0; i < xayat.length; i++) {
-			ayat_offset[i] = c;
+			SpannableStringBuilder seayat = new SpannableStringBuilder();
 			
 			pengawal = (i+1) + " ";
-			res.append(pengawal).append(xayat[i]).append(pengakhir);
-			res.setSpan(new ForegroundColorSpan(0xff8080ff), c, c + pengawal.length() - 1, 0);
-			res.setSpan(new LeadingMarginSpan.Standard(0, 14), c, c + pengawal.length() + xayat[i].length() + pengakhir.length(), 0);
+			seayat.append(pengawal).append(xayat[i]);
+			seayat.setSpan(new ForegroundColorSpan(0xff8080ff), 0, pengawal.length() - 1, 0);
+			seayat.setSpan(new LeadingMarginSpan.Standard(0, indenParagraf_), 0, pengawal.length() + xayat[i].length(), 0);
 			
-			c += pengawal.length() + xayat[i].length() + pengakhir.length();
+			res[i] = seayat;
 		}
 		
 		return res;
@@ -276,11 +286,6 @@ public class IsiActivity extends Activity {
 			Intent intent = new Intent(this, PengaturanActivity.class);
 			startActivityForResult(intent, R.id.menuPengaturan);
 		} else if (item.getItemId() == 0x985801) { // debug 1
-			CharSequence t = tIsi.getText();
-			SpannableStringBuilder builder = new SpannableStringBuilder(t);
-			builder.append("n");
-			tIsi.setText(builder);
-			
 			// dump pref
 			Log.i("alki.gebug1", "semua pref segera muncul di bawah ini");
 			Map<String, ?> all = preferences.getAll();
@@ -288,9 +293,8 @@ public class IsiActivity extends Activity {
 				Log.i("alki.gebug1", String.format("%s = %s", entry.getKey(), entry.getValue()));
 			}
 		} else if (item.getItemId() == 0x985802) { // debug 2
-			CharSequence t = tIsi.getText();
-			Log.w("disyuh", t.subSequence(t.length()-10, t.length()).toString());
-			tIsi.setText(t.subSequence(0, t.length() - 10));
+			
+			// kosong dulu
 		} else if (item.getItemId() == 0x985803) { // debug 3
 			Editor editor = preferences.edit();
 			editor.clear();
@@ -361,12 +365,12 @@ public class IsiActivity extends Activity {
 		if (ayat > S.kitab.nayat[pasal-1]) ayat = S.kitab.nayat[pasal-1];
 		
 		// muat data pake async dong.
-		new AsyncTask<Integer, Void, SpannableStringBuilder>() {
+		new AsyncTask<Integer, Void, SpannableStringBuilder[]>() {
 			int pasal;
 			int ayat;
 			
 			@Override
-			protected SpannableStringBuilder doInBackground(Integer... params) {
+			protected SpannableStringBuilder[] doInBackground(Integer... params) {
 				pasal = params[0];
 				ayat = params[1];
 				
@@ -375,8 +379,10 @@ public class IsiActivity extends Activity {
 			}
 		
 			@Override
-			protected void onPostExecute(SpannableStringBuilder result) {
-				tIsi.setText(result);
+			protected void onPostExecute(SpannableStringBuilder[] result) {
+				ayatAdapter_.setRendered(result);
+				lsIsi.setAdapter(ayatAdapter_);
+				ayatAdapter_.notifyDataSetChanged();
 				
 				String judul = getString(R.string.judulIsi, S.kitab.judul, pasal, ayat);
 				setTitle(judul);
@@ -384,11 +390,11 @@ public class IsiActivity extends Activity {
 				
 				IsiActivity.this.pasal = pasal;
 				
-				scrollIsi.post(new Runnable() {
+				lsIsi.post(new Runnable() {
 					@Override
 					public void run() {
-						int y = getAyatTop(ayat);
-						scrollIsi.scrollTo(0, y - ViewConfiguration.get(IsiActivity.this).getScaledFadingEdgeLength());
+						// ayat mulai dari 1. setSelectionFromTop mulai dari 0.
+						lsIsi.setSelectionFromTop(ayat - 1, ViewConfiguration.get(IsiActivity.this).getScaledFadingEdgeLength());
 					}
 				});
 			}
@@ -414,5 +420,56 @@ public class IsiActivity extends Activity {
 	
 	private void bKanan_click() {
 		tampil(pasal+1, 1);
+	}
+	
+	private class AyatAdapter extends BaseAdapter {
+		private SpannableStringBuilder[] rendered_;
+		
+		synchronized void setRendered(SpannableStringBuilder[] baru) {
+			rendered_ = baru;
+		}
+		
+		@Override
+		public synchronized int getCount() {
+			if (rendered_ == null) return 0;
+			return rendered_.length;
+		}
+
+		@Override
+		public synchronized Object getItem(int position) {
+			return position;
+		}
+
+		@Override
+		public synchronized long getItemId(int position) {
+			 return position;
+		}
+
+		@Override
+		public synchronized View getView(int position, View convertView, ViewGroup parent) {
+			TextView res;
+			
+			if (convertView == null) {
+				res = (TextView) LayoutInflater.from(IsiActivity.this).inflate(R.layout.satu_ayat, null);
+			} else {
+				res = (TextView) convertView;
+			}
+			
+			res.setTypeface(jenisHurufSesuaiPengaturan_, tebalHurufSesuaiPengaturan_);
+			res.setTextSize(TypedValue.COMPLEX_UNIT_PX, ukuranTeksSesuaiPengaturan_);
+			res.setText(rendered_[position], BufferType.SPANNABLE);
+			
+			return res;
+		}
+		
+		@Override
+		public boolean areAllItemsEnabled() {
+			return false;
+		}
+		
+		@Override
+		public boolean isEnabled(int position) {
+			return false;
+		}
 	}
 }
