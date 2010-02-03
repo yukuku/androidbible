@@ -194,18 +194,24 @@ public class IsiActivity extends Activity {
 		editor.commit();
 	}
 	
+	/**
+	 * @return ayat mulai dari 1
+	 */
 	private int getAyatBerdasarSkrol() {
-//		int line = tIsi.getLayout().getLineForVertical(scrollIsi.getScrollY() + ViewConfiguration.get(IsiActivity.this).getScaledFadingEdgeLength());
-//		int offset = tIsi.getLayout().getOffsetForHorizontal(line, 0);
-//		int ayat = 0;
-//		for (int i = 1; i < ayat_offset.length; i++) {
-//			if (ayat_offset[i] > offset) {
-//				ayat = i-1;
-//				break;
-//			}
-//		}
-//		return ayat + 1; // karena index mulai dari 0, sedangkan yang direturn mulai dari 1
-		return 1;
+		int firstPos = lsIsi.getFirstVisiblePosition();
+
+		// TODO bikin lebih tepat.
+		if (firstPos == 0) {
+			return 1;
+		}
+		
+		firstPos += 2;
+		
+		if (firstPos > xayat.length) {
+			firstPos = xayat.length;
+		}
+		
+		return firstPos;
 	}
 
 	protected void bTuju_click() {
@@ -394,7 +400,7 @@ public class IsiActivity extends Activity {
 					@Override
 					public void run() {
 						// ayat mulai dari 1. setSelectionFromTop mulai dari 0.
-						lsIsi.setSelectionFromTop(ayat - 1, ViewConfiguration.get(IsiActivity.this).getScaledFadingEdgeLength());
+						lsIsi.setSelectionFromTop(ayat - 1, lsIsi.getVerticalFadingEdgeLength());
 					}
 				});
 			}
