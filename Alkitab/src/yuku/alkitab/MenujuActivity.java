@@ -162,6 +162,22 @@ public class MenujuActivity extends Activity {
 		warnain();
 	}
 	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) {
+			pencet("" + (char)('0' + keyCode - KeyEvent.KEYCODE_0));
+			return true;
+		} else if (keyCode == KeyEvent.KEYCODE_STAR) {
+			pencet("C");
+			return true;
+		} else if (keyCode == KeyEvent.KEYCODE_POUND) {
+			pencet(":");
+			return true;
+		}
+
+		return super.onKeyDown(keyCode, event);
+	}
+	
 	private int cobaBacaPasal() {
 		try {
 			return Integer.parseInt("0" + lPasal.getText().toString());
