@@ -15,7 +15,9 @@ public class MenujuActivity extends Activity {
 	
 	Button bOk;
 	TextView lPasal;
+	View lLabelPasal;
 	TextView lAyat;
+	View lLabelAyat;
 	Spinner cbKitab;
 	
 	int maxPasal = 0;
@@ -32,7 +34,9 @@ public class MenujuActivity extends Activity {
 		
 		bOk = (Button) findViewById(R.id.bOk);
 		lPasal = (TextView) findViewById(R.id.lPasal);
+		lLabelPasal = findViewById(R.id.lLabelPasal);
 		lAyat = (TextView) findViewById(R.id.lAyat);
+		lLabelAyat = findViewById(R.id.lLabelAyat);
 		cbKitab = (Spinner) findViewById(R.id.cbKitab);
 		cbKitab.setAdapter(S.getKitabAdapter(this));
 
@@ -86,19 +90,27 @@ public class MenujuActivity extends Activity {
 			}
 		});
 		
-		lPasal.setOnClickListener(new OnClickListener() {
+		OnClickListener tombolPasalListener = new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				aktifin(lPasal, lAyat);
 			}
-		});
+		};
+		lPasal.setOnClickListener(tombolPasalListener);
+		if (lLabelPasal != null) {
+			lLabelPasal.setOnClickListener(tombolPasalListener);
+		}
 		
-		lAyat.setOnClickListener(new OnClickListener() {
+		OnClickListener tombolAyatListener = new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				aktifin(lAyat, lPasal);
 			}
-		});
+		};
+		lAyat.setOnClickListener(tombolAyatListener);
+		if (lLabelAyat != null) {
+			lLabelAyat.setOnClickListener(tombolAyatListener);
+		}
 		
 		aktif = lPasal;
 		pasif = lAyat;
