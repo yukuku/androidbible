@@ -26,4 +26,5 @@
 <string name="peringatanBeta_s">Program ini belum jadi, masih banyak kekurangan dan barang2 yang tidak selesai. Sementara kumasukkan ke Android market dulu karena kurasa ada orang yang butuh Alkitab di ponsel Android. Pastikan anda mengapdet (update) program ini ketika versi baru tersedia! Pesan, saran, kritik, dan ide harap tuliskan di bawah ini, akan sangat berguna bagiku. OK?</string>
 <string name="fidbekMakasih_s">Terima kasih atas komentar anda!</string>
 
+<string name="pref_cerahTeks_key">cerahTeks</string>
 </resources>
