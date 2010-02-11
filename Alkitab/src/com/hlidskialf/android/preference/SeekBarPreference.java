@@ -16,70 +16,63 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
 
 	private SeekBar mSeekBar;
 	private TextView mSplashText, mValueText;
-	private Context mContext;
+	private Context context_;
 
 	private String mDialogMessage, mSuffix;
-	private int mDefault, mMax, mValue = 0;
+	private int mDefault, max_, value_ = 0;
 
 	public SeekBarPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		mContext = context;
+		context_ = context;
 
 		mDialogMessage = attrs.getAttributeValue(androidns, "dialogMessage");
 		mSuffix = attrs.getAttributeValue(androidns, "text");
 		mDefault = attrs.getAttributeIntValue(androidns, "defaultValue", 0);
-		mMax = attrs.getAttributeIntValue(androidns, "max", 100);
-
+		max_ = attrs.getAttributeIntValue(androidns, "max", 100);
 	}
 
 	@Override
 	protected View onCreateDialogView() {
 		LinearLayout.LayoutParams params;
-		LinearLayout layout = new LinearLayout(mContext);
+		LinearLayout layout = new LinearLayout(context_);
 		layout.setOrientation(LinearLayout.VERTICAL);
 		layout.setPadding(6, 6, 6, 6);
 
-		mSplashText = new TextView(mContext);
+		mSplashText = new TextView(context_);
 		if (mDialogMessage != null) mSplashText.setText(mDialogMessage);
 		layout.addView(mSplashText);
 
-		mValueText = new TextView(mContext);
+		mValueText = new TextView(context_);
 		mValueText.setGravity(Gravity.CENTER_HORIZONTAL);
 		mValueText.setTextSize(32);
 		params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 		layout.addView(mValueText, params);
 
-		mSeekBar = new SeekBar(mContext);
+		mSeekBar = new SeekBar(context_);
 		mSeekBar.setOnSeekBarChangeListener(this);
 		layout.addView(mSeekBar, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
-		if (shouldPersist()) mValue = getPersistedInt(mDefault);
+		value_ = getPersistedInt(mDefault);
 
-		mSeekBar.setMax(mMax);
-		mSeekBar.setProgress(mValue);
+		mSeekBar.setMax(max_);
+		mSeekBar.setProgress(value_);
 		return layout;
 	}
 
 	@Override
 	protected void onBindDialogView(View v) {
 		super.onBindDialogView(v);
-		mSeekBar.setMax(mMax);
-		mSeekBar.setProgress(mValue);
-	}
-
-	@Override
-	protected void onSetInitialValue(boolean restore, Object defaultValue) {
-		super.onSetInitialValue(restore, defaultValue);
-		if (restore) mValue = shouldPersist() ? getPersistedInt(mDefault) : 0;
-		else
-			mValue = (Integer) defaultValue;
+		mSeekBar.setMax(max_);
+		mSeekBar.setProgress(value_);
 	}
 
 	public void onProgressChanged(SeekBar seek, int value, boolean fromTouch) {
+		value_ = value;
+		
 		String t = String.valueOf(value);
 		mValueText.setText(mSuffix == null ? t : t.concat(mSuffix));
-		if (shouldPersist()) persistInt(value);
-		callChangeListener(new Integer(value));
+		
+		mValueText.setTextColor(0xff000000 | (255 * value / 100 * 0x010101));
 	}
 
 	public void onStartTrackingTouch(SeekBar seek) {
@@ -89,19 +82,28 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
 	}
 
 	public void setMax(int max) {
-		mMax = max;
+		max_ = max;
 	}
 
 	public int getMax() {
-		return mMax;
+		return max_;
 	}
 
 	public void setProgress(int progress) {
-		mValue = progress;
+		value_ = progress;
 		if (mSeekBar != null) mSeekBar.setProgress(progress);
 	}
 
 	public int getProgress() {
-		return mValue;
+		return value_;
+	}
+	
+	@Override
+	protected void onDialogClosed(boolean positiveResult) {
+		if (positiveResult) {
+			if (shouldPersist()) {
+				persistInt(value_);
+			}
+		}
 	}
 }

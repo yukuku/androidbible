@@ -35,6 +35,7 @@ public class IsiActivity extends Activity {
 	SharedPreferences pengaturan;
 	Float ukuranAsalHurufIsi;
 	Handler handler = new Handler();
+	Integer cerahTeks; // null kalo ga diset, pake yang aslinya aja
 	
 	private Float ukuranTeksSesuaiPengaturan_;
 	private Typeface jenisHurufSesuaiPengaturan_;
@@ -179,6 +180,13 @@ public class IsiActivity extends Activity {
 			tebalHurufSesuaiPengaturan_ = boldHuruf_b? Typeface.BOLD: Typeface.NORMAL;
 		}
 		
+		//# atur terang teks
+		{
+			String key = getString(R.string.pref_cerahTeks_key);
+			if (pengaturan.contains(key)) {
+				cerahTeks = pengaturan.getInt(key, 80);
+			}
+		}
 		
 		lsIsi.invalidateViews();
 	}
@@ -256,7 +264,7 @@ public class IsiActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		new MenuInflater(this).inflate(R.menu.isi, menu);
 		
-		menu.add(0, 0x985801, 0, "gebug 1");
+		menu.add(0, 0x985801, 0, "gebug 1 (dump p+p)");
 		menu.add(0, 0x985802, 0, "gebug 2");
 		menu.add(0, 0x985803, 0, "gebug 3 (reset pref)");
 		menu.add(0, 0x985804, 0, "gebug 4 (reset pengaturan)");
@@ -294,9 +302,18 @@ public class IsiActivity extends Activity {
 		} else if (item.getItemId() == 0x985801) { // debug 1
 			// dump pref
 			Log.i("alki.gebug1", "semua pref segera muncul di bawah ini");
-			Map<String, ?> all = preferences.getAll();
-			for (Map.Entry<String, ?> entry: all.entrySet()) {
-				Log.i("alki.gebug1", String.format("%s = %s", entry.getKey(), entry.getValue()));
+			{
+				Map<String, ?> all = preferences.getAll();
+				for (Map.Entry<String, ?> entry: all.entrySet()) {
+					Log.i("alki.gebug1", String.format("%s = %s", entry.getKey(), entry.getValue()));
+				}
+			}
+			Log.i("alki.gebug1", "dan pengaturan");
+			{
+				Map<String, ?> all = pengaturan.getAll();
+				for (Map.Entry<String, ?> entry: all.entrySet()) {
+					Log.i("alki.gebug1", String.format("%s = %s", entry.getKey(), entry.getValue()));
+				}
 			}
 		} else if (item.getItemId() == 0x985802) { // debug 2
 			
@@ -464,6 +481,11 @@ public class IsiActivity extends Activity {
 			res.setTypeface(jenisHurufSesuaiPengaturan_, tebalHurufSesuaiPengaturan_);
 			res.setTextSize(TypedValue.COMPLEX_UNIT_PX, ukuranTeksSesuaiPengaturan_);
 			res.setText(rendered_[position], BufferType.SPANNABLE);
+			
+			if (cerahTeks != null) {
+				int color = ((255 * cerahTeks / 100) * 0x010101) | 0xff000000;
+				res.setTextColor(color);
+			}
 			
 			return res;
 		}
