@@ -13,22 +13,19 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/bAngka1"
 			android:text="1"
-			android:minWidth="46sp"
-			android:textAppearance="?android:attr/textAppearanceLarge"></Button>
+			android:textAppearance="?android:attr/textAppearanceLarge" android:layout_margin="3dp" android:minWidth="64dp" android:minHeight="64dp"></Button>
 		<Button
 			android:id="@+id/bAngka2"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="2"
-			android:minWidth="46sp"
-			android:textAppearance="?android:attr/textAppearanceLarge"></Button>
+			android:textAppearance="?android:attr/textAppearanceLarge" android:layout_margin="3dp" android:minWidth="64dp" android:minHeight="64dp"></Button>
 		<Button
 			android:id="@+id/bAngka3"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="3"
-			android:minWidth="46sp"
-			android:textAppearance="?android:attr/textAppearanceLarge"></Button>
+			android:textAppearance="?android:attr/textAppearanceLarge" android:layout_margin="3dp" android:minWidth="64dp" android:minHeight="64dp"></Button>
 	</TableRow>
 
 	<TableRow
@@ -39,22 +36,19 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="4"
-			android:minWidth="46sp"
-			android:textAppearance="?android:attr/textAppearanceLarge"></Button>
+			android:textAppearance="?android:attr/textAppearanceLarge" android:layout_margin="3dp" android:minWidth="64dp" android:minHeight="64dp"></Button>
 		<Button
 			android:id="@+id/bAngka5"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="5"
-			android:minWidth="46sp"
-			android:textAppearance="?android:attr/textAppearanceLarge"></Button>
+			android:textAppearance="?android:attr/textAppearanceLarge" android:layout_margin="3dp" android:minWidth="64dp" android:minHeight="64dp"></Button>
 		<Button
 			android:id="@+id/bAngka6"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="6"
-			android:minWidth="46sp"
-			android:textAppearance="?android:attr/textAppearanceLarge"></Button>
+			android:textAppearance="?android:attr/textAppearanceLarge" android:layout_margin="3dp" android:minWidth="64dp" android:minHeight="64dp"></Button>
 	</TableRow>
 
 	<TableRow
@@ -66,22 +60,19 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="7"
-			android:minWidth="46sp"
-			android:textAppearance="?android:attr/textAppearanceLarge"></Button>
+			android:textAppearance="?android:attr/textAppearanceLarge" android:layout_margin="3dp" android:minWidth="64dp" android:minHeight="64dp"></Button>
 		<Button
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="8"
 			android:id="@+id/bAngka8"
-			android:minWidth="46sp"
-			android:textAppearance="?android:attr/textAppearanceLarge"></Button>
+			android:textAppearance="?android:attr/textAppearanceLarge" android:layout_margin="3dp" android:minWidth="64dp" android:minHeight="64dp"></Button>
 		<Button
 			android:id="@+id/bAngka9"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="9"
-			android:minWidth="46sp"
-			android:textAppearance="?android:attr/textAppearanceLarge"></Button>
+			android:textAppearance="?android:attr/textAppearanceLarge" android:layout_margin="3dp" android:minWidth="64dp" android:minHeight="64dp"></Button>
 	</TableRow>
 
 	<TableRow
@@ -91,23 +82,20 @@
 		<Button
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:minWidth="46sp"
 			android:text="C"
 			android:id="@+id/bAngkaC"
-			android:textAppearance="?android:attr/textAppearanceLarge"></Button>
+			android:textAppearance="?android:attr/textAppearanceLarge" android:layout_margin="3dp" android:minWidth="64dp" android:minHeight="64dp"></Button>
 		<Button
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:id="@+id/bAngka0"
 			android:text="0"
-			android:minWidth="46sp"
-			android:textAppearance="?android:attr/textAppearanceLarge"></Button>
+			android:textAppearance="?android:attr/textAppearanceLarge" android:layout_margin="3dp" android:minWidth="64dp" android:minHeight="64dp"></Button>
 		<Button
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:minWidth="46sp"
 			android:text=":"
 			android:id="@+id/bAngkaPindah"
-			android:textAppearance="?android:attr/textAppearanceLarge"></Button>
+			android:textAppearance="?android:attr/textAppearanceLarge" android:layout_margin="3dp" android:minWidth="64dp" android:minHeight="64dp"></Button>
 	</TableRow>
 </TableLayout>

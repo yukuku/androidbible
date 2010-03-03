@@ -1,73 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:padding="2dp"
-	android:layout_gravity="center_vertical"
-	android:layout_height="wrap_content">
-	
-	<LinearLayout
-		android:orientation="vertical"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:padding="2dp"
+	android:layout_gravity="center_vertical" android:layout_height="wrap_content">
+
+	<LinearLayout android:orientation="vertical"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		android:gravity="center_horizontal">
 
-		<LinearLayout
-			android:layout_height="wrap_content"
-			android:layout_width="fill_parent"
-			android:gravity="center_horizontal"
+		<LinearLayout android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:gravity="center_horizontal"
 			android:orientation="vertical">
 
-			<Spinner
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:id="@+id/cbKitab"
-				android:prompt="@string/pilihKitab_s"
-				android:minWidth="200sp" />
+			<Spinner android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:id="@+id/cbKitab"
+				android:prompt="@string/pilihKitab_s" android:minWidth="200sp" />
 
-			<LinearLayout
-				android:layout_height="wrap_content"
-				android:orientation="horizontal"
-				android:layout_width="fill_parent"
-				android:gravity="center_vertical|center_horizontal" android:minHeight="48sp">
-				<TextView
-					android:layout_width="wrap_content"
-					android:text="Pasal " android:layout_height="fill_parent" android:gravity="fill_vertical" android:id="@+id/lLabelPasal"/>
-				<TextView
-					android:layout_width="wrap_content"
-					android:id="@+id/lPasal"
-					android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="fill_parent" android:gravity="center_vertical|center_horizontal" android:minWidth="48sp" android:text="1" android:focusable="true" android:focusableInTouchMode="true"/>
-				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:minEms="1" />
-				<TextView
-					android:layout_width="wrap_content"
-					android:text="Ayat " android:layout_height="fill_parent" android:gravity="center_vertical" android:id="@+id/lLabelAyat"/>
-				<TextView
-					android:layout_width="wrap_content"
-					android:id="@+id/lAyat"
-					android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="fill_parent" android:gravity="center_vertical|center_horizontal" android:text="2" android:minWidth="48sp" android:focusable="true" android:focusableInTouchMode="true"/>
+			<LinearLayout android:layout_height="wrap_content"
+				android:orientation="horizontal" android:layout_width="fill_parent"
+				android:gravity="center_vertical|center_horizontal"
+				android:minHeight="48sp" android:layout_margin="12dp">
+				<TextView android:layout_width="wrap_content" android:text="Pasal "
+					android:layout_height="fill_parent" android:gravity="fill_vertical"
+					android:id="@+id/lLabelPasal" />
+				<TextView android:layout_width="wrap_content" android:id="@+id/lPasal"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:layout_height="fill_parent" android:gravity="center_vertical|center_horizontal"
+					android:minWidth="48sp" android:text="1" android:focusable="true"
+					android:focusableInTouchMode="true" />
+				<TextView android:layout_width="wrap_content"
+					android:layout_height="wrap_content" android:minEms="1" />
+				<TextView android:layout_width="wrap_content" android:text="Ayat "
+					android:layout_height="fill_parent" android:gravity="center_vertical"
+					android:id="@+id/lLabelAyat" />
+				<TextView android:layout_width="wrap_content" android:id="@+id/lAyat"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:layout_height="fill_parent" android:gravity="center_vertical|center_horizontal"
+					android:text="2" android:minWidth="48sp" android:focusable="true"
+					android:focusableInTouchMode="true" />
 			</LinearLayout>
 
 		</LinearLayout>
 
-		<include
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			layout="@layout/keypad"></include>
+		<include android:layout_width="wrap_content"
+			android:layout_height="wrap_content" layout="@layout/keypad"></include>
 
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:minLines="1"></TextView>
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:minLines="1"></TextView>
 
-		<Button
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:id="@+id/bOk"
-			android:text="Ok"
-			android:minWidth="200dp"></Button>
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/bOk"
+			android:text="Ok" android:minWidth="200dp"
+			android:textAppearance="?android:attr/textAppearanceLarge"></Button>
 
 
 
