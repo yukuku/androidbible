@@ -3,9 +3,30 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
 		android:title="@string/menuTuju"
-		android:id="@+id/menuTuju" android:icon="@drawable/menu_tuju"></item><item android:id="@+id/menuEdisi" android:title="@string/menuEdisi"></item>
-	
-	
-<item android:id="@+id/menuKitab" android:title="@string/menuKitab"></item><item android:id="@+id/menuTentang" android:title="@string/menuTentang"></item>
-<item android:icon="@android:drawable/ic_menu_preferences" android:id="@+id/menuPengaturan" android:title="@string/menuPengaturan"></item>
+		android:id="@+id/menuTuju"
+		android:icon="@drawable/menu_tuju" />
+	<item
+		android:id="@+id/menuEdisi"
+		android:title="@string/menuEdisi" 
+		android:visible="false"
+		/>
+
+
+	<item
+		android:id="@+id/menuKitab"
+		android:title="@string/menuKitab" />
+	<item
+		android:id="@+id/menuFidbek"
+		android:title="Saran" 
+		android:icon="@android:drawable/ic_menu_send"
+		/>
+	<item
+		android:id="@+id/menuTentang"
+		android:title="@string/menuTentang"
+		android:icon="@android:drawable/ic_menu_info_details" />
+	<item
+		android:icon="@android:drawable/ic_menu_preferences"
+		android:id="@+id/menuPengaturan"
+		android:title="@string/menuPengaturan" />
+
 </menu>

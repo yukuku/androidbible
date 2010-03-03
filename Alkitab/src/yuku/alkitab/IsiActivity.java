@@ -118,39 +118,7 @@ public class IsiActivity extends Activity {
 				
 				@Override
 				public void run() {
-					final View feedback = getLayoutInflater().inflate(R.layout.feedback, null);
-					TextView lVersi = (TextView) feedback.findViewById(R.id.lVersi);
-					
-					try {
-						PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
-						lVersi.setText(String.format("Alkitab v%s (%d)", info.versionName, info.versionCode));
-					} catch (NameNotFoundException e) {
-						Log.w("alki", e);
-					}
-					
-					new AlertDialog.Builder(IsiActivity.this).setView(feedback)
-					.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							EditText tFeedback = (EditText) feedback.findViewById(R.id.tFeedback);
-							String isi = tFeedback.getText().toString();
-							
-							if (isi.length() > 0) {
-								S.pengirimFidbek.tambah(isi);
-							}
-							
-							S.pengirimFidbek.cobaKirim();
-							
-							Editor editor = preferences.edit();
-							editor.putLong(NAMAPREF_terakhirMintaFidbek, sekarang);
-							editor.commit();
-						}
-					}).setNegativeButton("No!", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							finish();
-						}
-					}).show();
+					popupMintaFidbek();
 				}
 			});
 		}
@@ -331,6 +299,8 @@ public class IsiActivity extends Activity {
 		} else if (item.getItemId() == R.id.menuPengaturan) {
 			Intent intent = new Intent(this, PengaturanActivity.class);
 			startActivityForResult(intent, R.id.menuPengaturan);
+		} else if (item.getItemId() == R.id.menuFidbek) {
+			popupMintaFidbek();
 		} else if (item.getItemId() == 0x985801) { // debug 1
 			// dump pref
 			Log.i("alki.gebug1", "semua pref segera muncul di bawah ini");
@@ -477,6 +447,37 @@ public class IsiActivity extends Activity {
 		tampil(pasal+1, 1);
 	}
 	
+	private void popupMintaFidbek() {
+		final View feedback = getLayoutInflater().inflate(R.layout.feedback, null);
+		TextView lVersi = (TextView) feedback.findViewById(R.id.lVersi);
+		
+		try {
+			PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
+			lVersi.setText(String.format("Alkitab v%s (%d)", info.versionName, info.versionCode));
+		} catch (NameNotFoundException e) {
+			Log.w("alki", e);
+		}
+		
+		new AlertDialog.Builder(IsiActivity.this).setView(feedback)
+		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				EditText tFeedback = (EditText) feedback.findViewById(R.id.tFeedback);
+				String isi = tFeedback.getText().toString();
+				
+				if (isi.length() > 0) {
+					S.pengirimFidbek.tambah(isi);
+				}
+				
+				S.pengirimFidbek.cobaKirim();
+				
+				Editor editor = preferences.edit();
+				editor.putLong(NAMAPREF_terakhirMintaFidbek, System.currentTimeMillis());
+				editor.commit();
+			}
+		}).show();
+	}
+
 //	@Override
 //	public boolean onTrackballEvent(MotionEvent event) {
 //		float x = event.getX();
