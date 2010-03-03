@@ -25,8 +25,7 @@
 				<TextView android:layout_width="wrap_content" android:id="@+id/lPasal"
 					android:textAppearance="?android:attr/textAppearanceLarge"
 					android:layout_height="fill_parent" android:gravity="center_vertical|center_horizontal"
-					android:minWidth="48sp" android:text="1" android:focusable="true"
-					android:focusableInTouchMode="true" />
+					android:minWidth="48sp" android:text="1" android:focusable="true"/>
 				<TextView android:layout_width="wrap_content"
 					android:layout_height="wrap_content" android:minEms="1" />
 				<TextView android:layout_width="wrap_content" android:text="Ayat "
@@ -35,8 +34,7 @@
 				<TextView android:layout_width="wrap_content" android:id="@+id/lAyat"
 					android:textAppearance="?android:attr/textAppearanceLarge"
 					android:layout_height="fill_parent" android:gravity="center_vertical|center_horizontal"
-					android:text="2" android:minWidth="48sp" android:focusable="true"
-					android:focusableInTouchMode="true" />
+					android:text="2" android:minWidth="48sp" android:focusable="true"/>
 			</LinearLayout>
 
 		</LinearLayout>
