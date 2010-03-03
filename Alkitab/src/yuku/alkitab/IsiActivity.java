@@ -1,22 +1,24 @@
 package yuku.alkitab;
 
-import java.util.*;
+import java.util.Map;
 
 import yuku.alkitab.model.*;
 import android.app.*;
 import android.content.*;
-import android.content.SharedPreferences.*;
-import android.content.pm.*;
-import android.content.pm.PackageManager.*;
-import android.graphics.*;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Typeface;
 import android.os.*;
-import android.preference.*;
+import android.preference.PreferenceManager;
 import android.text.*;
 import android.text.style.*;
 import android.util.*;
 import android.view.*;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.*;
-import android.widget.TextView.*;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.TextView.BufferType;
 
 public class IsiActivity extends Activity {
 	private static final String NAMAPREF_kitabTerakhir = "kitabTerakhir";
@@ -25,7 +27,6 @@ public class IsiActivity extends Activity {
 	private static final String NAMAPREF_terakhirMintaFidbek = "terakhirMintaFidbek";
 
 	String[] xayat;
-	//int[] ayat_offset;
 	ListView lsIsi;
 	Button bTuju;
 	ImageButton bKiri;
@@ -36,6 +37,7 @@ public class IsiActivity extends Activity {
 	Float ukuranAsalHurufIsi;
 	Handler handler = new Handler();
 	Integer cerahTeks; // null kalo ga diset, pake yang aslinya aja
+	DisplayMetrics displayMetrics;
 	
 	private Float ukuranTeksSesuaiPengaturan_;
 	private Typeface jenisHurufSesuaiPengaturan_;
@@ -53,6 +55,9 @@ public class IsiActivity extends Activity {
 		S.siapinKitab(getResources());
 		S.siapinPengirimFidbek(this);
 		
+		displayMetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		
 		lsIsi = (ListView) findViewById(R.id.lsIsi);
 		
 		bTuju = (Button) findViewById(R.id.bTuju);
@@ -61,6 +66,15 @@ public class IsiActivity extends Activity {
 		
 		pengaturan = PreferenceManager.getDefaultSharedPreferences(this);
 		terapkanPengaturan();
+		
+		lsIsi.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				return lsIsi_itemLongClick(parent, view, position, id);
+			}
+		});
+		
+		registerForContextMenu(lsIsi);
 		
 		bTuju.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -140,6 +154,33 @@ public class IsiActivity extends Activity {
 				}
 			});
 		}
+	}
+
+	private boolean lsIsi_itemLongClick(AdapterView<?> parent, View view, int position, long id) {
+		Log.d("klik panjang", "di " + position + " id " + id);
+		
+		return false;
+	}
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		
+		new MenuInflater(this).inflate(R.menu.context_ayat, menu);
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.menuSalinAyat) {
+			AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item.getMenuInfo();
+			String isiAyat = xayat[menuInfo.position];
+			ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+			clipboardManager.setText(isiAyat);
+			
+			return true;
+		}
+		
+		return super.onContextItemSelected(item);
 	}
 
 	private void terapkanPengaturan() {
@@ -230,15 +271,6 @@ public class IsiActivity extends Activity {
 		intent.putExtra("ayat", ayat);
 		
 		startActivityForResult(intent, R.id.menuTuju);
-	}
-
-	private int getAyatTop(int ayat) {
-//		Layout layout = tIsi.getLayout();
-//		if (layout != null) { // jaga2 belum siap
-//			int line = layout.getLineForOffset(ayat_offset[ayat-1]);
-//			return layout.getLineTop(line);
-//		} 
-		return 0;
 	}
 
 	private SpannableStringBuilder[] siapinTampilanAyat() {
@@ -445,6 +477,30 @@ public class IsiActivity extends Activity {
 		tampil(pasal+1, 1);
 	}
 	
+//	@Override
+//	public boolean onTrackballEvent(MotionEvent event) {
+//		float x = event.getX();
+//		float y = event.getY();
+//		float absx = Math.abs(x);
+//		float absy = Math.abs(y);
+//		
+//		// hanya kalo y nya lebih dari x
+//		if (absy > absx) {
+//			float actualY = event.getY() * event.getYPrecision();
+//			Log.d("trekbol skrol", String.format("actual y=%f", actualY));
+//			Log.d("lsIsi skrol", String.format("%d %d", lsIsi.getScrollX(), lsIsi.getScrollY()));
+//			
+//			lsIsi.scrollBy(0, (int) (actualY * 10 * displayMetrics.density));
+//			lsIsi.computeScroll();
+//			
+//			return true;
+//		} else {
+//			Log.d("trekbol abai", String.format("%f %f", event.getX(), event.getY()));
+//			return false;
+//		}
+//		
+//	}
+	
 	private class AyatAdapter extends BaseAdapter {
 		private SpannableStringBuilder[] rendered_;
 		
@@ -459,8 +515,8 @@ public class IsiActivity extends Activity {
 		}
 
 		@Override
-		public synchronized Object getItem(int position) {
-			return position;
+		public synchronized String getItem(int position) {
+			return rendered_[position].toString();
 		}
 
 		@Override
@@ -500,4 +556,5 @@ public class IsiActivity extends Activity {
 			return false;
 		}
 	}
+	
 }
