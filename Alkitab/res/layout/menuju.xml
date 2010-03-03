@@ -18,7 +18,7 @@
 			<LinearLayout android:layout_height="wrap_content"
 				android:orientation="horizontal" android:layout_width="fill_parent"
 				android:gravity="center_vertical|center_horizontal"
-				android:minHeight="48sp" android:layout_margin="12dp">
+				android:minHeight="48sp" android:layout_margin="8dp">
 				<TextView android:layout_width="wrap_content" android:text="Pasal "
 					android:layout_height="fill_parent" android:gravity="fill_vertical"
 					android:id="@+id/lLabelPasal" />
@@ -43,9 +43,6 @@
 
 		<include android:layout_width="wrap_content"
 			android:layout_height="wrap_content" layout="@layout/keypad"></include>
-
-		<TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:minLines="1"></TextView>
 
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:id="@+id/bOk"
