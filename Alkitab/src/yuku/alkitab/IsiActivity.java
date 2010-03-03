@@ -135,7 +135,12 @@ public class IsiActivity extends Activity {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		
 		new MenuInflater(this).inflate(R.menu.context_ayat, menu);
+		
+		AdapterContextMenuInfo menuInfo2 = (AdapterContextMenuInfo) menuInfo;
+		String alamat = S.kitab.judul + " " + this.pasal + ":" + (menuInfo2.position + 1);
+		menu.setHeaderTitle(alamat);
 	}
+
 	
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
