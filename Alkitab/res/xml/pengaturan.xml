@@ -10,7 +10,7 @@
 			android:entries="@array/pref_ukuranHuruf_label"
 			android:entryValues="@array/pref_ukuranHuruf_value"
 			android:key="@string/pref_ukuranHuruf_key"
-			android:defaultValue="100" />
+			android:defaultValue="120" />
 		<ListPreference
 			android:key="@string/pref_jenisHuruf_key"
 			android:title="@string/jenisHuruf_n"
@@ -25,6 +25,6 @@
 			android:defaultValue="false"
 			android:title="@string/boldHuruf_n" />
 		<com.hlidskialf.android.preference.SeekBarPreference
-			android:defaultValue="80" android:key="@string/pref_cerahTeks_key" android:text="%" android:max="100" android:summary="Seterang apa teks yang ditampilkan" android:dialogMessage="Atur seberapa terang teks ditampilkan:" android:title="Kecerahan Teks"/>
+			android:defaultValue="100" android:key="@string/pref_cerahTeks_key" android:text="%" android:max="100" android:summary="Seterang apa teks yang ditampilkan" android:dialogMessage="Atur seberapa terang teks ditampilkan:" android:title="Kecerahan Teks"/>
 	</PreferenceCategory>
 </PreferenceScreen>

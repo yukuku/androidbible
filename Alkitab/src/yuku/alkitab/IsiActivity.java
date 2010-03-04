@@ -163,7 +163,7 @@ public class IsiActivity extends Activity {
 				ukuranAsalHurufIsi = new TextView(this).getTextSize();
 			}
 			Log.d("alki", "ukuran asal huruf px = " + ukuranAsalHurufIsi);
-			String ukuranHuruf_s = pengaturan.getString(getString(R.string.pref_ukuranHuruf_key), "100");
+			String ukuranHuruf_s = pengaturan.getString(getString(R.string.pref_ukuranHuruf_key), "120");
 			int ukuranHuruf = 100;
 			try {
 				ukuranHuruf = Integer.valueOf(ukuranHuruf_s);
@@ -197,9 +197,7 @@ public class IsiActivity extends Activity {
 		//# atur terang teks
 		{
 			String key = getString(R.string.pref_cerahTeks_key);
-			if (pengaturan.contains(key)) {
-				cerahTeks = pengaturan.getInt(key, 80);
-			}
+			cerahTeks = pengaturan.getInt(key, 100);
 		}
 		
 		lsIsi.invalidateViews();
