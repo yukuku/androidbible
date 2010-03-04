@@ -6,7 +6,8 @@
 	android:versionCode="5">
 	<application
 		android:icon="@drawable/icon"
-		android:label="@string/app_name" android:name="AlkitabApplication" android:debuggable="true">
+		android:label="@string/app_name"
+		android:name="AlkitabApplication">
 		<activity
 			android:name="IsiActivity"
 			android:label="Alkitab">

@@ -6,13 +6,13 @@ v = udah
 
 v Huruf bisa di zoom akan lebih nyaman dibaca. 
 
-x SAYA SUKA INGGRIS INTERLINER.
- 
-x kalo bs ditambah menu copy paste ;)
+v kalo bs ditambah menu copy paste ;)
 
 v Bentuk tulisan, 
 	x background,
 	x ada catatan kotbah 
 
 * interfacenya dibuat lebih mudah seperti bible
+
+* SAYA SUKA INGGRIS INTERLINER.
 
