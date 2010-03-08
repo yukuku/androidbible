@@ -83,6 +83,48 @@ public class IsiActivity extends Activity {
 			}
 		});
 		
+		bTuju.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				final View loncat = LayoutInflater.from(IsiActivity.this).inflate(R.layout.loncat, null);
+				final TextView lAlamatKini = (TextView) loncat.findViewById(R.id.lAlamatKini);
+				final EditText tAlamatLoncat = (EditText) loncat.findViewById(R.id.tAlamatLoncat);
+
+				// set lAlamatKini
+				{
+					int ayat = getAyatBerdasarSkrol();
+					String alamat = S.kitab.judul + " " + IsiActivity.this.pasal + ":" + ayat;
+					lAlamatKini.setText(alamat);
+				}
+				
+				DialogInterface.OnClickListener loncat_click = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Log.d("alki", "loncat ke " + tAlamatLoncat.getText().toString());
+					}
+				};
+				
+				final AlertDialog dialog = new AlertDialog.Builder(IsiActivity.this)
+					.setView(loncat)
+					.setPositiveButton("Loncat", loncat_click)
+					.create();
+				
+				tAlamatLoncat.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+					@Override
+					public void onFocusChange(View v, boolean hasFocus) {
+						if (hasFocus) {
+							Log.d("alki", "setSoftInputMode panggil");
+							dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+						}
+					}
+				});
+				
+				dialog.show();
+				
+				return true;
+			}
+		});
+		
 		bKiri.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -480,30 +522,6 @@ public class IsiActivity extends Activity {
 			}
 		}).show();
 	}
-
-//	@Override
-//	public boolean onTrackballEvent(MotionEvent event) {
-//		float x = event.getX();
-//		float y = event.getY();
-//		float absx = Math.abs(x);
-//		float absy = Math.abs(y);
-//		
-//		// hanya kalo y nya lebih dari x
-//		if (absy > absx) {
-//			float actualY = event.getY() * event.getYPrecision();
-//			Log.d("trekbol skrol", String.format("actual y=%f", actualY));
-//			Log.d("lsIsi skrol", String.format("%d %d", lsIsi.getScrollX(), lsIsi.getScrollY()));
-//			
-//			lsIsi.scrollBy(0, (int) (actualY * 10 * displayMetrics.density));
-//			lsIsi.computeScroll();
-//			
-//			return true;
-//		} else {
-//			Log.d("trekbol abai", String.format("%f %f", event.getX(), event.getY()));
-//			return false;
-//		}
-//		
-//	}
 	
 	private class AyatAdapter extends BaseAdapter {
 		private SpannableStringBuilder[] rendered_;
