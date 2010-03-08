@@ -5,6 +5,6 @@
 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Alamat sekarang:"></TextView>
 <TextView android:layout_height="wrap_content" android:textSize="18dp" android:layout_width="fill_parent" android:gravity="center_horizontal" android:text="Kejadian 99:88" android:id="@+id/lAlamatKini" android:layout_marginLeft="18dp" android:layout_marginBottom="18dp" android:layout_marginRight="18dp"></TextView>
 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Loncat ke alamat:"></TextView>
-<EditText android:layout_height="wrap_content" android:id="@+id/tAlamatLoncat" android:layout_width="fill_parent" android:layout_marginLeft="18dp" android:layout_marginRight="18dp" android:inputType="textCapSentences"></EditText>
+<EditText android:layout_height="wrap_content" android:id="@+id/tAlamatLoncat" android:layout_width="fill_parent" android:layout_marginLeft="18dp" android:layout_marginRight="18dp" android:inputType="textCapSentences" android:imeOptions="actionGo"></EditText>
 
 </LinearLayout>

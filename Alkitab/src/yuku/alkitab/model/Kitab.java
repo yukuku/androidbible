@@ -1,8 +1,8 @@
 package yuku.alkitab.model;
 
-import java.io.*;
+import java.io.IOException;
 
-import yuku.bintex.*;
+import yuku.bintex.BintexReader;
 
 public class Kitab {
 	public int[] nayat;
@@ -26,6 +26,8 @@ public class Kitab {
 					k.nama = in.readShortString();
 				} else if (key.equals("judul")) {
 					k.judul = in.readShortString();
+					
+					k.judul = bersihinJudul(k.judul);
 				} else if (key.equals("file")) {
 					k.file = in.readShortString();
 				} else if (key.equals("npasal")) {
@@ -51,6 +53,10 @@ public class Kitab {
 		}
 	}
 	
+	private static String bersihinJudul(String judul) {
+		return judul.replace('_', ' ');
+	}
+
 	@Override
 	public String toString() {
 		return String.format("%s (%d pasal)", judul, npasal);

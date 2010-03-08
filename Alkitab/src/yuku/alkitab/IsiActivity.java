@@ -100,7 +100,7 @@ public class IsiActivity extends Activity {
 				DialogInterface.OnClickListener loncat_click = new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						Log.d("alki", "loncat ke " + tAlamatLoncat.getText().toString());
+						loncatKe(tAlamatLoncat.getText().toString());
 					}
 				};
 				
@@ -116,6 +116,16 @@ public class IsiActivity extends Activity {
 							Log.d("alki", "setSoftInputMode panggil");
 							dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 						}
+					}
+				});
+				
+				tAlamatLoncat.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+					@Override
+					public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+						loncatKe(tAlamatLoncat.getText().toString());
+						dialog.dismiss();
+						
+						return true;
 					}
 				});
 				
@@ -166,6 +176,11 @@ public class IsiActivity extends Activity {
 		}
 	}
 
+	private void loncatKe(String alamat) {
+		Log.d("alki", "akan loncat ke " + alamat);
+		
+	}
+	
 	private boolean lsIsi_itemLongClick(AdapterView<?> parent, View view, int position, long id) {
 		Log.d("klik panjang", "di " + position + " id " + id);
 		
