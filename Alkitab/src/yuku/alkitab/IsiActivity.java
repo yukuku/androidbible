@@ -2,6 +2,7 @@ package yuku.alkitab;
 
 import java.util.Map;
 
+import yuku.alkitab.S.Peloncat;
 import yuku.alkitab.model.*;
 import android.app.*;
 import android.content.*;
@@ -179,6 +180,25 @@ public class IsiActivity extends Activity {
 	private void loncatKe(String alamat) {
 		Log.d("alki", "akan loncat ke " + alamat);
 		
+		Peloncat peloncat = new S.Peloncat();
+		boolean sukses = peloncat.parse(alamat);
+		if (! sukses) {
+			Toast.makeText(this, "Alamat salah: " + alamat, Toast.LENGTH_SHORT).show();
+			return;
+		}
+		
+		int kitab = peloncat.getKitab();
+		if (kitab != -1) {
+			S.kitab = S.xkitab[kitab];
+		}
+		
+		int pasal = peloncat.getPasal();
+		int ayat = peloncat.getAyat();
+		if (pasal == -1 && ayat == -1) {
+			tampil(1, 1);
+		} else {
+			tampil(pasal, ayat);
+		}
 	}
 	
 	private boolean lsIsi_itemLongClick(AdapterView<?> parent, View view, int position, long id) {
