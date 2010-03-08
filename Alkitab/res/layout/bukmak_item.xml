@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="?android:attr/listPreferredItemHeight" android:padding="8dip">
+
+	<TextView
+		android:id="@+id/lAlamat"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+
+		android:layout_alignParentTop="true"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentRight="true"
+
+		android:gravity="center_vertical"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:text="Alamat ayat" />
+
+	<TextView
+		android:id="@+id/lCuplikan"
+
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+
+		android:layout_below="@id/lAlamat"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentRight="true"
+		android:layout_alignWithParentIfMissing="true"
+
+		android:singleLine="true"
+		android:ellipsize="end"
+		android:gravity="bottom"
+		android:text="Simple application that shows how to use RelativeLayout bla balbl balblbalbal balbalbalbalbala" />
+
+	<TextView
+		android:id="@+id/lTanggal"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+
+		android:layout_alignParentTop="true"
+		android:layout_alignParentRight="true"
+		
+		android:text="2099-12-32"
+		/>
+</RelativeLayout>

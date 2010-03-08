@@ -268,7 +268,7 @@ public class IsiActivity extends Activity {
 		new MenuInflater(this).inflate(R.menu.isi, menu);
 		
 		menu.add(0, 0x985801, 0, "gebug 1 (dump p+p)");
-		menu.add(0, 0x985802, 0, "gebug 2");
+		menu.add(0, 0x985802, 0, "gebug 2 (bukmak)");
 		menu.add(0, 0x985803, 0, "gebug 3 (reset pref)");
 		menu.add(0, 0x985804, 0, "gebug 4 (reset pengaturan)");
 		
@@ -321,8 +321,8 @@ public class IsiActivity extends Activity {
 				}
 			}
 		} else if (item.getItemId() == 0x985802) { // debug 2
-			
-			// kosong dulu
+			Intent intent = new Intent(this, BukmakActivity.class);
+			startActivity(intent);
 		} else if (item.getItemId() == 0x985803) { // debug 3
 			Editor editor = preferences.edit();
 			editor.clear();
