@@ -178,6 +178,10 @@ public class IsiActivity extends Activity {
 	}
 
 	private void loncatKe(String alamat) {
+		if (alamat.trim().length() == 0) {
+			return;
+		}
+		
 		Log.d("alki", "akan loncat ke " + alamat);
 		
 		Peloncat peloncat = new S.Peloncat();

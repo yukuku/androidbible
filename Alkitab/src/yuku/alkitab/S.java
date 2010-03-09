@@ -151,6 +151,17 @@ public class S {
 		private int p_pasal;
 		private int p_ayat;
 		
+		private static class KitabRef {
+			String pendek;
+			int pos;
+			
+			public String toString() {
+				return pendek + ":" + pos;
+			}
+		}
+		
+		private IdentityHashMap<Kitab[], KitabRef[]> pendekCache = new IdentityHashMap<Kitab[], KitabRef[]>();
+		
 		private boolean isKata(String s) {
 			char c = s.charAt(0);
 			if (c < '0' && c > '9') return true;
@@ -182,6 +193,11 @@ public class S {
 		
 		private boolean parse0(String alamat) {
 			alamat = alamat.trim();
+			
+			if (alamat.length() == 0) {
+				return false;
+			}
+			
 			Log.d("alki", "peloncat tahap 0: " + alamat);
 			
 			String[] bagian = alamat.split("(\\s|:|\\.)+");
@@ -234,6 +250,8 @@ public class S {
 					if (! isAngka(bagian[i])) {
 						// ini dan depannya semua adalah kitab
 						mulaiKata = i;
+						
+						break;
 					}
 					
 					if (i == 0 && bagian.length > 2) {
@@ -306,7 +324,107 @@ public class S {
 		}
 		
 		private int tebakKitab() {
-			return -1;
+			if (p_kitab == null) {
+				return -1;
+			}
+			
+			int res = -1;
+			
+			// 0. bikin cache semua judul kitab yang dibuang spasinya dan dikecilin semua dan 1 jadi I, 2 jadi II, dst
+			{
+				KitabRef[] refs = pendekCache.get(S.xkitab);
+				
+				if (refs == null) {
+					ArrayList<KitabRef> a = new ArrayList<KitabRef>();
+					
+					for (Kitab k: S.xkitab) {
+						String judul = k.judul.replaceAll("(\\s|-|_)+", "").toLowerCase();
+						
+						{
+							KitabRef ref = new KitabRef();
+							ref.pendek = judul;
+							ref.pos = k.pos;
+							
+							a.add(ref);
+						}
+						
+						if (judul.contains("1") || judul.contains("2") || judul.contains("3")) {
+							judul = judul.replaceAll("1", "i").replaceAll("2", "ii").replaceAll("3", "iii");
+							
+							KitabRef ref = new KitabRef();
+							ref.pendek = judul;
+							ref.pos = k.pos;
+							
+							a.add(ref);
+						}
+					}
+					
+					refs = a.toArray(new KitabRef[0]);
+					pendekCache.put(S.xkitab, refs);
+					Log.d("alki", "entri pendekCache baru: " + Arrays.toString(refs));
+				}
+			}
+			
+			// 0 juga. bersihin p_kitab
+			KitabRef[] refs = pendekCache.get(S.xkitab);
+			p_kitab = p_kitab.replaceAll("(\\s|-|_)", "").toLowerCase();
+			Log.d("alki", "tebakKitab fase 0: p_kitab = " + p_kitab);
+			
+			// 1. coba cocokin keseluruhan (co: "kejadian", "yohanes")
+			for (KitabRef ref: refs) {
+				if (ref.pendek.equals(p_kitab)) {
+					Log.d("alki", "tebakKitab fase 1 sukses: " + p_kitab);
+					return ref.pos;
+				}
+			}
+			
+			// 2. coba cocokin depannya, kalo ada 1 doang yang lulus, sukses
+			int pos_buatNanti = -1;
+			{
+				int lulus = 0;
+				for (KitabRef ref: refs) {
+					if (ref.pendek.startsWith(p_kitab)) {
+						lulus++;
+						if (lulus == 1) pos_buatNanti = ref.pos;
+					}
+				}
+				
+				if (lulus == 1) {
+					Log.d("alki", "tebakKitab fase 2 sukses: " + pos_buatNanti + " untuk " + p_kitab);
+					return pos_buatNanti;
+				} else {
+					Log.d("alki", "tebakKitab fase 2: lulus = " + lulus);
+				}
+			}
+			
+			// 3. String matching hanya kalo p_kitab 2 huruf ato lebih
+			if (p_kitab.length() >= 2) {
+				int minSkor = 9999999;
+				int pos = -1;
+				
+				for (KitabRef ref: refs) {
+					int skor = Levenshtein.distance(p_kitab, ref.pendek);
+					Log.d("alki", String.format("tebakKitab fase 3: dengan %s:%d skor %d", ref.pendek, ref.pos, skor));
+					
+					if (skor < minSkor) {
+						minSkor = skor;
+						pos = ref.pos;
+					}
+				}
+				
+				if (pos != -1) {
+					Log.d("alki", "tebakKitab fase 3 sukses: " + pos + " dengan skor " + minSkor);
+					return pos;
+				}
+			}
+			
+			// 7. Keluarin yang pertama cocok kalo ada lebih dari 1 yang lulus fase 2
+			if (pos_buatNanti != -1) {
+				Log.d("alki", "tebakKitab fase 7 sukses: " + pos_buatNanti + " untuk " + p_kitab);
+				return pos_buatNanti;
+			}
+			
+			return res;
 		}
 		
 		int getKitab() {
