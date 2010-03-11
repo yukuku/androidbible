@@ -1,30 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="boldHuruf_keterangan_s">Pakai huruf dengan cetak tebal</string>
-    <string name="boldHuruf_n">Tebalkan Huruf</string>
-    <string name="pref_boldHuruf_key">boldHuruf</string>
-    <string name="jenisHuruf_keterangan_s">Ganti jenis huruf</string>
-    <string name="jenisHuruf_n">Jenis Huruf</string>
-    <string name="pref_jenisHuruf_key">jenisHuruf</string>
-    <string name="pref_ukuranHuruf_key">ukuranHuruf</string>
-    <string name="menuPengaturan">Pengaturan</string>
-    <string name="ukuranHuruf_keterangan_s">Perbesar atau perkecil ukuran huruf</string>
-    <string name="ukuranHuruf_n">Ukuran Huruf</string>
-    <string name="tampilan_n">Tampilan</string>
-    <string name="pilihKitab_s">Pilih kitab</string>
-    <string name="menuSejarah">Sejarah</string>
-    <string name="menuKitab">Kitab</string>
-    <string name="menuEdisi">Edisi</string>
-    <string name="menuTentang">Tentang</string>
-    <string name="menuTuju">Tuju</string>
-    <string name="hello">Hello World, Alkitab!</string>
-    <string name="app_name">Alkitab</string>
-<string name="menuEdisi_text">Edisi</string>
-<string name="judulIsi">%s %d</string>
-<string name="tentang_title">Tentang Alkitab</string>
-<string name="tentang_message">Alkitab untuk Android %1$s (%2$d)&lt;br/&gt;&lt;br/&gt;Terjemahan Baru (c) LAI&lt;br/&gt;&lt;br/&gt;Tolong kirim komentar ke yuku+alkitab@ikitek.com. Terima kasih!</string>
-<string name="peringatanBeta_s">Saran dan komentar Anda sangat diharapkan! Tolong bantu pengembangan aplikasi ini dengan menyebutkannya di bawah. Akan sangat berguna bagiku. OK? Makasih sebelumnya.</string>
-<string name="fidbekMakasih_s">Terima kasih atas komentar anda!</string>
+	<string
+		name="pref_tombolAlamatLoncat_key">tombolAlamatLoncat</string>
+	<string
+		name="boldHuruf_keterangan_s">Pakai huruf dengan cetak tebal</string>
+	<string
+		name="boldHuruf_n">Tebalkan Huruf</string>
+	<string
+		name="pref_boldHuruf_key">boldHuruf</string>
+	<string
+		name="jenisHuruf_keterangan_s">Ganti jenis huruf</string>
+	<string
+		name="jenisHuruf_n">Jenis Huruf</string>
+	<string
+		name="pref_jenisHuruf_key">jenisHuruf</string>
+	<string
+		name="pref_ukuranHuruf_key">ukuranHuruf</string>
+	<string
+		name="menuPengaturan">Pengaturan</string>
+	<string
+		name="ukuranHuruf_keterangan_s">Perbesar atau perkecil ukuran huruf</string>
+	<string
+		name="ukuranHuruf_n">Ukuran Huruf</string>
+	<string
+		name="tampilan_n">Tampilan</string>
+	<string
+		name="pilihKitab_s">Pilih kitab</string>
+	<string
+		name="menuSejarah">Sejarah</string>
+	<string
+		name="menuKitab">Kitab</string>
+	<string
+		name="menuEdisi">Edisi</string>
+	<string
+		name="menuTentang">Tentang</string>
+	<string
+		name="menuTuju">Tuju</string>
+	<string
+		name="hello">Hello World, Alkitab!</string>
+	<string
+		name="app_name">Alkitab</string>
+	<string
+		name="menuEdisi_text">Edisi</string>
+	<string
+		name="judulIsi">%s %d</string>
+	<string
+		name="tentang_title">Tentang Alkitab</string>
+	<string
+		name="tentang_message">Alkitab untuk Android %1$s (%2$d)&lt;br/&gt;&lt;br/&gt;Terjemahan Baru (c) LAI&lt;br/&gt;&lt;br/&gt;Tolong kirim komentar ke yuku+alkitab@ikitek.com. Terima kasih!</string>
+	<string
+		name="peringatanBeta_s">Saran dan komentar Anda sangat diharapkan! Tolong bantu pengembangan aplikasi ini dengan menyebutkannya di bawah. Akan sangat berguna bagiku. OK? Makasih sebelumnya.
+	</string>
+	<string
+		name="fidbekMakasih_s">Terima kasih atas komentar anda!</string>
 
-<string name="pref_cerahTeks_key">cerahTeks</string>
+	<string
+		name="pref_cerahTeks_key">cerahTeks</string>
 </resources>

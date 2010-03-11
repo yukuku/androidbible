@@ -45,6 +45,7 @@ public class IsiActivity extends Activity {
 	private Integer tebalHurufSesuaiPengaturan_;
 	private AyatAdapter ayatAdapter_ = new AyatAdapter();
 	private int indenParagraf_;
+	private boolean tombolAlamatLoncat_;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,58 +81,22 @@ public class IsiActivity extends Activity {
 		bTuju.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				bTuju_click();
+				if (tombolAlamatLoncat_) {
+					bTuju_longClick();
+				} else {
+					bTuju_click();
+				}
 			}
 		});
 		
 		bTuju.setOnLongClickListener(new View.OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View v) {
-				final View loncat = LayoutInflater.from(IsiActivity.this).inflate(R.layout.loncat, null);
-				final TextView lAlamatKini = (TextView) loncat.findViewById(R.id.lAlamatKini);
-				final EditText tAlamatLoncat = (EditText) loncat.findViewById(R.id.tAlamatLoncat);
-
-				// set lAlamatKini
-				{
-					int ayat = getAyatBerdasarSkrol();
-					String alamat = S.kitab.judul + " " + IsiActivity.this.pasal + ":" + ayat;
-					lAlamatKini.setText(alamat);
+				if (tombolAlamatLoncat_) {
+					bTuju_click();
+				} else {
+					bTuju_longClick();
 				}
-				
-				DialogInterface.OnClickListener loncat_click = new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						loncatKe(tAlamatLoncat.getText().toString());
-					}
-				};
-				
-				final AlertDialog dialog = new AlertDialog.Builder(IsiActivity.this)
-					.setView(loncat)
-					.setPositiveButton("Loncat", loncat_click)
-					.create();
-				
-				tAlamatLoncat.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-					@Override
-					public void onFocusChange(View v, boolean hasFocus) {
-						if (hasFocus) {
-							Log.d("alki", "setSoftInputMode panggil");
-							dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-						}
-					}
-				});
-				
-				tAlamatLoncat.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-					@Override
-					public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-						loncatKe(tAlamatLoncat.getText().toString());
-						dialog.dismiss();
-						
-						return true;
-					}
-				});
-				
-				dialog.show();
-				
 				return true;
 			}
 		});
@@ -281,6 +246,8 @@ public class IsiActivity extends Activity {
 			cerahTeks = pengaturan.getInt(key, 100);
 		}
 		
+		tombolAlamatLoncat_ = pengaturan.getBoolean(getString(R.string.pref_tombolAlamatLoncat_key), false);
+		
 		lsIsi.invalidateViews();
 	}
 	
@@ -315,7 +282,7 @@ public class IsiActivity extends Activity {
 		return firstPos;
 	}
 
-	protected void bTuju_click() {
+	private void bTuju_click() {
 		Intent intent = new Intent(this, MenujuActivity.class);
 		intent.putExtra("pasal", pasal);
 		
@@ -323,6 +290,53 @@ public class IsiActivity extends Activity {
 		intent.putExtra("ayat", ayat);
 		
 		startActivityForResult(intent, R.id.menuTuju);
+	}
+	
+	private void bTuju_longClick() {
+		final View loncat = LayoutInflater.from(IsiActivity.this).inflate(R.layout.loncat, null);
+		final TextView lAlamatKini = (TextView) loncat.findViewById(R.id.lAlamatKini);
+		final EditText tAlamatLoncat = (EditText) loncat.findViewById(R.id.tAlamatLoncat);
+
+		// set lAlamatKini
+		{
+			int ayat = getAyatBerdasarSkrol();
+			String alamat = S.kitab.judul + " " + IsiActivity.this.pasal + ":" + ayat;
+			lAlamatKini.setText(alamat);
+		}
+		
+		DialogInterface.OnClickListener loncat_click = new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				loncatKe(tAlamatLoncat.getText().toString());
+			}
+		};
+		
+		final AlertDialog dialog = new AlertDialog.Builder(IsiActivity.this)
+			.setView(loncat)
+			.setPositiveButton("Loncat", loncat_click)
+			.create();
+		
+		tAlamatLoncat.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				if (hasFocus) {
+					Log.d("alki", "setSoftInputMode panggil");
+					dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+				}
+			}
+		});
+		
+		tAlamatLoncat.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				loncatKe(tAlamatLoncat.getText().toString());
+				dialog.dismiss();
+				
+				return true;
+			}
+		});
+		
+		dialog.show();
 	}
 
 	private SpannableStringBuilder[] siapinTampilanAyat() {

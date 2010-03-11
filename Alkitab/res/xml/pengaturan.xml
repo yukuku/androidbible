@@ -27,4 +27,6 @@
 		<com.hlidskialf.android.preference.SeekBarPreference
 			android:defaultValue="100" android:key="@string/pref_cerahTeks_key" android:text="%" android:max="100" android:summary="Seterang apa teks yang ditampilkan" android:dialogMessage="Atur seberapa terang teks ditampilkan:" android:title="Kecerahan Teks"/>
 	</PreferenceCategory>
+<PreferenceCategory android:title="Penggunaan"><CheckBoxPreference android:key="@string/pref_tombolAlamatLoncat_key" android:defaultValue="false" android:title="Tombol alamat untuk Loncat" android:summaryOn="... dan tahan lama tombol alamat untuk membuka layar Tuju" android:summaryOff="... dan tahan lama tombol alamat untuk membuka layar Loncat"></CheckBoxPreference>
+</PreferenceCategory>
 </PreferenceScreen>
