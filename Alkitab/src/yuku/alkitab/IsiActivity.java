@@ -1,6 +1,6 @@
 package yuku.alkitab;
 
-import java.util.Map;
+import java.util.*;
 
 import yuku.alkitab.S.Peloncat;
 import yuku.alkitab.model.*;
@@ -9,6 +9,8 @@ import android.content.*;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.*;
 import android.preference.PreferenceManager;
@@ -33,6 +35,8 @@ public class IsiActivity extends Activity {
 	ImageButton bKiri;
 	ImageButton bKanan;
 	int pasal = 0;
+	int ayatContextMenu = -1;
+	String isiAyatContextMenu = null;
 	SharedPreferences preferences;
 	SharedPreferences pengaturan;
 	Float ukuranAsalHurufIsi;
@@ -182,8 +186,16 @@ public class IsiActivity extends Activity {
 		
 		new MenuInflater(this).inflate(R.menu.context_ayat, menu);
 		
-		AdapterContextMenuInfo menuInfo2 = (AdapterContextMenuInfo) menuInfo;
-		String alamat = S.kitab.judul + " " + this.pasal + ":" + (menuInfo2.position + 1);
+		
+		// simpen ayat yang dipilih untuk dipake sama menu tambah bukmak
+		{
+			AdapterContextMenuInfo menuInfo2 = (AdapterContextMenuInfo) menuInfo;
+			this.ayatContextMenu = (menuInfo2.position + 1);
+			this.isiAyatContextMenu = xayat[menuInfo2.position];
+		}
+		
+		//# pasang header
+		String alamat = S.kitab.judul + " " + this.pasal + ":" + this.ayatContextMenu;
 		menu.setHeaderTitle(alamat);
 	}
 
@@ -191,10 +203,52 @@ public class IsiActivity extends Activity {
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.menuSalinAyat) {
-			AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item.getMenuInfo();
-			String isiAyat = xayat[menuInfo.position];
 			ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-			clipboardManager.setText(isiAyat);
+			clipboardManager.setText(this.isiAyatContextMenu);
+			
+			return true;
+		} else if (item.getItemId() == R.id.menuTambahBukmak) {
+			final SQLiteDatabase db = new AlkitabDb(this).getWritableDatabase();
+			
+			//# bikin bukmak
+			String alamat = S.kitab.judul + " " + this.pasal + ":" + this.ayatContextMenu;
+			final Bukmak bukmak = new Bukmak(alamat, this.isiAyatContextMenu, new Date(), S.kitab.pos, this.pasal, this.ayatContextMenu);
+			
+			Cursor cursor = db.query(AlkitabDb.TABEL_Bukmak, null, String.format("%s=? and %s=? and %s=?", AlkitabDb.KOLOM_kitab, AlkitabDb.KOLOM_pasal, AlkitabDb.KOLOM_ayat), new String[] {"" + S.kitab.pos, "" + this.pasal, "" + this.ayatContextMenu}, null, null, null);
+			cursor.moveToNext();
+			
+			if (cursor.isAfterLast()) {
+				// belum ada
+				cursor.close();
+				
+				// tambah baru
+				db.insertOrThrow(AlkitabDb.TABEL_Bukmak, null, bukmak.toContentValues());
+				db.close();
+			} else {
+				// udah ada, tanya user
+				final int id = cursor.getInt(cursor.getColumnIndexOrThrow("_id"));
+				cursor.close();
+				
+				new AlertDialog.Builder(this)
+				.setMessage("Pembatas buku " + alamat + " sudah ditambahkan sebelumnya. Perbarui tanggal pembatas buku?")
+				.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						db.update(AlkitabDb.TABEL_Bukmak, bukmak.toContentValues(), "_id=?", new String[] {"" + id});
+						db.close();
+					}
+				})
+				.setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						db.close();
+					}
+				})
+				.create()
+				.show();
+			}
 			
 			return true;
 		}

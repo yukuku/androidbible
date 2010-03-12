@@ -25,7 +25,7 @@ public class Sqlitil {
 	}
 	
 	public static String toYmdGmt(int date) {
-		return toYmdGmt(new Date(date * 1000));
+		return toYmdGmt(new Date((long)date * 1000));
 	}
 	
 	public static String toYmdhmsGmt(Date date) {
@@ -38,14 +38,14 @@ public class Sqlitil {
 	}
 
 	public static String toYmdhmsGmt(int date) {
-		return toYmdhmsGmt(new Date(date * 1000));
+		return toYmdhmsGmt(new Date((long)date * 1000));
 	}
 	
 	public static String toLocaleDateMedium(Date date) {
 		 return DateFormat.getDateInstance(DateFormat.MEDIUM).format(date);
 	}
 	
-	public static String toLocateDateMedium(int date) {
-		 return toLocaleDateMedium(new Date(date * 1000));
+	public static String toLocaleDateMedium(int date) {
+		 return toLocaleDateMedium(new Date((long)date * 1000));
 	}
 }

@@ -1,7 +1,8 @@
 package yuku.alkitab.model;
 
-import yuku.andoutil.Sqlitil;
-import android.content.*;
+import java.util.Date;
+
+import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.SQLException;
@@ -9,10 +10,13 @@ import android.database.sqlite.*;
 import android.util.Log;
 
 public class AlkitabDb extends SQLiteOpenHelper {
-	public static final String KOLOM_waktuBukmak = "waktuBukmak";
-	public static final String KOLOM_cuplikan = "cuplikan";
-	public static final String KOLOM_alamat = "alamat";
 	public static final String TABEL_Bukmak = "Bukmak";
+	public static final String KOLOM_alamat = "alamat";
+	public static final String KOLOM_cuplikan = "cuplikan";
+	public static final String KOLOM_waktuTambah = "waktuTambah";
+	public static final String KOLOM_kitab = "kitab";
+	public static final String KOLOM_pasal = "pasal";
+	public static final String KOLOM_ayat = "ayat";
 
 	public static int getVersionCode(Context context) {
 		PackageInfo packageInfo;
@@ -38,14 +42,15 @@ public class AlkitabDb extends SQLiteOpenHelper {
 					"_id integer primary key autoincrement, " +
 					"%s text, " +
 					"%s text, " +
-					"%s integer)", TABEL_Bukmak, KOLOM_alamat, KOLOM_cuplikan, KOLOM_waktuBukmak));
+					"%s integer, " +
+					"%s integer, " +
+					"%s integer, " +
+					"%s integer)", TABEL_Bukmak, KOLOM_alamat, KOLOM_cuplikan, KOLOM_waktuTambah, KOLOM_kitab, KOLOM_pasal, KOLOM_ayat));
 			
-			ContentValues values = new ContentValues();
-			values.put(KOLOM_alamat, "Kej 1:1");
-			values.put(KOLOM_cuplikan, "Pada mulanya Allah menciptakan langit dan bumi.");
-			values.put(KOLOM_waktuBukmak, Sqlitil.nowDateTime());
+			// Kej 1:1 buat percobaan doang
+			Bukmak kej1 = new Bukmak("Kej 1:1", "Pada mulanya Allah menciptakan langit dan bumi", new Date(), 0, 1, 1);
+			db.insert(TABEL_Bukmak, null, kej1.toContentValues());
 			
-			db.insert(TABEL_Bukmak, null, values);
 		} catch (SQLException e) {
 			Log.e("db", "ngaco!", e);
 		}
