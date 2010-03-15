@@ -6,20 +6,20 @@
 		android:id="@+id/menuTuju"
 		android:icon="@drawable/menu_tuju" />
 	<item
+		android:id="@+id/menuBukmak"
+		android:icon="@drawable/menu_bukmak" android:titleCondensed="Pembatas" android:title="Pembatas buku"/>
+	<item
 		android:id="@+id/menuEdisi"
-		android:title="@string/menuEdisi" 
-		android:visible="false"
-		/>
-
-
+		android:title="@string/menuEdisi"
+		android:visible="false" />
 	<item
 		android:id="@+id/menuKitab"
-		android:title="@string/menuKitab" />
+		android:title="@string/menuKitab"
+		android:visible="false" />
 	<item
 		android:id="@+id/menuFidbek"
-		android:title="Saran" 
-		android:icon="@android:drawable/ic_menu_send"
-		/>
+		android:title="Saran"
+		android:icon="@android:drawable/ic_menu_send" />
 	<item
 		android:id="@+id/menuTentang"
 		android:title="@string/menuTentang"

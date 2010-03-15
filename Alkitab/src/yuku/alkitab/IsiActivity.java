@@ -208,7 +208,7 @@ public class IsiActivity extends Activity {
 			
 			return true;
 		} else if (item.getItemId() == R.id.menuTambahBukmak) {
-			final SQLiteDatabase db = new AlkitabDb(this).getWritableDatabase();
+			final SQLiteDatabase db = AlkitabDb.getInstance(this).getDatabase();
 			
 			//# bikin bukmak
 			String alamat = S.kitab.judul + " " + this.pasal + ":" + this.ayatContextMenu;
@@ -223,7 +223,6 @@ public class IsiActivity extends Activity {
 				
 				// tambah baru
 				db.insertOrThrow(AlkitabDb.TABEL_Bukmak, null, bukmak.toContentValues());
-				db.close();
 			} else {
 				// udah ada, tanya user
 				final int id = cursor.getInt(cursor.getColumnIndexOrThrow("_id"));
@@ -236,16 +235,9 @@ public class IsiActivity extends Activity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						db.update(AlkitabDb.TABEL_Bukmak, bukmak.toContentValues(), "_id=?", new String[] {"" + id});
-						db.close();
 					}
 				})
-				.setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						db.close();
-					}
-				})
+				.setNegativeButton("Tidak", null)
 				.create()
 				.show();
 			}
@@ -428,6 +420,9 @@ public class IsiActivity extends Activity {
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if (item.getItemId() == R.id.menuTuju) {
 			bTuju_click();
+		} else if (item.getItemId() == R.id.menuBukmak) {
+			Intent intent = new Intent(this, BukmakActivity.class);
+			startActivityForResult(intent, R.id.menuBukmak);
 		} else if (item.getItemId() == R.id.menuKitab) {
 			Intent intent = new Intent(this, KitabActivity.class);
 			startActivityForResult(intent, R.id.menuKitab);
@@ -470,8 +465,7 @@ public class IsiActivity extends Activity {
 				}
 			}
 		} else if (item.getItemId() == 0x985802) { // debug 2
-			Intent intent = new Intent(this, BukmakActivity.class);
-			startActivity(intent);
+			// kosong
 		} else if (item.getItemId() == 0x985803) { // debug 3
 			Editor editor = preferences.edit();
 			editor.clear();
@@ -500,6 +494,13 @@ public class IsiActivity extends Activity {
 				}
 				
 				tampil(pasal, ayat);
+			}
+		} else if (requestCode == R.id.menuBukmak) {
+			if (resultCode == RESULT_OK) {
+				String alamat = data.getStringExtra("terpilih.alamat");
+				if (alamat != null) {
+					loncatKe(alamat);
+				}
 			}
 		} else if (requestCode == R.id.menuEdisi) {
 			if (resultCode == RESULT_OK) {
