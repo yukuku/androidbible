@@ -2,12 +2,10 @@
 <menu
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
-		android:title="Salin ayat"
 		android:titleCondensed="Salin"
 		android:id="@+id/menuSalinAyat"
-		android:icon="@drawable/menu_salin_ayat"></item>
+		android:icon="@drawable/menu_salin_ayat" android:title="Salin ayat"></item>
 	<item
 		android:id="@+id/menuTambahBukmak"
-		android:title="Tambah Pembatas Buku"
-		android:titleCondensed="Pembatas Buku"></item>
+		android:title="Tambah pembatas buku" android:titleCondensed="Pembatas buku"></item>
 </menu>

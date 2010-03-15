@@ -3,10 +3,12 @@
 	android:layout_height="wrap_content" android:layout_width="wrap_content" android:padding="8dp">
 	<LinearLayout android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:orientation="vertical">
-		<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/lVersi" android:text="lVersi" android:textStyle="bold"></TextView><TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/peringatanBeta_s"></TextView>
+		<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/lVersi" android:text="lVersi" android:textStyle="bold" android:paddingBottom="8dp" android:layout_marginRight="8dp"></TextView><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/lTautKeMarket" android:text="Android Market"></TextView></LinearLayout><TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/peringatanBeta_s" android:textSize="16dp" android:paddingBottom="8dp"></TextView>
 
 		<EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:inputType="textCapSentences|textAutoCorrect|textAutoComplete|textMultiLine" android:id="@+id/tFeedback" android:hint="Saran, komentar, dsb..."></EditText>
 	
+
+
 </LinearLayout>
 </ScrollView>

@@ -1,6 +1,7 @@
 package yuku.alkitab;
 
 import java.util.*;
+import java.util.regex.*;
 
 import yuku.alkitab.S.Peloncat;
 import yuku.alkitab.model.*;
@@ -16,6 +17,7 @@ import android.os.*;
 import android.preference.PreferenceManager;
 import android.text.*;
 import android.text.style.*;
+import android.text.util.Linkify;
 import android.util.*;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -293,6 +295,20 @@ public class IsiActivity extends Activity {
 		}
 		
 		tombolAlamatLoncat_ = pengaturan.getBoolean(getString(R.string.pref_tombolAlamatLoncat_key), false);
+		
+		//# sembunyikan navigasi kalo perlu
+		{
+			String key = getString(R.string.pref_tanpaNavigasi_key);
+			boolean sembunyiNavigasi = pengaturan.getBoolean(key, false);
+			
+			View panelNavigasi = findViewById(R.id.panelNavigasi);
+			if (sembunyiNavigasi) {
+				panelNavigasi.setVisibility(View.GONE);
+			} else {
+				panelNavigasi.setVisibility(View.VISIBLE);
+			}
+		}
+		
 		
 		lsIsi.invalidateViews();
 	}
@@ -610,6 +626,19 @@ public class IsiActivity extends Activity {
 		} catch (NameNotFoundException e) {
 			Log.w("alki", e);
 		}
+		
+		TextView lTautKeMarket = (TextView) feedback.findViewById(R.id.lTautKeMarket);
+		Linkify.addLinks(lTautKeMarket, Pattern.compile(".+"), "http://market.android.com/", new Linkify.MatchFilter() {
+			@Override
+			public boolean acceptMatch(CharSequence s, int start, int end) {
+				return true;
+			}
+		}, new Linkify.TransformFilter() {
+			@Override
+			public String transformUrl(Matcher match, String url) {
+				return "details?id=" + getPackageName();
+			}
+		});
 		
 		new AlertDialog.Builder(IsiActivity.this).setView(feedback)
 		.setPositiveButton("OK", new DialogInterface.OnClickListener() {

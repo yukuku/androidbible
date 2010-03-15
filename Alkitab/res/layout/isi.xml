@@ -8,7 +8,7 @@
 	<ListView android:layout_height="wrap_content" android:id="@+id/lsIsi" android:layout_width="fill_parent" android:layout_weight="1" android:divider="@null"></ListView>
 	<LinearLayout
 		android:layout_height="wrap_content"
-		android:layout_width="fill_parent">
+		android:layout_width="fill_parent" android:id="@+id/panelNavigasi">
 		
 		<ImageButton android:src="@drawable/left_arrow" android:id="@+id/bKiri" android:layout_width="64dp" android:layout_height="64dp" android:scaleType="fitXY" android:padding="16dp"></ImageButton>
 		<Button

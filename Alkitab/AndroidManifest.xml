@@ -29,7 +29,7 @@
 			android:name="SejarahActivity" />
 		<activity
 			android:name="PengaturanActivity" />
-	<activity android:label="Bukmak" android:name="BukmakActivity"></activity>
+	<activity android:name="BukmakActivity" android:label="Pembatas Buku"></activity>
 
 </application>
 	<uses-sdk
