@@ -146,6 +146,8 @@ public class IsiActivity extends Activity {
 				}
 			});
 		}
+		
+		SearchDb.setPath("/sdcard/coba.db");
 	}
 
 	private void loncatKe(String alamat) {
@@ -425,9 +427,9 @@ public class IsiActivity extends Activity {
 		new MenuInflater(this).inflate(R.menu.isi, menu);
 		
 		menu.add(0, 0x985801, 0, "gebug 1 (dump p+p)");
-		menu.add(0, 0x985802, 0, "gebug 2 (bukmak)");
-		menu.add(0, 0x985803, 0, "gebug 3 (reset pref)");
-		menu.add(0, 0x985804, 0, "gebug 4 (reset pengaturan)");
+		menu.add(0, 0x985802, 0, "gebug 2 (create index)");
+		menu.add(0, 0x985803, 0, "gebug 3 (cari)");
+		menu.add(0, 0x985804, 0, "gebug 4 (reset p+p)");
 		
 		return true;
 	}
@@ -481,15 +483,57 @@ public class IsiActivity extends Activity {
 				}
 			}
 		} else if (item.getItemId() == 0x985802) { // debug 2
-			// kosong
+			final PembuatIndex pembuatIndex = new PembuatIndex();
+			final Handler handler = new Handler();
+			final ProgressDialog dialog = ProgressDialog.show(this, "Membuat indeks...", "Mempersiapkan indeks...", true, false);
+			
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					Log.d("alki", "tred 2 jalan");
+					pembuatIndex.buatIndex(IsiActivity.this, new PembuatIndex.OnProgressListener() {
+						@Override
+						public void onProgress(final String msg) {
+							handler.post(new Runnable() {
+								@Override
+								public void run() {
+									Log.d("alki", "handler dipanggil msg: " + msg);
+									if (msg == null) {
+										dialog.dismiss();
+									} else {
+										dialog.setMessage(msg);
+									}
+								}
+							});
+						}
+					});
+				}
+			}).start();
+			
+			Log.d("alki", "sebelum dialog.show()");
+			dialog.show();
+			Log.d("alki", "sesudah dialog.show()");
 		} else if (item.getItemId() == 0x985803) { // debug 3
-			Editor editor = preferences.edit();
-			editor.clear();
-			editor.commit();
+			// berbagai percobaan cari
+			SQLiteDatabase db = SearchDb.getInstance().getDatabase();
+			Cursor cursor = db.rawQuery(String.format("select *, snippet(%s) as snip from %s where %s match ?", SearchDb.TABEL_Fts, SearchDb.TABEL_Fts, SearchDb.KOLOM_content), new String[] {"Berbahagialah"});
+			
+			while (cursor.moveToNext()) {
+				Log.d("alki-content", cursor.getString(cursor.getColumnIndexOrThrow(SearchDb.KOLOM_content)));
+				Log.d("alki-snip", cursor.getString(cursor.getColumnIndexOrThrow("snip")));
+			}
+			
 		} else if (item.getItemId() == 0x985804) { // debug 4
-			Editor editor = pengaturan.edit();
-			editor.clear();
-			editor.commit();
+			{
+				Editor editor = preferences.edit();
+				editor.clear();
+				editor.commit();
+			}
+			{
+				Editor editor = pengaturan.edit();
+				editor.clear();
+				editor.commit();
+			}
 		}
 		
 		return super.onMenuItemSelected(featureId, item);
