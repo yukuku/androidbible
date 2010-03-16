@@ -17,3 +17,16 @@ v Bentuk tulisan,
 * SAYA SUKA INGGRIS INTERLINER.
 
 x betulin supaya loncat ato menujuactivity yang pake tombol hardware/enter pun bisa membuat ayat ngeskrol.
+
+[cara ngepak kitab-pasal-ayat dalam 32 bit]
+
+Kitab ada 66 (0..65), biar aman 256 aja (8 bit)
+Pasal max 150 (1..150), biar aman bisa 256 juga (8 bit)
+Ayat max 176 (1..176) (maz 119), biar aman 256 juga deh (8 bit)
+
+maka:
+
+0x 00 kk pp aa
+
+8bit pertama belum dipake
+
