@@ -34,7 +34,8 @@
 			android:name="BukmakActivity"
 			android:label="Pembatas Buku"></activity>
 
-	</application>
+	<activity android:label="Pencarian" android:name="SearchActivity"></activity>
+</application>
 	<uses-sdk
 		android:minSdkVersion="3"
 		android:targetSdkVersion="4" />

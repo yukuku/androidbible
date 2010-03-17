@@ -514,15 +514,8 @@ public class IsiActivity extends Activity {
 			dialog.show();
 			Log.d("alki", "sesudah dialog.show()");
 		} else if (item.getItemId() == 0x985803) { // debug 3
-			// berbagai percobaan cari
-			SQLiteDatabase db = SearchDb.getInstance().getDatabase();
-			Cursor cursor = db.rawQuery(String.format("select *, snippet(%s) as snip from %s where %s match ?", SearchDb.TABEL_Fts, SearchDb.TABEL_Fts, SearchDb.KOLOM_content), new String[] {"Berbahagialah"});
-			
-			while (cursor.moveToNext()) {
-				Log.d("alki-content", cursor.getString(cursor.getColumnIndexOrThrow(SearchDb.KOLOM_content)));
-				Log.d("alki-snip", cursor.getString(cursor.getColumnIndexOrThrow("snip")));
-			}
-			
+			Intent intent = new Intent(this, SearchActivity.class);
+			startActivityForResult(intent, item.getItemId());
 		} else if (item.getItemId() == 0x985804) { // debug 4
 			{
 				Editor editor = preferences.edit();
