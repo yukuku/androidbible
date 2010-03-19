@@ -7,7 +7,7 @@
 		android:orientation="horizontal" android:layout_width="fill_parent">
 		<EditText
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/tCarian" android:imeOptions="actionSearch" android:layout_weight="1"></EditText>
+			android:layout_height="wrap_content" android:id="@+id/tCarian" android:imeOptions="actionSearch" android:layout_weight="1" android:selectAllOnFocus="true"></EditText>
 		<ImageButton
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:src="@drawable/tombol_cari" android:id="@+id/bCari"/>

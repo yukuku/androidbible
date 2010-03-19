@@ -8,7 +8,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Html;
-import android.view.View;
+import android.util.Log;
+import android.view.*;
+import android.view.View.OnClickListener;
+import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import android.widget.TextView.BufferType;
 
@@ -19,11 +22,19 @@ public class SearchActivity extends Activity {
 
 	private SQLiteDatabase db;
 	private Cursor cursor;
+	private int resultCode;
+	private Intent returnValue;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.search);
+		
+		//# default buat return
+		resultCode = RESULT_CANCELED;
+		returnValue = new Intent();
+		
+		Intent intent = getIntent();
 		
 		db = SearchDb.getInstance().getDatabase();
 
@@ -34,18 +45,16 @@ public class SearchActivity extends Activity {
 				Cursor cursor = (Cursor) parent.getItemAtPosition(position);
 				int ari = cursor.getInt(cursor.getColumnIndexOrThrow(SearchDb.KOLOM_ari));
 				
-				Intent res = new Intent();
-				res.putExtra("terpilih.ari", ari);
+				resultCode = RESULT_OK;
+				returnValue.putExtra("terpilih.ari", ari);
 				
-				setResult(RESULT_OK, res);
+				setResult(resultCode, returnValue);
+				Log.d("alki", "panggil finish");
 				finish();
 			}
 		});
 		
-		tCarian = (EditText) findViewById(R.id.tCarian);
-		
-		bCari = (ImageButton) findViewById(R.id.bCari);
-		bCari.setOnClickListener(new View.OnClickListener() {
+		final OnClickListener bCari_click = new View.OnClickListener() {
 
 			@Override
 			public synchronized void onClick(View v) {
@@ -56,6 +65,7 @@ public class SearchActivity extends Activity {
 					stopManagingCursor(cursor);
 					cursor.close();
 				}
+				
 				// baru
 				cursor = db.rawQuery(String.format("select *, docid as _id, snippet(%s, '<u><b>', '</b></u>', '...', -1, -40) as snip from %s where %s match ? limit 100", SearchDb.TABEL_Fts, SearchDb.TABEL_Fts, SearchDb.KOLOM_content), new String[] {carian});
 				startManagingCursor(cursor);
@@ -65,6 +75,7 @@ public class SearchActivity extends Activity {
 						xkolom,
 						new int[] {R.id.lCuplikan, R.id.lAlamat}
 				);
+				
 				adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
 					@Override
 					public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
@@ -81,6 +92,38 @@ public class SearchActivity extends Activity {
 				
 				lsHasilCari.setAdapter(adapter);
 			}
+		};
+		
+		tCarian = (EditText) findViewById(R.id.tCarian);
+		{
+			String carian = intent.getStringExtra("carian");
+			
+			if (carian != null) {
+				tCarian.setText(carian);
+				tCarian.selectAll();
+				bCari_click.onClick(bCari);
+			}
+		}
+		tCarian.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+					bCari_click.onClick(bCari);
+				}
+				return false;
+			}
 		});
+		
+		bCari = (ImageButton) findViewById(R.id.bCari);
+		bCari.setOnClickListener(bCari_click);
+	}
+	
+	@Override
+	public void finish() {
+		Log.d("alki", "finish");
+		returnValue.putExtra("carian", tCarian.getText().toString());
+		
+		setResult(resultCode, returnValue);
+		super.finish();
 	}
 }

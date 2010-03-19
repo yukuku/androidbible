@@ -7,7 +7,13 @@
 		android:icon="@drawable/menu_tuju" />
 	<item
 		android:id="@+id/menuBukmak"
-		android:icon="@drawable/menu_bukmak" android:titleCondensed="Pembatas" android:title="Pembatas buku"/>
+		android:icon="@drawable/menu_bukmak"
+		android:titleCondensed="Pembatas"
+		android:title="Pembatas buku" />
+	<item
+		android:id="@+id/menuSearch"
+		android:icon="@android:drawable/ic_menu_search"
+		android:title="Cari" />
 	<item
 		android:id="@+id/menuEdisi"
 		android:title="@string/menuEdisi"
@@ -16,17 +22,15 @@
 		android:id="@+id/menuKitab"
 		android:title="@string/menuKitab"
 		android:visible="false" />
+	
+	<item android:icon="@android:drawable/ic_menu_preferences" android:id="@+id/menuPengaturan" android:title="@string/menuPengaturan"></item>
 	<item
 		android:id="@+id/menuFidbek"
 		android:title="Saran"
-		android:icon="@android:drawable/ic_menu_send" />
+		android:icon="@android:drawable/ic_menu_send"></item>
 	<item
 		android:id="@+id/menuTentang"
 		android:title="@string/menuTentang"
-		android:icon="@android:drawable/ic_menu_info_details" />
-	<item
-		android:icon="@android:drawable/ic_menu_preferences"
-		android:id="@+id/menuPengaturan"
-		android:title="@string/menuPengaturan" />
+		android:icon="@android:drawable/ic_menu_info_details"></item>
 
 </menu>

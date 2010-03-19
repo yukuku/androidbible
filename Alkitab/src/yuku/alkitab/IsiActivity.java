@@ -52,6 +52,7 @@ public class IsiActivity extends Activity {
 	private AyatAdapter ayatAdapter_ = new AyatAdapter();
 	private int indenParagraf_;
 	private boolean tombolAlamatLoncat_;
+	private String carianTerakhir_;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +177,22 @@ public class IsiActivity extends Activity {
 		} else {
 			tampil(pasal, ayat);
 		}
+	}
+	
+	private void loncatKeAri(int ari) {
+		if (ari == 0) return;
+		
+		Log.d("alki", "akan loncat ke ari 0x" + Integer.toHexString(ari));
+		
+		int kitab = Ari.toKitab(ari);
+		if (kitab >= 0 && kitab < S.xkitab.length) {
+			S.kitab = S.xkitab[kitab];
+		} else {
+			Log.w("alki", "mana ada kitab " + ari);
+			return;
+		}
+		
+		tampil(Ari.toPasal(ari), Ari.toAyat(ari));
 	}
 	
 	private boolean lsIsi_itemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -441,6 +458,10 @@ public class IsiActivity extends Activity {
 		} else if (item.getItemId() == R.id.menuBukmak) {
 			Intent intent = new Intent(this, BukmakActivity.class);
 			startActivityForResult(intent, R.id.menuBukmak);
+		} else if (item.getItemId() == R.id.menuSearch) {
+			Intent intent = new Intent(this, SearchActivity.class);
+			intent.putExtra("carian", carianTerakhir_);
+			startActivityForResult(intent, item.getItemId());
 		} else if (item.getItemId() == R.id.menuKitab) {
 			Intent intent = new Intent(this, KitabActivity.class);
 			startActivityForResult(intent, R.id.menuKitab);
@@ -514,8 +535,6 @@ public class IsiActivity extends Activity {
 			dialog.show();
 			Log.d("alki", "sesudah dialog.show()");
 		} else if (item.getItemId() == 0x985803) { // debug 3
-			Intent intent = new Intent(this, SearchActivity.class);
-			startActivityForResult(intent, item.getItemId());
 		} else if (item.getItemId() == 0x985804) { // debug 4
 			{
 				Editor editor = preferences.edit();
@@ -555,6 +574,19 @@ public class IsiActivity extends Activity {
 					loncatKe(alamat);
 				}
 			}
+		} else if (requestCode == R.id.menuSearch) {
+			// Apapun hasilnya, simpan carian terakhir
+			String carian = data.getStringExtra("carian");
+			carianTerakhir_ = carian;
+			
+			if (resultCode == RESULT_OK) {
+				int ari = data.getIntExtra("terpilih.ari", 0);
+				if (ari != 0) { // 0 berarti ga ada apa2, karena ga ada pasal 0 ayat 0
+					loncatKeAri(ari);
+				}
+			}
+			
+			
 		} else if (requestCode == R.id.menuEdisi) {
 			if (resultCode == RESULT_OK) {
 				String nama = data.getStringExtra("nama");
