@@ -28,9 +28,8 @@
 		android:layout_alignParentRight="true"
 		android:layout_alignWithParentIfMissing="true"
 
-		android:ellipsize="end"
 		android:gravity="bottom"
-		android:text="Simple application that shows how to use RelativeLayout bla balbl balblbalbal balbalbalbalbala" />
+		android:text="Simple application that shows how to use RelativeLayout bla balbl balblbalbal balbalbalbalbala" android:maxLines="7"/>
 
 	<TextView
 		android:id="@+id/lTanggal"

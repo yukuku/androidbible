@@ -6,8 +6,10 @@ import android.app.Activity;
 import android.content.*;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.Html;
+import android.text.*;
+import android.text.style.*;
 import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
@@ -24,6 +26,30 @@ public class SearchActivity extends Activity {
 	private Cursor cursor;
 	private int resultCode;
 	private Intent returnValue;
+	
+	private boolean pakeSnippet_ = false;
+	
+	private static int[] xwarna;
+
+	static {
+		xwarna = new int[12];
+		
+		{
+			int w = 0x66ff66;
+			for (int i = 0; i < 6; i++) {
+				xwarna[i] = 0xff000000 | w;
+				w = (w >> 5) | (w << 19);
+			}
+		}
+		
+		{
+			int w = 0x6f666f;
+			for (int i = 6; i < 12; i++) {
+				xwarna[i] = 0xff000000 | w;
+				w = (w >> 5) | (w << 19);
+			}
+		}
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,29 +92,151 @@ public class SearchActivity extends Activity {
 					cursor.close();
 				}
 				
-				// baru
-				cursor = db.rawQuery(String.format("select *, docid as _id, snippet(%s, '<u><b>', '</b></u>', '...', -1, -40) as snip from %s where %s match ? limit 100", SearchDb.TABEL_Fts, SearchDb.TABEL_Fts, SearchDb.KOLOM_content), new String[] {carian});
-				startManagingCursor(cursor);
-				
-				final String[] xkolom = new String[] {"snip", SearchDb.KOLOM_ari};
-				SimpleCursorAdapter adapter = new SimpleCursorAdapter(SearchActivity.this, R.layout.search_item, cursor,
-						xkolom,
-						new int[] {R.id.lCuplikan, R.id.lAlamat}
-				);
-				
-				adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-					@Override
-					public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-						if (view.getId() == R.id.lAlamat) {
-							((TextView)view).setText(Ari.toAlamat(cursor.getInt(columnIndex)));
-							return true;
-						} else if (view.getId() == R.id.lCuplikan) {
-							((TextView)view).setText(Html.fromHtml(cursor.getString(columnIndex)), BufferType.SPANNABLE);
-							return true;
+				SimpleCursorAdapter adapter = null;
+
+				if (pakeSnippet_) {
+					// baru
+					cursor = db.rawQuery(String.format("select *, docid as _id, snippet(%s, '<u><b>', '</b></u>', '...', -1, -40) as snip from %s where %s match ? limit 300", SearchDb.TABEL_Fts, SearchDb.TABEL_Fts, SearchDb.KOLOM_content), new String[] {carian});
+					startManagingCursor(cursor);
+					
+					adapter = new SimpleCursorAdapter(SearchActivity.this, R.layout.search_item, cursor,
+							new String[] {"snip", SearchDb.KOLOM_ari},
+							new int[] {R.id.lCuplikan, R.id.lAlamat}
+					);
+					
+					adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+						@Override
+						public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+							if (view.getId() == R.id.lAlamat) {
+								((TextView)view).setText(Ari.toAlamat(cursor.getInt(columnIndex)));
+								return true;
+							} else if (view.getId() == R.id.lCuplikan) {
+								((TextView)view).setText(Html.fromHtml(cursor.getString(columnIndex)), BufferType.SPANNABLE);
+								return true;
+							}
+							return false;
 						}
-						return false;
-					}
-				});
+					});
+				} else {
+					// pake ayat2 penuh
+					cursor = db.rawQuery(String.format("select *, docid as _id, offsets(%s) as xoff from %s where %s match ? limit 300", SearchDb.TABEL_Fts, SearchDb.TABEL_Fts, SearchDb.KOLOM_content), new String[] {carian});
+					startManagingCursor(cursor);
+
+					adapter = new SimpleCursorAdapter(SearchActivity.this, R.layout.search_item, cursor,
+							new String[] {SearchDb.KOLOM_content, SearchDb.KOLOM_ari},
+							new int[] {R.id.lCuplikan, R.id.lAlamat}
+					);
+					
+					adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+						@Override
+						public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+							if (view.getId() == R.id.lAlamat) {
+								((TextView)view).setText(Ari.toAlamat(cursor.getInt(columnIndex)));
+								return true;
+							} else if (view.getId() == R.id.lCuplikan) {
+								SpannableString ss = SpannableString.valueOf(cursor.getString(columnIndex));
+								stabilo(ss, cursor.getString(cursor.getColumnIndexOrThrow("xoff")));
+								((TextView)view).setText(ss, BufferType.SPANNABLE);
+								
+								return true;
+							}
+							return false;
+						}
+
+						private void stabilo(SpannableString ss, String xoff) {
+							/*
+							 * 0 The column number that the term instance occurs in (0 for the leftmost column of the FTS3 table, 1 for the next leftmost, etc.).
+							 * 1 The term number of the matching term within the full-text query expression. Terms within a query expression are numbered starting from 0 in the
+							 * order that they occur.
+							 * 2 The byte offset of the matching term within the column.
+							 * 3 The size of the matching term in bytes.
+							 */
+							
+							int termNumber = 0;
+							int offset = 0;
+							int size = 0;
+							
+							int pos = 0;
+							int num = 0;
+							char[] cc = xoff.toCharArray();
+							
+							while (true) {
+								if (pos >= cc.length) {
+									break;
+								}
+								
+								{
+									char c = cc[pos++];
+									num = (c - '0');
+									while (true) {
+										c = cc[pos++];
+										if (c == ' ') {
+											break;
+										} else {
+											num = num*10 + (c-'0');
+										}
+									}
+								}
+								
+								{
+									char c = cc[pos++];
+									num = (c - '0');
+									while (true) {
+										c = cc[pos++];
+										if (c == ' ') {
+											break;
+										} else {
+											num = num*10 + (c-'0');
+										}
+									}
+									
+									termNumber = num;
+								}
+								
+								{
+									char c = cc[pos++];
+									num = (c - '0');
+									while (true) {
+										c = cc[pos++];
+										if (c == ' ') {
+											break;
+										} else {
+											num = num*10 + (c-'0');
+										}
+									}
+									
+									offset = num;
+								}
+								
+								{
+									char c = cc[pos++];
+									num = (c - '0');
+									while (true) {
+										if (pos >= cc.length) {
+											break;
+										}
+										
+										c = cc[pos++];
+										if (c == ' ') {
+											break;
+										} else {
+											num = num*10 + (c-'0');
+										}
+									}
+									
+									size = num;
+								}
+								
+								//# sudah dapet data2nya, mari lakukan sesuatu
+								{
+									ForegroundColorSpan color = new ForegroundColorSpan(xwarna[termNumber >= 12? 11: termNumber]);
+									ss.setSpan(color, offset, offset+size, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+									ss.setSpan(new StyleSpan(Typeface.BOLD), offset, offset+size, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+								}
+							}
+						}
+					});
+				}
 				
 				lsHasilCari.setAdapter(adapter);
 			}
