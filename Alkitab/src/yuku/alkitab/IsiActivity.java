@@ -10,6 +10,7 @@ import android.content.*;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
@@ -727,6 +728,13 @@ public class IsiActivity extends Activity {
 				editor.commit();
 			}
 		}).show();
+	}
+	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		
+		Log.d("alki", "onConfigurationChanged");
 	}
 	
 	private class AyatAdapter extends BaseAdapter {

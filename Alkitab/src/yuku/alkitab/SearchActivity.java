@@ -3,7 +3,7 @@ package yuku.alkitab;
 
 import yuku.alkitab.model.*;
 import android.app.Activity;
-import android.content.Intent;
+import android.content.*;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -11,7 +11,7 @@ import android.text.Html;
 import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.*;
 import android.widget.*;
 import android.widget.TextView.BufferType;
 
@@ -108,6 +108,10 @@ public class SearchActivity extends Activity {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+					//# close soft keyboard 
+					InputMethodManager inputManager = (InputMethodManager) SearchActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE); 
+					inputManager.hideSoftInputFromWindow(tCarian.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+					
 					bCari_click.onClick(bCari);
 				}
 				return false;
