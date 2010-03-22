@@ -456,19 +456,22 @@ public class IsiActivity extends Activity {
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if (item.getItemId() == R.id.menuTuju) {
 			bTuju_click();
+			return true;
 		} else if (item.getItemId() == R.id.menuBukmak) {
 			Intent intent = new Intent(this, BukmakActivity.class);
 			startActivityForResult(intent, R.id.menuBukmak);
+			return true;
 		} else if (item.getItemId() == R.id.menuSearch) {
-			Intent intent = new Intent(this, SearchActivity.class);
-			intent.putExtra("carian", carianTerakhir_);
-			startActivityForResult(intent, item.getItemId());
+			menuSearch_click();
+			return true;
 		} else if (item.getItemId() == R.id.menuKitab) {
 			Intent intent = new Intent(this, KitabActivity.class);
 			startActivityForResult(intent, R.id.menuKitab);
+			return true;
 		} else if (item.getItemId() == R.id.menuEdisi) {
 			Intent intent = new Intent(this, EdisiActivity.class);
 			startActivityForResult(intent, R.id.menuEdisi);
+			return true;
 		} else if (item.getItemId() == R.id.menuTentang) {
 			String verName = "null";
 	    	int verCode = -1;
@@ -483,11 +486,14 @@ public class IsiActivity extends Activity {
 	    	
 			new AlertDialog.Builder(this).setTitle(R.string.tentang_title).setMessage(
 					Html.fromHtml(getString(R.string.tentang_message, verName, verCode))).show();
+			return true;
 		} else if (item.getItemId() == R.id.menuPengaturan) {
 			Intent intent = new Intent(this, PengaturanActivity.class);
 			startActivityForResult(intent, R.id.menuPengaturan);
+			return true;
 		} else if (item.getItemId() == R.id.menuFidbek) {
 			popupMintaFidbek();
+			return true;
 		} else if (item.getItemId() == 0x985801) { // debug 1
 			// dump pref
 			Log.i("alki.gebug1", "semua pref segera muncul di bawah ini");
@@ -504,6 +510,7 @@ public class IsiActivity extends Activity {
 					Log.i("alki.gebug1", String.format("%s = %s", entry.getKey(), entry.getValue()));
 				}
 			}
+			return true;
 		} else if (item.getItemId() == 0x985802) { // debug 2
 			final PembuatIndex pembuatIndex = new PembuatIndex();
 			final Handler handler = new Handler();
@@ -535,7 +542,9 @@ public class IsiActivity extends Activity {
 			Log.d("alki", "sebelum dialog.show()");
 			dialog.show();
 			Log.d("alki", "sesudah dialog.show()");
+			return true;
 		} else if (item.getItemId() == 0x985803) { // debug 3
+			return true;
 		} else if (item.getItemId() == 0x985804) { // debug 4
 			{
 				Editor editor = preferences.edit();
@@ -547,9 +556,16 @@ public class IsiActivity extends Activity {
 				editor.clear();
 				editor.commit();
 			}
+			return true;
 		}
 		
 		return super.onMenuItemSelected(featureId, item);
+	}
+
+	private void menuSearch_click() {
+		Intent intent = new Intent(this, SearchActivity.class);
+		intent.putExtra("carian", carianTerakhir_);
+		startActivityForResult(intent, R.id.menuSearch);
 	}
 	
 	@Override
@@ -735,6 +751,13 @@ public class IsiActivity extends Activity {
 		super.onConfigurationChanged(newConfig);
 		
 		Log.d("alki", "onConfigurationChanged");
+	}
+	
+	@Override
+	public boolean onSearchRequested() {
+		menuSearch_click();
+		
+		return true;
 	}
 	
 	private class AyatAdapter extends BaseAdapter {
