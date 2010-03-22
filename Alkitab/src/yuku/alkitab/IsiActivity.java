@@ -89,22 +89,14 @@ public class IsiActivity extends Activity {
 		bTuju.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (tombolAlamatLoncat_) {
-					bTuju_longClick();
-				} else {
-					bTuju_click();
-				}
+				bTuju_click();
 			}
 		});
 		
 		bTuju.setOnLongClickListener(new View.OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View v) {
-				if (tombolAlamatLoncat_) {
-					bTuju_click();
-				} else {
-					bTuju_longClick();
-				}
+				bTuju_longClick();
 				return true;
 			}
 		});
@@ -365,6 +357,22 @@ public class IsiActivity extends Activity {
 	}
 
 	private void bTuju_click() {
+		if (tombolAlamatLoncat_) {
+			bukaDialogLoncat();
+		} else {
+			bukaDialogTuju();
+		}
+	}
+	
+	private void bTuju_longClick() {
+		if (tombolAlamatLoncat_) {
+			bukaDialogTuju();
+		} else {
+			bukaDialogLoncat();
+		}
+	}
+	
+	private void bukaDialogTuju() {
 		Intent intent = new Intent(this, MenujuActivity.class);
 		intent.putExtra("pasal", pasal);
 		
@@ -374,7 +382,7 @@ public class IsiActivity extends Activity {
 		startActivityForResult(intent, R.id.menuTuju);
 	}
 	
-	private void bTuju_longClick() {
+	private void bukaDialogLoncat() {
 		final View loncat = LayoutInflater.from(IsiActivity.this).inflate(R.layout.loncat, null);
 		final TextView lAlamatKini = (TextView) loncat.findViewById(R.id.lAlamatKini);
 		final EditText tAlamatLoncat = (EditText) loncat.findViewById(R.id.tAlamatLoncat);
@@ -453,6 +461,22 @@ public class IsiActivity extends Activity {
 	}
 	
 	@Override
+	public boolean onMenuOpened(int featureId, Menu menu) {
+		MenuItem menuTuju = menu.findItem(R.id.menuTuju);
+		if (menuTuju != null) {
+			if (tombolAlamatLoncat_) {
+				menuTuju.setIcon(R.drawable.menu_loncat);
+				menuTuju.setTitle("Loncat");
+			} else {
+				menuTuju.setIcon(R.drawable.menu_tuju);
+				menuTuju.setTitle("Tuju");
+			}
+		}
+		
+		return true;
+	}
+	
+	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if (item.getItemId() == R.id.menuTuju) {
 			bTuju_click();
@@ -485,7 +509,14 @@ public class IsiActivity extends Activity {
 			}
 	    	
 			new AlertDialog.Builder(this).setTitle(R.string.tentang_title).setMessage(
-					Html.fromHtml(getString(R.string.tentang_message, verName, verCode) + "<br/>$LastChangedRevision$")).show();
+					Html.fromHtml(
+							getString(R.string.tentang_message, verName, verCode) 
+							+ "<br/><br/>Rev: " + "$LastChangedRevision$".substring(22)
+							+ "<br/>Root: " + Environment.getRootDirectory()
+							+ "<br/>Ext: " + Environment.getExternalStorageDirectory()
+							+ "<br/>Data: " + Environment.getDataDirectory()
+					))
+					.show();
 			return true;
 		} else if (item.getItemId() == R.id.menuPengaturan) {
 			Intent intent = new Intent(this, PengaturanActivity.class);
