@@ -5,7 +5,7 @@ import yuku.alkitab.model.*;
 import android.app.Activity;
 import android.content.*;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.*;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.*;
@@ -93,9 +93,21 @@ public class SearchActivity extends Activity {
 					cursor.close();
 				}
 				
-				// baru
 				cursor = db.rawQuery(String.format("select *, docid as _id, snippet(%s, '<font color=\"#66ff66\"><b>', '</b></font>', '...', -1, -40) as snip, offsets(%s) as xoff from %s where %s match ? limit 300", SearchDb.TABEL_Fts, SearchDb.TABEL_Fts, SearchDb.TABEL_Fts, SearchDb.KOLOM_content), new String[] {carian});
 				startManagingCursor(cursor);
+				
+				// panggil getCount untuk tau cursor ini sah ga
+				try {
+					cursor.getCount();
+				} catch (SQLiteException e) {
+					Log.w("alki", "carian ga sah", e);
+					//Toast.makeText(SearchActivity.this, "Bentuk carian tidak sah", Toast.LENGTH_SHORT).show();
+					tCarian.setError("Bentuk carian tidak sah");
+					tCarian.requestFocus();
+					return;
+				}
+				
+				tCarian.setError(null);
 				
 				adapter = new SimpleCursorAdapter(SearchActivity.this, R.layout.search_item, cursor,
 						new String[] {SearchDb.KOLOM_content, SearchDb.KOLOM_ari},
@@ -281,7 +293,10 @@ public class SearchActivity extends Activity {
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if (item.getItemId() == R.id.menuTukarTampilCarian) {
 			pakeSnippet_ = !pakeSnippet_;
-			adapter.notifyDataSetChanged();
+			
+			if (adapter != null) {
+				adapter.notifyDataSetChanged();
+			}
 			
 			return true;
 		}

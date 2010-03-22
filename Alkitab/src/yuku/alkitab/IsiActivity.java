@@ -485,7 +485,7 @@ public class IsiActivity extends Activity {
 			}
 	    	
 			new AlertDialog.Builder(this).setTitle(R.string.tentang_title).setMessage(
-					Html.fromHtml(getString(R.string.tentang_message, verName, verCode))).show();
+					Html.fromHtml(getString(R.string.tentang_message, verName, verCode) + "<br/>$LastChangedRevision$")).show();
 			return true;
 		} else if (item.getItemId() == R.id.menuPengaturan) {
 			Intent intent = new Intent(this, PengaturanActivity.class);
