@@ -1,10 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_height="wrap_content" android:orientation="vertical" android:padding="8dp" android:layout_width="wrap_content" android:minWidth="280dp">
-<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Alamat sekarang:"></TextView>
-<TextView android:layout_height="wrap_content" android:textSize="18dp" android:layout_width="fill_parent" android:gravity="center_horizontal" android:text="Kejadian 99:88" android:id="@+id/lAlamatKini" android:layout_marginLeft="18dp" android:layout_marginBottom="18dp" android:layout_marginRight="18dp"></TextView>
-<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Loncat ke alamat:"></TextView>
-<EditText android:layout_height="wrap_content" android:id="@+id/tAlamatLoncat" android:layout_width="fill_parent" android:layout_marginLeft="18dp" android:layout_marginRight="18dp" android:inputType="textCapSentences" android:imeOptions="actionGo"></EditText>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content">
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:padding="8dp"
+		android:layout_width="wrap_content"
+		android:minWidth="280dp">
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Alamat sekarang:"></TextView>
+		<TextView
+			android:layout_height="wrap_content"
+			android:textSize="18dp"
+			android:layout_width="fill_parent"
+			android:gravity="center_horizontal"
+			android:text="Kejadian 99:88"
+			android:id="@+id/lAlamatKini"
+			android:layout_marginLeft="18dp"
+			android:layout_marginBottom="18dp"
+			android:layout_marginRight="18dp" android:textAppearance="?android:attr/textAppearanceMedium"></TextView>
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Loncat ke alamat:"></TextView>
+		<EditText
+			android:layout_height="wrap_content"
+			android:id="@+id/tAlamatLoncat"
+			android:layout_width="fill_parent"
+			android:layout_marginLeft="18dp"
+			android:layout_marginRight="18dp"
+			android:inputType="textCapSentences"
+			android:imeOptions="actionGo" android:textAppearance="?android:attr/textAppearanceMedium"></EditText>
 
-</LinearLayout>
+
+	</LinearLayout>
+<ImageButton android:layout_alignParentTop="true" android:layout_alignParentRight="true" android:layout_marginTop="4dp" android:layout_marginRight="4dp" android:id="@+id/bKeTuju" android:layout_height="wrap_content" android:layout_width="wrap_content" android:src="@drawable/tombol_ke_tuju" android:padding="6dp"></ImageButton>
+</RelativeLayout>

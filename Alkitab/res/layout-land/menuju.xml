@@ -19,12 +19,15 @@
 			<LinearLayout
 				android:layout_height="wrap_content"
 				android:layout_width="fill_parent"
-				android:orientation="horizontal" android:gravity="center_vertical|center_horizontal" android:layout_margin="6dp">
+				android:orientation="horizontal"
+				android:gravity="center_vertical|center_horizontal"
+				android:layout_margin="6dp">
 				<Spinner
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:id="@+id/cbKitab"
-					android:minWidth="200sp" android:layout_marginRight="8dp"/>
+					android:minWidth="200sp"
+					android:layout_marginRight="8dp" />
 				<TextView
 					android:layout_width="wrap_content"
 					android:textAppearance="?android:attr/textAppearanceLarge"
@@ -32,12 +35,14 @@
 					android:text="1"
 					android:minWidth="48sp"
 					android:layout_height="fill_parent"
-					android:gravity="center_vertical|center_horizontal" android:focusable="true"/>
+					android:gravity="center_vertical|center_horizontal"
+					android:focusable="true" />
 				<TextView
 					android:id="@+id/TextView02"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:text=" : " android:layout_margin="8dp"/>
+					android:text=" : "
+					android:layout_margin="8dp" />
 				<TextView
 					android:layout_width="wrap_content"
 					android:id="@+id/lAyat"
@@ -45,14 +50,14 @@
 					android:minWidth="48sp"
 					android:text="1"
 					android:layout_height="fill_parent"
-					android:gravity="center_vertical|center_horizontal" android:focusable="true"/>
-
-				<TextView
+					android:gravity="center_vertical|center_horizontal"
+					android:focusable="true" />
+				<ImageButton
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:minLines="1" />
-
-
+					android:id="@+id/bKeLoncat"
+					android:src="@drawable/tombol_ke_loncat"
+					android:padding="6dp" android:layout_marginLeft="20dp"></ImageButton>
 			</LinearLayout>
 		</LinearLayout>
 
@@ -66,7 +71,8 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/bOk"
 			android:text="Ok"
-			android:minWidth="200dp" android:textAppearance="?android:attr/textAppearanceLarge"/>
+			android:minWidth="200dp"
+			android:textAppearance="?android:attr/textAppearanceLarge" />
 
 
 

@@ -32,6 +32,8 @@ public class IsiActivity extends Activity {
 	private static final String NAMAPREF_ayatTerakhir = "ayatTerakhir";
 	private static final String NAMAPREF_terakhirMintaFidbek = "terakhirMintaFidbek";
 
+	public static final int RESULT_pindahCara = RESULT_FIRST_USER + 1;
+
 	String[] xayat;
 	ListView lsIsi;
 	Button bTuju;
@@ -386,6 +388,7 @@ public class IsiActivity extends Activity {
 		final View loncat = LayoutInflater.from(IsiActivity.this).inflate(R.layout.loncat, null);
 		final TextView lAlamatKini = (TextView) loncat.findViewById(R.id.lAlamatKini);
 		final EditText tAlamatLoncat = (EditText) loncat.findViewById(R.id.tAlamatLoncat);
+		final ImageButton bKeTuju = (ImageButton) loncat.findViewById(R.id.bKeTuju);
 
 		// set lAlamatKini
 		{
@@ -423,6 +426,14 @@ public class IsiActivity extends Activity {
 				dialog.dismiss();
 				
 				return true;
+			}
+		});
+		
+		bKeTuju.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				dialog.dismiss();
+				bukaDialogTuju();
 			}
 		});
 		
@@ -614,6 +625,8 @@ public class IsiActivity extends Activity {
 				}
 				
 				tampil(pasal, ayat);
+			} else if (resultCode == RESULT_pindahCara) {
+				bukaDialogLoncat();
 			}
 		} else if (requestCode == R.id.menuBukmak) {
 			if (resultCode == RESULT_OK) {

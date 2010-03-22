@@ -1,12 +1,12 @@
 package yuku.alkitab;
 
-import yuku.alkitab.model.*;
-import android.app.*;
-import android.content.*;
-import android.os.*;
-import android.util.*;
+import yuku.alkitab.model.Kitab;
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.*;
-import android.view.View.*;
+import android.view.View.OnClickListener;
 import android.widget.*;
 
 public class MenujuActivity extends Activity {
@@ -19,6 +19,7 @@ public class MenujuActivity extends Activity {
 	TextView lAyat;
 	View lLabelAyat;
 	Spinner cbKitab;
+	ImageButton bKeLoncat;
 	
 	int maxPasal = 0;
 	int maxAyat = 0;
@@ -39,6 +40,7 @@ public class MenujuActivity extends Activity {
 		lLabelAyat = findViewById(R.id.lLabelAyat);
 		cbKitab = (Spinner) findViewById(R.id.cbKitab);
 		cbKitab.setAdapter(S.getKitabAdapter(this));
+		bKeLoncat = (ImageButton) findViewById(R.id.bKeLoncat);
 
 		// set kitab, pasal, ayat kini
 		cbKitab.setSelection(S.kitab.pos);
@@ -158,6 +160,14 @@ public class MenujuActivity extends Activity {
 		findViewById(R.id.bAngka9).setOnClickListener(tombolListener);
 		findViewById(R.id.bAngkaC).setOnClickListener(tombolListener);
 		findViewById(R.id.bAngkaPindah).setOnClickListener(tombolListener);
+		
+		bKeLoncat.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				setResult(IsiActivity.RESULT_pindahCara);
+				finish();
+			}
+		});
 		
 		warnain();
 	}
