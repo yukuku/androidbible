@@ -14,7 +14,7 @@ public class PembuatIndex {
 		try {
 			listener.onProgress("Tahap 1: Membuat tabel");
 	
-			SQLiteDatabase db = SearchDb.getInstance().getDatabase();
+			SQLiteDatabase db = SearchDb.getInstance(context).getDatabase();
 			
 			String edisi_nama = S.edisi.nama;
 			int nkitab = S.edisi.nkitab;

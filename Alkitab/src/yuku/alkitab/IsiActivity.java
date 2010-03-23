@@ -33,6 +33,7 @@ public class IsiActivity extends Activity {
 	private static final String NAMAPREF_terakhirMintaFidbek = "terakhirMintaFidbek";
 
 	public static final int RESULT_pindahCara = RESULT_FIRST_USER + 1;
+	public static final int DIALOG_bikinIndex = 1;
 
 	String[] xayat;
 	ListView lsIsi;
@@ -48,6 +49,8 @@ public class IsiActivity extends Activity {
 	Handler handler = new Handler();
 	Integer cerahTeks; // null kalo ga diset, pake yang aslinya aja
 	DisplayMetrics displayMetrics;
+	ProgressDialog dialogBikinIndex;
+	boolean lagiBikinIndex = false;
 	
 	private Float ukuranTeksSesuaiPengaturan_;
 	private Typeface jenisHurufSesuaiPengaturan_;
@@ -142,10 +145,37 @@ public class IsiActivity extends Activity {
 				}
 			});
 		}
-		
-		SearchDb.setPath("/sdcard/coba.db");
 	}
 
+	@Override
+	protected Dialog onCreateDialog(final int id) {
+		if (id == DIALOG_bikinIndex) {
+			dialogBikinIndex = ProgressDialog.show(this, "Membuat indeks...", "Mempersiapkan indeks...", true, false);
+			
+			dialogBikinIndex.setOnCancelListener(new DialogInterface.OnCancelListener() {
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					Log.d("alki", "onCancel");
+				}
+			});
+			
+			dialogBikinIndex.setOnDismissListener(new DialogInterface.OnDismissListener() {
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+					Log.d("alki", "onDismiss");
+					
+					if (lagiBikinIndex) {
+						showDialog(id);
+					}
+				}
+			});
+			
+			return dialogBikinIndex;
+		}
+		
+		return null;
+	}
+	
 	private void loncatKe(String alamat) {
 		if (alamat.trim().length() == 0) {
 			return;
@@ -516,7 +546,7 @@ public class IsiActivity extends Activity {
 				verName = packageInfo.versionName;
 				verCode = packageInfo.versionCode;
 			} catch (NameNotFoundException e) {
-				Log.e("alki-isi", "PackageInfo ngaco", e);
+				Log.e("alki", "PackageInfo ngaco", e);
 			}
 	    	
 			new AlertDialog.Builder(this).setTitle(R.string.tentang_title).setMessage(
@@ -554,36 +584,7 @@ public class IsiActivity extends Activity {
 			}
 			return true;
 		} else if (item.getItemId() == 0x985802) { // debug 2
-			final PembuatIndex pembuatIndex = new PembuatIndex();
-			final Handler handler = new Handler();
-			final ProgressDialog dialog = ProgressDialog.show(this, "Membuat indeks...", "Mempersiapkan indeks...", true, false);
-			
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					Log.d("alki", "tred 2 jalan");
-					pembuatIndex.buatIndex(IsiActivity.this, new PembuatIndex.OnProgressListener() {
-						@Override
-						public void onProgress(final String msg) {
-							handler.post(new Runnable() {
-								@Override
-								public void run() {
-									Log.d("alki", "handler dipanggil msg: " + msg);
-									if (msg == null) {
-										dialog.dismiss();
-									} else {
-										dialog.setMessage(msg);
-									}
-								}
-							});
-						}
-					});
-				}
-			}).start();
-			
-			Log.d("alki", "sebelum dialog.show()");
-			dialog.show();
-			Log.d("alki", "sesudah dialog.show()");
+			bikinIndex();
 			return true;
 		} else if (item.getItemId() == 0x985803) { // debug 3
 			return true;
@@ -604,10 +605,79 @@ public class IsiActivity extends Activity {
 		return super.onMenuItemSelected(featureId, item);
 	}
 
+	private void bikinIndex() {
+		final PembuatIndex pembuatIndex = new PembuatIndex();
+		final Handler handler = new Handler();
+		
+		showDialog(DIALOG_bikinIndex);
+		lagiBikinIndex = true;
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Log.d("alki", "tred 2 jalan");
+				pembuatIndex.buatIndex(IsiActivity.this, new PembuatIndex.OnProgressListener() {
+					@Override
+					public void onProgress(final String msg) {
+						handler.post(new Runnable() {
+							@Override
+							public void run() {
+								Log.d("alki", "handler dipanggil msg: " + msg);
+								if (msg == null) {
+									lagiBikinIndex = false;
+									dismissDialog(DIALOG_bikinIndex);
+								} else {
+									dialogBikinIndex.setMessage(msg);
+								}
+							}
+						});
+					}
+				});
+			}
+		}).start();
+	}
+
 	private void menuSearch_click() {
-		Intent intent = new Intent(this, SearchActivity.class);
-		intent.putExtra("carian", carianTerakhir_);
-		startActivityForResult(intent, R.id.menuSearch);
+		// cek db. Harus ada dan jadi.
+		boolean adaDb = SearchDb.cekAdaDb(this);
+		boolean adaTabelEdisiIni = false;
+		
+		if (adaDb) {
+			adaTabelEdisiIni = SearchDb.cekAdaTabelEdisi(this, S.edisi.nama);
+		}
+		
+		if (! adaDb || ! adaTabelEdisiIni) {
+			AlertDialog dialog = new AlertDialog.Builder(this).setMessage(
+					Html.fromHtml("Untuk fungsi pencarian, perlu dibuat dulu <b>indeks</b>. Indeks memerlukan sekitar 9 MB memori dan akan disimpan di memori eksternal (SD card, dsb). " +
+							"Dengan indeks, Anda dapat mencari gabungan kata seperti <b>kuperbuat hidup kekal</b> atau <b>\"benda penerang\"</b>. " +
+							"Proses pembuatan indeks memerlukan 2-5 menit, dan selama itu Anda tidak bisa memakai program Alkitab. " +
+							"Buat indeks sekarang?"))
+					.setTitle("Pencarian " + S.edisi.judul)
+					.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							int ret = SearchDb.bikinDb(IsiActivity.this);
+							
+							if (ret == 0) {
+								Toast.makeText(IsiActivity.this, "Pembuatan file database gagal! Pastikan memori eksternal terpasang dan bisa ditulisi.", Toast.LENGTH_LONG).show();
+								return;
+							} else {
+								// mulai bikin! Hore.
+								bikinIndex();
+							}
+						}
+					})
+					.setNegativeButton("Tidak", null)
+					.create();
+			
+			dialog.show();
+			
+			return;
+		} else {
+			Intent intent = new Intent(this, SearchActivity.class);
+			intent.putExtra("carian", carianTerakhir_);
+			startActivityForResult(intent, R.id.menuSearch);
+		}
 	}
 	
 	@Override
@@ -797,12 +867,14 @@ public class IsiActivity extends Activity {
 		Log.d("alki", "onConfigurationChanged");
 	}
 	
-	@Override
-	public boolean onSearchRequested() {
-		menuSearch_click();
-		
-		return true;
-	}
+	
+	
+//	@Override
+//	public boolean onSearchRequested() {
+//		menuSearch_click();
+//		
+//		return true;
+//	}
 	
 	private class AyatAdapter extends BaseAdapter {
 		private SpannableStringBuilder[] rendered_;

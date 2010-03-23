@@ -63,7 +63,7 @@ public class SearchActivity extends Activity {
 		
 		Intent intent = getIntent();
 		
-		db = SearchDb.getInstance().getDatabase();
+		db = SearchDb.getInstance(this).getDatabase();
 
 		lsHasilCari = (ListView) findViewById(R.id.lsHasilCari);
 		lsHasilCari.setOnItemClickListener(new AdapterView.OnItemClickListener() {

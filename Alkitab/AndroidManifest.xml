@@ -10,7 +10,7 @@
 		android:name="AlkitabApplication">
 		<activity
 			android:name="IsiActivity"
-			android:label="Alkitab" android:configChanges="keyboardHidden|orientation">
+			android:label="Alkitab" android:configChanges="mcc|mnc|keyboard|keyboardHidden|orientation">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.MAIN" />
