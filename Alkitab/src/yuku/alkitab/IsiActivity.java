@@ -643,12 +643,17 @@ public class IsiActivity extends Activity {
 
 	private void menuSearch_click() {
 		// cek db. Harus ada dan jadi.
+		long wmulai = System.currentTimeMillis();
 		boolean adaDb = SearchDb.cekAdaDb(this);
+		Log.i("alki", "cek ada db " + (System.currentTimeMillis() - wmulai) + " ms");
+		
 		boolean adaTabelEdisiIni = false;
 		
+		wmulai = System.currentTimeMillis();
 		if (adaDb) {
 			adaTabelEdisiIni = SearchDb.cekAdaTabelEdisi(this, S.edisi.nama);
 		}
+		Log.i("alki", "cek ada tabel edisi " + (System.currentTimeMillis() - wmulai) + " ms");
 		
 		if (! adaDb || ! adaTabelEdisiIni) {
 			AlertDialog dialog = new AlertDialog.Builder(this).setMessage(
