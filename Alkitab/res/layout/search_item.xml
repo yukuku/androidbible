@@ -28,13 +28,7 @@
 		android:layout_alignParentRight="true"
 		android:layout_alignWithParentIfMissing="true"
 
-		android:text="Simple application that shows how to use RelativeLayout bla balbl balblbalbal balbalbalbalbala" android:maxLines="7" android:gravity="top"/>
+		android:text="Simple application that shows how to use RelativeLayout bla balbl balblbalbal balbalbalbalbala" android:gravity="top"/>
 
-	<TextView
-		android:id="@+id/lTanggal"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-
-		android:layout_alignParentTop="true"
-		android:layout_alignParentRight="true" android:text="*"/>
+	
 </RelativeLayout>

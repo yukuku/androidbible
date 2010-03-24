@@ -4,6 +4,7 @@ package yuku.alkitab;
 import yuku.alkitab.model.*;
 import android.app.Activity;
 import android.content.*;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.database.sqlite.*;
 import android.graphics.Typeface;
@@ -18,6 +19,7 @@ import android.widget.*;
 import android.widget.TextView.BufferType;
 
 public class SearchActivity extends Activity {
+	private static final String NAMAPREF_pakeSnippet = "pakeSnippet";
 	ListView lsHasilCari;
 	ImageButton bCari;
 	EditText tCarian;
@@ -35,20 +37,24 @@ public class SearchActivity extends Activity {
 	static {
 		xwarna = new int[12];
 		
-		{
-			int w = 0x66ff66;
-			for (int i = 0; i < 6; i++) {
-				xwarna[i] = 0xff000000 | w;
-				w = (w >> 5) | (w << 19);
-			}
-		}
+//		{
+//			int w = 0x66ff66;
+//			for (int i = 0; i < 6; i++) {
+//				xwarna[i] = 0xff000000 | w;
+//				w = (w >> 5) | (w << 19);
+//			}
+//		}
+//		
+//		{
+//			int w = 0x6f666f;
+//			for (int i = 6; i < 12; i++) {
+//				xwarna[i] = 0xff000000 | w;
+//				w = (w >> 5) | (w << 19);
+//			}
+//		}
 		
-		{
-			int w = 0x6f666f;
-			for (int i = 6; i < 12; i++) {
-				xwarna[i] = 0xff000000 | w;
-				w = (w >> 5) | (w << 19);
-			}
+		for (int i = 0; i < xwarna.length; i++) {
+			xwarna[i] = 0xff66ff66;
 		}
 	}
 	
@@ -80,6 +86,11 @@ public class SearchActivity extends Activity {
 				finish();
 			}
 		});
+		
+		{
+			SharedPreferences preferences = getSharedPreferences(S.NAMA_PREFERENCES, 0);
+			pakeSnippet_ = preferences.getBoolean(NAMAPREF_pakeSnippet, false);
+		}
 		
 		final OnClickListener bCari_click = new View.OnClickListener() {
 
@@ -266,8 +277,15 @@ public class SearchActivity extends Activity {
 	@Override
 	public void finish() {
 		Log.d("alki", "finish");
-		returnValue.putExtra("carian", tCarian.getText().toString());
 		
+		{
+			SharedPreferences preferences = getSharedPreferences(S.NAMA_PREFERENCES, 0);
+			Editor editor = preferences.edit();
+			editor.putBoolean(NAMAPREF_pakeSnippet, pakeSnippet_);
+			editor.commit();
+		}
+		
+		returnValue.putExtra("carian", tCarian.getText().toString());
 		setResult(resultCode, returnValue);
 		super.finish();
 	}
