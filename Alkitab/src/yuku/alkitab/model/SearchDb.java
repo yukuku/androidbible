@@ -16,7 +16,7 @@ public class SearchDb {
 	
 	public static final String TABEL_UdahIndex = "UdahIndex";
 	public static final String KOLOM_waktuJadi = "waktuJadi";
-
+	
 	private static SearchDb instance = null;
 	
 	private Context context_;

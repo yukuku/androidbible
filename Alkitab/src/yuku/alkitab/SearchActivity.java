@@ -33,6 +33,7 @@ public class SearchActivity extends Activity {
 	private boolean pakeSnippet_ = false;
 	
 	private static int[] xwarna;
+	private static final int maxHasil = 300;
 
 	static {
 		xwarna = new int[12];
@@ -104,12 +105,16 @@ public class SearchActivity extends Activity {
 					cursor.close();
 				}
 				
-				cursor = db.rawQuery(String.format("select *, docid as _id, snippet(%s, '<font color=\"#66ff66\"><b>', '</b></font>', '...', -1, -40) as snip, offsets(%s) as xoff from %s where %s match ? limit 300", SearchDb.TABEL_Fts, SearchDb.TABEL_Fts, SearchDb.TABEL_Fts, SearchDb.KOLOM_content), new String[] {carian});
+				cursor = db.rawQuery(String.format("select *, docid as _id, snippet(%s, '<font color=\"#66ff66\"><b>', '</b></font>', '...', -1, -40) as snip, offsets(%s) as xoff from %s where %s match ? limit %d", SearchDb.TABEL_Fts, SearchDb.TABEL_Fts, SearchDb.TABEL_Fts, SearchDb.KOLOM_content, (maxHasil + 1)), new String[] {carian});
 				startManagingCursor(cursor);
 				
-				// panggil getCount untuk tau cursor ini sah ga
+				// panggil getCount untuk tau cursor ini sah ga, dan kasi peringatan kalo lebih dari max
 				try {
-					cursor.getCount();
+					int count = cursor.getCount();
+					
+					if (count > maxHasil) {
+						Toast.makeText(SearchActivity.this, String.format("Lebih dari %d ayat ditemukan", maxHasil), Toast.LENGTH_SHORT).show();
+					}
 				} catch (SQLiteException e) {
 					Log.w("alki", "carian ga sah", e);
 					//Toast.makeText(SearchActivity.this, "Bentuk carian tidak sah", Toast.LENGTH_SHORT).show();

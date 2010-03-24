@@ -873,12 +873,15 @@ public class IsiActivity extends Activity {
 	
 	
 	
-//	@Override
-//	public boolean onSearchRequested() {
-//		menuSearch_click();
-//		
-//		return true;
-//	}
+	@Override
+	public boolean onSearchRequested() {
+		// hanya tampilin ini kalo ga lagi bikin index.
+		if (! lagiBikinIndex) {
+			menuSearch_click();
+		}
+		
+		return true;
+	}
 	
 	private class AyatAdapter extends BaseAdapter {
 		private SpannableStringBuilder[] rendered_;
