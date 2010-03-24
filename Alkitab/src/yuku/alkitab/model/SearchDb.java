@@ -10,10 +10,12 @@ import android.util.Log;
 
 public class SearchDb {
 	public static final String TABEL_Fts = "Fts";
-	/** Alkitab Resource Identifier */
 	public static final String KOLOM_ari = "ari";
 	public static final String KOLOM_edisi_nama = "edisi_nama";
 	public static final String KOLOM_content = "content";
+	
+	public static final String TABEL_UdahIndex = "UdahIndex";
+	public static final String KOLOM_waktuJadi = "waktuJadi";
 
 	private static SearchDb instance = null;
 	
@@ -49,7 +51,7 @@ public class SearchDb {
 		SQLiteDatabase db = null;
 		try {
 			db = SQLiteDatabase.openDatabase(getDbPath(context), null, 0);
-			Cursor cursor = db.rawQuery(String.format("select count(*) as c from %s where %s = ? limit 1", TABEL_Fts, KOLOM_edisi_nama), new String[] {edisi_nama});
+			Cursor cursor = db.rawQuery(String.format("select count(*) as c from %s where %s = ? limit 1", TABEL_UdahIndex, KOLOM_edisi_nama), new String[] {edisi_nama});
 			cursor.moveToNext();
 			
 			int c = cursor.getInt(cursor.getColumnIndexOrThrow("c"));
@@ -98,6 +100,10 @@ public class SearchDb {
 						"%s text, " +
 						"%s integer, " +
 						"%s text)", TABEL_Fts, KOLOM_content, KOLOM_ari, KOLOM_edisi_nama));
+				
+				db.execSQL(String.format("create table %s (" +
+						"%s text, " +
+						"%s integer)", TABEL_UdahIndex, KOLOM_edisi_nama, KOLOM_waktuJadi));
 				
 				db.close();
 				

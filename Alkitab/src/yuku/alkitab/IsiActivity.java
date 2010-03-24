@@ -150,7 +150,11 @@ public class IsiActivity extends Activity {
 	@Override
 	protected Dialog onCreateDialog(final int id) {
 		if (id == DIALOG_bikinIndex) {
-			dialogBikinIndex = ProgressDialog.show(this, "Membuat indeks...", "Mempersiapkan indeks...", true, false);
+			dialogBikinIndex = new ProgressDialog(this);
+			dialogBikinIndex.setTitle("Membuat indeks...");
+			dialogBikinIndex.setMessage("Mempersiapkan indeks...");
+			dialogBikinIndex.setIndeterminate(true);
+			dialogBikinIndex.setCancelable(false);
 			
 			dialogBikinIndex.setOnCancelListener(new DialogInterface.OnCancelListener() {
 				@Override

@@ -1,6 +1,7 @@
 package yuku.alkitab.model;
 
 import yuku.alkitab.S;
+import yuku.andoutil.Sqlitil;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -93,7 +94,16 @@ public class PembuatIndex {
 			}
 	
 			listener.onProgress("Tahap 5: Mengoptimalkan indeks"); // 92%
-			db.execSQL(String.format("insert into %s (%s) values ('optimize')", SearchDb.TABEL_Fts, SearchDb.TABEL_Fts));
+			{
+				db.execSQL(String.format("insert into %s (%s) values ('optimize')", SearchDb.TABEL_Fts, SearchDb.TABEL_Fts));
+			}
+			
+			listener.onProgress("Tahap 6: Memberi tanda bahwa indeks sudah jadi");
+			{
+				db.delete(SearchDb.TABEL_UdahIndex, String.format("%s = ?", SearchDb.KOLOM_edisi_nama), new String[] {edisi_nama});
+				db.execSQL(String.format("insert into %s (%s, %s) values (?, ?)", SearchDb.TABEL_UdahIndex, SearchDb.KOLOM_edisi_nama, SearchDb.KOLOM_waktuJadi), new Object[] {edisi_nama, Sqlitil.nowDateTime()});
+			}
+			
 			// Debug.stopMethodTracing();
 		} finally {
 			listener.onProgress(null);
