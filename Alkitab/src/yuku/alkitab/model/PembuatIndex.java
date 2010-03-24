@@ -25,11 +25,16 @@ public class PembuatIndex {
 			values[2] = edisi_nama;
 	
 			// Debug.startMethodTracing("alki");
-			listener.onProgress("Tahap 2: Menghapus index yang sudah ada (agak lama)"); // 1%
+			listener.onProgress("Tahap 2: Menghapus tanda indeks yang sudah ada"); // 1%
+			{
+				db.delete(SearchDb.TABEL_UdahIndex, String.format("%s = ?", SearchDb.KOLOM_edisi_nama), new String[] {edisi_nama});
+			}
+			
+			listener.onProgress("Tahap 3: Menghapus indeks yang sudah ada (agak lama)"); // 1%
 			db.execSQL(String.format("delete from %s where %s = ?", SearchDb.TABEL_Fts, SearchDb.KOLOM_edisi_nama), new Object[] {edisi_nama});
 	
 			//# hitung total ayat
-			listener.onProgress("Tahap 3: Menghitung jumlah ayat"); // 10%
+			listener.onProgress("Tahap 4: Menghitung jumlah ayat"); // 10%
 			int totalAyat = 0;
 			for (int i = 0; i < nkitab; i++) {
 				Kitab k = xkitab[i];
@@ -45,7 +50,7 @@ public class PembuatIndex {
 			
 			int udah = 0;
 	
-			listener.onProgress("Tahap 4: Memasukkan isi ayat-ayat ke dalam index"); // 12%
+			listener.onProgress("Tahap 5: Memasukkan isi ayat-ayat ke dalam index"); // 12%
 			db.beginTransaction();
 			try {
 				for (int i = 0; i < nkitab; i++) {
@@ -79,7 +84,7 @@ public class PembuatIndex {
 								db.endTransaction();
 								Log.d("alki", "transaksi selesai");
 								
-								listener.onProgress(String.format("Tahap 4: Memasukkan %d dari %d ayat", udah, totalAyat));
+								listener.onProgress(String.format("Tahap 5: Memasukkan %d dari %d ayat", udah, totalAyat));
 								nbuffer = 0;
 								db.beginTransaction();
 							}
@@ -93,14 +98,13 @@ public class PembuatIndex {
 				db.endTransaction();
 			}
 	
-			listener.onProgress("Tahap 5: Mengoptimalkan indeks"); // 92%
+			listener.onProgress("Tahap 6: Mengoptimalkan indeks"); // 92%
 			{
 				db.execSQL(String.format("insert into %s (%s) values ('optimize')", SearchDb.TABEL_Fts, SearchDb.TABEL_Fts));
 			}
 			
-			listener.onProgress("Tahap 6: Memberi tanda bahwa indeks sudah jadi");
+			listener.onProgress("Tahap 7: Memberi tanda bahwa indeks sudah jadi");
 			{
-				db.delete(SearchDb.TABEL_UdahIndex, String.format("%s = ?", SearchDb.KOLOM_edisi_nama), new String[] {edisi_nama});
 				db.execSQL(String.format("insert into %s (%s, %s) values (?, ?)", SearchDb.TABEL_UdahIndex, SearchDb.KOLOM_edisi_nama, SearchDb.KOLOM_waktuJadi), new Object[] {edisi_nama, Sqlitil.nowDateTime()});
 			}
 			

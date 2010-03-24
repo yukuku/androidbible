@@ -497,10 +497,10 @@ public class IsiActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		new MenuInflater(this).inflate(R.menu.isi, menu);
 		
-		menu.add(0, 0x985801, 0, "gebug 1 (dump p+p)");
-		menu.add(0, 0x985802, 0, "gebug 2 (create index)");
-		menu.add(0, 0x985803, 0, "gebug 3 (cari)");
-		menu.add(0, 0x985804, 0, "gebug 4 (reset p+p)");
+		menu.add(0, 0x985801, 0, "gebug 1: dump p+p");
+		menu.add(0, 0x985802, 0, "gebug 2: bikin ulang index");
+		menu.add(0, 0x985803, 0, "gebug 3");
+		menu.add(0, 0x985804, 0, "gebug 4: reset p+p");
 		
 		return true;
 	}
