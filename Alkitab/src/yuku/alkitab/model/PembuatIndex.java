@@ -10,14 +10,14 @@ public class PembuatIndex {
 		void onProgress(String msg);
 	}
 	
-	public void buatIndex(Context context, OnProgressListener listener) {
+	public void buatIndex(Context context, Edisi edisi, Kitab[] xkitab, OnProgressListener listener) {
 		try {
 			listener.onProgress("Tahap 1: Membuat tabel");
 	
 			SQLiteDatabase db = SearchDb.getInstance(context).getDatabase();
 			
-			String edisi_nama = S.edisi.nama;
-			int nkitab = S.edisi.nkitab;
+			String edisi_nama = edisi.nama;
+			int nkitab = edisi.nkitab;
 			String sql = String.format("insert into %s (%s, %s, %s) values (?, ?, ?)", SearchDb.TABEL_Fts, SearchDb.KOLOM_content, SearchDb.KOLOM_ari, SearchDb.KOLOM_edisi_nama);
 	
 			Object[] values = new Object[3];
@@ -31,7 +31,7 @@ public class PembuatIndex {
 			listener.onProgress("Tahap 3: Menghitung jumlah ayat"); // 10%
 			int totalAyat = 0;
 			for (int i = 0; i < nkitab; i++) {
-				Kitab k = S.xkitab[i];
+				Kitab k = xkitab[i];
 				int npasal = k.npasal;
 				
 				for (int j = 0; j < npasal; j++) {
@@ -48,15 +48,15 @@ public class PembuatIndex {
 			db.beginTransaction();
 			try {
 				for (int i = 0; i < nkitab; i++) {
-					S.kitab = S.xkitab[i];
+					Kitab kitab = xkitab[i];
 	
 					// kitab uda diatur... lanjut
-					int npasal = S.kitab.npasal;
+					int npasal = kitab.npasal;
 	
 					for (int j = 0; j < npasal; j++) {
 						int pasal = j + 1; // pasal 1..npasal
 	
-						String[] xayat = S.muatTeks(context.getResources(), pasal);
+						String[] xayat = S.muatTeks(context.getResources(), kitab, pasal);
 						int ariPasal = Ari.encode(i, pasal, 0); // semua ayat di pasal
 	
 						// pasal uda diatur... lanjut
@@ -84,7 +84,7 @@ public class PembuatIndex {
 							}
 						}
 	
-						Log.d("alki", String.format("index %s %d (0x%08x) OK", S.kitab.judul, pasal, ariPasal));
+						Log.d("alki", String.format("index %s %d (0x%08x) OK", kitab.judul, pasal, ariPasal));
 					}
 				}
 				db.setTransactionSuccessful();

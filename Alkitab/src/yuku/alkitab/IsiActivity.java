@@ -616,7 +616,7 @@ public class IsiActivity extends Activity {
 			@Override
 			public void run() {
 				Log.d("alki", "tred 2 jalan");
-				pembuatIndex.buatIndex(IsiActivity.this, new PembuatIndex.OnProgressListener() {
+				pembuatIndex.buatIndex(IsiActivity.this, S.edisi, S.xkitab, new PembuatIndex.OnProgressListener() {
 					@Override
 					public void onProgress(final String msg) {
 						handler.post(new Runnable() {
@@ -768,7 +768,7 @@ public class IsiActivity extends Activity {
 				pasal = params[0];
 				ayat = params[1];
 				
-				xayat = S.muatTeks(getResources(), pasal);
+				xayat = S.muatTeks(getResources(), S.kitab, pasal);
 				return siapinTampilanAyat();
 			}
 		

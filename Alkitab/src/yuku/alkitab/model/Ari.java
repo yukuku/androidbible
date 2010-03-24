@@ -1,6 +1,5 @@
 package yuku.alkitab.model;
 
-import yuku.alkitab.S;
 
 /**
  * Alkitab resource identifier
@@ -27,19 +26,19 @@ public class Ari {
 		return (ari & 0x000000ff);
 	}
 	
-	public static String toAlamat(int ari) {
+	public static String toAlamat(Kitab[] xkitab, int ari) {
 		int kitab = toKitab(ari);
 		int pasal = toPasal(ari);
 		int ayat = toAyat(ari);
 		
 		StringBuilder sb = new StringBuilder(30);
 		
-		if (kitab >= S.xkitab.length) {
+		if (kitab >= xkitab.length) {
 			sb.append('[');
 			sb.append(kitab);
 			sb.append("] ");
 		} else {
-			sb.append(S.xkitab[kitab].judul).append(" ");
+			sb.append(xkitab[kitab].judul).append(" ");
 		}
 		
 		sb.append(pasal).append(':').append(ayat);

@@ -81,7 +81,7 @@ public class S {
 	 * @param pasal
 	 *            harus betul! antara 1 sampe npasal, 0 ga boleh
 	 */
-	public static String[] muatTeks(Resources resources, int pasal) {
+	public static String[] muatTeks(Resources resources, Kitab kitab, int pasal) {
 		int offset = kitab.pasal_offset[pasal - 1];
 		int length = 0;
 

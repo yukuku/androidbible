@@ -118,7 +118,9 @@ public class SearchActivity extends Activity {
 					@Override
 					public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
 						if (view.getId() == R.id.lAlamat) {
-							((TextView)view).setText(Ari.toAlamat(cursor.getInt(columnIndex)));
+							S.siapinKitab(getResources());
+							
+							((TextView)view).setText(Ari.toAlamat(S.xkitab, cursor.getInt(columnIndex)));
 							return true;
 						} else if (view.getId() == R.id.lCuplikan) {
 							
