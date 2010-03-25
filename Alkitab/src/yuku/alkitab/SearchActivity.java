@@ -23,6 +23,7 @@ public class SearchActivity extends Activity {
 	ListView lsHasilCari;
 	ImageButton bCari;
 	EditText tCarian;
+	TextView lTiadaHasil;
 
 	private SQLiteDatabase db;
 	private Cursor cursor;
@@ -88,6 +89,8 @@ public class SearchActivity extends Activity {
 			}
 		});
 		
+		lTiadaHasil = (TextView) findViewById(R.id.lTiadaHasil);
+		
 		{
 			SharedPreferences preferences = getSharedPreferences(S.NAMA_PREFERENCES, 0);
 			pakeSnippet_ = preferences.getBoolean(NAMAPREF_pakeSnippet, false);
@@ -111,6 +114,15 @@ public class SearchActivity extends Activity {
 				// panggil getCount untuk tau cursor ini sah ga, dan kasi peringatan kalo lebih dari max
 				try {
 					int count = cursor.getCount();
+					
+					if (count == 0) {
+						lsHasilCari.setVisibility(View.GONE);
+						lTiadaHasil.setVisibility(View.VISIBLE);
+						lTiadaHasil.setText(Html.fromHtml(String.format("Pencarian <b>%s</b> tidak menghasilkan apa-apa. <br/>Tips: gunakan imbuhan yang sesuai.", carian)), BufferType.SPANNABLE);
+					} else {
+						lsHasilCari.setVisibility(View.VISIBLE);
+						lTiadaHasil.setVisibility(View.GONE);
+					}
 					
 					if (count > maxHasil) {
 						Toast.makeText(SearchActivity.this, String.format("Lebih dari %d ayat ditemukan", maxHasil), Toast.LENGTH_SHORT).show();
