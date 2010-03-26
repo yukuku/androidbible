@@ -5,10 +5,11 @@ import java.util.*;
 
 import yuku.alkitab.model.*;
 import yuku.bintex.BintexReader;
+import yuku.kirimfidbek.PengirimFidbek;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
-import android.widget.ArrayAdapter;
+import android.widget.*;
 
 public class S {
 	public static final String NAMA_PREFERENCES = "yuku.alkitab";
@@ -140,9 +141,21 @@ public class S {
 		return adapter;
 	}
 
-	public static void siapinPengirimFidbek(IsiActivity activity) {
+	public static synchronized void siapinPengirimFidbek(final IsiActivity activity) {
 		if (pengirimFidbek == null) {
-			pengirimFidbek = new PengirimFidbek(activity);
+			pengirimFidbek = new PengirimFidbek(activity, activity.getSharedPreferences(S.NAMA_PREFERENCES, 0));
+			pengirimFidbek.setOnSuccessListener(new PengirimFidbek.OnSuccessListener() {
+				@Override
+				public void onSuccess(final byte[] response) {
+					activity.handler.post(new Runnable() {
+						@Override
+						public void run() {
+							Log.d("alki", "KirimFidbek respon: " + new String(response, 0, response.length));
+							Toast.makeText(activity, R.string.fidbekMakasih_s, Toast.LENGTH_SHORT).show();
+						}
+					});
+				}
+			});
 		}
 	}
 	

@@ -135,15 +135,23 @@ public class IsiActivity extends Activity {
 		tampil(pasalTerakhir, ayatTerakhir); 
 		
 		final long terakhirMintaFidbek = preferences.getLong(NAMAPREF_terakhirMintaFidbek, 0);
-		final long sekarang = System.currentTimeMillis();
-		if (terakhirMintaFidbek == 0 || (sekarang - terakhirMintaFidbek > 1000*60*60*24)) { // 1 hari ato belom pernah
-			handler.post(new Runnable() {
-				
-				@Override
-				public void run() {
-					popupMintaFidbek();
-				}
-			});
+		
+		if (terakhirMintaFidbek == 0) {
+			Editor editor = preferences.edit();
+			editor.putLong(NAMAPREF_terakhirMintaFidbek, System.currentTimeMillis());
+			editor.commit();
+		} else {
+			final long sekarang = System.currentTimeMillis();
+			if (sekarang - terakhirMintaFidbek > 1000*60*60*24) { // 1 hari ato belom pernah
+				handler.post(new Runnable() {
+					
+					@Override
+					public void run() {
+						popupMintaFidbek();
+					}
+				});
+			}
+			
 		}
 	}
 
