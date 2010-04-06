@@ -14,8 +14,12 @@ import android.widget.*;
 public class S {
 	public static final String NAMA_PREFERENCES = "yuku.alkitab";
 	
+	//# 33nya harus siap di siapinEdisi
 	public static Edisi[] xedisi;
 	public static Edisi edisi;
+	public static IndexPerikop indexPerikop;
+	
+	//# 22nya harus siap di siapinKitab
 	public static Kitab[] xkitab;
 	public static Kitab kitab;
 
@@ -39,6 +43,28 @@ public class S {
 
 		S.xedisi = xedisi.toArray(new Edisi[xedisi.size()]);
 		S.edisi = S.xedisi[0]; // TODO selalu pilih edisi pertama
+		
+		if (S.edisi.perikopAda) {
+			if (S.indexPerikop != null && S.edisi.nama.equals(S.indexPerikop)) {
+				// indexPerikop uda kemuat dan uda betul
+			} else {
+				long wmulai = System.currentTimeMillis();
+				
+				InputStream is = resources.openRawResource(getRawInt(resources, S.edisi.nama + "_perikop_index_bt"));
+				BintexReader in = new BintexReader(is);
+				try {
+					S.indexPerikop = IndexPerikop.baca(in, S.edisi.nama);
+				} catch (IOException e) {
+					Log.e("alki", "baca perikop index ngaco", e);
+				} finally {
+					in.close();
+				}
+				
+				Log.d("alki", "Muat index perikop butuh ms: " + (System.currentTimeMillis() - wmulai));
+			}
+		} else {
+			S.indexPerikop = null;
+		}
 	}
 
 	public static void siapinKitab(Resources resources) {
@@ -47,11 +73,10 @@ public class S {
 		}
 		if (xkitab != null) return;
 
+		InputStream is = resources.openRawResource(getRawInt(resources, edisi.nama + "_index_bt"));
+		BintexReader in = new BintexReader(is);
 		try {
 			//Debug.startMethodTracing("siapinKitab");
-			
-			InputStream is = resources.openRawResource(getRawInt(resources, edisi.nama + "_index_bt"));
-			BintexReader in = new BintexReader(is);
 	
 			ArrayList<Kitab> xkitab = new ArrayList<Kitab>();
 	
@@ -70,6 +95,8 @@ public class S {
 			S.xkitab = xkitab.toArray(new Kitab[xkitab.size()]);
 			S.kitab = S.xkitab[0]; // TODO selalu pilih edisi pertama
 		} finally {
+			in.close();
+			
 			//Debug.stopMethodTracing();
 		}
 		
