@@ -579,18 +579,18 @@ public class IsiActivity extends Activity {
 			return true;
 		} else if (item.getItemId() == 0x985801) { // debug 1
 			// dump pref
-			Log.i("alki.gebug1", "semua pref segera muncul di bawah ini");
+			Log.i("alki", "semua pref segera muncul di bawah ini");
 			{
 				Map<String, ?> all = preferences.getAll();
 				for (Map.Entry<String, ?> entry: all.entrySet()) {
-					Log.i("alki.gebug1", String.format("%s = %s", entry.getKey(), entry.getValue()));
+					Log.i("alki", String.format("%s = %s", entry.getKey(), entry.getValue()));
 				}
 			}
-			Log.i("alki.gebug1", "dan pengaturan");
+			Log.i("alki", "dan pengaturan");
 			{
 				Map<String, ?> all = pengaturan.getAll();
 				for (Map.Entry<String, ?> entry: all.entrySet()) {
-					Log.i("alki.gebug1", String.format("%s = %s", entry.getKey(), entry.getValue()));
+					Log.i("alki", String.format("%s = %s", entry.getKey(), entry.getValue()));
 				}
 			}
 			return true;
@@ -785,6 +785,7 @@ public class IsiActivity extends Activity {
 				ayat = params[1];
 				
 				xayat = S.muatTeks(getResources(), S.kitab, pasal);
+				S.muatPerikop(getResources(), S.kitab.pos, pasal); // FIXME
 				return siapinTampilanAyat();
 			}
 		

@@ -53,7 +53,7 @@ public class S {
 				InputStream is = resources.openRawResource(getRawInt(resources, S.edisi.nama + "_perikop_index_bt"));
 				BintexReader in = new BintexReader(is);
 				try {
-					S.indexPerikop = IndexPerikop.baca(in, S.edisi.nama);
+					S.indexPerikop = IndexPerikop.baca(in, S.edisi.nama, getRawInt(resources, S.edisi.nama + "_perikop_blok_bt"));
 				} catch (IOException e) {
 					Log.e("alki", "baca perikop index ngaco", e);
 				} finally {
@@ -150,6 +150,40 @@ public class S {
 			return res.toArray(new String[res.size()]);
 		} catch (IOException e) {
 			return new String[] { e.getMessage() };
+		}
+	}
+	
+	public static void muatPerikop(Resources resources, int kitab, int pasal) {
+		int ariMin = Ari.encode(kitab, pasal, 0);
+		int ariMax = Ari.encode(kitab, pasal+1, 0);
+		
+		IndexPerikop indexPerikop = S.indexPerikop;
+		
+		int pertama = indexPerikop.cariPertama(ariMin, ariMax);
+		
+		if (pertama == -1) {
+			// return null;
+		}
+		
+		int kini = pertama;
+		
+		BintexReader in = new BintexReader(resources.openRawResource(indexPerikop.perikopBlokResId));
+		try {
+			while (true) {
+				int ari = indexPerikop.getAri(kini);
+				
+				if (ari >= ariMax) {
+					// habis. Uda ga relevan
+					break;
+				}
+				
+				Blok blok = indexPerikop.getBlok(in, kini);
+				kini++;
+				
+				Log.d("alki", "muatPerikop 0x" + Integer.toHexString(ari) + " " + blok);
+			}
+		} finally {
+			in.close();
 		}
 	}
 

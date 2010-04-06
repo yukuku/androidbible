@@ -15,7 +15,7 @@ Entri {
 Blok {
 	Uint8 versi = 1
 	ShortStr judul
-	Int nparalel
+	Uint8 nparalel
 	ShortStr[nparalel] xparalel
 }
 
