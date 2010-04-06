@@ -3,7 +3,6 @@ package yuku.alkitab;
 import java.util.*;
 import java.util.regex.*;
 
-import yuku.alkitab.S.Peloncat;
 import yuku.alkitab.model.*;
 import android.app.*;
 import android.content.*;
@@ -195,14 +194,14 @@ public class IsiActivity extends Activity {
 		
 		Log.d("alki", "akan loncat ke " + alamat);
 		
-		Peloncat peloncat = new S.Peloncat();
+		Peloncat peloncat = new Peloncat();
 		boolean sukses = peloncat.parse(alamat);
 		if (! sukses) {
 			Toast.makeText(this, "Alamat salah: " + alamat, Toast.LENGTH_SHORT).show();
 			return;
 		}
 		
-		int kitab = peloncat.getKitab();
+		int kitab = peloncat.getKitab(S.xkitab);
 		if (kitab != -1) {
 			S.kitab = S.xkitab[kitab];
 		}
