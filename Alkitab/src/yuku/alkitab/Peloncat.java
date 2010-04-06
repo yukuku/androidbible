@@ -295,12 +295,16 @@ public class Peloncat {
 		
 		// 3. String matching hanya kalo p_kitab 2 huruf ato lebih
 		if (p_kitab.length() >= 2) {
-			int minSkor = 9999999;
+			int minSkor = 99999999;
 			int pos = -1;
 			
 			for (Peloncat.KitabRef ref: refs) {
 				int skor = Levenshtein.distance(p_kitab, ref.pendek);
-				Log.d("alki", String.format("tebakKitab fase 3: dengan %s:%d skor %d", ref.pendek, ref.pos, skor));
+				if (p_kitab.charAt(0) != ref.pendek.charAt(0)) {
+					skor += 150; // kira2 1.5 insertion
+				}
+				
+				Log.d("alki", "tebakKitab fase 3: dengan " + ref.pendek + ":" + ref.pos + " skor " + skor);
 				
 				if (skor < minSkor) {
 					minSkor = skor;

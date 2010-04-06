@@ -1,10 +1,10 @@
 package yuku.alkitab;
 
 public class Levenshtein {
-	private static final int insertion = 1;
-	private static final int deletion = 5;
-	private static final int substitution = 4;
-	
+	private static final int insertion = 100;
+	private static final int deletion = 500;
+	private static final int substitution = 400;
+
 	static int distance(String s, String t) {
 		// d is a table with m+1 rows and n+1 columns
 		int m = s.length();
@@ -20,14 +20,14 @@ public class Levenshtein {
 			d[0][j] = j * insertion; // insertion
 		}
 
-		for (int j = 1; j <= n; j++) {
-			for (int i = 1; i <= m; i++) {
-				if (s.charAt(i-1) == t.charAt(j-1)) {
-					d[i][j] = d[i - 1][j - 1];
+		for (int j = 1; j <= n; j++) { // j adalah index t
+			for (int i = 1; i <= m; i++) { // i adalah index s
+				if (s.charAt(i - 1) == t.charAt(j - 1)) {
+					d[i][j] = d[i - 1][j - 1] + j + j; // makin jauh samanya, makin ga penting
 				} else {
 					d[i][j] = minimum(
 							d[i - 1][j] + deletion, // deletion
-							d[i][j - 1] + insertion, // insertion
+							d[i][j - 1] + insertion + (j - i), // insertion
 							d[i - 1][j - 1] + substitution // substitution
 					);
 				}

@@ -87,28 +87,28 @@ public class PeloncatTest extends AndroidTestCase {
 			xkitab[i] = k;
 		}
 	}
-	
+
 	void coba(String alamat, boolean ok, int kitab, int pasal, int ayat) {
 		long wmulai = System.currentTimeMillis();
-		
+
 		try {
 			Peloncat peloncat = new Peloncat();
-			
+
 			boolean ok1 = peloncat.parse(alamat);
 			if (ok1) {
 				int kitab1 = peloncat.getKitab(xkitab);
 				Assert.assertEquals(kitab, kitab1);
-				
+
 				int pasal1 = peloncat.getPasal();
 				Assert.assertEquals(pasal, pasal1);
-				
+
 				int ayat1 = peloncat.getAyat();
 				Assert.assertEquals(ayat, ayat1);
-				
+
 				Log.d(PeloncatTest.class.getSimpleName(), alamat + " -> " + kitab + " " + pasal + " " + ayat);
 			} else {
 				Assert.assertEquals(ok, ok1);
-	
+
 				Log.d(PeloncatTest.class.getSimpleName(), alamat + " -> false");
 			}
 		} finally {
@@ -133,10 +133,10 @@ public class PeloncatTest extends AndroidTestCase {
 		coba("Kej", true, 0, 0, 0);
 		coba("Kel", true, 1, 0, 0);
 		coba("Kid", true, 21, 0, 0);
-		
+
 		coba("Kej 4 5 1 3", false, 0, 0, 0);
 		coba("Kej 4 5 1", false, 0, 0, 0);
-		
+
 		coba("Kisah", true, 43, 0, 0);
 		coba("Kisah 4", true, 43, 4, 0);
 		coba("Kisah 4 999", true, 43, 4, 999);
@@ -146,7 +146,7 @@ public class PeloncatTest extends AndroidTestCase {
 		coba("Kisah rasul", true, 43, 0, 0);
 		coba("Kisah rasul 4", true, 43, 4, 0);
 		coba("Kisah rasul 4 999", true, 43, 4, 999);
-		
+
 		// angka di depan
 		coba("1yoh", true, 61, 0, 0);
 		coba("2yo", true, 62, 0, 0);
@@ -166,28 +166,44 @@ public class PeloncatTest extends AndroidTestCase {
 		coba("1yoh4", true, 61, 4, 0);
 		coba("2yo4", true, 62, 4, 0);
 		coba("3y4", true, 63, 4, 0);
-		
+
 		// tanda strip di nama kitab
 		coba("1raja-raja 4 999", true, 10, 4, 999);
 		coba("2 raja-raja 4 999", true, 11, 4, 999);
 		coba("kidung-agung 4 999", true, 21, 4, 999);
 		coba("3-yoha 4 999", true, 63, 4, 999);
-		
 
 		// pake tanda strip! susah deh.
 		coba("Kejadian 1-2", true, 0, 1, 0);
 		coba("Kejadian 1:2-3", true, 0, 1, 2);
 		coba("Kejadian 1:2-3:4", true, 0, 1, 2);
-		
+
 		coba("Kejadian 11-22", true, 0, 11, 0);
 		coba("Kejadian 11- 22", true, 0, 11, 0);
 		coba("Kejadian 11 -22", true, 0, 11, 0);
 		coba("Kejadian 11 - 22", true, 0, 11, 0);
 		coba("Kejadian 11:22-33:44", true, 0, 11, 22);
-		
 
 		coba("1yoh 4-5", true, 61, 4, 0);
 		coba("2 yo 5:6-7", true, 62, 5, 6);
 		coba("3y6:7-8", true, 63, 6, 7);
+
+		String[] ss = { "Kej", "Kel",
+				"Im", "Bil", "Ul", "Yos",
+				"Hak", "Rut", "1Sam", "2Sam", "1Raj", "2Raj", "1Taw", "2Taw", "Ezr",
+				"Neh", "Est", "Ayub", "Mazm", "Ams", "Pengkh", "Kid",
+				"Yes", "Yer", "Rat", "Yeh", "Dan", "Hos", "Yoel", "Am", "Ob", "Yun",
+				"Mi", "Nah", "Hab", "Zef", "Hag", "Za", "Mal",
+				"Mat", "Mr", "Luk", "Yoh", "Kis", "Rom", "1Kor", "2Kor", "Gal", "Ef", "Fili", "Kol",
+				"1Tes", "2Tes", "1Tim", "2Tim", "Tit",
+				"Filem", "Ibr", "Yak", "1Pet", "2Pet", "1Yoh", "2Yoh", "3Yoh", "Yud",
+				"Wahy",
+		};
+		
+		for (int i = 0; i < ss.length; i++) {
+			String s = ss[i];
+			
+			coba(s, true, i, 0, 0);
+		}
 	}
 }
