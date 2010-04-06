@@ -1,0 +1,21 @@
+// file <edisi.nama>_perikop_index_bt.bt
+
+PerikopIndex {
+	Int nentri
+	Entri[nentri] xentri
+}
+
+Entri {
+	Int ari
+	Int ofsetKeBlok
+}
+
+// file <edisi.nama>_perikop_blok_bt.bt
+
+Blok {
+	Uint8 versi = 1
+	ShortStr judul
+	Int nparalel
+	ShortStr[nparalel] xparalel
+}
+

@@ -50,9 +50,6 @@ public class S {
 		try {
 			//Debug.startMethodTracing("siapinKitab");
 			
-//			InputStream is = resources.openRawResource(getRawInt(resources, edisi.nama + "_index"));
-//			Utf8Reader in = new Utf8Reader(is);
-//			SimpleScanner sc = new SimpleScanner(in, 200);
 			InputStream is = resources.openRawResource(getRawInt(resources, edisi.nama + "_index_bt"));
 			BintexReader in = new BintexReader(is);
 	

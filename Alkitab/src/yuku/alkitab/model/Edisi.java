@@ -1,11 +1,12 @@
 package yuku.alkitab.model;
 
-import java.util.*;
+import java.util.Scanner;
 
 public class Edisi {
 	public String nama;
 	public 	String judul;
 	public int nkitab;
+	public boolean perikopAda;
 	
 	public static Edisi baca(Scanner sc) {
 		Edisi e = new Edisi();
@@ -21,6 +22,8 @@ public class Edisi {
 					e.judul = sc.next();
 				} else if (key.equals("nkitab")) {
 					e.nkitab = sc.nextInt();
+				} else if (key.equals("perikopAda")) {
+					e.perikopAda = sc.nextInt() != 0;
 				} else if (key.equals("uda")) {
 					break;
 				}
