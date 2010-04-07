@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_height="wrap_content" android:orientation="vertical" android:layout_width="fill_parent">
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Judul Perikop" android:id="@+id/lJudul" android:textStyle="bold" android:textSize="17dp" android:paddingTop="12dp"></TextView>
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/lXparalel" android:text="Mat 23:4; Luk 2:12-19; Yoh 3:16-4:4" android:layout_marginLeft="12dp"></TextView>
+</LinearLayout>

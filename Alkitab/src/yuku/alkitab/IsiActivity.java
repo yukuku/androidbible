@@ -39,6 +39,7 @@ public class IsiActivity extends Activity {
 	Button bTuju;
 	ImageButton bKiri;
 	ImageButton bKanan;
+	
 	int pasal = 0;
 	int ayatContextMenu = -1;
 	String isiAyatContextMenu = null;
@@ -243,19 +244,17 @@ public class IsiActivity extends Activity {
 		
 		new MenuInflater(this).inflate(R.menu.context_ayat, menu);
 		
-		
 		// simpen ayat yang dipilih untuk dipake sama menu tambah bukmak
 		{
 			AdapterContextMenuInfo menuInfo2 = (AdapterContextMenuInfo) menuInfo;
-			this.ayatContextMenu = (menuInfo2.position + 1);
-			this.isiAyatContextMenu = xayat[menuInfo2.position];
+			this.ayatContextMenu = (int) (menuInfo2.id) + 1;
+			this.isiAyatContextMenu = xayat[(int) menuInfo2.id];
 		}
 		
 		//# pasang header
 		String alamat = S.kitab.judul + " " + this.pasal + ":" + this.ayatContextMenu;
 		menu.setHeaderTitle(alamat);
 	}
-
 	
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
@@ -385,18 +384,13 @@ public class IsiActivity extends Activity {
 	private int getAyatBerdasarSkrol() {
 		int firstPos = lsIsi.getFirstVisiblePosition();
 
-		// TODO bikin lebih tepat.
-		if (firstPos == 0) {
-			return 1;
+		if (firstPos != 0) {
+			firstPos++;
 		}
 		
-		firstPos += 2;
+		int ayat = ayatAdapter_.getAyatDariPosition(firstPos);
 		
-		if (firstPos > xayat.length) {
-			firstPos = xayat.length;
-		}
-		
-		return firstPos;
+		return ayat;
 	}
 
 	private void bTuju_click() {
@@ -778,6 +772,9 @@ public class IsiActivity extends Activity {
 		new AsyncTask<Integer, Void, SpannableStringBuilder[]>() {
 			int pasal;
 			int ayat;
+			int[] perikop_xari;
+			Blok[] perikop_xblok;
+			int nblok;
 			
 			@Override
 			protected SpannableStringBuilder[] doInBackground(Integer... params) {
@@ -785,13 +782,19 @@ public class IsiActivity extends Activity {
 				ayat = params[1];
 				
 				xayat = S.muatTeks(getResources(), S.kitab, pasal);
-				S.muatPerikop(getResources(), S.kitab.pos, pasal); // FIXME
+				
+				//# max dibikin pol 30 aja (1 pasal max 30 blok, cukup mustahil)
+				int max = 30;
+				perikop_xari = new int[max];
+				perikop_xblok = new Blok[max];
+				nblok = S.muatPerikop(getResources(), S.kitab.pos, pasal, perikop_xari, perikop_xblok, max); // FIXME
+				
 				return siapinTampilanAyat();
 			}
 		
 			@Override
 			protected void onPostExecute(SpannableStringBuilder[] result) {
-				ayatAdapter_.setRendered(result);
+				ayatAdapter_.setRendered(result, perikop_xari, perikop_xblok, nblok);
 				lsIsi.setAdapter(ayatAdapter_);
 				ayatAdapter_.notifyDataSetChanged();
 				
@@ -804,8 +807,13 @@ public class IsiActivity extends Activity {
 				lsIsi.post(new Runnable() {
 					@Override
 					public void run() {
-						// ayat mulai dari 1. setSelectionFromTop mulai dari 0.
-						lsIsi.setSelectionFromTop(ayat - 1, lsIsi.getVerticalFadingEdgeLength());
+						int position = ayatAdapter_.getPositionDariAyat(ayat);
+						
+						if (position == -1) {
+							Log.w("alki", "ga bisa ketemu ayat " + ayat + ", ANEH!");
+						} else {
+							lsIsi.setSelectionFromTop(position, lsIsi.getVerticalFadingEdgeLength());
+						}
 					}
 				});
 			}
@@ -884,8 +892,6 @@ public class IsiActivity extends Activity {
 		Log.d("alki", "onConfigurationChanged");
 	}
 	
-	
-	
 	@Override
 	public boolean onSearchRequested() {
 		// hanya tampilin ini kalo ga lagi bikin index.
@@ -898,47 +904,152 @@ public class IsiActivity extends Activity {
 	
 	private class AyatAdapter extends BaseAdapter {
 		private SpannableStringBuilder[] rendered_;
+		private int[] perikop_xari_;
+		private Blok[] perikop_xblok_;
+		private int nblok_;
 		
-		synchronized void setRendered(SpannableStringBuilder[] baru) {
+		/**
+		 * Tiap elemen, kalo 0 sampe positif, berarti menunjuk ke AYAT di rendered_
+		 * kalo negatif, -1 berarti index 0 di perikop_*, -2 (a) berarti index 1 (b) di perikop_*
+		 * 
+		 * Konvert a ke b: -(a+1); // -a-1 juga sih sebetulnya. gubrak.
+		 * Konvert b ke a: -b-1;
+		 */
+		private int[] penunjukKotak_;
+		
+		synchronized void setRendered(SpannableStringBuilder[] baru, int[] perikop_xari, Blok[] perikop_xblok, int nblok) {
 			rendered_ = baru;
+			perikop_xari_ = perikop_xari;
+			perikop_xblok_ = perikop_xblok;
+			nblok_ = nblok;
+			
+			bikinPenunjukKotak();
 		}
 		
+		private void bikinPenunjukKotak() {
+			penunjukKotak_ = new int[rendered_.length + nblok_];
+			
+			int posBlok = 0;
+			int posAyat = 0;
+			int posPK = 0;
+			
+			int nayat = rendered_.length;
+			while (true) {
+				// cek apakah judul perikop, DAN perikop masih ada
+				if (posBlok < nblok_) {
+					// masih memungkinkan
+					if (Ari.toAyat(perikop_xari_[posBlok]) - 1 == posAyat) {
+						// ADA PERIKOP.
+						penunjukKotak_[posPK++] = -posBlok-1;
+						posBlok++;
+						continue;
+					}
+				}
+				
+				// cek apakah ga ada ayat lagi
+				if (posAyat >= nayat) {
+					break;
+				}
+				
+				// uda ga ada perikop, ATAU belom saatnya perikop. Maka masukin ayat.
+				penunjukKotak_[posPK++] = posAyat;
+				posAyat++;
+				continue;
+			}
+			
+			if (penunjukKotak_.length != posPK) {
+				// ada yang ngaco! di algo di atas
+				throw new RuntimeException("Algo selip2an perikop salah! posPK=" + posPK + " posAyat=" + posAyat + " posBlok=" + posBlok + " nayat=" + nayat + " nblok_=" + nblok_ + " xari:" + Arrays.toString(perikop_xari_) + " xblok:" + Arrays.toString(perikop_xblok_));
+			}
+		}
+
 		@Override
 		public synchronized int getCount() {
 			if (rendered_ == null) return 0;
-			return rendered_.length;
+
+			return penunjukKotak_.length;
 		}
 
 		@Override
 		public synchronized String getItem(int position) {
-			return rendered_[position].toString();
+			int id = penunjukKotak_[position];
+			
+			if (id >= 0) {
+				return rendered_[position].toString();
+			} else {
+				return perikop_xblok_[-id-1].toString();
+			}
 		}
 
 		@Override
 		public synchronized long getItemId(int position) {
-			 return position;
+			 return penunjukKotak_[position];
 		}
 
 		@Override
 		public synchronized View getView(int position, View convertView, ViewGroup parent) {
-			TextView res;
+			// Harus tentukan apakah ini perikop ato ayat.
+			int id = penunjukKotak_[position];
 			
-			if (convertView == null) {
-				res = (TextView) LayoutInflater.from(IsiActivity.this).inflate(R.layout.satu_ayat, null);
+			if (id >= 0) {
+				TextView res;
+				
+				if (convertView == null || convertView.getId() != R.layout.satu_ayat) {
+					res = (TextView) LayoutInflater.from(IsiActivity.this).inflate(R.layout.satu_ayat, null);
+					res.setId(R.layout.satu_ayat);
+				} else {
+					res = (TextView) convertView;
+				}
+				
+				res.setTypeface(jenisHurufSesuaiPengaturan_, tebalHurufSesuaiPengaturan_);
+				res.setTextSize(TypedValue.COMPLEX_UNIT_PX, ukuranTeksSesuaiPengaturan_);
+				res.setText(rendered_[id], BufferType.SPANNABLE);
+				
+				if (cerahTeks != null) {
+					int color = ((255 * cerahTeks / 100) * 0x010101) | 0xff000000;
+					res.setTextColor(color);
+				}
+				
+				return res;
 			} else {
-				res = (TextView) convertView;
+				View res;
+				
+				if (convertView == null || convertView.getId() != R.layout.header_perikop) {
+					res = LayoutInflater.from(IsiActivity.this).inflate(R.layout.header_perikop, null);
+					res.setId(R.layout.header_perikop);
+				} else {
+					res = convertView;
+				}
+				
+				Blok blok = perikop_xblok_[-id-1];
+				
+				TextView lJudul = (TextView) res.findViewById(R.id.lJudul);
+				TextView lXparalel = (TextView) res.findViewById(R.id.lXparalel);
+				
+				lJudul.setTypeface(jenisHurufSesuaiPengaturan_, Typeface.BOLD);
+				lJudul.setTextSize(TypedValue.COMPLEX_UNIT_PX, ukuranTeksSesuaiPengaturan_);
+				lJudul.setText(blok.judul);
+				
+				// matikan padding atas kalau position == 0
+				if (position == 0) {
+					lJudul.setPadding(0, 0, 0, 0);
+				}
+				
+				// gonekan paralel kalo ga ada
+				if (blok.xparalel.length == 0) {
+					lXparalel.setVisibility(View.GONE);
+				} else {
+					lXparalel.setVisibility(View.VISIBLE);
+					lXparalel.setText(Arrays.toString(blok.xparalel));  // FIXME
+				}
+				
+				if (cerahTeks != null) {
+					int color = ((255 * cerahTeks / 100) * 0x010101) | 0xff000000;
+					lJudul.setTextColor(color);
+				}
+				
+				return res;
 			}
-			
-			res.setTypeface(jenisHurufSesuaiPengaturan_, tebalHurufSesuaiPengaturan_);
-			res.setTextSize(TypedValue.COMPLEX_UNIT_PX, ukuranTeksSesuaiPengaturan_);
-			res.setText(rendered_[position], BufferType.SPANNABLE);
-			
-			if (cerahTeks != null) {
-				int color = ((255 * cerahTeks / 100) * 0x010101) | 0xff000000;
-				res.setTextColor(color);
-			}
-			
-			return res;
 		}
 		
 		@Override
@@ -950,6 +1061,63 @@ public class IsiActivity extends Activity {
 		public boolean isEnabled(int position) {
 			return false;
 		}
+		
+		/**
+		 * @param ayat mulai dari 1
+		 * @return position di adapter ini atau -1 kalo ga ketemu
+		 */
+		public int getPositionDariAyat(int ayat) {
+			if (penunjukKotak_ == null) return -1;
+			
+			int ayat0 = ayat - 1;
+			
+			for (int i = 0; i < penunjukKotak_.length; i++) {
+				if (penunjukKotak_[i] == ayat0) {
+					// ketemu, tapi kalo ada judul perikop, akan lebih baik. Coba cek mundur dari sini
+					for (int j = i-1; j >= 0; j--) {
+						if (penunjukKotak_[j] < 0) {
+							// masih perikop, yey, kita lanjutkan
+							i = j;
+						} else {
+							// uda bukan perikop. (Berarti uda ayat sebelumnya)
+							break;
+						}
+					}
+					
+					return i;
+				}
+			}
+			
+			return -1;
+		}
+		
+		/**
+		 * @return ayat (mulai dari 1). atau 0 kalo ga masuk akal
+		 */
+		public int getAyatDariPosition(int position) {
+			if (penunjukKotak_ == null) return 0;
+			
+			if (position >= penunjukKotak_.length) {
+				position = penunjukKotak_.length - 1;
+			}
+			
+			int id = penunjukKotak_[position];
+			
+			if (id >= 0) {
+				return id + 1;
+			}
+			
+			// perikop nih. Susuri sampe abis
+			for (int i = position + 1; i < penunjukKotak_.length; i++) {
+				id = penunjukKotak_[i];
+				
+				if (id >= 0) {
+					return id + 1;
+				}
+			}
+			
+			Log.w("alki", "masa judul perikop di paling bawah? Ga masuk akal.");
+			return 0; 
+		}
 	}
-	
 }

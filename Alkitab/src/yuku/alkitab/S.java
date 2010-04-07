@@ -153,9 +153,10 @@ public class S {
 		}
 	}
 	
-	public static void muatPerikop(Resources resources, int kitab, int pasal) {
+	public static int muatPerikop(Resources resources, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
 		int ariMin = Ari.encode(kitab, pasal, 0);
 		int ariMax = Ari.encode(kitab, pasal+1, 0);
+		int res = 0;
 		
 		IndexPerikop indexPerikop = S.indexPerikop;
 		
@@ -180,11 +181,15 @@ public class S {
 				Blok blok = indexPerikop.getBlok(in, kini);
 				kini++;
 				
-				Log.d("alki", "muatPerikop 0x" + Integer.toHexString(ari) + " " + blok);
+				xari[res] = ari;
+				xblok[res] = blok;
+				res++;
 			}
 		} finally {
 			in.close();
 		}
+		
+		return res;
 	}
 
 	public static ArrayAdapter<String> getKitabAdapter(Context context) {
