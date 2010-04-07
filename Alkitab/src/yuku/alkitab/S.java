@@ -163,7 +163,7 @@ public class S {
 		int pertama = indexPerikop.cariPertama(ariMin, ariMax);
 		
 		if (pertama == -1) {
-			// return null;
+			return 0;
 		}
 		
 		int kini = pertama;
@@ -181,9 +181,13 @@ public class S {
 				Blok blok = indexPerikop.getBlok(in, kini);
 				kini++;
 				
-				xari[res] = ari;
-				xblok[res] = blok;
-				res++;
+				if (res < max) {
+					xari[res] = ari;
+					xblok[res] = blok;
+					res++;
+				} else {
+					break;
+				}
 			}
 		} finally {
 			in.close();

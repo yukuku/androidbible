@@ -1030,8 +1030,8 @@ public class IsiActivity extends Activity {
 				lJudul.setTextSize(TypedValue.COMPLEX_UNIT_PX, ukuranTeksSesuaiPengaturan_);
 				lJudul.setText(blok.judul);
 				
-				// matikan padding atas kalau position == 0
-				if (position == 0) {
+				// matikan padding atas kalau position == 0 ATAU sebelum ini juga judul perikop
+				if (position == 0 || penunjukKotak_[position-1] < 0) {
 					lJudul.setPadding(0, 0, 0, 0);
 				}
 				
