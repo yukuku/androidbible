@@ -16,6 +16,7 @@ import android.graphics.Typeface;
 import android.os.*;
 import android.preference.PreferenceManager;
 import android.text.*;
+import android.text.method.LinkMovementMethod;
 import android.text.style.*;
 import android.text.util.Linkify;
 import android.util.*;
@@ -47,7 +48,7 @@ public class IsiActivity extends Activity {
 	SharedPreferences pengaturan;
 	Float ukuranAsalHurufIsi;
 	Handler handler = new Handler();
-	Integer cerahTeks; // null kalo ga diset, pake yang aslinya aja
+	int cerahTeks; // 0..100, sesuai pengaturan
 	DisplayMetrics displayMetrics;
 	ProgressDialog dialogBikinIndex;
 	boolean lagiBikinIndex = false;
@@ -55,10 +56,18 @@ public class IsiActivity extends Activity {
 	private Float ukuranTeksSesuaiPengaturan_;
 	private Typeface jenisHurufSesuaiPengaturan_;
 	private Integer tebalHurufSesuaiPengaturan_;
+	private int warnaTeksSesuaiPengaturan_; // ga mungkin null, karena dipaksakan
 	private AyatAdapter ayatAdapter_ = new AyatAdapter();
 	private int indenParagraf_;
 	private boolean tombolAlamatLoncat_;
 	private String carianTerakhir_;
+	
+	CallbackSpan.OnClickListener paralelOnClickListener = new CallbackSpan.OnClickListener() {
+		@Override
+		public void onClick(View widget, Object data) {
+			loncatKe((String)data);
+		}
+	};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -235,6 +244,11 @@ public class IsiActivity extends Activity {
 	private boolean lsIsi_itemLongClick(AdapterView<?> parent, View view, int position, long id) {
 		Log.d("klik panjang", "di " + position + " id " + id);
 		
+		// hanya untuk ayat! bukan perikop. Maka kalo perikop, anggap aja uda diconsume.
+		if (id < 0) {
+			return true;
+		}
+		
 		return false;
 	}
 	
@@ -346,6 +360,8 @@ public class IsiActivity extends Activity {
 		{
 			String key = getString(R.string.pref_cerahTeks_key);
 			cerahTeks = pengaturan.getInt(key, 100);
+			
+			warnaTeksSesuaiPengaturan_ = 0xff000000 | ((255 * cerahTeks / 100) * 0x010101);
 		}
 		
 		tombolAlamatLoncat_ = pengaturan.getBoolean(getString(R.string.pref_tombolAlamatLoncat_key), false);
@@ -787,7 +803,7 @@ public class IsiActivity extends Activity {
 				int max = 30;
 				perikop_xari = new int[max];
 				perikop_xblok = new Blok[max];
-				nblok = S.muatPerikop(getResources(), S.kitab.pos, pasal, perikop_xari, perikop_xblok, max); // FIXME
+				nblok = S.muatPerikop(getResources(), S.kitab.pos, pasal, perikop_xari, perikop_xblok, max); 
 				
 				return siapinTampilanAyat();
 			}
@@ -1004,11 +1020,7 @@ public class IsiActivity extends Activity {
 				res.setTypeface(jenisHurufSesuaiPengaturan_, tebalHurufSesuaiPengaturan_);
 				res.setTextSize(TypedValue.COMPLEX_UNIT_PX, ukuranTeksSesuaiPengaturan_);
 				res.setText(rendered_[id], BufferType.SPANNABLE);
-				
-				if (cerahTeks != null) {
-					int color = ((255 * cerahTeks / 100) * 0x010101) | 0xff000000;
-					res.setTextColor(color);
-				}
+				res.setTextColor(warnaTeksSesuaiPengaturan_);
 				
 				return res;
 			} else {
@@ -1029,6 +1041,7 @@ public class IsiActivity extends Activity {
 				lJudul.setTypeface(jenisHurufSesuaiPengaturan_, Typeface.BOLD);
 				lJudul.setTextSize(TypedValue.COMPLEX_UNIT_PX, ukuranTeksSesuaiPengaturan_);
 				lJudul.setText(blok.judul);
+				lJudul.setTextColor(warnaTeksSesuaiPengaturan_);
 				
 				// matikan padding atas kalau position == 0 ATAU sebelum ini juga judul perikop
 				if (position == 0 || penunjukKotak_[position-1] < 0) {
@@ -1040,12 +1053,34 @@ public class IsiActivity extends Activity {
 					lXparalel.setVisibility(View.GONE);
 				} else {
 					lXparalel.setVisibility(View.VISIBLE);
-					lXparalel.setText(Arrays.toString(blok.xparalel));  // FIXME
-				}
-				
-				if (cerahTeks != null) {
-					int color = ((255 * cerahTeks / 100) * 0x010101) | 0xff000000;
-					lJudul.setTextColor(color);
+					
+					SpannableStringBuilder sb = new SpannableStringBuilder("(");
+					int len = 1;
+
+					int total = blok.xparalel.length;
+					for (int i = 0; i < total; i++) {
+						String paralel = blok.xparalel[i];
+						
+						if (i > 0) {
+							if ( (total == 6 && i == 3) || (total == 4 && i == 2) || (total == 5 && i == 3) ) {
+								sb.append("; \n");
+								len += 3;
+							} else {
+								sb.append("; ");
+								len += 2;
+							}
+						}
+						
+						sb.append(paralel);
+						sb.setSpan(new CallbackSpan(paralel, paralelOnClickListener), len, len + paralel.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+						len += paralel.length();
+					}
+					sb.append(")");
+					len += 1;
+					
+					lXparalel.setText(sb, BufferType.SPANNABLE);
+					lXparalel.setMovementMethod(LinkMovementMethod.getInstance());
+					lXparalel.setLinkTextColor(warnaTeksSesuaiPengaturan_);
 				}
 				
 				return res;
