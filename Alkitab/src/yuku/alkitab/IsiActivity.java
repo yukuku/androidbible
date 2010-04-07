@@ -78,6 +78,7 @@ public class IsiActivity extends Activity {
 		S.siapinEdisi(getResources());
 		S.siapinKitab(getResources());
 		S.siapinPengirimFidbek(this);
+		S.pengirimFidbek.cobaKirim();
 		
 		displayMetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -160,7 +161,6 @@ public class IsiActivity extends Activity {
 					}
 				});
 			}
-			
 		}
 	}
 
@@ -516,7 +516,7 @@ public class IsiActivity extends Activity {
 		
 		menu.add(0, 0x985801, 0, "gebug 1: dump p+p");
 		menu.add(0, 0x985802, 0, "gebug 2: bikin ulang index");
-		menu.add(0, 0x985803, 0, "gebug 3");
+		menu.add(0, 0x985803, 0, "gebug 3: crash!");
 		menu.add(0, 0x985804, 0, "gebug 4: reset p+p");
 		
 		return true;
@@ -608,7 +608,8 @@ public class IsiActivity extends Activity {
 			bikinIndex();
 			return true;
 		} else if (item.getItemId() == 0x985803) { // debug 3
-			return true;
+			throw new RuntimeException("ini cuma lagi nyoba2 DUEH.");
+			//return true;
 		} else if (item.getItemId() == 0x985804) { // debug 4
 			{
 				Editor editor = preferences.edit();

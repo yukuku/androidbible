@@ -211,6 +211,7 @@ public class S {
 	public static synchronized void siapinPengirimFidbek(final IsiActivity activity) {
 		if (pengirimFidbek == null) {
 			pengirimFidbek = new PengirimFidbek(activity, activity.getSharedPreferences(S.NAMA_PREFERENCES, 0));
+			pengirimFidbek.activateDefaultUncaughtExceptionHandler("Ada kesalahan. Cobalah ulangi, dan jika tetap terjadi, tolong kirim imel ke yuku+alkitab@ikitek.com. Terima kasih.");
 			pengirimFidbek.setOnSuccessListener(new PengirimFidbek.OnSuccessListener() {
 				@Override
 				public void onSuccess(final byte[] response) {
