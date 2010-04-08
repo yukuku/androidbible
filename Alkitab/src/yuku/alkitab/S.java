@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import yuku.alkitab.model.*;
+import yuku.alkitab.renungan.TukangDonlot;
 import yuku.bintex.BintexReader;
 import yuku.kirimfidbek.PengirimFidbek;
 import android.content.Context;
@@ -24,6 +25,11 @@ public class S {
 	public static Kitab kitab;
 
 	public static PengirimFidbek pengirimFidbek;
+	public static TukangDonlot tukangDonlot;
+	
+	//# buat renungan
+	public static String renungan_nama = null;
+	public static Date renungan_tanggalan = null;
 	
 	private static int getRawInt(Resources resources, String rid) {
 		return resources.getIdentifier(rid, "raw", "yuku.alkitab");

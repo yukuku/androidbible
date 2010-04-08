@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_height="fill_parent" android:layout_width="fill_parent">
+
+	
+
+	
+<LinearLayout android:layout_height="wrap_content" android:orientation="horizontal" android:layout_width="fill_parent" android:background="#444" android:gravity="center_vertical"><TextView android:layout_height="wrap_content" android:text="Renungan TANGGAL (SERI)" android:padding="4dip" android:textSize="16sp" android:id="@+id/lHeader" android:layout_width="wrap_content" android:layout_weight="1"/><Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/bGanti" android:text="Ganti"></Button><ImageButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/left_arrow" android:scaleType="fitXY" android:id="@+id/bKiri"></ImageButton><ImageButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/right_arrow" android:id="@+id/bKanan"></ImageButton>
+
+
+</LinearLayout><ScrollView android:id="@+id/ScrollView01" android:layout_weight="1" android:layout_width="fill_parent" android:layout_height="fill_parent"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/lIsi" android:text="Isi renungan di sini. Bla bla bla bla. Dan terus. Bla bla bla bla bla bla bla, sampe ngeskrol." android:padding="8dp"></TextView>
+</ScrollView>
+
+</LinearLayout>

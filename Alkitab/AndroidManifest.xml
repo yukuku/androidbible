@@ -2,14 +2,16 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="yuku.alkitab"
-	android:versionName="0.9-dev1" android:versionCode="9">
+	android:versionCode="10"
+	android:versionName="0.9-dev2">
 	<application
 		android:icon="@drawable/icon"
 		android:label="@string/app_name"
 		android:name="AlkitabApplication">
 		<activity
 			android:name="IsiActivity"
-			android:label="Alkitab" android:configChanges="mcc|mnc|keyboard|keyboardHidden|orientation">
+			android:label="Alkitab"
+			android:configChanges="mcc|mnc|keyboard|keyboardHidden|orientation">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.MAIN" />
@@ -31,10 +33,15 @@
 			android:name="PengaturanActivity" />
 		<activity
 			android:name="BukmakActivity"
-			android:label="Pembatas Buku"></activity>
+			android:label="Pembatas Buku" />
 
-	<activity android:label="Pencarian" android:name="SearchActivity"></activity>
-</application>
+		<activity
+			android:label="Pencarian"
+			android:name="SearchActivity" />
+		<activity
+			android:name="RenunganActivity"
+			android:configChanges="mcc|mnc|keyboard|keyboardHidden|orientation" />
+	</application>
 	<uses-sdk
 		android:minSdkVersion="3"
 		android:targetSdkVersion="4" />
@@ -44,5 +51,5 @@
 	<uses-permission
 		android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-	<supports-screens></supports-screens>
+	<supports-screens />
 </manifest> 

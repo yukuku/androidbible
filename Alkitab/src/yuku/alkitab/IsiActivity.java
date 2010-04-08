@@ -518,6 +518,7 @@ public class IsiActivity extends Activity {
 		menu.add(0, 0x985802, 0, "gebug 2: bikin ulang index");
 		menu.add(0, 0x985803, 0, "gebug 3: crash!");
 		menu.add(0, 0x985804, 0, "gebug 4: reset p+p");
+		menu.add(0, 0x985805, 0, "gebug 5: renungan");
 		
 		return true;
 	}
@@ -622,6 +623,10 @@ public class IsiActivity extends Activity {
 				editor.commit();
 			}
 			return true;
+		} else if (item.getItemId() == 0x985805) { // gebug 5
+			Intent intent = new Intent(this, RenunganActivity.class);
+			startActivityForResult(intent, 0x985805);
+			return true;
 		}
 		
 		return super.onMenuItemSelected(featureId, item);
@@ -709,6 +714,8 @@ public class IsiActivity extends Activity {
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.d("alki", "onActivityResult reqCode=0x" + Integer.toHexString(requestCode) + " resCode=" + resultCode + " data=" + data);
+		
 		if (requestCode == R.id.menuTuju) {
 			if (resultCode == RESULT_OK) {
 				int pasal = data.getIntExtra("pasal", 0);
@@ -775,6 +782,13 @@ public class IsiActivity extends Activity {
 			}
 		} else if (requestCode == R.id.menuPengaturan) {
 			terapkanPengaturan();
+		} else if (requestCode == 0x985805) {
+			if (data != null) {
+				String alamat = data.getStringExtra("alamat");
+				if (alamat != null) {
+					loncatKe(alamat);
+				}
+			}
 		}
 	}
 
