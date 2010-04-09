@@ -69,8 +69,6 @@ public class SearchActivity extends Activity {
 		resultCode = RESULT_CANCELED;
 		returnValue = new Intent();
 		
-		Intent intent = getIntent();
-		
 		db = SearchDb.getInstance(this).getDatabase();
 
 		lsHasilCari = (ListView) findViewById(R.id.lsHasilCari);
@@ -265,7 +263,7 @@ public class SearchActivity extends Activity {
 		
 		tCarian = (EditText) findViewById(R.id.tCarian);
 		{
-			String carian = intent.getStringExtra("carian");
+			String carian = S.penampungan.search_carian;
 			
 			if (carian != null) {
 				tCarian.setText(carian);
@@ -302,7 +300,7 @@ public class SearchActivity extends Activity {
 			editor.commit();
 		}
 		
-		returnValue.putExtra("carian", tCarian.getText().toString());
+		S.penampungan.search_carian = tCarian.getText().toString();
 		setResult(resultCode, returnValue);
 		super.finish();
 	}

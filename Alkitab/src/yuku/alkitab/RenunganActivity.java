@@ -16,6 +16,7 @@ import android.text.*;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.*;
 import android.widget.*;
 import android.widget.TextView.BufferType;
@@ -44,7 +45,7 @@ public class RenunganActivity extends Activity {
 	Runnable cobaTampilLagi = new Runnable() {
 		@Override
 		public void run() {
-			tuju(S.renungan_nama, S.renungan_tanggalan);
+			tuju(S.penampungan.renungan_nama, S.penampungan.renungan_tanggalan);
 			
 			pengulangTampil.postDelayed(cobaTampilLagi, 12000);
 		}
@@ -62,7 +63,7 @@ public class RenunganActivity extends Activity {
 		bKiri.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				S.renungan_tanggalan.setTime(S.renungan_tanggalan.getTime() - 3600*24*1000);
+				S.penampungan.renungan_tanggalan.setTime(S.penampungan.renungan_tanggalan.getTime() - 3600*24*1000);
 				tampilkan();
 			}
 		});
@@ -71,7 +72,7 @@ public class RenunganActivity extends Activity {
 		bKanan.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				S.renungan_tanggalan.setTime(S.renungan_tanggalan.getTime() + 3600*24*1000);
+				S.penampungan.renungan_tanggalan.setTime(S.penampungan.renungan_tanggalan.getTime() + 3600*24*1000);
 				tampilkan();
 			}
 		});
@@ -83,21 +84,21 @@ public class RenunganActivity extends Activity {
 				int index = 0;
 				
 				for (int i = 0; i < ADA_NAMA.length; i++) {
-					if (ADA_NAMA[i].equals(S.renungan_nama)) {
+					if (ADA_NAMA[i].equals(S.penampungan.renungan_nama)) {
 						index = i;
 						break;
 					}
 				}
 				
 				index = (index + 1) % ADA_NAMA.length;
-				S.renungan_nama = ADA_NAMA[index];
+				S.penampungan.renungan_nama = ADA_NAMA[index];
 				tampilkan();
 			}
 		});
 		
 		//# atur difot! 
-		if (S.renungan_tanggalan == null) S.renungan_tanggalan = new Date();
-		if (S.renungan_nama == null) S.renungan_nama = "sh";
+		if (S.penampungan.renungan_tanggalan == null) S.penampungan.renungan_tanggalan = new Date();
+		if (S.penampungan.renungan_nama == null) S.penampungan.renungan_nama = "sh";
 		
 		tampilkan();
 	}
@@ -105,7 +106,7 @@ public class RenunganActivity extends Activity {
 	private void tampilkan() {
 		pengulangTampil.removeCallbacks(cobaTampilLagi);
 		
-		tuju(S.renungan_nama, S.renungan_tanggalan);
+		tuju(S.penampungan.renungan_nama, S.penampungan.renungan_tanggalan);
 	}
 
 	private void tuju(String nama, Date date) {
@@ -160,7 +161,9 @@ public class RenunganActivity extends Activity {
 			lIsi.setText(ss, BufferType.SPANNABLE);
 			lIsi.setLinksClickable(true);
 			lIsi.setMovementMethod(LinkMovementMethod.getInstance());
-			lIsi.setTextColor(0xffffffff);
+			lIsi.setTextColor(S.penerapan.warnaHuruf);
+			lIsi.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
+			lIsi.setTextSize(TypedValue.COMPLEX_UNIT_PX, S.penerapan.ukuranTeksPx);
 		} else {
 			if (artikel == null) {
 				lIsi.setText("Belum tersedia. Menunggu pengambilan data lewat Internet...\n\n(Pastikan ada koneksi Internet untuk mengambil renungan.)");
@@ -169,14 +172,14 @@ public class RenunganActivity extends Activity {
 			}
 		}
 		
-		String judul = S.renungan_nama;
+		String judul = S.penampungan.renungan_nama;
 		for (int i = 0; i < ADA_NAMA.length; i++) {
-			if (ADA_NAMA[i].equals(S.renungan_nama)) {
+			if (ADA_NAMA[i].equals(S.penampungan.renungan_nama)) {
 				judul = ADA_JUDUL[i];
 			}
 		}
 		
-		lHeader.setText(judul + "\n" + DateFormat.getDateFormat(this).format(S.renungan_tanggalan));
+		lHeader.setText(judul + "\n" + DateFormat.getDateFormat(this).format(S.penampungan.renungan_tanggalan));
 	}
 
 	private synchronized void akanPerlu(String nama, String tgl) {

@@ -53,14 +53,8 @@ public class IsiActivity extends Activity {
 	ProgressDialog dialogBikinIndex;
 	boolean lagiBikinIndex = false;
 	
-	private Float ukuranTeksSesuaiPengaturan_;
-	private Typeface jenisHurufSesuaiPengaturan_;
-	private Integer tebalHurufSesuaiPengaturan_;
-	private int warnaTeksSesuaiPengaturan_; // ga mungkin null, karena dipaksakan
 	private AyatAdapter ayatAdapter_ = new AyatAdapter();
-	private int indenParagraf_;
 	private boolean tombolAlamatLoncat_;
-	private String carianTerakhir_;
 	
 	CallbackSpan.OnClickListener paralelOnClickListener = new CallbackSpan.OnClickListener() {
 		@Override
@@ -332,11 +326,11 @@ public class IsiActivity extends Activity {
 			} catch (NumberFormatException e) {
 			}
 			Log.d("alki", "skala di pengaturan = " + ukuranHuruf);
-			ukuranTeksSesuaiPengaturan_ = ukuranAsalHurufIsi * ukuranHuruf / 100.f;
-			Log.d("alki", "ukuran baru px = " + ukuranTeksSesuaiPengaturan_);
+			S.penerapan.ukuranTeksPx = ukuranAsalHurufIsi * ukuranHuruf / 100.f;
+			Log.d("alki", "ukuran baru px = " + S.penerapan.ukuranTeksPx);
 			
-			indenParagraf_ = (int) (getResources().getDimension(R.dimen.indenParagraf) * ukuranHuruf / 100.f);
-			Log.d("alki", "indenParagraf_ = " + indenParagraf_);
+			S.penerapan.indenParagraf = (int) (getResources().getDimension(R.dimen.indenParagraf) * ukuranHuruf / 100.f);
+			Log.d("alki", "indenParagraf_ = " + S.penerapan.indenParagraf);
 		}
 		
 		//# atur jenis huruf, termasuk boldnya
@@ -352,8 +346,8 @@ public class IsiActivity extends Activity {
 			
 			boolean boldHuruf_b = pengaturan.getBoolean(getString(R.string.pref_boldHuruf_key), false);
 			
-			jenisHurufSesuaiPengaturan_ = typeface;
-			tebalHurufSesuaiPengaturan_ = boldHuruf_b? Typeface.BOLD: Typeface.NORMAL;
+			S.penerapan.jenisHuruf = typeface;
+			S.penerapan.tebalHuruf = boldHuruf_b? Typeface.BOLD: Typeface.NORMAL;
 		}
 		
 		//# atur terang teks
@@ -361,7 +355,7 @@ public class IsiActivity extends Activity {
 			String key = getString(R.string.pref_cerahTeks_key);
 			cerahTeks = pengaturan.getInt(key, 100);
 			
-			warnaTeksSesuaiPengaturan_ = 0xff000000 | ((255 * cerahTeks / 100) * 0x010101);
+			S.penerapan.warnaHuruf = 0xff000000 | ((255 * cerahTeks / 100) * 0x010101);
 		}
 		
 		tombolAlamatLoncat_ = pengaturan.getBoolean(getString(R.string.pref_tombolAlamatLoncat_key), false);
@@ -502,7 +496,7 @@ public class IsiActivity extends Activity {
 			pengawal = (i+1) + " ";
 			seayat.append(pengawal).append(xayat[i]);
 			seayat.setSpan(new ForegroundColorSpan(0xff8080ff), 0, pengawal.length() - 1, 0);
-			seayat.setSpan(new LeadingMarginSpan.Standard(0, indenParagraf_), 0, pengawal.length() + xayat[i].length(), 0);
+			seayat.setSpan(new LeadingMarginSpan.Standard(0, S.penerapan.indenParagraf), 0, pengawal.length() + xayat[i].length(), 0);
 			
 			res[i] = seayat;
 		}
@@ -707,7 +701,6 @@ public class IsiActivity extends Activity {
 			return;
 		} else {
 			Intent intent = new Intent(this, SearchActivity.class);
-			intent.putExtra("carian", carianTerakhir_);
 			startActivityForResult(intent, R.id.menuSearch);
 		}
 	}
@@ -740,18 +733,12 @@ public class IsiActivity extends Activity {
 				}
 			}
 		} else if (requestCode == R.id.menuSearch) {
-			// Apapun hasilnya, simpan carian terakhir
-			String carian = data.getStringExtra("carian");
-			carianTerakhir_ = carian;
-			
 			if (resultCode == RESULT_OK) {
 				int ari = data.getIntExtra("terpilih.ari", 0);
 				if (ari != 0) { // 0 berarti ga ada apa2, karena ga ada pasal 0 ayat 0
 					loncatKeAri(ari);
 				}
 			}
-			
-			
 		} else if (requestCode == R.id.menuEdisi) {
 			if (resultCode == RESULT_OK) {
 				String nama = data.getStringExtra("nama");
@@ -1032,10 +1019,10 @@ public class IsiActivity extends Activity {
 					res = (TextView) convertView;
 				}
 				
-				res.setTypeface(jenisHurufSesuaiPengaturan_, tebalHurufSesuaiPengaturan_);
-				res.setTextSize(TypedValue.COMPLEX_UNIT_PX, ukuranTeksSesuaiPengaturan_);
+				res.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
+				res.setTextSize(TypedValue.COMPLEX_UNIT_PX, S.penerapan.ukuranTeksPx);
 				res.setText(rendered_[id], BufferType.SPANNABLE);
-				res.setTextColor(warnaTeksSesuaiPengaturan_);
+				res.setTextColor(S.penerapan.warnaHuruf);
 				
 				return res;
 			} else {
@@ -1053,10 +1040,10 @@ public class IsiActivity extends Activity {
 				TextView lJudul = (TextView) res.findViewById(R.id.lJudul);
 				TextView lXparalel = (TextView) res.findViewById(R.id.lXparalel);
 				
-				lJudul.setTypeface(jenisHurufSesuaiPengaturan_, Typeface.BOLD);
-				lJudul.setTextSize(TypedValue.COMPLEX_UNIT_PX, ukuranTeksSesuaiPengaturan_);
+				lJudul.setTypeface(S.penerapan.jenisHuruf, Typeface.BOLD);
+				lJudul.setTextSize(TypedValue.COMPLEX_UNIT_PX, S.penerapan.ukuranTeksPx);
 				lJudul.setText(blok.judul);
-				lJudul.setTextColor(warnaTeksSesuaiPengaturan_);
+				lJudul.setTextColor(S.penerapan.warnaHuruf);
 				
 				// matikan padding atas kalau position == 0 ATAU sebelum ini juga judul perikop
 				if (position == 0 || penunjukKotak_[position-1] < 0) {
@@ -1095,7 +1082,7 @@ public class IsiActivity extends Activity {
 					
 					lXparalel.setText(sb, BufferType.SPANNABLE);
 					lXparalel.setMovementMethod(LinkMovementMethod.getInstance());
-					lXparalel.setLinkTextColor(warnaTeksSesuaiPengaturan_);
+					lXparalel.setLinkTextColor(S.penerapan.warnaHuruf);
 				}
 				
 				return res;

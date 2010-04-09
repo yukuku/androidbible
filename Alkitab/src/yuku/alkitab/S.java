@@ -9,11 +9,33 @@ import yuku.bintex.BintexReader;
 import yuku.kirimfidbek.PengirimFidbek;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.widget.*;
 
 public class S {
 	public static final String NAMA_PREFERENCES = "yuku.alkitab";
+	
+	/**
+	 * penerapan dari pengaturan
+	 */
+	public static class penerapan {
+		public static float ukuranTeksPx;
+		public static Typeface jenisHuruf;
+		public static int tebalHuruf;
+		public static int warnaHuruf; // ga mungkin null, karena dipaksakan
+		public static int indenParagraf; // ga mungkin null, karena dipaksakan
+	}
+	
+	/**
+	 * Seting yang tetep hidup walau aktiviti dimusnahkan.
+	 * Pastikan ga ada acuan ke aktiviti, supaya memori ga bocor.
+	 */
+	public static class penampungan {
+		public static String renungan_nama = null;
+		public static Date renungan_tanggalan = null;
+		public static String search_carian = null;
+	}
 	
 	//# 33nya harus siap di siapinEdisi
 	public static Edisi[] xedisi;
@@ -26,10 +48,6 @@ public class S {
 
 	public static PengirimFidbek pengirimFidbek;
 	public static TukangDonlot tukangDonlot;
-	
-	//# buat renungan
-	public static String renungan_nama = null;
-	public static Date renungan_tanggalan = null;
 	
 	private static int getRawInt(Resources resources, String rid) {
 		return resources.getIdentifier(rid, "raw", "yuku.alkitab");
