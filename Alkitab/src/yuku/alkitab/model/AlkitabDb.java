@@ -101,7 +101,7 @@ public class AlkitabDb {
 				db.execSQL(String.format("create index if not exists index_103 on %s (%s)", TABEL_Renungan, KOLOM_tgl));
 				
 				// Kej 1:1 buat percobaan doang
-				Bukmak kej1 = new Bukmak("Kejadian 1:1", "Pada mulanya Allah menciptakan langit dan bumi", new Date(), 0, 1, 1);
+				Bukmak kej1 = new Bukmak("Kejadian 1:1", "Pada mulanya Allah menciptakan langit dan bumi.", new Date(), 0, 1, 1);
 				db.insert(TABEL_Bukmak, null, kej1.toContentValues());
 				
 			} catch (SQLException e) {

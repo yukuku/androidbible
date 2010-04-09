@@ -48,7 +48,6 @@ public class IsiActivity extends Activity {
 	SharedPreferences pengaturan;
 	Float ukuranAsalHurufIsi;
 	Handler handler = new Handler();
-	int cerahTeks; // 0..100, sesuai pengaturan
 	DisplayMetrics displayMetrics;
 	ProgressDialog dialogBikinIndex;
 	boolean lagiBikinIndex = false;
@@ -65,10 +64,14 @@ public class IsiActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.d("alki", "IsiActivity (fase 0) onCreate dipanggil icicle=" + savedInstanceState);
+		
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.isi);
 		
+		Log.d("alki", "IsiActivity (fase 5) sebelum siapin macem2");
+
 		S.siapinEdisi(getResources());
 		S.siapinKitab(getResources());
 		S.siapinPengirimFidbek(this);
@@ -83,9 +86,13 @@ public class IsiActivity extends Activity {
 		bKiri = (ImageButton) findViewById(R.id.bKiri);
 		bKanan = (ImageButton) findViewById(R.id.bKanan);
 		
+		Log.d("alki", "IsiActivity (fase 10) sebelum terap pengaturan");
+
 		pengaturan = PreferenceManager.getDefaultSharedPreferences(this);
 		terapkanPengaturan();
 		
+		Log.d("alki", "IsiActivity (fase 20) sesudah terap pengaturan");
+
 		lsIsi.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -124,6 +131,8 @@ public class IsiActivity extends Activity {
 			}
 		});
 		
+		Log.d("alki", "IsiActivity (fase 30) sebelum baca preferences");
+
 		preferences = S.getPreferences(this);
 		int kitabTerakhir = preferences.getInt(NAMAPREF_kitabTerakhir, 0);
 		int pasalTerakhir = preferences.getInt(NAMAPREF_pasalTerakhir, 0);
@@ -146,7 +155,7 @@ public class IsiActivity extends Activity {
 			editor.commit();
 		} else {
 			final long sekarang = System.currentTimeMillis();
-			if (sekarang - terakhirMintaFidbek > 1000*60*60*24) { // 1 hari ato belom pernah
+			if (sekarang - terakhirMintaFidbek > 2000*60*60*24) { // 2 hari ato belom pernah
 				handler.post(new Runnable() {
 					
 					@Override
@@ -156,6 +165,8 @@ public class IsiActivity extends Activity {
 				});
 			}
 		}
+
+		Log.d("alki", "IsiActivity onCreate selesai");
 	}
 
 	@Override
@@ -353,7 +364,7 @@ public class IsiActivity extends Activity {
 		//# atur terang teks
 		{
 			String key = getString(R.string.pref_cerahTeks_key);
-			cerahTeks = pengaturan.getInt(key, 100);
+			int cerahTeks = pengaturan.getInt(key, 100);
 			
 			S.penerapan.warnaHuruf = 0xff000000 | ((255 * cerahTeks / 100) * 0x010101);
 		}
@@ -508,11 +519,12 @@ public class IsiActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		new MenuInflater(this).inflate(R.menu.isi, menu);
 		
-		menu.add(0, 0x985801, 0, "gebug 1: dump p+p");
-		menu.add(0, 0x985802, 0, "gebug 2: bikin ulang index");
-		menu.add(0, 0x985803, 0, "gebug 3: crash!");
-		menu.add(0, 0x985804, 0, "gebug 4: reset p+p");
-		menu.add(0, 0x985805, 0, "gebug 5: renungan");
+		SubMenu menuGebug = menu.addSubMenu("Gebug");
+		menuGebug.setHeaderTitle("Untuk percobaan dan cari kutu. Tidak penting.");
+		menuGebug.add(0, 0x985801, 0, "gebug 1: dump p+p");
+		menuGebug.add(0, 0x985802, 0, "gebug 2: bikin ulang index");
+		menuGebug.add(0, 0x985803, 0, "gebug 3: crash!");
+		menuGebug.add(0, 0x985804, 0, "gebug 4: reset p+p");
 		
 		return true;
 	}
@@ -553,6 +565,10 @@ public class IsiActivity extends Activity {
 			Intent intent = new Intent(this, EdisiActivity.class);
 			startActivityForResult(intent, R.id.menuEdisi);
 			return true;
+		} else if (item.getItemId() == R.id.menuRenungan) { // gebug 5
+			Intent intent = new Intent(this, RenunganActivity.class);
+			startActivityForResult(intent, R.id.menuRenungan);
+			return true;
 		} else if (item.getItemId() == R.id.menuTentang) {
 			String verName = "null";
 	    	int verCode = -1;
@@ -568,7 +584,7 @@ public class IsiActivity extends Activity {
 			new AlertDialog.Builder(this).setTitle(R.string.tentang_title).setMessage(
 					Html.fromHtml(
 							getString(R.string.tentang_message, verName, verCode) 
-							+ "<br/><br/>Rev: " + "$LastChangedRevision$".substring(22)
+							+ "<br/>Rev: " + "$LastChangedRevision$".replaceAll("\\$|LastChangedRevision|:| ", "")
 							+ "<br/>Root: " + Environment.getRootDirectory()
 							+ "<br/>Ext: " + Environment.getExternalStorageDirectory()
 							+ "<br/>Data: " + Environment.getDataDirectory()
@@ -584,14 +600,14 @@ public class IsiActivity extends Activity {
 			return true;
 		} else if (item.getItemId() == 0x985801) { // debug 1
 			// dump pref
-			Log.i("alki", "semua pref segera muncul di bawah ini");
+			Log.i("alki", "semua pref segera muncul di bawah ini:::");
 			{
 				Map<String, ?> all = preferences.getAll();
 				for (Map.Entry<String, ?> entry: all.entrySet()) {
 					Log.i("alki", String.format("%s = %s", entry.getKey(), entry.getValue()));
 				}
 			}
-			Log.i("alki", "dan pengaturan");
+			Log.i("alki", "dan pengaturan:::");
 			{
 				Map<String, ?> all = pengaturan.getAll();
 				for (Map.Entry<String, ?> entry: all.entrySet()) {
@@ -617,10 +633,7 @@ public class IsiActivity extends Activity {
 				editor.commit();
 			}
 			return true;
-		} else if (item.getItemId() == 0x985805) { // gebug 5
-			Intent intent = new Intent(this, RenunganActivity.class);
-			startActivityForResult(intent, 0x985805);
-			return true;
+		
 		}
 		
 		return super.onMenuItemSelected(featureId, item);

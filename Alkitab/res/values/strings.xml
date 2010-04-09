@@ -48,7 +48,7 @@
 	<string
 		name="tentang_title">Tentang Alkitab</string>
 	<string
-		name="tentang_message">Alkitab untuk Android %1$s (%2$d)&lt;br/&gt;&lt;br/&gt;Terjemahan Baru (c) LAI&lt;br/&gt;&lt;br/&gt;Tolong kirim komentar ke yuku+alkitab@ikitek.com. Terima kasih!</string>
+		name="tentang_message">Alkitab untuk Android&lt;br/&gt;versi %1$s (%2$d)&lt;br/&gt;&lt;br/&gt;Terjemahan Baru (c) LAI&lt;br/&gt;</string>
 	<string
 		name="peringatanBeta_s">Saran dan komentar Anda sangat diharapkan! Tolong bantu pengembangan aplikasi ini dengan menyebutkannya di bawah. Akan sangat berguna bagiku. OK? Makasih sebelumnya.
 	</string>

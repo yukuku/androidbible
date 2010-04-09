@@ -96,11 +96,10 @@ public class S {
 		}
 		if (xkitab != null) return;
 
+		Log.d("alki", "siapinKitab mulai");
 		InputStream is = resources.openRawResource(getRawInt(resources, edisi.nama + "_index_bt"));
 		BintexReader in = new BintexReader(is);
 		try {
-			//Debug.startMethodTracing("siapinKitab");
-	
 			ArrayList<Kitab> xkitab = new ArrayList<Kitab>();
 	
 			try {
@@ -108,21 +107,17 @@ public class S {
 				while (true) {
 					Kitab k = Kitab.baca(in, pos++);
 					xkitab.add(k);
-					
-					Log.d("alkitab", "siapinKitab memuat " + k.judul);
 				}
 			} catch (IOException e) {
-				Log.d("alkitab", "siapinKitab selesai memuat");
+				Log.d("alki", "siapinKitab selesai memuat");
 			}
 	
 			S.xkitab = xkitab.toArray(new Kitab[xkitab.size()]);
-			S.kitab = S.xkitab[0]; // TODO selalu pilih edisi pertama
+			S.kitab = S.xkitab[0]; // nanti diset sama luar 
 		} finally {
 			in.close();
-			
-			//Debug.stopMethodTracing();
 		}
-		
+		Log.d("alki", "siapinKitab selesai");
 	}
 
 	/**
