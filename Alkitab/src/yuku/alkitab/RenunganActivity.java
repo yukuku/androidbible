@@ -179,7 +179,7 @@ public class RenunganActivity extends Activity {
 			}
 		}
 		
-		lHeader.setText(judul + "\n" + DateFormat.getDateFormat(this).format(S.penampungan.renungan_tanggalan));
+		lHeader.setText(judul + "\n" + DateFormat.format("EEEE", S.penampungan.renungan_tanggalan) + ", " + DateFormat.getDateFormat(this).format(S.penampungan.renungan_tanggalan));
 	}
 
 	private synchronized void akanPerlu(String nama, String tgl) {
