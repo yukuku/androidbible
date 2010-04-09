@@ -1,5 +1,8 @@
 package yuku.alkitab;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import yuku.alkitab.model.Kitab;
 import android.app.Activity;
 import android.content.Intent;
@@ -25,6 +28,7 @@ public class MenujuActivity extends Activity {
 	
 	int maxPasal = 0;
 	int maxAyat = 0;
+	KitabAdapter kitabAdapter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +45,12 @@ public class MenujuActivity extends Activity {
 		lAyat = (TextView) findViewById(R.id.lAyat);
 		lLabelAyat = findViewById(R.id.lLabelAyat);
 		cbKitab = (Spinner) findViewById(R.id.cbKitab);
-		cbKitab.setAdapter(new KitabAdapter(S.xkitab));
+		kitabAdapter = new KitabAdapter(S.xkitab);
+		cbKitab.setAdapter(kitabAdapter);
 		bKeLoncat = (ImageButton) findViewById(R.id.bKeLoncat);
 
 		// set kitab, pasal, ayat kini
-		cbKitab.setSelection(S.kitab.pos);
+		cbKitab.setSelection(kitabAdapter.getPositionDariPos(S.kitab.pos));
 		
 		cbKitab.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
@@ -82,7 +87,8 @@ public class MenujuActivity extends Activity {
 					// biarin 0 aja
 				}
 				
-				int kitab = cbKitab.getSelectedItemPosition();
+				// itemid yang menentukan pos
+				int kitab = (int) cbKitab.getSelectedItemId();
 				
 				Intent intent = new Intent();
 				intent.putExtra("kitab", kitab);
@@ -292,7 +298,32 @@ public class MenujuActivity extends Activity {
 		Kitab[] xkitab_;
 		
 		public KitabAdapter(Kitab[] xkitab) {
-			xkitab_ = xkitab;
+			if (!S.penerapan.sortKitabAlfabet) {
+				xkitab_ = xkitab;
+			} else {
+				xkitab_ = new Kitab[xkitab.length];
+				System.arraycopy(xkitab, 0, xkitab_, 0, xkitab.length);
+				
+				// sort!
+				Arrays.sort(xkitab_, new Comparator<Kitab>() {
+					@Override
+					public int compare(Kitab a, Kitab b) {
+						return a.judul.compareTo(b.judul);
+					}
+				});
+			}
+		}
+
+		/**
+		 * @return 0 kalo ga ada (biar default dan ga eror)
+		 */
+		public int getPositionDariPos(int pos) {
+			for (int i = 0; i < xkitab_.length; i++) {
+				if (xkitab_[i].pos == pos) {
+					return i;
+				}
+			}
+			return 0;
 		}
 
 		@Override

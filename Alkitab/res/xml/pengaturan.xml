@@ -27,7 +27,8 @@
 			android:defaultValue="100" android:key="@string/pref_cerahTeks_key" android:text="%" android:max="100" android:summary="Seterang apa teks yang ditampilkan" android:dialogMessage="Atur seberapa terang teks ditampilkan:" android:title="Kecerahan Teks"/>
 	
 </PreferenceCategory>
-<PreferenceCategory android:title="Penggunaan"><CheckBoxPreference android:defaultValue="false" android:summary="Tekan ← dan → (atau trackball) untuk pindah pasal" android:title="Tanpa Tombol Navigasi" android:key="@string/pref_tanpaNavigasi_key"></CheckBoxPreference><CheckBoxPreference android:key="@string/pref_tombolAlamatLoncat_key" android:defaultValue="false" android:title="Loncat dengan Mudah" android:summaryOn="Klik alamat untuk loncat, tahan yang lama untuk tuju." android:summaryOff="Klik alamat untuk tuju, tahan yang lama untuk loncat."></CheckBoxPreference>
+<PreferenceCategory android:title="Penggunaan"><CheckBoxPreference android:key="@string/pref_sortKitabAlfabet_key" android:title="Kitab menurut Abjad" android:summaryOn="Tampilkan daftar kitab menurut abjad" android:summaryOff="Tampilkan daftar kitab sesuai urutan aslinya"></CheckBoxPreference><CheckBoxPreference android:defaultValue="false" android:summary="Tekan ← dan → (atau trackball) untuk pindah pasal" android:title="Tanpa Tombol Navigasi" android:key="@string/pref_tanpaNavigasi_key"></CheckBoxPreference><CheckBoxPreference android:key="@string/pref_tombolAlamatLoncat_key" android:defaultValue="false" android:title="Loncat dengan Mudah" android:summaryOn="Klik alamat untuk loncat, tahan yang lama untuk tuju." android:summaryOff="Klik alamat untuk tuju, tahan yang lama untuk loncat."></CheckBoxPreference>
+
 </PreferenceCategory>
 
 </PreferenceScreen>

@@ -384,6 +384,12 @@ public class IsiActivity extends Activity {
 			}
 		}
 		
+		//# abjad kah?
+		{
+			boolean sortKitabAlfabet = pengaturan.getBoolean(getString(R.string.pref_sortKitabAlfabet_key), false);
+			S.penerapan.sortKitabAlfabet = sortKitabAlfabet;
+		}
+		
 		
 		lsIsi.invalidateViews();
 	}

@@ -22,8 +22,9 @@ public class S {
 		public static float ukuranTeksPx;
 		public static Typeface jenisHuruf;
 		public static int tebalHuruf;
-		public static int warnaHuruf; // ga mungkin null, karena dipaksakan
-		public static int indenParagraf; // ga mungkin null, karena dipaksakan
+		public static int warnaHuruf; 
+		public static int indenParagraf;
+		public static boolean sortKitabAlfabet = true;
 	}
 	
 	/**
