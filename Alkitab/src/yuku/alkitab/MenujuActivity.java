@@ -15,8 +15,10 @@ public class MenujuActivity extends Activity {
 	
 	Button bOk;
 	TextView lPasal;
+	boolean lPasal_pertamaKali = true;
 	View lLabelPasal;
 	TextView lAyat;
+	boolean lAyat_pertamaKali = true;
 	View lLabelAyat;
 	Spinner cbKitab;
 	ImageButton bKeLoncat;
@@ -39,7 +41,7 @@ public class MenujuActivity extends Activity {
 		lAyat = (TextView) findViewById(R.id.lAyat);
 		lLabelAyat = findViewById(R.id.lLabelAyat);
 		cbKitab = (Spinner) findViewById(R.id.cbKitab);
-		cbKitab.setAdapter(S.getKitabAdapter(this));
+		cbKitab.setAdapter(new KitabAdapter(S.xkitab));
 		bKeLoncat = (ImageButton) findViewById(R.id.bKeLoncat);
 
 		// set kitab, pasal, ayat kini
@@ -241,7 +243,13 @@ public class MenujuActivity extends Activity {
 			}
 			
 			if (aktif == lPasal) {
-				aktif.append(s);
+				if (lPasal_pertamaKali) {
+					aktif.setText(s);
+					lPasal_pertamaKali = false;
+				} else {
+					aktif.append(s);
+				}
+				
 				if (cobaBacaPasal() > maxPasal || cobaBacaPasal() <= 0) {
 					aktif.setText(s);
 				}
@@ -255,7 +263,13 @@ public class MenujuActivity extends Activity {
 					Log.w("alki-menuju", e);
 				}
 			} else if (aktif == lAyat) {
-				aktif.append(s);
+				if (lAyat_pertamaKali) {
+					aktif.setText(s);
+					lAyat_pertamaKali = false;
+				} else {
+					aktif.append(s);
+				}
+				
 				if (cobaBacaAyat() > maxAyat || cobaBacaAyat() <= 0) {
 					aktif.setText(s);
 				}
@@ -272,5 +286,51 @@ public class MenujuActivity extends Activity {
 	private void warnain() {
 		if (aktif != null) aktif.setBackgroundColor(0x803030f0);
 		if (pasif != null) pasif.setBackgroundDrawable(null);
+	}
+	
+	private class KitabAdapter extends BaseAdapter {
+		Kitab[] xkitab_;
+		
+		public KitabAdapter(Kitab[] xkitab) {
+			xkitab_ = xkitab;
+		}
+
+		@Override
+		public int getCount() {
+			return xkitab_.length;
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return xkitab_[position];
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return xkitab_[position].pos;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup viewGroup) {
+			TextView res = (TextView) LayoutInflater.from(MenujuActivity.this).inflate(android.R.layout.simple_spinner_item, null);
+			res.setText(xkitab_[position].judul);
+						
+			return res;
+		}
+		
+		@Override
+		public View getDropDownView(int position, View convertView, ViewGroup parent) {
+			CheckedTextView res;
+			
+			if (convertView == null) {
+				res = (CheckedTextView) LayoutInflater.from(MenujuActivity.this).inflate(android.R.layout.simple_spinner_dropdown_item, null);
+			} else {
+				res = (CheckedTextView) convertView;
+			}
+			
+			res.setText(xkitab_[position].judul);
+						
+			return res;
+		}
 	}
 }

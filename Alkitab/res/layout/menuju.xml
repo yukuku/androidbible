@@ -86,9 +86,8 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:id="@+id/bOk"
-			android:text="Ok"
 			android:minWidth="200dp"
-			android:textAppearance="?android:attr/textAppearanceLarge"></Button>
+			android:textAppearance="?android:attr/textAppearanceLarge" android:text="OK"></Button>
 
 
 
