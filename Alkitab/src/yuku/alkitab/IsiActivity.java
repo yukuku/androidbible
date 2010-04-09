@@ -124,7 +124,7 @@ public class IsiActivity extends Activity {
 			}
 		});
 		
-		preferences = getSharedPreferences(S.NAMA_PREFERENCES, 0);
+		preferences = S.getPreferences(this);
 		int kitabTerakhir = preferences.getInt(NAMAPREF_kitabTerakhir, 0);
 		int pasalTerakhir = preferences.getInt(NAMAPREF_pasalTerakhir, 0);
 		int ayatTerakhir = preferences.getInt(NAMAPREF_ayatTerakhir, 0);

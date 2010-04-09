@@ -8,14 +8,13 @@ import yuku.alkitab.renungan.TukangDonlot;
 import yuku.bintex.BintexReader;
 import yuku.kirimfidbek.PengirimFidbek;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.widget.*;
 
 public class S {
-	public static final String NAMA_PREFERENCES = "yuku.alkitab";
-	
 	/**
 	 * penerapan dari pengaturan
 	 */
@@ -234,7 +233,7 @@ public class S {
 
 	public static synchronized void siapinPengirimFidbek(final IsiActivity activity) {
 		if (pengirimFidbek == null) {
-			pengirimFidbek = new PengirimFidbek(activity, activity.getSharedPreferences(S.NAMA_PREFERENCES, 0));
+			pengirimFidbek = new PengirimFidbek(activity, getPreferences(activity));
 			pengirimFidbek.activateDefaultUncaughtExceptionHandler("Ada kesalahan. Cobalah ulangi, dan jika tetap terjadi, tolong kirim imel ke yuku+alkitab@ikitek.com. Terima kasih.");
 			pengirimFidbek.setOnSuccessListener(new PengirimFidbek.OnSuccessListener() {
 				@Override
@@ -249,5 +248,9 @@ public class S {
 				}
 			});
 		}
+	}
+
+	public static SharedPreferences getPreferences(Context context) {
+		return context.getSharedPreferences(context.getPackageName(), 0);
 	}
 }

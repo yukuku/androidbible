@@ -90,7 +90,7 @@ public class SearchActivity extends Activity {
 		lTiadaHasil = (TextView) findViewById(R.id.lTiadaHasil);
 		
 		{
-			SharedPreferences preferences = getSharedPreferences(S.NAMA_PREFERENCES, 0);
+			SharedPreferences preferences = S.getPreferences(this);
 			pakeSnippet_ = preferences.getBoolean(NAMAPREF_pakeSnippet, false);
 		}
 		
@@ -294,7 +294,7 @@ public class SearchActivity extends Activity {
 		Log.d("alki", "finish");
 		
 		{
-			SharedPreferences preferences = getSharedPreferences(S.NAMA_PREFERENCES, 0);
+			SharedPreferences preferences = S.getPreferences(this);
 			Editor editor = preferences.edit();
 			editor.putBoolean(NAMAPREF_pakeSnippet, pakeSnippet_);
 			editor.commit();
