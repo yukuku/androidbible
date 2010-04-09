@@ -150,8 +150,6 @@ public class RenunganActivity extends Activity {
 					}}
 				), 0, artikel.getJudul().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 				
-				lIsi.setLinksClickable(true);
-				lIsi.setMovementMethod(LinkMovementMethod.getInstance());
 				ss.append(judul);
 			} else {
 				ss.append(Html.fromHtml("<br/><h3>" + artikel.getJudul() + "</h3><br/>"));
@@ -160,6 +158,9 @@ public class RenunganActivity extends Activity {
 			ss.append(Html.fromHtml(artikel.getIsiHtml() + "<br/><br/>" + artikel.getKopiraitHtml()));
 			
 			lIsi.setText(ss, BufferType.SPANNABLE);
+			lIsi.setLinksClickable(true);
+			lIsi.setMovementMethod(LinkMovementMethod.getInstance());
+			lIsi.setTextColor(0xffffffff);
 		} else {
 			if (artikel == null) {
 				lIsi.setText("Belum tersedia. Menunggu pengambilan data lewat Internet...\n\n(Pastikan ada koneksi Internet untuk mengambil renungan.)");
