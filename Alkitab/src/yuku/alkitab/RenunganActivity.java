@@ -193,7 +193,13 @@ public class RenunganActivity extends Activity {
 			}
 		}
 		
-		lHeader.setText(judul + "\n" + DateFormat.format("EEEE", S.penampungan.renungan_tanggalan) + ", " + DateFormat.getDateFormat(this).format(S.penampungan.renungan_tanggalan));
+		lHeader.setText(judul + "\n" + namaHari(S.penampungan.renungan_tanggalan) + ", " + DateFormat.getDateFormat(this).format(S.penampungan.renungan_tanggalan));
+	}
+
+	private static final String[] NAMA_HARI = {"Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"};
+	private static String namaHari(Date date) {
+		int day = date.getDay();
+		return NAMA_HARI[day];
 	}
 
 	private synchronized void akanPerlu(String nama, String tgl, boolean penting) {
