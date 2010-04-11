@@ -11,6 +11,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import yuku.alkitab.model.AlkitabDb;
+import yuku.andoutil.Sqlitil;
 import android.content.*;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -24,14 +25,19 @@ public class TukangDonlot extends Thread {
 		context_ = context;
 	}
 	
-	public synchronized boolean tambah(IArtikel artikel) {
+	public synchronized boolean tambah(IArtikel artikel, boolean penting) {
 		for (IArtikel a: antrian_) {
 			if (a.equals(artikel)) {
 				return false;
 			}
 		}
 		
-		antrian_.add(artikel);
+		if (penting) {
+			antrian_.addFirst(artikel);
+		} else {
+			antrian_.add(artikel);
+		}
+		
 		return true;
 	}
 	
@@ -130,6 +136,8 @@ public class TukangDonlot extends Thread {
 								values.put(KOLOM_isi, (String)null);
 								values.put(KOLOM_header, (String)null);
 							}
+							
+							values.put(KOLOM_waktuSentuh, Sqlitil.nowDateTime());
 							
 							db.insert(TABEL_Renungan, null, values);
 							

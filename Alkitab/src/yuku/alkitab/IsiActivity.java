@@ -31,6 +31,7 @@ public class IsiActivity extends Activity {
 	private static final String NAMAPREF_pasalTerakhir = "pasalTerakhir";
 	private static final String NAMAPREF_ayatTerakhir = "ayatTerakhir";
 	private static final String NAMAPREF_terakhirMintaFidbek = "terakhirMintaFidbek";
+	private static final String NAMAPREF_renungan_nama = "renungan_nama";
 
 	public static final int RESULT_pindahCara = RESULT_FIRST_USER + 1;
 	public static final int DIALOG_bikinIndex = 1;
@@ -138,7 +139,18 @@ public class IsiActivity extends Activity {
 		int pasalTerakhir = preferences.getInt(NAMAPREF_pasalTerakhir, 0);
 		int ayatTerakhir = preferences.getInt(NAMAPREF_ayatTerakhir, 0);
 		
-		Log.d("alki", String.format("Akan menuju kitab %d pasal %d ayat %d", kitabTerakhir, pasalTerakhir, ayatTerakhir));
+		{
+			String renungan_nama = preferences.getString(NAMAPREF_renungan_nama, null);
+			if (renungan_nama != null) {
+				for (String nama: RenunganActivity.ADA_NAMA) {
+					if (renungan_nama.equals(nama)) {
+						S.penampungan.renungan_nama = renungan_nama;
+					}
+				}
+			}
+		}
+		
+		Log.d("alki", "Akan menuju kitab " + kitabTerakhir + " pasal " + kitabTerakhir + " ayat " + ayatTerakhir);
 		
 		// muat kitab
 		if (kitabTerakhir < S.xkitab.length) {
@@ -402,6 +414,7 @@ public class IsiActivity extends Activity {
 		editor.putInt(NAMAPREF_kitabTerakhir, S.kitab.pos);
 		editor.putInt(NAMAPREF_pasalTerakhir, pasal);
 		editor.putInt(NAMAPREF_ayatTerakhir, getAyatBerdasarSkrol());
+		editor.putString(NAMAPREF_renungan_nama, S.penampungan.renungan_nama);
 		editor.commit();
 	}
 	
@@ -543,7 +556,7 @@ public class IsiActivity extends Activity {
 				menuTuju.setIcon(R.drawable.menu_loncat);
 				menuTuju.setTitle("Loncat");
 			} else {
-				menuTuju.setIcon(R.drawable.menu_tuju);
+				menuTuju.setIcon(R.drawable.ic_menu_forward);
 				menuTuju.setTitle("Tuju");
 			}
 		}

@@ -25,6 +25,7 @@ public class AlkitabDb {
 	public static final String KOLOM_judul = "judul";
 	public static final String KOLOM_isi = "isi";
 	public static final String KOLOM_siapPakai = "siapPakai";
+	public static final String KOLOM_waktuSentuh = "waktuSentuh";
 
 	public static int getVersionCode(Context context) {
 		PackageInfo packageInfo;
@@ -93,8 +94,9 @@ public class AlkitabDb {
 						"%s text, " + // header
 						"%s text, " + // judul
 						"%s text, " + // isi
-						"%s integer)", // siap pakai
-						TABEL_Renungan, KOLOM_nama, KOLOM_tgl, KOLOM_header, KOLOM_judul, KOLOM_isi, KOLOM_siapPakai));
+						"%s integer," + // siap pakai
+						"%s integer)", // waktuSentuh
+						TABEL_Renungan, KOLOM_nama, KOLOM_tgl, KOLOM_header, KOLOM_judul, KOLOM_isi, KOLOM_siapPakai, KOLOM_waktuSentuh));
 				
 				db.execSQL(String.format("create index if not exists index_101 on %s (%s)", TABEL_Renungan, KOLOM_nama));
 				db.execSQL(String.format("create index if not exists index_102 on %s (%s, %s)", TABEL_Renungan, KOLOM_nama, KOLOM_tgl));
@@ -111,7 +113,11 @@ public class AlkitabDb {
 	
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			// belum ada rencana apa2, biarkanlah
+			if (oldVersion == 10 && newVersion == 11) {
+				// 22nya versi dev, kondisi di atas bisa syuh kalo uda rilis
+				db.execSQL("drop table if exists " + TABEL_Renungan);
+			}
+			
 			if (oldVersion <= 10) { // 0.9-dev2, tambah renungan
 				onCreate(db);
 			}
