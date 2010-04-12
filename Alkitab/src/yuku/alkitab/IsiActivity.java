@@ -584,7 +584,7 @@ public class IsiActivity extends Activity {
 			Intent intent = new Intent(this, EdisiActivity.class);
 			startActivityForResult(intent, R.id.menuEdisi);
 			return true;
-		} else if (item.getItemId() == R.id.menuRenungan) { // gebug 5
+		} else if (item.getItemId() == R.id.menuRenungan) { 
 			Intent intent = new Intent(this, RenunganActivity.class);
 			startActivityForResult(intent, R.id.menuRenungan);
 			return true;
@@ -787,6 +787,13 @@ public class IsiActivity extends Activity {
 				
 				S.siapinKitab(getResources());
 			}
+		} else if (requestCode == R.id.menuRenungan) {
+			if (data != null) {
+				String alamat = data.getStringExtra("alamat");
+				if (alamat != null) {
+					loncatKe(alamat);
+				}
+			}
 		} else if (requestCode == R.id.menuKitab) {
 			if (resultCode == RESULT_OK) {
 				String nama = data.getStringExtra("nama");
@@ -801,13 +808,6 @@ public class IsiActivity extends Activity {
 			}
 		} else if (requestCode == R.id.menuPengaturan) {
 			terapkanPengaturan();
-		} else if (requestCode == 0x985805) {
-			if (data != null) {
-				String alamat = data.getStringExtra("alamat");
-				if (alamat != null) {
-					loncatKe(alamat);
-				}
-			}
 		}
 	}
 
