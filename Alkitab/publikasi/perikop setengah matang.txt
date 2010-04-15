@@ -3103,26 +3103,26 @@ Judul: Kembali dari Mesir
    Perikop: Mat 2:19-23
 Judul: Yohanes Pembaptis
    Perikop: Mat 3:1-12
-        Paralel: Mr 1:1-8
+        Paralel: Mrk 1:1-8
         Paralel: Luk 3:3-9
         Paralel: Luk 3:15-17
         Paralel: Yoh 1:19-28
 Judul: Yesus dibaptis Yohanes
    Perikop: Mat 3:13-17
-        Paralel: Mr 1:9-11
+        Paralel: Mrk 1:9-11
         Paralel: Luk 3:21-22
         Paralel: Yoh 1:32-34
 Judul: Pencobaan di padang gurun
    Perikop: Mat 4:1-11
-        Paralel: Mr 1:12-13
+        Paralel: Mrk 1:12-13
         Paralel: Luk 4:1-13
 Judul: Yesus tampil di Galilea
    Perikop: Mat 4:12-17
-        Paralel: Mr 1:14-15
+        Paralel: Mrk 1:14-15
         Paralel: Luk 4:14-15
 Judul: Yesus memanggil murid-murid yang pertama
    Perikop: Mat 4:18-22
-        Paralel: Mr 1:16-20
+        Paralel: Mrk 1:16-20
         Paralel: Luk 5:1-11
 Judul: Yesus mengajar dan menyembuhkan banyak orang
    Perikop: Mat 4:23-25
@@ -3167,7 +3167,7 @@ Judul: Kesan pendengar
    Perikop: Mat 7:28-29
 Judul: Yesus menyembuhkan seorang yang sakit kusta
    Perikop: Mat 8:1-4
-        Paralel: Mr 1:40-45
+        Paralel: Mrk 1:40-45
         Paralel: Luk 5:12-16
 Judul: Yesus menyembuhkan hamba seorang perwira di Kapernaum
    Perikop: Mat 8:5-13
@@ -3175,35 +3175,35 @@ Judul: Yesus menyembuhkan hamba seorang perwira di Kapernaum
         Paralel: Yoh 4:46-53
 Judul: Yesus menyembuhkan ibu mertua Petrus dan orang-orang lain
    Perikop: Mat 8:14-17
-        Paralel: Mr 1:29-34
+        Paralel: Mrk 1:29-34
         Paralel: Luk 4:38-41
 Judul: Hal mengikut Yesus
    Perikop: Mat 8:18-22
         Paralel: Luk 9:57-62
 Judul: Angin ribut diredakan
    Perikop: Mat 8:23-27
-        Paralel: Mr 4:35-41
+        Paralel: Mrk 4:35-41
         Paralel: Luk 8:22-25
 Judul: Dua orang yang kerasukan disembuhkan
    Perikop: Mat 8:28-34
-        Paralel: Mr 5:1-20
+        Paralel: Mrk 5:1-20
         Paralel: Luk 8:26-39
 Judul: Orang lumpuh disembuhkan
    Perikop: Mat 9:1-8
-        Paralel: Mr 2:1-12
+        Paralel: Mrk 2:1-12
         Paralel: Luk 5:17-26
 Judul: Matius pemungut cukai mengikut Yesus
    Perikop: Mat 9:9-13
-        Paralel: Mr 2:13-17
+        Paralel: Mrk 2:13-17
         Paralel: Luk 5:27-32
 Judul: Hal berpuasa
    Perikop: Mat 9:14-17
-        Paralel: Mr 2:18-22
+        Paralel: Mrk 2:18-22
         Paralel: Luk 5:33-39
 Judul: Anak kepala rumah ibadat
 Judul: Perempuan yang sakit pendarahan
    Perikop: Mat 9:18-26
-        Paralel: Mr 5:21-43
+        Paralel: Mrk 5:21-43
         Paralel: Luk 8:40-56
 Judul: Yesus menyembuhkan mata dua orang buta
    Perikop: Mat 9:27-31
@@ -3213,15 +3213,15 @@ Judul: Belas kasihan Yesus terhadap orang banyak
    Perikop: Mat 9:35-38
 Judul: Yesus memanggil kedua belas rasul
    Perikop: Mat 10:1-4
-        Paralel: Mr 3:13-19
+        Paralel: Mrk 3:13-19
         Paralel: Luk 6:12-16
 Judul: Yesus mengutus kedua belas rasul
    Perikop: Mat 10:5-15
-        Paralel: Mr 6:6-13
+        Paralel: Mrk 6:6-13
         Paralel: Luk 9:1-6
 Judul: Penganiayaan yang akan datang dan pengakuan akan Yesus
    Perikop: Mat 10:16-33
-        Paralel: Mr 13:9-13
+        Paralel: Mrk 13:9-13
         Paralel: Luk 21:12-19
         Paralel: Luk 12:2-9
 Judul: Yesus membawa pemisahan
@@ -3238,17 +3238,17 @@ Judul: Ajakan Juruselamat
         Paralel: Luk 10:21-22
 Judul: Murid-murid memetik gandum pada hari Sabat
    Perikop: Mat 12:1-8
-        Paralel: Mr 2:23-28
+        Paralel: Mrk 2:23-28
         Paralel: Luk 6:1-5
 Judul: Yesus menyembuhkan orang pada hari Sabat
    Perikop: Mat 12:9-15
-        Paralel: Mr 3:1-6
+        Paralel: Mrk 3:1-6
         Paralel: Luk 6:6-11
 Judul: Yesus Hamba Tuhan
    Perikop: Mat 12:15-21
 Judul: Yesus dan Beelzebul
    Perikop: Mat 12:22-37
-        Paralel: Mr 3:20-30
+        Paralel: Mrk 3:20-30
         Paralel: Luk 11:14-23
         Paralel: Luk 6:43-45
 Judul: Tanda Yunus
@@ -3259,17 +3259,17 @@ Judul: Kembalinya roh jahat
         Paralel: Luk 11:24-26
 Judul: Yesus dan sanak saudara-Nya
    Perikop: Mat 12:46-50
-        Paralel: Mr 3:31-35
+        Paralel: Mrk 3:31-35
         Paralel: Luk 8:19-21
 Judul: Perumpamaan tentang seorang penabur
    Perikop: Mat 13:1-23
-        Paralel: Mr 4:1-20
+        Paralel: Mrk 4:1-20
         Paralel: Luk 8:4-15
 Judul: Perumpamaan tentang lalang di antara gandum
    Perikop: Mat 13:24-30
 Judul: Perumpamaan tentang biji sesawi dan ragi
    Perikop: Mat 13:31-35
-        Paralel: Mr 4:30-34
+        Paralel: Mrk 4:30-34
         Paralel: Luk 13:18-21
 Judul: Penjelasan perumpamaan tentang lalang di antara gandum
    Perikop: Mat 13:36-43
@@ -3279,70 +3279,70 @@ Judul: Perumpamaan tentang pukat
    Perikop: Mat 13:47-52
 Judul: Yesus ditolak di Nazaret
    Perikop: Mat 13:53-58
-        Paralel: Mr 6:1-6
+        Paralel: Mrk 6:1-6
         Paralel: Luk 4:16-30
 Judul: Yohanes Pembaptis dibunuh
    Perikop: Mat 14:1-12
-        Paralel: Mr 6:14-29
+        Paralel: Mrk 6:14-29
         Paralel: Luk 9:7-9
 Judul: Yesus memberi makan lima ribu orang
    Perikop: Mat 14:13-21
-        Paralel: Mr 6:30-44
+        Paralel: Mrk 6:30-44
         Paralel: Luk 9:10-17
         Paralel: Yoh 6:1-13
 Judul: Yesus berjalan di atas air
    Perikop: Mat 14:22-33
-        Paralel: Mr 6:45-52
+        Paralel: Mrk 6:45-52
         Paralel: Yoh 6:16-21
 Judul: Yesus menyembuhkan orang-orang sakit di Genesaret
    Perikop: Mat 14:34-36
-        Paralel: Mr 6:53-56
+        Paralel: Mrk 6:53-56
 Judul: Perintah Allah dan adat istiadat Yahudi
    Perikop: Mat 15:1-20
-        Paralel: Mr 7:1-23
+        Paralel: Mrk 7:1-23
 Judul: Perempuan Kanaan yang percaya
    Perikop: Mat 15:21-28
-        Paralel: Mr 7:24-30
+        Paralel: Mrk 7:24-30
 Judul: Yesus menyembuhkan banyak orang sakit
    Perikop: Mat 15:29-31
 Judul: Yesus memberi makan empat ribu orang
    Perikop: Mat 15:32-39
-        Paralel: Mr 8:1-10
+        Paralel: Mrk 8:1-10
 Judul: Orang Farisi dan Saduki meminta tanda
    Perikop: Mat 16:1-4
-        Paralel: Mr 8:11-13
+        Paralel: Mrk 8:11-13
 Judul: Tentang ragi orang Farisi dan Saduki
    Perikop: Mat 16:5-12
-        Paralel: Mr 8:14-21
+        Paralel: Mrk 8:14-21
 Judul: Pengakuan Petrus
    Perikop: Mat 16:13-20
-        Paralel: Mr 8:27-30
+        Paralel: Mrk 8:27-30
         Paralel: Luk 9:18-21
 Judul: Pemberitahuan pertama tentang penderitaan Yesus dan syarat-syarat mengikut Dia
    Perikop: Mat 16:21-28
-        Paralel: Mr 8:31-9:1
+        Paralel: Mrk 8:31-9:1
         Paralel: Luk 9:22-27
 Judul: Yesus dimuliakan di atas gunung
    Perikop: Mat 17:1-13
-        Paralel: Mr 9:2-13
+        Paralel: Mrk 9:2-13
         Paralel: Luk 9:28-36
 Judul: Yesus menyembuhkan seorang anak muda yang sakit ayan
    Perikop: Mat 17:14-21
-        Paralel: Mr 9:14-29
+        Paralel: Mrk 9:14-29
         Paralel: Luk 9:37-43
 Judul: Pemberitahuan kedua tentang penderitaan Yesus
    Perikop: Mat 17:22-23
-        Paralel: Mr 9:30-32
+        Paralel: Mrk 9:30-32
         Paralel: Luk 9:43-45
 Judul: Yesus membayar bea untuk Bait Allah
    Perikop: Mat 17:24-27
 Judul: Siapa yang terbesar dalam Kerajaan Sorga
    Perikop: Mat 18:1-5
-        Paralel: Mr 9:33-37
+        Paralel: Mrk 9:33-37
         Paralel: Luk 9:46-48
 Judul: Siapa yang menyesatkan orang
    Perikop: Mat 18:6-11
-        Paralel: Mr 9:42-48
+        Paralel: Mrk 9:42-48
         Paralel: Luk 17:1-2
 Judul: Perumpamaan tentang domba yang hilang
    Perikop: Mat 18:12-14
@@ -3353,79 +3353,79 @@ Judul: Perumpamaan tentang pengampunan
    Perikop: Mat 18:21-35
 Judul: Perceraian
    Perikop: Mat 19:1-12
-        Paralel: Mr 10:1-12
+        Paralel: Mrk 10:1-12
 Judul: Yesus memberkati anak-anak
    Perikop: Mat 19:13-15
-        Paralel: Mr 10:13-16
+        Paralel: Mrk 10:13-16
         Paralel: Luk 18:15-17
 Judul: Orang muda yang kaya
    Perikop: Mat 19:16-26
-        Paralel: Mr 10:17-27
+        Paralel: Mrk 10:17-27
         Paralel: Luk 18:18-27
 Judul: Upah mengikut Yesus
    Perikop: Mat 19:27-30
-        Paralel: Mr 10:28-31
+        Paralel: Mrk 10:28-31
         Paralel: Luk 18:28-30
 Judul: Perumpamaan tentang orang-orang upahan di kebun anggur
    Perikop: Mat 20:1-16
 Judul: Pemberitahuan ketiga tentang penderitaan Yesus
    Perikop: Mat 20:17-19
-        Paralel: Mr 10:32-34
+        Paralel: Mrk 10:32-34
         Paralel: Luk 18:31-34
 Judul: Permintaan ibu Yakobus dan Yohanes
 Judul: Bukan memerintah melainkan melayani
    Perikop: Mat 20:20-28
-        Paralel: Mr 10:35-45
+        Paralel: Mrk 10:35-45
 Judul: Yesus menyembuhkan dua orang buta
    Perikop: Mat 20:29-34
-        Paralel: Mr 10:46-52
+        Paralel: Mrk 10:46-52
         Paralel: Luk 18:35-43
 Judul: Yesus dielu-elukan di Yerusalem
    Perikop: Mat 21:1-11
-        Paralel: Mr 11:1-10
+        Paralel: Mrk 11:1-10
         Paralel: Luk 19:28-38
         Paralel: Yoh 12:12-15
 Judul: Yesus menyucikan Bait Allah
    Perikop: Mat 21:12-17
-        Paralel: Mr 11:15-19
+        Paralel: Mrk 11:15-19
         Paralel: Luk 19:45-48
         Paralel: Yoh 2:13-16
 Judul: Yesus mengutuk pohon ara
    Perikop: Mat 21:18-22
-        Paralel: Mr 11:12-14
-        Paralel: Mr 11:20-26
+        Paralel: Mrk 11:12-14
+        Paralel: Mrk 11:20-26
 Judul: Pertanyaan mengenai kuasa Yesus
    Perikop: Mat 21:23-27
-        Paralel: Mr 11:27-33
+        Paralel: Mrk 11:27-33
         Paralel: Luk 20:1-8
 Judul: Perumpamaan tentang dua orang anak
    Perikop: Mat 21:28-32
 Judul: Perumpamaan tentang penggarap-penggarap kebun anggur
    Perikop: Mat 21:33-46
-        Paralel: Mr 12:1-12
+        Paralel: Mrk 12:1-12
         Paralel: Luk 20:9-19
 Judul: Perumpamaan tentang perjamuan kawin
    Perikop: Mat 22:1-14
         Paralel: Luk 14:15-24
 Judul: Tentang membayar pajak kepada Kaisar
    Perikop: Mat 22:15-22
-        Paralel: Mr 12:13-17
+        Paralel: Mrk 12:13-17
         Paralel: Luk 20:20-26
 Judul: Pertanyaan orang Saduki tentang kebangkitan
    Perikop: Mat 22:23-33
-        Paralel: Mr 12:18-27
+        Paralel: Mrk 12:18-27
         Paralel: Luk 20:27-40
 Judul: Hukum yang terutama
    Perikop: Mat 22:34-40
-        Paralel: Mr 12:28-34
+        Paralel: Mrk 12:28-34
         Paralel: Luk 10:25-28
 Judul: Hubungan antara Yesus dan Daud
    Perikop: Mat 22:41-46
-        Paralel: Mr 12:35-37
+        Paralel: Mrk 12:35-37
         Paralel: Luk 20:41-44
 Judul: Yesus mengecam ahli-ahli Taurat dan orang-orang Farisi
    Perikop: Mat 23:1-36
-        Paralel: Mr 12:38-40
+        Paralel: Mrk 12:38-40
         Paralel: Luk 11:37-54
         Paralel: Luk 20:45-47
 Judul: Keluhan terhadap Yerusalem
@@ -3433,20 +3433,20 @@ Judul: Keluhan terhadap Yerusalem
         Paralel: Luk 13:34-35
 Judul: Bait Allah akan diruntuhkan
    Perikop: Mat 24:1-2
-        Paralel: Mr 13:1-2
+        Paralel: Mrk 13:1-2
         Paralel: Luk 21:5-6
 Judul: Permulaan penderitaan
    Perikop: Mat 24:3-14
-        Paralel: Mr 13:3-13
+        Paralel: Mrk 13:3-13
         Paralel: Luk 21:7-19
 Judul: Siksaan yang berat dan Mesias-mesias palsu
    Perikop: Mat 24:15-28
-        Paralel: Mr 13:14-23
+        Paralel: Mrk 13:14-23
         Paralel: Luk 21:20-24
 Judul: Kedatangan Anak Manusia
 Judul: Perumpamaan tentang pohon ara
    Perikop: Mat 24:29-36
-        Paralel: Mr 13:24-32
+        Paralel: Mrk 13:24-32
         Paralel: Luk 21:25-33
 Judul: Nasihat supaya berjaga-jaga
    Perikop: Mat 24:37-44
@@ -3464,52 +3464,52 @@ Judul: Penghakiman terakhir
    Perikop: Mat 25:31-46
 Judul: Pemberitahuan keempat tentang penderitaan Yesus -- Rencana untuk membunuh Yesus
    Perikop: Mat 26:1-5
-        Paralel: Mr 14:1-2
+        Paralel: Mrk 14:1-2
         Paralel: Luk 22:1-2
         Paralel: Yoh 11:45-53
 Judul: Yesus diurapi
    Perikop: Mat 26:6-13
-        Paralel: Mr 14:3-9
+        Paralel: Mrk 14:3-9
         Paralel: Yoh 12:1-8
 Judul: Yudas mengkhianati Yesus
    Perikop: Mat 26:14-16
-        Paralel: Mr 14:10-11
+        Paralel: Mrk 14:10-11
         Paralel: Luk 22:3-6
 Judul: Yesus makan Paskah dengan murid-murid-Nya
    Perikop: Mat 26:17-25
-        Paralel: Mr 14:12-21
+        Paralel: Mrk 14:12-21
         Paralel: Luk 22:7-14
         Paralel: Luk 22:21-23
         Paralel: Yoh 13:21-30
 Judul: Penetapan Perjamuan Malam
    Perikop: Mat 26:26-29
-        Paralel: Mr 14:22-25
+        Paralel: Mrk 14:22-25
         Paralel: Luk 22:15-20
         Paralel: 1Kor 11:23-25
 Judul: Petrus akan menyangkal Yesus
    Perikop: Mat 26:30-35
-        Paralel: Mr 14:26-31
+        Paralel: Mrk 14:26-31
         Paralel: Luk 22:31-34
         Paralel: Yoh 13:36-38
 Judul: Di taman Getsemani
    Perikop: Mat 26:36-46
-        Paralel: Mr 14:32-42
+        Paralel: Mrk 14:32-42
         Paralel: Luk 22:39-46
 Judul: Yesus ditangkap
    Perikop: Mat 26:47-56
-        Paralel: Mr 14:43-50
+        Paralel: Mrk 14:43-50
         Paralel: Luk 22:47-53
         Paralel: Yoh 18:1-11
 Judul: Yesus di hadapan Mahkamah Agama
    Perikop: Mat 26:57-68
-        Paralel: Mr 14:53-65
+        Paralel: Mrk 14:53-65
         Paralel: Luk 22:54-55
         Paralel: Luk 22:63-71
         Paralel: Yoh 18:12-14
         Paralel: Yoh 18:19-24
 Judul: Petrus menyangkal Yesus
    Perikop: Mat 26:69-75
-        Paralel: Mr 14:66-72
+        Paralel: Mrk 14:66-72
         Paralel: Luk 22:56-62
         Paralel: Yoh 18:15-18
         Paralel: Yoh 18:25-27
@@ -3518,35 +3518,35 @@ Judul: Kematian Yudas
    Perikop: Mat 27:1-10
 Judul: Yesus di hadapan Pilatus
    Perikop: Mat 27:11-26
-        Paralel: Mr 15:1-15
+        Paralel: Mrk 15:1-15
         Paralel: Luk 23:1-5
         Paralel: Luk 23:13-25
         Paralel: Yoh 18:33-19:16
 Judul: Yesus diolok-olokkan
    Perikop: Mat 27:27-31
-        Paralel: Mr 15:16-20
+        Paralel: Mrk 15:16-20
         Paralel: Yoh 19:2-3
 Judul: Yesus disalibkan
    Perikop: Mat 27:32-44
-        Paralel: Mr 15:21-32
+        Paralel: Mrk 15:21-32
         Paralel: Luk 23:26
         Paralel: Luk 23:33-43
         Paralel: Yoh 19:17-24
 Judul: Yesus mati
    Perikop: Mat 27:45-56
-        Paralel: Mr 15:33-41
+        Paralel: Mrk 15:33-41
         Paralel: Luk 23:44-49
         Paralel: Yoh 19:28-30
 Judul: Yesus dikuburkan
    Perikop: Mat 27:57-61
-        Paralel: Mr 15:42-47
+        Paralel: Mrk 15:42-47
         Paralel: Luk 23:50-56
         Paralel: Yoh 19:38-42
 Judul: Kubur Yesus dijaga
    Perikop: Mat 27:62-66
 Judul: Kebangkitan Yesus
    Perikop: Mat 28:1-10
-        Paralel: Mr 16:1-8
+        Paralel: Mrk 16:1-8
         Paralel: Luk 24:1-12
         Paralel: Yoh 20:1-10
 Judul: Dusta Mahkamah Agama
@@ -3554,355 +3554,355 @@ Judul: Dusta Mahkamah Agama
 Judul: Perintah untuk memberitakan Injil
    Perikop: Mat 28:16-20
 Judul: Yohanes Pembaptis
-   Perikop: Mr 1:1-8
+   Perikop: Mrk 1:1-8
         Paralel: Mat 3:1-6
         Paralel: Mat 3:11-12
         Paralel: Luk 3:3-6
         Paralel: Luk 3:15-17
         Paralel: Yoh 1:19-28
 Judul: Yesus dibaptis Yohanes
-   Perikop: Mr 1:9-11
+   Perikop: Mrk 1:9-11
         Paralel: Mat 3:13-17
         Paralel: Luk 3:21-22
         Paralel: Yoh 1:32-34
 Judul: Pencobaan di padang gurun
-   Perikop: Mr 1:12-13
+   Perikop: Mrk 1:12-13
         Paralel: Mat 4:1-11
         Paralel: Luk 4:1-13
 Judul: Yesus tampil di Galilea
-   Perikop: Mr 1:14-15
+   Perikop: Mrk 1:14-15
         Paralel: Mat 4:12-17
         Paralel: Luk 4:14-15
 Judul: Yesus memanggil murid-murid yang pertama
-   Perikop: Mr 1:16-20
+   Perikop: Mrk 1:16-20
         Paralel: Mat 4:18-22
         Paralel: Luk 5:1-11
 Judul: Yesus dalam rumah ibadat di Kapernaum
-   Perikop: Mr 1:21-28
+   Perikop: Mrk 1:21-28
         Paralel: Luk 4:31-37
 Judul: Yesus menyembuhkan ibu mertua Petrus dan orang-orang lain
-   Perikop: Mr 1:29-34
+   Perikop: Mrk 1:29-34
         Paralel: Mat 8:14-17
         Paralel: Luk 4:38-41
 Judul: Yesus mengajar di kota-kota lain
-   Perikop: Mr 1:35-39
+   Perikop: Mrk 1:35-39
         Paralel: Luk 4:42-44
 Judul: Yesus menyembuhkan seorang yang sakit kusta
-   Perikop: Mr 1:40-45
+   Perikop: Mrk 1:40-45
         Paralel: Mat 8:1-4
         Paralel: Luk 5:12-16
 Judul: Orang lumpuh disembuhkan
-   Perikop: Mr 2:1-12
+   Perikop: Mrk 2:1-12
         Paralel: Mat 9:1-8
         Paralel: Luk 5:17-26
 Judul: Lewi pemungut cukai mengikut Yesus
-   Perikop: Mr 2:13-17
+   Perikop: Mrk 2:13-17
         Paralel: Mat 9:9-13
         Paralel: Luk 5:27-32
 Judul: Hal berpuasa
-   Perikop: Mr 2:18-22
+   Perikop: Mrk 2:18-22
         Paralel: Mat 9:14-17
         Paralel: Luk 5:33-39
 Judul: Murid-murid memetik gandum pada hari Sabat
-   Perikop: Mr 2:23-28
+   Perikop: Mrk 2:23-28
         Paralel: Mat 12:1-8
         Paralel: Luk 6:1-5
 Judul: Yesus menyembuhkan orang pada hari Sabat
-   Perikop: Mr 3:1-6
+   Perikop: Mrk 3:1-6
         Paralel: Mat 12:9-14
         Paralel: Luk 6:6-11
 Judul: Yesus menyembuhkan banyak orang
-   Perikop: Mr 3:7-12
+   Perikop: Mrk 3:7-12
 Judul: Yesus memanggil kedua belas rasul
-   Perikop: Mr 3:13-19
+   Perikop: Mrk 3:13-19
         Paralel: Mat 10:1-4
         Paralel: Luk 6:12-16
 Judul: Yesus dan Beelzebul
-   Perikop: Mr 3:20-30
+   Perikop: Mrk 3:20-30
         Paralel: Mat 12:22-32
         Paralel: Luk 11:14-23
 Judul: Yesus dan sanak saudara-Nya
-   Perikop: Mr 3:31-35
+   Perikop: Mrk 3:31-35
         Paralel: Mat 12:46-50
         Paralel: Luk 18:19-21
 Judul: Perumpamaan tentang seorang penabur
-   Perikop: Mr 4:1-20
+   Perikop: Mrk 4:1-20
         Paralel: Mat 13:1-23
         Paralel: Luk 8:4-15
 Judul: Perumpamaan tentang pelita dan tentang ukuran
-   Perikop: Mr 4:21-25
+   Perikop: Mrk 4:21-25
         Paralel: Luk 8:16-18
 Judul: Perumpamaan tentang benih yang tumbuh
-   Perikop: Mr 4:26-29
+   Perikop: Mrk 4:26-29
 Judul: Perumpamaan tentang biji sesawi
-   Perikop: Mr 4:30-34
+   Perikop: Mrk 4:30-34
         Paralel: Mat 13:31-35
         Paralel: Luk 13:18-19
 Judul: Angin ribut diredakan
-   Perikop: Mr 4:35-41
+   Perikop: Mrk 4:35-41
         Paralel: Mat 8:23-27
         Paralel: Luk 8:22-25
 Judul: Yesus mengusir roh jahat dari orang Gerasa
-   Perikop: Mr 5:1-20
+   Perikop: Mrk 5:1-20
         Paralel: Mat 8:28-34
         Paralel: Luk 8:26-39
 Judul: Yesus membangkitkan anak Yairus dan menyembuhkan seorang perempuan yang sakit pendarahan
-   Perikop: Mr 5:21-43
+   Perikop: Mrk 5:21-43
         Paralel: Mat 9:18-26
         Paralel: Luk 8:40-56
 Judul: Yesus ditolak di Nazaret
-   Perikop: Mr 6:1-6
+   Perikop: Mrk 6:1-6
         Paralel: Mat 13:53-58
         Paralel: Luk 4:16-30
 Judul: Yesus mengutus kedua belas rasul
-   Perikop: Mr 6:6-13
+   Perikop: Mrk 6:6-13
         Paralel: Mat 10:5-15
         Paralel: Luk 9:1-6
 Judul: Yohanes Pembaptis dibunuh
-   Perikop: Mr 6:14-29
+   Perikop: Mrk 6:14-29
         Paralel: Mat 14:1-12
         Paralel: Luk 9:7-9
 Judul: Yesus memberi makan lima ribu orang
-   Perikop: Mr 6:30-44
+   Perikop: Mrk 6:30-44
         Paralel: Mat 14:13-21
         Paralel: Luk 9:10-17
         Paralel: Yoh 6:1-13
 Judul: Yesus berjalan di atas air
-   Perikop: Mr 6:45-52
+   Perikop: Mrk 6:45-52
         Paralel: Mat 14:22-33
         Paralel: Yoh 6:16-21
 Judul: Yesus menyembuhkan orang-orang sakit di Genesaret
-   Perikop: Mr 6:53-56
+   Perikop: Mrk 6:53-56
         Paralel: Mat 14:34-36
 Judul: Perintah Allah dan adat istiadat Yahudi
-   Perikop: Mr 7:1-23
+   Perikop: Mrk 7:1-23
         Paralel: Mat 15:1-20
 Judul: Perempuan Siro-Fenisia yang percaya
-   Perikop: Mr 7:24-30
+   Perikop: Mrk 7:24-30
         Paralel: Mat 15:21-28
 Judul: Yesus menyembuhkan seorang tuli
-   Perikop: Mr 7:31-37
+   Perikop: Mrk 7:31-37
 Judul: Yesus memberi makan empat ribu orang
-   Perikop: Mr 8:1-10
+   Perikop: Mrk 8:1-10
         Paralel: Mat 15:32-39
 Judul: Orang Farisi meminta tanda
-   Perikop: Mr 8:11-13
+   Perikop: Mrk 8:11-13
         Paralel: Mat 16:1-4
 Judul: Tentang ragi orang Farisi dan ragi Herodes
-   Perikop: Mr 8:14-21
+   Perikop: Mrk 8:14-21
         Paralel: Mat 16:5-12
 Judul: Yesus menyembuhkan seorang buta di Betsaida
-   Perikop: Mr 8:22-26
+   Perikop: Mrk 8:22-26
 Judul: Pengakuan Petrus
-   Perikop: Mr 8:27-30
+   Perikop: Mrk 8:27-30
         Paralel: Mat 16:13-20
         Paralel: Luk 9:18-21
 Judul: Pemberitahuan pertama tentang penderitaan Yesus dan syarat-syarat mengikut Dia
-   Perikop: Mr 8:31-9:1
+   Perikop: Mrk 8:31-9:1
         Paralel: Mat 16:21-28
         Paralel: Luk 9:22-27
 Judul: Yesus dimuliakan di atas gunung
-   Perikop: Mr 9:2-13
+   Perikop: Mrk 9:2-13
         Paralel: Mat 17:1-13
         Paralel: Luk 9:28-36
 Judul: Yesus mengusir roh dari seorang anak yang bisu
-   Perikop: Mr 9:14-29
+   Perikop: Mrk 9:14-29
         Paralel: Mat 17:14-21
         Paralel: Luk 9:37-43
 Judul: Pemberitahuan kedua tentang penderitaan Yesus
-   Perikop: Mr 9:30-32
+   Perikop: Mrk 9:30-32
         Paralel: Mat 17:22-23
         Paralel: Luk 9:43-45
 Judul: Siapa yang terbesar di antara para murid
-   Perikop: Mr 9:33-37
+   Perikop: Mrk 9:33-37
         Paralel: Mat 18:1-5
         Paralel: Luk 9:46-48
 Judul: Seorang yang bukan murid Yesus mengusir setan
-   Perikop: Mr 9:38-41
+   Perikop: Mrk 9:38-41
         Paralel: Luk 9:49-50
 Judul: Siapa yang menyesatkan orang
 Judul: Tentang garam
-   Perikop: Mr 9:42-50
+   Perikop: Mrk 9:42-50
         Paralel: Mat 18:6-9
         Paralel: Luk 17:1-2
 Judul: Perceraian
-   Perikop: Mr 10:1-12
+   Perikop: Mrk 10:1-12
         Paralel: Mat 19:1-9
 Judul: Yesus memberkati anak-anak
-   Perikop: Mr 10:13-16
+   Perikop: Mrk 10:13-16
         Paralel: Mat 19:13-15
         Paralel: Luk 18:15-17
 Judul: Orang kaya sukar masuk Kerajaan Allah
-   Perikop: Mr 10:17-27
+   Perikop: Mrk 10:17-27
         Paralel: Mat 19:16-26
         Paralel: Luk 18:18-27
 Judul: Upah mengikut Yesus
-   Perikop: Mr 10:28-31
+   Perikop: Mrk 10:28-31
         Paralel: Mat 19:27-30
         Paralel: Luk 18:28-30
 Judul: Pemberitahuan ketiga tentang penderitaan Yesus
-   Perikop: Mr 10:32-34
+   Perikop: Mrk 10:32-34
         Paralel: Mat 20:17-19
         Paralel: Luk 18:31-34
 Judul: Permintaan Yakobus dan Yohanes
 Judul: Bukan memerintah melainkan melayani
-   Perikop: Mr 10:35-45
+   Perikop: Mrk 10:35-45
         Paralel: Mat 20:20-28
 Judul: Yesus menyembuhkan Bartimeus
-   Perikop: Mr 10:46-52
+   Perikop: Mrk 10:46-52
         Paralel: Mat 20:29-34
         Paralel: Luk 18:35-43
 Judul: Yesus dielu-elukan di Yerusalem
-   Perikop: Mr 11:1-11
+   Perikop: Mrk 11:1-11
         Paralel: Mat 21:1-9
         Paralel: Luk 19:28-38
         Paralel: Yoh 12:12-15
 Judul: Yesus mengutuk pohon ara
-   Perikop: Mr 11:12-14
+   Perikop: Mrk 11:12-14
         Paralel: Mat 21:18-19
 Judul: Yesus menyucikan Bait Allah
-   Perikop: Mr 11:15-19
+   Perikop: Mrk 11:15-19
         Paralel: Mat 21:12-13
         Paralel: Luk 19:45-48
         Paralel: Yoh 2:13-16
 Judul: Pohon ara yang sudah kering
 Judul: Nasihat Yesus tentang doa
-   Perikop: Mr 11:20-26
+   Perikop: Mrk 11:20-26
         Paralel: Mat 21:20-22
 Judul: Pertanyaan mengenai kuasa Yesus
-   Perikop: Mr 11:27-33
+   Perikop: Mrk 11:27-33
         Paralel: Mat 21:23-27
         Paralel: Luk 20:1-8
 Judul: Perumpamaan tentang penggarap-penggarap kebun anggur
-   Perikop: Mr 12:1-12
+   Perikop: Mrk 12:1-12
         Paralel: Mat 21:33-46
         Paralel: Luk 20:9-19
 Judul: Tentang membayar pajak kepada Kaisar
-   Perikop: Mr 12:13-17
+   Perikop: Mrk 12:13-17
         Paralel: Mat 22:15-22
         Paralel: Luk 20:20-26
 Judul: Pertanyaan orang Saduki tentang kebangkitan
-   Perikop: Mr 12:18-27
+   Perikop: Mrk 12:18-27
         Paralel: Mat 22:23-33
         Paralel: Luk 20:27-40
 Judul: Hukum yang terutama
-   Perikop: Mr 12:28-34
+   Perikop: Mrk 12:28-34
         Paralel: Mat 22:34-40
         Paralel: Luk 10:25-28
 Judul: Hubungan antara Yesus dan Daud
-   Perikop: Mr 13:35-37
+   Perikop: Mrk 13:35-37
         Paralel: Mat 22:41-46
         Paralel: Luk 20:41-44
 Judul: Yesus menasihatkan supaya hati-hati terhadap ahli-ahli Taurat
-   Perikop: Mr 12:38-40
+   Perikop: Mrk 12:38-40
         Paralel: Mat 23:5-7
         Paralel: Luk 20:45-47
 Judul: Persembahan seorang janda miskin
-   Perikop: Mr 12:41-44
+   Perikop: Mrk 12:41-44
         Paralel: Luk 21:1-4
 Judul: Bait Allah akan diruntuhkan
-   Perikop: Mr 13:1-2
+   Perikop: Mrk 13:1-2
         Paralel: Mat 24:1-2
         Paralel: Luk 21:5-6
 Judul: Permulaan penderitaan
-   Perikop: Mr 13:3-13
+   Perikop: Mrk 13:3-13
         Paralel: Mat 24:3-14
         Paralel: Luk 21:7-19
 Judul: Siksaan yang berat dan Mesias-mesias palsu
-   Perikop: Mr 13:14-23
+   Perikop: Mrk 13:14-23
         Paralel: Mat 24:15-28
         Paralel: Luk 21:20-24
 Judul: Kedatangan Anak Manusia
 Judul: Perumpamaan tentang pohon ara
-   Perikop: Mr 13:24-32
+   Perikop: Mrk 13:24-32
         Paralel: Mat 24:29-36
         Paralel: Luk 21:25-33
 Judul: Nasihat supaya berjaga-jaga
-   Perikop: Mr 13:33-37
+   Perikop: Mrk 13:33-37
 Judul: Rencana untuk membunuh Yesus
-   Perikop: Mr 14:1-2
+   Perikop: Mrk 14:1-2
         Paralel: Mat 26:1-5
         Paralel: Luk 22:1-2
         Paralel: Yoh 11:45-53
 Judul: Yesus diurapi
-   Perikop: Mr 14:3-9
+   Perikop: Mrk 14:3-9
         Paralel: Mat 26:6-13
         Paralel: Yoh 12:1-8
 Judul: Yudas mengkhianati Yesus
-   Perikop: Mr 14:10-11
+   Perikop: Mrk 14:10-11
 Judul: Yesus makan Paskah dengan murid-murid-Nya
-   Perikop: Mr 14:12-21
+   Perikop: Mrk 14:12-21
         Paralel: Mat 26:17-25
         Paralel: Luk 22:7-14
         Paralel: Luk 22:21-23
         Paralel: Yoh 13:21-30
 Judul: Penetapan Perjamuan Malam
-   Perikop: Mr 14:22-25
+   Perikop: Mrk 14:22-25
         Paralel: Mat 26:26-29
         Paralel: Luk 22:15-20
         Paralel: 1Kor 11:23-25
 Judul: Petrus akan menyangkal Yesus
-   Perikop: Mr 14:26-31
+   Perikop: Mrk 14:26-31
         Paralel: Mat 26:30-35
         Paralel: Luk 22:31-34
         Paralel: Yoh 13:36-38
 Judul: Di taman Getsemani
-   Perikop: Mr 14:32-42
+   Perikop: Mrk 14:32-42
         Paralel: Mat 26:36-46
         Paralel: Luk 22:39-46
 Judul: Yesus ditangkap
-   Perikop: Mr 14:43-52
+   Perikop: Mrk 14:43-52
         Paralel: Mat 26:47-56
         Paralel: Luk 22:47-53
         Paralel: Yoh 18:1-11
 Judul: Yesus di hadapan Mahkamah Agama
-   Perikop: Mr 14:53-65
+   Perikop: Mrk 14:53-65
         Paralel: Mat 26:57-68
         Paralel: Luk 22:54-55
         Paralel: Luk 22:63-71
         Paralel: Yoh 18:12-14
         Paralel: Yoh 18:19-24
 Judul: Petrus menyangkal Yesus
-   Perikop: Mr 14:66-72
+   Perikop: Mrk 14:66-72
         Paralel: Mat 26:69-75
         Paralel: Luk 22:56-62
         Paralel: Yoh 18:15-18
         Paralel: Yoh 18:25-27
 Judul: Yesus di hadapan Pilatus
-   Perikop: Mr 15:1-15
+   Perikop: Mrk 15:1-15
         Paralel: Mat 27:1-2
         Paralel: Mat 27:11-26
         Paralel: Luk 23:1-5
         Paralel: Luk 23:13-25
         Paralel: Yoh 18:28-19:16
 Judul: Yesus diolok-olokkan
-   Perikop: Mr 15:16-20
+   Perikop: Mrk 15:16-20
         Paralel: Mat 27:27-31
         Paralel: Yoh 19:2-3
 Judul: Yesus disalibkan
-   Perikop: Mr 15:20-32
+   Perikop: Mrk 15:20-32
         Paralel: Mat 27:32-44
         Paralel: Luk 23:26
         Paralel: Luk 23:33-43
         Paralel: Yoh 19:17-24
 Judul: Yesus mati
-   Perikop: Mr 15:33-41
+   Perikop: Mrk 15:33-41
         Paralel: Mat 27:45-56
         Paralel: Luk 23:44-49
         Paralel: Yoh 19:28-30
 Judul: Yesus dikuburkan
-   Perikop: Mr 15:42-47
+   Perikop: Mrk 15:42-47
         Paralel: Mat 27:57-61
         Paralel: Luk 23:50-56
         Paralel: Yoh 19:38-42
 Judul: Kebangkitan Yesus
-   Perikop: Mr 16:1-8
+   Perikop: Mrk 16:1-8
         Paralel: Mat 28:1-10
         Paralel: Luk 24:1-12
         Paralel: Yoh 20:1-10
 Judul: Yesus beberapa kali menampakkan diri dan mengutus murid-murid-Nya
 Judul: Yesus terangkat ke sorga
-   Perikop: Mr 16:9-20
+   Perikop: Mrk 16:9-20
 Judul: Pendahuluan
    Perikop: Luk 1:1-4
 Judul: Pemberitahuan tentang kelahiran Yohanes Pembaptis
@@ -3929,12 +3929,12 @@ Judul: Yesus pada umur dua belas tahun dalam Bait Allah
 Judul: Yohanes Pembaptis
    Perikop: Luk 3:1-20
         Paralel: Mat 3:1-12
-        Paralel: Mr 1:1-8
+        Paralel: Mrk 1:1-8
         Paralel: Yoh 1:19-28
 Judul: Yesus, Anak Allah, dibaptis
    Perikop: Luk 3:21-22
         Paralel: Mat 3:13-17
-        Paralel: Mr 1:9-11
+        Paralel: Mrk 1:9-11
         Paralel: Yoh 1:32-34
 Judul: Silsilah Yesus
    Perikop: Luk 3:23-38
@@ -3942,57 +3942,57 @@ Judul: Silsilah Yesus
 Judul: Pencobaan di padang gurun
    Perikop: Luk 4:1-13
         Paralel: Mat 4:1-11
-        Paralel: Mr 1:12-13
+        Paralel: Mrk 1:12-13
 Judul: Yesus kembali ke Galilea
    Perikop: Luk 4:14-15
         Paralel: Mat 4:12-17
-        Paralel: Mr 1:14-15
+        Paralel: Mrk 1:14-15
 Judul: Yesus ditolak di Nazaret
    Perikop: Luk 4:16-30
         Paralel: Mat 13:53-58
-        Paralel: Mr 6:1-6
+        Paralel: Mrk 6:1-6
 Judul: Yesus dalam rumah ibadat di Kapernaum
    Perikop: Luk 4:31-37
-        Paralel: Mr 1:21-28
+        Paralel: Mrk 1:21-28
 Judul: Yesus menyembuhkan ibu mertua Simon Petrus dan orang-orang lain
    Perikop: Luk 4:38-41
         Paralel: Mat 8:14-17
-        Paralel: Mr 1:29-34
+        Paralel: Mrk 1:29-34
 Judul: Yesus mengajar di kota-kota lain
    Perikop: Luk 4:42-44
-        Paralel: Mr 1:35-39
+        Paralel: Mrk 1:35-39
 Judul: Penjala ikan menjadi penjala manusia
    Perikop: Luk 5:1-11
         Paralel: Mat 4:18-22
-        Paralel: Mr 1:16-20
+        Paralel: Mrk 1:16-20
 Judul: Yesus menyembuhkan seorang yang sakit kusta
    Perikop: Luk 5:12-16
         Paralel: Mat 8:1-4
-        Paralel: Mr 1:40-45
+        Paralel: Mrk 1:40-45
 Judul: Orang lumpuh disembuhkan
    Perikop: Luk 5:17-26
         Paralel: Mat 9:1-8
-        Paralel: Mr 2:1-12
+        Paralel: Mrk 2:1-12
 Judul: Lewi pemungut cukai mengikut Yesus
    Perikop: Luk 5:27-32
         Paralel: Mat 9:9-13
-        Paralel: Mr 2:13-17
+        Paralel: Mrk 2:13-17
 Judul: Hal berpuasa
    Perikop: Luk 5:33-39
         Paralel: Mat 9:14-17
-        Paralel: Mr 2:18-22
+        Paralel: Mrk 2:18-22
 Judul: Murid-murid memetik gandum pada hari Sabat
    Perikop: Luk 6:1-5
         Paralel: Mat 12:1-8
-        Paralel: Mr 2:23-28
+        Paralel: Mrk 2:23-28
 Judul: Yesus menyembuhkan orang pada hari Sabat
    Perikop: Luk 6:6-11
         Paralel: Mat 12:9-14
-        Paralel: Mr 3:1-6
+        Paralel: Mrk 3:1-6
 Judul: Yesus memanggil kedua belas rasul
    Perikop: Luk 6:12-16
         Paralel: Mat 10:1-4
-        Paralel: Mr 3:13-19
+        Paralel: Mrk 3:13-19
 Judul: Yesus mengajar dan menyembuhkan banyak orang
    Perikop: Luk 6:17-19
         Paralel: Mat 4:23-25
@@ -4027,66 +4027,66 @@ Judul: Perempuan-perempuan yang melayani Yesus
 Judul: Perumpamaan tentang seorang penabur
    Perikop: Luk 8:4-15
         Paralel: Mat 13:1-23
-        Paralel: Mr 4:1-20
+        Paralel: Mrk 4:1-20
 Judul: Perumpamaan tentang pelita
    Perikop: Luk 8:16-18
-        Paralel: Mr 4:21-25
+        Paralel: Mrk 4:21-25
 Judul: Yesus dan sanak saudara-Nya
    Perikop: Luk 8:19-21
         Paralel: Mat 12:46-50
-        Paralel: Mr 3:31-35
+        Paralel: Mrk 3:31-35
 Judul: Angin ribut diredakan
    Perikop: Luk 8:22-25
         Paralel: Mat 8:23-27
-        Paralel: Mr 4:35-41
+        Paralel: Mrk 4:35-41
 Judul: Yesus mengusir roh jahat dari orang Gerasa
    Perikop: Luk 8:26-39
         Paralel: Mat 8:28-34
-        Paralel: Mr 5:1-20
+        Paralel: Mrk 5:1-20
 Judul: Yesus membangkitkan anak Yairus dan menyembuhkan seorang perempuan yang sakit pendarahan
    Perikop: Luk 8:40-56
         Paralel: Mat 9:18-26
-        Paralel: Mr 5:21-43
+        Paralel: Mrk 5:21-43
 Judul: Yesus mengutus kedua belas murid
    Perikop: Luk 9:1-6
         Paralel: Mat 10:5-15
-        Paralel: Mr 6:7-13
+        Paralel: Mrk 6:7-13
 Judul: Herodes dan Yesus
    Perikop: Luk 9:7-9
         Paralel: Mat 14:1-12
-        Paralel: Mr 6:14-29
+        Paralel: Mrk 6:14-29
 Judul: Yesus memberi makan lima ribu orang
    Perikop: Luk 9:10-17
         Paralel: Mat 14:13-21
-        Paralel: Mr 6:30-44
+        Paralel: Mrk 6:30-44
         Paralel: Yoh 6:1-14
 Judul: Pengakuan Petrus
    Perikop: Luk 9:18-21
         Paralel: Mat 16:13-20
-        Paralel: Mr 8:27-30
+        Paralel: Mrk 8:27-30
 Judul: Pemberitahuan pertama tentang penderitaan Yesus dan syarat-syarat mengikut Dia
    Perikop: Luk 9:22-27
         Paralel: Mat 16:21-28
-        Paralel: Mr 8:31-9:1
+        Paralel: Mrk 8:31-9:1
 Judul: Yesus dimuliakan di atas gunung
    Perikop: Luk 9:28-36
         Paralel: Mat 17:1-8
-        Paralel: Mr 9:2-8
+        Paralel: Mrk 9:2-8
 Judul: Yesus mengusir roh dari seorang anak yang sakit
    Perikop: Luk 9:37-43
         Paralel: Mat 17:14-21
-        Paralel: Mr 9:14-29
+        Paralel: Mrk 9:14-29
 Judul: Pemberitahuan kedua tentang penderitaan Yesus
    Perikop: Luk 9:43-45
         Paralel: Mat 17:22-23
-        Paralel: Mr 9:30-32
+        Paralel: Mrk 9:30-32
 Judul: Siapa yang terbesar di antara para murid
    Perikop: Luk 9:46-48
         Paralel: Mat 18:1-5
-        Paralel: Mr 9:33-37
+        Paralel: Mrk 9:33-37
 Judul: Seorang yang bukan murid Yesus mengusir setan
    Perikop: Luk 9:49-50
-        Paralel: Mr 9:38-40
+        Paralel: Mrk 9:38-40
 Judul: Yesus dan orang Samaria
    Perikop: Luk 9:51-56
 Judul: Hal mengikut Yesus
@@ -4114,7 +4114,7 @@ Judul: Hal berdoa
 Judul: Yesus dan Beelzebul
    Perikop: Luk 11:14-23
         Paralel: Mat 12:22-30
-        Paralel: Mr 3:22-27
+        Paralel: Mrk 3:22-27
 Judul: Kembalinya roh jahat
    Perikop: Luk 11:24-26
         Paralel: Mat 12:43-45
@@ -4128,7 +4128,7 @@ Judul: Pelita tubuh
 Judul: Yesus mengecam orang-orang Farisi dan ahli-ahli Taurat
    Perikop: Luk 11:37-54
         Paralel: Mat 23:1-36
-        Paralel: Mr 12:38-40
+        Paralel: Mrk 12:38-40
         Paralel: Luk 20:45-47
 Judul: Pengajaran khusus bagi murid-murid
    Perikop: Luk 12:1-12
@@ -4157,7 +4157,7 @@ Judul: Menyembuhkan orang sakit pada hari Sabat
 Judul: Perumpamaan tentang biji sesawi dan ragi
    Perikop: Luk 13:18-21
         Paralel: Mat 13:31-33
-        Paralel: Mr 4:30-32
+        Paralel: Mrk 4:30-32
 Judul: Siapa yang diselamatkan
    Perikop: Luk 13:22-30
 Judul: Yesus harus mati di Yerusalem
@@ -4206,23 +4206,23 @@ Judul: Perumpamaan tentang orang Farisi dengan pemungut cukai
 Judul: Yesus memberkati anak-anak
    Perikop: Luk 18:15-17
         Paralel: Mat 19:13-15
-        Paralel: Mr 10:13-16
+        Paralel: Mrk 10:13-16
 Judul: Orang kaya sukar masuk Kerajaan Allah
    Perikop: Luk 18:18-27
         Paralel: Mat 19:16-26
-        Paralel: Mr 10:17-27
+        Paralel: Mrk 10:17-27
 Judul: Upah mengikut Yesus
    Perikop: Luk 18:28-30
         Paralel: Mat 19:27-30
-        Paralel: Mr 10:28-31
+        Paralel: Mrk 10:28-31
 Judul: Pemberitahuan ketiga tentang penderitaan Yesus
    Perikop: Luk 18:31-34
         Paralel: Mat 20:17-19
-        Paralel: Mr 10:32-34
+        Paralel: Mrk 10:32-34
 Judul: Yesus menyembuhkan seorang buta dekat Yerikho
    Perikop: Luk 18:35-43
         Paralel: Mat 20:29-34
-        Paralel: Mr 10:46-52
+        Paralel: Mrk 10:46-52
 Judul: Zakheus
    Perikop: Luk 19:1-10
 Judul: Perumpamaan tentang uang mina
@@ -4231,139 +4231,139 @@ Judul: Perumpamaan tentang uang mina
 Judul: Yesus dielu-elukan di Yerusalem
    Perikop: Luk 19:28-44
         Paralel: Mat 21:1-9
-        Paralel: Mr 11:1-10
+        Paralel: Mrk 11:1-10
         Paralel: Yoh 12:12-15
 Judul: Yesus menyucikan Bait Allah
    Perikop: Luk 19:45-48
         Paralel: Mat 21:12-13
-        Paralel: Mr 11:15-18
+        Paralel: Mrk 11:15-18
         Paralel: Yoh 2:13-16
 Judul: Pertanyaan mengenai kuasa Yesus
    Perikop: Luk 20:1-8
         Paralel: Mat 21:23-27
-        Paralel: Mr 11:27-33
+        Paralel: Mrk 11:27-33
 Judul: Perumpamaan tentang penggarap-penggarap kebun anggur
    Perikop: Luk 20:9-19
         Paralel: Mat 21:33-46
-        Paralel: Mr 12:1-12
+        Paralel: Mrk 12:1-12
 Judul: Tentang membayar pajak kepada Kaisar
    Perikop: Luk 20:20-26
         Paralel: Mat 22:15-22
-        Paralel: Mr 12:13-17
+        Paralel: Mrk 12:13-17
 Judul: Pertanyaan orang Saduki tentang kebangkitan
    Perikop: Luk 20:27-40
         Paralel: Mat 22:23-33
-        Paralel: Mr 12:18-27
+        Paralel: Mrk 12:18-27
 Judul: Hubungan antara Yesus dan Daud
    Perikop: Luk 20:41-44
         Paralel: Mat 22:41-46
-        Paralel: Mr 12:35-37
+        Paralel: Mrk 12:35-37
 Judul: Yesus menasihatkan supaya waspada terhadap ahli-ahli Taurat
    Perikop: Luk 20:45-47
         Paralel: Mat 23:5-7
-        Paralel: Mr 12:38-40
+        Paralel: Mrk 12:38-40
 Judul: Persembahan seorang janda miskin
    Perikop: Luk 21:1-4
-        Paralel: Mr 12:41-44
+        Paralel: Mrk 12:41-44
 Judul: Bait Allah akan diruntuhkan
    Perikop: Luk 21:5-6
         Paralel: Mat 24:1-2
-        Paralel: Mr 13:1-2
+        Paralel: Mrk 13:1-2
 Judul: Permulaan penderitaan
    Perikop: Luk 21:7-19
         Paralel: Mat 24:3-14
-        Paralel: Mr 13:3-13
+        Paralel: Mrk 13:3-13
 Judul: Tentang runtuhnya Yerusalem
    Perikop: Luk 21:20-24
         Paralel: Mat 24:15-21
-        Paralel: Mr 13:14-19
+        Paralel: Mrk 13:14-19
 Judul: Kedatangan Anak Manusia
 Judul: Perumpamaan tentang pohon ara
    Perikop: Luk 21:25-33
         Paralel: Mat 24:29-35
-        Paralel: Mr 13:24-31
+        Paralel: Mrk 13:24-31
 Judul: Nasihat supaya berjaga-jaga
    Perikop: Luk 21:34-38
 Judul: Rencana untuk membunuh Yesus
    Perikop: Luk 22:1-2
         Paralel: Mat 26:1-5
-        Paralel: Mr 14:1-2
+        Paralel: Mrk 14:1-2
         Paralel: Yoh 11:45-53
 Judul: Yudas mengkhianati Yesus
    Perikop: Luk 22:3-6
         Paralel: Mat 26:14-16
-        Paralel: Mr 14:10-11
+        Paralel: Mrk 14:10-11
 Judul: Persiapan untuk makan Paskah
    Perikop: Luk 22:7-13
         Paralel: Mat 26:17-19
-        Paralel: Mr 14:12-16
+        Paralel: Mrk 14:12-16
 Judul: Penetapan Perjamuan Malam
    Perikop: Luk 22:14-23
         Paralel: Mat 26:20-29
-        Paralel: Mr 14:17-25
+        Paralel: Mrk 14:17-25
         Paralel: Yoh 13:21-30
         Paralel: 1Kor 11:23-25
 Judul: Percakapan waktu Perjamuan Malam
    Perikop: Luk 22:24-38
         Paralel: Mat 26:31-35
-        Paralel: Mr 14:27-31
+        Paralel: Mrk 14:27-31
         Paralel: Yoh 13:36-38
 Judul: Di taman Getsemani
    Perikop: Luk 22:39-46
         Paralel: Mat 26:36-46
-        Paralel: Mr 14:32-42
+        Paralel: Mrk 14:32-42
 Judul: Yesus ditangkap
    Perikop: Luk 22:47-53
         Paralel: Mat 26:47-56
-        Paralel: Mr 14:43-50
+        Paralel: Mrk 14:43-50
         Paralel: Yoh 18:1-11
 Judul: Petrus menyangkal Yesus
    Perikop: Luk 22:54-62
         Paralel: Mat 26:57-58
         Paralel: Mat 26:69-75
-        Paralel: Mr 14:53-54
-        Paralel: Mr 14:66-72
+        Paralel: Mrk 14:53-54
+        Paralel: Mrk 14:66-72
         Paralel: Yoh 18:12-18
         Paralel: Yoh 18:25-27
 Judul: Yesus di hadapan Mahkamah Agama
    Perikop: Luk 22:63-71
         Paralel: Mat 26:63-68
-        Paralel: Mr 14:60-65
+        Paralel: Mrk 14:60-65
         Paralel: Yoh 18:19-24
 Judul: Yesus di hadapan Pilatus
    Perikop: Luk 23:1-7
         Paralel: Mat 27:1-2
         Paralel: Mat 27:11-14
-        Paralel: Mr 15:1-5
+        Paralel: Mrk 15:1-5
         Paralel: Yoh 18:28-38
 Judul: Yesus di hadapan Herodes
    Perikop: Luk 23:8-12
 Judul: Yesus kembali di hadapan Pilatus
    Perikop: Luk 23:13-25
         Paralel: Mat 27:15-26
-        Paralel: Mr 15:6-15
+        Paralel: Mrk 15:6-15
         Paralel: Yoh 18:38-19:16
 Judul: Yesus dibawa untuk disalibkan
    Perikop: Luk 23:26-32
 Judul: Yesus disalibkan
    Perikop: Luk 23:33-43
         Paralel: Mat 27:33-44
-        Paralel: Mr 15:22-32
+        Paralel: Mrk 15:22-32
         Paralel: Yoh 19:17-24
 Judul: Yesus mati
    Perikop: Luk 23:44-49
         Paralel: Mat 27:45-46
-        Paralel: Mr 15:33-41
+        Paralel: Mrk 15:33-41
         Paralel: Yoh 19:28-30
 Judul: Yesus dikuburkan
    Perikop: Luk 23:50-56
         Paralel: Mat 27:57-61
-        Paralel: Mr 15:42-47
+        Paralel: Mrk 15:42-47
         Paralel: Yoh 19:38-42
 Judul: Kebangkitan Yesus
    Perikop: Luk 23:56-24:12
         Paralel: Mat 28:1-10
-        Paralel: Mr 16:1-8
+        Paralel: Mrk 16:1-8
         Paralel: Yoh 20:1-10
 Judul: Yesus menampakkan diri di jalan ke Emaus
    Perikop: Luk 24:13-35
@@ -4377,7 +4377,7 @@ Judul: Firman yang telah menjadi manusia
 Judul: Kesaksian Yohanes tentang dirinya sendiri
    Perikop: Yoh 1:19-28
         Paralel: Mat 3:1-12
-        Paralel: Mr 1:1-8
+        Paralel: Mrk 1:1-8
         Paralel: Luk 3:3-6
         Paralel: Luk 3:15-17
 Judul: Yohanes menunjuk kepada Yesus
@@ -4391,7 +4391,7 @@ Judul: Yesus di Kapernaum
 Judul: Yesus menyucikan Bait Allah
    Perikop: Yoh 2:13-25
         Paralel: Mat 21:12-13
-        Paralel: Mr 11:15-17
+        Paralel: Mrk 11:15-17
         Paralel: Luk 19:45-46
 Judul: Percakapan dengan Nikodemus
    Perikop: Yoh 3:1-21
@@ -4412,12 +4412,12 @@ Judul: Kesaksian Yesus tentang diri-Nya
 Judul: Yesus memberi makan lima ribu orang
    Perikop: Yoh 6:1-15
         Paralel: Mat 14:13-21
-        Paralel: Mr 6:32-44
+        Paralel: Mrk 6:32-44
         Paralel: Luk 9:10-17
 Judul: Yesus berjalan di atas air
    Perikop: Yoh 6:16-21
         Paralel: Mat 14:22-33
-        Paralel: Mr 6:45-52
+        Paralel: Mrk 6:45-52
 Judul: Orang banyak mencari Yesus
    Perikop: Yoh 6:22-24
 Judul: Roti hidup
@@ -4461,18 +4461,18 @@ Judul: Lazarus dibangkitkan
 Judul: Persepakatan untuk membunuh Yesus
    Perikop: Yoh 11:45-57
         Paralel: Mat 26:1-5
-        Paralel: Mr 14:1-2
+        Paralel: Mrk 14:1-2
         Paralel: Luk 22:1-2
 Judul: Yesus diurapi di Betania
    Perikop: Yoh 12:1-8
         Paralel: Mat 26:6-13
-        Paralel: Mr 14:3-9
+        Paralel: Mrk 14:3-9
 Judul: Persepakatan untuk membunuh Lazarus
    Perikop: Yoh 12:9-11
 Judul: Yesus dielu-elukan di Yerusalem
    Perikop: Yoh 12:12-19
         Paralel: Mat 21:1-11
-        Paralel: Mr 11:1-10
+        Paralel: Mrk 11:1-10
         Paralel: Luk 19:28-38
 Judul: Yesus memberitakan kematian-Nya
    Perikop: Yoh 12:20-36
@@ -4485,14 +4485,14 @@ Judul: Yesus membasuh kaki murid-murid-Nya
 Judul: Yesus memperingatkan Yudas
    Perikop: Yoh 13:21-30
         Paralel: Mat 26:21-25
-        Paralel: Mr 14:18-21
+        Paralel: Mrk 14:18-21
         Paralel: Luk 22:21-23
 Judul: Perintah baru
    Perikop: Yoh 13:31-35
 Judul: Yesus memperingatkan Petrus
    Perikop: Yoh 13:36-38
         Paralel: Mat 26:31-35
-        Paralel: Mr 14:27-31
+        Paralel: Mrk 14:27-31
         Paralel: Luk 22:31-34
 Judul: Rumah Bapa
    Perikop: Yoh 14:1-14
@@ -4515,46 +4515,46 @@ Judul: Doa Yesus untuk murid-murid-Nya
 Judul: Yesus ditangkap
    Perikop: Yoh 18:1-11
         Paralel: Mat 26:47-56
-        Paralel: Mr 14:43-50
+        Paralel: Mrk 14:43-50
         Paralel: Luk 22:47-53
 Judul: Yesus di hadapan Hanas -- Petrus menyangkal Yesus
    Perikop: Yoh 18:12-27
         Paralel: Mat 26:57-75
-        Paralel: Mr 14:53-72
+        Paralel: Mrk 14:53-72
         Paralel: Luk 22:54-71
 Judul: Yesus di hadapan Pilatus
    Perikop: Yoh 18:28-38
         Paralel: Mat 27:1-2
         Paralel: Mat 27:11-14
-        Paralel: Mr 15:1-5
+        Paralel: Mrk 15:1-5
         Paralel: Luk 23:1-5
 Judul: Yesus dihukum mati
    Perikop: Yoh 18:38-19:16
         Paralel: Mat 27:15-31
-        Paralel: Mr 15:6-20
+        Paralel: Mrk 15:6-20
         Paralel: Luk 23:13-25
 Judul: Yesus disalibkan
    Perikop: Yoh 19:16-27
         Paralel: Mat 27:32-38
-        Paralel: Mr 15:21-27
+        Paralel: Mrk 15:21-27
         Paralel: Luk 23:26
         Paralel: Luk 23:33-43
 Judul: Yesus mati
    Perikop: Yoh 19:28-30
         Paralel: Mat 27:45-50
-        Paralel: Mr 15:33-37
+        Paralel: Mrk 15:33-37
         Paralel: Luk 23:44-46
 Judul: Lambung Yesus ditikam
    Perikop: Yoh 19:31-37
 Judul: Yesus dikuburkan
    Perikop: Yoh 19:38-42
         Paralel: Mat 27:57-61
-        Paralel: Mr 15:42-47
+        Paralel: Mrk 15:42-47
         Paralel: Luk 23:50-56
 Judul: Kebangkitan Yesus
    Perikop: Yoh 20:1-10
         Paralel: Mat 28:1-10
-        Paralel: Mr 16:1-8
+        Paralel: Mrk 16:1-8
         Paralel: Luk 24:1-12
 Judul: Yesus menampakkan diri kepada Maria Magdalena
    Perikop: Yoh 20:11-18

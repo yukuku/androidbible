@@ -1,7 +1,6 @@
 package yuku.alkitab;
 
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.*;
 
 import yuku.alkitab.model.Kitab;
 import android.app.Activity;
@@ -60,13 +59,13 @@ public class MenujuActivity extends Activity {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				try {
-					Kitab kitab = S.xkitab[position];
+					Kitab kitab = S.xkitab[(int) id];
 					maxPasal = kitab.npasal;
 					
 					int pasal = cobaBacaPasal();
 					maxAyat = kitab.nayat[pasal-1];
 				} catch (Exception e) {
-					Log.w("alki-menuju", e);
+					Log.w("alki", e);
 				}
 				
 				betulinPasalKelebihan();
@@ -261,12 +260,12 @@ public class MenujuActivity extends Activity {
 				}
 				
 				try {
-					Kitab kitab = S.xkitab[cbKitab.getSelectedItemPosition()];
+					Kitab kitab = S.xkitab[(int) cbKitab.getSelectedItemId()];
 					int pasal = cobaBacaPasal();
 					
 					maxAyat = kitab.nayat[pasal-1];
 				} catch (Exception e) {
-					Log.w("alki-menuju", e);
+					Log.w("alki", e);
 				}
 			} else if (aktif == lAyat) {
 				if (lAyat_pertamaKali) {

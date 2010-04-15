@@ -1042,6 +1042,7 @@ public class IsiActivity extends Activity {
 			int id = penunjukKotak_[position];
 			
 			if (id >= 0) {
+				// AYAT. bukan judul perikop.
 				TextView res;
 				
 				if (convertView == null || convertView.getId() != R.layout.satu_ayat) {
@@ -1058,6 +1059,7 @@ public class IsiActivity extends Activity {
 				
 				return res;
 			} else {
+				// JUDUL PERIKOP. bukan ayat.
 				View res;
 				
 				if (convertView == null || convertView.getId() != R.layout.header_perikop) {
@@ -1080,6 +1082,8 @@ public class IsiActivity extends Activity {
 				// matikan padding atas kalau position == 0 ATAU sebelum ini juga judul perikop
 				if (position == 0 || penunjukKotak_[position-1] < 0) {
 					lJudul.setPadding(0, 0, 0, 0);
+				} else {
+					lJudul.setPadding(0, (int)(displayMetrics.density * 18.f), 0, 0);
 				}
 				
 				// gonekan paralel kalo ga ada
@@ -1114,6 +1118,7 @@ public class IsiActivity extends Activity {
 					
 					lXparalel.setText(sb, BufferType.SPANNABLE);
 					lXparalel.setMovementMethod(LinkMovementMethod.getInstance());
+					lXparalel.setTextColor(S.penerapan.warnaHuruf);
 					lXparalel.setLinkTextColor(S.penerapan.warnaHuruf);
 				}
 				
