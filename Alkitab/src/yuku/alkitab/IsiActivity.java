@@ -818,56 +818,40 @@ public class IsiActivity extends Activity {
 		if (ayat < 1) ayat = 1;
 		if (ayat > S.kitab.nayat[pasal-1]) ayat = S.kitab.nayat[pasal-1];
 		
-		// muat data pake async dong.
-		new AsyncTask<Integer, Void, SpannableStringBuilder[]>() {
-			int pasal;
-			int ayat;
+		// muat data GA USAH pake async dong. // diapdet 20100417 biar ga usa async, ga guna.
+		{
 			int[] perikop_xari;
 			Blok[] perikop_xblok;
 			int nblok;
 			
-			@Override
-			protected SpannableStringBuilder[] doInBackground(Integer... params) {
-				pasal = params[0];
-				ayat = params[1];
-				
-				xayat = S.muatTeks(getResources(), S.kitab, pasal);
-				
-				//# max dibikin pol 30 aja (1 pasal max 30 blok, cukup mustahil)
-				int max = 30;
-				perikop_xari = new int[max];
-				perikop_xblok = new Blok[max];
-				nblok = S.muatPerikop(getResources(), S.kitab.pos, pasal, perikop_xari, perikop_xblok, max); 
-				
-				return siapinTampilanAyat();
+			xayat = S.muatTeks(getResources(), S.kitab, pasal);
+			
+			//# max dibikin pol 30 aja (1 pasal max 30 blok, cukup mustahil)
+			int max = 30;
+			perikop_xari = new int[max];
+			perikop_xblok = new Blok[max];
+			nblok = S.muatPerikop(getResources(), S.kitab.pos, pasal, perikop_xari, perikop_xblok, max); 
+			
+			SpannableStringBuilder[] result = siapinTampilanAyat();
+
+			//# tadinya onPostExecute
+			ayatAdapter_.setRendered(result, perikop_xari, perikop_xblok, nblok);
+			lsIsi.setAdapter(ayatAdapter_);
+			ayatAdapter_.notifyDataSetChanged();
+			
+			String judul = S.kitab.judul + " " + pasal;
+			bTuju.setText(judul);
+			
+			this.pasal = pasal;
+			
+			int position = ayatAdapter_.getPositionDariAyat(ayat);
+			
+			if (position == -1) {
+				Log.w("alki", "ga bisa ketemu ayat " + ayat + ", ANEH!");
+			} else {
+				lsIsi.setSelectionFromTop(position, lsIsi.getVerticalFadingEdgeLength());
 			}
-		
-			@Override
-			protected void onPostExecute(SpannableStringBuilder[] result) {
-				ayatAdapter_.setRendered(result, perikop_xari, perikop_xblok, nblok);
-				lsIsi.setAdapter(ayatAdapter_);
-				ayatAdapter_.notifyDataSetChanged();
-				
-				String judul = getString(R.string.judulIsi, S.kitab.judul, pasal, ayat);
-				setTitle(judul);
-				bTuju.setText(judul);
-				
-				IsiActivity.this.pasal = pasal;
-				
-				lsIsi.post(new Runnable() {
-					@Override
-					public void run() {
-						int position = ayatAdapter_.getPositionDariAyat(ayat);
-						
-						if (position == -1) {
-							Log.w("alki", "ga bisa ketemu ayat " + ayat + ", ANEH!");
-						} else {
-							lsIsi.setSelectionFromTop(position, lsIsi.getVerticalFadingEdgeLength());
-						}
-					}
-				});
-			}
-		}.execute(pasal, ayat);
+		}
 	}
 	
 	@Override
