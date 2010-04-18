@@ -42,11 +42,22 @@ public class RenunganActivity extends Activity {
 	Button bGanti;
 	
 	private boolean renderBerhasilBaik = false;
+	private long terakhirCobaTampilLagi = 0;
 
 	Handler pengulangTampil = new Handler();
 	Runnable cobaTampilLagi = new Runnable() {
 		@Override
 		public void run() {
+			{
+				long kini = SystemClock.currentThreadTimeMillis();
+				if (kini - terakhirCobaTampilLagi < 2500) {
+					return; // ANEH. Terlalu cepat.
+				}
+				
+				terakhirCobaTampilLagi = kini;
+			}
+			
+			
 			tuju(S.penampungan.renungan_nama, S.penampungan.renungan_tanggalan, true);
 			
 			if (!renderBerhasilBaik) {

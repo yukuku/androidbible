@@ -586,10 +586,6 @@ public class IsiActivity extends Activity {
 		} else if (item.getItemId() == R.id.menuSearch) {
 			menuSearch_click();
 			return true;
-		} else if (item.getItemId() == R.id.menuKitab) {
-			Intent intent = new Intent(this, KitabActivity.class);
-			startActivityForResult(intent, R.id.menuKitab);
-			return true;
 		} else if (item.getItemId() == R.id.menuEdisi) {
 			Intent intent = new Intent(this, EdisiActivity.class);
 			startActivityForResult(intent, R.id.menuEdisi);
@@ -626,6 +622,10 @@ public class IsiActivity extends Activity {
 			return true;
 		} else if (item.getItemId() == R.id.menuFidbek) {
 			popupMintaFidbek();
+			return true;
+		} else if (item.getItemId() == R.id.menuBantuan) {
+			Intent intent = new Intent(this, BantuanActivity.class);
+			startActivity(intent);
 			return true;
 		} else if (item.getItemId() == 0x985801) { // debug 1
 			// dump pref
@@ -802,18 +802,6 @@ public class IsiActivity extends Activity {
 				String alamat = data.getStringExtra("alamat");
 				if (alamat != null) {
 					loncatKe(alamat);
-				}
-			}
-		} else if (requestCode == R.id.menuKitab) {
-			if (resultCode == RESULT_OK) {
-				String nama = data.getStringExtra("nama");
-				
-				for (Kitab k : S.xkitab) {
-					if (k.nama.equals(nama)) {
-						S.kitab = k;
-						tampil(pasal, 0);
-						break;
-					}
 				}
 			}
 		} else if (requestCode == R.id.menuPengaturan) {

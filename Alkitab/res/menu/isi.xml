@@ -18,10 +18,7 @@
 		android:id="@+id/menuEdisi"
 		android:title="@string/menuEdisi"
 		android:visible="false" />
-	<item
-		android:id="@+id/menuKitab"
-		android:title="@string/menuKitab"
-		android:visible="false" />
+	
 	<item
 		android:id="@+id/menuRenungan"
 		android:title="Renungan"
