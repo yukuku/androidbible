@@ -50,7 +50,7 @@ public class RenunganActivity extends Activity {
 		public void run() {
 			{
 				long kini = SystemClock.currentThreadTimeMillis();
-				if (kini - terakhirCobaTampilLagi < 2500) {
+				if (kini - terakhirCobaTampilLagi < 500) {
 					return; // ANEH. Terlalu cepat.
 				}
 				
