@@ -7,8 +7,7 @@ import yuku.alkitab.model.*;
 import yuku.alkitab.renungan.TukangDonlot;
 import yuku.bintex.BintexReader;
 import yuku.kirimfidbek.PengirimFidbek;
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.util.Log;
@@ -24,7 +23,8 @@ public class S {
 		public static int tebalHuruf;
 		public static int warnaHuruf; 
 		public static int indenParagraf;
-		public static boolean sortKitabAlfabet = true;
+		public static boolean sortKitabAlfabet;
+		public static boolean matikanTahanAyat;
 	}
 	
 	/**

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
 	xmlns:android="http://schemas.android.com/apk/res/android">
-	<PreferenceCategory android:title="Tulisan">
+	<PreferenceCategory
+		android:title="Tulisan">
 		<ListPreference
 			android:dialogTitle="@string/ukuranHuruf_n"
 			android:summary="@string/ukuranHuruf_keterangan_s"
@@ -24,11 +25,39 @@
 			android:defaultValue="false"
 			android:title="@string/boldHuruf_n" />
 		<com.hlidskialf.android.preference.SeekBarPreference
-			android:defaultValue="100" android:key="@string/pref_cerahTeks_key" android:text="%" android:max="100" android:summary="Seterang apa teks yang ditampilkan" android:dialogMessage="Atur seberapa terang teks ditampilkan:" android:title="Kecerahan Teks"/>
-	
-</PreferenceCategory>
-<PreferenceCategory android:title="Penggunaan"><CheckBoxPreference android:key="@string/pref_sortKitabAlfabet_key" android:title="Kitab menurut Abjad" android:summaryOn="Tampilkan daftar kitab menurut abjad" android:summaryOff="Tampilkan daftar kitab sesuai urutan aslinya"></CheckBoxPreference><CheckBoxPreference android:defaultValue="false" android:summary="Tekan ← dan → (atau trackball) untuk pindah pasal" android:title="Tanpa Tombol Navigasi" android:key="@string/pref_tanpaNavigasi_key"></CheckBoxPreference><CheckBoxPreference android:key="@string/pref_tombolAlamatLoncat_key" android:defaultValue="false" android:title="Loncat dengan Mudah" android:summaryOn="Klik alamat untuk loncat, tahan yang lama untuk tuju." android:summaryOff="Klik alamat untuk tuju, tahan yang lama untuk loncat."></CheckBoxPreference>
+			android:defaultValue="100"
+			android:key="@string/pref_cerahTeks_key"
+			android:text="%"
+			android:max="100"
+			android:summary="Seterang apa teks yang ditampilkan"
+			android:dialogMessage="Atur seberapa terang teks ditampilkan:"
+			android:title="Kecerahan Teks" />
 
-</PreferenceCategory>
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:title="Penggunaan">
+		<CheckBoxPreference
+			android:key="@string/pref_sortKitabAlfabet_key"
+			android:title="Kitab menurut Abjad"
+			android:summaryOn="Tampilkan daftar kitab menurut abjad"
+			android:summaryOff="Tampilkan daftar kitab sesuai urutan aslinya" />
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:summary="Tekan ← dan → (atau trackball) untuk pindah pasal"
+			android:title="Tanpa Tombol Navigasi"
+			android:key="@string/pref_tanpaNavigasi_key" />
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:title="Matikan Tahan Ayat"
+			android:summary="Cegah terbukanya menu ketika jari menahan salah satu ayat"
+			android:key="@string/pref_matikanTahanAyat_key" />
+		<CheckBoxPreference
+			android:key="@string/pref_tombolAlamatLoncat_key"
+			android:defaultValue="false"
+			android:title="Loncat dengan Mudah"
+			android:summaryOn="Klik alamat untuk loncat, tahan yang lama untuk tuju."
+			android:summaryOff="Klik alamat untuk tuju, tahan yang lama untuk loncat." />
+
+	</PreferenceCategory>
 
 </PreferenceScreen>

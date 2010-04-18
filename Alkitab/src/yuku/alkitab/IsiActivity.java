@@ -260,6 +260,11 @@ public class IsiActivity extends Activity {
 	
 	private boolean lsIsi_itemLongClick(AdapterView<?> parent, View view, int position, long id) {
 		Log.d("klik panjang", "di " + position + " id " + id);
+
+		// kalo setingnya mati, anggap true aja (diconsume)
+		if (S.penerapan.matikanTahanAyat) {
+			return true;
+		}
 		
 		// hanya untuk ayat! bukan perikop. Maka kalo perikop, anggap aja uda diconsume.
 		if (id < 0) {
@@ -402,6 +407,11 @@ public class IsiActivity extends Activity {
 			S.penerapan.sortKitabAlfabet = sortKitabAlfabet;
 		}
 		
+		//# jangan nyalakan context menu kah?
+		{
+			boolean matikanTahanAyat = pengaturan.getBoolean(getString(R.string.pref_matikanTahanAyat_key), false);
+			S.penerapan.matikanTahanAyat = matikanTahanAyat;
+		}
 		
 		lsIsi.invalidateViews();
 	}
