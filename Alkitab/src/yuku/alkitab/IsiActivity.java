@@ -560,14 +560,16 @@ public class IsiActivity extends Activity {
 	
 	@Override
 	public boolean onMenuOpened(int featureId, Menu menu) {
-		MenuItem menuTuju = menu.findItem(R.id.menuTuju);
-		if (menuTuju != null) {
-			if (tombolAlamatLoncat_) {
-				menuTuju.setIcon(R.drawable.menu_loncat);
-				menuTuju.setTitle("Loncat");
-			} else {
-				menuTuju.setIcon(R.drawable.ic_menu_forward);
-				menuTuju.setTitle("Tuju");
+		if (menu != null) {
+			MenuItem menuTuju = menu.findItem(R.id.menuTuju);
+			if (menuTuju != null) {
+				if (tombolAlamatLoncat_) {
+					menuTuju.setIcon(R.drawable.menu_loncat);
+					menuTuju.setTitle("Loncat");
+				} else {
+					menuTuju.setIcon(R.drawable.ic_menu_forward);
+					menuTuju.setTitle("Tuju");
+				}
 			}
 		}
 		

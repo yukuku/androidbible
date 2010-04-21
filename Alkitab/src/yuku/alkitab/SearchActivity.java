@@ -314,11 +314,13 @@ public class SearchActivity extends Activity {
 	
 	@Override
 	public boolean onMenuOpened(int featureId, Menu menu) {
-		MenuItem menuTukarTampilCarian = menu.findItem(R.id.menuTukarTampilCarian);
-		if (pakeSnippet_) {
-			menuTukarTampilCarian.setTitle("Lengkap");
-		} else {
-			menuTukarTampilCarian.setTitle("Sepotong");
+		if (menu != null) {
+			MenuItem menuTukarTampilCarian = menu.findItem(R.id.menuTukarTampilCarian);
+			if (pakeSnippet_) {
+				menuTukarTampilCarian.setTitle("Lengkap");
+			} else {
+				menuTukarTampilCarian.setTitle("Sepotong");
+			}
 		}
 		
 		return super.onMenuOpened(featureId, menu);
