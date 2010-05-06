@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<dimen name="indenParagraf">5sp</dimen>
-	<dimen name="menjorokSatu">24sp</dimen>
-	<dimen name="menjorokDua">48sp</dimen>
+	<dimen name="menjorokSatu">22sp</dimen>
+	<dimen name="menjorokDua">38sp</dimen>
 </resources>

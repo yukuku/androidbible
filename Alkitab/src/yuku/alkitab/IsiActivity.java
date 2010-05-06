@@ -1028,12 +1028,14 @@ public class IsiActivity extends Activity {
 	private static void aturTampilanTeksIsi(TextView t) {
 		t.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
 		t.setTextSize(TypedValue.COMPLEX_UNIT_PX, S.penerapan.ukuranTeksPx);
+		t.setIncludeFontPadding(false);
 		t.setTextColor(S.penerapan.warnaHuruf);
 	}
 
 	private static void aturTampilanTeksNomerAyat(TextView t) {
 		t.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
 		t.setTextSize(TypedValue.COMPLEX_UNIT_PX, S.penerapan.ukuranTeksPx);
+		t.setIncludeFontPadding(false);
 		t.setTextColor(WARNA_NOMER_AYAT);
 	}
 

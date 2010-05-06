@@ -9,7 +9,7 @@
 	fclose($fn);
 	
 	$f = fopen('b_indonesian_baru.txt', 'rb');
-	$i = fopen('tb_index.txt', 'wb');
+	$i = fopen('../publikasi/tb_index.txt', 'wb');
 	
 	
 	function jumlah($judul, $file, $npasal, $nayat, $pasal_offset) {
@@ -24,7 +24,7 @@
 	$maju = 0;
 	$c = 0;
 	
-	$g = fopen(sprintf("tb_k%02d.txt", $kitab), 'wb');
+	$g = fopen(sprintf("../res/raw/tb_k%02d.txt", $kitab), 'wb');
 	
 	while($line = fgets($f)) {
 		list(, $inkitab, $inpasal, , $isi) = explode("\t", $line);
@@ -50,7 +50,7 @@
 			fclose($g);
 			
 			// buka baru
-			$g = fopen(sprintf("tb_k%02d.txt", $kitab), 'wb');
+			$g = fopen(sprintf("../res/raw/tb_k%02d.txt", $kitab), 'wb');
 		}
 		
 		$c++;
