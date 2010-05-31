@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="pref_nyalakanTerusLayar_key">nyalakanTerusLayar</string>
 	<string
 		name="pref_tanpaNavigasi_key">tanpaNavigasi</string>
 	<string

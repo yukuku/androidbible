@@ -27,6 +27,7 @@ public class S {
 		public static int menjorokDua;
 		public static boolean sortKitabAlfabet;
 		public static boolean matikanTahanAyat;
+		public static boolean nyalakanTerusLayar;
 	}
 	
 	/**

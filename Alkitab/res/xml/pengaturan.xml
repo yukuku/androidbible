@@ -32,8 +32,8 @@
 			android:summary="Seterang apa teks yang ditampilkan"
 			android:dialogMessage="Atur seberapa terang teks ditampilkan:"
 			android:title="Kecerahan Teks" />
-
 	</PreferenceCategory>
+	
 	<PreferenceCategory
 		android:title="Penggunaan">
 		<CheckBoxPreference
@@ -57,7 +57,10 @@
 			android:title="Loncat dengan Mudah"
 			android:summaryOn="Klik alamat untuk loncat, tahan yang lama untuk tuju."
 			android:summaryOff="Klik alamat untuk tuju, tahan yang lama untuk loncat." />
-
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:title="Nyalakan Terus Layar"
+			android:summary="Biarkan layar menyala terus ketika membaca teks Alkitab" android:key="@string/pref_nyalakanTerusLayar_key"/>
 	</PreferenceCategory>
 
 </PreferenceScreen>

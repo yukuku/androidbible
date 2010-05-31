@@ -14,6 +14,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.*;
+import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.text.*;
 import android.text.method.LinkMovementMethod;
@@ -53,6 +54,7 @@ public class IsiActivity extends Activity {
 	DisplayMetrics displayMetrics;
 	ProgressDialog dialogBikinIndex;
 	boolean lagiBikinIndex = false;
+	WakeLock wakeLock = null;
 	
 	private AyatAdapter ayatAdapter_ = new AyatAdapter();
 	private boolean tombolAlamatLoncat_;
@@ -160,15 +162,15 @@ public class IsiActivity extends Activity {
 		// muat pasal dan ayat
 		tampil(pasalTerakhir, ayatTerakhir); 
 		
+		//# minta fidbek kah?
 		final long terakhirMintaFidbek = preferences.getLong(NAMAPREF_terakhirMintaFidbek, 0);
-		
 		if (terakhirMintaFidbek == 0) {
 			Editor editor = preferences.edit();
 			editor.putLong(NAMAPREF_terakhirMintaFidbek, System.currentTimeMillis());
 			editor.commit();
 		} else {
 			final long sekarang = System.currentTimeMillis();
-			if (sekarang - terakhirMintaFidbek > 2000*60*60*24) { // 2 hari ato belom pernah
+			if (sekarang - terakhirMintaFidbek > 14000*60*60*24) { // 2 MINGGU ato belom pernah
 				handler.post(new Runnable() {
 					
 					@Override
@@ -179,9 +181,30 @@ public class IsiActivity extends Activity {
 			}
 		}
 
+		//# nyala terus layar
+		nyalakanTerusLayarKalauDiminta();
+		
 		Log.d("alki", "IsiActivity onCreate selesai");
 	}
 
+	private synchronized void nyalakanTerusLayarKalauDiminta() {
+		if (S.penerapan.nyalakanTerusLayar) {
+			if (wakeLock == null) {
+				PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+				wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "alki:nyalakanTerusLayar");
+			}
+			if (wakeLock != null) { // jaga2 aja
+				wakeLock.acquire();
+			}
+		}
+	}
+
+	private synchronized void matikanLayarKalauSudahBolehMati() {
+		if (wakeLock != null) {
+			wakeLock.release();
+		}
+	}
+	
 	@Override
 	protected Dialog onCreateDialog(final int id) {
 		if (id == DIALOG_bikinIndex) {
@@ -418,6 +441,12 @@ public class IsiActivity extends Activity {
 			S.penerapan.matikanTahanAyat = matikanTahanAyat;
 		}
 		
+		//# layar selalu nyala kah?
+		{
+			boolean nyalakanTerusLayar = pengaturan.getBoolean(getString(R.string.pref_nyalakanTerusLayar_key), false);
+			S.penerapan.nyalakanTerusLayar = nyalakanTerusLayar;
+		}
+		
 		lsIsi.invalidateViews();
 	}
 	
@@ -431,6 +460,15 @@ public class IsiActivity extends Activity {
 		editor.putInt(NAMAPREF_ayatTerakhir, getAyatBerdasarSkrol());
 		editor.putString(NAMAPREF_renungan_nama, S.penampungan.renungan_nama);
 		editor.commit();
+		
+		matikanLayarKalauSudahBolehMati();
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		nyalakanTerusLayarKalauDiminta();
 	}
 	
 	/**
