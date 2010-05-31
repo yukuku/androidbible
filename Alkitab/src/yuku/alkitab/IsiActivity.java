@@ -68,13 +68,13 @@ public class IsiActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.d("alki", "IsiActivity (fase 0) onCreate dipanggil icicle=" + savedInstanceState);
+		TimingLogger tog = new TimingLogger("alki", "IsiActivity#onCreate");
+		tog.addSplit("IsiActivity (fase 0) onCreate dipanggil");
 		
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.isi);
-		
-		Log.d("alki", "IsiActivity (fase 5) sebelum siapin macem2");
+		tog.addSplit("IsiActivity (fase 5) sebelum siapin macem2");
 
 		S.siapinEdisi(getResources());
 		S.siapinKitab(getResources());
@@ -89,13 +89,11 @@ public class IsiActivity extends Activity {
 		bTuju = (Button) findViewById(R.id.bTuju);
 		bKiri = (ImageButton) findViewById(R.id.bKiri);
 		bKanan = (ImageButton) findViewById(R.id.bKanan);
-		
-		Log.d("alki", "IsiActivity (fase 10) sebelum terap pengaturan");
+		tog.addSplit("IsiActivity (fase 10) sebelum terap pengaturan");
 
 		pengaturan = PreferenceManager.getDefaultSharedPreferences(this);
 		terapkanPengaturan();
-		
-		Log.d("alki", "IsiActivity (fase 20) sesudah terap pengaturan");
+		tog.addSplit("IsiActivity (fase 20) sesudah terap pengaturan");
 
 		lsIsi.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			@Override
@@ -134,8 +132,7 @@ public class IsiActivity extends Activity {
 				bKanan_click();
 			}
 		});
-		
-		Log.d("alki", "IsiActivity (fase 30) sebelum baca preferences");
+		tog.addSplit("IsiActivity (fase 30) sebelum baca preferences");
 
 		preferences = S.getPreferences(this);
 		int kitabTerakhir = preferences.getInt(NAMAPREF_kitabTerakhir, 0);
@@ -183,8 +180,8 @@ public class IsiActivity extends Activity {
 
 		//# nyala terus layar
 		nyalakanTerusLayarKalauDiminta();
-		
-		Log.d("alki", "IsiActivity onCreate selesai");
+
+		tog.dumpToLog();
 	}
 
 	private synchronized void nyalakanTerusLayarKalauDiminta() {
