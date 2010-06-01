@@ -16,3 +16,10 @@ prog: KonvertPerikop.java (AlkitabBintexConverter)
 out: tb_perikop_blok_bt.bt
 out: tb_perikop_index_bt.bt
 
+Cara proses data Roy jadi data format yuku
+
+semua awal baris (yaitu juga awal ayat) kasih @@
+@ jadi @2
+$ jadi @1
+# jadi @0
+% jadi @8
