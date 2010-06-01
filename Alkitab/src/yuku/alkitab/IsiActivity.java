@@ -1076,10 +1076,7 @@ public class IsiActivity extends Activity {
 
 	private class AyatAdapter extends BaseAdapter {
 		private String[] dataAyat_;
-		private int[] perikop_xari_;
 		private Blok[] perikop_xblok_;
-		private int nblok_;
-		
 		/**
 		 * Tiap elemen, kalo 0 sampe positif, berarti menunjuk ke AYAT di rendered_
 		 * kalo negatif, -1 berarti index 0 di perikop_*, -2 (a) berarti index 1 (b) di perikop_*
@@ -1091,50 +1088,10 @@ public class IsiActivity extends Activity {
 		
 		synchronized void setData(String[] xayat, int[] perikop_xari, Blok[] perikop_xblok, int nblok) {
 			dataAyat_ = xayat.clone();
-			perikop_xari_ = perikop_xari;
 			perikop_xblok_ = perikop_xblok;
-			nblok_ = nblok;
-			
-			bikinPenunjukKotak();
+			penunjukKotak_ = S.bikinPenunjukKotak(dataAyat_.length, perikop_xari, perikop_xblok, nblok);
 		}
 		
-		private void bikinPenunjukKotak() {
-			penunjukKotak_ = new int[dataAyat_.length + nblok_];
-			
-			int posBlok = 0;
-			int posAyat = 0;
-			int posPK = 0;
-			
-			int nayat = dataAyat_.length;
-			while (true) {
-				// cek apakah judul perikop, DAN perikop masih ada
-				if (posBlok < nblok_) {
-					// masih memungkinkan
-					if (Ari.toAyat(perikop_xari_[posBlok]) - 1 == posAyat) {
-						// ADA PERIKOP.
-						penunjukKotak_[posPK++] = -posBlok-1;
-						posBlok++;
-						continue;
-					}
-				}
-				
-				// cek apakah ga ada ayat lagi
-				if (posAyat >= nayat) {
-					break;
-				}
-				
-				// uda ga ada perikop, ATAU belom saatnya perikop. Maka masukin ayat.
-				penunjukKotak_[posPK++] = posAyat;
-				posAyat++;
-				continue;
-			}
-			
-			if (penunjukKotak_.length != posPK) {
-				// ada yang ngaco! di algo di atas
-				throw new RuntimeException("Algo selip2an perikop salah! posPK=" + posPK + " posAyat=" + posAyat + " posBlok=" + posBlok + " nayat=" + nayat + " nblok_=" + nblok_ + " xari:" + Arrays.toString(perikop_xari_) + " xblok:" + Arrays.toString(perikop_xblok_));
-			}
-		}
-
 		@Override
 		public synchronized int getCount() {
 			if (dataAyat_ == null) return 0;

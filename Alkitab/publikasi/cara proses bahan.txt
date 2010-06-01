@@ -1,0 +1,18 @@
+Cara konvert dari file mentah ke file yang dibaca program alkitab.
+
+[1]
+in: b_indonesian_baru.txt
+prog: kode_ancur_yang_membuat_malu.php
+out: tb_index.txt
+           |
+[2]        v
+in: tb_index.txt
+prog: KonvertIsi.java (AlkitabBintexConverter)
+out: tb_index_bt.bt
+
+[3]
+in: perikop setengah matang.txt
+prog: KonvertPerikop.java (AlkitabBintexConverter)
+out: tb_perikop_blok_bt.bt
+out: tb_perikop_index_bt.bt
+
