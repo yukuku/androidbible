@@ -2,7 +2,8 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="yuku.alkitab"
-	android:versionCode="20" android:versionName="1.0-dev3">
+	android:versionCode="20"
+	android:versionName="1.0-dev3">
 	<application
 		android:icon="@drawable/icon"
 		android:label="@string/app_name"
@@ -24,7 +25,7 @@
 		<activity
 			android:label="Menuju"
 			android:name="MenujuActivity" />
-		
+
 		<activity
 			android:name="SejarahActivity" />
 		<activity
@@ -37,10 +38,15 @@
 			android:label="Pencarian"
 			android:name="SearchActivity" />
 		<activity
+			android:label="Pencarian2"
+			android:name="Search2Activity" />
+		<activity
 			android:name="RenunganActivity"
 			android:configChanges="mcc|mnc|keyboard|keyboardHidden|orientation" />
-	<activity android:name="BantuanActivity" android:label="Bantuan"></activity>
-</application>
+		<activity
+			android:name="BantuanActivity"
+			android:label="Bantuan"></activity>
+	</application>
 	<uses-sdk
 		android:minSdkVersion="3"
 		android:targetSdkVersion="4" />
@@ -51,5 +57,6 @@
 		android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 	<supports-screens />
-<uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
+	<uses-permission
+		android:name="android.permission.WAKE_LOCK"></uses-permission>
 </manifest> 

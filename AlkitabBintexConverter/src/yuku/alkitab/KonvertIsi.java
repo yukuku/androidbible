@@ -7,7 +7,7 @@ import yuku.bintex.BintexWriter;
 
 public class KonvertIsi {
 	public static void main(String[] args) throws Exception {
-		new KonvertIsi().convert("/Users/yuku/f/android/Alkitab/publikasi/tb_index.txt", "/Users/yuku/f/android/Alkitab/res/raw/tb_index_bt.bt");
+		new KonvertIsi().convert("/Users/yuku/android/Alkitab/publikasi/tb_index.txt", "/Users/yuku/android/Alkitab/res/raw/tb_index_bt.bt");
 	}
 
 	private void convert(String nfi, String nfo) throws Exception {

@@ -191,6 +191,7 @@ public class IsiActivity extends Activity {
 				wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "alki:nyalakanTerusLayar");
 			}
 			if (wakeLock != null) { // jaga2 aja
+				Log.i("alki", "wakeLock nyala");
 				wakeLock.acquire();
 			}
 		}
@@ -198,6 +199,7 @@ public class IsiActivity extends Activity {
 
 	private synchronized void matikanLayarKalauSudahBolehMati() {
 		if (wakeLock != null) {
+			Log.i("alki", "wakeLock mati");
 			wakeLock.release();
 		}
 	}
@@ -680,6 +682,7 @@ public class IsiActivity extends Activity {
 		menuGebug.add(0, 0x985802, 0, "gebug 2: bikin ulang index");
 		menuGebug.add(0, 0x985803, 0, "gebug 3: crash!");
 		menuGebug.add(0, 0x985804, 0, "gebug 4: reset p+p");
+		menuGebug.add(0, 0x985805, 0, "gebug 5: search2");
 		
 		return true;
 	}
@@ -790,7 +793,8 @@ public class IsiActivity extends Activity {
 				editor.commit();
 			}
 			return true;
-		
+		} else if (item.getItemId() == 0x985805) { // debug 5
+			startActivityForResult(new Intent(this, Search2Activity.class), item.getItemId());
 		}
 		
 		return super.onMenuItemSelected(featureId, item);

@@ -7,7 +7,7 @@ import yuku.bintex.BintexWriter;
 
 public class KonvertPerikop {
 	public static void main(String[] args) throws Exception {
-		new KonvertPerikop().convert("/Users/yuku/f/android/Alkitab/publikasi/perikop setengah matang.txt", "/Users/yuku/f/android/Alkitab/res/raw/tb_perikop_blok_bt.bt", "/Users/yuku/f/android/Alkitab/res/raw/tb_perikop_index_bt.bt");
+		new KonvertPerikop().convert("/Users/yuku/android/Alkitab/publikasi/perikop setengah matang.txt", "/Users/yuku/android/Alkitab/res/raw/tb_perikop_blok_bt.bt", "/Users/yuku/android/Alkitab/res/raw/tb_perikop_index_bt.bt");
 	}
 	
 	int bolong = 0;

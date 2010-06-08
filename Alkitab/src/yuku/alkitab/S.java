@@ -142,25 +142,20 @@ public class S {
 				length = kitab.pasal_offset[pasal] - offset;
 			}
 
-			ByteArrayInputStream bais = null;
-
 			byte[] ba = new byte[length];
 			in.read(ba);
 			in.close();
 			
-			bais = new ByteArrayInputStream(ba);
-
-			Utf8Reader reader = new Utf8Reader(bais);
 			char[] ayatBuf = new char[4000];
 			int i = 0;
 
 			ArrayList<String> res = new ArrayList<String>();
 			
-			while (true) {
-				int c = reader.read();
-				if (c == -1) {
-					break;
-				} else if (c == '\n') {
+			//# HANYA BERLAKU KALAU SEMUA byte hanya 7-bit. Akan rusak kalo ada yang 0x80.
+			int len = ba.length;
+			for (int pos = 0; pos < len; pos++) {
+				byte c = ba[pos];
+				if (c == (byte)0x0a) {
 					String satu = new String(ayatBuf, 0, i);
 					res.add(satu);
 					i = 0;
