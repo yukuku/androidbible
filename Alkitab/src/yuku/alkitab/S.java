@@ -4,13 +4,13 @@ import java.io.*;
 import java.util.*;
 
 import yuku.alkitab.model.*;
-import yuku.alkitab.renungan.TukangDonlot;
-import yuku.bintex.BintexReader;
-import yuku.kirimfidbek.PengirimFidbek;
+import yuku.alkitab.renungan.*;
+import yuku.bintex.*;
+import yuku.kirimfidbek.*;
 import android.content.*;
-import android.content.res.Resources;
-import android.graphics.Typeface;
-import android.util.Log;
+import android.content.res.*;
+import android.graphics.*;
+import android.util.*;
 import android.widget.*;
 
 public class S {
@@ -51,6 +51,11 @@ public class S {
 
 	public static PengirimFidbek pengirimFidbek;
 	public static TukangDonlot tukangDonlot;
+	
+	//# buat cache Asset
+	private static InputStream cache_inputStream = null;
+	private static String cache_file = null;
+	private static int cache_posInput = -1;
 	
 	private static int getRawInt(Resources resources, String rid) {
 		return resources.getIdentifier(rid, "raw", "yuku.alkitab");
@@ -124,17 +129,76 @@ public class S {
 		Log.d("alki", "siapinKitab selesai");
 	}
 
+
 	/**
 	 * @param pasal
 	 *            harus betul! antara 1 sampe npasal, 0 ga boleh
 	 */
 	public static String[] muatTeks(Resources resources, Kitab kitab, int pasal) {
+		return muatTeks(resources, kitab, pasal, false, false);
+	}
+
+	/**
+	 * @param pasal
+	 *            harus betul! antara 1 sampe npasal, 0 ga boleh
+	 */
+	public static String muatTeksJanganPisahAyatHurufKecil(Resources resources, Kitab kitab, int pasal) {
+		return muatTeks(resources, kitab, pasal, true, true)[0];
+	}
+	
+	private static String[] muatTeks(Resources resources, Kitab kitab, int pasal, boolean janganPisahAyat, boolean hurufKecil) {
 		int offset = kitab.pasal_offset[pasal - 1];
 		int length = 0;
 
 		try {
-			InputStream in = resources.openRawResource(getRawInt(resources, kitab.file));
-			in.skip(offset);
+			InputStream in;
+			
+			//Log.d("alki", "muatTeks kitab=" + kitab.nama + " pasal[1base]=" + pasal + " offset=" + offset);
+			//Log.d("alki", "muatTeks cache_file=" + cache_file + " cache_posInput=" + cache_posInput);
+			if (cache_inputStream == null) {
+				// kasus 1: belum buka apapun
+				in = resources.openRawResource(getRawInt(resources, kitab.file));
+				cache_inputStream = in;
+				cache_file = kitab.file;
+				
+				in.skip(offset);
+				cache_posInput = offset;
+				//Log.d("alki", "muatTeks masuk kasus 1");
+			} else {
+				// kasus 2: uda pernah buka. Cek apakah filenya sama
+				if (kitab.file.equals(cache_file)) {
+					// kasus 2.1: filenya sama.
+					if (offset >= cache_posInput) {
+						// bagus, kita bisa maju.
+						in = cache_inputStream;
+						
+						in.skip(offset - cache_posInput);
+						cache_posInput = offset;
+						//Log.d("alki", "muatTeks masuk kasus 2.1 bagus");
+					} else {
+						// ga bisa mundur. tutup dan buka lagi.
+						cache_inputStream.close();
+						
+						in = resources.openRawResource(getRawInt(resources, kitab.file));
+						cache_inputStream = in;
+						
+						in.skip(offset);
+						cache_posInput = offset;
+						//Log.d("alki", "muatTeks masuk kasus 2.1 jelek");
+					}
+				} else {
+					// kasus 2.2: filenya beda, tutup dan buka baru
+					cache_inputStream.close();
+					
+					in = resources.openRawResource(getRawInt(resources, kitab.file));
+					cache_inputStream = in;
+					cache_file = kitab.file;
+					
+					in.skip(offset);
+					cache_posInput = offset;
+					//Log.d("alki", "muatTeks masuk kasus 2.2");
+				}
+			}
 
 			if (pasal == kitab.npasal) {
 				length = in.available();
@@ -144,27 +208,41 @@ public class S {
 
 			byte[] ba = new byte[length];
 			in.read(ba);
-			in.close();
+			cache_posInput += ba.length;
+			// jangan ditutup walau uda baca. Siapa tau masih sama filenya dengan sebelumnya.
 			
-			char[] ayatBuf = new char[4000];
-			int i = 0;
-
-			ArrayList<String> res = new ArrayList<String>();
-			
-			//# HANYA BERLAKU KALAU SEMUA byte hanya 7-bit. Akan rusak kalo ada yang 0x80.
-			int len = ba.length;
-			for (int pos = 0; pos < len; pos++) {
-				byte c = ba[pos];
-				if (c == (byte)0x0a) {
-					String satu = new String(ayatBuf, 0, i);
-					res.add(satu);
-					i = 0;
-				} else {
-					ayatBuf[i++] = (char) c;
+			if (hurufKecil) {
+				int blen = ba.length;
+				for (int i = 0; i < blen; i++) {
+					if (ba[i] <= (byte)'Z' && ba[i] >= (byte)'A') {
+						ba[i] |= 0x20; // perhurufkecilkan
+					}
 				}
 			}
 			
-			return res.toArray(new String[res.size()]);
+			if (janganPisahAyat) {
+				return new String[] {new String(ba, 0)};
+			} else {
+				char[] ayatBuf = new char[4000];
+				int i = 0;
+	
+				ArrayList<String> res = new ArrayList<String>();
+				
+				//# HANYA BERLAKU KALAU SEMUA byte hanya 7-bit. Akan rusak kalo ada yang 0x80.
+				int len = ba.length;
+				for (int pos = 0; pos < len; pos++) {
+					byte c = ba[pos];
+					if (c == (byte)0x0a) {
+						String satu = new String(ayatBuf, 0, i);
+						res.add(satu);
+						i = 0;
+					} else {
+						ayatBuf[i++] = (char) c;
+					}
+				}
+				
+				return res.toArray(new String[res.size()]);
+			}
 		} catch (IOException e) {
 			return new String[] { e.getMessage() };
 		}
@@ -287,4 +365,29 @@ public class S {
 		return res;
 	}
 
+	/**
+	 * Kalo ayat ga berawalan @: ga ngapa2in
+	 * Sebaliknya, buang semua @ dan 1 karakter setelahnya.
+	 * @param ayat
+	 */
+	public static String buangKodeKusus(String ayat) {
+		if (ayat.length() == 0) return ayat;
+		if (ayat.charAt(0) != '@') return ayat;
+		
+		StringBuilder sb = new StringBuilder(ayat.length());
+		int pos = 2;
+		
+		while (true) {
+			int p = ayat.indexOf('@', pos);
+			if (p == -1) {
+				break;
+			}
+			
+			sb.append(ayat, pos, p);
+			pos = p + 2;
+		}
+		
+		sb.append(ayat, pos, ayat.length());
+		return sb.toString();
+	}
 }

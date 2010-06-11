@@ -45,4 +45,12 @@ public class IntArrayList {
 	public void set(int i, int a) {
 		this.buf[i] = a;
 	}
+	
+	/**
+	 * DANGEROUS. Do not mess with this buffer carelessly.
+	 * Use this for faster access to the underlying buffer only.
+	 */
+	public int[] buffer() {
+		return buf;
+	}
 }

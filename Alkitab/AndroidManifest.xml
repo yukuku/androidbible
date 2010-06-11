@@ -2,8 +2,8 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="yuku.alkitab"
-	android:versionCode="20"
-	android:versionName="1.0-dev3">
+	android:versionCode="21"
+	android:versionName="1.0-dev4">
 	<application
 		android:icon="@drawable/icon"
 		android:label="@string/app_name"
@@ -39,7 +39,8 @@
 			android:name="SearchActivity" />
 		<activity
 			android:label="Pencarian2"
-			android:name="Search2Activity" />
+			android:name="Search2Activity" 
+			android:configChanges="mcc|mnc|keyboard|keyboardHidden|orientation" />
 		<activity
 			android:name="RenunganActivity"
 			android:configChanges="mcc|mnc|keyboard|keyboardHidden|orientation" />
@@ -58,5 +59,5 @@
 
 	<supports-screens />
 	<uses-permission
-		android:name="android.permission.WAKE_LOCK"></uses-permission>
+		android:name="android.permission.WAKE_LOCK" />
 </manifest> 

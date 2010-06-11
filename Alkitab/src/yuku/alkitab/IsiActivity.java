@@ -6,26 +6,26 @@ import java.util.regex.*;
 import yuku.alkitab.model.*;
 import android.app.*;
 import android.content.*;
-import android.content.SharedPreferences.Editor;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Configuration;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Typeface;
+import android.content.SharedPreferences.*;
+import android.content.pm.*;
+import android.content.pm.PackageManager.*;
+import android.content.res.*;
+import android.database.*;
+import android.database.sqlite.*;
+import android.graphics.*;
 import android.os.*;
-import android.os.PowerManager.WakeLock;
-import android.preference.PreferenceManager;
+import android.os.PowerManager.*;
+import android.preference.*;
 import android.text.*;
-import android.text.method.LinkMovementMethod;
+import android.text.method.*;
 import android.text.style.*;
-import android.text.util.Linkify;
+import android.text.util.*;
 import android.util.*;
 import android.view.*;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.view.ContextMenu.*;
 import android.widget.*;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.TextView.BufferType;
+import android.widget.AdapterView.*;
+import android.widget.TextView.*;
 
 public class IsiActivity extends Activity {
 	private static final int WARNA_NOMER_AYAT = 0xff8080ff;
@@ -1064,7 +1064,7 @@ public class IsiActivity extends Activity {
 		return true;
 	}
 	
-	private static void aturTampilanTeksIsi(TextView t) {
+	static void aturTampilanTeksIsi(TextView t) {
 		t.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
 		t.setTextSize(TypedValue.COMPLEX_UNIT_PX, S.penerapan.ukuranTeksPx);
 		t.setIncludeFontPadding(false);
