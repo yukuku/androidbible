@@ -6,26 +6,26 @@ import java.util.regex.*;
 import yuku.alkitab.model.*;
 import android.app.*;
 import android.content.*;
-import android.content.SharedPreferences.*;
-import android.content.pm.*;
-import android.content.pm.PackageManager.*;
-import android.content.res.*;
-import android.database.*;
-import android.database.sqlite.*;
-import android.graphics.*;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Configuration;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.os.*;
-import android.os.PowerManager.*;
-import android.preference.*;
+import android.os.PowerManager.WakeLock;
+import android.preference.PreferenceManager;
 import android.text.*;
-import android.text.method.*;
+import android.text.method.LinkMovementMethod;
 import android.text.style.*;
-import android.text.util.*;
+import android.text.util.Linkify;
 import android.util.*;
 import android.view.*;
-import android.view.ContextMenu.*;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.*;
-import android.widget.AdapterView.*;
-import android.widget.TextView.*;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.TextView.BufferType;
 
 public class IsiActivity extends Activity {
 	private static final int WARNA_NOMER_AYAT = 0xff8080ff;
@@ -178,9 +178,6 @@ public class IsiActivity extends Activity {
 			}
 		}
 
-		//# nyala terus layar
-		nyalakanTerusLayarKalauDiminta();
-
 		tog.dumpToLog();
 	}
 
@@ -189,6 +186,7 @@ public class IsiActivity extends Activity {
 			if (wakeLock == null) {
 				PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
 				wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "alki:nyalakanTerusLayar");
+				wakeLock.setReferenceCounted(false);
 			}
 			if (wakeLock != null) { // jaga2 aja
 				Log.i("alki", "wakeLock nyala");
@@ -467,6 +465,7 @@ public class IsiActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		
+		//# nyala terus layar
 		nyalakanTerusLayarKalauDiminta();
 	}
 	
@@ -619,8 +618,14 @@ public class IsiActivity extends Activity {
 					TextView tehel = new TextView(this);
 					if (menjorok == 1) {
 						tehel.setPadding(S.penerapan.menjorokSatu, 0, 0, 0);
+						if (S.penerapan.gebug_tehelBewarna) {
+							tehel.setBackgroundColor(0xff000066);
+						}
 					} else if (menjorok == 2) {
 						tehel.setPadding(S.penerapan.menjorokDua, 0, 0, 0);
+						if (S.penerapan.gebug_tehelBewarna) {
+							tehel.setBackgroundColor(0xff660000);
+						}
 					}
 					
 					// kasus: belum ada tehel dan tehel pertama menjorok 0
@@ -656,7 +661,11 @@ public class IsiActivity extends Activity {
 				menjorok = 2;
 			} else if (jenisTanda == '8') {
 				if (tehelTerakhir != null) {
-					tehelTerakhir.append("\n");
+					if (S.penerapan.gebug_tehelBewarna) {
+						tehelTerakhir.append("$$$\n");
+					} else {
+						tehelTerakhir.append("\n");
+					}
 				}
 			}
 			

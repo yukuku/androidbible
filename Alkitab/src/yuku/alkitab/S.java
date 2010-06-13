@@ -28,6 +28,7 @@ public class S {
 		public static boolean sortKitabAlfabet;
 		public static boolean matikanTahanAyat;
 		public static boolean nyalakanTerusLayar;
+		public static boolean gebug_tehelBewarna = true;
 	}
 	
 	/**
