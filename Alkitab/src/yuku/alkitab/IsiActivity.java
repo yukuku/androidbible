@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.regex.*;
 
 import yuku.alkitab.model.*;
+import yuku.andoutil.IntArrayList;
 import android.app.*;
 import android.content.*;
 import android.content.SharedPreferences.Editor;
@@ -58,6 +59,12 @@ public class IsiActivity extends Activity {
 	
 	private AyatAdapter ayatAdapter_ = new AyatAdapter();
 	private boolean tombolAlamatLoncat_;
+	
+	//# penyimpanan state buat search2
+	String search2_carian = null;
+	IntArrayList search2_hasilCari = null;
+	int search2_posisiTerpilih = -1;
+
 	
 	CallbackSpan.OnClickListener paralelOnClickListener = new CallbackSpan.OnClickListener() {
 		@Override
@@ -315,16 +322,19 @@ public class IsiActivity extends Activity {
 	
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
+		String alamat = S.kitab.judul + " " + this.pasal + ":" + this.ayatContextMenu;
+		
 		if (item.getItemId() == R.id.menuSalinAyat) {
 			ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 			clipboardManager.setText(this.isiAyatContextMenu);
+			
+			Toast.makeText(this, alamat + " sudah disalin ke clipboard", Toast.LENGTH_SHORT).show();
 			
 			return true;
 		} else if (item.getItemId() == R.id.menuTambahBukmak) {
 			final SQLiteDatabase db = AlkitabDb.getInstance(this).getDatabase();
 			
 			//# bikin bukmak
-			String alamat = S.kitab.judul + " " + this.pasal + ":" + this.ayatContextMenu;
 			final Bukmak bukmak = new Bukmak(alamat, this.isiAyatContextMenu, new Date(), S.kitab.pos, this.pasal, this.ayatContextMenu);
 			
 			Cursor cursor = db.query(AlkitabDb.TABEL_Bukmak, null, String.format("%s=? and %s=? and %s=?", AlkitabDb.KOLOM_kitab, AlkitabDb.KOLOM_pasal, AlkitabDb.KOLOM_ayat), new String[] {"" + S.kitab.pos, "" + this.pasal, "" + this.ayatContextMenu}, null, null, null);
@@ -347,7 +357,7 @@ public class IsiActivity extends Activity {
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						db.update(AlkitabDb.TABEL_Bukmak, bukmak.toContentValues(), "_id=?", new String[] {"" + id});
+						db.update(AlkitabDb.TABEL_Bukmak, bukmak.toContentValues(), "_id=?", new String[] {String.valueOf(id)});
 					}
 				})
 				.setNegativeButton("Tidak", null)
@@ -355,6 +365,14 @@ public class IsiActivity extends Activity {
 				.show();
 			}
 			
+			return true;
+		} else if (item.getItemId() == R.id.menuBagikan) {
+			Intent i = new Intent(Intent.ACTION_SEND);
+			i.setType("text/plain");
+			i.putExtra(Intent.EXTRA_SUBJECT, alamat);
+			i.putExtra(Intent.EXTRA_TEXT, this.isiAyatContextMenu);
+			startActivity(Intent.createChooser(i, "Bagikan " + alamat));
+
 			return true;
 		}
 		
@@ -611,7 +629,7 @@ public class IsiActivity extends Activity {
 			if (posParse == posSampe) {
 				// di awal, belum ada apa2!
 			} else {
-				Log.d("alki", "akan masukinTehel menjorok=" + menjorok + " " + isi.substring(posParse, posSampe));
+				//Log.d("alki", "akan masukinTehel menjorok=" + menjorok + " " + isi.substring(posParse, posSampe));
 				
 				// bikin tehel
 				{
@@ -691,7 +709,7 @@ public class IsiActivity extends Activity {
 		menuGebug.add(0, 0x985802, 0, "gebug 2: bikin ulang index");
 		menuGebug.add(0, 0x985803, 0, "gebug 3: crash!");
 		menuGebug.add(0, 0x985804, 0, "gebug 4: reset p+p");
-		menuGebug.add(0, 0x985805, 0, "gebug 5: search2");
+		menuGebug.add(0, 0x985805, 0, "gebug 5: search1 (lama)");
 		
 		return true;
 	}
@@ -723,8 +741,8 @@ public class IsiActivity extends Activity {
 			Intent intent = new Intent(this, BukmakActivity.class);
 			startActivityForResult(intent, R.id.menuBukmak);
 			return true;
-		} else if (item.getItemId() == R.id.menuSearch) {
-			menuSearch_click();
+		} else if (item.getItemId() == R.id.menuSearch2) {
+			menuSearch2_click();
 			return true;
 		} else if (item.getItemId() == R.id.menuEdisi) {
 			Intent intent = new Intent(this, EdisiActivity.class);
@@ -803,7 +821,7 @@ public class IsiActivity extends Activity {
 			}
 			return true;
 		} else if (item.getItemId() == 0x985805) { // debug 5
-			startActivityForResult(new Intent(this, Search2Activity.class), item.getItemId());
+			menuSearch_click();
 		}
 		
 		return super.onMenuItemSelected(featureId, item);
@@ -888,6 +906,15 @@ public class IsiActivity extends Activity {
 		}
 	}
 	
+	private void menuSearch2_click() {
+		Intent intent = new Intent(this, Search2Activity.class);
+		intent.putExtra(Search2Activity.EXTRA_carian, search2_carian);
+		intent.putExtra(Search2Activity.EXTRA_hasilCari, search2_hasilCari);
+		intent.putExtra(Search2Activity.EXTRA_posisiTerpilih, search2_posisiTerpilih);
+		
+		startActivityForResult(intent, R.id.menuSearch2);
+	}
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.d("alki", "onActivityResult reqCode=0x" + Integer.toHexString(requestCode) + " resCode=" + resultCode + " data=" + data);
@@ -922,6 +949,19 @@ public class IsiActivity extends Activity {
 					loncatKeAri(ari);
 				}
 			}
+		} else if (requestCode == R.id.menuSearch2) {
+			if (resultCode == RESULT_OK) {
+				int ari = data.getIntExtra(Search2Activity.EXTRA_ariTerpilih, 0);
+				if (ari != 0) { // 0 berarti ga ada apa2, karena ga ada pasal 0 ayat 0
+					loncatKeAri(ari);
+				}
+				
+				search2_carian = data.getStringExtra(Search2Activity.EXTRA_carian);
+				search2_hasilCari = data.getParcelableExtra(Search2Activity.EXTRA_hasilCari);
+				search2_posisiTerpilih = data.getIntExtra(Search2Activity.EXTRA_posisiTerpilih, -1);
+				
+				//Log.d("alki", "kembali dari search2. Carian=" + search2_carian + ", posisiTerpilih=" + search2_posisiTerpilih + ", hasilCari=" + search2_hasilCari);
+			}
 		} else if (requestCode == R.id.menuEdisi) {
 			if (resultCode == RESULT_OK) {
 				String nama = data.getStringExtra("nama");
@@ -950,6 +990,10 @@ public class IsiActivity extends Activity {
 		}
 	}
 
+	/**
+	 * @param pasal basis-1
+	 * @param ayat basis-1
+	 */
 	private void tampil(int pasal, int ayat) {
 		if (pasal < 1) pasal = 1;
 		if (pasal > S.kitab.npasal) pasal = S.kitab.npasal;
@@ -1005,11 +1049,35 @@ public class IsiActivity extends Activity {
 	}
 
 	private void bKiri_click() {
-		tampil(pasal-1, 1);
+		if (pasal == 1) {
+			// uda di awal pasal, masuk ke kitab sebelum
+			Kitab kitabKini = S.kitab;
+			if (kitabKini.pos > 0) {
+				Kitab kitabBaru = S.xkitab[kitabKini.pos - 1];
+				S.kitab = kitabBaru;
+				int pasalBaru_1 = kitabBaru.npasal;
+				tampil(pasalBaru_1, 1);
+			} else {
+				// Kejadian 1. Ga usa ngapa2in
+			}
+			return;
+		}
+		tampil(pasal - 1, 1);
 	}
 	
 	private void bKanan_click() {
-		tampil(pasal+1, 1);
+		Kitab kitabKini = S.kitab;
+		if (pasal >= kitabKini.npasal) {
+			if (kitabKini.pos < S.xkitab.length - 1) {
+				Kitab kitabBaru = S.xkitab[kitabKini.pos + 1];
+				S.kitab = kitabBaru;
+				tampil(1, 1);
+			} else {
+				// uda di Wahyu pasal terakhir. Ga usa ngapa2in
+			}
+			return;
+		}
+		tampil(pasal + 1, 1);
 	}
 	
 	private void popupMintaFidbek() {
@@ -1065,10 +1133,7 @@ public class IsiActivity extends Activity {
 	
 	@Override
 	public boolean onSearchRequested() {
-		// hanya tampilin ini kalo ga lagi bikin index.
-		if (! lagiBikinIndex) {
-			menuSearch_click();
-		}
+		menuSearch2_click();
 		
 		return true;
 	}
@@ -1102,7 +1167,7 @@ public class IsiActivity extends Activity {
 		synchronized void setData(String[] xayat, int[] perikop_xari, Blok[] perikop_xblok, int nblok) {
 			dataAyat_ = xayat.clone();
 			perikop_xblok_ = perikop_xblok;
-			penunjukKotak_ = S.bikinPenunjukKotak(dataAyat_.length, perikop_xari, perikop_xblok, nblok);
+			penunjukKotak_ = U.bikinPenunjukKotak(dataAyat_.length, perikop_xari, perikop_xblok, nblok);
 		}
 		
 		@Override

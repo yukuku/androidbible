@@ -11,9 +11,15 @@
 		android:titleCondensed="Pembatas"
 		android:title="Pembatas buku" />
 	<item
-		android:id="@+id/menuSearch"
 		android:icon="@android:drawable/ic_menu_search"
-		android:title="Cari" />
+		android:title="Cari1"
+		android:id="@+id/menuSearch" 
+		android:visible="false"
+		/>
+	<item
+		android:icon="@android:drawable/ic_menu_search"
+		android:title="Cari"
+		android:id="@+id/menuSearch2" />
 	<item
 		android:id="@+id/menuEdisi"
 		android:title="@string/menuEdisi"

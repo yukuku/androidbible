@@ -1,16 +1,24 @@
 package yuku.alkitab;
 
+import java.util.Arrays;
+
 import yuku.alkitab.model.*;
-import yuku.andoutil.*;
+import yuku.andoutil.IntArrayList;
 import android.app.*;
 import android.content.*;
-import android.os.*;
+import android.os.Bundle;
 import android.text.*;
-import android.text.style.*;
+import android.text.style.UnderlineSpan;
 import android.view.*;
+import android.view.inputmethod.*;
 import android.widget.*;
 
 public class Search2Activity extends Activity {
+	public static final String EXTRA_carian = "carian";
+	public static final String EXTRA_hasilCari = "hasilCari";
+	public static final String EXTRA_posisiTerpilih = "posisiTerpilih";
+	public static final String EXTRA_ariTerpilih = "ariTerpilih";
+	
 	ListView lsHasilCari;
 	ImageButton bCari;
 	EditText tCarian;
@@ -27,36 +35,104 @@ public class Search2Activity extends Activity {
 		tCarian = (EditText) findViewById(R.id.tCarian);
 		lTiadaHasil = (TextView) findViewById(R.id.lTiadaHasil);
 		
+		lsHasilCari.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				int ari = (int) parent.getItemIdAtPosition(position);
+				
+				Intent data = new Intent();
+				data.putExtra(EXTRA_carian, tCarian.getText().toString());
+				
+				Search2Adapter adapter = (Search2Adapter) parent.getAdapter();
+				if (adapter != null) {
+					data.putExtra(EXTRA_hasilCari, adapter.getHasilCari());
+				}
+				
+				data.putExtra(EXTRA_posisiTerpilih, position);
+				data.putExtra(EXTRA_ariTerpilih, ari);
+				
+				setResult(RESULT_OK, data);
+				finish();
+			}
+		});
 		bCari.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) { bCari_click(); }
 		});
+		tCarian.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+					//# close soft keyboard 
+					InputMethodManager inputManager = (InputMethodManager) Search2Activity.this.getSystemService(Context.INPUT_METHOD_SERVICE); 
+					inputManager.hideSoftInputFromWindow(tCarian.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+					
+					bCari_click();
+					return true;
+				}
+				return false;
+			}
+		});
+		
+		{
+			Intent intent = getIntent();
+			if (intent != null) {
+				String carian = intent.getStringExtra(EXTRA_carian);
+				IntArrayList hasilCari = intent.getParcelableExtra(EXTRA_hasilCari);
+				int posisiTerpilih = intent.getIntExtra(EXTRA_posisiTerpilih, -1);
+				
+				if (carian != null) {
+					tCarian.setText(carian);
+					
+					if (hasilCari != null) {
+						String[] xkata = Search2Engine.tokenkan(carian);
+						lsHasilCari.setAdapter(new Search2Adapter(hasilCari, xkata));
+					}
+				}
+				
+				if (posisiTerpilih != -1) {
+					lsHasilCari.setSelection(posisiTerpilih);
+				}
+				
+				//Log.d("alki", "masuk search2 dengan carian=" + carian + ", posisiTerpilih=" + posisiTerpilih + " hasilCari=" + hasilCari);
+			}
+		}
 	}
 	
 	protected void bCari_click() {
 		final String carian = tCarian.getText().toString();
 		
 		if (carian.trim().length() > 0) {
-			progress = ProgressDialog.show(this, "Mencari", Html.fromHtml("Sedang mencari ayat yang mengandung kata-kata: <b>" + carian), true, false, new DialogInterface.OnCancelListener() {
+			final String[] xkata = Search2Engine.tokenkan(carian);
+			
+			progress = new ProgressDialog(this);
+			progress.setTitle("Mencari");
+			progress.setMessage(Html.fromHtml("Sedang mencari ayat yang mengandung kata-kata: <b>" + Arrays.toString(xkata)));
+			progress.setCancelable(false);
+			progress.setIndeterminate(true);
+			progress.setOnDismissListener(new DialogInterface.OnDismissListener() {
 				@Override
-				public void onCancel(DialogInterface dialog) {
+				public void onDismiss(DialogInterface dialog) {
+					// paksa muncul
 					progress.show();
 				}
 			});
+			progress.show();
 			
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
 					synchronized (Search2Activity.this) {
-						final String[] xkata = Search2Engine.tokenkan(carian);
 						final IntArrayList hasil = Search2Engine.cari(Search2Activity.this.getResources(), xkata);
 						Search2Activity.this.runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
 								lsHasilCari.setAdapter(new Search2Adapter(hasil, xkata));
+								Toast.makeText(Search2Activity.this, hasil.size() + " hasil", Toast.LENGTH_SHORT).show();
 							}
 						});
 						
+						progress.setOnDismissListener(null);
 						progress.dismiss();
 					}
 				}
@@ -65,27 +141,27 @@ public class Search2Activity extends Activity {
 	}
 	
 	class Search2Adapter extends BaseAdapter {
-		IntArrayList hasil;
+		IntArrayList hasilCari;
 		String[] xkata;
 		
-		public Search2Adapter(IntArrayList hasil, String[] xkata) {
-			this.hasil = hasil;
+		public Search2Adapter(IntArrayList hasilCari, String[] xkata) {
+			this.hasilCari = hasilCari;
 			this.xkata = xkata;
 		}
 		
 		@Override
 		public int getCount() {
-			return hasil.size();
+			return hasilCari.size();
 		}
 
 		@Override
-		public Integer getItem(int position) {
-			return hasil.get(position);
+		public Object getItem(int position) {
+			return null;
 		}
 
 		@Override
 		public long getItemId(int position) {
-			return position;
+			return hasilCari.get(position);
 		}
 
 		@Override
@@ -102,7 +178,7 @@ public class Search2Activity extends Activity {
 			TextView lAlamat = (TextView) res.findViewById(R.id.lAlamat);
 			TextView lCuplikan = (TextView) res.findViewById(R.id.lCuplikan);
 			
-			int ari = hasil.get(position);
+			int ari = hasilCari.get(position);
 			Kitab kitab = S.xkitab[Ari.toKitab(ari)];
 			int pasal_1 = Ari.toPasal(ari);
 			int ayat_1 = Ari.toAyat(ari);
@@ -112,7 +188,7 @@ public class Search2Activity extends Activity {
 			
 			String[] xayat = S.muatTeks(getResources(), kitab, pasal_1);
 			String ayat = xayat[ayat_1 - 1];
-			ayat = S.buangKodeKusus(ayat);
+			ayat = U.buangKodeKusus(ayat);
 			lCuplikan.setText(Search2Engine.hilite(ayat, xkata));
 			
 			IsiActivity.aturTampilanTeksIsi(lCuplikan);
@@ -120,6 +196,9 @@ public class Search2Activity extends Activity {
 			return res;
 		}
 		
+		IntArrayList getHasilCari() {
+			return hasilCari;
+		}
 	}
 	
 }
