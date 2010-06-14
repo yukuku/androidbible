@@ -4,13 +4,13 @@ import java.io.*;
 import java.util.*;
 
 import yuku.alkitab.model.*;
-import yuku.alkitab.renungan.TukangDonlot;
-import yuku.bintex.BintexReader;
-import yuku.kirimfidbek.PengirimFidbek;
+import yuku.alkitab.renungan.*;
+import yuku.bintex.*;
+import yuku.kirimfidbek.*;
 import android.content.*;
-import android.content.res.Resources;
-import android.graphics.Typeface;
-import android.util.Log;
+import android.content.res.*;
+import android.graphics.*;
+import android.util.*;
 import android.widget.*;
 
 public class S {
@@ -62,7 +62,7 @@ public class S {
 		return resources.getIdentifier(rid, "raw", "yuku.alkitab");
 	}
 
-	public static void siapinEdisi(Resources resources) {
+	public static synchronized void siapinEdisi(Resources resources) {
 		if (xedisi != null) return;
 
 		Scanner sc = new Scanner(resources.openRawResource(R.raw.edisi_index));
@@ -100,7 +100,7 @@ public class S {
 		}
 	}
 
-	public static void siapinKitab(Resources resources) {
+	public static synchronized void siapinKitab(Resources resources) {
 		if (xedisi == null || edisi == null) {
 			siapinEdisi(resources);
 		}
@@ -147,7 +147,7 @@ public class S {
 		return muatTeks(resources, kitab, pasal, true, true)[0];
 	}
 	
-	private static String[] muatTeks(Resources resources, Kitab kitab, int pasal, boolean janganPisahAyat, boolean hurufKecil) {
+	private static synchronized String[] muatTeks(Resources resources, Kitab kitab, int pasal, boolean janganPisahAyat, boolean hurufKecil) {
 		int offset = kitab.pasal_offset[pasal - 1];
 		int length = 0;
 
@@ -249,7 +249,7 @@ public class S {
 		}
 	}
 	
-	public static int muatPerikop(Resources resources, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
+	public static synchronized int muatPerikop(Resources resources, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
 		int ariMin = Ari.encode(kitab, pasal, 0);
 		int ariMax = Ari.encode(kitab, pasal+1, 0);
 		int res = 0;
@@ -290,18 +290,6 @@ public class S {
 		}
 		
 		return res;
-	}
-
-	public static ArrayAdapter<String> getKitabAdapter(Context context) {
-		String[] content = new String[xkitab.length];
-		
-		for (int i = 0; i < xkitab.length; i++) {
-			content[i] = xkitab[i].judul;
-		}
-		
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, content);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		return adapter;
 	}
 
 	public static synchronized void siapinPengirimFidbek(final IsiActivity activity) {

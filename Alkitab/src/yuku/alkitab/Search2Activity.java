@@ -1,14 +1,13 @@
 package yuku.alkitab;
 
-import java.util.Arrays;
+import java.util.*;
 
 import yuku.alkitab.model.*;
-import yuku.andoutil.IntArrayList;
+import yuku.andoutil.*;
 import android.app.*;
 import android.content.*;
-import android.os.Bundle;
+import android.os.*;
 import android.text.*;
-import android.text.style.UnderlineSpan;
 import android.view.*;
 import android.view.inputmethod.*;
 import android.widget.*;
@@ -183,8 +182,7 @@ public class Search2Activity extends Activity {
 			int pasal_1 = Ari.toPasal(ari);
 			int ayat_1 = Ari.toAyat(ari);
 			SpannableStringBuilder sb = new SpannableStringBuilder(kitab.judul).append(" " + pasal_1 + ":" + ayat_1);
-			sb.setSpan(new UnderlineSpan(), 0, sb.length(), 0);
-			lAlamat.setText(sb);
+			IsiActivity.aturTampilanTeksAlamatHasilCari(lAlamat, sb);
 			
 			String[] xayat = S.muatTeks(getResources(), kitab, pasal_1);
 			String ayat = xayat[ayat_1 - 1];

@@ -4,29 +4,29 @@ import java.util.*;
 import java.util.regex.*;
 
 import yuku.alkitab.model.*;
-import yuku.andoutil.IntArrayList;
+import yuku.andoutil.*;
 import android.app.*;
 import android.content.*;
-import android.content.SharedPreferences.Editor;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Configuration;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Typeface;
+import android.content.SharedPreferences.*;
+import android.content.pm.*;
+import android.content.pm.PackageManager.*;
+import android.content.res.*;
+import android.database.*;
+import android.database.sqlite.*;
+import android.graphics.*;
 import android.os.*;
-import android.os.PowerManager.WakeLock;
-import android.preference.PreferenceManager;
+import android.os.PowerManager.*;
+import android.preference.*;
 import android.text.*;
-import android.text.method.LinkMovementMethod;
+import android.text.method.*;
 import android.text.style.*;
-import android.text.util.Linkify;
+import android.text.util.*;
 import android.util.*;
 import android.view.*;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.view.ContextMenu.*;
 import android.widget.*;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.TextView.BufferType;
+import android.widget.AdapterView.*;
+import android.widget.TextView.*;
 
 public class IsiActivity extends Activity {
 	private static final int WARNA_NOMER_AYAT = 0xff8080ff;
@@ -370,7 +370,7 @@ public class IsiActivity extends Activity {
 			Intent i = new Intent(Intent.ACTION_SEND);
 			i.setType("text/plain");
 			i.putExtra(Intent.EXTRA_SUBJECT, alamat);
-			i.putExtra(Intent.EXTRA_TEXT, this.isiAyatContextMenu);
+			i.putExtra(Intent.EXTRA_TEXT, U.buangKodeKusus(this.isiAyatContextMenu));
 			startActivity(Intent.createChooser(i, "Bagikan " + alamat));
 
 			return true;
@@ -1144,6 +1144,14 @@ public class IsiActivity extends Activity {
 		t.setIncludeFontPadding(false);
 		t.setTextColor(S.penerapan.warnaHuruf);
 	}
+	
+	static void aturTampilanTeksAlamatHasilCari(TextView t, SpannableStringBuilder sb) {
+		t.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
+		t.setTextSize(TypedValue.COMPLEX_UNIT_PX, S.penerapan.ukuranTeksPx * 1.2f);
+		t.setTextColor(S.penerapan.warnaHuruf);
+		sb.setSpan(new UnderlineSpan(), 0, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+		t.setText(sb);
+	}
 
 	private static void aturTampilanTeksNomerAyat(TextView t) {
 		t.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
@@ -1226,7 +1234,11 @@ public class IsiActivity extends Activity {
 					RelativeLayout sebelahKiri = (RelativeLayout) res.findViewById(R.id.sebelahKiri);
 					tampilanAyatTehel(sebelahKiri, id + 1, isi);
 					
-					res.findViewById(R.id.imgAtributGelembung).setVisibility(pakeGelembung? View.VISIBLE: View.GONE);
+					ImageButton imgAtributGelembung = (ImageButton) res.findViewById(R.id.imgAtributGelembung);
+					imgAtributGelembung.setVisibility(pakeGelembung? View.VISIBLE: View.GONE);
+					if (pakeGelembung) {
+						pasangClickHandlerUntukGelembung(imgAtributGelembung, pasal, id + 1);
+					}
 					
 					return res;
 				} else {
@@ -1244,7 +1256,11 @@ public class IsiActivity extends Activity {
 					
 					aturTampilanTeksIsi(lIsiAyat);
 
-					res.findViewById(R.id.imgAtributGelembung).setVisibility(pakeGelembung? View.VISIBLE: View.GONE);
+					ImageButton imgAtributGelembung = (ImageButton) res.findViewById(R.id.imgAtributGelembung);
+					imgAtributGelembung.setVisibility(pakeGelembung? View.VISIBLE: View.GONE);
+					if (pakeGelembung) {
+						pasangClickHandlerUntukGelembung(imgAtributGelembung, pasal, id + 1);
+					}
 
 					return res;
 				}
@@ -1314,6 +1330,17 @@ public class IsiActivity extends Activity {
 				
 				return res;
 			}
+		}
+		
+		void pasangClickHandlerUntukGelembung(ImageButton imgGelembung, final int pasal, final int ayat) {
+			imgGelembung.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					GelembungDialog dialog = new GelembungDialog(IsiActivity.this);
+					dialog.setKitabPasalAyat(S.kitab, pasal, ayat);
+					dialog.tampilkan();
+				}
+			});
 		}
 		
 		@Override
