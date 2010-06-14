@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="wrap_content"
-  android:layout_height="wrap_content" android:longClickable="true">
-</TextView>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:orientation="horizontal"
+	>
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:longClickable="true"
+		android:id="@+id/lIsiAyat"
+		android:layout_weight="1"
+		 />
+	<include
+		layout="@layout/atributayat"
+	android:id="@+id/atributayat"/>
+</LinearLayout>

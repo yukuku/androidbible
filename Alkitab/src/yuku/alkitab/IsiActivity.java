@@ -1202,6 +1202,10 @@ public class IsiActivity extends Activity {
 				// AYAT. bukan judul perikop.
 				
 				String isi = dataAyat_[id];
+				
+				// FIXME dari db?
+				boolean pakeGelembung = Math.random() < 0.1;
+				
 				// Udah ditentukan bahwa ini ayat dan bukan perikop, sekarang tinggal tentukan
 				// apakah ayat ini pake formating biasa (tanpa menjorok dsb) atau ada formating
 				if (isi.charAt(0) == '@') {
@@ -1210,32 +1214,38 @@ public class IsiActivity extends Activity {
 						throw new RuntimeException("Karakter kedua bukan @. Isi ayat: " + isi);
 					}
 					
-					RelativeLayout res;
+					LinearLayout res;
 					
 					if (convertView == null || convertView.getId() != R.layout.satu_ayat_tehel) {
-						res = (RelativeLayout) LayoutInflater.from(IsiActivity.this).inflate(R.layout.satu_ayat_tehel, null);
+						res = (LinearLayout) LayoutInflater.from(IsiActivity.this).inflate(R.layout.satu_ayat_tehel, null);
 						res.setId(R.layout.satu_ayat_tehel);
 					} else {
-						res = (RelativeLayout) convertView;
+						res = (LinearLayout) convertView;
 					}
 					
-					tampilanAyatTehel(res, id + 1, isi);
+					RelativeLayout sebelahKiri = (RelativeLayout) res.findViewById(R.id.sebelahKiri);
+					tampilanAyatTehel(sebelahKiri, id + 1, isi);
+					
+					res.findViewById(R.id.imgAtributGelembung).setVisibility(pakeGelembung? View.VISIBLE: View.GONE);
 					
 					return res;
 				} else {
-					TextView res;
+					LinearLayout res;
 					
 					if (convertView == null || convertView.getId() != R.layout.satu_ayat_sederhana) {
-						res = (TextView) LayoutInflater.from(IsiActivity.this).inflate(R.layout.satu_ayat_sederhana, null);
+						res = (LinearLayout) LayoutInflater.from(IsiActivity.this).inflate(R.layout.satu_ayat_sederhana, null);
 						res.setId(R.layout.satu_ayat_sederhana);
 					} else {
-						res = (TextView) convertView;
+						res = (LinearLayout) convertView;
 					}
 					
-					res.setText(tampilanAyatSederhana(id + 1, isi), BufferType.SPANNABLE);
+					TextView lIsiAyat = (TextView) res.findViewById(R.id.lIsiAyat);
+					lIsiAyat.setText(tampilanAyatSederhana(id + 1, isi), BufferType.SPANNABLE);
 					
-					aturTampilanTeksIsi(res);
-					
+					aturTampilanTeksIsi(lIsiAyat);
+
+					res.findViewById(R.id.imgAtributGelembung).setVisibility(pakeGelembung? View.VISIBLE: View.GONE);
+
 					return res;
 				}
 			} else {
