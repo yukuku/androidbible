@@ -22,7 +22,6 @@ public class Search2Activity extends Activity {
 	ImageButton bCari;
 	EditText tCarian;
 	TextView lTiadaHasil;
-	ProgressDialog progress;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +103,7 @@ public class Search2Activity extends Activity {
 		if (carian.trim().length() > 0) {
 			final String[] xkata = Search2Engine.tokenkan(carian);
 			
-			progress = new ProgressDialog(this);
+			final ProgressDialog progress = new ProgressDialog(this);
 			progress.setTitle("Mencari");
 			progress.setMessage(Html.fromHtml("Sedang mencari ayat yang mengandung kata-kata: <b>" + Arrays.toString(xkata)));
 			progress.setCancelable(false);

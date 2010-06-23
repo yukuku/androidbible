@@ -135,7 +135,7 @@ public class S {
 	 * @param pasal
 	 *            harus betul! antara 1 sampe npasal, 0 ga boleh
 	 */
-	public static String[] muatTeks(Resources resources, Kitab kitab, int pasal) {
+	public static synchronized String[] muatTeks(Resources resources, Kitab kitab, int pasal) {
 		return muatTeks(resources, kitab, pasal, false, false);
 	}
 
@@ -143,11 +143,11 @@ public class S {
 	 * @param pasal
 	 *            harus betul! antara 1 sampe npasal, 0 ga boleh
 	 */
-	public static String muatTeksJanganPisahAyatHurufKecil(Resources resources, Kitab kitab, int pasal) {
+	public static synchronized String muatTeksJanganPisahAyatHurufKecil(Resources resources, Kitab kitab, int pasal) {
 		return muatTeks(resources, kitab, pasal, true, true)[0];
 	}
 	
-	private static synchronized String[] muatTeks(Resources resources, Kitab kitab, int pasal, boolean janganPisahAyat, boolean hurufKecil) {
+	private static String[] muatTeks(Resources resources, Kitab kitab, int pasal, boolean janganPisahAyat, boolean hurufKecil) {
 		int offset = kitab.pasal_offset[pasal - 1];
 		int length = 0;
 
@@ -227,7 +227,7 @@ public class S {
 				char[] ayatBuf = new char[4000];
 				int i = 0;
 	
-				ArrayList<String> res = new ArrayList<String>();
+				ArrayList<String> res = new ArrayList<String>(60);
 				
 				//# HANYA BERLAKU KALAU SEMUA byte hanya 7-bit. Akan rusak kalo ada yang 0x80.
 				int len = ba.length;
