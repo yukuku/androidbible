@@ -1,4 +1,4 @@
-package yuku.alkitab;
+package yuku.andoutil;
 
 
 /**

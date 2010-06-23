@@ -28,6 +28,7 @@ public class GelembungDialog {
 		.setNegativeButton("Hapus", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				//FIXME tanya dulu
 				bHapus_click();
 			}
 		})
