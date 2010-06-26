@@ -57,11 +57,11 @@
 		aplikasi ini dengan memberi pesan di bawah ini. Terima kasih!</string>
 	<string
 		name="fidbekMakasih_s">Terima kasih atas komentar anda!</string>
-
-	<string
-		name="pref_cerahTeks_key">cerahTeks</string>
 	<string
 		name="pref_sortKitabAlfabet_key">sortKitabAlfabet</string>
 	<string
 		name="pref_matikanTahanAyat_key">matikanTahanAyat</string>
+<string name="pref_warnaHuruf_int_key">warnaHuruf</string>
+<string name="pref_warnaLatar_int_key">warnaLatar</string>
+<string name="pref_warnaNomerAyat_int_key">warnaNomerAyat</string>
 </resources>

@@ -24,14 +24,21 @@
 			android:key="@string/pref_boldHuruf_key"
 			android:defaultValue="false"
 			android:title="@string/boldHuruf_n" />
-		<com.hlidskialf.android.preference.SeekBarPreference
-			android:defaultValue="100"
-			android:key="@string/pref_cerahTeks_key"
-			android:text="%"
-			android:max="100"
+		<yuku.alkitab.AmbilWarnaPreference
+			android:defaultValue="0xfff0f0f0"
+			android:key="@string/pref_warnaHuruf_int_key"
 			android:summary="Seterang apa teks yang ditampilkan"
-			android:dialogMessage="Atur seberapa terang teks ditampilkan:"
-			android:title="Kecerahan Teks" />
+			android:title="Warna Teks Alkitab" />
+		<yuku.alkitab.AmbilWarnaPreference
+			android:defaultValue="0xff000000"
+			android:key="@string/pref_warnaLatar_int_key"
+			android:summary="Seterang apa latar yang ditampilkan"
+			android:title="Warna Latar Belakang" />
+		<yuku.alkitab.AmbilWarnaPreference
+			android:defaultValue="0xff8080ff"
+			android:key="@string/pref_warnaNomerAyat_int_key"
+			android:summary="Seterang apa aat yang ditampilkan"
+			android:title="Warna Nomor Ayat" />
 	</PreferenceCategory>
 	
 	<PreferenceCategory

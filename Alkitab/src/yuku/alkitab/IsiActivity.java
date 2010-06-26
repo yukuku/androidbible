@@ -29,7 +29,6 @@ import android.widget.AdapterView.*;
 import android.widget.TextView.*;
 
 public class IsiActivity extends Activity {
-	private static final int WARNA_NOMER_AYAT = 0xff8080ff;
 	private static final String NAMAPREF_kitabTerakhir = "kitabTerakhir";
 	private static final String NAMAPREF_pasalTerakhir = "pasalTerakhir";
 	private static final String NAMAPREF_ayatTerakhir = "ayatTerakhir";
@@ -421,12 +420,16 @@ public class IsiActivity extends Activity {
 			S.penerapan.tebalHuruf = boldHuruf_b? Typeface.BOLD: Typeface.NORMAL;
 		}
 		
-		//# atur terang teks
+		//# atur warna teks, latar, dan nomer ayat
 		{
-			String key = getString(R.string.pref_cerahTeks_key);
-			int cerahTeks = pengaturan.getInt(key, 100);
+			int warnaHuruf = pengaturan.getInt(getString(R.string.pref_warnaHuruf_int_key), 0xfff0f0f0);
+			S.penerapan.warnaHuruf = warnaHuruf;
+
+			int warnaLatar = pengaturan.getInt(getString(R.string.pref_warnaLatar_int_key), 0xff000000);
+			S.penerapan.warnaLatar = warnaLatar;
 			
-			S.penerapan.warnaHuruf = 0xff000000 | ((255 * cerahTeks / 100) * 0x010101);
+			int warnaNomerAyat = pengaturan.getInt(getString(R.string.pref_warnaNomerAyat_int_key), 0xff8080ff);
+			S.penerapan.warnaNomerAyat = warnaNomerAyat;
 		}
 		
 		tombolAlamatLoncat_ = pengaturan.getBoolean(getString(R.string.pref_tombolAlamatLoncat_key), false);
@@ -593,7 +596,7 @@ public class IsiActivity extends Activity {
 		String ayat_s = String.valueOf(ayat);
 		
 		seayat.append(ayat_s).append(" ").append(isi);
-		seayat.setSpan(new ForegroundColorSpan(WARNA_NOMER_AYAT), 0, ayat_s.length(), 0);
+		seayat.setSpan(new ForegroundColorSpan(S.penerapan.warnaNomerAyat), 0, ayat_s.length(), 0);
 		
 		seayat.setSpan(new LeadingMarginSpan.Standard(0, S.penerapan.indenParagraf), 0, ayat_s.length() + 1 + isi.length(), 0);
 		
@@ -652,7 +655,7 @@ public class IsiActivity extends Activity {
 						SpannableStringBuilder s = new SpannableStringBuilder();
 						String ayat_s = String.valueOf(ayat);
 						s.append(ayat_s).append(" ").append(isi, posParse, posSampe);
-						s.setSpan(new ForegroundColorSpan(WARNA_NOMER_AYAT), 0, ayat_s.length(), 0);
+						s.setSpan(new ForegroundColorSpan(S.penerapan.warnaNomerAyat), 0, ayat_s.length(), 0);
 						tehel.setText(s, BufferType.SPANNABLE);
 						
 						// kasi tanda biar nanti ga tulis nomer ayat lagi
@@ -1165,7 +1168,7 @@ public class IsiActivity extends Activity {
 		t.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
 		t.setTextSize(TypedValue.COMPLEX_UNIT_PX, S.penerapan.ukuranTeksPx);
 		t.setIncludeFontPadding(false);
-		t.setTextColor(WARNA_NOMER_AYAT);
+		t.setTextColor(S.penerapan.warnaNomerAyat);
 	}
 
 	private class AyatAdapter extends BaseAdapter {
