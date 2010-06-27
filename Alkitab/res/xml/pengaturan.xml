@@ -27,17 +27,17 @@
 		<yuku.alkitab.AmbilWarnaPreference
 			android:defaultValue="0xfff0f0f0"
 			android:key="@string/pref_warnaHuruf_int_key"
-			android:summary="Seterang apa teks yang ditampilkan"
+			android:summary="Atur warna huruf tulisan"
 			android:title="Warna Teks Alkitab" />
 		<yuku.alkitab.AmbilWarnaPreference
 			android:defaultValue="0xff000000"
 			android:key="@string/pref_warnaLatar_int_key"
-			android:summary="Seterang apa latar yang ditampilkan"
+			android:summary="Atur warna latar belakang tulisan"
 			android:title="Warna Latar Belakang" />
 		<yuku.alkitab.AmbilWarnaPreference
 			android:defaultValue="0xff8080ff"
 			android:key="@string/pref_warnaNomerAyat_int_key"
-			android:summary="Seterang apa aat yang ditampilkan"
+			android:summary="Atur warna nomor ayat"
 			android:title="Warna Nomor Ayat" />
 	</PreferenceCategory>
 	
