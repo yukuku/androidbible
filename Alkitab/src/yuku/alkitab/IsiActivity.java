@@ -7,15 +7,16 @@ import yuku.alkitab.model.*;
 import yuku.andoutil.*;
 import android.app.*;
 import android.content.*;
-import android.content.SharedPreferences.*;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.*;
-import android.content.pm.PackageManager.*;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.*;
 import android.database.*;
 import android.database.sqlite.*;
 import android.graphics.*;
+import android.graphics.drawable.*;
 import android.os.*;
-import android.os.PowerManager.*;
+import android.os.PowerManager.WakeLock;
 import android.preference.*;
 import android.text.*;
 import android.text.method.*;
@@ -23,10 +24,10 @@ import android.text.style.*;
 import android.text.util.*;
 import android.util.*;
 import android.view.*;
-import android.view.ContextMenu.*;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.*;
-import android.widget.AdapterView.*;
-import android.widget.TextView.*;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.TextView.BufferType;
 
 public class IsiActivity extends Activity {
 	private static final String NAMAPREF_kitabTerakhir = "kitabTerakhir";
@@ -426,7 +427,13 @@ public class IsiActivity extends Activity {
 			S.penerapan.warnaHuruf = warnaHuruf;
 
 			int warnaLatar = pengaturan.getInt(getString(R.string.pref_warnaLatar_int_key), 0xff000000);
-			S.penerapan.warnaLatar = warnaLatar;
+			lsIsi.setBackgroundColor(warnaLatar);
+			lsIsi.setCacheColorHint(warnaLatar);
+			Window window = getWindow();
+			if (window != null) {
+				ColorDrawable bg = new ColorDrawable(warnaLatar);
+				window.setBackgroundDrawable(bg);
+			}
 			
 			int warnaNomerAyat = pengaturan.getInt(getString(R.string.pref_warnaNomerAyat_int_key), 0xff8080ff);
 			S.penerapan.warnaNomerAyat = warnaNomerAyat;
