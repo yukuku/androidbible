@@ -6,6 +6,7 @@ import yuku.alkitab.model.*;
 import yuku.andoutil.*;
 import android.app.*;
 import android.content.*;
+import android.graphics.*;
 import android.os.*;
 import android.text.*;
 import android.view.*;
@@ -22,6 +23,8 @@ public class Search2Activity extends Activity {
 	ImageButton bCari;
 	EditText tCarian;
 	TextView lTiadaHasil;
+	
+	private int warnaStabilo;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +38,16 @@ public class Search2Activity extends Activity {
 		
 		lsHasilCari.setBackgroundColor(S.penerapan.warnaLatar);
 		lsHasilCari.setCacheColorHint(S.penerapan.warnaLatar);
+		
+		{
+			int warnaLatar = S.penerapan.warnaLatar;
+			float keterangan = 0.30f * Color.red(warnaLatar) + 0.59f * Color.green(warnaLatar) + 0.11f * Color.blue(warnaLatar);
+			if (keterangan < 0.5f) {
+				warnaStabilo = 0xff66ff66;
+			} else {
+				warnaStabilo = 0xff990099;
+			}
+		}
 		
 		lsHasilCari.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
@@ -189,7 +202,7 @@ public class Search2Activity extends Activity {
 			String[] xayat = S.muatTeks(getResources(), kitab, pasal_1);
 			String ayat = xayat[ayat_1 - 1];
 			ayat = U.buangKodeKusus(ayat);
-			lCuplikan.setText(Search2Engine.hilite(ayat, xkata));
+			lCuplikan.setText(Search2Engine.hilite(ayat, xkata, warnaStabilo));
 			
 			IsiActivity.aturTampilanTeksIsi(lCuplikan);
 			

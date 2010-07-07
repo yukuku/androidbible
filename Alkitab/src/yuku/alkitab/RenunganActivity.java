@@ -36,6 +36,7 @@ public class RenunganActivity extends Activity {
 	}
 
 	TextView lIsi;
+	ScrollView scrollIsi;
 	TextView lHeader;
 	ImageButton bKiri;
 	ImageButton bKanan;
@@ -75,7 +76,11 @@ public class RenunganActivity extends Activity {
 
 		lHeader = (TextView) findViewById(R.id.lHeader);
 		lIsi = (TextView) findViewById(R.id.lIsi);
+		scrollIsi = (ScrollView) findViewById(R.id.scrollIsi);
 		bKiri = (ImageButton) findViewById(R.id.bKiri);
+		
+		scrollIsi.setBackgroundColor(S.penerapan.warnaLatar);
+		
 		bKiri.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -243,25 +248,25 @@ public class RenunganActivity extends Activity {
 		try {
 			if (c.moveToNext()) {
 				IArtikel res = null;
-					if (nama.equals("rh")) {
-						res = new ArtikelRenunganHarian(
-							tgl,
-							c.getString(c.getColumnIndexOrThrow(KOLOM_judul)),
-							c.getString(c.getColumnIndexOrThrow(KOLOM_header)),
-							c.getString(c.getColumnIndexOrThrow(KOLOM_isi)),
-							c.getInt(c.getColumnIndexOrThrow(KOLOM_siapPakai)) > 0
-						);
-					} else if (nama.equals("sh")) {
-						res = new ArtikelSantapanHarian(
-							tgl,
-							c.getString(c.getColumnIndexOrThrow(KOLOM_judul)),
-							c.getString(c.getColumnIndexOrThrow(KOLOM_header)),
-							c.getString(c.getColumnIndexOrThrow(KOLOM_isi)),
-							c.getInt(c.getColumnIndexOrThrow(KOLOM_siapPakai)) > 0
-						);
-					}
-	
-					return res;
+				if (nama.equals("rh")) {
+					res = new ArtikelRenunganHarian(
+						tgl,
+						c.getString(c.getColumnIndexOrThrow(KOLOM_judul)),
+						c.getString(c.getColumnIndexOrThrow(KOLOM_header)),
+						c.getString(c.getColumnIndexOrThrow(KOLOM_isi)),
+						c.getInt(c.getColumnIndexOrThrow(KOLOM_siapPakai)) > 0
+					);
+				} else if (nama.equals("sh")) {
+					res = new ArtikelSantapanHarian(
+						tgl,
+						c.getString(c.getColumnIndexOrThrow(KOLOM_judul)),
+						c.getString(c.getColumnIndexOrThrow(KOLOM_header)),
+						c.getString(c.getColumnIndexOrThrow(KOLOM_isi)),
+						c.getInt(c.getColumnIndexOrThrow(KOLOM_siapPakai)) > 0
+					);
+				}
+
+				return res;
 			} else {
 				return null;
 			}

@@ -1604,7 +1604,7 @@ Judul: Raja Ahas
    Perikop: 2Taw 28:1-27
         Paralel: 2Raj 16:1-20
 Judul: Raja Hizkia
-Judul: 29:1-2
+   Perikop: 2Taw 29:1-2
         Paralel: 2Raj 18:1-3
 Judul: Hizkia menguduskan kembali rumah TUHAN
    Perikop: 2Taw 29:3-36

@@ -1,15 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_height="fill_parent" android:layout_width="fill_parent">
+	android:orientation="vertical"
+	android:layout_height="fill_parent"
+	android:layout_width="fill_parent">
 
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:background="#444"
+		android:gravity="center_vertical">
+		<TextView
+			android:layout_height="wrap_content"
+			android:text="Renungan TANGGAL (SERI)"
+			android:padding="4dip"
+			android:textSize="16sp"
+			android:id="@+id/lHeader"
+			android:layout_width="wrap_content"
+			android:layout_weight="1" />
+		<Button
+			android:layout_width="wrap_content"
+			android:id="@+id/bGanti"
+			android:text="Ganti"
+			android:layout_height="wrap_content"
+			android:height="48dp"></Button>
+		<ImageButton
+			android:src="@drawable/left_arrow"
+			android:id="@+id/bKiri"
+			android:layout_height="48dp"
+			android:layout_width="48dp"
+			android:padding="8dp"
+			android:scaleType="fitXY"></ImageButton>
+		<ImageButton
+			android:src="@drawable/right_arrow"
+			android:id="@+id/bKanan"
+			android:layout_height="48dp"
+			android:layout_width="48dp"
+			android:padding="8dp"
+			android:scaleType="fitXY"></ImageButton>
+	</LinearLayout>
 	
-
-	
-<LinearLayout android:layout_height="wrap_content" android:orientation="horizontal" android:layout_width="fill_parent" android:background="#444" android:gravity="center_vertical"><TextView android:layout_height="wrap_content" android:text="Renungan TANGGAL (SERI)" android:padding="4dip" android:textSize="16sp" android:id="@+id/lHeader" android:layout_width="wrap_content" android:layout_weight="1"/><Button android:layout_width="wrap_content" android:id="@+id/bGanti" android:text="Ganti" android:layout_height="wrap_content" android:height="48dp"></Button><ImageButton android:src="@drawable/left_arrow" android:id="@+id/bKiri" android:layout_height="48dp" android:layout_width="48dp" android:padding="8dp" android:scaleType="fitXY"></ImageButton><ImageButton android:src="@drawable/right_arrow" android:id="@+id/bKanan" android:layout_height="48dp" android:layout_width="48dp" android:padding="8dp" android:scaleType="fitXY"></ImageButton>
-
-
-</LinearLayout><ScrollView android:layout_weight="1" android:layout_width="fill_parent" android:layout_height="fill_parent" android:focusable="true"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/lIsi" android:text="Isi renungan di sini. Bla bla bla bla. Dan terus. Bla bla bla bla bla bla bla, sampe ngeskrol." android:padding="8dp"></TextView>
-</ScrollView>
+	<ScrollView
+		android:layout_weight="1"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:id="@+id/scrollIsi"
+		android:focusable="true">
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/lIsi"
+			android:text="Isi renungan di sini. Bla bla bla bla. Dan terus. Bla bla bla bla bla bla bla, sampe ngeskrol."
+			android:padding="8dp"></TextView>
+	</ScrollView>
 
 </LinearLayout>
