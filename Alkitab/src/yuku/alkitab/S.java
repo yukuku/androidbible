@@ -22,6 +22,7 @@ public class S {
 		public static Typeface jenisHuruf;
 		public static int tebalHuruf;
 		public static int warnaHuruf; 
+		public static int warnaLatar;
 		public static int warnaNomerAyat;
 		public static int indenParagraf;
 		public static int menjorokSatu;

@@ -2,20 +2,20 @@ package yuku.alkitab;
 
 import static yuku.alkitab.model.AlkitabDb.*;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.text.*;
+import java.util.*;
 
-import yuku.alkitab.model.AlkitabDb;
+import yuku.alkitab.model.*;
 import yuku.alkitab.renungan.*;
-import yuku.andoutil.ThreadSleep;
-import android.app.Activity;
-import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import yuku.andoutil.*;
+import android.app.*;
+import android.content.*;
+import android.database.*;
+import android.database.sqlite.*;
 import android.os.*;
 import android.text.*;
 import android.text.format.DateFormat;
-import android.text.method.LinkMovementMethod;
+import android.text.method.*;
 import android.util.*;
 import android.view.*;
 import android.widget.*;
@@ -185,6 +185,7 @@ public class RenunganActivity extends Activity {
 			lIsi.setLinksClickable(true);
 			lIsi.setMovementMethod(LinkMovementMethod.getInstance());
 			lIsi.setTextColor(S.penerapan.warnaHuruf);
+			lIsi.setBackgroundColor(S.penerapan.warnaLatar);
 			lIsi.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
 			lIsi.setTextSize(TypedValue.COMPLEX_UNIT_PX, S.penerapan.ukuranTeksPx);
 		} else {

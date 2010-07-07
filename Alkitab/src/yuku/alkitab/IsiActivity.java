@@ -427,6 +427,7 @@ public class IsiActivity extends Activity {
 			S.penerapan.warnaHuruf = warnaHuruf;
 
 			int warnaLatar = pengaturan.getInt(getString(R.string.pref_warnaLatar_int_key), 0xff000000);
+			S.penerapan.warnaLatar = warnaLatar;
 			lsIsi.setBackgroundColor(warnaLatar);
 			lsIsi.setCacheColorHint(warnaLatar);
 			Window window = getWindow();

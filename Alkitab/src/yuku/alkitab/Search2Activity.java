@@ -33,6 +33,9 @@ public class Search2Activity extends Activity {
 		tCarian = (EditText) findViewById(R.id.tCarian);
 		lTiadaHasil = (TextView) findViewById(R.id.lTiadaHasil);
 		
+		lsHasilCari.setBackgroundColor(S.penerapan.warnaLatar);
+		lsHasilCari.setCacheColorHint(S.penerapan.warnaLatar);
+		
 		lsHasilCari.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
