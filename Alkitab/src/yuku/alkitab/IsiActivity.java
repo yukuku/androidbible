@@ -337,7 +337,7 @@ public class IsiActivity extends Activity {
 			//# bikin bukmak
 			final Bukmak bukmak = new Bukmak(alamat, this.isiAyatContextMenu, new Date(), S.kitab.pos, this.pasal, this.ayatContextMenu);
 			
-			Cursor cursor = db.query(AlkitabDb.TABEL_Bukmak, null, String.format("%s=? and %s=? and %s=?", AlkitabDb.KOLOM_kitab, AlkitabDb.KOLOM_pasal, AlkitabDb.KOLOM_ayat), new String[] {"" + S.kitab.pos, "" + this.pasal, "" + this.ayatContextMenu}, null, null, null);
+			Cursor cursor = db.query(AlkitabDb.TABEL_Bukmak, null, String.format("%s=? and %s=? and %s=?", AlkitabDb.KOLOM_Bukmak_kitab, AlkitabDb.KOLOM_Bukmak_pasal, AlkitabDb.KOLOM_Bukmak_ayat), new String[] {"" + S.kitab.pos, "" + this.pasal, "" + this.ayatContextMenu}, null, null, null);
 			cursor.moveToNext();
 			
 			if (cursor.isAfterLast()) {

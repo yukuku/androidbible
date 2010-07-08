@@ -2,7 +2,7 @@ package yuku.alkitab.renungan;
 
 import java.util.regex.*;
 
-import android.util.Log;
+import android.util.*;
 
 public abstract class ArtikelDariSabda implements IArtikel {
 	private static Pattern pattern1;
@@ -125,6 +125,11 @@ public abstract class ArtikelDariSabda implements IArtikel {
 		}
 		
 		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return tgl_.hashCode() * 31 + getNama().hashCode();
 	}
 	
 	@Override

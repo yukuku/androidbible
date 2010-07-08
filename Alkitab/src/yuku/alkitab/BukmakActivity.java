@@ -24,15 +24,15 @@ public class BukmakActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 
 		db = AlkitabDb.getInstance(this).getDatabase();
-		final String[] cursorColumns = {BaseColumns._ID, AlkitabDb.KOLOM_alamat, AlkitabDb.KOLOM_cuplikan, AlkitabDb.KOLOM_waktuTambah};
-		cursor = db.query(AlkitabDb.TABEL_Bukmak, cursorColumns, null, null, null, null, AlkitabDb.KOLOM_waktuTambah + " desc");
+		final String[] cursorColumns = {BaseColumns._ID, AlkitabDb.KOLOM_Bukmak_alamat, AlkitabDb.KOLOM_Bukmak_cuplikan, AlkitabDb.KOLOM_Bukmak_waktuTambah};
+		cursor = db.query(AlkitabDb.TABEL_Bukmak, cursorColumns, null, null, null, null, AlkitabDb.KOLOM_Bukmak_waktuTambah + " desc");
 		startManagingCursor(cursor);
 		
-		adapter = new SimpleCursorAdapter(this, R.layout.bukmak_item, cursor, new String[] {AlkitabDb.KOLOM_alamat, AlkitabDb.KOLOM_cuplikan, AlkitabDb.KOLOM_waktuTambah}, new int[] {R.id.lAlamat, R.id.lCuplikan, R.id.lTanggal});
+		adapter = new SimpleCursorAdapter(this, R.layout.bukmak_item, cursor, new String[] {AlkitabDb.KOLOM_Bukmak_alamat, AlkitabDb.KOLOM_Bukmak_cuplikan, AlkitabDb.KOLOM_Bukmak_waktuTambah}, new int[] {R.id.lAlamat, R.id.lCuplikan, R.id.lTanggal});
 		adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
 			@Override
 			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-				if (cursorColumns[columnIndex] == AlkitabDb.KOLOM_waktuTambah) {
+				if (cursorColumns[columnIndex] == AlkitabDb.KOLOM_Bukmak_waktuTambah) {
 					((TextView)view).setText(Sqlitil.toLocaleDateMedium(cursor.getInt(columnIndex)));
 					return true;
 				}
@@ -47,7 +47,7 @@ public class BukmakActivity extends ListActivity {
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		Cursor o = (Cursor) adapter.getItem(position);
-		String alamat = o.getString(o.getColumnIndexOrThrow(AlkitabDb.KOLOM_alamat));
+		String alamat = o.getString(o.getColumnIndexOrThrow(AlkitabDb.KOLOM_Bukmak_alamat));
 		
 		Intent res = new Intent();
 		res.putExtra("terpilih.alamat", alamat);

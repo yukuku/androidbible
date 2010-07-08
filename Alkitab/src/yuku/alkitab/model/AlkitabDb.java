@@ -1,31 +1,31 @@
 package yuku.alkitab.model;
 
-import java.util.Date;
+import java.util.*;
 
-import android.content.Context;
-import android.content.pm.PackageInfo;
+import android.content.*;
+import android.content.pm.*;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.database.SQLException;
+import android.database.*;
 import android.database.sqlite.*;
-import android.util.Log;
+import android.util.*;
 
 public class AlkitabDb {
 	public static final String TABEL_Bukmak = "Bukmak";
-	public static final String KOLOM_alamat = "alamat";
-	public static final String KOLOM_cuplikan = "cuplikan";
-	public static final String KOLOM_waktuTambah = "waktuTambah";
-	public static final String KOLOM_kitab = "kitab";
-	public static final String KOLOM_pasal = "pasal";
-	public static final String KOLOM_ayat = "ayat";
+	public static final String KOLOM_Bukmak_alamat = "alamat";
+	public static final String KOLOM_Bukmak_cuplikan = "cuplikan";
+	public static final String KOLOM_Bukmak_waktuTambah = "waktuTambah";
+	public static final String KOLOM_Bukmak_kitab = "kitab";
+	public static final String KOLOM_Bukmak_pasal = "pasal";
+	public static final String KOLOM_Bukmak_ayat = "ayat";
 	
 	public static final String TABEL_Renungan = "Renungan";
-	public static final String KOLOM_nama = "nama";
-	public static final String KOLOM_tgl = "tgl";
-	public static final String KOLOM_header = "header";
-	public static final String KOLOM_judul = "judul";
-	public static final String KOLOM_isi = "isi";
-	public static final String KOLOM_siapPakai = "siapPakai";
-	public static final String KOLOM_waktuSentuh = "waktuSentuh";
+	public static final String KOLOM_Renungan_nama = "nama";
+	public static final String KOLOM_Renungan_tgl = "tgl";
+	public static final String KOLOM_Renungan_header = "header";
+	public static final String KOLOM_Renungan_judul = "judul";
+	public static final String KOLOM_Renungan_isi = "isi";
+	public static final String KOLOM_Renungan_siapPakai = "siapPakai";
+	public static final String KOLOM_Renungan_waktuSentuh = "waktuSentuh";
 
 	public static int getVersionCode(Context context) {
 		PackageInfo packageInfo;
@@ -81,10 +81,10 @@ public class AlkitabDb {
 						"%s integer, " +
 						"%s integer, " +
 						"%s integer, " +
-						"%s integer)", TABEL_Bukmak, KOLOM_alamat, KOLOM_cuplikan, KOLOM_waktuTambah, KOLOM_kitab, KOLOM_pasal, KOLOM_ayat));
+						"%s integer)", TABEL_Bukmak, KOLOM_Bukmak_alamat, KOLOM_Bukmak_cuplikan, KOLOM_Bukmak_waktuTambah, KOLOM_Bukmak_kitab, KOLOM_Bukmak_pasal, KOLOM_Bukmak_ayat));
 				
-				db.execSQL(String.format("create index if not exists index_1 on %s (%s)", TABEL_Bukmak, KOLOM_waktuTambah));
-				db.execSQL(String.format("create index if not exists index_2 on %s (%s, %s, %s)", TABEL_Bukmak, KOLOM_kitab, KOLOM_pasal, KOLOM_ayat));
+				db.execSQL(String.format("create index if not exists index_1 on %s (%s)", TABEL_Bukmak, KOLOM_Bukmak_waktuTambah));
+				db.execSQL(String.format("create index if not exists index_2 on %s (%s, %s, %s)", TABEL_Bukmak, KOLOM_Bukmak_kitab, KOLOM_Bukmak_pasal, KOLOM_Bukmak_ayat));
 
 				
 				db.execSQL(String.format("create table if not exists %s (" +
@@ -96,11 +96,11 @@ public class AlkitabDb {
 						"%s text, " + // isi
 						"%s integer," + // siap pakai
 						"%s integer)", // waktuSentuh
-						TABEL_Renungan, KOLOM_nama, KOLOM_tgl, KOLOM_header, KOLOM_judul, KOLOM_isi, KOLOM_siapPakai, KOLOM_waktuSentuh));
+						TABEL_Renungan, KOLOM_Renungan_nama, KOLOM_Renungan_tgl, KOLOM_Renungan_header, KOLOM_Renungan_judul, KOLOM_Renungan_isi, KOLOM_Renungan_siapPakai, KOLOM_Renungan_waktuSentuh));
 				
-				db.execSQL(String.format("create index if not exists index_101 on %s (%s)", TABEL_Renungan, KOLOM_nama));
-				db.execSQL(String.format("create index if not exists index_102 on %s (%s, %s)", TABEL_Renungan, KOLOM_nama, KOLOM_tgl));
-				db.execSQL(String.format("create index if not exists index_103 on %s (%s)", TABEL_Renungan, KOLOM_tgl));
+				db.execSQL(String.format("create index if not exists index_101 on %s (%s)", TABEL_Renungan, KOLOM_Renungan_nama));
+				db.execSQL(String.format("create index if not exists index_102 on %s (%s, %s)", TABEL_Renungan, KOLOM_Renungan_nama, KOLOM_Renungan_tgl));
+				db.execSQL(String.format("create index if not exists index_103 on %s (%s)", TABEL_Renungan, KOLOM_Renungan_tgl));
 				
 				// Kej 1:1 buat percobaan doang
 				Bukmak kej1 = new Bukmak("Kejadian 1:1", "Pada mulanya Allah menciptakan langit dan bumi.", new Date(), 0, 1, 1);

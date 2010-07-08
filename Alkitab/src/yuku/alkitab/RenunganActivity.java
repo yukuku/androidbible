@@ -244,25 +244,25 @@ public class RenunganActivity extends Activity {
 	private IArtikel cobaAmbilLokal(String nama, String tgl) {
 		SQLiteDatabase db = AlkitabDb.getInstance(this).getDatabase();
 
-		Cursor c = db.query(TABEL_Renungan, null, KOLOM_nama + "=? and " + KOLOM_tgl + "=?", new String[] { nama, tgl }, null, null, null);
+		Cursor c = db.query(TABEL_Renungan, null, KOLOM_Renungan_nama + "=? and " + KOLOM_Renungan_tgl + "=?", new String[] { nama, tgl }, null, null, null);
 		try {
 			if (c.moveToNext()) {
 				IArtikel res = null;
 				if (nama.equals("rh")) {
 					res = new ArtikelRenunganHarian(
 						tgl,
-						c.getString(c.getColumnIndexOrThrow(KOLOM_judul)),
-						c.getString(c.getColumnIndexOrThrow(KOLOM_header)),
-						c.getString(c.getColumnIndexOrThrow(KOLOM_isi)),
-						c.getInt(c.getColumnIndexOrThrow(KOLOM_siapPakai)) > 0
+						c.getString(c.getColumnIndexOrThrow(KOLOM_Renungan_judul)),
+						c.getString(c.getColumnIndexOrThrow(KOLOM_Renungan_header)),
+						c.getString(c.getColumnIndexOrThrow(KOLOM_Renungan_isi)),
+						c.getInt(c.getColumnIndexOrThrow(KOLOM_Renungan_siapPakai)) > 0
 					);
 				} else if (nama.equals("sh")) {
 					res = new ArtikelSantapanHarian(
 						tgl,
-						c.getString(c.getColumnIndexOrThrow(KOLOM_judul)),
-						c.getString(c.getColumnIndexOrThrow(KOLOM_header)),
-						c.getString(c.getColumnIndexOrThrow(KOLOM_isi)),
-						c.getInt(c.getColumnIndexOrThrow(KOLOM_siapPakai)) > 0
+						c.getString(c.getColumnIndexOrThrow(KOLOM_Renungan_judul)),
+						c.getString(c.getColumnIndexOrThrow(KOLOM_Renungan_header)),
+						c.getString(c.getColumnIndexOrThrow(KOLOM_Renungan_isi)),
+						c.getInt(c.getColumnIndexOrThrow(KOLOM_Renungan_siapPakai)) > 0
 					);
 				}
 

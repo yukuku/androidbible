@@ -120,24 +120,24 @@ public class TukangDonlot extends Thread {
 
 						try {
 							// hapus dulu yang lama.
-							db.delete(TABEL_Renungan, KOLOM_nama + "=? and " + KOLOM_tgl + "=?", new String[] {artikel.getNama(), artikel.getTgl()});
+							db.delete(TABEL_Renungan, KOLOM_Renungan_nama + "=? and " + KOLOM_Renungan_tgl + "=?", new String[] {artikel.getNama(), artikel.getTgl()});
 
 							ContentValues values = new ContentValues();
-							values.put(KOLOM_nama, artikel.getNama());
-							values.put(KOLOM_tgl, artikel.getTgl());
-							values.put(KOLOM_siapPakai, artikel.getSiapPakai()? 1: 0);
+							values.put(KOLOM_Renungan_nama, artikel.getNama());
+							values.put(KOLOM_Renungan_tgl, artikel.getTgl());
+							values.put(KOLOM_Renungan_siapPakai, artikel.getSiapPakai()? 1: 0);
 							
 							if (artikel.getSiapPakai()) {
-								values.put(KOLOM_judul, artikel.getJudul().toString());
-								values.put(KOLOM_isi, artikel.getIsiHtml());
-								values.put(KOLOM_header, artikel.getHeaderHtml());
+								values.put(KOLOM_Renungan_judul, artikel.getJudul().toString());
+								values.put(KOLOM_Renungan_isi, artikel.getIsiHtml());
+								values.put(KOLOM_Renungan_header, artikel.getHeaderHtml());
 							} else {
-								values.put(KOLOM_judul, (String)null);
-								values.put(KOLOM_isi, (String)null);
-								values.put(KOLOM_header, (String)null);
+								values.put(KOLOM_Renungan_judul, (String)null);
+								values.put(KOLOM_Renungan_isi, (String)null);
+								values.put(KOLOM_Renungan_header, (String)null);
 							}
 							
-							values.put(KOLOM_waktuSentuh, Sqlitil.nowDateTime());
+							values.put(KOLOM_Renungan_waktuSentuh, Sqlitil.nowDateTime());
 							
 							db.insert(TABEL_Renungan, null, values);
 							

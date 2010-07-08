@@ -25,12 +25,12 @@ public class Bukmak {
 	public ContentValues toContentValues() {
 		ContentValues res = new ContentValues();
 		
-		res.put(AlkitabDb.KOLOM_alamat, alamat);
-		res.put(AlkitabDb.KOLOM_cuplikan, cuplikan);
-		res.put(AlkitabDb.KOLOM_waktuTambah, Sqlitil.toInt(waktuTambah));
-		res.put(AlkitabDb.KOLOM_kitab, kitab);
-		res.put(AlkitabDb.KOLOM_pasal, pasal);
-		res.put(AlkitabDb.KOLOM_ayat, ayat);
+		res.put(AlkitabDb.KOLOM_Bukmak_alamat, alamat);
+		res.put(AlkitabDb.KOLOM_Bukmak_cuplikan, cuplikan);
+		res.put(AlkitabDb.KOLOM_Bukmak_waktuTambah, Sqlitil.toInt(waktuTambah));
+		res.put(AlkitabDb.KOLOM_Bukmak_kitab, kitab);
+		res.put(AlkitabDb.KOLOM_Bukmak_pasal, pasal);
+		res.put(AlkitabDb.KOLOM_Bukmak_ayat, ayat);
 		
 		return res;
 	}
