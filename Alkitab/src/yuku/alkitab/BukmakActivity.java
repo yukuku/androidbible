@@ -1,18 +1,18 @@
 
 package yuku.alkitab;
 
-import yuku.alkitab.model.AlkitabDb;
-import yuku.andoutil.Sqlitil;
-import android.app.ListActivity;
-import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
-import android.provider.BaseColumns;
+import yuku.alkitab.model.*;
+import yuku.andoutil.*;
+import android.app.*;
+import android.content.*;
+import android.database.*;
+import android.database.sqlite.*;
+import android.os.*;
+import android.provider.*;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.*;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.*;
 
 public class BukmakActivity extends ListActivity {
 	SimpleCursorAdapter adapter;
@@ -23,7 +23,7 @@ public class BukmakActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		db = AlkitabDb.getInstance(this).getDatabase();
+		db = AlkitabDb.getInstance(getApplicationContext()).getDatabase();
 		final String[] cursorColumns = {BaseColumns._ID, AlkitabDb.KOLOM_Bukmak_alamat, AlkitabDb.KOLOM_Bukmak_cuplikan, AlkitabDb.KOLOM_Bukmak_waktuTambah};
 		cursor = db.query(AlkitabDb.TABEL_Bukmak, cursorColumns, null, null, null, null, AlkitabDb.KOLOM_Bukmak_waktuTambah + " desc");
 		startManagingCursor(cursor);

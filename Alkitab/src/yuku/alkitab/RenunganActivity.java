@@ -221,7 +221,7 @@ public class RenunganActivity extends Activity {
 
 	private synchronized void akanPerlu(String nama, String tgl, boolean penting) {
 		if (S.tukangDonlot == null) {
-			S.tukangDonlot = new TukangDonlot(this);
+			S.tukangDonlot = new TukangDonlot(getApplicationContext());
 			S.tukangDonlot.start();
 		}
 
@@ -242,7 +242,7 @@ public class RenunganActivity extends Activity {
 	 * Coba ambil artikel dari db lokal. Artikel ga siap pakai pun akan direturn.
 	 */
 	private IArtikel cobaAmbilLokal(String nama, String tgl) {
-		SQLiteDatabase db = AlkitabDb.getInstance(this).getDatabase();
+		SQLiteDatabase db = AlkitabDb.getInstance(getApplicationContext()).getDatabase();
 
 		Cursor c = db.query(TABEL_Renungan, null, KOLOM_Renungan_nama + "=? and " + KOLOM_Renungan_tgl + "=?", new String[] { nama, tgl }, null, null, null);
 		try {

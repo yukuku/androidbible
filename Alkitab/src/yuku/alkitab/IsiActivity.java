@@ -332,10 +332,11 @@ public class IsiActivity extends Activity {
 			
 			return true;
 		} else if (item.getItemId() == R.id.menuTambahBukmak) {
-			final SQLiteDatabase db = AlkitabDb.getInstance(this).getDatabase();
+			final SQLiteDatabase db = AlkitabDb.getInstance(getApplicationContext()).getDatabase();
 			
 			//# bikin bukmak
-			final Bukmak bukmak = new Bukmak(alamat, this.isiAyatContextMenu, new Date(), S.kitab.pos, this.pasal, this.ayatContextMenu);
+			int ari = Ari.encode(S.kitab.pos, pasal, ayatContextMenu);
+			final Bukmak2 bukmak = new Bukmak2(ari, AlkitabDb.ENUM_Bukmak2_jenis_bukmak, alamat, new Date(), new Date());
 			
 			Cursor cursor = db.query(AlkitabDb.TABEL_Bukmak, null, String.format("%s=? and %s=? and %s=?", AlkitabDb.KOLOM_Bukmak_kitab, AlkitabDb.KOLOM_Bukmak_pasal, AlkitabDb.KOLOM_Bukmak_ayat), new String[] {"" + S.kitab.pos, "" + this.pasal, "" + this.ayatContextMenu}, null, null, null);
 			cursor.moveToNext();
