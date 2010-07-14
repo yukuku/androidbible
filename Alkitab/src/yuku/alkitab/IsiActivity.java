@@ -15,7 +15,6 @@ import android.content.res.*;
 import android.graphics.*;
 import android.graphics.drawable.*;
 import android.os.*;
-import android.os.PowerManager.WakeLock;
 import android.preference.*;
 import android.text.*;
 import android.text.style.*;
@@ -52,7 +51,6 @@ public class IsiActivity extends Activity {
 	DisplayMetrics displayMetrics;
 	ProgressDialog dialogBikinIndex;
 	boolean lagiBikinIndex = false;
-	WakeLock wakeLock = null; // FIXME
 	AlkitabDb alkitabDb;
 	
 	private AyatAdapter ayatAdapter_;
@@ -195,23 +193,12 @@ public class IsiActivity extends Activity {
 
 	private synchronized void nyalakanTerusLayarKalauDiminta() {
 		if (S.penerapan.nyalakanTerusLayar) {
-			if (wakeLock == null) {
-				PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-				wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "alki:nyalakanTerusLayar");
-				wakeLock.setReferenceCounted(false);
-			}
-			if (wakeLock != null) { // jaga2 aja
-				Log.i("alki", "wakeLock nyala");
-				wakeLock.acquire();
-			}
+			lsIsi.setKeepScreenOn(true);
 		}
 	}
 
 	private synchronized void matikanLayarKalauSudahBolehMati() {
-		if (wakeLock != null) {
-			Log.i("alki", "wakeLock mati");
-			wakeLock.release();
-		}
+		lsIsi.setKeepScreenOn(false);
 	}
 	
 	@Override
