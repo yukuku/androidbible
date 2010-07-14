@@ -17,10 +17,9 @@
 			android:textSize="20dp" />
 		<EditText
 			android:id="@+id/tCatatan"
-			android:text="&lt;catatan kosong&gt;"
 			android:layout_width="fill_parent"
 			android:gravity="top"
 			android:layout_height="wrap_content"
-			android:minLines="4" />
+			android:minLines="4" android:hint="&lt;tidak ada catatan&gt;" android:inputType="textCapSentences|textMultiLine"/>
 	</LinearLayout>
 </ScrollView>

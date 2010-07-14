@@ -5,20 +5,41 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 
-	<ListView android:layout_height="wrap_content" android:id="@+id/lsIsi" android:layout_width="fill_parent" android:layout_weight="1" android:divider="@null"></ListView>
+	<ListView
+		android:layout_height="wrap_content"
+		android:id="@+id/lsIsi"
+		android:layout_width="fill_parent"
+		android:layout_weight="1"
+		android:divider="@null"
+		android:listSelector="@android:color/transparent" android:focusable="false" android:focusableInTouchMode="false"></ListView>
 	<LinearLayout
 		android:layout_height="wrap_content"
-		android:layout_width="fill_parent" android:id="@+id/panelNavigasi" android:layout_marginTop="6dp">
-		
-		<ImageButton android:src="@drawable/left_arrow" android:id="@+id/bKiri" android:layout_width="64dp" android:layout_height="64dp" android:scaleType="fitXY" android:padding="16dp"></ImageButton>
+		android:layout_width="fill_parent"
+		android:id="@+id/panelNavigasi"
+		android:layout_marginTop="6dp">
+
+		<ImageButton
+			android:src="@drawable/left_arrow"
+			android:id="@+id/bKiri"
+			android:layout_width="64dp"
+			android:layout_height="64dp"
+			android:scaleType="fitXY"
+			android:padding="16dp"></ImageButton>
 		<Button
 			android:layout_width="wrap_content"
 			android:text="@string/menuTuju"
 			android:id="@+id/bTuju"
-			android:layout_weight="1" android:layout_height="fill_parent"></Button>
-		<ImageButton android:src="@drawable/right_arrow" android:id="@+id/bKanan" android:layout_height="64dp" android:layout_width="64dp" android:scaleType="fitXY" android:padding="16dp"></ImageButton>
-		
-	
-</LinearLayout>
+			android:layout_weight="1"
+			android:layout_height="fill_parent"></Button>
+		<ImageButton
+			android:src="@drawable/right_arrow"
+			android:id="@+id/bKanan"
+			android:layout_height="64dp"
+			android:layout_width="64dp"
+			android:scaleType="fitXY"
+			android:padding="16dp"></ImageButton>
+
 
 	</LinearLayout>
+
+</LinearLayout>

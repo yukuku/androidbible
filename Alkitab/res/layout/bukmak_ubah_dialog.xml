@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="wrap_content"
+	android:layout_width="wrap_content"
+	android:orientation="vertical"
+	android:padding="8dp"
+	android:minWidth="280dp"
+	>
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="Judul:" android:textColor="#fff"/>
+	<EditText
+		android:id="@+id/tTulisan"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:inputType="textCapSentences"
+		android:imeOptions="actionGo"
+	android:singleLine="true" android:selectAllOnFocus="true" android:layout_marginTop="8dp"/>
+</LinearLayout>

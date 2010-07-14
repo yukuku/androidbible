@@ -3,4 +3,6 @@
 	<dimen name="indenParagraf">5sp</dimen>
 	<dimen name="menjorokSatu">22sp</dimen>
 	<dimen name="menjorokDua">38sp</dimen>
+	
+	<dimen name="marginAtasJudulPerikop">18dp</dimen>
 </resources>

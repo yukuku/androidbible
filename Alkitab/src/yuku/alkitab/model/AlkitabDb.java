@@ -1,11 +1,16 @@
 package yuku.alkitab.model;
 
+import java.util.*;
+
+import yuku.andoutil.*;
 import android.app.*;
 import android.content.*;
 import android.content.pm.*;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.*;
 import android.database.sqlite.*;
+import android.os.*;
+import android.provider.*;
 import android.util.*;
 
 public class AlkitabDb {
@@ -64,21 +69,99 @@ public class AlkitabDb {
 	}
 	
 	Context context;
-	Helper helper;
 	SQLiteDatabase db;
 	
 	private AlkitabDb(Context context) {
+		long wmulai = SystemClock.uptimeMillis();
+		Helper helper = new Helper(context);
+
 		this.context = context;
-		this.helper = new Helper(context);
 		this.db = helper.getWritableDatabase();
-	}
-	
-	public Helper getHelper() {
-		return helper;
+		
+		Log.d("alki", "membuka database butuh ms: " + (SystemClock.uptimeMillis() - wmulai));
 	}
 	
 	public SQLiteDatabase getDatabase() {
 		return db;
+	}
+	
+	public Bukmak2 getBukmak(int ari, int jenis) {
+		Cursor cursor = db.query(
+				TABEL_Bukmak2, 
+				new String[] {BaseColumns._ID, KOLOM_Bukmak2_tulisan, KOLOM_Bukmak2_waktuTambah, KOLOM_Bukmak2_waktuUbah}, 
+				KOLOM_Bukmak2_ari + "=? and " + KOLOM_Bukmak2_jenis + "=?", 
+				new String[] {String.valueOf(ari), String.valueOf(jenis)}, 
+				null, null, null);
+		
+		try {
+			if (!cursor.moveToNext()) return null;
+			
+			int _id = cursor.getInt(cursor.getColumnIndexOrThrow(BaseColumns._ID));
+			String tulisan = cursor.getString(cursor.getColumnIndexOrThrow(AlkitabDb.KOLOM_Bukmak2_tulisan));
+			Date waktuTambah = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(AlkitabDb.KOLOM_Bukmak2_waktuTambah)));
+			Date waktuUbah = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(AlkitabDb.KOLOM_Bukmak2_waktuUbah)));
+			
+			Bukmak2 res = new Bukmak2(ari, jenis, tulisan, waktuTambah, waktuUbah);
+			res._id = _id;
+			return res;
+		} finally {
+			cursor.close();
+		}
+	}
+	
+
+	public int updateBukmak(Bukmak2 bukmak) {
+		return db.update(TABEL_Bukmak2, bukmak.toContentValues(), "_id=?", new String[] {String.valueOf(bukmak._id)});
+	}
+	
+	public long insertBukmak(Bukmak2 bukmak) {
+		return db.insert(TABEL_Bukmak2, null, bukmak.toContentValues());
+	}
+	
+	private String[] sql_hapusBukmak_params = new String[2];
+	public int hapusBukmak(int ari, int jenis) {
+		sql_hapusBukmak_params[0] = String.valueOf(jenis);
+		sql_hapusBukmak_params[1] = String.valueOf(ari);
+		
+		return db.delete(TABEL_Bukmak2, KOLOM_Bukmak2_jenis + "=? and " + KOLOM_Bukmak2_ari + "=?", sql_hapusBukmak_params);
+	}
+
+	private static String sql_countCatatan = "select count(*) from " + TABEL_Bukmak2 + " where " + KOLOM_Bukmak2_jenis + "=" + ENUM_Bukmak2_jenis_catatan + " and " + KOLOM_Bukmak2_ari + ">=? and " + KOLOM_Bukmak2_ari + "<?";
+	private SQLiteStatement stmt_countCatatan = null;
+	public int countCatatan(int ari_kitabpasal) {
+		int ariMin = ari_kitabpasal & 0x00ffff00;
+		int ariMax = ari_kitabpasal | 0x000000ff;
+		
+		if (stmt_countCatatan == null) {
+			stmt_countCatatan = db.compileStatement(sql_countCatatan);
+		}
+		
+		stmt_countCatatan.clearBindings();
+		stmt_countCatatan.bindLong(1, ariMin);
+		stmt_countCatatan.bindLong(2, ariMax);
+		
+		return (int) stmt_countCatatan.simpleQueryForLong();
+	}
+	
+	private static String sql_getCatatan = "select * from " + TABEL_Bukmak2 + " where " + KOLOM_Bukmak2_jenis + "=" + ENUM_Bukmak2_jenis_catatan + " and " + KOLOM_Bukmak2_ari + ">=? and " + KOLOM_Bukmak2_ari + "<?";
+	private String[] sql_getCatatan_params = new String[2];
+	public int getCatatan(int ari_kitabpasal, int[] out) {
+		int ariMin = ari_kitabpasal & 0x00ffff00;
+		int ariMax = ari_kitabpasal | 0x000000ff;
+		int res = 0;
+		
+		sql_getCatatan_params[0] = String.valueOf(ariMin);
+		sql_getCatatan_params[1] = String.valueOf(ariMax);
+		Cursor cursor = db.rawQuery(sql_getCatatan, sql_getCatatan_params);
+		try {
+			int index_ari = cursor.getColumnIndexOrThrow(KOLOM_Bukmak2_ari);
+			while (cursor.moveToNext()) {
+				out[res++] = cursor.getInt(index_ari);
+			}
+		} finally {
+			cursor.close();
+		}
+		return res;
 	}
 	
 	private class Helper extends SQLiteOpenHelper {
@@ -206,5 +289,18 @@ public class AlkitabDb {
 			}
 			
 		}
+	}
+
+	public void dump() {
+		Cursor c = db.query(TABEL_Bukmak2, null, null, null, null, null, null);
+		while (c.moveToNext()) {
+			String a = "";
+			for (int i = 0; i < c.getColumnCount(); i++) {
+				String sel = c.getString(i);
+				a += " | " + sel;
+			}
+			Log.i("alki", a);
+		}
+		c.close();
 	}
 }

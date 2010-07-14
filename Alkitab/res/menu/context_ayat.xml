@@ -3,9 +3,15 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
 		android:id="@+id/menuSalinAyat"
-		android:icon="@drawable/menu_salin_ayat" android:title="Salin ayat"></item>
+		android:icon="@drawable/menu_salin_ayat"
+		android:title="Salin ayat" />
 	<item
 		android:id="@+id/menuTambahBukmak"
-		android:title="Tambah pembatas buku"></item>
-<item android:id="@+id/menuBagikan" android:title="Bagikan..."></item>
+		android:title="Tambah pembatas buku" />
+	<item
+		android:id="@+id/menuTambahCatatan"
+		android:title="Tulis catatan" />
+	<item
+		android:id="@+id/menuBagikan"
+		android:title="Bagikan..."></item>
 </menu>

@@ -3,6 +3,7 @@ package yuku.alkitab;
 import java.util.*;
 import java.util.regex.*;
 
+import yuku.alkitab.GelembungDialog.RefreshCallback;
 import yuku.alkitab.model.*;
 import yuku.andoutil.*;
 import android.app.*;
@@ -11,15 +12,12 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.*;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.*;
-import android.database.*;
-import android.database.sqlite.*;
 import android.graphics.*;
 import android.graphics.drawable.*;
 import android.os.*;
 import android.os.PowerManager.WakeLock;
 import android.preference.*;
 import android.text.*;
-import android.text.method.*;
 import android.text.style.*;
 import android.text.util.*;
 import android.util.*;
@@ -27,7 +25,6 @@ import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.*;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.TextView.BufferType;
 
 public class IsiActivity extends Activity {
 	private static final String NAMAPREF_kitabTerakhir = "kitabTerakhir";
@@ -45,8 +42,8 @@ public class IsiActivity extends Activity {
 	ImageButton bKiri;
 	ImageButton bKanan;
 	
-	int pasal = 0;
-	int ayatContextMenu = -1;
+	int pasal_1 = 0;
+	int ayatContextMenu_1 = -1;
 	String isiAyatContextMenu = null;
 	SharedPreferences preferences;
 	SharedPreferences pengaturan;
@@ -55,9 +52,10 @@ public class IsiActivity extends Activity {
 	DisplayMetrics displayMetrics;
 	ProgressDialog dialogBikinIndex;
 	boolean lagiBikinIndex = false;
-	WakeLock wakeLock = null;
+	WakeLock wakeLock = null; // FIXME
+	AlkitabDb alkitabDb;
 	
-	private AyatAdapter ayatAdapter_ = new AyatAdapter();
+	private AyatAdapter ayatAdapter_;
 	private boolean tombolAlamatLoncat_;
 	
 	//# penyimpanan state buat search2
@@ -72,6 +70,8 @@ public class IsiActivity extends Activity {
 			loncatKe((String)data);
 		}
 	};
+	
+	GelembungListener gelembungListener = new GelembungListener();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -157,6 +157,12 @@ public class IsiActivity extends Activity {
 			}
 		}
 		
+		// siapin db
+		alkitabDb = AlkitabDb.getInstance(getApplicationContext());
+		
+		ayatAdapter_ = new AyatAdapter(getApplicationContext(), alkitabDb, paralelOnClickListener, gelembungListener);
+		lsIsi.setAdapter(ayatAdapter_);
+		
 		Log.d("alki", "Akan menuju kitab " + kitabTerakhir + " pasal " + kitabTerakhir + " ayat " + ayatTerakhir);
 		
 		// muat kitab
@@ -174,9 +180,8 @@ public class IsiActivity extends Activity {
 			editor.commit();
 		} else {
 			final long sekarang = System.currentTimeMillis();
-			if (sekarang - terakhirMintaFidbek > 14000*60*60*24) { // 2 MINGGU ato belom pernah
+			if (sekarang - terakhirMintaFidbek > (long)30000*60*60*24) { // 1 BULAN ato belom pernah
 				handler.post(new Runnable() {
-					
 					@Override
 					public void run() {
 						popupMintaFidbek();
@@ -311,63 +316,61 @@ public class IsiActivity extends Activity {
 		// simpen ayat yang dipilih untuk dipake sama menu tambah bukmak
 		{
 			AdapterContextMenuInfo menuInfo2 = (AdapterContextMenuInfo) menuInfo;
-			this.ayatContextMenu = (int) (menuInfo2.id) + 1;
+			this.ayatContextMenu_1 = (int) (menuInfo2.id) + 1;
 			this.isiAyatContextMenu = xayat[(int) menuInfo2.id];
 		}
 		
 		//# pasang header
-		String alamat = S.kitab.judul + " " + this.pasal + ":" + this.ayatContextMenu;
+		String alamat = S.kitab.judul + " " + this.pasal_1 + ":" + this.ayatContextMenu_1;
 		menu.setHeaderTitle(alamat);
 	}
 	
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		String alamat = S.kitab.judul + " " + this.pasal + ":" + this.ayatContextMenu;
+		String alamat = S.kitab.judul + " " + this.pasal_1 + ":" + this.ayatContextMenu_1;
 		
-		if (item.getItemId() == R.id.menuSalinAyat) {
+		int itemId = item.getItemId();
+		if (itemId == R.id.menuSalinAyat) {
 			ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 			clipboardManager.setText(this.isiAyatContextMenu);
 			
 			Toast.makeText(this, alamat + " sudah disalin ke clipboard", Toast.LENGTH_SHORT).show();
 			
 			return true;
-		} else if (item.getItemId() == R.id.menuTambahBukmak) {
-			final SQLiteDatabase db = AlkitabDb.getInstance(getApplicationContext()).getDatabase();
+		} else if (itemId == R.id.menuTambahBukmak) {
+			final int ari = Ari.encode(S.kitab.pos, pasal_1, ayatContextMenu_1);
+			final Bukmak2 bukmak = alkitabDb.getBukmak(ari, AlkitabDb.ENUM_Bukmak2_jenis_bukmak);
 			
-			//# bikin bukmak
-			int ari = Ari.encode(S.kitab.pos, pasal, ayatContextMenu);
-			final Bukmak2 bukmak = new Bukmak2(ari, AlkitabDb.ENUM_Bukmak2_jenis_bukmak, alamat, new Date(), new Date());
+			View dialogView = LayoutInflater.from(this).inflate(R.layout.bukmak_ubah_dialog, null);
+			final EditText tTulisan = (EditText) dialogView.findViewById(R.id.tTulisan);
+			tTulisan.setText(bukmak != null? bukmak.tulisan: alamat);
 			
-			Cursor cursor = db.query(AlkitabDb.TABEL_Bukmak, null, String.format("%s=? and %s=? and %s=?", AlkitabDb.KOLOM_Bukmak_kitab, AlkitabDb.KOLOM_Bukmak_pasal, AlkitabDb.KOLOM_Bukmak_ayat), new String[] {"" + S.kitab.pos, "" + this.pasal, "" + this.ayatContextMenu}, null, null, null);
-			cursor.moveToNext();
-			
-			if (cursor.isAfterLast()) {
-				// belum ada
-				cursor.close();
-				
-				// tambah baru
-				db.insertOrThrow(AlkitabDb.TABEL_Bukmak, null, bukmak.toContentValues());
-			} else {
-				// udah ada, tanya user
-				final int id = cursor.getInt(cursor.getColumnIndexOrThrow("_id"));
-				cursor.close();
-				
-				new AlertDialog.Builder(this)
-				.setMessage("Pembatas buku " + alamat + " sudah ditambahkan sebelumnya. Perbarui tanggal pembatas buku?")
-				.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+			new AlertDialog.Builder(this)
+			.setView(dialogView)
+			.setTitle(alamat)
+			.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					String tulisan = tTulisan.getText().toString();
 					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						db.update(AlkitabDb.TABEL_Bukmak, bukmak.toContentValues(), "_id=?", new String[] {String.valueOf(id)});
+					if (bukmak != null) {
+						bukmak.tulisan = tulisan;
+						bukmak.waktuUbah = new Date();
+						alkitabDb.updateBukmak(bukmak);
+					} else {
+						Bukmak2 bukmakBaru = new Bukmak2(ari, AlkitabDb.ENUM_Bukmak2_jenis_bukmak, tulisan, new Date(), new Date());
+						alkitabDb.insertBukmak(bukmakBaru);
 					}
-				})
-				.setNegativeButton("Tidak", null)
-				.create()
-				.show();
-			}
+				}
+			})
+			.setNegativeButton("Batal", null)
+			.create()
+			.show();
 			
 			return true;
-		} else if (item.getItemId() == R.id.menuBagikan) {
+		} else if (itemId == R.id.menuTambahCatatan) {
+			tampilkanGelembung(S.kitab, pasal_1, ayatContextMenu_1);
+		} else if (itemId == R.id.menuBagikan) {
 			Intent i = new Intent(Intent.ACTION_SEND);
 			i.setType("text/plain");
 			i.putExtra(Intent.EXTRA_SUBJECT, alamat);
@@ -483,7 +486,7 @@ public class IsiActivity extends Activity {
 		
 		Editor editor = preferences.edit();
 		editor.putInt(NAMAPREF_kitabTerakhir, S.kitab.pos);
-		editor.putInt(NAMAPREF_pasalTerakhir, pasal);
+		editor.putInt(NAMAPREF_pasalTerakhir, pasal_1);
 		editor.putInt(NAMAPREF_ayatTerakhir, getAyatBerdasarSkrol());
 		editor.putString(NAMAPREF_renungan_nama, S.penampungan.renungan_nama);
 		editor.commit();
@@ -532,7 +535,7 @@ public class IsiActivity extends Activity {
 	
 	private void bukaDialogTuju() {
 		Intent intent = new Intent(this, MenujuActivity.class);
-		intent.putExtra("pasal", pasal);
+		intent.putExtra("pasal", pasal_1);
 		
 		int ayat = getAyatBerdasarSkrol();
 		intent.putExtra("ayat", ayat);
@@ -541,7 +544,7 @@ public class IsiActivity extends Activity {
 	}
 	
 	private void bukaDialogLoncat() {
-		final View loncat = LayoutInflater.from(IsiActivity.this).inflate(R.layout.loncat, null);
+		final View loncat = LayoutInflater.from(IsiActivity.this).inflate(R.layout.loncat_dialog, null);
 		final TextView lAlamatKini = (TextView) loncat.findViewById(R.id.lAlamatKini);
 		final EditText tAlamatLoncat = (EditText) loncat.findViewById(R.id.tAlamatLoncat);
 		final ImageButton bKeTuju = (ImageButton) loncat.findViewById(R.id.bKeTuju);
@@ -549,7 +552,7 @@ public class IsiActivity extends Activity {
 		// set lAlamatKini
 		{
 			int ayat = getAyatBerdasarSkrol();
-			String alamat = S.kitab.judul + " " + IsiActivity.this.pasal + ":" + ayat;
+			String alamat = S.kitab.judul + " " + IsiActivity.this.pasal_1 + ":" + ayat;
 			lAlamatKini.setText(alamat);
 		}
 		
@@ -569,7 +572,6 @@ public class IsiActivity extends Activity {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				if (hasFocus) {
-					Log.d("alki", "setSoftInputMode panggil");
 					dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 				}
 			}
@@ -594,121 +596,6 @@ public class IsiActivity extends Activity {
 		});
 		
 		dialog.show();
-	}
-
-	/**
-	 * @param ayat mulai dari 1
-	 */
-	private static SpannableStringBuilder tampilanAyatSederhana(int ayat, String isi) {
-		SpannableStringBuilder seayat = new SpannableStringBuilder();
-		
-		String ayat_s = String.valueOf(ayat);
-		
-		seayat.append(ayat_s).append(" ").append(isi);
-		seayat.setSpan(new ForegroundColorSpan(S.penerapan.warnaNomerAyat), 0, ayat_s.length(), 0);
-		
-		seayat.setSpan(new LeadingMarginSpan.Standard(0, S.penerapan.indenParagraf), 0, ayat_s.length() + 1 + isi.length(), 0);
-		
-		return seayat;
-	}
-
-	public void tampilanAyatTehel(RelativeLayout res, int ayat, String isi) {
-		// @@ = mulai ayat dengan tehel
-		// @0 = mulai menjorok 0
-		// @1 = mulai menjorok 1
-		// @2 = mulai menjorok 2
-		// @8 = tanda kasi jarak ke ayat berikutnya
-		int posParse = 2; // mulai setelah @@
-		int menjorok = 0;
-		char[] isi_cc = isi.toCharArray();
-		TextView tehelTerakhir = null;
-		boolean keluarlah = false;
-		boolean belumAdaTehel = true;
-		boolean nomerAyatUdaDitulis = false;
-		
-		LinearLayout tempatTehel = (LinearLayout) res.findViewById(R.id.tempatTehel);
-		tempatTehel.removeAllViews();
-		
-		while (true) {
-			int posSampe = isi.indexOf('@', posParse);
-
-			if (posSampe == -1) {
-				// abis
-				posSampe = isi.length();
-				keluarlah = true;
-			}
-			
-			if (posParse == posSampe) {
-				// di awal, belum ada apa2!
-			} else {
-				//Log.d("alki", "akan masukinTehel menjorok=" + menjorok + " " + isi.substring(posParse, posSampe));
-				
-				// bikin tehel
-				{
-					TextView tehel = new TextView(this);
-					if (menjorok == 1) {
-						tehel.setPadding(S.penerapan.menjorokSatu, 0, 0, 0);
-						if (S.penerapan.gebug_tehelBewarna) {
-							tehel.setBackgroundColor(0xff000066);
-						}
-					} else if (menjorok == 2) {
-						tehel.setPadding(S.penerapan.menjorokDua, 0, 0, 0);
-						if (S.penerapan.gebug_tehelBewarna) {
-							tehel.setBackgroundColor(0xff660000);
-						}
-					}
-					
-					// kasus: belum ada tehel dan tehel pertama menjorok 0
-					if (belumAdaTehel && menjorok == 0) {
-						//# kasih no ayat di depannya
-						SpannableStringBuilder s = new SpannableStringBuilder();
-						String ayat_s = String.valueOf(ayat);
-						s.append(ayat_s).append(" ").append(isi, posParse, posSampe);
-						s.setSpan(new ForegroundColorSpan(S.penerapan.warnaNomerAyat), 0, ayat_s.length(), 0);
-						tehel.setText(s, BufferType.SPANNABLE);
-						
-						// kasi tanda biar nanti ga tulis nomer ayat lagi
-						nomerAyatUdaDitulis = true;
-					} else {
-						tehel.setText(isi_cc, posParse, posSampe - posParse);
-					}
-					
-					aturTampilanTeksIsi(tehel);
-					tempatTehel.addView(tehel);
-					
-					tehelTerakhir = tehel;
-				}
-				
-				belumAdaTehel = false;
-			}
-			
-			if (keluarlah) break;
-
-			char jenisTanda = isi_cc[posSampe + 1];
-			if (jenisTanda == '1') {
-				menjorok = 1;
-			} else if (jenisTanda == '2') {
-				menjorok = 2;
-			} else if (jenisTanda == '8') {
-				if (tehelTerakhir != null) {
-					if (S.penerapan.gebug_tehelBewarna) {
-						tehelTerakhir.append("$$$\n");
-					} else {
-						tehelTerakhir.append("\n");
-					}
-				}
-			}
-			
-			posParse = posSampe+2;
-		}
-		
-		TextView lAyat = (TextView) res.findViewById(R.id.lAyat);
-		if (nomerAyatUdaDitulis) {
-			lAyat.setText("");
-		} else {
-			lAyat.setText(String.valueOf(ayat));
-			aturTampilanTeksNomerAyat(lAyat);
-		}
 	}
 
 	@Override
@@ -800,20 +687,22 @@ public class IsiActivity extends Activity {
 			return true;
 		} else if (item.getItemId() == 0x985801) { // debug 1
 			// dump pref
-			Log.i("alki", "semua pref segera muncul di bawah ini:::");
+			Log.i("alki", "### semua pref segera muncul di bawah ini:::");
 			{
 				Map<String, ?> all = preferences.getAll();
 				for (Map.Entry<String, ?> entry: all.entrySet()) {
 					Log.i("alki", String.format("%s = %s", entry.getKey(), entry.getValue()));
 				}
 			}
-			Log.i("alki", "dan pengaturan:::");
+			Log.i("alki", "### pengaturan:::");
 			{
 				Map<String, ?> all = pengaturan.getAll();
 				for (Map.Entry<String, ?> entry: all.entrySet()) {
 					Log.i("alki", String.format("%s = %s", entry.getKey(), entry.getValue()));
 				}
 			}
+			Log.i("alki", "### db:::");
+			alkitabDb.dump();
 			return true;
 		} else if (item.getItemId() == 0x985802) { // debug 2
 			bikinIndex();
@@ -957,9 +846,9 @@ public class IsiActivity extends Activity {
 			}
 		} else if (requestCode == R.id.menuBukmak) {
 			if (resultCode == RESULT_OK) {
-				String alamat = data.getStringExtra("terpilih.alamat");
-				if (alamat != null) {
-					loncatKe(alamat);
+				int ari = data.getIntExtra(BukmakActivity.EXTRA_ariTerpilih, 0);
+				if (ari != 0) { // 0 berarti ga ada apa2, karena ga ada pasal 0 ayat 0
+					loncatKeAri(ari);
 				}
 			}
 		} else if (requestCode == R.id.menuSearch) {
@@ -1011,15 +900,15 @@ public class IsiActivity extends Activity {
 	}
 
 	/**
-	 * @param pasal basis-1
-	 * @param ayat basis-1
+	 * @param pasal_1 basis-1
+	 * @param ayat_1 basis-1
 	 */
-	private void tampil(int pasal, int ayat) {
-		if (pasal < 1) pasal = 1;
-		if (pasal > S.kitab.npasal) pasal = S.kitab.npasal;
+	private void tampil(int pasal_1, int ayat_1) {
+		if (pasal_1 < 1) pasal_1 = 1;
+		if (pasal_1 > S.kitab.npasal) pasal_1 = S.kitab.npasal;
 		
-		if (ayat < 1) ayat = 1;
-		if (ayat > S.kitab.nayat[pasal-1]) ayat = S.kitab.nayat[pasal-1];
+		if (ayat_1 < 1) ayat_1 = 1;
+		if (ayat_1 > S.kitab.nayat[pasal_1 - 1]) ayat_1 = S.kitab.nayat[pasal_1 - 1];
 		
 		// muat data GA USAH pake async dong. // diapdet 20100417 biar ga usa async, ga guna.
 		{
@@ -1027,28 +916,29 @@ public class IsiActivity extends Activity {
 			Blok[] perikop_xblok;
 			int nblok;
 			
-			xayat = S.muatTeks(getResources(), S.kitab, pasal);
+			xayat = S.muatTeks(getResources(), S.kitab, pasal_1);
 			
 			//# max dibikin pol 30 aja (1 pasal max 30 blok, cukup mustahil)
 			int max = 30;
 			perikop_xari = new int[max];
 			perikop_xblok = new Blok[max];
-			nblok = S.muatPerikop(getResources(), S.kitab.pos, pasal, perikop_xari, perikop_xblok, max); 
+			nblok = S.muatPerikop(getResources(), S.kitab.pos, pasal_1, perikop_xari, perikop_xblok, max); 
 			
 			//# tadinya onPostExecute
-			ayatAdapter_.setData(xayat, perikop_xari, perikop_xblok, nblok);
-			lsIsi.setAdapter(ayatAdapter_);
+			ayatAdapter_.setData(S.kitab, pasal_1, xayat, perikop_xari, perikop_xblok, nblok);
+			ayatAdapter_.muatCatatanMap();
 			ayatAdapter_.notifyDataSetChanged();
 			
-			String judul = S.kitab.judul + " " + pasal;
+			String judul = S.kitab.judul + " " + pasal_1;
 			bTuju.setText(judul);
 			
-			this.pasal = pasal;
+			// kasi tau activity
+			this.pasal_1 = pasal_1;
 			
-			int position = ayatAdapter_.getPositionDariAyat(ayat);
+			final int position = ayatAdapter_.getPositionDariAyat(ayat_1);
 			
 			if (position == -1) {
-				Log.w("alki", "ga bisa ketemu ayat " + ayat + ", ANEH!");
+				Log.w("alki", "ga bisa ketemu ayat " + ayat_1 + ", ANEH!");
 			} else {
 				lsIsi.setSelectionFromTop(position, lsIsi.getVerticalFadingEdgeLength());
 			}
@@ -1057,6 +947,7 @@ public class IsiActivity extends Activity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		Log.d("alki", "onKeyDown: " + event);
 		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
 			bKiri_click();
 			return true;
@@ -1069,7 +960,7 @@ public class IsiActivity extends Activity {
 	}
 
 	private void bKiri_click() {
-		if (pasal == 1) {
+		if (pasal_1 == 1) {
 			// uda di awal pasal, masuk ke kitab sebelum
 			Kitab kitabKini = S.kitab;
 			if (kitabKini.pos > 0) {
@@ -1082,12 +973,12 @@ public class IsiActivity extends Activity {
 			}
 			return;
 		}
-		tampil(pasal - 1, 1);
+		tampil(pasal_1 - 1, 1);
 	}
 	
 	private void bKanan_click() {
 		Kitab kitabKini = S.kitab;
-		if (pasal >= kitabKini.npasal) {
+		if (pasal_1 >= kitabKini.npasal) {
 			if (kitabKini.pos < S.xkitab.length - 1) {
 				Kitab kitabBaru = S.xkitab[kitabKini.pos + 1];
 				S.kitab = kitabBaru;
@@ -1097,7 +988,7 @@ public class IsiActivity extends Activity {
 			}
 			return;
 		}
-		tampil(pasal + 1, 1);
+		tampil(pasal_1 + 1, 1);
 	}
 	
 	private void popupMintaFidbek() {
@@ -1173,262 +1064,28 @@ public class IsiActivity extends Activity {
 		t.setText(sb);
 	}
 
-	private static void aturTampilanTeksNomerAyat(TextView t) {
+	static void aturTampilanTeksNomerAyat(TextView t) {
 		t.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
 		t.setTextSize(TypedValue.COMPLEX_UNIT_PX, S.penerapan.ukuranTeksPx);
 		t.setIncludeFontPadding(false);
 		t.setTextColor(S.penerapan.warnaNomerAyat);
 	}
-
-	private class AyatAdapter extends BaseAdapter {
-		private String[] dataAyat_;
-		private Blok[] perikop_xblok_;
-		/**
-		 * Tiap elemen, kalo 0 sampe positif, berarti menunjuk ke AYAT di rendered_
-		 * kalo negatif, -1 berarti index 0 di perikop_*, -2 (a) berarti index 1 (b) di perikop_*
-		 * 
-		 * Konvert a ke b: -(a+1); // -a-1 juga sih sebetulnya. gubrak.
-		 * Konvert b ke a: -b-1;
-		 */
-		private int[] penunjukKotak_;
-		
-		synchronized void setData(String[] xayat, int[] perikop_xari, Blok[] perikop_xblok, int nblok) {
-			dataAyat_ = xayat.clone();
-			perikop_xblok_ = perikop_xblok;
-			penunjukKotak_ = U.bikinPenunjukKotak(dataAyat_.length, perikop_xari, perikop_xblok, nblok);
-		}
-		
-		@Override
-		public synchronized int getCount() {
-			if (dataAyat_ == null) return 0;
-
-			return penunjukKotak_.length;
-		}
-
-		@Override
-		public synchronized String getItem(int position) {
-			int id = penunjukKotak_[position];
-			
-			if (id >= 0) {
-				return dataAyat_[position].toString();
-			} else {
-				return perikop_xblok_[-id-1].toString();
+	
+	void tampilkanGelembung(Kitab kitab_, int pasal_1, int ayat_1) {
+		GelembungDialog dialog = new GelembungDialog(IsiActivity.this, new RefreshCallback() {
+			@Override
+			public void udahan() {
+				ayatAdapter_.muatCatatanMap();
+				ayatAdapter_.notifyDataSetChanged();
 			}
-		}
-
-		@Override
-		public synchronized long getItemId(int position) {
-			 return penunjukKotak_[position];
-		}
-
-		@Override
-		public synchronized View getView(int position, View convertView, ViewGroup parent) {
-			// Harus tentukan apakah ini perikop ato ayat.
-			int id = penunjukKotak_[position];
-			
-			if (id >= 0) {
-				// AYAT. bukan judul perikop.
-				
-				String isi = dataAyat_[id];
-				
-				// FIXME dari db?
-				boolean pakeGelembung = Math.random() < 0.1;
-				
-				// Udah ditentukan bahwa ini ayat dan bukan perikop, sekarang tinggal tentukan
-				// apakah ayat ini pake formating biasa (tanpa menjorok dsb) atau ada formating
-				if (isi.charAt(0) == '@') {
-					// karakter kedua harus '@' juga, kalo bukan ada ngaco
-					if (isi.charAt(1) != '@') {
-						throw new RuntimeException("Karakter kedua bukan @. Isi ayat: " + isi);
-					}
-					
-					LinearLayout res;
-					
-					if (convertView == null || convertView.getId() != R.layout.satu_ayat_tehel) {
-						res = (LinearLayout) LayoutInflater.from(IsiActivity.this).inflate(R.layout.satu_ayat_tehel, null);
-						res.setId(R.layout.satu_ayat_tehel);
-					} else {
-						res = (LinearLayout) convertView;
-					}
-					
-					RelativeLayout sebelahKiri = (RelativeLayout) res.findViewById(R.id.sebelahKiri);
-					tampilanAyatTehel(sebelahKiri, id + 1, isi);
-					
-					ImageButton imgAtributGelembung = (ImageButton) res.findViewById(R.id.imgAtributGelembung);
-					imgAtributGelembung.setVisibility(pakeGelembung? View.VISIBLE: View.GONE);
-					if (pakeGelembung) {
-						pasangClickHandlerUntukGelembung(imgAtributGelembung, pasal, id + 1);
-					}
-					
-					return res;
-				} else {
-					LinearLayout res;
-					
-					if (convertView == null || convertView.getId() != R.layout.satu_ayat_sederhana) {
-						res = (LinearLayout) LayoutInflater.from(IsiActivity.this).inflate(R.layout.satu_ayat_sederhana, null);
-						res.setId(R.layout.satu_ayat_sederhana);
-					} else {
-						res = (LinearLayout) convertView;
-					}
-					
-					TextView lIsiAyat = (TextView) res.findViewById(R.id.lIsiAyat);
-					lIsiAyat.setText(tampilanAyatSederhana(id + 1, isi), BufferType.SPANNABLE);
-					
-					aturTampilanTeksIsi(lIsiAyat);
-
-					ImageButton imgAtributGelembung = (ImageButton) res.findViewById(R.id.imgAtributGelembung);
-					imgAtributGelembung.setVisibility(pakeGelembung? View.VISIBLE: View.GONE);
-					if (pakeGelembung) {
-						pasangClickHandlerUntukGelembung(imgAtributGelembung, pasal, id + 1);
-					}
-
-					return res;
-				}
-			} else {
-				// JUDUL PERIKOP. bukan ayat.
-				View res;
-				
-				if (convertView == null || convertView.getId() != R.layout.header_perikop) {
-					res = LayoutInflater.from(IsiActivity.this).inflate(R.layout.header_perikop, null);
-					res.setId(R.layout.header_perikop);
-				} else {
-					res = convertView;
-				}
-				
-				Blok blok = perikop_xblok_[-id-1];
-				
-				TextView lJudul = (TextView) res.findViewById(R.id.lJudul);
-				TextView lXparalel = (TextView) res.findViewById(R.id.lXparalel);
-				
-				lJudul.setTypeface(S.penerapan.jenisHuruf, Typeface.BOLD);
-				lJudul.setTextSize(TypedValue.COMPLEX_UNIT_PX, S.penerapan.ukuranTeksPx);
-				lJudul.setText(blok.judul);
-				lJudul.setTextColor(S.penerapan.warnaHuruf);
-				
-				// matikan padding atas kalau position == 0 ATAU sebelum ini juga judul perikop
-				if (position == 0 || penunjukKotak_[position-1] < 0) {
-					lJudul.setPadding(0, 0, 0, 0);
-				} else {
-					lJudul.setPadding(0, (int)(displayMetrics.density * 18.f), 0, 0);
-				}
-				
-				// gonekan paralel kalo ga ada
-				if (blok.xparalel.length == 0) {
-					lXparalel.setVisibility(View.GONE);
-				} else {
-					lXparalel.setVisibility(View.VISIBLE);
-					
-					SpannableStringBuilder sb = new SpannableStringBuilder("(");
-					int len = 1;
-
-					int total = blok.xparalel.length;
-					for (int i = 0; i < total; i++) {
-						String paralel = blok.xparalel[i];
-						
-						if (i > 0) {
-							if ( (total == 6 && i == 3) || (total == 4 && i == 2) || (total == 5 && i == 3) ) {
-								sb.append("; \n");
-								len += 3;
-							} else {
-								sb.append("; ");
-								len += 2;
-							}
-						}
-						
-						sb.append(paralel);
-						sb.setSpan(new CallbackSpan(paralel, paralelOnClickListener), len, len + paralel.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-						len += paralel.length();
-					}
-					sb.append(")");
-					len += 1;
-					
-					lXparalel.setText(sb, BufferType.SPANNABLE);
-					lXparalel.setMovementMethod(LinkMovementMethod.getInstance());
-					lXparalel.setTextColor(S.penerapan.warnaHuruf);
-					lXparalel.setLinkTextColor(S.penerapan.warnaHuruf);
-				}
-				
-				return res;
-			}
-		}
-		
-		void pasangClickHandlerUntukGelembung(ImageButton imgGelembung, final int pasal, final int ayat) {
-			imgGelembung.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					GelembungDialog dialog = new GelembungDialog(IsiActivity.this);
-					dialog.setKitabPasalAyat(S.kitab, pasal, ayat);
-					dialog.tampilkan();
-				}
-			});
-		}
-		
-		@Override
-		public boolean areAllItemsEnabled() {
-			return false;
-		}
-		
-		@Override
-		public boolean isEnabled(int position) {
-			return false;
-		}
-		
-		/**
-		 * @param ayat mulai dari 1
-		 * @return position di adapter ini atau -1 kalo ga ketemu
-		 */
-		public int getPositionDariAyat(int ayat) {
-			if (penunjukKotak_ == null) return -1;
-			
-			int ayat0 = ayat - 1;
-			
-			for (int i = 0; i < penunjukKotak_.length; i++) {
-				if (penunjukKotak_[i] == ayat0) {
-					// ketemu, tapi kalo ada judul perikop, akan lebih baik. Coba cek mundur dari sini
-					for (int j = i-1; j >= 0; j--) {
-						if (penunjukKotak_[j] < 0) {
-							// masih perikop, yey, kita lanjutkan
-							i = j;
-						} else {
-							// uda bukan perikop. (Berarti uda ayat sebelumnya)
-							break;
-						}
-					}
-					
-					return i;
-				}
-			}
-			
-			return -1;
-		}
-		
-		/**
-		 * @return ayat (mulai dari 1). atau 0 kalo ga masuk akal
-		 */
-		public int getAyatDariPosition(int position) {
-			if (penunjukKotak_ == null) return 0;
-			
-			if (position >= penunjukKotak_.length) {
-				position = penunjukKotak_.length - 1;
-			}
-			
-			int id = penunjukKotak_[position];
-			
-			if (id >= 0) {
-				return id + 1;
-			}
-			
-			// perikop nih. Susuri sampe abis
-			for (int i = position + 1; i < penunjukKotak_.length; i++) {
-				id = penunjukKotak_[i];
-				
-				if (id >= 0) {
-					return id + 1;
-				}
-			}
-			
-			Log.w("alki", "masa judul perikop di paling bawah? Ga masuk akal.");
-			return 0; 
+		});
+		dialog.setDbKitabPasalAyat(alkitabDb, kitab_, pasal_1, ayat_1);
+		dialog.tampilkan();
+	}
+	
+	public class GelembungListener {
+		public void onClick(Kitab kitab_, int pasal_1, int ayat_1) {
+			tampilkanGelembung(kitab_, pasal_1, ayat_1);
 		}
 	}
 }

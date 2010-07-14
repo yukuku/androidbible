@@ -15,6 +15,10 @@ public class Sqlitil {
 		return (int) (date.getTime() / 1000);
 	}
 	
+	public static Date toDate(int date) {
+		return new Date((long)date * 1000);
+	}
+	
 	public static String toYmdGmt(Date date) {
 		if (dateFormat_ymd_gmt == null) {
 			dateFormat_ymd_gmt = new SimpleDateFormat("yyyy-MM-dd");

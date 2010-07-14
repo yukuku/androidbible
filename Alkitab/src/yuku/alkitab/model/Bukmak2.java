@@ -6,6 +6,7 @@ import yuku.andoutil.*;
 import android.content.*;
 
 public class Bukmak2 {
+	public int _id;
 	public int ari;
 	public int jenis;
 	public String tulisan;
@@ -20,6 +21,9 @@ public class Bukmak2 {
 		this.waktuUbah = waktuUbah;
 	}
 	
+	/**
+	 * _id ga termasuk
+	 */
 	public ContentValues toContentValues() {
 		ContentValues res = new ContentValues();
 		

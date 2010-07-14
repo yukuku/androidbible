@@ -8,25 +8,18 @@
 
 	<LinearLayout
 		android:orientation="horizontal"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content">
+		android:layout_height="wrap_content" android:layout_width="fill_parent">
 		<TextView
-			android:id="@+id/lAlamat"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:text="Alamat ayat makin 123:45" />
+			android:id="@+id/lTulisan"
+			android:textColor="#fff"
+			android:textSize="18dp"
+			android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1" android:text="Keterangan atau Alamat Ayat dan lain"/>
 
 		<TextView
 			android:id="@+id/lTanggal"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+			android:layout_width="wrap_content" 
 
-			android:layout_weight="1"
-			android:text="2099-12-32"
-			android:gravity="right"
-			android:layout_gravity="fill_vertical" />
+			android:text="2099-12-32" android:layout_height="fill_parent"/>
 	</LinearLayout>
 	<TextView
 		android:id="@+id/lCuplikan"
@@ -34,10 +27,9 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 
-		android:ellipsize="end"
-		android:maxLines="2"
 		android:gravity="bottom"
-		android:text="Simple application that shows how to use RelativeLayout bla balbl balblbalbal balbalbalbalbala" android:layout_marginTop="4dp"/>
+		android:text="Cuplikan ayat kalau bisa ditampilin Cuplikan ayat kalau bisa ditampilin Cuplikan ayat kalau bisa ditampilin Cuplikan ayat kalau bisa ditampilin "
+		android:layout_marginTop="4dp" />
 
 
 </LinearLayout>

@@ -40,8 +40,6 @@
 	<string
 		name="menuTuju">Tuju</string>
 	<string
-		name="hello">Hello World, Alkitab!</string>
-	<string
 		name="app_name">Alkitab</string>
 	<string
 		name="menuEdisi_text">Edisi</string>
@@ -53,8 +51,9 @@
 		name="tentang_message">Alkitab untuk Android&lt;br/&gt;versi %1$s (%2$d)&lt;br/&gt;&lt;br/&gt;Terjemahan Baru (c) LAI&lt;br/&gt;&lt;br/&gt;&lt;b&gt;yuku&lt;/b&gt;
 		2009-2010&lt;br/&gt;www.kejut.com&lt;br/&gt;</string>
 	<string
-		name="peringatanBeta_s">Terima kasih atas dukungan Anda sehingga versi 0.9 pun tercapai. Sebelum versi 1.0 dirilis, saran, kritik, dan komentar Anda sangat diharapkan! Tolong bantu pengembangan
-		aplikasi ini dengan memberi pesan di bawah ini. Terima kasih!</string>
+		name="peringatanBeta_s">Berkat Tuhan dan dukungan para pemakai, kami dapat merilis Alkitab versi 1.0 setelah masa percobaan 6 bulan lebih. 
+		Namun, kami masih mengharapkan saran, kritik, dan komentar Anda untuk perkembangan lebih lanjut. 
+		Tolong berikan pesan Anda di bawah (juga email Anda jika bersedia). Terima kasih!</string>
 	<string
 		name="fidbekMakasih_s">Terima kasih atas komentar anda!</string>
 	<string
