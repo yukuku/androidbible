@@ -411,7 +411,7 @@ public class IsiActivity extends Activity {
 			S.penerapan.warnaLatar = warnaLatar;
 			lsIsi.setBackgroundColor(warnaLatar);
 			
-			U.setCacheColorHintMaksa(lsIsi, warnaLatar);
+			lsIsi.setCacheColorHint(warnaLatar);
 			Window window = getWindow();
 			if (window != null) {
 				ColorDrawable bg = new ColorDrawable(warnaLatar);

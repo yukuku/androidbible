@@ -14,12 +14,6 @@ import android.widget.*;
 import android.widget.TextView.BufferType;
 
 class AyatAdapter extends BaseAdapter {
-	//# const
-	private static final int TYPE_ayat_tehel = 0;
-	private static final int TYPE_ayat_sederhana = 1;
-	private static final int TYPE_perikop = 2;
-	private static final int TYPE_COUNT = 3;
-	
 	//# field ctor
 	private final Context appContext_;
 	private final AlkitabDb db_;
@@ -99,28 +93,6 @@ class AyatAdapter extends BaseAdapter {
 	}
 	
 	@Override
-	public int getViewTypeCount() {
-		return TYPE_COUNT;
-	}
-	
-	@Override
-	public int getItemViewType(int position) {
-		int id = penunjukKotak_[position];
-		
-		if (id >= 0) {
-			// AYAT. bukan judul perikop.
-			
-			String isi = dataAyat_[id];
-			if (isi.charAt(0) == '@') {
-				return TYPE_ayat_tehel;
-			} else {
-				return TYPE_ayat_sederhana;
-			}
-		}
-		return TYPE_perikop;
-	}
-
-	@Override
 	public synchronized View getView(int position, View convertView, ViewGroup parent) {
 		// Harus tentukan apakah ini perikop ato ayat.
 		int id = penunjukKotak_[position];
@@ -139,9 +111,12 @@ class AyatAdapter extends BaseAdapter {
 					throw new RuntimeException("Karakter kedua bukan @. Isi ayat: " + isi);
 				}
 				
-				LinearLayout res = (LinearLayout) convertView;
-				if (convertView == null) {
+				LinearLayout res;
+				if (convertView == null || convertView.getId() != R.layout.satu_ayat_tehel) {
 					res = (LinearLayout) LayoutInflater.from(appContext_).inflate(R.layout.satu_ayat_tehel, null);
+					res.setId(R.layout.satu_ayat_tehel);
+				} else {
+					res = (LinearLayout) convertView;
 				}
 				
 				RelativeLayout sebelahKiri = (RelativeLayout) res.findViewById(R.id.sebelahKiri);
@@ -155,9 +130,12 @@ class AyatAdapter extends BaseAdapter {
 				
 				return res;
 			} else {
-				LinearLayout res = (LinearLayout) convertView;
-				if (convertView == null) {
+				LinearLayout res;
+				if (convertView == null || convertView.getId() != R.layout.satu_ayat_sederhana) {
 					res = (LinearLayout) LayoutInflater.from(appContext_).inflate(R.layout.satu_ayat_sederhana, null);
+					res.setId(R.layout.satu_ayat_sederhana);
+				} else {
+					res = (LinearLayout) convertView;
 				}
 				
 				TextView lIsiAyat = (TextView) res.findViewById(R.id.lIsiAyat);
@@ -175,9 +153,12 @@ class AyatAdapter extends BaseAdapter {
 			}
 		} else {
 			// JUDUL PERIKOP. bukan ayat.
-			View res = convertView;
-			if (convertView == null) {
+			View res;
+			if (convertView == null || convertView.getId() != R.layout.header_perikop) {
 				res = LayoutInflater.from(appContext_).inflate(R.layout.header_perikop, null);
+				res.setId(R.layout.header_perikop);
+			} else {
+				res = convertView;
 			}
 			
 			Blok blok = perikop_xblok_[-id-1];

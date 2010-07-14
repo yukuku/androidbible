@@ -1,6 +1,7 @@
 
 package yuku.alkitab;
 
+import yuku.alkitab.BukmakEditor.Listener;
 import yuku.alkitab.model.*;
 import yuku.andoutil.*;
 import android.app.*;
@@ -95,6 +96,12 @@ public class BukmakActivity extends ListActivity {
 			return true;
 		} else if (item.getItemId() == R.id.menuUbahKeteranganBukmak) {
 			BukmakEditor editor = new BukmakEditor(this, alkitabDb, menuInfo.id);
+			editor.setListener(new Listener() {
+				@Override
+				public void onOk() {
+					adapter.getCursor().requery();
+				}
+			});
 			editor.bukaDialog();
 			
 			return true;
