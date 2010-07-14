@@ -316,4 +316,20 @@ public class S {
 	public static SharedPreferences getPreferences(Context context) {
 		return context.getSharedPreferences(context.getPackageName(), 0);
 	}
+
+	public static String alamat(int ari) {
+		int kitab = Ari.toKitab(ari);
+		int pasal_1 = Ari.toPasal(ari);
+		int ayat_1 = Ari.toAyat(ari);
+		
+		StringBuilder hasil = new StringBuilder(40);
+		if (kitab >= S.xkitab.length) {
+			hasil.append("[").append(kitab).append("] ");
+		} else {
+			hasil.append(S.xkitab[kitab].judul).append(" ");
+		}
+		
+		hasil.append(pasal_1).append(":").append(ayat_1);
+		return hasil.toString();
+	}
 }

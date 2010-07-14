@@ -6,13 +6,12 @@ import yuku.andoutil.*;
 import android.app.*;
 import android.content.*;
 import android.database.*;
-import android.database.sqlite.*;
 import android.os.*;
 import android.provider.*;
 import android.view.*;
-import android.view.ContextMenu.*;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.*;
-import android.widget.AdapterView.*;
 
 public class BukmakActivity extends ListActivity {
 	public static final String EXTRA_ariTerpilih = "ariTerpilih";
@@ -21,7 +20,7 @@ public class BukmakActivity extends ListActivity {
 	private static final int[] cursorColumnsMapTo = {R.id.lCuplikan, R.id.lTulisan, R.id.lTanggal};
 	private static final String[] cursorColumnsSelect;
 	SimpleCursorAdapter adapter;
-	SQLiteDatabase db;
+	AlkitabDb alkitabDb;
 	Cursor cursor;
 	
 	static {
@@ -35,9 +34,12 @@ public class BukmakActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		db = AlkitabDb.getInstance(getApplicationContext()).getDatabase();
-		cursor = db.query(AlkitabDb.TABEL_Bukmak2, cursorColumnsSelect, null, null, null, null, AlkitabDb.KOLOM_Bukmak2_waktuUbah + " desc");
+		
+		S.siapinEdisi(getResources());
+		S.siapinKitab(getResources());
+		
+		alkitabDb = AlkitabDb.getInstance(getApplicationContext());
+		cursor = alkitabDb.getDatabase().query(AlkitabDb.TABEL_Bukmak2, cursorColumnsSelect, AlkitabDb.KOLOM_Bukmak2_jenis + "=?", new String[] {String.valueOf(AlkitabDb.ENUM_Bukmak2_jenis_bukmak)}, null, null, AlkitabDb.KOLOM_Bukmak2_waktuUbah + " desc");
 		startManagingCursor(cursor);
 		
 		adapter = new SimpleCursorAdapter(this, R.layout.bukmak_item, cursor, cursorColumnsMapFrom, cursorColumnsMapTo);
@@ -84,15 +86,16 @@ public class BukmakActivity extends ListActivity {
 	
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item.getMenuInfo();
+
 		if (item.getItemId() == R.id.menuHapusBukmak) {
-			AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item.getMenuInfo();
-			
-			db.delete(AlkitabDb.TABEL_Bukmak2, "_id=?", new String[] {"" + menuInfo.id});
+			alkitabDb.getDatabase().delete(AlkitabDb.TABEL_Bukmak2, "_id=?", new String[] {String.valueOf(menuInfo.id)});
 			adapter.getCursor().requery();
 			
 			return true;
 		} else if (item.getItemId() == R.id.menuUbahKeteranganBukmak) {
-			// FIXME
+			BukmakEditor editor = new BukmakEditor(this, alkitabDb, menuInfo.id);
+			editor.bukaDialog();
 			
 			return true;
 		}

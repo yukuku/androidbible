@@ -339,33 +339,9 @@ public class IsiActivity extends Activity {
 			return true;
 		} else if (itemId == R.id.menuTambahBukmak) {
 			final int ari = Ari.encode(S.kitab.pos, pasal_1, ayatContextMenu_1);
-			final Bukmak2 bukmak = alkitabDb.getBukmak(ari, AlkitabDb.ENUM_Bukmak2_jenis_bukmak);
 			
-			View dialogView = LayoutInflater.from(this).inflate(R.layout.bukmak_ubah_dialog, null);
-			final EditText tTulisan = (EditText) dialogView.findViewById(R.id.tTulisan);
-			tTulisan.setText(bukmak != null? bukmak.tulisan: alamat);
-			
-			new AlertDialog.Builder(this)
-			.setView(dialogView)
-			.setTitle(alamat)
-			.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					String tulisan = tTulisan.getText().toString();
-					
-					if (bukmak != null) {
-						bukmak.tulisan = tulisan;
-						bukmak.waktuUbah = new Date();
-						alkitabDb.updateBukmak(bukmak);
-					} else {
-						Bukmak2 bukmakBaru = new Bukmak2(ari, AlkitabDb.ENUM_Bukmak2_jenis_bukmak, tulisan, new Date(), new Date());
-						alkitabDb.insertBukmak(bukmakBaru);
-					}
-				}
-			})
-			.setNegativeButton("Batal", null)
-			.create()
-			.show();
+			BukmakEditor editor = new BukmakEditor(this, alkitabDb, alamat, ari);
+			editor.bukaDialog();
 			
 			return true;
 		} else if (itemId == R.id.menuTambahCatatan) {
@@ -382,6 +358,7 @@ public class IsiActivity extends Activity {
 		
 		return super.onContextItemSelected(item);
 	}
+
 
 	private void terapkanPengaturan() {
 		//# atur ukuran huruf isi berdasarkan pengaturan
@@ -433,7 +410,8 @@ public class IsiActivity extends Activity {
 			int warnaLatar = pengaturan.getInt(getString(R.string.pref_warnaLatar_int_key), 0xff000000);
 			S.penerapan.warnaLatar = warnaLatar;
 			lsIsi.setBackgroundColor(warnaLatar);
-			lsIsi.setCacheColorHint(warnaLatar);
+			
+			U.setCacheColorHintMaksa(lsIsi, warnaLatar);
 			Window window = getWindow();
 			if (window != null) {
 				ColorDrawable bg = new ColorDrawable(warnaLatar);

@@ -63,7 +63,7 @@ public class GelembungDialog {
 	public void tampilkan() {
 		lAlamat.setText("Catatan " + alamat);
 		
-		this.bukmak = alkitabDb.getBukmak(ari, AlkitabDb.ENUM_Bukmak2_jenis_catatan);
+		this.bukmak = alkitabDb.getBukmakByAri(ari, AlkitabDb.ENUM_Bukmak2_jenis_catatan);
 		if (bukmak != null) {
 			tCatatan.setText(bukmak.tulisan);
 		}
