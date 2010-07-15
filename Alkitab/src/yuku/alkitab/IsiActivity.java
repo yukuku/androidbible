@@ -156,7 +156,7 @@ public class IsiActivity extends Activity {
 		}
 		
 		// siapin db
-		alkitabDb = AlkitabDb.getInstance(getApplicationContext());
+		alkitabDb = AlkitabDb.getInstance(this);
 		
 		ayatAdapter_ = new AyatAdapter(getApplicationContext(), alkitabDb, paralelOnClickListener, gelembungListener);
 		lsIsi.setAdapter(ayatAdapter_);

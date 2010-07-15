@@ -284,7 +284,9 @@ public class AlkitabDb {
 			        	int ari = Ari.encode(kitab, pasal, ayat);
 			        	
 			        	cv.put(KOLOM_Bukmak2_ari, ari);
-			        	cv.put(KOLOM_Bukmak2_waktuTambah, new Integer(cursor.getString(kolom_waktuTambah)));
+			        	Integer waktu = new Integer(cursor.getString(kolom_waktuTambah));
+			        	cv.put(KOLOM_Bukmak2_waktuTambah, waktu);
+			        	cv.put(KOLOM_Bukmak2_waktuUbah, waktu);
 						db.insertOrThrow(TABEL_Bukmak2, null, cv);
 						
 						c++;
