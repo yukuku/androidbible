@@ -350,26 +350,16 @@ public class IsiActivity extends Activity {
 	private void terapkanPengaturan() {
 		//# atur ukuran huruf isi berdasarkan pengaturan
 		{
-			if (ukuranAsalHurufIsi == null) {
-				ukuranAsalHurufIsi = new TextView(this).getTextSize();
-			}
-			Log.d("alki", "ukuran asal huruf px = " + ukuranAsalHurufIsi);
-			String ukuranHuruf_s = pengaturan.getString(getString(R.string.pref_ukuranHuruf_key), "120");
-			int ukuranHuruf = 100;
-			try {
-				ukuranHuruf = Integer.valueOf(ukuranHuruf_s);
-			} catch (NumberFormatException e) {
-			}
-			Log.d("alki", "skala di pengaturan = " + ukuranHuruf);
-			S.penerapan.ukuranTeksPx = ukuranAsalHurufIsi * ukuranHuruf / 100.f;
-			Log.d("alki", "ukuran baru px = " + S.penerapan.ukuranTeksPx);
+			float ukuranHuruf2 = pengaturan.getFloat(getString(R.string.pref_ukuranHuruf2_key), 17.f);
+			S.penerapan.ukuranHuruf2dp = ukuranHuruf2;
+			Log.d("alki", "ukuranHuruf2 dalam dp = " + S.penerapan.ukuranHuruf2dp);
 			
-			S.penerapan.indenParagraf = (int) (getResources().getDimension(R.dimen.indenParagraf) * ukuranHuruf / 100.f);
-			Log.d("alki", "indenParagraf = " + S.penerapan.indenParagraf);
-			S.penerapan.menjorokSatu = (int) (getResources().getDimension(R.dimen.menjorokSatu) * ukuranHuruf / 100.f);
-			Log.d("alki", "menjorokSatu = " + S.penerapan.menjorokSatu);
-			S.penerapan.menjorokDua = (int) (getResources().getDimension(R.dimen.menjorokDua) * ukuranHuruf / 100.f);
-			Log.d("alki", "menjorokDua = " + S.penerapan.menjorokDua);
+			S.penerapan.indenParagraf = (int) (getResources().getDimension(R.dimen.indenParagraf) * ukuranHuruf2 / 17.f);
+			Log.d("alki", "indenParagraf dalam px = " + S.penerapan.indenParagraf);
+			S.penerapan.menjorokSatu = (int) (getResources().getDimension(R.dimen.menjorokSatu) * ukuranHuruf2 / 17.f);
+			Log.d("alki", "menjorokSatu dalam px = " + S.penerapan.menjorokSatu);
+			S.penerapan.menjorokDua = (int) (getResources().getDimension(R.dimen.menjorokDua) * ukuranHuruf2 / 17.f);
+			Log.d("alki", "menjorokDua dalam px = " + S.penerapan.menjorokDua);
 		}
 		
 		//# atur jenis huruf, termasuk boldnya
@@ -1016,14 +1006,14 @@ public class IsiActivity extends Activity {
 	
 	static void aturTampilanTeksIsi(TextView t) {
 		t.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
-		t.setTextSize(TypedValue.COMPLEX_UNIT_PX, S.penerapan.ukuranTeksPx);
+		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp);
 		t.setIncludeFontPadding(false);
 		t.setTextColor(S.penerapan.warnaHuruf);
 	}
 	
 	static void aturTampilanTeksAlamatHasilCari(TextView t, SpannableStringBuilder sb) {
 		t.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
-		t.setTextSize(TypedValue.COMPLEX_UNIT_PX, S.penerapan.ukuranTeksPx * 1.2f);
+		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp * 1.2f);
 		t.setTextColor(S.penerapan.warnaHuruf);
 		sb.setSpan(new UnderlineSpan(), 0, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 		t.setText(sb);
@@ -1031,7 +1021,7 @@ public class IsiActivity extends Activity {
 
 	static void aturTampilanTeksNomerAyat(TextView t) {
 		t.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
-		t.setTextSize(TypedValue.COMPLEX_UNIT_PX, S.penerapan.ukuranTeksPx);
+		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp);
 		t.setIncludeFontPadding(false);
 		t.setTextColor(S.penerapan.warnaNomerAyat);
 	}

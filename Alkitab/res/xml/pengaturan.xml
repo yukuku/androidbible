@@ -3,14 +3,13 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<PreferenceCategory
 		android:title="Tulisan">
-		<ListPreference
-			android:dialogTitle="@string/ukuranHuruf_n"
-			android:summary="@string/ukuranHuruf_keterangan_s"
-			android:title="@string/ukuranHuruf_n"
-			android:entries="@array/pref_ukuranHuruf_label"
-			android:entryValues="@array/pref_ukuranHuruf_value"
-			android:key="@string/pref_ukuranHuruf_key"
-			android:defaultValue="120" />
+		<yuku.alkitab.UkuranHuruf2Preference
+			android:summary="@string/ukuranHuruf2_keterangan_s"
+			android:title="@string/ukuranHuruf2_n"
+			android:key="@string/pref_ukuranHuruf2_key"
+			android:positiveButtonText="OK"
+			android:negativeButtonText="Batal"
+			android:defaultValue="17" />
 		<ListPreference
 			android:key="@string/pref_jenisHuruf_key"
 			android:title="@string/jenisHuruf_n"

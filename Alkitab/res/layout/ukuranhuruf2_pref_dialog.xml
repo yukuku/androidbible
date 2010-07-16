@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	android:padding="6dp">
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Contoh tulisan:"></TextView>
+	<TextView
+		android:layout_width="wrap_content"
+		android:textColor="#fff"
+		android:padding="6dp"
+		android:text='Pada mulanya Allah menciptakan langit dan bumi. Bumi belum berbentuk dan kosong; gelap gulita menutupi samudera raya, dan Roh Allah melayang-layang di atas permukaan air. Berfirmanlah Allah: "Jadilah terang." Lalu terang itu jadi. Allah melihat bahwa terang itu baik, lalu dipisahkan-Nyalah terang itu dari gelap. Dan Allah menamai terang itu siang, dan gelap itu malam. Jadilah petang dan jadilah pagi, itulah hari pertama.'
+		android:fadingEdge="vertical"
+		android:id="@+id/lContoh"
+		android:textSize="17dp"
+		android:layout_height="90dp"></TextView>
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:gravity="center_vertical">
+		<SeekBar
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:layout_weight="1"
+			android:id="@+id/seekbar"
+			android:max="80" android:progress="30"></SeekBar>
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textColor="#fff"
+			android:textSize="20dp"
+			android:layout_marginLeft="6dp"
+			android:id="@+id/lUkuranHuruf"
+			android:minWidth="50dp" android:text="17.0"></TextView>
+	</LinearLayout>
+
+</LinearLayout>

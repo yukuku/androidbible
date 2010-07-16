@@ -167,7 +167,7 @@ class AyatAdapter extends BaseAdapter {
 			TextView lXparalel = (TextView) res.findViewById(R.id.lXparalel);
 			
 			lJudul.setTypeface(S.penerapan.jenisHuruf, Typeface.BOLD);
-			lJudul.setTextSize(TypedValue.COMPLEX_UNIT_PX, S.penerapan.ukuranTeksPx);
+			lJudul.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp);
 			lJudul.setText(blok.judul);
 			lJudul.setTextColor(S.penerapan.warnaHuruf);
 			

@@ -18,7 +18,8 @@ public class S {
 	 * penerapan dari pengaturan
 	 */
 	public static class penerapan {
-		public static float ukuranTeksPx;
+		/** dalam dp */
+		public static float ukuranHuruf2dp;
 		public static Typeface jenisHuruf;
 		public static int tebalHuruf;
 		public static int warnaHuruf; 

@@ -18,13 +18,13 @@
 	<string
 		name="pref_jenisHuruf_key">jenisHuruf</string>
 	<string
-		name="pref_ukuranHuruf_key">ukuranHuruf</string>
+		name="pref_ukuranHuruf2_key">ukuranHuruf2</string>
+	<string
+		name="ukuranHuruf2_keterangan_s">Tulisan terlalu kecil atau terlalu besar?</string>
+	<string
+		name="ukuranHuruf2_n">Ukuran Huruf</string>
 	<string
 		name="menuPengaturan">Pengaturan</string>
-	<string
-		name="ukuranHuruf_keterangan_s">Tulisan terlalu kecil atau terlalu besar?</string>
-	<string
-		name="ukuranHuruf_n">Ukuran Huruf</string>
 	<string
 		name="tampilan_n">Tampilan</string>
 	<string

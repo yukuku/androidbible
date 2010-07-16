@@ -192,7 +192,7 @@ public class RenunganActivity extends Activity {
 			lIsi.setTextColor(S.penerapan.warnaHuruf);
 			lIsi.setBackgroundColor(S.penerapan.warnaLatar);
 			lIsi.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
-			lIsi.setTextSize(TypedValue.COMPLEX_UNIT_PX, S.penerapan.ukuranTeksPx);
+			lIsi.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp);
 		} else {
 			renderBerhasilBaik  = false;
 			
