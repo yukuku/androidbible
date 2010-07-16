@@ -5,13 +5,38 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:id="@+id/tempatJudul">
+
+		<TextView
+			android:id="@+id/lJudul"
+			android:text="Kitab 0:0"
+			android:textStyle="bold"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:padding="2dp"
+			android:textSize="18dp"
+			android:textColor="#222"
+			android:background="#aaa" />
+		<View
+			android:layout_width="fill_parent"
+			android:layout_height="1px"
+			android:background="#000" />
+
+	</LinearLayout>
+	
 	<ListView
 		android:layout_height="wrap_content"
 		android:id="@+id/lsIsi"
 		android:layout_width="fill_parent"
 		android:layout_weight="1"
 		android:divider="@null"
-		android:listSelector="@android:color/transparent" android:focusable="false" android:focusableInTouchMode="false"></ListView>
+		android:listSelector="@android:color/transparent"
+		android:focusable="false"
+		android:focusableInTouchMode="false"></ListView>
 	<LinearLayout
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"
@@ -27,10 +52,9 @@
 			android:padding="16dp"></ImageButton>
 		<Button
 			android:layout_width="wrap_content"
-			android:text="@string/menuTuju"
 			android:id="@+id/bTuju"
 			android:layout_weight="1"
-			android:layout_height="fill_parent"></Button>
+			android:layout_height="fill_parent" android:textSize="18dp" android:text="Nama Kitab Agak Panjang 20"></Button>
 		<ImageButton
 			android:src="@drawable/right_arrow"
 			android:id="@+id/bKanan"

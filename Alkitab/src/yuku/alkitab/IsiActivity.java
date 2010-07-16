@@ -40,6 +40,8 @@ public class IsiActivity extends Activity {
 	Button bTuju;
 	ImageButton bKiri;
 	ImageButton bKanan;
+	View tempatJudul;
+	TextView lJudul;
 	
 	int pasal_1 = 0;
 	int ayatContextMenu_1 = -1;
@@ -90,10 +92,12 @@ public class IsiActivity extends Activity {
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		
 		lsIsi = (ListView) findViewById(R.id.lsIsi);
-		
 		bTuju = (Button) findViewById(R.id.bTuju);
 		bKiri = (ImageButton) findViewById(R.id.bKiri);
 		bKanan = (ImageButton) findViewById(R.id.bKanan);
+		tempatJudul = findViewById(R.id.tempatJudul);
+		lJudul = (TextView) findViewById(R.id.lJudul);
+		
 		tog.addSplit("IsiActivity (fase 10) sebelum terap pengaturan");
 
 		pengaturan = PreferenceManager.getDefaultSharedPreferences(this);
@@ -409,8 +413,10 @@ public class IsiActivity extends Activity {
 			View panelNavigasi = findViewById(R.id.panelNavigasi);
 			if (sembunyiNavigasi) {
 				panelNavigasi.setVisibility(View.GONE);
+				tempatJudul.setVisibility(View.VISIBLE);
 			} else {
 				panelNavigasi.setVisibility(View.VISIBLE);
+				tempatJudul.setVisibility(View.GONE);
 			}
 		}
 		
@@ -884,9 +890,6 @@ public class IsiActivity extends Activity {
 			ayatAdapter_.muatCatatanMap();
 			ayatAdapter_.notifyDataSetChanged();
 			
-			String judul = S.kitab.judul + " " + pasal_1;
-			bTuju.setText(judul);
-			
 			// kasi tau activity
 			this.pasal_1 = pasal_1;
 			
@@ -898,6 +901,10 @@ public class IsiActivity extends Activity {
 				lsIsi.setSelectionFromTop(position, lsIsi.getVerticalFadingEdgeLength());
 			}
 		}
+		
+		String judul = S.alamat(S.kitab, pasal_1);
+		lJudul.setText(judul);
+		bTuju.setText(judul);
 	}
 	
 	@Override

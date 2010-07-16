@@ -333,4 +333,8 @@ public class S {
 		hasil.append(pasal_1).append(":").append(ayat_1);
 		return hasil.toString();
 	}
+
+	public static String alamat(Kitab kitab, int pasal_1) {
+		return kitab.judul + " " + pasal_1;
+	}
 }
