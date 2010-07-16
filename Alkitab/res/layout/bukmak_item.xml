@@ -8,18 +8,24 @@
 
 	<LinearLayout
 		android:orientation="horizontal"
-		android:layout_height="wrap_content" android:layout_width="fill_parent">
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent">
 		<TextView
 			android:id="@+id/lTulisan"
 			android:textColor="#fff"
-			android:textSize="18dp"
-			android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1" android:text="Keterangan atau Alamat Ayat dan lain"/>
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="Keterangan atau Alamat Ayat dan lain"
+			android:textSize="18dp" />
 
 		<TextView
 			android:id="@+id/lTanggal"
-			android:layout_width="wrap_content" 
+			android:layout_width="wrap_content"
 
-			android:text="2099-12-32" android:layout_height="fill_parent"/>
+			android:text="2099-12-32"
+			android:layout_height="wrap_content"
+			android:layout_gravity="fill_vertical" />
 	</LinearLayout>
 	<TextView
 		android:id="@+id/lCuplikan"

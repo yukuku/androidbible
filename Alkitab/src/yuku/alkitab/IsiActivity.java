@@ -1011,12 +1011,17 @@ public class IsiActivity extends Activity {
 		t.setTextColor(S.penerapan.warnaHuruf);
 	}
 	
-	static void aturTampilanTeksAlamatHasilCari(TextView t, SpannableStringBuilder sb) {
+	static void aturTampilanTeksAlamatHasilCariAtauTulisanBukmak(TextView t, SpannableStringBuilder sb) {
 		t.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
 		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp * 1.2f);
 		t.setTextColor(S.penerapan.warnaHuruf);
 		sb.setSpan(new UnderlineSpan(), 0, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 		t.setText(sb);
+	}
+	
+	static void aturTampilanTeksTanggalBukmak(TextView t) {
+		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp * 0.8f);
+		t.setTextColor(S.penerapan.warnaHuruf);
 	}
 
 	static void aturTampilanTeksNomerAyat(TextView t) {

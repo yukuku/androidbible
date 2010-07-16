@@ -197,7 +197,7 @@ public class Search2Activity extends Activity {
 			int pasal_1 = Ari.toPasal(ari);
 			int ayat_1 = Ari.toAyat(ari);
 			SpannableStringBuilder sb = new SpannableStringBuilder(kitab.judul).append(" " + pasal_1 + ":" + ayat_1);
-			IsiActivity.aturTampilanTeksAlamatHasilCari(lAlamat, sb);
+			IsiActivity.aturTampilanTeksAlamatHasilCariAtauTulisanBukmak(lAlamat, sb);
 			
 			String[] xayat = S.muatTeks(getResources(), kitab, pasal_1);
 			String ayat = xayat[ayat_1 - 1];

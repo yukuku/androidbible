@@ -9,6 +9,7 @@ import android.content.*;
 import android.database.*;
 import android.os.*;
 import android.provider.*;
+import android.text.*;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -35,11 +36,12 @@ public class BukmakActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.bukmak);
 		
 		S.siapinEdisi(getResources());
 		S.siapinKitab(getResources());
 		
-		alkitabDb = AlkitabDb.getInstance(getApplicationContext());
+		alkitabDb = AlkitabDb.getInstance(this);
 		cursor = alkitabDb.getDatabase().query(AlkitabDb.TABEL_Bukmak2, cursorColumnsSelect, AlkitabDb.KOLOM_Bukmak2_jenis + "=?", new String[] {String.valueOf(AlkitabDb.ENUM_Bukmak2_jenis_bukmak)}, null, null, AlkitabDb.KOLOM_Bukmak2_waktuUbah + " desc");
 		startManagingCursor(cursor);
 		
@@ -49,7 +51,16 @@ public class BukmakActivity extends ListActivity {
 			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
 				if (cursorColumnsSelect[columnIndex] == AlkitabDb.KOLOM_Bukmak2_waktuUbah) {
 					String text = Sqlitil.toLocaleDateMedium(cursor.getInt(columnIndex));
-					((TextView)view).setText(text);
+					
+					TextView tv = (TextView) view;
+					tv.setText(text);
+					IsiActivity.aturTampilanTeksTanggalBukmak(tv);
+					return true;
+				} else if (cursorColumnsSelect[columnIndex] == AlkitabDb.KOLOM_Bukmak2_tulisan) {
+					TextView tv = (TextView) view;
+					
+					SpannableStringBuilder sb = new SpannableStringBuilder(cursor.getString(columnIndex));
+					IsiActivity.aturTampilanTeksAlamatHasilCariAtauTulisanBukmak(tv, sb);
 					return true;
 				} else if (cursorColumnsSelect[columnIndex] == AlkitabDb.KOLOM_Bukmak2_ari) {
 					int ari = cursor.getInt(columnIndex);
@@ -57,14 +68,20 @@ public class BukmakActivity extends ListActivity {
 					String[] xayat = S.muatTeks(getResources(), kitab, Ari.toPasal(ari));
 					String ayat = xayat[Ari.toAyat(ari) - 1]; // TODO cek out of bounds?
 					ayat = U.buangKodeKusus(ayat);
-					((TextView)view).setText(ayat);
+					
+					TextView tv = (TextView) view;
+					tv.setText(ayat);
+					IsiActivity.aturTampilanTeksIsi(tv);
 					return true;
 				}
 				return false;
 			}
 		});
 		setListAdapter(adapter);
-		
+
+		getListView().setBackgroundColor(S.penerapan.warnaLatar);
+		getListView().setCacheColorHint(S.penerapan.warnaLatar);
+
 		registerForContextMenu(getListView());
 	}
 
