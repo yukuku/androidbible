@@ -150,26 +150,29 @@ public class AlkitabDb {
 		return db.delete(TABEL_Bukmak2, KOLOM_Bukmak2_jenis + "=? and " + KOLOM_Bukmak2_ari + "=?", sql_hapusBukmak_params);
 	}
 
-	private static String sql_countCatatan = "select count(*) from " + TABEL_Bukmak2 + " where " + KOLOM_Bukmak2_jenis + "=" + ENUM_Bukmak2_jenis_catatan + " and " + KOLOM_Bukmak2_ari + ">=? and " + KOLOM_Bukmak2_ari + "<?";
-	private SQLiteStatement stmt_countCatatan = null;
-	public int countCatatan(int ari_kitabpasal) {
+	private static String sql_countAtribut = "select count(*) from " + TABEL_Bukmak2 + " where " + KOLOM_Bukmak2_ari + ">=? and " + KOLOM_Bukmak2_ari + "<?";
+	private SQLiteStatement stmt_countAtribut = null;
+	public int countAtribut(int ari_kitabpasal) {
 		int ariMin = ari_kitabpasal & 0x00ffff00;
 		int ariMax = ari_kitabpasal | 0x000000ff;
 		
-		if (stmt_countCatatan == null) {
-			stmt_countCatatan = db.compileStatement(sql_countCatatan);
+		if (stmt_countAtribut == null) {
+			stmt_countAtribut = db.compileStatement(sql_countAtribut);
 		}
 		
-		stmt_countCatatan.clearBindings();
-		stmt_countCatatan.bindLong(1, ariMin);
-		stmt_countCatatan.bindLong(2, ariMax);
+		stmt_countAtribut.clearBindings();
+		stmt_countAtribut.bindLong(1, ariMin);
+		stmt_countAtribut.bindLong(2, ariMax);
 		
-		return (int) stmt_countCatatan.simpleQueryForLong();
+		return (int) stmt_countAtribut.simpleQueryForLong();
 	}
 	
-	private static String sql_getCatatan = "select * from " + TABEL_Bukmak2 + " where " + KOLOM_Bukmak2_jenis + "=" + ENUM_Bukmak2_jenis_catatan + " and " + KOLOM_Bukmak2_ari + ">=? and " + KOLOM_Bukmak2_ari + "<?";
+	private static String sql_getCatatan = "select * from " + TABEL_Bukmak2 + " where " + KOLOM_Bukmak2_ari + ">=? and " + KOLOM_Bukmak2_ari + "<?";
 	private String[] sql_getCatatan_params = new String[2];
-	public int getCatatan(int ari_kitabpasal, int[] out) {
+	/**
+	 * map_0 adalah ayat, basis 0
+	 */
+	public int putAtribut(int ari_kitabpasal, int[] map_0) {
 		int ariMin = ari_kitabpasal & 0x00ffff00;
 		int ariMax = ari_kitabpasal | 0x000000ff;
 		int res = 0;
@@ -178,9 +181,22 @@ public class AlkitabDb {
 		sql_getCatatan_params[1] = String.valueOf(ariMax);
 		Cursor cursor = db.rawQuery(sql_getCatatan, sql_getCatatan_params);
 		try {
-			int index_ari = cursor.getColumnIndexOrThrow(KOLOM_Bukmak2_ari);
+			int kolom_jenis = cursor.getColumnIndexOrThrow(KOLOM_Bukmak2_jenis);
+			int kolom_ari = cursor.getColumnIndexOrThrow(KOLOM_Bukmak2_ari);
 			while (cursor.moveToNext()) {
-				out[res++] = cursor.getInt(index_ari);
+				int ari = cursor.getInt(kolom_ari);
+				int jenis = cursor.getInt(kolom_jenis);
+				
+				int ofsetMap = Ari.toAyat(ari) - 1; // dari basis1 ke basis 0
+				if (ofsetMap >= map_0.length) {
+					Log.e("alki", "ofsetMap kebanyakan " + ofsetMap + " terjadi pada ari 0x" + Integer.toHexString(ari));
+				} else {
+					if (jenis == ENUM_Bukmak2_jenis_bukmak) {
+						map_0[ofsetMap] |= 0x1;
+					} else if (jenis == ENUM_Bukmak2_jenis_catatan) {
+						map_0[ofsetMap] |= 0x2;
+					}
+				}
 			}
 		} finally {
 			cursor.close();

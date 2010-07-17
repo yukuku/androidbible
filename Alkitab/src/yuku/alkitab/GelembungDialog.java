@@ -13,7 +13,6 @@ public class GelembungDialog {
 	private final AlertDialog alert;
 	private final RefreshCallback refreshCallback;
 	
-	TextView lAlamat;
 	EditText tCatatan;
 	
 	int ari;
@@ -33,6 +32,7 @@ public class GelembungDialog {
 		
 		this.alert = new AlertDialog.Builder(context)
 		.setView(dialogLayout)
+		.setIcon(R.drawable.gelembung)
 		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -47,7 +47,6 @@ public class GelembungDialog {
 		})
 		.create();
 
-		lAlamat = (TextView) dialogLayout.findViewById(R.id.lAlamat);
 		tCatatan = (EditText) dialogLayout.findViewById(R.id.tCatatan);
 		
 		tCatatan.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -63,7 +62,7 @@ public class GelembungDialog {
 	}
 
 	public void tampilkan() {
-		lAlamat.setText("Catatan " + alamat);
+		this.alert.setTitle("Catatan " + alamat);
 		
 		this.bukmak = alkitabDb.getBukmakByAri(ari, AlkitabDb.ENUM_Bukmak2_jenis_catatan);
 		if (bukmak != null) {
@@ -74,9 +73,8 @@ public class GelembungDialog {
 	}
 
 	protected void bOk_click() {
+		String tulisan = tCatatan.getText().toString();
 		if (bukmak != null) {
-			String tulisan = tCatatan.getText().toString();
-			
 			if (tulisan.length() == 0) {
 				alkitabDb.hapusBukmak(ari, AlkitabDb.ENUM_Bukmak2_jenis_catatan);
 			} else {
@@ -84,9 +82,11 @@ public class GelembungDialog {
 				bukmak.waktuUbah = new Date();
 				alkitabDb.updateBukmak(bukmak);
 			}
-		} else {
-			bukmak = new Bukmak2(ari, AlkitabDb.ENUM_Bukmak2_jenis_catatan, tCatatan.getText().toString(), new Date(), new Date());
-			alkitabDb.insertBukmak(bukmak);
+		} else { // bukmak == null; belum ada sebelumnya, maka hanya insert kalo ada tulisan.
+			if (tulisan.length() > 0) {
+				bukmak = new Bukmak2(ari, AlkitabDb.ENUM_Bukmak2_jenis_catatan, tulisan, new Date(), new Date());
+				alkitabDb.insertBukmak(bukmak);
+			}
 		}
 		
 		if (refreshCallback != null) {
@@ -95,6 +95,9 @@ public class GelembungDialog {
 	}
 
 	protected void bHapus_click() {
+		// kalo emang ga ada, biarkan saja, seperti tombol cancel jadinya.
+		if (bukmak == null) return;
+		
 		new AlertDialog.Builder(context)
 		.setTitle("Hapus Catatan")
 		.setMessage("Anda yakin mau menghapus catatan ini?")

@@ -5,24 +5,39 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 	<LinearLayout
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
 		android:layout_width="fill_parent"
-		android:gravity="center_vertical"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
 		android:padding="6dp"
 		android:background="#d7d7d7">
-		<EditText
-			android:layout_width="wrap_content"
+		<LinearLayout
+			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:id="@+id/tCarian"
-			android:imeOptions="actionSearch"
-			android:layout_weight="1"
-			android:selectAllOnFocus="true"></EditText>
-		<ImageButton
-			android:layout_width="wrap_content"
+			android:orientation="horizontal"
+			android:gravity="center_vertical">
+			<EditText
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/tCarian"
+				android:imeOptions="actionSearch"
+				android:layout_weight="1"
+				android:selectAllOnFocus="true"></EditText>
+			<ImageButton
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/tombol_cari"
+				android:id="@+id/bCari" />
+		</LinearLayout>
+		
+		<LinearLayout
+			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:src="@drawable/tombol_cari"
-			android:id="@+id/bCari" />
+			android:orientation="horizontal"
+			android:gravity="left">
+			<CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/cFilterLama" android:text="Perj. Lama" android:checked="true" android:textColor="#000"></CheckBox><CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/cFilterBaru" android:text="Perj. Baru" android:checked="true" android:textColor="#000"></CheckBox>
+		
+
+</LinearLayout>
 	</LinearLayout>
 
 	<ListView

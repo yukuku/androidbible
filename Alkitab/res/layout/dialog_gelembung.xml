@@ -8,18 +8,13 @@
 		android:padding="6dp"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content">
-		<TextView
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:id="@+id/lAlamat"
-			android:text="Catatan Kitab Itu 9:99"
-			android:textColor="#fff"
-			android:textSize="20dp" />
 		<EditText
 			android:id="@+id/tCatatan"
 			android:layout_width="fill_parent"
 			android:gravity="top"
 			android:layout_height="wrap_content"
-			android:minLines="4" android:hint="&lt;tidak ada catatan&gt;" android:inputType="textCapSentences|textMultiLine"/>
+			android:minLines="4"
+			android:hint="&lt;tidak ada catatan&gt;"
+			android:inputType="textCapSentences|textMultiLine" />
 	</LinearLayout>
 </ScrollView>

@@ -9,7 +9,6 @@ import android.content.*;
 import android.database.*;
 import android.os.*;
 import android.provider.*;
-import android.text.*;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -59,19 +58,20 @@ public class BukmakActivity extends ListActivity {
 				} else if (cursorColumnsSelect[columnIndex] == AlkitabDb.KOLOM_Bukmak2_tulisan) {
 					TextView tv = (TextView) view;
 					
-					SpannableStringBuilder sb = new SpannableStringBuilder(cursor.getString(columnIndex));
-					IsiActivity.aturTampilanTeksAlamatHasilCariAtauTulisanBukmak(tv, sb);
+					tv.setText(cursor.getString(columnIndex));
+					IsiActivity.aturTampilanTeksJudulBukmak(tv);
 					return true;
 				} else if (cursorColumnsSelect[columnIndex] == AlkitabDb.KOLOM_Bukmak2_ari) {
 					int ari = cursor.getInt(columnIndex);
 					Kitab kitab = S.xkitab[Ari.toKitab(ari)];
 					String[] xayat = S.muatTeks(getResources(), kitab, Ari.toPasal(ari));
-					String ayat = xayat[Ari.toAyat(ari) - 1]; // TODO cek out of bounds?
-					ayat = U.buangKodeKusus(ayat);
+					int ayat_1 = Ari.toAyat(ari);
+					String isi = ayat_1 > xayat.length? "(...)": xayat[ayat_1 - 1];
+					isi = U.buangKodeKusus(isi);
 					
 					TextView tv = (TextView) view;
-					tv.setText(ayat);
-					IsiActivity.aturTampilanTeksIsi(tv);
+					String alamat = S.alamat(ari);
+					IsiActivity.aturIsiDanTampilanCuplikanBukmak(tv, alamat, isi);
 					return true;
 				}
 				return false;

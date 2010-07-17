@@ -15,6 +15,8 @@ import android.widget.*;
 
 public class Search2Activity extends Activity {
 	public static final String EXTRA_carian = "carian";
+	public static final String EXTRA_filter_lama = "filter_lama";
+	public static final String EXTRA_filter_baru = "filter_baru";
 	public static final String EXTRA_hasilCari = "hasilCari";
 	public static final String EXTRA_posisiTerpilih = "posisiTerpilih";
 	public static final String EXTRA_ariTerpilih = "ariTerpilih";
@@ -22,6 +24,8 @@ public class Search2Activity extends Activity {
 	ListView lsHasilCari;
 	ImageButton bCari;
 	EditText tCarian;
+	CheckBox cFilterLama;
+	CheckBox cFilterBaru;
 	TextView lTiadaHasil;
 	
 	private int warnaStabilo;
@@ -29,11 +33,14 @@ public class Search2Activity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.search2);
 		
 		lsHasilCari = (ListView) findViewById(R.id.lsHasilCari);
 		bCari = (ImageButton) findViewById(R.id.bCari);
 		tCarian = (EditText) findViewById(R.id.tCarian);
+		cFilterLama = (CheckBox) findViewById(R.id.cFilterLama);
+		cFilterBaru = (CheckBox) findViewById(R.id.cFilterBaru);
 		lTiadaHasil = (TextView) findViewById(R.id.lTiadaHasil);
 		
 		lsHasilCari.setBackgroundColor(S.penerapan.warnaLatar);
@@ -56,6 +63,8 @@ public class Search2Activity extends Activity {
 				
 				Intent data = new Intent();
 				data.putExtra(EXTRA_carian, tCarian.getText().toString());
+				data.putExtra(EXTRA_filter_lama, cFilterLama.isChecked());
+				data.putExtra(EXTRA_filter_baru, cFilterBaru.isChecked());
 				
 				Search2Adapter adapter = (Search2Adapter) parent.getAdapter();
 				if (adapter != null) {
@@ -92,6 +101,8 @@ public class Search2Activity extends Activity {
 			Intent intent = getIntent();
 			if (intent != null) {
 				String carian = intent.getStringExtra(EXTRA_carian);
+				boolean filter_lama = intent.getBooleanExtra(EXTRA_filter_lama, true);
+				boolean filter_baru = intent.getBooleanExtra(EXTRA_filter_baru, true);
 				IntArrayList hasilCari = intent.getParcelableExtra(EXTRA_hasilCari);
 				int posisiTerpilih = intent.getIntExtra(EXTRA_posisiTerpilih, -1);
 				
@@ -104,6 +115,9 @@ public class Search2Activity extends Activity {
 					}
 				}
 				
+				cFilterLama.setChecked(filter_lama);
+				cFilterBaru.setChecked(filter_baru);
+				
 				if (posisiTerpilih != -1) {
 					lsHasilCari.setSelection(posisiTerpilih);
 				}
@@ -115,6 +129,8 @@ public class Search2Activity extends Activity {
 	
 	protected void bCari_click() {
 		final String carian = tCarian.getText().toString();
+		final boolean filter_lama = cFilterLama.isChecked();
+		final boolean filter_baru = cFilterBaru.isChecked();
 		
 		if (carian.trim().length() > 0) {
 			final String[] xkata = Search2Engine.tokenkan(carian);
@@ -137,7 +153,7 @@ public class Search2Activity extends Activity {
 				@Override
 				public void run() {
 					synchronized (Search2Activity.this) {
-						final IntArrayList hasil = Search2Engine.cari(Search2Activity.this.getResources(), xkata);
+						final IntArrayList hasil = Search2Engine.cari(Search2Activity.this.getResources(), xkata, filter_lama, filter_baru);
 						Search2Activity.this.runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
@@ -197,7 +213,7 @@ public class Search2Activity extends Activity {
 			int pasal_1 = Ari.toPasal(ari);
 			int ayat_1 = Ari.toAyat(ari);
 			SpannableStringBuilder sb = new SpannableStringBuilder(kitab.judul).append(" " + pasal_1 + ":" + ayat_1);
-			IsiActivity.aturTampilanTeksAlamatHasilCariAtauTulisanBukmak(lAlamat, sb);
+			IsiActivity.aturTampilanTeksAlamatHasilCari(lAlamat, sb);
 			
 			String[] xayat = S.muatTeks(getResources(), kitab, pasal_1);
 			String ayat = xayat[ayat_1 - 1];

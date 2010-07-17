@@ -18,7 +18,7 @@ class AyatAdapter extends BaseAdapter {
 	private final Context appContext_;
 	private final AlkitabDb db_;
 	private final CallbackSpan.OnClickListener paralelListener_;
-	private final IsiActivity.GelembungListener gelembungListener_;
+	private final IsiActivity.AtributListener atributListener_;
 	
 	//# field setData
 	private Kitab kitab_;
@@ -33,13 +33,13 @@ class AyatAdapter extends BaseAdapter {
 	 * Konvert b ke a: -b-1;
 	 */
 	private int[] penunjukKotak_;
-	private boolean[] catatanMap_;
+	private int[] atributMap_; // bit 0(0x1) = bukmak; bit 1(0x2) = catatan.
 	
-	public AyatAdapter(Context appContext, AlkitabDb db, CallbackSpan.OnClickListener paralelListener, IsiActivity.GelembungListener gelembungListener) {
+	public AyatAdapter(Context appContext, AlkitabDb db, CallbackSpan.OnClickListener paralelListener, IsiActivity.AtributListener gelembungListener) {
 		appContext_ = appContext;
 		db_ = db;
 		paralelListener_ = paralelListener;
-		gelembungListener_ = gelembungListener;
+		atributListener_ = gelembungListener;
 	}
 	
 	synchronized void setData(Kitab kitab, int pasal_1, String[] xayat, int[] perikop_xari, Blok[] perikop_xblok, int nblok) {
@@ -50,23 +50,16 @@ class AyatAdapter extends BaseAdapter {
 		penunjukKotak_ = U.bikinPenunjukKotak(dataAyat_.length, perikop_xari, perikop_xblok, nblok);
 	}
 	
-	private int[] catatan_xari_buf = new int[256]; // ga akan dalam 1 pasal sampe segini ayat
-	synchronized void muatCatatanMap() {
-		//# catatankah?
-		boolean[] catatanMap = null;
+	synchronized void muatAtributMap() {
+		int[] atributMap = null;
 
 		int ariKp = Ari.encode(kitab_.pos, pasal_1_, 0x00);
-		Log.d("alki", "ariKp = " + Integer.toHexString(ariKp));
-		if (db_.countCatatan(ariKp) > 0) {
-			catatanMap = new boolean[dataAyat_.length];
-			int c = db_.getCatatan(ariKp, catatan_xari_buf);
-			for (int i = 0; i < c; i++) {
-				int ari = catatan_xari_buf[i];
-				catatanMap[Ari.toAyat(ari) - 1] = true;
-			}
+		if (db_.countAtribut(ariKp) > 0) {
+			atributMap = new int[dataAyat_.length];
+			db_.putAtribut(ariKp, atributMap);
 		}
 
-		catatanMap_ = catatanMap;
+		atributMap_ = atributMap;
 	}
 
 	@Override
@@ -101,8 +94,10 @@ class AyatAdapter extends BaseAdapter {
 			// AYAT. bukan judul perikop.
 			
 			String isi = dataAyat_[id];
-			boolean pakeGelembung = catatanMap_ == null? false: catatanMap_[id];
+			boolean pakeBukmak = atributMap_ == null? false: (atributMap_[id] & 0x1) != 0;
+			boolean pakeCatatan = atributMap_ == null? false: (atributMap_[id] & 0x2) != 0;
 			
+			LinearLayout res;
 			// Udah ditentukan bahwa ini ayat dan bukan perikop, sekarang tinggal tentukan
 			// apakah ayat ini pake formating biasa (tanpa menjorok dsb) atau ada formating
 			if (isi.charAt(0) == '@') {
@@ -111,7 +106,6 @@ class AyatAdapter extends BaseAdapter {
 					throw new RuntimeException("Karakter kedua bukan @. Isi ayat: " + isi);
 				}
 				
-				LinearLayout res;
 				if (convertView == null || convertView.getId() != R.layout.satu_ayat_tehel) {
 					res = (LinearLayout) LayoutInflater.from(appContext_).inflate(R.layout.satu_ayat_tehel, null);
 					res.setId(R.layout.satu_ayat_tehel);
@@ -122,15 +116,7 @@ class AyatAdapter extends BaseAdapter {
 				RelativeLayout sebelahKiri = (RelativeLayout) res.findViewById(R.id.sebelahKiri);
 				tampilanAyatTehel(appContext_, sebelahKiri, id + 1, isi);
 				
-				ImageButton imgAtributGelembung = (ImageButton) res.findViewById(R.id.imgAtributGelembung);
-				imgAtributGelembung.setVisibility(pakeGelembung? View.VISIBLE: View.GONE);
-				if (pakeGelembung) {
-					pasangClickHandlerUntukGelembung(imgAtributGelembung, pasal_1_, id + 1);
-				}
-				
-				return res;
 			} else {
-				LinearLayout res;
 				if (convertView == null || convertView.getId() != R.layout.satu_ayat_sederhana) {
 					res = (LinearLayout) LayoutInflater.from(appContext_).inflate(R.layout.satu_ayat_sederhana, null);
 					res.setId(R.layout.satu_ayat_sederhana);
@@ -142,15 +128,20 @@ class AyatAdapter extends BaseAdapter {
 				lIsiAyat.setText(AyatAdapter.tampilanAyatSederhana(id + 1, isi), BufferType.SPANNABLE);
 				
 				IsiActivity.aturTampilanTeksIsi(lIsiAyat);
-
-				ImageButton imgAtributGelembung = (ImageButton) res.findViewById(R.id.imgAtributGelembung);
-				imgAtributGelembung.setVisibility(pakeGelembung? View.VISIBLE: View.GONE);
-				if (pakeGelembung) {
-					pasangClickHandlerUntukGelembung(imgAtributGelembung, pasal_1_, id + 1);
-				}
-
-				return res;
 			}
+
+			ImageButton imgAtributBukmak = (ImageButton) res.findViewById(R.id.imgAtributBukmak);
+			imgAtributBukmak.setVisibility(pakeBukmak? View.VISIBLE: View.GONE);
+			if (pakeBukmak) {
+				pasangClickHandlerUntukBukmak(imgAtributBukmak, pasal_1_, id + 1);
+			}
+			ImageButton imgAtributCatatan = (ImageButton) res.findViewById(R.id.imgAtributCatatan);
+			imgAtributCatatan.setVisibility(pakeCatatan? View.VISIBLE: View.GONE);
+			if (pakeCatatan) {
+				pasangClickHandlerUntukCatatan(imgAtributCatatan, pasal_1_, id + 1);
+			}
+			
+			return res;
 		} else {
 			// JUDUL PERIKOP. bukan ayat.
 			View res;
@@ -219,11 +210,20 @@ class AyatAdapter extends BaseAdapter {
 		}
 	}
 	
-	void pasangClickHandlerUntukGelembung(ImageButton imgGelembung, final int pasal_1, final int ayat_1) {
+	void pasangClickHandlerUntukBukmak(ImageButton imgBukmak, final int pasal_1, final int ayat_1) {
+		imgBukmak.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				atributListener_.onClick(kitab_, pasal_1, ayat_1, AlkitabDb.ENUM_Bukmak2_jenis_bukmak);
+			}
+		});
+	}
+	
+	void pasangClickHandlerUntukCatatan(ImageButton imgGelembung, final int pasal_1, final int ayat_1) {
 		imgGelembung.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				gelembungListener_.onClick(kitab_, pasal_1, ayat_1);
+				atributListener_.onClick(kitab_, pasal_1, ayat_1, AlkitabDb.ENUM_Bukmak2_jenis_catatan);
 			}
 		});
 	}

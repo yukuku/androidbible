@@ -3,6 +3,7 @@ package yuku.alkitab;
 import java.util.*;
 import java.util.regex.*;
 
+import yuku.alkitab.BukmakEditor.Listener;
 import yuku.alkitab.GelembungDialog.RefreshCallback;
 import yuku.alkitab.model.*;
 import yuku.andoutil.*;
@@ -60,6 +61,8 @@ public class IsiActivity extends Activity {
 	
 	//# penyimpanan state buat search2
 	String search2_carian = null;
+	boolean search2_filter_lama = true;
+	boolean search2_filter_baru = true;
 	IntArrayList search2_hasilCari = null;
 	int search2_posisiTerpilih = -1;
 
@@ -71,8 +74,16 @@ public class IsiActivity extends Activity {
 		}
 	};
 	
-	GelembungListener gelembungListener = new GelembungListener();
+	AtributListener gelembungListener = new AtributListener();
 	
+	Listener muatUlangAtributMapListener = new Listener() {
+		@Override
+		public void onOk() {
+			ayatAdapter_.muatAtributMap();
+			ayatAdapter_.notifyDataSetChanged();
+		}
+	};
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		TimingLogger tog = new TimingLogger("alki", "IsiActivity#onCreate");
@@ -332,11 +343,12 @@ public class IsiActivity extends Activity {
 			final int ari = Ari.encode(S.kitab.pos, pasal_1, ayatContextMenu_1);
 			
 			BukmakEditor editor = new BukmakEditor(this, alkitabDb, alamat, ari);
+			editor.setListener(muatUlangAtributMapListener);
 			editor.bukaDialog();
 			
 			return true;
 		} else if (itemId == R.id.menuTambahCatatan) {
-			tampilkanGelembung(S.kitab, pasal_1, ayatContextMenu_1);
+			tampilkanCatatan(S.kitab, pasal_1, ayatContextMenu_1);
 		} else if (itemId == R.id.menuBagikan) {
 			Intent i = new Intent(Intent.ACTION_SEND);
 			i.setType("text/plain");
@@ -779,6 +791,8 @@ public class IsiActivity extends Activity {
 	private void menuSearch2_click() {
 		Intent intent = new Intent(this, Search2Activity.class);
 		intent.putExtra(Search2Activity.EXTRA_carian, search2_carian);
+		intent.putExtra(Search2Activity.EXTRA_filter_lama, search2_filter_lama);
+		intent.putExtra(Search2Activity.EXTRA_filter_baru, search2_filter_baru);
 		intent.putExtra(Search2Activity.EXTRA_hasilCari, search2_hasilCari);
 		intent.putExtra(Search2Activity.EXTRA_posisiTerpilih, search2_posisiTerpilih);
 		
@@ -812,6 +826,8 @@ public class IsiActivity extends Activity {
 					loncatKeAri(ari);
 				}
 			}
+			ayatAdapter_.muatAtributMap();
+			ayatAdapter_.notifyDataSetChanged();
 		} else if (requestCode == R.id.menuSearch) {
 			if (resultCode == RESULT_OK) {
 				int ari = data.getIntExtra("terpilih.ari", 0);
@@ -827,6 +843,8 @@ public class IsiActivity extends Activity {
 				}
 				
 				search2_carian = data.getStringExtra(Search2Activity.EXTRA_carian);
+				search2_filter_lama = data.getBooleanExtra(Search2Activity.EXTRA_filter_lama, true);
+				search2_filter_baru = data.getBooleanExtra(Search2Activity.EXTRA_filter_baru, true);
 				search2_hasilCari = data.getParcelableExtra(Search2Activity.EXTRA_hasilCari);
 				search2_posisiTerpilih = data.getIntExtra(Search2Activity.EXTRA_posisiTerpilih, -1);
 				
@@ -887,7 +905,7 @@ public class IsiActivity extends Activity {
 			
 			//# tadinya onPostExecute
 			ayatAdapter_.setData(S.kitab, pasal_1, xayat, perikop_xari, perikop_xblok, nblok);
-			ayatAdapter_.muatCatatanMap();
+			ayatAdapter_.muatAtributMap();
 			ayatAdapter_.notifyDataSetChanged();
 			
 			// kasi tau activity
@@ -1010,6 +1028,14 @@ public class IsiActivity extends Activity {
 		
 		return true;
 	}
+
+	static void aturIsiDanTampilanCuplikanBukmak(TextView t, String alamat, String isi) {
+		SpannableStringBuilder sb = new SpannableStringBuilder(alamat);
+		sb.setSpan(new UnderlineSpan(), 0, alamat.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+		sb.append(" ").append(isi);
+		t.setText(sb);
+		aturTampilanTeksIsi(t);
+	}
 	
 	static void aturTampilanTeksIsi(TextView t) {
 		t.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
@@ -1018,12 +1044,16 @@ public class IsiActivity extends Activity {
 		t.setTextColor(S.penerapan.warnaHuruf);
 	}
 	
-	static void aturTampilanTeksAlamatHasilCariAtauTulisanBukmak(TextView t, SpannableStringBuilder sb) {
+	static void aturTampilanTeksAlamatHasilCari(TextView t, SpannableStringBuilder sb) {
+		aturTampilanTeksJudulBukmak(t);
+		sb.setSpan(new UnderlineSpan(), 0, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+		t.setText(sb);
+	}
+	
+	static void aturTampilanTeksJudulBukmak(TextView t) {
 		t.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
 		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp * 1.2f);
 		t.setTextColor(S.penerapan.warnaHuruf);
-		sb.setSpan(new UnderlineSpan(), 0, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-		t.setText(sb);
 	}
 	
 	static void aturTampilanTeksTanggalBukmak(TextView t) {
@@ -1038,11 +1068,11 @@ public class IsiActivity extends Activity {
 		t.setTextColor(S.penerapan.warnaNomerAyat);
 	}
 	
-	void tampilkanGelembung(Kitab kitab_, int pasal_1, int ayat_1) {
+	void tampilkanCatatan(Kitab kitab_, int pasal_1, int ayat_1) {
 		GelembungDialog dialog = new GelembungDialog(IsiActivity.this, new RefreshCallback() {
 			@Override
 			public void udahan() {
-				ayatAdapter_.muatCatatanMap();
+				ayatAdapter_.muatAtributMap();
 				ayatAdapter_.notifyDataSetChanged();
 			}
 		});
@@ -1050,9 +1080,17 @@ public class IsiActivity extends Activity {
 		dialog.tampilkan();
 	}
 	
-	public class GelembungListener {
-		public void onClick(Kitab kitab_, int pasal_1, int ayat_1) {
-			tampilkanGelembung(kitab_, pasal_1, ayat_1);
+	public class AtributListener {
+		public void onClick(Kitab kitab_, int pasal_1, int ayat_1, int jenis) {
+			if (jenis == AlkitabDb.ENUM_Bukmak2_jenis_bukmak) {
+				final int ari = Ari.encode(kitab_.pos, pasal_1, ayat_1);
+				String alamat = S.alamat(ari);
+				BukmakEditor editor = new BukmakEditor(IsiActivity.this, alkitabDb, alamat, ari);
+				editor.setListener(muatUlangAtributMapListener);
+				editor.bukaDialog();
+			} else if (jenis == AlkitabDb.ENUM_Bukmak2_jenis_catatan) {
+				tampilkanCatatan(kitab_, pasal_1, ayat_1);
+			}
 		}
 	}
 }

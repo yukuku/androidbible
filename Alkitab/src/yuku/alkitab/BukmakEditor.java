@@ -65,6 +65,7 @@ public class BukmakEditor {
 		new AlertDialog.Builder(context)
 		.setView(dialogView)
 		.setTitle(alamat)
+		.setIcon(R.drawable.bukmak)
 		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {

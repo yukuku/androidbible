@@ -18,7 +18,7 @@ public class Search2Engine {
 		return xkata;
 	}
 
-	static IntArrayList cari(Resources r, String[] xkata) {
+	static IntArrayList cari(Resources r, String[] xkata, boolean filter_lama, boolean filter_baru) {
 		// urutkan berdasarkan panjang, lalu abjad
 		Arrays.sort(xkata, new Comparator<String>() {
 			@Override
@@ -66,7 +66,7 @@ public class Search2Engine {
 	
 				{
 					long ms = System.currentTimeMillis();
-					hasil = cariDalam(r, kata, lama, 10000);
+					hasil = cariDalam(r, kata, lama, 10000, filter_lama, filter_baru);
 					Log.d("alki", "cari kata '" + kata + "' pake waktu: " + (System.currentTimeMillis() - ms) + " ms");
 				}
 	
@@ -146,11 +146,23 @@ public class Search2Engine {
 		}
 	}
 
-	static IntArrayList cariDalam(Resources r, String kata, IntArrayList sumber, int max) {
+	static IntArrayList cariDalam(Resources r, String kata, IntArrayList sumber, int max, boolean filter_lama, boolean filter_baru) {
 		IntArrayList res = new IntArrayList();
 	
 		if (sumber == null) {
 			for (Kitab k: S.xkitab) {
+				//# filter dulu
+				if (!filter_lama) {
+					if (k.pos >= 0 && k.pos <= 38) {
+						continue;
+					}
+				}
+				if (!filter_baru) {
+					if (k.pos >= 39 && k.pos <= 65) {
+						continue;
+					}
+				}
+				
 				int npasal = k.npasal;
 				
 				for (int pasal_1 = 1; pasal_1 <= npasal; pasal_1++) {
