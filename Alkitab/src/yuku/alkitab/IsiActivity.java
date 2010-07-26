@@ -83,6 +83,86 @@ public class IsiActivity extends Activity {
 			ayatAdapter_.notifyDataSetChanged();
 		}
 	};
+	
+	private class ScrollHandler extends Handler {
+		private float y;
+		private float dy;
+		private float stop;
+		private int tipe;
+		private long down;
+		private static final int BAWAH = 1, ATAS = 2;
+
+		private boolean terkunci = false;
+		private synchronized void bukaKunci() {
+			terkunci = false;
+		}
+		private synchronized boolean ambilKunci() {
+			if (terkunci) {
+				return false;
+			}
+			terkunci = true;
+			return true;
+		}
+		
+		@Override
+		public void handleMessage(Message msg) {
+			int next = -1;
+			
+			if (msg.what == MotionEvent.ACTION_DOWN) {
+				down = SystemClock.uptimeMillis();
+				next = MotionEvent.ACTION_MOVE;
+			} else if (msg.what == MotionEvent.ACTION_MOVE) {
+				y += dy;
+				
+				if ((tipe == BAWAH && y >= stop) || (tipe == ATAS && y <= stop)) {
+					next = MotionEvent.ACTION_MOVE;
+				} else {
+					next = MotionEvent.ACTION_UP;
+				}
+			}
+			
+			try {
+				//MotionEvent ev = MotionEvent.obtain(down, SystemClock.uptimeMillis(), msg.what, 1, y, 0);
+				MotionEvent ev = MotionEvent.obtain(down, SystemClock.uptimeMillis(), msg.what, 1, y, 1.f, 1.f, 0, 1.f, 1.f, 999, 0);
+				lsIsi.dispatchTouchEvent(ev);
+				
+				if (msg.what == MotionEvent.ACTION_UP) {
+					bukaKunci();
+				}
+			} catch (Exception e) {
+				Log.w("alki", "dari ScrollHandler", e);
+			}
+			
+			if (next != -1) {
+				sendEmptyMessage(next);
+			}
+		}
+		
+		public void bawah(int sebanyak) {
+			if (!ambilKunci()) {
+				return;
+			}
+			
+			y = sebanyak;
+			dy = -(sebanyak/8 - 1);
+			tipe = BAWAH;
+			stop = 0;
+			sendEmptyMessage(MotionEvent.ACTION_DOWN);
+		}
+		
+		public void atas(int sebanyak) {
+			if (!ambilKunci()) {
+				return;
+			}
+			
+			y = 0;
+			dy = +(sebanyak/8 - 1);
+			tipe = ATAS;
+			stop = sebanyak;
+			sendEmptyMessage(MotionEvent.ACTION_DOWN);
+		}
+	}
+	ScrollHandler scrollHandler = new ScrollHandler();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -125,33 +205,44 @@ public class IsiActivity extends Activity {
 		registerForContextMenu(lsIsi);
 		
 		bTuju.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				bTuju_click();
-			}
+			@Override public void onClick(View v) { bTuju_click(); }
+		});
+		bTuju.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override public boolean onLongClick(View v) { bTuju_longClick(); return true; }
 		});
 		
-		bTuju.setOnLongClickListener(new View.OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				bTuju_longClick();
-				return true;
-			}
+		lJudul.setOnClickListener(new View.OnClickListener() { // pinjem bTuju
+			@Override public void onClick(View v) { bTuju_click(); }
+		});
+		lJudul.setOnLongClickListener(new View.OnLongClickListener() { // pinjem bTuju
+			@Override public boolean onLongClick(View v) { bTuju_longClick(); return true; }
 		});
 		
 		bKiri.setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View v) { bKiri_click(); }
+		});
+		bKanan.setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View v) { bKanan_click(); }
+		});
+		
+		lsIsi.setOnKeyListener(new View.OnKeyListener() {
 			@Override
-			public void onClick(View v) {
-				bKiri_click();
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				int action = event.getAction();
+				if (action == KeyEvent.ACTION_DOWN) {
+					onKeyDown(keyCode, event);
+					return true;
+				} else if (action == KeyEvent.ACTION_MULTIPLE) {
+					onKeyMultiple(keyCode, event.getRepeatCount(), event);
+					return true;
+				} else if (action == KeyEvent.ACTION_UP) {
+					onKeyUp(keyCode, event);
+					return true;
+				}
+				return false;
 			}
 		});
 		
-		bKanan.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				bKanan_click();
-			}
-		});
 		tog.addSplit("IsiActivity (fase 30) sebelum baca preferences");
 
 		preferences = S.getPreferences(this);
@@ -637,15 +728,20 @@ public class IsiActivity extends Activity {
 				Log.e("alki", "PackageInfo ngaco", e);
 			}
 	    	
-			new AlertDialog.Builder(this).setTitle(R.string.tentang_title).setMessage(
-					Html.fromHtml(
-							getString(R.string.tentang_message, verName, verCode) 
-							+ "<br/>Rev: " + "$LastChangedRevision$".replaceAll("\\$|LastChangedRevision|:| ", "")
-							+ "<br/>Root: " + Environment.getRootDirectory()
-							+ "<br/>Ext: " + Environment.getExternalStorageDirectory()
-							+ "<br/>Data: " + Environment.getDataDirectory()
-					))
-					.show();
+			new AlertDialog.Builder(this)
+			.setTitle(R.string.tentang_title)
+			.setMessage(
+				Html.fromHtml(
+						"Alkitab untuk Android<br/>versi " + verName + " (" + verCode + ") rev " + "$LastChangedRevision$".replaceAll("\\$|LastChangedRevision|:| ", "")
+						+ "<br/><br/>Terjemahan Baru (c) LAI<br/><br/><b>yuku</b> 2009-2010<br/>www.kejut.com<br/><br/>"
+						+ "<b>Bantuan:</b><br/>"
+						+ "- <b>Roy Krisnadi</b> salinan indentasi Mazmur<br/>"
+						+ "- <b>Oluss</b> ikon program<br/>"
+						+ "- <b>Jaya Satrio</b> ikon bukmak<br/>"
+						+ "- dsb.<br/>"
+				))
+			.setPositiveButton("OK", null)
+			.show();
 			return true;
 		} else if (item.getItemId() == R.id.menuPengaturan) {
 			Intent intent = new Intent(this, PengaturanActivity.class);
@@ -927,18 +1023,32 @@ public class IsiActivity extends Activity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		Log.d("alki", "onKeyDown: " + event);
 		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
 			bKiri_click();
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
 			bKanan_click();
 			return true;
+		} else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+			scrollHandler.bawah((int) (getResources().getDisplayMetrics().density * 50));
+			return true;
+		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+			scrollHandler.atas((int) (getResources().getDisplayMetrics().density * 50));
+			return true;
 		}
-		
-		return super.onKeyDown(keyCode, event);
+		return false;
 	}
-
+	
+	@Override
+	public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+			return true;
+		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+			return true;
+		}
+		return false;
+	}
+	
 	private void bKiri_click() {
 		if (pasal_1 == 1) {
 			// uda di awal pasal, masuk ke kitab sebelum

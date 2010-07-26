@@ -3,7 +3,6 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
-	android:paddingRight="?android:attr/scrollbarSize"
 	android:orientation="vertical"
 	>
 	<ImageButton
@@ -12,6 +11,7 @@
 		android:id="@+id/imgAtributBukmak"
 		android:src="@drawable/bukmak"
 		android:background="@null"
+		android:paddingRight="6dp"
 	/>
 	<ImageButton
 		android:layout_width="wrap_content"
@@ -19,5 +19,6 @@
 		android:id="@+id/imgAtributCatatan"
 		android:src="@drawable/gelembung"
 		android:background="@null"
+		android:paddingRight="6dp"
 	/>
 </LinearLayout>

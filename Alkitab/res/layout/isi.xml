@@ -18,9 +18,7 @@
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:padding="2dp"
-			android:textSize="18dp"
-			android:textColor="#222"
-			android:background="#aaa" />
+			android:singleLine="true" android:background="@drawable/isi_judul_bg" android:shadowRadius="2.75" android:shadowColor="#bb000000" android:textColor="#fff" android:textSize="14sp"/>
 		<View
 			android:layout_width="fill_parent"
 			android:layout_height="1px"
@@ -36,7 +34,7 @@
 		android:divider="@null"
 		android:listSelector="@android:color/transparent"
 		android:focusable="false"
-		android:focusableInTouchMode="false"></ListView>
+		android:focusableInTouchMode="false" android:paddingLeft="2dp" android:paddingRight="2dp"></ListView>
 	<LinearLayout
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"
