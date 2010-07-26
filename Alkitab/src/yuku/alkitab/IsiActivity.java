@@ -84,86 +84,6 @@ public class IsiActivity extends Activity {
 		}
 	};
 	
-	private class ScrollHandler extends Handler {
-		private float y;
-		private float dy;
-		private float stop;
-		private int tipe;
-		private long down;
-		private static final int BAWAH = 1, ATAS = 2;
-
-		private boolean terkunci = false;
-		private synchronized void bukaKunci() {
-			terkunci = false;
-		}
-		private synchronized boolean ambilKunci() {
-			if (terkunci) {
-				return false;
-			}
-			terkunci = true;
-			return true;
-		}
-		
-		@Override
-		public void handleMessage(Message msg) {
-			int next = -1;
-			
-			if (msg.what == MotionEvent.ACTION_DOWN) {
-				down = SystemClock.uptimeMillis();
-				next = MotionEvent.ACTION_MOVE;
-			} else if (msg.what == MotionEvent.ACTION_MOVE) {
-				y += dy;
-				
-				if ((tipe == BAWAH && y >= stop) || (tipe == ATAS && y <= stop)) {
-					next = MotionEvent.ACTION_MOVE;
-				} else {
-					next = MotionEvent.ACTION_UP;
-				}
-			}
-			
-			try {
-				//MotionEvent ev = MotionEvent.obtain(down, SystemClock.uptimeMillis(), msg.what, 1, y, 0);
-				MotionEvent ev = MotionEvent.obtain(down, SystemClock.uptimeMillis(), msg.what, 1, y, 1.f, 1.f, 0, 1.f, 1.f, 999, 0);
-				lsIsi.dispatchTouchEvent(ev);
-				
-				if (msg.what == MotionEvent.ACTION_UP) {
-					bukaKunci();
-				}
-			} catch (Exception e) {
-				Log.w("alki", "dari ScrollHandler", e);
-			}
-			
-			if (next != -1) {
-				sendEmptyMessage(next);
-			}
-		}
-		
-		public void bawah(int sebanyak) {
-			if (!ambilKunci()) {
-				return;
-			}
-			
-			y = sebanyak;
-			dy = -(sebanyak/8 - 1);
-			tipe = BAWAH;
-			stop = 0;
-			sendEmptyMessage(MotionEvent.ACTION_DOWN);
-		}
-		
-		public void atas(int sebanyak) {
-			if (!ambilKunci()) {
-				return;
-			}
-			
-			y = 0;
-			dy = +(sebanyak/8 - 1);
-			tipe = ATAS;
-			stop = sebanyak;
-			sendEmptyMessage(MotionEvent.ACTION_DOWN);
-		}
-	}
-	ScrollHandler scrollHandler = new ScrollHandler();
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		TimingLogger tog = new TimingLogger("alki", "IsiActivity#onCreate");
@@ -230,14 +150,9 @@ public class IsiActivity extends Activity {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				int action = event.getAction();
 				if (action == KeyEvent.ACTION_DOWN) {
-					onKeyDown(keyCode, event);
-					return true;
+					return onKeyDown(keyCode, event);
 				} else if (action == KeyEvent.ACTION_MULTIPLE) {
-					onKeyMultiple(keyCode, event.getRepeatCount(), event);
-					return true;
-				} else if (action == KeyEvent.ACTION_UP) {
-					onKeyUp(keyCode, event);
-					return true;
+					return onKeyMultiple(keyCode, event.getRepeatCount(), event);
 				}
 				return false;
 			}
@@ -579,6 +494,27 @@ public class IsiActivity extends Activity {
 		int ayat = ayatAdapter_.getAyatDariPosition(firstPos);
 		
 		return ayat;
+	}
+	
+	private int getPosisiBerdasarSkrol() {
+		int pos = lsIsi.getFirstVisiblePosition();
+
+		// cek apakah paling atas uda keskrol
+		View child = lsIsi.getChildAt(0); 
+		if (child != null) {
+			int top = child.getTop();
+			if (top == 0) {
+				return pos;
+			}
+			int bottom = child.getBottom();
+			if (bottom > lsIsi.getVerticalFadingEdgeLength()) {
+				return pos;
+			} else {
+				return pos+1;
+			}
+		}
+		
+		return pos;
 	}
 
 	private void bTuju_click() {
@@ -1030,23 +966,31 @@ public class IsiActivity extends Activity {
 			bKanan_click();
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-			scrollHandler.bawah((int) (getResources().getDisplayMetrics().density * 50));
+			int posLama = getPosisiBerdasarSkrol();
+			if (posLama < ayatAdapter_.getCount() - 1) {
+				lsIsi.setSelectionFromTop(posLama+1, lsIsi.getVerticalFadingEdgeLength());
+			}
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-			scrollHandler.atas((int) (getResources().getDisplayMetrics().density * 50));
+			int posLama = getPosisiBerdasarSkrol();
+			if (posLama >= 1) {
+				lsIsi.setSelectionFromTop(posLama-1, lsIsi.getVerticalFadingEdgeLength());
+			} else {
+				lsIsi.setSelectionFromTop(0, lsIsi.getVerticalFadingEdgeLength());
+			}
 			return true;
 		}
-		return false;
+		return super.onKeyDown(keyCode, event);
 	}
 	
 	@Override
 	public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-			return true;
+			return onKeyDown(keyCode, event);
 		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-			return true;
+			return onKeyDown(keyCode, event);
 		}
-		return false;
+		return super.onKeyMultiple(keyCode, repeatCount, event);
 	}
 	
 	private void bKiri_click() {
