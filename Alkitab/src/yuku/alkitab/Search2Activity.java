@@ -86,10 +86,6 @@ public class Search2Activity extends Activity {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-					//# close soft keyboard 
-					InputMethodManager inputManager = (InputMethodManager) Search2Activity.this.getSystemService(Context.INPUT_METHOD_SERVICE); 
-					inputManager.hideSoftInputFromWindow(tCarian.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-					
 					bCari_click();
 					return true;
 				}
@@ -132,42 +128,55 @@ public class Search2Activity extends Activity {
 		final boolean filter_lama = cFilterLama.isChecked();
 		final boolean filter_baru = cFilterBaru.isChecked();
 		
-		if (carian.trim().length() > 0) {
-			final String[] xkata = Search2Engine.tokenkan(carian);
-			
-			final ProgressDialog progress = new ProgressDialog(this);
-			progress.setTitle("Mencari");
-			progress.setMessage(Html.fromHtml("Sedang mencari ayat yang mengandung kata-kata: <b>" + Arrays.toString(xkata)));
-			progress.setCancelable(false);
-			progress.setIndeterminate(true);
-			progress.setOnDismissListener(new DialogInterface.OnDismissListener() {
-				@Override
-				public void onDismiss(DialogInterface dialog) {
-					// paksa muncul
-					progress.show();
-				}
-			});
-			progress.show();
-			
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					synchronized (Search2Activity.this) {
-						final IntArrayList hasil = Search2Engine.cari(Search2Activity.this.getResources(), xkata, filter_lama, filter_baru);
-						Search2Activity.this.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								lsHasilCari.setAdapter(new Search2Adapter(hasil, xkata));
-								Toast.makeText(Search2Activity.this, hasil.size() + " hasil", Toast.LENGTH_SHORT).show();
-							}
-						});
-						
-						progress.setOnDismissListener(null);
-						progress.dismiss();
-					}
-				}
-			}).start();
+		if (!filter_lama && !filter_baru) {
+			Toast.makeText(Search2Activity.this, "Pilih perjanjian lama dan/atau baru", Toast.LENGTH_SHORT).show();
+			return;
 		}
+		
+		if (carian.trim().length() == 0) {
+			return;
+		}
+		
+		final String[] xkata = Search2Engine.tokenkan(carian);
+		
+		final ProgressDialog progress = new ProgressDialog(this);
+		progress.setTitle("Mencari");
+		progress.setMessage(Html.fromHtml("Sedang mencari ayat yang mengandung kata-kata: <b>" + Arrays.toString(xkata)));
+		progress.setCancelable(false);
+		progress.setIndeterminate(true);
+		progress.setOnDismissListener(new DialogInterface.OnDismissListener() {
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				// paksa muncul
+				progress.show();
+			}
+		});
+		progress.show();
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (Search2Activity.this) {
+					final IntArrayList hasil = Search2Engine.cari(Search2Activity.this.getResources(), xkata, filter_lama, filter_baru);
+					Search2Activity.this.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							lsHasilCari.setAdapter(new Search2Adapter(hasil, xkata));
+							Toast.makeText(Search2Activity.this, hasil.size() + " hasil", Toast.LENGTH_SHORT).show();
+							
+							if (hasil.size() > 0) {
+								//# close soft keyboard 
+								InputMethodManager inputManager = (InputMethodManager) Search2Activity.this.getSystemService(Context.INPUT_METHOD_SERVICE); 
+								inputManager.hideSoftInputFromWindow(tCarian.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+							}
+						}
+					});
+					
+					progress.setOnDismissListener(null);
+					progress.dismiss();
+				}
+			}
+		}).start();
 	}
 	
 	class Search2Adapter extends BaseAdapter {

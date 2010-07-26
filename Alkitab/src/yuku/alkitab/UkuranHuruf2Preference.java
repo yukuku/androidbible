@@ -3,6 +3,7 @@ package yuku.alkitab;
 
 import android.content.*;
 import android.content.res.*;
+import android.graphics.*;
 import android.os.*;
 import android.preference.*;
 import android.util.*;
@@ -127,6 +128,14 @@ public class UkuranHuruf2Preference extends DialogPreference implements OnSeekBa
 		
 		lUkuranHuruf.setText(String.valueOf(betulan));
 		lContoh.setTextSize(TypedValue.COMPLEX_UNIT_DIP, betulan);
+		
+		//# atur jenis huruf dan tebal huruf
+		SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
+		String jenisHuruf = sharedPreferences.getString(getContext().getString(R.string.pref_jenisHuruf_key), null);
+		boolean tebalHuruf = sharedPreferences.getBoolean(getContext().getString(R.string.pref_boldHuruf_key), false);
+		if (jenisHuruf != null) {
+			lContoh.setTypeface(U.typeface(jenisHuruf), tebalHuruf ? Typeface.BOLD: Typeface.NORMAL);
+		}
 	}
 
 	@Override

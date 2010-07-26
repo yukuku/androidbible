@@ -3,6 +3,7 @@ package yuku.alkitab;
 import java.util.*;
 
 import yuku.alkitab.model.*;
+import android.graphics.*;
 
 public class U {
 
@@ -72,4 +73,15 @@ public class U {
 
 		return res;
 	}
+	
+	public static Typeface typeface(String nama) {
+		Typeface typeface;
+		if (nama == null) typeface = Typeface.DEFAULT;
+		else if (nama.equals("SERIF")) typeface = Typeface.SERIF;
+		else if (nama.equals("SANS_SERIF")) typeface = Typeface.SANS_SERIF;
+		else if (nama.equals("MONOSPACE")) typeface = Typeface.MONOSPACE;
+		else typeface = Typeface.DEFAULT;
+		return typeface;
+	}
+	
 }

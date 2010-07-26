@@ -387,13 +387,7 @@ public class IsiActivity extends Activity {
 		//# atur jenis huruf, termasuk boldnya
 		{
 			String jenisHuruf_s = pengaturan.getString(getString(R.string.pref_jenisHuruf_key), null);
-			Typeface typeface;
-			
-			if (jenisHuruf_s == null) typeface = Typeface.DEFAULT;
-			else if (jenisHuruf_s.equals("SERIF")) typeface = Typeface.SERIF;
-			else if (jenisHuruf_s.equals("SANS_SERIF")) typeface = Typeface.SANS_SERIF;
-			else if (jenisHuruf_s.equals("MONOSPACE")) typeface = Typeface.MONOSPACE;
-			else typeface = Typeface.DEFAULT;
+			Typeface typeface = U.typeface(jenisHuruf_s);
 			
 			boolean boldHuruf_b = pengaturan.getBoolean(getString(R.string.pref_boldHuruf_key), false);
 			
