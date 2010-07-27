@@ -11,7 +11,7 @@
 			android:positiveButtonText="OK"
 			android:negativeButtonText="Batal"
 			android:defaultValue="17" />
-		<ListPreference
+		<yuku.alkitab.JenisHurufPreference
 			android:key="@string/pref_jenisHuruf_key"
 			android:title="Jenis Huruf"
 			android:dialogTitle="Jenis Huruf"
