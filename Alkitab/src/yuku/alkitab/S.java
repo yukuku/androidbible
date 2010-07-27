@@ -10,8 +10,8 @@ import yuku.kirimfidbek.*;
 import android.content.*;
 import android.content.res.*;
 import android.graphics.*;
+import android.preference.*;
 import android.util.*;
-import android.widget.*;
 
 public class S {
 	/**
@@ -32,6 +32,8 @@ public class S {
 		public static boolean matikanTahanAyat;
 		public static boolean nyalakanTerusLayar;
 		public static boolean gebug_tehelBewarna;
+		public static boolean prioritasLoncat;
+		public static boolean sembunyiNavigasi;
 	}
 	
 	/**
@@ -133,7 +135,76 @@ public class S {
 		Log.d("alki", "siapinKitab selesai");
 	}
 
+	public static void bacaPengaturan(Context context) {
+		Log.d("alki", "bacaPengaturan mulai");
+		SharedPreferences pengaturan = PreferenceManager.getDefaultSharedPreferences(context);
 
+		//# atur ukuran huruf isi berdasarkan pengaturan
+		{
+			float ukuranHuruf2 = pengaturan.getFloat(context.getString(R.string.pref_ukuranHuruf2_key), 17.f);
+			S.penerapan.ukuranHuruf2dp = ukuranHuruf2;
+			Log.d("alki", "ukuranHuruf2 dalam dp = " + S.penerapan.ukuranHuruf2dp);
+			
+			S.penerapan.indenParagraf = (int) (context.getResources().getDimension(R.dimen.indenParagraf) * ukuranHuruf2 / 17.f);
+			Log.d("alki", "indenParagraf dalam px = " + S.penerapan.indenParagraf);
+			S.penerapan.menjorokSatu = (int) (context.getResources().getDimension(R.dimen.menjorokSatu) * ukuranHuruf2 / 17.f);
+			Log.d("alki", "menjorokSatu dalam px = " + S.penerapan.menjorokSatu);
+			S.penerapan.menjorokDua = (int) (context.getResources().getDimension(R.dimen.menjorokDua) * ukuranHuruf2 / 17.f);
+			Log.d("alki", "menjorokDua dalam px = " + S.penerapan.menjorokDua);
+		}
+		
+		//# atur jenis huruf, termasuk boldnya
+		{
+			String jenisHuruf_s = pengaturan.getString(context.getString(R.string.pref_jenisHuruf_key), null);
+			Typeface typeface = U.typeface(jenisHuruf_s);
+			S.penerapan.jenisHuruf = typeface;
+			
+			boolean boldHuruf_b = pengaturan.getBoolean(context.getString(R.string.pref_boldHuruf_key), false);
+			S.penerapan.tebalHuruf = boldHuruf_b? Typeface.BOLD: Typeface.NORMAL;
+		}
+		
+		//# atur warna teks, latar, dan nomer ayat
+		{
+			int warnaHuruf = pengaturan.getInt(context.getString(R.string.pref_warnaHuruf_int_key), 0xfff0f0f0);
+			S.penerapan.warnaHuruf = warnaHuruf;
+
+			int warnaLatar = pengaturan.getInt(context.getString(R.string.pref_warnaLatar_int_key), 0xff000000);
+			S.penerapan.warnaLatar = warnaLatar;
+			// Terapkan saat ini juga (liat IsiActivity)
+			
+			int warnaNomerAyat = pengaturan.getInt(context.getString(R.string.pref_warnaNomerAyat_int_key), 0xff8080ff);
+			S.penerapan.warnaNomerAyat = warnaNomerAyat;
+		}
+		
+		S.penerapan.prioritasLoncat = pengaturan.getBoolean(context.getString(R.string.pref_tombolAlamatLoncat_key), false);
+		
+		//# sembunyikan navigasi kalo perlu
+		{
+			boolean sembunyiNavigasi = pengaturan.getBoolean(context.getString(R.string.pref_tanpaNavigasi_key), false);
+			S.penerapan.sembunyiNavigasi = sembunyiNavigasi;
+			// Terapkan saat ini juga (liat IsiActivity)
+		}
+		
+		//# abjad kah?
+		{
+			boolean sortKitabAlfabet = pengaturan.getBoolean(context.getString(R.string.pref_sortKitabAlfabet_key), false);
+			S.penerapan.sortKitabAlfabet = sortKitabAlfabet;
+		}
+		
+		//# jangan nyalakan context menu kah?
+		{
+			boolean matikanTahanAyat = pengaturan.getBoolean(context.getString(R.string.pref_matikanTahanAyat_key), false);
+			S.penerapan.matikanTahanAyat = matikanTahanAyat;
+		}
+		
+		//# layar selalu nyala kah?
+		{
+			boolean nyalakanTerusLayar = pengaturan.getBoolean(context.getString(R.string.pref_nyalakanTerusLayar_key), false);
+			S.penerapan.nyalakanTerusLayar = nyalakanTerusLayar;
+		}
+		Log.d("alki", "bacaPengaturan selesai");
+	}
+	
 	/**
 	 * @param pasal
 	 *            harus betul! antara 1 sampe npasal, 0 ga boleh
@@ -295,20 +366,14 @@ public class S {
 		return res;
 	}
 
-	public static synchronized void siapinPengirimFidbek(final IsiActivity activity) {
+	public static synchronized void siapinPengirimFidbek(final Context context) {
 		if (pengirimFidbek == null) {
-			pengirimFidbek = new PengirimFidbek(activity, getPreferences(activity));
-			pengirimFidbek.activateDefaultUncaughtExceptionHandler("Ada kesalahan. Cobalah ulangi, dan jika tetap terjadi, tolong kirim imel ke yuku+alkitab@ikitek.com. Terima kasih.");
+			pengirimFidbek = new PengirimFidbek(context, getPreferences(context));
+			pengirimFidbek.activateDefaultUncaughtExceptionHandler();
 			pengirimFidbek.setOnSuccessListener(new PengirimFidbek.OnSuccessListener() {
 				@Override
 				public void onSuccess(final byte[] response) {
-					activity.handler.post(new Runnable() {
-						@Override
-						public void run() {
-							Log.d("alki", "KirimFidbek respon: " + new String(response, 0, response.length));
-							Toast.makeText(activity, R.string.fidbekMakasih_s, Toast.LENGTH_SHORT).show();
-						}
-					});
+					Log.e("alki", "KirimFidbek respon: " + new String(response, 0, response.length));
 				}
 			});
 		}

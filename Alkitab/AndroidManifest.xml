@@ -27,8 +27,6 @@
 			android:name="MenujuActivity" />
 
 		<activity
-			android:name="SejarahActivity" />
-		<activity
 			android:name="PengaturanActivity" 
 			android:label="Pengaturan Alkitab"
 		/>

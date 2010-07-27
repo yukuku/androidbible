@@ -36,6 +36,11 @@ public class Search2Activity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.search2);
 		
+		S.siapinEdisi(getResources());
+		S.siapinKitab(getResources());
+		S.bacaPengaturan(this);
+		S.siapinPengirimFidbek(this);
+
 		lsHasilCari = (ListView) findViewById(R.id.lsHasilCari);
 		bCari = (ImageButton) findViewById(R.id.bCari);
 		tCarian = (EditText) findViewById(R.id.tCarian);

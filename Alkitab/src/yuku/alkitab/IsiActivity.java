@@ -13,7 +13,6 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.*;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.*;
-import android.graphics.*;
 import android.graphics.drawable.*;
 import android.os.*;
 import android.preference.*;
@@ -48,7 +47,6 @@ public class IsiActivity extends Activity {
 	int ayatContextMenu_1 = -1;
 	String isiAyatContextMenu = null;
 	SharedPreferences preferences;
-	SharedPreferences pengaturan;
 	Float ukuranAsalHurufIsi;
 	Handler handler = new Handler();
 	DisplayMetrics displayMetrics;
@@ -96,6 +94,7 @@ public class IsiActivity extends Activity {
 
 		S.siapinEdisi(getResources());
 		S.siapinKitab(getResources());
+		S.bacaPengaturan(this);
 		S.siapinPengirimFidbek(this);
 		S.pengirimFidbek.cobaKirim();
 		
@@ -111,7 +110,6 @@ public class IsiActivity extends Activity {
 		
 		tog.addSplit("IsiActivity (fase 10) sebelum terap pengaturan");
 
-		pengaturan = PreferenceManager.getDefaultSharedPreferences(this);
 		terapkanPengaturan();
 		tog.addSplit("IsiActivity (fase 20) sesudah terap pengaturan");
 
@@ -370,60 +368,21 @@ public class IsiActivity extends Activity {
 
 
 	private void terapkanPengaturan() {
-		//# atur ukuran huruf isi berdasarkan pengaturan
+		// penerapan langsung warnaLatar
 		{
-			float ukuranHuruf2 = pengaturan.getFloat(getString(R.string.pref_ukuranHuruf2_key), 17.f);
-			S.penerapan.ukuranHuruf2dp = ukuranHuruf2;
-			Log.d("alki", "ukuranHuruf2 dalam dp = " + S.penerapan.ukuranHuruf2dp);
-			
-			S.penerapan.indenParagraf = (int) (getResources().getDimension(R.dimen.indenParagraf) * ukuranHuruf2 / 17.f);
-			Log.d("alki", "indenParagraf dalam px = " + S.penerapan.indenParagraf);
-			S.penerapan.menjorokSatu = (int) (getResources().getDimension(R.dimen.menjorokSatu) * ukuranHuruf2 / 17.f);
-			Log.d("alki", "menjorokSatu dalam px = " + S.penerapan.menjorokSatu);
-			S.penerapan.menjorokDua = (int) (getResources().getDimension(R.dimen.menjorokDua) * ukuranHuruf2 / 17.f);
-			Log.d("alki", "menjorokDua dalam px = " + S.penerapan.menjorokDua);
-		}
-		
-		//# atur jenis huruf, termasuk boldnya
-		{
-			String jenisHuruf_s = pengaturan.getString(getString(R.string.pref_jenisHuruf_key), null);
-			Typeface typeface = U.typeface(jenisHuruf_s);
-			
-			boolean boldHuruf_b = pengaturan.getBoolean(getString(R.string.pref_boldHuruf_key), false);
-			
-			S.penerapan.jenisHuruf = typeface;
-			S.penerapan.tebalHuruf = boldHuruf_b? Typeface.BOLD: Typeface.NORMAL;
-		}
-		
-		//# atur warna teks, latar, dan nomer ayat
-		{
-			int warnaHuruf = pengaturan.getInt(getString(R.string.pref_warnaHuruf_int_key), 0xfff0f0f0);
-			S.penerapan.warnaHuruf = warnaHuruf;
-
-			int warnaLatar = pengaturan.getInt(getString(R.string.pref_warnaLatar_int_key), 0xff000000);
-			S.penerapan.warnaLatar = warnaLatar;
-			lsIsi.setBackgroundColor(warnaLatar);
-			
-			lsIsi.setCacheColorHint(warnaLatar);
+			lsIsi.setBackgroundColor(S.penerapan.warnaLatar);
+			lsIsi.setCacheColorHint(S.penerapan.warnaLatar);
 			Window window = getWindow();
 			if (window != null) {
-				ColorDrawable bg = new ColorDrawable(warnaLatar);
+				ColorDrawable bg = new ColorDrawable(S.penerapan.warnaLatar);
 				window.setBackgroundDrawable(bg);
 			}
-			
-			int warnaNomerAyat = pengaturan.getInt(getString(R.string.pref_warnaNomerAyat_int_key), 0xff8080ff);
-			S.penerapan.warnaNomerAyat = warnaNomerAyat;
 		}
 		
-		tombolAlamatLoncat_ = pengaturan.getBoolean(getString(R.string.pref_tombolAlamatLoncat_key), false);
-		
-		//# sembunyikan navigasi kalo perlu
+		// penerapan langsung sembunyi navigasi
 		{
-			String key = getString(R.string.pref_tanpaNavigasi_key);
-			boolean sembunyiNavigasi = pengaturan.getBoolean(key, false);
-			
 			View panelNavigasi = findViewById(R.id.panelNavigasi);
-			if (sembunyiNavigasi) {
+			if (S.penerapan.sembunyiNavigasi) {
 				panelNavigasi.setVisibility(View.GONE);
 				tempatJudul.setVisibility(View.VISIBLE);
 			} else {
@@ -432,24 +391,7 @@ public class IsiActivity extends Activity {
 			}
 		}
 		
-		//# abjad kah?
-		{
-			boolean sortKitabAlfabet = pengaturan.getBoolean(getString(R.string.pref_sortKitabAlfabet_key), false);
-			S.penerapan.sortKitabAlfabet = sortKitabAlfabet;
-		}
-		
-		//# jangan nyalakan context menu kah?
-		{
-			boolean matikanTahanAyat = pengaturan.getBoolean(getString(R.string.pref_matikanTahanAyat_key), false);
-			S.penerapan.matikanTahanAyat = matikanTahanAyat;
-		}
-		
-		//# layar selalu nyala kah?
-		{
-			boolean nyalakanTerusLayar = pengaturan.getBoolean(getString(R.string.pref_nyalakanTerusLayar_key), false);
-			S.penerapan.nyalakanTerusLayar = nyalakanTerusLayar;
-		}
-		
+		// wajib
 		lsIsi.invalidateViews();
 	}
 	
@@ -599,9 +541,6 @@ public class IsiActivity extends Activity {
 		SubMenu menuGebug = menu.addSubMenu("Gebug");
 		menuGebug.setHeaderTitle("Untuk percobaan dan cari kutu. Tidak penting.");
 		menuGebug.add(0, 0x985801, 0, "gebug 1: dump p+p");
-		menuGebug.add(0, 0x985802, 0, "gebug 2: bikin ulang index");
-		menuGebug.add(0, 0x985803, 0, "gebug 3: crash!");
-		menuGebug.add(0, 0x985804, 0, "gebug 4: reset p+p");
 		menuGebug.add(0, 0x985805, 0, "gebug 5: search1 (lama)");
 		menuGebug.add(0, 0x985806, 0, "gebug 6: tehel bewarna");
 		
@@ -690,36 +629,18 @@ public class IsiActivity extends Activity {
 			{
 				Map<String, ?> all = preferences.getAll();
 				for (Map.Entry<String, ?> entry: all.entrySet()) {
-					Log.i("alki", String.format("%s = %s", entry.getKey(), entry.getValue()));
+					Log.i("alki", entry.getKey() + ": " + entry.getValue());
 				}
 			}
 			Log.i("alki", "### pengaturan:::");
 			{
-				Map<String, ?> all = pengaturan.getAll();
+				Map<String, ?> all = PreferenceManager.getDefaultSharedPreferences(this).getAll();
 				for (Map.Entry<String, ?> entry: all.entrySet()) {
-					Log.i("alki", String.format("%s = %s", entry.getKey(), entry.getValue()));
+					Log.i("alki", entry.getKey() + ": " + entry.getValue());
 				}
 			}
 			Log.i("alki", "### db:::");
 			alkitabDb.dump();
-			return true;
-		} else if (item.getItemId() == 0x985802) { // debug 2
-			bikinIndex();
-			return true;
-		} else if (item.getItemId() == 0x985803) { // debug 3
-			throw new RuntimeException("ini cuma lagi nyoba2 DUEH.");
-			//return true;
-		} else if (item.getItemId() == 0x985804) { // debug 4
-			{
-				Editor editor = preferences.edit();
-				editor.clear();
-				editor.commit();
-			}
-			{
-				Editor editor = pengaturan.edit();
-				editor.clear();
-				editor.commit();
-			}
 			return true;
 		} else if (item.getItemId() == 0x985805) { // debug 5
 			menuSearch_click();

@@ -2,11 +2,11 @@ package yuku.alkitab;
 
 import java.util.*;
 
-import yuku.alkitab.model.Kitab;
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
+import yuku.alkitab.model.*;
+import android.app.*;
+import android.content.*;
+import android.os.*;
+import android.util.*;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.*;
@@ -37,6 +37,8 @@ public class MenujuActivity extends Activity {
 		
 		S.siapinEdisi(getResources());
 		S.siapinKitab(getResources());
+		S.bacaPengaturan(this);
+		S.siapinPengirimFidbek(this);
 		
 		bOk = (Button) findViewById(R.id.bOk);
 		lPasal = (TextView) findViewById(R.id.lPasal);

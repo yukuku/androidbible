@@ -39,6 +39,8 @@ public class BukmakActivity extends ListActivity {
 		
 		S.siapinEdisi(getResources());
 		S.siapinKitab(getResources());
+		S.bacaPengaturan(this);
+		S.siapinPengirimFidbek(this);
 		
 		alkitabDb = AlkitabDb.getInstance(this);
 		cursor = alkitabDb.getDatabase().query(AlkitabDb.TABEL_Bukmak2, cursorColumnsSelect, AlkitabDb.KOLOM_Bukmak2_jenis + "=?", new String[] {String.valueOf(AlkitabDb.ENUM_Bukmak2_jenis_bukmak)}, null, null, AlkitabDb.KOLOM_Bukmak2_waktuUbah + " desc");

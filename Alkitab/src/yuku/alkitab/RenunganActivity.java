@@ -74,6 +74,11 @@ public class RenunganActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.renungan);
 
+		S.siapinEdisi(getResources());
+		S.siapinKitab(getResources());
+		S.bacaPengaturan(this);
+		S.siapinPengirimFidbek(this);
+
 		lHeader = (TextView) findViewById(R.id.lHeader);
 		lIsi = (TextView) findViewById(R.id.lIsi);
 		scrollIsi = (ScrollView) findViewById(R.id.scrollIsi);
