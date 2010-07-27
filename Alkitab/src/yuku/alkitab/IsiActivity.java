@@ -821,6 +821,9 @@ public class IsiActivity extends Activity {
 				}
 			}
 		} else if (requestCode == R.id.menuPengaturan) {
+			// HARUS rilod pengaturan.
+			S.bacaPengaturan(this);
+			
 			terapkanPengaturan();
 		}
 	}
