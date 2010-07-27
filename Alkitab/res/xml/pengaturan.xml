@@ -24,21 +24,26 @@
 			android:title="Tebalkan Huruf"
 			android:summary="Pakai huruf yang dicetak tebal (bold)."
 			android:defaultValue="false" />
-		<yuku.alkitab.AmbilWarnaPreference
-			android:key="@string/pref_warnaHuruf_int_key"
-			android:defaultValue="0xfff0f0f0"
-			android:title="Warna Teks Alkitab"
-			android:summary="Ubah warna tulisan." />
-		<yuku.alkitab.AmbilWarnaPreference
-			android:key="@string/pref_warnaLatar_int_key"
-			android:defaultValue="0xff000000"
-			android:title="Warna Latar Belakang"
-			android:summary="Ubah warna latar belakang tulisan." />
-		<yuku.alkitab.AmbilWarnaPreference
-			android:key="@string/pref_warnaNomerAyat_int_key"
-			android:defaultValue="0xff9090ff"
-			android:title="Warna Nomor Ayat"
-			android:summary="Ubah warna nomor ayat." />
+
+		<PreferenceScreen
+			android:summary="Atur warna teks, latar belakang, dan nomor ayat."
+			android:title="Warna">
+			<yuku.alkitab.AmbilWarnaPreference
+				android:key="@string/pref_warnaHuruf_int_key"
+				android:defaultValue="0xfff0f0f0"
+				android:title="Warna Teks Alkitab"
+				android:summary="Ubah warna tulisan." />
+			<yuku.alkitab.AmbilWarnaPreference
+				android:key="@string/pref_warnaLatar_int_key"
+				android:defaultValue="0xff000000"
+				android:title="Warna Latar Belakang"
+				android:summary="Ubah warna latar belakang tulisan." />
+			<yuku.alkitab.AmbilWarnaPreference
+				android:key="@string/pref_warnaNomerAyat_int_key"
+				android:defaultValue="0xff9090ff"
+				android:title="Warna Nomor Ayat"
+				android:summary="Ubah warna nomor ayat." />
+		</PreferenceScreen>
 	</PreferenceCategory>
 
 	<PreferenceCategory
