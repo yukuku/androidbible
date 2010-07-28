@@ -79,6 +79,12 @@ public class AmbilWarnaPreference extends Preference {
 		});
     	dialog.show();
     }
+    
+    public void paksaSetWarna(int warna) {
+    	this.warna = warna;
+    	persistInt(warna);
+    	notifyChanged();
+    }
 
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {

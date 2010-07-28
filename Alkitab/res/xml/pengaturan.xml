@@ -28,21 +28,25 @@
 		<PreferenceScreen
 			android:summary="Atur warna teks, latar belakang, dan nomor ayat."
 			android:title="Warna">
+			<yuku.alkitab.TemaWarnaPreference
+				android:key="_gapake_temaWarna"
+				android:title="Tema Warna"
+				android:summary="Atur warna teks, latar belakang, dan nomor ayat menurut suatu tema." 
+				android:entries="@array/pref_temaWarna_label"
+				android:entryValues="@array/pref_temaWarna_value"
+				/>
 			<yuku.alkitab.AmbilWarnaPreference
 				android:key="@string/pref_warnaHuruf_int_key"
 				android:defaultValue="0xfff0f0f0"
-				android:title="Warna Teks Alkitab"
-				android:summary="Ubah warna tulisan." />
+				android:title="Warna Teks Alkitab" />
 			<yuku.alkitab.AmbilWarnaPreference
 				android:key="@string/pref_warnaLatar_int_key"
 				android:defaultValue="0xff000000"
-				android:title="Warna Latar Belakang"
-				android:summary="Ubah warna latar belakang tulisan." />
+				android:title="Warna Latar Belakang" />
 			<yuku.alkitab.AmbilWarnaPreference
 				android:key="@string/pref_warnaNomerAyat_int_key"
 				android:defaultValue="0xff9090ff"
-				android:title="Warna Nomor Ayat"
-				android:summary="Ubah warna nomor ayat." />
+				android:title="Warna Nomor Ayat" />
 		</PreferenceScreen>
 	</PreferenceCategory>
 

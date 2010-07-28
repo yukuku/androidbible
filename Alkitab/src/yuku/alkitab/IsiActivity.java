@@ -543,6 +543,7 @@ public class IsiActivity extends Activity {
 		menuGebug.add(0, 0x985801, 0, "gebug 1: dump p+p");
 		menuGebug.add(0, 0x985805, 0, "gebug 5: search1 (lama)");
 		menuGebug.add(0, 0x985806, 0, "gebug 6: tehel bewarna");
+		menuGebug.add(0, 0x985807, 0, "gebug 7: dump warna");
 		
 		return true;
 	}
@@ -644,6 +645,7 @@ public class IsiActivity extends Activity {
 			return true;
 		} else if (item.getItemId() == 0x985805) { // debug 5
 			menuSearch_click();
+			return true;
 		} else if (item.getItemId() == 0x985806) { // debug 6
 			if (S.penerapan.gebug_tehelBewarna) {
 				Toast.makeText(this, "tehel bewarna mati", Toast.LENGTH_SHORT).show();
@@ -651,6 +653,12 @@ public class IsiActivity extends Activity {
 				Toast.makeText(this, "tehel bewarna nyala", Toast.LENGTH_SHORT).show();
 			}
 			S.penerapan.gebug_tehelBewarna = ! S.penerapan.gebug_tehelBewarna;
+			return true;
+		} else if (item.getItemId() == 0x985807) { // debug 7
+			String s = Integer.toHexString(S.penerapan.warnaHuruf) + " " + Integer.toHexString(S.penerapan.warnaLatar) + " " + Integer.toHexString(S.penerapan.warnaNomerAyat);
+			Toast.makeText(this, s, Toast.LENGTH_LONG).show();
+			Log.i("alki", s);
+			return true;
 		}
 		
 		return super.onMenuItemSelected(featureId, item);
