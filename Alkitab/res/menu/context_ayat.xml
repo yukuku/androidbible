@@ -4,7 +4,7 @@
 	<item
 		android:id="@+id/menuSalinAyat"
 		android:icon="@drawable/menu_salin_ayat"
-		android:title="Salin ayat" />
+		android:title="Salin (copy) ayat" />
 	<item
 		android:id="@+id/menuTambahBukmak"
 		android:title="Tambah pembatas buku" />
@@ -13,5 +13,5 @@
 		android:title="Tulis catatan" />
 	<item
 		android:id="@+id/menuBagikan"
-		android:title="Bagikan..."></item>
+		android:title="Bagikan"></item>
 </menu>

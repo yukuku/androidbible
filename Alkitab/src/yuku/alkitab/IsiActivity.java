@@ -340,7 +340,7 @@ public class IsiActivity extends Activity {
 			ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 			clipboardManager.setText(this.isiAyatContextMenu);
 			
-			Toast.makeText(this, alamat + " sudah disalin ke clipboard", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, alamat + " sudah disalin", Toast.LENGTH_SHORT).show();
 			
 			return true;
 		} else if (itemId == R.id.menuTambahBukmak) {
