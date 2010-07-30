@@ -480,7 +480,7 @@ public class IsiActivity extends Activity {
 	}
 	
 	private void bukaDialogLoncat() {
-		final View loncat = LayoutInflater.from(IsiActivity.this).inflate(R.layout.loncat_dialog, null);
+		final View loncat = LayoutInflater.from(this).inflate(R.layout.loncat_dialog, null);
 		final TextView lAlamatKini = (TextView) loncat.findViewById(R.id.lAlamatKini);
 		final EditText tAlamatLoncat = (EditText) loncat.findViewById(R.id.tAlamatLoncat);
 		final ImageButton bKeTuju = (ImageButton) loncat.findViewById(R.id.bKeTuju);

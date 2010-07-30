@@ -8,7 +8,8 @@
 		android:orientation="vertical"
 		android:padding="8dp"
 		android:layout_width="wrap_content"
-		android:minWidth="280dp" android:layout_centerHorizontal="true">
+		android:minWidth="280dp"
+		android:layout_centerHorizontal="true">
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -22,7 +23,8 @@
 			android:id="@+id/lAlamatKini"
 			android:layout_marginLeft="18dp"
 			android:layout_marginBottom="18dp"
-			android:layout_marginRight="18dp" android:textAppearance="?android:attr/textAppearanceMedium"></TextView>
+			android:layout_marginRight="18dp"
+			android:textAppearance="?android:attr/textAppearanceMedium"></TextView>
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -34,9 +36,19 @@
 			android:layout_marginLeft="18dp"
 			android:layout_marginRight="18dp"
 			android:inputType="textCapSentences"
-			android:imeOptions="actionGo" android:textAppearance="?android:attr/textAppearanceMedium"></EditText>
+			android:imeOptions="actionGo"
+			android:textAppearance="?android:attr/textAppearanceMedium"></EditText>
 
 
 	</LinearLayout>
-<ImageButton android:layout_alignParentTop="true" android:layout_alignParentRight="true" android:layout_marginTop="4dp" android:layout_marginRight="4dp" android:id="@+id/bKeTuju" android:layout_height="wrap_content" android:layout_width="wrap_content" android:src="@drawable/tombol_ke_tuju" android:padding="6dp"></ImageButton>
+	<ImageButton
+		android:layout_alignParentTop="true"
+		android:layout_alignParentRight="true"
+		android:layout_marginTop="4dp"
+		android:layout_marginRight="4dp"
+		android:id="@+id/bKeTuju"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:src="@drawable/tombol_ke_tuju"
+		android:padding="6dp"></ImageButton>
 </RelativeLayout>
