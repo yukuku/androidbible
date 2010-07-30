@@ -7,6 +7,7 @@ import java.util.*;
 
 import yuku.alkitab.model.*;
 import yuku.alkitab.renungan.*;
+import yuku.alkitab.renungan.TukangDonlot.OnStatusDonlotListener;
 import yuku.andoutil.*;
 import android.app.*;
 import android.content.*;
@@ -18,10 +19,11 @@ import android.text.format.DateFormat;
 import android.text.method.*;
 import android.util.*;
 import android.view.*;
+import android.view.animation.*;
 import android.widget.*;
 import android.widget.TextView.BufferType;
 
-public class RenunganActivity extends Activity {
+public class RenunganActivity extends Activity implements OnStatusDonlotListener {
 	private static SimpleDateFormat sdf;
 
 	public static final String[] ADA_NAMA = {
@@ -41,11 +43,15 @@ public class RenunganActivity extends Activity {
 	ImageButton bKiri;
 	ImageButton bKanan;
 	Button bGanti;
+	TextView lStatus;
 	
 	private boolean renderBerhasilBaik = false;
 	private long terakhirCobaTampilLagi = 0;
+	private Animation memudar;
 
 	Handler pengulangTampil = new Handler();
+	Handler penampilStatusDonlot = new Handler();
+	
 	Runnable cobaTampilLagi = new Runnable() {
 		@Override
 		public void run() {
@@ -78,11 +84,14 @@ public class RenunganActivity extends Activity {
 		S.siapinKitab(getResources());
 		S.bacaPengaturan(this);
 		S.siapinPengirimFidbek(this);
+		
+		memudar = AnimationUtils.loadAnimation(this, R.anim.memudar);
 
 		lHeader = (TextView) findViewById(R.id.lHeader);
 		lIsi = (TextView) findViewById(R.id.lIsi);
 		scrollIsi = (ScrollView) findViewById(R.id.scrollIsi);
 		bKiri = (ImageButton) findViewById(R.id.bKiri);
+		lStatus = (TextView) findViewById(R.id.lStatus);
 		
 		scrollIsi.setBackgroundColor(S.penerapan.warnaLatar);
 		
@@ -226,7 +235,7 @@ public class RenunganActivity extends Activity {
 
 	private synchronized void akanPerlu(String nama, String tgl, boolean penting) {
 		if (S.tukangDonlot == null) {
-			S.tukangDonlot = new TukangDonlot(getApplicationContext());
+			S.tukangDonlot = new TukangDonlot(this, this);
 			S.tukangDonlot.start();
 		}
 
@@ -318,5 +327,19 @@ public class RenunganActivity extends Activity {
 			}
 		}
 		
+	}
+
+	@Override
+	public void onStatusDonlot(final String s) {
+		penampilStatusDonlot.post(new Runnable() {
+			@Override
+			public void run() {
+				if (s != null) {
+					lStatus.setText(s);
+					lStatus.setVisibility(View.VISIBLE);
+					lStatus.startAnimation(memudar);
+				}
+			}
+		});
 	}
 }

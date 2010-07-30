@@ -19,6 +19,11 @@ public class ArtikelRenunganHarian extends ArtikelDariSabda {
 	public String getNama() {
 		return "rh";
 	}
+	
+	@Override
+	public String getNamaUmum() {
+		return "Renungan Harian";
+	}
 }
 
 

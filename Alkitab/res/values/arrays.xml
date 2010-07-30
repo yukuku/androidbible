@@ -52,7 +52,7 @@
 	<!-- warna teks, warna latar, warna ayat -->
 	<string-array
 		name="pref_temaWarna_value">
-		<item>ff000000 ffffffff ff9090ff</item>
+		<item>ff101010 ffffffff ff9090ff</item>
 		<item>fff0f0f0 ff000000 ff9090ff</item>
 		<item>ff274720 ffd7e9e7 ff1916ec</item>
 		<item>ff562707 ffeddca9 ffe44908</item>

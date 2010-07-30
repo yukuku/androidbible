@@ -12,6 +12,7 @@ public interface IArtikel {
 	
 	//# dipake buat orang luar 
 	String getNama();
+	String getNamaUmum();
 	String getUrl();
 	String getMentahEncoding();
 	void isikan(String mentah);

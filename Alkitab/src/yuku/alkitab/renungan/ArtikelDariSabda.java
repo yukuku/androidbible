@@ -80,7 +80,7 @@ public abstract class ArtikelDariSabda implements IArtikel {
 			Matcher matcher = pattern4.matcher(mentah);
 			if (matcher.find()) {
 				headerHtml_ = matcher.group(1);
-				poin += 10;
+				poin += 5;
 			} else {
 				Log.w("alki", "ArtikelDariSabda ga dapat header");
 				headerHtml_ = "";

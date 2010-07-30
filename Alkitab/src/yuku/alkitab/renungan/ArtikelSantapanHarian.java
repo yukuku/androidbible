@@ -19,4 +19,9 @@ public class ArtikelSantapanHarian extends ArtikelDariSabda {
 	public String getNama() {
 		return "sh";
 	}
+	
+	@Override
+	public String getNamaUmum() {
+		return "Santapan Harian";
+	}
 }

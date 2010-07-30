@@ -3,26 +3,32 @@ package yuku.alkitab.renungan;
 import static yuku.alkitab.model.AlkitabDb.*;
 
 import java.io.*;
-import java.util.LinkedList;
+import java.util.*;
 
 import org.apache.http.*;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.*;
+import org.apache.http.client.methods.*;
+import org.apache.http.impl.client.*;
 
-import yuku.alkitab.model.AlkitabDb;
-import yuku.andoutil.Sqlitil;
+import yuku.alkitab.model.*;
+import yuku.andoutil.*;
 import android.content.*;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+import android.database.sqlite.*;
+import android.util.*;
 
 public class TukangDonlot extends Thread {
+	public interface OnStatusDonlotListener {
+		void onStatusDonlot(String s);
+	}
+	
 	private Context context_;
+	private OnStatusDonlotListener listener_;
 	private LinkedList<IArtikel> antrian_ = new LinkedList<IArtikel>();
 	private boolean nganggur_;
 	
-	public TukangDonlot(Context context) {
+	public TukangDonlot(Context context, OnStatusDonlotListener listener) {
 		context_ = context;
+		listener_ = listener;
 	}
 	
 	public synchronized boolean tambah(IArtikel artikel, boolean penting) {
@@ -83,8 +89,9 @@ public class TukangDonlot extends Thread {
 				String url = artikel.getUrl();
 				boolean berhasil = false;
 				String output = null;
-			
+				
 				Log.d("alki", "TukangDonlot mulai donlot nama=" + artikel.getNama() + " tgl=" + artikel.getTgl());
+				listener_.onStatusDonlot("Mengunduh " + artikel.getNamaUmum() + " tgl " + artikel.getTgl() + "...");
 				
 				try {
 					HttpClient client = new DefaultHttpClient();
@@ -111,7 +118,12 @@ public class TukangDonlot extends Thread {
 				}
 				
 				if (berhasil) {
+					listener_.onStatusDonlot("Berhasil mengunduh " + artikel.getNamaUmum() + " tgl " + artikel.getTgl());
+					
 					artikel.isikan(output);
+					if (output.startsWith("NG")) {
+						listener_.onStatusDonlot("Kesalahan dalam mengunduh " + artikel.getNamaUmum() + " tgl " + artikel.getTgl() + ": " + output);
+					}
 					
 					//# mari masukin ke db.
 					{
@@ -151,6 +163,7 @@ public class TukangDonlot extends Thread {
 						}
 					}
 				} else {
+					listener_.onStatusDonlot("Gagal mengunduh " + artikel.getNamaUmum() + " tgl " + artikel.getTgl());
 					Log.d("alki", "TukangDonlot gagal donlot");
 				}
 			}
