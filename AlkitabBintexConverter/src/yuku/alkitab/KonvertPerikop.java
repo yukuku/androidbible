@@ -3,11 +3,11 @@ package yuku.alkitab;
 import java.io.*;
 import java.util.*;
 
-import yuku.bintex.BintexWriter;
+import yuku.bintex.*;
 
 public class KonvertPerikop {
 	public static void main(String[] args) throws Exception {
-		new KonvertPerikop().convert("/Users/yuku/android/Alkitab/publikasi/perikop setengah matang.txt", "/Users/yuku/android/Alkitab/res/raw/tb_perikop_blok_bt.bt", "/Users/yuku/android/Alkitab/res/raw/tb_perikop_index_bt.bt");
+		new KonvertPerikop().convert("/Users/yuku/f/android/Alkitab/publikasi/perikop setengah matang.txt", "/Users/yuku/f/android/Alkitab/res/raw/tb_perikop_blok_bt.bt", "/Users/yuku/f/android/Alkitab/res/raw/tb_perikop_index_bt.bt");
 	}
 	
 	int bolong = 0;
@@ -78,6 +78,7 @@ public class KonvertPerikop {
 		out.close();
 		index.close();
 	}
+	static int lastAri = 0;
 
 	private void u(ArrayList<Integer> xofset, ArrayList<Integer> xari, BintexWriter out, BintexWriter index, String perikop) throws IOException {
 		int ofset = out.getPos();
@@ -111,10 +112,17 @@ public class KonvertPerikop {
 			
 			System.out.println("u: " + perikop + " -> " + kitab + " " + pasal + " " + ayat);
 			
-			xari.add(kitab << 16 | pasal << 8 | ayat);
+			int ari = kitab << 16 | pasal << 8 | ayat;
+			
+			if (ari < lastAri) {
+				throw new RuntimeException("ari sekarang: " + ari + " lastAri: " + lastAri);
+			}
+			lastAri = ari;
+			
+			xari.add(ari);
 			
 			for (int i = 0; i < bolong; i++) {
-				xari.add(kitab << 16 | pasal << 8 | ayat);
+				xari.add(ari);
 			}
 			bolong = 0;
 			
