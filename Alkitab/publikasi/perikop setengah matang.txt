@@ -3790,7 +3790,7 @@ Judul: Hukum yang terutama
         Paralel: Mat 22:34-40
         Paralel: Luk 10:25-28
 Judul: Hubungan antara Yesus dan Daud
-   Perikop: Mrk 13:35-37
+   Perikop: Mrk 12:35-37
         Paralel: Mat 22:41-46
         Paralel: Luk 20:41-44
 Judul: Yesus menasihatkan supaya hati-hati terhadap ahli-ahli Taurat

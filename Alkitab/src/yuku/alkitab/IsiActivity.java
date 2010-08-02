@@ -606,8 +606,8 @@ public class IsiActivity extends Activity {
 						+ "<br/><br/>Terjemahan Baru (c) LAI<br/><br/><b>yuku</b> 2009-2010<br/>www.kejut.com<br/><br/>"
 						+ "<b>Bantuan:</b><br/>"
 						+ "- <b>Roy Krisnadi</b> salinan indentasi Mazmur<br/>"
-						+ "- <b>Oluss</b> ikon program<br/>"
-						+ "- <b>Jaya Satrio</b> ikon bukmak<br/>"
+						+ "- <b>Oluss Studio</b> ikon program<br/>"
+						+ "- <b>Jaya Satrio</b> berbagai ikon<br/>"
 						+ "- dsb.<br/>"
 				))
 			.setPositiveButton("OK", null)
