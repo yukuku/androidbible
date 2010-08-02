@@ -29,15 +29,13 @@
 			android:id="@+id/bKiri"
 			android:layout_height="48dp"
 			android:layout_width="48dp"
-			android:padding="8dp"
-			android:scaleType="fitXY"></ImageButton>
+			android:padding="8dp" android:scaleType="center"></ImageButton>
 		<ImageButton
 			android:src="@drawable/right_arrow"
 			android:id="@+id/bKanan"
 			android:layout_height="48dp"
 			android:layout_width="48dp"
-			android:padding="8dp"
-			android:scaleType="fitXY"></ImageButton>
+			android:padding="8dp" android:scaleType="center"></ImageButton>
 	</LinearLayout>
 
 	<RelativeLayout
