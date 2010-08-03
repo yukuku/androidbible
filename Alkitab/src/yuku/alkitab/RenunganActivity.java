@@ -4,6 +4,7 @@ import static yuku.alkitab.model.AlkitabDb.*;
 
 import java.text.*;
 import java.util.*;
+import java.util.regex.*;
 
 import yuku.alkitab.model.*;
 import yuku.alkitab.renungan.*;
@@ -164,6 +165,19 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 			render(artikel);
 		}
 	}
+	
+	CallbackSpan.OnClickListener ayatKlikListener = new CallbackSpan.OnClickListener() {
+		@Override
+		public void onClick(View widget, Object data) {
+			Log.d("alki", "Dalam renungan, ada yang diklik: " + data);
+
+			Intent res = new Intent();
+			res.putExtra("alamat", (String)data);
+			
+			setResult(RESULT_OK, res);
+			finish();
+		}
+	};
 
 	private void render(IArtikel artikel) {
 		if (artikel == null) {
@@ -175,30 +189,50 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		if (artikel != null && artikel.getSiapPakai()) {
 			renderBerhasilBaik = true;
 			
-			Spanned s = Html.fromHtml(artikel.getHeaderHtml());
-			SpannableStringBuilder ss = new SpannableStringBuilder(s);
+			Spanned header = Html.fromHtml(artikel.getHeaderHtml());
+			SpannableStringBuilder ss = new SpannableStringBuilder(header);
 			
 			if (artikel.getNama().equals("sh")) {
 				SpannableStringBuilder judul = new SpannableStringBuilder(Html.fromHtml("<h3>" + artikel.getJudul() + "</h3>"));
-				judul.setSpan(new CallbackSpan(artikel.getJudul(), new CallbackSpan.OnClickListener() {
-					@Override
-					public void onClick(View widget, Object data) {
-						Log.d("alki", "Dalam renungan, ada yang diklik: " + data);
-
-						Intent res = new Intent();
-						res.putExtra("alamat", (String)data);
-						
-						setResult(RESULT_OK, res);
-						finish();
-					}}
-				), 0, artikel.getJudul().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+				judul.setSpan(new CallbackSpan(artikel.getJudul(), ayatKlikListener), 0, artikel.getJudul().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 				
 				ss.append(judul);
-			} else {
+			} else if (artikel.getNama().equals("rh")) {
+				// cari "Bacaan Setahun : " dst
+				{
+					String s = header.toString();
+					Matcher m = Pattern.compile("Bacaan\\s+Setahun\\s*:\\s*(.*?)\\s*$", Pattern.MULTILINE).matcher(s);
+					while (m.find()) {
+						// di dalem daftar ayat, kita cari lagi, harusnya sih dipisahkan titik-koma.
+						String t = m.group(1);
+						Matcher n = Pattern.compile("\\s*(\\S.*?)\\s*(;|$)", Pattern.MULTILINE).matcher(t);
+						
+						while (n.find()) {
+							Log.d("alki", "Ketemu salah satu bacaan setahun: #" + n.group(1) + "#");
+							CallbackSpan span = new CallbackSpan(n.group(1), ayatKlikListener);
+							ss.setSpan(span, m.start(1) + n.start(1), m.start(1) + n.end(1), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+						}
+					}
+				}
+				
 				ss.append(Html.fromHtml("<br/><h3>" + artikel.getJudul() + "</h3><br/>"));
 			}
 			
-			ss.append(Html.fromHtml(artikel.getIsiHtml() + "<br/><br/>" + artikel.getKopiraitHtml()));
+			int ofsetSebelumIsi = ss.length();
+			
+			Spanned isiDanKopirait = Html.fromHtml(artikel.getIsiHtml() + "<br/><br/>" + artikel.getKopiraitHtml());
+			ss.append(isiDanKopirait);
+			
+			// cari "Bacaan : " dst dan pasang link
+			{
+				String s = isiDanKopirait.toString();
+				Matcher m = Pattern.compile("Bacaan\\s*:\\s*(.*?)\\s*$", Pattern.MULTILINE).matcher(s);
+				while (m.find()) {
+					Log.d("alki", "Ketemu \"Bacaan : \": #" + m.group(1) + "#");
+					CallbackSpan span = new CallbackSpan(m.group(1), ayatKlikListener);
+					ss.setSpan(span, ofsetSebelumIsi + m.start(1), ofsetSebelumIsi + m.end(1), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+				}
+			}
 			
 			lIsi.setText(ss, BufferType.SPANNABLE);
 			lIsi.setLinksClickable(true);

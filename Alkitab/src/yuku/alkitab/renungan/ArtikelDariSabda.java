@@ -11,10 +11,10 @@ public abstract class ArtikelDariSabda implements IArtikel {
 	private static Pattern pattern4;
 	
 	static {
-		pattern1 = Pattern.compile("<h1>\\s*<div\\s+align=\"center\">(.*?)</div>\\s*</h1>", Pattern.MULTILINE | Pattern.DOTALL);
-		pattern2 = Pattern.compile("<td class=\"wj\">(.{100,}?)</td>", Pattern.MULTILINE | Pattern.DOTALL);
-		pattern3 = Pattern.compile("<td class=\"wn\".*?>(.*?)</td>", Pattern.MULTILINE | Pattern.DOTALL);
-		pattern4 = Pattern.compile("<td width=\"50%\" class=\"wn\" align=\"right\">.*?<b>(.*?)</b>", Pattern.MULTILINE | Pattern.DOTALL);
+		pattern1 = Pattern.compile("<h1>\\s*<div\\s+align=\"center\">(.*?)</div>\\s*</h1>", Pattern.MULTILINE | Pattern.DOTALL); // judul
+		pattern2 = Pattern.compile("<td class=\"wj\">(.{100,}?)</td>", Pattern.MULTILINE | Pattern.DOTALL); // isi
+		pattern3 = Pattern.compile("<td class=\"wn\".*?>(.*?)</td>", Pattern.MULTILINE | Pattern.DOTALL); // header
+		pattern4 = Pattern.compile("<td width=\"50%\" class=\"wn\" align=\"right\">.*?<b>(.*?)</b>", Pattern.MULTILINE | Pattern.DOTALL); //header
 	}
 	
 	private String judul_;
