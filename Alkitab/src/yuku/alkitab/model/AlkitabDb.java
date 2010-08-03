@@ -317,7 +317,7 @@ public class AlkitabDb {
 				
 				if (sukses) {
 					new AlertDialog.Builder(context)
-					.setMessage("Selamat datang di versi baru! Pembatas-pembatas buku yang anda miliki sudah diubah menjadi versi baru. Kini anda bisa menambahkan keterangan pada setiap pembatas buku.\nPembatas buku ditemukan: " + c)
+					.setMessage("Selamat datang di versi baru! Pembatas-pembatas buku yang anda miliki sudah diubah menjadi versi baru. Kini anda bisa menambahkan judul pada setiap pembatas buku.\nPembatas buku ditemukan: " + c)
 					.setPositiveButton("OK", null)
 					.create()
 					.show();
