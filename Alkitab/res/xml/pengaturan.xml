@@ -37,15 +37,15 @@
 				/>
 			<yuku.alkitab.AmbilWarnaPreference
 				android:key="@string/pref_warnaHuruf_int_key"
-				android:defaultValue="0xff000000"
+				android:defaultValue="0xfff0f0f0"
 				android:title="Warna Teks Alkitab" />
 			<yuku.alkitab.AmbilWarnaPreference
 				android:key="@string/pref_warnaLatar_int_key"
-				android:defaultValue="0xffeeeeee"
+				android:defaultValue="0xff000000"
 				android:title="Warna Latar Belakang" />
 			<yuku.alkitab.AmbilWarnaPreference
 				android:key="@string/pref_warnaNomerAyat_int_key"
-				android:defaultValue="0xff6666ff"
+				android:defaultValue="0xff9090ff"
 				android:title="Warna Nomor Ayat" />
 		</PreferenceScreen>
 	</PreferenceCategory>
