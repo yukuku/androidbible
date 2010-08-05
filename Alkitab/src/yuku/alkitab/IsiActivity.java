@@ -775,14 +775,15 @@ public class IsiActivity extends Activity {
 				bukaDialogLoncat();
 			}
 		} else if (requestCode == R.id.menuBukmak) {
+			ayatAdapter_.muatAtributMap();
+			ayatAdapter_.notifyDataSetChanged();
+
 			if (resultCode == RESULT_OK) {
 				int ari = data.getIntExtra(BukmakActivity.EXTRA_ariTerpilih, 0);
 				if (ari != 0) { // 0 berarti ga ada apa2, karena ga ada pasal 0 ayat 0
 					loncatKeAri(ari);
 				}
 			}
-			ayatAdapter_.muatAtributMap();
-			ayatAdapter_.notifyDataSetChanged();
 		} else if (requestCode == R.id.menuSearch) {
 			if (resultCode == RESULT_OK) {
 				int ari = data.getIntExtra("terpilih.ari", 0);

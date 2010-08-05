@@ -48,6 +48,7 @@
 		<item>Coklat</item>
 		<item>Jambu Air</item>
 		<item>Malam Cerah</item>
+		<item>Malam Berbintang</item>
 	</string-array>
 	
 	<!-- warna teks, warna latar, warna ayat -->
@@ -63,6 +64,7 @@
 		<item>fffaac5f ff362b2a ffac8674</item> <!-- coklat -->
 		<item>ffe7a697 ff262a33 ffad8d8d</item> <!-- jambu -->
 		<item>ffe1e6fa ff122641 ffb1790f</item> <!-- malam -->
+		<item>ffffe985 ff122641 ffe3f5ff</item> <!-- malam bintang -->
 	</string-array>
 	
 	
