@@ -2,11 +2,11 @@ package yuku.alkitab;
 
 import java.util.*;
 
-import yuku.alkitab.model.*;
-import android.app.*;
-import android.content.*;
-import android.os.*;
-import android.util.*;
+import yuku.alkitab.model.Kitab;
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.*;
@@ -35,8 +35,8 @@ public class MenujuActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.menuju);
 		
-		S.siapinEdisi(getResources());
-		S.siapinKitab(getResources());
+		S.siapinEdisi(getApplicationContext());
+		S.siapinKitab(getApplicationContext());
 		S.bacaPengaturan(this);
 		S.siapinPengirimFidbek(this);
 		
@@ -46,12 +46,12 @@ public class MenujuActivity extends Activity {
 		lAyat = (TextView) findViewById(R.id.lAyat);
 		lLabelAyat = findViewById(R.id.lLabelAyat);
 		cbKitab = (Spinner) findViewById(R.id.cbKitab);
-		kitabAdapter = new KitabAdapter(S.xkitab);
+		kitabAdapter = new KitabAdapter(S.edisiAktif.volatile_xkitab);
 		cbKitab.setAdapter(kitabAdapter);
 		bKeLoncat = (ImageButton) findViewById(R.id.bKeLoncat);
 
 		// set kitab, pasal, ayat kini
-		cbKitab.setSelection(kitabAdapter.getPositionDariPos(S.kitab.pos));
+		cbKitab.setSelection(kitabAdapter.getPositionDariPos(S.kitabAktif.pos));
 		
 		cbKitab.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
@@ -61,7 +61,7 @@ public class MenujuActivity extends Activity {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				try {
-					Kitab kitab = S.xkitab[(int) id];
+					Kitab kitab = S.edisiAktif.volatile_xkitab[(int) id];
 					maxPasal = kitab.npasal;
 					
 					int pasal = cobaBacaPasal();
@@ -262,7 +262,7 @@ public class MenujuActivity extends Activity {
 				}
 				
 				try {
-					Kitab kitab = S.xkitab[(int) cbKitab.getSelectedItemId()];
+					Kitab kitab = S.edisiAktif.volatile_xkitab[(int) cbKitab.getSelectedItemId()];
 					int pasal = cobaBacaPasal();
 					
 					maxAyat = kitab.nayat[pasal-1];

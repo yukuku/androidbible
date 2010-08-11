@@ -1,12 +1,12 @@
 package yuku.alkitab;
 
-import yuku.alkitab.model.*;
-import android.app.*;
-import android.content.*;
-import android.os.*;
-import android.view.*;
+import yuku.alkitab.model.Edisi;
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
 import android.widget.*;
-import android.widget.AdapterView.*;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class EdisiActivity extends Activity {
 	@Override
@@ -14,7 +14,7 @@ public class EdisiActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.pilih_edisi);
 		
-		S.siapinEdisi(getResources());
+		S.siapinEdisi(getApplicationContext());
 		
 		final ArrayAdapter<Edisi> adapter = new ArrayAdapter<Edisi>(this, R.layout.listitem, R.id.lLabel, S.xedisi);
 		

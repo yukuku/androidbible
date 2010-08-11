@@ -2,22 +2,22 @@ package yuku.alkitab;
 
 import static yuku.alkitab.model.AlkitabDb.*;
 
-import java.text.*;
-import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.*;
 
-import yuku.alkitab.model.*;
+import yuku.alkitab.model.AlkitabDb;
 import yuku.alkitab.renungan.*;
 import yuku.alkitab.renungan.TukangDonlot.OnStatusDonlotListener;
-import yuku.andoutil.*;
-import android.app.*;
-import android.content.*;
-import android.database.*;
-import android.database.sqlite.*;
+import yuku.andoutil.ThreadSleep;
+import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.*;
 import android.text.*;
 import android.text.format.DateFormat;
-import android.text.method.*;
+import android.text.method.LinkMovementMethod;
 import android.util.*;
 import android.view.*;
 import android.view.animation.*;
@@ -81,8 +81,8 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.renungan);
 
-		S.siapinEdisi(getResources());
-		S.siapinKitab(getResources());
+		S.siapinEdisi(getApplicationContext());
+		S.siapinKitab(getApplicationContext());
 		S.bacaPengaturan(this);
 		S.siapinPengirimFidbek(this);
 		

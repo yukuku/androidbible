@@ -3,12 +3,12 @@ package yuku.alkitab;
 import java.util.*;
 
 import yuku.alkitab.model.*;
-import yuku.andoutil.*;
-import android.content.res.*;
-import android.graphics.*;
+import yuku.andoutil.IntArrayList;
+import android.content.Context;
+import android.graphics.Typeface;
 import android.text.*;
 import android.text.style.*;
-import android.util.*;
+import android.util.Log;
 
 public class Search2Engine {
 	static String[] tokenkan(String carian) {
@@ -18,7 +18,7 @@ public class Search2Engine {
 		return xkata;
 	}
 
-	static IntArrayList cari(Resources r, String[] xkata, boolean filter_lama, boolean filter_baru) {
+	static IntArrayList cari(Context context, String[] xkata, boolean filter_lama, boolean filter_baru) {
 		// urutkan berdasarkan panjang, lalu abjad
 		Arrays.sort(xkata, new Comparator<String>() {
 			@Override
@@ -66,7 +66,7 @@ public class Search2Engine {
 	
 				{
 					long ms = System.currentTimeMillis();
-					hasil = cariDalam(r, kata, lama, 10000, filter_lama, filter_baru);
+					hasil = cariDalam(context, kata, lama, 10000, filter_lama, filter_baru);
 					Log.d("alki", "cari kata '" + kata + "' pake waktu: " + (System.currentTimeMillis() - ms) + " ms");
 				}
 	
@@ -146,11 +146,11 @@ public class Search2Engine {
 		}
 	}
 
-	static IntArrayList cariDalam(Resources r, String kata, IntArrayList sumber, int max, boolean filter_lama, boolean filter_baru) {
+	static IntArrayList cariDalam(Context context, String kata, IntArrayList sumber, int max, boolean filter_lama, boolean filter_baru) {
 		IntArrayList res = new IntArrayList();
 	
 		if (sumber == null) {
-			for (Kitab k: S.xkitab) {
+			for (Kitab k: S.edisiAktif.volatile_xkitab) {
 				//# filter dulu
 				if (!filter_lama) {
 					if (k.pos >= 0 && k.pos <= 38) {
@@ -167,7 +167,7 @@ public class Search2Engine {
 				
 				for (int pasal_1 = 1; pasal_1 <= npasal; pasal_1++) {
 					// coba sepasal sekaligus dulu.
-					String sepasal = S.muatTeksJanganPisahAyatHurufKecil(r, k, pasal_1);
+					String sepasal = S.muatTeksJanganPisahAyatHurufKecil(context, S.edisiAktif, k, pasal_1);
 					if (sepasal.indexOf(kata) >= 0) {
 						// hanya lakukan ini jika dalam sepasal kedetek ada kata
 						cariDalamSepasal(sepasal, kata, res, Ari.encode(k.pos, pasal_1, 0));
@@ -187,10 +187,10 @@ public class Search2Engine {
 				ariKpKini = ariBerikutnya(sumber, ppos, ariKpKini);
 				if (ariKpKini == 0) break; // habis
 				
-				Kitab k = S.xkitab[Ari.toKitab(ariKpKini)];
+				Kitab k = S.edisiAktif.volatile_xkitab[Ari.toKitab(ariKpKini)];
 				int pasal_1 = Ari.toPasal(ariKpKini);
 				
-				String sepasal = S.muatTeksJanganPisahAyatHurufKecil(r, k, pasal_1);
+				String sepasal = S.muatTeksJanganPisahAyatHurufKecil(context, S.edisiAktif, k, pasal_1);
 				if (sepasal.indexOf(kata) >= 0) {
 					// hanya lakukan ini jika dalam sepasal kedetek ada kata
 					cariDalamSepasal(sepasal, kata, res, ariKpKini);

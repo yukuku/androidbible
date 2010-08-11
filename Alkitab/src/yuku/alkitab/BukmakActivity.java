@@ -3,12 +3,12 @@ package yuku.alkitab;
 
 import yuku.alkitab.BukmakEditor.Listener;
 import yuku.alkitab.model.*;
-import yuku.andoutil.*;
-import android.app.*;
-import android.content.*;
-import android.database.*;
-import android.os.*;
-import android.provider.*;
+import yuku.andoutil.Sqlitil;
+import android.app.ListActivity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -37,8 +37,8 @@ public class BukmakActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.bukmak);
 		
-		S.siapinEdisi(getResources());
-		S.siapinKitab(getResources());
+		S.siapinEdisi(getApplicationContext());
+		S.siapinKitab(getApplicationContext());
 		S.bacaPengaturan(this);
 		S.siapinPengirimFidbek(this);
 		
@@ -65,14 +65,14 @@ public class BukmakActivity extends ListActivity {
 					return true;
 				} else if (cursorColumnsSelect[columnIndex] == AlkitabDb.KOLOM_Bukmak2_ari) {
 					int ari = cursor.getInt(columnIndex);
-					Kitab kitab = S.xkitab[Ari.toKitab(ari)];
-					String[] xayat = S.muatTeks(getResources(), kitab, Ari.toPasal(ari));
+					Kitab kitab = S.edisiAktif.volatile_xkitab[Ari.toKitab(ari)];
+					String[] xayat = S.muatTeks(getApplicationContext(), S.edisiAktif, kitab, Ari.toPasal(ari));
 					int ayat_1 = Ari.toAyat(ari);
 					String isi = ayat_1 > xayat.length? "(...)": xayat[ayat_1 - 1];
 					isi = U.buangKodeKusus(isi);
 					
 					TextView tv = (TextView) view;
-					String alamat = S.alamat(ari);
+					String alamat = S.alamat(S.edisiAktif, ari);
 					IsiActivity.aturIsiDanTampilanCuplikanBukmak(tv, alamat, isi);
 					return true;
 				}

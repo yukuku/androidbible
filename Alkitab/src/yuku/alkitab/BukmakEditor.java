@@ -1,12 +1,12 @@
 package yuku.alkitab;
 
-import java.util.*;
+import java.util.Date;
 
 import yuku.alkitab.model.*;
-import android.app.*;
+import android.app.AlertDialog;
 import android.content.*;
 import android.view.*;
-import android.widget.*;
+import android.widget.EditText;
 
 public class BukmakEditor {
 	public interface Listener {
@@ -55,7 +55,7 @@ public class BukmakEditor {
 		// set yang belum diset
 		if (this.ari == 0 && bukmak != null) {
 			this.ari = bukmak.ari;
-			this.alamat = S.alamat(bukmak.ari);
+			this.alamat = S.alamat(S.edisiAktif, bukmak.ari);
 		}
 		
 		View dialogView = LayoutInflater.from(context).inflate(R.layout.bukmak_ubah_dialog, null);

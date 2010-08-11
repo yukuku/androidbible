@@ -1,13 +1,13 @@
 package yuku.alkitab;
 
-import java.util.*;
+import java.util.Arrays;
 
 import yuku.alkitab.model.*;
-import yuku.andoutil.*;
+import yuku.andoutil.IntArrayList;
 import android.app.*;
 import android.content.*;
-import android.graphics.*;
-import android.os.*;
+import android.graphics.Color;
+import android.os.Bundle;
 import android.text.*;
 import android.view.*;
 import android.view.inputmethod.*;
@@ -36,8 +36,8 @@ public class Search2Activity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.search2);
 		
-		S.siapinEdisi(getResources());
-		S.siapinKitab(getResources());
+		S.siapinEdisi(getApplicationContext());
+		S.siapinKitab(getApplicationContext());
 		S.bacaPengaturan(this);
 		S.siapinPengirimFidbek(this);
 
@@ -162,7 +162,7 @@ public class Search2Activity extends Activity {
 			@Override
 			public void run() {
 				synchronized (Search2Activity.this) {
-					final IntArrayList hasil = Search2Engine.cari(Search2Activity.this.getResources(), xkata, filter_lama, filter_baru);
+					final IntArrayList hasil = Search2Engine.cari(Search2Activity.this, xkata, filter_lama, filter_baru);
 					Search2Activity.this.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -223,13 +223,13 @@ public class Search2Activity extends Activity {
 			TextView lCuplikan = (TextView) res.findViewById(R.id.lCuplikan);
 			
 			int ari = hasilCari.get(position);
-			Kitab kitab = S.xkitab[Ari.toKitab(ari)];
+			Kitab kitab = S.edisiAktif.volatile_xkitab[Ari.toKitab(ari)];
 			int pasal_1 = Ari.toPasal(ari);
 			int ayat_1 = Ari.toAyat(ari);
 			SpannableStringBuilder sb = new SpannableStringBuilder(kitab.judul).append(" " + pasal_1 + ":" + ayat_1);
 			IsiActivity.aturTampilanTeksAlamatHasilCari(lAlamat, sb);
 			
-			String[] xayat = S.muatTeks(getResources(), kitab, pasal_1);
+			String[] xayat = S.muatTeks(Search2Activity.this.getApplicationContext(), S.edisiAktif, kitab, pasal_1);
 			String ayat = xayat[ayat_1 - 1];
 			ayat = U.buangKodeKusus(ayat);
 			lCuplikan.setText(Search2Engine.hilite(ayat, xkata, warnaStabilo));

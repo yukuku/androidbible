@@ -12,6 +12,8 @@ public class Kitab {
 	public String judul;
 	public String file;
 	public int pos;
+	/** Hanya dipake di YesPembaca */
+	public int offset = -1;
 
 	public static Kitab baca(BintexReader in, int pos) throws IOException {
 		Kitab k = new Kitab();
