@@ -1,18 +1,26 @@
 package yuku.alkitab;
 
-import java.io.*;
+import java.io.File;
 import java.util.*;
 import java.util.Map.Entry;
 
 public class BdbProses {
+	static class Rec {
+		int kitab_1;
+		int pasal_1;
+		int ayat_1;
+		String isi;
+	}
+	
 	public static void main(String[] args) throws Exception {
-		new BdbProses().u(args);
+		new BdbProses().parse("../Alkitab/publikasi/kjv_teks_bdb.txt");
 	}
 
-	private void u(String[] args) throws Exception {
+	public ArrayList<Rec> parse(String nf) throws Exception {
 		LinkedHashMap<Integer, Integer> nn = new LinkedHashMap<Integer, Integer>();
+		ArrayList<Rec> res = new ArrayList<Rec>();
 		
-		Scanner sc = new Scanner(new File("../Alkitab/publikasi/kjv_teks_bdb.txt"), "ascii");
+		Scanner sc = new Scanner(new File(nf), "ascii");
 		
 		int lastNo = 0;
 		int lastKitab_1 = 1;
@@ -23,7 +31,7 @@ public class BdbProses {
 			String baris = sc.nextLine();
 			
 			String[] xkolom = baris.split("\t");
-			int no = Integer.parseInt(xkolom[0]);
+			int no = xkolom[0].startsWith("tambah")? 0: Integer.parseInt(xkolom[0]);
 			int kitab_1 = Integer.parseInt(xkolom[1]);
 			int pasal_1 = Integer.parseInt(xkolom[2]);
 			int ayat_1 = Integer.parseInt(xkolom[3]);
@@ -41,10 +49,18 @@ public class BdbProses {
 			}
 			
 			if (no != lastNo + 1) {
-				throw new RuntimeException("no ngaco");
+				System.out.println("no ngaco: " + no + "; ini gapapa kalo emang sengaja");
 			}
 			
 			nn.put(kitab_1, (nn.get(kitab_1) == null? 0: nn.get(kitab_1)) + 1);
+			
+			Rec rec = new Rec();
+			rec.kitab_1 = kitab_1;
+			rec.pasal_1 = pasal_1;
+			rec.ayat_1 = ayat_1;
+			rec.isi = isi;
+			
+			res.add(rec);
 			
 			lastNo = no;
 			lastKitab_1 = kitab_1;
@@ -57,6 +73,8 @@ public class BdbProses {
 		}
 		
 		System.out.println("selesai");
+		
+		return res;
 	}
 
 }
