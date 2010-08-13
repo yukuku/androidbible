@@ -15,8 +15,8 @@ public class YesPembaca implements Pembaca {
 	private RandomAccessFile f;
 	private long teks_dasarOffset;
 	
-	public YesPembaca() {
-		this.nf = "/sdcard/kjv.yes";
+	public YesPembaca(String nf) {
+		this.nf = nf;
 	}
 	
 	/**

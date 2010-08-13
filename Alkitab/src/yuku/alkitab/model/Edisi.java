@@ -2,6 +2,8 @@ package yuku.alkitab.model;
 
 import java.util.Scanner;
 
+import yuku.alkitab.AddonManager;
+
 public class Edisi {
 	public String nama;
 	public 	String judul;
@@ -34,7 +36,7 @@ public class Edisi {
 					if ("internal".equals(v)) {
 						e.pembaca = new InternalPembaca();
 					} else if ("yes".equals(v)) {
-						e.pembaca = new YesPembaca();
+						e.pembaca = new YesPembaca(AddonManager.getEdisiPath(e.nama));
 					}
 				} else if (key.equals("donlot")) {
 					e.donlot = sc.next();

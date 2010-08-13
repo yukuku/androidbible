@@ -3,10 +3,10 @@ package yuku.alkitab;
 import yuku.alkitab.R.id;
 import yuku.alkitab.S.penerapan;
 import yuku.alkitab.model.*;
-import android.content.*;
-import android.graphics.*;
+import android.content.Context;
+import android.graphics.Typeface;
 import android.text.*;
-import android.text.method.*;
+import android.text.method.LinkMovementMethod;
 import android.text.style.*;
 import android.util.*;
 import android.view.*;
@@ -395,6 +395,7 @@ class AyatAdapter extends BaseAdapter {
 		seayat.append(ayat_s).append(" ").append(isi);
 		seayat.setSpan(new ForegroundColorSpan(S.penerapan.warnaNomerAyat), 0, ayat_s.length(), 0);
 		
+		Log.d("alki", "kasi leading " + S.penerapan.indenParagraf);
 		seayat.setSpan(new LeadingMarginSpan.Standard(0, S.penerapan.indenParagraf), 0, ayat_s.length() + 1 + isi.length(), 0);
 		
 		return seayat;
