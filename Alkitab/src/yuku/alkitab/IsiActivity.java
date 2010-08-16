@@ -546,7 +546,6 @@ public class IsiActivity extends Activity {
 		menuGebug.add(0, 0x985801, 0, "gebug 1: dump p+p");
 		menuGebug.add(0, 0x985806, 0, "gebug 6: tehel bewarna");
 		menuGebug.add(0, 0x985807, 0, "gebug 7: dump warna");
-		menuGebug.add(0, 0x985808, 0, "gebug 8: pilih edisi");
 		
 		return true;
 	}
@@ -582,8 +581,7 @@ public class IsiActivity extends Activity {
 			menuSearch2_click();
 			return true;
 		} else if (item.getItemId() == R.id.menuEdisi) {
-			Intent intent = new Intent(this, EdisiActivity.class);
-			startActivityForResult(intent, R.id.menuEdisi);
+			pilihEdisi();
 			return true;
 		} else if (item.getItemId() == R.id.menuRenungan) { 
 			Intent intent = new Intent(this, RenunganActivity.class);
@@ -659,10 +657,6 @@ public class IsiActivity extends Activity {
 			Toast.makeText(this, s, Toast.LENGTH_LONG).show();
 			Log.i("alki", s);
 			return true;
-		} else if (item.getItemId() == 0x985808) { // debug 8
-			pilihEdisi();
-
-			return true;
 		}
 		
 		return super.onMenuItemSelected(featureId, item);
@@ -721,7 +715,7 @@ public class IsiActivity extends Activity {
 
 	protected void tanyaDonlotEdisi(final Edisi mau) {
 		new AlertDialog.Builder(IsiActivity.this)
-		.setTitle("Donlot tambahan")
+		.setTitle("Mengunduh tambahan")
 		.setMessage("File '" + AddonManager.getEdisiPath(mau.nama) + "' tidak ditemukan. Apakah anda mau mengunduhnya (download)?")
 		.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
 			@Override
@@ -824,13 +818,6 @@ public class IsiActivity extends Activity {
 
 			if (resultCode == RESULT_OK) {
 				int ari = data.getIntExtra(BukmakActivity.EXTRA_ariTerpilih, 0);
-				if (ari != 0) { // 0 berarti ga ada apa2, karena ga ada pasal 0 ayat 0
-					loncatKeAri(ari);
-				}
-			}
-		} else if (requestCode == R.id.menuSearch) {
-			if (resultCode == RESULT_OK) {
-				int ari = data.getIntExtra("terpilih.ari", 0);
 				if (ari != 0) { // 0 berarti ga ada apa2, karena ga ada pasal 0 ayat 0
 					loncatKeAri(ari);
 				}

@@ -12,31 +12,23 @@
 		android:title="Pembatas buku" />
 	<item
 		android:icon="@android:drawable/ic_menu_search"
-		android:title="Cari1"
-		android:id="@+id/menuSearch" 
-		android:visible="false"
-		/>
-	<item
-		android:icon="@android:drawable/ic_menu_search"
 		android:title="Cari"
 		android:id="@+id/menuSearch2" />
-	<item
-		android:id="@+id/menuEdisi"
-		android:title="@string/menuEdisi"
-		android:visible="false" />
-	
 	<item
 		android:id="@+id/menuRenungan"
 		android:title="Renungan"
 		android:icon="@drawable/ic_menu_notifications" />
 	<item
-		android:id="@+id/menuFidbek"
-		android:title="Saran"
-		android:icon="@android:drawable/ic_menu_send" />
+		android:id="@+id/menuEdisi"
+		android:title="Versi" />
 	<item
 		android:icon="@android:drawable/ic_menu_preferences"
 		android:id="@+id/menuPengaturan"
 		android:title="@string/menuPengaturan" />
+	<item
+		android:id="@+id/menuFidbek"
+		android:title="Beri Saran"
+		android:icon="@android:drawable/ic_menu_send" />
 	<item
 		android:id="@+id/menuBantuan"
 		android:title="Bantuan"
