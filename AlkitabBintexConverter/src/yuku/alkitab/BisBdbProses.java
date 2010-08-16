@@ -11,20 +11,18 @@ import yuku.yes.YesFile.InfoKitab;
 import yuku.yes.YesFile.Kitab;
 import yuku.yes.YesFile.Teks;
 
-public class KjvBdbProses {
-	private static final String KJV_TEKS_BDB = "../Alkitab/publikasi/kjv_teks_bdb.txt";
-	private static final String KJV_YES_OUTPUT = "../Alkitab/publikasi/kjv.yes";
-	//private static final String KJV_TEKS_BDB = "../Alkitab/prog/b_indonesian_baru.txt";
-	//private static final String KJV_YES_OUTPUT = "../Alkitab/publikasi/tb.yes";
+public class BisBdbProses {
+	private static final String BIS_TEKS_BDB = "../Alkitab/publikasi/bis_teks_bdb.txt";
+	private static final String BIS_YES_OUTPUT = "../Alkitab/publikasi/bis.yes";
 
 	public static void main(String[] args) throws Exception {
 		final Charset ascii = Charset.forName("ascii");
 		
-		ArrayList<Rec> xrec = new BdbProses().parse(KJV_TEKS_BDB);
+		ArrayList<Rec> xrec = new BdbProses().parse(BIS_TEKS_BDB);
 		
-		final InfoEdisi infoEdisi = kjvInfoEdisi();
-		final InfoKitab infoKitab = kjvInfoKitab(xrec);
-		final Teks teks = kjvTeks(xrec);
+		final InfoEdisi infoEdisi = bisInfoEdisi();
+		final InfoKitab infoKitab = bisInfoKitab(xrec);
+		final Teks teks = bisTeks(xrec);
 		
 		YesFile file = new YesFile() {{
 			this.xseksi = new Seksi[] {
@@ -53,6 +51,28 @@ public class KjvBdbProses {
 				new Seksi() {
 					@Override
 					public byte[] nama() {
+						return "perikopIndex".getBytes(ascii);
+					}
+					
+					@Override
+					public IsiSeksi isi() {
+						return new NemplokSeksi("../Alkitab/publikasi/bis_perikop_index_bt.bt");
+					}
+				},
+				new Seksi() {
+					@Override
+					public byte[] nama() {
+						return "perikopBlok_".getBytes(ascii);
+					}
+					
+					@Override
+					public IsiSeksi isi() {
+						return new NemplokSeksi("../Alkitab/publikasi/bis_perikop_blok_bt.bt");
+					}
+				},
+				new Seksi() {
+					@Override
+					public byte[] nama() {
 						return "teks________".getBytes(ascii);
 					}
 
@@ -64,11 +84,11 @@ public class KjvBdbProses {
 			};
 		}};
 		
-		file.output(new FileOutputStream(KJV_YES_OUTPUT));
+		file.output(new FileOutputStream(BIS_YES_OUTPUT));
 	}
 
 
-	private static Teks kjvTeks(ArrayList<Rec> xrec) {
+	private static Teks bisTeks(ArrayList<Rec> xrec) {
 		final ArrayList<String> ss = new ArrayList<String>();
 		for (Rec rec: xrec) {
 			ss.add(rec.isi);
@@ -79,17 +99,17 @@ public class KjvBdbProses {
 		}};
 	}
 
-	private static InfoEdisi kjvInfoEdisi() {
+	private static InfoEdisi bisInfoEdisi() {
 		return new InfoEdisi() {{
 			versi = 1;
-			nama = "kjv";
-			judul = "King James (KJV)";
+			nama = "bis";
+			judul = "Bahasa Indonesia Sehari-hari";
 			nkitab = 66;
-			perikopAda = 0;
+			perikopAda = 1;
 		}};
 	}
 
-	private static InfoKitab kjvInfoKitab(ArrayList<Rec> xrec) throws Exception {
+	private static InfoKitab bisInfoKitab(ArrayList<Rec> xrec) throws Exception {
 		final Kitab[] xkitab_ = new Kitab[66];
 		
 		String[] xjudul, xnama;
@@ -97,7 +117,7 @@ public class KjvBdbProses {
 		xnama = new String[66];
 		int p = 0;
 		
-		Scanner sc = new Scanner(new File("../Alkitab/publikasi/kjv_kitab.txt"));
+		Scanner sc = new Scanner(new File("../Alkitab/publikasi/bis_kitab.txt"));
 		while (sc.hasNextLine()) {
 			String judul = sc.nextLine().trim();
 			if (judul.length() > 0) {

@@ -3,11 +3,11 @@ package yuku.alkitab;
 import java.io.*;
 import java.util.*;
 
-import yuku.bintex.*;
+import yuku.bintex.BintexWriter;
 
 public class KonvertPerikop {
 	public static void main(String[] args) throws Exception {
-		new KonvertPerikop().convert("/Users/yuku/f/android/Alkitab/publikasi/perikop setengah matang.txt", "/Users/yuku/f/android/Alkitab/res/raw/tb_perikop_blok_bt.bt", "/Users/yuku/f/android/Alkitab/res/raw/tb_perikop_index_bt.bt");
+		new KonvertPerikop().convert("../Alkitab/publikasi/bis_perikop_1.txt", "../Alkitab/publikasi/bis_perikop_blok_bt.bt", "../Alkitab/publikasi/bis_perikop_index_bt.bt");
 	}
 	
 	int bolong = 0;
@@ -88,6 +88,12 @@ public class KonvertPerikop {
 			
 			xofset.add(ofset);
 		} else {
+			if (perikop.contains(";")) {
+				String[] bag = perikop.split(";");
+				System.out.println("Perikop " + perikop + " disederhanakan jadi: " + bag[0]);
+				perikop = bag[0];
+			}
+			
 			String[] s1 = perikop.split(" +");
 			if (s1.length != 2) {
 				throw new RuntimeException("perikop = " + perikop);

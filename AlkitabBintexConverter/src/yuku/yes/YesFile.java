@@ -2,7 +2,6 @@ package yuku.yes;
 
 import java.io.*;
 import java.lang.annotation.*;
-import java.lang.reflect.Field;
 
 import yuku.bintex.BintexWriter;
 
@@ -26,66 +25,81 @@ public class YesFile {
 		void toBytes(BintexWriter writer) throws Exception;
 	}
 	
-	public static class InfoEdisi implements IsiSeksi {
-		@key("nama") protected String nama;
-		@key("judul") protected String judul;
-		@key("format") protected int format;
-		@key("nkitab") protected int nkitab;
+	public static abstract class InfoEdisi implements IsiSeksi {
+		public int versi; // 1 
+		public String nama;
+		public String judul;
+		public int nkitab;
+		public int perikopAda; // 0=ga ada, selain 0: nomer versi perikopIndex dan perikopBlok_
 		
 		@Override
 		public void toBytes(BintexWriter writer) throws Exception {
-			Field[] fields = InfoEdisi.class.getDeclaredFields();
-			for (Field f: fields) {
-				key annotation = f.getAnnotation(key.class);
-				if (annotation != null) {
-					writer.writeShortString(annotation.value());
-					if (f.getType() == int.class) {
-						writer.writeInt(f.getInt(this));
-					} else if (f.getType() == String.class) {
-						writer.writeShortString((String) f.get(this));
-					} else {
-						throw new RuntimeException("type ga dikenal: " + f.getType());
-					}
-				}
-			}
+			writer.writeShortString("versi");
+			writer.writeInt(versi);
+			
+			writer.writeShortString("nama");
+			writer.writeShortString(nama);
+			
+			writer.writeShortString("judul");
+			writer.writeShortString(judul);
+			
+			writer.writeShortString("nkitab");
+			writer.writeInt(nkitab);
+
+			writer.writeShortString("perikopAda");
+			writer.writeInt(perikopAda);
+
 			writer.writeShortString("end");
 		}
 	}
 	
 	public static class Kitab {
-		@key("pos") public int pos;
-		@key("nama") public String nama;
-		@key("judul") public String judul;
-		@key("npasal") public int npasal;
-		@key("nayat") public int[] nayat;
-		@key("ayatLoncat") public int ayatLoncat;
-		@key("pasal_offset") public int[] pasal_offset;
-		@key("encoding") public int encoding;
-		@key("offset") public int offset;
+		public int versi;
+		public int pos;
+		public String nama;
+		public String judul;
+		public int npasal;
+		public int[] nayat;
+		public int ayatLoncat;
+		public int[] pasal_offset;
+		public int encoding;
+		public int offset;
 		
 		public void toBytes(BintexWriter writer) throws Exception {
-			Field[] fields = Kitab.class.getDeclaredFields();
-			for (Field f: fields) {
-				key annotation = f.getAnnotation(key.class);
-				if (annotation != null) {
-					writer.writeShortString(annotation.value());
-					if (f.getType() == int.class) {
-						writer.writeInt(f.getInt(this));
-					} else if (f.getType() == String.class) {
-						writer.writeShortString((String) f.get(this));
-					} else if (f.getType() == int[].class) {
-						for (int a: (int[])f.get(this)) {
-							if (f.getName().equals("nayat")) {
-								writer.writeUint8(a);
-							} else {
-								writer.writeInt(a);
-							}
-						}
-					} else {
-						throw new RuntimeException("type ga dikenal: " + f.getType());
-					}
-				}
+			writer.writeShortString("versi");
+			writer.writeInt(versi);
+			
+			writer.writeShortString("pos");
+			writer.writeInt(pos);
+			
+			writer.writeShortString("nama");
+			writer.writeShortString(nama);
+			
+			writer.writeShortString("judul");
+			writer.writeShortString(judul);
+			
+			writer.writeShortString("npasal");
+			writer.writeInt(npasal);
+			
+			writer.writeShortString("nayat");
+			for (int a: nayat) {
+				writer.writeUint8(a);
 			}
+			
+			writer.writeShortString("ayatLoncat");
+			writer.writeInt(ayatLoncat);
+			
+			writer.writeShortString("pasal_offset");
+			for (int a: pasal_offset) {
+				writer.writeInt(a);
+			}
+			
+			writer.writeShortString("encoding");
+			writer.writeInt(encoding);
+			
+			writer.writeShortString("offset");
+			writer.writeInt(offset);
+			
 			writer.writeShortString("end");
 		}
 	}
@@ -116,6 +130,26 @@ public class YesFile {
 				writer.writeRaw(isi.getBytes("ascii"));
 				writer.writeUint8('\n');
 			}
+		}
+	}
+	
+	public static class NemplokSeksi implements IsiSeksi {
+		private String nf;
+
+		public NemplokSeksi(String nf) {
+			this.nf = nf;
+		}
+
+		@Override
+		public void toBytes(BintexWriter writer) throws Exception {
+			FileInputStream in = new FileInputStream(nf);
+			byte[] b = new byte[10000];
+			while (true) {
+				int r = in.read(b);
+				if (r <= 0) break;
+				writer.writeRaw(b, 0, r);
+			}
+			in.close();
 		}
 	}
 	
