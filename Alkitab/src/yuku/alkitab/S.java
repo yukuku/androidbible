@@ -8,7 +8,6 @@ import yuku.alkitab.renungan.TukangDonlot;
 import yuku.bintex.BintexReader;
 import yuku.kirimfidbek.PengirimFidbek;
 import android.content.*;
-import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -56,39 +55,34 @@ public class S {
 	public static PengirimFidbek pengirimFidbek;
 	public static TukangDonlot tukangDonlot;
 	
+	static {
+		int a = R.drawable.ambilwarna_panah;
+		if (a == 0) throw new RuntimeException(); // cuma mencegah project ambilwarna lupa dibuka
+	}
+	
 	public static synchronized void siapinEdisi(Context context) {
 		if (xedisi != null) return;
+		
+		long wmulai = System.currentTimeMillis();
 
-		Resources resources = context.getResources();
-		Scanner sc = new Scanner(resources.openRawResource(R.raw.edisi_index));
-
+		BintexReader in = new BintexReader(context.getResources().openRawResource(R.raw.edisi_index_bt));
 		ArrayList<Edisi> xedisi = new ArrayList<Edisi>();
 
-		while (sc.hasNext()) {
-			Edisi e = Edisi.baca(sc);
-			xedisi.add(e);
+		try {
+			while (true) {
+				Edisi e = Edisi.baca(in);
+				xedisi.add(e);
+			}
+		} catch (EOFException e) {
+			// selesai baca
+		} catch (IOException e) {
+			Log.e("alki", "ngaco baca edisi index!!!");
 		}
 
 		S.xedisi = xedisi.toArray(new Edisi[xedisi.size()]);
 		S.edisiAktif = S.xedisi[0]; // TODO selalu pilih edisi pertama
 		
-		if (S.edisiAktif.perikopAda) {
-			if (S.edisiAktif.volatile_indexPerikop == null) {
-				long wmulai = System.currentTimeMillis();
-				
-				InputStream is = U.openRaw(context, S.edisiAktif.nama + "_perikop_index_bt");
-				BintexReader in = new BintexReader(is);
-				try {
-					S.edisiAktif.volatile_indexPerikop = IndexPerikop.baca(in, S.edisiAktif.nama, resources.getIdentifier(S.edisiAktif.nama + "_perikop_blok_bt", "raw", context.getPackageName()));
-				} catch (IOException e) {
-					Log.e("alki", "baca perikop index ngaco", e);
-				} finally {
-					in.close();
-				}
-				
-				Log.d("alki", "Muat index perikop butuh ms: " + (System.currentTimeMillis() - wmulai));
-			}
-		}
+		Log.d("alki", "siapinEdisi butuh ms: " + (System.currentTimeMillis() - wmulai));
 	}
 
 	public static synchronized void siapinKitab(Context context) {
@@ -99,8 +93,15 @@ public class S {
 
 		Edisi edisi = S.edisiAktif;
 		Log.d("alki", "siapinKitab mulai dengan edisi: " + edisi.nama);
-		S.edisiAktif.volatile_xkitab = edisi.pembaca.bacaInfoKitab(edisi, context);
+		S.edisiAktif.volatile_xkitab = edisi.pembaca.bacaInfoKitab(context, edisi);
 		S.kitabAktif = S.edisiAktif.volatile_xkitab[0]; // nanti diset sama luar 
+		
+		if (edisi.perikopAda != 0) {
+			if (edisi.volatile_indexPerikop == null) {
+				edisi.volatile_indexPerikop = edisi.pembaca.bacaIndexPerikop(context, edisi);
+			}
+		}
+		
 		Log.d("alki", "siapinKitab selesai");
 	}
 	
@@ -190,53 +191,7 @@ public class S {
 	 * @return berapa yang keisi
 	 */
 	public static synchronized int muatPerikop(Context context, Edisi edisi, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
-		IndexPerikop indexPerikop = S.edisiAktif.volatile_indexPerikop;
-		
-		if (indexPerikop == null) {
-			return 0; // ga ada perikop!
-		}
-		
-		Resources resources = context.getResources();
-		
-		int ariMin = Ari.encode(kitab, pasal, 0);
-		int ariMax = Ari.encode(kitab, pasal+1, 0);
-		int res = 0;
-		
-		
-		int pertama = indexPerikop.cariPertama(ariMin, ariMax);
-		
-		if (pertama == -1) {
-			return 0;
-		}
-		
-		int kini = pertama;
-		
-		BintexReader in = new BintexReader(resources.openRawResource(indexPerikop.perikopBlokResId));
-		try {
-			while (true) {
-				int ari = indexPerikop.getAri(kini);
-				
-				if (ari >= ariMax) {
-					// habis. Uda ga relevan
-					break;
-				}
-				
-				Blok blok = indexPerikop.getBlok(in, kini);
-				kini++;
-				
-				if (res < max) {
-					xari[res] = ari;
-					xblok[res] = blok;
-					res++;
-				} else {
-					break;
-				}
-			}
-		} finally {
-			in.close();
-		}
-		
-		return res;
+		return edisi.pembaca.muatPerikop(context, edisi, kitab, pasal, xari, xblok, max);
 	}
 
 	public static synchronized void siapinPengirimFidbek(final Context context) {

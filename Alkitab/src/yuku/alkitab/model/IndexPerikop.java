@@ -7,21 +7,13 @@ import yuku.bintex.BintexReader;
 import android.util.Log;
 
 public class IndexPerikop {
-	public int nentri;
-	
-	//# data tambahan buat hubungan sama yang lain
-	public String edisi_nama;
-	public int perikopBlokResId;
-	
 	private int[] xari;
 	private int[] xofset;
 	
-	public static IndexPerikop baca(BintexReader reader, String edisi_nama, int perikopBlokResId) throws IOException {
+	public static IndexPerikop baca(BintexReader reader) throws IOException {
 		IndexPerikop ip = new IndexPerikop();
 		
 		int nentri = reader.readInt();
-		
-		ip.nentri = nentri;
 		
 		ip.xari = new int[nentri];
 		ip.xofset = new int[nentri];
@@ -30,9 +22,6 @@ public class IndexPerikop {
 			ip.xari[i] = reader.readInt();
 			ip.xofset[i] = reader.readInt();
 		}
-		
-		ip.edisi_nama = edisi_nama;
-		ip.perikopBlokResId = perikopBlokResId;
 		
 		return ip;
 	}

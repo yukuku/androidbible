@@ -14,6 +14,7 @@ public class YesPembaca implements Pembaca {
 	private String nf;
 	private RandomAccessFile f;
 	private long teks_dasarOffset;
+	private long perikopBlok_dasarOffset;
 	
 	public YesPembaca(String nf) {
 		this.nf = nf;
@@ -60,7 +61,7 @@ public class YesPembaca implements Pembaca {
 	}
 	
 	@Override
-	public Kitab[] bacaInfoKitab(Edisi edisi, Context context) {
+	public Kitab[] bacaInfoKitab(Context context, Edisi edisi) {
 		try {
 			init();
 			
@@ -77,7 +78,10 @@ public class YesPembaca implements Pembaca {
 				while (true) {
 					String key = in.readShortString();
 					
-					if (key.equals("pos")) {
+					if (key.equals("versi")) {
+						int versi = in.readInt();
+						if (versi != 1) throw new RuntimeException("Versi Kitab: " + versi + " tidak dikenal");
+					} else if (key.equals("pos")) {
 						k.pos = in.readInt();
 					} else if (key.equals("nama")) {
 						k.nama = in.readShortString();
@@ -161,5 +165,80 @@ public class YesPembaca implements Pembaca {
 
 	static int readUkuranSeksi(RandomAccessFile f) throws IOException {
 		return f.readInt();
+	}
+
+	@Override
+	public IndexPerikop bacaIndexPerikop(Context context, Edisi edisi) {
+		long wmulai = System.currentTimeMillis();
+		try {
+			init();
+			
+			lewatiSampeSeksi("perikopIndex");
+			BintexReader in = new BintexReader(new RandomInputStream(f));
+			
+			return IndexPerikop.baca(in);
+		} catch (Exception e) {
+			Log.e(TAG, "bacaIndexPerikop error", e);
+			return null;
+		} finally {
+			Log.d("alki", "Muat index perikop butuh ms: " + (System.currentTimeMillis() - wmulai));
+		}
+	}
+
+	@Override
+	public int muatPerikop(Context context, Edisi edisi, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
+		try {
+			init();
+			
+			Log.d(TAG, "muatPerikop dipanggil untuk edisi=" + edisi.nama + " kitab=" + kitab + " pasal_1=" + pasal);
+			IndexPerikop indexPerikop = edisi.volatile_indexPerikop;
+			if (indexPerikop == null) {
+				return 0; // ga ada perikop!
+			}
+	
+			int ariMin = Ari.encode(kitab, pasal, 0);
+			int ariMax = Ari.encode(kitab, pasal + 1, 0);
+	
+			int pertama = indexPerikop.cariPertama(ariMin, ariMax);
+			if (pertama == -1) {
+				return 0;
+			}
+	
+			int kini = pertama;
+			int res = 0;
+			
+			if (perikopBlok_dasarOffset != 0) {
+				f.seek(perikopBlok_dasarOffset);
+			} else {
+				lewatiSampeSeksi("perikopBlok_");
+				perikopBlok_dasarOffset = f.getFilePointer();
+			}
+			
+			BintexReader in = new BintexReader(new RandomInputStream(f));
+			while (true) {
+				int ari = indexPerikop.getAri(kini);
+
+				if (ari >= ariMax) {
+					// habis. Uda ga relevan
+					break;
+				}
+
+				Blok blok = indexPerikop.getBlok(in, kini);
+				kini++;
+
+				if (res < max) {
+					xari[res] = ari;
+					xblok[res] = blok;
+					res++;
+				} else {
+					break;
+				}
+			}
+	
+			return res;
+		} catch (Exception e) {
+			Log.e(TAG, "gagal muatPerikop", e);
+			return 0;
+		}
 	}
 }

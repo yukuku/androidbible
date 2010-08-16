@@ -660,119 +660,131 @@ public class IsiActivity extends Activity {
 			Log.i("alki", s);
 			return true;
 		} else if (item.getItemId() == 0x985808) { // debug 8
-			String[] pilihan = new String[S.xedisi.length];
-			for (int i = 0; i < pilihan.length; i++) {
-				pilihan[i] = S.xedisi[i].judul;
-			}
-			
-			new AlertDialog.Builder(this)
-			.setTitle("Pilih Edisi")
-			.setSingleChoiceItems(pilihan, -1, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					final Edisi mau = S.xedisi[which];
-					
-					// cek dulu apakah ini Pembaca dan ada filenya
-					if (mau.pembaca instanceof YesPembaca) {
-						boolean ada = AddonManager.cekAdaEdisi(mau.nama);
-						
-						if (!ada) {
-							new AlertDialog.Builder(IsiActivity.this)
-							.setTitle("Donlot tambahan")
-							.setMessage("File '" + AddonManager.getEdisiPath(mau.nama) + "' tidak ditemukan. Apakah anda mau mengunduhnya (download)?")
-							.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int which) {
-									final ProgressDialog pd = new ProgressDialog(IsiActivity.this);
-									pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-									pd.setCancelable(true);
-									pd.setIndeterminate(true);
-									pd.setTitle("Mengunduh " + mau.nama);
-									pd.setMessage("Mulai mengunduh...");
-									
-									DonlotThread donlotThread = AddonManager.getDonlotThread();
-									final Elemen e = donlotThread.antrikan(mau.donlot, AddonManager.getEdisiPath(mau.nama), new DonlotListener() {
-										@Override
-										public void onSelesaiDonlot(Elemen e) {
-											IsiActivity.this.runOnUiThread(new Runnable() { public void run() {
-												Toast.makeText(IsiActivity.this, "Selesai mengunduh edisi: " + mau.judul + ".\nDisimpan di: " + AddonManager.getEdisiPath(mau.nama), Toast.LENGTH_LONG).show();
-											}});
-											pd.dismiss();
-										}
-										
-										@Override
-										public void onGagalDonlot(Elemen e, final String keterangan, final Throwable t) {
-											IsiActivity.this.runOnUiThread(new Runnable() { public void run() {
-												Toast.makeText(IsiActivity.this, keterangan != null? keterangan: "Gagal mengunduh edisi: " + mau.judul + " (" + (t == null? "null": t.getClass().getCanonicalName() + ": " + t.getMessage()) + ").\nPastikan Internet bekerja dengan baik.", Toast.LENGTH_LONG).show();
-											}});
-											pd.dismiss();
-										}
+			pilihEdisi();
 
-										@Override
-										public void onProgress(Elemen e, final int sampe, int total) {
-											IsiActivity.this.runOnUiThread(new Runnable() { public void run() {
-												if (sampe >= 0) {
-													pd.setMessage("Terunduh: " + sampe + " byte");
-												} else {
-													pd.setMessage("Sedang mendekompres. Harap tunggu...");
-												}
-											}});
-											Log.d("alki", "onProgress " + sampe);
-										}
-
-										@Override
-										public void onBatalDonlot(Elemen e) {
-											IsiActivity.this.runOnUiThread(new Runnable() { public void run() {
-												Toast.makeText(IsiActivity.this, "Pengunduhan dibatalkan.", Toast.LENGTH_SHORT).show();
-											}});
-											pd.dismiss();
-										}
-									});
-									if (e != null) {
-										pd.show();
-									}
-									
-									pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
-										@Override
-										public void onCancel(DialogInterface dialog) {
-											e.hentikan = true;
-										}
-									});
-								}
-							})
-							.setNegativeButton("Tidak", null)
-							.show();
-							
-							return;
-						}
-					}
-					
-					S.edisiAktif = mau;
-					S.siapinKitab(getApplicationContext());
-					
-					int posKitabAktif = S.kitabAktif.pos;
-					if (posKitabAktif < S.edisiAktif.volatile_xkitab.length && S.edisiAktif.volatile_xkitab[posKitabAktif].pos == posKitabAktif) {
-						// posisinya sama. Mari pake langsung
-						S.kitabAktif = S.edisiAktif.volatile_xkitab[posKitabAktif];
-					} else {
-						for (Kitab k: S.edisiAktif.volatile_xkitab) {
-							if (k.pos == posKitabAktif) {
-								S.kitabAktif = k;
-								break;
-							}
-						}
-						S.kitabAktif = S.edisiAktif.volatile_xkitab[0]; // apa boleh buat, ga ketemu...
-					}
-					
-					dialog.dismiss();
-					tampil(pasal_1, getAyatBerdasarSkrol());
-				}
-			})
-			.show();
 			return true;
 		}
 		
 		return super.onMenuItemSelected(featureId, item);
+	}
+
+	private void pilihEdisi() {
+		int terpilih = -1;
+		
+		String[] pilihan = new String[S.xedisi.length];
+		for (int i = 0; i < pilihan.length; i++) {
+			pilihan[i] = S.xedisi[i].judul;
+			
+			if (S.edisiAktif.nama.equals(S.xedisi[i].nama)) {
+				terpilih = i;
+			}
+		}
+
+		new AlertDialog.Builder(this)
+		.setTitle("Pilih Edisi")
+		.setSingleChoiceItems(pilihan, terpilih, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				final Edisi mau = S.xedisi[which];
+				
+				// cek dulu apakah ini Pembaca dan ada filenya
+				if (mau.pembaca instanceof YesPembaca) {
+					if (! AddonManager.cekAdaEdisi(mau.nama)) {
+						tanyaDonlotEdisi(mau);
+						return;
+					}
+				}
+				
+				S.edisiAktif = mau;
+				S.siapinKitab(getApplicationContext());
+				
+				int posKitabAktif = S.kitabAktif.pos;
+				if (posKitabAktif < S.edisiAktif.volatile_xkitab.length && S.edisiAktif.volatile_xkitab[posKitabAktif].pos == posKitabAktif) {
+					// posisinya sama. Mari pake langsung
+					S.kitabAktif = S.edisiAktif.volatile_xkitab[posKitabAktif];
+				} else {
+					for (Kitab k: S.edisiAktif.volatile_xkitab) {
+						if (k.pos == posKitabAktif) {
+							S.kitabAktif = k;
+							break;
+						}
+					}
+					S.kitabAktif = S.edisiAktif.volatile_xkitab[0]; // apa boleh buat, ga ketemu...
+				}
+				
+				dialog.dismiss();
+				tampil(pasal_1, getAyatBerdasarSkrol());
+			}
+		})
+		.show();
+	}
+
+	protected void tanyaDonlotEdisi(final Edisi mau) {
+		new AlertDialog.Builder(IsiActivity.this)
+		.setTitle("Donlot tambahan")
+		.setMessage("File '" + AddonManager.getEdisiPath(mau.nama) + "' tidak ditemukan. Apakah anda mau mengunduhnya (download)?")
+		.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				final ProgressDialog pd = new ProgressDialog(IsiActivity.this);
+				pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+				pd.setCancelable(true);
+				pd.setIndeterminate(true);
+				pd.setTitle("Mengunduh " + mau.nama);
+				pd.setMessage("Mulai mengunduh...");
+				
+				DonlotThread donlotThread = AddonManager.getDonlotThread();
+				final Elemen e = donlotThread.antrikan(mau.url, AddonManager.getEdisiPath(mau.nama), new DonlotListener() {
+					@Override
+					public void onSelesaiDonlot(Elemen e) {
+						IsiActivity.this.runOnUiThread(new Runnable() { public void run() {
+							Toast.makeText(IsiActivity.this, "Selesai mengunduh edisi: " + mau.judul + ".\nDisimpan di: " + AddonManager.getEdisiPath(mau.nama), Toast.LENGTH_LONG).show();
+						}});
+						pd.dismiss();
+					}
+					
+					@Override
+					public void onGagalDonlot(Elemen e, final String keterangan, final Throwable t) {
+						IsiActivity.this.runOnUiThread(new Runnable() { public void run() {
+							Toast.makeText(IsiActivity.this, keterangan != null? keterangan: "Gagal mengunduh edisi: " + mau.judul + " (" + (t == null? "null": t.getClass().getCanonicalName() + ": " + t.getMessage()) + ").\nPastikan Internet bekerja dengan baik.", Toast.LENGTH_LONG).show();
+						}});
+						pd.dismiss();
+					}
+
+					@Override
+					public void onProgress(Elemen e, final int sampe, int total) {
+						IsiActivity.this.runOnUiThread(new Runnable() { public void run() {
+							if (sampe >= 0) {
+								pd.setMessage("Terunduh: " + sampe + " byte");
+							} else {
+								pd.setMessage("Sedang mendekompres. Harap tunggu...");
+							}
+						}});
+						Log.d("alki", "onProgress " + sampe);
+					}
+
+					@Override
+					public void onBatalDonlot(Elemen e) {
+						IsiActivity.this.runOnUiThread(new Runnable() { public void run() {
+							Toast.makeText(IsiActivity.this, "Pengunduhan dibatalkan.", Toast.LENGTH_SHORT).show();
+						}});
+						pd.dismiss();
+					}
+				});
+				if (e != null) {
+					pd.show();
+				}
+				
+				pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
+					@Override
+					public void onCancel(DialogInterface dialog) {
+						e.hentikan = true;
+					}
+				});
+			}
+		})
+		.setNegativeButton("Tidak", null)
+		.show();
 	}
 
 	private void menuSearch2_click() {

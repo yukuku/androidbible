@@ -23,5 +23,9 @@ public class RandomInputStream extends InputStream {
 	public int read() throws IOException {
 		return f.read();
 	}
-
+	
+	@Override
+	public long skip(long n) throws IOException {
+		return f.skipBytes((int) n);
+	}
 }

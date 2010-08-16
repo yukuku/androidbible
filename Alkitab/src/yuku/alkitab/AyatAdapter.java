@@ -395,7 +395,6 @@ class AyatAdapter extends BaseAdapter {
 		seayat.append(ayat_s).append(" ").append(isi);
 		seayat.setSpan(new ForegroundColorSpan(S.penerapan.warnaNomerAyat), 0, ayat_s.length(), 0);
 		
-		Log.d("alki", "kasi leading " + S.penerapan.indenParagraf);
 		seayat.setSpan(new LeadingMarginSpan.Standard(0, S.penerapan.indenParagraf), 0, ayat_s.length() + 1 + isi.length(), 0);
 		
 		return seayat;

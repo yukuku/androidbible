@@ -1,46 +1,47 @@
 package yuku.alkitab.model;
 
-import java.util.Scanner;
+import java.io.IOException;
 
 import yuku.alkitab.AddonManager;
+import yuku.bintex.BintexReader;
 
 public class Edisi {
 	public String nama;
 	public 	String judul;
 	public int nkitab;
-	public boolean perikopAda;
+	public int perikopAda; // 0=gaada; 1=versi 1 (pake BintexReader dan utf16) 
 	public Pembaca pembaca;
-	public String donlot;// bisa null
+	public String url;// bisa null
 	
 	public Kitab[] volatile_xkitab;
 	public IndexPerikop volatile_indexPerikop;
 	
-	public static Edisi baca(Scanner sc) {
+	public static Edisi baca(BintexReader in) throws IOException {
 		Edisi e = new Edisi();
 
-		String awal = sc.next();
+		String awal = in.readShortString();
 
 		if (awal.equals("Edisi")) {
 			while (true) {
-				String key = sc.next();
+				String key = in.readShortString();
 				if (key.equals("nama")) {
-					e.nama = sc.next();
+					e.nama = in.readShortString();
 				} else if (key.equals("judul")) {
-					e.judul = sc.next();
+					e.judul = in.readShortString();
 				} else if (key.equals("nkitab")) {
-					e.nkitab = sc.nextInt();
+					e.nkitab = in.readInt();
 				} else if (key.equals("perikopAda")) {
-					e.perikopAda = sc.nextInt() != 0;
+					e.perikopAda = in.readInt();
 				} else if (key.equals("pembaca")) {
-					String v = sc.next();
+					String v = in.readShortString();
 					if ("internal".equals(v)) {
 						e.pembaca = new InternalPembaca();
 					} else if ("yes".equals(v)) {
 						e.pembaca = new YesPembaca(AddonManager.getEdisiPath(e.nama));
 					}
-				} else if (key.equals("donlot")) {
-					e.donlot = sc.next();
-				} else if (key.equals("uda")) {
+				} else if (key.equals("url")) {
+					e.url = in.readShortString();
+				} else if (key.equals("end")) {
 					break;
 				}
 			}
