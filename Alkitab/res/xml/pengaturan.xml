@@ -4,14 +4,14 @@
 	<PreferenceCategory
 		android:title="Penampilan">
 
-		<yuku.alkitab.UkuranHuruf2Preference
+		<yuku.alkitab.base.UkuranHuruf2Preference
 			android:key="@string/pref_ukuranHuruf2_key"
 			android:title="Ukuran Huruf"
 			android:summary="Ubah ukuran huruf teks Alkitab (perbesar atau perkecil)."
 			android:positiveButtonText="OK"
 			android:negativeButtonText="Batal"
 			android:defaultValue="17" />
-		<yuku.alkitab.JenisHurufPreference
+		<yuku.alkitab.base.JenisHurufPreference
 			android:key="@string/pref_jenisHuruf_key"
 			android:title="Jenis Huruf"
 			android:dialogTitle="Jenis Huruf"
@@ -28,22 +28,22 @@
 		<PreferenceScreen
 			android:summary="Atur warna teks, latar belakang, dan nomor ayat."
 			android:title="Warna">
-			<yuku.alkitab.TemaWarnaPreference
+			<yuku.alkitab.base.TemaWarnaPreference
 				android:key="_gapake_temaWarna"
 				android:title="Tema Warna"
 				android:summary="Atur warna teks, latar belakang, dan nomor ayat menurut suatu tema." 
 				android:entries="@array/pref_temaWarna_label"
 				android:entryValues="@array/pref_temaWarna_value"
 				/>
-			<yuku.alkitab.AmbilWarnaPreference
+			<yuku.alkitab.base.AmbilWarnaPreference
 				android:key="@string/pref_warnaHuruf_int_key"
 				android:defaultValue="0xfff0f0f0"
 				android:title="Warna Teks Alkitab" />
-			<yuku.alkitab.AmbilWarnaPreference
+			<yuku.alkitab.base.AmbilWarnaPreference
 				android:key="@string/pref_warnaLatar_int_key"
 				android:defaultValue="0xff000000"
 				android:title="Warna Latar Belakang" />
-			<yuku.alkitab.AmbilWarnaPreference
+			<yuku.alkitab.base.AmbilWarnaPreference
 				android:key="@string/pref_warnaNomerAyat_int_key"
 				android:defaultValue="0xff9090ff"
 				android:title="Warna Nomor Ayat" />

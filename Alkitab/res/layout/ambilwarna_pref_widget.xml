@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<yuku.alkitab.AmbilWarnaPrefWidgetView 
+<yuku.alkitab.base.AmbilWarnaPrefWidgetView 
 	xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ambilwarna_pref_widget_kotak" 
     android:layout_width="24dp"
