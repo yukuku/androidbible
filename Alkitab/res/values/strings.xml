@@ -29,8 +29,6 @@
 	<string
 		name="app_name">Alkitab</string>
 	<string
-		name="judulIsi">%s %d</string>
-	<string
 		name="tentang_title">Tentang Alkitab</string>
 	<string
 		name="peringatanBeta_s">Kami mengharapkan saran, kritik, dan komentar Anda.

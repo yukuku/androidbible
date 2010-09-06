@@ -326,7 +326,7 @@ public class IsiActivity extends Activity {
 		{
 			AdapterContextMenuInfo menuInfo2 = (AdapterContextMenuInfo) menuInfo;
 			this.ayatContextMenu_1 = (int) (menuInfo2.id) + 1;
-			this.isiAyatContextMenu = xayat[(int) menuInfo2.id];
+			this.isiAyatContextMenu = U.buangKodeKusus(xayat[(int) menuInfo2.id]);
 		}
 		
 		//# pasang header
@@ -689,10 +689,11 @@ public class IsiActivity extends Activity {
 					}
 				}
 				
+				int posKitabAktif = S.kitabAktif.pos;
+				
 				S.edisiAktif = mau;
 				S.siapinKitab(getApplicationContext());
 				
-				int posKitabAktif = S.kitabAktif.pos;
 				if (posKitabAktif < S.edisiAktif.volatile_xkitab.length && S.edisiAktif.volatile_xkitab[posKitabAktif].pos == posKitabAktif) {
 					// posisinya sama. Mari pake langsung
 					S.kitabAktif = S.edisiAktif.volatile_xkitab[posKitabAktif];

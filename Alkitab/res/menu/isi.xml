@@ -11,20 +11,18 @@
 		android:titleCondensed="Pembatas"
 		android:title="Pembatas buku" />
 	<item
-		android:icon="@android:drawable/ic_menu_search"
 		android:title="Cari"
-		android:id="@+id/menuSearch2" />
+		android:id="@+id/menuSearch2" android:icon="@drawable/ic_menu_search"/>
 	<item
 		android:id="@+id/menuRenungan"
 		android:title="Renungan"
 		android:icon="@drawable/ic_menu_notifications" />
 	<item
 		android:id="@+id/menuEdisi"
-		android:title="Versi" />
+		android:title="Versi" android:icon="@drawable/menu_edisi"/>
 	<item
-		android:icon="@android:drawable/ic_menu_preferences"
 		android:id="@+id/menuPengaturan"
-		android:title="@string/menuPengaturan" />
+		android:title="@string/menuPengaturan" android:icon="@drawable/ic_menu_preferences"/>
 	<item
 		android:id="@+id/menuFidbek"
 		android:title="Beri Saran"
