@@ -23,7 +23,7 @@ public class Blok {
 		int versi = in.readUint8();
 		
 		if (versi != 1) {
-			throw new RuntimeException("Versi harus 1 dong!");
+			throw new RuntimeException("Versi harus 1 dong!"); //$NON-NLS-1$
 		}
 		
 		b.judul = in.readShortString();
@@ -40,6 +40,6 @@ public class Blok {
 	
 	@Override
 	public String toString() {
-		return "Blok{judul=" + judul + " xparalel=" + Arrays.toString(xparalel) + "}";
+		return "Blok{judul=" + judul + " xparalel=" + Arrays.toString(xparalel) + "}"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

@@ -12,16 +12,16 @@ public class ArtikelSantapanHarian extends ArtikelDariSabda {
 
 	@Override
 	public CharSequence getKopiraitHtml() {
-		return "Santapan Harian.<br/>diambil dari <b>sabda.org</b>";
+		return "Santapan Harian.<br/>diambil dari <b>sabda.org</b>"; //$NON-NLS-1$
 	}
 
 	@Override
 	public String getNama() {
-		return "sh";
+		return "sh"; //$NON-NLS-1$
 	}
 	
 	@Override
 	public String getNamaUmum() {
-		return "Santapan Harian";
+		return "Santapan Harian"; //$NON-NLS-1$
 	}
 }

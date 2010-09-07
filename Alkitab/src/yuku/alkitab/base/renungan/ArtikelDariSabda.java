@@ -2,19 +2,21 @@ package yuku.alkitab.base.renungan;
 
 import java.util.regex.*;
 
-import android.util.*;
+import android.util.Log;
 
 public abstract class ArtikelDariSabda implements IArtikel {
+	public static final String TAG = ArtikelDariSabda.class.getSimpleName();
+	
 	private static Pattern pattern1;
 	private static Pattern pattern2;
 	private static Pattern pattern3;
 	private static Pattern pattern4;
 	
 	static {
-		pattern1 = Pattern.compile("<h1>\\s*<div\\s+align=\"center\">(.*?)</div>\\s*</h1>", Pattern.MULTILINE | Pattern.DOTALL); // judul
-		pattern2 = Pattern.compile("<td class=\"wj\">(.{100,}?)</td>", Pattern.MULTILINE | Pattern.DOTALL); // isi
-		pattern3 = Pattern.compile("<td class=\"wn\".*?>(.*?)</td>", Pattern.MULTILINE | Pattern.DOTALL); // header
-		pattern4 = Pattern.compile("<td width=\"50%\" class=\"wn\" align=\"right\">.*?<b>(.*?)</b>", Pattern.MULTILINE | Pattern.DOTALL); //header
+		pattern1 = Pattern.compile("<h1>\\s*<div\\s+align=\"center\">(.*?)</div>\\s*</h1>", Pattern.MULTILINE | Pattern.DOTALL); // judul //$NON-NLS-1$
+		pattern2 = Pattern.compile("<td class=\"wj\">(.{100,}?)</td>", Pattern.MULTILINE | Pattern.DOTALL); // isi //$NON-NLS-1$
+		pattern3 = Pattern.compile("<td class=\"wn\".*?>(.*?)</td>", Pattern.MULTILINE | Pattern.DOTALL); // header //$NON-NLS-1$
+		pattern4 = Pattern.compile("<td width=\"50%\" class=\"wn\" align=\"right\">.*?<b>(.*?)</b>", Pattern.MULTILINE | Pattern.DOTALL); //header //$NON-NLS-1$
 	}
 	
 	private String judul_;
@@ -43,8 +45,8 @@ public abstract class ArtikelDariSabda implements IArtikel {
 	public void isikan(String mentah) {
 		int poin = 0;
 		
-		if (mentah.startsWith("NG")) {
-			Log.d("alki", "isikan tapi mentahnya " + mentah);
+		if (mentah.startsWith("NG")) { //$NON-NLS-1$
+			Log.d(TAG, "isikan tapi mentahnya " + mentah); //$NON-NLS-1$
 			return;
 		}
 		
@@ -54,7 +56,7 @@ public abstract class ArtikelDariSabda implements IArtikel {
 				judul_ = matcher.group(1);
 				poin += 5;
 			} else {
-				Log.w("alki", "ArtikelDariSabda ga dapat judul");
+				Log.w(TAG, "ArtikelDariSabda ga dapat judul"); //$NON-NLS-1$
 			}
 		}
 		
@@ -64,7 +66,7 @@ public abstract class ArtikelDariSabda implements IArtikel {
 				isiHtml_ = matcher.group(1);
 				poin += 10;
 			} else {
-				Log.w("alki", "ArtikelDariSabda ga dapat isi");
+				Log.w(TAG, "ArtikelDariSabda ga dapat isi"); //$NON-NLS-1$
 			}
 		}
 		
@@ -74,7 +76,7 @@ public abstract class ArtikelDariSabda implements IArtikel {
 				headerHtml_ = matcher.group(1);
 				poin += 5;
 			} else {
-				Log.w("alki", "ArtikelDariSabda ga dapat header");
+				Log.w(TAG, "ArtikelDariSabda ga dapat header"); //$NON-NLS-1$
 			}
 		} else {
 			Matcher matcher = pattern4.matcher(mentah);
@@ -82,8 +84,8 @@ public abstract class ArtikelDariSabda implements IArtikel {
 				headerHtml_ = matcher.group(1);
 				poin += 5;
 			} else {
-				Log.w("alki", "ArtikelDariSabda ga dapat header");
-				headerHtml_ = "";
+				Log.w(TAG, "ArtikelDariSabda ga dapat header"); //$NON-NLS-1$
+				headerHtml_ = ""; //$NON-NLS-1$
 			}
 		}
 		
@@ -134,7 +136,7 @@ public abstract class ArtikelDariSabda implements IArtikel {
 	
 	@Override
 	public String getMentahEncoding() {
-		return "iso-8859-1";
+		return "iso-8859-1"; //$NON-NLS-1$
 	}
 	
 	@Override
@@ -144,6 +146,6 @@ public abstract class ArtikelDariSabda implements IArtikel {
 	
 	@Override
 	public String getUrl() {
-		return "http://www.kejut.com/prog/android/alkitab/renungan-proxy.php?nama=" + getNama() + "&tgl=" + tgl_;
+		return "http://www.kejut.com/prog/android/alkitab/renungan-proxy.php?nama=" + getNama() + "&tgl=" + tgl_; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

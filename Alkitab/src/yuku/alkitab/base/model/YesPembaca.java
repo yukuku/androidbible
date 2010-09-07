@@ -33,7 +33,7 @@ public class YesPembaca implements Pembaca {
 			if (namaSeksi.equals(seksi)) {
 				return ukuran;
 			} else {
-				Log.d(TAG, "seksi dilewati: " + namaSeksi);
+				Log.d(TAG, "seksi dilewati: " + namaSeksi); //$NON-NLS-1$
 				f.skipBytes(ukuran);
 			}
 		}
@@ -41,7 +41,7 @@ public class YesPembaca implements Pembaca {
 	
 	private synchronized void init() throws Exception {
 		if (f == null) {
-			f = new RandomAccessFile(nf, "r");
+			f = new RandomAccessFile(nf, "r"); //$NON-NLS-1$
 			f.seek(0);
 			
 			// cek header
@@ -49,14 +49,14 @@ public class YesPembaca implements Pembaca {
 				byte[] buf = new byte[8];
 				f.read(buf);
 				if (!Arrays.equals(buf, new byte[] {(byte) 0x98, 0x58, 0x0d, 0x0a, 0x00, 0x5d, (byte) 0xe0, 0x01})) {
-					throw new RuntimeException("Header ga betul. Ketemunya: " + Arrays.toString(buf));
+					throw new RuntimeException("Header ga betul. Ketemunya: " + Arrays.toString(buf)); //$NON-NLS-1$
 				}
 			}
 			
-			lewatiSampeSeksi("teks________");
+			lewatiSampeSeksi("teks________"); //$NON-NLS-1$
 			
 			teks_dasarOffset = f.getFilePointer();
-			Log.d(TAG, "teks_dasarOffset = " + teks_dasarOffset);
+			Log.d(TAG, "teks_dasarOffset = " + teks_dasarOffset); //$NON-NLS-1$
 		}
 	}
 	
@@ -67,7 +67,7 @@ public class YesPembaca implements Pembaca {
 			
 			Kitab[] res = new Kitab[edisi.nkitab];
 			
-			int ukuran = lewatiSampeSeksi("infoKitab___");
+			int ukuran = lewatiSampeSeksi("infoKitab___"); //$NON-NLS-1$
 			byte[] buf = new byte[ukuran];
 			f.read(buf);
 			BintexReader in = new BintexReader(new ByteArrayInputStream(buf));
@@ -78,39 +78,39 @@ public class YesPembaca implements Pembaca {
 				while (true) {
 					String key = in.readShortString();
 					
-					if (key.equals("versi")) {
+					if (key.equals("versi")) { //$NON-NLS-1$
 						int versi = in.readInt();
-						if (versi != 1) throw new RuntimeException("Versi Kitab: " + versi + " tidak dikenal");
-					} else if (key.equals("pos")) {
+						if (versi != 1) throw new RuntimeException("Versi Kitab: " + versi + " tidak dikenal"); //$NON-NLS-1$ //$NON-NLS-2$
+					} else if (key.equals("pos")) { //$NON-NLS-1$
 						k.pos = in.readInt();
-					} else if (key.equals("nama")) {
+					} else if (key.equals("nama")) { //$NON-NLS-1$
 						k.nama = in.readShortString();
-					} else if (key.equals("judul")) {
+					} else if (key.equals("judul")) { //$NON-NLS-1$
 						k.judul = in.readShortString();
-					} else if (key.equals("npasal")) {
+					} else if (key.equals("npasal")) { //$NON-NLS-1$
 						k.npasal = in.readInt();
-					} else if (key.equals("nayat")) {
+					} else if (key.equals("nayat")) { //$NON-NLS-1$
 						k.nayat = new int[k.npasal];
 						for (int i = 0; i < k.npasal; i++) {
 							k.nayat[i] = in.readUint8();
 						}
-					} else if (key.equals("ayatLoncat")) {
+					} else if (key.equals("ayatLoncat")) { //$NON-NLS-1$
 						// TODO di masa depan
 						in.readInt();
-					} else if (key.equals("pasal_offset")) {
+					} else if (key.equals("pasal_offset")) { //$NON-NLS-1$
 						k.pasal_offset = new int[k.npasal + 1]; // harus ada +1nya kalo YesPembaca
 						for (int i = 0; i < k.pasal_offset.length; i++) {
 							k.pasal_offset[i] = in.readInt();
 						}
-					} else if (key.equals("encoding")) {
+					} else if (key.equals("encoding")) { //$NON-NLS-1$
 						// TODO di masa depan
 						in.readInt();
-					} else if (key.equals("offset")) {
+					} else if (key.equals("offset")) { //$NON-NLS-1$
 						k.offset = in.readInt();
-					} else if (key.equals("end")) {
+					} else if (key.equals("end")) { //$NON-NLS-1$
 						break;
 					} else {
-						Log.w(TAG, "ada key ga dikenal di kitab " + k + " di infoKitab: " + key);
+						Log.w(TAG, "ada key ga dikenal di kitab " + k + " di infoKitab: " + key); //$NON-NLS-1$ //$NON-NLS-2$
 						break;
 					}
 				}
@@ -120,7 +120,7 @@ public class YesPembaca implements Pembaca {
 			
 			return res;
 		} catch (Exception e) {
-			Log.e(TAG, "bacaInfoKitab error", e);
+			Log.e(TAG, "bacaInfoKitab error", e); //$NON-NLS-1$
 			return null;
 		}
 	}
@@ -138,7 +138,7 @@ public class YesPembaca implements Pembaca {
 			
 			int length = kitab.pasal_offset[pasal_1] - kitab.pasal_offset[pasal_1 - 1];
 			
-			Log.d(TAG, "muatTeks kitab=" + kitab.nama + " pasal_1=" + pasal_1 + " offset=" + kitab.offset + " offset pasal: " + kitab.pasal_offset[pasal_1-1]);
+			Log.d(TAG, "muatTeks kitab=" + kitab.nama + " pasal_1=" + pasal_1 + " offset=" + kitab.offset + " offset pasal: " + kitab.pasal_offset[pasal_1-1]); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			byte[] ba = new byte[length];
 			f.read(ba);
 			
@@ -152,7 +152,7 @@ public class YesPembaca implements Pembaca {
 				return U.pisahJadiAyatAscii(ba);
 			}
 		} catch (Exception e) {
-			Log.e(TAG, "muatTeks error", e);
+			Log.e(TAG, "muatTeks error", e); //$NON-NLS-1$
 			return null;
 		}
 	}
@@ -173,15 +173,15 @@ public class YesPembaca implements Pembaca {
 		try {
 			init();
 			
-			lewatiSampeSeksi("perikopIndex");
+			lewatiSampeSeksi("perikopIndex"); //$NON-NLS-1$
 			BintexReader in = new BintexReader(new RandomInputStream(f));
 			
 			return IndexPerikop.baca(in);
 		} catch (Exception e) {
-			Log.e(TAG, "bacaIndexPerikop error", e);
+			Log.e(TAG, "bacaIndexPerikop error", e); //$NON-NLS-1$
 			return null;
 		} finally {
-			Log.d("alki", "Muat index perikop butuh ms: " + (System.currentTimeMillis() - wmulai));
+			Log.d(TAG, "Muat index perikop butuh ms: " + (System.currentTimeMillis() - wmulai)); //$NON-NLS-1$
 		}
 	}
 
@@ -190,7 +190,7 @@ public class YesPembaca implements Pembaca {
 		try {
 			init();
 			
-			Log.d(TAG, "muatPerikop dipanggil untuk edisi=" + edisi.nama + " kitab=" + kitab + " pasal_1=" + pasal);
+			Log.d(TAG, "muatPerikop dipanggil untuk edisi=" + edisi.nama + " kitab=" + kitab + " pasal_1=" + pasal); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			IndexPerikop indexPerikop = edisi.volatile_indexPerikop;
 			if (indexPerikop == null) {
 				return 0; // ga ada perikop!
@@ -210,7 +210,7 @@ public class YesPembaca implements Pembaca {
 			if (perikopBlok_dasarOffset != 0) {
 				f.seek(perikopBlok_dasarOffset);
 			} else {
-				lewatiSampeSeksi("perikopBlok_");
+				lewatiSampeSeksi("perikopBlok_"); //$NON-NLS-1$
 				perikopBlok_dasarOffset = f.getFilePointer();
 			}
 			
@@ -237,7 +237,7 @@ public class YesPembaca implements Pembaca {
 	
 			return res;
 		} catch (Exception e) {
-			Log.e(TAG, "gagal muatPerikop", e);
+			Log.e(TAG, "gagal muatPerikop", e); //$NON-NLS-1$
 			return 0;
 		}
 	}

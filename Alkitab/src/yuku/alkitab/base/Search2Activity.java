@@ -15,12 +15,12 @@ import android.view.inputmethod.*;
 import android.widget.*;
 
 public class Search2Activity extends Activity {
-	public static final String EXTRA_carian = "carian";
-	public static final String EXTRA_filter_lama = "filter_lama";
-	public static final String EXTRA_filter_baru = "filter_baru";
-	public static final String EXTRA_hasilCari = "hasilCari";
-	public static final String EXTRA_posisiTerpilih = "posisiTerpilih";
-	public static final String EXTRA_ariTerpilih = "ariTerpilih";
+	public static final String EXTRA_carian = "carian"; //$NON-NLS-1$
+	public static final String EXTRA_filter_lama = "filter_lama"; //$NON-NLS-1$
+	public static final String EXTRA_filter_baru = "filter_baru"; //$NON-NLS-1$
+	public static final String EXTRA_hasilCari = "hasilCari"; //$NON-NLS-1$
+	public static final String EXTRA_posisiTerpilih = "posisiTerpilih"; //$NON-NLS-1$
+	public static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
 	
 	ListView lsHasilCari;
 	ImageButton bCari;
@@ -135,7 +135,7 @@ public class Search2Activity extends Activity {
 		final boolean filter_baru = cFilterBaru.isChecked();
 		
 		if (!filter_lama && !filter_baru) {
-			Toast.makeText(Search2Activity.this, "Pilih perjanjian lama dan/atau baru", Toast.LENGTH_SHORT).show();
+			Toast.makeText(Search2Activity.this, R.string.pilih_perjanjian_lama_dan_atau_baru, Toast.LENGTH_SHORT).show();
 			return;
 		}
 		
@@ -146,8 +146,8 @@ public class Search2Activity extends Activity {
 		final String[] xkata = Search2Engine.tokenkan(carian);
 		
 		final ProgressDialog progress = new ProgressDialog(this);
-		progress.setTitle("Mencari");
-		progress.setMessage(Html.fromHtml("Sedang mencari ayat yang mengandung kata-kata: <b>" + Arrays.toString(xkata)));
+		progress.setTitle(getString(R.string.mencari));
+		progress.setMessage(Html.fromHtml(getString(R.string.sedang_mencari_ayat_yang_mengandung_kata_kata_xkata, Arrays.toString(xkata))));
 		progress.setCancelable(false);
 		progress.setIndeterminate(true);
 		progress.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -168,7 +168,7 @@ public class Search2Activity extends Activity {
 						@Override
 						public void run() {
 							lsHasilCari.setAdapter(new Search2Adapter(hasil, xkata));
-							Toast.makeText(Search2Activity.this, hasil.size() + " hasil", Toast.LENGTH_SHORT).show();
+							Toast.makeText(Search2Activity.this, getString(R.string.size_hasil, hasil.size()), Toast.LENGTH_SHORT).show();
 							
 							if (hasil.size() > 0) {
 								//# close soft keyboard 
@@ -227,7 +227,7 @@ public class Search2Activity extends Activity {
 			Kitab kitab = S.edisiAktif.volatile_xkitab[Ari.toKitab(ari)];
 			int pasal_1 = Ari.toPasal(ari);
 			int ayat_1 = Ari.toAyat(ari);
-			SpannableStringBuilder sb = new SpannableStringBuilder(kitab.judul).append(" " + pasal_1 + ":" + ayat_1);
+			SpannableStringBuilder sb = new SpannableStringBuilder(kitab.judul).append(" " + pasal_1 + ":" + ayat_1); //$NON-NLS-1$ //$NON-NLS-2$
 			IsiActivity.aturTampilanTeksAlamatHasilCari(lAlamat, sb);
 			
 			String[] xayat = S.muatTeks(Search2Activity.this.getApplicationContext(), S.edisiAktif, kitab, pasal_1);

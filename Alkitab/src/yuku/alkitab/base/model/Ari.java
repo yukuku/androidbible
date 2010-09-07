@@ -49,9 +49,9 @@ public class Ari {
 		if (kitab >= xkitab.length) {
 			sb.append('[');
 			sb.append(kitab);
-			sb.append("] ");
+			sb.append("] "); //$NON-NLS-1$
 		} else {
-			sb.append(xkitab[kitab].judul).append(" ");
+			sb.append(xkitab[kitab].judul).append(' ');
 		}
 		
 		sb.append(pasal).append(':').append(ayat);

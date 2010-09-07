@@ -21,27 +21,27 @@ public class Edisi {
 
 		String awal = in.readShortString();
 
-		if (awal.equals("Edisi")) {
+		if (awal.equals("Edisi")) { //$NON-NLS-1$
 			while (true) {
 				String key = in.readShortString();
-				if (key.equals("nama")) {
+				if (key.equals("nama")) { //$NON-NLS-1$
 					e.nama = in.readShortString();
-				} else if (key.equals("judul")) {
+				} else if (key.equals("judul")) { //$NON-NLS-1$
 					e.judul = in.readShortString();
-				} else if (key.equals("nkitab")) {
+				} else if (key.equals("nkitab")) { //$NON-NLS-1$
 					e.nkitab = in.readInt();
-				} else if (key.equals("perikopAda")) {
+				} else if (key.equals("perikopAda")) { //$NON-NLS-1$
 					e.perikopAda = in.readInt();
-				} else if (key.equals("pembaca")) {
+				} else if (key.equals("pembaca")) { //$NON-NLS-1$
 					String v = in.readShortString();
-					if ("internal".equals(v)) {
+					if ("internal".equals(v)) { //$NON-NLS-1$
 						e.pembaca = new InternalPembaca();
-					} else if ("yes".equals(v)) {
+					} else if ("yes".equals(v)) { //$NON-NLS-1$
 						e.pembaca = new YesPembaca(AddonManager.getEdisiPath(e.nama));
 					}
-				} else if (key.equals("url")) {
+				} else if (key.equals("url")) { //$NON-NLS-1$
 					e.url = in.readShortString();
-				} else if (key.equals("end")) {
+				} else if (key.equals("end")) { //$NON-NLS-1$
 					break;
 				}
 			}
@@ -54,6 +54,6 @@ public class Edisi {
 	
 	@Override
 	public String toString() {
-		return String.format("%s (%s)", judul, nama);
+		return String.format("%s (%s)", judul, nama); //$NON-NLS-1$
 	}
 }

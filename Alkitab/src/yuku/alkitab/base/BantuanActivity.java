@@ -3,6 +3,7 @@ package yuku.alkitab.base;
 import android.app.Activity;
 import android.os.Bundle;
 import android.webkit.*;
+import yuku.alkitab.R;
 
 public class BantuanActivity extends Activity {
 	WebView webview;
@@ -21,6 +22,6 @@ public class BantuanActivity extends Activity {
 		
 		setContentView(webview);
 		
-		webview.loadUrl("file:///android_asset/help/html-in/index.html");
+		webview.loadUrl(getString(R.string.url_help_index));
 	}
 }

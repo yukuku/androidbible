@@ -7,6 +7,8 @@ import yuku.bintex.BintexReader;
 import android.util.Log;
 
 public class IndexPerikop {
+	public static final String TAG = IndexPerikop.class.getSimpleName();
+	
 	private int[] xari;
 	private int[] xofset;
 	
@@ -74,14 +76,14 @@ public class IndexPerikop {
 			int posKini = in.getPos();
 
 			if (posKini > ofset) {
-				throw new RuntimeException("posKini " + posKini + " > ofset " + ofset + ", ngaco!!!!");
+				throw new RuntimeException("posKini " + posKini + " > ofset " + ofset + ", ngaco!!!!"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 
 			in.skip(ofset - posKini);
 			
 			return Blok.baca(in);
 		} catch (IOException e) {
-			Log.e("alki", "getBlok ngaco", e);
+			Log.e(TAG, "getBlok ngaco", e); //$NON-NLS-1$
 			
 			return null;
 		}

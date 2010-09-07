@@ -16,7 +16,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.*;
 
 public class BukmakActivity extends ListActivity {
-	public static final String EXTRA_ariTerpilih = "ariTerpilih";
+	public static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
 
 	private static final String[] cursorColumnsMapFrom = {AlkitabDb.KOLOM_Bukmak2_ari, AlkitabDb.KOLOM_Bukmak2_tulisan, AlkitabDb.KOLOM_Bukmak2_waktuUbah};
 	private static final int[] cursorColumnsMapTo = {R.id.lCuplikan, R.id.lTulisan, R.id.lTanggal};
@@ -44,7 +44,7 @@ public class BukmakActivity extends ListActivity {
 		S.siapinPengirimFidbek(this);
 		
 		alkitabDb = AlkitabDb.getInstance(this);
-		cursor = alkitabDb.getDatabase().query(AlkitabDb.TABEL_Bukmak2, cursorColumnsSelect, AlkitabDb.KOLOM_Bukmak2_jenis + "=?", new String[] {String.valueOf(AlkitabDb.ENUM_Bukmak2_jenis_bukmak)}, null, null, AlkitabDb.KOLOM_Bukmak2_waktuUbah + " desc");
+		cursor = alkitabDb.getDatabase().query(AlkitabDb.TABEL_Bukmak2, cursorColumnsSelect, AlkitabDb.KOLOM_Bukmak2_jenis + "=?", new String[] {String.valueOf(AlkitabDb.ENUM_Bukmak2_jenis_bukmak)}, null, null, AlkitabDb.KOLOM_Bukmak2_waktuUbah + " desc"); //$NON-NLS-1$ //$NON-NLS-2$
 		startManagingCursor(cursor);
 		
 		adapter = new SimpleCursorAdapter(this, R.layout.bukmak_item, cursor, cursorColumnsMapFrom, cursorColumnsMapTo);
@@ -69,7 +69,7 @@ public class BukmakActivity extends ListActivity {
 					Kitab kitab = S.edisiAktif.volatile_xkitab[Ari.toKitab(ari)];
 					String[] xayat = S.muatTeks(getApplicationContext(), S.edisiAktif, kitab, Ari.toPasal(ari));
 					int ayat_1 = Ari.toAyat(ari);
-					String isi = ayat_1 > xayat.length? "(...)": xayat[ayat_1 - 1];
+					String isi = ayat_1 > xayat.length? "(...)": xayat[ayat_1 - 1]; //$NON-NLS-1$
 					isi = U.buangKodeKusus(isi);
 					
 					TextView tv = (TextView) view;
@@ -110,7 +110,7 @@ public class BukmakActivity extends ListActivity {
 		AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item.getMenuInfo();
 
 		if (item.getItemId() == R.id.menuHapusBukmak) {
-			alkitabDb.getDatabase().delete(AlkitabDb.TABEL_Bukmak2, "_id=?", new String[] {String.valueOf(menuInfo.id)});
+			alkitabDb.getDatabase().delete(AlkitabDb.TABEL_Bukmak2, "_id=?", new String[] {String.valueOf(menuInfo.id)}); //$NON-NLS-1$
 			adapter.getCursor().requery();
 			
 			return true;

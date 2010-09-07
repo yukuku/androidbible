@@ -1,5 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="gagal_mengubah_pembatas_buku">GAGAL mengubah pembatas buku ke versi baru.\n\nMohon kirim email ke yukuku@gmail.com untuk melaporkan peristiwa ini supaya bisa dibetulkan di versi selanjutnya.</string>
+    <string name="selamat_datang_di_versi_baru_pembatas">Selamat datang di versi baru! Pembatas-pembatas buku yang anda miliki sudah diubah menjadi versi baru. Kini anda bisa menambahkan judul pada setiap pembatas buku.\n\nPembatas buku ditemukan: %d</string>
+    <string name="gagal_mengunduh_namaumum_tgl_tgl">Gagal mengunduh %1$s tgl %2$s</string>
+    <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Kesalahan dalam mengunduh %1$s tgl %2$s: %3$s</string>
+    <string name="berhasil_mengunduh_namaumum_tgl_tgl">Berhasil mengunduh %1$s tgl %2$s</string>
+    <string name="mengunduh_namaumum_tgl_tgl">Mengunduh %1$s tgl %2$s...</string>
+    <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Belum tersedia. Mungkin tanggal yang diminta belum disiapkan, atau terjadi kesalahan dalam mengenali sumber data.\n\nJika dirasa perlu, tolong beritahu pembuat program ini dengan kembali ke layar tampilan ayat, lalu buka menu dan pilih Saran.</string>
+    <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Belum tersedia. Menunggu pengambilan data lewat Internet...\n\n(Pastikan ada koneksi Internet untuk mengambil renungan.)</string>
+	<string name="teks_about">Alkitab untuk Android&lt;br/&gt;versi %1$s (%2$s) rev %3$s&lt;br/&gt;&lt;br/&gt;
+		Terjemahan Baru (c) LAI&lt;br/&gt;&lt;br/&gt;
+		&lt;b&gt;yuku&lt;/b&gt; 2009-2010&lt;br/&gt;
+		www.kejut.com&lt;br/&gt;&lt;br/&gt;
+		&lt;b&gt;Bantuan:&lt;/b&gt;&lt;br/&gt;
+		- &lt;b&gt;Roy Krisnadi&lt;/b&gt; salinan indentasi Mazmur&lt;br/&gt;
+		- &lt;b&gt;Oluss Studio&lt;/b&gt; ikon program&lt;br/&gt;
+		- &lt;b&gt;Jaya Satrio&lt;/b&gt; berbagai ikon&lt;br/&gt;
+		- dsb.</string>
+    <string name="namaprog_versi_build">Alkitab v%s (%d)</string>
+    <string name="hari_sabtu">Sabtu</string>
+    <string name="hari_jumat">Jumat</string>
+    <string name="hari_kamis">Kamis</string>
+    <string name="hari_rabu">Rabu</string>
+    <string name="hari_selasa">Selasa</string>
+    <string name="hari_senin">Senin</string>
+    <string name="hari_minggu">Minggu</string>
+    <string name="size_hasil">%d hasil</string>
+    <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Sedang mencari ayat yang mengandung kata-kata: &lt;b&gt;%s</string>
+    <string name="mencari">Mencari</string>
+    <string name="pilih_perjanjian_lama_dan_atau_baru">Pilih perjanjian lama dan/atau baru</string>
+    <string name="pengunduhan_dibatalkan">Pengunduhan dibatalkan.</string>
+    <string name="sedang_mendekompres_harap_tunggu">Sedang mendekompres. Harap tunggu...</string>
+    <string name="terunduh_sampe_byte">Terunduh: %d byte</string>
+    <string name="gagal_mengunduh_edisi_judul_ex_pastikan_internet">Gagal mengunduh edisi: %1$s (%2$s).\nPastikan Internet bekerja dengan baik.</string>
+    <string name="selesai_mengunduh_edisi_judul_disimpan_di_path">Selesai mengunduh edisi: %1$s\nDisimpan di: %2$s</string>
+    <string name="mulai_mengunduh">Mulai mengunduh...</string>
+    <string name="mengunduh_nama">Mengunduh %s</string>
+    <string name="file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya">File \'%s\' tidak ditemukan. Apakah anda mau mengunduhnya (download)?</string>
+    <string name="mengunduh_tambahan">Mengunduh tambahan</string>
+    <string name="pilih_edisi">Pilih Edisi</string>
+    <string name="tuju_v">Tuju</string>
+    <string name="gebug">Gebug</string>
+    <string name="loncat_v">Loncat</string>
+    <string name="bagikan_alamat">Bagikan %s</string>
+    <string name="alamat_sudah_disalin">%s sudah disalin</string>
+    <string name="alamat_tidak_sah_alamat">Alamat tidak sah: %s</string>
+    <string name="no">Tidak</string>
+    <string name="yes">Ya</string>
+    <string name="anda_yakin_mau_menghapus_catatan_ini">Anda yakin mau menghapus catatan ini?</string>
+    <string name="hapus_catatan">Hapus Catatan</string>
+    <string name="catatan_alamat">Catatan %s</string>
+    <string name="delete">Hapus</string>
+    <string name="cancel">Batal</string>
+    <string name="ok">OK</string>
+    <string name="url_help_index">file:///android_asset/help/html-in/index.html</string>
+    <string name="tidak_bisa_membuat_folder">Tidak bisa membuat folder %s</string>
 	<string
 		name="pref_nyalakanTerusLayar_key">nyalakanTerusLayar</string>
 	<string
@@ -31,8 +86,7 @@
 	<string
 		name="tentang_title">Tentang Alkitab</string>
 	<string
-		name="peringatanBeta_s">Kami mengharapkan saran, kritik, dan komentar Anda.
-		Tolong berikan pesan Anda di bawah (juga alamat imel Anda jika perlu). Terima kasih!</string>
+		name="peringatanBeta_s">Kami mengharapkan saran, kritik, dan komentar Anda.\nTolong berikan pesan Anda di bawah (juga alamat imel Anda jika perlu). Terima kasih!</string>
 	<string
 		name="fidbekMakasih_s">Terima kasih atas komentar anda!</string>
 	<string

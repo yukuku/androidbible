@@ -13,6 +13,11 @@ import android.view.View.OnClickListener;
 import android.widget.*;
 
 public class MenujuActivity extends Activity {
+	public static final String TAG = MenujuActivity.class.getSimpleName();
+	public static final String EXTRA_ayat = "ayat"; //$NON-NLS-1$
+	public static final String EXTRA_pasal = "pasal"; //$NON-NLS-1$
+	public static final String EXTRA_kitab = "kitab"; //$NON-NLS-1$
+
 	TextView aktif;
 	TextView pasif;
 	
@@ -68,7 +73,7 @@ public class MenujuActivity extends Activity {
 					int pasal = cobaBacaPasal();
 					maxAyat = kitab.nayat[pasal-1];
 				} catch (Exception e) {
-					Log.w("alki", e);
+					Log.w(TAG, e);
 				}
 				
 				betulinPasalKelebihan();
@@ -93,9 +98,9 @@ public class MenujuActivity extends Activity {
 				int kitab = (int) cbKitab.getSelectedItemId();
 				
 				Intent intent = new Intent();
-				intent.putExtra("kitab", kitab);
-				intent.putExtra("pasal", pasal);
-				intent.putExtra("ayat", ayat);
+				intent.putExtra(EXTRA_kitab, kitab);
+				intent.putExtra(EXTRA_pasal, pasal);
+				intent.putExtra(EXTRA_ayat, ayat);
 				setResult(RESULT_OK, intent);
 				
 				finish();
@@ -129,13 +134,13 @@ public class MenujuActivity extends Activity {
 		
 		{
 			Intent intent = getIntent();
-			int pasal = intent.getIntExtra("pasal", 0);
+			int pasal = intent.getIntExtra(EXTRA_pasal, 0);
 			if (pasal != 0) {
-				lPasal.setText("" + pasal);
+				lPasal.setText(String.valueOf(pasal));
 			}
-			int ayat = intent.getIntExtra("ayat", 0);
+			int ayat = intent.getIntExtra(EXTRA_ayat, 0);
 			if (ayat != 0) {
-				lAyat.setText("" + ayat);
+				lAyat.setText(String.valueOf(ayat));
 			}
 		}
 		
@@ -143,18 +148,18 @@ public class MenujuActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				int id = v.getId();
-				if (id == R.id.bAngka0) pencet("0");
-				if (id == R.id.bAngka1) pencet("1");
-				if (id == R.id.bAngka2) pencet("2");
-				if (id == R.id.bAngka3) pencet("3");
-				if (id == R.id.bAngka4) pencet("4");
-				if (id == R.id.bAngka5) pencet("5");
-				if (id == R.id.bAngka6) pencet("6");
-				if (id == R.id.bAngka7) pencet("7");
-				if (id == R.id.bAngka8) pencet("8");
-				if (id == R.id.bAngka9) pencet("9");
-				if (id == R.id.bAngkaC) pencet("C");
-				if (id == R.id.bAngkaPindah) pencet(":");
+				if (id == R.id.bAngka0) pencet("0"); //$NON-NLS-1$
+				if (id == R.id.bAngka1) pencet("1"); //$NON-NLS-1$
+				if (id == R.id.bAngka2) pencet("2"); //$NON-NLS-1$
+				if (id == R.id.bAngka3) pencet("3"); //$NON-NLS-1$
+				if (id == R.id.bAngka4) pencet("4"); //$NON-NLS-1$
+				if (id == R.id.bAngka5) pencet("5"); //$NON-NLS-1$
+				if (id == R.id.bAngka6) pencet("6"); //$NON-NLS-1$
+				if (id == R.id.bAngka7) pencet("7"); //$NON-NLS-1$
+				if (id == R.id.bAngka8) pencet("8"); //$NON-NLS-1$
+				if (id == R.id.bAngka9) pencet("9"); //$NON-NLS-1$
+				if (id == R.id.bAngkaC) pencet("C"); //$NON-NLS-1$
+				if (id == R.id.bAngkaPindah) pencet(":"); //$NON-NLS-1$
 			}
 		};
 		
@@ -185,13 +190,13 @@ public class MenujuActivity extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) {
-			pencet("" + (char)('0' + keyCode - KeyEvent.KEYCODE_0));
+			pencet(String.valueOf((char)('0' + keyCode - KeyEvent.KEYCODE_0)));
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_STAR) {
-			pencet("C");
+			pencet("C"); //$NON-NLS-1$
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_POUND) {
-			pencet(":");
+			pencet(":"); //$NON-NLS-1$
 			return true;
 		}
 
@@ -200,7 +205,7 @@ public class MenujuActivity extends Activity {
 	
 	private int cobaBacaPasal() {
 		try {
-			return Integer.parseInt("0" + lPasal.getText().toString());
+			return Integer.parseInt("0" + lPasal.getText().toString()); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
 			return 0;
 		}
@@ -208,7 +213,7 @@ public class MenujuActivity extends Activity {
 
 	private int cobaBacaAyat() {
 		try {
-			return Integer.parseInt("0" + lAyat.getText().toString());
+			return Integer.parseInt("0" + lAyat.getText().toString()); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
 			return 0;
 		}
@@ -223,7 +228,7 @@ public class MenujuActivity extends Activity {
 			ayat = 1;
 		}
 		
-		lAyat.setText(ayat + "");
+		lAyat.setText(String.valueOf(ayat));
 	}
 	
 	private void betulinPasalKelebihan() {
@@ -235,15 +240,15 @@ public class MenujuActivity extends Activity {
 			pasal = 1;
 		}
 		
-		lPasal.setText(pasal + "");
+		lPasal.setText(String.valueOf(pasal));
 	}
 
 	private void pencet(String s) {
 		if (aktif != null) {
-			if (s.equals("C")) {
-				aktif.setText("");
+			if (s.equals("C")) { //$NON-NLS-1$
+				aktif.setText(""); //$NON-NLS-1$
 				return;
-			} else if (s.equals(":")) {
+			} else if (s.equals(":")) { //$NON-NLS-1$
 				if (pasif != null) {
 					aktifin(pasif, aktif);
 				}
@@ -268,7 +273,7 @@ public class MenujuActivity extends Activity {
 					
 					maxAyat = kitab.nayat[pasal-1];
 				} catch (Exception e) {
-					Log.w("alki", e);
+					Log.w(TAG, e);
 				}
 			} else if (aktif == lAyat) {
 				if (lAyat_pertamaKali) {

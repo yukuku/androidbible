@@ -10,6 +10,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import yuku.alkitab.R;
+import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
@@ -32,12 +34,12 @@ public class AddonManager {
 	}
 
 	public static String getYesPath() {
-		return new File(Environment.getExternalStorageDirectory(), "bible/yes").getAbsolutePath();
+		return new File(Environment.getExternalStorageDirectory(), "bible/yes").getAbsolutePath(); //$NON-NLS-1$
 	}
 	
 	public static String getEdisiPath(String nama) {
 		String yesPath = getYesPath();
-		File yes = new File(yesPath, nama + ".yes");
+		File yes = new File(yesPath, nama + ".yes"); //$NON-NLS-1$
 		return yes.getAbsolutePath();
 	}
 	
@@ -47,20 +49,25 @@ public class AddonManager {
 	}
 	
 	static class DonlotThread extends Thread {
+		final Context appContext;
 		Semaphore sema = new Semaphore(0);
 		LinkedList<Elemen> antrian = new LinkedList<Elemen>();
+		
+		public DonlotThread(Context appContext) {
+			this.appContext = appContext;
+		}
 		
 		@Override
 		public void run() {
 			while (true) {
 				sema.acquireUninterruptibly();
-				Log.d(TAG, "DonlotThread sema count: " + sema.availablePermits());
+				Log.d(TAG, "DonlotThread sema count: " + sema.availablePermits()); //$NON-NLS-1$
 				
 				while (true) {
 					Elemen e;
 					synchronized (this) {
 						if (antrian.size() == 0) {
-							Log.d(TAG, "tiada lagi antrian donlot");
+							Log.d(TAG, "tiada lagi antrian donlot"); //$NON-NLS-1$
 							break;
 						}
 						
@@ -75,7 +82,7 @@ public class AddonManager {
 		private void donlot(Elemen e) {
 			new File(e.tujuan).delete(); // hapus dulu.. jangan2 kacau
 			
-			String tmpfile = e.tujuan + "-" + (int)(Math.random() * 100000) + ".tmp";
+			String tmpfile = e.tujuan + "-" + (int)(Math.random() * 100000) + ".tmp";  //$NON-NLS-1$//$NON-NLS-2$
 			
 			try {
 				{
@@ -83,7 +90,7 @@ public class AddonManager {
 					if (!dir.exists()) {
 						boolean mkdirOk = new File(getYesPath()).mkdirs();
 						if (!mkdirOk) {
-							if (e.listener != null) e.listener.onGagalDonlot(e, "Tidak bisa membuat folder " + dir.getAbsolutePath(), null);
+							if (e.listener != null) e.listener.onGagalDonlot(e, appContext.getString(R.string.tidak_bisa_membuat_folder, dir.getAbsolutePath()), null);
 						}
 					}
 				}
@@ -92,12 +99,12 @@ public class AddonManager {
 				HttpClient client = new DefaultHttpClient();
 				HttpGet get = new HttpGet(e.url);
 				
-				Log.d(TAG, "Mulai donlot " + e.url);
+				Log.d(TAG, "Mulai donlot " + e.url); //$NON-NLS-1$
 				HttpResponse response = client.execute(get);
 				HttpEntity entity = response.getEntity();
 				int length = (int) entity.getContentLength();
 				
-				Log.d(TAG, "Donlot sudah berjalan. Length: " + length);
+				Log.d(TAG, "Donlot sudah berjalan. Length: " + length); //$NON-NLS-1$
 				InputStream content = entity.getContent();
 				
 				byte[] b = new byte[4096 * 4];
@@ -120,11 +127,11 @@ public class AddonManager {
 				
 				os.close();
 
-				if (e.url.endsWith(".gz")) {
+				if (e.url.endsWith(".gz")) { //$NON-NLS-1$
 					if (e.listener != null) e.listener.onProgress(e, -1, length); // tanda lagi dekompres
 					
 					GZIPInputStream in = new GZIPInputStream(new FileInputStream(tmpfile));
-					String tmpfile2 = e.tujuan + (int)(Math.random() * 100000) + ".tmp2";
+					String tmpfile2 = e.tujuan + (int)(Math.random() * 100000) + ".tmp2"; //$NON-NLS-1$
 					FileOutputStream out = new FileOutputStream(tmpfile2);
 			    
 					try {
@@ -140,27 +147,27 @@ public class AddonManager {
 				        
 						boolean renameOk = new File(tmpfile2).renameTo(new File(e.tujuan));
 						if (!renameOk) {
-							Log.d(TAG, "Gagal rename!");
+							Log.d(TAG, "Gagal rename!"); //$NON-NLS-1$
 						}
 					} finally {
-						Log.d(TAG, "menghapus tmpfile2: " + tmpfile);
+						Log.d(TAG, "menghapus tmpfile2: " + tmpfile); //$NON-NLS-1$
 						new File(tmpfile2).delete();
 					}
 			        in.close();
 				} else {
 					boolean renameOk = new File(tmpfile).renameTo(new File(e.tujuan));
 					if (!renameOk) {
-						Log.d(TAG, "Gagal rename!");
+						Log.d(TAG, "Gagal rename!"); //$NON-NLS-1$
 					}
 				}
 				
 				if (e.listener != null) e.listener.onSelesaiDonlot(e);
 				e.beres = true;
 			} catch (IOException ex) {
-				Log.w(TAG, "Gagal donlot", ex);
+				Log.w(TAG, "Gagal donlot", ex); //$NON-NLS-1$
 				if (e.listener != null) e.listener.onGagalDonlot(e, null, ex);
 			} finally {
-				Log.d(TAG, "menghapus tmpfile: " + tmpfile);
+				Log.d(TAG, "menghapus tmpfile: " + tmpfile); //$NON-NLS-1$
 				new File(tmpfile).delete();
 			}
 		}
@@ -181,9 +188,9 @@ public class AddonManager {
 	
 	private static DonlotThread donlotThread;
 	
-	public synchronized static DonlotThread getDonlotThread() {
+	public synchronized static DonlotThread getDonlotThread(Context appContext) {
 		if (donlotThread == null) {
-			donlotThread = new DonlotThread();
+			donlotThread = new DonlotThread(appContext);
 			donlotThread.start();
 		}
 		return donlotThread;

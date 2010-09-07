@@ -2,8 +2,8 @@ package yuku.alkitab.base;
 
 import android.app.AlertDialog.Builder;
 import android.content.*;
-import android.preference.*;
-import android.util.*;
+import android.preference.ListPreference;
+import android.util.AttributeSet;
 import android.view.*;
 import android.widget.*;
 
@@ -25,7 +25,7 @@ public class JenisHurufPreference extends ListPreference {
 		final CharSequence[] entries = getEntries();
 		
 		if (entries == null || entryValues == null) {
-			throw new IllegalStateException("JenisHurufPreference requires an entries array and an entryValues array.");
+			throw new IllegalStateException("JenisHurufPreference requires an entries array and an entryValues array."); //$NON-NLS-1$
 		}
 
 		mClickedDialogEntryIndex = getValueIndex();

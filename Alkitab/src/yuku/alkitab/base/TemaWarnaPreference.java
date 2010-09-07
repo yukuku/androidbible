@@ -3,9 +3,9 @@ package yuku.alkitab.base;
 import yuku.alkitab.R;
 import android.app.AlertDialog.Builder;
 import android.content.*;
-import android.preference.*;
+import android.preference.ListPreference;
 import android.text.*;
-import android.text.style.*;
+import android.text.style.ForegroundColorSpan;
 import android.util.*;
 import android.view.*;
 import android.widget.*;
@@ -30,7 +30,7 @@ public class TemaWarnaPreference extends ListPreference {
 		final CharSequence[] entries = getEntries();
 
 		if (entries == null || entryValues == null) {
-			throw new IllegalStateException("TemaWarnaPreference requires an entries array and an entryValues array.");
+			throw new IllegalStateException("TemaWarnaPreference requires an entries array and an entryValues array."); //$NON-NLS-1$
 		}
 
 		mClickedDialogEntryIndex = getValueIndex();
@@ -49,7 +49,7 @@ public class TemaWarnaPreference extends ListPreference {
 				SpannableStringBuilder sb = new SpannableStringBuilder();
 
 				// no ayat
-				String s1 = String.valueOf(position + 1) + " ";
+				String s1 = String.valueOf(position + 1) + " "; //$NON-NLS-1$
 				sb.append(s1);
 				sb.setSpan(new ForegroundColorSpan(w[2]), 0, s1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -118,12 +118,12 @@ public class TemaWarnaPreference extends ListPreference {
 
 	@Override
 	public String getValue() {
-		Log.d(TAG, "getValue");
+		Log.d(TAG, "getValue "); //$NON-NLS-1$
 		
 		SharedPreferences pref = getPreferenceManager().getSharedPreferences();
-		String w1 = String.format("%08x", pref.getInt(getContext().getString(R.string.pref_warnaHuruf_int_key), 0xff000000));
-		String w2 = String.format("%08x", pref.getInt(getContext().getString(R.string.pref_warnaLatar_int_key), 0xff000000));
-		String w3 = String.format("%08x", pref.getInt(getContext().getString(R.string.pref_warnaNomerAyat_int_key), 0xff000000));
+		String w1 = String.format("%08x", pref.getInt(getContext().getString(R.string.pref_warnaHuruf_int_key), 0xff000000)); //$NON-NLS-1$
+		String w2 = String.format("%08x", pref.getInt(getContext().getString(R.string.pref_warnaLatar_int_key), 0xff000000)); //$NON-NLS-1$
+		String w3 = String.format("%08x", pref.getInt(getContext().getString(R.string.pref_warnaNomerAyat_int_key), 0xff000000)); //$NON-NLS-1$
 		return gabungWarna(w1, w2, w3);
 	}
 
@@ -133,24 +133,18 @@ public class TemaWarnaPreference extends ListPreference {
 
 	@Override
 	protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-		Log.d(TAG, "onSetInitialValue " + restoreValue + " " + defaultValue);
+		Log.d(TAG, "onSetInitialValue " + restoreValue + " " + defaultValue); //$NON-NLS-1$ //$NON-NLS-2$
 
 		setValue(restoreValue ? getPersistedString(mValue) : (String) defaultValue);
 	}
 
 	@Override
 	public void setValue(String value) {
-		Log.d(TAG, "setValue " + value);
+		Log.d(TAG, "setValue " + value); //$NON-NLS-1$
 		
 		mValue = value;
 
 		int[] w = pisahWarna(value);
-//		SharedPreferences pref = getPreferenceManager().getSharedPreferences();
-//		Editor editor = pref.edit();
-//		editor.putInt(getContext().getString(R.string.pref_warnaHuruf_int_key), w[0]);
-//		editor.putInt(getContext().getString(R.string.pref_warnaLatar_int_key), w[1]);
-//		editor.putInt(getContext().getString(R.string.pref_warnaNomerAyat_int_key), w[2]);
-//		editor.commit();
 		
 		int[] xresId = {R.string.pref_warnaHuruf_int_key, R.string.pref_warnaLatar_int_key, R.string.pref_warnaNomerAyat_int_key};
 		for (int i = 0; i < xresId.length; i++) {
@@ -168,6 +162,6 @@ public class TemaWarnaPreference extends ListPreference {
 	}
 
 	private static String gabungWarna(String w1, String w2, String w3) {
-		return w1 + " " + w2 + " " + w3;
+		return w1 + " " + w2 + " " + w3; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

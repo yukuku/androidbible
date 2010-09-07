@@ -92,14 +92,14 @@ public class IntArrayList implements Parcelable {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(this.len * 8);
-		sb.append("[");
+		sb.append('[');
 		for (int i = 0; i < len; i++) {
 			sb.append(buf[i]);
 			if (i != this.len - 1) {
-				sb.append(", ");
+				sb.append(", "); //$NON-NLS-1$
 			}
 		}
-		sb.append("]");
+		sb.append(']');
 		return sb.toString();
 	}
 }

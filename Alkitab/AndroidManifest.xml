@@ -21,27 +21,32 @@
 					android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity
-			android:name="yuku.alkitab.base.EdisiActivity"
-			android:label="Edisi" />
+
 		<activity
 			android:name="yuku.alkitab.base.MenujuActivity"
 			android:label="Menuju" />
 
 		<activity
 			android:name="yuku.alkitab.base.PengaturanActivity"
-			android:label="Pengaturan Alkitab" />
+			android:label="Pengaturan Alkitab" 
+			android:configChanges="mcc|mnc|keyboard|keyboardHidden|orientation" 
+			/>
+
 		<activity
 			android:name="yuku.alkitab.base.BukmakActivity"
-			android:label="Pembatas Buku" />
+			android:label="Pembatas Buku" 
+			android:configChanges="mcc|mnc|keyboard|keyboardHidden|orientation" 
+			/>
 
 		<activity
 			android:name="yuku.alkitab.base.Search2Activity"
 			android:label="Pencarian"
-			android:configChanges="mcc|mnc|keyboard|keyboardHidden|orientation" />
+			android:configChanges="mcc|mnc|keyboard|keyboardHidden|orientation" 
+			/>
 		<activity
 			android:name="yuku.alkitab.base.RenunganActivity"
-			android:configChanges="mcc|mnc|keyboard|keyboardHidden|orientation" />
+			android:configChanges="mcc|mnc|keyboard|keyboardHidden|orientation" 
+			/>
 		<activity
 			android:name="yuku.alkitab.base.BantuanActivity"
 			android:label="Bantuan" />

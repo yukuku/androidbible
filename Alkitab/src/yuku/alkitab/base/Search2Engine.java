@@ -11,9 +11,11 @@ import android.text.style.*;
 import android.util.Log;
 
 public class Search2Engine {
+	private static final String TAG = Search2Engine.class.getSimpleName();
+
 	static String[] tokenkan(String carian) {
 		// pisah jadi kata-kata
-		String[] xkata = carian.trim().toLowerCase().replaceAll("[\\s-]+", " ").split(" ");
+		String[] xkata = carian.trim().toLowerCase().replaceAll("\\s+", " ").split(" "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		return xkata;
 	}
@@ -45,7 +47,7 @@ public class Search2Engine {
 				terakhir = kata;
 			}
 			xkata = akata.toArray(new String[akata.size()]);
-			Log.d("alki", "xkata = " + Arrays.toString(xkata));
+			Log.d(TAG, "xkata = " + Arrays.toString(xkata)); //$NON-NLS-1$
 		}
 		
 		// cari betulan
@@ -67,13 +69,13 @@ public class Search2Engine {
 				{
 					long ms = System.currentTimeMillis();
 					hasil = cariDalam(context, kata, lama, 10000, filter_lama, filter_baru);
-					Log.d("alki", "cari kata '" + kata + "' pake waktu: " + (System.currentTimeMillis() - ms) + " ms");
+					Log.d(TAG, "cari kata '" + kata + "' pake waktu: " + (System.currentTimeMillis() - ms) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 	
 				if (lama != null) {
-					Log.d("alki", "Akan mengiris " + lama.size() + " elemen dengan " + hasil.size() + " elemen...");
+					Log.d(TAG, "Akan mengiris " + lama.size() + " elemen dengan " + hasil.size() + " elemen..."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					hasil = iris(lama, hasil);
-					Log.d("alki", "... hasilnya " + hasil.size() + " elemen");
+					Log.d(TAG, "... hasilnya " + hasil.size() + " elemen");  //$NON-NLS-1$//$NON-NLS-2$
 				}
 				//Debug.stopMethodTracing();
 				
@@ -174,7 +176,7 @@ public class Search2Engine {
 					}
 				}
 	
-				Log.d("alki", "cariDalam kitab " + k.nama + " selesai. res.size = " + res.size());
+				Log.d(TAG, "cariDalam kitab " + k.nama + " selesai. res.size = " + res.size()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else {
 			// cari hanya pada kp (kitab pasal) yang ada di sumber.
@@ -199,7 +201,7 @@ public class Search2Engine {
 				hitung++;
 			}
 			
-			Log.d("alki", "cariDalam kitab dengan sumber " + sumber.size() + " perlu baca kp sebanyak " + hitung + " res.size=" + res.size());
+			Log.d(TAG, "cariDalam kitab dengan sumber " + sumber.size() + " perlu baca kp sebanyak " + hitung + " res.size=" + res.size()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		
 		return res;

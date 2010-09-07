@@ -3,23 +3,26 @@ package yuku.alkitab.base.renungan;
 import static yuku.alkitab.base.model.AlkitabDb.*;
 
 import java.io.*;
-import java.util.*;
+import java.util.LinkedList;
 
 import org.apache.http.*;
-import org.apache.http.client.*;
-import org.apache.http.client.methods.*;
-import org.apache.http.impl.client.*;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
-import yuku.alkitab.base.model.*;
+import yuku.alkitab.R;
+import yuku.alkitab.base.model.AlkitabDb;
 import yuku.andoutil.*;
 import android.content.*;
-import android.database.sqlite.*;
-import android.util.*;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 public class TukangDonlot extends Thread {
 	public interface OnStatusDonlotListener {
 		void onStatusDonlot(String s);
 	}
+
+	private static final String TAG = null;
 	
 	private Context context_;
 	private OnStatusDonlotListener listener_;
@@ -80,7 +83,7 @@ public class TukangDonlot extends Thread {
 					nganggur_ = true;
 					Thread.sleep(60000);
 				} catch (InterruptedException e) {
-					Log.d("alki", "TukangDonlot dibangunin dari tidur nyenyak");
+					Log.d(TAG, "TukangDonlot dibangunin dari tidur nyenyak"); //$NON-NLS-1$
 				} finally {
 					nganggur_ = false;
 				}
@@ -90,8 +93,8 @@ public class TukangDonlot extends Thread {
 				boolean berhasil = false;
 				String output = null;
 				
-				Log.d("alki", "TukangDonlot mulai donlot nama=" + artikel.getNama() + " tgl=" + artikel.getTgl());
-				listener_.onStatusDonlot("Mengunduh " + artikel.getNamaUmum() + " tgl " + artikel.getTgl() + "...");
+				Log.d(TAG, "TukangDonlot mulai donlot nama=" + artikel.getNama() + " tgl=" + artikel.getTgl()); //$NON-NLS-1$ //$NON-NLS-2$
+				listener_.onStatusDonlot(context_.getString(R.string.mengunduh_namaumum_tgl_tgl, artikel.getNamaUmum(), artikel.getTgl()));
 				
 				try {
 					HttpClient client = new DefaultHttpClient();
@@ -114,15 +117,15 @@ public class TukangDonlot extends Thread {
 					output = new String(baos.toByteArray(), artikel.getMentahEncoding());
 					berhasil = true;
 				} catch (IOException e) {
-					Log.w("alki", "TukangDonlot", e);
+					Log.w(TAG, "TukangDonlot", e); //$NON-NLS-1$
 				}
 				
 				if (berhasil) {
-					listener_.onStatusDonlot("Berhasil mengunduh " + artikel.getNamaUmum() + " tgl " + artikel.getTgl());
+					listener_.onStatusDonlot(context_.getString(R.string.berhasil_mengunduh_namaumum_tgl_tgl, artikel.getNamaUmum(), artikel.getTgl()));
 					
 					artikel.isikan(output);
-					if (output.startsWith("NG")) {
-						listener_.onStatusDonlot("Kesalahan dalam mengunduh " + artikel.getNamaUmum() + " tgl " + artikel.getTgl() + ": " + output);
+					if (output.startsWith("NG")) { //$NON-NLS-1$
+						listener_.onStatusDonlot(context_.getString(R.string.kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output, artikel.getNamaUmum(), artikel.getTgl(), output));
 					}
 					
 					//# mari masukin ke db.
@@ -132,7 +135,7 @@ public class TukangDonlot extends Thread {
 
 						try {
 							// hapus dulu yang lama.
-							db.delete(TABEL_Renungan, KOLOM_Renungan_nama + "=? and " + KOLOM_Renungan_tgl + "=?", new String[] {artikel.getNama(), artikel.getTgl()});
+							db.delete(TABEL_Renungan, KOLOM_Renungan_nama + "=? and " + KOLOM_Renungan_tgl + "=?", new String[] {artikel.getNama(), artikel.getTgl()}); //$NON-NLS-1$ //$NON-NLS-2$
 
 							ContentValues values = new ContentValues();
 							values.put(KOLOM_Renungan_nama, artikel.getNama());
@@ -155,23 +158,20 @@ public class TukangDonlot extends Thread {
 							
 							db.setTransactionSuccessful();
 							
-							Log.d("alki", "TukangDonlot donlot selesai dengan sukses dan uda masuk ke db");
+							Log.d(TAG, "TukangDonlot donlot selesai dengan sukses dan uda masuk ke db"); //$NON-NLS-1$
 						} catch (Exception e) {
-							Log.w("alki", "TukangDonlot pas mau masukin ke db", e);
+							Log.w(TAG, "TukangDonlot pas mau masukin ke db", e); //$NON-NLS-1$
 						} finally {
 							db.endTransaction();
 						}
 					}
 				} else {
-					listener_.onStatusDonlot("Gagal mengunduh " + artikel.getNamaUmum() + " tgl " + artikel.getTgl());
-					Log.d("alki", "TukangDonlot gagal donlot");
+					listener_.onStatusDonlot(context_.getString(R.string.gagal_mengunduh_namaumum_tgl_tgl, artikel.getNamaUmum(), artikel.getTgl()));
+					Log.d(TAG, "TukangDonlot gagal donlot"); //$NON-NLS-1$
 				}
 			}
 			
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-			}
+			ThreadSleep.giveUpOnInterrupt(1000);
 		}
 	}
 }

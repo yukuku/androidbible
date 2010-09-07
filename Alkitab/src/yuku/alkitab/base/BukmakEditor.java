@@ -67,7 +67,7 @@ public class BukmakEditor {
 		.setView(dialogView)
 		.setTitle(alamat)
 		.setIcon(R.drawable.bukmak)
-		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				String tulisan = tTulisan.getText().toString();
@@ -89,7 +89,7 @@ public class BukmakEditor {
 				if (listener != null) listener.onOk();
 			}
 		})
-		.setNegativeButton("Batal", null)
+		.setNegativeButton(R.string.cancel, null)
 		.create()
 		.show();
 	}

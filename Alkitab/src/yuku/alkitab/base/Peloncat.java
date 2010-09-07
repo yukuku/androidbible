@@ -6,6 +6,8 @@ import yuku.alkitab.base.model.Kitab;
 import android.util.Log;
 
 public class Peloncat {
+	public static final String TAG = Peloncat.class.getSimpleName();
+	
 	private String p_kitab;
 	private int p_pasal;
 	private int p_ayat;
@@ -15,7 +17,7 @@ public class Peloncat {
 		int pos;
 		
 		public String toString() {
-			return pendek + ":" + pos;
+			return pendek + ":" + pos; //$NON-NLS-1$
 		}
 	}
 	
@@ -60,20 +62,20 @@ public class Peloncat {
 			return false;
 		}
 		
-		Log.d("alki", "peloncat tahap 0: " + alamat);
+		Log.d(TAG, "peloncat tahap 0: " + alamat); //$NON-NLS-1$
 		
 		//# TAHAP 5: Buang spasi di sebelah kiri-kanan tanda "-"
-		if (alamat.contains("-")) {
-			alamat = alamat.replaceAll("\\s+-\\s+|\\s+-|-\\s+", "-");
+		if (alamat.contains("-")) { //$NON-NLS-1$
+			alamat = alamat.replaceAll("\\s+-\\s+|\\s+-|-\\s+", "-"); //$NON-NLS-1$ //$NON-NLS-2$
 			
-			Log.d("alki", "peloncat tahap 5: " + alamat);
+			Log.d(TAG, "peloncat tahap 5: " + alamat); //$NON-NLS-1$
 		}
 		
 		//# TAHAP 10: BELAH BERDASAR SPASI, :, TITIK, dan kosong di antara - dan angka.
 		//# Contoh output salah: [Kisah, rasul34, 6-7, 8]
 		//# Contoh output betul: [Kisah, rasul34, 6, -, 7, 8]
-		String[] bagian = alamat.split("((\\s|:|\\.)+|(?=[0-9])(?<=-)|(?=-)(?<=[0-9]))");
-		Log.d("alki", "peloncat tahap 10: " + Arrays.toString(bagian));
+		String[] bagian = alamat.split("((\\s|:|\\.)+|(?=[0-9])(?<=-)|(?=-)(?<=[0-9]))"); //$NON-NLS-1$
+		Log.d(TAG, "peloncat tahap 10: " + Arrays.toString(bagian)); //$NON-NLS-1$
 		
 		if (bagian.length == 0) {
 			return false;
@@ -86,7 +88,7 @@ public class Peloncat {
 			
 			for (String b: bagian) {
 				if (isKata(b)) {
-					String angka = "";
+					String angka = ""; //$NON-NLS-1$
 					for (int i = b.length() - 1; i >= 0; i--) {
 						char c = b.charAt(i);
 						if (c >= '0' && c <= '9') {
@@ -110,7 +112,7 @@ public class Peloncat {
 			
 			bagian = bel.toArray(bagian);
 		}
-		Log.d("alki", "peloncat tahap 20: " + Arrays.toString(bagian));
+		Log.d(TAG, "peloncat tahap 20: " + Arrays.toString(bagian)); //$NON-NLS-1$
 		
 
 		//# TAHAP 25: cari elemen bagian yang "-", lalu buang mulai itu sampe belakang.
@@ -119,7 +121,7 @@ public class Peloncat {
 			int di = -1;
 			
 			for (int i = 0; i < bagian.length; i++) {
-				if ("-".equals(bagian[i])) {
+				if ("-".equals(bagian[i])) { //$NON-NLS-1$
 					adaStrip = true;
 					di = i;
 					break;
@@ -131,7 +133,7 @@ public class Peloncat {
 				System.arraycopy(bagian, 0, bel, 0, di);
 				bagian = bel;
 				
-				Log.d("alki", "peloncat tahap 25: " + Arrays.toString(bagian));
+				Log.d(TAG, "peloncat tahap 25: " + Arrays.toString(bagian)); //$NON-NLS-1$
 			}
 		}
 		
@@ -158,7 +160,7 @@ public class Peloncat {
 
 			String s = null;
 			for (int j = 0; j <= mulaiKata; j++) {
-				s = (s == null)? bagian[j]: s + " " + bagian[j];
+				s = (s == null)? bagian[j]: s + " " + bagian[j]; //$NON-NLS-1$
 			}
 			
 			bel.add(s);
@@ -168,7 +170,7 @@ public class Peloncat {
 
 			bagian = bel.toArray(new String[0]);
 		}
-		Log.d("alki", "peloncat tahap 30: " + Arrays.toString(bagian));
+		Log.d(TAG, "peloncat tahap 30: " + Arrays.toString(bagian)); //$NON-NLS-1$
 		
 		if (bagian.length == 1) { // 1 bagian doang
 			// , berati PASAL ato KITAB doang
@@ -212,9 +214,9 @@ public class Peloncat {
 	public boolean parse(String alamat) {
 		boolean res = parse0(alamat);
 		
-		Log.d("alki", "peloncat sesudah parse0: p_kitab=" + p_kitab);
-		Log.d("alki", "peloncat sesudah parse0: p_pasal=" + p_pasal);
-		Log.d("alki", "peloncat sesudah parse0: p_ayat=" + p_ayat);
+		Log.d(TAG, "peloncat sesudah parse0: p_kitab=" + p_kitab); //$NON-NLS-1$
+		Log.d(TAG, "peloncat sesudah parse0: p_pasal=" + p_pasal); //$NON-NLS-1$
+		Log.d(TAG, "peloncat sesudah parse0: p_ayat=" + p_ayat); //$NON-NLS-1$
 		
 		return res;
 	}
@@ -234,7 +236,7 @@ public class Peloncat {
 				ArrayList<Peloncat.KitabRef> a = new ArrayList<Peloncat.KitabRef>();
 				
 				for (Kitab k: xkitab) {
-					String judul = k.judul.replaceAll("(\\s|-|_)+", "").toLowerCase();
+					String judul = k.judul.replaceAll("(\\s|-|_)+", "").toLowerCase(); //$NON-NLS-1$ //$NON-NLS-2$
 					
 					{
 						Peloncat.KitabRef ref = new KitabRef();
@@ -244,8 +246,8 @@ public class Peloncat {
 						a.add(ref);
 					}
 					
-					if (judul.contains("1") || judul.contains("2") || judul.contains("3")) {
-						judul = judul.replaceAll("1", "i").replaceAll("2", "ii").replaceAll("3", "iii");
+					if (judul.contains("1") || judul.contains("2") || judul.contains("3")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						judul = judul.replaceAll("1", "i").replaceAll("2", "ii").replaceAll("3", "iii");    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 						
 						Peloncat.KitabRef ref = new KitabRef();
 						ref.pendek = judul;
@@ -257,19 +259,19 @@ public class Peloncat {
 				
 				refs = a.toArray(new Peloncat.KitabRef[0]);
 				pendekCache.put(xkitab, refs);
-				Log.d("alki", "entri pendekCache baru: " + Arrays.toString(refs));
+				Log.d(TAG, "entri pendekCache baru: " + Arrays.toString(refs)); //$NON-NLS-1$
 			}
 		}
 		
 		// 0 juga. bersihin p_kitab
 		Peloncat.KitabRef[] refs = pendekCache.get(xkitab);
-		p_kitab = p_kitab.replaceAll("(\\s|-|_)", "").toLowerCase();
-		Log.d("alki", "tebakKitab fase 0: p_kitab = " + p_kitab);
+		p_kitab = p_kitab.replaceAll("(\\s|-|_)", "").toLowerCase(); //$NON-NLS-1$ //$NON-NLS-2$
+		Log.d(TAG, "tebakKitab fase 0: p_kitab = " + p_kitab); //$NON-NLS-1$
 		
 		// 1. coba cocokin keseluruhan (co: "kejadian", "yohanes")
 		for (Peloncat.KitabRef ref: refs) {
 			if (ref.pendek.equals(p_kitab)) {
-				Log.d("alki", "tebakKitab fase 1 sukses: " + p_kitab);
+				Log.d(TAG, "tebakKitab fase 1 sukses: " + p_kitab); //$NON-NLS-1$
 				return ref.pos;
 			}
 		}
@@ -286,10 +288,10 @@ public class Peloncat {
 			}
 			
 			if (lulus == 1) {
-				Log.d("alki", "tebakKitab fase 2 sukses: " + pos_buatNanti + " untuk " + p_kitab);
+				Log.d(TAG, "tebakKitab fase 2 sukses: " + pos_buatNanti + " untuk " + p_kitab); //$NON-NLS-1$ //$NON-NLS-2$
 				return pos_buatNanti;
 			} else {
-				Log.d("alki", "tebakKitab fase 2: lulus = " + lulus);
+				Log.d(TAG, "tebakKitab fase 2: lulus = " + lulus); //$NON-NLS-1$
 			}
 		}
 		
@@ -304,7 +306,7 @@ public class Peloncat {
 					skor += 150; // kira2 1.5 insertion
 				}
 				
-				Log.d("alki", "tebakKitab fase 3: dengan " + ref.pendek + ":" + ref.pos + " skor " + skor);
+				Log.d(TAG, "tebakKitab fase 3: dengan " + ref.pendek + ":" + ref.pos + " skor " + skor); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				
 				if (skor < minSkor) {
 					minSkor = skor;
@@ -313,14 +315,14 @@ public class Peloncat {
 			}
 			
 			if (pos != -1) {
-				Log.d("alki", "tebakKitab fase 3 sukses: " + pos + " dengan skor " + minSkor);
+				Log.d(TAG, "tebakKitab fase 3 sukses: " + pos + " dengan skor " + minSkor);  //$NON-NLS-1$//$NON-NLS-2$
 				return pos;
 			}
 		}
 		
 		// 7. Keluarin yang pertama cocok kalo ada lebih dari 1 yang lulus fase 2
 		if (pos_buatNanti != -1) {
-			Log.d("alki", "tebakKitab fase 7 sukses: " + pos_buatNanti + " untuk " + p_kitab);
+			Log.d(TAG, "tebakKitab fase 7 sukses: " + pos_buatNanti + " untuk " + p_kitab); //$NON-NLS-1$ //$NON-NLS-2$
 			return pos_buatNanti;
 		}
 		

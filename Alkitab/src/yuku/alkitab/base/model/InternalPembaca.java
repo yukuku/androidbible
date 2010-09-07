@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import yuku.alkitab.base.U;
 import yuku.bintex.BintexReader;
 import android.content.Context;
-import android.content.res.Resources;
 import android.util.Log;
 
 public class InternalPembaca implements Pembaca {
-
+	public static final String TAG = InternalPembaca.class.getSimpleName();
+	
 	// # buat cache Asset
 	private static InputStream cache_inputStream = null;
 	private static String cache_file = null;
@@ -18,9 +18,7 @@ public class InternalPembaca implements Pembaca {
 
 	@Override
 	public Kitab[] bacaInfoKitab(Context context, Edisi edisi) {
-		Resources resources = context.getResources();
-
-		InputStream is = resources.openRawResource(resources.getIdentifier(edisi.nama + "_index_bt", "raw", context.getPackageName()));
+		InputStream is = U.openRaw(context, edisi.nama + "_index_bt"); //$NON-NLS-1$
 		BintexReader in = new BintexReader(is);
 		try {
 			ArrayList<Kitab> xkitab = new ArrayList<Kitab>();
@@ -32,7 +30,7 @@ public class InternalPembaca implements Pembaca {
 					xkitab.add(k);
 				}
 			} catch (IOException e) {
-				Log.d("alki", "siapinKitab selesai memuat");
+				Log.d(TAG, "siapinKitab selesai memuat"); //$NON-NLS-1$
 			}
 
 			return xkitab.toArray(new Kitab[xkitab.size()]);
@@ -125,17 +123,17 @@ public class InternalPembaca implements Pembaca {
 	public IndexPerikop bacaIndexPerikop(Context context, Edisi edisi) {
 		long wmulai = System.currentTimeMillis();
 
-		InputStream is = U.openRaw(context, edisi.nama + "_perikop_index_bt");
+		InputStream is = U.openRaw(context, edisi.nama + "_perikop_index_bt"); //$NON-NLS-1$
 		BintexReader in = new BintexReader(is);
 		try {
 			return IndexPerikop.baca(in);
 
 		} catch (IOException e) {
-			Log.e("alki", "baca perikop index ngaco", e);
+			Log.e(TAG, "baca perikop index ngaco", e); //$NON-NLS-1$
 			return null;
 		} finally {
 			in.close();
-			Log.d("alki", "Muat index perikop butuh ms: " + (System.currentTimeMillis() - wmulai));
+			Log.d(TAG, "Muat index perikop butuh ms: " + (System.currentTimeMillis() - wmulai)); //$NON-NLS-1$
 		}
 	}
 
@@ -159,7 +157,7 @@ public class InternalPembaca implements Pembaca {
 
 		int kini = pertama;
 
-		BintexReader in = new BintexReader(U.openRaw(context, edisi.nama + "_perikop_blok_bt"));
+		BintexReader in = new BintexReader(U.openRaw(context, edisi.nama + "_perikop_blok_bt")); //$NON-NLS-1$
 		try {
 			while (true) {
 				int ari = indexPerikop.getAri(kini);

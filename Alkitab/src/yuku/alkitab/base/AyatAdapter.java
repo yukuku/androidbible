@@ -1,6 +1,6 @@
 package yuku.alkitab.base;
 
-import yuku.alkitab.R;
+import yuku.alkitab.*;
 import yuku.alkitab.R.id;
 import yuku.alkitab.base.S.penerapan;
 import yuku.alkitab.base.model.*;
@@ -15,6 +15,8 @@ import android.widget.*;
 import android.widget.TextView.BufferType;
 
 class AyatAdapter extends BaseAdapter {
+	public static final String TAG = AyatAdapter.class.getSimpleName();
+	
 	//# field ctor
 	private final Context appContext_;
 	private final AlkitabDb db_;
@@ -104,7 +106,7 @@ class AyatAdapter extends BaseAdapter {
 			if (isi.charAt(0) == '@') {
 				// karakter kedua harus '@' juga, kalo bukan ada ngaco
 				if (isi.charAt(1) != '@') {
-					throw new RuntimeException("Karakter kedua bukan @. Isi ayat: " + isi);
+					throw new RuntimeException("Karakter kedua bukan @. Isi ayat: " + isi); //$NON-NLS-1$
 				}
 				
 				if (convertView == null || convertView.getId() != R.layout.satu_ayat_tehel) {
@@ -176,7 +178,7 @@ class AyatAdapter extends BaseAdapter {
 			} else {
 				lXparalel.setVisibility(View.VISIBLE);
 				
-				SpannableStringBuilder sb = new SpannableStringBuilder("(");
+				SpannableStringBuilder sb = new SpannableStringBuilder("("); //$NON-NLS-1$
 				int len = 1;
 
 				int total = blok.xparalel.length;
@@ -186,10 +188,10 @@ class AyatAdapter extends BaseAdapter {
 					if (i > 0) {
 						// paksa new line untuk pola2 paralel tertentu
 						if ( (total == 6 && i == 3) || (total == 4 && i == 2) || (total == 5 && i == 3) ) {
-							sb.append("; \n");
+							sb.append("; \n"); //$NON-NLS-1$
 							len += 3;
 						} else {
-							sb.append("; ");
+							sb.append("; "); //$NON-NLS-1$
 							len += 2;
 						}
 					}
@@ -198,7 +200,7 @@ class AyatAdapter extends BaseAdapter {
 					sb.setSpan(new CallbackSpan(paralel, paralelListener_), len, len + paralel.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 					len += paralel.length();
 				}
-				sb.append(")");
+				sb.append(")"); //$NON-NLS-1$
 				len += 1;
 				
 				lXparalel.setText(sb, BufferType.SPANNABLE);
@@ -282,7 +284,7 @@ class AyatAdapter extends BaseAdapter {
 			}
 		}
 		
-		Log.w("alki", "masa judul perikop di paling bawah? Ga masuk akal.");
+		Log.w(TAG, "masa judul perikop di paling bawah? Ga masuk akal."); //$NON-NLS-1$
 		return 0; 
 	}
 
@@ -337,7 +339,7 @@ class AyatAdapter extends BaseAdapter {
 						//# kasih no ayat di depannya
 						SpannableStringBuilder s = new SpannableStringBuilder();
 						String ayat_s = String.valueOf(ayat);
-						s.append(ayat_s).append(" ").append(isi, posParse, posSampe);
+						s.append(ayat_s).append(' ').append(isi, posParse, posSampe);
 						s.setSpan(new ForegroundColorSpan(penerapan.warnaNomerAyat), 0, ayat_s.length(), 0);
 						tehel.setText(s, BufferType.SPANNABLE);
 						
@@ -366,9 +368,9 @@ class AyatAdapter extends BaseAdapter {
 			} else if (jenisTanda == '8') {
 				if (tehelTerakhir != null) {
 					if (penerapan.gebug_tehelBewarna) {
-						tehelTerakhir.append("$$$\n");
+						tehelTerakhir.append("$$$\n"); //$NON-NLS-1$
 					} else {
-						tehelTerakhir.append("\n");
+						tehelTerakhir.append("\n"); //$NON-NLS-1$
 					}
 				}
 			}
@@ -378,7 +380,7 @@ class AyatAdapter extends BaseAdapter {
 		
 		TextView lAyat = (TextView) res.findViewById(id.lAyat);
 		if (nomerAyatUdaDitulis) {
-			lAyat.setText("");
+			lAyat.setText(""); //$NON-NLS-1$
 		} else {
 			lAyat.setText(String.valueOf(ayat));
 			IsiActivity.aturTampilanTeksNomerAyat(lAyat);
@@ -393,7 +395,7 @@ class AyatAdapter extends BaseAdapter {
 		
 		String ayat_s = String.valueOf(ayat);
 		
-		seayat.append(ayat_s).append(" ").append(isi);
+		seayat.append(ayat_s).append(' ').append(isi);
 		seayat.setSpan(new ForegroundColorSpan(S.penerapan.warnaNomerAyat), 0, ayat_s.length(), 0);
 		
 		seayat.setSpan(new LeadingMarginSpan.Standard(0, S.penerapan.indenParagraf), 0, ayat_s.length() + 1 + isi.length(), 0);

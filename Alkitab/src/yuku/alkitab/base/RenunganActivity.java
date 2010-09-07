@@ -26,18 +26,17 @@ import android.widget.*;
 import android.widget.TextView.BufferType;
 
 public class RenunganActivity extends Activity implements OnStatusDonlotListener {
-	private static SimpleDateFormat sdf;
+	public static final String TAG = RenunganActivity.class.getSimpleName();
+	public static final String EXTRA_alamat = "alamat"; //$NON-NLS-1$
+	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd"); //$NON-NLS-1$
 
 	public static final String[] ADA_NAMA = {
-		"sh", "rh",
+		"sh", "rh",  //$NON-NLS-1$//$NON-NLS-2$
 	};
+	public static final String DEFAULT = "sh"; //$NON-NLS-1$
 	private static final String[] ADA_JUDUL = {
-		"Santapan Harian", "Renungan Harian",
+		"Santapan Harian", "Renungan Harian", //$NON-NLS-1$ //$NON-NLS-2$
 	};
-
-	static {
-		sdf = new SimpleDateFormat("yyyyMMdd");
-	}
 
 	TextView lIsi;
 	ScrollView scrollIsi;
@@ -135,7 +134,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		
 		//# atur difot! 
 		if (S.penampungan.renungan_tanggalan == null) S.penampungan.renungan_tanggalan = new Date();
-		if (S.penampungan.renungan_nama == null) S.penampungan.renungan_nama = "sh";
+		if (S.penampungan.renungan_nama == null) S.penampungan.renungan_nama = DEFAULT;
 		
 		new PemintaMasaDepan().start();
 		
@@ -160,7 +159,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 			
 			pengulangTampil.postDelayed(cobaTampilLagi, 3000);
 		} else {
-			Log.d("alki", "sudah siap tampil, kita syuh yang tersisa dari pengulang tampil");
+			Log.d(TAG, "sudah siap tampil, kita syuh yang tersisa dari pengulang tampil"); //$NON-NLS-1$
 			pengulangTampil.removeCallbacks(cobaTampilLagi);
 			
 			render(artikel);
@@ -170,10 +169,10 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 	CallbackSpan.OnClickListener ayatKlikListener = new CallbackSpan.OnClickListener() {
 		@Override
 		public void onClick(View widget, Object data) {
-			Log.d("alki", "Dalam renungan, ada yang diklik: " + data);
+			Log.d(TAG, "Dalam renungan, ada yang diklik: " + data); //$NON-NLS-1$
 
 			Intent res = new Intent();
-			res.putExtra("alamat", (String)data);
+			res.putExtra(EXTRA_alamat, (String)data);
 			
 			setResult(RESULT_OK, res);
 			finish();
@@ -182,9 +181,9 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 
 	private void render(IArtikel artikel) {
 		if (artikel == null) {
-			Log.d("alki", "merender artikel null");
+			Log.d(TAG, "merender artikel null"); //$NON-NLS-1$
 		} else {
-			Log.d("alki", "merender artikel nama=" + artikel.getNama() + " tgl=" + artikel.getTgl() + " siapPakai=" + artikel.getSiapPakai());
+			Log.d(TAG, "merender artikel nama=" + artikel.getNama() + " tgl=" + artikel.getTgl() + " siapPakai=" + artikel.getSiapPakai()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		
 		if (artikel != null && artikel.getSiapPakai()) {
@@ -193,43 +192,43 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 			Spanned header = Html.fromHtml(artikel.getHeaderHtml());
 			SpannableStringBuilder ss = new SpannableStringBuilder(header);
 			
-			if (artikel.getNama().equals("sh")) {
-				SpannableStringBuilder judul = new SpannableStringBuilder(Html.fromHtml("<h3>" + artikel.getJudul() + "</h3>"));
+			if (artikel.getNama().equals("sh")) { //$NON-NLS-1$
+				SpannableStringBuilder judul = new SpannableStringBuilder(Html.fromHtml("<h3>" + artikel.getJudul() + "</h3>")); //$NON-NLS-1$ //$NON-NLS-2$
 				judul.setSpan(new CallbackSpan(artikel.getJudul(), ayatKlikListener), 0, artikel.getJudul().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 				
 				ss.append(judul);
-			} else if (artikel.getNama().equals("rh")) {
+			} else if (artikel.getNama().equals("rh")) { //$NON-NLS-1$
 				// cari "Bacaan Setahun : " dst
 				{
 					String s = header.toString();
-					Matcher m = Pattern.compile("Bacaan\\s+Setahun\\s*:\\s*(.*?)\\s*$", Pattern.MULTILINE).matcher(s);
+					Matcher m = Pattern.compile("Bacaan\\s+Setahun\\s*:\\s*(.*?)\\s*$", Pattern.MULTILINE).matcher(s); //$NON-NLS-1$
 					while (m.find()) {
 						// di dalem daftar ayat, kita cari lagi, harusnya sih dipisahkan titik-koma.
 						String t = m.group(1);
-						Matcher n = Pattern.compile("\\s*(\\S.*?)\\s*(;|$)", Pattern.MULTILINE).matcher(t);
+						Matcher n = Pattern.compile("\\s*(\\S.*?)\\s*(;|$)", Pattern.MULTILINE).matcher(t); //$NON-NLS-1$
 						
 						while (n.find()) {
-							Log.d("alki", "Ketemu salah satu bacaan setahun: #" + n.group(1) + "#");
+							Log.d(TAG, "Ketemu salah satu bacaan setahun: #" + n.group(1) + "#"); //$NON-NLS-1$ //$NON-NLS-2$
 							CallbackSpan span = new CallbackSpan(n.group(1), ayatKlikListener);
 							ss.setSpan(span, m.start(1) + n.start(1), m.start(1) + n.end(1), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 						}
 					}
 				}
 				
-				ss.append(Html.fromHtml("<br/><h3>" + artikel.getJudul() + "</h3><br/>"));
+				ss.append(Html.fromHtml("<br/><h3>" + artikel.getJudul() + "</h3><br/>"));  //$NON-NLS-1$//$NON-NLS-2$
 			}
 			
 			int ofsetSebelumIsi = ss.length();
 			
-			Spanned isiDanKopirait = Html.fromHtml(artikel.getIsiHtml() + "<br/><br/>" + artikel.getKopiraitHtml());
+			Spanned isiDanKopirait = Html.fromHtml(artikel.getIsiHtml() + "<br/><br/>" + artikel.getKopiraitHtml()); //$NON-NLS-1$
 			ss.append(isiDanKopirait);
 			
 			// cari "Bacaan : " dst dan pasang link
 			{
 				String s = isiDanKopirait.toString();
-				Matcher m = Pattern.compile("Bacaan\\s*:\\s*(.*?)\\s*$", Pattern.MULTILINE).matcher(s);
+				Matcher m = Pattern.compile("Bacaan\\s*:\\s*(.*?)\\s*$", Pattern.MULTILINE).matcher(s); //$NON-NLS-1$
 				while (m.find()) {
-					Log.d("alki", "Ketemu \"Bacaan : \": #" + m.group(1) + "#");
+					Log.d(TAG, "Ketemu \"Bacaan : \": #" + m.group(1) + "#"); //$NON-NLS-1$ //$NON-NLS-2$
 					CallbackSpan span = new CallbackSpan(m.group(1), ayatKlikListener);
 					ss.setSpan(span, ofsetSebelumIsi + m.start(1), ofsetSebelumIsi + m.end(1), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 				}
@@ -246,9 +245,9 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 			renderBerhasilBaik  = false;
 			
 			if (artikel == null) {
-				lIsi.setText("Belum tersedia. Menunggu pengambilan data lewat Internet...\n\n(Pastikan ada koneksi Internet untuk mengambil renungan.)");
+				lIsi.setText(R.string.belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada);
 			} else { // berarti belum siap pakai
-				lIsi.setText("Belum tersedia. Mungkin tanggal yang diminta belum disiapkan, atau terjadi kesalahan dalam mengenali sumber data.\n\nJika dirasa perlu, tolong beritahu pembuat program ini dengan kembali ke layar tampilan ayat, lalu buka menu dan pilih Saran.");
+				lIsi.setText(R.string.belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan);
 			}
 		}
 		
@@ -259,13 +258,14 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 			}
 		}
 		
-		lHeader.setText(judul + "\n" + namaHari(S.penampungan.renungan_tanggalan) + ", " + DateFormat.getDateFormat(this).format(S.penampungan.renungan_tanggalan));
+		lHeader.setText(judul + "\n" + namaHari(S.penampungan.renungan_tanggalan) + ", " + DateFormat.getDateFormat(this).format(S.penampungan.renungan_tanggalan));  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
-	private static final String[] NAMA_HARI = {"Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"};
-	private static String namaHari(Date date) {
+	private static final int[] NAMA_HARI_RESID = {R.string.hari_minggu, R.string.hari_senin, R.string.hari_selasa, R.string.hari_rabu, R.string.hari_kamis, R.string.hari_jumat, R.string.hari_sabtu};
+
+	private String namaHari(Date date) {
 		int day = date.getDay();
-		return NAMA_HARI[day];
+		return getString(NAMA_HARI_RESID[day]);
 	}
 
 	private synchronized void akanPerlu(String nama, String tgl, boolean penting) {
@@ -275,9 +275,9 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		}
 
 		IArtikel artikel = null;
-		if (nama.equals("rh")) {
+		if (nama.equals("rh")) { //$NON-NLS-1$
 			artikel = new ArtikelRenunganHarian(tgl);
-		} else if (nama.equals("sh")) {
+		} else if (nama.equals("sh")) { //$NON-NLS-1$
 			artikel = new ArtikelSantapanHarian(tgl);
 		}
 
@@ -293,11 +293,11 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 	private IArtikel cobaAmbilLokal(String nama, String tgl) {
 		SQLiteDatabase db = AlkitabDb.getInstance(getApplicationContext()).getDatabase();
 
-		Cursor c = db.query(TABEL_Renungan, null, KOLOM_Renungan_nama + "=? and " + KOLOM_Renungan_tgl + "=?", new String[] { nama, tgl }, null, null, null);
+		Cursor c = db.query(TABEL_Renungan, null, KOLOM_Renungan_nama + "=? and " + KOLOM_Renungan_tgl + "=?", new String[] { nama, tgl }, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			if (c.moveToNext()) {
 				IArtikel res = null;
-				if (nama.equals("rh")) {
+				if (nama.equals("rh")) { //$NON-NLS-1$
 					res = new ArtikelRenunganHarian(
 						tgl,
 						c.getString(c.getColumnIndexOrThrow(KOLOM_Renungan_judul)),
@@ -305,7 +305,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 						c.getString(c.getColumnIndexOrThrow(KOLOM_Renungan_isi)),
 						c.getInt(c.getColumnIndexOrThrow(KOLOM_Renungan_siapPakai)) > 0
 					);
-				} else if (nama.equals("sh")) {
+				} else if (nama.equals("sh")) { //$NON-NLS-1$
 					res = new ArtikelSantapanHarian(
 						tgl,
 						c.getString(c.getColumnIndexOrThrow(KOLOM_Renungan_judul)),
@@ -330,7 +330,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		@Override
 		public void run() {
 			if (pemintaMasaDepanLagiJalan) {
-				Log.d("alki", "peminta masa depan lagi jalan");
+				Log.d(TAG, "peminta masa depan lagi jalan"); //$NON-NLS-1$
 				return;
 			}
 			
@@ -346,7 +346,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 				for (int i = 0; i < hariDepan; i++) {
 					String tgl = sdf.format(hariIni);
 					if (cobaAmbilLokal(S.penampungan.renungan_nama, tgl) == null) {
-						Log.d("alki", "PemintaMasaDepan perlu minta " + tgl);
+						Log.d(TAG, "PemintaMasaDepan perlu minta " + tgl); //$NON-NLS-1$
 						akanPerlu(S.penampungan.renungan_nama, tgl, false);
 						
 						ThreadSleep.ignoreInterrupt(1000);

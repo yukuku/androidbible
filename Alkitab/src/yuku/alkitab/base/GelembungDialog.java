@@ -1,13 +1,13 @@
 package yuku.alkitab.base;
 
-import java.util.*;
+import java.util.Date;
 
 import yuku.alkitab.R;
 import yuku.alkitab.base.model.*;
-import android.app.*;
+import android.app.AlertDialog;
 import android.content.*;
 import android.view.*;
-import android.widget.*;
+import android.widget.EditText;
 
 public class GelembungDialog {
 	private final Context context;
@@ -34,13 +34,13 @@ public class GelembungDialog {
 		this.alert = new AlertDialog.Builder(context)
 		.setView(dialogLayout)
 		.setIcon(R.drawable.gelembung)
-		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				bOk_click();
 			}
 		})
-		.setNegativeButton("Hapus", new DialogInterface.OnClickListener() {
+		.setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				bHapus_click();
@@ -63,7 +63,7 @@ public class GelembungDialog {
 	}
 
 	public void tampilkan() {
-		this.alert.setTitle("Catatan " + alamat);
+		this.alert.setTitle(context.getString(R.string.catatan_alamat, alamat));
 		
 		this.bukmak = alkitabDb.getBukmakByAri(ari, AlkitabDb.ENUM_Bukmak2_jenis_catatan);
 		if (bukmak != null) {
@@ -100,9 +100,9 @@ public class GelembungDialog {
 		if (bukmak == null) return;
 		
 		new AlertDialog.Builder(context)
-		.setTitle("Hapus Catatan")
-		.setMessage("Anda yakin mau menghapus catatan ini?")
-		.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+		.setTitle(R.string.hapus_catatan)
+		.setMessage(R.string.anda_yakin_mau_menghapus_catatan_ini)
+		.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				alkitabDb.hapusBukmak(ari, AlkitabDb.ENUM_Bukmak2_jenis_catatan);
@@ -112,7 +112,7 @@ public class GelembungDialog {
 				}
 			}
 		})
-		.setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+		.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				if (refreshCallback != null) {
@@ -127,6 +127,6 @@ public class GelembungDialog {
 	public void setDbKitabPasalAyat(AlkitabDb alkitabDb, Kitab kitab, int pasal_1, int ayat_1) {
 		this.alkitabDb = alkitabDb;
 		this.ari = Ari.encode(kitab.pos, pasal_1, ayat_1);
-		this.alamat = kitab.judul + " " + pasal_1 + ":" + ayat_1;
+		this.alamat = S.alamat(kitab, pasal_1, ayat_1);
 	}
 }

@@ -14,6 +14,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class S {
+	private static final String TAG = S.class.getSimpleName();
+
 	/**
 	 * penerapan dari pengaturan
 	 */
@@ -77,13 +79,13 @@ public class S {
 		} catch (EOFException e) {
 			// selesai baca
 		} catch (IOException e) {
-			Log.e("alki", "ngaco baca edisi index!!!");
+			Log.e(TAG, "ngaco baca edisi index!!!"); //$NON-NLS-1$
 		}
 
 		S.xedisi = xedisi.toArray(new Edisi[xedisi.size()]);
 		S.edisiAktif = S.xedisi[0]; // TODO selalu pilih edisi pertama
 		
-		Log.d("alki", "siapinEdisi butuh ms: " + (System.currentTimeMillis() - wmulai));
+		Log.d(TAG, "siapinEdisi butuh ms: " + (System.currentTimeMillis() - wmulai)); //$NON-NLS-1$
 	}
 
 	public static synchronized void siapinKitab(Context context) {
@@ -93,7 +95,7 @@ public class S {
 		if (S.edisiAktif.volatile_xkitab != null) return;
 
 		Edisi edisi = S.edisiAktif;
-		Log.d("alki", "siapinKitab mulai dengan edisi: " + edisi.nama);
+		Log.d(TAG, "siapinKitab mulai dengan edisi: " + edisi.nama); //$NON-NLS-1$
 		S.edisiAktif.volatile_xkitab = edisi.pembaca.bacaInfoKitab(context, edisi);
 		S.kitabAktif = S.edisiAktif.volatile_xkitab[0]; // nanti diset sama luar 
 		
@@ -103,25 +105,25 @@ public class S {
 			}
 		}
 		
-		Log.d("alki", "siapinKitab selesai");
+		Log.d(TAG, "siapinKitab selesai"); //$NON-NLS-1$
 	}
 	
 	public static void bacaPengaturan(Context context) {
-		Log.d("alki", "bacaPengaturan mulai");
+		Log.d(TAG, "bacaPengaturan mulai"); //$NON-NLS-1$
 		SharedPreferences pengaturan = PreferenceManager.getDefaultSharedPreferences(context);
 
 		//# atur ukuran huruf isi berdasarkan pengaturan
 		{
 			float ukuranHuruf2 = pengaturan.getFloat(context.getString(R.string.pref_ukuranHuruf2_key), 17.f);
 			S.penerapan.ukuranHuruf2dp = ukuranHuruf2;
-			Log.d("alki", "ukuranHuruf2 dalam dp = " + S.penerapan.ukuranHuruf2dp);
+			Log.d(TAG, "ukuranHuruf2 dalam dp = " + S.penerapan.ukuranHuruf2dp); //$NON-NLS-1$
 			
 			S.penerapan.indenParagraf = (int) (context.getResources().getDimension(R.dimen.indenParagraf) * ukuranHuruf2 / 17.f);
-			Log.d("alki", "indenParagraf dalam px = " + S.penerapan.indenParagraf);
+			Log.d(TAG, "indenParagraf dalam px = " + S.penerapan.indenParagraf); //$NON-NLS-1$
 			S.penerapan.menjorokSatu = (int) (context.getResources().getDimension(R.dimen.menjorokSatu) * ukuranHuruf2 / 17.f);
-			Log.d("alki", "menjorokSatu dalam px = " + S.penerapan.menjorokSatu);
+			Log.d(TAG, "menjorokSatu dalam px = " + S.penerapan.menjorokSatu); //$NON-NLS-1$
 			S.penerapan.menjorokDua = (int) (context.getResources().getDimension(R.dimen.menjorokDua) * ukuranHuruf2 / 17.f);
-			Log.d("alki", "menjorokDua dalam px = " + S.penerapan.menjorokDua);
+			Log.d(TAG, "menjorokDua dalam px = " + S.penerapan.menjorokDua); //$NON-NLS-1$
 		}
 		
 		//# atur jenis huruf, termasuk boldnya
@@ -173,7 +175,7 @@ public class S {
 			boolean nyalakanTerusLayar = pengaturan.getBoolean(context.getString(R.string.pref_nyalakanTerusLayar_key), false);
 			S.penerapan.nyalakanTerusLayar = nyalakanTerusLayar;
 		}
-		Log.d("alki", "bacaPengaturan selesai");
+		Log.d(TAG, "bacaPengaturan selesai"); //$NON-NLS-1$
 	}
 	
 	public static synchronized String[] muatTeks(Context context, Edisi edisi, Kitab kitab, int pasal_1) {
@@ -202,7 +204,7 @@ public class S {
 			pengirimFidbek.setOnSuccessListener(new PengirimFidbek.OnSuccessListener() {
 				@Override
 				public void onSuccess(final byte[] response) {
-					Log.e("alki", "KirimFidbek respon: " + new String(response, 0, response.length));
+					Log.e(TAG, "KirimFidbek respon: " + new String(response, 0, response.length)); //$NON-NLS-1$
 				}
 			});
 		}
@@ -219,16 +221,20 @@ public class S {
 		
 		StringBuilder hasil = new StringBuilder(40);
 		if (kitab >= edisi.volatile_xkitab.length) {
-			hasil.append("[").append(kitab).append("] ");
+			hasil.append('[').append(kitab).append("] "); //$NON-NLS-1$
 		} else {
-			hasil.append(edisi.volatile_xkitab[kitab].judul).append(" ");
+			hasil.append(edisi.volatile_xkitab[kitab].judul).append(' ');
 		}
 		
-		hasil.append(pasal_1).append(":").append(ayat_1);
+		hasil.append(pasal_1).append(':').append(ayat_1);
 		return hasil.toString();
 	}
 
 	public static String alamat(Kitab kitab, int pasal_1) {
-		return kitab.judul + " " + pasal_1;
+		return kitab.judul + " " + pasal_1; //$NON-NLS-1$
+	}
+
+	public static String alamat(Kitab kitab, int pasal_1, int ayat_1) {
+		return kitab.judul + " " + pasal_1 + ":" + ayat_1;  //$NON-NLS-1$//$NON-NLS-2$
 	}
 }

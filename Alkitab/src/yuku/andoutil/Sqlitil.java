@@ -21,8 +21,8 @@ public class Sqlitil {
 	
 	public static String toYmdGmt(Date date) {
 		if (dateFormat_ymd_gmt == null) {
-			dateFormat_ymd_gmt = new SimpleDateFormat("yyyy-MM-dd");
-			dateFormat_ymd_gmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+			dateFormat_ymd_gmt = new SimpleDateFormat("yyyy-MM-dd"); //$NON-NLS-1$
+			dateFormat_ymd_gmt.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
 		}
 		
 		return dateFormat_ymd_gmt.format(date);
@@ -34,8 +34,8 @@ public class Sqlitil {
 	
 	public static String toYmdhmsGmt(Date date) {
 		if (dateFormat_ymdhms_gmt == null) {
-			dateFormat_ymdhms_gmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			dateFormat_ymdhms_gmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+			dateFormat_ymdhms_gmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //$NON-NLS-1$
+			dateFormat_ymdhms_gmt.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
 		}
 		
 		return dateFormat_ymdhms_gmt.format(date);

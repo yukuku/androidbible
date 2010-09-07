@@ -12,17 +12,17 @@ public class ArtikelRenunganHarian extends ArtikelDariSabda {
 
 	@Override
 	public CharSequence getKopiraitHtml() {
-		return "Renungan Harian.<br/>diambil dari <b>sabda.org</b>";
+		return "Renungan Harian.<br/>diambil dari <b>sabda.org</b>"; //$NON-NLS-1$
 	}
 
 	@Override
 	public String getNama() {
-		return "rh";
+		return "rh"; //$NON-NLS-1$
 	}
 	
 	@Override
 	public String getNamaUmum() {
-		return "Renungan Harian";
+		return "Renungan Harian"; //$NON-NLS-1$
 	}
 }
 

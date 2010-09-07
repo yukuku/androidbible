@@ -70,8 +70,8 @@ public class U {
 
 		if (res.length != posPK) {
 			// ada yang ngaco! di algo di atas
-			throw new RuntimeException("Algo selip2an perikop salah! posPK=" + posPK + " posAyat=" + posAyat + " posBlok=" + posBlok + " nayat=" + nayat + " nblok=" + nblok
-					+ " xari:" + Arrays.toString(perikop_xari) + " xblok:" + Arrays.toString(perikop_xblok));
+			throw new RuntimeException("Algo selip2an perikop salah! posPK=" + posPK + " posAyat=" + posAyat + " posBlok=" + posBlok + " nayat=" + nayat + " nblok=" + nblok //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+					+ " xari:" + Arrays.toString(perikop_xari) + " xblok:" + Arrays.toString(perikop_xblok));  //$NON-NLS-1$//$NON-NLS-2$
 		}
 
 		return res;
@@ -80,9 +80,9 @@ public class U {
 	public static Typeface typeface(String nama) {
 		Typeface typeface;
 		if (nama == null) typeface = Typeface.DEFAULT;
-		else if (nama.equals("SERIF")) typeface = Typeface.SERIF;
-		else if (nama.equals("SANS_SERIF")) typeface = Typeface.SANS_SERIF;
-		else if (nama.equals("MONOSPACE")) typeface = Typeface.MONOSPACE;
+		else if (nama.equals("SERIF")) typeface = Typeface.SERIF; //$NON-NLS-1$
+		else if (nama.equals("SANS_SERIF")) typeface = Typeface.SANS_SERIF; //$NON-NLS-1$
+		else if (nama.equals("MONOSPACE")) typeface = Typeface.MONOSPACE; //$NON-NLS-1$
 		else typeface = Typeface.DEFAULT;
 		return typeface;
 	}
@@ -90,7 +90,7 @@ public class U {
 
 	public static InputStream openRaw(Context context, String name) {
 		Resources resources = context.getResources();
-		return resources.openRawResource(resources.getIdentifier(name, "raw", context.getPackageName()));
+		return resources.openRawResource(resources.getIdentifier(name, "raw", context.getPackageName())); //$NON-NLS-1$
 	}
 
 	public static void hurufkecilkanAscii(byte[] ba) {
