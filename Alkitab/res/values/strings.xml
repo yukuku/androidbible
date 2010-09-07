@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="menuBantuan">Bantuan</string>
+    <string name="beri_saran_v">Beri Saran</string>
+    <string name="versi">Versi</string>
+    <string name="renungan">Renungan</string>
+    <string name="cari_v">Cari</string>
+    <string name="pembatas_buku">Pembatas buku</string>
+    <string name="pembatas_condensed">Pembatas</string>
+    <string name="hapus_pembatas_buku">Hapus pembatas buku</string>
+    <string name="ubah_judul">Ubah judul</string>
+    <string name="bagikan">Bagikan</string>
+    <string name="tulis_catatan">Tulis catatan</string>
+    <string name="tambah_pembatas_buku">Tambah pembatas buku</string>
+    <string name="salin_ayat">Salin (copy) ayat</string>
+    <string name="pada_mulanya">Pada mulanya Allah menciptakan langit dan bumi. Bumi belum berbentuk dan kosong; gelap gulita menutupi samudera raya, dan Roh Allah melayang-layang di atas permukaan air. Berfirmanlah Allah: "Jadilah terang." Lalu terang itu jadi. Allah melihat bahwa terang itu baik, lalu dipisahkan-Nyalah terang itu dari gelap. Dan Allah menamai terang itu siang, dan gelap itu malam. Jadilah petang dan jadilah pagi, itulah hari pertama.</string>
+    <string name="contoh_tulisan_titikdua">Contoh tulisan:</string>
+    <string name="perj_baru">Perj. Baru</string>
+    <string name="perj_lama">Perj. Lama</string>
+    <string name="ganti_v">Ganti</string>
+    <string name="ayat_sebelumangka">Ayat</string>
+    <string name="pasal_sebelumangka">Pasal</string>
+    <string name="loncat_ke_alamat_titikdua">Loncat ke alamat:</string>
+    <string name="alamat_sekarang_titikdua">Alamat sekarang:</string>
+    <string name="saran_komentar_dsb">Saran, komentar, dsb...</string>
+    <string name="tidak_ada_catatan">&lt;tidak ada catatan&gt;</string>
+    <string name="belum_ada_pembatas_buku">Belum ada pembatas buku.</string>
+    <string name="judul_titikdua">Judul:</string>
     <string name="gagal_mengubah_pembatas_buku">GAGAL mengubah pembatas buku ke versi baru.\n\nMohon kirim email ke yukuku@gmail.com untuk melaporkan peristiwa ini supaya bisa dibetulkan di versi selanjutnya.</string>
     <string name="selamat_datang_di_versi_baru_pembatas">Selamat datang di versi baru! Pembatas-pembatas buku yang anda miliki sudah diubah menjadi versi baru. Kini anda bisa menambahkan judul pada setiap pembatas buku.\n\nPembatas buku ditemukan: %d</string>
     <string name="gagal_mengunduh_namaumum_tgl_tgl">Gagal mengunduh %1$s tgl %2$s</string>

@@ -12,8 +12,7 @@
 		android:layout_centerHorizontal="true">
 		<TextView
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="Alamat sekarang:"></TextView>
+			android:layout_height="wrap_content" android:text="@string/alamat_sekarang_titikdua"></TextView>
 		<TextView
 			android:layout_height="wrap_content"
 			android:textSize="18dp"
@@ -27,8 +26,7 @@
 			android:textAppearance="?android:attr/textAppearanceMedium"></TextView>
 		<TextView
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="Loncat ke alamat:"></TextView>
+			android:layout_height="wrap_content" android:text="@string/loncat_ke_alamat_titikdua"></TextView>
 		<EditText
 			android:layout_height="wrap_content"
 			android:id="@+id/tAlamatLoncat"

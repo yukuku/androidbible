@@ -41,10 +41,9 @@
 				android:layout_margin="8dp">
 				<TextView
 					android:layout_width="wrap_content"
-					android:text="Pasal "
 					android:layout_height="fill_parent"
 					android:gravity="fill_vertical"
-					android:id="@+id/lLabelPasal" />
+					android:id="@+id/lLabelPasal" android:text="@string/pasal_sebelumangka"/>
 				<TextView
 					android:layout_width="wrap_content"
 					android:id="@+id/lPasal"
@@ -60,10 +59,9 @@
 					android:minEms="1" />
 				<TextView
 					android:layout_width="wrap_content"
-					android:text="Ayat "
 					android:layout_height="fill_parent"
 					android:gravity="center_vertical"
-					android:id="@+id/lLabelAyat" />
+					android:id="@+id/lLabelAyat" android:text="@string/ayat_sebelumangka"/>
 				<TextView
 					android:layout_width="wrap_content"
 					android:id="@+id/lAyat"
@@ -87,7 +85,7 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/bOk"
 			android:minWidth="200dp"
-			android:textAppearance="?android:attr/textAppearanceLarge" android:text="OK"></Button>
+			android:textAppearance="?android:attr/textAppearanceLarge" android:text="@string/ok"></Button>
 
 
 

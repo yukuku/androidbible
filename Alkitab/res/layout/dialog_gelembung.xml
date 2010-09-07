@@ -14,7 +14,6 @@
 			android:gravity="top"
 			android:layout_height="wrap_content"
 			android:minLines="4"
-			android:hint="&lt;tidak ada catatan&gt;"
-			android:inputType="textCapSentences|textMultiLine" />
+			android:inputType="textCapSentences|textMultiLine" android:hint="@string/tidak_ada_catatan"/>
 	</LinearLayout>
 </ScrollView>

@@ -34,7 +34,7 @@
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
 			android:gravity="left">
-			<CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/cFilterLama" android:text="Perj. Lama" android:checked="true" android:textColor="#000"></CheckBox><CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/cFilterBaru" android:text="Perj. Baru" android:checked="true" android:textColor="#000"></CheckBox>
+			<CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/cFilterLama" android:checked="true" android:textColor="#000" android:text="@string/perj_lama"></CheckBox><CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/cFilterBaru" android:checked="true" android:textColor="#000" android:text="@string/perj_baru"></CheckBox>
 		
 
 </LinearLayout>

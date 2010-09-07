@@ -2,34 +2,38 @@
 <menu
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
-		android:title="@string/menuTuju"
 		android:id="@+id/menuTuju"
+		android:title="@string/menuTuju"
 		android:icon="@drawable/ic_menu_forward" />
 	<item
 		android:id="@+id/menuBukmak"
+		android:title="@string/pembatas_buku" 
+		android:titleCondensed="@string/pembatas_condensed"
 		android:icon="@drawable/menu_bukmak"
-		android:titleCondensed="Pembatas"
-		android:title="Pembatas buku" />
+		/>
 	<item
-		android:title="Cari"
-		android:id="@+id/menuSearch2" android:icon="@drawable/ic_menu_search"/>
+		android:id="@+id/menuSearch2" 
+		android:title="@string/cari_v"
+		android:icon="@drawable/ic_menu_search"/>
 	<item
 		android:id="@+id/menuRenungan"
-		android:title="Renungan"
+		android:title="@string/renungan"
 		android:icon="@drawable/ic_menu_notifications" />
 	<item
 		android:id="@+id/menuEdisi"
-		android:title="Versi" android:icon="@drawable/menu_edisi"/>
+		android:title="@string/versi" 
+		android:icon="@drawable/menu_edisi"/>
 	<item
 		android:id="@+id/menuPengaturan"
-		android:title="@string/menuPengaturan" android:icon="@drawable/ic_menu_preferences"/>
+		android:title="@string/menuPengaturan" 
+		android:icon="@drawable/ic_menu_preferences" />
 	<item
 		android:id="@+id/menuFidbek"
-		android:title="Beri Saran"
+		android:title="@string/beri_saran_v"
 		android:icon="@android:drawable/ic_menu_send" />
 	<item
 		android:id="@+id/menuBantuan"
-		android:title="Bantuan"
+		android:title="@string/menuBantuan"
 		android:icon="@android:drawable/ic_menu_help" />
 	<item
 		android:id="@+id/menuTentang"

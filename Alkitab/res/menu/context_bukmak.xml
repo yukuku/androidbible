@@ -3,8 +3,8 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
 		android:id="@+id/menuUbahKeteranganBukmak"
-		android:title="Ubah judul" />
+		android:title="@string/ubah_judul" />
 	<item
 		android:id="@+id/menuHapusBukmak"
-		android:title="Hapus pembatas buku" />
+		android:title="@string/hapus_pembatas_buku" />
 </menu>

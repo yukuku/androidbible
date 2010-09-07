@@ -7,17 +7,15 @@
 	android:padding="6dp">
 	<TextView
 		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="Contoh tulisan:"></TextView>
+		android:layout_height="wrap_content" android:text="@string/contoh_tulisan_titikdua"></TextView>
 	<TextView
 		android:layout_width="wrap_content"
 		android:textColor="#fff"
 		android:padding="6dp"
-		android:text='Pada mulanya Allah menciptakan langit dan bumi. Bumi belum berbentuk dan kosong; gelap gulita menutupi samudera raya, dan Roh Allah melayang-layang di atas permukaan air. Berfirmanlah Allah: "Jadilah terang." Lalu terang itu jadi. Allah melihat bahwa terang itu baik, lalu dipisahkan-Nyalah terang itu dari gelap. Dan Allah menamai terang itu siang, dan gelap itu malam. Jadilah petang dan jadilah pagi, itulah hari pertama.'
 		android:fadingEdge="vertical"
 		android:id="@+id/lContoh"
 		android:textSize="17dp"
-		android:layout_height="90dp"></TextView>
+		android:layout_height="90dp" android:text="@string/pada_mulanya"></TextView>
 	<LinearLayout
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"

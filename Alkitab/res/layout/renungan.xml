@@ -21,9 +21,8 @@
 		<Button
 			android:layout_width="wrap_content"
 			android:id="@+id/bGanti"
-			android:text="Ganti"
 			android:layout_height="wrap_content"
-			android:height="48dp"></Button>
+			android:height="48dp" android:text="@string/ganti_v"></Button>
 		<ImageButton
 			android:src="@drawable/left_arrow"
 			android:id="@+id/bKiri"

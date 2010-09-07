@@ -38,7 +38,6 @@
 					android:gravity="center_vertical|center_horizontal"
 					android:focusable="true" />
 				<TextView
-					android:id="@+id/TextView02"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:text=" : "
@@ -70,11 +69,9 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:id="@+id/bOk"
-			android:text="OK"
+			android:text="@string/ok"
 			android:minWidth="200dp"
 			android:textAppearance="?android:attr/textAppearanceLarge" />
-
-
 
 	</LinearLayout>
 </ScrollView>
