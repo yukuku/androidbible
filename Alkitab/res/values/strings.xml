@@ -17,7 +17,7 @@
 		- &lt;b&gt;Oluss Studio&lt;/b&gt; ikon program&lt;br/&gt;
 		- &lt;b&gt;Jaya Satrio&lt;/b&gt; berbagai ikon&lt;br/&gt;
 		- dsb.</string>
-    <string name="namaprog_versi_build">Alkitab v%s (%d)</string>
+    <string name="namaprog_versi_build">Alkitab v%1$s (%2$d)</string>
     <string name="hari_sabtu">Sabtu</string>
     <string name="hari_jumat">Jumat</string>
     <string name="hari_kamis">Kamis</string>
