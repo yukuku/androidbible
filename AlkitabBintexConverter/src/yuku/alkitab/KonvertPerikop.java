@@ -6,8 +6,12 @@ import java.util.*;
 import yuku.bintex.BintexWriter;
 
 public class KonvertPerikop {
+	static String nama;
+	
 	public static void main(String[] args) throws Exception {
-		new KonvertPerikop().convert("../Alkitab/publikasi/bis_perikop_1.txt", "../Alkitab/publikasi/bis_perikop_blok_bt.bt", "../Alkitab/publikasi/bis_perikop_index_bt.bt");
+		nama = args[0];
+		
+		new KonvertPerikop().convert("../Alkitab/publikasi/" + nama + "_perikop_1.txt", "../Alkitab/publikasi/" + nama + "_raw/" + nama + "_perikop_blok_bt.bt", "../Alkitab/publikasi/" + nama + "_raw/"  + nama + "_perikop_index_bt.bt");
 	}
 	
 	int bolong = 0;

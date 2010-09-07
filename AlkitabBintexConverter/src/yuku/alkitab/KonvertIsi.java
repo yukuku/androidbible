@@ -1,13 +1,15 @@
 package yuku.alkitab;
 
 import java.io.*;
-import java.util.*;
+import java.util.Scanner;
 
-import yuku.bintex.*;
+import yuku.bintex.BintexWriter;
 
 public class KonvertIsi {
 	public static void main(String[] args) throws Exception {
-		new KonvertIsi().convert("/Users/yuku/f/android/Alkitab/publikasi/tb_index.txt", "/Users/yuku/f/android/Alkitab/res/raw/tb_index_bt.bt");
+		String nama = args[0];
+		
+		new KonvertIsi().convert("../Alkitab/publikasi/" + nama + "_index.txt", "../Alkitab/publikasi/" + nama + "_raw/" + nama + "_index_bt.bt");
 	}
 
 	private void convert(String nfi, String nfo) throws Exception {

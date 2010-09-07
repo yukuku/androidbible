@@ -1,16 +1,21 @@
 <?php
-	$fn = fopen('tb_nama.txt', 'rb');
+	// contoh pemakaian: 
+	// php ./kode_ancur_yang_membuat_malu.php ../publikasi/kjv_teks_bdb.txt ../publikasi/kjv_index.txt kjv ../publikasi/kjv_raw/
+	//                  [0]                   [1]                           [2]                        [3] [4]
+	
+	$fn = fopen('../publikasi/' . $argv[3] . '_kitab.txt', 'rb');
 	$nama_kitab = array();
+	$no = 1;
 	while ($line = fgets($fn)) {
-		list($no, $judul) = explode("\t", $line);
-		$no = (int)$no;
-		$nama_kitab[$no] = trim($judul);
+		$nama_kitab[$no] = trim($line);
+		$no++;
 	}
+	
 	fclose($fn);
+	error_reporting(E_ALL);
 	
-	$f = fopen('b_indonesian_baru.txt', 'rb');
-	$i = fopen('../publikasi/tb_index.txt', 'wb');
-	
+	$f = fopen($argv[1], 'rb');
+	$i = fopen($argv[2], 'wb');
 	
 	function jumlah($judul, $file, $npasal, $nayat, $pasal_offset) {
 		global $i;
@@ -24,7 +29,7 @@
 	$maju = 0;
 	$c = 0;
 	
-	$g = fopen(sprintf("../res/raw/tb_k%02d.txt", $kitab), 'wb');
+	$g = fopen(sprintf($argv[4] . $argv[3] . "_k%02d.txt", $kitab), 'wb');
 	
 	while($line = fgets($f)) {
 		list(, $inkitab, $inpasal, , $isi) = explode("\t", $line);
@@ -39,7 +44,7 @@
 		}
 		
 		if ($inkitab != $kitab) { // end of kitab
-			jumlah($nama_kitab[$kitab], sprintf("tb_k%02d", $kitab), count($nayat), $nayat, $pasal_offset);
+			jumlah($nama_kitab[$kitab], sprintf($argv[3] . "_k%02d", $kitab), count($nayat), $nayat, $pasal_offset);
 			$kitab = $inkitab;
 			$pasal = 1;
 			$nayat = array();
@@ -50,7 +55,9 @@
 			fclose($g);
 			
 			// buka baru
-			$g = fopen(sprintf("../res/raw/tb_k%02d.txt", $kitab), 'wb');
+			$nf = sprintf($argv[4] . $argv[3] . "_k%02d.txt", $kitab);
+			echo $nf . "\n";
+			$g = fopen($nf, 'wb');
 		}
 		
 		$c++;
@@ -62,7 +69,7 @@
 	$nayat[] = $c;
 	//$pasal_offset[] = $maju;
 	
-	jumlah($nama_kitab[$kitab], sprintf("tb_k%02d", $kitab), $pasal, $nayat, $pasal_offset);
+	jumlah($nama_kitab[$kitab], sprintf($argv[3] . "_k%02d", $kitab), $pasal, $nayat, $pasal_offset);
 	// tutup
 	fclose($g);
 	
