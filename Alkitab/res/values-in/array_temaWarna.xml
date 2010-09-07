@@ -1,42 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string-array
-		name="pref_ukuranHuruf_label">
-		<item>Super kecil</item>
-		<item>Kecil</item>
-		<item>Agak kecil</item>
-		<item>Sedang</item>
-		<item>Agak besar</item>
-		<item>Besar</item>
-		<item>Super besar</item>
-	</string-array>
-	<string-array
-		name="pref_ukuranHuruf_value">
-		<item>55</item>
-		<item>71</item>
-		<item>83</item>
-		<item>100</item>
-		<item>120</item>
-		<item>140</item>
-		<item>180</item>
-	</string-array>
-	
-	<string-array
-		name="pref_jenisHuruf_label">
-		<item>Normal</item>
-		<item>Sans-serif</item>
-		<item>Serif</item>
-		<item>Monospace</item>
-	</string-array>
-	<string-array
-		name="pref_jenisHuruf_value">
-		<item>DEFAULT</item>
-		<item>SANS_SERIF</item>
-		<item>SERIF</item>
-		<item>MONOSPACE</item>
-	</string-array>
-	
-	<string-array
 		name="pref_temaWarna_label">
 		<item>Kertas HVS</item>
 		<item>Papan Tulis</item>
@@ -66,6 +30,4 @@
 		<item>ffe1e6fa ff122641 ffb1790f</item> <!-- malam -->
 		<item>ffffe985 ff122641 ffe3f5ff</item> <!-- malam bintang -->
 	</string-array>
-	
-	
 </resources>

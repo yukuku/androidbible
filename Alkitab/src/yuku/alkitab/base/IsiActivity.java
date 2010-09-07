@@ -9,6 +9,7 @@ import yuku.alkitab.base.AddonManager.DonlotThread;
 import yuku.alkitab.base.AddonManager.Elemen;
 import yuku.alkitab.base.BukmakEditor.Listener;
 import yuku.alkitab.base.GelembungDialog.RefreshCallback;
+import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.model.*;
 import yuku.andoutil.IntArrayList;
 import android.app.*;
@@ -60,7 +61,6 @@ public class IsiActivity extends Activity {
 	AlkitabDb alkitabDb;
 	
 	private AyatAdapter ayatAdapter_;
-	private boolean tombolAlamatLoncat_;
 	
 	//# penyimpanan state buat search2
 	String search2_carian = null;
@@ -424,7 +424,7 @@ public class IsiActivity extends Activity {
 	}
 
 	private void bTuju_click() {
-		if (tombolAlamatLoncat_) {
+		if (S.penerapan.prioritasLoncat) {
 			bukaDialogLoncat();
 		} else {
 			bukaDialogTuju();
@@ -432,7 +432,7 @@ public class IsiActivity extends Activity {
 	}
 	
 	private void bTuju_longClick() {
-		if (tombolAlamatLoncat_) {
+		if (S.penerapan.prioritasLoncat) {
 			bukaDialogTuju();
 		} else {
 			bukaDialogLoncat();
@@ -471,7 +471,7 @@ public class IsiActivity extends Activity {
 		
 		final AlertDialog dialog = new AlertDialog.Builder(IsiActivity.this)
 			.setView(loncat)
-			.setPositiveButton(R.string.loncat_v, loncat_click)
+			.setPositiveButton(R.string.loncat, loncat_click)
 			.create();
 		
 		tAlamatLoncat.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -508,11 +508,17 @@ public class IsiActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		new MenuInflater(this).inflate(R.menu.isi, menu);
 		
-		SubMenu menuGebug = menu.addSubMenu(R.string.gebug);
-		menuGebug.setHeaderTitle("Untuk percobaan dan cari kutu. Tidak penting."); //$NON-NLS-1$
-		menuGebug.add(0, 0x985801, 0, "gebug 1: dump p+p"); //$NON-NLS-1$
-		menuGebug.add(0, 0x985806, 0, "gebug 6: tehel bewarna"); //$NON-NLS-1$
-		menuGebug.add(0, 0x985807, 0, "gebug 7: dump warna"); //$NON-NLS-1$
+		yuku.alkitab.base.config.Config c = BuildConfig.get(getPackageName());
+
+		if (c.menuGebug) {
+			SubMenu menuGebug = menu.addSubMenu(R.string.gebug);
+			menuGebug.setHeaderTitle("Untuk percobaan dan cari kutu. Tidak penting."); //$NON-NLS-1$
+			menuGebug.add(0, 0x985801, 0, "gebug 1: dump p+p"); //$NON-NLS-1$
+			menuGebug.add(0, 0x985806, 0, "gebug 6: tehel bewarna"); //$NON-NLS-1$
+			menuGebug.add(0, 0x985807, 0, "gebug 7: dump warna"); //$NON-NLS-1$
+		}
+		
+		menu.findItem(R.id.menuRenungan).setVisible(c.menuRenungan);
 		
 		return true;
 	}
@@ -522,7 +528,7 @@ public class IsiActivity extends Activity {
 		if (menu != null) {
 			MenuItem menuTuju = menu.findItem(R.id.menuTuju);
 			if (menuTuju != null) {
-				if (tombolAlamatLoncat_) {
+				if (S.penerapan.prioritasLoncat) {
 					menuTuju.setIcon(R.drawable.menu_loncat);
 					menuTuju.setTitle(R.string.loncat_v);
 				} else {
