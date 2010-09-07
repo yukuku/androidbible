@@ -2,82 +2,81 @@
 <PreferenceScreen
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<PreferenceCategory
-		android:title="Penampilan">
+		android:title="@string/pref_penampilan">
 
 		<yuku.alkitab.base.UkuranHuruf2Preference
 			android:key="@string/pref_ukuranHuruf2_key"
-			android:title="Ukuran Huruf"
-			android:summary="Ubah ukuran huruf teks Alkitab (perbesar atau perkecil)."
-			android:positiveButtonText="OK"
-			android:negativeButtonText="Batal"
+			android:title="@string/pref_ukuran_huruf"
+			android:summary="@string/pref_ubah_ukuran_huruf_teks_alkitab_perbesar_atau_perkecil"
+			android:positiveButtonText="@string/ok"
+			android:negativeButtonText="@string/cancel"
 			android:defaultValue="17" />
-		<yuku.alkitab.base.JenisHurufPreference
+		<yuku.alkitab.base.JenisHurufPreference 
 			android:key="@string/pref_jenisHuruf_key"
-			android:title="Jenis Huruf"
-			android:dialogTitle="Jenis Huruf"
-			android:summary="Ganti bentuk huruf teks Alkitab."
+			android:title="@string/pref_jenis_huruf"
+			android:summary="@string/pref_ganti_bentuk_huruf_teks_alkitab"
 			android:entries="@array/pref_jenisHuruf_label"
 			android:entryValues="@array/pref_jenisHuruf_value"
 			android:defaultValue="DEFAULT" />
 		<CheckBoxPreference
 			android:key="@string/pref_boldHuruf_key"
-			android:title="Tebalkan Huruf"
-			android:summary="Pakai huruf yang dicetak tebal (bold)."
+			android:title="@string/pref_tebalkan_huruf"
+			android:summary="@string/pref_pakai_huruf_yang_dicetak_tebal_bold"
 			android:defaultValue="false" />
 
 		<PreferenceScreen
-			android:summary="Atur warna teks, latar belakang, dan nomor ayat."
-			android:title="Warna">
+			android:summary="@string/pref_atur_warna_teks_latar_belakang_dan_nomor_ayat"
+			android:title="@string/pref_warna">
 			<yuku.alkitab.base.TemaWarnaPreference
 				android:key="_gapake_temaWarna"
-				android:title="Tema Warna"
-				android:summary="Atur warna teks, latar belakang, dan nomor ayat menurut suatu tema." 
+				android:title="@string/pref_tema_warna"
+				android:summary="@string/pref_atur_warna_teks_latar_belakang_dan" 
 				android:entries="@array/pref_temaWarna_label"
 				android:entryValues="@array/pref_temaWarna_value"
 				/>
 			<yuku.alkitab.base.AmbilWarnaPreference
 				android:key="@string/pref_warnaHuruf_int_key"
 				android:defaultValue="0xfff0f0f0"
-				android:title="Warna Teks Alkitab" />
+				android:title="@string/pref_warna_teks_alkitab" />
 			<yuku.alkitab.base.AmbilWarnaPreference
 				android:key="@string/pref_warnaLatar_int_key"
 				android:defaultValue="0xff000000"
-				android:title="Warna Latar Belakang" />
+				android:title="@string/pref_warna_latar_belakang" />
 			<yuku.alkitab.base.AmbilWarnaPreference
 				android:key="@string/pref_warnaNomerAyat_int_key"
 				android:defaultValue="0xff9090ff"
-				android:title="Warna Nomor Ayat" />
+				android:title="@string/pref_warna_nomor_ayat" />
 		</PreferenceScreen>
 	</PreferenceCategory>
 
 	<PreferenceCategory
-		android:title="Penggunaan">
+		android:title="@string/pref_penggunaan">
 
 		<CheckBoxPreference
 			android:defaultValue="true"
-			android:title="Biarkan Layar Menyala"
+			android:title="@string/pref_biarkan_layar_menyala"
 			android:key="@string/pref_nyalakanTerusLayar_key"
-			android:summary="Layar tidak akan padam ketika membaca teks Alkitab." />
+			android:summary="@string/pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab" />
 		<CheckBoxPreference
 			android:defaultValue="false"
-			android:title="Ketik Langsung Alamat"
+			android:title="@string/pref_ketik_langsung_alamat"
 			android:key="@string/pref_tombolAlamatLoncat_key"
-			android:summary="Buka bagian Alkitab tertentu dengan mengetikkan alamatnya langsung." />
+			android:summary="@string/pref_buka_bagian_alkitab_tertentu_dengan_mengetikkan_alamatnya_langsung" />
 		<CheckBoxPreference
 			android:defaultValue="false"
-			android:title="Kitab menurut Abjad"
+			android:title="@string/pref_kitab_menurut_abjad"
 			android:key="@string/pref_sortKitabAlfabet_key"
-			android:summary="Tampilkan kitab dalam urutan abjad, bukan urutan aslinya." />
+			android:summary="@string/pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya" />
 		<CheckBoxPreference
 			android:defaultValue="false"
-			android:title="Tanpa Tombol Navigasi"
+			android:title="@string/pref_tanpa_tombol_navigasi"
 			android:key="@string/pref_tanpaNavigasi_key"
-			android:summary="Tekan ← dan → untuk berpindah pasal. Tekan judul untuk pindah." />
+			android:summary="@string/pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah" />
 		<CheckBoxPreference
 			android:defaultValue="false"
-			android:title="Matikan Menu Ayat"
+			android:title="@string/pref_matikan_menu_ayat"
 			android:key="@string/pref_matikanTahanAyat_key"
-			android:summary="Jangan buka menu ketika jari menahan salah satu ayat." />
+			android:summary="@string/pref_jangan_buka_menu_ketika_jari_menahan_salah_satu_ayat" />
 
 	</PreferenceCategory>
 </PreferenceScreen>

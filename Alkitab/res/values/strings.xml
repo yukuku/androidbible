@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="pref_atur_warna_teks_latar_belakang_dan">Atur warna teks, latar belakang, dan nomor ayat menurut suatu tema.</string>
+    <string name="pref_tema_warna">Tema Warna</string>
+    <string name="pref_warna_teks_alkitab">Warna Teks Alkitab</string>
+    <string name="pref_warna_latar_belakang">Warna Latar Belakang</string>
+    <string name="pref_warna_nomor_ayat">Warna Nomor Ayat</string>
+    <string name="pref_pakai_huruf_yang_dicetak_tebal_bold">Pakai huruf yang dicetak tebal (bold).</string>
+    <string name="pref_tebalkan_huruf">Tebalkan Huruf</string>
+    <string name="pref_ganti_bentuk_huruf_teks_alkitab">Ganti bentuk huruf teks Alkitab.</string>
+    <string name="pref_jenis_huruf">Jenis Huruf</string>
+    <string name="pref_ubah_ukuran_huruf_teks_alkitab_perbesar_atau_perkecil">Ubah ukuran huruf teks Alkitab (perbesar atau perkecil).</string>
+    <string name="pref_ukuran_huruf">Ukuran Huruf</string>
+    <string name="pref_warna">Warna</string>
+    <string name="pref_atur_warna_teks_latar_belakang_dan_nomor_ayat">Atur warna teks, latar belakang, dan nomor ayat.</string>
+    <string name="pref_penggunaan">Penggunaan</string>
+    <string name="pref_jangan_buka_menu_ketika_jari_menahan_salah_satu_ayat">Jangan buka menu ketika jari menahan salah satu ayat.</string>
+    <string name="pref_matikan_menu_ayat">Matikan Menu Ayat</string>
+    <string name="pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah">Tekan ← dan → untuk berpindah pasal. Tekan judul untuk pindah.</string>
+    <string name="pref_tanpa_tombol_navigasi">Tanpa Tombol Navigasi</string>
+    <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Tampilkan kitab dalam urutan abjad, bukan urutan aslinya.</string>
+    <string name="pref_kitab_menurut_abjad">Kitab menurut Abjad</string>
+    <string name="pref_buka_bagian_alkitab_tertentu_dengan_mengetikkan_alamatnya_langsung">Buka bagian Alkitab tertentu dengan mengetikkan alamatnya langsung.</string>
+    <string name="pref_ketik_langsung_alamat">Ketik Langsung Alamat</string>
+    <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Layar tidak akan padam ketika membaca teks Alkitab.</string>
+    <string name="pref_biarkan_layar_menyala">Biarkan Layar Menyala</string>
+    <string name="pref_penampilan">Penampilan</string>
     <string name="menuBantuan">Bantuan</string>
     <string name="beri_saran_v">Beri Saran</string>
     <string name="versi">Versi</string>
@@ -81,48 +106,26 @@
     <string name="ok">OK</string>
     <string name="url_help_index">file:///android_asset/help/html-in/index.html</string>
     <string name="tidak_bisa_membuat_folder">Tidak bisa membuat folder %s</string>
-	<string
-		name="pref_nyalakanTerusLayar_key">nyalakanTerusLayar</string>
-	<string
-		name="pref_tanpaNavigasi_key">tanpaNavigasi</string>
-	<string
-		name="pref_tombolAlamatLoncat_key">tombolAlamatLoncat</string>
-	<string
-		name="pref_boldHuruf_key">boldHuruf</string>
-	<string
-		name="pref_jenisHuruf_key">jenisHuruf</string>
-	<string
-		name="pref_ukuranHuruf2_key">ukuranHuruf2</string>
-	<string
-		name="menuPengaturan">Pengaturan</string>
-	<string
-		name="tampilan_n">Tampilan</string>
-	<string
-		name="pilihKitab_s">Pilih kitab</string>
-	<string
-		name="menuSejarah">Sejarah</string>
-	<string
-		name="menuKitab">Kitab</string>
-	<string
-		name="menuTentang">Tentang</string>
-	<string
-		name="menuTuju">Tuju</string>
-	<string
-		name="app_name">Alkitab</string>
-	<string
-		name="tentang_title">Tentang Alkitab</string>
-	<string
-		name="peringatanBeta_s">Kami mengharapkan saran, kritik, dan komentar Anda.\nTolong berikan pesan Anda di bawah (juga alamat imel Anda jika perlu). Terima kasih!</string>
-	<string
-		name="fidbekMakasih_s">Terima kasih atas komentar anda!</string>
-	<string
-		name="pref_sortKitabAlfabet_key">sortKitabAlfabet</string>
-	<string
-		name="pref_matikanTahanAyat_key">matikanTahanAyat</string>
-	<string
-		name="pref_warnaHuruf_int_key">warnaHuruf</string>
-	<string
-		name="pref_warnaLatar_int_key">warnaLatar</string>
-	<string
-		name="pref_warnaNomerAyat_int_key">warnaNomerAyat</string>
+	<string name="pref_nyalakanTerusLayar_key">nyalakanTerusLayar</string>
+	<string name="pref_tanpaNavigasi_key">tanpaNavigasi</string>
+	<string name="pref_tombolAlamatLoncat_key">tombolAlamatLoncat</string>
+	<string name="pref_boldHuruf_key">boldHuruf</string>
+	<string name="pref_jenisHuruf_key">jenisHuruf</string>
+	<string name="pref_ukuranHuruf2_key">ukuranHuruf2</string>
+	<string name="menuPengaturan">Pengaturan</string>
+	<string name="tampilan_n">Tampilan</string>
+	<string name="pilihKitab_s">Pilih kitab</string>
+	<string name="menuSejarah">Sejarah</string>
+	<string name="menuKitab">Kitab</string>
+	<string name="menuTentang">Tentang</string>
+	<string name="menuTuju">Tuju</string>
+	<string name="app_name">Alkitab</string>
+	<string name="tentang_title">Tentang Alkitab</string>
+	<string name="peringatanBeta_s">Kami mengharapkan saran, kritik, dan komentar Anda.\nTolong berikan pesan Anda di bawah (juga alamat imel Anda jika perlu). Terima kasih!</string>
+	<string name="fidbekMakasih_s">Terima kasih atas komentar anda!</string>
+	<string name="pref_sortKitabAlfabet_key">sortKitabAlfabet</string>
+	<string name="pref_matikanTahanAyat_key">matikanTahanAyat</string>
+	<string name="pref_warnaHuruf_int_key">warnaHuruf</string>
+	<string name="pref_warnaLatar_int_key">warnaLatar</string>
+	<string name="pref_warnaNomerAyat_int_key">warnaNomerAyat</string>
 </resources>
