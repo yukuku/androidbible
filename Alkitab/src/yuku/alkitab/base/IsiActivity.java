@@ -3,7 +3,6 @@ package yuku.alkitab.base;
 import java.util.Map;
 import java.util.regex.*;
 
-import yuku.alkitab.R;
 import yuku.alkitab.base.AddonManager.DonlotListener;
 import yuku.alkitab.base.AddonManager.DonlotThread;
 import yuku.alkitab.base.AddonManager.Elemen;
@@ -519,6 +518,10 @@ public class IsiActivity extends Activity {
 		}
 		
 		menu.findItem(R.id.menuRenungan).setVisible(c.menuRenungan);
+		
+		menu.findItem(R.id.menuEdisi).setVisible(c.menuEdisi);
+		
+		menu.findItem(R.id.menuBantuan).setVisible(c.menuBantuan);
 		
 		return true;
 	}
