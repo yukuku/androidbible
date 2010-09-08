@@ -3,6 +3,7 @@ package yuku.alkitab.base;
 import java.util.Map;
 import java.util.regex.*;
 
+import yuku.alkitab.R;
 import yuku.alkitab.base.AddonManager.DonlotListener;
 import yuku.alkitab.base.AddonManager.DonlotThread;
 import yuku.alkitab.base.AddonManager.Elemen;
