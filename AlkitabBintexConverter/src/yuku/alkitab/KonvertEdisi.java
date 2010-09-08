@@ -7,7 +7,10 @@ import yuku.bintex.BintexWriter;
 
 public class KonvertEdisi {
 	public static void main(String[] args) throws Exception {
-		new KonvertEdisi().convert("../Alkitab/publikasi/edisi_index.txt", "../Alkitab/res/raw/edisi_index_bt.bt");
+		String pkgName = args[0];
+		String nama = args[1];
+		
+		new KonvertEdisi().convert("../Alkitab/publikasi/edisi_index-" + pkgName + ".txt", "../Alkitab/publikasi/" + nama + "_raw/edisi_index_bt.bt");
 	}
 	
 	int bolong = 0;
