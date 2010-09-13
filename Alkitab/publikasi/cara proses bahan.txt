@@ -1,9 +1,9 @@
 Cara konvert dari file mentah ke file yang dibaca program alkitab.
 
 [1]
-in: b_indonesian_baru.txt
+in: tb_teks_bdb.txt
 prog: kode_ancur_yang_membuat_malu.php
-out: tb_index.txt
+out: tb_index.txt dan tb_k*.txt
            |
 [2]        v
 in: tb_index.txt
