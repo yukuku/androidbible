@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
+    <string name="pref_bahasa_yang_digunakan_pada_menu_dan">Language used in menus and application messages</string>
+    <string name="pref_bahasa_language">Language</string>
     <string name="pref_atur_warna_teks_latar_belakang_dan">Set colors of text, background, and verse numbers according to a theme.</string>
     <string name="pref_tema_warna">Color Theme</string>
     <string name="pref_warna_teks_alkitab">Bible Text Color</string>

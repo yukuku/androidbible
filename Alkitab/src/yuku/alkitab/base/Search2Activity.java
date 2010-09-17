@@ -8,7 +8,7 @@ import yuku.andoutil.IntArrayList;
 import android.app.*;
 import android.content.*;
 import android.graphics.Color;
-import android.os.Bundle;
+import android.os.*;
 import android.text.*;
 import android.view.*;
 import android.view.inputmethod.*;
@@ -30,17 +30,21 @@ public class Search2Activity extends Activity {
 	TextView lTiadaHasil;
 	
 	private int warnaStabilo;
+	
+	Handler handler = new Handler();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.search2);
 		
 		S.siapinEdisi(getApplicationContext());
 		S.siapinKitab(getApplicationContext());
 		S.bacaPengaturan(this);
+		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
+		
+		setContentView(R.layout.search2);
 
 		lsHasilCari = (ListView) findViewById(R.id.lsHasilCari);
 		bCari = (ImageButton) findViewById(R.id.bCari);
@@ -182,7 +186,7 @@ public class Search2Activity extends Activity {
 					progress.dismiss();
 				}
 			}
-		}).start();
+		}, "search2engine").start();
 	}
 	
 	class Search2Adapter extends BaseAdapter {

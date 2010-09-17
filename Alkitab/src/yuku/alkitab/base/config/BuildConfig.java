@@ -6,8 +6,7 @@ public class BuildConfig {
 	static HashMap<String, Config> map = new HashMap<String, Config>();
 	
 	static {
-		map.put("yuku.alkitab", new Config(false, false, true, true));
-		//map.put("yuku.alkitab", new Config(true, true));
+		map.put("yuku.alkitab", new Config(true, false, true, true));
 		map.put("yuku.alkitab.kjv", new Config(false, false, false, false));
 	}
 	

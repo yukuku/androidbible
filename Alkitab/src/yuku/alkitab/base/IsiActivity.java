@@ -59,6 +59,7 @@ public class IsiActivity extends Activity {
 	ProgressDialog dialogBikinIndex;
 	boolean lagiBikinIndex = false;
 	AlkitabDb alkitabDb;
+	boolean perluReloadMenuWaktuOnMenuOpened = false;
 	
 	private AyatAdapter ayatAdapter_;
 	
@@ -86,7 +87,7 @@ public class IsiActivity extends Activity {
 			ayatAdapter_.notifyDataSetChanged();
 		}
 	};
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		TimingLogger tog = new TimingLogger(TAG, "IsiActivity#onCreate"); //$NON-NLS-1$
@@ -94,17 +95,22 @@ public class IsiActivity extends Activity {
 		
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.isi);
-		tog.addSplit("IsiActivity (fase 5) sebelum siapin macem2"); //$NON-NLS-1$
-
+		
 		S.siapinEdisi(getApplicationContext());
 		S.siapinKitab(getApplicationContext());
 		S.bacaPengaturan(this);
-		S.siapinPengirimFidbek(this);
-		S.pengirimFidbek.cobaKirim();
+		S.terapkanPengaturanBahasa(this, handler, 2);
 		
 		displayMetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+		
+		Log.d(TAG, "cancel dalam bahasa sekarang adalah: " + getString(R.string.cancel));
+		
+		setContentView(R.layout.isi);
+		tog.addSplit("IsiActivity (fase 5) sebelum siapin macem2"); //$NON-NLS-1$
+		
+		S.siapinPengirimFidbek(this);
+		S.pengirimFidbek.cobaKirim();
 		
 		lsIsi = (ListView) findViewById(R.id.lsIsi);
 		bTuju = (Button) findViewById(R.id.bTuju);
@@ -115,7 +121,7 @@ public class IsiActivity extends Activity {
 		
 		tog.addSplit("IsiActivity (fase 10) sebelum terap pengaturan"); //$NON-NLS-1$
 
-		terapkanPengaturan();
+		terapkanPengaturan(false);
 		tog.addSplit("IsiActivity (fase 20) sesudah terap pengaturan"); //$NON-NLS-1$
 
 		lsIsi.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -337,7 +343,7 @@ public class IsiActivity extends Activity {
 	}
 
 
-	private void terapkanPengaturan() {
+	private void terapkanPengaturan(boolean bahasaJuga) {
 		// penerapan langsung warnaLatar
 		{
 			lsIsi.setBackgroundColor(S.penerapan.warnaLatar);
@@ -359,6 +365,10 @@ public class IsiActivity extends Activity {
 				panelNavigasi.setVisibility(View.VISIBLE);
 				tempatJudul.setVisibility(View.GONE);
 			}
+		}
+		
+		if (bahasaJuga) {
+			S.terapkanPengaturanBahasa(this, null, 0);
 		}
 		
 		// wajib
@@ -385,6 +395,13 @@ public class IsiActivity extends Activity {
 		
 		//# nyala terus layar
 		nyalakanTerusLayarKalauDiminta();
+	}
+	
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		Log.d(TAG, "onPostCreate: " + getResources().getConfiguration().locale);
+		super.onPostCreate(savedInstanceState);
+		Log.d(TAG, "onPostCreate2: " + getResources().getConfiguration().locale);
 	}
 	
 	/**
@@ -504,8 +521,9 @@ public class IsiActivity extends Activity {
 		dialog.show();
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public void bikinMenu(Menu menu) {
+		menu.clear();
+
 		new MenuInflater(this).inflate(R.menu.isi, menu);
 		
 		yuku.alkitab.base.config.Config c = BuildConfig.get(getPackageName());
@@ -518,11 +536,15 @@ public class IsiActivity extends Activity {
 			menuGebug.add(0, 0x985807, 0, "gebug 7: dump warna"); //$NON-NLS-1$
 		}
 		
+		//# build config
 		menu.findItem(R.id.menuRenungan).setVisible(c.menuRenungan);
-		
 		menu.findItem(R.id.menuEdisi).setVisible(c.menuEdisi);
-		
 		menu.findItem(R.id.menuBantuan).setVisible(c.menuBantuan);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		bikinMenu(menu);
 		
 		return true;
 	}
@@ -530,6 +552,11 @@ public class IsiActivity extends Activity {
 	@Override
 	public boolean onMenuOpened(int featureId, Menu menu) {
 		if (menu != null) {
+			if (perluReloadMenuWaktuOnMenuOpened) {
+				bikinMenu(menu);
+				perluReloadMenuWaktuOnMenuOpened = false;
+			}
+			
 			MenuItem menuTuju = menu.findItem(R.id.menuTuju);
 			if (menuTuju != null) {
 				if (S.penerapan.prioritasLoncat) {
@@ -824,7 +851,8 @@ public class IsiActivity extends Activity {
 			// HARUS rilod pengaturan.
 			S.bacaPengaturan(this);
 			
-			terapkanPengaturan();
+			terapkanPengaturan(true);
+			perluReloadMenuWaktuOnMenuOpened = true;
 		}
 	}
 

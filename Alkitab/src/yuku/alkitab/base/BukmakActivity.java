@@ -8,7 +8,7 @@ import yuku.andoutil.Sqlitil;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.Bundle;
+import android.os.*;
 import android.provider.BaseColumns;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -21,27 +21,30 @@ public class BukmakActivity extends ListActivity {
 	private static final String[] cursorColumnsMapFrom = {AlkitabDb.KOLOM_Bukmak2_ari, AlkitabDb.KOLOM_Bukmak2_tulisan, AlkitabDb.KOLOM_Bukmak2_waktuUbah};
 	private static final int[] cursorColumnsMapTo = {R.id.lCuplikan, R.id.lTulisan, R.id.lTanggal};
 	private static final String[] cursorColumnsSelect;
+
 	SimpleCursorAdapter adapter;
 	AlkitabDb alkitabDb;
 	Cursor cursor;
+	Handler handler = new Handler();
 	
 	static {
 		cursorColumnsSelect = new String[cursorColumnsMapFrom.length+1];
-		for (int i = 0; i < cursorColumnsMapFrom.length; i++) {
-			cursorColumnsSelect[i+1] = cursorColumnsMapFrom[i];
-		}
+		System.arraycopy(cursorColumnsMapFrom, 0, cursorColumnsSelect, 1, cursorColumnsMapFrom.length);
 		cursorColumnsSelect[0] = BaseColumns._ID;
 	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.bukmak);
 		
 		S.siapinEdisi(getApplicationContext());
 		S.siapinKitab(getApplicationContext());
 		S.bacaPengaturan(this);
+		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
+		
+		setContentView(R.layout.bukmak);
+		setTitle(R.string.pembatas_buku);
 		
 		alkitabDb = AlkitabDb.getInstance(this);
 		cursor = alkitabDb.getDatabase().query(AlkitabDb.TABEL_Bukmak2, cursorColumnsSelect, AlkitabDb.KOLOM_Bukmak2_jenis + "=?", new String[] {String.valueOf(AlkitabDb.ENUM_Bukmak2_jenis_bukmak)}, null, null, AlkitabDb.KOLOM_Bukmak2_waktuUbah + " desc"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -51,20 +54,20 @@ public class BukmakActivity extends ListActivity {
 		adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
 			@Override
 			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-				if (cursorColumnsSelect[columnIndex] == AlkitabDb.KOLOM_Bukmak2_waktuUbah) {
+				if (cursorColumnsSelect[columnIndex] == AlkitabDb.KOLOM_Bukmak2_waktuUbah) { // $codepro.audit.disable stringComparison
 					String text = Sqlitil.toLocaleDateMedium(cursor.getInt(columnIndex));
 					
 					TextView tv = (TextView) view;
 					tv.setText(text);
 					IsiActivity.aturTampilanTeksTanggalBukmak(tv);
 					return true;
-				} else if (cursorColumnsSelect[columnIndex] == AlkitabDb.KOLOM_Bukmak2_tulisan) {
+				} else if (cursorColumnsSelect[columnIndex] == AlkitabDb.KOLOM_Bukmak2_tulisan) { // $codepro.audit.disable stringComparison
 					TextView tv = (TextView) view;
 					
 					tv.setText(cursor.getString(columnIndex));
 					IsiActivity.aturTampilanTeksJudulBukmak(tv);
 					return true;
-				} else if (cursorColumnsSelect[columnIndex] == AlkitabDb.KOLOM_Bukmak2_ari) {
+				} else if (cursorColumnsSelect[columnIndex] == AlkitabDb.KOLOM_Bukmak2_ari) { // $codepro.audit.disable stringComparison
 					int ari = cursor.getInt(columnIndex);
 					Kitab kitab = S.edisiAktif.volatile_xkitab[Ari.toKitab(ari)];
 					String[] xayat = S.muatTeks(getApplicationContext(), S.edisiAktif, kitab, Ari.toPasal(ari));

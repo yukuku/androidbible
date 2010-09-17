@@ -9,7 +9,9 @@ import yuku.alkitab.base.renungan.TukangDonlot;
 import yuku.bintex.BintexReader;
 import yuku.kirimfidbek.PengirimFidbek;
 import android.content.*;
+import android.content.res.Configuration;
 import android.graphics.Typeface;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -36,6 +38,7 @@ public class S {
 		public static boolean gebug_tehelBewarna;
 		public static boolean prioritasLoncat;
 		public static boolean sembunyiNavigasi;
+		public static String bahasa;
 	}
 	
 	/**
@@ -175,6 +178,13 @@ public class S {
 			boolean nyalakanTerusLayar = pengaturan.getBoolean(context.getString(R.string.pref_nyalakanTerusLayar_key), false);
 			S.penerapan.nyalakanTerusLayar = nyalakanTerusLayar;
 		}
+		
+		//# bahasa
+		{
+			String bahasa = pengaturan.getString(context.getString(R.string.pref_bahasa_key), "DEFAULT");
+			S.penerapan.bahasa = bahasa;
+		}
+		
 		Log.d(TAG, "bacaPengaturan selesai"); //$NON-NLS-1$
 	}
 	
@@ -236,5 +246,44 @@ public class S {
 
 	public static String alamat(Kitab kitab, int pasal_1, int ayat_1) {
 		return kitab.judul + " " + pasal_1 + ":" + ayat_1;  //$NON-NLS-1$//$NON-NLS-2$
+	}
+	
+	/**
+	 * @param handler Jangan null kalo mau dicek ulang 200ms kemudian. Harus null kalo jangan ulang lagi.
+	 */
+	public static void terapkanPengaturanBahasa(final Context context, final Handler handler, final int cobaLagi) {
+		Locale locale;
+		if ("DEFAULT".equals(S.penerapan.bahasa)) {
+			locale = Locale.getDefault();
+		} else {
+			locale = new Locale(S.penerapan.bahasa);
+		}
+		
+		Configuration config1 = context.getResources().getConfiguration();
+		if (locale.getLanguage() != null && locale.getLanguage().equals(config1.locale.getLanguage())) {
+			// ga ada perubahan, biarkan.
+		} else {
+			Configuration config2 = new Configuration();
+			config2.locale = locale;
+			if (handler != null) {
+				Log.d(TAG, "(Handler ga null) Update locale dari " + config1.locale.toString() + " ke " + config2.locale.toString());
+			} else {
+				Log.d(TAG, "(Handler null) Update locale dari " + config1.locale.toString() + " ke " + config2.locale.toString());
+			}
+			context.getResources().updateConfiguration(config2, null);
+		}
+		
+		if (handler != null) {
+			handler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					if (cobaLagi == 0) {
+						terapkanPengaturanBahasa(context, null, 0);
+					} else {
+						terapkanPengaturanBahasa(context, handler, cobaLagi - 1);
+					}
+				}
+			}, 200);
+		}
 	}
 }

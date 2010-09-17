@@ -1,7 +1,7 @@
 package yuku.alkitab.base;
 
 import java.io.*;
-import java.util.*;
+import java.util.NoSuchElementException;
 
 public class SimpleScanner {
 	private final Reader in_;
@@ -15,7 +15,7 @@ public class SimpleScanner {
 	}
 	
 	private void buffer() throws IOException {
-		if (filled_ == false) {
+		if (!filled_) {
 			char c = 0;
 			
 			// buang sampah

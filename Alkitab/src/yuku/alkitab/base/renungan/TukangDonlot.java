@@ -68,7 +68,7 @@ public class TukangDonlot extends Thread {
 	}
 	
 	public void interruptKaloNganggur() {
-		if (nganggur_ == true) {
+		if (nganggur_) {
 			this.interrupt();
 		}
 	}

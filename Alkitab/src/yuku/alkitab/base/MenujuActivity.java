@@ -6,7 +6,7 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.model.Kitab;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
+import android.os.*;
 import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
@@ -34,17 +34,20 @@ public class MenujuActivity extends Activity {
 	int maxPasal = 0;
 	int maxAyat = 0;
 	KitabAdapter kitabAdapter;
+	Handler handler = new Handler();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.menuju);
 		
 		S.siapinEdisi(getApplicationContext());
 		S.siapinKitab(getApplicationContext());
 		S.bacaPengaturan(this);
+		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
+		
+		setContentView(R.layout.menuju);
 		
 		bOk = (Button) findViewById(R.id.bOk);
 		lPasal = (TextView) findViewById(R.id.lPasal);

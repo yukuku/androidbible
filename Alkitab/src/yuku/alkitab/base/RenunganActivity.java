@@ -52,6 +52,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 
 	Handler pengulangTampil = new Handler();
 	Handler penampilStatusDonlot = new Handler();
+	Handler handler = new Handler();
 	
 	Runnable cobaTampilLagi = new Runnable() {
 		@Override
@@ -65,7 +66,6 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 				terakhirCobaTampilLagi = kini;
 			}
 			
-			
 			tuju(S.penampungan.renungan_nama, S.penampungan.renungan_tanggalan, true);
 			
 			if (!renderBerhasilBaik) {
@@ -74,17 +74,18 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		}
 	};
 
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.renungan);
 
 		S.siapinEdisi(getApplicationContext());
 		S.siapinKitab(getApplicationContext());
 		S.bacaPengaturan(this);
+		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
+		
+		setContentView(R.layout.renungan);
 		
 		memudar = AnimationUtils.loadAnimation(this, R.anim.memudar);
 

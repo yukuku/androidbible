@@ -200,7 +200,7 @@ class AyatAdapter extends BaseAdapter {
 					sb.setSpan(new CallbackSpan(paralel, paralelListener_), len, len + paralel.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 					len += paralel.length();
 				}
-				sb.append(")"); //$NON-NLS-1$
+				sb.append(')');
 				len += 1;
 				
 				lXparalel.setText(sb, BufferType.SPANNABLE);

@@ -119,6 +119,7 @@ public abstract class ArtikelDariSabda implements IArtikel {
 	public boolean equals(Object o) {
 		if (o == null) return false;
 		if (! (o instanceof ArtikelDariSabda)) return false;
+		if (this == o) return true;
 		
 		ArtikelDariSabda x = (ArtikelDariSabda) o;
 		
