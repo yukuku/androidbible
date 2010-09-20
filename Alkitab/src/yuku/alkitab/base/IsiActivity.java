@@ -397,13 +397,6 @@ public class IsiActivity extends Activity {
 		nyalakanTerusLayarKalauDiminta();
 	}
 	
-	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		Log.d(TAG, "onPostCreate: " + getResources().getConfiguration().locale);
-		super.onPostCreate(savedInstanceState);
-		Log.d(TAG, "onPostCreate2: " + getResources().getConfiguration().locale);
-	}
-	
 	/**
 	 * @return ayat mulai dari 1
 	 */
@@ -573,7 +566,7 @@ public class IsiActivity extends Activity {
 	}
 	
 	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.menuTuju) {
 			bTuju_click();
 			return true;
@@ -661,7 +654,7 @@ public class IsiActivity extends Activity {
 			return true;
 		}
 		
-		return super.onMenuItemSelected(featureId, item);
+		return false; //super.onMenuItemSelected(featureId, item);
 	}
 
 	private void pilihEdisi() {

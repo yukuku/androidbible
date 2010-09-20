@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+	xmlns:android="http://schemas.android.com/apk/res/android">
+<item android:title="@string/ekspor_ke_sd_card" android:id="@+id/menuEkspor"></item><item android:id="@+id/menuImpor" android:title="@string/impor_dari_sd_card"></item>
+
+</menu>

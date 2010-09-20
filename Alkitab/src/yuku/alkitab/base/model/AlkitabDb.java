@@ -1,9 +1,6 @@
 package yuku.alkitab.base.model;
 
-import java.util.Date;
-
 import yuku.alkitab.R;
-import yuku.andoutil.Sqlitil;
 import android.app.AlertDialog;
 import android.content.*;
 import android.content.pm.*;
@@ -90,22 +87,19 @@ public class AlkitabDb {
 	
 	public Bukmak2 getBukmakByAri(int ari, int jenis) {
 		Cursor cursor = db.query(
-				TABEL_Bukmak2, 
-				new String[] {BaseColumns._ID, KOLOM_Bukmak2_tulisan, KOLOM_Bukmak2_waktuTambah, KOLOM_Bukmak2_waktuUbah}, 
-				KOLOM_Bukmak2_ari + "=? and " + KOLOM_Bukmak2_jenis + "=?",  //$NON-NLS-1$ //$NON-NLS-2$
-				new String[] {String.valueOf(ari), String.valueOf(jenis)}, 
-				null, null, null);
+			TABEL_Bukmak2, 
+			new String[] {BaseColumns._ID, KOLOM_Bukmak2_tulisan, KOLOM_Bukmak2_waktuTambah, KOLOM_Bukmak2_waktuUbah}, 
+			KOLOM_Bukmak2_ari + "=? and " + KOLOM_Bukmak2_jenis + "=?",  //$NON-NLS-1$ //$NON-NLS-2$
+			new String[] {String.valueOf(ari), String.valueOf(jenis)}, 
+			null, null, null
+		);
 		
 		try {
 			if (!cursor.moveToNext()) return null;
 			
-			int _id = cursor.getInt(cursor.getColumnIndexOrThrow(BaseColumns._ID));
-			String tulisan = cursor.getString(cursor.getColumnIndexOrThrow(AlkitabDb.KOLOM_Bukmak2_tulisan));
-			Date waktuTambah = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(AlkitabDb.KOLOM_Bukmak2_waktuTambah)));
-			Date waktuUbah = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(AlkitabDb.KOLOM_Bukmak2_waktuUbah)));
+			Bukmak2 res = Bukmak2.dariCursor(cursor, ari, jenis);
+			res._id = cursor.getInt(cursor.getColumnIndexOrThrow(BaseColumns._ID));
 			
-			Bukmak2 res = new Bukmak2(ari, jenis, tulisan, waktuTambah, waktuUbah);
-			res._id = _id;
 			return res;
 		} finally {
 			cursor.close();
@@ -122,14 +116,9 @@ public class AlkitabDb {
 		try {
 			if (!cursor.moveToNext()) return null;
 			
-			int ari = cursor.getInt(cursor.getColumnIndexOrThrow(AlkitabDb.KOLOM_Bukmak2_ari));
-			int jenis = cursor.getInt(cursor.getColumnIndexOrThrow(AlkitabDb.KOLOM_Bukmak2_jenis));
-			String tulisan = cursor.getString(cursor.getColumnIndexOrThrow(AlkitabDb.KOLOM_Bukmak2_tulisan));
-			Date waktuTambah = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(AlkitabDb.KOLOM_Bukmak2_waktuTambah)));
-			Date waktuUbah = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(AlkitabDb.KOLOM_Bukmak2_waktuUbah)));
-			
-			Bukmak2 res = new Bukmak2(ari, jenis, tulisan, waktuTambah, waktuUbah);
+			Bukmak2 res = Bukmak2.dariCursor(cursor);
 			res._id = (int) id;
+			
 			return res;
 		} finally {
 			cursor.close();

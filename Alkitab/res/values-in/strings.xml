@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
+    <string name="impor_dari_sd_card">Impor dari SD Card</string>
+    <string name="ekspor_ke_sd_card">Ekspor ke SD Card</string>
     <string name="pref_bahasa_yang_digunakan_pada_menu_dan">Bahasa yang digunakan pada menu dan pesan-pesan aplikasi</string>
     <string name="pref_bahasa_language">Bahasa (Language)</string>
     <string name="pref_atur_warna_teks_latar_belakang_dan">Atur warna teks, latar belakang, dan nomor ayat menurut suatu tema.</string>
