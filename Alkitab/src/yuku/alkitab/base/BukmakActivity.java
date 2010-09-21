@@ -13,6 +13,7 @@ import yuku.alkitab.base.model.*;
 import yuku.andoutil.Sqlitil;
 import android.app.*;
 import android.content.*;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.*;
 import android.provider.BaseColumns;
@@ -33,6 +34,8 @@ public class BukmakActivity extends ListActivity {
 	AlkitabDb alkitabDb;
 	Cursor cursor;
 	Handler handler = new Handler();
+
+	private boolean perluReloadMenuWaktuOnMenuOpened = false;
 	
 	static {
 		cursorColumnsSelect = new String[cursorColumnsMapFrom.length+1];
@@ -99,9 +102,34 @@ public class BukmakActivity extends ListActivity {
 	}
 	
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public void onConfigurationChanged(Configuration newConfig) {
+		S.terapkanPengaturanBahasa(this, handler, 2);
+		perluReloadMenuWaktuOnMenuOpened = true;
+		
+		super.onConfigurationChanged(newConfig);
+	}
+
+	private void bikinMenu(Menu menu) {
+		menu.clear();
 		new MenuInflater(this).inflate(R.menu.bukmak, menu);
+	}
 	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		bikinMenu(menu);
+		
+		return true;
+	}
+	
+	@Override
+	public boolean onMenuOpened(int featureId, Menu menu) {
+		if (menu != null) {
+			if (perluReloadMenuWaktuOnMenuOpened) {
+				bikinMenu(menu);
+				perluReloadMenuWaktuOnMenuOpened = false;
+			}
+		}
+		
 		return true;
 	}
 	
@@ -119,27 +147,27 @@ public class BukmakActivity extends ListActivity {
 			final File f = getFileBackup();
 			
 			new AlertDialog.Builder(this)
-			.setTitle("Impor")
-			.setMessage("Impor pembatas buku dan catatan dari cadangan (backup) di SD Card? File: " + f.getAbsolutePath())
+			.setTitle(R.string.impor_judul)
+			.setMessage(getString(R.string.impor_pembatas_buku_dan_catatan_dari_tanya, f.getAbsolutePath()))
 			.setNegativeButton(R.string.no, null)
 			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					if (!f.exists() || !f.canRead()) {
-						msgbox("Impor", "File tidak bisa dibaca: " + f.getAbsolutePath());
+						msgbox(getString(R.string.impor_judul), getString(R.string.file_tidak_bisa_dibaca_file, f.getAbsolutePath()));
 						return;
 					}
 
 					new AlertDialog.Builder(BukmakActivity.this)
-					.setTitle("Impor")
-					.setMessage("Apakah Anda mau menumpuk pembatas buku dan catatan yang ada saat ini?")
+					.setTitle(R.string.impor_judul)
+					.setMessage(R.string.apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya)
 					.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							try {
 								impor(false);
 							} catch (Exception e) {
-								msgbox("Kesalahan", "Terjadi kesalahan ketika mengimpor: " + e.getMessage());
+								msgbox(getString(R.string.impor_judul), getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, e.getMessage()));
 							}
 						}
 					})
@@ -149,7 +177,7 @@ public class BukmakActivity extends ListActivity {
 							try {
 								impor(true);
 							} catch (Exception e) {
-								msgbox("Kesalahan", "Terjadi kesalahan ketika mengimpor: " + e.getMessage());
+								msgbox(getString(R.string.impor_judul), getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, e.getMessage()));
 							}
 						}
 					})
@@ -161,8 +189,8 @@ public class BukmakActivity extends ListActivity {
 			return true;
 		} else if (item.getItemId() == R.id.menuEkspor) {
 			new AlertDialog.Builder(this)
-			.setTitle("Ekspor")
-			.setMessage("Ekspor pembatas buku dan catatan ke SD Card untuk cadangan (backup)?")
+			.setTitle(R.string.ekspor_judul)
+			.setMessage(R.string.ekspor_pembatas_buku_dan_catatan_tanya)
 			.setNegativeButton(R.string.no, null)
 			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 				@Override
@@ -170,7 +198,7 @@ public class BukmakActivity extends ListActivity {
 					try {
 						ekspor();
 					} catch (IOException e) {
-						msgbox("Kesalahan", "Terjadi kesalahan ketika mengekspor: " + e.getMessage());
+						msgbox(getString(R.string.ekspor_judul), getString(R.string.terjadi_kesalahan_ketika_mengekspor_pesan, e.getMessage()));
 					}
 				}
 			})
@@ -182,12 +210,12 @@ public class BukmakActivity extends ListActivity {
 	}
 	
 	private File getFileBackup() {
-		File dir = new File(Environment.getExternalStorageDirectory(), "bible");
+		File dir = new File(Environment.getExternalStorageDirectory(), "bible"); //$NON-NLS-1$
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
 		
-		return new File(dir, getPackageName() + "-backup.xml");
+		return new File(dir, getPackageName() + "-backup.xml"); //$NON-NLS-1$
 	}
 
 	public void impor(final boolean tumpuk) throws Exception {
@@ -196,7 +224,7 @@ public class BukmakActivity extends ListActivity {
 		final int[] c = new int[1];
 		
 		Xml.parse(fis, Xml.Encoding.UTF_8, new DefaultHandler2() {
-			String where = AlkitabDb.KOLOM_Bukmak2_ari + "=? and " + AlkitabDb.KOLOM_Bukmak2_jenis + "=?";
+			String where = AlkitabDb.KOLOM_Bukmak2_ari + "=? and " + AlkitabDb.KOLOM_Bukmak2_jenis + "=?"; //$NON-NLS-1$ //$NON-NLS-2$
 			String[] plc = new String[2];
 			
 			@Override
@@ -234,7 +262,7 @@ public class BukmakActivity extends ListActivity {
 		});
 		
 		fis.close();
-		msgbox("Impor", "Impor berhasil. " + c[0] + " pembatas buku/catatan diproses.");
+		msgbox(getString(R.string.impor_judul), getString(R.string.impor_berhasil_angka_diproses, c[0]));
 		adapter.getCursor().requery();
 	}
 	
@@ -243,9 +271,9 @@ public class BukmakActivity extends ListActivity {
 		FileOutputStream fos = new FileOutputStream(out);
 		
 		XmlSerializer xml = Xml.newSerializer();
-		xml.setOutput(fos, "utf-8");
-		xml.startDocument("utf-8", null);
-		xml.startTag(null, "backup");
+		xml.setOutput(fos, "utf-8"); //$NON-NLS-1$
+		xml.startDocument("utf-8", null); //$NON-NLS-1$
+		xml.startTag(null, "backup"); //$NON-NLS-1$
 		
 		Cursor cursor = alkitabDb.getDatabase().query(AlkitabDb.TABEL_Bukmak2, null, null, null, null, null, null);
 		while (cursor.moveToNext()) {
@@ -254,11 +282,11 @@ public class BukmakActivity extends ListActivity {
 		}
 		cursor.close();
 		
-		xml.endTag(null, "backup");
+		xml.endTag(null, "backup"); //$NON-NLS-1$
 		xml.endDocument();
 		fos.close();
 		
-		msgbox("Ekspor", "Ekspor berhasil. File ditulis: " + out.getAbsolutePath());
+		msgbox(getString(R.string.ekspor_judul), getString(R.string.ekspor_berhasil_file_yang_dihasilkan_file, out.getAbsolutePath()));
 	}
 
 	@Override

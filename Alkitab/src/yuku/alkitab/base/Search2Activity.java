@@ -7,6 +7,7 @@ import yuku.alkitab.base.model.*;
 import yuku.andoutil.IntArrayList;
 import android.app.*;
 import android.content.*;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.*;
 import android.text.*;
@@ -133,6 +134,13 @@ public class Search2Activity extends Activity {
 		}
 	}
 	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		S.terapkanPengaturanBahasa(this, handler, 2);
+	
+		super.onConfigurationChanged(newConfig);
+	}
+	
 	protected void bCari_click() {
 		final String carian = tCarian.getText().toString();
 		final boolean filter_lama = cFilterLama.isChecked();
@@ -186,7 +194,7 @@ public class Search2Activity extends Activity {
 					progress.dismiss();
 				}
 			}
-		}, "search2engine").start();
+		}, "search2engine").start(); //$NON-NLS-1$
 	}
 	
 	class Search2Adapter extends BaseAdapter {

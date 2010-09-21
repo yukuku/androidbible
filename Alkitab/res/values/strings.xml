@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
+    <string name="ekspor_berhasil_file_yang_dihasilkan_file">Export was successful.\n\nResults are in file: %s</string>
+    <string name="impor_berhasil_angka_diproses">Import was successful. %d bookmarks/annotations were processed.</string>
+    <string name="terjadi_kesalahan_ketika_mengekspor_pesan">There were error(s) when exporting: %s</string>
+    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Export bookmarks and annotations to SD Card for backup?</string>
+    <string name="ekspor_judul">Export</string>
+    <string name="terjadi_kesalahan_ketika_mengimpor_pesan">There were error(s) when importing: %s</string>
+    <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Do you want to overwrite the bookmarks and the annotations you currently have?</string>
+    <string name="file_tidak_bisa_dibaca_file">The file does not exist or could not be read: %s</string>
+    <string name="impor_pembatas_buku_dan_catatan_dari_tanya">Import bookmarks and annotations from a backup file on the SD Card?\n\nFile: %s</string>
+    <string name="impor_judul">Import</string>
     <string name="impor_dari_sd_card">Import from SD Card</string>
     <string name="ekspor_ke_sd_card">Export to SD Card</string>
     <string name="pref_bahasa_yang_digunakan_pada_menu_dan">Language used in menus and application messages</string>

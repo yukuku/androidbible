@@ -1,9 +1,9 @@
 package yuku.alkitab.base;
 
+import yuku.alkitab.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.webkit.*;
-import yuku.alkitab.R;
 
 public class BantuanActivity extends Activity {
 	WebView webview;
@@ -21,6 +21,7 @@ public class BantuanActivity extends Activity {
 		webSettings.setBuiltInZoomControls(true);
 		
 		setContentView(webview);
+		setTitle(R.string.bantuan_judul);
 		
 		webview.loadUrl(getString(R.string.url_help_index));
 	}

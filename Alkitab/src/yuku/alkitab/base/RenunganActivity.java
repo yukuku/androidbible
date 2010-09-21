@@ -13,6 +13,7 @@ import yuku.alkitab.base.renungan.TukangDonlot.OnStatusDonlotListener;
 import yuku.andoutil.ThreadSleep;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.*;
@@ -142,6 +143,13 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		tampilkan();
 	}
 		
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		S.terapkanPengaturanBahasa(this, handler, 2);
+
+		super.onConfigurationChanged(newConfig);
+	}
+
 	private void tampilkan() {
 		pengulangTampil.removeCallbacks(cobaTampilLagi);
 		

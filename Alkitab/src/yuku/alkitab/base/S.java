@@ -181,7 +181,7 @@ public class S {
 		
 		//# bahasa
 		{
-			String bahasa = pengaturan.getString(context.getString(R.string.pref_bahasa_key), "DEFAULT");
+			String bahasa = pengaturan.getString(context.getString(R.string.pref_bahasa_key), "DEFAULT"); //$NON-NLS-1$
 			S.penerapan.bahasa = bahasa;
 		}
 		
@@ -253,7 +253,7 @@ public class S {
 	 */
 	public static void terapkanPengaturanBahasa(final Context context, final Handler handler, final int cobaLagi) {
 		Locale locale;
-		if ("DEFAULT".equals(S.penerapan.bahasa)) {
+		if ("DEFAULT".equals(S.penerapan.bahasa)) { //$NON-NLS-1$
 			locale = Locale.getDefault();
 		} else {
 			locale = new Locale(S.penerapan.bahasa);
@@ -266,9 +266,9 @@ public class S {
 			Configuration config2 = new Configuration();
 			config2.locale = locale;
 			if (handler != null) {
-				Log.d(TAG, "(Handler ga null) Update locale dari " + config1.locale.toString() + " ke " + config2.locale.toString());
+				Log.d(TAG, "(Handler ga null) Update locale dari " + config1.locale.toString() + " ke " + config2.locale.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				Log.d(TAG, "(Handler null) Update locale dari " + config1.locale.toString() + " ke " + config2.locale.toString());
+				Log.d(TAG, "(Handler null) Update locale dari " + config1.locale.toString() + " ke " + config2.locale.toString());  //$NON-NLS-1$//$NON-NLS-2$
 			}
 			context.getResources().updateConfiguration(config2, null);
 		}

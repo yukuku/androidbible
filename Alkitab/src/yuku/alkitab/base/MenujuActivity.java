@@ -6,6 +6,7 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.model.Kitab;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.*;
 import android.util.Log;
 import android.view.*;
@@ -190,6 +191,13 @@ public class MenujuActivity extends Activity {
 		warnain();
 	}
 	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		S.terapkanPengaturanBahasa(this, handler, 2);
+
+		super.onConfigurationChanged(newConfig);
+	}
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) {

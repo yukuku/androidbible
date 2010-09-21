@@ -42,14 +42,14 @@ public class Bukmak2 {
 	}
 	
 	
-	public static final String XMLTAG_Bukmak2 = "Bukmak2";
-	private static final String XMLATTR_ari = "ari";
-	private static final String XMLATTR_jenis = "jenis";
-	private static final String XMLATTR_tulisan = "tulisan";
-	private static final String XMLATTR_waktuTambah = "waktuTambah";
-	private static final String XMLATTR_waktuUbah = "waktuUbah";
-	private static final String XMLVAL_bukmak = "bukmak";
-	private static final String XMLVAL_catatan = "catatan";
+	public static final String XMLTAG_Bukmak2 = "Bukmak2"; //$NON-NLS-1$
+	private static final String XMLATTR_ari = "ari"; //$NON-NLS-1$
+	private static final String XMLATTR_jenis = "jenis"; //$NON-NLS-1$
+	private static final String XMLATTR_tulisan = "tulisan"; //$NON-NLS-1$
+	private static final String XMLATTR_waktuTambah = "waktuTambah"; //$NON-NLS-1$
+	private static final String XMLATTR_waktuUbah = "waktuUbah"; //$NON-NLS-1$
+	private static final String XMLVAL_bukmak = "bukmak"; //$NON-NLS-1$
+	private static final String XMLVAL_catatan = "catatan"; //$NON-NLS-1$
 	
 	public void writeXml(XmlSerializer xml) throws IOException {
 		xml.startTag(null, XMLTAG_Bukmak2);
@@ -83,12 +83,12 @@ public class Bukmak2 {
 	}
 
 	public static Bukmak2 dariAttributes(Attributes attributes) {
-		int ari = Integer.parseInt(attributes.getValue("", XMLATTR_ari));
-		String jenis_s = attributes.getValue("", XMLATTR_jenis);
+		int ari = Integer.parseInt(attributes.getValue("", XMLATTR_ari)); //$NON-NLS-1$
+		String jenis_s = attributes.getValue("", XMLATTR_jenis); //$NON-NLS-1$
 		int jenis = jenis_s.equals(XMLVAL_bukmak)? AlkitabDb.ENUM_Bukmak2_jenis_bukmak: jenis_s.equals(XMLVAL_catatan)? AlkitabDb.ENUM_Bukmak2_jenis_catatan: Integer.parseInt(jenis_s);
-		String tulisan = attributes.getValue("", XMLATTR_tulisan);
-		Date waktuTambah = Sqlitil.toDate(Integer.parseInt(attributes.getValue("", XMLATTR_waktuTambah)));
-		Date waktuUbah = Sqlitil.toDate(Integer.parseInt(attributes.getValue("", XMLATTR_waktuUbah)));
+		String tulisan = attributes.getValue("", XMLATTR_tulisan); //$NON-NLS-1$
+		Date waktuTambah = Sqlitil.toDate(Integer.parseInt(attributes.getValue("", XMLATTR_waktuTambah))); //$NON-NLS-1$
+		Date waktuUbah = Sqlitil.toDate(Integer.parseInt(attributes.getValue("", XMLATTR_waktuUbah))); //$NON-NLS-1$
 		
 		return new Bukmak2(ari, jenis, tulisan, waktuTambah, waktuUbah);
 	}

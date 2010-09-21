@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
+    <string name="ekspor_berhasil_file_yang_dihasilkan_file">Ekspor berhasil.\n\nFile yang dihasilkan: %s</string>
+    <string name="impor_berhasil_angka_diproses">Impor berhasil. %d pembatas buku/catatan diproses.</string>
+    <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Terjadi kesalahan ketika mengekspor: %s</string>
+    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Ekspor pembatas buku dan catatan ke SD Card untuk cadangan (backup)?</string>
+    <string name="ekspor_judul">Ekspor</string>
+    <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Terjadi kesalahan ketika mengimpor: %s</string>
+    <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Apakah Anda mau menumpuk pembatas buku dan catatan yang ada saat ini?</string>
+    <string name="file_tidak_bisa_dibaca_file">File tidak ada atau tidak bisa dibaca: %s</string>
+    <string name="impor_pembatas_buku_dan_catatan_dari_tanya">Impor pembatas buku dan catatan dari cadangan (backup) di SD Card?\n\nFile: %s</string>
+    <string name="impor_judul">Impor</string>
     <string name="impor_dari_sd_card">Impor dari SD Card</string>
     <string name="ekspor_ke_sd_card">Ekspor ke SD Card</string>
     <string name="pref_bahasa_yang_digunakan_pada_menu_dan">Bahasa yang digunakan pada menu dan pesan-pesan aplikasi</string>

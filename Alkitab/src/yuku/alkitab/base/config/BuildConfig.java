@@ -6,8 +6,8 @@ public class BuildConfig {
 	static HashMap<String, Config> map = new HashMap<String, Config>();
 	
 	static {
-		map.put("yuku.alkitab", new Config(true, false, true, true));
-		map.put("yuku.alkitab.kjv", new Config(false, false, false, false));
+		map.put("yuku.alkitab", new Config(true, false, true, true)); //$NON-NLS-1$
+		map.put("yuku.alkitab.kjv", new Config(false, false, false, false)); //$NON-NLS-1$
 	}
 	
 	public static Config get(String pkgName) {

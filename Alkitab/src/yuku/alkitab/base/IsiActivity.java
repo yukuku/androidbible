@@ -104,8 +104,6 @@ public class IsiActivity extends Activity {
 		displayMetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		
-		Log.d(TAG, "cancel dalam bahasa sekarang adalah: " + getString(R.string.cancel));
-		
 		setContentView(R.layout.isi);
 		tog.addSplit("IsiActivity (fase 5) sebelum siapin macem2"); //$NON-NLS-1$
 		
@@ -220,7 +218,7 @@ public class IsiActivity extends Activity {
 
 		tog.dumpToLog();
 	}
-
+	
 	private synchronized void nyalakanTerusLayarKalauDiminta() {
 		if (S.penerapan.nyalakanTerusLayar) {
 			lsIsi.setKeepScreenOn(true);
@@ -1010,9 +1008,10 @@ public class IsiActivity extends Activity {
 	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
+		S.terapkanPengaturanBahasa(this, handler, 2);
+		perluReloadMenuWaktuOnMenuOpened = true;
+
 		super.onConfigurationChanged(newConfig);
-		
-		Log.d(TAG, "onConfigurationChanged"); //$NON-NLS-1$
 	}
 	
 	@Override

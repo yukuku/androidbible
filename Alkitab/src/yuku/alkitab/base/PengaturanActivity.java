@@ -10,5 +10,6 @@ public class PengaturanActivity extends PreferenceActivity {
 		super.onCreate(savedInstanceState);
 		
 		addPreferencesFromResource(R.xml.pengaturan);
+		setTitle(R.string.pengaturan_alkitab);
 	}
 }
