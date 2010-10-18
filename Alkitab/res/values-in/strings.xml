@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
+    <string name="bagikan_renungan">Bagikan renungan</string>
+    <string name="renungan_sudah_disalin">Renungan sudah disalin.</string>
+    <string name="salin_renungan">Salin renungan</string>
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Ekspor berhasil.\n\nFile yang dihasilkan: %s</string>
     <string name="impor_berhasil_angka_diproses">Impor berhasil. %d pembatas buku/catatan diproses.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Terjadi kesalahan ketika mengekspor: %s</string>
@@ -63,7 +66,7 @@
     <string name="alamat_sekarang_titikdua">Alamat sekarang:</string>
     <string name="saran_komentar_dsb">Saran, komentar, dsb...</string>
     <string name="tidak_ada_catatan">(tidak ada catatan)</string>
-    <string name="belum_ada_pembatas_buku">Belum ada pembatas buku.</string>
+    <string name="belum_ada_pembatas_buku">Belum ada pembatas buku.\nTahan (tekan yang lama) suatu ayat untuk membuka menu dengan pilihan untuk menambah pembatas buku.</string>
     <string name="judul_titikdua">Judul:</string>
     <string name="gagal_mengubah_pembatas_buku">GAGAL mengubah pembatas buku ke versi baru.\n\nMohon kirim email ke yukuku@gmail.com untuk melaporkan peristiwa ini supaya bisa dibetulkan di versi selanjutnya.</string>
     <string name="selamat_datang_di_versi_baru_pembatas">Selamat datang di versi baru! Pembatas-pembatas buku yang anda miliki sudah diubah menjadi versi baru. Kini anda bisa menambahkan judul pada setiap pembatas buku.\n\nPembatas buku ditemukan: %d</string>

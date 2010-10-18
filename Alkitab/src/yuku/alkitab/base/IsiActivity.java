@@ -312,7 +312,7 @@ public class IsiActivity extends Activity {
 		int itemId = item.getItemId();
 		if (itemId == R.id.menuSalinAyat) {
 			ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-			clipboardManager.setText(this.isiAyatContextMenu);
+			clipboardManager.setText(alamat + "  " + this.isiAyatContextMenu); //$NON-NLS-1$
 			
 			Toast.makeText(this, getString(R.string.alamat_sudah_disalin, alamat), Toast.LENGTH_SHORT).show();
 			
@@ -327,11 +327,13 @@ public class IsiActivity extends Activity {
 			return true;
 		} else if (itemId == R.id.menuTambahCatatan) {
 			tampilkanCatatan(S.kitabAktif, pasal_1, ayatContextMenu_1);
+
+			return true;
 		} else if (itemId == R.id.menuBagikan) {
 			Intent i = new Intent(Intent.ACTION_SEND);
 			i.setType("text/plain"); //$NON-NLS-1$
 			i.putExtra(Intent.EXTRA_SUBJECT, alamat);
-			i.putExtra(Intent.EXTRA_TEXT, U.buangKodeKusus(this.isiAyatContextMenu));
+			i.putExtra(Intent.EXTRA_TEXT, alamat + "  " + this.isiAyatContextMenu); //$NON-NLS-1$
 			startActivity(Intent.createChooser(i, getString(R.string.bagikan_alamat, alamat)));
 
 			return true;
@@ -565,24 +567,25 @@ public class IsiActivity extends Activity {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.menuTuju) {
+		int itemId = item.getItemId();
+		if (itemId == R.id.menuTuju) {
 			bTuju_click();
 			return true;
-		} else if (item.getItemId() == R.id.menuBukmak) {
+		} else if (itemId == R.id.menuBukmak) {
 			Intent intent = new Intent(this, BukmakActivity.class);
 			startActivityForResult(intent, R.id.menuBukmak);
 			return true;
-		} else if (item.getItemId() == R.id.menuSearch2) {
+		} else if (itemId == R.id.menuSearch2) {
 			menuSearch2_click();
 			return true;
-		} else if (item.getItemId() == R.id.menuEdisi) {
+		} else if (itemId == R.id.menuEdisi) {
 			pilihEdisi();
 			return true;
-		} else if (item.getItemId() == R.id.menuRenungan) { 
+		} else if (itemId == R.id.menuRenungan) { 
 			Intent intent = new Intent(this, RenunganActivity.class);
 			startActivityForResult(intent, R.id.menuRenungan);
 			return true;
-		} else if (item.getItemId() == R.id.menuTentang) {
+		} else if (itemId == R.id.menuTentang) {
 			String verName = "null"; //$NON-NLS-1$
 	    	int verCode = -1;
 	    	
@@ -607,18 +610,18 @@ public class IsiActivity extends Activity {
 			.setPositiveButton(R.string.ok, null)
 			.show();
 			return true;
-		} else if (item.getItemId() == R.id.menuPengaturan) {
+		} else if (itemId == R.id.menuPengaturan) {
 			Intent intent = new Intent(this, PengaturanActivity.class);
 			startActivityForResult(intent, R.id.menuPengaturan);
 			return true;
-		} else if (item.getItemId() == R.id.menuFidbek) {
+		} else if (itemId == R.id.menuFidbek) {
 			popupMintaFidbek();
 			return true;
-		} else if (item.getItemId() == R.id.menuBantuan) {
+		} else if (itemId == R.id.menuBantuan) {
 			Intent intent = new Intent(this, BantuanActivity.class);
 			startActivity(intent);
 			return true;
-		} else if (item.getItemId() == 0x985801) { // debug 1
+		} else if (itemId == 0x985801) { // debug 1
 			// dump pref
 			Log.i(TAG, "### semua pref segera muncul di bawah ini:::"); //$NON-NLS-1$
 			{
@@ -637,7 +640,7 @@ public class IsiActivity extends Activity {
 			Log.i(TAG, "### db:::"); //$NON-NLS-1$
 			alkitabDb.dump();
 			return true;
-		} else if (item.getItemId() == 0x985806) { // debug 6
+		} else if (itemId == 0x985806) { // debug 6
 			if (S.penerapan.gebug_tehelBewarna) {
 				Toast.makeText(this, "tehel bewarna mati", Toast.LENGTH_SHORT).show(); //$NON-NLS-1$
 			} else {
@@ -645,14 +648,14 @@ public class IsiActivity extends Activity {
 			}
 			S.penerapan.gebug_tehelBewarna = ! S.penerapan.gebug_tehelBewarna;
 			return true;
-		} else if (item.getItemId() == 0x985807) { // debug 7
+		} else if (itemId == 0x985807) { // debug 7
 			String s = Integer.toHexString(S.penerapan.warnaHuruf) + ' ' + Integer.toHexString(S.penerapan.warnaLatar) + ' ' + Integer.toHexString(S.penerapan.warnaNomerAyat);
 			Toast.makeText(this, s, Toast.LENGTH_LONG).show();
 			Log.i(TAG, s);
 			return true;
 		}
 		
-		return false; //super.onMenuItemSelected(featureId, item);
+		return false; 
 	}
 
 	private void pilihEdisi() {

@@ -55,6 +55,8 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 	Handler penampilStatusDonlot = new Handler();
 	Handler handler = new Handler();
 	
+	private boolean perluReloadMenuWaktuOnMenuOpened = false;
+	
 	Runnable cobaTampilLagi = new Runnable() {
 		@Override
 		public void run() {
@@ -146,8 +148,55 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		S.terapkanPengaturanBahasa(this, handler, 2);
+		perluReloadMenuWaktuOnMenuOpened = true;
 
 		super.onConfigurationChanged(newConfig);
+	}
+
+	private void bikinMenu(Menu menu) {
+		menu.clear();
+		new MenuInflater(this).inflate(R.menu.renungan, menu);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		bikinMenu(menu);
+		
+		return true;
+	}
+	
+	@Override
+	public boolean onMenuOpened(int featureId, Menu menu) {
+		if (menu != null) {
+			if (perluReloadMenuWaktuOnMenuOpened) {
+				bikinMenu(menu);
+				perluReloadMenuWaktuOnMenuOpened = false;
+			}
+		}
+		
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int itemId = item.getItemId();
+		if (itemId == R.id.menuSalin) {
+			ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+			clipboardManager.setText(lHeader.getText() + "\n" + lIsi.getText()); //$NON-NLS-1$
+			
+			Toast.makeText(this, R.string.renungan_sudah_disalin, Toast.LENGTH_SHORT).show();
+			
+			return true;
+		} else if (itemId == R.id.menuBagikan) {
+			Intent i = new Intent(Intent.ACTION_SEND);
+			i.setType("text/plain"); //$NON-NLS-1$
+			i.putExtra(Intent.EXTRA_SUBJECT, lHeader.getText());
+			i.putExtra(Intent.EXTRA_TEXT, lHeader.getText() + "\n" + lIsi.getText()); //$NON-NLS-1$
+			startActivity(Intent.createChooser(i, getString(R.string.bagikan_renungan)));
+
+			return true;
+		}
+		return false;
 	}
 
 	private void tampilkan() {

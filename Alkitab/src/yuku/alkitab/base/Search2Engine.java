@@ -15,9 +15,60 @@ public class Search2Engine {
 
 	static String[] tokenkan(String carian) {
 		// pisah jadi kata-kata
-		String[] xkata = carian.trim().toLowerCase().replaceAll("\\s+", " ").split(" "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String bersih = carian.trim().toLowerCase().replaceAll("\\s+", " "); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		return xkata;
+		// cari dari kiri ke kanan, tiap ada kutip, ubah mode
+		boolean modeKutip = false;
+		int pos = 0;
+		ArrayList<String> xkata = new ArrayList<String>();
+		while (true) {
+			if (modeKutip) {
+				// cari kutip berikutnya
+				int posKutip = bersih.indexOf('"', pos);
+				if (posKutip != -1) {
+					xkata.add(bersih.substring(pos, posKutip));
+					pos = posKutip + 1;
+				} else {
+					// abisin aja
+					xkata.add(bersih.substring(pos));
+					pos = bersih.length();
+				}
+				modeKutip = false;
+			} else {
+				// cari spasi ato kutip pertama
+				int posSpasi = bersih.indexOf(' ', pos);
+				int posKutip = bersih.indexOf('"', pos);
+				
+				if (posSpasi == -1 && posKutip == -1) {
+					// ga ada lagi, ambil semua dan beres
+					xkata.add(bersih.substring(pos));
+					pos = bersih.length();
+				} else if ((posSpasi != -1 && posSpasi <= posKutip) || posKutip == -1) {
+					// ambil kata sampe spasi
+					xkata.add(bersih.substring(pos, posSpasi));
+					pos = posSpasi + 1;
+				} else if ((posKutip != -1 && posKutip <= posSpasi) || posSpasi == -1) {
+					// ambil kata sampe kutip
+					xkata.add(bersih.substring(pos, posKutip));
+					pos = posKutip + 1;
+					modeKutip = true;
+				}
+			}
+			if (pos >= bersih.length()) {
+				break;
+			}
+		}
+		
+		//# bersih2 terakhir
+		ArrayList<String> xkata2 = new ArrayList<String>(xkata.size());
+		for (int i = 0, len = xkata.size(); i < len; i++) {
+			String kata = xkata.get(i);
+			kata = kata.trim();
+			if (kata.length() > 0) {
+				xkata2.add(kata);
+			}
+		}
+		return xkata2.toArray(new String[xkata2.size()]);
 	}
 
 	static IntArrayList cari(Context context, String[] xkata, boolean filter_lama, boolean filter_baru) {

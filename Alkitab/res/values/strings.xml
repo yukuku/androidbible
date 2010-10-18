@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
+    <string name="bagikan_renungan">Share devotion</string>
+    <string name="renungan_sudah_disalin">Devotion has been copied.</string>
+    <string name="salin_renungan">Copy devotion</string>
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Export was successful.\n\nResults are in file: %s</string>
     <string name="impor_berhasil_angka_diproses">Import was successful. %d bookmarks/annotations were processed.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">There were error(s) when exporting: %s</string>
@@ -63,7 +66,7 @@
     <string name="alamat_sekarang_titikdua">Current address:</string>
     <string name="saran_komentar_dsb">Suggestions, comments, etc...</string>
     <string name="tidak_ada_catatan">(no annotations)</string>
-    <string name="belum_ada_pembatas_buku">No bookmarks yet.</string>
+    <string name="belum_ada_pembatas_buku">No bookmarks yet.\nLong-press on a verse to open a menu where you can choose to add a bookmark.</string>
     <string name="judul_titikdua">Title:</string>
     <string name="gagal_mengubah_pembatas_buku">FAILED to convert bookmarks to the new version.\n\nPlease send an email to yukuku@gmail.com to report this so that it can be fixed in the next release.</string>
     <string name="selamat_datang_di_versi_baru_pembatas">Welcome to the new version! Your bookmarks has been updated. Now you can add a title onto each of the bookmark.\n\nUpdated bookmarks: %d</string>

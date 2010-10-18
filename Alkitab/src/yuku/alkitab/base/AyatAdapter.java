@@ -203,6 +203,8 @@ class AyatAdapter extends BaseAdapter {
 				sb.append(')');
 				len += 1;
 				
+				lXparalel.setTypeface(S.penerapan.jenisHuruf);
+				lXparalel.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp * (14.f / 17.f));
 				lXparalel.setText(sb, BufferType.SPANNABLE);
 				lXparalel.setMovementMethod(LinkMovementMethod.getInstance());
 				lXparalel.setTextColor(S.penerapan.warnaHuruf);
