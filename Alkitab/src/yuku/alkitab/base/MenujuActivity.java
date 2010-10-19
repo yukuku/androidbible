@@ -361,9 +361,12 @@ public class MenujuActivity extends Activity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup viewGroup) {
-			TextView res = (TextView) LayoutInflater.from(MenujuActivity.this).inflate(android.R.layout.simple_spinner_item, null);
+			TextView res = (TextView) convertView;
+			if (res == null) {
+				res = (TextView) LayoutInflater.from(MenujuActivity.this).inflate(android.R.layout.simple_spinner_item, null);
+			}
+			
 			res.setText(xkitab_[position].judul);
-						
 			return res;
 		}
 		

@@ -62,7 +62,8 @@ public class IsiActivity extends Activity {
 	boolean perluReloadMenuWaktuOnMenuOpened = false;
 	
 	private AyatAdapter ayatAdapter_;
-	
+	private Sejarah sejarah;
+
 	//# penyimpanan state buat search2
 	String search2_carian = null;
 	boolean search2_filter_lama = true;
@@ -165,13 +166,18 @@ public class IsiActivity extends Activity {
 			}
 		});
 		
-		tog.addSplit("IsiActivity (fase 30) sebelum baca preferences"); //$NON-NLS-1$
-
+		// siapin db
+		alkitabDb = AlkitabDb.getInstance(this);
+		
+		// adapter
+		ayatAdapter_ = new AyatAdapter(getApplicationContext(), alkitabDb, paralelOnClickListener, gelembungListener);
+		lsIsi.setAdapter(ayatAdapter_);
+		
+		// muat preferences
 		preferences = S.getPreferences(this);
 		int kitabTerakhir = preferences.getInt(NAMAPREF_kitabTerakhir, 0);
 		int pasalTerakhir = preferences.getInt(NAMAPREF_pasalTerakhir, 0);
 		int ayatTerakhir = preferences.getInt(NAMAPREF_ayatTerakhir, 0);
-		
 		{
 			String renungan_nama = preferences.getString(NAMAPREF_renungan_nama, null);
 			if (renungan_nama != null) {
@@ -182,13 +188,7 @@ public class IsiActivity extends Activity {
 				}
 			}
 		}
-		
-		// siapin db
-		alkitabDb = AlkitabDb.getInstance(this);
-		
-		ayatAdapter_ = new AyatAdapter(getApplicationContext(), alkitabDb, paralelOnClickListener, gelembungListener);
-		lsIsi.setAdapter(ayatAdapter_);
-		
+		sejarah = new Sejarah(preferences);
 		Log.d(TAG, "Akan menuju kitab " + kitabTerakhir + " pasal " + kitabTerakhir + " ayat " + ayatTerakhir); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		// muat kitab
@@ -196,7 +196,8 @@ public class IsiActivity extends Activity {
 			S.kitabAktif = S.edisiAktif.volatile_xkitab[kitabTerakhir];
 		}
 		// muat pasal dan ayat
-		tampil(pasalTerakhir, ayatTerakhir); 
+		tampil(pasalTerakhir, ayatTerakhir);
+		//sejarah.tambah(Ari.encode(kitabTerakhir, pasalTerakhir, ayatTerakhir));
 		
 		//# minta fidbek kah?
 		final long terakhirMintaFidbek = preferences.getLong(NAMAPREF_terakhirMintaFidbek, 0);
@@ -229,9 +230,9 @@ public class IsiActivity extends Activity {
 		lsIsi.setKeepScreenOn(false);
 	}
 	
-	private void loncatKe(String alamat) {
+	private int loncatKe(String alamat) {
 		if (alamat.trim().length() == 0) {
-			return;
+			return 0;
 		}
 		
 		Log.d(TAG, "akan loncat ke " + alamat); //$NON-NLS-1$
@@ -240,7 +241,7 @@ public class IsiActivity extends Activity {
 		boolean sukses = peloncat.parse(alamat);
 		if (! sukses) {
 			Toast.makeText(this, getString(R.string.alamat_tidak_sah_alamat, alamat), Toast.LENGTH_SHORT).show();
-			return;
+			return 0;
 		}
 		
 		int kitab = peloncat.getKitab(S.edisiAktif.volatile_xkitab);
@@ -250,11 +251,14 @@ public class IsiActivity extends Activity {
 		
 		int pasal = peloncat.getPasal();
 		int ayat = peloncat.getAyat();
+		int ari_pa;
 		if (pasal == -1 && ayat == -1) {
-			tampil(1, 1);
+			ari_pa = tampil(1, 1);
 		} else {
-			tampil(pasal, ayat);
+			ari_pa = tampil(pasal, ayat);
 		}
+		
+		return Ari.encode(kitab, ari_pa);
 	}
 	
 	private void loncatKeAri(int ari) {
@@ -376,22 +380,23 @@ public class IsiActivity extends Activity {
 	}
 	
 	@Override
-	protected void onPause() {
-		super.onPause();
+	protected void onStop() {
+		super.onStop();
 		
 		Editor editor = preferences.edit();
 		editor.putInt(NAMAPREF_kitabTerakhir, S.kitabAktif.pos);
 		editor.putInt(NAMAPREF_pasalTerakhir, pasal_1);
 		editor.putInt(NAMAPREF_ayatTerakhir, getAyatBerdasarSkrol());
 		editor.putString(NAMAPREF_renungan_nama, S.penampungan.renungan_nama);
+		sejarah.simpan(editor);
 		editor.commit();
 		
 		matikanLayarKalauSudahBolehMati();
 	}
 	
 	@Override
-	protected void onResume() {
-		super.onResume();
+	protected void onStart() {
+		super.onStart();
 		
 		//# nyala terus layar
 		nyalakanTerusLayarKalauDiminta();
@@ -401,15 +406,7 @@ public class IsiActivity extends Activity {
 	 * @return ayat mulai dari 1
 	 */
 	private int getAyatBerdasarSkrol() {
-		int firstPos = lsIsi.getFirstVisiblePosition();
-
-		if (firstPos != 0) {
-			firstPos++;
-		}
-		
-		int ayat = ayatAdapter_.getAyatDariPosition(firstPos);
-		
-		return ayat;
+		return ayatAdapter_.getAyatDariPosition(getPosisiBerdasarSkrol());
 	}
 	
 	private int getPosisiBerdasarSkrol() {
@@ -442,12 +439,47 @@ public class IsiActivity extends Activity {
 	}
 	
 	private void bTuju_longClick() {
-		if (S.penerapan.prioritasLoncat) {
-			bukaDialogTuju();
-		} else {
-			bukaDialogLoncat();
-		}
+		AlertDialog dialog = new AlertDialog.Builder(this)
+		.setAdapter(sejarahAdapter, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				int ari = sejarah.getAri(which);
+				loncatKeAri(ari);
+				sejarah.tambah(ari);
+			}
+		})
+		.setNegativeButton(R.string.cancel, null)
+		.create();
+		dialog.show();
 	}
+	
+	private ListAdapter sejarahAdapter = new BaseAdapter() {
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			TextView res = (TextView) convertView;
+			if (res == null) {
+				res = (TextView) LayoutInflater.from(IsiActivity.this).inflate(android.R.layout.select_dialog_item, null);
+			}
+			int ari = sejarah.getAri(position);
+			res.setText(S.alamat(S.edisiAktif, ari));
+			return res;
+		}
+		
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+		
+		@Override
+		public Object getItem(int position) {
+			return sejarah.getAri(position);
+		}
+		
+		@Override
+		public int getCount() {
+			return sejarah.getN();
+		}
+	};
 	
 	private void bukaDialogTuju() {
 		Intent intent = new Intent(this, MenujuActivity.class);
@@ -467,15 +499,18 @@ public class IsiActivity extends Activity {
 
 		// set lAlamatKini
 		{
-			int ayat = getAyatBerdasarSkrol();
-			String alamat = S.alamat(S.kitabAktif, IsiActivity.this.pasal_1, ayat);
+			int ayatKini = getAyatBerdasarSkrol();
+			String alamat = S.alamat(S.kitabAktif, IsiActivity.this.pasal_1, ayatKini);
 			lAlamatKini.setText(alamat);
 		}
 		
-		DialogInterface.OnClickListener loncat_click = new DialogInterface.OnClickListener() {
+		final DialogInterface.OnClickListener loncat_click = new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				loncatKe(tAlamatLoncat.getText().toString());
+				int ari = loncatKe(tAlamatLoncat.getText().toString());
+				if (ari != 0) {
+					sejarah.tambah(ari);
+				}
 			}
 		};
 		
@@ -496,7 +531,7 @@ public class IsiActivity extends Activity {
 		tAlamatLoncat.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				loncatKe(tAlamatLoncat.getText().toString());
+				loncat_click.onClick(dialog, 0);
 				dialog.dismiss();
 				
 				return true;
@@ -596,19 +631,31 @@ public class IsiActivity extends Activity {
 			} catch (NameNotFoundException e) {
 				Log.e(TAG, "PackageInfo ngaco", e); //$NON-NLS-1$
 			}
-	    	
-			new AlertDialog.Builder(this)
+			
+			Spanned html = Html.fromHtml(
+				getString(R.string.teks_about, 
+					verName,
+					verCode,
+					"$LastChangedRevision$".replaceAll("\\$|LastChangedRevision|:| ", "") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				)
+			);
+			
+			TextView isi = new TextView(this);
+			isi.setText(html);
+			Linkify.addLinks(isi, Linkify.WEB_URLS);
+			isi.setTextColor(0xffffffff);
+			isi.setLinkTextColor(0xff8080ff);
+
+			int pad = (int) (getResources().getDisplayMetrics().density * 6.f);
+			isi.setPadding(pad, pad, pad, pad);
+			
+			AlertDialog dialog = new AlertDialog.Builder(this)
 			.setTitle(R.string.tentang_title)
-			.setMessage(
-				Html.fromHtml(
-					getString(R.string.teks_about, 
-						verName,
-						verCode,
-						"$LastChangedRevision$".replaceAll("\\$|LastChangedRevision|:| ", "") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					)
-				))
+			.setView(isi)
 			.setPositiveButton(R.string.ok, null)
-			.show();
+			.create();
+			
+			dialog.show();
 			return true;
 		} else if (itemId == R.id.menuPengaturan) {
 			Intent intent = new Intent(this, PengaturanActivity.class);
@@ -799,13 +846,13 @@ public class IsiActivity extends Activity {
 				int ayat = data.getIntExtra(MenujuActivity.EXTRA_ayat, 0);
 				int kitab = data.getIntExtra(MenujuActivity.EXTRA_kitab, AdapterView.INVALID_POSITION);
 				
-				if (kitab == AdapterView.INVALID_POSITION || kitab >= S.edisiAktif.volatile_xkitab.length || kitab < 0) {
-				} else {
+				if (kitab != AdapterView.INVALID_POSITION && kitab < S.edisiAktif.volatile_xkitab.length && kitab >= 0) {
 					// ganti kitab
 					S.kitabAktif = S.edisiAktif.volatile_xkitab[kitab];
 				}
 				
-				tampil(pasal, ayat);
+				int ari_pa = tampil(pasal, ayat);
+				sejarah.tambah(Ari.encode(kitab, ari_pa));
 			} else if (resultCode == RESULT_pindahCara) {
 				bukaDialogLoncat();
 			}
@@ -817,6 +864,7 @@ public class IsiActivity extends Activity {
 				int ari = data.getIntExtra(BukmakActivity.EXTRA_ariTerpilih, 0);
 				if (ari != 0) { // 0 berarti ga ada apa2, karena ga ada pasal 0 ayat 0
 					loncatKeAri(ari);
+					sejarah.tambah(ari);
 				}
 			}
 		} else if (requestCode == R.id.menuSearch2) {
@@ -824,6 +872,7 @@ public class IsiActivity extends Activity {
 				int ari = data.getIntExtra(Search2Activity.EXTRA_ariTerpilih, 0);
 				if (ari != 0) { // 0 berarti ga ada apa2, karena ga ada pasal 0 ayat 0
 					loncatKeAri(ari);
+					sejarah.tambah(ari);
 				}
 				
 				search2_carian = data.getStringExtra(Search2Activity.EXTRA_carian);
@@ -838,7 +887,10 @@ public class IsiActivity extends Activity {
 			if (data != null) {
 				String alamat = data.getStringExtra(RenunganActivity.EXTRA_alamat);
 				if (alamat != null) {
-					loncatKe(alamat);
+					int ari = loncatKe(alamat);
+					if (ari != 0) {
+						sejarah.tambah(ari);
+					}
 				}
 			}
 		} else if (requestCode == R.id.menuPengaturan) {
@@ -853,8 +905,9 @@ public class IsiActivity extends Activity {
 	/**
 	 * @param pasal_1 basis-1
 	 * @param ayat_1 basis-1
+	 * @return Ari yang hanya terdiri dari pasal dan ayat. Kitab selalu 00
 	 */
-	private void tampil(int pasal_1, int ayat_1) {
+	private int tampil(int pasal_1, int ayat_1) {
 		if (pasal_1 < 1) pasal_1 = 1;
 		if (pasal_1 > S.kitabAktif.npasal) pasal_1 = S.kitabAktif.npasal;
 		
@@ -895,6 +948,8 @@ public class IsiActivity extends Activity {
 		String judul = S.alamat(S.kitabAktif, pasal_1);
 		lJudul.setText(judul);
 		bTuju.setText(judul);
+		
+		return Ari.encode(0, pasal_1, ayat_1);
 	}
 	
 	@Override
@@ -934,20 +989,23 @@ public class IsiActivity extends Activity {
 	}
 	
 	private void bKiri_click() {
+		Kitab kitabKini = S.kitabAktif;
 		if (pasal_1 == 1) {
 			// uda di awal pasal, masuk ke kitab sebelum
-			Kitab kitabKini = S.kitabAktif;
 			if (kitabKini.pos > 0) {
 				Kitab kitabBaru = S.edisiAktif.volatile_xkitab[kitabKini.pos - 1];
 				S.kitabAktif = kitabBaru;
 				int pasalBaru_1 = kitabBaru.npasal;
 				tampil(pasalBaru_1, 1);
+				//sejarah.tambah(Ari.encode(kitabBaru.pos, pasalBaru_1, 1));
 			} else {
 				// Kejadian 1. Ga usa ngapa2in
 			}
-			return;
+		} else {
+			int pasalBaru = pasal_1 - 1;
+			tampil(pasalBaru, 1);
+			//sejarah.tambah(Ari.encode(kitabKini.pos, pasalBaru, 1));
 		}
-		tampil(pasal_1 - 1, 1);
 	}
 	
 	private void bKanan_click() {
@@ -957,12 +1015,15 @@ public class IsiActivity extends Activity {
 				Kitab kitabBaru = S.edisiAktif.volatile_xkitab[kitabKini.pos + 1];
 				S.kitabAktif = kitabBaru;
 				tampil(1, 1);
+				//sejarah.tambah(Ari.encode(kitabBaru.pos, 1, 1));
 			} else {
 				// uda di Wahyu pasal terakhir. Ga usa ngapa2in
 			}
-			return;
+		} else {
+			int pasalBaru = pasal_1 + 1;
+			tampil(pasalBaru, 1);
+			//sejarah.tambah(Ari.encode(kitabKini.pos, pasalBaru, 1));
 		}
-		tampil(pasal_1 + 1, 1);
 	}
 	
 	private void popupMintaFidbek() {

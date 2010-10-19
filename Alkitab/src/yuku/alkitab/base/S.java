@@ -236,7 +236,10 @@ public class S {
 			hasil.append(edisi.volatile_xkitab[kitab].judul).append(' ');
 		}
 		
-		hasil.append(pasal_1).append(':').append(ayat_1);
+		hasil.append(pasal_1);
+		if (ayat_1 != 0) {
+			hasil.append(':').append(ayat_1);
+		}
 		return hasil.toString();
 	}
 

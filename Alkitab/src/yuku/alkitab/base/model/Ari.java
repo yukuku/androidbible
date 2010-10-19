@@ -11,6 +11,10 @@ public class Ari {
 		return (kitab & 0xff) << 16 | (pasal & 0xff) << 8 | (ayat & 0xff);
 	}
 	
+	public static int encode(int kitab, int pasal_ayat) {
+		return (kitab & 0xff) << 16 | (pasal_ayat & 0xffff);
+	}
+	
 	/** 0..255 
 	 * kitab berbasis-0 (kejadian == 0)
 	 * */
