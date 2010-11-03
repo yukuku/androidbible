@@ -16,6 +16,8 @@ import android.view.inputmethod.*;
 import android.widget.*;
 
 public class Search2Activity extends Activity {
+	public static final String TAG = Search2Activity.class.getSimpleName();
+	
 	public static final String EXTRA_carian = "carian"; //$NON-NLS-1$
 	public static final String EXTRA_filter_lama = "filter_lama"; //$NON-NLS-1$
 	public static final String EXTRA_filter_baru = "filter_baru"; //$NON-NLS-1$
@@ -119,6 +121,7 @@ public class Search2Activity extends Activity {
 					if (hasilCari != null) {
 						String[] xkata = Search2Engine.tokenkan(carian);
 						lsHasilCari.setAdapter(new Search2Adapter(hasilCari, xkata));
+						lsHasilCari.setFastScrollEnabled(true);
 					}
 				}
 				
@@ -180,6 +183,7 @@ public class Search2Activity extends Activity {
 						@Override
 						public void run() {
 							lsHasilCari.setAdapter(new Search2Adapter(hasil, xkata));
+							lsHasilCari.setFastScrollEnabled(true);
 							Toast.makeText(Search2Activity.this, getString(R.string.size_hasil, hasil.size()), Toast.LENGTH_SHORT).show();
 							
 							if (hasil.size() > 0) {
@@ -197,15 +201,20 @@ public class Search2Activity extends Activity {
 		}, "search2engine").start(); //$NON-NLS-1$
 	}
 	
-	class Search2Adapter extends BaseAdapter {
+	class Search2Adapter extends BaseAdapter /*implements SectionIndexer*/ {
 		IntArrayList hasilCari;
 		String[] xkata;
+//		private int[] seksiKitab;
+//		private int[] seksiPos;
+//		private int nseksi;
+//		private String[] seksiLabel;
 		
 		public Search2Adapter(IntArrayList hasilCari, String[] xkata) {
 			this.hasilCari = hasilCari;
 			this.xkata = xkata;
+//			bikinSeksi();
 		}
-		
+
 		@Override
 		public int getCount() {
 			return hasilCari.size();
@@ -255,6 +264,65 @@ public class Search2Activity extends Activity {
 		IntArrayList getHasilCari() {
 			return hasilCari;
 		}
+
+//		private void bikinSeksi() {
+//			int[] seksiKitab = new int[256]; // max
+//			int[] seksiAwal = new int[256];
+//			int nseksi = 0;
+//			int maxSeksiKini = 0x000000;
+//			
+//			int[] tmpHasilCari = hasilCari.buffer();
+//			for (int i = 0, len = hasilCari.size(); i < len; i++) {
+//				int ari = tmpHasilCari[i];
+//				if (ari >= maxSeksiKini) { // seksi baru diperlukan
+//					int kitab = Ari.toKitab(ari);
+//					seksiKitab[nseksi] = kitab;
+//					seksiAwal[nseksi] = i;
+//					nseksi++;
+//					maxSeksiKini = Ari.encode(kitab+1, 0);
+//				}
+//			}
+//			
+//			this.seksiKitab = seksiKitab;
+//			this.seksiPos = seksiAwal;
+//			this.nseksi = nseksi;
+//			
+//			Log.d(TAG, "hasilCari = " + hasilCari); //$NON-NLS-1$
+//			Log.d(TAG, "nseksi = " + nseksi); //$NON-NLS-1$
+//			Log.d(TAG, "seksiKitab = " + Arrays.toString(seksiKitab)); //$NON-NLS-1$
+//			Log.d(TAG, "seksiAwal = " + Arrays.toString(seksiAwal)); //$NON-NLS-1$
+//		}
+//
+//		@Override
+//		public int getPositionForSection(int section) {
+//			Log.d(TAG, "getPositionForSection " + section); //$NON-NLS-1$
+//			if (section >= nseksi) section = nseksi-1;
+//			if (section < 0) section = 0;
+//			return seksiPos[section];
+//		}
+//
+//		@Override
+//		public int getSectionForPosition(int position) {
+//			Log.d(TAG, "getSectionForPosition " + position); //$NON-NLS-1$
+//			int pos = Arrays.binarySearch(seksiPos, position);
+//			int res = pos >= 0? pos: -pos-1;
+//			if (res >= nseksi) return nseksi-1;
+//			if (res < 0) return 0;
+//			return res;
+//		}
+//
+//		@Override
+//		public Object[] getSections() {
+//			if (seksiLabel == null) {
+//				seksiLabel = new String[nseksi];
+//				for (int i = 0; i < nseksi; i++) {
+//					seksiLabel[i] = S.edisiAktif.volatile_xkitab[seksiKitab[i]].judul;
+//				}
+//			}
+//			
+//			Log.d(TAG, "getSections -> " + Arrays.toString(seksiLabel)); //$NON-NLS-1$
+//			return seksiLabel;
+//		}
 	}
 	
 }

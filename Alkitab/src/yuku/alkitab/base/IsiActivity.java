@@ -247,6 +247,8 @@ public class IsiActivity extends Activity {
 		int kitab = peloncat.getKitab(S.edisiAktif.volatile_xkitab);
 		if (kitab != -1) {
 			S.kitabAktif = S.edisiAktif.volatile_xkitab[kitab];
+		} else {
+			kitab = S.kitabAktif.pos;
 		}
 		
 		int pasal = peloncat.getPasal();
