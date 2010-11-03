@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
+    <string name="mengimpor_titiktiga">Importing...</string>
+    <string name="mengekspor_titiktiga">Exporting...</string>
     <string name="bagikan_renungan">Share devotion</string>
     <string name="renungan_sudah_disalin">Devotion has been copied.</string>
     <string name="salin_renungan">Copy devotion</string>

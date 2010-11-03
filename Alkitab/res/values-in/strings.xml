@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
+    <string name="mengimpor_titiktiga">Mengimpor...</string>
+    <string name="mengekspor_titiktiga">Mengekspor...</string>
     <string name="bagikan_renungan">Bagikan renungan</string>
     <string name="renungan_sudah_disalin">Renungan sudah disalin.</string>
     <string name="salin_renungan">Salin renungan</string>

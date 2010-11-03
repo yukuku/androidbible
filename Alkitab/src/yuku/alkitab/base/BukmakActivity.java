@@ -164,21 +164,13 @@ public class BukmakActivity extends ListActivity {
 					.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							try {
-								impor(false);
-							} catch (Exception e) {
-								msgbox(getString(R.string.impor_judul), getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, e.getMessage()));
-							}
+							impor(false);
 						}
 					})
 					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							try {
-								impor(true);
-							} catch (Exception e) {
-								msgbox(getString(R.string.impor_judul), getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, e.getMessage()));
-							}
+							impor(true);
 						}
 					})
 					.show();
@@ -195,11 +187,7 @@ public class BukmakActivity extends ListActivity {
 			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					try {
-						ekspor();
-					} catch (IOException e) {
-						msgbox(getString(R.string.ekspor_judul), getString(R.string.terjadi_kesalahan_ketika_mengekspor_pesan, e.getMessage()));
-					}
+					ekspor();
 				}
 			})
 			.show();
@@ -218,75 +206,148 @@ public class BukmakActivity extends ListActivity {
 		return new File(dir, getPackageName() + "-backup.xml"); //$NON-NLS-1$
 	}
 
-	public void impor(final boolean tumpuk) throws Exception {
-		File in = getFileBackup();
-		FileInputStream fis = new FileInputStream(in);
-		final int[] c = new int[1];
-		
-		Xml.parse(fis, Xml.Encoding.UTF_8, new DefaultHandler2() {
-			String where = AlkitabDb.KOLOM_Bukmak2_ari + "=? and " + AlkitabDb.KOLOM_Bukmak2_jenis + "=?"; //$NON-NLS-1$ //$NON-NLS-2$
-			String[] plc = new String[2];
+	public void impor(boolean tumpuk) {
+		new AsyncTask<Boolean, Integer, Object>() {
+			ProgressDialog dialog;
 			
 			@Override
-			public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-				if (!localName.equals(Bukmak2.XMLTAG_Bukmak2)) {
-					return;
-				}
-				
-				Bukmak2 bukmak2 = Bukmak2.dariAttributes(attributes);
-				plc[0] = String.valueOf(bukmak2.ari);
-				plc[1] = String.valueOf(bukmak2.jenis);
-				
-				boolean ada = false;
-				Cursor cursor = alkitabDb.getDatabase().query(AlkitabDb.TABEL_Bukmak2, null, where, plc, null, null, null);
-				if (cursor.moveToNext()) {
-					// ada, maka kita perlu hapus
-					ada = true;
-				}
-				cursor.close();
-				
-				//  ada  tumpuk:     delete insert
-				//  ada !tumpuk: (nop)
-				// !ada  tumpuk:            insert
-				// !ada !tumpuk:            insert
-				
-				if (ada && tumpuk) {
-					alkitabDb.getDatabase().delete(AlkitabDb.TABEL_Bukmak2, where, plc);
-				}
-				if ((ada && tumpuk) || (!ada)) {
-					alkitabDb.getDatabase().insert(AlkitabDb.TABEL_Bukmak2, null, bukmak2.toContentValues());
-				}
-				
-				c[0]++;
+			protected void onPreExecute() {
+				dialog = new ProgressDialog(BukmakActivity.this);
+				dialog.setTitle(R.string.impor_judul);
+				dialog.setMessage(getString(R.string.mengimpor_titiktiga));
+				dialog.setIndeterminate(true);
+				dialog.setCancelable(false);
+				dialog.show();
 			}
-		});
-		
-		fis.close();
-		msgbox(getString(R.string.impor_judul), getString(R.string.impor_berhasil_angka_diproses, c[0]));
-		adapter.getCursor().requery();
+			
+			@Override
+			protected Object doInBackground(Boolean... params) {
+				try {
+					File in = getFileBackup();
+					FileInputStream fis = new FileInputStream(in);
+					final int[] c = new int[1];
+					final boolean tumpuk = params[0];
+					
+					alkitabDb.getDatabase().beginTransaction();
+					try {
+						Xml.parse(fis, Xml.Encoding.UTF_8, new DefaultHandler2() {
+							String where = AlkitabDb.KOLOM_Bukmak2_ari + "=? and " + AlkitabDb.KOLOM_Bukmak2_jenis + "=?"; //$NON-NLS-1$ //$NON-NLS-2$
+							String[] plc = new String[2];
+							
+							@Override
+							public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+								if (!localName.equals(Bukmak2.XMLTAG_Bukmak2)) {
+									return;
+								}
+								
+								Bukmak2 bukmak2 = Bukmak2.dariAttributes(attributes);
+								plc[0] = String.valueOf(bukmak2.ari);
+								plc[1] = String.valueOf(bukmak2.jenis);
+								
+								boolean ada = false;
+								Cursor cursor = alkitabDb.getDatabase().query(AlkitabDb.TABEL_Bukmak2, null, where, plc, null, null, null);
+								if (cursor.moveToNext()) {
+									// ada, maka kita perlu hapus
+									ada = true;
+								}
+								cursor.close();
+								
+								//  ada  tumpuk:     delete insert
+								//  ada !tumpuk: (nop)
+								// !ada  tumpuk:            insert
+								// !ada !tumpuk:            insert
+								
+								if (ada && tumpuk) {
+									alkitabDb.getDatabase().delete(AlkitabDb.TABEL_Bukmak2, where, plc);
+								}
+								if ((ada && tumpuk) || (!ada)) {
+									alkitabDb.getDatabase().insert(AlkitabDb.TABEL_Bukmak2, null, bukmak2.toContentValues());
+								}
+								
+								c[0]++;
+							}
+						});
+						alkitabDb.getDatabase().setTransactionSuccessful();
+					} finally {
+						alkitabDb.getDatabase().endTransaction();
+					}
+					
+					fis.close();
+				
+					return c[0];
+				} catch (Exception e) {
+					return e;
+				}
+			}
+
+			@Override
+			protected void onPostExecute(Object result) {
+				dialog.dismiss();
+				
+				if (result instanceof Integer) {
+					msgbox(getString(R.string.impor_judul), getString(R.string.impor_berhasil_angka_diproses, result));
+				} else if (result instanceof Exception) {
+					msgbox(getString(R.string.impor_judul), getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, ((Exception) result).getMessage()));
+				}
+				
+				adapter.getCursor().requery();
+			}
+		}.execute((Boolean)tumpuk);
 	}
 	
-	public void ekspor() throws IOException {
-		File out = getFileBackup();
-		FileOutputStream fos = new FileOutputStream(out);
-		
-		XmlSerializer xml = Xml.newSerializer();
-		xml.setOutput(fos, "utf-8"); //$NON-NLS-1$
-		xml.startDocument("utf-8", null); //$NON-NLS-1$
-		xml.startTag(null, "backup"); //$NON-NLS-1$
-		
-		Cursor cursor = alkitabDb.getDatabase().query(AlkitabDb.TABEL_Bukmak2, null, null, null, null, null, null);
-		while (cursor.moveToNext()) {
-			Bukmak2 bukmak2 = Bukmak2.dariCursor(cursor);
-			bukmak2.writeXml(xml);
-		}
-		cursor.close();
-		
-		xml.endTag(null, "backup"); //$NON-NLS-1$
-		xml.endDocument();
-		fos.close();
-		
-		msgbox(getString(R.string.ekspor_judul), getString(R.string.ekspor_berhasil_file_yang_dihasilkan_file, out.getAbsolutePath()));
+	public void ekspor() {
+		new AsyncTask<Void, Integer, Object>() {
+			ProgressDialog dialog;
+			
+			@Override
+			protected void onPreExecute() {
+				dialog = new ProgressDialog(BukmakActivity.this);
+				dialog.setTitle(R.string.ekspor_judul);
+				dialog.setMessage(getString(R.string.mengekspor_titiktiga));
+				dialog.setIndeterminate(true);
+				dialog.setCancelable(false);
+				dialog.show();
+			}
+			
+			@Override
+			protected Object doInBackground(Void... params) {
+				File out = getFileBackup();
+				try {
+					FileOutputStream fos = new FileOutputStream(out);
+					
+					XmlSerializer xml = Xml.newSerializer();
+					xml.setOutput(fos, "utf-8"); //$NON-NLS-1$
+					xml.startDocument("utf-8", null); //$NON-NLS-1$
+					xml.startTag(null, "backup"); //$NON-NLS-1$
+					
+					Cursor cursor = alkitabDb.getDatabase().query(AlkitabDb.TABEL_Bukmak2, null, null, null, null, null, null);
+					while (cursor.moveToNext()) {
+						Bukmak2 bukmak2 = Bukmak2.dariCursor(cursor);
+						bukmak2.writeXml(xml);
+					}
+					cursor.close();
+					
+					xml.endTag(null, "backup"); //$NON-NLS-1$
+					xml.endDocument();
+					fos.close();
+
+					return out.getAbsolutePath();
+				} catch (Exception e) {
+					return e;
+				}
+			}
+			
+			@Override
+			protected void onPostExecute(Object result) {
+				dialog.dismiss();
+				
+				if (result instanceof String) {
+					msgbox(getString(R.string.ekspor_judul), getString(R.string.ekspor_berhasil_file_yang_dihasilkan_file, result));
+				} else if (result instanceof Exception) {
+					msgbox(getString(R.string.ekspor_judul), getString(R.string.terjadi_kesalahan_ketika_mengekspor_pesan, ((Exception) result).getMessage()));
+				}
+			}
+		}.execute((Void[])null);
 	}
 
 	@Override
