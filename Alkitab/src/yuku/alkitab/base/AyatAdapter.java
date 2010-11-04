@@ -1,9 +1,8 @@
 package yuku.alkitab.base;
 
-import yuku.alkitab.*;
-import yuku.alkitab.R.id;
 import yuku.alkitab.base.S.penerapan;
 import yuku.alkitab.base.model.*;
+import yuku.alkitab.R;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.text.*;
@@ -304,7 +303,7 @@ class AyatAdapter extends BaseAdapter {
 		boolean belumAdaTehel = true;
 		boolean nomerAyatUdaDitulis = false;
 		
-		LinearLayout tempatTehel = (LinearLayout) res.findViewById(id.tempatTehel);
+		LinearLayout tempatTehel = (LinearLayout) res.findViewById(R.id.tempatTehel);
 		tempatTehel.removeAllViews();
 		
 		while (true) {
@@ -380,7 +379,7 @@ class AyatAdapter extends BaseAdapter {
 			posParse = posSampe+2;
 		}
 		
-		TextView lAyat = (TextView) res.findViewById(id.lAyat);
+		TextView lAyat = (TextView) res.findViewById(R.id.lAyat);
 		if (nomerAyatUdaDitulis) {
 			lAyat.setText(""); //$NON-NLS-1$
 		} else {

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
+    <string name="belum_ada_sejarah">No history yet.</string>
+    <string name="donasi_tombol_gamau">Not now</string>
+    <string name="donasi_tombol_ok">Donate</string>
+    <string name="donasi_keterangan">If you find this Bible app useful, please make some donation to the developer :) Currently I don\'t have a full-time job and your donation would be very helpful. Thank you!</string>
+    <string name="donasi_judul">Donation</string>
+    <string name="menuDonasi">Donation</string>
     <string name="mengimpor_titiktiga">Importing...</string>
     <string name="mengekspor_titiktiga">Exporting...</string>
     <string name="bagikan_renungan">Share devotion</string>

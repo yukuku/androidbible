@@ -3,7 +3,6 @@ package yuku.alkitab.base;
 import java.util.Map;
 import java.util.regex.*;
 
-import yuku.alkitab.R;
 import yuku.alkitab.base.AddonManager.DonlotListener;
 import yuku.alkitab.base.AddonManager.DonlotThread;
 import yuku.alkitab.base.AddonManager.Elemen;
@@ -11,6 +10,7 @@ import yuku.alkitab.base.BukmakEditor.Listener;
 import yuku.alkitab.base.GelembungDialog.RefreshCallback;
 import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.model.*;
+import yuku.alkitab.R;
 import yuku.andoutil.IntArrayList;
 import android.app.*;
 import android.content.*;
@@ -19,6 +19,7 @@ import android.content.pm.*;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.*;
 import android.preference.PreferenceManager;
 import android.text.*;
@@ -441,18 +442,21 @@ public class IsiActivity extends Activity {
 	}
 	
 	private void bTuju_longClick() {
-		AlertDialog dialog = new AlertDialog.Builder(this)
-		.setAdapter(sejarahAdapter, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				int ari = sejarah.getAri(which);
-				loncatKeAri(ari);
-				sejarah.tambah(ari);
-			}
-		})
-		.setNegativeButton(R.string.cancel, null)
-		.create();
-		dialog.show();
+		if (sejarah.getN() > 0) {
+			new AlertDialog.Builder(this)
+			.setAdapter(sejarahAdapter, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					int ari = sejarah.getAri(which);
+					loncatKeAri(ari);
+					sejarah.tambah(ari);
+				}
+			})
+			.setNegativeButton(R.string.cancel, null)
+			.show();
+		} else {
+			Toast.makeText(this, R.string.belum_ada_sejarah, Toast.LENGTH_SHORT).show();
+		}
 	}
 	
 	private ListAdapter sejarahAdapter = new BaseAdapter() {
@@ -550,6 +554,22 @@ public class IsiActivity extends Activity {
 		
 		dialog.show();
 	}
+	
+	public void bukaDialogDonasi() {
+		new AlertDialog.Builder(this)
+		.setTitle(R.string.donasi_judul)
+		.setMessage(R.string.donasi_keterangan)
+		.setPositiveButton(R.string.donasi_tombol_ok, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				String alamat_donasi = getString(R.string.alamat_donasi);
+				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(alamat_donasi));
+				startActivity(intent);
+			}
+		})
+		.setNegativeButton(R.string.donasi_tombol_gamau, null)
+		.show();
+	}
 
 	public void bikinMenu(Menu menu) {
 		menu.clear();
@@ -570,6 +590,7 @@ public class IsiActivity extends Activity {
 		menu.findItem(R.id.menuRenungan).setVisible(c.menuRenungan);
 		menu.findItem(R.id.menuEdisi).setVisible(c.menuEdisi);
 		menu.findItem(R.id.menuBantuan).setVisible(c.menuBantuan);
+		menu.findItem(R.id.menuDonasi).setVisible(c.menuDonasi);
 	}
 	
 	@Override
@@ -669,6 +690,9 @@ public class IsiActivity extends Activity {
 		} else if (itemId == R.id.menuBantuan) {
 			Intent intent = new Intent(this, BantuanActivity.class);
 			startActivity(intent);
+			return true;
+		} else if (itemId == R.id.menuDonasi) {
+			bukaDialogDonasi();
 			return true;
 		} else if (itemId == 0x985801) { // debug 1
 			// dump pref
