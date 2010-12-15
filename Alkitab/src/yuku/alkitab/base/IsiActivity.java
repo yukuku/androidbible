@@ -3,6 +3,7 @@ package yuku.alkitab.base;
 import java.util.Map;
 import java.util.regex.*;
 
+import yuku.alkitab.R;
 import yuku.alkitab.base.AddonManager.DonlotListener;
 import yuku.alkitab.base.AddonManager.DonlotThread;
 import yuku.alkitab.base.AddonManager.Elemen;
@@ -10,7 +11,6 @@ import yuku.alkitab.base.BukmakEditor.Listener;
 import yuku.alkitab.base.GelembungDialog.RefreshCallback;
 import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.model.*;
-import yuku.alkitab.R;
 import yuku.andoutil.IntArrayList;
 import android.app.*;
 import android.content.*;
@@ -336,6 +336,23 @@ public class IsiActivity extends Activity {
 			tampilkanCatatan(S.kitabAktif, pasal_1, ayatContextMenu_1);
 
 			return true;
+		} else if (itemId == R.id.menuTambahStabilo) {
+			final int ari = Ari.encode(S.kitabAktif.pos, pasal_1, ayatContextMenu_1);
+			
+			PemilihStabiloDialog dialog = new PemilihStabiloDialog(this, new PemilihStabiloDialog.PemilihStabiloCallback() {
+				@Override public void dipilih(int warnaRgb) {
+					alkitabDb.updateAtauInsertStabilo(ari, warnaRgb);
+					ayatAdapter_.muatAtributMap();
+					ayatAdapter_.notifyDataSetChanged();
+				}
+				
+				@Override public void batal() {
+				}
+			}, alkitabDb.getWarnaRgbStabilo(ari));
+			
+			dialog.show();
+			
+			return true;
 		} else if (itemId == R.id.menuBagikan) {
 			Intent i = new Intent(Intent.ACTION_SEND);
 			i.setType("text/plain"); //$NON-NLS-1$
@@ -348,7 +365,6 @@ public class IsiActivity extends Activity {
 		
 		return super.onContextItemSelected(item);
 	}
-
 
 	private void terapkanPengaturan(boolean bahasaJuga) {
 		// penerapan langsung warnaLatar
@@ -980,6 +996,11 @@ public class IsiActivity extends Activity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (S.penerapan.tombolVolumeNaikTurun) {
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_DOWN;
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_UP;
+		}
+		
 		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
 			bKiri_click();
 			return true;

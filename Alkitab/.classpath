@@ -4,7 +4,7 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/BintexReader"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/KirimFidbek"/>
 	<classpathentry kind="src" path="AmbilWarna_src"/>
+	<classpathentry kind="src" path="KirimFidbek_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

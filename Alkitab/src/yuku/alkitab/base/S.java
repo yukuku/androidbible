@@ -39,6 +39,7 @@ public class S {
 		public static boolean prioritasLoncat;
 		public static boolean sembunyiNavigasi;
 		public static String bahasa;
+		public static boolean tombolVolumeNaikTurun;
 	}
 	
 	/**
@@ -183,6 +184,12 @@ public class S {
 		{
 			String bahasa = pengaturan.getString(context.getString(R.string.pref_bahasa_key), "DEFAULT"); //$NON-NLS-1$
 			S.penerapan.bahasa = bahasa;
+		}
+		
+		//# volume untuk naik turun ayat
+		{
+			boolean tombolVolumeNaikTurun = pengaturan.getBoolean(context.getString(R.string.pref_tombolVolumeNaikTurun_key), false);
+			S.penerapan.tombolVolumeNaikTurun = tombolVolumeNaikTurun;
 		}
 		
 		Log.d(TAG, "bacaPengaturan selesai"); //$NON-NLS-1$

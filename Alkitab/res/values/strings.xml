@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
+    <string name="stabilo_judul">Highlight</string>
+    <string name="pref_pindah_ke_ayat_sebelum_sesudah_dengan_tombol_volume">Move to prev/next verses using the volume buttons</string>
+    <string name="pref_pindah_dengan_volume">Volume Button Move</string>
+    <string name="highlight_stabilo">Highlight</string>
     <string name="belum_ada_sejarah">No history yet.</string>
     <string name="donasi_tombol_gamau">Not now</string>
     <string name="donasi_tombol_ok">Donate</string>

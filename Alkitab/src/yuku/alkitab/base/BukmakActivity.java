@@ -95,10 +95,12 @@ public class BukmakActivity extends ListActivity {
 		});
 		setListAdapter(adapter);
 
-		getListView().setBackgroundColor(S.penerapan.warnaLatar);
-		getListView().setCacheColorHint(S.penerapan.warnaLatar);
+		ListView listView = getListView();
+		listView.setBackgroundColor(S.penerapan.warnaLatar);
+		listView.setCacheColorHint(S.penerapan.warnaLatar);
+		listView.setFastScrollEnabled(true);
 
-		registerForContextMenu(getListView());
+		registerForContextMenu(listView);
 	}
 	
 	@Override

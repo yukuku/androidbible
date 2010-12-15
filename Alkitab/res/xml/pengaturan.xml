@@ -86,6 +86,11 @@
 			android:title="@string/pref_matikan_menu_ayat"
 			android:key="@string/pref_matikanTahanAyat_key"
 			android:summary="@string/pref_jangan_buka_menu_ketika_jari_menahan_salah_satu_ayat" />
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:title="@string/pref_pindah_dengan_volume"
+			android:key="@string/pref_tombolVolumeNaikTurun_key"
+			android:summary="@string/pref_pindah_ke_ayat_sebelum_sesudah_dengan_tombol_volume" />
 
 	</PreferenceCategory>
 </PreferenceScreen>

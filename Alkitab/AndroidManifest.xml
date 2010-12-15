@@ -3,7 +3,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="yuku.alkitab"
 	android:installLocation="auto"
-	android:versionName="1.2.2" android:versionCode="41">
+	android:versionName="1.3" android:versionCode="42">
 	<application
 		android:name="yuku.alkitab.base.AlkitabApplication"
 		android:icon="@drawable/icon"

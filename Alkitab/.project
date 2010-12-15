@@ -34,7 +34,12 @@
 		<link>
 			<name>AmbilWarna_src</name>
 			<type>2</type>
-			<locationURI>_android_AmbilWarna/src</locationURI>
+			<locationURI>_android_AmbilWarna_5bada8e2/src</locationURI>
+		</link>
+		<link>
+			<name>KirimFidbek_src</name>
+			<type>2</type>
+			<locationURI>_android_KirimFidbek_7665a5df/src</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

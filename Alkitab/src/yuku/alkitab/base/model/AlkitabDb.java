@@ -1,6 +1,9 @@
 package yuku.alkitab.base.model;
 
+import java.util.Date;
+
 import yuku.alkitab.R;
+import yuku.alkitab.base.U;
 import android.app.AlertDialog;
 import android.content.*;
 import android.content.pm.*;
@@ -37,6 +40,7 @@ public class AlkitabDb {
 	public static final String KOLOM_Bukmak2_waktuUbah = "waktuUbah"; //$NON-NLS-1$
 	public static final int ENUM_Bukmak2_jenis_bukmak = 1;
 	public static final int ENUM_Bukmak2_jenis_catatan = 2;
+	public static final int ENUM_Bukmak2_jenis_stabilo = 3;
 	
 	public static final String TABEL_Renungan = "Renungan"; //$NON-NLS-1$
 	public static final String KOLOM_Renungan_nama = "nama"; //$NON-NLS-1$
@@ -162,12 +166,13 @@ public class AlkitabDb {
 	private static String sql_getCatatan = "select * from " + TABEL_Bukmak2 + " where " + KOLOM_Bukmak2_ari + ">=? and " + KOLOM_Bukmak2_ari + "<?"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	private String[] sql_getCatatan_params = new String[2];
 	/**
-	 * map_0 adalah ayat, basis 0
+	 * @param map_0 adalah ayat, basis 0
+	 * @return null kalau ga ada warna stabilo, atau int[] kalau ada, sesuai offset map_0.
 	 */
-	public int putAtribut(int ari_kitabpasal, int[] map_0) {
+	public int[] putAtribut(int ari_kitabpasal, int[] map_0) {
 		int ariMin = ari_kitabpasal & 0x00ffff00;
 		int ariMax = ari_kitabpasal | 0x000000ff;
-		int res = 0;
+		int[] res = null;
 		
 		sql_getCatatan_params[0] = String.valueOf(ariMin);
 		sql_getCatatan_params[1] = String.valueOf(ariMax);
@@ -175,6 +180,7 @@ public class AlkitabDb {
 		try {
 			int kolom_jenis = cursor.getColumnIndexOrThrow(KOLOM_Bukmak2_jenis);
 			int kolom_ari = cursor.getColumnIndexOrThrow(KOLOM_Bukmak2_ari);
+			int kolom_tulisan = cursor.getColumnIndexOrThrow(KOLOM_Bukmak2_tulisan);
 			while (cursor.moveToNext()) {
 				int ari = cursor.getInt(kolom_ari);
 				int jenis = cursor.getInt(kolom_jenis);
@@ -187,6 +193,14 @@ public class AlkitabDb {
 						map_0[ofsetMap] |= 0x1;
 					} else if (jenis == ENUM_Bukmak2_jenis_catatan) {
 						map_0[ofsetMap] |= 0x2;
+					} else if (jenis == ENUM_Bukmak2_jenis_stabilo) {
+						map_0[ofsetMap] |= 0x4;
+						
+						String tulisan = cursor.getString(kolom_tulisan);
+						int warnaRgb = U.dekodStabilo(tulisan);
+						
+						if (res == null) res = new int[map_0.length];
+						res[ofsetMap] = warnaRgb;
 					}
 				}
 			}
@@ -336,5 +350,51 @@ public class AlkitabDb {
 			Log.i(TAG, a);
 		}
 		c.close();
+	}
+
+	public void updateAtauInsertStabilo(int ari, int warnaRgb) {
+		// cek dulu ada ato ga
+		Cursor c = db.query(TABEL_Bukmak2, null, KOLOM_Bukmak2_ari + "=? and " + KOLOM_Bukmak2_jenis + "=?", new String[] {String.valueOf(ari), String.valueOf(ENUM_Bukmak2_jenis_stabilo)}, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
+		try {
+			if (c.moveToNext()) {
+				// sudah ada!
+				Bukmak2 bukmak = Bukmak2.dariCursor(c);
+				long id = c.getLong(c.getColumnIndexOrThrow("_id")); //$NON-NLS-1$
+				if (warnaRgb != -1) {
+					bukmak.tulisan = U.enkodStabilo(warnaRgb);
+					db.update(TABEL_Bukmak2, bukmak.toContentValues(), "_id=?", new String[] {String.valueOf(id)}); //$NON-NLS-1$
+				} else {
+					// delete
+					db.delete(TABEL_Bukmak2, "_id=?", new String[] {String.valueOf(id)}); //$NON-NLS-1$
+				}
+			} else {
+				// belum ada!
+				if (warnaRgb == -1) {
+					// ga usa ngapa2in, dari belum ada jadi tetep ga ada
+				} else {
+					Date kini = new Date();
+					Bukmak2 bukmak = new Bukmak2(ari, ENUM_Bukmak2_jenis_stabilo, U.enkodStabilo(warnaRgb), kini, kini); 
+					db.insert(TABEL_Bukmak2, null, bukmak.toContentValues());
+				}
+			}
+		} finally {
+			c.close();
+		}
+	}
+
+	public int getWarnaRgbStabilo(int ari) {
+		// cek dulu ada ato ga
+		Cursor c = db.query(TABEL_Bukmak2, null, KOLOM_Bukmak2_ari + "=? and " + KOLOM_Bukmak2_jenis + "=?", new String[] {String.valueOf(ari), String.valueOf(ENUM_Bukmak2_jenis_stabilo)}, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
+		try {
+			if (c.moveToNext()) {
+				// sudah ada!
+				Bukmak2 bukmak = Bukmak2.dariCursor(c);
+				return U.dekodStabilo(bukmak.tulisan);
+			} else {
+				return -1;
+			}
+		} finally {
+			c.close();
+		}
 	}
 }

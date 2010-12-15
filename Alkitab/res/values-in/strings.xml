@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
+    <string name="stabilo_judul">Highlight (Stabilo)</string>
+    <string name="pref_pindah_ke_ayat_sebelum_sesudah_dengan_tombol_volume">Pindah ke ayat sebelum/sesudahnya dengan tombol volume</string>
+    <string name="pref_pindah_dengan_volume">Pindah dengan Volume</string>
+    <string name="highlight_stabilo">Highlight (stabilo)</string>
     <string name="belum_ada_sejarah">Belum ada sejarah.</string>
     <string name="donasi_tombol_gamau">Lain kali</string>
     <string name="donasi_tombol_ok">Donasi</string>

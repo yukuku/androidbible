@@ -124,4 +124,30 @@ public class U {
 		
 		return res.toArray(new String[res.size()]);
 	}
+	
+	static StringBuilder enkodStabilo_buf;
+	public static String enkodStabilo(int warnaRgb) {
+		if (enkodStabilo_buf == null) {
+			enkodStabilo_buf = new StringBuilder(10);
+		}
+		enkodStabilo_buf.setLength(0);
+		enkodStabilo_buf.append('c');
+		String h = Integer.toHexString(warnaRgb);
+		for (int x = h.length(); x < 6; x++) {
+			enkodStabilo_buf.append('0');
+		}
+		enkodStabilo_buf.append(h);
+		return enkodStabilo_buf.toString();
+	}
+	
+	/**
+	 * @return warnaRgb
+	 */
+	public static int dekodStabilo(String tulisan) {
+		if (tulisan.length() >= 7 && tulisan.charAt(0) == 'c') {
+			return Integer.parseInt(tulisan.substring(1, 7), 16);
+		} else {
+			return -1;
+		}
+	}
 }
