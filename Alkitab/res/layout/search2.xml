@@ -21,7 +21,7 @@
 				android:id="@+id/tCarian"
 				android:imeOptions="actionSearch"
 				android:layout_weight="1"
-				android:selectAllOnFocus="true"></EditText>
+				android:selectAllOnFocus="true" android:singleLine="true"></EditText>
 			<ImageButton
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"

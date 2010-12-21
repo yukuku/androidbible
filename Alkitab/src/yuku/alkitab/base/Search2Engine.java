@@ -64,7 +64,7 @@ public class Search2Engine {
 		for (int i = 0, len = xkata.size(); i < len; i++) {
 			String kata = xkata.get(i);
 			kata = kata.trim();
-			if (kata.length() > 0) {
+			if (kata.length() > 0 && tanpaTambah(kata).length() > 0) {
 				xkata2.add(kata);
 			}
 		}
@@ -201,6 +201,12 @@ public class Search2Engine {
 
 	static IntArrayList cariDalam(Context context, String kata, IntArrayList sumber, int max, boolean filter_lama, boolean filter_baru) {
 		IntArrayList res = new IntArrayList();
+		boolean pakeTambah = false;
+		
+		if (adaTambah(kata)) {
+			pakeTambah = true;
+			kata = tanpaTambah(kata);
+		}
 	
 		if (sumber == null) {
 			for (Kitab k: S.edisiAktif.volatile_xkitab) {
@@ -223,7 +229,7 @@ public class Search2Engine {
 					String sepasal = S.muatTeksJanganPisahAyatHurufKecil(context, S.edisiAktif, k, pasal_1);
 					if (sepasal.indexOf(kata) >= 0) {
 						// hanya lakukan ini jika dalam sepasal kedetek ada kata
-						cariDalamSepasal(sepasal, kata, res, Ari.encode(k.pos, pasal_1, 0));
+						cariDalamSepasal(sepasal, kata, res, Ari.encode(k.pos, pasal_1, 0), pakeTambah);
 					}
 				}
 	
@@ -246,7 +252,7 @@ public class Search2Engine {
 				String sepasal = S.muatTeksJanganPisahAyatHurufKecil(context, S.edisiAktif, k, pasal_1);
 				if (sepasal.indexOf(kata) >= 0) {
 					// hanya lakukan ini jika dalam sepasal kedetek ada kata
-					cariDalamSepasal(sepasal, kata, res, ariKpKini);
+					cariDalamSepasal(sepasal, kata, res, ariKpKini, pakeTambah);
 				}
 				
 				hitung++;
@@ -258,12 +264,21 @@ public class Search2Engine {
 		return res;
 	}
 
-	private static void cariDalamSepasal(String sepasal, String kata, IntArrayList res, int base) {
+	private static void cariDalamSepasal(String sepasal, String kata, IntArrayList res, int base, boolean pakeTambah) {
 		int a = 0;
 		int aterakhir = -1;
 		
+		int posKata;
+		if (pakeTambah) {
+			posKata = indexOfWholeWord(sepasal, kata, 0);
+			if (posKata == -1) {
+				return;
+			}
+		} else {
+			posKata = sepasal.indexOf(kata);
+		}
+		
 		int posN = sepasal.indexOf(0x0a);
-		int posKata = sepasal.indexOf(kata);
 		
 		while (true) {
 			if (posN < posKata) {
@@ -277,7 +292,11 @@ public class Search2Engine {
 					res.add(base + a + 1); // +1 supaya jadi ayat[1base]
 					aterakhir = a;
 				}
-				posKata = sepasal.indexOf(kata, posKata+1);
+				if (pakeTambah) {
+					posKata = indexOfWholeWord(sepasal, kata, posKata+1);
+				} else {
+					posKata = sepasal.indexOf(kata, posKata+1);
+				}
 				if (posKata == -1) {
 					return;
 				}
@@ -285,8 +304,54 @@ public class Search2Engine {
 		}
 	}
 	
+	private static int indexOfWholeWord(String sepasal, String kata, int start) {
+		int len = sepasal.length();
+		
+		while (true) {
+			int pos = sepasal.indexOf(kata, start);
+			//Log.d(TAG, "pos=" + pos + " untuk " + kata + " pada: " + sepasal);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+			if (pos == -1) return -1;
+			
+			// pos bukan -1
+			
+			// cek kiri
+			// [pos] [charat pos-1]
+			//  0        *          ok
+			// >0       alpha       ng
+			// >0      !alpha       ok
+			if (pos != 0 && Character.isLetter(sepasal.charAt(pos - 1))) {
+				start = pos + 1;
+				continue;
+			}
+			
+			// cek kanan
+			int end = pos + kata.length();
+			// [end] [charat end]
+			// len       *         ok
+			// != len  alpha       ng
+			// != len  !alpha      ok
+			if (end != len && Character.isLetter(sepasal.charAt(end))) {
+				start = pos + 1;
+				continue;
+			}
+			
+			// lulus
+			return pos;
+		}
+	}
+
 	static SpannableStringBuilder hilite(String ayat, String[] xkata, int warnaStabilo) {
 		SpannableStringBuilder res = new SpannableStringBuilder(ayat);
+		{
+			String[] xkata2 = new String[xkata.length];
+			System.arraycopy(xkata, 0, xkata2, 0, xkata.length);
+			for (int i = 0; i < xkata.length; i++) {
+				if (adaTambah(xkata2[i])) {
+					xkata2[i] = tanpaTambah(xkata2[i]);
+				}
+			}
+			xkata = xkata2;
+		}
 		
 		ayat = ayat.toLowerCase();
 		
@@ -323,5 +388,23 @@ public class Search2Engine {
 		}
 		
 		return res;
+	}
+	
+	static boolean adaTambah(String kata) {
+		return (kata.startsWith("+")); //$NON-NLS-1$
+	}
+	
+	static String tanpaTambah(String kata) {
+		int pos = 0;
+		while (true) {
+			if (pos >= kata.length()) break;
+			if (kata.charAt(pos) == '+') {
+				pos++;
+			} else {
+				break;
+			}
+		}
+		if (pos == 0) return kata;
+		return kata.substring(pos);
 	}
 }

@@ -660,41 +660,7 @@ public class IsiActivity extends Activity {
 			startActivityForResult(intent, R.id.menuRenungan);
 			return true;
 		} else if (itemId == R.id.menuTentang) {
-			String verName = "null"; //$NON-NLS-1$
-	    	int verCode = -1;
-	    	
-			try {
-				PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-				verName = packageInfo.versionName;
-				verCode = packageInfo.versionCode;
-			} catch (NameNotFoundException e) {
-				Log.e(TAG, "PackageInfo ngaco", e); //$NON-NLS-1$
-			}
-			
-			Spanned html = Html.fromHtml(
-				getString(R.string.teks_about, 
-					verName,
-					verCode,
-					"$LastChangedRevision$".replaceAll("\\$|LastChangedRevision|:| ", "") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				)
-			);
-			
-			TextView isi = new TextView(this);
-			isi.setText(html);
-			Linkify.addLinks(isi, Linkify.WEB_URLS);
-			isi.setTextColor(0xffffffff);
-			isi.setLinkTextColor(0xff8080ff);
-
-			int pad = (int) (getResources().getDisplayMetrics().density * 6.f);
-			isi.setPadding(pad, pad, pad, pad);
-			
-			AlertDialog dialog = new AlertDialog.Builder(this)
-			.setTitle(R.string.tentang_title)
-			.setView(isi)
-			.setPositiveButton(R.string.ok, null)
-			.create();
-			
-			dialog.show();
+			tampilDialogTentang();
 			return true;
 		} else if (itemId == R.id.menuPengaturan) {
 			Intent intent = new Intent(this, PengaturanActivity.class);
@@ -745,6 +711,44 @@ public class IsiActivity extends Activity {
 		}
 		
 		return false; 
+	}
+
+	private void tampilDialogTentang() {
+		String verName = "null"; //$NON-NLS-1$
+		int verCode = -1;
+		
+		try {
+			PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+			verName = packageInfo.versionName;
+			verCode = packageInfo.versionCode;
+		} catch (NameNotFoundException e) {
+			Log.e(TAG, "PackageInfo ngaco", e); //$NON-NLS-1$
+		}
+		
+		Spanned html = Html.fromHtml(
+			getString(R.string.teks_about, 
+				verName,
+				verCode,
+				"$LastChangedRevision$".replaceAll("\\$|LastChangedRevision|:| ", "") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			)
+		);
+		
+		TextView isi = new TextView(this);
+		isi.setText(html);
+		Linkify.addLinks(isi, Linkify.WEB_URLS);
+		isi.setTextColor(0xffffffff);
+		isi.setLinkTextColor(0xff8080ff);
+
+		int pad = (int) (getResources().getDisplayMetrics().density * 6.f);
+		isi.setPadding(pad, pad, pad, pad);
+		
+		AlertDialog dialog = new AlertDialog.Builder(this)
+		.setTitle(R.string.tentang_title)
+		.setView(isi)
+		.setPositiveButton(R.string.ok, null)
+		.create();
+		
+		dialog.show();
 	}
 
 	private void pilihEdisi() {
