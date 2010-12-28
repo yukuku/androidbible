@@ -10,7 +10,7 @@ import yuku.bintex.BintexReader;
 import yuku.kirimfidbek.PengirimFidbek;
 import android.content.*;
 import android.content.res.Configuration;
-import android.graphics.Typeface;
+import android.graphics.*;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -27,6 +27,7 @@ public class S {
 		public static Typeface jenisHuruf;
 		public static int tebalHuruf;
 		public static int warnaHuruf; 
+		public static int warnaHurufMerah;
 		public static int warnaLatar;
 		public static int warnaNomerAyat;
 		public static int indenParagraf;
@@ -151,6 +152,8 @@ public class S {
 			
 			int warnaNomerAyat = pengaturan.getInt(context.getString(R.string.pref_warnaNomerAyat_int_key), 0xff8080ff);
 			S.penerapan.warnaNomerAyat = warnaNomerAyat;
+			
+			S.penerapan.warnaHurufMerah = hitungHurufMerah(warnaHuruf, warnaLatar);
 		}
 		
 		S.penerapan.prioritasLoncat = pengaturan.getBoolean(context.getString(R.string.pref_tombolAlamatLoncat_key), false);
@@ -195,6 +198,18 @@ public class S {
 		Log.d(TAG, "bacaPengaturan selesai"); //$NON-NLS-1$
 	}
 	
+	private static int hitungHurufMerah(int warnaHuruf, int warnaLatar) {
+		// berdasar warna latar saja deh untuk kali ini
+		int brt = Color.red(warnaLatar) * 30 + Color.green(warnaLatar) * 59 + Color.blue(warnaLatar) * 11;
+		if (brt < 30 * 100) {
+			return 0xffff9090;
+		} else if (brt < 86 * 100) {
+			return 0xffff5050;
+		} else {
+			return 0xffff0000;
+		}
+	}
+
 	public static synchronized String[] muatTeks(Context context, Edisi edisi, Kitab kitab, int pasal_1) {
 		return muatTeks(context, edisi, kitab, pasal_1, false, false);
 	}
