@@ -35,7 +35,9 @@ public class Edisi {
 				} else if (key.equals("pembaca")) { //$NON-NLS-1$
 					String v = in.readShortString();
 					if ("internal".equals(v)) { //$NON-NLS-1$
-						e.pembaca = new InternalPembaca();
+						e.pembaca = new InternalPembaca(new PembacaDecoder.Ascii());
+					} else if ("internal-utf8".equals(v)) { //$NON-NLS-1$
+						e.pembaca = new InternalPembaca(new PembacaDecoder.Utf8());
 					} else if ("yes".equals(v)) { //$NON-NLS-1$
 						e.pembaca = new YesPembaca(AddonManager.getEdisiPath(e.nama));
 					}

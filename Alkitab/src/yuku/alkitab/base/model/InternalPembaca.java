@@ -16,6 +16,12 @@ public class InternalPembaca implements Pembaca {
 	private static String cache_file = null;
 	private static int cache_posInput = -1;
 
+	private final PembacaDecoder pembacaDecoder;
+
+	public InternalPembaca(PembacaDecoder pembacaDecoder) {
+		this.pembacaDecoder = pembacaDecoder;
+	}
+	
 	@Override
 	public Kitab[] bacaInfoKitab(Context context, Edisi edisi) {
 		InputStream is = U.openRaw(context, edisi.nama + "_index_bt"); //$NON-NLS-1$
@@ -106,13 +112,13 @@ public class InternalPembaca implements Pembaca {
 			// jangan ditutup walau uda baca. Siapa tau masih sama filenya dengan sebelumnya.
 
 			if (hurufKecil) {
-				U.hurufkecilkanAscii(ba);
+				pembacaDecoder.hurufkecilkan(ba);
 			}
 
 			if (janganPisahAyat) {
-				return new String[] { new String(ba, 0) };
+				return new String[] { pembacaDecoder.jadikanStringTunggal(ba) };
 			} else {
-				return U.pisahJadiAyatAscii(ba);
+				return pembacaDecoder.pisahJadiAyat(ba);
 			}
 		} catch (IOException e) {
 			return new String[] { e.getMessage() };

@@ -3,7 +3,6 @@ package yuku.alkitab.base.model;
 import java.io.*;
 import java.util.Arrays;
 
-import yuku.alkitab.base.U;
 import yuku.bintex.BintexReader;
 import android.content.Context;
 import android.util.Log;
@@ -13,6 +12,8 @@ public class YesPembaca implements Pembaca {
 	
 	private String nf;
 	private RandomAccessFile f;
+	private PembacaDecoder pembacaDecoder = new PembacaDecoder.Ascii();
+	
 	private long teks_dasarOffset;
 	private long perikopBlok_dasarOffset;
 	
@@ -143,13 +144,13 @@ public class YesPembaca implements Pembaca {
 			f.read(ba);
 			
 			if (hurufKecil) {
-				U.hurufkecilkanAscii(ba);
+				pembacaDecoder.hurufkecilkan(ba);
 			}
 			
 			if (janganPisahAyat) {
-				return new String[] {new String(ba, 0)};
+				return new String[] {pembacaDecoder.jadikanStringTunggal(ba)};
 			} else {
-				return U.pisahJadiAyatAscii(ba);
+				return pembacaDecoder.pisahJadiAyat(ba);
 			}
 		} catch (Exception e) {
 			Log.e(TAG, "muatTeks error", e); //$NON-NLS-1$

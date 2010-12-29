@@ -1,7 +1,7 @@
 package yuku.alkitab.base;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.Arrays;
 
 import yuku.alkitab.base.model.*;
 import android.content.Context;
@@ -93,38 +93,6 @@ public class U {
 		return resources.openRawResource(resources.getIdentifier(name, "raw", context.getPackageName())); //$NON-NLS-1$
 	}
 
-	public static void hurufkecilkanAscii(byte[] ba) {
-		int blen = ba.length;
-		for (int i = 0; i < blen; i++) {
-			byte b = ba[i];
-			if (b <= (byte)'Z' && b >= (byte)'A') {
-				ba[i] |= 0x20; // perhurufkecilkan
-			}
-		}
-	}
-	
-	public static String[] pisahJadiAyatAscii(byte[] ba) {
-		char[] ayatBuf = new char[4000];
-		int i = 0;
-
-		ArrayList<String> res = new ArrayList<String>(60);
-		
-		//# HANYA BERLAKU KALAU SEMUA byte hanya 7-bit. Akan rusak kalo ada yang 0x80.
-		int len = ba.length;
-		for (int pos = 0; pos < len; pos++) {
-			byte c = ba[pos];
-			if (c == (byte)0x0a) {
-				String satu = new String(ayatBuf, 0, i);
-				res.add(satu);
-				i = 0;
-			} else {
-				ayatBuf[i++] = (char) c;
-			}
-		}
-		
-		return res.toArray(new String[res.size()]);
-	}
-	
 	static StringBuilder enkodStabilo_buf;
 	public static String enkodStabilo(int warnaRgb) {
 		if (enkodStabilo_buf == null) {
