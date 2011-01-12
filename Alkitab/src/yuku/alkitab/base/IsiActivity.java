@@ -208,7 +208,7 @@ public class IsiActivity extends Activity {
 			editor.commit();
 		} else {
 			final long sekarang = System.currentTimeMillis();
-			if (sekarang - terakhirMintaFidbek > (long)30000*60*60*24) { // 1 BULAN ato belom pernah
+			if (sekarang - terakhirMintaFidbek > (long)90000*24*3600) { // 3 BULAN ato belom pernah
 				handler.post(new Runnable() {
 					@Override
 					public void run() {

@@ -17,24 +17,31 @@
 			android:textSize="16sp"
 			android:id="@+id/lHeader"
 			android:layout_width="wrap_content"
-			android:layout_weight="1" android:padding="4dp"/>
+			android:layout_weight="1"
+			android:padding="4dp" />
 		<Button
 			android:layout_width="wrap_content"
-			android:id="@+id/bGanti"
 			android:layout_height="wrap_content"
-			android:height="48dp" android:text="@string/ganti_v"></Button>
+			android:id="@+id/bGanti"
+			android:height="48dp"
+			android:text="@string/ganti_v"
+			android:nextFocusDown="@+id/scrollIsi" />
 		<ImageButton
 			android:src="@drawable/left_arrow"
 			android:id="@+id/bKiri"
 			android:layout_height="48dp"
 			android:layout_width="48dp"
-			android:padding="8dp" android:scaleType="center"></ImageButton>
+			android:padding="8dp"
+			android:scaleType="center"
+			android:nextFocusDown="@+id/scrollIsi" />
 		<ImageButton
 			android:src="@drawable/right_arrow"
 			android:id="@+id/bKanan"
 			android:layout_height="48dp"
 			android:layout_width="48dp"
-			android:padding="8dp" android:scaleType="center"></ImageButton>
+			android:padding="8dp"
+			android:scaleType="center"
+			android:nextFocusDown="@+id/scrollIsi" />
 	</LinearLayout>
 
 	<RelativeLayout
@@ -52,8 +59,16 @@
 				android:id="@+id/lIsi"
 				android:text="Isi renungan di sini. Bla bla bla bla. Dan terus. Bla bla bla bla bla bla bla, sampe ngeskrol."
 				android:padding="8dp"></TextView>
-</ScrollView>
-		
-		<TextView android:layout_height="wrap_content" android:layout_alignParentBottom="true" android:layout_width="fill_parent" android:id="@+id/lStatus" android:padding="4dp" android:text="... status ..." android:background="#444" android:visibility="invisible"></TextView>
+		</ScrollView>
+
+		<TextView
+			android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"
+			android:layout_width="fill_parent"
+			android:id="@+id/lStatus"
+			android:padding="4dp"
+			android:text="... status ..."
+			android:background="#444"
+			android:visibility="invisible"></TextView>
 	</RelativeLayout>
 </LinearLayout>
