@@ -8,6 +8,7 @@ public class BuildConfig {
 	static {
 		map.put("yuku.alkitab", new Config(true, false, true, true, false)); //$NON-NLS-1$
 		map.put("yuku.alkitab.kjv", new Config(false, false, false, true, true)); //$NON-NLS-1$
+		map.put("yuku.alkitab.nrkv", new Config(false, false, false, false, false)); //$NON-NLS-1$
 	}
 	
 	public static Config get(String pkgName) {
