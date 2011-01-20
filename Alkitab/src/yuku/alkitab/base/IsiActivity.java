@@ -1039,6 +1039,16 @@ public class IsiActivity extends Activity {
 		return super.onKeyMultiple(keyCode, repeatCount, event);
 	}
 	
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		if (S.penerapan.tombolVolumeNaikTurun) {
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) return true;
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) return true;
+		}
+		
+		return super.onKeyUp(keyCode, event);
+	}
+	
 	private void bKiri_click() {
 		Kitab kitabKini = S.kitabAktif;
 		if (pasal_1 == 1) {
