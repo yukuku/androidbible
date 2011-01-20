@@ -13,7 +13,7 @@ public class KonvertIsi {
 	}
 
 	private void convert(String nfi, String nfo) throws Exception {
-		Scanner sc = new Scanner(new File(nfi));
+		Scanner sc = new Scanner(new File(nfi), "utf-8");
 		FileOutputStream os = new FileOutputStream(nfo);
 		
 		BintexWriter writer = new BintexWriter(os);
