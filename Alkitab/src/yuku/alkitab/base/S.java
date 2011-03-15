@@ -50,7 +50,6 @@ public class S {
 	public static class penampungan {
 		public static String renungan_nama = null;
 		public static Date renungan_tanggalan = null;
-		public static String search_carian = null; // TODO: syuh ketika search2 stabil
 	}
 	
 	//# 33nya harus siap di siapinEdisi
