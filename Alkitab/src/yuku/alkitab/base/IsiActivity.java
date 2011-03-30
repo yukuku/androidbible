@@ -1,7 +1,6 @@
 package yuku.alkitab.base;
 
 import java.util.Map;
-import java.util.regex.*;
 
 import yuku.alkitab.R;
 import yuku.alkitab.base.AddonManager.DonlotListener;
@@ -1097,19 +1096,6 @@ public class IsiActivity extends Activity {
 		} catch (NameNotFoundException e) {
 			Log.w(TAG, e);
 		}
-		
-		TextView lTautKeMarket = (TextView) feedback.findViewById(R.id.lTautKeMarket);
-		Linkify.addLinks(lTautKeMarket, Pattern.compile(".+"), "http://market.android.com/", new Linkify.MatchFilter() {  //$NON-NLS-1$//$NON-NLS-2$
-			@Override
-			public boolean acceptMatch(CharSequence s, int start, int end) {
-				return true;
-			}
-		}, new Linkify.TransformFilter() {
-			@Override
-			public String transformUrl(Matcher match, String url) {
-				return "details?id=" + getPackageName(); //$NON-NLS-1$
-			}
-		});
 		
 		new AlertDialog.Builder(IsiActivity.this).setView(feedback)
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {

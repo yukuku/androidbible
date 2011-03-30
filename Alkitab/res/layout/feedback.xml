@@ -1,14 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_height="wrap_content" android:layout_width="wrap_content" android:padding="8dp">
-	<LinearLayout android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:orientation="vertical">
-		<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/lVersi" android:text="lVersi" android:textStyle="bold" android:paddingBottom="8dp" android:layout_marginRight="8dp"></TextView><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/lTautKeMarket" android:text="Android Market"></TextView></LinearLayout><TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/peringatanBeta_s" android:textSize="16dp" android:paddingBottom="8dp"></TextView>
-
-		<EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:inputType="textCapSentences|textAutoCorrect|textAutoComplete|textMultiLine" android:id="@+id/tFeedback" android:hint="@string/saran_komentar_dsb"></EditText>
-	
-
-
-</LinearLayout>
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="wrap_content"
+	android:layout_width="wrap_content"
+	android:padding="8dp">
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/lVersi"
+				android:text="lVersi"
+				android:textStyle="bold"
+				android:paddingBottom="8dp"
+				android:layout_marginRight="8dp" />
+		</LinearLayout>
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/peringatanBeta_s"
+			android:textSize="16dp"
+			android:paddingBottom="8dp" />
+		<EditText
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:inputType="textCapSentences|textAutoCorrect|textAutoComplete|textMultiLine"
+			android:id="@+id/tFeedback"
+			android:hint="@string/saran_komentar_dsb" />
+	</LinearLayout>
 </ScrollView>

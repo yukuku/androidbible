@@ -18,14 +18,18 @@
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:padding="2dp"
-			android:singleLine="true" android:background="@drawable/isi_judul_bg" android:shadowRadius="2.75" android:shadowColor="#bb000000" android:textColor="#fff" android:textSize="14sp"/>
+			android:singleLine="true"
+			android:background="@drawable/isi_judul_bg"
+			android:shadowRadius="2.75"
+			android:shadowColor="#bb000000"
+			android:textColor="#fff"
+			android:textSize="14sp" />
 		<View
 			android:layout_width="fill_parent"
 			android:layout_height="1px"
 			android:background="#000" />
-
 	</LinearLayout>
-	
+
 	<ListView
 		android:layout_height="wrap_content"
 		android:id="@+id/lsIsi"
@@ -34,7 +38,9 @@
 		android:divider="@null"
 		android:listSelector="@android:color/transparent"
 		android:focusable="false"
-		android:focusableInTouchMode="false" android:paddingLeft="2dp" android:paddingRight="2dp"></ListView>
+		android:focusableInTouchMode="false"
+		android:paddingLeft="2dp"
+		android:paddingRight="2dp" />
 	<LinearLayout
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"
@@ -46,18 +52,22 @@
 			android:id="@+id/bKiri"
 			android:layout_width="64dp"
 			android:layout_height="64dp"
-			android:padding="16dp" android:scaleType="center"></ImageButton>
+			android:padding="16dp"
+			android:scaleType="center" />
 		<Button
 			android:layout_width="wrap_content"
 			android:id="@+id/bTuju"
 			android:layout_weight="1"
-			android:layout_height="fill_parent" android:textSize="18dp" android:text="Nama Kitab Agak Panjang 20"></Button>
+			android:layout_height="fill_parent"
+			android:textSize="18dp"
+			android:text="Nama Kitab Agak Panjang 20" />
 		<ImageButton
 			android:src="@drawable/right_arrow"
 			android:id="@+id/bKanan"
 			android:layout_height="64dp"
 			android:layout_width="64dp"
-			android:padding="16dp" android:scaleType="center"></ImageButton>
+			android:padding="16dp"
+			android:scaleType="center" />
 
 
 	</LinearLayout>
