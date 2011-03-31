@@ -1,8 +1,8 @@
 package yuku.alkitab.test;
 
 import junit.framework.Assert;
-import yuku.alkitab.Peloncat;
-import yuku.alkitab.model.Kitab;
+import yuku.alkitab.base.Peloncat;
+import yuku.alkitab.base.model.Kitab;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
