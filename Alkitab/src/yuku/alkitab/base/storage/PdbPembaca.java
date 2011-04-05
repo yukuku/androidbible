@@ -21,7 +21,7 @@ public class PdbPembaca implements Pembaca {
 	@Override
 	public Kitab[] bacaInfoKitab(Context context, Edisi edisi) {
 		try {
-			pdb = new BiblePlusPDB(new PDBFileStream("/sdcard/Bibles/tb.pdb"), null, null);
+			pdb = new BiblePlusPDB(new PDBFileStream(edisi.judul), null, null);
 			pdb.loadVersionInfo();
 			pdb.loadWordIndex();
 			
