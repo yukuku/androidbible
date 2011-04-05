@@ -1,9 +1,10 @@
-package yuku.alkitab.base.model;
+package yuku.alkitab.base.storage;
 
 import java.util.Date;
 
 import yuku.alkitab.R;
 import yuku.alkitab.base.U;
+import yuku.alkitab.base.model.*;
 import android.app.AlertDialog;
 import android.content.*;
 import android.content.pm.*;

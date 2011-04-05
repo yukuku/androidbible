@@ -1,7 +1,5 @@
 package yuku.alkitab.base;
 
-import java.util.Map;
-
 import yuku.alkitab.R;
 import yuku.alkitab.base.AddonManager.DonlotListener;
 import yuku.alkitab.base.AddonManager.DonlotThread;
@@ -10,6 +8,7 @@ import yuku.alkitab.base.BukmakEditor.Listener;
 import yuku.alkitab.base.GelembungDialog.RefreshCallback;
 import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.storage.*;
 import yuku.andoutil.IntArrayList;
 import android.app.*;
 import android.content.*;
@@ -20,7 +19,6 @@ import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.*;
-import android.preference.PreferenceManager;
 import android.text.*;
 import android.text.style.UnderlineSpan;
 import android.text.util.Linkify;
@@ -52,7 +50,7 @@ public class IsiActivity extends Activity {
 	int pasal_1 = 0;
 	int ayatContextMenu_1 = -1;
 	String isiAyatContextMenu = null;
-	SharedPreferences preferences;
+	SharedPreferences preferences_instan;
 	Float ukuranAsalHurufIsi;
 	Handler handler = new Handler();
 	DisplayMetrics displayMetrics;
@@ -174,12 +172,12 @@ public class IsiActivity extends Activity {
 		lsIsi.setAdapter(ayatAdapter_);
 		
 		// muat preferences
-		preferences = S.getPreferences(this);
-		int kitabTerakhir = preferences.getInt(NAMAPREF_kitabTerakhir, 0);
-		int pasalTerakhir = preferences.getInt(NAMAPREF_pasalTerakhir, 0);
-		int ayatTerakhir = preferences.getInt(NAMAPREF_ayatTerakhir, 0);
+		preferences_instan = S.getPreferences(this);
+		int kitabTerakhir = preferences_instan.getInt(NAMAPREF_kitabTerakhir, 0);
+		int pasalTerakhir = preferences_instan.getInt(NAMAPREF_pasalTerakhir, 0);
+		int ayatTerakhir = preferences_instan.getInt(NAMAPREF_ayatTerakhir, 0);
 		{
-			String renungan_nama = preferences.getString(NAMAPREF_renungan_nama, null);
+			String renungan_nama = preferences_instan.getString(NAMAPREF_renungan_nama, null);
 			if (renungan_nama != null) {
 				for (String nama: RenunganActivity.ADA_NAMA) {
 					if (renungan_nama.equals(nama)) {
@@ -188,7 +186,7 @@ public class IsiActivity extends Activity {
 				}
 			}
 		}
-		sejarah = new Sejarah(preferences);
+		sejarah = new Sejarah(preferences_instan);
 		Log.d(TAG, "Akan menuju kitab " + kitabTerakhir + " pasal " + kitabTerakhir + " ayat " + ayatTerakhir); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		// muat kitab
@@ -200,9 +198,9 @@ public class IsiActivity extends Activity {
 		//sejarah.tambah(Ari.encode(kitabTerakhir, pasalTerakhir, ayatTerakhir));
 		
 		//# minta fidbek kah?
-		final long terakhirMintaFidbek = preferences.getLong(NAMAPREF_terakhirMintaFidbek, 0);
+		final long terakhirMintaFidbek = preferences_instan.getLong(NAMAPREF_terakhirMintaFidbek, 0);
 		if (terakhirMintaFidbek == 0) {
-			Editor editor = preferences.edit();
+			Editor editor = preferences_instan.edit();
 			editor.putLong(NAMAPREF_terakhirMintaFidbek, System.currentTimeMillis());
 			editor.commit();
 		} else {
@@ -221,7 +219,7 @@ public class IsiActivity extends Activity {
 	}
 	
 	private synchronized void nyalakanTerusLayarKalauDiminta() {
-		if (S.penerapan.nyalakanTerusLayar) {
+		if (Preferences.getBoolean(R.string.pref_nyalakanTerusLayar_key, R.bool.pref_nyalakanTerusLayar_default)) {
 			lsIsi.setKeepScreenOn(true);
 		}
 	}
@@ -281,7 +279,7 @@ public class IsiActivity extends Activity {
 	
 	private boolean lsIsi_itemLongClick(AdapterView<?> parent, View view, int position, long id) {
 		// kalo setingnya mati, anggap true aja (diconsume)
-		if (S.penerapan.matikanTahanAyat) {
+		if (Preferences.getBoolean(R.string.pref_matikanTahanAyat_key, R.bool.pref_matikanTahanAyat_default)) {
 			return true;
 		}
 		
@@ -380,7 +378,7 @@ public class IsiActivity extends Activity {
 		// penerapan langsung sembunyi navigasi
 		{
 			View panelNavigasi = findViewById(R.id.panelNavigasi);
-			if (S.penerapan.sembunyiNavigasi) {
+			if (Preferences.getBoolean(R.string.pref_tanpaNavigasi_key, R.bool.pref_tanpaNavigasi_default)) {
 				panelNavigasi.setVisibility(View.GONE);
 				tempatJudul.setVisibility(View.VISIBLE);
 			} else {
@@ -401,7 +399,7 @@ public class IsiActivity extends Activity {
 	protected void onStop() {
 		super.onStop();
 		
-		Editor editor = preferences.edit();
+		Editor editor = preferences_instan.edit();
 		editor.putInt(NAMAPREF_kitabTerakhir, S.kitabAktif.pos);
 		editor.putInt(NAMAPREF_pasalTerakhir, pasal_1);
 		editor.putInt(NAMAPREF_ayatTerakhir, getAyatBerdasarSkrol());
@@ -449,7 +447,7 @@ public class IsiActivity extends Activity {
 	}
 
 	private void bTuju_click() {
-		if (S.penerapan.prioritasLoncat) {
+		if (Preferences.getBoolean(R.string.pref_tombolAlamatLoncat_key, R.bool.pref_tombolAlamatLoncat_default)) {
 			bukaDialogLoncat();
 		} else {
 			bukaDialogTuju();
@@ -625,7 +623,7 @@ public class IsiActivity extends Activity {
 			
 			MenuItem menuTuju = menu.findItem(R.id.menuTuju);
 			if (menuTuju != null) {
-				if (S.penerapan.prioritasLoncat) {
+				if (Preferences.getBoolean(R.string.pref_tombolAlamatLoncat_key, R.bool.pref_tombolAlamatLoncat_default)) {
 					menuTuju.setIcon(R.drawable.menu_loncat);
 					menuTuju.setTitle(R.string.loncat_v);
 				} else {
@@ -674,33 +672,6 @@ public class IsiActivity extends Activity {
 			return true;
 		} else if (itemId == R.id.menuDonasi) {
 			bukaDialogDonasi();
-			return true;
-		} else if (itemId == 0x985801) { // debug 1
-			// dump pref
-			Log.i(TAG, "### semua pref segera muncul di bawah ini:::"); //$NON-NLS-1$
-			{
-				Map<String, ?> all = preferences.getAll();
-				for (Map.Entry<String, ?> entry: all.entrySet()) {
-					Log.i(TAG, entry.getKey() + ": " + entry.getValue()); //$NON-NLS-1$
-				}
-			}
-			Log.i(TAG, "### pengaturan:::"); //$NON-NLS-1$
-			{
-				Map<String, ?> all = PreferenceManager.getDefaultSharedPreferences(this).getAll();
-				for (Map.Entry<String, ?> entry: all.entrySet()) {
-					Log.i(TAG, entry.getKey() + ": " + entry.getValue()); //$NON-NLS-1$
-				}
-			}
-			Log.i(TAG, "### db:::"); //$NON-NLS-1$
-			alkitabDb.dump();
-			return true;
-		} else if (itemId == 0x985806) { // debug 6
-			if (S.penerapan.gebug_tehelBewarna) {
-				Toast.makeText(this, "tehel bewarna mati", Toast.LENGTH_SHORT).show(); //$NON-NLS-1$
-			} else {
-				Toast.makeText(this, "tehel bewarna nyala", Toast.LENGTH_SHORT).show(); //$NON-NLS-1$
-			}
-			S.penerapan.gebug_tehelBewarna = ! S.penerapan.gebug_tehelBewarna;
 			return true;
 		} else if (itemId == 0x985807) { // debug 7
 			String s = Integer.toHexString(S.penerapan.warnaHuruf) + ' ' + Integer.toHexString(S.penerapan.warnaLatar) + ' ' + Integer.toHexString(S.penerapan.warnaNomerAyat);
@@ -965,13 +936,13 @@ public class IsiActivity extends Activity {
 			Blok[] perikop_xblok;
 			int nblok;
 			
-			xayat = S.muatTeks(getApplicationContext(), S.edisiAktif, S.kitabAktif, pasal_1);
+			xayat = S.muatTeks(S.edisiAktif, S.kitabAktif, pasal_1);
 			
 			//# max dibikin pol 30 aja (1 pasal max 30 blok, cukup mustahil)
 			int max = 30;
 			perikop_xari = new int[max];
 			perikop_xblok = new Blok[max];
-			nblok = S.muatPerikop(getApplicationContext(), S.edisiAktif, S.kitabAktif.pos, pasal_1, perikop_xari, perikop_xblok, max); 
+			nblok = S.muatPerikop(S.edisiAktif, S.kitabAktif.pos, pasal_1, perikop_xari, perikop_xblok, max); 
 			
 			//# tadinya onPostExecute
 			ayatAdapter_.setData(S.kitabAktif, pasal_1, xayat, perikop_xari, perikop_xblok, nblok);
@@ -999,7 +970,7 @@ public class IsiActivity extends Activity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (S.penerapan.tombolVolumeNaikTurun) {
+		if (Preferences.getBoolean(R.string.pref_tombolVolumeNaikTurun_key, R.bool.pref_tombolVolumeNaikTurun_default)) {
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_DOWN;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_UP;
 		}
@@ -1040,7 +1011,7 @@ public class IsiActivity extends Activity {
 	
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		if (S.penerapan.tombolVolumeNaikTurun) {
+		if (Preferences.getBoolean(R.string.pref_tombolVolumeNaikTurun_key, R.bool.pref_tombolVolumeNaikTurun_default)) {
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) return true;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) return true;
 		}
@@ -1110,7 +1081,7 @@ public class IsiActivity extends Activity {
 				
 				S.pengirimFidbek.cobaKirim();
 				
-				Editor editor = preferences.edit();
+				Editor editor = preferences_instan.edit();
 				editor.putLong(NAMAPREF_terakhirMintaFidbek, System.currentTimeMillis());
 				editor.commit();
 			}

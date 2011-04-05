@@ -1,5 +1,6 @@
-package yuku.alkitab.base.model;
+package yuku.alkitab.base.storage;
 
+import yuku.alkitab.base.model.*;
 import android.content.Context;
 
 public interface Pembaca {

@@ -1,8 +1,10 @@
-package yuku.alkitab.base.model;
+package yuku.alkitab.base.storage;
 
 import java.io.*;
 import java.util.Arrays;
 
+import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.storage.PembacaDecoder.Ascii;
 import yuku.bintex.BintexReader;
 import android.content.Context;
 import android.util.Log;

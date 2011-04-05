@@ -1,15 +1,15 @@
 package yuku.alkitab.base;
 
-import static yuku.alkitab.base.model.AlkitabDb.*;
+import static yuku.alkitab.base.storage.AlkitabDb.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.*;
 
 import yuku.alkitab.R;
-import yuku.alkitab.base.model.AlkitabDb;
 import yuku.alkitab.base.renungan.*;
 import yuku.alkitab.base.renungan.TukangDonlot.OnStatusDonlotListener;
+import yuku.alkitab.base.storage.AlkitabDb;
 import yuku.andoutil.ThreadSleep;
 import android.app.Activity;
 import android.content.Intent;

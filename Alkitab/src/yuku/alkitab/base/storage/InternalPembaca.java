@@ -1,9 +1,10 @@
-package yuku.alkitab.base.model;
+package yuku.alkitab.base.storage;
 
 import java.io.*;
 import java.util.ArrayList;
 
 import yuku.alkitab.base.U;
+import yuku.alkitab.base.model.*;
 import yuku.bintex.BintexReader;
 import android.content.Context;
 import android.util.Log;

@@ -10,6 +10,7 @@ import org.xmlpull.v1.XmlSerializer;
 import yuku.alkitab.R;
 import yuku.alkitab.base.BukmakEditor.Listener;
 import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.storage.AlkitabDb;
 import yuku.andoutil.Sqlitil;
 import android.app.*;
 import android.content.*;
@@ -80,7 +81,7 @@ public class BukmakActivity extends ListActivity {
 				} else if (cursorColumnsSelect[columnIndex] == AlkitabDb.KOLOM_Bukmak2_ari) { // $codepro.audit.disable stringComparison
 					int ari = cursor.getInt(columnIndex);
 					Kitab kitab = S.edisiAktif.volatile_xkitab[Ari.toKitab(ari)];
-					String[] xayat = S.muatTeks(getApplicationContext(), S.edisiAktif, kitab, Ari.toPasal(ari));
+					String[] xayat = S.muatTeks(S.edisiAktif, kitab, Ari.toPasal(ari));
 					int ayat_1 = Ari.toAyat(ari);
 					String isi = ayat_1 > xayat.length? "(...)": xayat[ayat_1 - 1]; //$NON-NLS-1$
 					isi = U.buangKodeKusus(isi);

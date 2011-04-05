@@ -6,6 +6,7 @@ import java.util.Date;
 import org.xml.sax.Attributes;
 import org.xmlpull.v1.XmlSerializer;
 
+import yuku.alkitab.base.storage.AlkitabDb;
 import yuku.andoutil.Sqlitil;
 import android.content.ContentValues;
 import android.database.Cursor;

@@ -62,7 +62,7 @@
 		android:title="@string/pref_penggunaan">
 
 		<CheckBoxPreference
-			android:defaultValue="true"
+			android:defaultValue="@bool/pref_nyalakanTerusLayar_default"
 			android:title="@string/pref_biarkan_layar_menyala"
 			android:key="@string/pref_nyalakanTerusLayar_key"
 			android:summary="@string/pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab" />

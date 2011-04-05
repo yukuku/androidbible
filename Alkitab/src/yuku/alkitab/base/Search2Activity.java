@@ -251,7 +251,7 @@ public class Search2Activity extends Activity {
 			SpannableStringBuilder sb = new SpannableStringBuilder(kitab.judul).append(" " + pasal_1 + ":" + ayat_1); //$NON-NLS-1$ //$NON-NLS-2$
 			IsiActivity.aturTampilanTeksAlamatHasilCari(lAlamat, sb);
 			
-			String[] xayat = S.muatTeks(Search2Activity.this.getApplicationContext(), S.edisiAktif, kitab, pasal_1);
+			String[] xayat = S.muatTeks(S.edisiAktif, kitab, pasal_1);
 			String ayat = xayat[ayat_1 - 1];
 			ayat = U.buangKodeKusus(ayat);
 			lCuplikan.setText(Search2Engine.hilite(ayat, xkata, warnaStabilo));

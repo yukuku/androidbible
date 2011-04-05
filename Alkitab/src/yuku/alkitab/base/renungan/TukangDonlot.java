@@ -1,6 +1,6 @@
 package yuku.alkitab.base.renungan;
 
-import static yuku.alkitab.base.model.AlkitabDb.*;
+import static yuku.alkitab.base.storage.AlkitabDb.*;
 
 import java.io.*;
 import java.util.LinkedList;
@@ -11,7 +11,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import yuku.alkitab.R;
-import yuku.alkitab.base.model.AlkitabDb;
+import yuku.alkitab.base.storage.AlkitabDb;
 import yuku.andoutil.*;
 import android.content.*;
 import android.database.sqlite.SQLiteDatabase;

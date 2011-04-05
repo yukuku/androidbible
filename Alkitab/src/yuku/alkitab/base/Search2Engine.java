@@ -226,7 +226,7 @@ public class Search2Engine {
 				
 				for (int pasal_1 = 1; pasal_1 <= npasal; pasal_1++) {
 					// coba sepasal sekaligus dulu.
-					String sepasal = S.muatTeksJanganPisahAyatHurufKecil(context, S.edisiAktif, k, pasal_1);
+					String sepasal = S.muatTeksJanganPisahAyatHurufKecil(S.edisiAktif, k, pasal_1);
 					if (sepasal.indexOf(kata) >= 0) {
 						// hanya lakukan ini jika dalam sepasal kedetek ada kata
 						cariDalamSepasal(sepasal, kata, res, Ari.encode(k.pos, pasal_1, 0), pakeTambah);
@@ -249,7 +249,7 @@ public class Search2Engine {
 				Kitab k = S.edisiAktif.volatile_xkitab[Ari.toKitab(ariKpKini)];
 				int pasal_1 = Ari.toPasal(ariKpKini);
 				
-				String sepasal = S.muatTeksJanganPisahAyatHurufKecil(context, S.edisiAktif, k, pasal_1);
+				String sepasal = S.muatTeksJanganPisahAyatHurufKecil(S.edisiAktif, k, pasal_1);
 				if (sepasal.indexOf(kata) >= 0) {
 					// hanya lakukan ini jika dalam sepasal kedetek ada kata
 					cariDalamSepasal(sepasal, kata, res, ariKpKini, pakeTambah);

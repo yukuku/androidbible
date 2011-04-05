@@ -3,6 +3,7 @@ package yuku.alkitab.base;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S.penerapan;
 import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.storage.AlkitabDb;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.text.*;
@@ -331,15 +332,9 @@ class AyatAdapter extends BaseAdapter {
 				{
 					TextView tehel = new TextView(context);
 					if (menjorok == 1) {
-						tehel.setPadding(penerapan.menjorokSatu, 0, 0, 0);
-						if (penerapan.gebug_tehelBewarna) {
-							tehel.setBackgroundColor(0xff000066);
-						}
+						tehel.setPadding(S.getMenjorokSatu(), 0, 0, 0);
 					} else if (menjorok == 2) {
-						tehel.setPadding(penerapan.menjorokDua, 0, 0, 0);
-						if (penerapan.gebug_tehelBewarna) {
-							tehel.setBackgroundColor(0xff660000);
-						}
+						tehel.setPadding(S.getMenjorokDua(), 0, 0, 0);
 					}
 					
 					// kasus: belum ada tehel dan tehel pertama menjorok 0
@@ -350,7 +345,7 @@ class AyatAdapter extends BaseAdapter {
 						s.append(ayat_s).append(' ');
 						appendFormattedText(s, isi, posParse, posSampe);
 						s.setSpan(new ForegroundColorSpan(penerapan.warnaNomerAyat), 0, ayat_s.length(), 0);
-						s.setSpan(new LeadingMarginSpan.Standard(0, S.penerapan.indenParagraf), 0, s.length(), 0);
+						s.setSpan(new LeadingMarginSpan.Standard(0, S.getIndenParagraf()), 0, s.length(), 0);
 						if (warnaStabilo != 0) {
 							s.setSpan(new BackgroundColorSpan(warnaStabilo), ayat_s.length() + 1, s.length(), 0);
 						}
@@ -428,11 +423,7 @@ class AyatAdapter extends BaseAdapter {
 				} else if (jenisTanda == '5') {
 					merah = false;
 				} else if (jenisTanda == '8') {
-					if (S.penerapan.gebug_tehelBewarna) {
-						s.append("$$$\n"); //$NON-NLS-1$
-					} else {
-						s.append('\n'); 
-					}
+					s.append('\n'); 
 				}
 			}
 			
@@ -475,7 +466,7 @@ class AyatAdapter extends BaseAdapter {
 		seayat.append(ayat_s).append(' ').append(isi);
 		seayat.setSpan(new ForegroundColorSpan(S.penerapan.warnaNomerAyat), 0, ayat_s.length(), 0);
 		
-		seayat.setSpan(new LeadingMarginSpan.Standard(0, S.penerapan.indenParagraf), 0, seayat.length(), 0);
+		seayat.setSpan(new LeadingMarginSpan.Standard(0, S.getIndenParagraf()), 0, seayat.length(), 0);
 		
 		if (warnaStabilo != 0) {
 			seayat.setSpan(new BackgroundColorSpan(warnaStabilo), ayat_s.length() + 1, seayat.length(), 0);

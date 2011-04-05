@@ -4,6 +4,7 @@ import java.util.*;
 
 import yuku.alkitab.R;
 import yuku.alkitab.base.model.Kitab;
+import yuku.alkitab.base.storage.Preferences;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -316,9 +317,7 @@ public class MenujuActivity extends Activity {
 		Kitab[] xkitab_;
 		
 		public KitabAdapter(Kitab[] xkitab) {
-			if (!S.penerapan.sortKitabAlfabet) {
-				xkitab_ = xkitab;
-			} else {
+			if (Preferences.getBoolean(R.string.pref_sortKitabAlfabet_key, R.bool.pref_sortKitabAlfabet_default)) {
 				xkitab_ = new Kitab[xkitab.length];
 				System.arraycopy(xkitab, 0, xkitab_, 0, xkitab.length);
 				
@@ -329,6 +328,8 @@ public class MenujuActivity extends Activity {
 						return a.judul.compareTo(b.judul);
 					}
 				});
+			} else {
+				xkitab_ = xkitab;
 			}
 		}
 

@@ -4,6 +4,7 @@ import java.util.Date;
 
 import yuku.alkitab.R;
 import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.storage.AlkitabDb;
 import android.app.AlertDialog;
 import android.content.*;
 import android.view.*;
