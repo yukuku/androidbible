@@ -41,6 +41,8 @@ public class Edisi {
 						e.pembaca = new InternalPembaca(new PembacaDecoder.Utf8());
 					} else if ("yes".equals(v)) { //$NON-NLS-1$
 						e.pembaca = new YesPembaca(AddonManager.getEdisiPath(e.nama));
+					} else if ("pdb".equals(v)) {
+						e.pembaca = new PdbPembaca();
 					}
 				} else if (key.equals("url")) { //$NON-NLS-1$
 					e.url = in.readShortString();

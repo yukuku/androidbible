@@ -1,5 +1,7 @@
 package yuku.alkitab.base;
 
+import java.util.Arrays;
+
 import yuku.alkitab.R;
 import yuku.alkitab.base.AddonManager.DonlotListener;
 import yuku.alkitab.base.AddonManager.DonlotThread;
@@ -928,6 +930,7 @@ public class IsiActivity extends Activity {
 		if (pasal_1 > S.kitabAktif.npasal) pasal_1 = S.kitabAktif.npasal;
 		
 		if (ayat_1 < 1) ayat_1 = 1;
+		Log.d(TAG, Arrays.toString(S.kitabAktif.nayat));
 		if (ayat_1 > S.kitabAktif.nayat[pasal_1 - 1]) ayat_1 = S.kitabAktif.nayat[pasal_1 - 1];
 		
 		// muat data GA USAH pake async dong. // diapdet 20100417 biar ga usa async, ga guna.
