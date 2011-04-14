@@ -48,7 +48,7 @@ public class MenujuActivity extends Activity {
 		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
 		
-		setContentView(R.layout.menuju);
+		setContentView(R.layout.activity_menuju);
 		
 		bOk = (Button) findViewById(R.id.bOk);
 		lPasal = (TextView) findViewById(R.id.lPasal);

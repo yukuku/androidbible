@@ -46,7 +46,7 @@ public class Search2Activity extends Activity {
 		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
 		
-		setContentView(R.layout.search2);
+		setContentView(R.layout.activity_search2);
 
 		lsHasilCari = (ListView) findViewById(R.id.lsHasilCari);
 		bCari = (ImageButton) findViewById(R.id.bCari);
@@ -231,15 +231,8 @@ public class Search2Activity extends Activity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View res = null;
-			
-			if (convertView == null) {
-				res = LayoutInflater.from(Search2Activity.this).inflate(R.layout.search2_item, null);
-				res.setId(R.layout.search2_item);
-			} else {
-				res = convertView;
-			}
-			
+			View res = convertView != null? convertView: LayoutInflater.from(Search2Activity.this).inflate(R.layout.item_search2, null);
+
 			TextView lAlamat = (TextView) res.findViewById(R.id.lAlamat);
 			TextView lCuplikan = (TextView) res.findViewById(R.id.lCuplikan);
 			
@@ -247,7 +240,7 @@ public class Search2Activity extends Activity {
 			Kitab kitab = S.edisiAktif.getXkitab()[Ari.toKitab(ari)];
 			int pasal_1 = Ari.toPasal(ari);
 			int ayat_1 = Ari.toAyat(ari);
-			SpannableStringBuilder sb = new SpannableStringBuilder(kitab.judul).append(" " + pasal_1 + ":" + ayat_1); //$NON-NLS-1$ //$NON-NLS-2$
+			SpannableStringBuilder sb = new SpannableStringBuilder(S.alamat(kitab, pasal_1, ayat_1));
 			IsiActivity.aturTampilanTeksAlamatHasilCari(lAlamat, sb);
 			
 			String[] xayat = S.muatTeks(S.edisiAktif, kitab, pasal_1);

@@ -87,7 +87,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
 		
-		setContentView(R.layout.renungan);
+		setContentView(R.layout.activity_renungan);
 		
 		memudar = AnimationUtils.loadAnimation(this, R.anim.memudar);
 

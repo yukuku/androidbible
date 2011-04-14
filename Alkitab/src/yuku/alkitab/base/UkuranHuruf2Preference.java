@@ -3,10 +3,10 @@ package yuku.alkitab.base;
 
 import yuku.alkitab.R;
 import android.content.*;
-import android.content.res.*;
-import android.graphics.*;
+import android.content.res.TypedArray;
+import android.graphics.Typeface;
 import android.os.*;
-import android.preference.*;
+import android.preference.DialogPreference;
 import android.util.*;
 import android.view.*;
 import android.widget.*;
@@ -39,7 +39,7 @@ public class UkuranHuruf2Preference extends DialogPreference implements OnSeekBa
     
     @Override
     protected View onCreateDialogView() {
-    	View res = LayoutInflater.from(context).inflate(R.layout.ukuranhuruf2_pref_dialog, null);
+    	View res = LayoutInflater.from(context).inflate(R.layout.dialog_ukuranhuruf2_pref, null);
     	
     	seekbar = (SeekBar) res.findViewById(R.id.seekbar);
     	lContoh = (TextView) res.findViewById(R.id.lContoh);

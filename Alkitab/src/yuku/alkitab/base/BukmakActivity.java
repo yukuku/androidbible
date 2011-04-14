@@ -53,14 +53,14 @@ public class BukmakActivity extends ListActivity {
 		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
 		
-		setContentView(R.layout.bukmak);
+		setContentView(R.layout.activity_bukmak);
 		setTitle(R.string.pembatas_buku);
 		
 		alkitabDb = AlkitabDb.getInstance(this);
 		cursor = alkitabDb.getDatabase().query(AlkitabDb.TABEL_Bukmak2, cursorColumnsSelect, AlkitabDb.KOLOM_Bukmak2_jenis + "=?", new String[] {String.valueOf(AlkitabDb.ENUM_Bukmak2_jenis_bukmak)}, null, null, AlkitabDb.KOLOM_Bukmak2_waktuUbah + " desc"); //$NON-NLS-1$ //$NON-NLS-2$
 		startManagingCursor(cursor);
 		
-		adapter = new SimpleCursorAdapter(this, R.layout.bukmak_item, cursor, cursorColumnsMapFrom, cursorColumnsMapTo);
+		adapter = new SimpleCursorAdapter(this, R.layout.item_bukmak, cursor, cursorColumnsMapFrom, cursorColumnsMapTo);
 		adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
 			@Override
 			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {

@@ -99,7 +99,7 @@ public class IsiActivity extends Activity {
 		displayMetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		
-		setContentView(R.layout.isi);
+		setContentView(R.layout.activity_isi);
 		tog.addSplit("IsiActivity (fase 5) sebelum siapin macem2"); //$NON-NLS-1$
 		
 		S.siapinPengirimFidbek(this);

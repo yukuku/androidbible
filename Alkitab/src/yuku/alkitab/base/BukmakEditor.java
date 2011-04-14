@@ -3,7 +3,7 @@ package yuku.alkitab.base;
 import java.util.Date;
 
 import yuku.alkitab.R;
-import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.model.Bukmak2;
 import yuku.alkitab.base.storage.AlkitabDb;
 import android.app.AlertDialog;
 import android.content.*;
@@ -60,7 +60,7 @@ public class BukmakEditor {
 			this.alamat = S.alamat(S.edisiAktif, bukmak.ari);
 		}
 		
-		View dialogView = LayoutInflater.from(context).inflate(R.layout.bukmak_ubah_dialog, null);
+		View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_bukmak_ubah, null);
 		final EditText tTulisan = (EditText) dialogView.findViewById(R.id.tTulisan);
 		tTulisan.setText(bukmak != null? bukmak.tulisan: alamat);
 		

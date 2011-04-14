@@ -106,7 +106,7 @@ class AyatAdapter extends BaseAdapter {
 			boolean pakeStabilo = atributMap_ == null? false: (atributMap_[id] & 0x4) != 0;
 			int warnaStabilo = pakeStabilo? (stabiloMap_ == null? 0: (0x80000000 | stabiloMap_[id])): 0;
 			
-			LinearLayout res;
+			View res;
 			// Udah ditentukan bahwa ini ayat dan bukan perikop, sekarang tinggal tentukan
 			// apakah ayat ini pake formating biasa (tanpa menjorok dsb) atau ada formating
 			if (isi.charAt(0) == '@') {
@@ -115,22 +115,22 @@ class AyatAdapter extends BaseAdapter {
 					throw new RuntimeException("Karakter kedua bukan @. Isi ayat: " + isi); //$NON-NLS-1$
 				}
 				
-				if (convertView == null || convertView.getId() != R.layout.satu_ayat_tehel) {
-					res = (LinearLayout) LayoutInflater.from(appContext_).inflate(R.layout.satu_ayat_tehel, null);
-					res.setId(R.layout.satu_ayat_tehel);
+				if (convertView == null || convertView.getId() != R.layout.item_ayat_tehel) {
+					res = LayoutInflater.from(appContext_).inflate(R.layout.item_ayat_tehel, null);
+					res.setId(R.layout.item_ayat_tehel);
 				} else {
-					res = (LinearLayout) convertView;
+					res = convertView;
 				}
 				
 				RelativeLayout sebelahKiri = (RelativeLayout) res.findViewById(R.id.sebelahKiri);
 				tampilanAyatTehel(appContext_, sebelahKiri, id + 1, isi, warnaStabilo);
 				
 			} else {
-				if (convertView == null || convertView.getId() != R.layout.satu_ayat_sederhana) {
-					res = (LinearLayout) LayoutInflater.from(appContext_).inflate(R.layout.satu_ayat_sederhana, null);
-					res.setId(R.layout.satu_ayat_sederhana);
+				if (convertView == null || convertView.getId() != R.layout.item_ayat_sederhana) {
+					res = LayoutInflater.from(appContext_).inflate(R.layout.item_ayat_sederhana, null);
+					res.setId(R.layout.item_ayat_sederhana);
 				} else {
-					res = (LinearLayout) convertView;
+					res = convertView;
 				}
 				
 				TextView lIsiAyat = (TextView) res.findViewById(R.id.lIsiAyat);
