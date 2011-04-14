@@ -10,21 +10,41 @@ import android.util.Log;
 import com.compactbyte.android.bible.PDBFileStream;
 import com.compactbyte.bibleplus.reader.*;
 
-public class PdbPembaca implements Pembaca {
+public class PdbPembaca extends Pembaca {
 	public static final String TAG = PdbPembaca.class.getSimpleName();
 	
 	private BiblePlusPDB pdb;
-
-	public PdbPembaca() {
+	private String filename;
+	
+	public PdbPembaca(Context context, String filename) {
+		super(context);
+		
+		this.filename = filename;
+	}
+	
+	private void init() {
+		if (pdb != null) return;
+		
+		try {
+			pdb = new BiblePlusPDB(new PDBFileStream(filename), null, null);
+			pdb.loadVersionInfo();
+			pdb.loadWordIndex();
+		} catch (IOException e) {
+			pdb = null;
+			Log.e(TAG, "Eror di init", e);
+		}
 	}
 	
 	@Override
-	public Kitab[] bacaInfoKitab(Context context, Edisi edisi) {
+	public String getJudul() {
+		init();
+		return pdb.getVersionName();
+	}
+
+	@Override
+	public Kitab[] bacaInfoKitab() {
+		init();
 		try {
-			pdb = new BiblePlusPDB(new PDBFileStream(edisi.judul), null, null);
-			pdb.loadVersionInfo();
-			pdb.loadWordIndex();
-			
 			ArrayList<Kitab> xkitab = new ArrayList<Kitab>();
 			
 			int nkitab = pdb.getBookCount();
@@ -56,7 +76,8 @@ public class PdbPembaca implements Pembaca {
 	}
 	
 	@Override
-	public String[] muatTeks(Context context, Edisi edisi, Kitab kitab, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+	public String[] muatTeks(Kitab kitab, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+		init();
 		try {
 			BookInfo bookInfo = pdb.getBook(kitab.pos);
 			bookInfo.openBook();
@@ -89,12 +110,12 @@ public class PdbPembaca implements Pembaca {
 	}
 
 	@Override
-	public IndexPerikop bacaIndexPerikop(Context context, Edisi edisi) {
+	public IndexPerikop bacaIndexPerikop() {
 		return null;
 	}
 
 	@Override
-	public int muatPerikop(Context context, Edisi edisi, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
+	public int muatPerikop(Edisi edisi, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
 		return 0;
 	}
 }

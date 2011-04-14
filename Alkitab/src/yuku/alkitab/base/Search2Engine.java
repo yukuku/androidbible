@@ -209,7 +209,7 @@ public class Search2Engine {
 		}
 	
 		if (sumber == null) {
-			for (Kitab k: S.edisiAktif.volatile_xkitab) {
+			for (Kitab k: S.edisiAktif.getXkitab()) {
 				//# filter dulu
 				if (!filter_lama) {
 					if (k.pos >= 0 && k.pos <= 38) {
@@ -246,7 +246,7 @@ public class Search2Engine {
 				ariKpKini = ariBerikutnya(sumber, ppos, ariKpKini);
 				if (ariKpKini == 0) break; // habis
 				
-				Kitab k = S.edisiAktif.volatile_xkitab[Ari.toKitab(ariKpKini)];
+				Kitab k = S.edisiAktif.getXkitab()[Ari.toKitab(ariKpKini)];
 				int pasal_1 = Ari.toPasal(ariKpKini);
 				
 				String sepasal = S.muatTeksJanganPisahAyatHurufKecil(S.edisiAktif, k, pasal_1);

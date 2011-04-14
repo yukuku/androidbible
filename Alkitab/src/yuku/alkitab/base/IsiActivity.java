@@ -1,11 +1,6 @@
 package yuku.alkitab.base;
 
-import java.util.Arrays;
-
 import yuku.alkitab.R;
-import yuku.alkitab.base.AddonManager.DonlotListener;
-import yuku.alkitab.base.AddonManager.DonlotThread;
-import yuku.alkitab.base.AddonManager.Elemen;
 import yuku.alkitab.base.BukmakEditor.Listener;
 import yuku.alkitab.base.GelembungDialog.RefreshCallback;
 import yuku.alkitab.base.config.BuildConfig;
@@ -97,8 +92,7 @@ public class IsiActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
-		S.siapinEdisi(getApplicationContext());
-		S.siapinKitab(getApplicationContext());
+		S.siapinKitab();
 		S.bacaPengaturan(this);
 		S.terapkanPengaturanBahasa(this, handler, 2);
 		
@@ -192,9 +186,11 @@ public class IsiActivity extends Activity {
 		Log.d(TAG, "Akan menuju kitab " + kitabTerakhir + " pasal " + kitabTerakhir + " ayat " + ayatTerakhir); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		// muat kitab
-		if (kitabTerakhir < S.edisiAktif.volatile_xkitab.length) {
-			S.kitabAktif = S.edisiAktif.volatile_xkitab[kitabTerakhir];
+		Kitab[] xkitab = S.edisiAktif.getXkitab();
+		if (kitabTerakhir < xkitab.length) {
+			S.kitabAktif = xkitab[kitabTerakhir];
 		}
+		
 		// muat pasal dan ayat
 		tampil(pasalTerakhir, ayatTerakhir);
 		//sejarah.tambah(Ari.encode(kitabTerakhir, pasalTerakhir, ayatTerakhir));
@@ -244,9 +240,10 @@ public class IsiActivity extends Activity {
 			return 0;
 		}
 		
-		int kitab = peloncat.getKitab(S.edisiAktif.volatile_xkitab);
+		Kitab[] xkitab = S.edisiAktif.getXkitab();
+		int kitab = peloncat.getKitab(xkitab);
 		if (kitab != -1) {
-			S.kitabAktif = S.edisiAktif.volatile_xkitab[kitab];
+			S.kitabAktif = xkitab[kitab];
 		} else {
 			kitab = S.kitabAktif.pos;
 		}
@@ -268,9 +265,10 @@ public class IsiActivity extends Activity {
 		
 		Log.d(TAG, "akan loncat ke ari 0x" + Integer.toHexString(ari)); //$NON-NLS-1$
 		
+		Kitab[] xkitab = S.edisiAktif.getXkitab();
 		int kitab = Ari.toKitab(ari);
-		if (kitab >= 0 && kitab < S.edisiAktif.volatile_xkitab.length) {
-			S.kitabAktif = S.edisiAktif.volatile_xkitab[kitab];
+		if (kitab >= 0 && kitab < xkitab.length) {
+			S.kitabAktif = xkitab[kitab];
 		} else {
 			Log.w(TAG, "mana ada kitab " + ari); //$NON-NLS-1$
 			return;
@@ -652,7 +650,7 @@ public class IsiActivity extends Activity {
 			menuSearch2_click();
 			return true;
 		} else if (itemId == R.id.menuEdisi) {
-			pilihEdisi();
+			// FIXME pilihEdisi();
 			return true;
 		} else if (itemId == R.id.menuRenungan) { 
 			Intent intent = new Intent(this, RenunganActivity.class);
@@ -723,125 +721,6 @@ public class IsiActivity extends Activity {
 		dialog.show();
 	}
 
-	private void pilihEdisi() {
-		int terpilih = -1;
-		
-		String[] pilihan = new String[S.xedisi.length];
-		for (int i = 0; i < pilihan.length; i++) {
-			pilihan[i] = S.xedisi[i].judul;
-			
-			if (S.edisiAktif.nama.equals(S.xedisi[i].nama)) {
-				terpilih = i;
-			}
-		}
-
-		new AlertDialog.Builder(this)
-		.setTitle(R.string.pilih_edisi)
-		.setSingleChoiceItems(pilihan, terpilih, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				final Edisi mau = S.xedisi[which];
-				
-				// cek dulu apakah ini Pembaca dan ada filenya
-				if (mau.pembaca instanceof YesPembaca) {
-					if (! AddonManager.cekAdaEdisi(mau.nama)) {
-						tanyaDonlotEdisi(mau);
-						return;
-					}
-				}
-				
-				int posKitabAktif = S.kitabAktif.pos;
-				
-				S.edisiAktif = mau;
-				S.siapinKitab(getApplicationContext());
-				
-				if (posKitabAktif < S.edisiAktif.volatile_xkitab.length && S.edisiAktif.volatile_xkitab[posKitabAktif].pos == posKitabAktif) {
-					// posisinya sama. Mari pake langsung
-					S.kitabAktif = S.edisiAktif.volatile_xkitab[posKitabAktif];
-				} else {
-					for (Kitab k: S.edisiAktif.volatile_xkitab) {
-						if (k.pos == posKitabAktif) {
-							S.kitabAktif = k;
-							break;
-						}
-					}
-					S.kitabAktif = S.edisiAktif.volatile_xkitab[0]; // apa boleh buat, ga ketemu...
-				}
-				
-				dialog.dismiss();
-				tampil(pasal_1, getAyatBerdasarSkrol());
-			}
-		})
-		.show();
-	}
-
-	protected void tanyaDonlotEdisi(final Edisi mau) {
-		new AlertDialog.Builder(IsiActivity.this)
-		.setTitle(R.string.mengunduh_tambahan)
-		.setMessage(getString(R.string.file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya, AddonManager.getEdisiPath(mau.nama)))
-		.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				final ProgressDialog pd = new ProgressDialog(IsiActivity.this);
-				pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-				pd.setCancelable(true);
-				pd.setIndeterminate(true);
-				pd.setTitle(getString(R.string.mengunduh_nama, mau.nama));
-				pd.setMessage(getString(R.string.mulai_mengunduh));
-				
-				DonlotThread donlotThread = AddonManager.getDonlotThread(getApplicationContext());
-				final Elemen e = donlotThread.antrikan(mau.url, AddonManager.getEdisiPath(mau.nama), new DonlotListener() {
-					@Override
-					public void onSelesaiDonlot(Elemen e) {
-						IsiActivity.this.runOnUiThread(new Runnable() { public void run() {
-							Toast.makeText(IsiActivity.this, getString(R.string.selesai_mengunduh_edisi_judul_disimpan_di_path, mau.judul, AddonManager.getEdisiPath(mau.nama)), Toast.LENGTH_LONG).show();
-						}});
-						pd.dismiss();
-					}
-					
-					@Override
-					public void onGagalDonlot(Elemen e, final String keterangan, final Throwable t) {
-						IsiActivity.this.runOnUiThread(new Runnable() { public void run() {
-							Toast.makeText(IsiActivity.this, keterangan != null? keterangan: getString(R.string.gagal_mengunduh_edisi_judul_ex_pastikan_internet, mau.judul, t == null? "null": t.getClass().getCanonicalName() + ": " + t.getMessage()), Toast.LENGTH_LONG).show(); //$NON-NLS-1$ //$NON-NLS-2$
-						}});
-						pd.dismiss();
-					}
-
-					@Override
-					public void onProgress(Elemen e, final int sampe, int total) {
-						IsiActivity.this.runOnUiThread(new Runnable() { public void run() {
-							if (sampe >= 0) {
-								pd.setMessage(getString(R.string.terunduh_sampe_byte, sampe));
-							} else {
-								pd.setMessage(getString(R.string.sedang_mendekompres_harap_tunggu));
-							}
-						}});
-						Log.d(TAG, "onProgress " + sampe); //$NON-NLS-1$
-					}
-
-					@Override
-					public void onBatalDonlot(Elemen e) {
-						IsiActivity.this.runOnUiThread(new Runnable() { public void run() {
-							Toast.makeText(IsiActivity.this, R.string.pengunduhan_dibatalkan, Toast.LENGTH_SHORT).show();
-						}});
-						pd.dismiss();
-					}
-				});
-				if (e != null) {
-					pd.show();
-				}
-				
-				pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
-					@Override
-					public void onCancel(DialogInterface dialog) {
-						e.hentikan = true;
-					}
-				});
-			}
-		})
-		.setNegativeButton(R.string.no, null)
-		.show();
-	}
 
 	private void menuSearch2_click() {
 		Intent intent = new Intent(this, Search2Activity.class);
@@ -864,9 +743,10 @@ public class IsiActivity extends Activity {
 				int ayat = data.getIntExtra(MenujuActivity.EXTRA_ayat, 0);
 				int kitab = data.getIntExtra(MenujuActivity.EXTRA_kitab, AdapterView.INVALID_POSITION);
 				
-				if (kitab != AdapterView.INVALID_POSITION && kitab < S.edisiAktif.volatile_xkitab.length && kitab >= 0) {
+				Kitab[] xkitab = S.edisiAktif.getXkitab();
+				if (kitab != AdapterView.INVALID_POSITION && kitab < xkitab.length && kitab >= 0) {
 					// ganti kitab
-					S.kitabAktif = S.edisiAktif.volatile_xkitab[kitab];
+					S.kitabAktif = xkitab[kitab];
 				}
 				
 				int ari_pa = tampil(pasal, ayat);
@@ -930,7 +810,6 @@ public class IsiActivity extends Activity {
 		if (pasal_1 > S.kitabAktif.npasal) pasal_1 = S.kitabAktif.npasal;
 		
 		if (ayat_1 < 1) ayat_1 = 1;
-		Log.d(TAG, Arrays.toString(S.kitabAktif.nayat));
 		if (ayat_1 > S.kitabAktif.nayat[pasal_1 - 1]) ayat_1 = S.kitabAktif.nayat[pasal_1 - 1];
 		
 		// muat data GA USAH pake async dong. // diapdet 20100417 biar ga usa async, ga guna.
@@ -945,7 +824,7 @@ public class IsiActivity extends Activity {
 			int max = 30;
 			perikop_xari = new int[max];
 			perikop_xblok = new Blok[max];
-			nblok = S.muatPerikop(S.edisiAktif, S.kitabAktif.pos, pasal_1, perikop_xari, perikop_xblok, max); 
+			nblok = S.edisiAktif.pembaca.muatPerikop(S.edisiAktif, S.kitabAktif.pos, pasal_1, perikop_xari, perikop_xblok, max); 
 			
 			//# tadinya onPostExecute
 			ayatAdapter_.setData(S.kitabAktif, pasal_1, xayat, perikop_xari, perikop_xblok, nblok);
@@ -1027,7 +906,8 @@ public class IsiActivity extends Activity {
 		if (pasal_1 == 1) {
 			// uda di awal pasal, masuk ke kitab sebelum
 			if (kitabKini.pos > 0) {
-				Kitab kitabBaru = S.edisiAktif.volatile_xkitab[kitabKini.pos - 1];
+				Kitab[] xkitab = S.edisiAktif.getXkitab();
+				Kitab kitabBaru = xkitab[kitabKini.pos - 1];
 				S.kitabAktif = kitabBaru;
 				int pasalBaru_1 = kitabBaru.npasal;
 				tampil(pasalBaru_1, 1);
@@ -1045,8 +925,9 @@ public class IsiActivity extends Activity {
 	private void bKanan_click() {
 		Kitab kitabKini = S.kitabAktif;
 		if (pasal_1 >= kitabKini.npasal) {
-			if (kitabKini.pos < S.edisiAktif.volatile_xkitab.length - 1) {
-				Kitab kitabBaru = S.edisiAktif.volatile_xkitab[kitabKini.pos + 1];
+			Kitab[] xkitab = S.edisiAktif.getXkitab();
+			if (kitabKini.pos < xkitab.length - 1) {
+				Kitab kitabBaru = xkitab[kitabKini.pos + 1];
 				S.kitabAktif = kitabBaru;
 				tampil(1, 1);
 				//sejarah.tambah(Ari.encode(kitabBaru.pos, 1, 1));

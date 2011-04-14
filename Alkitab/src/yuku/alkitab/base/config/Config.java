@@ -1,13 +1,17 @@
 package yuku.alkitab.base.config;
 
 public class Config {
-	public boolean menuRenungan = true;
-	public boolean menuGebug = false;
-	public boolean menuEdisi = true;
-	public boolean menuBantuan = true;
-	public boolean menuDonasi = false;
+	public final String edisiPrefix;
+	public final String edisiJudul;
+	public final boolean menuRenungan;
+	public final boolean menuGebug;
+	public final boolean menuEdisi;
+	public final boolean menuBantuan;
+	public final boolean menuDonasi;
 
-	public Config(boolean menuRenungan, boolean menuGebug, boolean menuEdisi, boolean menuBantuan, boolean menuDonasi) {
+	public Config(String edisiPrefix, String edisiJudul, boolean menuRenungan, boolean menuGebug, boolean menuEdisi, boolean menuBantuan, boolean menuDonasi) {
+		this.edisiPrefix = edisiPrefix;
+		this.edisiJudul = edisiJudul;
 		this.menuRenungan = menuRenungan;
 		this.menuGebug = menuGebug;
 		this.menuEdisi = menuEdisi;

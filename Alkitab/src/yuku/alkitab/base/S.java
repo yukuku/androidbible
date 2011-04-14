@@ -1,16 +1,16 @@
 package yuku.alkitab.base;
 
-import java.io.*;
+import java.io.InputStream;
 import java.util.*;
 
 import yuku.alkitab.R;
+import yuku.alkitab.base.config.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.renungan.TukangDonlot;
-import yuku.alkitab.base.storage.Preferences;
-import yuku.bintex.BintexReader;
+import yuku.alkitab.base.storage.*;
 import yuku.kirimfidbek.PengirimFidbek;
 import android.content.*;
-import android.content.res.Configuration;
+import android.content.res.*;
 import android.graphics.*;
 import android.os.Handler;
 import android.util.Log;
@@ -45,7 +45,6 @@ public class S {
 	}
 	
 	//# 33nya harus siap di siapinEdisi
-	public static Edisi[] xedisi;
 	public static Edisi edisiAktif;
 	
 	//# 22nya harus siap di siapinKitab
@@ -59,49 +58,18 @@ public class S {
 		if (a == 0) throw new RuntimeException(); // cuma mencegah project ambilwarna lupa dibuka
 	}
 	
-	public static synchronized void siapinEdisi(Context context) {
-		if (xedisi != null) return;
-		
-		long wmulai = System.currentTimeMillis();
-
-		BintexReader in = new BintexReader(appContext.getResources().openRawResource(R.raw.edisi_index_bt));
-		ArrayList<Edisi> xedisi = new ArrayList<Edisi>();
-
-		try {
-			while (true) {
-				Edisi e = Edisi.baca(in);
-				xedisi.add(e);
-			}
-		} catch (EOFException e) {
-			// selesai baca
-		} catch (IOException e) {
-			Log.e(TAG, "ngaco baca edisi index!!!"); //$NON-NLS-1$
+	private static synchronized void siapinEdisi() {
+		if (edisiAktif == null) {
+			Config c = BuildConfig.get(appContext.getPackageName());
+			edisiAktif = new Edisi(appContext, new InternalPembaca(appContext, c.edisiPrefix, c.edisiJudul, new PembacaDecoder.Ascii()));
 		}
-
-		S.xedisi = xedisi.toArray(new Edisi[xedisi.size()]);
-		S.edisiAktif = S.xedisi[0]; // TODO selalu pilih edisi pertama
-		
-		Log.d(TAG, "siapinEdisi butuh ms: " + (System.currentTimeMillis() - wmulai)); //$NON-NLS-1$
 	}
 
-	public static synchronized void siapinKitab(Context context) {
-		if (S.xedisi == null || S.edisiAktif == null) {
-			siapinEdisi(appContext);
-		}
-		if (S.edisiAktif.volatile_xkitab != null) return;
-
-		Edisi edisi = S.edisiAktif;
-		Log.d(TAG, "siapinKitab mulai dengan edisi: " + edisi.nama); //$NON-NLS-1$
-		S.edisiAktif.volatile_xkitab = edisi.pembaca.bacaInfoKitab(appContext, edisi);
-		S.kitabAktif = S.edisiAktif.volatile_xkitab[0]; // nanti diset sama luar 
+	public static synchronized void siapinKitab() {
+		siapinEdisi();
 		
-		if (edisi.perikopAda != 0) {
-			if (edisi.volatile_indexPerikop == null) {
-				edisi.volatile_indexPerikop = edisi.pembaca.bacaIndexPerikop(appContext, edisi);
-			}
-		}
-		
-		Log.d(TAG, "siapinKitab selesai"); //$NON-NLS-1$
+		if (kitabAktif != null) return;
+		kitabAktif = edisiAktif.getXkitab()[0]; // nanti diset sama luar 
 	}
 	
 	public static void bacaPengaturan(Context context) {
@@ -150,14 +118,7 @@ public class S {
 	}
 	
 	private static String[] muatTeks(Edisi edisi, Kitab kitab, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
-		return edisi.pembaca.muatTeks(appContext, edisi, kitab, pasal_1, janganPisahAyat, hurufKecil);
-	}
-
-	/**
-	 * @return berapa yang keisi
-	 */
-	public static synchronized int muatPerikop(Edisi edisi, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
-		return edisi.pembaca.muatPerikop(appContext, edisi, kitab, pasal, xari, xblok, max);
+		return edisi.pembaca.muatTeks(kitab, pasal_1, janganPisahAyat, hurufKecil);
 	}
 
 	public static synchronized void siapinPengirimFidbek(final Context context) {
@@ -183,10 +144,11 @@ public class S {
 		int ayat_1 = Ari.toAyat(ari);
 		
 		StringBuilder hasil = new StringBuilder(40);
-		if (kitab >= edisi.volatile_xkitab.length) {
+		Kitab[] xkitab = edisi.getXkitab();
+		if (kitab >= xkitab.length) {
 			hasil.append('[').append(kitab).append("] "); //$NON-NLS-1$
 		} else {
-			hasil.append(edisi.volatile_xkitab[kitab].judul).append(' ');
+			hasil.append(xkitab[kitab].judul).append(' ');
 		}
 		
 		hasil.append(pasal_1);
@@ -276,5 +238,14 @@ public class S {
 
 	public static Context getAppContext() {
 		return appContext;
+	}
+
+	public static InputStream openRaw(String name) {
+		Resources resources = appContext.getResources();
+		int resId = resources.getIdentifier(name, "raw", appContext.getPackageName()); //$NON-NLS-1$
+		if (resId == 0) {
+			return null;
+		}
+		return resources.openRawResource(resId);
 	}
 }

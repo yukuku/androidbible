@@ -1,11 +1,8 @@
 package yuku.alkitab.base;
 
-import java.io.InputStream;
 import java.util.Arrays;
 
 import yuku.alkitab.base.model.*;
-import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Typeface;
 
 public class U {
@@ -87,11 +84,6 @@ public class U {
 		return typeface;
 	}
 	
-
-	public static InputStream openRaw(Context context, String name) {
-		Resources resources = context.getResources();
-		return resources.openRawResource(resources.getIdentifier(name, "raw", context.getPackageName())); //$NON-NLS-1$
-	}
 
 	static StringBuilder enkodStabilo_buf;
 	public static String enkodStabilo(int warnaRgb) {

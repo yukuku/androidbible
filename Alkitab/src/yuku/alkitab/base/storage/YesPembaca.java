@@ -4,12 +4,11 @@ import java.io.*;
 import java.util.Arrays;
 
 import yuku.alkitab.base.model.*;
-import yuku.alkitab.base.storage.PembacaDecoder.Ascii;
 import yuku.bintex.BintexReader;
 import android.content.Context;
 import android.util.Log;
 
-public class YesPembaca implements Pembaca {
+public class YesPembaca extends Pembaca {
 	private static final String TAG = YesPembaca.class.getSimpleName();
 	
 	private String nf;
@@ -19,7 +18,12 @@ public class YesPembaca implements Pembaca {
 	private long teks_dasarOffset;
 	private long perikopBlok_dasarOffset;
 	
-	public YesPembaca(String nf) {
+	private String judul;
+	private int nkitab;
+	
+	public YesPembaca(Context context, String nf) {
+		super(context);
+		
 		this.nf = nf;
 	}
 	
@@ -56,26 +60,60 @@ public class YesPembaca implements Pembaca {
 				}
 			}
 			
-			lewatiSampeSeksi("teks________"); //$NON-NLS-1$
+			bacaInfoEdisi();
 			
+			lewatiSampeSeksi("teks________"); //$NON-NLS-1$
 			teks_dasarOffset = f.getFilePointer();
 			Log.d(TAG, "teks_dasarOffset = " + teks_dasarOffset); //$NON-NLS-1$
 		}
 	}
-	
+
 	@Override
-	public Kitab[] bacaInfoKitab(Context context, Edisi edisi) {
+	public String getJudul() {
+		return judul;
+	}
+
+	public void bacaInfoEdisi() {
+		try {
+			int ukuran = lewatiSampeSeksi("infoEdisi___"); //$NON-NLS-1$
+			byte[] buf = new byte[ukuran];
+			f.read(buf);
+			BintexReader in = new BintexReader(new ByteArrayInputStream(buf));
+			
+			while (true) {
+				String key = in.readShortString();
+				
+				if (key.equals("nama")) { //$NON-NLS-1$
+					/* this.nama = */ in.readShortString();
+				} else if (key.equals("judul")) { //$NON-NLS-1$
+					this.judul = in.readShortString();
+				} else if (key.equals("nkitab")) { //$NON-NLS-1$
+					this.nkitab = in.readInt();
+				} else if (key.equals("end")) { //$NON-NLS-1$
+					break;
+				} else {
+					Log.w(TAG, "ada key ga dikenal di infoEdisi: " + key); //$NON-NLS-1$ 
+					break;
+				}
+			}
+		} catch (Exception e) {
+			Log.e(TAG, "bacaInfoEdisi error", e); //$NON-NLS-1$
+		}
+	}
+
+	@Override
+	public Kitab[] bacaInfoKitab() {
 		try {
 			init();
 			
-			Kitab[] res = new Kitab[edisi.nkitab];
+			Kitab[] res = new Kitab[this.nkitab];
 			
 			int ukuran = lewatiSampeSeksi("infoKitab___"); //$NON-NLS-1$
 			byte[] buf = new byte[ukuran];
 			f.read(buf);
 			BintexReader in = new BintexReader(new ByteArrayInputStream(buf));
 			
-			for (int kitabPos = 0; kitabPos < edisi.nkitab; kitabPos++) {
+			for (int kitabPos = 0; kitabPos < res.length; kitabPos++) {
 				Kitab k = new Kitab();
 				
 				while (true) {
@@ -127,10 +165,9 @@ public class YesPembaca implements Pembaca {
 			return null;
 		}
 	}
-
-
+	
 	@Override
-	public String[] muatTeks(Context context, Edisi edisi, Kitab kitab, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+	public String[] muatTeks(Kitab kitab, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
 		try {
 			init();
 			
@@ -171,7 +208,7 @@ public class YesPembaca implements Pembaca {
 	}
 
 	@Override
-	public IndexPerikop bacaIndexPerikop(Context context, Edisi edisi) {
+	public IndexPerikop bacaIndexPerikop() {
 		long wmulai = System.currentTimeMillis();
 		try {
 			init();
@@ -189,12 +226,12 @@ public class YesPembaca implements Pembaca {
 	}
 
 	@Override
-	public int muatPerikop(Context context, Edisi edisi, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
+	public int muatPerikop(Edisi edisi, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
 		try {
 			init();
 			
-			Log.d(TAG, "muatPerikop dipanggil untuk edisi=" + edisi.nama + " kitab=" + kitab + " pasal_1=" + pasal); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			IndexPerikop indexPerikop = edisi.volatile_indexPerikop;
+			Log.d(TAG, "muatPerikop dipanggil untuk kitab=" + kitab + " pasal_1=" + pasal); //$NON-NLS-1$ //$NON-NLS-2$
+			IndexPerikop indexPerikop = edisi.getIndexPerikop();
 			if (indexPerikop == null) {
 				return 0; // ga ada perikop!
 			}

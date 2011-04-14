@@ -6,15 +6,14 @@ public class BuildConfig {
 	static HashMap<String, Config> map = new HashMap<String, Config>();
 	
 	static {
-		map.put("yuku.alkitab", new Config(true, false, true, true, false)); //$NON-NLS-1$
-		map.put("yuku.alkitab.kjv", new Config(false, false, false, true, true)); //$NON-NLS-1$
-		map.put("yuku.alkitab.nrkv", new Config(false, false, false, false, false)); //$NON-NLS-1$
+		map.put("yuku.alkitab", new Config("tb", "Terjemahan Baru", true, false, true, true, false)); //$NON-NLS-1$
+		map.put("yuku.alkitab.kjv", new Config("kjv", "King James", false, false, false, true, true)); //$NON-NLS-1$
 	}
 	
 	public static Config get(String pkgName) {
 		Config c = map.get(pkgName);
 		if (c == null) {
-			return new Config(true, true, true, true, true);
+			throw new RuntimeException("pkgName tidak dikenal: " + pkgName);
 		}
 		return c;
 	}

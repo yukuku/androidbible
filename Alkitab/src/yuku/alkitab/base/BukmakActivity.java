@@ -48,8 +48,7 @@ public class BukmakActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		S.siapinEdisi(getApplicationContext());
-		S.siapinKitab(getApplicationContext());
+		S.siapinKitab();
 		S.bacaPengaturan(this);
 		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
@@ -80,7 +79,7 @@ public class BukmakActivity extends ListActivity {
 					return true;
 				} else if (cursorColumnsSelect[columnIndex] == AlkitabDb.KOLOM_Bukmak2_ari) { // $codepro.audit.disable stringComparison
 					int ari = cursor.getInt(columnIndex);
-					Kitab kitab = S.edisiAktif.volatile_xkitab[Ari.toKitab(ari)];
+					Kitab kitab = S.edisiAktif.getXkitab()[Ari.toKitab(ari)];
 					String[] xayat = S.muatTeks(S.edisiAktif, kitab, Ari.toPasal(ari));
 					int ayat_1 = Ari.toAyat(ari);
 					String isi = ayat_1 > xayat.length? "(...)": xayat[ayat_1 - 1]; //$NON-NLS-1$

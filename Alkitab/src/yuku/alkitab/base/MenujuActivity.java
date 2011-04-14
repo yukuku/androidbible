@@ -43,8 +43,7 @@ public class MenujuActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
-		S.siapinEdisi(getApplicationContext());
-		S.siapinKitab(getApplicationContext());
+		S.siapinKitab();
 		S.bacaPengaturan(this);
 		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
@@ -57,7 +56,7 @@ public class MenujuActivity extends Activity {
 		lAyat = (TextView) findViewById(R.id.lAyat);
 		lLabelAyat = findViewById(R.id.lLabelAyat);
 		cbKitab = (Spinner) findViewById(R.id.cbKitab);
-		kitabAdapter = new KitabAdapter(S.edisiAktif.volatile_xkitab);
+		kitabAdapter = new KitabAdapter(S.edisiAktif.getXkitab());
 		cbKitab.setAdapter(kitabAdapter);
 		bKeLoncat = (ImageButton) findViewById(R.id.bKeLoncat);
 
@@ -72,7 +71,7 @@ public class MenujuActivity extends Activity {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				try {
-					Kitab kitab = S.edisiAktif.volatile_xkitab[(int) id];
+					Kitab kitab = S.edisiAktif.getXkitab()[(int) id];
 					maxPasal = kitab.npasal;
 					
 					int pasal = cobaBacaPasal();
@@ -280,7 +279,7 @@ public class MenujuActivity extends Activity {
 				}
 				
 				try {
-					Kitab kitab = S.edisiAktif.volatile_xkitab[(int) cbKitab.getSelectedItemId()];
+					Kitab kitab = S.edisiAktif.getXkitab()[(int) cbKitab.getSelectedItemId()];
 					int pasal = cobaBacaPasal();
 					
 					maxAyat = kitab.nayat[pasal-1];
