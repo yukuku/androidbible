@@ -11,6 +11,7 @@ import org.xmlpull.v1.XmlSerializer;
 import yuku.alkitab.R;
 import yuku.alkitab.base.BukmakEditor.Listener;
 import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.storage.Db;
 import yuku.andoutil.Sqlitil;
 import android.app.*;
 import android.content.*;
@@ -27,7 +28,7 @@ import android.widget.*;
 public class BukmakActivity extends ListActivity {
 	public static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
 
-	private static final String[] cursorColumnsMapFrom = {yuku.alkitab.base.storage.Db.Bukmak2.ari, yuku.alkitab.base.storage.Db.Bukmak2.tulisan, yuku.alkitab.base.storage.Db.Bukmak2.waktuUbah};
+	private static final String[] cursorColumnsMapFrom = {Db.Bukmak2.ari, Db.Bukmak2.tulisan, Db.Bukmak2.waktuUbah};
 	private static final int[] cursorColumnsMapTo = {R.id.lCuplikan, R.id.lTulisan, R.id.lTanggal};
 	private static final String[] cursorColumnsSelect;
 
@@ -55,27 +56,27 @@ public class BukmakActivity extends ListActivity {
 		setContentView(R.layout.activity_bukmak);
 		setTitle(R.string.pembatas_buku);
 		
-		cursor = S.getDb().listBukmak(cursorColumnsSelect, yuku.alkitab.base.storage.Db.Bukmak2.jenis_bukmak);
+		cursor = S.getDb().listBukmak(cursorColumnsSelect, Db.Bukmak2.jenis_bukmak);
 		startManagingCursor(cursor);
 		
 		adapter = new SimpleCursorAdapter(this, R.layout.item_bukmak, cursor, cursorColumnsMapFrom, cursorColumnsMapTo);
 		adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
 			@Override
 			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-				if (cursorColumnsSelect[columnIndex] == yuku.alkitab.base.storage.Db.Bukmak2.waktuUbah) { // $codepro.audit.disable stringComparison
+				if (cursorColumnsSelect[columnIndex] == Db.Bukmak2.waktuUbah) { // $codepro.audit.disable stringComparison
 					String text = Sqlitil.toLocaleDateMedium(cursor.getInt(columnIndex));
 					
 					TextView tv = (TextView) view;
 					tv.setText(text);
 					IsiActivity.aturTampilanTeksTanggalBukmak(tv);
 					return true;
-				} else if (cursorColumnsSelect[columnIndex] == yuku.alkitab.base.storage.Db.Bukmak2.tulisan) { // $codepro.audit.disable stringComparison
+				} else if (cursorColumnsSelect[columnIndex] == Db.Bukmak2.tulisan) { // $codepro.audit.disable stringComparison
 					TextView tv = (TextView) view;
 					
 					tv.setText(cursor.getString(columnIndex));
 					IsiActivity.aturTampilanTeksJudulBukmak(tv);
 					return true;
-				} else if (cursorColumnsSelect[columnIndex] == yuku.alkitab.base.storage.Db.Bukmak2.ari) { // $codepro.audit.disable stringComparison
+				} else if (cursorColumnsSelect[columnIndex] == Db.Bukmak2.ari) { // $codepro.audit.disable stringComparison
 					int ari = cursor.getInt(columnIndex);
 					Kitab kitab = S.edisiAktif.getXkitab()[Ari.toKitab(ari)];
 					String[] xayat = S.muatTeks(S.edisiAktif, kitab, Ari.toPasal(ari));
@@ -325,7 +326,7 @@ public class BukmakActivity extends ListActivity {
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		Cursor o = (Cursor) adapter.getItem(position);
-		int ari = o.getInt(o.getColumnIndexOrThrow(yuku.alkitab.base.storage.Db.Bukmak2.ari));
+		int ari = o.getInt(o.getColumnIndexOrThrow(Db.Bukmak2.ari));
 		
 		Intent res = new Intent();
 		res.putExtra(EXTRA_ariTerpilih, ari);

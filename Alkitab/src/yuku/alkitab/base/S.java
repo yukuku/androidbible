@@ -61,7 +61,7 @@ public class S {
 	private static synchronized void siapinEdisi() {
 		if (edisiAktif == null) {
 			Config c = BuildConfig.get(appContext.getPackageName());
-			edisiAktif = new Edisi(appContext, new InternalPembaca(appContext, c.edisiPrefix, c.edisiJudul, new PembacaDecoder.Ascii()));
+			edisiAktif = new Edisi(new InternalPembaca(appContext, c.edisiPrefix, c.edisiJudul, new PembacaDecoder.Ascii()));
 		}
 	}
 
@@ -249,10 +249,10 @@ public class S {
 		return resources.openRawResource(resId);
 	}
 	
-	private static AlkitabDb db;
-	public static synchronized AlkitabDb getDb() {
+	private static InternalDb db;
+	public static synchronized InternalDb getDb() {
 		if (db == null) {
-			db = new AlkitabDb(new InternalDbHelper(appContext));
+			db = new InternalDb(new InternalDbHelper(appContext));
 		}
 		
 		return db;

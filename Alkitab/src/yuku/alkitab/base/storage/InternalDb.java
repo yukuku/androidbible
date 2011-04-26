@@ -12,12 +12,12 @@ import android.database.sqlite.*;
 import android.provider.BaseColumns;
 import android.util.Log;
 
-public class AlkitabDb {
-	public static final String TAG = AlkitabDb.class.getSimpleName();
+public class InternalDb {
+	public static final String TAG = InternalDb.class.getSimpleName();
 
 	private final InternalDbHelper helper;
 
-	public AlkitabDb(InternalDbHelper helper) {
+	public InternalDb(InternalDbHelper helper) {
 		this.helper = helper;
 	}
 	

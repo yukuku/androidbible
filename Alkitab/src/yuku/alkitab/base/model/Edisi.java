@@ -1,14 +1,11 @@
 package yuku.alkitab.base.model;
 
 import yuku.alkitab.base.storage.Pembaca;
-import android.content.Context;
 
 public class Edisi {
-	private Context context;
 	public Pembaca pembaca;
 	
-	public Edisi(Context context, Pembaca pembaca) {
-		this.context = context;
+	public Edisi(Pembaca pembaca) {
 		this.pembaca = pembaca;
 	}
 	
