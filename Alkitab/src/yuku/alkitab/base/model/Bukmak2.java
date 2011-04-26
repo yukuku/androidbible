@@ -6,7 +6,6 @@ import java.util.Date;
 import org.xml.sax.Attributes;
 import org.xmlpull.v1.XmlSerializer;
 
-import yuku.alkitab.base.storage.AlkitabDb;
 import yuku.andoutil.Sqlitil;
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -33,11 +32,11 @@ public class Bukmak2 {
 	public ContentValues toContentValues() {
 		ContentValues res = new ContentValues();
 		
-		res.put(AlkitabDb.KOLOM_Bukmak2_ari, ari);
-		res.put(AlkitabDb.KOLOM_Bukmak2_jenis, jenis);
-		res.put(AlkitabDb.KOLOM_Bukmak2_tulisan, tulisan);
-		res.put(AlkitabDb.KOLOM_Bukmak2_waktuTambah, Sqlitil.toInt(waktuTambah));
-		res.put(AlkitabDb.KOLOM_Bukmak2_waktuUbah, Sqlitil.toInt(waktuUbah));
+		res.put(yuku.alkitab.base.storage.Db.Bukmak2.ari, ari);
+		res.put(yuku.alkitab.base.storage.Db.Bukmak2.jenis, jenis);
+		res.put(yuku.alkitab.base.storage.Db.Bukmak2.tulisan, tulisan);
+		res.put(yuku.alkitab.base.storage.Db.Bukmak2.waktuTambah, Sqlitil.toInt(waktuTambah));
+		res.put(yuku.alkitab.base.storage.Db.Bukmak2.waktuUbah, Sqlitil.toInt(waktuUbah));
 		
 		return res;
 	}
@@ -56,7 +55,7 @@ public class Bukmak2 {
 	public void writeXml(XmlSerializer xml) throws IOException {
 		xml.startTag(null, XMLTAG_Bukmak2);
 		xml.attribute(null, XMLATTR_ari, String.valueOf(ari));
-		xml.attribute(null, XMLATTR_jenis, jenis == AlkitabDb.ENUM_Bukmak2_jenis_bukmak? XMLVAL_bukmak: jenis == AlkitabDb.ENUM_Bukmak2_jenis_catatan? XMLVAL_catatan: jenis == AlkitabDb.ENUM_Bukmak2_jenis_stabilo? XMLVAL_stabilo: String.valueOf(jenis));
+		xml.attribute(null, XMLATTR_jenis, jenis == yuku.alkitab.base.storage.Db.Bukmak2.jenis_bukmak? XMLVAL_bukmak: jenis == yuku.alkitab.base.storage.Db.Bukmak2.jenis_catatan? XMLVAL_catatan: jenis == yuku.alkitab.base.storage.Db.Bukmak2.jenis_stabilo? XMLVAL_stabilo: String.valueOf(jenis));
 		if (tulisan != null) {
 			xml.attribute(null, XMLATTR_tulisan, tulisan);
 		}
@@ -70,16 +69,16 @@ public class Bukmak2 {
 	}
 	
 	public static Bukmak2 dariCursor(Cursor cursor) {
-		int ari = cursor.getInt(cursor.getColumnIndexOrThrow(AlkitabDb.KOLOM_Bukmak2_ari));
-		int jenis = cursor.getInt(cursor.getColumnIndexOrThrow(AlkitabDb.KOLOM_Bukmak2_jenis));
+		int ari = cursor.getInt(cursor.getColumnIndexOrThrow(yuku.alkitab.base.storage.Db.Bukmak2.ari));
+		int jenis = cursor.getInt(cursor.getColumnIndexOrThrow(yuku.alkitab.base.storage.Db.Bukmak2.jenis));
 		
 		return dariCursor(cursor, ari, jenis);
 	}
 
 	public static Bukmak2 dariCursor(Cursor cursor, int ari, int jenis) {
-		String tulisan = cursor.getString(cursor.getColumnIndexOrThrow(AlkitabDb.KOLOM_Bukmak2_tulisan));
-		Date waktuTambah = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(AlkitabDb.KOLOM_Bukmak2_waktuTambah)));
-		Date waktuUbah = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(AlkitabDb.KOLOM_Bukmak2_waktuUbah)));
+		String tulisan = cursor.getString(cursor.getColumnIndexOrThrow(yuku.alkitab.base.storage.Db.Bukmak2.tulisan));
+		Date waktuTambah = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(yuku.alkitab.base.storage.Db.Bukmak2.waktuTambah)));
+		Date waktuUbah = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(yuku.alkitab.base.storage.Db.Bukmak2.waktuUbah)));
 		
 		return new Bukmak2(ari, jenis, tulisan, waktuTambah, waktuUbah);
 	}
@@ -87,7 +86,7 @@ public class Bukmak2 {
 	public static Bukmak2 dariAttributes(Attributes attributes) {
 		int ari = Integer.parseInt(attributes.getValue("", XMLATTR_ari)); //$NON-NLS-1$
 		String jenis_s = attributes.getValue("", XMLATTR_jenis); //$NON-NLS-1$
-		int jenis = jenis_s.equals(XMLVAL_bukmak)? AlkitabDb.ENUM_Bukmak2_jenis_bukmak: jenis_s.equals(XMLVAL_catatan)? AlkitabDb.ENUM_Bukmak2_jenis_catatan: jenis_s.equals(XMLVAL_stabilo)? AlkitabDb.ENUM_Bukmak2_jenis_stabilo: Integer.parseInt(jenis_s);
+		int jenis = jenis_s.equals(XMLVAL_bukmak)? yuku.alkitab.base.storage.Db.Bukmak2.jenis_bukmak: jenis_s.equals(XMLVAL_catatan)? yuku.alkitab.base.storage.Db.Bukmak2.jenis_catatan: jenis_s.equals(XMLVAL_stabilo)? yuku.alkitab.base.storage.Db.Bukmak2.jenis_stabilo: Integer.parseInt(jenis_s);
 		String tulisan = attributes.getValue("", XMLATTR_tulisan); //$NON-NLS-1$
 		Date waktuTambah = Sqlitil.toDate(Integer.parseInt(attributes.getValue("", XMLATTR_waktuTambah))); //$NON-NLS-1$
 		Date waktuUbah = Sqlitil.toDate(Integer.parseInt(attributes.getValue("", XMLATTR_waktuUbah))); //$NON-NLS-1$

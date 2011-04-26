@@ -3,7 +3,7 @@ package yuku.alkitab.base;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S.penerapan;
 import yuku.alkitab.base.model.*;
-import yuku.alkitab.base.storage.AlkitabDb;
+import yuku.alkitab.base.storage.Db.Bukmak2;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.text.*;
@@ -19,7 +19,6 @@ class AyatAdapter extends BaseAdapter {
 	
 	//# field ctor
 	private final Context appContext_;
-	private final AlkitabDb db_;
 	private final CallbackSpan.OnClickListener paralelListener_;
 	private final IsiActivity.AtributListener atributListener_;
 	
@@ -40,9 +39,8 @@ class AyatAdapter extends BaseAdapter {
 	private int[] stabiloMap_; // null atau warna stabilo
 
 	
-	public AyatAdapter(Context appContext, AlkitabDb db, CallbackSpan.OnClickListener paralelListener, IsiActivity.AtributListener gelembungListener) {
+	public AyatAdapter(Context appContext, CallbackSpan.OnClickListener paralelListener, IsiActivity.AtributListener gelembungListener) {
 		appContext_ = appContext;
-		db_ = db;
 		paralelListener_ = paralelListener;
 		atributListener_ = gelembungListener;
 	}
@@ -60,9 +58,9 @@ class AyatAdapter extends BaseAdapter {
 		int[] stabiloMap = null;
 		
 		int ariKp = Ari.encode(kitab_.pos, pasal_1_, 0x00);
-		if (db_.countAtribut(ariKp) > 0) {
+		if (S.getDb().countAtribut(ariKp) > 0) {
 			atributMap = new int[dataAyat_.length];
-			stabiloMap = db_.putAtribut(ariKp, atributMap);
+			stabiloMap = S.getDb().putAtribut(ariKp, atributMap);
 		}
 
 		atributMap_ = atributMap;
@@ -225,7 +223,7 @@ class AyatAdapter extends BaseAdapter {
 		imgBukmak.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				atributListener_.onClick(kitab_, pasal_1, ayat_1, AlkitabDb.ENUM_Bukmak2_jenis_bukmak);
+				atributListener_.onClick(kitab_, pasal_1, ayat_1, Bukmak2.jenis_bukmak);
 			}
 		});
 	}
@@ -234,7 +232,7 @@ class AyatAdapter extends BaseAdapter {
 		imgGelembung.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				atributListener_.onClick(kitab_, pasal_1, ayat_1, AlkitabDb.ENUM_Bukmak2_jenis_catatan);
+				atributListener_.onClick(kitab_, pasal_1, ayat_1, Bukmak2.jenis_catatan);
 			}
 		});
 	}

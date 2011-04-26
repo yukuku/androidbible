@@ -1,7 +1,5 @@
 package yuku.alkitab.base.renungan;
 
-import static yuku.alkitab.base.storage.AlkitabDb.*;
-
 import java.io.*;
 import java.util.LinkedList;
 
@@ -11,10 +9,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import yuku.alkitab.R;
-import yuku.alkitab.base.storage.AlkitabDb;
-import yuku.andoutil.*;
-import android.content.*;
-import android.database.sqlite.SQLiteDatabase;
+import yuku.alkitab.base.S;
+import yuku.andoutil.ThreadSleep;
+import android.content.Context;
 import android.util.Log;
 
 public class TukangDonlot extends Thread {
@@ -129,42 +126,7 @@ public class TukangDonlot extends Thread {
 					}
 					
 					//# mari masukin ke db.
-					{
-						SQLiteDatabase db = AlkitabDb.getInstance(context_).getDatabase();
-						db.beginTransaction();
-
-						try {
-							// hapus dulu yang lama.
-							db.delete(TABEL_Renungan, KOLOM_Renungan_nama + "=? and " + KOLOM_Renungan_tgl + "=?", new String[] {artikel.getNama(), artikel.getTgl()}); //$NON-NLS-1$ //$NON-NLS-2$
-
-							ContentValues values = new ContentValues();
-							values.put(KOLOM_Renungan_nama, artikel.getNama());
-							values.put(KOLOM_Renungan_tgl, artikel.getTgl());
-							values.put(KOLOM_Renungan_siapPakai, artikel.getSiapPakai()? 1: 0);
-							
-							if (artikel.getSiapPakai()) {
-								values.put(KOLOM_Renungan_judul, artikel.getJudul().toString());
-								values.put(KOLOM_Renungan_isi, artikel.getIsiHtml());
-								values.put(KOLOM_Renungan_header, artikel.getHeaderHtml());
-							} else {
-								values.put(KOLOM_Renungan_judul, (String)null);
-								values.put(KOLOM_Renungan_isi, (String)null);
-								values.put(KOLOM_Renungan_header, (String)null);
-							}
-							
-							values.put(KOLOM_Renungan_waktuSentuh, Sqlitil.nowDateTime());
-							
-							db.insert(TABEL_Renungan, null, values);
-							
-							db.setTransactionSuccessful();
-							
-							Log.d(TAG, "TukangDonlot donlot selesai dengan sukses dan uda masuk ke db"); //$NON-NLS-1$
-						} catch (Exception e) {
-							Log.w(TAG, "TukangDonlot pas mau masukin ke db", e); //$NON-NLS-1$
-						} finally {
-							db.endTransaction();
-						}
-					}
+					S.getDb().simpanArtikelKeRenungan(artikel);
 				} else {
 					listener_.onStatusDonlot(context_.getString(R.string.gagal_mengunduh_namaumum_tgl_tgl, artikel.getNamaUmum(), artikel.getTgl()));
 					Log.d(TAG, "TukangDonlot gagal donlot"); //$NON-NLS-1$

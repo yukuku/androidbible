@@ -5,6 +5,7 @@ import yuku.alkitab.base.BukmakEditor.Listener;
 import yuku.alkitab.base.GelembungDialog.RefreshCallback;
 import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.storage.Db.Bukmak2;
 import yuku.alkitab.base.storage.*;
 import yuku.andoutil.IntArrayList;
 import android.app.*;
@@ -53,7 +54,6 @@ public class IsiActivity extends Activity {
 	DisplayMetrics displayMetrics;
 	ProgressDialog dialogBikinIndex;
 	boolean lagiBikinIndex = false;
-	AlkitabDb alkitabDb;
 	boolean perluReloadMenuWaktuOnMenuOpened = false;
 	
 	private AyatAdapter ayatAdapter_;
@@ -160,11 +160,8 @@ public class IsiActivity extends Activity {
 			}
 		});
 		
-		// siapin db
-		alkitabDb = AlkitabDb.getInstance(this);
-		
 		// adapter
-		ayatAdapter_ = new AyatAdapter(getApplicationContext(), alkitabDb, paralelOnClickListener, gelembungListener);
+		ayatAdapter_ = new AyatAdapter(getApplicationContext(), paralelOnClickListener, gelembungListener);
 		lsIsi.setAdapter(ayatAdapter_);
 		
 		// muat preferences
@@ -324,7 +321,7 @@ public class IsiActivity extends Activity {
 		} else if (itemId == R.id.menuTambahBukmak) {
 			final int ari = Ari.encode(S.kitabAktif.pos, pasal_1, ayatContextMenu_1);
 			
-			BukmakEditor editor = new BukmakEditor(this, alkitabDb, alamat, ari);
+			BukmakEditor editor = new BukmakEditor(this, alamat, ari);
 			editor.setListener(muatUlangAtributMapListener);
 			editor.bukaDialog();
 			
@@ -338,14 +335,14 @@ public class IsiActivity extends Activity {
 			
 			PemilihStabiloDialog dialog = new PemilihStabiloDialog(this, new PemilihStabiloDialog.PemilihStabiloCallback() {
 				@Override public void dipilih(int warnaRgb) {
-					alkitabDb.updateAtauInsertStabilo(ari, warnaRgb);
+					S.getDb().updateAtauInsertStabilo(ari, warnaRgb);
 					ayatAdapter_.muatAtributMap();
 					ayatAdapter_.notifyDataSetChanged();
 				}
 				
 				@Override public void batal() {
 				}
-			}, alkitabDb.getWarnaRgbStabilo(ari));
+			}, S.getDb().getWarnaRgbStabilo(ari));
 			
 			dialog.show();
 			
@@ -511,7 +508,7 @@ public class IsiActivity extends Activity {
 	}
 	
 	private void bukaDialogLoncat() {
-		final View loncat = LayoutInflater.from(this).inflate(R.layout.loncat_dialog, null);
+		final View loncat = LayoutInflater.from(this).inflate(R.layout.dialog_loncat, null);
 		final TextView lAlamatKini = (TextView) loncat.findViewById(R.id.lAlamatKini);
 		final EditText tAlamatLoncat = (EditText) loncat.findViewById(R.id.tAlamatLoncat);
 		final ImageButton bKeTuju = (ImageButton) loncat.findViewById(R.id.bKeTuju);
@@ -1034,19 +1031,19 @@ public class IsiActivity extends Activity {
 				ayatAdapter_.notifyDataSetChanged();
 			}
 		});
-		dialog.setDbKitabPasalAyat(alkitabDb, kitab_, pasal_1, ayat_1);
+		dialog.setDbKitabPasalAyat(kitab_, pasal_1, ayat_1);
 		dialog.tampilkan();
 	}
 	
 	public class AtributListener {
 		public void onClick(Kitab kitab_, int pasal_1, int ayat_1, int jenis) {
-			if (jenis == AlkitabDb.ENUM_Bukmak2_jenis_bukmak) {
+			if (jenis == Bukmak2.jenis_bukmak) {
 				final int ari = Ari.encode(kitab_.pos, pasal_1, ayat_1);
 				String alamat = S.alamat(S.edisiAktif, ari);
-				BukmakEditor editor = new BukmakEditor(IsiActivity.this, alkitabDb, alamat, ari);
+				BukmakEditor editor = new BukmakEditor(IsiActivity.this, alamat, ari);
 				editor.setListener(muatUlangAtributMapListener);
 				editor.bukaDialog();
-			} else if (jenis == AlkitabDb.ENUM_Bukmak2_jenis_catatan) {
+			} else if (jenis == Bukmak2.jenis_catatan) {
 				tampilkanCatatan(kitab_, pasal_1, ayat_1);
 			}
 		}

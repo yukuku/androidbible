@@ -248,4 +248,13 @@ public class S {
 		}
 		return resources.openRawResource(resId);
 	}
+	
+	private static AlkitabDb db;
+	public static synchronized AlkitabDb getDb() {
+		if (db == null) {
+			db = new AlkitabDb(new InternalDbHelper(appContext));
+		}
+		
+		return db;
+	}
 }
