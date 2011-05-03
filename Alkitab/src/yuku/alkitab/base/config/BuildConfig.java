@@ -69,7 +69,6 @@ public class BuildConfig {
 				res.internalPrefix = parser.getAttributeValue(null, "prefix");
 			} else if (next == XmlPullParser.START_TAG && "preset".equals(parser.getName())) {
 				MEdisiPreset preset = new MEdisiPreset();
-				preset.aktif = false;
 				preset.jenis = Db.Edisi.jenis_preset;
 				preset.judul = parser.getAttributeValue(null, "judul");
 				preset.namafile_preset = parser.getAttributeValue(null, "namafile_preset");

@@ -746,7 +746,7 @@ public class IsiActivity extends Activity {
 		
 		List<MEdisiYes> xyes = S.getDb().listSemuaEdisi();
 		for (MEdisiYes yes: xyes) {
-			if (yes.aktif) {
+			if (yes.getAktif()) {
 				pilihan.add(yes.judul);
 				data.add(yes);
 			}

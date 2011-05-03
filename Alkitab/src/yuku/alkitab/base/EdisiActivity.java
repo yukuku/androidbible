@@ -5,13 +5,17 @@ import java.io.File;
 import java.util.*;
 
 import yuku.alkitab.R;
+import yuku.alkitab.base.AddonManager.DonlotListener;
+import yuku.alkitab.base.AddonManager.DonlotThread;
+import yuku.alkitab.base.AddonManager.Elemen;
 import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.model.Edisi;
 import yuku.alkitab.base.storage.*;
-import android.app.Activity;
-import android.content.Context;
+import android.app.*;
+import android.content.*;
 import android.content.res.Configuration;
 import android.os.*;
+import android.util.Log;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.*;
@@ -88,24 +92,117 @@ public class EdisiActivity extends Activity {
 			MEdisi item = adapter.getItem(position);
 			if (item == null) return;
 			
+			final CheckBox cAktif = (CheckBox) v.findViewById(R.id.cAktif);
 			if (item instanceof MEdisiInternal) {
 				// ga ngapa2in, wong internal ko
 			} else if (item instanceof MEdisiPreset) {
-				MEdisiPreset edisi = (MEdisiPreset) item;
-				CheckBox cAktif = (CheckBox) v.findViewById(R.id.cAktif);
+				final MEdisiPreset edisi = (MEdisiPreset) item;
 				if (cAktif.isChecked()) {
-					edisi.aktif = false;
-					cAktif.setSelected(false);
 					edisi.setAktif(false);
 				} else {
 					// tergantung uda ada belum, kalo uda ada filenya sih centang aja
 					if (AddonManager.cekAdaEdisi(edisi.namafile_preset)) {
-						edisi.aktif = true;
-						cAktif.setSelected(true);
 						edisi.setAktif(true);
 					} else {
-						// FIXME DONLOT
+						DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
+							final ProgressDialog pd = new ProgressDialog(EdisiActivity.this);
+							DonlotListener donlotListener = new DonlotListener() {
+								@Override
+								public void onSelesaiDonlot(Elemen e) {
+									EdisiActivity.this.runOnUiThread(new Runnable() {
+										public void run() {
+											Toast.makeText(getApplicationContext(),
+												getString(R.string.selesai_mengunduh_edisi_judul_disimpan_di_path, edisi.judul, AddonManager.getEdisiPath(edisi.namafile_preset)),
+												Toast.LENGTH_LONG).show();
+										}
+									});
+									pd.dismiss();
+								}
+								
+								@Override
+								public void onGagalDonlot(Elemen e, final String keterangan, final Throwable t) {
+									EdisiActivity.this.runOnUiThread(new Runnable() {
+										public void run() {
+											Toast.makeText(
+												getApplicationContext(),
+												keterangan != null ? keterangan : getString(R.string.gagal_mengunduh_edisi_judul_ex_pastikan_internet, edisi.judul,
+													t == null ? "null" : t.getClass().getCanonicalName() + ": " + t.getMessage()), Toast.LENGTH_LONG).show(); //$NON-NLS-1$ //$NON-NLS-2$
+										}
+									});
+									pd.dismiss();
+								}
+								
+								@Override
+								public void onProgress(Elemen e, final int sampe, int total) {
+									EdisiActivity.this.runOnUiThread(new Runnable() {
+										public void run() {
+											if (sampe >= 0) {
+												pd.setMessage(getString(R.string.terunduh_sampe_byte, sampe));
+											} else {
+												pd.setMessage(getString(R.string.sedang_mendekompres_harap_tunggu));
+											}
+										}
+									});
+									Log.d(TAG, "onProgress " + sampe); //$NON-NLS-1$
+								}
+								
+								@Override
+								public void onBatalDonlot(Elemen e) {
+									EdisiActivity.this.runOnUiThread(new Runnable() {
+										public void run() {
+											Toast.makeText(getApplicationContext(), R.string.pengunduhan_dibatalkan, Toast.LENGTH_SHORT).show();
+										}
+									});
+									pd.dismiss();
+								}
+							};
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+								pd.setCancelable(true);
+								pd.setIndeterminate(true);
+								pd.setTitle(getString(R.string.mengunduh_nama, edisi.namafile_preset));
+								pd.setMessage(getString(R.string.mulai_mengunduh));
+								pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
+									@Override
+									public void onDismiss(DialogInterface dialog) {
+										if (AddonManager.cekAdaEdisi(edisi.namafile_preset)) {
+											edisi.setAktif(true);
+										}
+										adapter.notifyDataSetChanged();
+									}
+								});
+
+								DonlotThread donlotThread = AddonManager.getDonlotThread(getApplicationContext());
+								final Elemen e = donlotThread.antrikan(edisi.url, AddonManager.getEdisiPath(edisi.namafile_preset), donlotListener);
+								if (e != null) {
+									pd.show();
+								}
+
+								pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
+									@Override
+									public void onCancel(DialogInterface dialog) {
+										e.hentikan = true;
+									}
+								});
+							}
+						};
+						
+						new AlertDialog.Builder(EdisiActivity.this)
+						.setTitle(R.string.mengunduh_tambahan)
+						.setMessage(getString(R.string.file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya, AddonManager.getEdisiPath(edisi.namafile_preset)))
+						.setPositiveButton(R.string.yes, clickListener)
+						.setNegativeButton(R.string.no, null)
+						.show();
 					}
+				}
+			} else if (item instanceof MEdisiYes) {
+				final MEdisiYes edisi = (MEdisiYes) item;
+				if (cAktif.isChecked()) {
+					edisi.setAktif(false);
+				} else {
+					edisi.setAktif(true);
 				}
 			}
 			
@@ -128,13 +225,14 @@ public class EdisiActivity extends Activity {
 	public static abstract class MEdisi {
 		public String judul;
 		public int jenis;
-		public boolean aktif;
 		public int urutan;
 		
 		/** id unik untuk dibandingkan */
 		public abstract String getEdisiId();
 		/** return edisi supaya bisa mulai dibaca. null kalau ga memungkinkan */
 		public abstract Edisi getEdisi(Context context);
+		public abstract void setAktif(boolean aktif);
+		public abstract boolean getAktif();
 	}
 
 	public static class MEdisiInternal extends MEdisi {
@@ -146,6 +244,16 @@ public class EdisiActivity extends Activity {
 		@Override
 		public Edisi getEdisi(Context context) {
 			return S.getEdisiInternal();
+		}
+
+		@Override
+		public void setAktif(boolean aktif) {
+			// NOOP
+		}
+
+		@Override
+		public boolean getAktif() {
+			return true; // selalu aktif
 		}
 	}
 	
@@ -179,6 +287,7 @@ public class EdisiActivity extends Activity {
 	public static class MEdisiYes extends MEdisi {
 		public String namafile;
 		public String namafile_pdbasal;
+		public boolean cache_aktif; // supaya ga usa dibaca tulis terus dari db
 		
 		@Override
 		public String getEdisiId() {
@@ -194,6 +303,17 @@ public class EdisiActivity extends Activity {
 				return null;
 			}
 		}
+
+		@Override
+		public void setAktif(boolean aktif) {
+			this.cache_aktif = aktif;
+			S.getDb().setEdisiYesAktif(this.namafile, aktif);
+		}
+
+		@Override
+		public boolean getAktif() {
+			return this.cache_aktif;
+		}
 	}
 	
 	public class EdisiAdapter extends BaseAdapter {
@@ -205,7 +325,7 @@ public class EdisiActivity extends Activity {
 			BuildConfig c = BuildConfig.get(getApplicationContext());
 			
 			internal = new MEdisiInternal();
-			internal.aktif = true;
+			internal.setAktif(true);
 			internal.jenis = Db.Edisi.jenis_internal;
 			internal.judul = c.internalJudul;
 			internal.urutan = 1;
@@ -216,10 +336,7 @@ public class EdisiActivity extends Activity {
 			// betulin keaktifannya berdasarkan adanya file dan pref
 			for (MEdisiPreset preset: xpreset) {
 				if (!AddonManager.cekAdaEdisi(preset.namafile_preset)) {
-					preset.aktif = false;
-				} else {
-					// tergantung pref, default true
-					preset.aktif = preset.getAktif();
+					preset.setAktif(false);
 				}
 			}
 			
@@ -255,26 +372,21 @@ public class EdisiActivity extends Activity {
 			MEdisi medisi = getItem(position);
 			cAktif.setFocusable(false);
 			cAktif.setClickable(false);
+			cAktif.setChecked(medisi.getAktif());
+			lJudul.setText(medisi.judul);
 			if (medisi instanceof MEdisiInternal) {
-				//FIXME
-				lJudul.setText(medisi.judul);
 				lNamafile.setText("");
-				cAktif.setChecked(true);
 				cAktif.setEnabled(false);
 			} else if (medisi instanceof MEdisiPreset) {
 				String namafile_preset = ((MEdisiPreset) medisi).namafile_preset;
-				lJudul.setText(medisi.judul);
 				if (AddonManager.cekAdaEdisi(namafile_preset)) {
 					lNamafile.setText(AddonManager.getEdisiPath(namafile_preset));
 				} else {
 					lNamafile.setText("Tekan untuk mengunduh"); 
 				}
-				cAktif.setChecked(medisi.aktif);
 				cAktif.setEnabled(true);
 			} else if (medisi instanceof MEdisiYes) {
-				lJudul.setText(medisi.judul);
 				lNamafile.setText(((MEdisiYes) medisi).namafile);
-				cAktif.setChecked(medisi.aktif);
 				cAktif.setEnabled(true);
 			}
 			

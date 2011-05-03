@@ -326,7 +326,7 @@ public class InternalDb {
 			
 			while (cursor.moveToNext()) {
 				MEdisiYes yes = new MEdisiYes();
-				yes.aktif = cursor.getInt(col_aktif) != 0;
+				yes.cache_aktif = cursor.getInt(col_aktif) != 0;
 				yes.jenis = Db.Edisi.jenis_yes;
 				yes.judul = cursor.getString(col_judul);
 				yes.namafile = cursor.getString(col_namafile);
@@ -338,5 +338,12 @@ public class InternalDb {
 			cursor.close();
 		}
 		return res;
+	}
+
+	public void setEdisiYesAktif(String namafile, boolean aktif) {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		ContentValues cv = new ContentValues();
+		cv.put(Db.Edisi.aktif, aktif? 1: 0);
+		db.update(Db.TABEL_Edisi, cv, Db.Edisi.jenis + "=? and " + Db.Edisi.namafile + "=?", new String[] {String.valueOf(Db.Edisi.jenis_yes), namafile});
 	}
 }
