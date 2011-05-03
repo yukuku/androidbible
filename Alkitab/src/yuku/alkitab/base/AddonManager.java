@@ -37,14 +37,14 @@ public class AddonManager {
 		return new File(Environment.getExternalStorageDirectory(), "bible/yes").getAbsolutePath(); //$NON-NLS-1$
 	}
 	
-	public static String getEdisiPath(String nama) {
+	public static String getEdisiPath(String namayes) {
 		String yesPath = getYesPath();
-		File yes = new File(yesPath, nama + ".yes"); //$NON-NLS-1$
+		File yes = new File(yesPath, namayes); //$NON-NLS-1$
 		return yes.getAbsolutePath();
 	}
 	
-	public static boolean cekAdaEdisi(String nama) {
-		File f = new File(getEdisiPath(nama));
+	public static boolean cekAdaEdisi(String namayes) {
+		File f = new File(getEdisiPath(namayes));
 		return f.exists() && f.canRead();
 	}
 	
@@ -81,6 +81,7 @@ public class AddonManager {
 		
 		private void donlot(Elemen e) {
 			new File(e.tujuan).delete(); // hapus dulu.. jangan2 kacau
+			// FIXME Wakelock. Dan minta permission
 			
 			String tmpfile = e.tujuan + "-" + (int)(Math.random() * 100000) + ".tmp";  //$NON-NLS-1$//$NON-NLS-2$
 			

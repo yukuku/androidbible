@@ -40,6 +40,10 @@ public class Preferences {
 		return pref.getBoolean(key.toString(), def);
 	}
 	
+	public static boolean getBoolean(String key, boolean def) {
+		SharedPreferences pref = read(appContext);
+		return pref.getBoolean(key, def);
+	}
 	
 	public static int getInt(int keyResId, int defResId) {
 		SharedPreferences pref = read(appContext);
@@ -88,6 +92,12 @@ public class Preferences {
 	public static void setBoolean(Prefkey key, boolean val) {
 		SharedPreferences pref = read(appContext);
 		pref.edit().putBoolean(key.toString(), val).commit();
+		Log.d(TAG, key + " = (bool) " + val);
+	}
+	
+	public static void setBoolean(String key, boolean val) {
+		SharedPreferences pref = read(appContext);
+		pref.edit().putBoolean(key, val).commit();
 		Log.d(TAG, key + " = (bool) " + val);
 	}
 	
