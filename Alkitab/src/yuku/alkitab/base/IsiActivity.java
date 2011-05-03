@@ -1,7 +1,13 @@
 package yuku.alkitab.base;
 
+import java.util.*;
+
 import yuku.alkitab.R;
 import yuku.alkitab.base.BukmakEditor.Listener;
+import yuku.alkitab.base.EdisiActivity.MEdisi;
+import yuku.alkitab.base.EdisiActivity.MEdisiInternal;
+import yuku.alkitab.base.EdisiActivity.MEdisiPreset;
+import yuku.alkitab.base.EdisiActivity.MEdisiYes;
 import yuku.alkitab.base.GelembungDialog.RefreshCallback;
 import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.model.*;
@@ -586,7 +592,7 @@ public class IsiActivity extends Activity {
 
 		new MenuInflater(this).inflate(R.menu.isi, menu);
 		
-		yuku.alkitab.base.config.Config c = BuildConfig.get(getPackageName());
+		BuildConfig c = BuildConfig.get(this);
 
 		if (c.menuGebug) {
 			SubMenu menuGebug = menu.addSubMenu(R.string.gebug);
@@ -647,7 +653,7 @@ public class IsiActivity extends Activity {
 			menuSearch2_click();
 			return true;
 		} else if (itemId == R.id.menuEdisi) {
-			// FIXME pilihEdisi();
+			pilihEdisi();
 			return true;
 		} else if (itemId == R.id.menuRenungan) { 
 			Intent intent = new Intent(this, RenunganActivity.class);
@@ -718,6 +724,97 @@ public class IsiActivity extends Activity {
 		dialog.show();
 	}
 
+	private void pilihEdisi() {
+		// populate dengan 
+		// 1. internal
+		// 2. preset yang UDAH DIDONLOT dan AKTIF
+		// 3. yes yang AKTIF
+		
+		BuildConfig c = BuildConfig.get(this);
+		final List<String> pilihan = new ArrayList<String>(); // harus bareng2 sama bawah
+		final List<MEdisi> data = new ArrayList<MEdisi>();  // harus bareng2 sama atas
+		
+		pilihan.add(c.internalJudul); // 1. internal
+		data.add(new MEdisiInternal());
+		
+		for (MEdisiPreset preset: c.xpreset) { // 2. preset
+			if (AddonManager.cekAdaEdisi(preset.namafile_preset) && preset.getAktif()) {
+				pilihan.add(preset.judul);
+				data.add(preset);
+			}
+		}
+		
+		List<MEdisiYes> xyes = S.getDb().listSemuaEdisi();
+		for (MEdisiYes yes: xyes) {
+			if (yes.aktif) {
+				pilihan.add(yes.judul);
+				data.add(yes);
+			}
+		}
+		
+		int terpilih = -1;
+		if (S.edisiId == null) {
+			terpilih = 0;
+		} else {
+			for (int i = 0; i < data.size(); i++) {
+				MEdisi me = data.get(i);
+				if (me.getEdisiId().equals(S.edisiId)) {
+					terpilih = i;
+					break;
+				}
+			}
+		}
+
+		new AlertDialog.Builder(this)
+		.setTitle(R.string.pilih_edisi)
+		.setSingleChoiceItems(pilihan.toArray(new String[pilihan.size()]), terpilih, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				final MEdisi me = data.get(which);
+				
+				Edisi edisi = me.getEdisi(getApplicationContext());
+				
+				if (edisi != null) {
+					int posKitabAktif = S.kitabAktif.pos;
+					
+					S.edisiAktif = edisi;
+					S.edisiId = me.getEdisiId();
+					S.siapinKitab();
+					
+					Kitab[] xkitab = S.edisiAktif.getXkitab();
+					if (posKitabAktif < xkitab.length && xkitab[posKitabAktif].pos == posKitabAktif) {
+						// posisinya sama. Mari pake langsung
+						S.kitabAktif = xkitab[posKitabAktif];
+					} else {
+						for (Kitab k: xkitab) {
+							if (k.pos == posKitabAktif) {
+								S.kitabAktif = k;
+								break;
+							}
+						}
+						S.kitabAktif = xkitab[0]; // apa boleh buat, ga ketemu...
+					}
+					
+					dialog.dismiss();
+					tampil(pasal_1, getAyatBerdasarSkrol());
+				} else {
+					new AlertDialog.Builder(IsiActivity.this)
+					.setMessage("Ada kegagalan membuka: " + me.getEdisiId())
+					.setPositiveButton(R.string.ok, null)
+					.show();
+				}
+			}
+		})
+		.setPositiveButton("Versi lainnya...", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Intent intent = new Intent(getApplicationContext(), EdisiActivity.class);
+				startActivityForResult(intent, R.id.menuEdisi);
+			}
+		})
+		.setNegativeButton("Cancel", null)
+		.show();
+	}
 
 	private void menuSearch2_click() {
 		Intent intent = new Intent(this, Search2Activity.class);

@@ -35,6 +35,13 @@ public class YesPembaca extends Pembaca {
 		
 		while (true) {
 			String namaSeksi = readNamaSeksi(f);
+			
+			if (namaSeksi == null) {
+				// sudah mencapai EOF. Maka kasih tau seksi ini ga ada.
+				Log.d(TAG, "Seksi tidak ditemukan: " + seksi);
+				return -1;
+			}
+			
 			int ukuran = readUkuranSeksi(f);
 			
 			if (namaSeksi.equals(seksi)) {
@@ -75,16 +82,22 @@ public class YesPembaca extends Pembaca {
 
 	public void bacaInfoEdisi() {
 		try {
+			Log.d(TAG, "bacaInfoEdisi dipanggil");
+			
 			int ukuran = lewatiSampeSeksi("infoEdisi___"); //$NON-NLS-1$
 			byte[] buf = new byte[ukuran];
 			f.read(buf);
 			BintexReader in = new BintexReader(new ByteArrayInputStream(buf));
 			
+			String nama = null;
 			while (true) {
 				String key = in.readShortString();
 				
-				if (key.equals("nama")) { //$NON-NLS-1$
-					/* this.nama = */ in.readShortString();
+				if (key.equals("versi")) { //$NON-NLS-1$
+					int versi = in.readInt();
+					if (versi != 1) throw new RuntimeException("Versi Edisi: " + versi + " tidak dikenal"); //$NON-NLS-1$ //$NON-NLS-2$
+				} else if (key.equals("nama")) { //$NON-NLS-1$
+					nama = in.readShortString();
 				} else if (key.equals("judul")) { //$NON-NLS-1$
 					this.judul = in.readShortString();
 				} else if (key.equals("nkitab")) { //$NON-NLS-1$
@@ -96,6 +109,8 @@ public class YesPembaca extends Pembaca {
 					break;
 				}
 			}
+			
+			Log.d(TAG, "bacaInfoEdisi selesai, nama=" + nama + " judul=" + judul + " nkitab=" + nkitab);
 		} catch (Exception e) {
 			Log.e(TAG, "bacaInfoEdisi error", e); //$NON-NLS-1$
 		}
@@ -104,6 +119,8 @@ public class YesPembaca extends Pembaca {
 	@Override
 	public Kitab[] bacaInfoKitab() {
 		try {
+			Log.d(TAG, "bacaInfoKitab dipanggil");
+			
 			init();
 			
 			Kitab[] res = new Kitab[this.nkitab];
@@ -113,6 +130,7 @@ public class YesPembaca extends Pembaca {
 			f.read(buf);
 			BintexReader in = new BintexReader(new ByteArrayInputStream(buf));
 			
+			Log.d(TAG, "akan membaca " + this.nkitab + " kitab");
 			for (int kitabPos = 0; kitabPos < res.length; kitabPos++) {
 				Kitab k = new Kitab();
 				
@@ -199,8 +217,8 @@ public class YesPembaca extends Pembaca {
 
 	static String readNamaSeksi(RandomAccessFile f) throws IOException {
 		byte[] buf = new byte[12];
-		f.read(buf);
-		return new String(buf, 0);
+		int read = f.read(buf);
+		return read <= 0? null: new String(buf, 0);
 	}
 
 	static int readUkuranSeksi(RandomAccessFile f) throws IOException {
@@ -213,9 +231,14 @@ public class YesPembaca extends Pembaca {
 		try {
 			init();
 			
-			lewatiSampeSeksi("perikopIndex"); //$NON-NLS-1$
-			BintexReader in = new BintexReader(new RandomInputStream(f));
+			int ukuran = lewatiSampeSeksi("perikopIndex"); //$NON-NLS-1$
 			
+			if (ukuran < 0) {
+				Log.d(TAG, "Tidak ada index perikop");
+				return null;
+			}
+			
+			BintexReader in = new BintexReader(new RandomInputStream(f));
 			return IndexPerikop.baca(in);
 		} catch (Exception e) {
 			Log.e(TAG, "bacaIndexPerikop error", e); //$NON-NLS-1$

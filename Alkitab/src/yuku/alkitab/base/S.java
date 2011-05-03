@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.util.*;
 
 import yuku.alkitab.R;
-import yuku.alkitab.base.config.*;
+import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.renungan.TukangDonlot;
 import yuku.alkitab.base.storage.*;
@@ -44,11 +44,10 @@ public class S {
 		public static Date renungan_tanggalan = null;
 	}
 	
-	//# 33nya harus siap di siapinEdisi
-	public static Edisi edisiAktif;
-	
 	//# 22nya harus siap di siapinKitab
+	public static Edisi edisiAktif;
 	public static Kitab kitabAktif;
+	public static String edisiId;
 
 	public static PengirimFidbek pengirimFidbek;
 	public static TukangDonlot tukangDonlot;
@@ -60,9 +59,17 @@ public class S {
 	
 	private static synchronized void siapinEdisi() {
 		if (edisiAktif == null) {
-			Config c = BuildConfig.get(appContext.getPackageName());
-			edisiAktif = new Edisi(new InternalPembaca(appContext, c.edisiPrefix, c.edisiJudul, new PembacaDecoder.Ascii()));
+			edisiAktif = getEdisiInternal();
 		}
+	}
+
+	private static Edisi edisiInternal;
+	public static synchronized Edisi getEdisiInternal() {
+		if (edisiInternal == null) {
+			BuildConfig c = BuildConfig.get(appContext);
+			edisiInternal = new Edisi(new InternalPembaca(appContext, c.internalPrefix, c.internalJudul, new PembacaDecoder.Ascii()));
+		}
+		return edisiInternal;
 	}
 
 	public static synchronized void siapinKitab() {
