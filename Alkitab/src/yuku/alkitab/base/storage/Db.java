@@ -34,4 +34,17 @@ public class Db {
 		public static final String siapPakai = "siapPakai"; //$NON-NLS-1$
 		public static final String waktuSentuh = "waktuSentuh"; //$NON-NLS-1$
 	}
+	
+	public static final String TABEL_Edisi = "Edisi"; //$NON-NLS-1$
+	public static final class Edisi {
+		public static final String judul = "judul"; //$NON-NLS-1$
+		public static final String jenis = "jenis"; //$NON-NLS-1$
+		public static final String namafile = "namafile"; //$NON-NLS-1$
+		public static final String namafile_pdbasal = "namafile_pdbasal"; //$NON-NLS-1$
+		public static final String aktif = "aktif"; //$NON-NLS-1$
+		public static final String urutan = "urutan"; //$NON-NLS-1$
+		public static final int jenis_internal = 1; // ga dipake di db, hanya dipake di model 
+		public static final int jenis_preset = 2; // ga dipake di db, hanya dipake di model 
+		public static final int jenis_yes = 3;
+	}
 }

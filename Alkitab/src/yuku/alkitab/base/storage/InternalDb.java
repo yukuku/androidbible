@@ -2,7 +2,8 @@ package yuku.alkitab.base.storage;
 
 import java.util.*;
 
-import yuku.alkitab.base.U;
+import yuku.alkitab.base.EdisiActivity.MEdisiYes;
+import yuku.alkitab.base.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.renungan.*;
 import yuku.andoutil.Sqlitil;
@@ -311,5 +312,31 @@ public class InternalDb {
 		} finally {
 			c.close();
 		}
+	}
+
+	public List<MEdisiYes> listSemuaEdisi() {
+		List<MEdisiYes> res = new ArrayList<MEdisiYes>();
+		Cursor cursor = helper.getReadableDatabase().query(Db.TABEL_Edisi, null, null, null, null, null, Db.Edisi.urutan + " asc");
+		try {
+			int col_aktif = cursor.getColumnIndexOrThrow(Db.Edisi.aktif);
+			int col_judul = cursor.getColumnIndexOrThrow(Db.Edisi.judul);
+			int col_namafile = cursor.getColumnIndexOrThrow(Db.Edisi.namafile);
+			int col_namafile_pdbasal = cursor.getColumnIndexOrThrow(Db.Edisi.namafile);
+			int col_urutan = cursor.getColumnIndexOrThrow(Db.Edisi.urutan);
+			
+			while (cursor.moveToNext()) {
+				MEdisiYes yes = new MEdisiYes();
+				yes.aktif = cursor.getInt(col_aktif) != 0;
+				yes.jenis = Db.Edisi.jenis_yes;
+				yes.judul = cursor.getString(col_judul);
+				yes.namafile = cursor.getString(col_namafile);
+				yes.namafile_pdbasal = cursor.getString(col_namafile_pdbasal);
+				yes.urutan = cursor.getInt(col_urutan);
+				res.add(yes);
+			}
+		} finally {
+			cursor.close();
+		}
+		return res;
 	}
 }

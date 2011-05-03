@@ -42,6 +42,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		try {
 			bikinTabelBukmak2(db);
 			bikinTabelRenungan(db);
+			bikinTabelEdisi(db);
 		} catch (SQLException e) {
 			Log.e(TAG, "onCreate db ngaco!", e); //$NON-NLS-1$
 		}
@@ -64,18 +65,18 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		// index Bukmak2(jenis,waktuUbah)
 		db.execSQL(String.format("create index if not exists index_203 on %s (%s, %s)", Db.TABEL_Bukmak2, Db.Bukmak2.jenis, Db.Bukmak2.waktuUbah)); //$NON-NLS-1$
 	}
-
+	
 	private void bikinTabelRenungan(SQLiteDatabase db) throws SQLException {
 		db.execSQL(String.format("create table if not exists %s (" + //$NON-NLS-1$
-				"_id integer primary key autoincrement, " + //$NON-NLS-1$
-				"%s text, " + // nama //$NON-NLS-1$
-				"%s text, " + // tgl (yyyymmdd) //$NON-NLS-1$
-				"%s text, " + // header //$NON-NLS-1$
-				"%s text, " + // judul //$NON-NLS-1$
-				"%s text, " + // isi //$NON-NLS-1$
-				"%s integer," + // siap pakai //$NON-NLS-1$
-				"%s integer)", // waktuSentuh //$NON-NLS-1$
-				Db.TABEL_Renungan, Db.Renungan.nama, Db.Renungan.tgl, Db.Renungan.header, Db.Renungan.judul, Db.Renungan.isi, Db.Renungan.siapPakai, Db.Renungan.waktuSentuh));
+			"_id integer primary key autoincrement, " + //$NON-NLS-1$
+			"%s text, " + // nama //$NON-NLS-1$
+			"%s text, " + // tgl (yyyymmdd) //$NON-NLS-1$
+			"%s text, " + // header //$NON-NLS-1$
+			"%s text, " + // judul //$NON-NLS-1$
+			"%s text, " + // isi //$NON-NLS-1$
+			"%s integer," + // siap pakai //$NON-NLS-1$
+			"%s integer)", // waktuSentuh //$NON-NLS-1$
+			Db.TABEL_Renungan, Db.Renungan.nama, Db.Renungan.tgl, Db.Renungan.header, Db.Renungan.judul, Db.Renungan.isi, Db.Renungan.siapPakai, Db.Renungan.waktuSentuh));
 		
 		// index Renungan(nama)
 		db.execSQL(String.format("create index if not exists index_101 on %s (%s)", Db.TABEL_Renungan, Db.Renungan.nama)); //$NON-NLS-1$
@@ -85,13 +86,32 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL(String.format("create index if not exists index_103 on %s (%s)", Db.TABEL_Renungan, Db.Renungan.tgl)); //$NON-NLS-1$
 	}
 	
+	private void bikinTabelEdisi(SQLiteDatabase db) throws SQLException {
+		db.execSQL("create table if not exists " + Db.TABEL_Edisi + " (" + //$NON-NLS-1$
+				"_id integer primary key autoincrement, " + //$NON-NLS-1$
+				Db.Edisi.judul + " text, " + // judul (keliatan sama user) //$NON-NLS-1$
+				Db.Edisi.jenis + " text, " + // jenis (yes) //$NON-NLS-1$
+				Db.Edisi.namafile + " text, " + // nama file di sd card (full path) //$NON-NLS-1$
+				Db.Edisi.namafile_pdbasal + " text, " + // nama file kalau bekas dikonvert dari pdb (nama doang) //$NON-NLS-1$
+				Db.Edisi.aktif + " integer, " + // tampilkan di daftar edisi? //$NON-NLS-1$
+				Db.Edisi.urutan + " integer)");
+		
+		// index Edisi(urutan)
+		db.execSQL(String.format("create index if not exists index_301 on %s (%s)", Db.TABEL_Edisi, Db.Edisi.urutan)); //$NON-NLS-1$
+	}
+	
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.d(TAG, "onUpgrade dipanggil, oldVersion=" + oldVersion + " newVersion=" + newVersion); //$NON-NLS-1$ //$NON-NLS-2$
-
+		
 		if (oldVersion <= 23) {
 			// konvert dari Bukmak ke Bukmak2
 			konvertDariBukmakKeBukmak2(db);
+		}
+
+		if (oldVersion <= 50) {
+			// tambah tabel Edisi
+			bikinTabelEdisi(db);
 		}
 		
 	}
