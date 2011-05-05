@@ -77,7 +77,13 @@ public class YesPembaca extends Pembaca {
 
 	@Override
 	public String getJudul() {
-		return judul;
+		try {
+			init();
+			return judul;
+		} catch (Exception e) {
+			Log.e(TAG, "init error", e); //$NON-NLS-1$
+			return "";
+		}
 	}
 
 	public void bacaInfoEdisi() {

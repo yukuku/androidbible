@@ -346,4 +346,32 @@ public class InternalDb {
 		cv.put(Db.Edisi.aktif, aktif? 1: 0);
 		db.update(Db.TABEL_Edisi, cv, Db.Edisi.jenis + "=? and " + Db.Edisi.namafile + "=?", new String[] {String.valueOf(Db.Edisi.jenis_yes), namafile});
 	}
+
+	public int getUrutanTerbesarEdisiYes() {
+		SQLiteDatabase db = helper.getReadableDatabase();
+		SQLiteStatement stmt = db.compileStatement("select max(" + Db.Edisi.urutan + ") from " + Db.TABEL_Edisi);
+		return (int) stmt.simpleQueryForLong();
+	}
+
+	public void tambahEdisiYesDenganAktif(MEdisiYes edisi, boolean aktif) {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		ContentValues cv = new ContentValues();
+		cv.put(Db.Edisi.aktif, aktif);
+		cv.put(Db.Edisi.jenis, Db.Edisi.jenis_yes);
+		cv.put(Db.Edisi.judul, edisi.judul);
+		cv.put(Db.Edisi.namafile, edisi.namafile);
+		cv.put(Db.Edisi.namafile_pdbasal, edisi.namafile_pdbasal);
+		cv.put(Db.Edisi.urutan, edisi.urutan);
+		Log.d(TAG, "tambah edisi yes: " + cv.toString());
+		db.insert(Db.TABEL_Edisi, null, cv);
+	}
+
+	public boolean adakahEdisiYesDenganNamafile(String namafile) {
+		SQLiteDatabase db = helper.getReadableDatabase();
+		SQLiteStatement stmt = db.compileStatement("select count(*) from " + Db.TABEL_Edisi + " where " + Db.Edisi.jenis + "=? and " + Db.Edisi.namafile + "=?");
+		stmt.clearBindings();
+		stmt.bindLong(1, Db.Edisi.jenis_yes);
+		stmt.bindString(2, namafile);
+		return stmt.simpleQueryForLong() > 0;
+	}
 }

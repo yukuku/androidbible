@@ -7,5 +7,6 @@
 	<classpathentry kind="src" path="KirimFidbek_src"/>
 	<classpathentry kind="src" path="BintexReader_src"/>
 	<classpathentry kind="src" path="BiblePlus_src"/>
+	<classpathentry kind="src" path="FileChooser_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

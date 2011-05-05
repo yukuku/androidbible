@@ -47,6 +47,11 @@
 			<locationURI>_android_BintexReader_8d979ac3/src</locationURI>
 		</link>
 		<link>
+			<name>FileChooser_src</name>
+			<type>2</type>
+			<locationURI>_android_FileChooser_167b3ff/src</locationURI>
+		</link>
+		<link>
 			<name>KirimFidbek_src</name>
 			<type>2</type>
 			<locationURI>_android_KirimFidbek_7665a5df/src</locationURI>

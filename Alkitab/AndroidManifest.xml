@@ -17,6 +17,7 @@
 		<activity android:name="yuku.alkitab.base.Search2Activity" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />
 		<activity android:name="yuku.alkitab.base.RenunganActivity" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />
 		<activity android:name="yuku.alkitab.base.BantuanActivity" android:label="@string/bantuan_judul" />
+		<activity android:name="yuku.filechooser.FileChooserActivity" />
 	</application>
 
 	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4" />
