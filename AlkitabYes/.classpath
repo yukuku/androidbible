@@ -3,12 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="src" path="AmbilWarna_src"/>
-	<classpathentry kind="src" path="KirimFidbek_src"/>
-	<classpathentry kind="src" path="BintexReader_src"/>
-	<classpathentry kind="src" path="FileChooser_src"/>
-	<classpathentry kind="src" path="BiblePlus_src"/>
-	<classpathentry kind="src" path="AlkitabYes_src"/>
 	<classpathentry kind="src" path="BintexWriter_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

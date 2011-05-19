@@ -374,4 +374,9 @@ public class InternalDb {
 		stmt.bindString(2, namafile);
 		return stmt.simpleQueryForLong() > 0;
 	}
+
+	public void hapusEdisiYes(MEdisiYes edisi) {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		db.delete(Db.TABEL_Edisi, Db.Edisi.namafile + "=?", new String[] {edisi.namafile});
+	}
 }

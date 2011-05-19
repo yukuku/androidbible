@@ -5,11 +5,11 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 import yuku.alkitab.BdbProses.Rec;
-import yuku.yes.*;
-import yuku.yes.YesFile.InfoEdisi;
-import yuku.yes.YesFile.InfoKitab;
-import yuku.yes.YesFile.Kitab;
-import yuku.yes.YesFile.Teks;
+import yuku.alkitab.yes.*;
+import yuku.alkitab.yes.YesFile.InfoEdisi;
+import yuku.alkitab.yes.YesFile.InfoKitab;
+import yuku.alkitab.yes.YesFile.Kitab;
+import yuku.alkitab.yes.YesFile.Teks;
 
 public class TobaBdbProses {
 	private static final String KODE_EDISI = "toba";
@@ -63,7 +63,7 @@ public class TobaBdbProses {
 			};
 		}};
 		
-		file.output(new FileOutputStream(YES_OUTPUT));
+		file.output(new RandomAccessFile(YES_OUTPUT, "rw"));
 	}
 
 
@@ -73,7 +73,7 @@ public class TobaBdbProses {
 			ss.add(rec.isi);
 		}
 		
-		return new Teks() {{
+		return new Teks("ascii") {{
 			xisi = ss.toArray(new String[ss.size()]);
 		}};
 	}

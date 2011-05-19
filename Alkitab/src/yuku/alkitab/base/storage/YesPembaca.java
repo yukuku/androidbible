@@ -145,7 +145,7 @@ public class YesPembaca extends Pembaca {
 					
 					if (key.equals("versi")) { //$NON-NLS-1$
 						int versi = in.readInt();
-						if (versi != 1) throw new RuntimeException("Versi Kitab: " + versi + " tidak dikenal"); //$NON-NLS-1$ //$NON-NLS-2$
+						if (versi > 2) throw new RuntimeException("Versi Kitab (lebih dari 2): " + versi + " tidak dikenal"); //$NON-NLS-1$ //$NON-NLS-2$
 					} else if (key.equals("pos")) { //$NON-NLS-1$
 						k.pos = in.readInt();
 					} else if (key.equals("nama")) { //$NON-NLS-1$
@@ -160,6 +160,9 @@ public class YesPembaca extends Pembaca {
 							k.nayat[i] = in.readUint8();
 						}
 					} else if (key.equals("ayatLoncat")) { //$NON-NLS-1$
+						// TODO di masa depan
+						in.readInt();
+					} else if (key.equals("pdbBookNumber")) { //$NON-NLS-1$
 						// TODO di masa depan
 						in.readInt();
 					} else if (key.equals("pasal_offset")) { //$NON-NLS-1$

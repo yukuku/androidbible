@@ -1,12 +1,15 @@
-package yuku.yes;
+package yuku.alkitab.yes;
 
 import java.io.*;
 import java.lang.annotation.*;
 
 import yuku.bintex.BintexWriter;
+import android.util.Log;
 
 public class YesFile {
 	private static final byte FILE_VERSI = 0x01;
+	private static final String TAG = YesFile.class.getSimpleName();
+	
 	byte[] FILE_HEADER = {(byte) 0x98, 0x58, 0x0d, 0x0a, 0x00, 0x5d, (byte) 0xe0, FILE_VERSI};
 	
 	public Seksi[] xseksi;
@@ -54,8 +57,9 @@ public class YesFile {
 	}
 	
 	public static class Kitab {
-		public int versi;
+		public int versi; // 1; 2 mulai ada pdbBookNumber
 		public int pos;
+		public int pdbBookNumber;
 		public String nama;
 		public String judul;
 		public int npasal;
@@ -100,6 +104,11 @@ public class YesFile {
 			writer.writeShortString("offset");
 			writer.writeInt(offset);
 			
+			if (pdbBookNumber != 0) {
+				writer.writeShortString("pdbBookNumber");
+				writer.writeInt(pdbBookNumber);
+			}
+			
 			writer.writeShortString("end");
 		}
 	}
@@ -116,6 +125,13 @@ public class YesFile {
 	}
 	
 	public static class Teks implements IsiSeksi {
+		private final String encoding;
+
+		public Teks(String encoding) {
+			this.encoding = encoding;
+			
+		}
+		
 		int ayatLoncat = 0;
 		
 		public String[] xisi;
@@ -127,7 +143,7 @@ public class YesFile {
 			}
 			
 			for (String isi: xisi) {
-				writer.writeRaw(isi.getBytes("ascii"));
+				writer.writeRaw(isi.getBytes(encoding));
 				writer.writeUint8('\n');
 			}
 		}
@@ -153,25 +169,50 @@ public class YesFile {
 		}
 	}
 	
-	public void output(OutputStream os) throws Exception {
-		BintexWriter os2 = new BintexWriter(os);
+	public void output(RandomAccessFile file) throws Exception {
+		RandomOutputStream ros = new RandomOutputStream(file);
+		BintexWriter os2 = new BintexWriter(ros);
 		os2.writeRaw(FILE_HEADER);
 		
+		long pos = file.getFilePointer();
 		for (Seksi seksi: xseksi) {
-			os2.writeRaw(seksi.nama());
+			pos = file.getFilePointer();
+			{
+				byte[] nama = seksi.nama();
+				Log.d(TAG, "[pos=" + pos + "] tulis nama seksi: " + new String(nama));
+				os2.writeRaw(nama);
+			}
 			
-			ByteArrayOutputStream buf = new ByteArrayOutputStream();
+			pos = file.getFilePointer();
+			{
+				byte[] palsu = {-1, -1, -1, -1};
+				Log.d(TAG, "[pos=" + pos + "] tulis placeholder ukuran");
+				os2.writeRaw(palsu);
+			}
 			
-			BintexWriter writer = new BintexWriter(buf);
-			seksi.isi().toBytes(writer);
-			writer.close();
+			int posSebelumIsi = os2.getPos();
+			Log.d(TAG, "[pos=" + file.getFilePointer() + "] tulis isi seksi");
+			seksi.isi().toBytes(os2);
+			int posSesudahIsi = os2.getPos();
+			int ukuranIsi = posSesudahIsi - posSebelumIsi;
+			Log.d(TAG, "[pos=" + file.getFilePointer() + "] isi seksi selesai ditulis, sebesar " + ukuranIsi);
 			
-			int ukuran = buf.size();
-			os2.writeInt(ukuran);
+			long posUntukMelanjutkan = file.getFilePointer();
 			
-			os2.writeRaw(buf.toByteArray());
+			{
+				file.seek(pos);
+				Log.d(TAG, "[pos=" + pos + "] tulis ukuran: " + ukuranIsi);
+				os2.writeInt(ukuranIsi);
+			}
+			
+			file.seek(posUntukMelanjutkan);
 		}
 		
-		os.write("____________".getBytes("ascii"));
+		pos = file.getFilePointer();
+		Log.d(TAG, "[pos=" + pos + "] tulis penanda tidak ada seksi lagi (____________)");
+		os2.writeRaw("____________".getBytes("ascii"));
+		os2.close();
+		pos = file.getFilePointer();
+		Log.d(TAG, "[pos=" + pos + "] selesai");
 	}
 }

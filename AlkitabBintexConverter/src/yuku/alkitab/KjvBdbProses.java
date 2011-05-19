@@ -5,11 +5,11 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 import yuku.alkitab.BdbProses.Rec;
-import yuku.yes.*;
-import yuku.yes.YesFile.InfoEdisi;
-import yuku.yes.YesFile.InfoKitab;
-import yuku.yes.YesFile.Kitab;
-import yuku.yes.YesFile.Teks;
+import yuku.alkitab.yes.*;
+import yuku.alkitab.yes.YesFile.InfoEdisi;
+import yuku.alkitab.yes.YesFile.InfoKitab;
+import yuku.alkitab.yes.YesFile.Kitab;
+import yuku.alkitab.yes.YesFile.Teks;
 
 public class KjvBdbProses {
 	private static final String KJV_TEKS_BDB = "../Alkitab/publikasi/kjv_teks_bdb.txt";
@@ -64,7 +64,7 @@ public class KjvBdbProses {
 			};
 		}};
 		
-		file.output(new FileOutputStream(KJV_YES_OUTPUT));
+		file.output(new RandomAccessFile(KJV_YES_OUTPUT, "rw"));
 	}
 
 
@@ -74,7 +74,7 @@ public class KjvBdbProses {
 			ss.add(rec.isi);
 		}
 		
-		return new Teks() {{
+		return new Teks("ascii") {{
 			xisi = ss.toArray(new String[ss.size()]);
 		}};
 	}

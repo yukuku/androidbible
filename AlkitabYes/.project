@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Alkitab</name>
+	<name>AlkitabYes</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -32,39 +32,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>AlkitabYes_src</name>
-			<type>2</type>
-			<locationURI>_android_AlkitabYes_7c87933b/src</locationURI>
-		</link>
-		<link>
-			<name>AmbilWarna_src</name>
-			<type>2</type>
-			<locationURI>_android_AmbilWarna_5bada8e2/src</locationURI>
-		</link>
-		<link>
-			<name>BiblePlus_src</name>
-			<type>2</type>
-			<locationURI>_android_BiblePlus_d3235f4e/src</locationURI>
-		</link>
-		<link>
-			<name>BintexReader_src</name>
-			<type>2</type>
-			<locationURI>_android_BintexReader_8d979ac3/src</locationURI>
-		</link>
-		<link>
 			<name>BintexWriter_src</name>
 			<type>2</type>
 			<locationURI>_android_BintexWriter_96dae673/src</locationURI>
-		</link>
-		<link>
-			<name>FileChooser_src</name>
-			<type>2</type>
-			<locationURI>_android_FileChooser_167b3ff/src</locationURI>
-		</link>
-		<link>
-			<name>KirimFidbek_src</name>
-			<type>2</type>
-			<locationURI>_android_KirimFidbek_7665a5df/src</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

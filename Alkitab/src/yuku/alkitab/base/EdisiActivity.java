@@ -10,6 +10,7 @@ import yuku.alkitab.base.AddonManager.DonlotThread;
 import yuku.alkitab.base.AddonManager.Elemen;
 import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.model.Edisi;
+import yuku.alkitab.base.pdbconvert.ConvertPdbToYes;
 import yuku.alkitab.base.storage.*;
 import yuku.filechooser.*;
 import yuku.filechooser.FileChooserConfig.Mode;
@@ -21,6 +22,7 @@ import android.util.Log;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.*;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class EdisiActivity extends Activity {
@@ -111,13 +113,38 @@ public class EdisiActivity extends Activity {
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		// FIXME
+		if (menu == null) return;
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+		if (info.position == adapter.getCount() - 1) {
+			// ga ada menu untuk Buka file
+		} else {
+			new MenuInflater(getApplicationContext()).inflate(R.menu.context_edisi, menu);
+		
+			MenuItem menuBuang = menu.findItem(R.id.menuBuang);
+			if (menuBuang != null) {
+				menuBuang.setEnabled(false);
+				MEdisi item = adapter.getItem(info.position);
+				if (item instanceof MEdisiYes) {
+					menuBuang.setEnabled(true);
+				}
+			}
+		}
 	}
 	
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		
-		return super.onContextItemSelected(item);
+		switch (item.getItemId()) {
+		case R.id.menuBuang:
+			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+			MEdisi edisi = adapter.getItem(info.position);
+			if (edisi instanceof MEdisiYes) {
+				S.getDb().hapusEdisiYes((MEdisiYes) edisi);
+				adapter.initDaftarEdisiYes();
+				adapter.notifyDataSetChanged();
+			}
+			return true;
+		}
+		return false;
 	}
 	
 	private void klikPadaEdisiPreset(final CheckBox cAktif, final MEdisiPreset edisi) {
@@ -194,6 +221,7 @@ public class EdisiActivity extends Activity {
 								if (AddonManager.cekAdaEdisi(edisi.namafile_preset)) {
 									edisi.setAktif(true);
 								}
+								adapter.initDaftarEdisiYes();
 								adapter.notifyDataSetChanged();
 							}
 						});
@@ -259,55 +287,65 @@ public class EdisiActivity extends Activity {
 		
 			String filename = result.firstFilename;
 			if (filename.toLowerCase().endsWith(".yes")) {
-				{ // cari dup
-					boolean dup = false;
-					BuildConfig c = BuildConfig.get(getApplicationContext());
-					for (MEdisiPreset preset: c.xpreset) {
-						if (filename.equals(AddonManager.getEdisiPath(preset.namafile_preset))) {
-							dup = true;
-							break;
-						}
-					}
-					
-					if (!dup) dup = S.getDb().adakahEdisiYesDenganNamafile(filename);
-					
-					if (dup) {
-						new AlertDialog.Builder(this)
-						.setMessage("File " + filename + " sudah ada dalam daftar versi.")
-						.setPositiveButton(R.string.ok, null)
-						.show();
-						return;
-					}
-				}
-				
-				try {
-					YesPembaca pembaca = new YesPembaca(getApplicationContext(), filename);
-					String judul = pembaca.getJudul();
-					int urutanTerbesar = S.getDb().getUrutanTerbesarEdisiYes();
-					if (urutanTerbesar == 0) urutanTerbesar = 100; // default
-					
-					MEdisiYes yes = new MEdisiYes();
-					yes.jenis = Db.Edisi.jenis_yes;
-					yes.judul = judul;
-					yes.namafile = filename;
-					yes.namafile_pdbasal = null;
-					yes.urutan = urutanTerbesar + 1;
-					
-					S.getDb().tambahEdisiYesDenganAktif(yes, true);
-					adapter.notifyDataSetChanged();
-				} catch (Exception e) {
-					new AlertDialog.Builder(this)
-					.setTitle("Ada kesalahan")
-					.setMessage(e.getClass().getSimpleName() + ": " + e.getMessage())
-					.setPositiveButton(R.string.ok, null)
-					.show();
-				}
+				handleFileOpenYes(filename);
 			} else if (filename.toLowerCase().endsWith(".pdb")) {
-				// FIXME convert
+				handleFileOpenPdb(filename);
 			} else {
 				Toast.makeText(getApplicationContext(), "Invalid file selected.", Toast.LENGTH_SHORT).show();
 			}
 		}
+	}
+	
+	private void handleFileOpenYes(String filename) {
+		{ // cari dup
+			boolean dup = false;
+			BuildConfig c = BuildConfig.get(getApplicationContext());
+			for (MEdisiPreset preset: c.xpreset) {
+				if (filename.equals(AddonManager.getEdisiPath(preset.namafile_preset))) {
+					dup = true;
+					break;
+				}
+			}
+			
+			if (!dup) dup = S.getDb().adakahEdisiYesDenganNamafile(filename);
+			
+			if (dup) {
+				new AlertDialog.Builder(this)
+				.setMessage("File " + filename + " sudah ada dalam daftar versi.")
+				.setPositiveButton(R.string.ok, null)
+				.show();
+				return;
+			}
+		}
+		
+		try {
+			YesPembaca pembaca = new YesPembaca(getApplicationContext(), filename);
+			String judul = pembaca.getJudul();
+			int urutanTerbesar = S.getDb().getUrutanTerbesarEdisiYes();
+			if (urutanTerbesar == 0) urutanTerbesar = 100; // default
+			
+			MEdisiYes yes = new MEdisiYes();
+			yes.jenis = Db.Edisi.jenis_yes;
+			yes.judul = judul;
+			yes.namafile = filename;
+			yes.namafile_pdbasal = null;
+			yes.urutan = urutanTerbesar + 1;
+			
+			S.getDb().tambahEdisiYesDenganAktif(yes, true);
+			adapter.initDaftarEdisiYes();
+			adapter.notifyDataSetChanged();
+		} catch (Exception e) {
+			new AlertDialog.Builder(this)
+			.setTitle("Ada kesalahan")
+			.setMessage(e.getClass().getSimpleName() + ": " + e.getMessage())
+			.setPositiveButton(R.string.ok, null)
+			.show();
+		}
+	}
+
+	private void handleFileOpenPdb(String filename) {
+		ConvertPdbToYes converter = new ConvertPdbToYes();
+		converter.convert(getApplicationContext(), filename);
 	}
 
 	// model
@@ -429,9 +467,13 @@ public class EdisiActivity extends Activity {
 				}
 			}
 			
-			xyes = S.getDb().listSemuaEdisi();
+			initDaftarEdisiYes();
 		}
 		
+		public void initDaftarEdisiYes() {
+			xyes = S.getDb().listSemuaEdisi();
+		}
+
 		@Override
 		public int getCount() {
 			return 1 /* internal */ + xpreset.size() + xyes.size() + 1 /* open */;
