@@ -1,29 +1,30 @@
 
 package yuku.alkitab.base;
 
-import java.io.*;
-import java.util.*;
-
-import org.xml.sax.*;
-import org.xml.sax.ext.DefaultHandler2;
-import org.xmlpull.v1.XmlSerializer;
-
-import yuku.alkitab.R;
-import yuku.alkitab.base.BukmakEditor.Listener;
-import yuku.alkitab.base.model.*;
-import yuku.alkitab.base.storage.Db;
-import yuku.andoutil.Sqlitil;
 import android.app.*;
 import android.content.*;
-import android.content.res.Configuration;
-import android.database.Cursor;
+import android.content.res.*;
+import android.database.*;
 import android.os.*;
-import android.provider.BaseColumns;
-import android.util.Xml;
+import android.provider.*;
+import android.util.*;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.*;
+
+import java.io.*;
+import java.util.*;
+
+import org.xml.sax.*;
+import org.xml.sax.ext.*;
+import org.xmlpull.v1.*;
+
+import yuku.alkitab.*;
+import yuku.alkitab.base.BukmakEditor.Listener;
+import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.storage.*;
+import yuku.andoutil.*;
 
 public class BukmakActivity extends ListActivity {
 	public static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
@@ -78,10 +79,8 @@ public class BukmakActivity extends ListActivity {
 					return true;
 				} else if (cursorColumnsSelect[columnIndex] == Db.Bukmak2.ari) { // $codepro.audit.disable stringComparison
 					int ari = cursor.getInt(columnIndex);
-					Kitab kitab = S.edisiAktif.getXkitab()[Ari.toKitab(ari)];
-					String[] xayat = S.muatTeks(S.edisiAktif, kitab, Ari.toPasal(ari));
-					int ayat_1 = Ari.toAyat(ari);
-					String isi = ayat_1 > xayat.length? "(...)": xayat[ayat_1 - 1]; //$NON-NLS-1$
+					Kitab kitab = S.edisiAktif.getKitab(Ari.toKitab(ari));
+					String isi = S.muatSatuAyat(S.edisiAktif, kitab, Ari.toPasal(ari), Ari.toAyat(ari));
 					isi = U.buangKodeKusus(isi);
 					
 					TextView tv = (TextView) view;

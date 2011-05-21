@@ -1,19 +1,20 @@
 package yuku.alkitab.base;
 
-import java.io.InputStream;
-import java.util.*;
-
-import yuku.alkitab.R;
-import yuku.alkitab.base.config.BuildConfig;
-import yuku.alkitab.base.model.*;
-import yuku.alkitab.base.renungan.TukangDonlot;
-import yuku.alkitab.base.storage.*;
-import yuku.kirimfidbek.PengirimFidbek;
 import android.content.*;
 import android.content.res.*;
 import android.graphics.*;
-import android.os.Handler;
-import android.util.Log;
+import android.os.*;
+import android.util.*;
+
+import java.io.*;
+import java.util.*;
+
+import yuku.alkitab.R;
+import yuku.alkitab.base.config.*;
+import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.renungan.*;
+import yuku.alkitab.base.storage.*;
+import yuku.kirimfidbek.*;
 
 public class S {
 	private static final String TAG = S.class.getSimpleName();
@@ -76,7 +77,7 @@ public class S {
 		siapinEdisi();
 		
 		if (kitabAktif != null) return;
-		kitabAktif = edisiAktif.getXkitab()[0]; // nanti diset sama luar 
+		kitabAktif = edisiAktif.getKitabPertama(); // nanti diset sama luar waktu init 
 	}
 	
 	public static void bacaPengaturan(Context context) {
@@ -115,12 +116,36 @@ public class S {
 			return 0xffff0000;
 		}
 	}
+	
+	private static final String teksTakTersedia = "[?]";
+	
+	private static final String[] teksTakTersediaArray = {
+		teksTakTersedia,
+	};
 
+	public static synchronized String muatSatuAyat(Edisi edisi, Kitab kitab, int pasal_1, int ayat_1) {
+		if (kitab == null) {
+			return teksTakTersedia;
+		}
+		String[] xayat = muatTeks(edisi, kitab, pasal_1, false, false);
+		int ayat_0 = ayat_1 - 1;
+		if (ayat_0 >= xayat.length) {
+			return "[?]";
+		}
+		return xayat[ayat_0];
+	}
+	
 	public static synchronized String[] muatTeks(Edisi edisi, Kitab kitab, int pasal_1) {
+		if (kitab == null) {
+			return teksTakTersediaArray;
+		}
 		return muatTeks(edisi, kitab, pasal_1, false, false);
 	}
 
 	public static synchronized String muatTeksJanganPisahAyatHurufKecil(Edisi edisi, Kitab kitab, int pasal_1) {
+		if (kitab == null) {
+			return teksTakTersedia;
+		}
 		return muatTeks(edisi, kitab, pasal_1, true, true)[0];
 	}
 	
@@ -146,16 +171,16 @@ public class S {
 	}
 
 	public static String alamat(Edisi edisi, int ari) {
-		int kitab = Ari.toKitab(ari);
+		int kitabPos = Ari.toKitab(ari);
 		int pasal_1 = Ari.toPasal(ari);
 		int ayat_1 = Ari.toAyat(ari);
 		
 		StringBuilder hasil = new StringBuilder(40);
-		Kitab[] xkitab = edisi.getXkitab();
-		if (kitab >= xkitab.length) {
-			hasil.append('[').append(kitab).append("] "); //$NON-NLS-1$
+		Kitab k = edisi.getKitab(kitabPos);
+		if (k == null) {
+			hasil.append('[').append(kitabPos).append("] "); //$NON-NLS-1$
 		} else {
-			hasil.append(xkitab[kitab].judul).append(' ');
+			hasil.append(k.judul).append(' ');
 		}
 		
 		hasil.append(pasal_1);
@@ -166,11 +191,11 @@ public class S {
 	}
 
 	public static String alamat(Kitab kitab, int pasal_1) {
-		return kitab.judul + " " + pasal_1; //$NON-NLS-1$
+		return (kitab == null? "[?]": kitab.judul) + " " + pasal_1; //$NON-NLS-1$
 	}
 
 	public static String alamat(Kitab kitab, int pasal_1, int ayat_1) {
-		return kitab.judul + " " + pasal_1 + ":" + ayat_1;  //$NON-NLS-1$//$NON-NLS-2$
+		return (kitab == null? "[?]": kitab.judul) + " " + pasal_1 + ":" + ayat_1;  //$NON-NLS-1$//$NON-NLS-2$
 	}
 	
 	/**

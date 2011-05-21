@@ -1,36 +1,37 @@
 package yuku.alkitab.base;
 
+import android.app.*;
+import android.content.*;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.*;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.*;
+import android.graphics.drawable.*;
+import android.net.*;
+import android.os.*;
+import android.text.*;
+import android.text.style.*;
+import android.text.util.*;
+import android.util.*;
+import android.view.*;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.*;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+
 import java.util.*;
 
-import yuku.alkitab.R;
+import yuku.alkitab.*;
 import yuku.alkitab.base.BukmakEditor.Listener;
 import yuku.alkitab.base.EdisiActivity.MEdisi;
 import yuku.alkitab.base.EdisiActivity.MEdisiInternal;
 import yuku.alkitab.base.EdisiActivity.MEdisiPreset;
 import yuku.alkitab.base.EdisiActivity.MEdisiYes;
 import yuku.alkitab.base.GelembungDialog.RefreshCallback;
-import yuku.alkitab.base.config.BuildConfig;
+import yuku.alkitab.base.config.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.Db.Bukmak2;
 import yuku.alkitab.base.storage.*;
-import yuku.andoutil.IntArrayList;
-import android.app.*;
-import android.content.*;
-import android.content.SharedPreferences.Editor;
-import android.content.pm.*;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Configuration;
-import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
-import android.os.*;
-import android.text.*;
-import android.text.style.UnderlineSpan;
-import android.text.util.Linkify;
-import android.util.*;
-import android.view.*;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.*;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+import yuku.andoutil.*;
 
 public class IsiActivity extends Activity {
 	public static final String TAG = IsiActivity.class.getSimpleName();
@@ -189,9 +190,11 @@ public class IsiActivity extends Activity {
 		Log.d(TAG, "Akan menuju kitab " + kitabTerakhir + " pasal " + kitabTerakhir + " ayat " + ayatTerakhir); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		// muat kitab
-		Kitab[] xkitab = S.edisiAktif.getXkitab();
-		if (kitabTerakhir < xkitab.length) {
-			S.kitabAktif = xkitab[kitabTerakhir];
+		{
+			Kitab k = S.edisiAktif.getKitab(kitabTerakhir);
+			if (k != null) {
+				S.kitabAktif = k;
+			}
 		}
 		
 		// muat pasal dan ayat
@@ -243,13 +246,22 @@ public class IsiActivity extends Activity {
 			return 0;
 		}
 		
-		Kitab[] xkitab = S.edisiAktif.getXkitab();
-		int kitab = peloncat.getKitab(xkitab);
-		if (kitab != -1) {
-			S.kitabAktif = xkitab[kitab];
+		int kitabPos = peloncat.getKitab(S.edisiAktif.getConsecutiveXkitab());
+		Kitab terpilih;
+		if (kitabPos != -1) {
+			Kitab k = S.edisiAktif.getKitab(kitabPos);
+			if (k != null) {
+				terpilih = k;
+			} else {
+				// not avail, just fallback
+				terpilih = S.kitabAktif;
+			}
 		} else {
-			kitab = S.kitabAktif.pos;
+			terpilih = S.kitabAktif;
 		}
+		
+		// set kitab
+		S.kitabAktif = terpilih;
 		
 		int pasal = peloncat.getPasal();
 		int ayat = peloncat.getAyat();
@@ -260,7 +272,7 @@ public class IsiActivity extends Activity {
 			ari_pa = tampil(pasal, ayat);
 		}
 		
-		return Ari.encode(kitab, ari_pa);
+		return Ari.encode(terpilih.pos, ari_pa);
 	}
 	
 	private void loncatKeAri(int ari) {
@@ -268,12 +280,13 @@ public class IsiActivity extends Activity {
 		
 		Log.d(TAG, "akan loncat ke ari 0x" + Integer.toHexString(ari)); //$NON-NLS-1$
 		
-		Kitab[] xkitab = S.edisiAktif.getXkitab();
-		int kitab = Ari.toKitab(ari);
-		if (kitab >= 0 && kitab < xkitab.length) {
-			S.kitabAktif = xkitab[kitab];
+		int kitabPos = Ari.toKitab(ari);
+		Kitab k = S.edisiAktif.getKitab(kitabPos);
+		
+		if (k != null) {
+			S.kitabAktif = k;
 		} else {
-			Log.w(TAG, "mana ada kitab " + ari); //$NON-NLS-1$
+			Log.w(TAG, "mana ada kitabPos " + kitabPos + " dari ari " + ari); //$NON-NLS-1$
 			return;
 		}
 		
@@ -775,24 +788,16 @@ public class IsiActivity extends Activity {
 				Edisi edisi = me.getEdisi(getApplicationContext());
 				
 				if (edisi != null) {
-					int posKitabAktif = S.kitabAktif.pos;
-					
 					S.edisiAktif = edisi;
 					S.edisiId = me.getEdisiId();
 					S.siapinKitab();
 					
-					Kitab[] xkitab = S.edisiAktif.getXkitab();
-					if (posKitabAktif < xkitab.length && xkitab[posKitabAktif].pos == posKitabAktif) {
-						// posisinya sama. Mari pake langsung
-						S.kitabAktif = xkitab[posKitabAktif];
+					Kitab k = S.edisiAktif.getKitab(S.kitabAktif.pos);
+					if (k != null) {
+						// assign kitab aktif dengan yang baru, ga usa perhatiin pos
+						S.kitabAktif = k;
 					} else {
-						for (Kitab k: xkitab) {
-							if (k.pos == posKitabAktif) {
-								S.kitabAktif = k;
-								break;
-							}
-						}
-						S.kitabAktif = xkitab[0]; // apa boleh buat, ga ketemu...
+						S.kitabAktif = S.edisiAktif.getKitabPertama(); // apa boleh buat, ga ketemu...
 					}
 					
 					dialog.dismiss();
@@ -835,16 +840,18 @@ public class IsiActivity extends Activity {
 			if (resultCode == RESULT_OK) {
 				int pasal = data.getIntExtra(MenujuActivity.EXTRA_pasal, 0);
 				int ayat = data.getIntExtra(MenujuActivity.EXTRA_ayat, 0);
-				int kitab = data.getIntExtra(MenujuActivity.EXTRA_kitab, AdapterView.INVALID_POSITION);
+				int kitabPos = data.getIntExtra(MenujuActivity.EXTRA_kitab, AdapterView.INVALID_POSITION);
 				
-				Kitab[] xkitab = S.edisiAktif.getXkitab();
-				if (kitab != AdapterView.INVALID_POSITION && kitab < xkitab.length && kitab >= 0) {
+				if (kitabPos != AdapterView.INVALID_POSITION) {
 					// ganti kitab
-					S.kitabAktif = xkitab[kitab];
+					Kitab k = S.edisiAktif.getKitab(kitabPos);
+					if (k != null) {
+						S.kitabAktif = k;
+					}
 				}
 				
 				int ari_pa = tampil(pasal, ayat);
-				sejarah.tambah(Ari.encode(kitab, ari_pa));
+				sejarah.tambah(Ari.encode(kitabPos, ari_pa));
 			} else if (resultCode == RESULT_pindahCara) {
 				bukaDialogLoncat();
 			}
@@ -999,39 +1006,41 @@ public class IsiActivity extends Activity {
 		Kitab kitabKini = S.kitabAktif;
 		if (pasal_1 == 1) {
 			// uda di awal pasal, masuk ke kitab sebelum
-			if (kitabKini.pos > 0) {
-				Kitab[] xkitab = S.edisiAktif.getXkitab();
-				Kitab kitabBaru = xkitab[kitabKini.pos - 1];
-				S.kitabAktif = kitabBaru;
-				int pasalBaru_1 = kitabBaru.npasal;
-				tampil(pasalBaru_1, 1);
-				//sejarah.tambah(Ari.encode(kitabBaru.pos, pasalBaru_1, 1));
-			} else {
-				// Kejadian 1. Ga usa ngapa2in
+			int cobaKitabPos = kitabKini.pos - 1;
+			while (cobaKitabPos >= 0) {
+				Kitab kitabBaru = S.edisiAktif.getKitab(cobaKitabPos);
+				if (kitabBaru != null) {
+					S.kitabAktif = kitabBaru;
+					int pasalBaru_1 = kitabBaru.npasal; // ke pasal terakhir
+					tampil(pasalBaru_1, 1);
+					break;
+				}
 			}
+			// whileelse: sekarang sudah Kejadian 1. Ga usa ngapa2in
 		} else {
 			int pasalBaru = pasal_1 - 1;
 			tampil(pasalBaru, 1);
-			//sejarah.tambah(Ari.encode(kitabKini.pos, pasalBaru, 1));
 		}
 	}
 	
 	private void bKanan_click() {
 		Kitab kitabKini = S.kitabAktif;
 		if (pasal_1 >= kitabKini.npasal) {
-			Kitab[] xkitab = S.edisiAktif.getXkitab();
-			if (kitabKini.pos < xkitab.length - 1) {
-				Kitab kitabBaru = xkitab[kitabKini.pos + 1];
-				S.kitabAktif = kitabBaru;
-				tampil(1, 1);
-				//sejarah.tambah(Ari.encode(kitabBaru.pos, 1, 1));
-			} else {
-				// uda di Wahyu pasal terakhir. Ga usa ngapa2in
+			int maxKitabPos = S.edisiAktif.getMaxKitabPos();
+			int cobaKitabPos = kitabKini.pos + 1;
+			while (cobaKitabPos < maxKitabPos) {
+				Kitab kitabBaru = S.edisiAktif.getKitab(cobaKitabPos);
+				if (kitabBaru != null) {
+					S.kitabAktif = kitabBaru;
+					tampil(1, 1);
+					break;
+				}
+				cobaKitabPos++;
 			}
+			// whileelse: uda di Wahyu (atau kitab terakhir) pasal terakhir. Ga usa ngapa2in
 		} else {
 			int pasalBaru = pasal_1 + 1;
 			tampil(pasalBaru, 1);
-			//sejarah.tambah(Ari.encode(kitabKini.pos, pasalBaru, 1));
 		}
 	}
 	

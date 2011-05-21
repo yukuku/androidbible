@@ -1,19 +1,20 @@
 package yuku.alkitab.base;
 
-import java.util.Arrays;
-
-import yuku.alkitab.R;
-import yuku.alkitab.base.model.*;
-import yuku.andoutil.IntArrayList;
 import android.app.*;
 import android.content.*;
-import android.content.res.Configuration;
-import android.graphics.Color;
+import android.content.res.*;
+import android.graphics.*;
 import android.os.*;
 import android.text.*;
 import android.view.*;
 import android.view.inputmethod.*;
 import android.widget.*;
+
+import java.util.*;
+
+import yuku.alkitab.*;
+import yuku.alkitab.base.model.*;
+import yuku.andoutil.*;
 
 public class Search2Activity extends Activity {
 	public static final String TAG = Search2Activity.class.getSimpleName();
@@ -237,14 +238,13 @@ public class Search2Activity extends Activity {
 			TextView lCuplikan = (TextView) res.findViewById(R.id.lCuplikan);
 			
 			int ari = hasilCari.get(position);
-			Kitab kitab = S.edisiAktif.getXkitab()[Ari.toKitab(ari)];
+			Kitab kitab = S.edisiAktif.getKitab(Ari.toKitab(ari));
 			int pasal_1 = Ari.toPasal(ari);
 			int ayat_1 = Ari.toAyat(ari);
 			SpannableStringBuilder sb = new SpannableStringBuilder(S.alamat(kitab, pasal_1, ayat_1));
 			IsiActivity.aturTampilanTeksAlamatHasilCari(lAlamat, sb);
 			
-			String[] xayat = S.muatTeks(S.edisiAktif, kitab, pasal_1);
-			String ayat = xayat[ayat_1 - 1];
+			String ayat = S.muatSatuAyat(S.edisiAktif, kitab, pasal_1, ayat_1);
 			ayat = U.buangKodeKusus(ayat);
 			lCuplikan.setText(Search2Engine.hilite(ayat, xkata, warnaStabilo));
 			

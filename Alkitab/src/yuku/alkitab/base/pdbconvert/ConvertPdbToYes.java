@@ -1,18 +1,19 @@
 package yuku.alkitab.base.pdbconvert;
 
+import android.content.*;
+import android.util.*;
+
 import java.io.*;
-import java.util.Arrays;
+import java.util.*;
 
 import yuku.alkitab.yes.*;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
 import yuku.alkitab.yes.YesFile.IsiSeksi;
 import yuku.alkitab.yes.YesFile.Kitab;
-import yuku.bintex.BintexWriter;
-import android.content.Context;
-import android.util.Log;
+import yuku.bintex.*;
 
-import com.compactbyte.android.bible.PDBFileStream;
+import com.compactbyte.android.bible.*;
 import com.compactbyte.bibleplus.reader.*;
 
 public class ConvertPdbToYes {
@@ -119,26 +120,56 @@ public class ConvertPdbToYes {
 			versi = 1;
 			nama = pdb.getVersionName();
 			judul = pdb.getVersionName();
-			nkitab = pdb.getBookCount();
+			nkitab = pdb.getBookCount(); // FIXME salah! yang betul harus liat jadinya xkitab dulu
 			perikopAda = 0; // FIXME ada
 		}};
 	}
 
 	private InfoKitab getInfoKitab() throws Exception {
-		final int nkitab = pdb.getBookCount();
-		final Kitab[] xkitab_ = new Kitab[nkitab];
+		final int nbook = pdb.getBookCount();
 		
-		// FIXME sort books
+		// tempatin kitab2 di posisi yang betul, index array xkitab
+		// 0 = kejadian
+		// 65 = wahyu
+		// 66 sampe 87, terdaftar dalam PdbNumberToAriMapping
+		// selain itu, belum ada di mana2, maka kita buang aja (FIXME kasih warning)
+		final Kitab[] xkitab_;
+		{
+			int maxKitabPos = 0;
+			for (int bookPos = 0; bookPos < nbook; bookPos++) {
+				BookInfo bookInfo = pdb.getBook(bookPos);
+				bookInfo.openBook();
+				int bookNumber = bookInfo.getBookNumber();
+				int kitabPos = PdbNumberToAriMapping.pdbNumberToAriKitab(bookNumber);
+				if (kitabPos >= 0) {
+					if (kitabPos > maxKitabPos) maxKitabPos = kitabPos;
+				} else {
+					Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL");
+				}
+			}
+			// panjang array xkitab_ adalah menurut maxKitabPos
+			xkitab_ = new Kitab[maxKitabPos + 1];
+		}
 		
+		// untuk offset teks dari awal seksi teks
 		int offsetTotal = 0;
+		// untuk offset teks dari awal kitab
 		int offsetLewat = 0;
 		
-		for (int kitabPos = 0; kitabPos < nkitab; kitabPos++) {
-			BookInfo bookInfo = pdb.getBook(kitabPos);
+		for (int bookPos = 0; bookPos < nbook; bookPos++) {
+			BookInfo bookInfo = pdb.getBook(bookPos);
 			bookInfo.openBook();
+
+			int bookNumber = bookInfo.getBookNumber();
+			int kitabPos = PdbNumberToAriMapping.pdbNumberToAriKitab(bookNumber);
+			if (kitabPos < 0) {
+				Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL");
+				continue;
+			}
 			
 			Kitab k = new Kitab();
 			k.versi = 2;
+			k.pos = kitabPos;
 			k.ayatLoncat = 0;
 			k.encoding = 2; // UTF8 FIXME cek spesifikasi
 			k.judul = bookInfo.getFullName();
@@ -148,18 +179,17 @@ public class ConvertPdbToYes {
 			k.offset = offsetTotal;
 			k.pasal_offset = new int[k.npasal + 1];
 			k.pdbBookNumber = bookInfo.getBookNumber();
-			k.pos = kitabPos;
 
 			k.pasal_offset[0] = 0;
-			for (int i = 0; i < k.npasal; i++) {
-				k.nayat[i] = bookInfo.getVerseCount(i + 1);
+			for (int pasal_0 = 0; pasal_0 < k.npasal; pasal_0++) {
+				k.nayat[pasal_0] = bookInfo.getVerseCount(pasal_0 + 1);
 				
-				for (int j = 0; j < k.nayat[i]; j++) {
-					offsetLewat += bookInfo.getVerse(i + 1, j + 1).getBytes("utf-8").length + 1; // +1 buat \n
+				for (int ayat_0 = 0; ayat_0 < k.nayat[pasal_0]; ayat_0++) {
+					offsetLewat += bookInfo.getVerse(pasal_0 + 1, ayat_0 + 1).getBytes("utf-8").length + 1; // +1 buat \n
 				}
-				k.pasal_offset[i+1] = offsetLewat;
+				k.pasal_offset[pasal_0+1] = offsetLewat;
 			}
-			Log.d(TAG, "kitab " + k.judul + " pasal_offset: " + Arrays.toString(k.pasal_offset));
+			Log.d(TAG, "kitab " + k.judul + " (bookNumber=" + bookNumber + ", kitabPos=" + kitabPos + ") pasal_offset: " + Arrays.toString(k.pasal_offset));
 
 			xkitab_[kitabPos] = k;
 			

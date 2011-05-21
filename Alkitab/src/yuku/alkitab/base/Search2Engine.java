@@ -1,14 +1,15 @@
 package yuku.alkitab.base;
 
+import android.content.*;
+import android.graphics.*;
+import android.text.*;
+import android.text.style.*;
+import android.util.*;
+
 import java.util.*;
 
 import yuku.alkitab.base.model.*;
-import yuku.andoutil.IntArrayList;
-import android.content.Context;
-import android.graphics.Typeface;
-import android.text.*;
-import android.text.style.*;
-import android.util.Log;
+import yuku.andoutil.*;
 
 public class Search2Engine {
 	private static final String TAG = Search2Engine.class.getSimpleName();
@@ -209,7 +210,7 @@ public class Search2Engine {
 		}
 	
 		if (sumber == null) {
-			for (Kitab k: S.edisiAktif.getXkitab()) {
+			for (Kitab k: S.edisiAktif.getConsecutiveXkitab()) {
 				//# filter dulu
 				if (!filter_lama) {
 					if (k.pos >= 0 && k.pos <= 38) {
@@ -221,6 +222,7 @@ public class Search2Engine {
 						continue;
 					}
 				}
+				// FIXME kitab lain
 				
 				int npasal = k.npasal;
 				
@@ -246,7 +248,9 @@ public class Search2Engine {
 				ariKpKini = ariBerikutnya(sumber, ppos, ariKpKini);
 				if (ariKpKini == 0) break; // habis
 				
-				Kitab k = S.edisiAktif.getXkitab()[Ari.toKitab(ariKpKini)];
+				// ga usa cek kitab null, karena masuk sini hanya kalau udah pernah search token sebelumnya
+				// yang berdasarkan getConsecutiveXkitab yang ga mungkin ada nullnya.
+				Kitab k = S.edisiAktif.getKitab(Ari.toKitab(ariKpKini));
 				int pasal_1 = Ari.toPasal(ariKpKini);
 				
 				String sepasal = S.muatTeksJanganPisahAyatHurufKecil(S.edisiAktif, k, pasal_1);
