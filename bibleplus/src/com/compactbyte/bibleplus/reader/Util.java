@@ -20,13 +20,13 @@
 
 package com.compactbyte.bibleplus.reader;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class Util {
 
-	static int[] hebrewtab;
+	static char[] hebrewtab;
 
-	static int[] greektab;
+	static char[] greektab;
 
 	public static StringBuffer addField(StringBuffer sb, int i) {
 		return sb.append(i).append(":");
@@ -112,7 +112,7 @@ public class Util {
 		StringBuffer sb = new StringBuffer();
 		for (int i = offs; i < offs + length; i++) {
 			int c = data[i] & 0xff;
-			sb.append((char) (greektab[c]));
+			sb.append(greektab[c]);
 		}
 		return sb.toString();
 	}
@@ -121,7 +121,7 @@ public class Util {
 		StringBuffer sb = new StringBuffer();
 		for (int i = offs; i < offs + length; i++) {
 			int c = data[i] & 0xff;
-			sb.append((char) (hebrewtab[c]));
+			sb.append(hebrewtab[c]);
 		}
 		return sb.toString();
 	}
@@ -154,7 +154,7 @@ public class Util {
 		}
 	}
 
-	public static void setTables(int[] _hebrewtab, int[] _greektab) {
+	public static void setTables(char[] _hebrewtab, char[] _greektab) {
 		hebrewtab = _hebrewtab;
 		greektab = _greektab;
 	}

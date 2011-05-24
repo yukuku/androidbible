@@ -20,7 +20,7 @@
 
 package com.compactbyte.bibleplus.reader;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -60,6 +60,9 @@ public class BookInfo {
 		bi.simpleName = Util.readStringTrimZero(data, offset + idx, 8, bible.getEncoding());
 		idx += 8;
 		bi.complexName = Util.readStringTrimZero(data, offset + idx, 32, bible.getEncoding());
+		
+		System.out.println("simpleName=" + bi.simpleName + " complexName=" + bi.complexName + " with encoding=" + bible.getEncoding());
+		
 		return bi;
 	}
 

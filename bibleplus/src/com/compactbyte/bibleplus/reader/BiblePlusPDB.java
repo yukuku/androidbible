@@ -20,8 +20,8 @@
 
 package com.compactbyte.bibleplus.reader;
 
-import java.io.IOException;
-import java.util.Vector;
+import java.io.*;
+import java.util.*;
 
 /**
  * 
@@ -265,7 +265,7 @@ public class BiblePlusPDB {
 	 * @param _greektab
 	 *            greek table for translating to unicode
 	 */
-	public BiblePlusPDB(PDBDataStream is, int[] _hebrewtab, int[] _greektab) {
+	public BiblePlusPDB(PDBDataStream is, char[] _hebrewtab, char[] _greektab) {
 		Util.setTables(_hebrewtab, _greektab);
 		canSeek = is.canSeek();
 		pdbaccess = new PDBAccess(is);
