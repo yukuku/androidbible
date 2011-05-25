@@ -1,10 +1,11 @@
 package yuku.alkitab.yes;
 
+import android.util.*;
+
 import java.io.*;
 import java.lang.annotation.*;
 
-import yuku.bintex.BintexWriter;
-import android.util.Log;
+import yuku.bintex.*;
 
 public class YesFile {
 	private static final byte FILE_VERSI = 0x01;
@@ -24,16 +25,31 @@ public class YesFile {
 		IsiSeksi isi();
 	}
 	
+	public abstract class SeksiBernama implements Seksi {
+		private byte[] nama;
+		public SeksiBernama(String nama) {
+			try {
+				this.nama = nama.getBytes("ascii");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
+		@Override final public byte[] nama() {
+			return nama;
+		}
+	}
+	
 	public interface IsiSeksi {
 		void toBytes(BintexWriter writer) throws Exception;
 	}
 	
 	public static abstract class InfoEdisi implements IsiSeksi {
-		public int versi; // 1 
+		public int versi; // 1; 2 tambah encoding
 		public String nama;
 		public String judul;
 		public int nkitab;
 		public int perikopAda; // 0=ga ada, selain 0: nomer versi perikopIndex dan perikopBlok_
+		public int encoding; // 1 = ascii; 2 = utf-8
 		
 		@Override
 		public void toBytes(BintexWriter writer) throws Exception {
@@ -51,6 +67,9 @@ public class YesFile {
 
 			writer.writeShortString("perikopAda");
 			writer.writeInt(perikopAda);
+			
+			writer.writeShortString("encoding"); // mulai versi 2 ada.
+			writer.writeInt(encoding);
 
 			writer.writeShortString("end");
 		}
@@ -111,6 +130,10 @@ public class YesFile {
 			
 			writer.writeShortString("end");
 		}
+
+		public static void nullToBytes(BintexWriter writer) throws Exception {
+			writer.writeShortString("end");
+		}
 	}
 	
 	public static class InfoKitab implements IsiSeksi {
@@ -119,7 +142,11 @@ public class YesFile {
 		@Override
 		public void toBytes(BintexWriter writer) throws Exception {
 			for (Kitab kitab: xkitab) {
-				kitab.toBytes(writer);
+				if (kitab != null) {
+					kitab.toBytes(writer);
+				} else {
+					Kitab.nullToBytes(writer);
+				}
 			}
 		}
 	}
