@@ -42,6 +42,11 @@
 			<locationURI>_android_AmbilWarna_5bada8e2/src</locationURI>
 		</link>
 		<link>
+			<name>AndroidCrypto_src</name>
+			<type>2</type>
+			<locationURI>_android_AndroidCrypto_d76e73f0/src</locationURI>
+		</link>
+		<link>
 			<name>BiblePlus_src</name>
 			<type>2</type>
 			<locationURI>_android_BiblePlus_d3235f4e/src</locationURI>

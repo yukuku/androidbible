@@ -1,9 +1,11 @@
 package yuku.alkitab.base;
 
-import java.util.Arrays;
+import android.graphics.*;
+
+import java.io.*;
+import java.util.*;
 
 import yuku.alkitab.base.model.*;
-import android.graphics.Typeface;
 
 public class U {
 
@@ -109,5 +111,12 @@ public class U {
 		} else {
 			return -1;
 		}
+	}
+	
+	public static String tampilException(Exception e) {
+		StringWriter sw = new StringWriter(400);
+		sw.append('(').append(e.getClass().getName()).append("): ").append(e.getMessage()).append('\n');
+		e.printStackTrace(new PrintWriter(sw));
+		return sw.toString();
 	}
 }

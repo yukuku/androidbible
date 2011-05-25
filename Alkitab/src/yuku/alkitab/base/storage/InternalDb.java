@@ -1,17 +1,18 @@
 package yuku.alkitab.base.storage;
 
+import android.content.*;
+import android.database.*;
+import android.database.sqlite.*;
+import android.provider.*;
+import android.util.*;
+
 import java.util.*;
 
 import yuku.alkitab.base.EdisiActivity.MEdisiYes;
 import yuku.alkitab.base.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.renungan.*;
-import yuku.andoutil.Sqlitil;
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.*;
-import android.provider.BaseColumns;
-import android.util.Log;
+import yuku.andoutil.*;
 
 public class InternalDb {
 	public static final String TAG = InternalDb.class.getSimpleName();
@@ -321,7 +322,7 @@ public class InternalDb {
 			int col_aktif = cursor.getColumnIndexOrThrow(Db.Edisi.aktif);
 			int col_judul = cursor.getColumnIndexOrThrow(Db.Edisi.judul);
 			int col_namafile = cursor.getColumnIndexOrThrow(Db.Edisi.namafile);
-			int col_namafile_pdbasal = cursor.getColumnIndexOrThrow(Db.Edisi.namafile);
+			int col_namafile_pdbasal = cursor.getColumnIndexOrThrow(Db.Edisi.namafile_pdbasal);
 			int col_urutan = cursor.getColumnIndexOrThrow(Db.Edisi.urutan);
 			
 			while (cursor.moveToNext()) {

@@ -1,29 +1,33 @@
 
 package yuku.alkitab.base;
 
-import java.io.File;
+import android.app.*;
+import android.content.*;
+import android.content.res.*;
+import android.os.*;
+import android.util.*;
+import android.view.*;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.*;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
+
+import java.io.*;
 import java.util.*;
 
 import yuku.alkitab.R;
 import yuku.alkitab.base.AddonManager.DonlotListener;
 import yuku.alkitab.base.AddonManager.DonlotThread;
 import yuku.alkitab.base.AddonManager.Elemen;
-import yuku.alkitab.base.config.BuildConfig;
-import yuku.alkitab.base.model.Edisi;
-import yuku.alkitab.base.pdbconvert.ConvertPdbToYes;
+import yuku.alkitab.base.config.*;
+import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.pdbconvert.*;
+import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertProgressListener;
+import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertResult;
 import yuku.alkitab.base.storage.*;
+import yuku.androidcrypto.*;
 import yuku.filechooser.*;
 import yuku.filechooser.FileChooserConfig.Mode;
-import android.app.*;
-import android.content.*;
-import android.content.res.Configuration;
-import android.os.*;
-import android.util.Log;
-import android.view.*;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.*;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class EdisiActivity extends Activity {
 	public static final String TAG = EdisiActivity.class.getSimpleName();
@@ -287,7 +291,7 @@ public class EdisiActivity extends Activity {
 		
 			String filename = result.firstFilename;
 			if (filename.toLowerCase().endsWith(".yes")) {
-				handleFileOpenYes(filename);
+				handleFileOpenYes(filename, null);
 			} else if (filename.toLowerCase().endsWith(".pdb")) {
 				handleFileOpenPdb(filename);
 			} else {
@@ -296,7 +300,7 @@ public class EdisiActivity extends Activity {
 		}
 	}
 	
-	private void handleFileOpenYes(String filename) {
+	private void handleFileOpenYes(String filename, String namapdbasal) {
 		{ // cari dup
 			boolean dup = false;
 			BuildConfig c = BuildConfig.get(getApplicationContext());
@@ -328,7 +332,7 @@ public class EdisiActivity extends Activity {
 			yes.jenis = Db.Edisi.jenis_yes;
 			yes.judul = judul;
 			yes.namafile = filename;
-			yes.namafile_pdbasal = null;
+			yes.namafile_pdbasal = namapdbasal;
 			yes.urutan = urutanTerbesar + 1;
 			
 			S.getDb().tambahEdisiYesDenganAktif(yes, true);
@@ -343,9 +347,72 @@ public class EdisiActivity extends Activity {
 		}
 	}
 
-	private void handleFileOpenPdb(String filename) {
-		ConvertPdbToYes converter = new ConvertPdbToYes();
-		converter.convert(getApplicationContext(), filename);
+	private void handleFileOpenPdb(final String namafilepdb) {
+		String namayes = namaYes(namafilepdb, ConvertPdbToYes.VERSI_CONVERTER);
+		
+		// cek apakah sudah ada.
+		if (S.getDb().adakahEdisiYesDenganNamafile(AddonManager.getEdisiPath(namayes))) {
+			new AlertDialog.Builder(this)
+			.setMessage("This file is already on the list.")
+			.setPositiveButton(R.string.ok, null)
+			.show();
+			return;
+		}
+		
+		final String namafileyes = AddonManager.getEdisiPath(namayes);
+		
+		final ProgressDialog pd = ProgressDialog.show(EdisiActivity.this, null, "Reading PDB file...", true, false);
+		
+		new AsyncTask<String, Object, ConvertResult>() {
+			@Override protected ConvertResult doInBackground(String... params) {
+				ConvertPdbToYes converter = new ConvertPdbToYes();
+				converter.setConvertProgressListener(new ConvertProgressListener() {
+					@Override public void onProgress(int at, String message) {
+						publishProgress(at, message);
+					}
+					
+					@Override public void onFinish() {
+						publishProgress(null, null);
+					}
+				});
+				return converter.convert(getApplicationContext(), namafilepdb, namafileyes);
+			}
+			
+			@Override protected void onProgressUpdate(Object... values) {
+				if (values[0] == null) {
+					pd.setMessage("Finished.");
+				} else {
+					int at = (Integer) values[0];
+					String message = (String) values[1];
+					pd.setMessage("(" + at + ") " + message + "...");
+				}
+			};
+			
+			@Override protected void onPostExecute(ConvertResult result) {
+				pd.dismiss();
+				
+				if (result.exception != null) {
+					new AlertDialog.Builder(EdisiActivity.this)
+					.setTitle("Error reading PDB file")
+					.setMessage("Details: " + U.tampilException(result.exception))
+					.setPositiveButton(R.string.ok, null)
+					.show();
+				} else {
+					// sukses.
+					handleFileOpenYes(namafileyes, new File(namafilepdb).getName());
+				}
+			};
+		}.execute();
+	}
+
+	/**
+	 * @return nama file untuk yes yang dikonvert dari pdbnya, semacam "pdb-1234abcd-1.yes". Ga pake path.
+	 */
+	private String namaYes(String namafilepdb, int versi) {
+		byte[] digest = Digester.digestFile(DigestType.SHA1, new File(namafilepdb));
+		if (digest == null) return null;
+		String hash = Digester.toHex(digest).substring(0, 8);
+		return "pdb-" + hash + "-" + String.valueOf(versi) + ".yes";
 	}
 
 	// model
@@ -388,11 +455,11 @@ public class EdisiActivity extends Activity {
 		public String url;
 		public String namafile_preset;
 		
-		public boolean getAktif() {
+		@Override public boolean getAktif() {
 			return Preferences.getBoolean("edisi/preset/" + this.namafile_preset + "/aktif", true);
 		}
 		
-		public void setAktif(boolean aktif) {
+		@Override public void setAktif(boolean aktif) {
 			Preferences.setBoolean("edisi/preset/" + this.namafile_preset + "/aktif", aktif);
 		}
 
@@ -529,7 +596,8 @@ public class EdisiActivity extends Activity {
 				} else if (medisi instanceof MEdisiYes) {
 					cAktif.setEnabled(true);
 					lNamafile.setVisibility(View.VISIBLE);
-					lNamafile.setText(((MEdisiYes) medisi).namafile);
+					MEdisiYes yes = (MEdisiYes) medisi;
+					lNamafile.setText(yes.namafile_pdbasal == null? yes.namafile: (yes.namafile_pdbasal + "\n(Stored in: " + yes.namafile + ")"));
 				}
 			}
 			

@@ -4,6 +4,7 @@ import android.content.*;
 import android.util.*;
 
 import java.io.*;
+import java.nio.charset.*;
 import java.util.*;
 
 import yuku.alkitab.yes.*;
@@ -19,13 +20,57 @@ import com.compactbyte.bibleplus.reader.*;
 public class ConvertPdbToYes {
 	public static final String TAG = ConvertPdbToYes.class.getSimpleName();
 
+	public static final int VERSI_CONVERTER = 1;
+
 	private BiblePlusPDB pdb;
 
-	public void convert(Context context, String filename) {
+	private Kitab[] xkitab_;
+	private int[] kitabPosToBookPosMap_;
+
+	ConvertProgressListener convertProgressListener;
+	
+	public interface ConvertProgressListener {
+		void onProgress(int at, String message);
+		void onFinish();
+	}
+	
+	public static class ConvertResult {
+		public Exception exception;
+	}
+	
+	public void setConvertProgressListener(ConvertProgressListener l) {
+		this.convertProgressListener = l;
+	}
+	
+	private void progress(int at, String message) {
+		if (convertProgressListener != null) {
+			convertProgressListener.onProgress(at, message);
+		}
+	}
+	
+	private void finish() {
+		if (convertProgressListener != null) {
+			convertProgressListener.onFinish();
+		}
+	}
+	
+	public ConvertPdbToYes() {
+		SortedMap<String,Charset> charsets = Charset.availableCharsets();
+		for (Map.Entry<String, Charset> charset: charsets.entrySet()) {
+			Log.d(TAG, "available charset: " + charset.getKey());
+		}
+	}
+	
+	public ConvertResult convert(Context context, String filenamepdb, String namafileyes) {
+		ConvertResult res = new ConvertResult();
+		
 		try {
-			PDBFileStream stream = new PDBFileStream(filename);
-			pdb = new BiblePlusPDB(stream, null, null);
+			progress(0, "Opening PDB file");
+			PDBFileStream stream = new PDBFileStream(filenamepdb);
+			pdb = new BiblePlusPDB(stream, Tabs.hebrewTab, Tabs.greekTab);
+			progress(10, "Loading version info");
 			pdb.loadVersionInfo();
+			progress(20, "Loading word index");
 			pdb.loadWordIndex();
 
 			Log.d(TAG, "============ baca info versi selesai");
@@ -33,77 +78,92 @@ public class ConvertPdbToYes {
 			Log.d(TAG, "versionName: " + pdb.getVersionName());
 			Log.d(TAG, "encoding: " + pdb.getEncoding());
 			
-			int nkitab = pdb.getBookCount();
-			Log.d(TAG, "nkitab = " + nkitab);
+			int nbook = pdb.getBookCount();
+			Log.d(TAG, "getBookCount = " + nbook);
+			
+			// tempatin kitab2 di posisi yang betul, index array xkitab
+			// 0 = kejadian
+			// 65 = wahyu
+			// 66 sampe 87, terdaftar dalam PdbNumberToAriMapping
+			// selain itu, belum ada di mana2, maka kita buang aja (FIXME kasih warning)
+			progress(30, "Analyzing available books");
+			{
+				int maxKitabPos = 0;
+				for (int bookPos = 0; bookPos < nbook; bookPos++) {
+					BookInfo bookInfo = pdb.getBook(bookPos);
+					bookInfo.openBook();
+					int bookNumber = bookInfo.getBookNumber();
+					int kitabPos = PdbNumberToAriMapping.pdbNumberToAriKitab(bookNumber);
+					if (kitabPos >= 0) {
+						if (kitabPos > maxKitabPos) maxKitabPos = kitabPos;
+					} else {
+						Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL");
+					}
+				}
+				// panjang array xkitab_ adalah menurut maxKitabPos
+				xkitab_ = new Kitab[maxKitabPos + 1];
+				kitabPosToBookPosMap_ = new int[maxKitabPos + 1];
+				for (int i = 0; i < kitabPosToBookPosMap_.length; i++) kitabPosToBookPosMap_[i] = -1;
+			}
+			
+			progress(40, "Mapping books");
+			for (int bookPos = 0; bookPos < nbook; bookPos++) {
+				BookInfo bookInfo = pdb.getBook(bookPos);
+				bookInfo.openBook();
+
+				int bookNumber = bookInfo.getBookNumber();
+				int kitabPos = PdbNumberToAriMapping.pdbNumberToAriKitab(bookNumber);
+				if (kitabPos < 0) {
+					Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL");
+				} else {
+					kitabPosToBookPosMap_[kitabPos] = bookPos;
+				}
+			}
+			
+			Log.d(TAG, "kitabPosToBookPosMap_ (len " + kitabPosToBookPosMap_.length + ") = " + Arrays.toString(kitabPosToBookPosMap_));
 
 			Log.d(TAG, "============ baca daftar kitab selesai");
 			
+			progress(100, "Constructing version info");
+			final InfoEdisi infoEdisi = getInfoEdisi();
+
+			progress(200, "Constructing book info");
+			final InfoKitab infoKitab = getInfoKitab(200);
+			
+			progress(400, "Constructing translated file");
 			YesFile file = new YesFile() {{
 				this.xseksi = new Seksi[] {
-					new Seksi() {
-						@Override
-						public byte[] nama() {
-							return "infoEdisi___".getBytes();
-						}
-
-						@Override
-						public IsiSeksi isi() {
-							return getInfoEdisi();
+					new SeksiBernama("infoEdisi___") {
+						@Override public IsiSeksi isi() {
+							return infoEdisi;
 						}
 					},
-					new Seksi() {
-						@Override
-						public byte[] nama() {
-							return "infoKitab___".getBytes();
-						}
-
-						@Override
-						public IsiSeksi isi() {
-							try {
-								return getInfoKitab();
-							} catch (Exception e) {
-								Log.e(TAG, "aaa", e); // FIXME
-								return null;
-							}
+					new SeksiBernama("infoKitab___") {
+						@Override public IsiSeksi isi() {
+							return infoKitab;
 						}
 					},
-//					new Seksi() {
-//						@Override
-//						public byte[] nama() {
-//							return "perikopIndex".getBytes();
-//						}
-//						
-//						@Override
-//						public IsiSeksi isi() {
+//					new SeksiBernama("perikopIndex") {
+//						@Override public IsiSeksi isi() {
 //							return new NemplokSeksi("../Alkitab/publikasi/bis_perikop_index_bt.bt");
 //						}
 //					},
-//					new Seksi() {
-//						@Override
-//						public byte[] nama() {
-//							return "perikopBlok_".getBytes();
-//						}
-//						
-//						@Override
-//						public IsiSeksi isi() {
+//					new SeksiBernama("perikopBlok_") {
+//						@Override public IsiSeksi isi() {
 //							return new NemplokSeksi("../Alkitab/publikasi/bis_perikop_blok_bt.bt");
 //						}
 //					},
-					new Seksi() {
-						@Override
-						public byte[] nama() {
-							return "teks________".getBytes();
-						}
-
-						@Override
-						public IsiSeksi isi() {
+					new SeksiBernama("teks________") {
+						@Override public IsiSeksi isi() {
 							return new LazyTeks();
 						}
 					}
 				};
 			}};
 			
-			RandomAccessFile out = new RandomAccessFile("/sdcard/Bibles/_output.yes", "rw");
+			progress(600, "Opening translated file");
+			RandomAccessFile out = new RandomAccessFile(namafileyes, "rw");
+			progress(700, "Writing translated file");
 			file.output(out);
 			out.close();
 			
@@ -112,66 +172,44 @@ public class ConvertPdbToYes {
 		} catch (Exception e) {
 			pdb = null;
 			Log.e(TAG, "Eror baca pdb: ", e);
+			res.exception = e;
 		}
+		finish();
+		return res;
 	}
 	
 	private InfoEdisi getInfoEdisi() {
 		return new InfoEdisi() {{
-			versi = 1;
+			versi = 2;
 			nama = pdb.getVersionName();
 			judul = pdb.getVersionName();
-			nkitab = pdb.getBookCount(); // FIXME salah! yang betul harus liat jadinya xkitab dulu
+			nkitab = xkitab_.length; // INGAT: BISA BOLONG_BOLONG
 			perikopAda = 0; // FIXME ada
+			encoding = 2; // utf-8
 		}};
 	}
 
-	private InfoKitab getInfoKitab() throws Exception {
-		final int nbook = pdb.getBookCount();
-		
-		// tempatin kitab2 di posisi yang betul, index array xkitab
-		// 0 = kejadian
-		// 65 = wahyu
-		// 66 sampe 87, terdaftar dalam PdbNumberToAriMapping
-		// selain itu, belum ada di mana2, maka kita buang aja (FIXME kasih warning)
-		final Kitab[] xkitab_;
-		{
-			int maxKitabPos = 0;
-			for (int bookPos = 0; bookPos < nbook; bookPos++) {
-				BookInfo bookInfo = pdb.getBook(bookPos);
-				bookInfo.openBook();
-				int bookNumber = bookInfo.getBookNumber();
-				int kitabPos = PdbNumberToAriMapping.pdbNumberToAriKitab(bookNumber);
-				if (kitabPos >= 0) {
-					if (kitabPos > maxKitabPos) maxKitabPos = kitabPos;
-				} else {
-					Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL");
-				}
-			}
-			// panjang array xkitab_ adalah menurut maxKitabPos
-			xkitab_ = new Kitab[maxKitabPos + 1];
-		}
-		
+	private InfoKitab getInfoKitab(int baseProgress) throws Exception {
 		// untuk offset teks dari awal seksi teks
 		int offsetTotal = 0;
 		// untuk offset teks dari awal kitab
 		int offsetLewat = 0;
 		
-		for (int bookPos = 0; bookPos < nbook; bookPos++) {
-			BookInfo bookInfo = pdb.getBook(bookPos);
-			bookInfo.openBook();
-
-			int bookNumber = bookInfo.getBookNumber();
-			int kitabPos = PdbNumberToAriMapping.pdbNumberToAriKitab(bookNumber);
-			if (kitabPos < 0) {
-				Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL");
+		for (int kitabPos = 0; kitabPos < xkitab_.length; kitabPos++) {
+			int bookPos = kitabPosToBookPosMap_[kitabPos];
+			if (bookPos == -1) {
 				continue;
 			}
+			BookInfo bookInfo = pdb.getBook(bookPos);
+			bookInfo.openBook();
 			
+			progress(baseProgress + 1 + kitabPos, "Reading book info: " + bookInfo.getFullName());
+
 			Kitab k = new Kitab();
 			k.versi = 2;
 			k.pos = kitabPos;
 			k.ayatLoncat = 0;
-			k.encoding = 2; // UTF8 FIXME cek spesifikasi
+			k.encoding = 2; // utf-8
 			k.judul = bookInfo.getFullName();
 			k.nama = bookInfo.getShortName();
 			k.npasal = bookInfo.getChapterCount();
@@ -189,7 +227,7 @@ public class ConvertPdbToYes {
 				}
 				k.pasal_offset[pasal_0+1] = offsetLewat;
 			}
-			Log.d(TAG, "kitab " + k.judul + " (bookNumber=" + bookNumber + ", kitabPos=" + kitabPos + ") pasal_offset: " + Arrays.toString(k.pasal_offset));
+			Log.d(TAG, "kitab " + k.judul + " (bookNumber=" + bookInfo.getBookNumber() + ", kitabPos=" + kitabPos + ") pasal_offset: " + Arrays.toString(k.pasal_offset));
 
 			xkitab_[kitabPos] = k;
 			

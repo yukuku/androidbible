@@ -10,5 +10,6 @@
 	<classpathentry kind="src" path="BiblePlus_src"/>
 	<classpathentry kind="src" path="AlkitabYes_src"/>
 	<classpathentry kind="src" path="BintexWriter_src"/>
+	<classpathentry kind="src" path="AndroidCrypto_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

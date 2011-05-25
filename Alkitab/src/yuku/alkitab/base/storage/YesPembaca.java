@@ -1,25 +1,28 @@
 package yuku.alkitab.base.storage;
 
+import android.content.*;
+import android.util.*;
+
 import java.io.*;
-import java.util.Arrays;
+import java.util.*;
 
 import yuku.alkitab.base.model.*;
-import yuku.bintex.BintexReader;
-import android.content.Context;
-import android.util.Log;
+import yuku.bintex.*;
 
 public class YesPembaca extends Pembaca {
 	private static final String TAG = YesPembaca.class.getSimpleName();
 	
 	private String nf;
 	private RandomAccessFile f;
-	private PembacaDecoder pembacaDecoder = new PembacaDecoder.Ascii();
+	private PembacaDecoder pembacaDecoder;
 	
 	private long teks_dasarOffset;
 	private long perikopBlok_dasarOffset;
 	
 	private String judul;
 	private int nkitab;
+	private int perikopAda = 0; // default ga ada
+	private int encoding = 1; // 1 = ascii; 2 = utf-8;
 	
 	public YesPembaca(Context context, String nf) {
 		super(context);
@@ -36,7 +39,7 @@ public class YesPembaca extends Pembaca {
 		while (true) {
 			String namaSeksi = readNamaSeksi(f);
 			
-			if (namaSeksi == null) {
+			if (namaSeksi == null || namaSeksi.equals("____________")) {
 				// sudah mencapai EOF. Maka kasih tau seksi ini ga ada.
 				Log.d(TAG, "Seksi tidak ditemukan: " + seksi);
 				return -1;
@@ -101,13 +104,17 @@ public class YesPembaca extends Pembaca {
 				
 				if (key.equals("versi")) { //$NON-NLS-1$
 					int versi = in.readInt();
-					if (versi != 1) throw new RuntimeException("Versi Edisi: " + versi + " tidak dikenal"); //$NON-NLS-1$ //$NON-NLS-2$
+					if (versi > 2) throw new RuntimeException("Versi Edisi: " + versi + " tidak dikenal"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else if (key.equals("nama")) { //$NON-NLS-1$
 					nama = in.readShortString();
 				} else if (key.equals("judul")) { //$NON-NLS-1$
 					this.judul = in.readShortString();
 				} else if (key.equals("nkitab")) { //$NON-NLS-1$
 					this.nkitab = in.readInt();
+				} else if (key.equals("perikopAda")) { //$NON-NLS-1$
+					this.perikopAda = in.readInt();
+				} else if (key.equals("encoding")) { //$NON-NLS-1$
+					this.encoding = in.readInt();
 				} else if (key.equals("end")) { //$NON-NLS-1$
 					break;
 				} else {
@@ -140,7 +147,10 @@ public class YesPembaca extends Pembaca {
 			for (int kitabPos = 0; kitabPos < res.length; kitabPos++) {
 				Kitab k = new Kitab();
 				
-				while (true) {
+				// kalau true, berarti ini kitab NULL
+				boolean kosong = false;
+				
+				for (int keyKe = 0;; keyKe++) {
 					String key = in.readShortString();
 					
 					if (key.equals("versi")) { //$NON-NLS-1$
@@ -171,11 +181,13 @@ public class YesPembaca extends Pembaca {
 							k.pasal_offset[i] = in.readInt();
 						}
 					} else if (key.equals("encoding")) { //$NON-NLS-1$
-						// TODO di masa depan
+						// TODO di masa depan, mungkin deprecated, karena ini lebih cocok di edisi.
 						in.readInt();
 					} else if (key.equals("offset")) { //$NON-NLS-1$
 						k.offset = in.readInt();
 					} else if (key.equals("end")) { //$NON-NLS-1$
+						// sudah end sebelum baca apapun?
+						if (keyKe == 0) kosong = true;
 						break;
 					} else {
 						Log.w(TAG, "ada key ga dikenal di kitab " + k + " di infoKitab: " + key); //$NON-NLS-1$ //$NON-NLS-2$
@@ -183,7 +195,11 @@ public class YesPembaca extends Pembaca {
 					}
 				}
 				
-				res[kitabPos] = k;
+				if (kosong) {
+					res[kitabPos] = null;
+				} else {
+					res[kitabPos] = k;
+				}
 			}
 			
 			return res;
@@ -195,6 +211,19 @@ public class YesPembaca extends Pembaca {
 	
 	@Override
 	public String[] muatTeks(Kitab kitab, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+		// init pembacaDecoder
+		if (pembacaDecoder == null) {
+			if (encoding == 1) {
+				pembacaDecoder = new PembacaDecoder.Ascii();
+			} else if (encoding == 2) {
+				pembacaDecoder = new PembacaDecoder.Utf8();
+			} else {
+				Log.e(TAG, "Encoding " + encoding + " not recognized!");
+				pembacaDecoder = new PembacaDecoder.Ascii();
+			}
+			Log.d(TAG, "encoding " + encoding + " so decoder is " + pembacaDecoder.getClass().getName());
+		}
+		
 		try {
 			init();
 			
