@@ -88,11 +88,11 @@
     <string name="mengunduh_namaumum_tgl_tgl">Downloading %1$s dated %2$s...</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Not yet available. Probably the requested date\'s material is not prepared yet, or there are some errors in recognizing the data source.\n\nIf you think necessary, please inform the software developers by going back to the main verse view, open the menu and choose Suggest.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Not yet available. Fetching from the Internet...\n\n(Ensure there is Internet connection to fetch the devotion materials.)</string>
-	<string name="teks_about">Bible for Android&lt;br/&gt;version %1$s (%2$s) rev %3$s&lt;br/&gt;&lt;br/&gt;
+	<string name="teks_about">Bible for Android&lt;br/&gt;version %1$s (%2$s)&lt;br/&gt;&lt;br/&gt;
 		&lt;b&gt;yuku&lt;/b&gt; 2009-2011&lt;br/&gt;  Website: &lt;b&gt;androidbible.blogspot.com&lt;/b&gt;&lt;br/&gt; Mailing list: &lt;b&gt;goo.gl/v686r&lt;/b&gt;&lt;br/&gt;
 		&lt;br/&gt;
 		&lt;b&gt;Contributors:&lt;/b&gt;&lt;br/&gt;                  
-		- &lt;b&gt;Oluss Studio&lt;/b&gt; program icon&lt;br/&gt;    - &lt;b&gt;Jaya Satrio&lt;/b&gt; various icons&lt;br/&gt;   - etc.</string>
+		- &lt;b&gt;Oluss Studio&lt;/b&gt; program icon&lt;br/&gt;    - &lt;b&gt;Jaya Satrio&lt;/b&gt; various icons&lt;br/&gt;   - &lt;b&gt;Yohanes Nugroho&lt;/b&gt; PDB reader&lt;br/&gt;   - etc.</string>
     <string name="namaprog_versi_build">Bible v%1$s (%2$d)</string>
     <string name="hari_sabtu">Sat</string>
     <string name="hari_jumat">Fri</string>

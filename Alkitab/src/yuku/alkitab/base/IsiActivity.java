@@ -702,30 +702,20 @@ public class IsiActivity extends Activity {
 			Log.e(TAG, "PackageInfo ngaco", e); //$NON-NLS-1$
 		}
 		
-		Spanned html = Html.fromHtml(
-			getString(R.string.teks_about, 
-				verName,
-				verCode,
-				"$LastChangedRevision$".replaceAll("\\$|LastChangedRevision|:| ", "") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			)
-		);
-		
 		TextView isi = new TextView(this);
-		isi.setText(html);
-		Linkify.addLinks(isi, Linkify.WEB_URLS);
+		isi.setText(Html.fromHtml(getString(R.string.teks_about, verName, verCode)));
 		isi.setTextColor(0xffffffff);
 		isi.setLinkTextColor(0xff8080ff);
+		Linkify.addLinks(isi, Linkify.WEB_URLS);
 
 		int pad = (int) (getResources().getDisplayMetrics().density * 6.f);
 		isi.setPadding(pad, pad, pad, pad);
 		
-		AlertDialog dialog = new AlertDialog.Builder(this)
+		new AlertDialog.Builder(this)
 		.setTitle(R.string.tentang_title)
 		.setView(isi)
 		.setPositiveButton(R.string.ok, null)
-		.create();
-		
-		dialog.show();
+		.show();
 	}
 
 	private void pilihEdisi() {
