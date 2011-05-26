@@ -377,10 +377,12 @@ public class EdisiActivity extends Activity {
 				ConvertPdbToYes converter = new ConvertPdbToYes();
 				converter.setConvertProgressListener(new ConvertProgressListener() {
 					@Override public void onProgress(int at, String message) {
+						Log.d(TAG, "Progress " + at + ": " + message);
 						publishProgress(at, message);
 					}
 					
 					@Override public void onFinish() {
+						Log.d(TAG, "Finish");
 						publishProgress(null, null);
 					}
 				});

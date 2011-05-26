@@ -591,9 +591,9 @@ public class BiblePlusPDB {
 		return result;
 	}
 
-	// public void setEncoding(String _encoding) {
-	// encoding = _encoding;
-	// }
+	public void setEncoding(String _encoding) {
+		encoding = _encoding;
+	}
 
 	/**
 	 * return book index

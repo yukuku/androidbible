@@ -155,7 +155,7 @@ public class ConvertPdbToYes {
 //					},
 					new SeksiBernama("teks________") {
 						@Override public IsiSeksi isi() {
-							return new LazyTeks();
+							return new LazyTeks(700);
 						}
 					}
 				};
@@ -242,14 +242,25 @@ public class ConvertPdbToYes {
 	}
 	
 	public class LazyTeks implements IsiSeksi {
+		private final int baseProgress;
+
+		public LazyTeks(int baseProgress) {
+			this.baseProgress = baseProgress;
+		}
+		
 		@Override
 		public void toBytes(BintexWriter writer) throws Exception {
-			final int nkitab = pdb.getBookCount();
-			for (int ki = 0; ki < nkitab; ki++) {
-				BookInfo bookInfo = pdb.getBook(ki);
+			for (int kitabPos = 0; kitabPos < xkitab_.length; kitabPos++) {
+				int bookPos = kitabPosToBookPosMap_[kitabPos];
+				if (bookPos == -1) {
+					continue;
+				}
+				BookInfo bookInfo = pdb.getBook(bookPos);
 				bookInfo.openBook();
 
 				int npasal = bookInfo.getChapterCount();
+				progress(baseProgress + 1 + kitabPos, "Writing text of book " + bookInfo.getFullName() + " (" + npasal + " chapters)");
+				
 				for (int pi = 0; pi < npasal; pi++) {
 					int nayat = bookInfo.getVerseCount(pi + 1);
 					for (int ai = 0; ai < nayat; ai++) {

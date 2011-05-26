@@ -1,8 +1,8 @@
 package yuku.alkitab.base.storage;
 
-import java.util.ArrayList;
+import java.util.*;
 
-import yuku.andoutil.Utf8Decoder;
+import yuku.andoutil.*;
 
 public interface PembacaDecoder {
 	void hurufkecilkan(byte[] ba);
@@ -63,9 +63,20 @@ public interface PembacaDecoder {
 			for (int pos = 0; pos < len; pos++) {
 				byte c = ba[pos];
 				if (c == (byte)0x0a) {
+//					byte[] b = new byte[pos-dari];
+//					System.arraycopy(ba, dari, b, 0, pos-dari);
+//					Log.d(TAG, "akan dekod " + Arrays.toString(b));
+					
 					String satu = Utf8Decoder.toString(ba, dari, pos - dari);
 					res.add(satu);
 					dari = pos + 1;
+					
+//					Log.d(TAG, "hasil   : " + satu);
+//					try {
+//						Log.d(TAG, "harusnya: " + new String(b, "utf-8"));
+//					} catch (UnsupportedEncodingException e) {
+//						e.printStackTrace();
+//					}
 				}
 			}
 			

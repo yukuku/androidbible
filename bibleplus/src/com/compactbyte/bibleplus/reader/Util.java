@@ -102,7 +102,11 @@ public class Util {
 
 	public static String readString(byte[] data, int offs, int length, String encoding) {
 		try {
-			return new String(data, offs, length, encoding);
+			String s = new String(data, offs, length, encoding);
+//			byte[] b = new byte[length];
+//			System.arraycopy(data, offs, b, 0, length);
+//			Log.d("readString", (s.length() > 20? s.substring(0, 20): s) + " encoding " + encoding + " from " + Arrays.toString(b));
+			return s;
 		} catch (java.io.UnsupportedEncodingException e) {
 			return readStringISO8859_1(data, offs, length);
 		}
@@ -148,7 +152,13 @@ public class Util {
 			if (len < 0) {
 				return "";
 			}
-			return new String(data, offs, len, encoding);
+			
+			String s = new String(data, offs, len, encoding);
+//			byte[] b = new byte[len];
+//			System.arraycopy(data, offs, b, 0, len);
+//			Log.d("readString(TZ)", (s.length() > 20? s.substring(0, 20): s) + " encoding " + encoding + " from " + Arrays.toString(b));
+
+			return s;
 		} catch (java.io.UnsupportedEncodingException e) {
 			return "";
 		}
