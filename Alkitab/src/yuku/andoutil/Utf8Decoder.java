@@ -30,6 +30,7 @@ public class Utf8Decoder {
 				if (c0 < 0xe0) {
 					// input 2 byte, output 5+6 = 11 bit
 					buf[pos++] = (char) (((c0 & 0x1f) << 6) | (c1 & 0x3f));
+					continue;
 				}
 
 				i++;
