@@ -603,7 +603,7 @@ public class IsiActivity extends Activity {
 	public void bikinMenu(Menu menu) {
 		menu.clear();
 
-		new MenuInflater(this).inflate(R.menu.isi, menu);
+		new MenuInflater(this).inflate(R.menu.activity_isi, menu);
 		
 		BuildConfig c = BuildConfig.get(this);
 
@@ -654,45 +654,36 @@ public class IsiActivity extends Activity {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		int itemId = item.getItemId();
-		if (itemId == R.id.menuTuju) {
+		switch (item.getItemId()) {
+		case R.id.menuTuju:
 			bTuju_click();
 			return true;
-		} else if (itemId == R.id.menuBukmak) {
-			Intent intent = new Intent(this, BukmakActivity.class);
-			startActivityForResult(intent, R.id.menuBukmak);
+		case R.id.menuBukmak:
+			startActivityForResult(new Intent(this, BukmakActivity.class), R.id.menuBukmak);
 			return true;
-		} else if (itemId == R.id.menuSearch2) {
+		case R.id.menuSearch2:
 			menuSearch2_click();
 			return true;
-		} else if (itemId == R.id.menuEdisi) {
+		case R.id.menuEdisi:
 			pilihEdisi();
 			return true;
-		} else if (itemId == R.id.menuRenungan) { 
-			Intent intent = new Intent(this, RenunganActivity.class);
-			startActivityForResult(intent, R.id.menuRenungan);
+		case R.id.menuRenungan: 
+			startActivityForResult(new Intent(this, RenunganActivity.class), R.id.menuRenungan);
 			return true;
-		} else if (itemId == R.id.menuTentang) {
+		case R.id.menuTentang:
 			tampilDialogTentang();
 			return true;
-		} else if (itemId == R.id.menuPengaturan) {
-			Intent intent = new Intent(this, PengaturanActivity.class);
-			startActivityForResult(intent, R.id.menuPengaturan);
+		case R.id.menuPengaturan:
+			startActivityForResult(new Intent(this, PengaturanActivity.class), R.id.menuPengaturan);
 			return true;
-		} else if (itemId == R.id.menuFidbek) {
+		case R.id.menuFidbek:
 			popupMintaFidbek();
 			return true;
-		} else if (itemId == R.id.menuBantuan) {
-			Intent intent = new Intent(this, BantuanActivity.class);
-			startActivity(intent);
+		case R.id.menuBantuan:
+			startActivity(new Intent(this, BantuanActivity.class));
 			return true;
-		} else if (itemId == R.id.menuDonasi) {
+		case R.id.menuDonasi:
 			bukaDialogDonasi();
-			return true;
-		} else if (itemId == 0x985807) { // debug 7
-			String s = Integer.toHexString(S.penerapan.warnaHuruf) + ' ' + Integer.toHexString(S.penerapan.warnaLatar) + ' ' + Integer.toHexString(S.penerapan.warnaNomerAyat);
-			Toast.makeText(this, s, Toast.LENGTH_LONG).show();
-			Log.i(TAG, s);
 			return true;
 		}
 		

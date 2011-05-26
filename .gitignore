@@ -1,0 +1,7 @@
+# Google Android
+bin/
+gen/
+local.properties
+
+# Mac
+.DS_Store

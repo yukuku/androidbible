@@ -111,7 +111,7 @@ public class BukmakActivity extends ListActivity {
 
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		new MenuInflater(this).inflate(R.menu.bukmak, menu);
+		new MenuInflater(this).inflate(R.menu.activity_bukmak, menu);
 	}
 	
 	@Override

@@ -74,7 +74,7 @@ public class EdisiActivity extends Activity {
 
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		// FIXME new MenuInflater(this).inflate(R.menu.bukmak, menu);
+		new MenuInflater(this).inflate(R.menu.activity_edisi, menu);
 	}
 	
 	@Override
@@ -96,6 +96,15 @@ public class EdisiActivity extends Activity {
 		return true;
 	}
 
+	@Override public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menuTambah:
+			klikPadaBukaFile();
+			return true;
+		}
+		return false;
+	}
+	
 	private OnItemClickListener lsEdisi_itemClick = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id) {

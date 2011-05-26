@@ -1,25 +1,26 @@
 package yuku.alkitab.base;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.regex.*;
-
-import yuku.alkitab.R;
-import yuku.alkitab.base.renungan.*;
-import yuku.alkitab.base.renungan.TukangDonlot.OnStatusDonlotListener;
-import yuku.andoutil.ThreadSleep;
-import android.app.Activity;
-import android.content.Intent;
-import android.content.res.Configuration;
+import android.app.*;
+import android.content.*;
+import android.content.res.*;
 import android.os.*;
 import android.text.*;
 import android.text.format.DateFormat;
-import android.text.method.LinkMovementMethod;
+import android.text.method.*;
 import android.util.*;
 import android.view.*;
 import android.view.animation.*;
 import android.widget.*;
 import android.widget.TextView.BufferType;
+
+import java.text.*;
+import java.util.*;
+import java.util.regex.*;
+
+import yuku.alkitab.*;
+import yuku.alkitab.base.renungan.*;
+import yuku.alkitab.base.renungan.TukangDonlot.OnStatusDonlotListener;
+import yuku.andoutil.*;
 
 public class RenunganActivity extends Activity implements OnStatusDonlotListener {
 	public static final String TAG = RenunganActivity.class.getSimpleName();
@@ -149,7 +150,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		new MenuInflater(this).inflate(R.menu.renungan, menu);
+		new MenuInflater(this).inflate(R.menu.activity_renungan, menu);
 	}
 	
 	@Override

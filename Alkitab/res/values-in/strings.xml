@@ -132,15 +132,16 @@
     <string name="ok">OK</string>
     <string name="url_help_index">file:///android_asset/help/html-in/index.html</string>
     <string name="tidak_bisa_membuat_folder">Tidak bisa membuat folder %s</string>
-	<string name="menuPengaturan">Pengaturan</string>
-	<string name="tampilan_n">Tampilan</string>
-	<string name="pilihKitab_s">Pilih kitab</string>
-	<string name="menuTentang">Tentang</string>
-	<string name="menuTuju">Tuju</string>
-	<string name="tentang_title">Tentang Alkitab</string>
-	<string name="peringatanBeta_s">Kami mengharapkan saran, kritik, dan komentar Anda.\nTolong berikan pesan Anda di bawah (juga alamat imel Anda jika perlu). Terima kasih!</string>
-	<string name="fidbekMakasih_s">Terima kasih atas komentar anda!</string>
-	<string name="bantuan_judul">Bantuan</string>
-	<string name="pengaturan_alkitab">Pengaturan Alkitab</string>
-	<string name="kelola_versi">Kelola Versi</string>
+    <string name="menuPengaturan">Pengaturan</string>
+    <string name="tampilan_n">Tampilan</string>
+    <string name="pilihKitab_s">Pilih kitab</string>
+    <string name="menuTentang">Tentang</string>
+    <string name="menuTuju">Tuju</string>
+    <string name="tentang_title">Tentang Alkitab</string>
+    <string name="peringatanBeta_s">Kami mengharapkan saran, kritik, dan komentar Anda.\nTolong berikan pesan Anda di bawah (juga alamat imel Anda jika perlu). Terima kasih!</string>
+    <string name="fidbekMakasih_s">Terima kasih atas komentar anda!</string>
+    <string name="bantuan_judul">Bantuan</string>
+    <string name="pengaturan_alkitab">Pengaturan Alkitab</string>
+    <string name="kelola_versi">Kelola Versi</string>
+    <string name="tambah">Tambah</string>
 </resources>

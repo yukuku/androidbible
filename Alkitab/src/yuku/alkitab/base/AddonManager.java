@@ -1,19 +1,21 @@
 package yuku.alkitab.base;
 
+import android.content.*;
+import android.os.*;
+import android.os.PowerManager.WakeLock;
+import android.util.*;
+
 import java.io.*;
-import java.util.LinkedList;
-import java.util.concurrent.Semaphore;
-import java.util.zip.GZIPInputStream;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.zip.*;
 
 import org.apache.http.*;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.*;
+import org.apache.http.client.methods.*;
+import org.apache.http.impl.client.*;
 
-import yuku.alkitab.R;
-import android.content.Context;
-import android.os.Environment;
-import android.util.Log;
+import yuku.alkitab.*;
 
 public class AddonManager {
 	public static final String TAG = AddonManager.class.getSimpleName();
@@ -81,10 +83,13 @@ public class AddonManager {
 		
 		private void donlot(Elemen e) {
 			new File(e.tujuan).delete(); // hapus dulu.. jangan2 kacau
-			// FIXME Wakelock. Dan minta permission
 			
 			String tmpfile = e.tujuan + "-" + (int)(Math.random() * 100000) + ".tmp";  //$NON-NLS-1$//$NON-NLS-2$
 			
+			PowerManager pm = (PowerManager) appContext.getSystemService(Context.POWER_SERVICE);
+			WakeLock wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "donlot");
+			wakelock.setReferenceCounted(false);
+			wakelock.acquire();
 			try {
 				{
 					File dir = new File(getYesPath());
@@ -168,6 +173,10 @@ public class AddonManager {
 				Log.w(TAG, "Gagal donlot", ex); //$NON-NLS-1$
 				if (e.listener != null) e.listener.onGagalDonlot(e, null, ex);
 			} finally {
+				if (wakelock != null) {
+					wakelock.release();
+				}
+				
 				Log.d(TAG, "menghapus tmpfile: " + tmpfile); //$NON-NLS-1$
 				new File(tmpfile).delete();
 			}
