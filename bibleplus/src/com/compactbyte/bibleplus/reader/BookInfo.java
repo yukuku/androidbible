@@ -57,11 +57,13 @@ public class BookInfo {
 		}
 
 		idx += 2;
-		bi.simpleName = Util.readStringTrimZero(data, offset + idx, 8, bible.getEncoding());
+		bi.simpleName = new byte[8];
+		System.arraycopy(data, offset + idx, bi.simpleName, 0, 8);
 		idx += 8;
-		bi.complexName = Util.readStringTrimZero(data, offset + idx, 32, bible.getEncoding());
+		bi.complexName = new byte[32];
+		System.arraycopy(data, offset + idx, bi.complexName, 0, 32);
 		
-		System.out.println("simpleName=" + bi.simpleName + " complexName=" + bi.complexName + " with encoding=" + bible.getEncoding());
+		System.out.println("simpleName=" + bi.getShortName() + " complexName=" + bi.getFullName() + " with encoding=" + bible.getEncoding());
 		
 		return bi;
 	}
@@ -86,11 +88,11 @@ public class BookInfo {
 	/**
 	 * The sort name of the book, for example GEN for Genesis
 	 */
-	private String simpleName;
+	private byte[] simpleName;
 	/**
 	 * The complete/long name of the book
 	 */
-	private String complexName;
+	private byte[] complexName;
 
 	/**
 	 * Reference to the bible object
@@ -429,7 +431,7 @@ public class BookInfo {
 	 * @return The complete/long name of this book
 	 */
 	public String getFullName() {
-		return complexName;
+		return Util.readStringTrimZero(complexName, 0, complexName.length, bible.getEncoding());
 	}
 
 	/**
@@ -438,7 +440,7 @@ public class BookInfo {
 	 * @return The sort name of this book, for example GEN for Genesis
 	 */
 	public String getShortName() {
-		return simpleName;
+		return Util.readStringTrimZero(simpleName, 0, simpleName.length, bible.getEncoding());
 	}
 
 	/**
@@ -666,7 +668,7 @@ public class BookInfo {
 
 		return verseStart;
 	}
-
+	
 	/**
 	 * Try to open this book (load verse data for this book)
 	 * 
@@ -751,7 +753,7 @@ public class BookInfo {
 
 	@Override
 	public String toString() {
-		return complexName;
+		return getFullName();
 	}
 
 	/**
