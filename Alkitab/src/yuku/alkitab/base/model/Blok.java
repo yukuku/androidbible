@@ -1,15 +1,22 @@
 package yuku.alkitab.base.model;
 
-import java.io.IOException;
-import java.util.Arrays;
+import java.io.*;
+import java.util.*;
 
-import yuku.bintex.BintexReader;
+import yuku.bintex.*;
 
 public class Blok {
 
 //	Blok {
 //		Uint8 versi = 1
 //		ShortStr judul
+//		Uint8 nparalel
+//		ShortStr[nparalel] xparalel
+//	}
+
+//	Blok {
+//		Uint8 versi = 2
+//		LongStr judul
 //		Uint8 nparalel
 //		ShortStr[nparalel] xparalel
 //	}
@@ -22,11 +29,15 @@ public class Blok {
 		
 		int versi = in.readUint8();
 		
-		if (versi != 1) {
-			throw new RuntimeException("Versi harus 1 dong!"); //$NON-NLS-1$
+		if (versi > 2) {
+			throw new RuntimeException("Versi blok yang didukung cuma sampe 2. Keterima versi " + versi); //$NON-NLS-1$
 		}
 		
-		b.judul = in.readShortString();
+		if (versi == 1) {
+			b.judul = in.readShortString();
+		} else if (versi == 2) {
+			b.judul = in.readLongString();
+		}
 		
 		int nparalel = in.readUint8();
 		b.xparalel = new String[nparalel];

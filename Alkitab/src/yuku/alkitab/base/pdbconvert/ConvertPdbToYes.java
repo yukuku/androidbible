@@ -276,8 +276,13 @@ public class ConvertPdbToYes {
 		}};
 	}
 	
+	/** Perhatikan {@link Blok} untuk cara bikinnya. */
 	private void simpanBlok(int jenis, String judul, int kitab_0, int pasal_0, int ayat_0) {
 		int ari = Ari.encode(kitab_0, pasal_0 + 1, ayat_0 + 1);
+
+		if (D.EBUG) {
+			Log.d(TAG, "blok jenis " + jenis + " di " + Integer.toHexString(ari) + ": " + judul);
+		}
 		
 		try {
 			// simpen posisi blok terlebih dahulu
@@ -286,17 +291,22 @@ public class ConvertPdbToYes {
 			xposisiPerikopBlok_.add(nantinyaPerikopBlok_.getPos());
 			
 			// nah sekarang baru bloknya
-			// tulis versi
-			nantinyaPerikopBlok_.writeUint8(1);
-			// tulis judul
-			nantinyaPerikopBlok_.writeShortString(judul);
+			if (judul.length() > 255) {
+				// tulis versi = 2
+				nantinyaPerikopBlok_.writeUint8(2);
+				// tulis judul
+				nantinyaPerikopBlok_.writeLongString(judul);
+			} else {
+				// tulis versi = 1
+				nantinyaPerikopBlok_.writeUint8(1);
+				// tulis judul
+				nantinyaPerikopBlok_.writeShortString(judul);
+			}
+			
 			// tulis nparalel
 			nantinyaPerikopBlok_.writeUint8(0 /*xparalel.size()*/);
 			// tulis xparalel, tapi kan ga ada.
 			// NOP
-			if (D.EBUG) {
-				Log.d(TAG, "blok jenis " + jenis + " di " + Integer.toHexString(ari) + ": " + judul);
-			}
 		} catch (IOException e) {
 			// won't happen, this is writing to memory only
 		}
