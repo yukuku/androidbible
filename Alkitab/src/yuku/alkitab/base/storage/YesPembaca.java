@@ -300,10 +300,14 @@ public class YesPembaca extends Pembaca {
 		try {
 			init();
 			
+			if (perikopAda == 0) {
+				return null;
+			}
+			
 			int ukuran = lewatiSampeSeksi("perikopIndex"); //$NON-NLS-1$
 			
 			if (ukuran < 0) {
-				Log.d(TAG, "Tidak ada index perikop");
+				Log.d(TAG, "Tidak ada seksi 'perikopIndex'");
 				return null;
 			}
 			
