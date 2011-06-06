@@ -73,6 +73,7 @@ public class ConvertOptionsDialog {
 		lSample = (TextView) dialogLayout.findViewById(R.id.lSample);
 		cAddlTitle = (CheckBox) dialogLayout.findViewById(R.id.cAddlTitle);
 		
+		// FIXME if hebrew/greek, disable aja.
 		List<String> charsets = new ArrayList<String>();
 		{
 			for (Map.Entry<String, Charset> charset: Charset.availableCharsets().entrySet()) {
@@ -110,11 +111,13 @@ public class ConvertOptionsDialog {
 
 	private void showSample(String encoding) {
 		pdb.setEncoding(encoding); 
+		
+		String bookName = bookInfo.getFullName();
 		String verse = bookInfo.getVerse(1, 1);
 		if (verse.length() > 90) {
 			verse = verse.substring(0, 88) + "...";
 		}
-		lSample.setText(verse);
+		lSample.setText(bookName + " 1:1  " + verse);
 	}
 	
 	private OnItemSelectedListener cbEncoding_itemSelected = new OnItemSelectedListener() {

@@ -154,14 +154,23 @@ public class Util {
 			}
 			
 			String s = new String(data, offs, len, encoding);
+			
 //			byte[] b = new byte[len];
 //			System.arraycopy(data, offs, b, 0, len);
-//			Log.d("readString(TZ)", (s.length() > 20? s.substring(0, 20): s) + " encoding " + encoding + " from " + Arrays.toString(b));
+//			Log.d("readString(TZ)", (s.length() > 20? s.substring(0, 20): s) + " encoding " + encoding + " from " + dumpByteArray(b));
 
 			return s;
 		} catch (java.io.UnsupportedEncodingException e) {
 			return "";
 		}
+	}
+	
+	static String dumpByteArray(byte[] ba) {
+		StringBuilder sb = new StringBuilder();
+		for (byte b: ba) {
+			sb.append("0x").append(Integer.toHexString(0xff & b)).append(' ');
+		}
+		return sb.toString();
 	}
 
 	public static void setTables(char[] _hebrewtab, char[] _greektab) {

@@ -3,7 +3,7 @@ package yuku.alkitab;
 import java.io.*;
 import java.util.*;
 
-import yuku.bintex.BintexWriter;
+import yuku.bintex.*;
 
 public class KonvertPerikop {
 	static String nama;
@@ -70,10 +70,10 @@ public class KonvertPerikop {
 		t(out, judul, xparalel);
 		
 		if (xofset.size() == xari.size()) {
-			index.writeInt(xofset.size());
+			index.writeInt(xofset.size()); // int adaBerapaEntri
 			for (int i = 0; i < xofset.size(); i++) {
-				index.writeInt(xari.get(i));
-				index.writeInt(xofset.get(i));
+				index.writeInt(xari.get(i)); // ari untuk entri ini
+				index.writeInt(xofset.get(i)); // ofset ke blok untuk entri ini
 			}
 		} else {
 			throw new RuntimeException("xofset.size() != xari.size()");

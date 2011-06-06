@@ -739,6 +739,10 @@ public class BiblePlusPDB {
 	public String getVersionName() {
 		return versionName;
 	}
+	
+	public String getVersionInfo() {
+		return versionInfo;
+	}
 
 	String getWord(int wordNum) {
 		int pos = getWordPos(wordNum);

@@ -6,11 +6,14 @@ import android.util.*;
 import java.io.*;
 import java.util.*;
 
+import yuku.alkitab.base.config.*;
+import yuku.alkitab.base.model.*;
 import yuku.alkitab.yes.*;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
 import yuku.alkitab.yes.YesFile.IsiSeksi;
 import yuku.alkitab.yes.YesFile.Kitab;
+import yuku.andoutil.*;
 import yuku.bintex.*;
 
 import com.compactbyte.android.bible.*;
@@ -25,6 +28,11 @@ public class ConvertPdbToYes {
 
 	private Kitab[] xkitab_;
 	private int[] kitabPosToBookPosMap_;
+	private int nblokPerikop_ = 0;
+	private ByteArrayOutputStream nantinyaPerikopBlokBaos_ = new ByteArrayOutputStream();
+	private BintexWriter nantinyaPerikopBlok_ = new BintexWriter(nantinyaPerikopBlokBaos_);
+	private IntArrayList xariPerikopBlok_ = new IntArrayList();
+	private IntArrayList xposisiPerikopBlok_ = new IntArrayList();
 
 	ConvertProgressListener convertProgressListener;
 	
@@ -68,6 +76,7 @@ public class ConvertPdbToYes {
 			progress(0, "Opening PDB file");
 			pdb = new BiblePlusPDB(new PDBFileStream(filenamepdb), Tabs.hebrewTab, Tabs.greekTab);
 			if (params.inputEncoding != null) pdb.setEncoding(params.inputEncoding);
+			Log.d(TAG, "Encoding used: " + params.inputEncoding);
 			progress(10, "Loading version info");
 			pdb.loadVersionInfo();
 			progress(20, "Loading word index");
@@ -124,39 +133,57 @@ public class ConvertPdbToYes {
 
 			Log.d(TAG, "============ baca daftar kitab selesai");
 			
-			progress(100, "Constructing version info");
+			// sekaligus bangun perikop blok dan perikop index.
+			progress(100, "Constructing book info");
+			final InfoKitab infoKitab = getInfoKitab(100, params.includeAddlTitle);
+			
+			progress(200, "Constructing version info");
 			final InfoEdisi infoEdisi = getInfoEdisi();
-
-			progress(200, "Constructing book info");
-			final InfoKitab infoKitab = getInfoKitab(200);
 			
 			progress(400, "Constructing translated file");
 			YesFile file = new YesFile() {{
-				this.xseksi = new Seksi[] {
-					new SeksiBernama("infoEdisi___") {
+				boolean adaPerikop = nblokPerikop_ > 0;
+				this.xseksi = new Seksi[adaPerikop? 5: 3];
+				
+				xseksi[0] = new SeksiBernama("infoEdisi___") {
+					@Override public IsiSeksi isi() {
+						return infoEdisi;
+					}
+				};
+				xseksi[1] = new SeksiBernama("infoKitab___") {
+					@Override public IsiSeksi isi() {
+						return infoKitab;
+					}
+				};
+				if (adaPerikop) {
+					xseksi[2] = new SeksiBernama("perikopIndex") {
 						@Override public IsiSeksi isi() {
-							return infoEdisi;
+							return new IsiSeksi() {
+								@Override public void toBytes(BintexWriter writer) throws Exception {
+									progress(710, "Writing " + nblokPerikop_ + " section/pericope indexes");
+									writer.writeInt(nblokPerikop_);
+									for (int i = 0; i < nblokPerikop_; i++) {
+										writer.writeInt(xariPerikopBlok_.get(i)); // ari untuk entri ini
+										writer.writeInt(xposisiPerikopBlok_.get(i)); // ofset ke blok untuk entri ini
+									}
+								}
+							};
 						}
-					},
-					new SeksiBernama("infoKitab___") {
+					};
+					xseksi[3] = new SeksiBernama("perikopBlok_") {
 						@Override public IsiSeksi isi() {
-							return infoKitab;
+							return new IsiSeksi() {
+								@Override public void toBytes(BintexWriter writer) throws Exception {
+									progress(720, "Writing " + nblokPerikop_ + " section/pericope titles");
+									nantinyaPerikopBlokBaos_.writeTo(writer.getOutputStream());
+								}
+							};
 						}
-					},
-//					new SeksiBernama("perikopIndex") {
-//						@Override public IsiSeksi isi() {
-//							return new NemplokSeksi("../Alkitab/publikasi/bis_perikop_index_bt.bt");
-//						}
-//					},
-//					new SeksiBernama("perikopBlok_") {
-//						@Override public IsiSeksi isi() {
-//							return new NemplokSeksi("../Alkitab/publikasi/bis_perikop_blok_bt.bt");
-//						}
-//					},
-					new SeksiBernama("teks________") {
-						@Override public IsiSeksi isi() {
-							return new LazyTeks(700);
-						}
+					};
+				}
+				xseksi[xseksi.length - 1] = new SeksiBernama("teks________") {
+					@Override public IsiSeksi isi() {
+						return new LazyTeks(800);
 					}
 				};
 			}};
@@ -182,14 +209,14 @@ public class ConvertPdbToYes {
 		return new InfoEdisi() {{
 			versi = 2;
 			nama = pdb.getVersionName();
-			judul = pdb.getVersionName();
+			judul = pdb.getVersionInfo();
 			nkitab = xkitab_.length; // INGAT: BISA BOLONG_BOLONG
-			perikopAda = 0; // FIXME ada
+			perikopAda = nblokPerikop_ == 0? 0: 1;
 			encoding = 2; // utf-8
 		}};
 	}
 
-	private InfoKitab getInfoKitab(int baseProgress) throws Exception {
+	private InfoKitab getInfoKitab(int baseProgress, boolean includeAddlTitle) throws Exception {
 		// untuk offset teks dari awal seksi teks
 		int offsetTotal = 0;
 		// untuk offset teks dari awal kitab
@@ -223,7 +250,15 @@ public class ConvertPdbToYes {
 				k.nayat[pasal_0] = bookInfo.getVerseCount(pasal_0 + 1);
 				
 				for (int ayat_0 = 0; ayat_0 < k.nayat[pasal_0]; ayat_0++) {
-					offsetLewat += bookInfo.getVerse(pasal_0 + 1, ayat_0 + 1).getBytes("utf-8").length + 1; // +1 buat \n
+					String[] complete = bookInfo.getCompleteVerse(pasal_0 + 1, ayat_0 + 1);
+					offsetLewat += complete[0].getBytes("utf-8").length + 1; // +1 buat \n
+					
+					// perikop!
+					if (includeAddlTitle) {
+						if (complete[3].length() > 0) simpanBlok(3, complete[3], kitabPos, pasal_0, ayat_0); 
+						if (complete[2].length() > 0) simpanBlok(2, complete[2], kitabPos, pasal_0, ayat_0); 
+					}
+					if (complete[1].length() > 0) simpanBlok(1, complete[1], kitabPos, pasal_0, ayat_0);
 				}
 				k.pasal_offset[pasal_0+1] = offsetLewat;
 			}
@@ -241,6 +276,32 @@ public class ConvertPdbToYes {
 		}};
 	}
 	
+	private void simpanBlok(int jenis, String judul, int kitab_0, int pasal_0, int ayat_0) {
+		int ari = Ari.encode(kitab_0, pasal_0 + 1, ayat_0 + 1);
+		
+		try {
+			// simpen posisi blok terlebih dahulu
+			nblokPerikop_++;
+			xariPerikopBlok_.add(ari);
+			xposisiPerikopBlok_.add(nantinyaPerikopBlok_.getPos());
+			
+			// nah sekarang baru bloknya
+			// tulis versi
+			nantinyaPerikopBlok_.writeUint8(1);
+			// tulis judul
+			nantinyaPerikopBlok_.writeShortString(judul);
+			// tulis nparalel
+			nantinyaPerikopBlok_.writeUint8(0 /*xparalel.size()*/);
+			// tulis xparalel, tapi kan ga ada.
+			// NOP
+			if (D.EBUG) {
+				Log.d(TAG, "blok jenis " + jenis + " di " + Integer.toHexString(ari) + ": " + judul);
+			}
+		} catch (IOException e) {
+			// won't happen, this is writing to memory only
+		}
+	}
+
 	public class LazyTeks implements IsiSeksi {
 		private final int baseProgress;
 
@@ -271,26 +332,5 @@ public class ConvertPdbToYes {
 				}
 			}
 		}
-	}
-
-	private String[] bacaPasal(Kitab kitab, int pasal_1) throws IOException {
-		BookInfo bookInfo = pdb.getBook(kitab.pos);
-		bookInfo.openBook();
-		int nayat = bookInfo.getVerseCount(pasal_1);
-		
-		String[] xayat = new String[nayat];
-		for (int i = 0; i < nayat; i++) {
-			int ayat_1 = i + 1;
-			String[] vv = bookInfo.getCompleteVerse(pasal_1, ayat_1);
-			xayat[i] = vv[0].toString();
-			
-			for (int j = 1; j < 4; j++) {
-				if (vv[j].length() != 0) {
-					Log.d(TAG, "!!! Kitab " + kitab.judul + "(" + kitab.pos + ") " + pasal_1 + ":" + ayat_1 + " bagian " + j + ": " + vv[j].toString());
-				}
-			}
-		}
-
-		return xayat;
 	}
 }
