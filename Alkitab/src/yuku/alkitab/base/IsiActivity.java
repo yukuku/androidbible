@@ -220,6 +220,12 @@ public class IsiActivity extends Activity {
 		}
 
 		tog.dumpToLog();
+		
+		if (D.EBUG) {
+			new AlertDialog.Builder(this)
+			.setMessage("D.EBUG nyala!")
+			.show();
+		}
 	}
 	
 	private synchronized void nyalakanTerusLayarKalauDiminta() {
