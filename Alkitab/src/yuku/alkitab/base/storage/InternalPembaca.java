@@ -1,13 +1,14 @@
 package yuku.alkitab.base.storage;
 
-import java.io.*;
-import java.util.ArrayList;
+import android.content.*;
+import android.util.*;
 
-import yuku.alkitab.base.S;
+import java.io.*;
+import java.util.*;
+
+import yuku.alkitab.base.*;
 import yuku.alkitab.base.model.*;
-import yuku.bintex.BintexReader;
-import android.content.Context;
-import android.util.Log;
+import yuku.bintex.*;
 
 public class InternalPembaca extends Pembaca {
 	public static final String TAG = InternalPembaca.class.getSimpleName();
@@ -105,6 +106,10 @@ public class InternalPembaca extends Pembaca {
 
 	@Override
 	public String[] muatTeks(Kitab kitab, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+		if (pasal_1 > kitab.npasal) {
+			return null;
+		}
+		
 		int offset = kitab.pasal_offset[pasal_1 - 1];
 		int length = 0;
 

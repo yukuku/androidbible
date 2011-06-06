@@ -128,9 +128,14 @@ public class S {
 			return teksTakTersedia;
 		}
 		String[] xayat = muatTeks(edisi, kitab, pasal_1, false, false);
+		
+		if (xayat == null) {
+			return teksTakTersedia;
+		}
+		
 		int ayat_0 = ayat_1 - 1;
 		if (ayat_0 >= xayat.length) {
-			return "[?]";
+			return teksTakTersedia;
 		}
 		return xayat[ayat_0];
 	}
@@ -139,14 +144,26 @@ public class S {
 		if (kitab == null) {
 			return teksTakTersediaArray;
 		}
-		return muatTeks(edisi, kitab, pasal_1, false, false);
+		String[] xayat = muatTeks(edisi, kitab, pasal_1, false, false);
+		
+		if (xayat == null) {
+			return teksTakTersediaArray;
+		}
+		
+		return xayat;
 	}
 
 	public static synchronized String muatTeksJanganPisahAyatHurufKecil(Edisi edisi, Kitab kitab, int pasal_1) {
 		if (kitab == null) {
 			return teksTakTersedia;
 		}
-		return muatTeks(edisi, kitab, pasal_1, true, true)[0];
+		String[] xayat_denganSatuElemen = muatTeks(edisi, kitab, pasal_1, true, true);
+		
+		if (xayat_denganSatuElemen == null) {
+			return teksTakTersedia;
+		}
+		
+		return xayat_denganSatuElemen[0];
 	}
 	
 	private static String[] muatTeks(Edisi edisi, Kitab kitab, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {

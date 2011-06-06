@@ -228,6 +228,10 @@ public class YesPembaca extends Pembaca {
 		try {
 			init();
 			
+			if (pasal_1 > kitab.npasal) {
+				return null;
+			}
+			
 			long seekTo = teks_dasarOffset;
 			seekTo += kitab.offset;
 			seekTo += kitab.pasal_offset[pasal_1 - 1];
