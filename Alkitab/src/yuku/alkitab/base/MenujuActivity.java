@@ -96,8 +96,7 @@ public class MenujuActivity extends Activity {
 					// biarin 0 aja
 				}
 				
-				// itemid yang menentukan pos
-				int kitab = (int) cbKitab.getSelectedItemId();
+				int kitab = adapter.getItem(cbKitab.getSelectedItemPosition()).pos;
 				
 				Intent intent = new Intent();
 				intent.putExtra(EXTRA_kitab, kitab);

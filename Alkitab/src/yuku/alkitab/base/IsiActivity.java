@@ -996,6 +996,7 @@ public class IsiActivity extends Activity {
 					tampil(pasalBaru_1, 1);
 					break;
 				}
+				cobaKitabPos--;
 			}
 			// whileelse: sekarang sudah Kejadian 1. Ga usa ngapa2in
 		} else {
