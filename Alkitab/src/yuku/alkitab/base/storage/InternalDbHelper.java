@@ -1,14 +1,15 @@
 package yuku.alkitab.base.storage;
 
-import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.storage.Db.Bukmak;
-import yuku.alkitab.base.storage.Db.Bukmak2;
 import android.content.*;
 import android.content.pm.*;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.*;
 import android.database.sqlite.*;
-import android.util.Log;
+import android.util.*;
+
+import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.storage.Db.Bukmak;
+import yuku.alkitab.base.storage.Db.Bukmak2;
 
 public class InternalDbHelper extends SQLiteOpenHelper {
 	public static final String TAG = InternalDbHelper.class.getSimpleName();
@@ -91,6 +92,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 				"_id integer primary key autoincrement, " + //$NON-NLS-1$
 				Db.Edisi.judul + " text, " + // judul (keliatan sama user) //$NON-NLS-1$
 				Db.Edisi.jenis + " text, " + // jenis (yes) //$NON-NLS-1$
+				Db.Edisi.keterangan + " text, " + // keterangan tambahan, mungkin bisa diedit user kalo perlu //$NON-NLS-1$
 				Db.Edisi.namafile + " text, " + // nama file di sd card (full path) //$NON-NLS-1$
 				Db.Edisi.namafile_pdbasal + " text, " + // nama file kalau bekas dikonvert dari pdb (nama doang) //$NON-NLS-1$
 				Db.Edisi.aktif + " integer, " + // tampilkan di daftar edisi? //$NON-NLS-1$

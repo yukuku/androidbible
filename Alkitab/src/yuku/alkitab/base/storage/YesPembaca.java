@@ -21,6 +21,7 @@ public class YesPembaca extends Pembaca {
 	private long perikopBlok_dasarOffset;
 	
 	private String judul;
+	private String keterangan;
 	private int nkitab;
 	private int perikopAda = 0; // default ga ada
 	private int encoding = 1; // 1 = ascii; 2 = utf-8;
@@ -110,6 +111,8 @@ public class YesPembaca extends Pembaca {
 					nama = in.readShortString();
 				} else if (key.equals("judul")) { //$NON-NLS-1$
 					this.judul = in.readShortString();
+				} else if (key.equals("keterangan")) { //$NON-NLS-1$
+					this.keterangan = in.readLongString();
 				} else if (key.equals("nkitab")) { //$NON-NLS-1$
 					this.nkitab = in.readInt();
 				} else if (key.equals("perikopAda")) { //$NON-NLS-1$
@@ -368,6 +371,19 @@ public class YesPembaca extends Pembaca {
 		} catch (Exception e) {
 			Log.e(TAG, "gagal muatPerikop", e); //$NON-NLS-1$
 			return 0;
+		}
+	}
+
+	/**
+	 * Mungkin null kalo ga ada.
+	 */
+	public String getKeterangan() {
+		try {
+			init();
+			return keterangan;
+		} catch (Exception e) {
+			Log.e(TAG, "init error", e); //$NON-NLS-1$
+			return null;
 		}
 	}
 }

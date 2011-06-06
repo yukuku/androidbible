@@ -38,6 +38,7 @@ public class Db {
 	public static final String TABEL_Edisi = "Edisi"; //$NON-NLS-1$
 	public static final class Edisi {
 		public static final String judul = "judul"; //$NON-NLS-1$
+		public static final String keterangan = "keterangan"; //$NON-NLS-1$
 		public static final String jenis = "jenis"; //$NON-NLS-1$
 		public static final String namafile = "namafile"; //$NON-NLS-1$
 		public static final String namafile_pdbasal = "namafile_pdbasal"; //$NON-NLS-1$

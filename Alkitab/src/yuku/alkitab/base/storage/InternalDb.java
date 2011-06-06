@@ -321,6 +321,7 @@ public class InternalDb {
 		try {
 			int col_aktif = cursor.getColumnIndexOrThrow(Db.Edisi.aktif);
 			int col_judul = cursor.getColumnIndexOrThrow(Db.Edisi.judul);
+			int col_keterangan = cursor.getColumnIndexOrThrow(Db.Edisi.keterangan);
 			int col_namafile = cursor.getColumnIndexOrThrow(Db.Edisi.namafile);
 			int col_namafile_pdbasal = cursor.getColumnIndexOrThrow(Db.Edisi.namafile_pdbasal);
 			int col_urutan = cursor.getColumnIndexOrThrow(Db.Edisi.urutan);
@@ -329,6 +330,7 @@ public class InternalDb {
 				MEdisiYes yes = new MEdisiYes();
 				yes.cache_aktif = cursor.getInt(col_aktif) != 0;
 				yes.jenis = Db.Edisi.jenis_yes;
+				yes.keterangan = cursor.getString(col_keterangan);
 				yes.judul = cursor.getString(col_judul);
 				yes.namafile = cursor.getString(col_namafile);
 				yes.namafile_pdbasal = cursor.getString(col_namafile_pdbasal);
@@ -360,6 +362,7 @@ public class InternalDb {
 		cv.put(Db.Edisi.aktif, aktif);
 		cv.put(Db.Edisi.jenis, Db.Edisi.jenis_yes);
 		cv.put(Db.Edisi.judul, edisi.judul);
+		cv.put(Db.Edisi.keterangan, edisi.keterangan);
 		cv.put(Db.Edisi.namafile, edisi.namafile);
 		cv.put(Db.Edisi.namafile_pdbasal, edisi.namafile_pdbasal);
 		cv.put(Db.Edisi.urutan, edisi.urutan);

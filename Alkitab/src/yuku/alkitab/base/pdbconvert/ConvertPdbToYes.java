@@ -209,7 +209,8 @@ public class ConvertPdbToYes {
 		return new InfoEdisi() {{
 			versi = 2;
 			nama = pdb.getVersionName();
-			judul = pdb.getVersionInfo();
+			judul = pdb.getVersionName();
+			keterangan = pdb.getVersionInfo();
 			nkitab = xkitab_.length; // INGAT: BISA BOLONG_BOLONG
 			perikopAda = nblokPerikop_ == 0? 0: 1;
 			encoding = 2; // utf-8

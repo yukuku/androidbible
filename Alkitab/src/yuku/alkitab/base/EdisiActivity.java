@@ -335,13 +335,13 @@ public class EdisiActivity extends Activity {
 		
 		try {
 			YesPembaca pembaca = new YesPembaca(getApplicationContext(), filename);
-			String judul = pembaca.getJudul();
 			int urutanTerbesar = S.getDb().getUrutanTerbesarEdisiYes();
 			if (urutanTerbesar == 0) urutanTerbesar = 100; // default
 			
 			MEdisiYes yes = new MEdisiYes();
 			yes.jenis = Db.Edisi.jenis_yes;
-			yes.judul = judul;
+			yes.judul = pembaca.getJudul();
+			yes.keterangan = pembaca.getKeterangan();
 			yes.namafile = filename;
 			yes.namafile_pdbasal = namapdbasal;
 			yes.urutan = urutanTerbesar + 1;
@@ -507,6 +507,7 @@ public class EdisiActivity extends Activity {
 	}
 	
 	public static class MEdisiYes extends MEdisi {
+		public String keterangan;
 		public String namafile;
 		public String namafile_pdbasal;
 		public boolean cache_aktif; // supaya ga usa dibaca tulis terus dari db
