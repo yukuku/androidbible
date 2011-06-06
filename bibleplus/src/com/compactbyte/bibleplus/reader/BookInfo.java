@@ -132,7 +132,11 @@ public class BookInfo {
 	 * Temporary StringBuffer
 	 * Note: Blackberry doesn't have StringBuilder class
 	 */
-	private StringBuffer[] sb;
+	// <yuku>
+	// <original>
+//	private StringBuffer[] sb;
+	// </original>
+	// </yuku>
 	/**
 	 * lookup table for byteshifted PDB
 	 */
@@ -148,16 +152,20 @@ public class BookInfo {
 	 */
 	private BookInfo(BiblePlusPDB bible) {
 		this.bible = bible;
-
-		/**
-		 * One string buffer for each "tag"
-		 */
-		sb = new StringBuffer[4];
-
-		for (int i = 0; i < 4; i++) {
-			sb[i] = new StringBuffer();
-		}
-
+		// <yuku>
+		// <original>
+//		
+//		/**
+//		 * One string buffer for each "tag"
+//		 */
+//		sb = new StringBuffer[4];
+//		
+//		for (int i = 0; i < 4; i++) {
+//			sb[i] = new StringBuffer();
+//		}
+//		
+		// </original>
+		// </yuku>
 	}
 
 	/**
@@ -237,7 +245,7 @@ public class BookInfo {
 	 *         only appear in chapter 1 verse 1 of a book.
 	 * 
 	 */
-	public StringBuffer[] getCompleteVerse(int chapter, int verse) {
+	public String[] getCompleteVerse(int chapter, int verse) {
 
 		if (!bookOpened) {
 			return null;
@@ -255,9 +263,13 @@ public class BookInfo {
 			return getVerseByteShifted(chapter, verse);
 		}
 
-		for (int i = 0; i < 4; i++) {
-			sb[i].setLength(0);
-		}
+		// <yuku>
+		// <original>
+//		for (int i = 0; i < 4; i++) {
+//			sb[i].setLength(0);
+//		}
+		// </original>
+		// </yuku>
 		
 		// <yuku>
 		@SuppressWarnings("unchecked")
@@ -329,13 +341,19 @@ public class BookInfo {
 		}
 		
 		// <yuku>
-		sb[0] = new StringBuffer(stringFromWords(words[0]));
-		sb[1] = new StringBuffer(stringFromWords(words[1]));
-		sb[2] = new StringBuffer(stringFromWords(words[2]));
-		sb[3] = new StringBuffer(stringFromWords(words[3]));
+		String[] res = new String[4];
+		res[0] = stringFromWords(words[0]);
+		res[1] = stringFromWords(words[1]);
+		res[2] = stringFromWords(words[2]);
+		res[3] = stringFromWords(words[3]);
 		// </yuku>
 
-		return sb;
+		// <yuku>
+		// <original>
+		// return sb;
+		// </original>
+		return res;
+		// </yuku>
 	}
 
 	// <yuku>
@@ -433,11 +451,11 @@ public class BookInfo {
 	 * @return verse as string
 	 */
 	public String getVerse(int chapter, int verse) {
-		StringBuffer[] sb = getCompleteVerse(chapter, verse);
+		String[] sb = getCompleteVerse(chapter, verse);
 		if (sb == null) {
 			return null;
 		}
-		return sb[0].toString();
+		return sb[0];
 	}
 
 	/**
@@ -450,13 +468,17 @@ public class BookInfo {
 	 *            verse number
 	 * @return array of StringBuffer for each tag
 	 */
-	StringBuffer[] getVerseByteShifted(int chapter, int verse) {
+	String[] getVerseByteShifted(int chapter, int verse) {
 		int verseStart = getVerseStart(chapter, verse);
 		int verseLength = getVerseLength(chapter, verse);
 
-		for (int i = 0; i < 4; i++) {
-			sb[i].setLength(0);
-		}
+		// <yuku>
+		// <original>
+//		for (int i = 0; i < 4; i++) {
+//			sb[i].setLength(0);
+//		}
+		// </original>
+		// </yuku>
 
 		// System.out.println("Start " + verseStart + " length " + verseLength);
 
@@ -480,6 +502,15 @@ public class BookInfo {
 		default:
 			;
 		}
+
+		// <yuku>
+		@SuppressWarnings("unchecked")
+		ArrayList<String>[] words = new ArrayList[4];
+		words[0] = new ArrayList<String>();
+		words[1] = new ArrayList<String>();
+		words[2] = new ArrayList<String>();
+		words[3] = new ArrayList<String>();
+		// </yuku>
 
 		int sbpos = 0;
 
@@ -542,18 +573,42 @@ public class BookInfo {
 
 					String word = bible.getWord(r[j]);
 
-					addSepChar(sb[sbpos], word);
-
-					sb[sbpos].append(word);
+					// System.out.println("Word " + word);
+					// <yuku>
+					// <original>
+					// addSepChar(sb[sbpos], word);
+					// sb[sbpos].append(word);
+					// </original>
+					words[sbpos].add(word);
+					// </yuku>
 				}
 			} else {
 				String word = bible.getWord(decWordNum);
-				addSepChar(sb[sbpos], word);
-				sb[sbpos].append(word);
+				// <yuku>
+				// <original>
+				// addSepChar(sb[sbpos], word);
+				// sb[sbpos].append(word);
+				// </original>
+				words[sbpos].add(word);
+				// </yuku>
 				// System.out.println("r is null" + word);
 			}
 		}
-		return sb;
+
+		// <yuku>
+		String[] res = new String[4];
+		res[0] = stringFromWords(words[0]);
+		res[1] = stringFromWords(words[1]);
+		res[2] = stringFromWords(words[2]);
+		res[3] = stringFromWords(words[3]);
+		// </yuku>
+
+		// <yuku>
+		// <original>
+		// return sb;
+		// </original>
+		return res;
+		// </yuku>
 	}
 
 	/**

@@ -22,6 +22,8 @@ import yuku.alkitab.base.AddonManager.Elemen;
 import yuku.alkitab.base.config.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.pdbconvert.*;
+import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog.ConvertOptionsCallback;
+import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertParams;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertProgressListener;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertResult;
 import yuku.alkitab.base.storage.*;
@@ -357,7 +359,7 @@ public class EdisiActivity extends Activity {
 	}
 
 	private void handleFileOpenPdb(final String namafilepdb) {
-		String namayes = namaYes(namafilepdb, ConvertPdbToYes.VERSI_CONVERTER);
+		final String namayes = namaYes(namafilepdb, ConvertPdbToYes.VERSI_CONVERTER);
 		
 		// cek apakah sudah ada.
 		if (S.getDb().adakahEdisiYesDenganNamafile(AddonManager.getEdisiPath(namayes))) {
@@ -368,53 +370,68 @@ public class EdisiActivity extends Activity {
 			return;
 		}
 		
-		final String namafileyes = AddonManager.getEdisiPath(namayes);
 		
-		final ProgressDialog pd = ProgressDialog.show(EdisiActivity.this, null, "Reading PDB file...", true, false);
-		
-		new AsyncTask<String, Object, ConvertResult>() {
-			@Override protected ConvertResult doInBackground(String... params) {
-				ConvertPdbToYes converter = new ConvertPdbToYes();
-				converter.setConvertProgressListener(new ConvertProgressListener() {
-					@Override public void onProgress(int at, String message) {
-						Log.d(TAG, "Progress " + at + ": " + message);
-						publishProgress(at, message);
-					}
-					
-					@Override public void onFinish() {
-						Log.d(TAG, "Finish");
-						publishProgress(null, null);
-					}
-				});
-				return converter.convert(getApplicationContext(), namafilepdb, namafileyes);
+		ConvertOptionsCallback callback = new ConvertOptionsCallback() {
+			@Override public void onPdbReadError(Exception e) {
+				showPdbReadErrorDialog(e);
 			}
 			
-			@Override protected void onProgressUpdate(Object... values) {
-				if (values[0] == null) {
-					pd.setMessage("Finished.");
-				} else {
-					int at = (Integer) values[0];
-					String message = (String) values[1];
-					pd.setMessage("(" + at + ") " + message + "...");
-				}
-			};
-			
-			@Override protected void onPostExecute(ConvertResult result) {
-				pd.dismiss();
+			@Override public void onOk(final ConvertParams params) {
+				final String namafileyes = AddonManager.getEdisiPath(namayes);
+				final ProgressDialog pd = ProgressDialog.show(EdisiActivity.this, null, "Reading PDB file...", true, false);
 				
-				if (result.exception != null) {
-					new AlertDialog.Builder(EdisiActivity.this)
-					.setTitle("Error reading PDB file")
-					.setMessage("Details: " + U.tampilException(result.exception))
-					.setPositiveButton(R.string.ok, null)
-					.show();
-				} else {
-					// sukses.
-					handleFileOpenYes(namafileyes, new File(namafilepdb).getName());
-				}
-			};
-		}.execute();
+				new AsyncTask<String, Object, ConvertResult>() {
+					@Override protected ConvertResult doInBackground(String... _unused_) {
+						ConvertPdbToYes converter = new ConvertPdbToYes();
+						converter.setConvertProgressListener(new ConvertProgressListener() {
+							@Override public void onProgress(int at, String message) {
+								Log.d(TAG, "Progress " + at + ": " + message);
+								publishProgress(at, message);
+							}
+							
+							@Override public void onFinish() {
+								Log.d(TAG, "Finish");
+								publishProgress(null, null);
+							}
+						});
+						return converter.convert(getApplicationContext(), namafilepdb, namafileyes, params);
+					}
+					
+					@Override protected void onProgressUpdate(Object... values) {
+						if (values[0] == null) {
+							pd.setMessage("Finished.");
+						} else {
+							int at = (Integer) values[0];
+							String message = (String) values[1];
+							pd.setMessage("(" + at + ") " + message + "...");
+						}
+					};
+					
+					@Override protected void onPostExecute(ConvertResult result) {
+						pd.dismiss();
+						
+						if (result.exception != null) {
+							showPdbReadErrorDialog(result.exception);
+						} else {
+							// sukses.
+							handleFileOpenYes(namafileyes, new File(namafilepdb).getName());
+						}
+					}
+				}.execute();
+			}
+		};
+		
+		ConvertOptionsDialog dialog = new ConvertOptionsDialog(this, namafilepdb, callback);
+		dialog.show();
 	}
+	
+	private void showPdbReadErrorDialog(Exception exception) {
+		new AlertDialog.Builder(EdisiActivity.this)
+		.setTitle("Error reading PDB file")
+		.setMessage("Details: " + U.tampilException(exception))
+		.setPositiveButton(R.string.ok, null)
+		.show();
+	};
 
 	/**
 	 * @return nama file untuk yes yang dikonvert dari pdbnya, semacam "pdb-1234abcd-1.yes". Ga pake path.

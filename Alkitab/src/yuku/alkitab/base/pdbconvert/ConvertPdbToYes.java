@@ -4,7 +4,6 @@ import android.content.*;
 import android.util.*;
 
 import java.io.*;
-import java.nio.charset.*;
 import java.util.*;
 
 import yuku.alkitab.yes.*;
@@ -34,6 +33,11 @@ public class ConvertPdbToYes {
 		void onFinish();
 	}
 	
+	public static class ConvertParams {
+		public String inputEncoding;
+		public boolean includeAddlTitle;
+	}
+	
 	public static class ConvertResult {
 		public Exception exception;
 	}
@@ -55,19 +59,15 @@ public class ConvertPdbToYes {
 	}
 	
 	public ConvertPdbToYes() {
-		SortedMap<String,Charset> charsets = Charset.availableCharsets();
-		for (Map.Entry<String, Charset> charset: charsets.entrySet()) {
-			Log.d(TAG, "available charset: " + charset.getKey());
-		}
 	}
 	
-	public ConvertResult convert(Context context, String filenamepdb, String namafileyes) {
+	public ConvertResult convert(Context context, String filenamepdb, String namafileyes, ConvertParams params) {
 		ConvertResult res = new ConvertResult();
 		
 		try {
 			progress(0, "Opening PDB file");
-			PDBFileStream stream = new PDBFileStream(filenamepdb);
-			pdb = new BiblePlusPDB(stream, Tabs.hebrewTab, Tabs.greekTab);
+			pdb = new BiblePlusPDB(new PDBFileStream(filenamepdb), Tabs.hebrewTab, Tabs.greekTab);
+			if (params.inputEncoding != null) pdb.setEncoding(params.inputEncoding);
 			progress(10, "Loading version info");
 			pdb.loadVersionInfo();
 			progress(20, "Loading word index");
@@ -168,7 +168,7 @@ public class ConvertPdbToYes {
 			out.close();
 			
 			pdb.close();
-			stream.close();
+			new PDBFileStream(filenamepdb).close();
 		} catch (Exception e) {
 			pdb = null;
 			Log.e(TAG, "Eror baca pdb: ", e);
@@ -281,7 +281,7 @@ public class ConvertPdbToYes {
 		String[] xayat = new String[nayat];
 		for (int i = 0; i < nayat; i++) {
 			int ayat_1 = i + 1;
-			StringBuffer[] vv = bookInfo.getCompleteVerse(pasal_1, ayat_1);
+			String[] vv = bookInfo.getCompleteVerse(pasal_1, ayat_1);
 			xayat[i] = vv[0].toString();
 			
 			for (int j = 1; j < 4; j++) {
