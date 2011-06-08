@@ -152,4 +152,10 @@
     <string name="tambah">Tambah</string>
     <string name="versi_lainnya">Versi lainnya...</string>
     <string name="ada_kegagalan_membuka_edisiid">Ada kegagalan membuka %s</string>
+    <string name="pdb_file_options">Pilihan membaca file PDB</string>
+    <string name="greek_charset">Charset Yunani</string>
+    <string name="hebrew_charset">Charset Ibrani</string>
+    <string name="pdb_encoding">Enkoding PDB</string>
+    <string name="sample_text">Contoh tulisan</string>
+    <string name="include_book_and_chapter_headers">Sertakan juga judul kitab dan pasal</string>
 </resources>

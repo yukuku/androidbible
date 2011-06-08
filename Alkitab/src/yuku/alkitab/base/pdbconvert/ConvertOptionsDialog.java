@@ -10,6 +10,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import java.nio.charset.*;
 import java.util.*;
 
+import yuku.alkitab.R;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertParams;
 
 import com.compactbyte.android.bible.*;
@@ -59,7 +60,7 @@ public class ConvertOptionsDialog {
 		
 		this.alert = new AlertDialog.Builder(context)
 		.setView(dialogLayout)
-		.setTitle("PDB file options")
+		.setTitle(R.string.pdb_file_options)
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -75,16 +76,16 @@ public class ConvertOptionsDialog {
 		
 		String tabEncoding = null;
 		if (pdb.isGreek()) {
-			tabEncoding = "Greek charset";
+			tabEncoding = context.getString(R.string.greek_charset);
 		} else if (pdb.isHebrew()) {
-			tabEncoding = "Hebrew charset";
+			tabEncoding = context.getString(R.string.hebrew_charset);
 		}
 		
 		List<String> charsets = new ArrayList<String>();
 		if (tabEncoding == null) {
 			for (Map.Entry<String, Charset> charset: Charset.availableCharsets().entrySet()) {
 				String key = charset.getKey();
-				Log.d(TAG, "available charset: " + key);
+				Log.d(TAG, "available charset: " + key); //$NON-NLS-1$
 				charsets.add(key);
 			}
 			
