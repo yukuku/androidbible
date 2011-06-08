@@ -343,11 +343,12 @@ public class BookInfo {
 		}
 		
 		// <yuku>
+		String sepChar = bible.getSepChar();
 		String[] res = new String[4];
-		res[0] = stringFromWords(words[0]);
-		res[1] = stringFromWords(words[1]);
-		res[2] = stringFromWords(words[2]);
-		res[3] = stringFromWords(words[3]);
+		res[0] = stringFromWords(words[0], sepChar);
+		res[1] = stringFromWords(words[1], sepChar);
+		res[2] = stringFromWords(words[2], sepChar);
+		res[3] = stringFromWords(words[3], sepChar);
 		// </yuku>
 
 		// <yuku>
@@ -359,7 +360,7 @@ public class BookInfo {
 	}
 
 	// <yuku>
-	private String stringFromWords(List<String> words) {
+	private String stringFromWords(List<String> words, String sepChar) {
 		if (words == null) return "";
 		if (words.size() == 0) return "";
 		
@@ -405,7 +406,7 @@ public class BookInfo {
 			}
 			
 			if (sep) {
-				sb.append(bible.getSepChar());
+				sb.append(sepChar);
 			}
 			sb.append(cur);
 			
@@ -431,7 +432,7 @@ public class BookInfo {
 	 * @return The complete/long name of this book
 	 */
 	public String getFullName() {
-		return Util.readStringTrimZero(complexName, 0, complexName.length, bible.getEncoding());
+		return Util.readStringTrimZeroWithMaybeGreekHebrew(complexName, 0, complexName.length, bible);
 	}
 
 	/**
@@ -440,7 +441,7 @@ public class BookInfo {
 	 * @return The sort name of this book, for example GEN for Genesis
 	 */
 	public String getShortName() {
-		return Util.readStringTrimZero(simpleName, 0, simpleName.length, bible.getEncoding());
+		return Util.readStringTrimZeroWithMaybeGreekHebrew(simpleName, 0, simpleName.length, bible);
 	}
 
 	/**
@@ -598,11 +599,12 @@ public class BookInfo {
 		}
 
 		// <yuku>
+		String sepChar = bible.getSepChar();
 		String[] res = new String[4];
-		res[0] = stringFromWords(words[0]);
-		res[1] = stringFromWords(words[1]);
-		res[2] = stringFromWords(words[2]);
-		res[3] = stringFromWords(words[3]);
+		res[0] = stringFromWords(words[0], sepChar);
+		res[1] = stringFromWords(words[1], sepChar);
+		res[2] = stringFromWords(words[2], sepChar);
+		res[3] = stringFromWords(words[3], sepChar);
 		// </yuku>
 
 		// <yuku>

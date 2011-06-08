@@ -113,21 +113,19 @@ public class Util {
 	}
 
 	public static String readStringGreek(byte[] data, int offs, int length) {
-		StringBuffer sb = new StringBuffer();
-		for (int i = offs; i < offs + length; i++) {
-			int c = data[i] & 0xff;
-			sb.append(greektab[c]);
-		}
-		return sb.toString();
+		return readStringWithTable(data, offs, length, greektab);
 	}
 
 	public static String readStringHebrew(byte[] data, int offs, int length) {
-		StringBuffer sb = new StringBuffer();
-		for (int i = offs; i < offs + length; i++) {
-			int c = data[i] & 0xff;
-			sb.append(hebrewtab[c]);
+		return readStringWithTable(data, offs, length, hebrewtab);
+	}
+	
+	private static String readStringWithTable(byte[] data, int offs, int length, char[] tab) {
+		char[] s = new char[length];
+		for (int i = 0; i < length; i++) {
+			s[i] = tab[data[offs+i] & 0xff];
 		}
-		return sb.toString();
+		return new String(s);
 	}
 
 	public static String readStringISO8859_1(byte[] data, int offs, int length) {
@@ -139,6 +137,42 @@ public class Util {
 		}
 	}
 
+	public static String readStringTrimZeroWithMaybeGreekHebrew(byte[] data, int offs, int length, BiblePlusPDB bible) {
+		if (bible.isGreek()) {
+			return readStringTrimZeroWithTable(data, offs, length, greektab);
+		} else if (bible.isHebrew()) {
+			return readStringTrimZeroWithTable(data, offs, length, hebrewtab);
+		} else {
+			return readStringTrimZero(data, offs, length, bible.getEncoding());
+		}
+	}
+	
+	public static String readStringWithMaybeGreekHebrew(byte[] data, int offs, int length, BiblePlusPDB bible) {
+		if (bible.isGreek()) {
+			return readStringWithTable(data, offs, length, greektab);
+		} else if (bible.isHebrew()) {
+			return readStringWithTable(data, offs, length, hebrewtab);
+		} else {
+			return readString(data, offs, length, bible.getEncoding());
+		}
+	}
+	
+	public static String readStringTrimZeroWithTable(byte[] data, int offs, int length, char[] tab) {
+		int i = offs + length - 1;
+		while (i >= offs) {
+			if (data[i] != 0) {
+				break;
+			}
+			i--;
+		}
+		int len = i - offs + 1;
+		if (len < 0) {
+			return "";
+		}
+		
+		return readStringWithTable(data, offs, len, tab);
+	}
+	
 	public static String readStringTrimZero(byte[] data, int offs, int length, String encoding) {
 		try {
 			int i = offs + length - 1;
@@ -153,7 +187,9 @@ public class Util {
 				return "";
 			}
 			
-			String s = new String(data, offs, len, encoding);
+			String s;
+						
+			s = new String(data, offs, len, encoding);
 			
 //			byte[] b = new byte[len];
 //			System.arraycopy(data, offs, b, 0, len);

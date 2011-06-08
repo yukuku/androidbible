@@ -89,9 +89,9 @@ import java.util.*;
 
 public class BiblePlusPDB {
 
-	private String versionName;
-	private String versionInfo;
-	private String sepChar;
+	private byte[] versionName;
+	private byte[] versionInfo;
+	private byte[] sepChar;
 	private int versionAttr;
 	private int wordIndex;
 	private int totalWordRec;
@@ -362,7 +362,7 @@ public class BiblePlusPDB {
 
 		}
 
-		Bookmark bm = new Bookmark(pathName, versionName, bi.getFullName(),
+		Bookmark bm = new Bookmark(pathName, getVersionName(), bi.getFullName(),
 						bi.getBookNumber(), chapter, verse, excerpt);
 		return bm;
 	}
@@ -730,18 +730,18 @@ public class BiblePlusPDB {
 	 * @return word separator
 	 */
 	String getSepChar() {
-		return sepChar;
+		return Util.readStringWithMaybeGreekHebrew(sepChar, 0, sepChar.length, this);
 	}
 
 	/**
 	 * Get the version name of this bible
 	 */
 	public String getVersionName() {
-		return versionName;
+		return Util.readStringTrimZeroWithMaybeGreekHebrew(versionName, 0, versionName.length, this);
 	}
 	
 	public String getVersionInfo() {
-		return versionInfo;
+		return Util.readStringTrimZeroWithMaybeGreekHebrew(versionInfo, 0, versionInfo.length, this);
 	}
 
 	String getWord(int wordNum) {
@@ -1034,14 +1034,17 @@ public class BiblePlusPDB {
 		byte[] data = version.getData();
 
 		int idx = 0;
-		versionName = Util.readStringTrimZero(data, idx, 16, encoding);
+		versionName = new byte[16];
+		System.arraycopy(data, idx, versionName, 0, 16);
 		// System.out.println("Version name: ;" + versionName+";");
 		idx += 16;
-		versionInfo = Util.readStringTrimZero(data, idx, 128, encoding);
+		versionInfo = new byte[128];
+		System.arraycopy(data, idx, versionInfo, 0, 128);
 		// System.out.println("Info:" + versionInfo);
 
 		idx += 128;
-		sepChar = Util.readString(data, idx, 1, encoding);
+		sepChar = new byte[1];
+		System.arraycopy(data, idx, sepChar, 0, 1);
 		idx++;
 		versionAttr = data[idx] & 0xff;
 		// System.out.println("version attr " + versionAttr);
