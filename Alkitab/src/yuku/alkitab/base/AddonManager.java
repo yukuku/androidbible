@@ -41,7 +41,7 @@ public class AddonManager {
 	
 	public static String getEdisiPath(String namayes) {
 		String yesPath = getYesPath();
-		File yes = new File(yesPath, namayes); //$NON-NLS-1$
+		File yes = new File(yesPath, namayes);
 		return yes.getAbsolutePath();
 	}
 	
@@ -87,7 +87,7 @@ public class AddonManager {
 			String tmpfile = e.tujuan + "-" + (int)(Math.random() * 100000) + ".tmp";  //$NON-NLS-1$//$NON-NLS-2$
 			
 			PowerManager pm = (PowerManager) appContext.getSystemService(Context.POWER_SERVICE);
-			WakeLock wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "donlot");
+			WakeLock wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "donlot"); //$NON-NLS-1$
 			wakelock.setReferenceCounted(false);
 			wakelock.acquire();
 			try {

@@ -150,4 +150,6 @@
     <string name="pengaturan_alkitab">Pengaturan Alkitab</string>
     <string name="kelola_versi">Kelola Versi</string>
     <string name="tambah">Tambah</string>
+    <string name="versi_lainnya">Versi lainnya...</string>
+    <string name="ada_kegagalan_membuka_edisiid">Ada kegagalan membuka %s</string>
 </resources>

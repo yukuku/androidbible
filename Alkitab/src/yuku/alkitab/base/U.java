@@ -115,7 +115,7 @@ public class U {
 	
 	public static String tampilException(Exception e) {
 		StringWriter sw = new StringWriter(400);
-		sw.append('(').append(e.getClass().getName()).append("): ").append(e.getMessage()).append('\n');
+		sw.append('(').append(e.getClass().getName()).append("): ").append(e.getMessage()).append('\n'); //$NON-NLS-1$
 		e.printStackTrace(new PrintWriter(sw));
 		return sw.toString();
 	}

@@ -223,7 +223,7 @@ public class IsiActivity extends Activity {
 		
 		if (D.EBUG) {
 			new AlertDialog.Builder(this)
-			.setMessage("D.EBUG nyala!")
+			.setMessage("D.EBUG nyala!") //$NON-NLS-1$
 			.show();
 		}
 	}
@@ -292,7 +292,7 @@ public class IsiActivity extends Activity {
 		if (k != null) {
 			S.kitabAktif = k;
 		} else {
-			Log.w(TAG, "mana ada kitabPos " + kitabPos + " dari ari " + ari); //$NON-NLS-1$
+			Log.w(TAG, "mana ada kitabPos " + kitabPos + " dari ari " + ari); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		
@@ -791,20 +791,20 @@ public class IsiActivity extends Activity {
 					tampil(pasal_1, getAyatBerdasarSkrol());
 				} else {
 					new AlertDialog.Builder(IsiActivity.this)
-					.setMessage("Ada kegagalan membuka: " + me.getEdisiId())
+					.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, me.getEdisiId()))
 					.setPositiveButton(R.string.ok, null)
 					.show();
 				}
 			}
 		})
-		.setPositiveButton("Versi lainnya...", new DialogInterface.OnClickListener() {
+		.setPositiveButton(R.string.versi_lainnya, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				Intent intent = new Intent(getApplicationContext(), EdisiActivity.class);
 				startActivityForResult(intent, R.id.menuEdisi);
 			}
 		})
-		.setNegativeButton("Cancel", null)
+		.setNegativeButton(R.string.cancel, null)
 		.show();
 	}
 

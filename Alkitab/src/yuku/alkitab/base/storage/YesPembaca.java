@@ -41,9 +41,9 @@ public class YesPembaca extends Pembaca {
 		while (true) {
 			String namaSeksi = readNamaSeksi(f);
 			
-			if (namaSeksi == null || namaSeksi.equals("____________")) {
+			if (namaSeksi == null || namaSeksi.equals("____________")) { //$NON-NLS-1$
 				// sudah mencapai EOF. Maka kasih tau seksi ini ga ada.
-				Log.d(TAG, "Seksi tidak ditemukan: " + seksi);
+				Log.d(TAG, "Seksi tidak ditemukan: " + seksi); //$NON-NLS-1$
 				return -1;
 			}
 			
@@ -87,13 +87,13 @@ public class YesPembaca extends Pembaca {
 			return judul;
 		} catch (Exception e) {
 			Log.e(TAG, "init error", e); //$NON-NLS-1$
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 
 	public void bacaInfoEdisi() {
 		try {
-			Log.d(TAG, "bacaInfoEdisi dipanggil");
+			Log.d(TAG, "bacaInfoEdisi dipanggil"); //$NON-NLS-1$
 			
 			int ukuran = lewatiSampeSeksi("infoEdisi___"); //$NON-NLS-1$
 			byte[] buf = new byte[ukuran];
@@ -127,7 +127,7 @@ public class YesPembaca extends Pembaca {
 				}
 			}
 			
-			Log.d(TAG, "bacaInfoEdisi selesai, nama=" + nama + " judul=" + judul + " nkitab=" + nkitab);
+			Log.d(TAG, "bacaInfoEdisi selesai, nama=" + nama + " judul=" + judul + " nkitab=" + nkitab); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} catch (Exception e) {
 			Log.e(TAG, "bacaInfoEdisi error", e); //$NON-NLS-1$
 		}
@@ -136,7 +136,7 @@ public class YesPembaca extends Pembaca {
 	@Override
 	public Kitab[] bacaInfoKitab() {
 		try {
-			Log.d(TAG, "bacaInfoKitab dipanggil");
+			Log.d(TAG, "bacaInfoKitab dipanggil"); //$NON-NLS-1$
 			
 			init();
 			
@@ -147,7 +147,7 @@ public class YesPembaca extends Pembaca {
 			f.read(buf);
 			BintexReader in = new BintexReader(new ByteArrayInputStream(buf));
 			
-			Log.d(TAG, "akan membaca " + this.nkitab + " kitab");
+			Log.d(TAG, "akan membaca " + this.nkitab + " kitab"); //$NON-NLS-1$ //$NON-NLS-2$
 			for (int kitabPos = 0; kitabPos < res.length; kitabPos++) {
 				Kitab k = new Kitab();
 				
@@ -222,10 +222,10 @@ public class YesPembaca extends Pembaca {
 			} else if (encoding == 2) {
 				pembacaDecoder = new PembacaDecoder.Utf8();
 			} else {
-				Log.e(TAG, "Encoding " + encoding + " not recognized!");
+				Log.e(TAG, "Encoding " + encoding + " not recognized!");  //$NON-NLS-1$//$NON-NLS-2$
 				pembacaDecoder = new PembacaDecoder.Ascii();
 			}
-			Log.d(TAG, "encoding " + encoding + " so decoder is " + pembacaDecoder.getClass().getName());
+			Log.d(TAG, "encoding " + encoding + " so decoder is " + pembacaDecoder.getClass().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		try {
@@ -303,7 +303,7 @@ public class YesPembaca extends Pembaca {
 			int ukuran = lewatiSampeSeksi("perikopIndex"); //$NON-NLS-1$
 			
 			if (ukuran < 0) {
-				Log.d(TAG, "Tidak ada seksi 'perikopIndex'");
+				Log.d(TAG, "Tidak ada seksi 'perikopIndex'"); //$NON-NLS-1$
 				return null;
 			}
 			

@@ -1,8 +1,8 @@
 package yuku.alkitab.base.storage;
 
 import android.content.*;
-import android.preference.PreferenceManager;
-import android.util.Log;
+import android.preference.*;
+import android.util.*;
 
 public class Preferences {
 	private static final String TAG = Preferences.class.getSimpleName();
@@ -74,56 +74,46 @@ public class Preferences {
 	public static void setInt(Prefkey key, int val) {
 		SharedPreferences pref = read(appContext);
 		pref.edit().putInt(key.toString(), val).commit();
-		Log.d(TAG, key + " = (int) " + val);
+		Log.d(TAG, key + " = (int) " + val); //$NON-NLS-1$
 	}
 	
 	public static void setLong(Prefkey key, long val) {
 		SharedPreferences pref = read(appContext);
 		pref.edit().putLong(key.toString(), val).commit();
-		Log.d(TAG, key + " = (long) " + val);
+		Log.d(TAG, key + " = (long) " + val); //$NON-NLS-1$
 	}
 	
 	public static void setString(Prefkey key, String val) {
 		SharedPreferences pref = read(appContext);
 		pref.edit().putString(key.toString(), val).commit();
-		Log.d(TAG, key + " = (string) " + val);
+		Log.d(TAG, key + " = (string) " + val); //$NON-NLS-1$
 	}
 	
 	public static void setBoolean(Prefkey key, boolean val) {
 		SharedPreferences pref = read(appContext);
 		pref.edit().putBoolean(key.toString(), val).commit();
-		Log.d(TAG, key + " = (bool) " + val);
+		Log.d(TAG, key + " = (bool) " + val); //$NON-NLS-1$
 	}
 	
 	public static void setBoolean(String key, boolean val) {
 		SharedPreferences pref = read(appContext);
 		pref.edit().putBoolean(key, val).commit();
-		Log.d(TAG, key + " = (bool) " + val);
+		Log.d(TAG, key + " = (bool) " + val); //$NON-NLS-1$
 	}
 	
 	public static void remove(Prefkey key) {
 		SharedPreferences pref = read(appContext);
 		pref.edit().remove(key.toString()).commit();
-		Log.d(TAG, key + " removed");
+		Log.d(TAG, key + " removed"); //$NON-NLS-1$
 	}
 	
 	private static SharedPreferences read(Context context) {
 		SharedPreferences res;
 		if (dirty || cache == null) {
-			Log.d(TAG, "Preferences are (re-)read from disk");
+			Log.d(TAG, "Preferences are read from disk"); //$NON-NLS-1$
 			res = PreferenceManager.getDefaultSharedPreferences(appContext);
 			dirty = false;
 			cache = res;
-			
-			// debug
-//			{
-//				Log.d(TAG, "isi preferences: ===========");
-//				
-//				Map<String, ?> all = res.getAll();
-//				for (Entry<String, ?> e: all.entrySet()) {
-//					Log.d(TAG, e.getKey() + " = (" + e.getValue().getClass().getName() + ") " + e.getValue());
-//				}
-//			}
 		} else {
 			res = cache;
 		}

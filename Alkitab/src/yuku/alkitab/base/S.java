@@ -117,7 +117,7 @@ public class S {
 		}
 	}
 	
-	private static final String teksTakTersedia = "[?]";
+	private static final String teksTakTersedia = "[?]"; //$NON-NLS-1$
 	
 	private static final String[] teksTakTersediaArray = {
 		teksTakTersedia,
@@ -208,11 +208,11 @@ public class S {
 	}
 
 	public static String alamat(Kitab kitab, int pasal_1) {
-		return (kitab == null? "[?]": kitab.judul) + " " + pasal_1; //$NON-NLS-1$
+		return (kitab == null? "[?]": kitab.judul) + " " + pasal_1; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public static String alamat(Kitab kitab, int pasal_1, int ayat_1) {
-		return (kitab == null? "[?]": kitab.judul) + " " + pasal_1 + ":" + ayat_1;  //$NON-NLS-1$//$NON-NLS-2$
+		return (kitab == null? "[?]": kitab.judul) + " " + pasal_1 + ":" + ayat_1;  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	/**

@@ -317,7 +317,7 @@ public class InternalDb {
 
 	public List<MEdisiYes> listSemuaEdisi() {
 		List<MEdisiYes> res = new ArrayList<MEdisiYes>();
-		Cursor cursor = helper.getReadableDatabase().query(Db.TABEL_Edisi, null, null, null, null, null, Db.Edisi.urutan + " asc");
+		Cursor cursor = helper.getReadableDatabase().query(Db.TABEL_Edisi, null, null, null, null, null, Db.Edisi.urutan + " asc"); //$NON-NLS-1$
 		try {
 			int col_aktif = cursor.getColumnIndexOrThrow(Db.Edisi.aktif);
 			int col_judul = cursor.getColumnIndexOrThrow(Db.Edisi.judul);
@@ -347,12 +347,12 @@ public class InternalDb {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		ContentValues cv = new ContentValues();
 		cv.put(Db.Edisi.aktif, aktif? 1: 0);
-		db.update(Db.TABEL_Edisi, cv, Db.Edisi.jenis + "=? and " + Db.Edisi.namafile + "=?", new String[] {String.valueOf(Db.Edisi.jenis_yes), namafile});
+		db.update(Db.TABEL_Edisi, cv, Db.Edisi.jenis + "=? and " + Db.Edisi.namafile + "=?", new String[] {String.valueOf(Db.Edisi.jenis_yes), namafile}); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public int getUrutanTerbesarEdisiYes() {
 		SQLiteDatabase db = helper.getReadableDatabase();
-		SQLiteStatement stmt = db.compileStatement("select max(" + Db.Edisi.urutan + ") from " + Db.TABEL_Edisi);
+		SQLiteStatement stmt = db.compileStatement("select max(" + Db.Edisi.urutan + ") from " + Db.TABEL_Edisi);  //$NON-NLS-1$//$NON-NLS-2$
 		return (int) stmt.simpleQueryForLong();
 	}
 
@@ -366,13 +366,13 @@ public class InternalDb {
 		cv.put(Db.Edisi.namafile, edisi.namafile);
 		cv.put(Db.Edisi.namafile_pdbasal, edisi.namafile_pdbasal);
 		cv.put(Db.Edisi.urutan, edisi.urutan);
-		Log.d(TAG, "tambah edisi yes: " + cv.toString());
+		Log.d(TAG, "tambah edisi yes: " + cv.toString()); //$NON-NLS-1$
 		db.insert(Db.TABEL_Edisi, null, cv);
 	}
 
 	public boolean adakahEdisiYesDenganNamafile(String namafile) {
 		SQLiteDatabase db = helper.getReadableDatabase();
-		SQLiteStatement stmt = db.compileStatement("select count(*) from " + Db.TABEL_Edisi + " where " + Db.Edisi.jenis + "=? and " + Db.Edisi.namafile + "=?");
+		SQLiteStatement stmt = db.compileStatement("select count(*) from " + Db.TABEL_Edisi + " where " + Db.Edisi.jenis + "=? and " + Db.Edisi.namafile + "=?");    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
 		stmt.clearBindings();
 		stmt.bindLong(1, Db.Edisi.jenis_yes);
 		stmt.bindString(2, namafile);
@@ -381,6 +381,6 @@ public class InternalDb {
 
 	public void hapusEdisiYes(MEdisiYes edisi) {
 		SQLiteDatabase db = helper.getWritableDatabase();
-		db.delete(Db.TABEL_Edisi, Db.Edisi.namafile + "=?", new String[] {edisi.namafile});
+		db.delete(Db.TABEL_Edisi, Db.Edisi.namafile + "=?", new String[] {edisi.namafile}); //$NON-NLS-1$
 	}
 }

@@ -16,7 +16,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	private int version;
 	
 	public InternalDbHelper(Context context) {
-		super(context, "AlkitabDb", null, getVersionCode(context));
+		super(context, "AlkitabDb", null, getVersionCode(context)); //$NON-NLS-1$
 		version = versionNumber(context);
 	}
 	
@@ -88,7 +88,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	}
 	
 	private void bikinTabelEdisi(SQLiteDatabase db) throws SQLException {
-		db.execSQL("create table if not exists " + Db.TABEL_Edisi + " (" + //$NON-NLS-1$
+		db.execSQL("create table if not exists " + Db.TABEL_Edisi + " (" + //$NON-NLS-1$ //$NON-NLS-2$
 				"_id integer primary key autoincrement, " + //$NON-NLS-1$
 				Db.Edisi.judul + " text, " + // judul (keliatan sama user) //$NON-NLS-1$
 				Db.Edisi.jenis + " text, " + // jenis (yes) //$NON-NLS-1$
@@ -96,7 +96,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 				Db.Edisi.namafile + " text, " + // nama file di sd card (full path) //$NON-NLS-1$
 				Db.Edisi.namafile_pdbasal + " text, " + // nama file kalau bekas dikonvert dari pdb (nama doang) //$NON-NLS-1$
 				Db.Edisi.aktif + " integer, " + // tampilkan di daftar edisi? //$NON-NLS-1$
-				Db.Edisi.urutan + " integer)");
+				Db.Edisi.urutan + " integer)"); //$NON-NLS-1$
 		
 		// index Edisi(urutan)
 		db.execSQL(String.format("create index if not exists index_301 on %s (%s)", Db.TABEL_Edisi, Db.Edisi.urutan)); //$NON-NLS-1$
@@ -177,10 +177,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			versionNumber = packageManager.getPackageInfo(context.getPackageName(), 0).versionCode;
 			return versionNumber;
 		} catch (NameNotFoundException e) {
-			Log.e(TAG, "no pkg name", e);
 			return 0;
 		}
 	}
-
-
 }

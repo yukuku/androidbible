@@ -83,13 +83,13 @@ public class ConvertPdbToYes {
 			progress(20, "Loading word index");
 			pdb.loadWordIndex();
 
-			Log.d(TAG, "============ baca info versi selesai");
+			Log.d(TAG, "============ baca info versi selesai"); //$NON-NLS-1$
 			
-			Log.d(TAG, "versionName: " + pdb.getVersionName());
-			Log.d(TAG, "encoding: " + pdb.getEncoding());
+			Log.d(TAG, "versionName: " + pdb.getVersionName()); //$NON-NLS-1$
+			Log.d(TAG, "encoding: " + pdb.getEncoding()); //$NON-NLS-1$
 			
 			int nbook = pdb.getBookCount();
-			Log.d(TAG, "getBookCount = " + nbook);
+			Log.d(TAG, "getBookCount = " + nbook); //$NON-NLS-1$
 			
 			// tempatin kitab2 di posisi yang betul, index array xkitab
 			// 0 = kejadian
@@ -107,11 +107,11 @@ public class ConvertPdbToYes {
 					if (kitabPos >= 0) {
 						if (kitabPos > maxKitabPos) maxKitabPos = kitabPos;
 					} else {
-						Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL");
+						Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL"); //$NON-NLS-1$ //$NON-NLS-2$
 						if (res.unconvertedBookNames == null) {
 							res.unconvertedBookNames = new ArrayList<String>();
 						}
-						res.unconvertedBookNames.add(bookInfo.getFullName() + " (" + bookNumber + ")");
+						res.unconvertedBookNames.add(bookInfo.getFullName() + " (" + bookNumber + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 				// panjang array xkitab_ adalah menurut maxKitabPos
@@ -128,15 +128,15 @@ public class ConvertPdbToYes {
 				int bookNumber = bookInfo.getBookNumber();
 				int kitabPos = PdbNumberToAriMapping.pdbNumberToAriKitab(bookNumber);
 				if (kitabPos < 0) {
-					Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL");
+					Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					kitabPosToBookPosMap_[kitabPos] = bookPos;
 				}
 			}
 			
-			Log.d(TAG, "kitabPosToBookPosMap_ (len " + kitabPosToBookPosMap_.length + ") = " + Arrays.toString(kitabPosToBookPosMap_));
+			Log.d(TAG, "kitabPosToBookPosMap_ (len " + kitabPosToBookPosMap_.length + ") = " + Arrays.toString(kitabPosToBookPosMap_)); //$NON-NLS-1$ //$NON-NLS-2$
 
-			Log.d(TAG, "============ baca daftar kitab selesai");
+			Log.d(TAG, "============ baca daftar kitab selesai"); //$NON-NLS-1$
 			
 			// sekaligus bangun perikop blok dan perikop index.
 			progress(100, "Constructing book info");
@@ -150,18 +150,18 @@ public class ConvertPdbToYes {
 				boolean adaPerikop = nblokPerikop_ > 0;
 				this.xseksi = new Seksi[adaPerikop? 5: 3];
 				
-				xseksi[0] = new SeksiBernama("infoEdisi___") {
+				xseksi[0] = new SeksiBernama("infoEdisi___") { //$NON-NLS-1$
 					@Override public IsiSeksi isi() {
 						return infoEdisi;
 					}
 				};
-				xseksi[1] = new SeksiBernama("infoKitab___") {
+				xseksi[1] = new SeksiBernama("infoKitab___") { //$NON-NLS-1$
 					@Override public IsiSeksi isi() {
 						return infoKitab;
 					}
 				};
 				if (adaPerikop) {
-					xseksi[2] = new SeksiBernama("perikopIndex") {
+					xseksi[2] = new SeksiBernama("perikopIndex") { //$NON-NLS-1$
 						@Override public IsiSeksi isi() {
 							return new IsiSeksi() {
 								@Override public void toBytes(BintexWriter writer) throws Exception {
@@ -175,7 +175,7 @@ public class ConvertPdbToYes {
 							};
 						}
 					};
-					xseksi[3] = new SeksiBernama("perikopBlok_") {
+					xseksi[3] = new SeksiBernama("perikopBlok_") { //$NON-NLS-1$
 						@Override public IsiSeksi isi() {
 							return new IsiSeksi() {
 								@Override public void toBytes(BintexWriter writer) throws Exception {
@@ -186,7 +186,7 @@ public class ConvertPdbToYes {
 						}
 					};
 				}
-				xseksi[xseksi.length - 1] = new SeksiBernama("teks________") {
+				xseksi[xseksi.length - 1] = new SeksiBernama("teks________") { //$NON-NLS-1$
 					@Override public IsiSeksi isi() {
 						return new LazyTeks(800);
 					}
@@ -194,7 +194,7 @@ public class ConvertPdbToYes {
 			}};
 			
 			progress(600, "Opening translated file");
-			RandomAccessFile out = new RandomAccessFile(namafileyes, "rw");
+			RandomAccessFile out = new RandomAccessFile(namafileyes, "rw"); //$NON-NLS-1$
 			progress(700, "Writing translated file");
 			file.output(out);
 			out.close();
@@ -203,7 +203,7 @@ public class ConvertPdbToYes {
 			new PDBFileStream(filenamepdb).close();
 		} catch (Exception e) {
 			pdb = null;
-			Log.e(TAG, "Eror baca pdb: ", e);
+			Log.e(TAG, "Eror baca pdb: ", e); //$NON-NLS-1$
 			res.exception = e;
 		}
 		finish();
@@ -268,7 +268,7 @@ public class ConvertPdbToYes {
 				}
 				k.pasal_offset[pasal_0+1] = offsetLewat;
 			}
-			Log.d(TAG, "kitab " + k.judul + " (bookNumber=" + bookInfo.getBookNumber() + ", kitabPos=" + kitabPos + ") pasal_offset: " + Arrays.toString(k.pasal_offset));
+			Log.d(TAG, "kitab " + k.judul + " (bookNumber=" + bookInfo.getBookNumber() + ", kitabPos=" + kitabPos + ") pasal_offset: " + Arrays.toString(k.pasal_offset));  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 			xkitab_[kitabPos] = k;
 			
@@ -287,7 +287,7 @@ public class ConvertPdbToYes {
 		int ari = Ari.encode(kitab_0, pasal_0 + 1, ayat_0 + 1);
 
 		if (D.EBUG) {
-			Log.d(TAG, "blok jenis " + jenis + " di " + Integer.toHexString(ari) + ": " + judul);
+			Log.d(TAG, "blok jenis " + jenis + " di " + Integer.toHexString(ari) + ": " + judul); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		
 		try {
@@ -342,7 +342,7 @@ public class ConvertPdbToYes {
 					int nayat = bookInfo.getVerseCount(pi + 1);
 					for (int ai = 0; ai < nayat; ai++) {
 						String s = bookInfo.getVerse(pi + 1, ai + 1);
-						writer.writeRaw(s.getBytes("utf-8"));
+						writer.writeRaw(s.getBytes("utf-8")); //$NON-NLS-1$
 						writer.writeUint8('\n');
 					}
 				}
