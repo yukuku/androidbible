@@ -247,17 +247,13 @@ public class YesPembaca extends Pembaca {
 			byte[] ba = new byte[length];
 			f.read(ba);
 			
-			if (hurufKecil) {
-				pembacaDecoder.hurufkecilkan(ba);
-			}
-			
 			if (janganPisahAyat) {
-				return new String[] {pembacaDecoder.jadikanStringTunggal(ba)};
+				return new String[] {pembacaDecoder.jadikanStringTunggal(ba, hurufKecil)};
 			} else {
-				String[] xayat = pembacaDecoder.pisahJadiAyat(ba);
-				if (D.EBUG) for (int i = 0; i < xayat.length; i++) {
-					Log.d(TAG, "ayat_1 " + (i+1) + ": " + dumpChars(xayat[i]));
-				}
+				String[] xayat = pembacaDecoder.pisahJadiAyat(ba, hurufKecil);
+//				if (D.EBUG) for (int i = 0; i < xayat.length; i++) {
+//					Log.d(TAG, "ayat_1 " + (i+1) + ": " + dumpChars(xayat[i]));
+//				}
 				return xayat;
 			}
 		} catch (Exception e) {

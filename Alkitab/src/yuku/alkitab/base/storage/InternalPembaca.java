@@ -174,14 +174,10 @@ public class InternalPembaca extends Pembaca {
 			cache_posInput += ba.length;
 			// jangan ditutup walau uda baca. Siapa tau masih sama filenya dengan sebelumnya.
 
-			if (hurufKecil) {
-				pembacaDecoder.hurufkecilkan(ba);
-			}
-
 			if (janganPisahAyat) {
-				return new String[] { pembacaDecoder.jadikanStringTunggal(ba) };
+				return new String[] { pembacaDecoder.jadikanStringTunggal(ba, hurufKecil) };
 			} else {
-				return pembacaDecoder.pisahJadiAyat(ba);
+				return pembacaDecoder.pisahJadiAyat(ba, hurufKecil);
 			}
 		} catch (IOException e) {
 			return new String[] { e.getMessage() };

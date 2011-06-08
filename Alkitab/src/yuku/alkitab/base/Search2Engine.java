@@ -8,6 +8,7 @@ import android.util.*;
 
 import java.util.*;
 
+import yuku.alkitab.base.config.*;
 import yuku.alkitab.base.model.*;
 import yuku.andoutil.*;
 
@@ -235,7 +236,7 @@ public class Search2Engine {
 					}
 				}
 	
-				Log.d(TAG, "cariDalam kitab " + k.nama + " selesai. res.size = " + res.size()); //$NON-NLS-1$ //$NON-NLS-2$
+				if (D.EBUG) Log.d(TAG, "cariDalam kitab " + k.nama + " selesai. res.size = " + res.size()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else {
 			// cari hanya pada kp (kitab pasal) yang ada di sumber.
