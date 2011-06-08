@@ -48,6 +48,7 @@ public class ConvertPdbToYes {
 	
 	public static class ConvertResult {
 		public Exception exception;
+		public List<String> unconvertedBookNames;
 	}
 	
 	public void setConvertProgressListener(ConvertProgressListener l) {
@@ -94,7 +95,7 @@ public class ConvertPdbToYes {
 			// 0 = kejadian
 			// 65 = wahyu
 			// 66 sampe 87, terdaftar dalam PdbNumberToAriMapping
-			// selain itu, belum ada di mana2, maka kita buang aja (FIXME kasih warning)
+			// selain itu, belum ada di mana2, maka kita buang aja dan kasih warning.
 			progress(30, "Analyzing available books");
 			{
 				int maxKitabPos = 0;
@@ -107,6 +108,10 @@ public class ConvertPdbToYes {
 						if (kitabPos > maxKitabPos) maxKitabPos = kitabPos;
 					} else {
 						Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL");
+						if (res.unconvertedBookNames == null) {
+							res.unconvertedBookNames = new ArrayList<String>();
+						}
+						res.unconvertedBookNames.add(bookInfo.getFullName() + " (" + bookNumber + ")");
 					}
 				}
 				// panjang array xkitab_ adalah menurut maxKitabPos

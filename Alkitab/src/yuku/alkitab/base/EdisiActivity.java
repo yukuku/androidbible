@@ -415,6 +415,18 @@ public class EdisiActivity extends Activity {
 						} else {
 							// sukses.
 							handleFileOpenYes(namafileyes, new File(namafilepdb).getName());
+							
+							if (result.unconvertedBookNames != null && result.unconvertedBookNames.size() > 0) {
+								StringBuilder msg = new StringBuilder("The following books from the PDB file are not recognized and therefore skipped. Please email yukuku@gmail.com if you think these should not have been skipped.\n");
+								for (String s: result.unconvertedBookNames) {
+									msg.append("- ").append(s).append('\n');
+								}
+								
+								new AlertDialog.Builder(EdisiActivity.this)
+								.setMessage(msg)
+								.setPositiveButton(R.string.ok, null)
+								.show();
+							}
 						}
 					}
 				}.execute();
