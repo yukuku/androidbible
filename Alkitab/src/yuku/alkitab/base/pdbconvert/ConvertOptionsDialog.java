@@ -73,9 +73,15 @@ public class ConvertOptionsDialog {
 		lSample = (TextView) dialogLayout.findViewById(R.id.lSample);
 		cAddlTitle = (CheckBox) dialogLayout.findViewById(R.id.cAddlTitle);
 		
-		// FIXME if hebrew/greek, disable aja.
+		String tabEncoding = null;
+		if (pdb.isGreek()) {
+			tabEncoding = "Greek charset";
+		} else if (pdb.isHebrew()) {
+			tabEncoding = "Hebrew charset";
+		}
+		
 		List<String> charsets = new ArrayList<String>();
-		{
+		if (tabEncoding == null) {
 			for (Map.Entry<String, Charset> charset: Charset.availableCharsets().entrySet()) {
 				String key = charset.getKey();
 				Log.d(TAG, "available charset: " + key);
@@ -98,13 +104,16 @@ public class ConvertOptionsDialog {
 					}
 				}
 			});
+		} else {
+			charsets.add(tabEncoding);
+			cbEncoding.setEnabled(false);
 		}
 		
 		encodingAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, charsets);
 		encodingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		cbEncoding.setAdapter(encodingAdapter);
 		
-		showSample("utf-8"); // default!
+		showSample("utf-8"); // default! if greek or hebrew, this won't be cared!
 		
 		cbEncoding.setOnItemSelectedListener(cbEncoding_itemSelected);
 	}
