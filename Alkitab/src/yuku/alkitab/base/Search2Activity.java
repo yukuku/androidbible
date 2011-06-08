@@ -162,7 +162,7 @@ public class Search2Activity extends Activity {
 		
 		final ProgressDialog progress = new ProgressDialog(this);
 		progress.setTitle(getString(R.string.mencari));
-		progress.setMessage(Html.fromHtml(getString(R.string.sedang_mencari_ayat_yang_mengandung_kata_kata_xkata, Arrays.toString(xkata))));
+		progress.setMessage(Html.fromHtml(String.format(U.preprocessHtml(getString(R.string.sedang_mencari_ayat_yang_mengandung_kata_kata_xkata)), Arrays.toString(xkata))));
 		progress.setCancelable(false);
 		progress.setIndeterminate(true);
 		progress.setOnDismissListener(new DialogInterface.OnDismissListener() {

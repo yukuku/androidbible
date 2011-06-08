@@ -88,11 +88,17 @@
     <string name="mengunduh_namaumum_tgl_tgl">Mengunduh %1$s tgl %2$s...</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Belum tersedia. Mungkin tanggal yang diminta belum disiapkan, atau terjadi kesalahan dalam mengenali sumber data.\n\nJika dirasa perlu, tolong beritahu pembuat program ini dengan kembali ke layar tampilan ayat, lalu buka menu dan pilih Beri Saran.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Belum tersedia. Menunggu pengambilan data lewat Internet...\n\n(Pastikan ada koneksi Internet untuk mengambil renungan.)</string>
-	<string name="teks_about">Alkitab untuk Android&lt;br/&gt;versi %1$s (%2$s)&lt;br/&gt;&lt;br/&gt;
-		Terjemahan Baru (c) LAI&lt;br/&gt;&lt;br/&gt;          		&lt;b&gt;yuku&lt;/b&gt; 2009-2011&lt;br/&gt;  Situs: &lt;b&gt;androidbible.blogspot.com&lt;/b&gt;&lt;br/&gt; Milis: &lt;b&gt;goo.gl/v686r&lt;/b&gt;&lt;br/&gt;
-		&lt;br/&gt;
-		&lt;b&gt;Bantuan:&lt;/b&gt;&lt;br/&gt;                       - &lt;b&gt;Roy Krisnadi&lt;/b&gt; salinan indentasi Mazmur&lt;br/&gt;
-		- &lt;b&gt;Oluss Studio&lt;/b&gt; ikon program&lt;br/&gt;    - &lt;b&gt;Jaya Satrio&lt;/b&gt; berbagai ikon&lt;br/&gt;  - &lt;b&gt;Yohanes Nugroho&lt;/b&gt; pembaca PDB&lt;br/&gt;  - dsb.</string>
+    <string name="teks_about">Alkitab untuk Android[br/]versi %1$s (%2$s)[br/][br/]
+		Terjemahan Baru (c) LAI[br/][br/]
+		[b]yuku[/b] 2009-2011[br/]
+		Situs: [b]androidbible.blogspot.com[/b][br/]
+		Milis: [b]goo.gl/v686r[/b][br/][br/]
+		[b]Bantuan:[/b][br/]
+		- [b]Roy Krisnadi[/b] salinan indentasi Mazmur[br/]
+		- [b]Oluss Studio[/b] ikon program[br/]
+		- [b]Jaya Satrio[/b] berbagai ikon[br/]
+		- [b]Yohanes Nugroho[/b] pembaca PDB[br/]
+		- dll.</string>
     <string name="namaprog_versi_build">Alkitab v%1$s (%2$d)</string>
     <string name="hari_sabtu">Sabtu</string>
     <string name="hari_jumat">Jumat</string>
@@ -102,7 +108,7 @@
     <string name="hari_senin">Senin</string>
     <string name="hari_minggu">Minggu</string>
     <string name="size_hasil">%d hasil</string>
-    <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Sedang mencari ayat yang mengandung kata-kata: &lt;b&gt;%s</string>
+    <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Sedang mencari ayat yang mengandung kata-kata: [b]%s[/b]</string>
     <string name="mencari">Mencari</string>
     <string name="pilih_perjanjian_lama_dan_atau_baru">Pilih perjanjian lama dan/atau baru</string>
     <string name="pengunduhan_dibatalkan">Pengunduhan dibatalkan.</string>

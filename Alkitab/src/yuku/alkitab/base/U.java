@@ -119,4 +119,8 @@ public class U {
 		e.printStackTrace(new PrintWriter(sw));
 		return sw.toString();
 	}
+	
+	public static String preprocessHtml(String s) {
+		return s.replace('[', '<').replace(']', '>');
+	}
 }

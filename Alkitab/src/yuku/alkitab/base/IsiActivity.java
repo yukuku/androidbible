@@ -709,7 +709,7 @@ public class IsiActivity extends Activity {
 		}
 		
 		TextView isi = new TextView(this);
-		isi.setText(Html.fromHtml(getString(R.string.teks_about, verName, verCode)));
+		isi.setText(Html.fromHtml(U.preprocessHtml(getString(R.string.teks_about, verName, verCode))));
 		isi.setTextColor(0xffffffff);
 		isi.setLinkTextColor(0xff8080ff);
 		Linkify.addLinks(isi, Linkify.WEB_URLS);
