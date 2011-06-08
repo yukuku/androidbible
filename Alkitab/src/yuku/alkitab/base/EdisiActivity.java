@@ -3,6 +3,7 @@ package yuku.alkitab.base;
 
 import android.app.*;
 import android.content.*;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.*;
 import android.os.*;
 import android.util.*;
@@ -64,6 +65,18 @@ public class EdisiActivity extends Activity {
 		lsEdisi.setOnItemClickListener(lsEdisi_itemClick);
 		
 		registerForContextMenu(lsEdisi);
+		
+		try {
+			if (getPackageManager().getPackageInfo(getPackageName(), 0).versionCode <= 52) {
+				new AlertDialog.Builder(this)
+				.setMessage("Fitur membuka file PDB ini masih dalam percobaan. Jika Anda menemukan masalah, harap hubungi yukuku@gmail.com (lampirkan file PDB-nya jika ada).\n\n" +
+						"Opening PDB files is still an experimental feature. If you encounter problems, please contact yukuku@gmail.com (attach the PDB file if possible).\n\n" +
+						"Thanks to Yohanes Nugroho for the PDB-reader library.")
+				.setPositiveButton(R.string.ok, null)
+				.show();
+			}
+		} catch (NameNotFoundException e) {
+		}
 	}
 	
 	@Override
