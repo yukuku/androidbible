@@ -162,7 +162,7 @@ public class EdisiActivity extends Activity {
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menuBuang:
+		case R.id.menuBuang: {
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 			MEdisi edisi = adapter.getItem(info.position);
 			if (edisi instanceof MEdisiYes) {
@@ -171,6 +171,43 @@ public class EdisiActivity extends Activity {
 				adapter.notifyDataSetChanged();
 			}
 			return true;
+		}
+		case R.id.menuDetails: {
+			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+			MEdisi edisi = adapter.getItem(info.position);
+			StringBuilder details = new StringBuilder();
+			if (edisi instanceof MEdisiInternal) details.append("Type: Built-in\n");
+			if (edisi instanceof MEdisiPreset) details.append("Type: Preset\n");
+			if (edisi instanceof MEdisiYes) details.append("Type: Add-on\n");
+			details.append("Title: " + edisi.judul + "\n");
+			if (edisi instanceof MEdisiPreset) {
+				MEdisiPreset preset = (MEdisiPreset) edisi;
+				if (AddonManager.cekAdaEdisi(preset.namafile_preset)) {
+					details.append("Stored in: " + AddonManager.getEdisiPath(preset.namafile_preset) + "\n");
+				} else {
+					details.append("Default filename: " + preset.namafile_preset + "\n");
+					details.append("Download URL: " + preset.url + "\n");
+				}
+			}
+			if (edisi instanceof MEdisiYes) {
+				MEdisiYes yes = (MEdisiYes) edisi;
+				if (yes.namafile_pdbasal != null) {
+					details.append("PDB file name (original): " + yes.namafile_pdbasal + "\n");
+				}
+				details.append("Stored in: " + yes.namafile + "\n");
+				if (yes.keterangan != null) {
+					details.append("Version info: " + yes.keterangan + "\n");
+				}
+			}
+			
+			new AlertDialog.Builder(this)
+			.setTitle("Version details")
+			.setMessage(details)
+			.setPositiveButton(R.string.ok, null)
+			.show();
+			
+			return true;
+		}
 		}
 		return false;
 	}
@@ -641,17 +678,21 @@ public class EdisiActivity extends Activity {
 				} else if (medisi instanceof MEdisiPreset) {
 					cAktif.setEnabled(true);
 					String namafile_preset = ((MEdisiPreset) medisi).namafile_preset;
-					lNamafile.setVisibility(View.VISIBLE);
 					if (AddonManager.cekAdaEdisi(namafile_preset)) {
-						lNamafile.setText(AddonManager.getEdisiPath(namafile_preset));
+						lNamafile.setVisibility(View.GONE);
 					} else {
+						lNamafile.setVisibility(View.VISIBLE);
 						lNamafile.setText("Tekan untuk mengunduh"); 
 					}
 				} else if (medisi instanceof MEdisiYes) {
 					cAktif.setEnabled(true);
 					lNamafile.setVisibility(View.VISIBLE);
 					MEdisiYes yes = (MEdisiYes) medisi;
-					lNamafile.setText(yes.namafile_pdbasal == null? yes.namafile: (yes.namafile_pdbasal + "\n(Stored in: " + yes.namafile + ")"));
+					String extra = "";
+					if (yes.keterangan != null) {
+						extra += yes.keterangan;
+					}
+					lNamafile.setText(extra);
 				}
 			}
 			
