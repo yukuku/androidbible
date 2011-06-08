@@ -162,7 +162,7 @@ public class EdisiActivity extends Activity {
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menuBuang:
+		case R.id.menuBuang: {
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 			MEdisi edisi = adapter.getItem(info.position);
 			if (edisi instanceof MEdisiYes) {
@@ -171,6 +171,38 @@ public class EdisiActivity extends Activity {
 				adapter.notifyDataSetChanged();
 			}
 			return true;
+		}
+		case R.id.menuDetails: {
+			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+			MEdisi edisi = adapter.getItem(info.position);
+			StringBuilder details = new StringBuilder();
+			if (edisi instanceof MEdisiInternal) details.append("Type: Built-in\n");
+			if (edisi instanceof MEdisiPreset) details.append("Type: Preset\n");
+			if (edisi instanceof MEdisiYes) details.append("Type: Add-on\n");
+			details.append("Title: " + edisi.judul + "\n");
+			if (edisi instanceof MEdisiPreset) {
+				details.append("Default filename: " + ((MEdisiPreset) edisi).namafile_preset + "\n");
+				details.append("Download URL: " + ((MEdisiPreset) edisi).url + "\n");
+			}
+			if (edisi instanceof MEdisiYes) {
+				MEdisiYes yes = (MEdisiYes) edisi;
+				if (yes.namafile_pdbasal != null) {
+					details.append("PDB file name (original): " + yes.namafile_pdbasal + "\n");
+				}
+				details.append("Stored in: " + yes.namafile + "\n");
+				if (yes.keterangan != null) {
+					details.append("Version info: " + yes.keterangan + "\n");
+				}
+			}
+			
+			new AlertDialog.Builder(this)
+			.setTitle("Version details")
+			.setMessage(details)
+			.setPositiveButton(R.string.ok, null)
+			.show();
+			
+			return true;
+		}
 		}
 		return false;
 	}
@@ -651,7 +683,11 @@ public class EdisiActivity extends Activity {
 					cAktif.setEnabled(true);
 					lNamafile.setVisibility(View.VISIBLE);
 					MEdisiYes yes = (MEdisiYes) medisi;
-					lNamafile.setText(yes.namafile_pdbasal == null? yes.namafile: (yes.namafile_pdbasal + "\n(Stored in: " + yes.namafile + ")"));
+					String extra = "";
+					if (yes.keterangan != null) {
+						extra += yes.keterangan;
+					}
+					lNamafile.setText(extra);
 				}
 			}
 			
