@@ -3,6 +3,7 @@ package yuku.alkitab.base;
 
 import android.app.*;
 import android.content.*;
+import android.content.DialogInterface.OnClickListener;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.*;
 import android.os.*;
@@ -65,18 +66,6 @@ public class EdisiActivity extends Activity {
 		lsEdisi.setOnItemClickListener(lsEdisi_itemClick);
 		
 		registerForContextMenu(lsEdisi);
-		
-		try {
-			if (getPackageManager().getPackageInfo(getPackageName(), 0).versionCode <= 52) {
-				new AlertDialog.Builder(this)
-				.setMessage("Fitur membuka file PDB ini masih dalam percobaan. Jika Anda menemukan masalah, harap hubungi yukuku@gmail.com (lampirkan file PDB-nya jika ada).\n\n" +
-						"Opening PDB files is still an experimental feature. If you encounter problems, please contact yukuku@gmail.com (attach the PDB file if possible).\n\n" +
-						"Thanks to Yohanes Nugroho for the PDB-reader library.")
-				.setPositiveButton(R.string.ok, null)
-				.show();
-			}
-		} catch (NameNotFoundException e) {
-		}
 	}
 	
 	@Override
@@ -327,13 +316,27 @@ public class EdisiActivity extends Activity {
 	private void klikPadaBukaFile() {
 		String state = Environment.getExternalStorageState();
 		if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-			FileChooserConfig config = new FileChooserConfig();
-			config.mode = Mode.Open;
-			config.initialDir = Environment.getExternalStorageDirectory().getAbsolutePath();
-			config.title = "Pilih file .pdb atau .yes";
-			config.pattern = ".*\\.(?i:pdb|yes)";
-			
-			startActivityForResult(FileChooserActivity.createIntent(getApplicationContext(), config), REQCODE_openFile);
+			try {
+				if (getPackageManager().getPackageInfo(getPackageName(), 0).versionCode <= 52) {
+					new AlertDialog.Builder(this)
+					.setMessage("Fitur membuka file PDB masih dalam percobaan. Jika Anda menemukan masalah, harap hubungi yukuku@gmail.com (lampirkan file PDB-nya jika ada).\n\n" +
+							"Opening PDB files is still an experimental feature. If you encounter problems, please contact yukuku@gmail.com (attach the PDB file if possible).\n\n" +
+							"Thanks to Yohanes Nugroho for the PDB-reader library.")
+					.setPositiveButton(R.string.ok, new OnClickListener() {
+						@Override public void onClick(DialogInterface dialog, int which) {
+							FileChooserConfig config = new FileChooserConfig();
+							config.mode = Mode.Open;
+							config.initialDir = Environment.getExternalStorageDirectory().getAbsolutePath();
+							config.title = "Pilih file .pdb atau .yes";
+							config.pattern = ".*\\.(?i:pdb|yes)";
+							
+							startActivityForResult(FileChooserActivity.createIntent(getApplicationContext(), config), REQCODE_openFile);
+						}
+					})
+					.show();
+				}
+			} catch (NameNotFoundException e) {
+			}
 		} else {
 			new AlertDialog.Builder(this)
 			.setMessage("Tidak ditemukan penyimpanan eksternal (seperti SD Card).")
