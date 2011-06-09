@@ -77,7 +77,7 @@ public class ConvertPdbToYes {
 			progress(0, "Opening PDB file");
 			pdb = new BiblePlusPDB(new PDBFileStream(filenamepdb), Tabs.hebrewTab, Tabs.greekTab);
 			if (params.inputEncoding != null) pdb.setEncoding(params.inputEncoding);
-			Log.d(TAG, "Encoding used: " + params.inputEncoding);
+			Log.d(TAG, "Encoding used: " + params.inputEncoding); //$NON-NLS-1$
 			progress(10, "Loading version info");
 			pdb.loadVersionInfo();
 			progress(20, "Loading word index");
@@ -257,7 +257,7 @@ public class ConvertPdbToYes {
 				
 				for (int ayat_0 = 0; ayat_0 < k.nayat[pasal_0]; ayat_0++) {
 					String[] complete = bookInfo.getCompleteVerse(pasal_0 + 1, ayat_0 + 1);
-					offsetLewat += complete[0].getBytes("utf-8").length + 1; // +1 buat \n
+					offsetLewat += complete[0].getBytes("utf-8").length + 1; // +1 buat \n //$NON-NLS-1$
 					
 					// perikop!
 					if (includeAddlTitle) {

@@ -168,24 +168,24 @@ public class EdisiActivity extends Activity {
 			if (edisi instanceof MEdisiInternal) details.append("Type: Built-in\n");
 			if (edisi instanceof MEdisiPreset) details.append("Type: Preset\n");
 			if (edisi instanceof MEdisiYes) details.append("Type: Add-on\n");
-			details.append("Title: " + edisi.judul + "\n");
+			details.append("Title: " + edisi.judul + '\n');
 			if (edisi instanceof MEdisiPreset) {
 				MEdisiPreset preset = (MEdisiPreset) edisi;
 				if (AddonManager.cekAdaEdisi(preset.namafile_preset)) {
-					details.append("Stored in: " + AddonManager.getEdisiPath(preset.namafile_preset) + "\n");
+					details.append("Stored in: " + AddonManager.getEdisiPath(preset.namafile_preset) + '\n'); //$NON-NLS-2$
 				} else {
-					details.append("Default filename: " + preset.namafile_preset + "\n");
-					details.append("Download URL: " + preset.url + "\n");
+					details.append("Default filename: " + preset.namafile_preset + '\n');
+					details.append("Download URL: " + preset.url + '\n');
 				}
 			}
 			if (edisi instanceof MEdisiYes) {
 				MEdisiYes yes = (MEdisiYes) edisi;
 				if (yes.namafile_pdbasal != null) {
-					details.append("PDB file name (original): " + yes.namafile_pdbasal + "\n");
+					details.append("PDB file name (original): " + yes.namafile_pdbasal + '\n');
 				}
-				details.append("Stored in: " + yes.namafile + "\n");
+				details.append("Stored in: " + yes.namafile + '\n');
 				if (yes.keterangan != null) {
-					details.append("Version info: " + yes.keterangan + "\n");
+					details.append("Version info: " + yes.keterangan + '\n');
 				}
 			}
 			
@@ -328,7 +328,7 @@ public class EdisiActivity extends Activity {
 							config.mode = Mode.Open;
 							config.initialDir = Environment.getExternalStorageDirectory().getAbsolutePath();
 							config.title = "Pilih file .pdb atau .yes";
-							config.pattern = ".*\\.(?i:pdb|yes)";
+							config.pattern = ".*\\.(?i:pdb|yes)"; //$NON-NLS-1$
 							
 							startActivityForResult(FileChooserActivity.createIntent(getApplicationContext(), config), REQCODE_openFile);
 						}
@@ -354,9 +354,9 @@ public class EdisiActivity extends Activity {
 			}
 		
 			String filename = result.firstFilename;
-			if (filename.toLowerCase().endsWith(".yes")) {
+			if (filename.toLowerCase().endsWith(".yes")) { //$NON-NLS-1$
 				handleFileOpenYes(filename, null);
-			} else if (filename.toLowerCase().endsWith(".pdb")) {
+			} else if (filename.toLowerCase().endsWith(".pdb")) { //$NON-NLS-1$
 				handleFileOpenPdb(filename);
 			} else {
 				Toast.makeText(getApplicationContext(), "Invalid file selected.", Toast.LENGTH_SHORT).show();
@@ -405,7 +405,7 @@ public class EdisiActivity extends Activity {
 		} catch (Exception e) {
 			new AlertDialog.Builder(this)
 			.setTitle("Ada kesalahan")
-			.setMessage(e.getClass().getSimpleName() + ": " + e.getMessage())
+			.setMessage(e.getClass().getSimpleName() + ": " + e.getMessage()) //$NON-NLS-1$
 			.setPositiveButton(R.string.ok, null)
 			.show();
 		}
@@ -456,7 +456,7 @@ public class EdisiActivity extends Activity {
 						} else {
 							int at = (Integer) values[0];
 							String message = (String) values[1];
-							pd.setMessage("(" + at + ") " + message + "...");
+							pd.setMessage("(" + at + ") " + message + "...");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 						}
 					};
 					
@@ -472,7 +472,7 @@ public class EdisiActivity extends Activity {
 							if (result.unconvertedBookNames != null && result.unconvertedBookNames.size() > 0) {
 								StringBuilder msg = new StringBuilder("The following books from the PDB file are not recognized and therefore skipped. Please email yukuku@gmail.com if you think these should not have been skipped.\n");
 								for (String s: result.unconvertedBookNames) {
-									msg.append("- ").append(s).append('\n');
+									msg.append("- ").append(s).append('\n'); //$NON-NLS-1$
 								}
 								
 								new AlertDialog.Builder(EdisiActivity.this)
@@ -505,7 +505,7 @@ public class EdisiActivity extends Activity {
 		byte[] digest = Digester.digestFile(DigestType.SHA1, new File(namafilepdb));
 		if (digest == null) return null;
 		String hash = Digester.toHex(digest).substring(0, 8);
-		return "pdb-" + hash + "-" + String.valueOf(versi) + ".yes";
+		return "pdb-" + hash + "-" + String.valueOf(versi) + ".yes";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 
 	// model
@@ -525,7 +525,7 @@ public class EdisiActivity extends Activity {
 	public static class MEdisiInternal extends MEdisi {
 		@Override
 		public String getEdisiId() {
-			return "internal";
+			return "internal"; //$NON-NLS-1$
 		}
 
 		@Override
@@ -549,16 +549,16 @@ public class EdisiActivity extends Activity {
 		public String namafile_preset;
 		
 		@Override public boolean getAktif() {
-			return Preferences.getBoolean("edisi/preset/" + this.namafile_preset + "/aktif", true);
+			return Preferences.getBoolean("edisi/preset/" + this.namafile_preset + "/aktif", true); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		@Override public void setAktif(boolean aktif) {
-			Preferences.setBoolean("edisi/preset/" + this.namafile_preset + "/aktif", aktif);
+			Preferences.setBoolean("edisi/preset/" + this.namafile_preset + "/aktif", aktif); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		@Override
 		public String getEdisiId() {
-			return "preset/" + namafile_preset;
+			return "preset/" + namafile_preset; //$NON-NLS-1$
 		}
 
 		@Override
@@ -579,7 +579,7 @@ public class EdisiActivity extends Activity {
 		
 		@Override
 		public String getEdisiId() {
-			return "yes/" + namafile;
+			return "yes/" + namafile; //$NON-NLS-1$
 		}
 
 		@Override
@@ -691,7 +691,7 @@ public class EdisiActivity extends Activity {
 					cAktif.setEnabled(true);
 					lNamafile.setVisibility(View.VISIBLE);
 					MEdisiYes yes = (MEdisiYes) medisi;
-					String extra = "";
+					String extra = ""; //$NON-NLS-1$
 					if (yes.keterangan != null) {
 						extra += yes.keterangan;
 					}
