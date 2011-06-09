@@ -20,8 +20,8 @@
 
 package com.compactbyte.bibleplus.reader;
 
-import java.io.IOException;
-import java.util.Vector;
+import java.io.*;
+import java.util.*;
 
 /**
  * This is for importing bookmark and notes from PalmBible+. Palmbible+ stores
@@ -65,7 +65,7 @@ public class BookmarkPDB {
 		if (data.length > 6) {
 			note = Util.readString(data, 6,
 							data.length - 6,
-							"UTF-8");
+							"UTF-8"); //$NON-NLS-1$
 		}
 
 		return new PDBBookmark(booknumber, chapter, verse, note);
@@ -96,7 +96,7 @@ public class BookmarkPDB {
 
 		PDBHeader header = pdbaccess.getHeader();
 
-		if (!header.getType().equals("bkmk")) {
+		if (!header.getType().equals("bkmk")) { //$NON-NLS-1$
 			return false;
 		}
 

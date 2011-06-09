@@ -203,10 +203,10 @@ public class BitVector {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < size; i++) {
-			sb.append(get(i) == 1 ? "1" : "0");
+			sb.append(get(i) == 1 ? "1" : "0"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		sb.append("Count:").append(countSet());
-		sb.append("\n");
+		sb.append("Count:").append(countSet()); //$NON-NLS-1$
+		sb.append("\n"); //$NON-NLS-1$
 		return sb.toString();
 	}
 

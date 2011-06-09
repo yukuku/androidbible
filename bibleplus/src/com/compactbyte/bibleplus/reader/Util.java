@@ -29,11 +29,11 @@ public class Util {
 	static char[] greektab;
 
 	public static StringBuffer addField(StringBuffer sb, int i) {
-		return sb.append(i).append(":");
+		return sb.append(i).append(":"); //$NON-NLS-1$
 	}
 
 	public static StringBuffer addField(StringBuffer sb, String s) {
-		return sb.append(Util.escape(s)).append(":");
+		return sb.append(Util.escape(s)).append(":"); //$NON-NLS-1$
 	}
 
 	public static StringBuffer addLastField(StringBuffer sb, int i) {
@@ -49,7 +49,7 @@ public class Util {
 	}
 
 	public static String escape(String s) {
-		return Util.escape(s, '%', ":\r\n");
+		return Util.escape(s, '%', ":\r\n"); //$NON-NLS-1$
 	}
 
 	public static String escape(String s, char prefix, String charsToReplace) {
@@ -64,7 +64,7 @@ public class Util {
 				int v = c;
 				String vs = Integer.toHexString(v);
 				if (vs.length() < 4) {
-					res.append("0000".substring(vs.length()));
+					res.append("0000".substring(vs.length())); //$NON-NLS-1$
 				}
 				res.append(vs);
 
@@ -130,10 +130,10 @@ public class Util {
 
 	public static String readStringISO8859_1(byte[] data, int offs, int length) {
 		try {
-			return new String(data, offs, length, "ISO-8859-1");
+			return new String(data, offs, length, "ISO-8859-1"); //$NON-NLS-1$
 		} catch (java.io.UnsupportedEncodingException e) {
 
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 
@@ -167,7 +167,7 @@ public class Util {
 		}
 		int len = i - offs + 1;
 		if (len < 0) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		
 		return readStringWithTable(data, offs, len, tab);
@@ -184,7 +184,7 @@ public class Util {
 			}
 			int len = i - offs + 1;
 			if (len < 0) {
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 			
 			String s;
@@ -197,14 +197,14 @@ public class Util {
 
 			return s;
 		} catch (java.io.UnsupportedEncodingException e) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 	
 	static String dumpByteArray(byte[] ba) {
 		StringBuilder sb = new StringBuilder();
 		for (byte b: ba) {
-			sb.append("0x").append(Integer.toHexString(0xff & b)).append(' ');
+			sb.append("0x").append(Integer.toHexString(0xff & b)).append(' '); //$NON-NLS-1$
 		}
 		return sb.toString();
 	}

@@ -42,7 +42,7 @@ public class Bookmark {
 	 * @return Bookmark from string representation of this object
 	 */
 	public static Bookmark fromStringRepresentation(String s) {
-		MyStringTokenizer myst = new MyStringTokenizer(s, ":");
+		MyStringTokenizer myst = new MyStringTokenizer(s, ":"); //$NON-NLS-1$
 		if (myst.countTokens() != 7) {
 			return null;
 		}
@@ -162,9 +162,9 @@ public class Bookmark {
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append(bookName).append(" ");
-		sb.append(chapter).append(":");
-		sb.append(verse).append(" ");
+		sb.append(bookName).append(" "); //$NON-NLS-1$
+		sb.append(chapter).append(":"); //$NON-NLS-1$
+		sb.append(verse).append(" "); //$NON-NLS-1$
 		sb.append(excerpt);
 		return sb.toString();
 	}
@@ -177,17 +177,17 @@ public class Bookmark {
 	public String toStringRepresentation() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(Util.escape(bibleVersion));
-		sb.append(":");
+		sb.append(":"); //$NON-NLS-1$
 		sb.append(Util.escape(bibleLocation));
-		sb.append(":");
+		sb.append(":"); //$NON-NLS-1$
 		sb.append(Util.escape(bookName));
-		sb.append(":");
+		sb.append(":"); //$NON-NLS-1$
 		sb.append(bookNumber);
-		sb.append(":");
+		sb.append(":"); //$NON-NLS-1$
 		sb.append(chapter);
-		sb.append(":");
+		sb.append(":"); //$NON-NLS-1$
 		sb.append(verse);
-		sb.append(":");
+		sb.append(":"); //$NON-NLS-1$
 		sb.append(Util.escape(excerpt));
 		return sb.toString();
 	}

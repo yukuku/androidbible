@@ -2,14 +2,14 @@ package com.compactbyte.android.bible;
 
 import java.io.*;
 
-import com.compactbyte.bibleplus.reader.PDBDataStream;
+import com.compactbyte.bibleplus.reader.*;
 
 public class PDBFileStream extends PDBDataStream {
 
 	RandomAccessFile fis;
 	int pos;
 
-	public int getCurrentPosition() {
+	@Override public int getCurrentPosition() {
 		return pos;
 	}
 
@@ -17,37 +17,37 @@ public class PDBFileStream extends PDBDataStream {
 	
 	public PDBFileStream(String _filename) throws IOException  {
 		filename = _filename;
-		fis = new RandomAccessFile(filename, "r");
+		fis = new RandomAccessFile(filename, "r"); //$NON-NLS-1$
 		pos = 0;
 	}
 	
-	public void read(byte[]data) throws IOException {
+	@Override public void read(byte[]data) throws IOException {
 		fis.read(data);
 		pos += data.length;
 	}
 
-	public void seek(int position)  throws IOException {
+	@Override public void seek(int position)  throws IOException {
 		fis.seek(position);
 		pos = position;
 	}
 
-	public void skip(int nbytes)  throws IOException {
+	@Override public void skip(int nbytes)  throws IOException {
 		seek(pos + nbytes);
 	}
 
-	public boolean canSeek() {
+	@Override public boolean canSeek() {
 		return true;
 	}
 
-	public void close() throws IOException {
+	@Override public void close() throws IOException {
 		fis.close();
 	}
 
-	public long getSize() throws IOException {
+	@Override public long getSize() throws IOException {
 		return fis.length();
 	}
 
-	public String getPathName() {
+	@Override public String getPathName() {
 		return filename;
 	}
 }
