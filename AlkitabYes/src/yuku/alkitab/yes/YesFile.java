@@ -29,7 +29,7 @@ public class YesFile {
 		private byte[] nama;
 		public SeksiBernama(String nama) {
 			try {
-				this.nama = nama.getBytes("ascii");
+				this.nama = nama.getBytes("ascii"); //$NON-NLS-1$
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
@@ -54,28 +54,28 @@ public class YesFile {
 		
 		@Override
 		public void toBytes(BintexWriter writer) throws Exception {
-			writer.writeShortString("versi");
+			writer.writeShortString("versi"); //$NON-NLS-1$
 			writer.writeInt(versi);
 			
-			writer.writeShortString("nama");
+			writer.writeShortString("nama"); //$NON-NLS-1$
 			writer.writeShortString(nama);
 			
-			writer.writeShortString("judul");
+			writer.writeShortString("judul"); //$NON-NLS-1$
 			writer.writeShortString(judul);
 			
-			writer.writeShortString("keterangan");
+			writer.writeShortString("keterangan"); //$NON-NLS-1$
 			writer.writeLongString(keterangan);
 			
-			writer.writeShortString("nkitab");
+			writer.writeShortString("nkitab"); //$NON-NLS-1$
 			writer.writeInt(nkitab);
 
-			writer.writeShortString("perikopAda");
+			writer.writeShortString("perikopAda"); //$NON-NLS-1$
 			writer.writeInt(perikopAda);
 			
-			writer.writeShortString("encoding"); // mulai versi 2 ada.
+			writer.writeShortString("encoding"); // mulai versi 2 ada. //$NON-NLS-1$
 			writer.writeInt(encoding);
 
-			writer.writeShortString("end");
+			writer.writeShortString("end"); //$NON-NLS-1$
 		}
 	}
 	
@@ -93,50 +93,50 @@ public class YesFile {
 		public int offset;
 		
 		public void toBytes(BintexWriter writer) throws Exception {
-			writer.writeShortString("versi");
+			writer.writeShortString("versi"); //$NON-NLS-1$
 			writer.writeInt(versi);
 			
-			writer.writeShortString("pos");
+			writer.writeShortString("pos"); //$NON-NLS-1$
 			writer.writeInt(pos);
 			
-			writer.writeShortString("nama");
+			writer.writeShortString("nama"); //$NON-NLS-1$
 			writer.writeShortString(nama);
 			
-			writer.writeShortString("judul");
+			writer.writeShortString("judul"); //$NON-NLS-1$
 			writer.writeShortString(judul);
 			
-			writer.writeShortString("npasal");
+			writer.writeShortString("npasal"); //$NON-NLS-1$
 			writer.writeInt(npasal);
 			
-			writer.writeShortString("nayat");
+			writer.writeShortString("nayat"); //$NON-NLS-1$
 			for (int a: nayat) {
 				writer.writeUint8(a);
 			}
 			
-			writer.writeShortString("ayatLoncat");
+			writer.writeShortString("ayatLoncat"); //$NON-NLS-1$
 			writer.writeInt(ayatLoncat);
 			
-			writer.writeShortString("pasal_offset");
+			writer.writeShortString("pasal_offset"); //$NON-NLS-1$
 			for (int a: pasal_offset) {
 				writer.writeInt(a);
 			}
 			
-			writer.writeShortString("encoding");
+			writer.writeShortString("encoding"); //$NON-NLS-1$
 			writer.writeInt(encoding);
 			
-			writer.writeShortString("offset");
+			writer.writeShortString("offset"); //$NON-NLS-1$
 			writer.writeInt(offset);
 			
 			if (pdbBookNumber != 0) {
-				writer.writeShortString("pdbBookNumber");
+				writer.writeShortString("pdbBookNumber"); //$NON-NLS-1$
 				writer.writeInt(pdbBookNumber);
 			}
 			
-			writer.writeShortString("end");
+			writer.writeShortString("end"); //$NON-NLS-1$
 		}
 
 		public static void nullToBytes(BintexWriter writer) throws Exception {
-			writer.writeShortString("end");
+			writer.writeShortString("end"); //$NON-NLS-1$
 		}
 	}
 	
@@ -170,7 +170,7 @@ public class YesFile {
 		@Override
 		public void toBytes(BintexWriter writer) throws Exception {
 			if (ayatLoncat != 0) {
-				throw new RuntimeException("ayatLoncat ga 0");
+				throw new RuntimeException("ayatLoncat ga 0"); //$NON-NLS-1$
 			}
 			
 			for (String isi: xisi) {
@@ -210,29 +210,29 @@ public class YesFile {
 			pos = file.getFilePointer();
 			{
 				byte[] nama = seksi.nama();
-				Log.d(TAG, "[pos=" + pos + "] tulis nama seksi: " + new String(nama));
+				Log.d(TAG, "[pos=" + pos + "] tulis nama seksi: " + new String(nama));  //$NON-NLS-1$//$NON-NLS-2$
 				os2.writeRaw(nama);
 			}
 			
 			pos = file.getFilePointer();
 			{
 				byte[] palsu = {-1, -1, -1, -1};
-				Log.d(TAG, "[pos=" + pos + "] tulis placeholder ukuran");
+				Log.d(TAG, "[pos=" + pos + "] tulis placeholder ukuran"); //$NON-NLS-1$ //$NON-NLS-2$
 				os2.writeRaw(palsu);
 			}
 			
 			int posSebelumIsi = os2.getPos();
-			Log.d(TAG, "[pos=" + file.getFilePointer() + "] tulis isi seksi");
+			Log.d(TAG, "[pos=" + file.getFilePointer() + "] tulis isi seksi"); //$NON-NLS-1$ //$NON-NLS-2$
 			seksi.isi().toBytes(os2);
 			int posSesudahIsi = os2.getPos();
 			int ukuranIsi = posSesudahIsi - posSebelumIsi;
-			Log.d(TAG, "[pos=" + file.getFilePointer() + "] isi seksi selesai ditulis, sebesar " + ukuranIsi);
+			Log.d(TAG, "[pos=" + file.getFilePointer() + "] isi seksi selesai ditulis, sebesar " + ukuranIsi);  //$NON-NLS-1$//$NON-NLS-2$
 			
 			long posUntukMelanjutkan = file.getFilePointer();
 			
 			{
 				file.seek(pos);
-				Log.d(TAG, "[pos=" + pos + "] tulis ukuran: " + ukuranIsi);
+				Log.d(TAG, "[pos=" + pos + "] tulis ukuran: " + ukuranIsi);  //$NON-NLS-1$//$NON-NLS-2$
 				os2.writeInt(ukuranIsi);
 			}
 			
@@ -240,10 +240,10 @@ public class YesFile {
 		}
 		
 		pos = file.getFilePointer();
-		Log.d(TAG, "[pos=" + pos + "] tulis penanda tidak ada seksi lagi (____________)");
-		os2.writeRaw("____________".getBytes("ascii"));
+		Log.d(TAG, "[pos=" + pos + "] tulis penanda tidak ada seksi lagi (____________)");  //$NON-NLS-1$//$NON-NLS-2$
+		os2.writeRaw("____________".getBytes("ascii")); //$NON-NLS-1$ //$NON-NLS-2$
 		os2.close();
 		pos = file.getFilePointer();
-		Log.d(TAG, "[pos=" + pos + "] selesai");
+		Log.d(TAG, "[pos=" + pos + "] selesai");  //$NON-NLS-1$//$NON-NLS-2$
 	}
 }
