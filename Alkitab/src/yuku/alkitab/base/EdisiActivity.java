@@ -165,32 +165,32 @@ public class EdisiActivity extends Activity {
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 			MEdisi edisi = adapter.getItem(info.position);
 			StringBuilder details = new StringBuilder();
-			if (edisi instanceof MEdisiInternal) details.append("Type: Built-in\n");
-			if (edisi instanceof MEdisiPreset) details.append("Type: Preset\n");
-			if (edisi instanceof MEdisiYes) details.append("Type: Add-on\n");
-			details.append("Title: " + edisi.judul + '\n');
+			if (edisi instanceof MEdisiInternal) details.append(getString(R.string.ed_type_built_in) + '\n');
+			if (edisi instanceof MEdisiPreset) details.append(getString(R.string.ed_type_preset) + '\n');
+			if (edisi instanceof MEdisiYes) details.append(getString(R.string.ed_type_add_on) + '\n');
+			details.append(getString(R.string.ed_title_title, edisi.judul) + '\n');
 			if (edisi instanceof MEdisiPreset) {
 				MEdisiPreset preset = (MEdisiPreset) edisi;
 				if (AddonManager.cekAdaEdisi(preset.namafile_preset)) {
-					details.append("Stored in: " + AddonManager.getEdisiPath(preset.namafile_preset) + '\n'); //$NON-NLS-2$
+					details.append(getString(R.string.ed_stored_in_file, AddonManager.getEdisiPath(preset.namafile_preset)) + '\n'); 
 				} else {
-					details.append("Default filename: " + preset.namafile_preset + '\n');
-					details.append("Download URL: " + preset.url + '\n');
+					details.append(getString(R.string.ed_default_filename_file, preset.namafile_preset) + '\n');
+					details.append(getString(R.string.ed_download_url_url, preset.url) + '\n');
 				}
 			}
 			if (edisi instanceof MEdisiYes) {
 				MEdisiYes yes = (MEdisiYes) edisi;
 				if (yes.namafile_pdbasal != null) {
-					details.append("PDB file name (original): " + yes.namafile_pdbasal + '\n');
+					details.append(getString(R.string.ed_pdb_file_name_original_file, yes.namafile_pdbasal) + '\n');
 				}
-				details.append("Stored in: " + yes.namafile + '\n');
+				details.append(getString(R.string.ed_stored_in_file, yes.namafile) + '\n');
 				if (yes.keterangan != null) {
-					details.append("Version info: " + yes.keterangan + '\n');
+					details.append(getString(R.string.ed_version_info_info, yes.keterangan) + '\n');
 				}
 			}
 			
 			new AlertDialog.Builder(this)
-			.setTitle("Version details")
+			.setTitle(R.string.ed_version_details)
 			.setMessage(details)
 			.setPositiveButton(R.string.ok, null)
 			.show();
@@ -319,15 +319,13 @@ public class EdisiActivity extends Activity {
 			try {
 				if (getPackageManager().getPackageInfo(getPackageName(), 0).versionCode <= 52) {
 					new AlertDialog.Builder(this)
-					.setMessage("Fitur membuka file PDB masih dalam percobaan. Jika Anda menemukan masalah, harap hubungi yukuku@gmail.com (lampirkan file PDB-nya jika ada).\n\n" +
-							"Opening PDB files is still an experimental feature. If you encounter problems, please contact yukuku@gmail.com (attach the PDB file if possible).\n\n" +
-							"Thanks to Yohanes Nugroho for the PDB-reader library.")
+					.setMessage(R.string.ed_opening_pdb_files_is_still_an_experimental_feature)
 					.setPositiveButton(R.string.ok, new OnClickListener() {
 						@Override public void onClick(DialogInterface dialog, int which) {
 							FileChooserConfig config = new FileChooserConfig();
 							config.mode = Mode.Open;
 							config.initialDir = Environment.getExternalStorageDirectory().getAbsolutePath();
-							config.title = "Pilih file .pdb atau .yes";
+							config.title = getString(R.string.ed_choose_pdb_or_yes_file);
 							config.pattern = ".*\\.(?i:pdb|yes)"; //$NON-NLS-1$
 							
 							startActivityForResult(FileChooserActivity.createIntent(getApplicationContext(), config), REQCODE_openFile);
@@ -339,7 +337,7 @@ public class EdisiActivity extends Activity {
 			}
 		} else {
 			new AlertDialog.Builder(this)
-			.setMessage("Tidak ditemukan penyimpanan eksternal (seperti SD Card).")
+			.setMessage(R.string.ed_no_external_storage)
 			.setPositiveButton(R.string.ok, null)
 			.show();
 		}
@@ -359,7 +357,7 @@ public class EdisiActivity extends Activity {
 			} else if (filename.toLowerCase().endsWith(".pdb")) { //$NON-NLS-1$
 				handleFileOpenPdb(filename);
 			} else {
-				Toast.makeText(getApplicationContext(), "Invalid file selected.", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), R.string.ed_invalid_file_selected, Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -379,7 +377,7 @@ public class EdisiActivity extends Activity {
 			
 			if (dup) {
 				new AlertDialog.Builder(this)
-				.setMessage("File " + filename + " sudah ada dalam daftar versi.")
+				.setMessage(getString(R.string.ed_file_file_sudah_ada_dalam_daftar_versi, filename))
 				.setPositiveButton(R.string.ok, null)
 				.show();
 				return;
@@ -404,7 +402,7 @@ public class EdisiActivity extends Activity {
 			adapter.notifyDataSetChanged();
 		} catch (Exception e) {
 			new AlertDialog.Builder(this)
-			.setTitle("Ada kesalahan")
+			.setTitle(R.string.ed_error_encountered)
 			.setMessage(e.getClass().getSimpleName() + ": " + e.getMessage()) //$NON-NLS-1$
 			.setPositiveButton(R.string.ok, null)
 			.show();
@@ -417,7 +415,7 @@ public class EdisiActivity extends Activity {
 		// cek apakah sudah ada.
 		if (S.getDb().adakahEdisiYesDenganNamafile(AddonManager.getEdisiPath(namayes))) {
 			new AlertDialog.Builder(this)
-			.setMessage("This file is already on the list.")
+			.setMessage(R.string.ed_this_file_is_already_on_the_list)
 			.setPositiveButton(R.string.ok, null)
 			.show();
 			return;
@@ -431,19 +429,19 @@ public class EdisiActivity extends Activity {
 			
 			@Override public void onOk(final ConvertParams params) {
 				final String namafileyes = AddonManager.getEdisiPath(namayes);
-				final ProgressDialog pd = ProgressDialog.show(EdisiActivity.this, null, "Reading PDB file...", true, false);
+				final ProgressDialog pd = ProgressDialog.show(EdisiActivity.this, null, getString(R.string.ed_reading_pdb_file), true, false);
 				
 				new AsyncTask<String, Object, ConvertResult>() {
 					@Override protected ConvertResult doInBackground(String... _unused_) {
 						ConvertPdbToYes converter = new ConvertPdbToYes();
 						converter.setConvertProgressListener(new ConvertProgressListener() {
 							@Override public void onProgress(int at, String message) {
-								Log.d(TAG, "Progress " + at + ": " + message);
+								Log.d(TAG, "Progress " + at + ": " + message); //$NON-NLS-1$ //$NON-NLS-2$
 								publishProgress(at, message);
 							}
 							
 							@Override public void onFinish() {
-								Log.d(TAG, "Finish");
+								Log.d(TAG, "Finish"); //$NON-NLS-1$
 								publishProgress(null, null);
 							}
 						});
@@ -452,7 +450,7 @@ public class EdisiActivity extends Activity {
 					
 					@Override protected void onProgressUpdate(Object... values) {
 						if (values[0] == null) {
-							pd.setMessage("Finished.");
+							pd.setMessage(getString(R.string.ed_finished));
 						} else {
 							int at = (Integer) values[0];
 							String message = (String) values[1];
@@ -470,7 +468,7 @@ public class EdisiActivity extends Activity {
 							handleFileOpenYes(namafileyes, new File(namafilepdb).getName());
 							
 							if (result.unconvertedBookNames != null && result.unconvertedBookNames.size() > 0) {
-								StringBuilder msg = new StringBuilder("The following books from the PDB file are not recognized and therefore skipped. Please email yukuku@gmail.com if you think these should not have been skipped.\n");
+								StringBuilder msg = new StringBuilder(R.string.ed_the_following_books_from_the_pdb_file_are_not_recognized + '\n');
 								for (String s: result.unconvertedBookNames) {
 									msg.append("- ").append(s).append('\n'); //$NON-NLS-1$
 								}
@@ -492,8 +490,8 @@ public class EdisiActivity extends Activity {
 	
 	private void showPdbReadErrorDialog(Exception exception) {
 		new AlertDialog.Builder(EdisiActivity.this)
-		.setTitle("Error reading PDB file")
-		.setMessage("Details: " + U.tampilException(exception))
+		.setTitle(R.string.ed_error_reading_pdb_file)
+		.setMessage(getString(R.string.ed_details) + U.tampilException(exception))
 		.setPositiveButton(R.string.ok, null)
 		.show();
 	};
@@ -665,7 +663,7 @@ public class EdisiActivity extends Activity {
 			if (position == getCount() - 1) {
 				// pilihan untuk open
 				cAktif.setVisibility(View.GONE);
-				lJudul.setText("Buka file .pdb/.yes lainnya...");
+				lJudul.setText(R.string.ed_buka_file_pdb_yes_lainnya);
 				lNamafile.setVisibility(View.GONE);
 			} else {
 				// salah satu dari edisi yang ada
@@ -685,7 +683,7 @@ public class EdisiActivity extends Activity {
 						lNamafile.setVisibility(View.GONE);
 					} else {
 						lNamafile.setVisibility(View.VISIBLE);
-						lNamafile.setText("Tekan untuk mengunduh"); 
+						lNamafile.setText(R.string.ed_tekan_untuk_mengunduh); 
 					}
 				} else if (medisi instanceof MEdisiYes) {
 					cAktif.setEnabled(true);

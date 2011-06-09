@@ -6,6 +6,7 @@ import android.util.*;
 import java.io.*;
 import java.util.*;
 
+import yuku.alkitab.R;
 import yuku.alkitab.base.config.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.yes.*;
@@ -70,17 +71,17 @@ public class ConvertPdbToYes {
 	public ConvertPdbToYes() {
 	}
 	
-	public ConvertResult convert(Context context, String filenamepdb, String namafileyes, ConvertParams params) {
+	public ConvertResult convert(final Context context, String filenamepdb, String namafileyes, ConvertParams params) {
 		ConvertResult res = new ConvertResult();
 		
 		try {
-			progress(0, "Opening PDB file");
+			progress(0, context.getString(R.string.cp_opening_pdb_file));
 			pdb = new BiblePlusPDB(new PDBFileStream(filenamepdb), Tabs.hebrewTab, Tabs.greekTab);
 			if (params.inputEncoding != null) pdb.setEncoding(params.inputEncoding);
 			Log.d(TAG, "Encoding used: " + params.inputEncoding); //$NON-NLS-1$
-			progress(10, "Loading version info");
+			progress(10, context.getString(R.string.cp_loading_version_info));
 			pdb.loadVersionInfo();
-			progress(20, "Loading word index");
+			progress(20, context.getString(R.string.cp_loading_word_index));
 			pdb.loadWordIndex();
 
 			Log.d(TAG, "============ baca info versi selesai"); //$NON-NLS-1$
@@ -96,7 +97,7 @@ public class ConvertPdbToYes {
 			// 65 = wahyu
 			// 66 sampe 87, terdaftar dalam PdbNumberToAriMapping
 			// selain itu, belum ada di mana2, maka kita buang aja dan kasih warning.
-			progress(30, "Analyzing available books");
+			progress(30, context.getString(R.string.cp_analyzing_available_books));
 			{
 				int maxKitabPos = 0;
 				for (int bookPos = 0; bookPos < nbook; bookPos++) {
@@ -120,7 +121,7 @@ public class ConvertPdbToYes {
 				for (int i = 0; i < kitabPosToBookPosMap_.length; i++) kitabPosToBookPosMap_[i] = -1;
 			}
 			
-			progress(40, "Mapping books");
+			progress(40, context.getString(R.string.cp_mapping_books));
 			for (int bookPos = 0; bookPos < nbook; bookPos++) {
 				BookInfo bookInfo = pdb.getBook(bookPos);
 				bookInfo.openBook();
@@ -139,13 +140,13 @@ public class ConvertPdbToYes {
 			Log.d(TAG, "============ baca daftar kitab selesai"); //$NON-NLS-1$
 			
 			// sekaligus bangun perikop blok dan perikop index.
-			progress(100, "Constructing book info");
-			final InfoKitab infoKitab = getInfoKitab(100, params.includeAddlTitle);
+			progress(100, context.getString(R.string.cp_constructing_book_info));
+			final InfoKitab infoKitab = getInfoKitab(context, 100, params.includeAddlTitle);
 			
-			progress(200, "Constructing version info");
+			progress(200, context.getString(R.string.cp_constructing_version_info));
 			final InfoEdisi infoEdisi = getInfoEdisi();
 			
-			progress(400, "Constructing translated file");
+			progress(400, context.getString(R.string.cp_constructing_translated_file));
 			YesFile file = new YesFile() {{
 				boolean adaPerikop = nblokPerikop_ > 0;
 				this.xseksi = new Seksi[adaPerikop? 5: 3];
@@ -165,7 +166,7 @@ public class ConvertPdbToYes {
 						@Override public IsiSeksi isi() {
 							return new IsiSeksi() {
 								@Override public void toBytes(BintexWriter writer) throws Exception {
-									progress(710, "Writing " + nblokPerikop_ + " section/pericope indexes");
+									progress(710, context.getString(R.string.cp_writing_num_section_pericope_indexes, nblokPerikop_));
 									writer.writeInt(nblokPerikop_);
 									for (int i = 0; i < nblokPerikop_; i++) {
 										writer.writeInt(xariPerikopBlok_.get(i)); // ari untuk entri ini
@@ -179,7 +180,7 @@ public class ConvertPdbToYes {
 						@Override public IsiSeksi isi() {
 							return new IsiSeksi() {
 								@Override public void toBytes(BintexWriter writer) throws Exception {
-									progress(720, "Writing " + nblokPerikop_ + " section/pericope titles");
+									progress(720, context.getString(R.string.cp_writing_num_section_pericope_titles, nblokPerikop_));
 									nantinyaPerikopBlokBaos_.writeTo(writer.getOutputStream());
 								}
 							};
@@ -188,14 +189,14 @@ public class ConvertPdbToYes {
 				}
 				xseksi[xseksi.length - 1] = new SeksiBernama("teks________") { //$NON-NLS-1$
 					@Override public IsiSeksi isi() {
-						return new LazyTeks(800);
+						return new LazyTeks(context, 800);
 					}
 				};
 			}};
 			
-			progress(600, "Opening translated file");
+			progress(600, context.getString(R.string.cp_opening_translated_file));
 			RandomAccessFile out = new RandomAccessFile(namafileyes, "rw"); //$NON-NLS-1$
-			progress(700, "Writing translated file");
+			progress(700, context.getString(R.string.cp_writing_translated_file));
 			file.output(out);
 			out.close();
 			
@@ -222,7 +223,7 @@ public class ConvertPdbToYes {
 		}};
 	}
 
-	private InfoKitab getInfoKitab(int baseProgress, boolean includeAddlTitle) throws Exception {
+	private InfoKitab getInfoKitab(final Context context, int baseProgress, boolean includeAddlTitle) throws Exception {
 		// untuk offset teks dari awal seksi teks
 		int offsetTotal = 0;
 		// untuk offset teks dari awal kitab
@@ -236,7 +237,7 @@ public class ConvertPdbToYes {
 			BookInfo bookInfo = pdb.getBook(bookPos);
 			bookInfo.openBook();
 			
-			progress(baseProgress + 1 + kitabPos, "Reading book info: " + bookInfo.getFullName());
+			progress(baseProgress + 1 + kitabPos, context.getString(R.string.cp_reading_book_info, bookInfo.getFullName()));
 
 			Kitab k = new Kitab();
 			k.versi = 2;
@@ -320,8 +321,10 @@ public class ConvertPdbToYes {
 
 	public class LazyTeks implements IsiSeksi {
 		private final int baseProgress;
-
-		public LazyTeks(int baseProgress) {
+		private final Context context;
+		
+		public LazyTeks(Context context, int baseProgress) {
+			this.context = context;
 			this.baseProgress = baseProgress;
 		}
 		
@@ -336,7 +339,7 @@ public class ConvertPdbToYes {
 				bookInfo.openBook();
 
 				int npasal = bookInfo.getChapterCount();
-				progress(baseProgress + 1 + kitabPos, "Writing text of book " + bookInfo.getFullName() + " (" + npasal + " chapters)");
+				progress(baseProgress + 1 + kitabPos, context.getString(R.string.cp_writing_text_of_book_chapters, bookInfo.getFullName(), npasal));
 				
 				for (int pi = 0; pi < npasal; pi++) {
 					int nayat = bookInfo.getVerseCount(pi + 1);
