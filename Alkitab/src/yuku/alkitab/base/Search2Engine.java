@@ -1,14 +1,16 @@
 package yuku.alkitab.base;
 
-import java.util.*;
-
-import yuku.alkitab.base.model.*;
-import yuku.andoutil.IntArrayList;
-import android.content.Context;
-import android.graphics.Typeface;
+import android.content.*;
+import android.graphics.*;
 import android.text.*;
 import android.text.style.*;
-import android.util.Log;
+import android.util.*;
+
+import java.util.*;
+
+import yuku.alkitab.base.config.*;
+import yuku.alkitab.base.model.*;
+import yuku.andoutil.*;
 
 public class Search2Engine {
 	private static final String TAG = Search2Engine.class.getSimpleName();
@@ -209,7 +211,7 @@ public class Search2Engine {
 		}
 	
 		if (sumber == null) {
-			for (Kitab k: S.edisiAktif.volatile_xkitab) {
+			for (Kitab k: S.edisiAktif.getConsecutiveXkitab()) {
 				//# filter dulu
 				if (!filter_lama) {
 					if (k.pos >= 0 && k.pos <= 38) {
@@ -221,19 +223,20 @@ public class Search2Engine {
 						continue;
 					}
 				}
+				// FIXME kitab lain
 				
 				int npasal = k.npasal;
 				
 				for (int pasal_1 = 1; pasal_1 <= npasal; pasal_1++) {
 					// coba sepasal sekaligus dulu.
-					String sepasal = S.muatTeksJanganPisahAyatHurufKecil(context, S.edisiAktif, k, pasal_1);
+					String sepasal = S.muatTeksJanganPisahAyatHurufKecil(S.edisiAktif, k, pasal_1);
 					if (sepasal.indexOf(kata) >= 0) {
 						// hanya lakukan ini jika dalam sepasal kedetek ada kata
 						cariDalamSepasal(sepasal, kata, res, Ari.encode(k.pos, pasal_1, 0), pakeTambah);
 					}
 				}
 	
-				Log.d(TAG, "cariDalam kitab " + k.nama + " selesai. res.size = " + res.size()); //$NON-NLS-1$ //$NON-NLS-2$
+				if (D.EBUG) Log.d(TAG, "cariDalam kitab " + k.nama + " selesai. res.size = " + res.size()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else {
 			// cari hanya pada kp (kitab pasal) yang ada di sumber.
@@ -246,10 +249,12 @@ public class Search2Engine {
 				ariKpKini = ariBerikutnya(sumber, ppos, ariKpKini);
 				if (ariKpKini == 0) break; // habis
 				
-				Kitab k = S.edisiAktif.volatile_xkitab[Ari.toKitab(ariKpKini)];
+				// ga usa cek kitab null, karena masuk sini hanya kalau udah pernah search token sebelumnya
+				// yang berdasarkan getConsecutiveXkitab yang ga mungkin ada nullnya.
+				Kitab k = S.edisiAktif.getKitab(Ari.toKitab(ariKpKini));
 				int pasal_1 = Ari.toPasal(ariKpKini);
 				
-				String sepasal = S.muatTeksJanganPisahAyatHurufKecil(context, S.edisiAktif, k, pasal_1);
+				String sepasal = S.muatTeksJanganPisahAyatHurufKecil(S.edisiAktif, k, pasal_1);
 				if (sepasal.indexOf(kata) >= 0) {
 					// hanya lakukan ini jika dalam sepasal kedetek ada kata
 					cariDalamSepasal(sepasal, kata, res, ariKpKini, pakeTambah);

@@ -88,11 +88,17 @@
     <string name="mengunduh_namaumum_tgl_tgl">Mengunduh %1$s tgl %2$s...</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Belum tersedia. Mungkin tanggal yang diminta belum disiapkan, atau terjadi kesalahan dalam mengenali sumber data.\n\nJika dirasa perlu, tolong beritahu pembuat program ini dengan kembali ke layar tampilan ayat, lalu buka menu dan pilih Beri Saran.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Belum tersedia. Menunggu pengambilan data lewat Internet...\n\n(Pastikan ada koneksi Internet untuk mengambil renungan.)</string>
-	<string name="teks_about">Alkitab untuk Android&lt;br/&gt;versi %1$s (%2$s) rev %3$s&lt;br/&gt;&lt;br/&gt;
-		Terjemahan Baru (c) LAI&lt;br/&gt;&lt;br/&gt;          		&lt;b&gt;yuku&lt;/b&gt; 2009-2011&lt;br/&gt;  Situs: &lt;b&gt;androidbible.blogspot.com&lt;/b&gt;&lt;br/&gt; Milis: &lt;b&gt;goo.gl/v686r&lt;/b&gt;&lt;br/&gt;
-		&lt;br/&gt;
-		&lt;b&gt;Bantuan:&lt;/b&gt;&lt;br/&gt;                       - &lt;b&gt;Roy Krisnadi&lt;/b&gt; salinan indentasi Mazmur&lt;br/&gt;
-		- &lt;b&gt;Oluss Studio&lt;/b&gt; ikon program&lt;br/&gt;    - &lt;b&gt;Jaya Satrio&lt;/b&gt; berbagai ikon&lt;br/&gt;  - dsb.</string>
+    <string name="teks_about">Alkitab untuk Android[br/]versi %1$s (%2$s)[br/][br/]
+		Terjemahan Baru (c) LAI[br/][br/]
+		[b]yuku[/b] 2009-2011[br/]
+		Situs: [b]androidbible.blogspot.com[/b][br/]
+		Milis: [b]goo.gl/v686r[/b][br/][br/]
+		[b]Bantuan:[/b][br/]
+		- [b]Roy Krisnadi[/b] salinan indentasi Mazmur[br/]
+		- [b]Oluss Studio[/b] ikon program[br/]
+		- [b]Jaya Satrio[/b] berbagai ikon[br/]
+		- [b]Yohanes Nugroho[/b] pembaca PDB[br/]
+		- dll.</string>
     <string name="namaprog_versi_build">Alkitab v%1$s (%2$d)</string>
     <string name="hari_sabtu">Sabtu</string>
     <string name="hari_jumat">Jumat</string>
@@ -102,7 +108,7 @@
     <string name="hari_senin">Senin</string>
     <string name="hari_minggu">Minggu</string>
     <string name="size_hasil">%d hasil</string>
-    <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Sedang mencari ayat yang mengandung kata-kata: &lt;b&gt;%s</string>
+    <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Sedang mencari ayat yang mengandung kata-kata: [b]%s[/b]</string>
     <string name="mencari">Mencari</string>
     <string name="pilih_perjanjian_lama_dan_atau_baru">Pilih perjanjian lama dan/atau baru</string>
     <string name="pengunduhan_dibatalkan">Pengunduhan dibatalkan.</string>
@@ -132,14 +138,64 @@
     <string name="ok">OK</string>
     <string name="url_help_index">file:///android_asset/help/html-in/index.html</string>
     <string name="tidak_bisa_membuat_folder">Tidak bisa membuat folder %s</string>
-	<string name="menuPengaturan">Pengaturan</string>
-	<string name="tampilan_n">Tampilan</string>
-	<string name="pilihKitab_s">Pilih kitab</string>
-	<string name="menuTentang">Tentang</string>
-	<string name="menuTuju">Tuju</string>
-	<string name="tentang_title">Tentang Alkitab</string>
-	<string name="peringatanBeta_s">Kami mengharapkan saran, kritik, dan komentar Anda.\nTolong berikan pesan Anda di bawah (juga alamat imel Anda jika perlu). Terima kasih!</string>
-	<string name="fidbekMakasih_s">Terima kasih atas komentar anda!</string>
-	<string name="bantuan_judul">Bantuan</string>
-	<string name="pengaturan_alkitab">Pengaturan Alkitab</string>
+    <string name="menuPengaturan">Pengaturan</string>
+    <string name="tampilan_n">Tampilan</string>
+    <string name="pilihKitab_s">Pilih kitab</string>
+    <string name="menuTentang">Tentang</string>
+    <string name="menuTuju">Tuju</string>
+    <string name="tentang_title">Tentang Alkitab</string>
+    <string name="peringatanBeta_s">Kami mengharapkan saran, kritik, dan komentar Anda.\nTolong berikan pesan Anda di bawah (juga alamat imel Anda jika perlu). Terima kasih!</string>
+    <string name="fidbekMakasih_s">Terima kasih atas komentar anda!</string>
+    <string name="bantuan_judul">Bantuan</string>
+    <string name="pengaturan_alkitab">Pengaturan Alkitab</string>
+    <string name="kelola_versi">Kelola Versi</string>
+    <string name="tambah">Tambah</string>
+    <string name="versi_lainnya">Versi lainnya...</string>
+    <string name="ada_kegagalan_membuka_edisiid">Ada kegagalan membuka %s</string>
+    <string name="pdb_file_options">Pilihan membaca file PDB</string>
+    <string name="greek_charset">Charset Yunani</string>
+    <string name="hebrew_charset">Charset Ibrani</string>
+    <string name="pdb_encoding">Enkoding PDB</string>
+    <string name="sample_text">Contoh tulisan</string>
+    <string name="include_book_and_chapter_headers">Sertakan juga judul kitab dan pasal</string>
+    <string name="cp_opening_pdb_file">Membuka file PDB</string>
+    <string name="cp_loading_version_info">Memuat informasi versi</string>
+    <string name="cp_loading_word_index">Memuat indeks kata</string>
+    <string name="cp_analyzing_available_books">Memeriksa kitab-kitab yang tersedia</string>
+    <string name="cp_mapping_books">Memetakan kitab-kitab</string>
+    <string name="cp_constructing_book_info">Menyusun informasi kitab</string>
+    <string name="cp_constructing_version_info">Menyusun informasi versi</string>
+    <string name="cp_constructing_translated_file">Menyusun file hasil pengubahan</string>
+    <string name="cp_writing_num_section_pericope_indexes">Menulis %s indeks perikop</string>
+    <string name="cp_writing_num_section_pericope_titles">Menulis %s judul perikop</string>
+    <string name="cp_opening_translated_file">Membuka file hasil pengubahan</string>
+    <string name="cp_writing_translated_file">Menulis file hasil pengubahan</string>
+    <string name="cp_reading_book_info">Membaca informasi kitab: %s</string>
+    <string name="cp_writing_text_of_book_chapters">Menulis isi kitab %1$s (%2$s pasal)</string>
+    <string name="ed_type_built_in">Jenis: Terlampir</string>
+    <string name="ed_type_preset">Jenis: Teratur</string>
+    <string name="ed_type_add_on">Jenis: Tambahan</string>
+    <string name="ed_title_title">Judul: %s</string>
+    <string name="ed_stored_in_file">Disimpan di: %s</string>
+    <string name="ed_default_filename_file">Nama file semula: %s</string>
+    <string name="ed_download_url_url">URL unduh: %s</string>
+    <string name="ed_pdb_file_name_original_file">Nama file (asli) PDB: %s</string>
+    <string name="ed_version_info_info">Informasi versi: %s</string>
+    <string name="ed_version_details">Rincian versi</string>
+    <string name="ed_opening_pdb_files_is_still_an_experimental_feature">Fitur membuka file PDB masih dalam percobaan. Kalau ada masalah, harap hubungi yukuku@gmail.com (lampirkan file PDB-nya kalau tersedia).</string>
+    <string name="ed_choose_pdb_or_yes_file">Pilih file .pdb atau .yes</string>
+    <string name="ed_no_external_storage">Tidak ditemukan penyimpanan eksternal (seperti SD Card).</string>
+    <string name="ed_invalid_file_selected">File tidak dikenal yang dipilih.</string>
+    <string name="ed_file_file_sudah_ada_dalam_daftar_versi">File %s sudah ada dalam daftar versi.</string>
+    <string name="ed_error_encountered">Ada kesalahan</string>
+    <string name="ed_this_file_is_already_on_the_list">File ini sudah ada dalam daftar versi.</string>
+    <string name="ed_reading_pdb_file">Membaca file PDB...</string>
+    <string name="ed_finished">Selesai.</string>
+    <string name="ed_the_following_books_from_the_pdb_file_are_not_recognized">Kitab-kitab dari file PDB berikut ini tidak dikenal, maka dari itu dilewatkan. Harap hubungi yukuku@gmail.com kalau seharusnya tidak dilewatkan.</string>
+    <string name="ed_error_reading_pdb_file">Kesalahan dalam membaca file PDB</string>
+    <string name="ed_details">Keterangan: </string>
+    <string name="ed_buka_file_pdb_yes_lainnya">Buka file .pdb/.yes lainnya...</string>
+    <string name="ed_tekan_untuk_mengunduh">Tekan untuk mengunduh</string>
+    <string name="info_terperinci">Info terperinci</string>
+    <string name="buang_dari_daftar">Buang dari daftar</string>
 </resources>

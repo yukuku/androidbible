@@ -1,37 +1,39 @@
 
 package yuku.alkitab.base;
 
-import java.io.*;
-
-import org.xml.sax.*;
-import org.xml.sax.ext.DefaultHandler2;
-import org.xmlpull.v1.XmlSerializer;
-
-import yuku.alkitab.R;
-import yuku.alkitab.base.BukmakEditor.Listener;
-import yuku.alkitab.base.model.*;
-import yuku.andoutil.Sqlitil;
 import android.app.*;
 import android.content.*;
-import android.content.res.Configuration;
-import android.database.Cursor;
+import android.content.res.*;
+import android.database.*;
 import android.os.*;
-import android.provider.BaseColumns;
-import android.util.Xml;
+import android.provider.*;
+import android.util.*;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.*;
 
+import java.io.*;
+import java.util.*;
+
+import org.xml.sax.*;
+import org.xml.sax.ext.*;
+import org.xmlpull.v1.*;
+
+import yuku.alkitab.*;
+import yuku.alkitab.base.BukmakEditor.Listener;
+import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.storage.*;
+import yuku.andoutil.*;
+
 public class BukmakActivity extends ListActivity {
 	public static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
 
-	private static final String[] cursorColumnsMapFrom = {AlkitabDb.KOLOM_Bukmak2_ari, AlkitabDb.KOLOM_Bukmak2_tulisan, AlkitabDb.KOLOM_Bukmak2_waktuUbah};
+	private static final String[] cursorColumnsMapFrom = {Db.Bukmak2.ari, Db.Bukmak2.tulisan, Db.Bukmak2.waktuUbah};
 	private static final int[] cursorColumnsMapTo = {R.id.lCuplikan, R.id.lTulisan, R.id.lTanggal};
 	private static final String[] cursorColumnsSelect;
 
 	SimpleCursorAdapter adapter;
-	AlkitabDb alkitabDb;
 	Cursor cursor;
 	Handler handler = new Handler();
 
@@ -47,42 +49,38 @@ public class BukmakActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		S.siapinEdisi(getApplicationContext());
-		S.siapinKitab(getApplicationContext());
+		S.siapinKitab();
 		S.bacaPengaturan(this);
 		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
 		
-		setContentView(R.layout.bukmak);
+		setContentView(R.layout.activity_bukmak);
 		setTitle(R.string.pembatas_buku);
 		
-		alkitabDb = AlkitabDb.getInstance(this);
-		cursor = alkitabDb.getDatabase().query(AlkitabDb.TABEL_Bukmak2, cursorColumnsSelect, AlkitabDb.KOLOM_Bukmak2_jenis + "=?", new String[] {String.valueOf(AlkitabDb.ENUM_Bukmak2_jenis_bukmak)}, null, null, AlkitabDb.KOLOM_Bukmak2_waktuUbah + " desc"); //$NON-NLS-1$ //$NON-NLS-2$
+		cursor = S.getDb().listBukmak(cursorColumnsSelect, Db.Bukmak2.jenis_bukmak);
 		startManagingCursor(cursor);
 		
-		adapter = new SimpleCursorAdapter(this, R.layout.bukmak_item, cursor, cursorColumnsMapFrom, cursorColumnsMapTo);
+		adapter = new SimpleCursorAdapter(this, R.layout.item_bukmak, cursor, cursorColumnsMapFrom, cursorColumnsMapTo);
 		adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
 			@Override
 			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-				if (cursorColumnsSelect[columnIndex] == AlkitabDb.KOLOM_Bukmak2_waktuUbah) { // $codepro.audit.disable stringComparison
+				if (cursorColumnsSelect[columnIndex] == Db.Bukmak2.waktuUbah) { // $codepro.audit.disable stringComparison
 					String text = Sqlitil.toLocaleDateMedium(cursor.getInt(columnIndex));
 					
 					TextView tv = (TextView) view;
 					tv.setText(text);
 					IsiActivity.aturTampilanTeksTanggalBukmak(tv);
 					return true;
-				} else if (cursorColumnsSelect[columnIndex] == AlkitabDb.KOLOM_Bukmak2_tulisan) { // $codepro.audit.disable stringComparison
+				} else if (cursorColumnsSelect[columnIndex] == Db.Bukmak2.tulisan) { // $codepro.audit.disable stringComparison
 					TextView tv = (TextView) view;
 					
 					tv.setText(cursor.getString(columnIndex));
 					IsiActivity.aturTampilanTeksJudulBukmak(tv);
 					return true;
-				} else if (cursorColumnsSelect[columnIndex] == AlkitabDb.KOLOM_Bukmak2_ari) { // $codepro.audit.disable stringComparison
+				} else if (cursorColumnsSelect[columnIndex] == Db.Bukmak2.ari) { // $codepro.audit.disable stringComparison
 					int ari = cursor.getInt(columnIndex);
-					Kitab kitab = S.edisiAktif.volatile_xkitab[Ari.toKitab(ari)];
-					String[] xayat = S.muatTeks(getApplicationContext(), S.edisiAktif, kitab, Ari.toPasal(ari));
-					int ayat_1 = Ari.toAyat(ari);
-					String isi = ayat_1 > xayat.length? "(...)": xayat[ayat_1 - 1]; //$NON-NLS-1$
+					Kitab kitab = S.edisiAktif.getKitab(Ari.toKitab(ari));
+					String isi = S.muatSatuAyat(S.edisiAktif, kitab, Ari.toPasal(ari), Ari.toAyat(ari));
 					isi = U.buangKodeKusus(isi);
 					
 					TextView tv = (TextView) view;
@@ -113,7 +111,7 @@ public class BukmakActivity extends ListActivity {
 
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		new MenuInflater(this).inflate(R.menu.bukmak, menu);
+		new MenuInflater(this).inflate(R.menu.activity_bukmak, menu);
 	}
 	
 	@Override
@@ -224,62 +222,35 @@ public class BukmakActivity extends ListActivity {
 			
 			@Override
 			protected Object doInBackground(Boolean... params) {
+				final List<Bukmak2> list = new ArrayList<Bukmak2>();
+				final boolean tumpuk = params[0];
+				final int[] c = new int[1];
+
 				try {
 					File in = getFileBackup();
 					FileInputStream fis = new FileInputStream(in);
-					final int[] c = new int[1];
-					final boolean tumpuk = params[0];
 					
-					alkitabDb.getDatabase().beginTransaction();
-					try {
-						Xml.parse(fis, Xml.Encoding.UTF_8, new DefaultHandler2() {
-							String where = AlkitabDb.KOLOM_Bukmak2_ari + "=? and " + AlkitabDb.KOLOM_Bukmak2_jenis + "=?"; //$NON-NLS-1$ //$NON-NLS-2$
-							String[] plc = new String[2];
-							
-							@Override
-							public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-								if (!localName.equals(Bukmak2.XMLTAG_Bukmak2)) {
-									return;
-								}
-								
-								Bukmak2 bukmak2 = Bukmak2.dariAttributes(attributes);
-								plc[0] = String.valueOf(bukmak2.ari);
-								plc[1] = String.valueOf(bukmak2.jenis);
-								
-								boolean ada = false;
-								Cursor cursor = alkitabDb.getDatabase().query(AlkitabDb.TABEL_Bukmak2, null, where, plc, null, null, null);
-								if (cursor.moveToNext()) {
-									// ada, maka kita perlu hapus
-									ada = true;
-								}
-								cursor.close();
-								
-								//  ada  tumpuk:     delete insert
-								//  ada !tumpuk: (nop)
-								// !ada  tumpuk:            insert
-								// !ada !tumpuk:            insert
-								
-								if (ada && tumpuk) {
-									alkitabDb.getDatabase().delete(AlkitabDb.TABEL_Bukmak2, where, plc);
-								}
-								if ((ada && tumpuk) || (!ada)) {
-									alkitabDb.getDatabase().insert(AlkitabDb.TABEL_Bukmak2, null, bukmak2.toContentValues());
-								}
-								
-								c[0]++;
+					Xml.parse(fis, Xml.Encoding.UTF_8, new DefaultHandler2() {
+						@Override
+						public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+							if (!localName.equals(Bukmak2.XMLTAG_Bukmak2)) {
+								return;
 							}
-						});
-						alkitabDb.getDatabase().setTransactionSuccessful();
-					} finally {
-						alkitabDb.getDatabase().endTransaction();
-					}
-					
+							
+							Bukmak2 bukmak2 = Bukmak2.dariAttributes(attributes);
+							list.add(bukmak2);
+							
+							c[0]++;
+						}
+					});
 					fis.close();
-				
-					return c[0];
 				} catch (Exception e) {
 					return e;
 				}
+				
+				S.getDb().importBukmak(list, tumpuk);
+			
+				return c[0];
 			}
 
 			@Override
@@ -322,10 +293,9 @@ public class BukmakActivity extends ListActivity {
 					xml.startDocument("utf-8", null); //$NON-NLS-1$
 					xml.startTag(null, "backup"); //$NON-NLS-1$
 					
-					Cursor cursor = alkitabDb.getDatabase().query(AlkitabDb.TABEL_Bukmak2, null, null, null, null, null, null);
+					Cursor cursor = S.getDb().listSemuaBukmak();
 					while (cursor.moveToNext()) {
-						Bukmak2 bukmak2 = Bukmak2.dariCursor(cursor);
-						bukmak2.writeXml(xml);
+						Bukmak2.dariCursor(cursor).writeXml(xml);
 					}
 					cursor.close();
 					
@@ -355,7 +325,7 @@ public class BukmakActivity extends ListActivity {
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		Cursor o = (Cursor) adapter.getItem(position);
-		int ari = o.getInt(o.getColumnIndexOrThrow(AlkitabDb.KOLOM_Bukmak2_ari));
+		int ari = o.getInt(o.getColumnIndexOrThrow(Db.Bukmak2.ari));
 		
 		Intent res = new Intent();
 		res.putExtra(EXTRA_ariTerpilih, ari);
@@ -374,12 +344,12 @@ public class BukmakActivity extends ListActivity {
 		AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item.getMenuInfo();
 
 		if (item.getItemId() == R.id.menuHapusBukmak) {
-			alkitabDb.getDatabase().delete(AlkitabDb.TABEL_Bukmak2, "_id=?", new String[] {String.valueOf(menuInfo.id)}); //$NON-NLS-1$
+			S.getDb().hapusBukmakById(menuInfo.id);
 			adapter.getCursor().requery();
 			
 			return true;
 		} else if (item.getItemId() == R.id.menuUbahKeteranganBukmak) {
-			BukmakEditor editor = new BukmakEditor(this, alkitabDb, menuInfo.id);
+			BukmakEditor editor = new BukmakEditor(this, menuInfo.id);
 			editor.setListener(new Listener() {
 				@Override
 				public void onOk() {

@@ -5,11 +5,11 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 import yuku.alkitab.BdbProses.Rec;
-import yuku.yes.*;
-import yuku.yes.YesFile.InfoEdisi;
-import yuku.yes.YesFile.InfoKitab;
-import yuku.yes.YesFile.Kitab;
-import yuku.yes.YesFile.Teks;
+import yuku.alkitab.yes.*;
+import yuku.alkitab.yes.YesFile.InfoEdisi;
+import yuku.alkitab.yes.YesFile.InfoKitab;
+import yuku.alkitab.yes.YesFile.Kitab;
+import yuku.alkitab.yes.YesFile.Teks;
 
 public class BisBdbProses {
 	private static final String BIS_TEKS_BDB = "../Alkitab/publikasi/bis_teks_bdb.txt";
@@ -84,7 +84,7 @@ public class BisBdbProses {
 			};
 		}};
 		
-		file.output(new FileOutputStream(BIS_YES_OUTPUT));
+		file.output(new RandomAccessFile(BIS_YES_OUTPUT, "rw"));
 	}
 
 
@@ -94,7 +94,7 @@ public class BisBdbProses {
 			ss.add(rec.isi);
 		}
 		
-		return new Teks() {{
+		return new Teks("ascii") {{
 			xisi = ss.toArray(new String[ss.size()]);
 		}};
 	}

@@ -1,17 +1,19 @@
 package yuku.alkitab.base;
 
-import java.util.*;
-
-import yuku.alkitab.R;
-import yuku.alkitab.base.model.Kitab;
-import android.app.Activity;
-import android.content.Intent;
-import android.content.res.Configuration;
+import android.app.*;
+import android.content.*;
+import android.content.res.*;
 import android.os.*;
-import android.util.Log;
+import android.util.*;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.*;
+
+import java.util.*;
+
+import yuku.alkitab.*;
+import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.storage.*;
 
 public class MenujuActivity extends Activity {
 	public static final String TAG = MenujuActivity.class.getSimpleName();
@@ -34,7 +36,7 @@ public class MenujuActivity extends Activity {
 	
 	int maxPasal = 0;
 	int maxAyat = 0;
-	KitabAdapter kitabAdapter;
+	KitabAdapter adapter;
 	Handler handler = new Handler();
 	
 	@Override
@@ -42,13 +44,12 @@ public class MenujuActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
-		S.siapinEdisi(getApplicationContext());
-		S.siapinKitab(getApplicationContext());
+		S.siapinKitab();
 		S.bacaPengaturan(this);
 		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
 		
-		setContentView(R.layout.menuju);
+		setContentView(R.layout.activity_menuju);
 		
 		bOk = (Button) findViewById(R.id.bOk);
 		lPasal = (TextView) findViewById(R.id.lPasal);
@@ -56,12 +57,11 @@ public class MenujuActivity extends Activity {
 		lAyat = (TextView) findViewById(R.id.lAyat);
 		lLabelAyat = findViewById(R.id.lLabelAyat);
 		cbKitab = (Spinner) findViewById(R.id.cbKitab);
-		kitabAdapter = new KitabAdapter(S.edisiAktif.volatile_xkitab);
-		cbKitab.setAdapter(kitabAdapter);
+		cbKitab.setAdapter(adapter = new KitabAdapter());
 		bKeLoncat = (ImageButton) findViewById(R.id.bKeLoncat);
 
 		// set kitab, pasal, ayat kini
-		cbKitab.setSelection(kitabAdapter.getPositionDariPos(S.kitabAktif.pos));
+		cbKitab.setSelection(adapter.getPositionDariPos(S.kitabAktif.pos));
 		
 		cbKitab.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
@@ -70,16 +70,14 @@ public class MenujuActivity extends Activity {
 
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				try {
-					Kitab kitab = S.edisiAktif.volatile_xkitab[(int) id];
-					maxPasal = kitab.npasal;
-					
-					int pasal = cobaBacaPasal();
-					maxAyat = kitab.nayat[pasal-1];
-				} catch (Exception e) {
-					Log.w(TAG, e);
-				}
+				Kitab k = adapter.getItem(position);
+				maxPasal = k.npasal;
 				
+				int pasal_0 = cobaBacaPasal() - 1;
+				if (pasal_0 >= 0 && pasal_0 < k.npasal) {
+					maxAyat = k.nayat[pasal_0];
+				}
+			
 				betulinPasalKelebihan();
 				betulinAyatKelebihan();
 			}
@@ -98,8 +96,7 @@ public class MenujuActivity extends Activity {
 					// biarin 0 aja
 				}
 				
-				// itemid yang menentukan pos
-				int kitab = (int) cbKitab.getSelectedItemId();
+				int kitab = adapter.getItem(cbKitab.getSelectedItemPosition()).pos;
 				
 				Intent intent = new Intent();
 				intent.putExtra(EXTRA_kitab, kitab);
@@ -279,10 +276,10 @@ public class MenujuActivity extends Activity {
 				}
 				
 				try {
-					Kitab kitab = S.edisiAktif.volatile_xkitab[(int) cbKitab.getSelectedItemId()];
-					int pasal = cobaBacaPasal();
+					Kitab k = adapter.getItem(cbKitab.getSelectedItemPosition());
+					int pasal_1 = cobaBacaPasal();
 					
-					maxAyat = kitab.nayat[pasal-1];
+					maxAyat = k.nayat[pasal_1-1];
 				} catch (Exception e) {
 					Log.w(TAG, e);
 				}
@@ -313,22 +310,25 @@ public class MenujuActivity extends Activity {
 	}
 	
 	private class KitabAdapter extends BaseAdapter {
-		Kitab[] xkitab_;
+		Kitab[] xkitabc_;
 		
-		public KitabAdapter(Kitab[] xkitab) {
-			if (!S.penerapan.sortKitabAlfabet) {
-				xkitab_ = xkitab;
-			} else {
-				xkitab_ = new Kitab[xkitab.length];
-				System.arraycopy(xkitab, 0, xkitab_, 0, xkitab.length);
+		public KitabAdapter() {
+			Kitab[] xkitabc = S.edisiAktif.getConsecutiveXkitab();
+			
+			if (Preferences.getBoolean(R.string.pref_sortKitabAlfabet_key, R.bool.pref_sortKitabAlfabet_default)) {
+				// bikin kopian, supaya ga obok2 array lama
+				xkitabc_ = new Kitab[xkitabc.length];
+				System.arraycopy(xkitabc, 0, xkitabc_, 0, xkitabc.length);
 				
 				// sort!
-				Arrays.sort(xkitab_, new Comparator<Kitab>() {
+				Arrays.sort(xkitabc_, new Comparator<Kitab>() {
 					@Override
 					public int compare(Kitab a, Kitab b) {
-						return a.judul.compareTo(b.judul);
+						return a.judul.compareToIgnoreCase(b.judul);
 					}
 				});
+			} else {
+				xkitabc_ = xkitabc;
 			}
 		}
 
@@ -336,8 +336,8 @@ public class MenujuActivity extends Activity {
 		 * @return 0 kalo ga ada (biar default dan ga eror)
 		 */
 		public int getPositionDariPos(int pos) {
-			for (int i = 0; i < xkitab_.length; i++) {
-				if (xkitab_[i].pos == pos) {
+			for (int i = 0; i < xkitabc_.length; i++) {
+				if (xkitabc_[i].pos == pos) {
 					return i;
 				}
 			}
@@ -346,17 +346,17 @@ public class MenujuActivity extends Activity {
 
 		@Override
 		public int getCount() {
-			return xkitab_.length;
+			return xkitabc_.length;
 		}
 
 		@Override
-		public Object getItem(int position) {
-			return xkitab_[position];
+		public Kitab getItem(int position) {
+			return xkitabc_[position];
 		}
 
 		@Override
 		public long getItemId(int position) {
-			return xkitab_[position].pos;
+			return position;
 		}
 
 		@Override
@@ -366,7 +366,7 @@ public class MenujuActivity extends Activity {
 				res = (TextView) LayoutInflater.from(MenujuActivity.this).inflate(android.R.layout.simple_spinner_item, null);
 			}
 			
-			res.setText(xkitab_[position].judul);
+			res.setText(xkitabc_[position].judul);
 			return res;
 		}
 		
@@ -380,7 +380,7 @@ public class MenujuActivity extends Activity {
 				res = (CheckedTextView) convertView;
 			}
 			
-			res.setText(xkitab_[position].judul);
+			res.setText(xkitabc_[position].judul);
 						
 			return res;
 		}

@@ -1,30 +1,26 @@
 package yuku.alkitab.base;
 
-import static yuku.alkitab.base.model.AlkitabDb.*;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.regex.*;
-
-import yuku.alkitab.R;
-import yuku.alkitab.base.model.AlkitabDb;
-import yuku.alkitab.base.renungan.*;
-import yuku.alkitab.base.renungan.TukangDonlot.OnStatusDonlotListener;
-import yuku.andoutil.ThreadSleep;
-import android.app.Activity;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.app.*;
+import android.content.*;
+import android.content.res.*;
 import android.os.*;
 import android.text.*;
 import android.text.format.DateFormat;
-import android.text.method.LinkMovementMethod;
+import android.text.method.*;
 import android.util.*;
 import android.view.*;
 import android.view.animation.*;
 import android.widget.*;
 import android.widget.TextView.BufferType;
+
+import java.text.*;
+import java.util.*;
+import java.util.regex.*;
+
+import yuku.alkitab.*;
+import yuku.alkitab.base.renungan.*;
+import yuku.alkitab.base.renungan.TukangDonlot.OnStatusDonlotListener;
+import yuku.andoutil.*;
 
 public class RenunganActivity extends Activity implements OnStatusDonlotListener {
 	public static final String TAG = RenunganActivity.class.getSimpleName();
@@ -82,13 +78,12 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-		S.siapinEdisi(getApplicationContext());
-		S.siapinKitab(getApplicationContext());
+		S.siapinKitab();
 		S.bacaPengaturan(this);
 		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
 		
-		setContentView(R.layout.renungan);
+		setContentView(R.layout.activity_renungan);
 		
 		memudar = AnimationUtils.loadAnimation(this, R.anim.memudar);
 
@@ -155,7 +150,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		new MenuInflater(this).inflate(R.menu.renungan, menu);
+		new MenuInflater(this).inflate(R.menu.activity_renungan, menu);
 	}
 	
 	@Override
@@ -210,7 +205,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 	}
 
 	private void tuju(String nama, String tgl, boolean penting) {
-		IArtikel artikel = cobaAmbilLokal(nama, tgl);
+		IArtikel artikel = S.getDb().cobaAmbilRenungan(nama, tgl);
 		if (artikel == null || !artikel.getSiapPakai()) {
 			akanPerlu(nama, tgl, penting);
 			render(artikel);
@@ -344,43 +339,6 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 			if (tertambah) S.tukangDonlot.interruptKaloNganggur();
 		}
 	}
-
-	/**
-	 * Coba ambil artikel dari db lokal. Artikel ga siap pakai pun akan direturn.
-	 */
-	private IArtikel cobaAmbilLokal(String nama, String tgl) {
-		SQLiteDatabase db = AlkitabDb.getInstance(getApplicationContext()).getDatabase();
-
-		Cursor c = db.query(TABEL_Renungan, null, KOLOM_Renungan_nama + "=? and " + KOLOM_Renungan_tgl + "=?", new String[] { nama, tgl }, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
-		try {
-			if (c.moveToNext()) {
-				IArtikel res = null;
-				if (nama.equals("rh")) { //$NON-NLS-1$
-					res = new ArtikelRenunganHarian(
-						tgl,
-						c.getString(c.getColumnIndexOrThrow(KOLOM_Renungan_judul)),
-						c.getString(c.getColumnIndexOrThrow(KOLOM_Renungan_header)),
-						c.getString(c.getColumnIndexOrThrow(KOLOM_Renungan_isi)),
-						c.getInt(c.getColumnIndexOrThrow(KOLOM_Renungan_siapPakai)) > 0
-					);
-				} else if (nama.equals("sh")) { //$NON-NLS-1$
-					res = new ArtikelSantapanHarian(
-						tgl,
-						c.getString(c.getColumnIndexOrThrow(KOLOM_Renungan_judul)),
-						c.getString(c.getColumnIndexOrThrow(KOLOM_Renungan_header)),
-						c.getString(c.getColumnIndexOrThrow(KOLOM_Renungan_isi)),
-						c.getInt(c.getColumnIndexOrThrow(KOLOM_Renungan_siapPakai)) > 0
-					);
-				}
-
-				return res;
-			} else {
-				return null;
-			}
-		} finally {
-			c.close();
-		}
-	}
 	
 	private static boolean pemintaMasaDepanLagiJalan = false;
 	
@@ -403,7 +361,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 				
 				for (int i = 0; i < hariDepan; i++) {
 					String tgl = sdf.format(hariIni);
-					if (cobaAmbilLokal(S.penampungan.renungan_nama, tgl) == null) {
+					if (S.getDb().cobaAmbilRenungan(S.penampungan.renungan_nama, tgl) == null) {
 						Log.d(TAG, "PemintaMasaDepan perlu minta " + tgl); //$NON-NLS-1$
 						akanPerlu(S.penampungan.renungan_nama, tgl, false);
 						

@@ -1,19 +1,20 @@
 package yuku.alkitab.base;
 
-import java.util.Arrays;
-
-import yuku.alkitab.R;
-import yuku.alkitab.base.model.*;
-import yuku.andoutil.IntArrayList;
 import android.app.*;
 import android.content.*;
-import android.content.res.Configuration;
-import android.graphics.Color;
+import android.content.res.*;
+import android.graphics.*;
 import android.os.*;
 import android.text.*;
 import android.view.*;
 import android.view.inputmethod.*;
 import android.widget.*;
+
+import java.util.*;
+
+import yuku.alkitab.*;
+import yuku.alkitab.base.model.*;
+import yuku.andoutil.*;
 
 public class Search2Activity extends Activity {
 	public static final String TAG = Search2Activity.class.getSimpleName();
@@ -41,13 +42,12 @@ public class Search2Activity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
-		S.siapinEdisi(getApplicationContext());
-		S.siapinKitab(getApplicationContext());
+		S.siapinKitab();
 		S.bacaPengaturan(this);
 		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
 		
-		setContentView(R.layout.search2);
+		setContentView(R.layout.activity_search2);
 
 		lsHasilCari = (ListView) findViewById(R.id.lsHasilCari);
 		bCari = (ImageButton) findViewById(R.id.bCari);
@@ -162,7 +162,7 @@ public class Search2Activity extends Activity {
 		
 		final ProgressDialog progress = new ProgressDialog(this);
 		progress.setTitle(getString(R.string.mencari));
-		progress.setMessage(Html.fromHtml(getString(R.string.sedang_mencari_ayat_yang_mengandung_kata_kata_xkata, Arrays.toString(xkata))));
+		progress.setMessage(Html.fromHtml(String.format(U.preprocessHtml(getString(R.string.sedang_mencari_ayat_yang_mengandung_kata_kata_xkata)), Arrays.toString(xkata))));
 		progress.setCancelable(false);
 		progress.setIndeterminate(true);
 		progress.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -232,27 +232,19 @@ public class Search2Activity extends Activity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View res = null;
-			
-			if (convertView == null) {
-				res = LayoutInflater.from(Search2Activity.this).inflate(R.layout.search2_item, null);
-				res.setId(R.layout.search2_item);
-			} else {
-				res = convertView;
-			}
-			
+			View res = convertView != null? convertView: LayoutInflater.from(Search2Activity.this).inflate(R.layout.item_search2, null);
+
 			TextView lAlamat = (TextView) res.findViewById(R.id.lAlamat);
 			TextView lCuplikan = (TextView) res.findViewById(R.id.lCuplikan);
 			
 			int ari = hasilCari.get(position);
-			Kitab kitab = S.edisiAktif.volatile_xkitab[Ari.toKitab(ari)];
+			Kitab kitab = S.edisiAktif.getKitab(Ari.toKitab(ari));
 			int pasal_1 = Ari.toPasal(ari);
 			int ayat_1 = Ari.toAyat(ari);
-			SpannableStringBuilder sb = new SpannableStringBuilder(kitab.judul).append(" " + pasal_1 + ":" + ayat_1); //$NON-NLS-1$ //$NON-NLS-2$
+			SpannableStringBuilder sb = new SpannableStringBuilder(S.alamat(kitab, pasal_1, ayat_1));
 			IsiActivity.aturTampilanTeksAlamatHasilCari(lAlamat, sb);
 			
-			String[] xayat = S.muatTeks(Search2Activity.this.getApplicationContext(), S.edisiAktif, kitab, pasal_1);
-			String ayat = xayat[ayat_1 - 1];
+			String ayat = S.muatSatuAyat(S.edisiAktif, kitab, pasal_1, ayat_1);
 			ayat = U.buangKodeKusus(ayat);
 			lCuplikan.setText(Search2Engine.hilite(ayat, xkata, warnaStabilo));
 			

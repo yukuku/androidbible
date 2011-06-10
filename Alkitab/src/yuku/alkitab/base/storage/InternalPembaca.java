@@ -1,14 +1,16 @@
-package yuku.alkitab.base.model;
+package yuku.alkitab.base.storage;
+
+import android.content.*;
+import android.util.*;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.*;
 
-import yuku.alkitab.base.U;
-import yuku.bintex.BintexReader;
-import android.content.Context;
-import android.util.Log;
+import yuku.alkitab.base.*;
+import yuku.alkitab.base.model.*;
+import yuku.bintex.*;
 
-public class InternalPembaca implements Pembaca {
+public class InternalPembaca extends Pembaca {
 	public static final String TAG = InternalPembaca.class.getSimpleName();
 	
 	// # buat cache Asset
@@ -16,15 +18,26 @@ public class InternalPembaca implements Pembaca {
 	private static String cache_file = null;
 	private static int cache_posInput = -1;
 
+	private final String edisiPrefix;
+	private final String edisiJudul;
 	private final PembacaDecoder pembacaDecoder;
 
-	public InternalPembaca(PembacaDecoder pembacaDecoder) {
+	public InternalPembaca(Context context, String edisiPrefix, String edisiJudul, PembacaDecoder pembacaDecoder) {
+		super(context);
+		
+		this.edisiPrefix = edisiPrefix;
+		this.edisiJudul = edisiJudul;
 		this.pembacaDecoder = pembacaDecoder;
 	}
 	
 	@Override
-	public Kitab[] bacaInfoKitab(Context context, Edisi edisi) {
-		InputStream is = U.openRaw(context, edisi.nama + "_index_bt"); //$NON-NLS-1$
+	public String getJudul() {
+		return edisiJudul;
+	}
+
+	@Override
+	public Kitab[] bacaInfoKitab() {
+		InputStream is = S.openRaw(edisiPrefix + "_index_bt"); //$NON-NLS-1$
 		BintexReader in = new BintexReader(is);
 		try {
 			ArrayList<Kitab> xkitab = new ArrayList<Kitab>();
@@ -32,7 +45,7 @@ public class InternalPembaca implements Pembaca {
 			try {
 				int pos = 0;
 				while (true) {
-					Kitab k = Kitab.baca(in, pos++);
+					Kitab k = bacaKitab(in, pos++);
 					xkitab.add(k);
 				}
 			} catch (IOException e) {
@@ -44,9 +57,59 @@ public class InternalPembaca implements Pembaca {
 			in.close();
 		}
 	}
+	
+	private static Kitab bacaKitab(BintexReader in, int pos) throws IOException {
+		Kitab k = new Kitab();
+		k.pos = pos;
+		
+		String awal = in.readShortString();
+
+		if (awal.equals("Kitab")) { //$NON-NLS-1$
+			while (true) {
+				String key = in.readShortString();
+				if (key.equals("nama")) { //$NON-NLS-1$
+					k.nama = in.readShortString();
+				} else if (key.equals("judul")) { //$NON-NLS-1$
+					k.judul = in.readShortString();
+					
+					k.judul = bersihinJudul(k.judul);
+				} else if (key.equals("file")) { //$NON-NLS-1$
+					k.file = in.readShortString();
+				} else if (key.equals("npasal")) { //$NON-NLS-1$
+					k.npasal = in.readInt();
+				} else if (key.equals("nayat")) { //$NON-NLS-1$
+					k.nayat = new int[k.npasal];
+					for (int i = 0; i < k.npasal; i++) {
+						k.nayat[i] = in.readUint8();
+					}
+				} else if (key.equals("pdbBookNumber")) { //$NON-NLS-1$
+					k.pdbBookNumber = in.readInt();
+				} else if (key.equals("pasal_offset")) { //$NON-NLS-1$
+					k.pasal_offset = new int[k.npasal];
+					for (int i = 0; i < k.npasal; i++) {
+						k.pasal_offset[i] = in.readInt();
+					}
+				} else if (key.equals("uda")) { //$NON-NLS-1$
+					break;
+				}
+			}
+			
+			return k;
+		} else {
+			return null;
+		}
+	}
+	
+	private static String bersihinJudul(String judul) {
+		return judul.replace('_', ' ');
+	}
 
 	@Override
-	public String[] muatTeks(Context context, Edisi edisi, Kitab kitab, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+	public String[] muatTeks(Kitab kitab, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+		if (pasal_1 > kitab.npasal) {
+			return null;
+		}
+		
 		int offset = kitab.pasal_offset[pasal_1 - 1];
 		int length = 0;
 
@@ -57,7 +120,7 @@ public class InternalPembaca implements Pembaca {
 			// Log.d("alki", "muatTeks cache_file=" + cache_file + " cache_posInput=" + cache_posInput);
 			if (cache_inputStream == null) {
 				// kasus 1: belum buka apapun
-				in = U.openRaw(context, kitab.file);
+				in = S.openRaw(kitab.file);
 				cache_inputStream = in;
 				cache_file = kitab.file;
 
@@ -79,7 +142,7 @@ public class InternalPembaca implements Pembaca {
 						// ga bisa mundur. tutup dan buka lagi.
 						cache_inputStream.close();
 
-						in = U.openRaw(context, kitab.file);
+						in = S.openRaw(kitab.file);
 						cache_inputStream = in;
 
 						in.skip(offset);
@@ -90,7 +153,7 @@ public class InternalPembaca implements Pembaca {
 					// kasus 2.2: filenya beda, tutup dan buka baru
 					cache_inputStream.close();
 
-					in = U.openRaw(context, kitab.file);
+					in = S.openRaw(kitab.file);
 					cache_inputStream = in;
 					cache_file = kitab.file;
 
@@ -111,14 +174,10 @@ public class InternalPembaca implements Pembaca {
 			cache_posInput += ba.length;
 			// jangan ditutup walau uda baca. Siapa tau masih sama filenya dengan sebelumnya.
 
-			if (hurufKecil) {
-				pembacaDecoder.hurufkecilkan(ba);
-			}
-
 			if (janganPisahAyat) {
-				return new String[] { pembacaDecoder.jadikanStringTunggal(ba) };
+				return new String[] { pembacaDecoder.jadikanStringTunggal(ba, hurufKecil) };
 			} else {
-				return pembacaDecoder.pisahJadiAyat(ba);
+				return pembacaDecoder.pisahJadiAyat(ba, hurufKecil);
 			}
 		} catch (IOException e) {
 			return new String[] { e.getMessage() };
@@ -126,10 +185,10 @@ public class InternalPembaca implements Pembaca {
 	}
 
 	@Override
-	public IndexPerikop bacaIndexPerikop(Context context, Edisi edisi) {
+	public IndexPerikop bacaIndexPerikop() {
 		long wmulai = System.currentTimeMillis();
 
-		InputStream is = U.openRaw(context, edisi.nama + "_perikop_index_bt"); //$NON-NLS-1$
+		InputStream is = S.openRaw(edisiPrefix + "_perikop_index_bt"); //$NON-NLS-1$
 		BintexReader in = new BintexReader(is);
 		try {
 			return IndexPerikop.baca(in);
@@ -144,8 +203,8 @@ public class InternalPembaca implements Pembaca {
 	}
 
 	@Override
-	public int muatPerikop(Context context, Edisi edisi, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
-		IndexPerikop indexPerikop = edisi.volatile_indexPerikop;
+	public int muatPerikop(Edisi edisi, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
+		IndexPerikop indexPerikop = edisi.getIndexPerikop();
 
 		if (indexPerikop == null) {
 			return 0; // ga ada perikop!
@@ -163,7 +222,7 @@ public class InternalPembaca implements Pembaca {
 
 		int kini = pertama;
 
-		BintexReader in = new BintexReader(U.openRaw(context, edisi.nama + "_perikop_blok_bt")); //$NON-NLS-1$
+		BintexReader in = new BintexReader(S.openRaw(edisiPrefix + "_perikop_blok_bt")); //$NON-NLS-1$
 		try {
 			while (true) {
 				int ari = indexPerikop.getAri(kini);

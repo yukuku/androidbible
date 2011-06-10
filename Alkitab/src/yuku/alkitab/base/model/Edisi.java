@@ -1,61 +1,84 @@
 package yuku.alkitab.base.model;
 
-import java.io.IOException;
-
-import yuku.alkitab.base.AddonManager;
-import yuku.bintex.BintexReader;
+import yuku.alkitab.base.storage.*;
 
 public class Edisi {
-	public String nama;
-	public 	String judul;
-	public int nkitab;
-	public int perikopAda; // 0=gaada; 1=versi 1 (pake BintexReader dan utf16) 
 	public Pembaca pembaca;
-	public String url;// bisa null
 	
-	public Kitab[] volatile_xkitab;
-	public IndexPerikop volatile_indexPerikop;
-	
-	public static Edisi baca(BintexReader in) throws IOException {
-		Edisi e = new Edisi();
-
-		String awal = in.readShortString();
-
-		if (awal.equals("Edisi")) { //$NON-NLS-1$
-			while (true) {
-				String key = in.readShortString();
-				if (key.equals("nama")) { //$NON-NLS-1$
-					e.nama = in.readShortString();
-				} else if (key.equals("judul")) { //$NON-NLS-1$
-					e.judul = in.readShortString();
-				} else if (key.equals("nkitab")) { //$NON-NLS-1$
-					e.nkitab = in.readInt();
-				} else if (key.equals("perikopAda")) { //$NON-NLS-1$
-					e.perikopAda = in.readInt();
-				} else if (key.equals("pembaca")) { //$NON-NLS-1$
-					String v = in.readShortString();
-					if ("internal".equals(v)) { //$NON-NLS-1$
-						e.pembaca = new InternalPembaca(new PembacaDecoder.Ascii());
-					} else if ("internal-utf8".equals(v)) { //$NON-NLS-1$
-						e.pembaca = new InternalPembaca(new PembacaDecoder.Utf8());
-					} else if ("yes".equals(v)) { //$NON-NLS-1$
-						e.pembaca = new YesPembaca(AddonManager.getEdisiPath(e.nama));
-					}
-				} else if (key.equals("url")) { //$NON-NLS-1$
-					e.url = in.readShortString();
-				} else if (key.equals("end")) { //$NON-NLS-1$
-					break;
-				}
-			}
-			
-			return e;
-		} else {
-			return null;
-		}
+	public Edisi(Pembaca pembaca) {
+		this.pembaca = pembaca;
 	}
 	
-	@Override
-	public String toString() {
-		return String.format("%s (%s)", judul, nama); //$NON-NLS-1$
+	private Kitab[] volatile_xkitab;
+	private Kitab[] volatile_xkitabConsecutive;
+	private IndexPerikop volatile_indexPerikop;
+	private boolean volatile_indexPerikopSudahCobaBaca = false;
+	
+	@Deprecated
+	private synchronized Kitab[] getXkitab() {
+		if (volatile_xkitab == null) {
+			volatile_xkitab = this.pembaca.bacaInfoKitab();
+		}
+		return volatile_xkitab;
+	}
+	
+	/**
+	 * @return panjang dari array kitab (walau tengah2nya bisa ada null)
+	 */
+	public synchronized int getMaxKitabPos() {
+		return getXkitab().length;
+	}
+	
+	/**
+	 * @return same as getXkitab, but none of the array elements are null. For enumerating available kitabs.
+	 * Note that using this, no guarantee that return_value[pos].pos == pos.
+	 */
+	public synchronized Kitab[] getConsecutiveXkitab() {
+		if (volatile_xkitabConsecutive == null) {
+			Kitab[] xkitab1 = getXkitab();
+			// count
+			int nkitabc = 0;
+			for (Kitab k: xkitab1) {
+				if (k != null) {
+					nkitabc++;
+				}
+			}
+			Kitab[] xkitab2 = new Kitab[nkitabc];
+			int c = 0;
+			for (Kitab k: xkitab1) {
+				if (k != null) {
+					xkitab2[c++] = k;
+				}
+			}
+			volatile_xkitabConsecutive = xkitab2;
+		}
+		return volatile_xkitabConsecutive;
+	}
+	
+	/**
+	 * @return null if kitabPos is out of range, or the kitab is not available.
+	 */
+	public synchronized Kitab getKitab(int kitabPos) {
+		Kitab[] xkitab = getXkitab();
+		if (kitabPos < 0 || kitabPos >= xkitab.length) {
+			return null;
+		}
+		return xkitab[kitabPos];
+	}
+	
+	public synchronized Kitab getKitabPertama() {
+		Kitab[] xkitab = getXkitab();
+		for (Kitab k: xkitab) {
+			if (k != null) return k;
+		}
+		return null; // aneh skali kalo kena ini
+	}
+	
+	public synchronized IndexPerikop getIndexPerikop() {
+		if (!volatile_indexPerikopSudahCobaBaca) {
+			volatile_indexPerikop = this.pembaca.bacaIndexPerikop();
+			volatile_indexPerikopSudahCobaBaca = true;
+		}
+		return volatile_indexPerikop;
 	}
 }

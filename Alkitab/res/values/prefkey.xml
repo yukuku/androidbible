@@ -1,16 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="pref_nyalakanTerusLayar_key">nyalakanTerusLayar</string>
-	<string name="pref_tanpaNavigasi_key">tanpaNavigasi</string>
-	<string name="pref_tombolAlamatLoncat_key">tombolAlamatLoncat</string>
-	<string name="pref_boldHuruf_key">boldHuruf</string>
-	<string name="pref_jenisHuruf_key">jenisHuruf</string>
-	<string name="pref_ukuranHuruf2_key">ukuranHuruf2</string>
-	<string name="pref_sortKitabAlfabet_key">sortKitabAlfabet</string>
+	<bool name="pref_nyalakanTerusLayar_default">true</bool>
+	
 	<string name="pref_matikanTahanAyat_key">matikanTahanAyat</string>
-	<string name="pref_warnaHuruf_int_key">warnaHuruf</string>
-	<string name="pref_warnaLatar_int_key">warnaLatar</string>
-	<string name="pref_warnaNomerAyat_int_key">warnaNomerAyat</string>
-	<string name="pref_bahasa_key">bahasa</string>
+	<bool name="pref_matikanTahanAyat_default">false</bool>
+	
+	<string name="pref_tanpaNavigasi_key">tanpaNavigasi</string>
+	<bool name="pref_tanpaNavigasi_default">false</bool>
+	
+	<string name="pref_tombolAlamatLoncat_key">tombolAlamatLoncat</string>
+	<bool name="pref_tombolAlamatLoncat_default">false</bool>
+	
 	<string name="pref_tombolVolumeNaikTurun_key">tombolVolumeNaikTurun</string>
+	<bool name="pref_tombolVolumeNaikTurun_default">false</bool>
+	
+	<string name="pref_sortKitabAlfabet_key">sortKitabAlfabet</string>
+	<bool name="pref_sortKitabAlfabet_default">false</bool>
+	
+	<string name="pref_bahasa_key">bahasa</string>
+	<string name="pref_bahasa_default">DEFAULT</string>
+	
+	<string name="pref_warnaHuruf_int_key">warnaHuruf</string>
+	<integer name="pref_warnaHuruf_int_default">0xfff0f0f0</integer>
+	
+	<string name="pref_warnaLatar_int_key">warnaLatar</string>
+	<integer name="pref_warnaLatar_int_default">0xff000000</integer>
+
+	<string name="pref_warnaNomerAyat_int_key">warnaNomerAyat</string>
+	<integer name="pref_warnaNomerAyat_int_default">0xff8080ff</integer>
+	
+	<string name="pref_boldHuruf_key">boldHuruf</string>
+	<bool name="pref_boldHuruf_default">false</bool>
+	
+	<string name="pref_jenisHuruf_key">jenisHuruf</string>
+	
+	<string name="pref_ukuranHuruf2_key">ukuranHuruf2</string>
 </resources>

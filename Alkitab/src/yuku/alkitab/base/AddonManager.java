@@ -1,19 +1,21 @@
 package yuku.alkitab.base;
 
+import android.content.*;
+import android.os.*;
+import android.os.PowerManager.WakeLock;
+import android.util.*;
+
 import java.io.*;
-import java.util.LinkedList;
-import java.util.concurrent.Semaphore;
-import java.util.zip.GZIPInputStream;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.zip.*;
 
 import org.apache.http.*;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.*;
+import org.apache.http.client.methods.*;
+import org.apache.http.impl.client.*;
 
-import yuku.alkitab.R;
-import android.content.Context;
-import android.os.Environment;
-import android.util.Log;
+import yuku.alkitab.*;
 
 public class AddonManager {
 	public static final String TAG = AddonManager.class.getSimpleName();
@@ -37,14 +39,14 @@ public class AddonManager {
 		return new File(Environment.getExternalStorageDirectory(), "bible/yes").getAbsolutePath(); //$NON-NLS-1$
 	}
 	
-	public static String getEdisiPath(String nama) {
+	public static String getEdisiPath(String namayes) {
 		String yesPath = getYesPath();
-		File yes = new File(yesPath, nama + ".yes"); //$NON-NLS-1$
+		File yes = new File(yesPath, namayes);
 		return yes.getAbsolutePath();
 	}
 	
-	public static boolean cekAdaEdisi(String nama) {
-		File f = new File(getEdisiPath(nama));
+	public static boolean cekAdaEdisi(String namayes) {
+		File f = new File(getEdisiPath(namayes));
 		return f.exists() && f.canRead();
 	}
 	
@@ -84,6 +86,10 @@ public class AddonManager {
 			
 			String tmpfile = e.tujuan + "-" + (int)(Math.random() * 100000) + ".tmp";  //$NON-NLS-1$//$NON-NLS-2$
 			
+			PowerManager pm = (PowerManager) appContext.getSystemService(Context.POWER_SERVICE);
+			WakeLock wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "donlot"); //$NON-NLS-1$
+			wakelock.setReferenceCounted(false);
+			wakelock.acquire();
 			try {
 				{
 					File dir = new File(getYesPath());
@@ -167,6 +173,10 @@ public class AddonManager {
 				Log.w(TAG, "Gagal donlot", ex); //$NON-NLS-1$
 				if (e.listener != null) e.listener.onGagalDonlot(e, null, ex);
 			} finally {
+				if (wakelock != null) {
+					wakelock.release();
+				}
+				
 				Log.d(TAG, "menghapus tmpfile: " + tmpfile); //$NON-NLS-1$
 				new File(tmpfile).delete();
 			}

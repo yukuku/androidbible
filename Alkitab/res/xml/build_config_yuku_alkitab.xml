@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config package="yuku.alkitab">
+	<menu renungan="true" gebug="false" edisi="true" bantuan="true" donasi="false" />
+	<edisi>
+		<internal judul="Terjemahan Baru" prefix="tb" />
+		<preset judul="King James (KJV)" namafile_preset="kjv.yes" url="http://alkitab-host.appspot.com/addon/yes/v2/kjv.yes.gz" />
+		<preset judul="Bahasa Indonesia Sehari-hari" namafile_preset="bis.yes" url="http://alkitab-host.appspot.com/addon/yes/bis.yes.gz" />
+		<preset judul="Batak Toba" namafile_preset="toba.yes" url="http://alkitab-host.appspot.com/addon/yes/toba.yes.gz" />
+	</edisi>
+</config>

@@ -1,9 +1,10 @@
 package yuku.alkitab.base;
 
+import android.util.*;
+
 import java.util.*;
 
-import yuku.alkitab.base.model.Kitab;
-import android.util.Log;
+import yuku.alkitab.base.model.*;
 
 public class Peloncat {
 	public static final String TAG = Peloncat.class.getSimpleName();
@@ -16,7 +17,7 @@ public class Peloncat {
 		String pendek;
 		int pos;
 		
-		public String toString() {
+		@Override public String toString() {
 			return pendek + ":" + pos; //$NON-NLS-1$
 		}
 	}
@@ -329,6 +330,9 @@ public class Peloncat {
 		return res;
 	}
 	
+	/**
+	 * @return pos dari kitab, bukan index dari {@link Edisi#getConsecutiveXkitab()}
+	 */
 	public int getKitab(Kitab[] xkitab) {
 		return tebakKitab(xkitab);
 	}

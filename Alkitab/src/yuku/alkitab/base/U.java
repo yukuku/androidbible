@@ -1,12 +1,11 @@
 package yuku.alkitab.base;
 
-import java.io.InputStream;
-import java.util.Arrays;
+import android.graphics.*;
+
+import java.io.*;
+import java.util.*;
 
 import yuku.alkitab.base.model.*;
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Typeface;
 
 public class U {
 
@@ -88,11 +87,6 @@ public class U {
 	}
 	
 
-	public static InputStream openRaw(Context context, String name) {
-		Resources resources = context.getResources();
-		return resources.openRawResource(resources.getIdentifier(name, "raw", context.getPackageName())); //$NON-NLS-1$
-	}
-
 	static StringBuilder enkodStabilo_buf;
 	public static String enkodStabilo(int warnaRgb) {
 		if (enkodStabilo_buf == null) {
@@ -117,5 +111,16 @@ public class U {
 		} else {
 			return -1;
 		}
+	}
+	
+	public static String tampilException(Exception e) {
+		StringWriter sw = new StringWriter(400);
+		sw.append('(').append(e.getClass().getName()).append("): ").append(e.getMessage()).append('\n'); //$NON-NLS-1$
+		e.printStackTrace(new PrintWriter(sw));
+		return sw.toString();
+	}
+	
+	public static String preprocessHtml(String s) {
+		return s.replace('[', '<').replace(']', '>');
 	}
 }

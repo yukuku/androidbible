@@ -27,7 +27,7 @@ public class PemilihStabiloDialog {
 	 */
 	public PemilihStabiloDialog(Context context, PemilihStabiloCallback pemilihStabiloCallback, int colorRgb) {
 		this.pemilihStabiloCallback = pemilihStabiloCallback;
-		this.dialogLayout = LayoutInflater.from(context).inflate(R.layout.pemilihstabilo, null);
+		this.dialogLayout = LayoutInflater.from(context).inflate(R.layout.dialog_pemilihstabilo, null);
 		
 		this.alert = new AlertDialog.Builder(context)
 		.setView(dialogLayout)

@@ -4,6 +4,7 @@ import java.util.Date;
 
 import yuku.alkitab.R;
 import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.storage.Db;
 import android.app.AlertDialog;
 import android.content.*;
 import android.view.*;
@@ -18,7 +19,6 @@ public class GelembungDialog {
 	
 	int ari;
 	String alamat;
-	AlkitabDb alkitabDb;
 	Bukmak2 bukmak;
 
 	public interface RefreshCallback {
@@ -65,7 +65,7 @@ public class GelembungDialog {
 	public void tampilkan() {
 		this.alert.setTitle(context.getString(R.string.catatan_alamat, alamat));
 		
-		this.bukmak = alkitabDb.getBukmakByAri(ari, AlkitabDb.ENUM_Bukmak2_jenis_catatan);
+		this.bukmak = S.getDb().getBukmakByAri(ari, Db.Bukmak2.jenis_catatan);
 		if (bukmak != null) {
 			tCatatan.setText(bukmak.tulisan);
 		}
@@ -77,16 +77,16 @@ public class GelembungDialog {
 		String tulisan = tCatatan.getText().toString();
 		if (bukmak != null) {
 			if (tulisan.length() == 0) {
-				alkitabDb.hapusBukmak(ari, AlkitabDb.ENUM_Bukmak2_jenis_catatan);
+				S.getDb().hapusBukmakByAri(ari, Db.Bukmak2.jenis_catatan);
 			} else {
 				bukmak.tulisan = tulisan;
 				bukmak.waktuUbah = new Date();
-				alkitabDb.updateBukmak(bukmak);
+				S.getDb().updateBukmak(bukmak);
 			}
 		} else { // bukmak == null; belum ada sebelumnya, maka hanya insert kalo ada tulisan.
 			if (tulisan.length() > 0) {
-				bukmak = new Bukmak2(ari, AlkitabDb.ENUM_Bukmak2_jenis_catatan, tulisan, new Date(), new Date());
-				alkitabDb.insertBukmak(bukmak);
+				bukmak = new Bukmak2(ari, Db.Bukmak2.jenis_catatan, tulisan, new Date(), new Date());
+				S.getDb().insertBukmak(bukmak);
 			}
 		}
 		
@@ -105,7 +105,7 @@ public class GelembungDialog {
 		.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				alkitabDb.hapusBukmak(ari, AlkitabDb.ENUM_Bukmak2_jenis_catatan);
+				S.getDb().hapusBukmakByAri(ari, Db.Bukmak2.jenis_catatan);
 				
 				if (refreshCallback != null) {
 					refreshCallback.udahan();
@@ -124,8 +124,7 @@ public class GelembungDialog {
 		.show();
 	}
 
-	public void setDbKitabPasalAyat(AlkitabDb alkitabDb, Kitab kitab, int pasal_1, int ayat_1) {
-		this.alkitabDb = alkitabDb;
+	public void setDbKitabPasalAyat(Kitab kitab, int pasal_1, int ayat_1) {
 		this.ari = Ari.encode(kitab.pos, pasal_1, ayat_1);
 		this.alamat = S.alamat(kitab, pasal_1, ayat_1);
 	}

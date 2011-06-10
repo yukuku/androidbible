@@ -3,7 +3,7 @@ package yuku.alkitab.base;
 import java.util.Date;
 
 import yuku.alkitab.R;
-import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.model.Bukmak2;
 import android.app.AlertDialog;
 import android.content.*;
 import android.view.*;
@@ -15,7 +15,6 @@ public class BukmakEditor {
 	}
 	
 	private final Context context;
-	private final AlkitabDb alkitabDb;
 
 	// init ini...
 	private String alamat = null;
@@ -26,20 +25,18 @@ public class BukmakEditor {
 	// optional
 	private Listener listener;
 	
-	public BukmakEditor(Context context, AlkitabDb alkitabDb, String alamat, int ari) {
+	public BukmakEditor(Context context, String alamat, int ari) {
 		// wajib
 		this.context = context;
-		this.alkitabDb = alkitabDb;
 		
 		// pilihan
 		this.alamat = alamat;
 		this.ari = ari;
 	}
 
-	public BukmakEditor(Context context, AlkitabDb alkitabDb, long id) {
+	public BukmakEditor(Context context, long id) {
 		// wajib
 		this.context = context;
-		this.alkitabDb = alkitabDb;
 
 		// pilihan
 		this.alamat = null;
@@ -51,7 +48,7 @@ public class BukmakEditor {
 	}
 
 	public void bukaDialog() {
-		final Bukmak2 bukmak = this.ari == 0? alkitabDb.getBukmakById(id): alkitabDb.getBukmakByAri(ari, AlkitabDb.ENUM_Bukmak2_jenis_bukmak);
+		final Bukmak2 bukmak = this.ari == 0? S.getDb().getBukmakById(id): S.getDb().getBukmakByAri(ari, yuku.alkitab.base.storage.Db.Bukmak2.jenis_bukmak);
 		
 		// set yang belum diset
 		if (this.ari == 0 && bukmak != null) {
@@ -59,7 +56,7 @@ public class BukmakEditor {
 			this.alamat = S.alamat(S.edisiAktif, bukmak.ari);
 		}
 		
-		View dialogView = LayoutInflater.from(context).inflate(R.layout.bukmak_ubah_dialog, null);
+		View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_bukmak_ubah, null);
 		final EditText tTulisan = (EditText) dialogView.findViewById(R.id.tTulisan);
 		tTulisan.setText(bukmak != null? bukmak.tulisan: alamat);
 		
@@ -80,10 +77,10 @@ public class BukmakEditor {
 				if (bukmak != null) {
 					bukmak.tulisan = tulisan;
 					bukmak.waktuUbah = new Date();
-					alkitabDb.updateBukmak(bukmak);
+					S.getDb().updateBukmak(bukmak);
 				} else {
-					Bukmak2 bukmakBaru = new Bukmak2(ari, AlkitabDb.ENUM_Bukmak2_jenis_bukmak, tulisan, new Date(), new Date());
-					alkitabDb.insertBukmak(bukmakBaru);
+					Bukmak2 bukmakBaru = new Bukmak2(ari, yuku.alkitab.base.storage.Db.Bukmak2.jenis_bukmak, tulisan, new Date(), new Date());
+					S.getDb().insertBukmak(bukmakBaru);
 				}
 				
 				if (listener != null) listener.onOk();

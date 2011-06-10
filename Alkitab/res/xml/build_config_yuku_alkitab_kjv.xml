@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config package="yuku.alkitab.kjv">
+	<menu renungan="false" gebug="false" edisi="false" bantuan="true" donasi="true" />
+	<edisi>
+		<internal judul="King James (KJV)" prefix="kjv" />
+	</edisi>
+</config>
