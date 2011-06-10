@@ -200,24 +200,6 @@ public class IsiActivity extends Activity {
 		// muat pasal dan ayat
 		tampil(pasalTerakhir, ayatTerakhir);
 		//sejarah.tambah(Ari.encode(kitabTerakhir, pasalTerakhir, ayatTerakhir));
-		
-		//# minta fidbek kah?
-		final long terakhirMintaFidbek = preferences_instan.getLong(NAMAPREF_terakhirMintaFidbek, 0);
-		if (terakhirMintaFidbek == 0) {
-			Editor editor = preferences_instan.edit();
-			editor.putLong(NAMAPREF_terakhirMintaFidbek, System.currentTimeMillis());
-			editor.commit();
-		} else {
-			final long sekarang = System.currentTimeMillis();
-			if (sekarang - terakhirMintaFidbek > (long)90000*24*3600) { // 3 BULAN ato belom pernah
-				handler.post(new Runnable() {
-					@Override
-					public void run() {
-						popupMintaFidbek();
-					}
-				});
-			}
-		}
 
 		tog.dumpToLog();
 		
