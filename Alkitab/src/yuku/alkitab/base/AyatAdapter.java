@@ -1,18 +1,19 @@
 package yuku.alkitab.base;
 
-import yuku.alkitab.R;
-import yuku.alkitab.base.S.penerapan;
-import yuku.alkitab.base.model.*;
-import yuku.alkitab.base.storage.Db.Bukmak2;
-import android.content.Context;
-import android.graphics.Typeface;
+import android.content.*;
+import android.graphics.*;
 import android.text.*;
-import android.text.method.LinkMovementMethod;
+import android.text.method.*;
 import android.text.style.*;
 import android.util.*;
 import android.view.*;
 import android.widget.*;
 import android.widget.TextView.BufferType;
+
+import yuku.alkitab.*;
+import yuku.alkitab.base.S.penerapan;
+import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.storage.Db.Bukmak2;
 
 class AyatAdapter extends BaseAdapter {
 	public static final String TAG = AyatAdapter.class.getSimpleName();
@@ -38,7 +39,6 @@ class AyatAdapter extends BaseAdapter {
 	private int[] atributMap_; // bit 0(0x1) = bukmak; bit 1(0x2) = catatan; bit 2(0x4) = stabilo; 
 	private int[] stabiloMap_; // null atau warna stabilo
 
-	
 	public AyatAdapter(Context appContext, CallbackSpan.OnClickListener paralelListener, IsiActivity.AtributListener gelembungListener) {
 		appContext_ = appContext;
 		paralelListener_ = paralelListener;
@@ -295,12 +295,16 @@ class AyatAdapter extends BaseAdapter {
 	}
 
 	public void tampilanAyatTehel(Context context, RelativeLayout res, int ayat, String isi, int warnaStabilo) {
-		// @@ = mulai ayat dengan tehel atau ayat dengan teks merah
+		// @@ = mulai ayat dengan tehel atau ayat dengan format
 		// @0 = mulai menjorok 0 [kategori: penehel]
 		// @1 = mulai menjorok 1 [kategori: penehel]
 		// @2 = mulai menjorok 2 [kategori: penehel]
+		// @3 = mulai menjorok 3 (belum diimplemen) [kategori: penehel]
+		// @4 = mulai menjorok 4 (belum diimplemen) [kategori: penehel]
 		// @6 = mulai teks merah [kategori: format]
 		// @5 = akhir teks merah [kategori: format]
+		// @9 = mulai teks miring [kategori: format]
+		// @7 = akhir teks miring [kategori: format]
 		// @8 = tanda kasi jarak ke ayat berikutnya  [kategori: format]
 		int posParse = 2; // mulai setelah @@
 		int menjorok = 0;
@@ -311,13 +315,15 @@ class AyatAdapter extends BaseAdapter {
 		LinearLayout tempatTehel = (LinearLayout) res.findViewById(R.id.tempatTehel);
 		tempatTehel.removeAllViews();
 		
+		char[] isi_c = isi.toCharArray();
+		
 		while (true) {
 			// cari posisi penehel berikutnya TODO
 			int posSampe = indexOfPenehel(isi, posParse);
 	
 			if (posSampe == -1) {
 				// abis
-				posSampe = isi.length();
+				posSampe = isi_c.length;
 				keluarlah = true;
 			}
 			
@@ -341,7 +347,7 @@ class AyatAdapter extends BaseAdapter {
 						SpannableStringBuilder s = new SpannableStringBuilder();
 						String ayat_s = String.valueOf(ayat);
 						s.append(ayat_s).append(' ');
-						appendFormattedText(s, isi, posParse, posSampe);
+						appendFormattedText2(s, isi, isi_c, posParse, posSampe);
 						s.setSpan(new ForegroundColorSpan(penerapan.warnaNomerAyat), 0, ayat_s.length(), 0);
 						s.setSpan(new LeadingMarginSpan.Standard(0, S.getIndenParagraf()), 0, s.length(), 0);
 						if (warnaStabilo != 0) {
@@ -353,7 +359,7 @@ class AyatAdapter extends BaseAdapter {
 						nomerAyatUdaDitulis = true;
 					} else {
 						SpannableStringBuilder s = new SpannableStringBuilder();
-						appendFormattedText(s, isi, posParse, posSampe);
+						appendFormattedText2(s, isi, isi_c, posParse, posSampe);
 						if (warnaStabilo != 0) {
 							s.setSpan(new BackgroundColorSpan(warnaStabilo), 0, s.length(), 0);
 						}
@@ -369,7 +375,7 @@ class AyatAdapter extends BaseAdapter {
 			
 			if (keluarlah) break;
 	
-			char jenisTanda = isi.charAt(posSampe + 1);
+			char jenisTanda = isi_c[posSampe + 1];
 			if (jenisTanda == '1') {
 				menjorok = 1;
 			} else if (jenisTanda == '2') {
@@ -389,10 +395,75 @@ class AyatAdapter extends BaseAdapter {
 	}
 
 	/**
+	 * taro teks dari isi[posDari..posSampe] dengan format 6 atau 5 atau 9 atau 7 atau 8 ke s
+	 * @param isi_c  string yang dari posDari sampe sebelum posSampe hanya berisi 6 atau 5 atau 9 atau 7 atau 8 tanpa mengandung @ lain.
+	 */
+	private void appendFormattedText2(SpannableStringBuilder s, String isi, char[] isi_c, int posDari, int posSampe) {
+		int merahStart = -1; // posisi basis s. -1 artinya belum ketemu
+		int italicStart = -1; // posisi basis s. -1 artinya belum ketemu
+		
+		for (int i = posDari; i < posSampe; i++) {
+			// coba templok aja sampe ketemu @ berikutnya. Jadi jangan satu2.
+			{
+				int posAtBerikut = isi.indexOf('@', i);
+				if (posAtBerikut == -1) {
+					// udah ga ada lagi, tumplekin semua dan keluar dari method ini
+					s.append(isi, i, posSampe);
+					return;
+				} else {
+					// tumplekin sampe sebelum @
+					if (posAtBerikut != i) { // kalo ga 0 panjangnya
+						s.append(isi, i, posAtBerikut);
+					}
+					i = posAtBerikut;
+				}
+			}
+			
+			i++; // satu char setelah @
+			if (i >= posSampe) {
+				// out of bounds
+				break;
+			}
+			
+			char d = isi_c[i];
+			if (d == '8') {
+				s.append('\n');
+				continue;
+			}
+			
+			if (d == '6') { // merah start
+				merahStart = s.length();
+				continue;
+			}
+			
+			if (d == '9') { // italic start
+				italicStart = s.length();
+				continue;
+			}
+			
+			if (d == '5') { // merah ends
+				if (merahStart != -1) {
+					s.setSpan(new ForegroundColorSpan(S.penerapan.warnaHurufMerah), merahStart, s.length(), 0);
+					merahStart = -1; // reset
+				}
+				continue;
+			}
+			
+			if (d == '7') { // italic ends
+				if (italicStart != -1) {
+					s.setSpan(new StyleSpan(Typeface.ITALIC), italicStart, s.length(), 0);
+					italicStart = -1; // reset
+				}
+				continue;
+			}
+		}
+	}
+	
+	/**
 	 * taro teks dari isi[posDari..posSampe] dengan format 6 atau 5 atau 8 ke s
 	 * @param isi  string yang dari posDari sampe sebelum posSampe hanya berisi 6 atau 5 atau 8 tanpa mengandung @ lain.
 	 */
-	private void appendFormattedText(SpannableStringBuilder s, String isi, int posDari, int posSampe) {
+	@SuppressWarnings("unused") private void appendFormattedText(SpannableStringBuilder s, String isi, int posDari, int posSampe) {
 		int posAwal = posDari;
 		boolean merah = false;
 		boolean berakhir = false;
@@ -457,8 +528,9 @@ class AyatAdapter extends BaseAdapter {
 	 * @param ayat mulai dari 1
 	 */
 	static SpannableStringBuilder tampilanAyatSederhana(int ayat, String isi, int warnaStabilo) {
-		SpannableStringBuilder seayat = new SpannableStringBuilder();
-		
+		SpannableStringBuilder seayat = new SpannableStringBuilder(longPlaceholderString); // pre-allocate
+		seayat.clear();
+
 		String ayat_s = String.valueOf(ayat);
 		
 		seayat.append(ayat_s).append(' ').append(isi);
@@ -472,4 +544,9 @@ class AyatAdapter extends BaseAdapter {
 		
 		return seayat;
 	}
+	
+	static String longPlaceholderString = 
+		"1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" +
+		"1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" +
+		"1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
 }
