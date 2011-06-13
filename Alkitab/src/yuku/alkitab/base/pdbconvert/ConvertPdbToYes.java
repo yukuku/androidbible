@@ -7,6 +7,7 @@ import java.io.*;
 import java.util.*;
 
 import yuku.alkitab.R;
+import yuku.alkitab.base.*;
 import yuku.alkitab.base.config.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.yes.*;
@@ -83,6 +84,14 @@ public class ConvertPdbToYes {
 			pdb.loadVersionInfo();
 			progress(20, context.getString(R.string.cp_loading_word_index));
 			pdb.loadWordIndex();
+			
+			if (D.EBUG) {
+				List<String> words = pdb.getAllWords();
+				for (int i = 0; i < words.size(); i++) {
+					String word = words.get(i);
+					Log.d(TAG, "word " + i + ": " + word + ": " + U.dumpChars(word));
+				}
+			}
 
 			Log.d(TAG, "============ baca info versi selesai"); //$NON-NLS-1$
 			
@@ -257,7 +266,7 @@ public class ConvertPdbToYes {
 				k.nayat[pasal_0] = bookInfo.getVerseCount(pasal_0 + 1);
 				
 				for (int ayat_0 = 0; ayat_0 < k.nayat[pasal_0]; ayat_0++) {
-					String[] complete = bookInfo.getCompleteVerse(pasal_0 + 1, ayat_0 + 1);
+					String[] complete = getCompleteVerseWithPreprocess(bookInfo, pasal_0, ayat_0);
 					offsetLewat += complete[0].getBytes("utf-8").length + 1; // +1 buat \n //$NON-NLS-1$
 					
 					// perikop!
@@ -281,6 +290,56 @@ public class ConvertPdbToYes {
 		return new InfoKitab() {{
 			this.xkitab = xkitab_;
 		}};
+	}
+
+	/**
+	 * Replaces (0x0e 'b' 0x0e) with (at 9) to start, or (at 7) to end.
+	 * Replaces (0x0e 'n' 0x0e) with (at 8).
+	 * and will add (at at) on the beginning of such verses.
+	 * @return
+	 */
+	private String[] getCompleteVerseWithPreprocess(BookInfo bookInfo, int pasal_0, int ayat_0) {
+		String[] ss = bookInfo.getCompleteVerse(pasal_0 + 1, ayat_0 + 1);
+		
+		for (int i = 0; i < ss.length; i++) {
+			String s = ss[i];
+			if (s == null || s.length() == 0) {
+				continue;
+			}
+			
+			// search for 0x0e shortcut
+			if (s.indexOf(0x0e) < 0) {
+				continue;
+			}
+			
+			boolean prependAtAt = false;
+			
+			// look for 0x0e 'n' 0x0e
+			if (s.indexOf("\u000en\u000e") >= 0) {
+				prependAtAt = true;
+				s = s.replace("\u000en\u000e", "@8");
+			}
+			
+			boolean startingItalic = true;
+			while (true) {
+				int pos = s.indexOf("\u000eb\u000e");
+				if (pos > 0) {
+					prependAtAt = true;
+					String tag = startingItalic ? "@9" : "@7";
+					s = s.substring(0, pos) + tag + s.substring(pos + 3);
+					startingItalic = !startingItalic;
+				} else {
+					break;
+				}
+			}
+			
+			if (prependAtAt) {
+				s = "@@" + s;
+			}
+			
+			ss[i] = s;
+		}
+		return ss;
 	}
 	
 	/** Perhatikan {@link Blok} untuk cara bikinnya. */
@@ -344,7 +403,7 @@ public class ConvertPdbToYes {
 				for (int pi = 0; pi < npasal; pi++) {
 					int nayat = bookInfo.getVerseCount(pi + 1);
 					for (int ai = 0; ai < nayat; ai++) {
-						String s = bookInfo.getVerse(pi + 1, ai + 1);
+						String s = getCompleteVerseWithPreprocess(bookInfo, pi, ai)[0];
 						writer.writeRaw(s.getBytes("utf-8")); //$NON-NLS-1$
 						writer.writeUint8('\n');
 					}

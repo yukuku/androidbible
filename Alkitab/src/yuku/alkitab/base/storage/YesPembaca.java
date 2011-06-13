@@ -6,6 +6,7 @@ import android.util.*;
 import java.io.*;
 import java.util.*;
 
+import yuku.alkitab.base.*;
 import yuku.alkitab.base.config.*;
 import yuku.alkitab.base.model.*;
 import yuku.bintex.*;
@@ -251,33 +252,15 @@ public class YesPembaca extends Pembaca {
 				return new String[] {pembacaDecoder.jadikanStringTunggal(ba, hurufKecil)};
 			} else {
 				String[] xayat = pembacaDecoder.pisahJadiAyat(ba, hurufKecil);
-//				if (D.EBUG) for (int i = 0; i < xayat.length; i++) {
-//					Log.d(TAG, "ayat_1 " + (i+1) + ": " + dumpChars(xayat[i]));
-//				}
+				if (D.EBUG) for (int i = 0; i < xayat.length; i++) {
+					Log.d(TAG, "ayat_1 " + (i+1) + ": " + U.dumpChars(xayat[i]));
+				}
 				return xayat;
 			}
 		} catch (Exception e) {
 			Log.e(TAG, "muatTeks error", e); //$NON-NLS-1$
 			return null;
 		}
-	}
-	
-	static String dumpChars(String s) {
-		StringBuilder sb = new StringBuilder(s.length() * 8);
-		
-		for (int i = 0, len = s.length(); i < len; i++) {
-			char c = s.charAt(i);
-			sb.append(Integer.toHexString(c));
-			if (c >= 0x20) {
-				sb.append('\'');
-				sb.append(c);
-				sb.append('\'');
-			} else {
-				sb.append('|');
-			}
-		}
-		
-		return sb.toString();
 	}
 
 	static String readNamaSeksi(RandomAccessFile f) throws IOException {
