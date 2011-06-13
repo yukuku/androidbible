@@ -4,7 +4,6 @@ import android.app.*;
 import android.content.*;
 import android.content.res.*;
 import android.os.*;
-import android.util.*;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.*;
@@ -194,6 +193,28 @@ public class MenujuActivity extends Activity {
 
 		super.onConfigurationChanged(newConfig);
 	}
+	
+	@Override protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putString("lPasal.text", lPasal.getText().toString());
+		outState.putString("lAyat.text", lAyat.getText().toString());
+		outState.putBoolean("lPasal_pertamaKali", lPasal_pertamaKali);
+		outState.putBoolean("lAyat_pertamaKali", lAyat_pertamaKali);
+		outState.putInt("cbKitab.selectedItemPosition", cbKitab.getSelectedItemPosition());
+		outState.putInt("maxPasal", maxPasal);
+		outState.putInt("maxAyat", maxAyat);
+	}
+	
+	@Override protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		lPasal.setText(savedInstanceState.getString("lPasal.text"));
+		lAyat.setText(savedInstanceState.getString("lAyat.text"));
+		lPasal_pertamaKali = savedInstanceState.getBoolean("lPasal_pertamaKali");
+		lAyat_pertamaKali = savedInstanceState.getBoolean("lAyat_pertamaKali");
+		cbKitab.setSelection(savedInstanceState.getInt("cbKitab.selectedItemPosition"));
+		maxPasal = savedInstanceState.getInt("maxPasal");
+		maxAyat = savedInstanceState.getInt("maxAyat");
+	}
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -275,13 +296,10 @@ public class MenujuActivity extends Activity {
 					aktif.setText(s);
 				}
 				
-				try {
-					Kitab k = adapter.getItem(cbKitab.getSelectedItemPosition());
-					int pasal_1 = cobaBacaPasal();
-					
+				Kitab k = adapter.getItem(cbKitab.getSelectedItemPosition());
+				int pasal_1 = cobaBacaPasal();
+				if (pasal_1 >= 1 && pasal_1 <= k.nayat.length) {
 					maxAyat = k.nayat[pasal_1-1];
-				} catch (Exception e) {
-					Log.w(TAG, e);
 				}
 			} else if (aktif == lAyat) {
 				if (lAyat_pertamaKali) {
