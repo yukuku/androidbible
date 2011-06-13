@@ -123,4 +123,23 @@ public class U {
 	public static String preprocessHtml(String s) {
 		return s.replace('[', '<').replace(']', '>');
 	}
+	
+	
+	public static String dumpChars(String s) {
+		StringBuilder sb = new StringBuilder(s.length() * 8);
+		
+		for (int i = 0, len = s.length(); i < len; i++) {
+			char c = s.charAt(i);
+			sb.append(Integer.toHexString(c));
+			if (c >= 0x20) {
+				sb.append('\'');
+				sb.append(c);
+				sb.append('\'');
+			} else {
+				sb.append('|');
+			}
+		}
+		
+		return sb.toString();
+	}
 }

@@ -1551,4 +1551,11 @@ public class BiblePlusPDB {
 		}
 	}
 
+	public List<String> getAllWords() {
+		List<String> res = new ArrayList<String>(totalWords);
+		for (int i = 0; i < totalWords; i++) {
+			res.add(getWord(i));
+		}
+		return res;
+	}
 }
