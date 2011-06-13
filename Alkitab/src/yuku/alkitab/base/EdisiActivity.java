@@ -468,7 +468,7 @@ public class EdisiActivity extends Activity {
 							handleFileOpenYes(namafileyes, new File(namafilepdb).getName());
 							
 							if (result.unconvertedBookNames != null && result.unconvertedBookNames.size() > 0) {
-								StringBuilder msg = new StringBuilder(R.string.ed_the_following_books_from_the_pdb_file_are_not_recognized + '\n');
+								StringBuilder msg = new StringBuilder(getString(R.string.ed_the_following_books_from_the_pdb_file_are_not_recognized) + '\n');
 								for (String s: result.unconvertedBookNames) {
 									msg.append("- ").append(s).append('\n'); //$NON-NLS-1$
 								}
