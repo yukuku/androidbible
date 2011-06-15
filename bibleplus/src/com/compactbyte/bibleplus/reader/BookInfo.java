@@ -20,6 +20,8 @@
 
 package com.compactbyte.bibleplus.reader;
 
+import android.util.*;
+
 import java.io.*;
 import java.util.*;
 
@@ -375,11 +377,12 @@ public class BookInfo {
 		// word + ?
 		// word + !
 		// word + -
+		// word + [cjk 0x2e80..0x9fff]
 		// ( + word
 		// [ + word
 		// { + word
 		// - + word
-		// 0x0e + word
+		// [cjk 0x2e80..0x9fff] + word
 		String prev = null;
 		String cur = null;
 		for (int i = 0, len = words.size(); i < len; i++) {
@@ -390,13 +393,13 @@ public class BookInfo {
 				// no space
 			} else {
 				char lastPrev = prev.charAt(prev.length() - 1);
-				if (lastPrev == '(' || lastPrev == '[' || lastPrev == '{' || lastPrev == '-' || lastPrev == 0x0e) {
+				if (lastPrev == '(' || lastPrev == '[' || lastPrev == '{' || lastPrev == '-' || (lastPrev >= 0x2e80 && lastPrev <= 0x9fff)) {
 					// no space
 				} else if (cur.length() == 0) {
 					// no space too, exceptional case
 				} else {
 					char firstCur = cur.charAt(0);
-					if (")]}.,:;?!-".indexOf(firstCur) >= 0) { //$NON-NLS-1$
+					if (")]}.,:;?!-".indexOf(firstCur) >= 0 || (firstCur >= 0x2e80 && firstCur <= 0x9fff)) { //$NON-NLS-1$
 						// no space
 					} else {
 						sep = true;
@@ -516,22 +519,26 @@ public class BookInfo {
 
 		int sbpos = 0;
 
-		for (int i = 0; i < verseLength; i++) {
-
+		ayam: for (int i = 0; i < verseLength; i++) {
+			if (idx >= data.length) {Log.d("idx OOB", getFullName() + " c" + chapter + " v" + verse + " i=" + i + " verseLength=" + verseLength + " data.length=" + data.length + " idx=" + idx); break ayam;}
+			
 			switch (decShift) {
 			case 0:
 				decValueBuffer[0] = data[idx++] & 0xff;
+				if (idx >= data.length) {Log.d("idx OOB", getFullName() + " c" + chapter + " v" + verse + " i=" + i + " verseLength=" + verseLength + " data.length=" + data.length + " idx=" + idx); break ayam;}
 				decValueBuffer[1] = data[idx++] & 0xff;
 				decValueBuffer[2] = 0;
 				break;
 			case 1:
 				decValueBuffer[0] = decValueBuffer[1];
 				decValueBuffer[1] = data[idx++] & 0xff;
+				if (idx >= data.length) {Log.d("idx OOB", getFullName() + " c" + chapter + " v" + verse + " i=" + i + " verseLength=" + verseLength + " data.length=" + data.length + " idx=" + idx); break ayam;}
 				decValueBuffer[2] = data[idx++] & 0xff;
 				break;
 			case 2:
 				decValueBuffer[0] = decValueBuffer[2];
 				decValueBuffer[1] = data[idx++] & 0xff;
+				if (idx >= data.length) {Log.d("idx OOB", getFullName() + " c" + chapter + " v" + verse + " i=" + i + " verseLength=" + verseLength + " data.length=" + data.length + " idx=" + idx); break ayam;}
 				decValueBuffer[2] = data[idx++] & 0xff;
 				break;
 			case 3:
