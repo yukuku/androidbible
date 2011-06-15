@@ -1,9 +1,9 @@
 package yuku.alkitab;
 
 import java.io.*;
-import java.util.Scanner;
+import java.util.*;
 
-import yuku.bintex.BintexWriter;
+import yuku.bintex.*;
 
 public class KonvertIsi {
 	public static void main(String[] args) throws Exception {
@@ -44,7 +44,11 @@ public class KonvertIsi {
 				} else if (key.equals("uda")) { // value: ga ada
 					break;
 				} else { // value: String
-					writer.writeShortString(sc.next());
+					String value = sc.next();
+					if (key.equals("judul") || key.equals("nama")) {
+						value = value.replace('_', ' ');
+					}
+					writer.writeShortString(value);
 				}
 			}
 			

@@ -1,7 +1,7 @@
 package yuku.alkitab;
 
 import java.io.*;
-import java.nio.charset.Charset;
+import java.nio.charset.*;
 import java.util.*;
 
 import yuku.alkitab.BdbProses.Rec;
@@ -101,8 +101,8 @@ public class KjvBdbProses {
 		while (sc.hasNextLine()) {
 			String judul = sc.nextLine().trim();
 			if (judul.length() > 0) {
-				xjudul[p] = judul;
-				xnama[p] = judul.replaceAll(" ", "_");
+				xjudul[p] = judul.replace('_', ' ');
+				xnama[p] = judul.replace('_', ' ');
 				p++;
 			}
 		}
