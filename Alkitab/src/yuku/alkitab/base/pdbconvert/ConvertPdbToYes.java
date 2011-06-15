@@ -317,7 +317,7 @@ public class ConvertPdbToYes {
 			// look for 0x0e 'n' 0x0e
 			if (s.indexOf("\u000en\u000e") >= 0) {
 				prependAtAt = true;
-				s = s.replace("\u000en\u000e", "@8");
+				s = s.replaceAll("\\s*\u000en\u000e\\s*", "@8");
 			}
 			
 			boolean startingItalic = true;
@@ -326,7 +326,7 @@ public class ConvertPdbToYes {
 				if (pos > 0) {
 					prependAtAt = true;
 					String tag = startingItalic ? "@9" : "@7";
-					s = s.substring(0, pos) + tag + s.substring(pos + 3);
+					s = s.substring(0, pos) + tag + s.substring(pos + 3); // TODO remove extraneous spaces
 					startingItalic = !startingItalic;
 				} else {
 					break;
