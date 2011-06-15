@@ -317,7 +317,7 @@ public class EdisiActivity extends Activity {
 		String state = Environment.getExternalStorageState();
 		if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
 			try {
-				if (getPackageManager().getPackageInfo(getPackageName(), 0).versionCode <= 52) {
+				if (getPackageManager().getPackageInfo(getPackageName(), 0).versionCode <= 53) {
 					new AlertDialog.Builder(this)
 					.setMessage(R.string.ed_opening_pdb_files_is_still_an_experimental_feature)
 					.setPositiveButton(R.string.ok, new OnClickListener() {
