@@ -80,7 +80,10 @@ public class IsiActivity extends Activity {
 	CallbackSpan.OnClickListener paralelOnClickListener = new CallbackSpan.OnClickListener() {
 		@Override
 		public void onClick(View widget, Object data) {
-			loncatKe((String)data);
+			int ari = loncatKe((String)data);
+			if (ari != 0) {
+				sejarah.tambah(ari);
+			}
 		}
 	};
 	
@@ -499,7 +502,7 @@ public class IsiActivity extends Activity {
 		}
 		
 		@Override
-		public Object getItem(int position) {
+		public Integer getItem(int position) {
 			return sejarah.getAri(position);
 		}
 		
