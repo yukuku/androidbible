@@ -4,4 +4,7 @@
 	<edisi>
 		<internal judul="King James (KJV)" prefix="kjv" />
 	</edisi>
+	<share>
+		<url prefix="http://ref.ly/" format="dot2 nospace0" lang="en" />
+	</share>
 </config>

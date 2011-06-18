@@ -7,4 +7,7 @@
 		<preset judul="Bahasa Indonesia Sehari-hari" namafile_preset="bis.yes" url="http://alkitab-host.appspot.com/addon/yes/bis.yes.gz" />
 		<preset judul="Batak Toba" namafile_preset="toba.yes" url="http://alkitab-host.appspot.com/addon/yes/toba.yes.gz" />
 	</edisi>
+	<share>
+		<url prefix="http://alkitab.me/" format="slash1 slash2 nospace0" lang="in" />
+	</share>
 </config>

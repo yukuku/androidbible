@@ -22,7 +22,10 @@ public class BuildConfig {
 	public boolean menuBantuan;
 	public boolean menuDonasi;
 	public List<MEdisiPreset> xpreset;
-
+	public String url_prefix;
+	public String url_format;
+	public String[] url_namaKitabStandar;
+	
 	private static BuildConfig lastConfig;
 	private static String lastPackageName;
 	
@@ -41,7 +44,7 @@ public class BuildConfig {
 		
 		BuildConfig res = null;
 		try {
-			res = loadConfig(context.getResources().getXml(resId));
+			res = loadConfig(context, context.getResources().getXml(resId));
 			lastConfig = res;
 			lastPackageName = packageName;
 		} catch (Exception e) {
@@ -51,7 +54,7 @@ public class BuildConfig {
 		return res;
 	}
 
-	private static BuildConfig loadConfig(XmlResourceParser parser) throws Exception {
+	private static BuildConfig loadConfig(Context context, XmlResourceParser parser) throws Exception {
 		BuildConfig res = new BuildConfig();
 		
 		List<MEdisiPreset> xpreset = new ArrayList<MEdisiPreset>();
@@ -76,6 +79,14 @@ public class BuildConfig {
 				preset.url = parser.getAttributeValue(null, "url"); //$NON-NLS-1$
 				preset.urutan = ++urutanPreset;
 				xpreset.add(preset);
+			} else if (next == XmlPullParser.START_TAG && "url".equals(parser.getName())) { //$NON-NLS-1$
+				// TODO support more url's if needed. now only one.
+				res.url_prefix = parser.getAttributeValue(null, "prefix"); //$NON-NLS-1$
+				res.url_format = parser.getAttributeValue(null, "format"); //$NON-NLS-1$
+				res.url_namaKitabStandar = context.getResources().getStringArray(context.getResources().getIdentifier("nama_kitab_standar_" + parser.getAttributeValue(null, "lang"), "array", context.getPackageName()));
+				if (res.url_prefix == null || res.url_format == null || res.url_namaKitabStandar == null) {
+					throw new RuntimeException("wrong share url config!");
+				}
 			} else if (next == XmlPullParser.END_DOCUMENT) {
 				break;
 			}

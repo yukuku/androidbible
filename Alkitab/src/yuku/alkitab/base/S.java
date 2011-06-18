@@ -306,4 +306,20 @@ public class S {
 		
 		return db;
 	}
+	
+	public static String bikinUrlAyat(Kitab kitab, int pasal_1, int ayat_1) {
+		BuildConfig c = BuildConfig.get(appContext);
+		if (kitab.pos >= c.url_namaKitabStandar.length) {
+			return null;
+		}
+		String calonKitab = c.url_namaKitabStandar[kitab.pos], calonPasal = String.valueOf(pasal_1), calonAyat = String.valueOf(ayat_1);
+		for (String format: c.url_format.split(" ")) {
+			if ("slash1".equals(format)) calonPasal = "/" + calonPasal;
+			if ("slash2".equals(format)) calonAyat = "/" + calonAyat;
+			if ("dot1".equals(format)) calonPasal = "." + calonPasal;
+			if ("dot2".equals(format)) calonAyat = "." + calonAyat;
+			if ("nospace0".equals(format)) calonKitab = calonKitab.replaceAll("\\s+", "");
+		}
+		return c.url_prefix + calonKitab + calonPasal + calonAyat;
+	}
 }

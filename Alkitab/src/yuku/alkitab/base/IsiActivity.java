@@ -358,10 +358,12 @@ public class IsiActivity extends Activity {
 			
 			return true;
 		} else if (itemId == R.id.menuBagikan) {
+			String urlAyat = S.bikinUrlAyat(S.kitabAktif, this.pasal_1, this.ayatContextMenu_1);
+			
 			Intent i = new Intent(Intent.ACTION_SEND);
 			i.setType("text/plain"); //$NON-NLS-1$
 			i.putExtra(Intent.EXTRA_SUBJECT, alamat);
-			i.putExtra(Intent.EXTRA_TEXT, alamat + "  " + this.isiAyatContextMenu); //$NON-NLS-1$
+			i.putExtra(Intent.EXTRA_TEXT, alamat + "  " + this.isiAyatContextMenu + (urlAyat == null? "": " " + urlAyat)); //$NON-NLS-1$
 			startActivity(Intent.createChooser(i, getString(R.string.bagikan_alamat, alamat)));
 
 			return true;
