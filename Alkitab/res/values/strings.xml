@@ -74,8 +74,7 @@
     <string name="ganti_v">Switch</string>
     <string name="ayat_sebelumangka">Verse</string>
     <string name="pasal_sebelumangka">Chapter</string>
-    <string name="loncat_ke_alamat_titikdua">Jump to:</string>
-    <string name="alamat_sekarang_titikdua">Current address:</string>
+    <string name="loncat_ke_alamat_titikdua">Jump to: (Example: %s)</string>
     <string name="saran_komentar_dsb">Suggestions, comments, etc...</string>
     <string name="tidak_ada_catatan">(no annotations)</string>
     <string name="belum_ada_pembatas_buku">No bookmarks yet.\nLong-press on a verse to open a menu where you can choose to add a bookmark.</string>

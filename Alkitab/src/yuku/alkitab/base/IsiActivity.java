@@ -2,10 +2,12 @@ package yuku.alkitab.base;
 
 import android.app.*;
 import android.content.*;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.*;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.*;
+import android.graphics.*;
 import android.graphics.drawable.*;
 import android.net.*;
 import android.os.*;
@@ -17,6 +19,7 @@ import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.*;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.TextView.BufferType;
 
 import java.util.*;
 
@@ -516,15 +519,22 @@ public class IsiActivity extends Activity {
 	
 	private void bukaDialogLoncat() {
 		final View loncat = LayoutInflater.from(this).inflate(R.layout.dialog_loncat, null);
-		final TextView lAlamatKini = (TextView) loncat.findViewById(R.id.lAlamatKini);
+		final TextView lContohLoncat = (TextView) loncat.findViewById(R.id.lContohLoncat);
 		final EditText tAlamatLoncat = (EditText) loncat.findViewById(R.id.tAlamatLoncat);
 		final ImageButton bKeTuju = (ImageButton) loncat.findViewById(R.id.bKeTuju);
 
-		// set lAlamatKini
 		{
-			int ayatKini = getAyatBerdasarSkrol();
-			String alamat = S.alamat(S.kitabAktif, IsiActivity.this.pasal_1, ayatKini);
-			lAlamatKini.setText(alamat);
+			String alamatContoh = S.alamat(S.kitabAktif, IsiActivity.this.pasal_1, getAyatBerdasarSkrol());
+			String text = getString(R.string.loncat_ke_alamat_titikdua);
+			int pos = text.indexOf("%s");
+			if (pos >= 0) {
+				SpannableStringBuilder sb = new SpannableStringBuilder();
+				sb.append(text.substring(0, pos));
+				sb.append(alamatContoh);
+				sb.append(text.substring(pos + 2));
+				sb.setSpan(new StyleSpan(Typeface.BOLD), pos, pos + alamatContoh.length(), 0);
+				lContohLoncat.setText(sb, BufferType.SPANNABLE);
+			}
 		}
 		
 		final DialogInterface.OnClickListener loncat_click = new DialogInterface.OnClickListener() {
@@ -541,15 +551,6 @@ public class IsiActivity extends Activity {
 			.setView(loncat)
 			.setPositiveButton(R.string.loncat, loncat_click)
 			.create();
-		
-		tAlamatLoncat.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				if (hasFocus) {
-					dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-				}
-			}
-		});
 		
 		tAlamatLoncat.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
@@ -569,6 +570,13 @@ public class IsiActivity extends Activity {
 			}
 		});
 		
+		dialog.setOnDismissListener(new OnDismissListener() {
+			@Override public void onDismiss(DialogInterface _) {
+				dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED);
+			}
+		});
+		
+		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 		dialog.show();
 	}
 	

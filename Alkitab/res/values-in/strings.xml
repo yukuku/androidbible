@@ -74,8 +74,7 @@
     <string name="ganti_v">Ganti</string>
     <string name="ayat_sebelumangka">Ayat</string>
     <string name="pasal_sebelumangka">Pasal</string>
-    <string name="loncat_ke_alamat_titikdua">Loncat ke alamat:</string>
-    <string name="alamat_sekarang_titikdua">Alamat sekarang:</string>
+    <string name="loncat_ke_alamat_titikdua">Loncat ke: (Contoh: %s)</string>
     <string name="saran_komentar_dsb">Saran, komentar, dsb...</string>
     <string name="tidak_ada_catatan">(tidak ada catatan)</string>
     <string name="belum_ada_pembatas_buku">Belum ada pembatas buku.\nTahan (tekan yang lama) suatu ayat untuk membuka menu dengan pilihan untuk menambah pembatas buku.</string>
