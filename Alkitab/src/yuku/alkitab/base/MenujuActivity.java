@@ -379,27 +379,25 @@ public class MenujuActivity extends Activity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup viewGroup) {
-			TextView res = (TextView) convertView;
-			if (res == null) {
-				res = (TextView) LayoutInflater.from(MenujuActivity.this).inflate(android.R.layout.simple_spinner_item, null);
-			}
-			
+			TextView res = convertView != null? (TextView) convertView: (TextView) LayoutInflater.from(MenujuActivity.this).inflate(android.R.layout.simple_spinner_item, null);
 			res.setText(xkitabc_[position].judul);
 			return res;
 		}
 		
 		@Override
 		public View getDropDownView(int position, View convertView, ViewGroup parent) {
-			CheckedTextView res;
+			CheckedTextView res = convertView != null? (CheckedTextView) convertView: (CheckedTextView) LayoutInflater.from(MenujuActivity.this).inflate(android.R.layout.simple_spinner_dropdown_item, null);
+			res.setText(xkitabc_[position].judul);
 			
-			if (convertView == null) {
-				res = (CheckedTextView) LayoutInflater.from(MenujuActivity.this).inflate(android.R.layout.simple_spinner_dropdown_item, null);
+			// warna tergantung jenis
+			if (position >= 0 && position < 39) {
+				res.setTextColor(0xff990022);
+			} else if (position >= 39 && position < 66) {
+				res.setTextColor(0xff000099);
 			} else {
-				res = (CheckedTextView) convertView;
+				res.setTextColor(0xff000000);
 			}
 			
-			res.setText(xkitabc_[position].judul);
-						
 			return res;
 		}
 	}
