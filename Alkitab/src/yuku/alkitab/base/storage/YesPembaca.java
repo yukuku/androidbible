@@ -305,7 +305,8 @@ public class YesPembaca extends Pembaca {
 		try {
 			init();
 			
-			Log.d(TAG, "muatPerikop dipanggil untuk kitab=" + kitab + " pasal_1=" + pasal); //$NON-NLS-1$ //$NON-NLS-2$
+			if (D.EBUG) Log.d(TAG, "muatPerikop dipanggil untuk kitab=" + kitab + " pasal_1=" + pasal); //$NON-NLS-1$ //$NON-NLS-2$
+			
 			IndexPerikop indexPerikop = edisi.getIndexPerikop();
 			if (indexPerikop == null) {
 				return 0; // ga ada perikop!
