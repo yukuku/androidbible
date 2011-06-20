@@ -6,7 +6,6 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.*;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.*;
 import android.graphics.*;
 import android.graphics.drawable.*;
 import android.net.*;
@@ -59,12 +58,6 @@ public class IsiActivity extends Activity {
 	int ayatContextMenu_1 = -1;
 	String isiAyatContextMenu = null;
 	SharedPreferences preferences_instan;
-	Float ukuranAsalHurufIsi;
-	Handler handler = new Handler();
-	DisplayMetrics displayMetrics;
-	ProgressDialog dialogBikinIndex;
-	boolean lagiBikinIndex = false;
-	boolean perluReloadMenuWaktuOnMenuOpened = false;
 	
 	private AyatAdapter ayatAdapter_;
 	private Sejarah sejarah;
@@ -75,7 +68,6 @@ public class IsiActivity extends Activity {
 	boolean search2_filter_baru = true;
 	IntArrayList search2_hasilCari = null;
 	int search2_posisiTerpilih = -1;
-
 	
 	CallbackSpan.OnClickListener paralelOnClickListener = new CallbackSpan.OnClickListener() {
 		@Override
@@ -107,10 +99,6 @@ public class IsiActivity extends Activity {
 		
 		S.siapinKitab();
 		S.bacaPengaturan(this);
-		S.terapkanPengaturanBahasa(this, handler, 2);
-		
-		displayMetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		
 		setContentView(R.layout.activity_isi);
 		tog.addSplit("IsiActivity (fase 5) sebelum siapin macem2"); //$NON-NLS-1$
@@ -400,7 +388,7 @@ public class IsiActivity extends Activity {
 		}
 		
 		if (bahasaJuga) {
-			S.terapkanPengaturanBahasa(this, null, 0);
+			S.terapkanPengaturanBahasa(null, 0);
 		}
 		
 		// wajib
@@ -633,10 +621,7 @@ public class IsiActivity extends Activity {
 	@Override
 	public boolean onMenuOpened(int featureId, Menu menu) {
 		if (menu != null) {
-			if (perluReloadMenuWaktuOnMenuOpened) {
-				bikinMenu(menu);
-				perluReloadMenuWaktuOnMenuOpened = false;
-			}
+			bikinMenu(menu);
 			
 			MenuItem menuTuju = menu.findItem(R.id.menuTuju);
 			if (menuTuju != null) {
@@ -879,7 +864,6 @@ public class IsiActivity extends Activity {
 			S.bacaPengaturan(this);
 			
 			terapkanPengaturan(true);
-			perluReloadMenuWaktuOnMenuOpened = true;
 		}
 	}
 
@@ -1056,14 +1040,6 @@ public class IsiActivity extends Activity {
 				editor.commit();
 			}
 		}).show();
-	}
-	
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		S.terapkanPengaturanBahasa(this, handler, 2);
-		perluReloadMenuWaktuOnMenuOpened = true;
-
-		super.onConfigurationChanged(newConfig);
 	}
 	
 	@Override

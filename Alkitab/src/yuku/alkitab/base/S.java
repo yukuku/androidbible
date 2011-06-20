@@ -216,9 +216,9 @@ public class S {
 	}
 	
 	/**
-	 * @param handler Jangan null kalo mau dicek ulang 200ms kemudian. Harus null kalo jangan ulang lagi.
+	 * @param handler Jangan null kalo mau dicek ulang 200ms kemudian. Harus null kalo jangan ulang lagi. 20110620 Uda ga dipake lagi.
 	 */
-	public static void terapkanPengaturanBahasa(final Context context, final Handler handler, final int cobaLagi) {
+	public static void terapkanPengaturanBahasa(final Handler handler, final int cobaLagi) {
 		String bahasa = Preferences.getString(R.string.pref_bahasa_key, R.string.pref_bahasa_default);
 
 		Locale locale;
@@ -228,32 +228,34 @@ public class S {
 			locale = new Locale(bahasa);
 		}
 		
-		Configuration config1 = context.getResources().getConfiguration();
-		if (locale.getLanguage() != null && locale.getLanguage().equals(config1.locale.getLanguage())) {
-			// ga ada perubahan, biarkan.
-		} else {
-			Configuration config2 = new Configuration();
-			config2.locale = locale;
-			if (handler != null) {
-				Log.d(TAG, "(Handler ga null) Update locale dari " + config1.locale.toString() + " ke " + config2.locale.toString()); //$NON-NLS-1$ //$NON-NLS-2$
-			} else {
-				Log.d(TAG, "(Handler null) Update locale dari " + config1.locale.toString() + " ke " + config2.locale.toString());  //$NON-NLS-1$//$NON-NLS-2$
-			}
-			context.getResources().updateConfiguration(config2, null);
-		}
+		AlkitabApplication.updateConfigurationWithLocale(appContext.getResources().getConfiguration(), locale);
 		
-		if (handler != null) {
-			handler.postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					if (cobaLagi == 0) {
-						terapkanPengaturanBahasa(context, null, 0);
-					} else {
-						terapkanPengaturanBahasa(context, handler, cobaLagi - 1);
-					}
-				}
-			}, 200);
-		}
+//		Configuration config1 = context.getResources().getConfiguration();
+//		if (locale.getLanguage() != null && locale.getLanguage().equals(config1.locale.getLanguage())) {
+//			// ga ada perubahan, biarkan.
+//		} else {
+//			Configuration config2 = new Configuration();
+//			config2.locale = locale;
+//			if (handler != null) {
+//				Log.d(TAG, "(Handler ga null) Update locale dari " + config1.locale.toString() + " ke " + config2.locale.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+//			} else {
+//				Log.d(TAG, "(Handler null) Update locale dari " + config1.locale.toString() + " ke " + config2.locale.toString());  //$NON-NLS-1$//$NON-NLS-2$
+//			}
+//			context.getResources().updateConfiguration(config2, null);
+//		}
+//		
+//		if (handler != null) {
+//			handler.postDelayed(new Runnable() {
+//				@Override
+//				public void run() {
+//					if (cobaLagi == 0) {
+//						terapkanPengaturanBahasa(context, null, 0);
+//					} else {
+//						terapkanPengaturanBahasa(context, handler, cobaLagi - 1);
+//					}
+//				}
+//			}, 200);
+//		}
 	}
 
 	private static float[] precomputedValues = null;

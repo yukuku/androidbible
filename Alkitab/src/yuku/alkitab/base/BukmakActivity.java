@@ -3,7 +3,6 @@ package yuku.alkitab.base;
 
 import android.app.*;
 import android.content.*;
-import android.content.res.*;
 import android.database.*;
 import android.os.*;
 import android.provider.*;
@@ -35,10 +34,7 @@ public class BukmakActivity extends ListActivity {
 
 	SimpleCursorAdapter adapter;
 	Cursor cursor;
-	Handler handler = new Handler();
 
-	private boolean perluReloadMenuWaktuOnMenuOpened = false;
-	
 	static {
 		cursorColumnsSelect = new String[cursorColumnsMapFrom.length+1];
 		System.arraycopy(cursorColumnsMapFrom, 0, cursorColumnsSelect, 1, cursorColumnsMapFrom.length);
@@ -51,7 +47,6 @@ public class BukmakActivity extends ListActivity {
 		
 		S.siapinKitab();
 		S.bacaPengaturan(this);
-		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
 		
 		setContentView(R.layout.activity_bukmak);
@@ -101,14 +96,6 @@ public class BukmakActivity extends ListActivity {
 		registerForContextMenu(listView);
 	}
 	
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		S.terapkanPengaturanBahasa(this, handler, 2);
-		perluReloadMenuWaktuOnMenuOpened = true;
-		
-		super.onConfigurationChanged(newConfig);
-	}
-
 	private void bikinMenu(Menu menu) {
 		menu.clear();
 		new MenuInflater(this).inflate(R.menu.activity_bukmak, menu);
@@ -124,10 +111,7 @@ public class BukmakActivity extends ListActivity {
 	@Override
 	public boolean onMenuOpened(int featureId, Menu menu) {
 		if (menu != null) {
-			if (perluReloadMenuWaktuOnMenuOpened) {
-				bikinMenu(menu);
-				perluReloadMenuWaktuOnMenuOpened = false;
-			}
+			bikinMenu(menu);
 		}
 		
 		return true;

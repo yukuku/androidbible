@@ -2,7 +2,6 @@ package yuku.alkitab.base;
 
 import android.app.*;
 import android.content.*;
-import android.content.res.*;
 import android.os.*;
 import android.text.*;
 import android.text.format.DateFormat;
@@ -49,9 +48,6 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 
 	Handler pengulangTampil = new Handler();
 	Handler penampilStatusDonlot = new Handler();
-	Handler handler = new Handler();
-	
-	private boolean perluReloadMenuWaktuOnMenuOpened = false;
 	
 	Runnable cobaTampilLagi = new Runnable() {
 		@Override
@@ -80,7 +76,6 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 
 		S.siapinKitab();
 		S.bacaPengaturan(this);
-		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
 		
 		setContentView(R.layout.activity_renungan);
@@ -140,14 +135,6 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		tampilkan();
 	}
 		
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		S.terapkanPengaturanBahasa(this, handler, 2);
-		perluReloadMenuWaktuOnMenuOpened = true;
-
-		super.onConfigurationChanged(newConfig);
-	}
-
 	private void bikinMenu(Menu menu) {
 		menu.clear();
 		new MenuInflater(this).inflate(R.menu.activity_renungan, menu);
@@ -163,10 +150,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 	@Override
 	public boolean onMenuOpened(int featureId, Menu menu) {
 		if (menu != null) {
-			if (perluReloadMenuWaktuOnMenuOpened) {
-				bikinMenu(menu);
-				perluReloadMenuWaktuOnMenuOpened = false;
-			}
+			bikinMenu(menu);
 		}
 		
 		return true;

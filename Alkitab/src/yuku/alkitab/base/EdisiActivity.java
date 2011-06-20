@@ -4,8 +4,6 @@ package yuku.alkitab.base;
 import android.app.*;
 import android.content.*;
 import android.content.DialogInterface.OnClickListener;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.*;
 import android.os.*;
 import android.util.*;
 import android.view.*;
@@ -39,12 +37,7 @@ public class EdisiActivity extends Activity {
 	private static final int REQCODE_openFile = 1;
 	
 	ListView lsEdisi;
-
-	Handler handler = new Handler();
 	EdisiAdapter adapter;
-	
-	private boolean perluReloadMenuWaktuOnMenuOpened = false;
-
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +45,6 @@ public class EdisiActivity extends Activity {
 		
 		S.siapinKitab();
 		S.bacaPengaturan(this);
-		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
 		
 		setContentView(R.layout.activity_edisi);
@@ -68,14 +60,6 @@ public class EdisiActivity extends Activity {
 		registerForContextMenu(lsEdisi);
 	}
 	
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		S.terapkanPengaturanBahasa(this, handler, 2);
-		perluReloadMenuWaktuOnMenuOpened = true;
-		
-		super.onConfigurationChanged(newConfig);
-	}
-
 	private void bikinMenu(Menu menu) {
 		menu.clear();
 		new MenuInflater(this).inflate(R.menu.activity_edisi, menu);
@@ -91,10 +75,7 @@ public class EdisiActivity extends Activity {
 	@Override
 	public boolean onMenuOpened(int featureId, Menu menu) {
 		if (menu != null) {
-			if (perluReloadMenuWaktuOnMenuOpened) {
-				bikinMenu(menu);
-				perluReloadMenuWaktuOnMenuOpened = false;
-			}
+			bikinMenu(menu);
 		}
 		
 		return true;

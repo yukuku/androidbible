@@ -2,7 +2,6 @@ package yuku.alkitab.base;
 
 import android.app.*;
 import android.content.*;
-import android.content.res.*;
 import android.os.*;
 import android.view.*;
 import android.view.View.OnClickListener;
@@ -36,7 +35,6 @@ public class MenujuActivity extends Activity {
 	int maxPasal = 0;
 	int maxAyat = 0;
 	KitabAdapter adapter;
-	Handler handler = new Handler();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +43,6 @@ public class MenujuActivity extends Activity {
 		
 		S.siapinKitab();
 		S.bacaPengaturan(this);
-		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
 		
 		setContentView(R.layout.activity_menuju);
@@ -185,13 +182,6 @@ public class MenujuActivity extends Activity {
 		});
 		
 		warnain();
-	}
-	
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		S.terapkanPengaturanBahasa(this, handler, 2);
-
-		super.onConfigurationChanged(newConfig);
 	}
 	
 	@Override protected void onSaveInstanceState(Bundle outState) {

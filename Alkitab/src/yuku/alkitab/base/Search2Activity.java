@@ -2,7 +2,6 @@ package yuku.alkitab.base;
 
 import android.app.*;
 import android.content.*;
-import android.content.res.*;
 import android.graphics.*;
 import android.os.*;
 import android.text.*;
@@ -35,8 +34,6 @@ public class Search2Activity extends Activity {
 	
 	private int warnaStabilo;
 	
-	Handler handler = new Handler();
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -44,7 +41,6 @@ public class Search2Activity extends Activity {
 		
 		S.siapinKitab();
 		S.bacaPengaturan(this);
-		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
 		
 		setContentView(R.layout.activity_search2);
@@ -135,13 +131,6 @@ public class Search2Activity extends Activity {
 				//Log.d("alki", "masuk search2 dengan carian=" + carian + ", posisiTerpilih=" + posisiTerpilih + " hasilCari=" + hasilCari);
 			}
 		}
-	}
-	
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		S.terapkanPengaturanBahasa(this, handler, 2);
-	
-		super.onConfigurationChanged(newConfig);
 	}
 	
 	protected void bCari_click() {
