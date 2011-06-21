@@ -4,8 +4,6 @@ package yuku.alkitab.base;
 import android.app.*;
 import android.content.*;
 import android.content.DialogInterface.OnClickListener;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.*;
 import android.os.*;
 import android.util.*;
 import android.view.*;
@@ -39,12 +37,7 @@ public class EdisiActivity extends Activity {
 	private static final int REQCODE_openFile = 1;
 	
 	ListView lsEdisi;
-
-	Handler handler = new Handler();
 	EdisiAdapter adapter;
-	
-	private boolean perluReloadMenuWaktuOnMenuOpened = false;
-
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +45,6 @@ public class EdisiActivity extends Activity {
 		
 		S.siapinKitab();
 		S.bacaPengaturan(this);
-		S.terapkanPengaturanBahasa(this, handler, 2);
 		S.siapinPengirimFidbek(this);
 		
 		setContentView(R.layout.activity_edisi);
@@ -68,14 +60,6 @@ public class EdisiActivity extends Activity {
 		registerForContextMenu(lsEdisi);
 	}
 	
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		S.terapkanPengaturanBahasa(this, handler, 2);
-		perluReloadMenuWaktuOnMenuOpened = true;
-		
-		super.onConfigurationChanged(newConfig);
-	}
-
 	private void bikinMenu(Menu menu) {
 		menu.clear();
 		new MenuInflater(this).inflate(R.menu.activity_edisi, menu);
@@ -91,10 +75,7 @@ public class EdisiActivity extends Activity {
 	@Override
 	public boolean onMenuOpened(int featureId, Menu menu) {
 		if (menu != null) {
-			if (perluReloadMenuWaktuOnMenuOpened) {
-				bikinMenu(menu);
-				perluReloadMenuWaktuOnMenuOpened = false;
-			}
+			bikinMenu(menu);
 		}
 		
 		return true;
@@ -316,25 +297,20 @@ public class EdisiActivity extends Activity {
 	private void klikPadaBukaFile() {
 		String state = Environment.getExternalStorageState();
 		if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-			try {
-				if (getPackageManager().getPackageInfo(getPackageName(), 0).versionCode <= 53) {
-					new AlertDialog.Builder(this)
-					.setMessage(R.string.ed_opening_pdb_files_is_still_an_experimental_feature)
-					.setPositiveButton(R.string.ok, new OnClickListener() {
-						@Override public void onClick(DialogInterface dialog, int which) {
-							FileChooserConfig config = new FileChooserConfig();
-							config.mode = Mode.Open;
-							config.initialDir = Environment.getExternalStorageDirectory().getAbsolutePath();
-							config.title = getString(R.string.ed_choose_pdb_or_yes_file);
-							config.pattern = ".*\\.(?i:pdb|yes)"; //$NON-NLS-1$
-							
-							startActivityForResult(FileChooserActivity.createIntent(getApplicationContext(), config), REQCODE_openFile);
-						}
-					})
-					.show();
+			new AlertDialog.Builder(this)
+			.setMessage(R.string.ed_opening_pdb_files_is_still_an_experimental_feature)
+			.setPositiveButton(R.string.ok, new OnClickListener() {
+				@Override public void onClick(DialogInterface dialog, int which) {
+					FileChooserConfig config = new FileChooserConfig();
+					config.mode = Mode.Open;
+					config.initialDir = Environment.getExternalStorageDirectory().getAbsolutePath();
+					config.title = getString(R.string.ed_choose_pdb_or_yes_file);
+					config.pattern = ".*\\.(?i:pdb|yes)"; //$NON-NLS-1$
+					
+					startActivityForResult(FileChooserActivity.createIntent(getApplicationContext(), config), REQCODE_openFile);
 				}
-			} catch (NameNotFoundException e) {
-			}
+			})
+			.show();
 		} else {
 			new AlertDialog.Builder(this)
 			.setMessage(R.string.ed_no_external_storage)

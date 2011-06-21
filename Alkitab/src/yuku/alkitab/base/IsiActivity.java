@@ -6,7 +6,6 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.*;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.*;
 import android.graphics.*;
 import android.graphics.drawable.*;
 import android.net.*;
@@ -59,12 +58,6 @@ public class IsiActivity extends Activity {
 	int ayatContextMenu_1 = -1;
 	String isiAyatContextMenu = null;
 	SharedPreferences preferences_instan;
-	Float ukuranAsalHurufIsi;
-	Handler handler = new Handler();
-	DisplayMetrics displayMetrics;
-	ProgressDialog dialogBikinIndex;
-	boolean lagiBikinIndex = false;
-	boolean perluReloadMenuWaktuOnMenuOpened = false;
 	
 	private AyatAdapter ayatAdapter_;
 	private Sejarah sejarah;
@@ -75,7 +68,6 @@ public class IsiActivity extends Activity {
 	boolean search2_filter_baru = true;
 	IntArrayList search2_hasilCari = null;
 	int search2_posisiTerpilih = -1;
-
 	
 	CallbackSpan.OnClickListener paralelOnClickListener = new CallbackSpan.OnClickListener() {
 		@Override
@@ -107,10 +99,6 @@ public class IsiActivity extends Activity {
 		
 		S.siapinKitab();
 		S.bacaPengaturan(this);
-		S.terapkanPengaturanBahasa(this, handler, 2);
-		
-		displayMetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		
 		setContentView(R.layout.activity_isi);
 		tog.addSplit("IsiActivity (fase 5) sebelum siapin macem2"); //$NON-NLS-1$
@@ -165,9 +153,9 @@ public class IsiActivity extends Activity {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				int action = event.getAction();
 				if (action == KeyEvent.ACTION_DOWN) {
-					return onKeyDown(keyCode, event);
+					return tekan(keyCode);
 				} else if (action == KeyEvent.ACTION_MULTIPLE) {
-					return onKeyMultiple(keyCode, event.getRepeatCount(), event);
+					return tekan(keyCode);
 				}
 				return false;
 			}
@@ -216,6 +204,36 @@ public class IsiActivity extends Activity {
 		}
 	}
 	
+	protected boolean tekan(int keyCode) {
+		if (Preferences.getBoolean(R.string.pref_tombolVolumeNaikTurun_key, R.bool.pref_tombolVolumeNaikTurun_default)) {
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_DOWN;
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_UP;
+		}
+
+		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+			bKiri_click();
+			return true;
+		} else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+			bKanan_click();
+			return true;
+		} else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+			int posLama = getPosisiBerdasarSkrol();
+			if (posLama < ayatAdapter_.getCount() - 1) {
+				lsIsi.setSelectionFromTop(posLama+1, lsIsi.getVerticalFadingEdgeLength());
+			}
+			return true;
+		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+			int posLama = getPosisiBerdasarSkrol();
+			if (posLama >= 1) {
+				lsIsi.setSelectionFromTop(posLama-1, lsIsi.getVerticalFadingEdgeLength());
+			} else {
+				lsIsi.setSelectionFromTop(0, lsIsi.getVerticalFadingEdgeLength());
+			}
+			return true;
+		}
+		return false;
+	}
+
 	private synchronized void nyalakanTerusLayarKalauDiminta() {
 		if (Preferences.getBoolean(R.string.pref_nyalakanTerusLayar_key, R.bool.pref_nyalakanTerusLayar_default)) {
 			lsIsi.setKeepScreenOn(true);
@@ -400,7 +418,7 @@ public class IsiActivity extends Activity {
 		}
 		
 		if (bahasaJuga) {
-			S.terapkanPengaturanBahasa(this, null, 0);
+			S.terapkanPengaturanBahasa(null, 0);
 		}
 		
 		// wajib
@@ -633,10 +651,7 @@ public class IsiActivity extends Activity {
 	@Override
 	public boolean onMenuOpened(int featureId, Menu menu) {
 		if (menu != null) {
-			if (perluReloadMenuWaktuOnMenuOpened) {
-				bikinMenu(menu);
-				perluReloadMenuWaktuOnMenuOpened = false;
-			}
+			bikinMenu(menu);
 			
 			MenuItem menuTuju = menu.findItem(R.id.menuTuju);
 			if (menuTuju != null) {
@@ -879,7 +894,6 @@ public class IsiActivity extends Activity {
 			S.bacaPengaturan(this);
 			
 			terapkanPengaturan(true);
-			perluReloadMenuWaktuOnMenuOpened = true;
 		}
 	}
 
@@ -935,42 +949,13 @@ public class IsiActivity extends Activity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (Preferences.getBoolean(R.string.pref_tombolVolumeNaikTurun_key, R.bool.pref_tombolVolumeNaikTurun_default)) {
-			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_DOWN;
-			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_UP;
-		}
-		
-		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-			bKiri_click();
-			return true;
-		} else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-			bKanan_click();
-			return true;
-		} else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-			int posLama = getPosisiBerdasarSkrol();
-			if (posLama < ayatAdapter_.getCount() - 1) {
-				lsIsi.setSelectionFromTop(posLama+1, lsIsi.getVerticalFadingEdgeLength());
-			}
-			return true;
-		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-			int posLama = getPosisiBerdasarSkrol();
-			if (posLama >= 1) {
-				lsIsi.setSelectionFromTop(posLama-1, lsIsi.getVerticalFadingEdgeLength());
-			} else {
-				lsIsi.setSelectionFromTop(0, lsIsi.getVerticalFadingEdgeLength());
-			}
-			return true;
-		}
+		if (tekan(keyCode)) return true;
 		return super.onKeyDown(keyCode, event);
 	}
 	
 	@Override
 	public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-			return onKeyDown(keyCode, event);
-		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-			return onKeyDown(keyCode, event);
-		}
+		if (tekan(keyCode)) return true;
 		return super.onKeyMultiple(keyCode, repeatCount, event);
 	}
 	
@@ -980,7 +965,6 @@ public class IsiActivity extends Activity {
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) return true;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) return true;
 		}
-		
 		return super.onKeyUp(keyCode, event);
 	}
 	
@@ -1056,14 +1040,6 @@ public class IsiActivity extends Activity {
 				editor.commit();
 			}
 		}).show();
-	}
-	
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		S.terapkanPengaturanBahasa(this, handler, 2);
-		perluReloadMenuWaktuOnMenuOpened = true;
-
-		super.onConfigurationChanged(newConfig);
 	}
 	
 	@Override

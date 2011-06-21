@@ -107,7 +107,7 @@ class AyatAdapter extends BaseAdapter {
 			View res;
 			// Udah ditentukan bahwa ini ayat dan bukan perikop, sekarang tinggal tentukan
 			// apakah ayat ini pake formating biasa (tanpa menjorok dsb) atau ada formating
-			if (isi.charAt(0) == '@') {
+			if (isi.length() > 0 && isi.charAt(0) == '@') {
 				// karakter kedua harus '@' juga, kalo bukan ada ngaco
 				if (isi.charAt(1) != '@') {
 					throw new RuntimeException("Karakter kedua bukan @. Isi ayat: " + isi); //$NON-NLS-1$
