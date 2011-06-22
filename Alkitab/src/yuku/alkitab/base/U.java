@@ -1,6 +1,9 @@
 package yuku.alkitab.base;
 
+import android.app.*;
+import android.content.*;
 import android.graphics.*;
+import android.os.*;
 
 import java.io.*;
 import java.util.*;
@@ -141,5 +144,20 @@ public class U {
 		}
 		
 		return sb.toString();
+	}
+	
+	public static boolean tabletkah() {
+		return Build.VERSION.SDK_INT /* ini diambil waktu runtime */ >= Build.VERSION_CODES.HONEYCOMB /* ini diinline compiler */;
+	}
+	
+	public static void nyalakanTitleBarHanyaKalauTablet(Activity activity) {
+		if (tabletkah()) {
+			activity.setTheme(android.R.style.Theme_Holo);
+		}
+	}
+
+	@SuppressWarnings("deprecation") public static void salin(Context context, String salinan) {
+		android.text.ClipboardManager clipboardManager = (android.text.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+		clipboardManager.setText(salinan); 
 	}
 }

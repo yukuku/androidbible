@@ -72,7 +72,8 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		
+		U.nyalakanTitleBarHanyaKalauTablet(this);
 
 		S.siapinKitab();
 		S.bacaPengaturan(this);
@@ -160,8 +161,8 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
 		if (itemId == R.id.menuSalin) {
-			ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-			clipboardManager.setText(lHeader.getText() + "\n" + lIsi.getText()); //$NON-NLS-1$
+			String salinan = lHeader.getText() + "\n" + lIsi.getText();
+			U.salin(this, salinan);
 			
 			Toast.makeText(this, R.string.renungan_sudah_disalin, Toast.LENGTH_SHORT).show();
 			

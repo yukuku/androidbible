@@ -37,7 +37,8 @@ public class Search2Activity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		
+		U.nyalakanTitleBarHanyaKalauTablet(this);
 		
 		S.siapinKitab();
 		S.bacaPengaturan(this);

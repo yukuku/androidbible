@@ -91,17 +91,14 @@ public class IsiActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		TimingLogger tog = new TimingLogger(TAG, "IsiActivity#onCreate"); //$NON-NLS-1$
-		tog.addSplit("IsiActivity (fase 0) onCreate dipanggil"); //$NON-NLS-1$
-		
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		
+		U.nyalakanTitleBarHanyaKalauTablet(this);
 		
 		S.siapinKitab();
 		S.bacaPengaturan(this);
 		
 		setContentView(R.layout.activity_isi);
-		tog.addSplit("IsiActivity (fase 5) sebelum siapin macem2"); //$NON-NLS-1$
 		
 		S.siapinPengirimFidbek(this);
 		S.pengirimFidbek.cobaKirim();
@@ -113,10 +110,7 @@ public class IsiActivity extends Activity {
 		tempatJudul = findViewById(R.id.tempatJudul);
 		lJudul = (TextView) findViewById(R.id.lJudul);
 		
-		tog.addSplit("IsiActivity (fase 10) sebelum terap pengaturan"); //$NON-NLS-1$
-
 		terapkanPengaturan(false);
-		tog.addSplit("IsiActivity (fase 20) sesudah terap pengaturan"); //$NON-NLS-1$
 
 		lsIsi.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			@Override
@@ -195,8 +189,6 @@ public class IsiActivity extends Activity {
 		tampil(pasalTerakhir, ayatTerakhir);
 		//sejarah.tambah(Ari.encode(kitabTerakhir, pasalTerakhir, ayatTerakhir));
 
-		tog.dumpToLog();
-		
 		if (D.EBUG) {
 			new AlertDialog.Builder(this)
 			.setMessage("D.EBUG nyala!") //$NON-NLS-1$
@@ -343,8 +335,8 @@ public class IsiActivity extends Activity {
 		
 		int itemId = item.getItemId();
 		if (itemId == R.id.menuSalinAyat) {
-			ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-			clipboardManager.setText(alamat + "  " + this.isiAyatContextMenu); //$NON-NLS-1$
+			String salinan = alamat + "  " + this.isiAyatContextMenu;
+			U.salin(this, salinan);
 			
 			Toast.makeText(this, getString(R.string.alamat_sudah_disalin, alamat), Toast.LENGTH_SHORT).show();
 			
@@ -383,8 +375,9 @@ public class IsiActivity extends Activity {
 			
 			Intent i = new Intent(Intent.ACTION_SEND);
 			i.setType("text/plain"); //$NON-NLS-1$
-			i.putExtra(Intent.EXTRA_SUBJECT, alamat);
-			i.putExtra(Intent.EXTRA_TEXT, alamat + "  " + this.isiAyatContextMenu + (urlAyat == null? "": " " + urlAyat)); //$NON-NLS-1$
+			i.putExtra(Intent.EXTRA_SUBJECT, alamat); 
+			// FIXME cek fesbuk dan kalo fesbuk, maka taro url di depan, sebaliknya di belakang aja.
+			i.putExtra(Intent.EXTRA_TEXT, (urlAyat == null? "": (urlAyat + " ")) + alamat + "  " + this.isiAyatContextMenu); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			startActivity(Intent.createChooser(i, getString(R.string.bagikan_alamat, alamat)));
 
 			return true;

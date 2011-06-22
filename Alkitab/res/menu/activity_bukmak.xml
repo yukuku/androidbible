@@ -3,9 +3,9 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
 		android:title="@string/ekspor_ke_sd_card"
-		android:id="@+id/menuEkspor" />
+		android:id="@+id/menuEkspor" android:showAsAction="ifRoom|withText"/>
 	<item
 		android:id="@+id/menuImpor"
-		android:title="@string/impor_dari_sd_card" />
+		android:title="@string/impor_dari_sd_card" android:showAsAction="ifRoom|withText"/>
 
 </menu>

@@ -19,7 +19,7 @@
 	<bool name="pref_sortKitabAlfabet_default">false</bool>
 	
 	<string name="pref_bahasa_key">bahasa</string>
-	<string name="pref_bahasa_default">DEFAULT</string>
+	<!-- ditentukan di bahasa_default.xml : pref_bahasa_default -->
 	
 	<string name="pref_warnaHuruf_int_key">warnaHuruf</string>
 	<integer name="pref_warnaHuruf_int_default">0xfff0f0f0</integer>

@@ -4,29 +4,28 @@
 	<item
 		android:id="@+id/menuTuju"
 		android:title="@string/menuTuju"
-		android:icon="@drawable/ic_menu_forward" />
+		android:icon="@drawable/ic_menu_forward" android:showAsAction="always"/>
 	<item
 		android:id="@+id/menuBukmak"
 		android:title="@string/pembatas_buku" 
 		android:titleCondensed="@string/pembatas_condensed"
-		android:icon="@drawable/menu_bukmak"
-		/>
+		android:icon="@drawable/menu_bukmak" android:showAsAction="always"/>
 	<item
 		android:id="@+id/menuSearch2" 
 		android:title="@string/cari_v"
-		android:icon="@drawable/ic_menu_search"/>
+		android:icon="@drawable/ic_menu_search" android:showAsAction="always"/>
 	<item
 		android:id="@+id/menuRenungan"
 		android:title="@string/renungan"
-		android:icon="@drawable/ic_menu_notifications" />
+		android:icon="@drawable/ic_menu_notifications" android:showAsAction="always"/>
 	<item
 		android:id="@+id/menuEdisi"
 		android:title="@string/versi" 
-		android:icon="@drawable/menu_edisi"/>
+		android:icon="@drawable/menu_edisi" android:showAsAction="always"/>
 	<item
 		android:id="@+id/menuPengaturan"
 		android:title="@string/menuPengaturan" 
-		android:icon="@drawable/ic_menu_preferences" />
+		android:icon="@drawable/ic_menu_preferences" android:showAsAction="always"/>
 	<item
 		android:id="@+id/menuDonasi"
 		android:title="@string/menuDonasi"
