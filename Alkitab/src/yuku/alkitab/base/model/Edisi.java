@@ -14,7 +14,6 @@ public class Edisi {
 	private IndexPerikop volatile_indexPerikop;
 	private boolean volatile_indexPerikopSudahCobaBaca = false;
 	
-	@Deprecated
 	private synchronized Kitab[] getXkitab() {
 		if (volatile_xkitab == null) {
 			volatile_xkitab = this.pembaca.bacaInfoKitab();
@@ -71,7 +70,8 @@ public class Edisi {
 		for (Kitab k: xkitab) {
 			if (k != null) return k;
 		}
-		return null; // aneh skali kalo kena ini
+		// aneh skali kalo kena ini, tapi toh kena juga
+		throw new RuntimeException("Ga ketemu satu pun kitab yang ga null. Info edisi: " + (this.pembaca == null? "pembaca=null": (this.pembaca.getJudul() + " nkitab=" + xkitab.length))); 
 	}
 	
 	public synchronized IndexPerikop getIndexPerikop() {
