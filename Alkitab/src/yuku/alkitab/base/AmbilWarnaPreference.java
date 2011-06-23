@@ -16,8 +16,6 @@
 
 package yuku.alkitab.base;
 
-import yuku.alkitab.R;
-import yuku.ambilwarna.*;
 import android.content.*;
 import android.content.res.*;
 import android.os.*;
@@ -25,12 +23,15 @@ import android.preference.*;
 import android.util.*;
 import android.view.*;
 
+import yuku.alkitab.R;
+import yuku.ambilwarna.*;
+
 /**
  * This is an example of a custom preference type. The preference counts the
  * number of clicks it has received and stores/retrieves it from the storage.
  */
 public class AmbilWarnaPreference extends Preference {
-    private int warna;
+    int warna;
     
     // This is the constructor called by the inflater
     public AmbilWarnaPreference(Context context, AttributeSet attrs) {

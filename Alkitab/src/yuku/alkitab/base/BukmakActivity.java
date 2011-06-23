@@ -28,9 +28,9 @@ import yuku.andoutil.*;
 public class BukmakActivity extends ListActivity {
 	public static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
 
-	private static final String[] cursorColumnsMapFrom = {Db.Bukmak2.ari, Db.Bukmak2.tulisan, Db.Bukmak2.waktuUbah};
-	private static final int[] cursorColumnsMapTo = {R.id.lCuplikan, R.id.lTulisan, R.id.lTanggal};
-	private static final String[] cursorColumnsSelect;
+	static final String[] cursorColumnsMapFrom = {Db.Bukmak2.ari, Db.Bukmak2.tulisan, Db.Bukmak2.waktuUbah};
+	static final int[] cursorColumnsMapTo = {R.id.lCuplikan, R.id.lTulisan, R.id.lTanggal};
+	static final String[] cursorColumnsSelect;
 
 	SimpleCursorAdapter adapter;
 	Cursor cursor;
@@ -117,7 +117,7 @@ public class BukmakActivity extends ListActivity {
 		return true;
 	}
 	
-	private void msgbox(String title, String message) {
+	void msgbox(String title, String message) {
 		new AlertDialog.Builder(this)
 		.setTitle(title)
 		.setMessage(message)
@@ -181,7 +181,7 @@ public class BukmakActivity extends ListActivity {
 		return false;
 	}
 	
-	private File getFileBackup() {
+	File getFileBackup() {
 		File dir = new File(Environment.getExternalStorageDirectory(), "bible"); //$NON-NLS-1$
 		if (!dir.exists()) {
 			dir.mkdir();

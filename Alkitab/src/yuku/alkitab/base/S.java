@@ -17,7 +17,7 @@ import yuku.alkitab.base.storage.*;
 import yuku.kirimfidbek.*;
 
 public class S {
-	private static final String TAG = S.class.getSimpleName();
+	static final String TAG = S.class.getSimpleName();
 
 	private static Context appContext;
 	

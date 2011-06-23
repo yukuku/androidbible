@@ -1,15 +1,21 @@
 package yuku.alkitab.base;
 
-import yuku.alkitab.R;
-import android.app.AlertDialog;
+import android.app.*;
 import android.content.*;
 import android.view.*;
 import android.view.View.OnClickListener;
-import android.widget.CheckBox;
+import android.widget.*;
+
+import yuku.alkitab.*;
 
 public class PemilihStabiloDialog {
-	private final AlertDialog alert;
-	private PemilihStabiloCallback pemilihStabiloCallback;
+	final AlertDialog alert;
+	final PemilihStabiloCallback pemilihStabiloCallback;
+	
+	View dialogLayout;
+	
+	static final int[] xid = {R.id.c1, R.id.c2, R.id.c3, R.id.c4, R.id.c5, R.id.c6};
+	static final int[] xrgb = {0xff0000, 0xffff00, 0x00ff00, 0x00ffff, 0x0000ff, 0xff00ff};
 
 	public interface PemilihStabiloCallback {
 		/**
@@ -18,9 +24,6 @@ public class PemilihStabiloDialog {
 		void dipilih(int warnaRgb);
 		void batal();
 	}
-	
-	private static final int[] xid = {R.id.c1, R.id.c2, R.id.c3, R.id.c4, R.id.c5, R.id.c6};
-	private static final int[] xrgb = {0xff0000, 0xffff00, 0x00ff00, 0x00ffff, 0x0000ff, 0xff00ff};
 
 	/**
 	 * @param colorRgb -1 kalo ga terpilih. #rrggbb ga pake alpha
@@ -54,7 +57,7 @@ public class PemilihStabiloDialog {
 		cb.setOnClickListener(cb_click);
 	}
 	
-	private void bCancel_click() {
+	void bCancel_click() {
 		if (pemilihStabiloCallback != null) pemilihStabiloCallback.batal();
 	}
 
@@ -77,7 +80,6 @@ public class PemilihStabiloDialog {
 			}
 		}
 	};
-	private View dialogLayout;
 
 	public void show() {
 		alert.show();

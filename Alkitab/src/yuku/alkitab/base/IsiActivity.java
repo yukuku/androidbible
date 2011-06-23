@@ -59,8 +59,8 @@ public class IsiActivity extends Activity {
 	String isiAyatContextMenu = null;
 	SharedPreferences preferences_instan;
 	
-	private AyatAdapter ayatAdapter_;
-	private Sejarah sejarah;
+	AyatAdapter ayatAdapter_;
+	Sejarah sejarah;
 
 	//# penyimpanan state buat search2
 	String search2_carian = null;
@@ -236,7 +236,7 @@ public class IsiActivity extends Activity {
 		lsIsi.setKeepScreenOn(false);
 	}
 	
-	private int loncatKe(String alamat) {
+	int loncatKe(String alamat) {
 		if (alamat.trim().length() == 0) {
 			return 0;
 		}
@@ -279,7 +279,7 @@ public class IsiActivity extends Activity {
 		return Ari.encode(terpilih.pos, ari_pa);
 	}
 	
-	private void loncatKeAri(int ari) {
+	void loncatKeAri(int ari) {
 		if (ari == 0) return;
 		
 		Log.d(TAG, "akan loncat ke ari 0x" + Integer.toHexString(ari)); //$NON-NLS-1$
@@ -297,7 +297,7 @@ public class IsiActivity extends Activity {
 		tampil(Ari.toPasal(ari), Ari.toAyat(ari));
 	}
 	
-	private boolean lsIsi_itemLongClick(AdapterView<?> parent, View view, int position, long id) {
+	boolean lsIsi_itemLongClick(AdapterView<?> parent, View view, int position, long id) {
 		// kalo setingnya mati, anggap true aja (diconsume)
 		if (Preferences.getBoolean(R.string.pref_matikanTahanAyat_key, R.bool.pref_matikanTahanAyat_default)) {
 			return true;
@@ -444,11 +444,11 @@ public class IsiActivity extends Activity {
 	/**
 	 * @return ayat mulai dari 1
 	 */
-	private int getAyatBerdasarSkrol() {
+	int getAyatBerdasarSkrol() {
 		return ayatAdapter_.getAyatDariPosition(getPosisiBerdasarSkrol());
 	}
 	
-	private int getPosisiBerdasarSkrol() {
+	int getPosisiBerdasarSkrol() {
 		int pos = lsIsi.getFirstVisiblePosition();
 
 		// cek apakah paling atas uda keskrol
@@ -469,7 +469,7 @@ public class IsiActivity extends Activity {
 		return pos;
 	}
 
-	private void bTuju_click() {
+	void bTuju_click() {
 		if (Preferences.getBoolean(R.string.pref_tombolAlamatLoncat_key, R.bool.pref_tombolAlamatLoncat_default)) {
 			bukaDialogLoncat();
 		} else {
@@ -477,7 +477,7 @@ public class IsiActivity extends Activity {
 		}
 	}
 	
-	private void bTuju_longClick() {
+	void bTuju_longClick() {
 		if (sejarah.getN() > 0) {
 			new AlertDialog.Builder(this)
 			.setAdapter(sejarahAdapter, new DialogInterface.OnClickListener() {
@@ -523,7 +523,7 @@ public class IsiActivity extends Activity {
 		}
 	};
 	
-	private void bukaDialogTuju() {
+	void bukaDialogTuju() {
 		Intent intent = new Intent(this, MenujuActivity.class);
 		intent.putExtra(MenujuActivity.EXTRA_pasal, pasal_1);
 		
@@ -533,7 +533,7 @@ public class IsiActivity extends Activity {
 		startActivityForResult(intent, R.id.menuTuju);
 	}
 	
-	private void bukaDialogLoncat() {
+	void bukaDialogLoncat() {
 		final View loncat = LayoutInflater.from(this).inflate(R.layout.dialog_loncat, null);
 		final TextView lContohLoncat = (TextView) loncat.findViewById(R.id.lContohLoncat);
 		final EditText tAlamatLoncat = (EditText) loncat.findViewById(R.id.tAlamatLoncat);
@@ -895,7 +895,7 @@ public class IsiActivity extends Activity {
 	 * @param ayat_1 basis-1
 	 * @return Ari yang hanya terdiri dari pasal dan ayat. Kitab selalu 00
 	 */
-	private int tampil(int pasal_1, int ayat_1) {
+	int tampil(int pasal_1, int ayat_1) {
 		if (pasal_1 < 1) pasal_1 = 1;
 		if (pasal_1 > S.kitabAktif.npasal) pasal_1 = S.kitabAktif.npasal;
 		
@@ -961,7 +961,7 @@ public class IsiActivity extends Activity {
 		return super.onKeyUp(keyCode, event);
 	}
 	
-	private void bKiri_click() {
+	void bKiri_click() {
 		Kitab kitabKini = S.kitabAktif;
 		if (pasal_1 == 1) {
 			// uda di awal pasal, masuk ke kitab sebelum
@@ -983,7 +983,7 @@ public class IsiActivity extends Activity {
 		}
 	}
 	
-	private void bKanan_click() {
+	void bKanan_click() {
 		Kitab kitabKini = S.kitabAktif;
 		if (pasal_1 >= kitabKini.npasal) {
 			int maxKitabPos = S.edisiAktif.getMaxKitabPos();

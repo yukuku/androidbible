@@ -235,7 +235,7 @@ public class MenujuActivity extends Activity {
 		return super.onKeyDown(keyCode, event);
 	}
 	
-	private int cobaBacaPasal() {
+	int cobaBacaPasal() {
 		try {
 			return Integer.parseInt("0" + lPasal.getText().toString()); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
@@ -251,7 +251,7 @@ public class MenujuActivity extends Activity {
 		}
 	}
 
-	private void betulinAyatKelebihan() {
+	void betulinAyatKelebihan() {
 		int ayat = cobaBacaAyat();
 		
 		if (ayat > maxAyat) {
@@ -263,7 +263,7 @@ public class MenujuActivity extends Activity {
 		lAyat.setText(String.valueOf(ayat));
 	}
 	
-	private void betulinPasalKelebihan() {
+	void betulinPasalKelebihan() {
 		int pasal = cobaBacaPasal();
 			
 		if (pasal > maxPasal) {
@@ -275,7 +275,7 @@ public class MenujuActivity extends Activity {
 		lPasal.setText(String.valueOf(pasal));
 	}
 
-	private void pencet(String s) {
+	void pencet(String s) {
 		if (aktif != null) {
 			if (s.equals("C")) { //$NON-NLS-1$
 				aktif.setText(""); //$NON-NLS-1$
@@ -319,7 +319,7 @@ public class MenujuActivity extends Activity {
 		}
 	}
 
-	private void aktifin(TextView aktif, TextView pasif) {
+	void aktifin(TextView aktif, TextView pasif) {
 		this.aktif = aktif;
 		this.pasif = pasif;
 		warnain();

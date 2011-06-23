@@ -119,7 +119,7 @@ public class ConvertOptionsDialog {
 		cbEncoding.setOnItemSelectedListener(cbEncoding_itemSelected);
 	}
 
-	private void showSample(String encoding) {
+	void showSample(String encoding) {
 		pdb.setEncoding(encoding); 
 		
 		String bookName = bookInfo.getFullName();

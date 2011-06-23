@@ -26,15 +26,15 @@ public class ConvertPdbToYes {
 
 	public static final int VERSI_CONVERTER = 1;
 
-	private BiblePlusPDB pdb;
+	BiblePlusPDB pdb;
 
-	private Kitab[] xkitab_;
-	private int[] kitabPosToBookPosMap_;
-	private int nblokPerikop_ = 0;
-	private ByteArrayOutputStream nantinyaPerikopBlokBaos_ = new ByteArrayOutputStream();
-	private BintexWriter nantinyaPerikopBlok_ = new BintexWriter(nantinyaPerikopBlokBaos_);
-	private IntArrayList xariPerikopBlok_ = new IntArrayList();
-	private IntArrayList xposisiPerikopBlok_ = new IntArrayList();
+	Kitab[] xkitab_;
+	int[] kitabPosToBookPosMap_;
+	int nblokPerikop_ = 0;
+	ByteArrayOutputStream nantinyaPerikopBlokBaos_ = new ByteArrayOutputStream();
+	BintexWriter nantinyaPerikopBlok_ = new BintexWriter(nantinyaPerikopBlokBaos_);
+	IntArrayList xariPerikopBlok_ = new IntArrayList();
+	IntArrayList xposisiPerikopBlok_ = new IntArrayList();
 
 	ConvertProgressListener convertProgressListener;
 	
@@ -57,13 +57,13 @@ public class ConvertPdbToYes {
 		this.convertProgressListener = l;
 	}
 	
-	private void progress(int at, String message) {
+	void progress(int at, String message) {
 		if (convertProgressListener != null) {
 			convertProgressListener.onProgress(at, message);
 		}
 	}
 	
-	private void finish() {
+	void finish() {
 		if (convertProgressListener != null) {
 			convertProgressListener.onFinish();
 		}
@@ -298,7 +298,7 @@ public class ConvertPdbToYes {
 	 * and will add (at at) on the beginning of such verses.
 	 * @return
 	 */
-	private String[] getCompleteVerseWithPreprocess(BookInfo bookInfo, int pasal_0, int ayat_0) {
+	String[] getCompleteVerseWithPreprocess(BookInfo bookInfo, int pasal_0, int ayat_0) {
 		String[] ss = bookInfo.getCompleteVerse(pasal_0 + 1, ayat_0 + 1);
 		
 		for (int i = 0; i < ss.length; i++) {

@@ -1,19 +1,20 @@
 package yuku.alkitab.base;
 
-import java.util.Date;
-
-import yuku.alkitab.R;
-import yuku.alkitab.base.model.*;
-import yuku.alkitab.base.storage.Db;
-import android.app.AlertDialog;
+import android.app.*;
 import android.content.*;
 import android.view.*;
-import android.widget.EditText;
+import android.widget.*;
+
+import java.util.*;
+
+import yuku.alkitab.*;
+import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.storage.*;
 
 public class GelembungDialog {
-	private final Context context;
-	private final AlertDialog alert;
-	private final RefreshCallback refreshCallback;
+	final Context context;
+	final AlertDialog alert;
+	final RefreshCallback refreshCallback;
 	
 	EditText tCatatan;
 	

@@ -32,7 +32,7 @@ public class Search2Activity extends Activity {
 	CheckBox cFilterBaru;
 	TextView lTiadaHasil;
 	
-	private int warnaStabilo;
+	int warnaStabilo;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

@@ -71,7 +71,16 @@ public class IntArrayList implements Parcelable {
 
 	public static final Parcelable.Creator<IntArrayList> CREATOR = new Parcelable.Creator<IntArrayList>() {
 		public IntArrayList createFromParcel(Parcel in) {
-			return new IntArrayList(in);
+			int len = in.readInt();
+			
+			IntArrayList res = new IntArrayList();
+			res.buf = new int[len];
+			for (int i = 0; i < len; i++) {
+				res.buf[i] = in.readInt();
+			}
+			res.cap = len;
+			res.len = len;
+			return res;
 		}
 
 		public IntArrayList[] newArray(int size) {
@@ -79,16 +88,6 @@ public class IntArrayList implements Parcelable {
 		}
 	};
 
-	private IntArrayList(Parcel in) {
-		int len = in.readInt();
-		this.buf = new int[len];
-		for (int i = 0; i < len; i++) {
-			buf[i] = in.readInt();
-		}
-		this.cap = len;
-		this.len = len;
-	}
-	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(this.len * 8);

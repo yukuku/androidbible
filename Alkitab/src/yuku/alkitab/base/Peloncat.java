@@ -17,6 +17,9 @@ public class Peloncat {
 		String pendek;
 		int pos;
 		
+		public KitabRef() {
+		}
+
 		@Override public String toString() {
 			return pendek + ":" + pos; //$NON-NLS-1$
 		}

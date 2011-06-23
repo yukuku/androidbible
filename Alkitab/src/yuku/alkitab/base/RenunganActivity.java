@@ -24,7 +24,7 @@ import yuku.andoutil.*;
 public class RenunganActivity extends Activity implements OnStatusDonlotListener {
 	public static final String TAG = RenunganActivity.class.getSimpleName();
 	public static final String EXTRA_alamat = "alamat"; //$NON-NLS-1$
-	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd"); //$NON-NLS-1$
+	static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd"); //$NON-NLS-1$
 
 	public static final String[] ADA_NAMA = {
 		"sh", "rh",  //$NON-NLS-1$//$NON-NLS-2$
@@ -42,9 +42,9 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 	Button bGanti;
 	TextView lStatus;
 	
-	private boolean renderBerhasilBaik = false;
-	private long terakhirCobaTampilLagi = 0;
-	private Animation memudar;
+	boolean renderBerhasilBaik = false;
+	long terakhirCobaTampilLagi = 0;
+	Animation memudar;
 
 	Handler pengulangTampil = new Handler();
 	Handler penampilStatusDonlot = new Handler();
@@ -179,13 +179,13 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		return false;
 	}
 
-	private void tampilkan() {
+	void tampilkan() {
 		pengulangTampil.removeCallbacks(cobaTampilLagi);
 		
 		tuju(S.penampungan.renungan_nama, S.penampungan.renungan_tanggalan, true);
 	}
 
-	private void tuju(String nama, Date date, boolean penting) {
+	void tuju(String nama, Date date, boolean penting) {
 		tuju(nama, sdf.format(date), penting);
 	}
 
@@ -306,7 +306,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		return getString(NAMA_HARI_RESID[day]);
 	}
 
-	private synchronized void akanPerlu(String nama, String tgl, boolean penting) {
+	synchronized void akanPerlu(String nama, String tgl, boolean penting) {
 		if (S.tukangDonlot == null) {
 			S.tukangDonlot = new TukangDonlot(this, this);
 			S.tukangDonlot.start();
@@ -325,9 +325,12 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		}
 	}
 	
-	private static boolean pemintaMasaDepanLagiJalan = false;
+	static boolean pemintaMasaDepanLagiJalan = false;
 	
 	private class PemintaMasaDepan extends Thread {
+		public PemintaMasaDepan() {
+		}
+
 		@Override
 		public void run() {
 			if (pemintaMasaDepanLagiJalan) {

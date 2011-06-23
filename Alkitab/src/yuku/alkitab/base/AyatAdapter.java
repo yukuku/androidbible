@@ -19,15 +19,15 @@ class AyatAdapter extends BaseAdapter {
 	public static final String TAG = AyatAdapter.class.getSimpleName();
 	
 	//# field ctor
-	private final Context appContext_;
-	private final CallbackSpan.OnClickListener paralelListener_;
-	private final IsiActivity.AtributListener atributListener_;
+	final Context appContext_;
+	final CallbackSpan.OnClickListener paralelListener_;
+	final IsiActivity.AtributListener atributListener_;
 	
 	//# field setData
-	private Kitab kitab_;
-	private int pasal_1_;
-	private String[] dataAyat_;
-	private Blok[] perikop_xblok_;
+	Kitab kitab_;
+	int pasal_1_;
+	String[] dataAyat_;
+	Blok[] perikop_xblok_;
 	/**
 	 * Tiap elemen, kalo 0 sampe positif, berarti menunjuk ke AYAT di rendered_
 	 * kalo negatif, -1 berarti index 0 di perikop_*, -2 (a) berarti index 1 (b) di perikop_*

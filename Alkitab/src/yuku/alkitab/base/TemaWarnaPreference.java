@@ -1,20 +1,21 @@
 package yuku.alkitab.base;
 
-import yuku.alkitab.R;
 import android.app.AlertDialog.Builder;
 import android.content.*;
-import android.preference.ListPreference;
+import android.preference.*;
 import android.text.*;
-import android.text.style.ForegroundColorSpan;
+import android.text.style.*;
 import android.util.*;
 import android.view.*;
 import android.widget.*;
 
+import yuku.alkitab.*;
+
 public class TemaWarnaPreference extends ListPreference {
 	private static final String TAG = TemaWarnaPreference.class.getSimpleName();
 	
-	private int mClickedDialogEntryIndex;
-	private String mValue;
+	int mClickedDialogEntryIndex;
+	String mValue;
 	
 	public TemaWarnaPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -153,7 +154,7 @@ public class TemaWarnaPreference extends ListPreference {
 		}
 	}
 	
-	private static int[] pisahWarna(CharSequence value) {
+	static int[] pisahWarna(CharSequence value) {
 		int[] w = new int[3];
 		w[0] = (int) Long.parseLong(value.subSequence(0, 8).toString(), 16);
 		w[1] = (int) Long.parseLong(value.subSequence(9, 17).toString(), 16);

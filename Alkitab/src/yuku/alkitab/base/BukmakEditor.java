@@ -1,29 +1,30 @@
 package yuku.alkitab.base;
 
-import java.util.Date;
-
-import yuku.alkitab.R;
-import yuku.alkitab.base.model.Bukmak2;
-import android.app.AlertDialog;
+import android.app.*;
 import android.content.*;
 import android.view.*;
-import android.widget.EditText;
+import android.widget.*;
+
+import java.util.*;
+
+import yuku.alkitab.*;
+import yuku.alkitab.base.model.*;
 
 public class BukmakEditor {
 	public interface Listener {
 		void onOk();
 	}
 	
-	private final Context context;
+	final Context context;
 
 	// init ini...
-	private String alamat = null;
-	private int ari = 0;
+	String alamat = null;
+	int ari = 0;
 	//... atau ini
-	private long id = -1;
+	long id = -1;
 	
 	// optional
-	private Listener listener;
+	Listener listener;
 	
 	public BukmakEditor(Context context, String alamat, int ari) {
 		// wajib

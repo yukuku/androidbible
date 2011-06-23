@@ -182,7 +182,7 @@ public class EdisiActivity extends Activity {
 		return false;
 	}
 	
-	private void klikPadaEdisiPreset(final CheckBox cAktif, final MEdisiPreset edisi) {
+	void klikPadaEdisiPreset(final CheckBox cAktif, final MEdisiPreset edisi) {
 		if (cAktif.isChecked()) {
 			edisi.setAktif(false);
 		} else {
@@ -286,7 +286,7 @@ public class EdisiActivity extends Activity {
 		}
 	}
 
-	private void klikPadaEdisiYes(final CheckBox cAktif, final MEdisiYes edisi) {
+	void klikPadaEdisiYes(final CheckBox cAktif, final MEdisiYes edisi) {
 		if (cAktif.isChecked()) {
 			edisi.setAktif(false);
 		} else {
@@ -294,7 +294,7 @@ public class EdisiActivity extends Activity {
 		}
 	}
 
-	private void klikPadaBukaFile() {
+	void klikPadaBukaFile() {
 		String state = Environment.getExternalStorageState();
 		if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
 			new AlertDialog.Builder(this)
@@ -338,7 +338,7 @@ public class EdisiActivity extends Activity {
 		}
 	}
 	
-	private void handleFileOpenYes(String filename, String namapdbasal) {
+	void handleFileOpenYes(String filename, String namapdbasal) {
 		{ // cari dup
 			boolean dup = false;
 			BuildConfig c = BuildConfig.get(getApplicationContext());
@@ -464,7 +464,7 @@ public class EdisiActivity extends Activity {
 		dialog.show();
 	}
 	
-	private void showPdbReadErrorDialog(Exception exception) {
+	void showPdbReadErrorDialog(Exception exception) {
 		new AlertDialog.Builder(EdisiActivity.this)
 		.setTitle(R.string.ed_error_reading_pdb_file)
 		.setMessage(getString(R.string.ed_details) + U.tampilException(exception))
