@@ -108,6 +108,8 @@ public class YesPembaca extends Pembaca {
 				if (key.equals("versi")) { //$NON-NLS-1$
 					int versi = in.readInt();
 					if (versi > 2) throw new RuntimeException("Versi Edisi: " + versi + " tidak dikenal"); //$NON-NLS-1$ //$NON-NLS-2$
+				} else if (key.equals("format")) { //$NON-NLS-1$ // ini deprecated, sudah diganti jadi "versi". Tapi harus tetap dikenali, kalo ga akan crash.
+					in.readInt(); // buang
 				} else if (key.equals("nama")) { //$NON-NLS-1$
 					nama = in.readShortString();
 				} else if (key.equals("judul")) { //$NON-NLS-1$
