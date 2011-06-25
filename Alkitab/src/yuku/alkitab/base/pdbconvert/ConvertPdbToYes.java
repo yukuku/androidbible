@@ -49,7 +49,7 @@ public class ConvertPdbToYes {
 	}
 	
 	public static class ConvertResult {
-		public Exception exception;
+		public Throwable exception;
 		public List<String> unconvertedBookNames;
 	}
 	
@@ -211,7 +211,7 @@ public class ConvertPdbToYes {
 			
 			pdb.close();
 			new PDBFileStream(filenamepdb).close();
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			pdb = null;
 			Log.e(TAG, "Eror baca pdb: ", e); //$NON-NLS-1$
 			res.exception = e;

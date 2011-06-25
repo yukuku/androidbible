@@ -464,7 +464,7 @@ public class EdisiActivity extends Activity {
 		dialog.show();
 	}
 	
-	void showPdbReadErrorDialog(Exception exception) {
+	void showPdbReadErrorDialog(Throwable exception) {
 		new AlertDialog.Builder(EdisiActivity.this)
 		.setTitle(R.string.ed_error_reading_pdb_file)
 		.setMessage(getString(R.string.ed_details) + U.tampilException(exception))
