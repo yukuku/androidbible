@@ -390,12 +390,14 @@ public class MenujuActivity extends Activity {
 		@Override
 		public View getDropDownView(int position, View convertView, ViewGroup parent) {
 			CheckedTextView res = convertView != null? (CheckedTextView) convertView: (CheckedTextView) LayoutInflater.from(MenujuActivity.this).inflate(android.R.layout.simple_spinner_dropdown_item, null);
-			res.setText(xkitabc_[position].judul);
+
+			Kitab k = getItem(position);
+			res.setText(k.judul);
 			
 			// warna tergantung jenis
-			if (position >= 0 && position < 39) {
+			if (k.pos >= 0 && k.pos < 39) {
 				res.setTextColor(colorSet[0]);
-			} else if (position >= 39 && position < 66) {
+			} else if (k.pos >= 39 && k.pos < 66) {
 				res.setTextColor(colorSet[1]);
 			} else {
 				res.setTextColor(colorSet[2]);
