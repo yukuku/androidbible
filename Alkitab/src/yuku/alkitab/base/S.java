@@ -54,7 +54,7 @@ public class S {
 	public static TukangDonlot tukangDonlot;
 	
 	static {
-		int a = R.drawable.ambilwarna_panah;
+		int a = R.drawable.ambilwarna_cursor;
 		if (a == 0) throw new RuntimeException(); // cuma mencegah project ambilwarna lupa dibuka
 	}
 	

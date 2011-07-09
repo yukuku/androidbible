@@ -86,20 +86,18 @@ public class AddonManager {
 			
 			String tmpfile = e.tujuan + "-" + (int)(Math.random() * 100000) + ".tmp";  //$NON-NLS-1$//$NON-NLS-2$
 			
+			boolean mkdirOk = mkYesDir();
+			if (!mkdirOk) {
+				if (e.listener != null) e.listener.onGagalDonlot(e, appContext.getString(R.string.tidak_bisa_membuat_folder, getYesPath()), null);
+				return;
+			}
+			
 			PowerManager pm = (PowerManager) appContext.getSystemService(Context.POWER_SERVICE);
 			WakeLock wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "donlot"); //$NON-NLS-1$
 			wakelock.setReferenceCounted(false);
 			wakelock.acquire();
+			
 			try {
-				{
-					File dir = new File(getYesPath());
-					if (!dir.exists()) {
-						boolean mkdirOk = new File(getYesPath()).mkdirs();
-						if (!mkdirOk) {
-							if (e.listener != null) e.listener.onGagalDonlot(e, appContext.getString(R.string.tidak_bisa_membuat_folder, dir.getAbsolutePath()), null);
-						}
-					}
-				}
 				FileOutputStream os = new FileOutputStream(tmpfile);
 				
 				HttpClient client = new DefaultHttpClient();
@@ -193,6 +191,15 @@ public class AddonManager {
 			sema.release(); // ijinkan jalan
 			
 			return e;
+		}
+	}
+	
+	public static boolean mkYesDir() {
+		File dir = new File(getYesPath());
+		if (!dir.exists()) {
+			return new File(getYesPath()).mkdirs();
+		} else {
+			return true;
 		}
 	}
 	

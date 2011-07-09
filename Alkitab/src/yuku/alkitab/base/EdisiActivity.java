@@ -397,6 +397,14 @@ public class EdisiActivity extends Activity {
 			return;
 		}
 		
+		boolean mkdirOk = AddonManager.mkYesDir();
+		if (!mkdirOk) {
+			new AlertDialog.Builder(this)
+			.setMessage(getString(R.string.tidak_bisa_membuat_folder, AddonManager.getYesPath()))
+			.setPositiveButton(R.string.ok, null)
+			.show();
+			return;
+		}
 		
 		ConvertOptionsCallback callback = new ConvertOptionsCallback() {
 			@Override public void onPdbReadError(Exception e) {
