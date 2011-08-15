@@ -17,13 +17,15 @@
 			android:textStyle="bold"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:padding="2dp"
 			android:singleLine="true"
 			android:background="@drawable/isi_judul_bg"
 			android:shadowRadius="2.75"
 			android:shadowColor="#bb000000"
 			android:textColor="#fff"
-			android:textSize="14sp" />
+			android:textSize="14sp" 
+			android:paddingLeft="4dp" 
+			android:paddingBottom="2dp" 
+			android:paddingTop="2dp"/>
 		<View
 			android:layout_width="fill_parent"
 			android:layout_height="1px"
