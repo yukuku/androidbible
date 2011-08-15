@@ -3,6 +3,7 @@ package yuku.alkitab.base;
 import android.app.*;
 import android.content.*;
 import android.view.*;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.*;
 
 import java.util.*;
@@ -71,6 +72,8 @@ public class GelembungDialog {
 			tCatatan.setText(bukmak.tulisan);
 		}
 		
+		alert.getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+		alert.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 		alert.show();
 	}
 
