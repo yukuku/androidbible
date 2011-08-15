@@ -1,7 +1,12 @@
 <?php
+	if (count($argv) < 5) {
+?>
 	// contoh pemakaian: 
 	// php ./kode_ancur_yang_membuat_malu.php ../publikasi/kjv_teks_bdb.txt ../publikasi/kjv_index.txt kjv ../publikasi/kjv_raw/
 	//                  [0]                   [1]                           [2]                        [3] [4]
+<?php 		
+		die;	
+	}
 	
 	$fn = fopen('../publikasi/' . $argv[3] . '_kitab.txt', 'rb');
 	$nama_kitab = array();
