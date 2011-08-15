@@ -34,7 +34,7 @@ public class ConvertOptionsDialog {
 
 	public interface ConvertOptionsCallback {
 		void onOk(ConvertParams params);
-		void onPdbReadError(Exception e);
+		void onPdbReadError(Throwable e);
 	}
 	
 	public ConvertOptionsDialog(Context context, String filenamepdb, ConvertOptionsCallback callback) {
@@ -50,7 +50,7 @@ public class ConvertOptionsDialog {
 			bookInfo = pdb.getBook(0);
 			bookInfo.openBook();
 			bookInfo.getVerse(1, 1);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			callback.onPdbReadError(e);
 			if (pdb != null) pdb.close();
 			return;

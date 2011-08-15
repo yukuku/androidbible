@@ -407,7 +407,7 @@ public class EdisiActivity extends Activity {
 		}
 		
 		ConvertOptionsCallback callback = new ConvertOptionsCallback() {
-			@Override public void onPdbReadError(Exception e) {
+			@Override public void onPdbReadError(Throwable e) {
 				showPdbReadErrorDialog(e);
 			}
 			

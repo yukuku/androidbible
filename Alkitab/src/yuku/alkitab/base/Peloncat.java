@@ -80,6 +80,28 @@ public class Peloncat {
 		//# Contoh output betul: [Kisah, rasul34, 6, -, 7, 8]
 		String[] bagian = alamat.split("((\\s|:|\\.)+|(?=[0-9])(?<=-)|(?=-)(?<=[0-9]))"); //$NON-NLS-1$
 		Log.d(TAG, "peloncat tahap 10: " + Arrays.toString(bagian)); //$NON-NLS-1$
+
+		//# TAHAP 12: buang string dari bagian yang kosong
+		{
+			int adaKosong = 0;
+			for (String b: bagian) {
+				if (b.length() == 0) {
+					adaKosong++;
+					break;
+				}
+			}
+			if (adaKosong > 0) {
+				String[] bagianTanpaKosong = new String[bagian.length - adaKosong];
+				int c = 0;
+				for (String b: bagian) {
+					if (b.length() != 0) {
+						bagianTanpaKosong[c++] = b;
+					}
+				}
+				bagian = bagianTanpaKosong;
+			}
+		}
+		Log.d(TAG, "peloncat tahap 12: " + Arrays.toString(bagian)); //$NON-NLS-1$
 		
 		if (bagian.length == 0) {
 			return false;
