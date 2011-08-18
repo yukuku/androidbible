@@ -48,4 +48,17 @@ public class Db {
 		public static final int jenis_preset = 2; // ga dipake di db, hanya dipake di model 
 		public static final int jenis_yes = 3;
 	}
+	
+	public static final String TABEL_Label = "Label"; //$NON-NLS-1$
+	public static final class Label {
+		public static final String judul = "judul"; //$NON-NLS-1$
+		public static final String urutan = "urutan"; //$NON-NLS-1$
+		public static final String warnaLatar = "warnaLatar"; //$NON-NLS-1$
+	}
+	
+	public static final String TABEL_Bukmak2_Label = "Bukmak2_Label";
+	public static final class Bukmak2_Label {
+		public static final String bukmak2_id = "bukmak2_id"; //$NON-NLS-1$
+		public static final String label_id = "label_id"; //$NON-NLS-1$
+	}
 }
