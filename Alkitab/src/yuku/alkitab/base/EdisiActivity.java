@@ -3,7 +3,6 @@ package yuku.alkitab.base;
 
 import android.app.*;
 import android.content.*;
-import android.content.DialogInterface.OnClickListener;
 import android.os.*;
 import android.util.*;
 import android.view.*;
@@ -297,20 +296,13 @@ public class EdisiActivity extends Activity {
 	void klikPadaBukaFile() {
 		String state = Environment.getExternalStorageState();
 		if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-			new AlertDialog.Builder(this)
-			.setMessage(R.string.ed_opening_pdb_files_is_still_an_experimental_feature)
-			.setPositiveButton(R.string.ok, new OnClickListener() {
-				@Override public void onClick(DialogInterface dialog, int which) {
-					FileChooserConfig config = new FileChooserConfig();
-					config.mode = Mode.Open;
-					config.initialDir = Environment.getExternalStorageDirectory().getAbsolutePath();
-					config.title = getString(R.string.ed_choose_pdb_or_yes_file);
-					config.pattern = ".*\\.(?i:pdb|yes)"; //$NON-NLS-1$
-					
-					startActivityForResult(FileChooserActivity.createIntent(getApplicationContext(), config), REQCODE_openFile);
-				}
-			})
-			.show();
+			FileChooserConfig config = new FileChooserConfig();
+			config.mode = Mode.Open;
+			config.initialDir = Environment.getExternalStorageDirectory().getAbsolutePath();
+			config.title = getString(R.string.ed_choose_pdb_or_yes_file);
+			config.pattern = ".*\\.(?i:pdb|yes)"; //$NON-NLS-1$
+			
+			startActivityForResult(FileChooserActivity.createIntent(getApplicationContext(), config), REQCODE_openFile);
 		} else {
 			new AlertDialog.Builder(this)
 			.setMessage(R.string.ed_no_external_storage)
