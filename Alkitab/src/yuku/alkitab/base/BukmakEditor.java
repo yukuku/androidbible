@@ -163,7 +163,9 @@ public class BukmakEditor {
 		});
 		
 		if (bukmak != null) {
-			labels = new TreeSet<Label>(S.getDb().listLabels(bukmak._id));
+			labels = new TreeSet<Label>();
+			List<Label> ll = S.getDb().listLabels(bukmak._id);
+			if (ll != null) labels.addAll(ll);
 		}
 		setLabelsText();
 		

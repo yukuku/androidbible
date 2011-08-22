@@ -111,13 +111,12 @@ public class InternalDb {
 		}
 	}
 
-	public Cursor listBukmak(String[] cursorColumnsSelect, int jenisBukmak) {
-		return helper.getReadableDatabase().query(Db.TABEL_Bukmak2, cursorColumnsSelect, Db.Bukmak2.jenis + "=?", new String[] {String.valueOf(jenisBukmak)}, null, null, Db.Bukmak2.waktuUbah + " desc"); //$NON-NLS-1$ //$NON-NLS-2$
+	public Cursor listBukmak(int jenis) {
+		return helper.getReadableDatabase().query(Db.TABEL_Bukmak2, null, Db.Bukmak2.jenis + "=?", new String[] {String.valueOf(jenis)}, null, null, Db.Bukmak2.waktuUbah + " desc"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void importBukmak(List<Bukmak2> list, boolean tumpuk) {
 		SQLiteDatabase db = helper.getWritableDatabase();
-		
 		db.beginTransaction();
 		try {
 			String where = Db.Bukmak2.ari + "=? and " + Db.Bukmak2.jenis + "=?"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -158,14 +157,13 @@ public class InternalDb {
 		return helper.getReadableDatabase().query(Db.TABEL_Bukmak2, null, null, null, null, null, null);
 	}
 
-	private static String sql_countAtribut = "select count(*) from " + Db.TABEL_Bukmak2 + " where " + Db.Bukmak2.ari + ">=? and " + Db.Bukmak2.ari + "<?"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	private SQLiteStatement stmt_countAtribut = null;
 	public int countAtribut(int ari_kitabpasal) {
 		int ariMin = ari_kitabpasal & 0x00ffff00;
 		int ariMax = ari_kitabpasal | 0x000000ff;
 		
 		if (stmt_countAtribut == null) {
-			stmt_countAtribut = helper.getReadableDatabase().compileStatement(sql_countAtribut);
+			stmt_countAtribut = helper.getReadableDatabase().compileStatement("select count(*) from " + Db.TABEL_Bukmak2 + " where " + Db.Bukmak2.ari + ">=? and " + Db.Bukmak2.ari + "<?");//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 		
 		stmt_countAtribut.clearBindings();
@@ -175,7 +173,6 @@ public class InternalDb {
 		return (int) stmt_countAtribut.simpleQueryForLong();
 	}
 	
-	private static String sql_getCatatan = "select * from " + Db.TABEL_Bukmak2 + " where " + Db.Bukmak2.ari + ">=? and " + Db.Bukmak2.ari + "<?"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	private String[] sql_getCatatan_params = new String[2];
 	/**
 	 * @param map_0 adalah ayat, basis 0
@@ -188,7 +185,7 @@ public class InternalDb {
 		
 		sql_getCatatan_params[0] = String.valueOf(ariMin);
 		sql_getCatatan_params[1] = String.valueOf(ariMax);
-		Cursor cursor = helper.getReadableDatabase().rawQuery(sql_getCatatan, sql_getCatatan_params);
+		Cursor cursor = helper.getReadableDatabase().rawQuery("select * from " + Db.TABEL_Bukmak2 + " where " + Db.Bukmak2.ari + ">=? and " + Db.Bukmak2.ari + "<?", sql_getCatatan_params); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		try {
 			int kolom_jenis = cursor.getColumnIndexOrThrow(Db.Bukmak2.jenis);
 			int kolom_ari = cursor.getColumnIndexOrThrow(Db.Bukmak2.ari);
@@ -423,12 +420,16 @@ public class InternalDb {
 		}
 		return res;
 	}
-
+	
+	/**
+	 * @return null when not found
+	 */
 	public List<Label> listLabels(long bukmak2_id) {
-		List<Label> res = new ArrayList<Label>();
+		List<Label> res = null;
 		Cursor cursor = helper.getReadableDatabase().rawQuery("select " + Db.TABEL_Label + ".* from " + Db.TABEL_Label + ", " + Db.TABEL_Bukmak2_Label + " where " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.label_id + " = " + Db.TABEL_Label + "." + BaseColumns._ID + " and " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.bukmak2_id + " = ?  order by " + Db.TABEL_Label + "." + Db.Label.urutan + " asc", new String[] {String.valueOf(bukmak2_id)});
 		try {
 			while (cursor.moveToNext()) {
+				if (res == null) res = new ArrayList<Label>();
 				res.add(Label.fromCursor(cursor));
 			}
 		} finally {
