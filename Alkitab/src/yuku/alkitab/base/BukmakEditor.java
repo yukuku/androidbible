@@ -5,6 +5,7 @@ import android.content.*;
 import android.content.DialogInterface.OnClickListener;
 import android.text.*;
 import android.view.*;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.*;
 
 import java.util.*;
@@ -76,6 +77,8 @@ public class BukmakEditor {
 				.setNegativeButton(R.string.cancel, null)
 				.create();
 				
+				dialog.getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+				dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 				dialog.show();
 				
 				final Button bOk = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
