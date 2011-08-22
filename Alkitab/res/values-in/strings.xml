@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="stabilo_judul">Highlight (Stabilo)</string>
+    <string name="stabilo_judul">Sorot</string>
     <string name="pref_pindah_ke_ayat_sebelum_sesudah_dengan_tombol_volume">Pindah ke ayat sebelum/sesudahnya dengan tombol volume</string>
     <string name="pref_pindah_dengan_volume">Pindah dengan Volume</string>
-    <string name="highlight_stabilo">Highlight (stabilo)</string>
+    <string name="highlight_stabilo">Sorot</string>
     <string name="belum_ada_sejarah">Belum ada sejarah.</string>
     <string name="donasi_tombol_gamau">Lain kali</string>
     <string name="donasi_tombol_ok">Donasi</string>
@@ -16,14 +16,14 @@
     <string name="renungan_sudah_disalin">Renungan sudah disalin.</string>
     <string name="salin_renungan">Salin renungan</string>
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Ekspor berhasil.\n\nFile yang dihasilkan: %s</string>
-    <string name="impor_berhasil_angka_diproses">Impor berhasil. %d pembatas buku/catatan diproses.</string>
+    <string name="impor_berhasil_angka_diproses">Impor berhasil. Semuanya ada %d pembatas buku, catatan, dan/atau sorotan yang diproses.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Terjadi kesalahan ketika mengekspor: %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Ekspor pembatas buku dan catatan ke SD Card untuk cadangan (backup)?</string>
+    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Ekspor pembatas buku, catatan, dan sorotan ke SD Card untuk cadangan (backup)?</string>
     <string name="ekspor_judul">Ekspor</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Terjadi kesalahan ketika mengimpor: %s</string>
-    <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Apakah Anda mau menumpuk pembatas buku dan catatan yang ada saat ini?</string>
+    <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Apakah Anda mau menumpuk pembatas buku, catatan, dan sorotan yang sudah ada saat ini?</string>
     <string name="file_tidak_bisa_dibaca_file">File tidak ada atau tidak bisa dibaca: %s</string>
-    <string name="impor_pembatas_buku_dan_catatan_dari_tanya">Impor pembatas buku dan catatan dari cadangan (backup) di SD Card?\n\nFile: %s</string>
+    <string name="impor_pembatas_buku_dan_catatan_dari_tanya">Impor pembatas buku, catatan, dan sorotan dari cadangan (backup) di SD Card?\n\nFile: %s</string>
     <string name="impor_judul">Impor</string>
     <string name="impor_dari_sd_card">Impor dari SD Card</string>
     <string name="ekspor_ke_sd_card">Ekspor ke SD Card</string>
