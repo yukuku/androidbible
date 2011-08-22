@@ -2,8 +2,7 @@
 <menu
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
-		android:id="@+id/menuUbahKeteranganBukmak"
-		android:title="@string/ubah_judul" />
+		android:id="@+id/menuUbahKeteranganBukmak" android:title="@string/ubah_bukmak"/>
 	<item
 		android:id="@+id/menuHapusBukmak"
 		android:title="@string/hapus_pembatas_buku" />

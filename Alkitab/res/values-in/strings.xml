@@ -62,7 +62,6 @@
     <string name="pembatas_buku">Pembatas buku</string>
     <string name="pembatas_condensed">Pembatas</string>
     <string name="hapus_pembatas_buku">Hapus pembatas buku</string>
-    <string name="ubah_judul">Ubah judul</string>
     <string name="bagikan">Bagikan</string>
     <string name="tulis_catatan">Tulis catatan</string>
     <string name="tambah_pembatas_buku">Tambah pembatas buku</string>
@@ -197,4 +196,5 @@
     <string name="ed_tekan_untuk_mengunduh">Tekan untuk mengunduh</string>
     <string name="info_terperinci">Info terperinci</string>
     <string name="buang_dari_daftar">Buang dari daftar</string>
+    <string name="ubah_bukmak">Edit pembatas buku</string>
 </resources>

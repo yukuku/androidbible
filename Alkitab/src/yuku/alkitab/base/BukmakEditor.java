@@ -115,6 +115,25 @@ public class BukmakEditor {
 			}
 		}
 	};
+	
+	private View.OnClickListener lJudul_click = new View.OnClickListener() {
+		@Override public void onClick(View v) {
+			final Label label = (Label) v.getTag(R.id.TAG_label);
+			if (label == null) return;
+			
+			new AlertDialog.Builder(context)
+			.setTitle("Remove label")
+			.setMessage(String.format("Do you want to remove the label '%s' from this bookmark?", label.judul))
+			.setPositiveButton(R.string.ok, new OnClickListener() {
+				@Override public void onClick(DialogInterface dialog, int which) {
+					labels.remove(label);
+					setLabelsText();
+				}
+			})
+			.setNegativeButton(R.string.cancel, null)
+			.show();
+		}
+	};
 
 	public void bukaDialog() {
 		final Bukmak2 bukmak = this.ari == 0? S.getDb().getBukmakById(id): S.getDb().getBukmakByAri(ari, yuku.alkitab.base.storage.Db.Bukmak2.jenis_bukmak);
@@ -199,8 +218,13 @@ public class BukmakEditor {
 	private View getLabelView(Label label) {
 		View res = LayoutInflater.from(context).inflate(R.layout.label, null);
 		res.setLayoutParams(panelLabels.generateDefaultLayoutParams());
+		
 		TextView lJudul = U.getView(res, R.id.lJudul);
 		lJudul.setText(label.judul);
+		
+		res.setTag(R.id.TAG_label, label);
+		res.setOnClickListener(lJudul_click );
+		
 		return res;
 	}
 
