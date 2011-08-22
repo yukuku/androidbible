@@ -216,7 +216,7 @@ public class BukmakEditor {
 	}
 	
 	private View getLabelView(Label label) {
-		View res = LayoutInflater.from(context).inflate(R.layout.label, null);
+		View res = LayoutInflater.from(context).inflate(R.layout.label_x, null);
 		res.setLayoutParams(panelLabels.generateDefaultLayoutParams());
 		
 		TextView lJudul = U.getView(res, R.id.lJudul);
