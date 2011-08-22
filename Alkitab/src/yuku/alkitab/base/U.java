@@ -4,6 +4,7 @@ import android.app.*;
 import android.content.*;
 import android.graphics.*;
 import android.os.*;
+import android.view.*;
 
 import java.io.*;
 import java.util.*;
@@ -159,5 +160,19 @@ public class U {
 	@SuppressWarnings("deprecation") public static void salin(Context context, String salinan) {
 		android.text.ClipboardManager clipboardManager = (android.text.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
 		clipboardManager.setText(salinan); 
+	}
+
+	/**
+	 * Convenience method of findViewById
+	 */
+	@SuppressWarnings("unchecked") public static <T extends View> T getView(View parent, int id) {
+		return (T) parent.findViewById(id);
+	}
+
+	/**
+	 * Convenience method of findViewById
+	 */
+	@SuppressWarnings("unchecked") public static <T extends View> T getView(Activity activity, int id) {
+		return (T) activity.findViewById(id);
 	}
 }

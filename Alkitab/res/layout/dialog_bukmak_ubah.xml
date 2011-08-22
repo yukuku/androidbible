@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_height="wrap_content"
-	android:layout_width="wrap_content"
-	android:orientation="vertical"
-	android:padding="8dp"
-	android:minWidth="280dp"
-	>
-	<TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:textColor="#fff" android:text="@string/judul_titikdua"/>
-	<EditText
-		android:id="@+id/tTulisan"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:inputType="textCapSentences"
-		android:imeOptions="actionGo"
-	android:singleLine="true" android:selectAllOnFocus="true" android:layout_marginTop="8dp"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res/yuku.alkitab" android:layout_height="wrap_content" android:layout_width="wrap_content" android:orientation="vertical" android:padding="8dp" android:minWidth="280dp">
+	<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#fff" android:text="@string/judul_titikdua" />
+	<EditText android:id="@+id/tTulisan" android:layout_width="fill_parent" android:layout_height="wrap_content" android:inputType="textCapSentences" android:imeOptions="actionGo" android:singleLine="true" android:selectAllOnFocus="true" android:layout_marginTop="8dp" />
+	<yuku.devoxx.flowlayout.FlowLayout android:layout_height="wrap_content" android:id="@+id/panelLabels" android:layout_width="wrap_content" app:horizontalSpacing="8dp" app:verticalSpacing="6dp">
+		<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#fff" android:text="Labels:" android:layout_marginRight="8dp" />
+		<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/bAddLabel" android:text="Add…" />
+	</yuku.devoxx.flowlayout.FlowLayout>
+<!-- 	<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:gravity="center_vertical">
+		<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:text="+" />
+		<Button android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/bAddLabel" android:text="Add label…" />
+	</LinearLayout> -->
 </LinearLayout>

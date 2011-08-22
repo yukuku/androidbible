@@ -89,8 +89,7 @@ public class GelembungDialog {
 			}
 		} else { // bukmak == null; belum ada sebelumnya, maka hanya insert kalo ada tulisan.
 			if (tulisan.length() > 0) {
-				bukmak = new Bukmak2(ari, Db.Bukmak2.jenis_catatan, tulisan, new Date(), new Date());
-				S.getDb().insertBukmak(bukmak);
+				bukmak = S.getDb().insertBukmak(ari, Db.Bukmak2.jenis_catatan, tulisan, new Date(), new Date());
 			}
 		}
 		
