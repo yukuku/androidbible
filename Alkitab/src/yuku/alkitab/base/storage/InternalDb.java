@@ -80,16 +80,35 @@ public class InternalDb {
 		}
 	}
 	
-	private String[] sql_hapusBukmak_params = new String[2];
-	public int hapusBukmakByAri(int ari, int jenis) {
-		sql_hapusBukmak_params[0] = String.valueOf(jenis);
-		sql_hapusBukmak_params[1] = String.valueOf(ari);
-		
-		return helper.getWritableDatabase().delete(Db.TABEL_Bukmak2, Db.Bukmak2.jenis + "=? and " + Db.Bukmak2.ari + "=?", sql_hapusBukmak_params); //$NON-NLS-1$ //$NON-NLS-2$
+	public void hapusBukmakByAri(int ari, int jenis) {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		db.beginTransaction();
+		try {
+			String[] params = {String.valueOf(jenis), String.valueOf(ari)};
+			SQLiteStatement stmt = db.compileStatement("select _id from " + Db.TABEL_Bukmak2 + " where " + Db.Bukmak2.jenis + "=? and " + Db.Bukmak2.ari + "=?");
+			stmt.bindAllArgsAsStrings(params);
+			long _id = stmt.simpleQueryForLong();
+			
+			params = new String[] {String.valueOf(_id)};
+			db.delete(Db.TABEL_Bukmak2_Label, Db.Bukmak2_Label.bukmak2_id + "=?", params); //$NON-NLS-1$
+			db.delete(Db.TABEL_Bukmak2, "_id=?", params); //$NON-NLS-1$
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
 	}
 
 	public void hapusBukmakById(long id) {
-		helper.getWritableDatabase().delete(Db.TABEL_Bukmak2, "_id=?", new String[] {String.valueOf(id)}); //$NON-NLS-1$
+		SQLiteDatabase db = helper.getWritableDatabase();
+		db.beginTransaction();
+		try {
+			String[] params = new String[] {String.valueOf(id)};
+			db.delete(Db.TABEL_Bukmak2_Label, Db.Bukmak2_Label.bukmak2_id + "=?", params); //$NON-NLS-1$
+			db.delete(Db.TABEL_Bukmak2, "_id=?", params); //$NON-NLS-1$
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
 	}
 
 	public Cursor listBukmak(String[] cursorColumnsSelect, int jenisBukmak) {
