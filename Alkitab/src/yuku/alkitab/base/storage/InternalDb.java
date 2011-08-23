@@ -8,8 +8,8 @@ import android.util.*;
 
 import java.util.*;
 
-import yuku.alkitab.base.EdisiActivity.MEdisiYes;
 import yuku.alkitab.base.*;
+import yuku.alkitab.base.EdisiActivity.MEdisiYes;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.renungan.*;
 import yuku.andoutil.*;
@@ -111,8 +111,16 @@ public class InternalDb {
 		}
 	}
 
-	public Cursor listBukmak(int jenis) {
-		return helper.getReadableDatabase().query(Db.TABEL_Bukmak2, null, Db.Bukmak2.jenis + "=?", new String[] {String.valueOf(jenis)}, null, null, Db.Bukmak2.waktuUbah + " desc"); //$NON-NLS-1$ //$NON-NLS-2$
+	public Cursor listBukmak(int jenis, long labelId) {
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        if (labelId == 0) { // no restrictions
+            return db.query(Db.TABEL_Bukmak2, null, Db.Bukmak2.jenis + "=?", new String[]{String.valueOf(jenis)}, null, null, Db.Bukmak2.waktuUbah + " desc");
+        } else if (labelId == BukmakListActivity.LABELID_noLabel) { // only without label
+            return db.rawQuery("select * from " + Db.TABEL_Bukmak2 + " where " + Db.TABEL_Bukmak2 + "." + Db.Bukmak2.jenis + "=? and " + Db.TABEL_Bukmak2 + "." + BaseColumns._ID + " not in (select " + Db.Bukmak2_Label.bukmak2_id + " from " + Db.TABEL_Bukmak2_Label + ") order by " + Db.TABEL_Bukmak2 + "." + Db.Bukmak2.waktuUbah + " desc", new String[] {String.valueOf(jenis)});
+        } else { // filter by labelId
+            return db.rawQuery("select * from " + Db.TABEL_Bukmak2 + ", " + Db.TABEL_Bukmak2_Label + " where " + Db.Bukmak2.jenis + "=? and " + Db.TABEL_Bukmak2 + "." + BaseColumns._ID + " = " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.bukmak2_id + " and " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.label_id + "=? order by " + Db.TABEL_Bukmak2 + "." + Db.Bukmak2.waktuUbah + " desc", new String[] {String.valueOf(jenis), String.valueOf(labelId)});
+        }
 	}
 
 	public void importBukmak(List<Bukmak2> list, boolean tumpuk) {
@@ -475,5 +483,39 @@ public class InternalDb {
 		} finally {
 			db.endTransaction();
 		}
+	}
+
+    public Label getLabelById(long labelId) {
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.query(Db.TABEL_Label, null, BaseColumns._ID + "=?", new String[] {String.valueOf(labelId)}, null, null, null);
+        try {
+            if (cursor.moveToNext()) {
+                return Label.fromCursor(cursor);
+            } else {
+                return null;
+            }
+        } finally {
+            cursor.close();
+        }
+    }
+
+	public void hapusLabelById(long id) {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		db.beginTransaction();
+		try {
+			String[] params = new String[] {String.valueOf(id)};
+			db.delete(Db.TABEL_Bukmak2_Label, Db.Bukmak2_Label.label_id + "=?", params); //$NON-NLS-1$
+			db.delete(Db.TABEL_Label, "_id=?", params); //$NON-NLS-1$
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+	}
+
+	public void renameLabel(Label label, String judul) {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		ContentValues cv = new ContentValues();
+		cv.put(Db.Label.judul, judul);
+		db.update(Db.TABEL_Label, cv, "_id=?", new String[] {String.valueOf(label._id)});
 	}
 }

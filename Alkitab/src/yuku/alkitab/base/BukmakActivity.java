@@ -5,7 +5,6 @@ import android.app.*;
 import android.content.*;
 import android.database.*;
 import android.os.*;
-import android.provider.*;
 import android.util.*;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -19,18 +18,15 @@ import org.xml.sax.*;
 import org.xml.sax.ext.*;
 import org.xmlpull.v1.*;
 
-import yuku.alkitab.R;
-import yuku.alkitab.base.BukmakEditor.Listener;
+import yuku.alkitab.*;
+import yuku.alkitab.base.LabelEditorDialog.OkListener;
 import yuku.alkitab.base.model.*;
-import yuku.alkitab.base.storage.*;
-import yuku.andoutil.*;
-import yuku.devoxx.flowlayout.*;
 
 public class BukmakActivity extends ListActivity {
+    // out
 	public static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
 
-	CursorAdapter adapter;
-	Cursor cursor;
+	BukmakFilterAdapter adapter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,71 +39,14 @@ public class BukmakActivity extends ListActivity {
 		setContentView(R.layout.activity_bukmak);
 		setTitle(R.string.pembatas_buku);
 		
-		cursor = S.getDb().listBukmak(Db.Bukmak2.jenis_bukmak);
-		startManagingCursor(cursor);
+		adapter = new BukmakFilterAdapter();
+		adapter.reload();
 		
-		final int col__id = cursor.getColumnIndexOrThrow(BaseColumns._ID);
-		final int col_ari = cursor.getColumnIndexOrThrow(Db.Bukmak2.ari);
-		final int col_tulisan = cursor.getColumnIndexOrThrow(Db.Bukmak2.tulisan);
-		final int col_waktuUbah = cursor.getColumnIndexOrThrow(Db.Bukmak2.waktuUbah);
-		
-		adapter = new CursorAdapter(this, cursor, false) {
-			@Override public View newView(Context context, Cursor cursor, ViewGroup parent) {
-				return getLayoutInflater().inflate(R.layout.item_bukmak, null);
-			}
-			
-			@Override public void bindView(View view, Context context, Cursor cursor) {
-				TextView lTanggal = U.getView(view, R.id.lTanggal);
-				TextView lTulisan = U.getView(view, R.id.lTulisan);
-				TextView lCuplikan = U.getView(view, R.id.lCuplikan);
-				FlowLayout panelLabels = U.getView(view, R.id.panelLabels);
-				
-				lTanggal.setText(Sqlitil.toLocaleDateMedium(cursor.getInt(col_waktuUbah)));
-				IsiActivity.aturTampilanTeksTanggalBukmak(lTanggal);
-				
-				lTulisan.setText(cursor.getString(col_tulisan));
-				IsiActivity.aturTampilanTeksJudulBukmak(lTulisan);
-				
-				int ari = cursor.getInt(col_ari);
-				Kitab kitab = S.edisiAktif.getKitab(Ari.toKitab(ari));
-				String isi = S.muatSatuAyat(S.edisiAktif, kitab, Ari.toPasal(ari), Ari.toAyat(ari));
-				isi = U.buangKodeKusus(isi);
-				String alamat = S.alamat(S.edisiAktif, ari);
-				IsiActivity.aturIsiDanTampilanCuplikanBukmak(lCuplikan, alamat, isi);
-				
-				long _id = cursor.getLong(col__id);
-				List<Label> labels = S.getDb().listLabels(_id);
-				if (labels != null && labels.size() != 0) {
-					panelLabels.setVisibility(View.VISIBLE);
-					panelLabels.removeAllViews();
-					for (int i = 0, len = labels.size(); i < len; i++) {
-						panelLabels.addView(getLabelView(panelLabels, labels.get(i)));
-					}
-				} else {
-					panelLabels.setVisibility(View.GONE);
-				}
-			}
-		};
-		setListAdapter(adapter);
-
 		ListView listView = getListView();
-		listView.setBackgroundColor(S.penerapan.warnaLatar);
-		listView.setCacheColorHint(S.penerapan.warnaLatar);
-		listView.setFastScrollEnabled(true);
+		listView.setAdapter(adapter);
 
 		registerForContextMenu(listView);
 	}
-	
-	protected View getLabelView(FlowLayout panelLabels, Label label) {
-		View res = LayoutInflater.from(this).inflate(R.layout.label, null);
-		res.setLayoutParams(panelLabels.generateDefaultLayoutParams());
-		
-		TextView lJudul = U.getView(res, R.id.lJudul);
-		lJudul.setText(label.judul);
-		
-		return res;
-	}
-
 
 	private void bikinMenu(Menu menu) {
 		menu.clear();
@@ -260,7 +199,7 @@ public class BukmakActivity extends ListActivity {
 					msgbox(getString(R.string.impor_judul), getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, ((Exception) result).getMessage()));
 				}
 				
-				adapter.getCursor().requery();
+				adapter.reload();
 			}
 		}.execute((Boolean)tumpuk);
 	}
@@ -316,48 +255,138 @@ public class BukmakActivity extends ListActivity {
 					msgbox(getString(R.string.ekspor_judul), getString(R.string.terjadi_kesalahan_ketika_mengekspor_pesan, ((Exception) result).getMessage()));
 				}
 			}
-		}.execute((Void[])null);
+		}.execute();
 	}
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		Cursor o = (Cursor) adapter.getItem(position);
-		int ari = o.getInt(o.getColumnIndexOrThrow(Db.Bukmak2.ari));
-		
-		Intent res = new Intent();
-		res.putExtra(EXTRA_ariTerpilih, ari);
-		
-		setResult(RESULT_OK, res);
-		finish();
+		// FIXME
 	}
 	
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		new MenuInflater(this).inflate(R.menu.context_bukmak, menu);
-	}
-	
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item.getMenuInfo();
+	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		getMenuInflater().inflate(R.menu.context_bukmak, menu);
 
-		if (item.getItemId() == R.id.menuHapusBukmak) {
-			S.getDb().hapusBukmakById(menuInfo.id);
-			adapter.getCursor().requery();
+		MenuItem menuRenameLabel = menu.findItem(R.id.menuRenameLabel);
+		MenuItem menuDeleteLabel = menu.findItem(R.id.menuDeleteLabel);
+
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+		if (info.position < 4) {
+			menuRenameLabel.setEnabled(false);
+			menuDeleteLabel.setEnabled(false);
+		} else {
+			menuRenameLabel.setEnabled(true);
+			menuDeleteLabel.setEnabled(true);
+		}
+	}
+
+	@Override public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+
+		int itemId = item.getItemId();
+		if (itemId == R.id.menuRenameLabel) {
+			final Label label = adapter.getItem(info.position);
+			if (label == null) {
+				return true;
+			}
 			
-			return true;
-		} else if (item.getItemId() == R.id.menuUbahKeteranganBukmak) {
-			BukmakEditor editor = new BukmakEditor(this, menuInfo.id);
-			editor.setListener(new Listener() {
-				@Override
-				public void onOk() {
-					adapter.getCursor().requery();
+			LabelEditorDialog.show(this, label.judul, new OkListener() {
+				@Override public void onOk(String judul) {
+					S.getDb().renameLabel(label, judul);
+					adapter.reload();
 				}
 			});
-			editor.bukaDialog();
-			
+
+			return true;
+		} else if (itemId == R.id.menuDeleteLabel) {
+			final Label label = adapter.getItem(info.position);
+			if (label == null) {
+				return true;
+			}
+
+			new AlertDialog.Builder(this)
+			.setTitle("Delete label")
+			.setMessage(String.format("Are you sure you want to delete the label '%s'? This label will be unassigned from all bookmarks.", label.judul))
+			.setNegativeButton(R.string.cancel, null)
+			.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+				@Override public void onClick(DialogInterface dialog, int which) {
+					S.getDb().hapusLabelById(label._id);
+					adapter.reload();
+				}
+			})
+			.show();
 			return true;
 		}
+
+		return false;
+	}
+
+	class BukmakFilterAdapter extends BaseAdapter {
+		// 0. [icon] All bookmarks
+		// 1. [icon] Notes
+		// 2. [icon] Highlightings
+		// 3. Unlabeled bookmarks
+		// 4. dst label2
 		
-		return super.onContextItemSelected(item);
+		List<Label> labels;
+		private String[] presetCaptions = {
+			"All bookmarks",
+			"Notes",
+			"Highlightings",
+			"Unlabeled bookmarks",
+		};
+		
+		private boolean hasLabels() {
+			return labels != null && labels.size() > 0;
+		}
+		
+		@Override public int getCount() {
+			return 3 + (hasLabels()? 1 + labels.size(): 0);
+		}
+
+		@Override public Label getItem(int position) {
+			if (position < 4) return null;
+			return labels.get(position - 4);
+		}
+
+		@Override public long getItemId(int position) {
+			return position;
+		}
+
+		@Override public View getView(int position, View convertView, ViewGroup parent) {
+			View res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_bukmakfilter, null);
+			
+			ImageView imgFilterIcon = U.getView(res, R.id.imgFilterIcon);
+			if (position < 3) {
+				imgFilterIcon.setVisibility(View.VISIBLE);
+				imgFilterIcon.setImageResource(position == 0? R.drawable.bukmak: position == 1? R.drawable.gelembung: position == 2? R.drawable.warnastabilo_checked: 0);
+				imgFilterIcon.setBackgroundColor(position == 2? 0xffffff00: 0);
+			} else {
+				imgFilterIcon.setVisibility(View.GONE);
+			}
+			
+			TextView lFilterCaption = U.getView(res, R.id.lFilterCaption);
+			if (position < 4) {
+				lFilterCaption.setVisibility(View.VISIBLE);
+				lFilterCaption.setText(presetCaptions[position]);
+			} else {
+				lFilterCaption.setVisibility(View.GONE);
+			}
+			
+			TextView lFilterLabel = U.getView(res, R.id.lFilterLabel);
+			if (position < 4) {
+				lFilterLabel.setVisibility(View.GONE);
+			} else {
+				Label label = getItem(position);
+				lFilterLabel.setVisibility(View.VISIBLE);
+				lFilterLabel.setText(label.judul);
+			}
+			
+			return res;
+		}
+		
+		private void reload() {
+			labels = S.getDb().listSemuaLabel();
+			notifyDataSetChanged();
+		}
 	}
 }

@@ -3,13 +3,12 @@ package yuku.alkitab.base;
 import android.app.*;
 import android.content.*;
 import android.content.DialogInterface.OnClickListener;
-import android.text.*;
 import android.view.*;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.*;
 
 import java.util.*;
 
+import yuku.alkitab.base.LabelEditorDialog.OkListener;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.*;
 import yuku.devoxx.flowlayout.*;
@@ -60,52 +59,13 @@ public class BukmakEditor {
 	private OnClickListener bAddLabel_dialog_itemSelected = new OnClickListener() {
 		@Override public void onClick(DialogInterface _unused_, int which) {
 			if (which == adapter.getCount() - 1) { // new label
-				View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_label_ubah, null);
-				final EditText tJudul = U.getView(dialogView, R.id.tJudul);
-				
-				final AlertDialog dialog = new AlertDialog.Builder(context)
-				.setView(dialogView)
-				.setPositiveButton(R.string.ok, new OnClickListener() {
-					@Override public void onClick(DialogInterface dialog, int which) {
-						Label labelBaru = S.getDb().tambahLabel(tJudul.getText().toString());
+				LabelEditorDialog.show(context, "", new OkListener() {
+					@Override public void onOk(String judul) {
+						Label labelBaru = S.getDb().tambahLabel(judul);
 						if (labelBaru != null) {
 							labels.add(labelBaru);
 							setLabelsText();
 						}
-					}
-				})
-				.setNegativeButton(R.string.cancel, null)
-				.create();
-				
-				dialog.getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-				dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-				dialog.show();
-				
-				final Button bOk = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-				bOk.setEnabled(false);
-				
-				final List<Label> semuaLabel = S.getDb().listSemuaLabel();
-				
-				tJudul.addTextChangedListener(new TextWatcher() {
-					@Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-					}
-					
-					@Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-					}
-					
-					@Override public void afterTextChanged(Editable s) {
-						if (s.length() == 0 || s.toString().trim().length() == 0) {
-							bOk.setEnabled(false);
-							return;
-						} else {
-							for (Label label: semuaLabel) {
-								if (label.judul.equals(s.toString())) {
-									bOk.setEnabled(false);
-									return;
-								}
-							}
-						}
-						bOk.setEnabled(true);
 					}
 				});
 			} else {

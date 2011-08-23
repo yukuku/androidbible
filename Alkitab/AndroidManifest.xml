@@ -10,7 +10,8 @@
 
 		<activity android:name="yuku.alkitab.base.MenujuActivity" android:label="@string/tuju_v" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name="yuku.alkitab.base.PengaturanActivity" android:label="@string/pengaturan_alkitab" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />
-		<activity android:name="yuku.alkitab.base.BukmakActivity" android:label="@string/pembatas_buku" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />
+        <activity android:name="yuku.alkitab.base.BukmakActivity" android:label="@string/pembatas_buku" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />
+        <activity android:name="yuku.alkitab.base.BukmakListActivity" android:label="@string/pembatas_buku" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />
 		<activity android:name="yuku.alkitab.base.EdisiActivity" android:label="@string/kelola_versi" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />
 		<activity android:name="yuku.alkitab.base.Search2Activity" android:label="@string/cari_v" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name="yuku.alkitab.base.RenunganActivity" android:label="@string/renungan" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar" />
