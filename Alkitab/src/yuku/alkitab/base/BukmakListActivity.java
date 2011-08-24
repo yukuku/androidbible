@@ -1,45 +1,33 @@
 package yuku.alkitab.base;
 
-import android.app.AlertDialog;
-import android.app.ListActivity;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.database.Cursor;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Environment;
-import android.provider.BaseColumns;
-import android.util.Xml;
+import android.app.*;
+import android.content.*;
+import android.database.*;
+import android.os.*;
+import android.provider.*;
+import android.util.*;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.CursorAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.ext.DefaultHandler2;
-import org.xmlpull.v1.XmlSerializer;
+import android.widget.*;
+
+import java.io.*;
+import java.util.*;
+
+import org.xml.sax.*;
+import org.xml.sax.ext.*;
+import org.xmlpull.v1.*;
+
 import yuku.alkitab.R;
 import yuku.alkitab.base.BukmakEditor.Listener;
-import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.Bukmak2;
-import yuku.alkitab.base.model.Kitab;
-import yuku.alkitab.base.model.Label;
-import yuku.alkitab.base.storage.Db;
-import yuku.andoutil.Sqlitil;
-import yuku.devoxx.flowlayout.FlowLayout;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.List;
+import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.storage.*;
+import yuku.andoutil.*;
+import yuku.devoxx.flowlayout.*;
 
 public class BukmakListActivity extends ListActivity {
+	public static final String TAG = BukmakListActivity.class.getSimpleName();
+	
     // out
 	public static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
 
@@ -53,10 +41,16 @@ public class BukmakListActivity extends ListActivity {
 	Cursor cursor;
 
     int filter_jenis;
-    long filter_label_id;
+    long filter_labelId;
 
-    @Override
-	protected void onCreate(Bundle savedInstanceState) {
+    public static Intent createIntent(Context context, int filter_jenis, long filter_labelId) {
+    	Intent res = new Intent(context, BukmakListActivity.class);
+    	res.putExtra(EXTRA_filter_jenis, filter_jenis);
+    	res.putExtra(EXTRA_filter_labelId, filter_labelId);
+    	return res;
+    }
+    
+    @Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		S.siapinKitab();
@@ -66,7 +60,7 @@ public class BukmakListActivity extends ListActivity {
 		setContentView(R.layout.activity_bukmaklist);
 
         filter_jenis = getIntent().getIntExtra(EXTRA_filter_jenis, 0);
-        filter_label_id = getIntent().getLongExtra(EXTRA_filter_labelId, 0);
+        filter_labelId = getIntent().getLongExtra(EXTRA_filter_labelId, 0);
 
         {
             String title = null;
@@ -77,12 +71,12 @@ public class BukmakListActivity extends ListActivity {
             } else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
                 title = "Highlightings";
             } else if (filter_jenis == Db.Bukmak2.jenis_bukmak) {
-                if (filter_label_id == 0) {
+                if (filter_labelId == 0) {
                     title = "All bookmarks";
-                } else if (filter_label_id == LABELID_noLabel) {
+                } else if (filter_labelId == LABELID_noLabel) {
                     title = "All bookmarks without labels";
                 } else {
-                    Label label = S.getDb().getLabelById(filter_label_id);
+                    Label label = S.getDb().getLabelById(filter_labelId);
                     if (label != null) {
                         title = "Bookmarks labeled '" + label.judul + "'";
                     }
@@ -97,7 +91,7 @@ public class BukmakListActivity extends ListActivity {
             }
         }
 
-		cursor = S.getDb().listBukmak(filter_jenis, filter_label_id);
+		cursor = S.getDb().listBukmak(filter_jenis, filter_labelId);
 		startManagingCursor(cursor);
 		
 		final int col__id = cursor.getColumnIndexOrThrow(BaseColumns._ID);
@@ -387,7 +381,7 @@ public class BukmakListActivity extends ListActivity {
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		new MenuInflater(this).inflate(R.menu.context_bukmak, menu);
+		new MenuInflater(this).inflate(R.menu.context_bukmaklist, menu);
 	}
 	
 	@Override

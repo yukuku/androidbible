@@ -21,10 +21,13 @@ import org.xmlpull.v1.*;
 import yuku.alkitab.*;
 import yuku.alkitab.base.LabelEditorDialog.OkListener;
 import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.storage.*;
 
 public class BukmakActivity extends ListActivity {
     // out
 	public static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
+
+	private static final int REQCODE_bukmakList = 1;
 
 	BukmakFilterAdapter adapter;
 	
@@ -260,7 +263,24 @@ public class BukmakActivity extends ListActivity {
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		// FIXME
+		Intent intent;
+		if (position == 0) {
+			intent = BukmakListActivity.createIntent(this, Db.Bukmak2.jenis_bukmak, 0);
+		} else if (position == 1) {
+			intent = BukmakListActivity.createIntent(this, Db.Bukmak2.jenis_catatan, 0);
+		} else if (position == 2) {
+			intent = BukmakListActivity.createIntent(this, Db.Bukmak2.jenis_stabilo, 0);
+		} else if (position == 3) {
+			intent = BukmakListActivity.createIntent(this, Db.Bukmak2.jenis_bukmak, BukmakListActivity.LABELID_noLabel);
+		} else {
+			Label label = adapter.getItem(position);
+			if (label != null) {
+				intent = BukmakListActivity.createIntent(this, Db.Bukmak2.jenis_bukmak, label._id);
+			} else {
+				return;
+			}
+		}
+		startActivityForResult(intent, REQCODE_bukmakList);
 	}
 	
 	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {

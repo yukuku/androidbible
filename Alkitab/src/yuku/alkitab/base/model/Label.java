@@ -49,4 +49,8 @@ public class Label implements Comparable<Label> {
 	@Override public boolean equals(Object o) {
 		return (o instanceof Label) && (this._id == ((Label)o)._id);
 	}
+	
+	@Override public String toString() {
+		return this.judul + " (" + this._id + ")";
+	}
 }
