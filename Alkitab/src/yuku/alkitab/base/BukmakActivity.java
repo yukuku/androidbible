@@ -339,7 +339,22 @@ public class BukmakActivity extends ListActivity {
 
 		return false;
 	}
-
+	
+	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQCODE_bukmakList) {
+			if (resultCode == RESULT_OK) {
+				int ari = data.getIntExtra(BukmakActivity.EXTRA_ariTerpilih, 0);
+				if (ari != 0) { // 0 berarti ga ada apa2, karena ga ada pasal 0 ayat 0
+					Intent res = new Intent();
+					res.putExtra(EXTRA_ariTerpilih, ari);
+					
+					setResult(RESULT_OK, res);
+					finish();
+				}
+			}
+		}
+	}
+	
 	class BukmakFilterAdapter extends BaseAdapter {
 		// 0. [icon] All bookmarks
 		// 1. [icon] Notes

@@ -5,6 +5,8 @@ import android.content.*;
 import android.database.*;
 import android.os.*;
 import android.provider.*;
+import android.text.*;
+import android.text.style.*;
 import android.util.*;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -111,28 +113,51 @@ public class BukmakListActivity extends ListActivity {
 				FlowLayout panelLabels = U.getView(view, R.id.panelLabels);
 				
 				lTanggal.setText(Sqlitil.toLocaleDateMedium(cursor.getInt(col_waktuUbah)));
-				IsiActivity.aturTampilanTeksTanggalBukmak(lTanggal);
-				
-				lTulisan.setText(cursor.getString(col_tulisan));
-				IsiActivity.aturTampilanTeksJudulBukmak(lTulisan);
+				PengaturTampilan.aturTampilanTeksTanggalBukmak(lTanggal);
 				
 				int ari = cursor.getInt(col_ari);
 				Kitab kitab = S.edisiAktif.getKitab(Ari.toKitab(ari));
+				String alamat = S.alamat(S.edisiAktif, ari);
+				
 				String isi = S.muatSatuAyat(S.edisiAktif, kitab, Ari.toPasal(ari), Ari.toAyat(ari));
 				isi = U.buangKodeKusus(isi);
-				String alamat = S.alamat(S.edisiAktif, ari);
-				IsiActivity.aturIsiDanTampilanCuplikanBukmak(lCuplikan, alamat, isi);
 				
-				long _id = cursor.getLong(col__id);
-				List<Label> labels = S.getDb().listLabels(_id);
-				if (labels != null && labels.size() != 0) {
-					panelLabels.setVisibility(View.VISIBLE);
-					panelLabels.removeAllViews();
-					for (int i = 0, len = labels.size(); i < len; i++) {
-						panelLabels.addView(getLabelView(panelLabels, labels.get(i)));
+				String tulisan = cursor.getString(col_tulisan);
+				
+				if (filter_jenis == Db.Bukmak2.jenis_bukmak) {
+					lTulisan.setText(tulisan);
+					PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
+					PengaturTampilan.aturIsiDanTampilanCuplikanBukmak(lCuplikan, alamat, isi);
+					
+					long _id = cursor.getLong(col__id);
+					List<Label> labels = S.getDb().listLabels(_id);
+					if (labels != null && labels.size() != 0) {
+						panelLabels.setVisibility(View.VISIBLE);
+						panelLabels.removeAllViews();
+						for (int i = 0, len = labels.size(); i < len; i++) {
+							panelLabels.addView(getLabelView(panelLabels, labels.get(i)));
+						}
+					} else {
+						panelLabels.setVisibility(View.GONE);
 					}
-				} else {
-					panelLabels.setVisibility(View.GONE);
+					
+				} else if (filter_jenis == Db.Bukmak2.jenis_catatan) {
+					lTulisan.setText(alamat);
+					PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
+					lCuplikan.setText(tulisan);
+					PengaturTampilan.aturTampilanTeksIsi(lCuplikan);
+					
+				} else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
+					lTulisan.setText(alamat);
+					PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
+					
+					SpannableStringBuilder cuplikan = new SpannableStringBuilder(isi);
+					int warnaStabilo = U.dekodStabilo(tulisan);
+					if (warnaStabilo != -1) {
+						cuplikan.setSpan(new BackgroundColorSpan(0x80000000 | warnaStabilo), 0, cuplikan.length(), 0);
+					}
+					lCuplikan.setText(cuplikan);
+					PengaturTampilan.aturTampilanTeksIsi(lCuplikan);
 				}
 			}
 		};
@@ -384,8 +409,7 @@ public class BukmakListActivity extends ListActivity {
 		new MenuInflater(this).inflate(R.menu.context_bukmaklist, menu);
 	}
 	
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
+	@Override public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item.getMenuInfo();
 
 		if (item.getItemId() == R.id.menuHapusBukmak) {
@@ -406,6 +430,6 @@ public class BukmakListActivity extends ListActivity {
 			return true;
 		}
 		
-		return super.onContextItemSelected(item);
+		return false;
 	}
 }

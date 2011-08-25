@@ -134,7 +134,7 @@ class AyatAdapter extends BaseAdapter {
 				TextView lIsiAyat = (TextView) res.findViewById(R.id.lIsiAyat);
 				lIsiAyat.setText(AyatAdapter.tampilanAyatSederhana(id + 1, isi, warnaStabilo), BufferType.SPANNABLE);
 				
-				IsiActivity.aturTampilanTeksIsi(lIsiAyat);
+				PengaturTampilan.aturTampilanTeksIsi(lIsiAyat);
 			}
 
 			ImageButton imgAtributBukmak = (ImageButton) res.findViewById(R.id.imgAtributBukmak);
@@ -366,7 +366,7 @@ class AyatAdapter extends BaseAdapter {
 						tehel.setText(s);
 					}
 					
-					IsiActivity.aturTampilanTeksIsi(tehel);
+					PengaturTampilan.aturTampilanTeksIsi(tehel);
 					tempatTehel.addView(tehel);
 				}
 				
@@ -390,7 +390,7 @@ class AyatAdapter extends BaseAdapter {
 			lAyat.setText(""); //$NON-NLS-1$
 		} else {
 			lAyat.setText(String.valueOf(ayat));
-			IsiActivity.aturTampilanTeksNomerAyat(lAyat);
+			PengaturTampilan.aturTampilanTeksNomerAyat(lAyat);
 		}
 	}
 

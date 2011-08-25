@@ -1042,45 +1042,6 @@ public class IsiActivity extends Activity {
 		return true;
 	}
 
-	static void aturIsiDanTampilanCuplikanBukmak(TextView t, String alamat, String isi) {
-		SpannableStringBuilder sb = new SpannableStringBuilder(alamat);
-		sb.setSpan(new UnderlineSpan(), 0, alamat.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-		sb.append(' ').append(isi);
-		t.setText(sb);
-		aturTampilanTeksIsi(t);
-	}
-	
-	static void aturTampilanTeksIsi(TextView t) {
-		t.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
-		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp);
-		t.setIncludeFontPadding(false);
-		t.setTextColor(S.penerapan.warnaHuruf);
-	}
-	
-	static void aturTampilanTeksAlamatHasilCari(TextView t, SpannableStringBuilder sb) {
-		aturTampilanTeksJudulBukmak(t);
-		sb.setSpan(new UnderlineSpan(), 0, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-		t.setText(sb);
-	}
-	
-	static void aturTampilanTeksJudulBukmak(TextView t) {
-		t.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
-		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp * 1.2f);
-		t.setTextColor(S.penerapan.warnaHuruf);
-	}
-	
-	static void aturTampilanTeksTanggalBukmak(TextView t) {
-		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp * 0.8f);
-		t.setTextColor(S.penerapan.warnaHuruf);
-	}
-
-	static void aturTampilanTeksNomerAyat(TextView t) {
-		t.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
-		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp);
-		t.setIncludeFontPadding(false);
-		t.setTextColor(S.penerapan.warnaNomerAyat);
-	}
-	
 	void tampilkanCatatan(Kitab kitab_, int pasal_1, int ayat_1) {
 		GelembungDialog dialog = new GelembungDialog(IsiActivity.this, new RefreshCallback() {
 			@Override

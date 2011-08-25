@@ -232,13 +232,13 @@ public class Search2Activity extends Activity {
 			int pasal_1 = Ari.toPasal(ari);
 			int ayat_1 = Ari.toAyat(ari);
 			SpannableStringBuilder sb = new SpannableStringBuilder(S.alamat(kitab, pasal_1, ayat_1));
-			IsiActivity.aturTampilanTeksAlamatHasilCari(lAlamat, sb);
+			PengaturTampilan.aturTampilanTeksAlamatHasilCari(lAlamat, sb);
 			
 			String ayat = S.muatSatuAyat(S.edisiAktif, kitab, pasal_1, ayat_1);
 			ayat = U.buangKodeKusus(ayat);
 			lCuplikan.setText(Search2Engine.hilite(ayat, xkata, warnaStabilo));
 			
-			IsiActivity.aturTampilanTeksIsi(lCuplikan);
+			PengaturTampilan.aturTampilanTeksIsi(lCuplikan);
 			
 			return res;
 		}
