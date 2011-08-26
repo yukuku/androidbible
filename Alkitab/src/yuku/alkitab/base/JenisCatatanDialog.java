@@ -27,7 +27,9 @@ public class JenisCatatanDialog {
 		void udahan();
 	}
 	
-	public JenisCatatanDialog(Context context, RefreshCallback refreshCallback) {
+	public JenisCatatanDialog(Context context, Kitab kitab, int pasal_1, int ayat_1, RefreshCallback refreshCallback) {
+		this.ari = Ari.encode(kitab.pos, pasal_1, ayat_1);
+		this.alamat = S.alamat(kitab, pasal_1, ayat_1);
 		this.context = context;
 		this.refreshCallback = refreshCallback;
 		
@@ -64,7 +66,7 @@ public class JenisCatatanDialog {
 		});
 	}
 
-	public void tampilkan() {
+	public void bukaDialog() {
 		this.alert.setTitle(context.getString(R.string.catatan_alamat, alamat));
 		
 		this.bukmak = S.getDb().getBukmakByAri(ari, Db.Bukmak2.jenis_catatan);
@@ -125,10 +127,5 @@ public class JenisCatatanDialog {
 		})
 		.create()
 		.show();
-	}
-
-	public void setDbKitabPasalAyat(Kitab kitab, int pasal_1, int ayat_1) {
-		this.ari = Ari.encode(kitab.pos, pasal_1, ayat_1);
-		this.alamat = S.alamat(kitab, pasal_1, ayat_1);
 	}
 }

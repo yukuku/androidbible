@@ -82,10 +82,8 @@ public class IsiActivity extends Activity {
 	AtributListener atributListener = new AtributListener();
 	
 	Listener muatUlangAtributMapListener = new Listener() {
-		@Override
-		public void onOk() {
+		@Override public void onOk() {
 			ayatAdapter_.muatAtributMap();
-			ayatAdapter_.notifyDataSetChanged();
 		}
 	};
 
@@ -356,18 +354,13 @@ public class IsiActivity extends Activity {
 		} else if (itemId == R.id.menuTambahStabilo) {
 			final int ari = Ari.encode(S.kitabAktif.pos, pasal_1, ayatContextMenu_1);
 			
-			JenisStabiloDialog dialog = new JenisStabiloDialog(this, new JenisStabiloDialog.JenisStabiloCallback() {
-				@Override public void dipilih(int warnaRgb) {
-					S.getDb().updateAtauInsertStabilo(ari, warnaRgb);
+			JenisStabiloDialog dialog = new JenisStabiloDialog(this, ari, new JenisStabiloDialog.JenisStabiloCallback() {
+				@Override public void onOk(int ari, int warnaRgb) {
 					ayatAdapter_.muatAtributMap();
-					ayatAdapter_.notifyDataSetChanged();
-				}
-				
-				@Override public void batal() {
 				}
 			}, S.getDb().getWarnaRgbStabilo(ari));
 			
-			dialog.show();
+			dialog.bukaDialog();
 			
 			return true;
 		} else if (itemId == R.id.menuBagikan) {
@@ -847,7 +840,6 @@ public class IsiActivity extends Activity {
 			}
 		} else if (requestCode == R.id.menuBukmak) {
 			ayatAdapter_.muatAtributMap();
-			ayatAdapter_.notifyDataSetChanged();
 
 			if (resultCode == RESULT_OK) {
 				int ari = data.getIntExtra(BukmakActivity.EXTRA_ariTerpilih, 0);
@@ -919,7 +911,6 @@ public class IsiActivity extends Activity {
 			//# tadinya onPostExecute
 			ayatAdapter_.setData(S.kitabAktif, pasal_1, xayat, perikop_xari, perikop_xblok, nblok);
 			ayatAdapter_.muatAtributMap();
-			ayatAdapter_.notifyDataSetChanged();
 			
 			// kasi tau activity
 			this.pasal_1 = pasal_1;
@@ -1043,15 +1034,12 @@ public class IsiActivity extends Activity {
 	}
 
 	void tampilkanCatatan(Kitab kitab_, int pasal_1, int ayat_1) {
-		JenisCatatanDialog dialog = new JenisCatatanDialog(IsiActivity.this, new RefreshCallback() {
-			@Override
-			public void udahan() {
+		JenisCatatanDialog dialog = new JenisCatatanDialog(IsiActivity.this, kitab_, pasal_1, ayat_1, new RefreshCallback() {
+			@Override public void udahan() {
 				ayatAdapter_.muatAtributMap();
-				ayatAdapter_.notifyDataSetChanged();
 			}
 		});
-		dialog.setDbKitabPasalAyat(kitab_, pasal_1, ayat_1);
-		dialog.tampilkan();
+		dialog.bukaDialog();
 	}
 	
 	public class AtributListener {

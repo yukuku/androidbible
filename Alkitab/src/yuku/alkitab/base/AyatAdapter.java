@@ -65,6 +65,8 @@ class AyatAdapter extends BaseAdapter {
 
 		atributMap_ = atributMap;
 		stabiloMap_ = stabiloMap;
+		
+		notifyDataSetChanged();
 	}
 
 	@Override
