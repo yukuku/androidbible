@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu
-	xmlns:android="http://schemas.android.com/apk/res/android">
-	<item
-		android:id="@+id/menuUbahKeteranganBukmak" android:title="@string/ubah_bukmak"/>
-	<item
-		android:id="@+id/menuHapusBukmak"
-		android:title="@string/hapus_pembatas_buku" />
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:id="@+id/menuUbahBukmak" android:title="@string/ubah_bukmak" />
+	<item android:id="@+id/menuHapusBukmak" android:title="@string/hapus_pembatas_buku" />
 </menu>

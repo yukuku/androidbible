@@ -197,4 +197,7 @@
     <string name="info_terperinci">Info terperinci</string>
     <string name="buang_dari_daftar">Buang dari daftar</string>
     <string name="ubah_bukmak">Edit pembatas buku</string>
+    <string name="hapus_stabilo">Hapus sorotan</string>
+    <string name="ubah_catatan">Edit catatan</string>
+    <string name="ubah_stabilo">Ganti warna sorotan</string>
 </resources>

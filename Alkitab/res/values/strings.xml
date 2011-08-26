@@ -193,4 +193,7 @@
     <string name="info_terperinci">Details</string>
     <string name="buang_dari_daftar">Remove from list</string>
     <string name="ubah_bukmak">Edit bookmark</string>
+    <string name="hapus_stabilo">Remove highlighting</string>
+    <string name="ubah_catatan">Edit note</string>
+    <string name="ubah_stabilo">Change highlight color</string>
 </resources>

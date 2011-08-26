@@ -22,6 +22,8 @@ import org.xmlpull.v1.*;
 
 import yuku.alkitab.R;
 import yuku.alkitab.base.JenisBukmakDialog.Listener;
+import yuku.alkitab.base.JenisCatatanDialog.RefreshCallback;
+import yuku.alkitab.base.JenisStabiloDialog.JenisStabiloCallback;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.*;
 import yuku.andoutil.*;
@@ -407,25 +409,62 @@ public class BukmakListActivity extends ListActivity {
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		new MenuInflater(this).inflate(R.menu.context_bukmaklist, menu);
+		
+		// sesuaikan string berdasarkan jenis.
+		MenuItem menuHapusBukmak = menu.findItem(R.id.menuHapusBukmak);
+		if (filter_jenis == Db.Bukmak2.jenis_bukmak) menuHapusBukmak.setTitle(R.string.hapus_pembatas_buku);
+		if (filter_jenis == Db.Bukmak2.jenis_catatan) menuHapusBukmak.setTitle(R.string.hapus_catatan);
+		if (filter_jenis == Db.Bukmak2.jenis_stabilo) menuHapusBukmak.setTitle(R.string.hapus_stabilo);
+
+		MenuItem menuUbahBukmak = menu.findItem(R.id.menuUbahBukmak);
+		if (filter_jenis == Db.Bukmak2.jenis_bukmak) menuUbahBukmak.setTitle(R.string.ubah_bukmak);
+		if (filter_jenis == Db.Bukmak2.jenis_catatan) menuUbahBukmak.setTitle(R.string.ubah_catatan);
+		if (filter_jenis == Db.Bukmak2.jenis_stabilo) menuUbahBukmak.setTitle(R.string.ubah_stabilo);
 	}
 	
 	@Override public boolean onContextItemSelected(MenuItem item) {
-		AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item.getMenuInfo();
-
-		if (item.getItemId() == R.id.menuHapusBukmak) {
-			S.getDb().hapusBukmakById(menuInfo.id);
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		int itemId = item.getItemId();
+		
+		if (itemId == R.id.menuHapusBukmak) {
+			// jenisnya apapun, cara hapusnya sama
+			S.getDb().hapusBukmakById(info.id);
 			adapter.getCursor().requery();
 			
 			return true;
-		} else if (item.getItemId() == R.id.menuUbahKeteranganBukmak) {
-			JenisBukmakDialog dialog = new JenisBukmakDialog(this, menuInfo.id);
-			dialog.setListener(new Listener() {
-				@Override
-				public void onOk() {
-					adapter.getCursor().requery();
-				}
-			});
-			dialog.bukaDialog();
+		} else if (itemId == R.id.menuUbahBukmak) {
+			if (filter_jenis == Db.Bukmak2.jenis_bukmak) {
+				JenisBukmakDialog dialog = new JenisBukmakDialog(this, info.id);
+				dialog.setListener(new Listener() {
+					@Override public void onOk() {
+						adapter.getCursor().requery();
+					}
+				});
+				dialog.bukaDialog();
+				
+			} else if (filter_jenis == Db.Bukmak2.jenis_catatan) {
+				Cursor cursor = (Cursor) adapter.getItem(info.position);
+				int ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bukmak2.ari));
+				
+				JenisCatatanDialog dialog = new JenisCatatanDialog(this, S.edisiAktif.getKitab(Ari.toKitab(ari)), Ari.toPasal(ari), Ari.toAyat(ari), new RefreshCallback() {
+					@Override public void udahan() {
+						adapter.getCursor().requery();
+					}
+				});
+				dialog.bukaDialog();
+				
+			} else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
+				Cursor cursor = (Cursor) adapter.getItem(info.position);
+				int ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bukmak2.ari));
+				int warnaRgb = U.dekodStabilo(cursor.getString(cursor.getColumnIndexOrThrow(Db.Bukmak2.tulisan)));
+				
+				JenisStabiloDialog dialog = new JenisStabiloDialog(this, ari, new JenisStabiloCallback() {
+					@Override public void onOk(int ari, int warnaRgb) {
+						adapter.getCursor().requery();
+					}
+				}, warnaRgb);
+				dialog.bukaDialog();
+			}
 			
 			return true;
 		}
