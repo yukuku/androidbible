@@ -21,7 +21,7 @@ import org.xml.sax.ext.*;
 import org.xmlpull.v1.*;
 
 import yuku.alkitab.R;
-import yuku.alkitab.base.BukmakEditor.Listener;
+import yuku.alkitab.base.JenisBukmakDialog.Listener;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.*;
 import yuku.andoutil.*;
@@ -418,14 +418,14 @@ public class BukmakListActivity extends ListActivity {
 			
 			return true;
 		} else if (item.getItemId() == R.id.menuUbahKeteranganBukmak) {
-			BukmakEditor editor = new BukmakEditor(this, menuInfo.id);
-			editor.setListener(new Listener() {
+			JenisBukmakDialog dialog = new JenisBukmakDialog(this, menuInfo.id);
+			dialog.setListener(new Listener() {
 				@Override
 				public void onOk() {
 					adapter.getCursor().requery();
 				}
 			});
-			editor.bukaDialog();
+			dialog.bukaDialog();
 			
 			return true;
 		}

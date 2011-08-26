@@ -39,10 +39,10 @@ class AyatAdapter extends BaseAdapter {
 	private int[] atributMap_; // bit 0(0x1) = bukmak; bit 1(0x2) = catatan; bit 2(0x4) = stabilo; 
 	private int[] stabiloMap_; // null atau warna stabilo
 
-	public AyatAdapter(Context appContext, CallbackSpan.OnClickListener paralelListener, IsiActivity.AtributListener gelembungListener) {
+	public AyatAdapter(Context appContext, CallbackSpan.OnClickListener paralelListener, IsiActivity.AtributListener atributListener) {
 		appContext_ = appContext;
 		paralelListener_ = paralelListener;
-		atributListener_ = gelembungListener;
+		atributListener_ = atributListener;
 	}
 	
 	synchronized void setData(Kitab kitab, int pasal_1, String[] xayat, int[] perikop_xari, Blok[] perikop_xblok, int nblok) {
@@ -228,8 +228,8 @@ class AyatAdapter extends BaseAdapter {
 		});
 	}
 	
-	void pasangClickHandlerUntukCatatan(ImageButton imgGelembung, final int pasal_1, final int ayat_1) {
-		imgGelembung.setOnClickListener(new View.OnClickListener() {
+	void pasangClickHandlerUntukCatatan(ImageButton imgCatatan, final int pasal_1, final int ayat_1) {
+		imgCatatan.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				atributListener_.onClick(kitab_, pasal_1, ayat_1, Bukmak2.jenis_catatan);

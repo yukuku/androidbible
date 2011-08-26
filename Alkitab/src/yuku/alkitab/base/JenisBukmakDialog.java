@@ -13,7 +13,7 @@ import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.*;
 import yuku.devoxx.flowlayout.*;
 
-public class BukmakEditor {
+public class JenisBukmakDialog {
 	public interface Listener {
 		void onOk();
 	}
@@ -34,7 +34,7 @@ public class BukmakEditor {
 	// current labels (can be not in the db)
 	SortedSet<Label> labels = new TreeSet<Label>();
 	
-	public BukmakEditor(Context context, String alamat, int ari) {
+	public JenisBukmakDialog(Context context, String alamat, int ari) {
 		// wajib
 		this.context = context;
 		
@@ -43,7 +43,7 @@ public class BukmakEditor {
 		this.ari = ari;
 	}
 
-	public BukmakEditor(Context context, long id) {
+	public JenisBukmakDialog(Context context, long id) {
 		// wajib
 		this.context = context;
 
@@ -134,7 +134,7 @@ public class BukmakEditor {
 		new AlertDialog.Builder(context)
 		.setView(dialogView)
 		.setTitle(alamat)
-		.setIcon(R.drawable.bukmak)
+		.setIcon(R.drawable.jenis_bukmak)
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
 				Bukmak2 bukmakGaFinal = bukmak;

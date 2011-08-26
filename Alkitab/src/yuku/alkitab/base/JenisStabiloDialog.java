@@ -8,16 +8,16 @@ import android.widget.*;
 
 import yuku.alkitab.*;
 
-public class PemilihStabiloDialog {
+public class JenisStabiloDialog {
 	final AlertDialog alert;
-	final PemilihStabiloCallback pemilihStabiloCallback;
+	final JenisStabiloCallback jenisStabiloCallback;
 	
 	View dialogLayout;
 	
 	static final int[] xid = {R.id.c1, R.id.c2, R.id.c3, R.id.c4, R.id.c5, R.id.c6};
 	static final int[] xrgb = {0xff0000, 0xffff00, 0x00ff00, 0x00ffff, 0x0000ff, 0xff00ff};
 
-	public interface PemilihStabiloCallback {
+	public interface JenisStabiloCallback {
 		/**
 		 * @param warnaRgb -1 untuk ga terpilih
 		 */
@@ -28,9 +28,9 @@ public class PemilihStabiloDialog {
 	/**
 	 * @param colorRgb -1 kalo ga terpilih. #rrggbb ga pake alpha
 	 */
-	public PemilihStabiloDialog(Context context, PemilihStabiloCallback pemilihStabiloCallback, int colorRgb) {
-		this.pemilihStabiloCallback = pemilihStabiloCallback;
-		this.dialogLayout = LayoutInflater.from(context).inflate(R.layout.dialog_pemilihstabilo, null);
+	public JenisStabiloDialog(Context context, JenisStabiloCallback jenisStabiloCallback, int colorRgb) {
+		this.jenisStabiloCallback = jenisStabiloCallback;
+		this.dialogLayout = LayoutInflater.from(context).inflate(R.layout.dialog_stabilo_ubah, null);
 		
 		this.alert = new AlertDialog.Builder(context)
 		.setView(dialogLayout)
@@ -58,7 +58,7 @@ public class PemilihStabiloDialog {
 	}
 	
 	void bCancel_click() {
-		if (pemilihStabiloCallback != null) pemilihStabiloCallback.batal();
+		if (jenisStabiloCallback != null) jenisStabiloCallback.batal();
 	}
 
 	private OnClickListener cb_click = new View.OnClickListener() {
@@ -66,14 +66,14 @@ public class PemilihStabiloDialog {
 		public void onClick(View v) {
 			for (int i = 0; i < 6; i++) {
 				if (v.getId() == xid[i]) {
-					if (pemilihStabiloCallback != null) pemilihStabiloCallback.dipilih(xrgb[i]);
+					if (jenisStabiloCallback != null) jenisStabiloCallback.dipilih(xrgb[i]);
 					alert.dismiss();
 				} else {
 					((CheckBox) dialogLayout.findViewById(xid[i])).setChecked(false);
 				}
 			}
 			if (v.getId() == R.id.c0) {
-				if (pemilihStabiloCallback != null) pemilihStabiloCallback.dipilih(-1);
+				if (jenisStabiloCallback != null) jenisStabiloCallback.dipilih(-1);
 				alert.dismiss();
 			} else {
 				((CheckBox) dialogLayout.findViewById(R.id.c0)).setChecked(false);

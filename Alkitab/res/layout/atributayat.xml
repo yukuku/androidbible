@@ -9,7 +9,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:id="@+id/imgAtributBukmak"
-		android:src="@drawable/bukmak"
+		android:src="@drawable/jenis_bukmak"
 		android:background="@null"
 		android:paddingRight="6dp"
 	/>
@@ -17,7 +17,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:id="@+id/imgAtributCatatan"
-		android:src="@drawable/gelembung"
+		android:src="@drawable/jenis_catatan"
 		android:background="@null"
 		android:paddingRight="6dp"
 	/>

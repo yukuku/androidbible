@@ -23,12 +23,12 @@ import android.widget.TextView.BufferType;
 import java.util.*;
 
 import yuku.alkitab.*;
-import yuku.alkitab.base.BukmakEditor.Listener;
 import yuku.alkitab.base.EdisiActivity.MEdisi;
 import yuku.alkitab.base.EdisiActivity.MEdisiInternal;
 import yuku.alkitab.base.EdisiActivity.MEdisiPreset;
 import yuku.alkitab.base.EdisiActivity.MEdisiYes;
-import yuku.alkitab.base.GelembungDialog.RefreshCallback;
+import yuku.alkitab.base.JenisBukmakDialog.Listener;
+import yuku.alkitab.base.JenisCatatanDialog.RefreshCallback;
 import yuku.alkitab.base.config.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.Db.Bukmak2;
@@ -79,7 +79,7 @@ public class IsiActivity extends Activity {
 		}
 	};
 	
-	AtributListener gelembungListener = new AtributListener();
+	AtributListener atributListener = new AtributListener();
 	
 	Listener muatUlangAtributMapListener = new Listener() {
 		@Override
@@ -156,7 +156,7 @@ public class IsiActivity extends Activity {
 		});
 		
 		// adapter
-		ayatAdapter_ = new AyatAdapter(getApplicationContext(), paralelOnClickListener, gelembungListener);
+		ayatAdapter_ = new AyatAdapter(getApplicationContext(), paralelOnClickListener, atributListener);
 		lsIsi.setAdapter(ayatAdapter_);
 		
 		// muat preferences
@@ -344,9 +344,9 @@ public class IsiActivity extends Activity {
 		} else if (itemId == R.id.menuTambahBukmak) {
 			final int ari = Ari.encode(S.kitabAktif.pos, pasal_1, ayatContextMenu_1);
 			
-			BukmakEditor editor = new BukmakEditor(this, alamat, ari);
-			editor.setListener(muatUlangAtributMapListener);
-			editor.bukaDialog();
+			JenisBukmakDialog dialog = new JenisBukmakDialog(this, alamat, ari);
+			dialog.setListener(muatUlangAtributMapListener);
+			dialog.bukaDialog();
 			
 			return true;
 		} else if (itemId == R.id.menuTambahCatatan) {
@@ -356,7 +356,7 @@ public class IsiActivity extends Activity {
 		} else if (itemId == R.id.menuTambahStabilo) {
 			final int ari = Ari.encode(S.kitabAktif.pos, pasal_1, ayatContextMenu_1);
 			
-			PemilihStabiloDialog dialog = new PemilihStabiloDialog(this, new PemilihStabiloDialog.PemilihStabiloCallback() {
+			JenisStabiloDialog dialog = new JenisStabiloDialog(this, new JenisStabiloDialog.JenisStabiloCallback() {
 				@Override public void dipilih(int warnaRgb) {
 					S.getDb().updateAtauInsertStabilo(ari, warnaRgb);
 					ayatAdapter_.muatAtributMap();
@@ -1005,7 +1005,7 @@ public class IsiActivity extends Activity {
 	}
 	
 	private void popupMintaFidbek() {
-		final View feedback = getLayoutInflater().inflate(R.layout.feedback, null);
+		final View feedback = getLayoutInflater().inflate(R.layout.dialog_feedback, null);
 		TextView lVersi = (TextView) feedback.findViewById(R.id.lVersi);
 		
 		try {
@@ -1043,7 +1043,7 @@ public class IsiActivity extends Activity {
 	}
 
 	void tampilkanCatatan(Kitab kitab_, int pasal_1, int ayat_1) {
-		GelembungDialog dialog = new GelembungDialog(IsiActivity.this, new RefreshCallback() {
+		JenisCatatanDialog dialog = new JenisCatatanDialog(IsiActivity.this, new RefreshCallback() {
 			@Override
 			public void udahan() {
 				ayatAdapter_.muatAtributMap();
@@ -1059,9 +1059,9 @@ public class IsiActivity extends Activity {
 			if (jenis == Bukmak2.jenis_bukmak) {
 				final int ari = Ari.encode(kitab_.pos, pasal_1, ayat_1);
 				String alamat = S.alamat(S.edisiAktif, ari);
-				BukmakEditor editor = new BukmakEditor(IsiActivity.this, alamat, ari);
-				editor.setListener(muatUlangAtributMapListener);
-				editor.bukaDialog();
+				JenisBukmakDialog dialog = new JenisBukmakDialog(IsiActivity.this, alamat, ari);
+				dialog.setListener(muatUlangAtributMapListener);
+				dialog.bukaDialog();
 			} else if (jenis == Bukmak2.jenis_catatan) {
 				tampilkanCatatan(kitab_, pasal_1, ayat_1);
 			}

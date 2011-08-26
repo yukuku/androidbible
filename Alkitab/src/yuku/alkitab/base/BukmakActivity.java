@@ -393,7 +393,7 @@ public class BukmakActivity extends ListActivity {
 			ImageView imgFilterIcon = U.getView(res, R.id.imgFilterIcon);
 			if (position < 3) {
 				imgFilterIcon.setVisibility(View.VISIBLE);
-				imgFilterIcon.setImageResource(position == 0? R.drawable.bukmak: position == 1? R.drawable.gelembung: position == 2? R.drawable.warnastabilo_checked: 0);
+				imgFilterIcon.setImageResource(position == 0? R.drawable.jenis_bukmak: position == 1? R.drawable.jenis_catatan: position == 2? R.drawable.warnastabilo_checked: 0);
 				imgFilterIcon.setBackgroundColor(position == 2? 0xffffff00: 0);
 			} else {
 				imgFilterIcon.setVisibility(View.GONE);

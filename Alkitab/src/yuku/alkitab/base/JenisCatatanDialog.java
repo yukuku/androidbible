@@ -12,7 +12,7 @@ import yuku.alkitab.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.*;
 
-public class GelembungDialog {
+public class JenisCatatanDialog {
 	final Context context;
 	final AlertDialog alert;
 	final RefreshCallback refreshCallback;
@@ -27,15 +27,15 @@ public class GelembungDialog {
 		void udahan();
 	}
 	
-	public GelembungDialog(Context context, RefreshCallback refreshCallback) {
+	public JenisCatatanDialog(Context context, RefreshCallback refreshCallback) {
 		this.context = context;
 		this.refreshCallback = refreshCallback;
 		
-		View dialogLayout = LayoutInflater.from(context).inflate(R.layout.dialog_gelembung, null);
+		View dialogLayout = LayoutInflater.from(context).inflate(R.layout.dialog_catatan_ubah, null);
 		
 		this.alert = new AlertDialog.Builder(context)
 		.setView(dialogLayout)
-		.setIcon(R.drawable.gelembung)
+		.setIcon(R.drawable.jenis_catatan)
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
