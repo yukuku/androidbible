@@ -210,29 +210,29 @@ public class YesFile {
 			pos = file.getFilePointer();
 			{
 				byte[] nama = seksi.nama();
-				Log.d(TAG, "[pos=" + pos + "] tulis nama seksi: " + new String(nama));  //$NON-NLS-1$//$NON-NLS-2$
+				if (bisaLog()) Log.d(TAG, "[pos=" + pos + "] tulis nama seksi: " + new String(nama));  //$NON-NLS-1$//$NON-NLS-2$
 				os2.writeRaw(nama);
 			}
 			
 			pos = file.getFilePointer();
 			{
 				byte[] palsu = {-1, -1, -1, -1};
-				Log.d(TAG, "[pos=" + pos + "] tulis placeholder ukuran"); //$NON-NLS-1$ //$NON-NLS-2$
+				if (bisaLog()) Log.d(TAG, "[pos=" + pos + "] tulis placeholder ukuran"); //$NON-NLS-1$ //$NON-NLS-2$
 				os2.writeRaw(palsu);
 			}
 			
 			int posSebelumIsi = os2.getPos();
-			Log.d(TAG, "[pos=" + file.getFilePointer() + "] tulis isi seksi"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (bisaLog()) Log.d(TAG, "[pos=" + file.getFilePointer() + "] tulis isi seksi"); //$NON-NLS-1$ //$NON-NLS-2$
 			seksi.isi().toBytes(os2);
 			int posSesudahIsi = os2.getPos();
 			int ukuranIsi = posSesudahIsi - posSebelumIsi;
-			Log.d(TAG, "[pos=" + file.getFilePointer() + "] isi seksi selesai ditulis, sebesar " + ukuranIsi);  //$NON-NLS-1$//$NON-NLS-2$
+			if (bisaLog()) Log.d(TAG, "[pos=" + file.getFilePointer() + "] isi seksi selesai ditulis, sebesar " + ukuranIsi);  //$NON-NLS-1$//$NON-NLS-2$
 			
 			long posUntukMelanjutkan = file.getFilePointer();
 			
 			{
 				file.seek(pos);
-				Log.d(TAG, "[pos=" + pos + "] tulis ukuran: " + ukuranIsi);  //$NON-NLS-1$//$NON-NLS-2$
+				if (bisaLog()) Log.d(TAG, "[pos=" + pos + "] tulis ukuran: " + ukuranIsi);  //$NON-NLS-1$//$NON-NLS-2$
 				os2.writeInt(ukuranIsi);
 			}
 			
@@ -240,10 +240,23 @@ public class YesFile {
 		}
 		
 		pos = file.getFilePointer();
-		Log.d(TAG, "[pos=" + pos + "] tulis penanda tidak ada seksi lagi (____________)");  //$NON-NLS-1$//$NON-NLS-2$
+		if (bisaLog()) Log.d(TAG, "[pos=" + pos + "] tulis penanda tidak ada seksi lagi (____________)");  //$NON-NLS-1$//$NON-NLS-2$
 		os2.writeRaw("____________".getBytes("ascii")); //$NON-NLS-1$ //$NON-NLS-2$
 		os2.close();
 		pos = file.getFilePointer();
-		Log.d(TAG, "[pos=" + pos + "] selesai");  //$NON-NLS-1$//$NON-NLS-2$
+		if (bisaLog()) Log.d(TAG, "[pos=" + pos + "] selesai");  //$NON-NLS-1$//$NON-NLS-2$
+	}
+	
+	static Boolean bisaLog = null;
+	private static boolean bisaLog() {
+		if (bisaLog == null) {
+			try {
+				Class.forName("android.util.Log");
+				bisaLog = true;
+			} catch (Exception e) {
+				bisaLog = false;
+			}
+		}
+		return bisaLog;
 	}
 }
