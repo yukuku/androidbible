@@ -391,7 +391,7 @@ public class BukmakListActivity extends ListActivity {
 					msgbox(getString(R.string.ekspor_judul), getString(R.string.terjadi_kesalahan_ketika_mengekspor_pesan, ((Exception) result).getMessage()));
 				}
 			}
-		}.execute((Void[])null);
+		}.execute();
 	}
 
 	@Override
