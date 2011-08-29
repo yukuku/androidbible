@@ -207,4 +207,5 @@
     <string name="menuSortTulisan">Judul</string>
     <string name="menuSortTulisan_warna">Warna sorotan</string>
     <string name="judul_bukmak_activity">Pembatas buku, catatan, dan sorotan</string>
+    <string name="waktuTambah_edited_waktuUbah">%1$s\n(diedit %2$s)</string>
 </resources>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res/yuku.alkitab" android:layout_width="fill_parent" android:padding="8dip" android:layout_height="wrap_content" android:orientation="vertical">
-	<LinearLayout android:orientation="horizontal" android:layout_height="wrap_content" android:layout_width="fill_parent">
-		<TextView android:id="@+id/lTulisan" android:textColor="#fff" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1" android:text="Keterangan atau Alamat Ayat dan lain" android:textSize="18dp" />
-		<TextView android:id="@+id/lTanggal" android:layout_width="wrap_content" android:text="2099-12-32" android:layout_height="wrap_content" android:layout_gravity="fill_vertical" />
-	</LinearLayout>
-	<TextView android:id="@+id/lCuplikan" android:layout_width="fill_parent" android:layout_height="wrap_content" android:gravity="bottom" android:text="Cuplikan ayat kalau bisa ditampilin Cuplikan ayat kalau bisa ditampilin Cuplikan ayat kalau bisa ditampilin Cuplikan ayat kalau bisa ditampilin " android:layout_marginTop="4dp" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res/yuku.alkitab" android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="8dp">
+	<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical">
+		<TextView android:id="@+id/lTanggal" android:layout_height="wrap_content" android:layout_width="wrap_content" android:gravity="top|right" android:layout_alignParentTop="true" android:layout_alignParentRight="true" android:layout_marginTop="2dp" android:text="2099-12-32" />
+		<TextView android:id="@+id/lTulisan" android:layout_height="wrap_content" android:textSize="18dp" android:layout_width="wrap_content" android:textColor="#fff" android:layout_alignParentTop="true" android:layout_alignParentLeft="true" android:layout_toLeftOf="@+id/lTanggal" android:text="Keterangan atau Alamat Ayat dsb" />
+	</RelativeLayout>
+	<TextView android:id="@+id/lCuplikan" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="Cuplikan ayat kalau bisa ditampilin Cuplikan ayat kalau bisa ditampilin Cuplikan ayat kalau bisa ditampilin Cuplikan ayat kalau bisa ditampilin " android:layout_marginTop="6dp" />
 	<yuku.devoxx.flowlayout.FlowLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/panelLabels" android:paddingTop="7dp" app:horizontalSpacing="8dp" app:verticalSpacing="6dp" />
 </LinearLayout>

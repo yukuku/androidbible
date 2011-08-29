@@ -103,6 +103,7 @@ public class BukmakListActivity extends ListActivity {
 		final int col__id = cursor.getColumnIndexOrThrow(BaseColumns._ID);
 		final int col_ari = cursor.getColumnIndexOrThrow(Db.Bukmak2.ari);
 		final int col_tulisan = cursor.getColumnIndexOrThrow(Db.Bukmak2.tulisan);
+		final int col_waktuTambah = cursor.getColumnIndexOrThrow(Db.Bukmak2.waktuTambah);
 		final int col_waktuUbah = cursor.getColumnIndexOrThrow(Db.Bukmak2.waktuUbah);
 		
 		adapter = new CursorAdapter(this, cursor, false) {
@@ -116,8 +117,18 @@ public class BukmakListActivity extends ListActivity {
 				TextView lCuplikan = U.getView(view, R.id.lCuplikan);
 				FlowLayout panelLabels = U.getView(view, R.id.panelLabels);
 				
-				lTanggal.setText(Sqlitil.toLocaleDateMedium(cursor.getInt(col_waktuUbah)));
-				PengaturTampilan.aturTampilanTeksTanggalBukmak(lTanggal);
+				{
+					int waktuTambah_i = cursor.getInt(col_waktuTambah);
+					int waktuUbah_i = cursor.getInt(col_waktuUbah);
+					
+					if (waktuTambah_i == waktuUbah_i) {
+						lTanggal.setText(Sqlitil.toLocaleDateMedium(waktuTambah_i));
+					} else {
+						lTanggal.setText(getString(R.string.waktuTambah_edited_waktuUbah, Sqlitil.toLocaleDateMedium(waktuTambah_i), Sqlitil.toLocaleDateMedium(waktuUbah_i)));
+					}
+					
+					PengaturTampilan.aturTampilanTeksTanggalBukmak(lTanggal);
+				}
 				
 				int ari = cursor.getInt(col_ari);
 				Kitab kitab = S.edisiAktif.getKitab(Ari.toKitab(ari));

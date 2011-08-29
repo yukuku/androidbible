@@ -203,4 +203,5 @@
     <string name="menuSortTulisan">Title</string>
     <string name="menuSortTulisan_warna">Highlight color</string>
     <string name="judul_bukmak_activity">Bookmarks, notes, and highlightings</string>
+    <string name="waktuTambah_edited_waktuUbah">%1$s\n(edited %2$s)</string>
 </resources>
