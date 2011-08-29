@@ -84,12 +84,12 @@ public class InternalDb {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
 		try {
-			String[] params = {String.valueOf(jenis), String.valueOf(ari)};
 			SQLiteStatement stmt = db.compileStatement("select _id from " + Db.TABEL_Bukmak2 + " where " + Db.Bukmak2.jenis + "=? and " + Db.Bukmak2.ari + "=?");
-			stmt.bindAllArgsAsStrings(params);
+			stmt.bindLong(1, jenis);
+			stmt.bindLong(2, ari);
 			long _id = stmt.simpleQueryForLong();
 			
-			params = new String[] {String.valueOf(_id)};
+			String[] params = {String.valueOf(_id)};
 			db.delete(Db.TABEL_Bukmak2_Label, Db.Bukmak2_Label.bukmak2_id + "=?", params); //$NON-NLS-1$
 			db.delete(Db.TABEL_Bukmak2, "_id=?", params); //$NON-NLS-1$
 			db.setTransactionSuccessful();
