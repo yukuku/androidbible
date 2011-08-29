@@ -31,8 +31,7 @@ public class BukmakActivity extends ListActivity {
 
 	BukmakFilterAdapter adapter;
 	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		S.siapinKitab();
@@ -40,7 +39,6 @@ public class BukmakActivity extends ListActivity {
 		S.siapinPengirimFidbek(this);
 		
 		setContentView(R.layout.activity_bukmak);
-		setTitle(R.string.pembatas_buku);
 		
 		adapter = new BukmakFilterAdapter();
 		adapter.reload();

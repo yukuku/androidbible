@@ -37,7 +37,7 @@ public class BukmakListActivity extends ListActivity {
 
 	CursorAdapter adapter;
 	Cursor cursor;
-	String sortColumnKini;
+	int sortColumnIdKini;
 
     int filter_jenis;
     long filter_labelId;
@@ -98,7 +98,7 @@ public class BukmakListActivity extends ListActivity {
             }
         }
 
-		gantiCursor(Db.Bukmak2.waktuTambah, false);
+		gantiCursor(Db.Bukmak2.waktuTambah, false, R.string.menuSortWaktuTambah);
 		
 		final int col__id = cursor.getColumnIndexOrThrow(BaseColumns._ID);
 		final int col_ari = cursor.getColumnIndexOrThrow(Db.Bukmak2.ari);
@@ -175,13 +175,13 @@ public class BukmakListActivity extends ListActivity {
 		registerForContextMenu(listView);
 	}
 
-	private void gantiCursor(String sortColumn, boolean ascending) {
+	private void gantiCursor(String sortColumn, boolean ascending, int sortColumnId) {
 		if (cursor != null) {
 			stopManagingCursor(cursor);
 		}
 		
 		cursor = S.getDb().listBukmak(filter_jenis, filter_labelId, sortColumn, ascending);
-		sortColumnKini = sortColumn;
+		sortColumnIdKini = sortColumnId;
 		startManagingCursor(cursor);
 		
 		if (adapter != null) {
@@ -202,11 +202,6 @@ public class BukmakListActivity extends ListActivity {
 	private void bikinMenu(Menu menu) {
 		menu.clear();
 		new MenuInflater(this).inflate(R.menu.activity_bukmaklist, menu);
-		
-		MenuItem menuSortTulisan = menu.findItem(R.id.menuSortTulisan);
-		if (filter_jenis == Db.Bukmak2.jenis_bukmak) menuSortTulisan.setTitle(R.string.menuSortTulisan);
-		if (filter_jenis == Db.Bukmak2.jenis_catatan) menuSortTulisan.setVisible(false);
-		if (filter_jenis == Db.Bukmak2.jenis_stabilo) menuSortTulisan.setTitle(R.string.menuSortTulisan_warna);
 	}
 	
 	@Override
@@ -229,21 +224,69 @@ public class BukmakListActivity extends ListActivity {
 		int itemId = item.getItemId();
 		
 		switch (itemId) {
-		case R.id.menuSortAri:
-			gantiCursor(Db.Bukmak2.ari, true);
-			return true;
-		case R.id.menuSortTulisan:
-			gantiCursor(Db.Bukmak2.tulisan, true);
-			return true;
-		case R.id.menuSortWaktuTambah:
-			gantiCursor(Db.Bukmak2.waktuTambah, false);
-			return true;
-		case R.id.menuSortWaktuUbah:
-			gantiCursor(Db.Bukmak2.waktuUbah, false);
+		case R.id.menuSort:
+			openSortDialog();
 			return true;
 		}
 		
 		return false;
+	}
+
+	private void openSortDialog() {
+		List<String> labels = new ArrayList<String>();
+		final IntArrayList values = new IntArrayList();
+		
+		labels.add(getString(R.string.menuSortAri));
+		values.add(R.string.menuSortAri);
+		
+		if (filter_jenis == Db.Bukmak2.jenis_bukmak) {
+			labels.add(getString(R.string.menuSortTulisan));
+			values.add(R.string.menuSortTulisan);
+		} else if (filter_jenis == Db.Bukmak2.jenis_catatan) {
+			// nop
+		} else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
+			labels.add(getString(R.string.menuSortTulisan_warna));
+			values.add(R.string.menuSortTulisan);
+		}
+		
+		labels.add(getString(R.string.menuSortWaktuTambah));
+		values.add(R.string.menuSortWaktuTambah);
+		
+		labels.add(getString(R.string.menuSortWaktuUbah));
+		values.add(R.string.menuSortWaktuUbah);
+		
+		int selected = -1;
+		for (int i = 0, len = values.size(); i < len; i++) {
+			if (sortColumnIdKini == values.get(i)) {
+				selected = i;
+				break;
+			}
+		}
+		
+		new AlertDialog.Builder(this)
+		.setSingleChoiceItems(labels.toArray(new String[labels.size()]), selected, new DialogInterface.OnClickListener() {
+			@Override public void onClick(DialogInterface dialog, int which) {
+				if (which == -1) return;
+				int value = values.get(which);
+				switch (value) {
+				case R.string.menuSortAri:
+					gantiCursor(Db.Bukmak2.ari, true, value);
+					break;
+				case R.string.menuSortTulisan:
+					gantiCursor(Db.Bukmak2.tulisan, true, value);
+					break;
+				case R.string.menuSortWaktuTambah:
+					gantiCursor(Db.Bukmak2.waktuTambah, false, value);
+					break;
+				case R.string.menuSortWaktuUbah:
+					gantiCursor(Db.Bukmak2.waktuUbah, false, value);
+					break;
+				}
+				dialog.dismiss();
+			}
+		})
+		.setTitle(R.string.menuSort)
+		.show();
 	}
 
 	@Override
