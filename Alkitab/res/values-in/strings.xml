@@ -76,7 +76,7 @@
     <string name="loncat_ke_alamat_titikdua">Loncat ke: (Contoh: %s)</string>
     <string name="saran_komentar_dsb">Saran, komentar, dsb...</string>
     <string name="tidak_ada_catatan">(tidak ada catatan)</string>
-    <string name="belum_ada_pembatas_buku">Belum ada pembatas buku.\nTahan (tekan yang lama) suatu ayat untuk membuka menu dengan pilihan untuk menambah pembatas buku.</string>
+    <string name="belum_ada_pembatas_buku">Belum ada pembatas buku.\nTahan (tekan yang lama) suatu ayat untuk menambahkan pembatas buku.</string>
     <string name="judul_titikdua">Judul:</string>
     <string name="gagal_mengubah_pembatas_buku">GAGAL mengubah pembatas buku ke versi baru.\n\nMohon kirim email ke yukuku@gmail.com untuk melaporkan peristiwa ini supaya bisa dibetulkan di versi selanjutnya.</string>
     <string name="selamat_datang_di_versi_baru_pembatas">Selamat datang di versi baru! Pembatas-pembatas buku yang anda miliki sudah diubah menjadi versi baru. Kini anda bisa menambahkan judul pada setiap pembatas buku.\n\nPembatas buku ditemukan: %d</string>
@@ -200,4 +200,11 @@
     <string name="hapus_stabilo">Hapus sorotan</string>
     <string name="ubah_catatan">Edit catatan</string>
     <string name="ubah_stabilo">Ganti warna sorotan</string>
+    <string name="menuSortWaktuUbah">Tanggal edit</string>
+    <string name="menuSortWaktuTambah">Tanggal buat</string>
+    <string name="menuSortAri">Alamat ayat</string>
+    <string name="menuSort">Urutkan</string>
+    <string name="menuSortTulisan">Judul</string>
+    <string name="menuSortTulisan_warna">Warna sorotan</string>
+    <string name="judul_bukmak_activity">Pembatas buku, catatan, dan sorotan</string>
 </resources>

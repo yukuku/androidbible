@@ -111,15 +111,17 @@ public class InternalDb {
 		}
 	}
 
-	public Cursor listBukmak(int jenis, long labelId) {
+	public Cursor listBukmak(int jenis, long labelId, String sortColumn, boolean sortAscending) {
         SQLiteDatabase db = helper.getReadableDatabase();
 
+        String sortClause = sortColumn + (Db.Bukmak2.tulisan.equals(sortColumn)? " collate NOCASE ": "") + (sortAscending? " asc": " desc");
+        
         if (labelId == 0) { // no restrictions
-            return db.query(Db.TABEL_Bukmak2, null, Db.Bukmak2.jenis + "=?", new String[]{String.valueOf(jenis)}, null, null, Db.Bukmak2.waktuUbah + " desc");
+            return db.query(Db.TABEL_Bukmak2, null, Db.Bukmak2.jenis + "=?", new String[]{String.valueOf(jenis)}, null, null, sortClause);
         } else if (labelId == BukmakListActivity.LABELID_noLabel) { // only without label
-            return db.rawQuery("select " + Db.TABEL_Bukmak2 + ".* from " + Db.TABEL_Bukmak2 + " where " + Db.TABEL_Bukmak2 + "." + Db.Bukmak2.jenis + "=? and " + Db.TABEL_Bukmak2 + "." + BaseColumns._ID + " not in (select " + Db.Bukmak2_Label.bukmak2_id + " from " + Db.TABEL_Bukmak2_Label + ") order by " + Db.TABEL_Bukmak2 + "." + Db.Bukmak2.waktuUbah + " desc", new String[] {String.valueOf(jenis)});
+            return db.rawQuery("select " + Db.TABEL_Bukmak2 + ".* from " + Db.TABEL_Bukmak2 + " where " + Db.TABEL_Bukmak2 + "." + Db.Bukmak2.jenis + "=? and " + Db.TABEL_Bukmak2 + "." + BaseColumns._ID + " not in (select " + Db.Bukmak2_Label.bukmak2_id + " from " + Db.TABEL_Bukmak2_Label + ") order by " + Db.TABEL_Bukmak2 + "." + sortClause, new String[] {String.valueOf(jenis)});
         } else { // filter by labelId
-            return db.rawQuery("select " + Db.TABEL_Bukmak2 + ".* from " + Db.TABEL_Bukmak2 + ", " + Db.TABEL_Bukmak2_Label + " where " + Db.Bukmak2.jenis + "=? and " + Db.TABEL_Bukmak2 + "." + BaseColumns._ID + " = " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.bukmak2_id + " and " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.label_id + "=? order by " + Db.TABEL_Bukmak2 + "." + Db.Bukmak2.waktuUbah + " desc", new String[] {String.valueOf(jenis), String.valueOf(labelId)});
+            return db.rawQuery("select " + Db.TABEL_Bukmak2 + ".* from " + Db.TABEL_Bukmak2 + ", " + Db.TABEL_Bukmak2_Label + " where " + Db.Bukmak2.jenis + "=? and " + Db.TABEL_Bukmak2 + "." + BaseColumns._ID + " = " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.bukmak2_id + " and " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.label_id + "=? order by " + Db.TABEL_Bukmak2 + "." + sortClause, new String[] {String.valueOf(jenis), String.valueOf(labelId)});
         }
 	}
 

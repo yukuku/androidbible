@@ -353,6 +353,8 @@ public class BukmakActivity extends ListActivity {
 				}
 			}
 		}
+		
+		adapter.reload();
 	}
 	
 	class BukmakFilterAdapter extends BaseAdapter {

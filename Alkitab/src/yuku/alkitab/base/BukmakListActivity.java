@@ -7,18 +7,12 @@ import android.os.*;
 import android.provider.*;
 import android.text.*;
 import android.text.style.*;
-import android.util.*;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.*;
 
-import java.io.*;
 import java.util.*;
-
-import org.xml.sax.*;
-import org.xml.sax.ext.*;
-import org.xmlpull.v1.*;
 
 import yuku.alkitab.R;
 import yuku.alkitab.base.JenisBukmakDialog.Listener;
@@ -43,6 +37,7 @@ public class BukmakListActivity extends ListActivity {
 
 	CursorAdapter adapter;
 	Cursor cursor;
+	String sortColumnKini;
 
     int filter_jenis;
     long filter_labelId;
@@ -68,35 +63,42 @@ public class BukmakListActivity extends ListActivity {
 
         {
             String title = null;
+            String nothingText = null;
 
             // atur judul berdasarkan filter
             if (filter_jenis == Db.Bukmak2.jenis_catatan) {
                 title = "Notes";
+                nothingText = "No notes written yet.\nLong-press a verse to write a note.";
             } else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
                 title = "Highlightings";
+                nothingText = "No highlighted verses.\nLong-press a verse to highlight it.";
             } else if (filter_jenis == Db.Bukmak2.jenis_bukmak) {
                 if (filter_labelId == 0) {
                     title = "All bookmarks";
+                    nothingText = getString(R.string.belum_ada_pembatas_buku);
                 } else if (filter_labelId == LABELID_noLabel) {
                     title = "All bookmarks without labels";
+                    nothingText = "There are no bookmarks without any labels";
                 } else {
                     Label label = S.getDb().getLabelById(filter_labelId);
                     if (label != null) {
                         title = "Bookmarks labeled '" + label.judul + "'";
+                        nothingText = "There are no bookmarks with the label '" + label.judul + "'";
                     }
                 }
             }
 
-            if (title != null) {
+            if (title != null && nothingText != null) {
                 setTitle(title);
+                TextView empty = U.getView(this, android.R.id.empty);
+                empty.setText(nothingText);
             } else {
                 finish();
                 return;
             }
         }
 
-		cursor = S.getDb().listBukmak(filter_jenis, filter_labelId);
-		startManagingCursor(cursor);
+		gantiCursor(Db.Bukmak2.waktuTambah, false);
 		
 		final int col__id = cursor.getColumnIndexOrThrow(BaseColumns._ID);
 		final int col_ari = cursor.getColumnIndexOrThrow(Db.Bukmak2.ari);
@@ -172,6 +174,20 @@ public class BukmakListActivity extends ListActivity {
 
 		registerForContextMenu(listView);
 	}
+
+	private void gantiCursor(String sortColumn, boolean ascending) {
+		if (cursor != null) {
+			stopManagingCursor(cursor);
+		}
+		
+		cursor = S.getDb().listBukmak(filter_jenis, filter_labelId, sortColumn, ascending);
+		sortColumnKini = sortColumn;
+		startManagingCursor(cursor);
+		
+		if (adapter != null) {
+			adapter.changeCursor(cursor);
+		}
+	}
 	
 	protected View getLabelView(FlowLayout panelLabels, Label label) {
 		View res = LayoutInflater.from(this).inflate(R.layout.label, null);
@@ -183,10 +199,14 @@ public class BukmakListActivity extends ListActivity {
 		return res;
 	}
 
-
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		new MenuInflater(this).inflate(R.menu.activity_bukmak, menu);
+		new MenuInflater(this).inflate(R.menu.activity_bukmaklist, menu);
+		
+		MenuItem menuSortTulisan = menu.findItem(R.id.menuSortTulisan);
+		if (filter_jenis == Db.Bukmak2.jenis_bukmak) menuSortTulisan.setTitle(R.string.menuSortTulisan);
+		if (filter_jenis == Db.Bukmak2.jenis_catatan) menuSortTulisan.setVisible(false);
+		if (filter_jenis == Db.Bukmak2.jenis_stabilo) menuSortTulisan.setTitle(R.string.menuSortTulisan_warna);
 	}
 	
 	@Override
@@ -205,193 +225,25 @@ public class BukmakListActivity extends ListActivity {
 		return true;
 	}
 	
-	void msgbox(String title, String message) {
-		new AlertDialog.Builder(this)
-		.setTitle(title)
-		.setMessage(message)
-		.setPositiveButton(R.string.ok, null)
-		.show();
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.menuImpor) {
-			final File f = getFileBackup();
-			
-			new AlertDialog.Builder(this)
-			.setTitle(R.string.impor_judul)
-			.setMessage(getString(R.string.impor_pembatas_buku_dan_catatan_dari_tanya, f.getAbsolutePath()))
-			.setNegativeButton(R.string.no, null)
-			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					if (!f.exists() || !f.canRead()) {
-						msgbox(getString(R.string.impor_judul), getString(R.string.file_tidak_bisa_dibaca_file, f.getAbsolutePath()));
-						return;
-					}
-
-					new AlertDialog.Builder(BukmakListActivity.this)
-					.setTitle(R.string.impor_judul)
-					.setMessage(R.string.apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya)
-					.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							impor(false);
-						}
-					})
-					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							impor(true);
-						}
-					})
-					.show();
-				}
-			})
-			.show();
-			
+	@Override public boolean onOptionsItemSelected(MenuItem item) {
+		int itemId = item.getItemId();
+		
+		switch (itemId) {
+		case R.id.menuSortAri:
+			gantiCursor(Db.Bukmak2.ari, true);
 			return true;
-		} else if (item.getItemId() == R.id.menuEkspor) {
-			new AlertDialog.Builder(this)
-			.setTitle(R.string.ekspor_judul)
-			.setMessage(R.string.ekspor_pembatas_buku_dan_catatan_tanya)
-			.setNegativeButton(R.string.no, null)
-			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					ekspor();
-				}
-			})
-			.show();
-			
+		case R.id.menuSortTulisan:
+			gantiCursor(Db.Bukmak2.tulisan, true);
 			return true;
-		}
-		return false;
-	}
-	
-	File getFileBackup() {
-		File dir = new File(Environment.getExternalStorageDirectory(), "bible"); //$NON-NLS-1$
-		if (!dir.exists()) {
-			dir.mkdir();
+		case R.id.menuSortWaktuTambah:
+			gantiCursor(Db.Bukmak2.waktuTambah, false);
+			return true;
+		case R.id.menuSortWaktuUbah:
+			gantiCursor(Db.Bukmak2.waktuUbah, false);
+			return true;
 		}
 		
-		return new File(dir, getPackageName() + "-backup.xml"); //$NON-NLS-1$
-	}
-
-	public void impor(boolean tumpuk) {
-		new AsyncTask<Boolean, Integer, Object>() {
-			ProgressDialog dialog;
-			
-			@Override
-			protected void onPreExecute() {
-				dialog = new ProgressDialog(BukmakListActivity.this);
-				dialog.setTitle(R.string.impor_judul);
-				dialog.setMessage(getString(R.string.mengimpor_titiktiga));
-				dialog.setIndeterminate(true);
-				dialog.setCancelable(false);
-				dialog.show();
-			}
-			
-			@Override
-			protected Object doInBackground(Boolean... params) {
-				final List<Bukmak2> list = new ArrayList<Bukmak2>();
-				final boolean tumpuk = params[0];
-				final int[] c = new int[1];
-
-				try {
-					File in = getFileBackup();
-					FileInputStream fis = new FileInputStream(in);
-					
-					Xml.parse(fis, Xml.Encoding.UTF_8, new DefaultHandler2() {
-						@Override
-						public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-							if (!localName.equals(Bukmak2.XMLTAG_Bukmak2)) {
-								return;
-							}
-							
-							Bukmak2 bukmak2 = Bukmak2.dariAttributes(attributes);
-							list.add(bukmak2);
-							
-							c[0]++;
-						}
-					});
-					fis.close();
-				} catch (Exception e) {
-					return e;
-				}
-				
-				S.getDb().importBukmak(list, tumpuk);
-			
-				return c[0];
-			}
-
-			@Override
-			protected void onPostExecute(Object result) {
-				dialog.dismiss();
-				
-				if (result instanceof Integer) {
-					msgbox(getString(R.string.impor_judul), getString(R.string.impor_berhasil_angka_diproses, result));
-				} else if (result instanceof Exception) {
-					msgbox(getString(R.string.impor_judul), getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, ((Exception) result).getMessage()));
-				}
-				
-				adapter.getCursor().requery();
-			}
-		}.execute((Boolean)tumpuk);
-	}
-	
-	public void ekspor() {
-		new AsyncTask<Void, Integer, Object>() {
-			ProgressDialog dialog;
-			
-			@Override
-			protected void onPreExecute() {
-				dialog = new ProgressDialog(BukmakListActivity.this);
-				dialog.setTitle(R.string.ekspor_judul);
-				dialog.setMessage(getString(R.string.mengekspor_titiktiga));
-				dialog.setIndeterminate(true);
-				dialog.setCancelable(false);
-				dialog.show();
-			}
-			
-			@Override
-			protected Object doInBackground(Void... params) {
-				File out = getFileBackup();
-				try {
-					FileOutputStream fos = new FileOutputStream(out);
-					
-					XmlSerializer xml = Xml.newSerializer();
-					xml.setOutput(fos, "utf-8"); //$NON-NLS-1$
-					xml.startDocument("utf-8", null); //$NON-NLS-1$
-					xml.startTag(null, "backup"); //$NON-NLS-1$
-					
-					Cursor cursor = S.getDb().listSemuaBukmak();
-					while (cursor.moveToNext()) {
-						Bukmak2.dariCursor(cursor).writeXml(xml);
-					}
-					cursor.close();
-					
-					xml.endTag(null, "backup"); //$NON-NLS-1$
-					xml.endDocument();
-					fos.close();
-
-					return out.getAbsolutePath();
-				} catch (Exception e) {
-					return e;
-				}
-			}
-			
-			@Override
-			protected void onPostExecute(Object result) {
-				dialog.dismiss();
-				
-				if (result instanceof String) {
-					msgbox(getString(R.string.ekspor_judul), getString(R.string.ekspor_berhasil_file_yang_dihasilkan_file, result));
-				} else if (result instanceof Exception) {
-					msgbox(getString(R.string.ekspor_judul), getString(R.string.terjadi_kesalahan_ketika_mengekspor_pesan, ((Exception) result).getMessage()));
-				}
-			}
-		}.execute();
+		return false;
 	}
 
 	@Override

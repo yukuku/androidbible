@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:id="@+id/menuSort" android:showAsAction="ifRoom|withText" android:title="@string/menuSort">
+		<menu>
+			<group android:checkableBehavior="single">
+				<item android:id="@+id/menuSortAri" android:title="@string/menuSortAri" />
+				<item android:id="@+id/menuSortTulisan" android:title="@string/menuSortTulisan" />
+				<item android:id="@+id/menuSortWaktuTambah" android:title="@string/menuSortWaktuTambah" />
+				<item android:id="@+id/menuSortWaktuUbah" android:title="@string/menuSortWaktuUbah" />
+			</group>
+		</menu>
+	</item>
+</menu>

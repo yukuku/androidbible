@@ -76,7 +76,7 @@
     <string name="loncat_ke_alamat_titikdua">Jump to: (Example: %s)</string>
     <string name="saran_komentar_dsb">Suggestions, comments, etc...</string>
     <string name="tidak_ada_catatan">(no notes)</string>
-    <string name="belum_ada_pembatas_buku">No bookmarks yet.\nLong-press on a verse to open a menu where you can choose to add a bookmark.</string>
+    <string name="belum_ada_pembatas_buku">No bookmarks yet.\nLong-press on a verse to add a bookmark.</string>
     <string name="judul_titikdua">Title:</string>
     <string name="gagal_mengubah_pembatas_buku">FAILED to convert bookmarks to the new version.\n\nPlease send an email to yukuku@gmail.com to report this so that it can be fixed in the next release.</string>
     <string name="selamat_datang_di_versi_baru_pembatas">Welcome to the new version! Your bookmarks has been updated. Now you can add a title onto each of the bookmark.\n\nUpdated bookmarks: %d</string>
@@ -196,4 +196,11 @@
     <string name="hapus_stabilo">Remove highlighting</string>
     <string name="ubah_catatan">Edit note</string>
     <string name="ubah_stabilo">Change highlight color</string>
+    <string name="menuSort">Sort</string>
+    <string name="menuSortWaktuTambah">Created date</string>
+    <string name="menuSortWaktuUbah">Edited date</string>
+    <string name="menuSortAri">Verse address</string>
+    <string name="menuSortTulisan">Title</string>
+    <string name="menuSortTulisan_warna">Highlight color</string>
+    <string name="judul_bukmak_activity">Bookmarks, notes, and highlightings</string>
 </resources>
