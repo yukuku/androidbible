@@ -230,19 +230,23 @@ public class InternalDb {
 	}
 
 	public void updateAtauInsertStabilo(int ari, int warnaRgb) {
-		// cek dulu ada ato ga
-		Cursor c = helper.getWritableDatabase().query(Db.TABEL_Bukmak2, null, Db.Bukmak2.ari + "=? and " + Db.Bukmak2.jenis + "=?", new String[] {String.valueOf(ari), String.valueOf(Db.Bukmak2.jenis_stabilo)}, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
+		SQLiteDatabase db = helper.getWritableDatabase();
+		
+		db.beginTransaction();
+		Cursor c = db.query(Db.TABEL_Bukmak2, null, Db.Bukmak2.ari + "=? and " + Db.Bukmak2.jenis + "=?", new String[] {String.valueOf(ari), String.valueOf(Db.Bukmak2.jenis_stabilo)}, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
+			// cek dulu ada ato ga
 			if (c.moveToNext()) {
 				// sudah ada!
 				Bukmak2 bukmak = Bukmak2.dariCursor(c);
+				bukmak.waktuUbah = new Date();
 				long id = c.getLong(c.getColumnIndexOrThrow("_id")); //$NON-NLS-1$
 				if (warnaRgb != -1) {
 					bukmak.tulisan = U.enkodStabilo(warnaRgb);
-					helper.getWritableDatabase().update(Db.TABEL_Bukmak2, bukmak.toContentValues(), "_id=?", new String[] {String.valueOf(id)}); //$NON-NLS-1$
+					db.update(Db.TABEL_Bukmak2, bukmak.toContentValues(), "_id=?", new String[] {String.valueOf(id)}); //$NON-NLS-1$
 				} else {
 					// delete
-					helper.getWritableDatabase().delete(Db.TABEL_Bukmak2, "_id=?", new String[] {String.valueOf(id)}); //$NON-NLS-1$
+					db.delete(Db.TABEL_Bukmak2, "_id=?", new String[] {String.valueOf(id)}); //$NON-NLS-1$
 				}
 			} else {
 				// belum ada!
@@ -251,11 +255,13 @@ public class InternalDb {
 				} else {
 					Date kini = new Date();
 					Bukmak2 bukmak = new Bukmak2(ari, Db.Bukmak2.jenis_stabilo, U.enkodStabilo(warnaRgb), kini, kini); 
-					helper.getWritableDatabase().insert(Db.TABEL_Bukmak2, null, bukmak.toContentValues());
+					db.insert(Db.TABEL_Bukmak2, null, bukmak.toContentValues());
 				}
 			}
+			db.setTransactionSuccessful();
 		} finally {
 			c.close();
+			db.endTransaction();
 		}
 	}
 
