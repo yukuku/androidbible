@@ -53,7 +53,6 @@
     <string name="pref_ketik_langsung_alamat">Ketik Langsung Alamat</string>
     <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Layar tidak akan padam ketika membaca teks Alkitab.</string>
     <string name="pref_biarkan_layar_menyala">Biarkan Layar Menyala</string>
-    <string name="pref_penampilan">Penampilan</string>
     <string name="menuBantuan">Bantuan</string>
     <string name="beri_saran_v">Beri Saran</string>
     <string name="versi">Versi</string>
@@ -208,4 +207,8 @@
     <string name="menuSortTulisan_warna">Warna sorotan</string>
     <string name="judul_bukmak_activity">Pembatas buku, catatan, dan sorotan</string>
     <string name="waktuTambah_edited_waktuUbah">%1$s\n(diedit %2$s)</string>
+    <string name="pref_penampilan_teks">Penampilan Teks</string>
+    <string name="pref_penampilan_layar">Penampilan Layar</string>
+    <string name="pref_fullScreen_title">Layar Penuh</string>
+    <string name="pref_fullScreen_summary">Sembunyikan baris status ponsel Anda</string>
 </resources>

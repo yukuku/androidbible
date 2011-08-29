@@ -2,7 +2,7 @@
 <PreferenceScreen
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<PreferenceCategory
-		android:title="@string/pref_penampilan">
+		android:title="@string/pref_penampilan_teks">
 
 		<yuku.alkitab.base.UkuranHuruf2Preference
 			android:key="@string/pref_ukuranHuruf2_key"
@@ -47,7 +47,11 @@
 				android:defaultValue="0xff9090ff"
 				android:title="@string/pref_warna_nomor_ayat" />
 		</PreferenceScreen>
-		
+	</PreferenceCategory>
+
+	<PreferenceCategory
+		android:title="@string/pref_penampilan_layar">
+	
 		<ListPreference
 			android:key="@string/pref_bahasa_key"
 			android:title="@string/pref_bahasa_language"
@@ -56,26 +60,11 @@
 			android:entries="@array/pref_bahasa_label"
 			android:entryValues="@array/pref_bahasa_value"
 		/>
-	</PreferenceCategory>
-
-	<PreferenceCategory
-		android:title="@string/pref_penggunaan">
-
 		<CheckBoxPreference
 			android:defaultValue="@bool/pref_nyalakanTerusLayar_default"
 			android:title="@string/pref_biarkan_layar_menyala"
 			android:key="@string/pref_nyalakanTerusLayar_key"
 			android:summary="@string/pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab" />
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:title="@string/pref_ketik_langsung_alamat"
-			android:key="@string/pref_tombolAlamatLoncat_key"
-			android:summary="@string/pref_buka_bagian_alkitab_tertentu_dengan_mengetikkan_alamatnya_langsung" />
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:title="@string/pref_kitab_menurut_abjad"
-			android:key="@string/pref_sortKitabAlfabet_key"
-			android:summary="@string/pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya" />
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:title="@string/pref_tanpa_tombol_navigasi"
@@ -86,6 +75,20 @@
 			android:title="@string/pref_matikan_menu_ayat"
 			android:key="@string/pref_matikanTahanAyat_key"
 			android:summary="@string/pref_jangan_buka_menu_ketika_jari_menahan_salah_satu_ayat" />
+	</PreferenceCategory>
+
+	<PreferenceCategory
+		android:title="@string/pref_penggunaan">
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:title="@string/pref_ketik_langsung_alamat"
+			android:key="@string/pref_tombolAlamatLoncat_key"
+			android:summary="@string/pref_buka_bagian_alkitab_tertentu_dengan_mengetikkan_alamatnya_langsung" />
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:title="@string/pref_kitab_menurut_abjad"
+			android:key="@string/pref_sortKitabAlfabet_key"
+			android:summary="@string/pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya" />
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:title="@string/pref_pindah_dengan_volume"

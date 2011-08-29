@@ -53,7 +53,6 @@
     <string name="pref_ketik_langsung_alamat">Direct Address Input</string>
     <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Device screen will not turn off when reading the Bible text.</string>
     <string name="pref_biarkan_layar_menyala">Keep Screen On</string>
-    <string name="pref_penampilan">Appearance</string>
     <string name="menuBantuan">Help</string>
     <string name="beri_saran_v">Suggest</string>
     <string name="versi">Version</string>
@@ -204,4 +203,6 @@
     <string name="menuSortTulisan_warna">Highlight color</string>
     <string name="judul_bukmak_activity">Bookmarks, notes, and highlightings</string>
     <string name="waktuTambah_edited_waktuUbah">%1$s\n(edited %2$s)</string>
+    <string name="pref_penampilan_teks">Text Appearance</string>
+    <string name="pref_penampilan_layar">Display</string>
 </resources>
