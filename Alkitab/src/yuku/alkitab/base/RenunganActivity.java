@@ -133,6 +133,13 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		
 		new PemintaMasaDepan().execute();
 		
+		{ // betulin ui update 
+			TukangDonlot td = S.tukangDonlot;
+			if (td != null) {
+				td.setListener(this);
+			}
+		}
+		
 		tampilkan();
 	}
 		
