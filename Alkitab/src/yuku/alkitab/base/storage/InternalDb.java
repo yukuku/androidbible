@@ -320,6 +320,11 @@ public class InternalDb {
 		return res;
 	}
 	
+	public int hapusRenunganBerwaktuSentuhSebelum(Date date) {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		return db.delete(Db.TABEL_Renungan, Db.Renungan.waktuSentuh + "<?", new String[] {String.valueOf(Sqlitil.toInt(date))});
+	}
+	
 	/**
 	 * Coba ambil artikel dari db lokal. Artikel ga siap pakai pun akan direturn.
 	 */

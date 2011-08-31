@@ -131,7 +131,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		if (S.penampungan.renungan_tanggalan == null) S.penampungan.renungan_tanggalan = new Date();
 		if (S.penampungan.renungan_nama == null) S.penampungan.renungan_nama = DEFAULT;
 		
-		new PemintaMasaDepan().start();
+		new PemintaMasaDepan().execute();
 		
 		tampilkan();
 	}
@@ -327,27 +327,27 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 	
 	static boolean pemintaMasaDepanLagiJalan = false;
 	
-	private class PemintaMasaDepan extends Thread {
-		public PemintaMasaDepan() {
-		}
-
-		@Override
-		public void run() {
+	private class PemintaMasaDepan extends AsyncTask<Void, Void, Void> {
+		@Override protected Void doInBackground(Void... params) {
 			if (pemintaMasaDepanLagiJalan) {
 				Log.d(TAG, "peminta masa depan lagi jalan"); //$NON-NLS-1$
-				return;
+				return null;
 			}
 			
 			// diem dulu 6 detik
 			ThreadSleep.ignoreInterrupt(6000);
 			
+			Date hariIni = new Date();
+			
+			// hapus yang sudah lebih lama dari 3 bulan (90 hari)!
+			int terhapus = S.getDb().hapusRenunganBerwaktuSentuhSebelum(new Date(hariIni.getTime() - 90 * 86400000L));
+			if (terhapus > 0) {
+				Log.d(TAG, "penghapusan renungan berhasil menghapus " + terhapus);
+			}
+			
 			pemintaMasaDepanLagiJalan = true;
 			try {
-				Date hariIni = new Date();
-				
-				int hariDepan = 15;
-				
-				for (int i = 0; i < hariDepan; i++) {
+				for (int i = 0; i < 31; i++) { // 31 hari ke depan
 					String tgl = sdf.format(hariIni);
 					if (S.getDb().cobaAmbilRenungan(S.penampungan.renungan_nama, tgl) == null) {
 						Log.d(TAG, "PemintaMasaDepan perlu minta " + tgl); //$NON-NLS-1$
@@ -364,8 +364,9 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 			} finally {
 				pemintaMasaDepanLagiJalan = false;
 			}
+			
+			return null;
 		}
-		
 	}
 
 	@Override

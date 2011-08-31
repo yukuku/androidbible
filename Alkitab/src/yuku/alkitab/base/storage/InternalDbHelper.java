@@ -57,13 +57,13 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 
 	private void bikinTabelBukmak2(SQLiteDatabase db) throws SQLException {
 		db.execSQL(String.format("create table if not exists %s (" + //$NON-NLS-1$
-				"_id integer primary key autoincrement, " + //$NON-NLS-1$
-				"%s integer, " + // ari //$NON-NLS-1$
-				"%s integer, " + // jenis //$NON-NLS-1$
-				"%s text, " + // tulisan //$NON-NLS-1$
-				"%s integer, " + // waktuTambah //$NON-NLS-1$
-				"%s integer)", // waktuUbah //$NON-NLS-1$
-				Db.TABEL_Bukmak2, Db.Bukmak2.ari, Db.Bukmak2.jenis, Db.Bukmak2.tulisan, Db.Bukmak2.waktuTambah, Db.Bukmak2.waktuUbah));
+			"_id integer primary key autoincrement, " + //$NON-NLS-1$
+			"%s integer, " + // ari //$NON-NLS-1$
+			"%s integer, " + // jenis //$NON-NLS-1$
+			"%s text, " + // tulisan //$NON-NLS-1$
+			"%s integer, " + // waktuTambah //$NON-NLS-1$
+			"%s integer)", // waktuUbah //$NON-NLS-1$
+			Db.TABEL_Bukmak2, Db.Bukmak2.ari, Db.Bukmak2.jenis, Db.Bukmak2.tulisan, Db.Bukmak2.waktuTambah, Db.Bukmak2.waktuUbah));
 	}
 	
 	private void bikinIndexBukmak2(SQLiteDatabase db) throws SQLException {
@@ -99,6 +99,8 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL(String.format("create index if not exists index_102 on %s (%s, %s)", Db.TABEL_Renungan, Db.Renungan.nama, Db.Renungan.tgl)); //$NON-NLS-1$
 		// index Renungan(tgl)
 		db.execSQL(String.format("create index if not exists index_103 on %s (%s)", Db.TABEL_Renungan, Db.Renungan.tgl)); //$NON-NLS-1$
+		// index Renungan(waktuSentuh)
+		db.execSQL(String.format("create index if not exists index_104 on %s (%s)", Db.TABEL_Renungan, Db.Renungan.waktuSentuh)); //$NON-NLS-1$
 	}
 	
 	private void bikinTabelEdisi(SQLiteDatabase db) throws SQLException {
@@ -174,6 +176,11 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		if (oldVersion <= 70) { // 71: 2.0.0 juga
 			// tambah index di Bukmak2
 			bikinIndexBukmak2(db);
+		}
+		
+		if (oldVersion <= 71) { // 72: 2.0.0 juga
+			// tambah index di Renungan
+			bikinIndexRenungan(db);
 		}
 	}
 
