@@ -11,19 +11,16 @@ import java.util.*;
 import yuku.alkitab.*;
 import yuku.alkitab.base.storage.*;
 
-public class AlkitabApplication extends Application {
-	public static final String TAG = AlkitabApplication.class.getSimpleName();
+public class App extends Application {
+	public static final String TAG = App.class.getSimpleName();
 
-	private static Context appContext;
+	public static Context context;
 	
 	@Override public void onCreate() {
 		super.onCreate();
 
-		appContext = getApplicationContext();
+		context = getApplicationContext();
 		
-		S.setAppContext(appContext);
-		Preferences.setAppContext(appContext);
-
 		PreferenceManager.setDefaultValues(this, R.xml.pengaturan, false);
 		
 		Configuration config = getBaseContext().getResources().getConfiguration();
@@ -55,7 +52,7 @@ public class AlkitabApplication extends Application {
 			config.locale = locale;
 
 			Log.d(TAG, "updateConfigurationWithLocale: config updated to locale: " + locale);
-			appContext.getResources().updateConfiguration(config, null);
+			context.getResources().updateConfiguration(config, null);
 		}
 	}
 }

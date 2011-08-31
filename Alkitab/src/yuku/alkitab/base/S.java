@@ -19,9 +19,6 @@ import yuku.kirimfidbek.*;
 public class S {
 	static final String TAG = S.class.getSimpleName();
 
-	private static Context appContext;
-	
-	
 	/**
 	 * penerapan dari pengaturan
 	 */
@@ -67,8 +64,8 @@ public class S {
 	private static Edisi edisiInternal;
 	public static synchronized Edisi getEdisiInternal() {
 		if (edisiInternal == null) {
-			BuildConfig c = BuildConfig.get(appContext);
-			edisiInternal = new Edisi(new InternalPembaca(appContext, c.internalPrefix, c.internalJudul, new PembacaDecoder.Ascii()));
+			BuildConfig c = BuildConfig.get(App.context);
+			edisiInternal = new Edisi(new InternalPembaca(App.context, c.internalPrefix, c.internalJudul, new PembacaDecoder.Ascii()));
 		}
 		return edisiInternal;
 	}
@@ -228,7 +225,7 @@ public class S {
 			locale = new Locale(bahasa);
 		}
 		
-		AlkitabApplication.updateConfigurationWithLocale(appContext.getResources().getConfiguration(), locale);
+		App.updateConfigurationWithLocale(App.context.getResources().getConfiguration(), locale);
 		
 //		Configuration config1 = context.getResources().getConfiguration();
 //		if (locale.getLanguage() != null && locale.getLanguage().equals(config1.locale.getLanguage())) {
@@ -262,9 +259,9 @@ public class S {
 	private static void precomputeValues() {
 		if (precomputedValues != null) return;
 		precomputedValues = new float[] {
-			appContext.getResources().getDimension(R.dimen.indenParagraf), // [0]
-			appContext.getResources().getDimension(R.dimen.menjorokSatu), // [1]
-			appContext.getResources().getDimension(R.dimen.menjorokDua), // [2]
+			App.context.getResources().getDimension(R.dimen.indenParagraf), // [0]
+			App.context.getResources().getDimension(R.dimen.menjorokSatu), // [1]
+			App.context.getResources().getDimension(R.dimen.menjorokDua), // [2]
 		};
 	}
 	
@@ -283,17 +280,9 @@ public class S {
 		return (int) (precomputedValues[2] * Preferences.getFloat(R.string.pref_ukuranHuruf2_key, 17.f) / 17.f);
 	}
 	
-	public static void setAppContext(Context appContext) {
-		S.appContext = appContext;
-	}
-
-	public static Context getAppContext() {
-		return appContext;
-	}
-
 	public static InputStream openRaw(String name) {
-		Resources resources = appContext.getResources();
-		int resId = resources.getIdentifier(name, "raw", appContext.getPackageName()); //$NON-NLS-1$
+		Resources resources = App.context.getResources();
+		int resId = resources.getIdentifier(name, "raw", App.context.getPackageName()); //$NON-NLS-1$
 		if (resId == 0) {
 			return null;
 		}
@@ -303,14 +292,14 @@ public class S {
 	private static InternalDb db;
 	public static synchronized InternalDb getDb() {
 		if (db == null) {
-			db = new InternalDb(new InternalDbHelper(appContext));
+			db = new InternalDb(new InternalDbHelper(App.context));
 		}
 		
 		return db;
 	}
 	
 	public static String bikinUrlAyat(Kitab kitab, int pasal_1, int ayat_1) {
-		BuildConfig c = BuildConfig.get(appContext);
+		BuildConfig c = BuildConfig.get(App.context);
 		if (kitab.pos >= c.url_namaKitabStandar.length) {
 			return null;
 		}
