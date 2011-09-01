@@ -28,6 +28,7 @@ public class Search2Activity extends Activity {
 	
 	ListView lsHasilCari;
 	SearchBar searchBar;
+	View panelFilter;
 	CheckBox cFilterLama;
 	CheckBox cFilterBaru;
 	TextView lTiadaHasil;
@@ -47,9 +48,13 @@ public class Search2Activity extends Activity {
 
 		lsHasilCari = U.getView(this, R.id.lsHasilCari);
 		searchBar = U.getView(this, R.id.searchBar);
+		panelFilter = U.getView(this, R.id.panelFilter);
 		cFilterLama = U.getView(this, R.id.cFilterLama);
 		cFilterBaru = U.getView(this, R.id.cFilterBaru);
 		lTiadaHasil = U.getView(this, R.id.lTiadaHasil);
+		
+		((ViewGroup) panelFilter.getParent()).removeView(panelFilter);
+		searchBar.setBottomView(panelFilter);
 		
 		lsHasilCari.setBackgroundColor(S.penerapan.warnaLatar);
 		lsHasilCari.setCacheColorHint(S.penerapan.warnaLatar);

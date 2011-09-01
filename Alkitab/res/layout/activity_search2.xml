@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
-	<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="#80ffffff">
-		<yuku.androidsdk.searchbar.SearchBar android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/searchBar" />
+	<yuku.androidsdk.searchbar.SearchBar android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/searchBar" />
 
-		<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="left">
-			<CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/cFilterLama" android:checked="true" android:textColor="#000" android:text="@string/perj_lama" />
-			<CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/cFilterBaru" android:checked="true" android:textColor="#000" android:text="@string/perj_baru" />
-		</LinearLayout>
+	<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="left" android:id="@+id/panelFilter">
+		<CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/cFilterLama" android:checked="true" android:textColor="#000" android:text="@string/perj_lama" />
+		<CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/cFilterBaru" android:checked="true" android:textColor="#000" android:text="@string/perj_baru" />
 	</LinearLayout>
 
 	<ListView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/lsHasilCari" android:layout_weight="1" />
