@@ -76,5 +76,10 @@
 			<type>2</type>
 			<locationURI>_android_KirimFidbek_7665a5df/src</locationURI>
 		</link>
+		<link>
+			<name>SdkSearchBar_src</name>
+			<type>2</type>
+			<locationURI>_android_SdkSearchBar_a40fb651/src</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>

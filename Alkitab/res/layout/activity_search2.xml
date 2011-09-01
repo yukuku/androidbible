@@ -1,57 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
-	<LinearLayout
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:orientation="vertical"
-		android:padding="6dp" android:background="#80ffffff">
-		<LinearLayout
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:orientation="horizontal"
-			android:gravity="center_vertical">
-			<EditText
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:id="@+id/tCarian"
-				android:imeOptions="actionSearch"
-				android:layout_weight="1"
-				android:selectAllOnFocus="true" android:singleLine="true"></EditText>
-			<ImageButton
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:src="@drawable/tombol_cari"
-				android:id="@+id/bCari" />
-		</LinearLayout>
-		
-		<LinearLayout
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:orientation="horizontal"
-			android:gravity="left">
-			<CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/cFilterLama" android:checked="true" android:textColor="#000" android:text="@string/perj_lama"></CheckBox><CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/cFilterBaru" android:checked="true" android:textColor="#000" android:text="@string/perj_baru"></CheckBox>
-		
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
+	<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="#80ffffff">
+		<yuku.androidsdk.searchbar.SearchBar android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/searchBar" />
 
-</LinearLayout>
+		<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="left">
+			<CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/cFilterLama" android:checked="true" android:textColor="#000" android:text="@string/perj_lama" />
+			<CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/cFilterBaru" android:checked="true" android:textColor="#000" android:text="@string/perj_baru" />
+		</LinearLayout>
 	</LinearLayout>
 
-	<ListView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:id="@+id/lsHasilCari"
-		android:layout_weight="1"></ListView>
-	<TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:id="@+id/lTiadaHasil"
-		android:layout_weight="1"
-		android:layout_gravity="center_vertical|center_horizontal"
-		android:text="Pencarian tidak menghasilkan apa-apa. (dan seterusnya omongan gp)"
-		android:gravity="center_horizontal"
-		android:paddingTop="16dp"
-		android:visibility="gone"></TextView>
+	<ListView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/lsHasilCari" android:layout_weight="1" />
+	<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/lTiadaHasil" android:layout_weight="1" android:layout_gravity="center_vertical|center_horizontal" android:text="Pencarian tidak menghasilkan apa-apa. (dan seterusnya omongan gp)" android:gravity="center_horizontal" android:paddingTop="16dp" android:visibility="gone" />
 </LinearLayout>

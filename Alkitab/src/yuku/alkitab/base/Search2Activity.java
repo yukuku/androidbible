@@ -11,9 +11,10 @@ import android.widget.*;
 
 import java.util.*;
 
-import yuku.alkitab.*;
 import yuku.alkitab.base.model.*;
 import yuku.andoutil.*;
+import yuku.androidsdk.searchbar.*;
+import yuku.androidsdk.searchbar.SearchBar.OnSearchListener;
 
 public class Search2Activity extends Activity {
 	public static final String TAG = Search2Activity.class.getSimpleName();
@@ -26,16 +27,14 @@ public class Search2Activity extends Activity {
 	public static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
 	
 	ListView lsHasilCari;
-	ImageButton bCari;
-	EditText tCarian;
+	SearchBar searchBar;
 	CheckBox cFilterLama;
 	CheckBox cFilterBaru;
 	TextView lTiadaHasil;
 	
 	int warnaStabilo;
 	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		U.nyalakanTitleBarHanyaKalauTablet(this);
@@ -46,12 +45,11 @@ public class Search2Activity extends Activity {
 		
 		setContentView(R.layout.activity_search2);
 
-		lsHasilCari = (ListView) findViewById(R.id.lsHasilCari);
-		bCari = (ImageButton) findViewById(R.id.bCari);
-		tCarian = (EditText) findViewById(R.id.tCarian);
-		cFilterLama = (CheckBox) findViewById(R.id.cFilterLama);
-		cFilterBaru = (CheckBox) findViewById(R.id.cFilterBaru);
-		lTiadaHasil = (TextView) findViewById(R.id.lTiadaHasil);
+		lsHasilCari = U.getView(this, R.id.lsHasilCari);
+		searchBar = U.getView(this, R.id.searchBar);
+		cFilterLama = U.getView(this, R.id.cFilterLama);
+		cFilterBaru = U.getView(this, R.id.cFilterBaru);
+		lTiadaHasil = U.getView(this, R.id.lTiadaHasil);
 		
 		lsHasilCari.setBackgroundColor(S.penerapan.warnaLatar);
 		lsHasilCari.setCacheColorHint(S.penerapan.warnaLatar);
@@ -67,12 +65,11 @@ public class Search2Activity extends Activity {
 		}
 		
 		lsHasilCari.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				int ari = (int) parent.getItemIdAtPosition(position);
 				
 				Intent data = new Intent();
-				data.putExtra(EXTRA_carian, tCarian.getText().toString());
+				data.putExtra(EXTRA_carian, searchBar.getText().toString());
 				data.putExtra(EXTRA_filter_lama, cFilterLama.isChecked());
 				data.putExtra(EXTRA_filter_baru, cFilterBaru.isChecked());
 				
@@ -88,18 +85,9 @@ public class Search2Activity extends Activity {
 				finish();
 			}
 		});
-		bCari.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) { bCari_click(); }
-		});
-		tCarian.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-			@Override
-			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-					bCari_click();
-					return true;
-				}
-				return false;
+		searchBar.setOnSearchListener(new OnSearchListener() {
+			@Override public void onSearch(SearchBar searchBar, Editable text) {
+				search(text.toString());
 			}
 		});
 		
@@ -113,7 +101,7 @@ public class Search2Activity extends Activity {
 				int posisiTerpilih = intent.getIntExtra(EXTRA_posisiTerpilih, -1);
 				
 				if (carian != null) {
-					tCarian.setText(carian);
+					searchBar.setText(carian);
 					
 					if (hasilCari != null) {
 						String[] xkata = Search2Engine.tokenkan(carian);
@@ -134,8 +122,7 @@ public class Search2Activity extends Activity {
 		}
 	}
 	
-	protected void bCari_click() {
-		final String carian = tCarian.getText().toString();
+	protected void search(String carian) {
 		final boolean filter_lama = cFilterLama.isChecked();
 		final boolean filter_baru = cFilterBaru.isChecked();
 		
@@ -150,59 +137,50 @@ public class Search2Activity extends Activity {
 		
 		final String[] xkata = Search2Engine.tokenkan(carian);
 		
-		final ProgressDialog progress = new ProgressDialog(this);
-		progress.setTitle(getString(R.string.mencari));
-		progress.setMessage(Html.fromHtml(String.format(U.preprocessHtml(getString(R.string.sedang_mencari_ayat_yang_mengandung_kata_kata_xkata)), Arrays.toString(xkata))));
-		progress.setCancelable(false);
-		progress.setIndeterminate(true);
-		progress.setOnDismissListener(new DialogInterface.OnDismissListener() {
-			@Override
-			public void onDismiss(DialogInterface dialog) {
+		final ProgressDialog pd = new ProgressDialog(this);
+		pd.setTitle(getString(R.string.mencari));
+		pd.setMessage(Html.fromHtml(String.format(U.preprocessHtml(getString(R.string.sedang_mencari_ayat_yang_mengandung_kata_kata_xkata)), Arrays.toString(xkata))));
+		pd.setCancelable(false);
+		pd.setIndeterminate(true);
+		pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
+			@Override public void onDismiss(DialogInterface dialog) {
 				// paksa muncul
-				progress.show();
+				pd.show();
 			}
 		});
-		progress.show();
+		pd.show();
 		
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
+		new AsyncTask<Void, Void, IntArrayList>() {
+			@Override protected IntArrayList doInBackground(Void... params) {
 				synchronized (Search2Activity.this) {
-					final IntArrayList hasil = Search2Engine.cari(Search2Activity.this, xkata, filter_lama, filter_baru);
-					Search2Activity.this.runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							lsHasilCari.setAdapter(new Search2Adapter(hasil, xkata));
-							lsHasilCari.setFastScrollEnabled(true);
-							Toast.makeText(Search2Activity.this, getString(R.string.size_hasil, hasil.size()), Toast.LENGTH_SHORT).show();
-							
-							if (hasil.size() > 0) {
-								//# close soft keyboard 
-								InputMethodManager inputManager = (InputMethodManager) Search2Activity.this.getSystemService(Context.INPUT_METHOD_SERVICE); 
-								inputManager.hideSoftInputFromWindow(tCarian.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-							}
-						}
-					});
-					
-					progress.setOnDismissListener(null);
-					progress.dismiss();
+					return Search2Engine.cari(Search2Activity.this, xkata, filter_lama, filter_baru);
 				}
 			}
-		}, "search2engine").start(); //$NON-NLS-1$
+			
+			@Override protected void onPostExecute(IntArrayList hasil) {
+				lsHasilCari.setAdapter(new Search2Adapter(hasil, xkata));
+				lsHasilCari.setFastScrollEnabled(true);
+				Toast.makeText(Search2Activity.this, getString(R.string.size_hasil, hasil.size()), Toast.LENGTH_SHORT).show();
+				
+				if (hasil.size() > 0) {
+					//# close soft keyboard 
+					InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); 
+					inputManager.hideSoftInputFromWindow(searchBar.getSearchField().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+				}
+				
+				pd.setOnDismissListener(null);
+				pd.dismiss();
+			};
+		}.execute();
 	}
 	
-	class Search2Adapter extends BaseAdapter /*implements SectionIndexer*/ {
+	class Search2Adapter extends BaseAdapter {
 		IntArrayList hasilCari;
 		String[] xkata;
-//		private int[] seksiKitab;
-//		private int[] seksiPos;
-//		private int nseksi;
-//		private String[] seksiLabel;
 		
 		public Search2Adapter(IntArrayList hasilCari, String[] xkata) {
 			this.hasilCari = hasilCari;
 			this.xkata = xkata;
-//			bikinSeksi();
 		}
 
 		@Override
@@ -246,65 +224,5 @@ public class Search2Activity extends Activity {
 		IntArrayList getHasilCari() {
 			return hasilCari;
 		}
-
-//		private void bikinSeksi() {
-//			int[] seksiKitab = new int[256]; // max
-//			int[] seksiAwal = new int[256];
-//			int nseksi = 0;
-//			int maxSeksiKini = 0x000000;
-//			
-//			int[] tmpHasilCari = hasilCari.buffer();
-//			for (int i = 0, len = hasilCari.size(); i < len; i++) {
-//				int ari = tmpHasilCari[i];
-//				if (ari >= maxSeksiKini) { // seksi baru diperlukan
-//					int kitab = Ari.toKitab(ari);
-//					seksiKitab[nseksi] = kitab;
-//					seksiAwal[nseksi] = i;
-//					nseksi++;
-//					maxSeksiKini = Ari.encode(kitab+1, 0);
-//				}
-//			}
-//			
-//			this.seksiKitab = seksiKitab;
-//			this.seksiPos = seksiAwal;
-//			this.nseksi = nseksi;
-//			
-//			Log.d(TAG, "hasilCari = " + hasilCari); //$NON-NLS-1$
-//			Log.d(TAG, "nseksi = " + nseksi); //$NON-NLS-1$
-//			Log.d(TAG, "seksiKitab = " + Arrays.toString(seksiKitab)); //$NON-NLS-1$
-//			Log.d(TAG, "seksiAwal = " + Arrays.toString(seksiAwal)); //$NON-NLS-1$
-//		}
-//
-//		@Override
-//		public int getPositionForSection(int section) {
-//			Log.d(TAG, "getPositionForSection " + section); //$NON-NLS-1$
-//			if (section >= nseksi) section = nseksi-1;
-//			if (section < 0) section = 0;
-//			return seksiPos[section];
-//		}
-//
-//		@Override
-//		public int getSectionForPosition(int position) {
-//			Log.d(TAG, "getSectionForPosition " + position); //$NON-NLS-1$
-//			int pos = Arrays.binarySearch(seksiPos, position);
-//			int res = pos >= 0? pos: -pos-1;
-//			if (res >= nseksi) return nseksi-1;
-//			if (res < 0) return 0;
-//			return res;
-//		}
-//
-//		@Override
-//		public Object[] getSections() {
-//			if (seksiLabel == null) {
-//				seksiLabel = new String[nseksi];
-//				for (int i = 0; i < nseksi; i++) {
-//					seksiLabel[i] = S.edisiAktif.volatile_xkitab[seksiKitab[i]].judul;
-//				}
-//			}
-//			
-//			Log.d(TAG, "getSections -> " + Arrays.toString(seksiLabel)); //$NON-NLS-1$
-//			return seksiLabel;
-//		}
 	}
-	
 }
