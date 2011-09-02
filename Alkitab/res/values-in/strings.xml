@@ -107,7 +107,7 @@
     <string name="size_hasil">%d hasil</string>
     <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Sedang mencari ayat yang mengandung kata-kata: [b]%s[/b]</string>
     <string name="mencari">Mencari</string>
-    <string name="pilih_perjanjian_lama_dan_atau_baru">Pilih perjanjian lama dan/atau baru</string>
+    <string name="pilih_setidaknya_satu_kitab">Pilih setidaknya satu kitab untuk dicari.</string>
     <string name="pengunduhan_dibatalkan">Pengunduhan dibatalkan.</string>
     <string name="sedang_mendekompres_harap_tunggu">Sedang mendekompres. Harap tunggu...</string>
     <string name="terunduh_sampe_byte">Terunduh: %d byte</string>

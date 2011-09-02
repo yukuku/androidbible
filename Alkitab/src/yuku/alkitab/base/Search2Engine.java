@@ -2,6 +2,7 @@ package yuku.alkitab.base;
 
 import android.content.*;
 import android.graphics.*;
+import android.os.*;
 import android.text.*;
 import android.text.style.*;
 import android.util.*;
@@ -72,8 +73,37 @@ public class Search2Engine {
 		}
 		return xkata2.toArray(new String[xkata2.size()]);
 	}
+	
+	public static class Query implements Parcelable {
+		String carian;
+		SparseBooleanArray xkitabPos;
+		
+		@Override public int describeContents() {
+			return 0;
+		}
+		
+		@Override public void writeToParcel(Parcel dest, int flags) {
+			dest.writeString(carian);
+			dest.writeSparseBooleanArray(xkitabPos);
+		}
 
-	static IntArrayList cari(Context context, String[] xkata, boolean filter_lama, boolean filter_baru) {
+		public static final Parcelable.Creator<Query> CREATOR = new Parcelable.Creator<Query>() {
+			@Override public Query createFromParcel(Parcel in) {
+				Query res = new Query();
+				res.carian = in.readString();
+				res.xkitabPos = in.readSparseBooleanArray();
+				return res;
+			}
+
+			@Override public Query[] newArray(int size) {
+				return new Query[size];
+			}
+		};
+	}
+
+	public static IntArrayList cari(Context context, Query query) {
+		String[] xkata = tokenkan(query.carian);
+		
 		// urutkan berdasarkan panjang, lalu abjad
 		Arrays.sort(xkata, new Comparator<String>() {
 			@Override
@@ -121,7 +151,7 @@ public class Search2Engine {
 	
 				{
 					long ms = System.currentTimeMillis();
-					hasil = cariDalam(context, kata, lama, 10000, filter_lama, filter_baru);
+					hasil = cariDalam(context, kata, lama, query.xkitabPos);
 					Log.d(TAG, "cari kata '" + kata + "' pake waktu: " + (System.currentTimeMillis() - ms) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 	
@@ -201,7 +231,7 @@ public class Search2Engine {
 		}
 	}
 
-	static IntArrayList cariDalam(Context context, String kata, IntArrayList sumber, int max, boolean filter_lama, boolean filter_baru) {
+	static IntArrayList cariDalam(Context context, String kata, IntArrayList sumber, SparseBooleanArray xkitabPos) {
 		IntArrayList res = new IntArrayList();
 		boolean pakeTambah = false;
 		
@@ -212,18 +242,9 @@ public class Search2Engine {
 	
 		if (sumber == null) {
 			for (Kitab k: S.edisiAktif.getConsecutiveXkitab()) {
-				//# filter dulu
-				if (!filter_lama) {
-					if (k.pos >= 0 && k.pos <= 38) {
-						continue;
-					}
+				if (xkitabPos.get(k.pos, false) == false) {
+					continue; // ga termasuk dalam kitab yang dipilih
 				}
-				if (!filter_baru) {
-					if (k.pos >= 39 && k.pos <= 65) {
-						continue;
-					}
-				}
-				// FIXME kitab lain
 				
 				int npasal = k.npasal;
 				
@@ -294,7 +315,7 @@ public class Search2Engine {
 				}
 			} else {
 				if (a != aterakhir) {
-					res.add(base + a + 1); // +1 supaya jadi ayat[1base]
+					res.add(base + a + 1); // +1 supaya jadi ayat_1
 					aterakhir = a;
 				}
 				if (pakeTambah) {

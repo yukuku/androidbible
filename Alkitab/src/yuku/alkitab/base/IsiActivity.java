@@ -29,6 +29,7 @@ import yuku.alkitab.base.EdisiActivity.MEdisiPreset;
 import yuku.alkitab.base.EdisiActivity.MEdisiYes;
 import yuku.alkitab.base.JenisBukmakDialog.Listener;
 import yuku.alkitab.base.JenisCatatanDialog.RefreshCallback;
+import yuku.alkitab.base.Search2Engine.Query;
 import yuku.alkitab.base.config.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.Db.Bukmak2;
@@ -63,9 +64,7 @@ public class IsiActivity extends Activity {
 	Sejarah sejarah;
 
 	//# penyimpanan state buat search2
-	String search2_carian = null;
-	boolean search2_filter_lama = true;
-	boolean search2_filter_baru = true;
+	Query search2_query = null;
 	IntArrayList search2_hasilCari = null;
 	int search2_posisiTerpilih = -1;
 	
@@ -806,9 +805,7 @@ public class IsiActivity extends Activity {
 
 	private void menuSearch2_click() {
 		Intent intent = new Intent(this, Search2Activity.class);
-		intent.putExtra(Search2Activity.EXTRA_carian, search2_carian);
-		intent.putExtra(Search2Activity.EXTRA_filter_lama, search2_filter_lama);
-		intent.putExtra(Search2Activity.EXTRA_filter_baru, search2_filter_baru);
+		intent.putExtra(Search2Activity.EXTRA_query, search2_query);
 		intent.putExtra(Search2Activity.EXTRA_hasilCari, search2_hasilCari);
 		intent.putExtra(Search2Activity.EXTRA_posisiTerpilih, search2_posisiTerpilih);
 		
@@ -856,13 +853,9 @@ public class IsiActivity extends Activity {
 					sejarah.tambah(ari);
 				}
 				
-				search2_carian = data.getStringExtra(Search2Activity.EXTRA_carian);
-				search2_filter_lama = data.getBooleanExtra(Search2Activity.EXTRA_filter_lama, true);
-				search2_filter_baru = data.getBooleanExtra(Search2Activity.EXTRA_filter_baru, true);
+				search2_query = data.getParcelableExtra(Search2Activity.EXTRA_query);
 				search2_hasilCari = data.getParcelableExtra(Search2Activity.EXTRA_hasilCari);
 				search2_posisiTerpilih = data.getIntExtra(Search2Activity.EXTRA_posisiTerpilih, -1);
-				
-				//Log.d("alki", "kembali dari search2. Carian=" + search2_carian + ", posisiTerpilih=" + search2_posisiTerpilih + ", hasilCari=" + search2_hasilCari);
 			}
 		} else if (requestCode == R.id.menuRenungan) {
 			if (data != null) {

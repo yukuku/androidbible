@@ -103,7 +103,7 @@
     <string name="size_hasil">%d results</string>
     <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Searching for verses containing the following words: [b]%s[/b]</string>
     <string name="mencari">Searching</string>
-    <string name="pilih_perjanjian_lama_dan_atau_baru">Select old or new testament</string>
+    <string name="pilih_setidaknya_satu_kitab">Choose at least one book to search.</string>
     <string name="pengunduhan_dibatalkan">Download canceled.</string>
     <string name="sedang_mendekompres_harap_tunggu">Decompressing. Please wait...</string>
     <string name="terunduh_sampe_byte">Downloaded: %d bytes</string>
