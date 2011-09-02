@@ -6,6 +6,7 @@ import android.graphics.*;
 import android.os.*;
 import android.text.*;
 import android.view.*;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.*;
 import android.widget.*;
 
@@ -31,6 +32,7 @@ public class Search2Activity extends Activity {
 	View panelFilter;
 	CheckBox cFilterLama;
 	CheckBox cFilterBaru;
+	View bEditFilter;
 	TextView lTiadaHasil;
 	
 	int warnaStabilo;
@@ -51,6 +53,7 @@ public class Search2Activity extends Activity {
 		panelFilter = U.getView(this, R.id.panelFilter);
 		cFilterLama = U.getView(this, R.id.cFilterLama);
 		cFilterBaru = U.getView(this, R.id.cFilterBaru);
+		bEditFilter = U.getView(this, R.id.bEditFilter);
 		lTiadaHasil = U.getView(this, R.id.lTiadaHasil);
 		
 		((ViewGroup) panelFilter.getParent()).removeView(panelFilter);
@@ -95,6 +98,11 @@ public class Search2Activity extends Activity {
 				search(text.toString());
 			}
 		});
+		bEditFilter.setOnClickListener(new OnClickListener() {
+			@Override public void onClick(View v) {
+				bEditFilter_click();
+			}
+		});
 		
 		{
 			Intent intent = getIntent();
@@ -127,6 +135,58 @@ public class Search2Activity extends Activity {
 		}
 	}
 	
+	public void bEditFilter_click() {
+		SearchFilterAdapter adapter = new SearchFilterAdapter();
+		
+		AlertDialog dialog = new AlertDialog.Builder(this)
+		.setTitle("Select books to search")
+		.setAdapter(adapter, null)
+		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+			@Override public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				
+			}
+		})
+		.setNegativeButton(R.string.cancel, null)
+		.show();
+		
+		// Enable automatic support for multi choice, and also prevent dismissing the dialog because of
+		// the click handler set by the alertdialog builder.
+		final ListView lv = dialog.getListView();
+		lv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		lv.setOnItemClickListener(null); 
+	}
+	
+	class SearchFilterAdapter extends BaseAdapter {
+		private Kitab[] xkitab;
+
+		public SearchFilterAdapter() {
+			xkitab = S.edisiAktif.getConsecutiveXkitab();
+		}
+		
+		@Override public int getCount() {
+			return xkitab.length;
+		}
+
+		@Override public Kitab getItem(int position) {
+			return xkitab[position];
+		}
+
+		@Override public long getItemId(int position) {
+			return position;
+		}
+
+		@Override public View getView(int position, View convertView, ViewGroup parent) {
+			CheckedTextView res = (CheckedTextView) (convertView != null? convertView: getLayoutInflater().inflate(android.R.layout.select_dialog_multichoice, null));
+			
+			Kitab k = getItem(position);
+			res.setText(k.judul);
+			res.setTextColor(U.getWarnaBerdasarkanKitabPos(k.pos));
+			
+			return res;
+		}
+	}
+
 	protected void search(String carian) {
 		final boolean filter_lama = cFilterLama.isChecked();
 		final boolean filter_baru = cFilterBaru.isChecked();

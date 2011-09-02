@@ -36,23 +36,11 @@ public class MenujuActivity extends Activity {
 	int maxAyat = 0;
 	KitabAdapter adapter;
 	
-	int[] colorSet = {
-		0xff990022, // pl
-		0xff000099, // pb
-		0xff000000, // dll
-	};
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		U.nyalakanTitleBarHanyaKalauTablet(this);
-		
-		if (colorSet.length >= 3 && U.tabletkah()) {
-			colorSet[0] = 0xffffcccf;
-			colorSet[1] = 0xffccccff;
-			colorSet[2] = 0xffffffff;
-		}
 		
 		S.siapinKitab();
 		S.bacaPengaturan(this);
@@ -393,15 +381,7 @@ public class MenujuActivity extends Activity {
 
 			Kitab k = getItem(position);
 			res.setText(k.judul);
-			
-			// warna tergantung jenis
-			if (k.pos >= 0 && k.pos < 39) {
-				res.setTextColor(colorSet[0]);
-			} else if (k.pos >= 39 && k.pos < 66) {
-				res.setTextColor(colorSet[1]);
-			} else {
-				res.setTextColor(colorSet[2]);
-			}
+			res.setTextColor(U.getWarnaBerdasarkanKitabPos(k.pos));
 			
 			return res;
 		}

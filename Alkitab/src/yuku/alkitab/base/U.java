@@ -175,4 +175,28 @@ public class U {
 	@SuppressWarnings("unchecked") public static <T extends View> T getView(Activity activity, int id) {
 		return (T) activity.findViewById(id);
 	}
+	
+	private static int[] colorSet;
+	public static int getWarnaBerdasarkanKitabPos(int pos) {
+		if (colorSet == null) {
+			colorSet = new int[3];
+			if (U.tabletkah()) {
+				colorSet[0] = 0xffffcccf;
+				colorSet[1] = 0xffccccff;
+				colorSet[2] = 0xffffffff;
+			} else {
+				colorSet[0] = 0xff990022; // pl
+				colorSet[1] = 0xff000099; // pb 
+				colorSet[2] = 0xff000000; // dll
+			}
+		}
+
+		if (pos >= 0 && pos < 39) {
+			return colorSet[0];
+		} else if (pos >= 39 && pos < 66) {
+			return colorSet[1];
+		} else {
+			return colorSet[2];
+		}
+	}
 }
