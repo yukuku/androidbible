@@ -1,16 +1,17 @@
 package yuku.alkitab.base;
 
 
-import yuku.alkitab.R;
 import android.content.*;
-import android.content.res.TypedArray;
-import android.graphics.Typeface;
+import android.content.res.*;
+import android.graphics.*;
 import android.os.*;
-import android.preference.DialogPreference;
+import android.preference.*;
 import android.util.*;
 import android.view.*;
 import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+
+import yuku.alkitab.*;
 
 public class UkuranHuruf2Preference extends DialogPreference implements OnSeekBarChangeListener {
 	private static final int OFSET_minukuran = 2;
@@ -20,21 +21,22 @@ public class UkuranHuruf2Preference extends DialogPreference implements OnSeekBa
      */
     private SeekBar seekbar;
     private float ukuran;
-	private final Context context;
+	private Context context;
 	private TextView lContoh;
 	private TextView lUkuranHuruf;
     
     public UkuranHuruf2Preference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-		this.context = context;
+		init(context);
     }
 
     public UkuranHuruf2Preference(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        super(context, attrs);
+        init(context);
     }
 
-    public UkuranHuruf2Preference(Context context) {
-        this(context, null);
+    private void init(Context context) {
+    	this.context = context;
     }
     
     @Override
@@ -170,11 +172,11 @@ public class UkuranHuruf2Preference extends DialogPreference implements OnSeekBa
 
         @SuppressWarnings("unused")
 		public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
-            public SavedState createFromParcel(Parcel in) {
+            @Override public SavedState createFromParcel(Parcel in) {
                 return new SavedState(in);
             }
 
-            public SavedState[] newArray(int size) {
+            @Override public SavedState[] newArray(int size) {
                 return new SavedState[size];
             }
         };

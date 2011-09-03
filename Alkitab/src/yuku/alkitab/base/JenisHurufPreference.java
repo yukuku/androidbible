@@ -15,9 +15,8 @@ public class JenisHurufPreference extends ListPreference {
     }
 
     public JenisHurufPreference(Context context) {
-        this(context, null);
+        super(context);
     }
-
     
 	@Override
 	protected void onPrepareDialogBuilder(Builder builder) {
@@ -61,7 +60,7 @@ public class JenisHurufPreference extends ListPreference {
 				return entryValues.length;
 			}
 		}, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
+			@Override public void onClick(DialogInterface dialog, int which) {
 				mClickedDialogEntryIndex = which;
 
 				/*
