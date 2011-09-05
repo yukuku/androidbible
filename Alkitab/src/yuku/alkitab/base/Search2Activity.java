@@ -35,7 +35,6 @@ public class Search2Activity extends Activity {
 	CheckBox cFilterBaru;
 	TextView tFilterRumit;
 	View bEditFilter;
-	TextView lTiadaHasil;
 	
 	int warnaStabilo;
 	SparseBooleanArray xkitabPosTerpilih = new SparseBooleanArray();
@@ -58,7 +57,6 @@ public class Search2Activity extends Activity {
 		cFilterBaru = U.getView(this, R.id.cFilterBaru);
 		tFilterRumit = U.getView(this, R.id.tFilterRumit);
 		bEditFilter = U.getView(this, R.id.bEditFilter);
-		lTiadaHasil = U.getView(this, R.id.lTiadaHasil);
 		
 		((ViewGroup) panelFilter.getParent()).removeView(panelFilter);
 		searchBar.setBottomView(panelFilter);

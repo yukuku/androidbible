@@ -10,5 +10,4 @@
 	</RelativeLayout>
 
 	<ListView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/lsHasilCari" android:layout_weight="1" android:fastScrollEnabled="true" />
-	<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/lTiadaHasil" android:layout_weight="1" android:layout_gravity="center_vertical|center_horizontal" android:text="Pencarian tidak menghasilkan apa-apa. (dan seterusnya omongan gp)" android:gravity="center_horizontal" android:paddingTop="16dp" android:visibility="gone" />
 </LinearLayout>

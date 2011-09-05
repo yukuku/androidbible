@@ -42,24 +42,4 @@ public class Ari {
 	public static int toKitabPasal(int ari) {
 		return (ari & 0x00ffff00);
 	}
-	
-	public static String toAlamat(Kitab[] xkitab, int ari) {
-		int kitab = toKitab(ari);
-		int pasal = toPasal(ari);
-		int ayat = toAyat(ari);
-		
-		StringBuilder sb = new StringBuilder(30);
-		
-		if (kitab >= xkitab.length) {
-			sb.append('[');
-			sb.append(kitab);
-			sb.append("] "); //$NON-NLS-1$
-		} else {
-			sb.append(xkitab[kitab].judul).append(' ');
-		}
-		
-		sb.append(pasal).append(':').append(ayat);
-		
-		return sb.toString();
-	}
 }
