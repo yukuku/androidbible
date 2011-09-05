@@ -47,7 +47,6 @@ public class IsiActivity extends Activity {
 
 	public static final int RESULT_pindahCara = RESULT_FIRST_USER + 1;
 
-	String[] xayat;
 	ListView lsIsi;
 	Button bTuju;
 	ImageButton bKiri;
@@ -308,17 +307,16 @@ public class IsiActivity extends Activity {
 		return false;
 	}
 	
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		
 		new MenuInflater(this).inflate(R.menu.context_ayat, menu);
 		
 		// simpen ayat yang dipilih untuk dipake sama menu tambah bukmak
 		{
-			AdapterContextMenuInfo menuInfo2 = (AdapterContextMenuInfo) menuInfo;
-			this.ayatContextMenu_1 = (int) (menuInfo2.id) + 1;
-			this.isiAyatContextMenu = U.buangKodeKusus(xayat[(int) menuInfo2.id]);
+			int ayat_1 = (int) (((AdapterContextMenuInfo) menuInfo).id) + 1;
+			this.ayatContextMenu_1 = ayat_1;
+			this.isiAyatContextMenu = U.buangKodeKusus(ayatAdapter_.getAyat(ayat_1));
 		}
 		
 		//# pasang header
@@ -893,7 +891,7 @@ public class IsiActivity extends Activity {
 			Blok[] perikop_xblok;
 			int nblok;
 			
-			xayat = S.muatTeks(S.edisiAktif, S.kitabAktif, pasal_1);
+			String[] xayat = S.muatTeks(S.edisiAktif, S.kitabAktif, pasal_1);
 			
 			//# max dibikin pol 30 aja (1 pasal max 30 blok, cukup mustahil)
 			int max = 30;

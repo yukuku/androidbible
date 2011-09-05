@@ -547,6 +547,12 @@ class AyatAdapter extends BaseAdapter {
 		return seayat;
 	}
 	
+	public String getAyat(int ayat_1) {
+		if (dataAyat_ == null) return "[?]";
+		if (ayat_1 < 1 || ayat_1 > dataAyat_.length) return "[?]";
+		return dataAyat_[ayat_1 - 1];
+	}
+	
 	static String longPlaceholderString = 
 		"1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" +
 		"1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" +
