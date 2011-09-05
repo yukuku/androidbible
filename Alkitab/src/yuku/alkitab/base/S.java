@@ -14,6 +14,7 @@ import yuku.alkitab.base.config.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.renungan.*;
 import yuku.alkitab.base.storage.*;
+import yuku.andoutil.*;
 import yuku.kirimfidbek.*;
 
 public class S {
@@ -210,6 +211,45 @@ public class S {
 
 	public static String alamat(Kitab kitab, int pasal_1, int ayat_1) {
 		return (kitab == null? "[?]": kitab.judul) + " " + pasal_1 + ":" + ayat_1;  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+	}
+	
+	public static CharSequence alamat(Kitab kitab, int pasal_1, IntArrayList xayat_1) {
+		StringBuilder sb = new StringBuilder(kitab == null? "[?]": kitab.judul);
+		sb.append(' ').append(pasal_1);
+		int origLen = sb.length();
+		int lastAyat_1 = 0;
+		int awalAyat_1 = 0;
+		
+		for (int i = 0; i < xayat_1.size(); i++) {
+			int ayat_1 = xayat_1.get(i);
+			
+			if (lastAyat_1 == 0) {
+				// blum ada, diam dulu aja
+			} else if (lastAyat_1 == ayat_1 - 1) {
+				// masih terusan, simpen awalnya
+				if (awalAyat_1 == 0) awalAyat_1 = lastAyat_1;
+			} else {
+				// abis loncat
+				if (awalAyat_1 != 0) {
+					sb.append(origLen == sb.length()? ":": ", ").append(awalAyat_1).append('-').append(lastAyat_1);
+					awalAyat_1 = 0;
+				} else {
+					sb.append(origLen == sb.length()? ":": ", ").append(lastAyat_1);
+				}
+			}
+			
+			lastAyat_1 = xayat_1.get(i);
+		}
+		
+		// penghabisan
+		if (awalAyat_1 != 0) {
+			sb.append(origLen == sb.length()? ":": ", ").append(awalAyat_1).append('-').append(lastAyat_1);
+			awalAyat_1 = 0; // ga perlu, tapi biar konsisten aja dengan atas
+		} else {
+			sb.append(origLen == sb.length()? ":": ", ").append(lastAyat_1);
+		}
+		
+		return sb;
 	}
 	
 	/**

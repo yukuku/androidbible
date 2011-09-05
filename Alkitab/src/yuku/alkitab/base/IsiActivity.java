@@ -310,22 +310,38 @@ public class IsiActivity extends Activity {
 	}
 	
 	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
-		
 		getMenuInflater().inflate(R.menu.context_ayat, menu);
 		
-		// simpen ayat yang dipilih untuk dipake sama menu tambah bukmak
-		int ayat_1 = (int) (((AdapterContextMenuInfo) menuInfo).id) + 1;
-		this.ayatContextMenu_1 = ayat_1;
-		this.isiAyatContextMenu = U.buangKodeKusus(ayatAdapter_.getAyat(ayat_1));
+		{ 
+			// simpen ayat yang dipilih untuk dipake sama menu tambah bukmak
+			int ayat_1 = (int) (((AdapterContextMenuInfo) menuInfo).id) + 1;
+			this.ayatContextMenu_1 = ayat_1;
+			this.isiAyatContextMenu = U.buangKodeKusus(ayatAdapter_.getAyat(ayat_1));
+			
+			// yang sedang ditahan lama saat ini harus dianggap terpilih
+			int position = ayatAdapter_.getPositionAbaikanPerikopDariAyat(ayat_1);
+			if (position != -1) lsIsi.setItemChecked(position, true);
+		}
 		
-		// yang sedang ditahan lama saat ini harus dianggap terpilih
-		int position = ayatAdapter_.getPositionAbaikanPerikopDariAyat(ayat_1);
-		if (position != -1) lsIsi.setItemChecked(position, true);
+		// hitung ada berapa yang terpilih
+		SparseBooleanArray positions = lsIsi.getCheckedItemPositions();
+		IntArrayList terpilih = new IntArrayList(positions.size());
+		for (int i = 0, len = positions.size(); i < len; i++) {
+			if (positions.valueAt(i)) {
+				int position = positions.keyAt(i);
+				int ayat_1 = ayatAdapter_.getAyatDariPosition(position);
+				if (ayat_1 >= 1) terpilih.add(ayat_1);
+			}
+		}
 		
-		//# pasang header
-		String alamat = S.alamat(S.kitabAktif, this.pasal_1, this.ayatContextMenu_1);
-		menu.setHeaderTitle(alamat);
+		// sedikit beda perlakuan antara satu terpilih dan lebih
+		if (terpilih.size() == 0) {
+			// harusnya mustahil. Maka ga usa ngapa2in deh.
+		} else if (terpilih.size() == 1) {
+			menu.setHeaderTitle(S.alamat(S.kitabAktif, this.pasal_1, this.ayatContextMenu_1));
+		} else {
+			menu.setHeaderTitle(S.alamat(S.kitabAktif, this.pasal_1, terpilih));
+		}
 	}
 	
 	@Override
