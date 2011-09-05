@@ -312,7 +312,7 @@ public class IsiActivity extends Activity {
 	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		
-		new MenuInflater(this).inflate(R.menu.context_ayat, menu);
+		getMenuInflater().inflate(R.menu.context_ayat, menu);
 		
 		// simpen ayat yang dipilih untuk dipake sama menu tambah bukmak
 		{
@@ -606,8 +606,7 @@ public class IsiActivity extends Activity {
 
 	public void bikinMenu(Menu menu) {
 		menu.clear();
-
-		new MenuInflater(this).inflate(R.menu.activity_isi, menu);
+		getMenuInflater().inflate(R.menu.activity_isi, menu);
 		
 		BuildConfig c = BuildConfig.get(this);
 

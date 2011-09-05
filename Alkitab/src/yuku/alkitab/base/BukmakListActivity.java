@@ -212,7 +212,7 @@ public class BukmakListActivity extends ListActivity {
 
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		new MenuInflater(this).inflate(R.menu.activity_bukmaklist, menu);
+		getMenuInflater().inflate(R.menu.activity_bukmaklist, menu);
 	}
 	
 	@Override
@@ -312,9 +312,8 @@ public class BukmakListActivity extends ListActivity {
 		finish();
 	}
 	
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		new MenuInflater(this).inflate(R.menu.context_bukmaklist, menu);
+	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		getMenuInflater().inflate(R.menu.context_bukmaklist, menu);
 		
 		// sesuaikan string berdasarkan jenis.
 		MenuItem menuHapusBukmak = menu.findItem(R.id.menuHapusBukmak);

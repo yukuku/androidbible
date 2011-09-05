@@ -145,7 +145,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		new MenuInflater(this).inflate(R.menu.activity_renungan, menu);
+		getMenuInflater().inflate(R.menu.activity_renungan, menu);
 	}
 	
 	@Override

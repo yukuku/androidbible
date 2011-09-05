@@ -61,7 +61,7 @@ public class EdisiActivity extends Activity {
 	
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		new MenuInflater(this).inflate(R.menu.activity_edisi, menu);
+		getMenuInflater().inflate(R.menu.activity_edisi, menu);
 	}
 	
 	@Override
@@ -115,7 +115,7 @@ public class EdisiActivity extends Activity {
 		if (info.position == adapter.getCount() - 1) {
 			// ga ada menu untuk Buka file
 		} else {
-			new MenuInflater(getApplicationContext()).inflate(R.menu.context_edisi, menu);
+			getMenuInflater().inflate(R.menu.context_edisi, menu);
 		
 			MenuItem menuBuang = menu.findItem(R.id.menuBuang);
 			if (menuBuang != null) {
@@ -195,7 +195,7 @@ public class EdisiActivity extends Activity {
 						@Override
 						public void onSelesaiDonlot(Elemen e) {
 							EdisiActivity.this.runOnUiThread(new Runnable() {
-								public void run() {
+								@Override public void run() {
 									Toast.makeText(getApplicationContext(),
 										getString(R.string.selesai_mengunduh_edisi_judul_disimpan_di_path, edisi.judul, AddonManager.getEdisiPath(edisi.namafile_preset)),
 										Toast.LENGTH_LONG).show();
@@ -207,7 +207,7 @@ public class EdisiActivity extends Activity {
 						@Override
 						public void onGagalDonlot(Elemen e, final String keterangan, final Throwable t) {
 							EdisiActivity.this.runOnUiThread(new Runnable() {
-								public void run() {
+								@Override public void run() {
 									Toast.makeText(
 										getApplicationContext(),
 										keterangan != null ? keterangan : getString(R.string.gagal_mengunduh_edisi_judul_ex_pastikan_internet, edisi.judul,
@@ -220,7 +220,7 @@ public class EdisiActivity extends Activity {
 						@Override
 						public void onProgress(Elemen e, final int sampe, int total) {
 							EdisiActivity.this.runOnUiThread(new Runnable() {
-								public void run() {
+								@Override public void run() {
 									if (sampe >= 0) {
 										pd.setMessage(getString(R.string.terunduh_sampe_byte, sampe));
 									} else {
@@ -234,7 +234,7 @@ public class EdisiActivity extends Activity {
 						@Override
 						public void onBatalDonlot(Elemen e) {
 							EdisiActivity.this.runOnUiThread(new Runnable() {
-								public void run() {
+								@Override public void run() {
 									Toast.makeText(getApplicationContext(), R.string.pengunduhan_dibatalkan, Toast.LENGTH_SHORT).show();
 								}
 							});
