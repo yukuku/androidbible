@@ -3,14 +3,14 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
+	android:paddingLeft="2dp"
+	android:paddingRight="2dp"
 	android:orientation="horizontal">
 	<RelativeLayout
-		xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
-		android:id="@+id/sebelahKiri"
-		>
+		android:id="@+id/sebelahKiri">
 		<LinearLayout
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"

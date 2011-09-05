@@ -40,9 +40,7 @@
 		android:divider="@null"
 		android:listSelector="@android:color/transparent"
 		android:focusable="false"
-		android:focusableInTouchMode="false"
-		android:paddingLeft="2dp"
-		android:paddingRight="2dp" >
+		android:focusableInTouchMode="false">
 	    <!-- Preview: listitem=@layout/item_ayat_sederhana -->
 	</ListView>
 	<LinearLayout
