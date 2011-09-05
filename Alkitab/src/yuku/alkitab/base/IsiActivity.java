@@ -315,11 +315,13 @@ public class IsiActivity extends Activity {
 		getMenuInflater().inflate(R.menu.context_ayat, menu);
 		
 		// simpen ayat yang dipilih untuk dipake sama menu tambah bukmak
-		{
-			int ayat_1 = (int) (((AdapterContextMenuInfo) menuInfo).id) + 1;
-			this.ayatContextMenu_1 = ayat_1;
-			this.isiAyatContextMenu = U.buangKodeKusus(ayatAdapter_.getAyat(ayat_1));
-		}
+		int ayat_1 = (int) (((AdapterContextMenuInfo) menuInfo).id) + 1;
+		this.ayatContextMenu_1 = ayat_1;
+		this.isiAyatContextMenu = U.buangKodeKusus(ayatAdapter_.getAyat(ayat_1));
+		
+		// yang sedang ditahan lama saat ini harus dianggap terpilih
+		int position = ayatAdapter_.getPositionAbaikanPerikopDariAyat(ayat_1);
+		if (position != -1) lsIsi.setItemChecked(position, true);
 		
 		//# pasang header
 		String alamat = S.alamat(S.kitabAktif, this.pasal_1, this.ayatContextMenu_1);
@@ -915,7 +917,7 @@ public class IsiActivity extends Activity {
 			// kasi tau activity
 			this.pasal_1 = pasal_1;
 			
-			final int position = ayatAdapter_.getPositionDariAyat(ayat_1);
+			final int position = ayatAdapter_.getPositionAwalPerikopDariAyat(ayat_1);
 			
 			if (position == -1) {
 				Log.w(TAG, "ga bisa ketemu ayat " + ayat_1 + ", ANEH!"); //$NON-NLS-1$ //$NON-NLS-2$

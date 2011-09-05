@@ -243,16 +243,17 @@ public class AyatAdapter extends BaseAdapter {
 	}
 	
 	/**
-	 * @param ayat mulai dari 1
+	 * Kalau pos 0: perikop; pos 1: ayat_1 1;
+	 * maka fungsi ini (ayat_1: 1) akan return 0. 
 	 * @return position di adapter ini atau -1 kalo ga ketemu
 	 */
-	public int getPositionDariAyat(int ayat) {
+	public int getPositionAwalPerikopDariAyat(int ayat_1) {
 		if (penunjukKotak_ == null) return -1;
 		
-		int ayat0 = ayat - 1;
+		int ayat_0 = ayat_1 - 1;
 		
-		for (int i = 0; i < penunjukKotak_.length; i++) {
-			if (penunjukKotak_[i] == ayat0) {
+		for (int i = 0, len = penunjukKotak_.length; i < len; i++) {
+			if (penunjukKotak_[i] == ayat_0) {
 				// ketemu, tapi kalo ada judul perikop, akan lebih baik. Coba cek mundur dari sini
 				for (int j = i-1; j >= 0; j--) {
 					if (penunjukKotak_[j] < 0) {
@@ -265,6 +266,23 @@ public class AyatAdapter extends BaseAdapter {
 				}
 				return i;
 			}
+		}
+		
+		return -1;
+	}
+	
+	/**
+	 * Kalau pos 0: perikop; pos 1: ayat_1 1;
+	 * maka fungsi ini (ayat_1: 1) akan return 1. 
+	 * @return position di adapter ini atau -1 kalo ga ketemu
+	 */
+	public int getPositionAbaikanPerikopDariAyat(int ayat_1) {
+		if (penunjukKotak_ == null) return -1;
+		
+		int ayat_0 = ayat_1 - 1;
+		
+		for (int i = 0, len = penunjukKotak_.length; i < len; i++) {
+			if (penunjukKotak_[i] == ayat_0) return i;
 		}
 		
 		return -1;
