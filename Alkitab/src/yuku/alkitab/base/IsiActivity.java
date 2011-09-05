@@ -4,8 +4,6 @@ import android.app.*;
 import android.content.*;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.SharedPreferences.Editor;
-import android.content.pm.*;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.*;
 import android.graphics.drawable.*;
 import android.net.*;
@@ -16,6 +14,7 @@ import android.text.util.*;
 import android.util.*;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.*;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.TextView.BufferType;
@@ -673,7 +672,7 @@ public class IsiActivity extends Activity {
 			startActivityForResult(new Intent(this, PengaturanActivity.class), R.id.menuPengaturan);
 			return true;
 		case R.id.menuFidbek:
-			popupMintaFidbek();
+			bukaDialogSaran();
 			return true;
 		case R.id.menuBantuan:
 			startActivity(new Intent(this, BantuanActivity.class));
@@ -687,19 +686,8 @@ public class IsiActivity extends Activity {
 	}
 
 	private void tampilDialogTentang() {
-		String verName = "null"; //$NON-NLS-1$
-		int verCode = -1;
-		
-		try {
-			PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-			verName = packageInfo.versionName;
-			verCode = packageInfo.versionCode;
-		} catch (NameNotFoundException e) {
-			Log.e(TAG, "PackageInfo ngaco", e); //$NON-NLS-1$
-		}
-		
 		TextView isi = new TextView(this);
-		isi.setText(Html.fromHtml(U.preprocessHtml(getString(R.string.teks_about, verName, verCode))));
+		isi.setText(Html.fromHtml(U.preprocessHtml(getString(R.string.teks_about, S.getVersionName(), S.getVersionCode()))));
 		isi.setTextColor(0xffffffff);
 		isi.setLinkTextColor(0xff8080ff);
 		Linkify.addLinks(isi, Linkify.WEB_URLS);
@@ -983,25 +971,18 @@ public class IsiActivity extends Activity {
 		}
 	}
 	
-	private void popupMintaFidbek() {
-		final View feedback = getLayoutInflater().inflate(R.layout.dialog_feedback, null);
-		TextView lVersi = (TextView) feedback.findViewById(R.id.lVersi);
+	private void bukaDialogSaran() {
+		final View dialogView = getLayoutInflater().inflate(R.layout.dialog_saran, null);
 		
-		try {
-			PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
-			lVersi.setText(getString(R.string.namaprog_versi_build, info.versionName, info.versionCode));
-		} catch (NameNotFoundException e) {
-			Log.w(TAG, e);
-		}
-		
-		new AlertDialog.Builder(IsiActivity.this).setView(feedback)
+		AlertDialog dialog = new AlertDialog.Builder(this)
+		.setTitle(getString(R.string.namaprog_versi_build, S.getVersionName(), S.getVersionCode()))
+		.setView(dialogView)
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				EditText tFeedback = (EditText) feedback.findViewById(R.id.tFeedback);
-				String isi = tFeedback.getText().toString();
+			@Override public void onClick(DialogInterface dialog, int which) {
+				EditText tSaran = U.getView(dialogView, R.id.tSaran);
+				String isi = tSaran.getText().toString();
 				
-				if (isi.length() > 0) {
+				if (isi.trim().length() > 0) {
 					App.pengirimFidbek.tambah(isi);
 				}
 				
@@ -1011,7 +992,12 @@ public class IsiActivity extends Activity {
 				editor.putLong(NAMAPREF_terakhirMintaFidbek, System.currentTimeMillis());
 				editor.commit();
 			}
-		}).show();
+		})
+		.create();
+		
+		dialog.getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+		dialog.show();
 	}
 	
 	@Override

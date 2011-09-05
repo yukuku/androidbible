@@ -1,34 +1,20 @@
 package yuku.alkitab.base.storage;
 
 import android.content.*;
-import android.content.pm.*;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.*;
 import android.database.sqlite.*;
 import android.util.*;
 
+import yuku.alkitab.base.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.Db.Bukmak;
 import yuku.alkitab.base.storage.Db.Bukmak2;
 
 public class InternalDbHelper extends SQLiteOpenHelper {
 	public static final String TAG = InternalDbHelper.class.getSimpleName();
-	private int version;
 	
 	public InternalDbHelper(Context context) {
-		super(context, "AlkitabDb", null, getVersionCode(context)); //$NON-NLS-1$
-		version = versionNumber(context);
-	}
-	
-	public static int getVersionCode(Context context) {
-		PackageInfo packageInfo;
-		try {
-			packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-		} catch (NameNotFoundException e) {
-			Log.w(TAG, "pake versi 0 databesnya!"); //$NON-NLS-1$
-			return 0;
-		}
-		return packageInfo.versionCode;
+		super(context, "AlkitabDb", null, S.getVersionCode()); //$NON-NLS-1$
 	}
 	
 	@Override
@@ -228,22 +214,6 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
-		}
-	}
-	
-	public int getVersion() {
-		return version;
-	}
-
-	private static int versionNumber = 0;
-	private static int versionNumber(Context context) {
-		if (versionNumber != 0) return versionNumber;
-		PackageManager packageManager = context.getPackageManager();
-		try {
-			versionNumber = packageManager.getPackageInfo(context.getPackageName(), 0).versionCode;
-			return versionNumber;
-		} catch (NameNotFoundException e) {
-			return 0;
 		}
 	}
 }
