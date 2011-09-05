@@ -76,8 +76,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		U.nyalakanTitleBarHanyaKalauTablet(this);
 
 		S.siapinKitab();
-		S.bacaPengaturan(this);
-		S.siapinPengirimFidbek(this);
+		S.bacaPengaturan();
 		
 		setContentView(R.layout.activity_renungan);
 		

@@ -92,12 +92,9 @@ public class IsiActivity extends Activity {
 		U.nyalakanTitleBarHanyaKalauTablet(this);
 		
 		S.siapinKitab();
-		S.bacaPengaturan(this);
+		S.bacaPengaturan();
 		
 		setContentView(R.layout.activity_isi);
-		
-		S.siapinPengirimFidbek(this);
-		S.pengirimFidbek.cobaKirim();
 		
 		lsIsi = (ListView) findViewById(R.id.lsIsi);
 		bTuju = (Button) findViewById(R.id.bTuju);
@@ -156,7 +153,7 @@ public class IsiActivity extends Activity {
 		lsIsi.setAdapter(ayatAdapter_);
 		
 		// muat preferences
-		preferences_instan = S.getPreferences(this);
+		preferences_instan = App.getPreferencesInstan();
 		int kitabTerakhir = preferences_instan.getInt(NAMAPREF_kitabTerakhir, 0);
 		int pasalTerakhir = preferences_instan.getInt(NAMAPREF_pasalTerakhir, 0);
 		int ayatTerakhir = preferences_instan.getInt(NAMAPREF_ayatTerakhir, 0);
@@ -867,7 +864,7 @@ public class IsiActivity extends Activity {
 			}
 		} else if (requestCode == R.id.menuPengaturan) {
 			// HARUS rilod pengaturan.
-			S.bacaPengaturan(this);
+			S.bacaPengaturan();
 			
 			terapkanPengaturan(true);
 		}
@@ -1005,10 +1002,10 @@ public class IsiActivity extends Activity {
 				String isi = tFeedback.getText().toString();
 				
 				if (isi.length() > 0) {
-					S.pengirimFidbek.tambah(isi);
+					App.pengirimFidbek.tambah(isi);
 				}
 				
-				S.pengirimFidbek.cobaKirim();
+				App.pengirimFidbek.cobaKirim();
 				
 				Editor editor = preferences_instan.edit();
 				editor.putLong(NAMAPREF_terakhirMintaFidbek, System.currentTimeMillis());

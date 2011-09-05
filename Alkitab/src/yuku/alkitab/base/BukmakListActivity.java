@@ -53,8 +53,7 @@ public class BukmakListActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		
 		S.siapinKitab();
-		S.bacaPengaturan(this);
-		S.siapinPengirimFidbek(this);
+		S.bacaPengaturan();
 		
 		setContentView(R.layout.activity_bukmaklist);
 

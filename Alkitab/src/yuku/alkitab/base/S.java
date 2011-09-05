@@ -1,6 +1,5 @@
 package yuku.alkitab.base;
 
-import android.content.*;
 import android.content.res.*;
 import android.graphics.*;
 import android.os.*;
@@ -9,12 +8,11 @@ import android.util.*;
 import java.io.*;
 import java.util.*;
 
-import yuku.alkitab.R;
+import yuku.alkitab.*;
 import yuku.alkitab.base.config.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.renungan.*;
 import yuku.alkitab.base.storage.*;
-import yuku.kirimfidbek.*;
 
 public class S {
 	static final String TAG = S.class.getSimpleName();
@@ -47,7 +45,6 @@ public class S {
 	public static Kitab kitabAktif;
 	public static String edisiId;
 
-	public static PengirimFidbek pengirimFidbek;
 	public static TukangDonlot tukangDonlot;
 	
 	static {
@@ -77,7 +74,7 @@ public class S {
 		kitabAktif = edisiAktif.getKitabPertama(); // nanti diset sama luar waktu init 
 	}
 	
-	public static void bacaPengaturan(Context context) {
+	public static void bacaPengaturan() {
 		Log.d(TAG, "bacaPengaturan mulai"); //$NON-NLS-1$
 
 		//# atur ukuran huruf isi berdasarkan pengaturan
@@ -167,23 +164,6 @@ public class S {
 		return edisi.pembaca.muatTeks(kitab, pasal_1, janganPisahAyat, hurufKecil);
 	}
 
-	public static synchronized void siapinPengirimFidbek(final Context context) {
-		if (pengirimFidbek == null) {
-			pengirimFidbek = new PengirimFidbek(context, getPreferences(context));
-			pengirimFidbek.activateDefaultUncaughtExceptionHandler();
-			pengirimFidbek.setOnSuccessListener(new PengirimFidbek.OnSuccessListener() {
-				@Override
-				public void onSuccess(final byte[] response) {
-					Log.e(TAG, "KirimFidbek respon: " + new String(response, 0, response.length)); //$NON-NLS-1$
-				}
-			});
-		}
-	}
-
-	public static SharedPreferences getPreferences(Context context) {
-		return context.getSharedPreferences(context.getPackageName(), 0);
-	}
-
 	public static String alamat(Edisi edisi, int ari) {
 		int kitabPos = Ari.toKitab(ari);
 		int pasal_1 = Ari.toPasal(ari);
@@ -226,33 +206,6 @@ public class S {
 		}
 		
 		App.updateConfigurationWithLocale(App.context.getResources().getConfiguration(), locale);
-		
-//		Configuration config1 = context.getResources().getConfiguration();
-//		if (locale.getLanguage() != null && locale.getLanguage().equals(config1.locale.getLanguage())) {
-//			// ga ada perubahan, biarkan.
-//		} else {
-//			Configuration config2 = new Configuration();
-//			config2.locale = locale;
-//			if (handler != null) {
-//				Log.d(TAG, "(Handler ga null) Update locale dari " + config1.locale.toString() + " ke " + config2.locale.toString()); //$NON-NLS-1$ //$NON-NLS-2$
-//			} else {
-//				Log.d(TAG, "(Handler null) Update locale dari " + config1.locale.toString() + " ke " + config2.locale.toString());  //$NON-NLS-1$//$NON-NLS-2$
-//			}
-//			context.getResources().updateConfiguration(config2, null);
-//		}
-//		
-//		if (handler != null) {
-//			handler.postDelayed(new Runnable() {
-//				@Override
-//				public void run() {
-//					if (cobaLagi == 0) {
-//						terapkanPengaturanBahasa(context, null, 0);
-//					} else {
-//						terapkanPengaturanBahasa(context, handler, cobaLagi - 1);
-//					}
-//				}
-//			}, 200);
-//		}
 	}
 
 	private static float[] precomputedValues = null;

@@ -8,18 +8,22 @@ import android.util.*;
 
 import java.util.*;
 
-import yuku.alkitab.*;
 import yuku.alkitab.base.storage.*;
+import yuku.kirimfidbek.*;
 
 public class App extends Application {
 	public static final String TAG = App.class.getSimpleName();
 
 	public static Context context;
+	public static PengirimFidbek pengirimFidbek;
 	
 	@Override public void onCreate() {
 		super.onCreate();
 
 		context = getApplicationContext();
+		pengirimFidbek = siapinPengirimFidbek(context);
+		
+		pengirimFidbek.cobaKirim();
 		
 		PreferenceManager.setDefaultValues(this, R.xml.pengaturan, false);
 		
@@ -54,5 +58,20 @@ public class App extends Application {
 			Log.d(TAG, "updateConfigurationWithLocale: config updated to locale: " + locale);
 			context.getResources().updateConfiguration(config, null);
 		}
+	}
+
+	private static PengirimFidbek siapinPengirimFidbek(final Context context) {
+		PengirimFidbek res = new PengirimFidbek(context, getPreferencesInstan());
+		res.activateDefaultUncaughtExceptionHandler();
+		res.setOnSuccessListener(new PengirimFidbek.OnSuccessListener() {
+			@Override public void onSuccess(final byte[] response) {
+				Log.e(TAG, "KirimFidbek respon: " + new String(response, 0, response.length)); //$NON-NLS-1$
+			}
+		});
+		return res;
+	}
+
+	public static SharedPreferences getPreferencesInstan() {
+		return context.getSharedPreferences(context.getPackageName(), 0);
 	}
 }

@@ -43,8 +43,7 @@ public class MenujuActivity extends Activity {
 		U.nyalakanTitleBarHanyaKalauTablet(this);
 		
 		S.siapinKitab();
-		S.bacaPengaturan(this);
-		S.siapinPengirimFidbek(this);
+		S.bacaPengaturan();
 		
 		setContentView(R.layout.activity_menuju);
 		
