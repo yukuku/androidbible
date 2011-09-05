@@ -115,6 +115,8 @@ public class IsiActivity extends Activity {
 			}
 		});
 		
+		lsIsi.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		
 		registerForContextMenu(lsIsi);
 		
 		bTuju.setOnClickListener(new View.OnClickListener() {
@@ -152,7 +154,7 @@ public class IsiActivity extends Activity {
 		});
 		
 		// adapter
-		ayatAdapter_ = new AyatAdapter(getApplicationContext(), paralelOnClickListener, atributListener);
+		ayatAdapter_ = new AyatAdapter(this, paralelOnClickListener, atributListener);
 		lsIsi.setAdapter(ayatAdapter_);
 		
 		// muat preferences
@@ -899,7 +901,15 @@ public class IsiActivity extends Activity {
 			perikop_xblok = new Blok[max];
 			nblok = S.edisiAktif.pembaca.muatPerikop(S.edisiAktif, S.kitabAktif.pos, pasal_1, perikop_xari, perikop_xblok, max); 
 			
-			//# tadinya onPostExecute
+			//# isi adapter dengan data baru, pastikan semua checked state direset dulu
+			SparseBooleanArray checkedPositions = lsIsi.getCheckedItemPositions();
+			if (checkedPositions != null && checkedPositions.size() > 0) {
+				for (int i = checkedPositions.size() - 1; i >= 0; i--) {
+					if (checkedPositions.valueAt(i)) {
+						lsIsi.setItemChecked(checkedPositions.keyAt(i), false);
+					}
+				}
+			}
 			ayatAdapter_.setData(S.kitabAktif, pasal_1, xayat, perikop_xari, perikop_xblok, nblok);
 			ayatAdapter_.muatAtributMap();
 			

@@ -15,11 +15,11 @@ import yuku.alkitab.base.S.penerapan;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.Db.Bukmak2;
 
-class AyatAdapter extends BaseAdapter {
+public class AyatAdapter extends BaseAdapter {
 	public static final String TAG = AyatAdapter.class.getSimpleName();
 	
 	//# field ctor
-	final Context appContext_;
+	final Context context_;
 	final CallbackSpan.OnClickListener paralelListener_;
 	final IsiActivity.AtributListener atributListener_;
 	
@@ -39,13 +39,13 @@ class AyatAdapter extends BaseAdapter {
 	private int[] atributMap_; // bit 0(0x1) = bukmak; bit 1(0x2) = catatan; bit 2(0x4) = stabilo; 
 	private int[] stabiloMap_; // null atau warna stabilo
 
-	public AyatAdapter(Context appContext, CallbackSpan.OnClickListener paralelListener, IsiActivity.AtributListener atributListener) {
-		appContext_ = appContext;
+	public AyatAdapter(Context context, CallbackSpan.OnClickListener paralelListener, IsiActivity.AtributListener atributListener) {
+		context_ = context;
 		paralelListener_ = paralelListener;
 		atributListener_ = atributListener;
 	}
 	
-	synchronized void setData(Kitab kitab, int pasal_1, String[] xayat, int[] perikop_xari, Blok[] perikop_xblok, int nblok) {
+	public synchronized void setData(Kitab kitab, int pasal_1, String[] xayat, int[] perikop_xari, Blok[] perikop_xblok, int nblok) {
 		kitab_ = kitab;
 		pasal_1_ = pasal_1;
 		dataAyat_ = xayat.clone();
@@ -53,7 +53,7 @@ class AyatAdapter extends BaseAdapter {
 		penunjukKotak_ = U.bikinPenunjukKotak(dataAyat_.length, perikop_xari, perikop_xblok, nblok);
 	}
 	
-	synchronized void muatAtributMap() {
+	public synchronized void muatAtributMap() {
 		int[] atributMap = null;
 		int[] stabiloMap = null;
 		
@@ -92,13 +92,14 @@ class AyatAdapter extends BaseAdapter {
 		 return penunjukKotak_[position];
 	}
 	
-	@Override
-	public synchronized View getView(int position, View convertView, ViewGroup parent) {
+	@Override public synchronized View getView(int position, View convertView, ViewGroup parent) {
 		// Harus tentukan apakah ini perikop ato ayat.
 		int id = penunjukKotak_[position];
 		
 		if (id >= 0) {
 			// AYAT. bukan judul perikop.
+			
+			AyatItem res;
 			
 			String isi = dataAyat_[id];
 			boolean pakeBukmak = atributMap_ == null? false: (atributMap_[id] & 0x1) != 0;
@@ -106,7 +107,11 @@ class AyatAdapter extends BaseAdapter {
 			boolean pakeStabilo = atributMap_ == null? false: (atributMap_[id] & 0x4) != 0;
 			int warnaStabilo = pakeStabilo? (stabiloMap_ == null? 0: (0x80000000 | stabiloMap_[id])): 0;
 			
-			View res;
+			boolean checked = false;
+			if (parent instanceof ListView) {
+				checked = ((ListView)parent).isItemChecked(position);
+			}
+			
 			// Udah ditentukan bahwa ini ayat dan bukan perikop, sekarang tinggal tentukan
 			// apakah ayat ini pake formating biasa (tanpa menjorok dsb) atau ada formating
 			if (isi.length() > 0 && isi.charAt(0) == '@') {
@@ -116,35 +121,35 @@ class AyatAdapter extends BaseAdapter {
 				}
 				
 				if (convertView == null || convertView.getId() != R.layout.item_ayat_tehel) {
-					res = LayoutInflater.from(appContext_).inflate(R.layout.item_ayat_tehel, null);
+					res = (AyatItem) LayoutInflater.from(context_).inflate(R.layout.item_ayat_tehel, null);
 					res.setId(R.layout.item_ayat_tehel);
 				} else {
-					res = convertView;
+					res = (AyatItem) convertView;
 				}
 				
-				RelativeLayout sebelahKiri = (RelativeLayout) res.findViewById(R.id.sebelahKiri);
-				tampilanAyatTehel(appContext_, sebelahKiri, id + 1, isi, warnaStabilo);
+				tampilanAyatTehel(res.findViewById(R.id.sebelahKiri), id + 1, isi, warnaStabilo, checked);
 				
 			} else {
 				if (convertView == null || convertView.getId() != R.layout.item_ayat_sederhana) {
-					res = LayoutInflater.from(appContext_).inflate(R.layout.item_ayat_sederhana, null);
+					res = (AyatItem) LayoutInflater.from(context_).inflate(R.layout.item_ayat_sederhana, null);
 					res.setId(R.layout.item_ayat_sederhana);
 				} else {
-					res = convertView;
+					res = (AyatItem) convertView;
 				}
 				
 				TextView lIsiAyat = (TextView) res.findViewById(R.id.lIsiAyat);
-				lIsiAyat.setText(AyatAdapter.tampilanAyatSederhana(id + 1, isi, warnaStabilo), BufferType.SPANNABLE);
+				tampilanAyatSederhana(lIsiAyat, id + 1, isi, warnaStabilo, checked);
 				
 				PengaturTampilan.aturTampilanTeksIsi(lIsiAyat);
+				if (checked) lIsiAyat.setTextColor(0xff000000); // override with black!
 			}
 
-			ImageButton imgAtributBukmak = (ImageButton) res.findViewById(R.id.imgAtributBukmak);
+			View imgAtributBukmak = res.findViewById(R.id.imgAtributBukmak);
 			imgAtributBukmak.setVisibility(pakeBukmak? View.VISIBLE: View.GONE);
 			if (pakeBukmak) {
 				pasangClickHandlerUntukBukmak(imgAtributBukmak, pasal_1_, id + 1);
 			}
-			ImageButton imgAtributCatatan = (ImageButton) res.findViewById(R.id.imgAtributCatatan);
+			View imgAtributCatatan = res.findViewById(R.id.imgAtributCatatan);
 			imgAtributCatatan.setVisibility(pakeCatatan? View.VISIBLE: View.GONE);
 			if (pakeCatatan) {
 				pasangClickHandlerUntukCatatan(imgAtributCatatan, pasal_1_, id + 1);
@@ -153,9 +158,10 @@ class AyatAdapter extends BaseAdapter {
 			return res;
 		} else {
 			// JUDUL PERIKOP. bukan ayat.
+
 			View res;
 			if (convertView == null || convertView.getId() != R.layout.header_perikop) {
-				res = LayoutInflater.from(appContext_).inflate(R.layout.header_perikop, null);
+				res = LayoutInflater.from(context_).inflate(R.layout.header_perikop, null);
 				res.setId(R.layout.header_perikop);
 			} else {
 				res = convertView;
@@ -175,7 +181,7 @@ class AyatAdapter extends BaseAdapter {
 			if (position == 0 || penunjukKotak_[position-1] < 0) {
 				lJudul.setPadding(0, 0, 0, 0);
 			} else {
-				lJudul.setPadding(0, appContext_.getResources().getDimensionPixelOffset(R.dimen.marginAtasJudulPerikop), 0, 0);
+				lJudul.setPadding(0, context_.getResources().getDimensionPixelOffset(R.dimen.marginAtasJudulPerikop), 0, 0);
 			}
 			
 			// gonekan paralel kalo ga ada
@@ -216,24 +222,21 @@ class AyatAdapter extends BaseAdapter {
 				lXparalel.setTextColor(S.penerapan.warnaHuruf);
 				lXparalel.setLinkTextColor(S.penerapan.warnaHuruf);
 			}
-			
 			return res;
 		}
 	}
 	
-	void pasangClickHandlerUntukBukmak(ImageButton imgBukmak, final int pasal_1, final int ayat_1) {
-		imgBukmak.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
+	void pasangClickHandlerUntukBukmak(View imgBukmak, final int pasal_1, final int ayat_1) {
+		imgBukmak.setOnClickListener(new View.OnClickListener() { 
+			@Override public void onClick(View v) {
 				atributListener_.onClick(kitab_, pasal_1, ayat_1, Bukmak2.jenis_bukmak);
 			}
 		});
 	}
 	
-	void pasangClickHandlerUntukCatatan(ImageButton imgCatatan, final int pasal_1, final int ayat_1) {
-		imgCatatan.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
+	void pasangClickHandlerUntukCatatan(View imgCatatan, final int pasal_1, final int ayat_1) {
+		imgCatatan.setOnClickListener(new View.OnClickListener() { 
+			@Override public void onClick(View v) {
 				atributListener_.onClick(kitab_, pasal_1, ayat_1, Bukmak2.jenis_catatan);
 			}
 		});
@@ -296,7 +299,7 @@ class AyatAdapter extends BaseAdapter {
 		return 0; 
 	}
 
-	public void tampilanAyatTehel(Context context, RelativeLayout res, int ayat, String isi, int warnaStabilo) {
+	public void tampilanAyatTehel(View res, int ayat, String isi, int warnaStabilo, boolean checked) {
 		// @@ = mulai ayat dengan tehel atau ayat dengan format
 		// @0 = mulai menjorok 0 [kategori: penehel]
 		// @1 = mulai menjorok 1 [kategori: penehel]
@@ -332,11 +335,9 @@ class AyatAdapter extends BaseAdapter {
 			if (posParse == posSampe) {
 				// di awal, belum ada apa2!
 			} else {
-				//Log.d("alki", "akan masukinTehel menjorok=" + menjorok + " " + isi.substring(posParse, posSampe));
-				
 				// bikin tehel
 				{
-					TextView tehel = new TextView(context);
+					TextView tehel = new TextView(context_);
 					if (menjorok == 1) {
 						tehel.setPadding(S.getMenjorokSatu(), 0, 0, 0);
 					} else if (menjorok == 2) {
@@ -350,7 +351,9 @@ class AyatAdapter extends BaseAdapter {
 						String ayat_s = String.valueOf(ayat);
 						s.append(ayat_s).append(' ');
 						appendFormattedText2(s, isi, isi_c, posParse, posSampe);
-						s.setSpan(new ForegroundColorSpan(penerapan.warnaNomerAyat), 0, ayat_s.length(), 0);
+						if (!checked) {
+							s.setSpan(new ForegroundColorSpan(penerapan.warnaNomerAyat), 0, ayat_s.length(), 0);
+						}
 						s.setSpan(new LeadingMarginSpan.Standard(0, S.getIndenParagraf()), 0, s.length(), 0);
 						if (warnaStabilo != 0) {
 							s.setSpan(new BackgroundColorSpan(warnaStabilo), ayat_s.length() + 1, s.length(), 0);
@@ -369,6 +372,8 @@ class AyatAdapter extends BaseAdapter {
 					}
 					
 					PengaturTampilan.aturTampilanTeksIsi(tehel);
+					if (checked) tehel.setTextColor(0xff000000); // override with black!
+
 					tempatTehel.addView(tehel);
 				}
 				
@@ -393,6 +398,7 @@ class AyatAdapter extends BaseAdapter {
 		} else {
 			lAyat.setText(String.valueOf(ayat));
 			PengaturTampilan.aturTampilanTeksNomerAyat(lAyat);
+			if (checked) lAyat.setTextColor(0xff000000);
 		}
 	}
 
@@ -526,25 +532,25 @@ class AyatAdapter extends BaseAdapter {
 		}
 	}
 
-	/**
-	 * @param ayat mulai dari 1
-	 */
-	static SpannableStringBuilder tampilanAyatSederhana(int ayat, String isi, int warnaStabilo) {
+	static void tampilanAyatSederhana(TextView lIsiAyat, int ayat_1, String isi, int warnaStabilo, boolean checked) {
 		SpannableStringBuilder seayat = new SpannableStringBuilder(longPlaceholderString); // pre-allocate
 		seayat.clear();
 
-		String ayat_s = String.valueOf(ayat);
-		
+		// nomer ayat
+		String ayat_s = String.valueOf(ayat_1);
 		seayat.append(ayat_s).append(' ').append(isi);
-		seayat.setSpan(new ForegroundColorSpan(S.penerapan.warnaNomerAyat), 0, ayat_s.length(), 0);
+		if (!checked) {
+			seayat.setSpan(new ForegroundColorSpan(S.penerapan.warnaNomerAyat), 0, ayat_s.length(), 0);
+		}
 		
+		// teks
 		seayat.setSpan(new LeadingMarginSpan.Standard(0, S.getIndenParagraf()), 0, seayat.length(), 0);
 		
 		if (warnaStabilo != 0) {
 			seayat.setSpan(new BackgroundColorSpan(warnaStabilo), ayat_s.length() + 1, seayat.length(), 0);
 		}
 		
-		return seayat;
+		lIsiAyat.setText(seayat, BufferType.SPANNABLE);
 	}
 	
 	public String getAyat(int ayat_1) {
