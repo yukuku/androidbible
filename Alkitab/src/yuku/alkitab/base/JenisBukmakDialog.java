@@ -178,12 +178,9 @@ public class JenisBukmakDialog {
 	}
 	
 	private View getLabelView(Label label) {
-		View res = LayoutInflater.from(context).inflate(R.layout.label_x, null);
+		TextView res = (TextView) LayoutInflater.from(context).inflate(R.layout.label_x, null);
 		res.setLayoutParams(panelLabels.generateDefaultLayoutParams());
-		
-		TextView lJudul = U.getView(res, R.id.lJudul);
-		lJudul.setText(label.judul);
-		
+		res.setText(label.judul);
 		res.setTag(R.id.TAG_label, label);
 		res.setOnClickListener(lJudul_click );
 		

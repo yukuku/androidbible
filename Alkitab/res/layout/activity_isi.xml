@@ -33,9 +33,9 @@
 	</LinearLayout>
 
 	<ListView
-		android:layout_height="wrap_content"
 		android:id="@+id/lsIsi"
 		android:layout_width="fill_parent"
+		android:layout_height="0dp"
 		android:layout_weight="1"
 		android:divider="@null"
 		android:listSelector="@android:color/transparent"
@@ -57,10 +57,10 @@
 			android:padding="16dp"
 			android:scaleType="center" />
 		<Button
-			android:layout_width="wrap_content"
+			android:layout_width="0dp"
+			android:layout_height="fill_parent"
 			android:id="@+id/bTuju"
 			android:layout_weight="1"
-			android:layout_height="fill_parent"
 			android:textSize="18dp"
 			android:text="Nama Kitab Agak Panjang 20" />
 		<ImageButton
