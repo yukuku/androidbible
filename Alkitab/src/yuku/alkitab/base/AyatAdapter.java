@@ -105,7 +105,7 @@ public class AyatAdapter extends BaseAdapter {
 			boolean pakeBukmak = atributMap_ == null? false: (atributMap_[id] & 0x1) != 0;
 			boolean pakeCatatan = atributMap_ == null? false: (atributMap_[id] & 0x2) != 0;
 			boolean pakeStabilo = atributMap_ == null? false: (atributMap_[id] & 0x4) != 0;
-			int warnaStabilo = pakeStabilo? (stabiloMap_ == null? 0: (0x80000000 | stabiloMap_[id])): 0;
+			int warnaStabilo = pakeStabilo? (stabiloMap_ == null? 0: U.alphaMixStabilo(stabiloMap_[id])): 0;
 			
 			boolean checked = false;
 			if (parent instanceof ListView) {

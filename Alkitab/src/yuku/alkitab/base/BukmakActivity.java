@@ -307,7 +307,7 @@ public class BukmakActivity extends ListActivity {
 				return true;
 			}
 			
-			LabelEditorDialog.show(this, label.judul, new OkListener() {
+			LabelEditorDialog.show(this, label.judul, "Rename label", new OkListener() {
 				@Override public void onOk(String judul) {
 					S.getDb().renameLabel(label, judul);
 					adapter.reload();

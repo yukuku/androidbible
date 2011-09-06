@@ -338,6 +338,9 @@ public class S {
 		return db;
 	}
 	
+	/**
+	 * Jika ayat_1 adalah 0, ayat akan diabaikan.
+	 */
 	public static String bikinUrlAyat(Kitab kitab, int pasal_1, int ayat_1) {
 		BuildConfig c = BuildConfig.get(App.context);
 		if (kitab.pos >= c.url_namaKitabStandar.length) {
@@ -351,6 +354,6 @@ public class S {
 			if ("dot2".equals(format)) calonAyat = "." + calonAyat;
 			if ("nospace0".equals(format)) calonKitab = calonKitab.replaceAll("\\s+", "");
 		}
-		return c.url_prefix + calonKitab + calonPasal + calonAyat;
+		return c.url_prefix + calonKitab + calonPasal + (ayat_1 == 0? "": calonAyat);
 	}
 }

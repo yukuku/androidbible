@@ -157,8 +157,8 @@ public class U {
 		}
 	}
 
-	@SuppressWarnings("deprecation") public static void salin(Context context, String salinan) {
-		android.text.ClipboardManager clipboardManager = (android.text.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+	@SuppressWarnings("deprecation") public static void salin(CharSequence salinan) {
+		android.text.ClipboardManager clipboardManager = (android.text.ClipboardManager) App.context.getSystemService(Context.CLIPBOARD_SERVICE);
 		clipboardManager.setText(salinan); 
 	}
 
@@ -198,5 +198,9 @@ public class U {
 		} else {
 			return colorSet[2];
 		}
+	}
+
+	public static int alphaMixStabilo(int warnaRgb) {
+		return 0xa0000000 | warnaRgb;
 	}
 }

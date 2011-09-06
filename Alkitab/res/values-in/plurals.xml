@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="salin_n_ayat">
+        <item quantity="one">Salin ayat ini</item>
+        <item quantity="other">Salin %d ayat</item>
+    </plurals>
+    <plurals name="bagikan_n_ayat">
+        <item quantity="one">Bagikan ayat ini</item>
+        <item quantity="other">Bagikan %d ayat</item>
+    </plurals>
+    <plurals name="stabilo_n_ayat">
+        <item quantity="one">Sorot ayat ini</item>
+        <item quantity="other">Sorot %d ayat</item>
+    </plurals>
+</resources>

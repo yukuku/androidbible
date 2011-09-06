@@ -15,6 +15,10 @@ public class Ari {
 		return (kitab & 0xff) << 16 | (pasal_ayat & 0xffff);
 	}
 	
+	public static int encodeWithKp(int ariKp, int ayat) {
+		return (ariKp & 0x00ffff00) | (ayat & 0xff);
+	}
+	
 	/** 0..255 
 	 * kitab berbasis-0 (kejadian == 0)
 	 * */

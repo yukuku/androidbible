@@ -55,8 +55,6 @@ public class IsiActivity extends Activity {
 	TextView lJudul;
 	
 	int pasal_1 = 0;
-	int ayatContextMenu_1 = -1;
-	String isiAyatContextMenu = null;
 	SharedPreferences preferences_instan;
 	
 	AyatAdapter ayatAdapter_;
@@ -85,8 +83,7 @@ public class IsiActivity extends Activity {
 		}
 	};
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		U.nyalakanTitleBarHanyaKalauTablet(this);
@@ -309,91 +306,140 @@ public class IsiActivity extends Activity {
 		return false;
 	}
 	
-	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		getMenuInflater().inflate(R.menu.context_ayat, menu);
-		
-		{ 
-			// simpen ayat yang dipilih untuk dipake sama menu tambah bukmak
-			int ayat_1 = (int) (((AdapterContextMenuInfo) menuInfo).id) + 1;
-			this.ayatContextMenu_1 = ayat_1;
-			this.isiAyatContextMenu = U.buangKodeKusus(ayatAdapter_.getAyat(ayat_1));
-			
-			// yang sedang ditahan lama saat ini harus dianggap terpilih
-			int position = ayatAdapter_.getPositionAbaikanPerikopDariAyat(ayat_1);
-			if (position != -1) lsIsi.setItemChecked(position, true);
-		}
-		
+	private IntArrayList getAyat_1Terpilih() {
 		// hitung ada berapa yang terpilih
 		SparseBooleanArray positions = lsIsi.getCheckedItemPositions();
-		IntArrayList terpilih = new IntArrayList(positions.size());
+		if (positions == null) {
+			return new IntArrayList(0);
+		}
+		
+		IntArrayList res = new IntArrayList(positions.size());
 		for (int i = 0, len = positions.size(); i < len; i++) {
 			if (positions.valueAt(i)) {
 				int position = positions.keyAt(i);
 				int ayat_1 = ayatAdapter_.getAyatDariPosition(position);
-				if (ayat_1 >= 1) terpilih.add(ayat_1);
+				if (ayat_1 >= 1) res.add(ayat_1);
 			}
 		}
+		return res;
+	}
+	
+	private CharSequence alamatDariAyatTerpilih(IntArrayList ayatTerpilih) {
+		if (ayatTerpilih.size() == 0) {
+			// harusnya mustahil. Maka ga usa ngapa2in deh.
+			return S.alamat(S.kitabAktif, this.pasal_1);
+		} else if (ayatTerpilih.size() == 1) {
+			return S.alamat(S.kitabAktif, this.pasal_1, ayatTerpilih.get(0));
+		} else {
+			return S.alamat(S.kitabAktif, this.pasal_1, ayatTerpilih);
+		}
+	}
+
+	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		getMenuInflater().inflate(R.menu.context_ayat, menu);
+		
+		// yang sedang ditahan lama saat ini harus dianggap terpilih
+		int ayat_1 = (int) (((AdapterContextMenuInfo) menuInfo).id) + 1;
+		int position = ayatAdapter_.getPositionAbaikanPerikopDariAyat(ayat_1);
+		if (position != -1) lsIsi.setItemChecked(position, true);
+		
+		IntArrayList terpilih = getAyat_1Terpilih();
+		menu.setHeaderTitle(alamatDariAyatTerpilih(terpilih));
 		
 		// sedikit beda perlakuan antara satu terpilih dan lebih
 		if (terpilih.size() == 0) {
 			// harusnya mustahil. Maka ga usa ngapa2in deh.
 		} else if (terpilih.size() == 1) {
-			menu.setHeaderTitle(S.alamat(S.kitabAktif, this.pasal_1, this.ayatContextMenu_1));
+			// TODO
 		} else {
-			menu.setHeaderTitle(S.alamat(S.kitabAktif, this.pasal_1, terpilih));
+			// Ganti beberapa judul menu
+			menu.findItem(R.id.menuSalinAyat).setTitle(getResources().getQuantityString(R.plurals.salin_n_ayat, terpilih.size(), terpilih.size()));
+			menu.findItem(R.id.menuBagikan).setTitle(getResources().getQuantityString(R.plurals.bagikan_n_ayat, terpilih.size(), terpilih.size()));
+			menu.findItem(R.id.menuTambahStabilo).setTitle(getResources().getQuantityString(R.plurals.stabilo_n_ayat, terpilih.size(), terpilih.size()));
 		}
 	}
 	
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		String alamat = S.alamat(S.kitabAktif, this.pasal_1, this.ayatContextMenu_1);
+	@Override public boolean onContextItemSelected(MenuItem item) {
+		IntArrayList terpilih = getAyat_1Terpilih();
+		CharSequence alamat = alamatDariAyatTerpilih(terpilih);
+		
+		// ayat yang tepat di bawah pencetan jari. 0 kalo ngaco.
+		int ayatTekan_1 = ayatAdapter_.getAyatDariPosition(((AdapterContextMenuInfo) item.getMenuInfo()).position);
 		
 		int itemId = item.getItemId();
-		if (itemId == R.id.menuSalinAyat) {
-			String salinan = alamat + "  " + this.isiAyatContextMenu;
-			U.salin(this, salinan);
+		if (itemId == R.id.menuSalinAyat) { // salin, bisa multiple
+			StringBuilder salinan = new StringBuilder();
+			salinan.append(alamat).append("  ");
+			
+			// append tiap ayat terpilih
+			for (int i = 0; i < terpilih.size(); i++) {
+				int ayat_1 = terpilih.get(i);
+				if (i != 0) salinan.append('\n');
+				salinan.append(U.buangKodeKusus(ayatAdapter_.getAyat(ayat_1)));
+			}
+			
+			U.salin(salinan);
 			
 			Toast.makeText(this, getString(R.string.alamat_sudah_disalin, alamat), Toast.LENGTH_SHORT).show();
 			
 			return true;
 		} else if (itemId == R.id.menuTambahBukmak) {
-			final int ari = Ari.encode(S.kitabAktif.pos, pasal_1, ayatContextMenu_1);
-			
-			JenisBukmakDialog dialog = new JenisBukmakDialog(this, alamat, ari);
-			dialog.setListener(muatUlangAtributMapListener);
-			dialog.bukaDialog();
-			
-			return true;
+			if (ayatTekan_1 != 0) {
+				final int ari = Ari.encode(S.kitabAktif.pos, this.pasal_1, ayatTekan_1);
+				
+				JenisBukmakDialog dialog = new JenisBukmakDialog(this, alamat, ari);
+				dialog.setListener(muatUlangAtributMapListener);
+				dialog.bukaDialog();
+				
+				return true;
+			}
 		} else if (itemId == R.id.menuTambahCatatan) {
-			tampilkanCatatan(S.kitabAktif, pasal_1, ayatContextMenu_1);
-
-			return true;
+			if (ayatTekan_1 != 0) {
+				tampilkanCatatan(S.kitabAktif, this.pasal_1, ayatTekan_1);
+				return true;
+			}
 		} else if (itemId == R.id.menuTambahStabilo) {
-			final int ari = Ari.encode(S.kitabAktif.pos, pasal_1, ayatContextMenu_1);
+			final int ariKp = Ari.encode(S.kitabAktif.pos, this.pasal_1, 0);
 			
-			JenisStabiloDialog dialog = new JenisStabiloDialog(this, ari, new JenisStabiloDialog.JenisStabiloCallback() {
-				@Override public void onOk(int ari, int warnaRgb) {
+			new JenisStabiloDialog(this, ariKp, terpilih, new JenisStabiloDialog.JenisStabiloCallback() {
+				@Override public void onOk(int warnaRgb) {
+					uncheckAll();
 					ayatAdapter_.muatAtributMap();
 				}
-			}, S.getDb().getWarnaRgbStabilo(ari));
-			
-			dialog.bukaDialog();
+			}, -1, alamat).bukaDialog();
 			
 			return true;
 		} else if (itemId == R.id.menuBagikan) {
-			String urlAyat = S.bikinUrlAyat(S.kitabAktif, this.pasal_1, this.ayatContextMenu_1);
+			String urlAyat;
+			if (terpilih.size() == 1) {
+				urlAyat = S.bikinUrlAyat(S.kitabAktif, this.pasal_1, terpilih.get(0));
+			} else {
+				urlAyat = S.bikinUrlAyat(S.kitabAktif, this.pasal_1, 0); // sepasal aja!
+			}
+			
+			StringBuilder sb = new StringBuilder();
+			
+			// TODO cek fesbuk dan kalo fesbuk, maka taro url di depan, sebaliknya di belakang aja.
+			if (urlAyat != null) sb.append(urlAyat).append(" ");
+			sb.append(alamat).append("  ");
+			
+			// append tiap ayat terpilih
+			for (int i = 0; i < terpilih.size(); i++) {
+				int ayat_1 = terpilih.get(i);
+				if (i != 0) sb.append('\n');
+				sb.append(U.buangKodeKusus(ayatAdapter_.getAyat(ayat_1)));
+			}
 			
 			Intent i = new Intent(Intent.ACTION_SEND);
 			i.setType("text/plain"); //$NON-NLS-1$
 			i.putExtra(Intent.EXTRA_SUBJECT, alamat); 
-			// FIXME cek fesbuk dan kalo fesbuk, maka taro url di depan, sebaliknya di belakang aja.
-			i.putExtra(Intent.EXTRA_TEXT, (urlAyat == null? "": (urlAyat + " ")) + alamat + "  " + this.isiAyatContextMenu); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			i.putExtra(Intent.EXTRA_TEXT, sb.toString());
 			startActivity(Intent.createChooser(i, getString(R.string.bagikan_alamat, alamat)));
 
 			return true;
 		}
 		
-		return super.onContextItemSelected(item);
+		return false;
 	}
 
 	private void terapkanPengaturan(boolean bahasaJuga) {
@@ -919,14 +965,7 @@ public class IsiActivity extends Activity {
 			nblok = S.edisiAktif.pembaca.muatPerikop(S.edisiAktif, S.kitabAktif.pos, pasal_1, perikop_xari, perikop_xblok, max); 
 			
 			//# isi adapter dengan data baru, pastikan semua checked state direset dulu
-			SparseBooleanArray checkedPositions = lsIsi.getCheckedItemPositions();
-			if (checkedPositions != null && checkedPositions.size() > 0) {
-				for (int i = checkedPositions.size() - 1; i >= 0; i--) {
-					if (checkedPositions.valueAt(i)) {
-						lsIsi.setItemChecked(checkedPositions.keyAt(i), false);
-					}
-				}
-			}
+			uncheckAll();
 			ayatAdapter_.setData(S.kitabAktif, pasal_1, xayat, perikop_xari, perikop_xblok, nblok);
 			ayatAdapter_.muatAtributMap();
 			
@@ -947,6 +986,17 @@ public class IsiActivity extends Activity {
 		bTuju.setText(judul);
 		
 		return Ari.encode(0, pasal_1, ayat_1);
+	}
+
+	private void uncheckAll() {
+		SparseBooleanArray checkedPositions = lsIsi.getCheckedItemPositions();
+		if (checkedPositions != null && checkedPositions.size() > 0) {
+			for (int i = checkedPositions.size() - 1; i >= 0; i--) {
+				if (checkedPositions.valueAt(i)) {
+					lsIsi.setItemChecked(checkedPositions.keyAt(i), false);
+				}
+			}
+		}
 	}
 	
 	@Override

@@ -1,63 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
-	android:orientation="vertical" android:gravity="center_horizontal">
-		<TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/stabilo_judul" android:textAppearance="?android:attr/textAppearanceLarge" android:layout_margin="12dp"></TextView>
-	<LinearLayout
-		android:layout_height="fill_parent"
-		android:orientation="horizontal" android:gravity="center_horizontal" android:paddingBottom="12dp" android:layout_width="259dp">
-		<CheckBox
-			android:id="@+id/c1"
-			android:background="#80ff0000"
-			android:button="@drawable/warnastabilo"
-			android:layout_margin="6dp" 
-			android:layout_height="25dp"
-			android:layout_width="25dp" />
-		<CheckBox
-			android:id="@+id/c2"
-			android:background="#80ffff00"
-			android:button="@drawable/warnastabilo"
-			android:layout_margin="6dp" 
-			android:layout_height="25dp"
-			android:layout_width="25dp" />
-		<CheckBox
-			android:id="@+id/c3"
-			android:background="#8000ff00"
-			android:button="@drawable/warnastabilo"
-			android:layout_margin="6dp" 
-			android:layout_height="25dp"
-			android:layout_width="25dp" />
-		<CheckBox
-			android:id="@+id/c4"
-			android:background="#8000ffff"
-			android:button="@drawable/warnastabilo"
-			android:layout_margin="6dp" 
-			android:layout_height="25dp"
-			android:layout_width="25dp" />
-		<CheckBox
-			android:id="@+id/c5"
-			android:background="#800000ff"
-			android:button="@drawable/warnastabilo"
-			android:layout_margin="6dp" 
-			android:layout_height="25dp"
-			android:layout_width="25dp" />
-		<CheckBox
-			android:id="@+id/c6"
-			android:background="#80ff00ff"
-			android:button="@drawable/warnastabilo"
-			android:layout_margin="6dp" 
-			android:layout_height="25dp"
-			android:layout_width="25dp" />
-		<CheckBox
-			android:id="@+id/c0"
-			android:background="@drawable/warnastabilo_silang"
-			android:button="@drawable/warnastabilo"
-			android:layout_margin="6dp" 
-			android:layout_height="25dp"
-			android:layout_width="25dp" />
-	
-
-</LinearLayout>
+	android:orientation="horizontal" 
+	android:gravity="center_horizontal" 
+	android:paddingBottom="12dp" 
+	android:layout_width="259dp">
+	<CheckBox
+		android:id="@+id/c1"
+		android:background="#a0ff0000"
+		android:button="@drawable/warnastabilo"
+		android:layout_margin="6dp" 
+		android:layout_height="25dp"
+		android:layout_width="25dp" />
+	<CheckBox
+		android:id="@+id/c2"
+		android:background="#a0ffff00"
+		android:button="@drawable/warnastabilo"
+		android:layout_margin="6dp" 
+		android:layout_height="25dp"
+		android:layout_width="25dp" />
+	<CheckBox
+		android:id="@+id/c3"
+		android:background="#a000ff00"
+		android:button="@drawable/warnastabilo"
+		android:layout_margin="6dp" 
+		android:layout_height="25dp"
+		android:layout_width="25dp" />
+	<CheckBox
+		android:id="@+id/c4"
+		android:background="#a000ffff"
+		android:button="@drawable/warnastabilo"
+		android:layout_margin="6dp" 
+		android:layout_height="25dp"
+		android:layout_width="25dp" />
+	<CheckBox
+		android:id="@+id/c5"
+		android:background="#a00000ff"
+		android:button="@drawable/warnastabilo"
+		android:layout_margin="6dp" 
+		android:layout_height="25dp"
+		android:layout_width="25dp" />
+	<CheckBox
+		android:id="@+id/c6"
+		android:background="#a0ff00ff"
+		android:button="@drawable/warnastabilo"
+		android:layout_margin="6dp" 
+		android:layout_height="25dp"
+		android:layout_width="25dp" />
+	<CheckBox
+		android:id="@+id/c0"
+		android:background="@drawable/warnastabilo_silang"
+		android:button="@drawable/warnastabilo"
+		android:layout_margin="6dp" 
+		android:layout_height="25dp"
+		android:layout_width="25dp" />
 </LinearLayout>

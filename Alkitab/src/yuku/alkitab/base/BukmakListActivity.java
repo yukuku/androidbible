@@ -169,7 +169,7 @@ public class BukmakListActivity extends ListActivity {
 					SpannableStringBuilder cuplikan = new SpannableStringBuilder(isi);
 					int warnaStabilo = U.dekodStabilo(tulisan);
 					if (warnaStabilo != -1) {
-						cuplikan.setSpan(new BackgroundColorSpan(0x80000000 | warnaStabilo), 0, cuplikan.length(), 0);
+						cuplikan.setSpan(new BackgroundColorSpan(U.alphaMixStabilo(warnaStabilo)), 0, cuplikan.length(), 0);
 					}
 					lCuplikan.setText(cuplikan);
 					PengaturTampilan.aturTampilanTeksIsi(lCuplikan);
@@ -362,13 +362,13 @@ public class BukmakListActivity extends ListActivity {
 				Cursor cursor = (Cursor) adapter.getItem(info.position);
 				int ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bukmak2.ari));
 				int warnaRgb = U.dekodStabilo(cursor.getString(cursor.getColumnIndexOrThrow(Db.Bukmak2.tulisan)));
+				String alamat = S.alamat(S.edisiAktif, ari);
 				
-				JenisStabiloDialog dialog = new JenisStabiloDialog(this, ari, new JenisStabiloCallback() {
-					@Override public void onOk(int ari, int warnaRgb) {
+				new JenisStabiloDialog(this, ari, new JenisStabiloCallback() {
+					@Override public void onOk(int warnaRgb) {
 						adapter.getCursor().requery();
 					}
-				}, warnaRgb);
-				dialog.bukaDialog();
+				}, warnaRgb, alamat).bukaDialog();
 			}
 			
 			return true;
