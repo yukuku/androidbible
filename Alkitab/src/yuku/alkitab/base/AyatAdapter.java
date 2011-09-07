@@ -222,6 +222,7 @@ public class AyatAdapter extends BaseAdapter {
 				lXparalel.setTextColor(S.penerapan.warnaHuruf);
 				lXparalel.setLinkTextColor(S.penerapan.warnaHuruf);
 			}
+			
 			return res;
 		}
 	}
@@ -575,6 +576,14 @@ public class AyatAdapter extends BaseAdapter {
 		if (dataAyat_ == null) return "[?]";
 		if (ayat_1 < 1 || ayat_1 > dataAyat_.length) return "[?]";
 		return dataAyat_[ayat_1 - 1];
+	}
+	
+	@Override public boolean areAllItemsEnabled() {
+		return false;
+	}
+	
+	@Override public boolean isEnabled(int position) {
+		return getItemId(position) >= 0;
 	}
 	
 	static String longPlaceholderString = 
