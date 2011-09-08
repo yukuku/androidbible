@@ -205,4 +205,6 @@
     <string name="waktuTambah_edited_waktuUbah">%1$s\n(edited %2$s)</string>
     <string name="pref_penampilan_teks">Text Appearance</string>
     <string name="pref_penampilan_layar">Display</string>
+    <string name="tambah_pembatas_buku_di_ayat">Add bookmark on verse %s</string>
+    <string name="tulis_catatan_di_ayat">Write note on verse %s</string>
 </resources>

@@ -211,4 +211,6 @@
     <string name="pref_penampilan_layar">Penampilan Layar</string>
     <string name="pref_fullScreen_title">Layar Penuh</string>
     <string name="pref_fullScreen_summary">Sembunyikan baris status ponsel Anda</string>
+    <string name="tambah_pembatas_buku_di_ayat">Tambah pembatas buku di ayat %s</string>
+    <string name="tulis_catatan_di_ayat">Tulis catatan di ayat %s</string>
 </resources>

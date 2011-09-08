@@ -291,6 +291,46 @@ public class InternalDb {
 			c.close();
 		}
 	}
+	
+	public int getWarnaRgbStabilo(int ariKp, IntArrayList terpilih) {
+		int ariMin = ariKp;
+		int ariMax = ariKp | 0xff;
+		int[] xwarna = new int[256];
+		int res = -2;
+		
+		for (int i = 0; i < xwarna.length; i++) xwarna[i] = -1;
+		
+		// cek dulu ada ato ga
+		Cursor c = helper.getReadableDatabase().query(Db.TABEL_Bukmak2, null, Db.Bukmak2.ari + ">? and " + Db.Bukmak2.ari + "<=? and " + Db.Bukmak2.jenis + "=?", new String[] {String.valueOf(ariMin), String.valueOf(ariMax), String.valueOf(Db.Bukmak2.jenis_stabilo)}, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
+		try {
+			int ari_col = c.getColumnIndexOrThrow(Db.Bukmak2.ari);
+			int tulisan_col = c.getColumnIndexOrThrow(Db.Bukmak2.tulisan);
+			
+			// masukin aja ke array dulu
+			while (c.moveToNext()) { 
+				int ari = c.getInt(ari_col);
+				int index = ari & 0xff;
+				int warna = U.dekodStabilo(c.getString(tulisan_col));
+				xwarna[index] = warna;
+			}
+			
+			// tentukan warna default. Kalau semua berwarna x, maka jadi x. Kalau ada salah satu yang bukan x, jadi -1;
+			for (int i = 0; i < terpilih.size(); i++) {
+				int ayat_1 = terpilih.get(i);
+				int warna = xwarna[ayat_1];
+				if (res == -2) {
+					res = warna;
+				} else if (warna != res) {
+					return -1;
+				}
+			}
+			
+			if (res == -2) return -1;
+			return res;
+		} finally {
+			c.close();
+		}
+	}
 
 	public boolean simpanArtikelKeRenungan(IArtikel artikel) {
 		boolean res = false;

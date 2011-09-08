@@ -339,7 +339,7 @@ public class IsiActivity extends Activity {
 		getMenuInflater().inflate(R.menu.context_ayat, menu);
 		
 		// yang sedang ditahan lama saat ini harus dianggap terpilih
-		int ayat_1 = (int) (((AdapterContextMenuInfo) menuInfo).id) + 1;
+		int ayat_1 = ayatAdapter_.getAyatDariPosition(((AdapterContextMenuInfo) menuInfo).position);
 		int position = ayatAdapter_.getPositionAbaikanPerikopDariAyat(ayat_1);
 		if (position != -1) lsIsi.setItemChecked(position, true);
 		
@@ -350,12 +350,15 @@ public class IsiActivity extends Activity {
 		if (terpilih.size() == 0) {
 			// harusnya mustahil. Maka ga usa ngapa2in deh.
 		} else if (terpilih.size() == 1) {
-			// TODO
+			// diamkan saja
 		} else {
 			// Ganti beberapa judul menu
 			menu.findItem(R.id.menuSalinAyat).setTitle(getResources().getQuantityString(R.plurals.salin_n_ayat, terpilih.size(), terpilih.size()));
 			menu.findItem(R.id.menuBagikan).setTitle(getResources().getQuantityString(R.plurals.bagikan_n_ayat, terpilih.size(), terpilih.size()));
 			menu.findItem(R.id.menuTambahStabilo).setTitle(getResources().getQuantityString(R.plurals.stabilo_n_ayat, terpilih.size(), terpilih.size()));
+			
+			menu.findItem(R.id.menuTambahBukmak).setTitle(getString(R.string.tambah_pembatas_buku_di_ayat, ayat_1));
+			menu.findItem(R.id.menuTambahCatatan).setTitle(getString(R.string.tulis_catatan_di_ayat, ayat_1));
 		}
 	}
 	
@@ -387,7 +390,7 @@ public class IsiActivity extends Activity {
 			if (ayatTekan_1 != 0) {
 				final int ari = Ari.encode(S.kitabAktif.pos, this.pasal_1, ayatTekan_1);
 				
-				JenisBukmakDialog dialog = new JenisBukmakDialog(this, alamat, ari);
+				JenisBukmakDialog dialog = new JenisBukmakDialog(this, S.alamat(S.kitabAktif, this.pasal_1, ayatTekan_1), ari);
 				dialog.setListener(muatUlangAtributMapListener);
 				dialog.bukaDialog();
 				
@@ -400,13 +403,14 @@ public class IsiActivity extends Activity {
 			}
 		} else if (itemId == R.id.menuTambahStabilo) {
 			final int ariKp = Ari.encode(S.kitabAktif.pos, this.pasal_1, 0);
+			int warnaRgb = S.getDb().getWarnaRgbStabilo(ariKp, terpilih);
 			
 			new JenisStabiloDialog(this, ariKp, terpilih, new JenisStabiloDialog.JenisStabiloCallback() {
 				@Override public void onOk(int warnaRgb) {
 					uncheckAll();
 					ayatAdapter_.muatAtributMap();
 				}
-			}, -1, alamat).bukaDialog();
+			}, warnaRgb, S.alamat(S.kitabAktif, this.pasal_1, ayatTekan_1)).bukaDialog();
 			
 			return true;
 		} else if (itemId == R.id.menuBagikan) {
