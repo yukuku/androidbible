@@ -452,6 +452,8 @@ public class IsiActivity extends Activity {
 	
 	public void onFakeContextMenuSelected(FakeContextMenu menu, Item item) {
 		IntArrayList terpilih = getAyatTerpilih_1();
+		if (terpilih.size() == 0) return;
+		
 		CharSequence alamat = alamatDariAyatTerpilih(terpilih);
 		
 		// ayat utama (0 kalo ga ada), yaitu kalau cuma kepilih satu.
@@ -475,17 +477,27 @@ public class IsiActivity extends Activity {
 			
 			Toast.makeText(this, getString(R.string.alamat_sudah_disalin, alamat), Toast.LENGTH_SHORT).show();
 		} else if (item == menu.menuTambahBukmak) {
-			if (ayatUtama_1 != 0) {
-				final int ari = Ari.encode(S.kitabAktif.pos, this.pasal_1, ayatUtama_1);
+			if (ayatUtama_1 == 0) {
+				// ga ada ayat utama, fokuskan ke yang relevan!
+				ayatUtama_1 = terpilih.get(0);
 				
-				JenisBukmakDialog dialog = new JenisBukmakDialog(this, S.alamat(S.kitabAktif, this.pasal_1, ayatUtama_1), ari);
-				dialog.setListener(muatUlangAtributMapListener);
-				dialog.bukaDialog();
+				skrolSupayaAyatKeliatan(ayatUtama_1);
 			}
+			
+			final int ari = Ari.encode(S.kitabAktif.pos, this.pasal_1, ayatUtama_1);
+			
+			JenisBukmakDialog dialog = new JenisBukmakDialog(this, S.alamat(S.kitabAktif, this.pasal_1, ayatUtama_1), ari);
+			dialog.setListener(muatUlangAtributMapListener);
+			dialog.bukaDialog();
 		} else if (item == menu.menuTambahCatatan) {
-			if (ayatUtama_1 != 0) {
-				tampilkanCatatan(S.kitabAktif, this.pasal_1, ayatUtama_1);
+			if (ayatUtama_1 == 0) {
+				// ga ada ayat utama, fokuskan ke yang relevan!
+				ayatUtama_1 = terpilih.get(0);
+				
+				skrolSupayaAyatKeliatan(ayatUtama_1);
 			}
+			
+			tampilkanCatatan(S.kitabAktif, this.pasal_1, ayatUtama_1);
 		} else if (item == menu.menuTambahStabilo) {
 			final int ariKp = Ari.encode(S.kitabAktif.pos, this.pasal_1, 0);
 			int warnaRgb = S.getDb().getWarnaRgbStabilo(ariKp, terpilih);
@@ -522,6 +534,15 @@ public class IsiActivity extends Activity {
 			i.putExtra(Intent.EXTRA_SUBJECT, alamat); 
 			i.putExtra(Intent.EXTRA_TEXT, sb.toString());
 			startActivity(Intent.createChooser(i, getString(R.string.bagikan_alamat, alamat)));
+		}
+	}
+
+	private void skrolSupayaAyatKeliatan(int ayatUtama_1) {
+		int position = ayatAdapter_.getPositionAwalPerikopDariAyat(ayatUtama_1);
+		if (Build.VERSION.SDK_INT >= 8) {
+			lsIsi.smoothScrollToPosition(position);
+		} else {
+			lsIsi.setSelectionFromTop(position, lsIsi.getVerticalFadingEdgeLength());
 		}
 	}
 
