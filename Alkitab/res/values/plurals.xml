@@ -1,15 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <plurals name="salin_n_ayat">
-        <item quantity="one">Copy this verse</item>
-        <item quantity="other">Copy %d verses</item>
-    </plurals>
-    <plurals name="bagikan_n_ayat">
-        <item quantity="one">Share this verse</item>
-        <item quantity="other">Share %d verses</item>
-    </plurals>
-    <plurals name="stabilo_n_ayat">
-        <item quantity="one">Highlight this verse</item>
-        <item quantity="other">Highlight %d verses</item>
-    </plurals>
 </resources>

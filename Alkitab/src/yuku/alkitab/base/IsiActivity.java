@@ -438,19 +438,6 @@ public class IsiActivity extends Activity {
 		// pembuatan menu manual
 		final FakeContextMenu menu = getFakeContextMenu();
 		
-		// sedikit beda perlakuan antara satu terpilih dan lebih
-		if (terpilih.size() == 1) {
-			// diamkan saja
-		} else {
-			// Ganti beberapa judul menu
-			menu.menuSalinAyat.label = getResources().getQuantityString(R.plurals.salin_n_ayat, terpilih.size(), terpilih.size());
-			menu.menuBagikan.label = getResources().getQuantityString(R.plurals.bagikan_n_ayat, terpilih.size(), terpilih.size());
-			menu.menuTambahStabilo.label = getResources().getQuantityString(R.plurals.stabilo_n_ayat, terpilih.size(), terpilih.size());
-			
-//			menu.findItem(R.id.menuTambahBukmak).setTitle(getString(R.string.tambah_pembatas_buku_di_ayat, ayat_1));
-//			menu.findItem(R.id.menuTambahCatatan).setTitle(getString(R.string.tulis_catatan_di_ayat, ayat_1));
-		}
-		
 		new AlertDialog.Builder(this)
 		.setTitle(alamatDariAyatTerpilih(terpilih))
 		.setItems(menu.getLabels(), new DialogInterface.OnClickListener() {
