@@ -70,11 +70,6 @@
 			android:title="@string/pref_tanpa_tombol_navigasi"
 			android:key="@string/pref_tanpaNavigasi_key"
 			android:summary="@string/pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah" />
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:title="@string/pref_matikan_menu_ayat"
-			android:key="@string/pref_matikanTahanAyat_key"
-			android:summary="@string/pref_jangan_buka_menu_ketika_jari_menahan_salah_satu_ayat" />
 	</PreferenceCategory>
 
 	<PreferenceCategory

@@ -43,8 +43,6 @@
     <string name="pref_warna">Warna</string>
     <string name="pref_atur_warna_teks_latar_belakang_dan_nomor_ayat">Atur warna teks, latar belakang, dan nomor ayat.</string>
     <string name="pref_penggunaan">Penggunaan</string>
-    <string name="pref_jangan_buka_menu_ketika_jari_menahan_salah_satu_ayat">Jangan buka menu ketika jari menahan salah satu ayat.</string>
-    <string name="pref_matikan_menu_ayat">Matikan Menu Ayat</string>
     <string name="pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah">Tekan ← dan → untuk berpindah pasal. Tekan judul untuk pindah.</string>
     <string name="pref_tanpa_tombol_navigasi">Tanpa Tombol Navigasi</string>
     <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Tampilkan kitab dalam urutan abjad, bukan urutan aslinya.</string>
