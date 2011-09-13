@@ -254,7 +254,12 @@ public class IsiActivity extends Activity {
 		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
 			int posLama = getPosisiBerdasarSkrol();
 			if (posLama >= 1) {
-				lsIsi.setSelectionFromTop(posLama-1, lsIsi.getVerticalFadingEdgeLength());
+				int posBaru = posLama - 1;
+				while (posBaru > 0) { // cek disabled, kalo iya, mundurin lagi
+					if (ayatAdapter_.isEnabled(posBaru)) break;
+					posBaru--;
+				}
+				lsIsi.setSelectionFromTop(posBaru, lsIsi.getVerticalFadingEdgeLength());
 			} else {
 				lsIsi.setSelectionFromTop(0, lsIsi.getVerticalFadingEdgeLength());
 			}
