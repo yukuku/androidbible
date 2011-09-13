@@ -13,10 +13,12 @@ import android.text.style.*;
 import android.text.util.*;
 import android.util.*;
 import android.view.*;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.*;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.*;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.BufferType;
 
 import java.util.*;
@@ -26,6 +28,7 @@ import yuku.alkitab.base.EdisiActivity.MEdisi;
 import yuku.alkitab.base.EdisiActivity.MEdisiInternal;
 import yuku.alkitab.base.EdisiActivity.MEdisiPreset;
 import yuku.alkitab.base.EdisiActivity.MEdisiYes;
+import yuku.alkitab.base.IsiActivity.FakeContextMenu.Item;
 import yuku.alkitab.base.JenisBukmakDialog.Listener;
 import yuku.alkitab.base.JenisCatatanDialog.RefreshCallback;
 import yuku.alkitab.base.Search2Engine.Query;
@@ -52,10 +55,9 @@ public class IsiActivity extends Activity {
 	ImageButton bKanan;
 	View tempatJudul;
 	TextView lJudul;
+	View bContext;
 	
 	int pasal_1 = 0;
-	int ayatContextMenu_1 = -1;
-	String isiAyatContextMenu = null;
 	SharedPreferences preferences_instan;
 	
 	AyatAdapter ayatAdapter_;
@@ -84,8 +86,11 @@ public class IsiActivity extends Activity {
 		}
 	};
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	Animation fadeInAnimation;
+	Animation fadeOutAnimation;
+	boolean showingContextButton = false;
+
+	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		U.nyalakanTitleBarHanyaKalauTablet(this);
@@ -95,23 +100,18 @@ public class IsiActivity extends Activity {
 		
 		setContentView(R.layout.activity_isi);
 		
-		lsIsi = (ListView) findViewById(R.id.lsIsi);
-		bTuju = (Button) findViewById(R.id.bTuju);
-		bKiri = (ImageButton) findViewById(R.id.bKiri);
-		bKanan = (ImageButton) findViewById(R.id.bKanan);
-		tempatJudul = findViewById(R.id.tempatJudul);
-		lJudul = (TextView) findViewById(R.id.lJudul);
+		lsIsi = U.getView(this, R.id.lsIsi);
+		bTuju = U.getView(this, R.id.bTuju);
+		bKiri = U.getView(this, R.id.bKiri);
+		bKanan = U.getView(this, R.id.bKanan);
+		tempatJudul = U.getView(this, R.id.tempatJudul);
+		lJudul = U.getView(this, R.id.lJudul);
+		bContext = U.getView(this, R.id.bContext);
 		
 		terapkanPengaturan(false);
 
-		lsIsi.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-				return lsIsi_itemLongClick(parent, view, position, id);
-			}
-		});
-		
-		registerForContextMenu(lsIsi);
+		lsIsi.setOnItemClickListener(lsIsi_itemClick);
+		lsIsi.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		
 		bTuju.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) { bTuju_click(); }
@@ -134,6 +134,8 @@ public class IsiActivity extends Activity {
 			@Override public void onClick(View v) { bKanan_click(); }
 		});
 		
+		bContext.setOnClickListener(bContext_click);
+		
 		lsIsi.setOnKeyListener(new View.OnKeyListener() {
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -148,7 +150,7 @@ public class IsiActivity extends Activity {
 		});
 		
 		// adapter
-		ayatAdapter_ = new AyatAdapter(getApplicationContext(), paralelOnClickListener, atributListener);
+		ayatAdapter_ = new AyatAdapter(this, paralelOnClickListener, atributListener);
 		lsIsi.setAdapter(ayatAdapter_);
 		
 		// muat preferences
@@ -180,6 +182,7 @@ public class IsiActivity extends Activity {
 		// muat pasal dan ayat
 		tampil(pasalTerakhir, ayatTerakhir);
 		//sejarah.tambah(Ari.encode(kitabTerakhir, pasalTerakhir, ayatTerakhir));
+		
 
 		if (D.EBUG) {
 			new AlertDialog.Builder(this)
@@ -187,6 +190,44 @@ public class IsiActivity extends Activity {
 			.show();
 		}
 	}
+	
+	@Override protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		
+		hideOrShowContextButton();
+	}
+	
+	void showContextButton() {
+		if (! showingContextButton) {
+			if (fadeInAnimation == null) {
+				fadeInAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
+			}
+			bContext.setVisibility(View.VISIBLE);
+			bContext.startAnimation(fadeInAnimation);
+			bContext.setEnabled(true);
+			showingContextButton = true;
+		}
+	}
+	
+	void hideContextButton() {
+		if (showingContextButton) {
+			if (fadeOutAnimation == null) {
+				fadeOutAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_out);
+			}
+			fadeOutAnimation.setAnimationListener(fadeOutAnimation_animation);
+			bContext.startAnimation(fadeOutAnimation);
+			bContext.setEnabled(false);
+			showingContextButton = false;
+		}
+	}
+
+	private AnimationListener fadeOutAnimation_animation = new AnimationListener() {
+		@Override public void onAnimationStart(Animation animation) {}
+		@Override public void onAnimationRepeat(Animation animation) {}
+		@Override public void onAnimationEnd(Animation animation) {
+			bContext.setVisibility(View.INVISIBLE);
+		}
+	};
 	
 	protected boolean tekan(int keyCode) {
 		if (Preferences.getBoolean(R.string.pref_tombolVolumeNaikTurun_key, R.bool.pref_tombolVolumeNaikTurun_default)) {
@@ -209,7 +250,12 @@ public class IsiActivity extends Activity {
 		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
 			int posLama = getPosisiBerdasarSkrol();
 			if (posLama >= 1) {
-				lsIsi.setSelectionFromTop(posLama-1, lsIsi.getVerticalFadingEdgeLength());
+				int posBaru = posLama - 1;
+				while (posBaru > 0) { // cek disabled, kalo iya, mundurin lagi
+					if (ayatAdapter_.isEnabled(posBaru)) break;
+					posBaru--;
+				}
+				lsIsi.setSelectionFromTop(posBaru, lsIsi.getVerticalFadingEdgeLength());
 			} else {
 				lsIsi.setSelectionFromTop(0, lsIsi.getVerticalFadingEdgeLength());
 			}
@@ -288,88 +334,212 @@ public class IsiActivity extends Activity {
 		
 		tampil(Ari.toPasal(ari), Ari.toAyat(ari));
 	}
+
+	private OnItemClickListener lsIsi_itemClick = new OnItemClickListener() {
+		@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			hideOrShowContextButton();
+		}
+	};
 	
-	boolean lsIsi_itemLongClick(AdapterView<?> parent, View view, int position, long id) {
-		// kalo setingnya mati, anggap true aja (diconsume)
-		if (Preferences.getBoolean(R.string.pref_matikanTahanAyat_key, R.bool.pref_matikanTahanAyat_default)) {
-			return true;
+	private void hideOrShowContextButton() {
+		SparseBooleanArray checkedPositions = lsIsi.getCheckedItemPositions();
+		boolean anyChecked = false;
+		for (int i = 0; i < checkedPositions.size(); i++) if (checkedPositions.valueAt(i)) {
+			anyChecked = true; 
+			break;
 		}
 		
-		// hanya untuk ayat! bukan perikop. Maka kalo perikop, anggap aja uda diconsume.
-		if (id < 0) {
-			return true;
+		if (anyChecked) {
+			showContextButton();
+		} else {
+			hideContextButton();
+		}
+	}
+
+	private IntArrayList getAyatTerpilih_1() {
+		// hitung ada berapa yang terpilih
+		SparseBooleanArray positions = lsIsi.getCheckedItemPositions();
+		if (positions == null) {
+			return new IntArrayList(0);
 		}
 		
-		return false;
+		IntArrayList res = new IntArrayList(positions.size());
+		for (int i = 0, len = positions.size(); i < len; i++) {
+			if (positions.valueAt(i)) {
+				int position = positions.keyAt(i);
+				int ayat_1 = ayatAdapter_.getAyatDariPosition(position);
+				if (ayat_1 >= 1) res.add(ayat_1);
+			}
+		}
+		return res;
 	}
 	
-	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
-		
-		new MenuInflater(this).inflate(R.menu.context_ayat, menu);
-		
-		// simpen ayat yang dipilih untuk dipake sama menu tambah bukmak
-		{
-			int ayat_1 = (int) (((AdapterContextMenuInfo) menuInfo).id) + 1;
-			this.ayatContextMenu_1 = ayat_1;
-			this.isiAyatContextMenu = U.buangKodeKusus(ayatAdapter_.getAyat(ayat_1));
+	private CharSequence alamatDariAyatTerpilih(IntArrayList ayatTerpilih) {
+		if (ayatTerpilih.size() == 0) {
+			// harusnya mustahil. Maka ga usa ngapa2in deh.
+			return S.alamat(S.kitabAktif, this.pasal_1);
+		} else if (ayatTerpilih.size() == 1) {
+			return S.alamat(S.kitabAktif, this.pasal_1, ayatTerpilih.get(0));
+		} else {
+			return S.alamat(S.kitabAktif, this.pasal_1, ayatTerpilih);
 		}
-		
-		//# pasang header
-		String alamat = S.alamat(S.kitabAktif, this.pasal_1, this.ayatContextMenu_1);
-		menu.setHeaderTitle(alamat);
 	}
 	
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		String alamat = S.alamat(S.kitabAktif, this.pasal_1, this.ayatContextMenu_1);
+	static class FakeContextMenu {
+		static class Item {
+			String label;
+			Item(String label) {
+				this.label = label;
+			}
+		}
 		
-		int itemId = item.getItemId();
-		if (itemId == R.id.menuSalinAyat) {
-			String salinan = alamat + "  " + this.isiAyatContextMenu;
-			U.salin(this, salinan);
+		Item menuSalinAyat;
+		Item menuTambahBukmak;
+		Item menuTambahCatatan;
+		Item menuTambahStabilo;
+		Item menuBagikan;
+		Item[] items;
+		
+		String[] getLabels() {
+			String[] res = new String[items.length];
+			for (int i = 0; i < items.length; i++) {
+				res[i] = items[i].label;
+			}
+			return res;
+		}
+	}
+	
+	FakeContextMenu getFakeContextMenu() {
+		FakeContextMenu res = new FakeContextMenu();
+		res.menuSalinAyat = new Item(getString(R.string.salin_ayat));
+		res.menuTambahBukmak = new Item(getString(R.string.tambah_pembatas_buku));
+		res.menuTambahCatatan = new Item(getString(R.string.tulis_catatan));
+		res.menuTambahStabilo = new Item(getString(R.string.highlight_stabilo));
+		res.menuBagikan = new Item(getString(R.string.bagikan));
+		res.items = new Item[] {
+			res.menuSalinAyat,
+			res.menuTambahBukmak,
+			res.menuTambahCatatan,
+			res.menuTambahStabilo,
+			res.menuBagikan,
+		};
+		return res;
+	};
+	
+
+	public void showFakeContextMenu() {
+		IntArrayList terpilih = getAyatTerpilih_1();
+		if (terpilih.size() == 0) return;
+
+		// pembuatan menu manual
+		final FakeContextMenu menu = getFakeContextMenu();
+		
+		new AlertDialog.Builder(this)
+		.setTitle(alamatDariAyatTerpilih(terpilih))
+		.setItems(menu.getLabels(), new DialogInterface.OnClickListener() {
+			@Override public void onClick(DialogInterface dialog, int which) {
+				if (which >= 0 && which < menu.items.length) {
+					onFakeContextMenuSelected(menu, menu.items[which]);
+				}
+			}
+		})
+		.show();
+	}
+	
+	public void onFakeContextMenuSelected(FakeContextMenu menu, Item item) {
+		IntArrayList terpilih = getAyatTerpilih_1();
+		if (terpilih.size() == 0) return;
+		
+		CharSequence alamat = alamatDariAyatTerpilih(terpilih);
+		
+		// ayat utama (0 kalo ga ada), yaitu kalau cuma kepilih satu.
+		int ayatUtama_1 = 0;
+		if (terpilih.size() == 1) { // ga ada yang di bawah pencetan jari, tapi cuma 1 ayat yang di terpilih, maka pasang ayat itu aja.
+			ayatUtama_1 = terpilih.get(0);
+		}
+		
+		if (item == menu.menuSalinAyat) { // salin, bisa multiple
+			StringBuilder salinan = new StringBuilder();
+			salinan.append(alamat).append("  ");
+			
+			// append tiap ayat terpilih
+			for (int i = 0; i < terpilih.size(); i++) {
+				int ayat_1 = terpilih.get(i);
+				if (i != 0) salinan.append('\n');
+				salinan.append(U.buangKodeKusus(ayatAdapter_.getAyat(ayat_1)));
+			}
+			
+			U.salin(salinan);
 			
 			Toast.makeText(this, getString(R.string.alamat_sudah_disalin, alamat), Toast.LENGTH_SHORT).show();
+		} else if (item == menu.menuTambahBukmak) {
+			if (ayatUtama_1 == 0) {
+				// ga ada ayat utama, fokuskan ke yang relevan!
+				ayatUtama_1 = terpilih.get(0);
+				
+				skrolSupayaAyatKeliatan(ayatUtama_1);
+			}
 			
-			return true;
-		} else if (itemId == R.id.menuTambahBukmak) {
-			final int ari = Ari.encode(S.kitabAktif.pos, pasal_1, ayatContextMenu_1);
+			final int ari = Ari.encode(S.kitabAktif.pos, this.pasal_1, ayatUtama_1);
 			
-			JenisBukmakDialog dialog = new JenisBukmakDialog(this, alamat, ari);
+			JenisBukmakDialog dialog = new JenisBukmakDialog(this, S.alamat(S.kitabAktif, this.pasal_1, ayatUtama_1), ari);
 			dialog.setListener(muatUlangAtributMapListener);
 			dialog.bukaDialog();
+		} else if (item == menu.menuTambahCatatan) {
+			if (ayatUtama_1 == 0) {
+				// ga ada ayat utama, fokuskan ke yang relevan!
+				ayatUtama_1 = terpilih.get(0);
+				
+				skrolSupayaAyatKeliatan(ayatUtama_1);
+			}
 			
-			return true;
-		} else if (itemId == R.id.menuTambahCatatan) {
-			tampilkanCatatan(S.kitabAktif, pasal_1, ayatContextMenu_1);
-
-			return true;
-		} else if (itemId == R.id.menuTambahStabilo) {
-			final int ari = Ari.encode(S.kitabAktif.pos, pasal_1, ayatContextMenu_1);
+			tampilkanCatatan(S.kitabAktif, this.pasal_1, ayatUtama_1);
+		} else if (item == menu.menuTambahStabilo) {
+			final int ariKp = Ari.encode(S.kitabAktif.pos, this.pasal_1, 0);
+			int warnaRgb = S.getDb().getWarnaRgbStabilo(ariKp, terpilih);
 			
-			JenisStabiloDialog dialog = new JenisStabiloDialog(this, ari, new JenisStabiloDialog.JenisStabiloCallback() {
-				@Override public void onOk(int ari, int warnaRgb) {
+			new JenisStabiloDialog(this, ariKp, terpilih, new JenisStabiloDialog.JenisStabiloCallback() {
+				@Override public void onOk(int warnaRgb) {
+					uncheckAll();
 					ayatAdapter_.muatAtributMap();
 				}
-			}, S.getDb().getWarnaRgbStabilo(ari));
+			}, warnaRgb, alamat).bukaDialog();
+		} else if (item == menu.menuBagikan) {
+			String urlAyat;
+			if (terpilih.size() == 1) {
+				urlAyat = S.bikinUrlAyat(S.kitabAktif, this.pasal_1, terpilih.get(0));
+			} else {
+				urlAyat = S.bikinUrlAyat(S.kitabAktif, this.pasal_1, 0); // sepasal aja!
+			}
 			
-			dialog.bukaDialog();
+			StringBuilder sb = new StringBuilder();
 			
-			return true;
-		} else if (itemId == R.id.menuBagikan) {
-			String urlAyat = S.bikinUrlAyat(S.kitabAktif, this.pasal_1, this.ayatContextMenu_1);
+			// TODO cek fesbuk dan kalo fesbuk, maka taro url di depan, sebaliknya di belakang aja.
+			if (urlAyat != null) sb.append(urlAyat).append(" ");
+			sb.append(alamat).append("  ");
+			
+			// append tiap ayat terpilih
+			for (int i = 0; i < terpilih.size(); i++) {
+				int ayat_1 = terpilih.get(i);
+				if (i != 0) sb.append('\n');
+				sb.append(U.buangKodeKusus(ayatAdapter_.getAyat(ayat_1)));
+			}
 			
 			Intent i = new Intent(Intent.ACTION_SEND);
 			i.setType("text/plain"); //$NON-NLS-1$
 			i.putExtra(Intent.EXTRA_SUBJECT, alamat); 
-			// FIXME cek fesbuk dan kalo fesbuk, maka taro url di depan, sebaliknya di belakang aja.
-			i.putExtra(Intent.EXTRA_TEXT, (urlAyat == null? "": (urlAyat + " ")) + alamat + "  " + this.isiAyatContextMenu); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			i.putExtra(Intent.EXTRA_TEXT, sb.toString());
 			startActivity(Intent.createChooser(i, getString(R.string.bagikan_alamat, alamat)));
-
-			return true;
 		}
-		
-		return super.onContextItemSelected(item);
+	}
+
+	private void skrolSupayaAyatKeliatan(int ayatUtama_1) {
+		int position = ayatAdapter_.getPositionAwalPerikopDariAyat(ayatUtama_1);
+		if (Build.VERSION.SDK_INT >= 8) {
+			lsIsi.smoothScrollToPosition(position);
+		} else {
+			lsIsi.setSelectionFromTop(position, lsIsi.getVerticalFadingEdgeLength());
+		}
 	}
 
 	private void terapkanPengaturan(boolean bahasaJuga) {
@@ -600,8 +770,7 @@ public class IsiActivity extends Activity {
 
 	public void bikinMenu(Menu menu) {
 		menu.clear();
-
-		new MenuInflater(this).inflate(R.menu.activity_isi, menu);
+		getMenuInflater().inflate(R.menu.activity_isi, menu);
 		
 		BuildConfig c = BuildConfig.get(this);
 
@@ -884,14 +1053,15 @@ public class IsiActivity extends Activity {
 			perikop_xblok = new Blok[max];
 			nblok = S.edisiAktif.pembaca.muatPerikop(S.edisiAktif, S.kitabAktif.pos, pasal_1, perikop_xari, perikop_xblok, max); 
 			
-			//# tadinya onPostExecute
+			//# isi adapter dengan data baru, pastikan semua checked state direset dulu
+			uncheckAll();
 			ayatAdapter_.setData(S.kitabAktif, pasal_1, xayat, perikop_xari, perikop_xblok, nblok);
 			ayatAdapter_.muatAtributMap();
 			
 			// kasi tau activity
 			this.pasal_1 = pasal_1;
 			
-			final int position = ayatAdapter_.getPositionDariAyat(ayat_1);
+			final int position = ayatAdapter_.getPositionAwalPerikopDariAyat(ayat_1);
 			
 			if (position == -1) {
 				Log.w(TAG, "ga bisa ketemu ayat " + ayat_1 + ", ANEH!"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -905,6 +1075,18 @@ public class IsiActivity extends Activity {
 		bTuju.setText(judul);
 		
 		return Ari.encode(0, pasal_1, ayat_1);
+	}
+
+	private void uncheckAll() {
+		SparseBooleanArray checkedPositions = lsIsi.getCheckedItemPositions();
+		if (checkedPositions != null && checkedPositions.size() > 0) {
+			for (int i = checkedPositions.size() - 1; i >= 0; i--) {
+				if (checkedPositions.valueAt(i)) {
+					lsIsi.setItemChecked(checkedPositions.keyAt(i), false);
+				}
+			}
+		}
+		hideContextButton();
 	}
 	
 	@Override
@@ -970,6 +1152,12 @@ public class IsiActivity extends Activity {
 			tampil(pasalBaru, 1);
 		}
 	}
+
+	private OnClickListener bContext_click = new OnClickListener() {
+		@Override public void onClick(View v) {
+			showFakeContextMenu();
+		}
+	};
 	
 	private void bukaDialogSaran() {
 		final View dialogView = getLayoutInflater().inflate(R.layout.dialog_saran, null);

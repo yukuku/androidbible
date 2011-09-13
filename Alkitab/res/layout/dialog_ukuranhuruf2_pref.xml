@@ -7,7 +7,7 @@
 	android:padding="6dp">
 	<TextView
 		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="@string/contoh_tulisan_titikdua"></TextView>
+		android:layout_height="wrap_content" android:text="@string/contoh_tulisan_titikdua" />
 	<TextView
 		android:layout_width="wrap_content"
 		android:textColor="#fff"
@@ -15,17 +15,17 @@
 		android:fadingEdge="vertical"
 		android:id="@+id/lContoh"
 		android:textSize="17dp"
-		android:layout_height="90dp" android:text="@string/pada_mulanya"></TextView>
+		android:layout_height="90dp" android:text="@string/pada_mulanya" />
 	<LinearLayout
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"
 		android:gravity="center_vertical">
 		<SeekBar
+			android:layout_width="0dp"
 			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
 			android:layout_weight="1"
 			android:id="@+id/seekbar"
-			android:max="80" android:progress="30"></SeekBar>
+			android:max="80" android:progress="30" />
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
 			android:textSize="20dp"
 			android:layout_marginLeft="6dp"
 			android:id="@+id/lUkuranHuruf"
-			android:minWidth="50dp" android:text="17.0"></TextView>
+			android:minWidth="50dp" android:text="17.0" />
 	</LinearLayout>
 
 </LinearLayout>

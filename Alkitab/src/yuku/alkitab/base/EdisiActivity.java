@@ -60,7 +60,7 @@ public class EdisiActivity extends Activity {
 	
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		new MenuInflater(this).inflate(R.menu.activity_edisi, menu);
+		getMenuInflater().inflate(R.menu.activity_edisi, menu);
 	}
 	
 	@Override
@@ -114,7 +114,7 @@ public class EdisiActivity extends Activity {
 		if (info.position == adapter.getCount() - 1) {
 			// ga ada menu untuk Buka file
 		} else {
-			new MenuInflater(getApplicationContext()).inflate(R.menu.context_edisi, menu);
+			getMenuInflater().inflate(R.menu.context_edisi, menu);
 		
 			MenuItem menuBuang = menu.findItem(R.id.menuBuang);
 			if (menuBuang != null) {

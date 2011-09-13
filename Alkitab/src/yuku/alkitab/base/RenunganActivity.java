@@ -144,7 +144,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		new MenuInflater(this).inflate(R.menu.activity_renungan, menu);
+		getMenuInflater().inflate(R.menu.activity_renungan, menu);
 	}
 	
 	@Override
@@ -168,7 +168,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		int itemId = item.getItemId();
 		if (itemId == R.id.menuSalin) {
 			String salinan = lHeader.getText() + "\n" + lIsi.getText();
-			U.salin(this, salinan);
+			U.salin(salinan);
 			
 			Toast.makeText(this, R.string.renungan_sudah_disalin, Toast.LENGTH_SHORT).show();
 			

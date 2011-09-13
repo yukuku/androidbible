@@ -5,7 +5,7 @@
 	android:layout_height="wrap_content"
 	android:orientation="vertical"
 	>
-	<ImageButton
+	<ImageView
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:id="@+id/imgAtributBukmak"
@@ -13,7 +13,7 @@
 		android:background="@null"
 		android:paddingRight="6dp"
 	/>
-	<ImageButton
+	<ImageView
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:id="@+id/imgAtributCatatan"

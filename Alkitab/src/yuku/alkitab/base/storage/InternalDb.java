@@ -229,38 +229,49 @@ public class InternalDb {
 		return res;
 	}
 
-	public void updateAtauInsertStabilo(int ari, int warnaRgb) {
+	public void updateAtauInsertStabilo(int ariKp, IntArrayList ayatTerpilih, int warnaRgb) {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		
+		String[] params = {null /* buat ari */, String.valueOf(Db.Bukmak2.jenis_stabilo)};
+		
 		db.beginTransaction();
-		Cursor c = db.query(Db.TABEL_Bukmak2, null, Db.Bukmak2.ari + "=? and " + Db.Bukmak2.jenis + "=?", new String[] {String.valueOf(ari), String.valueOf(Db.Bukmak2.jenis_stabilo)}, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
-			// cek dulu ada ato ga
-			if (c.moveToNext()) {
-				// sudah ada!
-				Bukmak2 bukmak = Bukmak2.dariCursor(c);
-				bukmak.waktuUbah = new Date();
-				long id = c.getLong(c.getColumnIndexOrThrow("_id")); //$NON-NLS-1$
-				if (warnaRgb != -1) {
-					bukmak.tulisan = U.enkodStabilo(warnaRgb);
-					db.update(Db.TABEL_Bukmak2, bukmak.toContentValues(), "_id=?", new String[] {String.valueOf(id)}); //$NON-NLS-1$
-				} else {
-					// delete
-					db.delete(Db.TABEL_Bukmak2, "_id=?", new String[] {String.valueOf(id)}); //$NON-NLS-1$
-				}
-			} else {
-				// belum ada!
-				if (warnaRgb == -1) {
-					// ga usa ngapa2in, dari belum ada jadi tetep ga ada
-				} else {
-					Date kini = new Date();
-					Bukmak2 bukmak = new Bukmak2(ari, Db.Bukmak2.jenis_stabilo, U.enkodStabilo(warnaRgb), kini, kini); 
-					db.insert(Db.TABEL_Bukmak2, null, bukmak.toContentValues());
+			// setiap ayat yang diminta
+			for (int i = 0; i < ayatTerpilih.size(); i++) {
+				int ayat_1 = ayatTerpilih.get(i);
+				int ari = Ari.encodeWithKp(ariKp, ayat_1);
+				params[0] = String.valueOf(ari);
+				
+				Cursor c = db.query(Db.TABEL_Bukmak2, null, Db.Bukmak2.ari + "=? and " + Db.Bukmak2.jenis + "=?", params, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
+				try {
+					if (c.moveToNext()) { // cek dulu ada ato ga
+						// sudah ada!
+						Bukmak2 bukmak = Bukmak2.dariCursor(c);
+						bukmak.waktuUbah = new Date();
+						long id = c.getLong(c.getColumnIndexOrThrow(BaseColumns._ID)); //$NON-NLS-1$
+						if (warnaRgb != -1) {
+							bukmak.tulisan = U.enkodStabilo(warnaRgb);
+							db.update(Db.TABEL_Bukmak2, bukmak.toContentValues(), "_id=?", new String[] {String.valueOf(id)}); //$NON-NLS-1$
+						} else {
+							// delete
+							db.delete(Db.TABEL_Bukmak2, "_id=?", new String[] {String.valueOf(id)}); //$NON-NLS-1$
+						}
+					} else {
+						// belum ada!
+						if (warnaRgb == -1) {
+							// ga usa ngapa2in, dari belum ada jadi tetep ga ada
+						} else {
+							Date kini = new Date();
+							Bukmak2 bukmak = new Bukmak2(ari, Db.Bukmak2.jenis_stabilo, U.enkodStabilo(warnaRgb), kini, kini); 
+							db.insert(Db.TABEL_Bukmak2, null, bukmak.toContentValues());
+						}
+					}
+				} finally {
+					c.close();
 				}
 			}
 			db.setTransactionSuccessful();
 		} finally {
-			c.close();
 			db.endTransaction();
 		}
 	}
@@ -276,6 +287,46 @@ public class InternalDb {
 			} else {
 				return -1;
 			}
+		} finally {
+			c.close();
+		}
+	}
+	
+	public int getWarnaRgbStabilo(int ariKp, IntArrayList terpilih) {
+		int ariMin = ariKp;
+		int ariMax = ariKp | 0xff;
+		int[] xwarna = new int[256];
+		int res = -2;
+		
+		for (int i = 0; i < xwarna.length; i++) xwarna[i] = -1;
+		
+		// cek dulu ada ato ga
+		Cursor c = helper.getReadableDatabase().query(Db.TABEL_Bukmak2, null, Db.Bukmak2.ari + ">? and " + Db.Bukmak2.ari + "<=? and " + Db.Bukmak2.jenis + "=?", new String[] {String.valueOf(ariMin), String.valueOf(ariMax), String.valueOf(Db.Bukmak2.jenis_stabilo)}, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
+		try {
+			int ari_col = c.getColumnIndexOrThrow(Db.Bukmak2.ari);
+			int tulisan_col = c.getColumnIndexOrThrow(Db.Bukmak2.tulisan);
+			
+			// masukin aja ke array dulu
+			while (c.moveToNext()) { 
+				int ari = c.getInt(ari_col);
+				int index = ari & 0xff;
+				int warna = U.dekodStabilo(c.getString(tulisan_col));
+				xwarna[index] = warna;
+			}
+			
+			// tentukan warna default. Kalau semua berwarna x, maka jadi x. Kalau ada salah satu yang bukan x, jadi -1;
+			for (int i = 0; i < terpilih.size(); i++) {
+				int ayat_1 = terpilih.get(i);
+				int warna = xwarna[ayat_1];
+				if (res == -2) {
+					res = warna;
+				} else if (warna != res) {
+					return -1;
+				}
+			}
+			
+			if (res == -2) return -1;
+			return res;
 		} finally {
 			c.close();
 		}

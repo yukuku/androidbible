@@ -20,13 +20,14 @@ public class LabelEditorDialog {
 		void onOk(String judul);
 	}
 	
-	public static void show(Context context, String initialText, final OkListener okListener) {
+	public static void show(Context context, String initialText, String title, final OkListener okListener) {
 		View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_label_ubah, null);
 		final EditText tJudul = U.getView(dialogView, R.id.tJudul);
 		tJudul.setText(initialText);
 		
 		final AlertDialog dialog = new AlertDialog.Builder(context)
 		.setView(dialogView)
+		.setTitle(title)
 		.setPositiveButton(R.string.ok, new OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
 				if (okListener != null) {

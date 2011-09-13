@@ -11,53 +11,47 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:gravity="center_horizontal">
-
 		<LinearLayout
 			android:layout_height="wrap_content"
-			android:orientation="vertical"
-			android:layout_width="fill_parent">
-			<LinearLayout
+			android:layout_width="fill_parent"
+			android:orientation="horizontal"
+			android:gravity="center_vertical|center_horizontal"
+			android:layout_margin="6dp">
+			<Spinner
+				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_width="fill_parent"
-				android:orientation="horizontal"
+				android:id="@+id/cbKitab"
+				android:minWidth="200sp"
+				android:layout_marginRight="8dp" />
+			<TextView
+				android:layout_width="wrap_content"
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:id="@+id/lPasal"
+				android:text="1"
+				android:minWidth="48sp"
+				android:layout_height="fill_parent"
 				android:gravity="center_vertical|center_horizontal"
-				android:layout_margin="6dp">
-				<Spinner
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:id="@+id/cbKitab"
-					android:minWidth="200sp"
-					android:layout_marginRight="8dp" />
-				<TextView
-					android:layout_width="wrap_content"
-					android:textAppearance="?android:attr/textAppearanceLarge"
-					android:id="@+id/lPasal"
-					android:text="1"
-					android:minWidth="48sp"
-					android:layout_height="fill_parent"
-					android:gravity="center_vertical|center_horizontal"
-					android:focusable="true" />
-				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text=" : "
-					android:layout_margin="8dp" />
-				<TextView
-					android:layout_width="wrap_content"
-					android:id="@+id/lAyat"
-					android:textAppearance="?android:attr/textAppearanceLarge"
-					android:minWidth="48sp"
-					android:text="1"
-					android:layout_height="fill_parent"
-					android:gravity="center_vertical|center_horizontal"
-					android:focusable="true" />
-				<ImageButton
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:id="@+id/bKeLoncat"
-					android:src="@drawable/tombol_ke_loncat"
-					android:padding="6dp" android:layout_marginLeft="20dp"></ImageButton>
-			</LinearLayout>
+				android:focusable="true" />
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text=" : "
+				android:layout_margin="8dp" />
+			<TextView
+				android:layout_width="wrap_content"
+				android:id="@+id/lAyat"
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:minWidth="48sp"
+				android:text="1"
+				android:layout_height="fill_parent"
+				android:gravity="center_vertical|center_horizontal"
+				android:focusable="true" />
+			<ImageButton
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/bKeLoncat"
+				android:src="@drawable/tombol_ke_loncat"
+				android:padding="6dp" android:layout_marginLeft="20dp"></ImageButton>
 		</LinearLayout>
 
 		<include

@@ -34,12 +34,12 @@ public class JenisBukmakDialog {
 	// current labels (can be not in the db)
 	SortedSet<Label> labels = new TreeSet<Label>();
 	
-	public JenisBukmakDialog(Context context, String alamat, int ari) {
+	public JenisBukmakDialog(Context context, CharSequence alamat, int ari) {
 		// wajib
 		this.context = context;
 		
 		// pilihan
-		this.alamat = alamat;
+		this.alamat = alamat.toString();
 		this.ari = ari;
 	}
 
@@ -59,7 +59,7 @@ public class JenisBukmakDialog {
 	private OnClickListener bAddLabel_dialog_itemSelected = new OnClickListener() {
 		@Override public void onClick(DialogInterface _unused_, int which) {
 			if (which == adapter.getCount() - 1) { // new label
-				LabelEditorDialog.show(context, "", new OkListener() {
+				LabelEditorDialog.show(context, "", "Create label", new OkListener() {
 					@Override public void onOk(String judul) {
 						Label labelBaru = S.getDb().tambahLabel(judul);
 						if (labelBaru != null) {
@@ -178,12 +178,9 @@ public class JenisBukmakDialog {
 	}
 	
 	private View getLabelView(Label label) {
-		View res = LayoutInflater.from(context).inflate(R.layout.label_x, null);
+		TextView res = (TextView) LayoutInflater.from(context).inflate(R.layout.label_x, null);
 		res.setLayoutParams(panelLabels.generateDefaultLayoutParams());
-		
-		TextView lJudul = U.getView(res, R.id.lJudul);
-		lJudul.setText(label.judul);
-		
+		res.setText(label.judul);
 		res.setTag(R.id.TAG_label, label);
 		res.setOnClickListener(lJudul_click );
 		
@@ -202,7 +199,7 @@ public class JenisBukmakDialog {
 			for (int i = 0, len = labels.size(); i < len; i++) {
 				res[i] = labels.get(i).judul;
 			}
-			res[res.length - 1] = "New label\u2026";
+			res[res.length - 1] = "Create label\u2026";
 			return res;
 		}
 
