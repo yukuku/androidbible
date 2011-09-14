@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<item type="layout" name="keypad">@layout/keypad_tablet</item>
+	<item type="layout" name="activity_menuju">@layout/activity_menuju_tablet</item>
+</resources>
