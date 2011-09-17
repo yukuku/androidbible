@@ -185,7 +185,7 @@ public class EdisiActivity extends Activity {
 			edisi.setAktif(false);
 		} else {
 			// tergantung uda ada belum, kalo uda ada filenya sih centang aja
-			if (AddonManager.cekAdaEdisi(edisi.namafile_preset)) {
+			if (edisi.adaFileDatanya()) {
 				edisi.setAktif(true);
 			} else {
 				DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
@@ -288,7 +288,22 @@ public class EdisiActivity extends Activity {
 		if (cAktif.isChecked()) {
 			edisi.setAktif(false);
 		} else {
-			edisi.setAktif(true);
+			if (edisi.adaFileDatanya()) {
+				edisi.setAktif(true);
+			} else {
+				new AlertDialog.Builder(this)
+				.setTitle("Cannot find data file")
+				.setMessage("The file for this version is no longer available. Do you want to remove this version from the list?\nFile: " + edisi.namafile)
+				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+					@Override public void onClick(DialogInterface dialog, int which) {
+						S.getDb().hapusEdisiYes(edisi);
+						adapter.initDaftarEdisiYes();
+						adapter.notifyDataSetChanged();
+					}
+				})
+				.setNegativeButton(R.string.no, null)
+				.show();
+			}
 		}
 	}
 
@@ -493,12 +508,16 @@ public class EdisiActivity extends Activity {
 		public abstract Edisi getEdisi(Context context);
 		public abstract void setAktif(boolean aktif);
 		public abstract boolean getAktif();
+		public abstract boolean adaFileDatanya();
 	}
 
 	public static class MEdisiInternal extends MEdisi {
-		@Override
-		public String getEdisiId() {
+		public static String getEdisiInternalId() {
 			return "internal"; //$NON-NLS-1$
+		}
+		
+		@Override public String getEdisiId() {
+			return getEdisiInternalId();
 		}
 
 		@Override
@@ -514,6 +533,10 @@ public class EdisiActivity extends Activity {
 		@Override
 		public boolean getAktif() {
 			return true; // selalu aktif
+		}
+
+		@Override public boolean adaFileDatanya() {
+			return true; // selalu ada
 		}
 	}
 	
@@ -536,11 +559,15 @@ public class EdisiActivity extends Activity {
 
 		@Override
 		public Edisi getEdisi(Context context) {
-			if (AddonManager.cekAdaEdisi(namafile_preset)) {
+			if (adaFileDatanya()) {
 				return new Edisi(new YesPembaca(context, AddonManager.getEdisiPath(namafile_preset)));
 			} else {
 				return null;
 			}
+		}
+
+		@Override public boolean adaFileDatanya() {
+			return AddonManager.cekAdaEdisi(namafile_preset);
 		}
 	}
 	
@@ -557,8 +584,7 @@ public class EdisiActivity extends Activity {
 
 		@Override
 		public Edisi getEdisi(Context context) {
-			File f = new File(namafile);
-			if (f.exists() && f.canRead()) {
+			if (adaFileDatanya()) {
 				return new Edisi(new YesPembaca(context, namafile));
 			} else {
 				return null;
@@ -574,6 +600,11 @@ public class EdisiActivity extends Activity {
 		@Override
 		public boolean getAktif() {
 			return this.cache_aktif;
+		}
+
+		@Override public boolean adaFileDatanya() {
+			File f = new File(namafile);
+			return f.exists() && f.canRead();
 		}
 	}
 	

@@ -41,9 +41,11 @@ import yuku.andoutil.*;
 public class IsiActivity extends Activity {
 	public static final String TAG = IsiActivity.class.getSimpleName();
 	
+	// Berikut ini buat preferences_instan.
 	private static final String NAMAPREF_kitabTerakhir = "kitabTerakhir"; //$NON-NLS-1$
 	private static final String NAMAPREF_pasalTerakhir = "pasalTerakhir"; //$NON-NLS-1$
 	private static final String NAMAPREF_ayatTerakhir = "ayatTerakhir"; //$NON-NLS-1$
+	private static final String NAMAPREF_edisiTerakhir = "edisiTerakhir"; //$NON-NLS-1$
 	private static final String NAMAPREF_terakhirMintaFidbek = "terakhirMintaFidbek"; //$NON-NLS-1$
 	private static final String NAMAPREF_renungan_nama = "renungan_nama"; //$NON-NLS-1$
 
@@ -153,11 +155,9 @@ public class IsiActivity extends Activity {
 		ayatAdapter_ = new AyatAdapter(this, paralelOnClickListener, atributListener);
 		lsIsi.setAdapter(ayatAdapter_);
 		
-		// muat preferences
+		// muat preferences_instan, dan atur renungan
 		preferences_instan = App.getPreferencesInstan();
-		int kitabTerakhir = preferences_instan.getInt(NAMAPREF_kitabTerakhir, 0);
-		int pasalTerakhir = preferences_instan.getInt(NAMAPREF_pasalTerakhir, 0);
-		int ayatTerakhir = preferences_instan.getInt(NAMAPREF_ayatTerakhir, 0);
+		sejarah = new Sejarah(preferences_instan);
 		{
 			String renungan_nama = preferences_instan.getString(NAMAPREF_renungan_nama, null);
 			if (renungan_nama != null) {
@@ -168,11 +168,17 @@ public class IsiActivity extends Activity {
 				}
 			}
 		}
-		sejarah = new Sejarah(preferences_instan);
-		Log.d(TAG, "Akan menuju kitab " + kitabTerakhir + " pasal " + kitabTerakhir + " ayat " + ayatTerakhir); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
-		// muat kitab
-		{
+		// kembalikan (edisi; kitab; pasal dan ayat) terakhir.
+		String edisiTerakhir = preferences_instan.getString(NAMAPREF_edisiTerakhir, null);
+		int kitabTerakhir = preferences_instan.getInt(NAMAPREF_kitabTerakhir, 0);
+		int pasalTerakhir = preferences_instan.getInt(NAMAPREF_pasalTerakhir, 0);
+		int ayatTerakhir = preferences_instan.getInt(NAMAPREF_ayatTerakhir, 0);
+		Log.d(TAG, "Akan ke posisi terakhir: edisi " + edisiTerakhir + " kitab " + kitabTerakhir + " pasal " + kitabTerakhir + " ayat " + ayatTerakhir); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+
+		muatEdisiTerakhir(edisiTerakhir);
+		
+		{ // muat kitab
 			Kitab k = S.edisiAktif.getKitab(kitabTerakhir);
 			if (k != null) {
 				S.kitabAktif = k;
@@ -181,13 +187,83 @@ public class IsiActivity extends Activity {
 		
 		// muat pasal dan ayat
 		tampil(pasalTerakhir, ayatTerakhir);
-		//sejarah.tambah(Ari.encode(kitabTerakhir, pasalTerakhir, ayatTerakhir));
-		
 
-		if (D.EBUG) {
+		if (D.EBUG) { // supaya ga lupa matiin pas release
 			new AlertDialog.Builder(this)
 			.setMessage("D.EBUG nyala!") //$NON-NLS-1$
 			.show();
+		}
+	}
+
+	private void muatEdisiTerakhir(String edisiTerakhir) {
+		if (edisiTerakhir == null || MEdisiInternal.getEdisiInternalId().equals(edisiTerakhir)) {
+			return; // udah di internal, ga usah ngapa2in lagi!
+		}
+		
+		BuildConfig c = BuildConfig.get(this);
+		
+		// coba preset dulu!
+		for (MEdisiPreset preset: c.xpreset) { // 2. preset
+			if (preset.getEdisiId().equals(edisiTerakhir)) {
+				if (preset.adaFileDatanya()) {
+					muatEdisi(preset);
+				} else { 
+					return; // ini harusnya yang dipilih, tapi ternyata filenya ga ada, mari fallback aja
+				}
+			}
+		}
+		
+		// masih belum cocok, mari kita cari di daftar yes
+		List<MEdisiYes> xyes = S.getDb().listSemuaEdisi();
+		for (MEdisiYes yes: xyes) {
+			if (yes.getEdisiId().equals(edisiTerakhir)) {
+				if (yes.adaFileDatanya()) {
+					muatEdisi(yes);
+				} else { 
+					return; // ini harusnya yang dipilih, tapi ternyata filenya ga ada, mari fallback aja
+				}
+			}
+		}
+	}
+	
+	protected void muatEdisi(final MEdisi me) {
+		// buat rollback
+		Edisi edisiAktifLama = S.edisiAktif;
+		String edisiIdLama = S.edisiId;
+		
+		boolean sukses = false;
+		try {
+			Edisi edisi = me.getEdisi(getApplicationContext());
+			
+			if (edisi != null) {
+				S.edisiAktif = edisi;
+				S.edisiId = me.getEdisiId();
+				S.siapinKitab();
+				
+				Kitab k = S.edisiAktif.getKitab(S.kitabAktif.pos);
+				if (k != null) {
+					// assign kitab aktif dengan yang baru, ga usa perhatiin pos
+					S.kitabAktif = k;
+				} else {
+					S.kitabAktif = S.edisiAktif.getKitabPertama(); // apa boleh buat, ga ketemu...
+				}
+				
+				tampil(pasal_1, getAyatBerdasarSkrol());
+			} else {
+				new AlertDialog.Builder(IsiActivity.this)
+				.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, me.getEdisiId()))
+				.setPositiveButton(R.string.ok, null)
+				.show();
+			}
+			sukses = true;
+		} catch (Throwable e) { // supaya ga kres pas mulai jalanin prog
+			Log.e(TAG, "gagal di muatEdisi", e); 
+		} finally {
+			if (!sukses) {
+				S.edisiAktif = edisiAktifLama;
+				S.edisiId = edisiIdLama;
+				S.siapinKitab();
+			}
 		}
 	}
 	
@@ -583,6 +659,7 @@ public class IsiActivity extends Activity {
 		editor.putInt(NAMAPREF_pasalTerakhir, pasal_1);
 		editor.putInt(NAMAPREF_ayatTerakhir, getAyatBerdasarSkrol());
 		editor.putString(NAMAPREF_renungan_nama, S.penampungan.renungan_nama);
+		editor.putString(NAMAPREF_edisiTerakhir, S.edisiId);
 		sejarah.simpan(editor);
 		editor.commit();
 		
@@ -829,7 +906,7 @@ public class IsiActivity extends Activity {
 			menuSearch2_click();
 			return true;
 		case R.id.menuEdisi:
-			pilihEdisi();
+			bukaDialogEdisi();
 			return true;
 		case R.id.menuRenungan: 
 			startActivityForResult(new Intent(this, RenunganActivity.class), R.id.menuRenungan);
@@ -871,7 +948,7 @@ public class IsiActivity extends Activity {
 		.show();
 	}
 
-	private void pilihEdisi() {
+	private void bukaDialogEdisi() {
 		// populate dengan 
 		// 1. internal
 		// 2. preset yang UDAH DIDONLOT dan AKTIF
@@ -885,15 +962,16 @@ public class IsiActivity extends Activity {
 		data.add(new MEdisiInternal());
 		
 		for (MEdisiPreset preset: c.xpreset) { // 2. preset
-			if (AddonManager.cekAdaEdisi(preset.namafile_preset) && preset.getAktif()) {
+			if (preset.adaFileDatanya() && preset.getAktif()) {
 				pilihan.add(preset.judul);
 				data.add(preset);
 			}
 		}
 		
+		// 3. yes yang aktif
 		List<MEdisiYes> xyes = S.getDb().listSemuaEdisi();
 		for (MEdisiYes yes: xyes) {
-			if (yes.getAktif()) {
+			if (yes.adaFileDatanya() && yes.getAktif()) {
 				pilihan.add(yes.judul);
 				data.add(yes);
 			}
@@ -915,33 +993,11 @@ public class IsiActivity extends Activity {
 		new AlertDialog.Builder(this)
 		.setTitle(R.string.pilih_edisi)
 		.setSingleChoiceItems(pilihan.toArray(new String[pilihan.size()]), terpilih, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
+			@Override public void onClick(DialogInterface dialog, int which) {
 				final MEdisi me = data.get(which);
 				
-				Edisi edisi = me.getEdisi(getApplicationContext());
-				
-				if (edisi != null) {
-					S.edisiAktif = edisi;
-					S.edisiId = me.getEdisiId();
-					S.siapinKitab();
-					
-					Kitab k = S.edisiAktif.getKitab(S.kitabAktif.pos);
-					if (k != null) {
-						// assign kitab aktif dengan yang baru, ga usa perhatiin pos
-						S.kitabAktif = k;
-					} else {
-						S.kitabAktif = S.edisiAktif.getKitabPertama(); // apa boleh buat, ga ketemu...
-					}
-					
-					dialog.dismiss();
-					tampil(pasal_1, getAyatBerdasarSkrol());
-				} else {
-					new AlertDialog.Builder(IsiActivity.this)
-					.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, me.getEdisiId()))
-					.setPositiveButton(R.string.ok, null)
-					.show();
-				}
+				muatEdisi(me);
+				dialog.dismiss();
 			}
 		})
 		.setPositiveButton(R.string.versi_lainnya, new DialogInterface.OnClickListener() {
