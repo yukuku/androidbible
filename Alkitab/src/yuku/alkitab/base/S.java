@@ -41,6 +41,7 @@ public class S {
 	public static class penampungan {
 		public static String renungan_nama = null;
 		public static Date renungan_tanggalan = null;
+		public static int renungan_skrol = 0;
 	}
 	
 	//# 22nya harus siap di siapinKitab

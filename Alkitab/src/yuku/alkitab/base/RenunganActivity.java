@@ -45,13 +45,13 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 	boolean renderBerhasilBaik = false;
 	long terakhirCobaTampilLagi = 0;
 	Animation memudar;
-
-	Handler pengulangTampil = new Handler();
-	Handler penampilStatusDonlot = new Handler();
 	
-	Runnable cobaTampilLagi = new Runnable() {
-		@Override
-		public void run() {
+	// yang ditampilin saat ini
+	String nama;
+	Date tanggalan;
+
+	Handler pengulangTampil = new Handler() {
+		@Override public void handleMessage(Message msg) {
 			{
 				long kini = SystemClock.currentThreadTimeMillis();
 				if (kini - terakhirCobaTampilLagi < 500) {
@@ -61,14 +61,31 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 				terakhirCobaTampilLagi = kini;
 			}
 			
-			tuju(S.penampungan.renungan_nama, S.penampungan.renungan_tanggalan, true);
+			tuju(true, 0);
 			
 			if (!renderBerhasilBaik) {
-				pengulangTampil.postDelayed(cobaTampilLagi, 12000);
+				pengulangTampil.sendEmptyMessageDelayed(0, 12000);
 			}
 		}
 	};
+	
+	Handler penampilStatusDonlot = new Handler() {
+		@Override public void handleMessage(Message msg) {
+			String s = (String) msg.obj;
+			if (s != null) {
+				lStatus.setText(s);
+				lStatus.setVisibility(View.VISIBLE);
+				lStatus.startAnimation(memudar);
+			}
+		};
+	};
 
+	Handler pengskrolIsi = new Handler() {
+		@Override public void handleMessage(Message msg) {
+			scrollIsi.smoothScrollTo(0, msg.arg1);
+		};
+	};
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -91,10 +108,9 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		scrollIsi.setBackgroundColor(S.penerapan.warnaLatar);
 		
 		bKiri.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				S.penampungan.renungan_tanggalan.setTime(S.penampungan.renungan_tanggalan.getTime() - 3600*24*1000);
-				tampilkan();
+			@Override public void onClick(View v) {
+				tanggalan.setTime(tanggalan.getTime() - 3600*24*1000);
+				tampilkan(0);
 			}
 		});
 		
@@ -102,8 +118,8 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		bKanan.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				S.penampungan.renungan_tanggalan.setTime(S.penampungan.renungan_tanggalan.getTime() + 3600*24*1000);
-				tampilkan();
+				tanggalan.setTime(tanggalan.getTime() + 3600*24*1000);
+				tampilkan(0);
 			}
 		});
 		
@@ -114,21 +130,24 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 				int index = 0;
 				
 				for (int i = 0; i < ADA_NAMA.length; i++) {
-					if (ADA_NAMA[i].equals(S.penampungan.renungan_nama)) {
+					if (ADA_NAMA[i].equals(nama)) {
 						index = i;
 						break;
 					}
 				}
 				
 				index = (index + 1) % ADA_NAMA.length;
-				S.penampungan.renungan_nama = ADA_NAMA[index];
-				tampilkan();
+				nama = ADA_NAMA[index];
+				tampilkan(0);
 			}
 		});
 		
 		//# atur difot! 
 		if (S.penampungan.renungan_tanggalan == null) S.penampungan.renungan_tanggalan = new Date();
 		if (S.penampungan.renungan_nama == null) S.penampungan.renungan_nama = DEFAULT;
+		
+		nama = S.penampungan.renungan_nama;
+		tanggalan = S.penampungan.renungan_tanggalan;
 		
 		new PemintaMasaDepan().execute();
 		
@@ -139,7 +158,17 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 			}
 		}
 		
-		tampilkan();
+		tampilkan(S.penampungan.renungan_skrol);
+	}
+	
+	@Override protected void onDestroy() {
+		super.onDestroy();
+		
+		S.penampungan.renungan_nama = nama;
+		S.penampungan.renungan_tanggalan = tanggalan;
+		S.penampungan.renungan_skrol = scrollIsi.getScrollY();
+		
+		Log.d(TAG, "renungan_skrol = " + S.penampungan.renungan_skrol);
 	}
 		
 	private void bikinMenu(Menu menu) {
@@ -185,31 +214,28 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		return false;
 	}
 
-	void tampilkan() {
-		pengulangTampil.removeCallbacks(cobaTampilLagi);
+	void tampilkan(int skrol) {
+		pengulangTampil.removeMessages(0);
 		
-		tuju(S.penampungan.renungan_nama, S.penampungan.renungan_tanggalan, true);
+		tuju(true, skrol);
 	}
 
-	void tuju(String nama, Date date, boolean penting) {
-		tuju(nama, sdf.format(date), penting);
-	}
-
-	private void tuju(String nama, String tgl, boolean penting) {
+	void tuju(boolean penting, int skrol) {
+		String tgl = sdf.format(tanggalan);
 		IArtikel artikel = S.getDb().cobaAmbilRenungan(nama, tgl);
 		if (artikel == null || !artikel.getSiapPakai()) {
 			akanPerlu(nama, tgl, penting);
-			render(artikel);
+			render(artikel, skrol);
 			
-			pengulangTampil.postDelayed(cobaTampilLagi, 3000);
+			pengulangTampil.sendEmptyMessageDelayed(0, 3000);
 		} else {
 			Log.d(TAG, "sudah siap tampil, kita syuh yang tersisa dari pengulang tampil"); //$NON-NLS-1$
-			pengulangTampil.removeCallbacks(cobaTampilLagi);
+			pengulangTampil.removeMessages(0);
 			
-			render(artikel);
+			render(artikel, skrol);
 		}
 	}
-	
+
 	CallbackSpan.OnClickListener ayatKlikListener = new CallbackSpan.OnClickListener() {
 		@Override
 		public void onClick(View widget, Object data) {
@@ -223,7 +249,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		}
 	};
 
-	private void render(IArtikel artikel) {
+	private void render(IArtikel artikel, int skrol) {
 		if (artikel == null) {
 			Log.d(TAG, "merender artikel null"); //$NON-NLS-1$
 		} else {
@@ -285,6 +311,11 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 			lIsi.setBackgroundColor(S.penerapan.warnaLatar);
 			lIsi.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
 			lIsi.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp);
+			if (skrol != 0) {
+				Message msg = Message.obtain(pengskrolIsi);
+				msg.arg1 = skrol;
+				pengskrolIsi.sendMessageDelayed(msg, 10);
+			}
 		} else {
 			renderBerhasilBaik  = false;
 			
@@ -295,14 +326,14 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 			}
 		}
 		
-		String judul = S.penampungan.renungan_nama;
+		String judul = "";
 		for (int i = 0; i < ADA_NAMA.length; i++) {
-			if (ADA_NAMA[i].equals(S.penampungan.renungan_nama)) {
+			if (ADA_NAMA[i].equals(nama)) {
 				judul = ADA_JUDUL[i];
 			}
 		}
 		
-		lHeader.setText(judul + "\n" + namaHari(S.penampungan.renungan_tanggalan) + ", " + DateFormat.getDateFormat(this).format(S.penampungan.renungan_tanggalan));  //$NON-NLS-1$//$NON-NLS-2$
+		lHeader.setText(judul + "\n" + namaHari(tanggalan) + ", " + DateFormat.getDateFormat(this).format(tanggalan));  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	private static final int[] NAMA_HARI_RESID = {R.string.hari_minggu, R.string.hari_senin, R.string.hari_selasa, R.string.hari_rabu, R.string.hari_kamis, R.string.hari_jumat, R.string.hari_sabtu};
@@ -355,9 +386,9 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 			try {
 				for (int i = 0; i < 31; i++) { // 31 hari ke depan
 					String tgl = sdf.format(hariIni);
-					if (S.getDb().cobaAmbilRenungan(S.penampungan.renungan_nama, tgl) == null) {
+					if (S.getDb().cobaAmbilRenungan(nama, tgl) == null) {
 						Log.d(TAG, "PemintaMasaDepan perlu minta " + tgl); //$NON-NLS-1$
-						akanPerlu(S.penampungan.renungan_nama, tgl, false);
+						akanPerlu(nama, tgl, false);
 						
 						ThreadSleep.ignoreInterrupt(1000);
 					} else {
@@ -375,17 +406,9 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		}
 	}
 
-	@Override
-	public void onStatusDonlot(final String s) {
-		penampilStatusDonlot.post(new Runnable() {
-			@Override
-			public void run() {
-				if (s != null) {
-					lStatus.setText(s);
-					lStatus.setVisibility(View.VISIBLE);
-					lStatus.startAnimation(memudar);
-				}
-			}
-		});
+	@Override public void onStatusDonlot(final String s) {
+		Message msg = Message.obtain(penampilStatusDonlot);
+		msg.obj = s;
+		msg.sendToTarget();
 	}
 }
