@@ -83,9 +83,9 @@ public class BuildConfig {
 				// TODO support more url's if needed. now only one.
 				res.url_prefix = parser.getAttributeValue(null, "prefix"); //$NON-NLS-1$
 				res.url_format = parser.getAttributeValue(null, "format"); //$NON-NLS-1$
-				res.url_namaKitabStandar = context.getResources().getStringArray(context.getResources().getIdentifier("nama_kitab_standar_" + parser.getAttributeValue(null, "lang"), "array", context.getPackageName()));
+				res.url_namaKitabStandar = context.getResources().getStringArray(context.getResources().getIdentifier("nama_kitab_standar_" + parser.getAttributeValue(null, "lang"), "array", context.getPackageName())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				if (res.url_prefix == null || res.url_format == null || res.url_namaKitabStandar == null) {
-					throw new RuntimeException("wrong share url config!");
+					throw new RuntimeException("wrong share url config!"); //$NON-NLS-1$
 				}
 			} else if (next == XmlPullParser.END_DOCUMENT) {
 				break;

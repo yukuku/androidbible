@@ -181,7 +181,7 @@ public class Search2Activity extends Activity {
 					int kitabPos = xkitabPosTerpilih.keyAt(i);
 					Kitab kitab = S.edisiAktif.getKitab(kitabPos);
 					if (kitab != null) {
-						if (sb.length() != 0) sb.append(", ");
+						if (sb.length() != 0) sb.append(", "); //$NON-NLS-1$
 						sb.append(kitab.judul);
 					}
 				}

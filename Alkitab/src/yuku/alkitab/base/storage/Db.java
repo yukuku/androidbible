@@ -56,7 +56,7 @@ public class Db {
 		public static final String warnaLatar = "warnaLatar"; //$NON-NLS-1$
 	}
 	
-	public static final String TABEL_Bukmak2_Label = "Bukmak2_Label";
+	public static final String TABEL_Bukmak2_Label = "Bukmak2_Label"; //$NON-NLS-1$
 	public static final class Bukmak2_Label {
 		public static final String bukmak2_id = "bukmak2_id"; //$NON-NLS-1$
 		public static final String label_id = "label_id"; //$NON-NLS-1$

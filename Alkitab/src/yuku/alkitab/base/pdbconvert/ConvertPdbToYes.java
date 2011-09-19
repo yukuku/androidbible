@@ -89,7 +89,7 @@ public class ConvertPdbToYes {
 				List<String> words = pdb.getAllWords();
 				for (int i = 0; i < words.size(); i++) {
 					String word = words.get(i);
-					Log.d(TAG, "word " + i + ": " + word + ": " + U.dumpChars(word));
+					Log.d(TAG, "word " + i + ": " + word + ": " + U.dumpChars(word)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 			}
 
@@ -315,17 +315,17 @@ public class ConvertPdbToYes {
 			boolean prependAtAt = false;
 			
 			// look for 0x0e 'n' 0x0e
-			if (s.indexOf("\u000en\u000e") >= 0) {
+			if (s.indexOf("\u000en\u000e") >= 0) { //$NON-NLS-1$
 				prependAtAt = true;
-				s = s.replaceAll("\\s*\u000en\u000e\\s*", "@8");
+				s = s.replaceAll("\\s*\u000en\u000e\\s*", "@8"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 			boolean startingItalic = true;
 			while (true) {
-				int pos = s.indexOf("\u000eb\u000e");
+				int pos = s.indexOf("\u000eb\u000e"); //$NON-NLS-1$
 				if (pos > 0) {
 					prependAtAt = true;
-					String tag = startingItalic ? "@9" : "@7";
+					String tag = startingItalic ? "@9" : "@7"; //$NON-NLS-1$ //$NON-NLS-2$
 					s = s.substring(0, pos) + tag + s.substring(pos + 3); // TODO remove extraneous spaces
 					startingItalic = !startingItalic;
 				} else {
@@ -334,7 +334,7 @@ public class ConvertPdbToYes {
 			}
 			
 			if (prependAtAt) {
-				s = "@@" + s;
+				s = "@@" + s; //$NON-NLS-1$
 			}
 			
 			ss[i] = s;

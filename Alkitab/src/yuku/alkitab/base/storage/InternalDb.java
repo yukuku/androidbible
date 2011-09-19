@@ -84,7 +84,7 @@ public class InternalDb {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
 		try {
-			SQLiteStatement stmt = db.compileStatement("select _id from " + Db.TABEL_Bukmak2 + " where " + Db.Bukmak2.jenis + "=? and " + Db.Bukmak2.ari + "=?");
+			SQLiteStatement stmt = db.compileStatement("select _id from " + Db.TABEL_Bukmak2 + " where " + Db.Bukmak2.jenis + "=? and " + Db.Bukmak2.ari + "=?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			stmt.bindLong(1, jenis);
 			stmt.bindLong(2, ari);
 			long _id = stmt.simpleQueryForLong();
@@ -114,14 +114,14 @@ public class InternalDb {
 	public Cursor listBukmak(int jenis, long labelId, String sortColumn, boolean sortAscending) {
         SQLiteDatabase db = helper.getReadableDatabase();
 
-        String sortClause = sortColumn + (Db.Bukmak2.tulisan.equals(sortColumn)? " collate NOCASE ": "") + (sortAscending? " asc": " desc");
+        String sortClause = sortColumn + (Db.Bukmak2.tulisan.equals(sortColumn)? " collate NOCASE ": "") + (sortAscending? " asc": " desc"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         
         if (labelId == 0) { // no restrictions
-            return db.query(Db.TABEL_Bukmak2, null, Db.Bukmak2.jenis + "=?", new String[]{String.valueOf(jenis)}, null, null, sortClause);
+            return db.query(Db.TABEL_Bukmak2, null, Db.Bukmak2.jenis + "=?", new String[]{String.valueOf(jenis)}, null, null, sortClause); //$NON-NLS-1$
         } else if (labelId == BukmakListActivity.LABELID_noLabel) { // only without label
-            return db.rawQuery("select " + Db.TABEL_Bukmak2 + ".* from " + Db.TABEL_Bukmak2 + " where " + Db.TABEL_Bukmak2 + "." + Db.Bukmak2.jenis + "=? and " + Db.TABEL_Bukmak2 + "." + BaseColumns._ID + " not in (select " + Db.Bukmak2_Label.bukmak2_id + " from " + Db.TABEL_Bukmak2_Label + ") order by " + Db.TABEL_Bukmak2 + "." + sortClause, new String[] {String.valueOf(jenis)});
+            return db.rawQuery("select " + Db.TABEL_Bukmak2 + ".* from " + Db.TABEL_Bukmak2 + " where " + Db.TABEL_Bukmak2 + "." + Db.Bukmak2.jenis + "=? and " + Db.TABEL_Bukmak2 + "." + BaseColumns._ID + " not in (select " + Db.Bukmak2_Label.bukmak2_id + " from " + Db.TABEL_Bukmak2_Label + ") order by " + Db.TABEL_Bukmak2 + "." + sortClause, new String[] {String.valueOf(jenis)});  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
         } else { // filter by labelId
-            return db.rawQuery("select " + Db.TABEL_Bukmak2 + ".* from " + Db.TABEL_Bukmak2 + ", " + Db.TABEL_Bukmak2_Label + " where " + Db.Bukmak2.jenis + "=? and " + Db.TABEL_Bukmak2 + "." + BaseColumns._ID + " = " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.bukmak2_id + " and " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.label_id + "=? order by " + Db.TABEL_Bukmak2 + "." + sortClause, new String[] {String.valueOf(jenis), String.valueOf(labelId)});
+            return db.rawQuery("select " + Db.TABEL_Bukmak2 + ".* from " + Db.TABEL_Bukmak2 + ", " + Db.TABEL_Bukmak2_Label + " where " + Db.Bukmak2.jenis + "=? and " + Db.TABEL_Bukmak2 + "." + BaseColumns._ID + " = " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.bukmak2_id + " and " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.label_id + "=? order by " + Db.TABEL_Bukmak2 + "." + sortClause, new String[] {String.valueOf(jenis), String.valueOf(labelId)});          //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$//$NON-NLS-6$//$NON-NLS-7$//$NON-NLS-8$//$NON-NLS-9$//$NON-NLS-10$ //$NON-NLS-11$ //$NON-NLS-12$
         }
 	}
 
@@ -248,7 +248,7 @@ public class InternalDb {
 						// sudah ada!
 						Bukmak2 bukmak = Bukmak2.dariCursor(c);
 						bukmak.waktuUbah = new Date();
-						long id = c.getLong(c.getColumnIndexOrThrow(BaseColumns._ID)); //$NON-NLS-1$
+						long id = c.getLong(c.getColumnIndexOrThrow(BaseColumns._ID));
 						if (warnaRgb != -1) {
 							bukmak.tulisan = U.enkodStabilo(warnaRgb);
 							db.update(Db.TABEL_Bukmak2, bukmak.toContentValues(), "_id=?", new String[] {String.valueOf(id)}); //$NON-NLS-1$
@@ -301,7 +301,7 @@ public class InternalDb {
 		for (int i = 0; i < xwarna.length; i++) xwarna[i] = -1;
 		
 		// cek dulu ada ato ga
-		Cursor c = helper.getReadableDatabase().query(Db.TABEL_Bukmak2, null, Db.Bukmak2.ari + ">? and " + Db.Bukmak2.ari + "<=? and " + Db.Bukmak2.jenis + "=?", new String[] {String.valueOf(ariMin), String.valueOf(ariMax), String.valueOf(Db.Bukmak2.jenis_stabilo)}, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
+		Cursor c = helper.getReadableDatabase().query(Db.TABEL_Bukmak2, null, Db.Bukmak2.ari + ">? and " + Db.Bukmak2.ari + "<=? and " + Db.Bukmak2.jenis + "=?", new String[] {String.valueOf(ariMin), String.valueOf(ariMax), String.valueOf(Db.Bukmak2.jenis_stabilo)}, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		try {
 			int ari_col = c.getColumnIndexOrThrow(Db.Bukmak2.ari);
 			int tulisan_col = c.getColumnIndexOrThrow(Db.Bukmak2.tulisan);
@@ -373,7 +373,7 @@ public class InternalDb {
 	
 	public int hapusRenunganBerwaktuSentuhSebelum(Date date) {
 		SQLiteDatabase db = helper.getWritableDatabase();
-		return db.delete(Db.TABEL_Renungan, Db.Renungan.waktuSentuh + "<?", new String[] {String.valueOf(Sqlitil.toInt(date))});
+		return db.delete(Db.TABEL_Renungan, Db.Renungan.waktuSentuh + "<?", new String[] {String.valueOf(Sqlitil.toInt(date))}); //$NON-NLS-1$
 	}
 	
 	/**
@@ -498,7 +498,7 @@ public class InternalDb {
 	 */
 	public List<Label> listLabels(long bukmak2_id) {
 		List<Label> res = null;
-		Cursor cursor = helper.getReadableDatabase().rawQuery("select " + Db.TABEL_Label + ".* from " + Db.TABEL_Label + ", " + Db.TABEL_Bukmak2_Label + " where " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.label_id + " = " + Db.TABEL_Label + "." + BaseColumns._ID + " and " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.bukmak2_id + " = ?  order by " + Db.TABEL_Label + "." + Db.Label.urutan + " asc", new String[] {String.valueOf(bukmak2_id)});
+		Cursor cursor = helper.getReadableDatabase().rawQuery("select " + Db.TABEL_Label + ".* from " + Db.TABEL_Label + ", " + Db.TABEL_Bukmak2_Label + " where " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.label_id + " = " + Db.TABEL_Label + "." + BaseColumns._ID + " and " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.bukmak2_id + " = ?  order by " + Db.TABEL_Label + "." + Db.Label.urutan + " asc", new String[] {String.valueOf(bukmak2_id)});       //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$//$NON-NLS-6$//$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$ //$NON-NLS-11$ //$NON-NLS-12$
 		try {
 			while (cursor.moveToNext()) {
 				if (res == null) res = new ArrayList<Label>();
@@ -517,7 +517,7 @@ public class InternalDb {
 	}
 
 	public Label tambahLabel(String judul) {
-		Label res = new Label(-1, judul, getUrutanTerbesarLabel() + 1, "");
+		Label res = new Label(-1, judul, getUrutanTerbesarLabel() + 1, ""); //$NON-NLS-1$
 		SQLiteDatabase db = helper.getWritableDatabase();
 		long _id = db.insert(Db.TABEL_Label, null, res.toContentValues());
 		if (_id == -1) {
@@ -533,7 +533,7 @@ public class InternalDb {
 		db.beginTransaction();
 		try {
 			// hapus semua
-			db.delete(Db.TABEL_Bukmak2_Label, Db.Bukmak2_Label.bukmak2_id + "= ?", new String[] {String.valueOf(bukmak._id)});
+			db.delete(Db.TABEL_Bukmak2_Label, Db.Bukmak2_Label.bukmak2_id + "=?", new String[] {String.valueOf(bukmak._id)}); //$NON-NLS-1$
 			
 			// tambah semua
 			ContentValues cv = new ContentValues();
@@ -551,7 +551,7 @@ public class InternalDb {
 
     public Label getLabelById(long labelId) {
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.query(Db.TABEL_Label, null, BaseColumns._ID + "=?", new String[] {String.valueOf(labelId)}, null, null, null);
+        Cursor cursor = db.query(Db.TABEL_Label, null, BaseColumns._ID + "=?", new String[] {String.valueOf(labelId)}, null, null, null); //$NON-NLS-1$
         try {
             if (cursor.moveToNext()) {
                 return Label.fromCursor(cursor);
@@ -580,6 +580,6 @@ public class InternalDb {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		ContentValues cv = new ContentValues();
 		cv.put(Db.Label.judul, judul);
-		db.update(Db.TABEL_Label, cv, "_id=?", new String[] {String.valueOf(label._id)});
+		db.update(Db.TABEL_Label, cv, "_id=?", new String[] {String.valueOf(label._id)}); //$NON-NLS-1$
 	}
 }

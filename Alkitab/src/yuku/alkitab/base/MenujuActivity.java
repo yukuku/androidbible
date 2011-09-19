@@ -186,24 +186,24 @@ public class MenujuActivity extends Activity {
 	
 	@Override protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putString("lPasal.text", lPasal.getText().toString());
-		outState.putString("lAyat.text", lAyat.getText().toString());
-		outState.putBoolean("lPasal_pertamaKali", lPasal_pertamaKali);
-		outState.putBoolean("lAyat_pertamaKali", lAyat_pertamaKali);
-		outState.putInt("cbKitab.selectedItemPosition", cbKitab.getSelectedItemPosition());
-		outState.putInt("maxPasal", maxPasal);
-		outState.putInt("maxAyat", maxAyat);
+		outState.putString("lPasal.text", lPasal.getText().toString()); //$NON-NLS-1$
+		outState.putString("lAyat.text", lAyat.getText().toString()); //$NON-NLS-1$
+		outState.putBoolean("lPasal_pertamaKali", lPasal_pertamaKali); //$NON-NLS-1$
+		outState.putBoolean("lAyat_pertamaKali", lAyat_pertamaKali); //$NON-NLS-1$
+		outState.putInt("cbKitab.selectedItemPosition", cbKitab.getSelectedItemPosition()); //$NON-NLS-1$
+		outState.putInt("maxPasal", maxPasal); //$NON-NLS-1$
+		outState.putInt("maxAyat", maxAyat); //$NON-NLS-1$
 	}
 	
 	@Override protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
-		lPasal.setText(savedInstanceState.getString("lPasal.text"));
-		lAyat.setText(savedInstanceState.getString("lAyat.text"));
-		lPasal_pertamaKali = savedInstanceState.getBoolean("lPasal_pertamaKali");
-		lAyat_pertamaKali = savedInstanceState.getBoolean("lAyat_pertamaKali");
-		cbKitab.setSelection(savedInstanceState.getInt("cbKitab.selectedItemPosition"));
-		maxPasal = savedInstanceState.getInt("maxPasal");
-		maxAyat = savedInstanceState.getInt("maxAyat");
+		lPasal.setText(savedInstanceState.getString("lPasal.text")); //$NON-NLS-1$
+		lAyat.setText(savedInstanceState.getString("lAyat.text")); //$NON-NLS-1$
+		lPasal_pertamaKali = savedInstanceState.getBoolean("lPasal_pertamaKali"); //$NON-NLS-1$
+		lAyat_pertamaKali = savedInstanceState.getBoolean("lAyat_pertamaKali"); //$NON-NLS-1$
+		cbKitab.setSelection(savedInstanceState.getInt("cbKitab.selectedItemPosition")); //$NON-NLS-1$
+		maxPasal = savedInstanceState.getInt("maxPasal"); //$NON-NLS-1$
+		maxAyat = savedInstanceState.getInt("maxAyat"); //$NON-NLS-1$
 	}
 
 	@Override

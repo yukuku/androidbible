@@ -51,6 +51,6 @@ public class Label implements Comparable<Label> {
 	}
 	
 	@Override public String toString() {
-		return this.judul + " (" + this._id + ")";
+		return this.judul + " (" + this._id + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

@@ -257,7 +257,7 @@ public class IsiActivity extends Activity {
 			}
 			sukses = true;
 		} catch (Throwable e) { // supaya ga kres pas mulai jalanin prog
-			Log.e(TAG, "gagal di muatEdisi", e); 
+			Log.e(TAG, "gagal di muatEdisi", e);  //$NON-NLS-1$
 		} finally {
 			if (!sukses) {
 				S.edisiAktif = edisiAktifLama;
@@ -536,7 +536,7 @@ public class IsiActivity extends Activity {
 		
 		if (item == menu.menuSalinAyat) { // salin, bisa multiple
 			StringBuilder salinan = new StringBuilder();
-			salinan.append(alamat).append("  ");
+			salinan.append(alamat).append("  "); //$NON-NLS-1$
 			
 			// append tiap ayat terpilih
 			for (int i = 0; i < terpilih.size(); i++) {
@@ -591,8 +591,8 @@ public class IsiActivity extends Activity {
 			StringBuilder sb = new StringBuilder();
 			
 			// TODO cek fesbuk dan kalo fesbuk, maka taro url di depan, sebaliknya di belakang aja.
-			if (urlAyat != null) sb.append(urlAyat).append(" ");
-			sb.append(alamat).append("  ");
+			if (urlAyat != null) sb.append(urlAyat).append(" "); //$NON-NLS-1$
+			sb.append(alamat).append("  "); //$NON-NLS-1$
 			
 			// append tiap ayat terpilih
 			for (int i = 0; i < terpilih.size(); i++) {
@@ -775,7 +775,7 @@ public class IsiActivity extends Activity {
 		{
 			String alamatContoh = S.alamat(S.kitabAktif, IsiActivity.this.pasal_1, getAyatBerdasarSkrol());
 			String text = getString(R.string.loncat_ke_alamat_titikdua);
-			int pos = text.indexOf("%s");
+			int pos = text.indexOf("%s"); //$NON-NLS-1$
 			if (pos >= 0) {
 				SpannableStringBuilder sb = new SpannableStringBuilder();
 				sb.append(text.substring(0, pos));

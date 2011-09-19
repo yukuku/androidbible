@@ -30,14 +30,14 @@ public class App extends Application {
 		Configuration config = getBaseContext().getResources().getConfiguration();
 		Locale locale = getLocaleFromPreferences();
 		if (!config.locale.getLanguage().equals(locale.getLanguage())) {
-			Log.d(TAG, "onCreate: locale will be updated to: " + locale);
+			Log.d(TAG, "onCreate: locale will be updated to: " + locale); //$NON-NLS-1$
 			updateConfigurationWithLocale(config, locale);
 		}
 	}
 
 	private Locale getLocaleFromPreferences() {
 		String lang = Preferences.getString(R.string.pref_bahasa_key, R.string.pref_bahasa_default);
-		if (lang == null || "DEFAULT".equals(lang)) {
+		if (lang == null || "DEFAULT".equals(lang)) { //$NON-NLS-1$
 			lang = Locale.getDefault().getLanguage();
 		}
 		
@@ -47,7 +47,7 @@ public class App extends Application {
 	@Override public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		
-		Log.d(TAG, "onConfigurationChanged: config changed to: " + newConfig);
+		Log.d(TAG, "onConfigurationChanged: config changed to: " + newConfig); //$NON-NLS-1$
 		updateConfigurationWithLocale(newConfig, getLocaleFromPreferences());
 	}
 
@@ -55,7 +55,7 @@ public class App extends Application {
 		if (locale != null) {
 			config.locale = locale;
 
-			Log.d(TAG, "updateConfigurationWithLocale: config updated to locale: " + locale);
+			Log.d(TAG, "updateConfigurationWithLocale: config updated to locale: " + locale); //$NON-NLS-1$
 			context.getResources().updateConfiguration(config, null);
 		}
 	}

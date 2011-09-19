@@ -197,7 +197,7 @@ public class S {
 	}
 	
 	public static CharSequence alamat(Kitab kitab, int pasal_1, IntArrayList xayat_1) {
-		StringBuilder sb = new StringBuilder(kitab == null? "[?]": kitab.judul);
+		StringBuilder sb = new StringBuilder(kitab == null? "[?]": kitab.judul); //$NON-NLS-1$
 		sb.append(' ').append(pasal_1);
 		int origLen = sb.length();
 		int lastAyat_1 = 0;
@@ -214,10 +214,10 @@ public class S {
 			} else {
 				// abis loncat
 				if (awalAyat_1 != 0) {
-					sb.append(origLen == sb.length()? ":": ", ").append(awalAyat_1).append('-').append(lastAyat_1);
+					sb.append(origLen == sb.length()? ":": ", ").append(awalAyat_1).append('-').append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
 					awalAyat_1 = 0;
 				} else {
-					sb.append(origLen == sb.length()? ":": ", ").append(lastAyat_1);
+					sb.append(origLen == sb.length()? ":": ", ").append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			
@@ -226,10 +226,10 @@ public class S {
 		
 		// penghabisan
 		if (awalAyat_1 != 0) {
-			sb.append(origLen == sb.length()? ":": ", ").append(awalAyat_1).append('-').append(lastAyat_1);
+			sb.append(origLen == sb.length()? ":": ", ").append(awalAyat_1).append('-').append(lastAyat_1);  //$NON-NLS-1$//$NON-NLS-2$
 			awalAyat_1 = 0; // ga perlu, tapi biar konsisten aja dengan atas
 		} else {
-			sb.append(origLen == sb.length()? ":": ", ").append(lastAyat_1);
+			sb.append(origLen == sb.length()? ":": ", ").append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		return sb;
@@ -303,14 +303,14 @@ public class S {
 			return null;
 		}
 		String calonKitab = c.url_namaKitabStandar[kitab.pos], calonPasal = String.valueOf(pasal_1), calonAyat = String.valueOf(ayat_1);
-		for (String format: c.url_format.split(" ")) {
-			if ("slash1".equals(format)) calonPasal = "/" + calonPasal;
-			if ("slash2".equals(format)) calonAyat = "/" + calonAyat;
-			if ("dot1".equals(format)) calonPasal = "." + calonPasal;
-			if ("dot2".equals(format)) calonAyat = "." + calonAyat;
-			if ("nospace0".equals(format)) calonKitab = calonKitab.replaceAll("\\s+", "");
+		for (String format: c.url_format.split(" ")) { //$NON-NLS-1$
+			if ("slash1".equals(format)) calonPasal = "/" + calonPasal; //$NON-NLS-1$ //$NON-NLS-2$
+			if ("slash2".equals(format)) calonAyat = "/" + calonAyat; //$NON-NLS-1$ //$NON-NLS-2$
+			if ("dot1".equals(format)) calonPasal = "." + calonPasal; //$NON-NLS-1$ //$NON-NLS-2$
+			if ("dot2".equals(format)) calonAyat = "." + calonAyat; //$NON-NLS-1$ //$NON-NLS-2$
+			if ("nospace0".equals(format)) calonKitab = calonKitab.replaceAll("\\s+", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
-		return c.url_prefix + calonKitab + calonPasal + (ayat_1 == 0? "": calonAyat);
+		return c.url_prefix + calonKitab + calonPasal + (ayat_1 == 0? "": calonAyat); //$NON-NLS-1$
 	}
 	
 	private static PackageInfo packageInfo;

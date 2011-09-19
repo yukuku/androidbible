@@ -59,7 +59,7 @@ public class JenisBukmakDialog {
 	private OnClickListener bAddLabel_dialog_itemSelected = new OnClickListener() {
 		@Override public void onClick(DialogInterface _unused_, int which) {
 			if (which == adapter.getCount() - 1) { // new label
-				LabelEditorDialog.show(context, "", "Create label", new OkListener() {
+				LabelEditorDialog.show(context, "", "Create label", new OkListener() { //$NON-NLS-1$
 					@Override public void onOk(String judul) {
 						Label labelBaru = S.getDb().tambahLabel(judul);
 						if (labelBaru != null) {

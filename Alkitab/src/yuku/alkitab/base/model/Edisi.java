@@ -71,7 +71,7 @@ public class Edisi {
 			if (k != null) return k;
 		}
 		// aneh skali kalo kena ini, tapi toh kena juga
-		throw new RuntimeException("Ga ketemu satu pun kitab yang ga null. Info edisi: " + (this.pembaca == null? "pembaca=null": (this.pembaca.getJudul() + " nkitab=" + xkitab.length))); 
+		throw new RuntimeException("Ga ketemu satu pun kitab yang ga null. Info edisi: " + (this.pembaca == null? "pembaca=null": (this.pembaca.getJudul() + " nkitab=" + xkitab.length)));    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 	
 	public synchronized IndexPerikop getIndexPerikop() {

@@ -30,8 +30,8 @@ public class BukmakListActivity extends ListActivity {
 	public static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
 
     // in
-    private static final String EXTRA_filter_jenis = "filter_jenis";
-    private static final String EXTRA_filter_labelId = "filter_labelId";
+    private static final String EXTRA_filter_jenis = "filter_jenis"; //$NON-NLS-1$
+    private static final String EXTRA_filter_labelId = "filter_labelId"; //$NON-NLS-1$
 
     public static final int LABELID_noLabel = -1;
 

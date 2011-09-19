@@ -168,7 +168,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		S.penampungan.renungan_tanggalan = tanggalan;
 		S.penampungan.renungan_skrol = scrollIsi.getScrollY();
 		
-		Log.d(TAG, "renungan_skrol = " + S.penampungan.renungan_skrol);
+		Log.d(TAG, "renungan_skrol = " + S.penampungan.renungan_skrol); //$NON-NLS-1$
 	}
 		
 	private void bikinMenu(Menu menu) {
@@ -196,7 +196,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
 		if (itemId == R.id.menuSalin) {
-			String salinan = lHeader.getText() + "\n" + lIsi.getText();
+			String salinan = lHeader.getText() + "\n" + lIsi.getText(); //$NON-NLS-1$
 			U.salin(salinan);
 			
 			Toast.makeText(this, R.string.renungan_sudah_disalin, Toast.LENGTH_SHORT).show();
@@ -326,7 +326,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 			}
 		}
 		
-		String judul = "";
+		String judul = ""; //$NON-NLS-1$
 		for (int i = 0; i < ADA_NAMA.length; i++) {
 			if (ADA_NAMA[i].equals(nama)) {
 				judul = ADA_JUDUL[i];
@@ -379,7 +379,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 			// hapus yang sudah lebih lama dari 3 bulan (90 hari)!
 			int terhapus = S.getDb().hapusRenunganBerwaktuSentuhSebelum(new Date(hariIni.getTime() - 90 * 86400000L));
 			if (terhapus > 0) {
-				Log.d(TAG, "penghapusan renungan berhasil menghapus " + terhapus);
+				Log.d(TAG, "penghapusan renungan berhasil menghapus " + terhapus); //$NON-NLS-1$
 			}
 			
 			pemintaMasaDepanLagiJalan = true;
