@@ -8,6 +8,7 @@ import android.widget.*;
 
 import java.util.*;
 
+import yuku.alkitab.R;
 import yuku.alkitab.base.LabelEditorDialog.OkListener;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.*;
@@ -59,7 +60,7 @@ public class JenisBukmakDialog {
 	private OnClickListener bAddLabel_dialog_itemSelected = new OnClickListener() {
 		@Override public void onClick(DialogInterface _unused_, int which) {
 			if (which == adapter.getCount() - 1) { // new label
-				LabelEditorDialog.show(context, "", "Create label", new OkListener() { //$NON-NLS-1$
+				LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), new OkListener() { //$NON-NLS-1$
 					@Override public void onOk(String judul) {
 						Label labelBaru = S.getDb().tambahLabel(judul);
 						if (labelBaru != null) {
@@ -82,8 +83,8 @@ public class JenisBukmakDialog {
 			if (label == null) return;
 			
 			new AlertDialog.Builder(context)
-			.setTitle("Remove label")
-			.setMessage(String.format("Do you want to remove the label '%s' from this bookmark?", label.judul))
+			.setTitle(R.string.remove_label_title)
+			.setMessage(context.getString(R.string.do_you_want_to_remove_the_label_label_from_this_bookmark, label.judul))
 			.setPositiveButton(R.string.ok, new OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
 					labels.remove(label);
@@ -115,7 +116,7 @@ public class JenisBukmakDialog {
 				adapter = new LabelAdapter();
 				
 				new AlertDialog.Builder(context)
-				.setTitle("Add label")
+				.setTitle(R.string.add_label_title)
 				.setItems(adapter.getItems(), bAddLabel_dialog_itemSelected)
 				.setNegativeButton(R.string.cancel, null)
 				.show();
@@ -199,7 +200,7 @@ public class JenisBukmakDialog {
 			for (int i = 0, len = labels.size(); i < len; i++) {
 				res[i] = labels.get(i).judul;
 			}
-			res[res.length - 1] = "Create label\u2026";
+			res[res.length - 1] = context.getString(R.string.create_label_titik3);
 			return res;
 		}
 
@@ -226,7 +227,7 @@ public class JenisBukmakDialog {
 
 		private void setText1(TextView text1, int position) {
 			if (position == getCount() - 1) {
-				text1.setText("New label\u2026");
+				text1.setText(context.getString(R.string.create_label_titik3));
 			} else {
 				Label label = getItem(position);
 				text1.setText(label.judul);

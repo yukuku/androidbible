@@ -66,23 +66,23 @@ public class BukmakListActivity extends ListActivity {
 
             // atur judul berdasarkan filter
             if (filter_jenis == Db.Bukmak2.jenis_catatan) {
-                title = "Notes";
-                nothingText = "No notes written yet.\nLong-press a verse to write a note.";
+                title = getString(R.string.bl_notes);
+                nothingText = getString(R.string.bl_no_notes_written_yet);
             } else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
-                title = "Highlightings";
-                nothingText = "No highlighted verses.\nLong-press a verse to highlight it.";
+                title = getString(R.string.bl_highlights);
+                nothingText = getString(R.string.bl_no_highlighted_verses);
             } else if (filter_jenis == Db.Bukmak2.jenis_bukmak) {
                 if (filter_labelId == 0) {
-                    title = "All bookmarks";
+                    title = getString(R.string.bl_all_bookmarks);
                     nothingText = getString(R.string.belum_ada_pembatas_buku);
                 } else if (filter_labelId == LABELID_noLabel) {
-                    title = "All bookmarks without labels";
-                    nothingText = "There are no bookmarks without any labels";
+                    title = getString(R.string.bl_all_bookmarks_without_labels);
+                    nothingText = getString(R.string.bl_there_are_no_bookmarks_without_any_labels);
                 } else {
                     Label label = S.getDb().getLabelById(filter_labelId);
                     if (label != null) {
-                        title = "Bookmarks labeled '" + label.judul + "'";
-                        nothingText = "There are no bookmarks with the label '" + label.judul + "'";
+                        title = getString(R.string.bl_bookmarks_labeled_label, label.judul);
+                        nothingText = getString(R.string.bl_there_are_no_bookmarks_with_the_label_label, label.judul);
                     }
                 }
             }

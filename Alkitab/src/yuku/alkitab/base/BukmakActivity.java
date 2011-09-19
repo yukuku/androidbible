@@ -306,7 +306,7 @@ public class BukmakActivity extends ListActivity {
 				return true;
 			}
 			
-			LabelEditorDialog.show(this, label.judul, "Rename label", new OkListener() {
+			LabelEditorDialog.show(this, label.judul, getString(R.string.rename_label_title), new OkListener() {
 				@Override public void onOk(String judul) {
 					S.getDb().renameLabel(label, judul);
 					adapter.reload();
@@ -321,8 +321,8 @@ public class BukmakActivity extends ListActivity {
 			}
 
 			new AlertDialog.Builder(this)
-			.setTitle("Delete label")
-			.setMessage(String.format("Are you sure you want to delete the label '%s'? This label will be unassigned from all bookmarks.", label.judul))
+			.setTitle(R.string.delete_label_title)
+			.setMessage(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.judul))
 			.setNegativeButton(R.string.cancel, null)
 			.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
@@ -357,16 +357,16 @@ public class BukmakActivity extends ListActivity {
 	class BukmakFilterAdapter extends BaseAdapter {
 		// 0. [icon] All bookmarks
 		// 1. [icon] Notes
-		// 2. [icon] Highlightings
+		// 2. [icon] Highlights
 		// 3. Unlabeled bookmarks
 		// 4. dst label2
 		
 		List<Label> labels;
 		private String[] presetCaptions = {
-			"All bookmarks",
-			"Notes",
-			"Highlightings",
-			"Unlabeled bookmarks",
+			getString(R.string.bmcat_all_bookmarks),
+			getString(R.string.bmcat_notes),
+			getString(R.string.bmcat_highlights),
+			getString(R.string.bmcat_unlabeled_bookmarks),
 		};
 		
 		private boolean hasLabels() {

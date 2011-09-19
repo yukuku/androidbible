@@ -292,8 +292,8 @@ public class EdisiActivity extends Activity {
 				edisi.setAktif(true);
 			} else {
 				new AlertDialog.Builder(this)
-				.setTitle("Cannot find data file")
-				.setMessage("The file for this version is no longer available. Do you want to remove this version from the list?\nFile: " + edisi.namafile)
+				.setTitle(R.string.cannot_find_data_file)
+				.setMessage(getString(R.string.the_file_for_this_version_is_no_longer_available_file, edisi.namafile))
 				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
 						S.getDb().hapusEdisiYes(edisi);

@@ -14,6 +14,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import java.util.*;
 
+import yuku.alkitab.R;
 import yuku.alkitab.base.Search2Engine.Query;
 import yuku.alkitab.base.model.*;
 import yuku.andoutil.*;
@@ -217,7 +218,7 @@ public class Search2Activity extends Activity {
 		
 		final AlertDialog[] dialog = new AlertDialog[1]; 
 		dialog[0] = new AlertDialog.Builder(this)
-		.setTitle("Select books to search")
+		.setTitle(R.string.select_books_to_search)
 		.setAdapter(adapter, null)
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface _unused_, int which) {

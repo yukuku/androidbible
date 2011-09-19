@@ -62,7 +62,7 @@
     <string name="bagikan">Bagikan</string>
     <string name="tulis_catatan">Tulis catatan</string>
     <string name="tambah_pembatas_buku">Tambah pembatas buku</string>
-    <string name="salin_ayat">Salin (copy) ayat</string>
+    <string name="salin_ayat">Salin ayat</string>
     <string name="pada_mulanya">Pada mulanya Allah menciptakan langit dan bumi. Bumi belum berbentuk dan kosong; gelap gulita menutupi samudera raya, dan Roh Allah melayang-layang di atas permukaan air. Berfirmanlah Allah: "Jadilah terang." Lalu terang itu jadi. Allah melihat bahwa terang itu baik, lalu dipisahkan-Nyalah terang itu dari gelap. Dan Allah menamai terang itu siang, dan gelap itu malam. Jadilah petang dan jadilah pagi, itulah hari pertama.</string>
     <string name="contoh_tulisan_titikdua">Contoh tulisan:</string>
     <string name="perj_baru">Perj. Baru</string>
@@ -211,4 +211,28 @@
     <string name="pref_fullScreen_summary">Sembunyikan baris status ponsel Anda</string>
     <string name="tambah_pembatas_buku_di_ayat">Tambah pembatas buku di ayat %s</string>
     <string name="tulis_catatan_di_ayat">Tulis catatan di ayat %s</string>
+    <string name="cannot_find_data_file">File data tidak ketemu</string>
+    <string name="the_file_for_this_version_is_no_longer_available_file">File untuk versi ini tidak ada. Apakah Anda mau membuang versi ini dari daftar?\nFile: %s</string>
+    <string name="create_label_title">Buat label</string>
+    <string name="remove_label_title">Lepaskan label</string>
+    <string name="do_you_want_to_remove_the_label_label_from_this_bookmark">"Apakah Anda mau melepas label '%s' dari pembatas buku ini?"</string>
+    <string name="add_label_title">Tambah label</string>
+    <string name="create_label_titik3">Buat label…</string>
+    <string name="select_books_to_search">Pilih kitab untuk dicari</string>
+    <string name="rename_label_title">Ganti nama label</string>
+    <string name="delete_label_title">Hapus label</string>
+    <string name="are_you_sure_you_want_to_delete_the_label_label">"Apakah Anda mau menghapus label '%s'? Label ini akan dilepaskan dari semua pembatas buku."</string>
+    <string name="bmcat_all_bookmarks">Semua pembatas buku</string>
+    <string name="bmcat_notes">Catatan</string>
+    <string name="bmcat_highlights">Sorotan</string>
+    <string name="bmcat_unlabeled_bookmarks">Pembatas tanpa label</string>
+    <string name="bl_notes">Catatan</string>
+    <string name="bl_no_notes_written_yet">Belum ada catatan.\nTekan salah satu ayat untuk mulai menulis catatan.</string>
+    <string name="bl_highlights">Sorotan</string>
+    <string name="bl_no_highlighted_verses">Belum ada ayat yang disorot.\nTekan ayat untuk mulai menyorot.</string>
+    <string name="bl_all_bookmarks">Semua pembatas buku</string>
+    <string name="bl_all_bookmarks_without_labels">Semua pembatas buku tanpa label</string>
+    <string name="bl_there_are_no_bookmarks_without_any_labels">Tidak ada pembatas buku yang tidak berlabel.</string>
+    <string name="bl_bookmarks_labeled_label">"Pembatas buku berlabel '%s'"</string>
+    <string name="bl_there_are_no_bookmarks_with_the_label_label">"Tidak ada pembatas buku yang berlabel '%s'."</string>
 </resources>
