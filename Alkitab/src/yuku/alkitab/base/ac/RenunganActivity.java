@@ -81,12 +81,6 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 			}
 		};
 	};
-
-	Handler pengskrolIsi = new Handler() {
-		@Override public void handleMessage(Message msg) {
-			scrollIsi.smoothScrollTo(0, msg.arg1);
-		};
-	};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -251,7 +245,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 		}
 	};
 
-	private void render(IArtikel artikel, int skrol) {
+	private void render(IArtikel artikel, final int skrol) {
 		if (artikel == null) {
 			Log.d(TAG, "merender artikel null"); //$NON-NLS-1$
 		} else {
@@ -314,9 +308,11 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 			lIsi.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
 			lIsi.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp);
 			if (skrol != 0) {
-				Message msg = Message.obtain(pengskrolIsi);
-				msg.arg1 = skrol;
-				pengskrolIsi.sendMessageDelayed(msg, 10);
+				scrollIsi.post(new Runnable() {
+					@Override public void run() {
+						scrollIsi.scrollTo(0, skrol);
+					}
+				});
 			}
 		} else {
 			renderBerhasilBaik  = false;
