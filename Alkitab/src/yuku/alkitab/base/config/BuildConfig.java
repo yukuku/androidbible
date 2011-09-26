@@ -8,7 +8,7 @@ import java.util.*;
 
 import org.xmlpull.v1.*;
 
-import yuku.alkitab.base.EdisiActivity.MEdisiPreset;
+import yuku.alkitab.base.ac.EdisiActivity.*;
 import yuku.alkitab.base.storage.*;
 
 public class BuildConfig {

@@ -1,4 +1,4 @@
-package yuku.alkitab.base;
+package yuku.alkitab.base.widget;
 
 import android.text.style.ClickableSpan;
 import android.view.View;

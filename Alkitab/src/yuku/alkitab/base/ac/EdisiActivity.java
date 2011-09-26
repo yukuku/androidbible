@@ -1,5 +1,5 @@
 
-package yuku.alkitab.base;
+package yuku.alkitab.base.ac;
 
 import android.app.*;
 import android.content.*;
@@ -15,6 +15,7 @@ import java.io.*;
 import java.util.*;
 
 import yuku.alkitab.R;
+import yuku.alkitab.base.*;
 import yuku.alkitab.base.AddonManager.DonlotListener;
 import yuku.alkitab.base.AddonManager.DonlotThread;
 import yuku.alkitab.base.AddonManager.Elemen;

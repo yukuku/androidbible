@@ -9,7 +9,8 @@ import android.util.*;
 import java.util.*;
 
 import yuku.alkitab.base.*;
-import yuku.alkitab.base.EdisiActivity.MEdisiYes;
+import yuku.alkitab.base.ac.*;
+import yuku.alkitab.base.ac.EdisiActivity.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.renungan.*;
 import yuku.andoutil.*;

@@ -1,4 +1,4 @@
-package yuku.alkitab.base;
+package yuku.alkitab.base.dialog;
 
 import android.app.*;
 import android.content.*;
@@ -7,6 +7,7 @@ import android.view.View.OnClickListener;
 import android.widget.*;
 
 import yuku.alkitab.*;
+import yuku.alkitab.base.*;
 import yuku.alkitab.base.model.*;
 import yuku.andoutil.*;
 

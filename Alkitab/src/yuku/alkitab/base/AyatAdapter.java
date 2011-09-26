@@ -12,8 +12,10 @@ import android.widget.TextView.BufferType;
 
 import yuku.alkitab.*;
 import yuku.alkitab.base.S.penerapan;
+import yuku.alkitab.base.ac.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.Db.Bukmak2;
+import yuku.alkitab.base.widget.*;
 
 public class AyatAdapter extends BaseAdapter {
 	public static final String TAG = AyatAdapter.class.getSimpleName();

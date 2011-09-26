@@ -1,5 +1,5 @@
 
-package yuku.alkitab.base;
+package yuku.alkitab.base.ac;
 
 import android.app.*;
 import android.content.*;
@@ -19,7 +19,9 @@ import org.xml.sax.ext.*;
 import org.xmlpull.v1.*;
 
 import yuku.alkitab.*;
-import yuku.alkitab.base.LabelEditorDialog.OkListener;
+import yuku.alkitab.base.*;
+import yuku.alkitab.base.dialog.*;
+import yuku.alkitab.base.dialog.LabelEditorDialog.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.*;
 

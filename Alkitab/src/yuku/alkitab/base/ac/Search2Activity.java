@@ -1,4 +1,4 @@
-package yuku.alkitab.base;
+package yuku.alkitab.base.ac;
 
 import android.app.*;
 import android.content.*;
@@ -15,6 +15,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import java.util.*;
 
 import yuku.alkitab.R;
+import yuku.alkitab.base.*;
 import yuku.alkitab.base.Search2Engine.Query;
 import yuku.alkitab.base.model.*;
 import yuku.andoutil.*;

@@ -1,4 +1,4 @@
-package yuku.alkitab.base;
+package yuku.alkitab.base.widget;
 
 import android.app.AlertDialog.Builder;
 import android.content.*;
@@ -6,6 +6,8 @@ import android.preference.*;
 import android.util.*;
 import android.view.*;
 import android.widget.*;
+
+import yuku.alkitab.base.*;
 
 public class JenisHurufPreference extends ListPreference {
 	int mClickedDialogEntryIndex;

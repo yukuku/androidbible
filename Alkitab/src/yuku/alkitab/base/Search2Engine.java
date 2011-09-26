@@ -16,7 +16,7 @@ import yuku.andoutil.*;
 public class Search2Engine {
 	private static final String TAG = Search2Engine.class.getSimpleName();
 
-	static String[] tokenkan(String carian) {
+	public static String[] tokenkan(String carian) {
 		// pisah jadi kata-kata
 		String bersih = carian.trim().toLowerCase().replaceAll("\\s+", " "); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -75,8 +75,8 @@ public class Search2Engine {
 	}
 	
 	public static class Query implements Parcelable {
-		String carian;
-		SparseBooleanArray xkitabPos;
+		public String carian;
+		public SparseBooleanArray xkitabPos;
 		
 		@Override public int describeContents() {
 			return 0;
@@ -366,7 +366,7 @@ public class Search2Engine {
 		}
 	}
 
-	static SpannableStringBuilder hilite(String ayat, String[] xkata, int warnaStabilo) {
+	public static SpannableStringBuilder hilite(String ayat, String[] xkata, int warnaStabilo) {
 		SpannableStringBuilder res = new SpannableStringBuilder(ayat);
 		{
 			String[] xkata2 = new String[xkata.length];

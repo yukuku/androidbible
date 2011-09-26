@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="yuku.alkitab" android:installLocation="auto" android:versionCode="72" android:versionName="2.0.0">
 	<application android:name="yuku.alkitab.base.App" android:icon="@drawable/icon" android:label="@string/app_name">
-		<activity android:name="yuku.alkitab.base.IsiActivity" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" android:theme="@style/Theme.AlkitabIsi">
+		<activity android:name="yuku.alkitab.base.ac.IsiActivity" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" android:theme="@style/Theme.AlkitabIsi" android:exported="true" />
+		<activity-alias android:name="yuku.alkitab.base.IsiActivity" android:targetActivity="yuku.alkitab.base.ac.IsiActivity">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
-		</activity>
+		</activity-alias>
 
-		<activity android:name="yuku.alkitab.base.MenujuActivity" android:label="@string/tuju_v" android:theme="@android:style/Theme.NoTitleBar" />
-		<activity android:name="yuku.alkitab.base.PengaturanActivity" android:label="@string/pengaturan_alkitab" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />
-        <activity android:name="yuku.alkitab.base.BukmakActivity" android:label="@string/judul_bukmak_activity" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />
-        <activity android:name="yuku.alkitab.base.BukmakListActivity" android:label="@string/pembatas_buku" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />
-		<activity android:name="yuku.alkitab.base.EdisiActivity" android:label="@string/kelola_versi" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />
-		<activity android:name="yuku.alkitab.base.Search2Activity" android:label="@string/cari_v" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar" />
-		<activity android:name="yuku.alkitab.base.RenunganActivity" android:label="@string/renungan" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar" />
-		<activity android:name="yuku.alkitab.base.BantuanActivity" android:label="@string/bantuan_judul" />
+		<activity android:name="yuku.alkitab.base.ac.MenujuActivity" android:label="@string/tuju_v" android:theme="@android:style/Theme.NoTitleBar" />
+		<activity android:name="yuku.alkitab.base.ac.PengaturanActivity" android:label="@string/pengaturan_alkitab" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />
+        <activity android:name="yuku.alkitab.base.ac.BukmakActivity" android:label="@string/judul_bukmak_activity" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />
+        <activity android:name="yuku.alkitab.base.ac.BukmakListActivity" android:label="@string/pembatas_buku" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />
+		<activity android:name="yuku.alkitab.base.ac.EdisiActivity" android:label="@string/kelola_versi" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />
+		<activity android:name="yuku.alkitab.base.ac.Search2Activity" android:label="@string/cari_v" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar" />
+		<activity android:name="yuku.alkitab.base.ac.RenunganActivity" android:label="@string/renungan" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar" />
+		<activity android:name="yuku.alkitab.base.ac.BantuanActivity" android:label="@string/bantuan_judul" />
 		<activity android:name="yuku.filechooser.FileChooserActivity" />
 	</application>
 

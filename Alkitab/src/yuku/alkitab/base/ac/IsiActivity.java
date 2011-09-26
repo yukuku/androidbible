@@ -1,4 +1,4 @@
-package yuku.alkitab.base;
+package yuku.alkitab.base.ac;
 
 import android.app.*;
 import android.content.*;
@@ -24,18 +24,21 @@ import android.widget.TextView.BufferType;
 import java.util.*;
 
 import yuku.alkitab.*;
-import yuku.alkitab.base.EdisiActivity.MEdisi;
-import yuku.alkitab.base.EdisiActivity.MEdisiInternal;
-import yuku.alkitab.base.EdisiActivity.MEdisiPreset;
-import yuku.alkitab.base.EdisiActivity.MEdisiYes;
-import yuku.alkitab.base.IsiActivity.FakeContextMenu.Item;
-import yuku.alkitab.base.JenisBukmakDialog.Listener;
-import yuku.alkitab.base.JenisCatatanDialog.RefreshCallback;
+import yuku.alkitab.base.*;
 import yuku.alkitab.base.Search2Engine.Query;
+import yuku.alkitab.base.ac.EdisiActivity.MEdisi;
+import yuku.alkitab.base.ac.EdisiActivity.MEdisiInternal;
+import yuku.alkitab.base.ac.EdisiActivity.MEdisiPreset;
+import yuku.alkitab.base.ac.EdisiActivity.MEdisiYes;
+import yuku.alkitab.base.ac.IsiActivity.FakeContextMenu.Item;
 import yuku.alkitab.base.config.*;
+import yuku.alkitab.base.dialog.*;
+import yuku.alkitab.base.dialog.JenisBukmakDialog.*;
+import yuku.alkitab.base.dialog.JenisCatatanDialog.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.Db.Bukmak2;
 import yuku.alkitab.base.storage.*;
+import yuku.alkitab.base.widget.*;
 import yuku.andoutil.*;
 
 public class IsiActivity extends Activity {

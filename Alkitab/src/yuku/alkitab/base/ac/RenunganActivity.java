@@ -1,4 +1,4 @@
-package yuku.alkitab.base;
+package yuku.alkitab.base.ac;
 
 import android.app.*;
 import android.content.*;
@@ -17,8 +17,10 @@ import java.util.*;
 import java.util.regex.*;
 
 import yuku.alkitab.*;
+import yuku.alkitab.base.*;
 import yuku.alkitab.base.renungan.*;
 import yuku.alkitab.base.renungan.TukangDonlot.OnStatusDonlotListener;
+import yuku.alkitab.base.widget.*;
 import yuku.andoutil.*;
 
 public class RenunganActivity extends Activity implements OnStatusDonlotListener {

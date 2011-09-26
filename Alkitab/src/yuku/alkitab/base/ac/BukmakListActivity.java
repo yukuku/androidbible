@@ -1,4 +1,4 @@
-package yuku.alkitab.base;
+package yuku.alkitab.base.ac;
 
 import android.app.*;
 import android.content.*;
@@ -15,9 +15,11 @@ import android.widget.*;
 import java.util.*;
 
 import yuku.alkitab.R;
-import yuku.alkitab.base.JenisBukmakDialog.Listener;
-import yuku.alkitab.base.JenisCatatanDialog.RefreshCallback;
-import yuku.alkitab.base.JenisStabiloDialog.JenisStabiloCallback;
+import yuku.alkitab.base.*;
+import yuku.alkitab.base.dialog.*;
+import yuku.alkitab.base.dialog.JenisBukmakDialog.*;
+import yuku.alkitab.base.dialog.JenisCatatanDialog.*;
+import yuku.alkitab.base.dialog.JenisStabiloDialog.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.*;
 import yuku.andoutil.*;

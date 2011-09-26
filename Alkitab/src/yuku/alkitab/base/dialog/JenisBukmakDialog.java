@@ -1,4 +1,4 @@
-package yuku.alkitab.base;
+package yuku.alkitab.base.dialog;
 
 import android.app.*;
 import android.content.*;
@@ -9,7 +9,8 @@ import android.widget.*;
 import java.util.*;
 
 import yuku.alkitab.R;
-import yuku.alkitab.base.LabelEditorDialog.OkListener;
+import yuku.alkitab.base.*;
+import yuku.alkitab.base.dialog.LabelEditorDialog.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.*;
 import yuku.devoxx.flowlayout.*;

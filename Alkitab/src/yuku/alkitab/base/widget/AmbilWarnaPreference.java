@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package yuku.alkitab.base;
+package yuku.alkitab.base.widget;
 
 import android.content.*;
 import android.content.res.*;
