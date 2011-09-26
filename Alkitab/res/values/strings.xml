@@ -229,4 +229,7 @@
     <string name="bl_there_are_no_bookmarks_without_any_labels">There are no bookmarks without any labels.</string>
     <string name="bl_bookmarks_labeled_label">"Bookmarks labeled '%s'"</string>
     <string name="bl_there_are_no_bookmarks_with_the_label_label">"There are no bookmarks with the label '%s'."</string>
+    <string name="labels_titikdua">Labels:</string>
+    <string name="tambah_titiktiga">Add…</string>
+    <string name="nama_label_titikdua">Label name:</string>
 </resources>

@@ -4,8 +4,8 @@
 		<TextView android:id="@+id/lJudul" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#fff" android:text="@string/judul_titikdua" />
 		<EditText android:layout_alignParentLeft="true" android:layout_below="@+id/lJudul" android:id="@+id/tTulisan" android:layout_width="fill_parent" android:layout_height="wrap_content" android:inputType="textCapSentences" android:imeOptions="actionGo" android:singleLine="true" android:selectAllOnFocus="true" />
 		<yuku.devoxx.flowlayout.FlowLayout android:layout_alignParentLeft="true" android:layout_below="@+id/tTulisan" android:layout_height="wrap_content" android:id="@+id/panelLabels" android:layout_width="wrap_content" app:horizontalSpacing="8dp" app:verticalSpacing="6dp">
-			<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#fff" android:text="Labels:" android:layout_marginRight="8dp" android:paddingTop="8dp" />
-			<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/bAddLabel" android:text="Add…" />
+			<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#fff" android:layout_marginRight="8dp" android:paddingTop="8dp" android:text="@string/labels_titikdua"/>
+			<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/bAddLabel" android:text="@string/tambah_titiktiga"/>
 		</yuku.devoxx.flowlayout.FlowLayout>
 	</RelativeLayout>
 </ScrollView>

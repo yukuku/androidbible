@@ -235,4 +235,7 @@
     <string name="bl_there_are_no_bookmarks_without_any_labels">Tidak ada pembatas buku yang tidak berlabel.</string>
     <string name="bl_bookmarks_labeled_label">"Pembatas buku berlabel '%s'"</string>
     <string name="bl_there_are_no_bookmarks_with_the_label_label">"Tidak ada pembatas buku yang berlabel '%s'."</string>
+    <string name="labels_titikdua">Label:</string>
+    <string name="tambah_titiktiga">Tambah…</string>
+    <string name="nama_label_titikdua">Nama label:</string>
 </resources>
