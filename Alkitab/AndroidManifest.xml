@@ -12,7 +12,7 @@
 		<activity android:name="yuku.alkitab.base.ac.MenujuActivity" android:label="@string/tuju_v" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name="yuku.alkitab.base.ac.PengaturanActivity" android:label="@string/pengaturan_alkitab" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />
         <activity android:name="yuku.alkitab.base.ac.BukmakActivity" android:label="@string/judul_bukmak_activity" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />
-        <activity android:name="yuku.alkitab.base.ac.BukmakListActivity" android:label="@string/pembatas_buku" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />
+        <activity android:name="yuku.alkitab.base.ac.BukmakListActivity" android:label="@string/pembatas_buku" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" android:windowSoftInputMode="adjustResize"/>
 		<activity android:name="yuku.alkitab.base.ac.EdisiActivity" android:label="@string/kelola_versi" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />
 		<activity android:name="yuku.alkitab.base.ac.Search2Activity" android:label="@string/cari_v" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name="yuku.alkitab.base.ac.RenunganActivity" android:label="@string/renungan" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar" />

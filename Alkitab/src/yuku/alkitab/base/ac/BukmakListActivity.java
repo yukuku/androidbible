@@ -39,6 +39,8 @@ public class BukmakListActivity extends ListActivity {
 
     public static final int LABELID_noLabel = -1;
 
+    View panelList;
+    TextView empty;
     SearchBar searchBar;
     
 	CursorAdapter adapter;
@@ -66,51 +68,19 @@ public class BukmakListActivity extends ListActivity {
 		
 		setContentView(R.layout.activity_bukmaklist);
 		
+		panelList = U.getView(this, R.id.panelList);
+		empty = U.getView(this, android.R.id.empty);
 		searchBar = U.getView(this, R.id.searchBar);
+		
+		filter_jenis = getIntent().getIntExtra(EXTRA_filter_jenis, 0);
+		filter_labelId = getIntent().getLongExtra(EXTRA_filter_labelId, 0);
 		
 		searchBar.getSearchField().setHint(R.string.bl_filter_by_some_keywords);
 		searchBar.setOnSearchListener(searchBar_search);
 
-        filter_jenis = getIntent().getIntExtra(EXTRA_filter_jenis, 0);
-        filter_labelId = getIntent().getLongExtra(EXTRA_filter_labelId, 0);
+        setTitleAndNothingText();
 
-        {
-            String title = null;
-            String nothingText = null;
-
-            // atur judul berdasarkan filter
-            if (filter_jenis == Db.Bukmak2.jenis_catatan) {
-                title = getString(R.string.bl_notes);
-                nothingText = getString(R.string.bl_no_notes_written_yet);
-            } else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
-                title = getString(R.string.bl_highlights);
-                nothingText = getString(R.string.bl_no_highlighted_verses);
-            } else if (filter_jenis == Db.Bukmak2.jenis_bukmak) {
-                if (filter_labelId == 0) {
-                    title = getString(R.string.bl_all_bookmarks);
-                    nothingText = getString(R.string.belum_ada_pembatas_buku);
-                } else if (filter_labelId == LABELID_noLabel) {
-                    title = getString(R.string.bl_all_bookmarks_without_labels);
-                    nothingText = getString(R.string.bl_there_are_no_bookmarks_without_any_labels);
-                } else {
-                    Label label = S.getDb().getLabelById(filter_labelId);
-                    if (label != null) {
-                        title = getString(R.string.bl_bookmarks_labeled_label, label.judul);
-                        nothingText = getString(R.string.bl_there_are_no_bookmarks_with_the_label_label, label.judul);
-                    }
-                }
-            }
-
-            if (title != null && nothingText != null) {
-                setTitle(title);
-                TextView empty = U.getView(this, android.R.id.empty);
-                empty.setText(nothingText);
-            } else {
-                finish();
-                return;
-            }
-        }
-
+        // default sort
         sort_column = Db.Bukmak2.waktuTambah;
         sort_ascending = false;
         sort_columnId = R.string.menuSortWaktuTambah;
@@ -119,12 +89,50 @@ public class BukmakListActivity extends ListActivity {
 		adapter = new BukmakListAdapter(this, cursor);
 		setListAdapter(adapter);
 
-		ListView listView = getListView();
-		listView.setBackgroundColor(S.penerapan.warnaLatar);
-		listView.setCacheColorHint(S.penerapan.warnaLatar);
-		listView.setFastScrollEnabled(true);
+		panelList.setBackgroundColor(S.penerapan.warnaLatar);
+		empty.setTextColor(S.penerapan.warnaHuruf);
+		
+		ListView lv = getListView();
+		lv.setCacheColorHint(S.penerapan.warnaLatar);
+		lv.setFastScrollEnabled(true);
 
-		registerForContextMenu(listView);
+		registerForContextMenu(lv);
+	}
+
+	private void setTitleAndNothingText() {
+        String title = null;
+        String nothingText = null;
+
+        // atur judul berdasarkan filter
+        if (filter_jenis == Db.Bukmak2.jenis_catatan) {
+            title = getString(R.string.bl_notes);
+            nothingText = getString(R.string.bl_no_notes_written_yet);
+        } else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
+            title = getString(R.string.bl_highlights);
+            nothingText = getString(R.string.bl_no_highlighted_verses);
+        } else if (filter_jenis == Db.Bukmak2.jenis_bukmak) {
+            if (filter_labelId == 0) {
+                title = getString(R.string.bl_all_bookmarks);
+                nothingText = getString(R.string.belum_ada_pembatas_buku);
+            } else if (filter_labelId == LABELID_noLabel) {
+                title = getString(R.string.bl_all_bookmarks_without_labels);
+                nothingText = getString(R.string.bl_there_are_no_bookmarks_without_any_labels);
+            } else {
+                Label label = S.getDb().getLabelById(filter_labelId);
+                if (label != null) {
+                    title = getString(R.string.bl_bookmarks_labeled_label, label.judul);
+                    nothingText = getString(R.string.bl_there_are_no_bookmarks_with_the_label_label, label.judul);
+                }
+            }
+        }
+
+        if (title != null && nothingText != null) {
+            setTitle(title);
+            empty.setText(nothingText);
+        } else {
+            finish(); // shouldn't happen
+            return;
+        }
 	}
 
     OnSearchListener searchBar_search = new OnSearchListener() {
