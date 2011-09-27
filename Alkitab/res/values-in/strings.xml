@@ -242,4 +242,6 @@
     <string name="labels_titikdua">Label:</string>
     <string name="tambah_titiktiga">Tambah…</string>
     <string name="nama_label_titikdua">Nama label:</string>
+    <string name="rename_label">Ganti nama label</string>
+    <string name="delete_label">Hapus label</string>
 </resources>
