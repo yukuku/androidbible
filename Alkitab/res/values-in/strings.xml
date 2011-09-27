@@ -235,6 +235,10 @@
     <string name="bl_there_are_no_bookmarks_without_any_labels">Tidak ada pembatas buku yang tidak berlabel.</string>
     <string name="bl_bookmarks_labeled_label">"Pembatas buku berlabel '%s'"</string>
     <string name="bl_there_are_no_bookmarks_with_the_label_label">"Tidak ada pembatas buku yang berlabel '%s'."</string>
+    <string name="bl_filter_by_some_keywords">Saring dengan kata-kata</string>
+    <string name="bl_clear_filter">Hapus saringan</string>
+    <string name="bl_filtering_titiktiga">Menyaring…</string>
+    <string name="bl_no_items_match_the_filter_above">Tidak ada yang cocok dengan saringan di atas.</string>
     <string name="labels_titikdua">Label:</string>
     <string name="tambah_titiktiga">Tambah…</string>
     <string name="nama_label_titikdua">Nama label:</string>

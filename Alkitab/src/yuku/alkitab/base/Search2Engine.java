@@ -330,6 +330,31 @@ public class Search2Engine {
 		}
 	}
 	
+	/**
+	 * case sensitive! pastikan s dan xkata sudah dilowercase sebelum masuk sini.
+	 */
+	public static boolean memenuhiCarian(String s, String[] xkata) {
+		for (String kata: xkata) {
+			boolean pakeTambah = false;
+			
+			if (adaTambah(kata)) {
+				pakeTambah = true;
+				kata = tanpaTambah(kata);
+			}
+			
+			int posKata;
+			if (pakeTambah) {
+				posKata = indexOfWholeWord(s, kata, 0);
+			} else {
+				posKata = s.indexOf(kata);
+			}
+			if (posKata == -1) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	private static int indexOfWholeWord(String sepasal, String kata, int start) {
 		int len = sepasal.length();
 		

@@ -9,20 +9,24 @@ import android.text.*;
 import android.text.style.*;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.*;
+import android.widget.Filter.FilterListener;
 
 import java.util.*;
 
 import yuku.alkitab.R;
 import yuku.alkitab.base.*;
 import yuku.alkitab.base.dialog.*;
-import yuku.alkitab.base.dialog.JenisBukmakDialog.*;
-import yuku.alkitab.base.dialog.JenisCatatanDialog.*;
-import yuku.alkitab.base.dialog.JenisStabiloDialog.*;
+import yuku.alkitab.base.dialog.JenisBukmakDialog.Listener;
+import yuku.alkitab.base.dialog.JenisCatatanDialog.RefreshCallback;
+import yuku.alkitab.base.dialog.JenisStabiloDialog.JenisStabiloCallback;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.*;
 import yuku.andoutil.*;
+import yuku.androidsdk.searchbar.*;
+import yuku.androidsdk.searchbar.SearchBar.OnSearchListener;
 import yuku.devoxx.flowlayout.*;
 
 public class BukmakListActivity extends ListActivity {
@@ -37,9 +41,19 @@ public class BukmakListActivity extends ListActivity {
 
     public static final int LABELID_noLabel = -1;
 
+    View panelList;
+    View empty;
+    TextView tEmpty;
+    View bClearFilter;
+    SearchBar searchBar;
+    
 	CursorAdapter adapter;
 	Cursor cursor;
-	int sortColumnIdKini;
+	
+	String sort_column;
+	boolean sort_ascending;
+	int sort_columnId;
+	boolean lagiPakeFilter;
 
     int filter_jenis;
     long filter_labelId;
@@ -58,149 +72,141 @@ public class BukmakListActivity extends ListActivity {
 		S.bacaPengaturan();
 		
 		setContentView(R.layout.activity_bukmaklist);
-
-        filter_jenis = getIntent().getIntExtra(EXTRA_filter_jenis, 0);
-        filter_labelId = getIntent().getLongExtra(EXTRA_filter_labelId, 0);
-
-        {
-            String title = null;
-            String nothingText = null;
-
-            // atur judul berdasarkan filter
-            if (filter_jenis == Db.Bukmak2.jenis_catatan) {
-                title = getString(R.string.bl_notes);
-                nothingText = getString(R.string.bl_no_notes_written_yet);
-            } else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
-                title = getString(R.string.bl_highlights);
-                nothingText = getString(R.string.bl_no_highlighted_verses);
-            } else if (filter_jenis == Db.Bukmak2.jenis_bukmak) {
-                if (filter_labelId == 0) {
-                    title = getString(R.string.bl_all_bookmarks);
-                    nothingText = getString(R.string.belum_ada_pembatas_buku);
-                } else if (filter_labelId == LABELID_noLabel) {
-                    title = getString(R.string.bl_all_bookmarks_without_labels);
-                    nothingText = getString(R.string.bl_there_are_no_bookmarks_without_any_labels);
-                } else {
-                    Label label = S.getDb().getLabelById(filter_labelId);
-                    if (label != null) {
-                        title = getString(R.string.bl_bookmarks_labeled_label, label.judul);
-                        nothingText = getString(R.string.bl_there_are_no_bookmarks_with_the_label_label, label.judul);
-                    }
-                }
-            }
-
-            if (title != null && nothingText != null) {
-                setTitle(title);
-                TextView empty = U.getView(this, android.R.id.empty);
-                empty.setText(nothingText);
-            } else {
-                finish();
-                return;
-            }
-        }
-
-		gantiCursor(Db.Bukmak2.waktuTambah, false, R.string.menuSortWaktuTambah);
 		
-		final int col__id = cursor.getColumnIndexOrThrow(BaseColumns._ID);
-		final int col_ari = cursor.getColumnIndexOrThrow(Db.Bukmak2.ari);
-		final int col_tulisan = cursor.getColumnIndexOrThrow(Db.Bukmak2.tulisan);
-		final int col_waktuTambah = cursor.getColumnIndexOrThrow(Db.Bukmak2.waktuTambah);
-		final int col_waktuUbah = cursor.getColumnIndexOrThrow(Db.Bukmak2.waktuUbah);
+		panelList = U.getView(this, R.id.panelList);
+		empty = U.getView(this, android.R.id.empty);
+		tEmpty = U.getView(this, R.id.tEmpty);
+		bClearFilter = U.getView(this, R.id.bClearFilter);
+		searchBar = U.getView(this, R.id.searchBar);
 		
-		adapter = new CursorAdapter(this, cursor, false) {
-			@Override public View newView(Context context, Cursor cursor, ViewGroup parent) {
-				return getLayoutInflater().inflate(R.layout.item_bukmak, null);
-			}
-			
-			@Override public void bindView(View view, Context context, Cursor cursor) {
-				TextView lTanggal = U.getView(view, R.id.lTanggal);
-				TextView lTulisan = U.getView(view, R.id.lTulisan);
-				TextView lCuplikan = U.getView(view, R.id.lCuplikan);
-				FlowLayout panelLabels = U.getView(view, R.id.panelLabels);
-				
-				{
-					int waktuTambah_i = cursor.getInt(col_waktuTambah);
-					int waktuUbah_i = cursor.getInt(col_waktuUbah);
-					
-					if (waktuTambah_i == waktuUbah_i) {
-						lTanggal.setText(Sqlitil.toLocaleDateMedium(waktuTambah_i));
-					} else {
-						lTanggal.setText(getString(R.string.waktuTambah_edited_waktuUbah, Sqlitil.toLocaleDateMedium(waktuTambah_i), Sqlitil.toLocaleDateMedium(waktuUbah_i)));
-					}
-					
-					PengaturTampilan.aturTampilanTeksTanggalBukmak(lTanggal);
-				}
-				
-				int ari = cursor.getInt(col_ari);
-				Kitab kitab = S.edisiAktif.getKitab(Ari.toKitab(ari));
-				String alamat = S.alamat(S.edisiAktif, ari);
-				
-				String isi = S.muatSatuAyat(S.edisiAktif, kitab, Ari.toPasal(ari), Ari.toAyat(ari));
-				isi = U.buangKodeKusus(isi);
-				
-				String tulisan = cursor.getString(col_tulisan);
-				
-				if (filter_jenis == Db.Bukmak2.jenis_bukmak) {
-					lTulisan.setText(tulisan);
-					PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
-					PengaturTampilan.aturIsiDanTampilanCuplikanBukmak(lCuplikan, alamat, isi);
-					
-					long _id = cursor.getLong(col__id);
-					List<Label> labels = S.getDb().listLabels(_id);
-					if (labels != null && labels.size() != 0) {
-						panelLabels.setVisibility(View.VISIBLE);
-						panelLabels.removeAllViews();
-						for (int i = 0, len = labels.size(); i < len; i++) {
-							panelLabels.addView(getLabelView(panelLabels, labels.get(i)));
-						}
-					} else {
-						panelLabels.setVisibility(View.GONE);
-					}
-					
-				} else if (filter_jenis == Db.Bukmak2.jenis_catatan) {
-					lTulisan.setText(alamat);
-					PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
-					lCuplikan.setText(tulisan);
-					PengaturTampilan.aturTampilanTeksIsi(lCuplikan);
-					
-				} else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
-					lTulisan.setText(alamat);
-					PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
-					
-					SpannableStringBuilder cuplikan = new SpannableStringBuilder(isi);
-					int warnaStabilo = U.dekodStabilo(tulisan);
-					if (warnaStabilo != -1) {
-						cuplikan.setSpan(new BackgroundColorSpan(U.alphaMixStabilo(warnaStabilo)), 0, cuplikan.length(), 0);
-					}
-					lCuplikan.setText(cuplikan);
-					PengaturTampilan.aturTampilanTeksIsi(lCuplikan);
-				}
-			}
-		};
+		filter_jenis = getIntent().getIntExtra(EXTRA_filter_jenis, 0);
+		filter_labelId = getIntent().getLongExtra(EXTRA_filter_labelId, 0);
+		
+		searchBar.getSearchField().setHint(R.string.bl_filter_by_some_keywords);
+		searchBar.setOnSearchListener(searchBar_search);
+
+		bClearFilter.setOnClickListener(bClearFilter_click);
+		
+        setTitleAndNothingText();
+
+        // default sort
+        sort_column = Db.Bukmak2.waktuTambah;
+        sort_ascending = false;
+        sort_columnId = R.string.menuSortWaktuTambah;
+		gantiCursor();
+		
+		adapter = new BukmakListAdapter(this, cursor);
 		setListAdapter(adapter);
 
-		ListView listView = getListView();
-		listView.setBackgroundColor(S.penerapan.warnaLatar);
-		listView.setCacheColorHint(S.penerapan.warnaLatar);
-		listView.setFastScrollEnabled(true);
+		panelList.setBackgroundColor(S.penerapan.warnaLatar);
+		tEmpty.setTextColor(S.penerapan.warnaHuruf);
+		
+		ListView lv = getListView();
+		lv.setCacheColorHint(S.penerapan.warnaLatar);
+		lv.setFastScrollEnabled(true);
 
-		registerForContextMenu(listView);
+		registerForContextMenu(lv);
 	}
 
-	private void gantiCursor(String sortColumn, boolean ascending, int sortColumnId) {
+	private void setTitleAndNothingText() {
+        String title = null;
+        String nothingText = null;
+        
+        // atur judul berdasarkan filter
+        if (filter_jenis == Db.Bukmak2.jenis_catatan) {
+            title = getString(R.string.bl_notes);
+            nothingText = getString(R.string.bl_no_notes_written_yet);
+        } else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
+            title = getString(R.string.bl_highlights);
+            nothingText = getString(R.string.bl_no_highlighted_verses);
+        } else if (filter_jenis == Db.Bukmak2.jenis_bukmak) {
+            if (filter_labelId == 0) {
+                title = getString(R.string.bl_all_bookmarks);
+                nothingText = getString(R.string.belum_ada_pembatas_buku);
+            } else if (filter_labelId == LABELID_noLabel) {
+                title = getString(R.string.bl_all_bookmarks_without_labels);
+                nothingText = getString(R.string.bl_there_are_no_bookmarks_without_any_labels);
+            } else {
+                Label label = S.getDb().getLabelById(filter_labelId);
+                if (label != null) {
+                    title = getString(R.string.bl_bookmarks_labeled_label, label.judul);
+                    nothingText = getString(R.string.bl_there_are_no_bookmarks_with_the_label_label, label.judul);
+                }
+            }
+        }
+        
+        // kalau lagi pake filter teks (bukan filter jenis), nothingTextnya lain
+        if (lagiPakeFilter) {
+        	nothingText = getString(R.string.bl_no_items_match_the_filter_above);
+        	bClearFilter.setVisibility(View.VISIBLE);
+        } else {
+        	bClearFilter.setVisibility(View.GONE);
+        }
+
+        if (title != null && nothingText != null) {
+            setTitle(title);
+            tEmpty.setText(nothingText);
+        } else {
+            finish(); // shouldn't happen
+            return;
+        }
+	}
+
+    OnSearchListener searchBar_search = new OnSearchListener() {
+		@Override public void onSearch(SearchBar searchBar, Editable text) {
+			String carian = text.toString().trim();
+			if (carian.length() == 0) {
+				buangFilter();
+				return;
+			}
+			
+			String[] xtoken = Search2Engine.tokenkan(carian);
+			if (xtoken.length == 0) {
+				buangFilter();
+				return;
+			}
+			
+			pasangFilter(carian);
+		}
+	};
+
+	OnClickListener bClearFilter_click = new OnClickListener() {
+		@Override public void onClick(View v) {
+			searchBar.setText("");
+			buangFilter();
+		}
+	};
+
+	protected void buangFilter() {
+		adapter.getFilter().filter(null);
+		lagiPakeFilter = false;
+		setTitleAndNothingText();
+	}
+	
+	protected void pasangFilter(String carian) {
+		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.bl_filtering_titiktiga), true, false);
+		adapter.getFilter().filter(carian, new FilterListener() {
+			@Override public void onFilterComplete(int count) {
+				pd.dismiss();
+			}
+		});
+		lagiPakeFilter = true;
+		setTitleAndNothingText();
+	}
+
+	private void gantiCursor() {
 		if (cursor != null) {
 			stopManagingCursor(cursor);
 		}
 		
-		cursor = S.getDb().listBukmak(filter_jenis, filter_labelId, sortColumn, ascending);
-		sortColumnIdKini = sortColumnId;
+		cursor = S.getDb().listBukmak(filter_jenis, filter_labelId, sort_column, sort_ascending);
 		startManagingCursor(cursor);
 		
 		if (adapter != null) {
 			adapter.changeCursor(cursor);
 		}
 	}
-	
+
 	protected View getLabelView(FlowLayout panelLabels, Label label) {
 		View res = LayoutInflater.from(this).inflate(R.layout.label, null);
 		res.setLayoutParams(panelLabels.generateDefaultLayoutParams());
@@ -269,7 +275,7 @@ public class BukmakListActivity extends ListActivity {
 		
 		int selected = -1;
 		for (int i = 0, len = values.size(); i < len; i++) {
-			if (sortColumnIdKini == values.get(i)) {
+			if (sort_columnId == values.get(i)) {
 				selected = i;
 				break;
 			}
@@ -282,19 +288,29 @@ public class BukmakListActivity extends ListActivity {
 				int value = values.get(which);
 				switch (value) {
 				case R.string.menuSortAri:
-					gantiCursor(Db.Bukmak2.ari, true, value);
+					sort(Db.Bukmak2.ari, true, value);
 					break;
 				case R.string.menuSortTulisan:
-					gantiCursor(Db.Bukmak2.tulisan, true, value);
+					sort(Db.Bukmak2.tulisan, true, value);
 					break;
 				case R.string.menuSortWaktuTambah:
-					gantiCursor(Db.Bukmak2.waktuTambah, false, value);
+					sort(Db.Bukmak2.waktuTambah, false, value);
 					break;
 				case R.string.menuSortWaktuUbah:
-					gantiCursor(Db.Bukmak2.waktuUbah, false, value);
+					sort(Db.Bukmak2.waktuUbah, false, value);
 					break;
 				}
 				dialog.dismiss();
+			}
+
+			private void sort(String column, boolean ascending, int columnId) {
+				searchBar.setText("");
+				lagiPakeFilter = false;
+				setTitleAndNothingText();
+				sort_column = column;
+				sort_ascending = ascending;
+				sort_columnId = columnId;
+				gantiCursor();
 			}
 		})
 		.setTitle(R.string.menuSort)
@@ -376,5 +392,168 @@ public class BukmakListActivity extends ListActivity {
 		}
 		
 		return false;
+	}
+	
+	class BukmakListAdapter extends CursorAdapter {
+		// must also modify FilterQueryProvider below!!!
+		private int col__id;
+		private int col_ari;
+		private int col_tulisan;
+		private int col_waktuTambah;
+		private int col_waktuUbah;
+		//////////////////////////////
+		
+		BukmakListAdapter(Context context, Cursor cursor) {
+			super(context, cursor, false);
+			
+			getColumnIndexes();
+			
+			setFilterQueryProvider(new BukmakFilterQueryProvider());
+		}
+		
+		@Override public void notifyDataSetChanged() {
+			getColumnIndexes();
+			
+			super.notifyDataSetChanged();
+		}
+
+		private void getColumnIndexes() {
+			Cursor c = getCursor();
+			if (c != null) {
+				col__id = c.getColumnIndexOrThrow(BaseColumns._ID);
+				col_ari = c.getColumnIndexOrThrow(Db.Bukmak2.ari);
+				col_tulisan = c.getColumnIndexOrThrow(Db.Bukmak2.tulisan);
+				col_waktuTambah = c.getColumnIndexOrThrow(Db.Bukmak2.waktuTambah);
+				col_waktuUbah = c.getColumnIndexOrThrow(Db.Bukmak2.waktuUbah);
+			}
+		}
+		
+		@Override public View newView(Context context, Cursor cursor, ViewGroup parent) {
+			return getLayoutInflater().inflate(R.layout.item_bukmak, null);
+		}
+		
+		@Override public void bindView(View view, Context context, Cursor cursor) {
+			TextView lTanggal = U.getView(view, R.id.lTanggal);
+			TextView lTulisan = U.getView(view, R.id.lTulisan);
+			TextView lCuplikan = U.getView(view, R.id.lCuplikan);
+			FlowLayout panelLabels = U.getView(view, R.id.panelLabels);
+			
+			{
+				int waktuTambah_i = cursor.getInt(col_waktuTambah);
+				int waktuUbah_i = cursor.getInt(col_waktuUbah);
+				
+				if (waktuTambah_i == waktuUbah_i) {
+					lTanggal.setText(Sqlitil.toLocaleDateMedium(waktuTambah_i));
+				} else {
+					lTanggal.setText(getString(R.string.waktuTambah_edited_waktuUbah, Sqlitil.toLocaleDateMedium(waktuTambah_i), Sqlitil.toLocaleDateMedium(waktuUbah_i)));
+				}
+				
+				PengaturTampilan.aturTampilanTeksTanggalBukmak(lTanggal);
+			}
+			
+			int ari = cursor.getInt(col_ari);
+			Kitab kitab = S.edisiAktif.getKitab(Ari.toKitab(ari));
+			String alamat = S.alamat(S.edisiAktif, ari);
+			
+			String isi = S.muatSatuAyat(S.edisiAktif, kitab, Ari.toPasal(ari), Ari.toAyat(ari));
+			isi = U.buangKodeKusus(isi);
+			
+			String tulisan = cursor.getString(col_tulisan);
+			
+			if (filter_jenis == Db.Bukmak2.jenis_bukmak) {
+				lTulisan.setText(tulisan);
+				PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
+				PengaturTampilan.aturIsiDanTampilanCuplikanBukmak(lCuplikan, alamat, isi);
+				
+				long _id = cursor.getLong(col__id);
+				List<Label> labels = S.getDb().listLabels(_id);
+				if (labels != null && labels.size() != 0) {
+					panelLabels.setVisibility(View.VISIBLE);
+					panelLabels.removeAllViews();
+					for (int i = 0, len = labels.size(); i < len; i++) {
+						panelLabels.addView(getLabelView(panelLabels, labels.get(i)));
+					}
+				} else {
+					panelLabels.setVisibility(View.GONE);
+				}
+				
+			} else if (filter_jenis == Db.Bukmak2.jenis_catatan) {
+				lTulisan.setText(alamat);
+				PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
+				lCuplikan.setText(tulisan);
+				PengaturTampilan.aturTampilanTeksIsi(lCuplikan);
+				
+			} else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
+				lTulisan.setText(alamat);
+				PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
+				
+				SpannableStringBuilder cuplikan = new SpannableStringBuilder(isi);
+				int warnaStabilo = U.dekodStabilo(tulisan);
+				if (warnaStabilo != -1) {
+					cuplikan.setSpan(new BackgroundColorSpan(U.alphaMixStabilo(warnaStabilo)), 0, cuplikan.length(), 0);
+				}
+				lCuplikan.setText(cuplikan);
+				PengaturTampilan.aturTampilanTeksIsi(lCuplikan);
+			}
+		}
+	};
+	
+	class BukmakFilterQueryProvider implements FilterQueryProvider {
+		@Override public Cursor runQuery(CharSequence constraint) {
+			if (constraint == null || constraint.length() == 0) {
+				return S.getDb().listBukmak(filter_jenis, filter_labelId, sort_column, sort_ascending);
+			}
+			
+			String[] xkata = Search2Engine.tokenkan(constraint.toString());
+			for (int i = 0; i < xkata.length; i++) {
+				xkata[i] = xkata[i].toLowerCase();
+			}
+			
+			MatrixCursor res = new MatrixCursor(new String[] {BaseColumns._ID, Db.Bukmak2.ari, Db.Bukmak2.tulisan, Db.Bukmak2.waktuTambah, Db.Bukmak2.waktuUbah});
+			Cursor c = S.getDb().listBukmak(filter_jenis, filter_labelId, sort_column, sort_ascending);
+			try {
+				int col__id = c.getColumnIndexOrThrow(BaseColumns._ID);
+				int col_ari = c.getColumnIndexOrThrow(Db.Bukmak2.ari);
+				int col_tulisan = c.getColumnIndexOrThrow(Db.Bukmak2.tulisan);
+				int col_waktuTambah = c.getColumnIndexOrThrow(Db.Bukmak2.waktuTambah);
+				int col_waktuUbah = c.getColumnIndexOrThrow(Db.Bukmak2.waktuUbah);
+				
+				while (c.moveToNext()) {
+					boolean memenuhi = false;
+					
+					String tulisan = c.getString(col_tulisan);
+					
+					if (filter_jenis != Db.Bukmak2.jenis_stabilo) { // "tulisan" di stabilo cuma simpen info tentang warna, jadi ga ada gunanya dicek.
+						String tulisan_lc = tulisan.toLowerCase();
+						if (Search2Engine.memenuhiCarian(tulisan_lc, xkata)) {
+							memenuhi = true;
+						}
+					}
+					
+					int ari = c.getInt(col_ari);
+					if (!memenuhi) {
+						// coba isi ayatnya!
+						String ayat = S.muatSatuAyat(S.edisiAktif, ari);
+						String ayat_lc = ayat.toLowerCase();
+						if (Search2Engine.memenuhiCarian(ayat_lc, xkata)) {
+							memenuhi = true;
+						}
+					}
+					
+					if (memenuhi) {
+						res.newRow()
+						.add(c.getLong(col__id))
+						.add(ari)
+						.add(tulisan)
+						.add(c.getInt(col_waktuTambah))
+						.add(c.getInt(col_waktuUbah));
+					}
+				}
+			} finally {
+				c.close();
+			}
+
+			return res;
+		}
 	}
 }
