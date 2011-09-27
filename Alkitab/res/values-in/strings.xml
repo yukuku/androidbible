@@ -221,7 +221,7 @@
     <string name="select_books_to_search">Pilih kitab untuk dicari</string>
     <string name="rename_label_title">Ganti nama label</string>
     <string name="delete_label_title">Hapus label</string>
-    <string name="are_you_sure_you_want_to_delete_the_label_label">"Apakah Anda mau menghapus label '%s'? Label ini akan dilepaskan dari semua pembatas buku."</string>
+    <string name="are_you_sure_you_want_to_delete_the_label_label">"Apakah Anda mau menghapus label '%1$s'? Label ini akan dilepaskan dari %2$s pembatas buku."</string>
     <string name="bmcat_all_bookmarks">Semua pembatas buku</string>
     <string name="bmcat_notes">Catatan</string>
     <string name="bmcat_highlights">Sorotan</string>

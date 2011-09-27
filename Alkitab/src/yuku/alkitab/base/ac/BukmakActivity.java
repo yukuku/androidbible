@@ -21,7 +21,7 @@ import org.xmlpull.v1.*;
 import yuku.alkitab.*;
 import yuku.alkitab.base.*;
 import yuku.alkitab.base.dialog.*;
-import yuku.alkitab.base.dialog.LabelEditorDialog.*;
+import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.*;
 
@@ -321,18 +321,27 @@ public class BukmakActivity extends ListActivity {
 			if (label == null) {
 				return true;
 			}
+			
+			int nbukmak = S.getDb().countBukmakDenganLabel(label);
 
-			new AlertDialog.Builder(this)
-			.setTitle(R.string.delete_label_title)
-			.setMessage(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.judul))
-			.setNegativeButton(R.string.cancel, null)
-			.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-				@Override public void onClick(DialogInterface dialog, int which) {
-					S.getDb().hapusLabelById(label._id);
-					adapter.reload();
-				}
-			})
-			.show();
+			if (nbukmak == 0) {
+				// tiada, langsung hapus aja!
+				S.getDb().hapusLabelById(label._id);
+				adapter.reload();
+			} else {
+				new AlertDialog.Builder(this)
+				.setTitle(R.string.delete_label_title)
+				.setMessage(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.judul, nbukmak))
+				.setNegativeButton(R.string.cancel, null)
+				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+					@Override public void onClick(DialogInterface dialog, int which) {
+						S.getDb().hapusLabelById(label._id);
+						adapter.reload();
+					}
+				})
+				.show();
+			}
+			
 			return true;
 		}
 

@@ -10,7 +10,7 @@ import java.util.*;
 
 import yuku.alkitab.base.*;
 import yuku.alkitab.base.ac.*;
-import yuku.alkitab.base.ac.EdisiActivity.*;
+import yuku.alkitab.base.ac.EdisiActivity.MEdisiYes;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.renungan.*;
 import yuku.andoutil.*;
@@ -582,5 +582,12 @@ public class InternalDb {
 		ContentValues cv = new ContentValues();
 		cv.put(Db.Label.judul, judul);
 		db.update(Db.TABEL_Label, cv, "_id=?", new String[] {String.valueOf(label._id)}); //$NON-NLS-1$
+	}
+
+	public int countBukmakDenganLabel(Label label) {
+		SQLiteDatabase db = helper.getReadableDatabase();
+		SQLiteStatement stmt = db.compileStatement("select count(*) from " + Db.TABEL_Bukmak2_Label + " where " + Db.Bukmak2_Label.label_id + "=?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		stmt.bindLong(1, label._id);
+		return (int) stmt.simpleQueryForLong();
 	}
 }
