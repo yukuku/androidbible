@@ -366,35 +366,42 @@ public class Search2Engine {
 		}
 	}
 
-	public static SpannableStringBuilder hilite(String ayat, String[] xkata, int warnaStabilo) {
-		SpannableStringBuilder res = new SpannableStringBuilder(ayat);
-		{
-			String[] xkata2 = new String[xkata.length];
-			System.arraycopy(xkata, 0, xkata2, 0, xkata.length);
-			for (int i = 0; i < xkata.length; i++) {
+	public static SpannableStringBuilder hilite(String s, String[] xkata, int warnaStabilo) {
+		SpannableStringBuilder res = new SpannableStringBuilder(s);
+		
+		int nkata = xkata.length;
+		boolean[] xpakeTambah = new boolean[nkata];
+		{ // point to copy
+			String[] xkata2 = new String[nkata];
+			System.arraycopy(xkata, 0, xkata2, 0, nkata);
+			for (int i = 0; i < nkata; i++) {
 				if (adaTambah(xkata2[i])) {
 					xkata2[i] = tanpaTambah(xkata2[i]);
+					xpakeTambah[i] = true;
 				}
 			}
 			xkata = xkata2;
 		}
 		
-		ayat = ayat.toLowerCase();
+		s = s.toLowerCase();
 		
 		int pos = 0;
-		int nkata = xkata.length;
 		int[] coba = new int[nkata];
 		
 		while (true) {
 			for (int i = 0; i < nkata; i++) {
-				coba[i] = ayat.indexOf(xkata[i], pos);
+				if (xpakeTambah[i]) {
+					coba[i] = indexOfWholeWord(s, xkata[i], pos);
+				} else {
+					coba[i] = s.indexOf(xkata[i], pos);
+				}
 			}
 			
 			int minpos = Integer.MAX_VALUE;
 			int minkata = -1;
 			
 			for (int i = 0; i < nkata; i++) {
-				if (coba[i] >= 0) {
+				if (coba[i] >= 0) { // bukan -1 yang berarti ga ketemu
 					if (coba[i] < minpos) {
 						minpos = coba[i];
 						minkata = i;
