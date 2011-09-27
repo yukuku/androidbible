@@ -138,6 +138,10 @@ public class S {
 		return xayat[ayat_0];
 	}
 	
+	public static synchronized String muatSatuAyat(Edisi edisi, int ari) {
+		return muatSatuAyat(edisi, edisi.getKitab(Ari.toKitab(ari)), Ari.toPasal(ari), Ari.toAyat(ari));
+	}
+
 	public static synchronized String[] muatTeks(Edisi edisi, Kitab kitab, int pasal_1) {
 		if (kitab == null) {
 			return teksTakTersediaArray;

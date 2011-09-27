@@ -9,8 +9,10 @@ import android.text.*;
 import android.text.style.*;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.*;
+import android.widget.Filter.FilterListener;
 
 import java.util.*;
 
@@ -40,7 +42,9 @@ public class BukmakListActivity extends ListActivity {
     public static final int LABELID_noLabel = -1;
 
     View panelList;
-    TextView empty;
+    View empty;
+    TextView tEmpty;
+    View bClearFilter;
     SearchBar searchBar;
     
 	CursorAdapter adapter;
@@ -49,6 +53,7 @@ public class BukmakListActivity extends ListActivity {
 	String sort_column;
 	boolean sort_ascending;
 	int sort_columnId;
+	boolean lagiPakeFilter;
 
     int filter_jenis;
     long filter_labelId;
@@ -70,6 +75,8 @@ public class BukmakListActivity extends ListActivity {
 		
 		panelList = U.getView(this, R.id.panelList);
 		empty = U.getView(this, android.R.id.empty);
+		tEmpty = U.getView(this, R.id.tEmpty);
+		bClearFilter = U.getView(this, R.id.bClearFilter);
 		searchBar = U.getView(this, R.id.searchBar);
 		
 		filter_jenis = getIntent().getIntExtra(EXTRA_filter_jenis, 0);
@@ -78,6 +85,8 @@ public class BukmakListActivity extends ListActivity {
 		searchBar.getSearchField().setHint(R.string.bl_filter_by_some_keywords);
 		searchBar.setOnSearchListener(searchBar_search);
 
+		bClearFilter.setOnClickListener(bClearFilter_click);
+		
         setTitleAndNothingText();
 
         // default sort
@@ -90,7 +99,7 @@ public class BukmakListActivity extends ListActivity {
 		setListAdapter(adapter);
 
 		panelList.setBackgroundColor(S.penerapan.warnaLatar);
-		empty.setTextColor(S.penerapan.warnaHuruf);
+		tEmpty.setTextColor(S.penerapan.warnaHuruf);
 		
 		ListView lv = getListView();
 		lv.setCacheColorHint(S.penerapan.warnaLatar);
@@ -102,7 +111,7 @@ public class BukmakListActivity extends ListActivity {
 	private void setTitleAndNothingText() {
         String title = null;
         String nothingText = null;
-
+        
         // atur judul berdasarkan filter
         if (filter_jenis == Db.Bukmak2.jenis_catatan) {
             title = getString(R.string.bl_notes);
@@ -125,10 +134,18 @@ public class BukmakListActivity extends ListActivity {
                 }
             }
         }
+        
+        // kalau lagi pake filter teks (bukan filter jenis), nothingTextnya lain
+        if (lagiPakeFilter) {
+        	nothingText = getString(R.string.bl_no_items_match_the_filter_above);
+        	bClearFilter.setVisibility(View.VISIBLE);
+        } else {
+        	bClearFilter.setVisibility(View.GONE);
+        }
 
         if (title != null && nothingText != null) {
             setTitle(title);
-            empty.setText(nothingText);
+            tEmpty.setText(nothingText);
         } else {
             finish(); // shouldn't happen
             return;
@@ -153,12 +170,28 @@ public class BukmakListActivity extends ListActivity {
 		}
 	};
 
+	OnClickListener bClearFilter_click = new OnClickListener() {
+		@Override public void onClick(View v) {
+			searchBar.setText("");
+			buangFilter();
+		}
+	};
+
 	protected void buangFilter() {
 		adapter.getFilter().filter(null);
+		lagiPakeFilter = false;
+		setTitleAndNothingText();
 	}
 	
 	protected void pasangFilter(String carian) {
-		adapter.getFilter().filter(carian);
+		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.bl_filtering_titiktiga), true, false);
+		adapter.getFilter().filter(carian, new FilterListener() {
+			@Override public void onFilterComplete(int count) {
+				pd.dismiss();
+			}
+		});
+		lagiPakeFilter = true;
+		setTitleAndNothingText();
 	}
 
 	private void gantiCursor() {
@@ -255,35 +288,29 @@ public class BukmakListActivity extends ListActivity {
 				int value = values.get(which);
 				switch (value) {
 				case R.string.menuSortAri:
-					searchBar.setText("");
-					sort_column = Db.Bukmak2.ari;
-					sort_ascending = true;
-					sort_columnId = value;
-					gantiCursor();
+					sort(Db.Bukmak2.ari, true, value);
 					break;
 				case R.string.menuSortTulisan:
-					searchBar.setText("");
-					sort_column = Db.Bukmak2.tulisan;
-					sort_ascending = true;
-					sort_columnId = value;
-					gantiCursor();
+					sort(Db.Bukmak2.tulisan, true, value);
 					break;
 				case R.string.menuSortWaktuTambah:
-					searchBar.setText("");
-					sort_column = Db.Bukmak2.waktuTambah;
-					sort_ascending = false;
-					sort_columnId = value;
-					gantiCursor();
+					sort(Db.Bukmak2.waktuTambah, false, value);
 					break;
 				case R.string.menuSortWaktuUbah:
-					searchBar.setText("");
-					sort_column = Db.Bukmak2.waktuUbah;
-					sort_ascending = false;
-					sort_columnId = value;
-					gantiCursor();
+					sort(Db.Bukmak2.waktuUbah, false, value);
 					break;
 				}
 				dialog.dismiss();
+			}
+
+			private void sort(String column, boolean ascending, int columnId) {
+				searchBar.setText("");
+				lagiPakeFilter = false;
+				setTitleAndNothingText();
+				sort_column = column;
+				sort_ascending = ascending;
+				sort_columnId = columnId;
+				gantiCursor();
 			}
 		})
 		.setTitle(R.string.menuSort)
@@ -381,38 +408,7 @@ public class BukmakListActivity extends ListActivity {
 			
 			getColumnIndexes();
 			
-			setFilterQueryProvider(new FilterQueryProvider() {
-				@Override public Cursor runQuery(CharSequence constraint) {
-					if (constraint == null || constraint.length() == 0) {
-						return S.getDb().listBukmak(filter_jenis, filter_labelId, sort_column, sort_ascending);
-					}
-					
-					MatrixCursor res = new MatrixCursor(new String[] {BaseColumns._ID, Db.Bukmak2.ari, Db.Bukmak2.tulisan, Db.Bukmak2.waktuTambah, Db.Bukmak2.waktuUbah});
-					Cursor c = S.getDb().listBukmak(filter_jenis, filter_labelId, sort_column, sort_ascending);
-					try {
-						int col__id = c.getColumnIndexOrThrow(BaseColumns._ID);
-						int col_ari = c.getColumnIndexOrThrow(Db.Bukmak2.ari);
-						int col_tulisan = c.getColumnIndexOrThrow(Db.Bukmak2.tulisan);
-						int col_waktuTambah = c.getColumnIndexOrThrow(Db.Bukmak2.waktuTambah);
-						int col_waktuUbah = c.getColumnIndexOrThrow(Db.Bukmak2.waktuUbah);
-						while (c.moveToNext()) {
-							String tulisan = c.getString(col_tulisan);
-							if (tulisan.contains(constraint)) {
-								res.newRow()
-								.add(c.getLong(col__id))
-								.add(c.getInt(col_ari))
-								.add(tulisan)
-								.add(c.getInt(col_waktuTambah))
-								.add(c.getInt(col_waktuUbah));
-							}
-						}
-					} finally {
-						c.close();
-					}
-
-					return res;
-				}
-			});
+			setFilterQueryProvider(new BukmakFilterQueryProvider());
 		}
 		
 		@Override public void notifyDataSetChanged() {
@@ -501,4 +497,63 @@ public class BukmakListActivity extends ListActivity {
 			}
 		}
 	};
+	
+	class BukmakFilterQueryProvider implements FilterQueryProvider {
+		@Override public Cursor runQuery(CharSequence constraint) {
+			if (constraint == null || constraint.length() == 0) {
+				return S.getDb().listBukmak(filter_jenis, filter_labelId, sort_column, sort_ascending);
+			}
+			
+			String[] xkata = Search2Engine.tokenkan(constraint.toString());
+			for (int i = 0; i < xkata.length; i++) {
+				xkata[i] = xkata[i].toLowerCase();
+			}
+			
+			MatrixCursor res = new MatrixCursor(new String[] {BaseColumns._ID, Db.Bukmak2.ari, Db.Bukmak2.tulisan, Db.Bukmak2.waktuTambah, Db.Bukmak2.waktuUbah});
+			Cursor c = S.getDb().listBukmak(filter_jenis, filter_labelId, sort_column, sort_ascending);
+			try {
+				int col__id = c.getColumnIndexOrThrow(BaseColumns._ID);
+				int col_ari = c.getColumnIndexOrThrow(Db.Bukmak2.ari);
+				int col_tulisan = c.getColumnIndexOrThrow(Db.Bukmak2.tulisan);
+				int col_waktuTambah = c.getColumnIndexOrThrow(Db.Bukmak2.waktuTambah);
+				int col_waktuUbah = c.getColumnIndexOrThrow(Db.Bukmak2.waktuUbah);
+				
+				while (c.moveToNext()) {
+					boolean memenuhi = false;
+					
+					String tulisan = c.getString(col_tulisan);
+					
+					if (filter_jenis != Db.Bukmak2.jenis_stabilo) { // "tulisan" di stabilo cuma simpen info tentang warna, jadi ga ada gunanya dicek.
+						String tulisan_lc = tulisan.toLowerCase();
+						if (Search2Engine.memenuhiCarian(tulisan_lc, xkata)) {
+							memenuhi = true;
+						}
+					}
+					
+					int ari = c.getInt(col_ari);
+					if (!memenuhi) {
+						// coba isi ayatnya!
+						String ayat = S.muatSatuAyat(S.edisiAktif, ari);
+						String ayat_lc = ayat.toLowerCase();
+						if (Search2Engine.memenuhiCarian(ayat_lc, xkata)) {
+							memenuhi = true;
+						}
+					}
+					
+					if (memenuhi) {
+						res.newRow()
+						.add(c.getLong(col__id))
+						.add(ari)
+						.add(tulisan)
+						.add(c.getInt(col_waktuTambah))
+						.add(c.getInt(col_waktuUbah));
+					}
+				}
+			} finally {
+				c.close();
+			}
+
+			return res;
+		}
+	}
 }
