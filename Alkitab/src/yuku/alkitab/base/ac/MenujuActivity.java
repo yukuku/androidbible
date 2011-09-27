@@ -375,9 +375,8 @@ public class MenujuActivity extends Activity {
 			return res;
 		}
 		
-		@Override
-		public View getDropDownView(int position, View convertView, ViewGroup parent) {
-			CheckedTextView res = convertView != null? (CheckedTextView) convertView: (CheckedTextView) LayoutInflater.from(MenujuActivity.this).inflate(android.R.layout.simple_spinner_dropdown_item, null);
+		@Override public View getDropDownView(int position, View convertView, ViewGroup parent) {
+			CheckedTextView res = convertView != null? (CheckedTextView) convertView: (CheckedTextView) LayoutInflater.from(MenujuActivity.this).inflate(android.R.layout.select_dialog_singlechoice, null);
 
 			Kitab k = getItem(position);
 			res.setText(k.judul);
