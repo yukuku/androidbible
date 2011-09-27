@@ -2,7 +2,6 @@ package yuku.alkitab.base.ac;
 
 import android.app.*;
 import android.content.*;
-import android.graphics.*;
 import android.os.*;
 import android.text.*;
 import android.util.*;
@@ -38,7 +37,7 @@ public class Search2Activity extends Activity {
 	TextView tFilterRumit;
 	View bEditFilter;
 	
-	int warnaStabilo;
+	int warnaHilite;
 	SparseBooleanArray xkitabPosTerpilih = new SparseBooleanArray();
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
@@ -65,15 +64,7 @@ public class Search2Activity extends Activity {
 		lsHasilCari.setBackgroundColor(S.penerapan.warnaLatar);
 		lsHasilCari.setCacheColorHint(S.penerapan.warnaLatar);
 		
-		{
-			int warnaLatar = S.penerapan.warnaLatar;
-			float keterangan = 0.30f * Color.red(warnaLatar) + 0.59f * Color.green(warnaLatar) + 0.11f * Color.blue(warnaLatar);
-			if (keterangan < 0.5f) {
-				warnaStabilo = 0xff66ff66;
-			} else {
-				warnaStabilo = 0xff990099;
-			}
-		}
+		warnaHilite = U.getWarnaHiliteKontrasDengan(S.penerapan.warnaLatar);
 		
 		lsHasilCari.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -386,8 +377,7 @@ public class Search2Activity extends Activity {
 			
 			String ayat = S.muatSatuAyat(S.edisiAktif, kitab, pasal_1, ayat_1);
 			ayat = U.buangKodeKusus(ayat);
-			lCuplikan.setText(Search2Engine.hilite(ayat, xkata, warnaStabilo));
-			
+			lCuplikan.setText(Search2Engine.hilite(ayat, xkata, warnaHilite));
 			PengaturTampilan.aturTampilanTeksIsi(lCuplikan);
 			
 			return res;

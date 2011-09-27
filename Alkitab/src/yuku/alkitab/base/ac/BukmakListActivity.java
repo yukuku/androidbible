@@ -58,6 +58,8 @@ public class BukmakListActivity extends ListActivity {
     int filter_jenis;
     long filter_labelId;
 
+	int warnaHilite;
+
     public static Intent createIntent(Context context, int filter_jenis, long filter_labelId) {
     	Intent res = new Intent(context, BukmakListActivity.class);
     	res.putExtra(EXTRA_filter_jenis, filter_jenis);
@@ -100,6 +102,8 @@ public class BukmakListActivity extends ListActivity {
 
 		panelList.setBackgroundColor(S.penerapan.warnaLatar);
 		tEmpty.setTextColor(S.penerapan.warnaHuruf);
+		
+		warnaHilite = U.getWarnaHiliteKontrasDengan(S.penerapan.warnaLatar);
 		
 		ListView lv = getListView();
 		lv.setCacheColorHint(S.penerapan.warnaLatar);
@@ -395,6 +399,8 @@ public class BukmakListActivity extends ListActivity {
 	}
 	
 	class BukmakListAdapter extends CursorAdapter {
+		BukmakFilterQueryProvider filterQueryProvider;
+		
 		// must also modify FilterQueryProvider below!!!
 		private int col__id;
 		private int col_ari;
@@ -408,7 +414,7 @@ public class BukmakListActivity extends ListActivity {
 			
 			getColumnIndexes();
 			
-			setFilterQueryProvider(new BukmakFilterQueryProvider());
+			setFilterQueryProvider(filterQueryProvider = new BukmakFilterQueryProvider());
 		}
 		
 		@Override public void notifyDataSetChanged() {
@@ -461,9 +467,11 @@ public class BukmakListActivity extends ListActivity {
 			String tulisan = cursor.getString(col_tulisan);
 			
 			if (filter_jenis == Db.Bukmak2.jenis_bukmak) {
-				lTulisan.setText(tulisan);
+				lTulisan.setText(lagiPakeFilter? Search2Engine.hilite(tulisan, filterQueryProvider.getXkata(), warnaHilite): tulisan);
 				PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
-				PengaturTampilan.aturIsiDanTampilanCuplikanBukmak(lCuplikan, alamat, isi);
+				CharSequence cuplikan = lagiPakeFilter? Search2Engine.hilite(isi, filterQueryProvider.getXkata(), warnaHilite): isi;
+
+				PengaturTampilan.aturIsiDanTampilanCuplikanBukmak(lCuplikan, alamat, cuplikan);
 				
 				long _id = cursor.getLong(col__id);
 				List<Label> labels = S.getDb().listLabels(_id);
@@ -480,14 +488,14 @@ public class BukmakListActivity extends ListActivity {
 			} else if (filter_jenis == Db.Bukmak2.jenis_catatan) {
 				lTulisan.setText(alamat);
 				PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
-				lCuplikan.setText(tulisan);
+				lCuplikan.setText(lagiPakeFilter? Search2Engine.hilite(tulisan, filterQueryProvider.getXkata(), warnaHilite): tulisan);
 				PengaturTampilan.aturTampilanTeksIsi(lCuplikan);
 				
 			} else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
 				lTulisan.setText(alamat);
 				PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
 				
-				SpannableStringBuilder cuplikan = new SpannableStringBuilder(isi);
+				SpannableStringBuilder cuplikan = lagiPakeFilter? Search2Engine.hilite(isi, filterQueryProvider.getXkata(), warnaHilite): new SpannableStringBuilder(isi);
 				int warnaStabilo = U.dekodStabilo(tulisan);
 				if (warnaStabilo != -1) {
 					cuplikan.setSpan(new BackgroundColorSpan(U.alphaMixStabilo(warnaStabilo)), 0, cuplikan.length(), 0);
@@ -499,8 +507,15 @@ public class BukmakListActivity extends ListActivity {
 	};
 	
 	class BukmakFilterQueryProvider implements FilterQueryProvider {
+		private String[] xkata;
+		
+		public String[] getXkata() {
+			return xkata;
+		}
+		
 		@Override public Cursor runQuery(CharSequence constraint) {
 			if (constraint == null || constraint.length() == 0) {
+				this.xkata = null;
 				return S.getDb().listBukmak(filter_jenis, filter_labelId, sort_column, sort_ascending);
 			}
 			
@@ -508,6 +523,7 @@ public class BukmakListActivity extends ListActivity {
 			for (int i = 0; i < xkata.length; i++) {
 				xkata[i] = xkata[i].toLowerCase();
 			}
+			this.xkata = xkata;
 			
 			MatrixCursor res = new MatrixCursor(new String[] {BaseColumns._ID, Db.Bukmak2.ari, Db.Bukmak2.tulisan, Db.Bukmak2.waktuTambah, Db.Bukmak2.waktuUbah});
 			Cursor c = S.getDb().listBukmak(filter_jenis, filter_labelId, sort_column, sort_ascending);

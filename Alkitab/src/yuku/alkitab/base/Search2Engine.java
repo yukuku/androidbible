@@ -391,8 +391,12 @@ public class Search2Engine {
 		}
 	}
 
-	public static SpannableStringBuilder hilite(String s, String[] xkata, int warnaStabilo) {
+	public static SpannableStringBuilder hilite(String s, String[] xkata, int warnaHilite) {
 		SpannableStringBuilder res = new SpannableStringBuilder(s);
+		
+		if (xkata == null) {
+			return res;
+		}
 		
 		int nkata = xkata.length;
 		boolean[] xpakeTambah = new boolean[nkata];
@@ -442,7 +446,7 @@ public class Search2Engine {
 			
 			int kepos = minpos + xkata[minkata].length();
 			res.setSpan(new StyleSpan(Typeface.BOLD), minpos, kepos, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-			res.setSpan(new ForegroundColorSpan(warnaStabilo), minpos, kepos, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+			res.setSpan(new ForegroundColorSpan(warnaHilite), minpos, kepos, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 		}
 		
 		return res;

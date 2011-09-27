@@ -203,4 +203,13 @@ public class U {
 	public static int alphaMixStabilo(int warnaRgb) {
 		return 0xa0000000 | warnaRgb;
 	}
+
+	public static int getWarnaHiliteKontrasDengan(int warnaLatar) {
+		float keterangan = 0.30f * Color.red(warnaLatar) + 0.59f * Color.green(warnaLatar) + 0.11f * Color.blue(warnaLatar);
+		if (keterangan < 0.5f) {
+			return 0xff66ff66;
+		} else {
+			return 0xff990099;
+		}
+	}
 }

@@ -8,7 +8,7 @@ import android.widget.*;
 public class PengaturTampilan {
 	public static final String TAG = PengaturTampilan.class.getSimpleName();
 
-	public static void aturIsiDanTampilanCuplikanBukmak(TextView t, String alamat, String isi) {
+	public static void aturIsiDanTampilanCuplikanBukmak(TextView t, String alamat, CharSequence isi) {
 		SpannableStringBuilder sb = new SpannableStringBuilder(alamat);
 		sb.setSpan(new UnderlineSpan(), 0, alamat.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 		sb.append(' ').append(isi);
