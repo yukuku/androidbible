@@ -33,8 +33,8 @@ import yuku.alkitab.base.ac.EdisiActivity.MEdisiYes;
 import yuku.alkitab.base.ac.IsiActivity.FakeContextMenu.Item;
 import yuku.alkitab.base.config.*;
 import yuku.alkitab.base.dialog.*;
-import yuku.alkitab.base.dialog.JenisBukmakDialog.*;
-import yuku.alkitab.base.dialog.JenisCatatanDialog.*;
+import yuku.alkitab.base.dialog.JenisBukmakDialog.Listener;
+import yuku.alkitab.base.dialog.JenisCatatanDialog.RefreshCallback;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.Db.Bukmak2;
 import yuku.alkitab.base.storage.*;
@@ -896,8 +896,7 @@ public class IsiActivity extends Activity {
 		return true;
 	}
 	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menuTuju:
 			bTuju_click();
@@ -915,13 +914,10 @@ public class IsiActivity extends Activity {
 			startActivityForResult(new Intent(this, RenunganActivity.class), R.id.menuRenungan);
 			return true;
 		case R.id.menuTentang:
-			tampilDialogTentang();
+			bukaDialogTentang();
 			return true;
 		case R.id.menuPengaturan:
 			startActivityForResult(new Intent(this, PengaturanActivity.class), R.id.menuPengaturan);
-			return true;
-		case R.id.menuFidbek:
-			bukaDialogSaran();
 			return true;
 		case R.id.menuBantuan:
 			startActivity(new Intent(this, BantuanActivity.class));
@@ -934,20 +930,28 @@ public class IsiActivity extends Activity {
 		return false; 
 	}
 
-	private void tampilDialogTentang() {
+	private void bukaDialogTentang() {
+		Spanned text = Html.fromHtml(U.preprocessHtml(getString(R.string.teks_about)));
+		
 		TextView isi = new TextView(this);
-		isi.setText(Html.fromHtml(U.preprocessHtml(getString(R.string.teks_about, S.getVersionName(), S.getVersionCode()))));
+		isi.setText(text);
+		isi.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
 		isi.setTextColor(0xffffffff);
-		isi.setLinkTextColor(0xff8080ff);
+		isi.setLinkTextColor(0xffc0c0ff);
 		Linkify.addLinks(isi, Linkify.WEB_URLS);
 
 		int pad = (int) (getResources().getDisplayMetrics().density * 6.f);
 		isi.setPadding(pad, pad, pad, pad);
 		
 		new AlertDialog.Builder(this)
-		.setTitle(R.string.tentang_title)
+		.setTitle(getString(R.string.namaprog_versi_build, S.getVersionName(), S.getVersionCode()))
 		.setView(isi)
-		.setPositiveButton(R.string.ok, null)
+		.setPositiveButton(R.string.beri_saran_titik3, new DialogInterface.OnClickListener() {
+			@Override public void onClick(DialogInterface dialog, int which) {
+				bukaDialogSaran();
+			}
+		})
+		.setNegativeButton(R.string.tutup, null)
 		.show();
 	}
 
@@ -1222,7 +1226,7 @@ public class IsiActivity extends Activity {
 		final View dialogView = getLayoutInflater().inflate(R.layout.dialog_saran, null);
 		
 		AlertDialog dialog = new AlertDialog.Builder(this)
-		.setTitle(getString(R.string.namaprog_versi_build, S.getVersionName(), S.getVersionCode()))
+		.setTitle(R.string.beri_saran_title)
 		.setView(dialogView)
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
@@ -1243,7 +1247,7 @@ public class IsiActivity extends Activity {
 		.create();
 		
 		dialog.getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
-		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 		dialog.show();
 	}
 	

@@ -52,7 +52,8 @@
     <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Device screen will not turn off when reading the Bible text.</string>
     <string name="pref_biarkan_layar_menyala">Keep Screen On</string>
     <string name="menuBantuan">Help</string>
-    <string name="beri_saran_v">Suggest</string>
+    <string name="beri_saran_title">Suggest</string>
+    <string name="beri_saran_titik3">Suggest…</string>
     <string name="versi">Version</string>
     <string name="renungan">Devotion</string>
     <string name="cari_v">Search</string>
@@ -83,14 +84,16 @@
     <string name="mengunduh_namaumum_tgl_tgl">Downloading %1$s dated %2$s...</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Not yet available. Probably the requested date\'s material is not prepared yet, or there are some errors in recognizing the data source.\n\nIf you think necessary, please inform the software developers by going back to the main verse view, open the menu and choose Suggest.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Not yet available. Fetching from the Internet...\n\n(Ensure there is Internet connection to fetch the devotion materials.)</string>
-    <string name="teks_about">Bible for Android[br/]version %1$s (%2$s)[br/][br/]
-		[b]yuku[/b] 2009-2011[br/]  Website: [b]androidbible.blogspot.com[/b][br/] Mailing list: [b]goo.gl/v686r[/b][br/][br/]
+    <string name="teks_about">[b]yuku[/b] 2009-2011[br/]
+    	Website: androidbible.blogspot.com[br/] 
+    	Mailing list: goo.gl/v686r[br/]
+    	[br/]
 		[b]Contributors:[/b][br/]
 		- [b]Oluss Studio[/b] program icon[br/]
 		- [b]Jaya Satrio[/b] various icons[br/]
 		- [b]Yohanes Nugroho[/b] PDB reader[br/]
 		- etc.</string>
-    <string name="namaprog_versi_build">Bible v%1$s (%2$d)</string>
+    <string name="namaprog_versi_build">Bible %1$s (%2$d)</string>
     <string name="hari_sabtu">Sat</string>
     <string name="hari_jumat">Fri</string>
     <string name="hari_kamis">Thu</string>
@@ -134,7 +137,6 @@
     <string name="pilihKitab_s">Choose a Book</string>
     <string name="menuTentang">About</string>
     <string name="menuTuju">Go to</string>
-    <string name="tentang_title">About Bible</string>
     <string name="peringatanBeta_s">We are looking for your suggestions, complaints, and comments. Include your email address if needed. Thank you!</string>
     <string name="fidbekMakasih_s">Thank you for your feedback!</string>
     <string name="bantuan_judul">Help</string>
@@ -238,4 +240,5 @@
     <string name="nama_label_titikdua">Label name:</string>
     <string name="rename_label">Rename label</string>
     <string name="delete_label">Delete label</string>
+    <string name="tutup">Close</string>
 </resources>
