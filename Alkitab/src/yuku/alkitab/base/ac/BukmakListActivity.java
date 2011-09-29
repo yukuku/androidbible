@@ -53,7 +53,7 @@ public class BukmakListActivity extends ListActivity {
 	String sort_column;
 	boolean sort_ascending;
 	int sort_columnId;
-	boolean lagiPakeFilter;
+	String lagiPakeFilter;
 
     int filter_jenis;
     long filter_labelId;
@@ -140,7 +140,7 @@ public class BukmakListActivity extends ListActivity {
         }
         
         // kalau lagi pake filter teks (bukan filter jenis), nothingTextnya lain
-        if (lagiPakeFilter) {
+        if (lagiPakeFilter != null) {
         	nothingText = getString(R.string.bl_no_items_match_the_filter_above);
         	bClearFilter.setVisibility(View.VISIBLE);
         } else {
@@ -183,19 +183,23 @@ public class BukmakListActivity extends ListActivity {
 
 	protected void buangFilter() {
 		adapter.getFilter().filter(null);
-		lagiPakeFilter = false;
+		lagiPakeFilter = null;
 		setTitleAndNothingText();
 	}
 	
 	protected void pasangFilter(String carian) {
+		lagiPakeFilter = carian;
+		filterPakeLagiPakeFilter();
+		setTitleAndNothingText();
+	}
+
+	private void filterPakeLagiPakeFilter() {
 		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.bl_filtering_titiktiga), true, false);
-		adapter.getFilter().filter(carian, new FilterListener() {
+		adapter.getFilter().filter(lagiPakeFilter, new FilterListener() {
 			@Override public void onFilterComplete(int count) {
 				pd.dismiss();
 			}
 		});
-		lagiPakeFilter = true;
-		setTitleAndNothingText();
 	}
 
 	private void gantiCursor() {
@@ -309,7 +313,7 @@ public class BukmakListActivity extends ListActivity {
 
 			private void sort(String column, boolean ascending, int columnId) {
 				searchBar.setText("");
-				lagiPakeFilter = false;
+				lagiPakeFilter = null;
 				setTitleAndNothingText();
 				sort_column = column;
 				sort_ascending = ascending;
@@ -356,6 +360,7 @@ public class BukmakListActivity extends ListActivity {
 			// jenisnya apapun, cara hapusnya sama
 			S.getDb().hapusBukmakById(info.id);
 			adapter.getCursor().requery();
+			if (lagiPakeFilter != null) filterPakeLagiPakeFilter();
 			
 			return true;
 		} else if (itemId == R.id.menuUbahBukmak) {
@@ -364,6 +369,7 @@ public class BukmakListActivity extends ListActivity {
 				dialog.setListener(new Listener() {
 					@Override public void onOk() {
 						adapter.getCursor().requery();
+						if (lagiPakeFilter != null) filterPakeLagiPakeFilter();
 					}
 				});
 				dialog.bukaDialog();
@@ -375,6 +381,7 @@ public class BukmakListActivity extends ListActivity {
 				JenisCatatanDialog dialog = new JenisCatatanDialog(this, S.edisiAktif.getKitab(Ari.toKitab(ari)), Ari.toPasal(ari), Ari.toAyat(ari), new RefreshCallback() {
 					@Override public void udahan() {
 						adapter.getCursor().requery();
+						if (lagiPakeFilter != null) filterPakeLagiPakeFilter();
 					}
 				});
 				dialog.bukaDialog();
@@ -388,6 +395,7 @@ public class BukmakListActivity extends ListActivity {
 				new JenisStabiloDialog(this, ari, new JenisStabiloCallback() {
 					@Override public void onOk(int warnaRgb) {
 						adapter.getCursor().requery();
+						if (lagiPakeFilter != null) filterPakeLagiPakeFilter();
 					}
 				}, warnaRgb, alamat).bukaDialog();
 			}
@@ -467,9 +475,9 @@ public class BukmakListActivity extends ListActivity {
 			String tulisan = cursor.getString(col_tulisan);
 			
 			if (filter_jenis == Db.Bukmak2.jenis_bukmak) {
-				lTulisan.setText(lagiPakeFilter? Search2Engine.hilite(tulisan, filterQueryProvider.getXkata(), warnaHilite): tulisan);
+				lTulisan.setText(lagiPakeFilter != null? Search2Engine.hilite(tulisan, filterQueryProvider.getXkata(), warnaHilite): tulisan);
 				PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
-				CharSequence cuplikan = lagiPakeFilter? Search2Engine.hilite(isi, filterQueryProvider.getXkata(), warnaHilite): isi;
+				CharSequence cuplikan = lagiPakeFilter != null? Search2Engine.hilite(isi, filterQueryProvider.getXkata(), warnaHilite): isi;
 
 				PengaturTampilan.aturIsiDanTampilanCuplikanBukmak(lCuplikan, alamat, cuplikan);
 				
@@ -488,14 +496,14 @@ public class BukmakListActivity extends ListActivity {
 			} else if (filter_jenis == Db.Bukmak2.jenis_catatan) {
 				lTulisan.setText(alamat);
 				PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
-				lCuplikan.setText(lagiPakeFilter? Search2Engine.hilite(tulisan, filterQueryProvider.getXkata(), warnaHilite): tulisan);
+				lCuplikan.setText(lagiPakeFilter != null? Search2Engine.hilite(tulisan, filterQueryProvider.getXkata(), warnaHilite): tulisan);
 				PengaturTampilan.aturTampilanTeksIsi(lCuplikan);
 				
 			} else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
 				lTulisan.setText(alamat);
 				PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
 				
-				SpannableStringBuilder cuplikan = lagiPakeFilter? Search2Engine.hilite(isi, filterQueryProvider.getXkata(), warnaHilite): new SpannableStringBuilder(isi);
+				SpannableStringBuilder cuplikan = lagiPakeFilter != null? Search2Engine.hilite(isi, filterQueryProvider.getXkata(), warnaHilite): new SpannableStringBuilder(isi);
 				int warnaStabilo = U.dekodStabilo(tulisan);
 				if (warnaStabilo != -1) {
 					cuplikan.setSpan(new BackgroundColorSpan(U.alphaMixStabilo(warnaStabilo)), 0, cuplikan.length(), 0);
