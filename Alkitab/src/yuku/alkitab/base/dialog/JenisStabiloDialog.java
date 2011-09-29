@@ -17,8 +17,14 @@ public class JenisStabiloDialog {
 	
 	View dialogView;
 	
-	static final int[] xid = {R.id.c1, R.id.c2, R.id.c3, R.id.c4, R.id.c5, R.id.c6};
-	static final int[] xrgb = {0xff0000, 0xffff00, 0x00ff00, 0x00ffff, 0x0000ff, 0xff00ff};
+	static final int[] xid = {
+		R.id.c01, R.id.c02, R.id.c03, R.id.c04, R.id.c05, R.id.c06,
+		R.id.c07, R.id.c08, R.id.c09, R.id.c10, R.id.c11, R.id.c12,
+	};
+	static final int[] xrgb = {
+		0xff0000, 0xff8000, 0xffff00, 0x80ff00, 0x00ff00, 0x00ff80, 
+		0x00ffff, 0x0080ff, 0x0000ff, 0x8000ff, 0xff00ff, 0xff0080,
+	};
 	
 	final int ariKp;
 	final IntArrayList ayatTerpilih;
@@ -60,11 +66,13 @@ public class JenisStabiloDialog {
 		.setNegativeButton(R.string.cancel, null)
 		.create();
 		
+		dialogView.setBackgroundColor(S.penerapan.warnaLatar);
+		
 		if (judul != null) {
 			this.alert.setTitle(judul);
 		}
 		
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < xid.length; i++) {
 			CheckBox cb = U.getView(dialogView, xid[i]);
 			if (warnaRgb == xrgb[i]) {
 				cb.setChecked(true);
@@ -72,7 +80,7 @@ public class JenisStabiloDialog {
 			cb.setOnClickListener(cb_click);
 		}
 		
-		CheckBox cb = U.getView(dialogView, R.id.c0);
+		CheckBox cb = U.getView(dialogView, R.id.c00);
 		if (warnaRgb == -1) {
 			cb.setChecked(true);
 		}
@@ -82,17 +90,17 @@ public class JenisStabiloDialog {
 	private OnClickListener cb_click = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			for (int i = 0; i < 6; i++) {
+			for (int i = 0; i < xid.length; i++) {
 				if (v.getId() == xid[i]) {
 					select(xrgb[i]);
 				} else {
 					U.<CheckBox>getView(dialogView, xid[i]).setChecked(false);
 				}
 			}
-			if (v.getId() == R.id.c0) {
+			if (v.getId() == R.id.c00) {
 				select(-1);
 			} else {
-				U.<CheckBox>getView(dialogView, R.id.c0).setChecked(false);
+				U.<CheckBox>getView(dialogView, R.id.c00).setChecked(false);
 			}
 		}
 
