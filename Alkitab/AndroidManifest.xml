@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="yuku.alkitab" android:installLocation="auto" android:versionCode="72" android:versionName="2.0.0">
 	<application android:name="yuku.alkitab.base.App" android:icon="@drawable/icon" android:label="@string/app_name">
-		<activity android:name="yuku.alkitab.base.ac.IsiActivity" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" android:theme="@style/Theme.AlkitabIsi" android:exported="true" />
-		<activity-alias android:name="yuku.alkitab.base.IsiActivity" android:targetActivity="yuku.alkitab.base.ac.IsiActivity">
+		<activity android:name="yuku.alkitab.base.IsiActivity" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" android:theme="@style/Theme.AlkitabIsi">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
-		</activity-alias>
+		</activity>
 
 		<activity android:name="yuku.alkitab.base.ac.MenujuActivity" android:label="@string/tuju_v" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name="yuku.alkitab.base.ac.PengaturanActivity" android:label="@string/pengaturan_alkitab" android:configChanges="mcc|mnc|locale|keyboard|keyboardHidden|orientation" />

@@ -1,4 +1,4 @@
-package yuku.alkitab.base.ac;
+package yuku.alkitab.base;
 
 import android.app.*;
 import android.content.*;
@@ -24,13 +24,13 @@ import android.widget.TextView.BufferType;
 import java.util.*;
 
 import yuku.alkitab.*;
-import yuku.alkitab.base.*;
+import yuku.alkitab.base.IsiActivity.FakeContextMenu.Item;
 import yuku.alkitab.base.Search2Engine.Query;
+import yuku.alkitab.base.ac.*;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisi;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiInternal;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiPreset;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiYes;
-import yuku.alkitab.base.ac.IsiActivity.FakeContextMenu.Item;
 import yuku.alkitab.base.config.*;
 import yuku.alkitab.base.dialog.*;
 import yuku.alkitab.base.dialog.JenisBukmakDialog.Listener;
