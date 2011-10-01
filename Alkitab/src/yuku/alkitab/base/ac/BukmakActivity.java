@@ -40,6 +40,7 @@ public class BukmakActivity extends ListActivity {
 		S.bacaPengaturan();
 		
 		setContentView(R.layout.activity_bukmak);
+		setTitle(R.string.judul_bukmak_activity);
 		
 		adapter = new BukmakFilterAdapter();
 		adapter.reload();
