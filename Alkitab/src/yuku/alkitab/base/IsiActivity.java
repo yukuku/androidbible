@@ -31,6 +31,7 @@ import yuku.alkitab.base.ac.EdisiActivity.MEdisi;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiInternal;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiPreset;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiYes;
+import yuku.alkitab.base.compat.*;
 import yuku.alkitab.base.config.*;
 import yuku.alkitab.base.dialog.*;
 import yuku.alkitab.base.dialog.JenisBukmakDialog.Listener;
@@ -615,7 +616,7 @@ public class IsiActivity extends Activity {
 	private void skrolSupayaAyatKeliatan(int ayatUtama_1) {
 		int position = ayatAdapter_.getPositionAwalPerikopDariAyat(ayatUtama_1);
 		if (Build.VERSION.SDK_INT >= 8) {
-			lsIsi.smoothScrollToPosition(position);
+			Api8.ListView_smoothScrollToPosition(lsIsi, position);
 		} else {
 			lsIsi.setSelectionFromTop(position, lsIsi.getVerticalFadingEdgeLength());
 		}

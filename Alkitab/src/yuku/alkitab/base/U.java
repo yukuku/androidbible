@@ -9,6 +9,7 @@ import android.view.*;
 import java.io.*;
 import java.util.*;
 
+import yuku.alkitab.base.compat.*;
 import yuku.alkitab.base.model.*;
 
 public class U {
@@ -148,12 +149,12 @@ public class U {
 	}
 	
 	public static boolean tabletkah() {
-		return Build.VERSION.SDK_INT /* ini diambil waktu runtime */ >= Build.VERSION_CODES.HONEYCOMB /* ini diinline compiler */;
+		return Build.VERSION.SDK_INT /* ini diambil waktu runtime */ >= 11 /* HONEYCOMB */;
 	}
 	
 	public static void nyalakanTitleBarHanyaKalauTablet(Activity activity) {
 		if (tabletkah()) {
-			activity.setTheme(android.R.style.Theme_Holo);
+			activity.setTheme(Api11.getTheme_Holo());
 		}
 	}
 
