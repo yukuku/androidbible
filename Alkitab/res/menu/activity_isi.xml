@@ -31,10 +31,6 @@
 		android:title="@string/menuDonasi"
 		android:icon="@drawable/ic_menu_donasi" />
 	<item
-		android:id="@+id/menuFidbek"
-		android:title="@string/beri_saran_v"
-		android:icon="@android:drawable/ic_menu_send" />
-	<item
 		android:id="@+id/menuBantuan"
 		android:title="@string/menuBantuan"
 		android:icon="@android:drawable/ic_menu_help" />

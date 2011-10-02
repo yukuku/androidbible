@@ -3,9 +3,6 @@
 	<string name="pref_nyalakanTerusLayar_key">nyalakanTerusLayar</string>
 	<bool name="pref_nyalakanTerusLayar_default">true</bool>
 	
-	<string name="pref_matikanTahanAyat_key">matikanTahanAyat</string>
-	<bool name="pref_matikanTahanAyat_default">false</bool>
-	
 	<string name="pref_tanpaNavigasi_key">tanpaNavigasi</string>
 	<bool name="pref_tanpaNavigasi_default">false</bool>
 	

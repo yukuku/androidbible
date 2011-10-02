@@ -1,6 +1,7 @@
 package yuku.alkitab.base;
 
-import android.content.*;
+import android.content.pm.*;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.*;
 import android.graphics.*;
 import android.os.*;
@@ -9,19 +10,16 @@ import android.util.*;
 import java.io.*;
 import java.util.*;
 
-import yuku.alkitab.R;
+import yuku.alkitab.*;
 import yuku.alkitab.base.config.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.renungan.*;
 import yuku.alkitab.base.storage.*;
-import yuku.kirimfidbek.*;
+import yuku.andoutil.*;
 
 public class S {
 	static final String TAG = S.class.getSimpleName();
 
-	private static Context appContext;
-	
-	
 	/**
 	 * penerapan dari pengaturan
 	 */
@@ -43,6 +41,7 @@ public class S {
 	public static class penampungan {
 		public static String renungan_nama = null;
 		public static Date renungan_tanggalan = null;
+		public static int renungan_skrol = 0;
 	}
 	
 	//# 22nya harus siap di siapinKitab
@@ -50,7 +49,6 @@ public class S {
 	public static Kitab kitabAktif;
 	public static String edisiId;
 
-	public static PengirimFidbek pengirimFidbek;
 	public static TukangDonlot tukangDonlot;
 	
 	static {
@@ -67,8 +65,8 @@ public class S {
 	private static Edisi edisiInternal;
 	public static synchronized Edisi getEdisiInternal() {
 		if (edisiInternal == null) {
-			BuildConfig c = BuildConfig.get(appContext);
-			edisiInternal = new Edisi(new InternalPembaca(appContext, c.internalPrefix, c.internalJudul, new PembacaDecoder.Ascii()));
+			BuildConfig c = BuildConfig.get(App.context);
+			edisiInternal = new Edisi(new InternalPembaca(App.context, c.internalPrefix, c.internalJudul, new PembacaDecoder.Ascii()));
 		}
 		return edisiInternal;
 	}
@@ -80,7 +78,7 @@ public class S {
 		kitabAktif = edisiAktif.getKitabPertama(); // nanti diset sama luar waktu init 
 	}
 	
-	public static void bacaPengaturan(Context context) {
+	public static void bacaPengaturan() {
 		Log.d(TAG, "bacaPengaturan mulai"); //$NON-NLS-1$
 
 		//# atur ukuran huruf isi berdasarkan pengaturan
@@ -140,6 +138,10 @@ public class S {
 		return xayat[ayat_0];
 	}
 	
+	public static synchronized String muatSatuAyat(Edisi edisi, int ari) {
+		return muatSatuAyat(edisi, edisi.getKitab(Ari.toKitab(ari)), Ari.toPasal(ari), Ari.toAyat(ari));
+	}
+
 	public static synchronized String[] muatTeks(Edisi edisi, Kitab kitab, int pasal_1) {
 		if (kitab == null) {
 			return teksTakTersediaArray;
@@ -170,23 +172,6 @@ public class S {
 		return edisi.pembaca.muatTeks(kitab, pasal_1, janganPisahAyat, hurufKecil);
 	}
 
-	public static synchronized void siapinPengirimFidbek(final Context context) {
-		if (pengirimFidbek == null) {
-			pengirimFidbek = new PengirimFidbek(context, getPreferences(context));
-			pengirimFidbek.activateDefaultUncaughtExceptionHandler();
-			pengirimFidbek.setOnSuccessListener(new PengirimFidbek.OnSuccessListener() {
-				@Override
-				public void onSuccess(final byte[] response) {
-					Log.e(TAG, "KirimFidbek respon: " + new String(response, 0, response.length)); //$NON-NLS-1$
-				}
-			});
-		}
-	}
-
-	public static SharedPreferences getPreferences(Context context) {
-		return context.getSharedPreferences(context.getPackageName(), 0);
-	}
-
 	public static String alamat(Edisi edisi, int ari) {
 		int kitabPos = Ari.toKitab(ari);
 		int pasal_1 = Ari.toPasal(ari);
@@ -215,6 +200,45 @@ public class S {
 		return (kitab == null? "[?]": kitab.judul) + " " + pasal_1 + ":" + ayat_1;  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
+	public static CharSequence alamat(Kitab kitab, int pasal_1, IntArrayList xayat_1) {
+		StringBuilder sb = new StringBuilder(kitab == null? "[?]": kitab.judul); //$NON-NLS-1$
+		sb.append(' ').append(pasal_1);
+		int origLen = sb.length();
+		int lastAyat_1 = 0;
+		int awalAyat_1 = 0;
+		
+		for (int i = 0; i < xayat_1.size(); i++) {
+			int ayat_1 = xayat_1.get(i);
+			
+			if (lastAyat_1 == 0) {
+				// blum ada, diam dulu aja
+			} else if (lastAyat_1 == ayat_1 - 1) {
+				// masih terusan, simpen awalnya
+				if (awalAyat_1 == 0) awalAyat_1 = lastAyat_1;
+			} else {
+				// abis loncat
+				if (awalAyat_1 != 0) {
+					sb.append(origLen == sb.length()? ":": ", ").append(awalAyat_1).append('-').append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
+					awalAyat_1 = 0;
+				} else {
+					sb.append(origLen == sb.length()? ":": ", ").append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			}
+			
+			lastAyat_1 = xayat_1.get(i);
+		}
+		
+		// penghabisan
+		if (awalAyat_1 != 0) {
+			sb.append(origLen == sb.length()? ":": ", ").append(awalAyat_1).append('-').append(lastAyat_1);  //$NON-NLS-1$//$NON-NLS-2$
+			awalAyat_1 = 0; // ga perlu, tapi biar konsisten aja dengan atas
+		} else {
+			sb.append(origLen == sb.length()? ":": ", ").append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
+		return sb;
+	}
+	
 	/**
 	 * @param handler Jangan null kalo mau dicek ulang 200ms kemudian. Harus null kalo jangan ulang lagi. 20110620 Uda ga dipake lagi.
 	 */
@@ -228,43 +252,16 @@ public class S {
 			locale = new Locale(bahasa);
 		}
 		
-		AlkitabApplication.updateConfigurationWithLocale(appContext.getResources().getConfiguration(), locale);
-		
-//		Configuration config1 = context.getResources().getConfiguration();
-//		if (locale.getLanguage() != null && locale.getLanguage().equals(config1.locale.getLanguage())) {
-//			// ga ada perubahan, biarkan.
-//		} else {
-//			Configuration config2 = new Configuration();
-//			config2.locale = locale;
-//			if (handler != null) {
-//				Log.d(TAG, "(Handler ga null) Update locale dari " + config1.locale.toString() + " ke " + config2.locale.toString()); //$NON-NLS-1$ //$NON-NLS-2$
-//			} else {
-//				Log.d(TAG, "(Handler null) Update locale dari " + config1.locale.toString() + " ke " + config2.locale.toString());  //$NON-NLS-1$//$NON-NLS-2$
-//			}
-//			context.getResources().updateConfiguration(config2, null);
-//		}
-//		
-//		if (handler != null) {
-//			handler.postDelayed(new Runnable() {
-//				@Override
-//				public void run() {
-//					if (cobaLagi == 0) {
-//						terapkanPengaturanBahasa(context, null, 0);
-//					} else {
-//						terapkanPengaturanBahasa(context, handler, cobaLagi - 1);
-//					}
-//				}
-//			}, 200);
-//		}
+		App.updateConfigurationWithLocale(App.context.getResources().getConfiguration(), locale);
 	}
 
 	private static float[] precomputedValues = null;
 	private static void precomputeValues() {
 		if (precomputedValues != null) return;
 		precomputedValues = new float[] {
-			appContext.getResources().getDimension(R.dimen.indenParagraf), // [0]
-			appContext.getResources().getDimension(R.dimen.menjorokSatu), // [1]
-			appContext.getResources().getDimension(R.dimen.menjorokDua), // [2]
+			App.context.getResources().getDimension(R.dimen.indenParagraf), // [0]
+			App.context.getResources().getDimension(R.dimen.menjorokSatu), // [1]
+			App.context.getResources().getDimension(R.dimen.menjorokDua), // [2]
 		};
 	}
 	
@@ -283,17 +280,9 @@ public class S {
 		return (int) (precomputedValues[2] * Preferences.getFloat(R.string.pref_ukuranHuruf2_key, 17.f) / 17.f);
 	}
 	
-	public static void setAppContext(Context appContext) {
-		S.appContext = appContext;
-	}
-
-	public static Context getAppContext() {
-		return appContext;
-	}
-
 	public static InputStream openRaw(String name) {
-		Resources resources = appContext.getResources();
-		int resId = resources.getIdentifier(name, "raw", appContext.getPackageName()); //$NON-NLS-1$
+		Resources resources = App.context.getResources();
+		int resId = resources.getIdentifier(name, "raw", App.context.getPackageName()); //$NON-NLS-1$
 		if (resId == 0) {
 			return null;
 		}
@@ -303,25 +292,50 @@ public class S {
 	private static InternalDb db;
 	public static synchronized InternalDb getDb() {
 		if (db == null) {
-			db = new InternalDb(new InternalDbHelper(appContext));
+			db = new InternalDb(new InternalDbHelper(App.context));
 		}
 		
 		return db;
 	}
 	
+	/**
+	 * Jika ayat_1 adalah 0, ayat akan diabaikan.
+	 */
 	public static String bikinUrlAyat(Kitab kitab, int pasal_1, int ayat_1) {
-		BuildConfig c = BuildConfig.get(appContext);
+		BuildConfig c = BuildConfig.get(App.context);
 		if (kitab.pos >= c.url_namaKitabStandar.length) {
 			return null;
 		}
 		String calonKitab = c.url_namaKitabStandar[kitab.pos], calonPasal = String.valueOf(pasal_1), calonAyat = String.valueOf(ayat_1);
-		for (String format: c.url_format.split(" ")) {
-			if ("slash1".equals(format)) calonPasal = "/" + calonPasal;
-			if ("slash2".equals(format)) calonAyat = "/" + calonAyat;
-			if ("dot1".equals(format)) calonPasal = "." + calonPasal;
-			if ("dot2".equals(format)) calonAyat = "." + calonAyat;
-			if ("nospace0".equals(format)) calonKitab = calonKitab.replaceAll("\\s+", "");
+		for (String format: c.url_format.split(" ")) { //$NON-NLS-1$
+			if ("slash1".equals(format)) calonPasal = "/" + calonPasal; //$NON-NLS-1$ //$NON-NLS-2$
+			if ("slash2".equals(format)) calonAyat = "/" + calonAyat; //$NON-NLS-1$ //$NON-NLS-2$
+			if ("dot1".equals(format)) calonPasal = "." + calonPasal; //$NON-NLS-1$ //$NON-NLS-2$
+			if ("dot2".equals(format)) calonAyat = "." + calonAyat; //$NON-NLS-1$ //$NON-NLS-2$
+			if ("nospace0".equals(format)) calonKitab = calonKitab.replaceAll("\\s+", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
-		return c.url_prefix + calonKitab + calonPasal + calonAyat;
+		return c.url_prefix + calonKitab + calonPasal + (ayat_1 == 0? "": calonAyat); //$NON-NLS-1$
+	}
+	
+	private static PackageInfo packageInfo;
+	
+	private static void initPackageInfo() {
+		if (packageInfo == null) {
+			try {
+				packageInfo = App.context.getPackageManager().getPackageInfo(App.context.getPackageName(), 0);
+			} catch (NameNotFoundException e) {
+				Log.e(TAG, "PackageInfo ngaco", e); //$NON-NLS-1$
+			}
+		}
+	}
+	
+	public static String getVersionName() {
+		initPackageInfo();
+		return packageInfo.versionName;
+	}
+	
+	public static int getVersionCode() {
+		initPackageInfo();
+		return packageInfo.versionCode;
 	}
 }

@@ -2,6 +2,7 @@ package yuku.alkitab.base;
 
 import android.content.*;
 import android.graphics.*;
+import android.os.*;
 import android.text.*;
 import android.text.style.*;
 import android.util.*;
@@ -15,7 +16,7 @@ import yuku.andoutil.*;
 public class Search2Engine {
 	private static final String TAG = Search2Engine.class.getSimpleName();
 
-	static String[] tokenkan(String carian) {
+	public static String[] tokenkan(String carian) {
 		// pisah jadi kata-kata
 		String bersih = carian.trim().toLowerCase().replaceAll("\\s+", " "); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -72,8 +73,37 @@ public class Search2Engine {
 		}
 		return xkata2.toArray(new String[xkata2.size()]);
 	}
+	
+	public static class Query implements Parcelable {
+		public String carian;
+		public SparseBooleanArray xkitabPos;
+		
+		@Override public int describeContents() {
+			return 0;
+		}
+		
+		@Override public void writeToParcel(Parcel dest, int flags) {
+			dest.writeString(carian);
+			dest.writeSparseBooleanArray(xkitabPos);
+		}
 
-	static IntArrayList cari(Context context, String[] xkata, boolean filter_lama, boolean filter_baru) {
+		public static final Parcelable.Creator<Query> CREATOR = new Parcelable.Creator<Query>() {
+			@Override public Query createFromParcel(Parcel in) {
+				Query res = new Query();
+				res.carian = in.readString();
+				res.xkitabPos = in.readSparseBooleanArray();
+				return res;
+			}
+
+			@Override public Query[] newArray(int size) {
+				return new Query[size];
+			}
+		};
+	}
+
+	public static IntArrayList cari(Context context, Query query) {
+		String[] xkata = tokenkan(query.carian);
+		
 		// urutkan berdasarkan panjang, lalu abjad
 		Arrays.sort(xkata, new Comparator<String>() {
 			@Override
@@ -121,7 +151,7 @@ public class Search2Engine {
 	
 				{
 					long ms = System.currentTimeMillis();
-					hasil = cariDalam(context, kata, lama, 10000, filter_lama, filter_baru);
+					hasil = cariDalam(context, kata, lama, query.xkitabPos);
 					Log.d(TAG, "cari kata '" + kata + "' pake waktu: " + (System.currentTimeMillis() - ms) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 	
@@ -201,7 +231,7 @@ public class Search2Engine {
 		}
 	}
 
-	static IntArrayList cariDalam(Context context, String kata, IntArrayList sumber, int max, boolean filter_lama, boolean filter_baru) {
+	static IntArrayList cariDalam(Context context, String kata, IntArrayList sumber, SparseBooleanArray xkitabPos) {
 		IntArrayList res = new IntArrayList();
 		boolean pakeTambah = false;
 		
@@ -212,18 +242,9 @@ public class Search2Engine {
 	
 		if (sumber == null) {
 			for (Kitab k: S.edisiAktif.getConsecutiveXkitab()) {
-				//# filter dulu
-				if (!filter_lama) {
-					if (k.pos >= 0 && k.pos <= 38) {
-						continue;
-					}
+				if (xkitabPos.get(k.pos, false) == false) {
+					continue; // ga termasuk dalam kitab yang dipilih
 				}
-				if (!filter_baru) {
-					if (k.pos >= 39 && k.pos <= 65) {
-						continue;
-					}
-				}
-				// FIXME kitab lain
 				
 				int npasal = k.npasal;
 				
@@ -294,7 +315,7 @@ public class Search2Engine {
 				}
 			} else {
 				if (a != aterakhir) {
-					res.add(base + a + 1); // +1 supaya jadi ayat[1base]
+					res.add(base + a + 1); // +1 supaya jadi ayat_1
 					aterakhir = a;
 				}
 				if (pakeTambah) {
@@ -309,6 +330,31 @@ public class Search2Engine {
 		}
 	}
 	
+	/**
+	 * case sensitive! pastikan s dan xkata sudah dilowercase sebelum masuk sini.
+	 */
+	public static boolean memenuhiCarian(String s, String[] xkata) {
+		for (String kata: xkata) {
+			boolean pakeTambah = false;
+			
+			if (adaTambah(kata)) {
+				pakeTambah = true;
+				kata = tanpaTambah(kata);
+			}
+			
+			int posKata;
+			if (pakeTambah) {
+				posKata = indexOfWholeWord(s, kata, 0);
+			} else {
+				posKata = s.indexOf(kata);
+			}
+			if (posKata == -1) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	private static int indexOfWholeWord(String sepasal, String kata, int start) {
 		int len = sepasal.length();
 		
@@ -345,35 +391,46 @@ public class Search2Engine {
 		}
 	}
 
-	static SpannableStringBuilder hilite(String ayat, String[] xkata, int warnaStabilo) {
-		SpannableStringBuilder res = new SpannableStringBuilder(ayat);
-		{
-			String[] xkata2 = new String[xkata.length];
-			System.arraycopy(xkata, 0, xkata2, 0, xkata.length);
-			for (int i = 0; i < xkata.length; i++) {
+	public static SpannableStringBuilder hilite(String s, String[] xkata, int warnaHilite) {
+		SpannableStringBuilder res = new SpannableStringBuilder(s);
+		
+		if (xkata == null) {
+			return res;
+		}
+		
+		int nkata = xkata.length;
+		boolean[] xpakeTambah = new boolean[nkata];
+		{ // point to copy
+			String[] xkata2 = new String[nkata];
+			System.arraycopy(xkata, 0, xkata2, 0, nkata);
+			for (int i = 0; i < nkata; i++) {
 				if (adaTambah(xkata2[i])) {
 					xkata2[i] = tanpaTambah(xkata2[i]);
+					xpakeTambah[i] = true;
 				}
 			}
 			xkata = xkata2;
 		}
 		
-		ayat = ayat.toLowerCase();
+		s = s.toLowerCase();
 		
 		int pos = 0;
-		int nkata = xkata.length;
 		int[] coba = new int[nkata];
 		
 		while (true) {
 			for (int i = 0; i < nkata; i++) {
-				coba[i] = ayat.indexOf(xkata[i], pos);
+				if (xpakeTambah[i]) {
+					coba[i] = indexOfWholeWord(s, xkata[i], pos);
+				} else {
+					coba[i] = s.indexOf(xkata[i], pos);
+				}
 			}
 			
 			int minpos = Integer.MAX_VALUE;
 			int minkata = -1;
 			
 			for (int i = 0; i < nkata; i++) {
-				if (coba[i] >= 0) {
+				if (coba[i] >= 0) { // bukan -1 yang berarti ga ketemu
 					if (coba[i] < minpos) {
 						minpos = coba[i];
 						minkata = i;
@@ -389,7 +446,7 @@ public class Search2Engine {
 			
 			int kepos = minpos + xkata[minkata].length();
 			res.setSpan(new StyleSpan(Typeface.BOLD), minpos, kepos, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-			res.setSpan(new ForegroundColorSpan(warnaStabilo), minpos, kepos, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+			res.setSpan(new ForegroundColorSpan(warnaHilite), minpos, kepos, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 		}
 		
 		return res;

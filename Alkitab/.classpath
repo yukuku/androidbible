@@ -11,5 +11,7 @@
 	<classpathentry kind="src" path="AlkitabYes_src"/>
 	<classpathentry kind="src" path="BintexWriter_src"/>
 	<classpathentry kind="src" path="AndroidCrypto_src"/>
+	<classpathentry kind="src" path="FlowLayout_src"/>
+	<classpathentry kind="src" path="SdkSearchBar_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

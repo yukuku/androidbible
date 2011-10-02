@@ -61,86 +61,85 @@ kbd {
 	<li><a href="#cari">Search</a></li>
 	<li><a href="#renungan">Devotion (Indonesian version only)</a></li>
 	<li><a href="#versi">Version</a></li>
-	<li><a href="#saran">Suggest</a></li>
 	<li><a href="#pengaturan">Settings</a></li>
-	<li><a href="#menukontekstual">Context Menu</a></li>
+	<li><a href="#menuayat">Verse Menu</a></li>
 	</ul>
 </div>
-<p>When you run this program, you will immediately see the look of the biblical text. Press the <strong>button</strong> below which shows the verse address (example: Genesis 1) to go to other parts of the Bible. Press the left button (or slide the trackball to the left) and right button to move to the chapters before and after.</p>
-<p>Note: Some of the verses, especially in the book of Psalms, has numberings that differ between the Indonesian translation (or other languages) and other translations (e.g. KJV). The chapter and verse numbers of the specific translation are written in parentheses. For example, in Psalm 84 (Indonesian):  <strong>1</strong> Untuk pemimpin biduan. Menurut... <strong style="color: #090">(84-2)</strong> Betapa disenangi tempat kediaman-Mu, ... <strong>2</strong> <span style="color: #090"><strong>(84-3)</strong></span> Jiwaku hancur karena ... <strong>3</strong> <strong><span style="color: #090">(84-4)</span></strong> Bahkan burung pipit .... The ones colored green in this example are the chapter and verse numbering of the original Indonesian translation.</p>
+<p>When you run this application, you will immediately see the Bible text. Press the <strong>button</strong> below that is showing the verse address, like <kbd>Genesis 1</kbd>, to go to other parts of the Bible. Press the left and right button to move to the previous and next chapters.</p>
+<p>Note: Some of the verses, especially in the book of Psalms, has numberings that differ between different translations and other translations (e.g. KJV). The chapter and verse numbers of the specific translation are written in parentheses.</p>
 
 <h2><a name="berpindah"></a>Moving to Other Parts of the Bible</h2>
-<p>To move to another part of the Bible, you can press the <strong>verse address button</strong> (example: <kbd>Genesis 1</kbd>) or press the MENU button to open the menu, then select <strong><a href="#tuju">Go to</a></strong> or <strong><a href="#loncat">Jump to</a></strong> (depending on the <a href="#pengaturanloncatdenganmudah">setting</a>). </p>
+<p>To move to another part of the Bible, you can press the <strong>verse address button</strong>, like <kbd>Genesis 1</kbd> or press the MENU button to open the menu, then select <strong><a href="#tuju">Go to</a></strong> or <strong><a href="#loncat">Jump to</a></strong> (depending on the <a href="#pengaturanloncatdenganmudah">setting</a>). </p>
 <p>If <a href="#pengaturantanpatombolnavigasi">No Navigation Buttons</a> setting is enabled, you can press the gray verse address bar above the text instead of the <strong>verse address button</strong>.</p>
 <p>Hold (long-press) the <strong>verse address button</strong> to open the list of recent verses.</p>
 
 <h3><a name="tuju"></a>Go to</h3>
-<p>With the <strong>Go to </strong>menu (or press the <strong>verse address button</strong>), you can choose the book, chapter, and verse you want to open. To select a book, press the book name, then you can choose one from the list of books. The books are ordered according to the original ordering (Old Testament then New Testament) or alphabetically, depending on the <a href="#pengaturankitabmenurutabjad">setting</a>.</p>
+<p>With the <strong>Go to</strong> menu, you can choose the book, chapter, and verse to open. To select a book, press the book name, then choose one from the list of books. The books are ordered according to the original ordering (Old Testament then New Testament then other books) or alphabetically, depending on the <a href="#pengaturankitabmenurutabjad">setting</a>.</p>
 
 <h3><a name="loncat"></a>Jump to</h3>
-<p>With the <strong>Jump to</strong> menu (or press the<strong> verse address button</strong>, if it has been <a href="#pengaturanloncatdenganmudah">configured</a>), you can directly type the <strong>verse address</strong>. How to write the <strong>verse address</strong> is: Write the first 3 or so characters of the book name, then the chapter number, then a space or a colon, then the verse number. For example <span class="kod">Luk 3:11</span> or <span class="kod">1Pe 2:5</span> (1 Peter 2:5).</p>
+<p>With the <strong>Jump to</strong> menu, you can directly type the <strong>verse address</strong>. How to write the <strong>verse address</strong> is: Write the first 3 or so characters of the book name, then the chapter number, then a space or a colon, then the verse number. For example <span class="kod">Luk 3:11</span> or <span class="kod">1Pe 2:5</span> (1 Peter 2:5).</p>
 <p>However, <em>for your convenience</em>, you can also write it in the following ways:</p>
 <ul>
 	<li>Type just the <strong>chapter number</strong> to go to the chapter on the same book. Example: <span class="kod">8</span></li>
-	<li>Type the  <strong>chapter number</strong> followed by the <strong>verse number</strong>. Example: <span class="kod">3 16</span>, <span class="kod">12:4</span></li>
-	<li>Type the <strong>book name</strong> sufficiently. Example: <span class="kod">songs</span> (Song of Solomon), <span class="kod">1k</span> (1 Kings), <span class="kod">ps</span> (Psalms)</li>
-	<li>Concatenate the <strong>book name</strong> and the  <strong>chapter number</strong>: <span class="kod">Joh3</span>, <span class="kod">Gen48</span></li>
+	<li>Type the <strong>chapter number</strong> followed by the <strong>verse number</strong>. Example: <span class="kod">3 16</span>, <span class="kod">12:4</span></li>
+	<li>Type the <strong>book name</strong> <em>just enough</em>. Example: <span class="kod">songs</span> (Song of Solomon), <span class="kod">1k</span> (1 Kings), <span class="kod">ps</span> (Psalms)</li>
+	<li>Concatenate the <strong>book name</strong> and the <strong>chapter number</strong>: <span class="kod">Joh3</span>, <span class="kod">Gen48</span></li>
 </ul>
 
 <h2><a name="pembatas"></a>Bookmarks</h2>
-<p>Hold  (long press), any one verse to open the a menu (unless disabled in <a href="#pengaturanmatikantahanayat">settings</a>). On the menu there are options to <strong>Add Bookmark</strong>. With bookmarks, you can mark the necessary verses. You can also give a <strong>title</strong> to each bookmark. Go to the menu and select <strong>Bookmarks</strong> to see the list of bookmarks. Press one of the bookmarks to open it, or hold to change the <strong>title</strong> or to delete it. </p>
-<p>By pressing the menu, you can also do <strong>Export to SD Card</strong> or <strong>Import from SD Card</strong>. Use this menu to ensure that your bookmaks and your annotations are stored properly in SD Card as a backup in case there is a problem with your phone.</p>
+<p>Tap a verse and tap on the button that appears to open the a menu. On the menu there are options to <strong>Add bookmark</strong>. With bookmarks, you can mark verses that you think are important. You can also give a title and labels to each bookmark. Labels can be made by choosing <strong>Create label</strong>. Press MENU and select <strong>Bookmarks</strong> to see the list of bookmarks. Press one of the bookmarks to open it, or hold to change the title, labels, or to delete it. </p>
+<p>By pressing MENU, you can also <strong>Export to SD Card</strong> or <strong>Import from SD Card</strong>. Use this to ensure that your bookmaks, notes, and highlights are stored properly in SD Card as a backup in case there is a problem with your phone.</p>
 
 <h2><a name="cari"></a>Search</h2>
-<p>You can find verses that contain certain words. Press the <strong>search button</strong> (with the magnifying glass symbol) on your mobile phone if available, or open the menu and select <strong>Search</strong>. </p>
-<p>When the search screen opens, type the words that want to look for and click the button. The verses that contains <em>all</em> the words you entered, will be displayed. For example, if you type  <span class="kod">god son</span>, then even Genesis 4:25 would be displayed because it contains verses the word &quot;god&quot; and &quot;son&quot;, although not contiguous. If you type  <span class="kod">just</span>, you would find too &quot;justice&quot;, &quot;justify&quot;, etc. </p>
+<p>You can find verses that contain certain words. Press the <strong>search button</strong> (with the magnifying glass symbol) on your mobile phone if available, or press MENU and select <strong>Search</strong>. </p>
+<p>When the search screen opens, type the words that want to look for and click the button. The verses that contain <em>all</em> the words you entered will be displayed. For example, if you type <span class="kod">god son</span>, then even Genesis 4:25 would be displayed because it contains verses the word &quot;god&quot; and &quot;son&quot;, although not contiguous. If you type <span class="kod">just</span>, you will also find &quot;justice&quot;, &quot;justify&quot;, etc. </p>
 <ul>
 	<li>Use quotes to search for exact phrases. For example, <span class="kod">&quot;our father&quot;</span>.</li>
-	<li>Use plus sign (+) exactly before a word to search a whole word. For example, <span class="kod">+eve</span> will not find "even" or "evening".</li>
+	<li>Use plus sign (+) exactly before a word to search a whole word. For example, <span class="kod">+eve</span> will find the exact word "eve" or "Eve" but not "eventually" or "evening".</li>
 </ul>
 
 <h2><a name="renungan"></a>Devotion</h2>
 <p><i>This feature is only available in the Indonesian version of Bible for Android (search for "Alkitab" in Android Market).</i></p>
-<p>Open the menu and select <strong>Devotion</strong> to read some reflections which are provided every day. When you first open the devotion, you must be connected to Internet, because the devotion materials are available online. However, when you connect, the devotion materials of the day until about 15 days in the future, will be downloaded and stored so you do not need to be connected to the Internet to read the following days' devotions. </p>
-<p>Press the <strong>Switch</strong> button to read devotions from different sources. Press the left arrow or right arrow buttons to move between days. Open the menu to copy the contents of the devotion or to share them with others.</p>
+<p>Press MENU and select <strong>Devotion</strong> to read some reflections which are provided every day. When you first open the devotion, you must be connected to Internet, because the devotion materials are available online. However, when you connect, the devotion from that day to 30 days later will be downloaded and stored so you do not need to be connected to the Internet to read the devotion of the following days. </p>
+<p>Press the <kbd>Switch</kbd> button to read devotions from different sources. Press the left arrow or right arrow buttons to move between days. Open the menu to copy the contents of the devotion or to share them with others.</p>
 <p>Some devotions contain verse addresses that you can press to jump directly to the verses.</p>
 
 <h2><a name="versi"></a>Version</h2>
-<p>You can read another version of the Bible (in different languages or different translations) by selecting the <strong>Version</strong> menu. At the beginning, there will be only one version available. Tap on <kbd>Other version...</kbd> to add and manage Bible versions.</p>
-<p>In the managing versions screen, there will be some pre-set versions that are ready to be downloaded. You will need to download the data file for that version beforehand. The data file will be stored in the SD Card. Each version occupies about 5 MB space. After you download them once, you don't need to download them again.</p>
-<p>If you have PDB files (PalmBible+ format), it's possible that the file can be read using this application. This application does not directly read .pdb files, but it will convert beforehand the .pdb files to its own format whose file name ends with .yes.This file is stored on the SD card/bible/yes folder with the file name generated depending on the PDB file opened. Long-press on one of the items on the version list, and select Details to check the location of the files and so on.</p>
+<p>You can read another version of the Bible (in different languages or different translations) by selecting the <strong>Version</strong> menu. At the beginning, there will be only one version available. Tap on <kbd>Other versions...</kbd> to add and manage Bible versions.</p>
+<p>In the managing versions screen, there will be some pre-set versions that are ready to be downloaded. You will need to download the data file for that version beforehand. The data file will be stored in the SD Card. Each version occupies around 5 MB of space. After you download them once, you don't need to download them again.</p>
+<p>If you have PDB files in PalmBible+ format, those files can be read by this application. This application does not directly read .pdb files, instead it will convert the .pdb files to its own format whose file name ends with .yes beforehand. This file is stored on the SD card/bible/yes folder with the file name generated depending on the PDB file opened. Long-press on one of the items on the version list, and select Details to check the location of the files and so on.</p>
 <p>The checkboxes on the right of the versions indicates whether the versions are shown on the version selection dialog.</p>
 
-<h2><a name="saran"></a>Suggest</h2>
-<p>Open the menu  and select <strong>Suggest</strong> to send a message, suggestion, criticism, idea, etc. to the makers of this program. Your writing will be sent when you connect to the Internet. We read every message that is sent, so we are looking forward to receiving your suggestions. Not all suggestions will be satisfied, however, but we will try to give you the best.</p>
-
 <h2><a name="pengaturan"></a>Settings</h2>
-<p>Open the menu and select <strong>Settings</strong>. </p>
-<p>Some things that can be changed related to appearance:</p>
+<p>Press MENU and select <strong>Settings</strong>. </p>
+<p>Some things that can be changed related to text appearance:</p>
 <ul>
 	<li><strong><a name="pengaturanukuranhuruf"></a>Text Size</strong> for enlarging or reducing text size.</li>
 	<li><strong><a name="pengaturanjenishuruf"></a>Font</strong> to change the type to  <span class="contohHuruf" style="font-family: sans-serif">Sans-serif</span>, <span class="contohHuruf" style="font-family: serif">Serif</span>, or <span class="contohHuruf" style="font-family: monospace">Monospace</span>.</li>
 	<li><strong><a name="pengaturantebalkanhuruf"></a>Bold Text</strong> to use thicker text.</li>
 	<li><strong><a name="pengaturanwarna"></a>Color</strong> to change the colors of Bible text, the background, and the verse numbers. </li>
 </ul>
+<p>Some things that can be changed related to screen appearance:</p>
+<ul>
+	<li><strong><a name="pengaturanbahasa"></a>Language</strong> to change user interface language. The Bible text is not affected by this language choice.</li>
+	<li><strong><a name="pengaturanbiarkanlayarmenyala"></a>Keep Screen On</strong> to let the screen always on when reading the Bible text.</li>
+	<li><strong><a name="pengaturantanpatombolnavigasi"></a>No Navigation Buttons</strong> when checked, the buttons below the Bible text will disappear. Instead there is a small bar on the top. You can press or hold the bar to navigate. You can press the left or right button on your phone to go between chapters.</li>
+</ul>
 <p>Some things that can be changed related to usage:</p>
 <ul>
-	<li><strong><a name="pengaturanbiarkanlayarmenyala"></a>Keep Screen On</strong> to let the screen always on when reading the Bible text.</li>
-	<li><strong><a name="pengaturanloncatdenganmudah"></a>Direct Address Input</strong> when checked, the <a href="#tuju">Go to</a> menu will change to <a href="#loncat">Jump to</a>, and when the verse address button is pressed, the <a href="#loncat">Jump to</a> screen will be displayed.</li>
+	<li><strong><a name="pengaturanloncatdenganmudah"></a>Direct Address Input</strong> when checked, the <a href="#tuju">Go to</a> menu will change to <a href="#loncat">Jump to</a>, so when the verse address button is pressed, the <a href="#loncat">Jump to</a> screen will be displayed where you can type the verse address directly.</li>
 	<li><strong><a name="pengaturankitabmenurutabjad"></a>Sort Books Alphabetically</strong> when checked, the book selection on the <a href="#tuju">Go to</a> screen will show books in alphabetical order.</li>
-	<li><strong><a name="pengaturantanpatombolnavigasi"></a>No Navigation Buttons</strong> when checked, the buttons below the Bible text will disappear. Instead there is a small bar on the top. You can press or hold the bar to navigate. You can press the left or right button on your phone to go between chapters.</li>
-	<li><strong><a name="pengaturanmatikantahanayat"></a>Disable Verse Menu</strong> when checked, you will not be able to hold a verse to open the <a href="#menukontekstual">contextual menu</a>. Check this if you often open the menu by mistake.</li>
-	<li><strong><a name="pengaturanpindahdenganvolume"></a>Volume Button Move</strong> when checked, you can go to the next/previous verses by pressing the sound volume buttons.</li>
+	<li><strong><a name="pengaturanpindahdenganvolume"></a>Volume Button Move</strong> when checked, you can go to the next and previous verses by pressing the sound volume buttons.</li>
 </ul>
 
-<h2><a name="menukontekstual"></a>Context Menu</h2>
-<p>By holding down (long press) a verse, a menu will appear, and you can do several things:</p>
+<h2><a name="menuayat"></a>Verse Menu</h2>
+<p>Tap on one or more verses so that the verses are selected, and then click the arrow button that appears.</p>
 <ul>
-	<li><strong>Copy verse</strong> to copy the selected verse to be pasted into other applications.</li>
-	<li><strong>Add bookmark</strong> to add a bookmark or edit a bookmark of the verse.</li>
-	<li><strong>Write annotation</strong> to add an annotation of a verse. You will see a mark beside the verse so that you can see it later.</li>
-	<li><strong>Highlight</strong> to put a highlighter color into the selected verse. The highlight data is stored together with bookmarks and annotations, so you can import and export them in the same way as <a href="#pembatas">Bookmarks</a>.</li>
-	<li><strong>Share</strong> to send the verse by email, bluetooth, Twitter, Facebook, etc. depending on the application installed on your phone.</li>
+	<li><strong>Copy verse</strong> to copy the selected verses to be pasted into other applications.</li>
+	<li><strong>Add bookmark</strong> to add or edit a bookmark of the verse.</li>
+	<li><strong>Write note</strong> to add a note to the verse.</li>
+	<li><strong>Highlight</strong> to put a highlighter color into the selected verses.</li>
+	<li><strong>Share</strong> to send the selected verses by email, bluetooth, Twitter, Facebook, etc. (Depending on the application installed on your phone.)</li>
 </ul>
 <p>
 	|<br />|<br />

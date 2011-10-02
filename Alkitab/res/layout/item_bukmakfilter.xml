@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="?android:attr/listPreferredItemHeight" android:paddingLeft="8dp" android:gravity="center_vertical">
+	<ImageView android:layout_width="wrap_content" android:src="@drawable/jenis_catatan" android:layout_height="wrap_content" android:id="@+id/imgFilterIcon" android:layout_marginRight="8dp" />
+	<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:background="@drawable/label_filter_bg" android:textColor="#000" android:text="Suatu label" android:id="@+id/lFilterLabel" android:paddingLeft="8dp" android:paddingRight="8dp" android:paddingBottom="4dp" android:paddingTop="4dp" />
+	<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/lFilterCaption" android:text="Catatan" />
+</LinearLayout>

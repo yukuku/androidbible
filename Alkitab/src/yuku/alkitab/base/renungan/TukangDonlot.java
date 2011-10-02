@@ -1,18 +1,19 @@
 package yuku.alkitab.base.renungan;
 
+import android.content.*;
+import android.util.*;
+
 import java.io.*;
-import java.util.LinkedList;
+import java.util.*;
 
 import org.apache.http.*;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.*;
+import org.apache.http.client.methods.*;
+import org.apache.http.impl.client.*;
 
-import yuku.alkitab.R;
-import yuku.alkitab.base.S;
-import yuku.andoutil.ThreadSleep;
-import android.content.Context;
-import android.util.Log;
+import yuku.alkitab.*;
+import yuku.alkitab.base.*;
+import yuku.andoutil.*;
 
 public class TukangDonlot extends Thread {
 	public interface OnStatusDonlotListener {
@@ -29,6 +30,10 @@ public class TukangDonlot extends Thread {
 	public TukangDonlot(Context context, OnStatusDonlotListener listener) {
 		context_ = context;
 		listener_ = listener;
+	}
+	
+	public void setListener(OnStatusDonlotListener listener) {
+		this.listener_ = listener;
 	}
 	
 	public synchronized boolean tambah(IArtikel artikel, boolean penting) {

@@ -4,10 +4,12 @@ import android.app.*;
 import android.content.*;
 import android.graphics.*;
 import android.os.*;
+import android.view.*;
 
 import java.io.*;
 import java.util.*;
 
+import yuku.alkitab.base.compat.*;
 import yuku.alkitab.base.model.*;
 
 public class U {
@@ -147,17 +149,68 @@ public class U {
 	}
 	
 	public static boolean tabletkah() {
-		return Build.VERSION.SDK_INT /* ini diambil waktu runtime */ >= Build.VERSION_CODES.HONEYCOMB /* ini diinline compiler */;
+		return Build.VERSION.SDK_INT /* ini diambil waktu runtime */ >= 11 /* HONEYCOMB */;
 	}
 	
 	public static void nyalakanTitleBarHanyaKalauTablet(Activity activity) {
 		if (tabletkah()) {
-			activity.setTheme(android.R.style.Theme_Holo);
+			activity.setTheme(Api11.getTheme_Holo());
 		}
 	}
 
-	@SuppressWarnings("deprecation") public static void salin(Context context, String salinan) {
-		android.text.ClipboardManager clipboardManager = (android.text.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+	@SuppressWarnings("deprecation") public static void salin(CharSequence salinan) {
+		android.text.ClipboardManager clipboardManager = (android.text.ClipboardManager) App.context.getSystemService(Context.CLIPBOARD_SERVICE);
 		clipboardManager.setText(salinan); 
+	}
+
+	/**
+	 * Convenience method of findViewById
+	 */
+	@SuppressWarnings("unchecked") public static <T extends View> T getView(View parent, int id) {
+		return (T) parent.findViewById(id);
+	}
+
+	/**
+	 * Convenience method of findViewById
+	 */
+	@SuppressWarnings("unchecked") public static <T extends View> T getView(Activity activity, int id) {
+		return (T) activity.findViewById(id);
+	}
+	
+	private static int[] colorSet;
+	public static int getWarnaBerdasarkanKitabPos(int pos) {
+		if (colorSet == null) {
+			colorSet = new int[3];
+			if (U.tabletkah()) {
+				colorSet[0] = 0xffffcccf;
+				colorSet[1] = 0xffccccff;
+				colorSet[2] = 0xffffffff;
+			} else {
+				colorSet[0] = 0xff990022; // pl
+				colorSet[1] = 0xff000099; // pb 
+				colorSet[2] = 0xff000000; // dll
+			}
+		}
+
+		if (pos >= 0 && pos < 39) {
+			return colorSet[0];
+		} else if (pos >= 39 && pos < 66) {
+			return colorSet[1];
+		} else {
+			return colorSet[2];
+		}
+	}
+
+	public static int alphaMixStabilo(int warnaRgb) {
+		return 0xa0000000 | warnaRgb;
+	}
+
+	public static int getWarnaHiliteKontrasDengan(int warnaLatar) {
+		float keterangan = 0.30f * Color.red(warnaLatar) + 0.59f * Color.green(warnaLatar) + 0.11f * Color.blue(warnaLatar);
+		if (keterangan < 0.5f) {
+			return 0xff66ff66;
+		} else {
+			return 0xff990099;
+		}
 	}
 }

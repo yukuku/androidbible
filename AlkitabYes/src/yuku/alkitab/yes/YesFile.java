@@ -3,7 +3,6 @@ package yuku.alkitab.yes;
 import android.util.*;
 
 import java.io.*;
-import java.lang.annotation.*;
 
 import yuku.bintex.*;
 
@@ -14,11 +13,6 @@ public class YesFile {
 	byte[] FILE_HEADER = {(byte) 0x98, 0x58, 0x0d, 0x0a, 0x00, 0x5d, (byte) 0xe0, FILE_VERSI};
 	
 	public Seksi[] xseksi;
-	
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface key {
-		String value();
-	}
 	
 	public interface Seksi {
 		byte[] nama();

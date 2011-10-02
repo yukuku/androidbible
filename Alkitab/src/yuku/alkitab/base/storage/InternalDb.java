@@ -8,8 +8,9 @@ import android.util.*;
 
 import java.util.*;
 
-import yuku.alkitab.base.EdisiActivity.MEdisiYes;
 import yuku.alkitab.base.*;
+import yuku.alkitab.base.ac.*;
+import yuku.alkitab.base.ac.EdisiActivity.MEdisiYes;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.renungan.*;
 import yuku.andoutil.*;
@@ -68,29 +69,65 @@ public class InternalDb {
 		return helper.getWritableDatabase().update(Db.TABEL_Bukmak2, bukmak.toContentValues(), "_id=?", new String[] {String.valueOf(bukmak._id)}); //$NON-NLS-1$
 	}
 	
-	public long insertBukmak(Bukmak2 bukmak) {
-		return helper.getWritableDatabase().insert(Db.TABEL_Bukmak2, null, bukmak.toContentValues());
+	public Bukmak2 insertBukmak(int ari, int jenis, String tulisan, Date waktuTambah, Date waktuUbah) {
+		Bukmak2 res = new Bukmak2(ari, jenis, tulisan, waktuTambah, waktuUbah);
+		SQLiteDatabase db = helper.getWritableDatabase();
+		long _id = db.insert(Db.TABEL_Bukmak2, null, res.toContentValues());
+		if (_id == -1) {
+			return null;
+		} else {
+			res._id = _id;
+			return res;
+		}
 	}
 	
-	private String[] sql_hapusBukmak_params = new String[2];
-	public int hapusBukmakByAri(int ari, int jenis) {
-		sql_hapusBukmak_params[0] = String.valueOf(jenis);
-		sql_hapusBukmak_params[1] = String.valueOf(ari);
-		
-		return helper.getWritableDatabase().delete(Db.TABEL_Bukmak2, Db.Bukmak2.jenis + "=? and " + Db.Bukmak2.ari + "=?", sql_hapusBukmak_params); //$NON-NLS-1$ //$NON-NLS-2$
+	public void hapusBukmakByAri(int ari, int jenis) {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		db.beginTransaction();
+		try {
+			SQLiteStatement stmt = db.compileStatement("select _id from " + Db.TABEL_Bukmak2 + " where " + Db.Bukmak2.jenis + "=? and " + Db.Bukmak2.ari + "=?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			stmt.bindLong(1, jenis);
+			stmt.bindLong(2, ari);
+			long _id = stmt.simpleQueryForLong();
+			
+			String[] params = {String.valueOf(_id)};
+			db.delete(Db.TABEL_Bukmak2_Label, Db.Bukmak2_Label.bukmak2_id + "=?", params); //$NON-NLS-1$
+			db.delete(Db.TABEL_Bukmak2, "_id=?", params); //$NON-NLS-1$
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
 	}
 
 	public void hapusBukmakById(long id) {
-		helper.getWritableDatabase().delete(Db.TABEL_Bukmak2, "_id=?", new String[] {String.valueOf(id)}); //$NON-NLS-1$
+		SQLiteDatabase db = helper.getWritableDatabase();
+		db.beginTransaction();
+		try {
+			String[] params = new String[] {String.valueOf(id)};
+			db.delete(Db.TABEL_Bukmak2_Label, Db.Bukmak2_Label.bukmak2_id + "=?", params); //$NON-NLS-1$
+			db.delete(Db.TABEL_Bukmak2, "_id=?", params); //$NON-NLS-1$
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
 	}
 
-	public Cursor listBukmak(String[] cursorColumnsSelect, int jenisBukmak) {
-		return helper.getReadableDatabase().query(Db.TABEL_Bukmak2, cursorColumnsSelect, Db.Bukmak2.jenis + "=?", new String[] {String.valueOf(jenisBukmak)}, null, null, Db.Bukmak2.waktuUbah + " desc"); //$NON-NLS-1$ //$NON-NLS-2$
+	public Cursor listBukmak(int jenis, long labelId, String sortColumn, boolean sortAscending) {
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        String sortClause = sortColumn + (Db.Bukmak2.tulisan.equals(sortColumn)? " collate NOCASE ": "") + (sortAscending? " asc": " desc"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        
+        if (labelId == 0) { // no restrictions
+            return db.query(Db.TABEL_Bukmak2, null, Db.Bukmak2.jenis + "=?", new String[]{String.valueOf(jenis)}, null, null, sortClause); //$NON-NLS-1$
+        } else if (labelId == BukmakListActivity.LABELID_noLabel) { // only without label
+            return db.rawQuery("select " + Db.TABEL_Bukmak2 + ".* from " + Db.TABEL_Bukmak2 + " where " + Db.TABEL_Bukmak2 + "." + Db.Bukmak2.jenis + "=? and " + Db.TABEL_Bukmak2 + "." + BaseColumns._ID + " not in (select " + Db.Bukmak2_Label.bukmak2_id + " from " + Db.TABEL_Bukmak2_Label + ") order by " + Db.TABEL_Bukmak2 + "." + sortClause, new String[] {String.valueOf(jenis)});  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
+        } else { // filter by labelId
+            return db.rawQuery("select " + Db.TABEL_Bukmak2 + ".* from " + Db.TABEL_Bukmak2 + ", " + Db.TABEL_Bukmak2_Label + " where " + Db.Bukmak2.jenis + "=? and " + Db.TABEL_Bukmak2 + "." + BaseColumns._ID + " = " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.bukmak2_id + " and " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.label_id + "=? order by " + Db.TABEL_Bukmak2 + "." + sortClause, new String[] {String.valueOf(jenis), String.valueOf(labelId)});          //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$//$NON-NLS-6$//$NON-NLS-7$//$NON-NLS-8$//$NON-NLS-9$//$NON-NLS-10$ //$NON-NLS-11$ //$NON-NLS-12$
+        }
 	}
 
 	public void importBukmak(List<Bukmak2> list, boolean tumpuk) {
 		SQLiteDatabase db = helper.getWritableDatabase();
-		
 		db.beginTransaction();
 		try {
 			String where = Db.Bukmak2.ari + "=? and " + Db.Bukmak2.jenis + "=?"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -131,14 +168,13 @@ public class InternalDb {
 		return helper.getReadableDatabase().query(Db.TABEL_Bukmak2, null, null, null, null, null, null);
 	}
 
-	private static String sql_countAtribut = "select count(*) from " + Db.TABEL_Bukmak2 + " where " + Db.Bukmak2.ari + ">=? and " + Db.Bukmak2.ari + "<?"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	private SQLiteStatement stmt_countAtribut = null;
 	public int countAtribut(int ari_kitabpasal) {
 		int ariMin = ari_kitabpasal & 0x00ffff00;
 		int ariMax = ari_kitabpasal | 0x000000ff;
 		
 		if (stmt_countAtribut == null) {
-			stmt_countAtribut = helper.getReadableDatabase().compileStatement(sql_countAtribut);
+			stmt_countAtribut = helper.getReadableDatabase().compileStatement("select count(*) from " + Db.TABEL_Bukmak2 + " where " + Db.Bukmak2.ari + ">=? and " + Db.Bukmak2.ari + "<?");//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 		
 		stmt_countAtribut.clearBindings();
@@ -148,7 +184,6 @@ public class InternalDb {
 		return (int) stmt_countAtribut.simpleQueryForLong();
 	}
 	
-	private static String sql_getCatatan = "select * from " + Db.TABEL_Bukmak2 + " where " + Db.Bukmak2.ari + ">=? and " + Db.Bukmak2.ari + "<?"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	private String[] sql_getCatatan_params = new String[2];
 	/**
 	 * @param map_0 adalah ayat, basis 0
@@ -161,7 +196,7 @@ public class InternalDb {
 		
 		sql_getCatatan_params[0] = String.valueOf(ariMin);
 		sql_getCatatan_params[1] = String.valueOf(ariMax);
-		Cursor cursor = helper.getReadableDatabase().rawQuery(sql_getCatatan, sql_getCatatan_params);
+		Cursor cursor = helper.getReadableDatabase().rawQuery("select * from " + Db.TABEL_Bukmak2 + " where " + Db.Bukmak2.ari + ">=? and " + Db.Bukmak2.ari + "<?", sql_getCatatan_params); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		try {
 			int kolom_jenis = cursor.getColumnIndexOrThrow(Db.Bukmak2.jenis);
 			int kolom_ari = cursor.getColumnIndexOrThrow(Db.Bukmak2.ari);
@@ -195,33 +230,50 @@ public class InternalDb {
 		return res;
 	}
 
-	public void updateAtauInsertStabilo(int ari, int warnaRgb) {
-		// cek dulu ada ato ga
-		Cursor c = helper.getWritableDatabase().query(Db.TABEL_Bukmak2, null, Db.Bukmak2.ari + "=? and " + Db.Bukmak2.jenis + "=?", new String[] {String.valueOf(ari), String.valueOf(Db.Bukmak2.jenis_stabilo)}, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
+	public void updateAtauInsertStabilo(int ariKp, IntArrayList ayatTerpilih, int warnaRgb) {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		
+		String[] params = {null /* buat ari */, String.valueOf(Db.Bukmak2.jenis_stabilo)};
+		
+		db.beginTransaction();
 		try {
-			if (c.moveToNext()) {
-				// sudah ada!
-				Bukmak2 bukmak = Bukmak2.dariCursor(c);
-				long id = c.getLong(c.getColumnIndexOrThrow("_id")); //$NON-NLS-1$
-				if (warnaRgb != -1) {
-					bukmak.tulisan = U.enkodStabilo(warnaRgb);
-					helper.getWritableDatabase().update(Db.TABEL_Bukmak2, bukmak.toContentValues(), "_id=?", new String[] {String.valueOf(id)}); //$NON-NLS-1$
-				} else {
-					// delete
-					helper.getWritableDatabase().delete(Db.TABEL_Bukmak2, "_id=?", new String[] {String.valueOf(id)}); //$NON-NLS-1$
-				}
-			} else {
-				// belum ada!
-				if (warnaRgb == -1) {
-					// ga usa ngapa2in, dari belum ada jadi tetep ga ada
-				} else {
-					Date kini = new Date();
-					Bukmak2 bukmak = new Bukmak2(ari, Db.Bukmak2.jenis_stabilo, U.enkodStabilo(warnaRgb), kini, kini); 
-					helper.getWritableDatabase().insert(Db.TABEL_Bukmak2, null, bukmak.toContentValues());
+			// setiap ayat yang diminta
+			for (int i = 0; i < ayatTerpilih.size(); i++) {
+				int ayat_1 = ayatTerpilih.get(i);
+				int ari = Ari.encodeWithKp(ariKp, ayat_1);
+				params[0] = String.valueOf(ari);
+				
+				Cursor c = db.query(Db.TABEL_Bukmak2, null, Db.Bukmak2.ari + "=? and " + Db.Bukmak2.jenis + "=?", params, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
+				try {
+					if (c.moveToNext()) { // cek dulu ada ato ga
+						// sudah ada!
+						Bukmak2 bukmak = Bukmak2.dariCursor(c);
+						bukmak.waktuUbah = new Date();
+						long id = c.getLong(c.getColumnIndexOrThrow(BaseColumns._ID));
+						if (warnaRgb != -1) {
+							bukmak.tulisan = U.enkodStabilo(warnaRgb);
+							db.update(Db.TABEL_Bukmak2, bukmak.toContentValues(), "_id=?", new String[] {String.valueOf(id)}); //$NON-NLS-1$
+						} else {
+							// delete
+							db.delete(Db.TABEL_Bukmak2, "_id=?", new String[] {String.valueOf(id)}); //$NON-NLS-1$
+						}
+					} else {
+						// belum ada!
+						if (warnaRgb == -1) {
+							// ga usa ngapa2in, dari belum ada jadi tetep ga ada
+						} else {
+							Date kini = new Date();
+							Bukmak2 bukmak = new Bukmak2(ari, Db.Bukmak2.jenis_stabilo, U.enkodStabilo(warnaRgb), kini, kini); 
+							db.insert(Db.TABEL_Bukmak2, null, bukmak.toContentValues());
+						}
+					}
+				} finally {
+					c.close();
 				}
 			}
+			db.setTransactionSuccessful();
 		} finally {
-			c.close();
+			db.endTransaction();
 		}
 	}
 
@@ -236,6 +288,46 @@ public class InternalDb {
 			} else {
 				return -1;
 			}
+		} finally {
+			c.close();
+		}
+	}
+	
+	public int getWarnaRgbStabilo(int ariKp, IntArrayList terpilih) {
+		int ariMin = ariKp;
+		int ariMax = ariKp | 0xff;
+		int[] xwarna = new int[256];
+		int res = -2;
+		
+		for (int i = 0; i < xwarna.length; i++) xwarna[i] = -1;
+		
+		// cek dulu ada ato ga
+		Cursor c = helper.getReadableDatabase().query(Db.TABEL_Bukmak2, null, Db.Bukmak2.ari + ">? and " + Db.Bukmak2.ari + "<=? and " + Db.Bukmak2.jenis + "=?", new String[] {String.valueOf(ariMin), String.valueOf(ariMax), String.valueOf(Db.Bukmak2.jenis_stabilo)}, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		try {
+			int ari_col = c.getColumnIndexOrThrow(Db.Bukmak2.ari);
+			int tulisan_col = c.getColumnIndexOrThrow(Db.Bukmak2.tulisan);
+			
+			// masukin aja ke array dulu
+			while (c.moveToNext()) { 
+				int ari = c.getInt(ari_col);
+				int index = ari & 0xff;
+				int warna = U.dekodStabilo(c.getString(tulisan_col));
+				xwarna[index] = warna;
+			}
+			
+			// tentukan warna default. Kalau semua berwarna x, maka jadi x. Kalau ada salah satu yang bukan x, jadi -1;
+			for (int i = 0; i < terpilih.size(); i++) {
+				int ayat_1 = terpilih.get(i);
+				int warna = xwarna[ayat_1];
+				if (res == -2) {
+					res = warna;
+				} else if (warna != res) {
+					return -1;
+				}
+			}
+			
+			if (res == -2) return -1;
+			return res;
 		} finally {
 			c.close();
 		}
@@ -278,6 +370,11 @@ public class InternalDb {
 			db.endTransaction();
 		}
 		return res;
+	}
+	
+	public int hapusRenunganBerwaktuSentuhSebelum(Date date) {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		return db.delete(Db.TABEL_Renungan, Db.Renungan.waktuSentuh + "<?", new String[] {String.valueOf(Sqlitil.toInt(date))}); //$NON-NLS-1$
 	}
 	
 	/**
@@ -382,5 +479,115 @@ public class InternalDb {
 	public void hapusEdisiYes(MEdisiYes edisi) {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.delete(Db.TABEL_Edisi, Db.Edisi.namafile + "=?", new String[] {edisi.namafile}); //$NON-NLS-1$
+	}
+	
+	public List<Label> listSemuaLabel() {
+		List<Label> res = new ArrayList<Label>();
+		Cursor cursor = helper.getReadableDatabase().query(Db.TABEL_Label, null, null, null, null, null, Db.Label.urutan + " asc"); //$NON-NLS-1$
+		try {
+			while (cursor.moveToNext()) {
+				res.add(Label.fromCursor(cursor));
+			}
+		} finally {
+			cursor.close();
+		}
+		return res;
+	}
+	
+	/**
+	 * @return null when not found
+	 */
+	public List<Label> listLabels(long bukmak2_id) {
+		List<Label> res = null;
+		Cursor cursor = helper.getReadableDatabase().rawQuery("select " + Db.TABEL_Label + ".* from " + Db.TABEL_Label + ", " + Db.TABEL_Bukmak2_Label + " where " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.label_id + " = " + Db.TABEL_Label + "." + BaseColumns._ID + " and " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.bukmak2_id + " = ?  order by " + Db.TABEL_Label + "." + Db.Label.urutan + " asc", new String[] {String.valueOf(bukmak2_id)});       //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$//$NON-NLS-6$//$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$ //$NON-NLS-11$ //$NON-NLS-12$
+		try {
+			while (cursor.moveToNext()) {
+				if (res == null) res = new ArrayList<Label>();
+				res.add(Label.fromCursor(cursor));
+			}
+		} finally {
+			cursor.close();
+		}
+		return res;
+	}
+
+	public int getUrutanTerbesarLabel() {
+		SQLiteDatabase db = helper.getReadableDatabase();
+		SQLiteStatement stmt = db.compileStatement("select max(" + Db.Label.urutan + ") from " + Db.TABEL_Label);  //$NON-NLS-1$//$NON-NLS-2$
+		return (int) stmt.simpleQueryForLong();
+	}
+
+	public Label tambahLabel(String judul) {
+		Label res = new Label(-1, judul, getUrutanTerbesarLabel() + 1, ""); //$NON-NLS-1$
+		SQLiteDatabase db = helper.getWritableDatabase();
+		long _id = db.insert(Db.TABEL_Label, null, res.toContentValues());
+		if (_id == -1) {
+			return null;
+		} else {
+			res._id = _id;
+			return res;
+		}
+	}
+
+	public void updateLabels(Bukmak2 bukmak, Set<Label> labels) {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		db.beginTransaction();
+		try {
+			// hapus semua
+			db.delete(Db.TABEL_Bukmak2_Label, Db.Bukmak2_Label.bukmak2_id + "=?", new String[] {String.valueOf(bukmak._id)}); //$NON-NLS-1$
+			
+			// tambah semua
+			ContentValues cv = new ContentValues();
+			for (Label label: labels) {
+				cv.put(Db.Bukmak2_Label.bukmak2_id, bukmak._id);
+				cv.put(Db.Bukmak2_Label.label_id, label._id);
+				db.insert(Db.TABEL_Bukmak2_Label, null, cv);
+			}
+			
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+	}
+
+    public Label getLabelById(long labelId) {
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.query(Db.TABEL_Label, null, BaseColumns._ID + "=?", new String[] {String.valueOf(labelId)}, null, null, null); //$NON-NLS-1$
+        try {
+            if (cursor.moveToNext()) {
+                return Label.fromCursor(cursor);
+            } else {
+                return null;
+            }
+        } finally {
+            cursor.close();
+        }
+    }
+
+	public void hapusLabelById(long id) {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		db.beginTransaction();
+		try {
+			String[] params = new String[] {String.valueOf(id)};
+			db.delete(Db.TABEL_Bukmak2_Label, Db.Bukmak2_Label.label_id + "=?", params); //$NON-NLS-1$
+			db.delete(Db.TABEL_Label, "_id=?", params); //$NON-NLS-1$
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+	}
+
+	public void renameLabel(Label label, String judul) {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		ContentValues cv = new ContentValues();
+		cv.put(Db.Label.judul, judul);
+		db.update(Db.TABEL_Label, cv, "_id=?", new String[] {String.valueOf(label._id)}); //$NON-NLS-1$
+	}
+
+	public int countBukmakDenganLabel(Label label) {
+		SQLiteDatabase db = helper.getReadableDatabase();
+		SQLiteStatement stmt = db.compileStatement("select count(*) from " + Db.TABEL_Bukmak2_Label + " where " + Db.Bukmak2_Label.label_id + "=?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		stmt.bindLong(1, label._id);
+		return (int) stmt.simpleQueryForLong();
 	}
 }

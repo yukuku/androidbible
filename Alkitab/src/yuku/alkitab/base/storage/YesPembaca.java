@@ -255,7 +255,7 @@ public class YesPembaca extends Pembaca {
 			} else {
 				String[] xayat = pembacaDecoder.pisahJadiAyat(ba, hurufKecil);
 				if (D.EBUG) for (int i = 0; i < xayat.length; i++) {
-					Log.d(TAG, "ayat_1 " + (i+1) + ": " + U.dumpChars(xayat[i]));
+					Log.d(TAG, "ayat_1 " + (i+1) + ": " + U.dumpChars(xayat[i]));  //$NON-NLS-1$//$NON-NLS-2$
 				}
 				return xayat;
 			}

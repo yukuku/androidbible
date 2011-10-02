@@ -50,7 +50,7 @@ public class AddonManager {
 		return f.exists() && f.canRead();
 	}
 	
-	static class DonlotThread extends Thread {
+	public static class DonlotThread extends Thread {
 		final Context appContext;
 		Semaphore sema = new Semaphore(0);
 		LinkedList<Elemen> antrian = new LinkedList<Elemen>();
