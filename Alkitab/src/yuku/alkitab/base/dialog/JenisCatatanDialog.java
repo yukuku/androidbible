@@ -117,7 +117,12 @@ public class JenisCatatanDialog {
 			.setMessage(R.string.anda_yakin_mau_menghapus_catatan_ini)
 			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
-					S.getDb().hapusBukmakByAri(ari, Db.Bukmak2.jenis_catatan);
+					if (bukmak != null) {
+						// beneran hapus dari db
+						S.getDb().hapusBukmakByAri(ari, Db.Bukmak2.jenis_catatan);
+					} else {
+						// ga ngapa2in, karena emang ga ada di db, cuma di editor buffer
+					}
 					
 					if (refreshCallback != null) refreshCallback.udahan();
 				}
