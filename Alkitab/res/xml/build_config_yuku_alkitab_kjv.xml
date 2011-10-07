@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config package="yuku.alkitab.kjv">
-	<menu renungan="false" gebug="false" edisi="false" bantuan="true" donasi="true" />
+	<menu renungan="false" gebug="false" edisi="true" bantuan="true" donasi="true" />
 	<edisi>
 		<internal judul="King James (KJV)" prefix="kjv" />
+		<preset judul="Chinese Union Version (Simplified)" namafile_preset="cuvs.yes" url="http://alkitab-host.appspot.com/addon/yes/cuvs.yes.gz" />
+		<preset judul="Chinese Union Version (Traditional)" namafile_preset="cuvt.yes" url="http://alkitab-host.appspot.com/addon/yes/cuvt.yes.gz" />
 	</edisi>
 	<share>
 		<url prefix="http://ref.ly/" format="dot2 nospace0" lang="en" />

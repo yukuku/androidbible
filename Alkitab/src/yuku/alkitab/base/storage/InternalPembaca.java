@@ -184,11 +184,14 @@ public class InternalPembaca extends Pembaca {
 		}
 	}
 
-	@Override
-	public IndexPerikop bacaIndexPerikop() {
+	@Override public IndexPerikop bacaIndexPerikop() {
 		long wmulai = System.currentTimeMillis();
 
 		InputStream is = S.openRaw(edisiPrefix + "_perikop_index_bt"); //$NON-NLS-1$
+		if (is == null) {
+			return null;
+		}
+		
 		BintexReader in = new BintexReader(is);
 		try {
 			return IndexPerikop.baca(in);

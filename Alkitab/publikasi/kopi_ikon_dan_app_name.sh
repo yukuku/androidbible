@@ -1,5 +1,5 @@
 cp $1_ikon/hdpi.png ../res/drawable-hdpi/icon.png
-cp $1_ikon/mdpi.png ../res/drawable/icon.png
+cp $1_ikon/mdpi.png ../res/drawable-mdpi/icon.png
 cp $1_ikon/ldpi.png ../res/drawable-ldpi/icon.png
 
 if [ $1 = 'tb' ] ; then
@@ -14,7 +14,7 @@ if [ $1 = 'nrkv' ] ; then
 	judul='Korean NRKV Bible'
 	bahasa_default='en'
 	convert kjv_ikon/hdpi.png -gravity north -stroke '#000C' -strokewidth 2 -annotate 0 'DEMO' -stroke none -fill white -annotate 0 'DEMO' ../res/drawable-hdpi/icon.png
-	convert kjv_ikon/mdpi.png -gravity north -stroke '#000C' -strokewidth 2 -annotate 0 'DEMO' -stroke none -fill white -annotate 0 'DEMO' ../res/drawable/icon.png
+	convert kjv_ikon/mdpi.png -gravity north -stroke '#000C' -strokewidth 2 -annotate 0 'DEMO' -stroke none -fill white -annotate 0 'DEMO' ../res/drawable-mdpi/icon.png
 	convert kjv_ikon/ldpi.png -gravity north -stroke '#000C' -strokewidth 2 -annotate 0 'DEMO' -stroke none -fill white -annotate 0 'DEMO' ../res/drawable-ldpi/icon.png
 fi
 
