@@ -20,7 +20,7 @@
 
 package com.compactbyte.bibleplus.reader;
 
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Class to access any Palm PDB file.
@@ -51,7 +51,7 @@ class PDBAccess {
 			is.close();
 			// make sure it is garbage collected
 			header = null;
-			for (int i = 0; i < records.length; i++) {
+			if (records != null) for (int i = 0; i < records.length; i++) {
 				records[i] = null;
 			}
 			records = null;
