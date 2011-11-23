@@ -10,7 +10,7 @@ import java.util.*;
 
 import yuku.alkitab.R;
 import yuku.alkitab.base.*;
-import yuku.alkitab.base.dialog.LabelEditorDialog.*;
+import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.*;
 import yuku.devoxx.flowlayout.*;
@@ -98,7 +98,7 @@ public class JenisBukmakDialog {
 	};
 
 	public void bukaDialog() {
-		final Bukmak2 bukmak = this.ari == 0? S.getDb().getBukmakById(id): S.getDb().getBukmakByAri(ari, yuku.alkitab.base.storage.Db.Bukmak2.jenis_bukmak);
+		final Bukmak2 bukmak = this.ari == 0? S.getDb().getBukmakById(id): S.getDb().getBukmakByAri(ari, Db.Bukmak2.jenis_bukmak);
 		
 		// set yang belum diset
 		if (this.ari == 0 && bukmak != null) {

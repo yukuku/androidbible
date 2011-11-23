@@ -36,10 +36,7 @@ public class InternalDb {
 		try {
 			if (!cursor.moveToNext()) return null;
 			
-			Bukmak2 res = Bukmak2.dariCursor(cursor, ari, jenis);
-			res._id = cursor.getInt(cursor.getColumnIndexOrThrow(BaseColumns._ID));
-			
-			return res;
+			return Bukmak2.dariCursor(cursor, ari, jenis);
 		} finally {
 			cursor.close();
 		}
@@ -47,23 +44,21 @@ public class InternalDb {
 	
 	public Bukmak2 getBukmakById(long id) {
 		Cursor cursor = helper.getReadableDatabase().query(
-				Db.TABEL_Bukmak2, 
-				new String[] {Db.Bukmak2.ari, Db.Bukmak2.jenis, Db.Bukmak2.tulisan, Db.Bukmak2.waktuTambah, Db.Bukmak2.waktuUbah}, 
-				"_id=?", //$NON-NLS-1$
-				new String[] {String.valueOf(id)}, 
-				null, null, null);
+			Db.TABEL_Bukmak2, 
+			null, 
+			"_id=?", //$NON-NLS-1$
+			new String[] {String.valueOf(id)}, 
+			null, null, null
+		);
+		
 		try {
 			if (!cursor.moveToNext()) return null;
 			
-			Bukmak2 res = Bukmak2.dariCursor(cursor);
-			res._id = (int) id;
-			
-			return res;
+			return Bukmak2.dariCursor(cursor);
 		} finally {
 			cursor.close();
 		}
 	}
-	
 
 	public int updateBukmak(Bukmak2 bukmak) {
 		return helper.getWritableDatabase().update(Db.TABEL_Bukmak2, bukmak.toContentValues(), "_id=?", new String[] {String.valueOf(bukmak._id)}); //$NON-NLS-1$
@@ -249,13 +244,12 @@ public class InternalDb {
 						// sudah ada!
 						Bukmak2 bukmak = Bukmak2.dariCursor(c);
 						bukmak.waktuUbah = new Date();
-						long id = c.getLong(c.getColumnIndexOrThrow(BaseColumns._ID));
 						if (warnaRgb != -1) {
 							bukmak.tulisan = U.enkodStabilo(warnaRgb);
-							db.update(Db.TABEL_Bukmak2, bukmak.toContentValues(), "_id=?", new String[] {String.valueOf(id)}); //$NON-NLS-1$
+							db.update(Db.TABEL_Bukmak2, bukmak.toContentValues(), "_id=?", new String[] {String.valueOf(bukmak._id)}); //$NON-NLS-1$
 						} else {
 							// delete
-							db.delete(Db.TABEL_Bukmak2, "_id=?", new String[] {String.valueOf(id)}); //$NON-NLS-1$
+							db.delete(Db.TABEL_Bukmak2, "_id=?", new String[] {String.valueOf(bukmak._id)}); //$NON-NLS-1$
 						}
 					} else {
 						// belum ada!
