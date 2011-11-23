@@ -16,7 +16,7 @@
     <string name="renungan_sudah_disalin">Renungan sudah disalin.</string>
     <string name="salin_renungan">Salin renungan</string>
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Pembuatan cadangan berhasil.\n\nFile yang dihasilkan: %s</string>
-    <string name="impor_berhasil_angka_diproses">Pemulihan berhasil. Semuanya ada %d pembatas buku, catatan, dan/atau sorotan yang diproses.</string>
+    <string name="impor_berhasil_angka_diproses">Pemulihan berhasil. Semuanya ada %1$d pembatas buku, catatan, dan/atau sorotan, serta %2$d label yang diproses.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Terjadi kesalahan ketika membuat cadangan: %s</string>
     <string name="ekspor_pembatas_buku_dan_catatan_tanya">Buat cadangan pembatas buku, catatan, dan sorotan ke penyimpanan eksternal atau SD Card?</string>
     <string name="ekspor_judul">Buat cadangan</string>

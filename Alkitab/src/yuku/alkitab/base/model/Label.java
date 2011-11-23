@@ -6,6 +6,7 @@ import android.provider.*;
 
 import java.io.*;
 
+import org.xml.sax.*;
 import org.xmlpull.v1.*;
 
 import yuku.alkitab.base.storage.*;
@@ -69,5 +70,16 @@ public class Label implements Comparable<Label> {
 		xml.attribute(null, XMLATTR_relId, String.valueOf(relId));
 		xml.attribute(null, XMLATTR_judul, judul);
 		xml.endTag(null, XMLTAG_Label);
+	}
+
+	public static Label dariAttributes(Attributes attributes) {
+		String judul = attributes.getValue("", XMLATTR_judul); //$NON-NLS-1$
+		
+		return new Label(-1, judul, 0, null);
+	}
+	
+	public static int getRelId(Attributes attributes) {
+		String s = attributes.getValue("", XMLATTR_relId);
+		return s == null? 0: Integer.parseInt(s);
 	}
 }

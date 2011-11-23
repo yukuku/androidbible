@@ -104,4 +104,9 @@ public class Bukmak2 {
 		
 		return new Bukmak2(ari, jenis, tulisan, waktuTambah, waktuUbah);
 	}
+	
+	public static int getRelId(Attributes attributes) {
+		String s = attributes.getValue("", XMLATTR_relId);
+		return s == null? 0: Integer.parseInt(s);
+	}
 }

@@ -8,6 +8,7 @@ import android.util.*;
 
 import gnu.trove.list.*;
 import gnu.trove.list.array.*;
+import gnu.trove.map.hash.*;
 
 import java.util.*;
 
@@ -124,35 +125,97 @@ public class InternalDb {
         }
 	}
 
-	public void importBukmak(List<Bukmak2> list, boolean tumpuk) {
+	public void importBukmak(List<Bukmak2> xbukmak, boolean tumpuk, TObjectIntHashMap<Bukmak2> bukmakToRelIdMap, TIntLongHashMap labelRelIdToAbsIdMap, TIntObjectHashMap<TIntList> bukmak2RelIdToLabelRelIdsMap) {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
 		try {
-			String where = Db.Bukmak2.ari + "=? and " + Db.Bukmak2.jenis + "=?"; //$NON-NLS-1$ //$NON-NLS-2$
-			String[] plc = new String[2];
+			TIntLongHashMap bukmakRelIdToAbsIdMap = new TIntLongHashMap();
+
+			{ // tulis bukmak2 baru
+				String[] params1 = new String[1];
+				String[] params2 = new String[2];
+				for (Bukmak2 bukmak: xbukmak) {
+					int bukmak2_relId = bukmakToRelIdMap.get(bukmak);
+					
+					params2[0] = String.valueOf(bukmak.ari);
+					params2[1] = String.valueOf(bukmak.jenis);
+					
+					long _id = -1;
+					
+					boolean ada = false;
+					Cursor cursor = db.query(Db.TABEL_Bukmak2, null, Db.Bukmak2.ari + "=? and " + Db.Bukmak2.jenis + "=?", params2, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
+					if (cursor.moveToNext()) {
+						ada = true;
+						_id = cursor.getLong(cursor.getColumnIndexOrThrow(BaseColumns._ID)); /* [1] */
+					}
+					cursor.close();
+					
+					// --------------------------------- dapet _id dari
+					//  ada  tumpuk:     delete insert     [2]
+					//  ada !tumpuk: (nop)                 [1]
+					// !ada  tumpuk:            insert     [2]
+					// !ada !tumpuk:            insert     [2]
+					
+					if (ada && tumpuk) {
+						params1[0] = String.valueOf(_id);
+						db.delete(Db.TABEL_Bukmak2, "_id=?", params1);
+						db.delete(Db.TABEL_Bukmak2_Label, Db.Bukmak2_Label.bukmak2_id + "=?", params1); //$NON-NLS-1$
+					}
+					if ((ada && tumpuk) || (!ada)) {
+						_id = db.insert(Db.TABEL_Bukmak2, null, bukmak.toContentValues()); /* [2] */
+					}
+					
+					// map it
+					bukmakRelIdToAbsIdMap.put(bukmak2_relId, _id);
+				}
+			}
 			
-			for (Bukmak2 bukmak2: list) {
-				plc[0] = String.valueOf(bukmak2.ari);
-				plc[1] = String.valueOf(bukmak2.jenis);
+			{ // sekarang pemasangan label
+				String where = Db.Bukmak2_Label.bukmak2_id + "=?";
+				String[] params = {null};
+				ContentValues cv = new ContentValues();
 				
-				boolean ada = false;
-				Cursor cursor = db.query(Db.TABEL_Bukmak2, null, where, plc, null, null, null);
-				if (cursor.moveToNext()) {
-					// ada, maka kita perlu hapus
-					ada = true;
-				}
-				cursor.close();
+				// nlabel>0  tumpuk:  delete insert
+				// nlabel>0 !tumpuk: (nop)
+				// nlabel=0  tumpuk:         insert
+				// nlabel=0 !tumpuk:         insert
 				
-				//  ada  tumpuk:     delete insert
-				//  ada !tumpuk: (nop)
-				// !ada  tumpuk:            insert
-				// !ada !tumpuk:            insert
-				
-				if (ada && tumpuk) {
-					db.delete(Db.TABEL_Bukmak2, where, plc);
-				}
-				if ((ada && tumpuk) || (!ada)) {
-					db.insert(Db.TABEL_Bukmak2, null, bukmak2.toContentValues());
+				for (int bukmak2_relId: bukmak2RelIdToLabelRelIdsMap.keys()) {
+					TIntList label_relIds = bukmak2RelIdToLabelRelIdsMap.get(bukmak2_relId);
+					
+					long bukmak2_id = bukmakRelIdToAbsIdMap.get(bukmak2_relId);
+					
+					if (bukmak2_id > 0) {
+						params[0] = String.valueOf(bukmak2_id);
+						
+						// cek ada berapa label untuk bukmak2_id ini
+						int nlabel = 0;
+						Cursor c = db.rawQuery("select count(*) from " + Db.TABEL_Bukmak2_Label + " where " + where, params);
+						try {
+							c.moveToNext();
+							nlabel = c.getInt(0);
+						} finally {
+							c.close();
+						}
+						
+						if (nlabel>0 && tumpuk) {
+							db.delete(Db.TABEL_Bukmak2_Label, where, params);
+						}
+						if ((nlabel>0 && tumpuk) || (!(nlabel>0))) {
+							for (int label_relId: label_relIds.toArray()) {
+								long label_id = labelRelIdToAbsIdMap.get(label_relId);
+								if (label_id > 0) {
+									cv.put(Db.Bukmak2_Label.bukmak2_id, bukmak2_id);
+									cv.put(Db.Bukmak2_Label.label_id, label_id);
+									db.insert(Db.TABEL_Bukmak2_Label, null, cv);
+								} else {
+									Log.w(TAG, "label_id ngaco!: " + label_id);
+								}
+							}
+						}
+					} else {
+						Log.w(TAG, "bukmak2_id ngaco!: " + bukmak2_id);
+					}
 				}
 			}
 	

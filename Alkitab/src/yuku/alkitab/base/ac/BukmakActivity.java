@@ -12,6 +12,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.*;
 
 import gnu.trove.list.*;
+import gnu.trove.list.array.*;
 import gnu.trove.map.hash.*;
 
 import java.io.*;
@@ -29,6 +30,8 @@ import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.*;
 
 public class BukmakActivity extends ListActivity {
+	public static final String TAG = BukmakActivity.class.getSimpleName();
+	
     // out
 	public static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
 
@@ -150,39 +153,59 @@ public class BukmakActivity extends ListActivity {
 
 	public void impor(boolean tumpuk) {
 		new AsyncTask<Boolean, Integer, Object>() {
-			ProgressDialog dialog;
+			ProgressDialog pd;
+			int count_bukmak = 0;
+			int count_label = 0;
 			
 			@Override
 			protected void onPreExecute() {
-				dialog = new ProgressDialog(BukmakActivity.this);
-				dialog.setTitle(R.string.impor_judul);
-				dialog.setMessage(getString(R.string.mengimpor_titiktiga));
-				dialog.setIndeterminate(true);
-				dialog.setCancelable(false);
-				dialog.show();
+				pd = new ProgressDialog(BukmakActivity.this);
+				pd.setTitle(R.string.impor_judul);
+				pd.setMessage(getString(R.string.mengimpor_titiktiga));
+				pd.setIndeterminate(true);
+				pd.setCancelable(false);
+				pd.show();
 			}
 			
-			@Override
-			protected Object doInBackground(Boolean... params) {
-				final List<Bukmak2> list = new ArrayList<Bukmak2>();
+			@Override protected Object doInBackground(Boolean... params) {
 				final boolean tumpuk = params[0];
-				final int[] c = new int[1];
-
+				
+				final List<Bukmak2> xbukmak = new ArrayList<Bukmak2>();
+				final TObjectIntHashMap<Bukmak2> bukmakToRelIdMap = new TObjectIntHashMap<Bukmak2>();
+				final List<Label> xlabel = new ArrayList<Label>();
+				final TObjectIntHashMap<Label> labelToRelIdMap = new TObjectIntHashMap<Label>();
+				final TIntLongHashMap labelRelIdToAbsIdMap = new TIntLongHashMap();
+				final TIntObjectHashMap<TIntList> bukmak2RelIdToLabelRelIdsMap = new TIntObjectHashMap<TIntList>();
+				
 				try {
 					File in = getFileBackup();
 					FileInputStream fis = new FileInputStream(in);
 					
 					Xml.parse(fis, Xml.Encoding.UTF_8, new DefaultHandler2() {
-						@Override
-						public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-							if (!localName.equals(Bukmak2.XMLTAG_Bukmak2)) {
-								return;
+						@Override public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+							if (localName.equals(Bukmak2.XMLTAG_Bukmak2)) {
+								Bukmak2 bukmak = Bukmak2.dariAttributes(attributes);
+								int bukmak2_relId = Bukmak2.getRelId(attributes); 
+								xbukmak.add(bukmak);
+								bukmakToRelIdMap.put(bukmak, bukmak2_relId);
+								count_bukmak++;
+							} else if (localName.equals(Label.XMLTAG_Label)) {
+								Label label = Label.dariAttributes(attributes);
+								int label_relId = Label.getRelId(attributes); 
+								xlabel.add(label);
+								labelToRelIdMap.put(label, label_relId);
+								count_label++;
+							} else if (localName.equals(Bukmak2_Label_XMLTAG_Bukmak2_Label)) {
+								int bukmak2_relId = Integer.parseInt(attributes.getValue("", Bukmak2_Label_XMLATTR_bukmak2_relId));
+								int label_relId = Integer.parseInt(attributes.getValue("", Bukmak2_Label_XMLATTR_label_relId));
+								
+								TIntList labelRelIds = bukmak2RelIdToLabelRelIdsMap.get(bukmak2_relId);
+								if (labelRelIds == null) {
+									labelRelIds = new TIntArrayList();
+									bukmak2RelIdToLabelRelIdsMap.put(bukmak2_relId, labelRelIds);
+								}
+								labelRelIds.add(label_relId);
 							}
-							
-							Bukmak2 bukmak2 = Bukmak2.dariAttributes(attributes);
-							list.add(bukmak2);
-							
-							c[0]++;
 						}
 					});
 					fis.close();
@@ -190,19 +213,40 @@ public class BukmakActivity extends ListActivity {
 					return e;
 				}
 				
-				S.getDb().importBukmak(list, tumpuk);
+				{ // bikin label-label yang diperlukan, juga map relId dengan id dari label.
+					HashMap<String, Label> judulMap = new HashMap<String, Label>();
+					List<Label> xlabelLama = S.getDb().listSemuaLabel();
+					
+					for (Label labelLama: xlabelLama) {
+						judulMap.put(labelLama.judul, labelLama);
+					}
+					
+					for (Label label: xlabel) {
+						// cari apakah label yang judulnya persis sama udah ada
+						Label labelLama = judulMap.get(label.judul);
+						if (labelLama != null) {
+							labelRelIdToAbsIdMap.put(labelToRelIdMap.get(label), labelLama._id);
+							Log.d(TAG, "label (lama) r->a : " + labelToRelIdMap.get(label) + "->" + labelLama._id);
+						} else { // belum ada, harus bikin baru
+							Label labelBaru = S.getDb().tambahLabel(label.judul);
+							labelRelIdToAbsIdMap.put(labelToRelIdMap.get(label), labelBaru._id);
+							Log.d(TAG, "label (baru) r->a : " + labelToRelIdMap.get(label) + "->" + labelBaru._id);
+						}
+					}
+				}
+				
+				S.getDb().importBukmak(xbukmak, tumpuk, bukmakToRelIdMap, labelRelIdToAbsIdMap, bukmak2RelIdToLabelRelIdsMap);
 			
-				return c[0];
+				return null;
 			}
 
-			@Override
-			protected void onPostExecute(Object result) {
-				dialog.dismiss();
+			@Override protected void onPostExecute(Object result) {
+				pd.dismiss();
 				
-				if (result instanceof Integer) {
-					msgbox(getString(R.string.impor_judul), getString(R.string.impor_berhasil_angka_diproses, result));
-				} else if (result instanceof Exception) {
+				if (result instanceof Exception) {
 					msgbox(getString(R.string.impor_judul), getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, ((Exception) result).getMessage()));
+				} else {
+					msgbox(getString(R.string.impor_judul), getString(R.string.impor_berhasil_angka_diproses, count_bukmak, count_label));
 				}
 				
 				adapter.reload();
@@ -302,15 +346,15 @@ public class BukmakActivity extends ListActivity {
 		}.execute();
 	}
 
-	public static final String Bukmak2_Label_XMLTAG_Label = "Bukmak2_Label"; //$NON-NLS-1$
+	public static final String Bukmak2_Label_XMLTAG_Bukmak2_Label = "Bukmak2_Label"; //$NON-NLS-1$
 	private static final String Bukmak2_Label_XMLATTR_bukmak2_relId = "bukmak2_relId"; //$NON-NLS-1$
 	private static final String Bukmak2_Label_XMLATTR_label_relId = "label_relId"; //$NON-NLS-1$
 
 	void writeBukmak2_LabelXml(XmlSerializer xml, int bukmak2_relId, int label_relId) throws IOException {
-		xml.startTag(null, Bukmak2_Label_XMLTAG_Label);
+		xml.startTag(null, Bukmak2_Label_XMLTAG_Bukmak2_Label);
 		xml.attribute(null, Bukmak2_Label_XMLATTR_bukmak2_relId, String.valueOf(bukmak2_relId));
 		xml.attribute(null, Bukmak2_Label_XMLATTR_label_relId, String.valueOf(label_relId));
-		xml.endTag(null, Bukmak2_Label_XMLTAG_Label);
+		xml.endTag(null, Bukmak2_Label_XMLTAG_Bukmak2_Label);
 	}
 
 	@Override
