@@ -4,6 +4,10 @@ import android.content.*;
 import android.database.*;
 import android.provider.*;
 
+import java.io.*;
+
+import org.xmlpull.v1.*;
+
 import yuku.alkitab.base.storage.*;
 
 public class Label implements Comparable<Label> {
@@ -52,5 +56,18 @@ public class Label implements Comparable<Label> {
 	
 	@Override public String toString() {
 		return this.judul + " (" + this._id + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+
+	public static final String XMLTAG_Label = "Label"; //$NON-NLS-1$
+	private static final String XMLATTR_judul = "judul"; //$NON-NLS-1$
+	private static final String XMLATTR_relId = "relId"; //$NON-NLS-1$
+	
+	public void writeXml(XmlSerializer xml, int relId) throws IOException {
+		// urutan dan warnaLatar ga/belum dibekap
+		xml.startTag(null, XMLTAG_Label);
+		xml.attribute(null, XMLATTR_relId, String.valueOf(relId));
+		xml.attribute(null, XMLATTR_judul, judul);
+		xml.endTag(null, XMLTAG_Label);
 	}
 }

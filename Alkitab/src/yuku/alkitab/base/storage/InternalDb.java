@@ -6,6 +6,9 @@ import android.database.sqlite.*;
 import android.provider.*;
 import android.util.*;
 
+import gnu.trove.list.*;
+import gnu.trove.list.array.*;
+
 import java.util.*;
 
 import yuku.alkitab.base.*;
@@ -498,6 +501,24 @@ public class InternalDb {
 			while (cursor.moveToNext()) {
 				if (res == null) res = new ArrayList<Label>();
 				res.add(Label.fromCursor(cursor));
+			}
+		} finally {
+			cursor.close();
+		}
+		return res;
+	}
+	
+	/**
+	 * @return null when not found
+	 */
+	public TLongList listLabelIds(long bukmak2_id) {
+		TLongList res = null;
+		Cursor cursor = helper.getReadableDatabase().rawQuery("select " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.label_id + " from " + Db.TABEL_Bukmak2_Label + " where " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.bukmak2_id + "=?", new String[] {String.valueOf(bukmak2_id)});       //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$//$NON-NLS-6$//$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$ //$NON-NLS-11$ //$NON-NLS-12$
+		try {
+			int col_label_id = cursor.getColumnIndexOrThrow(Db.Bukmak2_Label.label_id);
+			while (cursor.moveToNext()) {
+				if (res == null) res = new TLongArrayList();
+				res.add(cursor.getLong(col_label_id));
 			}
 		} finally {
 			cursor.close();

@@ -54,12 +54,14 @@ public class Bukmak2 {
 	private static final String XMLATTR_tulisan = "tulisan"; //$NON-NLS-1$
 	private static final String XMLATTR_waktuTambah = "waktuTambah"; //$NON-NLS-1$
 	private static final String XMLATTR_waktuUbah = "waktuUbah"; //$NON-NLS-1$
+	private static final String XMLATTR_relId = "relId"; //$NON-NLS-1$
 	private static final String XMLVAL_bukmak = "bukmak"; //$NON-NLS-1$
 	private static final String XMLVAL_catatan = "catatan"; //$NON-NLS-1$
 	private static final String XMLVAL_stabilo = "stabilo"; //$NON-NLS-1$
 	
-	public void writeXml(XmlSerializer xml) throws IOException {
+	public void writeXml(XmlSerializer xml, int relId) throws IOException {
 		xml.startTag(null, XMLTAG_Bukmak2);
+		xml.attribute(null, XMLATTR_relId, String.valueOf(relId));
 		xml.attribute(null, XMLATTR_ari, String.valueOf(ari));
 		xml.attribute(null, XMLATTR_jenis, jenis == Db.Bukmak2.jenis_bukmak? XMLVAL_bukmak: jenis == Db.Bukmak2.jenis_catatan? XMLVAL_catatan: jenis == Db.Bukmak2.jenis_stabilo? XMLVAL_stabilo: String.valueOf(jenis));
 		if (tulisan != null) {

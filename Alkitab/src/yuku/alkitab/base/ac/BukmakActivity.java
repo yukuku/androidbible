@@ -11,6 +11,9 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.*;
 
+import gnu.trove.list.*;
+import gnu.trove.map.hash.*;
+
 import java.io.*;
 import java.util.*;
 
@@ -209,16 +212,16 @@ public class BukmakActivity extends ListActivity {
 	
 	public void ekspor() {
 		new AsyncTask<Void, Integer, Object>() {
-			ProgressDialog dialog;
+			ProgressDialog pd;
 			
 			@Override
 			protected void onPreExecute() {
-				dialog = new ProgressDialog(BukmakActivity.this);
-				dialog.setTitle(R.string.ekspor_judul);
-				dialog.setMessage(getString(R.string.mengekspor_titiktiga));
-				dialog.setIndeterminate(true);
-				dialog.setCancelable(false);
-				dialog.show();
+				pd = new ProgressDialog(BukmakActivity.this);
+				pd.setTitle(R.string.ekspor_judul);
+				pd.setMessage(getString(R.string.mengekspor_titiktiga));
+				pd.setIndeterminate(true);
+				pd.setCancelable(false);
+				pd.show();
 			}
 			
 			@Override
@@ -232,11 +235,49 @@ public class BukmakActivity extends ListActivity {
 					xml.startDocument("utf-8", null); //$NON-NLS-1$
 					xml.startTag(null, "backup"); //$NON-NLS-1$
 					
-					Cursor cursor = S.getDb().listSemuaBukmak();
-					while (cursor.moveToNext()) {
-						Bukmak2.dariCursor(cursor).writeXml(xml);
+					List<Bukmak2> xbukmak = new ArrayList<Bukmak2>();
+					{ // write bookmarks
+						Cursor cursor = S.getDb().listSemuaBukmak();
+						try {
+							while (cursor.moveToNext()) {
+								Bukmak2 bukmak = Bukmak2.dariCursor(cursor);
+								xbukmak.add(bukmak); // daftarkan bukmak
+								bukmak.writeXml(xml, xbukmak.size() /* 1-based relId */);
+							}
+						} finally {
+							cursor.close();
+						}
 					}
-					cursor.close();
+					
+					TLongIntHashMap labelAbsIdToRelIdMap = new TLongIntHashMap();
+					List<Label> xlabel = S.getDb().listSemuaLabel();
+					{ // write labels
+						for (int i = 0; i < xlabel.size(); i++) {
+							Label label = xlabel.get(i);
+							label.writeXml(xml, i + 1 /* 1-based relId */);
+							labelAbsIdToRelIdMap.put(label._id, i + 1 /* 1-based relId */);
+						}
+					}
+					
+					{ // write mapping from bukmak to label
+						for (int bukmak2_relId_0 = 0; bukmak2_relId_0 < xbukmak.size(); bukmak2_relId_0++) {
+							Bukmak2 bukmak = xbukmak.get(bukmak2_relId_0);
+							TLongList labelIds = S.getDb().listLabelIds(bukmak._id);
+							if (labelIds != null && labelIds.size() > 0) {
+								for (int i = 0; i < labelIds.size(); i++) {
+									long labelId = labelIds.get(i);
+									
+									// we now need 2 relids, bukmak relid and label relid
+									int bukmak2_relId = bukmak2_relId_0 + 1; // 1-based
+									int label_relId = labelAbsIdToRelIdMap.get(labelId);
+									
+									if (label_relId != labelAbsIdToRelIdMap.getNoEntryValue()) { // just in case
+										writeBukmak2_LabelXml(xml, bukmak2_relId, label_relId);
+									}
+								}
+							}
+						}
+					}
 					
 					xml.endTag(null, "backup"); //$NON-NLS-1$
 					xml.endDocument();
@@ -250,7 +291,7 @@ public class BukmakActivity extends ListActivity {
 			
 			@Override
 			protected void onPostExecute(Object result) {
-				dialog.dismiss();
+				pd.dismiss();
 				
 				if (result instanceof String) {
 					msgbox(getString(R.string.ekspor_judul), getString(R.string.ekspor_berhasil_file_yang_dihasilkan_file, result));
@@ -259,6 +300,17 @@ public class BukmakActivity extends ListActivity {
 				}
 			}
 		}.execute();
+	}
+
+	public static final String Bukmak2_Label_XMLTAG_Label = "Bukmak2_Label"; //$NON-NLS-1$
+	private static final String Bukmak2_Label_XMLATTR_bukmak2_relId = "bukmak2_relId"; //$NON-NLS-1$
+	private static final String Bukmak2_Label_XMLATTR_label_relId = "label_relId"; //$NON-NLS-1$
+
+	void writeBukmak2_LabelXml(XmlSerializer xml, int bukmak2_relId, int label_relId) throws IOException {
+		xml.startTag(null, Bukmak2_Label_XMLTAG_Label);
+		xml.attribute(null, Bukmak2_Label_XMLATTR_bukmak2_relId, String.valueOf(bukmak2_relId));
+		xml.attribute(null, Bukmak2_Label_XMLATTR_label_relId, String.valueOf(label_relId));
+		xml.endTag(null, Bukmak2_Label_XMLTAG_Label);
 	}
 
 	@Override
