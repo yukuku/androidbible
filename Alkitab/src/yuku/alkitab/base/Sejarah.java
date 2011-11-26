@@ -2,12 +2,12 @@ package yuku.alkitab.base;
 
 import android.content.*;
 import android.content.SharedPreferences.Editor;
-import android.util.Log;
+import android.util.*;
 
 public class Sejarah {
 	private static final String SEJARAH_AWALAN = "sejarah/"; //$NON-NLS-1$
 	private static final String TAG = Sejarah.class.getSimpleName();
-	private static final int MAX = 10;
+	private static final int MAX = 20;
 	
 	int[] xari;
 	int n;
