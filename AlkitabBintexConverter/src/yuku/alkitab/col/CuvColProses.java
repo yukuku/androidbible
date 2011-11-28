@@ -1,10 +1,10 @@
-package yuku.alkitab;
+package yuku.alkitab.col;
 
 import java.io.*;
 import java.nio.charset.*;
 import java.util.*;
 
-import yuku.alkitab.BdbProses.Rec;
+import yuku.alkitab.bdb.BdbProses.*;
 import yuku.alkitab.yes.*;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;

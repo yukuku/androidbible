@@ -1,11 +1,11 @@
-package yuku.alkitab;
+package yuku.alkitab.col;
 
 import java.io.*;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.*;
 
-import yuku.alkitab.BdbProses.Rec;
+import yuku.alkitab.bdb.BdbProses.*;
 
 public class ColProses {
 	static String[] xnamakitab = {

@@ -1,15 +1,15 @@
-package yuku.alkitab;
+package yuku.alkitab.bdb;
 
-import java.io.File;
+import java.io.*;
 import java.util.*;
 import java.util.Map.Entry;
 
 public class BdbProses {
-	static class Rec {
-		int kitab_1;
-		int pasal_1;
-		int ayat_1;
-		String isi;
+	public static class Rec {
+		public int kitab_1;
+		public int pasal_1;
+		public int ayat_1;
+		public String isi;
 	}
 	
 	public static void main(String[] args) throws Exception {
