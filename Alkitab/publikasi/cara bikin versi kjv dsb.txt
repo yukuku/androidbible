@@ -2,12 +2,13 @@
    dengan parameter versi. Misalnya 'tb' atau 'kjv'.
    Hal ini akan menumpuk res/drawable{,-hdpi,-ldpi} dengan ikon yang sesuai dari publikasi/$1_ikon
 
-2. Hapus res/raw YANG SAAT INI ADALAH SYMLINK.
-   rm res/raw (jangan rm -r res/raw)
+2. Tumpuk ../res/raw/ dengan ./$1_raw/
+   
+   pushd ../res/raw 
+   rm * 
+   cp ../../publikasi/$1_raw/* .
+   popd
 
-3. Bikin lagi symlink dari res/raw ke
-   publikasi/$1_raw
-
-4. Ganti package name
+3. Ganti package name
    - yuku.alkitab  untuk tb
    - yuku.alkitab.kjv  untuk kjv
