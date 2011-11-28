@@ -8,8 +8,9 @@ import android.os.*;
 import android.util.*;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.*;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 
 import gnu.trove.list.*;
 import gnu.trove.list.array.*;
@@ -24,12 +25,13 @@ import org.xmlpull.v1.*;
 
 import yuku.alkitab.*;
 import yuku.alkitab.base.*;
+import yuku.alkitab.base.ac.base.*;
 import yuku.alkitab.base.dialog.*;
 import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.*;
 
-public class BukmakActivity extends ListActivity {
+public class BukmakActivity extends BaseActivity {
 	public static final String TAG = BukmakActivity.class.getSimpleName();
 	
     // out
@@ -51,10 +53,11 @@ public class BukmakActivity extends ListActivity {
 		adapter = new BukmakFilterAdapter();
 		adapter.reload();
 		
-		ListView listView = getListView();
-		listView.setAdapter(adapter);
-
-		registerForContextMenu(listView);
+		lv = U.getView(this, android.R.id.list);
+		lv.setAdapter(adapter);
+		lv.setOnItemClickListener(lv_click);
+		
+		registerForContextMenu(lv);
 	}
 
 	private void bikinMenu(Menu menu) {
@@ -86,9 +89,9 @@ public class BukmakActivity extends ListActivity {
 		.show();
 	}
 	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.menuImpor) {
+	@Override public boolean onOptionsItemSelected(MenuItem item) {
+		int itemId = item.getItemId();
+		if (itemId == R.id.menuImpor) {
 			final File f = getFileBackup();
 			
 			new AlertDialog.Builder(this)
@@ -124,7 +127,7 @@ public class BukmakActivity extends ListActivity {
 			.show();
 			
 			return true;
-		} else if (item.getItemId() == R.id.menuEkspor) {
+		} else if (itemId == R.id.menuEkspor) {
 			new AlertDialog.Builder(this)
 			.setTitle(R.string.ekspor_judul)
 			.setMessage(R.string.ekspor_pembatas_buku_dan_catatan_tanya)
@@ -139,7 +142,8 @@ public class BukmakActivity extends ListActivity {
 			
 			return true;
 		}
-		return false;
+		
+		return super.onOptionsItemSelected(item);
 	}
 	
 	File getFileBackup() {
@@ -350,6 +354,8 @@ public class BukmakActivity extends ListActivity {
 	private static final String Bukmak2_Label_XMLATTR_bukmak2_relId = "bukmak2_relId"; //$NON-NLS-1$
 	private static final String Bukmak2_Label_XMLATTR_label_relId = "label_relId"; //$NON-NLS-1$
 
+	private ListView lv;
+
 	void writeBukmak2_LabelXml(XmlSerializer xml, int bukmak2_relId, int label_relId) throws IOException {
 		xml.startTag(null, Bukmak2_Label_XMLTAG_Bukmak2_Label);
 		xml.attribute(null, Bukmak2_Label_XMLATTR_bukmak2_relId, String.valueOf(bukmak2_relId));
@@ -357,27 +363,28 @@ public class BukmakActivity extends ListActivity {
 		xml.endTag(null, Bukmak2_Label_XMLTAG_Bukmak2_Label);
 	}
 
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		Intent intent;
-		if (position == 0) {
-			intent = BukmakListActivity.createIntent(this, Db.Bukmak2.jenis_bukmak, 0);
-		} else if (position == 1) {
-			intent = BukmakListActivity.createIntent(this, Db.Bukmak2.jenis_catatan, 0);
-		} else if (position == 2) {
-			intent = BukmakListActivity.createIntent(this, Db.Bukmak2.jenis_stabilo, 0);
-		} else if (position == 3) {
-			intent = BukmakListActivity.createIntent(this, Db.Bukmak2.jenis_bukmak, BukmakListActivity.LABELID_noLabel);
-		} else {
-			Label label = adapter.getItem(position);
-			if (label != null) {
-				intent = BukmakListActivity.createIntent(this, Db.Bukmak2.jenis_bukmak, label._id);
+	private OnItemClickListener lv_click = new OnItemClickListener() {
+		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+			Intent intent;
+			if (position == 0) {
+				intent = BukmakListActivity.createIntent(getApplicationContext(), Db.Bukmak2.jenis_bukmak, 0);
+			} else if (position == 1) {
+				intent = BukmakListActivity.createIntent(getApplicationContext(), Db.Bukmak2.jenis_catatan, 0);
+			} else if (position == 2) {
+				intent = BukmakListActivity.createIntent(getApplicationContext(), Db.Bukmak2.jenis_stabilo, 0);
+			} else if (position == 3) {
+				intent = BukmakListActivity.createIntent(getApplicationContext(), Db.Bukmak2.jenis_bukmak, BukmakListActivity.LABELID_noLabel);
 			} else {
-				return;
+				Label label = adapter.getItem(position);
+				if (label != null) {
+					intent = BukmakListActivity.createIntent(getApplicationContext(), Db.Bukmak2.jenis_bukmak, label._id);
+				} else {
+					return;
+				}
 			}
+			startActivityForResult(intent, REQCODE_bukmakList);
 		}
-		startActivityForResult(intent, REQCODE_bukmakList);
-	}
+	};
 	
 	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		getMenuInflater().inflate(R.menu.context_bukmak, menu);

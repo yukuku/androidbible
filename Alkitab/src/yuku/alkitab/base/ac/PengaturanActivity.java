@@ -1,8 +1,11 @@
 package yuku.alkitab.base.ac;
 
-import yuku.alkitab.R;
-import android.os.Bundle;
-import android.preference.PreferenceActivity;
+import android.os.*;
+import android.preference.*;
+import android.view.*;
+
+import yuku.alkitab.*;
+import yuku.alkitab.base.ac.base.*;
 
 public class PengaturanActivity extends PreferenceActivity {
 	@Override
@@ -11,5 +14,14 @@ public class PengaturanActivity extends PreferenceActivity {
 		
 		addPreferencesFromResource(R.xml.pengaturan);
 		setTitle(R.string.pengaturan_alkitab);
+	}
+	
+	@Override public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == android.R.id.home) {
+			BaseActivity.backToRootActivity(this);
+			return true;
+		}
+		
+		return super.onOptionsItemSelected(item);
 	}
 }

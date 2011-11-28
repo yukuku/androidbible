@@ -10,14 +10,16 @@ import android.text.style.*;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.*;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Filter.FilterListener;
 
 import java.util.*;
 
 import yuku.alkitab.R;
 import yuku.alkitab.base.*;
+import yuku.alkitab.base.ac.base.*;
 import yuku.alkitab.base.dialog.*;
 import yuku.alkitab.base.dialog.JenisBukmakDialog.Listener;
 import yuku.alkitab.base.dialog.JenisCatatanDialog.RefreshCallback;
@@ -29,7 +31,7 @@ import yuku.androidsdk.searchbar.*;
 import yuku.androidsdk.searchbar.SearchBar.OnSearchListener;
 import yuku.devoxx.flowlayout.*;
 
-public class BukmakListActivity extends ListActivity {
+public class BukmakListActivity extends BaseActivity {
 	public static final String TAG = BukmakListActivity.class.getSimpleName();
 	
     // out
@@ -46,6 +48,8 @@ public class BukmakListActivity extends ListActivity {
     TextView tEmpty;
     View bClearFilter;
     SearchBar searchBar;
+	ListView lv;
+	View emptyView;
     
 	CursorAdapter adapter;
 	Cursor cursor;
@@ -59,6 +63,7 @@ public class BukmakListActivity extends ListActivity {
     long filter_labelId;
 
 	int warnaHilite;
+
 
     public static Intent createIntent(Context context, int filter_jenis, long filter_labelId) {
     	Intent res = new Intent(context, BukmakListActivity.class);
@@ -80,6 +85,8 @@ public class BukmakListActivity extends ListActivity {
 		tEmpty = U.getView(this, R.id.tEmpty);
 		bClearFilter = U.getView(this, R.id.bClearFilter);
 		searchBar = U.getView(this, R.id.searchBar);
+		lv = U.getView(this, android.R.id.list);
+		emptyView = U.getView(this, android.R.id.empty);
 		
 		filter_jenis = getIntent().getIntExtra(EXTRA_filter_jenis, 0);
 		filter_labelId = getIntent().getLongExtra(EXTRA_filter_labelId, 0);
@@ -98,16 +105,16 @@ public class BukmakListActivity extends ListActivity {
 		gantiCursor();
 		
 		adapter = new BukmakListAdapter(this, cursor);
-		setListAdapter(adapter);
 
 		panelList.setBackgroundColor(S.penerapan.warnaLatar);
 		tEmpty.setTextColor(S.penerapan.warnaHuruf);
 		
 		warnaHilite = U.getWarnaHiliteKontrasDengan(S.penerapan.warnaLatar);
 		
-		ListView lv = getListView();
+		lv.setAdapter(adapter);
 		lv.setCacheColorHint(S.penerapan.warnaLatar);
-		lv.setFastScrollEnabled(true);
+		lv.setOnItemClickListener(lv_click);
+		lv.setEmptyView(emptyView);
 
 		registerForContextMenu(lv);
 	}
@@ -255,7 +262,7 @@ public class BukmakListActivity extends ListActivity {
 			return true;
 		}
 		
-		return false;
+		return super.onOptionsItemSelected(item);
 	}
 
 	private void openSortDialog() {
@@ -325,17 +332,18 @@ public class BukmakListActivity extends ListActivity {
 		.show();
 	}
 
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		Cursor o = (Cursor) adapter.getItem(position);
-		int ari = o.getInt(o.getColumnIndexOrThrow(Db.Bukmak2.ari));
-		
-		Intent res = new Intent();
-		res.putExtra(EXTRA_ariTerpilih, ari);
-		
-		setResult(RESULT_OK, res);
-		finish();
-	}
+	private OnItemClickListener lv_click = new OnItemClickListener() {
+		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+			Cursor o = (Cursor) adapter.getItem(position);
+			int ari = o.getInt(o.getColumnIndexOrThrow(Db.Bukmak2.ari));
+			
+			Intent res = new Intent();
+			res.putExtra(EXTRA_ariTerpilih, ari);
+			
+			setResult(RESULT_OK, res);
+			finish();
+		}
+	};
 	
 	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		getMenuInflater().inflate(R.menu.context_bukmaklist, menu);

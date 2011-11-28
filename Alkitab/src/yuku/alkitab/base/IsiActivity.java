@@ -31,6 +31,7 @@ import yuku.alkitab.base.ac.EdisiActivity.MEdisi;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiInternal;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiPreset;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiYes;
+import yuku.alkitab.base.ac.base.*;
 import yuku.alkitab.base.compat.*;
 import yuku.alkitab.base.config.*;
 import yuku.alkitab.base.dialog.*;
@@ -42,7 +43,7 @@ import yuku.alkitab.base.storage.*;
 import yuku.alkitab.base.widget.*;
 import yuku.andoutil.*;
 
-public class IsiActivity extends Activity {
+public class IsiActivity extends BaseActivity {
 	public static final String TAG = IsiActivity.class.getSimpleName();
 	
 	// Berikut ini buat preferences_instan.
@@ -928,7 +929,7 @@ public class IsiActivity extends Activity {
 			return true;
 		}
 		
-		return false; 
+		return super.onOptionsItemSelected(item); 
 	}
 
 	private void bukaDialogTentang() {

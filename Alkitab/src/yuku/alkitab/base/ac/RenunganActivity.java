@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.*;
 import android.content.*;
 import android.os.*;
 import android.text.*;
@@ -18,12 +17,13 @@ import java.util.regex.*;
 
 import yuku.alkitab.*;
 import yuku.alkitab.base.*;
+import yuku.alkitab.base.ac.base.*;
 import yuku.alkitab.base.renungan.*;
 import yuku.alkitab.base.renungan.TukangDonlot.OnStatusDonlotListener;
 import yuku.alkitab.base.widget.*;
 import yuku.andoutil.*;
 
-public class RenunganActivity extends Activity implements OnStatusDonlotListener {
+public class RenunganActivity extends BaseActivity implements OnStatusDonlotListener {
 	public static final String TAG = RenunganActivity.class.getSimpleName();
 	public static final String EXTRA_alamat = "alamat"; //$NON-NLS-1$
 	static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd"); //$NON-NLS-1$
@@ -207,7 +207,7 @@ public class RenunganActivity extends Activity implements OnStatusDonlotListener
 
 			return true;
 		}
-		return false;
+		return super.onOptionsItemSelected(item);
 	}
 
 	void tampilkan(int skrol) {

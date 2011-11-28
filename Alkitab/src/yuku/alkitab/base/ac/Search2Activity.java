@@ -16,12 +16,13 @@ import java.util.*;
 import yuku.alkitab.R;
 import yuku.alkitab.base.*;
 import yuku.alkitab.base.Search2Engine.Query;
+import yuku.alkitab.base.ac.base.*;
 import yuku.alkitab.base.model.*;
 import yuku.andoutil.*;
 import yuku.androidsdk.searchbar.*;
 import yuku.androidsdk.searchbar.SearchBar.OnSearchListener;
 
-public class Search2Activity extends Activity {
+public class Search2Activity extends BaseActivity {
 	public static final String TAG = Search2Activity.class.getSimpleName();
 	
 	public static final String EXTRA_query = "query"; //$NON-NLS-1$

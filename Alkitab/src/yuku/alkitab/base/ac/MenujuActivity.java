@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.*;
 import android.content.*;
 import android.os.*;
 import android.view.*;
@@ -11,10 +10,11 @@ import java.util.*;
 
 import yuku.alkitab.*;
 import yuku.alkitab.base.*;
+import yuku.alkitab.base.ac.base.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.storage.*;
 
-public class MenujuActivity extends Activity {
+public class MenujuActivity extends BaseActivity {
 	public static final String TAG = MenujuActivity.class.getSimpleName();
 	public static final String EXTRA_ayat = "ayat"; //$NON-NLS-1$
 	public static final String EXTRA_pasal = "pasal"; //$NON-NLS-1$

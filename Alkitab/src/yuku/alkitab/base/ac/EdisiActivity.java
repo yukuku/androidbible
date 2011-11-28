@@ -19,6 +19,7 @@ import yuku.alkitab.base.*;
 import yuku.alkitab.base.AddonManager.DonlotListener;
 import yuku.alkitab.base.AddonManager.DonlotThread;
 import yuku.alkitab.base.AddonManager.Elemen;
+import yuku.alkitab.base.ac.base.*;
 import yuku.alkitab.base.config.*;
 import yuku.alkitab.base.model.*;
 import yuku.alkitab.base.pdbconvert.*;
@@ -31,7 +32,7 @@ import yuku.androidcrypto.*;
 import yuku.filechooser.*;
 import yuku.filechooser.FileChooserConfig.Mode;
 
-public class EdisiActivity extends Activity {
+public class EdisiActivity extends BaseActivity {
 	public static final String TAG = EdisiActivity.class.getSimpleName();
 
 	private static final int REQCODE_openFile = 1;
@@ -86,7 +87,7 @@ public class EdisiActivity extends Activity {
 			klikPadaBukaFile();
 			return true;
 		}
-		return false;
+		return super.onOptionsItemSelected(item);
 	}
 	
 	private OnItemClickListener lsEdisi_itemClick = new OnItemClickListener() {
