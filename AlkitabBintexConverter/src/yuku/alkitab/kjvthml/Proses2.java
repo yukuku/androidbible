@@ -15,8 +15,8 @@ public class Proses2 {
 	public void loadUpTheData() throws Exception {
 		muatNomerKitab();
 		
-		Scanner sc = new Scanner(new FileInputStream("/Users/yuku/Downloads/kjv.proses"), "utf-8");
-		pw = new PrintWriter(new File("/Users/yuku/f/android/Alkitab/publikasi/kjv2_teks_bdb.txt"), "utf-8");
+		Scanner sc = new Scanner(new FileInputStream("../Alkitab/publikasi/kjv-thml/kjv.proses"), "utf-8");
+		pw = new PrintWriter(new File("../Alkitab/publikasi/kjv-thml/kjv3_teks_bdb.txt"), "utf-8");
 		
 		proses(sc);
 		pw.close();
@@ -24,7 +24,7 @@ public class Proses2 {
 	}
 
 	private void muatNomerKitab() throws Exception {
-		Scanner sc = new Scanner(new FileInputStream("/Users/yuku/Downloads/kjv.nomerkitab"), "utf-8");
+		Scanner sc = new Scanner(new FileInputStream("../Alkitab/publikasi/kjv-thml/kjv.nomerkitab"), "utf-8");
 		nomerKitab = new TreeMap<String, Integer>();
 		while (sc.hasNext()) {
 			String k = sc.next();
@@ -65,7 +65,7 @@ public class Proses2 {
 	private void tulis(String parsed, StringBuilder isi) {
 		if (prosesParsed(parsed)) {
 			output('\t');
-			String isi2 = isi.toString().trim().replaceAll("�", "'").replaceAll("<i>", "").replaceAll("</i>", "").replaceAll("<red>", "@6").replaceAll("</red>", "@5").replaceAll("\\s+@5$", "@5").replaceAll("@6@5", "");
+			String isi2 = isi.toString().trim().replaceAll("\u2019", "'").replaceAll("<i>", "@9").replaceAll("</i>", "@7").replaceAll("<red>", "@6").replaceAll("</red>", "@5").replaceAll("\\s+@5$", "@5").replaceAll("@6@5", "");
 			if (isi2.indexOf('@') != -1) {
 				isi2 = "@@" + isi2;
 			}

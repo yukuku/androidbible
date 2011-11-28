@@ -1,6 +1,7 @@
 package yuku.alkitab.kjvthml;
 
 import java.io.*;
+import java.util.*;
 
 import javax.xml.parsers.*;
 
@@ -20,8 +21,22 @@ public class Proses {
 	
 	public void loadUpTheData() throws Exception {
 		handler = new Handler();
-		InputStream in = new FileInputStream("/Users/yuku/Downloads/kjv.xml");
-		pw = new PrintWriter(new File("/Users/yuku/Downloads/kjv.proses"), "utf-8");
+		
+		new File("../Alkitab/publikasi/kjv-thml/kjv-patched.xml").delete();
+		
+		// patch dulu
+		Process p = new ProcessBuilder("patch", "-o", "../Alkitab/publikasi/kjv-thml/kjv-patched.xml", new File("../Alkitab/publikasi/kjv-thml/kjv.xml").getCanonicalPath(), "../Alkitab/publikasi/kjv-thml/kjv.patch")
+		.redirectErrorStream(true)
+		.start();
+		Scanner sc = new Scanner(p.getInputStream());
+		while (sc.hasNextLine()) {
+			System.out.println(sc.nextLine());
+		}
+		sc.close();
+		p.waitFor();
+		
+		InputStream in = new FileInputStream("../Alkitab/publikasi/kjv-thml/kjv-patched.xml");
+		pw = new PrintWriter(new File("../Alkitab/publikasi/kjv-thml/kjv.proses"), "utf-8");
 
 		SAXParser parser = factory.newSAXParser();
 		parser.getXMLReader().setFeature("http://xml.org/sax/features/namespaces", true);

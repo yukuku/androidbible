@@ -4,7 +4,7 @@ import java.io.*;
 import java.nio.charset.*;
 import java.util.*;
 
-import yuku.alkitab.bdb.BdbProses.*;
+import yuku.alkitab.bdb.BdbProses.Rec;
 import yuku.alkitab.yes.*;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
@@ -12,10 +12,8 @@ import yuku.alkitab.yes.YesFile.Kitab;
 import yuku.alkitab.yes.YesFile.Teks;
 
 public class KjvBdbProses {
-	private static final String KJV_TEKS_BDB = "../Alkitab/publikasi/kjv_teks_bdb.txt";
-	private static final String KJV_YES_OUTPUT = "../Alkitab/publikasi/kjv.yes";
-	//private static final String KJV_TEKS_BDB = "../Alkitab/prog/b_indonesian_baru.txt";
-	//private static final String KJV_YES_OUTPUT = "../Alkitab/publikasi/tb.yes";
+	private static final String KJV_TEKS_BDB = "../Alkitab/publikasi/kjv-thml/kjv3_teks_bdb.txt";
+	private static final String KJV_YES_OUTPUT = "../Alkitab/publikasi/kjv3.yes";
 
 	public static void main(String[] args) throws Exception {
 		final Charset ascii = Charset.forName("ascii");
@@ -86,6 +84,7 @@ public class KjvBdbProses {
 			judul = "King James (KJV)";
 			nkitab = 66;
 			perikopAda = 0;
+			keterangan = "The King James or Authorized version of the Holy Bible, created by the Church of England in 1604, quickly became the standard for English-speaking protestants.";
 		}};
 	}
 
