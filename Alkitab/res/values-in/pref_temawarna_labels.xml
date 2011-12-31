@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Names of the color themes -->
+	<string-array name="pref_temaWarna_label">
+		<item>Kertas HVS</item>
+		<item>Papan Tulis</item>
+		<item>Hutan Tropis</item>
+		<item>Danau Lumut</item>
+		<item>Abu Hangat</item>
+		<item>Jeruk Manis</item>
+		<item>Padang Pasir</item>
+		<item>Coklat</item>
+		<item>Jambu Air</item>
+		<item>Malam Cerah</item>
+		<item>Malam Berbintang</item>
+	</string-array>
+</resources>

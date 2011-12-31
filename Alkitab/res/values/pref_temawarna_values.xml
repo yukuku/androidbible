@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- warna teks, warna latar, warna ayat -->
+	<string-array
+		name="pref_temaWarna_value">
+		<item>ff000000 ffeeeeee ff6666ff</item> <!-- kertas -->
+		<item>fff0f0f0 ff000000 ff9090ff</item> <!-- papan -->
+		<item>ff1c5009 ffd2f9d0 ff543703</item> <!-- hutan -->
+		<item>ff274720 ffd7e9e7 ff1916ec</item> <!-- danau -->
+		<item>ff2f3540 fff2ede4 ff8c8681</item> <!-- abu -->
+		<item>ff3f5765 fffffcde ffe86a1c</item> <!-- jeruk -->
+		<item>ff562707 ffeddca9 ffe44908</item> <!-- padang -->
+		<item>fffaac5f ff362b2a ffac8674</item> <!-- coklat -->
+		<item>ffe7a697 ff262a33 ffad8d8d</item> <!-- jambu -->
+		<item>ffe1e6fa ff122641 ffb1790f</item> <!-- malam -->
+		<item>ffffe985 ff122641 ffe3f5ff</item> <!-- malam bintang -->
+	</string-array>
+</resources>

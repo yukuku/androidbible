@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
     <string name="stabilo_judul">Sorot</string>
-    <string name="pref_pindah_ke_ayat_sebelum_sesudah_dengan_tombol_volume">Pindah ke ayat sebelum/sesudahnya dengan tombol volume</string>
-    <string name="pref_pindah_dengan_volume">Pindah dengan Volume</string>
     <string name="highlight_stabilo">Sorot</string>
     <string name="belum_ada_sejarah">Belum ada sejarah.</string>
     <string name="donasi_tombol_gamau">Lain kali</string>
@@ -27,30 +25,6 @@
     <string name="impor_judul">Pulihkan dari cadangan</string>
     <string name="impor_dari_sd_card">Pulihkan</string>
     <string name="ekspor_ke_sd_card">Buat cadangan</string>
-    <string name="pref_bahasa_yang_digunakan_pada_menu_dan">Bahasa yang digunakan pada menu dan pesan-pesan aplikasi</string>
-    <string name="pref_bahasa_language">Bahasa (Language)</string>
-    <string name="pref_atur_warna_teks_latar_belakang_dan">Atur warna teks, latar belakang, dan nomor ayat menurut suatu tema.</string>
-    <string name="pref_tema_warna">Tema Warna</string>
-    <string name="pref_warna_teks_alkitab">Warna Teks Alkitab</string>
-    <string name="pref_warna_latar_belakang">Warna Latar Belakang</string>
-    <string name="pref_warna_nomor_ayat">Warna Nomor Ayat</string>
-    <string name="pref_pakai_huruf_yang_dicetak_tebal_bold">Pakai huruf yang dicetak tebal (bold).</string>
-    <string name="pref_tebalkan_huruf">Tebalkan Huruf</string>
-    <string name="pref_ganti_bentuk_huruf_teks_alkitab">Ganti bentuk huruf teks Alkitab.</string>
-    <string name="pref_jenis_huruf">Jenis Huruf</string>
-    <string name="pref_ubah_ukuran_huruf_teks_alkitab_perbesar_atau_perkecil">Ubah ukuran huruf teks Alkitab (perbesar atau perkecil).</string>
-    <string name="pref_ukuran_huruf">Ukuran Huruf</string>
-    <string name="pref_warna">Warna</string>
-    <string name="pref_atur_warna_teks_latar_belakang_dan_nomor_ayat">Atur warna teks, latar belakang, dan nomor ayat.</string>
-    <string name="pref_penggunaan">Penggunaan</string>
-    <string name="pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah">Tekan ← dan → untuk berpindah pasal. Tekan judul untuk pindah.</string>
-    <string name="pref_tanpa_tombol_navigasi">Tanpa Tombol Navigasi</string>
-    <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Tampilkan kitab dalam urutan abjad, bukan urutan aslinya.</string>
-    <string name="pref_kitab_menurut_abjad">Kitab menurut Abjad</string>
-    <string name="pref_buka_bagian_alkitab_tertentu_dengan_mengetikkan_alamatnya_langsung">Buka bagian Alkitab tertentu dengan mengetikkan alamatnya langsung.</string>
-    <string name="pref_ketik_langsung_alamat">Ketik Langsung Alamat</string>
-    <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Layar tidak akan padam ketika membaca teks Alkitab.</string>
-    <string name="pref_biarkan_layar_menyala">Biarkan Layar Menyala</string>
     <string name="menuBantuan">Bantuan</string>
     <string name="beri_saran_title">Beri Saran</string>
     <string name="beri_saran_titik3">Beri Saran…</string>
@@ -84,19 +58,6 @@
     <string name="mengunduh_namaumum_tgl_tgl">Mengunduh %1$s tgl %2$s...</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Belum tersedia. Mungkin tanggal yang diminta belum disiapkan, atau terjadi kesalahan dalam mengenali sumber data.\n\nJika dirasa perlu, tolong beritahu pembuat program ini dengan kembali ke layar tampilan ayat, lalu buka menu dan pilih Beri Saran.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Belum tersedia. Menunggu pengambilan data lewat Internet...\n\n(Pastikan ada koneksi Internet untuk mengambil renungan.)</string>
-    <string name="teks_about">
-		[b]yuku[/b] 2009-2011[br/]
-		Situs: androidbible.blogspot.com[br/]
-		Milis: goo.gl/v686r[br/]
-		[br/]
-    	Terjemahan Baru © LAI[br/]
-    	[br/]
-		[b]Bantuan:[/b][br/]
-		- [b]Roy Krisnadi[/b] salinan indentasi Mazmur[br/]
-		- [b]Oluss Studio[/b] ikon program[br/]
-		- [b]Jaya Satrio[/b] berbagai ikon[br/]
-		- [b]Yohanes Nugroho[/b] pembaca PDB[br/]
-		- dll.</string>
     <string name="namaprog_versi_build">Alkitab %1$s (%2$d)</string>
     <string name="hari_sabtu">Sabtu</string>
     <string name="hari_jumat">Jumat</string>
@@ -207,10 +168,6 @@
     <string name="menuSortTulisan_warna">Warna sorotan</string>
     <string name="judul_bukmak_activity">Pembatas buku, catatan, dan sorotan</string>
     <string name="waktuTambah_edited_waktuUbah">%1$s\n(diedit %2$s)</string>
-    <string name="pref_penampilan_teks">Penampilan Teks</string>
-    <string name="pref_penampilan_layar">Penampilan Layar</string>
-    <string name="pref_fullScreen_title">Layar Penuh</string>
-    <string name="pref_fullScreen_summary">Sembunyikan baris status ponsel Anda</string>
     <string name="tambah_pembatas_buku_di_ayat">Tambah pembatas buku di ayat %s</string>
     <string name="tulis_catatan_di_ayat">Tulis catatan di ayat %s</string>
     <string name="cannot_find_data_file">File data tidak ketemu</string>
@@ -247,4 +204,17 @@
     <string name="rename_label">Ganti nama label</string>
     <string name="delete_label">Hapus label</string>
     <string name="tutup">Tutup</string>
+    <string name="teks_about">
+		[b]yuku[/b] 2009-2012[br/]
+		Situs: androidbible.blogspot.com[br/]
+		Milis: goo.gl/v686r[br/]
+		[br/]
+    	Terjemahan Baru © LAI[br/]
+    	[br/]
+		[b]Bantuan:[/b][br/]
+		- [b]Roy Krisnadi[/b] salinan indentasi Mazmur[br/]
+		- [b]Oluss Studio[/b] ikon program[br/]
+		- [b]Jaya Satrio[/b] berbagai ikon[br/]
+		- [b]Yohanes Nugroho[/b] pembaca PDB[br/]
+		- dll.</string>
 </resources>

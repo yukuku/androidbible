@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_pindah_ke_ayat_sebelum_sesudah_dengan_tombol_volume">Move to prev/next verses using the volume buttons</string>
+    <string name="pref_pindah_dengan_volume">Volume Button Move</string>
+    <string name="pref_bahasa_yang_digunakan_pada_menu_dan">Language used in menus and application messages</string>
+    <string name="pref_bahasa_language">Language</string>
+    <string name="pref_atur_warna_teks_latar_belakang_dan">Set colors of text, background, and verse numbers according to a theme.</string>
+    <string name="pref_tema_warna">Color Theme</string>
+    <string name="pref_warna_teks_alkitab">Bible Text Color</string>
+    <string name="pref_warna_latar_belakang">Background Color</string>
+    <string name="pref_warna_nomor_ayat">Verse Number Color</string>
+    <string name="pref_pakai_huruf_yang_dicetak_tebal_bold">Use bold fonts.</string>
+    <string name="pref_tebalkan_huruf">Bold Text</string>
+    <string name="pref_ganti_bentuk_huruf_teks_alkitab">Modify the appearance of the Bible text.</string>
+    <string name="pref_jenis_huruf">Font</string>
+    <string name="pref_ubah_ukuran_huruf_teks_alkitab_perbesar_atau_perkecil">Modify the size of the Bible text (enlarge or reduce).</string>
+    <string name="pref_ukuran_huruf">Text Size</string>
+    <string name="pref_warna">Color</string>
+    <string name="pref_atur_warna_teks_latar_belakang_dan_nomor_ayat">Set colors of text, background, and verse numbers.</string>
+    <string name="pref_penggunaan">Usage</string>
+    <string name="pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah">Press ← and → to move between chapters, or press the title.</string>
+    <string name="pref_tanpa_tombol_navigasi">No Navigation Buttons</string>
+    <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Show list of books in alphabetic order (a-z) instead of the original.</string>
+    <string name="pref_kitab_menurut_abjad">Sort Books Alphabetically</string>
+    <string name="pref_buka_bagian_alkitab_tertentu_dengan_mengetikkan_alamatnya_langsung">Open a specific part of Bible by typing the address directly.</string>
+    <string name="pref_ketik_langsung_alamat">Direct Address Input</string>
+    <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Device screen will not turn off when reading the Bible text.</string>
+    <string name="pref_biarkan_layar_menyala">Keep Screen On</string>
+    <string name="pref_penampilan_teks">Text Appearance</string>
+    <string name="pref_penampilan_layar">Display</string>
+</resources>

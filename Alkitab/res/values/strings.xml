@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
     <string name="stabilo_judul">Highlight</string>
-    <string name="pref_pindah_ke_ayat_sebelum_sesudah_dengan_tombol_volume">Move to prev/next verses using the volume buttons</string>
-    <string name="pref_pindah_dengan_volume">Volume Button Move</string>
     <string name="highlight_stabilo">Highlight</string>
     <string name="belum_ada_sejarah">No history yet.</string>
     <string name="donasi_tombol_gamau">Not now</string>
@@ -27,30 +25,6 @@
     <string name="impor_judul">Restore from backup</string>
     <string name="impor_dari_sd_card">Restore</string>
     <string name="ekspor_ke_sd_card">Backup</string>
-    <string name="pref_bahasa_yang_digunakan_pada_menu_dan">Language used in menus and application messages</string>
-    <string name="pref_bahasa_language">Language</string>
-    <string name="pref_atur_warna_teks_latar_belakang_dan">Set colors of text, background, and verse numbers according to a theme.</string>
-    <string name="pref_tema_warna">Color Theme</string>
-    <string name="pref_warna_teks_alkitab">Bible Text Color</string>
-    <string name="pref_warna_latar_belakang">Background Color</string>
-    <string name="pref_warna_nomor_ayat">Verse Number Color</string>
-    <string name="pref_pakai_huruf_yang_dicetak_tebal_bold">Use bold fonts.</string>
-    <string name="pref_tebalkan_huruf">Bold Text</string>
-    <string name="pref_ganti_bentuk_huruf_teks_alkitab">Modify the appearance of the Bible text.</string>
-    <string name="pref_jenis_huruf">Font</string>
-    <string name="pref_ubah_ukuran_huruf_teks_alkitab_perbesar_atau_perkecil">Modify the size of the Bible text (enlarge or reduce).</string>
-    <string name="pref_ukuran_huruf">Text Size</string>
-    <string name="pref_warna">Color</string>
-    <string name="pref_atur_warna_teks_latar_belakang_dan_nomor_ayat">Set colors of text, background, and verse numbers.</string>
-    <string name="pref_penggunaan">Usage</string>
-    <string name="pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah">Press ← and → to move between chapters, or press the title.</string>
-    <string name="pref_tanpa_tombol_navigasi">No Navigation Buttons</string>
-    <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Show list of books in alphabetic order (a-z) instead of the original.</string>
-    <string name="pref_kitab_menurut_abjad">Sort Books Alphabetically</string>
-    <string name="pref_buka_bagian_alkitab_tertentu_dengan_mengetikkan_alamatnya_langsung">Open a specific part of Bible by typing the address directly.</string>
-    <string name="pref_ketik_langsung_alamat">Direct Address Input</string>
-    <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Device screen will not turn off when reading the Bible text.</string>
-    <string name="pref_biarkan_layar_menyala">Keep Screen On</string>
     <string name="menuBantuan">Help</string>
     <string name="beri_saran_title">Suggest</string>
     <string name="beri_saran_titik3">Suggest…</string>
@@ -84,15 +58,6 @@
     <string name="mengunduh_namaumum_tgl_tgl">Downloading %1$s dated %2$s...</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Not yet available. Probably the requested date\'s material is not prepared yet, or there are some errors in recognizing the data source.\n\nIf you think necessary, please inform the software developers by going back to the main verse view, open the menu and choose Suggest.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Not yet available. Fetching from the Internet...\n\n(Ensure there is Internet connection to fetch the devotion materials.)</string>
-    <string name="teks_about">[b]yuku[/b] 2009-2011[br/]
-    	Website: androidbible.blogspot.com[br/] 
-    	Mailing list: goo.gl/v686r[br/]
-    	[br/]
-		[b]Contributors:[/b][br/]
-		- [b]Oluss Studio[/b] program icon[br/]
-		- [b]Jaya Satrio[/b] various icons[br/]
-		- [b]Yohanes Nugroho[/b] PDB reader[br/]
-		- etc.</string>
     <string name="namaprog_versi_build">Bible %1$s (%2$d)</string>
     <string name="hari_sabtu">Sat</string>
     <string name="hari_jumat">Fri</string>
@@ -203,8 +168,6 @@
     <string name="menuSortTulisan_warna">Highlight color</string>
     <string name="judul_bukmak_activity">Bookmarks, notes, and highlights</string>
     <string name="waktuTambah_edited_waktuUbah">%1$s\n(edited %2$s)</string>
-    <string name="pref_penampilan_teks">Text Appearance</string>
-    <string name="pref_penampilan_layar">Display</string>
     <string name="tambah_pembatas_buku_di_ayat">Add bookmark on verse %s</string>
     <string name="tulis_catatan_di_ayat">Write note on verse %s</string>
     <string name="cannot_find_data_file">Cannot find data file</string>
@@ -241,4 +204,13 @@
     <string name="rename_label">Rename label</string>
     <string name="delete_label">Delete label</string>
     <string name="tutup">Close</string>
+    <string name="teks_about">[b]yuku[/b] 2009-2012[br/]
+    	Website: androidbible.blogspot.com[br/] 
+    	Mailing list: goo.gl/v686r[br/]
+    	[br/]
+		[b]Contributors:[/b][br/]
+		- [b]Oluss Studio[/b] program icon[br/]
+		- [b]Jaya Satrio[/b] various icons[br/]
+		- [b]Yohanes Nugroho[/b] PDB reader[br/]
+		- etc.</string>
 </resources>
