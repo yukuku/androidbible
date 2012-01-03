@@ -19,3 +19,11 @@ Blok {
 	ShortStr[nparalel] xparalel
 }
 
+////// ATAUUUUU
+
+Blok {
+	Uint8 versi = 2
+	LongStr judul
+	Uint8 nparalel
+	ShortStr[nparalel] xparalel
+}

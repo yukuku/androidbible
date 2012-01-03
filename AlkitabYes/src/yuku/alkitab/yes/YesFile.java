@@ -1,10 +1,14 @@
 package yuku.alkitab.yes;
 
-import android.util.*;
+import android.util.Log;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 
-import yuku.bintex.*;
+import yuku.alkitab.yes.YesFile.PerikopData.Entri;
+import yuku.bintex.BintexWriter;
 
 public class YesFile {
 	private static final byte FILE_VERSI = 0x01;
@@ -192,6 +196,69 @@ public class YesFile {
 			}
 			in.close();
 		}
+	}
+	
+	public static class PerikopBlok implements IsiSeksi {
+		private final PerikopData data;
+
+		public PerikopBlok(PerikopData data) {
+			this.data = data;
+		}
+
+		@Override public void toBytes(BintexWriter writer) throws Exception {
+			int offsetAwalSeksi = writer.getPos();
+			for (Entri entri: data.xentri) {
+				int offsetAwalEntri = writer.getPos();
+				
+				writer.writeUint8(entri.blok.versi); // versi
+				writer.writeLongString(entri.blok.judul); // judul
+				writer.writeUint8(entri.blok.xparalel == null? 0: entri.blok.xparalel.size()); // nparalel
+				if (entri.blok.xparalel != null) { // xparalel
+					for (String paralel: entri.blok.xparalel) {
+						writer.writeShortString(paralel);
+					}
+				}
+				
+				entri.blok._offset = offsetAwalEntri - offsetAwalSeksi;
+			}
+		}
+	}
+	
+	public static class PerikopIndex implements IsiSeksi {
+		private final PerikopData data;
+
+		public PerikopIndex(PerikopData data) {
+			this.data = data;
+		}
+
+		@Override public void toBytes(BintexWriter writer) throws Exception {
+			writer.writeInt(data.xentri.size()); // nentri
+			
+			for (Entri entri: data.xentri) {
+				if (entri.blok._offset == -1) {
+					throw new RuntimeException("offset entri perikop belum dihitung"); // $NON-NLS-1$
+				}
+				
+				writer.writeInt(entri.ari);
+				writer.writeInt(entri.blok._offset);
+			}
+		}
+	}
+	
+	public static class PerikopData {
+		public static class Entri {
+			public int ari;
+			public Blok blok;
+		}
+		public static class Blok {
+			public int versi;
+			public String judul;
+			public List<String> xparalel;
+			
+			int _offset = -1;
+		}
+		
+		public List<Entri> xentri;
 	}
 	
 	public void output(RandomAccessFile file) throws Exception {
