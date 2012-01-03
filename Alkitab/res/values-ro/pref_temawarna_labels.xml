@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<resources>
+    <!-- Names of the color themes -->
+	<string-array name="pref_temaWarna_label">
+		<item>Hârtie</item>
+		<item>Constrast</item>
+		<item>Tropical</item>
+		<item>Metalic</item>
+		<item>Cenuşiu</item>
+		<item>Orange</item>
+		<item>Deşert</item>
+		<item>Ciocolata</item>
+		<item>Cafeniu</item>
+		<item>Nocturn</item>
+		<item>Înstelat</item>
+	</string-array>
+</resources>
