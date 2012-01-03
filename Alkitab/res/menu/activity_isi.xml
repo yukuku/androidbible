@@ -17,15 +17,15 @@
 	<item
 		android:id="@+id/menuRenungan"
 		android:title="@string/renungan"
-		android:icon="@drawable/ic_menu_notifications" android:showAsAction="always"/>
+		android:icon="@drawable/ic_menu_notifications" />
 	<item
 		android:id="@+id/menuEdisi"
 		android:title="@string/versi" 
-		android:icon="@drawable/menu_edisi" android:showAsAction="always"/>
+		android:icon="@drawable/menu_edisi" />
 	<item
 		android:id="@+id/menuPengaturan"
 		android:title="@string/menuPengaturan" 
-		android:icon="@drawable/ic_menu_preferences" android:showAsAction="always"/>
+		android:icon="@drawable/ic_menu_preferences" />
 	<item
 		android:id="@+id/menuDonasi"
 		android:title="@string/menuDonasi"
