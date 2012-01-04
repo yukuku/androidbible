@@ -2,8 +2,8 @@
 	if (count($argv) < 5) {
 ?>
 	// contoh pemakaian: 
-	// php ./kode_ancur_yang_membuat_malu.php kjv_teks_bdb.txt kjv_index.txt kjv kjv_raw/
-	//                  [0]                   [1] (input)      [2] (output)  [3] [4] (output)
+	// php ./bdb_to_res_raw.php kjv_teks_bdb.txt kjv_index.txt kjv kjv_raw/
+	//            [0]           [1] (input)      [2] (output)  [3] [4] (output)
 <?php 		
 		die;	
 	}
