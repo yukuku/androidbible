@@ -1,15 +1,17 @@
 package yuku.alkitabconverter;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Scanner;
 
-import yuku.bintex.*;
+import yuku.bintex.BintexWriter;
 
 public class KonvertIsi {
 	public static void main(String[] args) throws Exception {
-		String nama = args[0];
+		String input_index = args[0]; // contoh: "bahan/en-kjv-thml/kjv_index.txt"
+		String output_index = args[1]; // contoh: "bahan/en-kjv-thml/kjv_raw/kjv_index_bt.bt"
 		
-		new KonvertIsi().convert("../Alkitab/publikasi/" + nama + "_index.txt", "../Alkitab/publikasi/" + nama + "_raw/" + nama + "_index_bt.bt");
+		new KonvertIsi().convert(input_index, output_index);
 	}
 
 	private void convert(String nfi, String nfo) throws Exception {

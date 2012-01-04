@@ -2,13 +2,13 @@
 	if (count($argv) < 5) {
 ?>
 	// contoh pemakaian: 
-	// php ./bdb_to_res_raw.php kjv_teks_bdb.txt kjv_index.txt kjv kjv_raw/
-	//            [0]           [1] (input)      [2] (output)  [3] [4] (output)
+	// php prog/bdb_to_res_raw.php bahan/en-kjv-thml/kjv3_teks_bdb.txt bahan/en-kjv-thml/kjv_index.txt kjv bahan/en-kjv-thml/kjv_raw/ bahan/en-kjv-thml/kjv
+	//            [0]              [1] (input)                         [2] (output)                    [3] [4] (output)               [5] (input)
 <?php 		
 		die;	
 	}
 	
-	$fn = fopen('../publikasi/' . $argv[3] . '_kitab.txt', 'rb');
+	$fn = fopen($argv[5], 'rb');
 	$nama_kitab = array();
 	$no = 1;
 	while ($line = fgets($fn)) {
