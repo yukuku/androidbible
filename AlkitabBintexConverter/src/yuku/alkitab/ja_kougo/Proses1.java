@@ -70,11 +70,15 @@ public class Proses1 {
 			//System.out.println("file " + file + " done; now total rec: " + xrec.size());
 		}
 		
+		// POST-PROCESS
 		for (Rec rec: xrec) {
 			// tambah @@ kalo perlu
 			if (rec.isi.contains("@") && !rec.isi.startsWith("@@")) {
 				rec.isi = "@@" + rec.isi;
 			}
+			
+			// betulin 〔セラ yang ga ada kurung tutupnya
+			rec.isi = rec.isi.replaceAll("(\u3014(ヒガヨン、)?セラ)(($|[^\u3015]))", "$1\u3015$3");
 			
 			System.out.println(rec.kitab_1 + "\t" + rec.pasal_1 + "\t" + rec.ayat_1 + "\t" + rec.isi);
 		}
