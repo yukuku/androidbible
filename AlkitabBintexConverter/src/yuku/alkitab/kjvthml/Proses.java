@@ -1,12 +1,17 @@
 package yuku.alkitab.kjvthml;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.Scanner;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
-import org.xml.sax.*;
-import org.xml.sax.ext.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.ext.DefaultHandler2;
 
 public class Proses {
 	private final SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -49,6 +54,7 @@ public class Proses {
 		int depth = 0;
 		StringBuilder b = new StringBuilder();
 		boolean simpan = true;
+		boolean sudahSelesaiSemua = false;
 		
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -87,11 +93,16 @@ public class Proses {
 					scTerakhir = alamat;
 				}
 			}
+			
+			if ("Indexes".equals(attributes.getValue("title"))) {
+				// selesai
+				sudahSelesaiSemua = true;
+			}
 		}
 		
 		@Override
 		public void characters(char[] ch, int start, int length) throws SAXException {
-			if (simpan) b.append(ch, start, length);
+			if (simpan && !sudahSelesaiSemua) b.append(ch, start, length);
 		}
 		
 		private void cetak() {

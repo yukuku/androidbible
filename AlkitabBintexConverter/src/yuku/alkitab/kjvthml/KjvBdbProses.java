@@ -1,11 +1,15 @@
-package yuku.alkitab.bdb;
+package yuku.alkitab.kjvthml;
 
-import java.io.*;
-import java.nio.charset.*;
-import java.util.*;
+import java.io.File;
+import java.io.RandomAccessFile;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
 
+import yuku.alkitab.bdb.BdbProses;
 import yuku.alkitab.bdb.BdbProses.Rec;
-import yuku.alkitab.yes.*;
+import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
 import yuku.alkitab.yes.YesFile.Kitab;
@@ -84,7 +88,7 @@ public class KjvBdbProses {
 			judul = "King James (KJV)";
 			nkitab = 66;
 			perikopAda = 0;
-			keterangan = "The King James or Authorized version of the Holy Bible, created by the Church of England in 1604, quickly became the standard for English-speaking protestants.";
+			keterangan = "The King James or Authorized version of the Holy Bible, created by the Church of England in 1604, that quickly became the standard for English-speaking protestants.";
 		}};
 	}
 
