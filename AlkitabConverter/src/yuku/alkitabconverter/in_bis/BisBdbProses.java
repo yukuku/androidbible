@@ -1,32 +1,29 @@
-package yuku.alkitab.kjvthml;
+package yuku.alkitabconverter.in_bis;
 
-import java.io.File;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.*;
 
-import yuku.alkitab.bdb.BdbProses;
-import yuku.alkitab.bdb.BdbProses.Rec;
-import yuku.alkitab.yes.YesFile;
+import yuku.alkitab.yes.*;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
 import yuku.alkitab.yes.YesFile.Kitab;
 import yuku.alkitab.yes.YesFile.Teks;
+import yuku.alkitabconverter.bdb.BdbProses;
+import yuku.alkitabconverter.bdb.BdbProses.*;
 
-public class KjvBdbProses {
-	private static final String KJV_TEKS_BDB = "../Alkitab/publikasi/kjv-thml/kjv3_teks_bdb.txt";
-	private static final String KJV_YES_OUTPUT = "../Alkitab/publikasi/kjv3.yes";
+public class BisBdbProses {
+	private static final String BIS_TEKS_BDB = "../Alkitab/publikasi/bis_teks_bdb.txt";
+	private static final String BIS_YES_OUTPUT = "../Alkitab/publikasi/bis.yes";
 
 	public static void main(String[] args) throws Exception {
 		final Charset ascii = Charset.forName("ascii");
 		
-		ArrayList<Rec> xrec = new BdbProses().parse(KJV_TEKS_BDB);
+		ArrayList<Rec> xrec = new BdbProses().parse(BIS_TEKS_BDB);
 		
-		final InfoEdisi infoEdisi = kjvInfoEdisi();
-		final InfoKitab infoKitab = kjvInfoKitab(xrec);
-		final Teks teks = kjvTeks(xrec);
+		final InfoEdisi infoEdisi = bisInfoEdisi();
+		final InfoKitab infoKitab = bisInfoKitab(xrec);
+		final Teks teks = bisTeks(xrec);
 		
 		YesFile file = new YesFile() {{
 			this.xseksi = new Seksi[] {
@@ -55,6 +52,28 @@ public class KjvBdbProses {
 				new Seksi() {
 					@Override
 					public byte[] nama() {
+						return "perikopIndex".getBytes(ascii);
+					}
+					
+					@Override
+					public IsiSeksi isi() {
+						return new NemplokSeksi("../Alkitab/publikasi/bis_perikop_index_bt.bt");
+					}
+				},
+				new Seksi() {
+					@Override
+					public byte[] nama() {
+						return "perikopBlok_".getBytes(ascii);
+					}
+					
+					@Override
+					public IsiSeksi isi() {
+						return new NemplokSeksi("../Alkitab/publikasi/bis_perikop_blok_bt.bt");
+					}
+				},
+				new Seksi() {
+					@Override
+					public byte[] nama() {
 						return "teks________".getBytes(ascii);
 					}
 
@@ -66,11 +85,11 @@ public class KjvBdbProses {
 			};
 		}};
 		
-		file.output(new RandomAccessFile(KJV_YES_OUTPUT, "rw"));
+		file.output(new RandomAccessFile(BIS_YES_OUTPUT, "rw"));
 	}
 
 
-	private static Teks kjvTeks(ArrayList<Rec> xrec) {
+	private static Teks bisTeks(ArrayList<Rec> xrec) {
 		final ArrayList<String> ss = new ArrayList<String>();
 		for (Rec rec: xrec) {
 			ss.add(rec.isi);
@@ -81,18 +100,17 @@ public class KjvBdbProses {
 		}};
 	}
 
-	private static InfoEdisi kjvInfoEdisi() {
+	private static InfoEdisi bisInfoEdisi() {
 		return new InfoEdisi() {{
 			versi = 1;
-			nama = "kjv";
-			judul = "King James (KJV)";
+			nama = "bis";
+			judul = "Bahasa Indonesia Sehari-hari";
 			nkitab = 66;
-			perikopAda = 0;
-			keterangan = "The King James or Authorized version of the Holy Bible, created by the Church of England in 1604, that quickly became the standard for English-speaking protestants.";
+			perikopAda = 1;
 		}};
 	}
 
-	private static InfoKitab kjvInfoKitab(ArrayList<Rec> xrec) throws Exception {
+	private static InfoKitab bisInfoKitab(ArrayList<Rec> xrec) throws Exception {
 		final Kitab[] xkitab_ = new Kitab[66];
 		
 		String[] xjudul, xnama;
@@ -100,12 +118,12 @@ public class KjvBdbProses {
 		xnama = new String[66];
 		int p = 0;
 		
-		Scanner sc = new Scanner(new File("../Alkitab/publikasi/kjv_kitab.txt"));
+		Scanner sc = new Scanner(new File("../Alkitab/publikasi/bis_kitab.txt"));
 		while (sc.hasNextLine()) {
 			String judul = sc.nextLine().trim();
 			if (judul.length() > 0) {
-				xjudul[p] = judul.replace('_', ' ');
-				xnama[p] = judul.replace('_', ' ');
+				xjudul[p] = judul;
+				xnama[p] = judul.replaceAll(" ", "_");
 				p++;
 			}
 		}

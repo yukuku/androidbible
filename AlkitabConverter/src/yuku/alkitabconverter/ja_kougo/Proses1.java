@@ -1,4 +1,4 @@
-package yuku.alkitab.ja_kougo;
+package yuku.alkitabconverter.ja_kougo;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,8 +15,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 
-import yuku.alkitab.OsisBookNames;
-import yuku.alkitab.bdb.BdbProses.Rec;
 import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
@@ -26,7 +24,9 @@ import yuku.alkitab.yes.YesFile.PerikopData.Blok;
 import yuku.alkitab.yes.YesFile.PerikopData.Entri;
 import yuku.alkitab.yes.YesFile.PerikopIndex;
 import yuku.alkitab.yes.YesFile.Teks;
-import yuku.alkitab.yes_common.YesCommon;
+import yuku.alkitabconverter.OsisBookNames;
+import yuku.alkitabconverter.bdb.BdbProses.Rec;
+import yuku.alkitabconverter.yes_common.YesCommon;
 
 public class Proses1 {
 	static String INPUT_TEKS_1 = "../Alkitab/publikasi/ja-kougo/xml/";

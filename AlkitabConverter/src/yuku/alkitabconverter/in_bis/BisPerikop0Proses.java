@@ -1,4 +1,4 @@
-package yuku.alkitab;
+package yuku.alkitabconverter.in_bis;
 
 import java.io.*;
 import java.util.*;

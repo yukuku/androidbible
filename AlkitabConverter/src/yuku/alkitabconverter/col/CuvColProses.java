@@ -1,25 +1,47 @@
-package yuku.alkitab.bdb;
+package yuku.alkitabconverter.col;
 
 import java.io.*;
-import java.nio.charset.Charset;
+import java.nio.charset.*;
 import java.util.*;
 
-import yuku.alkitab.bdb.BdbProses.*;
 import yuku.alkitab.yes.*;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
 import yuku.alkitab.yes.YesFile.Kitab;
 import yuku.alkitab.yes.YesFile.Teks;
+import yuku.alkitabconverter.bdb.BdbProses.*;
 
-public class TobaBdbProses {
-	private static final String KODE_EDISI = "toba";
-	private static final String TEKS_BDB = "../Alkitab/publikasi/" + KODE_EDISI + "_teks_bdb.txt";
-	private static final String YES_OUTPUT = "../Alkitab/publikasi/" + KODE_EDISI + ".yes";
+public class CuvColProses {
+	static int edisi_index = -1;
+	
+	private static String getKodeEdisi() {
+		return new String[] {"cuvs", "cuvt"}[edisi_index];
+	}
 
+	private static String getJudulEdisi() {
+		return new String[] {"Chinese Union Version (Simplified)", "Chinese Union Version (Traditional)"}[edisi_index];
+	}
+	
+	private static String getKeteranganEdisi() {
+		return "Public domain.";
+	}
+	
+	private static String getTeksCol() {
+		return "../Alkitab/publikasi/" + getKodeEdisi() + "_teks_col.txt";
+	}
+	
+	private static String getYesOutput() {
+		return "../Alkitab/publikasi/" + getKodeEdisi() + ".yes";
+	}
+	
+	static final Charset ascii = Charset.forName("ascii");
+	static final Charset utf8 = Charset.forName("utf-8");
+	
 	public static void main(String[] args) throws Exception {
-		final Charset ascii = Charset.forName("ascii");
+		edisi_index = Integer.parseInt(args[0]);
 		
-		ArrayList<Rec> xrec = new BdbProses().parse(TEKS_BDB);
+		
+		ArrayList<Rec> xrec = new ColProses().parse(getTeksCol());
 		
 		final InfoEdisi infoEdisi = infoEdisi();
 		final InfoKitab infoKitab = infoKitab(xrec);
@@ -28,42 +50,36 @@ public class TobaBdbProses {
 		YesFile file = new YesFile() {{
 			this.xseksi = new Seksi[] {
 				new Seksi() {
-					@Override
-					public byte[] nama() {
+					@Override public byte[] nama() {
 						return "infoEdisi___".getBytes(ascii);
 					}
 
-					@Override
-					public IsiSeksi isi() {
+					@Override public IsiSeksi isi() {
 						return infoEdisi;
 					}
 				},
 				new Seksi() {
-					@Override
-					public byte[] nama() {
+					@Override public byte[] nama() {
 						return "infoKitab___".getBytes(ascii);
 					}
 
-					@Override
-					public IsiSeksi isi() {
+					@Override public IsiSeksi isi() {
 						return infoKitab;
 					}
 				},
 				new Seksi() {
-					@Override
-					public byte[] nama() {
+					@Override public byte[] nama() {
 						return "teks________".getBytes(ascii);
 					}
 
-					@Override
-					public IsiSeksi isi() {
+					@Override public IsiSeksi isi() {
 						return teks;
 					}
 				}
 			};
 		}};
 		
-		file.output(new RandomAccessFile(YES_OUTPUT, "rw"));
+		file.output(new RandomAccessFile(getYesOutput(), "rw"));
 	}
 
 
@@ -73,7 +89,7 @@ public class TobaBdbProses {
 			ss.add(rec.isi);
 		}
 		
-		return new Teks("ascii") {{
+		return new Teks("utf-8") {{
 			xisi = ss.toArray(new String[ss.size()]);
 		}};
 	}
@@ -81,10 +97,12 @@ public class TobaBdbProses {
 	private static InfoEdisi infoEdisi() {
 		return new InfoEdisi() {{
 			versi = 1;
-			nama = "toba";
-			judul = "Batak Toba";
+			nama = getKodeEdisi();
+			judul = getJudulEdisi();
+			keterangan = getKeteranganEdisi();
 			nkitab = 66;
 			perikopAda = 0;
+			encoding = 2;
 		}};
 	}
 
@@ -96,7 +114,7 @@ public class TobaBdbProses {
 		xnama = new String[66];
 		int p = 0;
 		
-		Scanner sc = new Scanner(new File("../Alkitab/publikasi/" + KODE_EDISI + "_kitab.txt"));
+		Scanner sc = new Scanner(new File("../Alkitab/publikasi/" + getKodeEdisi() + "_kitab.txt"));
 		while (sc.hasNextLine()) {
 			String judul = sc.nextLine().trim();
 			if (judul.length() > 0) {
@@ -130,7 +148,7 @@ public class TobaBdbProses {
 						lastpasal_1 = rec.pasal_1;
 					}
 					
-					offsetLewat += rec.isi.length() + 1; // tambah 1 karena '\n' nya
+					offsetLewat += rec.isi.getBytes(utf8).length + 1; // tambah 1 karena '\n' nya
 				}
 			}
 			xpasal_offset[maxpasal_1] = offsetLewat;

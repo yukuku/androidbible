@@ -1,112 +1,98 @@
-package yuku.alkitab.col;
+package yuku.alkitabconverter.en_kjv_thml;
 
-import java.io.*;
-import java.nio.charset.*;
-import java.util.*;
+import java.io.File;
+import java.io.RandomAccessFile;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
 
-import yuku.alkitab.bdb.BdbProses.*;
-import yuku.alkitab.yes.*;
+import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
 import yuku.alkitab.yes.YesFile.Kitab;
 import yuku.alkitab.yes.YesFile.Teks;
+import yuku.alkitabconverter.bdb.BdbProses;
+import yuku.alkitabconverter.bdb.BdbProses.Rec;
 
-public class CuvColProses {
-	static int edisi_index = -1;
-	
-	private static String getKodeEdisi() {
-		return new String[] {"cuvs", "cuvt"}[edisi_index];
-	}
+public class KjvBdbProses {
+	private static final String KJV_TEKS_BDB = "../Alkitab/publikasi/kjv-thml/kjv3_teks_bdb.txt";
+	private static final String KJV_YES_OUTPUT = "../Alkitab/publikasi/kjv3.yes";
 
-	private static String getJudulEdisi() {
-		return new String[] {"Chinese Union Version (Simplified)", "Chinese Union Version (Traditional)"}[edisi_index];
-	}
-	
-	private static String getKeteranganEdisi() {
-		return "Public domain.";
-	}
-	
-	private static String getTeksCol() {
-		return "../Alkitab/publikasi/" + getKodeEdisi() + "_teks_col.txt";
-	}
-	
-	private static String getYesOutput() {
-		return "../Alkitab/publikasi/" + getKodeEdisi() + ".yes";
-	}
-	
-	static final Charset ascii = Charset.forName("ascii");
-	static final Charset utf8 = Charset.forName("utf-8");
-	
 	public static void main(String[] args) throws Exception {
-		edisi_index = Integer.parseInt(args[0]);
+		final Charset ascii = Charset.forName("ascii");
 		
+		ArrayList<Rec> xrec = new BdbProses().parse(KJV_TEKS_BDB);
 		
-		ArrayList<Rec> xrec = new ColProses().parse(getTeksCol());
-		
-		final InfoEdisi infoEdisi = infoEdisi();
-		final InfoKitab infoKitab = infoKitab(xrec);
-		final Teks teks = teks(xrec);
+		final InfoEdisi infoEdisi = kjvInfoEdisi();
+		final InfoKitab infoKitab = kjvInfoKitab(xrec);
+		final Teks teks = kjvTeks(xrec);
 		
 		YesFile file = new YesFile() {{
 			this.xseksi = new Seksi[] {
 				new Seksi() {
-					@Override public byte[] nama() {
+					@Override
+					public byte[] nama() {
 						return "infoEdisi___".getBytes(ascii);
 					}
 
-					@Override public IsiSeksi isi() {
+					@Override
+					public IsiSeksi isi() {
 						return infoEdisi;
 					}
 				},
 				new Seksi() {
-					@Override public byte[] nama() {
+					@Override
+					public byte[] nama() {
 						return "infoKitab___".getBytes(ascii);
 					}
 
-					@Override public IsiSeksi isi() {
+					@Override
+					public IsiSeksi isi() {
 						return infoKitab;
 					}
 				},
 				new Seksi() {
-					@Override public byte[] nama() {
+					@Override
+					public byte[] nama() {
 						return "teks________".getBytes(ascii);
 					}
 
-					@Override public IsiSeksi isi() {
+					@Override
+					public IsiSeksi isi() {
 						return teks;
 					}
 				}
 			};
 		}};
 		
-		file.output(new RandomAccessFile(getYesOutput(), "rw"));
+		file.output(new RandomAccessFile(KJV_YES_OUTPUT, "rw"));
 	}
 
 
-	private static Teks teks(ArrayList<Rec> xrec) {
+	private static Teks kjvTeks(ArrayList<Rec> xrec) {
 		final ArrayList<String> ss = new ArrayList<String>();
 		for (Rec rec: xrec) {
 			ss.add(rec.isi);
 		}
 		
-		return new Teks("utf-8") {{
+		return new Teks("ascii") {{
 			xisi = ss.toArray(new String[ss.size()]);
 		}};
 	}
 
-	private static InfoEdisi infoEdisi() {
+	private static InfoEdisi kjvInfoEdisi() {
 		return new InfoEdisi() {{
 			versi = 1;
-			nama = getKodeEdisi();
-			judul = getJudulEdisi();
-			keterangan = getKeteranganEdisi();
+			nama = "kjv";
+			judul = "King James (KJV)";
 			nkitab = 66;
 			perikopAda = 0;
-			encoding = 2;
+			keterangan = "The King James or Authorized version of the Holy Bible, created by the Church of England in 1604, that quickly became the standard for English-speaking protestants.";
 		}};
 	}
 
-	private static InfoKitab infoKitab(ArrayList<Rec> xrec) throws Exception {
+	private static InfoKitab kjvInfoKitab(ArrayList<Rec> xrec) throws Exception {
 		final Kitab[] xkitab_ = new Kitab[66];
 		
 		String[] xjudul, xnama;
@@ -114,12 +100,12 @@ public class CuvColProses {
 		xnama = new String[66];
 		int p = 0;
 		
-		Scanner sc = new Scanner(new File("../Alkitab/publikasi/" + getKodeEdisi() + "_kitab.txt"));
+		Scanner sc = new Scanner(new File("../Alkitab/publikasi/kjv_kitab.txt"));
 		while (sc.hasNextLine()) {
 			String judul = sc.nextLine().trim();
 			if (judul.length() > 0) {
-				xjudul[p] = judul;
-				xnama[p] = judul.replaceAll(" ", "_");
+				xjudul[p] = judul.replace('_', ' ');
+				xnama[p] = judul.replace('_', ' ');
 				p++;
 			}
 		}
@@ -148,7 +134,7 @@ public class CuvColProses {
 						lastpasal_1 = rec.pasal_1;
 					}
 					
-					offsetLewat += rec.isi.getBytes(utf8).length + 1; // tambah 1 karena '\n' nya
+					offsetLewat += rec.isi.length() + 1; // tambah 1 karena '\n' nya
 				}
 			}
 			xpasal_offset[maxpasal_1] = offsetLewat;

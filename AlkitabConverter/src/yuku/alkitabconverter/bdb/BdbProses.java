@@ -1,4 +1,4 @@
-package yuku.alkitab.bdb;
+package yuku.alkitabconverter.bdb;
 
 import java.io.*;
 import java.util.*;

@@ -1,4 +1,4 @@
-package yuku.alkitab.yes_common;
+package yuku.alkitabconverter.yes_common;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-import yuku.alkitab.bdb.BdbProses.Rec;
 import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
@@ -15,6 +14,7 @@ import yuku.alkitab.yes.YesFile.Kitab;
 import yuku.alkitab.yes.YesFile.PerikopBlok;
 import yuku.alkitab.yes.YesFile.PerikopIndex;
 import yuku.alkitab.yes.YesFile.Teks;
+import yuku.alkitabconverter.bdb.BdbProses.Rec;
 
 public class YesCommon {
 	public static final String TAG = YesCommon.class.getSimpleName();

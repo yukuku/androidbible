@@ -1,4 +1,4 @@
-package yuku.alkitab.ro_cornilescu;
+package yuku.alkitabconverter.ro_cornilescu;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import yuku.alkitab.bdb.BdbProses.Rec;
 import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
@@ -17,7 +16,8 @@ import yuku.alkitab.yes.YesFile.PerikopData.Blok;
 import yuku.alkitab.yes.YesFile.PerikopData.Entri;
 import yuku.alkitab.yes.YesFile.PerikopIndex;
 import yuku.alkitab.yes.YesFile.Teks;
-import yuku.alkitab.yes_common.YesCommon;
+import yuku.alkitabconverter.bdb.BdbProses.Rec;
+import yuku.alkitabconverter.yes_common.YesCommon;
 
 public class Proses1 {
 	public static final String TAG = Proses1.class.getSimpleName();

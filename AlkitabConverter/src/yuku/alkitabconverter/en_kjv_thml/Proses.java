@@ -1,4 +1,4 @@
-package yuku.alkitab.kjvthml;
+package yuku.alkitabconverter.en_kjv_thml;
 
 import java.io.File;
 import java.io.FileInputStream;

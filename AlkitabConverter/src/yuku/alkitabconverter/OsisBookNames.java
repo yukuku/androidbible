@@ -1,4 +1,4 @@
-package yuku.alkitab;
+package yuku.alkitabconverter;
 
 public class OsisBookNames {
 	public static final String TAG = OsisBookNames.class.getSimpleName();
