@@ -20,6 +20,11 @@ import yuku.alkitab.bdb.BdbProses.Rec;
 import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
+import yuku.alkitab.yes.YesFile.PerikopBlok;
+import yuku.alkitab.yes.YesFile.PerikopData;
+import yuku.alkitab.yes.YesFile.PerikopData.Blok;
+import yuku.alkitab.yes.YesFile.PerikopData.Entri;
+import yuku.alkitab.yes.YesFile.PerikopIndex;
 import yuku.alkitab.yes.YesFile.Teks;
 import yuku.alkitab.yes_common.YesCommon;
 
@@ -29,12 +34,16 @@ public class Proses1 {
 	public static int INPUT_TEKS_ENCODING_YES = 2; // 1: ascii; 2: utf-8;
 	public static String INPUT_KITAB = "../Alkitab/publikasi/ja-kougo/ja-kougo-kitab.txt";
 	static String OUTPUT_YES = "../Alkitab/publikasi/ja-kougo/ja-kougo.yes";
-	public static int OUTPUT_ADA_PERIKOP = 0;
+	public static int OUTPUT_ADA_PERIKOP = 1;
 
 	final SAXParserFactory factory = SAXParserFactory.newInstance();
 	Handler handler;
 
 	List<Rec> xrec = new ArrayList<Rec>();
+	PerikopData perikopData = new PerikopData();
+	{
+		perikopData.xentri = new ArrayList<Entri>();
+	}
 
 	public static void main(String[] args) throws Exception {
 		new Proses1().u();
@@ -77,7 +86,7 @@ public class Proses1 {
 		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
 		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
 		
-		YesFile file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks);
+		YesFile file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(perikopData), new PerikopIndex(perikopData));
 		
 		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
 	}
@@ -92,7 +101,9 @@ public class Proses1 {
 		String[] tree = new String[80];
 		int depth = 0;
 		StringBuilder b = new StringBuilder();
+		StringBuilder b_comment = new StringBuilder();
 		boolean simpan = false;
+		boolean simpan_comment = false;
 		
 		int indenDiXml = 0;
 		int indenDiAyat = 0;
@@ -110,6 +121,7 @@ public class Proses1 {
 			} else if (alamat.endsWith("/chapter")) {
 				String pasal_s = attributes.getValue("id");
 				pasal_1 = Integer.parseInt(pasal_s);
+				ayat_1 = 1; // reset to 1
 			} else if (alamat.endsWith("/verse")) {
 				String ayat_s = attributes.getValue("id");
 				
@@ -154,17 +166,9 @@ public class Proses1 {
 				} else if (indenDiXml > 1) {
 					throw new RuntimeException("inden di xml: " + indenDiXml);
 				}
+			} else if (alamat.endsWith("/comment")) {
+				simpan_comment = true;
 			}
-		}
-
-		private int parseIntSecukupnya(String s) {
-			for (int i = 0; i < s.length(); i++) {
-				if (!Character.isDigit(s.charAt(i))) {
-					s = s.substring(0, i);
-					break;
-				}
-			}
-			return Integer.parseInt(s);
 		}
 
 		@Override public void endElement(String uri, String localName, String qName) throws SAXException {
@@ -188,9 +192,34 @@ public class Proses1 {
 					Rec lastRec = xrec.get(xrec.size() - 1);
 					lastRec.isi = lastRec.isi + "@8";
 				}
+			} else if (alamat.endsWith("/comment")) {
+				simpan_comment = false;
+				
+				String comment = b_comment.toString();
+				b_comment.setLength(0);
+				
+				// masukin ke data perikop
+				Entri entri = new Entri();
+				entri.ari = (kitab_1 - 1) << 16 | pasal_1 << 8 | ayat_1;
+				entri.blok = new Blok();
+				entri.blok.versi = 2;
+				entri.blok.judul = comment;
+				perikopData.xentri.add(entri);
+				
+				System.out.println("Perikop: " + kitab_1 + " " + pasal_1 + " " + ayat_1 + " " + comment);
 			}
 
 			tree[--depth] = null;
+		}
+
+		private int parseIntSecukupnya(String s) {
+			for (int i = 0; i < s.length(); i++) {
+				if (!Character.isDigit(s.charAt(i))) {
+					s = s.substring(0, i);
+					break;
+				}
+			}
+			return Integer.parseInt(s);
 		}
 
 		private void newVerse(int kitab_1, int pasal_1, int ayat_1, String isi) {
@@ -234,6 +263,8 @@ public class Proses1 {
 					indenDiAyat = 0;
 				}
 				b.append(ch, start, length);
+			} else if (simpan_comment) {
+				b_comment.append(ch, start, length);
 			}
 		}
 
