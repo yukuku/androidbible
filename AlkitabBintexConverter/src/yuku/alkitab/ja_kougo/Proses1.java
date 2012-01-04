@@ -62,10 +62,14 @@ public class Proses1 {
 		}
 		
 		for (Rec rec: xrec) {
+			// tambah @@ kalo perlu
+			if (rec.isi.contains("@") && !rec.isi.startsWith("@@")) {
+				rec.isi = "@@" + rec.isi;
+			}
+			
 			System.out.println(rec.kitab_1 + "\t" + rec.pasal_1 + "\t" + rec.ayat_1 + "\t" + rec.isi);
 		}
 		//System.out.println("Total rec: " + xrec.size());
-		
 
 		////////// PROSES KE YES
 
@@ -89,6 +93,9 @@ public class Proses1 {
 		int depth = 0;
 		StringBuilder b = new StringBuilder();
 		boolean simpan = false;
+		
+		int indenDiXml = 0;
+		int indenDiAyat = 0;
 
 		@Override public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			tree[depth++] = localName;
@@ -139,6 +146,14 @@ public class Proses1 {
 						simpan = false;
 					}
 				}
+			} else if (alamat.endsWith("/l")) {
+				indenDiXml++;
+				if (indenDiXml == 1) {
+					b.append("@1");
+					indenDiAyat = 1;
+				} else if (indenDiXml > 1) {
+					throw new RuntimeException("inden di xml: " + indenDiXml);
+				}
 			}
 		}
 
@@ -162,6 +177,16 @@ public class Proses1 {
 					newVerse(kitab_1, pasal_1, ayat_1, b.toString());
 					b.setLength(0);
 					simpan = false;
+				}
+			} else if (alamat.endsWith("/l")) {
+				indenDiXml--;
+			} else if (alamat.endsWith("/p")) {
+				// tambah @8 di ayat terakhir ATAU buffer b (belum jadi ayat)
+				if (b.length() > 0) {
+					b.append("@8");
+				} else {
+					Rec lastRec = xrec.get(xrec.size() - 1);
+					lastRec.isi = lastRec.isi + "@8";
 				}
 			}
 
@@ -190,6 +215,9 @@ public class Proses1 {
 				rec.isi = isi;
 				xrec.add(rec);
 				
+				// reset inden ke 0 lagi
+				indenDiAyat = 0;
+				
 				lastAri = ari; // bukan di bawah.
 			} else { // ari sama lagi, ato malah mundur. Maka append ke rec terakhir
 				Rec lastRec = xrec.get(xrec.size()-1);
@@ -200,7 +228,13 @@ public class Proses1 {
 		}
 		
 		@Override public void characters(char[] ch, int start, int length) throws SAXException {
-			if (simpan) b.append(ch, start, length);
+			if (simpan) {
+				if (indenDiXml == 0 && indenDiAyat != 0) {
+					b.append("@0");
+					indenDiAyat = 0;
+				}
+				b.append(ch, start, length);
+			}
 		}
 
 		void cetak() {
