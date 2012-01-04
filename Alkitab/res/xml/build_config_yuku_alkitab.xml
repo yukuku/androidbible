@@ -8,6 +8,7 @@
 		<preset               judul="Batak Toba" namafile_preset="toba.yes" url="http://alkitab-host.appspot.com/addon/yes/toba.yes.gz" />
 		<preset locale="zh"   judul="Chinese Union Version (Simplified)" namafile_preset="cuvs.yes" url="http://alkitab-host.appspot.com/addon/yes/cuvs.yes.gz" />
 		<preset locale="zh"   judul="Chinese Union Version (Traditional)" namafile_preset="cuvt.yes" url="http://alkitab-host.appspot.com/addon/yes/cuvt.yes.gz" />
+		<preset locale="ja"   judul="口語訳" namafile_preset="ja-kougo.yes" url="http://alkitab-host.appspot.com/addon/yes/ja-kougo.yes.gz" />
 		<preset locale="ro"   judul="Cornilescu (1928)" namafile_preset="ro-cornilescu.yes" url="http://alkitab-host.appspot.com/addon/yes/ro-cornilescu/ro-cornilescu.yes.gz" />
 	</edisi>
 	<share>
