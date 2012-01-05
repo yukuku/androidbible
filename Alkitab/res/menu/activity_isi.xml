@@ -4,12 +4,12 @@
 	<item
 		android:id="@+id/menuTuju"
 		android:title="@string/menuTuju"
-		android:icon="@drawable/ic_menu_forward" android:showAsAction="always"/>
+		android:icon="@drawable/ic_menu_tuju" android:showAsAction="always"/>
 	<item
 		android:id="@+id/menuBukmak"
 		android:title="@string/pembatas_buku" 
 		android:titleCondensed="@string/pembatas_condensed"
-		android:icon="@drawable/menu_bukmak" android:showAsAction="always"/>
+		android:icon="@drawable/ic_menu_bukmak" android:showAsAction="always"/>
 	<item
 		android:id="@+id/menuSearch2" 
 		android:title="@string/cari_v"
@@ -17,15 +17,15 @@
 	<item
 		android:id="@+id/menuRenungan"
 		android:title="@string/renungan"
-		android:icon="@drawable/ic_menu_notifications" android:showAsAction="ifRoom" />
+		android:icon="@drawable/ic_menu_renungan" android:showAsAction="ifRoom" />
 	<item
 		android:id="@+id/menuEdisi"
 		android:title="@string/versi" 
-		android:icon="@drawable/menu_edisi" android:showAsAction="ifRoom" />
+		android:icon="@drawable/ic_menu_edisi" android:showAsAction="ifRoom" />
 	<item
 		android:id="@+id/menuPengaturan"
 		android:title="@string/menuPengaturan" 
-		android:icon="@drawable/ic_menu_preferences" android:showAsAction="ifRoom" />
+		android:icon="@drawable/ic_menu_pengaturan" android:showAsAction="ifRoom" />
 	<item
 		android:id="@+id/menuDonasi"
 		android:title="@string/menuDonasi"

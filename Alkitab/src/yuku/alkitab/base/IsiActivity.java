@@ -886,10 +886,10 @@ public class IsiActivity extends BaseActivity {
 			MenuItem menuTuju = menu.findItem(R.id.menuTuju);
 			if (menuTuju != null) {
 				if (Preferences.getBoolean(R.string.pref_tombolAlamatLoncat_key, R.bool.pref_tombolAlamatLoncat_default)) {
-					menuTuju.setIcon(R.drawable.menu_loncat);
+					menuTuju.setIcon(R.drawable.ic_menu_loncat);
 					menuTuju.setTitle(R.string.loncat_v);
 				} else {
-					menuTuju.setIcon(R.drawable.ic_menu_forward);
+					menuTuju.setIcon(R.drawable.ic_menu_tuju);
 					menuTuju.setTitle(R.string.tuju_v);
 				}
 			}
