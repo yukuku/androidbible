@@ -1,36 +1,59 @@
 
 package yuku.alkitab.base.ac;
 
-import android.app.*;
-import android.content.*;
-import android.os.*;
-import android.util.*;
-import android.view.*;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.*;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import yuku.alkitab.R;
-import yuku.alkitab.base.*;
+import yuku.alkitab.base.AddonManager;
 import yuku.alkitab.base.AddonManager.DonlotListener;
 import yuku.alkitab.base.AddonManager.DonlotThread;
 import yuku.alkitab.base.AddonManager.Elemen;
-import yuku.alkitab.base.ac.base.*;
-import yuku.alkitab.base.config.*;
-import yuku.alkitab.base.model.*;
-import yuku.alkitab.base.pdbconvert.*;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.config.BuildConfig;
+import yuku.alkitab.base.model.Edisi;
+import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog.ConvertOptionsCallback;
+import yuku.alkitab.base.pdbconvert.ConvertPdbToYes;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertParams;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertProgressListener;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertResult;
-import yuku.alkitab.base.storage.*;
-import yuku.androidcrypto.*;
-import yuku.filechooser.*;
+import yuku.alkitab.base.storage.Db;
+import yuku.alkitab.base.storage.Preferences;
+import yuku.alkitab.base.storage.YesPembaca;
+import yuku.androidcrypto.DigestType;
+import yuku.androidcrypto.Digester;
+import yuku.filechooser.FileChooserActivity;
+import yuku.filechooser.FileChooserConfig;
 import yuku.filechooser.FileChooserConfig.Mode;
+import yuku.filechooser.FileChooserResult;
 
 public class EdisiActivity extends BaseActivity {
 	public static final String TAG = EdisiActivity.class.getSimpleName();
@@ -672,6 +695,7 @@ public class EdisiActivity extends BaseActivity {
 				// pilihan untuk open
 				cAktif.setVisibility(View.GONE);
 				lJudul.setText(R.string.ed_buka_file_pdb_yes_lainnya);
+				lJudul.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_add, 0, 0, 0);
 				lNamafile.setVisibility(View.GONE);
 			} else {
 				// salah satu dari edisi yang ada
@@ -681,6 +705,7 @@ public class EdisiActivity extends BaseActivity {
 				cAktif.setClickable(false);
 				cAktif.setChecked(medisi.getAktif());
 				lJudul.setText(medisi.judul);
+				lJudul.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 				if (medisi instanceof MEdisiInternal) {
 					cAktif.setEnabled(false);
 					lNamafile.setVisibility(View.GONE);
