@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="yuku.alkitab" android:installLocation="auto" android:versionCode="82" android:versionName="2.2.0">
+	<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14" />
+
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+
+	<uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+
+	<supports-screens android:largeScreens="true" android:resizeable="true" android:smallScreens="true" android:normalScreens="true" android:anyDensity="true" />
+
 	<application android:name="yuku.alkitab.base.App" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:hardwareAccelerated="true">
 		<activity android:name="yuku.alkitab.base.IsiActivity" android:configChanges="keyboardHidden|orientation|locale" android:theme="@style/Theme.AlkitabIsi">
 			<intent-filter>
@@ -18,14 +28,4 @@
 		<activity android:name="yuku.alkitab.base.ac.BantuanActivity" android:label="@string/bantuan_judul" android:configChanges="locale" />
 		<activity android:name="yuku.filechooser.FileChooserActivity" android:configChanges="keyboardHidden|orientation|locale" />
 	</application>
-
-	<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="14" />
-
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-	<uses-permission android:name="android.permission.WAKE_LOCK" />
-
-	<uses-feature android:name="android.hardware.touchscreen" android:required="false" />
-
-	<supports-screens android:largeScreens="true" android:resizeable="true" android:smallScreens="true" android:normalScreens="true" android:anyDensity="true" />
 </manifest>
