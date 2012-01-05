@@ -166,7 +166,6 @@
     <string name="menuSortAri">Verse address</string>
     <string name="menuSortTulisan">Title</string>
     <string name="menuSortTulisan_warna">Highlight color</string>
-    <string name="judul_bukmak_activity">Bookmarks, notes, and highlights</string>
     <string name="waktuTambah_edited_waktuUbah">%1$s\n(edited %2$s)</string>
     <string name="tambah_pembatas_buku_di_ayat">Add bookmark on verse %s</string>
     <string name="tulis_catatan_di_ayat">Write note on verse %s</string>

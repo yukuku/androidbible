@@ -166,7 +166,6 @@
 	<string name="menuSortAri">Adresă verset</string>
 	<string name="menuSortTulisan">Titlu</string>
 	<string name="menuSortTulisan_warna">Culoare marcaj</string>
-	<string name="judul_bukmak_activity">Favorite, note şi marcaje</string>
 	<string name="waktuTambah_edited_waktuUbah">%1$s\n(editat %2$s)</string>
 	<string name="tambah_pembatas_buku_di_ayat">Adaugă versetul la favorite %s</string>
 	<string name="tulis_catatan_di_ayat">Scrie o notiţă versetului %s</string>
