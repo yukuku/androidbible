@@ -1,47 +1,85 @@
 package yuku.alkitab.base;
 
-import android.app.*;
-import android.content.*;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.graphics.*;
-import android.graphics.drawable.*;
-import android.net.*;
-import android.os.*;
-import android.text.*;
-import android.text.style.*;
-import android.text.util.*;
-import android.util.*;
-import android.view.*;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
+import android.text.util.Linkify;
+import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.util.TypedValue;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.SubMenu;
+import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.animation.*;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
-import android.widget.*;
+import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.TextView.BufferType;
+import android.widget.Toast;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import yuku.alkitab.*;
+import yuku.alkitab.R;
 import yuku.alkitab.base.IsiActivity.FakeContextMenu.Item;
 import yuku.alkitab.base.Search2Engine.Query;
-import yuku.alkitab.base.ac.*;
+import yuku.alkitab.base.ac.BantuanActivity;
+import yuku.alkitab.base.ac.BukmakActivity;
+import yuku.alkitab.base.ac.EdisiActivity;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisi;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiInternal;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiPreset;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiYes;
-import yuku.alkitab.base.ac.base.*;
-import yuku.alkitab.base.compat.*;
-import yuku.alkitab.base.config.*;
-import yuku.alkitab.base.dialog.*;
+import yuku.alkitab.base.ac.MenujuActivity;
+import yuku.alkitab.base.ac.PengaturanActivity;
+import yuku.alkitab.base.ac.RenunganActivity;
+import yuku.alkitab.base.ac.Search2Activity;
+import yuku.alkitab.base.ac.ShareActivity;
+import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.compat.Api8;
+import yuku.alkitab.base.config.BuildConfig;
+import yuku.alkitab.base.config.D;
+import yuku.alkitab.base.dialog.JenisBukmakDialog;
 import yuku.alkitab.base.dialog.JenisBukmakDialog.Listener;
+import yuku.alkitab.base.dialog.JenisCatatanDialog;
 import yuku.alkitab.base.dialog.JenisCatatanDialog.RefreshCallback;
-import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.dialog.JenisStabiloDialog;
+import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.model.Blok;
+import yuku.alkitab.base.model.Edisi;
+import yuku.alkitab.base.model.Kitab;
 import yuku.alkitab.base.storage.Db.Bukmak2;
-import yuku.alkitab.base.storage.*;
-import yuku.alkitab.base.widget.*;
-import yuku.andoutil.*;
+import yuku.alkitab.base.storage.Preferences;
+import yuku.alkitab.base.widget.CallbackSpan;
+import yuku.andoutil.IntArrayList;
 
 public class IsiActivity extends BaseActivity {
 	public static final String TAG = IsiActivity.class.getSimpleName();
@@ -606,11 +644,11 @@ public class IsiActivity extends BaseActivity {
 				sb.append(U.buangKodeKusus(ayatAdapter_.getAyat(ayat_1)));
 			}
 			
-			Intent i = new Intent(Intent.ACTION_SEND);
-			i.setType("text/plain"); //$NON-NLS-1$
-			i.putExtra(Intent.EXTRA_SUBJECT, alamat); 
-			i.putExtra(Intent.EXTRA_TEXT, sb.toString());
-			startActivity(Intent.createChooser(i, getString(R.string.bagikan_alamat, alamat)));
+			Intent intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("text/plain"); //$NON-NLS-1$
+			intent.putExtra(Intent.EXTRA_SUBJECT, alamat); 
+			intent.putExtra(Intent.EXTRA_TEXT, sb.toString());
+			startActivity(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, alamat)));
 		}
 	}
 

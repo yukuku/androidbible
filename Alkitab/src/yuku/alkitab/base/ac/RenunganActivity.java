@@ -1,27 +1,47 @@
 package yuku.alkitab.base.ac;
 
-import android.content.*;
-import android.os.*;
-import android.text.*;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.format.DateFormat;
-import android.text.method.*;
-import android.util.*;
-import android.view.*;
-import android.view.animation.*;
-import android.widget.*;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.TextView.BufferType;
+import android.widget.Toast;
 
-import java.text.*;
-import java.util.*;
-import java.util.regex.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import yuku.alkitab.*;
-import yuku.alkitab.base.*;
-import yuku.alkitab.base.ac.base.*;
-import yuku.alkitab.base.renungan.*;
+import yuku.alkitab.R;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.renungan.ArtikelRenunganHarian;
+import yuku.alkitab.base.renungan.ArtikelSantapanHarian;
+import yuku.alkitab.base.renungan.IArtikel;
+import yuku.alkitab.base.renungan.TukangDonlot;
 import yuku.alkitab.base.renungan.TukangDonlot.OnStatusDonlotListener;
-import yuku.alkitab.base.widget.*;
-import yuku.andoutil.*;
+import yuku.alkitab.base.widget.CallbackSpan;
+import yuku.andoutil.ThreadSleep;
 
 public class RenunganActivity extends BaseActivity implements OnStatusDonlotListener {
 	public static final String TAG = RenunganActivity.class.getSimpleName();
@@ -199,11 +219,11 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 			
 			return true;
 		} else if (itemId == R.id.menuBagikan) {
-			Intent i = new Intent(Intent.ACTION_SEND);
-			i.setType("text/plain"); //$NON-NLS-1$
-			i.putExtra(Intent.EXTRA_SUBJECT, lHeader.getText());
-			i.putExtra(Intent.EXTRA_TEXT, lHeader.getText() + "\n" + lIsi.getText()); //$NON-NLS-1$
-			startActivity(Intent.createChooser(i, getString(R.string.bagikan_renungan)));
+			Intent intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("text/plain"); //$NON-NLS-1$
+			intent.putExtra(Intent.EXTRA_SUBJECT, lHeader.getText());
+			intent.putExtra(Intent.EXTRA_TEXT, lHeader.getText() + "\n" + lIsi.getText()); //$NON-NLS-1$
+			startActivity(ShareActivity.createIntent(intent, getString(R.string.bagikan_renungan)));
 
 			return true;
 		}

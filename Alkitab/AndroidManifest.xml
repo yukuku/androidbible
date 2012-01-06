@@ -27,5 +27,6 @@
 		<activity android:name="yuku.alkitab.base.ac.RenunganActivity" android:label="@string/renungan" android:configChanges="keyboardHidden|orientation|locale" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name="yuku.alkitab.base.ac.BantuanActivity" android:label="@string/bantuan_judul" android:configChanges="locale" />
 		<activity android:name="yuku.filechooser.FileChooserActivity" android:configChanges="keyboardHidden|orientation|locale" />
+		<activity android:name="yuku.alkitab.base.ac.ShareActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 	</application>
 </manifest>
