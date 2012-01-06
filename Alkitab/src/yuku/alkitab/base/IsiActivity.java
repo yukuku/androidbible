@@ -125,12 +125,6 @@ public class IsiActivity extends BaseActivity {
 	
 	AtributListener atributListener = new AtributListener();
 	
-	Listener muatUlangAtributMapListener = new Listener() {
-		@Override public void onOk() {
-			ayatAdapter_.muatAtributMap();
-		}
-	};
-
 	Animation fadeInAnimation;
 	Animation fadeOutAnimation;
 	boolean showingContextButton = false;
@@ -589,6 +583,7 @@ public class IsiActivity extends BaseActivity {
 			}
 			
 			U.salin(salinan);
+			uncheckAll();
 			
 			Toast.makeText(this, getString(R.string.alamat_sudah_disalin, alamat), Toast.LENGTH_SHORT).show();
 		} else if (item == menu.menuTambahBukmak) {
@@ -602,7 +597,12 @@ public class IsiActivity extends BaseActivity {
 			final int ari = Ari.encode(S.kitabAktif.pos, this.pasal_1, ayatUtama_1);
 			
 			JenisBukmakDialog dialog = new JenisBukmakDialog(this, S.alamat(S.kitabAktif, this.pasal_1, ayatUtama_1), ari);
-			dialog.setListener(muatUlangAtributMapListener);
+			dialog.setListener(new Listener() {
+				@Override public void onOk() {
+					uncheckAll();
+					ayatAdapter_.muatAtributMap();
+				}
+			});
 			dialog.bukaDialog();
 		} else if (item == menu.menuTambahCatatan) {
 			if (ayatUtama_1 == 0) {
@@ -612,7 +612,13 @@ public class IsiActivity extends BaseActivity {
 				skrolSupayaAyatKeliatan(ayatUtama_1);
 			}
 			
-			tampilkanCatatan(S.kitabAktif, this.pasal_1, ayatUtama_1);
+			JenisCatatanDialog dialog = new JenisCatatanDialog(IsiActivity.this, S.kitabAktif, this.pasal_1, ayatUtama_1, new RefreshCallback() {
+				@Override public void udahan() {
+					uncheckAll();
+					ayatAdapter_.muatAtributMap();
+				}
+			});
+			dialog.bukaDialog();
 		} else if (item == menu.menuTambahStabilo) {
 			final int ariKp = Ari.encode(S.kitabAktif.pos, this.pasal_1, 0);
 			int warnaRgb = S.getDb().getWarnaRgbStabilo(ariKp, terpilih);
@@ -649,6 +655,8 @@ public class IsiActivity extends BaseActivity {
 			intent.putExtra(Intent.EXTRA_SUBJECT, alamat); 
 			intent.putExtra(Intent.EXTRA_TEXT, sb.toString());
 			startActivity(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, alamat)));
+
+			uncheckAll();
 		}
 	}
 
@@ -1298,25 +1306,25 @@ public class IsiActivity extends BaseActivity {
 		return true;
 	}
 
-	void tampilkanCatatan(Kitab kitab_, int pasal_1, int ayat_1) {
-		JenisCatatanDialog dialog = new JenisCatatanDialog(IsiActivity.this, kitab_, pasal_1, ayat_1, new RefreshCallback() {
-			@Override public void udahan() {
-				ayatAdapter_.muatAtributMap();
-			}
-		});
-		dialog.bukaDialog();
-	}
-	
 	public class AtributListener {
 		public void onClick(Kitab kitab_, int pasal_1, int ayat_1, int jenis) {
 			if (jenis == Bukmak2.jenis_bukmak) {
 				final int ari = Ari.encode(kitab_.pos, pasal_1, ayat_1);
 				String alamat = S.alamat(S.edisiAktif, ari);
 				JenisBukmakDialog dialog = new JenisBukmakDialog(IsiActivity.this, alamat, ari);
-				dialog.setListener(muatUlangAtributMapListener);
+				dialog.setListener(new Listener() {
+					@Override public void onOk() {
+						ayatAdapter_.muatAtributMap();
+					}
+				});
 				dialog.bukaDialog();
 			} else if (jenis == Bukmak2.jenis_catatan) {
-				tampilkanCatatan(kitab_, pasal_1, ayat_1);
+				JenisCatatanDialog dialog = new JenisCatatanDialog(IsiActivity.this, kitab_, pasal_1, ayat_1, new RefreshCallback() {
+					@Override public void udahan() {
+						ayatAdapter_.muatAtributMap();
+					}
+				});
+				dialog.bukaDialog();
 			}
 		}
 	}
