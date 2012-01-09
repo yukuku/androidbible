@@ -8,7 +8,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -48,9 +47,15 @@ public class ShareActivity extends BaseActivity {
 		return res;
 	}
 	
-	@Override public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		Log.d(TAG, "1changing config: " + getChangingConfigurations());
+	public static class Result {
+		public Intent chosenIntent;
+	}
+	
+	public static Result obtainResult(Intent data) {
+		if (data == null) return null;
+		Result res = new Result();
+		res.chosenIntent = data.getParcelableExtra(Intent.EXTRA_INTENT);
+		return res;
 	}
 	
 	@Override protected void onCreate(Bundle savedInstanceState) {
@@ -85,13 +90,15 @@ public class ShareActivity extends BaseActivity {
 		}.execute();
 		
 		lsIntent.setOnItemClickListener(lsIntent_itemClick);
-		Log.d(TAG, "2changing config: " + getChangingConfigurations());
 	}
 
 	private OnItemClickListener lsIntent_itemClick = new OnItemClickListener() {
 		@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 	        Intent intent = mAdapter.intentForPosition(position);
-	        startActivity(intent);
+	        
+	        Intent data = new Intent();
+	        data.putExtra(Intent.EXTRA_INTENT, intent);
+	        setResult(RESULT_OK, data);
 	        finish();
 		}
 	};
@@ -250,7 +257,10 @@ public class ShareActivity extends BaseActivity {
 			DisplayResolveInfo dri = mList.get(position);
 
 			Intent intent = new Intent(dri.origIntent != null ? dri.origIntent : mIntent);
-			intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+			
+			// removed by yuku because we return the chosen intent instead of starting activity from here: 
+			// intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+			
 			ActivityInfo ai = dri.ri.activityInfo;
 			intent.setComponent(new ComponentName(ai.applicationInfo.packageName, ai.name));
 			return intent;

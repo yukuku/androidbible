@@ -45,9 +45,12 @@ import yuku.andoutil.ThreadSleep;
 
 public class RenunganActivity extends BaseActivity implements OnStatusDonlotListener {
 	public static final String TAG = RenunganActivity.class.getSimpleName();
-	public static final String EXTRA_alamat = "alamat"; //$NON-NLS-1$
-	static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd"); //$NON-NLS-1$
 
+	public static final String EXTRA_alamat = "alamat"; //$NON-NLS-1$
+	private static final int REQCODE_bagikan = 0;
+
+	ThreadLocal<SimpleDateFormat> tgl_format = U.getThreadLocalSimpleDateFormat("yyyyMMdd"); //$NON-NLS-1$
+	
 	public static final String[] ADA_NAMA = {
 		"sh", "rh",  //$NON-NLS-1$//$NON-NLS-2$
 	};
@@ -223,7 +226,7 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 			intent.setType("text/plain"); //$NON-NLS-1$
 			intent.putExtra(Intent.EXTRA_SUBJECT, lHeader.getText());
 			intent.putExtra(Intent.EXTRA_TEXT, lHeader.getText() + "\n" + lIsi.getText()); //$NON-NLS-1$
-			startActivity(ShareActivity.createIntent(intent, getString(R.string.bagikan_renungan)));
+			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_renungan)), REQCODE_bagikan);
 
 			return true;
 		}
@@ -237,7 +240,7 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 	}
 
 	void tuju(boolean penting, int skrol) {
-		String tgl = sdf.format(tanggalan);
+		String tgl = tgl_format.get().format(tanggalan);
 		IArtikel artikel = S.getDb().cobaAmbilRenungan(nama, tgl);
 		if (artikel == null || !artikel.getSiapPakai()) {
 			akanPerlu(nama, tgl, penting);
@@ -403,7 +406,7 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 			pemintaMasaDepanLagiJalan = true;
 			try {
 				for (int i = 0; i < 31; i++) { // 31 hari ke depan
-					String tgl = sdf.format(hariIni);
+					String tgl = tgl_format.get().format(hariIni);
 					if (S.getDb().cobaAmbilRenungan(nama, tgl) == null) {
 						Log.d(TAG, "PemintaMasaDepan perlu minta " + tgl); //$NON-NLS-1$
 						akanPerlu(nama, tgl, false);
@@ -428,5 +431,21 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 		Message msg = Message.obtain(penampilStatusDonlot);
 		msg.obj = s;
 		msg.sendToTarget();
+	}
+	
+	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQCODE_bagikan) {
+			if (resultCode == RESULT_OK) {
+				ShareActivity.Result result = ShareActivity.obtainResult(data);
+				if (result != null && result.chosenIntent != null) {
+					Intent chosenIntent = result.chosenIntent;
+					if (U.equals(chosenIntent.getComponent().getPackageName(), "com.facebook.katana")) {
+						if (U.equals(nama, "sh")) chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-sh/print/?edisi=" + tgl_format.get().format(tanggalan)); // change text to url
+						if (U.equals(nama, "rh")) chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-rh/print/?edisi=" + tgl_format.get().format(tanggalan)); // change text to url
+					}
+					startActivity(chosenIntent);
+				}
+			}
+		}
 	}
 }

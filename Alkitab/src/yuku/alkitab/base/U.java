@@ -9,6 +9,7 @@ import android.view.View;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import yuku.alkitab.base.compat.Api11;
@@ -221,5 +222,13 @@ public class U {
 		if (a == b) return true;
 		if (a == null) return false;
 		return a.equals(b);
+	}
+	
+	public static ThreadLocal<SimpleDateFormat> getThreadLocalSimpleDateFormat(final String pattern) {
+		return new ThreadLocal<SimpleDateFormat>() {
+			@Override protected SimpleDateFormat initialValue() {
+				return new SimpleDateFormat(pattern);
+			}
+		};
 	}
 }

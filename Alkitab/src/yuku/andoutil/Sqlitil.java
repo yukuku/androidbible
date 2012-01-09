@@ -1,12 +1,9 @@
 package yuku.andoutil;
 
-import java.text.*;
-import java.util.*;
+import java.text.DateFormat;
+import java.util.Date;
 
 public class Sqlitil {
-	private static SimpleDateFormat dateFormat_ymd_gmt;
-	private static SimpleDateFormat dateFormat_ymdhms_gmt;
-	
 	public static int nowDateTime() {
 		return (int) (new Date().getTime() / 1000);
 	}
@@ -17,32 +14,6 @@ public class Sqlitil {
 	
 	public static Date toDate(int date) {
 		return new Date((long)date * 1000);
-	}
-	
-	public static String toYmdGmt(Date date) {
-		if (dateFormat_ymd_gmt == null) {
-			dateFormat_ymd_gmt = new SimpleDateFormat("yyyy-MM-dd"); //$NON-NLS-1$
-			dateFormat_ymd_gmt.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
-		}
-		
-		return dateFormat_ymd_gmt.format(date);
-	}
-	
-	public static String toYmdGmt(int date) {
-		return toYmdGmt(new Date((long)date * 1000));
-	}
-	
-	public static String toYmdhmsGmt(Date date) {
-		if (dateFormat_ymdhms_gmt == null) {
-			dateFormat_ymdhms_gmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //$NON-NLS-1$
-			dateFormat_ymdhms_gmt.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
-		}
-		
-		return dateFormat_ymdhms_gmt.format(date);
-	}
-
-	public static String toYmdhmsGmt(int date) {
-		return toYmdhmsGmt(new Date((long)date * 1000));
 	}
 	
 	public static String toLocaleDateMedium(Date date) {

@@ -1,21 +1,29 @@
 package yuku.alkitab.base;
 
-import android.content.pm.*;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.*;
-import android.graphics.*;
-import android.os.*;
-import android.util.*;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.Handler;
+import android.util.Log;
 
-import java.io.*;
-import java.util.*;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.Locale;
 
-import yuku.alkitab.*;
-import yuku.alkitab.base.config.*;
-import yuku.alkitab.base.model.*;
-import yuku.alkitab.base.renungan.*;
-import yuku.alkitab.base.storage.*;
-import yuku.andoutil.*;
+import yuku.alkitab.R;
+import yuku.alkitab.base.config.BuildConfig;
+import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.model.Edisi;
+import yuku.alkitab.base.model.Kitab;
+import yuku.alkitab.base.renungan.TukangDonlot;
+import yuku.alkitab.base.storage.InternalDb;
+import yuku.alkitab.base.storage.InternalDbHelper;
+import yuku.alkitab.base.storage.InternalPembaca;
+import yuku.alkitab.base.storage.PembacaDecoder;
+import yuku.alkitab.base.storage.Preferences;
+import yuku.andoutil.IntArrayList;
 
 public class S {
 	static final String TAG = S.class.getSimpleName();
@@ -203,6 +211,11 @@ public class S {
 	public static CharSequence alamat(Kitab kitab, int pasal_1, IntArrayList xayat_1) {
 		StringBuilder sb = new StringBuilder(kitab == null? "[?]": kitab.judul); //$NON-NLS-1$
 		sb.append(' ').append(pasal_1);
+		tulisAyatRange(xayat_1, sb);
+		return sb;
+	}
+	
+	public static void tulisAyatRange(IntArrayList xayat_1, StringBuilder sb) {
 		int origLen = sb.length();
 		int lastAyat_1 = 0;
 		int awalAyat_1 = 0;
@@ -235,8 +248,6 @@ public class S {
 		} else {
 			sb.append(origLen == sb.length()? ":": ", ").append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
-		return sb;
 	}
 	
 	/**
@@ -299,14 +310,14 @@ public class S {
 	}
 	
 	/**
-	 * Jika ayat_1 adalah 0, ayat akan diabaikan.
+	 * Jika ayat_1_range adalah null, ayat akan diabaikan (jadi cuma kitab dan pasal).
 	 */
-	public static String bikinUrlAyat(Kitab kitab, int pasal_1, int ayat_1) {
+	public static String bikinUrlAyat(Kitab kitab, int pasal_1, String ayat_1_range) {
 		BuildConfig c = BuildConfig.get(App.context);
 		if (kitab.pos >= c.url_namaKitabStandar.length) {
 			return null;
 		}
-		String calonKitab = c.url_namaKitabStandar[kitab.pos], calonPasal = String.valueOf(pasal_1), calonAyat = String.valueOf(ayat_1);
+		String calonKitab = c.url_namaKitabStandar[kitab.pos], calonPasal = String.valueOf(pasal_1), calonAyat = ayat_1_range;
 		for (String format: c.url_format.split(" ")) { //$NON-NLS-1$
 			if ("slash1".equals(format)) calonPasal = "/" + calonPasal; //$NON-NLS-1$ //$NON-NLS-2$
 			if ("slash2".equals(format)) calonAyat = "/" + calonAyat; //$NON-NLS-1$ //$NON-NLS-2$
@@ -314,7 +325,7 @@ public class S {
 			if ("dot2".equals(format)) calonAyat = "." + calonAyat; //$NON-NLS-1$ //$NON-NLS-2$
 			if ("nospace0".equals(format)) calonKitab = calonKitab.replaceAll("\\s+", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
-		return c.url_prefix + calonKitab + calonPasal + (ayat_1 == 0? "": calonAyat); //$NON-NLS-1$
+		return c.url_prefix + calonKitab + calonPasal + (ayat_1_range == null? "": calonAyat); //$NON-NLS-1$
 	}
 	
 	private static PackageInfo packageInfo;

@@ -94,6 +94,16 @@ public class IsiActivity extends BaseActivity {
 
 	public static final int RESULT_pindahCara = RESULT_FIRST_USER + 1;
 
+	private static final int REQCODE_tuju = 1;
+	private static final int REQCODE_bukmak = 2;
+	private static final int REQCODE_renungan = 3;
+	private static final int REQCODE_pengaturan = 4;
+	private static final int REQCODE_edisi = 5;
+	private static final int REQCODE_search = 6;
+	private static final int REQCODE_bagikan = 7;
+
+	private static final String EXTRA_urlAyat = "urlAyat";
+
 	ListView lsIsi;
 	Button bTuju;
 	ImageButton bKiri;
@@ -634,17 +644,7 @@ public class IsiActivity extends BaseActivity {
 				}
 			}, warnaRgb, alamat).bukaDialog();
 		} else if (item == menu.menuBagikan) {
-			String urlAyat;
-			if (terpilih.size() == 1) {
-				urlAyat = S.bikinUrlAyat(S.kitabAktif, this.pasal_1, terpilih.get(0));
-			} else {
-				urlAyat = S.bikinUrlAyat(S.kitabAktif, this.pasal_1, 0); // sepasal aja!
-			}
-			
 			StringBuilder sb = new StringBuilder();
-			
-			// TODO cek fesbuk dan kalo fesbuk, maka taro url di depan, sebaliknya di belakang aja.
-			if (urlAyat != null) sb.append(urlAyat).append(" "); //$NON-NLS-1$
 			sb.append(alamat).append("  "); //$NON-NLS-1$
 			
 			// append tiap ayat terpilih
@@ -654,11 +654,21 @@ public class IsiActivity extends BaseActivity {
 				sb.append(U.buangKodeKusus(ayatAdapter_.getAyat(ayat_1)));
 			}
 			
+			String urlAyat;
+			if (terpilih.size() == 1) {
+				urlAyat = S.bikinUrlAyat(S.kitabAktif, this.pasal_1, String.valueOf(terpilih.get(0)));
+			} else {
+				StringBuilder sb2 = new StringBuilder();
+				S.tulisAyatRange(terpilih, sb2);
+				urlAyat = S.bikinUrlAyat(S.kitabAktif, this.pasal_1, sb2.toString()); // pake ayat range
+			}
+			
 			Intent intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain"); //$NON-NLS-1$
 			intent.putExtra(Intent.EXTRA_SUBJECT, alamat); 
 			intent.putExtra(Intent.EXTRA_TEXT, sb.toString());
-			startActivity(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, alamat)));
+			intent.putExtra(EXTRA_urlAyat, urlAyat);
+			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, alamat)), REQCODE_bagikan);
 
 			uncheckAll();
 		}
@@ -818,7 +828,7 @@ public class IsiActivity extends BaseActivity {
 		int ayat = getAyatBerdasarSkrol();
 		intent.putExtra(MenujuActivity.EXTRA_ayat, ayat);
 		
-		startActivityForResult(intent, R.id.menuTuju);
+		startActivityForResult(intent, REQCODE_tuju);
 	}
 	
 	void bukaDialogLoncat() {
@@ -954,7 +964,7 @@ public class IsiActivity extends BaseActivity {
 			bTuju_click();
 			return true;
 		case R.id.menuBukmak:
-			startActivityForResult(new Intent(this, BukmakActivity.class), R.id.menuBukmak);
+			startActivityForResult(new Intent(this, BukmakActivity.class), REQCODE_bukmak);
 			return true;
 		case R.id.menuSearch2:
 			menuSearch2_click();
@@ -963,13 +973,13 @@ public class IsiActivity extends BaseActivity {
 			bukaDialogEdisi();
 			return true;
 		case R.id.menuRenungan: 
-			startActivityForResult(new Intent(this, RenunganActivity.class), R.id.menuRenungan);
+			startActivityForResult(new Intent(this, RenunganActivity.class), REQCODE_renungan);
 			return true;
 		case R.id.menuTentang:
 			bukaDialogTentang();
 			return true;
 		case R.id.menuPengaturan:
-			startActivityForResult(new Intent(this, PengaturanActivity.class), R.id.menuPengaturan);
+			startActivityForResult(new Intent(this, PengaturanActivity.class), REQCODE_pengaturan);
 			return true;
 		case R.id.menuBantuan:
 			startActivity(new Intent(this, BantuanActivity.class));
@@ -1060,10 +1070,9 @@ public class IsiActivity extends BaseActivity {
 			}
 		})
 		.setPositiveButton(R.string.versi_lainnya, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
+			@Override public void onClick(DialogInterface dialog, int which) {
 				Intent intent = new Intent(getApplicationContext(), EdisiActivity.class);
-				startActivityForResult(intent, R.id.menuEdisi);
+				startActivityForResult(intent, REQCODE_edisi);
 			}
 		})
 		.setNegativeButton(R.string.cancel, null)
@@ -1076,14 +1085,13 @@ public class IsiActivity extends BaseActivity {
 		intent.putExtra(Search2Activity.EXTRA_hasilCari, search2_hasilCari);
 		intent.putExtra(Search2Activity.EXTRA_posisiTerpilih, search2_posisiTerpilih);
 		
-		startActivityForResult(intent, R.id.menuSearch2);
+		startActivityForResult(intent, REQCODE_search);
 	}
 	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.d(TAG, "onActivityResult reqCode=0x" + Integer.toHexString(requestCode) + " resCode=" + resultCode + " data=" + data); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
-		if (requestCode == R.id.menuTuju) {
+		if (requestCode == REQCODE_tuju) {
 			if (resultCode == RESULT_OK) {
 				int pasal = data.getIntExtra(MenujuActivity.EXTRA_pasal, 0);
 				int ayat = data.getIntExtra(MenujuActivity.EXTRA_ayat, 0);
@@ -1102,7 +1110,7 @@ public class IsiActivity extends BaseActivity {
 			} else if (resultCode == RESULT_pindahCara) {
 				bukaDialogLoncat();
 			}
-		} else if (requestCode == R.id.menuBukmak) {
+		} else if (requestCode == REQCODE_bukmak) {
 			ayatAdapter_.muatAtributMap();
 
 			if (resultCode == RESULT_OK) {
@@ -1112,7 +1120,7 @@ public class IsiActivity extends BaseActivity {
 					sejarah.tambah(ari);
 				}
 			}
-		} else if (requestCode == R.id.menuSearch2) {
+		} else if (requestCode == REQCODE_search) {
 			if (resultCode == RESULT_OK) {
 				int ari = data.getIntExtra(Search2Activity.EXTRA_ariTerpilih, 0);
 				if (ari != 0) { // 0 berarti ga ada apa2, karena ga ada pasal 0 ayat 0
@@ -1124,7 +1132,7 @@ public class IsiActivity extends BaseActivity {
 				search2_hasilCari = data.getParcelableExtra(Search2Activity.EXTRA_hasilCari);
 				search2_posisiTerpilih = data.getIntExtra(Search2Activity.EXTRA_posisiTerpilih, -1);
 			}
-		} else if (requestCode == R.id.menuRenungan) {
+		} else if (requestCode == REQCODE_renungan) {
 			if (data != null) {
 				String alamat = data.getStringExtra(RenunganActivity.EXTRA_alamat);
 				if (alamat != null) {
@@ -1134,11 +1142,25 @@ public class IsiActivity extends BaseActivity {
 					}
 				}
 			}
-		} else if (requestCode == R.id.menuPengaturan) {
+		} else if (requestCode == REQCODE_pengaturan) {
 			// HARUS rilod pengaturan.
 			S.bacaPengaturan();
 			
 			terapkanPengaturan(true);
+		} else if (requestCode == REQCODE_bagikan) {
+			if (resultCode == RESULT_OK) {
+				ShareActivity.Result result = ShareActivity.obtainResult(data);
+				if (result != null && result.chosenIntent != null) {
+					Intent chosenIntent = result.chosenIntent;
+					if (U.equals(chosenIntent.getComponent().getPackageName(), "com.facebook.katana")) {
+						String urlAyat = chosenIntent.getStringExtra(EXTRA_urlAyat);
+						if (urlAyat != null) {
+							chosenIntent.putExtra(Intent.EXTRA_TEXT, urlAyat); // change text to url
+						}
+					}
+					startActivity(chosenIntent);
+				}
+			}
 		}
 	}
 
