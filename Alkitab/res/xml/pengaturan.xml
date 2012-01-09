@@ -84,11 +84,13 @@
 			android:title="@string/pref_kitab_menurut_abjad"
 			android:key="@string/pref_sortKitabAlfabet_key"
 			android:summary="@string/pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya" />
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:title="@string/pref_pindah_dengan_volume"
-			android:key="@string/pref_tombolVolumeNaikTurun_key"
-			android:summary="@string/pref_pindah_ke_ayat_sebelum_sesudah_dengan_tombol_volume" />
-
+		<ListPreference
+			android:defaultValue="@string/pref_tombolVolumeBuatPindah_default"
+			android:title="@string/pref_tombolVolumeBuatPindah_title"
+			android:key="@string/pref_tombolVolumeBuatPindah_key"
+			android:summary="@string/pref_tombolVolumeBuatPindah_summary" 
+			android:entries="@array/pref_tombolVolumeBuatPindah_labels"
+			android:entryValues="@array/pref_tombolVolumeBuatPindah_values"
+		/>
 	</PreferenceCategory>
 </PreferenceScreen>

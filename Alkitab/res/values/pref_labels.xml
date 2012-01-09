@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="pref_pindah_ke_ayat_sebelum_sesudah_dengan_tombol_volume">Move to prev/next verses using the volume buttons</string>
-    <string name="pref_pindah_dengan_volume">Volume Button Move</string>
     <string name="pref_bahasa_yang_digunakan_pada_menu_dan">Language used in menus and application messages</string>
     <string name="pref_bahasa_language">Language</string>
     <string name="pref_atur_warna_teks_latar_belakang_dan">Set colors of text, background, and verse numbers according to a theme.</string>
@@ -28,4 +26,6 @@
     <string name="pref_biarkan_layar_menyala">Keep Screen On</string>
     <string name="pref_penampilan_teks">Text Appearance</string>
     <string name="pref_penampilan_layar">Display</string>
+    <string name="pref_tombolVolumeBuatPindah_title">Volume Button Navigation</string>
+    <string name="pref_tombolVolumeBuatPindah_summary">Use hardware volume buttons to navigate between verses or chapters</string>
 </resources>

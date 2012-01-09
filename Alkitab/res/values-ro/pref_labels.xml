@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <resources>
-	<string name="pref_pindah_ke_ayat_sebelum_sesudah_dengan_tombol_volume">Mută versetele înapoi/înainte următoare folosind butoanele de volum</string>
-	<string name="pref_pindah_dengan_volume">Mută cu butonul de volum</string>
 	<string name="pref_bahasa_yang_digunakan_pada_menu_dan">Limba folosită în meniu şi mesajele aplicaţiei</string>
 	<string name="pref_bahasa_language">Limba</string>
 	<string name="pref_atur_warna_teks_latar_belakang_dan">Alege culoare text, fundal şi număr verset conform unei teme.</string>

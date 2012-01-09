@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="pref_pindah_ke_ayat_sebelum_sesudah_dengan_tombol_volume">Pindah ke ayat sebelum/sesudahnya dengan tombol volume</string>
-    <string name="pref_pindah_dengan_volume">Pindah dengan Volume</string>
     <string name="pref_bahasa_yang_digunakan_pada_menu_dan">Bahasa yang digunakan pada menu dan pesan-pesan aplikasi</string>
     <string name="pref_bahasa_language">Bahasa (Language)</string>
     <string name="pref_atur_warna_teks_latar_belakang_dan">Atur warna teks, latar belakang, dan nomor ayat menurut suatu tema.</string>
@@ -28,4 +26,6 @@
     <string name="pref_biarkan_layar_menyala">Biarkan Layar Menyala</string>
     <string name="pref_penampilan_teks">Penampilan Teks</string>
     <string name="pref_penampilan_layar">Penampilan Layar</string>
+    <string name="pref_tombolVolumeBuatPindah_title">Berpindah dengan Volume</string>
+    <string name="pref_tombolVolumeBuatPindah_summary">Tombol volume dapat digunakan untuk berpindah ayat atau pasal.</string>
 </resources>

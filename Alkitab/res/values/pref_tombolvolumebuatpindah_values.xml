@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="pref_tombolVolumeBuatPindah_values">
+		<item>default</item>
+		<item>ayat</item>
+		<item>pasal</item>
+	</string-array>
+</resources>

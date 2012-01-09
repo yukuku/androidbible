@@ -343,7 +343,11 @@ public class IsiActivity extends BaseActivity {
 	};
 	
 	protected boolean tekan(int keyCode) {
-		if (Preferences.getBoolean(R.string.pref_tombolVolumeNaikTurun_key, R.bool.pref_tombolVolumeNaikTurun_default)) {
+		String tombolVolumeBuatPindah = Preferences.getString(R.string.pref_tombolVolumeBuatPindah_key, R.string.pref_tombolVolumeBuatPindah_default);
+		if (U.equals(tombolVolumeBuatPindah, "pasal")) {
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_RIGHT;
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_LEFT;
+		} else if (U.equals(tombolVolumeBuatPindah, "ayat")) {
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_DOWN;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_UP;
 		}
@@ -1212,9 +1216,9 @@ public class IsiActivity extends BaseActivity {
 		return super.onKeyMultiple(keyCode, repeatCount, event);
 	}
 	
-	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		if (Preferences.getBoolean(R.string.pref_tombolVolumeNaikTurun_key, R.bool.pref_tombolVolumeNaikTurun_default)) {
+	@Override public boolean onKeyUp(int keyCode, KeyEvent event) {
+		String tombolVolumeBuatPindah = Preferences.getString(R.string.pref_tombolVolumeBuatPindah_key, R.string.pref_tombolVolumeBuatPindah_default);
+		if (! U.equals(tombolVolumeBuatPindah, "default")) { // consume here
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) return true;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) return true;
 		}

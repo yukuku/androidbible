@@ -1,16 +1,19 @@
 package yuku.alkitab.base;
 
-import android.app.*;
-import android.content.*;
-import android.graphics.*;
-import android.os.*;
-import android.view.*;
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.Build;
+import android.view.View;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Arrays;
 
-import yuku.alkitab.base.compat.*;
-import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.compat.Api11;
+import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.model.Blok;
 
 public class U {
 
@@ -212,5 +215,11 @@ public class U {
 		} else {
 			return 0xff990099;
 		}
+	}
+
+	public static boolean equals(Object a, Object b) {
+		if (a == b) return true;
+		if (a == null) return false;
+		return a.equals(b);
 	}
 }
