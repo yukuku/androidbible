@@ -11,14 +11,10 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Html;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.style.StyleSpan;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,7 +23,6 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -51,6 +46,7 @@ import java.util.List;
 import yuku.alkitab.R;
 import yuku.alkitab.base.IsiActivity.FakeContextMenu.Item;
 import yuku.alkitab.base.Search2Engine.Query;
+import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.BantuanActivity;
 import yuku.alkitab.base.ac.BukmakActivity;
 import yuku.alkitab.base.ac.EdisiActivity;
@@ -89,7 +85,6 @@ public class IsiActivity extends BaseActivity {
 	private static final String NAMAPREF_pasalTerakhir = "pasalTerakhir"; //$NON-NLS-1$
 	private static final String NAMAPREF_ayatTerakhir = "ayatTerakhir"; //$NON-NLS-1$
 	private static final String NAMAPREF_edisiTerakhir = "edisiTerakhir"; //$NON-NLS-1$
-	private static final String NAMAPREF_terakhirMintaFidbek = "terakhirMintaFidbek"; //$NON-NLS-1$
 	private static final String NAMAPREF_renungan_nama = "renungan_nama"; //$NON-NLS-1$
 
 	public static final int RESULT_pindahCara = RESULT_FIRST_USER + 1;
@@ -976,7 +971,7 @@ public class IsiActivity extends BaseActivity {
 			startActivityForResult(new Intent(this, RenunganActivity.class), REQCODE_renungan);
 			return true;
 		case R.id.menuTentang:
-			bukaDialogTentang();
+			startActivity(new Intent(this, AboutActivity.class));
 			return true;
 		case R.id.menuPengaturan:
 			startActivityForResult(new Intent(this, PengaturanActivity.class), REQCODE_pengaturan);
@@ -990,31 +985,6 @@ public class IsiActivity extends BaseActivity {
 		}
 		
 		return super.onOptionsItemSelected(item); 
-	}
-
-	private void bukaDialogTentang() {
-		Spanned text = Html.fromHtml(U.preprocessHtml(getString(R.string.teks_about)));
-		
-		TextView isi = new TextView(this);
-		isi.setText(text);
-		isi.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-		isi.setTextColor(0xffffffff);
-		isi.setLinkTextColor(0xffc0c0ff);
-		Linkify.addLinks(isi, Linkify.WEB_URLS);
-
-		int pad = (int) (getResources().getDisplayMetrics().density * 6.f);
-		isi.setPadding(pad, pad, pad, pad);
-		
-		new AlertDialog.Builder(this)
-		.setTitle(getString(R.string.namaprog_versi_build, S.getVersionName(), S.getVersionCode()))
-		.setView(isi)
-		.setPositiveButton(R.string.beri_saran_titik3, new DialogInterface.OnClickListener() {
-			@Override public void onClick(DialogInterface dialog, int which) {
-				bukaDialogSaran();
-			}
-		})
-		.setNegativeButton(R.string.tutup, null)
-		.show();
 	}
 
 	private void bukaDialogEdisi() {
@@ -1295,35 +1265,6 @@ public class IsiActivity extends BaseActivity {
 			showFakeContextMenu();
 		}
 	};
-	
-	private void bukaDialogSaran() {
-		final View dialogView = getLayoutInflater().inflate(R.layout.dialog_saran, null);
-		
-		AlertDialog dialog = new AlertDialog.Builder(this)
-		.setTitle(R.string.beri_saran_title)
-		.setView(dialogView)
-		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-			@Override public void onClick(DialogInterface dialog, int which) {
-				EditText tSaran = U.getView(dialogView, R.id.tSaran);
-				String isi = tSaran.getText().toString();
-				
-				if (isi.trim().length() > 0) {
-					App.pengirimFidbek.tambah(isi);
-				}
-				
-				App.pengirimFidbek.cobaKirim();
-				
-				Editor editor = preferences_instan.edit();
-				editor.putLong(NAMAPREF_terakhirMintaFidbek, System.currentTimeMillis());
-				editor.commit();
-			}
-		})
-		.create();
-		
-		dialog.getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
-		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-		dialog.show();
-	}
 	
 	@Override
 	public boolean onSearchRequested() {

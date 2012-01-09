@@ -204,14 +204,15 @@
 	<string name="delete_label">Şterge eticheta</string>
 	<string name="tutup">Închide</string>
 	<string name="teks_about">
-	    [b]yuku[/b] 2009-2012[br/] 
-	    Website: androidbible.blogspot.com[br/] 
-	    Mailing list: goo.gl/v686r[br/] 
+	    Developed by [b]yuku[/b], 2009-2012[br/] 
+	    • Website: androidbible.blogspot.com[br/] 
+		• Google+: gplus.to/androidbible[br/]
+	    • Mailing list: groups.google.com/group/androidbible[br/] 
 	    [br/] 
 	    [b]Contributors:[/b][br/] 
-	    - [b]Oluss Studio[/b] program icon[br/] 
-	    - [b]Jaya Satrio[/b] various icons[br/] 
-	    - [b]Yohanes Nugroho[/b] PDB reader[br/] 
-	    - etc.
+	    • [b]Oluss Studio[/b] program icon[br/] 
+	    • [b]Jaya Satrio[/b] various icons[br/] 
+	    • [b]Yohanes Nugroho[/b] PDB reader[br/] 
+	    • etc.
     </string>
 </resources>
