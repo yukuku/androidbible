@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,7 +22,6 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -106,6 +104,7 @@ public class IsiActivity extends BaseActivity {
 	View tempatJudul;
 	TextView lJudul;
 	View bContext;
+	View root;
 	
 	int pasal_1 = 0;
 	SharedPreferences preferences_instan;
@@ -151,6 +150,7 @@ public class IsiActivity extends BaseActivity {
 		tempatJudul = U.getView(this, R.id.tempatJudul);
 		lJudul = U.getView(this, R.id.lJudul);
 		bContext = U.getView(this, R.id.bContext);
+		root = U.getView(this, R.id.root);
 		
 		terapkanPengaturan(false);
 
@@ -681,13 +681,8 @@ public class IsiActivity extends BaseActivity {
 	private void terapkanPengaturan(boolean bahasaJuga) {
 		// penerapan langsung warnaLatar
 		{
-			lsIsi.setBackgroundColor(S.penerapan.warnaLatar);
+			root.setBackgroundColor(S.penerapan.warnaLatar);
 			lsIsi.setCacheColorHint(S.penerapan.warnaLatar);
-			Window window = getWindow();
-			if (window != null) {
-				ColorDrawable bg = new ColorDrawable(S.penerapan.warnaLatar);
-				window.setBackgroundDrawable(bg);
-			}
 		}
 		
 		// penerapan langsung sembunyi navigasi
