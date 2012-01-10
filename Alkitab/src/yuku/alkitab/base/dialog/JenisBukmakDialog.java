@@ -1,19 +1,32 @@
 package yuku.alkitab.base.dialog;
 
-import android.app.*;
-import android.content.*;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.view.*;
-import android.widget.*;
+import android.os.Build.VERSION;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import yuku.alkitab.R;
-import yuku.alkitab.base.*;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.compat.Api11;
 import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
-import yuku.alkitab.base.model.*;
-import yuku.alkitab.base.storage.*;
-import yuku.devoxx.flowlayout.*;
+import yuku.alkitab.base.model.Bukmak2;
+import yuku.alkitab.base.model.Label;
+import yuku.alkitab.base.storage.Db;
+import yuku.devoxx.flowlayout.FlowLayout;
 
 public class JenisBukmakDialog {
 	public interface Listener {
@@ -116,11 +129,16 @@ public class JenisBukmakDialog {
 			@Override public void onClick(View v) {
 				adapter = new LabelAdapter();
 				
-				new AlertDialog.Builder(context)
+				AlertDialog.Builder b = new AlertDialog.Builder(context)
 				.setTitle(R.string.add_label_title)
-				.setItems(adapter.getItems(), bAddLabel_dialog_itemSelected)
-				.setNegativeButton(R.string.cancel, null)
-				.show();
+				.setAdapter(adapter, bAddLabel_dialog_itemSelected)
+				.setNegativeButton(R.string.cancel, null);
+				
+				if (VERSION.SDK_INT >= 11) {
+					adapter.setDialogContext(Api11.AlertDialog_Builder_getContext(b));
+				}
+				
+				b.show();
 			}
 		});
 		
@@ -184,27 +202,26 @@ public class JenisBukmakDialog {
 		res.setLayoutParams(panelLabels.generateDefaultLayoutParams());
 		res.setText(label.judul);
 		res.setTag(R.id.TAG_label, label);
-		res.setOnClickListener(lJudul_click );
+		res.setOnClickListener(lJudul_click);
+		
+		U.pasangWarnaLabel(label, res);
 		
 		return res;
 	}
 
 	class LabelAdapter extends BaseAdapter {
 		private List<Label> labels;
+		private Context dialogContext;
 
 		public LabelAdapter() {
 			labels = S.getDb().listSemuaLabel();
+			dialogContext = context;
 		}
 		
-		public CharSequence[] getItems() {
-			String[] res = new String[getCount()];
-			for (int i = 0, len = labels.size(); i < len; i++) {
-				res[i] = labels.get(i).judul;
-			}
-			res[res.length - 1] = context.getString(R.string.create_label_titik3);
-			return res;
+		public void setDialogContext(Context dialogContext) {
+			this.dialogContext = dialogContext;
 		}
-
+		
 		@Override public int getCount() {
 			return labels.size() + 1;
 		}
@@ -218,21 +235,34 @@ public class JenisBukmakDialog {
 		}
 
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
-			View res = convertView != null? convertView: LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_1, null);
+			int type = getItemViewType(position);
+			View res = convertView != null? convertView: LayoutInflater.from(dialogContext).inflate(type == 0? R.layout.item_label_chooser: android.R.layout.simple_list_item_1, null);
 
-			TextView text1 = U.getView(res, android.R.id.text1); 
-			setText1(text1, position);
+			if (type == 0) {
+				TextView text1 = U.getView(res, android.R.id.text1); 
+				Label label = getItem(position);
+				text1.setText(label.judul);
+				U.pasangWarnaLabel(label, text1);
+			} else {
+				TextView text1 = U.getView(res, android.R.id.text1); 
+				text1.setText(context.getString(R.string.create_label_titik3));
+				
+				// for API 10 or lower, forcefully set text color
+				if (VERSION.SDK_INT <= 10) {
+					text1.setTextColor(0xff000000);
+				}
+			}
 			
 			return res;
 		}
-
-		private void setText1(TextView text1, int position) {
-			if (position == getCount() - 1) {
-				text1.setText(context.getString(R.string.create_label_titik3));
-			} else {
-				Label label = getItem(position);
-				text1.setText(label.judul);
-			}
+		
+		@Override public int getViewTypeCount() {
+			return 2;
+		}
+		
+		@Override public int getItemViewType(int position) {
+			if (position == getCount() - 1) return 1;
+			return 0;
 		}
 	}
 }

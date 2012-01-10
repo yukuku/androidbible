@@ -1,35 +1,62 @@
 
 package yuku.alkitab.base.ac;
 
-import android.app.*;
-import android.content.*;
-import android.database.*;
-import android.os.*;
-import android.util.*;
-import android.view.*;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.util.Xml;
+import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.*;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
-import gnu.trove.list.*;
-import gnu.trove.list.array.*;
-import gnu.trove.map.hash.*;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.TLongList;
+import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.map.hash.TIntLongHashMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.map.hash.TLongIntHashMap;
+import gnu.trove.map.hash.TObjectIntHashMap;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
-import org.xml.sax.*;
-import org.xml.sax.ext.*;
-import org.xmlpull.v1.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.ext.DefaultHandler2;
+import org.xmlpull.v1.XmlSerializer;
 
-import yuku.alkitab.*;
-import yuku.alkitab.base.*;
-import yuku.alkitab.base.ac.base.*;
-import yuku.alkitab.base.dialog.*;
+import yuku.alkitab.R;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.dialog.LabelEditorDialog;
 import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
-import yuku.alkitab.base.model.*;
-import yuku.alkitab.base.storage.*;
+import yuku.alkitab.base.model.Bukmak2;
+import yuku.alkitab.base.model.Label;
+import yuku.alkitab.base.storage.Db;
+import yuku.ambilwarna.AmbilWarnaDialog;
+import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
 
 public class BukmakActivity extends BaseActivity {
 	public static final String TAG = BukmakActivity.class.getSimpleName();
@@ -414,8 +441,9 @@ public class BukmakActivity extends BaseActivity {
 			
 			LabelEditorDialog.show(this, label.judul, getString(R.string.rename_label_title), new OkListener() {
 				@Override public void onOk(String judul) {
-					S.getDb().renameLabel(label, judul);
-					adapter.reload();
+					label.judul = judul;
+					S.getDb().updateLabel(label);
+					adapter.notifyDataSetChanged();
 				}
 			});
 
@@ -445,6 +473,30 @@ public class BukmakActivity extends BaseActivity {
 				})
 				.show();
 			}
+			
+			return true;
+		} else if (itemId == R.id.menuChangeLabelColor) {
+			final Label label = adapter.getItem(info.position);
+			if (label == null) {
+				return true;
+			}
+			
+			int warnaLatarRgb = U.dekodWarnaLatarLabel(label.warnaLatar);
+			new AmbilWarnaDialog(BukmakActivity.this, 0xff000000 | warnaLatarRgb, new OnAmbilWarnaListener() {
+				@Override public void onOk(AmbilWarnaDialog dialog, int color) {
+					if (color == -1) {
+						label.warnaLatar = null;
+					} else {
+						label.warnaLatar = U.enkodWarnaLatarLabel(0x00ffffff & color);
+					}
+					S.getDb().updateLabel(label);
+					adapter.notifyDataSetChanged();
+				}
+				
+				@Override public void onCancel(AmbilWarnaDialog dialog) {
+					// nop
+				}
+			}).show();
 			
 			return true;
 		}
@@ -528,6 +580,8 @@ public class BukmakActivity extends BaseActivity {
 				Label label = getItem(position);
 				lFilterLabel.setVisibility(View.VISIBLE);
 				lFilterLabel.setText(label.judul);
+				
+				U.pasangWarnaLabel(label, lFilterLabel);
 			}
 			
 			return res;

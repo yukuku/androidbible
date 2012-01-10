@@ -200,6 +200,7 @@
 	<string name="labels_titikdua">Etichete:</string>
 	<string name="tambah_titiktiga">Adaugă…</string>
 	<string name="nama_label_titikdua">Nume etichetă</string>
+    <string name="change_label_color">Change label color</string>
 	<string name="rename_label">Redenumeşte eticheta</string>
 	<string name="delete_label">Şterge eticheta</string>
 	<string name="tutup">Închide</string>

@@ -4,8 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
 import android.view.View;
+import android.widget.TextView;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -15,6 +19,7 @@ import java.util.Arrays;
 import yuku.alkitab.base.compat.Api11;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Blok;
+import yuku.alkitab.base.model.Label;
 
 public class U {
 
@@ -95,31 +100,126 @@ public class U {
 		return typeface;
 	}
 	
-
-	static StringBuilder enkodStabilo_buf;
 	public static String enkodStabilo(int warnaRgb) {
-		if (enkodStabilo_buf == null) {
-			enkodStabilo_buf = new StringBuilder(10);
-		}
-		enkodStabilo_buf.setLength(0);
-		enkodStabilo_buf.append('c');
+		StringBuilder sb = new StringBuilder(10);
+		sb.append('c');
 		String h = Integer.toHexString(warnaRgb);
 		for (int x = h.length(); x < 6; x++) {
-			enkodStabilo_buf.append('0');
+			sb.append('0');
 		}
-		enkodStabilo_buf.append(h);
-		return enkodStabilo_buf.toString();
+		sb.append(h);
+		return sb.toString();
 	}
 	
 	/**
-	 * @return warnaRgb
+	 * @return warnaRgb (belum ada alphanya) atau -1 kalau ga bisa dekod
 	 */
 	public static int dekodStabilo(String tulisan) {
+		if (tulisan == null) return -1;
 		if (tulisan.length() >= 7 && tulisan.charAt(0) == 'c') {
 			return Integer.parseInt(tulisan.substring(1, 7), 16);
 		} else {
 			return -1;
 		}
+	}
+	
+	public static String enkodWarnaLatarLabel(int warnaRgb_background) {
+		StringBuilder sb = new StringBuilder(10);
+		sb.append('b'); // 'b': background color
+		String h = Integer.toHexString(warnaRgb_background);
+		for (int x = h.length(); x < 6; x++) {
+			sb.append('0');
+		}
+		sb.append(h);
+		return sb.toString();
+	}
+	
+	/**
+	 * @return warnaRgb (belum ada alphanya) atau -1 kalau ga bisa dekod
+	 */
+	public static int dekodWarnaLatarLabel(String warnaLatar) {
+		if (warnaLatar == null) return -1;
+		if (warnaLatar.length() >= 7 && warnaLatar.charAt(0) == 'b') { // 'b': background color
+			return Integer.parseInt(warnaLatar.substring(1, 7), 16);
+		} else {
+			return -1;
+		}
+	}
+	
+	public static int getWarnaDepanBerdasarWarnaLatar(int warnaRgb) {
+		float[] hsl = {0.f, 0.f, 0.f};
+		rgbToHsl(warnaRgb, hsl);
+		//Log.d("getWarnaDepanBerdasarWarnaLatar", String.format("#%06x -> %3d %.2f %.2f", warnaRgb & 0xffffff, (int)hsl[0], hsl[1], hsl[2]));
+		
+		if (hsl[2] > 0.5f) hsl[2] -= 0.44f;
+		else hsl[2] += 0.44f;
+		
+		int res = hslToRgb(hsl);
+		//Log.d("getWarnaDepanBerdasarWarnaLatar", String.format("%3d %.2f %.2f -> #%06x", (int)hsl[0], hsl[1], hsl[2], res));
+		
+		return res;
+	}
+	
+	public static void rgbToHsl(int rgb, float[] hsl) {
+		float r = ((0x00ff0000 & rgb) >> 16) / 255.f;
+		float g = ((0x0000ff00 & rgb) >> 8) / 255.f;
+		float b = ((0x000000ff & rgb)) / 255.f;
+		float max = Math.max(Math.max(r, g), b);
+		float min = Math.min(Math.min(r, g), b);
+		float c = max - min;
+		
+		float h_ = 0.f;
+		if (c == 0) {
+			h_ = 0;
+		} else if (max == r) {
+			h_ = (float)(g-b) / c;
+			if (h_ < 0) h_ += 6.f;
+		} else if (max == g) {
+			h_ = (float)(b-r) / c + 2.f;
+		} else if (max == b) {
+			h_ = (float)(r-g) / c + 4.f;
+		}
+		float h = 60.f * h_;
+		
+		float l = (max + min) * 0.5f;
+		
+		float s;
+		if (c == 0) {
+			s = 0.f;
+		} else {
+			s = c / (1 - Math.abs(2.f * l - 1.f));
+		}
+		
+		hsl[0] = h;
+		hsl[1] = s;
+		hsl[2] = l;
+	}
+	
+	public static int hslToRgb(float[] hsl) {
+		float h = hsl[0];
+		float s = hsl[1];
+		float l = hsl[2];
+		
+		float c = (1 - Math.abs(2.f * l - 1.f)) * s;
+		float h_ = h / 60.f;
+		float h_mod2 = h_;
+		if (h_mod2 >= 4.f) h_mod2 -= 4.f;
+		else if (h_mod2 >= 2.f) h_mod2 -= 2.f;
+		
+		float x = c * (1 - Math.abs(h_mod2 - 1));
+		float r_, g_, b_;
+		if (h_ < 1)      { r_ = c; g_ = x; b_ = 0; }
+		else if (h_ < 2) { r_ = x; g_ = c; b_ = 0; }
+		else if (h_ < 3) { r_ = 0; g_ = c; b_ = x; }
+		else if (h_ < 4) { r_ = 0; g_ = x; b_ = c; }
+		else if (h_ < 5) { r_ = x; g_ = 0; b_ = c; }
+		else             { r_ = c; g_ = 0; b_ = x; }
+		
+		float m = l - (0.5f * c); 
+		int r = (int)((r_ + m) * (255.f) + 0.5f);
+		int g = (int)((g_ + m) * (255.f) + 0.5f);
+		int b = (int)((b_ + m) * (255.f) + 0.5f);
+		return r << 16 | g << 8 | b;
 	}
 	
 	public static String tampilException(Throwable e) {
@@ -230,5 +330,29 @@ public class U {
 				return new SimpleDateFormat(pattern);
 			}
 		};
+	}
+
+	public static void pasangWarnaLabel(Label label, TextView view) {
+		int warnaLatarRgb = U.dekodWarnaLatarLabel(label.warnaLatar);
+		if (warnaLatarRgb == -1) {
+			warnaLatarRgb = 0x777777; // warna standar
+		}
+		
+		GradientDrawable grad = null;
+
+		Drawable bg = view.getBackground();
+		if (bg instanceof GradientDrawable) {
+			grad = (GradientDrawable) bg;
+		} else if (bg instanceof StateListDrawable) {
+			StateListDrawable states = (StateListDrawable) bg;
+			Drawable current = states.getCurrent();
+			if (current instanceof GradientDrawable) {
+				grad = (GradientDrawable) current;
+			}
+		}
+		if (grad != null) {
+			grad.setColor(0xff000000 | warnaLatarRgb);
+			view.setTextColor(0xff000000 | U.getWarnaDepanBerdasarWarnaLatar(warnaLatarRgb));
+		}
 	}
 }

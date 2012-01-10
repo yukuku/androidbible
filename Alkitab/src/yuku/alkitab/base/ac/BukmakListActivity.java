@@ -1,35 +1,58 @@
 package yuku.alkitab.base.ac;
 
-import android.app.*;
-import android.content.*;
-import android.database.*;
-import android.os.*;
-import android.provider.*;
-import android.text.*;
-import android.text.style.*;
-import android.view.*;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.os.Bundle;
+import android.provider.BaseColumns;
+import android.text.Editable;
+import android.text.SpannableStringBuilder;
+import android.text.style.BackgroundColorSpan;
+import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.*;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CursorAdapter;
 import android.widget.Filter.FilterListener;
+import android.widget.FilterQueryProvider;
+import android.widget.ListView;
+import android.widget.TextView;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import yuku.alkitab.R;
-import yuku.alkitab.base.*;
-import yuku.alkitab.base.ac.base.*;
-import yuku.alkitab.base.dialog.*;
+import yuku.alkitab.base.PengaturTampilan;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.Search2Engine;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.dialog.JenisBukmakDialog;
 import yuku.alkitab.base.dialog.JenisBukmakDialog.Listener;
+import yuku.alkitab.base.dialog.JenisCatatanDialog;
 import yuku.alkitab.base.dialog.JenisCatatanDialog.RefreshCallback;
+import yuku.alkitab.base.dialog.JenisStabiloDialog;
 import yuku.alkitab.base.dialog.JenisStabiloDialog.JenisStabiloCallback;
-import yuku.alkitab.base.model.*;
-import yuku.alkitab.base.storage.*;
-import yuku.andoutil.*;
-import yuku.androidsdk.searchbar.*;
+import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.model.Kitab;
+import yuku.alkitab.base.model.Label;
+import yuku.alkitab.base.storage.Db;
+import yuku.andoutil.IntArrayList;
+import yuku.andoutil.Sqlitil;
+import yuku.androidsdk.searchbar.SearchBar;
 import yuku.androidsdk.searchbar.SearchBar.OnSearchListener;
-import yuku.devoxx.flowlayout.*;
+import yuku.devoxx.flowlayout.FlowLayout;
 
 public class BukmakListActivity extends BaseActivity {
 	public static final String TAG = BukmakListActivity.class.getSimpleName();
@@ -228,6 +251,8 @@ public class BukmakListActivity extends BaseActivity {
 		
 		TextView lJudul = U.getView(res, R.id.lJudul);
 		lJudul.setText(label.judul);
+		
+		U.pasangWarnaLabel(label, lJudul);
 		
 		return res;
 	}

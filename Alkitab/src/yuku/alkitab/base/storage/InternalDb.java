@@ -1,23 +1,35 @@
 package yuku.alkitab.base.storage;
 
-import android.content.*;
-import android.database.*;
-import android.database.sqlite.*;
-import android.provider.*;
-import android.util.*;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
+import android.provider.BaseColumns;
+import android.util.Log;
 
-import gnu.trove.list.*;
-import gnu.trove.list.array.*;
-import gnu.trove.map.hash.*;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.TLongList;
+import gnu.trove.list.array.TLongArrayList;
+import gnu.trove.map.hash.TIntLongHashMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.map.hash.TObjectIntHashMap;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
-import yuku.alkitab.base.*;
-import yuku.alkitab.base.ac.*;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.ac.BukmakListActivity;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiYes;
-import yuku.alkitab.base.model.*;
-import yuku.alkitab.base.renungan.*;
-import yuku.andoutil.*;
+import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.model.Bukmak2;
+import yuku.alkitab.base.model.Label;
+import yuku.alkitab.base.renungan.ArtikelRenunganHarian;
+import yuku.alkitab.base.renungan.ArtikelSantapanHarian;
+import yuku.alkitab.base.renungan.IArtikel;
+import yuku.andoutil.IntArrayList;
+import yuku.andoutil.Sqlitil;
 
 public class InternalDb {
 	public static final String TAG = InternalDb.class.getSimpleName();
@@ -655,10 +667,9 @@ public class InternalDb {
 		}
 	}
 
-	public void renameLabel(Label label, String judul) {
+	public void updateLabel(Label label) {
 		SQLiteDatabase db = helper.getWritableDatabase();
-		ContentValues cv = new ContentValues();
-		cv.put(Db.Label.judul, judul);
+		ContentValues cv = label.toContentValues();
 		db.update(Db.TABEL_Label, cv, "_id=?", new String[] {String.valueOf(label._id)}); //$NON-NLS-1$
 	}
 

@@ -200,6 +200,7 @@
     <string name="labels_titikdua">Labels:</string>
     <string name="tambah_titiktiga">Add…</string>
     <string name="nama_label_titikdua">Label name:</string>
+    <string name="change_label_color">Change label color</string>
     <string name="rename_label">Rename label</string>
     <string name="delete_label">Delete label</string>
     <string name="tutup">Close</string>
