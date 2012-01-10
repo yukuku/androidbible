@@ -46,7 +46,6 @@
 	<string name="ayat_sebelumangka">Verset</string>
 	<string name="pasal_sebelumangka">Capitol</string>
 	<string name="loncat_ke_alamat_titikdua">Mergi la: (Exemplu: %s)</string>
-	<string name="saran_komentar_dsb">Sugestii, comentarii, etc…</string>
 	<string name="tidak_ada_catatan">(Nu sunt note)</string>
 	<string name="belum_ada_pembatas_buku">Nu sunt încă favorite.\nApasă lung pe un verset pentru adăugare la favorite.</string>
 	<string name="judul_titikdua">Titlu:</string>
@@ -140,7 +139,6 @@
 	<string name="ed_pdb_file_name_original_file">Nume fişier PDB (original): %s</string>
 	<string name="ed_version_info_info">Despre versiune: %s</string>
 	<string name="ed_version_details">Detalii versiune</string>
-	<string name="ed_opening_pdb_files_is_still_an_experimental_feature">Deschiderea fişierelor PPB este încă o caracteristică experimentală. Dacă întâmpinaţi probleme, vă rugăm să ne contactaţi la email yukuku@gmail.com (ataşaţi fişierul PPB, dacă este posibil).</string>
 	<string name="ed_choose_pdb_or_yes_file">Alege un fişier .pdb sau .yes</string>
 	<string name="ed_no_external_storage">Nu găsesc stocare externă (ex: SD Card).</string>
 	<string name="ed_invalid_file_selected">Fişier selectat invalid.</string>
@@ -167,8 +165,6 @@
 	<string name="menuSortTulisan">Titlu</string>
 	<string name="menuSortTulisan_warna">Culoare marcaj</string>
 	<string name="waktuTambah_edited_waktuUbah">%1$s\n(editat %2$s)</string>
-	<string name="tambah_pembatas_buku_di_ayat">Adaugă versetul la favorite %s</string>
-	<string name="tulis_catatan_di_ayat">Scrie o notiţă versetului %s</string>
 	<string name="cannot_find_data_file">Nu găsesc fişier de date</string>
 	<string name="the_file_for_this_version_is_no_longer_available_file">Fişierul pentru această versiune nu mai este disponibil. Doriţi să eliminaţi această versiune din listă?\nFişier: %s</string>
 	<string name="create_label_title">Creează etichetă</string>

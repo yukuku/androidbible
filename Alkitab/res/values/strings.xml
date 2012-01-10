@@ -46,7 +46,6 @@
     <string name="ayat_sebelumangka">Verse</string>
     <string name="pasal_sebelumangka">Chapter</string>
     <string name="loncat_ke_alamat_titikdua">Jump to: (Example: %s)</string>
-    <string name="saran_komentar_dsb">Suggestions, comments, etc…</string>
     <string name="tidak_ada_catatan">(no notes)</string>
     <string name="belum_ada_pembatas_buku">No bookmarks yet.\nLong-press on a verse to add a bookmark.</string>
     <string name="judul_titikdua">Title:</string>
@@ -140,7 +139,6 @@
     <string name="ed_pdb_file_name_original_file">PDB file name (original): %s</string>
     <string name="ed_version_info_info">Version info: %s</string>
     <string name="ed_version_details">Version details</string>
-    <string name="ed_opening_pdb_files_is_still_an_experimental_feature">Opening PDB files is still an experimental feature. If you encounter problems, please contact yukuku@gmail.com (attach the PDB file if possible).</string>
     <string name="ed_choose_pdb_or_yes_file">Choose an .pdb or .yes file</string>
     <string name="ed_no_external_storage">No external storage found (such as SD Card).</string>
     <string name="ed_invalid_file_selected">Invalid file selected.</string>
@@ -167,8 +165,6 @@
     <string name="menuSortTulisan">Title</string>
     <string name="menuSortTulisan_warna">Highlight color</string>
     <string name="waktuTambah_edited_waktuUbah">%1$s\n(edited %2$s)</string>
-    <string name="tambah_pembatas_buku_di_ayat">Add bookmark on verse %s</string>
-    <string name="tulis_catatan_di_ayat">Write note on verse %s</string>
     <string name="cannot_find_data_file">Cannot find data file</string>
     <string name="the_file_for_this_version_is_no_longer_available_file">The file for this version is no longer available. Do you want to remove this version from the list?\nFile: %s</string>
     <string name="create_label_title">Create label</string>
