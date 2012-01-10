@@ -49,8 +49,6 @@
 	<string name="tidak_ada_catatan">(Nu sunt note)</string>
 	<string name="belum_ada_pembatas_buku">Nu sunt încă favorite.\nApasă lung pe un verset pentru adăugare la favorite.</string>
 	<string name="judul_titikdua">Titlu:</string>
-	<string name="gagal_mengubah_pembatas_buku">Eşec conversie favorite la noua versiune.\n\nVă rog trimiteţi un email la yukuku@gmail.com pentru a raporta aceasta şi va fi remediat în versiunea următoare.</string>
-	<string name="selamat_datang_di_versi_baru_pembatas">Bine aţi venit – versiune nouă! Marcajul dvs. a fost actualizat. Acum puteţi adăuga un titlu fiecărui favorit.\n\nActualizează favorite: %d</string>
 	<string name="gagal_mengunduh_namaumum_tgl_tgl">Eroare la descărcare %1$s data %2$s</string>
 	<string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Eroare în descărcare %1$s data %2$s: %3$s</string>
 	<string name="berhasil_mengunduh_namaumum_tgl_tgl">Descărcare reuşită %1$s data %2$s</string>

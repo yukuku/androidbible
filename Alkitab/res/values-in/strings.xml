@@ -49,8 +49,6 @@
     <string name="tidak_ada_catatan">(tidak ada catatan)</string>
     <string name="belum_ada_pembatas_buku">Belum ada pembatas buku.\nTahan (tekan yang lama) suatu ayat untuk menambahkan pembatas buku.</string>
     <string name="judul_titikdua">Judul:</string>
-    <string name="gagal_mengubah_pembatas_buku">GAGAL mengubah pembatas buku ke versi baru.\n\nMohon kirim email ke yukuku@gmail.com untuk melaporkan peristiwa ini supaya bisa dibetulkan di versi selanjutnya.</string>
-    <string name="selamat_datang_di_versi_baru_pembatas">Selamat datang di versi baru! Pembatas-pembatas buku yang anda miliki sudah diubah menjadi versi baru. Kini anda bisa menambahkan judul pada setiap pembatas buku.\n\nPembatas buku ditemukan: %d</string>
     <string name="gagal_mengunduh_namaumum_tgl_tgl">Gagal mengunduh %1$s tgl %2$s</string>
     <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Kesalahan dalam mengunduh %1$s tgl %2$s: %3$s</string>
     <string name="berhasil_mengunduh_namaumum_tgl_tgl">Berhasil mengunduh %1$s tgl %2$s</string>

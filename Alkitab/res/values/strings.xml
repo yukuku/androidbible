@@ -49,8 +49,6 @@
     <string name="tidak_ada_catatan">(no notes)</string>
     <string name="belum_ada_pembatas_buku">No bookmarks yet.\nLong-press on a verse to add a bookmark.</string>
     <string name="judul_titikdua">Title:</string>
-    <string name="gagal_mengubah_pembatas_buku">FAILED to convert bookmarks to the new version.\n\nPlease send an email to yukuku@gmail.com to report this so that it can be fixed in the next release.</string>
-    <string name="selamat_datang_di_versi_baru_pembatas">Welcome to the new version! Your bookmarks has been updated. Now you can add a title onto each of the bookmark.\n\nUpdated bookmarks: %d</string>
     <string name="gagal_mengunduh_namaumum_tgl_tgl">Failed to download %1$s dated %2$s</string>
     <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Error in downloading %1$s dated %2$s: %3$s</string>
     <string name="berhasil_mengunduh_namaumum_tgl_tgl">Succeeded in downloading %1$s dated %2$s</string>
