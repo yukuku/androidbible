@@ -8,8 +8,8 @@
     <string name="donasi_keterangan">If you are blessed by this Bible app, please make some donation to the developer. Your donation would be very helpful. Thank you!</string>
     <string name="donasi_judul">Donation</string>
     <string name="menuDonasi">Donation</string>
-    <string name="mengimpor_titiktiga">Creating backup...</string>
-    <string name="mengekspor_titiktiga">Restoring...</string>
+    <string name="mengimpor_titiktiga">Creating backup…</string>
+    <string name="mengekspor_titiktiga">Restoring…</string>
     <string name="bagikan_renungan">Share devotion</string>
     <string name="renungan_sudah_disalin">Devotion has been copied.</string>
     <string name="salin_renungan">Copy devotion</string>
@@ -46,7 +46,7 @@
     <string name="ayat_sebelumangka">Verse</string>
     <string name="pasal_sebelumangka">Chapter</string>
     <string name="loncat_ke_alamat_titikdua">Jump to: (Example: %s)</string>
-    <string name="saran_komentar_dsb">Suggestions, comments, etc...</string>
+    <string name="saran_komentar_dsb">Suggestions, comments, etc…</string>
     <string name="tidak_ada_catatan">(no notes)</string>
     <string name="belum_ada_pembatas_buku">No bookmarks yet.\nLong-press on a verse to add a bookmark.</string>
     <string name="judul_titikdua">Title:</string>
@@ -55,9 +55,9 @@
     <string name="gagal_mengunduh_namaumum_tgl_tgl">Failed to download %1$s dated %2$s</string>
     <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Error in downloading %1$s dated %2$s: %3$s</string>
     <string name="berhasil_mengunduh_namaumum_tgl_tgl">Succeeded in downloading %1$s dated %2$s</string>
-    <string name="mengunduh_namaumum_tgl_tgl">Downloading %1$s dated %2$s...</string>
+    <string name="mengunduh_namaumum_tgl_tgl">Downloading %1$s dated %2$s…</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Not yet available. Probably the requested date\'s material is not prepared yet, or there are some errors in recognizing the data source.\n\nIf you think necessary, please inform the software developers by going back to the main verse view, open the menu and choose Suggest.</string>
-    <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Not yet available. Fetching from the Internet...\n\n(Ensure there is Internet connection to fetch the devotion materials.)</string>
+    <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Not yet available. Fetching from the Internet…\n\n(Ensure there is Internet connection to fetch the devotion materials.)</string>
     <string name="namaprog_versi_build">Bible %1$s (%2$d)</string>
     <string name="hari_sabtu">Sat</string>
     <string name="hari_jumat">Fri</string>
@@ -71,11 +71,11 @@
     <string name="mencari">Searching</string>
     <string name="pilih_setidaknya_satu_kitab">Choose at least one book to search.</string>
     <string name="pengunduhan_dibatalkan">Download canceled.</string>
-    <string name="sedang_mendekompres_harap_tunggu">Decompressing. Please wait...</string>
+    <string name="sedang_mendekompres_harap_tunggu">Decompressing. Please wait…</string>
     <string name="terunduh_sampe_byte">Downloaded: %d bytes</string>
     <string name="gagal_mengunduh_edisi_judul_ex_pastikan_internet">Failed in downloading version: %1$s (%2$s).\nMake sure that Internet is working correctly.</string>
     <string name="selesai_mengunduh_edisi_judul_disimpan_di_path">Completed downloading version: %1$s\nSaved in: %2$s</string>
-    <string name="mulai_mengunduh">Starting download...</string>
+    <string name="mulai_mengunduh">Starting download…</string>
     <string name="mengunduh_nama">Downloading %s</string>
     <string name="file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya">Could not find file \'%s\'. Do you want to download it?</string>
     <string name="mengunduh_tambahan">Downloading add-on</string>
@@ -108,7 +108,7 @@
     <string name="pengaturan_alkitab">Bible Settings</string>
     <string name="kelola_versi">Manage Versions</string>
     <string name="tambah">Add</string>
-    <string name="versi_lainnya">Other versions...</string>
+    <string name="versi_lainnya">Other versions…</string>
     <string name="ada_kegagalan_membuka_edisiid">Error opening %s</string>
     <string name="pdb_file_options">PDB file options</string>
     <string name="greek_charset">Greek charset</string>
@@ -147,12 +147,12 @@
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">File %s is already on the list.</string>
     <string name="ed_error_encountered">Error encountered</string>
     <string name="ed_this_file_is_already_on_the_list">This file is already on the list.</string>
-    <string name="ed_reading_pdb_file">Reading PDB file...</string>
+    <string name="ed_reading_pdb_file">Reading PDB file…</string>
     <string name="ed_finished">Finished.</string>
     <string name="ed_the_following_books_from_the_pdb_file_are_not_recognized">The following books from the PDB file are not recognized and therefore skipped. Please email yukuku@gmail.com if you think these should not have been skipped.</string>
     <string name="ed_error_reading_pdb_file">Error reading PDB file</string>
     <string name="ed_details">Details: </string>
-    <string name="ed_buka_file_pdb_yes_lainnya">Open an .pdb/.yes file</string>
+    <string name="ed_buka_file_pdb_yes_lainnya">Open a .pdb/.yes file…</string>
     <string name="ed_tekan_untuk_mengunduh">Tap here to download</string>
     <string name="info_terperinci">Details</string>
     <string name="buang_dari_daftar">Remove from list</string>
@@ -204,7 +204,7 @@
     <string name="rename_label">Rename label</string>
     <string name="delete_label">Delete label</string>
     <string name="tutup">Close</string>
-    <string name="please_wait_titik3">Please wait...</string>
+    <string name="please_wait_titik3">Please wait…</string>
     <string name="teks_about">Developed by [b]yuku[/b], 2009-2012[br/]
     	• Website: androidbible.blogspot.com[br/] 
 		• Google+: gplus.to/androidbible[br/]

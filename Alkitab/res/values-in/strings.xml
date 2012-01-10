@@ -8,8 +8,8 @@
     <string name="donasi_keterangan">Kalau program Alkitab ini berguna bagi Anda, dimohon kesediaan Anda memberikan sumbangan. Terima kasih!</string>
     <string name="donasi_judul">Donasi</string>
     <string name="menuDonasi">Donasi</string>
-    <string name="mengimpor_titiktiga">Memulihkan...</string>
-    <string name="mengekspor_titiktiga">Membuat cadangan...</string>
+    <string name="mengimpor_titiktiga">Memulihkan…</string>
+    <string name="mengekspor_titiktiga">Membuat cadangan…</string>
     <string name="bagikan_renungan">Bagikan renungan</string>
     <string name="renungan_sudah_disalin">Renungan sudah disalin.</string>
     <string name="salin_renungan">Salin renungan</string>
@@ -46,7 +46,7 @@
     <string name="ayat_sebelumangka">Ayat</string>
     <string name="pasal_sebelumangka">Pasal</string>
     <string name="loncat_ke_alamat_titikdua">Loncat ke: (Contoh: %s)</string>
-    <string name="saran_komentar_dsb">Saran, komentar, dsb...</string>
+    <string name="saran_komentar_dsb">Saran, komentar, dsb…</string>
     <string name="tidak_ada_catatan">(tidak ada catatan)</string>
     <string name="belum_ada_pembatas_buku">Belum ada pembatas buku.\nTahan (tekan yang lama) suatu ayat untuk menambahkan pembatas buku.</string>
     <string name="judul_titikdua">Judul:</string>
@@ -55,9 +55,9 @@
     <string name="gagal_mengunduh_namaumum_tgl_tgl">Gagal mengunduh %1$s tgl %2$s</string>
     <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Kesalahan dalam mengunduh %1$s tgl %2$s: %3$s</string>
     <string name="berhasil_mengunduh_namaumum_tgl_tgl">Berhasil mengunduh %1$s tgl %2$s</string>
-    <string name="mengunduh_namaumum_tgl_tgl">Mengunduh %1$s tgl %2$s...</string>
+    <string name="mengunduh_namaumum_tgl_tgl">Mengunduh %1$s tgl %2$s…</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Belum tersedia. Mungkin tanggal yang diminta belum disiapkan, atau terjadi kesalahan dalam mengenali sumber data.\n\nJika dirasa perlu, tolong beritahu pembuat program ini dengan kembali ke layar tampilan ayat, lalu buka menu dan pilih Beri Saran.</string>
-    <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Belum tersedia. Menunggu pengambilan data lewat Internet...\n\n(Pastikan ada koneksi Internet untuk mengambil renungan.)</string>
+    <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Belum tersedia. Menunggu pengambilan data lewat Internet…\n\n(Pastikan ada koneksi Internet untuk mengambil renungan.)</string>
     <string name="namaprog_versi_build">Alkitab %1$s (%2$d)</string>
     <string name="hari_sabtu">Sabtu</string>
     <string name="hari_jumat">Jumat</string>
@@ -71,11 +71,11 @@
     <string name="mencari">Mencari</string>
     <string name="pilih_setidaknya_satu_kitab">Pilih setidaknya satu kitab untuk dicari.</string>
     <string name="pengunduhan_dibatalkan">Pengunduhan dibatalkan.</string>
-    <string name="sedang_mendekompres_harap_tunggu">Sedang mendekompres. Harap tunggu...</string>
+    <string name="sedang_mendekompres_harap_tunggu">Sedang mendekompres. Harap tunggu…</string>
     <string name="terunduh_sampe_byte">Terunduh: %d byte</string>
     <string name="gagal_mengunduh_edisi_judul_ex_pastikan_internet">Gagal mengunduh versi: %1$s (%2$s).\nPastikan Internet bekerja dengan baik.</string>
     <string name="selesai_mengunduh_edisi_judul_disimpan_di_path">Selesai mengunduh versi: %1$s\nDisimpan di: %2$s</string>
-    <string name="mulai_mengunduh">Mulai mengunduh...</string>
+    <string name="mulai_mengunduh">Mulai mengunduh…</string>
     <string name="mengunduh_nama">Mengunduh %s</string>
     <string name="file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya">File \'%s\' tidak ditemukan. Apakah anda mau mengunduhnya (download)?</string>
     <string name="mengunduh_tambahan">Mengunduh tambahan</string>
@@ -108,7 +108,7 @@
     <string name="pengaturan_alkitab">Pengaturan Alkitab</string>
     <string name="kelola_versi">Kelola Versi</string>
     <string name="tambah">Tambah</string>
-    <string name="versi_lainnya">Versi lainnya...</string>
+    <string name="versi_lainnya">Versi lainnya…</string>
     <string name="ada_kegagalan_membuka_edisiid">Ada kegagalan membuka %s</string>
     <string name="pdb_file_options">Pilihan membaca file PDB</string>
     <string name="greek_charset">Charset Yunani</string>
@@ -147,12 +147,12 @@
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">File %s sudah ada dalam daftar versi.</string>
     <string name="ed_error_encountered">Ada kesalahan</string>
     <string name="ed_this_file_is_already_on_the_list">File ini sudah ada dalam daftar versi.</string>
-    <string name="ed_reading_pdb_file">Membaca file PDB...</string>
+    <string name="ed_reading_pdb_file">Membaca file PDB…</string>
     <string name="ed_finished">Selesai.</string>
     <string name="ed_the_following_books_from_the_pdb_file_are_not_recognized">Kitab-kitab dari file PDB berikut ini tidak dikenal, maka dari itu dilewatkan. Harap hubungi yukuku@gmail.com kalau seharusnya tidak dilewatkan.</string>
     <string name="ed_error_reading_pdb_file">Kesalahan dalam membaca file PDB</string>
     <string name="ed_details">Keterangan: </string>
-    <string name="ed_buka_file_pdb_yes_lainnya">Buka file .pdb/.yes lainnya...</string>
+    <string name="ed_buka_file_pdb_yes_lainnya">Buka file .pdb/.yes lainnya…</string>
     <string name="ed_tekan_untuk_mengunduh">Tekan untuk mengunduh</string>
     <string name="info_terperinci">Info terperinci</string>
     <string name="buang_dari_daftar">Buang dari daftar</string>
@@ -204,7 +204,7 @@
     <string name="rename_label">Ganti nama label</string>
     <string name="delete_label">Hapus label</string>
     <string name="tutup">Tutup</string>
-    <string name="please_wait_titik3">Harap tunggu...</string>
+    <string name="please_wait_titik3">Harap tunggu…</string>
     <string name="teks_about">
 		Dikembangkan oleh [b]yuku[/b], 2009-2012[br/]
 		• Situs: androidbible.blogspot.com[br/]
