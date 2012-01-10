@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" android:baselineAligned="false">
 	<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/tempatJudul">
 		<TextView android:id="@+id/lJudul" android:text="Kitab 0:0" android:textStyle="bold" android:layout_width="fill_parent" android:layout_height="wrap_content" android:singleLine="true" android:background="@drawable/isi_judul_bg" android:shadowRadius="2.75" android:shadowColor="#bb000000" android:textColor="#fff" android:textSize="14sp" android:paddingLeft="4dp" android:paddingBottom="2dp" android:paddingTop="2dp" />
 		<View android:layout_width="fill_parent" android:layout_height="1px" android:background="#000" />
 	</LinearLayout>
 
-	<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_weight="1">
+	<RelativeLayout android:layout_width="fill_parent" android:layout_height="0dp" android:layout_weight="1">
 		<ListView android:id="@+id/lsIsi" android:layout_width="fill_parent" android:divider="@null" android:listSelector="@android:color/transparent" android:focusable="false" android:focusableInTouchMode="false" android:layout_height="fill_parent">
     	    <!-- Preview: listitem=@layout/item_ayat_sederhana -->
 		</ListView>
