@@ -1,25 +1,47 @@
 package yuku.alkitab.base.ac;
 
-import android.app.*;
-import android.content.*;
-import android.os.*;
-import android.text.*;
-import android.util.*;
-import android.view.*;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Build.VERSION;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.util.SparseBooleanArray;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.*;
-import android.widget.*;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CheckedTextView;
+import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import java.util.*;
+import java.util.Arrays;
 
 import yuku.alkitab.R;
-import yuku.alkitab.base.*;
+import yuku.alkitab.base.PengaturTampilan;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.Search2Engine;
 import yuku.alkitab.base.Search2Engine.Query;
-import yuku.alkitab.base.ac.base.*;
-import yuku.alkitab.base.model.*;
-import yuku.andoutil.*;
-import yuku.androidsdk.searchbar.*;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.model.Kitab;
+import yuku.andoutil.IntArrayList;
+import yuku.androidsdk.searchbar.SearchBar;
 import yuku.androidsdk.searchbar.SearchBar.OnSearchListener;
 
 public class Search2Activity extends BaseActivity {
@@ -41,6 +63,39 @@ public class Search2Activity extends BaseActivity {
 	int warnaHilite;
 	SparseBooleanArray xkitabPosTerpilih = new SparseBooleanArray();
 
+	private class Api11_compat {
+		SearchView searchView;
+
+		public void configureSearchView() {
+			searchView = U.getView(Search2Activity.this, R.id.searchView);
+			searchView.setOnQueryTextListener(new OnQueryTextListener() {
+				@Override public boolean onQueryTextSubmit(String query) {
+					search(query);
+					return true;
+				}
+				
+				@Override public boolean onQueryTextChange(String newText) {
+					return false;
+				}
+			});
+		}
+
+		public void setSearchViewQuery(String carian) {
+			searchView.setQuery(carian, false);
+		}
+
+		public String getSearchViewQuery() {
+			return searchView.getQuery().toString();
+		}
+
+		public void hideSoftInputFromSearchView(InputMethodManager inputManager) {
+			inputManager.hideSoftInputFromWindow(searchView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+			searchView.clearFocus();
+		}
+	}
+	
+	Api11_compat api11_compat;
+	
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
@@ -52,15 +107,25 @@ public class Search2Activity extends BaseActivity {
 		setContentView(R.layout.activity_search2);
 
 		lsHasilCari = U.getView(this, R.id.lsHasilCari);
-		searchBar = U.getView(this, R.id.searchBar);
 		panelFilter = U.getView(this, R.id.panelFilter);
 		cFilterLama = U.getView(this, R.id.cFilterLama);
 		cFilterBaru = U.getView(this, R.id.cFilterBaru);
 		tFilterRumit = U.getView(this, R.id.tFilterRumit);
 		bEditFilter = U.getView(this, R.id.bEditFilter);
 		
-		((ViewGroup) panelFilter.getParent()).removeView(panelFilter);
-		searchBar.setBottomView(panelFilter);
+		if (!useSearchView()) {
+			searchBar = U.getView(this, R.id.searchBar);
+			((ViewGroup) panelFilter.getParent()).removeView(panelFilter);
+			searchBar.setBottomView(panelFilter);
+			searchBar.setOnSearchListener(new OnSearchListener() {
+				@Override public void onSearch(SearchBar searchBar, Editable text) {
+					search(text.toString());
+				}
+			});
+		} else {
+			api11_compat = new Api11_compat();
+			api11_compat.configureSearchView();
+		}
 		
 		lsHasilCari.setBackgroundColor(S.penerapan.warnaLatar);
 		lsHasilCari.setCacheColorHint(S.penerapan.warnaLatar);
@@ -86,11 +151,6 @@ public class Search2Activity extends BaseActivity {
 				finish();
 			}
 		});
-		searchBar.setOnSearchListener(new OnSearchListener() {
-			@Override public void onSearch(SearchBar searchBar, Editable text) {
-				search(text.toString());
-			}
-		});
 		bEditFilter.setOnClickListener(new OnClickListener() {
 			@Override public void onClick(View v) {
 				bEditFilter_click();
@@ -106,7 +166,11 @@ public class Search2Activity extends BaseActivity {
 			int posisiTerpilih = intent.getIntExtra(EXTRA_posisiTerpilih, -1);
 			
 			if (query != null) {
-				searchBar.setText(query.carian);
+				if (!useSearchView()) {
+					searchBar.setText(query.carian);
+				} else {
+					api11_compat.setSearchViewQuery(query.carian);
+				}
 				
 				if (hasilCari != null) {
 					String[] xkata = Search2Engine.tokenkan(query.carian);
@@ -128,6 +192,10 @@ public class Search2Activity extends BaseActivity {
 				lsHasilCari.setSelection(posisiTerpilih);
 			}
 		}
+	}
+	
+	boolean useSearchView() {
+		return VERSION.SDK_INT >= 11;
 	}
 	
 	private void aturTampilanFilterLamaBaru() {
@@ -201,7 +269,11 @@ public class Search2Activity extends BaseActivity {
 	
 	protected Query getQuery() {
 		Query res = new Query();
-		res.carian = searchBar.getText().toString();
+		if (!useSearchView()) {
+			res.carian = searchBar.getText().toString();
+		} else {
+			res.carian = api11_compat.getSearchViewQuery();
+		}
 		res.xkitabPos = xkitabPosTerpilih;
 		return res;
 	}
@@ -329,7 +401,12 @@ public class Search2Activity extends BaseActivity {
 				if (hasil.size() > 0) {
 					//# close soft keyboard 
 					InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); 
-					inputManager.hideSoftInputFromWindow(searchBar.getSearchField().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+					if (!useSearchView()) {
+						inputManager.hideSoftInputFromWindow(searchBar.getSearchField().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+					} else {
+						api11_compat.hideSoftInputFromSearchView(inputManager);
+						lsHasilCari.requestFocus();
+					}
 				}
 				
 				pd.setOnDismissListener(null);
