@@ -26,4 +26,6 @@
 	<string name="pref_biarkan_layar_menyala">Ecran pornit</string>
 	<string name="pref_penampilan_teks">Aspect text</string>
 	<string name="pref_penampilan_layar">Afişare</string>
+    <string name="pref_tombolVolumeBuatPindah_title">Volume Button Navigation</string>
+    <string name="pref_tombolVolumeBuatPindah_summary">Use hardware volume buttons to navigate between verses or chapters</string>
 </resources>
