@@ -138,7 +138,7 @@ public class U {
 	 * @return warnaRgb (belum ada alphanya) atau -1 kalau ga bisa dekod
 	 */
 	public static int dekodWarnaLatarLabel(String warnaLatar) {
-		if (warnaLatar == null) return -1;
+		if (warnaLatar == null || warnaLatar.length() == 0) return -1;
 		if (warnaLatar.length() >= 7 && warnaLatar.charAt(0) == 'b') { // 'b': background color
 			return Integer.parseInt(warnaLatar.substring(1, 7), 16);
 		} else {

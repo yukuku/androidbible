@@ -607,8 +607,8 @@ public class InternalDb {
 		return (int) stmt.simpleQueryForLong();
 	}
 
-	public Label tambahLabel(String judul) {
-		Label res = new Label(-1, judul, getUrutanTerbesarLabel() + 1, ""); //$NON-NLS-1$
+	public Label tambahLabel(String judul, String warnaLatar) {
+		Label res = new Label(-1, judul, getUrutanTerbesarLabel() + 1, warnaLatar); //$NON-NLS-1$
 		SQLiteDatabase db = helper.getWritableDatabase();
 		long _id = db.insert(Db.TABEL_Label, null, res.toContentValues());
 		if (_id == -1) {

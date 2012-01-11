@@ -82,7 +82,7 @@ public class TemaWarnaPreference extends ListPreference {
 				return entryValues.length;
 			}
 		}, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
+			@Override public void onClick(DialogInterface dialog, int which) {
 				mClickedDialogEntryIndex = which;
 
 				/*

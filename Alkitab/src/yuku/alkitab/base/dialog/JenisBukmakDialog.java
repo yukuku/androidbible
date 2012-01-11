@@ -76,7 +76,7 @@ public class JenisBukmakDialog {
 			if (which == adapter.getCount() - 1) { // new label
 				LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), new OkListener() { //$NON-NLS-1$
 					@Override public void onOk(String judul) {
-						Label labelBaru = S.getDb().tambahLabel(judul);
+						Label labelBaru = S.getDb().tambahLabel(judul, null);
 						if (labelBaru != null) {
 							labels.add(labelBaru);
 							setLabelsText();

@@ -256,10 +256,15 @@ public class BukmakActivity extends BaseActivity {
 						// cari apakah label yang judulnya persis sama udah ada
 						Label labelLama = judulMap.get(label.judul);
 						if (labelLama != null) {
+							// update warna label lama
+							if (tumpuk && label.warnaLatar != null && label.warnaLatar.length() > 0) {
+								labelLama.warnaLatar = label.warnaLatar;
+								S.getDb().updateLabel(labelLama);
+							}
 							labelRelIdToAbsIdMap.put(labelToRelIdMap.get(label), labelLama._id);
 							Log.d(TAG, "label (lama) r->a : " + labelToRelIdMap.get(label) + "->" + labelLama._id);
 						} else { // belum ada, harus bikin baru
-							Label labelBaru = S.getDb().tambahLabel(label.judul);
+							Label labelBaru = S.getDb().tambahLabel(label.judul, label.warnaLatar);
 							labelRelIdToAbsIdMap.put(labelToRelIdMap.get(label), labelBaru._id);
 							Log.d(TAG, "label (baru) r->a : " + labelToRelIdMap.get(label) + "->" + labelBaru._id);
 						}

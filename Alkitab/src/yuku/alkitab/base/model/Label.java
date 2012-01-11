@@ -63,19 +63,22 @@ public class Label implements Comparable<Label> {
 	public static final String XMLTAG_Label = "Label"; //$NON-NLS-1$
 	private static final String XMLATTR_judul = "judul"; //$NON-NLS-1$
 	private static final String XMLATTR_relId = "relId"; //$NON-NLS-1$
+	private static final String XMLATTR_warnaLatar = "warnaLatar"; //$NON-NLS-1$
 	
 	public void writeXml(XmlSerializer xml, int relId) throws IOException {
-		// urutan dan warnaLatar ga/belum dibekap
+		// urutan ga/belum dibekap
 		xml.startTag(null, XMLTAG_Label);
 		xml.attribute(null, XMLATTR_relId, String.valueOf(relId));
 		xml.attribute(null, XMLATTR_judul, judul);
+		if (warnaLatar != null) xml.attribute(null, XMLATTR_warnaLatar, warnaLatar);
 		xml.endTag(null, XMLTAG_Label);
 	}
 
 	public static Label dariAttributes(Attributes attributes) {
 		String judul = attributes.getValue("", XMLATTR_judul); //$NON-NLS-1$
+		String warnaLatar = attributes.getValue("", XMLATTR_warnaLatar); //$NON-NLS-1$
 		
-		return new Label(-1, judul, 0, null);
+		return new Label(-1, judul, 0, warnaLatar);
 	}
 	
 	public static int getRelId(Attributes attributes) {
