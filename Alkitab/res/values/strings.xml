@@ -55,7 +55,7 @@
     <string name="mengunduh_namaumum_tgl_tgl">Downloading %1$s dated %2$s…</string>
     <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Not yet available. Probably the requested date\'s material is not prepared yet, or there are some errors in recognizing the data source.\n\nIf you think necessary, please inform the software developers by going back to the main verse view, open the menu and choose Suggest.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Not yet available. Fetching from the Internet…\n\n(Ensure there is Internet connection to fetch the devotion materials.)</string>
-    <string name="namaprog_versi_build">Bible %1$s (%2$d)</string>
+    <string name="namaprog_versi_build">Quick Bible %1$s (%2$d)</string>
     <string name="hari_sabtu">Sat</string>
     <string name="hari_jumat">Fri</string>
     <string name="hari_kamis">Thu</string>
