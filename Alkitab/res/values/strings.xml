@@ -8,8 +8,8 @@
     <string name="donasi_keterangan">If you are blessed by this Bible app, please make some donation to the developer. Your donation would be very helpful. Thank you!</string>
     <string name="donasi_judul">Donation</string>
     <string name="menuDonasi">Donation</string>
-    <string name="mengimpor_titiktiga">Creating backup…</string>
-    <string name="mengekspor_titiktiga">Restoring…</string>
+    <string name="mengimpor_titiktiga">Restoring…</string>
+    <string name="mengekspor_titiktiga">Creating backup…</string>
     <string name="bagikan_renungan">Share devotion</string>
     <string name="renungan_sudah_disalin">Devotion has been copied.</string>
     <string name="salin_renungan">Copy devotion</string>

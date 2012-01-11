@@ -8,8 +8,8 @@
 	<string name="donasi_keterangan">Dacă sunteţi binecuvântaţi de această aplicaţie - Biblia, vă rugăm să faceţi o donaţie dezvoltatorului. Donaţia dvs. este de un real de ajutor. Vă mulţumim!</string>
 	<string name="donasi_judul">Donează</string>
 	<string name="menuDonasi">Donează</string>
-	<string name="mengimpor_titiktiga">Creează rezervă…</string>
-	<string name="mengekspor_titiktiga">Restabilire…</string>
+	<string name="mengimpor_titiktiga">Restabilire…</string>
+	<string name="mengekspor_titiktiga">Creează rezervă…</string>
 	<string name="bagikan_renungan">Devoţional</string>
 	<string name="renungan_sudah_disalin">Devoţionalul a fost copiat.</string>
 	<string name="salin_renungan">Copiază devoţional</string>
