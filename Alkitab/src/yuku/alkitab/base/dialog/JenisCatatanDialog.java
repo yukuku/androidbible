@@ -1,17 +1,22 @@
 package yuku.alkitab.base.dialog;
 
-import android.app.*;
-import android.content.*;
-import android.view.*;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.*;
+import android.view.WindowManager;
+import android.widget.EditText;
 
-import java.util.*;
+import java.util.Date;
 
-import yuku.alkitab.*;
-import yuku.alkitab.base.*;
-import yuku.alkitab.base.model.*;
-import yuku.alkitab.base.storage.*;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.model.Bukmak2;
+import yuku.alkitab.base.model.Kitab;
+import yuku.alkitab.base.storage.Db;
+import yuku.alkitab.R;
 
 public class JenisCatatanDialog {
 	final Context context;

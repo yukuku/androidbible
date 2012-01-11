@@ -1,15 +1,22 @@
 package yuku.alkitab.base.widget;
 
 import android.app.AlertDialog.Builder;
-import android.content.*;
-import android.preference.*;
-import android.text.*;
-import android.text.style.*;
-import android.util.*;
-import android.view.*;
-import android.widget.*;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.preference.ListPreference;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.CheckedTextView;
 
-import yuku.alkitab.*;
+import yuku.alkitab.R;
 
 public class TemaWarnaPreference extends ListPreference {
 	private static final String TAG = TemaWarnaPreference.class.getSimpleName();

@@ -1,15 +1,15 @@
 package yuku.alkitab.base.model;
 
-import android.content.*;
-import android.database.*;
-import android.provider.*;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.provider.BaseColumns;
 
-import java.io.*;
+import java.io.IOException;
 
-import org.xml.sax.*;
-import org.xmlpull.v1.*;
+import org.xml.sax.Attributes;
+import org.xmlpull.v1.XmlSerializer;
 
-import yuku.alkitab.base.storage.*;
+import yuku.alkitab.base.storage.Db;
 
 public class Label implements Comparable<Label> {
 	public static final String TAG = Label.class.getSimpleName();

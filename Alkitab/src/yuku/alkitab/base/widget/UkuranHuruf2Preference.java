@@ -1,18 +1,23 @@
 package yuku.alkitab.base.widget;
 
 
-import android.content.*;
-import android.content.res.*;
-import android.graphics.*;
-import android.os.*;
-import android.preference.*;
-import android.util.*;
-import android.view.*;
-import android.widget.*;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.TypedArray;
+import android.graphics.Typeface;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.preference.DialogPreference;
+import android.util.AttributeSet;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 
-import yuku.alkitab.*;
-import yuku.alkitab.base.*;
+import yuku.alkitab.base.U;
+import yuku.alkitab.R;
 
 public class UkuranHuruf2Preference extends DialogPreference implements OnSeekBarChangeListener {
 	private static final int OFSET_minukuran = 2;

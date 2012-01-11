@@ -1,20 +1,33 @@
 package yuku.alkitab.base;
 
-import android.content.*;
-import android.graphics.*;
-import android.text.*;
-import android.text.method.*;
-import android.text.style.*;
-import android.util.*;
-import android.view.*;
-import android.widget.*;
+import android.content.Context;
+import android.graphics.Typeface;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.LeadingMarginSpan;
+import android.text.style.StyleSpan;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
-import yuku.alkitab.*;
 import yuku.alkitab.base.S.penerapan;
-import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.model.Blok;
+import yuku.alkitab.base.model.Kitab;
 import yuku.alkitab.base.storage.Db.Bukmak2;
-import yuku.alkitab.base.widget.*;
+import yuku.alkitab.base.widget.AyatItem;
+import yuku.alkitab.base.widget.CallbackSpan;
+import yuku.alkitab.R;
 
 public class AyatAdapter extends BaseAdapter {
 	public static final String TAG = AyatAdapter.class.getSimpleName();

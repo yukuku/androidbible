@@ -1,12 +1,13 @@
 package yuku.alkitab.base.widget;
 
-import android.content.*;
-import android.graphics.*;
-import android.graphics.drawable.*;
-import android.util.*;
-import android.widget.*;
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
+import android.util.AttributeSet;
+import android.widget.Checkable;
+import android.widget.LinearLayout;
 
-import yuku.alkitab.*;
+import yuku.alkitab.R;
 
 public class AyatItem extends LinearLayout implements Checkable {
 	public static final String TAG = AyatItem.class.getSimpleName();

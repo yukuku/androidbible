@@ -1,11 +1,11 @@
 package yuku.alkitab.base.ac;
 
-import android.os.*;
-import android.preference.*;
-import android.view.*;
+import android.os.Bundle;
+import android.preference.PreferenceActivity;
+import android.view.MenuItem;
 
-import yuku.alkitab.*;
-import yuku.alkitab.base.ac.base.*;
+import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.R;
 
 public class PengaturanActivity extends PreferenceActivity {
 	@Override

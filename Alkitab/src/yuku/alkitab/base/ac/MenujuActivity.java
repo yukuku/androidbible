@@ -1,18 +1,30 @@
 package yuku.alkitab.base.ac;
 
-import android.content.*;
-import android.os.*;
-import android.view.*;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.*;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.CheckedTextView;
+import android.widget.ImageButton;
+import android.widget.Spinner;
+import android.widget.TextView;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
 
-import yuku.alkitab.*;
-import yuku.alkitab.base.*;
-import yuku.alkitab.base.ac.base.*;
-import yuku.alkitab.base.model.*;
-import yuku.alkitab.base.storage.*;
+import yuku.alkitab.base.IsiActivity;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.model.Kitab;
+import yuku.alkitab.base.storage.Preferences;
+import yuku.alkitab.R;
 
 public class MenujuActivity extends BaseActivity {
 	public static final String TAG = MenujuActivity.class.getSimpleName();

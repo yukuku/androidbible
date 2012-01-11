@@ -1,10 +1,11 @@
 package yuku.alkitab.base.ac;
 
-import android.os.*;
-import android.webkit.*;
+import android.os.Bundle;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 
-import yuku.alkitab.*;
-import yuku.alkitab.base.ac.base.*;
+import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.R;
 
 public class BantuanActivity extends BaseActivity {
 	WebView webview;

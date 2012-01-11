@@ -1,15 +1,17 @@
 package yuku.alkitab.base.dialog;
 
-import android.app.*;
-import android.content.*;
-import android.view.*;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.*;
+import android.widget.CheckBox;
 
-import yuku.alkitab.*;
-import yuku.alkitab.base.*;
-import yuku.alkitab.base.model.*;
-import yuku.andoutil.*;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.R;
+import yuku.andoutil.IntArrayList;
 
 public class JenisStabiloDialog {
 	final AlertDialog alert;

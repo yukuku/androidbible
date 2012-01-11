@@ -1,19 +1,22 @@
 package yuku.alkitab.base.renungan;
 
-import android.content.*;
-import android.util.*;
+import android.content.Context;
+import android.util.Log;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.LinkedList;
 
-import org.apache.http.*;
-import org.apache.http.client.*;
-import org.apache.http.client.methods.*;
-import org.apache.http.impl.client.*;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
-import yuku.alkitab.*;
-import yuku.alkitab.base.*;
-import yuku.andoutil.*;
+import yuku.alkitab.base.S;
+import yuku.alkitab.R;
+import yuku.andoutil.ThreadSleep;
 
 public class TukangDonlot extends Thread {
 	public interface OnStatusDonlotListener {

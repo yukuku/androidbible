@@ -1,21 +1,27 @@
 package yuku.alkitab.base;
 
-import android.content.*;
-import android.os.*;
+import android.content.Context;
+import android.os.Environment;
+import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.util.*;
+import android.util.Log;
 
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.zip.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.concurrent.Semaphore;
+import java.util.zip.GZIPInputStream;
 
-import org.apache.http.*;
-import org.apache.http.client.*;
-import org.apache.http.client.methods.*;
-import org.apache.http.impl.client.*;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
-import yuku.alkitab.*;
+import yuku.alkitab.R;
 
 public class AddonManager {
 	public static final String TAG = AddonManager.class.getSimpleName();
