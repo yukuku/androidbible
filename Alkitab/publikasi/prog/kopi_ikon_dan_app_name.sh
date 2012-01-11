@@ -1,8 +1,8 @@
 # harus dijalanin dari dir root project!
 
-cp publikasi/img/$1_ikon/hdpi.png res/drawable-hdpi/icon.png
-cp publikasi/img/$1_ikon/mdpi.png res/drawable-mdpi/icon.png
-cp publikasi/img/$1_ikon/ldpi.png res/drawable-ldpi/icon.png
+cp publikasi/img/$1_ikon/hdpi.png res/drawable-hdpi/ic_launcher.png
+cp publikasi/img/$1_ikon/mdpi.png res/drawable-mdpi/ic_launcher.png
+cp publikasi/img/$1_ikon/ldpi.png res/drawable-ldpi/ic_launcher.png
 
 if [ $1 = 'tb' ] ; then
 	judul='Alkitab'

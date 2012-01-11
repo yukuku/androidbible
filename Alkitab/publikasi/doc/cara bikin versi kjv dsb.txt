@@ -8,7 +8,7 @@
 
    pushd res/raw 
    rm * 
-   cp ..._raw/* .
+   cp ../../../AlkitabConverter/bahan/en-kjv-thml/kjv_raw/* .
    popd
 
 3. Ganti package name
