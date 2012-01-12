@@ -22,11 +22,11 @@ import yuku.alkitabconverter.yes_common.YesCommon;
 public class Proses1 {
 	public static final String TAG = Proses1.class.getSimpleName();
 	
-	static String INPUT_TEKS_1 = "../Alkitab/publikasi/ro-cornilescu/ro-cornilescu.1.txt";
+	static String INPUT_TEKS_1 = "./bahan/ro-cornilescu/ro-cornilescu.1.txt";
 	public static String INPUT_TEKS_ENCODING = "utf-8";
 	public static int INPUT_TEKS_ENCODING_YES = 2; // 1: ascii; 2: utf-8;
-	public static String INPUT_KITAB = "../Alkitab/publikasi/ro-cornilescu/ro-cornilescu-kitab.txt";
-	static String OUTPUT_YES = "../Alkitab/publikasi/ro-cornilescu/ro-cornilescu.yes";
+	public static String INPUT_KITAB = "./bahan/ro-cornilescu/ro-cornilescu-kitab.txt";
+	static String OUTPUT_YES = "./bahan/ro-cornilescu/ro-cornilescu.yes";
 	public static int OUTPUT_ADA_PERIKOP = 1;
 
 	final static Charset utf8 = Charset.forName("utf-8");
@@ -88,7 +88,7 @@ public class Proses1 {
 
 		////////// PROSES KE YES
 
-		final InfoEdisi infoEdisi = YesCommon.infoEdisi("ro-cornilescu", "Cornilescu", OUTPUT_ADA_PERIKOP, "BIBLIA SAU SFÂNTA SCRIPTURĂ A VECHIULUI ŞI NOULUI TESTAMENT\nTraducerea: Dumitru Cornilescu, 1928", INPUT_TEKS_ENCODING_YES);
+		final InfoEdisi infoEdisi = YesCommon.infoEdisi("ro-cornilescu", "Cornilescu", OUTPUT_ADA_PERIKOP, "Biblia sau Sfânta Scriptură a Vechiului şi Noului Testament - Traducerea: Dumitru Cornilescu, 1921", INPUT_TEKS_ENCODING_YES);
 		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
 		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
 		final PerikopBlok perikopBlok = new PerikopBlok(perikopData);
