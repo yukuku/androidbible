@@ -174,7 +174,7 @@
 	<string name="rename_label_title">Redenumeşte eticheta</string>
 	<string name="delete_label_title">Şterge eticheta</string>
 	<string name="are_you_sure_you_want_to_delete_the_label_label">"Sunteţi sigur ca vreţi să ştergeţi eticheta '%1$s'? Eticheta va fi ştearsă din %2$s favorit."</string>
-	<string name="bmcat_all_bookmarks">Toate favorite</string>
+	<string name="bmcat_all_bookmarks">Versete favorite</string>
 	<string name="bmcat_notes">Note</string>
 	<string name="bmcat_highlights">Marcaje</string>
 	<string name="bmcat_unlabeled_bookmarks">Favorite neetichetate</string>
@@ -182,9 +182,9 @@
 	<string name="bl_no_notes_written_yet">Nu sunt note scrise.\nApăsaţi pe un verset pentru a scrie o notă.</string>
 	<string name="bl_highlights">Marchează</string>
 	<string name="bl_no_highlighted_verses">Nu sunt versete marcate.\nApăsati pe un verset pentru a fi marcat.</string>
-	<string name="bl_all_bookmarks">Toate favorite</string>
-	<string name="bl_all_bookmarks_without_labels">Toate favorite fără etichetă</string>
-	<string name="bl_there_are_no_bookmarks_without_any_labels">Nu sunt favorite fără etichetă.</string>
+	<string name="bl_all_bookmarks">Versete favorite</string>
+	<string name="bl_all_bookmarks_without_labels">Versete favorite fără etichetă</string>
+	<string name="bl_there_are_no_bookmarks_without_any_labels">Nu sunt versete favorite fără etichetă.</string>
 	<string name="bl_bookmarks_labeled_label">"Favorite etichetate '%s'"</string>
 	<string name="bl_there_are_no_bookmarks_with_the_label_label">" Nu sunt favorite cu eticheta '%s'."</string>
 	<string name="bl_filter_by_some_keywords">Filtrare după cuvintele cheie</string>
@@ -199,14 +199,14 @@
 	<string name="delete_label">Şterge eticheta</string>
 	<string name="tutup">Închide</string>
 	<string name="teks_about">
-	    Developed by [b]yuku[/b], 2009-2012[br/] 
+	    Dezvoltat de [b]yuku[/b], 2009-2012[br/] 
 	    • Website: androidbible.blogspot.com[br/] 
 		• Google+: gplus.to/androidbible[br/]
 	    • Mailing list: groups.google.com/group/androidbible[br/] 
 	    [br/] 
-	    [b]Contributors:[/b][br/] 
-	    • [b]Oluss Studio[/b] program icon[br/] 
-	    • [b]Jaya Satrio[/b] various icons[br/] 
+	    [b]Contribuitori:[/b][br/] 
+	    • [b]Oluss Studio[/b] icoane program[br/] 
+	    • [b]Jaya Satrio[/b] diverse icoane[br/] 
 	    • [b]Yohanes Nugroho[/b] PDB reader[br/] 
 	    • etc.
     </string>

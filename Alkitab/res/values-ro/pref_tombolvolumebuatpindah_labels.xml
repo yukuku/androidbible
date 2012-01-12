@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string-array name="pref_tombolVolumeBuatPindah_labels">
-		<item>"Don't use to navigate"</item>
-		<item>Navigate verses</item>
-		<item>Navigate chapters</item>
+		<item>"Dezactivat"</item>
+		<item>Deruleaz versete</item>
+		<item>Deruleaz capitole</item>
 	</string-array>
 </resources>

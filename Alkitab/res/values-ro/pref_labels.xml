@@ -3,7 +3,7 @@
 	<string name="pref_bahasa_yang_digunakan_pada_menu_dan">Limba folosită în meniu şi mesajele aplicaţiei</string>
 	<string name="pref_bahasa_language">Limba</string>
 	<string name="pref_atur_warna_teks_latar_belakang_dan">Alege culoare text, fundal şi număr verset conform unei teme.</string>
-	<string name="pref_tema_warna">Culoarea temei</string>
+	<string name="pref_tema_warna">Culoare temă</string>
 	<string name="pref_warna_teks_alkitab">Culoare text Biblie</string>
 	<string name="pref_warna_latar_belakang">Culoare fundal</string>
 	<string name="pref_warna_nomor_ayat">Culoare număr verset</string>
@@ -16,16 +16,16 @@
 	<string name="pref_warna">Culoare</string>
 	<string name="pref_atur_warna_teks_latar_belakang_dan_nomor_ayat">Alege culoare text, fundal şi număr verset.</string>
 	<string name="pref_penggunaan">Utilizare</string>
-	<string name="pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah">Apăsaţi ← şi → pentru a vă deplasa între capitole, sau apăsaţi pe titlu.</string>
+	<string name="pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah">Apăsaţi ← şi → pentru a vă deplasa între capitole sau apăsaţi pe titlu.</string>
 	<string name="pref_tanpa_tombol_navigasi">Fără butoane de navigare</string>
 	<string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Arată lista de cărţi în ordine alfabetică (a-z) în loc de versiunea originală.</string>
-	<string name="pref_kitab_menurut_abjad">Ordonează alfabetic cărţile</string>
+	<string name="pref_kitab_menurut_abjad">Ordonare alfabetică</string>
 	<string name="pref_buka_bagian_alkitab_tertentu_dengan_mengetikkan_alamatnya_langsung">Deschideţi o anumită parte a Bibliei, tastând adresa direct.</string>
 	<string name="pref_ketik_langsung_alamat">Introduceţi adresa direct.</string>
 	<string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Afişajul nu se închide atunci când se citeşte textulul Bibliei.</string>
 	<string name="pref_biarkan_layar_menyala">Ecran pornit</string>
 	<string name="pref_penampilan_teks">Aspect text</string>
 	<string name="pref_penampilan_layar">Afişare</string>
-    <string name="pref_tombolVolumeBuatPindah_title">Volume Button Navigation</string>
-    <string name="pref_tombolVolumeBuatPindah_summary">Use hardware volume buttons to navigate between verses or chapters</string>
+    <string name="pref_tombolVolumeBuatPindah_title">Navigare cu taste volum</string>
+    <string name="pref_tombolVolumeBuatPindah_summary">Utilizaţi butoanele de volum pentru derularea versetelor sau capitolelor. </string>
 </resources>
