@@ -1,15 +1,16 @@
 package yuku.alkitab.base.config;
 
-import android.content.*;
-import android.content.res.*;
-import android.util.*;
+import android.content.Context;
+import android.content.res.XmlResourceParser;
+import android.util.Log;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.xmlpull.v1.*;
+import org.xmlpull.v1.XmlPullParser;
 
-import yuku.alkitab.base.ac.EdisiActivity.*;
-import yuku.alkitab.base.storage.*;
+import yuku.alkitab.base.ac.EdisiActivity.MEdisiPreset;
+import yuku.alkitab.base.storage.Db;
 
 public class BuildConfig {
 	public static final String TAG = BuildConfig.class.getSimpleName();
@@ -78,6 +79,7 @@ public class BuildConfig {
 				preset.namafile_preset = parser.getAttributeValue(null, "namafile_preset"); //$NON-NLS-1$
 				preset.url = parser.getAttributeValue(null, "url"); //$NON-NLS-1$
 				preset.urutan = ++urutanPreset;
+				preset.locale = parser.getAttributeValue(null, "locale"); //$NON-NLS-1$
 				xpreset.add(preset);
 			} else if (next == XmlPullParser.START_TAG && "url".equals(parser.getName())) { //$NON-NLS-1$
 				// TODO support more url's if needed. now only one.

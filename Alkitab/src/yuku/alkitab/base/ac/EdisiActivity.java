@@ -27,7 +27,10 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import yuku.alkitab.R;
 import yuku.alkitab.base.AddonManager;
@@ -62,6 +65,8 @@ public class EdisiActivity extends BaseActivity {
 	
 	ListView lsEdisi;
 	EdisiAdapter adapter;
+	
+	Map<String, String> cache_displayLanguage = new HashMap<String, String>();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -568,6 +573,7 @@ public class EdisiActivity extends BaseActivity {
 	public static class MEdisiPreset extends MEdisi {
 		public String url;
 		public String namafile_preset;
+		public String locale;
 		
 		@Override public boolean getAktif() {
 			return Preferences.getBoolean("edisi/preset/" + this.namafile_preset + "/aktif", true); //$NON-NLS-1$ //$NON-NLS-2$
@@ -687,9 +693,10 @@ public class EdisiActivity extends BaseActivity {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_edisi, null);
 			
-			CheckBox cAktif = (CheckBox) res.findViewById(R.id.cAktif);
-			TextView lJudul = (TextView) res.findViewById(R.id.lJudul);
-			TextView lNamafile = (TextView) res.findViewById(R.id.lNamafile);
+			CheckBox cAktif = U.getView(res, R.id.cAktif);
+			TextView lJudul = U.getView(res, R.id.lJudul);
+			TextView lNamafile = U.getView(res, R.id.lNamafile);
+			TextView lBahasa = U.getView(res, R.id.lBahasa);
 			
 			if (position == getCount() - 1) {
 				// pilihan untuk open
@@ -697,6 +704,7 @@ public class EdisiActivity extends BaseActivity {
 				lJudul.setText(R.string.ed_buka_file_pdb_yes_lainnya);
 				lJudul.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_add, 0, 0, 0);
 				lNamafile.setVisibility(View.GONE);
+				lBahasa.setVisibility(View.GONE);
 			} else {
 				// salah satu dari edisi yang ada
 				MEdisi medisi = getItem(position);
@@ -709,18 +717,40 @@ public class EdisiActivity extends BaseActivity {
 				if (medisi instanceof MEdisiInternal) {
 					cAktif.setEnabled(false);
 					lNamafile.setVisibility(View.GONE);
+					lBahasa.setVisibility(View.GONE);
 				} else if (medisi instanceof MEdisiPreset) {
 					cAktif.setEnabled(true);
 					String namafile_preset = ((MEdisiPreset) medisi).namafile_preset;
+					String locale = ((MEdisiPreset) medisi).locale;
 					if (AddonManager.cekAdaEdisi(namafile_preset)) {
 						lNamafile.setVisibility(View.GONE);
 					} else {
 						lNamafile.setVisibility(View.VISIBLE);
 						lNamafile.setText(R.string.ed_tekan_untuk_mengunduh); 
 					}
+					if (locale != null && locale.length() > 0) {
+						String display = cache_displayLanguage.get(locale);
+						if (display == null) {
+							display = new Locale(locale).getDisplayLanguage();
+							if (U.equals(display, locale)) {
+								display = null; // no data, let's just hide it
+							}
+							cache_displayLanguage.put(locale, display);
+						}
+						
+						if (display != null) {
+							lBahasa.setVisibility(View.VISIBLE);
+							lBahasa.setText(display);
+						} else {
+							lBahasa.setVisibility(View.GONE);
+						}
+					} else {
+						lBahasa.setVisibility(View.GONE);
+					}
 				} else if (medisi instanceof MEdisiYes) {
 					cAktif.setEnabled(true);
 					lNamafile.setVisibility(View.VISIBLE);
+					lBahasa.setVisibility(View.GONE);
 					MEdisiYes yes = (MEdisiYes) medisi;
 					String extra = ""; //$NON-NLS-1$
 					if (yes.keterangan != null) {
