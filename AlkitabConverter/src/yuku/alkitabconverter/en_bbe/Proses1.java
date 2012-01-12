@@ -38,7 +38,7 @@ public class Proses1 {
 	private void u() throws Exception {
 		Patch.patch(INPUT_TEKS_1, INPUT_TEKS_PATCH, INPUT_TEKS_2);
 		
-		List<Rec> xrec = UnboundBibleReader.parse(INPUT_TEKS_2);
+		List<Rec> xrec = UnboundBibleReader.parse(INPUT_TEKS_2, 0, 1, 2, 5);
 		
 		// post-process
 		for (Rec rec: xrec) {

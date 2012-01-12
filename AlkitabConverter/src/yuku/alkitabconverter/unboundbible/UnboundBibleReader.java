@@ -10,7 +10,7 @@ import java.util.Scanner;
 import yuku.alkitabconverter.bdb.BdbProses.Rec;
 
 public class UnboundBibleReader {
-	public static List<Rec> parse(String nf) throws Exception {
+	public static List<Rec> parse(String nf, int kolom_orig_book_index, int kolom_pasal_1, int kolom_ayat_1, int kolom_isi) throws Exception {
 		LinkedHashMap<Integer, Integer> nn = new LinkedHashMap<Integer, Integer>();
 		List<Rec> res = new ArrayList<Rec>();
 		
@@ -28,13 +28,13 @@ public class UnboundBibleReader {
 			}
 			
 			String[] xkolom = baris.split("\t");
-			String orig_book_index = xkolom[0];
-			int pasal_1 = Integer.parseInt(xkolom[1]);
-			int ayat_1 = Integer.parseInt(xkolom[2]);
-			@SuppressWarnings("unused") String subayat_1 = xkolom[3];
-			@SuppressWarnings("unused") int order_by = Integer.parseInt(xkolom[4]);
-			String isi = xkolom[5];
-			if (xkolom.length != 6) {
+			String orig_book_index = xkolom[kolom_orig_book_index];
+			int pasal_1 = Integer.parseInt(xkolom[kolom_pasal_1]);
+			int ayat_1 = Integer.parseInt(xkolom[kolom_ayat_1]);
+			// @SuppressWarnings("unused") String subayat_1 = xkolom[3];
+			// @SuppressWarnings("unused") int order_by = Integer.parseInt(xkolom[4]);
+			String isi = xkolom[kolom_isi];
+			if (xkolom.length != kolom_isi + 1) {
 				throw new RuntimeException("baris ngaco: " + baris);
 			}
 			
