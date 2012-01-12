@@ -1237,7 +1237,7 @@ public class IsiActivity extends BaseActivity {
 	void bKanan_click() {
 		Kitab kitabKini = S.kitabAktif;
 		if (pasal_1 >= kitabKini.npasal) {
-			int maxKitabPos = S.edisiAktif.getMaxKitabPos();
+			int maxKitabPos = S.edisiAktif.getMaxKitabPosTambahSatu();
 			int cobaKitabPos = kitabKini.pos + 1;
 			while (cobaKitabPos < maxKitabPos) {
 				Kitab kitabBaru = S.edisiAktif.getKitab(cobaKitabPos);

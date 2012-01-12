@@ -1,15 +1,21 @@
 package yuku.alkitab.base.storage;
 
-import android.content.*;
-import android.util.*;
+import android.content.Context;
+import android.util.Log;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.Arrays;
 
-import yuku.alkitab.base.*;
-import yuku.alkitab.base.config.*;
-import yuku.alkitab.base.model.*;
-import yuku.bintex.*;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.config.D;
+import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.model.Blok;
+import yuku.alkitab.base.model.Edisi;
+import yuku.alkitab.base.model.IndexPerikop;
+import yuku.alkitab.base.model.Kitab;
+import yuku.bintex.BintexReader;
 
 public class YesPembaca extends Pembaca {
 	private static final String TAG = YesPembaca.class.getSimpleName();
@@ -136,14 +142,13 @@ public class YesPembaca extends Pembaca {
 		}
 	}
 
-	@Override
-	public Kitab[] bacaInfoKitab() {
+	@Override public Kitab[] bacaInfoKitab() {
 		try {
 			Log.d(TAG, "bacaInfoKitab dipanggil"); //$NON-NLS-1$
 			
 			init();
 			
-			Kitab[] res = new Kitab[this.nkitab];
+			Kitab[] res = new Kitab[256];
 			
 			int ukuran = lewatiSampeSeksi("infoKitab___"); //$NON-NLS-1$
 			byte[] buf = new byte[ukuran];
@@ -151,7 +156,7 @@ public class YesPembaca extends Pembaca {
 			BintexReader in = new BintexReader(new ByteArrayInputStream(buf));
 			
 			Log.d(TAG, "akan membaca " + this.nkitab + " kitab"); //$NON-NLS-1$ //$NON-NLS-2$
-			for (int kitabPos = 0; kitabPos < res.length; kitabPos++) {
+			for (int kitabIndex = 0; kitabIndex < this.nkitab; kitabIndex++) {
 				Kitab k = new Kitab();
 				
 				// kalau true, berarti ini kitab NULL
@@ -203,11 +208,22 @@ public class YesPembaca extends Pembaca {
 				}
 				
 				if (kosong) {
-					res[kitabPos] = null;
+					res[k.pos] = null;
+				} else if (k.pos < 0 || k.pos >= res.length) {
+					throw new RuntimeException("ada kitabPos yang sangat besar: " + k.pos);
 				} else {
-					res[kitabPos] = k;
+					res[k.pos] = k;
 				}
 			}
+			
+			// truncate res supaya ukuran arraynya jangan terlalu besar, sampe non-null terakhir
+			int lenBaru = 0;
+			for (int i = 0; i < res.length; i++) {
+				if (res[i] != null) lenBaru = i + 1;
+			}
+			Kitab[] resBaru = new Kitab[lenBaru];
+			System.arraycopy(res, 0, resBaru, 0, lenBaru);
+			res = resBaru;
 			
 			return res;
 		} catch (Exception e) {

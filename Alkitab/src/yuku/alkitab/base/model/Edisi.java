@@ -1,6 +1,6 @@
 package yuku.alkitab.base.model;
 
-import yuku.alkitab.base.storage.*;
+import yuku.alkitab.base.storage.Pembaca;
 
 public class Edisi {
 	public Pembaca pembaca;
@@ -22,9 +22,9 @@ public class Edisi {
 	}
 	
 	/**
-	 * @return panjang dari array kitab (walau tengah2nya bisa ada null)
+	 * @return kitab pos yang tertinggi (walau tengah2nya bisa ada null) + 1
 	 */
-	public synchronized int getMaxKitabPos() {
+	public synchronized int getMaxKitabPosTambahSatu() {
 		return getXkitab().length;
 	}
 	
