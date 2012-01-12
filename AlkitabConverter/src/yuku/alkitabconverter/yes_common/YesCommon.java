@@ -32,12 +32,12 @@ public class YesCommon {
 		}};
 	}
 
-	public static InfoEdisi infoEdisi(final String _nama, final String _judul, final int _perikopAda, final String _keterangan, final int _encoding) {
+	public static InfoEdisi infoEdisi(final String _nama, final String _judul, final int _nkitab, final int _perikopAda, final String _keterangan, final int _encoding) {
 		return new InfoEdisi() {{
 			versi = 1;
 			nama = _nama;
 			judul = _judul;
-			nkitab = 66;
+			nkitab = _nkitab;
 			perikopAda = _perikopAda;
 			keterangan = _keterangan;
 			encoding = _encoding;
@@ -45,21 +45,25 @@ public class YesCommon {
 	}
 
 	public static InfoKitab infoKitab(List<Rec> xrec, String _namafileInputKitab, String _encoding, int _encodingYes) throws Exception {
-		final Kitab[] xkitab_ = new Kitab[66];
+		// sapu xrec, liat ada kitab apa aja
+		List<Integer> xkitab_1 = new ArrayList<Integer>();
+		for (Rec rec: xrec) {
+			if (!xkitab_1.contains(rec.kitab_1)) {
+				xkitab_1.add(rec.kitab_1);
+			}
+		}
+		System.out.println("Total ada " + xkitab_1.size() + " kitab");
 		
-		String[] xjudul, xnama;
-		xjudul = new String[66];
-		xnama = new String[66];
-		int p = 0;
+		final Kitab[] xkitab_ = new Kitab[xkitab_1.size()];
 		
+		// parse file nama kitab
+		List<String> xnamaKitab = new ArrayList<String>(); // indexnya sama dengan kitabPos
 		Scanner sc = new Scanner(new File(_namafileInputKitab));
 		while (sc.hasNextLine()) {
 			String judul = sc.nextLine().trim();
-			if (judul.length() > 0) {
-				xjudul[p] = judul.replace('_', ' ');
-				xnama[p] = judul.replace('_', ' ');
-				p++;
-			}
+			judul = judul.replace('_', ' ');
+			System.out.println("kitabPos " + xnamaKitab.size() + " judul: " + judul);
+			xnamaKitab.add(judul);
 		}
 		sc.close();
 		
@@ -70,7 +74,9 @@ public class YesCommon {
 		int[] xnayat = new int[256];
 		int[] xpasal_offset = new int[256];
 		
-		for (int kitabPos = 0; kitabPos < 66; kitabPos++) {
+		for (int kitabIndex = 0; kitabIndex < xkitab_1.size(); kitabIndex++) {
+			int kitabPos = xkitab_1.get(kitabIndex) - 1; // kitabPos selalu mulai dari 0
+			
 			xpasal_offset[0] = 0;
 			
 			for (Rec rec: xrec) {
@@ -91,11 +97,12 @@ public class YesCommon {
 			}
 			xpasal_offset[maxpasal_1] = offsetLewat;
 			
+			System.out.println("kitabIndex " + kitabIndex + ", kitabPos " + kitabPos + ":");
 			Kitab kitab = new Kitab();
 			kitab.versi = 1;
 			kitab.pos = kitabPos;
-			kitab.nama = xnama[kitabPos];
-			kitab.judul = xjudul[kitabPos];
+			kitab.nama = xnamaKitab.get(kitabPos); // sama dengan bawah
+			kitab.judul = xnamaKitab.get(kitabPos); // sama dengan atas
 			kitab.npasal = maxpasal_1;
 			kitab.nayat = new int[kitab.npasal];
 			System.arraycopy(xnayat, 0, kitab.nayat, 0, kitab.npasal);
@@ -108,7 +115,7 @@ public class YesCommon {
 			kitab.offset = offsetTotal;
 			System.out.println("kitab " + kitab.judul + " offset: " + kitab.offset);
 			
-			xkitab_[kitabPos] = kitab;
+			xkitab_[kitabIndex] = kitab;
 			
 			//# reset
 			offsetTotal += offsetLewat;

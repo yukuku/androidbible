@@ -11,6 +11,7 @@ import yuku.alkitab.yes.YesFile.Teks;
 import yuku.alkitabconverter.bdb.BdbProses.Rec;
 import yuku.alkitabconverter.unboundbible.UnboundBibleReader;
 import yuku.alkitabconverter.util.Patch;
+import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.util.Tmp;
 import yuku.alkitabconverter.yes_common.YesCommon;
 
@@ -47,7 +48,7 @@ public class Proses1 {
 
 		////////// PROSES KE YES
 
-		final InfoEdisi infoEdisi = YesCommon.infoEdisi(INFO_NAMA, INFO_JUDUL, OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES);
+		final InfoEdisi infoEdisi = YesCommon.infoEdisi(INFO_NAMA, INFO_JUDUL, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES);
 		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
 		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
 		//final PerikopBlok perikopBlok = new PerikopBlok(perikopData);

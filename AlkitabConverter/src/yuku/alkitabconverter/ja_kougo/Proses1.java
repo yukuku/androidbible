@@ -26,6 +26,7 @@ import yuku.alkitab.yes.YesFile.PerikopIndex;
 import yuku.alkitab.yes.YesFile.Teks;
 import yuku.alkitabconverter.OsisBookNames;
 import yuku.alkitabconverter.bdb.BdbProses.Rec;
+import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.yes_common.YesCommon;
 
 public class Proses1 {
@@ -86,7 +87,7 @@ public class Proses1 {
 
 		////////// PROSES KE YES
 
-		final InfoEdisi infoEdisi = YesCommon.infoEdisi("ja-kougo", "口語訳", OUTPUT_ADA_PERIKOP, "新約1954年/旧約1955年", INPUT_TEKS_ENCODING_YES);
+		final InfoEdisi infoEdisi = YesCommon.infoEdisi("ja-kougo", "口語訳", RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, "新約1954年/旧約1955年", INPUT_TEKS_ENCODING_YES);
 		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
 		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
 		
