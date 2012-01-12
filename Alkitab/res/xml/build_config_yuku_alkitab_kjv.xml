@@ -7,6 +7,7 @@
 		<preset locale="de"   judul="Lutherbibel (1912)" namafile_preset="de-luther1912.yes" url="http://alkitab-host.appspot.com/addon/yes/de-luther1912/de-luther1912.yes.gz" />
 		<preset locale="ja"   judul="口語訳" namafile_preset="ja-kougo.yes" url="http://alkitab-host.appspot.com/addon/yes/ja-kougo/ja-kougo.yes.gz" />
 		<preset locale="ro"   judul="Cornilescu" namafile_preset="ro-cornilescu.yes" url="http://alkitab-host.appspot.com/addon/yes/ro-cornilescu/ro-cornilescu.yes.gz" />
+		<preset locale="tl"   judul="Ang Biblia (1905)" namafile_preset="tl-angbiblia1905.yes" url="http://alkitab-host.appspot.com/addon/yes/tl-angbiblia1905/tl-angbiblia1905.yes.gz" />
 		<preset locale="zh"   judul="Chinese Union (Simplified)" namafile_preset="cuvs.yes" url="http://alkitab-host.appspot.com/addon/yes/cuvs.yes.gz" />
 		<preset locale="zh"   judul="Chinese Union (Traditional)" namafile_preset="cuvt.yes" url="http://alkitab-host.appspot.com/addon/yes/cuvt.yes.gz" />
 	</edisi>
