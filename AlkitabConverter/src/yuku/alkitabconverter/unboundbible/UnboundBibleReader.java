@@ -27,16 +27,17 @@ public class UnboundBibleReader {
 				continue;
 			}
 			
-			String[] xkolom = baris.split("\t");
+			String[] xkolom = baris.split("\t", -1);
+			if (xkolom.length != kolom_isi + 1) {
+				throw new RuntimeException("baris ngaco: " + baris);
+			}
+			
 			String orig_book_index = xkolom[kolom_orig_book_index];
 			int pasal_1 = Integer.parseInt(xkolom[kolom_pasal_1]);
 			int ayat_1 = Integer.parseInt(xkolom[kolom_ayat_1]);
 			// @SuppressWarnings("unused") String subayat_1 = xkolom[3];
 			// @SuppressWarnings("unused") int order_by = Integer.parseInt(xkolom[4]);
 			String isi = xkolom[kolom_isi];
-			if (xkolom.length != kolom_isi + 1) {
-				throw new RuntimeException("baris ngaco: " + baris);
-			}
 			
 			int kitab_1 = ubToKitab1(orig_book_index);
 			
