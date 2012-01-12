@@ -5,6 +5,7 @@
 		<internal locale="in" judul="Terjemahan Baru" prefix="tb" />
 		<preset locale="in"   judul="Bahasa Indonesia Sehari-hari" namafile_preset="bis.yes" url="http://alkitab-host.appspot.com/addon/yes/bis.yes.gz" />
 		<preset locale="bbc"  judul="Batak Toba" namafile_preset="toba.yes" url="http://alkitab-host.appspot.com/addon/yes/toba.yes.gz" />
+		<preset locale="de"   judul="Lutherbibel (1912)" namafile_preset="de-luther1912.yes" url="http://alkitab-host.appspot.com/addon/yes/de-luther1912/de-luther1912.yes.gz" />
 		<preset locale="en"   judul="King James (KJV)" namafile_preset="kjv.yes" url="http://alkitab-host.appspot.com/addon/yes/kjv-italics/kjv.yes.gz" />
 		<preset locale="en"   judul="Bible in Basic English" namafile_preset="en-bbe.yes" url="http://alkitab-host.appspot.com/addon/yes/en-bbe/en-bbe.yes.gz" />
 		<preset locale="ja"   judul="口語訳" namafile_preset="ja-kougo.yes" url="http://alkitab-host.appspot.com/addon/yes/ja-kougo/ja-kougo.yes.gz" />
