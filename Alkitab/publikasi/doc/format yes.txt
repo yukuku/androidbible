@@ -1,0 +1,122 @@
+This document describes the format of the .yes files used as Bible version add-on.
+
+Updated 2012-01-16, but the best is by seeing the version control timestamp.
+
+There is no formal grammar for this document :D
+
+[Data types]
+
+The following shorthands describe the data types used in this document.
+
+- uint8: unsigned 8-bit integer, range 0..255
+- int32: signed 32-bit integer, range -2^31..2^31-1
+- char: 16-bit character as in Java, range 0..65535
+- byte[len]: bytes of length len, however it is interpreted
+- sstring {
+    uint8 length // in chars
+    char[length] value // character data
+  }
+- lstring {
+    int32 length // in chars
+    char[length] value // character data
+  }    
+
+[File format]
+
+// A YES file consists of a header and one or more sections and a footer. 
+
+YesFile {
+	Header
+	Seksi[]
+	uint8[] = "____________" // footer: 12 times of byte '_'
+}
+
+Header {
+	uint8[] signature = {0x98, 0x58, 0x0d, 0x0a, 0x00, 0x5d, 0xe0}
+	uint8 version = 1
+}
+
+// Each section consists of section name, size, and contents
+
+Seksi {
+	uint8[12] nama
+	int32 ukuran
+	byte[ukuran] isiSeksi
+} 
+
+// The isiSeksi above contains the actual data, where each of it differs based on the type extending IsiSeksi below
+
+// NameValue is a bad data structure to specify a pair of name and value. 
+// It's bad because I didn't think before that actually there should be length before the value, 
+// otherwise, parsers don't have ideas how to skip values of unknown names.
+
+NameValue {
+	sstring name
+	byte[] value
+}
+
+// The following IsiSeksi contains several NameValue pairs, and ends with a sstring "end". 
+// The order of NameValue pairs can be arbritrary, but "versi" needs to be first.
+// The following describes everything using NameValue.
+
+InfoEdisi: // section name is "infoEdisi___"
+	int32 versi // currently is 2
+	sstring nama
+	sstring judul
+	lstring keterangan
+	int32 nkitab
+	int32 perikopAda // 0 = ga ada; selain 0: nomer versi perikopIndex dan perikopBlok_
+	int32 encoding // 1 = ascii; 2 = utf-8
+
+InfoKitab: // section name is "infoKitab___"
+	int32 versi // currently is 2
+	int32 pos // book number, defined in "book numbers.txt"
+	int32 pdbBookNumber // original book number if converted from pdb files
+	sstring nama
+	sstring judul
+	int32 npasal // number of chapters in this book
+	uint8[npasal] nayat // number of verses in each chapters of this book
+	int32 ayatLoncat // 0 = unused
+	int32[npasal] pasal_offset // offsets of each chapter, starting from beginning of the offset of this book
+	int32 encoding // no more used
+	int32 offset  // offset of this book on the "Teks" section content
+
+// Teks is also IsiSeksi, but the contents are not defined. It's just a bunch of bytes. And it's encoded using the encoding specified in InfoEdisi.
+// Section name is "teks________"
+
+// IsiSeksi for pericopes are raw data, not NameValue pairs
+
+PerikopBlok { // section name is "perikopBlok_". Contains pericope data.
+	Blok[] blocks
+}
+
+// Please use the version 2 
+
+Blok { 
+	uint8 versi = 1
+	sstring judul // e.g. "Yesus memperingatkan Yudas"
+	uint8 nparalel // e.g. 3
+	sstring[nparalel] xparalel // e.g. {"Mat 26:21-25", "Mrk 14:18-21", "Luk 22:21-23"}
+}
+
+// OR
+
+Blok {
+	uint8 versi = 2
+	lstring judul
+	uint8 nparalel
+	sstring[nparalel] xparalel
+}
+
+// PerikopIndex is the loadable-to-memory index of the pericope blocks.
+
+PerikopIndex {
+	int32 nentri
+	Entri[nentri] xentri
+}
+
+Entri {
+	int32 ari
+	int32 ofsetKeBlok // offset to the block in PerikopBlok section content
+}
+

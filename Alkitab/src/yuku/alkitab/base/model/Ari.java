@@ -1,10 +1,16 @@
 package yuku.alkitab.base.model;
 
-
 /**
- * Alkitab resource identifier
+ * Alkitab resource identifier -- 2012-01-16: not really.
  * @author yuku
  *
+ * ari is a 32bit integer.
+ * LSB is bit 0, MSB is bit 31.
+ * 
+ * bit 31..24 is not used, always 0x00
+ * bit 23..16 is book number, 0 to 255. 0 is Genesis, 65 is Revelation, 66 and above is defined elsewhere
+ * bit 15..8 is chapter number, starts from 1. 0 is undefined or refers to the whole book
+ * bit 7..0 is verse number, starts from 1. 0 is undefined or refers to the whole chapter
  */
 public class Ari {
 	public static int encode(int kitab, int pasal, int ayat) {

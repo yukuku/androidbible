@@ -1,0 +1,29 @@
+PDB Book Number   Name of the book                                      Bible for Android book number
+
+// 0 to 38 is OT
+// 39 to 65 is NT
+// the rest is...
+
+    145            1 esdras                                                                  66
+    146            2 esdras                                                                  67
+    170            tobit                                                                     68
+    180            judit                                                                     69
+    200            1 makabe                                                                  70 
+    210            2 makabe                                                                  71
+    215            3 makabe                                                                  72
+    216            4 makabe                                                                  73
+    231            Psalms (from Heb.) Ps (H) Vulg.: Jerome's translation from the Hebrew     74
+    235            Odes                                                                      75
+    270            wisdom of solomon                                                         76
+    280            sirach / Ecclesiasticus                                                   77
+    285            Psalms of Solomon                                                         78
+    315            Letter of Jeremiah                                                        79
+    320            baruk                                                                     80
+    335            susanna                                                                   81
+    345            Prayer of Azariah and the Song of the Three Jews                          82
+    346            Bel and the Dragon                                                        83
+    790            Prayer of Manasseh                                                        84
+    980            Additions to Esther                                                       85
+    991            mazmur / psalm 151                                                        86
+   1802            Epistle to the Laodicaeans                                                87
+
