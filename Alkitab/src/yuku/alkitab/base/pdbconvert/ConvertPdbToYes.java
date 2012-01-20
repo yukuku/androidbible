@@ -1,25 +1,31 @@
 package yuku.alkitab.base.pdbconvert;
 
-import android.content.*;
-import android.util.*;
+import android.content.Context;
+import android.util.Log;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import yuku.alkitab.R;
-import yuku.alkitab.base.*;
-import yuku.alkitab.base.config.*;
-import yuku.alkitab.base.model.*;
-import yuku.alkitab.yes.*;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.config.D;
+import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.model.Blok;
+import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
 import yuku.alkitab.yes.YesFile.IsiSeksi;
 import yuku.alkitab.yes.YesFile.Kitab;
-import yuku.andoutil.*;
-import yuku.bintex.*;
+import yuku.andoutil.IntArrayList;
+import yuku.bintex.BintexWriter;
 
-import com.compactbyte.android.bible.*;
-import com.compactbyte.bibleplus.reader.*;
+import com.compactbyte.android.bible.PDBFileStream;
+import com.compactbyte.bibleplus.reader.BiblePlusPDB;
+import com.compactbyte.bibleplus.reader.BookInfo;
 
 public class ConvertPdbToYes {
 	public static final String TAG = ConvertPdbToYes.class.getSimpleName();
@@ -50,7 +56,7 @@ public class ConvertPdbToYes {
 	
 	public static class ConvertResult {
 		public Throwable exception;
-		public List<String> unconvertedBookNames;
+		public List<String> wronglyConvertedBookNames;
 	}
 	
 	public void setConvertProgressListener(ConvertProgressListener l) {
@@ -118,10 +124,10 @@ public class ConvertPdbToYes {
 						if (kitabPos > maxKitabPos) maxKitabPos = kitabPos;
 					} else {
 						Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL"); //$NON-NLS-1$ //$NON-NLS-2$
-						if (res.unconvertedBookNames == null) {
-							res.unconvertedBookNames = new ArrayList<String>();
+						if (res.wronglyConvertedBookNames == null) {
+							res.wronglyConvertedBookNames = new ArrayList<String>();
 						}
-						res.unconvertedBookNames.add(bookInfo.getFullName() + " (" + bookNumber + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+						res.wronglyConvertedBookNames.add(bookInfo.getFullName() + " (" + bookNumber + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 				// panjang array xkitab_ adalah menurut maxKitabPos
@@ -140,6 +146,13 @@ public class ConvertPdbToYes {
 				if (kitabPos < 0) {
 					Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
+					if (kitabPosToBookPosMap_[kitabPos] != -1) {
+						// just a warning
+						if (res.wronglyConvertedBookNames == null) {
+							res.wronglyConvertedBookNames = new ArrayList<String>();
+						}
+						res.wronglyConvertedBookNames.add(bookInfo.getFullName() + " (" + bookNumber + "): duplicate");
+					}
 					kitabPosToBookPosMap_[kitabPos] = bookPos;
 				}
 			}

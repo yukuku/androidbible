@@ -3,8 +3,8 @@ package yuku.alkitab.base.pdbconvert;
 public class PdbNumberToAriMapping {
 	public static final String TAG = PdbNumberToAriMapping.class.getSimpleName();
 	
-	// http://sourceforge.net/projects/palmbibleplus/files/zDocumentation/1.0/
-	public static final int[] bookNumber = {
+	// ref: http://sourceforge.net/projects/palmbibleplus/files/zDocumentation/1.0/
+	private static final int[] bookNumber = {
 		10,
 		20,
 		30,
@@ -97,12 +97,41 @@ public class PdbNumberToAriMapping {
 		1802, // Epistle to the Laodicaeans // nomer kitab Ari: 87
 	};
 	
+	// ref: email from jacobwarner@gmail.com
+	// file: kjvf_eng.pdb
+	// ref: http://www.koders.com/java/fid02C34FE21E1277132EE987F8478E08A5AB9E0828.aspx?s=WhenTag
+	// 
+	// book numbers not recognized:
+	// 1 Esdras 740 -> nomer kitab Ari: 66
+	// 2 Esdras 750 -> nomer kitab Ari: 67
+	// Letter of Jeremiah 760 -> nomer kitab Ari: 79
+	// Prayer of Azariah 770 -> nomer kitab Ari: 82
+	// Bel and the Dragon 780 -> nomer kitab Ari: 83
+	
+	/** Edit below too */
+	private static final int[] altBookNumberFrom = {
+		740, 750, 760, 770, 780,
+	};
+	
+	/** Edit above too */
+	private static final int[] altBookNumberTo = {
+		66, 67, 79, 82, 83,
+	};
+	
 	public static int pdbNumberToAriKitab(int pdbNumber) {
 		for (int i = 0; i < bookNumber.length; i++) {
 			if (bookNumber[i] == pdbNumber) {
 				return i;
 			}
 		}
+		
+		// try alternate book numbers
+		for (int i = 0; i < altBookNumberFrom.length; i++) {
+			if (altBookNumberFrom[i] == pdbNumber) {
+				return altBookNumberTo[i];
+			}
+		}
+		
 		return -1;
 	}
 	
