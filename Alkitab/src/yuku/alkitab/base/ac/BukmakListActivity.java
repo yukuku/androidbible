@@ -33,9 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import yuku.alkitab.R;
-import yuku.alkitab.base.PengaturTampilan;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.Search2Engine;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.JenisBukmakDialog;
@@ -48,6 +46,8 @@ import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Kitab;
 import yuku.alkitab.base.model.Label;
 import yuku.alkitab.base.storage.Db;
+import yuku.alkitab.base.util.PengaturTampilan;
+import yuku.alkitab.base.util.Search2Engine;
 import yuku.andoutil.IntArrayList;
 import yuku.andoutil.Sqlitil;
 import yuku.androidsdk.searchbar.SearchBar;

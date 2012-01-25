@@ -1,4 +1,4 @@
-package yuku.alkitab.base;
+package yuku.alkitab.base.util;
 
 public class Levenshtein {
 	private static final int insertion = 100;

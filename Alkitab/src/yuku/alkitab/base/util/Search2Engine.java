@@ -1,4 +1,4 @@
-package yuku.alkitab.base;
+package yuku.alkitab.base.util;
 
 import android.content.*;
 import android.graphics.*;
@@ -9,6 +9,7 @@ import android.util.*;
 
 import java.util.*;
 
+import yuku.alkitab.base.S;
 import yuku.alkitab.base.config.*;
 import yuku.alkitab.base.model.*;
 import yuku.andoutil.*;

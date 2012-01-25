@@ -43,7 +43,6 @@ import java.util.List;
 
 import yuku.alkitab.R;
 import yuku.alkitab.base.IsiActivity.FakeContextMenu.Item;
-import yuku.alkitab.base.Search2Engine.Query;
 import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.BantuanActivity;
 import yuku.alkitab.base.ac.BukmakActivity;
@@ -72,6 +71,10 @@ import yuku.alkitab.base.model.Edisi;
 import yuku.alkitab.base.model.Kitab;
 import yuku.alkitab.base.storage.Db.Bukmak2;
 import yuku.alkitab.base.storage.Preferences;
+import yuku.alkitab.base.util.Peloncat;
+import yuku.alkitab.base.util.Sejarah;
+import yuku.alkitab.base.util.Search2Engine.Query;
+import yuku.alkitab.base.widget.AyatAdapter;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.andoutil.IntArrayList;
 

@@ -1,4 +1,4 @@
-package yuku.alkitab.base;
+package yuku.alkitab.base.widget;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -20,14 +20,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
+import yuku.alkitab.R;
+import yuku.alkitab.base.IsiActivity;
+import yuku.alkitab.base.S;
 import yuku.alkitab.base.S.penerapan;
+import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Blok;
 import yuku.alkitab.base.model.Kitab;
 import yuku.alkitab.base.storage.Db.Bukmak2;
-import yuku.alkitab.base.widget.AyatItem;
-import yuku.alkitab.base.widget.CallbackSpan;
-import yuku.alkitab.R;
+import yuku.alkitab.base.util.PengaturTampilan;
 
 public class AyatAdapter extends BaseAdapter {
 	public static final String TAG = AyatAdapter.class.getSimpleName();

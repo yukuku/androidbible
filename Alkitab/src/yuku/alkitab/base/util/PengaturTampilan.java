@@ -1,9 +1,12 @@
-package yuku.alkitab.base;
+package yuku.alkitab.base.util;
 
-import android.text.*;
-import android.text.style.*;
-import android.util.*;
-import android.widget.*;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.UnderlineSpan;
+import android.util.TypedValue;
+import android.widget.TextView;
+
+import yuku.alkitab.base.S;
 
 public class PengaturTampilan {
 	public static final String TAG = PengaturTampilan.class.getSimpleName();
