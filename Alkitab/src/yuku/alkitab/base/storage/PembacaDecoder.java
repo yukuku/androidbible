@@ -1,8 +1,8 @@
 package yuku.alkitab.base.storage;
 
-import java.util.*;
+import java.util.ArrayList;
 
-import yuku.andoutil.*;
+import yuku.alkitab.base.util.Utf8Decoder;
 
 public interface PembacaDecoder {
 	String[] pisahJadiAyat(byte[] ba, boolean hurufKecilkan);

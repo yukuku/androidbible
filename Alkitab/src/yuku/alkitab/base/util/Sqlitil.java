@@ -1,4 +1,4 @@
-package yuku.andoutil;
+package yuku.alkitab.base.util;
 
 import java.text.DateFormat;
 import java.util.Date;

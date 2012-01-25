@@ -37,10 +37,10 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Kitab;
+import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.PengaturTampilan;
 import yuku.alkitab.base.util.Search2Engine;
 import yuku.alkitab.base.util.Search2Engine.Query;
-import yuku.andoutil.IntArrayList;
 import yuku.androidsdk.searchbar.SearchBar;
 import yuku.androidsdk.searchbar.SearchBar.OnSearchListener;
 

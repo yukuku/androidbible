@@ -1,18 +1,24 @@
 package yuku.alkitab.base.util;
 
-import android.content.*;
-import android.graphics.*;
-import android.os.*;
-import android.text.*;
-import android.text.style.*;
-import android.util.*;
+import android.content.Context;
+import android.graphics.Typeface;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
+import android.util.Log;
+import android.util.SparseBooleanArray;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.config.*;
-import yuku.alkitab.base.model.*;
-import yuku.andoutil.*;
+import yuku.alkitab.base.config.D;
+import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.model.Kitab;
 
 public class Search2Engine {
 	private static final String TAG = Search2Engine.class.getSimpleName();

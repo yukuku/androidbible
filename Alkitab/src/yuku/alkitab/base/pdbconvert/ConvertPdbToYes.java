@@ -15,12 +15,12 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.config.D;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Blok;
+import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
 import yuku.alkitab.yes.YesFile.IsiSeksi;
 import yuku.alkitab.yes.YesFile.Kitab;
-import yuku.andoutil.IntArrayList;
 import yuku.bintex.BintexWriter;
 
 import com.compactbyte.android.bible.PDBFileStream;

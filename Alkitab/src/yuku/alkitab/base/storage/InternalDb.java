@@ -28,8 +28,8 @@ import yuku.alkitab.base.model.Label;
 import yuku.alkitab.base.renungan.ArtikelRenunganHarian;
 import yuku.alkitab.base.renungan.ArtikelSantapanHarian;
 import yuku.alkitab.base.renungan.IArtikel;
-import yuku.andoutil.IntArrayList;
-import yuku.andoutil.Sqlitil;
+import yuku.alkitab.base.util.IntArrayList;
+import yuku.alkitab.base.util.Sqlitil;
 
 public class InternalDb {
 	public static final String TAG = InternalDb.class.getSimpleName();

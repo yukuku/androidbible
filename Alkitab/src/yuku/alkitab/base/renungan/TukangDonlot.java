@@ -1,6 +1,7 @@
 package yuku.alkitab.base.renungan;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
@@ -14,9 +15,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import yuku.alkitab.base.S;
 import yuku.alkitab.R;
-import yuku.andoutil.ThreadSleep;
+import yuku.alkitab.base.S;
 
 public class TukangDonlot extends Thread {
 	public interface OnStatusDonlotListener {
@@ -141,7 +141,7 @@ public class TukangDonlot extends Thread {
 				}
 			}
 			
-			ThreadSleep.giveUpOnInterrupt(1000);
+			SystemClock.sleep(1000);
 		}
 	}
 }

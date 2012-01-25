@@ -1,4 +1,4 @@
-package yuku.andoutil;
+package yuku.alkitab.base.util;
 
 public class Utf8Decoder {
 	public static char[] buf = new char[1000];

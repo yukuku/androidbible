@@ -41,7 +41,6 @@ import yuku.alkitab.base.renungan.IArtikel;
 import yuku.alkitab.base.renungan.TukangDonlot;
 import yuku.alkitab.base.renungan.TukangDonlot.OnStatusDonlotListener;
 import yuku.alkitab.base.widget.CallbackSpan;
-import yuku.andoutil.ThreadSleep;
 
 public class RenunganActivity extends BaseActivity implements OnStatusDonlotListener {
 	public static final String TAG = RenunganActivity.class.getSimpleName();
@@ -393,7 +392,7 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 			}
 			
 			// diem dulu 6 detik
-			ThreadSleep.ignoreInterrupt(6000);
+			SystemClock.sleep(6000);
 			
 			Date hariIni = new Date();
 			
@@ -411,9 +410,9 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 						Log.d(TAG, "PemintaMasaDepan perlu minta " + tgl); //$NON-NLS-1$
 						akanPerlu(nama, tgl, false);
 						
-						ThreadSleep.ignoreInterrupt(1000);
+						SystemClock.sleep(1000);
 					} else {
-						ThreadSleep.ignoreInterrupt(100); // biar ga berbeban aja
+						SystemClock.sleep(100); // biar ga berbeban aja
 					}
 					
 					// maju ke besoknya

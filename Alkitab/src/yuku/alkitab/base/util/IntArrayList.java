@@ -1,4 +1,4 @@
-package yuku.andoutil;
+package yuku.alkitab.base.util;
 
 import android.os.*;
 

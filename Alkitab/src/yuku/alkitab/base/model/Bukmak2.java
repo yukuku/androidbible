@@ -1,17 +1,17 @@
 package yuku.alkitab.base.model;
 
-import android.content.*;
-import android.database.*;
-import android.provider.*;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.provider.BaseColumns;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.Date;
 
-import org.xml.sax.*;
-import org.xmlpull.v1.*;
+import org.xml.sax.Attributes;
+import org.xmlpull.v1.XmlSerializer;
 
-import yuku.alkitab.base.storage.*;
-import yuku.andoutil.*;
+import yuku.alkitab.base.storage.Db;
+import yuku.alkitab.base.util.Sqlitil;
 
 public class Bukmak2 {
 	public long _id;

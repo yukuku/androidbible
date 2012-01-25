@@ -71,12 +71,12 @@ import yuku.alkitab.base.model.Edisi;
 import yuku.alkitab.base.model.Kitab;
 import yuku.alkitab.base.storage.Db.Bukmak2;
 import yuku.alkitab.base.storage.Preferences;
+import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.Peloncat;
 import yuku.alkitab.base.util.Sejarah;
 import yuku.alkitab.base.util.Search2Engine.Query;
 import yuku.alkitab.base.widget.AyatAdapter;
 import yuku.alkitab.base.widget.CallbackSpan;
-import yuku.andoutil.IntArrayList;
 
 public class IsiActivity extends BaseActivity {
 	public static final String TAG = IsiActivity.class.getSimpleName();
