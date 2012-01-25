@@ -73,7 +73,7 @@ public class EdisiActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		
 		S.siapinKitab();
-		S.bacaPengaturan();
+		S.hitungPenerapanBerdasarkanPengaturan();
 		
 		setContentView(R.layout.activity_edisi);
 		setTitle(R.string.kelola_versi);

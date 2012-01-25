@@ -102,7 +102,7 @@ public class Search2Activity extends BaseActivity {
 		U.nyalakanTitleBarHanyaKalauTablet(this);
 		
 		S.siapinKitab();
-		S.bacaPengaturan();
+		S.hitungPenerapanBerdasarkanPengaturan();
 		
 		setContentView(R.layout.activity_search2);
 

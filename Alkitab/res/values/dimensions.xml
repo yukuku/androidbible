@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<dimen name="indenParagraf">5sp</dimen>
-	<dimen name="menjorokSatu">22sp</dimen>
-	<dimen name="menjorokDua">38sp</dimen>
+    <!-- yang di bawah ini ukuran yang pas untuk ukuran font 17dp -->
+	<dimen name="indenParagraf">5dp</dimen>
+	<dimen name="menjorokSatu">22dp</dimen>
+	<dimen name="menjorokDua">38dp</dimen>
+	<dimen name="menjorokTiga">54dp</dimen>
+	<dimen name="menjorokEmpat">70dp</dimen>
+	<dimen name="menjorokExtra">10dp</dimen> <!-- khusus untuk nomer ayat >= 100 -->
 	
 	<dimen name="marginAtasJudulPerikop">18dp</dimen>
 </resources>

@@ -72,7 +72,7 @@ public class BukmakActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		
 		S.siapinKitab();
-		S.bacaPengaturan();
+		S.hitungPenerapanBerdasarkanPengaturan();
 		
 		setContentView(R.layout.activity_bukmak);
 		setTitle(R.string.judul_bukmak_activity);

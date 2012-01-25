@@ -142,7 +142,7 @@ public class IsiActivity extends BaseActivity {
 		U.nyalakanTitleBarHanyaKalauTablet(this);
 		
 		S.siapinKitab();
-		S.bacaPengaturan();
+		S.hitungPenerapanBerdasarkanPengaturan();
 		
 		setContentView(R.layout.activity_isi);
 		
@@ -1112,7 +1112,7 @@ public class IsiActivity extends BaseActivity {
 			}
 		} else if (requestCode == REQCODE_pengaturan) {
 			// HARUS rilod pengaturan.
-			S.bacaPengaturan();
+			S.hitungPenerapanBerdasarkanPengaturan();
 			
 			terapkanPengaturan(true);
 		} else if (requestCode == REQCODE_bagikan) {

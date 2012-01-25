@@ -111,7 +111,7 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 		U.nyalakanTitleBarHanyaKalauTablet(this);
 
 		S.siapinKitab();
-		S.bacaPengaturan();
+		S.hitungPenerapanBerdasarkanPengaturan();
 		
 		setContentView(R.layout.activity_renungan);
 		

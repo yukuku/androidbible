@@ -34,12 +34,22 @@ public class S {
 	public static class penerapan {
 		/** dalam dp */
 		public static float ukuranHuruf2dp;
+		
 		public static Typeface jenisHuruf;
 		public static int tebalHuruf;
+		
 		public static int warnaHuruf; 
 		public static int warnaHurufMerah;
 		public static int warnaLatar;
 		public static int warnaNomerAyat;
+		
+		// semua di bawah dalam px
+		public static int jarakIndenParagraf;
+		public static int jarakMenjorokSatu;
+		public static int jarakMenjorokDua;
+		public static int jarakMenjorokTiga;
+		public static int jarakMenjorokEmpat;
+		public static int jarakMenjorokExtra;
 	}
 	
 	/**
@@ -86,29 +96,35 @@ public class S {
 		kitabAktif = edisiAktif.getKitabPertama(); // nanti diset sama luar waktu init 
 	}
 	
-	public static void bacaPengaturan() {
-		Log.d(TAG, "bacaPengaturan mulai"); //$NON-NLS-1$
-
+	public static void hitungPenerapanBerdasarkanPengaturan() {
 		//# atur ukuran huruf isi berdasarkan pengaturan
 		{
-			S.penerapan.ukuranHuruf2dp = Preferences.getFloat(R.string.pref_ukuranHuruf2_key, 17.f);
+			penerapan.ukuranHuruf2dp = Preferences.getFloat(R.string.pref_ukuranHuruf2_key, 17.f);
 		}
 		
 		//# atur jenis huruf, termasuk boldnya
 		{
-			S.penerapan.jenisHuruf = U.typeface(Preferences.getString(R.string.pref_jenisHuruf_key, null));
-			S.penerapan.tebalHuruf = Preferences.getBoolean(R.string.pref_boldHuruf_key, R.bool.pref_boldHuruf_default)? Typeface.BOLD: Typeface.NORMAL;
+			penerapan.jenisHuruf = U.typeface(Preferences.getString(R.string.pref_jenisHuruf_key, null));
+			penerapan.tebalHuruf = Preferences.getBoolean(R.string.pref_boldHuruf_key, R.bool.pref_boldHuruf_default)? Typeface.BOLD: Typeface.NORMAL;
 		}
 		
 		//# atur warna teks, latar, dan nomer ayat
 		{
-			S.penerapan.warnaHuruf = Preferences.getInt(R.string.pref_warnaHuruf_int_key, R.integer.pref_warnaHuruf_int_default);
-			S.penerapan.warnaLatar = Preferences.getInt(R.string.pref_warnaLatar_int_key, R.integer.pref_warnaLatar_int_default); 
-			S.penerapan.warnaNomerAyat = Preferences.getInt(R.string.pref_warnaNomerAyat_int_key, R.integer.pref_warnaNomerAyat_int_default);
-			S.penerapan.warnaHurufMerah = hitungHurufMerah(S.penerapan.warnaHuruf, S.penerapan.warnaLatar);
+			penerapan.warnaHuruf = Preferences.getInt(R.string.pref_warnaHuruf_int_key, R.integer.pref_warnaHuruf_int_default);
+			penerapan.warnaLatar = Preferences.getInt(R.string.pref_warnaLatar_int_key, R.integer.pref_warnaLatar_int_default); 
+			penerapan.warnaNomerAyat = Preferences.getInt(R.string.pref_warnaNomerAyat_int_key, R.integer.pref_warnaNomerAyat_int_default);
+			penerapan.warnaHurufMerah = hitungHurufMerah(S.penerapan.warnaHuruf, S.penerapan.warnaLatar);
 		}
 		
-		Log.d(TAG, "bacaPengaturan selesai"); //$NON-NLS-1$
+		Resources res = App.context.getResources();
+		
+		float skalaBerdasarUkuranHuruf = penerapan.ukuranHuruf2dp / 17.f;
+		penerapan.jarakIndenParagraf = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.indenParagraf) + 0.5f);
+		penerapan.jarakMenjorokSatu = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokSatu) + 0.5f);
+		penerapan.jarakMenjorokDua = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokDua) + 0.5f);
+		penerapan.jarakMenjorokTiga = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokTiga) + 0.5f);
+		penerapan.jarakMenjorokEmpat = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokEmpat) + 0.5f);
+		penerapan.jarakMenjorokExtra = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokExtra) + 0.5f);
 	}
 	
 	private static int hitungHurufMerah(int warnaHuruf, int warnaLatar) {
@@ -266,31 +282,6 @@ public class S {
 		App.updateConfigurationWithLocale(App.context.getResources().getConfiguration(), locale);
 	}
 
-	private static float[] precomputedValues = null;
-	private static void precomputeValues() {
-		if (precomputedValues != null) return;
-		precomputedValues = new float[] {
-			App.context.getResources().getDimension(R.dimen.indenParagraf), // [0]
-			App.context.getResources().getDimension(R.dimen.menjorokSatu), // [1]
-			App.context.getResources().getDimension(R.dimen.menjorokDua), // [2]
-		};
-	}
-	
-	public static int getIndenParagraf() {
-		precomputeValues();
-		return (int) (precomputedValues[0] * Preferences.getFloat(R.string.pref_ukuranHuruf2_key, 17.f) / 17.f);
-	}
-	
-	public static int getMenjorokSatu() {
-		precomputeValues();
-		return (int) (precomputedValues[1] * Preferences.getFloat(R.string.pref_ukuranHuruf2_key, 17.f) / 17.f);
-	}
-	
-	public static int getMenjorokDua() {
-		precomputeValues();
-		return (int) (precomputedValues[2] * Preferences.getFloat(R.string.pref_ukuranHuruf2_key, 17.f) / 17.f);
-	}
-	
 	public static InputStream openRaw(String name) {
 		Resources resources = App.context.getResources();
 		int resId = resources.getIdentifier(name, "raw", App.context.getPackageName()); //$NON-NLS-1$

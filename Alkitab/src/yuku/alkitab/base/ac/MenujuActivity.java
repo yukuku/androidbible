@@ -56,7 +56,7 @@ public class MenujuActivity extends BaseActivity {
 		U.nyalakanTitleBarHanyaKalauTablet(this);
 		
 		S.siapinKitab();
-		S.bacaPengaturan();
+		S.hitungPenerapanBerdasarkanPengaturan();
 		
 		setContentView(R.layout.activity_menuju);
 		
