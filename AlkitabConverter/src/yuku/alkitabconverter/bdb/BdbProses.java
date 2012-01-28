@@ -1,15 +1,24 @@
 package yuku.alkitabconverter.bdb;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
+import java.util.Scanner;
 
 public class BdbProses {
-	public static class Rec {
+	public static class Rec implements Comparable<Rec> {
 		public int kitab_1;
 		public int pasal_1;
 		public int ayat_1;
 		public String isi;
+		
+		@Override public int compareTo(Rec o) {
+			if (this.kitab_1 != o.kitab_1) return this.kitab_1 - o.kitab_1;
+			if (this.pasal_1 != o.pasal_1) return this.pasal_1 - o.pasal_1;
+			if (this.ayat_1 != o.ayat_1) return this.ayat_1 - o.ayat_1;
+			return 0;
+		}
 	}
 	
 	public static void main(String[] args) throws Exception {

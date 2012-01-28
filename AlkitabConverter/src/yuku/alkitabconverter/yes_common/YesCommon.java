@@ -77,7 +77,7 @@ public class YesCommon {
 		for (int kitabIndex = 0; kitabIndex < xkitab_1.size(); kitabIndex++) {
 			int kitabPos = xkitab_1.get(kitabIndex) - 1; // kitabPos selalu mulai dari 0
 			
-			xpasal_offset[0] = 0;
+			Arrays.fill(xpasal_offset, 0);
 			
 			for (Rec rec: xrec) {
 				if (kitabPos + 1 == rec.kitab_1) {

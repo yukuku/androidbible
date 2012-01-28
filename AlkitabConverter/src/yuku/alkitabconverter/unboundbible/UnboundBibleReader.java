@@ -43,7 +43,8 @@ public class UnboundBibleReader {
 			
 			if (ayat_1 != lastAyat_1 + 1) {
 				if (pasal_1 != lastPasal_1 + 1) {
-					if (kitab_1 != lastKitab_1 + 1) {
+					// if (kitab_1 != lastKitab_1 + 1) {
+					if (pasal_1 != 1) {
 						throw new RuntimeException("urutan ngaco: " + baris);
 					}
 				}
@@ -76,6 +77,57 @@ public class UnboundBibleReader {
 	private static int ubToKitab1(String ub) {
 		if (ub.matches("[0-9][0-9](O|N)")) {
 			return Integer.parseInt(ub.substring(0, 2));
+		} else if (ub.matches("[0-9][0-9]A")) {
+			/*
+			 * 145 or 740 1 esdras 66
+			 * 146 or 750 2 esdras 67
+			 * 170 tobit 68
+			 * 180 judit 69
+			 * 200 1 makabe 70
+			 * 210 2 makabe 71
+			 * 215 3 makabe 72
+			 * 216 4 makabe 73
+			 * 231 Psalms (from Heb.) Ps (H) Vulg.: Jerome's translation from the Hebrew 74
+			 * 235 Odes 75
+			 * 270 wisdom of solomon 76
+			 * 280 sirach / Ecclesiasticus 77
+			 * 285 Psalms of Solomon 78
+			 * 315 or 760 Letter of Jeremiah 79
+			 * 320 baruk 80
+			 * 335 susanna 81
+			 * 345 or 770 Prayer of Azariah and the Song of the Three Jews 82
+			 * 346 or 780 Bel and the Dragon 83
+			 * 790 Prayer of Manasseh 84
+			 * 980 Additions to Esther 85
+			 * 991 mazmur / psalm 151 86
+			 * 1802 Epistle to the Laodicaeans 87
+			 */
+			int n = Integer.parseInt(ub.substring(0, 2));
+			int[] v = {
+				68, // 67A Tobit                       
+				69, // 68A Judith                      
+				85, // 69A Esther, Greek               
+				76, // 70A Wisdom of Solomon           
+				77, // 71A Ecclesiasticus (Sira        
+				80, // 72A Baruch                      
+				79, // 73A Epistle of Jeremiah         
+				82, // 74A Prayer of Azariah           
+				81, // 75A Susanna                     
+				83, // 76A Bel and the Dragon          
+				70, // 77A 1 Maccabees                 
+				71, // 78A 2 Maccabees                 
+				72, // 79A 3 Maccabees                 
+				73, // 80A 4 Maccabees                 
+				66, // 81A 1 Esdras                    
+				67, // 82A 2 Esdras                    
+				84, // 83A Prayer of Manasseh          
+				86, // 84A Psalm 151                   
+				78, // 85A Psalm of Solomon            
+			    75, // 86A Odes                        
+			};
+			int idx = n - 67; // 67A -> idx=0
+			if (idx >= 0 && idx < v.length) return v[idx] + 1 /* karena yang diminta kitab_1 */;
+			throw new RuntimeException("ub belum dikenal: " + ub);
 		} else {
 			throw new RuntimeException("ub belum dikenal: " + ub);
 		}
