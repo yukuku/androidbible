@@ -3,7 +3,10 @@
 	<menu renungan="false" gebug="false" edisi="true" bantuan="true" donasi="true" />
 	<edisi>
 		<internal judul="King James (KJV)" prefix="kjv" />
+		<preset locale="en"   judul="American Standard (ASV)" namafile_preset="en-asv.yes" url="http://alkitab-host.appspot.com/addon/yes/en-asv/en-asv.yes.gz" />
 		<preset locale="en"   judul="Bible in Basic English" namafile_preset="en-bbe.yes" url="http://alkitab-host.appspot.com/addon/yes/en-bbe/en-bbe.yes.gz" />
+		<preset locale="en"   judul="World English Bible (WEB)" namafile_preset="en-web.yes" url="http://alkitab-host.appspot.com/addon/yes/en-web/en-web.yes.gz" />
+		<preset locale="en"   judul="Young's Literal Translation (YLT)" namafile_preset="en-ylt.yes" url="http://alkitab-host.appspot.com/addon/yes/en-ylt/en-ylt.yes.gz" />
 		<preset locale="de"   judul="Lutherbibel (1912)" namafile_preset="de-luther1912.yes" url="http://alkitab-host.appspot.com/addon/yes/de-luther1912/de-luther1912.yes.gz" />
 		<preset locale="el"   judul="Byzantine/Majority Text (2000)" namafile_preset="el-byzantine.yes" url="http://alkitab-host.appspot.com/addon/yes/el-byzantine/el-byzantine.yes.gz" />
 		<preset locale="el"   judul="Textus Receptus (1550/1894)" namafile_preset="el-textusreceptus.yes" url="http://alkitab-host.appspot.com/addon/yes/el-textusreceptus/el-textusreceptus.yes.gz" />
