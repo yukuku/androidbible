@@ -1,3 +1,9 @@
+
+
+Update 20120201: Jalankan publikasi/prog/make-kjv.sh dari root project Alkitab
+
+===
+
 (dari root project Alkitab)
 
 1. Jalanin kopi_ikon_dan_app_name.sh
