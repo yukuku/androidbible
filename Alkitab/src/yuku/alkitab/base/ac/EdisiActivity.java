@@ -26,11 +26,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
@@ -344,7 +347,7 @@ public class EdisiActivity extends BaseActivity {
 			config.mode = Mode.Open;
 			config.initialDir = Environment.getExternalStorageDirectory().getAbsolutePath();
 			config.title = getString(R.string.ed_choose_pdb_or_yes_file);
-			config.pattern = ".*\\.(?i:pdb|yes)"; //$NON-NLS-1$
+			config.pattern = ".*\\.(?i:pdb|yes|yes\\.gz)"; //$NON-NLS-1$
 			
 			startActivityForResult(FileChooserActivity.createIntent(getApplicationContext(), config), REQCODE_openFile);
 		} else {
@@ -355,16 +358,60 @@ public class EdisiActivity extends BaseActivity {
 		}
 	}
 	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQCODE_openFile) {
 			FileChooserResult result = FileChooserActivity.obtainResult(data);
 			if (result == null) {
 				return;
 			}
 		
-			String filename = result.firstFilename;
-			if (filename.toLowerCase().endsWith(".yes")) { //$NON-NLS-1$
+			final String filename = result.firstFilename;
+			
+			if (filename.toLowerCase().endsWith(".yes.gz")) {
+				// decompress or see if the same filename without .gz exists
+				final File maybeDecompressed = new File(filename.substring(0, filename.length() - 3));
+				if (maybeDecompressed.exists() && !maybeDecompressed.isDirectory() && maybeDecompressed.canRead()) {
+					handleFileOpenYes(maybeDecompressed.getAbsolutePath(), null);
+				} else {
+					final ProgressDialog pd = ProgressDialog.show(EdisiActivity.this, null, getString(R.string.sedang_mendekompres_harap_tunggu), true, false);
+					new AsyncTask<Void, Void, File>() {
+						@Override protected File doInBackground(Void... params) {
+							String tmpfile3 = filename + "-" + (int)(Math.random() * 100000) + ".tmp3"; //$NON-NLS-1$
+							try {
+								GZIPInputStream in = new GZIPInputStream(new FileInputStream(filename));
+								FileOutputStream out = new FileOutputStream(tmpfile3); // decompressed file
+								
+								// Transfer bytes from the compressed file to the output file
+								byte[] buf = new byte[4096 * 4];
+								while (true) {
+									int len = in.read(buf);
+									if (len <= 0) break;
+									out.write(buf, 0, len);
+								}
+								out.close();
+								in.close();
+								
+								boolean renameOk = new File(tmpfile3).renameTo(maybeDecompressed);
+								if (!renameOk) {
+									throw new RuntimeException("Gagal rename!"); //$NON-NLS-1$
+								}
+							} catch (Exception e) {
+								return null;
+							} finally {
+								Log.d(TAG, "menghapus tmpfile3: " + tmpfile3); //$NON-NLS-1$
+								new File(tmpfile3).delete();
+							}
+							return maybeDecompressed;
+						}
+						
+						@Override protected void onPostExecute(File result) {
+							pd.dismiss();
+							
+							handleFileOpenYes(result.getAbsolutePath(), null);
+						};
+					}.execute();
+				}
+			} else if (filename.toLowerCase().endsWith(".yes")) { //$NON-NLS-1$
 				handleFileOpenYes(filename, null);
 			} else if (filename.toLowerCase().endsWith(".pdb")) { //$NON-NLS-1$
 				handleFileOpenPdb(filename);
