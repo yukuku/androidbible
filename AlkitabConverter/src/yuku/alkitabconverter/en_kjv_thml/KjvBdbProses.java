@@ -22,7 +22,7 @@ public class KjvBdbProses {
 	public static void main(String[] args) throws Exception {
 		final Charset ascii = Charset.forName("ascii");
 		
-		ArrayList<Rec> xrec = new BdbProses().parse(KJV_TEKS_BDB);
+		ArrayList<Rec> xrec = new BdbProses().parse(KJV_TEKS_BDB, "ascii");
 		
 		final InfoEdisi infoEdisi = kjvInfoEdisi();
 		final InfoKitab infoKitab = kjvInfoKitab(xrec);

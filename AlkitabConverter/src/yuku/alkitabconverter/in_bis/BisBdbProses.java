@@ -1,16 +1,19 @@
 package yuku.alkitabconverter.in_bis;
 
-import java.io.*;
+import java.io.File;
+import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
 
-import yuku.alkitab.yes.*;
+import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
 import yuku.alkitab.yes.YesFile.Kitab;
 import yuku.alkitab.yes.YesFile.Teks;
 import yuku.alkitabconverter.bdb.BdbProses;
-import yuku.alkitabconverter.bdb.BdbProses.*;
+import yuku.alkitabconverter.bdb.BdbProses.Rec;
 
 public class BisBdbProses {
 	private static final String BIS_TEKS_BDB = "../Alkitab/publikasi/bis_teks_bdb.txt";
@@ -19,7 +22,7 @@ public class BisBdbProses {
 	public static void main(String[] args) throws Exception {
 		final Charset ascii = Charset.forName("ascii");
 		
-		ArrayList<Rec> xrec = new BdbProses().parse(BIS_TEKS_BDB);
+		ArrayList<Rec> xrec = new BdbProses().parse(BIS_TEKS_BDB, "ascii");
 		
 		final InfoEdisi infoEdisi = bisInfoEdisi();
 		final InfoKitab infoKitab = bisInfoKitab(xrec);

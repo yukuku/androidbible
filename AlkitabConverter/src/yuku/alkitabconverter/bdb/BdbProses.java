@@ -21,15 +21,11 @@ public class BdbProses {
 		}
 	}
 	
-	public static void main(String[] args) throws Exception {
-		new BdbProses().parse("../Alkitab/publikasi/kjv_teks_bdb.txt");
-	}
-
-	public ArrayList<Rec> parse(String nf) throws Exception {
+	public ArrayList<Rec> parse(String nf, String charsetName) throws Exception {
 		LinkedHashMap<Integer, Integer> nn = new LinkedHashMap<Integer, Integer>();
 		ArrayList<Rec> res = new ArrayList<Rec>();
 		
-		Scanner sc = new Scanner(new File(nf), "ascii");
+		Scanner sc = new Scanner(new File(nf), charsetName);
 		
 		int lastNo = 0;
 		int lastKitab_1 = 1;
