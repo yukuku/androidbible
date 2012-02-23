@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="SFMInfo">
+		<xs:annotation>
+			<xs:documentation>Comment describing your root element</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence maxOccurs="unbounded">
+				<xs:element name="sfm">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="tag" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>This is the USFM tag value (without the backslash).</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="endTag" type="xs:string" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>The tag (or tags) that terminate the condition started with the associated USFM tag.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="paragraphStyle" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>The named Microsoft Word paragraph style associated with this tag.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string"/>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="characterStyle" type="xs:string" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>The named Microsoft Word character style associated with this tag.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="parameterName" type="xs:string" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>The parameter name associated with the USFM marker attribute for use within program processing. The presence of a non-null value here indicates that a space-delimited parameter follows this tag, such as the verse number after \v 1.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="contentName" type="xs:string" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>The parameter name associated with the tag contents for use within program processing.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="nestingAllowed" type="xs:boolean" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>true iff other markers are allowed to nest within this marker's contents.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="levelExpected" type="xs:boolean" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>true iff the USFM tag incorporates a number indicating level as the last part of the tag, such as \q1 or \q2 for different indent levels of poetry. This parameter is converted to a "level" attribute in USFX.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="usfx" type="xs:string" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>The USFX element name corresponding to the USFM tag.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="usfxAttribute" type="xs:string" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>The name of the attribute associated with the parameter after this tag when a parameterName is specified. For example, this would be "id" for chapter or verse.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="milestone" type="xs:boolean" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>True iff this SFM is to be converted to a milestone instead of a container. In the case of chapter and verse markers, they are marked as milestones here, but may contain a redundant chapter or verse marking, repeating the marking of the attribute. This redundant marking is lost on conversion back to USFM.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="TeXcode" type="xs:string" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>This is the TeX code (without the backslash) that this tag is translated to when converting to TeX.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="comment" type="xs:string" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Free-form text indicating the purpose of this tag.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="kind" type="xs:string" default="paragraph"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

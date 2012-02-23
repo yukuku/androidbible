@@ -1,0 +1,543 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>WordSend Downloads</title>
+
+</head>
+
+<body>
+<p><a href="http://eBible.org/wordsend/overview.htm">Previous
+page</a></p>
+<h1>WordSend Downloads</h1>
+<table id="table1" border="1">
+<tbody>
+<tr>
+<td><b>Local (for CD or USB memory stick distribution)</b></td>
+<td><b>Master Location</b></td>
+</tr>
+<tr>
+<td><b><a href="wordsend-2010-12-11.exe"><font size="4">Current version</font></a></b></td>
+<td><b><a href="http://eBible.org/wordsend/wordsend-2010-12-11.exe"><font size="4">wordsend-2010-12-11.exe</font></a></b></td>
+</tr>
+<tr>
+<td><b><a href="dotnetfx2.exe"><font size="4">Dot NET runtime 2.0 for versions 19 April 2006 and
+later</font></a></b></td>
+<td><b><font size="4"><a href="http://windowsupdate.microsoft.com/">Windows Update</a>
+or <a href="http://eBible.org/wordsend/dotnetfx2.exe">dotnetfx2.exe</a></font></b></td>
+</tr>
+<tr>
+<td><a href="dotnetfx.exe">Dot Net runtime 1.1
+for versions prior to 19 April 2006</a></td>
+<td><a href="http://eBible.org/wordsend/dotnetfx.exe">dotnetfx.exe</a></td>
+</tr>
+<tr>
+<td> <a href="wordsend-console.zip">WordSend
+cross-platform command line tools</a> (these require <a href="http://www.mono-project.com/Main_Page">Mono</a>
+or <a href="dotnetfx.exe">Microsoft .NET</a>)</td>
+<td><a href="http://eBible.org/wordsend/wordsend-console.zip">wordsend-console.zip</a></td>
+</tr>
+<tr>
+<td><a href="onyxppt.zip">Onyx Powerpoint
+presentation (from CTC2004)</a></td>
+<td><a href="http://eBible.org/wordsend/onyxppt.zip">onyxppt.zip</a></td>
+</tr>
+<tr>
+<td><a href="http://eBible.org/wordsend/wordsend-source.zip">Source code</a></td>
+<td><a href="http://code.google.com/p/wordsend/source">http://code.google.com/p/wordsend/source</a></td>
+</tr>
+</tbody>
+</table>
+<p>You must install the .NET runtime prior to installing WordSend.</p>
+<h2><a name="installation">Installation</a></h2>
+<p>Before installing WordSend on Microsoft Windows XP, you must
+install the Dot NET runtime (see the downloads above) if you haven't
+done so, already. To install WordSend on Windows XP, just run the
+self-installing executable file you downloaded. If you already have a <b>newer</b>
+version of WordSend installed and are going back to an older version
+(not usually a good idea), or if you have any version of Onyx
+installed, you should <b>uninstall it before installing a
+different version</b>. Other than that, installing over the top
+of an older version should not cause any problems.</p>
+<p>If you wish to try the command line tools on another platform
+(Mac OS X or Linux), first install <a href="http://www.mono-project.com/Main_Page">Mono</a>,
+then unzip <a href="wordsend-console-2010-12-11.zip">wordsend-console-2010-12-11.zip</a>
+to a suitable directory and include that directory in your executable
+file search path. The cross-platform abilities of this distribution are
+not fully tested, and not necessarily useful until some of
+the bugs in
+<a href="http://openoffice.org">OOo</a> that
+prevent proper rendition of very complex WordML have been exterminated
+or until I implement the direct conversion to Open Document Text (ODT),
+whichever comes first.</p>
+<h2><a name="history">History</a></h2>
+<p>If you want to download an older version of WordSend for some
+reason, please click on the release date of that version. Not all older
+versions are available. If you find a problem with an older version,
+please see if it is still a problem with the current version before
+<a href="http://cryptography.org/cgi-bin/contact.cgi">reporting
+it to the author</a>. The tested version may not actually be any
+more stable than the current version, but it has been tested more. The
+current version will have the latest feature additions.</p>
+<table style="text-align: left;" id="table2" cellpadding="2" cellspacing="4">
+<tbody>
+<tr>
+<td style="vertical-align: top;"> <span style="font-weight: bold; text-decoration: underline;">Date
+posted</span><br>
+</td>
+<td style="vertical-align: top;"> <span style="font-weight: bold; text-decoration: underline;">Comments</span><br>
+</td>
+</tr>
+<tr>
+<td>11 December 2010</td>
+<td>Updated USFM tag list to match current USFM standard.</td>
+</tr>
+<tr>
+<td>16
+August 2007</td>
+<td>Updated some documentation. Moved source repository to
+Google Code. Properly anchored help button.</td>
+</tr>
+<tr>
+<td>10
+November 2006</td>
+<td>Added partial handling of \fig ... \fig*, including
+allowing the \ character to occur in file names in the figure
+specification. WordSend doesn’t place a picture there, but
+puts text formatted with Figure * style names in the output document to
+make it easy to search for them and insert the picture.</td>
+</tr>
+<tr>
+<td>3 November
+2006</td>
+<td>Corrected an error affecting generation of WordML with
+embedded USFX with footnote styles not explicitly terminated by the end
+of the footnote.</td>
+</tr>
+<tr>
+<td>2
+November 2006</td>
+<td>Corrected error affecting \wg and \wh (style names
+swapped); added \rq support (was \rr per PNG standard); added \zp and
+\zc (custom paragraph and character styles).</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">11 October 2006</td>
+<td style="vertical-align: top;"> Corrected a bug
+where non-standard markers could cause generation of improper WordML
+that Microsoft Word couldn't read.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">10 October 2006</td>
+<td style="vertical-align: top;"> Corrected a
+problem where a newer font could be overwritten by an older font on
+installation. Replaced "Onyx" with "WordSend" in the source code,
+changing the name of the default log file, the main name space (for
+programs that use BibleFileLib.dll), etc.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">4 October 2006</td>
+<td style="vertical-align: top;"> Added Python
+script plug-in to launch WordSend usfm2word.exe from the Paratext 6
+checking menu.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">26 September 2006</td>
+<td style="vertical-align: top;"> Updated
+documentation and renamed the project, web site, and mailing list to
+WordSend.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">19 April 2006</td>
+<td style="vertical-align: top;"> Converted source
+project to Microsoft Visual C# 2005 Express Edition, and thus to
+requiring Dot NET runtime version 2.0 instead of 1.1.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">28 March 2006</td>
+<td style="vertical-align: top;"> Corrected critical
+failure in extract-usfx.exe that caused this program to die before
+doing any useful work.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">20 March 2006</td>
+<td style="vertical-align: top;"> Corrected link
+error in documentation. The new distribution format is a single .exe
+file, not a .zip file.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">17 March 2006</td>
+<td style="vertical-align: top;"> Changed default
+handling of qStart and qEnd markers in usfx2usfm.exe to better reflect
+USFX best practice.<br>
+Changed the installation program to use the freeware <a href="http://nsis.sourceforge.net/Main_Page">NullSoft
+Install System</a> instead of the expensive Microsoft Setup while
+correcting some compatibility issues. This also makes for an
+easier-to-use single self-installing compressed executable. It also has
+more efficient compression and lower overhead to do essentially the
+same job (but a little better), so the downloads are quicker.<br>
+Because of the change of install/uninstall systems, you should
+uninstall any previous version before installing this version.<br>
+Starting with this version, the install system adds a registry entry
+under HKEY_LOCAL_MACHINE\SOFTWARE\SIL\WordSend\Install_Dir containing
+the directory that WordSend was installed to. (This is to make it
+easier for other programs to find the executable files associated with
+this project.)<br>
+Made font installation and desktop icon installation optional in the
+installer program.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">7 March 2006</td>
+<td style="vertical-align: top;"> Added command line
+switch to permit specification of the log file name to use. Corrected a
+problem with cross reference footnotes.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">6 March 2006</td>
+<td style="vertical-align: top;"> Added font
+installation to Windows installer for a better first-time-run
+experience.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">10 November 2005</td>
+<td style="vertical-align: top;"> Enhanced the setup
+program to add the program installation directory to the system search
+path for ease of use of the command line utilities in this project.<br>
+Added usfx2usfm.exe command line utility to convert from USFX to USFM.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">25 October 2005</td>
+<td style="vertical-align: top;"> Reversed attempt
+at Mono-friendly function to determine executable file path, as it
+didn’t actually work.<br>
+Corrected bug in SFMInfo.xml affecting footnote markers inadvertently
+introduced with the last version.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">22 October 2005</td>
+<td style="vertical-align: top;"> Separated out
+Mono-friendly portion of this project and made a separate distribution
+for command line tools.<br>
+Enhanced support for front and back matter.<br>
+Corrected a problem with \w ... \w*.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">9
+September 2005</td>
+<td style="vertical-align: top;"> Added support for
+front and back matter.<br>
+Corrected a problem with the "All files" filter not working when
+selecting USFM input files.<br>
+Corrected some more problems with USFX interleaving with WordML.<br>
+Updated the USFX Schema to be more tolerant of marker order variations.<br>
+Added a command line tool (extract-usfx.exe) to extract USFX data from
+a WordML document with embedded USFX.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">30
+August 2005</td>
+<td style="vertical-align: top;"> Added crop marks
+insertion option on "Extras" tab.<br>
+Added support for styles new with USFM 2.03.<br>
+Corrected one problem with USFX insertion.<br>
+Added support for \cl. The chapter label in \cl overrides the setting
+for chapter or psalm label prefix in the options dialog, if present.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">24
+April 2005</td>
+<td style="vertical-align: top;"> Added
+documentation on picture placement. Changed automatic computation of
+drop cap spacing from text to be slightly narrower to avoid problem
+with interference with column separator line.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">21
+April 2005</td>
+<td style="vertical-align: top;">
+<p dir="ltr">Corrected a problem where an extra
+blank line could sometimes appear just before a new paragraph that is
+also the start of a verse, when the last line of the preceding verse
+was full. (The “blank” line had a cvmarker style
+chapter number in it for the running headers.) Added character style
+mapping for \w ...\w* to go to “Word listed” style.</p>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">13
+April 2005</td>
+<td style="vertical-align: top;"> Corrected a
+problem with the footnote character style sometimes being applied after
+a footnote has ended. Added a new footnote character style
+“Quoted from text” for \fq, reassigning \fqa to
+“Alternate reading.” (The \fqa character style
+marker is in the USFM 2.0 spec, but it wasn’t in the
+sfminfo.xml file before this version.) Toggled the default for marking
+verse 1 and chapter 1 to “true.”</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">9
+April 2005</td>
+<td style="vertical-align: top;"> Yet another bug
+fix quick release— this time improving the error handling if
+you have an non-supported USFM backslash code in the input and
+correcting the default unit processing for the last two of the manual
+drop cap parameters to really be half-points instead of twips, as
+documented. Changed USFX embedding to be enabled by default.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">8 April 2005</td>
+<td style="vertical-align: top;"> Corrected problem
+with USFX embedding.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">7 April 2005</td>
+<td style="vertical-align: top;"> Enhanced automatic
+drop cap dimension computations to also read and take into account
+space before in the Normal-ch style and adjusted the scaling factors
+for better results over a wider range of point values. For best
+results, use "exact" spacing instead of "single" spacing on the Normal
+font. Corrected several problems with the way USFX was integrated into
+WordML. Thanks go to Randy H. and Tim G. for valuable feedback
+contributing to this version.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">6 April 2005</td>
+<td style="vertical-align: top;">
+<p dir="ltr">Added “Help” button
+and revised the documentation. Added feature to automatically calculate
+drop cap dimensions based on the Normal paragraph font size in the seed
+file. This makes it more likely that drop caps will look good with
+various seed files without you having to mess with the manual
+parameters. The manual parameters are still there, if you need them.
+They have been changed in the way they now store both a number and a
+unit of measure. In testing, I found some bugs in the USFX embedding
+that are still there from last release, but I'll get at least these
+edits posted before tackling those.</p>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">1 April 2005</td>
+<td style="vertical-align: top;"> Corrected a bug in
+the setup file generation system that caused the last few updates to
+actually be older versions.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">21 March 2005</td>
+<td style="vertical-align: top;"> Debugged &amp;
+enabled the <a href="http://eBible.org/usfx/">USFX</a>
+(custom XML) embedding in WordML files. Embedding USFX in WordML files
+is a prerequisite to converting USFX+WordML back to USFM, but the
+converter to do so is still to be written. As a consequence of adding
+this feature, two more styles are implemented: "Invisible" (character
+style) and "Invisible Paragraph" (paragraph style). These are used to
+preserve things like the free-form text portion of the \id tag, which
+has no place in the visible portion of the typeset WordML document.<br>
+Added a direct USFM to USFX converter to the usfm2word.exe "extras"
+page. (This function will probably be moved elsewhere, later, but will
+remain available.)<br>
+Added \hr to sfminfo.xml and the Horizontal Rule style to the sample
+seed files. You can safely ignore this change if you don’t
+use \hr, which is not in USFM, but was in the old PNGSFM. It was easier
+for me to support than to tell the translator he couldn't use it.
+&lt;grin&gt;</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">3 March 2005</td>
+<td style="vertical-align: top;"> Moved merge
+crossreference footnote marker insertion point so that Microsoft Word
+wouldn’t break a line just after a verse marker. Changed
+character style name generated by \it ...\it* to Italics and added that
+style to the sample seed files. (This marker is depreciated, and it is
+recommended that you use something else instead, but it is still in the
+USFM standard for now.) Tweaked the display of the default seed file
+created with a new .xini file to reflect the location of the default
+seed file (Scripture.xml in the directory where the program was
+installed). Changed the substitution list so that it can accept a
+character in the form of its Unicode hexadecimal code point, U+xxxx,
+like U+8239 for a narrow non-breaking space, so that the resulting
+substitutions are more readable. This also makes it easier to find an
+editor and keyboard to make some substitutions.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">18 February 2005</td>
+<td style="vertical-align: top;"> Added character
+and paragraph styles for tags that are new with USFM 2.0 that
+weren’t in USFM 1.53. These include \em...\em*, \sr, \pm,
+\pmo, \pmr, \qm#, \pro...\pro, and \wj...\wj*. Added new character
+styles that are only applied to the first normal poetry or prose
+paragraph of a chapter when drop cap chapters are selected: Normal-ch
+and Poetry Line 1-ch. The purpose of this differentiation is to allow
+you to specify additional space above or alter the indent settings on
+those paragraphs adjacent to the chapter number.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">2 February 2005</td>
+<td style="vertical-align: top;"> Added Gotchas,
+Known Issues, and Tips section to this document. Removed some
+development logging code that was causing conflicts on startup of
+multiple copies of usfm2word.exe. Corrected a problem with chapter
+labels (not drop caps) when \c is not immediately followed by a tag
+that causes a new paragraph to start.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">31 January 2005</td>
+<td style="vertical-align: top;">
+<p dir="ltr">Added additional cvmarker fields to
+substantially increase the probability that a partial last verse of a
+chapter at the beginning of a page will cause that earlier chapter to
+be noted in the running headers. Removed the macros from the sample
+seed files, since they aren’t needed any more. Added a new
+character style to the seed file called "Hidden" which is cvmarker +
+font hidden. If your seed file doesn't have this style, you will get
+some extra spaces in the output at the end of every text run that
+begins with a verse marker. This style is used to separate the cvmarker
+invisible text at the beginning of a verse from that at the end. You
+can copy this style from one of the distribution seed files, or just
+create it to upgrade an existing seed file.</p>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">25 January 2005</td>
+<td style="vertical-align: top;"> Corrected an error
+in sfminfo.xml affecting only the sls (secondary language source)
+style. Changed the headers in Scripture.xml to just have the book and
+chapter number or range of chapter numbers on the outside rather than
+book and first chapter on the left and book and last chapter on the
+right. After this version, I plan to separate the releases into latest
+and latest stable versions. The tweaks to this version were intended to
+stabilize this one before I tackle finishing the USFX embedding.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">21 January 2005</td>
+<td style="vertical-align: top;"> Oops! I didn't
+quite get the setup settings right to include the fixquotes.xml file
+and its schema, changelist.xsd in the setup list with the 19 January
+release. A minimalist release process makes it easy to goof-- but also
+easy to release a fix. Here is that fix. Sorry for any inconvenience...</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">19 January 2005</td>
+<td style="vertical-align: top;">
+<p dir="ltr">Added a feature that allows certain
+global search &amp; replace operations (consistent changes) to be
+done on the text (not tags) of the Scriptures for the purpose of
+normalizing quotation mark spacing, replacing character sets with
+ligatures, etc. (I use it to change &lt;&lt; to “,
+&gt;&gt; to ”, and -- to —, and to put
+non-breaking narrow spaces between consecutive quotation marks.)</p>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">6 January 2005</td>
+<td style="vertical-align: top;">Squashed a bug that
+could cause footnotes and crossreferences to be improperly rendered by
+Microsoft Word. Enhanced verse bridge rendering to change normal dashes
+to non-breaking hyphens to prevent line breaks in the middle of a verse
+marker. Note that the font used must support this character, U+2011 or
+Alt-8209.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">8 December 2004</td>
+<td style="vertical-align: top;">Changed the name of
+the “template” file to “seed”
+file to avoid confusion with Microsoft Word template files. Updated web
+page to include a link to dotnetfx.exe for better CD-ROM distribution.
+Squashed some bugs, including one that may have prevented automatic
+opening of Microsoft Word upon completion of the conversion process.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">16 November 2004</td>
+<td style="vertical-align: top;">Added a macro to
+Scripture.xml to normalize consecutive typographic quotation marks to
+have a narrow no-break space between them.<br>
+Made some cosmetic changes to the program.<br>
+USFX insertion into the WordML is still not ready for prime time, so I
+still recommend leaving this feature disabled (the default).</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">7 November 2004</td>
+<td style="vertical-align: top;">Added a feature to
+merge crossreference notes from an external file, translating the book
+name or abbreviation on the fly. The \x tag in the main USFM source is
+also supported, but this method can save time if you don’t
+need caller symbols on your crossreference footnotes.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">4 November 2004</td>
+<td style="vertical-align: top;">Added a single
+command line parameter to the Windows GUI version of the program: the
+name of the project parameter file to use. For example:<br>
+usfm2word c:\path\to\mylanguage.xini<br>
+This feature is intended to be used with batch files or calls from
+other programs.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">3 November 2004</td>
+<td style="vertical-align: top;">Corrected problems
+in SFM parsing that caused problems with how spaces around footnotes
+and verse markers appeared in some cases.<br>
+Added “advanced” adjustments for drop cap
+parameters.<br>
+Corrected prototype Scripture “template” so that
+drop caps work in the Psalms. (I still think drop caps work better
+everywhere but the Psalms, and chapter headings are better there, but
+at least you now have a reasonable choice.)<br>
+Corrected some footnote behavior.<br>
+Created some additional prototype Scripture templates.<br>
+Added some code to embed USFX tags in the WordML. You can optionally
+activate this code, but the tag embedding is not yet correct and
+complete as of this version, so I recommend leaving that option off,
+for now.<br>
+Defined <a href="http://eBible.org/usfx/">USFX</a>,
+at least for a starting point.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">5 October 2004</td>
+<td style="vertical-align: top;">Beta test version:
+minimal documentation included above. Several open issues still exist,
+but many bugs fixed. This version is being posted just prior to
+implementing some changes to support reversibility of the
+transformation (i. e. embedding of USFX in the WordML).</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">29 June 2004<br>
+</td>
+<td style="vertical-align: top;">Still an alpha test
+version: documentation not included.<br>
+Changes:<br>
+Improved setup program.<br>
+Now properly reads &amp; sorts one file per chapter USFM files.<br>
+Corrected some formatting errors found in testing.<br>
+Corrected a problem with two instances interfering with each other.<br>
+Known issues:<br>
+Still not reversible (i. e. you can’t go back from WordML to
+USFM, yet).<br>
+No support for tables.<br>
+Drop caps in Psalms are not as bad, but there are still some issues
+with how Word displays some of them.<br>
+Drop cap formatting is not as configurable as I would like.<br>
+Automatic open of Microsoft Word on converted file may not always work.
+Try manually opening it if it fails to automatically open.<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">20 May 2004<br>
+</td>
+<td style="vertical-align: top;">Alpha test version.
+Known issues include:<br>
+the setup program doesn't create a menu shortcut properly, causing a
+crash,<br>
+ugly formatting in Psalms if you choose drop cap chapter styles,<br>
+lack of documentation,<br>
+irreversibility of transformation (i. e. you can’t go back to
+USFM from WordML), and<br>
+no support for tables.<br>
+To work around the menu shortcut problem, create a new shortcut
+manually.<br>
+</td>
+</tr>
+</tbody>
+</table>
+<p><a href="http://eBible.org/wordsend/instructions.htm">Next
+page</a></p>
+</body></html>

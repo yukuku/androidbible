@@ -1,0 +1,1600 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<crossreferences xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="C:\sil\Onyx\crossreferences.xsd">
+	<comment>This is a set of crossreferences from the World English Bible New Testament.</comment>
+	<xlat>
+		<source>Genesis</source>
+		<target>GEN</target>
+	</xlat>
+	<xlat>
+		<source>Exodus</source>
+		<target>EXO</target>
+	</xlat>
+	<xlat>
+		<source>Leviticus</source>
+		<target>LEV</target>
+	</xlat>
+	<xlat>
+		<source>Numbers</source>
+		<target>NUM</target>
+	</xlat>
+	<xlat>
+		<source>Deuteronomy</source>
+		<target>DEU</target>
+	</xlat>
+	<xlat>
+		<source>Joshua</source>
+		<target>JOS</target>
+	</xlat>
+	<xlat>
+		<source>Judges</source>
+		<target>JDG</target>
+	</xlat>
+	<xlat>
+		<source>Ruth</source>
+		<target>RUT</target>
+	</xlat>
+	<xlat>
+		<source>1 Samuel</source>
+		<target>1SA</target>
+	</xlat>
+	<xlat>
+		<source>2 Samuel</source>
+		<target>2SA</target>
+	</xlat>
+	<xlat>
+		<source>1 Kings</source>
+		<target>1KI</target>
+	</xlat>
+	<xlat>
+		<source>2 Kings</source>
+		<target>2KI</target>
+	</xlat>
+	<xlat>
+		<source>1 Chronicles</source>
+		<target>1CH</target>
+	</xlat>
+	<xlat>
+		<source>2 Chronicles</source>
+		<target>2CH</target>
+	</xlat>
+	<xlat>
+		<source>Ezra</source>
+		<target>EZR</target>
+	</xlat>
+	<xlat>
+		<source>Nehemiah</source>
+		<target>NEH</target>
+	</xlat>
+	<xlat>
+		<source>Esther</source>
+		<target>EST</target>
+	</xlat>
+	<xlat>
+		<source>Job</source>
+		<target>JOB</target>
+	</xlat>
+	<xlat>
+		<source>Psalm</source>
+		<target>PSA</target>
+	</xlat>
+	<xlat>
+		<source>Proverbs</source>
+		<target>PRO</target>
+	</xlat>
+	<xlat>
+		<source>Ecclesiastes</source>
+		<target>ECC</target>
+	</xlat>
+	<xlat>
+		<source>Song of Songs</source>
+		<target>SNG</target>
+	</xlat>
+	<xlat>
+		<source>Isaiah</source>
+		<target>ISA</target>
+	</xlat>
+	<xlat>
+		<source>Jeremiah</source>
+		<target>JER</target>
+	</xlat>
+	<xlat>
+		<source>Lamentations</source>
+		<target>LAM</target>
+	</xlat>
+	<xlat>
+		<source>Ezekiel</source>
+		<target>EZK</target>
+	</xlat>
+	<xlat>
+		<source>Daniel</source>
+		<target>DAN</target>
+	</xlat>
+	<xlat>
+		<source>Hosea</source>
+		<target>HOS</target>
+	</xlat>
+	<xlat>
+		<source>Joel</source>
+		<target>JOL</target>
+	</xlat>
+	<xlat>
+		<source>Amos</source>
+		<target>AMO</target>
+	</xlat>
+	<xlat>
+		<source>Obadiah</source>
+		<target>OBA</target>
+	</xlat>
+	<xlat>
+		<source>Jonah</source>
+		<target>JON</target>
+	</xlat>
+	<xlat>
+		<source>Micah</source>
+		<target>MIC</target>
+	</xlat>
+	<xlat>
+		<source>Nahum</source>
+		<target>NAH</target>
+	</xlat>
+	<xlat>
+		<source>Habakuk</source>
+		<target>HAB</target>
+	</xlat>
+	<xlat>
+		<source>Zephaniah</source>
+		<target>ZEP</target>
+	</xlat>
+	<xlat>
+		<source>Haggai</source>
+		<target>HAG</target>
+	</xlat>
+	<xlat>
+		<source>Zechariah</source>
+		<target>ZEC</target>
+	</xlat>
+	<xlat>
+		<source>Malachi</source>
+		<target>MAL</target>
+	</xlat>
+	<xlat>
+		<source>Matthew</source>
+		<target>MAT</target>
+	</xlat>
+	<xlat>
+		<source>Mark</source>
+		<target>MRK</target>
+	</xlat>
+	<xlat>
+		<source>Luke</source>
+		<target>LUK</target>
+	</xlat>
+	<xlat>
+		<source>John</source>
+		<target>JHN</target>
+	</xlat>
+	<xlat>
+		<source>Acts</source>
+		<target>ACT</target>
+	</xlat>
+	<xlat>
+		<source>Romans</source>
+		<target>ROM</target>
+	</xlat>
+	<xlat>
+		<source>1 Corinthians</source>
+		<target>1CO</target>
+	</xlat>
+	<xlat>
+		<source>2 Corinthians</source>
+		<target>2CO</target>
+	</xlat>
+	<xlat>
+		<source>Galatians</source>
+		<target>GAL</target>
+	</xlat>
+	<xlat>
+		<source>Ephesians</source>
+		<target>EPH</target>
+	</xlat>
+	<xlat>
+		<source>Philippians</source>
+		<target>PHP</target>
+	</xlat>
+	<xlat>
+		<source>Colossians</source>
+		<target>COL</target>
+	</xlat>
+	<xlat>
+		<source>1 Thessalonians</source>
+		<target>1TH</target>
+	</xlat>
+	<xlat>
+		<source>2 Thessalonians</source>
+		<target>2TH</target>
+	</xlat>
+	<xlat>
+		<source>1 Timothy</source>
+		<target>1TI</target>
+	</xlat>
+	<xlat>
+		<source>2 Timothy</source>
+		<target>2TI</target>
+	</xlat>
+	<xlat>
+		<source>Titus</source>
+		<target>TIT</target>
+	</xlat>
+	<xlat>
+		<source>Philemon</source>
+		<target>PHM</target>
+	</xlat>
+	<xlat>
+		<source>Hebrews</source>
+		<target>HEB</target>
+	</xlat>
+	<xlat>
+		<source>James</source>
+		<target>JAS</target>
+	</xlat>
+	<xlat>
+		<source>1 Peter</source>
+		<target>1PE</target>
+	</xlat>
+	<xlat>
+		<source>2 Peter</source>
+		<target>2PE</target>
+	</xlat>
+	<xlat>
+		<source>1 John</source>
+		<target>1JN</target>
+	</xlat>
+	<xlat>
+		<source>2 John</source>
+		<target>2JN</target>
+	</xlat>
+	<xlat>
+		<source>3 John</source>
+		<target>3JN</target>
+	</xlat>
+	<xlat>
+		<source>Jude</source>
+		<target>JUD</target>
+	</xlat>
+	<xlat>
+		<source>Revelation</source>
+		<target>REV</target>
+	</xlat>
+	<xref>
+		<at>MAT 1:23</at>
+		<note>Isaiah 7:14</note>
+	</xref>
+	<xref>
+		<at>MAT 2:6</at>
+		<note>Micah 5:2</note>
+	</xref>
+	<xref>
+		<at>MAT 2:15</at>
+		<note>Hosea 11:1</note>
+	</xref>
+	<xref>
+		<at>MAT 2:18</at>
+		<note>Jeremiah 31:15</note>
+	</xref>
+	<xref>
+		<at>MAT 3:3</at>
+		<note>Isaiah 40:3</note>
+	</xref>
+	<xref>
+		<at>MAT 4:4</at>
+		<note>Deuteronomy 8:3</note>
+	</xref>
+	<xref>
+		<at>MAT 4:6</at>
+		<note>Psalm 91:11-12</note>
+	</xref>
+	<xref>
+		<at>MAT 4:7</at>
+		<note>Deuteronomy 6:16</note>
+	</xref>
+	<xref>
+		<at>MAT 4:10</at>
+		<note>Deuteronomy 6:13</note>
+	</xref>
+	<xref>
+		<at>MAT 4:16</at>
+		<note>Isaiah 9:1-2</note>
+	</xref>
+	<xref>
+		<at>MAT 5:3</at>
+		<note>Isaiah 57:15; 66:2</note>
+	</xref>
+	<xref>
+		<at>MAT 5:4</at>
+		<note>Isaiah 61:2; 66:10,13</note>
+	</xref>
+	<xref>
+		<at>MAT 5:5</at>
+		<note>Psalm 37:11</note>
+	</xref>
+	<xref>
+		<at>MAT 5:21</at>
+		<note>Exodus 20:13</note>
+	</xref>
+	<xref>
+		<at>MAT 5:27</at>
+		<note>Exodus 20:14</note>
+	</xref>
+	<xref>
+		<at>MAT 5:31</at>
+		<note>Deuteronomy 24:1</note>
+	</xref>
+	<xref>
+		<at>MAT 5:38</at>
+		<note>Exodus 21:24; Leviticus 24:20; Deuteronomy 19:21</note>
+	</xref>
+	<xref>
+		<at>MAT 5:43</at>
+		<note>Leviticus 19:18</note>
+	</xref>
+	<xref>
+		<at>MAT 8:17</at>
+		<note>Isaiah 53:4</note>
+	</xref>
+	<xref>
+		<at>MAT 9:13</at>
+		<note>Hosea 6:6</note>
+	</xref>
+	<xref>
+		<at>MAT 10:36</at>
+		<note>Micah 7:6</note>
+	</xref>
+	<xref>
+		<at>MAT 11:5</at>
+		<note>Isaiah 35:5</note>
+	</xref>
+	<xref>
+		<at>MAT 11:5</at>
+		<note>Isaiah 61:1-4</note>
+	</xref>
+	<xref>
+		<at>MAT 11:10</at>
+		<note>Malachi 3:1</note>
+	</xref>
+	<xref>
+		<at>MAT 12:4</at>
+		<note>1 Samuel 21:3-6</note>
+	</xref>
+	<xref>
+		<at>MAT 12:7</at>
+		<note>Hosea 6:6</note>
+	</xref>
+	<xref>
+		<at>MAT 12:21</at>
+		<note>Isaiah 42:1-4</note>
+	</xref>
+	<xref>
+		<at>MAT 13:15</at>
+		<note>Isaiah 6:9-10</note>
+	</xref>
+	<xref>
+		<at>MAT 13:35</at>
+		<note>Psalm 78:2</note>
+	</xref>
+	<xref>
+		<at>MAT 14:25</at>
+		<note>Job 9:8</note>
+	</xref>
+	<xref>
+		<at>MAT 15:4</at>
+		<note>Exodus 20:12; Deuteronomy 5:16</note>
+	</xref>
+	<xref>
+		<at>MAT 15:4</at>
+		<note>Exodus 21:17; Leviticus 20:9</note>
+	</xref>
+	<xref>
+		<at>MAT 15:9</at>
+		<note>Isaiah 29:13</note>
+	</xref>
+	<xref>
+		<at>MAT 18:16</at>
+		<note>Deuteronomy 19:15</note>
+	</xref>
+	<xref>
+		<at>MAT 19:4</at>
+		<note>Genesis 1:27</note>
+	</xref>
+	<xref>
+		<at>MAT 19:5</at>
+		<note>Genesis 2:24</note>
+	</xref>
+	<xref>
+		<at>MAT 19:19</at>
+		<note>Exodus 20:12-16; Deuteronomy 5:16-20</note>
+	</xref>
+	<xref>
+		<at>MAT 19:19</at>
+		<note>Leviticus 19:18</note>
+	</xref>
+	<xref>
+		<at>MAT 21:5</at>
+		<note>Zechariah 9:9</note>
+	</xref>
+	<xref>
+		<at>MAT 21:9</at>
+		<note>Psalm 118:26</note>
+	</xref>
+	<xref>
+		<at>MAT 21:13</at>
+		<note>Isaiah 56:7</note>
+	</xref>
+	<xref>
+		<at>MAT 21:13</at>
+		<note>Jeremiah 7:11</note>
+	</xref>
+	<xref>
+		<at>MAT 21:16</at>
+		<note>Psalm 8:2</note>
+	</xref>
+	<xref>
+		<at>MAT 21:42</at>
+		<note>Psalm 118:22-23</note>
+	</xref>
+	<xref>
+		<at>MAT 22:32</at>
+		<note>Exodus 3:6</note>
+	</xref>
+	<xref>
+		<at>MAT 22:37</at>
+		<note>Deuteronomy 6:5</note>
+	</xref>
+	<xref>
+		<at>MAT 22:39</at>
+		<note>Leviticus 19:18</note>
+	</xref>
+	<xref>
+		<at>MAT 22:44</at>
+		<note>Psalm 110:1</note>
+	</xref>
+	<xref>
+		<at>MAT 23:39</at>
+		<note>Psalm 118:26</note>
+	</xref>
+	<xref>
+		<at>MAT 24:15</at>
+		<note>Daniel 9:27; 11:31; 12:11</note>
+	</xref>
+	<xref>
+		<at>MAT 24:29</at>
+		<note>Isaiah 13:10; 34:4</note>
+	</xref>
+	<xref>
+		<at>MAT 26:31</at>
+		<note>Zechariah 13:7</note>
+	</xref>
+	<xref>
+		<at>MAT 27:10</at>
+		<note>Zechariah 11:12-13; Jeremiah 19:1-13; 32:6-9</note>
+	</xref>
+	<xref>
+		<at>MAT 27:46</at>
+		<note>Psalm 22:1</note>
+	</xref>
+	<xref>
+		<at>MRK 1:2</at>
+		<note>Malachi 3:1</note>
+	</xref>
+	<xref>
+		<at>MRK 1:3</at>
+		<note>Isaiah 40:3</note>
+	</xref>
+	<xref>
+		<at>MRK 4:12</at>
+		<note>Isaiah 6:9-10</note>
+	</xref>
+	<xref>
+		<at>MRK 6:48</at>
+		<note>Job 9:8</note>
+	</xref>
+	<xref>
+		<at>MRK 7:7</at>
+		<note>Isaiah 29:13</note>
+	</xref>
+	<xref>
+		<at>MRK 7:10</at>
+		<note>Exodus 20:12; Deuteronomy 5:16</note>
+	</xref>
+	<xref>
+		<at>MRK 7:10</at>
+		<note>Exodus 21:17; Leviticus 20:9</note>
+	</xref>
+	<xref>
+		<at>MRK 9:48</at>
+		<note>Isaiah 66:24</note>
+	</xref>
+	<xref>
+		<at>MRK 10:6</at>
+		<note>Genesis 1:27</note>
+	</xref>
+	<xref>
+		<at>MRK 10:8</at>
+		<note>Genesis 2:24</note>
+	</xref>
+	<xref>
+		<at>MRK 10:19</at>
+		<note>Exodus 20:12-16; Deuteronomy 5:16-20</note>
+	</xref>
+	<xref>
+		<at>MRK 11:9</at>
+		<note>Psalm 118:25-26</note>
+	</xref>
+	<xref>
+		<at>MRK 11:17</at>
+		<note>Isaiah 56:7</note>
+	</xref>
+	<xref>
+		<at>MRK 11:17</at>
+		<note>Jeremiah 7:11</note>
+	</xref>
+	<xref>
+		<at>MRK 12:11</at>
+		<note>Psalm 118:22-23</note>
+	</xref>
+	<xref>
+		<at>MRK 12:26</at>
+		<note>Exodus 3:6</note>
+	</xref>
+	<xref>
+		<at>MRK 12:30</at>
+		<note>Deuteronomy 6:4-5</note>
+	</xref>
+	<xref>
+		<at>MRK 12:31</at>
+		<note>Leviticus 19:18</note>
+	</xref>
+	<xref>
+		<at>MRK 12:36</at>
+		<note>Psalm 110:1</note>
+	</xref>
+	<xref>
+		<at>MRK 13:14</at>
+		<note>Daniel 9:17; 11:31; 12:11</note>
+	</xref>
+	<xref>
+		<at>MRK 13:25</at>
+		<note>Isaiah 13:10; 34:4</note>
+	</xref>
+	<xref>
+		<at>MRK 14:27</at>
+		<note>Zechariah 13:7</note>
+	</xref>
+	<xref>
+		<at>MRK 15:34</at>
+		<note>Psalm 22:1</note>
+	</xref>
+	<xref>
+		<at>LUK 2:23</at>
+		<note>Exodus 13:2,12</note>
+	</xref>
+	<xref>
+		<at>LUK 2:24</at>
+		<note>Leviticus 12:8</note>
+	</xref>
+	<xref>
+		<at>LUK 3:6</at>
+		<note>Isaiah 40:3-5</note>
+	</xref>
+	<xref>
+		<at>LUK 4:4</at>
+		<note>Deuteronomy 8:3</note>
+	</xref>
+	<xref>
+		<at>LUK 4:8</at>
+		<note>Deuteronomy 6:13</note>
+	</xref>
+	<xref>
+		<at>LUK 4:11</at>
+		<note>Psalm 91:11-12</note>
+	</xref>
+	<xref>
+		<at>LUK 4:12</at>
+		<note>Deuteronomy 6:16</note>
+	</xref>
+	<xref>
+		<at>LUK 4:19</at>
+		<note>Isaiah 61:1-2</note>
+	</xref>
+	<xref>
+		<at>LUK 7:27</at>
+		<note>Malachi 3:1</note>
+	</xref>
+	<xref>
+		<at>LUK 8:10</at>
+		<note>Isaiah 6:9</note>
+	</xref>
+	<xref>
+		<at>LUK 10:27</at>
+		<note>Deuteronomy 6:5</note>
+	</xref>
+	<xref>
+		<at>LUK 10:27</at>
+		<note>Leviticus 19:18</note>
+	</xref>
+	<xref>
+		<at>LUK 12:53</at>
+		<note>Micah 7:6</note>
+	</xref>
+	<xref>
+		<at>LUK 13:35</at>
+		<note>Psalm 118:26</note>
+	</xref>
+	<xref>
+		<at>LUK 18:20</at>
+		<note>Exodus 20:12-16; Deuteronomy 5:16-20</note>
+	</xref>
+	<xref>
+		<at>LUK 19:38</at>
+		<note>Psalm 118:26</note>
+	</xref>
+	<xref>
+		<at>LUK 19:46</at>
+		<note>Isaiah 56:7</note>
+	</xref>
+	<xref>
+		<at>LUK 19:46</at>
+		<note>Jeremiah 7:11</note>
+	</xref>
+	<xref>
+		<at>LUK 20:17</at>
+		<note>Psalm 118:22</note>
+	</xref>
+	<xref>
+		<at>LUK 20:37</at>
+		<note>Exodus 3:6</note>
+	</xref>
+	<xref>
+		<at>LUK 20:43</at>
+		<note>Psalm 110:1</note>
+	</xref>
+	<xref>
+		<at>LUK 22:37</at>
+		<note>Isaiah 53:12</note>
+	</xref>
+	<xref>
+		<at>LUK 23:30</at>
+		<note>Hosea 10:8</note>
+	</xref>
+	<xref>
+		<at>JHN 1:23</at>
+		<note>Isaiah 40:3</note>
+	</xref>
+	<xref>
+		<at>JHN 2:17</at>
+		<note>Psalm 69:9</note>
+	</xref>
+	<xref>
+		<at>JHN 6:19</at>
+		<note>Job 9:8</note>
+	</xref>
+	<xref>
+		<at>JHN 6:31</at>
+		<note>Exodus 16:4; Nehemiah 9:15; Psalm 78:24-25</note>
+	</xref>
+	<xref>
+		<at>JHN 6:45</at>
+		<note>Isaiah 54:13</note>
+	</xref>
+	<xref>
+		<at>JHN 7:42</at>
+		<note>2 Samuel 7:12</note>
+	</xref>
+	<xref>
+		<at>JHN 7:42</at>
+		<note>Micah 5:2</note>
+	</xref>
+	<xref>
+		<at>JHN 7:52</at>
+		<note>Isaiah 9:1; Matthew 4:13-16.</note>
+	</xref>
+	<xref>
+		<at>JHN 8:5</at>
+		<note>Leviticus 20:10; Deuteronomy 22:22</note>
+	</xref>
+	<xref>
+		<at>JHN 8:12</at>
+		<note>Isaiah 60:1</note>
+	</xref>
+	<xref>
+		<at>JHN 8:17</at>
+		<note>Deuteronomy 17:6; 19:15</note>
+	</xref>
+	<xref>
+		<at>JHN 8:32</at>
+		<note>Psalm 119:45</note>
+	</xref>
+	<xref>
+		<at>JHN 9:31</at>
+		<note>Psalm 66:18, Proverbs 15:29; 28:9</note>
+	</xref>
+	<xref>
+		<at>JHN 10:11</at>
+		<note>Isaiah 40:11; Ezekiel 34:11-12,15,22</note>
+	</xref>
+	<xref>
+		<at>JHN 10:16</at>
+		<note>Isaiah 56:8</note>
+	</xref>
+	<xref>
+		<at>JHN 10:17</at>
+		<note>Isaiah 53:7-8</note>
+	</xref>
+	<xref>
+		<at>JHN 10:21</at>
+		<note>Exodus 4:11</note>
+	</xref>
+	<xref>
+		<at>JHN 10:34</at>
+		<note>Psalm 82:6</note>
+	</xref>
+	<xref>
+		<at>JHN 12:13</at>
+		<note>Psalm 118:25-26</note>
+	</xref>
+	<xref>
+		<at>JHN 12:15</at>
+		<note>Zechariah 9:9</note>
+	</xref>
+	<xref>
+		<at>JHN 12:34</at>
+		<note>Isaiah 9:7; Daniel 2:44; Isaiah 53:8</note>
+	</xref>
+	<xref>
+		<at>JHN 12:38</at>
+		<note>Isaiah 53:1</note>
+	</xref>
+	<xref>
+		<at>JHN 12:40</at>
+		<note>Isaiah 6:10</note>
+	</xref>
+	<xref>
+		<at>JHN 12:41</at>
+		<note>Isaiah 6:1</note>
+	</xref>
+	<xref>
+		<at>JHN 13:18</at>
+		<note>Psalm 41:9</note>
+	</xref>
+	<xref>
+		<at>JHN 15:20</at>
+		<note>John 13:16</note>
+	</xref>
+	<xref>
+		<at>JHN 15:25</at>
+		<note>Psalms 35:19; 69:4</note>
+	</xref>
+	<xref>
+		<at>JHN 17:17</at>
+		<note>Psalm 119:142</note>
+	</xref>
+	<xref>
+		<at>JHN 18:9</at>
+		<note>John 6:39</note>
+	</xref>
+	<xref>
+		<at>JHN 19:24</at>
+		<note>Psalm 22:18</note>
+	</xref>
+	<xref>
+		<at>JHN 19:36</at>
+		<note>Exodus 12:46; Numbers 9:12; Psalm 34:20</note>
+	</xref>
+	<xref>
+		<at>JHN 19:37</at>
+		<note>Zechariah 12:10</note>
+	</xref>
+	<xref>
+		<at>ACT 1:20</at>
+		<note>Psalm 69:25</note>
+	</xref>
+	<xref>
+		<at>ACT 1:20</at>
+		<note>Psalm 109:8</note>
+	</xref>
+	<xref>
+		<at>ACT 2:21</at>
+		<note>Joel 2:28-32</note>
+	</xref>
+	<xref>
+		<at>ACT 2:28</at>
+		<note>Psalm 16:8-11</note>
+	</xref>
+	<xref>
+		<at>ACT 2:35</at>
+		<note>Psalm 110:1</note>
+	</xref>
+	<xref>
+		<at>ACT 3:23</at>
+		<note>Deuteronomy 18:15,18-19</note>
+	</xref>
+	<xref>
+		<at>ACT 3:25</at>
+		<note>Genesis 22:18; 26:4</note>
+	</xref>
+	<xref>
+		<at>ACT 4:11</at>
+		<note>Psalm 118:22</note>
+	</xref>
+	<xref>
+		<at>ACT 4:26</at>
+		<note>Psalm 2:1-2</note>
+	</xref>
+	<xref>
+		<at>ACT 7:3</at>
+		<note>Genesis 12:1</note>
+	</xref>
+	<xref>
+		<at>ACT 7:7</at>
+		<note>Genesis 15:13-14</note>
+	</xref>
+	<xref>
+		<at>ACT 7:28</at>
+		<note>Exodus 2:14</note>
+	</xref>
+	<xref>
+		<at>ACT 7:32</at>
+		<note>Exodus 3:6</note>
+	</xref>
+	<xref>
+		<at>ACT 7:34</at>
+		<note>Exodus 3:5,7-8,10</note>
+	</xref>
+	<xref>
+		<at>ACT 7:37</at>
+		<note>Deuteronomy 18:15</note>
+	</xref>
+	<xref>
+		<at>ACT 7:40</at>
+		<note>Exodus 32:1</note>
+	</xref>
+	<xref>
+		<at>ACT 7:43</at>
+		<note>Amos 5:25-27</note>
+	</xref>
+	<xref>
+		<at>ACT 7:50</at>
+		<note>Isaiah 66:1-2</note>
+	</xref>
+	<xref>
+		<at>ACT 8:33</at>
+		<note>Isaiah 53:7,8</note>
+	</xref>
+	<xref>
+		<at>ACT 13:33</at>
+		<note>Psalm 2:7</note>
+	</xref>
+	<xref>
+		<at>ACT 13:34</at>
+		<note>Isaiah 55:3</note>
+	</xref>
+	<xref>
+		<at>ACT 13:35</at>
+		<note>Psalm 16:10</note>
+	</xref>
+	<xref>
+		<at>ACT 13:41</at>
+		<note>Habakkuk 1:5</note>
+	</xref>
+	<xref>
+		<at>ACT 13:47</at>
+		<note>Isaiah 49:6</note>
+	</xref>
+	<xref>
+		<at>ACT 15:17</at>
+		<note>Amos 9:11-12</note>
+	</xref>
+	<xref>
+		<at>ACT 23:5</at>
+		<note>Exodus 22:28</note>
+	</xref>
+	<xref>
+		<at>ACT 28:27</at>
+		<note>Isaiah 6:9-10</note>
+	</xref>
+	<xref>
+		<at>ROM 1:17</at>
+		<note>Habakkuk 2:4</note>
+	</xref>
+	<xref>
+		<at>ROM 2:6</at>
+		<note>Psalm 62:12; Proverbs 24:12</note>
+	</xref>
+	<xref>
+		<at>ROM 2:24</at>
+		<note>Isaiah 52:5; Ezekiel 36:22</note>
+	</xref>
+	<xref>
+		<at>ROM 3:4</at>
+		<note>Psalm 51:4</note>
+	</xref>
+	<xref>
+		<at>ROM 3:12</at>
+		<note>Psalms 14:1-3; 53:1-3; Ecclesiastes 7:20</note>
+	</xref>
+	<xref>
+		<at>ROM 3:13</at>
+		<note>Psalm 5:9</note>
+	</xref>
+	<xref>
+		<at>ROM 3:13</at>
+		<note>Psalm 140:3</note>
+	</xref>
+	<xref>
+		<at>ROM 3:14</at>
+		<note>Psalm 10:7</note>
+	</xref>
+	<xref>
+		<at>ROM 3:17</at>
+		<note>Isaiah 59:7-8</note>
+	</xref>
+	<xref>
+		<at>ROM 3:18</at>
+		<note>Psalm 36:1</note>
+	</xref>
+	<xref>
+		<at>ROM 4:3</at>
+		<note>Genesis 15:6</note>
+	</xref>
+	<xref>
+		<at>ROM 4:8</at>
+		<note>Psalm 32:1-2</note>
+	</xref>
+	<xref>
+		<at>ROM 4:17</at>
+		<note>Genesis 17:5</note>
+	</xref>
+	<xref>
+		<at>ROM 4:18</at>
+		<note>Genesis 15:5</note>
+	</xref>
+	<xref>
+		<at>ROM 4:22</at>
+		<note>Genesis 15:6</note>
+	</xref>
+	<xref>
+		<at>ROM 7:7</at>
+		<note>Exodus 20:17; Deuteronomy 5:21</note>
+	</xref>
+	<xref>
+		<at>ROM 8:36</at>
+		<note>Psalm 44:22</note>
+	</xref>
+	<xref>
+		<at>ROM 9:7</at>
+		<note>Genesis 21:12</note>
+	</xref>
+	<xref>
+		<at>ROM 9:9</at>
+		<note>Genesis 18:10,14</note>
+	</xref>
+	<xref>
+		<at>ROM 9:12</at>
+		<note>Genesis 25:23</note>
+	</xref>
+	<xref>
+		<at>ROM 9:13</at>
+		<note>Malachi 1:2-3</note>
+	</xref>
+	<xref>
+		<at>ROM 9:15</at>
+		<note>Exodus 33:19</note>
+	</xref>
+	<xref>
+		<at>ROM 9:17</at>
+		<note>Exodus 9:16</note>
+	</xref>
+	<xref>
+		<at>ROM 9:20</at>
+		<note>Isaiah 29:16; 45:9</note>
+	</xref>
+	<xref>
+		<at>ROM 9:25</at>
+		<note>Hosea 2:23</note>
+	</xref>
+	<xref>
+		<at>ROM 9:26</at>
+		<note>Hosea 1:10</note>
+	</xref>
+	<xref>
+		<at>ROM 9:28</at>
+		<note>Isaiah 10:22-23</note>
+	</xref>
+	<xref>
+		<at>ROM 9:29</at>
+		<note>Isaiah 1:9</note>
+	</xref>
+	<xref>
+		<at>ROM 9:33</at>
+		<note>Isaiah 8:14; 28:16</note>
+	</xref>
+	<xref>
+		<at>ROM 10:5</at>
+		<note>Leviticus 18:5</note>
+	</xref>
+	<xref>
+		<at>ROM 10:6</at>
+		<note>Deuteronomy 30:12</note>
+	</xref>
+	<xref>
+		<at>ROM 10:7</at>
+		<note>Deuteronomy 30:13</note>
+	</xref>
+	<xref>
+		<at>ROM 10:8</at>
+		<note>Deuteronomy 30:14</note>
+	</xref>
+	<xref>
+		<at>ROM 10:11</at>
+		<note>Isaiah 28:16</note>
+	</xref>
+	<xref>
+		<at>ROM 10:13</at>
+		<note>Joel 2:32</note>
+	</xref>
+	<xref>
+		<at>ROM 10:15</at>
+		<note>Isaiah 52:7</note>
+	</xref>
+	<xref>
+		<at>ROM 10:16</at>
+		<note>Isaiah 53:1</note>
+	</xref>
+	<xref>
+		<at>ROM 10:18</at>
+		<note>Psalm 19:4</note>
+	</xref>
+	<xref>
+		<at>ROM 10:19</at>
+		<note>Deuteronomy 32:31</note>
+	</xref>
+	<xref>
+		<at>ROM 10:20</at>
+		<note>Isaiah 65:1</note>
+	</xref>
+	<xref>
+		<at>ROM 10:21</at>
+		<note>Isaiah 65:2</note>
+	</xref>
+	<xref>
+		<at>ROM 11:3</at>
+		<note>1 Kings 19:10,14</note>
+	</xref>
+	<xref>
+		<at>ROM 11:4</at>
+		<note>1 Kings 19:18</note>
+	</xref>
+	<xref>
+		<at>ROM 11:8</at>
+		<note>Deuteronomy 29:4; Isaiah 29:10</note>
+	</xref>
+	<xref>
+		<at>ROM 11:10</at>
+		<note>Psalm 69:22,23</note>
+	</xref>
+	<xref>
+		<at>ROM 11:27</at>
+		<note>Isaiah 59:20-21; 27:9; Jeremiah 31:33-34</note>
+	</xref>
+	<xref>
+		<at>ROM 11:34</at>
+		<note>Isaiah 40:13</note>
+	</xref>
+	<xref>
+		<at>ROM 11:35</at>
+		<note>Job 41:11</note>
+	</xref>
+	<xref>
+		<at>ROM 12:19</at>
+		<note>Deuteronomy 32:35</note>
+	</xref>
+	<xref>
+		<at>ROM 12:20</at>
+		<note>Proverbs 25:21-22</note>
+	</xref>
+	<xref>
+		<at>ROM 13:9</at>
+		<note>Exodus 20:13-15,17; Deuteronomy 5:17-19,21</note>
+	</xref>
+	<xref>
+		<at>ROM 13:9</at>
+		<note>Leviticus 19:18</note>
+	</xref>
+	<xref>
+		<at>ROM 14:11</at>
+		<note>Isaiah 45:23</note>
+	</xref>
+	<xref>
+		<at>ROM 15:3</at>
+		<note>Psalm 69:9</note>
+	</xref>
+	<xref>
+		<at>ROM 15:9</at>
+		<note>2 Samuel 22:50; Psalm 18:49</note>
+	</xref>
+	<xref>
+		<at>ROM 15:10</at>
+		<note>Deuteronomy 32:43</note>
+	</xref>
+	<xref>
+		<at>ROM 15:11</at>
+		<note>Psalm 117:1</note>
+	</xref>
+	<xref>
+		<at>ROM 15:12</at>
+		<note>Isaiah 11:10</note>
+	</xref>
+	<xref>
+		<at>ROM 15:21</at>
+		<note>Isaiah 52:15</note>
+	</xref>
+	<xref>
+		<at>1CO 1:19</at>
+		<note>Isaiah 29:14</note>
+	</xref>
+	<xref>
+		<at>1CO 1:31</at>
+		<note>Jeremiah 9:24</note>
+	</xref>
+	<xref>
+		<at>1CO 2:9</at>
+		<note>Isaiah 64:4</note>
+	</xref>
+	<xref>
+		<at>1CO 2:16</at>
+		<note>Isaiah 40:13</note>
+	</xref>
+	<xref>
+		<at>1CO 3:19</at>
+		<note>Job 5:13</note>
+	</xref>
+	<xref>
+		<at>1CO 3:20</at>
+		<note>Psalm 94:11</note>
+	</xref>
+	<xref>
+		<at>1CO 5:13</at>
+		<note>Deuteronomy 17:7; 19:19; 21:21; 22:21; 24:7</note>
+	</xref>
+	<xref>
+		<at>1CO 6:16</at>
+		<note>Genesis 2:24</note>
+	</xref>
+	<xref>
+		<at>1CO 9:9</at>
+		<note>Deuteronomy 25:4</note>
+	</xref>
+	<xref>
+		<at>1CO 10:7</at>
+		<note>Exodus 32:6</note>
+	</xref>
+	<xref>
+		<at>1CO 10:26</at>
+		<note>Psalm 24:1</note>
+	</xref>
+	<xref>
+		<at>1CO 14:21</at>
+		<note>Isaiah 28:11-12</note>
+	</xref>
+	<xref>
+		<at>1CO 15:27</at>
+		<note>Psalm 8:6</note>
+	</xref>
+	<xref>
+		<at>1CO 15:32</at>
+		<note>Isaiah 22:13</note>
+	</xref>
+	<xref>
+		<at>1CO 15:45</at>
+		<note>Genesis 2:7</note>
+	</xref>
+	<xref>
+		<at>1CO 15:54</at>
+		<note>Isaiah 25:8</note>
+	</xref>
+	<xref>
+		<at>1CO 15:55</at>
+		<note>Hosea 13:14</note>
+	</xref>
+	<xref>
+		<at>2CO 4:6</at>
+		<note>Genesis 1:3</note>
+	</xref>
+	<xref>
+		<at>2CO 4:13</at>
+		<note>Psalm 116:10</note>
+	</xref>
+	<xref>
+		<at>2CO 6:2</at>
+		<note>Isaiah 49:8</note>
+	</xref>
+	<xref>
+		<at>2CO 6:16</at>
+		<note>Leviticus 26:12; Jeremiah 32:38; Ezekiel 37:27</note>
+	</xref>
+	<xref>
+		<at>2CO 6:17</at>
+		<note>Isaiah 52:11; Ezekiel 20:34,41</note>
+	</xref>
+	<xref>
+		<at>2CO 6:18</at>
+		<note>2 Samuel 7:14; 7:8</note>
+	</xref>
+	<xref>
+		<at>2CO 8:15</at>
+		<note>Exodus 16:8</note>
+	</xref>
+	<xref>
+		<at>2CO 9:9</at>
+		<note>Psalm 112:9</note>
+	</xref>
+	<xref>
+		<at>2CO 10:17</at>
+		<note>Jeremiah 9:24</note>
+	</xref>
+	<xref>
+		<at>2CO 13:1</at>
+		<note>Deuteronomy 19:15</note>
+	</xref>
+	<xref>
+		<at>GAL 3:8</at>
+		<note>Genesis 12:3; 18:18; 22:18</note>
+	</xref>
+	<xref>
+		<at>GAL 3:10</at>
+		<note>Deuteronomy 27:26</note>
+	</xref>
+	<xref>
+		<at>GAL 3:11</at>
+		<note>Habakkuk 2:4</note>
+	</xref>
+	<xref>
+		<at>GAL 3:12</at>
+		<note>Leviticus 18:5</note>
+	</xref>
+	<xref>
+		<at>GAL 3:13</at>
+		<note>Deuteronomy 21:23</note>
+	</xref>
+	<xref>
+		<at>GAL 3:16</at>
+		<note>Genesis 12:7; 13:15; 24:7</note>
+	</xref>
+	<xref>
+		<at>GAL 4:27</at>
+		<note>Isaiah 54:1</note>
+	</xref>
+	<xref>
+		<at>GAL 4:30</at>
+		<note>Genesis 21:10</note>
+	</xref>
+	<xref>
+		<at>GAL 5:14</at>
+		<note>Leviticus 19:18</note>
+	</xref>
+	<xref>
+		<at>EPH 4:8</at>
+		<note>Psalm 68:18</note>
+	</xref>
+	<xref>
+		<at>EPH 4:26</at>
+		<note>Psalm 4:4</note>
+	</xref>
+	<xref>
+		<at>EPH 5:31</at>
+		<note>Genesis 2:24</note>
+	</xref>
+	<xref>
+		<at>EPH 6:3</at>
+		<note>Deuteronomy 5:16</note>
+	</xref>
+	<xref>
+		<at>1TI 5:18</at>
+		<note>Deuteronomy 25:4</note>
+	</xref>
+	<xref>
+		<at>1TI 5:18</at>
+		<note>Luke 10:7; Leviticus 19:13</note>
+	</xref>
+	<xref>
+		<at>2TI 2:19</at>
+		<note>Numbers 16:5</note>
+	</xref>
+	<xref>
+		<at>HEB 1:5</at>
+		<note>Psalm 2:7</note>
+	</xref>
+	<xref>
+		<at>HEB 1:5</at>
+		<note>2 Samuel 7:14; 1 Chronicles 17:13</note>
+	</xref>
+	<xref>
+		<at>HEB 1:7</at>
+		<note>Psalm 104:4</note>
+	</xref>
+	<xref>
+		<at>HEB 1:9</at>
+		<note>Psalm 45:6-7</note>
+	</xref>
+	<xref>
+		<at>HEB 1:12</at>
+		<note>Psalm 102:25-27</note>
+	</xref>
+	<xref>
+		<at>HEB 1:13</at>
+		<note>Psalm 110:1</note>
+	</xref>
+	<xref>
+		<at>HEB 2:8</at>
+		<note>Psalm 8:4-6</note>
+	</xref>
+	<xref>
+		<at>HEB 2:12</at>
+		<note>Psalm 22:22</note>
+	</xref>
+	<xref>
+		<at>HEB 2:13</at>
+		<note>Isaiah 8:17</note>
+	</xref>
+	<xref>
+		<at>HEB 2:13</at>
+		<note>Isaiah 8:18</note>
+	</xref>
+	<xref>
+		<at>HEB 3:11</at>
+		<note>Psalm 95:7-11</note>
+	</xref>
+	<xref>
+		<at>HEB 3:15</at>
+		<note>Psalm 95:7-8</note>
+	</xref>
+	<xref>
+		<at>HEB 4:3</at>
+		<note>Psalm 95:11</note>
+	</xref>
+	<xref>
+		<at>HEB 4:4</at>
+		<note>Genesis 2:2</note>
+	</xref>
+	<xref>
+		<at>HEB 4:5</at>
+		<note>Psalm 95:11</note>
+	</xref>
+	<xref>
+		<at>HEB 4:7</at>
+		<note>Psalm 95:7-8</note>
+	</xref>
+	<xref>
+		<at>HEB 5:5</at>
+		<note>Psalm 2:7</note>
+	</xref>
+	<xref>
+		<at>HEB 5:6</at>
+		<note>Psalm 110:4</note>
+	</xref>
+	<xref>
+		<at>HEB 6:14</at>
+		<note>Genesis 22:17</note>
+	</xref>
+	<xref>
+		<at>HEB 7:17</at>
+		<note>Psalm 110:4</note>
+	</xref>
+	<xref>
+		<at>HEB 7:21</at>
+		<note>Psalm 110:4</note>
+	</xref>
+	<xref>
+		<at>HEB 8:5</at>
+		<note>Exodus 25:40</note>
+	</xref>
+	<xref>
+		<at>HEB 8:12</at>
+		<note>Jeremiah 31:31-34</note>
+	</xref>
+	<xref>
+		<at>HEB 9:20</at>
+		<note>Exodus 24:8</note>
+	</xref>
+	<xref>
+		<at>HEB 9:28</at>
+		<note>Isaiah 53:13</note>
+	</xref>
+	<xref>
+		<at>HEB 10:7</at>
+		<note>Psalm 40:6-8</note>
+	</xref>
+	<xref>
+		<at>HEB 10:16</at>
+		<note>Jeremiah 31:33</note>
+	</xref>
+	<xref>
+		<at>HEB 10:17</at>
+		<note>Jeremiah 31:34</note>
+	</xref>
+	<xref>
+		<at>HEB 10:30</at>
+		<note>Deuteronomy 32:35</note>
+	</xref>
+	<xref>
+		<at>HEB 10:30</at>
+		<note>Deuteronomy 32:36; Psalm 135:14</note>
+	</xref>
+	<xref>
+		<at>HEB 10:38</at>
+		<note>Habakkuk 2:3-4</note>
+	</xref>
+	<xref>
+		<at>HEB 11:18</at>
+		<note>Genesis 21:12</note>
+	</xref>
+	<xref>
+		<at>HEB 11:33</at>
+		<note>Daniel 6:22-23</note>
+	</xref>
+	<xref>
+		<at>HEB 11:34</at>
+		<note>Daniel 3:1-30</note>
+	</xref>
+	<xref>
+		<at>HEB 11:34</at>
+		<note>1 Kings 19:1-3; 2 Kings 6:31-7:20</note>
+	</xref>
+	<xref>
+		<at>HEB 11:35</at>
+		<note>1 Kings 19:1-3; 2 Kings 6:31-7:20</note>
+	</xref>
+	<xref>
+		<at>HEB 11:37</at>
+		<note>2 Chronicles 24:20-21</note>
+	</xref>
+	<xref>
+		<at>HEB 11:37</at>
+		<note>Jeremiah 26:20-23; 1 Kings 19:10</note>
+	</xref>
+	<xref>
+		<at>HEB 12:6</at>
+		<note>Proverbs 3:11-12</note>
+	</xref>
+	<xref>
+		<at>HEB 12:12</at>
+		<note>Isaiah 35:3</note>
+	</xref>
+	<xref>
+		<at>HEB 12:13</at>
+		<note>Proverbs 4:26</note>
+	</xref>
+	<xref>
+		<at>HEB 12:20</at>
+		<note>Exodus 19:12-13</note>
+	</xref>
+	<xref>
+		<at>HEB 12:21</at>
+		<note>Deuteronomy 9:19</note>
+	</xref>
+	<xref>
+		<at>HEB 12:24</at>
+		<note>Jeremiah 31:31</note>
+	</xref>
+	<xref>
+		<at>HEB 12:26</at>
+		<note>Haggai 2:6</note>
+	</xref>
+	<xref>
+		<at>HEB 12:29</at>
+		<note>Deuteronomy 4:24</note>
+	</xref>
+	<xref>
+		<at>HEB 13:5</at>
+		<note>Deuteronomy 31:6</note>
+	</xref>
+	<xref>
+		<at>HEB 13:6</at>
+		<note>Psalm 118:6-7</note>
+	</xref>
+	<xref>
+		<at>HEB 13:11</at>
+		<note>Leviticus 16:27</note>
+	</xref>
+	<xref>
+		<at>HEB 13:15</at>
+		<note>Psalm 50:23</note>
+	</xref>
+	<xref>
+		<at>JAS 2:8</at>
+		<note>Leviticus 19:18</note>
+	</xref>
+	<xref>
+		<at>JAS 2:11</at>
+		<note>Exodus 20:14; Deuteronomy 5:18</note>
+	</xref>
+	<xref>
+		<at>JAS 2:11</at>
+		<note>Exodus 10:13; Deuteronomy 5:17</note>
+	</xref>
+	<xref>
+		<at>JAS 2:23</at>
+		<note>Genesis 15:6</note>
+	</xref>
+	<xref>
+		<at>JAS 4:6</at>
+		<note>Proverbs 3:34</note>
+	</xref>
+	<xref>
+		<at>1PE 1:16</at>
+		<note>Leviticus 11:44-45</note>
+	</xref>
+	<xref>
+		<at>1PE 1:25</at>
+		<note>Isaiah 40:6-8</note>
+	</xref>
+	<xref>
+		<at>1PE 2:6</at>
+		<note>Isaiah 28:16</note>
+	</xref>
+	<xref>
+		<at>1PE 2:7</at>
+		<note>Psalm 118:22</note>
+	</xref>
+	<xref>
+		<at>1PE 2:8</at>
+		<note>Isaiah 8:14</note>
+	</xref>
+	<xref>
+		<at>1PE 2:22</at>
+		<note>Isaiah 53:9</note>
+	</xref>
+	<xref>
+		<at>1PE 3:12</at>
+		<note>Psalm 34:12-16</note>
+	</xref>
+	<xref>
+		<at>1PE 3:14</at>
+		<note>Isaiah 8:12</note>
+	</xref>
+	<xref>
+		<at>1PE 4:18</at>
+		<note>Proverbs 11:31</note>
+	</xref>
+	<xref>
+		<at>1PE 5:5</at>
+		<note>Proverbs 3:34</note>
+	</xref>
+	<xref>
+		<at>2PE 1:17</at>
+		<note>Matthew 17:5; Mark 9:7; Luke 9:35</note>
+	</xref>
+	<xref>
+		<at>2PE 2:22</at>
+		<note>Proverbs 26:11</note>
+	</xref>
+	<xref>
+		<at>REV 1:6</at>
+		<note>Exodus 19:6; Isaiah 61:6</note>
+	</xref>
+	<xref>
+		<at>REV 1:13</at>
+		<note>Daniel 7:13</note>
+	</xref>
+	<xref>
+		<at>REV 2:27</at>
+		<note>Psalm 2:9</note>
+	</xref>
+	<xref>
+		<at>REV 14:14</at>
+		<note>Daniel 7:13</note>
+	</xref>
+	<xref>
+		<at>REV 19:15</at>
+		<note>Psalm 2:9</note>
+	</xref>
+</crossreferences>
