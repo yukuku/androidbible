@@ -7,6 +7,7 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FontManager {
@@ -93,6 +94,8 @@ public class FontManager {
 				}
 			}
 		});
+    	
+    	Arrays.sort(dirs);
     	
     	for (File dir: dirs) {
     		FontEntry e = new FontEntry();
