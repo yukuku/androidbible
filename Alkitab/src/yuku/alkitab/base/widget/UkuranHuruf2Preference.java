@@ -16,8 +16,9 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import yuku.alkitab.base.U;
 import yuku.alkitab.R;
+import yuku.alkitab.base.util.FontManager;
+
 
 public class UkuranHuruf2Preference extends DialogPreference implements OnSeekBarChangeListener {
 	private static final int OFSET_minukuran = 2;
@@ -143,7 +144,7 @@ public class UkuranHuruf2Preference extends DialogPreference implements OnSeekBa
 		String jenisHuruf = sharedPreferences.getString(getContext().getString(R.string.pref_jenisHuruf_key), null);
 		boolean tebalHuruf = sharedPreferences.getBoolean(getContext().getString(R.string.pref_boldHuruf_key), false);
 		if (jenisHuruf != null) {
-			lContoh.setTypeface(U.typeface(jenisHuruf), tebalHuruf ? Typeface.BOLD: Typeface.NORMAL);
+			lContoh.setTypeface(FontManager.typeface(jenisHuruf), tebalHuruf ? Typeface.BOLD: Typeface.NORMAL);
 		}
 	}
 

@@ -3,7 +3,6 @@ package yuku.alkitab.base;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
@@ -88,16 +87,6 @@ public class U {
 		}
 
 		return res;
-	}
-	
-	public static Typeface typeface(String nama) {
-		Typeface typeface;
-		if (nama == null) typeface = Typeface.DEFAULT;
-		else if (nama.equals("SERIF")) typeface = Typeface.SERIF; //$NON-NLS-1$
-		else if (nama.equals("SANS_SERIF")) typeface = Typeface.SANS_SERIF; //$NON-NLS-1$
-		else if (nama.equals("MONOSPACE")) typeface = Typeface.MONOSPACE; //$NON-NLS-1$
-		else typeface = Typeface.DEFAULT;
-		return typeface;
 	}
 	
 	public static String enkodStabilo(int warnaRgb) {

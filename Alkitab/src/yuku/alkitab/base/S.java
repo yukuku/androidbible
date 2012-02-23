@@ -23,7 +23,9 @@ import yuku.alkitab.base.storage.InternalDbHelper;
 import yuku.alkitab.base.storage.InternalPembaca;
 import yuku.alkitab.base.storage.PembacaDecoder;
 import yuku.alkitab.base.storage.Preferences;
+import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.base.util.IntArrayList;
+
 
 public class S {
 	static final String TAG = S.class.getSimpleName();
@@ -104,7 +106,7 @@ public class S {
 		
 		//# atur jenis huruf, termasuk boldnya
 		{
-			penerapan.jenisHuruf = U.typeface(Preferences.getString(R.string.pref_jenisHuruf_key, null));
+			penerapan.jenisHuruf = FontManager.typeface(Preferences.getString(R.string.pref_jenisHuruf_key, null));
 			penerapan.tebalHuruf = Preferences.getBoolean(R.string.pref_boldHuruf_key, R.bool.pref_boldHuruf_default)? Typeface.BOLD: Typeface.NORMAL;
 		}
 		

@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string-array
-		name="pref_jenisHuruf_label">
-		<item>Normal</item>
-		<item>Sans-serif</item>
+	<string-array name="pref_jenisHuruf_label">
+		<item>Default</item>
 		<item>Serif</item>
 		<item>Monospace</item>
 	</string-array>
-	<string-array
-		name="pref_jenisHuruf_value">
+	<string-array name="pref_jenisHuruf_value">
 		<item>DEFAULT</item>
-		<item>SANS_SERIF</item>
 		<item>SERIF</item>
 		<item>MONOSPACE</item>
 	</string-array>
