@@ -16,7 +16,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import yuku.alkitab.R;
+import yuku.alkitab.beta.R;
 import yuku.alkitab.base.util.FontManager;
 
 

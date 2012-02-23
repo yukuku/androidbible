@@ -16,7 +16,7 @@ import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Bukmak2;
 import yuku.alkitab.base.model.Kitab;
 import yuku.alkitab.base.storage.Db;
-import yuku.alkitab.R;
+import yuku.alkitab.beta.R;
 
 public class JenisCatatanDialog {
 	final Context context;

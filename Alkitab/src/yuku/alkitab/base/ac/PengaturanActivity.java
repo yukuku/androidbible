@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.view.MenuItem;
 
-import yuku.alkitab.R;
+import yuku.alkitab.beta.R;
 import yuku.alkitab.base.ac.base.BaseActivity;
 
 public class PengaturanActivity extends PreferenceActivity {

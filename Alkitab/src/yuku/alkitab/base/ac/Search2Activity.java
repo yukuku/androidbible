@@ -31,7 +31,7 @@ import android.widget.Toast;
 
 import java.util.Arrays;
 
-import yuku.alkitab.R;
+import yuku.alkitab.beta.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;

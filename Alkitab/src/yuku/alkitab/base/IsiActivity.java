@@ -41,7 +41,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import yuku.alkitab.R;
+import yuku.alkitab.beta.R;
 import yuku.alkitab.base.IsiActivity.FakeContextMenu.Item;
 import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.BantuanActivity;

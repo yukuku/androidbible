@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckedTextView;
 
-import yuku.alkitab.R;
+import yuku.alkitab.beta.R;
 
 public class TemaWarnaPreference extends ListPreference {
 	private static final String TAG = TemaWarnaPreference.class.getSimpleName();

@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Locale;
 
-import yuku.alkitab.R;
+import yuku.alkitab.beta.R;
 import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Edisi;

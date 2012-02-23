@@ -23,7 +23,7 @@ import android.preference.*;
 import android.util.*;
 import android.view.*;
 
-import yuku.alkitab.R;
+import yuku.alkitab.beta.R;
 import yuku.ambilwarna.*;
 
 /**

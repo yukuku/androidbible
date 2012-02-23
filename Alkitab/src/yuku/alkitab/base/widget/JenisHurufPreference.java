@@ -14,11 +14,11 @@ import android.widget.CheckedTextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import yuku.alkitab.beta.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.base.util.FontManager.FontEntry;
-import yuku.alkitab.beta.R;
 
 public class JenisHurufPreference extends ListPreference {
 	public static final String TAG = JenisHurufPreference.class.getSimpleName();

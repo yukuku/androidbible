@@ -10,7 +10,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import java.nio.charset.*;
 import java.util.*;
 
-import yuku.alkitab.R;
+import yuku.alkitab.beta.R;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertParams;
 
 import com.compactbyte.android.bible.*;

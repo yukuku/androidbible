@@ -5,7 +5,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.R;
+import yuku.alkitab.beta.R;
 
 public class BantuanActivity extends BaseActivity {
 	WebView webview;

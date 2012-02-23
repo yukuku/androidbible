@@ -54,7 +54,7 @@ import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
 import yuku.alkitab.base.model.Bukmak2;
 import yuku.alkitab.base.model.Label;
 import yuku.alkitab.base.storage.Db;
-import yuku.alkitab.R;
+import yuku.alkitab.beta.R;
 import yuku.ambilwarna.AmbilWarnaDialog;
 import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
 
