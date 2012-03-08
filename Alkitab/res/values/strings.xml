@@ -199,6 +199,7 @@
     <string name="delete_label">Delete label</string>
     <string name="tutup">Close</string>
     <string name="please_wait_titik3">Please wait…</string>
+    <string name="juga_hapus_file_datanya_file">Also delete the data file?\nFile: %s</string>
     <string name="teks_about">Developed by [b]yuku[/b], 2009-2012[br/]
     	• Website: androidbible.blogspot.com[br/] 
 		• Google+: gplus.to/androidbible[br/]

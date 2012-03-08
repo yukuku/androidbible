@@ -199,6 +199,7 @@
     <string name="delete_label">Hapus label</string>
     <string name="tutup">Tutup</string>
     <string name="please_wait_titik3">Harap tunggu…</string>
+    <string name="juga_hapus_file_datanya_file">Juga hapus file datanya?\nFile: %s</string>
     <string name="teks_about">
 		Dikembangkan oleh [b]yuku[/b], 2009-2012[br/]
 		• Situs: androidbible.blogspot.com[br/]

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -160,16 +162,31 @@ public class EdisiActivity extends BaseActivity {
 		}
 	}
 	
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
+	@Override public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menuBuang: {
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-			MEdisi edisi = adapter.getItem(info.position);
+			final MEdisi edisi = adapter.getItem(info.position);
 			if (edisi instanceof MEdisiYes) {
-				S.getDb().hapusEdisiYes((MEdisiYes) edisi);
-				adapter.initDaftarEdisiYes();
-				adapter.notifyDataSetChanged();
+				final MEdisiYes edisiYes = (MEdisiYes) edisi;
+				new AlertDialog.Builder(EdisiActivity.this)
+				.setMessage(getString(R.string.juga_hapus_file_datanya_file, edisiYes.namafile))
+				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+					@Override public void onClick(DialogInterface dialog, int which) {
+						S.getDb().hapusEdisiYes(edisiYes);
+						adapter.initDaftarEdisiYes();
+						adapter.notifyDataSetChanged();
+						new File(edisiYes.namafile).delete();
+					}
+				})
+				.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+					@Override public void onClick(DialogInterface dialog, int which) {
+						S.getDb().hapusEdisiYes(edisiYes);
+						adapter.initDaftarEdisiYes();
+						adapter.notifyDataSetChanged();
+					}
+				})
+				.show();
 			}
 			return true;
 		}
@@ -497,6 +514,14 @@ public class EdisiActivity extends BaseActivity {
 			@Override public void onOk(final ConvertParams params) {
 				final String namafileyes = AddonManager.getEdisiPath(namayes);
 				final ProgressDialog pd = ProgressDialog.show(EdisiActivity.this, null, getString(R.string.ed_reading_pdb_file), true, false);
+				pd.setOnKeyListener(new OnKeyListener() {
+					@Override public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+						if (keyCode == KeyEvent.KEYCODE_SEARCH) {
+							return true;
+						}
+						return false;
+					}
+				});
 				
 				new AsyncTask<String, Object, ConvertResult>() {
 					@Override protected ConvertResult doInBackground(String... _unused_) {
