@@ -227,6 +227,10 @@ public class S {
 	public static CharSequence alamat(Kitab kitab, int pasal_1, IntArrayList xayat_1) {
 		StringBuilder sb = new StringBuilder(kitab == null? "[?]": kitab.judul); //$NON-NLS-1$
 		sb.append(' ').append(pasal_1);
+		if (xayat_1 == null || xayat_1.size() == 0) {
+			return sb;
+		}
+		sb.append(':');
 		tulisAyatRange(xayat_1, sb);
 		return sb;
 	}
@@ -247,10 +251,10 @@ public class S {
 			} else {
 				// abis loncat
 				if (awalAyat_1 != 0) {
-					sb.append(origLen == sb.length()? ":": ", ").append(awalAyat_1).append('-').append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
+					sb.append(origLen == sb.length()? "": ", ").append(awalAyat_1).append('-').append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
 					awalAyat_1 = 0;
 				} else {
-					sb.append(origLen == sb.length()? ":": ", ").append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
+					sb.append(origLen == sb.length()? "": ", ").append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			
@@ -259,10 +263,10 @@ public class S {
 		
 		// penghabisan
 		if (awalAyat_1 != 0) {
-			sb.append(origLen == sb.length()? ":": ", ").append(awalAyat_1).append('-').append(lastAyat_1);  //$NON-NLS-1$//$NON-NLS-2$
+			sb.append(origLen == sb.length()? "": ", ").append(awalAyat_1).append('-').append(lastAyat_1);  //$NON-NLS-1$//$NON-NLS-2$
 			awalAyat_1 = 0; // ga perlu, tapi biar konsisten aja dengan atas
 		} else {
-			sb.append(origLen == sb.length()? ":": ", ").append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
+			sb.append(origLen == sb.length()? "": ", ").append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
