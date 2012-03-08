@@ -207,11 +207,10 @@ public class YesPembaca extends Pembaca {
 					}
 				}
 				
-				if (kosong) {
-					res[k.pos] = null;
-				} else if (k.pos < 0 || k.pos >= res.length) {
-					throw new RuntimeException("ada kitabPos yang sangat besar: " + k.pos);
-				} else {
+				if (!kosong) {
+					if (k.pos < 0 || k.pos >= res.length) {
+						throw new RuntimeException("ada kitabPos yang sangat besar: " + k.pos);
+					}
 					res[k.pos] = k;
 				}
 			}
