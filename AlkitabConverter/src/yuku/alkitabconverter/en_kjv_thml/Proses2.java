@@ -1,7 +1,11 @@
 package yuku.alkitabconverter.en_kjv_thml;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.PrintWriter;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.TreeMap;
 
 public class Proses2 {
 	PrintWriter pw;
@@ -15,8 +19,8 @@ public class Proses2 {
 	public void loadUpTheData() throws Exception {
 		muatNomerKitab();
 		
-		Scanner sc = new Scanner(new FileInputStream("../Alkitab/publikasi/kjv-thml/kjv.proses"), "utf-8");
-		pw = new PrintWriter(new File("../Alkitab/publikasi/kjv-thml/kjv3_teks_bdb.txt"), "utf-8");
+		Scanner sc = new Scanner(new FileInputStream("./bahan/en-kjv-thml/kjv.proses"), "utf-8");
+		pw = new PrintWriter(new File("./bahan/en-kjv-thml/kjv3_teks_bdb.txt"), "utf-8");
 		
 		proses(sc);
 		pw.close();
@@ -24,7 +28,7 @@ public class Proses2 {
 	}
 
 	private void muatNomerKitab() throws Exception {
-		Scanner sc = new Scanner(new FileInputStream("../Alkitab/publikasi/kjv-thml/kjv.nomerkitab"), "utf-8");
+		Scanner sc = new Scanner(new FileInputStream("./bahan/en-kjv-thml/kjv.nomerkitab"), "utf-8");
 		nomerKitab = new TreeMap<String, Integer>();
 		while (sc.hasNext()) {
 			String k = sc.next();
