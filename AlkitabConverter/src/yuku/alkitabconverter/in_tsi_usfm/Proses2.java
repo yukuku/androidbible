@@ -3,6 +3,7 @@ package yuku.alkitabconverter.in_tsi_usfm;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,17 +16,33 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 
+import yuku.alkitab.yes.YesFile;
+import yuku.alkitab.yes.YesFile.InfoEdisi;
+import yuku.alkitab.yes.YesFile.InfoKitab;
+import yuku.alkitab.yes.YesFile.PerikopBlok;
 import yuku.alkitab.yes.YesFile.PerikopData;
 import yuku.alkitab.yes.YesFile.PerikopData.Entri;
+import yuku.alkitab.yes.YesFile.PerikopIndex;
+import yuku.alkitab.yes.YesFile.Teks;
 import yuku.alkitabconverter.bdb.BdbProses.Rec;
+import yuku.alkitabconverter.util.Ari;
+import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.util.TeksDb;
+import yuku.alkitabconverter.yes_common.YesCommon;
 
 public class Proses2 {
 	final SAXParserFactory factory = SAXParserFactory.newInstance();
 	
+	public static String INPUT_TEKS_ENCODING = "utf-8";
+	public static int INPUT_TEKS_ENCODING_YES = 2; // 1: ascii; 2: utf-8;
+	public static String INPUT_KITAB = "./bahan/in-tsi-usfm/in/in-tsi-usfm-kitab.txt";
+	static String OUTPUT_YES = "./bahan/in-tsi-usfm/out/in-tsi.yes";
+	public static int OUTPUT_ADA_PERIKOP = 1;
+	static String INFO_NAMA = "in-tsi";
+	static String INFO_JUDUL = "TSI";
+	static String INFO_KETERANGAN = "Terjemahan Sederhana Indonesia (TSI) diterbitkan oleh Pioneer Bible Translators. Teks TSI lengkap dengan catatan-catatan kaki dapat dibaca di m.bahasakita.net atau tsi.bahasakita.net. Tim penerjemah memohon Anda menulis masukan, usulan, atau komentar lain halaman di Facebook “tsi sederhana.” Anda boleh pesan buku-buku TSI yang lain melalui e-mail kepada tim.kita@bahasakita.net. Anda bebas juga untuk mencetak kitab-kitab TSI sesuai informasi yang terdapat di http://bahasakita.net.";
 	static String INPUT_TEKS_2 = "./bahan/in-tsi-usfm/mid/"; 
 
-	List<Rec> xrec = new ArrayList<Rec>();
 	TeksDb teksDb = new TeksDb();
 	StringBuilder misteri = new StringBuilder();
 	PerikopData perikopData = new PerikopData();
@@ -54,26 +71,29 @@ public class Proses2 {
 			parser.getXMLReader().setFeature("http://xml.org/sax/features/namespaces", true);
 			parser.parse(in, new Handler(Integer.parseInt(file.substring(0, 2))));
 			
-			System.out.println("file " + file + " done; now total rec: " + xrec.size());
+			System.out.println("file " + file + " done; now total rec: " + teksDb.size());
 		}
-		
-		teksDb.dump();
 		
 		System.out.println("MISTERI:");
 		System.out.println(misteri);
 		
 		// POST-PROCESS
-		for (Rec rec: xrec) {
-			// tambah @@ kalo perlu
-			if (rec.isi.contains("@") && !rec.isi.startsWith("@@")) {
-				rec.isi = "@@" + rec.isi;
-			}
-			
-			System.out.println(rec.kitab_1 + "\t" + rec.pasal_1 + "\t" + rec.ayat_1 + "\t" + rec.isi);
-		}
-		System.out.println("Total rec: " + xrec.size());
+		
+		teksDb.normalize();
+		
+		teksDb.dump();
 
 		////////// PROSES KE YES
+
+		List<Rec> xrec = teksDb.toRecList();
+		
+		final InfoEdisi infoEdisi = YesCommon.infoEdisi(INFO_NAMA, INFO_JUDUL, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES);
+		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
+		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
+		
+		YesFile file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(perikopData), new PerikopIndex(perikopData));
+		
+		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
 	}
 
 	public class Handler extends DefaultHandler2 {
@@ -89,6 +109,7 @@ public class Proses2 {
 		Object tujuanTulis_teks = new Object();
 		Object tujuanTulis_judulPerikop = new Object();
 		Object tujuanTulis_xref = new Object();
+		Object tujuanTulis_footnote = new Object();
 		
 		int sLevel = 0;
 		int menjorokTeks = -1; // -1 p; 1 2 3 adalah q level;
@@ -127,6 +148,8 @@ public class Proses2 {
 						}
 					}
 				}
+			} else if (alamat.endsWith("/f")) {
+				tujuanTulis.push(tujuanTulis_footnote);
 			} else if (alamat.endsWith("/p")) {
 				String sfm = attributes.getValue("sfm");
 				if (sfm != null) {
@@ -189,6 +212,8 @@ public class Proses2 {
 			String alamat = alamat();
 			if (alamat.endsWith("/p")) {
 				tujuanTulis.pop();
+			} else if (alamat.endsWith("/f")) {
+				tujuanTulis.pop();
 			} else if (alamat.endsWith("/s")) {
 				tujuanTulis.pop();
 			} else if (alamat.endsWith("/x")) {
@@ -219,8 +244,18 @@ public class Proses2 {
 				teksDb.append(kitab_0, pasal_1, ayat_1, chars.replace("\n", " ").replaceAll("\\s+", " "), menjorokTeks == -1? 0: menjorokTeks);
 			} else if (tujuan == tujuanTulis_judulPerikop) {
 				System.out.println("$tulis ke judulPerikop[level=" + sLevel + "] " + kitab_0 + " " + pasal_1 + " " + ayat_1 + " level " + sLevel + ":" + chars);
+				// masukin ke data perikop
+				String judul = chars.replace("\n", " ").replace("  ", " ").trim();
+				PerikopData.Entri entri = new PerikopData.Entri();
+				entri.ari = Ari.encode(kitab_0, pasal_1, ayat_1);
+				entri.blok = new PerikopData.Blok();
+				entri.blok.versi = 2;
+				entri.blok.judul = judul;
+				perikopData.xentri.add(entri);
 			} else if (tujuan == tujuanTulis_xref) {
 				System.out.println("$tulis ke xref " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
+			} else if (tujuan == tujuanTulis_footnote) {
+				System.out.println("$tulis ke footnote " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
 			}
 		}
 
