@@ -1,9 +1,8 @@
-package yuku.alkitabconverter.in_tb_usfm;
+package yuku.alkitabconverter.util;
 
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import yuku.alkitabconverter.util.Ari;
 
 public class TeksDb {
 	public static final String TAG = TeksDb.class.getSimpleName();
@@ -58,7 +57,7 @@ public class TeksDb {
 	public void dump() {
 		System.out.println("TOTAL teks: " + teks.size());
 		for (Entry<Integer, AyatState> e: teks.entrySet()) {
-			System.out.printf("%d\t%d\t%d\t%s%n", Ari.toKitab(e.getKey()), Ari.toPasal(e.getKey()), Ari.toAyat(e.getKey()), e.getValue().isi);
+			System.out.printf("%d\t%d\t%d\t%s%n", Ari.toKitab(e.getKey()) + 1, Ari.toPasal(e.getKey()), Ari.toAyat(e.getKey()), e.getValue().isi);
 		}
 	}
 }

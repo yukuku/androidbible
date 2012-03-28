@@ -1,4 +1,4 @@
-package yuku.alkitabconverter.in_tb_usfm;
+package yuku.alkitabconverter.in_tsi_usfm;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,7 +23,7 @@ import yuku.alkitabconverter.util.TeksDb;
 public class Proses2 {
 	final SAXParserFactory factory = SAXParserFactory.newInstance();
 	
-	static String INPUT_TEKS_2 = "./bahan/in-tb-usfm/mid/"; 
+	static String INPUT_TEKS_2 = "./bahan/in-tsi-usfm/mid/"; 
 
 	List<Rec> xrec = new ArrayList<Rec>();
 	TeksDb teksDb = new TeksDb();
@@ -46,14 +46,13 @@ public class Proses2 {
 		
 		Arrays.sort(files);
 		
-		int kitab_0 = 0;
 		for (String file : files) {
 			System.out.println("file " + file + " start;");
 			
 			FileInputStream in = new FileInputStream(new File(INPUT_TEKS_2, file));
 			SAXParser parser = factory.newSAXParser();
 			parser.getXMLReader().setFeature("http://xml.org/sax/features/namespaces", true);
-			parser.parse(in, new Handler(kitab_0++));
+			parser.parse(in, new Handler(Integer.parseInt(file.substring(0, 2))));
 			
 			System.out.println("file " + file + " done; now total rec: " + xrec.size());
 		}
@@ -109,12 +108,25 @@ public class Proses2 {
 			if (alamat.endsWith("/c")) {
 				String id = attributes.getValue("id");
 				System.out.println("#c:" + id);
-				pasal_1 = Integer.parseInt(id);
+				pasal_1 = Integer.parseInt(id.trim());
 				ayat_1 = 1; // reset ayat tiap ganti pasal
 			} else if (alamat.endsWith("/v")) {
 				String id = attributes.getValue("id");
 				System.out.println("#v:" + id);
-				ayat_1 = Integer.parseInt(id);
+				try {
+					ayat_1 = Integer.parseInt(id);
+				} catch (NumberFormatException e) {
+					System.out.println("// number format exception for: " + id);
+					// get until first non number
+					for (int pos = 0; pos < id.length(); pos++) {
+						if (!Character.isDigit(id.charAt(pos))) {
+							String s = id.substring(0, pos);
+							ayat_1 = Integer.parseInt(s); 
+							System.out.println("// number format exception simplified to: " + s);
+							break;
+						}
+					}
+				}
 			} else if (alamat.endsWith("/p")) {
 				String sfm = attributes.getValue("sfm");
 				if (sfm != null) {
@@ -127,6 +139,12 @@ public class Proses2 {
 					} else if (sfm.equals("mr")) {
 						tujuanTulis.push(tujuanTulis_judulPerikop);
 					} else if (sfm.equals("mi")) {
+						tujuanTulis.push(tujuanTulis_teks);
+						menjorokTeks = 2;
+					} else if (sfm.equals("pi")) { // Indented para
+						tujuanTulis.push(tujuanTulis_teks);
+						menjorokTeks = 1;
+					} else if (sfm.equals("pc")) { // Centered para
 						tujuanTulis.push(tujuanTulis_teks);
 						menjorokTeks = 2;
 					} else if (sfm.equals("m")) {
