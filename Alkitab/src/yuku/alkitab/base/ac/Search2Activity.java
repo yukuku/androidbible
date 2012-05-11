@@ -1,5 +1,6 @@
 package yuku.alkitab.base.ac;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -63,7 +64,7 @@ public class Search2Activity extends BaseActivity {
 	int warnaHilite;
 	SparseBooleanArray xkitabPosTerpilih = new SparseBooleanArray();
 
-	private class Api11_compat {
+	@TargetApi(11) private class Api11_compat {
 		SearchView searchView;
 
 		public void configureSearchView() {
