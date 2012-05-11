@@ -1,15 +1,24 @@
 package yuku.alkitab.base;
 
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.IntentFilter.MalformedMimeTypeException;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcAdapter.CreateNdefMessageCallback;
+import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
 import android.util.Log;
@@ -41,6 +50,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import yuku.alkitab.R;
 import yuku.alkitab.base.IsiActivity.FakeContextMenu.Item;
 import yuku.alkitab.base.ac.AboutActivity;
@@ -61,7 +73,6 @@ import yuku.alkitab.base.compat.Api8;
 import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.config.D;
 import yuku.alkitab.base.dialog.JenisBukmakDialog;
-import yuku.alkitab.base.dialog.JenisBukmakDialog.Listener;
 import yuku.alkitab.base.dialog.JenisCatatanDialog;
 import yuku.alkitab.base.dialog.JenisCatatanDialog.RefreshCallback;
 import yuku.alkitab.base.dialog.JenisStabiloDialog;
@@ -73,8 +84,8 @@ import yuku.alkitab.base.storage.Db.Bukmak2;
 import yuku.alkitab.base.storage.Preferences;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.Peloncat;
-import yuku.alkitab.base.util.Sejarah;
 import yuku.alkitab.base.util.Search2Engine.Query;
+import yuku.alkitab.base.util.Sejarah;
 import yuku.alkitab.base.widget.AyatAdapter;
 import yuku.alkitab.base.widget.CallbackSpan;
 
@@ -114,6 +125,7 @@ public class IsiActivity extends BaseActivity {
 	
 	AyatAdapter ayatAdapter_;
 	Sejarah sejarah;
+	NfcAdapter nfcAdapter;
 
 	//# penyimpanan state buat search2
 	Query search2_query = null;
@@ -237,6 +249,87 @@ public class IsiActivity extends BaseActivity {
 			new AlertDialog.Builder(this)
 			.setMessage("D.EBUG nyala!") //$NON-NLS-1$
 			.show();
+		}
+		
+		if (Build.VERSION.SDK_INT >= 14) {
+			nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
+			if (nfcAdapter != null) {
+				nfcAdapter.setNdefPushMessageCallback(new CreateNdefMessageCallback() {
+					@Override public NdefMessage createNdefMessage(NfcEvent event) {
+						JSONObject obj = new JSONObject();
+						try {
+							obj.put("ari", Ari.encode(S.kitabAktif.pos, IsiActivity.this.pasal_1, IsiActivity.this.getAyatBerdasarSkrol()));
+						} catch (JSONException e) { // won't happen
+						}
+						byte[] payload = obj.toString().getBytes();
+						NdefRecord record = new NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".getBytes(), new byte[0], payload);
+						NdefMessage msg = new NdefMessage(new NdefRecord[] { 
+							record,
+							NdefRecord.createApplicationRecord(getPackageName()),
+						});
+						return msg;
+					}
+				}, this);
+			}
+			
+			checkAndProcessBeamIntent(getIntent());
+		}
+	}
+	
+	@Override protected void onPause() {
+		super.onPause();
+		if (Build.VERSION.SDK_INT >= 14) {
+			if (nfcAdapter != null) nfcAdapter.disableForegroundDispatch(this);
+		}
+	}
+	
+	@Override protected void onResume() {
+		super.onResume();
+		if (Build.VERSION.SDK_INT >= 14) {
+			if (nfcAdapter != null) {
+				PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+				IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+			    try {
+			        ndef.addDataType("application/vnd.yuku.alkitab.nfc.beam");
+			    } catch (MalformedMimeTypeException e) {
+			        throw new RuntimeException("fail mime type", e);
+			    }
+			    IntentFilter[] intentFiltersArray = new IntentFilter[] {ndef, };
+			    nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, null);
+			}
+		}
+	}
+	
+	@Override protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		
+		if (Build.VERSION.SDK_INT >= 14) {
+			checkAndProcessBeamIntent(intent);
+		}
+	}
+
+	private void checkAndProcessBeamIntent(Intent intent) {
+		String action = intent.getAction();
+		if (U.equals(action, NfcAdapter.ACTION_NDEF_DISCOVERED)) {
+			Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+			// only one message sent during the beam
+			if (rawMsgs != null && rawMsgs.length > 0) {
+				NdefMessage msg = (NdefMessage) rawMsgs[0];
+				// record 0 contains the MIME type, record 1 is the AAR, if present
+				NdefRecord[] records = msg.getRecords();
+				if (records != null && records.length > 0) {
+					String json = new String(records[0].getPayload());
+					try {
+						JSONObject obj = new JSONObject(json);
+						int ari = obj.optInt("ari", -1);
+						if (ari != -1) {
+							IsiActivity.this.loncatKeAri(ari);
+						}
+					} catch (JSONException e) {
+						Log.e(TAG, "Malformed json from nfc", e);
+					}
+				}
+			}
 		}
 	}
 
@@ -609,7 +702,7 @@ public class IsiActivity extends BaseActivity {
 			final int ari = Ari.encode(S.kitabAktif.pos, this.pasal_1, ayatUtama_1);
 			
 			JenisBukmakDialog dialog = new JenisBukmakDialog(this, S.alamat(S.kitabAktif, this.pasal_1, ayatUtama_1), ari);
-			dialog.setListener(new Listener() {
+			dialog.setListener(new JenisBukmakDialog.Listener() {
 				@Override public void onOk() {
 					uncheckAll();
 					ayatAdapter_.muatAtributMap();
@@ -1277,7 +1370,7 @@ public class IsiActivity extends BaseActivity {
 				final int ari = Ari.encode(kitab_.pos, pasal_1, ayat_1);
 				String alamat = S.alamat(S.edisiAktif, ari);
 				JenisBukmakDialog dialog = new JenisBukmakDialog(IsiActivity.this, alamat, ari);
-				dialog.setListener(new Listener() {
+				dialog.setListener(new JenisBukmakDialog.Listener() {
 					@Override public void onOk() {
 						ayatAdapter_.muatAtributMap();
 					}
