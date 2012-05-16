@@ -132,6 +132,11 @@ public class IsiActivity extends BaseActivity {
 	IntArrayList search2_hasilCari = null;
 	int search2_posisiTerpilih = -1;
 	
+	// temporary states
+	Animation fadeInAnimation;
+	Animation fadeOutAnimation;
+	boolean showingContextButton = false;
+	
 	CallbackSpan.OnClickListener paralelOnClickListener = new CallbackSpan.OnClickListener() {
 		@Override
 		public void onClick(View widget, Object data) {
@@ -142,12 +147,6 @@ public class IsiActivity extends BaseActivity {
 		}
 	};
 	
-	AtributListener atributListener = new AtributListener();
-	
-	Animation fadeInAnimation;
-	Animation fadeOutAnimation;
-	boolean showingContextButton = false;
-
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
@@ -209,7 +208,7 @@ public class IsiActivity extends BaseActivity {
 		});
 		
 		// adapter
-		ayatAdapter_ = new AyatAdapter(this, paralelOnClickListener, atributListener);
+		ayatAdapter_ = new AyatAdapter(this, paralelOnClickListener, new AtributListener());
 		lsIsi.setAdapter(ayatAdapter_);
 		
 		// muat preferences_instan, dan atur renungan
@@ -1364,7 +1363,7 @@ public class IsiActivity extends BaseActivity {
 		return true;
 	}
 
-	public class AtributListener {
+	class AtributListener {
 		public void onClick(Kitab kitab_, int pasal_1, int ayat_1, int jenis) {
 			if (jenis == Bukmak2.jenis_bukmak) {
 				final int ari = Ari.encode(kitab_.pos, pasal_1, ayat_1);
