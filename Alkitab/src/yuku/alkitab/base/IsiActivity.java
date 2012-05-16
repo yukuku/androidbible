@@ -1174,12 +1174,7 @@ public class IsiActivity extends BaseActivity {
 	}
 
 	private void menuSearch2_click() {
-		Intent intent = new Intent(this, Search2Activity.class);
-		intent.putExtra(Search2Activity.EXTRA_query, search2_query);
-		intent.putExtra(Search2Activity.EXTRA_hasilCari, search2_hasilCari);
-		intent.putExtra(Search2Activity.EXTRA_posisiTerpilih, search2_posisiTerpilih);
-		
-		startActivityForResult(intent, REQCODE_search);
+		startActivityForResult(Search2Activity.createIntent(search2_query, search2_hasilCari, search2_posisiTerpilih, S.kitabAktif.pos), REQCODE_search);
 	}
 	
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1216,15 +1211,17 @@ public class IsiActivity extends BaseActivity {
 			}
 		} else if (requestCode == REQCODE_search) {
 			if (resultCode == RESULT_OK) {
-				int ari = data.getIntExtra(Search2Activity.EXTRA_ariTerpilih, 0);
-				if (ari != 0) { // 0 berarti ga ada apa2, karena ga ada pasal 0 ayat 0
-					loncatKeAri(ari);
-					sejarah.tambah(ari);
+				Search2Activity.Result result = Search2Activity.obtainResult(data);
+				if (result != null) {
+					if (result.ariTerpilih != -1) {
+						loncatKeAri(result.ariTerpilih);
+						sejarah.tambah(result.ariTerpilih);
+					}
+					
+					search2_query = result.query;
+					search2_hasilCari = result.hasilCari;
+					search2_posisiTerpilih = result.posisiTerpilih;
 				}
-				
-				search2_query = data.getParcelableExtra(Search2Activity.EXTRA_query);
-				search2_hasilCari = data.getParcelableExtra(Search2Activity.EXTRA_hasilCari);
-				search2_posisiTerpilih = data.getIntExtra(Search2Activity.EXTRA_posisiTerpilih, -1);
 			}
 		} else if (requestCode == REQCODE_renungan) {
 			if (data != null) {

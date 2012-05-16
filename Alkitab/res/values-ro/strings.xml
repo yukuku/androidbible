@@ -42,6 +42,7 @@
 	<string name="contoh_tulisan_titikdua">Exemplu text:</string>
 	<string name="perj_baru">Noul Test.</string>
 	<string name="perj_lama">Vechiul Test.</string>
+    <!-- untranslated --><string name="search_bookname_only">%s only</string>
 	<string name="ganti_v">Schimbă</string>
 	<string name="ayat_sebelumangka">Verset</string>
 	<string name="pasal_sebelumangka">Capitol</string>
