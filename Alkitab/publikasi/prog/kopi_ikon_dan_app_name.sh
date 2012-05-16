@@ -1,8 +1,8 @@
 # harus dijalanin dari dir root project!
 
+cp publikasi/img/$1_ikon/xhdpi.png res/drawable-xhdpi/ic_launcher.png
 cp publikasi/img/$1_ikon/hdpi.png res/drawable-hdpi/ic_launcher.png
 cp publikasi/img/$1_ikon/mdpi.png res/drawable-mdpi/ic_launcher.png
-cp publikasi/img/$1_ikon/ldpi.png res/drawable-ldpi/ic_launcher.png
 
 if [ $1 = 'tb' ] ; then
 	judul='Alkitab'
@@ -17,9 +17,9 @@ fi
 if [ $1 = 'nrkv' ] ; then
 	judul='Korean NRKV Bible'
 	bahasa_default='en'
+	convert kjv_ikon/xhdpi.png -gravity north -stroke '#000C' -strokewidth 2 -annotate 0 'DEMO' -stroke none -fill white -annotate 0 'DEMO' ../res/drawable-xhdpi/icon.png
 	convert kjv_ikon/hdpi.png -gravity north -stroke '#000C' -strokewidth 2 -annotate 0 'DEMO' -stroke none -fill white -annotate 0 'DEMO' ../res/drawable-hdpi/icon.png
 	convert kjv_ikon/mdpi.png -gravity north -stroke '#000C' -strokewidth 2 -annotate 0 'DEMO' -stroke none -fill white -annotate 0 'DEMO' ../res/drawable-mdpi/icon.png
-	convert kjv_ikon/ldpi.png -gravity north -stroke '#000C' -strokewidth 2 -annotate 0 'DEMO' -stroke none -fill white -annotate 0 'DEMO' ../res/drawable-ldpi/icon.png
 fi
 
 ######################## Tulis app name
