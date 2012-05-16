@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.nfc.NdefMessage;
@@ -136,6 +137,7 @@ public class IsiActivity extends BaseActivity {
 	Animation fadeInAnimation;
 	Animation fadeOutAnimation;
 	boolean showingContextButton = false;
+	Boolean hasEsvsbAsal;
 	
 	CallbackSpan.OnClickListener paralelOnClickListener = new CallbackSpan.OnClickListener() {
 		@Override
@@ -146,7 +148,7 @@ public class IsiActivity extends BaseActivity {
 			}
 		}
 	};
-	
+
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
@@ -615,12 +617,13 @@ public class IsiActivity extends BaseActivity {
 		Item menuTambahCatatan;
 		Item menuTambahStabilo;
 		Item menuBagikan;
-		Item[] items;
+		Item menuEsvsbasal;
+		List<Item> items;
 		
 		String[] getLabels() {
-			String[] res = new String[items.length];
-			for (int i = 0; i < items.length; i++) {
-				res[i] = items[i].label;
+			String[] res = new String[items.size()];
+			for (int i = 0, len = items.size(); i < len; i++) {
+				res[i] = items.get(i).label;
 			}
 			return res;
 		}
@@ -633,13 +636,34 @@ public class IsiActivity extends BaseActivity {
 		res.menuTambahCatatan = new Item(getString(R.string.tulis_catatan));
 		res.menuTambahStabilo = new Item(getString(R.string.highlight_stabilo));
 		res.menuBagikan = new Item(getString(R.string.bagikan));
-		res.items = new Item[] {
-			res.menuSalinAyat,
-			res.menuTambahBukmak,
-			res.menuTambahCatatan,
-			res.menuTambahStabilo,
-			res.menuBagikan,
-		};
+		
+		/* The following "esvsbasal" thing is a personal thing by yuku that doesn't matter to anyone else. 
+		 * Please ignore it and leave it intact. */
+		if (hasEsvsbAsal == null) {
+			try {
+				getPackageManager().getApplicationInfo("yuku.esvsbasal", 0);
+				hasEsvsbAsal = true;
+			} catch (NameNotFoundException e) {
+				hasEsvsbAsal = false;
+			}
+		}
+		
+		if (hasEsvsbAsal) {
+			res.menuEsvsbasal = new Item("ESV Study Bible");
+		}
+		
+		ArrayList<Item> items = new ArrayList<Item>(6);
+		items.add(res.menuSalinAyat);
+		items.add(res.menuTambahBukmak);
+		items.add(res.menuTambahCatatan);
+		items.add(res.menuTambahStabilo);
+		items.add(res.menuBagikan);
+		
+		if (hasEsvsbAsal) {
+			items.add(res.menuEsvsbasal);
+		}
+		res.items = items;
+		
 		return res;
 	};
 	
@@ -655,8 +679,8 @@ public class IsiActivity extends BaseActivity {
 		.setTitle(alamatDariAyatTerpilih(terpilih))
 		.setItems(menu.getLabels(), new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
-				if (which >= 0 && which < menu.items.length) {
-					onFakeContextMenuSelected(menu, menu.items[which]);
+				if (which >= 0 && which < menu.items.size()) {
+					onFakeContextMenuSelected(menu, menu.items.get(which));
 				}
 			}
 		})
@@ -761,6 +785,16 @@ public class IsiActivity extends BaseActivity {
 			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, alamat)), REQCODE_bagikan);
 
 			uncheckAll();
+		} else if (item == menu.menuEsvsbasal) {
+			final int ari = Ari.encode(S.kitabAktif.pos, this.pasal_1, ayatUtama_1);
+
+			try {
+				Intent intent = new Intent("yuku.esvsbasal.action.GOTO");
+				intent.putExtra("ari", ari);
+				startActivity(intent);
+			} catch (Exception e) {
+				Log.e(TAG, "ESVSB starting", e);
+			}
 		}
 	}
 
@@ -1363,7 +1397,7 @@ public class IsiActivity extends BaseActivity {
 		return true;
 	}
 
-	class AtributListener {
+	public class AtributListener {
 		public void onClick(Kitab kitab_, int pasal_1, int ayat_1, int jenis) {
 			if (jenis == Bukmak2.jenis_bukmak) {
 				final int ari = Ari.encode(kitab_.pos, pasal_1, ayat_1);
