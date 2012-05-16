@@ -206,7 +206,7 @@ public class Search2Activity extends BaseActivity {
 			
 			kitabPosTerbuka = intent.getIntExtra(EXTRA_kitabPosTerbuka, -1);
 			Kitab kitab = S.edisiAktif.getKitab(kitabPosTerbuka);
-			cFilterKitabSaja.setText(kitab.judul + " saja");
+			cFilterKitabSaja.setText(getString(R.string.search_bookname_only, kitab.judul));
 			
 			if (query != null) {
 				if (!useSearchView()) {

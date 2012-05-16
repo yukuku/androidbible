@@ -42,6 +42,7 @@
     <string name="contoh_tulisan_titikdua">Sample text:</string>
     <string name="perj_baru">New Test.</string>
     <string name="perj_lama">Old Test.</string>
+    <string name="search_bookname_only">%s only</string>
     <string name="ganti_v">Switch</string>
     <string name="ayat_sebelumangka">Verse</string>
     <string name="pasal_sebelumangka">Chapter</string>

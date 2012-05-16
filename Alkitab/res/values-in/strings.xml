@@ -42,6 +42,7 @@
     <string name="contoh_tulisan_titikdua">Contoh tulisan:</string>
     <string name="perj_baru">Perj. Baru</string>
     <string name="perj_lama">Perj. Lama</string>
+    <string name="search_bookname_only">%s saja</string>
     <string name="ganti_v">Ganti</string>
     <string name="ayat_sebelumangka">Ayat</string>
     <string name="pasal_sebelumangka">Pasal</string>
