@@ -38,6 +38,7 @@ public class AyatAdapter extends BaseAdapter {
 	final Context context_;
 	final CallbackSpan.OnClickListener paralelListener_;
 	final IsiActivity.AtributListener atributListener_;
+	final float density_;
 	
 	//# field setData
 	Kitab kitab_;
@@ -59,6 +60,7 @@ public class AyatAdapter extends BaseAdapter {
 		context_ = context;
 		paralelListener_ = paralelListener;
 		atributListener_ = atributListener;
+		density_ = context.getResources().getDisplayMetrics().density;
 	}
 	
 	public synchronized void setData(Kitab kitab, int pasal_1, String[] xayat, int[] perikop_xari, Blok[] perikop_xblok, int nblok) {
@@ -197,7 +199,7 @@ public class AyatAdapter extends BaseAdapter {
 			if (position == 0 || penunjukKotak_[position-1] < 0) {
 				lJudul.setPadding(0, 0, 0, 0);
 			} else {
-				lJudul.setPadding(0, context_.getResources().getDimensionPixelOffset(R.dimen.marginAtasJudulPerikop), 0, 0);
+				lJudul.setPadding(0, (int) (S.penerapan.ukuranHuruf2dp * density_), 0, 0);
 			}
 			
 			// gonekan paralel kalo ga ada

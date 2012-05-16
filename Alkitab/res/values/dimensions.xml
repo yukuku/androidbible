@@ -6,7 +6,7 @@
 	<dimen name="menjorokDua">38dp</dimen>
 	<dimen name="menjorokTiga">54dp</dimen>
 	<dimen name="menjorokEmpat">70dp</dimen>
-	<dimen name="menjorokExtra">10dp</dimen> <!-- khusus untuk nomer ayat >= 100 -->
 	
-	<dimen name="marginAtasJudulPerikop">18dp</dimen>
+	 <!-- khusus untuk nomer ayat >= 100 -->
+	<dimen name="menjorokExtra">10dp</dimen>
 </resources>
