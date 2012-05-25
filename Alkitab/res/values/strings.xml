@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="stabilo_judul">Highlight</string>
     <string name="highlight_stabilo">Highlight</string>
     <string name="belum_ada_sejarah">No history yet.</string>
     <string name="donasi_tombol_gamau">Not now</string>
@@ -198,7 +197,6 @@
     <string name="change_label_color">Change label color</string>
     <string name="rename_label">Rename label</string>
     <string name="delete_label">Delete label</string>
-    <string name="tutup">Close</string>
     <string name="please_wait_titik3">Please wait…</string>
     <string name="juga_hapus_file_datanya_file">Also delete the data file?\nFile: %s</string>
     <string name="teks_about">Developed by [b]yuku[/b], 2009-2012[br/]

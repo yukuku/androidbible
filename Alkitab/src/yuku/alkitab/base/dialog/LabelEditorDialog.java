@@ -1,18 +1,24 @@
 package yuku.alkitab.base.dialog;
 
-import android.app.*;
-import android.content.*;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.text.*;
-import android.view.*;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.*;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 
-import java.util.*;
+import java.util.List;
 
-import yuku.alkitab.base.*;
-import yuku.alkitab.base.model.*;
-import yuku.devoxx.flowlayout.*;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.model.Label;
+import yuku.devoxx.flowlayout.R;
 
 public class LabelEditorDialog {
 	public static final String TAG = LabelEditorDialog.class.getSimpleName();
@@ -39,7 +45,7 @@ public class LabelEditorDialog {
 		.setNegativeButton(R.string.cancel, null)
 		.create();
 		
-		dialog.getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+		dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 		dialog.show();
 		

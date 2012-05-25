@@ -1,5 +1,6 @@
 package yuku.alkitab.base;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
@@ -253,51 +254,61 @@ public class IsiActivity extends BaseActivity {
 		}
 		
 		if (Build.VERSION.SDK_INT >= 14) {
-			nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
-			if (nfcAdapter != null) {
-				nfcAdapter.setNdefPushMessageCallback(new CreateNdefMessageCallback() {
-					@Override public NdefMessage createNdefMessage(NfcEvent event) {
-						JSONObject obj = new JSONObject();
-						try {
-							obj.put("ari", Ari.encode(S.kitabAktif.pos, IsiActivity.this.pasal_1, IsiActivity.this.getAyatBerdasarSkrol()));
-						} catch (JSONException e) { // won't happen
-						}
-						byte[] payload = obj.toString().getBytes();
-						NdefRecord record = new NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".getBytes(), new byte[0], payload);
-						NdefMessage msg = new NdefMessage(new NdefRecord[] { 
-							record,
-							NdefRecord.createApplicationRecord(getPackageName()),
-						});
-						return msg;
-					}
-				}, this);
-			}
-			
+			initNfcIfAvailable();
 			checkAndProcessBeamIntent(getIntent());
 		}
 	}
 	
+	@TargetApi(14) private void initNfcIfAvailable() {
+		nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
+		if (nfcAdapter != null) {
+			nfcAdapter.setNdefPushMessageCallback(new CreateNdefMessageCallback() {
+				@Override public NdefMessage createNdefMessage(NfcEvent event) {
+					JSONObject obj = new JSONObject();
+					try {
+						obj.put("ari", Ari.encode(S.kitabAktif.pos, IsiActivity.this.pasal_1, IsiActivity.this.getAyatBerdasarSkrol()));
+					} catch (JSONException e) { // won't happen
+					}
+					byte[] payload = obj.toString().getBytes();
+					NdefRecord record = new NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".getBytes(), new byte[0], payload);
+					NdefMessage msg = new NdefMessage(new NdefRecord[] { 
+						record,
+						NdefRecord.createApplicationRecord(getPackageName()),
+					});
+					return msg;
+				}
+			}, this);
+		}	}
+
 	@Override protected void onPause() {
 		super.onPause();
 		if (Build.VERSION.SDK_INT >= 14) {
-			if (nfcAdapter != null) nfcAdapter.disableForegroundDispatch(this);
+			disableNfcForegroundDispatchIfAvailable();
 		}
+	}
+
+	@TargetApi(14) private void disableNfcForegroundDispatchIfAvailable() {
+		if (nfcAdapter != null) nfcAdapter.disableForegroundDispatch(this);
 	}
 	
 	@Override protected void onResume() {
 		super.onResume();
 		if (Build.VERSION.SDK_INT >= 14) {
-			if (nfcAdapter != null) {
-				PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-				IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
-			    try {
-			        ndef.addDataType("application/vnd.yuku.alkitab.nfc.beam");
-			    } catch (MalformedMimeTypeException e) {
-			        throw new RuntimeException("fail mime type", e);
-			    }
-			    IntentFilter[] intentFiltersArray = new IntentFilter[] {ndef, };
-			    nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, null);
+			enableNfcForegroundDispatchIfAvailable();
+		}
+	}
+
+	@TargetApi(14) private void enableNfcForegroundDispatchIfAvailable() {
+		if (nfcAdapter != null) {
+			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+			IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+			try {
+			    ndef.addDataType("application/vnd.yuku.alkitab.nfc.beam");
+			} catch (MalformedMimeTypeException e) {
+			    throw new RuntimeException("fail mime type", e);
 			}
+			IntentFilter[] intentFiltersArray = new IntentFilter[] {ndef, };
+			nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, null);
 		}
 	}
 	
@@ -309,7 +320,7 @@ public class IsiActivity extends BaseActivity {
 		}
 	}
 
-	private void checkAndProcessBeamIntent(Intent intent) {
+	@TargetApi(14) private void checkAndProcessBeamIntent(Intent intent) {
 		String action = intent.getAction();
 		if (U.equals(action, NfcAdapter.ACTION_NDEF_DISCOVERED)) {
 			Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);

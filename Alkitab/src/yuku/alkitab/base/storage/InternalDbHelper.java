@@ -1,12 +1,15 @@
 package yuku.alkitab.base.storage;
 
-import android.content.*;
-import android.database.*;
-import android.database.sqlite.*;
-import android.util.*;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
-import yuku.alkitab.base.*;
-import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.storage.Db.Bukmak;
 import yuku.alkitab.base.storage.Db.Bukmak2;
 
@@ -204,7 +207,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		    	int ari = Ari.encode(kitab, pasal, ayat);
 		    	
 		    	cv.put(Bukmak2.ari, ari);
-		    	Integer waktu = new Integer(cursor.getString(kolom_waktuTambah));
+		    	Integer waktu = Integer.valueOf(cursor.getString(kolom_waktuTambah));
 		    	cv.put(Bukmak2.waktuTambah, waktu);
 		    	cv.put(Bukmak2.waktuUbah, waktu);
 				db.insertOrThrow(Db.TABEL_Bukmak2, null, cv);

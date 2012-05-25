@@ -11,12 +11,12 @@ import android.widget.EditText;
 
 import java.util.Date;
 
+import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Bukmak2;
 import yuku.alkitab.base.model.Kitab;
 import yuku.alkitab.base.storage.Db;
-import yuku.alkitab.R;
 
 public class JenisCatatanDialog {
 	final Context context;
@@ -89,7 +89,7 @@ public class JenisCatatanDialog {
 			tCatatan.setText(bukmak.tulisan);
 		}
 		
-		dialog.getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+		dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 		dialog.show();
 	}

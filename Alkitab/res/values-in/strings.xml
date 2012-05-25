@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="stabilo_judul">Sorot</string>
     <string name="highlight_stabilo">Sorot</string>
     <string name="belum_ada_sejarah">Belum ada sejarah.</string>
     <string name="donasi_tombol_gamau">Lain kali</string>
@@ -198,7 +197,6 @@
     <string name="change_label_color">Ganti warna label</string>
     <string name="rename_label">Ganti nama label</string>
     <string name="delete_label">Hapus label</string>
-    <string name="tutup">Tutup</string>
     <string name="please_wait_titik3">Harap tunggu…</string>
     <string name="juga_hapus_file_datanya_file">Juga hapus file datanya?\nFile: %s</string>
     <string name="teks_about">
