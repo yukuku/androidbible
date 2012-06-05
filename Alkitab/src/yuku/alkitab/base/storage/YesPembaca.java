@@ -207,11 +207,10 @@ public class YesPembaca extends Pembaca {
 					}
 				}
 				
-				if (kosong) {
-					res[k.pos] = null;
-				} else if (k.pos < 0 || k.pos >= res.length) {
-					throw new RuntimeException("ada kitabPos yang sangat besar: " + k.pos);
-				} else {
+				if (!kosong) {
+					if (k.pos < 0 || k.pos >= res.length) {
+						throw new RuntimeException("ada kitabPos yang sangat besar: " + k.pos);
+					}
 					res[k.pos] = k;
 				}
 			}
@@ -281,7 +280,7 @@ public class YesPembaca extends Pembaca {
 		}
 	}
 
-	static String readNamaSeksi(RandomAccessFile f) throws IOException {
+	@SuppressWarnings("deprecation") static String readNamaSeksi(RandomAccessFile f) throws IOException {
 		byte[] buf = new byte[12];
 		int read = f.read(buf);
 		return read <= 0? null: new String(buf, 0);

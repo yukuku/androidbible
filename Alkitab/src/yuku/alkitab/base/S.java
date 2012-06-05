@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Locale;
 
-import yuku.alkitab.beta.R;
+import yuku.alkitab.R;
 import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Edisi;
@@ -38,6 +38,7 @@ public class S {
 		public static float ukuranHuruf2dp;
 		
 		public static Typeface jenisHuruf;
+		public static float lineSpacingMult;
 		public static int tebalHuruf;
 		
 		public static int warnaHuruf; 
@@ -52,6 +53,7 @@ public class S {
 		public static int jarakMenjorokTiga;
 		public static int jarakMenjorokEmpat;
 		public static int jarakMenjorokExtra;
+
 	}
 	
 	/**
@@ -107,6 +109,7 @@ public class S {
 		//# atur jenis huruf, termasuk boldnya
 		{
 			penerapan.jenisHuruf = FontManager.typeface(Preferences.getString(R.string.pref_jenisHuruf_key, null));
+			penerapan.lineSpacingMult = Preferences.getFloat(R.string.pref_lineSpacingMult_key, 1.f);
 			penerapan.tebalHuruf = Preferences.getBoolean(R.string.pref_boldHuruf_key, R.bool.pref_boldHuruf_default)? Typeface.BOLD: Typeface.NORMAL;
 		}
 		
@@ -229,6 +232,10 @@ public class S {
 	public static CharSequence alamat(Kitab kitab, int pasal_1, IntArrayList xayat_1) {
 		StringBuilder sb = new StringBuilder(kitab == null? "[?]": kitab.judul); //$NON-NLS-1$
 		sb.append(' ').append(pasal_1);
+		if (xayat_1 == null || xayat_1.size() == 0) {
+			return sb;
+		}
+		sb.append(':');
 		tulisAyatRange(xayat_1, sb);
 		return sb;
 	}
@@ -249,10 +256,10 @@ public class S {
 			} else {
 				// abis loncat
 				if (awalAyat_1 != 0) {
-					sb.append(origLen == sb.length()? ":": ", ").append(awalAyat_1).append('-').append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
+					sb.append(origLen == sb.length()? "": ", ").append(awalAyat_1).append('-').append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
 					awalAyat_1 = 0;
 				} else {
-					sb.append(origLen == sb.length()? ":": ", ").append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
+					sb.append(origLen == sb.length()? "": ", ").append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			
@@ -261,10 +268,10 @@ public class S {
 		
 		// penghabisan
 		if (awalAyat_1 != 0) {
-			sb.append(origLen == sb.length()? ":": ", ").append(awalAyat_1).append('-').append(lastAyat_1);  //$NON-NLS-1$//$NON-NLS-2$
+			sb.append(origLen == sb.length()? "": ", ").append(awalAyat_1).append('-').append(lastAyat_1);  //$NON-NLS-1$//$NON-NLS-2$
 			awalAyat_1 = 0; // ga perlu, tapi biar konsisten aja dengan atas
 		} else {
-			sb.append(origLen == sb.length()? ":": ", ").append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
+			sb.append(origLen == sb.length()? "": ", ").append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

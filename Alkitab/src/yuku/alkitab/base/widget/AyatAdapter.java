@@ -4,13 +4,11 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.method.LinkMovementMethod;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
-import yuku.alkitab.beta.R;
+import yuku.alkitab.R;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.S.penerapan;
@@ -38,6 +36,7 @@ public class AyatAdapter extends BaseAdapter {
 	final Context context_;
 	final CallbackSpan.OnClickListener paralelListener_;
 	final IsiActivity.AtributListener atributListener_;
+	final float density_;
 	
 	//# field setData
 	Kitab kitab_;
@@ -59,6 +58,7 @@ public class AyatAdapter extends BaseAdapter {
 		context_ = context;
 		paralelListener_ = paralelListener;
 		atributListener_ = atributListener;
+		density_ = context.getResources().getDisplayMetrics().density;
 	}
 	
 	public synchronized void setData(Kitab kitab, int pasal_1, String[] xayat, int[] perikop_xari, Blok[] perikop_xblok, int nblok) {
@@ -188,17 +188,16 @@ public class AyatAdapter extends BaseAdapter {
 			TextView lJudul = (TextView) res.findViewById(R.id.lJudul);
 			TextView lXparalel = (TextView) res.findViewById(R.id.lXparalel);
 			
-			lJudul.setTypeface(S.penerapan.jenisHuruf, Typeface.BOLD);
-			lJudul.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp);
 			lJudul.setText(blok.judul);
-			lJudul.setTextColor(S.penerapan.warnaHuruf);
 			
 			// matikan padding atas kalau position == 0 ATAU sebelum ini juga judul perikop
 			if (position == 0 || penunjukKotak_[position-1] < 0) {
 				lJudul.setPadding(0, 0, 0, 0);
 			} else {
-				lJudul.setPadding(0, context_.getResources().getDimensionPixelOffset(R.dimen.marginAtasJudulPerikop), 0, 0);
+				lJudul.setPadding(0, (int) (S.penerapan.ukuranHuruf2dp * density_), 0, 0);
 			}
+			
+			PengaturTampilan.aturTampilanTeksJudulPerikop(lJudul);
 			
 			// gonekan paralel kalo ga ada
 			if (blok.xparalel.length == 0) {
@@ -231,18 +230,14 @@ public class AyatAdapter extends BaseAdapter {
 				sb.append(')');
 				len += 1;
 				
-				lXparalel.setTypeface(S.penerapan.jenisHuruf);
-				lXparalel.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp * (14.f / 17.f));
 				lXparalel.setText(sb, BufferType.SPANNABLE);
-				lXparalel.setMovementMethod(LinkMovementMethod.getInstance());
-				lXparalel.setTextColor(S.penerapan.warnaHuruf);
-				lXparalel.setLinkTextColor(S.penerapan.warnaHuruf);
+				PengaturTampilan.aturTampilanTeksParalelPerikop(lXparalel);
 			}
 			
 			return res;
 		}
 	}
-	
+
 	void pasangClickHandlerUntukBukmak(View imgBukmak, final int pasal_1, final int ayat_1) {
 		imgBukmak.setOnClickListener(new View.OnClickListener() { 
 			@Override public void onClick(View v) {

@@ -1,9 +1,10 @@
 package yuku.alkitab.base.compat;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 
-public class Api11 {
+@TargetApi(11) public class Api11 {
 	public static final String TAG = Api11.class.getSimpleName();
 	
 	public static int getTheme_Holo() {

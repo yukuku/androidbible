@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import yuku.alkitab.beta.R;
+import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -359,7 +359,7 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 	private static final int[] NAMA_HARI_RESID = {R.string.hari_minggu, R.string.hari_senin, R.string.hari_selasa, R.string.hari_rabu, R.string.hari_kamis, R.string.hari_jumat, R.string.hari_sabtu};
 
 	private String namaHari(Date date) {
-		int day = date.getDay();
+		@SuppressWarnings("deprecation") int day = date.getDay();
 		return getString(NAMA_HARI_RESID[day]);
 	}
 

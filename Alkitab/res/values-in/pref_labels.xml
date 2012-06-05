@@ -28,4 +28,5 @@
     <string name="pref_penampilan_layar">Penampilan Layar</string>
     <string name="pref_tombolVolumeBuatPindah_title">Berpindah dengan Volume</string>
     <string name="pref_tombolVolumeBuatPindah_summary">Tombol volume dapat digunakan untuk berpindah ayat atau pasal.</string>
+    <string name="pref_lineSpacingMult_title">Jarak Antarbaris</string>
 </resources>

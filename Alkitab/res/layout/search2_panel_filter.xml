@@ -9,23 +9,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_centerVertical="true"
         android:checked="true"
-        android:text="@string/perj_lama"
-        android:textColor="#000" />
+        android:text="@string/perj_lama"/>
 
     <CheckBox
         android:id="@+id/cFilterBaru"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/cFilterLama"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/cFilterLama"
         android:checked="true"
-        android:text="@string/perj_baru"
-        android:textColor="#000" />
+        android:text="@string/perj_baru"/>
 
     <ImageButton
         android:id="@+id/bEditFilter"
@@ -44,13 +38,17 @@
         android:id="@+id/tFilterRumit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/cFilterLama"
         android:layout_toLeftOf="@+id/bEditFilter"
-        android:layout_toRightOf="@+id/cFilterBaru"
         android:ellipsize="end"
         android:maxLines="2"
-        android:text="Kejadian, Keluaran, Imamat, Bilangan, Ulangan, Matius, Markus, Lukas, Yohanes, dst"
-        android:textColor="#000" />
+        android:text="Kejadian, Keluaran, Imamat, Bilangan, Ulangan, Matius, Markus, Lukas, Yohanes, dst" android:paddingTop="8dp" android:paddingBottom="8dp" android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <CheckBox
+        android:id="@+id/cFilterKitabSaja"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="(Nama kitab) saja" android:layout_below="@+id/cFilterLama"/>
 
 </RelativeLayout>

@@ -24,7 +24,7 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.Kitab;
 import yuku.alkitab.base.storage.Preferences;
-import yuku.alkitab.beta.R;
+import yuku.alkitab.R;
 
 public class MenujuActivity extends BaseActivity {
 	public static final String TAG = MenujuActivity.class.getSimpleName();

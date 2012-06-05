@@ -3,6 +3,8 @@ package yuku.alkitab.base.pdbconvert;
 import android.content.Context;
 import android.util.Log;
 
+import gnu.trove.map.hash.TIntIntHashMap;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -10,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import yuku.alkitab.beta.R;
+import yuku.alkitab.R;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.config.D;
 import yuku.alkitab.base.model.Ari;
@@ -34,8 +36,7 @@ public class ConvertPdbToYes {
 
 	BiblePlusPDB pdb;
 
-	Kitab[] xkitab_;
-	int[] kitabPosToBookPosMap_;
+	TIntIntHashMap kitabPosToBookPosMap_;
 	int nblokPerikop_ = 0;
 	ByteArrayOutputStream nantinyaPerikopBlokBaos_ = new ByteArrayOutputStream();
 	BintexWriter nantinyaPerikopBlok_ = new BintexWriter(nantinyaPerikopBlokBaos_);
@@ -107,22 +108,18 @@ public class ConvertPdbToYes {
 			int nbook = pdb.getBookCount();
 			Log.d(TAG, "getBookCount = " + nbook); //$NON-NLS-1$
 			
-			// tempatin kitab2 di posisi yang betul, index array xkitab
 			// 0 = kejadian
 			// 65 = wahyu
 			// 66 sampe 87, terdaftar dalam PdbNumberToAriMapping
 			// selain itu, belum ada di mana2, maka kita buang aja dan kasih warning.
 			progress(30, context.getString(R.string.cp_analyzing_available_books));
 			{
-				int maxKitabPos = 0;
 				for (int bookPos = 0; bookPos < nbook; bookPos++) {
 					BookInfo bookInfo = pdb.getBook(bookPos);
 					bookInfo.openBook();
 					int bookNumber = bookInfo.getBookNumber();
 					int kitabPos = PdbNumberToAriMapping.pdbNumberToAriKitab(bookNumber);
-					if (kitabPos >= 0) {
-						if (kitabPos > maxKitabPos) maxKitabPos = kitabPos;
-					} else {
+					if (kitabPos < 0) {
 						Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL"); //$NON-NLS-1$ //$NON-NLS-2$
 						if (res.wronglyConvertedBookNames == null) {
 							res.wronglyConvertedBookNames = new ArrayList<String>();
@@ -130,10 +127,7 @@ public class ConvertPdbToYes {
 						res.wronglyConvertedBookNames.add(bookInfo.getFullName() + " (" + bookNumber + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
-				// panjang array xkitab_ adalah menurut maxKitabPos
-				xkitab_ = new Kitab[maxKitabPos + 1];
-				kitabPosToBookPosMap_ = new int[maxKitabPos + 1];
-				for (int i = 0; i < kitabPosToBookPosMap_.length; i++) kitabPosToBookPosMap_[i] = -1;
+				kitabPosToBookPosMap_ = new TIntIntHashMap();
 			}
 			
 			progress(40, context.getString(R.string.cp_mapping_books));
@@ -146,24 +140,28 @@ public class ConvertPdbToYes {
 				if (kitabPos < 0) {
 					Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
-					if (kitabPosToBookPosMap_[kitabPos] != -1) {
-						// just a warning
+					if (kitabPosToBookPosMap_.containsKey(kitabPos)) {
+						// just a warning of duplicate
 						if (res.wronglyConvertedBookNames == null) {
 							res.wronglyConvertedBookNames = new ArrayList<String>();
 						}
 						res.wronglyConvertedBookNames.add(bookInfo.getFullName() + " (" + bookNumber + "): duplicate");
 					}
-					kitabPosToBookPosMap_[kitabPos] = bookPos;
+					kitabPosToBookPosMap_.put(kitabPos, bookPos);
 				}
 			}
 			
-			Log.d(TAG, "kitabPosToBookPosMap_ (len " + kitabPosToBookPosMap_.length + ") = " + Arrays.toString(kitabPosToBookPosMap_)); //$NON-NLS-1$ //$NON-NLS-2$
+			Log.d(TAG, "kitabPosToBookPosMap_ (size " + kitabPosToBookPosMap_.size() + ") = " + kitabPosToBookPosMap_.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 
 			Log.d(TAG, "============ baca daftar kitab selesai"); //$NON-NLS-1$
 			
+
+			final int[] xkitabPos = kitabPosToBookPosMap_.keys();
+			Arrays.sort(xkitabPos);
+			
 			// sekaligus bangun perikop blok dan perikop index.
 			progress(100, context.getString(R.string.cp_constructing_book_info));
-			final InfoKitab infoKitab = getInfoKitab(context, 100, params.includeAddlTitle);
+			final InfoKitab infoKitab = getInfoKitab(context, 100, params.includeAddlTitle, xkitabPos);
 			
 			progress(200, context.getString(R.string.cp_constructing_version_info));
 			final InfoEdisi infoEdisi = getInfoEdisi();
@@ -211,7 +209,7 @@ public class ConvertPdbToYes {
 				}
 				xseksi[xseksi.length - 1] = new SeksiBernama("teks________") { //$NON-NLS-1$
 					@Override public IsiSeksi isi() {
-						return new LazyTeks(context, 800);
+						return new LazyTeks(context, 800, xkitabPos);
 					}
 				};
 			}};
@@ -239,23 +237,23 @@ public class ConvertPdbToYes {
 			nama = pdb.getVersionName();
 			judul = pdb.getVersionName();
 			keterangan = pdb.getVersionInfo();
-			nkitab = xkitab_.length; // INGAT: BISA BOLONG_BOLONG
+			nkitab = kitabPosToBookPosMap_.size();
 			perikopAda = nblokPerikop_ == 0? 0: 1;
 			encoding = 2; // utf-8
 		}};
 	}
 
-	private InfoKitab getInfoKitab(final Context context, int baseProgress, boolean includeAddlTitle) throws Exception {
+	private InfoKitab getInfoKitab(final Context context, int baseProgress, boolean includeAddlTitle, int[] sortedXkitabPos) throws Exception {
+		// no nulls allowed
+		final List<Kitab> res = new ArrayList<Kitab>();
+		
 		// untuk offset teks dari awal seksi teks
 		int offsetTotal = 0;
 		// untuk offset teks dari awal kitab
 		int offsetLewat = 0;
 		
-		for (int kitabPos = 0; kitabPos < xkitab_.length; kitabPos++) {
-			int bookPos = kitabPosToBookPosMap_[kitabPos];
-			if (bookPos == -1) {
-				continue;
-			}
+		for (int kitabPos: sortedXkitabPos) {
+			int bookPos = kitabPosToBookPosMap_.get(kitabPos);
 			BookInfo bookInfo = pdb.getBook(bookPos);
 			bookInfo.openBook();
 			
@@ -293,15 +291,19 @@ public class ConvertPdbToYes {
 			}
 			Log.d(TAG, "kitab " + k.judul + " (bookNumber=" + bookInfo.getBookNumber() + ", kitabPos=" + kitabPos + ") pasal_offset: " + Arrays.toString(k.pasal_offset));  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
-			xkitab_[kitabPos] = k;
+			res.add(k);
 			
 			//# reset
 			offsetTotal += offsetLewat;
 			offsetLewat = 0;
 		}
 		
+		if (res.size() != kitabPosToBookPosMap_.size()) {
+			throw new RuntimeException("Some internal error, res size != kitabPosToBookPos size");
+		}
+		
 		return new InfoKitab() {{
-			this.xkitab = xkitab_;
+			this.xkitab = res.toArray(new Kitab[0]);
 		}};
 	}
 
@@ -394,19 +396,18 @@ public class ConvertPdbToYes {
 	public class LazyTeks implements IsiSeksi {
 		private final int baseProgress;
 		private final Context context;
+		private final int[] sortedXkitabPos;
 		
-		public LazyTeks(Context context, int baseProgress) {
+		public LazyTeks(Context context, int baseProgress, int[] sortedXkitabPos) {
 			this.context = context;
 			this.baseProgress = baseProgress;
+			this.sortedXkitabPos = sortedXkitabPos;
 		}
 		
 		@Override
 		public void toBytes(BintexWriter writer) throws Exception {
-			for (int kitabPos = 0; kitabPos < xkitab_.length; kitabPos++) {
-				int bookPos = kitabPosToBookPosMap_[kitabPos];
-				if (bookPos == -1) {
-					continue;
-				}
+			for (int kitabPos: sortedXkitabPos) {
+				int bookPos = kitabPosToBookPosMap_.get(kitabPos);
 				BookInfo bookInfo = pdb.getBook(bookPos);
 				bookInfo.openBook();
 

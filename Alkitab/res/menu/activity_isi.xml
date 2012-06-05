@@ -4,12 +4,12 @@
 	<item
 		android:id="@+id/menuTuju"
 		android:title="@string/menuTuju"
-		android:icon="@drawable/ic_menu_tuju" android:showAsAction="always"/>
+		android:icon="@drawable/ic_menu_tuju" android:showAsAction="ifRoom" />
 	<item
 		android:id="@+id/menuBukmak"
 		android:title="@string/pembatas_buku" 
 		android:titleCondensed="@string/pembatas_condensed"
-		android:icon="@drawable/ic_menu_bukmak" android:showAsAction="always"/>
+		android:icon="@drawable/ic_menu_bukmak" android:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/menuSearch2" 
 		android:title="@string/cari_v"
@@ -21,7 +21,7 @@
 	<item
 		android:id="@+id/menuEdisi"
 		android:title="@string/versi" 
-		android:icon="@drawable/ic_menu_edisi" android:showAsAction="ifRoom" />
+		android:icon="@drawable/ic_menu_edisi" android:showAsAction="always" />
 	<item
 		android:id="@+id/menuPengaturan"
 		android:title="@string/menuPengaturan" 
@@ -29,13 +29,13 @@
 	<item
 		android:id="@+id/menuDonasi"
 		android:title="@string/menuDonasi"
-		android:icon="@drawable/ic_menu_donasi" />
+		android:icon="@drawable/ic_menu_donasi" android:showAsAction="never" />
 	<item
 		android:id="@+id/menuBantuan"
 		android:title="@string/menuBantuan"
-		android:icon="@android:drawable/ic_menu_help" />
+		android:icon="@android:drawable/ic_menu_help" android:showAsAction="never" />
 	<item
 		android:id="@+id/menuTentang"
 		android:title="@string/menuTentang"
-		android:icon="@android:drawable/ic_menu_info_details" />
+		android:icon="@android:drawable/ic_menu_info_details" android:showAsAction="never" />
 </menu>

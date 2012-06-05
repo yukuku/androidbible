@@ -8,7 +8,7 @@ public class Kitab {
 	public String nama;
 	public String judul;
 	public String file;
-	public int pos;
+	public int pos = -1;
 	public int pdbBookNumber;
 	/** Hanya dipake di YesPembaca */
 	public int offset = -1;

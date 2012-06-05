@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <resources>
-	<string name="stabilo_judul">Evidenţiază</string>
 	<string name="highlight_stabilo">Evidenţiază</string>
 	<string name="belum_ada_sejarah">Fără istoric.</string>
 	<string name="donasi_tombol_gamau">Nu acum</string>
@@ -42,6 +41,7 @@
 	<string name="contoh_tulisan_titikdua">Exemplu text:</string>
 	<string name="perj_baru">Noul Test.</string>
 	<string name="perj_lama">Vechiul Test.</string>
+    <!-- untranslated --><string name="search_bookname_only">%s only</string>
 	<string name="ganti_v">Schimbă</string>
 	<string name="ayat_sebelumangka">Verset</string>
 	<string name="pasal_sebelumangka">Capitol</string>
@@ -197,7 +197,6 @@
     <string name="change_label_color">Change label color</string>
 	<string name="rename_label">Redenumeşte eticheta</string>
 	<string name="delete_label">Şterge eticheta</string>
-	<string name="tutup">Închide</string>
 	<string name="teks_about">
 	    Dezvoltat de [b]yuku[/b], 2009-2012[br/] 
 	    • Website: androidbible.blogspot.com[br/] 

@@ -11,7 +11,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.util.IntArrayList;
-import yuku.alkitab.beta.R;
+import yuku.alkitab.R;
 
 public class JenisStabiloDialog {
 	final AlertDialog alert;

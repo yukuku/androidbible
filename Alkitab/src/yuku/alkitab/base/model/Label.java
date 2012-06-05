@@ -51,10 +51,6 @@ public class Label implements Comparable<Label> {
 		return this.urutan - another.urutan;
 	}
 	
-	@Override public boolean equals(Object o) {
-		return (o instanceof Label) && (this._id == ((Label)o)._id);
-	}
-	
 	@Override public String toString() {
 		return this.judul + " (" + this._id + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}

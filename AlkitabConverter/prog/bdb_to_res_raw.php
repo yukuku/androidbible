@@ -2,7 +2,7 @@
 	if (count($argv) < 5) {
 ?>
 	// contoh pemakaian: 
-	// php prog/bdb_to_res_raw.php bahan/en-kjv-thml/kjv3_teks_bdb.txt bahan/en-kjv-thml/kjv_index.txt kjv bahan/en-kjv-thml/kjv_raw/ bahan/en-kjv-thml/kjv
+	// php prog/bdb_to_res_raw.php bahan/en-kjv-thml/kjv3_teks_bdb.txt bahan/en-kjv-thml/kjv_index.txt kjv bahan/en-kjv-thml/kjv_raw/ bahan/en-kjv-thml/kjv_kitab.txt
 	//            [0]              [1] (input)                         [2] (output)                    [3] [4] (output)               [5] (input)
 <?php 		
 		die;	
