@@ -1,10 +1,11 @@
 package yuku.alkitab.base.storage;
 
-import android.content.*;
-import android.preference.*;
-import android.util.*;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
-import yuku.alkitab.base.*;
+import yuku.alkitab.base.App;
 
 public class Preferences {
 	private static final String TAG = Preferences.class.getSimpleName();
@@ -26,6 +27,11 @@ public class Preferences {
 		return pref.getFloat(key.toString(), def);
 	}
 	
+	public static float getFloat(String key, float def) {
+		SharedPreferences pref = read(App.context);
+		return pref.getFloat(key, def);
+	}
+	
 	public static long getLong(Prefkey key, long def) {
 		SharedPreferences pref = read(App.context);
 		return pref.getLong(key.toString(), def);
@@ -34,6 +40,11 @@ public class Preferences {
 	public static String getString(Prefkey key, String def) {
 		SharedPreferences pref = read(App.context);
 		return pref.getString(key.toString(), def);
+	}
+	
+	public static String getString(String key, String def) {
+		SharedPreferences pref = read(App.context);
+		return pref.getString(key, def);
 	}
 	
 	public static boolean getBoolean(Prefkey key, boolean def) {
@@ -71,6 +82,10 @@ public class Preferences {
 		return pref.getBoolean(App.context.getString(keyResId), App.context.getResources().getBoolean(defResId));
 	}
 	
+	public static Object get(String key) {
+		SharedPreferences pref = read(App.context);
+		return pref.getAll().get(key);
+	}
 	
 	public static void setInt(Prefkey key, int val) {
 		SharedPreferences pref = read(App.context);

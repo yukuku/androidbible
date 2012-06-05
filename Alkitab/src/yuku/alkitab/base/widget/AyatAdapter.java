@@ -4,13 +4,11 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.method.LinkMovementMethod;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -190,10 +188,7 @@ public class AyatAdapter extends BaseAdapter {
 			TextView lJudul = (TextView) res.findViewById(R.id.lJudul);
 			TextView lXparalel = (TextView) res.findViewById(R.id.lXparalel);
 			
-			lJudul.setTypeface(S.penerapan.jenisHuruf, Typeface.BOLD);
-			lJudul.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp);
 			lJudul.setText(blok.judul);
-			lJudul.setTextColor(S.penerapan.warnaHuruf);
 			
 			// matikan padding atas kalau position == 0 ATAU sebelum ini juga judul perikop
 			if (position == 0 || penunjukKotak_[position-1] < 0) {
@@ -201,6 +196,8 @@ public class AyatAdapter extends BaseAdapter {
 			} else {
 				lJudul.setPadding(0, (int) (S.penerapan.ukuranHuruf2dp * density_), 0, 0);
 			}
+			
+			PengaturTampilan.aturTampilanTeksJudulPerikop(lJudul);
 			
 			// gonekan paralel kalo ga ada
 			if (blok.xparalel.length == 0) {
@@ -233,18 +230,14 @@ public class AyatAdapter extends BaseAdapter {
 				sb.append(')');
 				len += 1;
 				
-				lXparalel.setTypeface(S.penerapan.jenisHuruf);
-				lXparalel.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp * (14.f / 17.f));
 				lXparalel.setText(sb, BufferType.SPANNABLE);
-				lXparalel.setMovementMethod(LinkMovementMethod.getInstance());
-				lXparalel.setTextColor(S.penerapan.warnaHuruf);
-				lXparalel.setLinkTextColor(S.penerapan.warnaHuruf);
+				PengaturTampilan.aturTampilanTeksParalelPerikop(lXparalel);
 			}
 			
 			return res;
 		}
 	}
-	
+
 	void pasangClickHandlerUntukBukmak(View imgBukmak, final int pasal_1, final int ayat_1) {
 		imgBukmak.setOnClickListener(new View.OnClickListener() { 
 			@Override public void onClick(View v) {

@@ -36,6 +36,7 @@ public class S {
 		public static float ukuranHuruf2dp;
 		
 		public static Typeface jenisHuruf;
+		public static float lineSpacingMult;
 		public static int tebalHuruf;
 		
 		public static int warnaHuruf; 
@@ -50,6 +51,7 @@ public class S {
 		public static int jarakMenjorokTiga;
 		public static int jarakMenjorokEmpat;
 		public static int jarakMenjorokExtra;
+
 	}
 	
 	/**
@@ -105,6 +107,7 @@ public class S {
 		//# atur jenis huruf, termasuk boldnya
 		{
 			penerapan.jenisHuruf = U.typeface(Preferences.getString(R.string.pref_jenisHuruf_key, null));
+			penerapan.lineSpacingMult = Preferences.getFloat(R.string.pref_lineSpacingMult_key, 1.f);
 			penerapan.tebalHuruf = Preferences.getBoolean(R.string.pref_boldHuruf_key, R.bool.pref_boldHuruf_default)? Typeface.BOLD: Typeface.NORMAL;
 		}
 		

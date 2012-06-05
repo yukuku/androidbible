@@ -18,6 +18,12 @@
 			android:entries="@array/pref_jenisHuruf_label"
 			android:entryValues="@array/pref_jenisHuruf_value"
 			android:defaultValue="DEFAULT" />
+		<yuku.alkitab.base.widget.LineSpacingMultPreference
+			android:key="@string/pref_lineSpacingMult_key"
+			android:title="@string/pref_lineSpacingMult_title"
+			android:positiveButtonText="@string/ok"
+			android:negativeButtonText="@string/cancel"
+			android:defaultValue="1.0" />
 		<CheckBoxPreference
 			android:key="@string/pref_boldHuruf_key"
 			android:title="@string/pref_tebalkan_huruf"

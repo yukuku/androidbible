@@ -1,7 +1,9 @@
 package yuku.alkitab.base.util;
 
+import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.text.style.UnderlineSpan;
 import android.util.TypedValue;
 import android.widget.TextView;
@@ -24,12 +26,30 @@ public class PengaturTampilan {
 		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp);
 		t.setIncludeFontPadding(false);
 		t.setTextColor(S.penerapan.warnaHuruf);
+		t.setLineSpacing(0.f, S.penerapan.lineSpacingMult);
 	}
 
+	public static void aturTampilanTeksJudulPerikop(TextView t) {
+		t.setTypeface(S.penerapan.jenisHuruf, Typeface.BOLD);
+		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp);
+		t.setTextColor(S.penerapan.warnaHuruf);
+		t.setLineSpacing(0.f, S.penerapan.lineSpacingMult);
+	}
+
+	public static void aturTampilanTeksParalelPerikop(TextView t) {
+		t.setTypeface(S.penerapan.jenisHuruf);
+		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp * (14.f / 17.f));
+		t.setMovementMethod(LinkMovementMethod.getInstance());
+		t.setTextColor(S.penerapan.warnaHuruf);
+		t.setLinkTextColor(S.penerapan.warnaHuruf);
+		t.setLineSpacing(0.f, S.penerapan.lineSpacingMult);
+	}
+	
 	public static void aturTampilanTeksAlamatHasilCari(TextView t, SpannableStringBuilder sb) {
 		aturTampilanTeksJudulBukmak(t);
 		sb.setSpan(new UnderlineSpan(), 0, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 		t.setText(sb);
+		t.setLineSpacing(0.f, S.penerapan.lineSpacingMult);
 	}
 
 	public static void aturTampilanTeksJudulBukmak(TextView t) {

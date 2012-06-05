@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	android:padding="6dp">
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="@string/contoh_tulisan_titikdua" />
+	<TextView
+		android:layout_width="wrap_content"
+		android:textColor="#fff"
+		android:padding="6dp"
+		android:fadingEdge="vertical"
+		android:id="@+id/lContoh"
+		android:textSize="17dp"
+		android:layout_height="90dp" android:text="@string/pada_mulanya" />
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:gravity="center_vertical">
+		<SeekBar
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:id="@+id/seekbar"
+			android:max="20" android:progress="0" />
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textColor="#fff"
+			android:textSize="20dp"
+			android:layout_marginLeft="6dp"
+			android:id="@+id/lValue"
+			android:minWidth="50dp" android:text="1.00" />
+	</LinearLayout>
+
+</LinearLayout>
