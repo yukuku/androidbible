@@ -280,7 +280,7 @@ public class YesPembaca extends Pembaca {
 		}
 	}
 
-	static String readNamaSeksi(RandomAccessFile f) throws IOException {
+	@SuppressWarnings("deprecation") static String readNamaSeksi(RandomAccessFile f) throws IOException {
 		byte[] buf = new byte[12];
 		int read = f.read(buf);
 		return read <= 0? null: new String(buf, 0);

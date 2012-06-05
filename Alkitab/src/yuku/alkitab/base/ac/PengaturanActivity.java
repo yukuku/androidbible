@@ -8,8 +8,7 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.ac.base.BaseActivity;
 
 public class PengaturanActivity extends PreferenceActivity {
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	@SuppressWarnings("deprecation") @Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		addPreferencesFromResource(R.xml.pengaturan);

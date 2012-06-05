@@ -46,7 +46,7 @@ public interface PembacaDecoder {
 			return pisahJadiAyatBuf.toArray(new String[pisahJadiAyatBuf.size()]);
 		}
 
-		@Override public String jadikanStringTunggal(byte[] ba, boolean hurufKecilkan) {
+		@SuppressWarnings("deprecation") @Override public String jadikanStringTunggal(byte[] ba, boolean hurufKecilkan) {
 			if (hurufKecilkan) {
 				hurufkecilkan(ba);
 			}

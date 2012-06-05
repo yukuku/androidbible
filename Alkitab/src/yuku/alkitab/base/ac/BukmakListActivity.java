@@ -232,7 +232,7 @@ public class BukmakListActivity extends BaseActivity {
 		});
 	}
 
-	private void gantiCursor() {
+	@SuppressWarnings("deprecation") private void gantiCursor() {
 		if (cursor != null) {
 			stopManagingCursor(cursor);
 		}
@@ -385,7 +385,7 @@ public class BukmakListActivity extends BaseActivity {
 		if (filter_jenis == Db.Bukmak2.jenis_stabilo) menuUbahBukmak.setTitle(R.string.ubah_stabilo);
 	}
 	
-	@Override public boolean onContextItemSelected(MenuItem item) {
+	@SuppressWarnings("deprecation") @Override public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		int itemId = item.getItemId();
 		
