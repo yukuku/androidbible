@@ -17,6 +17,7 @@ import android.widget.BaseAdapter;
 import android.widget.CheckedTextView;
 
 import yuku.alkitab.R;
+import yuku.ambilwarna.widget.AmbilWarnaPreference;
 
 public class TemaWarnaPreference extends ListPreference {
 	private static final String TAG = TemaWarnaPreference.class.getSimpleName();
@@ -157,7 +158,7 @@ public class TemaWarnaPreference extends ListPreference {
 		int[] xresId = {R.string.pref_warnaHuruf_int_key, R.string.pref_warnaLatar_int_key, R.string.pref_warnaNomerAyat_int_key};
 		for (int i = 0; i < xresId.length; i++) {
 			AmbilWarnaPreference p = (AmbilWarnaPreference) findPreferenceInHierarchy(getContext().getString(xresId[i]));
-			p.paksaSetWarna(w[i]);
+			p.forceSetValue(w[i]);
 		}
 	}
 	
