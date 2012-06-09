@@ -77,11 +77,12 @@ public class UkuranHuruf2Preference extends DialogPreference implements OnSeekBa
         }
     }
     
-    @Override
-    protected void onBindDialogView(View view) {
+    @Override protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
 
         seekbar.setProgress((int) ((ukuran - OFSET_minukuran) * 2.f));
+
+        aturJenisDanTebalHuruf();
     }
 
     @Override
@@ -132,14 +133,16 @@ public class UkuranHuruf2Preference extends DialogPreference implements OnSeekBa
         setUkuran(myState.ukuran);
     }
 
-	@Override
-	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+	@Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 		float betulan = OFSET_minukuran + (float) progress * 0.5f;
 		
 		lUkuranHuruf.setText(String.valueOf(betulan));
 		lContoh.setTextSize(TypedValue.COMPLEX_UNIT_DIP, betulan);
 		
-		//# atur jenis huruf dan tebal huruf
+		aturJenisDanTebalHuruf();
+	}
+
+	private void aturJenisDanTebalHuruf() {
 		SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
 		String jenisHuruf = sharedPreferences.getString(getContext().getString(R.string.pref_jenisHuruf_key), null);
 		boolean tebalHuruf = sharedPreferences.getBoolean(getContext().getString(R.string.pref_boldHuruf_key), false);

@@ -53,7 +53,9 @@ public class LineSpacingMultPreference extends DialogPreference implements OnSee
 
 	@Override protected void onBindDialogView(View view) {
 		super.onBindDialogView(view);
-		seekbar.setProgress((int) ((value - 1.f) * 20.f));
+		seekbar.setProgress(Math.round((value - 1.f) * 20.f));
+
+		aturJenisDanTebalHuruf();
 	}
 
 	@Override protected void onDialogClosed(boolean positiveResult) {
@@ -103,7 +105,10 @@ public class LineSpacingMultPreference extends DialogPreference implements OnSee
 		lValue.setText(String.format("%.2f", realValue));
 		lContoh.setLineSpacing(0.f, realValue);
 
-		// # atur jenis huruf dan tebal huruf
+		aturJenisDanTebalHuruf();
+	}
+
+	private void aturJenisDanTebalHuruf() {
 		SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
 		String jenisHuruf = sharedPreferences.getString(getContext().getString(R.string.pref_jenisHuruf_key), null);
 		boolean tebalHuruf = sharedPreferences.getBoolean(getContext().getString(R.string.pref_boldHuruf_key), false);

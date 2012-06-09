@@ -17,6 +17,7 @@ import java.util.List;
 import yuku.alkitab.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
+import yuku.alkitab.base.ac.FontManagerActivity;
 import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.base.util.FontManager.FontEntry;
 
@@ -154,8 +155,7 @@ public class JenisHurufPreference extends ListPreference {
 					JenisHurufPreference.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
 					dialog.dismiss();
 				} else {
-					// spc case for add
-					
+					getContext().startActivity(FontManagerActivity.createIntent());
 				}
 			}
 		});

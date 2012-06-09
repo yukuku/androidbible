@@ -1,17 +1,22 @@
 package yuku.alkitab.base;
 
-import android.app.*;
-import android.content.*;
-import android.content.res.*;
-import android.preference.*;
-import android.util.*;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.os.Build;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
-import java.util.*;
+import greendroid.app.GDApplication;
 
-import yuku.alkitab.base.storage.*;
-import yuku.kirimfidbek.*;
+import java.io.File;
+import java.util.Locale;
 
-public class App extends Application {
+import yuku.alkitab.base.storage.Preferences;
+import yuku.kirimfidbek.PengirimFidbek;
+import yuku.kirimfidbek.R;
+
+public class App extends GDApplication {
 	public static final String TAG = App.class.getSimpleName();
 
 	public static Context context;
@@ -32,6 +37,24 @@ public class App extends Application {
 		if (!config.locale.getLanguage().equals(locale.getLanguage())) {
 			Log.d(TAG, "onCreate: locale will be updated to: " + locale); //$NON-NLS-1$
 			updateConfigurationWithLocale(config, locale);
+		}
+		
+		// http://android-developers.blogspot.com/2011/09/androids-http-clients.html
+		{
+		    // HTTP connection reuse which was buggy pre-froyo
+		    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
+		        System.setProperty("http.keepAlive", "false");
+		    }
+		    
+		    // Use reflection to enable HTTP response caching on devices that support it. This sample code will turn on the response cache on Ice Cream Sandwich without affecting earlier releases:
+		    try {
+		        long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
+		        File httpCacheDir = new File(getCacheDir(), "http");
+		        Class.forName("android.net.http.HttpResponseCache")
+		            .getMethod("install", File.class, long.class)
+		            .invoke(null, httpCacheDir, httpCacheSize);
+		    } catch (Exception httpResponseCacheNotAvailable) {
+		    }
 		}
 	}
 

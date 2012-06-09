@@ -197,6 +197,11 @@
     <string name="change_label_color">Change label color</string>
 	<string name="rename_label">Redenumeşte eticheta</string>
 	<string name="delete_label">Şterge eticheta</string>
+    <!-- untranslated --><string name="please_wait_titik3">Please wait…</string>
+    <!-- untranslated --><string name="juga_hapus_file_datanya_file">Also delete the data file?\nFile: %s</string>
+	<!-- Font Manager -->
+    <string name="fm_activity_title">Font Manager</string>
+    <!-- Lastly, about -->
 	<string name="teks_about">
 	    Dezvoltat de [b]yuku[/b], 2009-2012[br/] 
 	    • Website: androidbible.blogspot.com[br/] 
