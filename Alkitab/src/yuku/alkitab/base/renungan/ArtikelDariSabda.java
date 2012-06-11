@@ -1,8 +1,9 @@
 package yuku.alkitab.base.renungan;
 
-import java.util.regex.*;
-
 import android.util.Log;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class ArtikelDariSabda implements IArtikel {
 	public static final String TAG = ArtikelDariSabda.class.getSimpleName();

@@ -16,8 +16,8 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import yuku.alkitab.base.U;
 import yuku.alkitab.R;
+import yuku.alkitab.base.U;
 
 public class UkuranHuruf2Preference extends DialogPreference implements OnSeekBarChangeListener {
 	private static final int OFSET_minukuran = 2;

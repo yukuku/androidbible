@@ -1,6 +1,8 @@
 package yuku.alkitab.base.storage;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 
 public class RandomInputStream extends InputStream {
 	private RandomAccessFile f;

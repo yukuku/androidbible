@@ -1,6 +1,7 @@
 package yuku.alkitab.base.util;
 
-import android.os.*;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 public class IntArrayList implements Parcelable {
 	int[] buf;

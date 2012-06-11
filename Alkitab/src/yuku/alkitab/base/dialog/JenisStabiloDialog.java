@@ -7,11 +7,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 
+import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.util.IntArrayList;
-import yuku.alkitab.R;
 
 public class JenisStabiloDialog {
 	final AlertDialog alert;

@@ -1,9 +1,9 @@
 package yuku.alkitab.base.model;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.Arrays;
 
-import yuku.bintex.*;
+import yuku.bintex.BintexReader;
 
 public class Blok {
 

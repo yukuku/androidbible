@@ -1,10 +1,11 @@
 package yuku.alkitab.base.model;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.util.Arrays;
 
 import yuku.bintex.BintexReader;
-import android.util.Log;
 
 public class IndexPerikop {
 	public static final String TAG = IndexPerikop.class.getSimpleName();

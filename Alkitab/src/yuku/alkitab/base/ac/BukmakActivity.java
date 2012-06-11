@@ -46,6 +46,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 import org.xmlpull.v1.XmlSerializer;
 
+import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -54,7 +55,6 @@ import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
 import yuku.alkitab.base.model.Bukmak2;
 import yuku.alkitab.base.model.Label;
 import yuku.alkitab.base.storage.Db;
-import yuku.alkitab.R;
 import yuku.ambilwarna.AmbilWarnaDialog;
 import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
 

@@ -1,10 +1,13 @@
 package yuku.alkitab.base.util;
 
-import android.util.*;
+import android.util.Log;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.IdentityHashMap;
 
-import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.model.Edisi;
+import yuku.alkitab.base.model.Kitab;
 
 public class Peloncat {
 	public static final String TAG = Peloncat.class.getSimpleName();

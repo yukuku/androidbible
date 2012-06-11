@@ -1,13 +1,17 @@
 package yuku.alkitab.base.widget;
 
 import android.app.AlertDialog.Builder;
-import android.content.*;
-import android.preference.*;
-import android.util.*;
-import android.view.*;
-import android.widget.*;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.preference.ListPreference;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.CheckedTextView;
 
-import yuku.alkitab.base.*;
+import yuku.alkitab.base.U;
 
 public class JenisHurufPreference extends ListPreference {
 	int mClickedDialogEntryIndex;

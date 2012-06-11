@@ -1,8 +1,8 @@
 package yuku.alkitab.base.util;
 
-import android.content.*;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.util.*;
+import android.util.Log;
 
 public class Sejarah {
 	private static final String SEJARAH_AWALAN = "sejarah/"; //$NON-NLS-1$

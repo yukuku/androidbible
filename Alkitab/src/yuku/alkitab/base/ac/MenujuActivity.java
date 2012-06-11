@@ -18,13 +18,13 @@ import android.widget.TextView;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import yuku.alkitab.R;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.Kitab;
 import yuku.alkitab.base.storage.Preferences;
-import yuku.alkitab.R;
 
 public class MenujuActivity extends BaseActivity {
 	public static final String TAG = MenujuActivity.class.getSimpleName();

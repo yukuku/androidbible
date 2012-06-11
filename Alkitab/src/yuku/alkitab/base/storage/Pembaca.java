@@ -1,8 +1,11 @@
 package yuku.alkitab.base.storage;
 
-import android.content.*;
+import android.content.Context;
 
-import yuku.alkitab.base.model.*;
+import yuku.alkitab.base.model.Blok;
+import yuku.alkitab.base.model.Edisi;
+import yuku.alkitab.base.model.IndexPerikop;
+import yuku.alkitab.base.model.Kitab;
 
 public abstract class Pembaca {
 	private Context context;

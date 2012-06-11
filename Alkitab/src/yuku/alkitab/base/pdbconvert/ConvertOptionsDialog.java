@@ -1,20 +1,31 @@
 package yuku.alkitab.base.pdbconvert;
 
-import android.app.*;
-import android.content.*;
-import android.util.*;
-import android.view.*;
-import android.widget.*;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.Spinner;
+import android.widget.TextView;
 
-import java.nio.charset.*;
-import java.util.*;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 import yuku.alkitab.R;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertParams;
 
-import com.compactbyte.android.bible.*;
-import com.compactbyte.bibleplus.reader.*;
+import com.compactbyte.android.bible.PDBFileStream;
+import com.compactbyte.bibleplus.reader.BiblePlusPDB;
+import com.compactbyte.bibleplus.reader.BookInfo;
 
 public class ConvertOptionsDialog {
 	public static final String TAG = ConvertOptionsDialog.class.getSimpleName();

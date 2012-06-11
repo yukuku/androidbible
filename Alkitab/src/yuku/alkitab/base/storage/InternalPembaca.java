@@ -1,14 +1,19 @@
 package yuku.alkitab.base.storage;
 
-import android.content.*;
-import android.util.*;
+import android.content.Context;
+import android.util.Log;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 
-import yuku.alkitab.base.*;
-import yuku.alkitab.base.model.*;
-import yuku.bintex.*;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.model.Blok;
+import yuku.alkitab.base.model.Edisi;
+import yuku.alkitab.base.model.IndexPerikop;
+import yuku.alkitab.base.model.Kitab;
+import yuku.bintex.BintexReader;
 
 public class InternalPembaca extends Pembaca {
 	public static final String TAG = InternalPembaca.class.getSimpleName();
