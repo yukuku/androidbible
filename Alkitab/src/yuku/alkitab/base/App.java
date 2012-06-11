@@ -1,28 +1,26 @@
 package yuku.alkitab.base;
 
-import android.app.*;
-import android.content.*;
-import android.content.res.*;
-import android.preference.*;
-import android.util.*;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
-import java.util.*;
+import java.util.Locale;
 
-import yuku.alkitab.base.storage.*;
-import yuku.kirimfidbek.*;
+import yuku.alkitab.base.storage.Preferences;
+import yuku.kirimfidbek.PengirimFidbek;
+import yuku.kirimfidbek.R;
 
-public class App extends Application {
+public class App extends yuku.afw.App {
 	public static final String TAG = App.class.getSimpleName();
 
-	public static Context context;
 	public static PengirimFidbek pengirimFidbek;
 	
 	@Override public void onCreate() {
 		super.onCreate();
 
-		context = getApplicationContext();
 		pengirimFidbek = siapinPengirimFidbek(context);
-		
 		pengirimFidbek.cobaKirim();
 		
 		PreferenceManager.setDefaultValues(this, R.xml.pengaturan, false);
