@@ -11,21 +11,78 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckedTextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import yuku.alkitab.R;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
+import yuku.alkitab.base.ac.FontManagerActivity;
+import yuku.alkitab.base.util.FontManager;
+import yuku.alkitab.base.util.FontManager.FontEntry;
 
 public class JenisHurufPreference extends ListPreference {
+	public static final String TAG = JenisHurufPreference.class.getSimpleName();
+	
+	List<FontManager.FontEntry> fontEntries = new ArrayList<FontManager.FontEntry>();
+	int originalNumberOfEntries;
 	int mClickedDialogEntryIndex;
 	
     public JenisHurufPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public JenisHurufPreference(Context context) {
         super(context);
+        init();
     }
     
-	@Override
-	protected void onPrepareDialogBuilder(Builder builder) {
+    private void init() {
+    }
+    
+    private void initAvailableFonts() {
+    	fontEntries.clear();
+    	fontEntries.addAll(FontManager.getInstalledFonts());
+	}
+
+
+	@Override public CharSequence[] getEntryValues() {
+    	// get super first
+    	CharSequence[] preset = super.getEntryValues();
+    	originalNumberOfEntries = preset.length;
+    	
+    	// additional...
+    	CharSequence[] res = new CharSequence[preset.length + fontEntries.size() + 1];
+    	System.arraycopy(preset, 0, res, 0, preset.length);
+    	
+    	for (int i = 0; i < fontEntries.size(); i++) {
+    		res[preset.length + i] = fontEntries.get(i).name;
+    	}
+    	
+    	res[res.length - 1] = "<ADD>";
+    	return res;
+    }
+    
+    @Override public CharSequence[] getEntries() {
+    	CharSequence[] preset = super.getEntries();
+    	originalNumberOfEntries = preset.length;
+    	
+    	// additional...
+    	CharSequence[] res = new CharSequence[preset.length + fontEntries.size() + 1];
+    	System.arraycopy(preset, 0, res, 0, preset.length);
+    	
+    	for (int i = 0; i < fontEntries.size(); i++) {
+    		res[preset.length + i] = fontEntries.get(i).title;
+    	}
+    	
+    	res[res.length - 1] = App.context.getString(R.string.get_more_fonts);
+    	return res;
+    }
+    
+	@Override protected void onPrepareDialogBuilder(Builder builder) {
+		initAvailableFonts();
+		
 		final CharSequence[] entryValues = getEntryValues();
 		final CharSequence[] entries = getEntries();
 		
@@ -33,18 +90,39 @@ public class JenisHurufPreference extends ListPreference {
 			throw new IllegalStateException("JenisHurufPreference requires an entries array and an entryValues array."); //$NON-NLS-1$
 		}
 
-		mClickedDialogEntryIndex = getValueIndex();
+		String prevValue = getValue();
+		// find position
+		mClickedDialogEntryIndex = -1;
+		for (int i = 0; i < entryValues.length; i++) {
+			if (U.equals(prevValue, entryValues[i])) {
+				mClickedDialogEntryIndex = i;
+				break;
+			}
+		}
 		
 		builder.setAdapter(new BaseAdapter() {
-			@Override
-			public View getView(int position, View convertView, ViewGroup parent) {
+			public FontManager.FontEntry getFontEntryFromPosition(int position) {
+				if (position < originalNumberOfEntries || position == entryValues.length-1 /* "add fonts" */) {
+					return null;
+				} else {
+					return fontEntries.get(position - originalNumberOfEntries);
+				}
+			}
+			
+			@Override public View getView(int position, View convertView, ViewGroup parent) {
 				CheckedTextView res = (CheckedTextView) convertView;
 				if (convertView == null) {
 					res = (CheckedTextView) LayoutInflater.from(getContext()).inflate(android.R.layout.select_dialog_singlechoice, null);
 				}
 				
 				res.setText(entries[position]);
-				res.setTypeface(U.typeface(entryValues[position].toString()));
+				
+				FontEntry fontEntry = getFontEntryFromPosition(position);
+				if (fontEntry == null) {
+					res.setTypeface(FontManager.typeface(entryValues[position].toString()));
+				} else {
+					res.setTypeface(FontManager.typeface(fontEntry.name));
+				}
 				
 				res.setChecked(position == mClickedDialogEntryIndex);
 				
@@ -73,8 +151,12 @@ public class JenisHurufPreference extends ListPreference {
 				 * Clicking on an item simulates the positive button
 				 * click, and dismisses the dialog.
 				 */
-				JenisHurufPreference.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
-				dialog.dismiss();
+				if (which != entryValues.length - 1) {
+					JenisHurufPreference.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
+					dialog.dismiss();
+				} else {
+					getContext().startActivity(FontManagerActivity.createIntent());
+				}
 			}
 		});
 
@@ -99,8 +181,4 @@ public class JenisHurufPreference extends ListPreference {
             }
         }
     }
-    
-	private int getValueIndex() {
-		return findIndexOfValue(getValue());
-	}
 }

@@ -38,9 +38,14 @@ public class BuildConfig {
 			return lastConfig;
 		}
 		
-		int resId = context.getResources().getIdentifier("build_config_" + packageName.replace('.', '_'), "xml", packageName); //$NON-NLS-1$ //$NON-NLS-2$
-		if (resId == 0) {
-			return null;
+		int resId;
+		if (packageName.equals("yuku.alkitab.beta")) { // special for yuku.alkitab.beta
+			resId = context.getResources().getIdentifier("build_config_yuku_alkitab", "xml", packageName); //$NON-NLS-1$ //$NON-NLS-2$
+		} else {
+			resId = context.getResources().getIdentifier("build_config_" + packageName.replace('.', '_'), "xml", packageName); //$NON-NLS-1$ //$NON-NLS-2$
+			if (resId == 0) {
+				return null;
+			}
 		}
 		
 		BuildConfig res = null;

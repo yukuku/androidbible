@@ -199,6 +199,9 @@
     <string name="delete_label">Delete label</string>
     <string name="please_wait_titik3">Please wait…</string>
     <string name="juga_hapus_file_datanya_file">Also delete the data file?\nFile: %s</string>
+    <!-- Font Manager -->
+    <string name="fm_activity_title">Font Manager</string>
+    <!-- Lastly, about -->
     <string name="teks_about">Developed by [b]yuku[/b], 2009-2012[br/]
     	• Website: androidbible.blogspot.com[br/] 
 		• Google+: gplus.to/androidbible[br/]
@@ -209,4 +212,5 @@
 		• [b]Jaya Satrio[/b] various icons[br/]
 		• [b]Yohanes Nugroho[/b] PDB reader[br/]
 		• etc.</string>
+    <string name="get_more_fonts">Get more fonts…</string>
 </resources>

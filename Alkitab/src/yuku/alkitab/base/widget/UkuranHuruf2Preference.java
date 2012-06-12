@@ -17,7 +17,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import yuku.alkitab.R;
-import yuku.alkitab.base.U;
+import yuku.alkitab.base.util.FontManager;
 
 public class UkuranHuruf2Preference extends DialogPreference implements OnSeekBarChangeListener {
 	private static final int OFSET_minukuran = 2;
@@ -76,11 +76,12 @@ public class UkuranHuruf2Preference extends DialogPreference implements OnSeekBa
         }
     }
     
-    @Override
-    protected void onBindDialogView(View view) {
+    @Override protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
 
         seekbar.setProgress((int) ((ukuran - OFSET_minukuran) * 2.f));
+
+        aturJenisDanTebalHuruf();
     }
 
     @Override
@@ -131,19 +132,23 @@ public class UkuranHuruf2Preference extends DialogPreference implements OnSeekBa
         setUkuran(myState.ukuran);
     }
 
-	@Override
-	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+	@Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 		float betulan = OFSET_minukuran + (float) progress * 0.5f;
 		
 		lUkuranHuruf.setText(String.valueOf(betulan));
 		lContoh.setTextSize(TypedValue.COMPLEX_UNIT_DIP, betulan);
 		
-		//# atur jenis huruf dan tebal huruf
+		aturJenisDanTebalHuruf();
+	}
+
+	private void aturJenisDanTebalHuruf() {
 		SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
 		String jenisHuruf = sharedPreferences.getString(getContext().getString(R.string.pref_jenisHuruf_key), null);
 		boolean tebalHuruf = sharedPreferences.getBoolean(getContext().getString(R.string.pref_boldHuruf_key), false);
+		float lineSpacingMult = sharedPreferences.getFloat(getContext().getString(R.string.pref_lineSpacingMult_key), 1.0f);
 		if (jenisHuruf != null) {
-			lContoh.setTypeface(U.typeface(jenisHuruf), tebalHuruf ? Typeface.BOLD: Typeface.NORMAL);
+			lContoh.setTypeface(FontManager.typeface(jenisHuruf), tebalHuruf ? Typeface.BOLD: Typeface.NORMAL);
+			lContoh.setLineSpacing(0.f, lineSpacingMult);
 		}
 	}
 
