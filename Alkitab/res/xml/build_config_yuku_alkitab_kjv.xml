@@ -12,7 +12,11 @@
 		<preset locale="el"   judul="Textus Receptus (1550/1894)" namafile_preset="el-textusreceptus.yes" url="http://alkitab-host.appspot.com/addon/yes/el-textusreceptus/el-textusreceptus.yes.gz" />
 		<preset locale="el"   judul="Tischendorf 8th Ed." namafile_preset="el-tischendorf.yes" url="http://alkitab-host.appspot.com/addon/yes/el-tischendorf/el-tischendorf.yes.gz" />
 		<preset locale="el"   judul="Westcott/Hort, UBS4 variants" namafile_preset="el-whubs4.yes" url="http://alkitab-host.appspot.com/addon/yes/el-whubs4/el-whubs4.yes.gz" />
+		<preset locale="es"   judul="Reina-Valera (1909)" namafile_preset="es-reinavalera1909.yes" url="http://alkitab-host.appspot.com/addon/yes/es-reinavalera1909/es-reinavalera1909.yes.gz" />
 		<preset locale="ja"   judul="口語訳" namafile_preset="ja-kougo.yes" url="http://alkitab-host.appspot.com/addon/yes/ja-kougo/ja-kougo.yes.gz" />
+		<preset locale="pl"   judul="Nowa Biblia Gdańska" namafile_preset="pl-nbg.yes" url="http://alkitab-host.appspot.com/addon/yes/pl-nbg/pl-nbg.yes.gz" />
+		<preset locale="pl"   judul="Uwspółcześniona Biblia Gdańska" namafile_preset="pl-ubg.yes" url="http://alkitab-host.appspot.com/addon/yes/pl-ubg/pl-ubg.yes.gz" />
+		<preset locale="sq"   judul="Albanian" namafile_preset="sq-kk.yes" url="http://alkitab-host.appspot.com/addon/yes/sq-kk/sq-kk.yes.gz" />
 		<preset locale="ro"   judul="Cornilescu" namafile_preset="ro-cornilescu.yes" url="http://alkitab-host.appspot.com/addon/yes/ro-cornilescu/ro-cornilescu.yes.gz" />
 		<preset locale="tl"   judul="Ang Biblia (1905)" namafile_preset="tl-angbiblia1905.yes" url="http://alkitab-host.appspot.com/addon/yes/tl-angbiblia1905/tl-angbiblia1905.yes.gz" />
 		<preset locale="zh"   judul="Chinese Union (Simplified)" namafile_preset="cuvs.yes" url="http://alkitab-host.appspot.com/addon/yes/cuvs.yes.gz" />
