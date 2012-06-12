@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<declare-styleable name="UrlImageView">
+		<attr name="defaultImage" format="reference|color" />
+		<attr name="maxPixels" format="integer" />
+	</declare-styleable>
+</resources>

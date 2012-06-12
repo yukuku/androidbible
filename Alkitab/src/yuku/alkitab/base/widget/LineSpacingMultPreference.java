@@ -8,6 +8,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.SeekBar;
@@ -112,8 +113,10 @@ public class LineSpacingMultPreference extends DialogPreference implements OnSee
 		SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
 		String jenisHuruf = sharedPreferences.getString(getContext().getString(R.string.pref_jenisHuruf_key), null);
 		boolean tebalHuruf = sharedPreferences.getBoolean(getContext().getString(R.string.pref_boldHuruf_key), false);
+		float ukuranHuruf2dp = sharedPreferences.getFloat(getContext().getString(R.string.pref_ukuranHuruf2_key), 17.0f);
 		if (jenisHuruf != null) {
 			lContoh.setTypeface(FontManager.typeface(jenisHuruf), tebalHuruf ? Typeface.BOLD : Typeface.NORMAL);
+			lContoh.setTextSize(TypedValue.COMPLEX_UNIT_DIP, ukuranHuruf2dp);
 		}
 	}
 

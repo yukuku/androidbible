@@ -1,7 +1,6 @@
 package yuku.alkitab.base.ac;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,9 +14,6 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import greendroid.widget.AsyncImageView;
-import greendroid.widget.AsyncImageView.OnImageViewLoadListener;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -33,6 +29,9 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.widget.UrlImageView;
+import yuku.alkitab.base.widget.UrlImageView.OnStateChangeListener;
+import yuku.alkitab.base.widget.UrlImageView.State;
 
 public class FontManagerActivity extends BaseActivity {
 	public static final String TAG = FontManagerActivity.class.getSimpleName();
@@ -191,7 +190,7 @@ public class FontManagerActivity extends BaseActivity {
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
 			View res = convertView != null ? convertView : getLayoutInflater().inflate(R.layout.item_font_download, null);
 
-			AsyncImageView imgPreview = U.getView(res, R.id.imgPreview);
+			UrlImageView imgPreview = U.getView(res, R.id.imgPreview);
 			TextView lFontName = U.getView(res, R.id.lFontName);
 			View bDownload = U.getView(res, R.id.bDownload);
 			ProgressBar progressbar = U.getView(res, R.id.progressbar);
@@ -201,7 +200,7 @@ public class FontManagerActivity extends BaseActivity {
 			lFontName.setText(item.name);
 			lFontName.setVisibility(View.VISIBLE);
 			imgPreview.setTag(R.id.TAG_fontName, lFontName);
-			imgPreview.setOnImageViewLoadListener(imgPreview_imageViewLoad);
+			imgPreview.setOnStateChangeListener(imgPreview_stateChange);
 			imgPreview.setUrl("http://alkitab-host.appspot.com/addon/fonts/v1/preview/" + item.name + "-384x84.png");
 			bDownload.setTag(R.id.TAG_fontItem, item);
 			bDownload.setOnClickListener(bDownload_click);
@@ -217,17 +216,12 @@ public class FontManagerActivity extends BaseActivity {
 			}
 		};
 		
-		private OnImageViewLoadListener imgPreview_imageViewLoad = new OnImageViewLoadListener() {
-			@Override public void onLoadingStarted(AsyncImageView imageView) {}
-			
-			@Override public void onLoadingFailed(AsyncImageView imageView, Throwable throwable) {
-				TextView lFontName = (TextView) imageView.getTag(R.id.TAG_fontName);
-				lFontName.setVisibility(View.VISIBLE);
-			}
-			
-			@Override public void onLoadingEnded(AsyncImageView imageView, Bitmap image) {
-				TextView lFontName = (TextView) imageView.getTag(R.id.TAG_fontName);
-				lFontName.setVisibility(View.GONE);
+		private OnStateChangeListener imgPreview_stateChange = new OnStateChangeListener() {
+			@Override public void onStateChange(UrlImageView v, State newState, String url) {
+				if (newState.isLoaded()) {
+					TextView lFontName = (TextView) v.getTag(R.id.TAG_fontName);
+					lFontName.setVisibility(View.GONE);
+				}
 			}
 		};
 	}

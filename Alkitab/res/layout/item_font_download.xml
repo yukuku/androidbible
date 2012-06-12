@@ -7,13 +7,12 @@
     android:orientation="horizontal"
     android:padding="8dip" android:descendantFocusability="blocksDescendants">
 
-    <greendroid.widget.AsyncImageView
+    <yuku.alkitab.base.widget.UrlImageView
         android:id="@+id/imgPreview"
         android:layout_width="256dp"
         android:layout_height="56dp"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:src="#fff" />
+        android:layout_alignParentTop="true"/>
 
     <ProgressBar
         android:id="@+id/progressbar"
@@ -28,10 +27,11 @@
         android:id="@+id/bDownload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imgPreview"
+        android:layout_alignBottom="@+id/progressbar"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/imgPreview"
-        android:src="@drawable/btn_9_av_download" android:padding="8dp"/>
+        android:padding="8dp"
+        android:src="@drawable/btn_9_av_download" />
 
     <TextView
         android:id="@+id/lFontName"
