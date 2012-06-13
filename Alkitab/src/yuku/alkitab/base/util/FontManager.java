@@ -63,9 +63,17 @@ public class FontManager {
 		}
 		return null;
 	}
+	
+	public static File getFontDir(String name) {
+		return new File(getFontsPath(), name);
+	}
 
 	private static File getRegularPath(String name) {
 		return new File(getFontsPath(), name + "/" + name + "-Regular.ttf");
+	}
+	
+	public static boolean isInstalled(String name) {
+		return getRegularPath(name).exists();
 	}
 	
 	public static List<FontEntry> getInstalledFonts() {

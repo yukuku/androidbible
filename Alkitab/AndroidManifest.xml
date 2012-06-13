@@ -37,5 +37,7 @@
 		<activity android:name="yuku.alkitab.base.ac.ShareActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 		<activity android:name="yuku.alkitab.base.ac.FontManagerActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 		<activity android:name="yuku.filechooser.FileChooserActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
+		
+		<service android:name="yuku.alkitab.base.sv.DownloadService" />
 	</application>
 </manifest>
