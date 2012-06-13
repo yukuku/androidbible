@@ -27,11 +27,16 @@
         android:id="@+id/bDownload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/progressbar"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/imgPreview"
         android:padding="8dp"
-        android:src="@drawable/btn_9_av_download" />
+        android:src="@drawable/btn_9_av_download" android:layout_centerVertical="true"/>
+
+    <ImageButton
+        android:id="@+id/bDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:src="@drawable/btn_5_content_discard" android:layout_alignParentRight="true" android:layout_centerVertical="true"/>
 
     <TextView
         android:id="@+id/lFontName"
@@ -43,5 +48,14 @@
         android:layout_alignTop="@+id/imgPreview"
         android:text="FontName"
         android:textAppearance="?android:attr/textAppearanceMedium" android:gravity="center_vertical"/>
+
+    <TextView
+        android:id="@+id/lErrorMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/progressbar"
+        android:layout_alignRight="@+id/progressbar"
+        android:layout_below="@+id/progressbar"
+        android:textAppearance="?android:attr/textAppearanceSmall" android:visibility="gone"/>
 
 </RelativeLayout>
