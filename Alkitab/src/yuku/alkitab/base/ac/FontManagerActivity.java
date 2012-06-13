@@ -12,9 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -22,20 +19,20 @@ import android.widget.TextView;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
-import yuku.afw.D;
 import yuku.alkitab.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.rpc.SimpleHttpConnection;
 import yuku.alkitab.base.sv.DownloadService;
 import yuku.alkitab.base.sv.DownloadService.DownloadBinder;
 import yuku.alkitab.base.sv.DownloadService.DownloadEntry;
@@ -82,8 +79,6 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 		lEmptyError = U.getView(this, R.id.lEmptyError);
 		
 		lsFont.setAdapter(adapter = new FontAdapter());
-		lsFont.setOnItemClickListener(lsFont_itemClick);
-		lsFont.setOnItemLongClickListener(lsFont_itemLongClick);
 		lsFont.setEmptyView(lEmptyError);
 		
 		bindService(new Intent(App.context, DownloadService.class), serviceConnection, BIND_AUTO_CREATE);
@@ -99,24 +94,17 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 
 	private void loadFontList() {
 		new AsyncTask<Void, Void, List<FontItem>>() {
-			String error;
+			String errorMsg;
 			
 			@Override protected List<FontItem> doInBackground(Void... params) {
-				{
-					List<FontItem> list = new ArrayList<FontItem>();
-					for (String name: "Bitter Cardo EBGaramond Kreon Lora".split(" ")) {
-						FontItem item = new FontItem();
-						item.name = name;
-						list.add(item);
-					}
-					if (D.EBUG) return list;
-				}
-				
-				
-				HttpConnection conn = new HttpConnection("http://alkitab-host.appspot.com/addon/fonts/v1/list.txt");
+				SimpleHttpConnection conn = new SimpleHttpConnection("http://alkitab-host.appspot.com/addon/fonts/v1/list.txt");
 				try {
 					InputStream in = conn.load();
-					if (in != null) {
+					if (in == null) {
+						Exception ex = conn.getException();
+						errorMsg = ex.getClass().getSimpleName() + " " + ex.getMessage();
+						return null;
+					} else {
 						if (conn.isSameHost()) {
 							List<FontItem> list = new ArrayList<FontItem>();
 							Scanner sc = new Scanner(in);
@@ -130,12 +118,10 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 							}
 							return list;
 						} else {
-							error = "You need to log-in to your (Wi-Fi) network first.";
+							errorMsg = "You need to log-in to your (Wi-Fi) network first.";
 						}
-					} else {
-						error = conn.getException().getMessage();
+						return null;
 					}
-					return null;
 				} finally {
 					conn.close();
 				}
@@ -146,69 +132,23 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 					lEmptyError.setText(null);
 					adapter.setData(result);
 				} else {
-					lEmptyError.setText(error);
+					lEmptyError.setText(errorMsg);
 				}
 			};
 		}.execute();
 	}
 	
-	public static class HttpConnection {
-		final URL url;
-		HttpURLConnection conn = null;
-		InputStream in = null;
-		IOException ex = null;
-		
-		public HttpConnection(String url) {
-			try {
-				this.url = new URL(url);
-			} catch (MalformedURLException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		
-		public InputStream load() {
-			try {
-				conn = (HttpURLConnection) url.openConnection();
-				in = new BufferedInputStream(conn.getInputStream());
-				return in;
-			} catch (IOException e) {
-				this.ex = e;
-				return null;
-			}
-		}
-		
-		public boolean isSameHost() {
-			return url.getHost().equals(conn.getURL().getHost());
-		}
-		
-		public Exception getException() {
-			return ex;
-		}
-		
-		public void close() {
-			try {
-				if (in != null) in.close();
-				if (conn != null) conn.disconnect();
-			} catch (IOException e) {
-				Log.d(TAG, "close", e);
-			}
-		}
+	private String getFontDownloadKey(String name) {
+		return "FontManager/" + name;
+	}
+	
+	private String getFontNameFromDownloadKey(String key) {
+		return key.substring("FontManager/".length());
 	}
 
-	private OnItemClickListener lsFont_itemClick = new OnItemClickListener() {
-		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-			FontItem item = adapter.getItem(position);
-
-			adapter.notifyDataSetChanged();
-		}
-	};
-
-	private OnItemLongClickListener lsFont_itemLongClick = new OnItemLongClickListener() {
-		@Override public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-	};
+	private String getFontDownloadDestination(String name) {
+		return new File(FontManager.getFontsPath(), "download-" + name + ".zip").getAbsolutePath();
+	}
 	
 	public static class FontItem {
 		public String name;
@@ -245,8 +185,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 			TextView lErrorMsg = U.getView(res, R.id.lErrorMsg);
 			
 			FontItem item = getItem(position);
-			String dlkey = getDownloadKey(item.name);
-			boolean installed = FontManager.isInstalled(item.name);
+			String dlkey = getFontDownloadKey(item.name);
 			
 			lFontName.setText(item.name);
 			lFontName.setVisibility(View.VISIBLE);
@@ -258,10 +197,10 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 			bDelete.setTag(R.id.TAG_fontItem, item);
 			bDelete.setOnClickListener(bDelete_click);
 			
-			if (installed) {
+			if (FontManager.isInstalled(item.name)) {
 				progressbar.setIndeterminate(false);
-				progressbar.setProgress(100);
 				progressbar.setMax(100);
+				progressbar.setProgress(100);
 				bDownload.setVisibility(View.GONE);
 				bDelete.setVisibility(View.VISIBLE);
 				lErrorMsg.setVisibility(View.GONE);
@@ -269,8 +208,8 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 				DownloadEntry entry = dls.getEntry(dlkey);
 				if (entry == null) {
 					progressbar.setIndeterminate(false);
-					progressbar.setProgress(0);
 					progressbar.setMax(100);
+					progressbar.setProgress(0);
 					bDownload.setVisibility(View.VISIBLE);
 					bDownload.setEnabled(true);
 					bDelete.setVisibility(View.GONE);
@@ -287,8 +226,8 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 							progressbar.setIndeterminate(true);
 						} else {
 							progressbar.setIndeterminate(false);
-							progressbar.setProgress((int) entry.progress);
 							progressbar.setMax((int) entry.length);
+							progressbar.setProgress((int) entry.progress);
 						}
 						bDownload.setVisibility(View.VISIBLE);
 						bDownload.setEnabled(false);
@@ -296,15 +235,15 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 						lErrorMsg.setVisibility(View.GONE);
 					} else if (entry.state == DownloadService.State.finished) {
 						progressbar.setIndeterminate(false);
-						progressbar.setProgress((int) entry.progress);
-						progressbar.setMax((int) entry.progress); // same as progress
+						progressbar.setMax(100); // consider full
+						progressbar.setProgress(100); // consider full
 						bDownload.setVisibility(View.GONE);
 						bDelete.setVisibility(View.VISIBLE);
 						lErrorMsg.setVisibility(View.GONE);
 					} else if (entry.state == DownloadService.State.failed) {
 						progressbar.setIndeterminate(false);
+						progressbar.setMax(100);
 						progressbar.setProgress(0);
-						progressbar.setMax((int) (entry.length == -1? 100: entry.length));
 						bDownload.setVisibility(View.VISIBLE);
 						bDownload.setEnabled(true);
 						bDelete.setVisibility(View.GONE);
@@ -316,23 +255,20 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 			
 			return res;
 		}
-
-		private String getDownloadKey(String name) {
-			return "FontManager/name/" + name;
-		}
 		
 		private OnClickListener bDownload_click = new OnClickListener() {
 			@Override public void onClick(View v) {
 				FontItem item = (FontItem) v.getTag(R.id.TAG_fontItem);
 				
-				String dlkey = getDownloadKey(item.name);
+				String dlkey = getFontDownloadKey(item.name);
 				dls.removeEntry(dlkey);
 				
 				if (dls.getEntry(dlkey) == null) {
+					new File(FontManager.getFontsPath()).mkdirs();
 					dls.startDownload(
 						dlkey, 
 						"http://alkitab-host.appspot.com/addon/fonts/v1/data/" + item.name + ".zip",
-						new File(FontManager.getFontsPath(), "download-" + item.name + ".zip").getAbsolutePath()
+						getFontDownloadDestination(item.name)
 					);
 				}
 				
@@ -349,10 +285,15 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
 						File fontDir = FontManager.getFontDir(item.name);
-						for (File file: fontDir.listFiles()) {
-							file.delete();
+						File[] listFiles = fontDir.listFiles();
+						if (listFiles != null) {
+							for (File file: listFiles) {
+								file.delete();
+							}
 						}
 						fontDir.delete();
+						
+						dls.removeEntry(getFontDownloadKey(item.name));
 						
 						notifyDataSetChanged();
 					}
@@ -373,9 +314,48 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 	}
 
 	@Override public void onStateChanged(DownloadEntry entry) {
-		adapter.notifyDataSetChanged();
 		// TODO optimize
-		// TODO unzip
+		adapter.notifyDataSetChanged();
+		
+		if (entry.state == DownloadService.State.finished) {
+			String fontName = getFontNameFromDownloadKey(entry.key);
+			try {
+				String downloadedZip = getFontDownloadDestination(fontName);
+				File fontDir = FontManager.getFontDir(fontName);
+				fontDir.mkdirs();
+				
+				Log.d(TAG, "Going to unzip " + downloadedZip);
+				
+				ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(downloadedZip)));
+				try {
+					ZipEntry ze;
+					while ((ze = zis.getNextEntry()) != null) {
+						String zname = ze.getName();
+						Log.d(TAG, "Extracting from zip: " + zname);
+						File extractFile = new File(fontDir, zname);
+						FileOutputStream fos = new FileOutputStream(extractFile);
+						try {
+							byte[] buf = new byte[4096];
+							int count;
+							while ((count = zis.read(buf)) != -1) {
+								fos.write(buf, 0, count);
+							}
+						} finally {
+							fos.close();
+						}
+					}
+				} finally {
+					zis.close();
+				}
+				
+				new File(downloadedZip).delete();
+			} catch (Exception e) {
+				new AlertDialog.Builder(FontManagerActivity.this)
+				.setMessage("Error when extracting font " + fontName + ": " + e.getMessage())
+				.setPositiveButton(R.string.ok, null)
+				.show();
+			}
+		}
 	}
 
 	@Override public void onProgress(DownloadEntry entry) {

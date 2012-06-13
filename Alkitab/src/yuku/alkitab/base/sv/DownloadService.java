@@ -6,11 +6,11 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.SystemClock;
 import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -18,6 +18,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import yuku.afw.App;
+import yuku.alkitab.base.rpc.SimpleHttpConnection;
 
 public class DownloadService extends Service {
 	public static final String TAG = DownloadService.class.getSimpleName();
@@ -148,18 +149,30 @@ public class DownloadService extends Service {
 			try {
 				FileOutputStream tempOut = new FileOutputStream(entry.tempFile);
 				
-				// simulate download
-				entry.length = 20;
-				dispatchProgress(entry);
-				
-				for (int i = 0; i < entry.length; i++) {
+				// download
+				SimpleHttpConnection conn = new SimpleHttpConnection(entry.url);
+				try {
+					InputStream is = conn.load();
+					if (is == null) {
+						throw conn.getException();
+					}
+					
 					changeState(State.downloading);
-					SystemClock.sleep((long) (3000 * Math.random() * Math.random()));
-					tempOut.write(i);
-					entry.progress = i;
+					entry.progress = conn.getContentLength();
 					dispatchProgress(entry);
-					Log.d(TAG, "Entry " + entry.key + " progress " + i + "/" + entry.length);
-					if (Math.random() < 0.05) throw new RuntimeException("pura2 gagal");
+					
+					byte[] buf = new byte[16384];
+					while (true) {
+						int read = is.read(buf);
+						if (read < 0) break;
+						tempOut.write(buf, 0, read);
+						entry.progress += read;
+						dispatchProgress(entry);
+						Log.d(TAG, "Entry " + entry.key + " progress " + entry.progress + "/" + entry.length);
+					}
+					tempOut.close();
+				} finally {
+					conn.close();
 				}
 				
 				// move
@@ -177,7 +190,7 @@ public class DownloadService extends Service {
 			} catch (Exception e) {
 				Log.w(TAG, "Failed download because of exception", e);
 				entry.tempFile.delete();
-				entry.errorMsg = e.getMessage();
+				entry.errorMsg = e.getClass().getSimpleName() + " " + e.getMessage();
 				changeState(State.failed);
 			} finally {
 				decrementWaitingAndCheck();
