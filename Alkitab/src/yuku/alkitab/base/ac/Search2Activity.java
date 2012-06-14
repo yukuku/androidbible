@@ -52,7 +52,7 @@ public class Search2Activity extends BaseActivity {
 	private static final String EXTRA_query = "query"; //$NON-NLS-1$
 	private static final String EXTRA_hasilCari = "hasilCari"; //$NON-NLS-1$
 	private static final String EXTRA_posisiTerpilih = "posisiTerpilih"; //$NON-NLS-1$
-	private static final String EXTRA_kitabPosTerbuka = "kitabPosTerbuka";
+	private static final String EXTRA_kitabPosTerbuka = "kitabPosTerbuka"; //$NON-NLS-1$
 	private static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
 	
 	ListView lsHasilCari;

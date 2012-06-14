@@ -53,7 +53,7 @@ public class SimpleHttpConnection {
 			if (in != null) in.close();
 			if (conn != null) conn.disconnect();
 		} catch (IOException e) {
-			Log.d(FontManagerActivity.TAG, "close", e);
+			Log.d(FontManagerActivity.TAG, "close", e); //$NON-NLS-1$
 		}
 	}
 }

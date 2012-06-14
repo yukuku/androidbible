@@ -111,7 +111,7 @@ public class IsiActivity extends BaseActivity {
 	private static final int REQCODE_search = 6;
 	private static final int REQCODE_bagikan = 7;
 
-	private static final String EXTRA_urlAyat = "urlAyat";
+	private static final String EXTRA_urlAyat = "urlAyat"; //$NON-NLS-1$
 
 	ListView lsIsi;
 	Button bTuju;
@@ -266,11 +266,11 @@ public class IsiActivity extends BaseActivity {
 				@Override public NdefMessage createNdefMessage(NfcEvent event) {
 					JSONObject obj = new JSONObject();
 					try {
-						obj.put("ari", Ari.encode(S.kitabAktif.pos, IsiActivity.this.pasal_1, IsiActivity.this.getAyatBerdasarSkrol()));
+						obj.put("ari", Ari.encode(S.kitabAktif.pos, IsiActivity.this.pasal_1, IsiActivity.this.getAyatBerdasarSkrol())); //$NON-NLS-1$
 					} catch (JSONException e) { // won't happen
 					}
 					byte[] payload = obj.toString().getBytes();
-					NdefRecord record = new NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".getBytes(), new byte[0], payload);
+					NdefRecord record = new NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".getBytes(), new byte[0], payload); //$NON-NLS-1$
 					NdefMessage msg = new NdefMessage(new NdefRecord[] { 
 						record,
 						NdefRecord.createApplicationRecord(getPackageName()),
@@ -303,9 +303,9 @@ public class IsiActivity extends BaseActivity {
 			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 			IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
 			try {
-			    ndef.addDataType("application/vnd.yuku.alkitab.nfc.beam");
+			    ndef.addDataType("application/vnd.yuku.alkitab.nfc.beam"); //$NON-NLS-1$
 			} catch (MalformedMimeTypeException e) {
-			    throw new RuntimeException("fail mime type", e);
+			    throw new RuntimeException("fail mime type", e); //$NON-NLS-1$
 			}
 			IntentFilter[] intentFiltersArray = new IntentFilter[] {ndef, };
 			nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, null);
@@ -333,12 +333,12 @@ public class IsiActivity extends BaseActivity {
 					String json = new String(records[0].getPayload());
 					try {
 						JSONObject obj = new JSONObject(json);
-						int ari = obj.optInt("ari", -1);
+						int ari = obj.optInt("ari", -1); //$NON-NLS-1$
 						if (ari != -1) {
 							IsiActivity.this.loncatKeAri(ari);
 						}
 					} catch (JSONException e) {
-						Log.e(TAG, "Malformed json from nfc", e);
+						Log.e(TAG, "Malformed json from nfc", e); //$NON-NLS-1$
 					}
 				}
 			}
@@ -457,10 +457,10 @@ public class IsiActivity extends BaseActivity {
 	
 	protected boolean tekan(int keyCode) {
 		String tombolVolumeBuatPindah = Preferences.getString(R.string.pref_tombolVolumeBuatPindah_key, R.string.pref_tombolVolumeBuatPindah_default);
-		if (U.equals(tombolVolumeBuatPindah, "pasal")) {
+		if (U.equals(tombolVolumeBuatPindah, "pasal")) { //$NON-NLS-1$
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_RIGHT;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_LEFT;
-		} else if (U.equals(tombolVolumeBuatPindah, "ayat")) {
+		} else if (U.equals(tombolVolumeBuatPindah, "ayat")) { //$NON-NLS-1$
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_DOWN;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_UP;
 		}
@@ -652,7 +652,7 @@ public class IsiActivity extends BaseActivity {
 		 * Please ignore it and leave it intact. */
 		if (hasEsvsbAsal == null) {
 			try {
-				getPackageManager().getApplicationInfo("yuku.esvsbasal", 0);
+				getPackageManager().getApplicationInfo("yuku.esvsbasal", 0); //$NON-NLS-1$
 				hasEsvsbAsal = true;
 			} catch (NameNotFoundException e) {
 				hasEsvsbAsal = false;
@@ -660,7 +660,7 @@ public class IsiActivity extends BaseActivity {
 		}
 		
 		if (hasEsvsbAsal) {
-			res.menuEsvsbasal = new Item("ESV Study Bible");
+			res.menuEsvsbasal = new Item("ESV Study Bible"); //$NON-NLS-1$
 		}
 		
 		ArrayList<Item> items = new ArrayList<Item>(6);
@@ -800,11 +800,11 @@ public class IsiActivity extends BaseActivity {
 			final int ari = Ari.encode(S.kitabAktif.pos, this.pasal_1, ayatUtama_1);
 
 			try {
-				Intent intent = new Intent("yuku.esvsbasal.action.GOTO");
-				intent.putExtra("ari", ari);
+				Intent intent = new Intent("yuku.esvsbasal.action.GOTO"); //$NON-NLS-1$
+				intent.putExtra("ari", ari); //$NON-NLS-1$
 				startActivity(intent);
 			} catch (Exception e) {
-				Log.e(TAG, "ESVSB starting", e);
+				Log.e(TAG, "ESVSB starting", e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -1254,7 +1254,7 @@ public class IsiActivity extends BaseActivity {
 				ShareActivity.Result result = ShareActivity.obtainResult(data);
 				if (result != null && result.chosenIntent != null) {
 					Intent chosenIntent = result.chosenIntent;
-					if (U.equals(chosenIntent.getComponent().getPackageName(), "com.facebook.katana")) {
+					if (U.equals(chosenIntent.getComponent().getPackageName(), "com.facebook.katana")) { //$NON-NLS-1$
 						String urlAyat = chosenIntent.getStringExtra(EXTRA_urlAyat);
 						if (urlAyat != null) {
 							chosenIntent.putExtra(Intent.EXTRA_TEXT, urlAyat); // change text to url
@@ -1342,7 +1342,7 @@ public class IsiActivity extends BaseActivity {
 	
 	@Override public boolean onKeyUp(int keyCode, KeyEvent event) {
 		String tombolVolumeBuatPindah = Preferences.getString(R.string.pref_tombolVolumeBuatPindah_key, R.string.pref_tombolVolumeBuatPindah_default);
-		if (! U.equals(tombolVolumeBuatPindah, "default")) { // consume here
+		if (! U.equals(tombolVolumeBuatPindah, "default")) { // consume here //$NON-NLS-1$
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) return true;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) return true;
 		}

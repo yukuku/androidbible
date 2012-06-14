@@ -38,16 +38,16 @@ public class App extends yuku.afw.App {
 		{
 			// HTTP connection reuse which was buggy pre-froyo
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
-				System.setProperty("http.keepAlive", "false");
+				System.setProperty("http.keepAlive", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			// Use reflection to enable HTTP response caching on devices that support it. This sample code will turn on the response cache on Ice Cream Sandwich without affecting
 			// earlier releases:
 			try {
 				long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
-				File httpCacheDir = new File(getCacheDir(), "http");
-				Class.forName("android.net.http.HttpResponseCache")
-				.getMethod("install", File.class, long.class)
+				File httpCacheDir = new File(getCacheDir(), "http"); //$NON-NLS-1$
+				Class.forName("android.net.http.HttpResponseCache") //$NON-NLS-1$
+				.getMethod("install", File.class, long.class) //$NON-NLS-1$
 				.invoke(null, httpCacheDir, httpCacheSize);
 			} catch (Exception httpResponseCacheNotAvailable) {
 			}

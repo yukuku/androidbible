@@ -145,7 +145,7 @@ public class ConvertPdbToYes {
 						if (res.wronglyConvertedBookNames == null) {
 							res.wronglyConvertedBookNames = new ArrayList<String>();
 						}
-						res.wronglyConvertedBookNames.add(bookInfo.getFullName() + " (" + bookNumber + "): duplicate");
+						res.wronglyConvertedBookNames.add(bookInfo.getFullName() + " (" + bookNumber + "): duplicate"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					kitabPosToBookPosMap_.put(kitabPos, bookPos);
 				}
@@ -299,7 +299,7 @@ public class ConvertPdbToYes {
 		}
 		
 		if (res.size() != kitabPosToBookPosMap_.size()) {
-			throw new RuntimeException("Some internal error, res size != kitabPosToBookPos size");
+			throw new RuntimeException("Some internal error, res size != kitabPosToBookPos size"); //$NON-NLS-1$
 		}
 		
 		return new InfoKitab() {{

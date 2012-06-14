@@ -39,7 +39,7 @@ public class BuildConfig {
 		}
 		
 		int resId;
-		if (packageName.equals("yuku.alkitab.beta")) { // special for yuku.alkitab.beta
+		if (packageName.equals("yuku.alkitab.beta")) { // special for yuku.alkitab.beta //$NON-NLS-1$
 			resId = context.getResources().getIdentifier("build_config_yuku_alkitab", "xml", packageName); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			resId = context.getResources().getIdentifier("build_config_" + packageName.replace('.', '_'), "xml", packageName); //$NON-NLS-1$ //$NON-NLS-2$

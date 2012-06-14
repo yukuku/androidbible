@@ -103,7 +103,7 @@ public class LineSpacingMultPreference extends DialogPreference implements OnSee
 	@Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 		float realValue = progress * 0.05f + 1.0f;
 
-		lValue.setText(String.format("%.2f", realValue));
+		lValue.setText(String.format("%.2f", realValue)); //$NON-NLS-1$
 		lContoh.setLineSpacing(0.f, realValue);
 
 		aturJenisDanTebalHuruf();

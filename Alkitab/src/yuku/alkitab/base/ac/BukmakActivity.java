@@ -227,8 +227,8 @@ public class BukmakActivity extends BaseActivity {
 								labelToRelIdMap.put(label, label_relId);
 								count_label++;
 							} else if (localName.equals(Bukmak2_Label_XMLTAG_Bukmak2_Label)) {
-								int bukmak2_relId = Integer.parseInt(attributes.getValue("", Bukmak2_Label_XMLATTR_bukmak2_relId));
-								int label_relId = Integer.parseInt(attributes.getValue("", Bukmak2_Label_XMLATTR_label_relId));
+								int bukmak2_relId = Integer.parseInt(attributes.getValue("", Bukmak2_Label_XMLATTR_bukmak2_relId)); //$NON-NLS-1$
+								int label_relId = Integer.parseInt(attributes.getValue("", Bukmak2_Label_XMLATTR_label_relId)); //$NON-NLS-1$
 								
 								TIntList labelRelIds = bukmak2RelIdToLabelRelIdsMap.get(bukmak2_relId);
 								if (labelRelIds == null) {
@@ -262,11 +262,11 @@ public class BukmakActivity extends BaseActivity {
 								S.getDb().updateLabel(labelLama);
 							}
 							labelRelIdToAbsIdMap.put(labelToRelIdMap.get(label), labelLama._id);
-							Log.d(TAG, "label (lama) r->a : " + labelToRelIdMap.get(label) + "->" + labelLama._id);
+							Log.d(TAG, "label (lama) r->a : " + labelToRelIdMap.get(label) + "->" + labelLama._id); //$NON-NLS-1$ //$NON-NLS-2$
 						} else { // belum ada, harus bikin baru
 							Label labelBaru = S.getDb().tambahLabel(label.judul, label.warnaLatar);
 							labelRelIdToAbsIdMap.put(labelToRelIdMap.get(label), labelBaru._id);
-							Log.d(TAG, "label (baru) r->a : " + labelToRelIdMap.get(label) + "->" + labelBaru._id);
+							Log.d(TAG, "label (baru) r->a : " + labelToRelIdMap.get(label) + "->" + labelBaru._id); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					}
 				}

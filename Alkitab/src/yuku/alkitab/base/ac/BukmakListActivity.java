@@ -206,7 +206,7 @@ public class BukmakListActivity extends BaseActivity {
 
 	OnClickListener bClearFilter_click = new OnClickListener() {
 		@Override public void onClick(View v) {
-			searchBar.setText("");
+			searchBar.setText(""); //$NON-NLS-1$
 			buangFilter();
 		}
 	};
@@ -344,7 +344,7 @@ public class BukmakListActivity extends BaseActivity {
 			}
 
 			private void sort(String column, boolean ascending, int columnId) {
-				searchBar.setText("");
+				searchBar.setText(""); //$NON-NLS-1$
 				lagiPakeFilter = null;
 				setTitleAndNothingText();
 				sort_column = column;

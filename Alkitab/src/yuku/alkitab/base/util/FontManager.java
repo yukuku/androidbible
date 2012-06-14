@@ -36,14 +36,14 @@ public class FontManager {
 				}
 			}
 			
-			Log.d(TAG, "TypefaceCreateFromFileCacher creating entry for " + path);
+			Log.d(TAG, "TypefaceCreateFromFileCacher creating entry for " + path); //$NON-NLS-1$
 			Typeface typeface = Typeface.createFromFile(path);
 			
 			// cache too full?
 			if (keys.size() >= max) {
 				keys.remove(0);
 				values.remove(0);
-				Log.d(TAG, "TypefaceCreateFromFileCacher removed entry from cache because cache is too full");
+				Log.d(TAG, "TypefaceCreateFromFileCacher removed entry from cache because cache is too full"); //$NON-NLS-1$
 			}
 			keys.add(path);
 			values.add(typeface);
@@ -69,7 +69,7 @@ public class FontManager {
 	}
 
 	private static File getRegularPath(String name) {
-		return new File(getFontsPath(), name + "/" + name + "-Regular.ttf");
+		return new File(getFontsPath(), name + "/" + name + "-Regular.ttf"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static boolean isInstalled(String name) {
@@ -95,7 +95,7 @@ public class FontManager {
 				String basename = pathname.getName();
 				File ttf = getRegularPath(basename);
 				if (!ttf.exists()) {
-					Log.d(TAG, "Font dir " + pathname.getAbsolutePath() + " exists but " + ttf.getAbsolutePath() + " doesn't");
+					Log.d(TAG, "Font dir " + pathname.getAbsolutePath() + " exists but " + ttf.getAbsolutePath() + " doesn't"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					return false;
 				} else {
 					return true;
@@ -121,13 +121,13 @@ public class FontManager {
 	
 	public static Typeface typeface(String name) {
 		Typeface res;
-		if (name == null || name.equals("DEFAULT") || name.equals("SANS_SERIF") || name.equals("<ADD>")) res = Typeface.SANS_SERIF; //$NON-NLS-1$
+		if (name == null || name.equals("DEFAULT") || name.equals("SANS_SERIF") || name.equals("<ADD>")) res = Typeface.SANS_SERIF; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		else if (name.equals("SERIF")) res = Typeface.SERIF; //$NON-NLS-1$
 		else if (name.equals("MONOSPACE")) res = Typeface.MONOSPACE; //$NON-NLS-1$
 		else {
 			res = getRegular(name);
 			if (res == null) { 
-				Log.w(TAG, "Failed to load font named " + name + " fallback to SANS_SERIF");
+				Log.w(TAG, "Failed to load font named " + name + " fallback to SANS_SERIF"); //$NON-NLS-1$ //$NON-NLS-2$
 				res = Typeface.SANS_SERIF;
 			}
 		}

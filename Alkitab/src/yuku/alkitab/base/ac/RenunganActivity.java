@@ -438,9 +438,9 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 				ShareActivity.Result result = ShareActivity.obtainResult(data);
 				if (result != null && result.chosenIntent != null) {
 					Intent chosenIntent = result.chosenIntent;
-					if (U.equals(chosenIntent.getComponent().getPackageName(), "com.facebook.katana")) {
-						if (U.equals(nama, "sh")) chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-sh/print/?edisi=" + tgl_format.get().format(tanggalan)); // change text to url
-						if (U.equals(nama, "rh")) chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-rh/print/?edisi=" + tgl_format.get().format(tanggalan)); // change text to url
+					if (U.equals(chosenIntent.getComponent().getPackageName(), "com.facebook.katana")) { //$NON-NLS-1$
+						if (U.equals(nama, "sh")) chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-sh/print/?edisi=" + tgl_format.get().format(tanggalan)); // change text to url //$NON-NLS-1$ //$NON-NLS-2$
+						if (U.equals(nama, "rh")) chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-rh/print/?edisi=" + tgl_format.get().format(tanggalan)); // change text to url //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					startActivity(chosenIntent);
 				}

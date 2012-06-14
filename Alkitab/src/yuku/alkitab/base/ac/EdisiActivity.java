@@ -384,7 +384,7 @@ public class EdisiActivity extends BaseActivity {
 		
 			final String filename = result.firstFilename;
 			
-			if (filename.toLowerCase().endsWith(".yes.gz")) {
+			if (filename.toLowerCase().endsWith(".yes.gz")) { //$NON-NLS-1$
 				// decompress or see if the same filename without .gz exists
 				final File maybeDecompressed = new File(filename.substring(0, filename.length() - 3));
 				if (maybeDecompressed.exists() && !maybeDecompressed.isDirectory() && maybeDecompressed.canRead()) {
@@ -393,7 +393,7 @@ public class EdisiActivity extends BaseActivity {
 					final ProgressDialog pd = ProgressDialog.show(EdisiActivity.this, null, getString(R.string.sedang_mendekompres_harap_tunggu), true, false);
 					new AsyncTask<Void, Void, File>() {
 						@Override protected File doInBackground(Void... params) {
-							String tmpfile3 = filename + "-" + (int)(Math.random() * 100000) + ".tmp3"; //$NON-NLS-1$
+							String tmpfile3 = filename + "-" + (int)(Math.random() * 100000) + ".tmp3"; //$NON-NLS-1$ //$NON-NLS-2$
 							try {
 								GZIPInputStream in = new GZIPInputStream(new FileInputStream(filename));
 								FileOutputStream out = new FileOutputStream(tmpfile3); // decompressed file

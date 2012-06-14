@@ -168,7 +168,7 @@ public class DownloadService extends Service {
 						tempOut.write(buf, 0, read);
 						entry.progress += read;
 						dispatchProgress(entry);
-						Log.d(TAG, "Entry " + entry.key + " progress " + entry.progress + "/" + entry.length);
+						Log.d(TAG, "Entry " + entry.key + " progress " + entry.progress + "/" + entry.length); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
 					tempOut.close();
 				} finally {

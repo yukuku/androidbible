@@ -170,7 +170,7 @@ public class InternalDb {
 					
 					if (ada && tumpuk) {
 						params1[0] = String.valueOf(_id);
-						db.delete(Db.TABEL_Bukmak2, "_id=?", params1);
+						db.delete(Db.TABEL_Bukmak2, "_id=?", params1); //$NON-NLS-1$
 						db.delete(Db.TABEL_Bukmak2_Label, Db.Bukmak2_Label.bukmak2_id + "=?", params1); //$NON-NLS-1$
 					}
 					if ((ada && tumpuk) || (!ada)) {
@@ -183,7 +183,7 @@ public class InternalDb {
 			}
 			
 			{ // sekarang pemasangan label
-				String where = Db.Bukmak2_Label.bukmak2_id + "=?";
+				String where = Db.Bukmak2_Label.bukmak2_id + "=?"; //$NON-NLS-1$
 				String[] params = {null};
 				ContentValues cv = new ContentValues();
 				
@@ -202,7 +202,7 @@ public class InternalDb {
 						
 						// cek ada berapa label untuk bukmak2_id ini
 						int nlabel = 0;
-						Cursor c = db.rawQuery("select count(*) from " + Db.TABEL_Bukmak2_Label + " where " + where, params);
+						Cursor c = db.rawQuery("select count(*) from " + Db.TABEL_Bukmak2_Label + " where " + where, params); //$NON-NLS-1$ //$NON-NLS-2$
 						try {
 							c.moveToNext();
 							nlabel = c.getInt(0);
@@ -221,12 +221,12 @@ public class InternalDb {
 									cv.put(Db.Bukmak2_Label.label_id, label_id);
 									db.insert(Db.TABEL_Bukmak2_Label, null, cv);
 								} else {
-									Log.w(TAG, "label_id ngaco!: " + label_id);
+									Log.w(TAG, "label_id ngaco!: " + label_id); //$NON-NLS-1$
 								}
 							}
 						}
 					} else {
-						Log.w(TAG, "bukmak2_id ngaco!: " + bukmak2_id);
+						Log.w(TAG, "bukmak2_id ngaco!: " + bukmak2_id); //$NON-NLS-1$
 					}
 				}
 			}
@@ -588,7 +588,7 @@ public class InternalDb {
 	 */
 	public TLongList listLabelIds(long bukmak2_id) {
 		TLongList res = null;
-		Cursor cursor = helper.getReadableDatabase().rawQuery("select " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.label_id + " from " + Db.TABEL_Bukmak2_Label + " where " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.bukmak2_id + "=?", new String[] {String.valueOf(bukmak2_id)});       //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$//$NON-NLS-6$//$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$ //$NON-NLS-11$ //$NON-NLS-12$
+		Cursor cursor = helper.getReadableDatabase().rawQuery("select " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.label_id + " from " + Db.TABEL_Bukmak2_Label + " where " + Db.TABEL_Bukmak2_Label + "." + Db.Bukmak2_Label.bukmak2_id + "=?", new String[] {String.valueOf(bukmak2_id)});       //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$//$NON-NLS-6$
 		try {
 			int col_label_id = cursor.getColumnIndexOrThrow(Db.Bukmak2_Label.label_id);
 			while (cursor.moveToNext()) {
@@ -608,7 +608,7 @@ public class InternalDb {
 	}
 
 	public Label tambahLabel(String judul, String warnaLatar) {
-		Label res = new Label(-1, judul, getUrutanTerbesarLabel() + 1, warnaLatar); //$NON-NLS-1$
+		Label res = new Label(-1, judul, getUrutanTerbesarLabel() + 1, warnaLatar); 
 		SQLiteDatabase db = helper.getWritableDatabase();
 		long _id = db.insert(Db.TABEL_Label, null, res.toContentValues());
 		if (_id == -1) {

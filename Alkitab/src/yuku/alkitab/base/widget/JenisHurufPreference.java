@@ -60,7 +60,7 @@ public class JenisHurufPreference extends ListPreference {
     		res[preset.length + i] = fontEntries.get(i).name;
     	}
     	
-    	res[res.length - 1] = "<ADD>";
+    	res[res.length - 1] = "<ADD>"; //$NON-NLS-1$
     	return res;
     }
     

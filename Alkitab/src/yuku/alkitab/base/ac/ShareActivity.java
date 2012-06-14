@@ -140,7 +140,6 @@ public class ShareActivity extends BaseActivity {
 				ResolveInfo r0 = rList.get(0);
 				for (int i = 1; i < N; i++) {
 					ResolveInfo ri = rList.get(i);
-					Log.v("ResolveListActivity", r0.activityInfo.name + "=" + r0.priority + "/" + r0.isDefault + " vs " + ri.activityInfo.name + "=" + ri.priority + "/" + ri.isDefault);
 					if (r0.priority != ri.priority || r0.isDefault != ri.isDefault) {
 						while (i < N) {
 							rList.remove(i);
@@ -164,7 +163,7 @@ public class ShareActivity extends BaseActivity {
 						}
 						ActivityInfo ai = ii.resolveActivityInfo(getPackageManager(), 0);
 						if (ai == null) {
-							Log.w("ResolverActivity", "No activity found for " + ii);
+							Log.w("ResolverActivity", "No activity found for " + ii); //$NON-NLS-1$ //$NON-NLS-2$
 							continue;
 						}
 						ResolveInfo ri = new ResolveInfo();

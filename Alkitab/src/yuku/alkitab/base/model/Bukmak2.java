@@ -106,7 +106,7 @@ public class Bukmak2 {
 	}
 	
 	public static int getRelId(Attributes attributes) {
-		String s = attributes.getValue("", XMLATTR_relId);
+		String s = attributes.getValue("", XMLATTR_relId); //$NON-NLS-1$
 		return s == null? 0: Integer.parseInt(s);
 	}
 }

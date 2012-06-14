@@ -76,9 +76,9 @@ public class UrlImageView extends ImageView {
 			res.reverse();
 			res.append('-');
 			res.append(Integer.toHexString(path.hashCode()));
-			res.append("-v");
+			res.append("-v"); //$NON-NLS-1$
 			res.append(version);
-			res.append(".cache");
+			res.append(".cache"); //$NON-NLS-1$
 			return res.toString();
 		}
 		
@@ -88,7 +88,7 @@ public class UrlImageView extends ImageView {
 			
 			final String pathcode = getPathcode(key, App.getVersionCode());
 			
-			File cacheDir = new File(App.context.getCacheDir(), "UrlImageView-diskcache");
+			File cacheDir = new File(App.context.getCacheDir(), "UrlImageView-diskcache"); //$NON-NLS-1$
 			File cacheFile = new File(cacheDir, pathcode);
 			
 			byte[] buf = null;
@@ -107,7 +107,7 @@ public class UrlImageView extends ImageView {
 					return null;
 				}
 			} catch (Exception e) {
-				Log.d(TAG, "Error when reading disk cache: ", e);
+				Log.d(TAG, "Error when reading disk cache: ", e); //$NON-NLS-1$
 				return null;
 			} finally {
 				if (D.EBUG) Log.d(TAG, "retrieveFromDiskCache (" + (buf == null? "null": buf.length + " bytes") + ") took " + (SystemClock.uptimeMillis() - startTime) + " ms. From '" + key + "', thread=" + Thread.currentThread().getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
@@ -131,13 +131,13 @@ public class UrlImageView extends ImageView {
 						startTime = SystemClock.uptimeMillis();
 					}
 					
-					File cacheDir = new File(App.context.getCacheDir(), "UrlImageView-diskcache");
+					File cacheDir = new File(App.context.getCacheDir(), "UrlImageView-diskcache"); //$NON-NLS-1$
 					cacheDir.mkdirs();
 					File cacheFile = new File(cacheDir, pathcode);
 					if (data == null) {
 						cacheFile.delete();
 					} else {
-						File cacheFileTmp = new File(cacheDir, pathcode + ".tmp");
+						File cacheFileTmp = new File(cacheDir, pathcode + ".tmp"); //$NON-NLS-1$
 						
 						try {
 							FileOutputStream os = new FileOutputStream(cacheFileTmp);
@@ -147,11 +147,11 @@ public class UrlImageView extends ImageView {
 							cacheFile.delete();
 							cacheFileTmp.renameTo(cacheFile);
 						} catch (Exception e) {
-							Log.w(TAG, "exception when writing cache: ", e);
+							Log.w(TAG, "exception when writing cache: ", e); //$NON-NLS-1$
 						}
 					}
 					
-					if (D.EBUG) Log.d(TAG, "storeToDiskCache " + (data == null? "null": data.length + " bytes") + " took " + (SystemClock.uptimeMillis() - startTime) + " ms (delayed " + (startTime - callTime) + " ms). To '" + key + "', thread=" + Thread.currentThread().getName()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+					if (D.EBUG) Log.d(TAG, "storeToDiskCache " + (data == null? "null": data.length + " bytes") + " took " + (SystemClock.uptimeMillis() - startTime) + " ms (delayed " + (startTime - callTime) + " ms). To '" + key + "', thread=" + Thread.currentThread().getName()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 					return null;
 				}
 			}.execute();
@@ -179,13 +179,13 @@ public class UrlImageView extends ImageView {
 			if (prev != null) {
 				int size = calcSize(prev);
 				totalSize -= size;
-				if (D.EBUG) Log.d(TAG, "cache put() remove prev: size " + size + " total " + totalSize);
+				if (D.EBUG) Log.d(TAG, "cache put() remove prev: size " + size + " total " + totalSize); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 			if (value != null) {
 				int size = calcSize(value);
 				totalSize += size;
-				if (D.EBUG) Log.d(TAG, "cache put() add new: size " + size + " total " + totalSize);
+				if (D.EBUG) Log.d(TAG, "cache put() add new: size " + size + " total " + totalSize); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 			return prev;
@@ -204,7 +204,7 @@ public class UrlImageView extends ImageView {
 					if (totalSize < maxTotalSize) {
 						break;
 					} else {
-						if (D.EBUG) Log.d(TAG, "cache removeEldestEntry() still needs to remove items");
+						if (D.EBUG) Log.d(TAG, "cache removeEldestEntry() still needs to remove items"); //$NON-NLS-1$
 					}
 				}
 			}
@@ -219,7 +219,7 @@ public class UrlImageView extends ImageView {
 			if (prev != null) {
 				int size = calcSize(prev);
 				totalSize -= size;
-				if (D.EBUG) Log.d(TAG, "cache remove(): size " + size + " total " + totalSize);
+				if (D.EBUG) Log.d(TAG, "cache remove(): size " + size + " total " + totalSize); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 			return prev;
@@ -227,7 +227,7 @@ public class UrlImageView extends ImageView {
 		
 		@Override public void clear() {
 			totalSize = 0;
-			if (D.EBUG) Log.d(TAG, "cache clear()");
+			if (D.EBUG) Log.d(TAG, "cache clear()"); //$NON-NLS-1$
 			
 			super.clear();
 		};
@@ -309,7 +309,7 @@ public class UrlImageView extends ImageView {
 		setState(State.loading, url);
 
 		if (url == null) {
-			Log.d(TAG, "calss: " + defaultImage.getClass().getName());
+			Log.d(TAG, "class: " + defaultImage.getClass().getName()); //$NON-NLS-1$
 			
 			if (defaultImage != null) {
 				this.setImageDrawable(defaultImage);
@@ -361,7 +361,7 @@ public class UrlImageView extends ImageView {
 								int pixels = opts.outHeight * opts.outWidth;
 								int downscale = 1;
 								while (true) {
-									if (D.EBUG) Log.d(TAG, "maxpixels: " + maxPixels + " pixels: " + pixels + " downscale: " + downscale + " pixels/downscale/downscale: " + (pixels / downscale / downscale));
+									if (D.EBUG) Log.d(TAG, "maxpixels: " + maxPixels + " pixels: " + pixels + " downscale: " + downscale + " pixels/downscale/downscale: " + (pixels / downscale / downscale)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 									if (pixels / downscale / downscale > maxPixels) {
 										downscale++;
 									} else {
@@ -432,7 +432,7 @@ public class UrlImageView extends ImageView {
 		if (b == null) {
 			memoryCache.remove(url);
 		} else {
-			if (D.EBUG) Log.d(TAG, "storeToMemoryCache " + b.getWidth() + "*" + b.getHeight() + " " + b.getConfig() + " for " + url);
+			if (D.EBUG) Log.d(TAG, "storeToMemoryCache " + b.getWidth() + "*" + b.getHeight() + " " + b.getConfig() + " for " + url); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			memoryCache.put(url, b);
 		}
 	}

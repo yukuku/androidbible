@@ -24,20 +24,20 @@ public class PengaturanActivity extends PreferenceActivity {
 		autoUpdateSummary(R.string.pref_ukuranHuruf2_key, new PreferenceUpdate() {
 			@Override public String withValue(Object value) {
 				float dp = value == null? 17.f: (Float) value;
-				return String.format("%.1f dp (%.1f pt)", dp, dp * 0.45f);
+				return String.format("%.1f dp (%.1f pt)", dp, dp * 0.45f); //$NON-NLS-1$
 			}
 		});
 		
 		autoUpdateSummary(R.string.pref_jenisHuruf_key, new PreferenceUpdate() {
 			@Override public String withValue(Object value) {
-				return value != null? (String) value: "Default";
+				return value != null? (String) value: "Default"; //$NON-NLS-1$
 			}
 		});
 		
 		autoUpdateSummary(R.string.pref_lineSpacingMult_key, new PreferenceUpdate() {
 			@Override public String withValue(Object value) {
 				float lineSpacingMult = value == null? 1.0f: (Float) value;
-				return String.valueOf(lineSpacingMult) + "x";
+				return String.valueOf(lineSpacingMult) + "x"; //$NON-NLS-1$
 			}
 		});
 	}

@@ -209,7 +209,7 @@ public class YesPembaca extends Pembaca {
 				
 				if (!kosong) {
 					if (k.pos < 0 || k.pos >= res.length) {
-						throw new RuntimeException("ada kitabPos yang sangat besar: " + k.pos);
+						throw new RuntimeException("ada kitabPos yang sangat besar: " + k.pos); //$NON-NLS-1$
 					}
 					res[k.pos] = k;
 				}
