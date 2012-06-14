@@ -30,6 +30,7 @@
 	<string name="versi">Versiune</string>
 	<string name="renungan">Devoţional</string>
 	<string name="cari_v">Caută</string>
+	<string name="judul_bukmak_activity">Favorite, note şi marcaje</string>
 	<string name="pembatas_buku">Favorite</string>
 	<string name="pembatas_condensed">Favorite</string>
 	<string name="hapus_pembatas_buku">Şterge favorit</string>
@@ -197,8 +198,6 @@
     <string name="change_label_color">Change label color</string>
 	<string name="rename_label">Redenumeşte eticheta</string>
 	<string name="delete_label">Şterge eticheta</string>
-    <!-- untranslated --><string name="please_wait_titik3">Please wait…</string>
-    <!-- untranslated --><string name="juga_hapus_file_datanya_file">Also delete the data file?\nFile: %s</string>
 	<!-- Font Manager -->
     <string name="fm_activity_title">Font Manager</string>
     <!-- Lastly, about -->

@@ -18,6 +18,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import yuku.afw.App;
+import yuku.alkitab.R;
 import yuku.alkitab.base.rpc.SimpleHttpConnection;
 
 public class DownloadService extends Service {
@@ -179,8 +180,8 @@ public class DownloadService extends Service {
 				entry.completeFile.delete();
 				boolean renameOk = entry.tempFile.renameTo(entry.completeFile);
 				if (!renameOk) {
-					Log.w(TAG, "Failed to rename file from " + entry.tempFile + " to " + entry.completeFile);
-					entry.errorMsg = "Failed to rename temporary file";
+					Log.w(TAG, "Failed to rename file from " + entry.tempFile + " to " + entry.completeFile); //$NON-NLS-1$ //$NON-NLS-2$
+					entry.errorMsg = getString(R.string.dl_failed_to_rename_temporary_file);
 					changeState(State.failed);
 					return entry;
 				}
@@ -188,9 +189,9 @@ public class DownloadService extends Service {
 				// finished successfully
 				changeState(State.finished);
 			} catch (Exception e) {
-				Log.w(TAG, "Failed download because of exception", e);
+				Log.w(TAG, "Failed download because of exception", e); //$NON-NLS-1$
 				entry.tempFile.delete();
-				entry.errorMsg = e.getClass().getSimpleName() + " " + e.getMessage(); //$NON-NLS-1$
+				entry.errorMsg = e.getClass().getSimpleName() + ' ' + e.getMessage();
 				changeState(State.failed);
 			} finally {
 				decrementWaitingAndCheck();

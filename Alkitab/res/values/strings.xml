@@ -30,6 +30,7 @@
     <string name="versi">Version</string>
     <string name="renungan">Devotion</string>
     <string name="cari_v">Search</string>
+    <string name="judul_bukmak_activity">Bookmarks, notes, and highlights</string>
     <string name="pembatas_buku">Bookmarks</string>
     <string name="pembatas_condensed">Bookmarks</string>
     <string name="hapus_pembatas_buku">Delete bookmark</string>
@@ -199,8 +200,13 @@
     <string name="delete_label">Delete label</string>
     <string name="please_wait_titik3">Please wait…</string>
     <string name="juga_hapus_file_datanya_file">Also delete the data file?\nFile: %s</string>
+    <string name="get_more_fonts">Download more fonts…</string>
     <!-- Font Manager -->
     <string name="fm_activity_title">Font Manager</string>
+    <string name="fm_need_to_log_in_to_wifi">You need to log-in to your (Wi-Fi) network first.</string>
+    <string name="fm_do_you_want_to_delete">Do you want to delete %s?</string>
+    <string name="fm_error_when_extracting_font">Error when extracting font %1$s: %2$s</string>
+    <string name="dl_failed_to_rename_temporary_file">Failed to rename temporary file</string>
     <!-- Lastly, about -->
     <string name="teks_about">Developed by [b]yuku[/b], 2009-2012[br/]
     	• Website: androidbible.blogspot.com[br/] 
@@ -212,5 +218,4 @@
 		• [b]Jaya Satrio[/b] various icons[br/]
 		• [b]Yohanes Nugroho[/b] PDB reader[br/]
 		• etc.</string>
-    <string name="get_more_fonts">Get more fonts…</string>
 </resources>

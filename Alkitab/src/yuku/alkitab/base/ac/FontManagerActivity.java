@@ -122,7 +122,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 							}
 							return list;
 						} else {
-							errorMsg = "You need to log-in to your (Wi-Fi) network first.";
+							errorMsg = getString(R.string.fm_need_to_log_in_to_wifi);
 						}
 						return null;
 					}
@@ -286,7 +286,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 				final FontItem item = (FontItem) v.getTag(R.id.TAG_fontItem);
 				
 				new AlertDialog.Builder(FontManagerActivity.this)
-				.setMessage("Do you want to delete " + item.name + "?")
+				.setMessage(getString(R.string.fm_do_you_want_to_delete, item.name))
 				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
 						File fontDir = FontManager.getFontDir(item.name);
@@ -360,7 +360,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 				new File(downloadedZip).delete();
 			} catch (Exception e) {
 				new AlertDialog.Builder(FontManagerActivity.this)
-				.setMessage("Error when extracting font " + fontName + ": " + e.getClass().getSimpleName() + " " + e.getMessage())
+				.setMessage(getString(R.string.fm_error_when_extracting_font, fontName, e.getClass().getSimpleName() + ' ' + e.getMessage()))
 				.setPositiveButton(R.string.ok, null)
 				.show();
 			}
