@@ -43,6 +43,10 @@ import yuku.alkitab.base.widget.UrlImageView.OnStateChangeListener;
 
 public class FontManagerActivity extends BaseActivity implements DownloadListener {
 	public static final String TAG = FontManagerActivity.class.getSimpleName();
+	
+	private static final String URL_fontList = "http://alkitab-host.appspot.com/addon/fonts/v1/list.txt"; //$NON-NLS-1$
+	private static final String URL_fontData = "http://alkitab-host.appspot.com/addon/fonts/v1/data/%s.zip"; //$NON-NLS-1$
+	private static final String URL_fontPreview = "http://alkitab-host.appspot.com/addon/fonts/v1/preview/%s-384x84.png"; //$NON-NLS-1$
 
 	public static Intent createIntent() {
 		return new Intent(App.context, FontManagerActivity.class);
@@ -97,12 +101,12 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 			String errorMsg;
 			
 			@Override protected List<FontItem> doInBackground(Void... params) {
-				SimpleHttpConnection conn = new SimpleHttpConnection("http://alkitab-host.appspot.com/addon/fonts/v1/list.txt");
+				SimpleHttpConnection conn = new SimpleHttpConnection(URL_fontList);
 				try {
 					InputStream in = conn.load();
 					if (in == null) {
 						Exception ex = conn.getException();
-						errorMsg = ex.getClass().getSimpleName() + " " + ex.getMessage();
+						errorMsg = ex.getClass().getSimpleName() + " " + ex.getMessage(); //$NON-NLS-1$
 						return null;
 					} else {
 						if (conn.isSameHost()) {
@@ -112,7 +116,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 								String line = sc.nextLine().trim();
 								if (line.length() > 0) {
 									FontItem item = new FontItem();
-									item.name = line.split(" ")[0];
+									item.name = line.split(" ")[0]; //$NON-NLS-1$
 									list.add(item);
 								}
 							}
@@ -139,15 +143,16 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 	}
 	
 	private String getFontDownloadKey(String name) {
-		return "FontManager/" + name;
+		return "FontManager/" + name; //$NON-NLS-1$
 	}
 	
 	private String getFontNameFromDownloadKey(String key) {
-		return key.substring("FontManager/".length());
+		if (!key.startsWith("FontManager/")) return null; //$NON-NLS-1$
+		return key.substring("FontManager/".length()); //$NON-NLS-1$
 	}
 
 	private String getFontDownloadDestination(String name) {
-		return new File(FontManager.getFontsPath(), "download-" + name + ".zip").getAbsolutePath();
+		return new File(FontManager.getFontsPath(), "download-" + name + ".zip").getAbsolutePath(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static class FontItem {
@@ -191,7 +196,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 			lFontName.setVisibility(View.VISIBLE);
 			imgPreview.setTag(R.id.TAG_fontName, lFontName);
 			imgPreview.setOnStateChangeListener(imgPreview_stateChange);
-			imgPreview.setUrl("http://alkitab-host.appspot.com/addon/fonts/v1/preview/" + item.name + "-384x84.png");
+			imgPreview.setUrl(String.format(URL_fontPreview, item.name));
 			bDownload.setTag(R.id.TAG_fontItem, item);
 			bDownload.setOnClickListener(bDownload_click);
 			bDelete.setTag(R.id.TAG_fontItem, item);
@@ -267,7 +272,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 					new File(FontManager.getFontsPath()).mkdirs();
 					dls.startDownload(
 						dlkey, 
-						"http://alkitab-host.appspot.com/addon/fonts/v1/data/" + item.name + ".zip",
+						String.format(URL_fontData, item.name),
 						getFontDownloadDestination(item.name)
 					);
 				}
@@ -319,19 +324,23 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 		
 		if (entry.state == DownloadService.State.finished) {
 			String fontName = getFontNameFromDownloadKey(entry.key);
+			if (fontName == null) { // this download doesn't belong to font manager. 
+				return;
+			}
+			
 			try {
 				String downloadedZip = getFontDownloadDestination(fontName);
 				File fontDir = FontManager.getFontDir(fontName);
 				fontDir.mkdirs();
 				
-				Log.d(TAG, "Going to unzip " + downloadedZip);
+				Log.d(TAG, "Going to unzip " + downloadedZip); //$NON-NLS-1$
 				
 				ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(downloadedZip)));
 				try {
 					ZipEntry ze;
 					while ((ze = zis.getNextEntry()) != null) {
 						String zname = ze.getName();
-						Log.d(TAG, "Extracting from zip: " + zname);
+						Log.d(TAG, "Extracting from zip: " + zname); //$NON-NLS-1$
 						File extractFile = new File(fontDir, zname);
 						FileOutputStream fos = new FileOutputStream(extractFile);
 						try {
@@ -351,7 +360,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 				new File(downloadedZip).delete();
 			} catch (Exception e) {
 				new AlertDialog.Builder(FontManagerActivity.this)
-				.setMessage("Error when extracting font " + fontName + ": " + e.getMessage())
+				.setMessage("Error when extracting font " + fontName + ": " + e.getClass().getSimpleName() + " " + e.getMessage())
 				.setPositiveButton(R.string.ok, null)
 				.show();
 			}

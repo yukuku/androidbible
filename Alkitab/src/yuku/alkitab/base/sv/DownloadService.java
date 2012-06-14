@@ -117,7 +117,7 @@ public class DownloadService extends Service {
 		e.state = State.created;
 		e.url = url;
 		e.completeFile = new File(completeFile);
-		e.tempFile = new File(completeFile + ".part." + System.nanoTime() + ".tmp");
+		e.tempFile = new File(completeFile + ".part." + System.nanoTime() + ".tmp"); //$NON-NLS-1$ //$NON-NLS-2$
 		e.length = -1;
 		e.progress = 0;
 		enqueueAndStart(e);
@@ -190,7 +190,7 @@ public class DownloadService extends Service {
 			} catch (Exception e) {
 				Log.w(TAG, "Failed download because of exception", e);
 				entry.tempFile.delete();
-				entry.errorMsg = e.getClass().getSimpleName() + " " + e.getMessage();
+				entry.errorMsg = e.getClass().getSimpleName() + " " + e.getMessage(); //$NON-NLS-1$
 				changeState(State.failed);
 			} finally {
 				decrementWaitingAndCheck();
@@ -207,7 +207,7 @@ public class DownloadService extends Service {
 
 	private void incrementWaiting() {
 		nwaiting.incrementAndGet();
-		Log.d(TAG, "(inc) now nwaiting is " + nwaiting);
+		Log.d(TAG, "(inc) now nwaiting is " + nwaiting); //$NON-NLS-1$
 	}
 
 	public synchronized void decrementWaitingAndCheck() {
@@ -217,7 +217,7 @@ public class DownloadService extends Service {
 			Message.obtain(handler, MSG_stopSelf).sendToTarget();
 		}
 		
-		Log.d(TAG, "(dec) now nwaiting is " + nwaiting);
+		Log.d(TAG, "(dec) now nwaiting is " + nwaiting); //$NON-NLS-1$
 	}
 	
 	public void dispatchProgress(DownloadEntry entry) {
