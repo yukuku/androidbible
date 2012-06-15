@@ -100,6 +100,7 @@ public class Search2Activity extends BaseActivity {
 
 		public void configureSearchView() {
 			searchView = U.getView(Search2Activity.this, R.id.searchView);
+			searchView.setSubmitButtonEnabled(true);
 			searchView.setOnQueryTextListener(new OnQueryTextListener() {
 				@Override public boolean onQueryTextSubmit(String query) {
 					search(query);

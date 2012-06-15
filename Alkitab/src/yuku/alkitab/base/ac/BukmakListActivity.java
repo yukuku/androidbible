@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.provider.BaseColumns;
-import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.style.BackgroundColorSpan;
 import android.view.ContextMenu;
@@ -50,9 +49,8 @@ import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.PengaturTampilan;
 import yuku.alkitab.base.util.Search2Engine;
 import yuku.alkitab.base.util.Sqlitil;
-import yuku.androidsdk.searchbar.SearchBar;
-import yuku.androidsdk.searchbar.SearchBar.OnSearchListener;
 import yuku.devoxx.flowlayout.FlowLayout;
+import yuku.searchbar.SearchWidget;
 
 public class BukmakListActivity extends BaseActivity {
 	public static final String TAG = BukmakListActivity.class.getSimpleName();
@@ -70,7 +68,7 @@ public class BukmakListActivity extends BaseActivity {
     View empty;
     TextView tEmpty;
     View bClearFilter;
-    SearchBar searchBar;
+    SearchWidget searchWidget;
 	ListView lv;
 	View emptyView;
     
@@ -107,15 +105,15 @@ public class BukmakListActivity extends BaseActivity {
 		empty = U.getView(this, android.R.id.empty);
 		tEmpty = U.getView(this, R.id.tEmpty);
 		bClearFilter = U.getView(this, R.id.bClearFilter);
-		searchBar = U.getView(this, R.id.searchBar);
+		searchWidget = U.getView(this, R.id.searchBar);
 		lv = U.getView(this, android.R.id.list);
 		emptyView = U.getView(this, android.R.id.empty);
 		
 		filter_jenis = getIntent().getIntExtra(EXTRA_filter_jenis, 0);
 		filter_labelId = getIntent().getLongExtra(EXTRA_filter_labelId, 0);
 		
-		searchBar.getSearchField().setHint(R.string.bl_filter_by_some_keywords);
-		searchBar.setOnSearchListener(searchBar_search);
+		searchWidget.setHint(R.string.bl_filter_by_some_keywords);
+		searchWidget.setOnQueryTextListener(searchWidget_queryText);
 
 		bClearFilter.setOnClickListener(bClearFilter_click);
 		
@@ -186,27 +184,32 @@ public class BukmakListActivity extends BaseActivity {
         }
 	}
 
-    OnSearchListener searchBar_search = new OnSearchListener() {
-		@Override public void onSearch(SearchBar searchBar, Editable text) {
-			String carian = text.toString().trim();
+    SearchWidget.OnQueryTextListener searchWidget_queryText = new SearchWidget.OnQueryTextListener() {
+		@Override public boolean onQueryTextChange(SearchWidget searchWidget, String newText) {
+			return false;
+		}
+
+		@Override public boolean onQueryTextSubmit(SearchWidget searchWidget, String query) {
+			String carian = query.toString().trim();
 			if (carian.length() == 0) {
 				buangFilter();
-				return;
+				return true;
 			}
 			
 			String[] xtoken = Search2Engine.tokenkan(carian);
 			if (xtoken.length == 0) {
 				buangFilter();
-				return;
+				return true;
 			}
 			
 			pasangFilter(carian);
+			return true;
 		}
 	};
 
 	OnClickListener bClearFilter_click = new OnClickListener() {
 		@Override public void onClick(View v) {
-			searchBar.setText(""); //$NON-NLS-1$
+			searchWidget.setText(""); //$NON-NLS-1$
 			buangFilter();
 		}
 	};
@@ -344,7 +347,7 @@ public class BukmakListActivity extends BaseActivity {
 			}
 
 			private void sort(String column, boolean ascending, int columnId) {
-				searchBar.setText(""); //$NON-NLS-1$
+				searchWidget.setText(""); //$NON-NLS-1$
 				lagiPakeFilter = null;
 				setTitleAndNothingText();
 				sort_column = column;
