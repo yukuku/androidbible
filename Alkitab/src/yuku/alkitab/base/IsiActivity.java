@@ -70,6 +70,7 @@ import yuku.alkitab.base.ac.PengaturanActivity;
 import yuku.alkitab.base.ac.RenunganActivity;
 import yuku.alkitab.base.ac.Search2Activity;
 import yuku.alkitab.base.ac.ShareActivity;
+import yuku.alkitab.base.ac.SongListActivity;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.compat.Api8;
 import yuku.alkitab.base.config.BuildConfig;
@@ -1068,21 +1069,9 @@ public class IsiActivity extends BaseActivity {
 		return true;
 	}
 	
-	@Override
-	public boolean onMenuOpened(int featureId, Menu menu) {
+	@Override public boolean onMenuOpened(int featureId, Menu menu) {
 		if (menu != null) {
 			bikinMenu(menu);
-			
-			MenuItem menuTuju = menu.findItem(R.id.menuTuju);
-			if (menuTuju != null) {
-				if (Preferences.getBoolean(R.string.pref_tombolAlamatLoncat_key, R.bool.pref_tombolAlamatLoncat_default)) {
-					menuTuju.setIcon(R.drawable.ic_menu_loncat);
-					menuTuju.setTitle(R.string.loncat_v);
-				} else {
-					menuTuju.setIcon(R.drawable.ic_menu_tuju);
-					menuTuju.setTitle(R.string.tuju_v);
-				}
-			}
 		}
 		
 		return true;
@@ -1090,9 +1079,6 @@ public class IsiActivity extends BaseActivity {
 	
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menuTuju:
-			bTuju_click();
-			return true;
 		case R.id.menuBukmak:
 			startActivityForResult(new Intent(this, BukmakActivity.class), REQCODE_bukmak);
 			return true;
@@ -1104,6 +1090,9 @@ public class IsiActivity extends BaseActivity {
 			return true;
 		case R.id.menuRenungan: 
 			startActivityForResult(new Intent(this, RenunganActivity.class), REQCODE_renungan);
+			return true;
+		case R.id.menuSongs: 
+			startActivity(SongListActivity.createIntent());
 			return true;
 		case R.id.menuTentang:
 			startActivity(new Intent(this, AboutActivity.class));

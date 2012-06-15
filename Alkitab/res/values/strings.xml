@@ -208,6 +208,8 @@
     <string name="fm_do_you_want_to_delete">Do you want to delete %s?</string>
     <string name="fm_error_when_extracting_font">Error when extracting font %1$s: %2$s</string>
     <string name="dl_failed_to_rename_temporary_file">Failed to rename temporary file</string>
+    <!-- Songs -->
+    <string name="menuSongs">Songs</string>
     <!-- Lastly, about -->
     <string name="teks_about">Developed by [b]yuku[/b], 2009-2012[br/]
     	• Website: androidbible.blogspot.com[br/] 
