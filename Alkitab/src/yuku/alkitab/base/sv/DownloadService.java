@@ -11,6 +11,7 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.util.LinkedHashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -34,25 +35,36 @@ public class DownloadService extends Service {
 	private AtomicInteger nwaiting = new AtomicInteger(0);
 	private DownloadListener listener;
 	
-	private Handler handler = new Handler() {
+	static class ListenerHandler extends Handler {
+		private WeakReference<DownloadService> sv;
+
+		public ListenerHandler(DownloadService sv) {
+			this.sv = new WeakReference<DownloadService>(sv);
+		}
+
 		@Override public void handleMessage(Message msg) {
+			DownloadService sv = this.sv.get();
+			if (sv == null) return;
+			
 			switch (msg.what) {
 			case MSG_stopSelf:
-				stopSelf();
+				sv.stopSelf();
 				return;
 			case MSG_progress:
-				if (listener != null) {
-					listener.onProgress((DownloadEntry) msg.obj);
+				if (sv.listener != null) {
+					sv.listener.onProgress((DownloadEntry) msg.obj);
 				}
 				return;
 			case MSG_stateChanged:
-				if (listener != null) {
-					listener.onStateChanged((DownloadEntry) msg.obj);
+				if (sv.listener != null) {
+					sv.listener.onStateChanged((DownloadEntry) msg.obj);
 				}
 				return;
 			}
 		}
-	};
+	}
+
+	private Handler handler = new ListenerHandler(this);
 	
 	public interface DownloadListener {
 		void onStateChanged(DownloadEntry entry);
