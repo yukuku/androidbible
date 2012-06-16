@@ -13,6 +13,7 @@ import java.util.List;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.alkitab.R;
+import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.kpri.model.Song;
 import yuku.kpriviewer.SongRepo;
@@ -28,6 +29,8 @@ public class SongViewActivity extends BaseActivity {
 	ViewPager viewPager;
 	
 	SongAdapter adapter;
+	
+	Bundle templateCustomVars;
 	
 	public static Intent createIntent(List<String> bookNames, List<String> songCodes, int index) {
 		Intent res = new Intent(App.context, SongViewActivity.class);
@@ -46,6 +49,15 @@ public class SongViewActivity extends BaseActivity {
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_song_view);
+		
+		// for colors of bg, text, etc
+		S.hitungPenerapanBerdasarkanPengaturan();
+		V.get(this, android.R.id.content).setBackgroundColor(S.penerapan.warnaLatar);
+		
+		templateCustomVars = new Bundle();
+		templateCustomVars.putString("background_color", String.format("#%06x", S.penerapan.warnaLatar & 0xffffff));
+		templateCustomVars.putString("text_color", String.format("#%06x", S.penerapan.warnaHuruf & 0xffffff));
+		templateCustomVars.putString("verse_number_color", String.format("#%06x", S.penerapan.warnaNomerAyat & 0xffffff));
 		
 		viewPager = V.get(this, R.id.viewPager);
 		
@@ -91,7 +103,8 @@ public class SongViewActivity extends BaseActivity {
 		@Override public SongFragment getItem(int position) {
 			Song song = getSong(position);
 			
-			return SongFragment.create(song, "templates/song.html");
+			
+			return SongFragment.create(song, "templates/song.html", templateCustomVars);
 		}
 
 		@Override public int getCount() {

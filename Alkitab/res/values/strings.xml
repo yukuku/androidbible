@@ -234,4 +234,5 @@
     <string name="desc_delete">Delete</string>
     <string name="desc_change_selected_books">Change selected books</string>
     <string name="desc_download">Download</string>
+    <string name="failed_to_load_songbookname_reason">Failed to load %1$s: %2$s</string>
 </resources>

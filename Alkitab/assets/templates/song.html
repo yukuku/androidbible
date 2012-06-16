@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html>
+	<head>
+		<link rel='stylesheet' href='song.css' />
+		<style>
+			html, body {
+				background-color: {{$background_color}};
+				color: {{$text_color}};
+			}
+			.verse_ordering {
+				color: {{$verse_number_color}};
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class='song'>
+			{{div:code}}
+			{{div:title}}
+			{{div:title_original}}
+			<div class='break' />
+			{{div:tune}}
+			<div class='break' />
+			{{div:authors_lyric}}
+			{{div:authors_music}}
+			<div class='break' />
+			{{div:keySignature}}
+			{{div:timeSignature}}
+			<div class='break' />
+			{{div:lyrics}}
+		</div>
+	</body>
+</html>
