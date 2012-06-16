@@ -1,1 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><resources><string name="pref_bahasa_default">in</string></resources>
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="pref_bahasa_default" tools:ignore="MissingTranslation">in</string>
+
+</resources>

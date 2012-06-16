@@ -1,11 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:padding="8dp" android:minWidth="280dp" android:layout_centerHorizontal="true">
-	<TextView android:layout_height="wrap_content" android:textSize="18dp" android:layout_width="fill_parent" android:gravity="center_horizontal" android:text="Kejadian 99:88" android:id="@+id/lAlamatKini" android:layout_marginLeft="18dp" android:layout_marginBottom="18dp" android:layout_marginRight="18dp" android:textAppearance="?android:attr/textAppearanceMedium" android:visibility="gone" />
-	<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/loncat_ke_alamat_titikdua" android:id="@+id/lContohLoncat" />
-	<LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent">
-		<EditText android:layout_height="wrap_content" android:id="@+id/tAlamatLoncat" android:layout_marginLeft="18dp" android:inputType="textCapSentences" android:imeOptions="actionGo" android:textAppearance="?android:attr/textAppearanceMedium" android:layout_width="0dp" android:layout_weight="1">
-			<requestFocus />
-		</EditText>
-		<ImageButton android:id="@+id/bKeTuju" android:layout_height="wrap_content" android:layout_width="wrap_content" android:src="@drawable/tombol_ke_tuju" android:padding="6dp" />
-	</LinearLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:minWidth="280dp"
+    android:orientation="vertical"
+    android:padding="8dp" >
+
+    <TextView
+        android:id="@+id/lAlamatKini"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="18dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="18dp"
+        android:gravity="center_horizontal"
+        android:text="Kejadian 99:88"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="18dp"
+        android:visibility="gone"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/lContohLoncat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/loncat_ke_alamat_titikdua" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/tAlamatLoncat"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="18dp"
+            android:layout_weight="1"
+            android:imeOptions="actionGo"
+            android:inputType="textCapSentences"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
+
+            <requestFocus />
+        </EditText>
+
+        <ImageButton
+            android:id="@+id/bKeTuju"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/desc_go_to_verse"
+            android:padding="6dp"
+            android:src="@drawable/tombol_ke_tuju" />
+    </LinearLayout>
+
 </LinearLayout>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
 	<ListView android:id="@+id/lsFont" android:layout_width="match_parent" android:layout_height="match_parent" />
-	<TextView android:id="@+id/lEmptyError" android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:visibility="gone" android:text="Loading…" android:textAppearance="?android:attr/textAppearanceMedium" />
+	<TextView android:id="@+id/lEmptyError" android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:visibility="gone" android:text="@string/fm_loading_ellipsis" android:textAppearance="?android:attr/textAppearanceMedium" />
 </LinearLayout>

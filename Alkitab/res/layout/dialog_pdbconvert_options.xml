@@ -1,8 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="6dp">
-	<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pdb_encoding" />
-	<Spinner android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/cbEncoding" />
-	<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/sample_text" />
-	<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/lSample" android:textColor="#fff" android:text="In the beginning God created heaven and earth (to-replace)" android:textSize="17.5dp" android:padding="6dp" />
-	<CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/include_book_and_chapter_headers" android:id="@+id/cAddlTitle" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="6dp" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/pdb_encoding" />
+
+    <Spinner
+        android:id="@+id/cbEncoding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sample_text" />
+
+    <TextView
+        android:id="@+id/lSample"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="6dp"
+        android:text="In the beginning God created heaven and earth (to-replace)"
+        android:textColor="#fff"
+        android:textSize="17.5dp"
+        tools:ignore="HardcodedText" />
+
+    <CheckBox
+        android:id="@+id/cAddlTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/include_book_and_chapter_headers" />
+
 </LinearLayout>

@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
     android:gravity="center_vertical"
     android:minHeight="64dp"
     android:orientation="horizontal"
-    android:padding="8dip" android:descendantFocusability="blocksDescendants">
+    android:padding="8dip" >
 
     <yuku.alkitab.base.widget.UrlImageView
         android:id="@+id/imgPreview"
         android:layout_width="256dp"
         android:layout_height="56dp"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentTop="true" />
 
     <ProgressBar
         android:id="@+id/progressbar"
@@ -28,15 +30,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/desc_download"
         android:padding="8dp"
-        android:src="@drawable/btn_9_av_download" android:layout_centerVertical="true"/>
+        android:src="@drawable/btn_9_av_download" />
 
     <ImageButton
         android:id="@+id/bDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/desc_delete"
         android:padding="8dp"
-        android:src="@drawable/btn_5_content_discard" android:layout_alignParentRight="true" android:layout_centerVertical="true"/>
+        android:src="@drawable/btn_5_content_discard" />
 
     <TextView
         android:id="@+id/lFontName"
@@ -46,8 +53,10 @@
         android:layout_alignLeft="@+id/imgPreview"
         android:layout_alignRight="@+id/imgPreview"
         android:layout_alignTop="@+id/imgPreview"
+        android:gravity="center_vertical"
         android:text="FontName"
-        android:textAppearance="?android:attr/textAppearanceMedium" android:gravity="center_vertical"/>
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/lErrorMsg"
@@ -56,6 +65,7 @@
         android:layout_alignLeft="@+id/progressbar"
         android:layout_alignRight="@+id/progressbar"
         android:layout_below="@+id/progressbar"
-        android:textAppearance="?android:attr/textAppearanceSmall" android:visibility="gone"/>
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:visibility="gone" />
 
 </RelativeLayout>

@@ -1,20 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" android:baselineAligned="false" android:id="@+id/root">
-	<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/tempatJudul">
-		<TextView android:id="@+id/lJudul" android:text="Kitab 0:0" android:textStyle="bold" android:layout_width="fill_parent" android:layout_height="wrap_content" android:singleLine="true" android:background="@drawable/isi_judul_bg" android:shadowRadius="2.75" android:shadowColor="#bb000000" android:textColor="#fff" android:textSize="14sp" android:paddingLeft="4dp" android:paddingBottom="2dp" android:paddingTop="2dp" />
-		<View android:layout_width="fill_parent" android:layout_height="1px" android:background="#000" />
-	</LinearLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:baselineAligned="false"
+    android:orientation="vertical" >
 
-	<RelativeLayout android:layout_width="fill_parent" android:layout_height="0dp" android:layout_weight="1">
-		<ListView android:id="@+id/lsIsi" android:layout_width="fill_parent" android:divider="@null" android:listSelector="@android:color/transparent" android:focusable="false" android:focusableInTouchMode="false" android:layout_height="fill_parent">
-    	    <!-- Preview: listitem=@layout/item_ayat_sederhana -->
-		</ListView>
-		<ImageButton android:src="@drawable/ic_btn_round_more_normal" android:layout_alignParentBottom="true" android:layout_alignParentRight="true" android:id="@+id/bContext" android:layout_height="48dp" android:layout_width="48dp" android:layout_marginRight="4dp" android:visibility="invisible" />
-	</RelativeLayout>
-	
-	<LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/panelNavigasi" android:layout_marginTop="6dp">
-		<ImageButton android:src="@drawable/left_arrow" android:id="@+id/bKiri" android:layout_width="64dp" android:layout_height="64dp" android:padding="16dp" android:scaleType="center" />
-		<Button android:layout_width="0dp" android:layout_height="fill_parent" android:id="@+id/bTuju" android:layout_weight="1" android:textSize="18dp" android:text="Nama Kitab Agak Panjang 20" />
-		<ImageButton android:src="@drawable/right_arrow" android:id="@+id/bKanan" android:layout_height="64dp" android:layout_width="64dp" android:padding="16dp" android:scaleType="center" />
-	</LinearLayout>
+    <LinearLayout
+        android:id="@+id/tempatJudul"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/lJudul"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/isi_judul_bg"
+            android:paddingBottom="2dp"
+            android:paddingLeft="4dp"
+            android:paddingTop="2dp"
+            android:shadowColor="#bb000000"
+            android:shadowRadius="2.75"
+            android:singleLine="true"
+            android:text="Kitab 0:0"
+            android:textColor="#fff"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:background="#000"
+            tools:ignore="PxUsage" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <ListView
+            android:id="@+id/lsIsi"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:divider="@null"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:listSelector="@android:color/transparent" >
+
+            <!-- Preview: listitem=@layout/item_ayat_sederhana -->
+        </ListView>
+
+        <ImageButton
+            android:id="@+id/bContext"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="4dp"
+            android:src="@drawable/ic_btn_round_more_normal"
+            android:visibility="invisible" android:contentDescription="@string/desc_open_verse_menu"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/panelNavigasi"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp" >
+
+        <ImageButton
+            android:id="@+id/bKiri"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:padding="16dp"
+            android:scaleType="center"
+            android:src="@drawable/left_arrow" android:contentDescription="@string/desc_previous_chapter"/>
+
+        <Button
+            android:id="@+id/bTuju"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="Nama Kitab Agak Panjang 20"
+            android:textSize="18dp"
+            tools:ignore="HardcodedText" />
+
+        <ImageButton
+            android:id="@+id/bKanan"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:padding="16dp"
+            android:scaleType="center"
+            android:src="@drawable/right_arrow" android:contentDescription="@string/desc_next_chapter"/>
+    </LinearLayout>
+
 </LinearLayout>

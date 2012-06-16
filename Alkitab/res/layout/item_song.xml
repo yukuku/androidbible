@@ -37,6 +37,7 @@
             android:layout_alignLeft="@+id/lTitle"
             android:layout_below="@+id/lTitle"
             android:textAppearance="?android:attr/textAppearanceSmall" />
+
     </RelativeLayout>
 
 </FrameLayout>
