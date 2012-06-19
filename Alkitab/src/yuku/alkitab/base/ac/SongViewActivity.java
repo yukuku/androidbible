@@ -1,54 +1,62 @@
 package yuku.alkitab.base.ac;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v4.app.FragmentTransaction;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.Button;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import net.londatiga.android.QuickAction;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.util.SongBookUtil;
+import yuku.alkitab.base.util.SongBookUtil.OnDownloadSongBookListener;
+import yuku.alkitab.base.util.SongBookUtil.OnSongBookSelectedListener;
+import yuku.alkitab.base.util.SongBookUtil.SongBookInfo;
 import yuku.kpri.model.Song;
-import yuku.kpriviewer.SongRepo;
 import yuku.kpriviewer.fr.SongFragment;
 
 public class SongViewActivity extends BaseActivity {
 	public static final String TAG = SongViewActivity.class.getSimpleName();
+
+	private static final int REQCODE_songList = 1;
 	
-	private static final String EXTRA_bookNames = "bookNames";
-	private static final String EXTRA_codes = "codes";
-	private static final String EXTRA_index = "index";
-	
-	ViewPager viewPager;
-	
-	SongAdapter adapter;
+	ViewGroup song_container;
+	ViewGroup no_song_data_container;
+	Button bChangeBook;
+	Button bChangeCode;
+	View bGanti;
+	QuickAction qaChangeBook;
 	
 	Bundle templateCustomVars;
-	
-	public static Intent createIntent(List<String> bookNames, List<String> songCodes, int index) {
+	Song currentSong;
+
+	public static Intent createIntent() {
 		Intent res = new Intent(App.context, SongViewActivity.class);
-		res.putStringArrayListExtra(EXTRA_bookNames, new ArrayList<String>(bookNames));
-		res.putStringArrayListExtra(EXTRA_codes, new ArrayList<String>(songCodes));
-		res.putExtra(EXTRA_index, index);
 		return res;
 	}
-
-	private OnPageChangeListener viewPager_pageChange = new ViewPager.SimpleOnPageChangeListener() {
-		@Override public void onPageSelected(int position) {
-			updateTitle(position);
-		}
-	};
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_song_view);
+		
+		song_container = V.get(this, R.id.song_container);
+		no_song_data_container = V.get(this, R.id.no_song_data_container);
+		bChangeBook = V.get(this, R.id.bChangeBook);
+		bChangeCode = V.get(this, R.id.bChangeCode);
+		bGanti = V.get(this, R.id.bGanti);
+		
+		qaChangeBook = SongBookUtil.getSongBookQuickAction(this, false);
+		qaChangeBook.setOnActionItemClickListener(SongBookUtil.getOnActionItemConverter(songBookSelected));
+		
+		bChangeBook.setOnClickListener(bChangeBook_click);
+		bGanti.setOnClickListener(bGanti_click);
 		
 		// for colors of bg, text, etc
 		S.hitungPenerapanBerdasarkanPengaturan();
@@ -59,56 +67,78 @@ public class SongViewActivity extends BaseActivity {
 		templateCustomVars.putString("text_color", String.format("#%06x", S.penerapan.warnaHuruf & 0xffffff));
 		templateCustomVars.putString("verse_number_color", String.format("#%06x", S.penerapan.warnaNomerAyat & 0xffffff));
 		
-		viewPager = V.get(this, R.id.viewPager);
+		// TODO get latest viewed song
+		String bookName = "KJ";
+		String code = "30";
 		
-		List<String> bookNames = getIntent().getStringArrayListExtra(EXTRA_bookNames);
-		List<String> codes = getIntent().getStringArrayListExtra(EXTRA_codes);
-		
-		int index = getIntent().getIntExtra(EXTRA_index, -1);
-		if (index == -1) {
-			finish();
-			return;
-		}
-
-		adapter = new SongAdapter(getSupportFragmentManager());
-		adapter.setData(SongRepo.getSongsByBookNamesAndCodes(bookNames, codes));
-		
-		viewPager.setAdapter(adapter);
-		viewPager.setCurrentItem(index);
-		viewPager.setOnPageChangeListener(viewPager_pageChange);
-		updateTitle(index);
+		Song song = S.getSongDb().getSong(bookName, code, SongBookUtil.getSongDataFormatVersion());
+		displaySong(bookName, song);
 	}
 	
-	void updateTitle(int position) {
-		Song song = adapter.getSong(position);
-		setTitle(SongRepo.getBookNameBySong(song).toUpperCase() + " " + song.code);
+	private void displaySong(String bookName, Song song) {
+		this.currentSong = song;
+		
+		song_container.setVisibility(song != null? View.VISIBLE: View.GONE);
+		no_song_data_container.setVisibility(song != null? View.GONE: View.VISIBLE);
+		
+		if (song != null) {
+			bChangeBook.setText(bookName);
+			bChangeCode.setText(song.code);
+
+			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			ft.replace(R.id.song_container, SongFragment.create(song, "templates/song.html", templateCustomVars));
+			ft.commitAllowingStateLoss();
+		}
+	}
+
+	OnClickListener bGanti_click = new OnClickListener() {
+		@Override public void onClick(View v) {
+			startActivityForResult(SongListActivity.createIntent(), REQCODE_songList);
+		}
 	};
 	
-	class SongAdapter extends FragmentPagerAdapter {
-		List<Song> list;
-		
-		public SongAdapter(FragmentManager fm) {
-			super(fm);
+	OnClickListener bChangeBook_click = new OnClickListener() {
+		@Override public void onClick(View v) {
+			qaChangeBook.show(v);
 		}
-
-		public void setData(List<Song> data) {
-			list = data;
-			notifyDataSetChanged();
-		}
-
-		public Song getSong(int position) {
-			return list.get(position);
-		}
-
-		@Override public SongFragment getItem(int position) {
-			Song song = getSong(position);
+	};
+	
+	OnSongBookSelectedListener songBookSelected = new OnSongBookSelectedListener() {
+		@Override public void onSongBookSelected(boolean all, SongBookInfo songBookInfo) {
+			if (all) return; // should not happen
 			
+			Song song = S.getSongDb().getFirstSongFromBook(songBookInfo.bookName, SongBookUtil.getSongDataFormatVersion());
 			
-			return SongFragment.create(song, "templates/song.html", templateCustomVars);
+			if (song != null) {
+				displaySong(songBookInfo.bookName, song);
+			} else {
+				SongBookUtil.downloadSongBook(SongViewActivity.this, songBookInfo, new OnDownloadSongBookListener() {
+					@Override public void onFailedOrCancelled(SongBookInfo songBookInfo, Exception e) {
+						if (e != null) {
+							new AlertDialog.Builder(SongViewActivity.this)
+							.setMessage(e.getClass().getSimpleName() + " " + e.getMessage())
+							.setPositiveButton(R.string.ok, null)
+							.show();
+						}
+					}
+					
+					@Override public void onDownloadedAndInserted(SongBookInfo songBookInfo) {
+						Song song = S.getSongDb().getFirstSongFromBook(songBookInfo.bookName, SongBookUtil.getSongDataFormatVersion());
+						displaySong(songBookInfo.bookName, song);
+					}
+				});
+			}
 		}
-
-		@Override public int getCount() {
-			return list == null? 0: list.size();
+	};
+	
+	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQCODE_songList) {
+			if (resultCode == RESULT_OK) {
+				SongListActivity.Result result = SongListActivity.obtainResult(data);
+				if (result != null) {
+					displaySong(result.bookName, S.getSongDb().getSong(result.bookName, result.code, SongBookUtil.getSongDataFormatVersion()));
+				}
+			}
 		}
 	}
 }

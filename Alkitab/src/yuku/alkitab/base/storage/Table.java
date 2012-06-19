@@ -14,7 +14,7 @@ public class Table {
 		blob,
 	}
 	
-	public enum Song {
+	public enum SongInfo {
 		bookName(text),
 		code(text),
 		title(text, "collate nocase"),
@@ -27,17 +27,17 @@ public class Table {
 		public final Type type;
 		public final String suffix;
 		
-		private Song(Type type) {
+		private SongInfo(Type type) {
 			this(type, null);
 		}
 		
-		private Song(Type type, String suffix) {
+		private SongInfo(Type type, String suffix) {
 			this.type = type;
 			this.suffix = suffix;
 		}
 		
 		public static String tableName() {
-			return Song.class.getSimpleName();
+			return SongInfo.class.getSimpleName();
 		}
 	}
 }
