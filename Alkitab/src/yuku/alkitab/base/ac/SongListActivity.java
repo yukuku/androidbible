@@ -32,6 +32,7 @@ import yuku.alkitab.base.util.SongBookUtil;
 import yuku.alkitab.base.util.SongBookUtil.OnDownloadSongBookListener;
 import yuku.alkitab.base.util.SongBookUtil.OnSongBookSelectedListener;
 import yuku.alkitab.base.util.SongBookUtil.SongBookInfo;
+import yuku.alkitab.base.util.SongFilter;
 import yuku.searchbar.SearchWidget;
 
 public class SongListActivity extends BaseActivity {
@@ -243,7 +244,8 @@ public class SongListActivity extends BaseActivity {
 		@Override public List<SongInfo> loadInBackground() {
 			Log.d(TAG, "@@loadInBackground filter_string=" + filter_string);
 
-			return S.getSongDb().getSongInfosByBookName(selectedBookName, filter_string, SongBookUtil.getSongDataFormatVersion());
+			List<SongInfo> songInfos = S.getSongDb().getSongInfosByBookName(selectedBookName, SongBookUtil.getSongDataFormatVersion());
+			return SongFilter.filterSongInfoByString(songInfos, filter_string);
 		}
 	}
 }

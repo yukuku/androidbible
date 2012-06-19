@@ -147,7 +147,7 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 		}
 	}
 
-	public List<SongInfo> getSongInfosByBookName(String bookName, String filter_string, int dataFormatVersion) {
+	public List<SongInfo> getSongInfosByBookName(String bookName, int dataFormatVersion) {
 		// TODO consider filter_string
 		SQLiteDatabase db = helper.getReadableDatabase();
 		
