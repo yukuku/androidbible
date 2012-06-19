@@ -26,8 +26,8 @@
             android:id="@+id/lBookName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/lTitle"
             android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <TextView
@@ -36,6 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/lTitle"
             android:layout_below="@+id/lTitle"
+            android:layout_toLeftOf="@+id/lBookName"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
     </RelativeLayout>
