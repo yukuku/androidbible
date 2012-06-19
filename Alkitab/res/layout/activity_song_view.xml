@@ -17,14 +17,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:height="48dp"
-            android:text="BKNM" />
+            android:text="––––"
+            tools:ignore="HardcodedText" />
 
         <Button
             android:id="@+id/bChangeCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:height="48dp"
-            android:text="999Z" />
+            android:text="––––"
+            tools:ignore="HardcodedText" />
 
         <TextView
             android:layout_width="0dp"
@@ -32,11 +34,11 @@
             android:layout_weight="1" />
 
         <Button
-            android:id="@+id/bGanti"
+            android:id="@+id/bSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:height="48dp"
-            android:text="@string/ganti_v" />
+            android:text="@string/cari_v" />
     </LinearLayout>
 
     <FrameLayout
@@ -50,11 +52,12 @@
         android:layout_height="fill_parent"
         android:visibility="gone" >
 
-        <TextView
+        <Button
+            android:id="@+id/bDownload"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="No song data available for selected book" />
+            android:text="Download song books" />
     </FrameLayout>
 
 </LinearLayout>

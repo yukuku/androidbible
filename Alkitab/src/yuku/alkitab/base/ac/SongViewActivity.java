@@ -15,6 +15,8 @@ import yuku.afw.V;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.storage.Preferences;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.SongBookUtil;
 import yuku.alkitab.base.util.SongBookUtil.OnDownloadSongBookListener;
 import yuku.alkitab.base.util.SongBookUtil.OnSongBookSelectedListener;
@@ -31,11 +33,11 @@ public class SongViewActivity extends BaseActivity {
 	ViewGroup no_song_data_container;
 	Button bChangeBook;
 	Button bChangeCode;
-	View bGanti;
+	View bSearch;
+	View bDownload;
 	QuickAction qaChangeBook;
 	
 	Bundle templateCustomVars;
-	Song currentSong;
 
 	public static Intent createIntent() {
 		Intent res = new Intent(App.context, SongViewActivity.class);
@@ -46,17 +48,21 @@ public class SongViewActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_song_view);
 		
+		setTitle("Songs");
+		
 		song_container = V.get(this, R.id.song_container);
 		no_song_data_container = V.get(this, R.id.no_song_data_container);
 		bChangeBook = V.get(this, R.id.bChangeBook);
 		bChangeCode = V.get(this, R.id.bChangeCode);
-		bGanti = V.get(this, R.id.bGanti);
+		bSearch = V.get(this, R.id.bSearch);
+		bDownload = V.get(this, R.id.bDownload);
 		
 		qaChangeBook = SongBookUtil.getSongBookQuickAction(this, false);
 		qaChangeBook.setOnActionItemClickListener(SongBookUtil.getOnActionItemConverter(songBookSelected));
 		
 		bChangeBook.setOnClickListener(bChangeBook_click);
-		bGanti.setOnClickListener(bGanti_click);
+		bSearch.setOnClickListener(bSearch_click);
+		bDownload.setOnClickListener(bDownload_click);
 		
 		// for colors of bg, text, etc
 		S.hitungPenerapanBerdasarkanPengaturan();
@@ -67,17 +73,15 @@ public class SongViewActivity extends BaseActivity {
 		templateCustomVars.putString("text_color", String.format("#%06x", S.penerapan.warnaHuruf & 0xffffff));
 		templateCustomVars.putString("verse_number_color", String.format("#%06x", S.penerapan.warnaNomerAyat & 0xffffff));
 		
-		// TODO get latest viewed song
-		String bookName = "KJ";
-		String code = "30";
-		
-		Song song = S.getSongDb().getSong(bookName, code, SongBookUtil.getSongDataFormatVersion());
-		displaySong(bookName, song);
+		{ // show latest viewed song
+			String bookName = Preferences.getString(Prefkey.song_last_bookName, "KJ"); // let KJ become the default.
+			String code = Preferences.getString(Prefkey.song_last_code, "1");
+			
+			displaySong(bookName, S.getSongDb().getSong(bookName, code, SongBookUtil.getSongDataFormatVersion()));
+		}
 	}
 	
 	private void displaySong(String bookName, Song song) {
-		this.currentSong = song;
-		
 		song_container.setVisibility(song != null? View.VISIBLE: View.GONE);
 		no_song_data_container.setVisibility(song != null? View.GONE: View.VISIBLE);
 		
@@ -88,12 +92,23 @@ public class SongViewActivity extends BaseActivity {
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			ft.replace(R.id.song_container, SongFragment.create(song, "templates/song.html", templateCustomVars));
 			ft.commitAllowingStateLoss();
+
+			{ // save latest viewed song TODO optimize using new preferences fw
+				Preferences.setString(Prefkey.song_last_bookName, bookName);
+				Preferences.setString(Prefkey.song_last_code, song.code);
+			}
 		}
 	}
 
-	OnClickListener bGanti_click = new OnClickListener() {
+	OnClickListener bSearch_click = new OnClickListener() {
 		@Override public void onClick(View v) {
 			startActivityForResult(SongListActivity.createIntent(), REQCODE_songList);
+		}
+	};
+	
+	OnClickListener bDownload_click = new OnClickListener() {
+		@Override public void onClick(View v) { // just a proxy to bChangeBook
+			bChangeBook.performClick();
 		}
 	};
 	
