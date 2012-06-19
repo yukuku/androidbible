@@ -21,6 +21,8 @@ import yuku.alkitab.base.util.SongBookUtil;
 import yuku.alkitab.base.util.SongBookUtil.OnDownloadSongBookListener;
 import yuku.alkitab.base.util.SongBookUtil.OnSongBookSelectedListener;
 import yuku.alkitab.base.util.SongBookUtil.SongBookInfo;
+import yuku.alkitab.base.widget.SongCodePopup;
+import yuku.alkitab.base.widget.SongCodePopup.SongCodePopupListener;
 import yuku.kpri.model.Song;
 import yuku.kpriviewer.fr.SongFragment;
 
@@ -36,8 +38,10 @@ public class SongViewActivity extends BaseActivity {
 	View bSearch;
 	View bDownload;
 	QuickAction qaChangeBook;
+	SongCodePopup codeKeypad;
 	
 	Bundle templateCustomVars;
+	String currentBookName;
 
 	public static Intent createIntent() {
 		Intent res = new Intent(App.context, SongViewActivity.class);
@@ -60,7 +64,10 @@ public class SongViewActivity extends BaseActivity {
 		qaChangeBook = SongBookUtil.getSongBookQuickAction(this, false);
 		qaChangeBook.setOnActionItemClickListener(SongBookUtil.getOnActionItemConverter(songBookSelected));
 		
+		codeKeypad = new SongCodePopup(this);
+		
 		bChangeBook.setOnClickListener(bChangeBook_click);
+		bChangeCode.setOnClickListener(bChangeCode_click);
 		bSearch.setOnClickListener(bSearch_click);
 		bDownload.setOnClickListener(bDownload_click);
 		
@@ -93,6 +100,8 @@ public class SongViewActivity extends BaseActivity {
 			ft.replace(R.id.song_container, SongFragment.create(song, "templates/song.html", templateCustomVars));
 			ft.commitAllowingStateLoss();
 
+			currentBookName = bookName; 
+			
 			{ // save latest viewed song TODO optimize using new preferences fw
 				Preferences.setString(Prefkey.song_last_bookName, bookName);
 				Preferences.setString(Prefkey.song_last_code, song.code);
@@ -115,6 +124,63 @@ public class SongViewActivity extends BaseActivity {
 	OnClickListener bChangeBook_click = new OnClickListener() {
 		@Override public void onClick(View v) {
 			qaChangeBook.show(v);
+		}
+	};
+	
+	OnClickListener bChangeCode_click = new OnClickListener() {
+		@Override public void onClick(View v) {
+			if (currentBookName == null) return;
+			
+			codeKeypad.show(v);
+			codeKeypad.setOkButtonEnabled(false); 
+			
+			codeKeypad.setSongCodePopupListener(new SongCodePopupListener() { // do not make this a field. Need to create a new instance to init fields correctly.
+				CharSequence originalCode = bChangeCode.getText();
+				String tempCode = "";
+				String bookName = currentBookName;
+				boolean jumped = false;
+				
+				@Override public void onDismiss(SongCodePopup songCodePopup) {
+					if (!jumped) {
+						bChangeCode.setText(originalCode);
+					}
+				}
+				
+				@Override public void onButtonClick(SongCodePopup songCodePopup, View v) {
+					int[] numIds = {
+					R.id.bAngka0, R.id.bAngka1, R.id.bAngka2, R.id.bAngka3, R.id.bAngka4,
+					R.id.bAngka5, R.id.bAngka6, R.id.bAngka7, R.id.bAngka8, R.id.bAngka9,
+					};
+					
+					int id = v.getId();
+					int num = -1;
+					for (int i = 0; i < numIds.length; i++) if (id == numIds[i]) num = i;
+					
+					if (num >= 0) { // digits
+						if (tempCode.length() >= 4) tempCode = ""; // can't be more than 4 digits
+						if (tempCode.length() == 0 && num == 0) { // nothing has been pressed and 0 is now pressed
+						} else {
+							tempCode += num;
+						}
+						bChangeCode.setText(tempCode);
+						
+						songCodePopup.setOkButtonEnabled(S.getSongDb().songExists(bookName, tempCode, SongBookUtil.getSongDataFormatVersion()));
+					} else if (id == R.id.bOk) {
+						if (tempCode.length() > 0) {
+							Song song = S.getSongDb().getSong(bookName, tempCode, SongBookUtil.getSongDataFormatVersion());
+							if (song != null) {
+								displaySong(bookName, song);
+								jumped = true;
+							} else {
+								bChangeCode.setText(originalCode); // revert
+							}
+						} else {
+							bChangeCode.setText(originalCode); // revert
+						}
+						songCodePopup.dismiss();
+					}
+				}
+			});
 		}
 	};
 	

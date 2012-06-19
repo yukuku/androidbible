@@ -108,6 +108,24 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 		}
 	}
 	
+	public boolean songExists(String bookName, String code, int dataFormatVersion) {
+		SQLiteDatabase db = helper.getReadableDatabase();
+		
+		Cursor c = db.rawQuery("select count(*) from " + Table.SongInfo.tableName() + " where " 
+		+ Table.SongInfo.bookName + "=? and " + Table.SongInfo.code + "=? and " + Table.SongInfo.dataFormatVersion + "=?", 
+		new String[] {bookName, code, "" + dataFormatVersion});
+
+		try {
+			if (c.moveToNext()) {
+				return c.getInt(0) > 0;
+			} else {
+				return false;
+			}
+		} finally {
+			c.close();
+		}
+	}
+	
 	public Song getFirstSongFromBook(String bookName, int dataFormatVersion) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		
