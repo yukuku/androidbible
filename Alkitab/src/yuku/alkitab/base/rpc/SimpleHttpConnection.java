@@ -12,6 +12,8 @@ import java.net.URL;
 import yuku.alkitab.base.ac.FontManagerActivity;
 
 public class SimpleHttpConnection {
+	public static final String TAG = SimpleHttpConnection.class.getSimpleName(); 
+	
 	final URL url;
 	HttpURLConnection conn = null;
 	InputStream in = null;
@@ -37,7 +39,10 @@ public class SimpleHttpConnection {
 	}
 	
 	public boolean isSameHost() {
-		return url.getHost().equals(conn.getURL().getHost());
+		String urlHost = url.getHost();
+		String connHost = conn.getURL().getHost();
+		Log.d(TAG, "isSameHost? urlHost=" + urlHost + " connHost=" + connHost);
+		return urlHost.equals(connHost);
 	}
 	
 	public long getContentLength() {

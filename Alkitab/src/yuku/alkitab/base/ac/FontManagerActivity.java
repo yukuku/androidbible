@@ -44,7 +44,7 @@ import yuku.alkitab.base.widget.UrlImageView.OnStateChangeListener;
 public class FontManagerActivity extends BaseActivity implements DownloadListener {
 	public static final String TAG = FontManagerActivity.class.getSimpleName();
 	
-	private static final String URL_fontList = "http://alkitab-host.appspot.com/addon/fonts/v1/list.txt"; //$NON-NLS-1$
+	private static final String URL_fontList = "http://alkitab-host.appspot.com/addon/fonts/v1/list-v2.txt"; //$NON-NLS-1$
 	private static final String URL_fontData = "http://alkitab-host.appspot.com/addon/fonts/v1/data/%s.zip"; //$NON-NLS-1$
 	private static final String URL_fontPreview = "http://alkitab-host.appspot.com/addon/fonts/v1/preview/%s-384x84.png"; //$NON-NLS-1$
 
@@ -112,12 +112,14 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 						if (conn.isSameHost()) {
 							List<FontItem> list = new ArrayList<FontItem>();
 							Scanner sc = new Scanner(in);
-							while (sc.hasNextLine()) {
-								String line = sc.nextLine().trim();
-								if (line.length() > 0) {
-									FontItem item = new FontItem();
-									item.name = line.split(" ")[0]; //$NON-NLS-1$
-									list.add(item);
+							if (sc.hasNextLine() && sc.nextLine().startsWith("OK")) {
+								while (sc.hasNextLine()) {
+									String line = sc.nextLine().trim();
+									if (line.length() > 0) {
+										FontItem item = new FontItem();
+										item.name = line.split(" ")[0]; //$NON-NLS-1$
+										list.add(item);
+									}
 								}
 							}
 							return list;
