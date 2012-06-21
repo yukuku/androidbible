@@ -43,9 +43,9 @@ public class SongBookUtil {
 		for (String k: new String[] {
 			// bookName :: fileName :: downloadUrl :: bookDescription
 			"KJ   :: kj-1.ser   :: http://alkitab-host.appspot.com/addon/songs/v1/data/kj-1.ser.gz   :: Kidung Jemaat, buku himne terbitan YAMUGER (Yayasan Musik Gereja di Indonesia).",
+			"KPRI :: kpri-1.ser :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpri-1.ser.gz :: Kidung Persekutuan Reformed Injili, buku nyanyian terbitan Sinode Gereja Reformed Injili Indonesia (GRII).",
 			"NKB  :: nkb-1.ser  :: http://alkitab-host.appspot.com/addon/songs/v1/data/nkb-1.ser.gz  :: Nyanyikanlah Kidung Baru, buku himne terbitan Badan Pengerja Majelis Sinode (BPMS) Gereja Kristen Indonesia.", 
 			"PKJ  :: pkj-1.ser  :: http://alkitab-host.appspot.com/addon/songs/v1/data/pkj-1.ser.gz  :: Pelengkap Kidung Jemaat, buku nyanyian untuk melengkapi Kidung Jemaat, terbitan YAMUGER (Yayasan Musik Gereja di Indonesia).",
-			"KPRI :: kpri-1.ser :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpri-1.ser.gz :: Kidung Persekutuan Reformed Injili, buku nyanyian terbitan Sinode Gereja Reformed Injili Indonesia (GRII).",
 		}) {
 			String[] ss = k.split("::");
 			SongBookInfo bookInfo = new SongBookInfo();

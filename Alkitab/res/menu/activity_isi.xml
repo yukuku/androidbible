@@ -21,7 +21,7 @@
 	<item
 		android:id="@+id/menuSongs"
 		android:title="@string/menuSongs"
-		android:icon="@drawable/ic_menu_renungan" android:showAsAction="ifRoom" />
+		android:icon="@drawable/ic_menu_songs" android:showAsAction="ifRoom" />
 	<item
 		android:id="@+id/menuPengaturan"
 		android:title="@string/menuPengaturan" 

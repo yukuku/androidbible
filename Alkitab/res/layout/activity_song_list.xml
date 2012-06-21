@@ -27,6 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:height="48dp"
+            android:minEms="3"
             android:text="All"
             tools:ignore="HardcodedText" />
 
@@ -34,7 +35,7 @@
             android:id="@+id/cDeepSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lyrics, etc. too" />
+            android:text="@string/sn_deep_search_enabled" />
 
     </LinearLayout>
 

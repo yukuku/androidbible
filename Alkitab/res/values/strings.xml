@@ -210,6 +210,7 @@
     <string name="fm_need_to_log_in_to_wifi">You need to log-in to your (Wi-Fi) network first.</string>
     <string name="fm_do_you_want_to_delete">Do you want to delete %s?</string>
     <string name="fm_error_when_extracting_font">Error when extracting font %1$s: %2$s</string>
+    <string name="fm_loading_ellipsis">Loading…</string>
     <string name="dl_failed_to_rename_temporary_file">Failed to rename temporary file</string>
     <!-- Songs -->
     <string name="menuSongs">Songs</string>
@@ -224,7 +225,6 @@
 		• [b]Jaya Satrio[/b] various icons[br/]
 		• [b]Yohanes Nugroho[/b] PDB reader[br/]
 		• etc.</string>
-    <string name="fm_loading_ellipsis">Loading…</string>
     <string name="desc_type_verse_reference_directly">Type verse reference directly</string>
     <string name="desc_previous_day">Previous day</string>
     <string name="desc_next_day">Next day</string>
@@ -234,5 +234,5 @@
     <string name="desc_delete">Delete</string>
     <string name="desc_change_selected_books">Change selected books</string>
     <string name="desc_download">Download</string>
-    <string name="failed_to_load_songbookname_reason">Failed to load %1$s: %2$s</string>
+    <string name="sn_deep_search_enabled">Lyrics, etc. too</string>
 </resources>
