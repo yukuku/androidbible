@@ -36,8 +36,8 @@
 		<activity android:name="yuku.alkitab.base.ac.AboutActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 		<activity android:name="yuku.alkitab.base.ac.ShareActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 		<activity android:name="yuku.alkitab.base.ac.FontManagerActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
-		<activity android:name="yuku.alkitab.base.ac.SongListActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" android:windowSoftInputMode="adjustResize|stateHidden" android:theme="@android:style/Theme.NoTitleBar" />
-		<activity android:name="yuku.alkitab.base.ac.SongViewActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" android:theme="@android:style/Theme.NoTitleBar" />
+		<activity android:name="yuku.alkitab.base.ac.SongListActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" android:windowSoftInputMode="adjustResize|stateHidden" />
+		<activity android:name="yuku.alkitab.base.ac.SongViewActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 		<activity android:name="yuku.filechooser.FileChooserActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 		
 		<service android:name="yuku.alkitab.base.sv.DownloadService" />
