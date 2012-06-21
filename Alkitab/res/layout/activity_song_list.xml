@@ -29,7 +29,8 @@
             android:layout_height="wrap_content"
             android:height="48dp"
             android:minEms="3"
-            android:text="@string/sn_bookselector_all" />
+            android:text="@string/sn_bookselector_all"
+            android:textSize="18dp" />
 
         <CheckBox
             android:id="@+id/cDeepSearch"

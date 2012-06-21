@@ -19,6 +19,7 @@
             android:height="48dp"
             android:minEms="3"
             android:text="––––"
+            android:textSize="18dp"
             tools:ignore="HardcodedText" />
 
         <Button
@@ -28,6 +29,7 @@
             android:height="48dp"
             android:minEms="3"
             android:text="––––"
+            android:textSize="18dp"
             tools:ignore="HardcodedText" />
 
         <TextView
@@ -41,7 +43,9 @@
             android:layout_height="wrap_content"
             android:height="48dp"
             android:minEms="3"
-            android:text="@string/cari_v" />
+            android:text="@string/cari_v"
+            android:textSize="18dp" />
+
     </LinearLayout>
 
     <FrameLayout
