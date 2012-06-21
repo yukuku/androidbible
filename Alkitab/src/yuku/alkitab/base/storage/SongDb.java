@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import yuku.alkitab.base.model.SongInfo;
+import yuku.alkitab.base.util.SongFilter;
+import yuku.alkitab.base.util.SongFilter.CompiledFilter;
 import yuku.kpri.model.Song;
 
 public class SongDb extends yuku.afw.storage.InternalDb {
@@ -148,16 +150,69 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 	}
 
 	public List<SongInfo> getSongInfosByBookName(String bookName, int dataFormatVersion) {
-		// TODO consider filter_string
 		SQLiteDatabase db = helper.getReadableDatabase();
-		
+		List<SongInfo> res = new ArrayList<SongInfo>();
+
 		String[] columns = { // column indexes!
 		Table.SongInfo.bookName.name(), // 0
 		Table.SongInfo.code.name(), // 1
 		Table.SongInfo.title.name(), // 2
 		Table.SongInfo.title_original.name(), // 3
 		};
+	
+		Cursor c = querySongs(db, columns, bookName, dataFormatVersion);
+		try {
+			while (c.moveToNext()) {
+				String bookName2 = c.getString(0);
+				String code = c.getString(1);
+				String title = c.getString(2);
+				String title_original = c.getString(3);
+				res.add(new SongInfo(bookName2, code, title, title_original));
+			}
+		} finally {
+			c.close();
+		}
 		
+		return res;
+	}
+
+	public List<SongInfo> getSongInfosByBookNameAndDeepFilter(String bookName, String filter_string, int dataFormatVersion) {
+		SQLiteDatabase db = helper.getReadableDatabase();
+		
+		List<SongInfo> res = new ArrayList<SongInfo>();
+
+		String[] columns = { // column indexes!
+		Table.SongInfo.bookName.name(), // 0
+		Table.SongInfo.code.name(), // 1
+		Table.SongInfo.title.name(), // 2
+		Table.SongInfo.title_original.name(), // 3
+		Table.SongInfo.data.name(), // 4
+		};
+		
+		CompiledFilter cf = SongFilter.compileFilter(filter_string);
+		
+		Cursor c = querySongs(db, columns, bookName, dataFormatVersion);
+		try {
+			while (c.moveToNext()) {
+				String bookName2 = c.getString(0);
+				String code = c.getString(1);
+				String title = c.getString(2);
+				String title_original = c.getString(3);
+				byte[] data = c.getBlob(4);
+				
+				Song song = unmarshall(data, Song.CREATOR);
+				if (SongFilter.match(song, cf)) {
+					res.add(new SongInfo(bookName2, code, title, title_original));
+				}
+			}
+		} finally {
+			c.close();
+		}
+		
+		return res;
+	}
+
+	private static Cursor querySongs(SQLiteDatabase db, String[] columns, String bookName, int dataFormatVersion) {
 		Cursor c;
 		if (bookName == null) {
 			c = db.query(Table.SongInfo.tableName(), 
@@ -172,21 +227,6 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 			new String[] {bookName, "" + dataFormatVersion},
 			null, null, Table.SongInfo.ordering + " asc");
 		}
-		
-		List<SongInfo> res = new ArrayList<SongInfo>();
-		
-		try {
-			while (c.moveToNext()) {
-				String bookName2 = c.getString(0);
-				String code = c.getString(1);
-				String title = c.getString(2);
-				String title_original = c.getString(3);
-				res.add(new SongInfo(bookName2, code, title, title_original));
-			}
-		} finally {
-			c.close();
-		}
-		
-		return res;
+		return c;
 	}
 }

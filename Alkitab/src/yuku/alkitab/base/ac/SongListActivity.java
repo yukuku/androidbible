@@ -16,6 +16,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -35,6 +38,12 @@ import yuku.alkitab.base.util.SongBookUtil.SongBookInfo;
 import yuku.alkitab.base.util.SongFilter;
 import yuku.searchbar.SearchWidget;
 
+/*
+ * Everytime we want to do a search, make sure 3 things:
+ * 1. setProgressBarIndeterminateVisibility(true);
+ * 2. set new search params
+ * 3. loader.forceLoad()
+ */
 public class SongListActivity extends BaseActivity {
 	public static final String TAG = SongListActivity.class.getSimpleName();
 	
@@ -45,6 +54,8 @@ public class SongListActivity extends BaseActivity {
 	ListView lsSong;
 	Button bChangeBook;
 	QuickAction qaChangeBook;
+	CheckBox cDeepSearch;
+	View panelFilter;
 	
 	SongAdapter adapter;
 	SongLoader loader;
@@ -80,6 +91,8 @@ public class SongListActivity extends BaseActivity {
 		searchWidget = V.get(this, R.id.searchWidget);
 		lsSong = V.get(this, R.id.lsSong);
 		bChangeBook = V.get(this, R.id.bChangeBook);
+		cDeepSearch = V.get(this, R.id.cDeepSearch);
+		panelFilter = V.get(this, R.id.panelFilter);
 		
 		searchWidget.setSubmitButtonEnabled(false);
 		searchWidget.setOnQueryTextListener(searchWidget_queryText);
@@ -91,6 +104,14 @@ public class SongListActivity extends BaseActivity {
 		qaChangeBook.setOnActionItemClickListener(SongBookUtil.getOnActionItemConverter(songBookSelected)); 
 		
 		bChangeBook.setOnClickListener(bChangeBook_click);
+		cDeepSearch.setOnCheckedChangeListener(cDeepSearch_checkedChange);
+		
+		// if we're using SearchBar instead of SearchView, move filter panel to 
+		// the bottom view of the SearchBar for better appearance
+		if (searchWidget.getSearchBarIfUsed() != null) {
+			((ViewGroup) panelFilter.getParent()).removeView(panelFilter);
+			searchWidget.getSearchBarIfUsed().setBottomView(panelFilter);
+		}
 		
 		loader = new SongLoader();
 		
@@ -118,10 +139,19 @@ public class SongListActivity extends BaseActivity {
 		}
 	};
 	
+	OnCheckedChangeListener cDeepSearch_checkedChange = new OnCheckedChangeListener() {
+		@Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			setProgressBarIndeterminateVisibility(true);
+			loader.setDeepSearch(isChecked);
+			loader.forceLoad();
+		}
+	};
+
 	OnSongBookSelectedListener songBookSelected = new OnSongBookSelectedListener() {
 		@Override public void onSongBookSelected(boolean all, SongBookInfo songBookInfo) {
 			if (all) {
 				bChangeBook.setText("All");
+				setProgressBarIndeterminateVisibility(true);
 				loader.setSelectedBookName(null);
 				loader.forceLoad();
 			} else if (songBookInfo != null) {
@@ -138,12 +168,14 @@ public class SongListActivity extends BaseActivity {
 						
 						@Override public void onDownloadedAndInserted(SongBookInfo songBookInfo) {
 							bChangeBook.setText(songBookInfo.bookName);
+							setProgressBarIndeterminateVisibility(true);
 							loader.setSelectedBookName(songBookInfo.bookName);
 							loader.forceLoad();
 						}
 					});
 				} else { // already have, just display
 					bChangeBook.setText(songBookInfo.bookName);
+					setProgressBarIndeterminateVisibility(true);
 					loader.setSelectedBookName(songBookInfo.bookName);
 					loader.forceLoad();
 				}
@@ -222,11 +254,18 @@ public class SongListActivity extends BaseActivity {
 	}
 	
 	static class SongLoader extends AsyncTaskLoader<List<SongInfo>> {
+		public static final String TAG = SongLoader.class.getSimpleName();
+		
 		private String filter_string;
 		private String selectedBookName;
+		private boolean deepSearch;
 
 		public SongLoader() {
 			super(App.context);
+		}
+		
+		public void setDeepSearch(boolean deepSearch) {
+			this.deepSearch = deepSearch;
 		}
 
 		public void setFilterString(String s) {
@@ -242,10 +281,16 @@ public class SongListActivity extends BaseActivity {
 		}
 
 		@Override public List<SongInfo> loadInBackground() {
-			Log.d(TAG, "@@loadInBackground filter_string=" + filter_string);
-
-			List<SongInfo> songInfos = S.getSongDb().getSongInfosByBookName(selectedBookName, SongBookUtil.getSongDataFormatVersion());
-			return SongFilter.filterSongInfoByString(songInfos, filter_string);
+			Log.d(TAG, "@@loadInBackground selectedBookName=" + selectedBookName + " filter_string=" + filter_string + " deepSearch=" + deepSearch);
+			
+			List<SongInfo> res;
+			if (!deepSearch) {
+				List<SongInfo> songInfos = S.getSongDb().getSongInfosByBookName(selectedBookName, SongBookUtil.getSongDataFormatVersion());
+				res = SongFilter.filterSongInfosByString(songInfos, filter_string);
+			} else {
+				res = S.getSongDb().getSongInfosByBookNameAndDeepFilter(selectedBookName, filter_string, SongBookUtil.getSongDataFormatVersion());
+			}
+			return res;
 		}
 	}
 }

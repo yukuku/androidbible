@@ -16,53 +16,78 @@ import yuku.kpri.model.Verse;
 public class SongFilter {
 	public static final String TAG = SongFilter.class.getSimpleName();
 
-	public static List<SongInfo> filterSongInfoByString(List<SongInfo> songInfos, String filter_string) {
-		List<SongInfo> res = new ArrayList<SongInfo>();
-		
-		if (filter_string == null) {
-			res.addAll(songInfos);
-		} else {
-			Pattern[] ps = extractPatterns(filter_string);
-			
-			for (SongInfo songInfo: songInfos) {
-				int matches = 0;
-				for (int i = 0; i < ps.length; i++) {
-					if (match(songInfo, ps[i])) matches++; 
-				}
-				if (matches == ps.length) res.add(songInfo);
-			}
-		}
-		
-		return res;		
+	public static class CompiledFilter {
+		Pattern[] ps;
 	}
 	
-	public static List<Song> filterSongByString(List<Song> songs, String filter_string) {
-		List<Song> res = new ArrayList<Song>();
-		
-		if (filter_string == null) {
-			res.addAll(songs);
+	public static CompiledFilter compileFilter(String filter_string) {
+		CompiledFilter res = new CompiledFilter();
+
+		if (filter_string == null || filter_string.trim().length() == 0) {
+			return null; 
 		} else {
-			Pattern[] ps = extractPatterns(filter_string);
-			
-			for (Song song: songs) {
-				int matches = 0;
-				for (int i = 0; i < ps.length; i++) {
-					if (match(song, ps[i])) matches++; 
-				}
-				if (matches == ps.length) res.add(song);
+			String[] splits = TextUtils.split(filter_string, "\\s+");
+			Pattern[] ps = new Pattern[splits.length];
+			for (int i = 0; i < splits.length; i++) {
+				ps[i] = Pattern.compile(Pattern.quote(splits[i]), Pattern.CASE_INSENSITIVE); 
 			}
 		}
 		
 		return res;
 	}
 	
-	private static Pattern[] extractPatterns(String filter_string) {
-		String[] splits = TextUtils.split(filter_string, "\\s+");
-		Pattern[] ps = new Pattern[splits.length];
-		for (int i = 0; i < splits.length; i++) {
-			ps[i] = Pattern.compile(Pattern.quote(splits[i]), Pattern.CASE_INSENSITIVE); 
+	public static List<SongInfo> filterSongInfosByString(List<SongInfo> songInfos, String filter_string) {
+		List<SongInfo> res = new ArrayList<SongInfo>();
+		
+		if (filter_string == null) {
+			res.addAll(songInfos);
+		} else {
+			CompiledFilter cf = compileFilter(filter_string);
+			
+			for (SongInfo songInfo: songInfos) {
+				if (match(songInfo, cf)) res.add(songInfo);
+			}
 		}
-		return ps;
+		
+		return res;		
+	}
+	
+	public static List<Song> filterSongsByString(List<Song> songs, String filter_string) {
+		List<Song> res = new ArrayList<Song>();
+		
+		if (filter_string == null) {
+			res.addAll(songs);
+		} else {
+			CompiledFilter cf = compileFilter(filter_string);
+			
+			for (Song song: songs) {
+				if (match(song, cf)) res.add(song);
+			}
+		}
+		
+		return res;
+	}
+	
+	public static boolean match(SongInfo song, CompiledFilter cf) {
+		Pattern[] ps = cf.ps;
+		if (ps == null) return true; // empty filter? consider it passes
+		
+		int matches = 0;
+		for (int i = 0; i < ps.length; i++) {
+			if (match(song, ps[i])) matches++;
+		}
+		return matches == ps.length;
+	}
+	
+	public static boolean match(Song song, CompiledFilter cf) {
+		Pattern[] ps = cf.ps;
+		if (ps == null) return true; // empty filter? consider it passes
+
+		int matches = 0;
+		for (int i = 0; i < ps.length; i++) {
+			if (match(song, ps[i])) matches++;
+		}
+		return matches == ps.length;
 	}
 	
 	private static boolean match(SongInfo song, Pattern p) {

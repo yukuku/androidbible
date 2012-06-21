@@ -11,17 +11,31 @@
 
         <yuku.searchbar.SearchWidget
             android:id="@+id/searchWidget"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/panelFilter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical" >
 
         <Button
             android:id="@+id/bChangeBook"
-            style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:height="48dp"
             android:text="All"
             tools:ignore="HardcodedText" />
+
+        <CheckBox
+            android:id="@+id/cDeepSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lyrics, etc. too" />
+
     </LinearLayout>
 
     <ListView
