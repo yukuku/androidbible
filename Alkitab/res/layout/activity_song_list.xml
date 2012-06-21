@@ -20,7 +20,8 @@
         android:id="@+id/panelFilter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical" >
+        android:layout_gravity="center_vertical"
+        android:paddingLeft="12dp" >
 
         <Button
             android:id="@+id/bChangeBook"

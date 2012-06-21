@@ -110,11 +110,12 @@ public class SongListActivity extends BaseActivity {
 		if (searchWidget.getSearchBarIfUsed() != null) {
 			((ViewGroup) panelFilter.getParent()).removeView(panelFilter);
 			searchWidget.getSearchBarIfUsed().setBottomView(panelFilter);
+			// the background of the search bar is bright, so let's make all text black
+			cDeepSearch.setTextColor(0xff000000);
 		}
 		
 		loader = new SongLoader();
 		
-		setProgressBarIndeterminateVisibility(true);
         getSupportLoaderManager().initLoader(0, null, new LoaderManager.LoaderCallbacks<List<SongInfo>>() {
 			@Override public Loader<List<SongInfo>> onCreateLoader(int id, Bundle args) {
 				return loader;
@@ -129,7 +130,21 @@ public class SongListActivity extends BaseActivity {
 				adapter.setData(null);
 				setProgressBarIndeterminateVisibility(false);
 			}
-		}).forceLoad();
+		});
+        
+        startSearch();
+	}
+	
+	private void startSearch() {
+		setProgressBarIndeterminateVisibility(true);
+		loader.setFilterString(searchWidget.getText().toString());
+		loader.setDeepSearch(cDeepSearch.isChecked());
+		loader.forceLoad();
+	}
+	
+	private void startSearchSettingBookName(String selectedBookName) {
+		loader.setSelectedBookName(selectedBookName);
+		startSearch();
 	}
 	
 	OnClickListener bChangeBook_click = new OnClickListener() {
@@ -140,9 +155,7 @@ public class SongListActivity extends BaseActivity {
 	
 	OnCheckedChangeListener cDeepSearch_checkedChange = new OnCheckedChangeListener() {
 		@Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-			setProgressBarIndeterminateVisibility(true);
-			loader.setDeepSearch(isChecked);
-			loader.forceLoad();
+			startSearch();
 		}
 	};
 
@@ -150,9 +163,7 @@ public class SongListActivity extends BaseActivity {
 		@Override public void onSongBookSelected(boolean all, SongBookInfo songBookInfo) {
 			if (all) {
 				bChangeBook.setText(R.string.sn_bookselector_all);
-				setProgressBarIndeterminateVisibility(true);
-				loader.setSelectedBookName(null);
-				loader.forceLoad();
+				startSearchSettingBookName(null);
 			} else if (songBookInfo != null) {
 				if (S.getSongDb().getFirstSongFromBook(songBookInfo.bookName, SongBookUtil.getSongDataFormatVersion()) == null) {
 					SongBookUtil.downloadSongBook(SongListActivity.this, songBookInfo, new OnDownloadSongBookListener() {
@@ -167,16 +178,12 @@ public class SongListActivity extends BaseActivity {
 						
 						@Override public void onDownloadedAndInserted(SongBookInfo songBookInfo) {
 							bChangeBook.setText(songBookInfo.bookName);
-							setProgressBarIndeterminateVisibility(true);
-							loader.setSelectedBookName(songBookInfo.bookName);
-							loader.forceLoad();
+							startSearchSettingBookName(songBookInfo.bookName);
 						}
 					});
 				} else { // already have, just display
 					bChangeBook.setText(songBookInfo.bookName);
-					setProgressBarIndeterminateVisibility(true);
-					loader.setSelectedBookName(songBookInfo.bookName);
-					loader.forceLoad();
+					startSearchSettingBookName(songBookInfo.bookName);
 				}
 			}
 		}
@@ -195,20 +202,14 @@ public class SongListActivity extends BaseActivity {
 
 	private SearchWidget.OnQueryTextListener searchWidget_queryText = new SearchWidget.SimpleOnQueryTextListener() {
 		@Override public boolean onQueryTextSubmit(SearchWidget searchWidget, String query) {
-			search(query);
+			startSearch();
 			return true;
 		};
 		
 		@Override public boolean onQueryTextChange(SearchWidget searchWidget, String newText) {
-			search(newText);
+			startSearch();
 			return true;
 		}
-
-		private void search(String s) {
-			setProgressBarIndeterminateVisibility(true);
-			loader.setFilterString(s);
-			loader.forceLoad();
-		};
 	};
 
 	public class SongAdapter extends BaseAdapter {
