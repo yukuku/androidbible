@@ -24,13 +24,14 @@ public class SongFilter {
 		CompiledFilter res = new CompiledFilter();
 
 		if (filter_string == null || filter_string.trim().length() == 0) {
-			return null; 
+			res.ps = null;
 		} else {
 			String[] splits = TextUtils.split(filter_string, "\\s+"); //$NON-NLS-1$
 			Pattern[] ps = new Pattern[splits.length];
 			for (int i = 0; i < splits.length; i++) {
 				ps[i] = Pattern.compile(Pattern.quote(splits[i]), Pattern.CASE_INSENSITIVE); 
 			}
+			res.ps = ps;
 		}
 		
 		return res;

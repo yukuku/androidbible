@@ -81,10 +81,14 @@ public class SongViewActivity extends BaseActivity {
 		templateCustomVars.putString("verse_number_color", String.format("#%06x", S.penerapan.warnaNomerAyat & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		{ // show latest viewed song
-			String bookName = Preferences.getString(Prefkey.song_last_bookName, "KJ"); // let KJ become the default.
-			String code = Preferences.getString(Prefkey.song_last_code, "1");
+			String bookName = Preferences.getString(Prefkey.song_last_bookName, null); // let KJ become the default.
+			String code = Preferences.getString(Prefkey.song_last_code, null);
 			
-			displaySong(bookName, S.getSongDb().getSong(bookName, code, SongBookUtil.getSongDataFormatVersion()));
+			if (bookName == null || code == null) {
+				displaySong(null, null);
+			} else {
+				displaySong(bookName, S.getSongDb().getSong(bookName, code, SongBookUtil.getSongDataFormatVersion()));
+			}
 		}
 	}
 	
