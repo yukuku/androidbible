@@ -207,6 +207,12 @@
   <string name="fm_do_you_want_to_delete">Hapus %s?</string>
   <string name="fm_error_when_extracting_font">Kesalahan ketika mengekstrak huruf %1$s: %2$s</string>
   <string name="dl_failed_to_rename_temporary_file">Gagal mengganti nama file sementara</string>
+    <string name="sn_deep_search_enabled">Juga lirik, dsb.</string>
+    <string name="sn_songs_activity_title">Kidung</string>
+    <string name="sn_bookselector_all">SEMUA</string>
+    <string name="sn_bookselector_all_desc">Cari pada semua buku yang tersedia.</string>
+    <string name="sn_downloading_ellipsis">Mengunduh…</string>
+    <string name="sn_download_song_books">Unduh buku lagu</string>
   <string name="teks_about">
 		Dikembangkan oleh [b]yuku[/b], 2009-2012[br/]
 		• Situs: androidbible.blogspot.com[br/]

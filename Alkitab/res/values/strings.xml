@@ -214,6 +214,12 @@
     <string name="dl_failed_to_rename_temporary_file">Failed to rename temporary file</string>
     <!-- Songs -->
     <string name="menuSongs">Songs</string>
+    <string name="sn_deep_search_enabled">Lyrics, etc. too</string>
+    <string name="sn_songs_activity_title">Songs</string>
+    <string name="sn_bookselector_all">ALL</string>
+    <string name="sn_bookselector_all_desc">Search all books that are installed.</string>
+    <string name="sn_downloading_ellipsis">Downloading…</string>
+    <string name="sn_download_song_books">Download song books</string>
     <!-- Lastly, about -->
     <string name="teks_about">Developed by [b]yuku[/b], 2009-2012[br/]
     	• Website: androidbible.blogspot.com[br/] 
@@ -234,5 +240,4 @@
     <string name="desc_delete">Delete</string>
     <string name="desc_change_selected_books">Change selected books</string>
     <string name="desc_download">Download</string>
-    <string name="sn_deep_search_enabled">Lyrics, etc. too</string>
 </resources>

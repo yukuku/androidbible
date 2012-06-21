@@ -52,7 +52,7 @@ public class SongViewActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_song_view);
 		
-		setTitle("Songs");
+		setTitle(R.string.sn_songs_activity_title);
 		
 		song_container = V.get(this, R.id.song_container);
 		no_song_data_container = V.get(this, R.id.no_song_data_container);
@@ -76,9 +76,9 @@ public class SongViewActivity extends BaseActivity {
 		V.get(this, android.R.id.content).setBackgroundColor(S.penerapan.warnaLatar);
 		
 		templateCustomVars = new Bundle();
-		templateCustomVars.putString("background_color", String.format("#%06x", S.penerapan.warnaLatar & 0xffffff));
-		templateCustomVars.putString("text_color", String.format("#%06x", S.penerapan.warnaHuruf & 0xffffff));
-		templateCustomVars.putString("verse_number_color", String.format("#%06x", S.penerapan.warnaNomerAyat & 0xffffff));
+		templateCustomVars.putString("background_color", String.format("#%06x", S.penerapan.warnaLatar & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
+		templateCustomVars.putString("text_color", String.format("#%06x", S.penerapan.warnaHuruf & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
+		templateCustomVars.putString("verse_number_color", String.format("#%06x", S.penerapan.warnaNomerAyat & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		{ // show latest viewed song
 			String bookName = Preferences.getString(Prefkey.song_last_bookName, "KJ"); // let KJ become the default.
@@ -97,7 +97,7 @@ public class SongViewActivity extends BaseActivity {
 			bChangeCode.setText(song.code);
 
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			ft.replace(R.id.song_container, SongFragment.create(song, "templates/song.html", templateCustomVars));
+			ft.replace(R.id.song_container, SongFragment.create(song, "templates/song.html", templateCustomVars)); //$NON-NLS-1$
 			ft.commitAllowingStateLoss();
 
 			currentBookName = bookName; 
@@ -136,7 +136,7 @@ public class SongViewActivity extends BaseActivity {
 			
 			codeKeypad.setSongCodePopupListener(new SongCodePopupListener() { // do not make this a field. Need to create a new instance to init fields correctly.
 				CharSequence originalCode = bChangeCode.getText();
-				String tempCode = "";
+				String tempCode = ""; //$NON-NLS-1$
 				String bookName = currentBookName;
 				boolean jumped = false;
 				
@@ -157,7 +157,7 @@ public class SongViewActivity extends BaseActivity {
 					for (int i = 0; i < numIds.length; i++) if (id == numIds[i]) num = i;
 					
 					if (num >= 0) { // digits
-						if (tempCode.length() >= 4) tempCode = ""; // can't be more than 4 digits
+						if (tempCode.length() >= 4) tempCode = ""; // can't be more than 4 digits //$NON-NLS-1$
 						if (tempCode.length() == 0 && num == 0) { // nothing has been pressed and 0 is now pressed
 						} else {
 							tempCode += num;
@@ -197,7 +197,7 @@ public class SongViewActivity extends BaseActivity {
 					@Override public void onFailedOrCancelled(SongBookInfo songBookInfo, Exception e) {
 						if (e != null) {
 							new AlertDialog.Builder(SongViewActivity.this)
-							.setMessage(e.getClass().getSimpleName() + " " + e.getMessage())
+							.setMessage(e.getClass().getSimpleName() + ' ' + e.getMessage())
 							.setPositiveButton(R.string.ok, null)
 							.show();
 						}

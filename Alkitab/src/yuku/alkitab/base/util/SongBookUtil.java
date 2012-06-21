@@ -19,6 +19,7 @@ import java.util.zip.GZIPInputStream;
 
 import net.londatiga.android.ActionItem;
 import net.londatiga.android.QuickAction;
+import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.rpc.SimpleHttpConnection;
 import yuku.kpri.model.Song;
@@ -42,12 +43,12 @@ public class SongBookUtil {
 		
 		for (String k: new String[] {
 			// bookName :: fileName :: downloadUrl :: bookDescription
-			"KJ   :: kj-1.ser   :: http://alkitab-host.appspot.com/addon/songs/v1/data/kj-1.ser.gz   :: Kidung Jemaat, buku himne terbitan YAMUGER (Yayasan Musik Gereja di Indonesia).",
-			"KPRI :: kpri-1.ser :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpri-1.ser.gz :: Kidung Persekutuan Reformed Injili, buku nyanyian terbitan Sinode Gereja Reformed Injili Indonesia (GRII).",
-			"NKB  :: nkb-1.ser  :: http://alkitab-host.appspot.com/addon/songs/v1/data/nkb-1.ser.gz  :: Nyanyikanlah Kidung Baru, buku himne terbitan Badan Pengerja Majelis Sinode (BPMS) Gereja Kristen Indonesia.", 
-			"PKJ  :: pkj-1.ser  :: http://alkitab-host.appspot.com/addon/songs/v1/data/pkj-1.ser.gz  :: Pelengkap Kidung Jemaat, buku nyanyian untuk melengkapi Kidung Jemaat, terbitan YAMUGER (Yayasan Musik Gereja di Indonesia).",
+			"KJ   :: kj-1.ser   :: http://alkitab-host.appspot.com/addon/songs/v1/data/kj-1.ser.gz   :: Kidung Jemaat, buku himne terbitan YAMUGER (Yayasan Musik Gereja di Indonesia).", //$NON-NLS-1$
+			"KPRI :: kpri-1.ser :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpri-1.ser.gz :: Kidung Persekutuan Reformed Injili, buku nyanyian terbitan Sinode Gereja Reformed Injili Indonesia (GRII).", //$NON-NLS-1$
+			"NKB  :: nkb-1.ser  :: http://alkitab-host.appspot.com/addon/songs/v1/data/nkb-1.ser.gz  :: Nyanyikanlah Kidung Baru, buku himne terbitan Badan Pengerja Majelis Sinode (BPMS) Gereja Kristen Indonesia.",  //$NON-NLS-1$
+			"PKJ  :: pkj-1.ser  :: http://alkitab-host.appspot.com/addon/songs/v1/data/pkj-1.ser.gz  :: Pelengkap Kidung Jemaat, buku nyanyian untuk melengkapi Kidung Jemaat, terbitan YAMUGER (Yayasan Musik Gereja di Indonesia).", //$NON-NLS-1$
 		}) {
-			String[] ss = k.split("::");
+			String[] ss = k.split("::"); //$NON-NLS-1$
 			SongBookInfo bookInfo = new SongBookInfo();
 			bookInfo.bookName = ss[0].trim();
 			bookInfo.bookFile = ss[1].trim();
@@ -67,16 +68,16 @@ public class SongBookUtil {
 	public static QuickAction getSongBookQuickAction(Context context, boolean withAll) {
         QuickAction res = new QuickAction(context, QuickAction.VERTICAL);
         if (withAll) {
-        	SpannableStringBuilder sb = new SpannableStringBuilder("All" + "\n");
+        	SpannableStringBuilder sb = new SpannableStringBuilder(context.getString(R.string.sn_bookselector_all) + '\n');
 			int sb_len = sb.length();
-			sb.append("Show all books that are installed.");
+			sb.append(context.getString(R.string.sn_bookselector_all_desc));
 			sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
 			sb.setSpan(new ForegroundColorSpan(0xff4488bb), sb_len, sb.length(), 0);
-        	res.addActionItem(new ActionItem(0, "All"));
+        	res.addActionItem(new ActionItem(0, sb));
         }
 		int n = 1;
 		for (SongBookInfo bookInfo: knownSongBooks) {
-			SpannableStringBuilder sb = new SpannableStringBuilder(bookInfo.bookName + "\n");
+			SpannableStringBuilder sb = new SpannableStringBuilder(bookInfo.bookName + '\n');
 			int sb_len = sb.length();
 			sb.append(bookInfo.description);
 			sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
@@ -108,7 +109,7 @@ public class SongBookUtil {
 			Exception ex;
 			
 			@Override protected void onPreExecute() {
-				pd = ProgressDialog.show(activity, null, "Downloading…", true, true);
+				pd = ProgressDialog.show(activity, null, activity.getString(R.string.sn_downloading_ellipsis), true, true);
 				pd.setOnDismissListener(new OnDismissListener() {
 					@Override public void onDismiss(DialogInterface dialog) {
 						cancel(false);

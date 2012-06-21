@@ -40,6 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:height="48dp"
+            android:minEms="3"
             android:text="@string/cari_v" />
     </LinearLayout>
 
@@ -59,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Download song books" />
+            android:text="@string/sn_download_song_books" />
     </FrameLayout>
 
 </LinearLayout>

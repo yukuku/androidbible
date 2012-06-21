@@ -28,8 +28,7 @@
             android:layout_height="wrap_content"
             android:height="48dp"
             android:minEms="3"
-            android:text="All"
-            tools:ignore="HardcodedText" />
+            android:text="@string/sn_bookselector_all" />
 
         <CheckBox
             android:id="@+id/cDeepSearch"

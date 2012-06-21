@@ -26,7 +26,7 @@ public class SongFilter {
 		if (filter_string == null || filter_string.trim().length() == 0) {
 			return null; 
 		} else {
-			String[] splits = TextUtils.split(filter_string, "\\s+");
+			String[] splits = TextUtils.split(filter_string, "\\s+"); //$NON-NLS-1$
 			Pattern[] ps = new Pattern[splits.length];
 			for (int i = 0; i < splits.length; i++) {
 				ps[i] = Pattern.compile(Pattern.quote(splits[i]), Pattern.CASE_INSENSITIVE); 
@@ -91,7 +91,7 @@ public class SongFilter {
 	}
 	
 	private static boolean match(SongInfo song, Pattern p) {
-		Matcher m = p.matcher("");
+		Matcher m = p.matcher(""); //$NON-NLS-1$
 		
 		if (find(song.code, m)) return true;
 		if (find(song.title, m)) return true;
@@ -101,7 +101,7 @@ public class SongFilter {
 	}
 	
 	private static boolean match(Song song, Pattern p) {
-		Matcher m = p.matcher("");
+		Matcher m = p.matcher(""); //$NON-NLS-1$
 		
 		if (find(song.code, m)) return true;
 		if (find(song.title, m)) return true;

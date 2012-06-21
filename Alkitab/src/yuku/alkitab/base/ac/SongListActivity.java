@@ -7,7 +7,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -47,8 +46,8 @@ import yuku.searchbar.SearchWidget;
 public class SongListActivity extends BaseActivity {
 	public static final String TAG = SongListActivity.class.getSimpleName();
 	
-	private static final String EXTRA_bookName = "bookName";
-	private static final String EXTRA_code = "code";
+	private static final String EXTRA_bookName = "bookName"; //$NON-NLS-1$
+	private static final String EXTRA_code = "code"; //$NON-NLS-1$
 	
 	SearchWidget searchWidget;
 	ListView lsSong;
@@ -86,7 +85,7 @@ public class SongListActivity extends BaseActivity {
 		
 		setContentView(R.layout.activity_song_list);
 		
-		setTitle("Songs");
+		setTitle(R.string.sn_songs_activity_title);
 		
 		searchWidget = V.get(this, R.id.searchWidget);
 		lsSong = V.get(this, R.id.lsSong);
@@ -150,7 +149,7 @@ public class SongListActivity extends BaseActivity {
 	OnSongBookSelectedListener songBookSelected = new OnSongBookSelectedListener() {
 		@Override public void onSongBookSelected(boolean all, SongBookInfo songBookInfo) {
 			if (all) {
-				bChangeBook.setText("All");
+				bChangeBook.setText(R.string.sn_bookselector_all);
 				setProgressBarIndeterminateVisibility(true);
 				loader.setSelectedBookName(null);
 				loader.forceLoad();
@@ -160,7 +159,7 @@ public class SongListActivity extends BaseActivity {
 						@Override public void onFailedOrCancelled(SongBookInfo songBookInfo, Exception e) {
 							if (e != null) {
 								new AlertDialog.Builder(SongListActivity.this)
-								.setMessage(e.getClass().getSimpleName() + " " + e.getMessage())
+								.setMessage(e.getClass().getSimpleName() + ' ' + e.getMessage())
 								.setPositiveButton(R.string.ok, null)
 								.show();
 							}
@@ -240,7 +239,7 @@ public class SongListActivity extends BaseActivity {
 			TextView lBookName = V.get(res, R.id.lBookName);
 			
 			SongInfo songInfo = getItem(position);
-			lTitle.setText(songInfo.code + ". " + songInfo.title);
+			lTitle.setText(songInfo.code + ". " + songInfo.title); //$NON-NLS-1$
 			if (songInfo.title_original != null) {
 				lTitleOriginal.setVisibility(View.VISIBLE);
 				lTitleOriginal.setText(songInfo.title_original);
@@ -281,8 +280,6 @@ public class SongListActivity extends BaseActivity {
 		}
 
 		@Override public List<SongInfo> loadInBackground() {
-			Log.d(TAG, "@@loadInBackground selectedBookName=" + selectedBookName + " filter_string=" + filter_string + " deepSearch=" + deepSearch);
-			
 			List<SongInfo> res;
 			if (!deepSearch) {
 				List<SongInfo> songInfos = S.getSongDb().getSongInfosByBookName(selectedBookName, SongBookUtil.getSongDataFormatVersion());
