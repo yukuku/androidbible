@@ -4,16 +4,21 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import net.londatiga.android.QuickAction;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.storage.Preferences;
 import yuku.alkitab.base.storage.Prefkey;
@@ -24,13 +29,17 @@ import yuku.alkitab.base.util.SongBookUtil.OnSongBookSelectedListener;
 import yuku.alkitab.base.util.SongBookUtil.SongBookInfo;
 import yuku.alkitab.base.widget.SongCodePopup;
 import yuku.alkitab.base.widget.SongCodePopup.SongCodePopupListener;
+import yuku.kpri.model.Lyric;
 import yuku.kpri.model.Song;
+import yuku.kpri.model.Verse;
+import yuku.kpri.model.VerseKind;
 import yuku.kpriviewer.fr.SongFragment;
 
 public class SongViewActivity extends BaseActivity {
 	public static final String TAG = SongViewActivity.class.getSimpleName();
 
 	private static final int REQCODE_songList = 1;
+	private static final int REQCODE_share = 2;
 	
 	ViewGroup song_container;
 	ViewGroup no_song_data_container;
@@ -43,6 +52,7 @@ public class SongViewActivity extends BaseActivity {
 	
 	Bundle templateCustomVars;
 	String currentBookName;
+	Song currentSong;
 
 	public static Intent createIntent() {
 		Intent res = new Intent(App.context, SongViewActivity.class);
@@ -105,6 +115,101 @@ public class SongViewActivity extends BaseActivity {
 		}
 	}
 	
+	private void bikinMenu(Menu menu) {
+		menu.clear();
+		getMenuInflater().inflate(R.menu.activity_song_view, menu);
+	}
+	
+	@Override public boolean onCreateOptionsMenu(Menu menu) {
+		bikinMenu(menu);
+		return true;
+	}
+	
+	@Override public boolean onPrepareOptionsMenu(Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+		if (menu != null) bikinMenu(menu);
+		return true;
+	}
+	
+	@Override public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menuSalin: {
+			if (currentSong != null) {
+				U.salin(convertSongToText(currentSong));
+
+				Toast.makeText(this, R.string.sn_copied, Toast.LENGTH_SHORT).show();
+			}
+		} return true;
+		case R.id.menuBagikan: {
+			if (currentSong != null) {
+				Intent intent = new Intent(Intent.ACTION_SEND);
+				intent.setType("text/plain"); //$NON-NLS-1$
+				intent.putExtra(Intent.EXTRA_SUBJECT, currentBookName + ' ' + currentSong.code + ' ' + currentSong.title);
+				intent.putExtra(Intent.EXTRA_TEXT, (CharSequence) convertSongToText(currentSong)); 
+				startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.sn_share_title)), REQCODE_share);
+			}
+		} return true;
+		}
+		return false;
+	}
+
+	private StringBuilder convertSongToText(Song song) {
+		// build text to copy
+		StringBuilder sb = new StringBuilder();
+		sb.append(song.code).append(". "); //$NON-NLS-1$
+		sb.append(song.title).append('\n');
+		if (song.title_original != null) sb.append('(').append(song.title_original).append(')').append('\n');
+		sb.append('\n');
+		
+		if (song.authors_lyric != null && song.authors_lyric.size() > 0) sb.append(TextUtils.join("; ", song.authors_lyric)).append('\n'); //$NON-NLS-1$
+		if (song.authors_music != null && song.authors_music.size() > 0) sb.append(TextUtils.join("; ", song.authors_music)).append('\n'); //$NON-NLS-1$
+		if (song.tune != null) sb.append(song.tune.toUpperCase()).append('\n');
+		sb.append('\n');
+		
+		if (song.keySignature != null) sb.append(song.keySignature).append('\n');
+		if (song.timeSignature != null) sb.append(song.timeSignature).append('\n');
+		sb.append('\n');
+
+		for (int i = 0; i < song.lyrics.size(); i++) {
+			Lyric lyric = song.lyrics.get(i);
+			
+			if (song.lyrics.size() > 1 || lyric.caption != null) { // otherwise, only lyric and has no name
+				if (lyric.caption != null) {
+					sb.append(lyric.caption).append('\n');
+				} else {
+					sb.append(getString(R.string.sn_lyric_version_version, i+1)).append('\n');
+				}
+			}
+			
+			int verse_normal_no = 0;
+			for (Verse verse: lyric.verses) {
+				if (verse.kind == VerseKind.NORMAL) {
+					verse_normal_no++;
+				}
+				
+				boolean skipPad = false;
+				if (verse.kind == VerseKind.REFRAIN) {
+					sb.append(getString(R.string.sn_lyric_refrain_marker)).append('\n');
+				} else {
+					sb.append(String.format("%2d: ", verse_normal_no)); //$NON-NLS-1$
+					skipPad = true;
+				}
+
+				for (String line: verse.lines) {
+					if (!skipPad) {
+						sb.append("    "); //$NON-NLS-1$
+					} else {
+						skipPad = false;
+					}
+					sb.append(line).append("\n");  //$NON-NLS-1$
+				}
+				sb.append('\n');
+			}
+			sb.append('\n');
+		}
+		return sb;
+	}
+
 	private void displaySong(String bookName, Song song) {
 		song_container.setVisibility(song != null? View.VISIBLE: View.GONE);
 		no_song_data_container.setVisibility(song != null? View.GONE: View.VISIBLE);
@@ -117,7 +222,8 @@ public class SongViewActivity extends BaseActivity {
 			ft.replace(R.id.song_container, SongFragment.create(song, "templates/song.html", templateCustomVars)); //$NON-NLS-1$
 			ft.commitAllowingStateLoss();
 
-			currentBookName = bookName; 
+			currentBookName = bookName;
+			currentSong = song;
 			
 			{ // save latest viewed song TODO optimize using new preferences fw
 				Preferences.setString(Prefkey.song_last_bookName, bookName);
@@ -235,6 +341,13 @@ public class SongViewActivity extends BaseActivity {
 				SongListActivity.Result result = SongListActivity.obtainResult(data);
 				if (result != null) {
 					displaySong(result.bookName, S.getSongDb().getSong(result.bookName, result.code, SongBookUtil.getSongDataFormatVersion()));
+				}
+			}
+		} else if (requestCode == REQCODE_share) {
+			if (resultCode == RESULT_OK) {
+				ShareActivity.Result result = ShareActivity.obtainResult(data);
+				if (result != null && result.chosenIntent != null) {
+					startActivity(result.chosenIntent);
 				}
 			}
 		}

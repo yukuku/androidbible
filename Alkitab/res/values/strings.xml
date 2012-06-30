@@ -212,6 +212,7 @@
     <string name="fm_error_when_extracting_font">Error when extracting font %1$s: %2$s</string>
     <string name="fm_loading_ellipsis">Loading…</string>
     <string name="dl_failed_to_rename_temporary_file">Failed to rename temporary file</string>
+    
     <!-- Songs -->
     <string name="menuSongs">Songs</string>
     <string name="sn_deep_search_enabled">Lyrics, etc. too</string>
@@ -220,6 +221,23 @@
     <string name="sn_bookselector_all_desc">Search all books that are installed.</string>
     <string name="sn_downloading_ellipsis">Downloading…</string>
     <string name="sn_download_song_books">Download song books</string>
+    <string name="sn_copied">The song has been copied.</string>
+    <string name="sn_share_title">Share song</string>
+    <string name="sn_download_song_books">Download song books</string>
+    <string name="sn_lyric_version_version">Version %s</string>
+    <string name="sn_lyric_refrain_marker">Ref.</string>
+    
+    <!-- Content descriptions, for blind users -->
+    <string name="desc_type_verse_reference_directly">Type verse reference directly</string>
+    <string name="desc_previous_day">Previous day</string>
+    <string name="desc_next_day">Next day</string>
+    <string name="desc_open_bookmark">Open bookmark</string>
+    <string name="desc_open_note">Open note</string>
+    <string name="desc_go_to_verse">Go to verse</string>
+    <string name="desc_delete">Delete</string>
+    <string name="desc_change_selected_books">Change selected books</string>
+    <string name="desc_download">Download</string>
+    
     <!-- Lastly, about -->
     <string name="teks_about">Developed by [b]yuku[/b], 2009-2012[br/]
     	• Website: androidbible.blogspot.com[br/] 
@@ -231,13 +249,4 @@
 		• [b]Jaya Satrio[/b] various icons[br/]
 		• [b]Yohanes Nugroho[/b] PDB reader[br/]
 		• etc.</string>
-    <string name="desc_type_verse_reference_directly">Type verse reference directly</string>
-    <string name="desc_previous_day">Previous day</string>
-    <string name="desc_next_day">Next day</string>
-    <string name="desc_open_bookmark">Open bookmark</string>
-    <string name="desc_open_note">Open note</string>
-    <string name="desc_go_to_verse">Go to verse</string>
-    <string name="desc_delete">Delete</string>
-    <string name="desc_change_selected_books">Change selected books</string>
-    <string name="desc_download">Download</string>
 </resources>
