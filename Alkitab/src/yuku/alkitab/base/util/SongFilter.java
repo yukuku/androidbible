@@ -1,7 +1,5 @@
 package yuku.alkitab.base.util;
 
-import android.text.TextUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -26,10 +24,15 @@ public class SongFilter {
 		if (filter_string == null || filter_string.trim().length() == 0) {
 			res.ps = null;
 		} else {
-			String[] splits = TextUtils.split(filter_string, "\\s+"); //$NON-NLS-1$
-			Pattern[] ps = new Pattern[splits.length];
-			for (int i = 0; i < splits.length; i++) {
-				ps[i] = Pattern.compile(Pattern.quote(splits[i]), Pattern.CASE_INSENSITIVE); 
+			String[] tokens = QueryTokenizer.tokenize(filter_string);
+			Pattern[] ps = new Pattern[tokens.length];
+			for (int i = 0; i < tokens.length; i++) {
+				String token = tokens[i];
+				if (QueryTokenizer.isPlussedToken(token)) {
+					ps[i] = Pattern.compile("\\b" + Pattern.quote(QueryTokenizer.tokenWithoutPlus(token)) + "\\b", Pattern.CASE_INSENSITIVE);
+				} else {
+					ps[i] = Pattern.compile(Pattern.quote(token), Pattern.CASE_INSENSITIVE);
+				}
 			}
 			res.ps = ps;
 		}

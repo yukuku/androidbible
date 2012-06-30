@@ -41,6 +41,7 @@ import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Kitab;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.PengaturTampilan;
+import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.Search2Engine;
 import yuku.alkitab.base.util.Search2Engine.Query;
 import yuku.androidsdk.searchbar.SearchBar;
@@ -217,7 +218,7 @@ public class Search2Activity extends BaseActivity {
 				}
 				
 				if (hasilCari != null) {
-					String[] xkata = Search2Engine.tokenkan(query.carian);
+					String[] xkata = QueryTokenizer.tokenize(query.carian);
 					lsHasilCari.setAdapter(new Search2Adapter(hasilCari, xkata));
 				}
 			}
@@ -483,7 +484,7 @@ public class Search2Activity extends BaseActivity {
 			}
 		}
 		
-		final String[] xkata = Search2Engine.tokenkan(carian);
+		final String[] xkata = QueryTokenizer.tokenize(carian);
 		
 		final ProgressDialog pd = new ProgressDialog(this);
 		pd.setTitle(getString(R.string.mencari));
