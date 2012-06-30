@@ -19,6 +19,7 @@ import yuku.afw.V;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
+import yuku.alkitab.base.ac.SongListActivity.SearchState;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.storage.Preferences;
 import yuku.alkitab.base.storage.Prefkey;
@@ -53,6 +54,9 @@ public class SongViewActivity extends BaseActivity {
 	Bundle templateCustomVars;
 	String currentBookName;
 	Song currentSong;
+
+	// for initially populating the search song activity
+	SearchState last_searchState = null;
 
 	public static Intent createIntent() {
 		Intent res = new Intent(App.context, SongViewActivity.class);
@@ -210,7 +214,7 @@ public class SongViewActivity extends BaseActivity {
 		return sb;
 	}
 
-	private void displaySong(String bookName, Song song) {
+	void displaySong(String bookName, Song song) {
 		song_container.setVisibility(song != null? View.VISIBLE: View.GONE);
 		no_song_data_container.setVisibility(song != null? View.GONE: View.VISIBLE);
 		
@@ -234,7 +238,7 @@ public class SongViewActivity extends BaseActivity {
 
 	OnClickListener bSearch_click = new OnClickListener() {
 		@Override public void onClick(View v) {
-			startActivityForResult(SongListActivity.createIntent(), REQCODE_songList);
+			startActivityForResult(SongListActivity.createIntent(last_searchState), REQCODE_songList);
 		}
 	};
 	
@@ -334,13 +338,15 @@ public class SongViewActivity extends BaseActivity {
 			}
 		}
 	};
-	
+
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQCODE_songList) {
 			if (resultCode == RESULT_OK) {
 				SongListActivity.Result result = SongListActivity.obtainResult(data);
 				if (result != null) {
 					displaySong(result.bookName, S.getSongDb().getSong(result.bookName, result.code, SongBookUtil.getSongDataFormatVersion()));
+					// store this for next search
+					last_searchState = result.last_searchState;
 				}
 			}
 		} else if (requestCode == REQCODE_share) {
