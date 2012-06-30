@@ -49,7 +49,7 @@
   <string name="pasal_sebelumangka">Pasal</string>
   <string name="loncat_ke_alamat_titikdua">Loncat ke: (Contoh: %s)</string>
   <string name="tidak_ada_catatan">(tidak ada catatan)</string>
-  <string name="belum_ada_pembatas_buku">Belum ada pembatas buku.\nTahan (tekan yang lama) suatu ayat untuk menambahkan pembatas buku.</string>
+  <string name="belum_ada_pembatas_buku">Belum ada pembatas buku.\nPilih suatu ayat dan tekan tombol menu ayat untuk menambahkan pembatas buku.</string>
   <string name="judul_titikdua">Judul:</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Gagal mengunduh %1$s tgl %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Kesalahan dalam mengunduh %1$s tgl %2$s: %3$s</string>
