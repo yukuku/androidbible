@@ -5,12 +5,14 @@
         <item>Default</item>
         <item>English</item>
         <item>Bahasa Indonesia</item>
+        <item>Polski</item>
         <item>Română</item>
     </string-array>
     <string-array name="pref_bahasa_value">
         <item>DEFAULT</item>
         <item>en</item>
         <item>in</item>
+        <item>pl</item>
         <item>ro</item>
     </string-array>
 
