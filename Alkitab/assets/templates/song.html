@@ -3,17 +3,37 @@
 	<head>
 		<link rel='stylesheet' href='song.css' />
 		<style>
+			{{$custom_font_loader}}
+		
 			html, body {
 				background-color: {{$background_color}};
 				color: {{$text_color}};
+				font-size: {{$text_size}};
+				font-family: {{$text_font}};
 			}
+			
 			.verse_ordering {
 				color: {{$verse_number_color}};
 			}
 		</style>
+
+		<script>
+			function body_load() {
+				var test_tobehidden = document.getElementById('test_tobehidden');
+				var test_line = document.getElementById('test_line');
+				
+				var h = test_line.clientHeight;
+				var lh = (h * {{$line_spacing_mult}}) + 'px';
+				
+				var lines = document.getElementsByClassName('line');
+				for (var i = 0; i < lines.length; i++) lines[i].style.lineHeight = lh;
+				
+				test_tobehidden.parentNode.removeChild(test_tobehidden);
+			}
+		</script>
 	</head>
 
-	<body>
+	<body onload="body_load()">
 		<div class='song'>
 			{{div:code}}
 			{{div:title}}
@@ -27,6 +47,11 @@
 			{{div:keySignature}}
 			{{div:timeSignature}}
 			<div class='break' />
+			
+			<div class='verse' id="test_tobehidden">
+				<p class='line' id="test_line">Test1#fg</p>
+			</div>
+			
 			{{div:lyrics}}
 		</div>
 	</body>

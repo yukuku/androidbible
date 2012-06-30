@@ -17,6 +17,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.storage.Preferences;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.base.util.SongBookUtil;
 import yuku.alkitab.base.util.SongBookUtil.OnDownloadSongBookListener;
 import yuku.alkitab.base.util.SongBookUtil.OnSongBookSelectedListener;
@@ -79,6 +80,18 @@ public class SongViewActivity extends BaseActivity {
 		templateCustomVars.putString("background_color", String.format("#%06x", S.penerapan.warnaLatar & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
 		templateCustomVars.putString("text_color", String.format("#%06x", S.penerapan.warnaHuruf & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
 		templateCustomVars.putString("verse_number_color", String.format("#%06x", S.penerapan.warnaNomerAyat & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
+		templateCustomVars.putString("text_size", S.penerapan.ukuranHuruf2dp + "px"); // somehow this is automatically scaled to dp. //$NON-NLS-1$ //$NON-NLS-2$
+		templateCustomVars.putString("line_spacing_mult", String.valueOf(S.penerapan.lineSpacingMult)); //$NON-NLS-1$
+		
+		{
+			String fontName = Preferences.getString(R.string.pref_jenisHuruf_key, null);
+			if (FontManager.isCustomFont(fontName)) {
+				templateCustomVars.putString("custom_font_loader", String.format("@font-face{ font-family: '%s'; src: url('%s'); }", fontName, FontManager.getCustomFontUri(fontName))); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				templateCustomVars.putString("custom_font_loader", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			templateCustomVars.putString("text_font", fontName); //$NON-NLS-1$
+		}
 		
 		{ // show latest viewed song
 			String bookName = Preferences.getString(Prefkey.song_last_bookName, null); // let KJ become the default.
