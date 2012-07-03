@@ -69,7 +69,7 @@ public class FontManager {
 		return new File(getFontsPath(), name);
 	}
 
-	private static File getRegularPath(String name) {
+	static File getRegularPath(String name) {
 		return new File(getFontsPath(), name + "/" + name + "-Regular.ttf"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	

@@ -186,6 +186,7 @@ public class SongListActivity extends BaseActivity {
 	    			bChangeBook.setText(searchState.bookName);
 	    		}
         	} stillUsingInitialSearchState = false;
+        	setProgressBarIndeterminateVisibility(false); // somehow this is needed.
         } else {
         	startSearch();
         }

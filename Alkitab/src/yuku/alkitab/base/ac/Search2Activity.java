@@ -96,7 +96,7 @@ public class Search2Activity extends BaseActivity {
 		return res;
 	}
 
-	@TargetApi(11) private class Api11_compat {
+	@TargetApi(11) class Api11_compat {
 		SearchView searchView;
 
 		public void configureSearchView() {
@@ -243,7 +243,7 @@ public class Search2Activity extends BaseActivity {
 		return VERSION.SDK_INT >= 11;
 	}
 	
-	private void aturTampilanFilterLamaBaru() {
+	void aturTampilanFilterLamaBaru() {
 		// kondisi: kalau sebagian nyala sebagian ga, null.
 		// semua nyala: true.
 		// semua ga nyala: false.

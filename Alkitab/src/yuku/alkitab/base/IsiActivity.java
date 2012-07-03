@@ -572,7 +572,7 @@ public class IsiActivity extends BaseActivity {
 		}
 	};
 	
-	private void hideOrShowContextButton() {
+	void hideOrShowContextButton() {
 		SparseBooleanArray checkedPositions = lsIsi.getCheckedItemPositions();
 		boolean anyChecked = false;
 		for (int i = 0; i < checkedPositions.size(); i++) if (checkedPositions.valueAt(i)) {
@@ -1306,7 +1306,7 @@ public class IsiActivity extends BaseActivity {
 		return Ari.encode(0, pasal_1, ayat_1);
 	}
 
-	private void uncheckAll() {
+	void uncheckAll() {
 		SparseBooleanArray checkedPositions = lsIsi.getCheckedItemPositions();
 		if (checkedPositions != null && checkedPositions.size() > 0) {
 			for (int i = checkedPositions.size() - 1; i >= 0; i--) {

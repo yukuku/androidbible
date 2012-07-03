@@ -396,7 +396,7 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 	
 	static boolean pemintaMasaDepanLagiJalan = false;
 	
-	private class PemintaMasaDepan extends AsyncTask<Void, Void, Void> {
+	class PemintaMasaDepan extends AsyncTask<Void, Void, Void> {
 		@Override protected Void doInBackground(Void... params) {
 			if (pemintaMasaDepanLagiJalan) {
 				Log.d(TAG, "peminta masa depan lagi jalan"); //$NON-NLS-1$

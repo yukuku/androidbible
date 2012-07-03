@@ -96,7 +96,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 		}
 	}
 
-	private void loadFontList() {
+	void loadFontList() {
 		new AsyncTask<Void, Void, List<FontItem>>() {
 			String errorMsg;
 			
@@ -144,7 +144,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 		}.execute();
 	}
 	
-	private String getFontDownloadKey(String name) {
+	String getFontDownloadKey(String name) {
 		return "FontManager/" + name; //$NON-NLS-1$
 	}
 	
@@ -153,7 +153,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 		return key.substring("FontManager/".length()); //$NON-NLS-1$
 	}
 
-	private String getFontDownloadDestination(String name) {
+	String getFontDownloadDestination(String name) {
 		return new File(FontManager.getFontsPath(), "download-" + name + ".zip").getAbsolutePath(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	

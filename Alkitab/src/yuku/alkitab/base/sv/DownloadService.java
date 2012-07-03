@@ -29,11 +29,11 @@ public class DownloadService extends Service {
 	private static final int MSG_stateChanged = 2;
 	private static final int MSG_stopSelf = 3;
 
-	private LinkedHashMap<String, DownloadEntry> db = new LinkedHashMap<String, DownloadEntry>();
-	private ExecutorService executor = Executors.newFixedThreadPool(3);
+	LinkedHashMap<String, DownloadEntry> db = new LinkedHashMap<String, DownloadEntry>();
+	ExecutorService executor = Executors.newFixedThreadPool(3);
 	/** waiting or running */
-	private AtomicInteger nwaiting = new AtomicInteger(0);
-	private DownloadListener listener;
+	AtomicInteger nwaiting = new AtomicInteger(0);
+	DownloadListener listener;
 	
 	static class ListenerHandler extends Handler {
 		private WeakReference<DownloadService> sv;

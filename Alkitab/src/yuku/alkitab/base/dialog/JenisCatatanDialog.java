@@ -77,7 +77,7 @@ public class JenisCatatanDialog {
 		});
 	}
 	
-	private void setCatatan(CharSequence catatan) {
+	void setCatatan(CharSequence catatan) {
 		tCatatan.setText(catatan);
 	}
 

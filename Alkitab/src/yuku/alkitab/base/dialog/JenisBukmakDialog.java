@@ -71,7 +71,7 @@ public class JenisBukmakDialog {
 		this.listener = listener;
 	}
 	
-	private OnClickListener bAddLabel_dialog_itemSelected = new OnClickListener() {
+	OnClickListener bAddLabel_dialog_itemSelected = new OnClickListener() {
 		@Override public void onClick(DialogInterface _unused_, int which) {
 			if (which == adapter.getCount() - 1) { // new label
 				LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), new OkListener() { //$NON-NLS-1$
@@ -184,7 +184,7 @@ public class JenisBukmakDialog {
 		.show();
 	}
 	
-	private void setLabelsText() {
+	void setLabelsText() {
 		// remove all first
 		final int childCount = panelLabels.getChildCount();
 		if (childCount > 1) {

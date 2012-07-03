@@ -36,7 +36,7 @@ public class SongBookUtil {
 		void onFailedOrCancelled(SongBookInfo songBookInfo, Exception e);
 	}
 	
-	private static List<SongBookInfo> knownSongBooks;
+	static List<SongBookInfo> knownSongBooks;
 	
 	static {
 		knownSongBooks = new ArrayList<SongBookInfo>();

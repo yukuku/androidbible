@@ -28,8 +28,8 @@ public class SongCodePopup extends PopupWindows implements OnDismissListener {
 	ImageView mArrowUp;
 	Button bOk;
 	
-	private SongCodePopupListener listener;
-	private int rootWidth = 0;
+	SongCodePopupListener listener;
+	int rootWidth = 0;
 
 	public SongCodePopup(Context context) {
 		super(context);

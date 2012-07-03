@@ -164,9 +164,9 @@ public class UrlImageView extends ImageView {
 		}
 	}
 	
-	private String urlToDisplay = null;
+	String urlToDisplay = null;
 	private Drawable defaultImage;
-	private int maxPixels;
+	int maxPixels;
 	
 	private static Map<String, Bitmap> memoryCache = Collections.synchronizedMap(new LinkedHashMap<String, Bitmap>(200, 0.75f, true) {
 		static final int maxTotalSize = 4000000;
@@ -244,7 +244,7 @@ public class UrlImageView extends ImageView {
 		}
 	});
 	
-	private static DiskCache diskCache;
+	static DiskCache diskCache;
 	
 	private State state;
 	private OnStateChangeListener onStateChangeListener;
@@ -407,7 +407,7 @@ public class UrlImageView extends ImageView {
 		}
 	}
 
-	private void loadFromServer(final String url) {
+	void loadFromServer(final String url) {
 		// the below is executed in async
 		urlLoader.load(getContext(), url, new AlwaysSuccessImageData(), new UrlLoader.Listener() {
 			@Override public void onResponse(String url, Response response, BaseData data_, boolean firstTime) {

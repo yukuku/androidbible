@@ -141,7 +141,7 @@ public class BukmakListActivity extends BaseActivity {
 		registerForContextMenu(lv);
 	}
 
-	private void setTitleAndNothingText() {
+	void setTitleAndNothingText() {
         String title = null;
         String nothingText = null;
         
@@ -227,7 +227,7 @@ public class BukmakListActivity extends BaseActivity {
 		setTitleAndNothingText();
 	}
 
-	private void filterPakeLagiPakeFilter() {
+	void filterPakeLagiPakeFilter() {
 		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.bl_filtering_titiktiga), true, false);
 		adapter.getFilter().filter(lagiPakeFilter, new FilterListener() {
 			@Override public void onFilterComplete(int count) {
@@ -236,7 +236,7 @@ public class BukmakListActivity extends BaseActivity {
 		});
 	}
 
-	@SuppressWarnings("deprecation") private void gantiCursor() {
+	@SuppressWarnings("deprecation") void gantiCursor() {
 		if (cursor != null) {
 			stopManagingCursor(cursor);
 		}

@@ -592,7 +592,7 @@ public class BukmakActivity extends BaseActivity {
 			return res;
 		}
 		
-		private void reload() {
+		void reload() {
 			labels = S.getDb().listSemuaLabel();
 			notifyDataSetChanged();
 		}
