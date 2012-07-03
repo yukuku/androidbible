@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
+import yuku.alkitab.yes.YesFile.PerikopData;
+
 public class BdbProses {
 	public static class Rec implements Comparable<Rec> {
 		public int kitab_1;
@@ -21,8 +23,16 @@ public class BdbProses {
 		}
 	}
 	
+	public interface PerikopTester {
+		PerikopData.Entri getPerikopEntri(int kitab_1, int pasal_1, int ayat_1, String isi);
+	}
+	
+	PerikopData perikopData;
+	private PerikopTester perikopTester;
+	boolean combineSameVerse = false;
+	
 	public ArrayList<Rec> parse(String nf, String charsetName) throws Exception {
-		LinkedHashMap<Integer, Integer> nn = new LinkedHashMap<Integer, Integer>();
+		LinkedHashMap<Integer, Integer> nversePerChapter = new LinkedHashMap<Integer, Integer>();
 		ArrayList<Rec> res = new ArrayList<Rec>();
 		
 		Scanner sc = new Scanner(new File(nf), charsetName);
@@ -45,27 +55,43 @@ public class BdbProses {
 				throw new RuntimeException("kolom ngaco");
 			}
 			
-			if (ayat_1 != lastAyat_1 + 1) {
-				if (pasal_1 != lastPasal_1 + 1) {
-					if (kitab_1 != lastKitab_1 + 1) {
-						throw new RuntimeException("urutan ngaco");
+			if (perikopTester != null) {
+				PerikopData.Entri pe = perikopTester.getPerikopEntri(kitab_1, pasal_1, ayat_1, isi);
+				if (pe != null) {
+					if (perikopData == null) {
+						perikopData = new PerikopData();
+						perikopData.xentri = new ArrayList<PerikopData.Entri>();
 					}
+					perikopData.xentri.add(pe);
+					continue; // let's continue with next line
 				}
 			}
 			
-			if (no != lastNo + 1) {
-				System.out.println("no ngaco: " + no + "; ini gapapa kalo emang sengaja");
+			if (combineSameVerse && ayat_1 == lastAyat_1 && pasal_1 == lastPasal_1 && kitab_1 == lastKitab_1) {
+				Rec lastRec = res.get(res.size() - 1);
+				lastRec.isi += " " + isi;
+			} else {
+				if (ayat_1 != lastAyat_1 + 1) {
+					if (pasal_1 != lastPasal_1 + 1) {
+						if (kitab_1 != lastKitab_1 + 1) {
+							throw new RuntimeException("urutan ngaco: " + baris);
+						}
+					}
+				}
+				
+				Rec rec = new Rec();
+				rec.kitab_1 = kitab_1;
+				rec.pasal_1 = pasal_1;
+				rec.ayat_1 = ayat_1;
+				rec.isi = isi;
+				
+				res.add(rec);
+				nversePerChapter.put(kitab_1, (nversePerChapter.get(kitab_1) == null? 0: nversePerChapter.get(kitab_1)) + 1);
 			}
 			
-			nn.put(kitab_1, (nn.get(kitab_1) == null? 0: nn.get(kitab_1)) + 1);
-			
-			Rec rec = new Rec();
-			rec.kitab_1 = kitab_1;
-			rec.pasal_1 = pasal_1;
-			rec.ayat_1 = ayat_1;
-			rec.isi = isi;
-			
-			res.add(rec);
+			if (no != lastNo + 1) {
+				System.out.println("no ngaco: " + no + " after " + lastNo + "; ini gapapa kalo emang sengaja");
+			}
 			
 			lastNo = no;
 			lastKitab_1 = kitab_1;
@@ -73,13 +99,25 @@ public class BdbProses {
 			lastAyat_1 = ayat_1;
 		}
 		
-		for (Entry<Integer, Integer> e: nn.entrySet()) {
-			System.out.println(e.getKey() + ": " + e.getValue());
+		for (Entry<Integer, Integer> e: nversePerChapter.entrySet()) {
+			System.out.println("kitab_1 " + e.getKey() + ": " + e.getValue() + " verses");
 		}
 		
 		System.out.println("selesai");
 		
 		return res;
+	}
+
+	public void setCombineSameVerse(boolean combineSameVerse) {
+		this.combineSameVerse = combineSameVerse;
+	}
+
+	public void setPerikopTester(PerikopTester perikopTester) {
+		this.perikopTester = perikopTester;
+	}
+
+	public PerikopData getPerikopData() {
+		return perikopData;
 	}
 
 }
