@@ -202,9 +202,8 @@
     <string name="please_wait_titik3">Please wait…</string>
     <string name="juga_hapus_file_datanya_file">Also delete the data file?\nFile: %s</string>
     <string name="get_more_fonts">Download more fonts…</string>
-    <string name="desc_open_verse_menu">Open verse menu</string>
-    <string name="desc_previous_chapter">Previous chapter</string>
-    <string name="desc_next_chapter">Next chapter</string>
+    <string name="about_translators">Translators:</string>
+
     <!-- Font Manager -->
     <string name="fm_activity_title">Font Manager</string>
     <string name="fm_need_to_log_in_to_wifi">You need to log-in to your (Wi-Fi) network first.</string>
@@ -237,6 +236,9 @@
     <string name="desc_delete">Delete</string>
     <string name="desc_change_selected_books">Change selected books</string>
     <string name="desc_download">Download</string>
+    <string name="desc_open_verse_menu">Open verse menu</string>
+    <string name="desc_previous_chapter">Previous chapter</string>
+    <string name="desc_next_chapter">Next chapter</string>
     
     <!-- Lastly, about -->
     <string name="teks_about">Developed by [b]yuku[/b], 2009-2012[br/]
