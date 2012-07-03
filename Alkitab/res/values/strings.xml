@@ -49,7 +49,7 @@
     <string name="pasal_sebelumangka">Chapter</string>
     <string name="loncat_ke_alamat_titikdua">Jump to: (Example: %s)</string>
     <string name="tidak_ada_catatan">(no notes)</string>
-    <string name="belum_ada_pembatas_buku">No bookmarks yet.\nLong-press on a verse to add a bookmark.</string>
+    <string name="belum_ada_pembatas_buku">No bookmarks yet.\nSelect a verse and tap the verse menu button to add a bookmark.</string>
     <string name="judul_titikdua">Title:</string>
     <string name="gagal_mengunduh_namaumum_tgl_tgl">Failed to download %1$s dated %2$s</string>
     <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Error in downloading %1$s dated %2$s: %3$s</string>
@@ -202,12 +202,44 @@
     <string name="please_wait_titik3">Please wait…</string>
     <string name="juga_hapus_file_datanya_file">Also delete the data file?\nFile: %s</string>
     <string name="get_more_fonts">Download more fonts…</string>
+    <string name="about_translators">Translators:</string>
+
     <!-- Font Manager -->
     <string name="fm_activity_title">Font Manager</string>
     <string name="fm_need_to_log_in_to_wifi">You need to log-in to your (Wi-Fi) network first.</string>
     <string name="fm_do_you_want_to_delete">Do you want to delete %s?</string>
     <string name="fm_error_when_extracting_font">Error when extracting font %1$s: %2$s</string>
+    <string name="fm_loading_ellipsis">Loading…</string>
     <string name="dl_failed_to_rename_temporary_file">Failed to rename temporary file</string>
+    
+    <!-- Songs -->
+    <string name="menuSongs">Songs</string>
+    <string name="sn_deep_search_enabled">Lyrics, etc. too</string>
+    <string name="sn_songs_activity_title">Songs</string>
+    <string name="sn_bookselector_all">ALL</string>
+    <string name="sn_bookselector_all_desc">Search all books that are installed.</string>
+    <string name="sn_downloading_ellipsis">Downloading…</string>
+    <string name="sn_download_song_books">Download song books</string>
+    <string name="sn_copied">The song has been copied.</string>
+    <string name="sn_share_title">Share song</string>
+    <string name="sn_download_song_books">Download song books</string>
+    <string name="sn_lyric_version_version">Version %s</string>
+    <string name="sn_lyric_refrain_marker">Ref.</string>
+    
+    <!-- Content descriptions, for blind users -->
+    <string name="desc_type_verse_reference_directly">Type verse reference directly</string>
+    <string name="desc_previous_day">Previous day</string>
+    <string name="desc_next_day">Next day</string>
+    <string name="desc_open_bookmark">Open bookmark</string>
+    <string name="desc_open_note">Open note</string>
+    <string name="desc_go_to_verse">Go to verse</string>
+    <string name="desc_delete">Delete</string>
+    <string name="desc_change_selected_books">Change selected books</string>
+    <string name="desc_download">Download</string>
+    <string name="desc_open_verse_menu">Open verse menu</string>
+    <string name="desc_previous_chapter">Previous chapter</string>
+    <string name="desc_next_chapter">Next chapter</string>
+    
     <!-- Lastly, about -->
     <string name="teks_about">Developed by [b]yuku[/b], 2009-2012[br/]
     	• Website: androidbible.blogspot.com[br/] 

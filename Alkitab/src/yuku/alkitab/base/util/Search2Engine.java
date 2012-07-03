@@ -21,66 +21,8 @@ import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Kitab;
 
 public class Search2Engine {
-	private static final String TAG = Search2Engine.class.getSimpleName();
+	public static final String TAG = Search2Engine.class.getSimpleName();
 
-	public static String[] tokenkan(String carian) {
-		// pisah jadi kata-kata
-		String bersih = carian.trim().toLowerCase().replaceAll("\\s+", " "); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		// cari dari kiri ke kanan, tiap ada kutip, ubah mode
-		boolean modeKutip = false;
-		int pos = 0;
-		ArrayList<String> xkata = new ArrayList<String>();
-		while (true) {
-			if (modeKutip) {
-				// cari kutip berikutnya
-				int posKutip = bersih.indexOf('"', pos);
-				if (posKutip != -1) {
-					xkata.add(bersih.substring(pos, posKutip));
-					pos = posKutip + 1;
-				} else {
-					// abisin aja
-					xkata.add(bersih.substring(pos));
-					pos = bersih.length();
-				}
-				modeKutip = false;
-			} else {
-				// cari spasi ato kutip pertama
-				int posSpasi = bersih.indexOf(' ', pos);
-				int posKutip = bersih.indexOf('"', pos);
-				
-				if (posSpasi == -1 && posKutip == -1) {
-					// ga ada lagi, ambil semua dan beres
-					xkata.add(bersih.substring(pos));
-					pos = bersih.length();
-				} else if ((posSpasi != -1 && posSpasi <= posKutip) || posKutip == -1) {
-					// ambil kata sampe spasi
-					xkata.add(bersih.substring(pos, posSpasi));
-					pos = posSpasi + 1;
-				} else if ((posKutip != -1 && posKutip <= posSpasi) || posSpasi == -1) {
-					// ambil kata sampe kutip
-					xkata.add(bersih.substring(pos, posKutip));
-					pos = posKutip + 1;
-					modeKutip = true;
-				}
-			}
-			if (pos >= bersih.length()) {
-				break;
-			}
-		}
-		
-		//# bersih2 terakhir
-		ArrayList<String> xkata2 = new ArrayList<String>(xkata.size());
-		for (int i = 0, len = xkata.size(); i < len; i++) {
-			String kata = xkata.get(i);
-			kata = kata.trim();
-			if (kata.length() > 0 && tanpaTambah(kata).length() > 0) {
-				xkata2.add(kata);
-			}
-		}
-		return xkata2.toArray(new String[xkata2.size()]);
-	}
-	
 	public static class Query implements Parcelable {
 		public String carian;
 		public SparseBooleanArray xkitabPos;
@@ -109,7 +51,7 @@ public class Search2Engine {
 	}
 
 	public static IntArrayList cari(Context context, Query query) {
-		String[] xkata = tokenkan(query.carian);
+		String[] xkata = QueryTokenizer.tokenize(query.carian);
 		
 		// urutkan berdasarkan panjang, lalu abjad
 		Arrays.sort(xkata, new Comparator<String>() {
@@ -242,9 +184,9 @@ public class Search2Engine {
 		IntArrayList res = new IntArrayList();
 		boolean pakeTambah = false;
 		
-		if (adaTambah(kata)) {
+		if (QueryTokenizer.isPlussedToken(kata)) {
 			pakeTambah = true;
-			kata = tanpaTambah(kata);
+			kata = QueryTokenizer.tokenWithoutPlus(kata);
 		}
 	
 		if (sumber == null) {
@@ -344,9 +286,9 @@ public class Search2Engine {
 		for (String kata: xkata) {
 			boolean pakeTambah = false;
 			
-			if (adaTambah(kata)) {
+			if (QueryTokenizer.isPlussedToken(kata)) {
 				pakeTambah = true;
-				kata = tanpaTambah(kata);
+				kata = QueryTokenizer.tokenWithoutPlus(kata);
 			}
 			
 			int posKata;
@@ -411,8 +353,8 @@ public class Search2Engine {
 			String[] xkata2 = new String[nkata];
 			System.arraycopy(xkata, 0, xkata2, 0, nkata);
 			for (int i = 0; i < nkata; i++) {
-				if (adaTambah(xkata2[i])) {
-					xkata2[i] = tanpaTambah(xkata2[i]);
+				if (QueryTokenizer.isPlussedToken(xkata2[i])) {
+					xkata2[i] = QueryTokenizer.tokenWithoutPlus(xkata2[i]);
 					xpakeTambah[i] = true;
 				}
 			}
@@ -457,23 +399,5 @@ public class Search2Engine {
 		}
 		
 		return res;
-	}
-	
-	static boolean adaTambah(String kata) {
-		return (kata.startsWith("+")); //$NON-NLS-1$
-	}
-	
-	static String tanpaTambah(String kata) {
-		int pos = 0;
-		while (true) {
-			if (pos >= kata.length()) break;
-			if (kata.charAt(pos) == '+') {
-				pos++;
-			} else {
-				break;
-			}
-		}
-		if (pos == 0) return kata;
-		return kata.substring(pos);
 	}
 }

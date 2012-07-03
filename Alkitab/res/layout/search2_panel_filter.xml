@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:paddingLeft="12dp" >
@@ -10,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:checked="true"
-        android:text="@string/perj_lama"/>
+        android:text="@string/perj_lama" />
 
     <CheckBox
         android:id="@+id/cFilterBaru"
@@ -19,7 +20,7 @@
         android:layout_alignBaseline="@+id/cFilterLama"
         android:layout_toRightOf="@+id/cFilterLama"
         android:checked="true"
-        android:text="@string/perj_baru"/>
+        android:text="@string/perj_baru" />
 
     <ImageButton
         android:id="@+id/bEditFilter"
@@ -28,6 +29,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:background="@null"
+        android:contentDescription="@string/desc_change_selected_books"
         android:paddingBottom="8dp"
         android:paddingLeft="12dp"
         android:paddingRight="18dp"
@@ -43,12 +45,18 @@
         android:layout_toLeftOf="@+id/bEditFilter"
         android:ellipsize="end"
         android:maxLines="2"
-        android:text="Kejadian, Keluaran, Imamat, Bilangan, Ulangan, Matius, Markus, Lukas, Yohanes, dst" android:paddingTop="8dp" android:paddingBottom="8dp" android:textAppearance="?android:attr/textAppearanceMedium"/>
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:text="Kejadian, Keluaran, Imamat, Bilangan, Ulangan, Matius, Markus, Lukas, Yohanes, dst"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        tools:ignore="HardcodedText" />
 
     <CheckBox
         android:id="@+id/cFilterKitabSaja"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="(Nama kitab) saja" android:layout_below="@+id/cFilterLama"/>
+        android:layout_below="@+id/cFilterLama"
+        android:text="(Nama kitab) saja"
+        tools:ignore="HardcodedText" />
 
 </RelativeLayout>

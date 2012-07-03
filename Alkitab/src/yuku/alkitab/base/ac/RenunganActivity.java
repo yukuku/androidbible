@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -93,16 +94,27 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 		}
 	};
 	
-	Handler penampilStatusDonlot = new Handler() {
+	static class PenampilStatusDonlotHandler extends Handler {
+		private WeakReference<RenunganActivity> ac;
+
+		public PenampilStatusDonlotHandler(RenunganActivity ac) {
+			this.ac = new WeakReference<RenunganActivity>(ac);
+		}
+		
 		@Override public void handleMessage(Message msg) {
+			RenunganActivity ac = this.ac.get();
+			if (ac == null) return;
+			
 			String s = (String) msg.obj;
 			if (s != null) {
-				lStatus.setText(s);
-				lStatus.setVisibility(View.VISIBLE);
-				lStatus.startAnimation(memudar);
+				ac.lStatus.setText(s);
+				ac.lStatus.setVisibility(View.VISIBLE);
+				ac.lStatus.startAnimation(ac.memudar);
 			}
-		};
-	};
+		}
+	}
+	
+	Handler penampilStatusDonlot = new PenampilStatusDonlotHandler(this);
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

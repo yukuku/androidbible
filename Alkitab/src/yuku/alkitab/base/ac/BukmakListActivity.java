@@ -47,6 +47,7 @@ import yuku.alkitab.base.model.Label;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.PengaturTampilan;
+import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.Search2Engine;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.devoxx.flowlayout.FlowLayout;
@@ -196,7 +197,7 @@ public class BukmakListActivity extends BaseActivity {
 				return true;
 			}
 			
-			String[] xtoken = Search2Engine.tokenkan(carian);
+			String[] xtoken = QueryTokenizer.tokenize(carian);
 			if (xtoken.length == 0) {
 				buangFilter();
 				return true;
@@ -563,7 +564,7 @@ public class BukmakListActivity extends BaseActivity {
 				return S.getDb().listBukmak(filter_jenis, filter_labelId, sort_column, sort_ascending);
 			}
 			
-			String[] xkata = Search2Engine.tokenkan(constraint.toString());
+			String[] xkata = QueryTokenizer.tokenize(constraint.toString());
 			for (int i = 0; i < xkata.length; i++) {
 				xkata[i] = xkata[i].toLowerCase();
 			}

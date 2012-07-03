@@ -1,35 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:padding="8dip"
-	android:layout_height="wrap_content">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dip" >
 
-	<TextView
-		android:id="@+id/lAlamat"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
+    <TextView
+        android:id="@+id/lAlamat"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center_vertical"
+        android:text="Alamat ayat"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        tools:ignore="HardcodedText" />
 
-		android:layout_alignParentTop="true"
-		android:layout_alignParentLeft="true"
-		android:layout_alignParentRight="true"
-
-		android:gravity="center_vertical"
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:text="Alamat ayat" />
-
-	<TextView
-		android:id="@+id/lCuplikan"
-
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-
-		android:layout_below="@id/lAlamat"
-		android:layout_alignParentBottom="true"
-		android:layout_alignParentRight="true"
-		android:layout_alignWithParentIfMissing="true"
-
-		android:text="Simple application that shows how to use RelativeLayout bla balbl balblbalbal balbalbalbalbala"
-		android:gravity="top" />
+    <TextView
+        android:id="@+id/lCuplikan"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_below="@id/lAlamat"
+        android:gravity="top"
+        android:text="Simple application that shows how to use RelativeLayout bla balbl balblbalbal balbalbalbalbala"
+        tools:ignore="HardcodedText" />
 
 </RelativeLayout>

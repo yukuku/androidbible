@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config package="yuku.alkitab.kjv">
-	<menu renungan="false" gebug="false" edisi="true" bantuan="true" donasi="true" />
+	<menu renungan="false" gebug="false" edisi="true" bantuan="true" donasi="true" songs="false" />
 	<edisi>
 		<internal judul="King James (KJV)" prefix="kjv" />
 		<preset locale="en"   judul="American Standard (ASV)" namafile_preset="en-asv.yes" url="http://alkitab-host.appspot.com/addon/yes/en-asv/en-asv.yes.gz" />
@@ -14,6 +14,7 @@
 		<preset locale="el"   judul="Westcott/Hort, UBS4 variants" namafile_preset="el-whubs4.yes" url="http://alkitab-host.appspot.com/addon/yes/el-whubs4/el-whubs4.yes.gz" />
 		<preset locale="es"   judul="Reina-Valera (1909)" namafile_preset="es-reinavalera1909.yes" url="http://alkitab-host.appspot.com/addon/yes/es-reinavalera1909/es-reinavalera1909.yes.gz" />
 		<preset locale="ja"   judul="口語訳" namafile_preset="ja-kougo.yes" url="http://alkitab-host.appspot.com/addon/yes/ja-kougo/ja-kougo.yes.gz" />
+		<preset locale="no"   judul="Det Norsk Bibelselskap" namafile_preset="no-dnb1930.yes" url="http://alkitab-host.appspot.com/addon/yes/no-dnb1930/no-dnb1930.yes.gz" />
 		<preset locale="pl"   judul="Nowa Biblia Gdańska" namafile_preset="pl-nbg.yes" url="http://alkitab-host.appspot.com/addon/yes/pl-nbg/pl-nbg.yes.gz" />
 		<preset locale="pl"   judul="Uwspółcześniona Biblia Gdańska" namafile_preset="pl-ubg.yes" url="http://alkitab-host.appspot.com/addon/yes/pl-ubg/pl-ubg.yes.gz" />
 		<preset locale="sq"   judul="Albanian" namafile_preset="sq-kk.yes" url="http://alkitab-host.appspot.com/addon/yes/sq-kk/sq-kk.yes.gz" />

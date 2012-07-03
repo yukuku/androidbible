@@ -1,10 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="fill_parent" android:padding="8dip" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="64dp" android:gravity="center_vertical">
-	<LinearLayout android:orientation="vertical" android:layout_height="wrap_content" android:layout_width="0dp" android:layout_weight="1">
-		<TextView android:id="@+id/lBahasa" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="(Bahasa)" android:textAppearance="?android:attr/textAppearanceSmall" />
-		<TextView android:textColor="#fff" android:layout_width="wrap_content" android:layout_height="0dp" android:layout_weight="1" android:textSize="18dp" android:id="@+id/lJudul" android:text="Bahasa Indonesia Sehari-hari" android:drawablePadding="6dp" />
-		<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:id="@+id/lNamafile" android:text="/mnt/sdcard/nama/file/bis.yes" />
-	</LinearLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:minHeight="64dp"
+    android:orientation="horizontal"
+    android:padding="8dip" >
 
-	<CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_vertical" android:id="@+id/cAktif" />
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/lBahasa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(Bahasa)"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/lJudul"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="6dp"
+            android:text="Bahasa Indonesia Sehari-hari"
+            android:textColor="#fff"
+            android:textSize="18dp"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/lNamafile"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="/mnt/sdcard/nama/file/bis.yes"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/cAktif"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical" />
+
 </LinearLayout>

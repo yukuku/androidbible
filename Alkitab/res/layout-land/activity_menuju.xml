@@ -1,71 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:padding="2dp"
-	android:layout_gravity="center_vertical"
-	android:layout_height="wrap_content">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:padding="2dp" >
 
-	<LinearLayout
-		android:orientation="vertical"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:gravity="center_horizontal">
-		<LinearLayout
-			android:layout_height="wrap_content"
-			android:layout_width="fill_parent"
-			android:orientation="horizontal"
-			android:gravity="center_vertical|center_horizontal"
-			android:layout_margin="6dp">
-			<Spinner
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:id="@+id/cbKitab"
-				android:minWidth="200sp"
-				android:layout_marginRight="8dp" />
-			<TextView
-				android:layout_width="wrap_content"
-				android:textAppearance="?android:attr/textAppearanceLarge"
-				android:id="@+id/lPasal"
-				android:text="1"
-				android:minWidth="48sp"
-				android:layout_height="fill_parent"
-				android:gravity="center_vertical|center_horizontal"
-				android:focusable="true" />
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text=" : "
-				android:layout_margin="8dp" />
-			<TextView
-				android:layout_width="wrap_content"
-				android:id="@+id/lAyat"
-				android:textAppearance="?android:attr/textAppearanceLarge"
-				android:minWidth="48sp"
-				android:text="1"
-				android:layout_height="fill_parent"
-				android:gravity="center_vertical|center_horizontal"
-				android:focusable="true" />
-			<ImageButton
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:id="@+id/bKeLoncat"
-				android:src="@drawable/tombol_ke_loncat"
-				android:padding="6dp" android:layout_marginLeft="20dp"></ImageButton>
-		</LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
 
-		<include
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			layout="@layout/keypad" />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="horizontal" >
 
-		<Button
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:id="@+id/bOk"
-			android:text="@string/ok"
-			android:minWidth="200dp"
-			android:textAppearance="?android:attr/textAppearanceLarge" />
+            <Spinner
+                android:id="@+id/cbKitab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:minWidth="200sp" />
 
-	</LinearLayout>
+            <TextView
+                android:id="@+id/lPasal"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:focusable="true"
+                android:gravity="center_vertical|center_horizontal"
+                android:minWidth="48sp"
+                android:text="1"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text=" : "
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/lAyat"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:focusable="true"
+                android:gravity="center_vertical|center_horizontal"
+                android:minWidth="48sp"
+                android:text="1"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                tools:ignore="HardcodedText" />
+
+            <ImageButton
+                android:id="@+id/bKeLoncat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:contentDescription="@string/desc_type_verse_reference_directly"
+                android:padding="6dp"
+                android:src="@drawable/tombol_ke_loncat" >
+            </ImageButton>
+        </LinearLayout>
+
+        <include
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            layout="@layout/keypad" />
+
+        <Button
+            android:id="@+id/bOk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="200dp"
+            android:text="@string/ok"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    </LinearLayout>
+
 </ScrollView>

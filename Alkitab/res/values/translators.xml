@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="translators_list">
+        <item>English: author</item>
+        <item>Indonesian: author</item>
+        <item>Polski: Artur Szymczak</item>
+        <item>Română: Liviu Foltut</item>
+        <item>Please help us translate this Bible app to more languages!</item>
+    </string-array>
+</resources>

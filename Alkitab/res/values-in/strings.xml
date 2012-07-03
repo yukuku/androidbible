@@ -49,7 +49,7 @@
   <string name="pasal_sebelumangka">Pasal</string>
   <string name="loncat_ke_alamat_titikdua">Loncat ke: (Contoh: %s)</string>
   <string name="tidak_ada_catatan">(tidak ada catatan)</string>
-  <string name="belum_ada_pembatas_buku">Belum ada pembatas buku.\nTahan (tekan yang lama) suatu ayat untuk menambahkan pembatas buku.</string>
+  <string name="belum_ada_pembatas_buku">Belum ada pembatas buku.\nPilih suatu ayat dan tekan tombol menu ayat untuk menambahkan pembatas buku.</string>
   <string name="judul_titikdua">Judul:</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Gagal mengunduh %1$s tgl %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Kesalahan dalam mengunduh %1$s tgl %2$s: %3$s</string>
@@ -207,6 +207,13 @@
   <string name="fm_do_you_want_to_delete">Hapus %s?</string>
   <string name="fm_error_when_extracting_font">Kesalahan ketika mengekstrak huruf %1$s: %2$s</string>
   <string name="dl_failed_to_rename_temporary_file">Gagal mengganti nama file sementara</string>
+	<string name="menuSongs">Kidung</string>
+    <string name="sn_deep_search_enabled">Juga lirik, dsb.</string>
+    <string name="sn_songs_activity_title">Kidung</string>
+    <string name="sn_bookselector_all">SEMUA</string>
+    <string name="sn_bookselector_all_desc">Cari pada semua buku yang tersedia.</string>
+    <string name="sn_downloading_ellipsis">Mengunduh…</string>
+    <string name="sn_download_song_books">Unduh buku lagu</string>
   <string name="teks_about">
 		Dikembangkan oleh [b]yuku[/b], 2009-2012[br/]
 		• Situs: androidbible.blogspot.com[br/]

@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-	<string-array name="pref_bahasa_label">
-		<item>Default</item>
-		<item>English</item>
-		<item>Bahasa Indonesia</item>
-		<item>Română</item>
-	</string-array>
-	<string-array name="pref_bahasa_value">
-		<item>DEFAULT</item>
-		<item>en</item>
-		<item>in</item>
-		<item>ro</item>
-	</string-array>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+
+    <string-array name="pref_bahasa_label">
+        <item>Default</item>
+        <item>English</item>
+        <item>Bahasa Indonesia</item>
+        <item>Polski</item>
+        <item>Română</item>
+    </string-array>
+    <string-array name="pref_bahasa_value">
+        <item>DEFAULT</item>
+        <item>en</item>
+        <item>in</item>
+        <item>pl</item>
+        <item>ro</item>
+    </string-array>
+
 </resources>

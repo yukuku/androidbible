@@ -1,0 +1,93 @@
+
+.code {
+	font-family: sans-serif;
+	font-weight: bold;
+	font-size: 110%;
+	float: left;
+}
+
+.title {
+	font-family: sans-serif;
+	font-weight: bold;
+	font-size: 110%;
+	text-align: center;
+}
+
+.title_original {
+	font-family: sans-serif;
+	font-size: 80%;
+	font-family: sans-serif;
+	text-align: center;
+}
+
+.song {
+	/* width: 640px; */
+}
+
+.lyric {
+	padding-left: 0.4em;
+}
+
+.lyric_caption {
+	font-weight: bold;
+	padding-top: 1em;
+}
+
+.verse {
+	margin: 0.3em;
+	margin-top: 0.8em;
+	padding-bottom: 0.8em;
+	border-bottom: 1px dashed #ccc;
+}
+
+.verse_ordering {
+	float: left;
+	font-size: 140%;
+}
+
+.refrain .verse_ordering {
+	display: none;
+}
+
+.refrain {
+	font-style: italic;
+	padding-left: 1em;
+}
+
+.refrain:before {
+	font-family: sans-serif;
+	content: 'Ref.:';
+	font-size: 75%;
+}
+
+.authors_lyric {
+	font-family: sans-serif;
+	float: left;
+}
+
+.authors_music {
+	font-family: sans-serif;
+	float: right;
+}
+
+.tune {
+	font-family: sans-serif;
+	text-transform: uppercase;
+	float: right;
+}
+
+.break {
+	clear: both;
+}
+
+.timeSignature, .keySignature {
+	font-family: sans-serif;
+	font-size: 80%;
+}
+
+.line {
+	margin: 0;
+	padding: 0;
+	padding-left: 3em;
+	text-indent: -2em;
+}

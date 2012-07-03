@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config package="yuku.alkitab">
-	<menu renungan="true" gebug="false" edisi="true" bantuan="true" donasi="true" />
+	<menu renungan="true" gebug="false" edisi="true" bantuan="true" donasi="true" songs="true" />
 	<edisi>
 		<internal locale="in" judul="Terjemahan Baru" prefix="tb" />
 		<preset locale="in"   judul="Bahasa Indonesia Sehari-hari" namafile_preset="bis.yes" url="http://alkitab-host.appspot.com/addon/yes/bis.yes.gz" />
@@ -17,6 +17,7 @@
 		<preset locale="en"   judul="Young's Literal Translation (YLT)" namafile_preset="en-ylt.yes" url="http://alkitab-host.appspot.com/addon/yes/en-ylt/en-ylt.yes.gz" />
 		<preset locale="es"   judul="Reina-Valera (1909)" namafile_preset="es-reinavalera1909.yes" url="http://alkitab-host.appspot.com/addon/yes/es-reinavalera1909/es-reinavalera1909.yes.gz" />
 		<preset locale="ja"   judul="口語訳" namafile_preset="ja-kougo.yes" url="http://alkitab-host.appspot.com/addon/yes/ja-kougo/ja-kougo.yes.gz" />
+		<preset locale="no"   judul="Det Norsk Bibelselskap" namafile_preset="no-dnb1930.yes" url="http://alkitab-host.appspot.com/addon/yes/no-dnb1930/no-dnb1930.yes.gz" />
 		<preset locale="pl"   judul="Nowa Biblia Gdańska" namafile_preset="pl-nbg.yes" url="http://alkitab-host.appspot.com/addon/yes/pl-nbg/pl-nbg.yes.gz" />
 		<preset locale="pl"   judul="Uwspółcześniona Biblia Gdańska" namafile_preset="pl-ubg.yes" url="http://alkitab-host.appspot.com/addon/yes/pl-ubg/pl-ubg.yes.gz" />
 		<preset locale="sq"   judul="Albanian" namafile_preset="sq-kk.yes" url="http://alkitab-host.appspot.com/addon/yes/sq-kk/sq-kk.yes.gz" />

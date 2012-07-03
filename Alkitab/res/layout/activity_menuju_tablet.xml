@@ -1,84 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:padding="2dp"
-	android:layout_gravity="center_vertical"
-	android:layout_height="wrap_content">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:padding="2dp" >
 
-	<LinearLayout
-		android:orientation="vertical"
-		android:layout_height="wrap_content"
-		android:gravity="center_horizontal" android:layout_width="wrap_content" android:layout_gravity="center_horizontal">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
 
-		<LinearLayout
-			android:layout_height="wrap_content"
-			android:layout_width="fill_parent"
-			android:gravity="center_horizontal"
-			android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical" >
 
-			<LinearLayout
-				android:layout_height="wrap_content"
-				android:orientation="horizontal" android:gravity="center_vertical" android:layout_width="fill_parent">
-				<Spinner
-					android:layout_height="wrap_content"
-					android:id="@+id/cbKitab"
-					android:prompt="@string/pilihKitab_s"
-					android:minWidth="200sp" android:layout_weight="1" android:layout_width="0dp"/>
-					
-			<ImageButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/bKeLoncat" android:src="@drawable/tombol_ke_loncat" android:padding="6dp"></ImageButton>
-</LinearLayout>
-			
-			<LinearLayout
-				android:layout_height="wrap_content"
-				android:orientation="horizontal"
-				android:layout_width="fill_parent"
-				android:gravity="center_vertical|center_horizontal"
-				android:minHeight="48sp"
-				android:layout_margin="8dp">
-				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="fill_parent"
-					android:gravity="fill_vertical"
-					android:id="@+id/lLabelPasal" android:text="@string/pasal_sebelumangka"/>
-				<TextView
-					android:layout_width="wrap_content"
-					android:id="@+id/lPasal"
-					android:textAppearance="?android:attr/textAppearanceLarge"
-					android:layout_height="fill_parent"
-					android:gravity="center_vertical|center_horizontal"
-					android:text="1"
-					android:focusable="true" android:textSize="30dp" android:minWidth="64dp" android:minHeight="64dp"/>
-				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:minEms="1" />
-				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="fill_parent"
-					android:gravity="center_vertical"
-					android:id="@+id/lLabelAyat" android:text="@string/ayat_sebelumangka"/>
-				<TextView
-					android:layout_width="wrap_content"
-					android:id="@+id/lAyat"
-					android:textAppearance="?android:attr/textAppearanceLarge"
-					android:layout_height="fill_parent"
-					android:gravity="center_vertical|center_horizontal"
-					android:text="2"
-					android:focusable="true" android:textSize="30dp" android:minWidth="64dp" android:minHeight="64dp"/>
-			</LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
 
-		</LinearLayout>
+                <Spinner
+                    android:id="@+id/cbKitab"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minWidth="200sp"
+                    android:prompt="@string/pilihKitab_s" />
 
-		<include
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" layout="@layout/keypad"></include>
+                <ImageButton
+                    android:id="@+id/bKeLoncat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/desc_type_verse_reference_directly"
+                    android:padding="6dp"
+                    android:src="@drawable/tombol_ke_loncat" />
+            </LinearLayout>
 
-		<Button
-			android:id="@+id/bOk"
-			android:textAppearance="?android:attr/textAppearanceLarge" android:text="@string/ok" android:minWidth="200dp" android:layout_width="fill_parent" android:layout_height="fill_parent" android:minHeight="60dp"></Button>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:minHeight="48sp"
+                android:orientation="horizontal" >
 
+                <TextView
+                    android:id="@+id/lLabelPasal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:gravity="fill_vertical"
+                    android:text="@string/pasal_sebelumangka" />
 
+                <TextView
+                    android:id="@+id/lPasal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:focusable="true"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:minHeight="64dp"
+                    android:minWidth="64dp"
+                    android:text="1"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="30dp"
+                    tools:ignore="HardcodedText" />
 
-	</LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minEms="1" />
+
+                <TextView
+                    android:id="@+id/lLabelAyat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/ayat_sebelumangka" />
+
+                <TextView
+                    android:id="@+id/lAyat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:focusable="true"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:minHeight="64dp"
+                    android:minWidth="64dp"
+                    android:text="2"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="30dp"
+                    tools:ignore="HardcodedText" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <include
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            layout="@layout/keypad" >
+        </include>
+
+        <Button
+            android:id="@+id/bOk"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:minHeight="60dp"
+            android:minWidth="200dp"
+            android:text="@string/ok"
+            android:textAppearance="?android:attr/textAppearanceLarge" >
+        </Button>
+    </LinearLayout>
+
 </ScrollView>

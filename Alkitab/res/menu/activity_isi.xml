@@ -2,10 +2,6 @@
 <menu
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
-		android:id="@+id/menuTuju"
-		android:title="@string/menuTuju"
-		android:icon="@drawable/ic_menu_tuju" android:showAsAction="ifRoom" />
-	<item
 		android:id="@+id/menuBukmak"
 		android:title="@string/pembatas_buku" 
 		android:titleCondensed="@string/pembatas_condensed"
@@ -15,13 +11,17 @@
 		android:title="@string/cari_v"
 		android:icon="@drawable/ic_menu_search" android:showAsAction="always"/>
 	<item
+		android:id="@+id/menuEdisi"
+		android:title="@string/versi" 
+		android:icon="@drawable/ic_menu_edisi" android:showAsAction="always" />
+	<item
 		android:id="@+id/menuRenungan"
 		android:title="@string/renungan"
 		android:icon="@drawable/ic_menu_renungan" android:showAsAction="ifRoom" />
 	<item
-		android:id="@+id/menuEdisi"
-		android:title="@string/versi" 
-		android:icon="@drawable/ic_menu_edisi" android:showAsAction="always" />
+		android:id="@+id/menuSongs"
+		android:title="@string/menuSongs"
+		android:icon="@drawable/ic_menu_songs" android:showAsAction="ifRoom" />
 	<item
 		android:id="@+id/menuPengaturan"
 		android:title="@string/menuPengaturan" 
