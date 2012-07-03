@@ -22,6 +22,7 @@ public class BuildConfig {
 	public boolean menuEdisi;
 	public boolean menuBantuan;
 	public boolean menuDonasi;
+	public boolean menuSongs;
 	public List<MEdisiPreset> xpreset;
 	public String url_prefix;
 	public String url_format;
@@ -74,6 +75,7 @@ public class BuildConfig {
 				res.menuEdisi = parser.getAttributeBooleanValue(null, "edisi", false); //$NON-NLS-1$
 				res.menuGebug = parser.getAttributeBooleanValue(null, "gebug", false); //$NON-NLS-1$
 				res.menuRenungan = parser.getAttributeBooleanValue(null, "renungan", false); //$NON-NLS-1$
+				res.menuSongs = parser.getAttributeBooleanValue(null, "songs", false); //$NON-NLS-1$
 			} else if (next == XmlPullParser.START_TAG && "internal".equals(parser.getName())) { //$NON-NLS-1$
 				res.internalJudul = parser.getAttributeValue(null, "judul"); //$NON-NLS-1$
 				res.internalPrefix = parser.getAttributeValue(null, "prefix"); //$NON-NLS-1$

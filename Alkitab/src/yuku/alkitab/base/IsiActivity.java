@@ -1060,6 +1060,7 @@ public class IsiActivity extends BaseActivity {
 		menu.findItem(R.id.menuEdisi).setVisible(c.menuEdisi);
 		menu.findItem(R.id.menuBantuan).setVisible(c.menuBantuan);
 		menu.findItem(R.id.menuDonasi).setVisible(c.menuDonasi);
+		menu.findItem(R.id.menuSongs).setVisible(c.menuSongs);
 	}
 	
 	@Override
