@@ -14,8 +14,6 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -63,6 +61,9 @@ import yuku.filechooser.FileChooserConfig;
 import yuku.filechooser.FileChooserConfig.Mode;
 import yuku.filechooser.FileChooserResult;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+
 public class EdisiActivity extends BaseActivity {
 	public static final String TAG = EdisiActivity.class.getSimpleName();
 
@@ -95,7 +96,7 @@ public class EdisiActivity extends BaseActivity {
 	
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		getMenuInflater().inflate(R.menu.activity_edisi, menu);
+		getSupportMenuInflater().inflate(R.menu.activity_edisi, menu);
 	}
 	
 	@Override
@@ -105,8 +106,7 @@ public class EdisiActivity extends BaseActivity {
 		return true;
 	}
 	
-	@Override
-	public boolean onMenuOpened(int featureId, Menu menu) {
+	@Override public boolean onPrepareOptionsMenu(Menu menu) {
 		if (menu != null) {
 			bikinMenu(menu);
 		}
@@ -151,7 +151,7 @@ public class EdisiActivity extends BaseActivity {
 		} else {
 			getMenuInflater().inflate(R.menu.context_edisi, menu);
 		
-			MenuItem menuBuang = menu.findItem(R.id.menuBuang);
+			android.view.MenuItem menuBuang = menu.findItem(R.id.menuBuang);
 			if (menuBuang != null) {
 				menuBuang.setEnabled(false);
 				MEdisi item = adapter.getItem(info.position);
@@ -162,7 +162,7 @@ public class EdisiActivity extends BaseActivity {
 		}
 	}
 	
-	@Override public boolean onContextItemSelected(MenuItem item) {
+	@Override public boolean onContextItemSelected(android.view.MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menuBuang: {
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();

@@ -14,8 +14,6 @@ import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -42,6 +40,9 @@ import yuku.alkitab.base.renungan.IArtikel;
 import yuku.alkitab.base.renungan.TukangDonlot;
 import yuku.alkitab.base.renungan.TukangDonlot.OnStatusDonlotListener;
 import yuku.alkitab.base.widget.CallbackSpan;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 public class RenunganActivity extends BaseActivity implements OnStatusDonlotListener {
 	public static final String TAG = RenunganActivity.class.getSimpleName();
@@ -203,7 +204,7 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 		
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		getMenuInflater().inflate(R.menu.activity_renungan, menu);
+		getSupportMenuInflater().inflate(R.menu.activity_renungan, menu);
 	}
 	
 	@Override
@@ -213,8 +214,7 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 		return true;
 	}
 	
-	@Override
-	public boolean onMenuOpened(int featureId, Menu menu) {
+	@Override public boolean onPrepareOptionsMenu(Menu menu) {
 		if (menu != null) {
 			bikinMenu(menu);
 		}

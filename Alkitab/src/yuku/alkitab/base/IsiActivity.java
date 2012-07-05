@@ -4,14 +4,12 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -21,19 +19,13 @@ import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.text.SpannableStringBuilder;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -41,12 +33,10 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -65,7 +55,7 @@ import yuku.alkitab.base.ac.EdisiActivity.MEdisi;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiInternal;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiPreset;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiYes;
-import yuku.alkitab.base.ac.MenujuActivity;
+import yuku.alkitab.base.ac.GotoActivity;
 import yuku.alkitab.base.ac.PengaturanActivity;
 import yuku.alkitab.base.ac.RenunganActivity;
 import yuku.alkitab.base.ac.Search2Activity;
@@ -92,6 +82,10 @@ import yuku.alkitab.base.util.Sejarah;
 import yuku.alkitab.base.widget.AyatAdapter;
 import yuku.alkitab.base.widget.CallbackSpan;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
+
 public class IsiActivity extends BaseActivity {
 	public static final String TAG = IsiActivity.class.getSimpleName();
 	
@@ -104,7 +98,7 @@ public class IsiActivity extends BaseActivity {
 
 	public static final int RESULT_pindahCara = RESULT_FIRST_USER + 1;
 
-	private static final int REQCODE_tuju = 1;
+	private static final int REQCODE_goto = 1;
 	private static final int REQCODE_bukmak = 2;
 	private static final int REQCODE_renungan = 3;
 	private static final int REQCODE_pengaturan = 4;
@@ -899,11 +893,7 @@ public class IsiActivity extends BaseActivity {
 	}
 
 	void bTuju_click() {
-		if (Preferences.getBoolean(R.string.pref_tombolAlamatLoncat_key, R.bool.pref_tombolAlamatLoncat_default)) {
-			bukaDialogLoncat();
-		} else {
-			bukaDialogTuju();
-		}
+		startActivityForResult(GotoActivity.createIntent(S.kitabAktif.pos, this.pasal_1, getAyatBerdasarSkrol()), REQCODE_goto);
 	}
 	
 	void bTuju_longClick() {
@@ -952,79 +942,6 @@ public class IsiActivity extends BaseActivity {
 		}
 	};
 	
-	void bukaDialogTuju() {
-		Intent intent = new Intent(this, MenujuActivity.class);
-		intent.putExtra(MenujuActivity.EXTRA_pasal, pasal_1);
-		
-		int ayat = getAyatBerdasarSkrol();
-		intent.putExtra(MenujuActivity.EXTRA_ayat, ayat);
-		
-		startActivityForResult(intent, REQCODE_tuju);
-	}
-	
-	void bukaDialogLoncat() {
-		final View loncat = LayoutInflater.from(this).inflate(R.layout.dialog_loncat, null);
-		final TextView lContohLoncat = (TextView) loncat.findViewById(R.id.lContohLoncat);
-		final EditText tAlamatLoncat = (EditText) loncat.findViewById(R.id.tAlamatLoncat);
-		final ImageButton bKeTuju = (ImageButton) loncat.findViewById(R.id.bKeTuju);
-
-		{
-			String alamatContoh = S.alamat(S.kitabAktif, IsiActivity.this.pasal_1, getAyatBerdasarSkrol());
-			String text = getString(R.string.loncat_ke_alamat_titikdua);
-			int pos = text.indexOf("%s"); //$NON-NLS-1$
-			if (pos >= 0) {
-				SpannableStringBuilder sb = new SpannableStringBuilder();
-				sb.append(text.substring(0, pos));
-				sb.append(alamatContoh);
-				sb.append(text.substring(pos + 2));
-				sb.setSpan(new StyleSpan(Typeface.BOLD), pos, pos + alamatContoh.length(), 0);
-				lContohLoncat.setText(sb, BufferType.SPANNABLE);
-			}
-		}
-		
-		final DialogInterface.OnClickListener loncat_click = new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				int ari = loncatKe(tAlamatLoncat.getText().toString());
-				if (ari != 0) {
-					sejarah.tambah(ari);
-				}
-			}
-		};
-		
-		final AlertDialog dialog = new AlertDialog.Builder(IsiActivity.this)
-			.setView(loncat)
-			.setPositiveButton(R.string.loncat, loncat_click)
-			.create();
-		
-		tAlamatLoncat.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-			@Override
-			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				loncat_click.onClick(dialog, 0);
-				dialog.dismiss();
-				
-				return true;
-			}
-		});
-		
-		bKeTuju.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				dialog.dismiss();
-				bukaDialogTuju();
-			}
-		});
-		
-		dialog.setOnDismissListener(new OnDismissListener() {
-			@Override public void onDismiss(DialogInterface _) {
-				dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED);
-			}
-		});
-		
-		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-		dialog.show();
-	}
-	
 	public void bukaDialogDonasi() {
 		new AlertDialog.Builder(this)
 		.setTitle(R.string.donasi_judul)
@@ -1043,7 +960,7 @@ public class IsiActivity extends BaseActivity {
 
 	public void bikinMenu(Menu menu) {
 		menu.clear();
-		getMenuInflater().inflate(R.menu.activity_isi, menu);
+		getSupportMenuInflater().inflate(R.menu.activity_isi, menu);
 		
 		BuildConfig c = BuildConfig.get(this);
 
@@ -1070,7 +987,7 @@ public class IsiActivity extends BaseActivity {
 		return true;
 	}
 	
-	@Override public boolean onMenuOpened(int featureId, Menu menu) {
+	@Override public boolean onPrepareOptionsMenu(Menu menu) {
 		if (menu != null) {
 			bikinMenu(menu);
 		}
@@ -1181,24 +1098,19 @@ public class IsiActivity extends BaseActivity {
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.d(TAG, "onActivityResult reqCode=0x" + Integer.toHexString(requestCode) + " resCode=" + resultCode + " data=" + data); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
-		if (requestCode == REQCODE_tuju) {
+		if (requestCode == REQCODE_goto) {
 			if (resultCode == RESULT_OK) {
-				int pasal = data.getIntExtra(MenujuActivity.EXTRA_pasal, 0);
-				int ayat = data.getIntExtra(MenujuActivity.EXTRA_ayat, 0);
-				int kitabPos = data.getIntExtra(MenujuActivity.EXTRA_kitab, AdapterView.INVALID_POSITION);
-				
-				if (kitabPos != AdapterView.INVALID_POSITION) {
+				GotoActivity.Result result = GotoActivity.obtainResult(data);
+				if (result != null) {
 					// ganti kitab
-					Kitab k = S.edisiAktif.getKitab(kitabPos);
+					Kitab k = S.edisiAktif.getKitab(result.kitab_pos);
 					if (k != null) {
 						S.kitabAktif = k;
 					}
+					
+					int ari_pa = tampil(result.pasal_1, result.ayat_1);
+					sejarah.tambah(Ari.encode(result.kitab_pos, ari_pa));
 				}
-				
-				int ari_pa = tampil(pasal, ayat);
-				sejarah.tambah(Ari.encode(kitabPos, ari_pa));
-			} else if (resultCode == RESULT_pindahCara) {
-				bukaDialogLoncat();
 			}
 		} else if (requestCode == REQCODE_bukmak) {
 			ayatAdapter_.muatAtributMap();

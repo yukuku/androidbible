@@ -2,13 +2,13 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical"
-    android:padding="2dp" >
+    android:layout_height="fill_parent"
+    android:fillViewport="false" >
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:gravity="center_horizontal"
         android:orientation="vertical" >
 
@@ -54,16 +54,6 @@
                 android:text="1"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 tools:ignore="HardcodedText" />
-
-            <ImageButton
-                android:id="@+id/bKeLoncat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:contentDescription="@string/desc_type_verse_reference_directly"
-                android:padding="6dp"
-                android:src="@drawable/tombol_ke_loncat" >
-            </ImageButton>
         </LinearLayout>
 
         <include
@@ -73,11 +63,12 @@
 
         <Button
             android:id="@+id/bOk"
-            android:layout_width="wrap_content"
+            style="@style/GotoWideOkButton"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minWidth="200dp"
-            android:text="@string/ok"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:layout_marginTop="8dp"
+            android:text="@string/ok" />
+
     </LinearLayout>
 
 </ScrollView>

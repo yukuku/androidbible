@@ -30,14 +30,6 @@
                     android:layout_height="wrap_content"
                     android:minWidth="200sp"
                     android:prompt="@string/pilihKitab_s" />
-
-                <ImageButton
-                    android:id="@+id/bKeLoncat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/desc_type_verse_reference_directly"
-                    android:padding="6dp"
-                    android:src="@drawable/tombol_ke_loncat" />
             </LinearLayout>
 
             <LinearLayout
@@ -99,12 +91,12 @@
 
         <Button
             android:id="@+id/bOk"
-            android:layout_width="wrap_content"
+            style="@style/GotoWideOkButton"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minWidth="200dp"
-            android:text="@string/ok"
-            android:textAppearance="?android:attr/textAppearanceLarge" >
-        </Button>
+            android:layout_marginTop="8dp"
+            android:text="@string/ok" />
+
     </LinearLayout>
 
 </ScrollView>
