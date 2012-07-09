@@ -27,7 +27,7 @@ public class QueryTokenizer {
 	public static String[] tokenize(String query) {
 		List<String> raw_tokens = new ArrayList<String>();
 		
-		Matcher matcher = QueryTokenizer.oneToken.matcher(query);
+		Matcher matcher = QueryTokenizer.oneToken.matcher(query.toLowerCase());
 		while (matcher.find()) {
 			raw_tokens.add(matcher.group(1) + matcher.group(2));
 		}
