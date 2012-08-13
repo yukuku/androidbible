@@ -28,7 +28,7 @@ public class U {
 	 * 
 	 * @param ayat
 	 */
-	public static String buangKodeKusus(String ayat) {
+	public static String removeSpecialCodes(String ayat) {
 		if (ayat.length() == 0) return ayat;
 		if (ayat.charAt(0) != '@') return ayat;
 
@@ -61,7 +61,7 @@ public class U {
 			// cek apakah judul perikop, DAN perikop masih ada
 			if (posBlok < nblok) {
 				// masih memungkinkan
-				if (Ari.toAyat(perikop_xari[posBlok]) - 1 == posAyat) {
+				if (Ari.toVerse(perikop_xari[posBlok]) - 1 == posAyat) {
 					// ADA PERIKOP.
 					res[posPK++] = -posBlok - 1;
 					posBlok++;
@@ -251,7 +251,7 @@ public class U {
 		}
 	}
 
-	@SuppressWarnings("deprecation") public static void salin(CharSequence salinan) {
+	@SuppressWarnings("deprecation") public static void copyToClipboard(CharSequence salinan) {
 		android.text.ClipboardManager clipboardManager = (android.text.ClipboardManager) App.context.getSystemService(Context.CLIPBOARD_SERVICE);
 		clipboardManager.setText(salinan); 
 	}

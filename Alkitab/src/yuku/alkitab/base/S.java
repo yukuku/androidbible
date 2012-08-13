@@ -15,8 +15,8 @@ import java.util.Locale;
 import yuku.alkitab.R;
 import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.Edisi;
-import yuku.alkitab.base.model.Kitab;
+import yuku.alkitab.base.model.Version;
+import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.renungan.TukangDonlot;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.InternalDbHelper;
@@ -45,7 +45,7 @@ public class S {
 		
 		public static int warnaHuruf; 
 		public static int warnaHurufMerah;
-		public static int warnaLatar;
+		public static int backgroundColor;
 		public static int warnaNomerAyat;
 		
 		// semua di bawah dalam px
@@ -69,9 +69,9 @@ public class S {
 	}
 	
 	//# 22nya harus siap di siapinKitab
-	public static Edisi edisiAktif;
-	public static Kitab kitabAktif;
-	public static String edisiId;
+	public static Version activeVersion;
+	public static Book activeBook;
+	public static String activeVersionId;
 
 	public static TukangDonlot tukangDonlot;
 	
@@ -81,16 +81,16 @@ public class S {
 	}
 	
 	private static synchronized void siapinEdisi() {
-		if (edisiAktif == null) {
-			edisiAktif = getEdisiInternal();
+		if (activeVersion == null) {
+			activeVersion = getEdisiInternal();
 		}
 	}
 
-	private static Edisi edisiInternal;
-	public static synchronized Edisi getEdisiInternal() {
+	private static Version edisiInternal;
+	public static synchronized Version getEdisiInternal() {
 		if (edisiInternal == null) {
 			BuildConfig c = BuildConfig.get(App.context);
-			edisiInternal = new Edisi(new InternalPembaca(App.context, c.internalPrefix, c.internalJudul, new PembacaDecoder.Ascii()));
+			edisiInternal = new Version(new InternalPembaca(App.context, c.internalPrefix, c.internalJudul, new PembacaDecoder.Ascii()));
 		}
 		return edisiInternal;
 	}
@@ -98,8 +98,8 @@ public class S {
 	public static synchronized void prepareBook() {
 		siapinEdisi();
 		
-		if (kitabAktif != null) return;
-		kitabAktif = edisiAktif.getKitabPertama(); // nanti diset sama luar waktu init 
+		if (activeBook != null) return;
+		activeBook = activeVersion.getKitabPertama(); // nanti diset sama luar waktu init 
 	}
 	
 	public static void calculateAppliedValuesBasedOnPreferences() {
@@ -118,9 +118,9 @@ public class S {
 		//# atur warna teks, latar, dan nomer ayat
 		{
 			penerapan.warnaHuruf = Preferences.getInt(R.string.pref_warnaHuruf_int_key, R.integer.pref_warnaHuruf_int_default);
-			penerapan.warnaLatar = Preferences.getInt(R.string.pref_warnaLatar_int_key, R.integer.pref_warnaLatar_int_default); 
+			penerapan.backgroundColor = Preferences.getInt(R.string.pref_warnaLatar_int_key, R.integer.pref_warnaLatar_int_default); 
 			penerapan.warnaNomerAyat = Preferences.getInt(R.string.pref_warnaNomerAyat_int_key, R.integer.pref_warnaNomerAyat_int_default);
-			penerapan.warnaHurufMerah = hitungHurufMerah(S.penerapan.warnaHuruf, S.penerapan.warnaLatar);
+			penerapan.warnaHurufMerah = hitungHurufMerah(S.penerapan.warnaHuruf, S.penerapan.backgroundColor);
 		}
 		
 		Resources res = App.context.getResources();
@@ -152,11 +152,11 @@ public class S {
 		teksTakTersedia,
 	};
 
-	public static synchronized String muatSatuAyat(Edisi edisi, Kitab kitab, int pasal_1, int ayat_1) {
-		if (kitab == null) {
+	public static synchronized String muatSatuAyat(Version version, Book book, int pasal_1, int ayat_1) {
+		if (book == null) {
 			return teksTakTersedia;
 		}
-		String[] xayat = muatTeks(edisi, kitab, pasal_1, false, false);
+		String[] xayat = muatTeks(version, book, pasal_1, false, false);
 		
 		if (xayat == null) {
 			return teksTakTersedia;
@@ -169,15 +169,15 @@ public class S {
 		return xayat[ayat_0];
 	}
 	
-	public static synchronized String muatSatuAyat(Edisi edisi, int ari) {
-		return muatSatuAyat(edisi, edisi.getKitab(Ari.toKitab(ari)), Ari.toPasal(ari), Ari.toAyat(ari));
+	public static synchronized String muatSatuAyat(Version version, int ari) {
+		return muatSatuAyat(version, version.getKitab(Ari.toKitab(ari)), Ari.toChapter(ari), Ari.toVerse(ari));
 	}
 
-	public static synchronized String[] muatTeks(Edisi edisi, Kitab kitab, int pasal_1) {
-		if (kitab == null) {
+	public static synchronized String[] muatTeks(Version version, Book book, int pasal_1) {
+		if (book == null) {
 			return teksTakTersediaArray;
 		}
-		String[] xayat = muatTeks(edisi, kitab, pasal_1, false, false);
+		String[] xayat = muatTeks(version, book, pasal_1, false, false);
 		
 		if (xayat == null) {
 			return teksTakTersediaArray;
@@ -186,11 +186,11 @@ public class S {
 		return xayat;
 	}
 
-	public static synchronized String muatTeksJanganPisahAyatHurufKecil(Edisi edisi, Kitab kitab, int pasal_1) {
-		if (kitab == null) {
+	public static synchronized String muatTeksJanganPisahAyatHurufKecil(Version version, Book book, int pasal_1) {
+		if (book == null) {
 			return teksTakTersedia;
 		}
-		String[] xayat_denganSatuElemen = muatTeks(edisi, kitab, pasal_1, true, true);
+		String[] xayat_denganSatuElemen = muatTeks(version, book, pasal_1, true, true);
 		
 		if (xayat_denganSatuElemen == null) {
 			return teksTakTersedia;
@@ -199,17 +199,17 @@ public class S {
 		return xayat_denganSatuElemen[0];
 	}
 	
-	private static String[] muatTeks(Edisi edisi, Kitab kitab, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
-		return edisi.pembaca.muatTeks(kitab, pasal_1, janganPisahAyat, hurufKecil);
+	private static String[] muatTeks(Version version, Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+		return version.pembaca.muatTeks(book, pasal_1, janganPisahAyat, hurufKecil);
 	}
 
-	public static String alamat(Edisi edisi, int ari) {
+	public static String reference(Version version, int ari) {
 		int kitabPos = Ari.toKitab(ari);
-		int pasal_1 = Ari.toPasal(ari);
-		int ayat_1 = Ari.toAyat(ari);
+		int pasal_1 = Ari.toChapter(ari);
+		int ayat_1 = Ari.toVerse(ari);
 		
 		StringBuilder hasil = new StringBuilder(40);
-		Kitab k = edisi.getKitab(kitabPos);
+		Book k = version.getKitab(kitabPos);
 		if (k == null) {
 			hasil.append('[').append(kitabPos).append("] "); //$NON-NLS-1$
 		} else {
@@ -223,26 +223,26 @@ public class S {
 		return hasil.toString();
 	}
 
-	public static String alamat(Kitab kitab, int pasal_1) {
-		return (kitab == null? "[?]": kitab.judul) + " " + pasal_1; //$NON-NLS-1$ //$NON-NLS-2$
+	public static String alamat(Book book, int pasal_1) {
+		return (book == null? "[?]": book.judul) + " " + pasal_1; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public static String alamat(Kitab kitab, int pasal_1, int ayat_1) {
-		return (kitab == null? "[?]": kitab.judul) + " " + pasal_1 + ":" + ayat_1;  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+	public static String alamat(Book book, int pasal_1, int ayat_1) {
+		return (book == null? "[?]": book.judul) + " " + pasal_1 + ":" + ayat_1;  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
-	public static CharSequence alamat(Kitab kitab, int pasal_1, IntArrayList xayat_1) {
-		StringBuilder sb = new StringBuilder(kitab == null? "[?]": kitab.judul); //$NON-NLS-1$
+	public static CharSequence alamat(Book book, int pasal_1, IntArrayList xayat_1) {
+		StringBuilder sb = new StringBuilder(book == null? "[?]": book.judul); //$NON-NLS-1$
 		sb.append(' ').append(pasal_1);
 		if (xayat_1 == null || xayat_1.size() == 0) {
 			return sb;
 		}
 		sb.append(':');
-		tulisAyatRange(xayat_1, sb);
+		writeVerseRange(xayat_1, sb);
 		return sb;
 	}
 	
-	public static void tulisAyatRange(IntArrayList xayat_1, StringBuilder sb) {
+	public static void writeVerseRange(IntArrayList xayat_1, StringBuilder sb) {
 		int origLen = sb.length();
 		int lastAyat_1 = 0;
 		int awalAyat_1 = 0;
@@ -280,7 +280,7 @@ public class S {
 	/**
 	 * @param handler Jangan null kalo mau dicek ulang 200ms kemudian. Harus null kalo jangan ulang lagi. 20110620 Uda ga dipake lagi.
 	 */
-	public static void terapkanPengaturanBahasa(final Handler handler, final int cobaLagi) {
+	public static void applyLanguagePreference(final Handler handler, final int cobaLagi) {
 		String bahasa = Preferences.getString(R.string.pref_bahasa_key, R.string.pref_bahasa_default);
 
 		Locale locale;
@@ -323,12 +323,12 @@ public class S {
 	/**
 	 * Jika ayat_1_range adalah null, ayat akan diabaikan (jadi cuma kitab dan pasal).
 	 */
-	public static String bikinUrlAyat(Kitab kitab, int pasal_1, String ayat_1_range) {
+	public static String createVerseUrl(Book book, int pasal_1, String ayat_1_range) {
 		BuildConfig c = BuildConfig.get(App.context);
-		if (kitab.pos >= c.url_namaKitabStandar.length) {
+		if (book.pos >= c.url_namaKitabStandar.length) {
 			return null;
 		}
-		String calonKitab = c.url_namaKitabStandar[kitab.pos], calonPasal = String.valueOf(pasal_1), calonAyat = ayat_1_range;
+		String calonKitab = c.url_namaKitabStandar[book.pos], calonPasal = String.valueOf(pasal_1), calonAyat = ayat_1_range;
 		for (String format: c.url_format.split(" ")) { //$NON-NLS-1$
 			if ("slash1".equals(format)) calonPasal = "/" + calonPasal; //$NON-NLS-1$ //$NON-NLS-2$
 			if ("slash2".equals(format)) calonAyat = "/" + calonAyat; //$NON-NLS-1$ //$NON-NLS-2$

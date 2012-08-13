@@ -25,7 +25,7 @@ import yuku.alkitab.base.S.penerapan;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Blok;
-import yuku.alkitab.base.model.Kitab;
+import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.storage.Db.Bukmak2;
 import yuku.alkitab.base.util.PengaturTampilan;
 
@@ -39,7 +39,7 @@ public class VerseAdapter extends BaseAdapter {
 	final float density_;
 	
 	//# field setData
-	Kitab kitab_;
+	Book kitab_;
 	int pasal_1_;
 	String[] dataAyat_;
 	Blok[] perikop_xblok_;
@@ -61,15 +61,15 @@ public class VerseAdapter extends BaseAdapter {
 		density_ = context.getResources().getDisplayMetrics().density;
 	}
 	
-	public synchronized void setData(Kitab kitab, int pasal_1, String[] xayat, int[] perikop_xari, Blok[] perikop_xblok, int nblok) {
-		kitab_ = kitab;
+	public synchronized void setData(Book book, int pasal_1, String[] xayat, int[] perikop_xari, Blok[] perikop_xblok, int nblok) {
+		kitab_ = book;
 		pasal_1_ = pasal_1;
 		dataAyat_ = xayat.clone();
 		perikop_xblok_ = perikop_xblok;
 		penunjukKotak_ = U.bikinPenunjukKotak(dataAyat_.length, perikop_xari, perikop_xblok, nblok);
 	}
 	
-	public synchronized void muatAtributMap() {
+	public synchronized void loadAttributeMap() {
 		int[] atributMap = null;
 		int[] stabiloMap = null;
 		
@@ -259,7 +259,7 @@ public class VerseAdapter extends BaseAdapter {
 	 * maka fungsi ini (ayat_1: 1) akan return 0. 
 	 * @return position di adapter ini atau -1 kalo ga ketemu
 	 */
-	public int getPositionAwalPerikopDariAyat(int ayat_1) {
+	public int getPositionOfPericopeBeginningFromVerse(int ayat_1) {
 		if (penunjukKotak_ == null) return -1;
 		
 		int ayat_0 = ayat_1 - 1;
@@ -303,7 +303,7 @@ public class VerseAdapter extends BaseAdapter {
 	/**
 	 * @return ayat (mulai dari 1). atau 0 kalo ga masuk akal
 	 */
-	public int getAyatDariPosition(int position) {
+	public int getVerseFromPosition(int position) {
 		if (penunjukKotak_ == null) return 0;
 		
 		if (position >= penunjukKotak_.length) {
@@ -547,7 +547,7 @@ public class VerseAdapter extends BaseAdapter {
 		lIsiAyat.setText(seayat, BufferType.SPANNABLE);
 	}
 	
-	public String getAyat(int ayat_1) {
+	public String getVerse(int ayat_1) {
 		if (dataAyat_ == null) return "[?]"; //$NON-NLS-1$
 		if (ayat_1 < 1 || ayat_1 > dataAyat_.length) return "[?]"; //$NON-NLS-1$
 		return dataAyat_[ayat_1 - 1];

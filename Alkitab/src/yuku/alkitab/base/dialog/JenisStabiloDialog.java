@@ -43,7 +43,7 @@ public class JenisStabiloDialog {
 	 * @param warnaRgb -1 kalo ga terpilih. #rrggbb ga pake alpha
 	 */
 	public JenisStabiloDialog(Context context, int ari, JenisStabiloCallback callback, int warnaRgb, CharSequence judul) {
-		this(context, Ari.toKitabPasal(ari), satuSaja(Ari.toAyat(ari)), callback, warnaRgb, judul);
+		this(context, Ari.toKitabPasal(ari), satuSaja(Ari.toVerse(ari)), callback, warnaRgb, judul);
 	}
 	
 	private static IntArrayList satuSaja(int ayat_1) {
@@ -68,7 +68,7 @@ public class JenisStabiloDialog {
 		.setNegativeButton(R.string.cancel, null)
 		.create();
 		
-		dialogView.setBackgroundColor(S.penerapan.warnaLatar);
+		dialogView.setBackgroundColor(S.penerapan.backgroundColor);
 		
 		if (judul != null) {
 			this.alert.setTitle(judul);

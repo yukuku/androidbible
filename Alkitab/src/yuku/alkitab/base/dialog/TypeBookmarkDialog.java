@@ -28,7 +28,7 @@ import yuku.alkitab.base.model.Label;
 import yuku.alkitab.base.storage.Db;
 import yuku.devoxx.flowlayout.FlowLayout;
 
-public class JenisBukmakDialog {
+public class TypeBookmarkDialog {
 	public interface Listener {
 		void onOk();
 	}
@@ -49,7 +49,7 @@ public class JenisBukmakDialog {
 	// current labels (can be not in the db)
 	SortedSet<Label> labels = new TreeSet<Label>();
 	
-	public JenisBukmakDialog(Context context, CharSequence alamat, int ari) {
+	public TypeBookmarkDialog(Context context, CharSequence alamat, int ari) {
 		// wajib
 		this.context = context;
 		
@@ -58,7 +58,7 @@ public class JenisBukmakDialog {
 		this.ari = ari;
 	}
 
-	public JenisBukmakDialog(Context context, long id) {
+	public TypeBookmarkDialog(Context context, long id) {
 		// wajib
 		this.context = context;
 
@@ -116,7 +116,7 @@ public class JenisBukmakDialog {
 		// set yang belum diset
 		if (this.ari == 0 && bukmak != null) {
 			this.ari = bukmak.ari;
-			this.alamat = S.alamat(S.edisiAktif, bukmak.ari);
+			this.alamat = S.reference(S.activeVersion, bukmak.ari);
 		}
 		
 		View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_bukmak_ubah, null);

@@ -88,10 +88,10 @@ public class SongViewActivity extends BaseActivity {
 		
 		// for colors of bg, text, etc
 		S.calculateAppliedValuesBasedOnPreferences();
-		V.get(this, android.R.id.content).setBackgroundColor(S.penerapan.warnaLatar);
+		V.get(this, android.R.id.content).setBackgroundColor(S.penerapan.backgroundColor);
 		
 		templateCustomVars = new Bundle();
-		templateCustomVars.putString("background_color", String.format("#%06x", S.penerapan.warnaLatar & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
+		templateCustomVars.putString("background_color", String.format("#%06x", S.penerapan.backgroundColor & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
 		templateCustomVars.putString("text_color", String.format("#%06x", S.penerapan.warnaHuruf & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
 		templateCustomVars.putString("verse_number_color", String.format("#%06x", S.penerapan.warnaNomerAyat & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
 		templateCustomVars.putString("text_size", S.penerapan.ukuranHuruf2dp + "px"); // somehow this is automatically scaled to dp. //$NON-NLS-1$ //$NON-NLS-2$
@@ -139,7 +139,7 @@ public class SongViewActivity extends BaseActivity {
 		switch (item.getItemId()) {
 		case R.id.menuSalin: {
 			if (currentSong != null) {
-				U.salin(convertSongToText(currentSong));
+				U.copyToClipboard(convertSongToText(currentSong));
 
 				Toast.makeText(this, R.string.sn_copied, Toast.LENGTH_SHORT).show();
 			}

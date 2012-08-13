@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 
-import yuku.alkitab.base.model.Edisi;
-import yuku.alkitab.base.model.Kitab;
+import yuku.alkitab.base.model.Version;
+import yuku.alkitab.base.model.Book;
 
-public class Peloncat {
-	public static final String TAG = Peloncat.class.getSimpleName();
+public class Jumper {
+	public static final String TAG = Jumper.class.getSimpleName();
 	
 	private String p_kitab;
 	private int p_pasal;
@@ -28,7 +28,7 @@ public class Peloncat {
 		}
 	}
 	
-	private static IdentityHashMap<Kitab[], Peloncat.KitabRef[]> pendekCache = new IdentityHashMap<Kitab[], Peloncat.KitabRef[]>();
+	private static IdentityHashMap<Book[], Jumper.KitabRef[]> pendekCache = new IdentityHashMap<Book[], Jumper.KitabRef[]>();
 	
 	/**
 	 * Ga bisa diparse sebagai bilangan. "4-5" true. "Halo" true. "123" false.
@@ -250,7 +250,7 @@ public class Peloncat {
 		return res;
 	}
 	
-	private int tebakKitab(Kitab[] xkitab) {
+	private int tebakKitab(Book[] xkitab) {
 		if (p_kitab == null) {
 			return -1;
 		}
@@ -259,16 +259,16 @@ public class Peloncat {
 		
 		// 0. bikin cache semua judul kitab yang dibuang spasinya dan dikecilin semua dan 1 jadi I, 2 jadi II, dst
 		{
-			Peloncat.KitabRef[] refs = pendekCache.get(xkitab);
+			Jumper.KitabRef[] refs = pendekCache.get(xkitab);
 			
 			if (refs == null) {
-				ArrayList<Peloncat.KitabRef> a = new ArrayList<Peloncat.KitabRef>();
+				ArrayList<Jumper.KitabRef> a = new ArrayList<Jumper.KitabRef>();
 				
-				for (Kitab k: xkitab) {
+				for (Book k: xkitab) {
 					String judul = k.judul.replaceAll("(\\s|-|_)+", "").toLowerCase(); //$NON-NLS-1$ //$NON-NLS-2$
 					
 					{
-						Peloncat.KitabRef ref = new KitabRef();
+						Jumper.KitabRef ref = new KitabRef();
 						ref.pendek = judul;
 						ref.pos = k.pos;
 						
@@ -278,7 +278,7 @@ public class Peloncat {
 					if (judul.contains("1") || judul.contains("2") || judul.contains("3")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						judul = judul.replaceAll("1", "i").replaceAll("2", "ii").replaceAll("3", "iii");    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 						
-						Peloncat.KitabRef ref = new KitabRef();
+						Jumper.KitabRef ref = new KitabRef();
 						ref.pendek = judul;
 						ref.pos = k.pos;
 						
@@ -286,19 +286,19 @@ public class Peloncat {
 					}
 				}
 				
-				refs = a.toArray(new Peloncat.KitabRef[0]);
+				refs = a.toArray(new Jumper.KitabRef[0]);
 				pendekCache.put(xkitab, refs);
 				Log.d(TAG, "entri pendekCache baru: " + Arrays.toString(refs)); //$NON-NLS-1$
 			}
 		}
 		
 		// 0 juga. bersihin p_kitab
-		Peloncat.KitabRef[] refs = pendekCache.get(xkitab);
+		Jumper.KitabRef[] refs = pendekCache.get(xkitab);
 		p_kitab = p_kitab.replaceAll("(\\s|-|_)", "").toLowerCase(); //$NON-NLS-1$ //$NON-NLS-2$
 		Log.d(TAG, "tebakKitab fase 0: p_kitab = " + p_kitab); //$NON-NLS-1$
 		
 		// 1. coba cocokin keseluruhan (co: "kejadian", "yohanes")
-		for (Peloncat.KitabRef ref: refs) {
+		for (Jumper.KitabRef ref: refs) {
 			if (ref.pendek.equals(p_kitab)) {
 				Log.d(TAG, "tebakKitab fase 1 sukses: " + p_kitab); //$NON-NLS-1$
 				return ref.pos;
@@ -309,7 +309,7 @@ public class Peloncat {
 		int pos_buatNanti = -1;
 		{
 			int lulus = 0;
-			for (Peloncat.KitabRef ref: refs) {
+			for (Jumper.KitabRef ref: refs) {
 				if (ref.pendek.startsWith(p_kitab)) {
 					lulus++;
 					if (lulus == 1) pos_buatNanti = ref.pos;
@@ -329,7 +329,7 @@ public class Peloncat {
 			int minSkor = 99999999;
 			int pos = -1;
 			
-			for (Peloncat.KitabRef ref: refs) {
+			for (Jumper.KitabRef ref: refs) {
 				int skor = Levenshtein.distance(p_kitab, ref.pendek);
 				if (p_kitab.charAt(0) != ref.pendek.charAt(0)) {
 					skor += 150; // kira2 1.5 insertion
@@ -359,17 +359,17 @@ public class Peloncat {
 	}
 	
 	/**
-	 * @return pos dari kitab, bukan index dari {@link Edisi#getConsecutiveXkitab()}
+	 * @return pos dari kitab, bukan index dari {@link Version#getConsecutiveBooks()}
 	 */
-	public int getKitab(Kitab[] xkitab) {
+	public int getKitab(Book[] xkitab) {
 		return tebakKitab(xkitab);
 	}
 	
-	public int getPasal() {
+	public int getChapter() {
 		return p_pasal;
 	}
 	
-	public int getAyat() {
+	public int getVerse() {
 		return p_ayat;
 	}
 }

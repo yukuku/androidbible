@@ -135,7 +135,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		bKiri = (ImageButton) findViewById(R.id.bKiri);
 		lStatus = (TextView) findViewById(R.id.lStatus);
 		
-		scrollIsi.setBackgroundColor(S.penerapan.warnaLatar);
+		scrollIsi.setBackgroundColor(S.penerapan.backgroundColor);
 		
 		bKiri.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
@@ -227,7 +227,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		int itemId = item.getItemId();
 		if (itemId == R.id.menuSalin) {
 			String salinan = lHeader.getText() + "\n" + lIsi.getText(); //$NON-NLS-1$
-			U.salin(salinan);
+			U.copyToClipboard(salinan);
 			
 			Toast.makeText(this, R.string.renungan_sudah_disalin, Toast.LENGTH_SHORT).show();
 			
@@ -338,7 +338,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			lIsi.setLinksClickable(true);
 			lIsi.setMovementMethod(LinkMovementMethod.getInstance());
 			lIsi.setTextColor(S.penerapan.warnaHuruf);
-			lIsi.setBackgroundColor(S.penerapan.warnaLatar);
+			lIsi.setBackgroundColor(S.penerapan.backgroundColor);
 			lIsi.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
 			lIsi.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp);
 			if (skrol != 0) {

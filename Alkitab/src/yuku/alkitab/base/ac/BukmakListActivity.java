@@ -35,14 +35,14 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.dialog.JenisBukmakDialog;
-import yuku.alkitab.base.dialog.JenisBukmakDialog.Listener;
-import yuku.alkitab.base.dialog.JenisCatatanDialog;
-import yuku.alkitab.base.dialog.JenisCatatanDialog.RefreshCallback;
+import yuku.alkitab.base.dialog.TypeBookmarkDialog;
+import yuku.alkitab.base.dialog.TypeBookmarkDialog.Listener;
+import yuku.alkitab.base.dialog.TypeNoteDialog;
+import yuku.alkitab.base.dialog.TypeNoteDialog.RefreshCallback;
 import yuku.alkitab.base.dialog.JenisStabiloDialog;
 import yuku.alkitab.base.dialog.JenisStabiloDialog.JenisStabiloCallback;
 import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.Kitab;
+import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.Label;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.util.IntArrayList;
@@ -128,13 +128,13 @@ public class BukmakListActivity extends BaseActivity {
 		
 		adapter = new BukmakListAdapter(this, cursor);
 
-		panelList.setBackgroundColor(S.penerapan.warnaLatar);
+		panelList.setBackgroundColor(S.penerapan.backgroundColor);
 		tEmpty.setTextColor(S.penerapan.warnaHuruf);
 		
-		warnaHilite = U.getWarnaHiliteKontrasDengan(S.penerapan.warnaLatar);
+		warnaHilite = U.getWarnaHiliteKontrasDengan(S.penerapan.backgroundColor);
 		
 		lv.setAdapter(adapter);
-		lv.setCacheColorHint(S.penerapan.warnaLatar);
+		lv.setCacheColorHint(S.penerapan.backgroundColor);
 		lv.setOnItemClickListener(lv_click);
 		lv.setEmptyView(emptyView);
 
@@ -402,7 +402,7 @@ public class BukmakListActivity extends BaseActivity {
 			return true;
 		} else if (itemId == R.id.menuUbahBukmak) {
 			if (filter_jenis == Db.Bukmak2.jenis_bukmak) {
-				JenisBukmakDialog dialog = new JenisBukmakDialog(this, info.id);
+				TypeBookmarkDialog dialog = new TypeBookmarkDialog(this, info.id);
 				dialog.setListener(new Listener() {
 					@Override public void onOk() {
 						adapter.getCursor().requery();
@@ -415,8 +415,8 @@ public class BukmakListActivity extends BaseActivity {
 				Cursor cursor = (Cursor) adapter.getItem(info.position);
 				int ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bukmak2.ari));
 				
-				JenisCatatanDialog dialog = new JenisCatatanDialog(this, S.edisiAktif.getKitab(Ari.toKitab(ari)), Ari.toPasal(ari), Ari.toAyat(ari), new RefreshCallback() {
-					@Override public void udahan() {
+				TypeNoteDialog dialog = new TypeNoteDialog(this, S.activeVersion.getKitab(Ari.toKitab(ari)), Ari.toChapter(ari), Ari.toVerse(ari), new RefreshCallback() {
+					@Override public void onDone() {
 						adapter.getCursor().requery();
 						if (lagiPakeFilter != null) filterPakeLagiPakeFilter();
 					}
@@ -427,7 +427,7 @@ public class BukmakListActivity extends BaseActivity {
 				Cursor cursor = (Cursor) adapter.getItem(info.position);
 				int ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bukmak2.ari));
 				int warnaRgb = U.dekodStabilo(cursor.getString(cursor.getColumnIndexOrThrow(Db.Bukmak2.tulisan)));
-				String alamat = S.alamat(S.edisiAktif, ari);
+				String alamat = S.reference(S.activeVersion, ari);
 				
 				new JenisStabiloDialog(this, ari, new JenisStabiloCallback() {
 					@Override public void onOk(int warnaRgb) {
@@ -503,11 +503,11 @@ public class BukmakListActivity extends BaseActivity {
 			}
 			
 			int ari = cursor.getInt(col_ari);
-			Kitab kitab = S.edisiAktif.getKitab(Ari.toKitab(ari));
-			String alamat = S.alamat(S.edisiAktif, ari);
+			Book book = S.activeVersion.getKitab(Ari.toKitab(ari));
+			String alamat = S.reference(S.activeVersion, ari);
 			
-			String isi = S.muatSatuAyat(S.edisiAktif, kitab, Ari.toPasal(ari), Ari.toAyat(ari));
-			isi = U.buangKodeKusus(isi);
+			String isi = S.muatSatuAyat(S.activeVersion, book, Ari.toChapter(ari), Ari.toVerse(ari));
+			isi = U.removeSpecialCodes(isi);
 			
 			String tulisan = cursor.getString(col_tulisan);
 			
@@ -594,7 +594,7 @@ public class BukmakListActivity extends BaseActivity {
 					int ari = c.getInt(col_ari);
 					if (!memenuhi) {
 						// coba isi ayatnya!
-						String ayat = S.muatSatuAyat(S.edisiAktif, ari);
+						String ayat = S.muatSatuAyat(S.activeVersion, ari);
 						String ayat_lc = ayat.toLowerCase();
 						if (Search2Engine.memenuhiCarian(ayat_lc, xkata)) {
 							memenuhi = true;

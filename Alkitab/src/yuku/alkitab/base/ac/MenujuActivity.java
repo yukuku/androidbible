@@ -23,13 +23,13 @@ import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.model.Kitab;
+import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.storage.Preferences;
 
 public class MenujuActivity extends BaseActivity {
 	public static final String TAG = MenujuActivity.class.getSimpleName();
-	public static final String EXTRA_ayat = "ayat"; //$NON-NLS-1$
-	public static final String EXTRA_pasal = "pasal"; //$NON-NLS-1$
+	public static final String EXTRA_verse = "ayat"; //$NON-NLS-1$
+	public static final String EXTRA_chapter = "pasal"; //$NON-NLS-1$
 	public static final String EXTRA_kitab = "kitab"; //$NON-NLS-1$
 
 	TextView aktif;
@@ -70,7 +70,7 @@ public class MenujuActivity extends BaseActivity {
 		bKeLoncat = (ImageButton) findViewById(R.id.bKeLoncat);
 
 		// set kitab, pasal, ayat kini
-		cbKitab.setSelection(adapter.getPositionDariPos(S.kitabAktif.pos));
+		cbKitab.setSelection(adapter.getPositionDariPos(S.activeBook.pos));
 		
 		cbKitab.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
@@ -79,7 +79,7 @@ public class MenujuActivity extends BaseActivity {
 
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				Kitab k = adapter.getItem(position);
+				Book k = adapter.getItem(position);
 				maxPasal = k.npasal;
 				
 				int pasal_0 = cobaBacaPasal() - 1;
@@ -109,8 +109,8 @@ public class MenujuActivity extends BaseActivity {
 				
 				Intent intent = new Intent();
 				intent.putExtra(EXTRA_kitab, kitab);
-				intent.putExtra(EXTRA_pasal, pasal);
-				intent.putExtra(EXTRA_ayat, ayat);
+				intent.putExtra(EXTRA_chapter, pasal);
+				intent.putExtra(EXTRA_verse, ayat);
 				setResult(RESULT_OK, intent);
 				
 				finish();
@@ -144,11 +144,11 @@ public class MenujuActivity extends BaseActivity {
 		
 		{
 			Intent intent = getIntent();
-			int pasal = intent.getIntExtra(EXTRA_pasal, 0);
+			int pasal = intent.getIntExtra(EXTRA_chapter, 0);
 			if (pasal != 0) {
 				lPasal.setText(String.valueOf(pasal));
 			}
-			int ayat = intent.getIntExtra(EXTRA_ayat, 0);
+			int ayat = intent.getIntExtra(EXTRA_verse, 0);
 			if (ayat != 0) {
 				lAyat.setText(String.valueOf(ayat));
 			}
@@ -299,7 +299,7 @@ public class MenujuActivity extends BaseActivity {
 					aktif.setText(s);
 				}
 				
-				Kitab k = adapter.getItem(cbKitab.getSelectedItemPosition());
+				Book k = adapter.getItem(cbKitab.getSelectedItemPosition());
 				int pasal_1 = cobaBacaPasal();
 				if (pasal_1 >= 1 && pasal_1 <= k.nayat.length) {
 					maxAyat = k.nayat[pasal_1-1];
@@ -331,20 +331,20 @@ public class MenujuActivity extends BaseActivity {
 	}
 	
 	private class KitabAdapter extends BaseAdapter {
-		Kitab[] xkitabc_;
+		Book[] xkitabc_;
 		
 		public KitabAdapter() {
-			Kitab[] xkitabc = S.edisiAktif.getConsecutiveXkitab();
+			Book[] xkitabc = S.activeVersion.getConsecutiveBooks();
 			
 			if (Preferences.getBoolean(R.string.pref_sortKitabAlfabet_key, R.bool.pref_sortKitabAlfabet_default)) {
 				// bikin kopian, supaya ga obok2 array lama
-				xkitabc_ = new Kitab[xkitabc.length];
+				xkitabc_ = new Book[xkitabc.length];
 				System.arraycopy(xkitabc, 0, xkitabc_, 0, xkitabc.length);
 				
 				// sort!
-				Arrays.sort(xkitabc_, new Comparator<Kitab>() {
+				Arrays.sort(xkitabc_, new Comparator<Book>() {
 					@Override
-					public int compare(Kitab a, Kitab b) {
+					public int compare(Book a, Book b) {
 						return a.judul.compareToIgnoreCase(b.judul);
 					}
 				});
@@ -371,7 +371,7 @@ public class MenujuActivity extends BaseActivity {
 		}
 
 		@Override
-		public Kitab getItem(int position) {
+		public Book getItem(int position) {
 			return xkitabc_[position];
 		}
 
@@ -390,7 +390,7 @@ public class MenujuActivity extends BaseActivity {
 		@Override public View getDropDownView(int position, View convertView, ViewGroup parent) {
 			CheckedTextView res = convertView != null? (CheckedTextView) convertView: (CheckedTextView) LayoutInflater.from(MenujuActivity.this).inflate(android.R.layout.select_dialog_singlechoice, null);
 
-			Kitab k = getItem(position);
+			Book k = getItem(position);
 			res.setText(k.judul);
 			res.setTextColor(U.getWarnaBerdasarkanKitabPos(k.pos));
 			
