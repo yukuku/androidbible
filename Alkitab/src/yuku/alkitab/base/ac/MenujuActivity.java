@@ -53,10 +53,10 @@ public class MenujuActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		U.nyalakanTitleBarHanyaKalauTablet(this);
+		U.enableTitleBarOnlyForHolo(this);
 		
-		S.siapinKitab();
-		S.hitungPenerapanBerdasarkanPengaturan();
+		S.prepareBook();
+		S.calculateAppliedValuesBasedOnPreferences();
 		
 		setContentView(R.layout.activity_menuju);
 		

@@ -63,7 +63,7 @@ public class S {
 	 * Pastikan ga ada acuan ke aktiviti, supaya memori ga bocor.
 	 */
 	public static class penampungan {
-		public static String renungan_nama = null;
+		public static String devotion_name = null;
 		public static Date renungan_tanggalan = null;
 		public static int renungan_skrol = 0;
 	}
@@ -95,14 +95,14 @@ public class S {
 		return edisiInternal;
 	}
 
-	public static synchronized void siapinKitab() {
+	public static synchronized void prepareBook() {
 		siapinEdisi();
 		
 		if (kitabAktif != null) return;
 		kitabAktif = edisiAktif.getKitabPertama(); // nanti diset sama luar waktu init 
 	}
 	
-	public static void hitungPenerapanBerdasarkanPengaturan() {
+	public static void calculateAppliedValuesBasedOnPreferences() {
 		//# atur ukuran huruf isi berdasarkan pengaturan
 		{
 			penerapan.ukuranHuruf2dp = Preferences.getFloat(R.string.pref_ukuranHuruf2_key, 17.f);

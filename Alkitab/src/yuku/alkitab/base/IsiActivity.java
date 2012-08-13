@@ -60,6 +60,7 @@ import yuku.alkitab.base.IsiActivity.FakeContextMenu.Item;
 import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.BantuanActivity;
 import yuku.alkitab.base.ac.BukmakActivity;
+import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.EdisiActivity;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisi;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiInternal;
@@ -67,7 +68,6 @@ import yuku.alkitab.base.ac.EdisiActivity.MEdisiPreset;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiYes;
 import yuku.alkitab.base.ac.MenujuActivity;
 import yuku.alkitab.base.ac.PengaturanActivity;
-import yuku.alkitab.base.ac.RenunganActivity;
 import yuku.alkitab.base.ac.Search2Activity;
 import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.ac.SongViewActivity;
@@ -85,55 +85,55 @@ import yuku.alkitab.base.model.Edisi;
 import yuku.alkitab.base.model.Kitab;
 import yuku.alkitab.base.storage.Db.Bukmak2;
 import yuku.alkitab.base.storage.Preferences;
+import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.Peloncat;
 import yuku.alkitab.base.util.Search2Engine.Query;
-import yuku.alkitab.base.util.Sejarah;
-import yuku.alkitab.base.widget.AyatAdapter;
 import yuku.alkitab.base.widget.CallbackSpan;
+import yuku.alkitab.base.widget.VerseAdapter;
 
 public class IsiActivity extends BaseActivity {
 	public static final String TAG = IsiActivity.class.getSimpleName();
 	
-	// Berikut ini buat preferences_instan.
-	private static final String NAMAPREF_kitabTerakhir = "kitabTerakhir"; //$NON-NLS-1$
-	private static final String NAMAPREF_pasalTerakhir = "pasalTerakhir"; //$NON-NLS-1$
-	private static final String NAMAPREF_ayatTerakhir = "ayatTerakhir"; //$NON-NLS-1$
-	private static final String NAMAPREF_edisiTerakhir = "edisiTerakhir"; //$NON-NLS-1$
-	private static final String NAMAPREF_renungan_nama = "renungan_nama"; //$NON-NLS-1$
+	// The followings are for instant_pref
+	private static final String PREFKEY_lastBook = "kitabTerakhir"; //$NON-NLS-1$
+	private static final String PREFKEY_lastChapter = "pasalTerakhir"; //$NON-NLS-1$
+	private static final String PREFKEY_lastVerse = "ayatTerakhir"; //$NON-NLS-1$
+	private static final String PREFKEY_lastVersion = "edisiTerakhir"; //$NON-NLS-1$
+	private static final String PREFKEY_devotion_name = "renungan_nama"; //$NON-NLS-1$
 
 	public static final int RESULT_pindahCara = RESULT_FIRST_USER + 1;
 
-	private static final int REQCODE_tuju = 1;
-	private static final int REQCODE_bukmak = 2;
-	private static final int REQCODE_renungan = 3;
-	private static final int REQCODE_pengaturan = 4;
-	private static final int REQCODE_edisi = 5;
+	private static final int REQCODE_goto = 1;
+	private static final int REQCODE_bookmark = 2;
+	private static final int REQCODE_devotion = 3;
+	private static final int REQCODE_settings = 4;
+	private static final int REQCODE_version = 5;
 	private static final int REQCODE_search = 6;
-	private static final int REQCODE_bagikan = 7;
+	private static final int REQCODE_share = 7;
 
-	private static final String EXTRA_urlAyat = "urlAyat"; //$NON-NLS-1$
+	private static final String EXTRA_verseUrl = "urlAyat"; //$NON-NLS-1$
 
-	ListView lsIsi;
-	Button bTuju;
-	ImageButton bKiri;
-	ImageButton bKanan;
-	View tempatJudul;
-	TextView lJudul;
-	View bContext;
+	ListView lsText;
+	Button bGoto;
+	ImageButton bLeft;
+	ImageButton bRight;
+	View titleContainer;
+	TextView lTitle;
+	View bContextMenu;
 	View root;
 	
-	int pasal_1 = 0;
-	SharedPreferences preferences_instan;
+	int chapter_1 = 0;
+	SharedPreferences instant_pref;
 	
-	AyatAdapter ayatAdapter_;
-	Sejarah sejarah;
+	VerseAdapter verseAdapter_;
+	History history;
 	NfcAdapter nfcAdapter;
 
-	//# penyimpanan state buat search2
+	//# state storage for search2
 	Query search2_query = null;
-	IntArrayList search2_hasilCari = null;
-	int search2_posisiTerpilih = -1;
+	IntArrayList search2_results = null;
+	int search2_selectedPosition = -1;
 	
 	// temporary states
 	Animation fadeInAnimation;
@@ -141,12 +141,11 @@ public class IsiActivity extends BaseActivity {
 	boolean showingContextButton = false;
 	Boolean hasEsvsbAsal;
 	
-	CallbackSpan.OnClickListener paralelOnClickListener = new CallbackSpan.OnClickListener() {
-		@Override
-		public void onClick(View widget, Object data) {
-			int ari = loncatKe((String)data);
+	CallbackSpan.OnClickListener parallel_click = new CallbackSpan.OnClickListener() {
+		@Override public void onClick(View widget, Object data) {
+			int ari = jumpTo((String)data);
 			if (ari != 0) {
-				sejarah.tambah(ari);
+				history.add(ari);
 			}
 		}
 	};
@@ -154,99 +153,98 @@ public class IsiActivity extends BaseActivity {
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		U.nyalakanTitleBarHanyaKalauTablet(this);
+		U.enableTitleBarOnlyForHolo(this);
 		
-		S.siapinKitab();
-		S.hitungPenerapanBerdasarkanPengaturan();
+		S.prepareBook();
+		S.calculateAppliedValuesBasedOnPreferences();
 		
 		setContentView(R.layout.activity_isi);
 		
-		lsIsi = U.getView(this, R.id.lsIsi);
-		bTuju = U.getView(this, R.id.bTuju);
-		bKiri = U.getView(this, R.id.bKiri);
-		bKanan = U.getView(this, R.id.bKanan);
-		tempatJudul = U.getView(this, R.id.tempatJudul);
-		lJudul = U.getView(this, R.id.lJudul);
-		bContext = U.getView(this, R.id.bContext);
+		lsText = U.getView(this, R.id.lsIsi);
+		bGoto = U.getView(this, R.id.bTuju);
+		bLeft = U.getView(this, R.id.bKiri);
+		bRight = U.getView(this, R.id.bKanan);
+		titleContainer = U.getView(this, R.id.tempatJudul);
+		lTitle = U.getView(this, R.id.lJudul);
+		bContextMenu = U.getView(this, R.id.bContext);
 		root = U.getView(this, R.id.root);
 		
-		terapkanPengaturan(false);
+		applyPreferences(false);
 
-		lsIsi.setOnItemClickListener(lsIsi_itemClick);
-		lsIsi.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		lsText.setOnItemClickListener(lsText_itemClick);
+		lsText.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		
-		bTuju.setOnClickListener(new View.OnClickListener() {
-			@Override public void onClick(View v) { bTuju_click(); }
+		bGoto.setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View v) { bGoto_click(); }
 		});
-		bTuju.setOnLongClickListener(new View.OnLongClickListener() {
-			@Override public boolean onLongClick(View v) { bTuju_longClick(); return true; }
-		});
-		
-		lJudul.setOnClickListener(new View.OnClickListener() { // pinjem bTuju
-			@Override public void onClick(View v) { bTuju_click(); }
-		});
-		lJudul.setOnLongClickListener(new View.OnLongClickListener() { // pinjem bTuju
-			@Override public boolean onLongClick(View v) { bTuju_longClick(); return true; }
+		bGoto.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override public boolean onLongClick(View v) { bGoto_longClick(); return true; }
 		});
 		
-		bKiri.setOnClickListener(new View.OnClickListener() {
-			@Override public void onClick(View v) { bKiri_click(); }
+		lTitle.setOnClickListener(new View.OnClickListener() { // pinjem bTuju
+			@Override public void onClick(View v) { bGoto_click(); }
 		});
-		bKanan.setOnClickListener(new View.OnClickListener() {
-			@Override public void onClick(View v) { bKanan_click(); }
+		lTitle.setOnLongClickListener(new View.OnLongClickListener() { // pinjem bTuju
+			@Override public boolean onLongClick(View v) { bGoto_longClick(); return true; }
 		});
 		
-		bContext.setOnClickListener(bContext_click);
+		bLeft.setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View v) { bLeft_click(); }
+		});
+		bRight.setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View v) { bRight_click(); }
+		});
 		
-		lsIsi.setOnKeyListener(new View.OnKeyListener() {
-			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
+		bContextMenu.setOnClickListener(bContextMenu_click);
+		
+		lsText.setOnKeyListener(new View.OnKeyListener() {
+			@Override public boolean onKey(View v, int keyCode, KeyEvent event) {
 				int action = event.getAction();
 				if (action == KeyEvent.ACTION_DOWN) {
-					return tekan(keyCode);
+					return press(keyCode);
 				} else if (action == KeyEvent.ACTION_MULTIPLE) {
-					return tekan(keyCode);
+					return press(keyCode);
 				}
 				return false;
 			}
 		});
 		
 		// adapter
-		ayatAdapter_ = new AyatAdapter(this, paralelOnClickListener, new AtributListener());
-		lsIsi.setAdapter(ayatAdapter_);
+		verseAdapter_ = new VerseAdapter(this, parallel_click, new AttributeListener());
+		lsText.setAdapter(verseAdapter_);
 		
 		// muat preferences_instan, dan atur renungan
-		preferences_instan = App.getPreferencesInstan();
-		sejarah = new Sejarah(preferences_instan);
+		instant_pref = App.getPreferencesInstan();
+		history = new History(instant_pref);
 		{
-			String renungan_nama = preferences_instan.getString(NAMAPREF_renungan_nama, null);
-			if (renungan_nama != null) {
-				for (String nama: RenunganActivity.ADA_NAMA) {
-					if (renungan_nama.equals(nama)) {
-						S.penampungan.renungan_nama = renungan_nama;
+			String devotion_name = instant_pref.getString(PREFKEY_devotion_name, null);
+			if (devotion_name != null) {
+				for (String nama: DevotionActivity.AVAILABLE_NAMES) {
+					if (devotion_name.equals(nama)) {
+						S.penampungan.devotion_name = devotion_name;
 					}
 				}
 			}
 		}
 		
 		// kembalikan (edisi; kitab; pasal dan ayat) terakhir.
-		String edisiTerakhir = preferences_instan.getString(NAMAPREF_edisiTerakhir, null);
-		int kitabTerakhir = preferences_instan.getInt(NAMAPREF_kitabTerakhir, 0);
-		int pasalTerakhir = preferences_instan.getInt(NAMAPREF_pasalTerakhir, 0);
-		int ayatTerakhir = preferences_instan.getInt(NAMAPREF_ayatTerakhir, 0);
-		Log.d(TAG, "Akan ke posisi terakhir: edisi " + edisiTerakhir + " kitab " + kitabTerakhir + " pasal " + kitabTerakhir + " ayat " + ayatTerakhir); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		String lastVersion = instant_pref.getString(PREFKEY_lastVersion, null);
+		int lastBook = instant_pref.getInt(PREFKEY_lastBook, 0);
+		int lastChapter = instant_pref.getInt(PREFKEY_lastChapter, 0);
+		int lastVerse = instant_pref.getInt(PREFKEY_lastVerse, 0);
+		Log.d(TAG, "Going to the last: version=" + lastVersion + " book=" + lastBook + " chapter=" + lastBook + " verse=" + lastVerse); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
-		muatEdisiTerakhir(edisiTerakhir);
+		loadLastVersion(lastVersion);
 		
 		{ // muat kitab
-			Kitab k = S.edisiAktif.getKitab(kitabTerakhir);
+			Kitab k = S.edisiAktif.getKitab(lastBook);
 			if (k != null) {
 				S.kitabAktif = k;
 			}
 		}
 		
 		// muat pasal dan ayat
-		tampil(pasalTerakhir, ayatTerakhir);
+		tampil(lastChapter, lastVerse);
 
 		if (D.EBUG) { // supaya ga lupa matiin pas release
 			new AlertDialog.Builder(this)
@@ -267,7 +265,7 @@ public class IsiActivity extends BaseActivity {
 				@Override public NdefMessage createNdefMessage(NfcEvent event) {
 					JSONObject obj = new JSONObject();
 					try {
-						obj.put("ari", Ari.encode(S.kitabAktif.pos, IsiActivity.this.pasal_1, IsiActivity.this.getAyatBerdasarSkrol())); //$NON-NLS-1$
+						obj.put("ari", Ari.encode(S.kitabAktif.pos, IsiActivity.this.chapter_1, IsiActivity.this.getAyatBerdasarSkrol())); //$NON-NLS-1$
 					} catch (JSONException e) { // won't happen
 					}
 					byte[] payload = obj.toString().getBytes();
@@ -346,7 +344,7 @@ public class IsiActivity extends BaseActivity {
 		}
 	}
 
-	private void muatEdisiTerakhir(String edisiTerakhir) {
+	private void loadLastVersion(String edisiTerakhir) {
 		if (edisiTerakhir == null || MEdisiInternal.getEdisiInternalId().equals(edisiTerakhir)) {
 			return; // udah di internal, ga usah ngapa2in lagi!
 		}
@@ -389,7 +387,7 @@ public class IsiActivity extends BaseActivity {
 			if (edisi != null) {
 				S.edisiAktif = edisi;
 				S.edisiId = me.getEdisiId();
-				S.siapinKitab();
+				S.prepareBook();
 				
 				Kitab k = S.edisiAktif.getKitab(S.kitabAktif.pos);
 				if (k != null) {
@@ -399,7 +397,7 @@ public class IsiActivity extends BaseActivity {
 					S.kitabAktif = S.edisiAktif.getKitabPertama(); // apa boleh buat, ga ketemu...
 				}
 				
-				tampil(pasal_1, getAyatBerdasarSkrol());
+				tampil(chapter_1, getAyatBerdasarSkrol());
 			} else {
 				new AlertDialog.Builder(IsiActivity.this)
 				.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, me.getEdisiId()))
@@ -413,7 +411,7 @@ public class IsiActivity extends BaseActivity {
 			if (!sukses) {
 				S.edisiAktif = edisiAktifLama;
 				S.edisiId = edisiIdLama;
-				S.siapinKitab();
+				S.prepareBook();
 			}
 		}
 	}
@@ -429,9 +427,9 @@ public class IsiActivity extends BaseActivity {
 			if (fadeInAnimation == null) {
 				fadeInAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
 			}
-			bContext.setVisibility(View.VISIBLE);
-			bContext.startAnimation(fadeInAnimation);
-			bContext.setEnabled(true);
+			bContextMenu.setVisibility(View.VISIBLE);
+			bContextMenu.startAnimation(fadeInAnimation);
+			bContextMenu.setEnabled(true);
 			showingContextButton = true;
 		}
 	}
@@ -442,8 +440,8 @@ public class IsiActivity extends BaseActivity {
 				fadeOutAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_out);
 			}
 			fadeOutAnimation.setAnimationListener(fadeOutAnimation_animation);
-			bContext.startAnimation(fadeOutAnimation);
-			bContext.setEnabled(false);
+			bContextMenu.startAnimation(fadeOutAnimation);
+			bContextMenu.setEnabled(false);
 			showingContextButton = false;
 		}
 	}
@@ -452,11 +450,11 @@ public class IsiActivity extends BaseActivity {
 		@Override public void onAnimationStart(Animation animation) {}
 		@Override public void onAnimationRepeat(Animation animation) {}
 		@Override public void onAnimationEnd(Animation animation) {
-			bContext.setVisibility(View.INVISIBLE);
+			bContextMenu.setVisibility(View.INVISIBLE);
 		}
 	};
 	
-	protected boolean tekan(int keyCode) {
+	protected boolean press(int keyCode) {
 		String tombolVolumeBuatPindah = Preferences.getString(R.string.pref_tombolVolumeBuatPindah_key, R.string.pref_tombolVolumeBuatPindah_default);
 		if (U.equals(tombolVolumeBuatPindah, "pasal")) { //$NON-NLS-1$
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_RIGHT;
@@ -467,15 +465,15 @@ public class IsiActivity extends BaseActivity {
 		}
 
 		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-			bKiri_click();
+			bLeft_click();
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-			bKanan_click();
+			bRight_click();
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
 			int posLama = getPosisiBerdasarSkrol();
-			if (posLama < ayatAdapter_.getCount() - 1) {
-				lsIsi.setSelectionFromTop(posLama+1, lsIsi.getVerticalFadingEdgeLength());
+			if (posLama < verseAdapter_.getCount() - 1) {
+				lsText.setSelectionFromTop(posLama+1, lsText.getVerticalFadingEdgeLength());
 			}
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
@@ -483,12 +481,12 @@ public class IsiActivity extends BaseActivity {
 			if (posLama >= 1) {
 				int posBaru = posLama - 1;
 				while (posBaru > 0) { // cek disabled, kalo iya, mundurin lagi
-					if (ayatAdapter_.isEnabled(posBaru)) break;
+					if (verseAdapter_.isEnabled(posBaru)) break;
 					posBaru--;
 				}
-				lsIsi.setSelectionFromTop(posBaru, lsIsi.getVerticalFadingEdgeLength());
+				lsText.setSelectionFromTop(posBaru, lsText.getVerticalFadingEdgeLength());
 			} else {
-				lsIsi.setSelectionFromTop(0, lsIsi.getVerticalFadingEdgeLength());
+				lsText.setSelectionFromTop(0, lsText.getVerticalFadingEdgeLength());
 			}
 			return true;
 		}
@@ -497,15 +495,15 @@ public class IsiActivity extends BaseActivity {
 
 	private synchronized void nyalakanTerusLayarKalauDiminta() {
 		if (Preferences.getBoolean(R.string.pref_nyalakanTerusLayar_key, R.bool.pref_nyalakanTerusLayar_default)) {
-			lsIsi.setKeepScreenOn(true);
+			lsText.setKeepScreenOn(true);
 		}
 	}
 
 	private synchronized void matikanLayarKalauSudahBolehMati() {
-		lsIsi.setKeepScreenOn(false);
+		lsText.setKeepScreenOn(false);
 	}
 	
-	int loncatKe(String alamat) {
+	int jumpTo(String alamat) {
 		if (alamat.trim().length() == 0) {
 			return 0;
 		}
@@ -566,14 +564,14 @@ public class IsiActivity extends BaseActivity {
 		tampil(Ari.toPasal(ari), Ari.toAyat(ari));
 	}
 
-	private OnItemClickListener lsIsi_itemClick = new OnItemClickListener() {
+	private OnItemClickListener lsText_itemClick = new OnItemClickListener() {
 		@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			hideOrShowContextButton();
 		}
 	};
 	
 	void hideOrShowContextButton() {
-		SparseBooleanArray checkedPositions = lsIsi.getCheckedItemPositions();
+		SparseBooleanArray checkedPositions = lsText.getCheckedItemPositions();
 		boolean anyChecked = false;
 		for (int i = 0; i < checkedPositions.size(); i++) if (checkedPositions.valueAt(i)) {
 			anyChecked = true; 
@@ -589,7 +587,7 @@ public class IsiActivity extends BaseActivity {
 
 	private IntArrayList getAyatTerpilih_1() {
 		// hitung ada berapa yang terpilih
-		SparseBooleanArray positions = lsIsi.getCheckedItemPositions();
+		SparseBooleanArray positions = lsText.getCheckedItemPositions();
 		if (positions == null) {
 			return new IntArrayList(0);
 		}
@@ -598,7 +596,7 @@ public class IsiActivity extends BaseActivity {
 		for (int i = 0, len = positions.size(); i < len; i++) {
 			if (positions.valueAt(i)) {
 				int position = positions.keyAt(i);
-				int ayat_1 = ayatAdapter_.getAyatDariPosition(position);
+				int ayat_1 = verseAdapter_.getAyatDariPosition(position);
 				if (ayat_1 >= 1) res.add(ayat_1);
 			}
 		}
@@ -608,11 +606,11 @@ public class IsiActivity extends BaseActivity {
 	private CharSequence alamatDariAyatTerpilih(IntArrayList ayatTerpilih) {
 		if (ayatTerpilih.size() == 0) {
 			// harusnya mustahil. Maka ga usa ngapa2in deh.
-			return S.alamat(S.kitabAktif, this.pasal_1);
+			return S.alamat(S.kitabAktif, this.chapter_1);
 		} else if (ayatTerpilih.size() == 1) {
-			return S.alamat(S.kitabAktif, this.pasal_1, ayatTerpilih.get(0));
+			return S.alamat(S.kitabAktif, this.chapter_1, ayatTerpilih.get(0));
 		} else {
-			return S.alamat(S.kitabAktif, this.pasal_1, ayatTerpilih);
+			return S.alamat(S.kitabAktif, this.chapter_1, ayatTerpilih);
 		}
 	}
 	
@@ -719,7 +717,7 @@ public class IsiActivity extends BaseActivity {
 			for (int i = 0; i < terpilih.size(); i++) {
 				int ayat_1 = terpilih.get(i);
 				if (i != 0) salinan.append('\n');
-				salinan.append(U.buangKodeKusus(ayatAdapter_.getAyat(ayat_1)));
+				salinan.append(U.buangKodeKusus(verseAdapter_.getAyat(ayat_1)));
 			}
 			
 			U.salin(salinan);
@@ -734,13 +732,13 @@ public class IsiActivity extends BaseActivity {
 				skrolSupayaAyatKeliatan(ayatUtama_1);
 			}
 			
-			final int ari = Ari.encode(S.kitabAktif.pos, this.pasal_1, ayatUtama_1);
+			final int ari = Ari.encode(S.kitabAktif.pos, this.chapter_1, ayatUtama_1);
 			
-			JenisBukmakDialog dialog = new JenisBukmakDialog(this, S.alamat(S.kitabAktif, this.pasal_1, ayatUtama_1), ari);
+			JenisBukmakDialog dialog = new JenisBukmakDialog(this, S.alamat(S.kitabAktif, this.chapter_1, ayatUtama_1), ari);
 			dialog.setListener(new JenisBukmakDialog.Listener() {
 				@Override public void onOk() {
 					uncheckAll();
-					ayatAdapter_.muatAtributMap();
+					verseAdapter_.muatAtributMap();
 				}
 			});
 			dialog.bukaDialog();
@@ -752,21 +750,21 @@ public class IsiActivity extends BaseActivity {
 				skrolSupayaAyatKeliatan(ayatUtama_1);
 			}
 			
-			JenisCatatanDialog dialog = new JenisCatatanDialog(IsiActivity.this, S.kitabAktif, this.pasal_1, ayatUtama_1, new RefreshCallback() {
+			JenisCatatanDialog dialog = new JenisCatatanDialog(IsiActivity.this, S.kitabAktif, this.chapter_1, ayatUtama_1, new RefreshCallback() {
 				@Override public void udahan() {
 					uncheckAll();
-					ayatAdapter_.muatAtributMap();
+					verseAdapter_.muatAtributMap();
 				}
 			});
 			dialog.bukaDialog();
 		} else if (item == menu.menuTambahStabilo) {
-			final int ariKp = Ari.encode(S.kitabAktif.pos, this.pasal_1, 0);
+			final int ariKp = Ari.encode(S.kitabAktif.pos, this.chapter_1, 0);
 			int warnaRgb = S.getDb().getWarnaRgbStabilo(ariKp, terpilih);
 			
 			new JenisStabiloDialog(this, ariKp, terpilih, new JenisStabiloDialog.JenisStabiloCallback() {
 				@Override public void onOk(int warnaRgb) {
 					uncheckAll();
-					ayatAdapter_.muatAtributMap();
+					verseAdapter_.muatAtributMap();
 				}
 			}, warnaRgb, alamat).bukaDialog();
 		} else if (item == menu.menuBagikan) {
@@ -777,28 +775,28 @@ public class IsiActivity extends BaseActivity {
 			for (int i = 0; i < terpilih.size(); i++) {
 				int ayat_1 = terpilih.get(i);
 				if (i != 0) sb.append('\n');
-				sb.append(U.buangKodeKusus(ayatAdapter_.getAyat(ayat_1)));
+				sb.append(U.buangKodeKusus(verseAdapter_.getAyat(ayat_1)));
 			}
 			
 			String urlAyat;
 			if (terpilih.size() == 1) {
-				urlAyat = S.bikinUrlAyat(S.kitabAktif, this.pasal_1, String.valueOf(terpilih.get(0)));
+				urlAyat = S.bikinUrlAyat(S.kitabAktif, this.chapter_1, String.valueOf(terpilih.get(0)));
 			} else {
 				StringBuilder sb2 = new StringBuilder();
 				S.tulisAyatRange(terpilih, sb2);
-				urlAyat = S.bikinUrlAyat(S.kitabAktif, this.pasal_1, sb2.toString()); // pake ayat range
+				urlAyat = S.bikinUrlAyat(S.kitabAktif, this.chapter_1, sb2.toString()); // pake ayat range
 			}
 			
 			Intent intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain"); //$NON-NLS-1$
 			intent.putExtra(Intent.EXTRA_SUBJECT, alamat); 
 			intent.putExtra(Intent.EXTRA_TEXT, sb.toString());
-			intent.putExtra(EXTRA_urlAyat, urlAyat);
-			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, alamat)), REQCODE_bagikan);
+			intent.putExtra(EXTRA_verseUrl, urlAyat);
+			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, alamat)), REQCODE_share);
 
 			uncheckAll();
 		} else if (item == menu.menuEsvsbasal) {
-			final int ari = Ari.encode(S.kitabAktif.pos, this.pasal_1, ayatUtama_1);
+			final int ari = Ari.encode(S.kitabAktif.pos, this.chapter_1, ayatUtama_1);
 
 			try {
 				Intent intent = new Intent("yuku.esvsbasal.action.GOTO"); //$NON-NLS-1$
@@ -811,19 +809,19 @@ public class IsiActivity extends BaseActivity {
 	}
 
 	private void skrolSupayaAyatKeliatan(int ayatUtama_1) {
-		int position = ayatAdapter_.getPositionAwalPerikopDariAyat(ayatUtama_1);
+		int position = verseAdapter_.getPositionAwalPerikopDariAyat(ayatUtama_1);
 		if (Build.VERSION.SDK_INT >= 8) {
-			Api8.ListView_smoothScrollToPosition(lsIsi, position);
+			Api8.ListView_smoothScrollToPosition(lsText, position);
 		} else {
-			lsIsi.setSelectionFromTop(position, lsIsi.getVerticalFadingEdgeLength());
+			lsText.setSelectionFromTop(position, lsText.getVerticalFadingEdgeLength());
 		}
 	}
 
-	private void terapkanPengaturan(boolean bahasaJuga) {
+	private void applyPreferences(boolean bahasaJuga) {
 		// penerapan langsung warnaLatar
 		{
 			root.setBackgroundColor(S.penerapan.warnaLatar);
-			lsIsi.setCacheColorHint(S.penerapan.warnaLatar);
+			lsText.setCacheColorHint(S.penerapan.warnaLatar);
 		}
 		
 		// penerapan langsung sembunyi navigasi
@@ -831,10 +829,10 @@ public class IsiActivity extends BaseActivity {
 			View panelNavigasi = findViewById(R.id.panelNavigasi);
 			if (Preferences.getBoolean(R.string.pref_tanpaNavigasi_key, R.bool.pref_tanpaNavigasi_default)) {
 				panelNavigasi.setVisibility(View.GONE);
-				tempatJudul.setVisibility(View.VISIBLE);
+				titleContainer.setVisibility(View.VISIBLE);
 			} else {
 				panelNavigasi.setVisibility(View.VISIBLE);
-				tempatJudul.setVisibility(View.GONE);
+				titleContainer.setVisibility(View.GONE);
 			}
 		}
 		
@@ -843,20 +841,20 @@ public class IsiActivity extends BaseActivity {
 		}
 		
 		// wajib
-		lsIsi.invalidateViews();
+		lsText.invalidateViews();
 	}
 	
 	@Override
 	protected void onStop() {
 		super.onStop();
 		
-		Editor editor = preferences_instan.edit();
-		editor.putInt(NAMAPREF_kitabTerakhir, S.kitabAktif.pos);
-		editor.putInt(NAMAPREF_pasalTerakhir, pasal_1);
-		editor.putInt(NAMAPREF_ayatTerakhir, getAyatBerdasarSkrol());
-		editor.putString(NAMAPREF_renungan_nama, S.penampungan.renungan_nama);
-		editor.putString(NAMAPREF_edisiTerakhir, S.edisiId);
-		sejarah.simpan(editor);
+		Editor editor = instant_pref.edit();
+		editor.putInt(PREFKEY_lastBook, S.kitabAktif.pos);
+		editor.putInt(PREFKEY_lastChapter, chapter_1);
+		editor.putInt(PREFKEY_lastVerse, getAyatBerdasarSkrol());
+		editor.putString(PREFKEY_devotion_name, S.penampungan.devotion_name);
+		editor.putString(PREFKEY_lastVersion, S.edisiId);
+		history.simpan(editor);
 		editor.commit();
 		
 		matikanLayarKalauSudahBolehMati();
@@ -874,21 +872,21 @@ public class IsiActivity extends BaseActivity {
 	 * @return ayat mulai dari 1
 	 */
 	int getAyatBerdasarSkrol() {
-		return ayatAdapter_.getAyatDariPosition(getPosisiBerdasarSkrol());
+		return verseAdapter_.getAyatDariPosition(getPosisiBerdasarSkrol());
 	}
 	
 	int getPosisiBerdasarSkrol() {
-		int pos = lsIsi.getFirstVisiblePosition();
+		int pos = lsText.getFirstVisiblePosition();
 
 		// cek apakah paling atas uda keskrol
-		View child = lsIsi.getChildAt(0); 
+		View child = lsText.getChildAt(0); 
 		if (child != null) {
 			int top = child.getTop();
 			if (top == 0) {
 				return pos;
 			}
 			int bottom = child.getBottom();
-			if (bottom > lsIsi.getVerticalFadingEdgeLength()) {
+			if (bottom > lsText.getVerticalFadingEdgeLength()) {
 				return pos;
 			} else {
 				return pos+1;
@@ -898,7 +896,7 @@ public class IsiActivity extends BaseActivity {
 		return pos;
 	}
 
-	void bTuju_click() {
+	void bGoto_click() {
 		if (Preferences.getBoolean(R.string.pref_tombolAlamatLoncat_key, R.bool.pref_tombolAlamatLoncat_default)) {
 			bukaDialogLoncat();
 		} else {
@@ -906,15 +904,15 @@ public class IsiActivity extends BaseActivity {
 		}
 	}
 	
-	void bTuju_longClick() {
-		if (sejarah.getN() > 0) {
+	void bGoto_longClick() {
+		if (history.getN() > 0) {
 			new AlertDialog.Builder(this)
 			.setAdapter(sejarahAdapter, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					int ari = sejarah.getAri(which);
+					int ari = history.getAri(which);
 					loncatKeAri(ari);
-					sejarah.tambah(ari);
+					history.add(ari);
 				}
 			})
 			.setNegativeButton(R.string.cancel, null)
@@ -931,7 +929,7 @@ public class IsiActivity extends BaseActivity {
 			if (res == null) {
 				res = (TextView) LayoutInflater.from(IsiActivity.this).inflate(android.R.layout.select_dialog_item, null);
 			}
-			int ari = sejarah.getAri(position);
+			int ari = history.getAri(position);
 			res.setText(S.alamat(S.edisiAktif, ari));
 			return res;
 		}
@@ -943,23 +941,23 @@ public class IsiActivity extends BaseActivity {
 		
 		@Override
 		public Integer getItem(int position) {
-			return sejarah.getAri(position);
+			return history.getAri(position);
 		}
 		
 		@Override
 		public int getCount() {
-			return sejarah.getN();
+			return history.getN();
 		}
 	};
 	
 	void bukaDialogTuju() {
 		Intent intent = new Intent(this, MenujuActivity.class);
-		intent.putExtra(MenujuActivity.EXTRA_pasal, pasal_1);
+		intent.putExtra(MenujuActivity.EXTRA_pasal, chapter_1);
 		
 		int ayat = getAyatBerdasarSkrol();
 		intent.putExtra(MenujuActivity.EXTRA_ayat, ayat);
 		
-		startActivityForResult(intent, REQCODE_tuju);
+		startActivityForResult(intent, REQCODE_goto);
 	}
 	
 	void bukaDialogLoncat() {
@@ -969,7 +967,7 @@ public class IsiActivity extends BaseActivity {
 		final ImageButton bKeTuju = (ImageButton) loncat.findViewById(R.id.bKeTuju);
 
 		{
-			String alamatContoh = S.alamat(S.kitabAktif, IsiActivity.this.pasal_1, getAyatBerdasarSkrol());
+			String alamatContoh = S.alamat(S.kitabAktif, IsiActivity.this.chapter_1, getAyatBerdasarSkrol());
 			String text = getString(R.string.loncat_ke_alamat_titikdua);
 			int pos = text.indexOf("%s"); //$NON-NLS-1$
 			if (pos >= 0) {
@@ -985,9 +983,9 @@ public class IsiActivity extends BaseActivity {
 		final DialogInterface.OnClickListener loncat_click = new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				int ari = loncatKe(tAlamatLoncat.getText().toString());
+				int ari = jumpTo(tAlamatLoncat.getText().toString());
 				if (ari != 0) {
-					sejarah.tambah(ari);
+					history.add(ari);
 				}
 			}
 		};
@@ -1081,7 +1079,7 @@ public class IsiActivity extends BaseActivity {
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menuBukmak:
-			startActivityForResult(new Intent(this, BukmakActivity.class), REQCODE_bukmak);
+			startActivityForResult(new Intent(this, BukmakActivity.class), REQCODE_bookmark);
 			return true;
 		case R.id.menuSearch2:
 			menuSearch2_click();
@@ -1090,7 +1088,7 @@ public class IsiActivity extends BaseActivity {
 			bukaDialogEdisi();
 			return true;
 		case R.id.menuRenungan: 
-			startActivityForResult(new Intent(this, RenunganActivity.class), REQCODE_renungan);
+			startActivityForResult(new Intent(this, DevotionActivity.class), REQCODE_devotion);
 			return true;
 		case R.id.menuSongs: 
 			startActivity(SongViewActivity.createIntent());
@@ -1099,7 +1097,7 @@ public class IsiActivity extends BaseActivity {
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
 		case R.id.menuPengaturan:
-			startActivityForResult(new Intent(this, PengaturanActivity.class), REQCODE_pengaturan);
+			startActivityForResult(new Intent(this, PengaturanActivity.class), REQCODE_settings);
 			return true;
 		case R.id.menuBantuan:
 			startActivity(new Intent(this, BantuanActivity.class));
@@ -1167,7 +1165,7 @@ public class IsiActivity extends BaseActivity {
 		.setPositiveButton(R.string.versi_lainnya, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
 				Intent intent = new Intent(getApplicationContext(), EdisiActivity.class);
-				startActivityForResult(intent, REQCODE_edisi);
+				startActivityForResult(intent, REQCODE_version);
 			}
 		})
 		.setNegativeButton(R.string.cancel, null)
@@ -1175,13 +1173,13 @@ public class IsiActivity extends BaseActivity {
 	}
 
 	private void menuSearch2_click() {
-		startActivityForResult(Search2Activity.createIntent(search2_query, search2_hasilCari, search2_posisiTerpilih, S.kitabAktif.pos), REQCODE_search);
+		startActivityForResult(Search2Activity.createIntent(search2_query, search2_results, search2_selectedPosition, S.kitabAktif.pos), REQCODE_search);
 	}
 	
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.d(TAG, "onActivityResult reqCode=0x" + Integer.toHexString(requestCode) + " resCode=" + resultCode + " data=" + data); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
-		if (requestCode == REQCODE_tuju) {
+		if (requestCode == REQCODE_goto) {
 			if (resultCode == RESULT_OK) {
 				int pasal = data.getIntExtra(MenujuActivity.EXTRA_pasal, 0);
 				int ayat = data.getIntExtra(MenujuActivity.EXTRA_ayat, 0);
@@ -1196,18 +1194,18 @@ public class IsiActivity extends BaseActivity {
 				}
 				
 				int ari_pa = tampil(pasal, ayat);
-				sejarah.tambah(Ari.encode(kitabPos, ari_pa));
+				history.add(Ari.encode(kitabPos, ari_pa));
 			} else if (resultCode == RESULT_pindahCara) {
 				bukaDialogLoncat();
 			}
-		} else if (requestCode == REQCODE_bukmak) {
-			ayatAdapter_.muatAtributMap();
+		} else if (requestCode == REQCODE_bookmark) {
+			verseAdapter_.muatAtributMap();
 
 			if (resultCode == RESULT_OK) {
 				int ari = data.getIntExtra(BukmakActivity.EXTRA_ariTerpilih, 0);
 				if (ari != 0) { // 0 berarti ga ada apa2, karena ga ada pasal 0 ayat 0
 					loncatKeAri(ari);
-					sejarah.tambah(ari);
+					history.add(ari);
 				}
 			}
 		} else if (requestCode == REQCODE_search) {
@@ -1216,36 +1214,36 @@ public class IsiActivity extends BaseActivity {
 				if (result != null) {
 					if (result.ariTerpilih != -1) {
 						loncatKeAri(result.ariTerpilih);
-						sejarah.tambah(result.ariTerpilih);
+						history.add(result.ariTerpilih);
 					}
 					
 					search2_query = result.query;
-					search2_hasilCari = result.hasilCari;
-					search2_posisiTerpilih = result.posisiTerpilih;
+					search2_results = result.hasilCari;
+					search2_selectedPosition = result.posisiTerpilih;
 				}
 			}
-		} else if (requestCode == REQCODE_renungan) {
+		} else if (requestCode == REQCODE_devotion) {
 			if (data != null) {
-				String alamat = data.getStringExtra(RenunganActivity.EXTRA_alamat);
+				String alamat = data.getStringExtra(DevotionActivity.EXTRA_alamat);
 				if (alamat != null) {
-					int ari = loncatKe(alamat);
+					int ari = jumpTo(alamat);
 					if (ari != 0) {
-						sejarah.tambah(ari);
+						history.add(ari);
 					}
 				}
 			}
-		} else if (requestCode == REQCODE_pengaturan) {
+		} else if (requestCode == REQCODE_settings) {
 			// HARUS rilod pengaturan.
-			S.hitungPenerapanBerdasarkanPengaturan();
+			S.calculateAppliedValuesBasedOnPreferences();
 			
-			terapkanPengaturan(true);
-		} else if (requestCode == REQCODE_bagikan) {
+			applyPreferences(true);
+		} else if (requestCode == REQCODE_share) {
 			if (resultCode == RESULT_OK) {
 				ShareActivity.Result result = ShareActivity.obtainResult(data);
 				if (result != null && result.chosenIntent != null) {
 					Intent chosenIntent = result.chosenIntent;
 					if (U.equals(chosenIntent.getComponent().getPackageName(), "com.facebook.katana")) { //$NON-NLS-1$
-						String urlAyat = chosenIntent.getStringExtra(EXTRA_urlAyat);
+						String urlAyat = chosenIntent.getStringExtra(EXTRA_verseUrl);
 						if (urlAyat != null) {
 							chosenIntent.putExtra(Intent.EXTRA_TEXT, urlAyat); // change text to url
 						}
@@ -1284,34 +1282,34 @@ public class IsiActivity extends BaseActivity {
 			
 			//# isi adapter dengan data baru, pastikan semua checked state direset dulu
 			uncheckAll();
-			ayatAdapter_.setData(S.kitabAktif, pasal_1, xayat, perikop_xari, perikop_xblok, nblok);
-			ayatAdapter_.muatAtributMap();
+			verseAdapter_.setData(S.kitabAktif, pasal_1, xayat, perikop_xari, perikop_xblok, nblok);
+			verseAdapter_.muatAtributMap();
 			
 			// kasi tau activity
-			this.pasal_1 = pasal_1;
+			this.chapter_1 = pasal_1;
 			
-			final int position = ayatAdapter_.getPositionAwalPerikopDariAyat(ayat_1);
+			final int position = verseAdapter_.getPositionAwalPerikopDariAyat(ayat_1);
 			
 			if (position == -1) {
 				Log.w(TAG, "ga bisa ketemu ayat " + ayat_1 + ", ANEH!"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				lsIsi.setSelectionFromTop(position, lsIsi.getVerticalFadingEdgeLength());
+				lsText.setSelectionFromTop(position, lsText.getVerticalFadingEdgeLength());
 			}
 		}
 		
 		String judul = S.alamat(S.kitabAktif, pasal_1);
-		lJudul.setText(judul);
-		bTuju.setText(judul);
+		lTitle.setText(judul);
+		bGoto.setText(judul);
 		
 		return Ari.encode(0, pasal_1, ayat_1);
 	}
 
 	void uncheckAll() {
-		SparseBooleanArray checkedPositions = lsIsi.getCheckedItemPositions();
+		SparseBooleanArray checkedPositions = lsText.getCheckedItemPositions();
 		if (checkedPositions != null && checkedPositions.size() > 0) {
 			for (int i = checkedPositions.size() - 1; i >= 0; i--) {
 				if (checkedPositions.valueAt(i)) {
-					lsIsi.setItemChecked(checkedPositions.keyAt(i), false);
+					lsText.setItemChecked(checkedPositions.keyAt(i), false);
 				}
 			}
 		}
@@ -1320,13 +1318,13 @@ public class IsiActivity extends BaseActivity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (tekan(keyCode)) return true;
+		if (press(keyCode)) return true;
 		return super.onKeyDown(keyCode, event);
 	}
 	
 	@Override
 	public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
-		if (tekan(keyCode)) return true;
+		if (press(keyCode)) return true;
 		return super.onKeyMultiple(keyCode, repeatCount, event);
 	}
 	
@@ -1339,9 +1337,9 @@ public class IsiActivity extends BaseActivity {
 		return super.onKeyUp(keyCode, event);
 	}
 	
-	void bKiri_click() {
+	void bLeft_click() {
 		Kitab kitabKini = S.kitabAktif;
-		if (pasal_1 == 1) {
+		if (chapter_1 == 1) {
 			// uda di awal pasal, masuk ke kitab sebelum
 			int cobaKitabPos = kitabKini.pos - 1;
 			while (cobaKitabPos >= 0) {
@@ -1356,14 +1354,14 @@ public class IsiActivity extends BaseActivity {
 			}
 			// whileelse: sekarang sudah Kejadian 1. Ga usa ngapa2in
 		} else {
-			int pasalBaru = pasal_1 - 1;
+			int pasalBaru = chapter_1 - 1;
 			tampil(pasalBaru, 1);
 		}
 	}
 	
-	void bKanan_click() {
+	void bRight_click() {
 		Kitab kitabKini = S.kitabAktif;
-		if (pasal_1 >= kitabKini.npasal) {
+		if (chapter_1 >= kitabKini.npasal) {
 			int maxKitabPos = S.edisiAktif.getMaxKitabPosTambahSatu();
 			int cobaKitabPos = kitabKini.pos + 1;
 			while (cobaKitabPos < maxKitabPos) {
@@ -1377,12 +1375,12 @@ public class IsiActivity extends BaseActivity {
 			}
 			// whileelse: uda di Wahyu (atau kitab terakhir) pasal terakhir. Ga usa ngapa2in
 		} else {
-			int pasalBaru = pasal_1 + 1;
+			int pasalBaru = chapter_1 + 1;
 			tampil(pasalBaru, 1);
 		}
 	}
 
-	private OnClickListener bContext_click = new OnClickListener() {
+	private OnClickListener bContextMenu_click = new OnClickListener() {
 		@Override public void onClick(View v) {
 			showFakeContextMenu();
 		}
@@ -1395,7 +1393,7 @@ public class IsiActivity extends BaseActivity {
 		return true;
 	}
 
-	public class AtributListener {
+	public class AttributeListener {
 		public void onClick(Kitab kitab_, int pasal_1, int ayat_1, int jenis) {
 			if (jenis == Bukmak2.jenis_bukmak) {
 				final int ari = Ari.encode(kitab_.pos, pasal_1, ayat_1);
@@ -1403,14 +1401,14 @@ public class IsiActivity extends BaseActivity {
 				JenisBukmakDialog dialog = new JenisBukmakDialog(IsiActivity.this, alamat, ari);
 				dialog.setListener(new JenisBukmakDialog.Listener() {
 					@Override public void onOk() {
-						ayatAdapter_.muatAtributMap();
+						verseAdapter_.muatAtributMap();
 					}
 				});
 				dialog.bukaDialog();
 			} else if (jenis == Bukmak2.jenis_catatan) {
 				JenisCatatanDialog dialog = new JenisCatatanDialog(IsiActivity.this, kitab_, pasal_1, ayat_1, new RefreshCallback() {
 					@Override public void udahan() {
-						ayatAdapter_.muatAtributMap();
+						verseAdapter_.muatAtributMap();
 					}
 				});
 				dialog.bukaDialog();

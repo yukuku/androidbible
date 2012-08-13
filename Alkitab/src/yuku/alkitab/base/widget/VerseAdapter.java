@@ -29,13 +29,13 @@ import yuku.alkitab.base.model.Kitab;
 import yuku.alkitab.base.storage.Db.Bukmak2;
 import yuku.alkitab.base.util.PengaturTampilan;
 
-public class AyatAdapter extends BaseAdapter {
-	public static final String TAG = AyatAdapter.class.getSimpleName();
+public class VerseAdapter extends BaseAdapter {
+	public static final String TAG = VerseAdapter.class.getSimpleName();
 	
 	//# field ctor
 	final Context context_;
 	final CallbackSpan.OnClickListener paralelListener_;
-	final IsiActivity.AtributListener atributListener_;
+	final IsiActivity.AttributeListener atributListener_;
 	final float density_;
 	
 	//# field setData
@@ -54,10 +54,10 @@ public class AyatAdapter extends BaseAdapter {
 	private int[] atributMap_; // bit 0(0x1) = bukmak; bit 1(0x2) = catatan; bit 2(0x4) = stabilo; 
 	private int[] stabiloMap_; // null atau warna stabilo
 
-	public AyatAdapter(Context context, CallbackSpan.OnClickListener paralelListener, IsiActivity.AtributListener atributListener) {
+	public VerseAdapter(Context context, CallbackSpan.OnClickListener paralelListener, IsiActivity.AttributeListener attributeListener) {
 		context_ = context;
 		paralelListener_ = paralelListener;
-		atributListener_ = atributListener;
+		atributListener_ = attributeListener;
 		density_ = context.getResources().getDisplayMetrics().density;
 	}
 	

@@ -31,7 +31,7 @@
 		<activity android:name="yuku.alkitab.base.ac.BukmakListActivity" android:label="@string/pembatas_buku" android:configChanges="keyboardHidden|orientation|screenSize|locale" android:windowSoftInputMode="adjustResize|stateHidden" />
 		<activity android:name="yuku.alkitab.base.ac.EdisiActivity" android:label="@string/kelola_versi" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 		<activity android:name="yuku.alkitab.base.ac.Search2Activity" android:label="@string/cari_v" android:configChanges="keyboardHidden|orientation|screenSize|locale" android:theme="@android:style/Theme.NoTitleBar" />
-		<activity android:name="yuku.alkitab.base.ac.RenunganActivity" android:label="@string/renungan" android:configChanges="keyboardHidden|orientation|screenSize|locale" android:theme="@android:style/Theme.NoTitleBar" />
+		<activity android:name="yuku.alkitab.base.ac.DevotionActivity" android:label="@string/renungan" android:configChanges="keyboardHidden|orientation|screenSize|locale" android:theme="@android:style/Theme.NoTitleBar" />
 		<activity android:name="yuku.alkitab.base.ac.BantuanActivity" android:label="@string/bantuan_judul" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 		<activity android:name="yuku.alkitab.base.ac.AboutActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 		<activity android:name="yuku.alkitab.base.ac.ShareActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />

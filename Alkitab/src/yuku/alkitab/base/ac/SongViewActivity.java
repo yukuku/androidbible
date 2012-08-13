@@ -87,7 +87,7 @@ public class SongViewActivity extends BaseActivity {
 		bDownload.setOnClickListener(bDownload_click);
 		
 		// for colors of bg, text, etc
-		S.hitungPenerapanBerdasarkanPengaturan();
+		S.calculateAppliedValuesBasedOnPreferences();
 		V.get(this, android.R.id.content).setBackgroundColor(S.penerapan.warnaLatar);
 		
 		templateCustomVars = new Bundle();

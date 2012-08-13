@@ -133,10 +133,10 @@ public class Search2Activity extends BaseActivity {
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		U.nyalakanTitleBarHanyaKalauTablet(this);
+		U.enableTitleBarOnlyForHolo(this);
 		
-		S.siapinKitab();
-		S.hitungPenerapanBerdasarkanPengaturan();
+		S.prepareBook();
+		S.calculateAppliedValuesBasedOnPreferences();
 		
 		setContentView(R.layout.activity_search2);
 

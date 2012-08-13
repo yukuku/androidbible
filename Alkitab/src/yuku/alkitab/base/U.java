@@ -241,12 +241,12 @@ public class U {
 		return sb.toString();
 	}
 	
-	public static boolean tabletkah() {
+	public static boolean isHolo() {
 		return Build.VERSION.SDK_INT /* ini diambil waktu runtime */ >= 11 /* HONEYCOMB */;
 	}
 	
-	public static void nyalakanTitleBarHanyaKalauTablet(Activity activity) {
-		if (tabletkah()) {
+	public static void enableTitleBarOnlyForHolo(Activity activity) {
+		if (isHolo()) {
 			activity.setTheme(Api11.getTheme_Holo());
 		}
 	}
@@ -274,7 +274,7 @@ public class U {
 	public static int getWarnaBerdasarkanKitabPos(int pos) {
 		if (colorSet == null) {
 			colorSet = new int[3];
-			if (U.tabletkah()) {
+			if (U.isHolo()) {
 				colorSet[0] = 0xffffcccf;
 				colorSet[1] = 0xffccccff;
 				colorSet[2] = 0xffffffff;
