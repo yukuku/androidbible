@@ -191,18 +191,18 @@ public class Search2Engine {
 	
 		if (sumber == null) {
 			for (Book k: S.activeVersion.getConsecutiveBooks()) {
-				if (xkitabPos.get(k.pos, false) == false) {
+				if (xkitabPos.get(k.bookId, false) == false) {
 					continue; // ga termasuk dalam kitab yang dipilih
 				}
 				
-				int npasal = k.npasal;
+				int npasal = k.nchapter;
 				
 				for (int pasal_1 = 1; pasal_1 <= npasal; pasal_1++) {
 					// coba sepasal sekaligus dulu.
 					String sepasal = S.muatTeksJanganPisahAyatHurufKecil(S.activeVersion, k, pasal_1);
 					if (sepasal.indexOf(kata) >= 0) {
 						// hanya lakukan ini jika dalam sepasal kedetek ada kata
-						cariDalamSepasal(sepasal, kata, res, Ari.encode(k.pos, pasal_1, 0), pakeTambah);
+						cariDalamSepasal(sepasal, kata, res, Ari.encode(k.bookId, pasal_1, 0), pakeTambah);
 					}
 				}
 	
@@ -221,7 +221,7 @@ public class Search2Engine {
 				
 				// ga usa cek kitab null, karena masuk sini hanya kalau udah pernah search token sebelumnya
 				// yang berdasarkan getConsecutiveXkitab yang ga mungkin ada nullnya.
-				Book k = S.activeVersion.getKitab(Ari.toKitab(ariKpKini));
+				Book k = S.activeVersion.getBook(Ari.toBook(ariKpKini));
 				int pasal_1 = Ari.toChapter(ariKpKini);
 				
 				String sepasal = S.muatTeksJanganPisahAyatHurufKecil(S.activeVersion, k, pasal_1);

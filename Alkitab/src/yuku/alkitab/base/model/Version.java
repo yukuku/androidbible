@@ -3,10 +3,10 @@ package yuku.alkitab.base.model;
 import yuku.alkitab.base.storage.Pembaca;
 
 public class Version {
-	public Pembaca pembaca;
+	public Pembaca reader;
 	
 	public Version(Pembaca pembaca) {
-		this.pembaca = pembaca;
+		this.reader = pembaca;
 	}
 	
 	private Book[] volatile_xkitab;
@@ -16,7 +16,7 @@ public class Version {
 	
 	private synchronized Book[] getXkitab() {
 		if (volatile_xkitab == null) {
-			volatile_xkitab = this.pembaca.bacaInfoKitab();
+			volatile_xkitab = this.reader.bacaInfoKitab();
 		}
 		return volatile_xkitab;
 	}
@@ -24,7 +24,7 @@ public class Version {
 	/**
 	 * @return kitab pos yang tertinggi (walau tengah2nya bisa ada null) + 1
 	 */
-	public synchronized int getMaxKitabPosTambahSatu() {
+	public synchronized int getMaxBookIdPlusOne() {
 		return getXkitab().length;
 	}
 	
@@ -57,7 +57,7 @@ public class Version {
 	/**
 	 * @return null if kitabPos is out of range, or the kitab is not available.
 	 */
-	public synchronized Book getKitab(int kitabPos) {
+	public synchronized Book getBook(int kitabPos) {
 		Book[] xkitab = getXkitab();
 		if (kitabPos < 0 || kitabPos >= xkitab.length) {
 			return null;
@@ -65,18 +65,18 @@ public class Version {
 		return xkitab[kitabPos];
 	}
 	
-	public synchronized Book getKitabPertama() {
+	public synchronized Book getFirstBook() {
 		Book[] xkitab = getXkitab();
 		for (Book k: xkitab) {
 			if (k != null) return k;
 		}
 		// aneh skali kalo kena ini, tapi toh kena juga
-		throw new RuntimeException("Ga ketemu satu pun kitab yang ga null. Info edisi: " + (this.pembaca == null? "pembaca=null": (this.pembaca.getJudul() + " nkitab=" + xkitab.length)));    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		throw new RuntimeException("Ga ketemu satu pun kitab yang ga null. Info edisi: " + (this.reader == null? "pembaca=null": (this.reader.getJudul() + " nkitab=" + xkitab.length)));    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 	
 	public synchronized IndexPerikop getIndexPerikop() {
 		if (!volatile_indexPerikopSudahCobaBaca) {
-			volatile_indexPerikop = this.pembaca.bacaIndexPerikop();
+			volatile_indexPerikop = this.reader.bacaIndexPerikop();
 			volatile_indexPerikopSudahCobaBaca = true;
 		}
 		return volatile_indexPerikop;

@@ -17,9 +17,9 @@ public class GotoActivity extends BaseActivity implements ActionBar.TabListener 
 	public static final String TAG = GotoActivity.class.getSimpleName();
 
 	public static class Result {
-		public int kitab_pos;
-		public int pasal_1;
-		public int ayat_1;
+		public int bookId;
+		public int chapter_1;
+		public int verse_1;
 	}
 	
 	public static Intent createIntent(int kitab_pos, int pasal_1, int ayat_1) {

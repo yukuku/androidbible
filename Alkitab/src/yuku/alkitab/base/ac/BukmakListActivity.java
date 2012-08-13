@@ -147,13 +147,13 @@ public class BukmakListActivity extends BaseActivity {
         String nothingText = null;
         
         // atur judul berdasarkan filter
-        if (filter_jenis == Db.Bukmak2.jenis_catatan) {
+        if (filter_jenis == Db.Bukmak2.kind_note) {
             title = getString(R.string.bl_notes);
             nothingText = getString(R.string.bl_no_notes_written_yet);
         } else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
             title = getString(R.string.bl_highlights);
             nothingText = getString(R.string.bl_no_highlighted_verses);
-        } else if (filter_jenis == Db.Bukmak2.jenis_bukmak) {
+        } else if (filter_jenis == Db.Bukmak2.kind_bookmark) {
             if (filter_labelId == 0) {
                 title = getString(R.string.bl_all_bookmarks);
                 nothingText = getString(R.string.belum_ada_pembatas_buku);
@@ -301,10 +301,10 @@ public class BukmakListActivity extends BaseActivity {
 		labels.add(getString(R.string.menuSortAri));
 		values.add(R.string.menuSortAri);
 		
-		if (filter_jenis == Db.Bukmak2.jenis_bukmak) {
+		if (filter_jenis == Db.Bukmak2.kind_bookmark) {
 			labels.add(getString(R.string.menuSortTulisan));
 			values.add(R.string.menuSortTulisan);
-		} else if (filter_jenis == Db.Bukmak2.jenis_catatan) {
+		} else if (filter_jenis == Db.Bukmak2.kind_note) {
 			// nop
 		} else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
 			labels.add(getString(R.string.menuSortTulisan_warna));
@@ -379,13 +379,13 @@ public class BukmakListActivity extends BaseActivity {
 		
 		// sesuaikan string berdasarkan jenis.
 		android.view.MenuItem menuHapusBukmak = menu.findItem(R.id.menuHapusBukmak);
-		if (filter_jenis == Db.Bukmak2.jenis_bukmak) menuHapusBukmak.setTitle(R.string.hapus_pembatas_buku);
-		if (filter_jenis == Db.Bukmak2.jenis_catatan) menuHapusBukmak.setTitle(R.string.hapus_catatan);
+		if (filter_jenis == Db.Bukmak2.kind_bookmark) menuHapusBukmak.setTitle(R.string.hapus_pembatas_buku);
+		if (filter_jenis == Db.Bukmak2.kind_note) menuHapusBukmak.setTitle(R.string.hapus_catatan);
 		if (filter_jenis == Db.Bukmak2.jenis_stabilo) menuHapusBukmak.setTitle(R.string.hapus_stabilo);
 
 		android.view.MenuItem menuUbahBukmak = menu.findItem(R.id.menuUbahBukmak);
-		if (filter_jenis == Db.Bukmak2.jenis_bukmak) menuUbahBukmak.setTitle(R.string.ubah_bukmak);
-		if (filter_jenis == Db.Bukmak2.jenis_catatan) menuUbahBukmak.setTitle(R.string.ubah_catatan);
+		if (filter_jenis == Db.Bukmak2.kind_bookmark) menuUbahBukmak.setTitle(R.string.ubah_bukmak);
+		if (filter_jenis == Db.Bukmak2.kind_note) menuUbahBukmak.setTitle(R.string.ubah_catatan);
 		if (filter_jenis == Db.Bukmak2.jenis_stabilo) menuUbahBukmak.setTitle(R.string.ubah_stabilo);
 	}
 	
@@ -401,7 +401,7 @@ public class BukmakListActivity extends BaseActivity {
 			
 			return true;
 		} else if (itemId == R.id.menuUbahBukmak) {
-			if (filter_jenis == Db.Bukmak2.jenis_bukmak) {
+			if (filter_jenis == Db.Bukmak2.kind_bookmark) {
 				TypeBookmarkDialog dialog = new TypeBookmarkDialog(this, info.id);
 				dialog.setListener(new Listener() {
 					@Override public void onOk() {
@@ -409,19 +409,19 @@ public class BukmakListActivity extends BaseActivity {
 						if (lagiPakeFilter != null) filterPakeLagiPakeFilter();
 					}
 				});
-				dialog.bukaDialog();
+				dialog.show();
 				
-			} else if (filter_jenis == Db.Bukmak2.jenis_catatan) {
+			} else if (filter_jenis == Db.Bukmak2.kind_note) {
 				Cursor cursor = (Cursor) adapter.getItem(info.position);
 				int ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bukmak2.ari));
 				
-				TypeNoteDialog dialog = new TypeNoteDialog(this, S.activeVersion.getKitab(Ari.toKitab(ari)), Ari.toChapter(ari), Ari.toVerse(ari), new RefreshCallback() {
+				TypeNoteDialog dialog = new TypeNoteDialog(this, S.activeVersion.getBook(Ari.toBook(ari)), Ari.toChapter(ari), Ari.toVerse(ari), new RefreshCallback() {
 					@Override public void onDone() {
 						adapter.getCursor().requery();
 						if (lagiPakeFilter != null) filterPakeLagiPakeFilter();
 					}
 				});
-				dialog.bukaDialog();
+				dialog.show();
 				
 			} else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
 				Cursor cursor = (Cursor) adapter.getItem(info.position);
@@ -503,7 +503,7 @@ public class BukmakListActivity extends BaseActivity {
 			}
 			
 			int ari = cursor.getInt(col_ari);
-			Book book = S.activeVersion.getKitab(Ari.toKitab(ari));
+			Book book = S.activeVersion.getBook(Ari.toBook(ari));
 			String alamat = S.reference(S.activeVersion, ari);
 			
 			String isi = S.muatSatuAyat(S.activeVersion, book, Ari.toChapter(ari), Ari.toVerse(ari));
@@ -511,7 +511,7 @@ public class BukmakListActivity extends BaseActivity {
 			
 			String tulisan = cursor.getString(col_tulisan);
 			
-			if (filter_jenis == Db.Bukmak2.jenis_bukmak) {
+			if (filter_jenis == Db.Bukmak2.kind_bookmark) {
 				lTulisan.setText(lagiPakeFilter != null? Search2Engine.hilite(tulisan, filterQueryProvider.getXkata(), warnaHilite): tulisan);
 				PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
 				CharSequence cuplikan = lagiPakeFilter != null? Search2Engine.hilite(isi, filterQueryProvider.getXkata(), warnaHilite): isi;
@@ -530,7 +530,7 @@ public class BukmakListActivity extends BaseActivity {
 					panelLabels.setVisibility(View.GONE);
 				}
 				
-			} else if (filter_jenis == Db.Bukmak2.jenis_catatan) {
+			} else if (filter_jenis == Db.Bukmak2.kind_note) {
 				lTulisan.setText(alamat);
 				PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
 				lCuplikan.setText(lagiPakeFilter != null? Search2Engine.hilite(tulisan, filterQueryProvider.getXkata(), warnaHilite): tulisan);

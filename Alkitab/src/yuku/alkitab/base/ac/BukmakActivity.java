@@ -399,17 +399,17 @@ public class BukmakActivity extends BaseActivity {
 		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 			Intent intent;
 			if (position == 0) {
-				intent = BukmakListActivity.createIntent(getApplicationContext(), Db.Bukmak2.jenis_bukmak, 0);
+				intent = BukmakListActivity.createIntent(getApplicationContext(), Db.Bukmak2.kind_bookmark, 0);
 			} else if (position == 1) {
-				intent = BukmakListActivity.createIntent(getApplicationContext(), Db.Bukmak2.jenis_catatan, 0);
+				intent = BukmakListActivity.createIntent(getApplicationContext(), Db.Bukmak2.kind_note, 0);
 			} else if (position == 2) {
 				intent = BukmakListActivity.createIntent(getApplicationContext(), Db.Bukmak2.jenis_stabilo, 0);
 			} else if (position == 3) {
-				intent = BukmakListActivity.createIntent(getApplicationContext(), Db.Bukmak2.jenis_bukmak, BukmakListActivity.LABELID_noLabel);
+				intent = BukmakListActivity.createIntent(getApplicationContext(), Db.Bukmak2.kind_bookmark, BukmakListActivity.LABELID_noLabel);
 			} else {
 				Label label = adapter.getItem(position);
 				if (label != null) {
-					intent = BukmakListActivity.createIntent(getApplicationContext(), Db.Bukmak2.jenis_bukmak, label._id);
+					intent = BukmakListActivity.createIntent(getApplicationContext(), Db.Bukmak2.kind_bookmark, label._id);
 				} else {
 					return;
 				}

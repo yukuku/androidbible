@@ -207,7 +207,7 @@ public class Search2Activity extends BaseActivity {
 			int posisiTerpilih = intent.getIntExtra(EXTRA_posisiTerpilih, -1);
 			
 			kitabPosTerbuka = intent.getIntExtra(EXTRA_kitabPosTerbuka, -1);
-			Book book = S.activeVersion.getKitab(kitabPosTerbuka);
+			Book book = S.activeVersion.getBook(kitabPosTerbuka);
 			cFilterKitabSaja.setText(getString(R.string.search_bookname_only, book.judul));
 			
 			if (query != null) {
@@ -225,7 +225,7 @@ public class Search2Activity extends BaseActivity {
 			
 			if (query == null) { // default: semua kitab
 				for (Book k: S.activeVersion.getConsecutiveBooks()) {
-					xkitabPosTerpilih.put(k.pos, true);
+					xkitabPosTerpilih.put(k.bookId, true);
 				}
 			} else if (query.xkitabPos != null) {
 				xkitabPosTerpilih = query.xkitabPos;
@@ -316,7 +316,7 @@ public class Search2Activity extends BaseActivity {
 					for (int i = 0, len = xkitabPosTerpilih.size(); i < len; i++) {
 						if (xkitabPosTerpilih.valueAt(i) == true) {
 							int kitabPos = xkitabPosTerpilih.keyAt(i);
-							Book book = S.activeVersion.getKitab(kitabPos);
+							Book book = S.activeVersion.getBook(kitabPos);
 							if (book != null) {
 								if (sb.length() != 0) sb.append(", "); //$NON-NLS-1$
 								sb.append(book.judul);
@@ -411,7 +411,7 @@ public class Search2Activity extends BaseActivity {
 						int position = xpos.keyAt(i);
 						Book k = adapter.getItem(position);
 						if (k != null) {
-							xkitabPosTerpilih.put(k.pos, true);
+							xkitabPosTerpilih.put(k.bookId, true);
 						}
 					}
 				}
@@ -431,7 +431,7 @@ public class Search2Activity extends BaseActivity {
 		// set checked items
 		for (int position = 0, count = adapter.getCount(); position < count; position++) {
 			Book k = adapter.getItem(position);
-			if (k != null && xkitabPosTerpilih.get(k.pos, false) == true) {
+			if (k != null && xkitabPosTerpilih.get(k.bookId, false) == true) {
 				lv.setItemChecked(position, true);
 			}
 		}
@@ -461,7 +461,7 @@ public class Search2Activity extends BaseActivity {
 			
 			Book k = getItem(position);
 			res.setText(k.judul);
-			res.setTextColor(U.getWarnaBerdasarkanKitabPos(k.pos));
+			res.setTextColor(U.getWarnaBerdasarkanKitabPos(k.bookId));
 			
 			return res;
 		}
@@ -563,7 +563,7 @@ public class Search2Activity extends BaseActivity {
 			TextView lCuplikan = (TextView) res.findViewById(R.id.lCuplikan);
 			
 			int ari = hasilCari.get(position);
-			Book book = S.activeVersion.getKitab(Ari.toKitab(ari));
+			Book book = S.activeVersion.getBook(Ari.toBook(ari));
 			int pasal_1 = Ari.toChapter(ari);
 			int ayat_1 = Ari.toVerse(ari);
 			SpannableStringBuilder sb = new SpannableStringBuilder(S.alamat(book, pasal_1, ayat_1));

@@ -92,18 +92,18 @@ public class GotoDialerFragment extends BaseFragment {
 		super.onActivityCreated(savedInstanceState);
 
 		// set kitab, pasal, ayat kini
-		cbKitab.setSelection(adapter.getPositionDariPos(S.activeBook.pos));
+		cbKitab.setSelection(adapter.getPositionDariPos(S.activeBook.bookId));
 		cbKitab.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override public void onNothingSelected(AdapterView<?> parent) {}
 
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				Book k = adapter.getItem(position);
-				maxPasal = k.npasal;
+				maxPasal = k.nchapter;
 
 				int pasal_0 = cobaBacaPasal() - 1;
-				if (pasal_0 >= 0 && pasal_0 < k.npasal) {
-					maxAyat = k.nayat[pasal_0];
+				if (pasal_0 >= 0 && pasal_0 < k.nchapter) {
+					maxAyat = k.nverses[pasal_0];
 				}
 
 				betulinPasalKelebihan();
@@ -123,7 +123,7 @@ public class GotoDialerFragment extends BaseFragment {
 					// biarin 0 aja
 				}
 
-				int kitab = adapter.getItem(cbKitab.getSelectedItemPosition()).pos;
+				int kitab = adapter.getItem(cbKitab.getSelectedItemPosition()).bookId;
 
 				Intent intent = new Intent();
 				intent.putExtra(EXTRA_kitab, kitab);
@@ -288,8 +288,8 @@ public class GotoDialerFragment extends BaseFragment {
 				
 				Book k = adapter.getItem(cbKitab.getSelectedItemPosition());
 				int pasal_1 = cobaBacaPasal();
-				if (pasal_1 >= 1 && pasal_1 <= k.nayat.length) {
-					maxAyat = k.nayat[pasal_1 - 1];
+				if (pasal_1 >= 1 && pasal_1 <= k.nverses.length) {
+					maxAyat = k.nverses[pasal_1 - 1];
 				}
 			} else if (aktif == lAyat) {
 				if (lAyat_pertamaKali) {
@@ -344,7 +344,7 @@ public class GotoDialerFragment extends BaseFragment {
 		 */
 		public int getPositionDariPos(int pos) {
 			for (int i = 0; i < xkitabc_.length; i++) {
-				if (xkitabc_[i].pos == pos) {
+				if (xkitabc_[i].bookId == pos) {
 					return i;
 				}
 			}
@@ -374,7 +374,7 @@ public class GotoDialerFragment extends BaseFragment {
 
 			Book k = getItem(position);
 			res.setText(k.judul);
-			res.setTextColor(U.getWarnaBerdasarkanKitabPos(k.pos));
+			res.setTextColor(U.getWarnaBerdasarkanKitabPos(k.bookId));
 
 			return res;
 		}

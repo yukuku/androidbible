@@ -270,7 +270,7 @@ public class Jumper {
 					{
 						Jumper.KitabRef ref = new KitabRef();
 						ref.pendek = judul;
-						ref.pos = k.pos;
+						ref.pos = k.bookId;
 						
 						a.add(ref);
 					}
@@ -280,7 +280,7 @@ public class Jumper {
 						
 						Jumper.KitabRef ref = new KitabRef();
 						ref.pendek = judul;
-						ref.pos = k.pos;
+						ref.pos = k.bookId;
 						
 						a.add(ref);
 					}
@@ -361,7 +361,7 @@ public class Jumper {
 	/**
 	 * @return pos dari kitab, bukan index dari {@link Version#getConsecutiveBooks()}
 	 */
-	public int getKitab(Book[] xkitab) {
+	public int getBookId(Book[] xkitab) {
 		return tebakKitab(xkitab);
 	}
 	

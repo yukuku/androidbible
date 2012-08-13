@@ -18,8 +18,8 @@ public class Db {
 		public static final String tulisan = "tulisan"; //$NON-NLS-1$
 		public static final String waktuTambah = "waktuTambah"; //$NON-NLS-1$
 		public static final String waktuUbah = "waktuUbah"; //$NON-NLS-1$
-		public static final int jenis_bukmak = 1;
-		public static final int jenis_catatan = 2;
+		public static final int kind_bookmark = 1;
+		public static final int kind_note = 2;
 		public static final int jenis_stabilo = 3;
 	}
 	

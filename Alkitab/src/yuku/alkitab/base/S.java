@@ -99,7 +99,7 @@ public class S {
 		siapinEdisi();
 		
 		if (activeBook != null) return;
-		activeBook = activeVersion.getKitabPertama(); // nanti diset sama luar waktu init 
+		activeBook = activeVersion.getFirstBook(); // nanti diset sama luar waktu init 
 	}
 	
 	public static void calculateAppliedValuesBasedOnPreferences() {
@@ -170,7 +170,7 @@ public class S {
 	}
 	
 	public static synchronized String muatSatuAyat(Version version, int ari) {
-		return muatSatuAyat(version, version.getKitab(Ari.toKitab(ari)), Ari.toChapter(ari), Ari.toVerse(ari));
+		return muatSatuAyat(version, version.getBook(Ari.toBook(ari)), Ari.toChapter(ari), Ari.toVerse(ari));
 	}
 
 	public static synchronized String[] muatTeks(Version version, Book book, int pasal_1) {
@@ -200,16 +200,16 @@ public class S {
 	}
 	
 	private static String[] muatTeks(Version version, Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
-		return version.pembaca.muatTeks(book, pasal_1, janganPisahAyat, hurufKecil);
+		return version.reader.muatTeks(book, pasal_1, janganPisahAyat, hurufKecil);
 	}
 
 	public static String reference(Version version, int ari) {
-		int kitabPos = Ari.toKitab(ari);
+		int kitabPos = Ari.toBook(ari);
 		int pasal_1 = Ari.toChapter(ari);
 		int ayat_1 = Ari.toVerse(ari);
 		
 		StringBuilder hasil = new StringBuilder(40);
-		Book k = version.getKitab(kitabPos);
+		Book k = version.getBook(kitabPos);
 		if (k == null) {
 			hasil.append('[').append(kitabPos).append("] "); //$NON-NLS-1$
 		} else {
@@ -325,10 +325,10 @@ public class S {
 	 */
 	public static String createVerseUrl(Book book, int pasal_1, String ayat_1_range) {
 		BuildConfig c = BuildConfig.get(App.context);
-		if (book.pos >= c.url_namaKitabStandar.length) {
+		if (book.bookId >= c.url_namaKitabStandar.length) {
 			return null;
 		}
-		String calonKitab = c.url_namaKitabStandar[book.pos], calonPasal = String.valueOf(pasal_1), calonAyat = ayat_1_range;
+		String calonKitab = c.url_namaKitabStandar[book.bookId], calonPasal = String.valueOf(pasal_1), calonAyat = ayat_1_range;
 		for (String format: c.url_format.split(" ")) { //$NON-NLS-1$
 			if ("slash1".equals(format)) calonPasal = "/" + calonPasal; //$NON-NLS-1$ //$NON-NLS-2$
 			if ("slash2".equals(format)) calonAyat = "/" + calonAyat; //$NON-NLS-1$ //$NON-NLS-2$

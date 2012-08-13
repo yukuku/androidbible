@@ -25,5 +25,5 @@ public abstract class Pembaca {
 	 */
 	public abstract String[] muatTeks(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil);
 	public abstract IndexPerikop bacaIndexPerikop();
-	public abstract int muatPerikop(Version version, int kitab, int pasal, int[] xari, Blok[] xblok, int max);
+	public abstract int loadPericope(Version version, int kitab, int pasal, int[] xari, Blok[] xblok, int max);
 }

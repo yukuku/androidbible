@@ -169,17 +169,17 @@ public class YesPembaca extends Pembaca {
 						int versi = in.readInt();
 						if (versi > 2) throw new RuntimeException("Versi Kitab (lebih dari 2): " + versi + " tidak dikenal"); //$NON-NLS-1$ //$NON-NLS-2$
 					} else if (key.equals("pos")) { //$NON-NLS-1$
-						k.pos = in.readInt();
+						k.bookId = in.readInt();
 					} else if (key.equals("nama")) { //$NON-NLS-1$
 						k.nama = in.readShortString();
 					} else if (key.equals("judul")) { //$NON-NLS-1$
 						k.judul = in.readShortString();
 					} else if (key.equals("npasal")) { //$NON-NLS-1$
-						k.npasal = in.readInt();
+						k.nchapter = in.readInt();
 					} else if (key.equals("nayat")) { //$NON-NLS-1$
-						k.nayat = new int[k.npasal];
-						for (int i = 0; i < k.npasal; i++) {
-							k.nayat[i] = in.readUint8();
+						k.nverses = new int[k.nchapter];
+						for (int i = 0; i < k.nchapter; i++) {
+							k.nverses[i] = in.readUint8();
 						}
 					} else if (key.equals("ayatLoncat")) { //$NON-NLS-1$
 						// TODO di masa depan
@@ -188,7 +188,7 @@ public class YesPembaca extends Pembaca {
 						// TODO di masa depan
 						in.readInt();
 					} else if (key.equals("pasal_offset")) { //$NON-NLS-1$
-						k.pasal_offset = new int[k.npasal + 1]; // harus ada +1nya kalo YesPembaca
+						k.pasal_offset = new int[k.nchapter + 1]; // harus ada +1nya kalo YesPembaca
 						for (int i = 0; i < k.pasal_offset.length; i++) {
 							k.pasal_offset[i] = in.readInt();
 						}
@@ -208,10 +208,10 @@ public class YesPembaca extends Pembaca {
 				}
 				
 				if (!kosong) {
-					if (k.pos < 0 || k.pos >= res.length) {
-						throw new RuntimeException("ada kitabPos yang sangat besar: " + k.pos); //$NON-NLS-1$
+					if (k.bookId < 0 || k.bookId >= res.length) {
+						throw new RuntimeException("ada kitabPos yang sangat besar: " + k.bookId); //$NON-NLS-1$
 					}
-					res[k.pos] = k;
+					res[k.bookId] = k;
 				}
 			}
 			
@@ -249,7 +249,7 @@ public class YesPembaca extends Pembaca {
 		try {
 			init();
 			
-			if (pasal_1 > book.npasal) {
+			if (pasal_1 > book.nchapter) {
 				return null;
 			}
 			
@@ -318,7 +318,7 @@ public class YesPembaca extends Pembaca {
 	}
 
 	@Override
-	public int muatPerikop(Version version, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
+	public int loadPericope(Version version, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
 		try {
 			init();
 			

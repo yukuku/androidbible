@@ -73,7 +73,7 @@ public class VerseAdapter extends BaseAdapter {
 		int[] atributMap = null;
 		int[] stabiloMap = null;
 		
-		int ariKp = Ari.encode(kitab_.pos, pasal_1_, 0x00);
+		int ariKp = Ari.encode(kitab_.bookId, pasal_1_, 0x00);
 		if (S.getDb().countAtribut(ariKp) > 0) {
 			atributMap = new int[dataAyat_.length];
 			stabiloMap = S.getDb().putAtribut(ariKp, atributMap);
@@ -241,7 +241,7 @@ public class VerseAdapter extends BaseAdapter {
 	void pasangClickHandlerUntukBukmak(View imgBukmak, final int pasal_1, final int ayat_1) {
 		imgBukmak.setOnClickListener(new View.OnClickListener() { 
 			@Override public void onClick(View v) {
-				atributListener_.onClick(kitab_, pasal_1, ayat_1, Bukmak2.jenis_bukmak);
+				atributListener_.onClick(kitab_, pasal_1, ayat_1, Bukmak2.kind_bookmark);
 			}
 		});
 	}
@@ -249,7 +249,7 @@ public class VerseAdapter extends BaseAdapter {
 	void pasangClickHandlerUntukCatatan(View imgCatatan, final int pasal_1, final int ayat_1) {
 		imgCatatan.setOnClickListener(new View.OnClickListener() { 
 			@Override public void onClick(View v) {
-				atributListener_.onClick(kitab_, pasal_1, ayat_1, Bukmak2.jenis_catatan);
+				atributListener_.onClick(kitab_, pasal_1, ayat_1, Bukmak2.kind_note);
 			}
 		});
 	}

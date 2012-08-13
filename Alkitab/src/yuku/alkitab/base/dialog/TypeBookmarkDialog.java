@@ -110,8 +110,8 @@ public class TypeBookmarkDialog {
 		}
 	};
 
-	public void bukaDialog() {
-		final Bukmak2 bukmak = this.ari == 0? S.getDb().getBukmakById(id): S.getDb().getBukmakByAri(ari, Db.Bukmak2.jenis_bukmak);
+	public void show() {
+		final Bukmak2 bukmak = this.ari == 0? S.getDb().getBukmakById(id): S.getDb().getBukmakByAri(ari, Db.Bukmak2.kind_bookmark);
 		
 		// set yang belum diset
 		if (this.ari == 0 && bukmak != null) {
@@ -170,7 +170,7 @@ public class TypeBookmarkDialog {
 					bukmakGaFinal.waktuUbah = new Date();
 					S.getDb().updateBukmak(bukmakGaFinal);
 				} else {
-					bukmakGaFinal = S.getDb().insertBukmak(ari, Db.Bukmak2.jenis_bukmak, tulisan, new Date(), new Date());
+					bukmakGaFinal = S.getDb().insertBukmak(ari, Db.Bukmak2.kind_bookmark, tulisan, new Date(), new Date());
 				}
 				
 				if (bukmakGaFinal != null) {

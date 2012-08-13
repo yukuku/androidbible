@@ -28,7 +28,7 @@ public class Ari {
 	/** 0..255 
 	 * kitab berbasis-0 (kejadian == 0)
 	 * */
-	public static int toKitab(int ari) {
+	public static int toBook(int ari) {
 		return (ari & 0x00ff0000) >> 16;
 	}
 	

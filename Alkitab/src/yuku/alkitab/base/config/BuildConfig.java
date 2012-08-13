@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.xmlpull.v1.XmlPullParser;
 
-import yuku.alkitab.base.ac.EdisiActivity.MEdisiPreset;
+import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
 import yuku.alkitab.base.storage.Db;
 
 public class BuildConfig {
@@ -17,13 +17,13 @@ public class BuildConfig {
 
 	public String internalPrefix;
 	public String internalJudul;
-	public boolean menuRenungan;
+	public boolean menuDevotion;
 	public boolean menuGebug;
-	public boolean menuEdisi;
-	public boolean menuBantuan;
-	public boolean menuDonasi;
+	public boolean menuVersions;
+	public boolean menuHelp;
+	public boolean menuDonation;
 	public boolean menuSongs;
-	public List<MEdisiPreset> presets;
+	public List<MVersionPreset> presets;
 	public String url_prefix;
 	public String url_format;
 	public String[] url_namaKitabStandar;
@@ -64,23 +64,23 @@ public class BuildConfig {
 	private static BuildConfig loadConfig(Context context, XmlResourceParser parser) throws Exception {
 		BuildConfig res = new BuildConfig();
 		
-		List<MEdisiPreset> xpreset = new ArrayList<MEdisiPreset>();
+		List<MVersionPreset> xpreset = new ArrayList<MVersionPreset>();
 		int urutanPreset = 10;
 
 		while (true) {
 			int next = parser.next();
 			if (next == XmlPullParser.START_TAG && "menu".equals(parser.getName())) { //$NON-NLS-1$
-				res.menuBantuan = parser.getAttributeBooleanValue(null, "bantuan", false); //$NON-NLS-1$
-				res.menuDonasi = parser.getAttributeBooleanValue(null, "donasi", false); //$NON-NLS-1$
-				res.menuEdisi = parser.getAttributeBooleanValue(null, "edisi", false); //$NON-NLS-1$
+				res.menuHelp = parser.getAttributeBooleanValue(null, "bantuan", false); //$NON-NLS-1$
+				res.menuDonation = parser.getAttributeBooleanValue(null, "donasi", false); //$NON-NLS-1$
+				res.menuVersions = parser.getAttributeBooleanValue(null, "edisi", false); //$NON-NLS-1$
 				res.menuGebug = parser.getAttributeBooleanValue(null, "gebug", false); //$NON-NLS-1$
-				res.menuRenungan = parser.getAttributeBooleanValue(null, "renungan", false); //$NON-NLS-1$
+				res.menuDevotion = parser.getAttributeBooleanValue(null, "renungan", false); //$NON-NLS-1$
 				res.menuSongs = parser.getAttributeBooleanValue(null, "songs", false); //$NON-NLS-1$
 			} else if (next == XmlPullParser.START_TAG && "internal".equals(parser.getName())) { //$NON-NLS-1$
 				res.internalJudul = parser.getAttributeValue(null, "judul"); //$NON-NLS-1$
 				res.internalPrefix = parser.getAttributeValue(null, "prefix"); //$NON-NLS-1$
 			} else if (next == XmlPullParser.START_TAG && "preset".equals(parser.getName())) { //$NON-NLS-1$
-				MEdisiPreset preset = new MEdisiPreset();
+				MVersionPreset preset = new MVersionPreset();
 				preset.jenis = Db.Edisi.jenis_preset;
 				preset.judul = parser.getAttributeValue(null, "judul"); //$NON-NLS-1$
 				preset.namafile_preset = parser.getAttributeValue(null, "namafile_preset"); //$NON-NLS-1$

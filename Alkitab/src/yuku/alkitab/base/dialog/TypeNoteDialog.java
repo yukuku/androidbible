@@ -40,7 +40,7 @@ public class TypeNoteDialog {
 		this.book = book;
 		this.pasal_1 = pasal_1;
 		this.ayat_1 = ayat_1;
-		this.ari = Ari.encode(book.pos, pasal_1, ayat_1);
+		this.ari = Ari.encode(book.bookId, pasal_1, ayat_1);
 		this.alamat = S.alamat(book, pasal_1, ayat_1);
 		this.context = context;
 		this.refreshCallback = refreshCallback;
@@ -81,10 +81,10 @@ public class TypeNoteDialog {
 		tCatatan.setText(catatan);
 	}
 
-	public void bukaDialog() {
+	public void show() {
 		this.dialog.setTitle(context.getString(R.string.catatan_alamat, alamat));
 		
-		this.bukmak = S.getDb().getBukmakByAri(ari, Db.Bukmak2.jenis_catatan);
+		this.bukmak = S.getDb().getBukmakByAri(ari, Db.Bukmak2.kind_note);
 		if (bukmak != null) {
 			tCatatan.setText(bukmak.tulisan);
 		}
@@ -99,7 +99,7 @@ public class TypeNoteDialog {
 		Date kini = new Date();
 		if (bukmak != null) {
 			if (tulisan.length() == 0) {
-				S.getDb().hapusBukmakByAri(ari, Db.Bukmak2.jenis_catatan);
+				S.getDb().hapusBukmakByAri(ari, Db.Bukmak2.kind_note);
 			} else {
 				bukmak.tulisan = tulisan;
 				bukmak.waktuUbah = kini;
@@ -107,7 +107,7 @@ public class TypeNoteDialog {
 			}
 		} else { // bukmak == null; belum ada sebelumnya, maka hanya insert kalo ada tulisan.
 			if (tulisan.length() > 0) {
-				bukmak = S.getDb().insertBukmak(ari, Db.Bukmak2.jenis_catatan, tulisan, kini, kini);
+				bukmak = S.getDb().insertBukmak(ari, Db.Bukmak2.kind_note, tulisan, kini, kini);
 			}
 		}
 		
@@ -124,7 +124,7 @@ public class TypeNoteDialog {
 				@Override public void onClick(DialogInterface dialog, int which) {
 					if (bukmak != null) {
 						// beneran hapus dari db
-						S.getDb().hapusBukmakByAri(ari, Db.Bukmak2.jenis_catatan);
+						S.getDb().hapusBukmakByAri(ari, Db.Bukmak2.kind_note);
 					} else {
 						// ga ngapa2in, karena emang ga ada di db, cuma di editor buffer
 					}
@@ -136,7 +136,7 @@ public class TypeNoteDialog {
 				@Override public void onClick(DialogInterface _unused_, int which) {
 					TypeNoteDialog dialog = new TypeNoteDialog(context, book, pasal_1, ayat_1, refreshCallback);
 					dialog.setCatatan(tCatatan.getText());
-					dialog.bukaDialog();
+					dialog.show();
 				}
 			})
 			.show();

@@ -21,7 +21,7 @@ import java.util.Set;
 
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.BukmakListActivity;
-import yuku.alkitab.base.ac.EdisiActivity.MEdisiYes;
+import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Bukmak2;
 import yuku.alkitab.base.model.Label;
@@ -282,9 +282,9 @@ public class InternalDb {
 				if (ofsetMap >= map_0.length) {
 					Log.e(TAG, "ofsetMap kebanyakan " + ofsetMap + " terjadi pada ari 0x" + Integer.toHexString(ari)); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
-					if (jenis == Db.Bukmak2.jenis_bukmak) {
+					if (jenis == Db.Bukmak2.kind_bookmark) {
 						map_0[ofsetMap] |= 0x1;
-					} else if (jenis == Db.Bukmak2.jenis_catatan) {
+					} else if (jenis == Db.Bukmak2.kind_note) {
 						map_0[ofsetMap] |= 0x2;
 					} else if (jenis == Db.Bukmak2.jenis_stabilo) {
 						map_0[ofsetMap] |= 0x4;
@@ -484,8 +484,8 @@ public class InternalDb {
 		}
 	}
 
-	public List<MEdisiYes> listAllVersions() {
-		List<MEdisiYes> res = new ArrayList<MEdisiYes>();
+	public List<MVersionYes> listAllVersions() {
+		List<MVersionYes> res = new ArrayList<MVersionYes>();
 		Cursor cursor = helper.getReadableDatabase().query(Db.TABEL_Edisi, null, null, null, null, null, Db.Edisi.urutan + " asc"); //$NON-NLS-1$
 		try {
 			int col_aktif = cursor.getColumnIndexOrThrow(Db.Edisi.aktif);
@@ -496,7 +496,7 @@ public class InternalDb {
 			int col_urutan = cursor.getColumnIndexOrThrow(Db.Edisi.urutan);
 			
 			while (cursor.moveToNext()) {
-				MEdisiYes yes = new MEdisiYes();
+				MVersionYes yes = new MVersionYes();
 				yes.cache_aktif = cursor.getInt(col_aktif) != 0;
 				yes.jenis = Db.Edisi.jenis_yes;
 				yes.keterangan = cursor.getString(col_keterangan);
@@ -525,7 +525,7 @@ public class InternalDb {
 		return (int) stmt.simpleQueryForLong();
 	}
 
-	public void tambahEdisiYesDenganAktif(MEdisiYes edisi, boolean aktif) {
+	public void tambahEdisiYesDenganAktif(MVersionYes edisi, boolean aktif) {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		ContentValues cv = new ContentValues();
 		cv.put(Db.Edisi.aktif, aktif);
@@ -548,7 +548,7 @@ public class InternalDb {
 		return stmt.simpleQueryForLong() > 0;
 	}
 
-	public void hapusEdisiYes(MEdisiYes edisi) {
+	public void hapusEdisiYes(MVersionYes edisi) {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.delete(Db.TABEL_Edisi, Db.Edisi.namafile + "=?", new String[] {edisi.namafile}); //$NON-NLS-1$
 	}

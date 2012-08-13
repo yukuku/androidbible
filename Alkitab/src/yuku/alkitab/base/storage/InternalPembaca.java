@@ -65,7 +65,7 @@ public class InternalPembaca extends Pembaca {
 	
 	private static Book bacaKitab(BintexReader in, int pos) throws IOException {
 		Book k = new Book();
-		k.pos = pos;
+		k.bookId = pos;
 		
 		String awal = in.readShortString();
 
@@ -81,17 +81,17 @@ public class InternalPembaca extends Pembaca {
 				} else if (key.equals("file")) { //$NON-NLS-1$
 					k.file = in.readShortString();
 				} else if (key.equals("npasal")) { //$NON-NLS-1$
-					k.npasal = in.readInt();
+					k.nchapter = in.readInt();
 				} else if (key.equals("nayat")) { //$NON-NLS-1$
-					k.nayat = new int[k.npasal];
-					for (int i = 0; i < k.npasal; i++) {
-						k.nayat[i] = in.readUint8();
+					k.nverses = new int[k.nchapter];
+					for (int i = 0; i < k.nchapter; i++) {
+						k.nverses[i] = in.readUint8();
 					}
 				} else if (key.equals("pdbBookNumber")) { //$NON-NLS-1$
 					k.pdbBookNumber = in.readInt();
 				} else if (key.equals("pasal_offset")) { //$NON-NLS-1$
-					k.pasal_offset = new int[k.npasal];
-					for (int i = 0; i < k.npasal; i++) {
+					k.pasal_offset = new int[k.nchapter];
+					for (int i = 0; i < k.nchapter; i++) {
 						k.pasal_offset[i] = in.readInt();
 					}
 				} else if (key.equals("uda")) { //$NON-NLS-1$
@@ -111,7 +111,7 @@ public class InternalPembaca extends Pembaca {
 
 	@Override
 	public String[] muatTeks(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
-		if (pasal_1 > book.npasal) {
+		if (pasal_1 > book.nchapter) {
 			return null;
 		}
 		
@@ -168,7 +168,7 @@ public class InternalPembaca extends Pembaca {
 				}
 			}
 
-			if (pasal_1 == book.npasal) {
+			if (pasal_1 == book.nchapter) {
 				length = in.available();
 			} else {
 				length = book.pasal_offset[pasal_1] - offset;
@@ -211,7 +211,7 @@ public class InternalPembaca extends Pembaca {
 	}
 
 	@Override
-	public int muatPerikop(Version version, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
+	public int loadPericope(Version version, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
 		IndexPerikop indexPerikop = version.getIndexPerikop();
 
 		if (indexPerikop == null) {

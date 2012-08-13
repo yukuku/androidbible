@@ -191,7 +191,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			ContentValues cv = new ContentValues();
 			
 			// default
-			cv.put(Bukmak2.jenis, Bukmak2.jenis_bukmak);
+			cv.put(Bukmak2.jenis, Bukmak2.kind_bookmark);
 
 			while (true) {
 		    	boolean more = cursor.moveToNext();

@@ -64,8 +64,8 @@ import yuku.filechooser.FileChooserResult;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public class EdisiActivity extends BaseActivity {
-	public static final String TAG = EdisiActivity.class.getSimpleName();
+public class VersionsActivity extends BaseActivity {
+	public static final String TAG = VersionsActivity.class.getSimpleName();
 
 	private static final int REQCODE_openFile = 1;
 	
@@ -130,10 +130,10 @@ public class EdisiActivity extends BaseActivity {
 			
 			if (item instanceof MEdisiInternal) {
 				// ga ngapa2in, wong internal ko
-			} else if (item instanceof MEdisiPreset) {
-				klikPadaEdisiPreset((CheckBox) v.findViewById(R.id.cAktif), (MEdisiPreset) item);
-			} else if (item instanceof MEdisiYes) {
-				klikPadaEdisiYes((CheckBox) v.findViewById(R.id.cAktif), (MEdisiYes) item);
+			} else if (item instanceof MVersionPreset) {
+				klikPadaEdisiPreset((CheckBox) v.findViewById(R.id.cAktif), (MVersionPreset) item);
+			} else if (item instanceof MVersionYes) {
+				klikPadaEdisiYes((CheckBox) v.findViewById(R.id.cAktif), (MVersionYes) item);
 			} else if (position == adapter.getCount() - 1) {
 				klikPadaBukaFile();
 			}
@@ -155,7 +155,7 @@ public class EdisiActivity extends BaseActivity {
 			if (menuBuang != null) {
 				menuBuang.setEnabled(false);
 				MVersion item = adapter.getItem(info.position);
-				if (item instanceof MEdisiYes) {
+				if (item instanceof MVersionYes) {
 					menuBuang.setEnabled(true);
 				}
 			}
@@ -167,9 +167,9 @@ public class EdisiActivity extends BaseActivity {
 		case R.id.menuBuang: {
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 			final MVersion edisi = adapter.getItem(info.position);
-			if (edisi instanceof MEdisiYes) {
-				final MEdisiYes edisiYes = (MEdisiYes) edisi;
-				new AlertDialog.Builder(EdisiActivity.this)
+			if (edisi instanceof MVersionYes) {
+				final MVersionYes edisiYes = (MVersionYes) edisi;
+				new AlertDialog.Builder(VersionsActivity.this)
 				.setMessage(getString(R.string.juga_hapus_file_datanya_file, edisiYes.namafile))
 				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
@@ -195,11 +195,11 @@ public class EdisiActivity extends BaseActivity {
 			MVersion edisi = adapter.getItem(info.position);
 			StringBuilder details = new StringBuilder();
 			if (edisi instanceof MEdisiInternal) details.append(getString(R.string.ed_type_built_in) + '\n');
-			if (edisi instanceof MEdisiPreset) details.append(getString(R.string.ed_type_preset) + '\n');
-			if (edisi instanceof MEdisiYes) details.append(getString(R.string.ed_type_add_on) + '\n');
+			if (edisi instanceof MVersionPreset) details.append(getString(R.string.ed_type_preset) + '\n');
+			if (edisi instanceof MVersionYes) details.append(getString(R.string.ed_type_add_on) + '\n');
 			details.append(getString(R.string.ed_title_title, edisi.judul) + '\n');
-			if (edisi instanceof MEdisiPreset) {
-				MEdisiPreset preset = (MEdisiPreset) edisi;
+			if (edisi instanceof MVersionPreset) {
+				MVersionPreset preset = (MVersionPreset) edisi;
 				if (AddonManager.cekAdaEdisi(preset.namafile_preset)) {
 					details.append(getString(R.string.ed_stored_in_file, AddonManager.getEdisiPath(preset.namafile_preset)) + '\n'); 
 				} else {
@@ -207,8 +207,8 @@ public class EdisiActivity extends BaseActivity {
 					details.append(getString(R.string.ed_download_url_url, preset.url) + '\n');
 				}
 			}
-			if (edisi instanceof MEdisiYes) {
-				MEdisiYes yes = (MEdisiYes) edisi;
+			if (edisi instanceof MVersionYes) {
+				MVersionYes yes = (MVersionYes) edisi;
 				if (yes.namafile_pdbasal != null) {
 					details.append(getString(R.string.ed_pdb_file_name_original_file, yes.namafile_pdbasal) + '\n');
 				}
@@ -230,7 +230,7 @@ public class EdisiActivity extends BaseActivity {
 		return false;
 	}
 	
-	void klikPadaEdisiPreset(final CheckBox cAktif, final MEdisiPreset edisi) {
+	void klikPadaEdisiPreset(final CheckBox cAktif, final MVersionPreset edisi) {
 		if (cAktif.isChecked()) {
 			edisi.setAktif(false);
 		} else {
@@ -239,11 +239,11 @@ public class EdisiActivity extends BaseActivity {
 				edisi.setAktif(true);
 			} else {
 				DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
-					final ProgressDialog pd = new ProgressDialog(EdisiActivity.this);
+					final ProgressDialog pd = new ProgressDialog(VersionsActivity.this);
 					DonlotListener donlotListener = new DonlotListener() {
 						@Override
 						public void onSelesaiDonlot(Elemen e) {
-							EdisiActivity.this.runOnUiThread(new Runnable() {
+							VersionsActivity.this.runOnUiThread(new Runnable() {
 								@Override public void run() {
 									Toast.makeText(getApplicationContext(),
 										getString(R.string.selesai_mengunduh_edisi_judul_disimpan_di_path, edisi.judul, AddonManager.getEdisiPath(edisi.namafile_preset)),
@@ -255,7 +255,7 @@ public class EdisiActivity extends BaseActivity {
 						
 						@Override
 						public void onGagalDonlot(Elemen e, final String keterangan, final Throwable t) {
-							EdisiActivity.this.runOnUiThread(new Runnable() {
+							VersionsActivity.this.runOnUiThread(new Runnable() {
 								@Override public void run() {
 									Toast.makeText(
 										getApplicationContext(),
@@ -268,7 +268,7 @@ public class EdisiActivity extends BaseActivity {
 						
 						@Override
 						public void onProgress(Elemen e, final int sampe, int total) {
-							EdisiActivity.this.runOnUiThread(new Runnable() {
+							VersionsActivity.this.runOnUiThread(new Runnable() {
 								@Override public void run() {
 									if (sampe >= 0) {
 										pd.setMessage(getString(R.string.terunduh_sampe_byte, sampe));
@@ -282,7 +282,7 @@ public class EdisiActivity extends BaseActivity {
 						
 						@Override
 						public void onBatalDonlot(Elemen e) {
-							EdisiActivity.this.runOnUiThread(new Runnable() {
+							VersionsActivity.this.runOnUiThread(new Runnable() {
 								@Override public void run() {
 									Toast.makeText(getApplicationContext(), R.string.pengunduhan_dibatalkan, Toast.LENGTH_SHORT).show();
 								}
@@ -324,7 +324,7 @@ public class EdisiActivity extends BaseActivity {
 					}
 				};
 				
-				new AlertDialog.Builder(EdisiActivity.this)
+				new AlertDialog.Builder(VersionsActivity.this)
 				.setTitle(R.string.mengunduh_tambahan)
 				.setMessage(getString(R.string.file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya, AddonManager.getEdisiPath(edisi.namafile_preset)))
 				.setPositiveButton(R.string.yes, clickListener)
@@ -334,7 +334,7 @@ public class EdisiActivity extends BaseActivity {
 		}
 	}
 
-	void klikPadaEdisiYes(final CheckBox cAktif, final MEdisiYes edisi) {
+	void klikPadaEdisiYes(final CheckBox cAktif, final MVersionYes edisi) {
 		if (cAktif.isChecked()) {
 			edisi.setAktif(false);
 		} else {
@@ -390,7 +390,7 @@ public class EdisiActivity extends BaseActivity {
 				if (maybeDecompressed.exists() && !maybeDecompressed.isDirectory() && maybeDecompressed.canRead()) {
 					handleFileOpenYes(maybeDecompressed.getAbsolutePath(), null);
 				} else {
-					final ProgressDialog pd = ProgressDialog.show(EdisiActivity.this, null, getString(R.string.sedang_mendekompres_harap_tunggu), true, false);
+					final ProgressDialog pd = ProgressDialog.show(VersionsActivity.this, null, getString(R.string.sedang_mendekompres_harap_tunggu), true, false);
 					new AsyncTask<Void, Void, File>() {
 						@Override protected File doInBackground(Void... params) {
 							String tmpfile3 = filename + "-" + (int)(Math.random() * 100000) + ".tmp3"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -442,7 +442,7 @@ public class EdisiActivity extends BaseActivity {
 		{ // cari dup
 			boolean dup = false;
 			BuildConfig c = BuildConfig.get(getApplicationContext());
-			for (MEdisiPreset preset: c.presets) {
+			for (MVersionPreset preset: c.presets) {
 				if (filename.equals(AddonManager.getEdisiPath(preset.namafile_preset))) {
 					dup = true;
 					break;
@@ -465,7 +465,7 @@ public class EdisiActivity extends BaseActivity {
 			int urutanTerbesar = S.getDb().getUrutanTerbesarEdisiYes();
 			if (urutanTerbesar == 0) urutanTerbesar = 100; // default
 			
-			MEdisiYes yes = new MEdisiYes();
+			MVersionYes yes = new MVersionYes();
 			yes.jenis = Db.Edisi.jenis_yes;
 			yes.judul = pembaca.getJudul();
 			yes.keterangan = pembaca.getKeterangan();
@@ -513,7 +513,7 @@ public class EdisiActivity extends BaseActivity {
 			
 			@Override public void onOk(final ConvertParams params) {
 				final String namafileyes = AddonManager.getEdisiPath(namayes);
-				final ProgressDialog pd = ProgressDialog.show(EdisiActivity.this, null, getString(R.string.ed_reading_pdb_file), true, false);
+				final ProgressDialog pd = ProgressDialog.show(VersionsActivity.this, null, getString(R.string.ed_reading_pdb_file), true, false);
 				pd.setOnKeyListener(new OnKeyListener() {
 					@Override public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
 						if (keyCode == KeyEvent.KEYCODE_SEARCH) {
@@ -565,7 +565,7 @@ public class EdisiActivity extends BaseActivity {
 									msg.append("- ").append(s).append('\n'); //$NON-NLS-1$
 								}
 								
-								new AlertDialog.Builder(EdisiActivity.this)
+								new AlertDialog.Builder(VersionsActivity.this)
 								.setMessage(msg)
 								.setPositiveButton(R.string.ok, null)
 								.show();
@@ -581,7 +581,7 @@ public class EdisiActivity extends BaseActivity {
 	}
 	
 	void showPdbReadErrorDialog(Throwable exception) {
-		new AlertDialog.Builder(EdisiActivity.this)
+		new AlertDialog.Builder(VersionsActivity.this)
 		.setTitle(R.string.ed_error_reading_pdb_file)
 		.setMessage(getString(R.string.ed_details) + U.tampilException(exception))
 		.setPositiveButton(R.string.ok, null)
@@ -642,7 +642,7 @@ public class EdisiActivity extends BaseActivity {
 		}
 	}
 	
-	public static class MEdisiPreset extends MVersion {
+	public static class MVersionPreset extends MVersion {
 		public String url;
 		public String namafile_preset;
 		public String locale;
@@ -674,7 +674,7 @@ public class EdisiActivity extends BaseActivity {
 		}
 	}
 	
-	public static class MEdisiYes extends MVersion {
+	public static class MVersionYes extends MVersion {
 		public String keterangan;
 		public String namafile;
 		public String namafile_pdbasal;
@@ -713,8 +713,8 @@ public class EdisiActivity extends BaseActivity {
 	
 	public class EdisiAdapter extends BaseAdapter {
 		MEdisiInternal internal;
-		List<MEdisiPreset> xpreset;
-		List<MEdisiYes> xyes;
+		List<MVersionPreset> xpreset;
+		List<MVersionYes> xyes;
 		
 		public void init() {
 			BuildConfig c = BuildConfig.get(getApplicationContext());
@@ -725,11 +725,11 @@ public class EdisiActivity extends BaseActivity {
 			internal.judul = c.internalJudul;
 			internal.urutan = 1;
 			
-			xpreset = new ArrayList<MEdisiPreset>();
+			xpreset = new ArrayList<MVersionPreset>();
 			xpreset.addAll(c.presets);
 			
 			// betulin keaktifannya berdasarkan adanya file dan pref
-			for (MEdisiPreset preset: xpreset) {
+			for (MVersionPreset preset: xpreset) {
 				if (!AddonManager.cekAdaEdisi(preset.namafile_preset)) {
 					preset.setAktif(false);
 				}
@@ -790,10 +790,10 @@ public class EdisiActivity extends BaseActivity {
 					cAktif.setEnabled(false);
 					lNamafile.setVisibility(View.GONE);
 					lBahasa.setVisibility(View.GONE);
-				} else if (medisi instanceof MEdisiPreset) {
+				} else if (medisi instanceof MVersionPreset) {
 					cAktif.setEnabled(true);
-					String namafile_preset = ((MEdisiPreset) medisi).namafile_preset;
-					String locale = ((MEdisiPreset) medisi).locale;
+					String namafile_preset = ((MVersionPreset) medisi).namafile_preset;
+					String locale = ((MVersionPreset) medisi).locale;
 					if (AddonManager.cekAdaEdisi(namafile_preset)) {
 						lNamafile.setVisibility(View.GONE);
 					} else {
@@ -819,11 +819,11 @@ public class EdisiActivity extends BaseActivity {
 					} else {
 						lBahasa.setVisibility(View.GONE);
 					}
-				} else if (medisi instanceof MEdisiYes) {
+				} else if (medisi instanceof MVersionYes) {
 					cAktif.setEnabled(true);
 					lNamafile.setVisibility(View.VISIBLE);
 					lBahasa.setVisibility(View.GONE);
-					MEdisiYes yes = (MEdisiYes) medisi;
+					MVersionYes yes = (MVersionYes) medisi;
 					String extra = ""; //$NON-NLS-1$
 					if (yes.keterangan != null) {
 						extra += yes.keterangan;
