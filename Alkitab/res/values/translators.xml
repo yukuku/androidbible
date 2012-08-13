@@ -3,8 +3,9 @@
     <string-array name="translators_list">
         <item>English: author</item>
         <item>Indonesian: author</item>
+        <item>German: Ribka Ling</item>
         <item>Polski: Artur Szymczak</item>
         <item>Română: Liviu Foltut</item>
-        <item>Please help us translate this Bible app to more languages!</item>
+        <item>Please help us [http://crowdin.net/project/alkitab/]translate this Bible app to more languages!</item>
     </string-array>
 </resources>

@@ -5,6 +5,7 @@
         <item>Default</item>
         <item>English</item>
         <item>Bahasa Indonesia</item>
+        <item>German</item>
         <item>Polski</item>
         <item>Română</item>
     </string-array>
@@ -12,6 +13,7 @@
         <item>DEFAULT</item>
         <item>en</item>
         <item>in</item>
+        <item>de</item>
         <item>pl</item>
         <item>ro</item>
     </string-array>

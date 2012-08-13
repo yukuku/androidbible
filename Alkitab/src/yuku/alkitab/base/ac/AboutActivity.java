@@ -6,7 +6,9 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
 import android.text.style.StyleSpan;
+import android.text.style.URLSpan;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -48,10 +50,23 @@ public class AboutActivity extends BaseActivity {
 		SpannableStringBuilder sb = new SpannableStringBuilder();
 		sb.append(getString(R.string.about_translators)).append('\n'); 
 		sb.setSpan(new StyleSpan(Typeface.BOLD), 0, sb.length(), 0);
+
 		for (String translator: translators) {
-			sb.append(translator).append('\n');
+			sb.append("\u2022 "); //$NON-NLS-1$
+			int open = translator.indexOf('[');
+			int close = translator.indexOf(']');
+			if (open != -1 && close > open) {
+				sb.append(translator.substring(0, open));
+				int sb_len = sb.length();
+				sb.append(translator.substring(close + 1));
+				sb.setSpan(new URLSpan(translator.substring(open + 1, close)), sb_len, sb.length(), 0);
+			} else {
+				sb.append(translator);
+			}
+			sb.append('\n');
 		}
 		lTranslators.setText(sb);
+		lTranslators.setMovementMethod(LinkMovementMethod.getInstance());
 		
 		bSaran.setOnClickListener(bSaran_click);
 	}
