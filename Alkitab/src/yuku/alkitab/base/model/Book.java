@@ -1,7 +1,7 @@
 package yuku.alkitab.base.model;
 
 
-public class Kitab {
+public class Book {
 	public int[] nayat;
 	public int npasal;
 	public int[] pasal_offset;

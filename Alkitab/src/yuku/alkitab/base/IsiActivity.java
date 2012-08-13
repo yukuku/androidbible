@@ -50,14 +50,14 @@ import yuku.alkitab.base.IsiActivity.FakeContextMenu.Item;
 import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.BantuanActivity;
 import yuku.alkitab.base.ac.BukmakActivity;
+import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.EdisiActivity;
-import yuku.alkitab.base.ac.EdisiActivity.MEdisi;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiInternal;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiPreset;
 import yuku.alkitab.base.ac.EdisiActivity.MEdisiYes;
+import yuku.alkitab.base.ac.EdisiActivity.MVersion;
 import yuku.alkitab.base.ac.GotoActivity;
 import yuku.alkitab.base.ac.PengaturanActivity;
-import yuku.alkitab.base.ac.RenunganActivity;
 import yuku.alkitab.base.ac.Search2Activity;
 import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.ac.SongViewActivity;
@@ -65,22 +65,21 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.compat.Api8;
 import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.config.D;
-import yuku.alkitab.base.dialog.JenisBukmakDialog;
-import yuku.alkitab.base.dialog.JenisCatatanDialog;
-import yuku.alkitab.base.dialog.JenisCatatanDialog.RefreshCallback;
 import yuku.alkitab.base.dialog.JenisStabiloDialog;
+import yuku.alkitab.base.dialog.TypeBookmarkDialog;
+import yuku.alkitab.base.dialog.TypeNoteDialog;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Blok;
-import yuku.alkitab.base.model.Edisi;
-import yuku.alkitab.base.model.Kitab;
-import yuku.alkitab.base.storage.Db.Bukmak2;
+import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.Version;
+import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.storage.Preferences;
+import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.IntArrayList;
-import yuku.alkitab.base.util.Peloncat;
+import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.Search2Engine.Query;
-import yuku.alkitab.base.util.Sejarah;
-import yuku.alkitab.base.widget.AyatAdapter;
 import yuku.alkitab.base.widget.CallbackSpan;
+import yuku.alkitab.base.widget.VerseAdapter;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -89,58 +88,57 @@ import com.actionbarsherlock.view.SubMenu;
 public class IsiActivity extends BaseActivity {
 	public static final String TAG = IsiActivity.class.getSimpleName();
 	
-	// Berikut ini buat preferences_instan.
-	private static final String NAMAPREF_kitabTerakhir = "kitabTerakhir"; //$NON-NLS-1$
-	private static final String NAMAPREF_pasalTerakhir = "pasalTerakhir"; //$NON-NLS-1$
-	private static final String NAMAPREF_ayatTerakhir = "ayatTerakhir"; //$NON-NLS-1$
-	private static final String NAMAPREF_edisiTerakhir = "edisiTerakhir"; //$NON-NLS-1$
-	private static final String NAMAPREF_renungan_nama = "renungan_nama"; //$NON-NLS-1$
+	// The followings are for instant_pref
+	private static final String PREFKEY_lastBook = "kitabTerakhir"; //$NON-NLS-1$
+	private static final String PREFKEY_lastChapter = "pasalTerakhir"; //$NON-NLS-1$
+	private static final String PREFKEY_lastVerse = "ayatTerakhir"; //$NON-NLS-1$
+	private static final String PREFKEY_lastVersion = "edisiTerakhir"; //$NON-NLS-1$
+	private static final String PREFKEY_devotion_name = "renungan_nama"; //$NON-NLS-1$
 
 	public static final int RESULT_pindahCara = RESULT_FIRST_USER + 1;
 
 	private static final int REQCODE_goto = 1;
-	private static final int REQCODE_bukmak = 2;
-	private static final int REQCODE_renungan = 3;
-	private static final int REQCODE_pengaturan = 4;
-	private static final int REQCODE_edisi = 5;
+	private static final int REQCODE_bookmark = 2;
+	private static final int REQCODE_devotion = 3;
+	private static final int REQCODE_settings = 4;
+	private static final int REQCODE_version = 5;
 	private static final int REQCODE_search = 6;
-	private static final int REQCODE_bagikan = 7;
+	private static final int REQCODE_share = 7;
 
-	private static final String EXTRA_urlAyat = "urlAyat"; //$NON-NLS-1$
+	private static final String EXTRA_verseUrl = "urlAyat"; //$NON-NLS-1$
 
-	ListView lsIsi;
-	Button bTuju;
-	ImageButton bKiri;
-	ImageButton bKanan;
-	View tempatJudul;
-	TextView lJudul;
-	View bContext;
+	ListView lsText;
+	Button bGoto;
+	ImageButton bLeft;
+	ImageButton bRight;
+	View titleContainer;
+	TextView lTitle;
+	View bContextMenu;
 	View root;
 	
-	int pasal_1 = 0;
-	SharedPreferences preferences_instan;
+	int chapter_1 = 0;
+	SharedPreferences instant_pref;
 	
-	AyatAdapter ayatAdapter_;
-	Sejarah sejarah;
+	VerseAdapter verseAdapter_;
+	History history;
 	NfcAdapter nfcAdapter;
 
-	//# penyimpanan state buat search2
+	//# state storage for search2
 	Query search2_query = null;
-	IntArrayList search2_hasilCari = null;
-	int search2_posisiTerpilih = -1;
+	IntArrayList search2_results = null;
+	int search2_selectedPosition = -1;
 	
 	// temporary states
 	Animation fadeInAnimation;
 	Animation fadeOutAnimation;
-	boolean showingContextButton = false;
+	boolean showingContextMenuButton = false;
 	Boolean hasEsvsbAsal;
 	
-	CallbackSpan.OnClickListener paralelOnClickListener = new CallbackSpan.OnClickListener() {
-		@Override
-		public void onClick(View widget, Object data) {
-			int ari = loncatKe((String)data);
+	CallbackSpan.OnClickListener parallel_click = new CallbackSpan.OnClickListener() {
+		@Override public void onClick(View widget, Object data) {
+			int ari = jumpTo((String)data);
 			if (ari != 0) {
-				sejarah.tambah(ari);
+				history.add(ari);
 			}
 		}
 	};
@@ -148,103 +146,102 @@ public class IsiActivity extends BaseActivity {
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		U.nyalakanTitleBarHanyaKalauTablet(this);
+		U.enableTitleBarOnlyForHolo(this);
 		
-		S.siapinKitab();
-		S.hitungPenerapanBerdasarkanPengaturan();
+		S.prepareBook();
+		S.calculateAppliedValuesBasedOnPreferences();
 		
 		setContentView(R.layout.activity_isi);
 		
-		lsIsi = U.getView(this, R.id.lsIsi);
-		bTuju = U.getView(this, R.id.bTuju);
-		bKiri = U.getView(this, R.id.bKiri);
-		bKanan = U.getView(this, R.id.bKanan);
-		tempatJudul = U.getView(this, R.id.tempatJudul);
-		lJudul = U.getView(this, R.id.lJudul);
-		bContext = U.getView(this, R.id.bContext);
+		lsText = U.getView(this, R.id.lsIsi);
+		bGoto = U.getView(this, R.id.bTuju);
+		bLeft = U.getView(this, R.id.bKiri);
+		bRight = U.getView(this, R.id.bKanan);
+		titleContainer = U.getView(this, R.id.tempatJudul);
+		lTitle = U.getView(this, R.id.lJudul);
+		bContextMenu = U.getView(this, R.id.bContext);
 		root = U.getView(this, R.id.root);
 		
-		terapkanPengaturan(false);
+		applyPreferences(false);
 
-		lsIsi.setOnItemClickListener(lsIsi_itemClick);
-		lsIsi.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		lsText.setOnItemClickListener(lsText_itemClick);
+		lsText.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		
-		bTuju.setOnClickListener(new View.OnClickListener() {
-			@Override public void onClick(View v) { bTuju_click(); }
+		bGoto.setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View v) { bGoto_click(); }
 		});
-		bTuju.setOnLongClickListener(new View.OnLongClickListener() {
-			@Override public boolean onLongClick(View v) { bTuju_longClick(); return true; }
-		});
-		
-		lJudul.setOnClickListener(new View.OnClickListener() { // pinjem bTuju
-			@Override public void onClick(View v) { bTuju_click(); }
-		});
-		lJudul.setOnLongClickListener(new View.OnLongClickListener() { // pinjem bTuju
-			@Override public boolean onLongClick(View v) { bTuju_longClick(); return true; }
+		bGoto.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override public boolean onLongClick(View v) { bGoto_longClick(); return true; }
 		});
 		
-		bKiri.setOnClickListener(new View.OnClickListener() {
-			@Override public void onClick(View v) { bKiri_click(); }
+		lTitle.setOnClickListener(new View.OnClickListener() { // pinjem bTuju
+			@Override public void onClick(View v) { bGoto_click(); }
 		});
-		bKanan.setOnClickListener(new View.OnClickListener() {
-			@Override public void onClick(View v) { bKanan_click(); }
+		lTitle.setOnLongClickListener(new View.OnLongClickListener() { // pinjem bTuju
+			@Override public boolean onLongClick(View v) { bGoto_longClick(); return true; }
 		});
 		
-		bContext.setOnClickListener(bContext_click);
+		bLeft.setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View v) { bLeft_click(); }
+		});
+		bRight.setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View v) { bRight_click(); }
+		});
 		
-		lsIsi.setOnKeyListener(new View.OnKeyListener() {
-			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
+		bContextMenu.setOnClickListener(bContextMenu_click);
+		
+		lsText.setOnKeyListener(new View.OnKeyListener() {
+			@Override public boolean onKey(View v, int keyCode, KeyEvent event) {
 				int action = event.getAction();
 				if (action == KeyEvent.ACTION_DOWN) {
-					return tekan(keyCode);
+					return press(keyCode);
 				} else if (action == KeyEvent.ACTION_MULTIPLE) {
-					return tekan(keyCode);
+					return press(keyCode);
 				}
 				return false;
 			}
 		});
 		
 		// adapter
-		ayatAdapter_ = new AyatAdapter(this, paralelOnClickListener, new AtributListener());
-		lsIsi.setAdapter(ayatAdapter_);
+		verseAdapter_ = new VerseAdapter(this, parallel_click, new AttributeListener());
+		lsText.setAdapter(verseAdapter_);
 		
 		// muat preferences_instan, dan atur renungan
-		preferences_instan = App.getPreferencesInstan();
-		sejarah = new Sejarah(preferences_instan);
+		instant_pref = App.getPreferencesInstan();
+		history = new History(instant_pref);
 		{
-			String renungan_nama = preferences_instan.getString(NAMAPREF_renungan_nama, null);
-			if (renungan_nama != null) {
-				for (String nama: RenunganActivity.ADA_NAMA) {
-					if (renungan_nama.equals(nama)) {
-						S.penampungan.renungan_nama = renungan_nama;
+			String devotion_name = instant_pref.getString(PREFKEY_devotion_name, null);
+			if (devotion_name != null) {
+				for (String nama: DevotionActivity.AVAILABLE_NAMES) {
+					if (devotion_name.equals(nama)) {
+						S.penampungan.devotion_name = devotion_name;
 					}
 				}
 			}
 		}
 		
-		// kembalikan (edisi; kitab; pasal dan ayat) terakhir.
-		String edisiTerakhir = preferences_instan.getString(NAMAPREF_edisiTerakhir, null);
-		int kitabTerakhir = preferences_instan.getInt(NAMAPREF_kitabTerakhir, 0);
-		int pasalTerakhir = preferences_instan.getInt(NAMAPREF_pasalTerakhir, 0);
-		int ayatTerakhir = preferences_instan.getInt(NAMAPREF_ayatTerakhir, 0);
-		Log.d(TAG, "Akan ke posisi terakhir: edisi " + edisiTerakhir + " kitab " + kitabTerakhir + " pasal " + kitabTerakhir + " ayat " + ayatTerakhir); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		// restore the last (version; book; chapter and verse).
+		String lastVersion = instant_pref.getString(PREFKEY_lastVersion, null);
+		int lastBook = instant_pref.getInt(PREFKEY_lastBook, 0);
+		int lastChapter = instant_pref.getInt(PREFKEY_lastChapter, 0);
+		int lastVerse = instant_pref.getInt(PREFKEY_lastVerse, 0);
+		Log.d(TAG, "Going to the last: version=" + lastVersion + " book=" + lastBook + " chapter=" + lastBook + " verse=" + lastVerse); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
-		muatEdisiTerakhir(edisiTerakhir);
+		loadLastVersion(lastVersion);
 		
-		{ // muat kitab
-			Kitab k = S.edisiAktif.getKitab(kitabTerakhir);
-			if (k != null) {
-				S.kitabAktif = k;
+		{ // load book
+			Book book = S.activeVersion.getKitab(lastBook);
+			if (book != null) {
+				S.activeBook = book;
 			}
 		}
 		
-		// muat pasal dan ayat
-		tampil(pasalTerakhir, ayatTerakhir);
+		// load chapter and verse
+		display(lastChapter, lastVerse);
 
-		if (D.EBUG) { // supaya ga lupa matiin pas release
+		if (D.EBUG) { // so we get some warning if D.EBUG is on when released
 			new AlertDialog.Builder(this)
-			.setMessage("D.EBUG nyala!") //$NON-NLS-1$
+			.setMessage("D.EBUG is on!") //$NON-NLS-1$
 			.show();
 		}
 		
@@ -261,7 +258,7 @@ public class IsiActivity extends BaseActivity {
 				@Override public NdefMessage createNdefMessage(NfcEvent event) {
 					JSONObject obj = new JSONObject();
 					try {
-						obj.put("ari", Ari.encode(S.kitabAktif.pos, IsiActivity.this.pasal_1, IsiActivity.this.getAyatBerdasarSkrol())); //$NON-NLS-1$
+						obj.put("ari", Ari.encode(S.activeBook.pos, IsiActivity.this.chapter_1, IsiActivity.this.getVerseBasedOnScroll())); //$NON-NLS-1$
 					} catch (JSONException e) { // won't happen
 					}
 					byte[] payload = obj.toString().getBytes();
@@ -273,7 +270,8 @@ public class IsiActivity extends BaseActivity {
 					return msg;
 				}
 			}, this);
-		}	}
+		}
+	}
 
 	@Override protected void onPause() {
 		super.onPause();
@@ -330,7 +328,7 @@ public class IsiActivity extends BaseActivity {
 						JSONObject obj = new JSONObject(json);
 						int ari = obj.optInt("ari", -1); //$NON-NLS-1$
 						if (ari != -1) {
-							IsiActivity.this.loncatKeAri(ari);
+							IsiActivity.this.jumpToAri(ari);
 						}
 					} catch (JSONException e) {
 						Log.e(TAG, "Malformed json from nfc", e); //$NON-NLS-1$
@@ -340,74 +338,74 @@ public class IsiActivity extends BaseActivity {
 		}
 	}
 
-	private void muatEdisiTerakhir(String edisiTerakhir) {
-		if (edisiTerakhir == null || MEdisiInternal.getEdisiInternalId().equals(edisiTerakhir)) {
-			return; // udah di internal, ga usah ngapa2in lagi!
+	private void loadLastVersion(String lastVersion) {
+		if (lastVersion == null || MEdisiInternal.getVersionInternalId().equals(lastVersion)) {
+			return; // we are now already on internal, no need to do anything!
 		}
 		
 		BuildConfig c = BuildConfig.get(this);
 		
 		// coba preset dulu!
-		for (MEdisiPreset preset: c.xpreset) { // 2. preset
-			if (preset.getEdisiId().equals(edisiTerakhir)) {
+		for (MEdisiPreset preset: c.presets) { // 2. preset
+			if (preset.getEdisiId().equals(lastVersion)) {
 				if (preset.adaFileDatanya()) {
-					muatEdisi(preset);
+					loadVersion(preset);
 				} else { 
-					return; // ini harusnya yang dipilih, tapi ternyata filenya ga ada, mari fallback aja
+					return; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
 				}
 			}
 		}
 		
 		// masih belum cocok, mari kita cari di daftar yes
-		List<MEdisiYes> xyes = S.getDb().listSemuaEdisi();
-		for (MEdisiYes yes: xyes) {
-			if (yes.getEdisiId().equals(edisiTerakhir)) {
+		List<MEdisiYes> yeses = S.getDb().listAllVersions();
+		for (MEdisiYes yes: yeses) {
+			if (yes.getEdisiId().equals(lastVersion)) {
 				if (yes.adaFileDatanya()) {
-					muatEdisi(yes);
+					loadVersion(yes);
 				} else { 
-					return; // ini harusnya yang dipilih, tapi ternyata filenya ga ada, mari fallback aja
+					return; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
 				}
 			}
 		}
 	}
 	
-	protected void muatEdisi(final MEdisi me) {
-		// buat rollback
-		Edisi edisiAktifLama = S.edisiAktif;
-		String edisiIdLama = S.edisiId;
+	protected void loadVersion(final MVersion mv) {
+		// for rollback
+		Version oldActiveVersion = S.activeVersion;
+		String oldActiveVersionId = S.activeVersionId;
 		
-		boolean sukses = false;
+		boolean success = false;
 		try {
-			Edisi edisi = me.getEdisi(getApplicationContext());
+			Version version = mv.getVersion(getApplicationContext());
 			
-			if (edisi != null) {
-				S.edisiAktif = edisi;
-				S.edisiId = me.getEdisiId();
-				S.siapinKitab();
+			if (version != null) {
+				S.activeVersion = version;
+				S.activeVersionId = mv.getEdisiId();
+				S.prepareBook();
 				
-				Kitab k = S.edisiAktif.getKitab(S.kitabAktif.pos);
-				if (k != null) {
-					// assign kitab aktif dengan yang baru, ga usa perhatiin pos
-					S.kitabAktif = k;
+				Book book = S.activeVersion.getKitab(S.activeBook.pos);
+				if (book != null) {
+					// assign active book with the new one, no need to consider the pos
+					S.activeBook = book;
 				} else {
-					S.kitabAktif = S.edisiAktif.getKitabPertama(); // apa boleh buat, ga ketemu...
+					S.activeBook = S.activeVersion.getKitabPertama(); // too bad, it was not found
 				}
 				
-				tampil(pasal_1, getAyatBerdasarSkrol());
+				display(chapter_1, getVerseBasedOnScroll());
 			} else {
 				new AlertDialog.Builder(IsiActivity.this)
-				.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, me.getEdisiId()))
+				.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getEdisiId()))
 				.setPositiveButton(R.string.ok, null)
 				.show();
 			}
-			sukses = true;
-		} catch (Throwable e) { // supaya ga kres pas mulai jalanin prog
-			Log.e(TAG, "gagal di muatEdisi", e);  //$NON-NLS-1$
+			success = true;
+		} catch (Throwable e) { // so we don't crash on the beginning of the app
+			Log.e(TAG, "failed in loadVersion", e);  //$NON-NLS-1$
 		} finally {
-			if (!sukses) {
-				S.edisiAktif = edisiAktifLama;
-				S.edisiId = edisiIdLama;
-				S.siapinKitab();
+			if (!success) {
+				S.activeVersion = oldActiveVersion;
+				S.activeVersionId = oldActiveVersionId;
+				S.prepareBook();
 			}
 		}
 	}
@@ -415,30 +413,30 @@ public class IsiActivity extends BaseActivity {
 	@Override protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		
-		hideOrShowContextButton();
+		hideOrShowContextMenuButton();
 	}
 	
-	void showContextButton() {
-		if (! showingContextButton) {
+	void showContextMenuButton() {
+		if (! showingContextMenuButton) {
 			if (fadeInAnimation == null) {
 				fadeInAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
 			}
-			bContext.setVisibility(View.VISIBLE);
-			bContext.startAnimation(fadeInAnimation);
-			bContext.setEnabled(true);
-			showingContextButton = true;
+			bContextMenu.setVisibility(View.VISIBLE);
+			bContextMenu.startAnimation(fadeInAnimation);
+			bContextMenu.setEnabled(true);
+			showingContextMenuButton = true;
 		}
 	}
 	
 	void hideContextButton() {
-		if (showingContextButton) {
+		if (showingContextMenuButton) {
 			if (fadeOutAnimation == null) {
 				fadeOutAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_out);
 			}
 			fadeOutAnimation.setAnimationListener(fadeOutAnimation_animation);
-			bContext.startAnimation(fadeOutAnimation);
-			bContext.setEnabled(false);
-			showingContextButton = false;
+			bContextMenu.startAnimation(fadeOutAnimation);
+			bContextMenu.setEnabled(false);
+			showingContextMenuButton = false;
 		}
 	}
 
@@ -446,128 +444,128 @@ public class IsiActivity extends BaseActivity {
 		@Override public void onAnimationStart(Animation animation) {}
 		@Override public void onAnimationRepeat(Animation animation) {}
 		@Override public void onAnimationEnd(Animation animation) {
-			bContext.setVisibility(View.INVISIBLE);
+			bContextMenu.setVisibility(View.INVISIBLE);
 		}
 	};
 	
-	protected boolean tekan(int keyCode) {
-		String tombolVolumeBuatPindah = Preferences.getString(R.string.pref_tombolVolumeBuatPindah_key, R.string.pref_tombolVolumeBuatPindah_default);
-		if (U.equals(tombolVolumeBuatPindah, "pasal")) { //$NON-NLS-1$
+	protected boolean press(int keyCode) {
+		String volumeButtonsForNavigation = Preferences.getString(R.string.pref_tombolVolumeBuatPindah_key, R.string.pref_tombolVolumeBuatPindah_default);
+		if (U.equals(volumeButtonsForNavigation, "pasal" /* chapter */)) { //$NON-NLS-1$
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_RIGHT;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_LEFT;
-		} else if (U.equals(tombolVolumeBuatPindah, "ayat")) { //$NON-NLS-1$
+		} else if (U.equals(volumeButtonsForNavigation, "ayat" /* verse */)) { //$NON-NLS-1$
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_DOWN;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_UP;
 		}
 
 		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-			bKiri_click();
+			bLeft_click();
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-			bKanan_click();
+			bRight_click();
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-			int posLama = getPosisiBerdasarSkrol();
-			if (posLama < ayatAdapter_.getCount() - 1) {
-				lsIsi.setSelectionFromTop(posLama+1, lsIsi.getVerticalFadingEdgeLength());
+			int oldPos = getPositionBasedOnScroll();
+			if (oldPos < verseAdapter_.getCount() - 1) {
+				lsText.setSelectionFromTop(oldPos+1, lsText.getVerticalFadingEdgeLength());
 			}
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-			int posLama = getPosisiBerdasarSkrol();
-			if (posLama >= 1) {
-				int posBaru = posLama - 1;
-				while (posBaru > 0) { // cek disabled, kalo iya, mundurin lagi
-					if (ayatAdapter_.isEnabled(posBaru)) break;
-					posBaru--;
+			int oldPos = getPositionBasedOnScroll();
+			if (oldPos >= 1) {
+				int newPos = oldPos - 1;
+				while (newPos > 0) { // cek disabled, kalo iya, mundurin lagi
+					if (verseAdapter_.isEnabled(newPos)) break;
+					newPos--;
 				}
-				lsIsi.setSelectionFromTop(posBaru, lsIsi.getVerticalFadingEdgeLength());
+				lsText.setSelectionFromTop(newPos, lsText.getVerticalFadingEdgeLength());
 			} else {
-				lsIsi.setSelectionFromTop(0, lsIsi.getVerticalFadingEdgeLength());
+				lsText.setSelectionFromTop(0, lsText.getVerticalFadingEdgeLength());
 			}
 			return true;
 		}
 		return false;
 	}
 
-	private synchronized void nyalakanTerusLayarKalauDiminta() {
+	private synchronized void keepScreenOnWhenRequested() {
 		if (Preferences.getBoolean(R.string.pref_nyalakanTerusLayar_key, R.bool.pref_nyalakanTerusLayar_default)) {
-			lsIsi.setKeepScreenOn(true);
+			lsText.setKeepScreenOn(true);
 		}
 	}
 
-	private synchronized void matikanLayarKalauSudahBolehMati() {
-		lsIsi.setKeepScreenOn(false);
+	private synchronized void turnScreenOffIfAllowedToTurnOff() {
+		lsText.setKeepScreenOn(false);
 	}
 	
-	int loncatKe(String alamat) {
-		if (alamat.trim().length() == 0) {
+	int jumpTo(String reference) {
+		if (reference.trim().length() == 0) {
 			return 0;
 		}
 		
-		Log.d(TAG, "akan loncat ke " + alamat); //$NON-NLS-1$
+		Log.d(TAG, "going to jump to " + reference); //$NON-NLS-1$
 		
-		Peloncat peloncat = new Peloncat();
-		boolean sukses = peloncat.parse(alamat);
-		if (! sukses) {
-			Toast.makeText(this, getString(R.string.alamat_tidak_sah_alamat, alamat), Toast.LENGTH_SHORT).show();
+		Jumper jumper = new Jumper();
+		boolean success = jumper.parse(reference);
+		if (! success) {
+			Toast.makeText(this, getString(R.string.alamat_tidak_sah_alamat, reference), Toast.LENGTH_SHORT).show();
 			return 0;
 		}
 		
-		int kitabPos = peloncat.getKitab(S.edisiAktif.getConsecutiveXkitab());
-		Kitab terpilih;
-		if (kitabPos != -1) {
-			Kitab k = S.edisiAktif.getKitab(kitabPos);
-			if (k != null) {
-				terpilih = k;
+		int bookPos = jumper.getKitab(S.activeVersion.getConsecutiveBooks());
+		Book selected;
+		if (bookPos != -1) {
+			Book book = S.activeVersion.getKitab(bookPos);
+			if (book != null) {
+				selected = book;
 			} else {
 				// not avail, just fallback
-				terpilih = S.kitabAktif;
+				selected = S.activeBook;
 			}
 		} else {
-			terpilih = S.kitabAktif;
+			selected = S.activeBook;
 		}
 		
-		// set kitab
-		S.kitabAktif = terpilih;
+		// set book
+		S.activeBook = selected;
 		
-		int pasal = peloncat.getPasal();
-		int ayat = peloncat.getAyat();
-		int ari_pa;
-		if (pasal == -1 && ayat == -1) {
-			ari_pa = tampil(1, 1);
+		int chapter = jumper.getChapter();
+		int verse = jumper.getVerse();
+		int ari_cv;
+		if (chapter == -1 && verse == -1) {
+			ari_cv = display(1, 1);
 		} else {
-			ari_pa = tampil(pasal, ayat);
+			ari_cv = display(chapter, verse);
 		}
 		
-		return Ari.encode(terpilih.pos, ari_pa);
+		return Ari.encode(selected.pos, ari_cv);
 	}
 	
-	void loncatKeAri(int ari) {
+	void jumpToAri(int ari) {
 		if (ari == 0) return;
 		
-		Log.d(TAG, "akan loncat ke ari 0x" + Integer.toHexString(ari)); //$NON-NLS-1$
+		Log.d(TAG, "will jump to ari 0x" + Integer.toHexString(ari)); //$NON-NLS-1$
 		
-		int kitabPos = Ari.toKitab(ari);
-		Kitab k = S.edisiAktif.getKitab(kitabPos);
+		int bookPos = Ari.toKitab(ari);
+		Book book = S.activeVersion.getKitab(bookPos);
 		
-		if (k != null) {
-			S.kitabAktif = k;
+		if (book != null) {
+			S.activeBook = book;
 		} else {
-			Log.w(TAG, "mana ada kitabPos " + kitabPos + " dari ari " + ari); //$NON-NLS-1$ //$NON-NLS-2$
+			Log.w(TAG, "bookPos=" + bookPos + " not found for ari=" + ari); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		
-		tampil(Ari.toPasal(ari), Ari.toAyat(ari));
+		display(Ari.toChapter(ari), Ari.toVerse(ari));
 	}
 
-	private OnItemClickListener lsIsi_itemClick = new OnItemClickListener() {
+	private OnItemClickListener lsText_itemClick = new OnItemClickListener() {
 		@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-			hideOrShowContextButton();
+			hideOrShowContextMenuButton();
 		}
 	};
 	
-	void hideOrShowContextButton() {
-		SparseBooleanArray checkedPositions = lsIsi.getCheckedItemPositions();
+	void hideOrShowContextMenuButton() {
+		SparseBooleanArray checkedPositions = lsText.getCheckedItemPositions();
 		boolean anyChecked = false;
 		for (int i = 0; i < checkedPositions.size(); i++) if (checkedPositions.valueAt(i)) {
 			anyChecked = true; 
@@ -575,15 +573,15 @@ public class IsiActivity extends BaseActivity {
 		}
 		
 		if (anyChecked) {
-			showContextButton();
+			showContextMenuButton();
 		} else {
 			hideContextButton();
 		}
 	}
 
-	private IntArrayList getAyatTerpilih_1() {
-		// hitung ada berapa yang terpilih
-		SparseBooleanArray positions = lsIsi.getCheckedItemPositions();
+	private IntArrayList getSelectedVerses_1() {
+		// count how many are selected
+		SparseBooleanArray positions = lsText.getCheckedItemPositions();
 		if (positions == null) {
 			return new IntArrayList(0);
 		}
@@ -592,21 +590,21 @@ public class IsiActivity extends BaseActivity {
 		for (int i = 0, len = positions.size(); i < len; i++) {
 			if (positions.valueAt(i)) {
 				int position = positions.keyAt(i);
-				int ayat_1 = ayatAdapter_.getAyatDariPosition(position);
-				if (ayat_1 >= 1) res.add(ayat_1);
+				int verse_1 = verseAdapter_.getVerseFromPosition(position);
+				if (verse_1 >= 1) res.add(verse_1);
 			}
 		}
 		return res;
 	}
 	
-	private CharSequence alamatDariAyatTerpilih(IntArrayList ayatTerpilih) {
-		if (ayatTerpilih.size() == 0) {
-			// harusnya mustahil. Maka ga usa ngapa2in deh.
-			return S.alamat(S.kitabAktif, this.pasal_1);
-		} else if (ayatTerpilih.size() == 1) {
-			return S.alamat(S.kitabAktif, this.pasal_1, ayatTerpilih.get(0));
+	private CharSequence referenceFromSelectedVerses(IntArrayList selectedVerses) {
+		if (selectedVerses.size() == 0) {
+			// should not be possible. So we don't do anything.
+			return S.alamat(S.activeBook, this.chapter_1);
+		} else if (selectedVerses.size() == 1) {
+			return S.alamat(S.activeBook, this.chapter_1, selectedVerses.get(0));
 		} else {
-			return S.alamat(S.kitabAktif, this.pasal_1, ayatTerpilih);
+			return S.alamat(S.activeBook, this.chapter_1, selectedVerses);
 		}
 	}
 	
@@ -618,11 +616,11 @@ public class IsiActivity extends BaseActivity {
 			}
 		}
 		
-		Item menuSalinAyat;
-		Item menuTambahBukmak;
-		Item menuTambahCatatan;
-		Item menuTambahStabilo;
-		Item menuBagikan;
+		Item menuCopyVerse;
+		Item menuAddBookmark;
+		Item menuAddNote;
+		Item menuAddHighlight;
+		Item menuShare;
 		Item menuEsvsbasal;
 		List<Item> items;
 		
@@ -637,11 +635,11 @@ public class IsiActivity extends BaseActivity {
 	
 	FakeContextMenu getFakeContextMenu() {
 		FakeContextMenu res = new FakeContextMenu();
-		res.menuSalinAyat = new Item(getString(R.string.salin_ayat));
-		res.menuTambahBukmak = new Item(getString(R.string.tambah_pembatas_buku));
-		res.menuTambahCatatan = new Item(getString(R.string.tulis_catatan));
-		res.menuTambahStabilo = new Item(getString(R.string.highlight_stabilo));
-		res.menuBagikan = new Item(getString(R.string.bagikan));
+		res.menuCopyVerse = new Item(getString(R.string.salin_ayat));
+		res.menuAddBookmark = new Item(getString(R.string.tambah_pembatas_buku));
+		res.menuAddNote = new Item(getString(R.string.tulis_catatan));
+		res.menuAddHighlight = new Item(getString(R.string.highlight_stabilo));
+		res.menuShare = new Item(getString(R.string.bagikan));
 		
 		/* The following "esvsbasal" thing is a personal thing by yuku that doesn't matter to anyone else. 
 		 * Please ignore it and leave it intact. */
@@ -659,11 +657,11 @@ public class IsiActivity extends BaseActivity {
 		}
 		
 		ArrayList<Item> items = new ArrayList<Item>(6);
-		items.add(res.menuSalinAyat);
-		items.add(res.menuTambahBukmak);
-		items.add(res.menuTambahCatatan);
-		items.add(res.menuTambahStabilo);
-		items.add(res.menuBagikan);
+		items.add(res.menuCopyVerse);
+		items.add(res.menuAddBookmark);
+		items.add(res.menuAddNote);
+		items.add(res.menuAddHighlight);
+		items.add(res.menuShare);
 		
 		if (hasEsvsbAsal) {
 			items.add(res.menuEsvsbasal);
@@ -675,14 +673,14 @@ public class IsiActivity extends BaseActivity {
 	
 
 	public void showFakeContextMenu() {
-		IntArrayList terpilih = getAyatTerpilih_1();
-		if (terpilih.size() == 0) return;
+		IntArrayList selected = getSelectedVerses_1();
+		if (selected.size() == 0) return;
 
-		// pembuatan menu manual
+		// creating the menu manually
 		final FakeContextMenu menu = getFakeContextMenu();
 		
 		new AlertDialog.Builder(this)
-		.setTitle(alamatDariAyatTerpilih(terpilih))
+		.setTitle(referenceFromSelectedVerses(selected))
 		.setItems(menu.getLabels(), new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
 				if (which >= 0 && which < menu.items.size()) {
@@ -694,105 +692,105 @@ public class IsiActivity extends BaseActivity {
 	}
 	
 	public void onFakeContextMenuSelected(FakeContextMenu menu, Item item) {
-		IntArrayList terpilih = getAyatTerpilih_1();
-		if (terpilih.size() == 0) return;
+		IntArrayList selected = getSelectedVerses_1();
+		if (selected.size() == 0) return;
 		
-		CharSequence alamat = alamatDariAyatTerpilih(terpilih);
+		CharSequence reference = referenceFromSelectedVerses(selected);
 		
-		// ayat utama (0 kalo ga ada), yaitu kalau cuma kepilih satu.
-		int ayatUtama_1 = 0;
-		if (terpilih.size() == 1) { // ga ada yang di bawah pencetan jari, tapi cuma 1 ayat yang di terpilih, maka pasang ayat itu aja.
-			ayatUtama_1 = terpilih.get(0);
+		// the main verse (0 if not exist), which is only when only one verse is selected
+		int mainVerse_1 = 0;
+		if (selected.size() == 1) { 
+			mainVerse_1 = selected.get(0);
 		}
 		
-		if (item == menu.menuSalinAyat) { // salin, bisa multiple
-			StringBuilder salinan = new StringBuilder();
-			salinan.append(alamat).append("  "); //$NON-NLS-1$
+		if (item == menu.menuCopyVerse) { // copy, can be multiple
+			StringBuilder textToCopy = new StringBuilder();
+			textToCopy.append(reference).append("  "); //$NON-NLS-1$
 			
-			// append tiap ayat terpilih
-			for (int i = 0; i < terpilih.size(); i++) {
-				int ayat_1 = terpilih.get(i);
-				if (i != 0) salinan.append('\n');
-				salinan.append(U.buangKodeKusus(ayatAdapter_.getAyat(ayat_1)));
+			// append each selected verse
+			for (int i = 0; i < selected.size(); i++) {
+				int verse_1 = selected.get(i);
+				if (i != 0) textToCopy.append('\n');
+				textToCopy.append(U.removeSpecialCodes(verseAdapter_.getVerse(verse_1)));
 			}
 			
-			U.salin(salinan);
+			U.copyToClipboard(textToCopy);
 			uncheckAll();
 			
-			Toast.makeText(this, getString(R.string.alamat_sudah_disalin, alamat), Toast.LENGTH_SHORT).show();
-		} else if (item == menu.menuTambahBukmak) {
-			if (ayatUtama_1 == 0) {
-				// ga ada ayat utama, fokuskan ke yang relevan!
-				ayatUtama_1 = terpilih.get(0);
+			Toast.makeText(this, getString(R.string.alamat_sudah_disalin, reference), Toast.LENGTH_SHORT).show();
+		} else if (item == menu.menuAddBookmark) {
+			if (mainVerse_1 == 0) {
+				// no main verse, scroll to show the relevant one!
+				mainVerse_1 = selected.get(0);
 				
-				skrolSupayaAyatKeliatan(ayatUtama_1);
+				scrollToShowVerse(mainVerse_1);
 			}
 			
-			final int ari = Ari.encode(S.kitabAktif.pos, this.pasal_1, ayatUtama_1);
+			final int ari = Ari.encode(S.activeBook.pos, this.chapter_1, mainVerse_1);
 			
-			JenisBukmakDialog dialog = new JenisBukmakDialog(this, S.alamat(S.kitabAktif, this.pasal_1, ayatUtama_1), ari);
-			dialog.setListener(new JenisBukmakDialog.Listener() {
+			TypeBookmarkDialog dialog = new TypeBookmarkDialog(this, S.alamat(S.activeBook, this.chapter_1, mainVerse_1), ari);
+			dialog.setListener(new TypeBookmarkDialog.Listener() {
 				@Override public void onOk() {
 					uncheckAll();
-					ayatAdapter_.muatAtributMap();
+					verseAdapter_.loadAttributeMap();
 				}
 			});
 			dialog.bukaDialog();
-		} else if (item == menu.menuTambahCatatan) {
-			if (ayatUtama_1 == 0) {
-				// ga ada ayat utama, fokuskan ke yang relevan!
-				ayatUtama_1 = terpilih.get(0);
+		} else if (item == menu.menuAddNote) {
+			if (mainVerse_1 == 0) {
+				// no main verse, scroll to show the relevant one!
+				mainVerse_1 = selected.get(0);
 				
-				skrolSupayaAyatKeliatan(ayatUtama_1);
+				scrollToShowVerse(mainVerse_1);
 			}
 			
-			JenisCatatanDialog dialog = new JenisCatatanDialog(IsiActivity.this, S.kitabAktif, this.pasal_1, ayatUtama_1, new RefreshCallback() {
-				@Override public void udahan() {
+			TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, S.activeBook, this.chapter_1, mainVerse_1, new TypeNoteDialog.RefreshCallback() {
+				@Override public void onDone() {
 					uncheckAll();
-					ayatAdapter_.muatAtributMap();
+					verseAdapter_.loadAttributeMap();
 				}
 			});
 			dialog.bukaDialog();
-		} else if (item == menu.menuTambahStabilo) {
-			final int ariKp = Ari.encode(S.kitabAktif.pos, this.pasal_1, 0);
-			int warnaRgb = S.getDb().getWarnaRgbStabilo(ariKp, terpilih);
+		} else if (item == menu.menuAddHighlight) {
+			final int ariKp = Ari.encode(S.activeBook.pos, this.chapter_1, 0);
+			int warnaRgb = S.getDb().getWarnaRgbStabilo(ariKp, selected);
 			
-			new JenisStabiloDialog(this, ariKp, terpilih, new JenisStabiloDialog.JenisStabiloCallback() {
+			new JenisStabiloDialog(this, ariKp, selected, new JenisStabiloDialog.JenisStabiloCallback() {
 				@Override public void onOk(int warnaRgb) {
 					uncheckAll();
-					ayatAdapter_.muatAtributMap();
+					verseAdapter_.loadAttributeMap();
 				}
-			}, warnaRgb, alamat).bukaDialog();
-		} else if (item == menu.menuBagikan) {
+			}, warnaRgb, reference).bukaDialog();
+		} else if (item == menu.menuShare) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(alamat).append("  "); //$NON-NLS-1$
+			sb.append(reference).append("  "); //$NON-NLS-1$
 			
-			// append tiap ayat terpilih
-			for (int i = 0; i < terpilih.size(); i++) {
-				int ayat_1 = terpilih.get(i);
+			// append each selected verse
+			for (int i = 0; i < selected.size(); i++) {
+				int ayat_1 = selected.get(i);
 				if (i != 0) sb.append('\n');
-				sb.append(U.buangKodeKusus(ayatAdapter_.getAyat(ayat_1)));
+				sb.append(U.removeSpecialCodes(verseAdapter_.getVerse(ayat_1)));
 			}
 			
-			String urlAyat;
-			if (terpilih.size() == 1) {
-				urlAyat = S.bikinUrlAyat(S.kitabAktif, this.pasal_1, String.valueOf(terpilih.get(0)));
+			String verseUrl;
+			if (selected.size() == 1) {
+				verseUrl = S.createVerseUrl(S.activeBook, this.chapter_1, String.valueOf(selected.get(0)));
 			} else {
 				StringBuilder sb2 = new StringBuilder();
-				S.tulisAyatRange(terpilih, sb2);
-				urlAyat = S.bikinUrlAyat(S.kitabAktif, this.pasal_1, sb2.toString()); // pake ayat range
+				S.writeVerseRange(selected, sb2);
+				verseUrl = S.createVerseUrl(S.activeBook, this.chapter_1, sb2.toString()); // pake ayat range
 			}
 			
 			Intent intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain"); //$NON-NLS-1$
-			intent.putExtra(Intent.EXTRA_SUBJECT, alamat); 
+			intent.putExtra(Intent.EXTRA_SUBJECT, reference); 
 			intent.putExtra(Intent.EXTRA_TEXT, sb.toString());
-			intent.putExtra(EXTRA_urlAyat, urlAyat);
-			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, alamat)), REQCODE_bagikan);
+			intent.putExtra(EXTRA_verseUrl, verseUrl);
+			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, reference)), REQCODE_share);
 
 			uncheckAll();
 		} else if (item == menu.menuEsvsbasal) {
-			final int ari = Ari.encode(S.kitabAktif.pos, this.pasal_1, ayatUtama_1);
+			final int ari = Ari.encode(S.activeBook.pos, this.chapter_1, mainVerse_1);
 
 			try {
 				Intent intent = new Intent("yuku.esvsbasal.action.GOTO"); //$NON-NLS-1$
@@ -804,85 +802,82 @@ public class IsiActivity extends BaseActivity {
 		}
 	}
 
-	private void skrolSupayaAyatKeliatan(int ayatUtama_1) {
-		int position = ayatAdapter_.getPositionAwalPerikopDariAyat(ayatUtama_1);
+	private void scrollToShowVerse(int ayatUtama_1) {
+		int position = verseAdapter_.getPositionOfPericopeBeginningFromVerse(ayatUtama_1);
 		if (Build.VERSION.SDK_INT >= 8) {
-			Api8.ListView_smoothScrollToPosition(lsIsi, position);
+			Api8.ListView_smoothScrollToPosition(lsText, position);
 		} else {
-			lsIsi.setSelectionFromTop(position, lsIsi.getVerticalFadingEdgeLength());
+			lsText.setSelectionFromTop(position, lsText.getVerticalFadingEdgeLength());
 		}
 	}
 
-	private void terapkanPengaturan(boolean bahasaJuga) {
-		// penerapan langsung warnaLatar
+	private void applyPreferences(boolean languageToo) {
+		// appliance of background color
 		{
-			root.setBackgroundColor(S.penerapan.warnaLatar);
-			lsIsi.setCacheColorHint(S.penerapan.warnaLatar);
+			root.setBackgroundColor(S.penerapan.backgroundColor);
+			lsText.setCacheColorHint(S.penerapan.backgroundColor);
 		}
 		
-		// penerapan langsung sembunyi navigasi
+		// appliance of hide navigation
 		{
-			View panelNavigasi = findViewById(R.id.panelNavigasi);
+			View navigationPanel = findViewById(R.id.panelNavigasi);
 			if (Preferences.getBoolean(R.string.pref_tanpaNavigasi_key, R.bool.pref_tanpaNavigasi_default)) {
-				panelNavigasi.setVisibility(View.GONE);
-				tempatJudul.setVisibility(View.VISIBLE);
+				navigationPanel.setVisibility(View.GONE);
+				titleContainer.setVisibility(View.VISIBLE);
 			} else {
-				panelNavigasi.setVisibility(View.VISIBLE);
-				tempatJudul.setVisibility(View.GONE);
+				navigationPanel.setVisibility(View.VISIBLE);
+				titleContainer.setVisibility(View.GONE);
 			}
 		}
 		
-		if (bahasaJuga) {
-			S.terapkanPengaturanBahasa(null, 0);
+		if (languageToo) {
+			S.applyLanguagePreference(null, 0);
 		}
 		
-		// wajib
-		lsIsi.invalidateViews();
+		// necessary
+		lsText.invalidateViews();
 	}
 	
-	@Override
-	protected void onStop() {
+	@Override protected void onStop() {
 		super.onStop();
 		
-		Editor editor = preferences_instan.edit();
-		editor.putInt(NAMAPREF_kitabTerakhir, S.kitabAktif.pos);
-		editor.putInt(NAMAPREF_pasalTerakhir, pasal_1);
-		editor.putInt(NAMAPREF_ayatTerakhir, getAyatBerdasarSkrol());
-		editor.putString(NAMAPREF_renungan_nama, S.penampungan.renungan_nama);
-		editor.putString(NAMAPREF_edisiTerakhir, S.edisiId);
-		sejarah.simpan(editor);
+		Editor editor = instant_pref.edit();
+		editor.putInt(PREFKEY_lastBook, S.activeBook.pos);
+		editor.putInt(PREFKEY_lastChapter, chapter_1);
+		editor.putInt(PREFKEY_lastVerse, getVerseBasedOnScroll());
+		editor.putString(PREFKEY_devotion_name, S.penampungan.devotion_name);
+		editor.putString(PREFKEY_lastVersion, S.activeVersionId);
+		history.simpan(editor);
 		editor.commit();
 		
-		matikanLayarKalauSudahBolehMati();
+		turnScreenOffIfAllowedToTurnOff();
 	}
 	
-	@Override
-	protected void onStart() {
+	@Override protected void onStart() {
 		super.onStart();
 		
-		//# nyala terus layar
-		nyalakanTerusLayarKalauDiminta();
+		keepScreenOnWhenRequested();
 	}
 	
 	/**
-	 * @return ayat mulai dari 1
+	 * @return 1-based verse
 	 */
-	int getAyatBerdasarSkrol() {
-		return ayatAdapter_.getAyatDariPosition(getPosisiBerdasarSkrol());
+	int getVerseBasedOnScroll() {
+		return verseAdapter_.getVerseFromPosition(getPositionBasedOnScroll());
 	}
 	
-	int getPosisiBerdasarSkrol() {
-		int pos = lsIsi.getFirstVisiblePosition();
+	int getPositionBasedOnScroll() {
+		int pos = lsText.getFirstVisiblePosition();
 
-		// cek apakah paling atas uda keskrol
-		View child = lsIsi.getChildAt(0); 
+		// check if the top one has been scrolled 
+		View child = lsText.getChildAt(0); 
 		if (child != null) {
 			int top = child.getTop();
 			if (top == 0) {
 				return pos;
 			}
 			int bottom = child.getBottom();
-			if (bottom > lsIsi.getVerticalFadingEdgeLength()) {
+			if (bottom > lsText.getVerticalFadingEdgeLength()) {
 				return pos;
 			} else {
 				return pos+1;
@@ -892,19 +887,18 @@ public class IsiActivity extends BaseActivity {
 		return pos;
 	}
 
-	void bTuju_click() {
-		startActivityForResult(GotoActivity.createIntent(S.kitabAktif.pos, this.pasal_1, getAyatBerdasarSkrol()), REQCODE_goto);
+	void bGoto_click() {
+		startActivityForResult(GotoActivity.createIntent(S.activeBook.pos, this.chapter_1, getVerseBasedOnScroll()), REQCODE_goto);
 	}
 	
-	void bTuju_longClick() {
-		if (sejarah.getN() > 0) {
+	void bGoto_longClick() {
+		if (history.getN() > 0) {
 			new AlertDialog.Builder(this)
-			.setAdapter(sejarahAdapter, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					int ari = sejarah.getAri(which);
-					loncatKeAri(ari);
-					sejarah.tambah(ari);
+			.setAdapter(historyAdapter, new DialogInterface.OnClickListener() {
+				@Override public void onClick(DialogInterface dialog, int which) {
+					int ari = history.getAri(which);
+					jumpToAri(ari);
+					history.add(ari);
 				}
 			})
 			.setNegativeButton(R.string.cancel, null)
@@ -914,15 +908,14 @@ public class IsiActivity extends BaseActivity {
 		}
 	}
 	
-	private ListAdapter sejarahAdapter = new BaseAdapter() {
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+	private ListAdapter historyAdapter = new BaseAdapter() {
+		@Override public View getView(int position, View convertView, ViewGroup parent) {
 			TextView res = (TextView) convertView;
 			if (res == null) {
 				res = (TextView) LayoutInflater.from(IsiActivity.this).inflate(android.R.layout.select_dialog_item, null);
 			}
-			int ari = sejarah.getAri(position);
-			res.setText(S.alamat(S.edisiAktif, ari));
+			int ari = history.getAri(position);
+			res.setText(S.reference(S.activeVersion, ari));
 			return res;
 		}
 		
@@ -933,12 +926,12 @@ public class IsiActivity extends BaseActivity {
 		
 		@Override
 		public Integer getItem(int position) {
-			return sejarah.getAri(position);
+			return history.getAri(position);
 		}
 		
 		@Override
 		public int getCount() {
-			return sejarah.getN();
+			return history.getN();
 		}
 	};
 	
@@ -998,7 +991,7 @@ public class IsiActivity extends BaseActivity {
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menuBukmak:
-			startActivityForResult(new Intent(this, BukmakActivity.class), REQCODE_bukmak);
+			startActivityForResult(new Intent(this, BukmakActivity.class), REQCODE_bookmark);
 			return true;
 		case R.id.menuSearch2:
 			menuSearch2_click();
@@ -1007,7 +1000,7 @@ public class IsiActivity extends BaseActivity {
 			bukaDialogEdisi();
 			return true;
 		case R.id.menuRenungan: 
-			startActivityForResult(new Intent(this, RenunganActivity.class), REQCODE_renungan);
+			startActivityForResult(new Intent(this, DevotionActivity.class), REQCODE_devotion);
 			return true;
 		case R.id.menuSongs: 
 			startActivity(SongViewActivity.createIntent());
@@ -1016,7 +1009,7 @@ public class IsiActivity extends BaseActivity {
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
 		case R.id.menuPengaturan:
-			startActivityForResult(new Intent(this, PengaturanActivity.class), REQCODE_pengaturan);
+			startActivityForResult(new Intent(this, PengaturanActivity.class), REQCODE_settings);
 			return true;
 		case R.id.menuBantuan:
 			startActivity(new Intent(this, BantuanActivity.class));
@@ -1037,12 +1030,12 @@ public class IsiActivity extends BaseActivity {
 		
 		BuildConfig c = BuildConfig.get(this);
 		final List<String> pilihan = new ArrayList<String>(); // harus bareng2 sama bawah
-		final List<MEdisi> data = new ArrayList<MEdisi>();  // harus bareng2 sama atas
+		final List<MVersion> data = new ArrayList<MVersion>();  // harus bareng2 sama atas
 		
 		pilihan.add(c.internalJudul); // 1. internal
 		data.add(new MEdisiInternal());
 		
-		for (MEdisiPreset preset: c.xpreset) { // 2. preset
+		for (MEdisiPreset preset: c.presets) { // 2. preset
 			if (preset.adaFileDatanya() && preset.getAktif()) {
 				pilihan.add(preset.judul);
 				data.add(preset);
@@ -1050,7 +1043,7 @@ public class IsiActivity extends BaseActivity {
 		}
 		
 		// 3. yes yang aktif
-		List<MEdisiYes> xyes = S.getDb().listSemuaEdisi();
+		List<MEdisiYes> xyes = S.getDb().listAllVersions();
 		for (MEdisiYes yes: xyes) {
 			if (yes.adaFileDatanya() && yes.getAktif()) {
 				pilihan.add(yes.judul);
@@ -1059,12 +1052,12 @@ public class IsiActivity extends BaseActivity {
 		}
 		
 		int terpilih = -1;
-		if (S.edisiId == null) {
+		if (S.activeVersionId == null) {
 			terpilih = 0;
 		} else {
 			for (int i = 0; i < data.size(); i++) {
-				MEdisi me = data.get(i);
-				if (me.getEdisiId().equals(S.edisiId)) {
+				MVersion me = data.get(i);
+				if (me.getEdisiId().equals(S.activeVersionId)) {
 					terpilih = i;
 					break;
 				}
@@ -1075,16 +1068,16 @@ public class IsiActivity extends BaseActivity {
 		.setTitle(R.string.pilih_edisi)
 		.setSingleChoiceItems(pilihan.toArray(new String[pilihan.size()]), terpilih, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
-				final MEdisi me = data.get(which);
+				final MVersion me = data.get(which);
 				
-				muatEdisi(me);
+				loadVersion(me);
 				dialog.dismiss();
 			}
 		})
 		.setPositiveButton(R.string.versi_lainnya, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
 				Intent intent = new Intent(getApplicationContext(), EdisiActivity.class);
-				startActivityForResult(intent, REQCODE_edisi);
+				startActivityForResult(intent, REQCODE_version);
 			}
 		})
 		.setNegativeButton(R.string.cancel, null)
@@ -1092,7 +1085,7 @@ public class IsiActivity extends BaseActivity {
 	}
 
 	private void menuSearch2_click() {
-		startActivityForResult(Search2Activity.createIntent(search2_query, search2_hasilCari, search2_posisiTerpilih, S.kitabAktif.pos), REQCODE_search);
+		startActivityForResult(Search2Activity.createIntent(search2_query, search2_results, search2_selectedPosition, S.activeBook.pos), REQCODE_search);
 	}
 	
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1103,23 +1096,23 @@ public class IsiActivity extends BaseActivity {
 				GotoActivity.Result result = GotoActivity.obtainResult(data);
 				if (result != null) {
 					// ganti kitab
-					Kitab k = S.edisiAktif.getKitab(result.kitab_pos);
+					Book k = S.activeVersion.getKitab(result.kitab_pos);
 					if (k != null) {
-						S.kitabAktif = k;
+						S.activeBook = k;
 					}
 					
-					int ari_pa = tampil(result.pasal_1, result.ayat_1);
-					sejarah.tambah(Ari.encode(result.kitab_pos, ari_pa));
+					int ari_pa = display(result.pasal_1, result.ayat_1);
+					history.add(Ari.encode(result.kitab_pos, ari_pa));
 				}
 			}
-		} else if (requestCode == REQCODE_bukmak) {
-			ayatAdapter_.muatAtributMap();
+		} else if (requestCode == REQCODE_bookmark) {
+			verseAdapter_.loadAttributeMap();
 
 			if (resultCode == RESULT_OK) {
 				int ari = data.getIntExtra(BukmakActivity.EXTRA_ariTerpilih, 0);
 				if (ari != 0) { // 0 berarti ga ada apa2, karena ga ada pasal 0 ayat 0
-					loncatKeAri(ari);
-					sejarah.tambah(ari);
+					jumpToAri(ari);
+					history.add(ari);
 				}
 			}
 		} else if (requestCode == REQCODE_search) {
@@ -1127,37 +1120,37 @@ public class IsiActivity extends BaseActivity {
 				Search2Activity.Result result = Search2Activity.obtainResult(data);
 				if (result != null) {
 					if (result.ariTerpilih != -1) {
-						loncatKeAri(result.ariTerpilih);
-						sejarah.tambah(result.ariTerpilih);
+						jumpToAri(result.ariTerpilih);
+						history.add(result.ariTerpilih);
 					}
 					
 					search2_query = result.query;
-					search2_hasilCari = result.hasilCari;
-					search2_posisiTerpilih = result.posisiTerpilih;
+					search2_results = result.hasilCari;
+					search2_selectedPosition = result.posisiTerpilih;
 				}
 			}
-		} else if (requestCode == REQCODE_renungan) {
+		} else if (requestCode == REQCODE_devotion) {
 			if (data != null) {
-				String alamat = data.getStringExtra(RenunganActivity.EXTRA_alamat);
+				String alamat = data.getStringExtra(DevotionActivity.EXTRA_alamat);
 				if (alamat != null) {
-					int ari = loncatKe(alamat);
+					int ari = jumpTo(alamat);
 					if (ari != 0) {
-						sejarah.tambah(ari);
+						history.add(ari);
 					}
 				}
 			}
-		} else if (requestCode == REQCODE_pengaturan) {
+		} else if (requestCode == REQCODE_settings) {
 			// HARUS rilod pengaturan.
-			S.hitungPenerapanBerdasarkanPengaturan();
+			S.calculateAppliedValuesBasedOnPreferences();
 			
-			terapkanPengaturan(true);
-		} else if (requestCode == REQCODE_bagikan) {
+			applyPreferences(true);
+		} else if (requestCode == REQCODE_share) {
 			if (resultCode == RESULT_OK) {
 				ShareActivity.Result result = ShareActivity.obtainResult(data);
 				if (result != null && result.chosenIntent != null) {
 					Intent chosenIntent = result.chosenIntent;
 					if (U.equals(chosenIntent.getComponent().getPackageName(), "com.facebook.katana")) { //$NON-NLS-1$
-						String urlAyat = chosenIntent.getStringExtra(EXTRA_urlAyat);
+						String urlAyat = chosenIntent.getStringExtra(EXTRA_verseUrl);
 						if (urlAyat != null) {
 							chosenIntent.putExtra(Intent.EXTRA_TEXT, urlAyat); // change text to url
 						}
@@ -1173,12 +1166,12 @@ public class IsiActivity extends BaseActivity {
 	 * @param ayat_1 basis-1
 	 * @return Ari yang hanya terdiri dari pasal dan ayat. Kitab selalu 00
 	 */
-	int tampil(int pasal_1, int ayat_1) {
+	int display(int pasal_1, int ayat_1) {
 		if (pasal_1 < 1) pasal_1 = 1;
-		if (pasal_1 > S.kitabAktif.npasal) pasal_1 = S.kitabAktif.npasal;
+		if (pasal_1 > S.activeBook.npasal) pasal_1 = S.activeBook.npasal;
 		
 		if (ayat_1 < 1) ayat_1 = 1;
-		if (ayat_1 > S.kitabAktif.nayat[pasal_1 - 1]) ayat_1 = S.kitabAktif.nayat[pasal_1 - 1];
+		if (ayat_1 > S.activeBook.nayat[pasal_1 - 1]) ayat_1 = S.activeBook.nayat[pasal_1 - 1];
 		
 		// muat data GA USAH pake async dong. // diapdet 20100417 biar ga usa async, ga guna.
 		{
@@ -1186,44 +1179,44 @@ public class IsiActivity extends BaseActivity {
 			Blok[] perikop_xblok;
 			int nblok;
 			
-			String[] xayat = S.muatTeks(S.edisiAktif, S.kitabAktif, pasal_1);
+			String[] xayat = S.muatTeks(S.activeVersion, S.activeBook, pasal_1);
 			
 			//# max dibikin pol 30 aja (1 pasal max 30 blok, cukup mustahil)
 			int max = 30;
 			perikop_xari = new int[max];
 			perikop_xblok = new Blok[max];
-			nblok = S.edisiAktif.pembaca.muatPerikop(S.edisiAktif, S.kitabAktif.pos, pasal_1, perikop_xari, perikop_xblok, max); 
+			nblok = S.activeVersion.pembaca.muatPerikop(S.activeVersion, S.activeBook.pos, pasal_1, perikop_xari, perikop_xblok, max); 
 			
 			//# isi adapter dengan data baru, pastikan semua checked state direset dulu
 			uncheckAll();
-			ayatAdapter_.setData(S.kitabAktif, pasal_1, xayat, perikop_xari, perikop_xblok, nblok);
-			ayatAdapter_.muatAtributMap();
+			verseAdapter_.setData(S.activeBook, pasal_1, xayat, perikop_xari, perikop_xblok, nblok);
+			verseAdapter_.loadAttributeMap();
 			
 			// kasi tau activity
-			this.pasal_1 = pasal_1;
+			this.chapter_1 = pasal_1;
 			
-			final int position = ayatAdapter_.getPositionAwalPerikopDariAyat(ayat_1);
+			final int position = verseAdapter_.getPositionOfPericopeBeginningFromVerse(ayat_1);
 			
 			if (position == -1) {
 				Log.w(TAG, "ga bisa ketemu ayat " + ayat_1 + ", ANEH!"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				lsIsi.setSelectionFromTop(position, lsIsi.getVerticalFadingEdgeLength());
+				lsText.setSelectionFromTop(position, lsText.getVerticalFadingEdgeLength());
 			}
 		}
 		
-		String judul = S.alamat(S.kitabAktif, pasal_1);
-		lJudul.setText(judul);
-		bTuju.setText(judul);
+		String judul = S.alamat(S.activeBook, pasal_1);
+		lTitle.setText(judul);
+		bGoto.setText(judul);
 		
 		return Ari.encode(0, pasal_1, ayat_1);
 	}
 
 	void uncheckAll() {
-		SparseBooleanArray checkedPositions = lsIsi.getCheckedItemPositions();
+		SparseBooleanArray checkedPositions = lsText.getCheckedItemPositions();
 		if (checkedPositions != null && checkedPositions.size() > 0) {
 			for (int i = checkedPositions.size() - 1; i >= 0; i--) {
 				if (checkedPositions.valueAt(i)) {
-					lsIsi.setItemChecked(checkedPositions.keyAt(i), false);
+					lsText.setItemChecked(checkedPositions.keyAt(i), false);
 				}
 			}
 		}
@@ -1232,13 +1225,13 @@ public class IsiActivity extends BaseActivity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (tekan(keyCode)) return true;
+		if (press(keyCode)) return true;
 		return super.onKeyDown(keyCode, event);
 	}
 	
 	@Override
 	public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
-		if (tekan(keyCode)) return true;
+		if (press(keyCode)) return true;
 		return super.onKeyMultiple(keyCode, repeatCount, event);
 	}
 	
@@ -1251,50 +1244,50 @@ public class IsiActivity extends BaseActivity {
 		return super.onKeyUp(keyCode, event);
 	}
 	
-	void bKiri_click() {
-		Kitab kitabKini = S.kitabAktif;
-		if (pasal_1 == 1) {
+	void bLeft_click() {
+		Book kitabKini = S.activeBook;
+		if (chapter_1 == 1) {
 			// uda di awal pasal, masuk ke kitab sebelum
 			int cobaKitabPos = kitabKini.pos - 1;
 			while (cobaKitabPos >= 0) {
-				Kitab kitabBaru = S.edisiAktif.getKitab(cobaKitabPos);
+				Book kitabBaru = S.activeVersion.getKitab(cobaKitabPos);
 				if (kitabBaru != null) {
-					S.kitabAktif = kitabBaru;
+					S.activeBook = kitabBaru;
 					int pasalBaru_1 = kitabBaru.npasal; // ke pasal terakhir
-					tampil(pasalBaru_1, 1);
+					display(pasalBaru_1, 1);
 					break;
 				}
 				cobaKitabPos--;
 			}
 			// whileelse: sekarang sudah Kejadian 1. Ga usa ngapa2in
 		} else {
-			int pasalBaru = pasal_1 - 1;
-			tampil(pasalBaru, 1);
+			int pasalBaru = chapter_1 - 1;
+			display(pasalBaru, 1);
 		}
 	}
 	
-	void bKanan_click() {
-		Kitab kitabKini = S.kitabAktif;
-		if (pasal_1 >= kitabKini.npasal) {
-			int maxKitabPos = S.edisiAktif.getMaxKitabPosTambahSatu();
+	void bRight_click() {
+		Book kitabKini = S.activeBook;
+		if (chapter_1 >= kitabKini.npasal) {
+			int maxKitabPos = S.activeVersion.getMaxKitabPosTambahSatu();
 			int cobaKitabPos = kitabKini.pos + 1;
 			while (cobaKitabPos < maxKitabPos) {
-				Kitab kitabBaru = S.edisiAktif.getKitab(cobaKitabPos);
+				Book kitabBaru = S.activeVersion.getKitab(cobaKitabPos);
 				if (kitabBaru != null) {
-					S.kitabAktif = kitabBaru;
-					tampil(1, 1);
+					S.activeBook = kitabBaru;
+					display(1, 1);
 					break;
 				}
 				cobaKitabPos++;
 			}
 			// whileelse: uda di Wahyu (atau kitab terakhir) pasal terakhir. Ga usa ngapa2in
 		} else {
-			int pasalBaru = pasal_1 + 1;
-			tampil(pasalBaru, 1);
+			int pasalBaru = chapter_1 + 1;
+			display(pasalBaru, 1);
 		}
 	}
 
-	private OnClickListener bContext_click = new OnClickListener() {
+	private OnClickListener bContextMenu_click = new OnClickListener() {
 		@Override public void onClick(View v) {
 			showFakeContextMenu();
 		}
@@ -1307,22 +1300,22 @@ public class IsiActivity extends BaseActivity {
 		return true;
 	}
 
-	public class AtributListener {
-		public void onClick(Kitab kitab_, int pasal_1, int ayat_1, int jenis) {
-			if (jenis == Bukmak2.jenis_bukmak) {
+	public class AttributeListener {
+		public void onClick(Book kitab_, int pasal_1, int ayat_1, int jenis) {
+			if (jenis == Db.Bukmak2.jenis_bukmak) {
 				final int ari = Ari.encode(kitab_.pos, pasal_1, ayat_1);
-				String alamat = S.alamat(S.edisiAktif, ari);
-				JenisBukmakDialog dialog = new JenisBukmakDialog(IsiActivity.this, alamat, ari);
-				dialog.setListener(new JenisBukmakDialog.Listener() {
+				String alamat = S.reference(S.activeVersion, ari);
+				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, alamat, ari);
+				dialog.setListener(new TypeBookmarkDialog.Listener() {
 					@Override public void onOk() {
-						ayatAdapter_.muatAtributMap();
+						verseAdapter_.loadAttributeMap();
 					}
 				});
 				dialog.bukaDialog();
-			} else if (jenis == Bukmak2.jenis_catatan) {
-				JenisCatatanDialog dialog = new JenisCatatanDialog(IsiActivity.this, kitab_, pasal_1, ayat_1, new RefreshCallback() {
-					@Override public void udahan() {
-						ayatAdapter_.muatAtributMap();
+			} else if (jenis == Db.Bukmak2.jenis_catatan) {
+				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, kitab_, pasal_1, ayat_1, new TypeNoteDialog.RefreshCallback() {
+					@Override public void onDone() {
+						verseAdapter_.loadAttributeMap();
 					}
 				});
 				dialog.bukaDialog();

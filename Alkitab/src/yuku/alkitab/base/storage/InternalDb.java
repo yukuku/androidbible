@@ -278,7 +278,7 @@ public class InternalDb {
 				int ari = cursor.getInt(kolom_ari);
 				int jenis = cursor.getInt(kolom_jenis);
 				
-				int ofsetMap = Ari.toAyat(ari) - 1; // dari basis1 ke basis 0
+				int ofsetMap = Ari.toVerse(ari) - 1; // dari basis1 ke basis 0
 				if (ofsetMap >= map_0.length) {
 					Log.e(TAG, "ofsetMap kebanyakan " + ofsetMap + " terjadi pada ari 0x" + Integer.toHexString(ari)); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
@@ -484,7 +484,7 @@ public class InternalDb {
 		}
 	}
 
-	public List<MEdisiYes> listSemuaEdisi() {
+	public List<MEdisiYes> listAllVersions() {
 		List<MEdisiYes> res = new ArrayList<MEdisiYes>();
 		Cursor cursor = helper.getReadableDatabase().query(Db.TABEL_Edisi, null, null, null, null, null, Db.Edisi.urutan + " asc"); //$NON-NLS-1$
 		try {

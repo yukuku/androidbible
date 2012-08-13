@@ -23,7 +23,7 @@ public class BuildConfig {
 	public boolean menuBantuan;
 	public boolean menuDonasi;
 	public boolean menuSongs;
-	public List<MEdisiPreset> xpreset;
+	public List<MEdisiPreset> presets;
 	public String url_prefix;
 	public String url_format;
 	public String[] url_namaKitabStandar;
@@ -101,7 +101,7 @@ public class BuildConfig {
 			}
 		}
 		
-		res.xpreset = xpreset;
+		res.presets = xpreset;
 		
 		return res;
 	}

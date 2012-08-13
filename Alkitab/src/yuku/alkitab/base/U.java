@@ -28,7 +28,7 @@ public class U {
 	 * 
 	 * @param ayat
 	 */
-	public static String buangKodeKusus(String ayat) {
+	public static String removeSpecialCodes(String ayat) {
 		if (ayat.length() == 0) return ayat;
 		if (ayat.charAt(0) != '@') return ayat;
 
@@ -61,7 +61,7 @@ public class U {
 			// cek apakah judul perikop, DAN perikop masih ada
 			if (posBlok < nblok) {
 				// masih memungkinkan
-				if (Ari.toAyat(perikop_xari[posBlok]) - 1 == posAyat) {
+				if (Ari.toVerse(perikop_xari[posBlok]) - 1 == posAyat) {
 					// ADA PERIKOP.
 					res[posPK++] = -posBlok - 1;
 					posBlok++;
@@ -241,17 +241,17 @@ public class U {
 		return sb.toString();
 	}
 	
-	public static boolean tabletkah() {
+	public static boolean isHolo() {
 		return Build.VERSION.SDK_INT /* ini diambil waktu runtime */ >= 11 /* HONEYCOMB */;
 	}
 	
-	public static void nyalakanTitleBarHanyaKalauTablet(Activity activity) {
-		if (tabletkah()) {
+	public static void enableTitleBarOnlyForHolo(Activity activity) {
+		if (isHolo()) {
 			activity.setTheme(Api11.getTheme_Holo());
 		}
 	}
 
-	@SuppressWarnings("deprecation") public static void salin(CharSequence salinan) {
+	@SuppressWarnings("deprecation") public static void copyToClipboard(CharSequence salinan) {
 		android.text.ClipboardManager clipboardManager = (android.text.ClipboardManager) App.context.getSystemService(Context.CLIPBOARD_SERVICE);
 		clipboardManager.setText(salinan); 
 	}
@@ -274,7 +274,7 @@ public class U {
 	public static int getWarnaBerdasarkanKitabPos(int pos) {
 		if (colorSet == null) {
 			colorSet = new int[3];
-			if (U.tabletkah()) {
+			if (U.isHolo()) {
 				colorSet[0] = 0xffffcccf;
 				colorSet[1] = 0xffccccff;
 				colorSet[2] = 0xffffffff;

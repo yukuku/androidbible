@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Blok;
-import yuku.alkitab.base.model.Edisi;
+import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.model.IndexPerikop;
-import yuku.alkitab.base.model.Kitab;
+import yuku.alkitab.base.model.Book;
 import yuku.bintex.BintexReader;
 
 public class InternalPembaca extends Pembaca {
@@ -41,30 +41,30 @@ public class InternalPembaca extends Pembaca {
 	}
 
 	@Override
-	public Kitab[] bacaInfoKitab() {
+	public Book[] bacaInfoKitab() {
 		InputStream is = S.openRaw(edisiPrefix + "_index_bt"); //$NON-NLS-1$
 		BintexReader in = new BintexReader(is);
 		try {
-			ArrayList<Kitab> xkitab = new ArrayList<Kitab>();
+			ArrayList<Book> xkitab = new ArrayList<Book>();
 
 			try {
 				int pos = 0;
 				while (true) {
-					Kitab k = bacaKitab(in, pos++);
+					Book k = bacaKitab(in, pos++);
 					xkitab.add(k);
 				}
 			} catch (IOException e) {
 				Log.d(TAG, "siapinKitab selesai memuat"); //$NON-NLS-1$
 			}
 
-			return xkitab.toArray(new Kitab[xkitab.size()]);
+			return xkitab.toArray(new Book[xkitab.size()]);
 		} finally {
 			in.close();
 		}
 	}
 	
-	private static Kitab bacaKitab(BintexReader in, int pos) throws IOException {
-		Kitab k = new Kitab();
+	private static Book bacaKitab(BintexReader in, int pos) throws IOException {
+		Book k = new Book();
 		k.pos = pos;
 		
 		String awal = in.readShortString();
@@ -110,12 +110,12 @@ public class InternalPembaca extends Pembaca {
 	}
 
 	@Override
-	public String[] muatTeks(Kitab kitab, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
-		if (pasal_1 > kitab.npasal) {
+	public String[] muatTeks(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+		if (pasal_1 > book.npasal) {
 			return null;
 		}
 		
-		int offset = kitab.pasal_offset[pasal_1 - 1];
+		int offset = book.pasal_offset[pasal_1 - 1];
 		int length = 0;
 
 		try {
@@ -125,16 +125,16 @@ public class InternalPembaca extends Pembaca {
 			// Log.d("alki", "muatTeks cache_file=" + cache_file + " cache_posInput=" + cache_posInput);
 			if (cache_inputStream == null) {
 				// kasus 1: belum buka apapun
-				in = S.openRaw(kitab.file);
+				in = S.openRaw(book.file);
 				cache_inputStream = in;
-				cache_file = kitab.file;
+				cache_file = book.file;
 
 				in.skip(offset);
 				cache_posInput = offset;
 				// Log.d("alki", "muatTeks masuk kasus 1");
 			} else {
 				// kasus 2: uda pernah buka. Cek apakah filenya sama
-				if (kitab.file.equals(cache_file)) {
+				if (book.file.equals(cache_file)) {
 					// kasus 2.1: filenya sama.
 					if (offset >= cache_posInput) {
 						// bagus, kita bisa maju.
@@ -147,7 +147,7 @@ public class InternalPembaca extends Pembaca {
 						// ga bisa mundur. tutup dan buka lagi.
 						cache_inputStream.close();
 
-						in = S.openRaw(kitab.file);
+						in = S.openRaw(book.file);
 						cache_inputStream = in;
 
 						in.skip(offset);
@@ -158,9 +158,9 @@ public class InternalPembaca extends Pembaca {
 					// kasus 2.2: filenya beda, tutup dan buka baru
 					cache_inputStream.close();
 
-					in = S.openRaw(kitab.file);
+					in = S.openRaw(book.file);
 					cache_inputStream = in;
-					cache_file = kitab.file;
+					cache_file = book.file;
 
 					in.skip(offset);
 					cache_posInput = offset;
@@ -168,10 +168,10 @@ public class InternalPembaca extends Pembaca {
 				}
 			}
 
-			if (pasal_1 == kitab.npasal) {
+			if (pasal_1 == book.npasal) {
 				length = in.available();
 			} else {
-				length = kitab.pasal_offset[pasal_1] - offset;
+				length = book.pasal_offset[pasal_1] - offset;
 			}
 
 			byte[] ba = new byte[length];
@@ -211,8 +211,8 @@ public class InternalPembaca extends Pembaca {
 	}
 
 	@Override
-	public int muatPerikop(Edisi edisi, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
-		IndexPerikop indexPerikop = edisi.getIndexPerikop();
+	public int muatPerikop(Version version, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
+		IndexPerikop indexPerikop = version.getIndexPerikop();
 
 		if (indexPerikop == null) {
 			return 0; // ga ada perikop!

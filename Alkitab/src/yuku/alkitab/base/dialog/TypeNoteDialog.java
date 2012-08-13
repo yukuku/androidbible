@@ -15,14 +15,14 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Bukmak2;
-import yuku.alkitab.base.model.Kitab;
+import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.storage.Db;
 
-public class JenisCatatanDialog {
+public class TypeNoteDialog {
 	final Context context;
 	final AlertDialog dialog;
 	final RefreshCallback refreshCallback;
-	final Kitab kitab;
+	final Book book;
 	final int pasal_1;
 	final int ayat_1;
 	
@@ -33,15 +33,15 @@ public class JenisCatatanDialog {
 	Bukmak2 bukmak;
 
 	public interface RefreshCallback {
-		void udahan();
+		void onDone();
 	}
 	
-	public JenisCatatanDialog(Context context, Kitab kitab, int pasal_1, int ayat_1, RefreshCallback refreshCallback) {
-		this.kitab = kitab;
+	public TypeNoteDialog(Context context, Book book, int pasal_1, int ayat_1, RefreshCallback refreshCallback) {
+		this.book = book;
 		this.pasal_1 = pasal_1;
 		this.ayat_1 = ayat_1;
-		this.ari = Ari.encode(kitab.pos, pasal_1, ayat_1);
-		this.alamat = S.alamat(kitab, pasal_1, ayat_1);
+		this.ari = Ari.encode(book.pos, pasal_1, ayat_1);
+		this.alamat = S.alamat(book, pasal_1, ayat_1);
 		this.context = context;
 		this.refreshCallback = refreshCallback;
 		
@@ -111,7 +111,7 @@ public class JenisCatatanDialog {
 			}
 		}
 		
-		if (refreshCallback != null) refreshCallback.udahan();
+		if (refreshCallback != null) refreshCallback.onDone();
 	}
 
 	protected void bHapus_click() {
@@ -129,12 +129,12 @@ public class JenisCatatanDialog {
 						// ga ngapa2in, karena emang ga ada di db, cuma di editor buffer
 					}
 					
-					if (refreshCallback != null) refreshCallback.udahan();
+					if (refreshCallback != null) refreshCallback.onDone();
 				}
 			})
 			.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface _unused_, int which) {
-					JenisCatatanDialog dialog = new JenisCatatanDialog(context, kitab, pasal_1, ayat_1, refreshCallback);
+					TypeNoteDialog dialog = new TypeNoteDialog(context, book, pasal_1, ayat_1, refreshCallback);
 					dialog.setCatatan(tCatatan.getText());
 					dialog.bukaDialog();
 				}

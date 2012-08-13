@@ -12,9 +12,9 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.config.D;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Blok;
-import yuku.alkitab.base.model.Edisi;
+import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.model.IndexPerikop;
-import yuku.alkitab.base.model.Kitab;
+import yuku.alkitab.base.model.Book;
 import yuku.bintex.BintexReader;
 
 public class YesPembaca extends Pembaca {
@@ -142,13 +142,13 @@ public class YesPembaca extends Pembaca {
 		}
 	}
 
-	@Override public Kitab[] bacaInfoKitab() {
+	@Override public Book[] bacaInfoKitab() {
 		try {
 			Log.d(TAG, "bacaInfoKitab dipanggil"); //$NON-NLS-1$
 			
 			init();
 			
-			Kitab[] res = new Kitab[256];
+			Book[] res = new Book[256];
 			
 			int ukuran = lewatiSampeSeksi("infoKitab___"); //$NON-NLS-1$
 			byte[] buf = new byte[ukuran];
@@ -157,7 +157,7 @@ public class YesPembaca extends Pembaca {
 			
 			Log.d(TAG, "akan membaca " + this.nkitab + " kitab"); //$NON-NLS-1$ //$NON-NLS-2$
 			for (int kitabIndex = 0; kitabIndex < this.nkitab; kitabIndex++) {
-				Kitab k = new Kitab();
+				Book k = new Book();
 				
 				// kalau true, berarti ini kitab NULL
 				boolean kosong = false;
@@ -220,7 +220,7 @@ public class YesPembaca extends Pembaca {
 			for (int i = 0; i < res.length; i++) {
 				if (res[i] != null) lenBaru = i + 1;
 			}
-			Kitab[] resBaru = new Kitab[lenBaru];
+			Book[] resBaru = new Book[lenBaru];
 			System.arraycopy(res, 0, resBaru, 0, lenBaru);
 			res = resBaru;
 			
@@ -232,7 +232,7 @@ public class YesPembaca extends Pembaca {
 	}
 	
 	@Override
-	public String[] muatTeks(Kitab kitab, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+	public String[] muatTeks(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
 		// init pembacaDecoder
 		if (pembacaDecoder == null) {
 			if (encoding == 1) {
@@ -249,18 +249,18 @@ public class YesPembaca extends Pembaca {
 		try {
 			init();
 			
-			if (pasal_1 > kitab.npasal) {
+			if (pasal_1 > book.npasal) {
 				return null;
 			}
 			
 			long seekTo = teks_dasarOffset;
-			seekTo += kitab.offset;
-			seekTo += kitab.pasal_offset[pasal_1 - 1];
+			seekTo += book.offset;
+			seekTo += book.pasal_offset[pasal_1 - 1];
 			f.seek(seekTo);
 			
-			int length = kitab.pasal_offset[pasal_1] - kitab.pasal_offset[pasal_1 - 1];
+			int length = book.pasal_offset[pasal_1] - book.pasal_offset[pasal_1 - 1];
 			
-			if (D.EBUG) Log.d(TAG, "muatTeks kitab=" + kitab.nama + " pasal_1=" + pasal_1 + " offset=" + kitab.offset + " offset pasal: " + kitab.pasal_offset[pasal_1-1]); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			if (D.EBUG) Log.d(TAG, "muatTeks kitab=" + book.nama + " pasal_1=" + pasal_1 + " offset=" + book.offset + " offset pasal: " + book.pasal_offset[pasal_1-1]); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			
 			byte[] ba = new byte[length];
 			f.read(ba);
@@ -318,13 +318,13 @@ public class YesPembaca extends Pembaca {
 	}
 
 	@Override
-	public int muatPerikop(Edisi edisi, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
+	public int muatPerikop(Version version, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
 		try {
 			init();
 			
 			if (D.EBUG) Log.d(TAG, "muatPerikop dipanggil untuk kitab=" + kitab + " pasal_1=" + pasal); //$NON-NLS-1$ //$NON-NLS-2$
 			
-			IndexPerikop indexPerikop = edisi.getIndexPerikop();
+			IndexPerikop indexPerikop = version.getIndexPerikop();
 			if (indexPerikop == null) {
 				return 0; // ga ada perikop!
 			}

@@ -72,8 +72,8 @@ public class BukmakActivity extends BaseActivity {
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		S.siapinKitab();
-		S.hitungPenerapanBerdasarkanPengaturan();
+		S.prepareBook();
+		S.calculateAppliedValuesBasedOnPreferences();
 		
 		setContentView(R.layout.activity_bukmak);
 		setTitle(R.string.judul_bukmak_activity);

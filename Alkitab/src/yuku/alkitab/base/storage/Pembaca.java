@@ -3,9 +3,9 @@ package yuku.alkitab.base.storage;
 import android.content.Context;
 
 import yuku.alkitab.base.model.Blok;
-import yuku.alkitab.base.model.Edisi;
+import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.model.IndexPerikop;
-import yuku.alkitab.base.model.Kitab;
+import yuku.alkitab.base.model.Book;
 
 public abstract class Pembaca {
 	private Context context;
@@ -19,11 +19,11 @@ public abstract class Pembaca {
 	}
 	
 	public abstract String getJudul();
-	public abstract Kitab[] bacaInfoKitab();
+	public abstract Book[] bacaInfoKitab();
 	/**
 	 * @return boleh return null kalau yang diminta tak tersedia. 
 	 */
-	public abstract String[] muatTeks(Kitab kitab, int pasal_1, boolean janganPisahAyat, boolean hurufKecil);
+	public abstract String[] muatTeks(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil);
 	public abstract IndexPerikop bacaIndexPerikop();
-	public abstract int muatPerikop(Edisi edisi, int kitab, int pasal, int[] xari, Blok[] xblok, int max);
+	public abstract int muatPerikop(Version version, int kitab, int pasal, int[] xari, Blok[] xblok, int max);
 }

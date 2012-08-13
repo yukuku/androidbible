@@ -13,20 +13,20 @@ import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.fr.base.BaseFragment;
-import yuku.alkitab.base.model.Kitab;
+import yuku.alkitab.base.model.Book;
 
 public class GotoGridFragment extends BaseFragment {
 	public static final String TAG = GotoGridFragment.class.getSimpleName();
 	
 	GridView grid;
 
-	Kitab[] xkitab;
+	Book[] xkitab;
 	KitabAdapter kitabAdapter;
 	
 	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		xkitab = S.edisiAktif.getConsecutiveXkitab();
+		xkitab = S.activeVersion.getConsecutiveBooks();
 	}
 	
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,7 +48,7 @@ public class GotoGridFragment extends BaseFragment {
 			return xkitab.length;
 		}
 
-		@Override public Kitab getItem(int position) {
+		@Override public Book getItem(int position) {
 			return xkitab[position];
 		}
 		
@@ -63,7 +63,7 @@ public class GotoGridFragment extends BaseFragment {
 		@Override public void bindView(View view, int position, ViewGroup parent) {
 			TextView lName = (TextView) view;
 			
-			Kitab kitab = getItem(position);
+			Book kitab = getItem(position);
 			CharSequence judul = kitab.judul;
 			if (kitab.judul.indexOf(' ') != -1) {
 				String nospace = kitab.judul.replace(" ", "");

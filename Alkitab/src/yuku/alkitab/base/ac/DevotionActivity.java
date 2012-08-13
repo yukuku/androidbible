@@ -44,15 +44,15 @@ import yuku.alkitab.base.widget.CallbackSpan;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public class RenunganActivity extends BaseActivity implements OnStatusDonlotListener {
-	public static final String TAG = RenunganActivity.class.getSimpleName();
+public class DevotionActivity extends BaseActivity implements OnStatusDonlotListener {
+	public static final String TAG = DevotionActivity.class.getSimpleName();
 
 	public static final String EXTRA_alamat = "alamat"; //$NON-NLS-1$
 	private static final int REQCODE_bagikan = 0;
 
 	ThreadLocal<SimpleDateFormat> tgl_format = U.getThreadLocalSimpleDateFormat("yyyyMMdd"); //$NON-NLS-1$
 	
-	public static final String[] ADA_NAMA = {
+	public static final String[] AVAILABLE_NAMES = {
 		"sh", "rh",  //$NON-NLS-1$//$NON-NLS-2$
 	};
 	public static final String DEFAULT = "sh"; //$NON-NLS-1$
@@ -96,14 +96,14 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 	};
 	
 	static class PenampilStatusDonlotHandler extends Handler {
-		private WeakReference<RenunganActivity> ac;
+		private WeakReference<DevotionActivity> ac;
 
-		public PenampilStatusDonlotHandler(RenunganActivity ac) {
-			this.ac = new WeakReference<RenunganActivity>(ac);
+		public PenampilStatusDonlotHandler(DevotionActivity ac) {
+			this.ac = new WeakReference<DevotionActivity>(ac);
 		}
 		
 		@Override public void handleMessage(Message msg) {
-			RenunganActivity ac = this.ac.get();
+			DevotionActivity ac = this.ac.get();
 			if (ac == null) return;
 			
 			String s = (String) msg.obj;
@@ -121,10 +121,10 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		U.nyalakanTitleBarHanyaKalauTablet(this);
+		U.enableTitleBarOnlyForHolo(this);
 
-		S.siapinKitab();
-		S.hitungPenerapanBerdasarkanPengaturan();
+		S.prepareBook();
+		S.calculateAppliedValuesBasedOnPreferences();
 		
 		setContentView(R.layout.activity_renungan);
 		
@@ -136,7 +136,7 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 		bKiri = (ImageButton) findViewById(R.id.bKiri);
 		lStatus = (TextView) findViewById(R.id.lStatus);
 		
-		scrollIsi.setBackgroundColor(S.penerapan.warnaLatar);
+		scrollIsi.setBackgroundColor(S.penerapan.backgroundColor);
 		
 		bKiri.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
@@ -160,24 +160,24 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 			public void onClick(View v) {
 				int index = 0;
 				
-				for (int i = 0; i < ADA_NAMA.length; i++) {
-					if (ADA_NAMA[i].equals(nama)) {
+				for (int i = 0; i < AVAILABLE_NAMES.length; i++) {
+					if (AVAILABLE_NAMES[i].equals(nama)) {
 						index = i;
 						break;
 					}
 				}
 				
-				index = (index + 1) % ADA_NAMA.length;
-				nama = ADA_NAMA[index];
+				index = (index + 1) % AVAILABLE_NAMES.length;
+				nama = AVAILABLE_NAMES[index];
 				tampilkan(0);
 			}
 		});
 		
 		//# atur difot! 
 		if (S.penampungan.renungan_tanggalan == null) S.penampungan.renungan_tanggalan = new Date();
-		if (S.penampungan.renungan_nama == null) S.penampungan.renungan_nama = DEFAULT;
+		if (S.penampungan.devotion_name == null) S.penampungan.devotion_name = DEFAULT;
 		
-		nama = S.penampungan.renungan_nama;
+		nama = S.penampungan.devotion_name;
 		tanggalan = S.penampungan.renungan_tanggalan;
 		
 		new PemintaMasaDepan().execute();
@@ -195,7 +195,7 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 	@Override protected void onDestroy() {
 		super.onDestroy();
 		
-		S.penampungan.renungan_nama = nama;
+		S.penampungan.devotion_name = nama;
 		S.penampungan.renungan_tanggalan = tanggalan;
 		S.penampungan.renungan_skrol = scrollIsi.getScrollY();
 		
@@ -227,7 +227,7 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 		int itemId = item.getItemId();
 		if (itemId == R.id.menuSalin) {
 			String salinan = lHeader.getText() + "\n" + lIsi.getText(); //$NON-NLS-1$
-			U.salin(salinan);
+			U.copyToClipboard(salinan);
 			
 			Toast.makeText(this, R.string.renungan_sudah_disalin, Toast.LENGTH_SHORT).show();
 			
@@ -338,7 +338,7 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 			lIsi.setLinksClickable(true);
 			lIsi.setMovementMethod(LinkMovementMethod.getInstance());
 			lIsi.setTextColor(S.penerapan.warnaHuruf);
-			lIsi.setBackgroundColor(S.penerapan.warnaLatar);
+			lIsi.setBackgroundColor(S.penerapan.backgroundColor);
 			lIsi.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
 			lIsi.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp);
 			if (skrol != 0) {
@@ -359,8 +359,8 @@ public class RenunganActivity extends BaseActivity implements OnStatusDonlotList
 		}
 		
 		String judul = ""; //$NON-NLS-1$
-		for (int i = 0; i < ADA_NAMA.length; i++) {
-			if (ADA_NAMA[i].equals(nama)) {
+		for (int i = 0; i < AVAILABLE_NAMES.length; i++) {
+			if (AVAILABLE_NAMES[i].equals(nama)) {
 				judul = ADA_JUDUL[i];
 			}
 		}

@@ -4,15 +4,15 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
-public class Sejarah {
+public class History {
 	private static final String SEJARAH_AWALAN = "sejarah/"; //$NON-NLS-1$
-	private static final String TAG = Sejarah.class.getSimpleName();
+	private static final String TAG = History.class.getSimpleName();
 	private static final int MAX = 20;
 	
 	int[] xari;
 	int n;
 	
-	public Sejarah(SharedPreferences preferences) {
+	public History(SharedPreferences preferences) {
 		n = 0;
 		xari = new int[MAX];
 		
@@ -34,7 +34,7 @@ public class Sejarah {
 		}
 	}
 	
-	public void tambah(int ari) {
+	public void add(int ari) {
 		// cari dulu di yang lama, ada ari ga
 		for (int i = 0; i < n; i++) {
 			if (xari[i] == ari) {

@@ -21,13 +21,13 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.fr.base.BaseFragment;
-import yuku.alkitab.base.model.Kitab;
+import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.storage.Preferences;
 
 public class GotoDialerFragment extends BaseFragment {
 	public static final String TAG = GotoDialerFragment.class.getSimpleName();
-	public static final String EXTRA_ayat = "ayat"; //$NON-NLS-1$
-	public static final String EXTRA_pasal = "pasal"; //$NON-NLS-1$
+	public static final String EXTRA_verse = "ayat"; //$NON-NLS-1$
+	public static final String EXTRA_chapter = "pasal"; //$NON-NLS-1$
 	public static final String EXTRA_kitab = "kitab"; //$NON-NLS-1$
 
 	TextView aktif;
@@ -92,13 +92,13 @@ public class GotoDialerFragment extends BaseFragment {
 		super.onActivityCreated(savedInstanceState);
 
 		// set kitab, pasal, ayat kini
-		cbKitab.setSelection(adapter.getPositionDariPos(S.kitabAktif.pos));
-
+		cbKitab.setSelection(adapter.getPositionDariPos(S.activeBook.pos));
 		cbKitab.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override public void onNothingSelected(AdapterView<?> parent) {}
 
-			@Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				Kitab k = adapter.getItem(position);
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				Book k = adapter.getItem(position);
 				maxPasal = k.npasal;
 
 				int pasal_0 = cobaBacaPasal() - 1;
@@ -127,8 +127,8 @@ public class GotoDialerFragment extends BaseFragment {
 
 				Intent intent = new Intent();
 				intent.putExtra(EXTRA_kitab, kitab);
-				intent.putExtra(EXTRA_pasal, pasal);
-				intent.putExtra(EXTRA_ayat, ayat);
+				intent.putExtra(EXTRA_chapter, pasal);
+				intent.putExtra(EXTRA_verse, ayat);
 //			TODO 	setResult(RESULT_OK, intent);
 //
 //				finish();
@@ -285,8 +285,8 @@ public class GotoDialerFragment extends BaseFragment {
 				if (cobaBacaPasal() > maxPasal || cobaBacaPasal() <= 0) {
 					aktif.setText(s);
 				}
-
-				Kitab k = adapter.getItem(cbKitab.getSelectedItemPosition());
+				
+				Book k = adapter.getItem(cbKitab.getSelectedItemPosition());
 				int pasal_1 = cobaBacaPasal();
 				if (pasal_1 >= 1 && pasal_1 <= k.nayat.length) {
 					maxAyat = k.nayat[pasal_1 - 1];
@@ -318,19 +318,19 @@ public class GotoDialerFragment extends BaseFragment {
 	}
 
 	private class KitabAdapter extends BaseAdapter {
-		Kitab[] xkitabc_;
-
+		Book[] xkitabc_;
+		
 		public KitabAdapter() {
-			Kitab[] xkitabc = S.edisiAktif.getConsecutiveXkitab();
-
+			Book[] xkitabc = S.activeVersion.getConsecutiveBooks();
+			
 			if (Preferences.getBoolean(R.string.pref_sortKitabAlfabet_key, R.bool.pref_sortKitabAlfabet_default)) {
 				// bikin kopian, supaya ga obok2 array lama
-				xkitabc_ = new Kitab[xkitabc.length];
+				xkitabc_ = new Book[xkitabc.length];
 				System.arraycopy(xkitabc, 0, xkitabc_, 0, xkitabc.length);
 
 				// sort!
-				Arrays.sort(xkitabc_, new Comparator<Kitab>() {
-					@Override public int compare(Kitab a, Kitab b) {
+				Arrays.sort(xkitabc_, new Comparator<Book>() {
+					@Override public int compare(Book a, Book b) {
 						return a.judul.compareToIgnoreCase(b.judul);
 					}
 				});
@@ -355,7 +355,7 @@ public class GotoDialerFragment extends BaseFragment {
 			return xkitabc_.length;
 		}
 
-		@Override public Kitab getItem(int position) {
+		@Override public Book getItem(int position) {
 			return xkitabc_[position];
 		}
 
@@ -372,7 +372,7 @@ public class GotoDialerFragment extends BaseFragment {
 		@Override public View getDropDownView(int position, View convertView, ViewGroup parent) {
 			CheckedTextView res = (CheckedTextView) (convertView != null ? convertView : LayoutInflater.from(getActivity()).inflate(android.R.layout.select_dialog_singlechoice, null));
 
-			Kitab k = getItem(position);
+			Book k = getItem(position);
 			res.setText(k.judul);
 			res.setTextColor(U.getWarnaBerdasarkanKitabPos(k.pos));
 

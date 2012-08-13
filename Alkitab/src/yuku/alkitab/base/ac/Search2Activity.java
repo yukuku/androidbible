@@ -38,7 +38,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.Kitab;
+import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.PengaturTampilan;
 import yuku.alkitab.base.util.QueryTokenizer;
@@ -133,10 +133,10 @@ public class Search2Activity extends BaseActivity {
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		U.nyalakanTitleBarHanyaKalauTablet(this);
+		U.enableTitleBarOnlyForHolo(this);
 		
-		S.siapinKitab();
-		S.hitungPenerapanBerdasarkanPengaturan();
+		S.prepareBook();
+		S.calculateAppliedValuesBasedOnPreferences();
 		
 		setContentView(R.layout.activity_search2);
 
@@ -167,10 +167,10 @@ public class Search2Activity extends BaseActivity {
 			tFilterRumit.setTextColor(0xff000000);
 		}
 		
-		lsHasilCari.setBackgroundColor(S.penerapan.warnaLatar);
-		lsHasilCari.setCacheColorHint(S.penerapan.warnaLatar);
+		lsHasilCari.setBackgroundColor(S.penerapan.backgroundColor);
+		lsHasilCari.setCacheColorHint(S.penerapan.backgroundColor);
 		
-		warnaHilite = U.getWarnaHiliteKontrasDengan(S.penerapan.warnaLatar);
+		warnaHilite = U.getWarnaHiliteKontrasDengan(S.penerapan.backgroundColor);
 		
 		lsHasilCari.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -207,8 +207,8 @@ public class Search2Activity extends BaseActivity {
 			int posisiTerpilih = intent.getIntExtra(EXTRA_posisiTerpilih, -1);
 			
 			kitabPosTerbuka = intent.getIntExtra(EXTRA_kitabPosTerbuka, -1);
-			Kitab kitab = S.edisiAktif.getKitab(kitabPosTerbuka);
-			cFilterKitabSaja.setText(getString(R.string.search_bookname_only, kitab.judul));
+			Book book = S.activeVersion.getKitab(kitabPosTerbuka);
+			cFilterKitabSaja.setText(getString(R.string.search_bookname_only, book.judul));
 			
 			if (query != null) {
 				if (!useSearchView()) {
@@ -224,7 +224,7 @@ public class Search2Activity extends BaseActivity {
 			}
 			
 			if (query == null) { // default: semua kitab
-				for (Kitab k: S.edisiAktif.getConsecutiveXkitab()) {
+				for (Book k: S.activeVersion.getConsecutiveBooks()) {
 					xkitabPosTerpilih.put(k.pos, true);
 				}
 			} else if (query.xkitabPos != null) {
@@ -316,10 +316,10 @@ public class Search2Activity extends BaseActivity {
 					for (int i = 0, len = xkitabPosTerpilih.size(); i < len; i++) {
 						if (xkitabPosTerpilih.valueAt(i) == true) {
 							int kitabPos = xkitabPosTerpilih.keyAt(i);
-							Kitab kitab = S.edisiAktif.getKitab(kitabPos);
-							if (kitab != null) {
+							Book book = S.activeVersion.getKitab(kitabPos);
+							if (book != null) {
 								if (sb.length() != 0) sb.append(", "); //$NON-NLS-1$
-								sb.append(kitab.judul);
+								sb.append(book.judul);
 							}
 						}
 					}
@@ -409,7 +409,7 @@ public class Search2Activity extends BaseActivity {
 				for (int i = 0, len = xpos.size(); i < len; i++) {
 					if (xpos.valueAt(i) == true) {
 						int position = xpos.keyAt(i);
-						Kitab k = adapter.getItem(position);
+						Book k = adapter.getItem(position);
 						if (k != null) {
 							xkitabPosTerpilih.put(k.pos, true);
 						}
@@ -430,7 +430,7 @@ public class Search2Activity extends BaseActivity {
 		
 		// set checked items
 		for (int position = 0, count = adapter.getCount(); position < count; position++) {
-			Kitab k = adapter.getItem(position);
+			Book k = adapter.getItem(position);
 			if (k != null && xkitabPosTerpilih.get(k.pos, false) == true) {
 				lv.setItemChecked(position, true);
 			}
@@ -438,17 +438,17 @@ public class Search2Activity extends BaseActivity {
 	}
 	
 	class SearchFilterAdapter extends BaseAdapter {
-		private Kitab[] xkitab;
+		private Book[] xkitab;
 
 		public SearchFilterAdapter() {
-			xkitab = S.edisiAktif.getConsecutiveXkitab();
+			xkitab = S.activeVersion.getConsecutiveBooks();
 		}
 		
 		@Override public int getCount() {
 			return xkitab.length;
 		}
 
-		@Override public Kitab getItem(int position) {
+		@Override public Book getItem(int position) {
 			return xkitab[position];
 		}
 
@@ -459,7 +459,7 @@ public class Search2Activity extends BaseActivity {
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
 			CheckedTextView res = (CheckedTextView) (convertView != null? convertView: getLayoutInflater().inflate(android.R.layout.select_dialog_multichoice, null));
 			
-			Kitab k = getItem(position);
+			Book k = getItem(position);
 			res.setText(k.judul);
 			res.setTextColor(U.getWarnaBerdasarkanKitabPos(k.pos));
 			
@@ -563,14 +563,14 @@ public class Search2Activity extends BaseActivity {
 			TextView lCuplikan = (TextView) res.findViewById(R.id.lCuplikan);
 			
 			int ari = hasilCari.get(position);
-			Kitab kitab = S.edisiAktif.getKitab(Ari.toKitab(ari));
-			int pasal_1 = Ari.toPasal(ari);
-			int ayat_1 = Ari.toAyat(ari);
-			SpannableStringBuilder sb = new SpannableStringBuilder(S.alamat(kitab, pasal_1, ayat_1));
+			Book book = S.activeVersion.getKitab(Ari.toKitab(ari));
+			int pasal_1 = Ari.toChapter(ari);
+			int ayat_1 = Ari.toVerse(ari);
+			SpannableStringBuilder sb = new SpannableStringBuilder(S.alamat(book, pasal_1, ayat_1));
 			PengaturTampilan.aturTampilanTeksAlamatHasilCari(lAlamat, sb);
 			
-			String ayat = S.muatSatuAyat(S.edisiAktif, kitab, pasal_1, ayat_1);
-			ayat = U.buangKodeKusus(ayat);
+			String ayat = S.muatSatuAyat(S.activeVersion, book, pasal_1, ayat_1);
+			ayat = U.removeSpecialCodes(ayat);
 			lCuplikan.setText(Search2Engine.hilite(ayat, xkata, warnaHilite));
 			PengaturTampilan.aturTampilanTeksIsi(lCuplikan);
 			

@@ -2,19 +2,19 @@ package yuku.alkitab.base.model;
 
 import yuku.alkitab.base.storage.Pembaca;
 
-public class Edisi {
+public class Version {
 	public Pembaca pembaca;
 	
-	public Edisi(Pembaca pembaca) {
+	public Version(Pembaca pembaca) {
 		this.pembaca = pembaca;
 	}
 	
-	private Kitab[] volatile_xkitab;
-	private Kitab[] volatile_xkitabConsecutive;
+	private Book[] volatile_xkitab;
+	private Book[] volatile_xkitabConsecutive;
 	private IndexPerikop volatile_indexPerikop;
 	private boolean volatile_indexPerikopSudahCobaBaca = false;
 	
-	private synchronized Kitab[] getXkitab() {
+	private synchronized Book[] getXkitab() {
 		if (volatile_xkitab == null) {
 			volatile_xkitab = this.pembaca.bacaInfoKitab();
 		}
@@ -32,19 +32,19 @@ public class Edisi {
 	 * @return same as getXkitab, but none of the array elements are null. For enumerating available kitabs.
 	 * Note that using this, no guarantee that return_value[pos].pos == pos.
 	 */
-	public synchronized Kitab[] getConsecutiveXkitab() {
+	public synchronized Book[] getConsecutiveBooks() {
 		if (volatile_xkitabConsecutive == null) {
-			Kitab[] xkitab1 = getXkitab();
+			Book[] xkitab1 = getXkitab();
 			// count
 			int nkitabc = 0;
-			for (Kitab k: xkitab1) {
+			for (Book k: xkitab1) {
 				if (k != null) {
 					nkitabc++;
 				}
 			}
-			Kitab[] xkitab2 = new Kitab[nkitabc];
+			Book[] xkitab2 = new Book[nkitabc];
 			int c = 0;
-			for (Kitab k: xkitab1) {
+			for (Book k: xkitab1) {
 				if (k != null) {
 					xkitab2[c++] = k;
 				}
@@ -57,17 +57,17 @@ public class Edisi {
 	/**
 	 * @return null if kitabPos is out of range, or the kitab is not available.
 	 */
-	public synchronized Kitab getKitab(int kitabPos) {
-		Kitab[] xkitab = getXkitab();
+	public synchronized Book getKitab(int kitabPos) {
+		Book[] xkitab = getXkitab();
 		if (kitabPos < 0 || kitabPos >= xkitab.length) {
 			return null;
 		}
 		return xkitab[kitabPos];
 	}
 	
-	public synchronized Kitab getKitabPertama() {
-		Kitab[] xkitab = getXkitab();
-		for (Kitab k: xkitab) {
+	public synchronized Book getKitabPertama() {
+		Book[] xkitab = getXkitab();
+		for (Book k: xkitab) {
 			if (k != null) return k;
 		}
 		// aneh skali kalo kena ini, tapi toh kena juga

@@ -40,7 +40,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.config.BuildConfig;
-import yuku.alkitab.base.model.Edisi;
+import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog.ConvertOptionsCallback;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes;
@@ -78,8 +78,8 @@ public class EdisiActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		S.siapinKitab();
-		S.hitungPenerapanBerdasarkanPengaturan();
+		S.prepareBook();
+		S.calculateAppliedValuesBasedOnPreferences();
 		
 		setContentView(R.layout.activity_edisi);
 		setTitle(R.string.kelola_versi);
@@ -126,7 +126,7 @@ public class EdisiActivity extends BaseActivity {
 	private OnItemClickListener lsEdisi_itemClick = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-			MEdisi item = adapter.getItem(position);
+			MVersion item = adapter.getItem(position);
 			
 			if (item instanceof MEdisiInternal) {
 				// ga ngapa2in, wong internal ko
@@ -154,7 +154,7 @@ public class EdisiActivity extends BaseActivity {
 			android.view.MenuItem menuBuang = menu.findItem(R.id.menuBuang);
 			if (menuBuang != null) {
 				menuBuang.setEnabled(false);
-				MEdisi item = adapter.getItem(info.position);
+				MVersion item = adapter.getItem(info.position);
 				if (item instanceof MEdisiYes) {
 					menuBuang.setEnabled(true);
 				}
@@ -166,7 +166,7 @@ public class EdisiActivity extends BaseActivity {
 		switch (item.getItemId()) {
 		case R.id.menuBuang: {
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-			final MEdisi edisi = adapter.getItem(info.position);
+			final MVersion edisi = adapter.getItem(info.position);
 			if (edisi instanceof MEdisiYes) {
 				final MEdisiYes edisiYes = (MEdisiYes) edisi;
 				new AlertDialog.Builder(EdisiActivity.this)
@@ -192,7 +192,7 @@ public class EdisiActivity extends BaseActivity {
 		}
 		case R.id.menuDetails: {
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-			MEdisi edisi = adapter.getItem(info.position);
+			MVersion edisi = adapter.getItem(info.position);
 			StringBuilder details = new StringBuilder();
 			if (edisi instanceof MEdisiInternal) details.append(getString(R.string.ed_type_built_in) + '\n');
 			if (edisi instanceof MEdisiPreset) details.append(getString(R.string.ed_type_preset) + '\n');
@@ -442,7 +442,7 @@ public class EdisiActivity extends BaseActivity {
 		{ // cari dup
 			boolean dup = false;
 			BuildConfig c = BuildConfig.get(getApplicationContext());
-			for (MEdisiPreset preset: c.xpreset) {
+			for (MEdisiPreset preset: c.presets) {
 				if (filename.equals(AddonManager.getEdisiPath(preset.namafile_preset))) {
 					dup = true;
 					break;
@@ -599,7 +599,7 @@ public class EdisiActivity extends BaseActivity {
 	}
 
 	// model
-	public static abstract class MEdisi {
+	public static abstract class MVersion {
 		public String judul;
 		public int jenis;
 		public int urutan;
@@ -607,23 +607,23 @@ public class EdisiActivity extends BaseActivity {
 		/** id unik untuk dibandingkan */
 		public abstract String getEdisiId();
 		/** return edisi supaya bisa mulai dibaca. null kalau ga memungkinkan */
-		public abstract Edisi getEdisi(Context context);
+		public abstract Version getVersion(Context context);
 		public abstract void setAktif(boolean aktif);
 		public abstract boolean getAktif();
 		public abstract boolean adaFileDatanya();
 	}
 
-	public static class MEdisiInternal extends MEdisi {
-		public static String getEdisiInternalId() {
+	public static class MEdisiInternal extends MVersion {
+		public static String getVersionInternalId() {
 			return "internal"; //$NON-NLS-1$
 		}
 		
 		@Override public String getEdisiId() {
-			return getEdisiInternalId();
+			return getVersionInternalId();
 		}
 
 		@Override
-		public Edisi getEdisi(Context context) {
+		public Version getVersion(Context context) {
 			return S.getEdisiInternal();
 		}
 
@@ -642,7 +642,7 @@ public class EdisiActivity extends BaseActivity {
 		}
 	}
 	
-	public static class MEdisiPreset extends MEdisi {
+	public static class MEdisiPreset extends MVersion {
 		public String url;
 		public String namafile_preset;
 		public String locale;
@@ -661,9 +661,9 @@ public class EdisiActivity extends BaseActivity {
 		}
 
 		@Override
-		public Edisi getEdisi(Context context) {
+		public Version getVersion(Context context) {
 			if (adaFileDatanya()) {
-				return new Edisi(new YesPembaca(context, AddonManager.getEdisiPath(namafile_preset)));
+				return new Version(new YesPembaca(context, AddonManager.getEdisiPath(namafile_preset)));
 			} else {
 				return null;
 			}
@@ -674,7 +674,7 @@ public class EdisiActivity extends BaseActivity {
 		}
 	}
 	
-	public static class MEdisiYes extends MEdisi {
+	public static class MEdisiYes extends MVersion {
 		public String keterangan;
 		public String namafile;
 		public String namafile_pdbasal;
@@ -686,9 +686,9 @@ public class EdisiActivity extends BaseActivity {
 		}
 
 		@Override
-		public Edisi getEdisi(Context context) {
+		public Version getVersion(Context context) {
 			if (adaFileDatanya()) {
-				return new Edisi(new YesPembaca(context, namafile));
+				return new Version(new YesPembaca(context, namafile));
 			} else {
 				return null;
 			}
@@ -726,7 +726,7 @@ public class EdisiActivity extends BaseActivity {
 			internal.urutan = 1;
 			
 			xpreset = new ArrayList<MEdisiPreset>();
-			xpreset.addAll(c.xpreset);
+			xpreset.addAll(c.presets);
 			
 			// betulin keaktifannya berdasarkan adanya file dan pref
 			for (MEdisiPreset preset: xpreset) {
@@ -739,7 +739,7 @@ public class EdisiActivity extends BaseActivity {
 		}
 		
 		public void initDaftarEdisiYes() {
-			xyes = S.getDb().listSemuaEdisi();
+			xyes = S.getDb().listAllVersions();
 		}
 
 		@Override
@@ -748,7 +748,7 @@ public class EdisiActivity extends BaseActivity {
 		}
 
 		@Override
-		public MEdisi getItem(int position) {
+		public MVersion getItem(int position) {
 			if (position < 1) return internal;
 			if (position < 1 + xpreset.size()) return xpreset.get(position - 1);
 			if (position < 1 + xpreset.size() + xyes.size()) return xyes.get(position - 1 - xpreset.size());
@@ -779,7 +779,7 @@ public class EdisiActivity extends BaseActivity {
 				lBahasa.setVisibility(View.GONE);
 			} else {
 				// salah satu dari edisi yang ada
-				MEdisi medisi = getItem(position);
+				MVersion medisi = getItem(position);
 				cAktif.setVisibility(View.VISIBLE);
 				cAktif.setFocusable(false);
 				cAktif.setClickable(false);

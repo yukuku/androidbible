@@ -35,14 +35,14 @@ public class Ari {
 	/** 1..255 
 	 * pasal berbasis-1 yang dikembalikan
 	 * */
-	public static int toPasal(int ari) {
+	public static int toChapter(int ari) {
 		return (ari & 0x0000ff00) >> 8;
 	}
 	
 	/** 1..255 
 	 * ayat berbasis-1 yang dikembalikan
 	 * */
-	public static int toAyat(int ari) {
+	public static int toVerse(int ari) {
 		return (ari & 0x000000ff);
 	}
 	
