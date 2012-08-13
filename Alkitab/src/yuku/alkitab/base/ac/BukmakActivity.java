@@ -13,8 +13,6 @@ import android.util.Log;
 import android.util.Xml;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -58,6 +56,9 @@ import yuku.alkitab.base.storage.Db;
 import yuku.ambilwarna.AmbilWarnaDialog;
 import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+
 public class BukmakActivity extends BaseActivity {
 	public static final String TAG = BukmakActivity.class.getSimpleName();
 	
@@ -89,7 +90,7 @@ public class BukmakActivity extends BaseActivity {
 
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		getMenuInflater().inflate(R.menu.activity_bukmak, menu);
+		getSupportMenuInflater().inflate(R.menu.activity_bukmak, menu);
 	}
 	
 	@Override
@@ -99,8 +100,7 @@ public class BukmakActivity extends BaseActivity {
 		return true;
 	}
 	
-	@Override
-	public boolean onMenuOpened(int featureId, Menu menu) {
+	@Override public boolean onPrepareOptionsMenu(Menu menu) {
 		if (menu != null) {
 			bikinMenu(menu);
 		}
@@ -421,8 +421,8 @@ public class BukmakActivity extends BaseActivity {
 	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		getMenuInflater().inflate(R.menu.context_bukmak, menu);
 
-		MenuItem menuRenameLabel = menu.findItem(R.id.menuRenameLabel);
-		MenuItem menuDeleteLabel = menu.findItem(R.id.menuDeleteLabel);
+		android.view.MenuItem menuRenameLabel = menu.findItem(R.id.menuRenameLabel);
+		android.view.MenuItem menuDeleteLabel = menu.findItem(R.id.menuDeleteLabel);
 
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
 		if (info.position < 4) {
@@ -434,7 +434,7 @@ public class BukmakActivity extends BaseActivity {
 		}
 	}
 
-	@Override public boolean onContextItemSelected(MenuItem item) {
+	@Override public boolean onContextItemSelected(android.view.MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 
 		int itemId = item.getItemId();

@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -35,6 +33,9 @@ import yuku.kpri.model.Song;
 import yuku.kpri.model.Verse;
 import yuku.kpri.model.VerseKind;
 import yuku.kpriviewer.fr.SongFragment;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 public class SongViewActivity extends BaseActivity {
 	public static final String TAG = SongViewActivity.class.getSimpleName();
@@ -121,7 +122,7 @@ public class SongViewActivity extends BaseActivity {
 	
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		getMenuInflater().inflate(R.menu.activity_song_view, menu);
+		getSupportMenuInflater().inflate(R.menu.activity_song_view, menu);
 	}
 	
 	@Override public boolean onCreateOptionsMenu(Menu menu) {

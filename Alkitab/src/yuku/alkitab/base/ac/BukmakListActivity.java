@@ -14,8 +14,6 @@ import android.text.style.BackgroundColorSpan;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -52,6 +50,9 @@ import yuku.alkitab.base.util.Search2Engine;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.devoxx.flowlayout.FlowLayout;
 import yuku.searchbar.SearchWidget;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 public class BukmakListActivity extends BaseActivity {
 	public static final String TAG = BukmakListActivity.class.getSimpleName();
@@ -263,7 +264,7 @@ public class BukmakListActivity extends BaseActivity {
 
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		getMenuInflater().inflate(R.menu.activity_bukmaklist, menu);
+		getSupportMenuInflater().inflate(R.menu.activity_bukmaklist, menu);
 	}
 	
 	@Override
@@ -273,8 +274,7 @@ public class BukmakListActivity extends BaseActivity {
 		return true;
 	}
 	
-	@Override
-	public boolean onMenuOpened(int featureId, Menu menu) {
+	@Override public boolean onPrepareOptionsMenu(Menu menu) {
 		if (menu != null) {
 			bikinMenu(menu);
 		}
@@ -378,18 +378,18 @@ public class BukmakListActivity extends BaseActivity {
 		getMenuInflater().inflate(R.menu.context_bukmaklist, menu);
 		
 		// sesuaikan string berdasarkan jenis.
-		MenuItem menuHapusBukmak = menu.findItem(R.id.menuHapusBukmak);
+		android.view.MenuItem menuHapusBukmak = menu.findItem(R.id.menuHapusBukmak);
 		if (filter_jenis == Db.Bukmak2.jenis_bukmak) menuHapusBukmak.setTitle(R.string.hapus_pembatas_buku);
 		if (filter_jenis == Db.Bukmak2.jenis_catatan) menuHapusBukmak.setTitle(R.string.hapus_catatan);
 		if (filter_jenis == Db.Bukmak2.jenis_stabilo) menuHapusBukmak.setTitle(R.string.hapus_stabilo);
 
-		MenuItem menuUbahBukmak = menu.findItem(R.id.menuUbahBukmak);
+		android.view.MenuItem menuUbahBukmak = menu.findItem(R.id.menuUbahBukmak);
 		if (filter_jenis == Db.Bukmak2.jenis_bukmak) menuUbahBukmak.setTitle(R.string.ubah_bukmak);
 		if (filter_jenis == Db.Bukmak2.jenis_catatan) menuUbahBukmak.setTitle(R.string.ubah_catatan);
 		if (filter_jenis == Db.Bukmak2.jenis_stabilo) menuUbahBukmak.setTitle(R.string.ubah_stabilo);
 	}
 	
-	@SuppressWarnings("deprecation") @Override public boolean onContextItemSelected(MenuItem item) {
+	@SuppressWarnings("deprecation") @Override public boolean onContextItemSelected(android.view.MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		int itemId = item.getItemId();
 		

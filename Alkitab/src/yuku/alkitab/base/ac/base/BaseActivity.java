@@ -2,12 +2,13 @@ package yuku.alkitab.base.ac.base;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
-import android.view.MenuItem;
 
 import yuku.alkitab.base.IsiActivity;
 
-public abstract class BaseActivity extends FragmentActivity {
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
+
+public abstract class BaseActivity extends SherlockFragmentActivity {
 	public static final String TAG = BaseActivity.class.getSimpleName();
 	
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
