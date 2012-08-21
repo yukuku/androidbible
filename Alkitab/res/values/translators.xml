@@ -2,8 +2,9 @@
 <resources>
     <string-array name="translators_list">
         <item>English: author</item>
-        <item>Indonesian: author</item>
+        <item>Chinese: Jandi Lau</item>
         <item>German: Ribka Ling</item>
+        <item>Indonesian: author</item>
         <item>Polski: Artur Szymczak</item>
         <item>Română: Liviu Foltut</item>
         <item>Please help us [http://crowdin.net/project/alkitab/]translate this Bible app to more languages!</item>

@@ -8,6 +8,7 @@
         <item>German</item>
         <item>Polski</item>
         <item>Română</item>
+        <item>中文</item>
     </string-array>
     <string-array name="pref_bahasa_value">
         <item>DEFAULT</item>
@@ -16,6 +17,7 @@
         <item>de</item>
         <item>pl</item>
         <item>ro</item>
+        <item>zh</item>
     </string-array>
 
 </resources>
