@@ -337,10 +337,14 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			lIsi.setText(ss, BufferType.SPANNABLE);
 			lIsi.setLinksClickable(true);
 			lIsi.setMovementMethod(LinkMovementMethod.getInstance());
+			
+			// text formats
 			lIsi.setTextColor(S.penerapan.warnaHuruf);
 			lIsi.setBackgroundColor(S.penerapan.backgroundColor);
 			lIsi.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
 			lIsi.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp);
+			lIsi.setLineSpacing(0, S.penerapan.lineSpacingMult);
+			
 			if (skrol != 0) {
 				scrollIsi.post(new Runnable() {
 					@Override public void run() {
