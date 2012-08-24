@@ -12,16 +12,31 @@ import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.fr.base.BaseFragment;
+import yuku.alkitab.base.fr.base.BaseGotoFragment;
 import yuku.alkitab.base.model.Book;
 
-public class GotoGridFragment extends BaseFragment {
+public class GotoGridFragment extends BaseGotoFragment {
 	public static final String TAG = GotoGridFragment.class.getSimpleName();
 	
+	private static final String EXTRA_verse = "verse"; //$NON-NLS-1$
+	private static final String EXTRA_chapter = "chapter"; //$NON-NLS-1$
+	private static final String EXTRA_bookId = "bookId"; //$NON-NLS-1$
+
 	GridView grid;
 
 	Book[] xkitab;
 	KitabAdapter kitabAdapter;
+	
+
+	public static GotoGridFragment create(int bookId, int chapter_1, int verse_1) {
+		GotoGridFragment res = new GotoGridFragment();
+		Bundle args = new Bundle();
+		args.putInt(EXTRA_bookId, bookId);
+		args.putInt(EXTRA_chapter, chapter_1);
+		args.putInt(EXTRA_verse, verse_1);
+		res.setArguments(args);
+		return res;
+	}
 	
 	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

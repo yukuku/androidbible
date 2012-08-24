@@ -20,15 +20,16 @@ import yuku.afw.V;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.fr.base.BaseFragment;
+import yuku.alkitab.base.fr.base.BaseGotoFragment;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.storage.Preferences;
 
-public class GotoDialerFragment extends BaseFragment {
+public class GotoDialerFragment extends BaseGotoFragment {
 	public static final String TAG = GotoDialerFragment.class.getSimpleName();
-	public static final String EXTRA_verse = "ayat"; //$NON-NLS-1$
-	public static final String EXTRA_chapter = "pasal"; //$NON-NLS-1$
-	public static final String EXTRA_kitab = "kitab"; //$NON-NLS-1$
+	
+	private static final String EXTRA_verse = "verse"; //$NON-NLS-1$
+	private static final String EXTRA_chapter = "chapter"; //$NON-NLS-1$
+	private static final String EXTRA_bookId = "bookId"; //$NON-NLS-1$
 
 	TextView aktif;
 	TextView pasif;
@@ -46,6 +47,16 @@ public class GotoDialerFragment extends BaseFragment {
 	int maxPasal = 0;
 	int maxAyat = 0;
 	KitabAdapter adapter;
+	
+	public static GotoDialerFragment create(int bookId, int chapter_1, int verse_1) {
+		GotoDialerFragment res = new GotoDialerFragment();
+		Bundle args = new Bundle();
+		args.putInt(EXTRA_bookId, bookId);
+		args.putInt(EXTRA_chapter, chapter_1);
+		args.putInt(EXTRA_verse, verse_1);
+		res.setArguments(args);
+		return res;
+	}
 
 	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -126,7 +137,7 @@ public class GotoDialerFragment extends BaseFragment {
 				int kitab = adapter.getItem(cbKitab.getSelectedItemPosition()).bookId;
 
 				Intent intent = new Intent();
-				intent.putExtra(EXTRA_kitab, kitab);
+				intent.putExtra(EXTRA_bookId, kitab);
 				intent.putExtra(EXTRA_chapter, pasal);
 				intent.putExtra(EXTRA_verse, ayat);
 //			TODO 	setResult(RESULT_OK, intent);

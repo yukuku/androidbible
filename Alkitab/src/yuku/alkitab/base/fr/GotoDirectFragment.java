@@ -1,5 +1,7 @@
 package yuku.alkitab.base.fr;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
@@ -7,25 +9,71 @@ import android.text.style.StyleSpan;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
 import yuku.afw.V;
 import yuku.alkitab.R;
-import yuku.alkitab.base.fr.base.BaseFragment;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.fr.base.BaseGotoFragment;
+import yuku.alkitab.base.util.Jumper;
 
-public class GotoDirectFragment extends BaseFragment {
+public class GotoDirectFragment extends BaseGotoFragment {
 	public static final String TAG = GotoDirectFragment.class.getSimpleName();
 	
+	private static final String EXTRA_verse = "verse"; //$NON-NLS-1$
+	private static final String EXTRA_chapter = "chapter"; //$NON-NLS-1$
+	private static final String EXTRA_bookId = "bookId"; //$NON-NLS-1$
+
 	TextView lContohLoncat;
 	EditText tAlamatLoncat;
+	View bOk;
+
+	int bookId;
+	int chapter_1;
+	int verse_1;
+
+
 	
+	public static GotoDirectFragment create(int bookId, int chapter_1, int verse_1) {
+		GotoDirectFragment res = new GotoDirectFragment();
+		Bundle args = new Bundle();
+		args.putInt(EXTRA_bookId, bookId);
+		args.putInt(EXTRA_chapter, chapter_1);
+		args.putInt(EXTRA_verse, verse_1);
+		res.setArguments(args);
+		return res;
+	}
+	
+	@Override public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
+		Bundle args = getArguments();
+		if (args != null) {
+			bookId = args.getInt(EXTRA_bookId, -1);
+			chapter_1 = args.getInt(EXTRA_chapter);
+			verse_1 = args.getInt(EXTRA_verse);
+		}
+	}
+
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View res = inflater.inflate(R.layout.fragment_goto_direct, container, false);
 		lContohLoncat = V.get(res, R.id.lContohLoncat);
 		tAlamatLoncat = V.get(res, R.id.tAlamatLoncat);
+		bOk = V.get(res, R.id.bOk);
+
+		bOk.setOnClickListener(bOk_click);
+		
+		tAlamatLoncat.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				bOk_click.onClick(bOk);
+				return true;
+			}
+		});
 		return res;
 	}
 	
@@ -33,7 +81,7 @@ public class GotoDirectFragment extends BaseFragment {
 		super.onActivityCreated(savedInstanceState);
 
 		{
-			String alamatContoh = "*Contoh alamat"; // TODO S.alamat(S.kitabAktif, IsiActivity.this.pasal_1, getAyatBerdasarSkrol());
+			String alamatContoh = S.alamat(S.activeVersion.getBook(bookId), chapter_1, verse_1);
 			String text = getString(R.string.loncat_ke_alamat_titikdua);
 			int pos = text.indexOf("%s"); //$NON-NLS-1$
 			if (pos >= 0) {
@@ -46,30 +94,46 @@ public class GotoDirectFragment extends BaseFragment {
 			}
 		}
 		
-//		TODO final DialogInterface.OnClickListener loncat_click = new DialogInterface.OnClickListener() {
-//			@Override public void onClick(DialogInterface dialog, int which) {
-//				int ari = loncatKe(tAlamatLoncat.getText().toString());
-//				if (ari != 0) {
+		showKeyboard();
+		
+//		TODO 
 //					sejarah.tambah(ari);
-//				}
-//			}
-//		};
-		
-		tAlamatLoncat.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-			@Override  public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//				loncat_click.onClick(dialog, 0);
-//				dialog.dismiss();
-				
-				return true;
+	}
+	
+	OnClickListener bOk_click = new OnClickListener() {
+		@Override public void onClick(View v) {
+			String reference = tAlamatLoncat.getText().toString();
+			
+			if (reference.trim().length() == 0) {
+				return; // do nothing
 			}
-		});
-		
-//		TODO dialog.setOnDismissListener(new OnDismissListener() {
-//			@Override public void onDismiss(DialogInterface _) {
-//				dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED);
-//			}
-//		});
-		
-		// TODO dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+			
+			Jumper jumper = new Jumper();
+			boolean success = jumper.parse(reference);
+			if (! success) {
+				new AlertDialog.Builder(getActivity())
+				.setMessage(getString(R.string.alamat_tidak_sah_alamat, reference))
+				.setPositiveButton(R.string.ok, null)
+				.show();
+				return;
+			}
+			
+			int bookId = jumper.getBookId(S.activeVersion.getConsecutiveBooks());
+			int chapter = jumper.getChapter();
+			int verse = jumper.getVerse();
+			
+			((GotoFinishListener) getActivity()).onGotoFinished(bookId, chapter, verse);
+		}
+	};
+
+	public void onTabSelected() {
+		showKeyboard();
+	}
+
+	private void showKeyboard() {
+		if (getActivity() != null) {
+			InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.showSoftInput(tAlamatLoncat, 0);
+		}
 	}
 }
