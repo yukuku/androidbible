@@ -1,6 +1,5 @@
 package yuku.alkitab.base.fr;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,6 +47,10 @@ public class GotoDialerFragment extends BaseGotoFragment {
 	int maxAyat = 0;
 	KitabAdapter adapter;
 	
+	int bookId;
+	int chapter_1;
+	int verse_1;
+	
 	public static GotoDialerFragment create(int bookId, int chapter_1, int verse_1) {
 		GotoDialerFragment res = new GotoDialerFragment();
 		Bundle args = new Bundle();
@@ -60,6 +63,13 @@ public class GotoDialerFragment extends BaseGotoFragment {
 
 	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		Bundle args = getArguments();
+		if (args != null) {
+			bookId = args.getInt(EXTRA_bookId, -1);
+			chapter_1 = args.getInt(EXTRA_chapter);
+			verse_1 = args.getInt(EXTRA_verse);
+		}
 	}
 
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -136,13 +146,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 
 				int kitab = adapter.getItem(cbKitab.getSelectedItemPosition()).bookId;
 
-				Intent intent = new Intent();
-				intent.putExtra(EXTRA_bookId, kitab);
-				intent.putExtra(EXTRA_chapter, pasal);
-				intent.putExtra(EXTRA_verse, ayat);
-//			TODO 	setResult(RESULT_OK, intent);
-//
-//				finish();
+				((GotoFinishListener) getActivity()).onGotoFinished(kitab, pasal, ayat);
 			}
 		});
 
@@ -150,12 +154,11 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		pasif = lAyat;
 
 		{
-			// TODO Intent intent = getIntent();
-			int pasal = 5; // TODO intent.getIntExtra(EXTRA_pasal, 0);
+			int pasal = chapter_1;
 			if (pasal != 0) {
 				lPasal.setText(String.valueOf(pasal));
 			}
-			int ayat = 17; // TODO intent.getIntExtra(EXTRA_ayat, 0);
+			int ayat = verse_1;
 			if (ayat != 0) {
 				lAyat.setText(String.valueOf(ayat));
 			}

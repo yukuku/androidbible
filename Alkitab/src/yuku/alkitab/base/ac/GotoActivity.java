@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.inputmethod.InputMethodManager;
 
 import yuku.afw.App;
+import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.fr.GotoDialerFragment;
 import yuku.alkitab.base.fr.GotoDirectFragment;
@@ -59,6 +60,8 @@ public class GotoActivity extends BaseActivity implements ActionBar.TabListener,
 
 	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		S.prepareBook();
 
 		bookId = getIntent().getIntExtra(EXTRA_bookId, -1);
 		chapter_1 = getIntent().getIntExtra(EXTRA_chapter, 0);

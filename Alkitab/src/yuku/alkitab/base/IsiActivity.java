@@ -1092,6 +1092,8 @@ public class IsiActivity extends BaseActivity {
 					Book book = S.activeVersion.getBook(result.bookId);
 					if (book != null) {
 						S.activeBook = book;
+					} else { // no book, just chapter and verse.
+						result.bookId = S.activeBook.bookId;
 					}
 					
 					int ari_cv = display(result.chapter_1, result.verse_1);
