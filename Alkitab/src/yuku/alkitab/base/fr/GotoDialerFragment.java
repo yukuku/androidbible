@@ -51,14 +51,12 @@ public class GotoDialerFragment extends BaseGotoFragment {
 	int chapter_1;
 	int verse_1;
 	
-	public static GotoDialerFragment create(int bookId, int chapter_1, int verse_1) {
-		GotoDialerFragment res = new GotoDialerFragment();
+	public static Bundle createArgs(int bookId, int chapter_1, int verse_1) {
 		Bundle args = new Bundle();
 		args.putInt(EXTRA_bookId, bookId);
 		args.putInt(EXTRA_chapter, chapter_1);
 		args.putInt(EXTRA_verse, verse_1);
-		res.setArguments(args);
-		return res;
+		return args;
 	}
 
 	@Override public void onCreate(Bundle savedInstanceState) {

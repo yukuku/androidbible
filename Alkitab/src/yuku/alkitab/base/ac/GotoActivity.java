@@ -3,8 +3,11 @@ package yuku.alkitab.base.ac;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import yuku.afw.App;
 import yuku.alkitab.base.S;
@@ -17,19 +20,19 @@ import yuku.alkitab.base.fr.base.BaseGotoFragment.GotoFinishListener;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 
-public class GotoActivity extends BaseActivity implements ActionBar.TabListener, GotoFinishListener {
+public class GotoActivity extends BaseActivity implements GotoFinishListener {
 	public static final String TAG = GotoActivity.class.getSimpleName();
 
 	private static final String EXTRA_bookId = "bookId";
 	private static final String EXTRA_chapter = "chapter";
 	private static final String EXTRA_verse = "verse";
-	
+
 	public static class Result {
 		public int bookId;
 		public int chapter_1;
 		public int verse_1;
 	}
-	
+
 	public static Intent createIntent(int bookId, int chapter_1, int verse_1) {
 		Intent res = new Intent(App.context, GotoActivity.class);
 		res.putExtra(EXTRA_bookId, bookId);
@@ -37,7 +40,7 @@ public class GotoActivity extends BaseActivity implements ActionBar.TabListener,
 		res.putExtra(EXTRA_verse, verse_1);
 		return res;
 	}
-	
+
 	public static Result obtainResult(Intent data) {
 		Result res = new Result();
 		res.bookId = data.getIntExtra(EXTRA_bookId, -1);
@@ -49,7 +52,7 @@ public class GotoActivity extends BaseActivity implements ActionBar.TabListener,
 	private Object tab_dialer = new Object();
 	private Object tab_direct = new Object();
 	private Object tab_grid = new Object();
-	
+
 	GotoDialerFragment fr_dialer;
 	GotoDirectFragment fr_direct;
 	GotoGridFragment fr_grid;
@@ -66,56 +69,84 @@ public class GotoActivity extends BaseActivity implements ActionBar.TabListener,
 		bookId = getIntent().getIntExtra(EXTRA_bookId, -1);
 		chapter_1 = getIntent().getIntExtra(EXTRA_chapter, 0);
 		verse_1 = getIntent().getIntExtra(EXTRA_verse, 0);
-		
-		if (savedInstanceState == null) {
-			ActionBar actionBar = getSupportActionBar();
-			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-			actionBar.addTab(actionBar.newTab().setTag(tab_dialer).setText("Dialer").setTabListener(this));
-			actionBar.addTab(actionBar.newTab().setTag(tab_direct).setText("Direct").setTabListener(this));
-			actionBar.addTab(actionBar.newTab().setTag(tab_grid).setText("Grid").setTabListener(this));
+
+		if (savedInstanceState != null) {
+			FragmentManager fm = getSupportFragmentManager();
+			fr_dialer = (GotoDialerFragment) fm.findFragmentByTag("dialer");
+			fr_direct = (GotoDirectFragment) fm.findFragmentByTag("direct");
+			fr_grid = (GotoGridFragment) fm.findFragmentByTag("grid");
+		}
+
+		ActionBar actionBar = getSupportActionBar();
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		actionBar.addTab(actionBar.newTab().setTag(tab_dialer).setText("Dialer").setTabListener(new TabListener<GotoDialerFragment>(this, "dialer", GotoDialerFragment.class, GotoDialerFragment.createArgs(bookId, chapter_1, verse_1))));
+		actionBar.addTab(actionBar.newTab().setTag(tab_direct).setText("Direct").setTabListener(new TabListener<GotoDirectFragment>(this, "direct", GotoDirectFragment.class, GotoDirectFragment.createArgs(bookId, chapter_1, verse_1))));
+		actionBar.addTab(actionBar.newTab().setTag(tab_grid).setText("Grid").setTabListener(new TabListener<GotoGridFragment>(this, "grid", GotoGridFragment.class, GotoGridFragment.createArgs(bookId, chapter_1, verse_1))));
+
+		if (savedInstanceState != null) {
+			actionBar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
 		}
 	}
 
-	@Override public void onTabSelected(Tab tab, FragmentTransaction ft) {
-		if (tab.getTag() == tab_dialer) {
-			if (fr_dialer == null) {
-				fr_dialer = GotoDialerFragment.create(bookId, chapter_1, verse_1);
-				ft.add(android.R.id.content, fr_dialer);
-			} else {
-				ft.attach(fr_dialer);
-			}
-		}
-		if (tab.getTag() == tab_direct) {
-			if (fr_direct == null) {
-				fr_direct = GotoDirectFragment.create(bookId, chapter_1, verse_1);
-				ft.add(android.R.id.content, fr_direct);
-			} else {
-				ft.attach(fr_direct);
-			}
-		}
-		if (tab.getTag() == tab_grid) {
-			if (fr_grid == null) {
-				fr_grid = GotoGridFragment.create(bookId, chapter_1, verse_1);
-				ft.add(android.R.id.content, fr_grid);
-			} else {
-				ft.attach(fr_grid);
-			}
-		}
-
-		if (tab.getTag() == tab_direct) {
-			fr_direct.onTabSelected();
-		} else {
-			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(findViewById(android.R.id.content).getWindowToken(), 0);
-		}
+	@Override protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt("tab", getSupportActionBar().getSelectedNavigationIndex());
 	}
 
-	@Override public void onTabReselected(Tab tab, FragmentTransaction ft) {}
+	public static class TabListener<T extends Fragment> implements ActionBar.TabListener {
+		private final BaseActivity mActivity;
+		private final String mTag;
+		private final Class<T> mClass;
+		private final Bundle mArgs;
+		private Fragment mFragment;
 
-	@Override public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-		if (tab.getTag() == tab_dialer && fr_dialer != null) ft.detach(fr_dialer); 
-		if (tab.getTag() == tab_direct && fr_direct != null) ft.detach(fr_direct); 
-		if (tab.getTag() == tab_grid && fr_grid != null) ft.detach(fr_grid); 
+		public TabListener(BaseActivity activity, String tag, Class<T> clz) {
+			this(activity, tag, clz, null);
+		}
+
+		public TabListener(BaseActivity activity, String tag, Class<T> clz, Bundle args) {
+			mActivity = activity;
+			mTag = tag;
+			mClass = clz;
+			mArgs = args;
+
+			// Check to see if we already have a fragment for this tab, probably
+			// from a previously saved state. If so, deactivate it, because our
+			// initial state is that a tab isn't shown.
+			FragmentManager fm = mActivity.getSupportFragmentManager();
+			mFragment = fm.findFragmentByTag(mTag);
+			if (mFragment != null && !mFragment.isDetached()) {
+				FragmentTransaction ft = fm.beginTransaction();
+				ft.detach(mFragment);
+				ft.commit();
+			}
+		}
+
+		@Override public void onTabSelected(Tab tab, FragmentTransaction ft) {
+			if (mFragment == null) {
+				mFragment = Fragment.instantiate(mActivity, mClass.getName(), mArgs);
+				ft.add(android.R.id.content, mFragment, mTag);
+			} else {
+				ft.attach(mFragment);
+			}
+			
+			if (mFragment instanceof GotoDirectFragment) {
+				((GotoDirectFragment) mFragment).onTabSelected();
+			} else {
+				InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(mActivity.findViewById(android.R.id.content).getWindowToken(), 0);
+			}
+		}
+
+		@Override public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+			if (mFragment != null) {
+				ft.detach(mFragment);
+			}
+		}
+
+		@Override public void onTabReselected(Tab tab, FragmentTransaction ft) {
+			Toast.makeText(mActivity, "Reselected!", Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	@Override public void onGotoFinished(int bookId, int chapter_1, int verse_1) {

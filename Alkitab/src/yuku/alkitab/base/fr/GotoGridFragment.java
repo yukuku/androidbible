@@ -28,14 +28,12 @@ public class GotoGridFragment extends BaseGotoFragment {
 	KitabAdapter kitabAdapter;
 	
 
-	public static GotoGridFragment create(int bookId, int chapter_1, int verse_1) {
-		GotoGridFragment res = new GotoGridFragment();
+	public static Bundle createArgs(int bookId, int chapter_1, int verse_1) {
 		Bundle args = new Bundle();
 		args.putInt(EXTRA_bookId, bookId);
 		args.putInt(EXTRA_chapter, chapter_1);
 		args.putInt(EXTRA_verse, verse_1);
-		res.setArguments(args);
-		return res;
+		return args;
 	}
 	
 	@Override public void onCreate(Bundle savedInstanceState) {

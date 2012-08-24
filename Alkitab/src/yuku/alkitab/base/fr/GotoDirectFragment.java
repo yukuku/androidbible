@@ -2,6 +2,7 @@ package yuku.alkitab.base.fr;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
@@ -39,14 +40,12 @@ public class GotoDirectFragment extends BaseGotoFragment {
 
 
 	
-	public static GotoDirectFragment create(int bookId, int chapter_1, int verse_1) {
-		GotoDirectFragment res = new GotoDirectFragment();
+	public static Bundle createArgs(int bookId, int chapter_1, int verse_1) {
 		Bundle args = new Bundle();
 		args.putInt(EXTRA_bookId, bookId);
 		args.putInt(EXTRA_chapter, chapter_1);
 		args.putInt(EXTRA_verse, verse_1);
-		res.setArguments(args);
-		return res;
+		return args;
 	}
 	
 	@Override public void onCreate(Bundle savedInstanceState) {
@@ -131,7 +130,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 	}
 
 	private void showKeyboard() {
-		if (getActivity() != null) {
+		if (getActivity() != null && getActivity().getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
 			InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.showSoftInput(tAlamatLoncat, 0);
 		}
