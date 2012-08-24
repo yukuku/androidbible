@@ -559,6 +559,7 @@ public class IsiActivity extends BaseActivity {
 
 	private OnItemClickListener lsText_itemClick = new OnItemClickListener() {
 		@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			verseAdapter_.notifyDataSetChanged();
 			hideOrShowContextMenuButton();
 		}
 	};
