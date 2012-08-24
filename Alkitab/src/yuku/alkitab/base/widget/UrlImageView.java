@@ -97,11 +97,15 @@ public class UrlImageView extends ImageView {
 					long length = cacheFile.length();
 					buf = new byte[(int) length];
 					FileInputStream fis = new FileInputStream(cacheFile);
-					int read = fis.read(buf, 0, buf.length);
-					if (read == length) {
-						return buf;
-					} else {
-						return null;
+					try {
+						int read = fis.read(buf, 0, buf.length);
+						if (read == length) {
+							return buf;
+						} else {
+							return null;
+						}
+					} finally {
+						fis.close();
 					}
 				} else {
 					return null;
