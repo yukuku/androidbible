@@ -32,11 +32,25 @@
 		        <action android:name="android.intent.action.VIEW" />
 		        <category android:name="android.intent.category.DEFAULT" />
 		        <category android:name="android.intent.category.BROWSABLE" />
-		        <category android:name="android.intent.category.SELECTED_ALTERNATIVE" />
 		        <data android:scheme="file" />
 		        <data android:scheme="content" />
 		        <data android:mimeType="text/xml" />
 		        <data android:host="*" />
+		    </intent-filter>
+		    <intent-filter android:label="@string/intent_filter_import_from_backup">
+		        <action android:name="android.intent.action.VIEW" />
+		        <category android:name="android.intent.category.DEFAULT" />
+		        <category android:name="android.intent.category.BROWSABLE" />
+		        <data android:scheme="file" />
+		        <data android:scheme="content" />
+		        <data android:mimeType="*/*" />
+		        <data android:host="*" />
+		        <data android:pathPattern=".*\\.xml" />
+		        <data android:pathPattern=".*\\..*\\.xml" />
+		        <data android:pathPattern=".*\\..*\\..*\\.xml" />
+		        <data android:pathPattern=".*\\..*\\..*\\..*\\.xml" />
+		        <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.xml" />
+		        <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.xml" />
 		    </intent-filter>
    		</activity>
 		<activity android:name="yuku.alkitab.base.ac.BukmakListActivity" android:label="@string/pembatas_buku" android:configChanges="keyboardHidden|orientation|screenSize|locale" android:windowSoftInputMode="adjustResize|stateHidden" />

@@ -102,7 +102,8 @@ public class BukmakActivity extends BaseActivity {
 					dialog[0] = new AlertDialog.Builder(BukmakActivity.this)
 					.setTitle(R.string.impor_judul)
 					.setMessage(R.string.apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya)
-					.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+					.setNegativeButton(R.string.cancel, null)
+					.setNeutralButton(R.string.no, new DialogInterface.OnClickListener() {
 						@Override public void onClick(DialogInterface dialog_, int which) {
 							dialog[0].setOnDismissListener(null);
 							impor(inputStream, false, true);
