@@ -170,7 +170,7 @@ public class Search2Activity extends BaseActivity {
 		lsHasilCari.setBackgroundColor(S.penerapan.backgroundColor);
 		lsHasilCari.setCacheColorHint(S.penerapan.backgroundColor);
 		
-		warnaHilite = U.getWarnaHiliteKontrasDengan(S.penerapan.backgroundColor);
+		warnaHilite = U.getHighlightColorByBrightness(S.penerapan.backgroundBrightness);
 		
 		lsHasilCari.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
