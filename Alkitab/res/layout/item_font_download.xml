@@ -22,8 +22,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/imgPreview"
-        android:layout_alignRight="@+id/imgPreview"
-        android:layout_below="@+id/imgPreview" />
+        android:layout_below="@+id/imgPreview"
+        android:layout_marginRight="64dp" />
 
     <ImageButton
         android:id="@+id/bDownload"
