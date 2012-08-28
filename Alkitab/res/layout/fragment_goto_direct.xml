@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="18dp"
         android:layout_marginRight="18dp"
-        android:imeOptions="actionGo"
+        android:imeOptions="actionGo|flagNoExtractUi"
         android:inputType="textCapSentences" >
 
         <requestFocus />

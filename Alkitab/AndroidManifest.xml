@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="yuku.alkitab" android:installLocation="auto" android:versionCode="96" android:versionName="2.5.2">
-	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="14" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="yuku.alkitab" android:installLocation="auto" android:versionCode="97" android:versionName="2.6.0" xmlns:tools="http://schemas.android.com/tools">
+	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="15" />
 
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -25,9 +25,9 @@
             </intent-filter>
 		</activity>
 
-		<activity android:name="yuku.alkitab.base.ac.GotoActivity" android:label="@string/tuju_v" android:configChanges="locale" />
+		<activity android:name="yuku.alkitab.base.ac.GotoActivity" android:label="@string/tuju_v" android:configChanges="locale" android:windowSoftInputMode="adjustPan" />
 		<activity android:name="yuku.alkitab.base.ac.PengaturanActivity" android:label="@string/pengaturan_alkitab" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
-		<activity android:name="yuku.alkitab.base.ac.BukmakActivity" android:label="@string/judul_bukmak_activity" android:configChanges="keyboardHidden|orientation|screenSize|locale">
+		<activity android:name="yuku.alkitab.base.ac.BukmakActivity" android:label="@string/judul_bukmak_activity" android:configChanges="keyboardHidden|orientation|screenSize|locale" tools:ignore="ExportedActivity">
 		    <intent-filter android:label="@string/intent_filter_import_from_backup">
 		        <action android:name="android.intent.action.VIEW" />
 		        <category android:name="android.intent.category.DEFAULT" />

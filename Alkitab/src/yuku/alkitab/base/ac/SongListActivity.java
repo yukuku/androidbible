@@ -1,6 +1,8 @@
 package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -39,6 +41,9 @@ import yuku.alkitab.base.util.SongBookUtil.OnSongBookSelectedListener;
 import yuku.alkitab.base.util.SongBookUtil.SongBookInfo;
 import yuku.alkitab.base.util.SongFilter;
 import yuku.searchbar.SearchWidget;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 /*
  * Everytime we want to do a search, make sure 3 things:
@@ -208,6 +213,49 @@ public class SongListActivity extends BaseActivity {
         });
 	}
 	
+	@Override public boolean onCreateOptionsMenu(Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.activity_song_list, menu);
+		return true;
+	}
+	
+	@Override public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.menuDeleteAll) {
+			new AlertDialog.Builder(this)
+			.setMessage(R.string.sn_delete_all_songs_explanation)
+			.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+				@Override public void onClick(DialogInterface dialog, int which) {
+					deleteAllSongs();
+				}
+			})
+			.setNegativeButton(R.string.cancel, null)
+			.show();
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+	protected void deleteAllSongs() {
+		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.please_wait_titik3), true, false);
+		
+		new Thread() {
+			@Override public void run() {
+				final int count = S.getSongDb().deleteAllSongs();
+				
+				runOnUiThread(new Runnable() {
+					@Override public void run() {
+						pd.dismiss();
+						
+						startSearch();
+						
+						new AlertDialog.Builder(SongListActivity.this)
+						.setMessage(getString(R.string.sn_delete_all_songs_result, count))
+						.setPositiveButton(R.string.ok, null)
+						.show();
+					}
+				});
+			};
+		}.start();
+	}
+
 	void startSearch() {
 		if (stillUsingInitialSearchState) return;
 		setProgressBarIndeterminateVisibility(true);

@@ -43,10 +43,12 @@ public class SongBookUtil {
 		
 		for (String k: new String[] {
 			// bookName :: fileName :: downloadUrl :: bookDescription
-			"KJ   :: kj-1.ser   :: http://alkitab-host.appspot.com/addon/songs/v1/data/kj-1.ser.gz   :: Kidung Jemaat, buku himne terbitan YAMUGER (Yayasan Musik Gereja di Indonesia).", //$NON-NLS-1$
-			"KPRI :: kpri-1.ser :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpri-1.ser.gz :: Kidung Persekutuan Reformed Injili, buku nyanyian terbitan Sinode Gereja Reformed Injili Indonesia (GRII).", //$NON-NLS-1$
-			"NKB  :: nkb-1.ser  :: http://alkitab-host.appspot.com/addon/songs/v1/data/nkb-1.ser.gz  :: Nyanyikanlah Kidung Baru, buku himne terbitan Badan Pengerja Majelis Sinode (BPMS) Gereja Kristen Indonesia.",  //$NON-NLS-1$
-			"PKJ  :: pkj-1.ser  :: http://alkitab-host.appspot.com/addon/songs/v1/data/pkj-1.ser.gz  :: Pelengkap Kidung Jemaat, buku nyanyian untuk melengkapi Kidung Jemaat, terbitan YAMUGER (Yayasan Musik Gereja di Indonesia).", //$NON-NLS-1$
+			"KJ   :: kj-1.ser   :: http://alkitab-host.appspot.com/addon/songs/v1/data/kj-1.ser.gz   :: Kidung Jemaat, buku terbitan Yayasan Musik Gereja di Indonesia (YAMUGER).", //$NON-NLS-1$
+			"KPRI :: kpri-1.ser :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpri-1.ser.gz :: Kidung Persekutuan Reformed Injili, buku terbitan Sinode Gereja Reformed Injili Indonesia (GRII).", //$NON-NLS-1$
+			"NKB  :: nkb-1.ser  :: http://alkitab-host.appspot.com/addon/songs/v1/data/nkb-1.ser.gz  :: Nyanyikanlah Kidung Baru, buku terbitan Badan Pengerja Majelis Sinode Gereja Kristen Indonesia.",  //$NON-NLS-1$
+			"NP   :: np-1.ser   :: http://alkitab-host.appspot.com/addon/songs/v1/data/np-1.ser.gz   :: Nyanyian Pujian, buku terbitan Lembaga Literatur Baptis yang digunakan gereja-gereja Baptis.", //$NON-NLS-1$
+			"PKJ  :: pkj-1.ser  :: http://alkitab-host.appspot.com/addon/songs/v1/data/pkj-1.ser.gz  :: Pelengkap Kidung Jemaat, buku terbitan Yayasan Musik Gereja di Indonesia (YAMUGER).", //$NON-NLS-1$
+			"PPK  :: ppk-1.ser  :: http://alkitab-host.appspot.com/addon/songs/v1/data/ppk-1.ser.gz  :: Puji-pujian Kristen, buku terbitan Seminari Alkitab Asia Tenggara (SAAT).", //$NON-NLS-1$
 		}) {
 			String[] ss = k.split("::"); //$NON-NLS-1$
 			SongBookInfo bookInfo = new SongBookInfo();
