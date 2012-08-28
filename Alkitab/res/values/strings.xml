@@ -254,4 +254,7 @@
 		
     <string name="bl_send_backup">Transfer</string>
     <string name="intent_filter_import_from_backup">Import from backup</string>
+    <string name="sn_delete_all_songs">Delete all songs</string>
+    <string name="sn_delete_all_songs_explanation">Delete all songs from local storage? This may save some space.</string>
+    <string name="sn_delete_all_songs_result">Deletion completed. Songs deleted: %s</string>
 </resources>
