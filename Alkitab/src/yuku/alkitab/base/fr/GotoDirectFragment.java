@@ -2,7 +2,6 @@ package yuku.alkitab.base.fr;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
@@ -130,7 +129,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 	}
 
 	private void showKeyboard() {
-		if (getActivity() != null && getActivity().getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
+		if (getActivity() != null) {
 			InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.showSoftInput(tAlamatLoncat, 0);
 		}

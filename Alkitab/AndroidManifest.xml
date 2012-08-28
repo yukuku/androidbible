@@ -25,9 +25,9 @@
             </intent-filter>
 		</activity>
 
-		<activity android:name="yuku.alkitab.base.ac.GotoActivity" android:label="@string/tuju_v" android:configChanges="locale" />
+		<activity android:name="yuku.alkitab.base.ac.GotoActivity" android:label="@string/tuju_v" android:configChanges="locale" android:windowSoftInputMode="adjustPan" />
 		<activity android:name="yuku.alkitab.base.ac.PengaturanActivity" android:label="@string/pengaturan_alkitab" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
-		<activity android:name="yuku.alkitab.base.ac.BukmakActivity" android:label="@string/judul_bukmak_activity" android:configChanges="keyboardHidden|orientation|screenSize|locale">
+		<activity android:name="yuku.alkitab.base.ac.BukmakActivity" android:label="@string/judul_bukmak_activity" android:configChanges="keyboardHidden|orientation|screenSize|locale" tools:ignore="ExportedActivity">
 		    <intent-filter android:label="@string/intent_filter_import_from_backup">
 		        <action android:name="android.intent.action.VIEW" />
 		        <category android:name="android.intent.category.DEFAULT" />
