@@ -19,6 +19,7 @@ public class Song implements Serializable, Parcelable {
 	public String tune;
 	public String keySignature;
 	public String timeSignature;
+	public String scriptureReferences;
 	public List<Lyric> lyrics;
 	
 	
