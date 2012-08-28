@@ -251,4 +251,7 @@
 		• [b]Jaya Satrio[/b] various icons[br/]
 		• [b]Yohanes Nugroho[/b] PDB reader[br/]
 		• etc.</string>
+		
+    <string name="bl_send_backup">Transfer</string>
+    <string name="intent_filter_import_from_backup">Import from backup</string>
 </resources>

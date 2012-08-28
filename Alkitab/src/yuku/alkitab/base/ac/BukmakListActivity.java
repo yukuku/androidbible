@@ -33,12 +33,12 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.dialog.JenisStabiloDialog;
+import yuku.alkitab.base.dialog.JenisStabiloDialog.JenisStabiloCallback;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog.Listener;
 import yuku.alkitab.base.dialog.TypeNoteDialog;
 import yuku.alkitab.base.dialog.TypeNoteDialog.RefreshCallback;
-import yuku.alkitab.base.dialog.JenisStabiloDialog;
-import yuku.alkitab.base.dialog.JenisStabiloDialog.JenisStabiloCallback;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.Label;
@@ -132,7 +132,7 @@ public class BukmakListActivity extends BaseActivity {
 		panelList.setBackgroundColor(S.penerapan.backgroundColor);
 		tEmpty.setTextColor(S.penerapan.warnaHuruf);
 		
-		warnaHilite = U.getWarnaHiliteKontrasDengan(S.penerapan.backgroundColor);
+		warnaHilite = U.getHighlightColorByBrightness(S.penerapan.backgroundBrightness);
 		
 		lv.setAdapter(adapter);
 		lv.setCacheColorHint(S.penerapan.backgroundColor);

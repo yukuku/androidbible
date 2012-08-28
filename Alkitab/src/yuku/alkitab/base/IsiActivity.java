@@ -816,6 +816,16 @@ public class IsiActivity extends BaseActivity {
 		{
 			root.setBackgroundColor(S.penerapan.backgroundColor);
 			lsText.setCacheColorHint(S.penerapan.backgroundColor);
+			
+			// on Holo theme, the button background is quite transparent, so we need to adjust button text color
+			// to dark one if user chooses to use a light background color.
+			if (Build.VERSION.SDK_INT >= 11) {
+				if (S.penerapan.backgroundBrightness > 0.7f) {
+					bGoto.setTextColor(0xff000000); // black
+				} else {
+					bGoto.setTextColor(0xfff3f3f3); // default button text color on Holo
+				}
+			}
 		}
 		
 		// appliance of hide navigation

@@ -2,7 +2,6 @@ package yuku.alkitab.base;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
@@ -298,9 +297,8 @@ public class U {
 		return 0xa0000000 | warnaRgb;
 	}
 
-	public static int getWarnaHiliteKontrasDengan(int warnaLatar) {
-		float keterangan = 0.30f * Color.red(warnaLatar) + 0.59f * Color.green(warnaLatar) + 0.11f * Color.blue(warnaLatar);
-		if (keterangan < 0.5f) {
+	public static int getHighlightColorByBrightness(float brightness) {
+		if (brightness < 0.5f) {
 			return 0xff66ff66;
 		} else {
 			return 0xff990099;

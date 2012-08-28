@@ -6,9 +6,11 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.ShareCompat;
 import android.util.Log;
 import android.util.Xml;
 import android.view.ContextMenu;
@@ -33,8 +35,10 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -86,6 +90,43 @@ public class BukmakActivity extends BaseActivity {
 		lv.setOnItemClickListener(lv_click);
 		
 		registerForContextMenu(lv);
+		
+		Intent intent = getIntent();
+		if (U.equals(intent.getAction(), Intent.ACTION_VIEW)) {
+			Uri data = intent.getData();
+			if (data != null && (U.equals(data.getScheme(), "content") || U.equals(data.getScheme(), "file"))) {
+				try {
+					final InputStream inputStream = getContentResolver().openInputStream(data);
+					
+					final AlertDialog[] dialog = {null};
+					dialog[0] = new AlertDialog.Builder(BukmakActivity.this)
+					.setTitle(R.string.impor_judul)
+					.setMessage(R.string.apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya)
+					.setNegativeButton(R.string.cancel, null)
+					.setNeutralButton(R.string.no, new DialogInterface.OnClickListener() {
+						@Override public void onClick(DialogInterface dialog_, int which) {
+							dialog[0].setOnDismissListener(null);
+							impor(inputStream, false, true);
+						}
+					})
+					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+						@Override public void onClick(DialogInterface dialog_, int which) {
+							dialog[0].setOnDismissListener(null);
+							impor(inputStream, true, true);
+						}
+					})
+					.show();
+					dialog[0].setOnDismissListener(finishActivityListener);
+
+				} catch (FileNotFoundException e) {
+					new AlertDialog.Builder(this)
+					.setTitle(R.string.impor_judul)
+					.setMessage("File not found: " + data.toString())
+					.show()
+					.setOnDismissListener(finishActivityListener);
+				}
+			}
+		}
 	}
 
 	private void bikinMenu(Menu menu) {
@@ -139,13 +180,13 @@ public class BukmakActivity extends BaseActivity {
 					.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							impor(false);
+							impor(null, false, false);
 						}
 					})
 					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							impor(true);
+							impor(null, true, false);
 						}
 					})
 					.show();
@@ -160,9 +201,20 @@ public class BukmakActivity extends BaseActivity {
 			.setMessage(R.string.ekspor_pembatas_buku_dan_catatan_tanya)
 			.setNegativeButton(R.string.no, null)
 			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					ekspor();
+				@Override public void onClick(DialogInterface dialog, int which) {
+					ekspor(false);
+				}
+			})
+			.show();
+			
+			return true;
+		} else if (itemId == R.id.menuSendBackup) {
+			new AlertDialog.Builder(this)
+			.setMessage("Create and send backup of bookmarks, notes, and highlights? You can, for example, send the attached file by email to your new device, or just for archiving purposes.")
+			.setNegativeButton(R.string.no, null)
+			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+				@Override public void onClick(DialogInterface dialog, int which) {
+					ekspor(true);
 				}
 			})
 			.show();
@@ -182,7 +234,7 @@ public class BukmakActivity extends BaseActivity {
 		return new File(dir, getPackageName() + "-backup.xml"); //$NON-NLS-1$
 	}
 
-	public void impor(boolean tumpuk) {
+	public void impor(final InputStream inputStream, boolean tumpuk, final boolean finishActivityAfterwards) {
 		new AsyncTask<Boolean, Integer, Object>() {
 			ProgressDialog pd;
 			int count_bukmak = 0;
@@ -209,9 +261,15 @@ public class BukmakActivity extends BaseActivity {
 				final TIntObjectHashMap<TIntList> bukmak2RelIdToLabelRelIdsMap = new TIntObjectHashMap<TIntList>();
 				
 				try {
-					File in = getFileBackup();
-					FileInputStream fis = new FileInputStream(in);
+					InputStream fis;
 					
+					if (inputStream == null) {
+						File in = getFileBackup();
+						fis = new FileInputStream(in);
+					} else {
+						fis = inputStream;
+					}
+
 					Xml.parse(fis, Xml.Encoding.UTF_8, new DefaultHandler2() {
 						@Override public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 							if (localName.equals(Bukmak2.XMLTAG_Bukmak2)) {
@@ -280,9 +338,23 @@ public class BukmakActivity extends BaseActivity {
 				pd.dismiss();
 				
 				if (result instanceof Exception) {
-					msgbox(getString(R.string.impor_judul), getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, ((Exception) result).getMessage()));
+					AlertDialog dialog = new AlertDialog.Builder(BukmakActivity.this)
+					.setTitle(R.string.impor_judul)
+					.setMessage(getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, ((Exception) result).getMessage()))
+					.setPositiveButton(R.string.ok, null)
+					.show();
+					if (finishActivityAfterwards) {
+						dialog.setOnDismissListener(finishActivityListener);
+					}
 				} else {
-					msgbox(getString(R.string.impor_judul), getString(R.string.impor_berhasil_angka_diproses, count_bukmak, count_label));
+					AlertDialog dialog = new AlertDialog.Builder(BukmakActivity.this)
+					.setTitle(R.string.impor_judul)
+					.setMessage(getString(R.string.impor_berhasil_angka_diproses, count_bukmak, count_label))
+					.setPositiveButton(R.string.ok, null)
+					.show();
+					if (finishActivityAfterwards) {
+						dialog.setOnDismissListener(finishActivityListener);
+					}
 				}
 				
 				adapter.reload();
@@ -290,7 +362,7 @@ public class BukmakActivity extends BaseActivity {
 		}.execute((Boolean)tumpuk);
 	}
 	
-	public void ekspor() {
+	public void ekspor(final boolean sendBackup) {
 		new AsyncTask<Void, Integer, Object>() {
 			ProgressDialog pd;
 			
@@ -369,12 +441,22 @@ public class BukmakActivity extends BaseActivity {
 				}
 			}
 			
-			@Override
-			protected void onPostExecute(Object result) {
+			@Override protected void onPostExecute(Object result) {
 				pd.dismiss();
 				
 				if (result instanceof String) {
-					msgbox(getString(R.string.ekspor_judul), getString(R.string.ekspor_berhasil_file_yang_dihasilkan_file, result));
+					if (!sendBackup) {
+						msgbox(getString(R.string.ekspor_judul), getString(R.string.ekspor_berhasil_file_yang_dihasilkan_file, result));
+					} else {
+						Uri uri = Uri.fromFile(new File((String) result));
+						
+						Intent intent = ShareCompat.IntentBuilder.from(BukmakActivity.this)
+						.setStream(uri)
+						.setType("text/xml")
+						.createChooserIntent();
+						
+						startActivity(intent);
+					}
 				} else if (result instanceof Exception) {
 					msgbox(getString(R.string.ekspor_judul), getString(R.string.terjadi_kesalahan_ketika_mengekspor_pesan, ((Exception) result).getMessage()));
 				}
@@ -415,6 +497,12 @@ public class BukmakActivity extends BaseActivity {
 				}
 			}
 			startActivityForResult(intent, REQCODE_bukmakList);
+		}
+	};
+
+	private DialogInterface.OnDismissListener finishActivityListener = new DialogInterface.OnDismissListener() {
+		@Override public void onDismiss(DialogInterface dialog) {
+			finish();
 		}
 	};
 	

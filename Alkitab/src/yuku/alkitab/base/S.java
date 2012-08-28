@@ -15,8 +15,8 @@ import java.util.Locale;
 import yuku.alkitab.R;
 import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.renungan.TukangDonlot;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.InternalDbHelper;
@@ -48,6 +48,9 @@ public class S {
 		public static int backgroundColor;
 		public static int warnaNomerAyat;
 		
+		/** 0.f to 1.f */
+		public static float backgroundBrightness;
+		
 		// semua di bawah dalam px
 		public static int jarakIndenParagraf;
 		public static int jarakMenjorokSatu;
@@ -55,7 +58,6 @@ public class S {
 		public static int jarakMenjorokTiga;
 		public static int jarakMenjorokEmpat;
 		public static int jarakMenjorokExtra;
-
 	}
 	
 	/**
@@ -121,6 +123,12 @@ public class S {
 			penerapan.backgroundColor = Preferences.getInt(R.string.pref_warnaLatar_int_key, R.integer.pref_warnaLatar_int_default); 
 			penerapan.warnaNomerAyat = Preferences.getInt(R.string.pref_warnaNomerAyat_int_key, R.integer.pref_warnaNomerAyat_int_default);
 			penerapan.warnaHurufMerah = hitungHurufMerah(S.penerapan.warnaHuruf, S.penerapan.backgroundColor);
+			
+			// calculation of backgroundColor brightness. Used somewhere else.
+			{
+				int c = penerapan.backgroundColor;
+				penerapan.backgroundBrightness = (0.30f * Color.red(c) + 0.59f * Color.green(c) + 0.11f * Color.blue(c)) * 0.003921568627f;
+			}
 		}
 		
 		Resources res = App.context.getResources();
