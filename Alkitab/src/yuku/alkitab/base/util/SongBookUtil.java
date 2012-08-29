@@ -42,18 +42,18 @@ public class SongBookUtil {
 		knownSongBooks = new ArrayList<SongBookInfo>();
 		
 		for (String k: new String[] {
-			// bookName :: fileName :: downloadUrl :: bookDescription
-			"KJ   :: kj-1.ser   :: http://alkitab-host.appspot.com/addon/songs/v1/data/kj-1.ser.gz   :: Kidung Jemaat, buku terbitan Yayasan Musik Gereja di Indonesia (YAMUGER).", //$NON-NLS-1$
-			"KPRI :: kpri-1.ser :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpri-1.ser.gz :: Kidung Persekutuan Reformed Injili, buku terbitan Sinode Gereja Reformed Injili Indonesia (GRII).", //$NON-NLS-1$
-			"NKB  :: nkb-1.ser  :: http://alkitab-host.appspot.com/addon/songs/v1/data/nkb-1.ser.gz  :: Nyanyikanlah Kidung Baru, buku terbitan Badan Pengerja Majelis Sinode Gereja Kristen Indonesia.",  //$NON-NLS-1$
-			"NP   :: np-1.ser   :: http://alkitab-host.appspot.com/addon/songs/v1/data/np-1.ser.gz   :: Nyanyian Pujian, buku terbitan Lembaga Literatur Baptis yang digunakan gereja-gereja Baptis.", //$NON-NLS-1$
-			"PKJ  :: pkj-1.ser  :: http://alkitab-host.appspot.com/addon/songs/v1/data/pkj-1.ser.gz  :: Pelengkap Kidung Jemaat, buku terbitan Yayasan Musik Gereja di Indonesia (YAMUGER).", //$NON-NLS-1$
-			"PPK  :: ppk-1.ser  :: http://alkitab-host.appspot.com/addon/songs/v1/data/ppk-1.ser.gz  :: Puji-pujian Kristen, buku terbitan Seminari Alkitab Asia Tenggara (SAAT).", //$NON-NLS-1$
+			// bookName :: dataFormatVersion :: downloadUrl :: bookDescription
+			"KJ   :: 1 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kj-1.ser.gz   :: Kidung Jemaat, buku terbitan Yayasan Musik Gereja di Indonesia (YAMUGER).", //$NON-NLS-1$
+			"KPRI :: 1 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpri-1.ser.gz :: Kidung Persekutuan Reformed Injili, buku terbitan Sinode Gereja Reformed Injili Indonesia (GRII).", //$NON-NLS-1$
+			"NKB  :: 1 :: http://alkitab-host.appspot.com/addon/songs/v1/data/nkb-1.ser.gz  :: Nyanyikanlah Kidung Baru, buku terbitan Badan Pengerja Majelis Sinode Gereja Kristen Indonesia.",  //$NON-NLS-1$
+			"NP   :: 2 :: http://alkitab-host.appspot.com/addon/songs/v1/data/np-2.ser.gz   :: Nyanyian Pujian, buku terbitan Lembaga Literatur Baptis yang digunakan gereja-gereja Baptis.", //$NON-NLS-1$
+			"PKJ  :: 1 :: http://alkitab-host.appspot.com/addon/songs/v1/data/pkj-1.ser.gz  :: Pelengkap Kidung Jemaat, buku terbitan Yayasan Musik Gereja di Indonesia (YAMUGER).", //$NON-NLS-1$
+			"PPK  :: 2 :: http://alkitab-host.appspot.com/addon/songs/v1/data/ppk-2.ser.gz  :: Puji-pujian Kristen, buku terbitan Seminari Alkitab Asia Tenggara (SAAT).", //$NON-NLS-1$
 		}) {
 			String[] ss = k.split("::"); //$NON-NLS-1$
 			SongBookInfo bookInfo = new SongBookInfo();
 			bookInfo.bookName = ss[0].trim();
-			bookInfo.bookFile = ss[1].trim();
+			bookInfo.dataFormatVersion = Integer.parseInt(ss[1].trim());
 			bookInfo.downloadUrl = ss[2].trim();
 			bookInfo.description = ss[3].trim();
 			knownSongBooks.add(bookInfo);
@@ -62,7 +62,7 @@ public class SongBookUtil {
 	
 	public static class SongBookInfo {
 		public String bookName;
-		public String bookFile;
+		public int dataFormatVersion;
 		public String downloadUrl;
 		public String description;
 	}
@@ -99,10 +99,6 @@ public class SongBookUtil {
 				}
 			}
 		};
-	}
-
-	public static int getSongDataFormatVersion() {
-		return 1;
 	}
 
 	public static void downloadSongBook(final Activity activity, final SongBookInfo songBookInfo, final OnDownloadSongBookListener listener) {
@@ -144,7 +140,7 @@ public class SongBookUtil {
 					return null;
 				} else {
 					// insert songs to db
-					S.getSongDb().storeSongs(songBookInfo.bookName, songs, getSongDataFormatVersion());
+					S.getSongDb().storeSongs(songBookInfo.bookName, songs, songBookInfo.dataFormatVersion);
 					
 					return songs;
 				}

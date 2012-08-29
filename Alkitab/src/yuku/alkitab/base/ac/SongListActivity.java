@@ -287,7 +287,7 @@ public class SongListActivity extends BaseActivity {
 				bChangeBook.setText(R.string.sn_bookselector_all);
 				startSearchSettingBookName(null);
 			} else if (songBookInfo != null) {
-				if (S.getSongDb().getFirstSongFromBook(songBookInfo.bookName, SongBookUtil.getSongDataFormatVersion()) == null) {
+				if (S.getSongDb().getFirstSongFromBook(songBookInfo.bookName) == null) {
 					SongBookUtil.downloadSongBook(SongListActivity.this, songBookInfo, new OnDownloadSongBookListener() {
 						@Override public void onFailedOrCancelled(SongBookInfo songBookInfo, Exception e) {
 							if (e != null) {
@@ -414,10 +414,10 @@ public class SongListActivity extends BaseActivity {
 		@Override public List<SongInfo> loadInBackground() {
 			List<SongInfo> res;
 			if (!deepSearch) {
-				List<SongInfo> songInfos = S.getSongDb().getSongInfosByBookName(getSelectedBookName(), SongBookUtil.getSongDataFormatVersion());
+				List<SongInfo> songInfos = S.getSongDb().getSongInfosByBookName(getSelectedBookName());
 				res = SongFilter.filterSongInfosByString(songInfos, filter_string);
 			} else {
-				res = S.getSongDb().getSongInfosByBookNameAndDeepFilter(getSelectedBookName(), filter_string, SongBookUtil.getSongDataFormatVersion());
+				res = S.getSongDb().getSongInfosByBookNameAndDeepFilter(getSelectedBookName(), filter_string);
 			}
 			return res;
 		}

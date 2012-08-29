@@ -4,7 +4,6 @@ import android.database.Cursor;
 import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.TimingLogger;
 
 import java.util.ArrayList;
@@ -22,19 +21,19 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 		super(helper);
 	}
 	
-	private static byte[] marshall(Parcelable o) {
+	private static byte[] marshallSong(Song song, int dataFormatVersion) {
 		Parcel p = Parcel.obtain();
-		o.writeToParcel(p, 0);
+		song.writeToParcelCompat(dataFormatVersion, p, 0);
 		byte[] buf = p.marshall();
 		p.recycle();
 		return buf;
 	}
 	
-	private static <T extends Parcelable> T unmarshall(byte[] buf, Parcelable.Creator<T> creator) {
+	private static Song unmarshallSong(byte[] buf, int dataFormatVersion) {
 		Parcel p = Parcel.obtain();
 		p.unmarshall(buf, 0, buf.length);
 		p.setDataPosition(0);
-		T res = creator.createFromParcel(p);
+		Song res = Song.createFromParcelCompat(dataFormatVersion, p);
 		p.recycle();
 		return res;
 	}
@@ -76,7 +75,7 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 				ih.bind(col_title_original, song.title_original);
 				ih.bind(col_ordering, ordering++);
 				ih.bind(col_dataFormatVersion, dataFormatVersion);
-				ih.bind(col_data, marshall(song));
+				ih.bind(col_data, marshallSong(song, dataFormatVersion));
 				ih.execute();
 			}
 			
@@ -89,19 +88,25 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 		}
 	}
 	
-	public Song getSong(String bookName, String code, int dataFormatVersion) {
+	public Song getSong(String bookName, String code) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		
+		String[] columns = new String[] {
+		Table.SongInfo.data.name(), // 0
+		Table.SongInfo.dataFormatVersion.name(), // 1
+		};
+		
 		Cursor c = db.query(Table.SongInfo.tableName(), 
-		new String[] {Table.SongInfo.data.name()}, 
-		Table.SongInfo.bookName + "=? and " + Table.SongInfo.code + "=? and " + Table.SongInfo.dataFormatVersion + "=?",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		new String[] {bookName, code, "" + dataFormatVersion}, //$NON-NLS-1$
+		columns, 
+		Table.SongInfo.bookName + "=? and " + Table.SongInfo.code + "=?",  //$NON-NLS-1$ //$NON-NLS-2$
+		new String[] {bookName, code}, 
 		null, null, null);
 		
 		try {
 			if (c.moveToNext()) {
-				byte[] data = c.getBlob(0); // ensure col index is correct
-				return unmarshall(data, Song.CREATOR);
+				byte[] data = c.getBlob(0);
+				int dataFormatVersion = c.getInt(1);
+				return unmarshallSong(data, dataFormatVersion);
 			} else {
 				return null;
 			}
@@ -110,12 +115,12 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 		}
 	}
 	
-	public boolean songExists(String bookName, String code, int dataFormatVersion) {
+	public boolean songExists(String bookName, String code) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		
 		Cursor c = db.rawQuery("select count(*) from " + Table.SongInfo.tableName() + " where "  //$NON-NLS-1$ //$NON-NLS-2$
-		+ Table.SongInfo.bookName + "=? and " + Table.SongInfo.code + "=? and " + Table.SongInfo.dataFormatVersion + "=?",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		new String[] {bookName, code, "" + dataFormatVersion}); //$NON-NLS-1$
+		+ Table.SongInfo.bookName + "=? and " + Table.SongInfo.code + "=?",  //$NON-NLS-1$ //$NON-NLS-2$ 
+		new String[] {bookName}); 
 
 		try {
 			if (c.moveToNext()) {
@@ -128,19 +133,25 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 		}
 	}
 	
-	public Song getFirstSongFromBook(String bookName, int dataFormatVersion) {
+	public Song getFirstSongFromBook(String bookName) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		
+		String[] columns = new String[] { // column indexes!
+		Table.SongInfo.data.name(), // 0
+		Table.SongInfo.dataFormatVersion.name(), // 1
+		};
+		
 		Cursor c = db.query(Table.SongInfo.tableName(), 
-		new String[] {Table.SongInfo.data.name()}, 
-		Table.SongInfo.bookName + "=? and " + Table.SongInfo.dataFormatVersion + "=?",  //$NON-NLS-1$ //$NON-NLS-2$
-		new String[] {bookName, "" + dataFormatVersion}, //$NON-NLS-1$
+		columns, 
+		Table.SongInfo.bookName + "=?",  //$NON-NLS-1$ 
+		new String[] {bookName}, 
 		null, null, Table.SongInfo.ordering + " asc", "1"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			if (c.moveToNext()) {
-				byte[] data = c.getBlob(0); // ensure col index is correct
-				return unmarshall(data, Song.CREATOR);
+				byte[] data = c.getBlob(0); 
+				int dataFormatVersion = c.getInt(1); 
+				return unmarshallSong(data, dataFormatVersion);
 			} else {
 				return null;
 			}
@@ -149,7 +160,7 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 		}
 	}
 
-	public List<SongInfo> getSongInfosByBookName(String bookName, int dataFormatVersion) {
+	public List<SongInfo> getSongInfosByBookName(String bookName) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		List<SongInfo> res = new ArrayList<SongInfo>();
 
@@ -160,7 +171,7 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 		Table.SongInfo.title_original.name(), // 3
 		};
 	
-		Cursor c = querySongs(db, columns, bookName, dataFormatVersion);
+		Cursor c = querySongs(db, columns, bookName);
 		try {
 			while (c.moveToNext()) {
 				String bookName2 = c.getString(0);
@@ -176,7 +187,7 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 		return res;
 	}
 
-	public List<SongInfo> getSongInfosByBookNameAndDeepFilter(String bookName, String filter_string, int dataFormatVersion) {
+	public List<SongInfo> getSongInfosByBookNameAndDeepFilter(String bookName, String filter_string) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		
 		List<SongInfo> res = new ArrayList<SongInfo>();
@@ -187,11 +198,12 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 		Table.SongInfo.title.name(), // 2
 		Table.SongInfo.title_original.name(), // 3
 		Table.SongInfo.data.name(), // 4
+		Table.SongInfo.dataFormatVersion.name(), // 5
 		};
 		
 		CompiledFilter cf = SongFilter.compileFilter(filter_string);
 		
-		Cursor c = querySongs(db, columns, bookName, dataFormatVersion);
+		Cursor c = querySongs(db, columns, bookName);
 		try {
 			while (c.moveToNext()) {
 				String bookName2 = c.getString(0);
@@ -199,8 +211,9 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 				String title = c.getString(2);
 				String title_original = c.getString(3);
 				byte[] data = c.getBlob(4);
+				int dataFormatVersion = c.getInt(5);
 				
-				Song song = unmarshall(data, Song.CREATOR);
+				Song song = unmarshallSong(data, dataFormatVersion);
 				if (SongFilter.match(song, cf)) {
 					res.add(new SongInfo(bookName2, code, title, title_original));
 				}
@@ -212,19 +225,19 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 		return res;
 	}
 
-	private static Cursor querySongs(SQLiteDatabase db, String[] columns, String bookName, int dataFormatVersion) {
+	private static Cursor querySongs(SQLiteDatabase db, String[] columns, String bookName) {
 		Cursor c;
 		if (bookName == null) {
 			c = db.query(Table.SongInfo.tableName(), 
 			columns, 
-			Table.SongInfo.dataFormatVersion + "=?",  //$NON-NLS-1$
-			new String[] {"" + dataFormatVersion}, //$NON-NLS-1$
+			null, 
+			null, 
 			null, null, Table.SongInfo.bookName + " asc, " + Table.SongInfo.ordering + " asc"); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			c = db.query(Table.SongInfo.tableName(), 
 			columns, 
-			Table.SongInfo.bookName + "=? and " + Table.SongInfo.dataFormatVersion + "=?",  //$NON-NLS-1$ //$NON-NLS-2$
-			new String[] {bookName, "" + dataFormatVersion}, //$NON-NLS-1$
+			Table.SongInfo.bookName + "=?",  //$NON-NLS-1$ 
+			new String[] {bookName},
 			null, null, Table.SongInfo.ordering + " asc"); //$NON-NLS-1$
 		}
 		return c;

@@ -115,7 +115,7 @@ public class SongViewActivity extends BaseActivity {
 			if (bookName == null || code == null) {
 				displaySong(null, null);
 			} else {
-				displaySong(bookName, S.getSongDb().getSong(bookName, code, SongBookUtil.getSongDataFormatVersion()));
+				displaySong(bookName, S.getSongDb().getSong(bookName, code));
 			}
 		}
 	}
@@ -292,10 +292,10 @@ public class SongViewActivity extends BaseActivity {
 						}
 						bChangeCode.setText(tempCode);
 						
-						songCodePopup.setOkButtonEnabled(S.getSongDb().songExists(bookName, tempCode, SongBookUtil.getSongDataFormatVersion()));
+						songCodePopup.setOkButtonEnabled(S.getSongDb().songExists(bookName, tempCode));
 					} else if (id == R.id.bOk) {
 						if (tempCode.length() > 0) {
-							Song song = S.getSongDb().getSong(bookName, tempCode, SongBookUtil.getSongDataFormatVersion());
+							Song song = S.getSongDb().getSong(bookName, tempCode);
 							if (song != null) {
 								displaySong(bookName, song);
 								jumped = true;
@@ -316,7 +316,7 @@ public class SongViewActivity extends BaseActivity {
 		@Override public void onSongBookSelected(boolean all, SongBookInfo songBookInfo) {
 			if (all) return; // should not happen
 			
-			Song song = S.getSongDb().getFirstSongFromBook(songBookInfo.bookName, SongBookUtil.getSongDataFormatVersion());
+			Song song = S.getSongDb().getFirstSongFromBook(songBookInfo.bookName);
 			
 			if (song != null) {
 				displaySong(songBookInfo.bookName, song);
@@ -332,7 +332,7 @@ public class SongViewActivity extends BaseActivity {
 					}
 					
 					@Override public void onDownloadedAndInserted(SongBookInfo songBookInfo) {
-						Song song = S.getSongDb().getFirstSongFromBook(songBookInfo.bookName, SongBookUtil.getSongDataFormatVersion());
+						Song song = S.getSongDb().getFirstSongFromBook(songBookInfo.bookName);
 						displaySong(songBookInfo.bookName, song);
 					}
 				});
@@ -345,7 +345,7 @@ public class SongViewActivity extends BaseActivity {
 			if (resultCode == RESULT_OK) {
 				SongListActivity.Result result = SongListActivity.obtainResult(data);
 				if (result != null) {
-					displaySong(result.bookName, S.getSongDb().getSong(result.bookName, result.code, SongBookUtil.getSongDataFormatVersion()));
+					displaySong(result.bookName, S.getSongDb().getSong(result.bookName, result.code));
 					// store this for next search
 					last_searchState = result.last_searchState;
 				}

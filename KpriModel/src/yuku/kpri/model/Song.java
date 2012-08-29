@@ -19,25 +19,39 @@ public class Song implements Serializable, Parcelable {
 	public String tune;
 	public String keySignature;
 	public String timeSignature;
-	public String scriptureReferences;
 	public List<Lyric> lyrics;
-	
+	public String scriptureReferences; // added in dataFormatVersion 2
 	
 	public Song() {}
 	
-	private Song(Parcel in) {
-		code = in.readString();                    
-		title = in.readString();                 
-		title_original = in.readString();            
-		in.readStringList(authors_lyric = new ArrayList<String>());
-		in.readStringList(authors_music = new ArrayList<String>());
-		tune = in.readString();                  
-		keySignature = in.readString();             
-		timeSignature = in.readString();                
-		in.readList(lyrics = new ArrayList<Lyric>(), getClass().getClassLoader());
-	}
-
     @Override public void writeToParcel(Parcel out, int flags) {
+    	writeToParcelCompat(Integer.MAX_VALUE, out, flags);
+    }
+
+	@Override public int describeContents() {
+    	return 0;
+    }
+    
+    public static Song createFromParcelCompat(int dataFormatVersion, Parcel in) {
+    	Song res = new Song();
+		res.code = in.readString();                    
+		res.title = in.readString();                 
+		res.title_original = in.readString();            
+		in.readStringList(res.authors_lyric = new ArrayList<String>());
+		in.readStringList(res.authors_music = new ArrayList<String>());
+		res.tune = in.readString();                  
+		res.keySignature = in.readString();             
+		res.timeSignature = in.readString();                
+		in.readList(res.lyrics = new ArrayList<Lyric>(), res.getClass().getClassLoader());
+
+    	if (dataFormatVersion >= 2) {
+    		res.scriptureReferences = in.readString();
+    	}
+
+    	return res;
+    }
+    
+    public void writeToParcelCompat(int dataFormatVersion, Parcel out, int flags) {
     	out.writeString(code);
     	out.writeString(title);
     	out.writeString(title_original);
@@ -47,15 +61,15 @@ public class Song implements Serializable, Parcelable {
     	out.writeString(keySignature);
     	out.writeString(timeSignature);
     	out.writeList(lyrics);
-    }
-
-    @Override public int describeContents() {
-    	return 0;
+    	
+    	if (dataFormatVersion >= 2) {
+    		out.writeString(scriptureReferences);
+    	}
     }
     
     public static final Parcelable.Creator<Song> CREATOR = new Parcelable.Creator<Song>() {
         @Override public Song createFromParcel(Parcel in) {
-            return new Song(in);
+            return Song.createFromParcelCompat(Integer.MAX_VALUE, in);
         }
 
         @Override public Song[] newArray(int size) {
