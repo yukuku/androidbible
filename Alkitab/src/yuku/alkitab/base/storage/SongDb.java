@@ -120,7 +120,7 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 		
 		Cursor c = db.rawQuery("select count(*) from " + Table.SongInfo.tableName() + " where "  //$NON-NLS-1$ //$NON-NLS-2$
 		+ Table.SongInfo.bookName + "=? and " + Table.SongInfo.code + "=?",  //$NON-NLS-1$ //$NON-NLS-2$ 
-		new String[] {bookName}); 
+		new String[] {bookName, code}); 
 
 		try {
 			if (c.moveToNext()) {
