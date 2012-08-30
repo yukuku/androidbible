@@ -144,7 +144,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 
 				int kitab = adapter.getItem(cbKitab.getSelectedItemPosition()).bookId;
 
-				((GotoFinishListener) getActivity()).onGotoFinished(kitab, pasal, ayat);
+				((GotoFinishListener) getActivity()).onGotoFinished(GotoFinishListener.GOTO_TAB_dialer, kitab, pasal, ayat);
 			}
 		});
 

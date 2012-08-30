@@ -120,7 +120,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 			int chapter = jumper.getChapter();
 			int verse = jumper.getVerse();
 			
-			((GotoFinishListener) getActivity()).onGotoFinished(bookId, chapter, verse);
+			((GotoFinishListener) getActivity()).onGotoFinished(GotoFinishListener.GOTO_TAB_direct, bookId, chapter, verse);
 		}
 	};
 

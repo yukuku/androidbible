@@ -60,7 +60,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 	private AdapterView.OnItemClickListener gridVerse_itemClick = new AdapterView.OnItemClickListener() {
 		@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			int selectedVerse = position + 1;
-			((GotoFinishListener) getActivity()).onGotoFinished(selectedBook.bookId, selectedChapter, selectedVerse); 
+			((GotoFinishListener) getActivity()).onGotoFinished(GotoFinishListener.GOTO_TAB_grid, selectedBook.bookId, selectedChapter, selectedVerse); 
 		}
 	};
 	

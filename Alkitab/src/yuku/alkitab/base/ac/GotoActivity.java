@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
 
 import yuku.afw.App;
 import yuku.alkitab.base.S;
@@ -16,6 +15,8 @@ import yuku.alkitab.base.fr.GotoDialerFragment;
 import yuku.alkitab.base.fr.GotoDirectFragment;
 import yuku.alkitab.base.fr.GotoGridFragment;
 import yuku.alkitab.base.fr.base.BaseGotoFragment.GotoFinishListener;
+import yuku.alkitab.base.storage.Preferences;
+import yuku.alkitab.base.storage.Prefkey;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
@@ -83,7 +84,13 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 		actionBar.addTab(actionBar.newTab().setTag(tab_direct).setText("Direct").setTabListener(new TabListener<GotoDirectFragment>(this, "direct", GotoDirectFragment.class, GotoDirectFragment.createArgs(bookId, chapter_1, verse_1))));
 		actionBar.addTab(actionBar.newTab().setTag(tab_grid).setText("Grid").setTabListener(new TabListener<GotoGridFragment>(this, "grid", GotoGridFragment.class, GotoGridFragment.createArgs(bookId, chapter_1, verse_1))));
 
-		if (savedInstanceState != null) {
+		if (savedInstanceState == null) {
+			// get from preferences
+			int tabUsed = Preferences.getInt(Prefkey.goto_last_tab, 0);
+			if (tabUsed >= 1 && tabUsed <= 3) {
+				actionBar.setSelectedNavigationItem(tabUsed - 1 /* to make it 0-based */);
+			}
+		} else {
 			actionBar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
 		}
 	}
@@ -144,12 +151,13 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 			}
 		}
 
-		@Override public void onTabReselected(Tab tab, FragmentTransaction ft) {
-			Toast.makeText(mActivity, "Reselected!", Toast.LENGTH_SHORT).show();
-		}
+		@Override public void onTabReselected(Tab tab, FragmentTransaction ft) {}
 	}
 
-	@Override public void onGotoFinished(int bookId, int chapter_1, int verse_1) {
+	@Override public void onGotoFinished(int gotoTabUsed, int bookId, int chapter_1, int verse_1) {
+		// store goto tab used for next time
+		Preferences.setInt(Prefkey.goto_last_tab, gotoTabUsed);
+		
 		Intent data = new Intent();
 		data.putExtra(EXTRA_bookId, bookId);
 		data.putExtra(EXTRA_chapter, chapter_1);
