@@ -103,6 +103,7 @@ public class IsiActivity extends BaseActivity {
 	private static final int REQCODE_version = 5;
 	private static final int REQCODE_search = 6;
 	private static final int REQCODE_share = 7;
+	private static final int REQCODE_songs = 8;
 
 	private static final String EXTRA_verseUrl = "urlAyat"; //$NON-NLS-1$
 
@@ -1008,7 +1009,7 @@ public class IsiActivity extends BaseActivity {
 			startActivityForResult(new Intent(this, DevotionActivity.class), REQCODE_devotion);
 			return true;
 		case R.id.menuSongs: 
-			startActivity(SongViewActivity.createIntent());
+			startActivityForResult(SongViewActivity.createIntent(), REQCODE_songs);
 			return true;
 		case R.id.menuTentang:
 			startActivity(new Intent(this, AboutActivity.class));
@@ -1139,6 +1140,16 @@ public class IsiActivity extends BaseActivity {
 				String alamat = data.getStringExtra(DevotionActivity.EXTRA_alamat);
 				if (alamat != null) {
 					int ari = jumpTo(alamat);
+					if (ari != 0) {
+						history.add(ari);
+					}
+				}
+			}
+		} else if (requestCode == REQCODE_songs) {
+			if (resultCode == SongViewActivity.RESULT_gotoScripture && data != null) {
+				String ref = data.getStringExtra("ref");
+				if (ref != null) { // TODO
+					int ari = jumpTo(ref);
 					if (ari != 0) {
 						history.add(ari);
 					}

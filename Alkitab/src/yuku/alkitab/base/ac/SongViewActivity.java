@@ -2,12 +2,16 @@ package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -19,9 +23,11 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.SongListActivity.SearchState;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.storage.Preferences;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.FontManager;
+import yuku.alkitab.base.util.OsisBookNames;
 import yuku.alkitab.base.util.SongBookUtil;
 import yuku.alkitab.base.util.SongBookUtil.OnDownloadSongBookListener;
 import yuku.alkitab.base.util.SongBookUtil.OnSongBookSelectedListener;
@@ -33,15 +39,18 @@ import yuku.kpri.model.Song;
 import yuku.kpri.model.Verse;
 import yuku.kpri.model.VerseKind;
 import yuku.kpriviewer.fr.SongFragment;
+import yuku.kpriviewer.fr.SongFragment.ShouldOverrideUrlLoadingHandler;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public class SongViewActivity extends BaseActivity {
+public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlLoadingHandler {
 	public static final String TAG = SongViewActivity.class.getSimpleName();
 
 	private static final int REQCODE_songList = 1;
 	private static final int REQCODE_share = 2;
+
+	public static final int RESULT_gotoScripture = 1;
 	
 	ViewGroup song_container;
 	ViewGroup no_song_data_container;
@@ -214,6 +223,95 @@ public class SongViewActivity extends BaseActivity {
 		}
 		return sb;
 	}
+	
+	/**
+	 * Convert scripture ref lines like
+	 * B1.C1.V1-B2.C2.V2; B3.C3.V3 to:
+	 * <a href="protocol:B1.C1.V1-B2.C2.V2">Book 1 c1:v1-v2</a>; <a href="protocol:B3.C3.V3>Book 3 c3:v3</a>
+	 * @param protocol null to output text
+	 * @param line scripture ref in osis
+	 */
+	String renderScriptureReferences(String protocol, String line) {
+		if (line == null || line.trim().length() == 0) return "";
+		
+		StringBuilder sb = new StringBuilder();
+
+		String[] ranges = line.split("\\s*;\\s*");
+		for (String range: ranges) {
+			String[] osisIds;
+			if (range.indexOf('-') >= 0) {
+				osisIds = range.split("\\s*-\\s*");
+			} else {
+				osisIds = new String[] {range};
+			}
+			
+			if (osisIds.length == 1) {
+				if (sb.length() != 0) {
+					sb.append("; ");
+				}
+				
+				String osisId = osisIds[0];
+				String readable = osisIdToReadable(line, osisId);
+				if (readable != null) {
+					appendScriptureReferenceLink(sb, protocol, osisId, readable);
+				}
+			} else if (osisIds.length == 2) {
+				if (sb.length() != 0) {
+					sb.append("; ");
+				}
+
+				String osisId0 = osisIds[0];
+				String readable0 = osisIdToReadable(line, osisId0);
+				String osisId1 = osisIds[1];
+				String readable1 = osisIdToReadable(line, osisId1);
+				if (readable0 != null && readable1 != null) {
+					appendScriptureReferenceLink(sb, protocol, osisId0 + "-" + osisId1, readable0 + "-" + readable1);
+				}
+			}
+		}
+		
+		return sb.toString();
+	}
+
+	private void appendScriptureReferenceLink(StringBuilder sb, String protocol, String osisId, String readable) {
+		if (protocol != null) {
+			sb.append("<a href='");
+			sb.append(protocol);
+			sb.append(':');
+			sb.append(osisId);
+			sb.append("'>");
+		}
+		sb.append(readable);
+		if (protocol != null) {
+			sb.append("</a>");
+		}
+	}
+
+	private String osisIdToReadable(String line, String osisId) {
+		String res = null;
+		
+		String[] parts = osisId.split("\\.");
+		if (parts.length != 2 && parts.length != 3) {
+			Log.w(TAG, "osisId invalid: " + osisId + " in " + line);
+		} else {
+			String bookName = parts[0];
+			int chapter_1 = Integer.parseInt(parts[1]);
+			int verse_1 = parts.length < 3? 0: Integer.parseInt(parts[2]);
+			
+			int bookId = OsisBookNames.osisBookNameToBookId(bookName);
+			
+			if (bookId < 0) {
+				Log.w(TAG, "osisBookName invalid: " + bookName + " in " + line);
+			} else {
+				Book book = S.activeVersion.getBook(bookId);
+				
+				if (book != null) {
+					res = verse_1 == 0? S.alamat(book, chapter_1): S.alamat(book, chapter_1, verse_1);
+				}
+			}
+		}
+		return res;
+	}
 
 	void displaySong(String bookName, Song song) {
 		song_container.setVisibility(song != null? View.VISIBLE: View.GONE);
@@ -223,6 +321,10 @@ public class SongViewActivity extends BaseActivity {
 			bChangeBook.setText(bookName);
 			bChangeCode.setText(song.code);
 
+			// construct rendition of scripture references
+			String scripture_references = renderScriptureReferences("bible", song.scriptureReferences);
+			templateCustomVars.putString("scripture_references", scripture_references);
+			
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			ft.replace(R.id.song_container, SongFragment.create(song, "templates/song.html", templateCustomVars)); //$NON-NLS-1$
 			ft.commitAllowingStateLoss();
@@ -358,5 +460,17 @@ public class SongViewActivity extends BaseActivity {
 				}
 			}
 		}
+	}
+
+	@Override public boolean shouldOverrideUrlLoading(WebViewClient client, WebView view, String url) {
+		Uri uri = Uri.parse(url);
+		if (U.equals(uri.getScheme(), "bible")) {
+			Intent data = new Intent();
+			data.putExtra("ref", uri.getSchemeSpecificPart());
+			setResult(RESULT_gotoScripture, data);
+			finish();
+			return true;
+		}
+		return false;
 	}
 }

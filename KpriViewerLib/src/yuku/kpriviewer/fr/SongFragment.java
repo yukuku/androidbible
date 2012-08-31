@@ -1,6 +1,7 @@
 package yuku.kpriviewer.fr;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -37,6 +39,10 @@ public class SongFragment extends BaseFragment {
 	private String templateFile;
 	private Bundle customVars;
 	
+	public interface ShouldOverrideUrlLoadingHandler {
+		boolean shouldOverrideUrlLoading(WebViewClient client, WebView view, String url);
+	}
+	
 	public static SongFragment create(Song song, String templateFile, Bundle optionalCustomVars) {
 		SongFragment res = new SongFragment();
 		Bundle args = new Bundle();
@@ -60,6 +66,7 @@ public class SongFragment extends BaseFragment {
 		webView = V.get(res, R.id.webView);
 		webView.setBackgroundColor(0x00000000);
 		webView.getSettings().setJavaScriptEnabled(true);
+		webView.setWebViewClient(webViewClient);
 		
 		if (Build.VERSION.SDK_INT >= 11) {
 			webView.getSettings().setSupportZoom(true);
@@ -78,6 +85,21 @@ public class SongFragment extends BaseFragment {
 		super.onActivityCreated(savedInstanceState);
 		renderLagu(song);
 	}
+	
+	WebViewClient webViewClient = new WebViewClient() {
+		@Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
+			Activity activity = getActivity();
+			if (activity instanceof ShouldOverrideUrlLoadingHandler) {
+				if (((ShouldOverrideUrlLoadingHandler)activity).shouldOverrideUrlLoading(this, view, url)) {
+					return true;
+				} else {
+					return super.shouldOverrideUrlLoading(view, url);
+				}
+			} else {
+				return super.shouldOverrideUrlLoading(view, url);
+			}
+		};
+	};
 
 	private void renderLagu(Song song) {
 		try {
