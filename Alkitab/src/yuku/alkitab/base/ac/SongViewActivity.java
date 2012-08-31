@@ -16,9 +16,9 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import net.londatiga.android.QuickAction;
-import yuku.afw.App;
 import yuku.afw.V;
 import yuku.alkitab.R;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.SongListActivity.SearchState;
@@ -251,7 +251,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 				}
 				
 				String osisId = osisIds[0];
-				String readable = osisIdToReadable(line, osisId);
+				String readable = osisIdToReadable(line, osisId, null, null);
 				if (readable != null) {
 					appendScriptureReferenceLink(sb, protocol, osisId, readable);
 				}
@@ -260,10 +260,12 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 					sb.append("; ");
 				}
 
+				int[] bcv = {-1, 0, 0};
+				
 				String osisId0 = osisIds[0];
-				String readable0 = osisIdToReadable(line, osisId0);
+				String readable0 = osisIdToReadable(line, osisId0, null, bcv);
 				String osisId1 = osisIds[1];
-				String readable1 = osisIdToReadable(line, osisId1);
+				String readable1 = osisIdToReadable(line, osisId1, bcv, null);
 				if (readable0 != null && readable1 != null) {
 					appendScriptureReferenceLink(sb, protocol, osisId0 + "-" + osisId1, readable0 + "-" + readable1);
 				}
@@ -287,7 +289,11 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		}
 	}
 
-	private String osisIdToReadable(String line, String osisId) {
+	/**
+	 * @param compareWithRangeStart if this is the second part of a range, set this to non-null, with [0] is bookId and [1] chapter_1.
+	 * @param outBcv if not null and length is >= 3, will be filled with parsed bcv
+	 */
+	private String osisIdToReadable(String line, String osisId, int[] compareWithRangeStart, int[] outBcv) {
 		String res = null;
 		
 		String[] parts = osisId.split("\\.");
@@ -300,13 +306,34 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			
 			int bookId = OsisBookNames.osisBookNameToBookId(bookName);
 			
+			if (outBcv != null && outBcv.length >= 3) {
+				outBcv[0] = bookId;
+				outBcv[1] = chapter_1;
+				outBcv[2] = verse_1;
+			}
+			
 			if (bookId < 0) {
 				Log.w(TAG, "osisBookName invalid: " + bookName + " in " + line);
 			} else {
 				Book book = S.activeVersion.getBook(bookId);
 				
 				if (book != null) {
-					res = verse_1 == 0? S.alamat(book, chapter_1): S.alamat(book, chapter_1, verse_1);
+					boolean full = true;
+					if (compareWithRangeStart != null) {
+						if (compareWithRangeStart[0] == bookId) {
+							if (compareWithRangeStart[1] == chapter_1) {
+								res = String.valueOf(verse_1);
+								full = false;
+							} else {
+								res = String.valueOf(chapter_1) + ":" + String.valueOf(verse_1);
+								full = false;
+							}
+						}
+					}
+					
+					if (full) {
+						res = verse_1 == 0? S.alamat(book, chapter_1): S.alamat(book, chapter_1, verse_1);
+					}
 				}
 			}
 		}
