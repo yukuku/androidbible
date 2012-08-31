@@ -98,9 +98,6 @@ public class BukmakListActivity extends BaseActivity {
     @Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		S.prepareBook();
-		S.calculateAppliedValuesBasedOnPreferences();
-		
 		setContentView(R.layout.activity_bukmaklist);
 		
 		panelList = U.getView(this, R.id.panelList);

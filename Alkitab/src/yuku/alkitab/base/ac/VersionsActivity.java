@@ -78,9 +78,6 @@ public class VersionsActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		S.prepareBook();
-		S.calculateAppliedValuesBasedOnPreferences();
-		
 		setContentView(R.layout.activity_edisi);
 		setTitle(R.string.kelola_versi);
 

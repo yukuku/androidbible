@@ -97,7 +97,6 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		bDownload.setOnClickListener(bDownload_click);
 		
 		// for colors of bg, text, etc
-		S.calculateAppliedValuesBasedOnPreferences();
 		V.get(this, android.R.id.content).setBackgroundColor(S.penerapan.backgroundColor);
 		
 		templateCustomVars = new Bundle();

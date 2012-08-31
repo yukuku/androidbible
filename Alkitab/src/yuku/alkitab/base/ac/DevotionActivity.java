@@ -123,9 +123,6 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		
 		U.enableTitleBarOnlyForHolo(this);
 
-		S.prepareBook();
-		S.calculateAppliedValuesBasedOnPreferences();
-		
 		setContentView(R.layout.activity_renungan);
 		
 		memudar = AnimationUtils.loadAnimation(this, R.anim.memudar);

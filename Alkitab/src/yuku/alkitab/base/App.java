@@ -34,6 +34,13 @@ public class App extends yuku.afw.App {
 			updateConfigurationWithLocale(config, locale);
 		}
 
+		// all activities need at least the activeVersion and activeBook from S
+		// so initialize it here.
+		S.prepareBook();
+		
+		// also pre-calculate calculated preferences value here
+		S.calculateAppliedValuesBasedOnPreferences();
+
 		// http://android-developers.blogspot.com/2011/09/androids-http-clients.html
 		{
 			// HTTP connection reuse which was buggy pre-froyo

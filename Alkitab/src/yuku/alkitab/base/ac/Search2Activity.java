@@ -135,9 +135,6 @@ public class Search2Activity extends BaseActivity {
 		
 		U.enableTitleBarOnlyForHolo(this);
 		
-		S.prepareBook();
-		S.calculateAppliedValuesBasedOnPreferences();
-		
 		setContentView(R.layout.activity_search2);
 
 		lsHasilCari = U.getView(this, R.id.lsHasilCari);

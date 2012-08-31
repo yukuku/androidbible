@@ -148,9 +148,6 @@ public class IsiActivity extends BaseActivity {
 		
 		U.enableTitleBarOnlyForHolo(this);
 		
-		S.prepareBook();
-		S.calculateAppliedValuesBasedOnPreferences();
-		
 		setContentView(R.layout.activity_isi);
 		
 		lsText = U.getView(this, R.id.lsIsi);
