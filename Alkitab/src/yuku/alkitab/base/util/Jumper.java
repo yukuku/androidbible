@@ -5,9 +5,11 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.Version;
 
 public class Jumper {
 	public static final String TAG = Jumper.class.getSimpleName();
@@ -15,6 +17,9 @@ public class Jumper {
 	private String p_kitab;
 	private int p_pasal;
 	private int p_ayat;
+	
+	/** If bookId found from OSIS book names, set this to other than -1 and this will be returned */
+	private int p_bookIdFromOsis = -1;
 	
 	private static class KitabRef {
 		String pendek;
@@ -76,6 +81,46 @@ public class Jumper {
 			alamat = alamat.replaceAll("\\s+-\\s+|\\s+-|-\\s+", "-"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			Log.d(TAG, "peloncat tahap 5: " + alamat); //$NON-NLS-1$
+		}
+		
+		//# TAHAP 7: Check whether this is in strict osis ID format.
+		// This can be BookName.Chapter.Verse or BookName.Chapter
+		// Or, either of the above separated by a '-'
+		notosis: {
+			if (alamat.indexOf('.') < 0) {
+				break notosis; // must contain a dot
+			}
+			
+			String osisId;
+			if (alamat.indexOf('-') >= 0) { // optionally a '-'
+				String[] osisIds = alamat.split("-");
+				if (osisIds.length != 2) { 
+					break notosis; // wrong format
+				}
+				osisId = osisIds[0];
+			} else {
+				osisId = alamat;
+			}
+			
+			Pattern p = OsisBookNames.getBookNameWithChapterAndOptionalVersePattern();
+			Matcher m = p.matcher(osisId);
+			if (m.matches()) {
+				Log.d(TAG, "peloncat tahap 7: ref matching osis pattern found: " + osisId);
+				String osisBookName = m.group(1);
+				String chapter_s = m.group(2);
+				String verse_s = m.group(3);
+				
+				try {
+					p_bookIdFromOsis = OsisBookNames.osisBookNameToBookId(osisBookName);
+					p_pasal = Integer.parseInt(chapter_s);
+					p_ayat = (verse_s == null || verse_s.length() == 0)? 0: Integer.parseInt(verse_s);
+				} catch (Exception e) {
+					Log.e(TAG, "Should not happen. In peloncat tahap 7", e);
+				}
+				
+				Log.d(TAG, "peloncat tahap 7: successfully parsed osis id: " + p_bookIdFromOsis + " " + p_pasal + " " + p_ayat);
+				return true;
+			}
 		}
 		
 		//# TAHAP 10: BELAH BERDASAR SPASI, :, TITIK, dan kosong di antara - dan angka.
@@ -362,6 +407,7 @@ public class Jumper {
 	 * @return pos dari kitab, bukan index dari {@link Version#getConsecutiveBooks()}
 	 */
 	public int getBookId(Book[] xkitab) {
+		if (p_bookIdFromOsis != -1) return p_bookIdFromOsis;
 		return tebakKitab(xkitab);
 	}
 	
