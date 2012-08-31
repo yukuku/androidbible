@@ -193,6 +193,7 @@
     <string name="bl_clear_filter">Clear filter</string>
     <string name="bl_filtering_titiktiga">Filtering…</string>
     <string name="bl_no_items_match_the_filter_above">No items match the filter above.</string>
+    <string name="bl_send_backup">Transfer</string>
     <string name="labels_titikdua">Labels:</string>
     <string name="tambah_titiktiga">Add…</string>
     <string name="nama_label_titikdua">Label name:</string>
@@ -203,6 +204,7 @@
     <string name="juga_hapus_file_datanya_file">Also delete the data file?\nFile: %s</string>
     <string name="get_more_fonts">Download more fonts…</string>
     <string name="about_translators">Translators:</string>
+    <string name="intent_filter_import_from_backup">Import from backup</string>
 
     <!-- Font Manager -->
     <string name="fm_activity_title">Font Manager</string>
@@ -225,6 +227,9 @@
     <string name="sn_download_song_books">Download song books</string>
     <string name="sn_lyric_version_version">Version %s</string>
     <string name="sn_lyric_refrain_marker">Ref.</string>
+    <string name="sn_delete_all_songs">Delete all songs</string>
+    <string name="sn_delete_all_songs_explanation">Delete all songs from local storage? This may save some space.</string>
+    <string name="sn_delete_all_songs_result">Deletion completed. Songs deleted: %s</string>
     
     <!-- Content descriptions, for blind users -->
     <string name="desc_type_verse_reference_directly">Type verse reference directly</string>
@@ -252,9 +257,4 @@
 		• [b]Yohanes Nugroho[/b] PDB reader[br/]
 		• etc.</string>
 		
-    <string name="bl_send_backup">Transfer</string>
-    <string name="intent_filter_import_from_backup">Import from backup</string>
-    <string name="sn_delete_all_songs">Delete all songs</string>
-    <string name="sn_delete_all_songs_explanation">Delete all songs from local storage? This may save some space.</string>
-    <string name="sn_delete_all_songs_result">Deletion completed. Songs deleted: %s</string>
 </resources>
