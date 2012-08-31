@@ -98,12 +98,6 @@ public class GotoGridFragment extends BaseGotoFragment {
 		}
 	}
 
-	@Override public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		xkitab = S.activeVersion.getConsecutiveBooks();
-	}
-	
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View res = inflater.inflate(R.layout.fragment_goto_grid, container, false);
 		panelChapterVerse = V.get(res, R.id.panelChapterVerse);
@@ -113,7 +107,6 @@ public class GotoGridFragment extends BaseGotoFragment {
 		gridVerse = V.get(res, R.id.gridVerse);
 		
 		panelChapterVerse.setVisibility(View.INVISIBLE);
-		gridBook.setAdapter(bookAdapter = new BookAdapter());
 		gridBook.setOnItemClickListener(gridBook_itemClick);
 		gridBook.setVisibility(View.VISIBLE);
 		gridChapter.setVisibility(View.INVISIBLE);
@@ -127,6 +120,8 @@ public class GotoGridFragment extends BaseGotoFragment {
 	@Override public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		
+		xkitab = S.activeVersion.getConsecutiveBooks();
+		gridBook.setAdapter(bookAdapter = new BookAdapter());
 	}
 	
 	abstract class GridAdapter extends EasyAdapter {
