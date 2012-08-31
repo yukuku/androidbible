@@ -14,7 +14,6 @@
             android:id="@+id/bAngka1"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_margin="2dp"
             android:text="1"
             android:textSize="28dp" >
         </Button>
@@ -23,7 +22,6 @@
             android:id="@+id/bAngka2"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_margin="2dp"
             android:text="2"
             android:textSize="28dp" >
         </Button>
@@ -32,7 +30,6 @@
             android:id="@+id/bAngka3"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_margin="2dp"
             android:text="3"
             android:textSize="28dp" >
         </Button>
@@ -46,7 +43,6 @@
             android:id="@+id/bAngka4"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_margin="2dp"
             android:text="4"
             android:textSize="28dp" >
         </Button>
@@ -55,7 +51,6 @@
             android:id="@+id/bAngka5"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_margin="2dp"
             android:text="5"
             android:textSize="28dp" >
         </Button>
@@ -64,7 +59,6 @@
             android:id="@+id/bAngka6"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_margin="2dp"
             android:text="6"
             android:textSize="28dp" >
         </Button>
@@ -79,7 +73,6 @@
             android:id="@+id/bAngka7"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_margin="2dp"
             android:text="7"
             android:textSize="28dp" >
         </Button>
@@ -88,7 +81,6 @@
             android:id="@+id/bAngka8"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_margin="2dp"
             android:text="8"
             android:textSize="28dp" >
         </Button>
@@ -97,7 +89,6 @@
             android:id="@+id/bAngka9"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_margin="2dp"
             android:text="9"
             android:textSize="28dp" >
         </Button>
@@ -112,7 +103,6 @@
             android:id="@+id/bAngkaC"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_margin="2dp"
             android:text="C"
             android:textSize="28dp"
             android:textStyle="bold" >
@@ -122,7 +112,6 @@
             android:id="@+id/bAngka0"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_margin="2dp"
             android:text="0"
             android:textSize="28dp" >
         </Button>
@@ -131,7 +120,6 @@
             android:id="@+id/bAngkaPindah"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_margin="2dp"
             android:text=":"
             android:textSize="28dp"
             android:textStyle="bold" >

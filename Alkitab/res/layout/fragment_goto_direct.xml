@@ -21,8 +21,6 @@
         android:layout_marginRight="18dp"
         android:imeOptions="actionGo|flagNoExtractUi"
         android:inputType="textCapSentences" >
-
-        <requestFocus />
     </EditText>
 
     <include

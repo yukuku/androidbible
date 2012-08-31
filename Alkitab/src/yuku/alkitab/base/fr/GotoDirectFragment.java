@@ -10,6 +10,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -92,10 +93,14 @@ public class GotoDirectFragment extends BaseGotoFragment {
 			}
 		}
 		
-		showKeyboard();
-		
-//		TODO 
-//					sejarah.tambah(ari);
+		tAlamatLoncat.setOnFocusChangeListener(new OnFocusChangeListener() {
+			@Override public void onFocusChange(View v, boolean hasFocus) {
+				if (hasFocus) {
+					showKeyboard();
+				}
+			}
+		});
+		tAlamatLoncat.requestFocus();
 	}
 	
 	OnClickListener bOk_click = new OnClickListener() {
@@ -131,7 +136,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 	private void showKeyboard() {
 		if (getActivity() != null) {
 			InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.showSoftInput(tAlamatLoncat, 0);
+			imm.showSoftInput(tAlamatLoncat, InputMethodManager.SHOW_IMPLICIT);
 		}
 	}
 }

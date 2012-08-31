@@ -6,7 +6,7 @@
     android:layout_alignParentBottom="true"
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="vertical"
-    android:paddingTop="16dip"
+    android:paddingTop="8dp"
     android:showDividers="beginning" >
 
     <LinearLayout

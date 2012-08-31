@@ -104,15 +104,11 @@
             layout="@layout/keypad" >
         </include>
 
-        <Button
-            android:id="@+id/bOk"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:minHeight="60dp"
-            android:minWidth="200dp"
-            android:text="@string/ok"
-            android:textAppearance="?android:attr/textAppearanceLarge" >
-        </Button>
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/buttonbar_ok" />
+        
     </LinearLayout>
 
 </ScrollView>

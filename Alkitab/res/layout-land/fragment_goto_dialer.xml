@@ -61,14 +61,11 @@
             android:layout_height="wrap_content"
             layout="@layout/keypad" />
 
-        <Button
-            android:id="@+id/bOk"
-            style="@style/GotoWideOkButton"
+        <include
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/ok" />
-
+            layout="@layout/buttonbar_ok" />
+        
     </LinearLayout>
 
 </ScrollView>

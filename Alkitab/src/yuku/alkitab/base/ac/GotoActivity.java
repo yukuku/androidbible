@@ -138,7 +138,7 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 				((GotoDirectFragment) mFragment).onTabSelected();
 			} else {
 				InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-				imm.hideSoftInputFromWindow(mActivity.findViewById(android.R.id.content).getWindowToken(), 0);
+				imm.hideSoftInputFromWindow(mActivity.findViewById(android.R.id.content).getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
 			}
 		}
 
@@ -148,7 +148,11 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 			}
 		}
 
-		@Override public void onTabReselected(Tab tab, FragmentTransaction ft) {}
+		@Override public void onTabReselected(Tab tab, FragmentTransaction ft) {
+			if (mFragment instanceof GotoDirectFragment) {
+				((GotoDirectFragment) mFragment).onTabSelected();
+			}
+		}
 	}
 
 	@Override public void onGotoFinished(int gotoTabUsed, int bookId, int chapter_1, int verse_1) {

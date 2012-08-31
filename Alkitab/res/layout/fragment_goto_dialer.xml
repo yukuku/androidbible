@@ -35,7 +35,6 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
                 android:gravity="center_vertical|center_horizontal"
                 android:minHeight="48sp"
                 android:orientation="horizontal" >
@@ -44,6 +43,7 @@
                     android:id="@+id/lLabelPasal"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
+                    android:layout_marginRight="8dp"
                     android:gravity="fill_vertical"
                     android:text="@string/pasal_sebelumangka" />
 
@@ -51,22 +51,22 @@
                     android:id="@+id/lPasal"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
                     android:focusable="true"
                     android:gravity="center_vertical|center_horizontal"
-                    android:minWidth="48sp"
+                    android:minHeight="40sp"
+                    android:minWidth="40sp"
                     android:text="1"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     tools:ignore="HardcodedText" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minEms="1" />
-
-                <TextView
                     android:id="@+id/lLabelAyat"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="8dp"
                     android:gravity="center_vertical"
                     android:text="@string/ayat_sebelumangka" />
 
@@ -74,12 +74,16 @@
                     android:id="@+id/lAyat"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
                     android:focusable="true"
                     android:gravity="center_vertical|center_horizontal"
-                    android:minWidth="48sp"
+                    android:minHeight="40sp"
+                    android:minWidth="40sp"
                     android:text="2"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     tools:ignore="HardcodedText" />
+
             </LinearLayout>
         </LinearLayout>
 
