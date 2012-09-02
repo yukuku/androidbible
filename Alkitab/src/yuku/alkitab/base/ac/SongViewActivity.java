@@ -182,6 +182,8 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		if (song.tune != null) sb.append(song.tune.toUpperCase()).append('\n');
 		sb.append('\n');
 		
+		if (song.scriptureReferences != null) sb.append(renderScriptureReferences(null, song.scriptureReferences)).append('\n');
+
 		if (song.keySignature != null) sb.append(song.keySignature).append('\n');
 		if (song.timeSignature != null) sb.append(song.timeSignature).append('\n');
 		sb.append('\n');
