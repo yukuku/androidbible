@@ -68,7 +68,14 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 		verse_1 = getIntent().getIntExtra(EXTRA_verse, 0);
 
 		ActionBar actionBar = getSupportActionBar();
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+		if (getResources().getBoolean(R.bool.screen_sw_check_min_600dp) == false) {
+	        // The following two options trigger the collapsing of the main action bar view.
+	        actionBar.setDisplayShowHomeEnabled(false);
+	        actionBar.setDisplayShowTitleEnabled(false);
+		}
+		
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.addTab(actionBar.newTab().setTag(tab_dialer).setText(R.string.goto_tab_dialer_label).setTabListener(new TabListener<GotoDialerFragment>(this, "dialer", GotoDialerFragment.class, GotoDialerFragment.createArgs(bookId, chapter_1, verse_1)))); //$NON-NLS-1$
 		actionBar.addTab(actionBar.newTab().setTag(tab_direct).setText(R.string.goto_tab_direct_label).setTabListener(new TabListener<GotoDirectFragment>(this, "direct", GotoDirectFragment.class, GotoDirectFragment.createArgs(bookId, chapter_1, verse_1)))); //$NON-NLS-1$
 		actionBar.addTab(actionBar.newTab().setTag(tab_grid).setText(R.string.goto_tab_grid_label).setTabListener(new TabListener<GotoGridFragment>(this, "grid", GotoGridFragment.class, GotoGridFragment.createArgs(bookId, chapter_1, verse_1)))); //$NON-NLS-1$
