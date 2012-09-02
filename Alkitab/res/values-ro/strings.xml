@@ -202,6 +202,7 @@
   <string name="please_wait_titik3">Vă rugăm să aşteptaţi...</string>
   <string name="juga_hapus_file_datanya_file">De asemenea, şterge fişierul de date?\nFile: %s</string>
   <string name="get_more_fonts">Descarca mai multe fonturi…</string>
+  <string name="about_translators">Traducători:</string>
   <string name="fm_activity_title">Gestionare Fonturi</string>
   <string name="fm_need_to_log_in_to_wifi">Trebuie să vă logați mai întâi în rețea (Wi-Fi).</string>
   <string name="fm_do_you_want_to_delete">Doriți să stergeți %s?</string>
@@ -215,7 +216,11 @@
   <string name="sn_bookselector_all_desc">Caută toate cărţile care sunt instalate.</string>
   <string name="sn_downloading_ellipsis">Descărcare în curs…</string>
   <string name="sn_download_song_books">Descarcă cântece</string>
+  <string name="sn_copied">Cântecul a fost copiat.</string>
+  <string name="sn_share_title">Partajează cântec</string>
   <string name="sn_download_song_books">Descarcă cântece</string>
+  <string name="sn_lyric_version_version">Versiunea %s </string>
+  <string name="sn_lyric_refrain_marker">Ref.</string>
   <string name="desc_type_verse_reference_directly">Introduceţi referinţa versetului</string>
   <string name="desc_previous_day">Ziua precedentă</string>
   <string name="desc_next_day">Ziua următoare</string>

@@ -193,6 +193,9 @@
   <string name="bl_clear_filter">Hapus saringan</string>
   <string name="bl_filtering_titiktiga">Menyaring…</string>
   <string name="bl_no_items_match_the_filter_above">Tidak ada yang cocok dengan saringan di atas.</string>
+  <string name="bl_send_backup">Pindahkan</string>
+  <string name="bl_file_not_found_filename">File tidak ditemukan: %s</string>
+  <string name="bl_send_backup_confirmation">Buat dan kirimkan cadangan pembatas buku, catatan, dan stabilo? Misalnya, anda dapat mengirimkannya lewat imel ke perangkat yang baru, atau sekedar untuk dimasukkan ke dalam arsip.</string>
   <string name="labels_titikdua">Label:</string>
   <string name="tambah_titiktiga">Tambah…</string>
   <string name="nama_label_titikdua">Nama label:</string>
@@ -203,6 +206,10 @@
   <string name="juga_hapus_file_datanya_file">Juga hapus file datanya?\nFile: %s</string>
   <string name="get_more_fonts">Dapatkan huruf lainnya…</string>
   <string name="about_translators">Penerjemah:</string>
+  <string name="intent_filter_import_from_backup">Impor dari cadangan</string>
+  <string name="goto_tab_dialer_label">Telusuri</string>
+  <string name="goto_tab_direct_label">Ketik</string>
+  <string name="goto_tab_grid_label">Pilih</string>
   <string name="fm_activity_title">Jenis Huruf</string>
   <string name="fm_need_to_log_in_to_wifi">Anda perlu log-in ke jaringan (Wi-Fi) dahulu.</string>
   <string name="fm_do_you_want_to_delete">Hapus %s?</string>
@@ -221,6 +228,9 @@
   <string name="sn_download_song_books">Unduh buku lagu</string>
   <string name="sn_lyric_version_version">Versi %s</string>
   <string name="sn_lyric_refrain_marker">Ref.</string>
+  <string name="sn_delete_all_songs">Hapus semua lagu</string>
+  <string name="sn_delete_all_songs_explanation">Hapus semua lagu dari penyimpanan lokal? Hal ini akan menghemat pemakaian penyimpanan.</string>
+  <string name="sn_delete_all_songs_result">Penghapusan selesai. Lagu yang dihapus: %s</string>
   <string name="desc_type_verse_reference_directly">Langsung ketik alamat ayat</string>
   <string name="desc_previous_day">Hari sebelumnya</string>
   <string name="desc_next_day">Hari berikutnya</string>

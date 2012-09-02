@@ -193,6 +193,9 @@
   <string name="bl_clear_filter">Wyczyść filtr</string>
   <string name="bl_filtering_titiktiga">Filtrowanie…</string>
   <string name="bl_no_items_match_the_filter_above">Nic nie pasuje do powyższego filtra.</string>
+  <string name="bl_send_backup">Transfer</string>
+  <string name="bl_file_not_found_filename">Nie znaleziono pliku: %s</string>
+  <string name="bl_send_backup_confirmation">Czy stworzyć i wysłać kopię zakładek, notatek i podkreśleń? Możesz np. wysłać załącznoy plik pocztą na nowe urządzenie, albo po prostu dla celów archiwizacji.</string>
   <string name="labels_titikdua">Etykiety:</string>
   <string name="tambah_titiktiga">Dodaj…</string>
   <string name="nama_label_titikdua">Nazwa etykiety:</string>
@@ -202,6 +205,9 @@
   <string name="please_wait_titik3">Proszę czekać…</string>
   <string name="juga_hapus_file_datanya_file">Czy usunąć również plik danych?\nPlik: %s</string>
   <string name="get_more_fonts">Pobierz więcej czcionek…</string>
+  <string name="about_translators">Tłumacze:</string>
+  <string name="intent_filter_import_from_backup">Import z kopii</string>
+  <string name="goto_tab_grid_label">Siatka</string>
   <string name="fm_activity_title">Zarządca czcionek</string>
   <string name="fm_need_to_log_in_to_wifi">Musisz zalogować się do swojej sieci (Wi-Fi).</string>
   <string name="fm_do_you_want_to_delete">Czy chcesz usunąć %s?</string>
@@ -215,7 +221,14 @@
   <string name="sn_bookselector_all_desc">Przeszukaj wszystkie zainstalowane książki.</string>
   <string name="sn_downloading_ellipsis">Pobieranie…</string>
   <string name="sn_download_song_books">Pobierz śpiewnik</string>
+  <string name="sn_copied">Pieśń została skopiowana.</string>
+  <string name="sn_share_title">Podziel się pieśnią</string>
   <string name="sn_download_song_books">Pobierz śpiewnik</string>
+  <string name="sn_lyric_version_version">Wersja %s</string>
+  <string name="sn_lyric_refrain_marker">Ref.</string>
+  <string name="sn_delete_all_songs">Usuń wszystkie pieśni</string>
+  <string name="sn_delete_all_songs_explanation">Czy usunąć wszystkie pieśni z lokalnego dysku? Może to uwolnić trochę miejsca na dysku.</string>
+  <string name="sn_delete_all_songs_result">Usuwanie zakończone. Usunięto pieśń o numerze: %s</string>
   <string name="desc_type_verse_reference_directly">Wprowadź bezpośredni adres tekstu</string>
   <string name="desc_previous_day">Poprzedni dzień</string>
   <string name="desc_next_day">Następny dzień</string>
