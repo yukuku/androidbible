@@ -146,8 +146,6 @@ public class IsiActivity extends BaseActivity {
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		U.enableTitleBarOnlyForHolo(this);
-		
 		setContentView(R.layout.activity_isi);
 		
 		lsText = U.getView(this, R.id.lsIsi);

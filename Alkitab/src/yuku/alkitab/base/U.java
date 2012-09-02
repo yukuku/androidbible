@@ -14,7 +14,6 @@ import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
-import yuku.alkitab.base.compat.Api11;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Blok;
 import yuku.alkitab.base.model.Label;
@@ -244,12 +243,6 @@ public class U {
 		return Build.VERSION.SDK_INT /* ini diambil waktu runtime */ >= 11 /* HONEYCOMB */;
 	}
 	
-	public static void enableTitleBarOnlyForHolo(Activity activity) {
-		if (isHolo()) {
-			activity.setTheme(Api11.getTheme_Holo());
-		}
-	}
-
 	@SuppressWarnings("deprecation") public static void copyToClipboard(CharSequence salinan) {
 		android.text.ClipboardManager clipboardManager = (android.text.ClipboardManager) App.context.getSystemService(Context.CLIPBOARD_SERVICE);
 		clipboardManager.setText(salinan); 

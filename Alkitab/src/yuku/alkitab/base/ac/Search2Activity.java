@@ -133,8 +133,6 @@ public class Search2Activity extends BaseActivity {
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		U.enableTitleBarOnlyForHolo(this);
-		
 		setContentView(R.layout.activity_search2);
 
 		lsHasilCari = U.getView(this, R.id.lsHasilCari);

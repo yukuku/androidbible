@@ -121,8 +121,6 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		U.enableTitleBarOnlyForHolo(this);
-
 		setContentView(R.layout.activity_renungan);
 		
 		memudar = AnimationUtils.loadAnimation(this, R.anim.memudar);
