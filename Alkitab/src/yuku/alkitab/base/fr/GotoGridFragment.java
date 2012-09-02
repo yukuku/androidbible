@@ -150,8 +150,8 @@ public class GotoGridFragment extends BaseGotoFragment {
 	
 	class BookAdapter extends GridAdapter {
 		final int[] numberedBookMap;
-		final String[] numberedBookStartsWiths = {null, "I", "II", "III", "IV", "V"};
-		final String[] numberedBookReplaceWiths = {null, "1", "2", "3", "4", "5"};
+		final String[] numberedBookStartsWiths = {null, "I", "II", "III", "IV", "V"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		final String[] numberedBookReplaceWiths = {null, "1", "2", "3", "4", "5"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		
 		public BookAdapter() {
 			// for these book numbers, replace "I", "II", "III", "IV", "V" with numbers 
@@ -184,10 +184,10 @@ public class GotoGridFragment extends BaseGotoFragment {
 			
 			// remove spaces and '.'
 			if (book.judul.indexOf(' ') != -1) {
-				title = title.replace(" ", "");
+				title = title.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			} 
 			if (book.judul.indexOf('.') != -1) {
-				title = title.replace(".", "");
+				title = title.replace(".", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 			int numberedBookCategory = position >= numberedBookMap.length? 0: numberedBookMap[position];

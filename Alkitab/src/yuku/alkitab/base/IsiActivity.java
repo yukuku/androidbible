@@ -1142,7 +1142,7 @@ public class IsiActivity extends BaseActivity {
 			}
 		} else if (requestCode == REQCODE_songs) {
 			if (resultCode == SongViewActivity.RESULT_gotoScripture && data != null) {
-				String ref = data.getStringExtra("ref");
+				String ref = data.getStringExtra(SongViewActivity.EXTRA_ref);
 				if (ref != null) { // TODO
 					int ari = jumpTo(ref);
 					if (ari != 0) {

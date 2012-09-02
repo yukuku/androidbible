@@ -41,7 +41,7 @@ public class SimpleHttpConnection {
 	public boolean isSameHost() {
 		String urlHost = url.getHost();
 		String connHost = conn.getURL().getHost();
-		Log.d(TAG, "isSameHost? urlHost=" + urlHost + " connHost=" + connHost);
+		Log.d(TAG, "isSameHost? urlHost=" + urlHost + " connHost=" + connHost); //$NON-NLS-1$ //$NON-NLS-2$
 		return urlHost.equals(connHost);
 	}
 	

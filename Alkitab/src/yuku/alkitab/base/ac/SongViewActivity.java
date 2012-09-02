@@ -47,10 +47,13 @@ import com.actionbarsherlock.view.MenuItem;
 public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlLoadingHandler {
 	public static final String TAG = SongViewActivity.class.getSimpleName();
 
+	private static final String PROTOCOL = "bible"; //$NON-NLS-1$
 	private static final int REQCODE_songList = 1;
 	private static final int REQCODE_share = 2;
 
 	public static final int RESULT_gotoScripture = 1;
+
+	public static final String EXTRA_ref = "ref"; //$NON-NLS-1$
 	
 	ViewGroup song_container;
 	ViewGroup no_song_data_container;
@@ -231,22 +234,22 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 	 * @param line scripture ref in osis
 	 */
 	String renderScriptureReferences(String protocol, String line) {
-		if (line == null || line.trim().length() == 0) return "";
+		if (line == null || line.trim().length() == 0) return ""; //$NON-NLS-1$
 		
 		StringBuilder sb = new StringBuilder();
 
-		String[] ranges = line.split("\\s*;\\s*");
+		String[] ranges = line.split("\\s*;\\s*"); //$NON-NLS-1$
 		for (String range: ranges) {
 			String[] osisIds;
 			if (range.indexOf('-') >= 0) {
-				osisIds = range.split("\\s*-\\s*");
+				osisIds = range.split("\\s*-\\s*"); //$NON-NLS-1$
 			} else {
 				osisIds = new String[] {range};
 			}
 			
 			if (osisIds.length == 1) {
 				if (sb.length() != 0) {
-					sb.append("; ");
+					sb.append("; "); //$NON-NLS-1$
 				}
 				
 				String osisId = osisIds[0];
@@ -256,7 +259,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 				}
 			} else if (osisIds.length == 2) {
 				if (sb.length() != 0) {
-					sb.append("; ");
+					sb.append("; "); //$NON-NLS-1$
 				}
 
 				int[] bcv = {-1, 0, 0};
@@ -266,7 +269,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 				String osisId1 = osisIds[1];
 				String readable1 = osisIdToReadable(line, osisId1, bcv, null);
 				if (readable0 != null && readable1 != null) {
-					appendScriptureReferenceLink(sb, protocol, osisId0 + "-" + osisId1, readable0 + "-" + readable1);
+					appendScriptureReferenceLink(sb, protocol, osisId0 + '-' + osisId1, readable0 + '-' + readable1);
 				}
 			}
 		}
@@ -276,15 +279,15 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 
 	private void appendScriptureReferenceLink(StringBuilder sb, String protocol, String osisId, String readable) {
 		if (protocol != null) {
-			sb.append("<a href='");
+			sb.append("<a href='"); //$NON-NLS-1$
 			sb.append(protocol);
 			sb.append(':');
 			sb.append(osisId);
-			sb.append("'>");
+			sb.append("'>"); //$NON-NLS-1$
 		}
 		sb.append(readable);
 		if (protocol != null) {
-			sb.append("</a>");
+			sb.append("</a>"); //$NON-NLS-1$
 		}
 	}
 
@@ -295,9 +298,9 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 	private String osisIdToReadable(String line, String osisId, int[] compareWithRangeStart, int[] outBcv) {
 		String res = null;
 		
-		String[] parts = osisId.split("\\.");
+		String[] parts = osisId.split("\\."); //$NON-NLS-1$
 		if (parts.length != 2 && parts.length != 3) {
-			Log.w(TAG, "osisId invalid: " + osisId + " in " + line);
+			Log.w(TAG, "osisId invalid: " + osisId + " in " + line); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			String bookName = parts[0];
 			int chapter_1 = Integer.parseInt(parts[1]);
@@ -312,7 +315,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			}
 			
 			if (bookId < 0) {
-				Log.w(TAG, "osisBookName invalid: " + bookName + " in " + line);
+				Log.w(TAG, "osisBookName invalid: " + bookName + " in " + line); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				Book book = S.activeVersion.getBook(bookId);
 				
@@ -324,7 +327,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 								res = String.valueOf(verse_1);
 								full = false;
 							} else {
-								res = String.valueOf(chapter_1) + ":" + String.valueOf(verse_1);
+								res = String.valueOf(chapter_1) + ':' + String.valueOf(verse_1);
 								full = false;
 							}
 						}
@@ -348,8 +351,8 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			bChangeCode.setText(song.code);
 
 			// construct rendition of scripture references
-			String scripture_references = renderScriptureReferences("bible", song.scriptureReferences);
-			templateCustomVars.putString("scripture_references", scripture_references);
+			String scripture_references = renderScriptureReferences(PROTOCOL, song.scriptureReferences);
+			templateCustomVars.putString("scripture_references", scripture_references); //$NON-NLS-1$
 			
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			ft.replace(R.id.song_container, SongFragment.create(song, "templates/song.html", templateCustomVars)); //$NON-NLS-1$
@@ -490,9 +493,9 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 
 	@Override public boolean shouldOverrideUrlLoading(WebViewClient client, WebView view, String url) {
 		Uri uri = Uri.parse(url);
-		if (U.equals(uri.getScheme(), "bible")) {
+		if (U.equals(uri.getScheme(), PROTOCOL)) {
 			Intent data = new Intent();
-			data.putExtra("ref", uri.getSchemeSpecificPart());
+			data.putExtra(EXTRA_ref, uri.getSchemeSpecificPart());
 			setResult(RESULT_gotoScripture, data);
 			finish();
 			return true;

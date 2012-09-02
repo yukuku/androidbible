@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.inputmethod.InputMethodManager;
 
 import yuku.afw.App;
+import yuku.alkitab.R;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.fr.GotoDialerFragment;
 import yuku.alkitab.base.fr.GotoDirectFragment;
@@ -23,9 +24,11 @@ import com.actionbarsherlock.app.ActionBar.Tab;
 public class GotoActivity extends BaseActivity implements GotoFinishListener {
 	public static final String TAG = GotoActivity.class.getSimpleName();
 
-	private static final String EXTRA_bookId = "bookId";
-	private static final String EXTRA_chapter = "chapter";
-	private static final String EXTRA_verse = "verse";
+	private static final String EXTRA_bookId = "bookId"; //$NON-NLS-1$
+	private static final String EXTRA_chapter = "chapter"; //$NON-NLS-1$
+	private static final String EXTRA_verse = "verse"; //$NON-NLS-1$
+
+	private static final String INSTANCE_STATE_tab = "tab"; //$NON-NLS-1$
 
 	public static class Result {
 		public int bookId;
@@ -53,10 +56,6 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 	private Object tab_direct = new Object();
 	private Object tab_grid = new Object();
 
-	GotoDialerFragment fr_dialer;
-	GotoDirectFragment fr_direct;
-	GotoGridFragment fr_grid;
-
 	int bookId;
 	int chapter_1;
 	int verse_1;
@@ -68,18 +67,11 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 		chapter_1 = getIntent().getIntExtra(EXTRA_chapter, 0);
 		verse_1 = getIntent().getIntExtra(EXTRA_verse, 0);
 
-		if (savedInstanceState != null) {
-			FragmentManager fm = getSupportFragmentManager();
-			fr_dialer = (GotoDialerFragment) fm.findFragmentByTag("dialer");
-			fr_direct = (GotoDirectFragment) fm.findFragmentByTag("direct");
-			fr_grid = (GotoGridFragment) fm.findFragmentByTag("grid");
-		}
-
 		ActionBar actionBar = getSupportActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		actionBar.addTab(actionBar.newTab().setTag(tab_dialer).setText("Dialer").setTabListener(new TabListener<GotoDialerFragment>(this, "dialer", GotoDialerFragment.class, GotoDialerFragment.createArgs(bookId, chapter_1, verse_1))));
-		actionBar.addTab(actionBar.newTab().setTag(tab_direct).setText("Direct").setTabListener(new TabListener<GotoDirectFragment>(this, "direct", GotoDirectFragment.class, GotoDirectFragment.createArgs(bookId, chapter_1, verse_1))));
-		actionBar.addTab(actionBar.newTab().setTag(tab_grid).setText("Grid").setTabListener(new TabListener<GotoGridFragment>(this, "grid", GotoGridFragment.class, GotoGridFragment.createArgs(bookId, chapter_1, verse_1))));
+		actionBar.addTab(actionBar.newTab().setTag(tab_dialer).setText(R.string.goto_tab_dialer_label).setTabListener(new TabListener<GotoDialerFragment>(this, "dialer", GotoDialerFragment.class, GotoDialerFragment.createArgs(bookId, chapter_1, verse_1)))); //$NON-NLS-1$
+		actionBar.addTab(actionBar.newTab().setTag(tab_direct).setText(R.string.goto_tab_direct_label).setTabListener(new TabListener<GotoDirectFragment>(this, "direct", GotoDirectFragment.class, GotoDirectFragment.createArgs(bookId, chapter_1, verse_1)))); //$NON-NLS-1$
+		actionBar.addTab(actionBar.newTab().setTag(tab_grid).setText(R.string.goto_tab_grid_label).setTabListener(new TabListener<GotoGridFragment>(this, "grid", GotoGridFragment.class, GotoGridFragment.createArgs(bookId, chapter_1, verse_1)))); //$NON-NLS-1$
 
 		if (savedInstanceState == null) {
 			// get from preferences
@@ -88,13 +80,13 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 				actionBar.setSelectedNavigationItem(tabUsed - 1 /* to make it 0-based */);
 			}
 		} else {
-			actionBar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
+			actionBar.setSelectedNavigationItem(savedInstanceState.getInt(INSTANCE_STATE_tab, 0));
 		}
 	}
 
 	@Override protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putInt("tab", getSupportActionBar().getSelectedNavigationIndex());
+		outState.putInt(INSTANCE_STATE_tab, getSupportActionBar().getSelectedNavigationIndex());
 	}
 
 	public static class TabListener<T extends Fragment> implements ActionBar.TabListener {

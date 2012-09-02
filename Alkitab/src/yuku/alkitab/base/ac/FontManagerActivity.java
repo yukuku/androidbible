@@ -112,7 +112,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 						if (conn.isSameHost()) {
 							List<FontItem> list = new ArrayList<FontItem>();
 							Scanner sc = new Scanner(in);
-							if (sc.hasNextLine() && sc.nextLine().startsWith("OK")) {
+							if (sc.hasNextLine() && sc.nextLine().startsWith("OK")) { //$NON-NLS-1$
 								while (sc.hasNextLine()) {
 									String line = sc.nextLine().trim();
 									if (line.length() > 0) {

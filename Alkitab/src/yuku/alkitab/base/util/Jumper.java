@@ -93,7 +93,7 @@ public class Jumper {
 			
 			String osisId;
 			if (alamat.indexOf('-') >= 0) { // optionally a '-'
-				String[] osisIds = alamat.split("-");
+				String[] osisIds = alamat.split("-"); //$NON-NLS-1$
 				if (osisIds.length != 2) { 
 					break notosis; // wrong format
 				}
@@ -105,7 +105,7 @@ public class Jumper {
 			Pattern p = OsisBookNames.getBookNameWithChapterAndOptionalVersePattern();
 			Matcher m = p.matcher(osisId);
 			if (m.matches()) {
-				Log.d(TAG, "peloncat tahap 7: ref matching osis pattern found: " + osisId);
+				Log.d(TAG, "peloncat tahap 7: ref matching osis pattern found: " + osisId); //$NON-NLS-1$
 				String osisBookName = m.group(1);
 				String chapter_s = m.group(2);
 				String verse_s = m.group(3);
@@ -115,10 +115,10 @@ public class Jumper {
 					p_pasal = Integer.parseInt(chapter_s);
 					p_ayat = (verse_s == null || verse_s.length() == 0)? 0: Integer.parseInt(verse_s);
 				} catch (Exception e) {
-					Log.e(TAG, "Should not happen. In peloncat tahap 7", e);
+					Log.e(TAG, "Should not happen. In peloncat tahap 7", e); //$NON-NLS-1$
 				}
 				
-				Log.d(TAG, "peloncat tahap 7: successfully parsed osis id: " + p_bookIdFromOsis + " " + p_pasal + " " + p_ayat);
+				Log.d(TAG, "peloncat tahap 7: successfully parsed osis id: " + p_bookIdFromOsis + ' ' + p_pasal + ' ' + p_ayat); //$NON-NLS-1$
 				return true;
 			}
 		}

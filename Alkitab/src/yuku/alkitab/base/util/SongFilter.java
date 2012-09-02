@@ -29,7 +29,7 @@ public class SongFilter {
 			for (int i = 0; i < tokens.length; i++) {
 				String token = tokens[i];
 				if (QueryTokenizer.isPlussedToken(token)) {
-					ps[i] = Pattern.compile("\\b" + Pattern.quote(QueryTokenizer.tokenWithoutPlus(token)) + "\\b", Pattern.CASE_INSENSITIVE);
+					ps[i] = Pattern.compile("\\b" + Pattern.quote(QueryTokenizer.tokenWithoutPlus(token)) + "\\b", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					ps[i] = Pattern.compile(Pattern.quote(token), Pattern.CASE_INSENSITIVE);
 				}

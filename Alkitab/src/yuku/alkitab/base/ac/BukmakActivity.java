@@ -91,7 +91,7 @@ public class BukmakActivity extends BaseActivity {
 		Intent intent = getIntent();
 		if (U.equals(intent.getAction(), Intent.ACTION_VIEW)) {
 			Uri data = intent.getData();
-			if (data != null && (U.equals(data.getScheme(), "content") || U.equals(data.getScheme(), "file"))) {
+			if (data != null && (U.equals(data.getScheme(), "content") || U.equals(data.getScheme(), "file"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				try {
 					final InputStream inputStream = getContentResolver().openInputStream(data);
 					
@@ -118,7 +118,7 @@ public class BukmakActivity extends BaseActivity {
 				} catch (FileNotFoundException e) {
 					new AlertDialog.Builder(this)
 					.setTitle(R.string.impor_judul)
-					.setMessage("File not found: " + data.toString())
+					.setMessage(getString(R.string.bl_file_not_found_filename, data.toString()))
 					.show()
 					.setOnDismissListener(finishActivityListener);
 				}
@@ -207,7 +207,7 @@ public class BukmakActivity extends BaseActivity {
 			return true;
 		} else if (itemId == R.id.menuSendBackup) {
 			new AlertDialog.Builder(this)
-			.setMessage("Create and send backup of bookmarks, notes, and highlights? You can, for example, send the attached file by email to your new device, or just for archiving purposes.")
+			.setMessage(R.string.bl_send_backup_confirmation)
 			.setNegativeButton(R.string.no, null)
 			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
@@ -449,7 +449,7 @@ public class BukmakActivity extends BaseActivity {
 						
 						Intent intent = ShareCompat.IntentBuilder.from(BukmakActivity.this)
 						.setStream(uri)
-						.setType("text/xml")
+						.setType("text/xml") //$NON-NLS-1$
 						.createChooserIntent();
 						
 						startActivity(intent);
@@ -497,7 +497,7 @@ public class BukmakActivity extends BaseActivity {
 		}
 	};
 
-	private DialogInterface.OnDismissListener finishActivityListener = new DialogInterface.OnDismissListener() {
+	DialogInterface.OnDismissListener finishActivityListener = new DialogInterface.OnDismissListener() {
 		@Override public void onDismiss(DialogInterface dialog) {
 			finish();
 		}

@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 public class QueryTokenizer {
 	public static final String TAG = QueryTokenizer.class.getSimpleName();
 	
-	static Pattern oneToken = Pattern.compile("(\\+?)((?:\".*?\"|\\S)+)");
+	static Pattern oneToken = Pattern.compile("(\\+?)((?:\".*?\"|\\S)+)"); //$NON-NLS-1$
 
 	/**
 	 * Convert a query string into tokens. Takes care of quotes and plus signs.
@@ -37,7 +37,7 @@ public class QueryTokenizer {
 		for (int i = 0, len = raw_tokens.size(); i < len; i++) {
 			String token = raw_tokens.get(i);
 			if (token.length() > 0 && QueryTokenizer.tokenWithoutPlus(token).length() > 0) {
-				processed.add(token.replace("\"", "")); // remove quotes
+				processed.add(token.replace("\"", "")); // remove quotes //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return processed.toArray(new String[processed.size()]);

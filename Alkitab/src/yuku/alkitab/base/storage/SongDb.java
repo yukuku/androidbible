@@ -245,8 +245,8 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 
 	public int deleteAllSongs() {
 		SQLiteDatabase db = helper.getWritableDatabase();
-		int count = db.delete(Table.SongInfo.tableName(), "1", null);
-		db.execSQL("vacuum");
+		int count = db.delete(Table.SongInfo.tableName(), "1", null); //$NON-NLS-1$
+		db.execSQL("vacuum"); //$NON-NLS-1$
 		return count;
 	}
 }
