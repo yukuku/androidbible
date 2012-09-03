@@ -34,13 +34,13 @@ Getting the sources
 
 1. Clone the Bible for Android git repository to <your directory of choice>/androidbible
 
-    git clone git@github.com:yukuku/androidbible.git
+    `git clone git@github.com:yukuku/androidbible.git`
     
    You may need to use public/private key pairs to easily authenticate yourself. 
 
 2. Clone the yuku-android-util project from Google Code to <your directory of choice>/yuku-android-util/
 
-    git clone https://yukuku@code.google.com/p/yuku-android-util/
+    `git clone https://yukuku@code.google.com/p/yuku-android-util/`
     
    See the full instructions here: http://code.google.com/p/yuku-android-util/source/checkout
 
@@ -75,7 +75,7 @@ Setting up
      - SdkSearchBar
      - SimpleTrove
      - NewQuickAction3DLib
-   ... and you know that this document might be outdated, so you need to add necessary projects by yourself.
+   - ... and you know that this document might be outdated, so you need to add necessary projects by yourself.
 
 Building and running
 
