@@ -5,7 +5,3 @@ local.properties
 
 # Mac
 .DS_Store
-
-# LameLib native
-LameLib/libs/
-LameLib/obj/
