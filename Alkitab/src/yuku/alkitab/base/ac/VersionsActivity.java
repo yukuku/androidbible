@@ -78,7 +78,7 @@ public class VersionsActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.activity_edisi);
+		setContentView(R.layout.activity_versions);
 		setTitle(R.string.kelola_versi);
 
 		adapter = new EdisiAdapter();
@@ -93,7 +93,7 @@ public class VersionsActivity extends BaseActivity {
 	
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		getSupportMenuInflater().inflate(R.menu.activity_edisi, menu);
+		getSupportMenuInflater().inflate(R.menu.activity_versions, menu);
 	}
 	
 	@Override
@@ -146,7 +146,7 @@ public class VersionsActivity extends BaseActivity {
 		if (info.position == adapter.getCount() - 1) {
 			// ga ada menu untuk Buka file
 		} else {
-			getMenuInflater().inflate(R.menu.context_edisi, menu);
+			getMenuInflater().inflate(R.menu.context_version, menu);
 		
 			android.view.MenuItem menuBuang = menu.findItem(R.id.menuBuang);
 			if (menuBuang != null) {
@@ -760,7 +760,7 @@ public class VersionsActivity extends BaseActivity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_edisi, null);
+			View res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_version, null);
 			
 			CheckBox cAktif = U.getView(res, R.id.cAktif);
 			TextView lJudul = U.getView(res, R.id.lJudul);
