@@ -207,6 +207,8 @@
   <string name="get_more_fonts">Pobierz więcej czcionek…</string>
   <string name="about_translators">Tłumacze:</string>
   <string name="intent_filter_import_from_backup">Import z kopii</string>
+  <string name="goto_tab_dialer_label">Dialer</string>
+  <string name="goto_tab_direct_label">Bezpośrednio</string>
   <string name="goto_tab_grid_label">Siatka</string>
   <string name="fm_activity_title">Zarządca czcionek</string>
   <string name="fm_need_to_log_in_to_wifi">Musisz zalogować się do swojej sieci (Wi-Fi).</string>
