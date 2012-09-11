@@ -121,7 +121,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.activity_renungan);
+		setContentView(R.layout.activity_devotion);
 		
 		memudar = AnimationUtils.loadAnimation(this, R.anim.memudar);
 

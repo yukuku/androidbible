@@ -119,7 +119,7 @@ public class TypeBookmarkDialog {
 			this.alamat = S.reference(S.activeVersion, bukmak.ari);
 		}
 		
-		View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_bukmak_ubah, null);
+		View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_bookmark, null);
 		this.panelLabels = U.getView(dialogView, R.id.panelLabels);
 		
 		final EditText tTulisan = U.getView(dialogView, R.id.tTulisan);

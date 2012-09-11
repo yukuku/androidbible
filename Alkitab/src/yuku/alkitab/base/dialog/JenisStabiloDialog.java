@@ -61,7 +61,7 @@ public class JenisStabiloDialog {
 		this.ariKp = ariKp;
 		this.ayatTerpilih = ayatTerpilih;
 		this.callback = callback;
-		this.dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_stabilo_ubah, null);
+		this.dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_highlight, null);
 		
 		this.alert = new AlertDialog.Builder(context)
 		.setView(dialogView)

@@ -73,7 +73,7 @@ public class AboutActivity extends BaseActivity {
 
 	private OnClickListener bSaran_click = new OnClickListener() {
 		@Override public void onClick(View v) {
-			final View dialogView = getLayoutInflater().inflate(R.layout.dialog_saran, null);
+			final View dialogView = getLayoutInflater().inflate(R.layout.dialog_suggest, null);
 			
 			AlertDialog dialog = new AlertDialog.Builder(AboutActivity.this)
 			.setTitle(R.string.beri_saran_title)

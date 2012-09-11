@@ -7,7 +7,7 @@ import android.webkit.WebView;
 import yuku.alkitab.R;
 import yuku.alkitab.base.ac.base.BaseActivity;
 
-public class BantuanActivity extends BaseActivity {
+public class HelpActivity extends BaseActivity {
 	WebView webview;
 	
 	@Override

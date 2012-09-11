@@ -10,7 +10,7 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.storage.Preferences;
 
-public class PengaturanActivity extends PreferenceActivity {
+public class SettingsActivity extends PreferenceActivity {
 	interface PreferenceUpdate {
 		String withValue(Object value);
 	}

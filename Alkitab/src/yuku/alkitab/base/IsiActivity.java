@@ -48,11 +48,11 @@ import org.json.JSONObject;
 import yuku.alkitab.R;
 import yuku.alkitab.base.IsiActivity.FakeContextMenu.Item;
 import yuku.alkitab.base.ac.AboutActivity;
-import yuku.alkitab.base.ac.BantuanActivity;
-import yuku.alkitab.base.ac.BukmakActivity;
+import yuku.alkitab.base.ac.HelpActivity;
+import yuku.alkitab.base.ac.BookmarkActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.GotoActivity;
-import yuku.alkitab.base.ac.PengaturanActivity;
+import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.Search2Activity;
 import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.ac.SongViewActivity;
@@ -992,7 +992,7 @@ public class IsiActivity extends BaseActivity {
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menuBukmak:
-			startActivityForResult(new Intent(this, BukmakActivity.class), REQCODE_bookmark);
+			startActivityForResult(new Intent(this, BookmarkActivity.class), REQCODE_bookmark);
 			return true;
 		case R.id.menuSearch2:
 			menuSearch2_click();
@@ -1010,10 +1010,10 @@ public class IsiActivity extends BaseActivity {
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
 		case R.id.menuPengaturan:
-			startActivityForResult(new Intent(this, PengaturanActivity.class), REQCODE_settings);
+			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
 			return true;
 		case R.id.menuBantuan:
-			startActivity(new Intent(this, BantuanActivity.class));
+			startActivity(new Intent(this, HelpActivity.class));
 			return true;
 		case R.id.menuDonasi:
 			openDonationDialog();
@@ -1110,7 +1110,7 @@ public class IsiActivity extends BaseActivity {
 			verseAdapter_.loadAttributeMap();
 
 			if (resultCode == RESULT_OK) {
-				int ari = data.getIntExtra(BukmakActivity.EXTRA_ariTerpilih, 0);
+				int ari = data.getIntExtra(BookmarkActivity.EXTRA_ariTerpilih, 0);
 				if (ari != 0) { // 0 means nothing, because we don't have chapter 0 verse 0
 					jumpToAri(ari);
 					history.add(ari);

@@ -54,8 +54,8 @@ import yuku.searchbar.SearchWidget;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public class BukmakListActivity extends BaseActivity {
-	public static final String TAG = BukmakListActivity.class.getSimpleName();
+public class BookmarkListActivity extends BaseActivity {
+	public static final String TAG = BookmarkListActivity.class.getSimpleName();
 	
     // out
 	public static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
@@ -89,7 +89,7 @@ public class BukmakListActivity extends BaseActivity {
 
 
     public static Intent createIntent(Context context, int filter_jenis, long filter_labelId) {
-    	Intent res = new Intent(context, BukmakListActivity.class);
+    	Intent res = new Intent(context, BookmarkListActivity.class);
     	res.putExtra(EXTRA_filter_jenis, filter_jenis);
     	res.putExtra(EXTRA_filter_labelId, filter_labelId);
     	return res;
@@ -98,7 +98,7 @@ public class BukmakListActivity extends BaseActivity {
     @Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.activity_bukmaklist);
+		setContentView(R.layout.activity_bookmark_list);
 		
 		panelList = U.getView(this, R.id.panelList);
 		empty = U.getView(this, android.R.id.empty);
@@ -477,7 +477,7 @@ public class BukmakListActivity extends BaseActivity {
 		}
 		
 		@Override public View newView(Context context, Cursor cursor, ViewGroup parent) {
-			return getLayoutInflater().inflate(R.layout.item_bukmak, null);
+			return getLayoutInflater().inflate(R.layout.item_bookmark, null);
 		}
 		
 		@Override public void bindView(View view, Context context, Cursor cursor) {

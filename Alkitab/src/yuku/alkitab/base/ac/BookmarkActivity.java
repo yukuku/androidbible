@@ -63,8 +63,8 @@ import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public class BukmakActivity extends BaseActivity {
-	public static final String TAG = BukmakActivity.class.getSimpleName();
+public class BookmarkActivity extends BaseActivity {
+	public static final String TAG = BookmarkActivity.class.getSimpleName();
 	
     // out
 	public static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
@@ -76,7 +76,7 @@ public class BukmakActivity extends BaseActivity {
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.activity_bukmak);
+		setContentView(R.layout.activity_bookmark);
 		setTitle(R.string.judul_bukmak_activity);
 		
 		adapter = new BukmakFilterAdapter();
@@ -96,7 +96,7 @@ public class BukmakActivity extends BaseActivity {
 					final InputStream inputStream = getContentResolver().openInputStream(data);
 					
 					final AlertDialog[] dialog = {null};
-					dialog[0] = new AlertDialog.Builder(BukmakActivity.this)
+					dialog[0] = new AlertDialog.Builder(BookmarkActivity.this)
 					.setTitle(R.string.impor_judul)
 					.setMessage(R.string.apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya)
 					.setNegativeButton(R.string.cancel, null)
@@ -171,7 +171,7 @@ public class BukmakActivity extends BaseActivity {
 						return;
 					}
 
-					new AlertDialog.Builder(BukmakActivity.this)
+					new AlertDialog.Builder(BookmarkActivity.this)
 					.setTitle(R.string.impor_judul)
 					.setMessage(R.string.apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya)
 					.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -239,7 +239,7 @@ public class BukmakActivity extends BaseActivity {
 			
 			@Override
 			protected void onPreExecute() {
-				pd = new ProgressDialog(BukmakActivity.this);
+				pd = new ProgressDialog(BookmarkActivity.this);
 				pd.setTitle(R.string.impor_judul);
 				pd.setMessage(getString(R.string.mengimpor_titiktiga));
 				pd.setIndeterminate(true);
@@ -335,7 +335,7 @@ public class BukmakActivity extends BaseActivity {
 				pd.dismiss();
 				
 				if (result instanceof Exception) {
-					AlertDialog dialog = new AlertDialog.Builder(BukmakActivity.this)
+					AlertDialog dialog = new AlertDialog.Builder(BookmarkActivity.this)
 					.setTitle(R.string.impor_judul)
 					.setMessage(getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, ((Exception) result).getMessage()))
 					.setPositiveButton(R.string.ok, null)
@@ -344,7 +344,7 @@ public class BukmakActivity extends BaseActivity {
 						dialog.setOnDismissListener(finishActivityListener);
 					}
 				} else {
-					AlertDialog dialog = new AlertDialog.Builder(BukmakActivity.this)
+					AlertDialog dialog = new AlertDialog.Builder(BookmarkActivity.this)
 					.setTitle(R.string.impor_judul)
 					.setMessage(getString(R.string.impor_berhasil_angka_diproses, count_bukmak, count_label))
 					.setPositiveButton(R.string.ok, null)
@@ -365,7 +365,7 @@ public class BukmakActivity extends BaseActivity {
 			
 			@Override
 			protected void onPreExecute() {
-				pd = new ProgressDialog(BukmakActivity.this);
+				pd = new ProgressDialog(BookmarkActivity.this);
 				pd.setTitle(R.string.ekspor_judul);
 				pd.setMessage(getString(R.string.mengekspor_titiktiga));
 				pd.setIndeterminate(true);
@@ -447,7 +447,7 @@ public class BukmakActivity extends BaseActivity {
 					} else {
 						Uri uri = Uri.fromFile(new File((String) result));
 						
-						Intent intent = ShareCompat.IntentBuilder.from(BukmakActivity.this)
+						Intent intent = ShareCompat.IntentBuilder.from(BookmarkActivity.this)
 						.setStream(uri)
 						.setType("text/xml") //$NON-NLS-1$
 						.createChooserIntent();
@@ -478,17 +478,17 @@ public class BukmakActivity extends BaseActivity {
 		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 			Intent intent;
 			if (position == 0) {
-				intent = BukmakListActivity.createIntent(getApplicationContext(), Db.Bukmak2.kind_bookmark, 0);
+				intent = BookmarkListActivity.createIntent(getApplicationContext(), Db.Bukmak2.kind_bookmark, 0);
 			} else if (position == 1) {
-				intent = BukmakListActivity.createIntent(getApplicationContext(), Db.Bukmak2.kind_note, 0);
+				intent = BookmarkListActivity.createIntent(getApplicationContext(), Db.Bukmak2.kind_note, 0);
 			} else if (position == 2) {
-				intent = BukmakListActivity.createIntent(getApplicationContext(), Db.Bukmak2.jenis_stabilo, 0);
+				intent = BookmarkListActivity.createIntent(getApplicationContext(), Db.Bukmak2.jenis_stabilo, 0);
 			} else if (position == 3) {
-				intent = BukmakListActivity.createIntent(getApplicationContext(), Db.Bukmak2.kind_bookmark, BukmakListActivity.LABELID_noLabel);
+				intent = BookmarkListActivity.createIntent(getApplicationContext(), Db.Bukmak2.kind_bookmark, BookmarkListActivity.LABELID_noLabel);
 			} else {
 				Label label = adapter.getItem(position);
 				if (label != null) {
-					intent = BukmakListActivity.createIntent(getApplicationContext(), Db.Bukmak2.kind_bookmark, label._id);
+					intent = BookmarkListActivity.createIntent(getApplicationContext(), Db.Bukmak2.kind_bookmark, label._id);
 				} else {
 					return;
 				}
@@ -572,7 +572,7 @@ public class BukmakActivity extends BaseActivity {
 			}
 			
 			int warnaLatarRgb = U.dekodWarnaLatarLabel(label.warnaLatar);
-			new AmbilWarnaDialog(BukmakActivity.this, 0xff000000 | warnaLatarRgb, new OnAmbilWarnaListener() {
+			new AmbilWarnaDialog(BookmarkActivity.this, 0xff000000 | warnaLatarRgb, new OnAmbilWarnaListener() {
 				@Override public void onOk(AmbilWarnaDialog dialog, int color) {
 					if (color == -1) {
 						label.warnaLatar = null;
@@ -597,7 +597,7 @@ public class BukmakActivity extends BaseActivity {
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQCODE_bukmakList) {
 			if (resultCode == RESULT_OK) {
-				int ari = data.getIntExtra(BukmakActivity.EXTRA_ariTerpilih, 0);
+				int ari = data.getIntExtra(BookmarkActivity.EXTRA_ariTerpilih, 0);
 				if (ari != 0) { // 0 berarti ga ada apa2, karena ga ada pasal 0 ayat 0
 					Intent res = new Intent();
 					res.putExtra(EXTRA_ariTerpilih, ari);
@@ -644,7 +644,7 @@ public class BukmakActivity extends BaseActivity {
 		}
 
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
-			View res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_bukmakfilter, null);
+			View res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_bookmark_filter, null);
 			
 			ImageView imgFilterIcon = U.getView(res, R.id.imgFilterIcon);
 			if (position < 3) {

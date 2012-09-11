@@ -14,8 +14,8 @@ import java.util.Date;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.Bukmak2;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.Bukmak2;
 import yuku.alkitab.base.storage.Db;
 
 public class TypeNoteDialog {
@@ -45,7 +45,7 @@ public class TypeNoteDialog {
 		this.context = context;
 		this.refreshCallback = refreshCallback;
 		
-		View dialogLayout = LayoutInflater.from(context).inflate(R.layout.dialog_catatan_ubah, null);
+		View dialogLayout = LayoutInflater.from(context).inflate(R.layout.dialog_edit_note, null);
 		
 		this.dialog = new AlertDialog.Builder(context)
 		.setView(dialogLayout)
