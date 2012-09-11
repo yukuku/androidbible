@@ -44,11 +44,12 @@ public class SongBookUtil {
 		for (String k: new String[] {
 			// bookName :: dataFormatVersion :: downloadUrl :: bookDescription
 			"KJ   :: 1 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kj-1.ser.gz   :: Kidung Jemaat, buku terbitan Yayasan Musik Gereja di Indonesia (YAMUGER).", //$NON-NLS-1$
+			"KPKA :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpka-3.ser.gz :: Kidung Pasamuan Kristen (Bahasa Jawa), terbitan Badan Musyawarah Gereja-gereja Jawa (BMGJ).", //$NON-NLS-1$
 			"KPRI :: 2 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpri-2.ser.gz :: Kidung Persekutuan Reformed Injili, buku terbitan Sinode Gereja Reformed Injili Indonesia (GRII).", //$NON-NLS-1$
 			"NKB  :: 1 :: http://alkitab-host.appspot.com/addon/songs/v1/data/nkb-1.ser.gz  :: Nyanyikanlah Kidung Baru, buku terbitan Badan Pengerja Majelis Sinode Gereja Kristen Indonesia.",  //$NON-NLS-1$
 			"NP   :: 2 :: http://alkitab-host.appspot.com/addon/songs/v1/data/np-2.ser.gz   :: Nyanyian Pujian, buku terbitan Lembaga Literatur Baptis yang digunakan gereja-gereja Baptis.", //$NON-NLS-1$
 			"PKJ  :: 1 :: http://alkitab-host.appspot.com/addon/songs/v1/data/pkj-1.ser.gz  :: Pelengkap Kidung Jemaat, buku terbitan Yayasan Musik Gereja di Indonesia (YAMUGER).", //$NON-NLS-1$
-			"PPK  :: 2 :: http://alkitab-host.appspot.com/addon/songs/v1/data/ppk-2.ser.gz  :: Puji-pujian Kristen, buku terbitan Seminari Alkitab Asia Tenggara (SAAT).", //$NON-NLS-1$
+			"PPK  :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/ppk-3.ser.gz  :: Puji-pujian Kristen, buku terbitan Seminari Alkitab Asia Tenggara (SAAT).", //$NON-NLS-1$
 		}) {
 			String[] ss = k.split("::"); //$NON-NLS-1$
 			SongBookInfo bookInfo = new SongBookInfo();
