@@ -65,6 +65,7 @@
                 android:layout_height="wrap_content"
                 android:padding="8dp"
                 android:text="Isi renungan di sini. Bla bla bla bla. Dan terus. Bla bla bla bla bla bla bla, sampe ngeskrol."
+                android:textColorLink="#33b5e5"
                 tools:ignore="HardcodedText" />
 
         </ScrollView>

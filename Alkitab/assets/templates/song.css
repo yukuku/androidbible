@@ -75,6 +75,10 @@
 	font-family: sans-serif;
 }
 
+.scriptureReferences a {
+	color: #33b5e5;
+}
+
 .tune {
 	font-family: sans-serif;
 	text-transform: uppercase;
