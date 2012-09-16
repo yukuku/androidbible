@@ -82,11 +82,6 @@
 		android:title="@string/pref_penggunaan">
 		<CheckBoxPreference
 			android:defaultValue="false"
-			android:title="@string/pref_ketik_langsung_alamat"
-			android:key="@string/pref_tombolAlamatLoncat_key"
-			android:summary="@string/pref_buka_bagian_alkitab_tertentu_dengan_mengetikkan_alamatnya_langsung" />
-		<CheckBoxPreference
-			android:defaultValue="false"
 			android:title="@string/pref_kitab_menurut_abjad"
 			android:key="@string/pref_sortKitabAlfabet_key"
 			android:summary="@string/pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya" />
