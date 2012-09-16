@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import net.londatiga.android.QuickAction;
 import yuku.afw.V;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -24,7 +25,6 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.SongListActivity.SearchState;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.Book;
-import yuku.alkitab.base.storage.Preferences;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.base.util.OsisBookNames;
@@ -110,7 +110,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		templateCustomVars.putString("line_spacing_mult", String.valueOf(S.applied.lineSpacingMult)); //$NON-NLS-1$
 		
 		{
-			String fontName = Preferences.getString(R.string.pref_jenisHuruf_key, null);
+			String fontName = Preferences.getString(getString(R.string.pref_jenisHuruf_key), null);
 			if (FontManager.isCustomFont(fontName)) {
 				templateCustomVars.putString("custom_font_loader", String.format("@font-face{ font-family: '%s'; src: url('%s'); }", fontName, FontManager.getCustomFontUri(fontName))); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {

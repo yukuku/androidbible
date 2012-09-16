@@ -10,7 +10,7 @@ import android.util.Log;
 import java.io.File;
 import java.util.Locale;
 
-import yuku.alkitab.base.storage.Preferences;
+import yuku.afw.storage.Preferences;
 import yuku.kirimfidbek.PengirimFidbek;
 import yuku.kirimfidbek.R;
 
@@ -62,7 +62,7 @@ public class App extends yuku.afw.App {
 	}
 
 	private Locale getLocaleFromPreferences() {
-		String lang = Preferences.getString(R.string.pref_bahasa_key, R.string.pref_bahasa_default);
+		String lang = Preferences.getString(context.getString(R.string.pref_bahasa_key), context.getString(R.string.pref_bahasa_default));
 		if (lang == null || "DEFAULT".equals(lang)) { //$NON-NLS-1$
 			lang = Locale.getDefault().getLanguage();
 		}

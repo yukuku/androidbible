@@ -9,13 +9,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.inputmethod.InputMethodManager;
 
 import yuku.afw.App;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.fr.GotoDialerFragment;
 import yuku.alkitab.base.fr.GotoDirectFragment;
 import yuku.alkitab.base.fr.GotoGridFragment;
 import yuku.alkitab.base.fr.base.BaseGotoFragment.GotoFinishListener;
-import yuku.alkitab.base.storage.Preferences;
 import yuku.alkitab.base.storage.Prefkey;
 
 import com.actionbarsherlock.app.ActionBar;

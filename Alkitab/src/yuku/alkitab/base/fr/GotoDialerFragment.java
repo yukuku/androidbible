@@ -15,13 +15,14 @@ import android.widget.TextView;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import yuku.afw.App;
 import yuku.afw.V;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
 import yuku.alkitab.base.model.Book;
-import yuku.alkitab.base.storage.Preferences;
 
 public class GotoDialerFragment extends BaseGotoFragment {
 	public static final String TAG = GotoDialerFragment.class.getSimpleName();
@@ -335,7 +336,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		public KitabAdapter() {
 			Book[] xkitabc = S.activeVersion.getConsecutiveBooks();
 			
-			if (Preferences.getBoolean(R.string.pref_sortKitabAlfabet_key, R.bool.pref_sortKitabAlfabet_default)) {
+			if (Preferences.getBoolean(App.context.getString(R.string.pref_sortKitabAlfabet_key), App.context.getResources().getBoolean(R.bool.pref_sortKitabAlfabet_default))) {
 				// bikin kopian, supaya ga obok2 array lama
 				xkitabc_ = new Book[xkitabc.length];
 				System.arraycopy(xkitabc, 0, xkitabc_, 0, xkitabc.length);

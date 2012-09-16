@@ -35,6 +35,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -48,7 +49,6 @@ import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertParams;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertProgressListener;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertResult;
 import yuku.alkitab.base.storage.Db;
-import yuku.alkitab.base.storage.Preferences;
 import yuku.alkitab.base.storage.YesReader;
 import yuku.alkitab.base.util.AddonManager;
 import yuku.alkitab.base.util.AddonManager.DonlotListener;

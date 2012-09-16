@@ -45,15 +45,16 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.IsiActivity.FakeContextMenu.Item;
 import yuku.alkitab.base.ac.AboutActivity;
-import yuku.alkitab.base.ac.HelpActivity;
 import yuku.alkitab.base.ac.BookmarkActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.GotoActivity;
-import yuku.alkitab.base.ac.SettingsActivity;
+import yuku.alkitab.base.ac.HelpActivity;
 import yuku.alkitab.base.ac.Search2Activity;
+import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.ac.SongViewActivity;
 import yuku.alkitab.base.ac.VersionsActivity;
@@ -65,15 +66,14 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.compat.Api8;
 import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.config.D;
-import yuku.alkitab.base.dialog.TypeHighlightDialog;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
+import yuku.alkitab.base.dialog.TypeHighlightDialog;
 import yuku.alkitab.base.dialog.TypeNoteDialog;
 import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.Db;
-import yuku.alkitab.base.storage.Preferences;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.Jumper;
@@ -444,7 +444,7 @@ public class IsiActivity extends BaseActivity {
 	};
 	
 	protected boolean press(int keyCode) {
-		String volumeButtonsForNavigation = Preferences.getString(R.string.pref_tombolVolumeBuatPindah_key, R.string.pref_tombolVolumeBuatPindah_default);
+		String volumeButtonsForNavigation = Preferences.getString(getString(R.string.pref_tombolVolumeBuatPindah_key), getString(R.string.pref_tombolVolumeBuatPindah_default));
 		if (U.equals(volumeButtonsForNavigation, "pasal" /* chapter */)) { //$NON-NLS-1$
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_RIGHT;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_LEFT;
@@ -483,7 +483,7 @@ public class IsiActivity extends BaseActivity {
 	}
 
 	private synchronized void keepScreenOnWhenRequested() {
-		if (Preferences.getBoolean(R.string.pref_nyalakanTerusLayar_key, R.bool.pref_nyalakanTerusLayar_default)) {
+		if (Preferences.getBoolean(getString(R.string.pref_nyalakanTerusLayar_key), getResources().getBoolean(R.bool.pref_nyalakanTerusLayar_default))) {
 			lsText.setKeepScreenOn(true);
 		}
 	}
@@ -827,7 +827,7 @@ public class IsiActivity extends BaseActivity {
 		// appliance of hide navigation
 		{
 			View navigationPanel = findViewById(R.id.panelNavigasi);
-			if (Preferences.getBoolean(R.string.pref_tanpaNavigasi_key, R.bool.pref_tanpaNavigasi_default)) {
+			if (Preferences.getBoolean(getString(R.string.pref_tanpaNavigasi_key), getResources().getBoolean(R.bool.pref_tanpaNavigasi_default))) {
 				navigationPanel.setVisibility(View.GONE);
 				titleContainer.setVisibility(View.VISIBLE);
 			} else {
@@ -1243,7 +1243,7 @@ public class IsiActivity extends BaseActivity {
 	}
 	
 	@Override public boolean onKeyUp(int keyCode, KeyEvent event) {
-		String volumeButtonsForNavigation = Preferences.getString(R.string.pref_tombolVolumeBuatPindah_key, R.string.pref_tombolVolumeBuatPindah_default);
+		String volumeButtonsForNavigation = Preferences.getString(getString(R.string.pref_tombolVolumeBuatPindah_key), getString(R.string.pref_tombolVolumeBuatPindah_default));
 		if (! U.equals(volumeButtonsForNavigation, "default")) { // consume here //$NON-NLS-1$
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) return true;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) return true;

@@ -6,9 +6,9 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.view.MenuItem;
 
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.storage.Preferences;
 
 public class SettingsActivity extends PreferenceActivity {
 	interface PreferenceUpdate {

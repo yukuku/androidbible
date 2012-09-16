@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Locale;
 
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.model.Ari;
@@ -21,7 +22,6 @@ import yuku.alkitab.base.renungan.Downloader;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.InternalDbHelper;
 import yuku.alkitab.base.storage.InternalReader;
-import yuku.alkitab.base.storage.Preferences;
 import yuku.alkitab.base.storage.ReaderDecoder;
 import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.base.storage.SongDbHelper;
@@ -109,21 +109,21 @@ public class S {
 	public static void calculateAppliedValuesBasedOnPreferences() {
 		//# atur ukuran huruf isi berdasarkan pengaturan
 		{
-			applied.fontSize2dp = Preferences.getFloat(R.string.pref_ukuranHuruf2_key, 17.f);
+			applied.fontSize2dp = Preferences.getFloat(App.context.getString(R.string.pref_ukuranHuruf2_key), 17.f);
 		}
 		
 		//# atur jenis huruf, termasuk boldnya
 		{
-			applied.fontFace = FontManager.typeface(Preferences.getString(R.string.pref_jenisHuruf_key, null));
-			applied.lineSpacingMult = Preferences.getFloat(R.string.pref_lineSpacingMult_key, 1.f);
-			applied.fontBold = Preferences.getBoolean(R.string.pref_boldHuruf_key, R.bool.pref_boldHuruf_default)? Typeface.BOLD: Typeface.NORMAL;
+			applied.fontFace = FontManager.typeface(Preferences.getString(App.context.getString(R.string.pref_jenisHuruf_key), null));
+			applied.lineSpacingMult = Preferences.getFloat(App.context.getString(R.string.pref_lineSpacingMult_key), 1.f);
+			applied.fontBold = Preferences.getBoolean(App.context.getString(R.string.pref_boldHuruf_key), false)? Typeface.BOLD: Typeface.NORMAL;
 		}
 		
 		//# atur warna teks, latar, dan nomer ayat
 		{
-			applied.fontColor = Preferences.getInt(R.string.pref_warnaHuruf_int_key, R.integer.pref_warnaHuruf_int_default);
-			applied.backgroundColor = Preferences.getInt(R.string.pref_warnaLatar_int_key, R.integer.pref_warnaLatar_int_default); 
-			applied.verseNumberColor = Preferences.getInt(R.string.pref_warnaNomerAyat_int_key, R.integer.pref_warnaNomerAyat_int_default);
+			applied.fontColor = Preferences.getInt(App.context.getString(R.string.pref_warnaHuruf_int_key), App.context.getResources().getInteger(R.integer.pref_warnaHuruf_int_default));
+			applied.backgroundColor = Preferences.getInt(App.context.getString(R.string.pref_warnaLatar_int_key), App.context.getResources().getInteger(R.integer.pref_warnaLatar_int_default)); 
+			applied.verseNumberColor = Preferences.getInt(App.context.getString(R.string.pref_warnaNomerAyat_int_key), App.context.getResources().getInteger(R.integer.pref_warnaNomerAyat_int_default));
 			applied.fontRedColor = hitungHurufMerah(S.applied.fontColor, S.applied.backgroundColor);
 			
 			// calculation of backgroundColor brightness. Used somewhere else.
@@ -291,7 +291,7 @@ public class S {
 	 * @param handler Jangan null kalo mau dicek ulang 200ms kemudian. Harus null kalo jangan ulang lagi. 20110620 Uda ga dipake lagi.
 	 */
 	public static void applyLanguagePreference(final Handler handler, final int cobaLagi) {
-		String bahasa = Preferences.getString(R.string.pref_bahasa_key, R.string.pref_bahasa_default);
+		String bahasa = Preferences.getString(App.context.getString(R.string.pref_bahasa_key), App.context.getString(R.string.pref_bahasa_default));
 
 		Locale locale;
 		if ("DEFAULT".equals(bahasa)) { //$NON-NLS-1$

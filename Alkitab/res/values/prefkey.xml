@@ -25,7 +25,6 @@
 	<integer name="pref_warnaNomerAyat_int_default">0xff8080ff</integer>
 	
 	<string name="pref_boldHuruf_key">boldHuruf</string>
-	<bool name="pref_boldHuruf_default">false</bool>
 	
 	<string name="pref_jenisHuruf_key">jenisHuruf</string>
 	
