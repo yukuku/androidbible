@@ -96,10 +96,16 @@ public class InternalDb {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
 		try {
+			long _id;
+			
 			SQLiteStatement stmt = db.compileStatement("select _id from " + Db.TABEL_Bukmak2 + " where " + Db.Bukmak2.jenis + "=? and " + Db.Bukmak2.ari + "=?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			stmt.bindLong(1, jenis);
-			stmt.bindLong(2, ari);
-			long _id = stmt.simpleQueryForLong();
+			try {
+				stmt.bindLong(1, jenis);
+				stmt.bindLong(2, ari);
+				_id = stmt.simpleQueryForLong();
+			} finally {
+				stmt.close();
+			}
 			
 			String[] params = {String.valueOf(_id)};
 			db.delete(Db.TABEL_Bukmak2_Label, Db.Bukmak2_Label.bukmak2_id + "=?", params); //$NON-NLS-1$
@@ -522,7 +528,11 @@ public class InternalDb {
 	public int getUrutanTerbesarEdisiYes() {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		SQLiteStatement stmt = db.compileStatement("select max(" + Db.Edisi.urutan + ") from " + Db.TABEL_Edisi);  //$NON-NLS-1$//$NON-NLS-2$
-		return (int) stmt.simpleQueryForLong();
+		try {
+			return (int) stmt.simpleQueryForLong();
+		} finally {
+			stmt.close();
+		}
 	}
 
 	public void tambahEdisiYesDenganAktif(MVersionYes edisi, boolean aktif) {
@@ -542,10 +552,14 @@ public class InternalDb {
 	public boolean adakahEdisiYesDenganNamafile(String namafile) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		SQLiteStatement stmt = db.compileStatement("select count(*) from " + Db.TABEL_Edisi + " where " + Db.Edisi.jenis + "=? and " + Db.Edisi.namafile + "=?");    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
-		stmt.clearBindings();
-		stmt.bindLong(1, Db.Edisi.jenis_yes);
-		stmt.bindString(2, namafile);
-		return stmt.simpleQueryForLong() > 0;
+		try {
+			stmt.clearBindings();
+			stmt.bindLong(1, Db.Edisi.jenis_yes);
+			stmt.bindString(2, namafile);
+			return stmt.simpleQueryForLong() > 0;
+		} finally {
+			stmt.close();
+		}
 	}
 
 	public void hapusEdisiYes(MVersionYes edisi) {
@@ -604,7 +618,11 @@ public class InternalDb {
 	public int getUrutanTerbesarLabel() {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		SQLiteStatement stmt = db.compileStatement("select max(" + Db.Label.urutan + ") from " + Db.TABEL_Label);  //$NON-NLS-1$//$NON-NLS-2$
-		return (int) stmt.simpleQueryForLong();
+		try {
+			return (int) stmt.simpleQueryForLong();
+		} finally {
+			stmt.close();
+		}
 	}
 
 	public Label tambahLabel(String judul, String warnaLatar) {
@@ -676,7 +694,11 @@ public class InternalDb {
 	public int countBukmakDenganLabel(Label label) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		SQLiteStatement stmt = db.compileStatement("select count(*) from " + Db.TABEL_Bukmak2_Label + " where " + Db.Bukmak2_Label.label_id + "=?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		stmt.bindLong(1, label._id);
-		return (int) stmt.simpleQueryForLong();
+		try {
+			stmt.bindLong(1, label._id);
+			return (int) stmt.simpleQueryForLong();
+		} finally {
+			stmt.close();
+		}
 	}
 }
