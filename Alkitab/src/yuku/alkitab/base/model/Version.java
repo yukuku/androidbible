@@ -1,17 +1,17 @@
 package yuku.alkitab.base.model;
 
-import yuku.alkitab.base.storage.Pembaca;
+import yuku.alkitab.base.storage.Reader;
 
 public class Version {
-	public Pembaca reader;
+	public Reader reader;
 	
-	public Version(Pembaca pembaca) {
-		this.reader = pembaca;
+	public Version(Reader reader) {
+		this.reader = reader;
 	}
 	
 	private Book[] volatile_xkitab;
 	private Book[] volatile_xkitabConsecutive;
-	private IndexPerikop volatile_indexPerikop;
+	private PericopeIndex volatile_indexPerikop;
 	private boolean volatile_indexPerikopSudahCobaBaca = false;
 	
 	private synchronized Book[] getXkitab() {
@@ -74,7 +74,7 @@ public class Version {
 		throw new RuntimeException("Ga ketemu satu pun kitab yang ga null. Info edisi: " + (this.reader == null? "pembaca=null": (this.reader.getJudul() + " nkitab=" + xkitab.length)));    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 	
-	public synchronized IndexPerikop getIndexPerikop() {
+	public synchronized PericopeIndex getIndexPerikop() {
 		if (!volatile_indexPerikopSudahCobaBaca) {
 			volatile_indexPerikop = this.reader.bacaIndexPerikop();
 			volatile_indexPerikopSudahCobaBaca = true;

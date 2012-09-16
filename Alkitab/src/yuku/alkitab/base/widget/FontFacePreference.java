@@ -21,19 +21,19 @@ import yuku.alkitab.base.ac.FontManagerActivity;
 import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.base.util.FontManager.FontEntry;
 
-public class JenisHurufPreference extends ListPreference {
-	public static final String TAG = JenisHurufPreference.class.getSimpleName();
+public class FontFacePreference extends ListPreference {
+	public static final String TAG = FontFacePreference.class.getSimpleName();
 	
 	List<FontManager.FontEntry> fontEntries = new ArrayList<FontManager.FontEntry>();
 	int originalNumberOfEntries;
 	int mClickedDialogEntryIndex;
 	
-    public JenisHurufPreference(Context context, AttributeSet attrs) {
+    public FontFacePreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public JenisHurufPreference(Context context) {
+    public FontFacePreference(Context context) {
         super(context);
         init();
     }
@@ -152,7 +152,7 @@ public class JenisHurufPreference extends ListPreference {
 				 * click, and dismisses the dialog.
 				 */
 				if (which != entryValues.length - 1) {
-					JenisHurufPreference.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
+					FontFacePreference.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
 					dialog.dismiss();
 				} else {
 					getContext().startActivity(FontManagerActivity.createIntent());

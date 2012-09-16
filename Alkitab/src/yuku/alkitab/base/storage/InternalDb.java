@@ -23,7 +23,7 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.BookmarkListActivity;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
 import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.Bukmak2;
+import yuku.alkitab.base.model.Bookmark2;
 import yuku.alkitab.base.model.Label;
 import yuku.alkitab.base.renungan.ArtikelRenunganHarian;
 import yuku.alkitab.base.renungan.ArtikelSantapanHarian;
@@ -40,7 +40,7 @@ public class InternalDb {
 		this.helper = helper;
 	}
 	
-	public Bukmak2 getBukmakByAri(int ari, int jenis) {
+	public Bookmark2 getBukmakByAri(int ari, int jenis) {
 		Cursor cursor = helper.getReadableDatabase().query(
 			Db.TABEL_Bukmak2, 
 			new String[] {BaseColumns._ID, Db.Bukmak2.tulisan, Db.Bukmak2.waktuTambah, Db.Bukmak2.waktuUbah}, 
@@ -52,13 +52,13 @@ public class InternalDb {
 		try {
 			if (!cursor.moveToNext()) return null;
 			
-			return Bukmak2.dariCursor(cursor, ari, jenis);
+			return Bookmark2.dariCursor(cursor, ari, jenis);
 		} finally {
 			cursor.close();
 		}
 	}
 	
-	public Bukmak2 getBukmakById(long id) {
+	public Bookmark2 getBukmakById(long id) {
 		Cursor cursor = helper.getReadableDatabase().query(
 			Db.TABEL_Bukmak2, 
 			null, 
@@ -70,18 +70,18 @@ public class InternalDb {
 		try {
 			if (!cursor.moveToNext()) return null;
 			
-			return Bukmak2.dariCursor(cursor);
+			return Bookmark2.dariCursor(cursor);
 		} finally {
 			cursor.close();
 		}
 	}
 
-	public int updateBukmak(Bukmak2 bukmak) {
+	public int updateBukmak(Bookmark2 bukmak) {
 		return helper.getWritableDatabase().update(Db.TABEL_Bukmak2, bukmak.toContentValues(), "_id=?", new String[] {String.valueOf(bukmak._id)}); //$NON-NLS-1$
 	}
 	
-	public Bukmak2 insertBukmak(int ari, int jenis, String tulisan, Date waktuTambah, Date waktuUbah) {
-		Bukmak2 res = new Bukmak2(ari, jenis, tulisan, waktuTambah, waktuUbah);
+	public Bookmark2 insertBukmak(int ari, int jenis, String tulisan, Date waktuTambah, Date waktuUbah) {
+		Bookmark2 res = new Bookmark2(ari, jenis, tulisan, waktuTambah, waktuUbah);
 		SQLiteDatabase db = helper.getWritableDatabase();
 		long _id = db.insert(Db.TABEL_Bukmak2, null, res.toContentValues());
 		if (_id == -1) {
@@ -143,7 +143,7 @@ public class InternalDb {
         }
 	}
 
-	public void importBukmak(List<Bukmak2> xbukmak, boolean tumpuk, TObjectIntHashMap<Bukmak2> bukmakToRelIdMap, TIntLongHashMap labelRelIdToAbsIdMap, TIntObjectHashMap<TIntList> bukmak2RelIdToLabelRelIdsMap) {
+	public void importBukmak(List<Bookmark2> xbukmak, boolean tumpuk, TObjectIntHashMap<Bookmark2> bukmakToRelIdMap, TIntLongHashMap labelRelIdToAbsIdMap, TIntObjectHashMap<TIntList> bukmak2RelIdToLabelRelIdsMap) {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
 		try {
@@ -152,7 +152,7 @@ public class InternalDb {
 			{ // tulis bukmak2 baru
 				String[] params1 = new String[1];
 				String[] params2 = new String[2];
-				for (Bukmak2 bukmak: xbukmak) {
+				for (Bookmark2 bukmak: xbukmak) {
 					int bukmak2_relId = bukmakToRelIdMap.get(bukmak);
 					
 					params2[0] = String.valueOf(bukmak.ari);
@@ -326,7 +326,7 @@ public class InternalDb {
 				try {
 					if (c.moveToNext()) { // cek dulu ada ato ga
 						// sudah ada!
-						Bukmak2 bukmak = Bukmak2.dariCursor(c);
+						Bookmark2 bukmak = Bookmark2.dariCursor(c);
 						bukmak.waktuUbah = new Date();
 						if (warnaRgb != -1) {
 							bukmak.tulisan = U.enkodStabilo(warnaRgb);
@@ -341,7 +341,7 @@ public class InternalDb {
 							// ga usa ngapa2in, dari belum ada jadi tetep ga ada
 						} else {
 							Date kini = new Date();
-							Bukmak2 bukmak = new Bukmak2(ari, Db.Bukmak2.jenis_stabilo, U.enkodStabilo(warnaRgb), kini, kini); 
+							Bookmark2 bukmak = new Bookmark2(ari, Db.Bukmak2.jenis_stabilo, U.enkodStabilo(warnaRgb), kini, kini); 
 							db.insert(Db.TABEL_Bukmak2, null, bukmak.toContentValues());
 						}
 					}
@@ -361,7 +361,7 @@ public class InternalDb {
 		try {
 			if (c.moveToNext()) {
 				// sudah ada!
-				Bukmak2 bukmak = Bukmak2.dariCursor(c);
+				Bookmark2 bukmak = Bookmark2.dariCursor(c);
 				return U.dekodStabilo(bukmak.tulisan);
 			} else {
 				return -1;
@@ -637,7 +637,7 @@ public class InternalDb {
 		}
 	}
 
-	public void updateLabels(Bukmak2 bukmak, Set<Label> labels) {
+	public void updateLabels(Bookmark2 bukmak, Set<Label> labels) {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
 		try {

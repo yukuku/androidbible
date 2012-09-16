@@ -65,11 +65,11 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.compat.Api8;
 import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.config.D;
-import yuku.alkitab.base.dialog.JenisStabiloDialog;
+import yuku.alkitab.base.dialog.TypeHighlightDialog;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeNoteDialog;
 import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.Blok;
+import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.Db;
@@ -209,7 +209,7 @@ public class IsiActivity extends BaseActivity {
 			if (devotion_name != null) {
 				for (String nama: DevotionActivity.AVAILABLE_NAMES) {
 					if (devotion_name.equals(nama)) {
-						S.penampungan.devotion_name = devotion_name;
+						S.temporary.devotion_name = devotion_name;
 					}
 				}
 			}
@@ -751,7 +751,7 @@ public class IsiActivity extends BaseActivity {
 			final int ariKp = Ari.encode(S.activeBook.bookId, this.chapter_1, 0);
 			int warnaRgb = S.getDb().getWarnaRgbStabilo(ariKp, selected);
 			
-			new JenisStabiloDialog(this, ariKp, selected, new JenisStabiloDialog.JenisStabiloCallback() {
+			new TypeHighlightDialog(this, ariKp, selected, new TypeHighlightDialog.JenisStabiloCallback() {
 				@Override public void onOk(int warnaRgb) {
 					uncheckAll();
 					verseAdapter_.loadAttributeMap();
@@ -810,13 +810,13 @@ public class IsiActivity extends BaseActivity {
 	private void applyPreferences(boolean languageToo) {
 		// appliance of background color
 		{
-			root.setBackgroundColor(S.penerapan.backgroundColor);
-			lsText.setCacheColorHint(S.penerapan.backgroundColor);
+			root.setBackgroundColor(S.applied.backgroundColor);
+			lsText.setCacheColorHint(S.applied.backgroundColor);
 			
 			// on Holo theme, the button background is quite transparent, so we need to adjust button text color
 			// to dark one if user chooses to use a light background color.
 			if (Build.VERSION.SDK_INT >= 11) {
-				if (S.penerapan.backgroundBrightness > 0.7f) {
+				if (S.applied.backgroundBrightness > 0.7f) {
 					bGoto.setTextColor(0xff000000); // black
 				} else {
 					bGoto.setTextColor(0xfff3f3f3); // default button text color on Holo
@@ -851,7 +851,7 @@ public class IsiActivity extends BaseActivity {
 		editor.putInt(PREFKEY_lastBook, S.activeBook.bookId);
 		editor.putInt(PREFKEY_lastChapter, chapter_1);
 		editor.putInt(PREFKEY_lastVerse, getVerseBasedOnScroll());
-		editor.putString(PREFKEY_devotion_name, S.penampungan.devotion_name);
+		editor.putString(PREFKEY_devotion_name, S.temporary.devotion_name);
 		editor.putString(PREFKEY_lastVersion, S.activeVersionId);
 		history.simpan(editor);
 		editor.commit();
@@ -1185,7 +1185,7 @@ public class IsiActivity extends BaseActivity {
 		// loading data no need to use async. // 20100417 updated to not use async, it's not useful.
 		{
 			int[] pericope_aris;
-			Blok[] pericope_blocks;
+			PericopeBlock[] pericope_blocks;
 			int nblock;
 			
 			String[] verses = S.muatTeks(S.activeVersion, S.activeBook, chapter_1);
@@ -1193,7 +1193,7 @@ public class IsiActivity extends BaseActivity {
 			//# max is set to 30 (one chapter has max of 30 blocks. Already almost impossible)
 			int max = 30;
 			pericope_aris = new int[max];
-			pericope_blocks = new Blok[max];
+			pericope_blocks = new PericopeBlock[max];
 			nblock = S.activeVersion.reader.loadPericope(S.activeVersion, S.activeBook.bookId, chapter_1, pericope_aris, pericope_blocks, max); 
 			
 			//# fill adapter with new data. make sure all checked states are reset

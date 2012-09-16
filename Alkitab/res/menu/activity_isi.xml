@@ -5,7 +5,7 @@
 		android:id="@+id/menuBukmak"
 		android:title="@string/pembatas_buku" 
 		android:titleCondensed="@string/pembatas_condensed"
-		android:icon="@drawable/ic_menu_bukmak" android:showAsAction="ifRoom"/>
+		android:icon="@drawable/ic_menu_bookmark" android:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/menuSearch2" 
 		android:title="@string/cari_v"
@@ -13,11 +13,11 @@
 	<item
 		android:id="@+id/menuEdisi"
 		android:title="@string/versi" 
-		android:icon="@drawable/ic_menu_edisi" android:showAsAction="always" />
+		android:icon="@drawable/ic_menu_versions" android:showAsAction="always" />
 	<item
 		android:id="@+id/menuRenungan"
 		android:title="@string/renungan"
-		android:icon="@drawable/ic_menu_renungan" android:showAsAction="ifRoom" />
+		android:icon="@drawable/ic_menu_devotion" android:showAsAction="ifRoom" />
 	<item
 		android:id="@+id/menuSongs"
 		android:title="@string/menuSongs"
@@ -25,11 +25,11 @@
 	<item
 		android:id="@+id/menuPengaturan"
 		android:title="@string/menuPengaturan" 
-		android:icon="@drawable/ic_menu_pengaturan" android:showAsAction="ifRoom" />
+		android:icon="@drawable/ic_menu_settings" android:showAsAction="ifRoom" />
 	<item
 		android:id="@+id/menuDonasi"
 		android:title="@string/menuDonasi"
-		android:icon="@drawable/ic_menu_donasi" android:showAsAction="never" />
+		android:icon="@drawable/ic_menu_donation" android:showAsAction="never" />
 	<item
 		android:id="@+id/menuBantuan"
 		android:title="@string/menuBantuan"

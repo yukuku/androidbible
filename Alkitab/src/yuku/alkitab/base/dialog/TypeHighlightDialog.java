@@ -13,7 +13,7 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.util.IntArrayList;
 
-public class JenisStabiloDialog {
+public class TypeHighlightDialog {
 	final AlertDialog alert;
 	final JenisStabiloCallback callback;
 	
@@ -42,7 +42,7 @@ public class JenisStabiloDialog {
 	 * Buka dialog buat 1 ayat
 	 * @param warnaRgb -1 kalo ga terpilih. #rrggbb ga pake alpha
 	 */
-	public JenisStabiloDialog(Context context, int ari, JenisStabiloCallback callback, int warnaRgb, CharSequence judul) {
+	public TypeHighlightDialog(Context context, int ari, JenisStabiloCallback callback, int warnaRgb, CharSequence judul) {
 		this(context, Ari.toKitabPasal(ari), satuSaja(Ari.toVerse(ari)), callback, warnaRgb, judul);
 	}
 	
@@ -57,7 +57,7 @@ public class JenisStabiloDialog {
 	 * @param warnaRgb -1 kalo ga terpilih. #rrggbb ga pake alpha
 	 * @param ayatTerpilih ayat2 yang dipilih.
 	 */
-	public JenisStabiloDialog(Context context, int ariKp, IntArrayList ayatTerpilih, JenisStabiloCallback callback, int warnaRgb, CharSequence judul) {
+	public TypeHighlightDialog(Context context, int ariKp, IntArrayList ayatTerpilih, JenisStabiloCallback callback, int warnaRgb, CharSequence judul) {
 		this.ariKp = ariKp;
 		this.ayatTerpilih = ayatTerpilih;
 		this.callback = callback;
@@ -68,7 +68,7 @@ public class JenisStabiloDialog {
 		.setNegativeButton(R.string.cancel, null)
 		.create();
 		
-		dialogView.setBackgroundColor(S.penerapan.backgroundColor);
+		dialogView.setBackgroundColor(S.applied.backgroundColor);
 		
 		if (judul != null) {
 			this.alert.setTitle(judul);

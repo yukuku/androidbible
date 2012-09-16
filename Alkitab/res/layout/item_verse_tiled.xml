@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<yuku.alkitab.base.widget.AyatItem
+<yuku.alkitab.base.widget.VerseItem
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
@@ -22,6 +22,6 @@
 			android:id="@+id/lAyat" />
 	</RelativeLayout>
 	<include
-		layout="@layout/atributayat"
+		layout="@layout/verse_attributes"
 		android:id="@+id/atributayat" />
-</yuku.alkitab.base.widget.AyatItem>
+</yuku.alkitab.base.widget.VerseItem>

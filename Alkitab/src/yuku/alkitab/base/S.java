@@ -17,12 +17,12 @@ import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.Version;
-import yuku.alkitab.base.renungan.TukangDonlot;
+import yuku.alkitab.base.renungan.Downloader;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.InternalDbHelper;
-import yuku.alkitab.base.storage.InternalPembaca;
-import yuku.alkitab.base.storage.PembacaDecoder;
+import yuku.alkitab.base.storage.InternalReader;
 import yuku.alkitab.base.storage.Preferences;
+import yuku.alkitab.base.storage.ReaderDecoder;
 import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.base.storage.SongDbHelper;
 import yuku.alkitab.base.util.FontManager;
@@ -33,41 +33,43 @@ public class S {
 	static final String TAG = S.class.getSimpleName();
 
 	/**
-	 * penerapan dari pengaturan
+	 * values applied from settings
 	 */
-	public static class penerapan {
-		/** dalam dp */
-		public static float ukuranHuruf2dp;
+	public static class applied {
+		/** in dp */
+		public static float fontSize2dp;
 		
-		public static Typeface jenisHuruf;
+		public static Typeface fontFace;
 		public static float lineSpacingMult;
-		public static int tebalHuruf;
+		public static int fontBold;
 		
-		public static int warnaHuruf; 
-		public static int warnaHurufMerah;
+		public static int fontColor; 
+		public static int fontRedColor;
 		public static int backgroundColor;
-		public static int warnaNomerAyat;
+		public static int verseNumberColor;
 		
 		/** 0.f to 1.f */
 		public static float backgroundBrightness;
 		
 		// semua di bawah dalam px
-		public static int jarakIndenParagraf;
-		public static int jarakMenjorokSatu;
-		public static int jarakMenjorokDua;
-		public static int jarakMenjorokTiga;
-		public static int jarakMenjorokEmpat;
-		public static int jarakMenjorokExtra;
+		public static int paragraphIndentSpacing;
+		public static int indentSpacing1;
+		public static int indentSpacing2;
+		public static int indentSpacing3;
+		public static int indentSpacing4;
+		public static int indentSpacingExtra;
 	}
 	
 	/**
-	 * Seting yang tetep hidup walau aktiviti dimusnahkan.
-	 * Pastikan ga ada acuan ke aktiviti, supaya memori ga bocor.
+	 * Settings that are still alive even when activities are destroyed.
+	 * Ensure there is no references to any activity to prevent memory leak.
+	 * 
+	 * TODO this is not a good practice
 	 */
-	public static class penampungan {
+	public static class temporary {
 		public static String devotion_name = null;
-		public static Date renungan_tanggalan = null;
-		public static int renungan_skrol = 0;
+		public static Date devotion_date = null;
+		public static int devotion_scroll = 0;
 	}
 	
 	//# 22nya harus siap di siapinKitab
@@ -75,7 +77,7 @@ public class S {
 	public static Book activeBook;
 	public static String activeVersionId;
 
-	public static TukangDonlot tukangDonlot;
+	public static Downloader downloader;
 	
 	static {
 		int a = R.drawable.ambilwarna_cursor;
@@ -92,7 +94,7 @@ public class S {
 	public static synchronized Version getEdisiInternal() {
 		if (edisiInternal == null) {
 			BuildConfig c = BuildConfig.get(App.context);
-			edisiInternal = new Version(new InternalPembaca(App.context, c.internalPrefix, c.internalJudul, new PembacaDecoder.Ascii()));
+			edisiInternal = new Version(new InternalReader(App.context, c.internalPrefix, c.internalJudul, new ReaderDecoder.Ascii()));
 		}
 		return edisiInternal;
 	}
@@ -107,39 +109,39 @@ public class S {
 	public static void calculateAppliedValuesBasedOnPreferences() {
 		//# atur ukuran huruf isi berdasarkan pengaturan
 		{
-			penerapan.ukuranHuruf2dp = Preferences.getFloat(R.string.pref_ukuranHuruf2_key, 17.f);
+			applied.fontSize2dp = Preferences.getFloat(R.string.pref_ukuranHuruf2_key, 17.f);
 		}
 		
 		//# atur jenis huruf, termasuk boldnya
 		{
-			penerapan.jenisHuruf = FontManager.typeface(Preferences.getString(R.string.pref_jenisHuruf_key, null));
-			penerapan.lineSpacingMult = Preferences.getFloat(R.string.pref_lineSpacingMult_key, 1.f);
-			penerapan.tebalHuruf = Preferences.getBoolean(R.string.pref_boldHuruf_key, R.bool.pref_boldHuruf_default)? Typeface.BOLD: Typeface.NORMAL;
+			applied.fontFace = FontManager.typeface(Preferences.getString(R.string.pref_jenisHuruf_key, null));
+			applied.lineSpacingMult = Preferences.getFloat(R.string.pref_lineSpacingMult_key, 1.f);
+			applied.fontBold = Preferences.getBoolean(R.string.pref_boldHuruf_key, R.bool.pref_boldHuruf_default)? Typeface.BOLD: Typeface.NORMAL;
 		}
 		
 		//# atur warna teks, latar, dan nomer ayat
 		{
-			penerapan.warnaHuruf = Preferences.getInt(R.string.pref_warnaHuruf_int_key, R.integer.pref_warnaHuruf_int_default);
-			penerapan.backgroundColor = Preferences.getInt(R.string.pref_warnaLatar_int_key, R.integer.pref_warnaLatar_int_default); 
-			penerapan.warnaNomerAyat = Preferences.getInt(R.string.pref_warnaNomerAyat_int_key, R.integer.pref_warnaNomerAyat_int_default);
-			penerapan.warnaHurufMerah = hitungHurufMerah(S.penerapan.warnaHuruf, S.penerapan.backgroundColor);
+			applied.fontColor = Preferences.getInt(R.string.pref_warnaHuruf_int_key, R.integer.pref_warnaHuruf_int_default);
+			applied.backgroundColor = Preferences.getInt(R.string.pref_warnaLatar_int_key, R.integer.pref_warnaLatar_int_default); 
+			applied.verseNumberColor = Preferences.getInt(R.string.pref_warnaNomerAyat_int_key, R.integer.pref_warnaNomerAyat_int_default);
+			applied.fontRedColor = hitungHurufMerah(S.applied.fontColor, S.applied.backgroundColor);
 			
 			// calculation of backgroundColor brightness. Used somewhere else.
 			{
-				int c = penerapan.backgroundColor;
-				penerapan.backgroundBrightness = (0.30f * Color.red(c) + 0.59f * Color.green(c) + 0.11f * Color.blue(c)) * 0.003921568627f;
+				int c = applied.backgroundColor;
+				applied.backgroundBrightness = (0.30f * Color.red(c) + 0.59f * Color.green(c) + 0.11f * Color.blue(c)) * 0.003921568627f;
 			}
 		}
 		
 		Resources res = App.context.getResources();
 		
-		float skalaBerdasarUkuranHuruf = penerapan.ukuranHuruf2dp / 17.f;
-		penerapan.jarakIndenParagraf = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.indenParagraf) + 0.5f);
-		penerapan.jarakMenjorokSatu = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokSatu) + 0.5f);
-		penerapan.jarakMenjorokDua = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokDua) + 0.5f);
-		penerapan.jarakMenjorokTiga = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokTiga) + 0.5f);
-		penerapan.jarakMenjorokEmpat = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokEmpat) + 0.5f);
-		penerapan.jarakMenjorokExtra = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokExtra) + 0.5f);
+		float skalaBerdasarUkuranHuruf = applied.fontSize2dp / 17.f;
+		applied.paragraphIndentSpacing = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.indenParagraf) + 0.5f);
+		applied.indentSpacing1 = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokSatu) + 0.5f);
+		applied.indentSpacing2 = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokDua) + 0.5f);
+		applied.indentSpacing3 = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokTiga) + 0.5f);
+		applied.indentSpacing4 = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokEmpat) + 0.5f);
+		applied.indentSpacingExtra = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokExtra) + 0.5f);
 	}
 	
 	private static int hitungHurufMerah(int warnaHuruf, int warnaLatar) {

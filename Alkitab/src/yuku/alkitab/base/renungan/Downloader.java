@@ -18,7 +18,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 
-public class TukangDonlot extends Thread {
+public class Downloader extends Thread {
 	public interface OnStatusDonlotListener {
 		void onStatusDonlot(String s);
 	}
@@ -30,7 +30,7 @@ public class TukangDonlot extends Thread {
 	private LinkedList<IArtikel> antrian_ = new LinkedList<IArtikel>();
 	private boolean nganggur_;
 	
-	public TukangDonlot(Context context, OnStatusDonlotListener listener) {
+	public Downloader(Context context, OnStatusDonlotListener listener) {
 		context_ = context;
 		listener_ = listener;
 	}

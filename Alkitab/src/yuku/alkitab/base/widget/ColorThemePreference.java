@@ -19,17 +19,17 @@ import android.widget.CheckedTextView;
 import yuku.alkitab.R;
 import yuku.ambilwarna.widget.AmbilWarnaPreference;
 
-public class TemaWarnaPreference extends ListPreference {
-	private static final String TAG = TemaWarnaPreference.class.getSimpleName();
+public class ColorThemePreference extends ListPreference {
+	private static final String TAG = ColorThemePreference.class.getSimpleName();
 	
 	int mClickedDialogEntryIndex;
 	String mValue;
 	
-	public TemaWarnaPreference(Context context, AttributeSet attrs) {
+	public ColorThemePreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public TemaWarnaPreference(Context context) {
+	public ColorThemePreference(Context context) {
 		this(context, null);
 	}
 
@@ -97,7 +97,7 @@ public class TemaWarnaPreference extends ListPreference {
 				 * Clicking on an item simulates the positive button
 				 * click, and dismisses the dialog.
 				 */
-				TemaWarnaPreference.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
+				ColorThemePreference.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
 				dialog.dismiss();
 			}
 		});

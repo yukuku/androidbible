@@ -7,14 +7,14 @@ import java.util.Arrays;
 
 import yuku.bintex.BintexReader;
 
-public class IndexPerikop {
-	public static final String TAG = IndexPerikop.class.getSimpleName();
+public class PericopeIndex {
+	public static final String TAG = PericopeIndex.class.getSimpleName();
 	
 	private int[] xari;
 	private int[] xofset;
 	
-	public static IndexPerikop baca(BintexReader reader) throws IOException {
-		IndexPerikop ip = new IndexPerikop();
+	public static PericopeIndex baca(BintexReader reader) throws IOException {
+		PericopeIndex ip = new PericopeIndex();
 		
 		int nentri = reader.readInt();
 		
@@ -71,7 +71,7 @@ public class IndexPerikop {
 		return xari[index];
 	}
 	
-	public Blok getBlok(BintexReader in, int index) {
+	public PericopeBlock getBlok(BintexReader in, int index) {
 		try {
 			int ofset = xofset[index];
 			int posKini = in.getPos();
@@ -82,7 +82,7 @@ public class IndexPerikop {
 
 			in.skip(ofset - posKini);
 			
-			return Blok.baca(in);
+			return PericopeBlock.baca(in);
 		} catch (IOException e) {
 			Log.e(TAG, "getBlok ngaco", e); //$NON-NLS-1$
 			

@@ -18,7 +18,7 @@ public class SettingsActivity extends PreferenceActivity {
 	@SuppressWarnings("deprecation") @Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		addPreferencesFromResource(R.xml.pengaturan);
+		addPreferencesFromResource(R.xml.settings);
 		setTitle(R.string.pengaturan_alkitab);
 		
 		autoUpdateSummary(R.string.pref_ukuranHuruf2_key, new PreferenceUpdate() {

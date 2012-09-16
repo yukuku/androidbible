@@ -32,14 +32,6 @@
                     android:layout_weight="1"
                     android:minWidth="200sp"
                     android:prompt="@string/pilihKitab_s" />
-
-                <ImageButton
-                    android:id="@+id/bKeLoncat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/desc_type_verse_reference_directly"
-                    android:padding="6dp"
-                    android:src="@drawable/tombol_ke_loncat" />
             </LinearLayout>
 
             <LinearLayout

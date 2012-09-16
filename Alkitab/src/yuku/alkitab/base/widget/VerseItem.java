@@ -9,20 +9,20 @@ import android.widget.LinearLayout;
 
 import yuku.alkitab.R;
 
-public class AyatItem extends LinearLayout implements Checkable {
-	public static final String TAG = AyatItem.class.getSimpleName();
+public class VerseItem extends LinearLayout implements Checkable {
+	public static final String TAG = VerseItem.class.getSimpleName();
 	
 	private boolean checked;
 	private Drawable checkedBg;
 	
-	public AyatItem(Context context, AttributeSet attrs) {
+	public VerseItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
 	@Override protected void onDraw(Canvas canvas) {
 		if (checked) {
 			if (checkedBg == null) {
-				checkedBg = getResources().getDrawable(R.drawable.item_ayat_bg_checked);
+				checkedBg = getResources().getDrawable(R.drawable.item_verse_bg_checked);
 			}
 			
 			checkedBg.setBounds(0, 0, getWidth(), getHeight());

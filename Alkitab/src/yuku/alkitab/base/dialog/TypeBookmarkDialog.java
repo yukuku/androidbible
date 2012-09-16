@@ -23,7 +23,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.compat.Api11;
 import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
-import yuku.alkitab.base.model.Bukmak2;
+import yuku.alkitab.base.model.Bookmark2;
 import yuku.alkitab.base.model.Label;
 import yuku.alkitab.base.storage.Db;
 import yuku.devoxx.flowlayout.FlowLayout;
@@ -111,7 +111,7 @@ public class TypeBookmarkDialog {
 	};
 
 	public void show() {
-		final Bukmak2 bukmak = this.ari == 0? S.getDb().getBukmakById(id): S.getDb().getBukmakByAri(ari, Db.Bukmak2.kind_bookmark);
+		final Bookmark2 bukmak = this.ari == 0? S.getDb().getBukmakById(id): S.getDb().getBukmakByAri(ari, Db.Bukmak2.kind_bookmark);
 		
 		// set yang belum diset
 		if (this.ari == 0 && bukmak != null) {
@@ -154,10 +154,10 @@ public class TypeBookmarkDialog {
 		new AlertDialog.Builder(context)
 		.setView(dialogView)
 		.setTitle(alamat)
-		.setIcon(R.drawable.jenis_bukmak)
+		.setIcon(R.drawable.attribute_type_bookmark)
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
-				Bukmak2 bukmakGaFinal = bukmak;
+				Bookmark2 bukmakGaFinal = bukmak;
 				String tulisan = tTulisan.getText().toString();
 				
 				// kalo ga ada tulisan, kasi alamat aja.

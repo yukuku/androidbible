@@ -9,7 +9,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:id="@+id/imgAtributBukmak"
-		android:src="@drawable/jenis_bukmak"
+		android:src="@drawable/attribute_type_bookmark"
 		android:background="@null"
 		android:paddingRight="6dp"
 		android:contentDescription="@string/desc_open_bookmark"/>
@@ -17,7 +17,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:id="@+id/imgAtributCatatan"
-		android:src="@drawable/jenis_catatan"
+		android:src="@drawable/attribute_type_note"
 		android:background="@null"
 		android:paddingRight="6dp"
 		android:contentDescription="@string/desc_open_note"/>

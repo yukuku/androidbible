@@ -49,7 +49,7 @@ import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertProgressListener;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertResult;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.storage.Preferences;
-import yuku.alkitab.base.storage.YesPembaca;
+import yuku.alkitab.base.storage.YesReader;
 import yuku.alkitab.base.util.AddonManager;
 import yuku.alkitab.base.util.AddonManager.DonlotListener;
 import yuku.alkitab.base.util.AddonManager.DonlotThread;
@@ -458,7 +458,7 @@ public class VersionsActivity extends BaseActivity {
 		}
 		
 		try {
-			YesPembaca pembaca = new YesPembaca(getApplicationContext(), filename);
+			YesReader pembaca = new YesReader(getApplicationContext(), filename);
 			int urutanTerbesar = S.getDb().getUrutanTerbesarEdisiYes();
 			if (urutanTerbesar == 0) urutanTerbesar = 100; // default
 			
@@ -660,7 +660,7 @@ public class VersionsActivity extends BaseActivity {
 		@Override
 		public Version getVersion(Context context) {
 			if (adaFileDatanya()) {
-				return new Version(new YesPembaca(context, AddonManager.getEdisiPath(namafile_preset)));
+				return new Version(new YesReader(context, AddonManager.getEdisiPath(namafile_preset)));
 			} else {
 				return null;
 			}
@@ -685,7 +685,7 @@ public class VersionsActivity extends BaseActivity {
 		@Override
 		public Version getVersion(Context context) {
 			if (adaFileDatanya()) {
-				return new Version(new YesPembaca(context, namafile));
+				return new Version(new YesReader(context, namafile));
 			} else {
 				return null;
 			}

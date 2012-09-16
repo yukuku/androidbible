@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 import yuku.bintex.BintexReader;
 
-public class Blok {
+public class PericopeBlock {
 
 //	Blok {
 //		Uint8 versi = 1
@@ -24,8 +24,8 @@ public class Blok {
 	public String judul;
 	public String[] xparalel;
 	
-	public static Blok baca(BintexReader in) throws IOException {
-		Blok b = new Blok();
+	public static PericopeBlock baca(BintexReader in) throws IOException {
+		PericopeBlock b = new PericopeBlock();
 		
 		int versi = in.readUint8();
 		

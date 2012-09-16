@@ -54,7 +54,7 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.LabelEditorDialog;
 import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
-import yuku.alkitab.base.model.Bukmak2;
+import yuku.alkitab.base.model.Bookmark2;
 import yuku.alkitab.base.model.Label;
 import yuku.alkitab.base.storage.Db;
 import yuku.ambilwarna.AmbilWarnaDialog;
@@ -128,7 +128,7 @@ public class BookmarkActivity extends BaseActivity {
 
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		getSupportMenuInflater().inflate(R.menu.activity_bukmak, menu);
+		getSupportMenuInflater().inflate(R.menu.activity_bookmark, menu);
 	}
 	
 	@Override
@@ -250,8 +250,8 @@ public class BookmarkActivity extends BaseActivity {
 			@Override protected Object doInBackground(Boolean... params) {
 				final boolean tumpuk = params[0];
 				
-				final List<Bukmak2> xbukmak = new ArrayList<Bukmak2>();
-				final TObjectIntHashMap<Bukmak2> bukmakToRelIdMap = new TObjectIntHashMap<Bukmak2>();
+				final List<Bookmark2> xbukmak = new ArrayList<Bookmark2>();
+				final TObjectIntHashMap<Bookmark2> bukmakToRelIdMap = new TObjectIntHashMap<Bookmark2>();
 				final List<Label> xlabel = new ArrayList<Label>();
 				final TObjectIntHashMap<Label> labelToRelIdMap = new TObjectIntHashMap<Label>();
 				final TIntLongHashMap labelRelIdToAbsIdMap = new TIntLongHashMap();
@@ -269,9 +269,9 @@ public class BookmarkActivity extends BaseActivity {
 
 					Xml.parse(fis, Xml.Encoding.UTF_8, new DefaultHandler2() {
 						@Override public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-							if (localName.equals(Bukmak2.XMLTAG_Bukmak2)) {
-								Bukmak2 bukmak = Bukmak2.dariAttributes(attributes);
-								int bukmak2_relId = Bukmak2.getRelId(attributes); 
+							if (localName.equals(Bookmark2.XMLTAG_Bukmak2)) {
+								Bookmark2 bukmak = Bookmark2.dariAttributes(attributes);
+								int bukmak2_relId = Bookmark2.getRelId(attributes); 
 								xbukmak.add(bukmak);
 								bukmakToRelIdMap.put(bukmak, bukmak2_relId);
 								count_bukmak++;
@@ -384,12 +384,12 @@ public class BookmarkActivity extends BaseActivity {
 					xml.startDocument("utf-8", null); //$NON-NLS-1$
 					xml.startTag(null, "backup"); //$NON-NLS-1$
 					
-					List<Bukmak2> xbukmak = new ArrayList<Bukmak2>();
+					List<Bookmark2> xbukmak = new ArrayList<Bookmark2>();
 					{ // write bookmarks
 						Cursor cursor = S.getDb().listSemuaBukmak();
 						try {
 							while (cursor.moveToNext()) {
-								Bukmak2 bukmak = Bukmak2.dariCursor(cursor);
+								Bookmark2 bukmak = Bookmark2.dariCursor(cursor);
 								xbukmak.add(bukmak); // daftarkan bukmak
 								bukmak.writeXml(xml, xbukmak.size() /* 1-based relId */);
 							}
@@ -410,7 +410,7 @@ public class BookmarkActivity extends BaseActivity {
 					
 					{ // write mapping from bukmak to label
 						for (int bukmak2_relId_0 = 0; bukmak2_relId_0 < xbukmak.size(); bukmak2_relId_0++) {
-							Bukmak2 bukmak = xbukmak.get(bukmak2_relId_0);
+							Bookmark2 bukmak = xbukmak.get(bukmak2_relId_0);
 							TLongList labelIds = S.getDb().listLabelIds(bukmak._id);
 							if (labelIds != null && labelIds.size() > 0) {
 								for (int i = 0; i < labelIds.size(); i++) {
@@ -504,7 +504,7 @@ public class BookmarkActivity extends BaseActivity {
 	};
 	
 	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		getMenuInflater().inflate(R.menu.context_bukmak, menu);
+		getMenuInflater().inflate(R.menu.context_bookmark, menu);
 
 		android.view.MenuItem menuRenameLabel = menu.findItem(R.id.menuRenameLabel);
 		android.view.MenuItem menuDeleteLabel = menu.findItem(R.id.menuDeleteLabel);
@@ -649,7 +649,7 @@ public class BookmarkActivity extends BaseActivity {
 			ImageView imgFilterIcon = U.getView(res, R.id.imgFilterIcon);
 			if (position < 3) {
 				imgFilterIcon.setVisibility(View.VISIBLE);
-				imgFilterIcon.setImageResource(position == 0? R.drawable.jenis_bukmak: position == 1? R.drawable.jenis_catatan: position == 2? R.drawable.warnastabilo_checked: 0);
+				imgFilterIcon.setImageResource(position == 0? R.drawable.attribute_type_bookmark: position == 1? R.drawable.attribute_type_note: position == 2? R.drawable.highlight_color_checked: 0);
 				imgFilterIcon.setBackgroundColor(position == 2? 0xffffff00: 0);
 			} else {
 				imgFilterIcon.setVisibility(View.GONE);

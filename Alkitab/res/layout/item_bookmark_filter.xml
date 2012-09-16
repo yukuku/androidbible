@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="8dp"
-        android:src="@drawable/jenis_catatan"
+        android:src="@drawable/attribute_type_note"
         tools:ignore="ContentDescription" />
 
     <TextView

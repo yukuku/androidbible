@@ -33,18 +33,18 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.dialog.JenisStabiloDialog;
-import yuku.alkitab.base.dialog.JenisStabiloDialog.JenisStabiloCallback;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog.Listener;
+import yuku.alkitab.base.dialog.TypeHighlightDialog;
+import yuku.alkitab.base.dialog.TypeHighlightDialog.JenisStabiloCallback;
 import yuku.alkitab.base.dialog.TypeNoteDialog;
 import yuku.alkitab.base.dialog.TypeNoteDialog.RefreshCallback;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.Label;
 import yuku.alkitab.base.storage.Db;
+import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.IntArrayList;
-import yuku.alkitab.base.util.PengaturTampilan;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.Search2Engine;
 import yuku.alkitab.base.util.Sqlitil;
@@ -126,13 +126,13 @@ public class BookmarkListActivity extends BaseActivity {
 		
 		adapter = new BukmakListAdapter(this, cursor);
 
-		panelList.setBackgroundColor(S.penerapan.backgroundColor);
-		tEmpty.setTextColor(S.penerapan.warnaHuruf);
+		panelList.setBackgroundColor(S.applied.backgroundColor);
+		tEmpty.setTextColor(S.applied.fontColor);
 		
-		warnaHilite = U.getHighlightColorByBrightness(S.penerapan.backgroundBrightness);
+		warnaHilite = U.getHighlightColorByBrightness(S.applied.backgroundBrightness);
 		
 		lv.setAdapter(adapter);
-		lv.setCacheColorHint(S.penerapan.backgroundColor);
+		lv.setCacheColorHint(S.applied.backgroundColor);
 		lv.setOnItemClickListener(lv_click);
 		lv.setEmptyView(emptyView);
 
@@ -261,7 +261,7 @@ public class BookmarkListActivity extends BaseActivity {
 
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		getSupportMenuInflater().inflate(R.menu.activity_bukmaklist, menu);
+		getSupportMenuInflater().inflate(R.menu.activity_bookmark_list, menu);
 	}
 	
 	@Override
@@ -372,7 +372,7 @@ public class BookmarkListActivity extends BaseActivity {
 	};
 	
 	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		getMenuInflater().inflate(R.menu.context_bukmaklist, menu);
+		getMenuInflater().inflate(R.menu.context_bookmark_list, menu);
 		
 		// sesuaikan string berdasarkan jenis.
 		android.view.MenuItem menuHapusBukmak = menu.findItem(R.id.menuHapusBukmak);
@@ -426,7 +426,7 @@ public class BookmarkListActivity extends BaseActivity {
 				int warnaRgb = U.dekodStabilo(cursor.getString(cursor.getColumnIndexOrThrow(Db.Bukmak2.tulisan)));
 				String alamat = S.reference(S.activeVersion, ari);
 				
-				new JenisStabiloDialog(this, ari, new JenisStabiloCallback() {
+				new TypeHighlightDialog(this, ari, new JenisStabiloCallback() {
 					@Override public void onOk(int warnaRgb) {
 						adapter.getCursor().requery();
 						if (lagiPakeFilter != null) filterPakeLagiPakeFilter();
@@ -496,7 +496,7 @@ public class BookmarkListActivity extends BaseActivity {
 					lTanggal.setText(getString(R.string.waktuTambah_edited_waktuUbah, Sqlitil.toLocaleDateMedium(waktuTambah_i), Sqlitil.toLocaleDateMedium(waktuUbah_i)));
 				}
 				
-				PengaturTampilan.aturTampilanTeksTanggalBukmak(lTanggal);
+				Appearances.applyBookmarkDateTextAppearance(lTanggal);
 			}
 			
 			int ari = cursor.getInt(col_ari);
@@ -510,10 +510,10 @@ public class BookmarkListActivity extends BaseActivity {
 			
 			if (filter_jenis == Db.Bukmak2.kind_bookmark) {
 				lTulisan.setText(lagiPakeFilter != null? Search2Engine.hilite(tulisan, filterQueryProvider.getXkata(), warnaHilite): tulisan);
-				PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
+				Appearances.applyBookmarkTitleTextAppearance(lTulisan);
 				CharSequence cuplikan = lagiPakeFilter != null? Search2Engine.hilite(isi, filterQueryProvider.getXkata(), warnaHilite): isi;
 
-				PengaturTampilan.aturIsiDanTampilanCuplikanBukmak(lCuplikan, alamat, cuplikan);
+				Appearances.applyBookmarkSnippetContentAndAppearance(lCuplikan, alamat, cuplikan);
 				
 				long _id = cursor.getLong(col__id);
 				List<Label> labels = S.getDb().listLabels(_id);
@@ -529,13 +529,13 @@ public class BookmarkListActivity extends BaseActivity {
 				
 			} else if (filter_jenis == Db.Bukmak2.kind_note) {
 				lTulisan.setText(alamat);
-				PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
+				Appearances.applyBookmarkTitleTextAppearance(lTulisan);
 				lCuplikan.setText(lagiPakeFilter != null? Search2Engine.hilite(tulisan, filterQueryProvider.getXkata(), warnaHilite): tulisan);
-				PengaturTampilan.aturTampilanTeksIsi(lCuplikan);
+				Appearances.applyTextAppearance(lCuplikan);
 				
 			} else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
 				lTulisan.setText(alamat);
-				PengaturTampilan.aturTampilanTeksJudulBukmak(lTulisan);
+				Appearances.applyBookmarkTitleTextAppearance(lTulisan);
 				
 				SpannableStringBuilder cuplikan = lagiPakeFilter != null? Search2Engine.hilite(isi, filterQueryProvider.getXkata(), warnaHilite): new SpannableStringBuilder(isi);
 				int warnaStabilo = U.dekodStabilo(tulisan);
@@ -543,7 +543,7 @@ public class BookmarkListActivity extends BaseActivity {
 					cuplikan.setSpan(new BackgroundColorSpan(U.alphaMixStabilo(warnaStabilo)), 0, cuplikan.length(), 0);
 				}
 				lCuplikan.setText(cuplikan);
-				PengaturTampilan.aturTampilanTeksIsi(lCuplikan);
+				Appearances.applyTextAppearance(lCuplikan);
 			}
 		}
 	};

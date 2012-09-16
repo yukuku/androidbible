@@ -40,7 +40,7 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.util.IntArrayList;
-import yuku.alkitab.base.util.PengaturTampilan;
+import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.Search2Engine;
 import yuku.alkitab.base.util.Search2Engine.Query;
@@ -162,10 +162,10 @@ public class Search2Activity extends BaseActivity {
 			tFilterRumit.setTextColor(0xff000000);
 		}
 		
-		lsHasilCari.setBackgroundColor(S.penerapan.backgroundColor);
-		lsHasilCari.setCacheColorHint(S.penerapan.backgroundColor);
+		lsHasilCari.setBackgroundColor(S.applied.backgroundColor);
+		lsHasilCari.setCacheColorHint(S.applied.backgroundColor);
 		
-		warnaHilite = U.getHighlightColorByBrightness(S.penerapan.backgroundBrightness);
+		warnaHilite = U.getHighlightColorByBrightness(S.applied.backgroundBrightness);
 		
 		lsHasilCari.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -562,12 +562,12 @@ public class Search2Activity extends BaseActivity {
 			int pasal_1 = Ari.toChapter(ari);
 			int ayat_1 = Ari.toVerse(ari);
 			SpannableStringBuilder sb = new SpannableStringBuilder(S.alamat(book, pasal_1, ayat_1));
-			PengaturTampilan.aturTampilanTeksAlamatHasilCari(lAlamat, sb);
+			Appearances.applySearchResultReferenceAppearance(lAlamat, sb);
 			
 			String ayat = S.muatSatuAyat(S.activeVersion, book, pasal_1, ayat_1);
 			ayat = U.removeSpecialCodes(ayat);
 			lCuplikan.setText(Search2Engine.hilite(ayat, xkata, warnaHilite));
-			PengaturTampilan.aturTampilanTeksIsi(lCuplikan);
+			Appearances.applyTextAppearance(lCuplikan);
 			
 			return res;
 		}

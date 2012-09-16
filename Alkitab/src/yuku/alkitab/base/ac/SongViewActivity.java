@@ -100,14 +100,14 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		bDownload.setOnClickListener(bDownload_click);
 		
 		// for colors of bg, text, etc
-		V.get(this, android.R.id.content).setBackgroundColor(S.penerapan.backgroundColor);
+		V.get(this, android.R.id.content).setBackgroundColor(S.applied.backgroundColor);
 		
 		templateCustomVars = new Bundle();
-		templateCustomVars.putString("background_color", String.format("#%06x", S.penerapan.backgroundColor & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
-		templateCustomVars.putString("text_color", String.format("#%06x", S.penerapan.warnaHuruf & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
-		templateCustomVars.putString("verse_number_color", String.format("#%06x", S.penerapan.warnaNomerAyat & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
-		templateCustomVars.putString("text_size", S.penerapan.ukuranHuruf2dp + "px"); // somehow this is automatically scaled to dp. //$NON-NLS-1$ //$NON-NLS-2$
-		templateCustomVars.putString("line_spacing_mult", String.valueOf(S.penerapan.lineSpacingMult)); //$NON-NLS-1$
+		templateCustomVars.putString("background_color", String.format("#%06x", S.applied.backgroundColor & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
+		templateCustomVars.putString("text_color", String.format("#%06x", S.applied.fontColor & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
+		templateCustomVars.putString("verse_number_color", String.format("#%06x", S.applied.verseNumberColor & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
+		templateCustomVars.putString("text_size", S.applied.fontSize2dp + "px"); // somehow this is automatically scaled to dp. //$NON-NLS-1$ //$NON-NLS-2$
+		templateCustomVars.putString("line_spacing_mult", String.valueOf(S.applied.lineSpacingMult)); //$NON-NLS-1$
 		
 		{
 			String fontName = Preferences.getString(R.string.pref_jenisHuruf_key, null);

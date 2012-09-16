@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.Blok;
+import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.Label;
 
 public class U {
@@ -48,7 +48,7 @@ public class U {
 	}
 
 	// di sini supaya bisa dites dari luar
-	public static int[] bikinPenunjukKotak(int nayat, int[] perikop_xari, Blok[] perikop_xblok, int nblok) {
+	public static int[] bikinPenunjukKotak(int nayat, int[] perikop_xari, PericopeBlock[] perikop_xblok, int nblok) {
 		int[] res = new int[nayat + nblok];
 
 		int posBlok = 0;

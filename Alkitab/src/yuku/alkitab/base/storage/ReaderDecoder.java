@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 import yuku.alkitab.base.util.Utf8Decoder;
 
-public interface PembacaDecoder {
+public interface ReaderDecoder {
 	String[] pisahJadiAyat(byte[] ba, boolean hurufKecilkan);
 	String jadikanStringTunggal(byte[] ba, boolean hurufKecilkan);
 
-	public class Ascii implements PembacaDecoder {
+	public class Ascii implements ReaderDecoder {
 		private void hurufkecilkan(byte[] ba) {
 			for (int i = 0, blen = ba.length; i < blen; i++) {
 				byte b = ba[i];
@@ -55,7 +55,7 @@ public interface PembacaDecoder {
 		}
 	}
 	
-	public class Utf8 implements PembacaDecoder {
+	public class Utf8 implements ReaderDecoder {
 		private ArrayList<String> pisahJadiAyatBuf = new ArrayList<String>(60);
 		
 		@Override public String[] pisahJadiAyat(byte[] ba, boolean hurufKecilkan) {

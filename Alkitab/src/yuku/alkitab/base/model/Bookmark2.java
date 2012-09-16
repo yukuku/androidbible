@@ -13,7 +13,7 @@ import org.xmlpull.v1.XmlSerializer;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.util.Sqlitil;
 
-public class Bukmak2 {
+public class Bookmark2 {
 	public long _id;
 	public int ari;
 	public int jenis;
@@ -24,7 +24,7 @@ public class Bukmak2 {
 	/**
 	 * Bikin bukmak2 baru tanpa _id
 	 */
-	public Bukmak2(int ari, int jenis, String tulisan, Date waktuTambah, Date waktuUbah) {
+	public Bookmark2(int ari, int jenis, String tulisan, Date waktuTambah, Date waktuUbah) {
 		this.ari = ari;
 		this.jenis = jenis;
 		this.tulisan = tulisan;
@@ -76,25 +76,25 @@ public class Bukmak2 {
 		xml.endTag(null, XMLTAG_Bukmak2);
 	}
 	
-	public static Bukmak2 dariCursor(Cursor cursor) {
+	public static Bookmark2 dariCursor(Cursor cursor) {
 		int ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bukmak2.ari));
 		int jenis = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bukmak2.jenis));
 		
 		return dariCursor(cursor, ari, jenis);
 	}
 
-	public static Bukmak2 dariCursor(Cursor cursor, int ari, int jenis) {
+	public static Bookmark2 dariCursor(Cursor cursor, int ari, int jenis) {
 		long _id = cursor.getLong(cursor.getColumnIndexOrThrow(BaseColumns._ID));
 		String tulisan = cursor.getString(cursor.getColumnIndexOrThrow(Db.Bukmak2.tulisan));
 		Date waktuTambah = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bukmak2.waktuTambah)));
 		Date waktuUbah = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bukmak2.waktuUbah)));
 		
-		Bukmak2 res = new Bukmak2(ari, jenis, tulisan, waktuTambah, waktuUbah);
+		Bookmark2 res = new Bookmark2(ari, jenis, tulisan, waktuTambah, waktuUbah);
 		res._id = _id;
 		return res;
 	}
 
-	public static Bukmak2 dariAttributes(Attributes attributes) {
+	public static Bookmark2 dariAttributes(Attributes attributes) {
 		int ari = Integer.parseInt(attributes.getValue("", XMLATTR_ari)); //$NON-NLS-1$
 		String jenis_s = attributes.getValue("", XMLATTR_jenis); //$NON-NLS-1$
 		int jenis = jenis_s.equals(XMLVAL_bukmak)? Db.Bukmak2.kind_bookmark: jenis_s.equals(XMLVAL_catatan)? Db.Bukmak2.kind_note: jenis_s.equals(XMLVAL_stabilo)? Db.Bukmak2.jenis_stabilo: Integer.parseInt(jenis_s);
@@ -102,7 +102,7 @@ public class Bukmak2 {
 		Date waktuTambah = Sqlitil.toDate(Integer.parseInt(attributes.getValue("", XMLATTR_waktuTambah))); //$NON-NLS-1$
 		Date waktuUbah = Sqlitil.toDate(Integer.parseInt(attributes.getValue("", XMLATTR_waktuUbah))); //$NON-NLS-1$
 		
-		return new Bukmak2(ari, jenis, tulisan, waktuTambah, waktuUbah);
+		return new Bookmark2(ari, jenis, tulisan, waktuTambah, waktuUbah);
 	}
 	
 	public static int getRelId(Attributes attributes) {

@@ -11,18 +11,18 @@ import java.util.Arrays;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.config.D;
 import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.Blok;
+import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.Version;
-import yuku.alkitab.base.model.IndexPerikop;
+import yuku.alkitab.base.model.PericopeIndex;
 import yuku.alkitab.base.model.Book;
 import yuku.bintex.BintexReader;
 
-public class YesPembaca extends Pembaca {
-	private static final String TAG = YesPembaca.class.getSimpleName();
+public class YesReader extends Reader {
+	private static final String TAG = YesReader.class.getSimpleName();
 	
 	private String nf;
 	private RandomAccessFile f;
-	private PembacaDecoder pembacaDecoder;
+	private ReaderDecoder readerDecoder;
 	
 	private long teks_dasarOffset;
 	private long perikopBlok_dasarOffset;
@@ -33,7 +33,7 @@ public class YesPembaca extends Pembaca {
 	private int perikopAda = 0; // default ga ada
 	private int encoding = 1; // 1 = ascii; 2 = utf-8;
 	
-	public YesPembaca(Context context, String nf) {
+	public YesReader(Context context, String nf) {
 		super(context);
 		
 		this.nf = nf;
@@ -234,16 +234,16 @@ public class YesPembaca extends Pembaca {
 	@Override
 	public String[] muatTeks(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
 		// init pembacaDecoder
-		if (pembacaDecoder == null) {
+		if (readerDecoder == null) {
 			if (encoding == 1) {
-				pembacaDecoder = new PembacaDecoder.Ascii();
+				readerDecoder = new ReaderDecoder.Ascii();
 			} else if (encoding == 2) {
-				pembacaDecoder = new PembacaDecoder.Utf8();
+				readerDecoder = new ReaderDecoder.Utf8();
 			} else {
 				Log.e(TAG, "Encoding " + encoding + " not recognized!");  //$NON-NLS-1$//$NON-NLS-2$
-				pembacaDecoder = new PembacaDecoder.Ascii();
+				readerDecoder = new ReaderDecoder.Ascii();
 			}
-			Log.d(TAG, "encoding " + encoding + " so decoder is " + pembacaDecoder.getClass().getName()); //$NON-NLS-1$ //$NON-NLS-2$
+			Log.d(TAG, "encoding " + encoding + " so decoder is " + readerDecoder.getClass().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		try {
@@ -266,9 +266,9 @@ public class YesPembaca extends Pembaca {
 			f.read(ba);
 			
 			if (janganPisahAyat) {
-				return new String[] {pembacaDecoder.jadikanStringTunggal(ba, hurufKecil)};
+				return new String[] {readerDecoder.jadikanStringTunggal(ba, hurufKecil)};
 			} else {
-				String[] xayat = pembacaDecoder.pisahJadiAyat(ba, hurufKecil);
+				String[] xayat = readerDecoder.pisahJadiAyat(ba, hurufKecil);
 				if (D.EBUG) for (int i = 0; i < xayat.length; i++) {
 					Log.d(TAG, "ayat_1 " + (i+1) + ": " + U.dumpChars(xayat[i]));  //$NON-NLS-1$//$NON-NLS-2$
 				}
@@ -291,7 +291,7 @@ public class YesPembaca extends Pembaca {
 	}
 
 	@Override
-	public IndexPerikop bacaIndexPerikop() {
+	public PericopeIndex bacaIndexPerikop() {
 		long wmulai = System.currentTimeMillis();
 		try {
 			init();
@@ -308,7 +308,7 @@ public class YesPembaca extends Pembaca {
 			}
 			
 			BintexReader in = new BintexReader(new RandomInputStream(f));
-			return IndexPerikop.baca(in);
+			return PericopeIndex.baca(in);
 		} catch (Exception e) {
 			Log.e(TAG, "bacaIndexPerikop error", e); //$NON-NLS-1$
 			return null;
@@ -318,21 +318,21 @@ public class YesPembaca extends Pembaca {
 	}
 
 	@Override
-	public int loadPericope(Version version, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
+	public int loadPericope(Version version, int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max) {
 		try {
 			init();
 			
 			if (D.EBUG) Log.d(TAG, "muatPerikop dipanggil untuk kitab=" + kitab + " pasal_1=" + pasal); //$NON-NLS-1$ //$NON-NLS-2$
 			
-			IndexPerikop indexPerikop = version.getIndexPerikop();
-			if (indexPerikop == null) {
+			PericopeIndex pericopeIndex = version.getIndexPerikop();
+			if (pericopeIndex == null) {
 				return 0; // ga ada perikop!
 			}
 	
 			int ariMin = Ari.encode(kitab, pasal, 0);
 			int ariMax = Ari.encode(kitab, pasal + 1, 0);
 	
-			int pertama = indexPerikop.cariPertama(ariMin, ariMax);
+			int pertama = pericopeIndex.cariPertama(ariMin, ariMax);
 			if (pertama == -1) {
 				return 0;
 			}
@@ -349,19 +349,19 @@ public class YesPembaca extends Pembaca {
 			
 			BintexReader in = new BintexReader(new RandomInputStream(f));
 			while (true) {
-				int ari = indexPerikop.getAri(kini);
+				int ari = pericopeIndex.getAri(kini);
 
 				if (ari >= ariMax) {
 					// habis. Uda ga relevan
 					break;
 				}
 
-				Blok blok = indexPerikop.getBlok(in, kini);
+				PericopeBlock pericopeBlock = pericopeIndex.getBlok(in, kini);
 				kini++;
 
 				if (res < max) {
 					xari[res] = ari;
-					xblok[res] = blok;
+					xblok[res] = pericopeBlock;
 					res++;
 				} else {
 					break;

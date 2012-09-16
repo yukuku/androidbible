@@ -16,7 +16,7 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.config.D;
 import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.Blok;
+import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
@@ -357,7 +357,7 @@ public class ConvertPdbToYes {
 		return ss;
 	}
 	
-	/** Perhatikan {@link Blok} untuk cara bikinnya. */
+	/** Perhatikan {@link PericopeBlock} untuk cara bikinnya. */
 	private void simpanBlok(int jenis, String judul, int kitab_0, int pasal_0, int ayat_0) {
 		int ari = Ari.encode(kitab_0, pasal_0 + 1, ayat_0 + 1);
 

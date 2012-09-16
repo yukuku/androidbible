@@ -36,9 +36,9 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.renungan.ArtikelRenunganHarian;
 import yuku.alkitab.base.renungan.ArtikelSantapanHarian;
+import yuku.alkitab.base.renungan.Downloader;
+import yuku.alkitab.base.renungan.Downloader.OnStatusDonlotListener;
 import yuku.alkitab.base.renungan.IArtikel;
-import yuku.alkitab.base.renungan.TukangDonlot;
-import yuku.alkitab.base.renungan.TukangDonlot.OnStatusDonlotListener;
 import yuku.alkitab.base.widget.CallbackSpan;
 
 import com.actionbarsherlock.view.Menu;
@@ -123,7 +123,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		
 		setContentView(R.layout.activity_devotion);
 		
-		memudar = AnimationUtils.loadAnimation(this, R.anim.memudar);
+		memudar = AnimationUtils.loadAnimation(this, R.anim.fade_out);
 
 		lHeader = (TextView) findViewById(R.id.lHeader);
 		lIsi = (TextView) findViewById(R.id.lIsi);
@@ -131,7 +131,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		bKiri = (ImageButton) findViewById(R.id.bKiri);
 		lStatus = (TextView) findViewById(R.id.lStatus);
 		
-		scrollIsi.setBackgroundColor(S.penerapan.backgroundColor);
+		scrollIsi.setBackgroundColor(S.applied.backgroundColor);
 		
 		bKiri.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
@@ -169,37 +169,37 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		});
 		
 		//# atur difot! 
-		if (S.penampungan.renungan_tanggalan == null) S.penampungan.renungan_tanggalan = new Date();
-		if (S.penampungan.devotion_name == null) S.penampungan.devotion_name = DEFAULT;
+		if (S.temporary.devotion_date == null) S.temporary.devotion_date = new Date();
+		if (S.temporary.devotion_name == null) S.temporary.devotion_name = DEFAULT;
 		
-		nama = S.penampungan.devotion_name;
-		tanggalan = S.penampungan.renungan_tanggalan;
+		nama = S.temporary.devotion_name;
+		tanggalan = S.temporary.devotion_date;
 		
 		new PemintaMasaDepan().execute();
 		
 		{ // betulin ui update 
-			TukangDonlot td = S.tukangDonlot;
+			Downloader td = S.downloader;
 			if (td != null) {
 				td.setListener(this);
 			}
 		}
 		
-		tampilkan(S.penampungan.renungan_skrol);
+		tampilkan(S.temporary.devotion_scroll);
 	}
 	
 	@Override protected void onDestroy() {
 		super.onDestroy();
 		
-		S.penampungan.devotion_name = nama;
-		S.penampungan.renungan_tanggalan = tanggalan;
-		S.penampungan.renungan_skrol = scrollIsi.getScrollY();
+		S.temporary.devotion_name = nama;
+		S.temporary.devotion_date = tanggalan;
+		S.temporary.devotion_scroll = scrollIsi.getScrollY();
 		
-		Log.d(TAG, "renungan_skrol = " + S.penampungan.renungan_skrol); //$NON-NLS-1$
+		Log.d(TAG, "renungan_skrol = " + S.temporary.devotion_scroll); //$NON-NLS-1$
 	}
 		
 	private void bikinMenu(Menu menu) {
 		menu.clear();
-		getSupportMenuInflater().inflate(R.menu.activity_renungan, menu);
+		getSupportMenuInflater().inflate(R.menu.activity_devotion, menu);
 	}
 	
 	@Override
@@ -334,11 +334,11 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			lIsi.setMovementMethod(LinkMovementMethod.getInstance());
 			
 			// text formats
-			lIsi.setTextColor(S.penerapan.warnaHuruf);
-			lIsi.setBackgroundColor(S.penerapan.backgroundColor);
-			lIsi.setTypeface(S.penerapan.jenisHuruf, S.penerapan.tebalHuruf);
-			lIsi.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.penerapan.ukuranHuruf2dp);
-			lIsi.setLineSpacing(0, S.penerapan.lineSpacingMult);
+			lIsi.setTextColor(S.applied.fontColor);
+			lIsi.setBackgroundColor(S.applied.backgroundColor);
+			lIsi.setTypeface(S.applied.fontFace, S.applied.fontBold);
+			lIsi.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
+			lIsi.setLineSpacing(0, S.applied.lineSpacingMult);
 			
 			if (skrol != 0) {
 				scrollIsi.post(new Runnable() {
@@ -375,9 +375,9 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	}
 
 	synchronized void akanPerlu(String nama, String tgl, boolean penting) {
-		if (S.tukangDonlot == null) {
-			S.tukangDonlot = new TukangDonlot(this, this);
-			S.tukangDonlot.start();
+		if (S.downloader == null) {
+			S.downloader = new Downloader(this, this);
+			S.downloader.start();
 		}
 
 		IArtikel artikel = null;
@@ -388,8 +388,8 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		}
 
 		if (artikel != null) {
-			boolean tertambah = S.tukangDonlot.tambah(artikel, penting);
-			if (tertambah) S.tukangDonlot.interruptKaloNganggur();
+			boolean tertambah = S.downloader.tambah(artikel, penting);
+			if (tertambah) S.downloader.interruptKaloNganggur();
 		}
 	}
 	

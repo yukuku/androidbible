@@ -15,7 +15,7 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
-import yuku.alkitab.base.model.Bukmak2;
+import yuku.alkitab.base.model.Bookmark2;
 import yuku.alkitab.base.storage.Db;
 
 public class TypeNoteDialog {
@@ -30,7 +30,7 @@ public class TypeNoteDialog {
 	
 	int ari;
 	String alamat;
-	Bukmak2 bukmak;
+	Bookmark2 bukmak;
 
 	public interface RefreshCallback {
 		void onDone();
@@ -49,7 +49,7 @@ public class TypeNoteDialog {
 		
 		this.dialog = new AlertDialog.Builder(context)
 		.setView(dialogLayout)
-		.setIcon(R.drawable.jenis_catatan)
+		.setIcon(R.drawable.attribute_type_note)
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {

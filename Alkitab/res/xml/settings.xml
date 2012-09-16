@@ -4,14 +4,14 @@
 	<PreferenceCategory
 		android:title="@string/pref_penampilan_teks">
 
-		<yuku.alkitab.base.widget.UkuranHuruf2Preference
+		<yuku.alkitab.base.widget.FontSize2Preference
 			android:key="@string/pref_ukuranHuruf2_key"
 			android:title="@string/pref_ukuran_huruf"
 			android:summary="@string/pref_ubah_ukuran_huruf_teks_alkitab_perbesar_atau_perkecil"
 			android:positiveButtonText="@string/ok"
 			android:negativeButtonText="@string/cancel"
 			android:defaultValue="@integer/pref_ukuranHuruf2_default" />
-		<yuku.alkitab.base.widget.JenisHurufPreference 
+		<yuku.alkitab.base.widget.FontFacePreference 
 			android:key="@string/pref_jenisHuruf_key"
 			android:title="@string/pref_jenis_huruf"
 			android:summary="@string/pref_ganti_bentuk_huruf_teks_alkitab"
@@ -33,7 +33,7 @@
 		<PreferenceScreen
 			android:summary="@string/pref_atur_warna_teks_latar_belakang_dan_nomor_ayat"
 			android:title="@string/pref_warna">
-			<yuku.alkitab.base.widget.TemaWarnaPreference
+			<yuku.alkitab.base.widget.ColorThemePreference
 				android:key="_gapake_temaWarna"
 				android:title="@string/pref_tema_warna"
 				android:summary="@string/pref_atur_warna_teks_latar_belakang_dan" 

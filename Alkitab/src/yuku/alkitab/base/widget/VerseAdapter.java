@@ -21,13 +21,13 @@ import android.widget.TextView.BufferType;
 import yuku.alkitab.R;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.S.penerapan;
+import yuku.alkitab.base.S.applied;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.Blok;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.storage.Db.Bukmak2;
-import yuku.alkitab.base.util.PengaturTampilan;
+import yuku.alkitab.base.util.Appearances;
 
 public class VerseAdapter extends BaseAdapter {
 	public static final String TAG = VerseAdapter.class.getSimpleName();
@@ -42,7 +42,7 @@ public class VerseAdapter extends BaseAdapter {
 	Book kitab_;
 	int pasal_1_;
 	String[] dataAyat_;
-	Blok[] perikop_xblok_;
+	PericopeBlock[] perikop_xblok_;
 	/**
 	 * Tiap elemen, kalo 0 sampe positif, berarti menunjuk ke AYAT di rendered_
 	 * kalo negatif, -1 berarti index 0 di perikop_*, -2 (a) berarti index 1 (b) di perikop_*
@@ -61,7 +61,7 @@ public class VerseAdapter extends BaseAdapter {
 		density_ = context.getResources().getDisplayMetrics().density;
 	}
 	
-	public synchronized void setData(Book book, int pasal_1, String[] xayat, int[] perikop_xari, Blok[] perikop_xblok, int nblok) {
+	public synchronized void setData(Book book, int pasal_1, String[] xayat, int[] perikop_xari, PericopeBlock[] perikop_xblok, int nblok) {
 		kitab_ = book;
 		pasal_1_ = pasal_1;
 		dataAyat_ = xayat.clone();
@@ -115,7 +115,7 @@ public class VerseAdapter extends BaseAdapter {
 		if (id >= 0) {
 			// AYAT. bukan judul perikop.
 			
-			AyatItem res;
+			VerseItem res;
 			
 			String isi = dataAyat_[id];
 			boolean pakeBukmak = atributMap_ == null? false: (atributMap_[id] & 0x1) != 0;
@@ -136,27 +136,27 @@ public class VerseAdapter extends BaseAdapter {
 					throw new RuntimeException("Karakter kedua bukan @. Isi ayat: " + isi); //$NON-NLS-1$
 				}
 				
-				if (convertView == null || convertView.getId() != R.layout.item_ayat_tehel) {
-					res = (AyatItem) LayoutInflater.from(context_).inflate(R.layout.item_ayat_tehel, null);
-					res.setId(R.layout.item_ayat_tehel);
+				if (convertView == null || convertView.getId() != R.layout.item_verse_tiled) {
+					res = (VerseItem) LayoutInflater.from(context_).inflate(R.layout.item_verse_tiled, null);
+					res.setId(R.layout.item_verse_tiled);
 				} else {
-					res = (AyatItem) convertView;
+					res = (VerseItem) convertView;
 				}
 				
 				tampilanAyatTehel(res.findViewById(R.id.sebelahKiri), id + 1, isi, warnaStabilo, checked);
 				
 			} else {
-				if (convertView == null || convertView.getId() != R.layout.item_ayat_sederhana) {
-					res = (AyatItem) LayoutInflater.from(context_).inflate(R.layout.item_ayat_sederhana, null);
-					res.setId(R.layout.item_ayat_sederhana);
+				if (convertView == null || convertView.getId() != R.layout.item_verse_simple) {
+					res = (VerseItem) LayoutInflater.from(context_).inflate(R.layout.item_verse_simple, null);
+					res.setId(R.layout.item_verse_simple);
 				} else {
-					res = (AyatItem) convertView;
+					res = (VerseItem) convertView;
 				}
 				
 				TextView lIsiAyat = (TextView) res.findViewById(R.id.lIsiAyat);
 				tampilanAyatSederhana(lIsiAyat, id + 1, isi, warnaStabilo, checked);
 				
-				PengaturTampilan.aturTampilanTeksIsi(lIsiAyat);
+				Appearances.applyTextAppearance(lIsiAyat);
 				if (checked) lIsiAyat.setTextColor(0xff000000); // override with black!
 			}
 
@@ -176,31 +176,31 @@ public class VerseAdapter extends BaseAdapter {
 			// JUDUL PERIKOP. bukan ayat.
 
 			View res;
-			if (convertView == null || convertView.getId() != R.layout.header_perikop) {
-				res = LayoutInflater.from(context_).inflate(R.layout.header_perikop, null);
-				res.setId(R.layout.header_perikop);
+			if (convertView == null || convertView.getId() != R.layout.pericope_header) {
+				res = LayoutInflater.from(context_).inflate(R.layout.pericope_header, null);
+				res.setId(R.layout.pericope_header);
 			} else {
 				res = convertView;
 			}
 			
-			Blok blok = perikop_xblok_[-id-1];
+			PericopeBlock pericopeBlock = perikop_xblok_[-id-1];
 			
 			TextView lJudul = (TextView) res.findViewById(R.id.lJudul);
 			TextView lXparalel = (TextView) res.findViewById(R.id.lXparalel);
 			
-			lJudul.setText(blok.judul);
+			lJudul.setText(pericopeBlock.judul);
 			
 			// matikan padding atas kalau position == 0 ATAU sebelum ini juga judul perikop
 			if (position == 0 || penunjukKotak_[position-1] < 0) {
 				lJudul.setPadding(0, 0, 0, 0);
 			} else {
-				lJudul.setPadding(0, (int) (S.penerapan.ukuranHuruf2dp * density_), 0, 0);
+				lJudul.setPadding(0, (int) (S.applied.fontSize2dp * density_), 0, 0);
 			}
 			
-			PengaturTampilan.aturTampilanTeksJudulPerikop(lJudul);
+			Appearances.applyPericopeTitleAppearance(lJudul);
 			
 			// gonekan paralel kalo ga ada
-			if (blok.xparalel.length == 0) {
+			if (pericopeBlock.xparalel.length == 0) {
 				lXparalel.setVisibility(View.GONE);
 			} else {
 				lXparalel.setVisibility(View.VISIBLE);
@@ -208,9 +208,9 @@ public class VerseAdapter extends BaseAdapter {
 				SpannableStringBuilder sb = new SpannableStringBuilder("("); //$NON-NLS-1$
 				int len = 1;
 
-				int total = blok.xparalel.length;
+				int total = pericopeBlock.xparalel.length;
 				for (int i = 0; i < total; i++) {
-					String paralel = blok.xparalel[i];
+					String paralel = pericopeBlock.xparalel[i];
 					
 					if (i > 0) {
 						// paksa new line untuk pola2 paralel tertentu
@@ -231,7 +231,7 @@ public class VerseAdapter extends BaseAdapter {
 				len += 1;
 				
 				lXparalel.setText(sb, BufferType.SPANNABLE);
-				PengaturTampilan.aturTampilanTeksParalelPerikop(lXparalel);
+				Appearances.applyPericopeParallelTextAppearance(lXparalel);
 			}
 			
 			return res;
@@ -370,13 +370,13 @@ public class VerseAdapter extends BaseAdapter {
 				{
 					TextView tehel = new TextView(context_);
 					if (menjorok == 1) {
-						tehel.setPadding(S.penerapan.jarakMenjorokSatu + (ayat_1 >= 100? S.penerapan.jarakMenjorokExtra: 0), 0, 0, 0);
+						tehel.setPadding(S.applied.indentSpacing1 + (ayat_1 >= 100? S.applied.indentSpacingExtra: 0), 0, 0, 0);
 					} else if (menjorok == 2) {
-						tehel.setPadding(S.penerapan.jarakMenjorokDua + (ayat_1 >= 100? S.penerapan.jarakMenjorokExtra: 0), 0, 0, 0);
+						tehel.setPadding(S.applied.indentSpacing2 + (ayat_1 >= 100? S.applied.indentSpacingExtra: 0), 0, 0, 0);
 					} else if (menjorok == 3) {
-						tehel.setPadding(S.penerapan.jarakMenjorokTiga + (ayat_1 >= 100? S.penerapan.jarakMenjorokExtra: 0), 0, 0, 0);
+						tehel.setPadding(S.applied.indentSpacing3 + (ayat_1 >= 100? S.applied.indentSpacingExtra: 0), 0, 0, 0);
 					} else if (menjorok == 4) {
-						tehel.setPadding(S.penerapan.jarakMenjorokEmpat + (ayat_1 >= 100? S.penerapan.jarakMenjorokExtra: 0), 0, 0, 0);
+						tehel.setPadding(S.applied.indentSpacing4 + (ayat_1 >= 100? S.applied.indentSpacingExtra: 0), 0, 0, 0);
 					}
 					
 					// kasus: belum ada tehel dan tehel pertama menjorok 0
@@ -387,9 +387,9 @@ public class VerseAdapter extends BaseAdapter {
 						s.append(ayat_s).append(' ');
 						appendFormattedText2(s, isi, isi_c, posParse, posSampe);
 						if (!checked) {
-							s.setSpan(new ForegroundColorSpan(penerapan.warnaNomerAyat), 0, ayat_s.length(), 0);
+							s.setSpan(new ForegroundColorSpan(applied.verseNumberColor), 0, ayat_s.length(), 0);
 						}
-						s.setSpan(new LeadingMarginSpan.Standard(0, S.penerapan.jarakIndenParagraf), 0, s.length(), 0);
+						s.setSpan(new LeadingMarginSpan.Standard(0, S.applied.paragraphIndentSpacing), 0, s.length(), 0);
 						if (warnaStabilo != 0) {
 							s.setSpan(new BackgroundColorSpan(warnaStabilo), ayat_s.length() + 1, s.length(), 0);
 						}
@@ -406,7 +406,7 @@ public class VerseAdapter extends BaseAdapter {
 						tehel.setText(s);
 					}
 					
-					PengaturTampilan.aturTampilanTeksIsi(tehel);
+					Appearances.applyTextAppearance(tehel);
 					if (checked) tehel.setTextColor(0xff000000); // override with black!
 
 					tempatTehel.addView(tehel);
@@ -436,7 +436,7 @@ public class VerseAdapter extends BaseAdapter {
 			lAyat.setText(""); //$NON-NLS-1$
 		} else {
 			lAyat.setText(String.valueOf(ayat_1));
-			PengaturTampilan.aturTampilanTeksNomerAyat(lAyat);
+			Appearances.applyVerseNumberAppearance(lAyat);
 			if (checked) lAyat.setTextColor(0xff000000);
 		}
 	}
@@ -490,7 +490,7 @@ public class VerseAdapter extends BaseAdapter {
 			
 			if (d == '5') { // merah ends
 				if (merahStart != -1) {
-					s.setSpan(new ForegroundColorSpan(S.penerapan.warnaHurufMerah), merahStart, s.length(), 0);
+					s.setSpan(new ForegroundColorSpan(S.applied.fontRedColor), merahStart, s.length(), 0);
 					merahStart = -1; // reset
 				}
 				continue;
@@ -534,11 +534,11 @@ public class VerseAdapter extends BaseAdapter {
 		String ayat_s = String.valueOf(ayat_1);
 		seayat.append(ayat_s).append(' ').append(isi);
 		if (!checked) {
-			seayat.setSpan(new ForegroundColorSpan(S.penerapan.warnaNomerAyat), 0, ayat_s.length(), 0);
+			seayat.setSpan(new ForegroundColorSpan(S.applied.verseNumberColor), 0, ayat_s.length(), 0);
 		}
 		
 		// teks
-		seayat.setSpan(new LeadingMarginSpan.Standard(0, S.penerapan.jarakIndenParagraf), 0, seayat.length(), 0);
+		seayat.setSpan(new LeadingMarginSpan.Standard(0, S.applied.paragraphIndentSpacing), 0, seayat.length(), 0);
 		
 		if (warnaStabilo != 0) {
 			seayat.setSpan(new BackgroundColorSpan(warnaStabilo), ayat_s.length() + 1, seayat.length(), 0);

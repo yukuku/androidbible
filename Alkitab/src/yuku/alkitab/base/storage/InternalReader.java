@@ -9,14 +9,14 @@ import java.util.ArrayList;
 
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.Blok;
+import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.Version;
-import yuku.alkitab.base.model.IndexPerikop;
+import yuku.alkitab.base.model.PericopeIndex;
 import yuku.alkitab.base.model.Book;
 import yuku.bintex.BintexReader;
 
-public class InternalPembaca extends Pembaca {
-	public static final String TAG = InternalPembaca.class.getSimpleName();
+public class InternalReader extends Reader {
+	public static final String TAG = InternalReader.class.getSimpleName();
 	
 	// # buat cache Asset
 	private static InputStream cache_inputStream = null;
@@ -25,14 +25,14 @@ public class InternalPembaca extends Pembaca {
 
 	private final String edisiPrefix;
 	private final String edisiJudul;
-	private final PembacaDecoder pembacaDecoder;
+	private final ReaderDecoder readerDecoder;
 
-	public InternalPembaca(Context context, String edisiPrefix, String edisiJudul, PembacaDecoder pembacaDecoder) {
+	public InternalReader(Context context, String edisiPrefix, String edisiJudul, ReaderDecoder readerDecoder) {
 		super(context);
 		
 		this.edisiPrefix = edisiPrefix;
 		this.edisiJudul = edisiJudul;
-		this.pembacaDecoder = pembacaDecoder;
+		this.readerDecoder = readerDecoder;
 	}
 	
 	@Override
@@ -180,16 +180,16 @@ public class InternalPembaca extends Pembaca {
 			// jangan ditutup walau uda baca. Siapa tau masih sama filenya dengan sebelumnya.
 
 			if (janganPisahAyat) {
-				return new String[] { pembacaDecoder.jadikanStringTunggal(ba, hurufKecil) };
+				return new String[] { readerDecoder.jadikanStringTunggal(ba, hurufKecil) };
 			} else {
-				return pembacaDecoder.pisahJadiAyat(ba, hurufKecil);
+				return readerDecoder.pisahJadiAyat(ba, hurufKecil);
 			}
 		} catch (IOException e) {
 			return new String[] { e.getMessage() };
 		}
 	}
 
-	@Override public IndexPerikop bacaIndexPerikop() {
+	@Override public PericopeIndex bacaIndexPerikop() {
 		long wmulai = System.currentTimeMillis();
 
 		InputStream is = S.openRaw(edisiPrefix + "_perikop_index_bt"); //$NON-NLS-1$
@@ -199,7 +199,7 @@ public class InternalPembaca extends Pembaca {
 		
 		BintexReader in = new BintexReader(is);
 		try {
-			return IndexPerikop.baca(in);
+			return PericopeIndex.baca(in);
 
 		} catch (IOException e) {
 			Log.e(TAG, "baca perikop index ngaco", e); //$NON-NLS-1$
@@ -211,10 +211,10 @@ public class InternalPembaca extends Pembaca {
 	}
 
 	@Override
-	public int loadPericope(Version version, int kitab, int pasal, int[] xari, Blok[] xblok, int max) {
-		IndexPerikop indexPerikop = version.getIndexPerikop();
+	public int loadPericope(Version version, int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max) {
+		PericopeIndex pericopeIndex = version.getIndexPerikop();
 
-		if (indexPerikop == null) {
+		if (pericopeIndex == null) {
 			return 0; // ga ada perikop!
 		}
 
@@ -222,7 +222,7 @@ public class InternalPembaca extends Pembaca {
 		int ariMax = Ari.encode(kitab, pasal + 1, 0);
 		int res = 0;
 
-		int pertama = indexPerikop.cariPertama(ariMin, ariMax);
+		int pertama = pericopeIndex.cariPertama(ariMin, ariMax);
 
 		if (pertama == -1) {
 			return 0;
@@ -233,19 +233,19 @@ public class InternalPembaca extends Pembaca {
 		BintexReader in = new BintexReader(S.openRaw(edisiPrefix + "_perikop_blok_bt")); //$NON-NLS-1$
 		try {
 			while (true) {
-				int ari = indexPerikop.getAri(kini);
+				int ari = pericopeIndex.getAri(kini);
 
 				if (ari >= ariMax) {
 					// habis. Uda ga relevan
 					break;
 				}
 
-				Blok blok = indexPerikop.getBlok(in, kini);
+				PericopeBlock pericopeBlock = pericopeIndex.getBlok(in, kini);
 				kini++;
 
 				if (res < max) {
 					xari[res] = ari;
-					xblok[res] = blok;
+					xblok[res] = pericopeBlock;
 					res++;
 				} else {
 					break;

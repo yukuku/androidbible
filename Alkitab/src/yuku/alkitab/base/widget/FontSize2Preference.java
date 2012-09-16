@@ -19,7 +19,7 @@ import android.widget.TextView;
 import yuku.alkitab.R;
 import yuku.alkitab.base.util.FontManager;
 
-public class UkuranHuruf2Preference extends DialogPreference implements OnSeekBarChangeListener {
+public class FontSize2Preference extends DialogPreference implements OnSeekBarChangeListener {
 	private static final int OFSET_minukuran = 2;
 	
     /**
@@ -31,12 +31,12 @@ public class UkuranHuruf2Preference extends DialogPreference implements OnSeekBa
 	private TextView lContoh;
 	private TextView lUkuranHuruf;
     
-    public UkuranHuruf2Preference(Context context, AttributeSet attrs, int defStyle) {
+    public FontSize2Preference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 		init(context);
     }
 
-    public UkuranHuruf2Preference(Context context, AttributeSet attrs) {
+    public FontSize2Preference(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
