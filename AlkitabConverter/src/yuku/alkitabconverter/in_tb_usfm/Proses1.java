@@ -14,12 +14,13 @@ public class Proses1 {
 	static String INPUT_TEKS_1 = "./bahan/in-tb-usfm/in/tb-woj-utf8.sfm";
 	public static String INPUT_TEKS_ENCODING = "utf-8";
 	public static int INPUT_TEKS_ENCODING_YES = 2; // 1: ascii; 2: utf-8;
-	public static String INPUT_KITAB = "./bahan/hu-karoli/in/hu-karoli-kitab.txt";
-	static String OUTPUT_YES = "./bahan/hu-karoli/out/hu-karoli.yes";
+	public static String INPUT_KITAB = "./bahan/in-tb-usfm/in/in-tb-usfm-kitab.txt";
+	static final String MID_DIR = "./bahan/in-tb-usfm/mid/";
+	static String OUTPUT_YES = "./bahan/in-tb-usfm/out/in-tb-usfm.yes";
 	public static int OUTPUT_ADA_PERIKOP = 0;
-	static String INFO_NAMA = "hu-karoli";
-	static String INFO_JUDUL = "Károli";
-	static String INFO_KETERANGAN = "Hungarian Vizsoly Biblia translated by Károli Gáspár (1590)";
+	static String INFO_NAMA = "in-tb-usfm";
+	static String INFO_JUDUL = "TB";
+	static String INFO_KETERANGAN = "Terjemahan Baru (1974)";
 
 	List<Rec> xrec = new ArrayList<Rec>();
 
