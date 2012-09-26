@@ -540,7 +540,7 @@ public class BookmarkListActivity extends BaseActivity {
 				SpannableStringBuilder cuplikan = lagiPakeFilter != null? Search2Engine.hilite(isi, filterQueryProvider.getXkata(), warnaHilite): new SpannableStringBuilder(isi);
 				int warnaStabilo = U.dekodStabilo(tulisan);
 				if (warnaStabilo != -1) {
-					cuplikan.setSpan(new BackgroundColorSpan(U.alphaMixStabilo(warnaStabilo)), 0, cuplikan.length(), 0);
+					cuplikan.setSpan(new BackgroundColorSpan(U.alphaMixHighlight(warnaStabilo)), 0, cuplikan.length(), 0);
 				}
 				lCuplikan.setText(cuplikan);
 				Appearances.applyTextAppearance(lCuplikan);

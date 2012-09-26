@@ -12,10 +12,7 @@ import android.widget.TextView;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 
-import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.Label;
 
 public class U {
@@ -47,46 +44,6 @@ public class U {
 		return sb.toString();
 	}
 
-	// di sini supaya bisa dites dari luar
-	public static int[] bikinPenunjukKotak(int nayat, int[] perikop_xari, PericopeBlock[] perikop_xblok, int nblok) {
-		int[] res = new int[nayat + nblok];
-
-		int posBlok = 0;
-		int posAyat = 0;
-		int posPK = 0;
-
-		while (true) {
-			// cek apakah judul perikop, DAN perikop masih ada
-			if (posBlok < nblok) {
-				// masih memungkinkan
-				if (Ari.toVerse(perikop_xari[posBlok]) - 1 == posAyat) {
-					// ADA PERIKOP.
-					res[posPK++] = -posBlok - 1;
-					posBlok++;
-					continue;
-				}
-			}
-
-			// cek apakah ga ada ayat lagi
-			if (posAyat >= nayat) {
-				break;
-			}
-
-			// uda ga ada perikop, ATAU belom saatnya perikop. Maka masukin ayat.
-			res[posPK++] = posAyat;
-			posAyat++;
-			continue;
-		}
-
-		if (res.length != posPK) {
-			// ada yang ngaco! di algo di atas
-			throw new RuntimeException("Algo selip2an perikop salah! posPK=" + posPK + " posAyat=" + posAyat + " posBlok=" + posBlok + " nayat=" + nayat + " nblok=" + nblok //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					+ " xari:" + Arrays.toString(perikop_xari) + " xblok:" + Arrays.toString(perikop_xblok));  //$NON-NLS-1$//$NON-NLS-2$
-		}
-
-		return res;
-	}
-	
 	public static String enkodStabilo(int warnaRgb) {
 		StringBuilder sb = new StringBuilder(10);
 		sb.append('c');
@@ -286,7 +243,7 @@ public class U {
 		}
 	}
 
-	public static int alphaMixStabilo(int warnaRgb) {
+	public static int alphaMixHighlight(int warnaRgb) {
 		return 0xa0000000 | warnaRgb;
 	}
 

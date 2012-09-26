@@ -21,7 +21,7 @@ public class PericopeBlock {
 //		ShortStr[nparalel] xparalel
 //	}
 
-	public String judul;
+	public String title;
 	public String[] xparalel;
 	
 	public static PericopeBlock baca(BintexReader in) throws IOException {
@@ -34,9 +34,9 @@ public class PericopeBlock {
 		}
 		
 		if (versi == 1) {
-			b.judul = in.readShortString();
+			b.title = in.readShortString();
 		} else if (versi == 2) {
-			b.judul = in.readLongString();
+			b.title = in.readLongString();
 		}
 		
 		int nparalel = in.readUint8();
@@ -51,6 +51,6 @@ public class PericopeBlock {
 	
 	@Override
 	public String toString() {
-		return "Blok{judul=" + judul + " xparalel=" + Arrays.toString(xparalel) + "}"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return "Blok{judul=" + title + " xparalel=" + Arrays.toString(xparalel) + "}"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }
