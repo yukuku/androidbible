@@ -70,5 +70,7 @@
 		<activity android:name="yuku.filechooser.FileChooserActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 		
 		<service android:name="yuku.alkitab.base.sv.DownloadService" />
+		
+		<provider android:name="yuku.alkitab.base.cp.Provider" android:authorities="yuku.alkitab.provider" />
 	</application>
 </manifest>
