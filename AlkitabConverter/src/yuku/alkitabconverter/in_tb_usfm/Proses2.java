@@ -110,6 +110,10 @@ public class Proses2 {
 	}
 
 	public class Handler extends DefaultHandler2 {
+		private static final int LEVEL_p_r = -2;
+		private static final int LEVEL_p_ms = -3;
+		private static final int LEVEL_p_mr = -4;
+		
 		int kitab_0 = -1;
 		int pasal_1 = 0;
 		int ayat_1 = 0;
@@ -126,6 +130,7 @@ public class Proses2 {
 		
 		List<PerikopData.Entri> perikopBuffer = new ArrayList<PerikopData.Entri>();
 		boolean afterThisMustStartNewPerikop = true; // if true, we have done with a pericope title, so the next text must become a new pericope title instead of appending to existing one
+		boolean afterThisParagraphStart = false; // if true, the next verse text (can be beginning of verse, can also be in the middle of verse) have @^ prepended
 		
 		int sLevel = 0;
 		int menjorokTeks = -1; // -1 p; 1 2 3 adalah q level;
@@ -171,12 +176,15 @@ public class Proses2 {
 				if (sfm != null) {
 					if (sfm.equals("r")) {
 						tujuanTulis.push(tujuanTulis_judulPerikop);
+						sLevel = LEVEL_p_r;
 					} else if (sfm.equals("mt")) {
 						tujuanTulis.push(tujuanTulis_misteri);
 					} else if (sfm.equals("ms")) {
 						tujuanTulis.push(tujuanTulis_judulPerikop);
+						sLevel = LEVEL_p_ms;
 					} else if (sfm.equals("mr")) {
 						tujuanTulis.push(tujuanTulis_judulPerikop);
+						sLevel = LEVEL_p_mr;
 					} else if (sfm.equals("mi")) {
 						tujuanTulis.push(tujuanTulis_teks);
 						menjorokTeks = 2;
@@ -199,6 +207,7 @@ public class Proses2 {
 						throw new RuntimeException("p@sfm ga dikenal: " + sfm);
 					}
 				} else {
+					afterThisParagraphStart = true;
 					tujuanTulis.push(tujuanTulis_teks);
 					menjorokTeks = -1;
 				}
@@ -258,9 +267,14 @@ public class Proses2 {
 				System.out.println("$tulis ke misteri " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
 				misteri.append(chars).append('\n');
 			} else if (tujuan == tujuanTulis_teks) {
+				if (afterThisParagraphStart) {
+					System.out.println("$tulis ke teks[jenis=" + menjorokTeks + "] " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":@^");
+					teksDb.append(kitab_0, pasal_1, ayat_1, "@^", 0);
+					afterThisParagraphStart = false;
+				}
+				
 				System.out.println("$tulis ke teks[jenis=" + menjorokTeks + "] " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
 				teksDb.append(kitab_0, pasal_1, ayat_1, chars.replace("\n", " ").replaceAll("\\s+", " "), menjorokTeks == -1? 0: menjorokTeks);
-				
 				
 				if (perikopBuffer.size() > 0) {
 					for (PerikopData.Entri pe: perikopBuffer) {
@@ -275,7 +289,7 @@ public class Proses2 {
 				// masukin ke data perikop
 				String judul = chars;
 				
-				if (sLevel == 0 || sLevel == 1) {
+				if (sLevel == 0 || sLevel == 1 || sLevel == LEVEL_p_mr || sLevel == LEVEL_p_ms) {
 					if (afterThisMustStartNewPerikop || perikopBuffer.size() == 0) {
 						PerikopData.Entri entri = new PerikopData.Entri();
 						entri.ari = 0; // done later when writing teks so we know which verse this pericope starts from 
@@ -289,10 +303,17 @@ public class Proses2 {
 						perikopBuffer.get(perikopBuffer.size() - 1).blok.judul += judul;
 						System.out.println("$tulis ke perikopBuffer (append to existing) (size now: " + perikopBuffer.size() + "): " + judul);
 					}
+				} else if (sLevel == LEVEL_p_r) { // paralel
+					if (perikopBuffer.size() == 0) {
+						throw new RuntimeException("paralel found but no perikop on buffer: " + judul);
+					}
+					
+					PerikopData.Entri entri = perikopBuffer.get(perikopBuffer.size() - 1);
+					entri.blok.xparalel = parseParalel(judul);
 				} else if (sLevel == 2) {
 					System.out.println("$tulis ke tempat sampah (perikop level 2): " + judul);
 				} else {
-					throw new RuntimeException("sLevel = " + sLevel + " not understood");
+					throw new RuntimeException("sLevel = " + sLevel + " not understood: " + judul);
 				}
 			} else if (tujuan == tujuanTulis_xref) {
 				System.out.println("$tulis ke xref " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
@@ -318,6 +339,56 @@ public class Proses2 {
 			}
 			return a.toString();
 		}
+	}
 
+	/**
+	 * (Mat. 23:1-36; Mrk. 12:38-40; Luk. 20:45-47) -> [Mat. 23:1-36, Mrk. 12:38-40, Luk. 20:45-47]
+	 * (Mat. 10:26-33, 19-20) -> [Mat. 10:26-33, Mat. 10:19-20]
+	 * (Mat. 6:25-34, 19-21) -> [Mat. 6:25-34, Mat. 6:19-21]
+	 * (Mat. 10:34-36) -> [Mat. 10:34-36]
+	 * (Mat. 26:57-58, 69-75; Mrk. 14:53-54, 66-72; Yoh. 18:12-18, 25-27) -> [Mat. 26:57-58, Mat. 26:69-75, Mrk. 14:53-54, Mrk. 14:66-72, Yoh. 18:12-18, Yoh. 18:25-27]
+	 * (2Taw. 13:1--14:1) -> [2Taw. 13:1--14:1]
+	 * (2Taw. 14:1-5, 15:16--16:13) -> [2Taw. 14:1-5, 2Taw. 15:16--16:13]
+	 * (2Taw. 2:13-14, 3:15--5:1) -> [2Taw. 2:13-14, 2Taw. 3:15--5:1]
+	 * (2Taw. 34:3-7, 35:1-27) -> [2Taw. 34:3-7, 2Taw. 35:1-27]
+	 */
+	static List<String> parseParalel(String judul) {
+		List<String> res = new ArrayList<String>();
+
+		judul = judul.trim();
+		if (judul.startsWith("(")) judul = judul.substring(1);
+		if (judul.endsWith(")")) judul = judul.substring(0, judul.length() - 1);
+
+		String kitab = null;
+		String pasal = null;
+		String ayat = null;
+
+		String[] alamats = judul.split("[;,]");
+		for (String alamat : alamats) {
+			alamat = alamat.trim();
+
+			String[] bagians = alamat.split(" +", 2);
+			String pa;
+			if (bagians.length == 1) { // no kitab;
+				if (kitab == null) throw new RuntimeException("no existing kitab");
+				pa = bagians[0];
+			} else {
+				kitab = bagians[0];
+				pa = bagians[1];
+			}
+
+			String[] parts = pa.split(":", 2);
+			if (parts.length == 1) { // no pasal
+				if (pasal == null) throw new RuntimeException("no existing pasal");
+				ayat = parts[0];
+			} else {
+				pasal = parts[0];
+				ayat = parts[1];
+			}
+
+			res.add(kitab + " " + pasal + ":" + ayat);
+		}
+
+		return res;
 	}
 }
