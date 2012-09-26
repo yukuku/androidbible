@@ -195,7 +195,7 @@ public class Jumper {
 			int di = -1;
 			
 			for (int i = 0; i < bagian.length; i++) {
-				if ("-".equals(bagian[i])) { //$NON-NLS-1$
+				if ("-".equals(bagian[i]) || "--".equals(bagian[i])) { //$NON-NLS-1$
 					adaStrip = true;
 					di = i;
 					break;
