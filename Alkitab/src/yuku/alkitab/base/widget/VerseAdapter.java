@@ -142,7 +142,9 @@ public class VerseAdapter extends BaseAdapter {
 					res = (VerseItem) convertView;
 				}
 
-				tiledVerseDisplay(res.findViewById(R.id.sebelahKiri), id + 1, text, highlightColor, checked);
+				boolean rightAfterPericope = position > 0 && itemPointer_[position - 1] < 0;
+				
+				tiledVerseDisplay(res.findViewById(R.id.sebelahKiri), id + 1, text, highlightColor, checked, rightAfterPericope);
 
 			} else {
 				if (convertView == null || convertView.getId() != R.layout.item_verse_simple) {
@@ -330,20 +332,21 @@ public class VerseAdapter extends BaseAdapter {
 		return 0;
 	}
 
-	public void tiledVerseDisplay(View res, int ayat_1, String isi, int warnaStabilo, boolean checked) {
+	public void tiledVerseDisplay(View res, int ayat_1, String text, int warnaStabilo, boolean checked, boolean rightAfterPericope) {
 		// Don't forget to modify indexOfPenehel below too
-		// @@ = mulai ayat dengan tehel atau ayat dengan format
-		// @0 = mulai menjorok 0 [kategori: penehel]
-		// @1 = mulai menjorok 1 [kategori: penehel]
-		// @2 = mulai menjorok 2 [kategori: penehel]
-		// @3 = mulai menjorok 3 [kategori: penehel]
-		// @4 = mulai menjorok 4 [kategori: penehel]
-		// @6 = mulai teks merah [kategori: format]
-		// @5 = akhir teks merah [kategori: format]
-		// @9 = mulai teks miring [kategori: format]
-		// @7 = akhir teks miring [kategori: format]
-		// @8 = tanda kasi jarak ke ayat berikutnya [kategori: format]
-		int parsingPos = 2; // mulai setelah @@
+		// @@ = start a verse containing tiles or formatting
+		// @0 = start with indent 0 [tiler]
+		// @1 = start with indent 1 [tiler]
+		// @2 = start with indent 2 [tiler]
+		// @3 = start with indent 3 [tiler]
+		// @4 = start with indent 4 [tiler]
+		// @6 = start of red text [formatting]
+		// @5 = end of red text   [formatting]
+		// @9 = start of italic [formatting]
+		// @7 = end of italic   [formatting]
+		// @8 = put a blank line to the next verse [formatting]
+		// @^ = start-of-paragraph marker
+		int parsingPos = 2; // we start after "@@"
 		int indent = 0;
 		boolean pleaseExit = false;
 		boolean noTileYet = true;
@@ -352,23 +355,22 @@ public class VerseAdapter extends BaseAdapter {
 		LinearLayout tileContainer = (LinearLayout) res.findViewById(R.id.tempatTehel);
 		tileContainer.removeAllViews();
 
-		char[] isi_c = isi.toCharArray();
+		char[] text_c = text.toCharArray();
 
 		while (true) {
 			// cari posisi penehel berikutnya
-			int pos_until = indexOfTiler(isi, parsingPos);
+			int pos_until = indexOfTiler(text, parsingPos);
 
 			if (pos_until == -1) {
 				// abis
-				pos_until = isi_c.length;
+				pos_until = text_c.length;
 				pleaseExit = true;
 			}
 
 			if (parsingPos == pos_until) {
 				// di awal, belum ada apa2!
 			} else {
-				// bikin tehel
-				{
+				{ // create a tile
 					TextView tile = new TextView(context_);
 					if (indent == 1) {
 						tile.setPadding(S.applied.indentSpacing1 + (ayat_1 >= 100 ? S.applied.indentSpacingExtra : 0), 0, 0, 0);
@@ -380,13 +382,19 @@ public class VerseAdapter extends BaseAdapter {
 						tile.setPadding(S.applied.indentSpacing4 + (ayat_1 >= 100 ? S.applied.indentSpacingExtra : 0), 0, 0, 0);
 					}
 
-					// kasus: belum ada tehel dan tehel pertama menjorok 0
+					// case: no tile yet and the first tile has 0 indent
 					if (noTileYet && indent == 0) {
 						// # kasih no ayat di depannya
 						SpannableStringBuilder s = new SpannableStringBuilder();
 						String verse_s = String.valueOf(ayat_1);
 						s.append(verse_s).append(' ');
-						appendFormattedText2(s, isi, isi_c, parsingPos, pos_until);
+						
+						// special case: if @^ is at the beginning
+						if (!rightAfterPericope && text_c[parsingPos] == '@' && text_c[parsingPos+1] == '^') {
+							tile.setPadding(tile.getPaddingLeft(), 20 /* TODO softcode */, 0, 0);
+						}
+
+						appendFormattedText2(s, text, text_c, parsingPos, pos_until);
 						if (!checked) {
 							s.setSpan(new ForegroundColorSpan(applied.verseNumberColor), 0, verse_s.length(), 0);
 						}
@@ -400,7 +408,7 @@ public class VerseAdapter extends BaseAdapter {
 						verseNumberWritten = true;
 					} else {
 						SpannableStringBuilder s = new SpannableStringBuilder();
-						appendFormattedText2(s, isi, isi_c, parsingPos, pos_until);
+						appendFormattedText2(s, text, text_c, parsingPos, pos_until);
 						if (warnaStabilo != 0) {
 							s.setSpan(new BackgroundColorSpan(warnaStabilo), 0, s.length(), 0);
 						}
@@ -418,7 +426,7 @@ public class VerseAdapter extends BaseAdapter {
 
 			if (pleaseExit) break;
 
-			char marker = isi_c[pos_until + 1];
+			char marker = text_c[pos_until + 1];
 			if (marker == '1') {
 				indent = 1;
 			} else if (marker == '2') {
@@ -451,7 +459,7 @@ public class VerseAdapter extends BaseAdapter {
 	private void appendFormattedText2(SpannableStringBuilder s, String text, char[] text_c, int pos_from, int pos_until) {
 		int redStart = -1; // posisi basis s. -1 artinya belum ketemu
 		int italicStart = -1; // posisi basis s. -1 artinya belum ketemu
-
+		
 		for (int i = pos_from; i < pos_until; i++) {
 			// coba templok aja sampe ketemu @ berikutnya. Jadi jangan satu2.
 			{
@@ -479,6 +487,10 @@ public class VerseAdapter extends BaseAdapter {
 			if (d == '8') {
 				s.append('\n');
 				continue;
+			}
+			
+			if (d == '^' && i >= pos_from + 2) { // the other case where @^ happens at the beginning is already handled outside this method
+				s.append("\n\n");
 			}
 
 			if (d == '6') { // merah start
