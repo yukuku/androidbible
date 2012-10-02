@@ -14,7 +14,7 @@ public class TeksDb {
 	public static final String TAG = TeksDb.class.getSimpleName();
 	
 	public static class AyatState {
-		public int menjorok;
+		// was: "public int menjorok;" but no longer used
 		public String isi;
 	}
 	
@@ -24,28 +24,44 @@ public class TeksDb {
 		return append(Ari.encode(kitab_0, pasal_1, ayat_1), s, menjorokKini);
 	}
 	
+	/**
+	 * @param menjorokKini if -1, don't write anything. 
+	 * @return
+	 */
 	public String append(int ari, String s, int menjorokKini) {
 		AyatState as = teks.get(ari);
 		if (as == null) {
 			as = new AyatState();
-			as.menjorok = 0;
 			as.isi = "";
 			teks.put(ari, as);
 		}
 		
-		if (as.menjorok != menjorokKini) {
-			if (menjorokKini < 0 || menjorokKini > 4) throw new RuntimeException("menjorok ngaco: " + menjorokKini);
-			as.isi += "@" + String.valueOf(menjorokKini);
-			
-			// update menjoroknya ayatstate
-			for (int i = 0; i < as.isi.length(); i++) {
-				if (as.isi.charAt(i) == '@' && as.isi.charAt(i+1) >= '0' && as.isi.charAt(i+1) <= '4') {
-					as.menjorok = as.isi.charAt(i+1) - '0';
-				}
+		boolean writtenParaMarker = false;
+		
+		if (menjorokKini != -1) {
+			if (menjorokKini == -2) {
+				as.isi += "@^";
+			} else if (menjorokKini < 0 || menjorokKini > 4) {
+				throw new RuntimeException("menjorok ngaco: " + menjorokKini);
+			} else {
+				as.isi += "@" + String.valueOf(menjorokKini);
 			}
+			
+			writtenParaMarker = true;
+			
+			// was: "update menjoroknya ayatstate" but no longer used
+//			for (int i = 0; i < as.isi.length(); i++) {
+//				if (as.isi.charAt(i) == '@' && as.isi.charAt(i+1) >= '0' && as.isi.charAt(i+1) <= '4') {
+//					as.menjorok = as.isi.charAt(i+1) - '0';
+//				}
+//			}
 		}
 		
-		as.isi += s;
+		if (writtenParaMarker) {
+			as.isi += leftSpaceTrim(s);
+		} else {
+			as.isi += s;
+		}
 		
 		// buang spasi di depan kalo ada
 		while (as.isi.startsWith(" ")) {
@@ -58,6 +74,15 @@ public class TeksDb {
 		}
 		
 		return as.isi;
+	}
+	
+	private static String leftSpaceTrim(String s) {
+		for (int i = 0; i < s.length(); i++) {
+			if (s.charAt(i) != ' ') {
+				return s.substring(i);
+			}
+		}
+		return s;
 	}
 	
 	public void normalize() {

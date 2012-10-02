@@ -130,10 +130,9 @@ public class Proses2 {
 		
 		List<PerikopData.Entri> perikopBuffer = new ArrayList<PerikopData.Entri>();
 		boolean afterThisMustStartNewPerikop = true; // if true, we have done with a pericope title, so the next text must become a new pericope title instead of appending to existing one
-		boolean afterThisParagraphStart = false; // if true, the next verse text (can be beginning of verse, can also be in the middle of verse) have @^ prepended
 		
 		int sLevel = 0;
-		int menjorokTeks = -1; // -1 p; 1 2 3 adalah q level;
+		int menjorokTeks = -1; // -2 adalah para start; 0 1 2 3 4 adalah q level;
 		
 		public Handler(int kitab_0) {
 			this.kitab_0 = kitab_0;
@@ -207,9 +206,8 @@ public class Proses2 {
 						throw new RuntimeException("p@sfm ga dikenal: " + sfm);
 					}
 				} else {
-					afterThisParagraphStart = true;
 					tujuanTulis.push(tujuanTulis_teks);
-					menjorokTeks = -1;
+					menjorokTeks = -2;
 				}
 			} else if (alamat.endsWith("/q")) {
 				tujuanTulis.push(tujuanTulis_teks);
@@ -267,14 +265,9 @@ public class Proses2 {
 				System.out.println("$tulis ke misteri " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
 				misteri.append(chars).append('\n');
 			} else if (tujuan == tujuanTulis_teks) {
-				if (afterThisParagraphStart) {
-					System.out.println("$tulis ke teks[jenis=" + menjorokTeks + "] " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":@^");
-					teksDb.append(kitab_0, pasal_1, ayat_1, "@^", 0);
-					afterThisParagraphStart = false;
-				}
-				
 				System.out.println("$tulis ke teks[jenis=" + menjorokTeks + "] " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
-				teksDb.append(kitab_0, pasal_1, ayat_1, chars.replace("\n", " ").replaceAll("\\s+", " "), menjorokTeks == -1? 0: menjorokTeks);
+				teksDb.append(kitab_0, pasal_1, ayat_1, chars.replace("\n", " ").replaceAll("\\s+", " "), menjorokTeks);
+				menjorokTeks = -1; // reset
 				
 				if (perikopBuffer.size() > 0) {
 					for (PerikopData.Entri pe: perikopBuffer) {
