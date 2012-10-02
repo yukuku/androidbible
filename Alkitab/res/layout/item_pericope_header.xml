@@ -12,7 +12,6 @@
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
         android:gravity="center_horizontal"
-        android:paddingTop="18dp"
         android:text="Judul Perikop"
         android:textSize="17dp"
         android:textStyle="bold"
