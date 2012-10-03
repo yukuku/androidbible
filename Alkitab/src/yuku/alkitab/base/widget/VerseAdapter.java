@@ -85,15 +85,23 @@ public class VerseAdapter extends BaseAdapter {
 	}
 
 	static class VerseNumberSpan extends MetricAffectingSpan {
+		private final boolean applyColor;
+
+		public VerseNumberSpan(boolean applyColor) {
+			this.applyColor = applyColor;
+		}
+		
 		@Override public void updateMeasureState(TextPaint tp) {
-			tp.baselineShift += (int) (tp.ascent() * 0.2f + 0.5f);
-			tp.setTextSize(tp.getTextSize() * 0.8f);
+			tp.baselineShift += (int) (tp.ascent() * 0.3f + 0.5f);
+			tp.setTextSize(tp.getTextSize() * 0.7f);
 		}
 
 		@Override public void updateDrawState(TextPaint tp) {
-			tp.baselineShift += (int) (tp.ascent() * 0.2f + 0.5f);
-			tp.setTextSize(tp.getTextSize() * 0.8f);
-			tp.setColor(S.applied.verseNumberColor);
+			tp.baselineShift += (int) (tp.ascent() * 0.3f + 0.5f);
+			tp.setTextSize(tp.getTextSize() * 0.7f);
+			if (applyColor) {
+				tp.setColor(S.applied.verseNumberColor);
+			}
 		}
 	}
 	
@@ -463,9 +471,7 @@ public class VerseAdapter extends BaseAdapter {
 			// don't write verse number now
 		} else {
 			s.append(verseNumber_s);
-			if (!checked) {
-				s.setSpan(new VerseNumberSpan(), 0, s.length(), 0);
-			}
+			s.setSpan(new VerseNumberSpan(!checked), 0, s.length(), 0);
 			s.append("  ");
 			startPosAfterVerseNumber = s.length();
 		}
@@ -618,9 +624,7 @@ public class VerseAdapter extends BaseAdapter {
 		// nomer ayat
 		String verse_s = Integer.toString(verse_1);
 		s.append(verse_s).append("  ").append(text);
-		if (!checked) {
-			s.setSpan(new VerseNumberSpan(), 0, verse_s.length(), 0);
-		}
+		s.setSpan(new VerseNumberSpan(!checked), 0, verse_s.length(), 0);
 
 		// teks
 		s.setSpan(new LeadingMarginSpan.Standard(0, S.applied.indentParagraphRest), 0, s.length(), 0);
