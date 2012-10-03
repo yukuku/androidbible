@@ -124,7 +124,7 @@ public class S {
 			applied.fontColor = Preferences.getInt(App.context.getString(R.string.pref_warnaHuruf_int_key), App.context.getResources().getInteger(R.integer.pref_warnaHuruf_int_default));
 			applied.backgroundColor = Preferences.getInt(App.context.getString(R.string.pref_warnaLatar_int_key), App.context.getResources().getInteger(R.integer.pref_warnaLatar_int_default)); 
 			applied.verseNumberColor = Preferences.getInt(App.context.getString(R.string.pref_warnaNomerAyat_int_key), App.context.getResources().getInteger(R.integer.pref_warnaNomerAyat_int_default));
-			applied.fontRedColor = hitungHurufMerah(S.applied.fontColor, S.applied.backgroundColor);
+			applied.fontRedColor = Preferences.getInt(App.context.getString(R.string.pref_redTextColor_key), App.context.getResources().getInteger(R.integer.pref_redTextColor_default));
 			
 			// calculation of backgroundColor brightness. Used somewhere else.
 			{
@@ -142,18 +142,6 @@ public class S {
 		applied.indentSpacing3 = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokTiga) + 0.5f);
 		applied.indentSpacing4 = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokEmpat) + 0.5f);
 		applied.indentSpacingExtra = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokExtra) + 0.5f);
-	}
-	
-	private static int hitungHurufMerah(int warnaHuruf, int warnaLatar) {
-		// berdasar warna latar saja deh untuk kali ini
-		int brt = Color.red(warnaLatar) * 30 + Color.green(warnaLatar) * 59 + Color.blue(warnaLatar) * 11;
-		if (brt < 30 * 100) {
-			return 0xffff9090;
-		} else if (brt < 86 * 100) {
-			return 0xffff5050;
-		} else {
-			return 0xffff0000;
-		}
 	}
 	
 	private static final String notAvailableText = "[?]"; //$NON-NLS-1$

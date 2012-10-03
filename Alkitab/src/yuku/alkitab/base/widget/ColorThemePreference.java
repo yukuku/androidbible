@@ -21,10 +21,10 @@ import yuku.ambilwarna.widget.AmbilWarnaPreference;
 
 public class ColorThemePreference extends ListPreference {
 	private static final String TAG = ColorThemePreference.class.getSimpleName();
-	
+
 	int mClickedDialogEntryIndex;
 	String mValue;
-	
+
 	public ColorThemePreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
@@ -33,8 +33,7 @@ public class ColorThemePreference extends ListPreference {
 		this(context, null);
 	}
 
-	@Override
-	protected void onPrepareDialogBuilder(Builder builder) {
+	@Override protected void onPrepareDialogBuilder(Builder builder) {
 		final CharSequence[] entryValues = getEntryValues();
 		final CharSequence[] entries = getEntries();
 
@@ -45,8 +44,7 @@ public class ColorThemePreference extends ListPreference {
 		mClickedDialogEntryIndex = getValueIndex();
 
 		builder.setAdapter(new BaseAdapter() {
-			@Override
-			public View getView(int position, View convertView, ViewGroup parent) {
+			@Override public View getView(int position, View convertView, ViewGroup parent) {
 				CheckedTextView res = (CheckedTextView) convertView;
 				if (convertView == null) {
 					res = (CheckedTextView) LayoutInflater.from(getContext()).inflate(android.R.layout.select_dialog_singlechoice, null);
@@ -75,18 +73,15 @@ public class ColorThemePreference extends ListPreference {
 				return res;
 			}
 
-			@Override
-			public long getItemId(int position) {
+			@Override public long getItemId(int position) {
 				return position;
 			}
 
-			@Override
-			public Object getItem(int position) {
+			@Override public Object getItem(int position) {
 				return null;
 			}
 
-			@Override
-			public int getCount() {
+			@Override public int getCount() {
 				return entryValues.length;
 			}
 		}, new DialogInterface.OnClickListener() {
@@ -101,7 +96,7 @@ public class ColorThemePreference extends ListPreference {
 				dialog.dismiss();
 			}
 		});
-		
+
 		/*
 		 * The typical interaction for list-based dialogs is to have
 		 * click-on-an-item dismiss the dialog instead of the user having to
@@ -110,8 +105,7 @@ public class ColorThemePreference extends ListPreference {
 		builder.setPositiveButton(null, null);
 	}
 
-	@Override
-	protected void onDialogClosed(boolean positiveResult) {
+	@Override protected void onDialogClosed(boolean positiveResult) {
 		super.onDialogClosed(positiveResult);
 
 		final CharSequence[] entryValues = getEntryValues();
@@ -125,52 +119,51 @@ public class ColorThemePreference extends ListPreference {
 		}
 	}
 
-	@Override
-	public String getValue() {
+	@Override public String getValue() {
 		Log.d(TAG, "getValue "); //$NON-NLS-1$
-		
+
 		SharedPreferences pref = getPreferenceManager().getSharedPreferences();
 		String w1 = String.format("%08x", pref.getInt(getContext().getString(R.string.pref_warnaHuruf_int_key), 0xff000000)); //$NON-NLS-1$
 		String w2 = String.format("%08x", pref.getInt(getContext().getString(R.string.pref_warnaLatar_int_key), 0xff000000)); //$NON-NLS-1$
 		String w3 = String.format("%08x", pref.getInt(getContext().getString(R.string.pref_warnaNomerAyat_int_key), 0xff000000)); //$NON-NLS-1$
-		return gabungWarna(w1, w2, w3);
+		String w4 = String.format("%08x", pref.getInt(getContext().getString(R.string.pref_redTextColor_key), 0xff000000)); //$NON-NLS-1$
+		return gabungWarna(w1, w2, w3, w4);
 	}
 
 	private int getValueIndex() {
 		return findIndexOfValue(getValue());
 	}
 
-	@Override
-	protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
+	@Override protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
 		Log.d(TAG, "onSetInitialValue " + restoreValue + " " + defaultValue); //$NON-NLS-1$ //$NON-NLS-2$
 
 		setValue(restoreValue ? getPersistedString(mValue) : (String) defaultValue);
 	}
 
-	@Override
-	public void setValue(String value) {
+	@Override public void setValue(String value) {
 		Log.d(TAG, "setValue " + value); //$NON-NLS-1$
-		
+
 		mValue = value;
 
 		int[] w = pisahWarna(value);
-		
-		int[] xresId = {R.string.pref_warnaHuruf_int_key, R.string.pref_warnaLatar_int_key, R.string.pref_warnaNomerAyat_int_key};
+
+		int[] xresId = { R.string.pref_warnaHuruf_int_key, R.string.pref_warnaLatar_int_key, R.string.pref_warnaNomerAyat_int_key, R.string.pref_redTextColor_key };
 		for (int i = 0; i < xresId.length; i++) {
 			AmbilWarnaPreference p = (AmbilWarnaPreference) findPreferenceInHierarchy(getContext().getString(xresId[i]));
 			p.forceSetValue(w[i]);
 		}
 	}
-	
+
 	static int[] pisahWarna(CharSequence value) {
-		int[] w = new int[3];
+		int[] w = new int[4];
 		w[0] = (int) Long.parseLong(value.subSequence(0, 8).toString(), 16);
 		w[1] = (int) Long.parseLong(value.subSequence(9, 17).toString(), 16);
 		w[2] = (int) Long.parseLong(value.subSequence(18, 26).toString(), 16);
+		w[3] = (int) Long.parseLong(value.subSequence(27, 35).toString(), 16);
 		return w;
 	}
 
-	private static String gabungWarna(String w1, String w2, String w3) {
-		return w1 + " " + w2 + " " + w3; //$NON-NLS-1$ //$NON-NLS-2$
+	private static String gabungWarna(String w1, String w2, String w3, String w4) {
+		return w1 + ' ' + w2 + ' ' + w3 + ' ' + w4;
 	}
 }
