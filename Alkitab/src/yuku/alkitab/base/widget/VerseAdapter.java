@@ -544,7 +544,9 @@ public class VerseAdapter extends BaseAdapter {
 		// apply unapplied
 		applyParaStyle(s, paraType, startPara, verse_1, startPosAfterVerseNumber > 0, dontPutSpacingBefore && startPara <= startPosAfterVerseNumber, startPara <= startPosAfterVerseNumber, lVerseNumber);
 
-		// TODO highlightcolor
+		if (highlightColor != 0) {
+			s.setSpan(new BackgroundColorSpan(highlightColor), startPosAfterVerseNumber == 0? 0: verseNumber_s.length() + 1, s.length(), 0);
+		}
 
 		lText.setText(s);
 		
