@@ -48,6 +48,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 import org.xmlpull.v1.XmlSerializer;
 
+import yuku.afw.V;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -82,7 +83,7 @@ public class BookmarkActivity extends BaseActivity {
 		adapter = new BukmakFilterAdapter();
 		adapter.reload();
 		
-		lv = U.getView(this, android.R.id.list);
+		lv = V.get(this, android.R.id.list);
 		lv.setAdapter(adapter);
 		lv.setOnItemClickListener(lv_click);
 		
@@ -646,7 +647,7 @@ public class BookmarkActivity extends BaseActivity {
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
 			View res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_bookmark_filter, null);
 			
-			ImageView imgFilterIcon = U.getView(res, R.id.imgFilterIcon);
+			ImageView imgFilterIcon = V.get(res, R.id.imgFilterIcon);
 			if (position < 3) {
 				imgFilterIcon.setVisibility(View.VISIBLE);
 				imgFilterIcon.setImageResource(position == 0? R.drawable.attribute_type_bookmark: position == 1? R.drawable.attribute_type_note: position == 2? R.drawable.highlight_color_checked: 0);
@@ -655,7 +656,7 @@ public class BookmarkActivity extends BaseActivity {
 				imgFilterIcon.setVisibility(View.GONE);
 			}
 			
-			TextView lFilterCaption = U.getView(res, R.id.lFilterCaption);
+			TextView lFilterCaption = V.get(res, R.id.lFilterCaption);
 			if (position < 4) {
 				lFilterCaption.setVisibility(View.VISIBLE);
 				lFilterCaption.setText(presetCaptions[position]);
@@ -663,7 +664,7 @@ public class BookmarkActivity extends BaseActivity {
 				lFilterCaption.setVisibility(View.GONE);
 			}
 			
-			TextView lFilterLabel = U.getView(res, R.id.lFilterLabel);
+			TextView lFilterLabel = V.get(res, R.id.lFilterLabel);
 			if (position < 4) {
 				lFilterLabel.setVisibility(View.GONE);
 			} else {

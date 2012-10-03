@@ -35,6 +35,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
+import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
@@ -762,10 +763,10 @@ public class VersionsActivity extends BaseActivity {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_version, null);
 			
-			CheckBox cAktif = U.getView(res, R.id.cAktif);
-			TextView lJudul = U.getView(res, R.id.lJudul);
-			TextView lNamafile = U.getView(res, R.id.lNamafile);
-			TextView lBahasa = U.getView(res, R.id.lBahasa);
+			CheckBox cAktif = V.get(res, R.id.cAktif);
+			TextView lJudul = V.get(res, R.id.lJudul);
+			TextView lNamafile = V.get(res, R.id.lNamafile);
+			TextView lBahasa = V.get(res, R.id.lBahasa);
 			
 			if (position == getCount() - 1) {
 				// pilihan untuk open

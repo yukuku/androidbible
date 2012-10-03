@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import yuku.afw.V;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -120,10 +121,10 @@ public class TypeBookmarkDialog {
 		}
 		
 		View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_bookmark, null);
-		this.panelLabels = U.getView(dialogView, R.id.panelLabels);
+		this.panelLabels = V.get(dialogView, R.id.panelLabels);
 		
-		final EditText tTulisan = U.getView(dialogView, R.id.tTulisan);
-		final Button bAddLabel = U.getView(dialogView, R.id.bAddLabel);
+		final EditText tTulisan = V.get(dialogView, R.id.tTulisan);
+		final Button bAddLabel = V.get(dialogView, R.id.bAddLabel);
 		
 		bAddLabel.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
@@ -239,12 +240,12 @@ public class TypeBookmarkDialog {
 			View res = convertView != null? convertView: LayoutInflater.from(dialogContext).inflate(type == 0? R.layout.item_label_chooser: android.R.layout.simple_list_item_1, null);
 
 			if (type == 0) {
-				TextView text1 = U.getView(res, android.R.id.text1); 
+				TextView text1 = V.get(res, android.R.id.text1); 
 				Label label = getItem(position);
 				text1.setText(label.judul);
 				U.applyLabelColor(label, text1);
 			} else {
-				TextView text1 = U.getView(res, android.R.id.text1); 
+				TextView text1 = V.get(res, android.R.id.text1); 
 				text1.setText(context.getString(R.string.create_label_titik3));
 				
 				// for API 10 or lower, forcefully set text color

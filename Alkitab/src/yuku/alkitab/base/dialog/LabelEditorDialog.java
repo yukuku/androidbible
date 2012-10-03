@@ -15,8 +15,8 @@ import android.widget.EditText;
 
 import java.util.List;
 
+import yuku.afw.V;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Label;
 import yuku.devoxx.flowlayout.R;
 
@@ -29,7 +29,7 @@ public class LabelEditorDialog {
 	
 	public static void show(Context context, String initialText, String title, final OkListener okListener) {
 		View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_label, null);
-		final EditText tJudul = U.getView(dialogView, R.id.tJudul);
+		final EditText tJudul = V.get(dialogView, R.id.tJudul);
 		tJudul.setText(initialText);
 		
 		final AlertDialog dialog = new AlertDialog.Builder(context)

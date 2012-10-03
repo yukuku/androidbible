@@ -28,9 +28,9 @@ import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import yuku.afw.V;
 import yuku.alkitab.R;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.rpc.SimpleHttpConnection;
 import yuku.alkitab.base.sv.DownloadService;
@@ -79,8 +79,8 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 		setContentView(R.layout.activity_font_manager);
 		setTitle(R.string.fm_activity_title);
 
-		lsFont = U.getView(this, R.id.lsFont);
-		lEmptyError = U.getView(this, R.id.lEmptyError);
+		lsFont = V.get(this, R.id.lsFont);
+		lEmptyError = V.get(this, R.id.lEmptyError);
 		
 		lsFont.setAdapter(adapter = new FontAdapter());
 		lsFont.setEmptyView(lEmptyError);
@@ -184,12 +184,12 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
 			View res = convertView != null ? convertView : getLayoutInflater().inflate(R.layout.item_font_download, null);
 
-			UrlImageView imgPreview = U.getView(res, R.id.imgPreview);
-			TextView lFontName = U.getView(res, R.id.lFontName);
-			View bDownload = U.getView(res, R.id.bDownload);
-			View bDelete = U.getView(res, R.id.bDelete);
-			ProgressBar progressbar = U.getView(res, R.id.progressbar);
-			TextView lErrorMsg = U.getView(res, R.id.lErrorMsg);
+			UrlImageView imgPreview = V.get(res, R.id.imgPreview);
+			TextView lFontName = V.get(res, R.id.lFontName);
+			View bDownload = V.get(res, R.id.bDownload);
+			View bDelete = V.get(res, R.id.bDelete);
+			ProgressBar progressbar = V.get(res, R.id.progressbar);
+			TextView lErrorMsg = V.get(res, R.id.lErrorMsg);
 			
 			FontItem item = getItem(position);
 			String dlkey = getFontDownloadKey(item.name);

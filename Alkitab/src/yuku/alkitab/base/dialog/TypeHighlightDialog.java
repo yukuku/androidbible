@@ -7,9 +7,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 
+import yuku.afw.V;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.util.IntArrayList;
 
@@ -75,14 +75,14 @@ public class TypeHighlightDialog {
 		}
 		
 		for (int i = 0; i < xid.length; i++) {
-			CheckBox cb = U.getView(dialogView, xid[i]);
+			CheckBox cb = V.get(dialogView, xid[i]);
 			if (warnaRgb == xrgb[i]) {
 				cb.setChecked(true);
 			}
 			cb.setOnClickListener(cb_click);
 		}
 		
-		CheckBox cb = U.getView(dialogView, R.id.c00);
+		CheckBox cb = V.get(dialogView, R.id.c00);
 		if (warnaRgb == -1) {
 			cb.setChecked(true);
 		}
@@ -96,13 +96,13 @@ public class TypeHighlightDialog {
 				if (v.getId() == xid[i]) {
 					select(xrgb[i]);
 				} else {
-					U.<CheckBox>getView(dialogView, xid[i]).setChecked(false);
+					V.<CheckBox>get(dialogView, xid[i]).setChecked(false);
 				}
 			}
 			if (v.getId() == R.id.c00) {
 				select(-1);
 			} else {
-				U.<CheckBox>getView(dialogView, R.id.c00).setChecked(false);
+				V.<CheckBox>get(dialogView, R.id.c00).setChecked(false);
 			}
 		}
 

@@ -29,6 +29,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import yuku.afw.V;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -100,13 +101,13 @@ public class BookmarkListActivity extends BaseActivity {
 		
 		setContentView(R.layout.activity_bookmark_list);
 		
-		panelList = U.getView(this, R.id.panelList);
-		empty = U.getView(this, android.R.id.empty);
-		tEmpty = U.getView(this, R.id.tEmpty);
-		bClearFilter = U.getView(this, R.id.bClearFilter);
-		searchWidget = U.getView(this, R.id.searchBar);
-		lv = U.getView(this, android.R.id.list);
-		emptyView = U.getView(this, android.R.id.empty);
+		panelList = V.get(this, R.id.panelList);
+		empty = V.get(this, android.R.id.empty);
+		tEmpty = V.get(this, R.id.tEmpty);
+		bClearFilter = V.get(this, R.id.bClearFilter);
+		searchWidget = V.get(this, R.id.searchBar);
+		lv = V.get(this, android.R.id.list);
+		emptyView = V.get(this, android.R.id.empty);
 		
 		filter_jenis = getIntent().getIntExtra(EXTRA_filter_jenis, 0);
 		filter_labelId = getIntent().getLongExtra(EXTRA_filter_labelId, 0);
@@ -251,7 +252,7 @@ public class BookmarkListActivity extends BaseActivity {
 		View res = LayoutInflater.from(this).inflate(R.layout.label, null);
 		res.setLayoutParams(panelLabels.generateDefaultLayoutParams());
 		
-		TextView lJudul = U.getView(res, R.id.lJudul);
+		TextView lJudul = V.get(res, R.id.lJudul);
 		lJudul.setText(label.judul);
 		
 		U.applyLabelColor(label, lJudul);
@@ -481,10 +482,10 @@ public class BookmarkListActivity extends BaseActivity {
 		}
 		
 		@Override public void bindView(View view, Context context, Cursor cursor) {
-			TextView lTanggal = U.getView(view, R.id.lTanggal);
-			TextView lTulisan = U.getView(view, R.id.lTulisan);
-			TextView lCuplikan = U.getView(view, R.id.lCuplikan);
-			FlowLayout panelLabels = U.getView(view, R.id.panelLabels);
+			TextView lTanggal = V.get(view, R.id.lTanggal);
+			TextView lTulisan = V.get(view, R.id.lTulisan);
+			TextView lCuplikan = V.get(view, R.id.lCuplikan);
+			FlowLayout panelLabels = V.get(view, R.id.panelLabels);
 			
 			{
 				int waktuTambah_i = cursor.getInt(col_waktuTambah);

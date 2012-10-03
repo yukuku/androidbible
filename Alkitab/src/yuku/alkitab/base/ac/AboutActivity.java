@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import yuku.afw.V;
 import yuku.alkitab.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -34,9 +35,9 @@ public class AboutActivity extends BaseActivity {
 		setContentView(R.layout.activity_about);
 		setTitle(getString(R.string.namaprog_versi_build, S.getVersionName(), S.getVersionCode()));
 		
-		lAbout = U.getView(this, R.id.lAbout);
-		lTranslators = U.getView(this, R.id.lTranslators);
-		bSaran = U.getView(this, R.id.bSaran);
+		lAbout = V.get(this, R.id.lAbout);
+		lTranslators = V.get(this, R.id.lTranslators);
+		bSaran = V.get(this, R.id.bSaran);
 		
 		// preprocess html
 		lAbout.setText(Html.fromHtml(U.preprocessHtml(lAbout.getText().toString())));
@@ -80,7 +81,7 @@ public class AboutActivity extends BaseActivity {
 			.setView(dialogView)
 			.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
-					EditText tSaran = U.getView(dialogView, R.id.tSaran);
+					EditText tSaran = V.get(dialogView, R.id.tSaran);
 					String isi = tSaran.getText().toString();
 					
 					if (isi.trim().length() > 0) {

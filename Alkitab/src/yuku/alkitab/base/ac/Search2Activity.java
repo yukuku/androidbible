@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 import java.util.Arrays;
 
+import yuku.afw.V;
 import yuku.alkitab.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -39,8 +40,8 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
-import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.Search2Engine;
 import yuku.alkitab.base.util.Search2Engine.Query;
@@ -100,7 +101,7 @@ public class Search2Activity extends BaseActivity {
 		SearchView searchView;
 
 		public void configureSearchView() {
-			searchView = U.getView(Search2Activity.this, R.id.searchView);
+			searchView = V.get(Search2Activity.this, R.id.searchView);
 			searchView.setSubmitButtonEnabled(true);
 			searchView.setOnQueryTextListener(new OnQueryTextListener() {
 				@Override public boolean onQueryTextSubmit(String query) {
@@ -135,19 +136,19 @@ public class Search2Activity extends BaseActivity {
 		
 		setContentView(R.layout.activity_search2);
 
-		lsHasilCari = U.getView(this, R.id.lsHasilCari);
-		panelFilter = U.getView(this, R.id.panelFilter);
-		cFilterLama = U.getView(this, R.id.cFilterLama);
-		cFilterBaru = U.getView(this, R.id.cFilterBaru);
-		cFilterKitabSaja = U.getView(this, R.id.cFilterKitabSaja);
-		tFilterRumit = U.getView(this, R.id.tFilterRumit);
-		bEditFilter = U.getView(this, R.id.bEditFilter);
+		lsHasilCari = V.get(this, R.id.lsHasilCari);
+		panelFilter = V.get(this, R.id.panelFilter);
+		cFilterLama = V.get(this, R.id.cFilterLama);
+		cFilterBaru = V.get(this, R.id.cFilterBaru);
+		cFilterKitabSaja = V.get(this, R.id.cFilterKitabSaja);
+		tFilterRumit = V.get(this, R.id.tFilterRumit);
+		bEditFilter = V.get(this, R.id.bEditFilter);
 		
 		if (useSearchView()) {
 			api11_compat = new Api11_compat();
 			api11_compat.configureSearchView();
 		} else {
-			searchBar = U.getView(this, R.id.searchBar);
+			searchBar = V.get(this, R.id.searchBar);
 			((ViewGroup) panelFilter.getParent()).removeView(panelFilter);
 			searchBar.setBottomView(panelFilter);
 			searchBar.setOnSearchListener(new OnSearchListener() {

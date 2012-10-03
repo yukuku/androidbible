@@ -1,12 +1,10 @@
 package yuku.alkitab.base;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
-import android.view.View;
 import android.widget.TextView;
 
 import java.io.PrintWriter;
@@ -205,20 +203,6 @@ public class U {
 		clipboardManager.setText(salinan); 
 	}
 
-	/**
-	 * Convenience method of findViewById
-	 */
-	@SuppressWarnings("unchecked") public static <T extends View> T getView(View parent, int id) {
-		return (T) parent.findViewById(id);
-	}
-
-	/**
-	 * Convenience method of findViewById
-	 */
-	@SuppressWarnings("unchecked") public static <T extends View> T getView(Activity activity, int id) {
-		return (T) activity.findViewById(id);
-	}
-	
 	private static int[] colorSet;
 	public static int getColorBasedOnBookId(int pos) {
 		if (colorSet == null) {

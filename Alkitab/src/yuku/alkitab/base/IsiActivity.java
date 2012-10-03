@@ -45,6 +45,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.IsiActivity.FakeContextMenu.Item;
@@ -148,14 +149,14 @@ public class IsiActivity extends BaseActivity {
 		
 		setContentView(R.layout.activity_isi);
 		
-		lsText = U.getView(this, R.id.lsIsi);
-		bGoto = U.getView(this, R.id.bTuju);
-		bLeft = U.getView(this, R.id.bKiri);
-		bRight = U.getView(this, R.id.bKanan);
-		titleContainer = U.getView(this, R.id.tempatJudul);
-		lTitle = U.getView(this, R.id.lJudul);
-		bContextMenu = U.getView(this, R.id.bContext);
-		root = U.getView(this, R.id.root);
+		lsText = V.get(this, R.id.lsIsi);
+		bGoto = V.get(this, R.id.bTuju);
+		bLeft = V.get(this, R.id.bKiri);
+		bRight = V.get(this, R.id.bKanan);
+		titleContainer = V.get(this, R.id.tempatJudul);
+		lTitle = V.get(this, R.id.lJudul);
+		bContextMenu = V.get(this, R.id.bContext);
+		root = V.get(this, R.id.root);
 		
 		applyPreferences(false);
 

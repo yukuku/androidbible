@@ -27,9 +27,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import yuku.afw.V;
 import yuku.alkitab.R;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 
 public class ShareActivity extends BaseActivity {
@@ -69,7 +69,7 @@ public class ShareActivity extends BaseActivity {
 		final Intent[] initialIntents = null;
 		final List<ResolveInfo> rList = null;
 		
-		lsIntent = U.getView(this, R.id.lsIntent);
+		lsIntent = V.get(this, R.id.lsIntent);
 		
 		mPm = getPackageManager();
 		intent.setComponent(null);
