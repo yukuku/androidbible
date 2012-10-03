@@ -14,6 +14,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 
 import yuku.alkitab.yes.YesFile;
@@ -71,7 +72,11 @@ public class Proses2 {
 			
 			FileInputStream in = new FileInputStream(new File(INPUT_TEKS_2, file));
 			SAXParser parser = factory.newSAXParser();
-			parser.getXMLReader().setFeature("http://xml.org/sax/features/namespaces", true);
+			XMLReader r = parser.getXMLReader();
+			System.out.println("input buffer size (old) = " + r.getProperty("http://apache.org/xml/properties/input-buffer-size"));
+			r.setProperty("http://apache.org/xml/properties/input-buffer-size", 1048576);
+			System.out.println("input buffer size (new) = " + r.getProperty("http://apache.org/xml/properties/input-buffer-size"));
+			r.setFeature("http://xml.org/sax/features/namespaces", true);
 			parser.parse(in, new Handler(Integer.parseInt(file.substring(0, 2))));
 			
 			System.out.println("file " + file + " done; now total rec: " + teksDb.size());
