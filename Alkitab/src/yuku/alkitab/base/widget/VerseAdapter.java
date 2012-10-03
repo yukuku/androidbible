@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -105,7 +106,6 @@ public class VerseAdapter extends BaseAdapter {
 		}
 	}
 	
-	
 	// # field ctor
 	final Context context_;
 	final CallbackSpan.OnClickListener parallelListener_;
@@ -138,6 +138,34 @@ public class VerseAdapter extends BaseAdapter {
 		inflater_ = LayoutInflater.from(context_);
 	}
 
+	/** 0 undefined. 1 and 2 based on version. */
+	private static int leadingMarginSpanVersion = 0;
+	
+	/** Creates a leading margin span based on version:
+	 * - API 7 or 11 and above: LeadingMarginSpan.Standard
+	 * - API 8..10: LeadingMarginSpanFixed, which is based on LeadingMarginSpan.LeadingMarginSpan2
+	 */
+	static Object createLeadingMarginSpan(int all) {
+		return createLeadingMarginSpan(all, all);
+	}
+	
+	/** Creates a leading margin span based on version:
+	 * - API 7 or 11 and above: LeadingMarginSpan.Standard
+	 * - API 8..10: LeadingMarginSpanFixed, which is based on LeadingMarginSpan.LeadingMarginSpan2
+	 */
+	static Object createLeadingMarginSpan(int first, int rest) {
+		if (leadingMarginSpanVersion == 0) {
+			int v = Build.VERSION.SDK_INT;
+			leadingMarginSpanVersion = (v == 7 || v >= 11)? 1: 2; 
+		}
+		
+		if (leadingMarginSpanVersion == 1) {
+			return new LeadingMarginSpan.Standard(first, rest); 
+		} else {
+			return new LeadingMarginSpanFixed(first, rest);
+		}
+	}
+	
 	public synchronized void setData(Book book, int chapter_1, String[] verseTextData, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
 		book_ = book;
 		chapter_1_ = chapter_1;
@@ -582,26 +610,26 @@ public class VerseAdapter extends BaseAdapter {
 		
 		switch (paraType) {
 		case -1:
-			sb.setSpan(new LeadingMarginSpanFixed(0, S.applied.indentParagraphRest), startPara, len, 0);
+			sb.setSpan(createLeadingMarginSpan(0, S.applied.indentParagraphRest), startPara, len, 0);
 			break;
 		case '0':
 			if (firstLineWithVerseNumber) {
-				sb.setSpan(new LeadingMarginSpanFixed(0, S.applied.indentParagraphRest), startPara, len, 0);
+				sb.setSpan(createLeadingMarginSpan(0, S.applied.indentParagraphRest), startPara, len, 0);
 			} else {
-				sb.setSpan(new LeadingMarginSpanFixed(S.applied.indentParagraphRest), startPara, len, 0);
+				sb.setSpan(createLeadingMarginSpan(S.applied.indentParagraphRest), startPara, len, 0);
 			}
 			break;
 		case '1':
-			sb.setSpan(new LeadingMarginSpanFixed(S.applied.indentSpacing1 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0)), startPara, len, 0);
+			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing1 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0)), startPara, len, 0);
 			break;
 		case '2':
-			sb.setSpan(new LeadingMarginSpanFixed(S.applied.indentSpacing2 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0)), startPara, len, 0);
+			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing2 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0)), startPara, len, 0);
 			break;
 		case '3':
-			sb.setSpan(new LeadingMarginSpanFixed(S.applied.indentSpacing3 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0)), startPara, len, 0);
+			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing3 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0)), startPara, len, 0);
 			break;
 		case '4':
-			sb.setSpan(new LeadingMarginSpanFixed(S.applied.indentSpacing4 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0)), startPara, len, 0);
+			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing4 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0)), startPara, len, 0);
 			break;
 		case '^':
 			if (!dontPutSpacingBefore) {
@@ -610,7 +638,7 @@ public class VerseAdapter extends BaseAdapter {
 					lVerseNumber.setPadding(0, S.applied.paragraphSpacingBefore, 0, 0);
 				}
 			}
-			sb.setSpan(new LeadingMarginSpanFixed(S.applied.indentParagraphFirst, S.applied.indentParagraphRest), startPara, len, 0);
+			sb.setSpan(createLeadingMarginSpan(S.applied.indentParagraphFirst, S.applied.indentParagraphRest), startPara, len, 0);
 			break;
 		}
 	}
@@ -627,7 +655,7 @@ public class VerseAdapter extends BaseAdapter {
 		s.setSpan(new VerseNumberSpan(!checked), 0, verse_s.length(), 0);
 
 		// teks
-		s.setSpan(new LeadingMarginSpan.Standard(0, S.applied.indentParagraphRest), 0, s.length(), 0);
+		s.setSpan(createLeadingMarginSpan(0, S.applied.indentParagraphRest), 0, s.length(), 0);
 
 		if (highlightColor != 0) {
 			s.setSpan(new BackgroundColorSpan(highlightColor), verse_s.length() + 1, s.length(), 0);
