@@ -84,23 +84,23 @@ public class S {
 		if (a == 0) throw new RuntimeException(); // cuma mencegah project ambilwarna lupa dibuka
 	}
 	
-	private static synchronized void siapinEdisi() {
+	private static synchronized void prepareVersion() {
 		if (activeVersion == null) {
-			activeVersion = getEdisiInternal();
+			activeVersion = getInternalVersion();
 		}
 	}
 
-	private static Version edisiInternal;
-	public static synchronized Version getEdisiInternal() {
-		if (edisiInternal == null) {
+	private static Version internalVersion;
+	public static synchronized Version getInternalVersion() {
+		if (internalVersion == null) {
 			BuildConfig c = BuildConfig.get(App.context);
-			edisiInternal = new Version(new InternalReader(App.context, c.internalPrefix, c.internalJudul, new ReaderDecoder.Ascii()));
+			internalVersion = new Version(new InternalReader(App.context, c.internalPrefix, c.internalJudul, new ReaderDecoder.Ascii()));
 		}
-		return edisiInternal;
+		return internalVersion;
 	}
 
 	public static synchronized void prepareBook() {
-		siapinEdisi();
+		prepareVersion();
 		
 		if (activeBook != null) return;
 		activeBook = activeVersion.getFirstBook(); // nanti diset sama luar waktu init 
@@ -156,60 +156,60 @@ public class S {
 		}
 	}
 	
-	private static final String teksTakTersedia = "[?]"; //$NON-NLS-1$
+	private static final String notAvailableText = "[?]"; //$NON-NLS-1$
 	
-	private static final String[] teksTakTersediaArray = {
-		teksTakTersedia,
+	private static final String[] notAvailableTextArray = {
+		notAvailableText,
 	};
 
-	public static synchronized String muatSatuAyat(Version version, Book book, int pasal_1, int ayat_1) {
+	public static synchronized String loadVerseText(Version version, Book book, int pasal_1, int ayat_1) {
 		if (book == null) {
-			return teksTakTersedia;
+			return notAvailableText;
 		}
-		String[] xayat = muatTeks(version, book, pasal_1, false, false);
+		String[] xayat = loadChapterText(version, book, pasal_1, false, false);
 		
 		if (xayat == null) {
-			return teksTakTersedia;
+			return notAvailableText;
 		}
 		
 		int ayat_0 = ayat_1 - 1;
 		if (ayat_0 >= xayat.length) {
-			return teksTakTersedia;
+			return notAvailableText;
 		}
 		return xayat[ayat_0];
 	}
 	
-	public static synchronized String muatSatuAyat(Version version, int ari) {
-		return muatSatuAyat(version, version.getBook(Ari.toBook(ari)), Ari.toChapter(ari), Ari.toVerse(ari));
+	public static synchronized String loadVerseText(Version version, int ari) {
+		return loadVerseText(version, version.getBook(Ari.toBook(ari)), Ari.toChapter(ari), Ari.toVerse(ari));
 	}
 
-	public static synchronized String[] muatTeks(Version version, Book book, int pasal_1) {
+	public static synchronized String[] loadChapterText(Version version, Book book, int pasal_1) {
 		if (book == null) {
-			return teksTakTersediaArray;
+			return notAvailableTextArray;
 		}
-		String[] xayat = muatTeks(version, book, pasal_1, false, false);
+		String[] xayat = loadChapterText(version, book, pasal_1, false, false);
 		
 		if (xayat == null) {
-			return teksTakTersediaArray;
+			return notAvailableTextArray;
 		}
 		
 		return xayat;
 	}
 
-	public static synchronized String muatTeksJanganPisahAyatHurufKecil(Version version, Book book, int pasal_1) {
+	public static synchronized String loadChapterTextLowercasedWithoutSplit(Version version, Book book, int pasal_1) {
 		if (book == null) {
-			return teksTakTersedia;
+			return notAvailableText;
 		}
-		String[] xayat_denganSatuElemen = muatTeks(version, book, pasal_1, true, true);
+		String[] xayat_denganSatuElemen = loadChapterText(version, book, pasal_1, true, true);
 		
 		if (xayat_denganSatuElemen == null) {
-			return teksTakTersedia;
+			return notAvailableText;
 		}
 		
 		return xayat_denganSatuElemen[0];
 	}
 	
-	private static String[] muatTeks(Version version, Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+	private static String[] loadChapterText(Version version, Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
 		return version.reader.muatTeks(book, pasal_1, janganPisahAyat, hurufKecil);
 	}
 
@@ -233,15 +233,15 @@ public class S {
 		return hasil.toString();
 	}
 
-	public static String alamat(Book book, int pasal_1) {
+	public static String reference(Book book, int pasal_1) {
 		return (book == null? "[?]": book.judul) + " " + pasal_1; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public static String alamat(Book book, int pasal_1, int ayat_1) {
+	public static String reference(Book book, int pasal_1, int ayat_1) {
 		return (book == null? "[?]": book.judul) + " " + pasal_1 + ":" + ayat_1;  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
-	public static CharSequence alamat(Book book, int pasal_1, IntArrayList xayat_1) {
+	public static CharSequence reference(Book book, int pasal_1, IntArrayList xayat_1) {
 		StringBuilder sb = new StringBuilder(book == null? "[?]": book.judul); //$NON-NLS-1$
 		sb.append(' ').append(pasal_1);
 		if (xayat_1 == null || xayat_1.size() == 0) {

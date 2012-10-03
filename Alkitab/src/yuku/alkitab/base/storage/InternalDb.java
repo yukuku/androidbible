@@ -296,7 +296,7 @@ public class InternalDb {
 						map_0[ofsetMap] |= 0x4;
 						
 						String tulisan = cursor.getString(kolom_tulisan);
-						int warnaRgb = U.dekodStabilo(tulisan);
+						int warnaRgb = U.decodeHighlight(tulisan);
 						
 						if (res == null) res = new int[map_0.length];
 						res[ofsetMap] = warnaRgb;
@@ -329,7 +329,7 @@ public class InternalDb {
 						Bookmark2 bukmak = Bookmark2.dariCursor(c);
 						bukmak.waktuUbah = new Date();
 						if (warnaRgb != -1) {
-							bukmak.tulisan = U.enkodStabilo(warnaRgb);
+							bukmak.tulisan = U.encodeHighlight(warnaRgb);
 							db.update(Db.TABEL_Bukmak2, bukmak.toContentValues(), "_id=?", new String[] {String.valueOf(bukmak._id)}); //$NON-NLS-1$
 						} else {
 							// delete
@@ -341,7 +341,7 @@ public class InternalDb {
 							// ga usa ngapa2in, dari belum ada jadi tetep ga ada
 						} else {
 							Date kini = new Date();
-							Bookmark2 bukmak = new Bookmark2(ari, Db.Bukmak2.jenis_stabilo, U.enkodStabilo(warnaRgb), kini, kini); 
+							Bookmark2 bukmak = new Bookmark2(ari, Db.Bukmak2.jenis_stabilo, U.encodeHighlight(warnaRgb), kini, kini); 
 							db.insert(Db.TABEL_Bukmak2, null, bukmak.toContentValues());
 						}
 					}
@@ -362,7 +362,7 @@ public class InternalDb {
 			if (c.moveToNext()) {
 				// sudah ada!
 				Bookmark2 bukmak = Bookmark2.dariCursor(c);
-				return U.dekodStabilo(bukmak.tulisan);
+				return U.decodeHighlight(bukmak.tulisan);
 			} else {
 				return -1;
 			}
@@ -389,7 +389,7 @@ public class InternalDb {
 			while (c.moveToNext()) { 
 				int ari = c.getInt(ari_col);
 				int index = ari & 0xff;
-				int warna = U.dekodStabilo(c.getString(tulisan_col));
+				int warna = U.decodeHighlight(c.getString(tulisan_col));
 				xwarna[index] = warna;
 			}
 			

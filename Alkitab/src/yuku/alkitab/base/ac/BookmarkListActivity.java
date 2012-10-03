@@ -254,7 +254,7 @@ public class BookmarkListActivity extends BaseActivity {
 		TextView lJudul = U.getView(res, R.id.lJudul);
 		lJudul.setText(label.judul);
 		
-		U.pasangWarnaLabel(label, lJudul);
+		U.applyLabelColor(label, lJudul);
 		
 		return res;
 	}
@@ -423,7 +423,7 @@ public class BookmarkListActivity extends BaseActivity {
 			} else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
 				Cursor cursor = (Cursor) adapter.getItem(info.position);
 				int ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bukmak2.ari));
-				int warnaRgb = U.dekodStabilo(cursor.getString(cursor.getColumnIndexOrThrow(Db.Bukmak2.tulisan)));
+				int warnaRgb = U.decodeHighlight(cursor.getString(cursor.getColumnIndexOrThrow(Db.Bukmak2.tulisan)));
 				String alamat = S.reference(S.activeVersion, ari);
 				
 				new TypeHighlightDialog(this, ari, new JenisStabiloCallback() {
@@ -503,7 +503,7 @@ public class BookmarkListActivity extends BaseActivity {
 			Book book = S.activeVersion.getBook(Ari.toBook(ari));
 			String alamat = S.reference(S.activeVersion, ari);
 			
-			String isi = S.muatSatuAyat(S.activeVersion, book, Ari.toChapter(ari), Ari.toVerse(ari));
+			String isi = S.loadVerseText(S.activeVersion, book, Ari.toChapter(ari), Ari.toVerse(ari));
 			isi = U.removeSpecialCodes(isi);
 			
 			String tulisan = cursor.getString(col_tulisan);
@@ -538,7 +538,7 @@ public class BookmarkListActivity extends BaseActivity {
 				Appearances.applyBookmarkTitleTextAppearance(lTulisan);
 				
 				SpannableStringBuilder cuplikan = lagiPakeFilter != null? Search2Engine.hilite(isi, filterQueryProvider.getXkata(), warnaHilite): new SpannableStringBuilder(isi);
-				int warnaStabilo = U.dekodStabilo(tulisan);
+				int warnaStabilo = U.decodeHighlight(tulisan);
 				if (warnaStabilo != -1) {
 					cuplikan.setSpan(new BackgroundColorSpan(U.alphaMixHighlight(warnaStabilo)), 0, cuplikan.length(), 0);
 				}
@@ -591,7 +591,7 @@ public class BookmarkListActivity extends BaseActivity {
 					int ari = c.getInt(col_ari);
 					if (!memenuhi) {
 						// coba isi ayatnya!
-						String ayat = S.muatSatuAyat(S.activeVersion, ari);
+						String ayat = S.loadVerseText(S.activeVersion, ari);
 						String ayat_lc = ayat.toLowerCase();
 						if (Search2Engine.memenuhiCarian(ayat_lc, xkata)) {
 							memenuhi = true;

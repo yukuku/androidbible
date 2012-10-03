@@ -18,36 +18,36 @@ import yuku.alkitab.base.model.Label;
 public class U {
 
 	/**
-	 * Kalo ayat ga berawalan @: ga ngapa2in
-	 * Sebaliknya, buang semua @ dan 1 karakter setelahnya.
+	 * If verse doesn't start with @: don't do anything.
+	 * Otherwise, remove all @'s and one character after that.
 	 * 
-	 * @param ayat
+	 * @param text a verse
 	 */
-	public static String removeSpecialCodes(String ayat) {
-		if (ayat.length() == 0) return ayat;
-		if (ayat.charAt(0) != '@') return ayat;
+	public static String removeSpecialCodes(String text) {
+		if (text.length() == 0) return text;
+		if (text.charAt(0) != '@') return text;
 
-		StringBuilder sb = new StringBuilder(ayat.length());
+		StringBuilder sb = new StringBuilder(text.length());
 		int pos = 2;
 
 		while (true) {
-			int p = ayat.indexOf('@', pos);
+			int p = text.indexOf('@', pos);
 			if (p == -1) {
 				break;
 			}
 
-			sb.append(ayat, pos, p);
+			sb.append(text, pos, p);
 			pos = p + 2;
 		}
 
-		sb.append(ayat, pos, ayat.length());
+		sb.append(text, pos, text.length());
 		return sb.toString();
 	}
 
-	public static String enkodStabilo(int warnaRgb) {
+	public static String encodeHighlight(int colorRgb) {
 		StringBuilder sb = new StringBuilder(10);
 		sb.append('c');
-		String h = Integer.toHexString(warnaRgb);
+		String h = Integer.toHexString(colorRgb);
 		for (int x = h.length(); x < 6; x++) {
 			sb.append('0');
 		}
@@ -56,21 +56,21 @@ public class U {
 	}
 	
 	/**
-	 * @return warnaRgb (belum ada alphanya) atau -1 kalau ga bisa dekod
+	 * @return colorRgb (without alpha) or -1 if can't decode
 	 */
-	public static int dekodStabilo(String tulisan) {
-		if (tulisan == null) return -1;
-		if (tulisan.length() >= 7 && tulisan.charAt(0) == 'c') {
-			return Integer.parseInt(tulisan.substring(1, 7), 16);
+	public static int decodeHighlight(String text) {
+		if (text == null) return -1;
+		if (text.length() >= 7 && text.charAt(0) == 'c') {
+			return Integer.parseInt(text.substring(1, 7), 16);
 		} else {
 			return -1;
 		}
 	}
 	
-	public static String enkodWarnaLatarLabel(int warnaRgb_background) {
+	public static String encodeLabelBackgroundColor(int colorRgb_background) {
 		StringBuilder sb = new StringBuilder(10);
 		sb.append('b'); // 'b': background color
-		String h = Integer.toHexString(warnaRgb_background);
+		String h = Integer.toHexString(colorRgb_background);
 		for (int x = h.length(); x < 6; x++) {
 			sb.append('0');
 		}
@@ -79,20 +79,20 @@ public class U {
 	}
 	
 	/**
-	 * @return warnaRgb (belum ada alphanya) atau -1 kalau ga bisa dekod
+	 * @return colorRgb (without alpha) or -1 if can't decode
 	 */
-	public static int dekodWarnaLatarLabel(String warnaLatar) {
-		if (warnaLatar == null || warnaLatar.length() == 0) return -1;
-		if (warnaLatar.length() >= 7 && warnaLatar.charAt(0) == 'b') { // 'b': background color
-			return Integer.parseInt(warnaLatar.substring(1, 7), 16);
+	public static int decodeLabelBackgroundColor(String backgroundColor) {
+		if (backgroundColor == null || backgroundColor.length() == 0) return -1;
+		if (backgroundColor.length() >= 7 && backgroundColor.charAt(0) == 'b') { // 'b': background color
+			return Integer.parseInt(backgroundColor.substring(1, 7), 16);
 		} else {
 			return -1;
 		}
 	}
 	
-	public static int getWarnaDepanBerdasarWarnaLatar(int warnaRgb) {
+	public static int getLabelForegroundColorBasedOnBackgroundColor(int colorRgb) {
 		float[] hsl = {0.f, 0.f, 0.f};
-		rgbToHsl(warnaRgb, hsl);
+		rgbToHsl(colorRgb, hsl);
 		//Log.d("getWarnaDepanBerdasarWarnaLatar", String.format("#%06x -> %3d %.2f %.2f", warnaRgb & 0xffffff, (int)hsl[0], hsl[1], hsl[2]));
 		
 		if (hsl[2] > 0.5f) hsl[2] -= 0.44f;
@@ -166,7 +166,7 @@ public class U {
 		return r << 16 | g << 8 | b;
 	}
 	
-	public static String tampilException(Throwable e) {
+	public static String showException(Throwable e) {
 		StringWriter sw = new StringWriter(400);
 		sw.append('(').append(e.getClass().getName()).append("): ").append(e.getMessage()).append('\n'); //$NON-NLS-1$
 		e.printStackTrace(new PrintWriter(sw));
@@ -220,7 +220,7 @@ public class U {
 	}
 	
 	private static int[] colorSet;
-	public static int getWarnaBerdasarkanKitabPos(int pos) {
+	public static int getColorBasedOnBookId(int pos) {
 		if (colorSet == null) {
 			colorSet = new int[3];
 			if (U.isHolo()) {
@@ -243,8 +243,8 @@ public class U {
 		}
 	}
 
-	public static int alphaMixHighlight(int warnaRgb) {
-		return 0xa0000000 | warnaRgb;
+	public static int alphaMixHighlight(int colorRgb) {
+		return 0xa0000000 | colorRgb;
 	}
 
 	public static int getHighlightColorByBrightness(float brightness) {
@@ -269,10 +269,10 @@ public class U {
 		};
 	}
 
-	public static void pasangWarnaLabel(Label label, TextView view) {
-		int warnaLatarRgb = U.dekodWarnaLatarLabel(label.warnaLatar);
-		if (warnaLatarRgb == -1) {
-			warnaLatarRgb = 0x777777; // warna standar
+	public static void applyLabelColor(Label label, TextView view) {
+		int bgColorRgb = U.decodeLabelBackgroundColor(label.backgroundColor);
+		if (bgColorRgb == -1) {
+			bgColorRgb = 0x777777; // standard color
 		}
 		
 		GradientDrawable grad = null;
@@ -288,8 +288,8 @@ public class U {
 			}
 		}
 		if (grad != null) {
-			grad.setColor(0xff000000 | warnaLatarRgb);
-			view.setTextColor(0xff000000 | U.getWarnaDepanBerdasarWarnaLatar(warnaLatarRgb));
+			grad.setColor(0xff000000 | bgColorRgb);
+			view.setTextColor(0xff000000 | U.getLabelForegroundColorBasedOnBackgroundColor(bgColorRgb));
 		}
 	}
 }

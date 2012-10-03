@@ -387,7 +387,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 
 			Book k = getItem(position);
 			res.setText(k.judul);
-			res.setTextColor(U.getWarnaBerdasarkanKitabPos(k.bookId));
+			res.setTextColor(U.getColorBasedOnBookId(k.bookId));
 
 			return res;
 		}

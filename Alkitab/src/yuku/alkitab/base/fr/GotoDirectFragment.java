@@ -80,7 +80,7 @@ public class GotoDirectFragment extends BaseGotoFragment {
 		super.onActivityCreated(savedInstanceState);
 
 		{
-			String alamatContoh = S.alamat(S.activeVersion.getBook(bookId), chapter_1, verse_1);
+			String alamatContoh = S.reference(S.activeVersion.getBook(bookId), chapter_1, verse_1);
 			String text = getString(R.string.loncat_ke_alamat_titikdua);
 			int pos = text.indexOf("%s"); //$NON-NLS-1$
 			if (pos >= 0) {

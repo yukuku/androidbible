@@ -312,14 +312,14 @@ public class BookmarkActivity extends BaseActivity {
 						Label labelLama = judulMap.get(label.judul);
 						if (labelLama != null) {
 							// update warna label lama
-							if (tumpuk && label.warnaLatar != null && label.warnaLatar.length() > 0) {
-								labelLama.warnaLatar = label.warnaLatar;
+							if (tumpuk && label.backgroundColor != null && label.backgroundColor.length() > 0) {
+								labelLama.backgroundColor = label.backgroundColor;
 								S.getDb().updateLabel(labelLama);
 							}
 							labelRelIdToAbsIdMap.put(labelToRelIdMap.get(label), labelLama._id);
 							Log.d(TAG, "label (lama) r->a : " + labelToRelIdMap.get(label) + "->" + labelLama._id); //$NON-NLS-1$ //$NON-NLS-2$
 						} else { // belum ada, harus bikin baru
-							Label labelBaru = S.getDb().tambahLabel(label.judul, label.warnaLatar);
+							Label labelBaru = S.getDb().tambahLabel(label.judul, label.backgroundColor);
 							labelRelIdToAbsIdMap.put(labelToRelIdMap.get(label), labelBaru._id);
 							Log.d(TAG, "label (baru) r->a : " + labelToRelIdMap.get(label) + "->" + labelBaru._id); //$NON-NLS-1$ //$NON-NLS-2$
 						}
@@ -571,13 +571,13 @@ public class BookmarkActivity extends BaseActivity {
 				return true;
 			}
 			
-			int warnaLatarRgb = U.dekodWarnaLatarLabel(label.warnaLatar);
+			int warnaLatarRgb = U.decodeLabelBackgroundColor(label.backgroundColor);
 			new AmbilWarnaDialog(BookmarkActivity.this, 0xff000000 | warnaLatarRgb, new OnAmbilWarnaListener() {
 				@Override public void onOk(AmbilWarnaDialog dialog, int color) {
 					if (color == -1) {
-						label.warnaLatar = null;
+						label.backgroundColor = null;
 					} else {
-						label.warnaLatar = U.enkodWarnaLatarLabel(0x00ffffff & color);
+						label.backgroundColor = U.encodeLabelBackgroundColor(0x00ffffff & color);
 					}
 					S.getDb().updateLabel(label);
 					adapter.notifyDataSetChanged();
@@ -671,7 +671,7 @@ public class BookmarkActivity extends BaseActivity {
 				lFilterLabel.setVisibility(View.VISIBLE);
 				lFilterLabel.setText(label.judul);
 				
-				U.pasangWarnaLabel(label, lFilterLabel);
+				U.applyLabelColor(label, lFilterLabel);
 			}
 			
 			return res;

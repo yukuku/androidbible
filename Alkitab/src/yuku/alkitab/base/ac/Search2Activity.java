@@ -456,7 +456,7 @@ public class Search2Activity extends BaseActivity {
 			
 			Book k = getItem(position);
 			res.setText(k.judul);
-			res.setTextColor(U.getWarnaBerdasarkanKitabPos(k.bookId));
+			res.setTextColor(U.getColorBasedOnBookId(k.bookId));
 			
 			return res;
 		}
@@ -561,10 +561,10 @@ public class Search2Activity extends BaseActivity {
 			Book book = S.activeVersion.getBook(Ari.toBook(ari));
 			int pasal_1 = Ari.toChapter(ari);
 			int ayat_1 = Ari.toVerse(ari);
-			SpannableStringBuilder sb = new SpannableStringBuilder(S.alamat(book, pasal_1, ayat_1));
+			SpannableStringBuilder sb = new SpannableStringBuilder(S.reference(book, pasal_1, ayat_1));
 			Appearances.applySearchResultReferenceAppearance(lAlamat, sb);
 			
-			String ayat = S.muatSatuAyat(S.activeVersion, book, pasal_1, ayat_1);
+			String ayat = S.loadVerseText(S.activeVersion, book, pasal_1, ayat_1);
 			ayat = U.removeSpecialCodes(ayat);
 			lCuplikan.setText(Search2Engine.hilite(ayat, xkata, warnaHilite));
 			Appearances.applyTextAppearance(lCuplikan);

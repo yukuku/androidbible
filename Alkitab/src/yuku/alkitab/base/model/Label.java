@@ -17,7 +17,7 @@ public class Label implements Comparable<Label> {
 	public long _id;
 	public String judul;
 	public int urutan;
-	public String warnaLatar;
+	public String backgroundColor;
 	
 	private Label() {
 	}
@@ -26,7 +26,7 @@ public class Label implements Comparable<Label> {
 		this._id = _id;
 		this.judul = judul;
 		this.urutan = urutan;
-		this.warnaLatar = warnaLatar;
+		this.backgroundColor = warnaLatar;
 	}
 
 	public static Label fromCursor(Cursor c) {
@@ -34,7 +34,7 @@ public class Label implements Comparable<Label> {
 		res._id = c.getLong(c.getColumnIndexOrThrow(BaseColumns._ID));
 		res.judul = c.getString(c.getColumnIndexOrThrow(Db.Label.judul));
 		res.urutan = c.getInt(c.getColumnIndexOrThrow(Db.Label.urutan));
-		res.warnaLatar = c.getString(c.getColumnIndexOrThrow(Db.Label.warnaLatar));
+		res.backgroundColor = c.getString(c.getColumnIndexOrThrow(Db.Label.warnaLatar));
 		return res;
 	}
 	
@@ -43,7 +43,7 @@ public class Label implements Comparable<Label> {
 		// skip _id
 		res.put(Db.Label.judul, judul);
 		res.put(Db.Label.urutan, urutan);
-		res.put(Db.Label.warnaLatar, warnaLatar);
+		res.put(Db.Label.warnaLatar, backgroundColor);
 		return res;
 	}
 
@@ -66,7 +66,7 @@ public class Label implements Comparable<Label> {
 		xml.startTag(null, XMLTAG_Label);
 		xml.attribute(null, XMLATTR_relId, String.valueOf(relId));
 		xml.attribute(null, XMLATTR_judul, judul);
-		if (warnaLatar != null) xml.attribute(null, XMLATTR_warnaLatar, warnaLatar);
+		if (backgroundColor != null) xml.attribute(null, XMLATTR_warnaLatar, backgroundColor);
 		xml.endTag(null, XMLTAG_Label);
 	}
 

@@ -204,7 +204,7 @@ public class TypeBookmarkDialog {
 		res.setTag(R.id.TAG_label, label);
 		res.setOnClickListener(lJudul_click);
 		
-		U.pasangWarnaLabel(label, res);
+		U.applyLabelColor(label, res);
 		
 		return res;
 	}
@@ -242,7 +242,7 @@ public class TypeBookmarkDialog {
 				TextView text1 = U.getView(res, android.R.id.text1); 
 				Label label = getItem(position);
 				text1.setText(label.judul);
-				U.pasangWarnaLabel(label, text1);
+				U.applyLabelColor(label, text1);
 			} else {
 				TextView text1 = U.getView(res, android.R.id.text1); 
 				text1.setText(context.getString(R.string.create_label_titik3));

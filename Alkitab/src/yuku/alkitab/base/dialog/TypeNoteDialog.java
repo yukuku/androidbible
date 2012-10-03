@@ -41,7 +41,7 @@ public class TypeNoteDialog {
 		this.pasal_1 = pasal_1;
 		this.ayat_1 = ayat_1;
 		this.ari = Ari.encode(book.bookId, pasal_1, ayat_1);
-		this.alamat = S.alamat(book, pasal_1, ayat_1);
+		this.alamat = S.reference(book, pasal_1, ayat_1);
 		this.context = context;
 		this.refreshCallback = refreshCallback;
 		

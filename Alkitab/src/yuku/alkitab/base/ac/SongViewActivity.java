@@ -336,7 +336,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 					}
 					
 					if (full) {
-						res = verse_1 == 0? S.alamat(book, chapter_1): S.alamat(book, chapter_1, verse_1);
+						res = verse_1 == 0? S.reference(book, chapter_1): S.reference(book, chapter_1, verse_1);
 					}
 				}
 			}

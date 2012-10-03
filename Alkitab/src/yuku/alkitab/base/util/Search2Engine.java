@@ -199,7 +199,7 @@ public class Search2Engine {
 				
 				for (int pasal_1 = 1; pasal_1 <= npasal; pasal_1++) {
 					// coba sepasal sekaligus dulu.
-					String sepasal = S.muatTeksJanganPisahAyatHurufKecil(S.activeVersion, k, pasal_1);
+					String sepasal = S.loadChapterTextLowercasedWithoutSplit(S.activeVersion, k, pasal_1);
 					if (sepasal.indexOf(kata) >= 0) {
 						// hanya lakukan ini jika dalam sepasal kedetek ada kata
 						cariDalamSepasal(sepasal, kata, res, Ari.encode(k.bookId, pasal_1, 0), pakeTambah);
@@ -224,7 +224,7 @@ public class Search2Engine {
 				Book k = S.activeVersion.getBook(Ari.toBook(ariKpKini));
 				int pasal_1 = Ari.toChapter(ariKpKini);
 				
-				String sepasal = S.muatTeksJanganPisahAyatHurufKecil(S.activeVersion, k, pasal_1);
+				String sepasal = S.loadChapterTextLowercasedWithoutSplit(S.activeVersion, k, pasal_1);
 				if (sepasal.indexOf(kata) >= 0) {
 					// hanya lakukan ini jika dalam sepasal kedetek ada kata
 					cariDalamSepasal(sepasal, kata, res, ariKpKini, pakeTambah);

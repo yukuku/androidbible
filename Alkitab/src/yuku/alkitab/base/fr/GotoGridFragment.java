@@ -94,7 +94,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 		if (selectedChapter == 0) {
 			lCurrentSelection.setText(selectedBook.judul);
 		} else {
-			lCurrentSelection.setText(S.alamat(selectedBook, selectedChapter));
+			lCurrentSelection.setText(S.reference(selectedBook, selectedChapter));
 		}
 	}
 

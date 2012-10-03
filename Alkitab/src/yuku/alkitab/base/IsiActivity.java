@@ -596,11 +596,11 @@ public class IsiActivity extends BaseActivity {
 	private CharSequence referenceFromSelectedVerses(IntArrayList selectedVerses) {
 		if (selectedVerses.size() == 0) {
 			// should not be possible. So we don't do anything.
-			return S.alamat(S.activeBook, this.chapter_1);
+			return S.reference(S.activeBook, this.chapter_1);
 		} else if (selectedVerses.size() == 1) {
-			return S.alamat(S.activeBook, this.chapter_1, selectedVerses.get(0));
+			return S.reference(S.activeBook, this.chapter_1, selectedVerses.get(0));
 		} else {
-			return S.alamat(S.activeBook, this.chapter_1, selectedVerses);
+			return S.reference(S.activeBook, this.chapter_1, selectedVerses);
 		}
 	}
 	
@@ -724,7 +724,7 @@ public class IsiActivity extends BaseActivity {
 			
 			final int ari = Ari.encode(S.activeBook.bookId, this.chapter_1, mainVerse_1);
 			
-			TypeBookmarkDialog dialog = new TypeBookmarkDialog(this, S.alamat(S.activeBook, this.chapter_1, mainVerse_1), ari);
+			TypeBookmarkDialog dialog = new TypeBookmarkDialog(this, S.reference(S.activeBook, this.chapter_1, mainVerse_1), ari);
 			dialog.setListener(new TypeBookmarkDialog.Listener() {
 				@Override public void onOk() {
 					uncheckAll();
@@ -1188,7 +1188,7 @@ public class IsiActivity extends BaseActivity {
 			PericopeBlock[] pericope_blocks;
 			int nblock;
 			
-			String[] verses = S.muatTeks(S.activeVersion, S.activeBook, chapter_1);
+			String[] verses = S.loadChapterText(S.activeVersion, S.activeBook, chapter_1);
 			
 			//# max is set to 30 (one chapter has max of 30 blocks. Already almost impossible)
 			int max = 30;
@@ -1213,7 +1213,7 @@ public class IsiActivity extends BaseActivity {
 			}
 		}
 		
-		String title = S.alamat(S.activeBook, chapter_1);
+		String title = S.reference(S.activeBook, chapter_1);
 		lTitle.setText(title);
 		bGoto.setText(title);
 		
