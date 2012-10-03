@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- warna teks, warna latar, warna ayat -->
+    <!-- text color, bg color, verse number color, red text color -->
     <string-array name="pref_temaWarna_value" tools:ignore="MissingTranslation">
         <!-- kertas -->
-        <item>ff000000 ffeeeeee ff6666ff</item>
+        <item>ff000000 ffeeeeee ff6666ff ffed130e</item>
         <!-- papan -->
-        <item>fff0f0f0 ff000000 ff9090ff</item>
+        <item>fff0f0f0 ff000000 ff9090ff ffff9090</item>
         <!-- hutan -->
-        <item>ff1c5009 ffd2f9d0 ff543703</item>
+        <item>ff1c5009 ffd2f9d0 ff543703 fff26f05</item>
         <!-- danau -->
-        <item>ff274720 ffd7e9e7 ff1916ec</item>
+        <item>ff274720 ffd7e9e7 ff1916ec ffe02c2c</item>
         <!-- abu -->
-        <item>ff2f3540 fff2ede4 ff8c8681</item>
+        <item>ff2f3540 fff2ede4 ff8c8681 ffdc48c5</item>
         <!-- jeruk -->
-        <item>ff3f5765 fffffcde ffe86a1c</item>
+        <item>ff3f5765 fffffcde ff25a81e fff65608</item>
         <!-- padang -->
-        <item>ff562707 ffeddca9 ffe44908</item>
+        <item>ff562707 ffeddca9 ffe36b09 ffbc641d</item>
         <!-- coklat -->
-        <item>fffaac5f ff362b2a ffac8674</item>
+        <item>fffaac5f ff362b2a ffd8d7d7 ffede36f</item>
         <!-- jambu -->
-        <item>ffe7a697 ff262a33 ffad8d8d</item>
+        <item>ffffc0af ff262a33 ffad8d8d ffff9090</item>
         <!-- malam -->
-        <item>ffe1e6fa ff122641 ffb1790f</item>
+        <item>ffe1e6fa ff122641 ffb1790f ffff9090</item>
         <!-- malam bintang -->
-        <item>ffffe985 ff122641 ffe3f5ff</item>
+        <item>ffffe985 ff122641 ffe3f5ff ffff9090</item>
     </string-array>
 
 </resources>

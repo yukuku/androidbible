@@ -24,6 +24,8 @@
 	<string name="pref_warnaNomerAyat_int_key">warnaNomerAyat</string>
 	<integer name="pref_warnaNomerAyat_int_default">0xff8080ff</integer>
 	
+	<string name="pref_redTextColor_key">redTextColor</string>
+	
 	<string name="pref_boldHuruf_key">boldHuruf</string>
 	
 	<string name="pref_jenisHuruf_key">jenisHuruf</string>

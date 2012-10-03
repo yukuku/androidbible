@@ -4,9 +4,10 @@
     <string name="pref_bahasa_language">Language</string>
     <string name="pref_atur_warna_teks_latar_belakang_dan">Set colors of text, background, and verse numbers according to a theme.</string>
     <string name="pref_tema_warna">Color Theme</string>
-    <string name="pref_warna_teks_alkitab">Bible Text Color</string>
-    <string name="pref_warna_latar_belakang">Background Color</string>
-    <string name="pref_warna_nomor_ayat">Verse Number Color</string>
+    <string name="pref_warna_teks_alkitab">Bible Text</string>
+    <string name="pref_warna_latar_belakang">Background</string>
+    <string name="pref_warna_nomor_ayat">Verse Number</string>
+    <string name="pref_redTextColor_title">Words of Jesus</string>
     <string name="pref_pakai_huruf_yang_dicetak_tebal_bold">Use bold fonts.</string>
     <string name="pref_tebalkan_huruf">Bold Text</string>
     <string name="pref_ganti_bentuk_huruf_teks_alkitab">Modify the appearance of the Bible text.</string>
