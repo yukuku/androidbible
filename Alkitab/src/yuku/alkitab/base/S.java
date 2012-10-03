@@ -52,12 +52,16 @@ public class S {
 		public static float backgroundBrightness;
 		
 		// semua di bawah dalam px
-		public static int paragraphIndentSpacing;
+		public static int indentParagraphFirst;
+		public static int indentParagraphRest;
 		public static int indentSpacing1;
 		public static int indentSpacing2;
 		public static int indentSpacing3;
 		public static int indentSpacing4;
 		public static int indentSpacingExtra;
+		public static int paragraphSpacingBefore;
+		public static int pericopeSpacingTop;
+		public static int pericopeSpacingBottom;
 	}
 	
 	/**
@@ -136,12 +140,16 @@ public class S {
 		Resources res = App.context.getResources();
 		
 		float skalaBerdasarUkuranHuruf = applied.fontSize2dp / 17.f;
-		applied.paragraphIndentSpacing = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.indenParagraf) + 0.5f);
-		applied.indentSpacing1 = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokSatu) + 0.5f);
-		applied.indentSpacing2 = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokDua) + 0.5f);
-		applied.indentSpacing3 = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokTiga) + 0.5f);
-		applied.indentSpacing4 = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokEmpat) + 0.5f);
-		applied.indentSpacingExtra = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.menjorokExtra) + 0.5f);
+		applied.indentParagraphFirst = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.indentParagraphFirst) + 0.5f);
+		applied.indentParagraphRest = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.indentParagraphRest) + 0.5f);
+		applied.indentSpacing1 = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.indent_1) + 0.5f);
+		applied.indentSpacing2 = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.indent_2) + 0.5f);
+		applied.indentSpacing3 = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.indent_3) + 0.5f);
+		applied.indentSpacing4 = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.indent_4) + 0.5f);
+		applied.indentSpacingExtra = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.indentExtra) + 0.5f);
+		applied.paragraphSpacingBefore = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.paragraphSpacingBefore) + 0.5f);
+		applied.pericopeSpacingTop = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.pericopeSpacingTop) + 0.5f);
+		applied.pericopeSpacingBottom = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.pericopeSpacingBottom) + 0.5f);
 	}
 	
 	private static final String notAvailableText = "[?]"; //$NON-NLS-1$

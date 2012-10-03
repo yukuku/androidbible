@@ -1,19 +1,26 @@
 package yuku.alkitab.base.widget;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Typeface;
+import android.os.Build;
+import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.TextPaint;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.LeadingMarginSpan;
+import android.text.style.LineHeightSpan;
+import android.text.style.MetricAffectingSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
@@ -23,7 +30,6 @@ import java.util.Arrays;
 import yuku.alkitab.R;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.S.applied;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
@@ -34,6 +40,72 @@ import yuku.alkitab.base.util.Appearances;
 public class VerseAdapter extends BaseAdapter {
 	public static final String TAG = VerseAdapter.class.getSimpleName();
 
+	static class ParagraphSpacingBefore implements LineHeightSpan {
+		private final int before;
+		
+		ParagraphSpacingBefore(int before) {
+			this.before = before;
+		}
+		
+		@Override public void chooseHeight(CharSequence text, int start, int end, int spanstartv, int v, FontMetricsInt fm) {
+			if (spanstartv == v) {
+				fm.top -= before;
+				fm.ascent -= before;
+			}
+		}
+	}
+	
+	/**
+	 * This is used instead of {@link LeadingMarginSpan.Standard} to overcome
+	 * a bug in CyanogenMod 7.x. If we don't support CM 7 anymore, we 
+	 * can use that instead of this, which seemingly *a bit* more efficient. 
+	 */
+	static class LeadingMarginSpanFixed implements LeadingMarginSpan.LeadingMarginSpan2 {
+		private final int first;
+		private final int rest;
+
+		@Override public void drawLeadingMargin(Canvas c, Paint p, int x, int dir, int top, int baseline, int bottom, CharSequence text, int start, int end, boolean first, Layout layout) {}
+		
+		public LeadingMarginSpanFixed(int all) {
+			this.first = all;
+			this.rest = all;
+		}
+
+		public LeadingMarginSpanFixed(int first, int rest) {
+			this.first = first;
+			this.rest = rest;
+		}
+		
+		@Override public int getLeadingMargin(boolean first) {
+			return first? this.first: this.rest;
+		}
+
+		@Override public int getLeadingMarginLineCount() {
+			return 1;
+		}
+	}
+
+	static class VerseNumberSpan extends MetricAffectingSpan {
+		private final boolean applyColor;
+
+		public VerseNumberSpan(boolean applyColor) {
+			this.applyColor = applyColor;
+		}
+		
+		@Override public void updateMeasureState(TextPaint tp) {
+			tp.baselineShift += (int) (tp.ascent() * 0.3f + 0.5f);
+			tp.setTextSize(tp.getTextSize() * 0.7f);
+		}
+
+		@Override public void updateDrawState(TextPaint tp) {
+			tp.baselineShift += (int) (tp.ascent() * 0.3f + 0.5f);
+			tp.setTextSize(tp.getTextSize() * 0.7f);
+			if (applyColor) {
+				tp.setColor(S.applied.verseNumberColor);
+			}
+		}
+	}
+	
 	// # field ctor
 	final Context context_;
 	final CallbackSpan.OnClickListener parallelListener_;
@@ -56,13 +128,44 @@ public class VerseAdapter extends BaseAdapter {
 	private int[] attributeMap_; // bit 0(0x1) = bukmak; bit 1(0x2) = catatan; bit 2(0x4) = stabilo;
 	private int[] highlightMap_; // null atau warna stabilo
 
+	private LayoutInflater inflater_;
+	
 	public VerseAdapter(Context context, CallbackSpan.OnClickListener paralelListener, IsiActivity.AttributeListener attributeListener) {
 		context_ = context;
 		parallelListener_ = paralelListener;
 		attributeListener_ = attributeListener;
 		density_ = context.getResources().getDisplayMetrics().density;
+		inflater_ = LayoutInflater.from(context_);
 	}
 
+	/** 0 undefined. 1 and 2 based on version. */
+	private static int leadingMarginSpanVersion = 0;
+	
+	/** Creates a leading margin span based on version:
+	 * - API 7 or 11 and above: LeadingMarginSpan.Standard
+	 * - API 8..10: LeadingMarginSpanFixed, which is based on LeadingMarginSpan.LeadingMarginSpan2
+	 */
+	static Object createLeadingMarginSpan(int all) {
+		return createLeadingMarginSpan(all, all);
+	}
+	
+	/** Creates a leading margin span based on version:
+	 * - API 7 or 11 and above: LeadingMarginSpan.Standard
+	 * - API 8..10: LeadingMarginSpanFixed, which is based on LeadingMarginSpan.LeadingMarginSpan2
+	 */
+	static Object createLeadingMarginSpan(int first, int rest) {
+		if (leadingMarginSpanVersion == 0) {
+			int v = Build.VERSION.SDK_INT;
+			leadingMarginSpanVersion = (v == 7 || v >= 11)? 1: 2; 
+		}
+		
+		if (leadingMarginSpanVersion == 1) {
+			return new LeadingMarginSpan.Standard(first, rest); 
+		} else {
+			return new LeadingMarginSpanFixed(first, rest);
+		}
+	}
+	
 	public synchronized void setData(Book book, int chapter_1, String[] verseTextData, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
 		book_ = book;
 		chapter_1_ = chapter_1;
@@ -114,7 +217,6 @@ public class VerseAdapter extends BaseAdapter {
 		if (id >= 0) {
 			// AYAT. bukan judul perikop.
 
-			VerseItem res;
 
 			String text = verseTextData_[id];
 			boolean withBookmark = attributeMap_ == null ? false : (attributeMap_[id] & 0x1) != 0;
@@ -127,6 +229,18 @@ public class VerseAdapter extends BaseAdapter {
 				checked = ((ListView) parent).isItemChecked(position);
 			}
 
+			VerseItem res;
+			if (convertView == null || convertView.getId() != R.layout.item_verse) {
+				res = (VerseItem) inflater_.inflate(R.layout.item_verse, null);
+				res.setId(R.layout.item_verse);
+			} else {
+				res = (VerseItem) convertView;
+			}
+			
+			TextView lText = (TextView) res.findViewById(R.id.lText);
+			TextView lVerseNumber = (TextView) res.findViewById(R.id.lVerseNumber);
+			
+			
 			// Udah ditentukan bahwa ini ayat dan bukan perikop, sekarang tinggal tentukan
 			// apakah ayat ini pake formating biasa (tanpa menjorok dsb) atau ada formating
 			if (text.length() > 0 && text.charAt(0) == '@') {
@@ -135,30 +249,16 @@ public class VerseAdapter extends BaseAdapter {
 					throw new RuntimeException("Karakter kedua bukan @. Isi ayat: " + text); //$NON-NLS-1$
 				}
 
-				if (convertView == null || convertView.getId() != R.layout.item_verse_tiled) {
-					res = (VerseItem) LayoutInflater.from(context_).inflate(R.layout.item_verse_tiled, null);
-					res.setId(R.layout.item_verse_tiled);
-				} else {
-					res = (VerseItem) convertView;
-				}
-
-				boolean rightAfterPericope = position > 0 && itemPointer_[position - 1] < 0;
+				boolean dontPutSpacingBefore = (position > 0 && itemPointer_[position - 1] < 0) || position == 0;
 				
-				tiledVerseDisplay(res.findViewById(R.id.sebelahKiri), id + 1, text, highlightColor, checked, rightAfterPericope);
-
+				tiledVerseDisplay(lText, lVerseNumber, id + 1, text, highlightColor, checked, dontPutSpacingBefore);
 			} else {
-				if (convertView == null || convertView.getId() != R.layout.item_verse_simple) {
-					res = (VerseItem) LayoutInflater.from(context_).inflate(R.layout.item_verse_simple, null);
-					res.setId(R.layout.item_verse_simple);
-				} else {
-					res = (VerseItem) convertView;
-				}
-
-				TextView lIsiAyat = (TextView) res.findViewById(R.id.lIsiAyat);
-				simpleVerseDisplay(lIsiAyat, id + 1, text, highlightColor, checked);
-
-				Appearances.applyTextAppearance(lIsiAyat);
-				if (checked) lIsiAyat.setTextColor(0xff000000); // override with black!
+				simpleVerseDisplay(lText, lVerseNumber, id + 1, text, highlightColor, checked);
+			}
+			
+			Appearances.applyTextAppearance(lText);
+			if (checked) {
+				lText.setTextColor(0xff000000); // override with black!
 			}
 
 			View imgAttributeBookmark = res.findViewById(R.id.imgAtributBukmak);
@@ -171,15 +271,26 @@ public class VerseAdapter extends BaseAdapter {
 			if (withNote) {
 				setClickListenerForNote(imgAttributeNote, chapter_1_, id + 1);
 			}
+			
+//			{ // DUMP
+//				Log.d(TAG, "==== DUMP verse " + (id + 1));
+//				SpannedString sb = (SpannedString) lText.getText();
+//				Object[] spans = sb.getSpans(0, sb.length(), Object.class);
+//				for (Object span: spans) {
+//					int start = sb.getSpanStart(span);
+//					int end = sb.getSpanEnd(span);
+//					Log.d(TAG, "Span " + span.getClass().getSimpleName() + " " + start + ".." + end + ": " + sb.toString().substring(start, end));
+//				}
+//			}
 
 			return res;
 		} else {
 			// JUDUL PERIKOP. bukan ayat.
 
 			View res;
-			if (convertView == null || convertView.getId() != R.layout.pericope_header) {
-				res = LayoutInflater.from(context_).inflate(R.layout.pericope_header, null);
-				res.setId(R.layout.pericope_header);
+			if (convertView == null || convertView.getId() != R.layout.item_pericope_header) {
+				res = LayoutInflater.from(context_).inflate(R.layout.item_pericope_header, null);
+				res.setId(R.layout.item_pericope_header);
 			} else {
 				res = convertView;
 			}
@@ -191,12 +302,15 @@ public class VerseAdapter extends BaseAdapter {
 
 			lJudul.setText(pericopeBlock.title);
 
-			// matikan padding atas kalau position == 0 ATAU sebelum ini juga judul perikop
+			int paddingTop;
+			// turn off top padding if the position == 0 OR before this is also a pericope title
 			if (position == 0 || itemPointer_[position - 1] < 0) {
-				lJudul.setPadding(0, 0, 0, 0);
+				paddingTop = 0;
 			} else {
-				lJudul.setPadding(0, (int) (S.applied.fontSize2dp * density_), 0, 0);
+				paddingTop = S.applied.pericopeSpacingTop;
 			}
+			
+			res.setPadding(0, paddingTop, 0, S.applied.pericopeSpacingBottom);
 
 			Appearances.applyPericopeTitleAppearance(lJudul);
 
@@ -332,239 +446,225 @@ public class VerseAdapter extends BaseAdapter {
 		return 0;
 	}
 
-	public void tiledVerseDisplay(View res, int ayat_1, String text, int warnaStabilo, boolean checked, boolean rightAfterPericope) {
-		// Don't forget to modify indexOfPenehel below too
-		// @@ = start a verse containing tiles or formatting
-		// @0 = start with indent 0 [tiler]
-		// @1 = start with indent 1 [tiler]
-		// @2 = start with indent 2 [tiler]
-		// @3 = start with indent 3 [tiler]
-		// @4 = start with indent 4 [tiler]
+	/**
+	 * @param dontPutSpacingBefore this verse is right after a pericope title or on the 0th position
+	 */
+	public static void tiledVerseDisplay(TextView lText, TextView lVerseNumber, int verse_1, String text, int highlightColor, boolean checked, boolean dontPutSpacingBefore) {
+		// @@ = start a verse containing paragraphs or formatting
+		// @0 = start with indent 0 [paragraph]
+		// @1 = start with indent 1 [paragraph]
+		// @2 = start with indent 2 [paragraph]
+		// @3 = start with indent 3 [paragraph]
+		// @4 = start with indent 4 [paragraph]
 		// @6 = start of red text [formatting]
 		// @5 = end of red text   [formatting]
 		// @9 = start of italic [formatting]
 		// @7 = end of italic   [formatting]
 		// @8 = put a blank line to the next verse [formatting]
 		// @^ = start-of-paragraph marker
-		int parsingPos = 2; // we start after "@@"
-		int indent = 0;
-		boolean pleaseExit = false;
-		boolean noTileYet = true;
-		boolean verseNumberWritten = false;
-
-		LinearLayout tileContainer = (LinearLayout) res.findViewById(R.id.tempatTehel);
-		tileContainer.removeAllViews();
-
-		char[] text_c = text.toCharArray();
-
-		while (true) {
-			// cari posisi penehel berikutnya
-			int pos_until = indexOfTiler(text, parsingPos);
-
-			if (pos_until == -1) {
-				// abis
-				pos_until = text_c.length;
-				pleaseExit = true;
-			}
-
-			if (parsingPos == pos_until) {
-				// di awal, belum ada apa2!
-			} else {
-				{ // create a tile
-					TextView tile = new TextView(context_);
-					if (indent == 1) {
-						tile.setPadding(S.applied.indentSpacing1 + (ayat_1 >= 100 ? S.applied.indentSpacingExtra : 0), 0, 0, 0);
-					} else if (indent == 2) {
-						tile.setPadding(S.applied.indentSpacing2 + (ayat_1 >= 100 ? S.applied.indentSpacingExtra : 0), 0, 0, 0);
-					} else if (indent == 3) {
-						tile.setPadding(S.applied.indentSpacing3 + (ayat_1 >= 100 ? S.applied.indentSpacingExtra : 0), 0, 0, 0);
-					} else if (indent == 4) {
-						tile.setPadding(S.applied.indentSpacing4 + (ayat_1 >= 100 ? S.applied.indentSpacingExtra : 0), 0, 0, 0);
-					}
-
-					// case: no tile yet and the first tile has 0 indent
-					if (noTileYet && indent == 0) {
-						// # kasih no ayat di depannya
-						SpannableStringBuilder s = new SpannableStringBuilder();
-						String verse_s = String.valueOf(ayat_1);
-						s.append(verse_s).append(' ');
-						
-						// special case: if @^ is at the beginning
-						if (!rightAfterPericope && text_c[parsingPos] == '@' && text_c[parsingPos+1] == '^') {
-							tile.setPadding(tile.getPaddingLeft(), 20 /* TODO softcode */, 0, 0);
-						}
-
-						appendFormattedText2(s, text, text_c, parsingPos, pos_until);
-						if (!checked) {
-							s.setSpan(new ForegroundColorSpan(applied.verseNumberColor), 0, verse_s.length(), 0);
-						}
-						s.setSpan(new LeadingMarginSpan.Standard(0, S.applied.paragraphIndentSpacing), 0, s.length(), 0);
-						if (warnaStabilo != 0) {
-							s.setSpan(new BackgroundColorSpan(warnaStabilo), verse_s.length() + 1, s.length(), 0);
-						}
-						tile.setText(s, BufferType.SPANNABLE);
-
-						// kasi tanda biar nanti ga tulis nomer ayat lagi
-						verseNumberWritten = true;
-					} else {
-						SpannableStringBuilder s = new SpannableStringBuilder();
-						appendFormattedText2(s, text, text_c, parsingPos, pos_until);
-						if (warnaStabilo != 0) {
-							s.setSpan(new BackgroundColorSpan(warnaStabilo), 0, s.length(), 0);
-						}
-						tile.setText(s);
-					}
-
-					Appearances.applyTextAppearance(tile);
-					if (checked) tile.setTextColor(0xff000000); // override with black!
-
-					tileContainer.addView(tile);
-				}
-
-				noTileYet = false;
-			}
-
-			if (pleaseExit) break;
-
-			char marker = text_c[pos_until + 1];
-			if (marker == '1') {
-				indent = 1;
-			} else if (marker == '2') {
-				indent = 2;
-			} else if (marker == '3') {
-				indent = 3;
-			} else if (marker == '4') {
-				indent = 4;
-			}
-
-			parsingPos = pos_until + 2;
-		}
-
-		TextView lAyat = (TextView) res.findViewById(R.id.lAyat);
-		if (verseNumberWritten) {
-			lAyat.setText(""); //$NON-NLS-1$
-		} else {
-			lAyat.setText(String.valueOf(ayat_1));
-			Appearances.applyVerseNumberAppearance(lAyat);
-			if (checked) lAyat.setTextColor(0xff000000);
-		}
-	}
-
-	/**
-	 * taro teks dari text[pos_from..pos_until] dengan format 6 atau 5 atau 9 atau 7 atau 8 ke s
-	 * 
-	 * @param text_c
-	 *            string yang dari posDari sampe sebelum posSampe hanya berisi 6 atau 5 atau 9 atau 7 atau 8 tanpa mengandung @ lain.
-	 */
-	private void appendFormattedText2(SpannableStringBuilder s, String text, char[] text_c, int pos_from, int pos_until) {
-		int redStart = -1; // posisi basis s. -1 artinya belum ketemu
-		int italicStart = -1; // posisi basis s. -1 artinya belum ketemu
 		
-		for (int i = pos_from; i < pos_until; i++) {
-			// coba templok aja sampe ketemu @ berikutnya. Jadi jangan satu2.
-			{
-				int nextAtPos = text.indexOf('@', i);
-				if (nextAtPos == -1) {
-					// udah ga ada lagi, tumplekin semua dan keluar dari method ini
-					s.append(text, i, pos_until);
-					return;
-				} else {
-					// tumplekin sampe sebelum @
-					if (nextAtPos != i) { // kalo ga 0 panjangnya
-						s.append(text, i, nextAtPos);
-					}
-					i = nextAtPos;
-				}
-			}
+		// optimization, to prevent repeated calls to charAt()
+		char[] text_c = text.toCharArray();
+		
+		/**
+		 * '0'..'4', '^' indent 0..4 or new para
+		 * -1 undefined
+		 */
+		int paraType = -1; 
+		/**
+		 * position of start of paragraph
+		 */
+		int startPara = 0;
+		/**
+		 * position of start red marker
+		 */
+		int startRed = -1;
+		/**
+		 * position of start italic marker
+		 */
+		int startItalic = -1;
+		
+		SpannableStringBuilder s = new SpannableStringBuilder();
 
-			i++; // satu char setelah @
-			if (i >= pos_until) {
-				// out of bounds
+		// this has two uses
+		// - to check whether a verse number has been written
+		// - to check whether we need to put a new line when encountering a new para 
+		int startPosAfterVerseNumber = 0;
+		String verseNumber_s = Integer.toString(verse_1);
+
+		int pos = 2; // we start after "@@"
+
+		// write verse number inline only when no @[1234^] on the beginning of text
+		if (text_c.length >= 4 && text_c[pos] == '@' && (text_c[pos+1] == '^' || (text_c[pos+1] >= '1' && text_c[pos+1] <= '4'))) {
+			// don't write verse number now
+		} else {
+			s.append(verseNumber_s);
+			s.setSpan(new VerseNumberSpan(!checked), 0, s.length(), 0);
+			s.append("  ");
+			startPosAfterVerseNumber = s.length();
+		}
+
+		
+		// initialize lVerseNumber to have no padding first
+		lVerseNumber.setPadding(0, 0, 0, 0);
+		
+		while (true) {
+			if (pos >= text_c.length) {
 				break;
 			}
 
-			char d = text_c[i];
-			if (d == '8') {
-				s.append('\n');
-				continue;
+			int nextAt = text.indexOf('@', pos);
+			
+			if (nextAt == -1) { // no more, just append till the end of everything and exit
+				s.append(text, pos, text.length());
+				break;
 			}
 			
-			if (d == '^' && i >= pos_from + 2) { // the other case where @^ happens at the beginning is already handled outside this method
-				s.append("\n\n");
+			// insert all text until the nextAt
+			if (nextAt != pos) /* optimization */ {
+				s.append(text, pos, nextAt);
+				pos = nextAt;
 			}
-
-			if (d == '6') { // merah start
-				redStart = s.length();
-				continue;
+			
+			pos++;
+			// just in case 
+			if (pos >= text_c.length) {
+				break;
 			}
-
-			if (d == '9') { // italic start
-				italicStart = s.length();
-				continue;
-			}
-
-			if (d == '5') { // merah ends
-				if (redStart != -1) {
-					s.setSpan(new ForegroundColorSpan(S.applied.fontRedColor), redStart, s.length(), 0);
-					redStart = -1; // reset
+			
+			char marker = text_c[pos];
+			switch (marker) {
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '^':
+				// apply previous
+				applyParaStyle(s, paraType, startPara, verse_1, startPosAfterVerseNumber > 0, dontPutSpacingBefore && startPara <= startPosAfterVerseNumber, startPara <= startPosAfterVerseNumber, lVerseNumber);
+				if (s.length() > startPosAfterVerseNumber) {
+					s.append("\n");
 				}
-				continue;
-			}
-
-			if (d == '7') { // italic ends
-				if (italicStart != -1) {
-					s.setSpan(new StyleSpan(Typeface.ITALIC), italicStart, s.length(), 0);
-					italicStart = -1; // reset
+				// store current
+				paraType = marker;
+				startPara = s.length();
+				break;
+			case '6':
+				startRed = s.length();
+				break;
+			case '9':
+				startItalic = s.length();
+				break;
+			case '5':
+				if (startRed != -1) {
+					if (!checked) {
+						s.setSpan(new ForegroundColorSpan(S.applied.fontRedColor), startRed, s.length(), 0);
+					}
+					startRed = -1;
 				}
-				continue;
+				break;
+			case '7':
+				if (startItalic != -1) {
+					s.setSpan(new StyleSpan(Typeface.ITALIC), startItalic, s.length(), 0);
+					startItalic = -1;
+				}
+				break;
+			case '8':
+				s.append("\n");
+				break;
 			}
+			
+			pos++;
 		}
-	}
-
-	/** index of penehel berikutnya */
-	private int indexOfTiler(String text, int start) {
-		int length = text.length();
-		while (true) {
-			int pos = text.indexOf('@', start);
-			if (pos == -1) {
-				return -1;
-			} else if (pos >= length - 1) {
-				return -1; // tepat di akhir string, maka anggaplah tidak ada
-			} else {
-				char c = text.charAt(pos + 1);
-				if (c >= '0' && c <= '4') {
-					return pos;
-				} else {
-					start = pos + 2;
-				}
-			}
-		}
-	}
-
-	static void simpleVerseDisplay(TextView lIsiAyat, int verse_1, String text, int highlightColor, boolean checked) {
-		SpannableStringBuilder verse = new SpannableStringBuilder(
-			"1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" + //$NON-NLS-1$
-			"1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" + //$NON-NLS-1$
-			"1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" //$NON-NLS-1$
-		); // pre-allocate
 		
-		verse.clear();
-
-		// nomer ayat
-		String verse_s = String.valueOf(verse_1);
-		verse.append(verse_s).append(' ').append(text);
-		if (!checked) {
-			verse.setSpan(new ForegroundColorSpan(S.applied.verseNumberColor), 0, verse_s.length(), 0);
-		}
-
-		// teks
-		verse.setSpan(new LeadingMarginSpan.Standard(0, S.applied.paragraphIndentSpacing), 0, verse.length(), 0);
+		// apply unapplied
+		applyParaStyle(s, paraType, startPara, verse_1, startPosAfterVerseNumber > 0, dontPutSpacingBefore && startPara <= startPosAfterVerseNumber, startPara <= startPosAfterVerseNumber, lVerseNumber);
 
 		if (highlightColor != 0) {
-			verse.setSpan(new BackgroundColorSpan(highlightColor), verse_s.length() + 1, verse.length(), 0);
+			s.setSpan(new BackgroundColorSpan(highlightColor), startPosAfterVerseNumber == 0? 0: verseNumber_s.length() + 1, s.length(), 0);
 		}
 
-		lIsiAyat.setText(verse, BufferType.SPANNABLE);
+		lText.setText(s);
+		
+		// show verse on lVerseNumber if not shown in lText yet
+		if (startPosAfterVerseNumber > 0) {
+			lVerseNumber.setText(""); //$NON-NLS-1$
+		} else {
+			lVerseNumber.setText(verseNumber_s);
+			Appearances.applyVerseNumberAppearance(lVerseNumber);
+			if (checked) {
+				lVerseNumber.setTextColor(0xff000000); // override with black!
+			}
+		}
+	}
+	
+	/**
+	 * @param paraType if -1, will apply the same thing as when paraType is 0 and firstLineWithVerseNumber is true.
+	 * @param firstLineWithVerseNumber If this is formatting for the first paragraph of a verse and that paragraph contains a verse number, so we can apply more lefty first-line indent.
+	 * This only applies if the paraType is 0.
+	 * @param dontPutSpacingBefore if this paragraph is just after pericope title or on the 0th position, in this case we don't apply paragraph spacing before.
+	 * @return whether we should put a top-spacing to the detached verse number too
+	 */
+	private static void applyParaStyle(SpannableStringBuilder sb, int paraType, int startPara, int verse_1, boolean firstLineWithVerseNumber, boolean dontPutSpacingBefore, boolean firstParagraph, TextView lVerseNumber) {
+		int len = sb.length();
+		
+		if (startPara == len) return;
+		
+		switch (paraType) {
+		case -1:
+			sb.setSpan(createLeadingMarginSpan(0, S.applied.indentParagraphRest), startPara, len, 0);
+			break;
+		case '0':
+			if (firstLineWithVerseNumber) {
+				sb.setSpan(createLeadingMarginSpan(0, S.applied.indentParagraphRest), startPara, len, 0);
+			} else {
+				sb.setSpan(createLeadingMarginSpan(S.applied.indentParagraphRest), startPara, len, 0);
+			}
+			break;
+		case '1':
+			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing1 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0)), startPara, len, 0);
+			break;
+		case '2':
+			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing2 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0)), startPara, len, 0);
+			break;
+		case '3':
+			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing3 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0)), startPara, len, 0);
+			break;
+		case '4':
+			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing4 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0)), startPara, len, 0);
+			break;
+		case '^':
+			if (!dontPutSpacingBefore) {
+				sb.setSpan(new ParagraphSpacingBefore(S.applied.paragraphSpacingBefore), startPara, len, 0);
+				if (firstParagraph) {
+					lVerseNumber.setPadding(0, S.applied.paragraphSpacingBefore, 0, 0);
+				}
+			}
+			sb.setSpan(createLeadingMarginSpan(S.applied.indentParagraphFirst, S.applied.indentParagraphRest), startPara, len, 0);
+			break;
+		}
+	}
+
+	static void simpleVerseDisplay(TextView lText, TextView lVerseNumber, int verse_1, String text, int highlightColor, boolean checked) {
+		// initialize lVerseNumber to have no padding first
+		lVerseNumber.setPadding(0, 0, 0, 0);
+		
+		SpannableStringBuilder s = new SpannableStringBuilder();
+
+		// nomer ayat
+		String verse_s = Integer.toString(verse_1);
+		s.append(verse_s).append("  ").append(text);
+		s.setSpan(new VerseNumberSpan(!checked), 0, verse_s.length(), 0);
+
+		// teks
+		s.setSpan(createLeadingMarginSpan(0, S.applied.indentParagraphRest), 0, s.length(), 0);
+
+		if (highlightColor != 0) {
+			s.setSpan(new BackgroundColorSpan(highlightColor), verse_s.length() + 1, s.length(), 0);
+		}
+
+		lText.setText(s);
+		lVerseNumber.setText("");
 	}
 
 	public String getVerse(int verse_1) {

@@ -6,22 +6,20 @@
 	android:paddingLeft="2dp"
 	android:paddingRight="2dp"
 	android:orientation="horizontal">
-	<RelativeLayout
+	<FrameLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:layout_weight="1"
-		android:id="@+id/sebelahKiri">
-		<LinearLayout
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical"
-			android:id="@+id/tempatTehel" />
+		android:layout_weight="1">
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:id="@+id/lAyat" />
-	</RelativeLayout>
+			android:id="@+id/lVerseNumber" />
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/lText" />
+	</FrameLayout>
 	<include
 		layout="@layout/verse_attributes"
-		android:id="@+id/atributayat" />
+		android:id="@+id/verse_attributes" />
 </yuku.alkitab.base.widget.VerseItem>
