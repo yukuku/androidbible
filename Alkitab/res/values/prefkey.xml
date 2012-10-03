@@ -22,9 +22,10 @@
 	<integer name="pref_warnaLatar_int_default">0xff000000</integer>
 
 	<string name="pref_warnaNomerAyat_int_key">warnaNomerAyat</string>
-	<integer name="pref_warnaNomerAyat_int_default">0xff8080ff</integer>
+	<integer name="pref_warnaNomerAyat_int_default">0xff9090ff</integer>
 	
 	<string name="pref_redTextColor_key">redTextColor</string>
+	<integer name="pref_redTextColor_default">0xffff9090</integer>
 	
 	<string name="pref_boldHuruf_key">boldHuruf</string>
 	
