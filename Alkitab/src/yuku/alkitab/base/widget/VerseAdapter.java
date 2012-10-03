@@ -557,7 +557,9 @@ public class VerseAdapter extends BaseAdapter {
 				break;
 			case '5':
 				if (startRed != -1) {
-					s.setSpan(new ForegroundColorSpan(S.applied.fontRedColor), startRed, s.length(), 0);
+					if (!checked) {
+						s.setSpan(new ForegroundColorSpan(S.applied.fontRedColor), startRed, s.length(), 0);
+					}
 					startRed = -1;
 				}
 				break;
