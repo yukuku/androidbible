@@ -173,7 +173,7 @@ public class Provider extends ContentProvider {
 		if (ari != Integer.MIN_VALUE && ari != 0) {
 			Book book = S.activeVersion.getBook(Ari.toBook(ari));
 			if (book != null) {
-				String text = S.muatSatuAyat(S.activeVersion, ari);
+				String text = S.loadVerseText(S.activeVersion, ari);
 				if (formatting == false) {
 					text = U.removeSpecialCodes(text);
 				}
@@ -195,7 +195,7 @@ public class Provider extends ContentProvider {
 			if (ari != 0) {
 				Book book = S.activeVersion.getBook(Ari.toBook(ari));
 				if (book != null) {
-					String text = S.muatSatuAyat(S.activeVersion, ari);
+					String text = S.loadVerseText(S.activeVersion, ari);
 					if (formatting == false) {
 						text = U.removeSpecialCodes(text);
 					}
@@ -221,7 +221,7 @@ public class Provider extends ContentProvider {
 					if (chapter_1 >= 1 && chapter_1 <= book.nchapter) {
 						int verse_1 = Ari.toVerse(ari);
 						if (verse_1 >= 1 && verse_1 <= book.nverses[chapter_1-1]) {
-							String text = S.muatSatuAyat(S.activeVersion, ari);
+							String text = S.loadVerseText(S.activeVersion, ari);
 							if (formatting == false) {
 								text = U.removeSpecialCodes(text);
 							}
