@@ -18,7 +18,7 @@ public abstract class Reader {
 		return context;
 	}
 	
-	public abstract String getJudul();
+	public abstract String getLongName();
 	public abstract Book[] bacaInfoKitab();
 	/**
 	 * @return boleh return null kalau yang diminta tak tersedia. 

@@ -100,7 +100,7 @@ public class S {
 	public static synchronized Version getInternalVersion() {
 		if (internalVersion == null) {
 			BuildConfig c = BuildConfig.get(App.context);
-			internalVersion = new Version(new InternalReader(App.context, c.internalPrefix, c.internalJudul, new ReaderDecoder.Ascii()));
+			internalVersion = new Version(new InternalReader(App.context, c.internalPrefix, c.internalLongName, new ReaderDecoder.Ascii()));
 		}
 		return internalVersion;
 	}

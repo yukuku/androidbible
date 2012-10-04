@@ -16,7 +16,8 @@ public class BuildConfig {
 	public static final String TAG = BuildConfig.class.getSimpleName();
 
 	public String internalPrefix;
-	public String internalJudul;
+	public String internalShortName;
+	public String internalLongName;
 	public boolean menuDevotion;
 	public boolean menuGebug;
 	public boolean menuVersions;
@@ -77,15 +78,17 @@ public class BuildConfig {
 				res.menuDevotion = parser.getAttributeBooleanValue(null, "renungan", false); //$NON-NLS-1$
 				res.menuSongs = parser.getAttributeBooleanValue(null, "songs", false); //$NON-NLS-1$
 			} else if (next == XmlPullParser.START_TAG && "internal".equals(parser.getName())) { //$NON-NLS-1$
-				res.internalJudul = parser.getAttributeValue(null, "judul"); //$NON-NLS-1$
+				res.internalShortName = parser.getAttributeValue(null, "shortName"); //$NON-NLS-1$
+				res.internalLongName = parser.getAttributeValue(null, "longName"); //$NON-NLS-1$
 				res.internalPrefix = parser.getAttributeValue(null, "prefix"); //$NON-NLS-1$
 			} else if (next == XmlPullParser.START_TAG && "preset".equals(parser.getName())) { //$NON-NLS-1$
 				MVersionPreset preset = new MVersionPreset();
-				preset.jenis = Db.Edisi.jenis_preset;
-				preset.judul = parser.getAttributeValue(null, "judul"); //$NON-NLS-1$
-				preset.namafile_preset = parser.getAttributeValue(null, "namafile_preset"); //$NON-NLS-1$
+				preset.type = Db.Edisi.jenis_preset;
+				preset.shortName = parser.getAttributeValue(null, "shortName"); //$NON-NLS-1$
+				preset.longName = parser.getAttributeValue(null, "longName"); //$NON-NLS-1$
+				preset.presetFilename = parser.getAttributeValue(null, "namafile_preset"); //$NON-NLS-1$
 				preset.url = parser.getAttributeValue(null, "url"); //$NON-NLS-1$
-				preset.urutan = ++urutanPreset;
+				preset.ordering = ++urutanPreset;
 				preset.locale = parser.getAttributeValue(null, "locale"); //$NON-NLS-1$
 				xpreset.add(preset);
 			} else if (next == XmlPullParser.START_TAG && "url".equals(parser.getName())) { //$NON-NLS-1$

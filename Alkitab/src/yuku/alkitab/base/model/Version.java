@@ -71,7 +71,7 @@ public class Version {
 			if (k != null) return k;
 		}
 		// aneh skali kalo kena ini, tapi toh kena juga
-		throw new RuntimeException("Ga ketemu satu pun kitab yang ga null. Info edisi: " + (this.reader == null? "pembaca=null": (this.reader.getJudul() + " nkitab=" + xkitab.length)));    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		throw new RuntimeException("Ga ketemu satu pun kitab yang ga null. Info edisi: " + (this.reader == null? "pembaca=null": (this.reader.getLongName() + " nkitab=" + xkitab.length)));    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 	
 	public synchronized PericopeIndex getIndexPerikop() {

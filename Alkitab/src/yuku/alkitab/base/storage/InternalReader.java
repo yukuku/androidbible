@@ -36,7 +36,7 @@ public class InternalReader extends Reader {
 	}
 	
 	@Override
-	public String getJudul() {
+	public String getLongName() {
 		return edisiJudul;
 	}
 

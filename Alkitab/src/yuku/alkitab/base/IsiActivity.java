@@ -59,7 +59,7 @@ import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.ac.SongViewActivity;
 import yuku.alkitab.base.ac.VersionsActivity;
-import yuku.alkitab.base.ac.VersionsActivity.MEdisiInternal;
+import yuku.alkitab.base.ac.VersionsActivity.MVersionInternal;
 import yuku.alkitab.base.ac.VersionsActivity.MVersion;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
@@ -389,7 +389,7 @@ public class IsiActivity extends BaseActivity {
 	}
 
 	private void loadLastVersion(String lastVersion) {
-		if (lastVersion == null || MEdisiInternal.getVersionInternalId().equals(lastVersion)) {
+		if (lastVersion == null || MVersionInternal.getVersionInternalId().equals(lastVersion)) {
 			return; // we are now already on internal, no need to do anything!
 		}
 		
@@ -397,8 +397,8 @@ public class IsiActivity extends BaseActivity {
 		
 		// coba preset dulu!
 		for (MVersionPreset preset: c.presets) { // 2. preset
-			if (preset.getEdisiId().equals(lastVersion)) {
-				if (preset.adaFileDatanya()) {
+			if (preset.getVersionId().equals(lastVersion)) {
+				if (preset.hasDataFile()) {
 					loadVersion(preset);
 				} else { 
 					return; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
@@ -409,8 +409,8 @@ public class IsiActivity extends BaseActivity {
 		// masih belum cocok, mari kita cari di daftar yes
 		List<MVersionYes> yeses = S.getDb().listAllVersions();
 		for (MVersionYes yes: yeses) {
-			if (yes.getEdisiId().equals(lastVersion)) {
-				if (yes.adaFileDatanya()) {
+			if (yes.getVersionId().equals(lastVersion)) {
+				if (yes.hasDataFile()) {
 					loadVersion(yes);
 				} else { 
 					return; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
@@ -430,7 +430,7 @@ public class IsiActivity extends BaseActivity {
 			
 			if (version != null) {
 				S.activeVersion = version;
-				S.activeVersionId = mv.getEdisiId();
+				S.activeVersionId = mv.getVersionId();
 				S.prepareBook();
 				
 				Book book = S.activeVersion.getBook(S.activeBook.bookId);
@@ -444,7 +444,7 @@ public class IsiActivity extends BaseActivity {
 				display(chapter_1, getVerseBasedOnScroll());
 			} else {
 				new AlertDialog.Builder(IsiActivity.this)
-				.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getEdisiId()))
+				.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()))
 				.setPositiveButton(R.string.ok, null)
 				.show();
 			}
@@ -1088,12 +1088,12 @@ public class IsiActivity extends BaseActivity {
 		final List<String> options = new ArrayList<String>(); // sync with below line
 		final List<MVersion> data = new ArrayList<MVersion>();  // sync with above line
 		
-		options.add(c.internalJudul); // 1. internal
-		data.add(new MEdisiInternal());
+		options.add(c.internalLongName); // 1. internal
+		data.add(new MVersionInternal());
 		
 		for (MVersionPreset preset: c.presets) { // 2. preset
-			if (preset.adaFileDatanya() && preset.getAktif()) {
-				options.add(preset.judul);
+			if (preset.hasDataFile() && preset.getActive()) {
+				options.add(preset.longName);
 				data.add(preset);
 			}
 		}
@@ -1101,8 +1101,8 @@ public class IsiActivity extends BaseActivity {
 		// 3. active yeses
 		List<MVersionYes> yeses = S.getDb().listAllVersions();
 		for (MVersionYes yes: yeses) {
-			if (yes.adaFileDatanya() && yes.getAktif()) {
-				options.add(yes.judul);
+			if (yes.hasDataFile() && yes.getActive()) {
+				options.add(yes.longName);
 				data.add(yes);
 			}
 		}
@@ -1113,7 +1113,7 @@ public class IsiActivity extends BaseActivity {
 		} else {
 			for (int i = 0; i < data.size(); i++) {
 				MVersion mv = data.get(i);
-				if (mv.getEdisiId().equals(S.activeVersionId)) {
+				if (mv.getVersionId().equals(S.activeVersionId)) {
 					selected = i;
 					break;
 				}

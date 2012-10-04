@@ -25,43 +25,43 @@ import yuku.alkitab.R;
 
 public class AddonManager {
 	public static final String TAG = AddonManager.class.getSimpleName();
-	public static class Elemen {
+	public static class Element {
 		public String url;
-		public String tujuan;
-		public int selesai;
-		public boolean beres;
-		public DonlotListener listener;
-		public boolean hentikan;
+		public String dest;
+		public int downloaded;
+		public boolean finished;
+		public DownloadListener listener;
+		public boolean cancelled;
 	}
 	
-	public interface DonlotListener {
-		void onSelesaiDonlot(Elemen e);
-		void onGagalDonlot(Elemen e, String keterangan, Throwable t);
-		void onProgress(Elemen e, int sampe, int total);
-		void onBatalDonlot(Elemen e);
+	public interface DownloadListener {
+		void onDownloadFinished(Element e);
+		void onDownloadFailed(Element e, String caption, Throwable t);
+		void onDownloadProgress(Element e, int progress, int total);
+		void onDownloadCancelled(Element e);
 	}
 
 	public static String getYesPath() {
 		return new File(Environment.getExternalStorageDirectory(), "bible/yes").getAbsolutePath(); //$NON-NLS-1$
 	}
 	
-	public static String getEdisiPath(String namayes) {
+	public static String getVersionPath(String yesName) {
 		String yesPath = getYesPath();
-		File yes = new File(yesPath, namayes);
+		File yes = new File(yesPath, yesName);
 		return yes.getAbsolutePath();
 	}
 	
-	public static boolean cekAdaEdisi(String namayes) {
-		File f = new File(getEdisiPath(namayes));
+	public static boolean hasVersion(String yesName) {
+		File f = new File(getVersionPath(yesName));
 		return f.exists() && f.canRead();
 	}
 	
-	public static class DonlotThread extends Thread {
+	public static class DownloadThread extends Thread {
 		final Context appContext;
 		Semaphore sema = new Semaphore(0);
-		LinkedList<Elemen> antrian = new LinkedList<Elemen>();
+		LinkedList<Element> queue = new LinkedList<Element>();
 		
-		public DonlotThread(Context appContext) {
+		public DownloadThread(Context appContext) {
 			this.appContext = appContext;
 		}
 		
@@ -69,32 +69,32 @@ public class AddonManager {
 		public void run() {
 			while (true) {
 				sema.acquireUninterruptibly();
-				Log.d(TAG, "DonlotThread sema count: " + sema.availablePermits()); //$NON-NLS-1$
+				Log.d(TAG, "DownloadThread sema count: " + sema.availablePermits()); //$NON-NLS-1$
 				
 				while (true) {
-					Elemen e;
+					Element e;
 					synchronized (this) {
-						if (antrian.size() == 0) {
+						if (queue.size() == 0) {
 							Log.d(TAG, "tiada lagi antrian donlot"); //$NON-NLS-1$
 							break;
 						}
 						
-						e = antrian.poll();
+						e = queue.poll();
 					}
 					
-					donlot(e);
+					download(e);
 				}
 			}
 		}
 		
-		private void donlot(Elemen e) {
-			new File(e.tujuan).delete(); // hapus dulu.. jangan2 kacau
+		private void download(Element e) {
+			new File(e.dest).delete(); // hapus dulu.. jangan2 kacau
 			
-			String tmpfile = e.tujuan + "-" + (int)(Math.random() * 100000) + ".tmp";  //$NON-NLS-1$//$NON-NLS-2$
+			String tmpfile = e.dest + "-" + (int)(Math.random() * 100000) + ".tmp";  //$NON-NLS-1$//$NON-NLS-2$
 			
 			boolean mkdirOk = mkYesDir();
 			if (!mkdirOk) {
-				if (e.listener != null) e.listener.onGagalDonlot(e, appContext.getString(R.string.tidak_bisa_membuat_folder, getYesPath()), null);
+				if (e.listener != null) e.listener.onDownloadFailed(e, appContext.getString(R.string.tidak_bisa_membuat_folder, getYesPath()), null);
 				return;
 			}
 			
@@ -124,12 +124,12 @@ public class AddonManager {
 					if (read <= 0) break;
 					os.write(b, 0, read);
 					
-					e.selesai += read;
-					if (e.listener != null) e.listener.onProgress(e, e.selesai, length);
+					e.downloaded += read;
+					if (e.listener != null) e.listener.onDownloadProgress(e, e.downloaded, length);
 					
-					if (e.hentikan) {
+					if (e.cancelled) {
 						get.abort();
-						if (e.listener != null) e.listener.onBatalDonlot(e);
+						if (e.listener != null) e.listener.onDownloadCancelled(e);
 						os.close();
 						return;
 					}
@@ -138,10 +138,10 @@ public class AddonManager {
 				os.close();
 
 				if (e.url.endsWith(".gz")) { //$NON-NLS-1$
-					if (e.listener != null) e.listener.onProgress(e, -1, length); // tanda lagi dekompres
+					if (e.listener != null) e.listener.onDownloadProgress(e, -1, length); // tanda lagi dekompres
 					
 					GZIPInputStream in = new GZIPInputStream(new FileInputStream(tmpfile));
-					String tmpfile2 = e.tujuan + (int)(Math.random() * 100000) + ".tmp2"; //$NON-NLS-1$
+					String tmpfile2 = e.dest + (int)(Math.random() * 100000) + ".tmp2"; //$NON-NLS-1$
 					FileOutputStream out = new FileOutputStream(tmpfile2);
 			    
 					try {
@@ -155,7 +155,7 @@ public class AddonManager {
 				        
 				        out.close();
 				        
-						boolean renameOk = new File(tmpfile2).renameTo(new File(e.tujuan));
+						boolean renameOk = new File(tmpfile2).renameTo(new File(e.dest));
 						if (!renameOk) {
 							Log.d(TAG, "Gagal rename!"); //$NON-NLS-1$
 						}
@@ -165,17 +165,17 @@ public class AddonManager {
 					}
 			        in.close();
 				} else {
-					boolean renameOk = new File(tmpfile).renameTo(new File(e.tujuan));
+					boolean renameOk = new File(tmpfile).renameTo(new File(e.dest));
 					if (!renameOk) {
 						Log.d(TAG, "Gagal rename!"); //$NON-NLS-1$
 					}
 				}
 				
-				if (e.listener != null) e.listener.onSelesaiDonlot(e);
-				e.beres = true;
+				if (e.listener != null) e.listener.onDownloadFinished(e);
+				e.finished = true;
 			} catch (IOException ex) {
 				Log.w(TAG, "Gagal donlot", ex); //$NON-NLS-1$
-				if (e.listener != null) e.listener.onGagalDonlot(e, null, ex);
+				if (e.listener != null) e.listener.onDownloadFailed(e, null, ex);
 			} finally {
 				if (wakelock != null) {
 					wakelock.release();
@@ -186,14 +186,14 @@ public class AddonManager {
 			}
 		}
 
-		public synchronized Elemen antrikan(String url, String tujuan, DonlotListener listener) {
-			Elemen e = new Elemen();
+		public synchronized Element enqueue(String url, String dest, DownloadListener listener) {
+			Element e = new Element();
 			e.url = url;
-			e.tujuan = tujuan;
+			e.dest = dest;
 			e.listener = listener;
-			e.beres = false;
+			e.finished = false;
 			
-			antrian.offer(e);
+			queue.offer(e);
 			sema.release(); // ijinkan jalan
 			
 			return e;
@@ -209,13 +209,13 @@ public class AddonManager {
 		}
 	}
 	
-	private static DonlotThread donlotThread;
+	private static DownloadThread downloadThread;
 	
-	public synchronized static DonlotThread getDonlotThread(Context appContext) {
-		if (donlotThread == null) {
-			donlotThread = new DonlotThread(appContext);
-			donlotThread.start();
+	public synchronized static DownloadThread getDownloadThread(Context appContext) {
+		if (downloadThread == null) {
+			downloadThread = new DownloadThread(appContext);
+			downloadThread.start();
 		}
-		return donlotThread;
+		return downloadThread;
 	}
 }

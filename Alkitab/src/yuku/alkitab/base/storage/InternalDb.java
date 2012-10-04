@@ -503,13 +503,13 @@ public class InternalDb {
 			
 			while (cursor.moveToNext()) {
 				MVersionYes yes = new MVersionYes();
-				yes.cache_aktif = cursor.getInt(col_aktif) != 0;
-				yes.jenis = Db.Edisi.jenis_yes;
-				yes.keterangan = cursor.getString(col_keterangan);
-				yes.judul = cursor.getString(col_judul);
-				yes.namafile = cursor.getString(col_namafile);
-				yes.namafile_pdbasal = cursor.getString(col_namafile_pdbasal);
-				yes.urutan = cursor.getInt(col_urutan);
+				yes.cache_active = cursor.getInt(col_aktif) != 0;
+				yes.type = Db.Edisi.jenis_yes;
+				yes.description = cursor.getString(col_keterangan);
+				yes.longName = cursor.getString(col_judul);
+				yes.filename = cursor.getString(col_namafile);
+				yes.originalPdbFilename = cursor.getString(col_namafile_pdbasal);
+				yes.ordering = cursor.getInt(col_urutan);
 				res.add(yes);
 			}
 		} finally {
@@ -540,11 +540,11 @@ public class InternalDb {
 		ContentValues cv = new ContentValues();
 		cv.put(Db.Edisi.aktif, aktif);
 		cv.put(Db.Edisi.jenis, Db.Edisi.jenis_yes);
-		cv.put(Db.Edisi.judul, edisi.judul);
-		cv.put(Db.Edisi.keterangan, edisi.keterangan);
-		cv.put(Db.Edisi.namafile, edisi.namafile);
-		cv.put(Db.Edisi.namafile_pdbasal, edisi.namafile_pdbasal);
-		cv.put(Db.Edisi.urutan, edisi.urutan);
+		cv.put(Db.Edisi.judul, edisi.longName);
+		cv.put(Db.Edisi.keterangan, edisi.description);
+		cv.put(Db.Edisi.namafile, edisi.filename);
+		cv.put(Db.Edisi.namafile_pdbasal, edisi.originalPdbFilename);
+		cv.put(Db.Edisi.urutan, edisi.ordering);
 		Log.d(TAG, "tambah edisi yes: " + cv.toString()); //$NON-NLS-1$
 		db.insert(Db.TABEL_Edisi, null, cv);
 	}
@@ -564,7 +564,7 @@ public class InternalDb {
 
 	public void hapusEdisiYes(MVersionYes edisi) {
 		SQLiteDatabase db = helper.getWritableDatabase();
-		db.delete(Db.TABEL_Edisi, Db.Edisi.namafile + "=?", new String[] {edisi.namafile}); //$NON-NLS-1$
+		db.delete(Db.TABEL_Edisi, Db.Edisi.namafile + "=?", new String[] {edisi.filename}); //$NON-NLS-1$
 	}
 	
 	public List<Label> listSemuaLabel() {

@@ -88,7 +88,7 @@ public class YesReader extends Reader {
 	}
 
 	@Override
-	public String getJudul() {
+	public String getLongName() {
 		try {
 			init();
 			return judul;
@@ -378,7 +378,7 @@ public class YesReader extends Reader {
 	/**
 	 * Mungkin null kalo ga ada.
 	 */
-	public String getKeterangan() {
+	public String getDescription() {
 		try {
 			init();
 			return keterangan;
