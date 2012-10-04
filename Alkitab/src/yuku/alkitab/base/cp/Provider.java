@@ -15,6 +15,7 @@ import yuku.afw.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
+import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
 import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
@@ -235,12 +236,27 @@ public class Provider extends ContentProvider {
 	}
 	
 	private Cursor getCursorForBibleVersions() {
-		MatrixCursor res = new MatrixCursor(new String[] {"_id", "ari", "bookName", "text"});
+		MatrixCursor res = new MatrixCursor(new String[] {"_id", "type", "available", "shortName", "longName", "description"});
 
-		S.getEdisiInternal();
-		List<MVersionPreset> presets = BuildConfig.get(App.context).presets;
-		S.getDb().listAllVersions();
-		return null;
+		long _id = 0;
+		{ // internal
+			BuildConfig c = BuildConfig.get(getContext());
+			res.addRow(new Object[] {++_id, "internal", 1, c.internalJudul, c.internalJudul, c.internalJudul});
+		}
+		{ // presets
+			List<MVersionPreset> presets = BuildConfig.get(App.context).presets;
+			for (MVersionPreset preset: presets) {
+				res.addRow(new Object[] {++_id, "preset", preset.adaFileDatanya()? 1: 0, preset.judul, preset.judul, preset.judul});
+			}
+		}
+		{ // yes
+			List<MVersionYes> yeses = S.getDb().listAllVersions();
+			for (MVersionYes yes: yeses) {
+				res.addRow(new Object[] {++_id, "yes", yes.adaFileDatanya()? 1:0, yes.judul, yes.judul, yes.keterangan});
+			}
+		}
+		
+		return res;
 	}
 	
 	/** Similar to Integer.parseInt() but supports 0x and won't throw any exception when failed */
