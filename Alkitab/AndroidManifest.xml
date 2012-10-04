@@ -23,6 +23,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="application/vnd.yuku.alkitab.nfc.beam" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="yuku.alkitab.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
 		</activity>
 
 		<activity android:name="yuku.alkitab.base.ac.GotoActivity" android:label="@string/tuju_v" android:configChanges="locale" android:windowSoftInputMode="adjustNothing" />
@@ -66,5 +70,7 @@
 		<activity android:name="yuku.filechooser.FileChooserActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 		
 		<service android:name="yuku.alkitab.base.sv.DownloadService" />
+		
+		<provider android:name="yuku.alkitab.base.cp.Provider" android:authorities="yuku.alkitab.provider" />
 	</application>
 </manifest>

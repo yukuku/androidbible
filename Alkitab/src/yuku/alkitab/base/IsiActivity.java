@@ -78,6 +78,7 @@ import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.Jumper;
+import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.base.util.Search2Engine.Query;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.VerseAdapter;
@@ -243,10 +244,71 @@ public class IsiActivity extends BaseActivity {
 		
 		if (Build.VERSION.SDK_INT >= 14) {
 			initNfcIfAvailable();
-			checkAndProcessBeamIntent(getIntent());
 		}
+		
+		processIntent(getIntent(), "onCreate");
 	}
 	
+	@Override protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		
+		processIntent(intent, "onNewIntent");
+	}
+
+	private void processIntent(Intent intent, String via) {
+		Log.d(TAG, "Got intent via " + via);
+		Log.d(TAG, "  action: " + intent.getAction());
+		Log.d(TAG, "  data uri: " + intent.getData());
+		Log.d(TAG, "  component: " + intent.getComponent());
+		Log.d(TAG, "  flags: 0x" + Integer.toHexString(intent.getFlags()));
+		Log.d(TAG, "  mime: " + intent.getType());
+		Bundle extras = intent.getExtras();
+		Log.d(TAG, "  extras: " + (extras == null? "null": extras.size()));
+		if (extras != null) {
+			for (String key: extras.keySet()) {
+				Log.d(TAG, "    " + key + " = " + extras.get(key));
+			}
+		}
+		
+		if (Build.VERSION.SDK_INT >= 14) {
+			checkAndProcessBeamIntent(intent);
+		}
+		
+		checkAndProcessViewIntent(intent);
+	}
+	
+	/** did we get here from VIEW intent? */
+	private void checkAndProcessViewIntent(Intent intent) {
+		if (!U.equals(intent.getAction(), "yuku.alkitab.action.VIEW")) return;
+
+		if (intent.hasExtra("ari")) {
+			int ari = intent.getIntExtra("ari", 0);
+			if (ari != 0) {
+				jumpToAri(ari);
+				return;
+			} else {
+				new AlertDialog.Builder(this)
+				.setMessage("Invalid ari: " + ari)
+				.setPositiveButton(R.string.ok, null)
+				.show();
+			}
+		} 
+		
+		if (intent.hasExtra("lid")) {
+			int lid = intent.getIntExtra("lid", 0);
+			int ari = LidToAri.lidToAri(lid);
+			if (ari != 0) {
+				jumpToAri(ari);
+				return;
+			} else {
+				new AlertDialog.Builder(this)
+				.setMessage("Invalid lid: " + lid)
+				.setPositiveButton(R.string.ok, null)
+				.show();
+			}
+		}
+	}
+
 	@TargetApi(14) private void initNfcIfAvailable() {
 		nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
 		if (nfcAdapter != null) {
@@ -298,14 +360,6 @@ public class IsiActivity extends BaseActivity {
 			}
 			IntentFilter[] intentFiltersArray = new IntentFilter[] {ndef, };
 			nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, null);
-		}
-	}
-	
-	@Override protected void onNewIntent(Intent intent) {
-		super.onNewIntent(intent);
-		
-		if (Build.VERSION.SDK_INT >= 14) {
-			checkAndProcessBeamIntent(intent);
 		}
 	}
 

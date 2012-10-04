@@ -17,17 +17,27 @@ import yuku.kirimfidbek.R;
 public class App extends yuku.afw.App {
 	public static final String TAG = App.class.getSimpleName();
 
+	private static boolean initted = false;
 	public static PengirimFidbek pengirimFidbek;
 
 	@Override public void onCreate() {
 		super.onCreate();
+		
+		Log.d(TAG, "@@onCreate");
 
+		staticInit();
+	}
+
+	public synchronized static void staticInit() {
+		if (initted) return;
+		initted = true;
+		
 		pengirimFidbek = siapinPengirimFidbek(context);
 		pengirimFidbek.cobaKirim();
 
-		PreferenceManager.setDefaultValues(this, R.xml.settings, false);
+		PreferenceManager.setDefaultValues(context, R.xml.settings, false);
 
-		Configuration config = getBaseContext().getResources().getConfiguration();
+		Configuration config = context.getResources().getConfiguration();
 		Locale locale = getLocaleFromPreferences();
 		if (!config.locale.getLanguage().equals(locale.getLanguage())) {
 			Log.d(TAG, "onCreate: locale will be updated to: " + locale); //$NON-NLS-1$
@@ -52,7 +62,7 @@ public class App extends yuku.afw.App {
 			// earlier releases:
 			try {
 				long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
-				File httpCacheDir = new File(getCacheDir(), "http"); //$NON-NLS-1$
+				File httpCacheDir = new File(context.getCacheDir(), "http"); //$NON-NLS-1$
 				Class.forName("android.net.http.HttpResponseCache") //$NON-NLS-1$
 				.getMethod("install", File.class, long.class) //$NON-NLS-1$
 				.invoke(null, httpCacheDir, httpCacheSize);
@@ -61,7 +71,7 @@ public class App extends yuku.afw.App {
 		}
 	}
 
-	private Locale getLocaleFromPreferences() {
+	private static Locale getLocaleFromPreferences() {
 		String lang = Preferences.getString(context.getString(R.string.pref_bahasa_key), context.getString(R.string.pref_bahasa_default));
 		if (lang == null || "DEFAULT".equals(lang)) { //$NON-NLS-1$
 			lang = Locale.getDefault().getLanguage();
