@@ -241,18 +241,18 @@ public class Provider extends ContentProvider {
 		long _id = 0;
 		{ // internal
 			BuildConfig c = BuildConfig.get(getContext());
-			res.addRow(new Object[] {++_id, "internal", 1, c.internalLongName, c.internalLongName, c.internalLongName});
+			res.addRow(new Object[] {++_id, "internal", 1, c.internalShortName, c.internalLongName, c.internalLongName});
 		}
 		{ // presets
 			List<MVersionPreset> presets = BuildConfig.get(App.context).presets;
 			for (MVersionPreset preset: presets) {
-				res.addRow(new Object[] {++_id, "preset", preset.hasDataFile()? 1: 0, preset.longName, preset.longName, preset.longName});
+				res.addRow(new Object[] {++_id, "preset", preset.hasDataFile()? 1: 0, preset.shortName != null? preset.shortName: preset.longName, preset.longName, preset.longName});
 			}
 		}
 		{ // yes
 			List<MVersionYes> yeses = S.getDb().listAllVersions();
 			for (MVersionYes yes: yeses) {
-				res.addRow(new Object[] {++_id, "yes", yes.hasDataFile()? 1:0, yes.longName, yes.longName, yes.description});
+				res.addRow(new Object[] {++_id, "yes", yes.hasDataFile()? 1:0, yes.shortName != null? yes.shortName: yes.longName, yes.longName, yes.description});
 			}
 		}
 		
