@@ -7,11 +7,13 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Locale;
 
+import yuku.afw.D;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.config.BuildConfig;
@@ -150,6 +152,19 @@ public class S {
 		applied.paragraphSpacingBefore = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.paragraphSpacingBefore) + 0.5f);
 		applied.pericopeSpacingTop = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.pericopeSpacingTop) + 0.5f);
 		applied.pericopeSpacingBottom = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.pericopeSpacingBottom) + 0.5f);
+		
+		if (D.EBUG) {
+			Toast.makeText(App.context, String.format(" text 0x%08x %n bg 0x%08x %n versenumber 0x%08x %n redtext 0x%08x", 
+				applied.fontColor,
+				applied.backgroundColor,
+				applied.verseNumberColor,
+				applied.fontRedColor), Toast.LENGTH_LONG).show();
+			applied.fontColor = Preferences.getInt(App.context.getString(R.string.pref_warnaHuruf_int_key), App.context.getResources().getInteger(R.integer.pref_warnaHuruf_int_default));
+			applied.backgroundColor = Preferences.getInt(App.context.getString(R.string.pref_warnaLatar_int_key), App.context.getResources().getInteger(R.integer.pref_warnaLatar_int_default)); 
+			applied.verseNumberColor = Preferences.getInt(App.context.getString(R.string.pref_warnaNomerAyat_int_key), App.context.getResources().getInteger(R.integer.pref_warnaNomerAyat_int_default));
+			applied.fontRedColor = Preferences.getInt(App.context.getString(R.string.pref_redTextColor_key), App.context.getResources().getInteger(R.integer.pref_redTextColor_default));
+
+		}
 	}
 	
 	private static final String notAvailableText = "[?]"; //$NON-NLS-1$
