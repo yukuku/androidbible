@@ -44,7 +44,8 @@ public class YesFile {
 	public static abstract class InfoEdisi implements IsiSeksi {
 		public int versi; // 1; 2 tambah encoding dan keterangan
 		public String nama;
-		public String judul;
+		public String shortTitle;
+		public String longTitle;
 		public String keterangan;
 		public int nkitab;
 		public int perikopAda; // 0=ga ada, selain 0: nomer versi perikopIndex dan perikopBlok_
@@ -59,7 +60,12 @@ public class YesFile {
 			writer.writeShortString(nama);
 			
 			writer.writeShortString("judul"); //$NON-NLS-1$
-			writer.writeShortString(judul);
+			writer.writeShortString(longTitle);
+			
+			if (shortTitle != null) {
+				writer.writeShortString("shortTitle"); //$NON-NLS-1$
+				writer.writeShortString(shortTitle);
+			}
 			
 			writer.writeShortString("keterangan"); //$NON-NLS-1$
 			writer.writeLongString(keterangan);

@@ -1,28 +1,35 @@
 package yuku.alkitabconverter.col;
 
-import java.io.*;
-import java.nio.charset.*;
-import java.util.*;
+import java.io.File;
+import java.io.RandomAccessFile;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
 
-import yuku.alkitab.yes.*;
+import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
 import yuku.alkitab.yes.YesFile.Kitab;
 import yuku.alkitab.yes.YesFile.Teks;
-import yuku.alkitabconverter.bdb.BdbProses.*;
+import yuku.alkitabconverter.bdb.BdbProses.Rec;
 
 public class CuvColProses {
 	static int edisi_index = -1;
 	
-	private static String getKodeEdisi() {
+	static String getKodeEdisi() {
 		return new String[] {"cuvs", "cuvt"}[edisi_index];
 	}
 
-	private static String getJudulEdisi() {
+	static String getShortTitleEdisi() {
+		return new String[] {"CUVS", "CUVT"}[edisi_index];
+	}
+	
+	static String getJudulEdisi() {
 		return new String[] {"Chinese Union Version (Simplified)", "Chinese Union Version (Traditional)"}[edisi_index];
 	}
 	
-	private static String getKeteranganEdisi() {
+	static String getKeteranganEdisi() {
 		return "Public domain.";
 	}
 	
@@ -98,7 +105,8 @@ public class CuvColProses {
 		return new InfoEdisi() {{
 			versi = 1;
 			nama = getKodeEdisi();
-			judul = getJudulEdisi();
+			shortTitle = getShortTitleEdisi();
+			longTitle = getJudulEdisi();
 			keterangan = getKeteranganEdisi();
 			nkitab = 66;
 			perikopAda = 0;

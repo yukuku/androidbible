@@ -107,7 +107,8 @@ public class BisBdbProses {
 		return new InfoEdisi() {{
 			versi = 1;
 			nama = "bis";
-			judul = "Bahasa Indonesia Sehari-hari";
+			shortTitle = "BIS";
+			longTitle = "Bahasa Indonesia Sehari-hari";
 			nkitab = 66;
 			perikopAda = 1;
 		}};
