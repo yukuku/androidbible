@@ -26,6 +26,7 @@ import yuku.alkitab.yes.YesFile.PerikopData.Entri;
 import yuku.alkitab.yes.YesFile.PerikopIndex;
 import yuku.alkitab.yes.YesFile.Teks;
 import yuku.alkitabconverter.bdb.BdbProses.Rec;
+import yuku.alkitabconverter.internal_common.InternalCommon;
 import yuku.alkitabconverter.util.Ari;
 import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.util.TeksDb;
@@ -101,9 +102,17 @@ public class Proses2 {
 		}
 		System.out.println("Total rec: " + xrec.size());
 
-		////////// PROSES KE YES
-
 		List<Rec> xrec = teksDb.toRecList();
+		
+		////////// PROSES KE INTERNAL
+		
+		{
+			File outDir = new File("./bahan/in-tb-usfm/raw");
+			outDir.mkdir();
+			InternalCommon.createInternalFiles(outDir, "tb", InternalCommon.fileToBookNames(INPUT_KITAB), teksDb, perikopData);
+		}
+		
+		////////// PROSES KE YES
 		
 		final InfoEdisi infoEdisi = YesCommon.infoEdisi(INFO_NAMA, null, INFO_JUDUL, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES);
 		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
