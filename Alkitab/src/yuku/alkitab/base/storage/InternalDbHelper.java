@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import yuku.alkitab.base.S;
+import yuku.afw.App;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.storage.Db.Bukmak;
 import yuku.alkitab.base.storage.Db.Bukmak2;
@@ -17,7 +17,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	public static final String TAG = InternalDbHelper.class.getSimpleName();
 	
 	public InternalDbHelper(Context context) {
-		super(context, "AlkitabDb", null, S.getVersionCode()); //$NON-NLS-1$
+		super(context, "AlkitabDb", null, App.getVersionCode()); //$NON-NLS-1$
 	}
 	
 	@Override

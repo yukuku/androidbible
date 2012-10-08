@@ -59,14 +59,13 @@ import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.ac.SongViewActivity;
 import yuku.alkitab.base.ac.VersionsActivity;
-import yuku.alkitab.base.ac.VersionsActivity.MVersionInternal;
 import yuku.alkitab.base.ac.VersionsActivity.MVersion;
+import yuku.alkitab.base.ac.VersionsActivity.MVersionInternal;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.compat.Api8;
 import yuku.alkitab.base.config.BuildConfig;
-import yuku.alkitab.base.config.D;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeHighlightDialog;
 import yuku.alkitab.base.dialog.TypeNoteDialog;
@@ -235,12 +234,6 @@ public class IsiActivity extends BaseActivity {
 		
 		// load chapter and verse
 		display(lastChapter, lastVerse);
-
-		if (D.EBUG) { // so we get some warning if D.EBUG is on when released
-			new AlertDialog.Builder(this)
-			.setMessage("D.EBUG is on!") //$NON-NLS-1$
-			.show();
-		}
 		
 		if (Build.VERSION.SDK_INT >= 14) {
 			initNfcIfAvailable();
@@ -547,6 +540,10 @@ public class IsiActivity extends BaseActivity {
 		lsText.setKeepScreenOn(false);
 	}
 	
+	/**
+	 * Jump to a given verse reference in string format.
+	 * @return ari of the parsed reference
+	 */
 	int jumpTo(String reference) {
 		if (reference.trim().length() == 0) {
 			return 0;
@@ -590,6 +587,9 @@ public class IsiActivity extends BaseActivity {
 		return Ari.encode(selected.bookId, ari_cv);
 	}
 	
+	/**
+	 * Jump to a given ari
+	 */
 	void jumpToAri(int ari) {
 		if (ari == 0) return;
 		

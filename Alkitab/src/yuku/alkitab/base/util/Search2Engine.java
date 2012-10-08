@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import yuku.afw.D;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.config.D;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 

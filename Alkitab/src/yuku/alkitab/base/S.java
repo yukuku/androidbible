@@ -1,12 +1,9 @@
 package yuku.alkitab.base;
 
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.io.InputStream;
@@ -358,27 +355,5 @@ public class S {
 			if ("nospace0".equals(format)) calonKitab = calonKitab.replaceAll("\\s+", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return c.url_prefix + calonKitab + calonPasal + (ayat_1_range == null? "": calonAyat); //$NON-NLS-1$
-	}
-	
-	private static PackageInfo packageInfo;
-	
-	private static void initPackageInfo() {
-		if (packageInfo == null) {
-			try {
-				packageInfo = App.context.getPackageManager().getPackageInfo(App.context.getPackageName(), 0);
-			} catch (NameNotFoundException e) {
-				Log.e(TAG, "PackageInfo ngaco", e); //$NON-NLS-1$
-			}
-		}
-	}
-	
-	public static String getVersionName() {
-		initPackageInfo();
-		return packageInfo.versionName;
-	}
-	
-	public static int getVersionCode() {
-		initPackageInfo();
-		return packageInfo.versionCode;
 	}
 }

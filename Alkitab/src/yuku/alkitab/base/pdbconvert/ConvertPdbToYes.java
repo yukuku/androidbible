@@ -12,9 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import yuku.afw.D;
 import yuku.alkitab.R;
-import yuku.alkitab.base.U;
-import yuku.alkitab.base.config.D;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.util.IntArrayList;
@@ -92,14 +91,6 @@ public class ConvertPdbToYes {
 			progress(20, context.getString(R.string.cp_loading_word_index));
 			pdb.loadWordIndex();
 			
-			if (D.EBUG) {
-				List<String> words = pdb.getAllWords();
-				for (int i = 0; i < words.size(); i++) {
-					String word = words.get(i);
-					Log.d(TAG, "word " + i + ": " + word + ": " + U.dumpChars(word)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				}
-			}
-
 			Log.d(TAG, "============ baca info versi selesai"); //$NON-NLS-1$
 			
 			Log.d(TAG, "versionName: " + pdb.getVersionName()); //$NON-NLS-1$

@@ -19,7 +19,6 @@ import android.widget.TextView;
 import yuku.afw.V;
 import yuku.alkitab.R;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 
@@ -33,7 +32,7 @@ public class AboutActivity extends BaseActivity {
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_about);
-		setTitle(getString(R.string.namaprog_versi_build, S.getVersionName(), S.getVersionCode()));
+		setTitle(getString(R.string.namaprog_versi_build, App.getVersionName(), App.getVersionCode()));
 		
 		lAbout = V.get(this, R.id.lAbout);
 		lTranslators = V.get(this, R.id.lTranslators);

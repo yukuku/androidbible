@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
 
+import yuku.afw.D;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.config.D;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.Version;

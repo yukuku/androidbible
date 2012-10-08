@@ -19,11 +19,11 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 
 public class Downloader extends Thread {
+	private static final String TAG = Downloader.class.getSimpleName();
+	
 	public interface OnStatusDonlotListener {
 		void onStatusDonlot(String s);
 	}
-
-	private static final String TAG = null;
 	
 	private Context context_;
 	private OnStatusDonlotListener listener_;
