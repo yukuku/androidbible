@@ -9,6 +9,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
+import gnu.trove.map.hash.TObjectIntHashMap;
+
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Locale;
@@ -100,7 +102,7 @@ public class S {
 	public static synchronized Version getInternalVersion() {
 		if (internalVersion == null) {
 			BuildConfig c = BuildConfig.get(App.context);
-			internalVersion = new Version(new InternalReader(App.context, c.internalPrefix, c.internalLongName, new ReaderDecoder.Ascii()));
+			internalVersion = new Version(new InternalReader(App.context, c.internalPrefix, c.internalLongName, new ReaderDecoder.Utf8()));
 		}
 		return internalVersion;
 	}
@@ -314,12 +316,22 @@ public class S {
 		App.updateConfigurationWithLocale(App.context.getResources().getConfiguration(), locale);
 	}
 
+	private static TObjectIntHashMap<String> cache_rawResId = new TObjectIntHashMap<String>(32);
+	
 	public static InputStream openRaw(String name) {
 		Resources resources = App.context.getResources();
-		int resId = resources.getIdentifier(name, "raw", App.context.getPackageName()); //$NON-NLS-1$
+		
+		int resId = cache_rawResId.get(name);
+		if (resId != 0) {
+			return resources.openRawResource(resId);
+		}
+		
+		resId = resources.getIdentifier(name, "raw", App.context.getPackageName()); //$NON-NLS-1$
 		if (resId == 0) {
 			return null;
 		}
+		
+		cache_rawResId.put(name, resId);
 		return resources.openRawResource(resId);
 	}
 	

@@ -90,7 +90,7 @@ PerikopBlok { // section name is "perikopBlok_". Contains pericope data.
 	Blok[] blocks
 }
 
-// Please use the version 2 
+// Please use the version 3
 
 Blok { 
 	uint8 versi = 1
@@ -106,6 +106,15 @@ Blok {
 	lstring judul
 	uint8 nparalel
 	sstring[nparalel] xparalel
+}
+
+// OR
+
+Blok {
+	uint8 versi = 3
+	autostring judul
+	uint8 nparalel
+	autostring[nparalel] xparalel
 }
 
 // PerikopIndex is the loadable-to-memory index of the pericope blocks.

@@ -10,27 +10,27 @@ import yuku.bintex.BintexReader;
 public class PericopeIndex {
 	public static final String TAG = PericopeIndex.class.getSimpleName();
 	
-	private int[] xari;
-	private int[] xofset;
+	private int[] aris;
+	private int[] offsets;
 	
-	public static PericopeIndex baca(BintexReader reader) throws IOException {
-		PericopeIndex ip = new PericopeIndex();
+	public static PericopeIndex read(BintexReader in) throws IOException {
+		PericopeIndex pi = new PericopeIndex();
 		
-		int nentri = reader.readInt();
+		int nentri = in.readInt();
 		
-		ip.xari = new int[nentri];
-		ip.xofset = new int[nentri];
+		pi.aris = new int[nentri];
+		pi.offsets = new int[nentri];
 		
 		for (int i = 0; i < nentri; i++) {
-			ip.xari[i] = reader.readInt();
-			ip.xofset[i] = reader.readInt();
+			pi.aris[i] = in.readInt();
+			pi.offsets[i] = in.readInt();
 		}
 		
-		return ip;
+		return pi;
 	}
 
-	public int cariPertama(int ariMin, int ariMax) {
-		int x = Arrays.binarySearch(xari, ariMin);
+	public int findFirst(int ariMin, int ariMax) {
+		int x = Arrays.binarySearch(aris, ariMin);
 		
 		// x == -1 (-0-1) kalo ariMin == 0
 		/*
@@ -53,9 +53,9 @@ public class PericopeIndex {
 		if (x < 0) res = -(x + 1);
 		else res = x;
 		
-		if (res >= xari.length) return -1;
+		if (res >= aris.length) return -1;
 		
-		int ari = xari[res];
+		int ari = aris[res];
 		if (ari < ariMax) {
 			return res;
 		}
@@ -64,16 +64,16 @@ public class PericopeIndex {
 	}
 	
 	public int getAri(int index) {
-		if (index >= xari.length) {
+		if (index >= aris.length) {
 			return 0x00ffffff; // EOF
 		}
 		
-		return xari[index];
+		return aris[index];
 	}
 	
-	public PericopeBlock getBlok(BintexReader in, int index) {
+	public PericopeBlock getBlock(BintexReader in, int index) {
 		try {
-			int ofset = xofset[index];
+			int ofset = offsets[index];
 			int posKini = in.getPos();
 
 			if (posKini > ofset) {
@@ -82,7 +82,7 @@ public class PericopeIndex {
 
 			in.skip(ofset - posKini);
 			
-			return PericopeBlock.baca(in);
+			return PericopeBlock.read(in);
 		} catch (IOException e) {
 			Log.e(TAG, "getBlok ngaco", e); //$NON-NLS-1$
 			

@@ -315,7 +315,7 @@ public class VerseAdapter extends BaseAdapter {
 			Appearances.applyPericopeTitleAppearance(lJudul);
 
 			// gonekan paralel kalo ga ada
-			if (pericopeBlock.xparalel.length == 0) {
+			if (pericopeBlock.parallels.length == 0) {
 				lXparalel.setVisibility(View.GONE);
 			} else {
 				lXparalel.setVisibility(View.VISIBLE);
@@ -323,9 +323,9 @@ public class VerseAdapter extends BaseAdapter {
 				SpannableStringBuilder sb = new SpannableStringBuilder("("); //$NON-NLS-1$
 				int len = 1;
 
-				int total = pericopeBlock.xparalel.length;
+				int total = pericopeBlock.parallels.length;
 				for (int i = 0; i < total; i++) {
-					String parallel = pericopeBlock.xparalel[i];
+					String parallel = pericopeBlock.parallels[i];
 
 					if (i > 0) {
 						// paksa new line untuk pola2 paralel tertentu

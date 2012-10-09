@@ -20,37 +20,49 @@ public class PericopeBlock {
 //		Uint8 nparalel
 //		ShortStr[nparalel] xparalel
 //	}
+	
+//	Blok {
+//		uint8 version = 3
+//		autostring title
+//		uint8 parallel_count
+//		autostring[parallel_count] parallels
+//	}
 
 	public String title;
-	public String[] xparalel;
+	public String[] parallels;
 	
-	public static PericopeBlock baca(BintexReader in) throws IOException {
+	public static PericopeBlock read(BintexReader in) throws IOException {
 		PericopeBlock b = new PericopeBlock();
 		
-		int versi = in.readUint8();
+		int version = in.readUint8();
 		
-		if (versi > 2) {
-			throw new RuntimeException("Versi blok yang didukung cuma sampe 2. Keterima versi " + versi); //$NON-NLS-1$
+		if (version > 3) {
+			throw new RuntimeException("Parallel block supported is only up to 3. Got version " + version); //$NON-NLS-1$
 		}
 		
-		if (versi == 1) {
-			b.title = in.readShortString();
-		} else if (versi == 2) {
+		if (version == 3) {
+			b.title = in.readAutoString();
+		} else if (version == 2) {
 			b.title = in.readLongString();
+		} else if (version == 1) {
+			b.title = in.readShortString();
 		}
 		
 		int nparalel = in.readUint8();
-		b.xparalel = new String[nparalel];
+		b.parallels = new String[nparalel];
 		
 		for (int i = 0; i < nparalel; i++) {
-			b.xparalel[i] = in.readShortString();
+			if (version == 3) {
+				b.parallels[i] = in.readAutoString();
+			} else {
+				b.parallels[i] = in.readShortString();
+			}
 		}
 		
 		return b;
 	}
-	
-	@Override
-	public String toString() {
-		return "Blok{judul=" + title + " xparalel=" + Arrays.toString(xparalel) + "}"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+	@Override public String toString() {
+		return "Blok{title=" + title + " parallels=" + Arrays.toString(parallels) + "}"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

@@ -9,15 +9,15 @@ import java.util.ArrayList;
 
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.PericopeBlock;
-import yuku.alkitab.base.model.Version;
-import yuku.alkitab.base.model.PericopeIndex;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.PericopeBlock;
+import yuku.alkitab.base.model.PericopeIndex;
+import yuku.alkitab.base.model.Version;
 import yuku.bintex.BintexReader;
 
 public class InternalReader extends Reader {
 	public static final String TAG = InternalReader.class.getSimpleName();
-	
+
 	// # buat cache Asset
 	private static InputStream cache_inputStream = null;
 	private static String cache_file = null;
@@ -29,19 +29,17 @@ public class InternalReader extends Reader {
 
 	public InternalReader(Context context, String edisiPrefix, String edisiJudul, ReaderDecoder readerDecoder) {
 		super(context);
-		
+
 		this.edisiPrefix = edisiPrefix;
 		this.edisiJudul = edisiJudul;
 		this.readerDecoder = readerDecoder;
 	}
-	
-	@Override
-	public String getLongName() {
+
+	@Override public String getLongName() {
 		return edisiJudul;
 	}
 
-	@Override
-	public Book[] bacaInfoKitab() {
+	@Override public Book[] bacaInfoKitab() {
 		InputStream is = S.openRaw(edisiPrefix + "_index_bt"); //$NON-NLS-1$
 		BintexReader in = new BintexReader(is);
 		try {
@@ -62,59 +60,43 @@ public class InternalReader extends Reader {
 			in.close();
 		}
 	}
-	
+
 	private static Book bacaKitab(BintexReader in, int pos) throws IOException {
 		Book k = new Book();
 		k.bookId = pos;
-		
-		String awal = in.readShortString();
 
-		if (awal.equals("Kitab")) { //$NON-NLS-1$
-			while (true) {
-				String key = in.readShortString();
-				if (key.equals("nama")) { //$NON-NLS-1$
-					k.nama = in.readShortString();
-				} else if (key.equals("judul")) { //$NON-NLS-1$
-					k.judul = in.readShortString();
-					
-					k.judul = bersihinJudul(k.judul);
-				} else if (key.equals("file")) { //$NON-NLS-1$
-					k.file = in.readShortString();
-				} else if (key.equals("npasal")) { //$NON-NLS-1$
-					k.nchapter = in.readInt();
-				} else if (key.equals("nayat")) { //$NON-NLS-1$
-					k.nverses = new int[k.nchapter];
-					for (int i = 0; i < k.nchapter; i++) {
-						k.nverses[i] = in.readUint8();
-					}
-				} else if (key.equals("pdbBookNumber")) { //$NON-NLS-1$
-					k.pdbBookNumber = in.readInt();
-				} else if (key.equals("pasal_offset")) { //$NON-NLS-1$
-					k.pasal_offset = new int[k.nchapter];
-					for (int i = 0; i < k.nchapter; i++) {
-						k.pasal_offset[i] = in.readInt();
-					}
-				} else if (key.equals("uda")) { //$NON-NLS-1$
-					break;
-				}
-			}
-			
-			return k;
-		} else {
-			return null;
+		// autostring bookName
+		// shortstring resName
+		// int chapter_count
+		// uint8[chapter_count] verse_counts
+		// int[chapter_count+1] chapter_offsets
+
+		k.nama = k.judul = in.readAutoString();
+		k.file = in.readShortString();
+		k.nchapter = in.readInt();
+
+		k.nverses = new int[k.nchapter];
+		for (int i = 0; i < k.nchapter; i++) {
+			k.nverses[i] = in.readUint8();
 		}
+
+		k.pasal_offset = new int[k.nchapter + 1];
+		for (int i = 0; i < k.nchapter + 1; i++) {
+			k.pasal_offset[i] = in.readInt();
+		}
+
+		return k;
 	}
-	
+
 	private static String bersihinJudul(String judul) {
 		return judul.replace('_', ' ');
 	}
 
-	@Override
-	public String[] muatTeks(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+	@Override public String[] muatTeks(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
 		if (pasal_1 > book.nchapter) {
 			return null;
 		}
-		
+
 		int offset = book.pasal_offset[pasal_1 - 1];
 		int length = 0;
 
@@ -192,14 +174,14 @@ public class InternalReader extends Reader {
 	@Override public PericopeIndex bacaIndexPerikop() {
 		long wmulai = System.currentTimeMillis();
 
-		InputStream is = S.openRaw(edisiPrefix + "_perikop_index_bt"); //$NON-NLS-1$
+		InputStream is = S.openRaw(edisiPrefix + "_pericope_index_bt"); //$NON-NLS-1$
 		if (is == null) {
 			return null;
 		}
-		
+
 		BintexReader in = new BintexReader(is);
 		try {
-			return PericopeIndex.baca(in);
+			return PericopeIndex.read(in);
 
 		} catch (IOException e) {
 			Log.e(TAG, "baca perikop index ngaco", e); //$NON-NLS-1$
@@ -210,8 +192,7 @@ public class InternalReader extends Reader {
 		}
 	}
 
-	@Override
-	public int loadPericope(Version version, int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max) {
+	@Override public int loadPericope(Version version, int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max) {
 		PericopeIndex pericopeIndex = version.getIndexPerikop();
 
 		if (pericopeIndex == null) {
@@ -222,7 +203,7 @@ public class InternalReader extends Reader {
 		int ariMax = Ari.encode(kitab, pasal + 1, 0);
 		int res = 0;
 
-		int pertama = pericopeIndex.cariPertama(ariMin, ariMax);
+		int pertama = pericopeIndex.findFirst(ariMin, ariMax);
 
 		if (pertama == -1) {
 			return 0;
@@ -230,7 +211,7 @@ public class InternalReader extends Reader {
 
 		int kini = pertama;
 
-		BintexReader in = new BintexReader(S.openRaw(edisiPrefix + "_perikop_blok_bt")); //$NON-NLS-1$
+		BintexReader in = new BintexReader(S.openRaw(edisiPrefix + "_pericope_blocks_bt")); //$NON-NLS-1$
 		try {
 			while (true) {
 				int ari = pericopeIndex.getAri(kini);
@@ -240,7 +221,7 @@ public class InternalReader extends Reader {
 					break;
 				}
 
-				PericopeBlock pericopeBlock = pericopeIndex.getBlok(in, kini);
+				PericopeBlock pericopeBlock = pericopeIndex.getBlock(in, kini);
 				kini++;
 
 				if (res < max) {

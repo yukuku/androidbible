@@ -311,7 +311,7 @@ public class YesReader extends Reader {
 			}
 			
 			BintexReader in = new BintexReader(new RandomInputStream(f));
-			return PericopeIndex.baca(in);
+			return PericopeIndex.read(in);
 		} catch (Exception e) {
 			Log.e(TAG, "bacaIndexPerikop error", e); //$NON-NLS-1$
 			return null;
@@ -335,7 +335,7 @@ public class YesReader extends Reader {
 			int ariMin = Ari.encode(kitab, pasal, 0);
 			int ariMax = Ari.encode(kitab, pasal + 1, 0);
 	
-			int pertama = pericopeIndex.cariPertama(ariMin, ariMax);
+			int pertama = pericopeIndex.findFirst(ariMin, ariMax);
 			if (pertama == -1) {
 				return 0;
 			}
@@ -359,7 +359,7 @@ public class YesReader extends Reader {
 					break;
 				}
 
-				PericopeBlock pericopeBlock = pericopeIndex.getBlok(in, kini);
+				PericopeBlock pericopeBlock = pericopeIndex.getBlock(in, kini);
 				kini++;
 
 				if (res < max) {
