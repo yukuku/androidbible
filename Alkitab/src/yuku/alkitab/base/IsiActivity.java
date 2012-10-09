@@ -434,7 +434,7 @@ public class IsiActivity extends BaseActivity {
 					S.activeBook = S.activeVersion.getFirstBook(); // too bad, it was not found
 				}
 				
-				display(chapter_1, getVerseBasedOnScroll());
+				display(chapter_1, getVerseBasedOnScroll(), false);
 			} else {
 				new AlertDialog.Builder(IsiActivity.this)
 				.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()))
@@ -1228,9 +1228,21 @@ public class IsiActivity extends BaseActivity {
 	}
 
 	/**
+	 * Display specified chapter and verse of the active book. By default all checked verses will be unchecked.
 	 * @return Ari that contains only chapter and verse. Book always set to 0.
 	 */
 	int display(int chapter_1, int verse_1) {
+		return display(chapter_1, verse_1, true);
+	}
+
+	/**
+	 * Display specified chapter and verse of the active book. 
+	 * @param uncheckAllVerses whether we want to always make all verses unchecked after this operation.
+	 * @return Ari that contains only chapter and verse. Book always set to 0.
+	 */
+	int display(int chapter_1, int verse_1, boolean uncheckAllVerses) {
+		int current_chapter_1 = this.chapter_1; 
+		
 		if (chapter_1 < 1) chapter_1 = 1;
 		if (chapter_1 > S.activeBook.nchapter) chapter_1 = S.activeBook.nchapter;
 		
@@ -1252,9 +1264,23 @@ public class IsiActivity extends BaseActivity {
 			nblock = S.activeVersion.reader.loadPericope(S.activeVersion, S.activeBook.bookId, chapter_1, pericope_aris, pericope_blocks, max); 
 			
 			//# fill adapter with new data. make sure all checked states are reset
+			IntArrayList selectedVerses_1 = null;
+			if (uncheckAllVerses || chapter_1 != current_chapter_1) {
+				// let selectedVerses_1 still null
+			} else {
+				selectedVerses_1 = getSelectedVerses_1();
+			}
 			uncheckAll();
+			
 			verseAdapter_.setData(S.activeBook, chapter_1, verses, pericope_aris, pericope_blocks, nblock);
 			verseAdapter_.loadAttributeMap();
+			
+			if (selectedVerses_1 != null) {
+				for (int i = 0, len = selectedVerses_1.size(); i < len; i++) {
+					int pos = verseAdapter_.getPositionAbaikanPerikopDariAyat(selectedVerses_1.get(i));
+					if (pos != -1) lsText.setItemChecked(pos, true);
+				}
+			}
 			
 			// tell activity
 			this.chapter_1 = chapter_1;
