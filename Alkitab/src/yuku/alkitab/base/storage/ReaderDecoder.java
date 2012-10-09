@@ -66,8 +66,12 @@ public interface ReaderDecoder {
 			for (int pos = 0; pos < len; pos++) {
 				byte c = ba[pos];
 				if (c == (byte)0x0a) {
-					String satu = Utf8Decoder.toString(ba, dari, pos - dari);
-					if (hurufKecilkan) satu = satu.toLowerCase();
+					String satu;
+					if (hurufKecilkan) {
+						satu = Utf8Decoder.toStringLowerCase(ba, dari, pos - dari);
+					} else {
+						satu = Utf8Decoder.toString(ba, dari, pos - dari);
+					}
 					pisahJadiAyatBuf.add(satu);
 					dari = pos + 1;
 				}
@@ -77,8 +81,12 @@ public interface ReaderDecoder {
 		}
 
 		@Override public String jadikanStringTunggal(byte[] ba, boolean hurufKecilkan) {
-			String semua = Utf8Decoder.toString(ba);
-			if (hurufKecilkan) semua = semua.toLowerCase();
+			String semua;
+			if (hurufKecilkan) {
+				semua = Utf8Decoder.toStringLowerCase(ba);
+			} else {
+				semua = Utf8Decoder.toString(ba);
+			}
 			return semua;
 		}
 	}
