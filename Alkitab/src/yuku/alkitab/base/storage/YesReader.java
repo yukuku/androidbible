@@ -11,10 +11,10 @@ import java.util.Arrays;
 import yuku.afw.D;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.PericopeBlock;
-import yuku.alkitab.base.model.Version;
-import yuku.alkitab.base.model.PericopeIndex;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.PericopeBlock;
+import yuku.alkitab.base.model.PericopeIndex;
+import yuku.alkitab.base.model.Version;
 import yuku.bintex.BintexReader;
 
 public class YesReader extends Reader {
@@ -27,7 +27,8 @@ public class YesReader extends Reader {
 	private long teks_dasarOffset;
 	private long perikopBlok_dasarOffset;
 	
-	private String judul;
+	private String shortTitle;
+	private String longTitle;
 	private String keterangan;
 	private int nkitab;
 	private int perikopAda = 0; // default ga ada
@@ -91,7 +92,7 @@ public class YesReader extends Reader {
 	public String getLongName() {
 		try {
 			init();
-			return judul;
+			return longTitle;
 		} catch (Exception e) {
 			Log.e(TAG, "init error", e); //$NON-NLS-1$
 			return ""; //$NON-NLS-1$
@@ -118,8 +119,10 @@ public class YesReader extends Reader {
 					in.readInt(); // buang
 				} else if (key.equals("nama")) { //$NON-NLS-1$
 					nama = in.readShortString();
+				} else if (key.equals("shortTitle")) { //$NON-NLS-1$
+					this.shortTitle = in.readShortString();
 				} else if (key.equals("judul")) { //$NON-NLS-1$
-					this.judul = in.readShortString();
+					this.longTitle = in.readShortString();
 				} else if (key.equals("keterangan")) { //$NON-NLS-1$
 					this.keterangan = in.readLongString();
 				} else if (key.equals("nkitab")) { //$NON-NLS-1$
@@ -136,7 +139,7 @@ public class YesReader extends Reader {
 				}
 			}
 			
-			Log.d(TAG, "bacaInfoEdisi selesai, nama=" + nama + " judul=" + judul + " nkitab=" + nkitab); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Log.d(TAG, "bacaInfoEdisi selesai, nama=" + nama + " judul=" + longTitle + " nkitab=" + nkitab); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} catch (Exception e) {
 			Log.e(TAG, "bacaInfoEdisi error", e); //$NON-NLS-1$
 		}
@@ -308,7 +311,7 @@ public class YesReader extends Reader {
 			}
 			
 			BintexReader in = new BintexReader(new RandomInputStream(f));
-			return PericopeIndex.baca(in);
+			return PericopeIndex.read(in);
 		} catch (Exception e) {
 			Log.e(TAG, "bacaIndexPerikop error", e); //$NON-NLS-1$
 			return null;
@@ -332,7 +335,7 @@ public class YesReader extends Reader {
 			int ariMin = Ari.encode(kitab, pasal, 0);
 			int ariMax = Ari.encode(kitab, pasal + 1, 0);
 	
-			int pertama = pericopeIndex.cariPertama(ariMin, ariMax);
+			int pertama = pericopeIndex.findFirst(ariMin, ariMax);
 			if (pertama == -1) {
 				return 0;
 			}
@@ -356,7 +359,7 @@ public class YesReader extends Reader {
 					break;
 				}
 
-				PericopeBlock pericopeBlock = pericopeIndex.getBlok(in, kini);
+				PericopeBlock pericopeBlock = pericopeIndex.getBlock(in, kini);
 				kini++;
 
 				if (res < max) {

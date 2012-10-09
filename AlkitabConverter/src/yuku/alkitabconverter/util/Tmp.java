@@ -2,8 +2,6 @@ package yuku.alkitabconverter.util;
 
 import java.io.File;
 
-import java.io.File;
-
 public class Tmp {
 	public static final String TAG = Tmp.class.getSimpleName();
 	
