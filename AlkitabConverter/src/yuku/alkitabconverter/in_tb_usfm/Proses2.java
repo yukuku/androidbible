@@ -27,6 +27,7 @@ import yuku.alkitab.yes.YesFile.PerikopIndex;
 import yuku.alkitab.yes.YesFile.Teks;
 import yuku.alkitabconverter.bdb.BdbProses.Rec;
 import yuku.alkitabconverter.internal_common.InternalCommon;
+import yuku.alkitabconverter.internal_common.ReverseIndexer;
 import yuku.alkitabconverter.util.Ari;
 import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.util.TeksDb;
@@ -103,6 +104,13 @@ public class Proses2 {
 		System.out.println("Total rec: " + xrec.size());
 
 		List<Rec> xrec = teksDb.toRecList();
+		
+		////////// CREATE REVERSE INDEX
+		
+		{
+			File outDir = new File("./bahan/in-tb-usfm/raw");
+			ReverseIndexer.createReverseIndex(outDir, "tb", teksDb);
+		}
 		
 		////////// PROSES KE INTERNAL
 		
