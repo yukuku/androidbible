@@ -234,6 +234,10 @@ public class Search2Activity extends BaseActivity {
 				lsHasilCari.setSelection(posisiTerpilih);
 			}
 		}
+		
+		if (usingRevIndex()) {
+			Search2Engine.preloadRevIndex();
+		}
 	}
 	
 	boolean useSearchView() {
@@ -499,14 +503,14 @@ public class Search2Activity extends BaseActivity {
 		new AsyncTask<Void, Void, IntArrayList>() {
 			@Override protected IntArrayList doInBackground(Void... params) {
 				synchronized (Search2Activity.this) {
-					if (S.activeVersionId == null || S.activeVersionId.equals(MVersionInternal.getVersionInternalId())) {
+					if (usingRevIndex()) {
 						return Search2Engine.searchByRevIndex(getQuery());
 					} else {
 						return Search2Engine.searchByGrep(getQuery());
 					}
 				}
 			}
-			
+
 			@Override protected void onPostExecute(IntArrayList hasil) {
 				if (hasil == null) {
 					hasil = new IntArrayList(); // empty result
@@ -532,6 +536,10 @@ public class Search2Activity extends BaseActivity {
 		}.execute();
 	}
 	
+	boolean usingRevIndex() {
+		return S.activeVersionId == null || S.activeVersionId.equals(MVersionInternal.getVersionInternalId());
+	}
+
 	class Search2Adapter extends BaseAdapter {
 		IntArrayList hasilCari;
 		String[] xkata;

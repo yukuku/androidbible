@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 import yuku.afw.App;
 import yuku.afw.D;
@@ -66,7 +67,8 @@ public class Search2Engine {
 	}
 	
 	private static SoftReference<RevIndex> cache_revIndex;
-
+	private static Semaphore revIndexLoading = new Semaphore(1);
+	
 	public static IntArrayList searchByGrep(Query query) {
 		String[] xkata = QueryTokenizer.tokenize(query.carian);
 		
@@ -297,14 +299,17 @@ public class Search2Engine {
 	}
 	
 	public static IntArrayList searchByRevIndex(Query query) {
-		IntArrayList res = new IntArrayList();
-		
 		TimingLogger timing = new TimingLogger("RevIndex", "searchByRevIndex");
-		
-		RevIndex revIndex = loadRevIndex();
-		if (revIndex == null) {
-			Log.w(TAG, "Cannot load revindex (internal error)!");
-			return searchByGrep(query);
+		RevIndex revIndex;
+		revIndexLoading.acquireUninterruptibly();
+		try {
+			revIndex = loadRevIndex();
+			if (revIndex == null) {
+				Log.w(TAG, "Cannot load revindex (internal error)!");
+				return searchByGrep(query);
+			}
+		} finally {
+			revIndexLoading.release();
 		}
 		timing.addSplit("Load rev index");
 		
@@ -356,6 +361,7 @@ public class Search2Engine {
 			timing.addSplit("AND operation");
 		}
 
+		IntArrayList res = new IntArrayList();
 		for (int i = 0, len = passBitmapAnd.length; i < len; i++) {
 			if (passBitmapAnd[i]) {
 				int ari = LidToAri.lidToAri(i);
@@ -367,6 +373,22 @@ public class Search2Engine {
 		timing.dumpToLog();
 		
 		return res;
+	}
+	
+	@SuppressWarnings("synthetic-access") public static void preloadRevIndex() {
+		new Thread() {
+			@Override public void run() {
+				TimingLogger timing = new TimingLogger("RevIndex", "preloadRevIndex");
+				revIndexLoading.acquireUninterruptibly();
+				try {
+					loadRevIndex();
+					timing.addSplit("loadRevIndex");
+				} finally {
+					revIndexLoading.release();
+					timing.dumpToLog();
+				}
+			}
+		}.start();
 	}
 	
 	private static RevIndex loadRevIndex() {
