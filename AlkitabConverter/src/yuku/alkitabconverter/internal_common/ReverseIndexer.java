@@ -91,9 +91,9 @@ public class ReverseIndexer {
 				
 				if (cnt != 0) {
 					// :: uint8 word_len
-					// :: uint16 word_by_len_count
+					// :: int word_by_len_count
 					bw.writeUint8(i);
-					bw.writeUint16(cnt);
+					bw.writeInt(cnt);
 					
 					for (Map.Entry<String, Set<Integer>> e: lenmap.entrySet()) {
 						String word = e.getKey();

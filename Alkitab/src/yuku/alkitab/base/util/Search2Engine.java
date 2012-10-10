@@ -1,6 +1,5 @@
 package yuku.alkitab.base.util;
 
-import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -10,15 +9,25 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.util.TimingLogger;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
+import yuku.afw.App;
 import yuku.afw.D;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.config.BuildConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
+import yuku.bintex.BintexReader;
 
 public class Search2Engine {
 	public static final String TAG = Search2Engine.class.getSimpleName();
@@ -49,8 +58,16 @@ public class Search2Engine {
 			}
 		};
 	}
+	
+	static class RevIndex extends HashMap<String, int[]> {
+		public RevIndex() {
+			super(32768);
+		}
+	}
+	
+	private static SoftReference<RevIndex> cache_revIndex;
 
-	public static IntArrayList cari(Context context, Query query) {
+	public static IntArrayList searchByGrep(Query query) {
 		String[] xkata = QueryTokenizer.tokenize(query.carian);
 		
 		// urutkan berdasarkan panjang, lalu abjad
@@ -100,7 +117,7 @@ public class Search2Engine {
 	
 				{
 					long ms = System.currentTimeMillis();
-					hasil = cariDalam(context, kata, lama, query.xkitabPos);
+					hasil = searchByGrepInside(kata, lama, query.xkitabPos);
 					Log.d(TAG, "cari kata '" + kata + "' pake waktu: " + (System.currentTimeMillis() - ms) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 	
@@ -180,7 +197,7 @@ public class Search2Engine {
 		}
 	}
 
-	static IntArrayList cariDalam(Context context, String kata, IntArrayList sumber, SparseBooleanArray xkitabPos) {
+	static IntArrayList searchByGrepInside(String kata, IntArrayList sumber, SparseBooleanArray xkitabPos) {
 		IntArrayList res = new IntArrayList();
 		boolean pakeTambah = false;
 		
@@ -202,7 +219,7 @@ public class Search2Engine {
 					String sepasal = S.loadChapterTextLowercasedWithoutSplit(S.activeVersion, k, pasal_1);
 					if (sepasal.indexOf(kata) >= 0) {
 						// hanya lakukan ini jika dalam sepasal kedetek ada kata
-						cariDalamSepasal(sepasal, kata, res, Ari.encode(k.bookId, pasal_1, 0), pakeTambah);
+						searchByGrepInChapter(sepasal, kata, res, Ari.encode(k.bookId, pasal_1, 0), pakeTambah);
 					}
 				}
 	
@@ -227,7 +244,7 @@ public class Search2Engine {
 				String sepasal = S.loadChapterTextLowercasedWithoutSplit(S.activeVersion, k, pasal_1);
 				if (sepasal.indexOf(kata) >= 0) {
 					// hanya lakukan ini jika dalam sepasal kedetek ada kata
-					cariDalamSepasal(sepasal, kata, res, ariKpKini, pakeTambah);
+					searchByGrepInChapter(sepasal, kata, res, ariKpKini, pakeTambah);
 				}
 				
 				hitung++;
@@ -239,7 +256,7 @@ public class Search2Engine {
 		return res;
 	}
 
-	private static void cariDalamSepasal(String sepasal, String kata, IntArrayList res, int base, boolean pakeTambah) {
+	private static void searchByGrepInChapter(String sepasal, String kata, IntArrayList res, int base, boolean pakeTambah) {
 		int a = 0;
 		int aterakhir = -1;
 		
@@ -279,6 +296,139 @@ public class Search2Engine {
 		}
 	}
 	
+	public static IntArrayList searchByRevIndex(Query query) {
+		IntArrayList res = new IntArrayList();
+		
+		TimingLogger timing = new TimingLogger("RevIndex", "searchByRevIndex");
+		
+		RevIndex revIndex = loadRevIndex();
+		if (revIndex == null) {
+			Log.w(TAG, "Cannot load revindex (internal error)!");
+			return searchByGrep(query);
+		}
+		timing.addSplit("Load rev index");
+		
+		boolean[] passBitmapAnd = null;
+		boolean[] passBitmapOr = new boolean[32768];
+		
+		String[] tokens = QueryTokenizer.tokenize(query.carian);
+		timing.addSplit("Tokenize query");
+		
+		for (String token: tokens) {
+			boolean plussed = QueryTokenizer.isPlussedToken(token);
+			String token_bare = QueryTokenizer.tokenWithoutPlus(token);
+			
+			Arrays.fill(passBitmapOr, false);
+			
+			for (Map.Entry<String, int[]> e: revIndex.entrySet()) {
+				String word = e.getKey();
+
+				boolean match = false;
+				if (plussed) {
+					if (word.equals(token_bare)) match = true;
+				} else {
+					if (word.indexOf(token_bare) >= 0) match = true;
+				}
+				
+				if (match) {
+					int[] lids = e.getValue();
+					for (int lid: lids) {
+						passBitmapOr[lid] = true; // OR operation
+					}
+				}
+			}
+			
+			int c = 0;
+			for (boolean b: passBitmapOr) {
+				if (b) c++;
+			}
+			timing.addSplit("gather lid for token '" + token + "' (" + c + ")");
+			
+			// AND operation with existing word(s)
+			if (passBitmapAnd == null) { // no existing word(s)
+				passBitmapAnd = new boolean[32768];
+				System.arraycopy(passBitmapOr, 0, passBitmapAnd, 0, passBitmapOr.length);
+			} else {
+				for (int i = passBitmapOr.length - 1; i >= 0; i--) {
+					passBitmapAnd[i] &= passBitmapOr[i];
+				}
+			}
+			timing.addSplit("AND operation");
+		}
+
+		for (int i = 0, len = passBitmapAnd.length; i < len; i++) {
+			if (passBitmapAnd[i]) {
+				int ari = LidToAri.lidToAri(i);
+				if (ari > 0) res.add(ari);
+			}
+		}
+		timing.addSplit("convert matching lids to aris (" + res.size() + ")");
+
+		timing.dumpToLog();
+		
+		return res;
+	}
+	
+	private static RevIndex loadRevIndex() {
+		if (cache_revIndex != null) {
+			RevIndex res = cache_revIndex.get();
+			if (res != null) {
+				return res;
+			}
+		}
+		
+		RevIndex res = new RevIndex();
+		
+		InputStream raw = new BufferedInputStream(S.openRaw(BuildConfig.get(App.context).internalPrefix + "_revindex_bt"), 65536);
+		
+		byte[] buf = new byte[256];
+		try {
+			BintexReader br = new BintexReader(raw);
+			
+			int total_word_count = br.readInt();
+			int word_count = 0;
+			
+			while (true) {
+				int word_len = br.readUint8();
+				int word_by_len_count = br.readInt();
+				
+				for (int i = 0; i < word_by_len_count; i++) {
+					br.readRaw(buf, 0, word_len);
+					@SuppressWarnings("deprecation") String word = new String(buf, 0, 0, word_len);
+					
+					int lid_count = br.readUint16();
+					int last_lid = 0;
+					int[] lids = new int[lid_count];
+					int pos = 0;
+					for (int j = 0; j < lid_count; j++) {
+						int lid;
+						int h = br.readUint8();
+						if (h < 0x80) {
+							lid = last_lid + h;
+						} else {
+							int l = br.readUint8();
+							lid = ((h << 8) | l) & 0x7fff;
+						}
+						last_lid = lid;
+						lids[pos++] = lid;
+					}
+					
+					res.put(word, lids);
+				}
+				
+				word_count += word_by_len_count;
+				if (word_count >= total_word_count) {
+					break;
+				}
+			}
+		} catch (IOException e) {	
+			return null;
+		}
+		
+		cache_revIndex = new SoftReference<RevIndex>(res);
+		return res;
+	}
+
 	/**
 	 * case sensitive! pastikan s dan xkata sudah dilowercase sebelum masuk sini.
 	 */
