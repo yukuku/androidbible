@@ -316,8 +316,9 @@ public class Search2Engine {
 		}
 		timing.addSplit("Load rev index");
 		
-		boolean[] passBitmapAnd = null;
 		boolean[] passBitmapOr = new boolean[32768];
+		boolean[] passBitmapAnd = new boolean[32768];
+		Arrays.fill(passBitmapAnd, true);
 		
 		// Query e.g.: "a b" c +"d e" +f
 		List<String> tokens; // this will be: "a" "b" "c" "+d" "+e" "+f"
@@ -412,13 +413,8 @@ public class Search2Engine {
 			timing.addSplit("gather lid for token '" + token + "' (" + c + ")");
 			
 			// AND operation with existing word(s)
-			if (passBitmapAnd == null) { // no existing word(s)
-				passBitmapAnd = new boolean[32768];
-				System.arraycopy(passBitmapOr, 0, passBitmapAnd, 0, passBitmapOr.length);
-			} else {
-				for (int i = passBitmapOr.length - 1; i >= 0; i--) {
-					passBitmapAnd[i] &= passBitmapOr[i];
-				}
+			for (int i = passBitmapOr.length - 1; i >= 0; i--) {
+				passBitmapAnd[i] &= passBitmapOr[i];
 			}
 			timing.addSplit("AND operation");
 		}
