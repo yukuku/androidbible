@@ -193,6 +193,9 @@
   <string name="bl_clear_filter">删除筛选器</string>
   <string name="bl_filtering_titiktiga">正在筛选…</string>
   <string name="bl_no_items_match_the_filter_above">没有商品符合筛选器的。</string>
+  <string name="bl_send_backup">转让</string>
+  <string name="bl_file_not_found_filename">找不到文件: %s</string>
+  <string name="bl_send_backup_confirmation">要创建并发送备份的书签，笔记和亮点呢? 例如，您可以通过电子邮件发送附加的文件到一个新的设备，或只是用于存档目的。</string>
   <string name="labels_titikdua">标签：</string>
   <string name="tambah_titiktiga">加…</string>
   <string name="nama_label_titikdua">标签名称：</string>
@@ -203,6 +206,10 @@
   <string name="juga_hapus_file_datanya_file">同时删除数据文件吗？\n文件： %s</string>
   <string name="get_more_fonts">下载更多的字体...</string>
   <string name="about_translators">翻译：</string>
+  <string name="intent_filter_import_from_backup">进口从备份</string>
+  <string name="goto_tab_dialer_label">拨号</string>
+  <string name="goto_tab_direct_label">直接</string>
+  <string name="goto_tab_grid_label">格</string>
   <string name="fm_activity_title">字体管理</string>
   <string name="fm_need_to_log_in_to_wifi">您需要先登录到您的无线网络。</string>
   <string name="fm_do_you_want_to_delete">你要删除这个文件 %s？</string>
@@ -221,6 +228,9 @@
   <string name="sn_download_song_books">下载歌曲的书籍</string>
   <string name="sn_lyric_version_version">版本 %s</string>
   <string name="sn_lyric_refrain_marker">副歌</string>
+  <string name="sn_delete_all_songs">删除所有歌曲</string>
+  <string name="sn_delete_all_songs_explanation">删除本地存储的所有歌曲？这可以节省一些空间</string>
+  <string name="sn_delete_all_songs_result">删除完成。删除的歌曲数目：%s</string>
   <string name="desc_type_verse_reference_directly">型直接诗句参考</string>
   <string name="desc_previous_day">前天</string>
   <string name="desc_next_day">后天</string>
@@ -234,13 +244,13 @@
   <string name="desc_previous_chapter">前章</string>
   <string name="desc_next_chapter">后章</string>
   <string name="teks_about">开发人员 [b]yuku[/b], 2009-2012[br/]
-    	• 网站: androidbible.blogspot.com[br/] 
-		• Google+: gplus.to/androidbible[br/]
-    	• 邮寄清单: groups.google.com/group/androidbible[br/]
-    	[br/]
-		[b]贡献者:[/b][br/]
-		• [b]Oluss Studio[/b] 软件图标[br/]
-		• [b]Jaya Satrio[/b] 各种图标[br/]
-		• [b]Yohanes Nugroho[/b] PDB读者[br/]
-		• etc.</string>
+• 网站: androidbible.blogspot.com[br/] 
+• Google+: gplus.to/androidbible[br/]
+• 邮寄清单: groups.google.com/group/androidbible[br/]
+[br/]
+[b]贡献者:[/b][br/]
+• [b]Jaya Satrio[/b] 各种图标[br/]
+• [b]Yohanes Nugroho[/b] BiblePlus+PDB读者[br/]
+• 还有许多人贡献想法，补丁，错误报告，拷贝的歌曲，圣经翻译的信息，等等!
+</string>
 </resources>

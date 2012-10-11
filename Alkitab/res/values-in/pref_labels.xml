@@ -5,9 +5,10 @@
   <string name="pref_bahasa_language">Bahasa (Language)</string>
   <string name="pref_atur_warna_teks_latar_belakang_dan">Atur warna teks, latar belakang, dan nomor ayat menurut suatu tema.</string>
   <string name="pref_tema_warna">Tema Warna</string>
-  <string name="pref_warna_teks_alkitab">Warna Teks Alkitab</string>
-  <string name="pref_warna_latar_belakang">Warna Latar Belakang</string>
-  <string name="pref_warna_nomor_ayat">Warna Nomor Ayat</string>
+  <string name="pref_warna_teks_alkitab">Teks Alkitab</string>
+  <string name="pref_warna_latar_belakang">Latar belakang</string>
+  <string name="pref_warna_nomor_ayat">Nomor ayat</string>
+  <string name="pref_redTextColor_title">Perkataan Yesus</string>
   <string name="pref_pakai_huruf_yang_dicetak_tebal_bold">Pakai huruf yang dicetak tebal (bold).</string>
   <string name="pref_tebalkan_huruf">Tebalkan Huruf</string>
   <string name="pref_ganti_bentuk_huruf_teks_alkitab">Ganti bentuk huruf teks Alkitab.</string>

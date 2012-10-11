@@ -193,6 +193,9 @@
   <string name="bl_clear_filter">Şterge filtrare</string>
   <string name="bl_filtering_titiktiga">Filtrare…</string>
   <string name="bl_no_items_match_the_filter_above">Nu sunt elemente să se potrivească cu filtrul de mai sus.</string>
+  <string name="bl_send_backup">Transfer</string>
+  <string name="bl_file_not_found_filename">Fişierul nu este găsit: %s</string>
+  <string name="bl_send_backup_confirmation">Creați și trimiteți o copie de rezervă a marcajelor, notelor, și evidențierilor? Puteți de exemplu, să trimiteți fișierul atașat prin e-mail la un dispozitiv nou, sau doar pentru arhivare.</string>
   <string name="labels_titikdua">Etichete:</string>
   <string name="tambah_titiktiga">Adaugă…</string>
   <string name="nama_label_titikdua">Nume etichetă</string>
@@ -203,6 +206,10 @@
   <string name="juga_hapus_file_datanya_file">De asemenea, şterge fişierul de date?\nFile: %s</string>
   <string name="get_more_fonts">Descarca mai multe fonturi…</string>
   <string name="about_translators">Traducători:</string>
+  <string name="intent_filter_import_from_backup">Importă din copia de rezervă</string>
+  <string name="goto_tab_dialer_label">Formare număr</string>
+  <string name="goto_tab_direct_label">Direct</string>
+  <string name="goto_tab_grid_label">Grilă</string>
   <string name="fm_activity_title">Gestionare Fonturi</string>
   <string name="fm_need_to_log_in_to_wifi">Trebuie să vă logați mai întâi în rețea (Wi-Fi).</string>
   <string name="fm_do_you_want_to_delete">Doriți să stergeți %s?</string>
@@ -221,6 +228,9 @@
   <string name="sn_download_song_books">Descarcă cântece</string>
   <string name="sn_lyric_version_version">Versiunea %s </string>
   <string name="sn_lyric_refrain_marker">Ref.</string>
+  <string name="sn_delete_all_songs">Şterge toate cântecele</string>
+  <string name="sn_delete_all_songs_explanation">Ștergeți toate melodiile din unitatea locală? Acest lucru poate elibera spaţiu.</string>
+  <string name="sn_delete_all_songs_result">Ştergere completă. Cântece şterse: %s</string>
   <string name="desc_type_verse_reference_directly">Introduceţi referinţa versetului</string>
   <string name="desc_previous_day">Ziua precedentă</string>
   <string name="desc_next_day">Ziua următoare</string>
@@ -233,16 +243,13 @@
   <string name="desc_open_verse_menu">Deschide meniul versetului</string>
   <string name="desc_previous_chapter">Capitolul precedent</string>
   <string name="desc_next_chapter">Capitolul următor</string>
-  <string name="teks_about">
-	    Dezvoltat de [b]yuku[/b], 2009-2012[br/] 
-	    • Website: androidbible.blogspot.com[br/] 
-		• Google+: gplus.to/androidbible[br/]
-	    • Mailing list: groups.google.com/group/androidbible[br/] 
-	    [br/] 
-	    [b]Contribuitori:[/b][br/] 
-	    • [b]Oluss Studio[/b] icoane program[br/] 
-	    • [b]Jaya Satrio[/b] diverse icoane[br/] 
-	    • [b]Yohanes Nugroho[/b] PDB reader[br/] 
-	    • etc.
-    </string>
+  <string name="teks_about">Dezvoltat de [b]Yuku[/b], 2009-2012[br/]
+ •Website: androidbible.blogspot.com[br /]
+ •Google+: gplus.to/androidbible[br /]
+ •Lista de discuții: groups.google.com/grup/androidbible[br/]
+  [br/]
+  [b]Colaboratori:[/b][br/]
+ •[b]Jaya Satrio Hendrick[/b] iconițe[br/]
+ •[b]Yohanes Nugroho[/ b] BiblePlus+ PPB reader[br/]
+ • alți oameni care au contribuit cu idei, patch-uri, rapoarte de bug-uri, copie de cântece, informații despre traducerile Bibliei, etc!</string>
 </resources>

@@ -243,14 +243,13 @@
   <string name="desc_open_verse_menu">Otwórz menu wersetu</string>
   <string name="desc_previous_chapter">Poprzedni rozdział</string>
   <string name="desc_next_chapter">Następny rozdział</string>
-  <string name="teks_about">Autor: [b]yuku[/b], 2009-2012[br/]
-• Strona: androidbible.blogspot.com[br/]
+  <string name="teks_about">Rozwijane przez [b]yuku[/b], 2009-2012[br/]
+• Strona: androidbible.blogspot.com[br/] 
 • Google+: gplus.to/androidbible[br/]
-• Lista Mailingowa: groups.google.com/group/androidbible[br/]
+• Lista mailingowa: groups.google.com/group/androidbible[br/]
 [br/]
 [b]Współpracownicy:[/b][br/]
-• [b]Oluss Studio[/b] ikonka programu[br/]
-• [b]Jaya Satrio[/b] różne ikonki[br/]
-• [b]Yohanes Nugroho[/b] czytnik PDB[br/]
-• inni.</string>
+• [b]Jaya Satrio Hendrick[/b] ikony[br/]
+• [b]Yohanes Nugroho[/b] czytnik plików PDB z BiblePlus+ PDB[br/]
+• i wiele innych osób, które zasugerowały pomysł, poprawki, raportowały błędy, kopiowały pieśni, dodały informacje o przekładach Biblii, itp!</string>
 </resources>
