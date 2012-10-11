@@ -319,6 +319,20 @@ public class Search2Engine {
 		String[] tokens = QueryTokenizer.tokenize(query.carian);
 		timing.addSplit("Tokenize query");
 		
+		// optimization, if user doesn't filter any books
+		boolean wholeBibleSearched = true;
+		boolean[] searchedBookIds = new boolean[66];
+		if (query.xkitabPos == null) {
+			Arrays.fill(searchedBookIds, true);
+		} else {
+			for (int i = 0; i < 66; i++) {
+				searchedBookIds[i] = query.xkitabPos.get(i, false);
+				if (searchedBookIds[i] == false) {
+					wholeBibleSearched = false;
+				}
+			}
+		}
+		
 		for (String token: tokens) {
 			boolean plussed = QueryTokenizer.isPlussedToken(token);
 			String token_bare = QueryTokenizer.tokenWithoutPlus(token);
@@ -364,8 +378,17 @@ public class Search2Engine {
 		IntArrayList res = new IntArrayList();
 		for (int i = 0, len = passBitmapAnd.length; i < len; i++) {
 			if (passBitmapAnd[i]) {
-				int ari = LidToAri.lidToAri(i);
-				if (ari > 0) res.add(ari);
+				if (wholeBibleSearched) {
+					int ari = LidToAri.lidToAri(i);
+					if (ari > 0) res.add(ari);
+				} else {
+					// check first if this lid is in the searched portion
+					int bookId = LidToAri.bookIdForLid(i);
+					if (bookId >= 0 && searchedBookIds[bookId]) {
+						int ari = LidToAri.lidToAri(i);
+						if (ari > 0) res.add(ari);
+					}
+				}
 			}
 		}
 		timing.addSplit("convert matching lids to aris (" + res.size() + ")");
