@@ -440,7 +440,7 @@ public class Search2Engine {
 			}
 		}
 		timing.addSplit("convert matching lids to aris (" + res.size() + ")");
-
+		
 		// last check: whether multiword tokens are all matching. No way to find this except by loading the text
 		// and examining one by one whether the text contains those multiword tokens
 		if (multiwords != null) {
@@ -602,11 +602,11 @@ public class Search2Engine {
 		return true;
 	}
 
-	private static int indexOfWholeWord(String sepasal, String kata, int start) {
-		int len = sepasal.length();
+	private static int indexOfWholeWord(String text, String word, int start) {
+		int len = text.length();
 		
 		while (true) {
-			int pos = sepasal.indexOf(kata, start);
+			int pos = text.indexOf(word, start);
 			//Log.d(TAG, "pos=" + pos + " untuk " + kata + " pada: " + sepasal);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 			if (pos == -1) return -1;
 			
@@ -617,18 +617,18 @@ public class Search2Engine {
 			//  0        *          ok
 			// >0       alpha       ng
 			// >0      !alpha       ok
-			if (pos != 0 && Character.isLetter(sepasal.charAt(pos - 1))) {
+			if (pos != 0 && Character.isLetter(text.charAt(pos - 1))) {
 				start = pos + 1;
 				continue;
 			}
 			
 			// cek kanan
-			int end = pos + kata.length();
+			int end = pos + word.length();
 			// [end] [charat end]
 			// len       *         ok
 			// != len  alpha       ng
 			// != len  !alpha      ok
-			if (end != len && Character.isLetter(sepasal.charAt(end))) {
+			if (end != len && Character.isLetter(text.charAt(end))) {
 				start = pos + 1;
 				continue;
 			}
