@@ -19,7 +19,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Semaphore;
 
 import yuku.afw.App;
@@ -316,7 +319,52 @@ public class Search2Engine {
 		boolean[] passBitmapAnd = null;
 		boolean[] passBitmapOr = new boolean[32768];
 		
-		String[] tokens = QueryTokenizer.tokenize(query.carian);
+		// Query e.g.: "a b" c +"d e" +f
+		List<String> tokens; // this will be: "a" "b" "c" "+d" "+e" "+f"
+		List<String> multiwords = null; // this will be: "a b" "+d e"
+		{
+			Set<String> tokenSet = new LinkedHashSet<String>(Arrays.asList(QueryTokenizer.tokenize(query.carian)));
+			Log.d(TAG, "Tokens before retokenization:");
+			for (String token: tokenSet) {
+				Log.d(TAG, "- token: " + token);
+			}
+			
+			Set<String> tokenSet2 = new LinkedHashSet<String>();
+			for (String token: tokenSet) {
+				if (QueryTokenizer.isMultiwordToken(token)) {
+					if (multiwords == null) {
+						multiwords = new ArrayList<String>();
+					}
+					multiwords.add(token);
+					boolean token_plussed = QueryTokenizer.isPlussedToken(token);
+					String token_bare = QueryTokenizer.tokenWithoutPlus(token);
+					for (String token2: QueryTokenizer.tokenizeMultiwordToken(token_bare)) {
+						if (token_plussed) {
+							tokenSet2.add("+" + token2);
+						} else {
+							tokenSet2.add(token2);
+						}
+					}
+				} else {
+					tokenSet2.add(token);
+				}
+			}
+			
+			Log.d(TAG, "Tokens after retokenization:");
+			for (String token: tokenSet2) {
+				Log.d(TAG, "- token: " + token);
+			}
+			
+			if (multiwords != null) {
+				Log.d(TAG, "Multiwords:");
+				for (String multiword: multiwords) {
+					Log.d(TAG, "- multiword: " + multiword);
+				}
+			}
+			
+			tokens = new ArrayList<String>(tokenSet2);
+		}
+		
 		timing.addSplit("Tokenize query");
 		
 		// optimization, if user doesn't filter any books
@@ -392,6 +440,61 @@ public class Search2Engine {
 			}
 		}
 		timing.addSplit("convert matching lids to aris (" + res.size() + ")");
+
+		// last check: whether multiword tokens are all matching. No way to find this except by loading the text
+		// and examining one by one whether the text contains those multiword tokens
+		if (multiwords != null) {
+			IntArrayList res2 = new IntArrayList(res.size());
+			
+			// separate the pluses
+			String[] multiwords_bare = new String[multiwords.size()];
+			boolean[] multiwords_plussed = new boolean[multiwords.size()];
+			
+			for (int i = 0, len = multiwords.size(); i < len; i++) {
+				String multiword = multiwords.get(i);
+				multiwords_bare[i] = QueryTokenizer.tokenWithoutPlus(multiword);
+				multiwords_plussed[i] = QueryTokenizer.isPlussedToken(multiword);
+			}
+			
+			String[] loadedChapter = null; // the currently loaded chapter, to prevent repeated loading of same chapter
+			int loadedAriCv = 0; // chapter and verse of current Ari
+			for (int i = 0, len = res.size(); i < len; i++) {
+				int ari = res.get(i);
+				
+				int ariCv = Ari.toKitabPasal(ari);
+				if (ariCv != loadedAriCv) { // we can't reuse, we need to load from disk
+					Book book = S.activeVersion.getBook(Ari.toBook(ari));
+					if (book != null) {
+						loadedChapter = S.loadChapterTextLowercased(S.activeVersion, book, Ari.toChapter(ari));
+						loadedAriCv = ariCv;
+					}
+				}
+				
+				int verse_1 = Ari.toVerse(ari);
+				if (verse_1 >= 1 && verse_1 <= loadedChapter.length) {
+					String text = loadedChapter[verse_1 - 1];
+					if (text != null) {
+						boolean passed = true;
+						for (int j = 0, len2 = multiwords_bare.length; j < len2; j++) {
+							String multiword_bare = multiwords_bare[j];
+							boolean multiword_plussed = multiwords_plussed[j];
+							
+							if ((multiword_plussed && indexOfWholeWord(text, multiword_bare, 0) < 0) || (!multiword_plussed && text.indexOf(multiword_bare) < 0)) {
+								passed = false;
+								break;
+							}
+						}
+						if (passed) {
+							res2.add(ari);
+						}
+					}
+				}
+			}
+			
+			res = res2;
+			
+			timing.addSplit("filter for multiword tokens (" + res.size() + ")");
+		}
 
 		timing.dumpToLog();
 		
