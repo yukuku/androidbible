@@ -67,7 +67,7 @@
 		<activity android:name="yuku.alkitab.base.ac.FontManagerActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 		<activity android:name="yuku.alkitab.base.ac.SongListActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" android:windowSoftInputMode="adjustResize|stateHidden" />
 		<activity android:name="yuku.alkitab.base.ac.SongViewActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
-		<activity android:name="yuku.alkitab.base.ac.SecretSettingsActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
+		<activity android:name="yuku.alkitab.base.ac.SecretSettingsActivity" android:label="Secret settings" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 		<activity android:name="yuku.filechooser.FileChooserActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 		
 		<service android:name="yuku.alkitab.base.sv.DownloadService" />
