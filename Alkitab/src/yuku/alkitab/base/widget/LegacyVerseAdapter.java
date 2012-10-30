@@ -8,6 +8,7 @@ import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.StyleSpan;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -280,7 +281,12 @@ public class LegacyVerseAdapter extends VerseAdapter {
 			lAyat.setText(""); //$NON-NLS-1$
 		} else {
 			lAyat.setText(String.valueOf(ayat_1));
-			Appearances.applyVerseNumberAppearance(lAyat);
+			
+            lAyat.setTypeface(S.applied.fontFace, S.applied.fontBold);
+            lAyat.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
+            lAyat.setIncludeFontPadding(false);
+            lAyat.setTextColor(S.applied.verseNumberColor);
+
 			if (checked) lAyat.setTextColor(0xff000000);
 		}
 	}
