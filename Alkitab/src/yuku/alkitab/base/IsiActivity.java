@@ -199,7 +199,7 @@ public class IsiActivity extends BaseActivity {
 		});
 		
 		// adapter
-		verseAdapter_ = new VerseAdapter(this, parallel_click, new AttributeListener());
+		verseAdapter_ = new VerseAdapter.Factory().create(this, parallel_click, new AttributeListener());
 		lsText.setAdapter(verseAdapter_);
 		
 		// muat preferences_instan, dan atur renungan
