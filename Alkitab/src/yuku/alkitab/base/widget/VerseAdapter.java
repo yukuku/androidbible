@@ -17,16 +17,50 @@ import android.widget.BaseAdapter;
 
 import java.util.Arrays;
 
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.IsiActivity;
+import yuku.alkitab.base.IsiActivity.AttributeListener;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.storage.Db.Bukmak2;
+import yuku.alkitab.base.widget.CallbackSpan.OnClickListener;
 
 public abstract class VerseAdapter extends BaseAdapter {
 	public static final String TAG = VerseAdapter.class.getSimpleName();
 
+	public static class Factory {
+		int impl = 0; // 0 need check, 1 new (single view), 2 legacy
+		
+		public VerseAdapter create(Context context, OnClickListener paralelListener, AttributeListener attributeListener) {
+			if (impl == 0) {
+				String useLegacyVerseRenderer = Preferences.getString("useLegacyVerseRenderer", "auto");
+				if ("auto".equals(useLegacyVerseRenderer)) { // determine based on device
+					if ("SEMC".equals(Build.BRAND) && Build.VERSION.SDK_INT >= 9 && Build.VERSION.SDK_INT <= 10) {
+						impl = 2;
+					} else {
+						impl = 1;
+					}
+				} else if ("never".equals(useLegacyVerseRenderer)) {
+					impl = 1;
+				} else if ("always".equals(useLegacyVerseRenderer)) {
+					impl = 2;
+				} else { // just in case
+					impl = 1;
+				}
+			}
+			
+			if (impl == 1) {
+				return new SingleViewVerseAdapter(context, paralelListener, attributeListener);
+			} else if (impl == 2) {
+				return new LegacyVerseAdapter(context, paralelListener, attributeListener);
+			}
+			
+			return null;
+		}
+	}
+	
 	static class ParagraphSpacingBefore implements LineHeightSpan {
 		private final int before;
 		
