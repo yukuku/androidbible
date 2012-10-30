@@ -99,7 +99,7 @@ public class S {
 	public static synchronized Version getInternalVersion() {
 		if (internalVersion == null) {
 			BuildConfig c = BuildConfig.get(App.context);
-			internalVersion = new Version(new InternalReader(App.context, c.internalPrefix, c.internalLongName, new ReaderDecoder.Utf8()));
+			internalVersion = new Version(new InternalReader(c.internalPrefix, c.internalShortName, c.internalLongName, new ReaderDecoder.Utf8()));
 		}
 		return internalVersion;
 	}
@@ -220,7 +220,7 @@ public class S {
 	}
 	
 	private static String[] loadChapterText(Version version, Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
-		return version.reader.muatTeks(book, pasal_1, janganPisahAyat, hurufKecil);
+		return version.reader.loadVerseText(book, pasal_1, janganPisahAyat, hurufKecil);
 	}
 
 	public static String reference(Version version, int ari) {

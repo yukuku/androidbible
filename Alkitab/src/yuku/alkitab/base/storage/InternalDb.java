@@ -495,6 +495,7 @@ public class InternalDb {
 		Cursor cursor = helper.getReadableDatabase().query(Db.TABEL_Edisi, null, null, null, null, null, Db.Edisi.urutan + " asc"); //$NON-NLS-1$
 		try {
 			int col_aktif = cursor.getColumnIndexOrThrow(Db.Edisi.aktif);
+			int col_shortName = cursor.getColumnIndexOrThrow(Db.Edisi.shortName);
 			int col_judul = cursor.getColumnIndexOrThrow(Db.Edisi.judul);
 			int col_keterangan = cursor.getColumnIndexOrThrow(Db.Edisi.keterangan);
 			int col_namafile = cursor.getColumnIndexOrThrow(Db.Edisi.namafile);
@@ -506,6 +507,7 @@ public class InternalDb {
 				yes.cache_active = cursor.getInt(col_aktif) != 0;
 				yes.type = Db.Edisi.jenis_yes;
 				yes.description = cursor.getString(col_keterangan);
+				yes.shortName = cursor.getString(col_shortName);
 				yes.longName = cursor.getString(col_judul);
 				yes.filename = cursor.getString(col_namafile);
 				yes.originalPdbFilename = cursor.getString(col_namafile_pdbasal);
@@ -540,6 +542,7 @@ public class InternalDb {
 		ContentValues cv = new ContentValues();
 		cv.put(Db.Edisi.aktif, aktif);
 		cv.put(Db.Edisi.jenis, Db.Edisi.jenis_yes);
+		cv.put(Db.Edisi.shortName, edisi.shortName);
 		cv.put(Db.Edisi.judul, edisi.longName);
 		cv.put(Db.Edisi.keterangan, edisi.description);
 		cv.put(Db.Edisi.namafile, edisi.filename);

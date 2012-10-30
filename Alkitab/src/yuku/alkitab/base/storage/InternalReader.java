@@ -1,6 +1,5 @@
 package yuku.alkitab.base.storage;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.io.IOException;
@@ -15,7 +14,7 @@ import yuku.alkitab.base.model.PericopeIndex;
 import yuku.alkitab.base.model.Version;
 import yuku.bintex.BintexReader;
 
-public class InternalReader extends Reader {
+public class InternalReader implements Reader {
 	public static final String TAG = InternalReader.class.getSimpleName();
 
 	// # buat cache Asset
@@ -24,22 +23,26 @@ public class InternalReader extends Reader {
 	private static int cache_posInput = -1;
 
 	private final String edisiPrefix;
-	private final String edisiJudul;
+	private final String edisiShortName;
+	private final String edisiLongName;
 	private final ReaderDecoder readerDecoder;
 
-	public InternalReader(Context context, String edisiPrefix, String edisiJudul, ReaderDecoder readerDecoder) {
-		super(context);
-
+	public InternalReader(String edisiPrefix, String edisiShortName, String edisiLongName, ReaderDecoder readerDecoder) {
 		this.edisiPrefix = edisiPrefix;
-		this.edisiJudul = edisiJudul;
+		this.edisiShortName = edisiShortName;
+		this.edisiLongName = edisiLongName;
 		this.readerDecoder = readerDecoder;
+	}
+	
+	@Override public String getShortName() {
+		return edisiShortName;
 	}
 
 	@Override public String getLongName() {
-		return edisiJudul;
+		return edisiLongName;
 	}
 
-	@Override public Book[] bacaInfoKitab() {
+	@Override public Book[] loadBooks() {
 		InputStream is = S.openRaw(edisiPrefix + "_index_bt"); //$NON-NLS-1$
 		BintexReader in = new BintexReader(is);
 		try {
@@ -88,11 +91,7 @@ public class InternalReader extends Reader {
 		return k;
 	}
 
-	private static String bersihinJudul(String judul) {
-		return judul.replace('_', ' ');
-	}
-
-	@Override public String[] muatTeks(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+	@Override public String[] loadVerseText(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
 		if (pasal_1 > book.nchapter) {
 			return null;
 		}
@@ -171,7 +170,7 @@ public class InternalReader extends Reader {
 		}
 	}
 
-	@Override public PericopeIndex bacaIndexPerikop() {
+	@Override public PericopeIndex loadPericopeIndex() {
 		long wmulai = System.currentTimeMillis();
 
 		InputStream is = S.openRaw(edisiPrefix + "_pericope_index_bt"); //$NON-NLS-1$

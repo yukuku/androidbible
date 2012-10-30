@@ -3,7 +3,6 @@ package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
@@ -194,6 +193,7 @@ public class VersionsActivity extends BaseActivity {
 			if (edisi instanceof MVersionInternal) details.append(getString(R.string.ed_type_built_in) + '\n');
 			if (edisi instanceof MVersionPreset) details.append(getString(R.string.ed_type_preset) + '\n');
 			if (edisi instanceof MVersionYes) details.append(getString(R.string.ed_type_add_on) + '\n');
+			if (edisi.shortName != null) details.append(getString(R.string.ed_shortName_shortName, edisi.shortName) + '\n');
 			details.append(getString(R.string.ed_title_title, edisi.longName) + '\n');
 			if (edisi instanceof MVersionPreset) {
 				MVersionPreset preset = (MVersionPreset) edisi;
@@ -458,12 +458,13 @@ public class VersionsActivity extends BaseActivity {
 		}
 		
 		try {
-			YesReader pembaca = new YesReader(getApplicationContext(), filename);
+			YesReader pembaca = new YesReader(filename);
 			int urutanTerbesar = S.getDb().getUrutanTerbesarEdisiYes();
 			if (urutanTerbesar == 0) urutanTerbesar = 100; // default
 			
 			MVersionYes yes = new MVersionYes();
 			yes.type = Db.Edisi.jenis_yes;
+			yes.shortName = pembaca.getShortName();
 			yes.longName = pembaca.getLongName();
 			yes.description = pembaca.getDescription();
 			yes.filename = filename;
@@ -605,7 +606,7 @@ public class VersionsActivity extends BaseActivity {
 		/** id unik untuk dibandingkan */
 		public abstract String getVersionId();
 		/** return edisi supaya bisa mulai dibaca. null kalau ga memungkinkan */
-		public abstract Version getVersion(Context context);
+		public abstract Version getVersion();
 		public abstract void setActive(boolean aktif);
 		public abstract boolean getActive();
 		public abstract boolean hasDataFile();
@@ -621,7 +622,7 @@ public class VersionsActivity extends BaseActivity {
 		}
 
 		@Override
-		public Version getVersion(Context context) {
+		public Version getVersion() {
 			return S.getInternalVersion();
 		}
 
@@ -659,9 +660,9 @@ public class VersionsActivity extends BaseActivity {
 		}
 
 		@Override
-		public Version getVersion(Context context) {
+		public Version getVersion() {
 			if (hasDataFile()) {
-				return new Version(new YesReader(context, AddonManager.getVersionPath(presetFilename)));
+				return new Version(new YesReader(AddonManager.getVersionPath(presetFilename)));
 			} else {
 				return null;
 			}
@@ -684,9 +685,9 @@ public class VersionsActivity extends BaseActivity {
 		}
 
 		@Override
-		public Version getVersion(Context context) {
+		public Version getVersion() {
 			if (hasDataFile()) {
-				return new Version(new YesReader(context, filename));
+				return new Version(new YesReader(filename));
 			} else {
 				return null;
 			}

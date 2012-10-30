@@ -1,29 +1,18 @@
 package yuku.alkitab.base.storage;
 
-import android.content.Context;
-
-import yuku.alkitab.base.model.PericopeBlock;
-import yuku.alkitab.base.model.Version;
-import yuku.alkitab.base.model.PericopeIndex;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.PericopeBlock;
+import yuku.alkitab.base.model.PericopeIndex;
+import yuku.alkitab.base.model.Version;
 
-public abstract class Reader {
-	private Context context;
-	
-	public Reader(Context context) {
-		this.context = context;
-	}
-	
-	public Context getContext() {
-		return context;
-	}
-	
-	public abstract String getLongName();
-	public abstract Book[] bacaInfoKitab();
+public interface Reader {
+	String getShortName();
+	String getLongName();
+	Book[] loadBooks();
 	/**
-	 * @return boleh return null kalau yang diminta tak tersedia. 
+	 * @return may return null if the requested is not available 
 	 */
-	public abstract String[] muatTeks(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil);
-	public abstract PericopeIndex bacaIndexPerikop();
-	public abstract int loadPericope(Version version, int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max);
+	String[] loadVerseText(Book book, int pasal_1, boolean dontSplitVerses, boolean lowercased);
+	PericopeIndex loadPericopeIndex();
+	int loadPericope(Version version, int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max);
 }
