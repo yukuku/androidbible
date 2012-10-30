@@ -19,8 +19,8 @@ public class Proses2 {
 	public void loadUpTheData() throws Exception {
 		muatNomerKitab();
 		
-		Scanner sc = new Scanner(new FileInputStream("./bahan/en-kjv-thml/kjv.proses"), "utf-8");
-		pw = new PrintWriter(new File("./bahan/en-kjv-thml/kjv3_teks_bdb.txt"), "utf-8");
+		Scanner sc = new Scanner(new FileInputStream("./bahan/en-kjv-thml/in/kjv.proses"), "utf-8");
+		pw = new PrintWriter(new File("./bahan/en-kjv-thml/in/kjv3_teks_bdb.txt"), "utf-8");
 		
 		proses(sc);
 		pw.close();
@@ -28,7 +28,7 @@ public class Proses2 {
 	}
 
 	private void muatNomerKitab() throws Exception {
-		Scanner sc = new Scanner(new FileInputStream("./bahan/en-kjv-thml/kjv.nomerkitab"), "utf-8");
+		Scanner sc = new Scanner(new FileInputStream("./bahan/en-kjv-thml/in/kjv.nomerkitab"), "utf-8");
 		nomerKitab = new TreeMap<String, Integer>();
 		while (sc.hasNext()) {
 			String k = sc.next();

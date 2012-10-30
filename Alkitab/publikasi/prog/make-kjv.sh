@@ -11,7 +11,7 @@ fi
 `dirname $0`/kopi_ikon_dan_app_name.sh kjv
 pushd res/raw
 rm *
-cp ../../../AlkitabConverter/bahan/en-kjv-thml/kjv_raw/* .
+cp ../../../../alkitab-android.lama/AlkitabConverter/bahan/en-kjv-thml/raw/* .
 popd
 
 grep 'yuku\.alkitab\.kjv' AndroidManifest.xml > /dev/null || {
