@@ -86,7 +86,7 @@ public class TobaBdbProses {
 		return new InfoEdisi() {{
 			versi = 1;
 			nama = "toba";
-			longTitle = "Batak Toba";
+			longName = "Batak Toba";
 			nkitab = 66;
 			perikopAda = 0;
 		}};
