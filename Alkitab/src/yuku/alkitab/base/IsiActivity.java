@@ -199,7 +199,7 @@ public class IsiActivity extends BaseActivity {
 		});
 		
 		// adapter
-		verseAdapter_ = new VerseAdapter(this, parallel_click, new AttributeListener());
+		verseAdapter_ = new VerseAdapter.Factory().create(this, parallel_click, new AttributeListener());
 		lsText.setAdapter(verseAdapter_);
 		
 		// muat preferences_instan, dan atur renungan
@@ -419,7 +419,7 @@ public class IsiActivity extends BaseActivity {
 		
 		boolean success = false;
 		try {
-			Version version = mv.getVersion(getApplicationContext());
+			Version version = mv.getVersion();
 			
 			if (version != null) {
 				S.activeVersion = version;

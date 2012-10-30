@@ -36,6 +36,7 @@ public class App extends yuku.afw.App {
 		pengirimFidbek.cobaKirim();
 
 		PreferenceManager.setDefaultValues(context, R.xml.settings, false);
+		PreferenceManager.setDefaultValues(context, R.xml.secret_settings, false);
 
 		Configuration config = context.getResources().getConfiguration();
 		Locale locale = getLocaleFromPreferences();

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="yuku.alkitab" android:installLocation="auto" android:versionCode="102" android:versionName="2.7.0" xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="yuku.alkitab" android:installLocation="auto" android:versionCode="103" android:versionName="2.7.1" xmlns:tools="http://schemas.android.com/tools">
 	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="16" />
 
 	<uses-permission android:name="android.permission.INTERNET" />
@@ -67,10 +67,19 @@
 		<activity android:name="yuku.alkitab.base.ac.FontManagerActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 		<activity android:name="yuku.alkitab.base.ac.SongListActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" android:windowSoftInputMode="adjustResize|stateHidden" />
 		<activity android:name="yuku.alkitab.base.ac.SongViewActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
+		<activity android:name="yuku.alkitab.base.ac.SecretSettingsActivity" android:label="Secret settings" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 		<activity android:name="yuku.filechooser.FileChooserActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale" />
 		
 		<service android:name="yuku.alkitab.base.sv.DownloadService" />
 		
-		<provider android:name="yuku.alkitab.base.cp.Provider" android:authorities="yuku.alkitab.provider" />
+		<provider android:name="yuku.alkitab.base.cp.Provider" android:authorities="yuku.alkitab.provider" tools:ignore="ExportedContentProvider"/>
+		
+		<receiver android:name="yuku.alkitab.base.br.SecretSettingsReceiver" tools:ignore="ExportedReceiver">
+			<intent-filter>
+				<action android:name="android.provider.Telephony.SECRET_CODE" />
+				<data android:scheme="android_secret_code" android:host="2554822" />
+			</intent-filter>
+		</receiver>
+		
 	</application>
 </manifest>

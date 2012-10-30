@@ -85,8 +85,8 @@ public class KjvBdbProses {
 		return new InfoEdisi() {{
 			versi = 1;
 			nama = "kjv";
-			shortTitle = "KJV";
-			longTitle = "King James";
+			shortName = "KJV";
+			longName = "King James";
 			nkitab = 66;
 			perikopAda = 0;
 			keterangan = "The King James or Authorized version of the Holy Bible, created by the Church of England in 1604, that quickly became the standard for English-speaking protestants.";

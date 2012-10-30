@@ -3,14 +3,12 @@ package yuku.alkitab.base.ac;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.PreferenceActivity;
-import android.view.MenuItem;
 
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
-import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.ac.base.BasePreferenceActivity;
 
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends BasePreferenceActivity {
 	interface PreferenceUpdate {
 		String withValue(Object value);
 	}
@@ -54,14 +52,5 @@ public class SettingsActivity extends PreferenceActivity {
 				}
 			});
 		}
-	}
-	
-	@Override public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == android.R.id.home) {
-			BaseActivity.backToRootActivity(this);
-			return true;
-		}
-		
-		return super.onOptionsItemSelected(item);
 	}
 }

@@ -105,8 +105,8 @@ public class CuvColProses {
 		return new InfoEdisi() {{
 			versi = 1;
 			nama = getKodeEdisi();
-			shortTitle = getShortTitleEdisi();
-			longTitle = getJudulEdisi();
+			shortName = getShortTitleEdisi();
+			longName = getJudulEdisi();
 			keterangan = getKeteranganEdisi();
 			nkitab = 66;
 			perikopAda = 0;

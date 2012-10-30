@@ -16,7 +16,7 @@ public class Version {
 	
 	private synchronized Book[] getXkitab() {
 		if (volatile_xkitab == null) {
-			volatile_xkitab = this.reader.bacaInfoKitab();
+			volatile_xkitab = this.reader.loadBooks();
 		}
 		return volatile_xkitab;
 	}
@@ -76,7 +76,7 @@ public class Version {
 	
 	public synchronized PericopeIndex getIndexPerikop() {
 		if (!volatile_indexPerikopSudahCobaBaca) {
-			volatile_indexPerikop = this.reader.bacaIndexPerikop();
+			volatile_indexPerikop = this.reader.loadPericopeIndex();
 			volatile_indexPerikopSudahCobaBaca = true;
 		}
 		return volatile_indexPerikop;

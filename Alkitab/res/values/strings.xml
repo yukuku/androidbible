@@ -132,6 +132,7 @@
     <string name="ed_type_built_in">Type: Built-in</string>
     <string name="ed_type_preset">Type: Preset</string>
     <string name="ed_type_add_on">Type: Add-on</string>
+    <string name="ed_shortName_shortName">Short name: %s</string>
     <string name="ed_title_title">Title: %s</string>
     <string name="ed_stored_in_file">Stored in: %s</string>
     <string name="ed_default_filename_file">Default filename: %s</string>
