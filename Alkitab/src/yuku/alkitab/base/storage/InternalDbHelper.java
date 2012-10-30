@@ -95,6 +95,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	private void bikinTabelEdisi(SQLiteDatabase db) throws SQLException {
 		db.execSQL("create table if not exists " + Db.TABEL_Edisi + " (" + //$NON-NLS-1$ //$NON-NLS-2$
 			"_id integer primary key autoincrement, " + //$NON-NLS-1$
+			Db.Edisi.shortName + " text, " + //$NON-NLS-1$
 			Db.Edisi.judul + " text, " + // judul (keliatan sama user) //$NON-NLS-1$
 			Db.Edisi.jenis + " text, " + // jenis (yes) //$NON-NLS-1$
 			Db.Edisi.keterangan + " text, " + // keterangan tambahan, mungkin bisa diedit user kalo perlu //$NON-NLS-1$
@@ -108,6 +109,12 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	private void bikinIndexEdisi(SQLiteDatabase db) throws SQLException {
 		// index Edisi(urutan)
 		db.execSQL(String.format("create index if not exists index_301 on %s (%s)", Db.TABEL_Edisi, Db.Edisi.urutan)); //$NON-NLS-1$
+		
+		// index Edisi(shortName)
+		db.execSQL(String.format("create index if not exists index_302 on %s (%s)", Db.TABEL_Edisi, Db.Edisi.shortName)); //$NON-NLS-1$
+		
+		// index Edisi(judul)
+		db.execSQL(String.format("create index if not exists index_303 on %s (%s)", Db.TABEL_Edisi, Db.Edisi.judul)); //$NON-NLS-1$
 	}
 	
 	private void bikinTabelLabel(SQLiteDatabase db) throws SQLException {
@@ -171,6 +178,20 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			// tambah index di Renungan
 			bikinIndexRenungan(db);
 		}
+		
+		if (oldVersion <= 102) { // 103: 2.7.1 
+			addShortNameColumnAndIndexToEdisi(db);
+		}
+	}
+
+	private void addShortNameColumnAndIndexToEdisi(SQLiteDatabase db) {
+		db.execSQL("alter table " + Db.TABEL_Edisi + " add column " + Db.Edisi.shortName + " text");
+		
+		// index Edisi(shortName)
+		db.execSQL(String.format("create index if not exists index_302 on %s (%s)", Db.TABEL_Edisi, Db.Edisi.shortName)); //$NON-NLS-1$
+		
+		// index Edisi(judul)
+		db.execSQL(String.format("create index if not exists index_303 on %s (%s)", Db.TABEL_Edisi, Db.Edisi.judul)); //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("deprecation") private void konvertDariBukmakKeBukmak2(SQLiteDatabase db) {

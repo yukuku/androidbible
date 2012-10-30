@@ -419,7 +419,7 @@ public class IsiActivity extends BaseActivity {
 		
 		boolean success = false;
 		try {
-			Version version = mv.getVersion(getApplicationContext());
+			Version version = mv.getVersion();
 			
 			if (version != null) {
 				S.activeVersion = version;

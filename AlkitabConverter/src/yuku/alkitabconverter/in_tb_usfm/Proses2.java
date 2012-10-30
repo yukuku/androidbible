@@ -41,8 +41,9 @@ public class Proses2 {
 	static String OUTPUT_YES = "./bahan/in-tb-usfm/out/in-tb-usfm.yes";
 	public static int OUTPUT_ADA_PERIKOP = 1;
 	static String INFO_NAMA = "in-tb-usfm";
-	static String INFO_JUDUL = "TB";
-	static String INFO_KETERANGAN = "Terjemahan Baru (1974)";
+	static String INFO_SHORT_NAME = "TB";
+	static String INFO_LONG_NAME = "Terjemahan Baru";
+	static String INFO_KETERANGAN = "Terjemahan Baru (1974), Lembaga Alkitab Indonesia";
 	static String INPUT_TEKS_2 = "./bahan/in-tb-usfm/mid/"; 
 
 
@@ -114,7 +115,7 @@ public class Proses2 {
 		
 		////////// PROSES KE YES
 		
-		final InfoEdisi infoEdisi = YesCommon.infoEdisi(INFO_NAMA, null, INFO_JUDUL, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES);
+		final InfoEdisi infoEdisi = YesCommon.infoEdisi(INFO_NAMA, INFO_SHORT_NAME, INFO_LONG_NAME, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES);
 		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
 		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
 		

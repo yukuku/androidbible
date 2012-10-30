@@ -1,6 +1,5 @@
 package yuku.alkitab.base.storage;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.io.ByteArrayInputStream;
@@ -17,7 +16,7 @@ import yuku.alkitab.base.model.PericopeIndex;
 import yuku.alkitab.base.model.Version;
 import yuku.bintex.BintexReader;
 
-public class YesReader extends Reader {
+public class YesReader implements Reader {
 	private static final String TAG = YesReader.class.getSimpleName();
 	
 	private String nf;
@@ -27,16 +26,14 @@ public class YesReader extends Reader {
 	private long teks_dasarOffset;
 	private long perikopBlok_dasarOffset;
 	
-	private String shortTitle;
-	private String longTitle;
-	private String keterangan;
+	private String shortName;
+	private String longName;
+	private String description;
 	private int nkitab;
 	private int perikopAda = 0; // default ga ada
 	private int encoding = 1; // 1 = ascii; 2 = utf-8;
 	
-	public YesReader(Context context, String nf) {
-		super(context);
-		
+	public YesReader(String nf) {
 		this.nf = nf;
 	}
 	
@@ -87,12 +84,23 @@ public class YesReader extends Reader {
 			Log.d(TAG, "teks_dasarOffset = " + teks_dasarOffset); //$NON-NLS-1$
 		}
 	}
+	
+	@Override
+	public String getShortName() {
+		try {
+			init();
+			return shortName;
+		} catch (Exception e) {
+			Log.e(TAG, "init error", e); //$NON-NLS-1$
+			return ""; //$NON-NLS-1$
+		}
+	}
 
 	@Override
 	public String getLongName() {
 		try {
 			init();
-			return longTitle;
+			return longName;
 		} catch (Exception e) {
 			Log.e(TAG, "init error", e); //$NON-NLS-1$
 			return ""; //$NON-NLS-1$
@@ -119,12 +127,14 @@ public class YesReader extends Reader {
 					in.readInt(); // buang
 				} else if (key.equals("nama")) { //$NON-NLS-1$
 					nama = in.readShortString();
+				} else if (key.equals("shortName")) { //$NON-NLS-1$
+					this.shortName = in.readShortString();
 				} else if (key.equals("shortTitle")) { //$NON-NLS-1$
-					this.shortTitle = in.readShortString();
+					this.shortName = in.readShortString();
 				} else if (key.equals("judul")) { //$NON-NLS-1$
-					this.longTitle = in.readShortString();
+					this.longName = in.readShortString();
 				} else if (key.equals("keterangan")) { //$NON-NLS-1$
-					this.keterangan = in.readLongString();
+					this.description = in.readLongString();
 				} else if (key.equals("nkitab")) { //$NON-NLS-1$
 					this.nkitab = in.readInt();
 				} else if (key.equals("perikopAda")) { //$NON-NLS-1$
@@ -139,13 +149,13 @@ public class YesReader extends Reader {
 				}
 			}
 			
-			Log.d(TAG, "bacaInfoEdisi selesai, nama=" + nama + " judul=" + longTitle + " nkitab=" + nkitab); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Log.d(TAG, "bacaInfoEdisi selesai, nama=" + nama + " judul=" + longName + " nkitab=" + nkitab); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} catch (Exception e) {
 			Log.e(TAG, "bacaInfoEdisi error", e); //$NON-NLS-1$
 		}
 	}
 
-	@Override public Book[] bacaInfoKitab() {
+	@Override public Book[] loadBooks() {
 		try {
 			Log.d(TAG, "bacaInfoKitab dipanggil"); //$NON-NLS-1$
 			
@@ -235,7 +245,7 @@ public class YesReader extends Reader {
 	}
 	
 	@Override
-	public String[] muatTeks(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+	public String[] loadVerseText(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
 		// init pembacaDecoder
 		if (readerDecoder == null) {
 			if (encoding == 1) {
@@ -294,7 +304,7 @@ public class YesReader extends Reader {
 	}
 
 	@Override
-	public PericopeIndex bacaIndexPerikop() {
+	public PericopeIndex loadPericopeIndex() {
 		long wmulai = System.currentTimeMillis();
 		try {
 			init();
@@ -384,7 +394,7 @@ public class YesReader extends Reader {
 	public String getDescription() {
 		try {
 			init();
-			return keterangan;
+			return description;
 		} catch (Exception e) {
 			Log.e(TAG, "init error", e); //$NON-NLS-1$
 			return null;

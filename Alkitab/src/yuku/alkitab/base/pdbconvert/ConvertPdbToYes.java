@@ -226,7 +226,7 @@ public class ConvertPdbToYes {
 		return new InfoEdisi() {{
 			versi = 2;
 			nama = pdb.getVersionName();
-			longTitle = pdb.getVersionName();
+			longName = pdb.getVersionName();
 			keterangan = pdb.getVersionInfo();
 			nkitab = kitabPosToBookPosMap_.size();
 			perikopAda = nblokPerikop_ == 0? 0: 1;
