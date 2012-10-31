@@ -21,8 +21,8 @@ import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
 import yuku.alkitab.yes.YesFile.PerikopBlok;
-import yuku.alkitab.yes.YesFile.PerikopData;
-import yuku.alkitab.yes.YesFile.PerikopData.Entri;
+import yuku.alkitab.yes.YesFile.PericopeData;
+import yuku.alkitab.yes.YesFile.PericopeData.Entry;
 import yuku.alkitab.yes.YesFile.PerikopIndex;
 import yuku.alkitab.yes.YesFile.Teks;
 import yuku.alkitabconverter.bdb.BdbProses.Rec;
@@ -50,9 +50,9 @@ public class Proses2 {
 	List<Rec> xrec = new ArrayList<Rec>();
 	TeksDb teksDb = new TeksDb();
 	StringBuilder misteri = new StringBuilder();
-	PerikopData perikopData = new PerikopData();
+	PericopeData pericopeData = new PericopeData();
 	{
-		perikopData.xentri = new ArrayList<Entri>();
+		pericopeData.entries = new ArrayList<Entry>();
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -110,7 +110,7 @@ public class Proses2 {
 		{
 			File outDir = new File("./bahan/in-tb-usfm/raw");
 			outDir.mkdir();
-			InternalCommon.createInternalFiles(outDir, "tb", InternalCommon.fileToBookNames(INPUT_KITAB), teksDb, perikopData);
+			InternalCommon.createInternalFiles(outDir, "tb", InternalCommon.fileToBookNames(INPUT_KITAB), teksDb, pericopeData);
 		}
 		
 		////////// PROSES KE YES
@@ -119,7 +119,7 @@ public class Proses2 {
 		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
 		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
 		
-		YesFile file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(perikopData), new PerikopIndex(perikopData));
+		YesFile file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(pericopeData), new PerikopIndex(pericopeData));
 		
 		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
 	}
@@ -143,7 +143,7 @@ public class Proses2 {
 		Object tujuanTulis_xref = new Object();
 		Object tujuanTulis_footnote = new Object();
 		
-		List<PerikopData.Entri> perikopBuffer = new ArrayList<PerikopData.Entri>();
+		List<PericopeData.Entry> perikopBuffer = new ArrayList<PericopeData.Entry>();
 		boolean afterThisMustStartNewPerikop = true; // if true, we have done with a pericope title, so the next text must become a new pericope title instead of appending to existing one
 		
 		int sLevel = 0;
@@ -285,11 +285,11 @@ public class Proses2 {
 				menjorokTeks = -1; // reset
 				
 				if (perikopBuffer.size() > 0) {
-					for (PerikopData.Entri pe: perikopBuffer) {
-						pe.blok.judul = pe.blok.judul.replace("\n", " ").replace("  ", " ").trim();
-						System.out.println("(commit to perikopData " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":) " + pe.blok.judul);
+					for (PericopeData.Entry pe: perikopBuffer) {
+						pe.block.title = pe.block.title.replace("\n", " ").replace("  ", " ").trim();
+						System.out.println("(commit to perikopData " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":) " + pe.block.title);
 						pe.ari = Ari.encode(kitab_0, pasal_1, ayat_1);
-						perikopData.xentri.add(pe);
+						pericopeData.entries.add(pe);
 					}
 					perikopBuffer.clear();
 				}
@@ -299,16 +299,16 @@ public class Proses2 {
 				
 				if (sLevel == 0 || sLevel == 1 || sLevel == LEVEL_p_mr || sLevel == LEVEL_p_ms) {
 					if (afterThisMustStartNewPerikop || perikopBuffer.size() == 0) {
-						PerikopData.Entri entri = new PerikopData.Entri();
-						entri.ari = 0; // done later when writing teks so we know which verse this pericope starts from 
-						entri.blok = new PerikopData.Blok();
-						entri.blok.versi = 2;
-						entri.blok.judul = judul;
-						perikopBuffer.add(entri);
+						PericopeData.Entry entry = new PericopeData.Entry();
+						entry.ari = 0; // done later when writing teks so we know which verse this pericope starts from 
+						entry.block = new PericopeData.Block();
+						entry.block.version = 2;
+						entry.block.title = judul;
+						perikopBuffer.add(entry);
 						afterThisMustStartNewPerikop = false;
 						System.out.println("$tulis ke perikopBuffer (new entry) (size now: " + perikopBuffer.size() + "): " + judul);
 					} else {
-						perikopBuffer.get(perikopBuffer.size() - 1).blok.judul += judul;
+						perikopBuffer.get(perikopBuffer.size() - 1).block.title += judul;
 						System.out.println("$tulis ke perikopBuffer (append to existing) (size now: " + perikopBuffer.size() + "): " + judul);
 					}
 				} else if (sLevel == LEVEL_p_r) { // paralel
@@ -316,8 +316,8 @@ public class Proses2 {
 						throw new RuntimeException("paralel found but no perikop on buffer: " + judul);
 					}
 					
-					PerikopData.Entri entri = perikopBuffer.get(perikopBuffer.size() - 1);
-					entri.blok.xparalel = parseParalel(judul);
+					PericopeData.Entry entry = perikopBuffer.get(perikopBuffer.size() - 1);
+					entry.block.paralels = parseParalel(judul);
 				} else if (sLevel == 2) {
 					System.out.println("$tulis ke tempat sampah (perikop level 2): " + judul);
 				} else {

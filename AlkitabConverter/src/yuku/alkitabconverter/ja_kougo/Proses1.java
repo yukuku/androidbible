@@ -19,9 +19,9 @@ import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
 import yuku.alkitab.yes.YesFile.PerikopBlok;
-import yuku.alkitab.yes.YesFile.PerikopData;
-import yuku.alkitab.yes.YesFile.PerikopData.Blok;
-import yuku.alkitab.yes.YesFile.PerikopData.Entri;
+import yuku.alkitab.yes.YesFile.PericopeData;
+import yuku.alkitab.yes.YesFile.PericopeData.Block;
+import yuku.alkitab.yes.YesFile.PericopeData.Entry;
 import yuku.alkitab.yes.YesFile.PerikopIndex;
 import yuku.alkitab.yes.YesFile.Teks;
 import yuku.alkitabconverter.OsisBookNames;
@@ -41,9 +41,9 @@ public class Proses1 {
 	Handler handler;
 
 	List<Rec> xrec = new ArrayList<Rec>();
-	PerikopData perikopData = new PerikopData();
+	PericopeData pericopeData = new PericopeData();
 	{
-		perikopData.xentri = new ArrayList<Entri>();
+		pericopeData.entries = new ArrayList<Entry>();
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -91,7 +91,7 @@ public class Proses1 {
 		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
 		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
 		
-		YesFile file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(perikopData), new PerikopIndex(perikopData));
+		YesFile file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(pericopeData), new PerikopIndex(pericopeData));
 		
 		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
 	}
@@ -204,12 +204,12 @@ public class Proses1 {
 				b_comment.setLength(0);
 				
 				// masukin ke data perikop
-				Entri entri = new Entri();
-				entri.ari = (kitab_1 - 1) << 16 | pasal_1 << 8 | ayat_1;
-				entri.blok = new Blok();
-				entri.blok.versi = 2;
-				entri.blok.judul = comment;
-				perikopData.xentri.add(entri);
+				Entry entry = new Entry();
+				entry.ari = (kitab_1 - 1) << 16 | pasal_1 << 8 | ayat_1;
+				entry.block = new Block();
+				entry.block.version = 2;
+				entry.block.title = comment;
+				pericopeData.entries.add(entry);
 				
 				System.out.println("Perikop: " + kitab_1 + " " + pasal_1 + " " + ayat_1 + " " + comment);
 			}

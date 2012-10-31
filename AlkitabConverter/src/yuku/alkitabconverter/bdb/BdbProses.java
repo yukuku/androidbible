@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
-import yuku.alkitab.yes.YesFile.PerikopData;
+import yuku.alkitab.yes.YesFile.PericopeData;
 
 public class BdbProses {
 	public static class Rec implements Comparable<Rec> {
@@ -23,12 +23,12 @@ public class BdbProses {
 		}
 	}
 	
-	public interface PerikopTester {
-		PerikopData.Entri getPerikopEntri(int kitab_1, int pasal_1, int ayat_1, String isi);
+	public interface PericopeTester {
+		PericopeData.Entry getPericopeEntry(int kitab_1, int pasal_1, int ayat_1, String isi);
 	}
 	
-	PerikopData perikopData;
-	private PerikopTester perikopTester;
+	PericopeData pericopeData;
+	private PericopeTester pericopeTester;
 	boolean combineSameVerse = false;
 	
 	public ArrayList<Rec> parse(String nf, String charsetName) throws Exception {
@@ -55,14 +55,14 @@ public class BdbProses {
 				throw new RuntimeException("kolom ngaco");
 			}
 			
-			if (perikopTester != null) {
-				PerikopData.Entri pe = perikopTester.getPerikopEntri(kitab_1, pasal_1, ayat_1, isi);
+			if (pericopeTester != null) {
+				PericopeData.Entry pe = pericopeTester.getPericopeEntry(kitab_1, pasal_1, ayat_1, isi);
 				if (pe != null) {
-					if (perikopData == null) {
-						perikopData = new PerikopData();
-						perikopData.xentri = new ArrayList<PerikopData.Entri>();
+					if (pericopeData == null) {
+						pericopeData = new PericopeData();
+						pericopeData.entries = new ArrayList<PericopeData.Entry>();
 					}
-					perikopData.xentri.add(pe);
+					pericopeData.entries.add(pe);
 					continue; // let's continue with next line
 				}
 			}
@@ -112,12 +112,12 @@ public class BdbProses {
 		this.combineSameVerse = combineSameVerse;
 	}
 
-	public void setPerikopTester(PerikopTester perikopTester) {
-		this.perikopTester = perikopTester;
+	public void setPericopeTester(PericopeTester pericopeTester) {
+		this.pericopeTester = pericopeTester;
 	}
 
-	public PerikopData getPerikopData() {
-		return perikopData;
+	public PericopeData getPericopeData() {
+		return pericopeData;
 	}
 
 }

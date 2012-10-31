@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-import yuku.alkitab.yes.YesFile.PerikopData;
+import yuku.alkitab.yes.YesFile.PericopeData;
 import yuku.alkitabconverter.bdb.BdbProses.Rec;
 import yuku.alkitabconverter.util.CountingOutputStream;
 import yuku.alkitabconverter.util.TeksDb;
@@ -25,14 +25,14 @@ public class InternalCommon {
 	/**
 	 * @param prefix e.g. "tb"
 	 */
-	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, TeksDb teksDb, PerikopData perikopData) {
-		createInternalFiles(outDir, prefix, bookNames, teksDb.toRecList(), perikopData);
+	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, TeksDb teksDb, PericopeData pericopeData) {
+		createInternalFiles(outDir, prefix, bookNames, teksDb.toRecList(), pericopeData);
 	}
 	
 	/**
 	 * @param prefix e.g. "tb"
 	 */
-	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, List<Rec> _recs, PerikopData perikopData) {
+	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, List<Rec> _recs, PericopeData pericopeData) {
 		List<List<Rec>> books = new ArrayList<List<Rec>>();
 		
 		for (int i = 1; i <= 66; i++) {
@@ -107,13 +107,13 @@ public class InternalCommon {
 			}
 			
 			// perikop
-			if (perikopData != null) {
+			if (pericopeData != null) {
 				BintexWriter bw_blocks = new BintexWriter(new FileOutputStream(new File(outDir, String.format("%s_pericope_blocks_bt.bt", prefix))));
 				BintexWriter bw_index = new BintexWriter(new FileOutputStream(new File(outDir, String.format("%s_pericope_index_bt.bt", prefix))));
 				
-				bw_index.writeInt(perikopData.xentri.size());
+				bw_index.writeInt(pericopeData.entries.size());
 				
-				for (PerikopData.Entri pe: perikopData.xentri) {
+				for (PericopeData.Entry pe: pericopeData.entries) {
 					/* Blok {
 						uint8 versi = 3
 						autostring judul
@@ -124,11 +124,11 @@ public class InternalCommon {
 					
 					int pos = bw_blocks.getPos();
 					bw_blocks.writeUint8(3);
-					bw_blocks.writeAutoString(pe.blok.judul);
-					int parallel_count = pe.blok.xparalel == null? 0: pe.blok.xparalel.size();
+					bw_blocks.writeAutoString(pe.block.title);
+					int parallel_count = pe.block.paralels == null? 0: pe.block.paralels.size();
 					bw_blocks.writeUint8(parallel_count);
 					for (int i = 0; i < parallel_count; i++) {
-						bw_blocks.writeAutoString(pe.blok.xparalel.get(i));
+						bw_blocks.writeAutoString(pe.block.paralels.get(i));
 					}
 					
 					bw_index.writeInt(pe.ari);

@@ -7,7 +7,7 @@ import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import yuku.alkitab.yes.YesFile.PerikopData.Entri;
+import yuku.alkitab.yes.YesFile.PericopeData.Entry;
 import yuku.bintex.BintexWriter;
 
 public class YesFile {
@@ -205,66 +205,66 @@ public class YesFile {
 	}
 	
 	public static class PerikopBlok implements IsiSeksi {
-		private final PerikopData data;
+		private final PericopeData data;
 
-		public PerikopBlok(PerikopData data) {
+		public PerikopBlok(PericopeData data) {
 			this.data = data;
 		}
 
 		@Override public void toBytes(BintexWriter writer) throws Exception {
 			int offsetAwalSeksi = writer.getPos();
-			for (Entri entri: data.xentri) {
+			for (Entry entry: data.entries) {
 				int offsetAwalEntri = writer.getPos();
 				
-				writer.writeUint8(entri.blok.versi); // versi
-				writer.writeLongString(entri.blok.judul); // judul
-				writer.writeUint8(entri.blok.xparalel == null? 0: entri.blok.xparalel.size()); // nparalel
-				if (entri.blok.xparalel != null) { // xparalel
-					for (String paralel: entri.blok.xparalel) {
+				writer.writeUint8(entry.block.version); // versi
+				writer.writeLongString(entry.block.title); // judul
+				writer.writeUint8(entry.block.paralels == null? 0: entry.block.paralels.size()); // nparalel
+				if (entry.block.paralels != null) { // xparalel
+					for (String paralel: entry.block.paralels) {
 						writer.writeShortString(paralel);
 					}
 				}
 				
-				entri.blok._offset = offsetAwalEntri - offsetAwalSeksi;
+				entry.block._offset = offsetAwalEntri - offsetAwalSeksi;
 			}
 		}
 	}
 	
 	public static class PerikopIndex implements IsiSeksi {
-		private final PerikopData data;
+		private final PericopeData data;
 
-		public PerikopIndex(PerikopData data) {
+		public PerikopIndex(PericopeData data) {
 			this.data = data;
 		}
 
 		@Override public void toBytes(BintexWriter writer) throws Exception {
-			writer.writeInt(data.xentri.size()); // nentri
+			writer.writeInt(data.entries.size()); // nentri
 			
-			for (Entri entri: data.xentri) {
-				if (entri.blok._offset == -1) {
+			for (Entry entry: data.entries) {
+				if (entry.block._offset == -1) {
 					throw new RuntimeException("offset entri perikop belum dihitung"); // $NON-NLS-1$
 				}
 				
-				writer.writeInt(entri.ari);
-				writer.writeInt(entri.blok._offset);
+				writer.writeInt(entry.ari);
+				writer.writeInt(entry.block._offset);
 			}
 		}
 	}
 	
-	public static class PerikopData {
-		public static class Entri {
+	public static class PericopeData {
+		public static class Entry {
 			public int ari;
-			public Blok blok;
+			public Block block;
 		}
-		public static class Blok {
-			public int versi;
-			public String judul;
-			public List<String> xparalel;
+		public static class Block {
+			public int version;
+			public String title;
+			public List<String> paralels;
 			
 			int _offset = -1;
 		}
 		
-		public List<Entri> xentri;
+		public List<Entry> entries;
 	}
 	
 	public void output(RandomAccessFile file) throws Exception {

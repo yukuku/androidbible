@@ -20,8 +20,8 @@ import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
 import yuku.alkitab.yes.YesFile.PerikopBlok;
-import yuku.alkitab.yes.YesFile.PerikopData;
-import yuku.alkitab.yes.YesFile.PerikopData.Entri;
+import yuku.alkitab.yes.YesFile.PericopeData;
+import yuku.alkitab.yes.YesFile.PericopeData.Entry;
 import yuku.alkitab.yes.YesFile.PerikopIndex;
 import yuku.alkitab.yes.YesFile.Teks;
 import yuku.alkitabconverter.bdb.BdbProses.Rec;
@@ -45,9 +45,9 @@ public class Proses2 {
 
 	TeksDb teksDb = new TeksDb();
 	StringBuilder misteri = new StringBuilder();
-	PerikopData perikopData = new PerikopData();
+	PericopeData pericopeData = new PericopeData();
 	{
-		perikopData.xentri = new ArrayList<Entri>();
+		pericopeData.entries = new ArrayList<Entry>();
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -91,7 +91,7 @@ public class Proses2 {
 		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
 		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
 		
-		YesFile file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(perikopData), new PerikopIndex(perikopData));
+		YesFile file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(pericopeData), new PerikopIndex(pericopeData));
 		
 		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
 	}
@@ -246,12 +246,12 @@ public class Proses2 {
 				System.out.println("$tulis ke judulPerikop[level=" + sLevel + "] " + kitab_0 + " " + pasal_1 + " " + ayat_1 + " level " + sLevel + ":" + chars);
 				// masukin ke data perikop
 				String judul = chars.replace("\n", " ").replace("  ", " ").trim();
-				PerikopData.Entri entri = new PerikopData.Entri();
-				entri.ari = Ari.encode(kitab_0, pasal_1, ayat_1);
-				entri.blok = new PerikopData.Blok();
-				entri.blok.versi = 2;
-				entri.blok.judul = judul;
-				perikopData.xentri.add(entri);
+				PericopeData.Entry entry = new PericopeData.Entry();
+				entry.ari = Ari.encode(kitab_0, pasal_1, ayat_1);
+				entry.block = new PericopeData.Block();
+				entry.block.version = 2;
+				entry.block.title = judul;
+				pericopeData.entries.add(entry);
 			} else if (tujuan == tujuanTulis_xref) {
 				System.out.println("$tulis ke xref " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
 			} else if (tujuan == tujuanTulis_footnote) {
