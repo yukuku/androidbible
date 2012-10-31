@@ -57,8 +57,10 @@ public class YesFile {
 			writer.writeShortString("versi"); //$NON-NLS-1$
 			writer.writeInt(versi);
 			
-			writer.writeShortString("nama"); //$NON-NLS-1$
-			writer.writeShortString(nama);
+			if (nama != null) {
+				writer.writeShortString("nama"); //$NON-NLS-1$
+				writer.writeShortString(nama);
+			}
 			
 			writer.writeShortString("judul"); //$NON-NLS-1$
 			writer.writeShortString(longName);
@@ -126,8 +128,10 @@ public class YesFile {
 				writer.writeInt(a);
 			}
 			
-			writer.writeShortString("encoding"); //$NON-NLS-1$
-			writer.writeInt(encoding);
+			if (encoding != 0) {
+				writer.writeShortString("encoding"); //$NON-NLS-1$
+				writer.writeInt(encoding);
+			}
 			
 			writer.writeShortString("offset"); //$NON-NLS-1$
 			writer.writeInt(offset);
