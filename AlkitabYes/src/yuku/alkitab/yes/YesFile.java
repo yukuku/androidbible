@@ -5,6 +5,7 @@ import android.util.Log;
 import java.io.FileInputStream;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 
 import yuku.alkitab.yes.YesFile.PericopeData.Entry;
@@ -218,9 +219,9 @@ public class YesFile {
 				
 				writer.writeUint8(entry.block.version); // versi
 				writer.writeLongString(entry.block.title); // judul
-				writer.writeUint8(entry.block.paralels == null? 0: entry.block.paralels.size()); // nparalel
-				if (entry.block.paralels != null) { // xparalel
-					for (String paralel: entry.block.paralels) {
+				writer.writeUint8(entry.block.parallels == null? 0: entry.block.parallels.size()); // nparalel
+				if (entry.block.parallels != null) { // xparalel
+					for (String paralel: entry.block.parallels) {
 						writer.writeShortString(paralel);
 					}
 				}
@@ -259,12 +260,22 @@ public class YesFile {
 		public static class Block {
 			public int version;
 			public String title;
-			public List<String> paralels;
+			public List<String> parallels;
 			
 			int _offset = -1;
+			
+			public void addParallel(String parallel) {
+				if (parallels == null) parallels = new ArrayList<String>();
+				parallels.add(parallel);
+			}
 		}
 		
 		public List<Entry> entries;
+		
+		public void addEntry(Entry e) {
+			if (entries == null) entries = new ArrayList<Entry>();
+			entries.add(e);
+		}
 	}
 	
 	public void output(RandomAccessFile file) throws Exception {

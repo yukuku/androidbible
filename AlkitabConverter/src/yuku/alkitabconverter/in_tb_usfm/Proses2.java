@@ -317,7 +317,7 @@ public class Proses2 {
 					}
 					
 					PericopeData.Entry entry = perikopBuffer.get(perikopBuffer.size() - 1);
-					entry.block.paralels = parseParalel(judul);
+					entry.block.parallels = parseParalel(judul);
 				} else if (sLevel == 2) {
 					System.out.println("$tulis ke tempat sampah (perikop level 2): " + judul);
 				} else {

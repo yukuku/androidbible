@@ -125,10 +125,10 @@ public class InternalCommon {
 					int pos = bw_blocks.getPos();
 					bw_blocks.writeUint8(3);
 					bw_blocks.writeAutoString(pe.block.title);
-					int parallel_count = pe.block.paralels == null? 0: pe.block.paralels.size();
+					int parallel_count = pe.block.parallels == null? 0: pe.block.parallels.size();
 					bw_blocks.writeUint8(parallel_count);
 					for (int i = 0; i < parallel_count; i++) {
-						bw_blocks.writeAutoString(pe.block.paralels.get(i));
+						bw_blocks.writeAutoString(pe.block.parallels.get(i));
 					}
 					
 					bw_index.writeInt(pe.ari);
