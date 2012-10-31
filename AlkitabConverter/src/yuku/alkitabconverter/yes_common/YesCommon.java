@@ -46,17 +46,6 @@ public class YesCommon {
 	}
 
 	public static InfoKitab infoKitab(List<Rec> xrec, String _namafileInputKitab, String _encoding, int _encodingYes) throws Exception {
-		// sapu xrec, liat ada kitab apa aja
-		List<Integer> xkitab_1 = new ArrayList<Integer>();
-		for (Rec rec: xrec) {
-			if (!xkitab_1.contains(rec.book_1)) {
-				xkitab_1.add(rec.book_1);
-			}
-		}
-		System.out.println("Total ada " + xkitab_1.size() + " kitab");
-		
-		final Kitab[] xkitab_ = new Kitab[xkitab_1.size()];
-		
 		// parse file nama kitab
 		List<String> xnamaKitab = new ArrayList<String>(); // indexnya sama dengan kitabPos
 		Scanner sc = new Scanner(new File(_namafileInputKitab));
@@ -67,6 +56,21 @@ public class YesCommon {
 			xnamaKitab.add(judul);
 		}
 		sc.close();
+		
+		return infoKitab(xrec, _encoding, xnamaKitab);
+	}
+
+	public static InfoKitab infoKitab(List<Rec> xrec, String _encoding, List<String> xnamaKitab) throws Exception {
+		// sapu xrec, liat ada kitab apa aja
+		List<Integer> xkitab_1 = new ArrayList<Integer>();
+		for (Rec rec: xrec) {
+			if (!xkitab_1.contains(rec.book_1)) {
+				xkitab_1.add(rec.book_1);
+			}
+		}
+		System.out.println("Total ada " + xkitab_1.size() + " kitab");
+		
+		final Kitab[] xkitab_ = new Kitab[xkitab_1.size()];
 		
 		int offsetTotal = 0;
 		int offsetLewat = 0;
@@ -112,7 +116,6 @@ public class YesCommon {
 			kitab.pasal_offset = new int[kitab.npasal + 1];
 			System.arraycopy(xpasal_offset, 0, kitab.pasal_offset, 0, kitab.npasal+1);
 			System.out.println("kitab " + kitab.judul + " pasal_offset: " + Arrays.toString(kitab.pasal_offset));
-			kitab.encoding = _encodingYes;
 			kitab.offset = offsetTotal;
 			System.out.println("kitab " + kitab.judul + " offset: " + kitab.offset);
 			

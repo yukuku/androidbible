@@ -6,6 +6,8 @@ import java.io.FilenameFilter;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
@@ -93,6 +95,8 @@ public class Proses2 {
 		
 		teksDb.dump();		
 		
+		dumpForYetTesting(InternalCommon.fileToBookNames(INPUT_KITAB), teksDb, pericopeData);
+		
 		for (Rec rec: xrec) {
 			// tambah @@ kalo perlu
 			if (rec.text.contains("@") && !rec.text.startsWith("@@")) {
@@ -101,9 +105,9 @@ public class Proses2 {
 			
 			System.out.println(rec.book_1 + "\t" + rec.chapter_1 + "\t" + rec.verse_1 + "\t" + rec.text);
 		}
-		System.out.println("Total rec: " + xrec.size());
 
 		List<Rec> xrec = teksDb.toRecList();
+		System.out.println("Total rec: " + xrec.size());
 		
 		////////// PROSES KE INTERNAL
 		
@@ -122,6 +126,57 @@ public class Proses2 {
 		YesFile file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(pericopeData), new PerikopIndex(pericopeData));
 		
 		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
+	}
+
+	private void dumpForYetTesting(List<String> bookNames, TeksDb teksDb, PericopeData pericopeData) {
+		class Row {
+			int ari;
+			int type;
+			Rec rec;
+			PericopeData.Entry entry;
+		}
+		
+		List<Row> rows = new ArrayList<Row>();
+		
+		for (Rec rec: teksDb.toRecList()) {
+			Row row = new Row();
+			row.ari = Ari.encode(rec.book_1 - 1, rec.chapter_1, rec.verse_1);
+			row.type = 2;
+			row.rec = rec;
+			rows.add(row);
+		}
+		
+		for (PericopeData.Entry entry: pericopeData.entries) {
+			Row row = new Row();
+			row.ari = entry.ari;
+			row.type = 1;
+			row.entry = entry;
+			rows.add(row);
+		}
+		
+		Collections.sort(rows, new Comparator<Row>() {
+			@Override public int compare(Row a, Row b) {
+				if (a.ari != b.ari) return a.ari - b.ari;
+				return a.type - b.type;
+			}
+		});
+		
+		for (int i = 0; i < bookNames.size(); i++) {
+			System.out.printf("%s\t%d\t%s%n", "book_name", i + 1, bookNames.get(i));
+		}
+		
+		for (Row row: rows) {
+			if (row.type == 1) {
+				System.out.printf("%s\t%d\t%d\t%d\t%s%n", "pericope", Ari.toKitab(row.ari) + 1, Ari.toPasal(row.ari), Ari.toAyat(row.ari), row.entry.block.title);
+				if (row.entry.block.parallels != null) {
+					for (String parallel: row.entry.block.parallels) {
+						System.out.printf("%s\t%s%n", "parallel", parallel);
+					}
+				}
+			} else {
+				System.out.printf("%s\t%d\t%d\t%d\t%s%n", "verse", Ari.toKitab(row.ari) + 1, Ari.toPasal(row.ari), Ari.toAyat(row.ari), row.rec.text);
+			}
+		}
 	}
 
 	public class Handler extends DefaultHandler2 {

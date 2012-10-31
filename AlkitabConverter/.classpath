@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/BintexWriter"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/AlkitabYes"/>
+	<classpathentry kind="lib" path="libs/jcommander-1.30.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
