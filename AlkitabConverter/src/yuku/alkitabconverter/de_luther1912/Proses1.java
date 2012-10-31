@@ -8,8 +8,8 @@ import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
 import yuku.alkitab.yes.YesFile.Teks;
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
 import yuku.alkitabconverter.unboundbible.UnboundBibleReader;
+import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.yes_common.YesCommon;
 
@@ -37,7 +37,7 @@ public class Proses1 {
 		
 		// post-process
 		for (Rec rec: xrec) {
-			rec.isi = rec.isi.replace(" {~}", "");
+			rec.text = rec.text.replace(" {~}", "");
 		}
 
 		////////// PROSES KE YES

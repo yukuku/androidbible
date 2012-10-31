@@ -9,7 +9,7 @@ import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
 import yuku.alkitab.yes.YesFile.Teks;
 import yuku.alkitabconverter.bdb.BdbProses;
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
+import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.yes_common.YesCommon;
 
@@ -40,18 +40,18 @@ public class Proses1 {
 		for (int i = 0; i < xrec.size(); i++) {
 			Rec rec = xrec.get(i);
 			
-			if (rec.isi.startsWith("@@@8")) {
+			if (rec.text.startsWith("@@@8")) {
 				Rec recSblum = xrec.get(i - 1);
-				if (recSblum.kitab_1 == rec.kitab_1 && recSblum.pasal_1 == recSblum.pasal_1) {
-					while (rec.isi.substring(2, 4).equals("@8")) {
-						rec.isi = "@@" + rec.isi.substring(4); // buang @8
-						recSblum.isi = recSblum.isi + "@8"; // tambah @8
+				if (recSblum.book_1 == rec.book_1 && recSblum.chapter_1 == recSblum.chapter_1) {
+					while (rec.text.substring(2, 4).equals("@8")) {
+						rec.text = "@@" + rec.text.substring(4); // buang @8
+						recSblum.text = recSblum.text + "@8"; // tambah @8
 					}
-					if (!recSblum.isi.startsWith("@@")) {
-						recSblum.isi = "@@" + recSblum.isi;
+					if (!recSblum.text.startsWith("@@")) {
+						recSblum.text = "@@" + recSblum.text;
 					}
 				} else {
-					throw new RuntimeException("@8 ga bisa dipindah ke depan pada: " + rec.kitab_1 + " " + rec.pasal_1 + " " + rec.ayat_1);
+					throw new RuntimeException("@8 ga bisa dipindah ke depan pada: " + rec.book_1 + " " + rec.chapter_1 + " " + rec.verse_1);
 				}
 			}
 		}
@@ -61,24 +61,24 @@ public class Proses1 {
 		for (int i = 0; i < xrec.size(); i++) {
 			Rec rec = xrec.get(i);
 			
-			if (rec.isi.startsWith("@@\\p") || rec.isi.startsWith("\\p")) {
-				if (rec.ayat_1 == 1) { // di ayat 1
-					if (rec.isi.startsWith("@@\\p")) {
-						rec.isi = "@@" + rec.isi.substring(4); // buang \p
-					} else if (rec.isi.startsWith("\\p")) {
-						rec.isi = rec.isi.substring(2); // buang \p
+			if (rec.text.startsWith("@@\\p") || rec.text.startsWith("\\p")) {
+				if (rec.verse_1 == 1) { // di ayat 1
+					if (rec.text.startsWith("@@\\p")) {
+						rec.text = "@@" + rec.text.substring(4); // buang \p
+					} else if (rec.text.startsWith("\\p")) {
+						rec.text = rec.text.substring(2); // buang \p
 					}
 				} else {
 					Rec recSblum = xrec.get(i - 1);
-					if (recSblum.kitab_1 == rec.kitab_1 && recSblum.pasal_1 == recSblum.pasal_1) {
-						if (rec.isi.startsWith("@@\\p")) {
-							rec.isi = "@@" + rec.isi.substring(4); // buang \p
-						} else if (rec.isi.startsWith("\\p")) {
-							rec.isi = rec.isi.substring(2); // buang \p
+					if (recSblum.book_1 == rec.book_1 && recSblum.chapter_1 == recSblum.chapter_1) {
+						if (rec.text.startsWith("@@\\p")) {
+							rec.text = "@@" + rec.text.substring(4); // buang \p
+						} else if (rec.text.startsWith("\\p")) {
+							rec.text = rec.text.substring(2); // buang \p
 						}
-						recSblum.isi = recSblum.isi + "@8"; // tambah @8
-						if (!recSblum.isi.startsWith("@@")) {
-							recSblum.isi = "@@" + recSblum.isi;
+						recSblum.text = recSblum.text + "@8"; // tambah @8
+						if (!recSblum.text.startsWith("@@")) {
+							recSblum.text = "@@" + recSblum.text;
 						}
 					} 
 				}
@@ -89,11 +89,11 @@ public class Proses1 {
 		// cari semua \p di tengah2 ayat, ganti dengan @8@8
 		for (int i = 0; i < xrec.size(); i++) {
 			Rec rec = xrec.get(i);
-			if (rec.isi.contains("\\p")) {
-				System.out.println("\\p di tengah2: " + rec.kitab_1 + " " + rec.pasal_1 + " " + rec.ayat_1 + " " + rec.isi);
-				rec.isi = rec.isi.replace("\\p", "@8@8");
-				if (!rec.isi.startsWith("@@")) {
-					rec.isi = "@@" + rec.isi;
+			if (rec.text.contains("\\p")) {
+				System.out.println("\\p di tengah2: " + rec.book_1 + " " + rec.chapter_1 + " " + rec.verse_1 + " " + rec.text);
+				rec.text = rec.text.replace("\\p", "@8@8");
+				if (!rec.text.startsWith("@@")) {
+					rec.text = "@@" + rec.text;
 				}	
 			}
 		}

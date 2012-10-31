@@ -7,15 +7,15 @@ import java.util.ArrayList;
 import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
-import yuku.alkitab.yes.YesFile.PerikopBlok;
 import yuku.alkitab.yes.YesFile.PericopeData;
 import yuku.alkitab.yes.YesFile.PericopeData.Entry;
+import yuku.alkitab.yes.YesFile.PerikopBlok;
 import yuku.alkitab.yes.YesFile.PerikopIndex;
 import yuku.alkitab.yes.YesFile.Teks;
 import yuku.alkitabconverter.bdb.BdbProses;
 import yuku.alkitabconverter.bdb.BdbProses.PericopeTester;
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
 import yuku.alkitabconverter.util.Ari;
+import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.yes_common.YesCommon;
 
@@ -59,7 +59,7 @@ public class Proses1 {
 		
 		// remove stray @
 		for (Rec rec: xrec) {
-			if (rec.isi.contains("@")) rec.isi = rec.isi.replace("@", "");
+			if (rec.text.contains("@")) rec.text = rec.text.replace("@", "");
 		}
 		
 		System.out.println("Total verses: " + xrec.size());

@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Scanner;
 
 import yuku.alkitab.yes.YesFile.PericopeData;
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
 import yuku.alkitabconverter.util.CountingOutputStream;
+import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.TeksDb;
 import yuku.bintex.BintexWriter;
 
@@ -40,7 +40,7 @@ public class InternalCommon {
 		}
 		
 		for (Rec rec: _recs) {
-			int kitab_1 = rec.kitab_1;
+			int kitab_1 = rec.book_1;
 			if (kitab_1 < 1 || kitab_1 > 66) {
 				throw new RuntimeException("kitab_1 not supported: " + kitab_1);
 			}
@@ -57,8 +57,8 @@ public class InternalCommon {
 					
 					int chapter_count = 0;
 					for (Rec rec: recs) {
-						if (rec.pasal_1 > chapter_count) {
-							chapter_count = rec.pasal_1;
+						if (rec.chapter_1 > chapter_count) {
+							chapter_count = rec.chapter_1;
 						}
 					}
 	
@@ -66,7 +66,7 @@ public class InternalCommon {
 					{ // verse_counts
 						verse_counts = new int[chapter_count];
 						for (Rec rec: recs) {
-							verse_counts[rec.pasal_1 - 1]++;
+							verse_counts[rec.chapter_1 - 1]++;
 						}
 					}
 	
@@ -76,10 +76,10 @@ public class InternalCommon {
 						CountingOutputStream counter = new CountingOutputStream(new FileOutputStream(f));
 						OutputStreamWriter out = new OutputStreamWriter(counter, "utf-8");
 						for (Rec rec: recs) {
-							out.write(rec.isi);
+							out.write(rec.text);
 							out.write('\n');
 							out.flush();
-							chapter_offsets[rec.pasal_1] = (int) counter.getCount();
+							chapter_offsets[rec.chapter_1] = (int) counter.getCount();
 						}
 						out.close();
 					}

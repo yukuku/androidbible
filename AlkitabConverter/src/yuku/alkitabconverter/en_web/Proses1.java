@@ -9,8 +9,8 @@ import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
 import yuku.alkitab.yes.YesFile.Teks;
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
 import yuku.alkitabconverter.unboundbible.UnboundBibleReader;
+import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.yes_common.YesCommon;
 

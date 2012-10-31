@@ -14,7 +14,7 @@ import yuku.alkitab.yes.YesFile.Kitab;
 import yuku.alkitab.yes.YesFile.PerikopBlok;
 import yuku.alkitab.yes.YesFile.PerikopIndex;
 import yuku.alkitab.yes.YesFile.Teks;
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
+import yuku.alkitabconverter.util.Rec;
 
 public class YesCommon {
 	public static final String TAG = YesCommon.class.getSimpleName();
@@ -24,7 +24,7 @@ public class YesCommon {
 	public static Teks teks(List<Rec> xrec, String _encoding) {
 		final ArrayList<String> ss = new ArrayList<String>();
 		for (Rec rec: xrec) {
-			ss.add(rec.isi);
+			ss.add(rec.text);
 		}
 		
 		return new Teks(_encoding) {{
@@ -49,8 +49,8 @@ public class YesCommon {
 		// sapu xrec, liat ada kitab apa aja
 		List<Integer> xkitab_1 = new ArrayList<Integer>();
 		for (Rec rec: xrec) {
-			if (!xkitab_1.contains(rec.kitab_1)) {
-				xkitab_1.add(rec.kitab_1);
+			if (!xkitab_1.contains(rec.book_1)) {
+				xkitab_1.add(rec.book_1);
 			}
 		}
 		System.out.println("Total ada " + xkitab_1.size() + " kitab");
@@ -81,19 +81,19 @@ public class YesCommon {
 			Arrays.fill(xpasal_offset, 0);
 			
 			for (Rec rec: xrec) {
-				if (kitabPos + 1 == rec.kitab_1) {
-					xnayat[rec.pasal_1 - 1]++;
+				if (kitabPos + 1 == rec.book_1) {
+					xnayat[rec.chapter_1 - 1]++;
 					
-					if (rec.pasal_1 > maxpasal_1) {
-						maxpasal_1 = rec.pasal_1;
+					if (rec.chapter_1 > maxpasal_1) {
+						maxpasal_1 = rec.chapter_1;
 					}
 					
-					if (rec.pasal_1 != lastpasal_1) {
+					if (rec.chapter_1 != lastpasal_1) {
 						xpasal_offset[lastpasal_1] = offsetLewat;
-						lastpasal_1 = rec.pasal_1;
+						lastpasal_1 = rec.chapter_1;
 					}
 					
-					offsetLewat += rec.isi.getBytes(_encoding).length + 1; // tambah 1 karena '\n' nya
+					offsetLewat += rec.text.getBytes(_encoding).length + 1; // tambah 1 karena '\n' nya
 				}
 			}
 			xpasal_offset[maxpasal_1] = offsetLewat;

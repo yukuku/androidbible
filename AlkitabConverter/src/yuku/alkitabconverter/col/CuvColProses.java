@@ -12,7 +12,7 @@ import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
 import yuku.alkitab.yes.YesFile.Kitab;
 import yuku.alkitab.yes.YesFile.Teks;
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
+import yuku.alkitabconverter.util.Rec;
 
 public class CuvColProses {
 	static int edisi_index = -1;
@@ -93,7 +93,7 @@ public class CuvColProses {
 	private static Teks teks(ArrayList<Rec> xrec) {
 		final ArrayList<String> ss = new ArrayList<String>();
 		for (Rec rec: xrec) {
-			ss.add(rec.isi);
+			ss.add(rec.text);
 		}
 		
 		return new Teks("utf-8") {{
@@ -144,19 +144,19 @@ public class CuvColProses {
 			xpasal_offset[0] = 0;
 			
 			for (Rec rec: xrec) {
-				if (kitabPos + 1 == rec.kitab_1) {
-					xnayat[rec.pasal_1 - 1]++;
+				if (kitabPos + 1 == rec.book_1) {
+					xnayat[rec.chapter_1 - 1]++;
 					
-					if (rec.pasal_1 > maxpasal_1) {
-						maxpasal_1 = rec.pasal_1;
+					if (rec.chapter_1 > maxpasal_1) {
+						maxpasal_1 = rec.chapter_1;
 					}
 					
-					if (rec.pasal_1 != lastpasal_1) {
+					if (rec.chapter_1 != lastpasal_1) {
 						xpasal_offset[lastpasal_1] = offsetLewat;
-						lastpasal_1 = rec.pasal_1;
+						lastpasal_1 = rec.chapter_1;
 					}
 					
-					offsetLewat += rec.isi.getBytes(utf8).length + 1; // tambah 1 karena '\n' nya
+					offsetLewat += rec.text.getBytes(utf8).length + 1; // tambah 1 karena '\n' nya
 				}
 			}
 			xpasal_offset[maxpasal_1] = offsetLewat;

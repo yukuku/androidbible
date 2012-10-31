@@ -18,14 +18,14 @@ import org.xml.sax.ext.DefaultHandler2;
 import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
-import yuku.alkitab.yes.YesFile.PerikopBlok;
 import yuku.alkitab.yes.YesFile.PericopeData;
 import yuku.alkitab.yes.YesFile.PericopeData.Block;
 import yuku.alkitab.yes.YesFile.PericopeData.Entry;
+import yuku.alkitab.yes.YesFile.PerikopBlok;
 import yuku.alkitab.yes.YesFile.PerikopIndex;
 import yuku.alkitab.yes.YesFile.Teks;
 import yuku.alkitabconverter.OsisBookNames;
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
+import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.yes_common.YesCommon;
 
@@ -74,14 +74,14 @@ public class Proses1 {
 		// POST-PROCESS
 		for (Rec rec: xrec) {
 			// tambah @@ kalo perlu
-			if (rec.isi.contains("@") && !rec.isi.startsWith("@@")) {
-				rec.isi = "@@" + rec.isi;
+			if (rec.text.contains("@") && !rec.text.startsWith("@@")) {
+				rec.text = "@@" + rec.text;
 			}
 			
 			// betulin 〔セラ yang ga ada kurung tutupnya
-			rec.isi = rec.isi.replaceAll("(\u3014(ヒガヨン、)?セラ)(($|[^\u3015]))", "$1\u3015$3");
+			rec.text = rec.text.replaceAll("(\u3014(ヒガヨン、)?セラ)(($|[^\u3015]))", "$1\u3015$3");
 			
-			System.out.println(rec.kitab_1 + "\t" + rec.pasal_1 + "\t" + rec.ayat_1 + "\t" + rec.isi);
+			System.out.println(rec.book_1 + "\t" + rec.chapter_1 + "\t" + rec.verse_1 + "\t" + rec.text);
 		}
 		//System.out.println("Total rec: " + xrec.size());
 
@@ -195,7 +195,7 @@ public class Proses1 {
 					b.append("@8");
 				} else {
 					Rec lastRec = xrec.get(xrec.size() - 1);
-					lastRec.isi = lastRec.isi + "@8";
+					lastRec.text = lastRec.text + "@8";
 				}
 			} else if (alamat.endsWith("/comment")) {
 				simpan_comment = false;
@@ -234,19 +234,19 @@ public class Proses1 {
 					// isi dengan kekosongan
 					for (int a_1 = ((lastAri+1) & 0xff); a_1 < ayat_1; a_1++) {
 						Rec rec = new Rec();
-						rec.kitab_1 = kitab_1;
-						rec.pasal_1 = pasal_1;
-						rec.ayat_1 = a_1;
-						rec.isi = "";
+						rec.book_1 = kitab_1;
+						rec.chapter_1 = pasal_1;
+						rec.verse_1 = a_1;
+						rec.text = "";
 						xrec.add(rec);
 					}
 				}
 				
 				Rec rec = new Rec();
-				rec.kitab_1 = kitab_1;
-				rec.pasal_1 = pasal_1;
-				rec.ayat_1 = ayat_1;
-				rec.isi = isi;
+				rec.book_1 = kitab_1;
+				rec.chapter_1 = pasal_1;
+				rec.verse_1 = ayat_1;
+				rec.text = isi;
 				xrec.add(rec);
 				
 				// reset inden ke 0 lagi
@@ -255,9 +255,9 @@ public class Proses1 {
 				lastAri = ari; // bukan di bawah.
 			} else { // ari sama lagi, ato malah mundur. Maka append ke rec terakhir
 				Rec lastRec = xrec.get(xrec.size()-1);
-				lastRec.isi += " ";
-				lastRec.isi += " (" + pasal_1 + ":" + ayat_1 + ") ";
-				lastRec.isi += isi;
+				lastRec.text += " ";
+				lastRec.text += " (" + pasal_1 + ":" + ayat_1 + ") ";
+				lastRec.text += isi;
 			}
 		}
 		

@@ -20,14 +20,14 @@ import org.xml.sax.ext.DefaultHandler2;
 import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
-import yuku.alkitab.yes.YesFile.PerikopBlok;
 import yuku.alkitab.yes.YesFile.PericopeData;
 import yuku.alkitab.yes.YesFile.PericopeData.Entry;
+import yuku.alkitab.yes.YesFile.PerikopBlok;
 import yuku.alkitab.yes.YesFile.PerikopIndex;
 import yuku.alkitab.yes.YesFile.Teks;
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
 import yuku.alkitabconverter.internal_common.InternalCommon;
 import yuku.alkitabconverter.util.Ari;
+import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.util.TeksDb;
 import yuku.alkitabconverter.yes_common.YesCommon;
@@ -95,11 +95,11 @@ public class Proses2 {
 		
 		for (Rec rec: xrec) {
 			// tambah @@ kalo perlu
-			if (rec.isi.contains("@") && !rec.isi.startsWith("@@")) {
-				rec.isi = "@@" + rec.isi;
+			if (rec.text.contains("@") && !rec.text.startsWith("@@")) {
+				rec.text = "@@" + rec.text;
 			}
 			
-			System.out.println(rec.kitab_1 + "\t" + rec.pasal_1 + "\t" + rec.ayat_1 + "\t" + rec.isi);
+			System.out.println(rec.book_1 + "\t" + rec.chapter_1 + "\t" + rec.verse_1 + "\t" + rec.text);
 		}
 		System.out.println("Total rec: " + xrec.size());
 

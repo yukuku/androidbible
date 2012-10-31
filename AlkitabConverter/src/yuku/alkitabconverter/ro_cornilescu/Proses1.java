@@ -10,13 +10,13 @@ import java.util.Scanner;
 import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
-import yuku.alkitab.yes.YesFile.PerikopBlok;
 import yuku.alkitab.yes.YesFile.PericopeData;
 import yuku.alkitab.yes.YesFile.PericopeData.Block;
 import yuku.alkitab.yes.YesFile.PericopeData.Entry;
+import yuku.alkitab.yes.YesFile.PerikopBlok;
 import yuku.alkitab.yes.YesFile.PerikopIndex;
 import yuku.alkitab.yes.YesFile.Teks;
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
+import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.yes_common.YesCommon;
 
@@ -60,10 +60,10 @@ public class Proses1 {
 				String isi = splits[1].trim();
 				
 				Rec rec = new Rec();
-				rec.kitab_1 = kitab_1;
-				rec.pasal_1 = pasal_1;
-				rec.ayat_1 = ayat_1;
-				rec.isi = isi;
+				rec.book_1 = kitab_1;
+				rec.chapter_1 = pasal_1;
+				rec.verse_1 = ayat_1;
+				rec.text = isi;
 				
 				xrec.add(rec);
 			} else if (line.startsWith("Capitolul ")) {

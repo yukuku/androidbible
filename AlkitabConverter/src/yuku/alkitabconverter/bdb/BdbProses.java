@@ -7,22 +7,9 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 
 import yuku.alkitab.yes.YesFile.PericopeData;
+import yuku.alkitabconverter.util.Rec;
 
 public class BdbProses {
-	public static class Rec implements Comparable<Rec> {
-		public int kitab_1;
-		public int pasal_1;
-		public int ayat_1;
-		public String isi;
-		
-		@Override public int compareTo(Rec o) {
-			if (this.kitab_1 != o.kitab_1) return this.kitab_1 - o.kitab_1;
-			if (this.pasal_1 != o.pasal_1) return this.pasal_1 - o.pasal_1;
-			if (this.ayat_1 != o.ayat_1) return this.ayat_1 - o.ayat_1;
-			return 0;
-		}
-	}
-	
 	public interface PericopeTester {
 		PericopeData.Entry getPericopeEntry(int kitab_1, int pasal_1, int ayat_1, String isi);
 	}
@@ -69,7 +56,7 @@ public class BdbProses {
 			
 			if (combineSameVerse && ayat_1 == lastAyat_1 && pasal_1 == lastPasal_1 && kitab_1 == lastKitab_1) {
 				Rec lastRec = res.get(res.size() - 1);
-				lastRec.isi += " " + isi;
+				lastRec.text += " " + isi;
 			} else {
 				if (ayat_1 != lastAyat_1 + 1) {
 					if (pasal_1 != lastPasal_1 + 1) {
@@ -80,10 +67,10 @@ public class BdbProses {
 				}
 				
 				Rec rec = new Rec();
-				rec.kitab_1 = kitab_1;
-				rec.pasal_1 = pasal_1;
-				rec.ayat_1 = ayat_1;
-				rec.isi = isi;
+				rec.book_1 = kitab_1;
+				rec.chapter_1 = pasal_1;
+				rec.verse_1 = ayat_1;
+				rec.text = isi;
 				
 				res.add(rec);
 				nversePerChapter.put(kitab_1, (nversePerChapter.get(kitab_1) == null? 0: nversePerChapter.get(kitab_1)) + 1);
