@@ -227,13 +227,44 @@ public class YesFile {
 			for (Entry entry: data.entries) {
 				int offsetAwalEntri = writer.getPos();
 				
+				/*
+				 * Blok {
+				 * uint8 versi = 2
+				 * lstring judul
+				 * uint8 nparalel
+				 * sstring[nparalel] xparalel
+				 * }
+				 * 
+				 * // OR
+				 * 
+				 * Blok {
+				 * uint8 versi = 3
+				 * autostring judul
+				 * uint8 nparalel
+				 * autostring[nparalel] xparalel
+				 * }
+				 */				
+				
 				writer.writeUint8(entry.block.version); // versi
-				writer.writeLongString(entry.block.title); // judul
-				writer.writeUint8(entry.block.parallels == null? 0: entry.block.parallels.size()); // nparalel
-				if (entry.block.parallels != null) { // xparalel
-					for (String paralel: entry.block.parallels) {
-						writer.writeShortString(paralel);
+				
+				if (entry.block.version == 2) {
+					writer.writeLongString(entry.block.title); // judul
+					writer.writeUint8(entry.block.parallels == null? 0: entry.block.parallels.size()); // nparalel
+					if (entry.block.parallels != null) { // xparalel
+						for (String paralel: entry.block.parallels) {
+							writer.writeShortString(paralel);
+						}
 					}
+				} else if (entry.block.version == 3) {
+					writer.writeAutoString(entry.block.title); // judul
+					writer.writeUint8(entry.block.parallels == null? 0: entry.block.parallels.size()); // nparalel
+					if (entry.block.parallels != null) { // xparalel
+						for (String paralel: entry.block.parallels) {
+							writer.writeAutoString(paralel);
+						}
+					}
+				} else {
+					throw new RuntimeException("pericope entry.block.version " + entry.block.version + " not supported yet");
 				}
 				
 				entry.block._offset = offsetAwalEntri - offsetAwalSeksi;
