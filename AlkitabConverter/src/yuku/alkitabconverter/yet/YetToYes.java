@@ -77,7 +77,7 @@ public class YetToYes {
 			}
 		}
 		
-		InfoEdisi infoEdisi = YesCommon.infoEdisi(null, result.infos.get("shortName"), result.infos.get("longName"), result.numberOfBooks, result.pericopeData == null? 0: 1, result.infos.get("description"), 2 /* utf-8 */);
+		InfoEdisi infoEdisi = YesCommon.infoEdisi(null, result.infos.get("shortName"), result.infos.get("longName"), result.numberOfBooks, result.pericopeData == null? 0: 1, result.infos.get("description"), 2 /* utf-8 */, result.infos.get("locale"));
 		InfoKitab infoKitab = YesCommon.infoKitab(result.recs, "utf-8", result.bookNames);
 		Teks teks = YesCommon.teks(result.recs, "utf-8");
 		YesFile out;

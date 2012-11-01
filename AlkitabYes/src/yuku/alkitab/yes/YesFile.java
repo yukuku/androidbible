@@ -48,6 +48,7 @@ public class YesFile {
 		public String shortName;
 		public String longName;
 		public String keterangan;
+		public String locale;
 		public int nkitab;
 		public int perikopAda; // 0=ga ada, selain 0: nomer versi perikopIndex dan perikopBlok_
 		public int encoding; // 1 = ascii; 2 = utf-8
@@ -82,6 +83,11 @@ public class YesFile {
 			writer.writeShortString("encoding"); // mulai versi 2 ada. //$NON-NLS-1$
 			writer.writeInt(encoding);
 
+			if (locale != null) {
+				writer.writeShortString("locale");
+				writer.writeShortString(locale);
+			}
+			
 			writer.writeShortString("end"); //$NON-NLS-1$
 		}
 	}

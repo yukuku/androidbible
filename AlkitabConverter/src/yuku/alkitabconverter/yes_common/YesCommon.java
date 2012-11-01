@@ -32,7 +32,7 @@ public class YesCommon {
 		}};
 	}
 
-	public static InfoEdisi infoEdisi(final String _nama, final String _shortName, final String _longName, final int _nkitab, final int _perikopAda, final String _keterangan, final int _encoding) {
+	public static InfoEdisi infoEdisi(final String _nama, final String _shortName, final String _longName, final int _nkitab, final int _perikopAda, final String _keterangan, final int _encoding, final String _locale) {
 		return new InfoEdisi() {{
 			versi = 1;
 			nama = _nama;
@@ -42,6 +42,7 @@ public class YesCommon {
 			perikopAda = _perikopAda;
 			keterangan = _keterangan;
 			encoding = _encoding;
+			locale = _locale;
 		}};
 	}
 
