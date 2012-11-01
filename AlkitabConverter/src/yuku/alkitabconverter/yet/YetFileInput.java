@@ -63,9 +63,9 @@ public class YetFileInput {
 		YetFileInputResult res = new YetFileInputResult();
 		
 		while (sc.hasNextLine()) {
-			String baris = sc.nextLine();
+			String line = sc.nextLine();
 			
-			String[] splits = baris.split("\t");
+			String[] splits = line.split("\t");
 			String command = splits[0];
 			
 			if ("info".equals(command)) {
@@ -102,7 +102,7 @@ public class YetFileInput {
 				if (verse_1 != lastVerse_1 + 1) {
 					if (chapter_1 != lastChapter_1 + 1) {
 						if (book_1 != lastBook_1 + 1) {
-							throw new RuntimeException("wrong verse ordering: " + baris);
+							throw new RuntimeException("wrong verse ordering: " + line);
 						}
 					}
 				}
@@ -119,6 +119,11 @@ public class YetFileInput {
 				lastBook_1 = book_1;
 				lastChapter_1 = chapter_1;
 				lastVerse_1 = verse_1;
+			} else if (command.trim().startsWith("#")) {
+				// comment
+			} else {
+				System.err.println("unknown line encountered: " + line);
+				return null;
 			}
 		}
 		
@@ -127,7 +132,6 @@ public class YetFileInput {
 		}
 		res.setNumberOfBooks(nversePerBook.size());
 		
-		System.out.println("DONE");
 		return res;
 	}
 }

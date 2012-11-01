@@ -48,6 +48,11 @@ public class YetToYes {
 		System.err.println("output: " + yesfile);
 		
 		YetFileInputResult result = new YetFileInput().parse(yetfile);
+		if (result == null) {
+			// error message given by parse above
+			return 1;
+		}
+		
 		if (result.recs == null) {
 			System.err.println("yet file doesn't contain any verses");
 			return 1;
