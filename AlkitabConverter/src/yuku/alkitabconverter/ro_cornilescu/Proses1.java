@@ -10,13 +10,13 @@ import java.util.Scanner;
 import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
+import yuku.alkitab.yes.YesFile.PericopeData;
+import yuku.alkitab.yes.YesFile.PericopeData.Block;
+import yuku.alkitab.yes.YesFile.PericopeData.Entry;
 import yuku.alkitab.yes.YesFile.PerikopBlok;
-import yuku.alkitab.yes.YesFile.PerikopData;
-import yuku.alkitab.yes.YesFile.PerikopData.Blok;
-import yuku.alkitab.yes.YesFile.PerikopData.Entri;
 import yuku.alkitab.yes.YesFile.PerikopIndex;
 import yuku.alkitab.yes.YesFile.Teks;
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
+import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.yes_common.YesCommon;
 
@@ -40,8 +40,8 @@ public class Proses1 {
 		Scanner sc = new Scanner(new File(INPUT_TEKS_1), INPUT_TEKS_ENCODING);
 		
 		List<Rec> xrec = new ArrayList<Rec>();
-		PerikopData perikopData = new PerikopData();
-		perikopData.xentri = new ArrayList<Entri>();
+		PericopeData pericopeData = new PericopeData();
+		pericopeData.entries = new ArrayList<Entry>();
 		
 		int kitab_1 = 1;
 		int pasal_1 = 1;
@@ -60,10 +60,10 @@ public class Proses1 {
 				String isi = splits[1].trim();
 				
 				Rec rec = new Rec();
-				rec.kitab_1 = kitab_1;
-				rec.pasal_1 = pasal_1;
-				rec.ayat_1 = ayat_1;
-				rec.isi = isi;
+				rec.book_1 = kitab_1;
+				rec.chapter_1 = pasal_1;
+				rec.verse_1 = ayat_1;
+				rec.text = isi;
 				
 				xrec.add(rec);
 			} else if (line.startsWith("Capitolul ")) {
@@ -73,12 +73,12 @@ public class Proses1 {
 				}
 				lastPasal_1 = pasal_1;
 			} else if (line.startsWith("(") && line.endsWith(")")) {
-				Entri entri = new Entri();
-				entri.ari = (kitab_1 - 1) << 16 | pasal_1 << 8 | 1 /* ayat_1 == 1 */;
-				entri.blok = new Blok();
-				entri.blok.versi = 2;
-				entri.blok.judul = line.substring(1, line.length() - 1);
-				perikopData.xentri.add(entri);
+				Entry entry = new Entry();
+				entry.ari = (kitab_1 - 1) << 16 | pasal_1 << 8 | 1 /* ayat_1 == 1 */;
+				entry.block = new Block();
+				entry.block.version = 2;
+				entry.block.title = line.substring(1, line.length() - 1);
+				pericopeData.entries.add(entry);
 			} else {
 				System.out.println("unknown line: " + line);
 			}
@@ -89,11 +89,11 @@ public class Proses1 {
 
 		////////// PROSES KE YES
 
-		final InfoEdisi infoEdisi = YesCommon.infoEdisi("ro-cornilescu", null, "Cornilescu", RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, "Biblia sau Sfânta Scriptură a Vechiului şi Noului Testament - Traducerea: Dumitru Cornilescu, 1921", INPUT_TEKS_ENCODING_YES);
+		final InfoEdisi infoEdisi = YesCommon.infoEdisi("ro-cornilescu", null, "Cornilescu", RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, "Biblia sau Sfânta Scriptură a Vechiului şi Noului Testament - Traducerea: Dumitru Cornilescu, 1921", INPUT_TEKS_ENCODING_YES, null);
 		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
 		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
-		final PerikopBlok perikopBlok = new PerikopBlok(perikopData);
-		final PerikopIndex perikopIndex = new PerikopIndex(perikopData);
+		final PerikopBlok perikopBlok = new PerikopBlok(pericopeData);
+		final PerikopIndex perikopIndex = new PerikopIndex(pericopeData);
 		
 		YesFile file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, perikopBlok, perikopIndex);
 		

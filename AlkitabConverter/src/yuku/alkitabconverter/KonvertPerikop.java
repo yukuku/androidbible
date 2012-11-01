@@ -1,9 +1,12 @@
 package yuku.alkitabconverter;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
 
-import yuku.bintex.*;
+import yuku.bintex.BintexWriter;
 
 public class KonvertPerikop {
 	static String nama;

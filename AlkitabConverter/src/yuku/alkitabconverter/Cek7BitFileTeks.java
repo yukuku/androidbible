@@ -1,6 +1,6 @@
 package yuku.alkitabconverter;
 
-import java.io.*;
+import java.io.FileInputStream;
 
 public class Cek7BitFileTeks {
 	public static void main(String[] args) throws Exception {

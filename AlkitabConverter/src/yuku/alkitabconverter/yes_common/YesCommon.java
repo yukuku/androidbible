@@ -14,7 +14,7 @@ import yuku.alkitab.yes.YesFile.Kitab;
 import yuku.alkitab.yes.YesFile.PerikopBlok;
 import yuku.alkitab.yes.YesFile.PerikopIndex;
 import yuku.alkitab.yes.YesFile.Teks;
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
+import yuku.alkitabconverter.util.Rec;
 
 public class YesCommon {
 	public static final String TAG = YesCommon.class.getSimpleName();
@@ -24,7 +24,7 @@ public class YesCommon {
 	public static Teks teks(List<Rec> xrec, String _encoding) {
 		final ArrayList<String> ss = new ArrayList<String>();
 		for (Rec rec: xrec) {
-			ss.add(rec.isi);
+			ss.add(rec.text);
 		}
 		
 		return new Teks(_encoding) {{
@@ -32,7 +32,7 @@ public class YesCommon {
 		}};
 	}
 
-	public static InfoEdisi infoEdisi(final String _nama, final String _shortName, final String _longName, final int _nkitab, final int _perikopAda, final String _keterangan, final int _encoding) {
+	public static InfoEdisi infoEdisi(final String _nama, final String _shortName, final String _longName, final int _nkitab, final int _perikopAda, final String _keterangan, final int _encoding, final String _locale) {
 		return new InfoEdisi() {{
 			versi = 1;
 			nama = _nama;
@@ -42,21 +42,11 @@ public class YesCommon {
 			perikopAda = _perikopAda;
 			keterangan = _keterangan;
 			encoding = _encoding;
+			locale = _locale;
 		}};
 	}
 
 	public static InfoKitab infoKitab(List<Rec> xrec, String _namafileInputKitab, String _encoding, int _encodingYes) throws Exception {
-		// sapu xrec, liat ada kitab apa aja
-		List<Integer> xkitab_1 = new ArrayList<Integer>();
-		for (Rec rec: xrec) {
-			if (!xkitab_1.contains(rec.kitab_1)) {
-				xkitab_1.add(rec.kitab_1);
-			}
-		}
-		System.out.println("Total ada " + xkitab_1.size() + " kitab");
-		
-		final Kitab[] xkitab_ = new Kitab[xkitab_1.size()];
-		
 		// parse file nama kitab
 		List<String> xnamaKitab = new ArrayList<String>(); // indexnya sama dengan kitabPos
 		Scanner sc = new Scanner(new File(_namafileInputKitab));
@@ -67,6 +57,21 @@ public class YesCommon {
 			xnamaKitab.add(judul);
 		}
 		sc.close();
+		
+		return infoKitab(xrec, _encoding, xnamaKitab);
+	}
+
+	public static InfoKitab infoKitab(List<Rec> xrec, String _encoding, List<String> xnamaKitab) throws Exception {
+		// sapu xrec, liat ada kitab apa aja
+		List<Integer> xkitab_1 = new ArrayList<Integer>();
+		for (Rec rec: xrec) {
+			if (!xkitab_1.contains(rec.book_1)) {
+				xkitab_1.add(rec.book_1);
+			}
+		}
+		System.out.println("Total ada " + xkitab_1.size() + " kitab");
+		
+		final Kitab[] xkitab_ = new Kitab[xkitab_1.size()];
 		
 		int offsetTotal = 0;
 		int offsetLewat = 0;
@@ -81,19 +86,19 @@ public class YesCommon {
 			Arrays.fill(xpasal_offset, 0);
 			
 			for (Rec rec: xrec) {
-				if (kitabPos + 1 == rec.kitab_1) {
-					xnayat[rec.pasal_1 - 1]++;
+				if (kitabPos + 1 == rec.book_1) {
+					xnayat[rec.chapter_1 - 1]++;
 					
-					if (rec.pasal_1 > maxpasal_1) {
-						maxpasal_1 = rec.pasal_1;
+					if (rec.chapter_1 > maxpasal_1) {
+						maxpasal_1 = rec.chapter_1;
 					}
 					
-					if (rec.pasal_1 != lastpasal_1) {
+					if (rec.chapter_1 != lastpasal_1) {
 						xpasal_offset[lastpasal_1] = offsetLewat;
-						lastpasal_1 = rec.pasal_1;
+						lastpasal_1 = rec.chapter_1;
 					}
 					
-					offsetLewat += rec.isi.getBytes(_encoding).length + 1; // tambah 1 karena '\n' nya
+					offsetLewat += rec.text.getBytes(_encoding).length + 1; // tambah 1 karena '\n' nya
 				}
 			}
 			xpasal_offset[maxpasal_1] = offsetLewat;
@@ -112,7 +117,6 @@ public class YesCommon {
 			kitab.pasal_offset = new int[kitab.npasal + 1];
 			System.arraycopy(xpasal_offset, 0, kitab.pasal_offset, 0, kitab.npasal+1);
 			System.out.println("kitab " + kitab.judul + " pasal_offset: " + Arrays.toString(kitab.pasal_offset));
-			kitab.encoding = _encodingYes;
 			kitab.offset = offsetTotal;
 			System.out.println("kitab " + kitab.judul + " offset: " + kitab.offset);
 			

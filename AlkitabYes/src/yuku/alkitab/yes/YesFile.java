@@ -5,9 +5,10 @@ import android.util.Log;
 import java.io.FileInputStream;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 
-import yuku.alkitab.yes.YesFile.PerikopData.Entri;
+import yuku.alkitab.yes.YesFile.PericopeData.Entry;
 import yuku.bintex.BintexWriter;
 
 public class YesFile {
@@ -47,6 +48,7 @@ public class YesFile {
 		public String shortName;
 		public String longName;
 		public String keterangan;
+		public String locale;
 		public int nkitab;
 		public int perikopAda; // 0=ga ada, selain 0: nomer versi perikopIndex dan perikopBlok_
 		public int encoding; // 1 = ascii; 2 = utf-8
@@ -56,8 +58,10 @@ public class YesFile {
 			writer.writeShortString("versi"); //$NON-NLS-1$
 			writer.writeInt(versi);
 			
-			writer.writeShortString("nama"); //$NON-NLS-1$
-			writer.writeShortString(nama);
+			if (nama != null) {
+				writer.writeShortString("nama"); //$NON-NLS-1$
+				writer.writeShortString(nama);
+			}
 			
 			writer.writeShortString("judul"); //$NON-NLS-1$
 			writer.writeShortString(longName);
@@ -79,6 +83,11 @@ public class YesFile {
 			writer.writeShortString("encoding"); // mulai versi 2 ada. //$NON-NLS-1$
 			writer.writeInt(encoding);
 
+			if (locale != null) {
+				writer.writeShortString("locale");
+				writer.writeShortString(locale);
+			}
+			
 			writer.writeShortString("end"); //$NON-NLS-1$
 		}
 	}
@@ -125,8 +134,10 @@ public class YesFile {
 				writer.writeInt(a);
 			}
 			
-			writer.writeShortString("encoding"); //$NON-NLS-1$
-			writer.writeInt(encoding);
+			if (encoding != 0) {
+				writer.writeShortString("encoding"); //$NON-NLS-1$
+				writer.writeInt(encoding);
+			}
 			
 			writer.writeShortString("offset"); //$NON-NLS-1$
 			writer.writeInt(offset);
@@ -205,66 +216,107 @@ public class YesFile {
 	}
 	
 	public static class PerikopBlok implements IsiSeksi {
-		private final PerikopData data;
+		private final PericopeData data;
 
-		public PerikopBlok(PerikopData data) {
+		public PerikopBlok(PericopeData data) {
 			this.data = data;
 		}
 
 		@Override public void toBytes(BintexWriter writer) throws Exception {
 			int offsetAwalSeksi = writer.getPos();
-			for (Entri entri: data.xentri) {
+			for (Entry entry: data.entries) {
 				int offsetAwalEntri = writer.getPos();
 				
-				writer.writeUint8(entri.blok.versi); // versi
-				writer.writeLongString(entri.blok.judul); // judul
-				writer.writeUint8(entri.blok.xparalel == null? 0: entri.blok.xparalel.size()); // nparalel
-				if (entri.blok.xparalel != null) { // xparalel
-					for (String paralel: entri.blok.xparalel) {
-						writer.writeShortString(paralel);
+				/*
+				 * Blok {
+				 * uint8 versi = 2
+				 * lstring judul
+				 * uint8 nparalel
+				 * sstring[nparalel] xparalel
+				 * }
+				 * 
+				 * // OR
+				 * 
+				 * Blok {
+				 * uint8 versi = 3
+				 * autostring judul
+				 * uint8 nparalel
+				 * autostring[nparalel] xparalel
+				 * }
+				 */				
+				
+				writer.writeUint8(entry.block.version); // versi
+				
+				if (entry.block.version == 2) {
+					writer.writeLongString(entry.block.title); // judul
+					writer.writeUint8(entry.block.parallels == null? 0: entry.block.parallels.size()); // nparalel
+					if (entry.block.parallels != null) { // xparalel
+						for (String paralel: entry.block.parallels) {
+							writer.writeShortString(paralel);
+						}
 					}
+				} else if (entry.block.version == 3) {
+					writer.writeAutoString(entry.block.title); // judul
+					writer.writeUint8(entry.block.parallels == null? 0: entry.block.parallels.size()); // nparalel
+					if (entry.block.parallels != null) { // xparalel
+						for (String paralel: entry.block.parallels) {
+							writer.writeAutoString(paralel);
+						}
+					}
+				} else {
+					throw new RuntimeException("pericope entry.block.version " + entry.block.version + " not supported yet");
 				}
 				
-				entri.blok._offset = offsetAwalEntri - offsetAwalSeksi;
+				entry.block._offset = offsetAwalEntri - offsetAwalSeksi;
 			}
 		}
 	}
 	
 	public static class PerikopIndex implements IsiSeksi {
-		private final PerikopData data;
+		private final PericopeData data;
 
-		public PerikopIndex(PerikopData data) {
+		public PerikopIndex(PericopeData data) {
 			this.data = data;
 		}
 
 		@Override public void toBytes(BintexWriter writer) throws Exception {
-			writer.writeInt(data.xentri.size()); // nentri
+			writer.writeInt(data.entries.size()); // nentri
 			
-			for (Entri entri: data.xentri) {
-				if (entri.blok._offset == -1) {
+			for (Entry entry: data.entries) {
+				if (entry.block._offset == -1) {
 					throw new RuntimeException("offset entri perikop belum dihitung"); // $NON-NLS-1$
 				}
 				
-				writer.writeInt(entri.ari);
-				writer.writeInt(entri.blok._offset);
+				writer.writeInt(entry.ari);
+				writer.writeInt(entry.block._offset);
 			}
 		}
 	}
 	
-	public static class PerikopData {
-		public static class Entri {
+	public static class PericopeData {
+		public static class Entry {
 			public int ari;
-			public Blok blok;
+			public Block block;
 		}
-		public static class Blok {
-			public int versi;
-			public String judul;
-			public List<String> xparalel;
+		public static class Block {
+			public int version;
+			public String title;
+			public List<String> parallels;
 			
 			int _offset = -1;
+			
+			public void addParallel(String parallel) {
+				if (parallels == null) parallels = new ArrayList<String>();
+				parallels.add(parallel);
+			}
 		}
 		
-		public List<Entri> xentri;
+		public List<Entry> entries;
+		
+		public void addEntry(Entry e) {
+			if (entries == null) entries = new ArrayList<Entry>();
+			entries.add(e);
+		}
 	}
 	
 	public void output(RandomAccessFile file) throws Exception {

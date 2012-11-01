@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 import yuku.alkitabconverter.bdb.BdbProses;
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
 import yuku.alkitabconverter.internal_common.InternalCommon;
+import yuku.alkitabconverter.util.Rec;
 
 public class ProcessToInternal {
 	

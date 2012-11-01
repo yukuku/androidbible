@@ -9,7 +9,7 @@ import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
 import yuku.alkitab.yes.YesFile.Teks;
 import yuku.alkitabconverter.bdb.BdbProses;
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
+import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.yes_common.YesCommon;
 
@@ -39,16 +39,16 @@ public class Proses1 {
 		// some lines contains @@ but not start with @@. Add here.
 		for (int i = 0; i < xrec.size(); i++) {
 			Rec rec = xrec.get(i);
-			if (rec.isi.contains("@")) {
-				if (!rec.isi.startsWith("@@")) {
-					rec.isi = "@@" + rec.isi;
+			if (rec.text.contains("@")) {
+				if (!rec.text.startsWith("@@")) {
+					rec.text = "@@" + rec.text;
 				}	
 			}
 		}
 		
 		////////// PROSES KE YES
 		
-		final InfoEdisi infoEdisi = YesCommon.infoEdisi(INFO_NAMA, null, INFO_JUDUL, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES);
+		final InfoEdisi infoEdisi = YesCommon.infoEdisi(INFO_NAMA, null, INFO_JUDUL, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES, null);
 		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
 		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
 		

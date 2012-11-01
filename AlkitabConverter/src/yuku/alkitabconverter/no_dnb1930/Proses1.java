@@ -7,15 +7,15 @@ import java.util.ArrayList;
 import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
+import yuku.alkitab.yes.YesFile.PericopeData;
+import yuku.alkitab.yes.YesFile.PericopeData.Entry;
 import yuku.alkitab.yes.YesFile.PerikopBlok;
-import yuku.alkitab.yes.YesFile.PerikopData;
-import yuku.alkitab.yes.YesFile.PerikopData.Entri;
 import yuku.alkitab.yes.YesFile.PerikopIndex;
 import yuku.alkitab.yes.YesFile.Teks;
 import yuku.alkitabconverter.bdb.BdbProses;
-import yuku.alkitabconverter.bdb.BdbProses.PerikopTester;
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
+import yuku.alkitabconverter.bdb.BdbProses.PericopeTester;
 import yuku.alkitabconverter.util.Ari;
+import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.yes_common.YesCommon;
 
@@ -39,37 +39,37 @@ public class Proses1 {
 	private void u() throws Exception {
 		BdbProses bdbProses = new BdbProses();
 		bdbProses.setCombineSameVerse(true);
-		bdbProses.setPerikopTester(new PerikopTester() {
-			@Override public Entri getPerikopEntri(int kitab_1, int pasal_1, int ayat_1, String isi) {
+		bdbProses.setPericopeTester(new PericopeTester() {
+			@Override public Entry getPericopeEntry(int kitab_1, int pasal_1, int ayat_1, String isi) {
 				if (!isi.startsWith("  ")) { // special: 2 spaces before
 					return null;
 				}
 				
-				PerikopData.Entri res = new PerikopData.Entri();
+				PericopeData.Entry res = new PericopeData.Entry();
 				res.ari = Ari.encode(kitab_1 - 1, pasal_1, ayat_1);
-				res.blok = new PerikopData.Blok();
-				res.blok.versi = 2;
-				res.blok.judul = isi.trim();
+				res.block = new PericopeData.Block();
+				res.block.version = 2;
+				res.block.title = isi.trim();
 				return res;
 			}
 		});
 		
 		ArrayList<Rec> xrec = bdbProses.parse(INPUT_TEKS_1, "latin1");
-		PerikopData perikopData = bdbProses.getPerikopData();
+		PericopeData pericopeData = bdbProses.getPericopeData();
 		
 		// remove stray @
 		for (Rec rec: xrec) {
-			if (rec.isi.contains("@")) rec.isi = rec.isi.replace("@", "");
+			if (rec.text.contains("@")) rec.text = rec.text.replace("@", "");
 		}
 		
 		System.out.println("Total verses: " + xrec.size());
 
 		////////// PROSES KE YES
-		final InfoEdisi infoEdisi = YesCommon.infoEdisi(INFO_NAMA, null, INFO_JUDUL, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES);
+		final InfoEdisi infoEdisi = YesCommon.infoEdisi(INFO_NAMA, null, INFO_JUDUL, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES, null);
 		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
 		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
 		
-		YesFile file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(perikopData), new PerikopIndex(perikopData));
+		YesFile file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(pericopeData), new PerikopIndex(pericopeData));
 		
 		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
 	}

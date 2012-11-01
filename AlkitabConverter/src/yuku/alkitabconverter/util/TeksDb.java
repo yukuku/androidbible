@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
 
 
 public class TeksDb {
@@ -149,10 +148,10 @@ public class TeksDb {
 		for (Entry<Integer, AyatState> e: teks.entrySet()) {
 			Rec rec = new Rec();
 			int ari = e.getKey();
-			rec.kitab_1 = Ari.toKitab(ari) + 1;
-			rec.pasal_1 = Ari.toPasal(ari);
-			rec.ayat_1 = Ari.toAyat(ari);
-			rec.isi = e.getValue().isi;
+			rec.book_1 = Ari.toKitab(ari) + 1;
+			rec.chapter_1 = Ari.toPasal(ari);
+			rec.verse_1 = Ari.toAyat(ari);
+			rec.text = e.getValue().isi;
 			res.add(rec);
 		}
 		return res;

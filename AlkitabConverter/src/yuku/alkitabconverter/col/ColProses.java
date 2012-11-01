@@ -1,11 +1,14 @@
 package yuku.alkitabconverter.col;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
-import java.util.regex.*;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import yuku.alkitabconverter.bdb.BdbProses.*;
+import yuku.alkitabconverter.util.Rec;
 
 public class ColProses {
 	static String[] xnamakitab = {
@@ -54,10 +57,10 @@ public class ColProses {
 			nn.put(kitab_1, (nn.get(kitab_1) == null? 0: nn.get(kitab_1)) + 1);
 			
 			Rec rec = new Rec();
-			rec.kitab_1 = kitab_1;
-			rec.pasal_1 = pasal_1;
-			rec.ayat_1 = ayat_1;
-			rec.isi = isi;
+			rec.book_1 = kitab_1;
+			rec.chapter_1 = pasal_1;
+			rec.verse_1 = ayat_1;
+			rec.text = isi;
 			
 			res.add(rec);
 			

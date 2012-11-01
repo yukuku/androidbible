@@ -29,6 +29,7 @@ public class YesReader implements Reader {
 	private String shortName;
 	private String longName;
 	private String description;
+	private String locale;
 	private int nkitab;
 	private int perikopAda = 0; // default ga ada
 	private int encoding = 1; // 1 = ascii; 2 = utf-8;
@@ -141,6 +142,8 @@ public class YesReader implements Reader {
 					this.perikopAda = in.readInt();
 				} else if (key.equals("encoding")) { //$NON-NLS-1$
 					this.encoding = in.readInt();
+				} else if (key.equals("locale")) { //$NON-NLS-1$
+					this.locale = in.readShortString();
 				} else if (key.equals("end")) { //$NON-NLS-1$
 					break;
 				} else {
