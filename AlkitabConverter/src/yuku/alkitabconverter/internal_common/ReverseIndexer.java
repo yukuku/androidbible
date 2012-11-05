@@ -23,7 +23,7 @@ public class ReverseIndexer {
 	public final static Charset utf8 = Charset.forName("utf8");
 
 	public static void createReverseIndex(File outDir, String prefix, TeksDb teksDb) {
-		Pattern p_word = Pattern.compile("[A-Za-z]+");
+		Pattern p_word = Pattern.compile("[A-Za-z]+(?:-[A-Za-z]+)*");
 
 		Map<String, Set<Integer>> map = new TreeMap<String, Set<Integer>>(new Comparator<String>() {
 			@Override public int compare(String o1, String o2) {
