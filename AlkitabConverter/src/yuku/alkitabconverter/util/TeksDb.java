@@ -2,6 +2,7 @@ package yuku.alkitabconverter.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
@@ -12,12 +13,16 @@ import java.util.TreeSet;
 public class TeksDb {
 	public static final String TAG = TeksDb.class.getSimpleName();
 	
-	public static class AyatState {
-		// was: "public int menjorok;" but no longer used
-		public String isi;
+	public interface TextProcessor {
+		void process(int ari, AyatState ayatState);
 	}
 	
-	TreeMap<Integer, AyatState> teks = new TreeMap<Integer, AyatState>();
+	public static class AyatState {
+		// was: "public int menjorok;" but no longer used
+		public String text;
+	}
+	
+	TreeMap<Integer, AyatState> map = new TreeMap<Integer, AyatState>();
 	
 	public String append(int kitab_0, int pasal_1, int ayat_1, String s, int menjorokKini) {
 		return append(Ari.encode(kitab_0, pasal_1, ayat_1), s, menjorokKini);
@@ -28,22 +33,22 @@ public class TeksDb {
 	 * @return
 	 */
 	public String append(int ari, String s, int menjorokKini) {
-		AyatState as = teks.get(ari);
+		AyatState as = map.get(ari);
 		if (as == null) {
 			as = new AyatState();
-			as.isi = "";
-			teks.put(ari, as);
+			as.text = "";
+			map.put(ari, as);
 		}
 		
 		boolean writtenParaMarker = false;
 		
 		if (menjorokKini != -1) {
 			if (menjorokKini == -2) {
-				as.isi += "@^";
+				as.text += "@^";
 			} else if (menjorokKini < 0 || menjorokKini > 4) {
 				throw new RuntimeException("menjorok ngaco: " + menjorokKini);
 			} else {
-				as.isi += "@" + String.valueOf(menjorokKini);
+				as.text += "@" + String.valueOf(menjorokKini);
 			}
 			
 			writtenParaMarker = true;
@@ -57,22 +62,22 @@ public class TeksDb {
 		}
 		
 		if (writtenParaMarker) {
-			as.isi += leftSpaceTrim(s);
+			as.text += leftSpaceTrim(s);
 		} else {
-			as.isi += s;
+			as.text += s;
 		}
 		
 		// buang spasi di depan kalo ada
-		while (as.isi.startsWith(" ")) {
-			as.isi = as.isi.substring(1);
+		while (as.text.startsWith(" ")) {
+			as.text = as.text.substring(1);
 		}
 		
 		// kasih @@ kalo depannya blum ada
-		if (as.isi.contains("@") && !as.isi.startsWith("@@")) {
-			as.isi = "@@" + as.isi;
+		if (as.text.contains("@") && !as.text.startsWith("@@")) {
+			as.text = "@@" + as.text;
 		}
 		
-		return as.isi;
+		return as.text;
 	}
 	
 	private static String leftSpaceTrim(String s) {
@@ -85,7 +90,7 @@ public class TeksDb {
 	}
 	
 	public void normalize() {
-		Set<Integer> keys = new TreeSet<Integer>(teks.keySet());
+		Set<Integer> keys = new TreeSet<Integer>(map.keySet());
 		int last_kitab_0 = -1;
 		int last_pasal_1 = 0;
 		int last_ayat_1 = 0;
@@ -133,27 +138,33 @@ public class TeksDb {
 	}
 	
 	public void dump() {
-		System.out.println("TOTAL teks: " + teks.size());
-		for (Entry<Integer, AyatState> e: teks.entrySet()) {
-			System.out.printf("%d\t%d\t%d\t%s%n", Ari.toKitab(e.getKey()) + 1, Ari.toPasal(e.getKey()), Ari.toAyat(e.getKey()), e.getValue().isi);
+		System.out.println("TOTAL teks: " + map.size());
+		for (Entry<Integer, AyatState> e: map.entrySet()) {
+			System.out.printf("%d\t%d\t%d\t%s%n", Ari.toKitab(e.getKey()) + 1, Ari.toPasal(e.getKey()), Ari.toAyat(e.getKey()), e.getValue().text);
 		}
 	}
 
 	public int size() {
-		return teks.size();
+		return map.size();
 	}
 
 	public List<Rec> toRecList() {
 		List<Rec> res = new ArrayList<Rec>();
-		for (Entry<Integer, AyatState> e: teks.entrySet()) {
+		for (Entry<Integer, AyatState> e: map.entrySet()) {
 			Rec rec = new Rec();
 			int ari = e.getKey();
 			rec.book_1 = Ari.toKitab(ari) + 1;
 			rec.chapter_1 = Ari.toPasal(ari);
 			rec.verse_1 = Ari.toAyat(ari);
-			rec.text = e.getValue().isi;
+			rec.text = e.getValue().text;
 			res.add(rec);
 		}
 		return res;
+	}
+
+	public void processEach(TextProcessor textProcessor) {
+		for (Map.Entry<Integer, AyatState> e: map.entrySet()) {
+			textProcessor.process(e.getKey(), e.getValue());
+		}
 	}
 }
