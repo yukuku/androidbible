@@ -12,7 +12,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
+import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.TeksDb;
 import yuku.bintex.BintexWriter;
 
@@ -41,7 +41,7 @@ public class ReverseIndexer {
 			for (Rec rec: teksDb.toRecList()) {
 				lid++;
 				
-				String text = Normalizer.normalize(rec.isi, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+				String text = Normalizer.normalize(rec.text, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 				text = text.toLowerCase();
 				Matcher m = p_word.matcher(text);
 				while (m.find()) {
