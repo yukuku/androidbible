@@ -33,6 +33,8 @@ import yuku.alkitabconverter.util.Ari;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.util.TeksDb;
+import yuku.alkitabconverter.util.TeksDb.AyatState;
+import yuku.alkitabconverter.util.TeksDb.TextProcessor;
 import yuku.alkitabconverter.yes_common.YesCommon;
 
 public class Proses2 {
@@ -92,24 +94,26 @@ public class Proses2 {
 		// POST-PROCESS
 		
 		teksDb.normalize();
+
+		teksDb.processEach(new TextProcessor() {
+			@Override public void process(int ari, AyatState as) {
+				// tambah @@ kalo perlu
+				if (as.text.contains("@") && !as.text.startsWith("@@")) {
+					as.text = "@@" + as.text;
+				}
+				
+				as.text = as.text.replace("S e l a", "Sela");
+				as.text = as.text.replace("S el a", "Sela");
+				as.text = as.text.replace("H i g a y o n", "Higayon");
+			}
+		});
 		
-		teksDb.dump();		
+		teksDb.dump();
+		
+		List<Rec> xrec = teksDb.toRecList();
 		
 		dumpForYetTesting(InternalCommon.fileToBookNames(INPUT_KITAB), teksDb, pericopeData);
 		
-		List<Rec> xrec = teksDb.toRecList();
-		for (Rec rec: xrec) {
-			// tambah @@ kalo perlu
-			if (rec.text.contains("@") && !rec.text.startsWith("@@")) {
-				rec.text = "@@" + rec.text;
-			}
-			
-			rec.text = rec.text.replace("S e l a", "Sela");
-			rec.text = rec.text.replace("H i g a y o n", "Higayon");
-			
-			System.out.println(rec.book_1 + "\t" + rec.chapter_1 + "\t" + rec.verse_1 + "\t" + rec.text);
-		}
-
 		System.out.println("Total rec: " + xrec.size());
 		
 		////////// CREATE REVERSE INDEX
