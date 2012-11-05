@@ -62,73 +62,84 @@ public class YetFileInput {
 		
 		YetFileInputResult res = new YetFileInputResult();
 		
-		while (sc.hasNextLine()) {
-			String line = sc.nextLine();
-			
-			String[] splits = line.split("\t");
-			String command = splits[0];
-			
-			if ("info".equals(command)) {
-				String k = splits[1];
-				String v = splits[2];
-				res.addInfo(k, v);
-			} else if ("pericope".equals(command)) {
-				int book_1 = Integer.parseInt(splits[1]);
-				int chapter_1 = Integer.parseInt(splits[2]);
-				int verse_1 = Integer.parseInt(splits[3]);
-				String text = splits[4];
+		int report_line_number = 0;
+		String report_line_text = null;
+		
+		try {
+			while (sc.hasNextLine()) {
+				String line = sc.nextLine();
 				
-				lastPericopeEntry = new PericopeData.Entry();
-				res.addPericopeEntry(lastPericopeEntry);
+				report_line_number++;
+				report_line_text = line;
 				
-				lastPericopeEntry.ari = ((book_1 - 1) << 16) | (chapter_1 << 8) | verse_1;
-				lastPericopeEntry.block = new PericopeData.Block();
-				lastPericopeEntry.block.version = 3;
-				lastPericopeEntry.block.title = text;
-			} else if ("parallel".equals(command)) {
-				String text = splits[1];
-				lastPericopeEntry.block.addParallel(text);
-			} else if ("book_name".equals(command)) {
-				int bookId = Integer.parseInt(splits[1]);
-				String bookName = splits[2];
+				String[] splits = line.split("\t");
+				String command = splits[0];
 				
-				res.addBookName(bookId, bookName);
-			} else if ("verse".equals(command)) {
-				int book_1 = Integer.parseInt(splits[1]);
-				int chapter_1 = Integer.parseInt(splits[2]);
-				int verse_1 = Integer.parseInt(splits[3]);
-				String text = splits[4];
-			
-				if (verse_1 != lastVerse_1 + 1) {
-					if (chapter_1 != lastChapter_1 + 1) {
-						if (book_1 != lastBook_1 + 1) {
-							throw new RuntimeException("wrong verse ordering: " + line);
+				if ("info".equals(command)) {
+					String k = splits[1];
+					String v = splits[2];
+					res.addInfo(k, v);
+				} else if ("pericope".equals(command)) {
+					int book_1 = Integer.parseInt(splits[1]);
+					int chapter_1 = Integer.parseInt(splits[2]);
+					int verse_1 = Integer.parseInt(splits[3]);
+					String text = splits[4];
+					
+					lastPericopeEntry = new PericopeData.Entry();
+					res.addPericopeEntry(lastPericopeEntry);
+					
+					lastPericopeEntry.ari = ((book_1 - 1) << 16) | (chapter_1 << 8) | verse_1;
+					lastPericopeEntry.block = new PericopeData.Block();
+					lastPericopeEntry.block.version = 3;
+					lastPericopeEntry.block.title = text;
+				} else if ("parallel".equals(command)) {
+					String text = splits[1];
+					lastPericopeEntry.block.addParallel(text);
+				} else if ("book_name".equals(command)) {
+					int bookId = Integer.parseInt(splits[1]);
+					String bookName = splits[2];
+					
+					res.addBookName(bookId, bookName);
+				} else if ("verse".equals(command)) {
+					int book_1 = Integer.parseInt(splits[1]);
+					int chapter_1 = Integer.parseInt(splits[2]);
+					int verse_1 = Integer.parseInt(splits[3]);
+					String text = splits[4];
+				
+					if (verse_1 != lastVerse_1 + 1) {
+						if (chapter_1 != lastChapter_1 + 1) {
+							if (book_1 != lastBook_1 + 1) {
+								throw new RuntimeException("wrong verse ordering: " + line);
+							}
 						}
 					}
+					
+					Rec rec = new Rec();
+					rec.book_1 = book_1;
+					rec.chapter_1 = chapter_1;
+					rec.verse_1 = verse_1;
+					rec.text = text;
+					
+					res.addRec(rec);
+					nversePerBook.put(book_1, (nversePerBook.get(book_1) == null? 0: nversePerBook.get(book_1)) + 1);
+					
+					lastBook_1 = book_1;
+					lastChapter_1 = chapter_1;
+					lastVerse_1 = verse_1;
+				} else if (command.trim().startsWith("#")) {
+					// comment
+				} else {
+					System.err.println("unknown line encountered: " + line);
+					return null;
 				}
-				
-				Rec rec = new Rec();
-				rec.book_1 = book_1;
-				rec.chapter_1 = chapter_1;
-				rec.verse_1 = verse_1;
-				rec.text = text;
-				
-				res.addRec(rec);
-				nversePerBook.put(book_1, (nversePerBook.get(book_1) == null? 0: nversePerBook.get(book_1)) + 1);
-				
-				lastBook_1 = book_1;
-				lastChapter_1 = chapter_1;
-				lastVerse_1 = verse_1;
-			} else if (command.trim().startsWith("#")) {
-				// comment
-			} else {
-				System.err.println("unknown line encountered: " + line);
-				return null;
 			}
+		} catch (Exception e) {
+			System.err.println("Error in line " + report_line_number + ": " + report_line_text);
+			throw e;
 		}
-		
+			
 		for (Entry<Integer, Integer> e: nversePerBook.entrySet()) {
-			System.out.println("book_1 " + e.getKey() + ": " + e.getValue() + " verses");
+			System.err.println("book_1 " + e.getKey() + ": " + e.getValue() + " verses");
 		}
 		res.setNumberOfBooks(nversePerBook.size());
 		
