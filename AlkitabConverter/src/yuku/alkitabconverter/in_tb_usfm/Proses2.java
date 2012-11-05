@@ -50,7 +50,6 @@ public class Proses2 {
 	static String INPUT_TEKS_2 = "./bahan/in-tb-usfm/mid/"; 
 
 
-	List<Rec> xrec = new ArrayList<Rec>();
 	TeksDb teksDb = new TeksDb();
 	StringBuilder misteri = new StringBuilder();
 	PericopeData pericopeData = new PericopeData();
@@ -98,16 +97,19 @@ public class Proses2 {
 		
 		dumpForYetTesting(InternalCommon.fileToBookNames(INPUT_KITAB), teksDb, pericopeData);
 		
+		List<Rec> xrec = teksDb.toRecList();
 		for (Rec rec: xrec) {
 			// tambah @@ kalo perlu
 			if (rec.text.contains("@") && !rec.text.startsWith("@@")) {
 				rec.text = "@@" + rec.text;
 			}
 			
+			rec.text = rec.text.replace("S e l a", "Sela");
+			rec.text = rec.text.replace("H i g a y o n", "Higayon");
+			
 			System.out.println(rec.book_1 + "\t" + rec.chapter_1 + "\t" + rec.verse_1 + "\t" + rec.text);
 		}
 
-		List<Rec> xrec = teksDb.toRecList();
 		System.out.println("Total rec: " + xrec.size());
 		
 		////////// CREATE REVERSE INDEX
