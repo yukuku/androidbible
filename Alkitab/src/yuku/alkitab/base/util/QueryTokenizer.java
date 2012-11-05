@@ -69,14 +69,14 @@ public class QueryTokenizer {
 		}
 		for (int i = start, len = token.length(); i < len; i++) {
 			char c = token.charAt(i);
-			if (! Character.isLetter(c)) {
+			if (! (Character.isLetter(c) || (c == '-' && i > start && i < len-1))) {
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	static Pattern pattern_letters = Pattern.compile("\\p{javaLetter}+"); 
+	static Pattern pattern_letters = Pattern.compile("[\\p{javaLetter}-]+"); 
 	
 	/**
 	 * For tokens such as "abc.,- def", which will be re-tokenized to "abc" "def"
