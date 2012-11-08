@@ -1,7 +1,6 @@
 package yuku.alkitab.base.ac;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Html;
@@ -11,9 +10,6 @@ import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
-import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import yuku.afw.V;
@@ -21,6 +17,8 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+
+import com.example.android.wizardpager.MainActivity;
 
 public class AboutActivity extends BaseActivity {
 	public static final String TAG = AboutActivity.class.getSimpleName();
@@ -73,28 +71,29 @@ public class AboutActivity extends BaseActivity {
 
 	private OnClickListener bSaran_click = new OnClickListener() {
 		@Override public void onClick(View v) {
-			final View dialogView = getLayoutInflater().inflate(R.layout.dialog_suggest, null);
-			
-			AlertDialog dialog = new AlertDialog.Builder(AboutActivity.this)
-			.setTitle(R.string.beri_saran_title)
-			.setView(dialogView)
-			.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-				@Override public void onClick(DialogInterface dialog, int which) {
-					EditText tSaran = V.get(dialogView, R.id.tSaran);
-					String isi = tSaran.getText().toString();
-					
-					if (isi.trim().length() > 0) {
-						App.pengirimFidbek.tambah(isi);
-					}
-					
-					App.pengirimFidbek.cobaKirim();
-				}
-			})
-			.create();
-			
-			dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-			dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-			dialog.show();
+			startActivity(new Intent(App.context, MainActivity.class));
+//			final View dialogView = getLayoutInflater().inflate(R.layout.dialog_suggest, null);
+//			
+//			AlertDialog dialog = new AlertDialog.Builder(AboutActivity.this)
+//			.setTitle(R.string.beri_saran_title)
+//			.setView(dialogView)
+//			.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//				@Override public void onClick(DialogInterface dialog, int which) {
+//					EditText tSaran = V.get(dialogView, R.id.tSaran);
+//					String isi = tSaran.getText().toString();
+//					
+//					if (isi.trim().length() > 0) {
+//						App.pengirimFidbek.tambah(isi);
+//					}
+//					
+//					App.pengirimFidbek.cobaKirim();
+//				}
+//			})
+//			.create();
+//			
+//			dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+//			dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+//			dialog.show();
 		}
 	};
 }
