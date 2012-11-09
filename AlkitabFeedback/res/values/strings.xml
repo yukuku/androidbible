@@ -29,7 +29,6 @@
     <string name="alkitabfeedback_label_message">Message</string>
     <string name="alkitabfeedback_hint_message">Anything you want to say to the creators</string>
 
-    <string name="alkitabfeedback_submit_confirm_message">Place the order with the deli? You will receive an email
-        confirmation.</string>
-    <string name="alkitabfeedback_submit_confirm_button">Place order</string>
+    <string name="alkitabfeedback_submit_confirm_message">Send your message to the creators? </string>
+    <string name="alkitabfeedback_submit_confirm_button">Send</string>
 </resources>
