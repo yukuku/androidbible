@@ -1,0 +1,16 @@
+<resources>
+    <string name="alkitabfeedback_next">Lanjut</string>
+    <string name="alkitabfeedback_prev">Kembali</string>
+    <string name="alkitabfeedback_finish">Kirim</string>
+    <string name="alkitabfeedback_review">Cek lagi</string>
+
+    <string name="alkitabfeedback_label_your_name">Nama</string>
+    <string name="alkitabfeedback_label_your_email">Alamat email</string>
+    <string name="alkitabfeedback_hint_your_name">Harap diisi</string>
+    <string name="alkitabfeedback_hint_your_email">Harap diisi</string>
+    <string name="alkitabfeedback_label_message">Pesan</string>
+    <string name="alkitabfeedback_hint_message">Apapun yang ingin disampaikan. Saran, kritik, ide, laporan masalah, informasi, dsb.</string>
+
+    <string name="alkitabfeedback_submit_confirm_message">Kirimkan pesan?</string>
+    <string name="alkitabfeedback_submit_confirm_button">Kirim</string>
+</resources>
