@@ -53,6 +53,15 @@ public class FeedbackSender {
 	OnSuccessListener onSuccessListener_ = null;
 	boolean sending_ = false;
 
+	private static FeedbackSender instance;
+	
+	public static FeedbackSender getInstance(Context context) {
+		if (instance != null) {
+			return instance;
+		}
+		return new FeedbackSender(context);
+	}
+	
 	public FeedbackSender(Context context) {
 		context_ = context;
 		pref_ = context.getSharedPreferences("FeedbackSender", 0);

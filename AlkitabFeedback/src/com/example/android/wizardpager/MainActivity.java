@@ -19,6 +19,7 @@ package com.example.android.wizardpager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -33,12 +34,15 @@ import android.widget.Button;
 import java.util.List;
 
 import yuku.alkitabfeedback.AlkitabFeedbackModel;
+import yuku.alkitabfeedback.FeedbackSender;
 import yuku.alkitabfeedback.R;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.example.android.wizardpager.wizard.model.AbstractWizardModel;
+import com.example.android.wizardpager.wizard.model.CustomerInfoPage;
 import com.example.android.wizardpager.wizard.model.ModelCallbacks;
 import com.example.android.wizardpager.wizard.model.Page;
+import com.example.android.wizardpager.wizard.model.TextareaPage;
 import com.example.android.wizardpager.wizard.ui.PageFragmentCallbacks;
 import com.example.android.wizardpager.wizard.ui.ReviewFragment;
 import com.example.android.wizardpager.wizard.ui.StepPagerStrip;
@@ -115,7 +119,30 @@ public class MainActivity extends SherlockFragmentActivity implements
                         public Dialog onCreateDialog(Bundle savedInstanceState) {
                             return new AlertDialog.Builder(getActivity())
                                     .setMessage(R.string.alkitabfeedback_submit_confirm_message)
-                                    .setPositiveButton(R.string.alkitabfeedback_submit_confirm_button, null)
+                                    .setPositiveButton(R.string.alkitabfeedback_submit_confirm_button, new DialogInterface.OnClickListener() {
+										@Override public void onClick(DialogInterface dialog, int which) {
+											String feedback_from_name = null;
+											String feedback_from_email = null;
+											String feedback_body = null;
+											
+											Bundle saved = mWizardModel.save();
+											Bundle contact = saved.getBundle("contact");
+											if (contact != null) {
+												feedback_from_name = contact.getString(CustomerInfoPage.NAME_DATA_KEY);
+												feedback_from_email = contact.getString(CustomerInfoPage.EMAIL_DATA_KEY);
+											}
+											Bundle message = saved.getBundle("message");
+											if (message != null) {
+												feedback_body = message.getString(TextareaPage.SIMPLE_DATA_KEY);
+											}
+											
+											if (feedback_from_name != null && feedback_from_email != null && feedback_body != null) {
+												FeedbackSender sender = FeedbackSender.getInstance(getApplicationContext());
+												sender.addEntry(feedback_from_name, feedback_from_email, feedback_body);
+												sender.trySend();
+											}
+										}
+									})
                                     .setNegativeButton(android.R.string.cancel, null)
                                     .create();
                         }

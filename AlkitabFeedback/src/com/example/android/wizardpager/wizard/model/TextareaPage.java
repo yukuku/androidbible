@@ -29,10 +29,17 @@ import com.example.android.wizardpager.wizard.ui.TextareaFragment;
  * A page asking for a name and an email.
  */
 public class TextareaPage extends Page {
-    public TextareaPage(ModelCallbacks callbacks, String title) {
-        super(callbacks, title);
-    }
+    private final String key;
 
+	public TextareaPage(String key, ModelCallbacks callbacks, String title) {
+        super(callbacks, title);
+		this.key = key;
+    }
+	
+	@Override public String getKey() {
+		return key;
+	}
+    
     @Override
     public Fragment createFragment() {
         return TextareaFragment.create(getKey());

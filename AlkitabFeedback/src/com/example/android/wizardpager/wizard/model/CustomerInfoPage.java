@@ -32,9 +32,15 @@ import com.example.android.wizardpager.wizard.ui.CustomerInfoFragment;
 public class CustomerInfoPage extends Page {
     public static final String NAME_DATA_KEY = "name";
     public static final String EMAIL_DATA_KEY = "email";
+	private final String key;
 
-    public CustomerInfoPage(ModelCallbacks callbacks, String title) {
+    public CustomerInfoPage(String key, ModelCallbacks callbacks, String title) {
         super(callbacks, title);
+		this.key = key;
+    }
+    
+    @Override public String getKey() {
+    	return key;
     }
 
     @Override
