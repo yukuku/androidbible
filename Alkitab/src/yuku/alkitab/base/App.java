@@ -11,8 +11,8 @@ import java.io.File;
 import java.util.Locale;
 
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.R;
 import yuku.kirimfidbek.PengirimFidbek;
-import yuku.kirimfidbek.R;
 
 public class App extends yuku.afw.App {
 	public static final String TAG = App.class.getSimpleName();
