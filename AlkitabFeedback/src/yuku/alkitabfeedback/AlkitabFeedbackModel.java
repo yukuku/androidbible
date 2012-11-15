@@ -29,12 +29,16 @@ public class AlkitabFeedbackModel extends AbstractWizardModel {
 	}
 
 	@Override protected PageList onNewRootPageList() {
-		return new PageList(
-			new TextareaPage(this, "Message")
+		return new PageList( 
+			new TextareaPage(this, getContext().getString(R.string.alkitabfeedback_label_message))
 			.setRequired(true),
 	
-			new CustomerInfoPage(this, "Your info")
+			new CustomerInfoPage(this, getContext().getString(R.string.alkitabfeedback_title_about_you))
 			.setRequired(true)
 		);
+	}
+
+	@Override public Context getContext() {
+		return super.mContext;
 	}
 }

@@ -16,12 +16,15 @@
 
 package com.example.android.wizardpager.wizard.model;
 
-import com.example.android.wizardpager.wizard.ui.CustomerInfoFragment;
-
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
+
+import yuku.alkitabfeedback.R;
+
+import com.example.android.wizardpager.wizard.ui.CustomerInfoFragment;
 
 /**
  * A page asking for a name and an email.
@@ -41,12 +44,27 @@ public class CustomerInfoPage extends Page {
 
     @Override
     public void getReviewItems(ArrayList<ReviewItem> dest) {
-        dest.add(new ReviewItem("Your name", mData.getString(NAME_DATA_KEY), getKey(), -1));
-        dest.add(new ReviewItem("Your email", mData.getString(EMAIL_DATA_KEY), getKey(), -1));
+        dest.add(new ReviewItem(getContext().getString(R.string.alkitabfeedback_label_your_name), mData.getString(NAME_DATA_KEY), getKey(), -1));
+        dest.add(new ReviewItem(getContext().getString(R.string.alkitabfeedback_label_your_email), mData.getString(EMAIL_DATA_KEY), getKey(), -1));
     }
+
+    // copied from Android SDK 8
+    private static final Pattern EMAIL_ADDRESS
+    = Pattern.compile(
+        "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
+        "\\@" +
+        "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
+        "(" +
+            "\\." +
+            "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
+        ")+"
+    );
 
     @Override
     public boolean isCompleted() {
-        return !TextUtils.isEmpty(mData.getString(NAME_DATA_KEY));
+        boolean name_ok = !TextUtils.isEmpty(mData.getString(NAME_DATA_KEY));
+        String email = mData.getString(EMAIL_DATA_KEY);
+		boolean email_ok = email != null && EMAIL_ADDRESS.matcher(email).matches();
+        return name_ok && email_ok;
     }
 }

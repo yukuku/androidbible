@@ -18,10 +18,10 @@ package com.example.android.wizardpager;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -32,8 +32,10 @@ import android.widget.Button;
 
 import java.util.List;
 
+import yuku.alkitabfeedback.AlkitabFeedbackModel;
 import yuku.alkitabfeedback.R;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.example.android.wizardpager.wizard.model.AbstractWizardModel;
 import com.example.android.wizardpager.wizard.model.ModelCallbacks;
 import com.example.android.wizardpager.wizard.model.Page;
@@ -41,7 +43,7 @@ import com.example.android.wizardpager.wizard.ui.PageFragmentCallbacks;
 import com.example.android.wizardpager.wizard.ui.ReviewFragment;
 import com.example.android.wizardpager.wizard.ui.StepPagerStrip;
 
-public class MainActivity extends FragmentActivity implements
+public class MainActivity extends SherlockFragmentActivity implements
         PageFragmentCallbacks,
         ReviewFragment.Callbacks,
         ModelCallbacks {
@@ -50,7 +52,7 @@ public class MainActivity extends FragmentActivity implements
 
     private boolean mEditingAfterReview;
 
-    private AbstractWizardModel mWizardModel = new SandwichWizardModel(this);
+    private AbstractWizardModel mWizardModel;
 
     private boolean mConsumePageSelectedEvent;
 
@@ -64,6 +66,8 @@ public class MainActivity extends FragmentActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alkitabfeedback_activity_main);
 
+        mWizardModel = new AlkitabFeedbackModel(this);
+        
         if (savedInstanceState != null) {
             mWizardModel.load(savedInstanceState.getBundle("model"));
         }
@@ -281,4 +285,8 @@ public class MainActivity extends FragmentActivity implements
             return mCutOffPage;
         }
     }
+
+	@Override public Context getContext() {
+		return this;
+	}
 }

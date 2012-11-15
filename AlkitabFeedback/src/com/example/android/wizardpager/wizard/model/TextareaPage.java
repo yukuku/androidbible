@@ -21,6 +21,8 @@ import android.text.TextUtils;
 
 import java.util.ArrayList;
 
+import yuku.alkitabfeedback.R;
+
 import com.example.android.wizardpager.wizard.ui.TextareaFragment;
 
 /**
@@ -38,7 +40,7 @@ public class TextareaPage extends Page {
 
     @Override
     public void getReviewItems(ArrayList<ReviewItem> dest) {
-        dest.add(new ReviewItem("Message", mData.getString(Page.SIMPLE_DATA_KEY), getKey()));
+        dest.add(new ReviewItem(getContext().getString(R.string.alkitabfeedback_label_message), mData.getString(Page.SIMPLE_DATA_KEY), getKey()));
     }
 
     @Override

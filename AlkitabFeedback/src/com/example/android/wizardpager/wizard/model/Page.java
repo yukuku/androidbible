@@ -16,6 +16,7 @@
 
 package com.example.android.wizardpager.wizard.model;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
@@ -95,5 +96,9 @@ public abstract class Page implements PageTreeNode {
     public Page setRequired(boolean required) {
         mRequired = required;
         return this;
+    }
+    
+    public Context getContext() {
+    	return mCallbacks.getContext();
     }
 }
