@@ -12,6 +12,7 @@ import java.util.Locale;
 
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
+import yuku.alkitabfeedback.FeedbackSender;
 import yuku.kirimfidbek.PengirimFidbek;
 
 public class App extends yuku.afw.App {
@@ -34,6 +35,10 @@ public class App extends yuku.afw.App {
 		
 		pengirimFidbek = siapinPengirimFidbek(context);
 		pengirimFidbek.cobaKirim();
+		
+		// transfer installationId from pengirimfidbek to feedbacksender 
+		FeedbackSender fs = FeedbackSender.getInstance(context);
+		fs.setOverrideInstallationId(pengirimFidbek.getUniqueId());
 
 		PreferenceManager.setDefaultValues(context, R.xml.settings, false);
 		PreferenceManager.setDefaultValues(context, R.xml.secret_settings, false);

@@ -45,7 +45,7 @@ public class FeedbackSender {
 		String capjempol;
 	}
 
-	static String presetInstallationId_;
+	String overrideInstallationId_;
 
 	final Context context_;
 	final SharedPreferences pref_;
@@ -62,7 +62,7 @@ public class FeedbackSender {
 		return new FeedbackSender(context);
 	}
 	
-	public FeedbackSender(Context context) {
+	private FeedbackSender(Context context) {
 		context_ = context;
 		pref_ = context.getSharedPreferences("FeedbackSender", 0);
 	}
@@ -246,7 +246,7 @@ public class FeedbackSender {
 	}
 
 	String getInstallationId() {
-		if (presetInstallationId_ != null) return presetInstallationId_;
+		if (overrideInstallationId_ != null) return overrideInstallationId_;
 
 		String installationId = pref_.getString("installationId", null); //$NON-NLS-1$
 		if (installationId == null) {
@@ -261,7 +261,7 @@ public class FeedbackSender {
 	 * 
 	 * @param installationId
 	 */
-	public static void setPresetInstallationId(String installationId) {
-		FeedbackSender.presetInstallationId_ = installationId;
+	public void setOverrideInstallationId(String installationId) {
+		overrideInstallationId_ = installationId;
 	}
 }
