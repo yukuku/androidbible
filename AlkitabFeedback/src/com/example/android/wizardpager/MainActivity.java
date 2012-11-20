@@ -202,8 +202,9 @@ public class MainActivity extends SherlockFragmentActivity implements
 	            TypedValue v = new TypedValue();
 	            getTheme().resolveAttribute(android.R.attr.textAppearanceMedium, v, true);
 	            mNextButton.setTextAppearance(this, v.resourceId);
-	            mNextButton.setEnabled(position != mPagerAdapter.getCutOffPage());
             }
+            
+            mNextButton.setEnabled(position != mPagerAdapter.getCutOffPage());
         }
 
         mPrevButton.setVisibility(position <= 0 ? View.INVISIBLE : View.VISIBLE);
