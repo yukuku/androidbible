@@ -1070,6 +1070,9 @@ public class IsiActivity extends BaseActivity {
 		case R.id.menuBantuan:
 			startActivity(new Intent(this, HelpActivity.class));
 			return true;
+		case R.id.menuSendMessage:
+			startActivity(new Intent(App.context, com.example.android.wizardpager.MainActivity.class));
+			return true;
 		case R.id.menuDonasi:
 			openDonationDialog();
 			return true;
