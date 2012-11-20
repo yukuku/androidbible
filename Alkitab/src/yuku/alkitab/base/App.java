@@ -39,6 +39,7 @@ public class App extends yuku.afw.App {
 		// transfer installationId from pengirimfidbek to feedbacksender 
 		FeedbackSender fs = FeedbackSender.getInstance(context);
 		fs.setOverrideInstallationId(pengirimFidbek.getUniqueId());
+		fs.trySend();
 
 		PreferenceManager.setDefaultValues(context, R.xml.settings, false);
 		PreferenceManager.setDefaultValues(context, R.xml.secret_settings, false);
