@@ -37,6 +37,7 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
+import yuku.alkitab.base.ac.VersionsActivity.MVersionInternal;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
@@ -232,6 +233,10 @@ public class Search2Activity extends BaseActivity {
 			if (posisiTerpilih != -1) {
 				lsHasilCari.setSelection(posisiTerpilih);
 			}
+		}
+		
+		if (usingRevIndex()) {
+			Search2Engine.preloadRevIndex();
 		}
 	}
 	
@@ -498,10 +503,14 @@ public class Search2Activity extends BaseActivity {
 		new AsyncTask<Void, Void, IntArrayList>() {
 			@Override protected IntArrayList doInBackground(Void... params) {
 				synchronized (Search2Activity.this) {
-					return Search2Engine.cari(Search2Activity.this, getQuery());
+					if (usingRevIndex()) {
+						return Search2Engine.searchByRevIndex(getQuery());
+					} else {
+						return Search2Engine.searchByGrep(getQuery());
+					}
 				}
 			}
-			
+
 			@Override protected void onPostExecute(IntArrayList hasil) {
 				if (hasil == null) {
 					hasil = new IntArrayList(); // empty result
@@ -527,6 +536,10 @@ public class Search2Activity extends BaseActivity {
 		}.execute();
 	}
 	
+	boolean usingRevIndex() {
+		return S.activeVersionId == null || S.activeVersionId.equals(MVersionInternal.getVersionInternalId());
+	}
+
 	class Search2Adapter extends BaseAdapter {
 		IntArrayList hasilCari;
 		String[] xkata;

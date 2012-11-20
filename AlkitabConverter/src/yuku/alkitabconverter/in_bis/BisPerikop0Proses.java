@@ -1,7 +1,9 @@
 package yuku.alkitabconverter.in_bis;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.Scanner;
+import java.util.TreeSet;
 
 public class BisPerikop0Proses {
 	public static void main(String[] args) throws Exception {

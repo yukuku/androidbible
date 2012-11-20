@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
+import yuku.alkitabconverter.util.Rec;
 
 public class UnboundBibleReader {
 	public static List<Rec> parse(String nf, int kolom_orig_book_index, int kolom_pasal_1, int kolom_ayat_1, int kolom_isi) throws Exception {
@@ -53,10 +53,10 @@ public class UnboundBibleReader {
 			nn.put(kitab_1, (nn.get(kitab_1) == null? 0: nn.get(kitab_1)) + 1);
 			
 			Rec rec = new Rec();
-			rec.kitab_1 = kitab_1;
-			rec.pasal_1 = pasal_1;
-			rec.ayat_1 = ayat_1;
-			rec.isi = isi;
+			rec.book_1 = kitab_1;
+			rec.chapter_1 = pasal_1;
+			rec.verse_1 = ayat_1;
+			rec.text = isi;
 			
 			res.add(rec);
 			

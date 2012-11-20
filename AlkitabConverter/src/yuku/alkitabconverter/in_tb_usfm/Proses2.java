@@ -6,6 +6,8 @@ import java.io.FilenameFilter;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
@@ -20,16 +22,19 @@ import org.xml.sax.ext.DefaultHandler2;
 import yuku.alkitab.yes.YesFile;
 import yuku.alkitab.yes.YesFile.InfoEdisi;
 import yuku.alkitab.yes.YesFile.InfoKitab;
+import yuku.alkitab.yes.YesFile.PericopeData;
+import yuku.alkitab.yes.YesFile.PericopeData.Entry;
 import yuku.alkitab.yes.YesFile.PerikopBlok;
-import yuku.alkitab.yes.YesFile.PerikopData;
-import yuku.alkitab.yes.YesFile.PerikopData.Entri;
 import yuku.alkitab.yes.YesFile.PerikopIndex;
 import yuku.alkitab.yes.YesFile.Teks;
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
 import yuku.alkitabconverter.internal_common.InternalCommon;
+import yuku.alkitabconverter.internal_common.ReverseIndexer;
 import yuku.alkitabconverter.util.Ari;
+import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.util.TeksDb;
+import yuku.alkitabconverter.util.TeksDb.AyatState;
+import yuku.alkitabconverter.util.TeksDb.TextProcessor;
 import yuku.alkitabconverter.yes_common.YesCommon;
 
 public class Proses2 {
@@ -47,12 +52,11 @@ public class Proses2 {
 	static String INPUT_TEKS_2 = "./bahan/in-tb-usfm/mid/"; 
 
 
-	List<Rec> xrec = new ArrayList<Rec>();
 	TeksDb teksDb = new TeksDb();
 	StringBuilder misteri = new StringBuilder();
-	PerikopData perikopData = new PerikopData();
+	PericopeData pericopeData = new PericopeData();
 	{
-		perikopData.xentri = new ArrayList<Entri>();
+		pericopeData.entries = new ArrayList<Entry>();
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -90,38 +94,103 @@ public class Proses2 {
 		// POST-PROCESS
 		
 		teksDb.normalize();
-		
-		teksDb.dump();		
-		
-		for (Rec rec: xrec) {
-			// tambah @@ kalo perlu
-			if (rec.isi.contains("@") && !rec.isi.startsWith("@@")) {
-				rec.isi = "@@" + rec.isi;
-			}
-			
-			System.out.println(rec.kitab_1 + "\t" + rec.pasal_1 + "\t" + rec.ayat_1 + "\t" + rec.isi);
-		}
-		System.out.println("Total rec: " + xrec.size());
 
+		teksDb.processEach(new TextProcessor() {
+			@Override public void process(int ari, AyatState as) {
+				// tambah @@ kalo perlu
+				if (as.text.contains("@") && !as.text.startsWith("@@")) {
+					as.text = "@@" + as.text;
+				}
+				
+				as.text = as.text.replace("S e l a", "Sela");
+				as.text = as.text.replace("S el a", "Sela");
+				as.text = as.text.replace("H i g a y o n", "Higayon");
+			}
+		});
+		
+		teksDb.dump();
+		
 		List<Rec> xrec = teksDb.toRecList();
+		
+		dumpForYetTesting(InternalCommon.fileToBookNames(INPUT_KITAB), teksDb, pericopeData);
+		
+		System.out.println("Total rec: " + xrec.size());
+		
+		////////// CREATE REVERSE INDEX
+		
+		{
+			File outDir = new File("./bahan/in-tb-usfm/raw");
+			ReverseIndexer.createReverseIndex(outDir, "tb", teksDb);
+		}
 		
 		////////// PROSES KE INTERNAL
 		
 		{
 			File outDir = new File("./bahan/in-tb-usfm/raw");
 			outDir.mkdir();
-			InternalCommon.createInternalFiles(outDir, "tb", InternalCommon.fileToBookNames(INPUT_KITAB), teksDb, perikopData);
+			InternalCommon.createInternalFiles(outDir, "tb", InternalCommon.fileToBookNames(INPUT_KITAB), teksDb, pericopeData);
 		}
 		
 		////////// PROSES KE YES
 		
-		final InfoEdisi infoEdisi = YesCommon.infoEdisi(INFO_NAMA, INFO_SHORT_NAME, INFO_LONG_NAME, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES);
+		final InfoEdisi infoEdisi = YesCommon.infoEdisi(INFO_NAMA, INFO_SHORT_NAME, INFO_LONG_NAME, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES, null);
 		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
 		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
 		
-		YesFile file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(perikopData), new PerikopIndex(perikopData));
+		YesFile file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(pericopeData), new PerikopIndex(pericopeData));
 		
 		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
+	}
+
+	private void dumpForYetTesting(List<String> bookNames, TeksDb teksDb, PericopeData pericopeData) {
+		class Row {
+			int ari;
+			int type;
+			Rec rec;
+			PericopeData.Entry entry;
+		}
+		
+		List<Row> rows = new ArrayList<Row>();
+		
+		for (Rec rec: teksDb.toRecList()) {
+			Row row = new Row();
+			row.ari = Ari.encode(rec.book_1 - 1, rec.chapter_1, rec.verse_1);
+			row.type = 2;
+			row.rec = rec;
+			rows.add(row);
+		}
+		
+		for (PericopeData.Entry entry: pericopeData.entries) {
+			Row row = new Row();
+			row.ari = entry.ari;
+			row.type = 1;
+			row.entry = entry;
+			rows.add(row);
+		}
+		
+		Collections.sort(rows, new Comparator<Row>() {
+			@Override public int compare(Row a, Row b) {
+				if (a.ari != b.ari) return a.ari - b.ari;
+				return a.type - b.type;
+			}
+		});
+		
+		for (int i = 0; i < bookNames.size(); i++) {
+			System.out.printf("%s\t%d\t%s%n", "book_name", i + 1, bookNames.get(i));
+		}
+		
+		for (Row row: rows) {
+			if (row.type == 1) {
+				System.out.printf("%s\t%d\t%d\t%d\t%s%n", "pericope", Ari.toKitab(row.ari) + 1, Ari.toPasal(row.ari), Ari.toAyat(row.ari), row.entry.block.title);
+				if (row.entry.block.parallels != null) {
+					for (String parallel: row.entry.block.parallels) {
+						System.out.printf("%s\t%s%n", "parallel", parallel);
+					}
+				}
+			} else {
+				System.out.printf("%s\t%d\t%d\t%d\t%s%n", "verse", Ari.toKitab(row.ari) + 1, Ari.toPasal(row.ari), Ari.toAyat(row.ari), row.rec.text);
+			}
+		}
 	}
 
 	public class Handler extends DefaultHandler2 {
@@ -143,7 +212,7 @@ public class Proses2 {
 		Object tujuanTulis_xref = new Object();
 		Object tujuanTulis_footnote = new Object();
 		
-		List<PerikopData.Entri> perikopBuffer = new ArrayList<PerikopData.Entri>();
+		List<PericopeData.Entry> perikopBuffer = new ArrayList<PericopeData.Entry>();
 		boolean afterThisMustStartNewPerikop = true; // if true, we have done with a pericope title, so the next text must become a new pericope title instead of appending to existing one
 		
 		int sLevel = 0;
@@ -285,11 +354,11 @@ public class Proses2 {
 				menjorokTeks = -1; // reset
 				
 				if (perikopBuffer.size() > 0) {
-					for (PerikopData.Entri pe: perikopBuffer) {
-						pe.blok.judul = pe.blok.judul.replace("\n", " ").replace("  ", " ").trim();
-						System.out.println("(commit to perikopData " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":) " + pe.blok.judul);
+					for (PericopeData.Entry pe: perikopBuffer) {
+						pe.block.title = pe.block.title.replace("\n", " ").replace("  ", " ").trim();
+						System.out.println("(commit to perikopData " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":) " + pe.block.title);
 						pe.ari = Ari.encode(kitab_0, pasal_1, ayat_1);
-						perikopData.xentri.add(pe);
+						pericopeData.entries.add(pe);
 					}
 					perikopBuffer.clear();
 				}
@@ -299,16 +368,16 @@ public class Proses2 {
 				
 				if (sLevel == 0 || sLevel == 1 || sLevel == LEVEL_p_mr || sLevel == LEVEL_p_ms) {
 					if (afterThisMustStartNewPerikop || perikopBuffer.size() == 0) {
-						PerikopData.Entri entri = new PerikopData.Entri();
-						entri.ari = 0; // done later when writing teks so we know which verse this pericope starts from 
-						entri.blok = new PerikopData.Blok();
-						entri.blok.versi = 2;
-						entri.blok.judul = judul;
-						perikopBuffer.add(entri);
+						PericopeData.Entry entry = new PericopeData.Entry();
+						entry.ari = 0; // done later when writing teks so we know which verse this pericope starts from 
+						entry.block = new PericopeData.Block();
+						entry.block.version = 2;
+						entry.block.title = judul;
+						perikopBuffer.add(entry);
 						afterThisMustStartNewPerikop = false;
 						System.out.println("$tulis ke perikopBuffer (new entry) (size now: " + perikopBuffer.size() + "): " + judul);
 					} else {
-						perikopBuffer.get(perikopBuffer.size() - 1).blok.judul += judul;
+						perikopBuffer.get(perikopBuffer.size() - 1).block.title += judul;
 						System.out.println("$tulis ke perikopBuffer (append to existing) (size now: " + perikopBuffer.size() + "): " + judul);
 					}
 				} else if (sLevel == LEVEL_p_r) { // paralel
@@ -316,8 +385,8 @@ public class Proses2 {
 						throw new RuntimeException("paralel found but no perikop on buffer: " + judul);
 					}
 					
-					PerikopData.Entri entri = perikopBuffer.get(perikopBuffer.size() - 1);
-					entri.blok.xparalel = parseParalel(judul);
+					PericopeData.Entry entry = perikopBuffer.get(perikopBuffer.size() - 1);
+					entry.block.parallels = parseParalel(judul);
 				} else if (sLevel == 2) {
 					System.out.println("$tulis ke tempat sampah (perikop level 2): " + judul);
 				} else {

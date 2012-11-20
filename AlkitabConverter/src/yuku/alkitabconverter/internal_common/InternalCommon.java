@@ -10,9 +10,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-import yuku.alkitab.yes.YesFile.PerikopData;
-import yuku.alkitabconverter.bdb.BdbProses.Rec;
+import yuku.alkitab.yes.YesFile.PericopeData;
 import yuku.alkitabconverter.util.CountingOutputStream;
+import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.TeksDb;
 import yuku.bintex.BintexWriter;
 
@@ -23,20 +23,24 @@ public class InternalCommon {
 	public final static Charset utf8 = Charset.forName("utf8");
 
 	/**
-	 * @param outDir
 	 * @param prefix e.g. "tb"
-	 * @param teksDb
-	 * @param perikopData
 	 */
-	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, TeksDb teksDb, PerikopData perikopData) {
+	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, TeksDb teksDb, PericopeData pericopeData) {
+		createInternalFiles(outDir, prefix, bookNames, teksDb.toRecList(), pericopeData);
+	}
+	
+	/**
+	 * @param prefix e.g. "tb"
+	 */
+	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, List<Rec> _recs, PericopeData pericopeData) {
 		List<List<Rec>> books = new ArrayList<List<Rec>>();
 		
 		for (int i = 1; i <= 66; i++) {
 			books.add(new ArrayList<Rec>());
 		}
 		
-		for (Rec rec: teksDb.toRecList()) {
-			int kitab_1 = rec.kitab_1;
+		for (Rec rec: _recs) {
+			int kitab_1 = rec.book_1;
 			if (kitab_1 < 1 || kitab_1 > 66) {
 				throw new RuntimeException("kitab_1 not supported: " + kitab_1);
 			}
@@ -53,8 +57,8 @@ public class InternalCommon {
 					
 					int chapter_count = 0;
 					for (Rec rec: recs) {
-						if (rec.pasal_1 > chapter_count) {
-							chapter_count = rec.pasal_1;
+						if (rec.chapter_1 > chapter_count) {
+							chapter_count = rec.chapter_1;
 						}
 					}
 	
@@ -62,7 +66,7 @@ public class InternalCommon {
 					{ // verse_counts
 						verse_counts = new int[chapter_count];
 						for (Rec rec: recs) {
-							verse_counts[rec.pasal_1 - 1]++;
+							verse_counts[rec.chapter_1 - 1]++;
 						}
 					}
 	
@@ -72,10 +76,10 @@ public class InternalCommon {
 						CountingOutputStream counter = new CountingOutputStream(new FileOutputStream(f));
 						OutputStreamWriter out = new OutputStreamWriter(counter, "utf-8");
 						for (Rec rec: recs) {
-							out.write(rec.isi);
+							out.write(rec.text);
 							out.write('\n');
 							out.flush();
-							chapter_offsets[rec.pasal_1] = (int) counter.getCount();
+							chapter_offsets[rec.chapter_1] = (int) counter.getCount();
 						}
 						out.close();
 					}
@@ -103,13 +107,13 @@ public class InternalCommon {
 			}
 			
 			// perikop
-			{
+			if (pericopeData != null) {
 				BintexWriter bw_blocks = new BintexWriter(new FileOutputStream(new File(outDir, String.format("%s_pericope_blocks_bt.bt", prefix))));
 				BintexWriter bw_index = new BintexWriter(new FileOutputStream(new File(outDir, String.format("%s_pericope_index_bt.bt", prefix))));
 				
-				bw_index.writeInt(perikopData.xentri.size());
+				bw_index.writeInt(pericopeData.entries.size());
 				
-				for (PerikopData.Entri pe: perikopData.xentri) {
+				for (PericopeData.Entry pe: pericopeData.entries) {
 					/* Blok {
 						uint8 versi = 3
 						autostring judul
@@ -120,11 +124,11 @@ public class InternalCommon {
 					
 					int pos = bw_blocks.getPos();
 					bw_blocks.writeUint8(3);
-					bw_blocks.writeAutoString(pe.blok.judul);
-					int parallel_count = pe.blok.xparalel == null? 0: pe.blok.xparalel.size();
+					bw_blocks.writeAutoString(pe.block.title);
+					int parallel_count = pe.block.parallels == null? 0: pe.block.parallels.size();
 					bw_blocks.writeUint8(parallel_count);
 					for (int i = 0; i < parallel_count; i++) {
-						bw_blocks.writeAutoString(pe.blok.xparalel.get(i));
+						bw_blocks.writeAutoString(pe.block.parallels.get(i));
 					}
 					
 					bw_index.writeInt(pe.ari);

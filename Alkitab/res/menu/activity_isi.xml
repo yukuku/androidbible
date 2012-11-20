@@ -33,9 +33,13 @@
 	<item
 		android:id="@+id/menuBantuan"
 		android:title="@string/menuBantuan"
-		android:icon="@android:drawable/ic_menu_help" android:showAsAction="never" />
+		android:showAsAction="never" />
+	<item
+		android:id="@+id/menuSendMessage"
+		android:title="@string/beri_saran_title"
+		android:showAsAction="never" />
 	<item
 		android:id="@+id/menuTentang"
 		android:title="@string/menuTentang"
-		android:icon="@android:drawable/ic_menu_info_details" android:showAsAction="never" />
+		android:showAsAction="never" />
 </menu>

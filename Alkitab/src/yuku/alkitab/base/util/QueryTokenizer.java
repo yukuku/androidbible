@@ -61,4 +61,32 @@ public class QueryTokenizer {
 		if (pos == 0) return token;
 		return token.substring(pos);
 	}
+	
+	static boolean isMultiwordToken(String token) {
+		int start = 0;
+		if (isPlussedToken(token)) {
+			start = 1;
+		}
+		for (int i = start, len = token.length(); i < len; i++) {
+			char c = token.charAt(i);
+			if (! (Character.isLetter(c) || (c == '-' && i > start && i < len-1))) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	static Pattern pattern_letters = Pattern.compile("[\\p{javaLetter}-]+"); 
+	
+	/**
+	 * For tokens such as "abc.,- def", which will be re-tokenized to "abc" "def"
+	 */
+	static List<String> tokenizeMultiwordToken(String token) {
+		List<String> res = new ArrayList<String>();
+		Matcher m = pattern_letters.matcher(token);
+		while (m.find()) {
+			res.add(m.group());
+		}
+		return res;
+	}
 }

@@ -27,10 +27,10 @@ public class Proses {
 	public void loadUpTheData() throws Exception {
 		handler = new Handler();
 		
-		new File("./bahan/en-kjv-thml/kjv-patched.xml").delete();
+		new File("./bahan/en-kjv-thml/in/kjv-patched.xml").delete();
 		
 		// patch dulu
-		Process p = new ProcessBuilder("patch", "-o", "./bahan/en-kjv-thml/kjv-patched.xml", new File("./bahan/en-kjv-thml/kjv.xml").getCanonicalPath(), "./bahan/en-kjv-thml/kjv.patch")
+		Process p = new ProcessBuilder("patch", "-o", "./bahan/en-kjv-thml/in/kjv-patched.xml", new File("./bahan/en-kjv-thml/in/kjv.xml").getCanonicalPath(), "./bahan/en-kjv-thml/in/kjv.patch")
 		.redirectErrorStream(true)
 		.start();
 		Scanner sc = new Scanner(p.getInputStream());
@@ -40,8 +40,8 @@ public class Proses {
 		sc.close();
 		p.waitFor();
 		
-		InputStream in = new FileInputStream("./bahan/en-kjv-thml/kjv-patched.xml");
-		pw = new PrintWriter(new File("./bahan/en-kjv-thml/kjv.proses"), "utf-8");
+		InputStream in = new FileInputStream("./bahan/en-kjv-thml/in/kjv-patched.xml");
+		pw = new PrintWriter(new File("./bahan/en-kjv-thml/in/kjv.proses"), "utf-8");
 
 		SAXParser parser = factory.newSAXParser();
 		parser.getXMLReader().setFeature("http://xml.org/sax/features/namespaces", true);

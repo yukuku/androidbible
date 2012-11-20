@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="yuku.alkitab" android:installLocation="auto" android:versionCode="103" android:versionName="2.7.1" xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="yuku.alkitab" android:installLocation="auto" android:versionCode="104" android:versionName="2.8.0" xmlns:tools="http://schemas.android.com/tools">
 	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="17" />
 
 	<uses-permission android:name="android.permission.INTERNET" />
@@ -70,6 +70,7 @@
 		<activity android:name="yuku.alkitab.base.ac.SongViewActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.SecretSettingsActivity" android:label="Secret settings" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.filechooser.FileChooserActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
+		<activity android:name="com.example.android.wizardpager.MainActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:theme="@style/AlkitabFeedback.Theme" />
 		
 		<service android:name="yuku.alkitab.base.sv.DownloadService" />
 		

@@ -206,6 +206,13 @@ public class S {
 		return xayat;
 	}
 
+	public static synchronized String[] loadChapterTextLowercased(Version version, Book book, int pasal_1) {
+		if (book == null) {
+			return notAvailableTextArray;
+		}
+		return loadChapterText(version, book, pasal_1, false, true);
+	}
+	
 	public static synchronized String loadChapterTextLowercasedWithoutSplit(Version version, Book book, int pasal_1) {
 		if (book == null) {
 			return notAvailableText;
