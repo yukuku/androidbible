@@ -31,6 +31,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -116,36 +117,39 @@ public class MainActivity extends SherlockFragmentActivity implements
             public void onClick(View view) {
                 if (mPager.getCurrentItem() == mCurrentPageSequence.size()) {
                     DialogFragment dg = new DialogFragment() {
-                        @Override
-                        public Dialog onCreateDialog(Bundle savedInstanceState) {
+                        @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
                             return new AlertDialog.Builder(getActivity())
-                                    .setMessage(R.string.alkitabfeedback_submit_confirm_message)
-                                    .setPositiveButton(R.string.alkitabfeedback_submit_confirm_button, new DialogInterface.OnClickListener() {
-										@Override public void onClick(DialogInterface dialog, int which) {
-											String feedback_from_name = null;
-											String feedback_from_email = null;
-											String feedback_body = null;
-											
-											Bundle saved = mWizardModel.save();
-											Bundle contact = saved.getBundle("contact");
-											if (contact != null) {
-												feedback_from_name = contact.getString(CustomerInfoPage.NAME_DATA_KEY);
-												feedback_from_email = contact.getString(CustomerInfoPage.EMAIL_DATA_KEY);
-											}
-											Bundle message = saved.getBundle("message");
-											if (message != null) {
-												feedback_body = message.getString(TextareaPage.SIMPLE_DATA_KEY);
-											}
-											
-											if (feedback_from_name != null && feedback_from_email != null && feedback_body != null) {
-												FeedbackSender sender = FeedbackSender.getInstance(getApplicationContext());
-												sender.addEntry(feedback_from_name, feedback_from_email, feedback_body);
-												sender.trySend();
-											}
-										}
-									})
-                                    .setNegativeButton(android.R.string.cancel, null)
-                                    .create();
+                            .setMessage(R.string.alkitabfeedback_submit_confirm_message)
+                            .setPositiveButton(R.string.alkitabfeedback_submit_confirm_button, new DialogInterface.OnClickListener() {
+								@Override public void onClick(DialogInterface dialog, int which) {
+									String feedback_from_name = null;
+									String feedback_from_email = null;
+									String feedback_body = null;
+									
+									Bundle saved = mWizardModel.save();
+									Bundle contact = saved.getBundle("contact");
+									if (contact != null) {
+										feedback_from_name = contact.getString(CustomerInfoPage.NAME_DATA_KEY);
+										feedback_from_email = contact.getString(CustomerInfoPage.EMAIL_DATA_KEY);
+									}
+									Bundle message = saved.getBundle("message");
+									if (message != null) {
+										feedback_body = message.getString(TextareaPage.SIMPLE_DATA_KEY);
+									}
+									
+									if (feedback_from_name != null && feedback_from_email != null && feedback_body != null) {
+										FeedbackSender sender = FeedbackSender.getInstance(getApplicationContext());
+										sender.addEntry(feedback_from_name, feedback_from_email, feedback_body);
+										sender.trySend();
+									}
+									
+									Toast.makeText(MainActivity.this, R.string.alkitabfeedback_submit_thanks, Toast.LENGTH_LONG).show();
+									setResult(RESULT_OK);
+									finish();
+								}
+							})
+                            .setNegativeButton(android.R.string.cancel, null)
+                            .create();
                         }
                     };
                     dg.show(getSupportFragmentManager(), "place_order_dialog");

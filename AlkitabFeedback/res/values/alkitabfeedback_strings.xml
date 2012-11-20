@@ -14,4 +14,5 @@
 
     <string name="alkitabfeedback_submit_confirm_message">Send your message to the creators?</string>
     <string name="alkitabfeedback_submit_confirm_button">Send</string>
+    <string name="alkitabfeedback_submit_thanks">Thanks for your message!</string>
 </resources>
