@@ -20,6 +20,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -182,17 +183,23 @@ public class MainActivity extends SherlockFragmentActivity implements
         int position = mPager.getCurrentItem();
         if (position == mCurrentPageSequence.size()) {
             mNextButton.setText(R.string.alkitabfeedback_finish);
-            mNextButton.setBackgroundResource(R.drawable.alkitabfeedback_finish_background);
-            mNextButton.setTextAppearance(this, R.style.alkitabfeedback_TextAppearanceFinish);
+            
+            if (Build.VERSION.SDK_INT >= 11) {
+	            mNextButton.setBackgroundResource(R.drawable.alkitabfeedback_finish_background);
+	            mNextButton.setTextAppearance(this, R.style.alkitabfeedback_TextAppearanceFinish);
+            }
         } else {
             mNextButton.setText(mEditingAfterReview
                     ? R.string.alkitabfeedback_review
                     : R.string.alkitabfeedback_next);
-            mNextButton.setBackgroundResource(R.drawable.alkitabfeedback_selectable_item_background);
-            TypedValue v = new TypedValue();
-            getTheme().resolveAttribute(android.R.attr.textAppearanceMedium, v, true);
-            mNextButton.setTextAppearance(this, v.resourceId);
-            mNextButton.setEnabled(position != mPagerAdapter.getCutOffPage());
+            
+            if (Build.VERSION.SDK_INT >= 11) {
+	            mNextButton.setBackgroundResource(R.drawable.alkitabfeedback_selectable_item_background);
+	            TypedValue v = new TypedValue();
+	            getTheme().resolveAttribute(android.R.attr.textAppearanceMedium, v, true);
+	            mNextButton.setTextAppearance(this, v.resourceId);
+	            mNextButton.setEnabled(position != mPagerAdapter.getCutOffPage());
+            }
         }
 
         mPrevButton.setVisibility(position <= 0 ? View.INVISIBLE : View.VISIBLE);

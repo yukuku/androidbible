@@ -58,7 +58,7 @@
             android:text="@string/alkitabfeedback_prev" />
 
         <Button
-            style="?attr/buttonBarButtonStyle"
+            style="?buttonBarButtonStyle"
             android:background="@drawable/alkitabfeedback_selectable_item_background"
             android:id="@+id/next_button"
             android:layout_width="0dp"
