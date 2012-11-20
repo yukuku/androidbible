@@ -155,7 +155,7 @@ public class FeedbackSender {
 
 			try {
 				HttpClient client = new DefaultHttpClient();
-				HttpPost post = new HttpPost("http://udayuku.appspot.com/laban/submit"); //$NON-NLS-1$
+				HttpPost post = new HttpPost("http://alkitab-host.appspot.com/laban/submit"); //$NON-NLS-1$
 				List<NameValuePair> params = new ArrayList<NameValuePair>();
 
 				for (Entry e : entries_) {
