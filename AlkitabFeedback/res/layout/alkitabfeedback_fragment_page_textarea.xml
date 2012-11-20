@@ -34,7 +34,7 @@
                 android:layout_marginBottom="16dp"
                 android:gravity="top"
                 android:hint="@string/alkitabfeedback_hint_message"
-                android:inputType="textAutoCorrect|textAutoComplete|textMultiLine"
+                android:inputType="textAutoCorrect|textCapSentences|textMultiLine"
                 android:minLines="6"
                 android:saveEnabled="false" />
 
