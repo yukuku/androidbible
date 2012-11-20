@@ -169,6 +169,7 @@ public class FeedbackSender {
 					params.add(new BasicNameValuePair("package_versionCode[]", "" + e.package_versionCode));
 					params.add(new BasicNameValuePair("build_product[]", "" + getBuildProduct()));
 					params.add(new BasicNameValuePair("build_device[]", "" + getBuildDevice()));
+					params.add(new BasicNameValuePair("build_model[]", "" + getBuildModel()));
 					params.add(new BasicNameValuePair("build_version_sdk[]", "" + e.build_version_sdk));
 					params.add(new BasicNameValuePair("capjempol[]", "" + e.capjempol));
 				}
@@ -234,6 +235,10 @@ public class FeedbackSender {
 
 	String getBuildDevice() {
 		return Build.DEVICE;
+	}
+
+	String getBuildModel() {
+		return Build.MODEL;
 	}
 
 	int getBuildVersionSdk() {
