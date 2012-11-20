@@ -56,6 +56,18 @@ if [ "$ALKITAB_SIGN_PASSWORD" == "" ] ; then
 	exit 1
 fi
 
+echo '========================================='
+echo 'ALKITAB_RAW_DIR       = ' $ALKITAB_RAW_DIR
+echo 'ALKITAB_VERSION_CODE  = ' $ALKITAB_VERSION_CODE
+echo 'ALKITAB_VERSION_NAME  = ' $ALKITAB_VERSION_NAME
+echo 'ALKITAB_PACKAGE_NAME  = ' $ALKITAB_PACKAGE_NAME
+echo 'ALKITAB_STABLE        = ' $ALKITAB_STABLE
+echo 'ALKITAB_SIGN_KEYSTORE = ' $ALKITAB_SIGN_KEYSTORE
+echo 'ALKITAB_SIGN_ALIAS    = ' $ALKITAB_SIGN_ALIAS
+echo 'ALKITAB_SIGN_PASSWORD = ' '.... =)'
+echo '========================================='
+
+
 echo 'Creating 500 MB ramdisk...'
 
 BUILD_NAME=alkitab-build-`date "+%Y%m%d-%H%M%S"`
