@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="yuku.alkitab" android:installLocation="auto" android:versionCode="104" android:versionName="2.8.0" xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="yuku.alkitab" android:installLocation="auto" android:versionCode="105" android:versionName="2.8.1" xmlns:tools="http://schemas.android.com/tools">
 	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="17" />
 
 	<uses-permission android:name="android.permission.INTERNET" />
@@ -12,7 +12,7 @@
 	
 	<supports-screens android:largeScreens="true" android:resizeable="true" android:smallScreens="true" android:normalScreens="true" android:anyDensity="true" />
 
-	<application android:name="yuku.alkitab.base.App" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:hardwareAccelerated="true" android:theme="@style/Theme.Sherlock">
+	<application android:name="yuku.alkitab.base.App" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:hardwareAccelerated="true" android:theme="@style/Theme.Sherlock" android:allowBackup="true">
 		<activity android:name="yuku.alkitab.base.IsiActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:theme="@style/Theme.AlkitabIsi">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
@@ -74,7 +74,7 @@
 		
 		<service android:name="yuku.alkitab.base.sv.DownloadService" />
 		
-		<provider android:name="yuku.alkitab.base.cp.Provider" android:authorities="yuku.alkitab.provider" tools:ignore="ExportedContentProvider"/>
+		<provider android:name="yuku.alkitab.base.cp.Provider" android:authorities="yuku.alkitab.provider" android:exported="true" tools:ignore="ExportedContentProvider" />
 		
 		<receiver android:name="yuku.alkitab.base.br.SecretSettingsReceiver" tools:ignore="ExportedReceiver">
 			<intent-filter>
