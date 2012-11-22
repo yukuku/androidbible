@@ -74,7 +74,7 @@
 		
 		<service android:name="yuku.alkitab.base.sv.DownloadService" />
 		
-		<provider android:name="yuku.alkitab.base.cp.Provider" android:authorities="yuku.alkitab.provider" tools:ignore="ExportedContentProvider"/>
+		<provider android:name="yuku.alkitab.base.cp.Provider" android:authorities="yuku.alkitab.provider" android:exported="true" tools:ignore="ExportedContentProvider" />
 		
 		<receiver android:name="yuku.alkitab.base.br.SecretSettingsReceiver" tools:ignore="ExportedReceiver">
 			<intent-filter>
