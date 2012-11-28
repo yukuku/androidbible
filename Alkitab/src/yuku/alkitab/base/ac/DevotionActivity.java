@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -39,6 +40,7 @@ import yuku.alkitab.base.renungan.ArtikelSantapanHarian;
 import yuku.alkitab.base.renungan.Downloader;
 import yuku.alkitab.base.renungan.Downloader.OnStatusDonlotListener;
 import yuku.alkitab.base.renungan.IArtikel;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.widget.CallbackSpan;
 
 import com.actionbarsherlock.view.Menu;
@@ -175,6 +177,14 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		nama = S.temporary.devotion_name;
 		tanggalan = S.temporary.devotion_date;
 		
+		// Workaround for crashes due to html tags in the title
+		// We remove all rows that contain '<' in the judul
+		if (Preferences.getBoolean(Prefkey.patch_devotionSlippedHtmlTags, false) == false) {
+			int deleted = S.getDb().deleteDevotionsWithLessThanInTitle();
+			Log.d(TAG, "patch_devotionSlippedHtmlTags: deleted " + deleted);
+			Preferences.setBoolean(Prefkey.patch_devotionSlippedHtmlTags, true);
+		}
+		
 		new PemintaMasaDepan().execute();
 		
 		{ // betulin ui update 
@@ -289,7 +299,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			
 			if (artikel.getNama().equals("sh")) { //$NON-NLS-1$
 				SpannableStringBuilder judul = new SpannableStringBuilder(Html.fromHtml("<h3>" + artikel.getJudul() + "</h3>")); //$NON-NLS-1$ //$NON-NLS-2$
-				judul.setSpan(new CallbackSpan(artikel.getJudul(), ayatKlikListener), 0, artikel.getJudul().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+				judul.setSpan(new CallbackSpan(artikel.getJudul(), ayatKlikListener), 0, judul.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 				
 				ss.append(judul);
 			} else if (artikel.getNama().equals("rh")) { //$NON-NLS-1$
