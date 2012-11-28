@@ -704,4 +704,9 @@ public class InternalDb {
 			stmt.close();
 		}
 	}
+
+	public int deleteDevotionsWithLessThanInTitle() {
+		SQLiteDatabase db = helper.getWritableDatabase();
+		return db.delete(Db.TABEL_Renungan, Db.Renungan.judul + " like '%<%'", null);
+	}
 }
