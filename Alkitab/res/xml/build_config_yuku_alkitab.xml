@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config package="yuku.alkitab">
-	<menu renungan="true" gebug="false" edisi="true" bantuan="true" donasi="true" songs="true" />
+	<menu renungan="true" gebug="false" edisi="true" bantuan="true" donasi="false" songs="true" />
 	<edisi>
 		<internal locale="in" shortName="TB"   longName="Terjemahan Baru" prefix="tb" />
 		<preset locale="in"   shortName="BIS"  longName="Bahasa Indonesia Sehari-hari" namafile_preset="bis.yes" url="http://alkitab-host.appspot.com/addon/yes/bis.yes.gz" />
