@@ -1,6 +1,9 @@
 package yuku.alkitab.base.fr;
 
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
+import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -43,8 +46,6 @@ public class GotoGridFragment extends BaseGotoFragment {
 		@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			Book book = bookAdapter.getItem(position);
 			selectedBook = book;
-			displaySelectedBookAndChapter();
-			
 			transitionBookToChapter();
 		}
 	};
@@ -52,8 +53,6 @@ public class GotoGridFragment extends BaseGotoFragment {
 	private AdapterView.OnItemClickListener gridChapter_itemClick = new AdapterView.OnItemClickListener() {
 		@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			selectedChapter = position + 1;
-			displaySelectedBookAndChapter();
-			
 			transitionChapterToVerse();
 		}
 	};
@@ -65,14 +64,25 @@ public class GotoGridFragment extends BaseGotoFragment {
 		}
 	};
 	
-	private View.OnClickListener lSelectedChapter_click = new View.OnClickListener() {
-		@Override public void onClick(View v) {
-		}
-	};
-
 	private View.OnClickListener lSelectedBook_click = new View.OnClickListener() {
 		@Override public void onClick(View v) {
+			selectedBook = null;
+			selectedChapter = 0;
+			transitionChapterToBook();
 		}
+	};
+	
+	private View.OnClickListener lSelectedChapter_click = new View.OnClickListener() {
+		@Override public void onClick(View v) {
+			selectedChapter = 0;
+			transitionVerseToChapter();
+		}
+	};
+	
+	@Override public void onResume() {
+		super.onResume();
+		
+		Log.d(TAG, "ONresume");
 	};
 	
 	void transitionBookToChapter() {
@@ -82,6 +92,13 @@ public class GotoGridFragment extends BaseGotoFragment {
 		gridChapter.setVisibility(View.VISIBLE);
 		gridChapter.setAdapter(chapterAdapter = new ChapterAdapter(selectedBook));
 		gridVerse.setVisibility(View.INVISIBLE);
+		displaySelectedBookAndChapter();
+	}
+	
+	void transitionChapterToBook() {
+		// TODO Animate
+		gridBook.setVisibility(View.VISIBLE);
+		panelChapterVerse.setVisibility(View.INVISIBLE);
 	}
 	
 	void transitionChapterToVerse() {
@@ -91,6 +108,17 @@ public class GotoGridFragment extends BaseGotoFragment {
 		gridChapter.setVisibility(View.INVISIBLE);
 		gridVerse.setVisibility(View.VISIBLE);
 		gridVerse.setAdapter(verseAdapter = new VerseAdapter(selectedBook, selectedChapter));
+		displaySelectedBookAndChapter();
+	}
+	
+	void transitionVerseToChapter() {
+		// TODO Animate
+		gridBook.setVisibility(View.INVISIBLE);
+		panelChapterVerse.setVisibility(View.VISIBLE);
+		gridChapter.setVisibility(View.VISIBLE);
+		gridChapter.setAdapter(chapterAdapter = new ChapterAdapter(selectedBook));
+		gridVerse.setVisibility(View.INVISIBLE);
+		displaySelectedBookAndChapter();
 	}
 
 	public static Bundle createArgs(int bookId, int chapter_1, int verse_1) {
@@ -102,14 +130,19 @@ public class GotoGridFragment extends BaseGotoFragment {
 	}
 	
 	protected void displaySelectedBookAndChapter() {
+		lSelectedBook.setText(underline(selectedBook.judul));
 		if (selectedChapter == 0) {
-			lSelectedBook.setText(selectedBook.judul);
 			lSelectedChapter.setVisibility(View.GONE);
 		} else {
-			lSelectedBook.setText(selectedBook.judul);
 			lSelectedChapter.setVisibility(View.VISIBLE);
-			lSelectedChapter.setText("" + selectedChapter);
+			lSelectedChapter.setText(underline("" + selectedChapter));
 		}
+	}
+
+	private CharSequence underline(CharSequence cs) {
+		SpannableStringBuilder sb = SpannableStringBuilder.valueOf(cs);
+		sb.setSpan(new UnderlineSpan(), 0, cs.length(), 0);
+		return sb;
 	}
 
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
