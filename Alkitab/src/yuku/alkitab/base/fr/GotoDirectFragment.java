@@ -125,6 +125,9 @@ public class GotoDirectFragment extends BaseGotoFragment {
 			int chapter = jumper.getChapter();
 			int verse = jumper.getVerse();
 			
+			InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(tAlamatLoncat.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+			
 			((GotoFinishListener) getActivity()).onGotoFinished(GotoFinishListener.GOTO_TAB_direct, bookId, chapter, verse);
 		}
 	};
@@ -134,9 +137,9 @@ public class GotoDirectFragment extends BaseGotoFragment {
 	}
 
 	private void showKeyboard() {
-		if (getActivity() != null) {
-			InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.showSoftInput(tAlamatLoncat, InputMethodManager.SHOW_IMPLICIT);
-		}
+		if (getActivity() != null) { 
+					InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.showSoftInput(tAlamatLoncat, InputMethodManager.SHOW_IMPLICIT);
+				}
 	}
 }
