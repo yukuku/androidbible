@@ -230,20 +230,24 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
-		if (itemId == R.id.menuSalin) {
+		if (itemId == R.id.menuCopy) {
 			String salinan = lHeader.getText() + "\n" + lIsi.getText(); //$NON-NLS-1$
 			U.copyToClipboard(salinan);
 			
 			Toast.makeText(this, R.string.renungan_sudah_disalin, Toast.LENGTH_SHORT).show();
 			
 			return true;
-		} else if (itemId == R.id.menuBagikan) {
+		} else if (itemId == R.id.menuShare) {
 			Intent intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain"); //$NON-NLS-1$
 			intent.putExtra(Intent.EXTRA_SUBJECT, lHeader.getText());
 			intent.putExtra(Intent.EXTRA_TEXT, lHeader.getText() + "\n" + lIsi.getText()); //$NON-NLS-1$
 			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_renungan)), REQCODE_bagikan);
-
+			
+			return true;
+		} else if (itemId == R.id.menuRedownload) {
+			akanPerlu(this.nama, this.tgl_format.get().format(tanggalan), true);
+			
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

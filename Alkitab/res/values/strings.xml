@@ -208,6 +208,7 @@
     <string name="get_more_fonts">Download more fonts…</string>
     <string name="about_translators">Translators:</string>
     <string name="intent_filter_import_from_backup">Import from backup</string>
+    <string name="redownload">Redownload</string>
 
     <string name="goto_tab_dialer_label">Dialer</string>
     <string name="goto_tab_direct_label">Direct</string>
