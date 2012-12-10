@@ -137,10 +137,28 @@ public class IsiActivity extends BaseActivity {
 	
 	CallbackSpan.OnClickListener parallel_click = new CallbackSpan.OnClickListener() {
 		@Override public void onClick(View widget, Object data) {
-			int ari = jumpTo((String)data);
-			if (ari != 0) {
-				history.add(ari);
-			}
+            if (data instanceof String) {
+                int ari = jumpTo((String) data);
+                if (ari != 0) {
+                    history.add(ari);
+                }
+            } else if (data instanceof VerseAdapter.ParallelTypeAri) {
+                int ari = ((VerseAdapter.ParallelTypeAri) data).ariStart;
+                jumpToAri(ari);
+                history.add(ari);
+            } else if (data instanceof VerseAdapter.ParallelTypeLid) {
+                int ari = LidToAri.lidToAri(((VerseAdapter.ParallelTypeLid) data).lidStart);
+                if (ari != 0) {
+                    jumpToAri(ari);
+                    history.add(ari);
+                }
+            } else if (data instanceof VerseAdapter.ParallelTypeOsis) {
+                String osis = ((VerseAdapter.ParallelTypeOsis) data).osisStart;
+                int ari = jumpTo(osis); // jumpTo handles osis well
+                if (ari != 0) {
+                    history.add(ari);
+                }
+            }
 		}
 	};
 

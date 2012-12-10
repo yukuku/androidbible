@@ -126,6 +126,18 @@ public abstract class VerseAdapter extends BaseAdapter {
 			}
 		}
 	}
+
+    public static class ParallelTypeAri {
+        public int ariStart;
+    }
+
+    public static class ParallelTypeOsis {
+        public String osisStart;
+    }
+
+    public static class ParallelTypeLid {
+        public int lidStart;
+    }
 	
 	// # field ctor
 	final Context context_;
