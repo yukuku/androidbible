@@ -4,13 +4,13 @@ import android.util.Log;
 
 import java.io.FileInputStream;
 import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 import yuku.alkitab.yes.YesFile.PericopeData.Entry;
 import yuku.bintex.BintexWriter;
 
+@Deprecated
 public class YesFile {
 	private static final byte FILE_VERSI = 0x01;
 	private static final String TAG = YesFile.class.getSimpleName();
@@ -22,20 +22,6 @@ public class YesFile {
 	public interface Seksi {
 		byte[] nama();
 		IsiSeksi isi();
-	}
-	
-	public abstract class SeksiBernama implements Seksi {
-		private byte[] nama;
-		public SeksiBernama(String nama) {
-			try {
-				this.nama = nama.getBytes("ascii"); //$NON-NLS-1$
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
-		}
-		@Override final public byte[] nama() {
-			return nama;
-		}
 	}
 	
 	public interface IsiSeksi {

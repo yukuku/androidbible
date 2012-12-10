@@ -1,0 +1,26 @@
+package yuku.alkitab.yes2.model;
+
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+
+import yuku.bintex.BintexWriter;
+
+public class Text implements SectionContent {
+	private final Charset charset;
+	public String[] xisi;
+
+	public Text(Charset charset) {
+		this.charset = charset;
+	}
+
+	@Override public void toBytes(BintexWriter writer) throws Exception {
+		for (String isi : xisi) {
+			ByteBuffer buf = charset.encode(isi);
+			byte[] bytes = new byte[buf.limit()];
+			buf.position(0);
+			buf.get(bytes);
+			writer.writeRaw(bytes);
+			writer.writeUint8('\n');
+		}
+	}
+}
