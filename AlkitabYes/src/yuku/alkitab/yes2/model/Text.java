@@ -7,15 +7,15 @@ import yuku.bintex.BintexWriter;
 
 public class Text implements SectionContent {
 	private final Charset charset;
-	public String[] xisi;
+	public String[] verses;
 
 	public Text(Charset charset) {
 		this.charset = charset;
 	}
 
 	@Override public void toBytes(BintexWriter writer) throws Exception {
-		for (String isi : xisi) {
-			ByteBuffer buf = charset.encode(isi);
+		for (String verse : verses) {
+			ByteBuffer buf = charset.encode(verse);
 			byte[] bytes = new byte[buf.limit()];
 			buf.position(0);
 			buf.get(bytes);
