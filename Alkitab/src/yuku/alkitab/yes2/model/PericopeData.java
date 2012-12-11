@@ -12,7 +12,7 @@ public class PericopeData {
 		public String title;
 		public List<String> parallels;
 		
-		int _offset = -1;
+		public int _offset = -1;
 		
 		public void addParallel(String parallel) {
 			if (parallels == null) parallels = new ArrayList<String>();

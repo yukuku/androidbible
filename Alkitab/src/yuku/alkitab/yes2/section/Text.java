@@ -1,19 +1,25 @@
-package yuku.alkitab.yes2.model;
+package yuku.alkitab.yes2.section;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.List;
 
+import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexWriter;
 
-public class Text implements SectionContent {
+public class Text implements SectionContent.Writer {
 	private final Charset charset;
-	public String[] verses;
+	private final List<String> verses;
 
-	public Text(Charset charset) {
+	public Text(Charset charset, List<String> verses) {
 		this.charset = charset;
+		this.verses = verses;
 	}
 
 	@Override public void toBytes(BintexWriter writer) throws Exception {
+		// int verse_count
+		writer.writeInt(verses.size());
+		
 		for (String verse : verses) {
 			ByteBuffer buf = charset.encode(verse);
 			byte[] bytes = new byte[buf.limit()];

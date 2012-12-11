@@ -1,11 +1,12 @@
-package yuku.alkitab.yes2.model;
+package yuku.alkitab.yes2.section;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexWriter;
 
-public abstract class VersionInfo implements SectionContent {
+public abstract class VersionInfo implements SectionContent.Writer {
 	public String shortName;
 	public String longName;
 	public String description;

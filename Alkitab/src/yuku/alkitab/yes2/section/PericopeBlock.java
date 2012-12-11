@@ -1,9 +1,11 @@
-package yuku.alkitab.yes2.model;
+package yuku.alkitab.yes2.section;
 
+import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitab.yes2.model.PericopeData.Entry;
+import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexWriter;
 
-public class PericopeBlock implements SectionContent {
+public class PericopeBlock implements SectionContent.Writer {
 	private final PericopeData data;
 
 	public PericopeBlock(PericopeData data) {
