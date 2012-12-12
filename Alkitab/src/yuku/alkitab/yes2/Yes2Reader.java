@@ -15,7 +15,7 @@ import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.Reader;
 import yuku.alkitab.base.storage.ReaderDecoder;
 import yuku.alkitab.yes2.io.RandomInputStream;
-import yuku.alkitab.yes2.model.YesBook;
+import yuku.alkitab.yes2.model.Yes2Book;
 import yuku.alkitab.yes2.section.BooksInfo;
 import yuku.alkitab.yes2.section.VersionInfo;
 import yuku.bintex.BintexReader;
@@ -140,18 +140,18 @@ public class Yes2Reader implements Reader {
 			RandomInputStream ris = new RandomInputStream(file_);
 			BooksInfo booksInfo = new BooksInfo.Reader().toSection(ris);
 
-			Book[] res = new Book[booksInfo.yesBooks.size()];
+			Book[] res = new Book[booksInfo.yes2Books.size()];
 			for (int i = 0; i < res.length; i++) {
-				YesBook yesBook = booksInfo.yesBooks.get(i);
+				Yes2Book yes2Book = booksInfo.yes2Books.get(i);
 				Book book = res[i] = new Book();
 
-				book.bookId = yesBook.bookId;
-				book.judul = yesBook.shortName;
-				book.nama = yesBook.shortName;
-				book.nchapter = yesBook.chapter_count;
-				book.nverses = yesBook.verse_counts;
-				book.offset = yesBook.offset;
-				book.pasal_offset = yesBook.chapter_offsets;
+				book.bookId = yes2Book.bookId;
+				book.judul = yes2Book.shortName;
+				book.nama = yes2Book.shortName;
+				book.nchapter = yes2Book.chapter_count;
+				book.nverses = yes2Book.verse_counts;
+				book.offset = yes2Book.offset;
+				book.pasal_offset = yes2Book.chapter_offsets;
 			}
 
 			return res;

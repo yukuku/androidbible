@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import yuku.alkitab.yes2.io.RandomInputStream;
-import yuku.alkitab.yes2.model.YesBook;
+import yuku.alkitab.yes2.model.Yes2Book;
 import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexReader;
 import yuku.bintex.BintexWriter;
 
 public class BooksInfo implements SectionContent, SectionContent.Writer {
-	public List<YesBook> yesBooks;
+	public List<Yes2Book> yes2Books;
 
 	@Override public void toBytes(BintexWriter writer) throws Exception {
 		int c = 0;
 		
-		for (YesBook yesBook: yesBooks) {
-			if (yesBook != null) {
+		for (Yes2Book yes2Book: yes2Books) {
+			if (yes2Book != null) {
 				c++;
 			}
 		}
@@ -25,9 +25,9 @@ public class BooksInfo implements SectionContent, SectionContent.Writer {
 		writer.writeInt(c);
 		
 		// Book[book_count]
-		for (YesBook yesBook: yesBooks) {
-			if (yesBook != null) {
-				yesBook.toBytes(writer);
+		for (Yes2Book yes2Book: yes2Books) {
+			if (yes2Book != null) {
+				yes2Book.toBytes(writer);
 			}
 		}
 	}
@@ -38,9 +38,9 @@ public class BooksInfo implements SectionContent, SectionContent.Writer {
 			
 			BooksInfo res = new BooksInfo();
 			int book_count = br.readInt();
-			res.yesBooks = new ArrayList<YesBook>(book_count);
+			res.yes2Books = new ArrayList<Yes2Book>(book_count);
 			for (int i = 0; i < book_count; i++) {
-				res.yesBooks.add(YesBook.fromBytes(br));
+				res.yes2Books.add(Yes2Book.fromBytes(br));
 			}
 			return res;
 		}

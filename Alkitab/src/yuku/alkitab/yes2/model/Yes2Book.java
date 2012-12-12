@@ -8,7 +8,7 @@ import yuku.bintex.BintexReader;
 import yuku.bintex.BintexWriter;
 import yuku.bintex.ValueMap;
 
-public class YesBook {
+public class Yes2Book {
 	public int bookId;
 	public String shortName;
 	public int offset;
@@ -28,10 +28,10 @@ public class YesBook {
 		bw.writeValueSimpleMap(map);
 	}
 	
-	public static YesBook fromBytes(BintexReader br) throws IOException {
+	public static Yes2Book fromBytes(BintexReader br) throws IOException {
 		ValueMap map = br.readValueSimpleMap();
 		
-		YesBook res = new YesBook();
+		Yes2Book res = new Yes2Book();
 		res.bookId = map.getInt("bookId", -1);
 		res.shortName = map.getString("shortName");
 		res.offset = map.getInt("offset");
