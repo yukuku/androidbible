@@ -10,6 +10,7 @@ import android.util.Log;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import yuku.afw.App;
 import yuku.alkitab.base.S;
@@ -291,7 +292,7 @@ public class Provider extends ContentProvider {
 		if (s.equals("1")) return true;
 		if (s.equals("false")) return false;
 		if (s.equals("true")) return true;
-		s = s.toLowerCase();
+		s = s.toLowerCase(Locale.US);
 		if (s.equals("false")) return false;
 		if (s.equals("true")) return true;
 		if (s.equals("no")) return false;
