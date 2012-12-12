@@ -9,7 +9,7 @@ import yuku.bintex.BintexReader;
 import yuku.bintex.BintexWriter;
 import yuku.bintex.ValueMap;
 
-public class VersionInfo implements SectionContent, SectionContent.Writer {
+public class VersionInfo extends SectionContent implements SectionContent.Writer {
 	public String shortName;
 	public String longName;
 	public String description;
@@ -17,6 +17,10 @@ public class VersionInfo implements SectionContent, SectionContent.Writer {
 	public int book_count;
 	public int hasPericopes;
 	public int textEncoding; // 1 = ascii; 2 = utf-8 (default)
+	
+	public VersionInfo() {
+		super("versionInfo_");
+	}
 
 	@Override public void toBytes(BintexWriter writer) throws Exception {
 		Map<String, Object> map = new LinkedHashMap<String, Object>();

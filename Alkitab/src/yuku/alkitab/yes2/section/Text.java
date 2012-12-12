@@ -7,11 +7,12 @@ import java.util.List;
 import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexWriter;
 
-public class Text implements SectionContent.Writer {
+public class Text extends SectionContent implements SectionContent.Writer {
 	private final Charset charset;
 	private final List<String> verses;
 
 	public Text(Charset charset, List<String> verses) {
+		super("text________");
 		this.charset = charset;
 		this.verses = verses;
 	}

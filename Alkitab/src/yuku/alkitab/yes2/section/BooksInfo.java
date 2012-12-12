@@ -9,9 +9,13 @@ import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexReader;
 import yuku.bintex.BintexWriter;
 
-public class BooksInfo implements SectionContent, SectionContent.Writer {
+public class BooksInfo extends SectionContent implements SectionContent.Writer {
 	public List<Yes2Book> yes2Books;
 
+	public BooksInfo() {
+		super("booksInfo___");
+	}
+	
 	@Override public void toBytes(BintexWriter writer) throws Exception {
 		int c = 0;
 		
