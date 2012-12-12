@@ -12,7 +12,7 @@ import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.PericopeIndex;
 import yuku.alkitab.base.model.Version;
-import yuku.alkitab.base.storage.Reader;
+import yuku.alkitab.base.storage.BibleReader;
 import yuku.alkitab.base.storage.VerseTextDecoder;
 import yuku.alkitab.yes2.io.RandomInputStream;
 import yuku.alkitab.yes2.model.Yes2Book;
@@ -20,7 +20,7 @@ import yuku.alkitab.yes2.section.BooksInfo;
 import yuku.alkitab.yes2.section.VersionInfo;
 import yuku.bintex.BintexReader;
 
-public class Yes2Reader implements Reader {
+public class Yes2Reader implements BibleReader {
 	private static final String TAG = Yes2Reader.class.getSimpleName();
 
 	private String filename_;
@@ -142,16 +142,7 @@ public class Yes2Reader implements Reader {
 
 			Book[] res = new Book[booksInfo.yes2Books.size()];
 			for (int i = 0; i < res.length; i++) {
-				Yes2Book yes2Book = booksInfo.yes2Books.get(i);
-				Book book = res[i] = new Book();
-
-				book.bookId = yes2Book.bookId;
-				book.judul = yes2Book.shortName;
-				book.nama = yes2Book.shortName;
-				book.nchapter = yes2Book.chapter_count;
-				book.nverses = yes2Book.verse_counts;
-				book.offset = yes2Book.offset;
-				book.pasal_offset = yes2Book.chapter_offsets;
+				res[i] = booksInfo.yes2Books.get(i);
 			}
 
 			return res;
@@ -162,6 +153,8 @@ public class Yes2Reader implements Reader {
 	}
 
 	@Override public String[] loadVerseText(Book book, int chapter_1, boolean dontSeparateVerses, boolean lowercase) {
+		Yes2Book yes2Book = (Yes2Book) book;
+		
 		// init text decoder 
 		if (decoder_ == null) {
 			int textEncoding = versionInfo_.textEncoding;
@@ -178,16 +171,16 @@ public class Yes2Reader implements Reader {
 		try {
 			init();
 
-			if (chapter_1 <= 0 || chapter_1 > book.nchapter) {
+			if (chapter_1 <= 0 || chapter_1 > yes2Book.chapter_count) {
 				return null;
 			}
 
 			long seekTo = text_offsetBase_;
-			seekTo += book.offset;
-			seekTo += book.pasal_offset[chapter_1 - 1];
+			seekTo += yes2Book.offset;
+			seekTo += yes2Book.chapter_offsets[chapter_1 - 1];
 			file_.seek(seekTo);
 
-			int length = book.pasal_offset[chapter_1] - book.pasal_offset[chapter_1 - 1];
+			int length = yes2Book.chapter_offsets[chapter_1] - yes2Book.chapter_offsets[chapter_1 - 1];
 
 			byte[] ba = new byte[length];
 			file_.read(ba);

@@ -180,7 +180,7 @@ public class Provider extends ContentProvider {
 				if (formatting == false) {
 					text = U.removeSpecialCodes(text);
 				}
-				res.addRow(new Object[] {1, ari, book.judul, text});
+				res.addRow(new Object[] {1, ari, book.shortName, text});
 			}
 		}
 		
@@ -222,7 +222,7 @@ public class Provider extends ContentProvider {
 					if (formatting == false) {
 						text = U.removeSpecialCodes(text);
 					}
-					res.addRow(new Object[] {++c, ari, book.judul, text});
+					res.addRow(new Object[] {++c, ari, book.shortName, text});
 				}
 			} else {
 				int ari_start_bc = Ari.toBookChapter(ari_start);
@@ -239,7 +239,7 @@ public class Provider extends ContentProvider {
 					for (int ari_bc = ari_start_bc; ari_bc <= ari_end_bc; ari_bc += 0x0100) {
 						Book book = S.activeVersion.getBook(Ari.toBook(ari_bc));
 						int chapter_1 = Ari.toChapter(ari_bc);
-						if (book == null || chapter_1 <= 0 || chapter_1 > book.nchapter) {
+						if (book == null || chapter_1 <= 0 || chapter_1 > book.chapter_count) {
 							continue;
 						}
 						
@@ -274,7 +274,7 @@ public class Provider extends ContentProvider {
 					text = U.removeSpecialCodes(text);
 				}
 				count++;
-				cursor.addRow(new Object[] {last_c + count, ari, book.judul, text});
+				cursor.addRow(new Object[] {last_c + count, ari, book.shortName, text});
 			} else {
 				// we're done with this chapter, no need to loop again
 				break;

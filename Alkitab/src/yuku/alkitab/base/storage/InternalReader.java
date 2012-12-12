@@ -9,12 +9,13 @@ import java.util.ArrayList;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.InternalBook;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.PericopeIndex;
 import yuku.alkitab.base.model.Version;
 import yuku.bintex.BintexReader;
 
-public class InternalReader implements Reader {
+public class InternalReader implements BibleReader {
 	public static final String TAG = InternalReader.class.getSimpleName();
 
 	// # buat cache Asset
@@ -64,8 +65,8 @@ public class InternalReader implements Reader {
 		}
 	}
 
-	private static Book bacaKitab(BintexReader in, int pos) throws IOException {
-		Book k = new Book();
+	private static InternalBook bacaKitab(BintexReader in, int pos) throws IOException {
+		InternalBook k = new InternalBook();
 		k.bookId = pos;
 
 		// autostring bookName
@@ -74,29 +75,31 @@ public class InternalReader implements Reader {
 		// uint8[chapter_count] verse_counts
 		// int[chapter_count+1] chapter_offsets
 
-		k.nama = k.judul = in.readAutoString();
+		k.shortName = in.readAutoString();
 		k.file = in.readShortString();
-		k.nchapter = in.readInt();
+		k.chapter_count = in.readInt();
 
-		k.nverses = new int[k.nchapter];
-		for (int i = 0; i < k.nchapter; i++) {
-			k.nverses[i] = in.readUint8();
+		k.verse_counts = new int[k.chapter_count];
+		for (int i = 0; i < k.chapter_count; i++) {
+			k.verse_counts[i] = in.readUint8();
 		}
 
-		k.pasal_offset = new int[k.nchapter + 1];
-		for (int i = 0; i < k.nchapter + 1; i++) {
-			k.pasal_offset[i] = in.readInt();
+		k.chapter_offsets = new int[k.chapter_count + 1];
+		for (int i = 0; i < k.chapter_count + 1; i++) {
+			k.chapter_offsets[i] = in.readInt();
 		}
 
 		return k;
 	}
 
 	@Override public String[] loadVerseText(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
-		if (pasal_1 < 1 || pasal_1 > book.nchapter) {
+		InternalBook internalBook = (InternalBook) book;
+
+		if (pasal_1 < 1 || pasal_1 > book.chapter_count) {
 			return null;
 		}
-
-		int offset = book.pasal_offset[pasal_1 - 1];
+		
+		int offset = internalBook.chapter_offsets[pasal_1 - 1];
 		int length = 0;
 
 		try {
@@ -106,16 +109,16 @@ public class InternalReader implements Reader {
 			// Log.d("alki", "muatTeks cache_file=" + cache_file + " cache_posInput=" + cache_posInput);
 			if (cache_inputStream == null) {
 				// kasus 1: belum buka apapun
-				in = S.openRaw(book.file);
+				in = S.openRaw(internalBook.file);
 				cache_inputStream = in;
-				cache_file = book.file;
+				cache_file = internalBook.file;
 
 				in.skip(offset);
 				cache_posInput = offset;
 				// Log.d("alki", "muatTeks masuk kasus 1");
 			} else {
 				// kasus 2: uda pernah buka. Cek apakah filenya sama
-				if (book.file.equals(cache_file)) {
+				if (internalBook.file.equals(cache_file)) {
 					// kasus 2.1: filenya sama.
 					if (offset >= cache_posInput) {
 						// bagus, kita bisa maju.
@@ -128,7 +131,7 @@ public class InternalReader implements Reader {
 						// ga bisa mundur. tutup dan buka lagi.
 						cache_inputStream.close();
 
-						in = S.openRaw(book.file);
+						in = S.openRaw(internalBook.file);
 						cache_inputStream = in;
 
 						in.skip(offset);
@@ -139,9 +142,9 @@ public class InternalReader implements Reader {
 					// kasus 2.2: filenya beda, tutup dan buka baru
 					cache_inputStream.close();
 
-					in = S.openRaw(book.file);
+					in = S.openRaw(internalBook.file);
 					cache_inputStream = in;
-					cache_file = book.file;
+					cache_file = internalBook.file;
 
 					in.skip(offset);
 					cache_posInput = offset;
@@ -149,10 +152,10 @@ public class InternalReader implements Reader {
 				}
 			}
 
-			if (pasal_1 == book.nchapter) {
+			if (pasal_1 == internalBook.chapter_count) {
 				length = in.available();
 			} else {
-				length = book.pasal_offset[pasal_1] - offset;
+				length = internalBook.chapter_offsets[pasal_1] - offset;
 			}
 
 			byte[] ba = new byte[length];

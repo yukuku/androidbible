@@ -227,7 +227,7 @@ public class S {
 	}
 	
 	private static String[] loadChapterText(Version version, Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
-		return version.reader.loadVerseText(book, pasal_1, janganPisahAyat, hurufKecil);
+		return version.bibleReader.loadVerseText(book, pasal_1, janganPisahAyat, hurufKecil);
 	}
 
 	public static String reference(Version version, int ari) {
@@ -240,7 +240,7 @@ public class S {
 		if (k == null) {
 			hasil.append('[').append(kitabPos).append("] "); //$NON-NLS-1$
 		} else {
-			hasil.append(k.judul).append(' ');
+			hasil.append(k.shortName).append(' ');
 		}
 		
 		hasil.append(pasal_1);
@@ -251,15 +251,15 @@ public class S {
 	}
 
 	public static String reference(Book book, int pasal_1) {
-		return (book == null? "[?]": book.judul) + " " + pasal_1; //$NON-NLS-1$ //$NON-NLS-2$
+		return (book == null? "[?]": book.shortName) + " " + pasal_1; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public static String reference(Book book, int pasal_1, int ayat_1) {
-		return (book == null? "[?]": book.judul) + " " + pasal_1 + ":" + ayat_1;  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		return (book == null? "[?]": book.shortName) + " " + pasal_1 + ":" + ayat_1;  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	public static CharSequence reference(Book book, int pasal_1, IntArrayList xayat_1) {
-		StringBuilder sb = new StringBuilder(book == null? "[?]": book.judul); //$NON-NLS-1$
+		StringBuilder sb = new StringBuilder(book == null? "[?]": book.shortName); //$NON-NLS-1$
 		sb.append(' ').append(pasal_1);
 		if (xayat_1 == null || xayat_1.size() == 0) {
 			return sb;

@@ -119,11 +119,11 @@ public class GotoDialerFragment extends BaseGotoFragment {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				Book k = adapter.getItem(position);
-				maxPasal = k.nchapter;
+				maxPasal = k.chapter_count;
 
 				int pasal_0 = cobaBacaPasal() - 1;
-				if (pasal_0 >= 0 && pasal_0 < k.nchapter) {
-					maxAyat = k.nverses[pasal_0];
+				if (pasal_0 >= 0 && pasal_0 < k.chapter_count) {
+					maxAyat = k.verse_counts[pasal_0];
 				}
 
 				betulinPasalKelebihan();
@@ -301,8 +301,8 @@ public class GotoDialerFragment extends BaseGotoFragment {
 				
 				Book k = adapter.getItem(cbKitab.getSelectedItemPosition());
 				int pasal_1 = cobaBacaPasal();
-				if (pasal_1 >= 1 && pasal_1 <= k.nverses.length) {
-					maxAyat = k.nverses[pasal_1 - 1];
+				if (pasal_1 >= 1 && pasal_1 <= k.verse_counts.length) {
+					maxAyat = k.verse_counts[pasal_1 - 1];
 				}
 			} else if (aktif == lAyat) {
 				if (lAyat_pertamaKali) {
@@ -344,7 +344,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 				// sort!
 				Arrays.sort(xkitabc_, new Comparator<Book>() {
 					@Override public int compare(Book a, Book b) {
-						return a.judul.compareToIgnoreCase(b.judul);
+						return a.shortName.compareToIgnoreCase(b.shortName);
 					}
 				});
 			} else {
@@ -378,7 +378,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 
 		@Override public View getView(int position, View convertView, ViewGroup viewGroup) {
 			TextView res = (TextView) (convertView != null ? convertView : LayoutInflater.from(getActivity()).inflate(android.R.layout.simple_spinner_item, null));
-			res.setText(xkitabc_[position].judul);
+			res.setText(xkitabc_[position].shortName);
 			return res;
 		}
 
@@ -386,7 +386,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 			CheckedTextView res = (CheckedTextView) (convertView != null ? convertView : LayoutInflater.from(getActivity()).inflate(android.R.layout.select_dialog_singlechoice, null));
 
 			Book k = getItem(position);
-			res.setText(k.judul);
+			res.setText(k.shortName);
 			res.setTextColor(U.getColorBasedOnBookId(k.bookId));
 
 			return res;

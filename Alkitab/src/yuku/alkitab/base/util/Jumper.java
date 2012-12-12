@@ -310,7 +310,7 @@ public class Jumper {
 				ArrayList<Jumper.KitabRef> a = new ArrayList<Jumper.KitabRef>();
 				
 				for (Book k: xkitab) {
-					String judul = k.judul.replaceAll("(\\s|-|_)+", "").toLowerCase(); //$NON-NLS-1$ //$NON-NLS-2$
+					String judul = k.shortName.replaceAll("(\\s|-|_)+", "").toLowerCase(); //$NON-NLS-1$ //$NON-NLS-2$
 					
 					{
 						Jumper.KitabRef ref = new KitabRef();

@@ -5,14 +5,14 @@ import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.PericopeIndex;
 import yuku.alkitab.base.model.Version;
 
-public interface Reader {
+public interface BibleReader {
 	String getShortName();
 	String getLongName();
 	Book[] loadBooks();
 	/**
 	 * @return may return null if the requested is not available 
 	 */
-	String[] loadVerseText(Book book, int pasal_1, boolean dontSplitVerses, boolean lowercased);
+	String[] loadVerseText(Book book, int chapter_1, boolean dontSplitVerses, boolean lowercased);
 	PericopeIndex loadPericopeIndex();
-	int loadPericope(Version version, int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max);
+	int loadPericope(Version version, int bookId, int chapter_1, int[] aris, PericopeBlock[] pericopeBlocks, int max);
 }

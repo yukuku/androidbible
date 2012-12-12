@@ -217,7 +217,7 @@ public class Search2Engine {
 					continue; // ga termasuk dalam kitab yang dipilih
 				}
 				
-				int npasal = k.nchapter;
+				int npasal = k.chapter_count;
 				
 				for (int pasal_1 = 1; pasal_1 <= npasal; pasal_1++) {
 					// coba sepasal sekaligus dulu.
@@ -228,7 +228,7 @@ public class Search2Engine {
 					}
 				}
 	
-				if (D.EBUG) Log.d(TAG, "cariDalam kitab " + k.nama + " selesai. res.size = " + res.size()); //$NON-NLS-1$ //$NON-NLS-2$
+				if (D.EBUG) Log.d(TAG, "cariDalam kitab " + k.shortName + " selesai. res.size = " + res.size()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else {
 			// cari hanya pada kp (kitab pasal) yang ada di sumber.

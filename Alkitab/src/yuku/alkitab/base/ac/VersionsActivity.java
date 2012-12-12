@@ -49,11 +49,11 @@ import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertParams;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertProgressListener;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertResult;
 import yuku.alkitab.base.storage.Db;
-import yuku.alkitab.base.storage.YesReader;
 import yuku.alkitab.base.util.AddonManager;
 import yuku.alkitab.base.util.AddonManager.DownloadListener;
 import yuku.alkitab.base.util.AddonManager.DownloadThread;
 import yuku.alkitab.base.util.AddonManager.Element;
+import yuku.alkitab.yes1.Yes1Reader;
 import yuku.androidcrypto.DigestType;
 import yuku.androidcrypto.Digester;
 import yuku.filechooser.FileChooserActivity;
@@ -458,7 +458,7 @@ public class VersionsActivity extends BaseActivity {
 		}
 		
 		try {
-			YesReader pembaca = new YesReader(filename);
+			Yes1Reader pembaca = new Yes1Reader(filename);
 			int urutanTerbesar = S.getDb().getUrutanTerbesarEdisiYes();
 			if (urutanTerbesar == 0) urutanTerbesar = 100; // default
 			
@@ -662,7 +662,7 @@ public class VersionsActivity extends BaseActivity {
 		@Override
 		public Version getVersion() {
 			if (hasDataFile()) {
-				return new Version(new YesReader(AddonManager.getVersionPath(presetFilename)));
+				return new Version(new Yes1Reader(AddonManager.getVersionPath(presetFilename)));
 			} else {
 				return null;
 			}
@@ -687,7 +687,7 @@ public class VersionsActivity extends BaseActivity {
 		@Override
 		public Version getVersion() {
 			if (hasDataFile()) {
-				return new Version(new YesReader(filename));
+				return new Version(new Yes1Reader(filename));
 			} else {
 				return null;
 			}

@@ -4,16 +4,13 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import yuku.alkitab.base.model.Book;
 import yuku.bintex.BintexReader;
 import yuku.bintex.BintexWriter;
 import yuku.bintex.ValueMap;
 
-public class Yes2Book {
-	public int bookId;
-	public String shortName;
-	public int offset;
-	public int chapter_count;
-	public int[] verse_counts;
+public class Yes2Book extends Book {
+	public int offset = -1;
 	public int[] chapter_offsets;
 	
 	public void toBytes(BintexWriter bw) throws Exception {

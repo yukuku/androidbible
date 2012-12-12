@@ -1,4 +1,4 @@
-package yuku.alkitab.base.storage;
+package yuku.alkitab.yes1;
 
 import android.util.Log;
 
@@ -14,10 +14,12 @@ import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.PericopeIndex;
 import yuku.alkitab.base.model.Version;
+import yuku.alkitab.base.storage.BibleReader;
+import yuku.alkitab.base.storage.VerseTextDecoder;
 import yuku.bintex.BintexReader;
 
-public class YesReader implements Reader {
-	private static final String TAG = YesReader.class.getSimpleName();
+public class Yes1Reader implements BibleReader {
+	private static final String TAG = Yes1Reader.class.getSimpleName();
 	
 	private String nf;
 	private RandomAccessFile f;
@@ -34,7 +36,7 @@ public class YesReader implements Reader {
 	private int perikopAda = 0; // default ga ada
 	private int encoding = 1; // 1 = ascii; 2 = utf-8;
 	
-	public YesReader(String nf) {
+	public Yes1Reader(String nf) {
 		this.nf = nf;
 	}
 	
@@ -173,7 +175,7 @@ public class YesReader implements Reader {
 			
 			Log.d(TAG, "akan membaca " + this.nkitab + " kitab"); //$NON-NLS-1$ //$NON-NLS-2$
 			for (int kitabIndex = 0; kitabIndex < this.nkitab; kitabIndex++) {
-				Book k = new Book();
+				Yes1Book k = new Yes1Book();
 				
 				// kalau true, berarti ini kitab NULL
 				boolean kosong = false;
@@ -187,15 +189,15 @@ public class YesReader implements Reader {
 					} else if (key.equals("pos")) { //$NON-NLS-1$
 						k.bookId = in.readInt();
 					} else if (key.equals("nama")) { //$NON-NLS-1$
-						k.nama = in.readShortString();
+						k.shortName = in.readShortString();
 					} else if (key.equals("judul")) { //$NON-NLS-1$
-						k.judul = in.readShortString();
+						k.shortName = in.readShortString();
 					} else if (key.equals("npasal")) { //$NON-NLS-1$
-						k.nchapter = in.readInt();
+						k.chapter_count = in.readInt();
 					} else if (key.equals("nayat")) { //$NON-NLS-1$
-						k.nverses = new int[k.nchapter];
-						for (int i = 0; i < k.nchapter; i++) {
-							k.nverses[i] = in.readUint8();
+						k.verse_counts = new int[k.chapter_count];
+						for (int i = 0; i < k.chapter_count; i++) {
+							k.verse_counts[i] = in.readUint8();
 						}
 					} else if (key.equals("ayatLoncat")) { //$NON-NLS-1$
 						// TODO di masa depan
@@ -204,9 +206,9 @@ public class YesReader implements Reader {
 						// TODO di masa depan
 						in.readInt();
 					} else if (key.equals("pasal_offset")) { //$NON-NLS-1$
-						k.pasal_offset = new int[k.nchapter + 1]; // harus ada +1nya kalo YesPembaca
-						for (int i = 0; i < k.pasal_offset.length; i++) {
-							k.pasal_offset[i] = in.readInt();
+						k.chapter_offsets = new int[k.chapter_count + 1]; // harus ada +1nya kalo YesPembaca
+						for (int i = 0; i < k.chapter_offsets.length; i++) {
+							k.chapter_offsets[i] = in.readInt();
 						}
 					} else if (key.equals("encoding")) { //$NON-NLS-1$
 						// TODO di masa depan, mungkin deprecated, karena ini lebih cocok di edisi.
@@ -265,18 +267,20 @@ public class YesReader implements Reader {
 		try {
 			init();
 			
-			if (pasal_1 > book.nchapter) {
+			if (pasal_1 > book.chapter_count) {
 				return null;
 			}
 			
+			Yes1Book yesBook = (Yes1Book) book;
+			
 			long seekTo = teks_dasarOffset;
-			seekTo += book.offset;
-			seekTo += book.pasal_offset[pasal_1 - 1];
+			seekTo += yesBook.offset;
+			seekTo += yesBook.chapter_offsets[pasal_1 - 1];
 			f.seek(seekTo);
 			
-			int length = book.pasal_offset[pasal_1] - book.pasal_offset[pasal_1 - 1];
+			int length = yesBook.chapter_offsets[pasal_1] - yesBook.chapter_offsets[pasal_1 - 1];
 			
-			if (D.EBUG) Log.d(TAG, "muatTeks kitab=" + book.nama + " pasal_1=" + pasal_1 + " offset=" + book.offset + " offset pasal: " + book.pasal_offset[pasal_1-1]); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			if (D.EBUG) Log.d(TAG, "muatTeks kitab=" + book.shortName + " pasal_1=" + pasal_1 + " offset=" + yesBook.offset + " offset pasal: " + yesBook.chapter_offsets[pasal_1-1]); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			
 			byte[] ba = new byte[length];
 			f.read(ba);
