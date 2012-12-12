@@ -7,7 +7,6 @@ import java.io.RandomAccessFile;
 import java.util.Arrays;
 
 import yuku.afw.D;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
@@ -162,50 +161,44 @@ public class Yes2Reader implements Reader {
 		}
 	}
 
-	@Override public String[] loadVerseText(YesBook yesBook, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
-		// init pembacaDecoder
+	@Override public String[] loadVerseText(Book book, int chapter_1, boolean dontSeparateVerses, boolean lowercase) {
+		// init text decoder 
 		if (decoder_ == null) {
-			if (encoding == 1) {
+			int textEncoding = versionInfo_.textEncoding;
+			if (textEncoding == 1) {
 				decoder_ = new ReaderDecoder.Ascii();
-			} else if (encoding == 2) {
+			} else if (textEncoding == 2) {
 				decoder_ = new ReaderDecoder.Utf8();
 			} else {
-				Log.e(TAG, "Encoding " + encoding + " not recognized!"); //$NON-NLS-1$//$NON-NLS-2$
+				Log.e(TAG, "Text encoding " + textEncoding + " not supported! Fallback to ascii."); //$NON-NLS-1$ //$NON-NLS-2$
 				decoder_ = new ReaderDecoder.Ascii();
 			}
-			Log.d(TAG, "encoding " + encoding + " so decoder is " + decoder_.getClass().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		try {
 			init();
 
-			if (pasal_1 > yesBook.nchapter) {
+			if (chapter_1 <= 0 || chapter_1 > book.nchapter) {
 				return null;
 			}
 
 			long seekTo = text_offsetBase_;
-			seekTo += yesBook.offset;
-			seekTo += yesBook.pasal_offset[pasal_1 - 1];
+			seekTo += book.offset;
+			seekTo += book.pasal_offset[chapter_1 - 1];
 			file_.seek(seekTo);
 
-			int length = yesBook.pasal_offset[pasal_1] - yesBook.pasal_offset[pasal_1 - 1];
-
-			if (D.EBUG) Log.d(TAG, "muatTeks kitab=" + yesBook.nama + " pasal_1=" + pasal_1 + " offset=" + yesBook.offset + " offset pasal: " + yesBook.pasal_offset[pasal_1 - 1]); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			int length = book.pasal_offset[chapter_1] - book.pasal_offset[chapter_1 - 1];
 
 			byte[] ba = new byte[length];
 			file_.read(ba);
 
-			if (janganPisahAyat) {
-				return new String[] { decoder_.jadikanStringTunggal(ba, hurufKecil) };
+			if (dontSeparateVerses) {
+				return new String[] { decoder_.jadikanStringTunggal(ba, lowercase) };
 			} else {
-				String[] xayat = decoder_.pisahJadiAyat(ba, hurufKecil);
-				if (D.EBUG) for (int i = 0; i < xayat.length; i++) {
-					Log.d(TAG, "ayat_1 " + (i + 1) + ": " + U.dumpChars(xayat[i])); //$NON-NLS-1$//$NON-NLS-2$
-				}
-				return xayat;
+				return decoder_.pisahJadiAyat(ba, lowercase);
 			}
 		} catch (Exception e) {
-			Log.e(TAG, "muatTeks error", e); //$NON-NLS-1$
+			Log.e(TAG, "loadVerseText error", e); //$NON-NLS-1$
 			return null;
 		}
 	}
