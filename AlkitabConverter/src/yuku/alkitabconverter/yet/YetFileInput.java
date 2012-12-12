@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
-import yuku.alkitab.yes.YesFile.PericopeData;
+import yuku.alkitab.yes1.Yes1File.PericopeData;
 import yuku.alkitabconverter.util.Rec;
 
 public class YetFileInput {
