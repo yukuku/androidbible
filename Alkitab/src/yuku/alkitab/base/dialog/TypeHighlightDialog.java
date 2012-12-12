@@ -43,7 +43,7 @@ public class TypeHighlightDialog {
 	 * @param warnaRgb -1 kalo ga terpilih. #rrggbb ga pake alpha
 	 */
 	public TypeHighlightDialog(Context context, int ari, JenisStabiloCallback callback, int warnaRgb, CharSequence judul) {
-		this(context, Ari.toKitabPasal(ari), satuSaja(Ari.toVerse(ari)), callback, warnaRgb, judul);
+		this(context, Ari.toBookChapter(ari), satuSaja(Ari.toVerse(ari)), callback, warnaRgb, judul);
 	}
 	
 	private static IntArrayList satuSaja(int ayat_1) {

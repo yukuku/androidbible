@@ -319,7 +319,7 @@ public class InternalDb {
 			// setiap ayat yang diminta
 			for (int i = 0; i < ayatTerpilih.size(); i++) {
 				int ayat_1 = ayatTerpilih.get(i);
-				int ari = Ari.encodeWithKp(ariKp, ayat_1);
+				int ari = Ari.encodeWithBc(ariKp, ayat_1);
 				params[0] = String.valueOf(ari);
 				
 				Cursor c = db.query(Db.TABEL_Bukmak2, null, Db.Bukmak2.ari + "=? and " + Db.Bukmak2.jenis + "=?", params, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
