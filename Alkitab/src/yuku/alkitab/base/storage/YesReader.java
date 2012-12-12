@@ -21,7 +21,7 @@ public class YesReader implements Reader {
 	
 	private String nf;
 	private RandomAccessFile f;
-	private ReaderDecoder readerDecoder;
+	private VerseTextDecoder verseTextDecoder;
 	
 	private long teks_dasarOffset;
 	private long perikopBlok_dasarOffset;
@@ -250,16 +250,16 @@ public class YesReader implements Reader {
 	@Override
 	public String[] loadVerseText(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
 		// init pembacaDecoder
-		if (readerDecoder == null) {
+		if (verseTextDecoder == null) {
 			if (encoding == 1) {
-				readerDecoder = new ReaderDecoder.Ascii();
+				verseTextDecoder = new VerseTextDecoder.Ascii();
 			} else if (encoding == 2) {
-				readerDecoder = new ReaderDecoder.Utf8();
+				verseTextDecoder = new VerseTextDecoder.Utf8();
 			} else {
 				Log.e(TAG, "Encoding " + encoding + " not recognized!");  //$NON-NLS-1$//$NON-NLS-2$
-				readerDecoder = new ReaderDecoder.Ascii();
+				verseTextDecoder = new VerseTextDecoder.Ascii();
 			}
-			Log.d(TAG, "encoding " + encoding + " so decoder is " + readerDecoder.getClass().getName()); //$NON-NLS-1$ //$NON-NLS-2$
+			Log.d(TAG, "encoding " + encoding + " so decoder is " + verseTextDecoder.getClass().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		try {
@@ -282,9 +282,9 @@ public class YesReader implements Reader {
 			f.read(ba);
 			
 			if (janganPisahAyat) {
-				return new String[] {readerDecoder.jadikanStringTunggal(ba, hurufKecil)};
+				return new String[] {verseTextDecoder.makeIntoSingleString(ba, hurufKecil)};
 			} else {
-				String[] xayat = readerDecoder.pisahJadiAyat(ba, hurufKecil);
+				String[] xayat = verseTextDecoder.separateIntoVerses(ba, hurufKecil);
 				if (D.EBUG) for (int i = 0; i < xayat.length; i++) {
 					Log.d(TAG, "ayat_1 " + (i+1) + ": " + U.dumpChars(xayat[i]));  //$NON-NLS-1$//$NON-NLS-2$
 				}

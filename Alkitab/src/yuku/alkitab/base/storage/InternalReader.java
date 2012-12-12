@@ -25,13 +25,13 @@ public class InternalReader implements Reader {
 	private final String edisiPrefix;
 	private final String edisiShortName;
 	private final String edisiLongName;
-	private final ReaderDecoder readerDecoder;
+	private final VerseTextDecoder verseTextDecoder;
 
-	public InternalReader(String edisiPrefix, String edisiShortName, String edisiLongName, ReaderDecoder readerDecoder) {
+	public InternalReader(String edisiPrefix, String edisiShortName, String edisiLongName, VerseTextDecoder verseTextDecoder) {
 		this.edisiPrefix = edisiPrefix;
 		this.edisiShortName = edisiShortName;
 		this.edisiLongName = edisiLongName;
-		this.readerDecoder = readerDecoder;
+		this.verseTextDecoder = verseTextDecoder;
 	}
 	
 	@Override public String getShortName() {
@@ -161,9 +161,9 @@ public class InternalReader implements Reader {
 			// jangan ditutup walau uda baca. Siapa tau masih sama filenya dengan sebelumnya.
 
 			if (janganPisahAyat) {
-				return new String[] { readerDecoder.jadikanStringTunggal(ba, hurufKecil) };
+				return new String[] { verseTextDecoder.makeIntoSingleString(ba, hurufKecil) };
 			} else {
-				return readerDecoder.pisahJadiAyat(ba, hurufKecil);
+				return verseTextDecoder.separateIntoVerses(ba, hurufKecil);
 			}
 		} catch (IOException e) {
 			return new String[] { e.getMessage() };

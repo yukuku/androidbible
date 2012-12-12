@@ -13,7 +13,7 @@ import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.PericopeIndex;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.Reader;
-import yuku.alkitab.base.storage.ReaderDecoder;
+import yuku.alkitab.base.storage.VerseTextDecoder;
 import yuku.alkitab.yes2.io.RandomInputStream;
 import yuku.alkitab.yes2.model.Yes2Book;
 import yuku.alkitab.yes2.section.BooksInfo;
@@ -25,7 +25,7 @@ public class Yes2Reader implements Reader {
 
 	private String filename_;
 	private RandomAccessFile file_;
-	private ReaderDecoder decoder_;
+	private VerseTextDecoder decoder_;
 
 	private long text_offsetBase_;
 	private long pericopeBlock_offsetBase_;
@@ -166,12 +166,12 @@ public class Yes2Reader implements Reader {
 		if (decoder_ == null) {
 			int textEncoding = versionInfo_.textEncoding;
 			if (textEncoding == 1) {
-				decoder_ = new ReaderDecoder.Ascii();
+				decoder_ = new VerseTextDecoder.Ascii();
 			} else if (textEncoding == 2) {
-				decoder_ = new ReaderDecoder.Utf8();
+				decoder_ = new VerseTextDecoder.Utf8();
 			} else {
 				Log.e(TAG, "Text encoding " + textEncoding + " not supported! Fallback to ascii."); //$NON-NLS-1$ //$NON-NLS-2$
-				decoder_ = new ReaderDecoder.Ascii();
+				decoder_ = new VerseTextDecoder.Ascii();
 			}
 		}
 
@@ -193,9 +193,9 @@ public class Yes2Reader implements Reader {
 			file_.read(ba);
 
 			if (dontSeparateVerses) {
-				return new String[] { decoder_.jadikanStringTunggal(ba, lowercase) };
+				return new String[] { decoder_.makeIntoSingleString(ba, lowercase) };
 			} else {
-				return decoder_.pisahJadiAyat(ba, lowercase);
+				return decoder_.separateIntoVerses(ba, lowercase);
 			}
 		} catch (Exception e) {
 			Log.e(TAG, "loadVerseText error", e); //$NON-NLS-1$
