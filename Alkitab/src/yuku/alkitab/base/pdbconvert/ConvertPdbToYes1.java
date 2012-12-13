@@ -109,7 +109,7 @@ public class ConvertPdbToYes1 {
 					BookInfo bookInfo = pdb.getBook(bookPos);
 					bookInfo.openBook();
 					int bookNumber = bookInfo.getBookNumber();
-					int kitabPos = PdbNumberToAriMapping.pdbNumberToAriKitab(bookNumber);
+					int kitabPos = PdbBookNumberToBookIdMapping.pdbBookNumberToBookId(bookNumber);
 					if (kitabPos < 0) {
 						Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL"); //$NON-NLS-1$ //$NON-NLS-2$
 						if (res.wronglyConvertedBookNames == null) {
@@ -127,7 +127,7 @@ public class ConvertPdbToYes1 {
 				bookInfo.openBook();
 
 				int bookNumber = bookInfo.getBookNumber();
-				int kitabPos = PdbNumberToAriMapping.pdbNumberToAriKitab(bookNumber);
+				int kitabPos = PdbBookNumberToBookIdMapping.pdbBookNumberToBookId(bookNumber);
 				if (kitabPos < 0) {
 					Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
