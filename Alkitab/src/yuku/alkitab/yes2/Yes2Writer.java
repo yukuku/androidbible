@@ -9,6 +9,7 @@ import java.util.List;
 import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexWriter;
+import yuku.bintex.ValueMap;
 
 /**
  * YES version 2 file format
@@ -149,7 +150,8 @@ public class Yes2Writer {
 			{ // attributes
 				int posBeforeAttributes = (int) file.getFilePointer();
 				alog(file.getFilePointer(), "write section attributes: " + section_name);
-				bw.writeValueSimpleMap(section.getAttributes());
+				ValueMap attributes = section.getAttributes();
+				bw.writeValueSimpleMap(attributes == null? new ValueMap(): attributes);
 				savedsizes_sectionAttributes[i] = (int) file.getFilePointer() - posBeforeAttributes;
 			}
 			

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import yuku.afw.D;
 import yuku.alkitab.R;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.yes2.Yes2Writer;
@@ -155,13 +154,13 @@ public class ConvertPdbToYes2 {
 			yesWriter.sections.add(booksInfo);
 			
 			if (pericopeData_ != null) {
-				progress(510, context.getString(R.string.cp_writing_num_section_pericope_indexes, pericopeData_.entries.size()));
-				PericopeIndex pericopeIndex = new PericopeIndex(pericopeData_);
-				yesWriter.sections.add(pericopeIndex);
-				
-				progress(520, context.getString(R.string.cp_writing_num_section_pericope_titles, pericopeData_.entries.size()));
+				progress(510, context.getString(R.string.cp_writing_num_section_pericope_titles, pericopeData_.entries.size()));
 				PericopeBlock pericopeBlock = new PericopeBlock(pericopeData_);
 				yesWriter.sections.add(pericopeBlock);
+				
+				progress(520, context.getString(R.string.cp_writing_num_section_pericope_indexes, pericopeData_.entries.size()));
+				PericopeIndex pericopeIndex = new PericopeIndex(pericopeData_);
+				yesWriter.sections.add(pericopeIndex);
 			}
 			
 			LazyText lazyText = new LazyText(context, 800, sortedBookIds);
@@ -305,10 +304,6 @@ public class ConvertPdbToYes2 {
 	private void storePericope(int type, String title, int bookId, int chapter_0, int verse_0) {
 		int ari = Ari.encode(bookId, chapter_0 + 1, verse_0 + 1);
 
-		if (D.EBUG) {
-			Log.d(TAG, "block type " + type + " at " + Integer.toHexString(ari) + ": " + title); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-		
 		if (pericopeData_ == null) {
 			pericopeData_ = new PericopeData();
 		}
@@ -317,6 +312,7 @@ public class ConvertPdbToYes2 {
 		entry.ari = ari;
 		entry.block = new PericopeData.Block();
 		entry.block.title = title;
+		pericopeData_.addEntry(entry);
 	}
 
 	public class LazyText extends SectionContent implements SectionContent.Writer {

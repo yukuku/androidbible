@@ -9,7 +9,7 @@ public class PericopeBlock extends SectionContent implements SectionContent.Writ
 	private final PericopeData data;
 
 	public PericopeBlock(PericopeData data) {
-		super("pericopeData");
+		super("pericopeBlock");
 		this.data = data;
 	}
 
