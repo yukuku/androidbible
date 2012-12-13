@@ -28,8 +28,8 @@ import com.compactbyte.android.bible.PDBFileStream;
 import com.compactbyte.bibleplus.reader.BiblePlusPDB;
 import com.compactbyte.bibleplus.reader.BookInfo;
 
-public class ConvertPdbToYes {
-	public static final String TAG = ConvertPdbToYes.class.getSimpleName();
+public class ConvertPdbToYes1 {
+	public static final String TAG = ConvertPdbToYes1.class.getSimpleName();
 
 	public static final int VERSI_CONVERTER = 1;
 
@@ -75,7 +75,7 @@ public class ConvertPdbToYes {
 		}
 	}
 	
-	public ConvertPdbToYes() {
+	public ConvertPdbToYes1() {
 	}
 	
 	public ConvertResult convert(final Context context, String filenamepdb, String namafileyes, ConvertParams params) {

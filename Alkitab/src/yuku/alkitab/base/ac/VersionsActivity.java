@@ -44,10 +44,10 @@ import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog.ConvertOptionsCallback;
-import yuku.alkitab.base.pdbconvert.ConvertPdbToYes;
-import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertParams;
-import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertProgressListener;
-import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertResult;
+import yuku.alkitab.base.pdbconvert.ConvertPdbToYes1;
+import yuku.alkitab.base.pdbconvert.ConvertPdbToYes1.ConvertParams;
+import yuku.alkitab.base.pdbconvert.ConvertPdbToYes1.ConvertProgressListener;
+import yuku.alkitab.base.pdbconvert.ConvertPdbToYes1.ConvertResult;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.util.AddonManager;
 import yuku.alkitab.base.util.AddonManager.DownloadListener;
@@ -484,7 +484,7 @@ public class VersionsActivity extends BaseActivity {
 	}
 
 	private void handleFileOpenPdb(final String namafilepdb) {
-		final String namayes = yesName(namafilepdb, ConvertPdbToYes.VERSI_CONVERTER);
+		final String namayes = yesName(namafilepdb, ConvertPdbToYes1.VERSI_CONVERTER);
 		
 		// cek apakah sudah ada.
 		if (S.getDb().adakahEdisiYesDenganNamafile(AddonManager.getVersionPath(namayes))) {
@@ -523,7 +523,7 @@ public class VersionsActivity extends BaseActivity {
 				
 				new AsyncTask<String, Object, ConvertResult>() {
 					@Override protected ConvertResult doInBackground(String... _unused_) {
-						ConvertPdbToYes converter = new ConvertPdbToYes();
+						ConvertPdbToYes1 converter = new ConvertPdbToYes1();
 						converter.setConvertProgressListener(new ConvertProgressListener() {
 							@Override public void onProgress(int at, String message) {
 								Log.d(TAG, "Progress " + at + ": " + message); //$NON-NLS-1$ //$NON-NLS-2$

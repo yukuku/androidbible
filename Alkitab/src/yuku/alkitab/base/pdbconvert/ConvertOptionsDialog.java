@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import yuku.alkitab.R;
-import yuku.alkitab.base.pdbconvert.ConvertPdbToYes.ConvertParams;
+import yuku.alkitab.base.pdbconvert.ConvertPdbToYes1.ConvertParams;
 
 import com.compactbyte.android.bible.PDBFileStream;
 import com.compactbyte.bibleplus.reader.BiblePlusPDB;
