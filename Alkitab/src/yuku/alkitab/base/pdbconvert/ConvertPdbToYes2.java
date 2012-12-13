@@ -213,7 +213,7 @@ public class ConvertPdbToYes2 {
 			b.chapter_count = pdbBookInfo.getChapterCount();
 			b.chapter_offsets = new int[b.chapter_count + 1];
 			b.offset = offsetTotal;
-			b.shortName = pdbBookInfo.getShortName();
+			b.shortName = pdbBookInfo.getFullName();
 			b.verse_counts = new int[b.chapter_count];
 			
 			b.chapter_offsets[0] = 0;
