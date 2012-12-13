@@ -328,7 +328,7 @@ public class Yes1Reader implements BibleReader {
 			}
 			
 			BintexReader in = new BintexReader(new RandomInputStream(f));
-			return PericopeIndex.read(in);
+			return Yes1PericopeIndex.read(in);
 		} catch (Exception e) {
 			Log.e(TAG, "bacaIndexPerikop error", e); //$NON-NLS-1$
 			return null;
@@ -344,7 +344,7 @@ public class Yes1Reader implements BibleReader {
 			
 			if (D.EBUG) Log.d(TAG, "muatPerikop dipanggil untuk kitab=" + kitab + " pasal_1=" + pasal); //$NON-NLS-1$ //$NON-NLS-2$
 			
-			PericopeIndex pericopeIndex = version.getIndexPerikop();
+			Yes1PericopeIndex pericopeIndex = (Yes1PericopeIndex) version.getIndexPerikop();
 			if (pericopeIndex == null) {
 				return 0; // ga ada perikop!
 			}
@@ -376,7 +376,7 @@ public class Yes1Reader implements BibleReader {
 					break;
 				}
 
-				PericopeBlock pericopeBlock = pericopeIndex.getBlock(in, kini);
+				Yes1PericopeBlock pericopeBlock = pericopeIndex.getBlock(in, kini);
 				kini++;
 
 				if (res < max) {

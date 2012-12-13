@@ -13,6 +13,7 @@ import yuku.alkitab.base.model.InternalBook;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.PericopeIndex;
 import yuku.alkitab.base.model.Version;
+import yuku.alkitab.yes1.Yes1PericopeIndex;
 import yuku.bintex.BintexReader;
 
 public class InternalReader implements BibleReader {
@@ -183,7 +184,7 @@ public class InternalReader implements BibleReader {
 
 		BintexReader in = new BintexReader(is);
 		try {
-			return PericopeIndex.read(in);
+			return Yes1PericopeIndex.read(in);
 
 		} catch (IOException e) {
 			Log.e(TAG, "baca perikop index ngaco", e); //$NON-NLS-1$
@@ -195,7 +196,7 @@ public class InternalReader implements BibleReader {
 	}
 
 	@Override public int loadPericope(Version version, int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max) {
-		PericopeIndex pericopeIndex = version.getIndexPerikop();
+		Yes1PericopeIndex pericopeIndex = (Yes1PericopeIndex) version.getIndexPerikop();
 
 		if (pericopeIndex == null) {
 			return 0; // ga ada perikop!
