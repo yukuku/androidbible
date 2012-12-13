@@ -20,8 +20,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
-import yuku.alkitab.base.pdbconvert.ConvertPdbToYes1.ConvertParams;
 
 import com.compactbyte.android.bible.PDBFileStream;
 import com.compactbyte.bibleplus.reader.BiblePlusPDB;
@@ -44,7 +44,8 @@ public class ConvertOptionsDialog {
 	ArrayAdapter<String> encodingAdapter;
 
 	public interface ConvertOptionsCallback {
-		void onOk(ConvertParams params);
+		void onOkYes1(ConvertPdbToYes1.ConvertParams params);
+		void onOkYes2(ConvertPdbToYes2.ConvertParams params);
 		void onPdbReadError(Throwable e);
 	}
 	
@@ -158,10 +159,17 @@ public class ConvertOptionsDialog {
 	
 	protected void bOk_click() {
 		pdb.close();
-		ConvertParams params = new ConvertParams();
-		params.inputEncoding = encodingAdapter.getItem(cbEncoding.getSelectedItemPosition());
-		params.includeAddlTitle = cAddlTitle.isChecked();
 		
-		callback.onOk(params);
+		if (Preferences.getBoolean("outputYesVersion2", false) == false) {
+			ConvertPdbToYes1.ConvertParams params = new ConvertPdbToYes1.ConvertParams();
+			params.inputEncoding = encodingAdapter.getItem(cbEncoding.getSelectedItemPosition());
+			params.includeAddlTitle = cAddlTitle.isChecked();
+			callback.onOkYes1(params);
+		} else {
+			ConvertPdbToYes2.ConvertParams params = new ConvertPdbToYes2.ConvertParams();
+			params.inputEncoding = encodingAdapter.getItem(cbEncoding.getSelectedItemPosition());
+			params.includeAddlTitle = cAddlTitle.isChecked();
+			callback.onOkYes2(params);
+		}
 	}
 }

@@ -45,9 +45,7 @@ import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog.ConvertOptionsCallback;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes1;
-import yuku.alkitab.base.pdbconvert.ConvertPdbToYes1.ConvertParams;
-import yuku.alkitab.base.pdbconvert.ConvertPdbToYes1.ConvertProgressListener;
-import yuku.alkitab.base.pdbconvert.ConvertPdbToYes1.ConvertResult;
+import yuku.alkitab.base.pdbconvert.ConvertPdbToYes2;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.util.AddonManager;
 import yuku.alkitab.base.util.AddonManager.DownloadListener;
@@ -483,8 +481,8 @@ public class VersionsActivity extends BaseActivity {
 		}
 	}
 
-	private void handleFileOpenPdb(final String namafilepdb) {
-		final String namayes = yesName(namafilepdb, ConvertPdbToYes1.VERSI_CONVERTER);
+	private void handleFileOpenPdb(final String pdbFilename) {
+		final String namayes = yesName(pdbFilename, ConvertPdbToYes1.VERSI_CONVERTER);
 		
 		// cek apakah sudah ada.
 		if (S.getDb().adakahEdisiYesDenganNamafile(AddonManager.getVersionPath(namayes))) {
@@ -505,11 +503,40 @@ public class VersionsActivity extends BaseActivity {
 		}
 		
 		ConvertOptionsCallback callback = new ConvertOptionsCallback() {
+			private void showPdbReadErrorDialog(Throwable exception) {
+				new AlertDialog.Builder(VersionsActivity.this)
+				.setTitle(R.string.ed_error_reading_pdb_file)
+				.setMessage(getString(R.string.ed_details) + U.showException(exception))
+				.setPositiveButton(R.string.ok, null)
+				.show();
+			};
+
+			private void showResult(final String namafilepdb, final String namafileyes, Throwable exception, List<String> wronglyConvertedBookNames) {
+				if (exception != null) {
+					showPdbReadErrorDialog(exception);
+				} else {
+					// sukses.
+					handleFileOpenYes(namafileyes, new File(namafilepdb).getName());
+					
+					if (wronglyConvertedBookNames != null && wronglyConvertedBookNames.size() > 0) {
+						StringBuilder msg = new StringBuilder(getString(R.string.ed_the_following_books_from_the_pdb_file_are_not_recognized) + '\n');
+						for (String s: wronglyConvertedBookNames) {
+							msg.append("- ").append(s).append('\n'); //$NON-NLS-1$
+						}
+						
+						new AlertDialog.Builder(VersionsActivity.this)
+						.setMessage(msg)
+						.setPositiveButton(R.string.ok, null)
+						.show();
+					}
+				}
+			}
+
 			@Override public void onPdbReadError(Throwable e) {
 				showPdbReadErrorDialog(e);
 			}
 			
-			@Override public void onOk(final ConvertParams params) {
+			@Override public void onOkYes1(final ConvertPdbToYes1.ConvertParams params) {
 				final String namafileyes = AddonManager.getVersionPath(namayes);
 				final ProgressDialog pd = ProgressDialog.show(VersionsActivity.this, null, getString(R.string.ed_reading_pdb_file), true, false);
 				pd.setOnKeyListener(new OnKeyListener() {
@@ -521,10 +548,10 @@ public class VersionsActivity extends BaseActivity {
 					}
 				});
 				
-				new AsyncTask<String, Object, ConvertResult>() {
-					@Override protected ConvertResult doInBackground(String... _unused_) {
+				new AsyncTask<String, Object, ConvertPdbToYes1.ConvertResult>() {
+					@Override protected ConvertPdbToYes1.ConvertResult doInBackground(String... _unused_) {
 						ConvertPdbToYes1 converter = new ConvertPdbToYes1();
-						converter.setConvertProgressListener(new ConvertProgressListener() {
+						converter.setConvertProgressListener(new ConvertPdbToYes1.ConvertProgressListener() {
 							@Override public void onProgress(int at, String message) {
 								Log.d(TAG, "Progress " + at + ": " + message); //$NON-NLS-1$ //$NON-NLS-2$
 								publishProgress(at, message);
@@ -535,7 +562,7 @@ public class VersionsActivity extends BaseActivity {
 								publishProgress(null, null);
 							}
 						});
-						return converter.convert(getApplicationContext(), namafilepdb, namafileyes, params);
+						return converter.convert(getApplicationContext(), pdbFilename, namafileyes, params);
 					}
 					
 					@Override protected void onProgressUpdate(Object... values) {
@@ -548,43 +575,65 @@ public class VersionsActivity extends BaseActivity {
 						}
 					};
 					
-					@Override protected void onPostExecute(ConvertResult result) {
+					@Override protected void onPostExecute(ConvertPdbToYes1.ConvertResult result) {
 						pd.dismiss();
 						
-						if (result.exception != null) {
-							showPdbReadErrorDialog(result.exception);
-						} else {
-							// sukses.
-							handleFileOpenYes(namafileyes, new File(namafilepdb).getName());
-							
-							if (result.wronglyConvertedBookNames != null && result.wronglyConvertedBookNames.size() > 0) {
-								StringBuilder msg = new StringBuilder(getString(R.string.ed_the_following_books_from_the_pdb_file_are_not_recognized) + '\n');
-								for (String s: result.wronglyConvertedBookNames) {
-									msg.append("- ").append(s).append('\n'); //$NON-NLS-1$
-								}
-								
-								new AlertDialog.Builder(VersionsActivity.this)
-								.setMessage(msg)
-								.setPositiveButton(R.string.ok, null)
-								.show();
-							}
+						showResult(pdbFilename, namafileyes, result.exception, result.wronglyConvertedBookNames);
+					}
+				}.execute();
+			}
+			
+			@Override public void onOkYes2(final ConvertPdbToYes2.ConvertParams params) {
+				final String yesFilename = AddonManager.getVersionPath(namayes);
+				final ProgressDialog pd = ProgressDialog.show(VersionsActivity.this, null, getString(R.string.ed_reading_pdb_file), true, false);
+				pd.setOnKeyListener(new OnKeyListener() {
+					@Override public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+						if (keyCode == KeyEvent.KEYCODE_SEARCH) {
+							return true;
 						}
+						return false;
+					}
+				});
+				
+				new AsyncTask<String, Object, ConvertPdbToYes2.ConvertResult>() {
+					@Override protected ConvertPdbToYes2.ConvertResult doInBackground(String... _unused_) {
+						ConvertPdbToYes2 converter = new ConvertPdbToYes2();
+						converter.setConvertProgressListener(new ConvertPdbToYes2.ConvertProgressListener() {
+							@Override public void onProgress(int at, String message) {
+								Log.d(TAG, "Progress " + at + ": " + message); //$NON-NLS-1$ //$NON-NLS-2$
+								publishProgress(at, message);
+							}
+							
+							@Override public void onFinish() {
+								Log.d(TAG, "Finish"); //$NON-NLS-1$
+								publishProgress(null, null);
+							}
+						});
+						return converter.convert(getApplicationContext(), pdbFilename, yesFilename, params);
+					}
+					
+					@Override protected void onProgressUpdate(Object... values) {
+						if (values[0] == null) {
+							pd.setMessage(getString(R.string.ed_finished));
+						} else {
+							int at = (Integer) values[0];
+							String message = (String) values[1];
+							pd.setMessage("(" + at + ") " + message + "...");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+						}
+					};
+					
+					@Override protected void onPostExecute(ConvertPdbToYes2.ConvertResult result) {
+						pd.dismiss();
+						
+						showResult(pdbFilename, yesFilename, result.exception, result.wronglyConvertedBookNames);
 					}
 				}.execute();
 			}
 		};
 		
-		ConvertOptionsDialog dialog = new ConvertOptionsDialog(this, namafilepdb, callback);
+		ConvertOptionsDialog dialog = new ConvertOptionsDialog(this, pdbFilename, callback);
 		dialog.show();
 	}
-	
-	void showPdbReadErrorDialog(Throwable exception) {
-		new AlertDialog.Builder(VersionsActivity.this)
-		.setTitle(R.string.ed_error_reading_pdb_file)
-		.setMessage(getString(R.string.ed_details) + U.showException(exception))
-		.setPositiveButton(R.string.ok, null)
-		.show();
-	};
 
 	/**
 	 * @return a filename for yes that will be converted from pdb file, such as "pdb-1234abcd-1.yes". Path not included.
