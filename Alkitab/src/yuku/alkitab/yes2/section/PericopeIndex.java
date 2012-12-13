@@ -12,7 +12,10 @@ public class PericopeIndex implements SectionContent.Writer {
 		this.data = data;
 	}
 
-	@Override public void toBytes(BintexWriter writer) throws Exception {
+	@Override public void write(BintexWriter writer) throws Exception {
+		// uint8 version: 2
+		writer.writeUint8(2);
+		
 		// int entry_count
 		writer.writeInt(data.entries.size()); 
 		

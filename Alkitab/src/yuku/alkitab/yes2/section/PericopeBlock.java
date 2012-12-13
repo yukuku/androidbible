@@ -12,7 +12,7 @@ public class PericopeBlock implements SectionContent.Writer {
 		this.data = data;
 	}
 
-	@Override public void toBytes(BintexWriter writer) throws Exception {
+	@Override public void write(BintexWriter writer) throws Exception {
 		int sectionBeginOffset = writer.getPos();
 		for (Entry entry: data.entries) {
 			int entryBeginOffset = writer.getPos();

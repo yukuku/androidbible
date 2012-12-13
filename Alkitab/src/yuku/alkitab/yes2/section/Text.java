@@ -17,7 +17,7 @@ public class Text extends SectionContent implements SectionContent.Writer {
 		this.verses = verses;
 	}
 
-	@Override public void toBytes(BintexWriter writer) throws Exception {
+	@Override public void write(BintexWriter writer) throws Exception {
 		// int verse_count
 		writer.writeInt(verses.size());
 		

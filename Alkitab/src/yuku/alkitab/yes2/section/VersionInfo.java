@@ -22,7 +22,7 @@ public class VersionInfo extends SectionContent implements SectionContent.Writer
 		super("versionInfo_");
 	}
 
-	@Override public void toBytes(BintexWriter writer) throws Exception {
+	@Override public void write(BintexWriter writer) throws Exception {
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		map.put("version", 3);
 		if (shortName != null) map.put("shortName", shortName);
@@ -36,7 +36,7 @@ public class VersionInfo extends SectionContent implements SectionContent.Writer
 	}
 	
 	public static class Reader implements SectionContent.Reader<VersionInfo> {
-		@Override public VersionInfo toSection(RandomInputStream input) throws Exception {
+		@Override public VersionInfo read(RandomInputStream input) throws Exception {
 			BintexReader br = new BintexReader(input);
 			ValueMap map = br.readValueSimpleMap();
 			VersionInfo res = new VersionInfo();

@@ -16,7 +16,7 @@ public class BooksInfo extends SectionContent implements SectionContent.Writer {
 		super("booksInfo___");
 	}
 	
-	@Override public void toBytes(BintexWriter writer) throws Exception {
+	@Override public void write(BintexWriter writer) throws Exception {
 		int c = 0;
 		
 		for (Yes2Book yes2Book: yes2Books) {
@@ -37,7 +37,7 @@ public class BooksInfo extends SectionContent implements SectionContent.Writer {
 	}
 	
 	public static class Reader implements SectionContent.Reader<BooksInfo> {
-		@Override public BooksInfo toSection(RandomInputStream input) throws Exception {
+		@Override public BooksInfo read(RandomInputStream input) throws Exception {
 			BintexReader br = new BintexReader(input);
 			
 			BooksInfo res = new BooksInfo();

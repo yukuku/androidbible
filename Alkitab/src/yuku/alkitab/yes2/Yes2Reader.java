@@ -122,7 +122,7 @@ public class Yes2Reader implements BibleReader {
 			skipUntilSection("versionInfo_"); //$NON-NLS-1$
 
 			RandomInputStream ris = new RandomInputStream(file_);
-			versionInfo_ = new VersionInfo.Reader().toSection(ris);
+			versionInfo_ = new VersionInfo.Reader().read(ris);
 
 			Log.d(TAG, "readVersionInfo done");
 		} catch (Exception e) {
@@ -138,7 +138,7 @@ public class Yes2Reader implements BibleReader {
 
 			skipUntilSection("booksInfo___"); //$NON-NLS-1$
 			RandomInputStream ris = new RandomInputStream(file_);
-			BooksInfo booksInfo = new BooksInfo.Reader().toSection(ris);
+			BooksInfo booksInfo = new BooksInfo.Reader().read(ris);
 
 			Book[] res = new Book[booksInfo.yes2Books.size()];
 			for (int i = 0; i < res.length; i++) {
