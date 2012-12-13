@@ -13,7 +13,7 @@ public class BooksInfo extends SectionContent implements SectionContent.Writer {
 	public List<Yes2Book> yes2Books;
 
 	public BooksInfo() {
-		super("booksInfo___");
+		super("booksInfo");
 	}
 	
 	@Override public void write(BintexWriter writer) throws Exception {

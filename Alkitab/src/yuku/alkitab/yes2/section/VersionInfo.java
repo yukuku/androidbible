@@ -19,7 +19,7 @@ public class VersionInfo extends SectionContent implements SectionContent.Writer
 	public int textEncoding; // 1 = ascii; 2 = utf-8 (default)
 	
 	public VersionInfo() {
-		super("versionInfo_");
+		super("versionInfo");
 	}
 
 	@Override public void write(BintexWriter writer) throws Exception {

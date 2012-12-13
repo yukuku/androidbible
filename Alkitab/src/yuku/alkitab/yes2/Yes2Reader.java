@@ -47,7 +47,7 @@ public class Yes2Reader implements BibleReader {
 		while (true) {
 			String name = readSectionName(file_);
 
-			if (name == null || name.equals("____________")) { //$NON-NLS-1$
+			if (name == null || name.equals("")) { //$NON-NLS-1$
 				// We have reached EOF. Tell that the looked for section does not exist
 				Log.d(TAG, "Section not found: " + sectionName); //$NON-NLS-1$
 				return -1;
@@ -79,7 +79,7 @@ public class Yes2Reader implements BibleReader {
 
 			readVersionInfo();
 
-			skipUntilSection("text________"); //$NON-NLS-1$
+			skipUntilSection("text"); //$NON-NLS-1$
 			text_offsetBase_ = file_.getFilePointer();
 			Log.d(TAG, "text_offsetBase_=" + text_offsetBase_); //$NON-NLS-1$
 		}
@@ -119,7 +119,7 @@ public class Yes2Reader implements BibleReader {
 		Log.d(TAG, "@@readVersionInfo"); //$NON-NLS-1$
 
 		try {
-			skipUntilSection("versionInfo_"); //$NON-NLS-1$
+			skipUntilSection("versionInfo"); //$NON-NLS-1$
 
 			RandomInputStream ris = new RandomInputStream(file_);
 			versionInfo_ = new VersionInfo.Reader().read(ris);
@@ -136,7 +136,7 @@ public class Yes2Reader implements BibleReader {
 		try {
 			init();
 
-			skipUntilSection("booksInfo___"); //$NON-NLS-1$
+			skipUntilSection("booksInfo"); //$NON-NLS-1$
 			RandomInputStream ris = new RandomInputStream(file_);
 			BooksInfo booksInfo = new BooksInfo.Reader().read(ris);
 
@@ -257,7 +257,7 @@ public class Yes2Reader implements BibleReader {
 			if (pericopeBlock_offsetBase_ != 0) {
 				file_.seek(pericopeBlock_offsetBase_);
 			} else {
-				skipUntilSection("perikopBlok_"); //$NON-NLS-1$
+				skipUntilSection("perikopBlok"); //$NON-NLS-1$
 				pericopeBlock_offsetBase_ = file_.getFilePointer();
 			}
 

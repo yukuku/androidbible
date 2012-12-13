@@ -12,7 +12,7 @@ public class Text extends SectionContent implements SectionContent.Writer {
 	private final List<String> verses;
 
 	public Text(Charset charset, List<String> verses) {
-		super("text________");
+		super("text");
 		this.charset = charset;
 		this.verses = verses;
 	}

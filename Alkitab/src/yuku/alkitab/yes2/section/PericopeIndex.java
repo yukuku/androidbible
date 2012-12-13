@@ -5,10 +5,11 @@ import yuku.alkitab.yes2.model.PericopeData.Entry;
 import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexWriter;
 
-public class PericopeIndex implements SectionContent.Writer {
+public class PericopeIndex extends SectionContent implements SectionContent.Writer {
 	private final PericopeData data;
 
 	public PericopeIndex(PericopeData data) {
+		super("pericopeData");
 		this.data = data;
 	}
 
