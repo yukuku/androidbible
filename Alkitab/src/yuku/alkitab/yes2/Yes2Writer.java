@@ -73,7 +73,7 @@ public class Yes2Writer {
 		}
 	}
 
-	List<SectionContent> sections = new ArrayList<SectionContent>();
+	public List<SectionContent> sections = new ArrayList<SectionContent>();
 
 	public void writeToFile(RandomAccessFile file) throws Exception {
 		BintexWriter bw = new BintexWriter(new RandomOutputStream(file));

@@ -18,9 +18,6 @@ public class Text extends SectionContent implements SectionContent.Writer {
 	}
 
 	@Override public void write(BintexWriter writer) throws Exception {
-		// int verse_count
-		writer.writeInt(verses.size());
-		
 		for (String verse : verses) {
 			ByteBuffer buf = charset.encode(verse);
 			byte[] bytes = new byte[buf.limit()];
