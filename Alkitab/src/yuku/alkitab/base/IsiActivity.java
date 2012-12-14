@@ -65,7 +65,7 @@ import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.compat.Api8;
-import yuku.alkitab.base.config.BuildConfig;
+import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeHighlightDialog;
 import yuku.alkitab.base.dialog.TypeNoteDialog;
@@ -386,7 +386,7 @@ public class IsiActivity extends BaseActivity {
 			return; // we are now already on internal, no need to do anything!
 		}
 		
-		BuildConfig c = BuildConfig.get(this);
+		AppConfig c = AppConfig.get(this);
 		
 		// coba preset dulu!
 		for (MVersionPreset preset: c.presets) { // 2. preset
@@ -1016,7 +1016,7 @@ public class IsiActivity extends BaseActivity {
 		menu.clear();
 		getSupportMenuInflater().inflate(R.menu.activity_isi, menu);
 		
-		BuildConfig c = BuildConfig.get(this);
+		AppConfig c = AppConfig.get(this);
 
 		if (c.menuGebug) {
 			// SubMenu menuGebug = menu.addSubMenu(R.string.gebug);
@@ -1087,7 +1087,7 @@ public class IsiActivity extends BaseActivity {
 		// 2. presets that have been DOWNLOADED and ACTIVE
 		// 3. yeses that are ACTIVE
 		
-		BuildConfig c = BuildConfig.get(this);
+		AppConfig c = AppConfig.get(this);
 		final List<String> options = new ArrayList<String>(); // sync with below line
 		final List<MVersion> data = new ArrayList<MVersion>();  // sync with above line
 		

@@ -17,7 +17,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
-import yuku.alkitab.base.config.BuildConfig;
+import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.util.IntArrayList;
@@ -241,11 +241,11 @@ public class Provider extends ContentProvider {
 
 		long _id = 0;
 		{ // internal
-			BuildConfig c = BuildConfig.get(getContext());
+			AppConfig c = AppConfig.get(getContext());
 			res.addRow(new Object[] {++_id, "internal", 1, c.internalShortName, c.internalLongName, c.internalLongName});
 		}
 		{ // presets
-			List<MVersionPreset> presets = BuildConfig.get(App.context).presets;
+			List<MVersionPreset> presets = AppConfig.get(App.context).presets;
 			for (MVersionPreset preset: presets) {
 				res.addRow(new Object[] {++_id, "preset", preset.hasDataFile()? 1: 0, preset.shortName != null? preset.shortName: preset.longName, preset.longName, preset.longName});
 			}

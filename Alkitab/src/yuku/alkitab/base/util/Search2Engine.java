@@ -28,7 +28,7 @@ import java.util.concurrent.Semaphore;
 import yuku.afw.App;
 import yuku.afw.D;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.config.BuildConfig;
+import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.bintex.BintexReader;
@@ -523,7 +523,7 @@ public class Search2Engine {
 		
 		RevIndex res = new RevIndex();
 		
-		InputStream raw = new BufferedInputStream(S.openRaw(BuildConfig.get(App.context).internalPrefix + "_revindex_bt"), 65536);
+		InputStream raw = new BufferedInputStream(S.openRaw(AppConfig.get(App.context).internalPrefix + "_revindex_bt"), 65536);
 		
 		byte[] buf = new byte[256];
 		try {
