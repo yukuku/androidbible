@@ -18,8 +18,10 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.IsiActivity.AttributeListener;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
+import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.base.util.OsisBookNames;
 import yuku.alkitab.base.widget.CallbackSpan.OnClickListener;
 
 
@@ -140,7 +142,6 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				lXparalel.setVisibility(View.VISIBLE);
 
 				SpannableStringBuilder sb = new SpannableStringBuilder("("); //$NON-NLS-1$
-				int len = 1;
 
 				int total = pericopeBlock.parallels.length;
 				for (int i = 0; i < total; i++) {
@@ -150,19 +151,14 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 						// paksa new line untuk pola2 paralel tertentu
 						if ((total == 6 && i == 3) || (total == 4 && i == 2) || (total == 5 && i == 3)) {
 							sb.append("; \n"); //$NON-NLS-1$
-							len += 3;
 						} else {
 							sb.append("; "); //$NON-NLS-1$
-							len += 2;
 						}
 					}
 
-					sb.append(parallel);
-					sb.setSpan(new CallbackSpan(parallel, parallelListener_), len, len + parallel.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-					len += parallel.length();
+                    appendParallel(sb, parallel);
 				}
 				sb.append(')');
-				len += 1;
 
 				lXparalel.setText(sb, BufferType.SPANNABLE);
 				Appearances.applyPericopeParallelTextAppearance(lXparalel);
@@ -172,8 +168,85 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		}
 	}
 
+    private void appendParallel(SpannableStringBuilder sb, String parallel) {
+        int sb_len = sb.length();
 
-	/**
+        linked: {
+            if (parallel.startsWith("@")) {
+                Object data;
+                String display;
+
+                if (parallel.startsWith("@o:")) { // osis ref
+                    int space = parallel.indexOf(' ');
+                    if (space != -1) {
+                        String osis = parallel.substring(3, space);
+                        int dash = osis.indexOf('-');
+                        if (dash != -1) {
+                            osis = osis.substring(0, dash);
+                        }
+                        ParallelTypeOsis d = new ParallelTypeOsis();
+                        d.osisStart = osis;
+                        data = d;
+                        display = parallel.substring(space + 1);
+                    } else {
+                        break linked;
+                    }
+                } else if (parallel.startsWith("@a:")) { // ari ref
+                    int space = parallel.indexOf(' ');
+                    if (space != -1) {
+                        String ari_s = parallel.substring(3, space);
+                        int dash = ari_s.indexOf('-');
+                        if (dash != -1) {
+                            ari_s = ari_s.substring(0, dash);
+                        }
+                        int ari = Ari.parseInt(ari_s, 0);
+                        if (ari == 0) {
+                            break linked;
+                        }
+                        ParallelTypeAri d = new ParallelTypeAri();
+                        d.ariStart = ari;
+                        data = d;
+                        display = parallel.substring(space + 1);
+                    } else {
+                        break linked;
+                    }
+                } else if (parallel.startsWith("@lid:")) { // lid ref
+                    int space = parallel.indexOf(' ');
+                    if (space != -1) {
+                        String lid_s = parallel.substring(5, space);
+                        int dash = lid_s.indexOf('-');
+                        if (dash != -1) {
+                            lid_s = lid_s.substring(0, dash);
+                        }
+                        int lid = Ari.parseInt(lid_s, 0);
+                        if (lid == 0) {
+                            break linked;
+                        }
+                        ParallelTypeLid d = new ParallelTypeLid();
+                        d.lidStart = lid;
+                        data = d;
+                        display = parallel.substring(space + 1);
+                    } else {
+                        break linked;
+                    }
+                } else {
+                    break linked;
+                }
+
+                // if we reach this, data and display should have values, and we must not go to fallback below
+                sb.append(display);
+                sb.setSpan(new CallbackSpan(data, parallelListener_), sb_len, sb.length(), 0);
+                return; // do not remove this
+            }
+        }
+
+        // fallback if the above code fails
+        sb.append(parallel);
+        sb.setSpan(new CallbackSpan(parallel, parallelListener_), sb_len, sb.length(), 0);
+    }
+
+
+    /**
 	 * @param dontPutSpacingBefore this verse is right after a pericope title or on the 0th position
 	 */
 	private static void tiledVerseDisplay(TextView lText, TextView lVerseNumber, int verse_1, String text, int highlightColor, boolean checked, boolean dontPutSpacingBefore) {

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="yuku.alkitab" android:installLocation="auto" android:versionCode="107" android:versionName="2.8.3" xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="yuku.alkitab" android:installLocation="auto" android:versionCode="108" android:versionName="2.8.4" xmlns:tools="http://schemas.android.com/tools">
 	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="17" />
 
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="android.permission.NFC" />
-	
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+			
 	<uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 	<uses-feature android:name="android.hardware.nfc" android:required="false" />
 	
@@ -83,5 +84,15 @@
 			</intent-filter>
 		</receiver>
 		
-	</application>
+		<!-- Used for install referrer tracking -->
+        <receiver
+            android:name="com.google.analytics.tracking.android.AnalyticsReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver" >
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+    </application>
+
 </manifest>

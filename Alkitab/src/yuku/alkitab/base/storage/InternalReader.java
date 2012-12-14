@@ -92,7 +92,7 @@ public class InternalReader implements Reader {
 	}
 
 	@Override public String[] loadVerseText(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
-		if (pasal_1 > book.nchapter) {
+		if (pasal_1 < 1 || pasal_1 > book.nchapter) {
 			return null;
 		}
 

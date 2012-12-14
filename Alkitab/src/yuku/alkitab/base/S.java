@@ -15,7 +15,7 @@ import java.util.Locale;
 import yuku.afw.D;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
-import yuku.alkitab.base.config.BuildConfig;
+import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.Version;
@@ -98,7 +98,7 @@ public class S {
 	private static Version internalVersion;
 	public static synchronized Version getInternalVersion() {
 		if (internalVersion == null) {
-			BuildConfig c = BuildConfig.get(App.context);
+			AppConfig c = AppConfig.get(App.context);
 			internalVersion = new Version(new InternalReader(c.internalPrefix, c.internalShortName, c.internalLongName, new ReaderDecoder.Utf8()));
 		}
 		return internalVersion;
@@ -361,11 +361,11 @@ public class S {
 	 * Jika ayat_1_range adalah null, ayat akan diabaikan (jadi cuma kitab dan pasal).
 	 */
 	public static String createVerseUrl(Book book, int pasal_1, String ayat_1_range) {
-		BuildConfig c = BuildConfig.get(App.context);
-		if (book.bookId >= c.url_namaKitabStandar.length) {
+		AppConfig c = AppConfig.get(App.context);
+		if (book.bookId >= c.url_standardBookNames.length) {
 			return null;
 		}
-		String calonKitab = c.url_namaKitabStandar[book.bookId], calonPasal = String.valueOf(pasal_1), calonAyat = ayat_1_range;
+		String calonKitab = c.url_standardBookNames[book.bookId], calonPasal = String.valueOf(pasal_1), calonAyat = ayat_1_range;
 		for (String format: c.url_format.split(" ")) { //$NON-NLS-1$
 			if ("slash1".equals(format)) calonPasal = "/" + calonPasal; //$NON-NLS-1$ //$NON-NLS-2$
 			if ("slash2".equals(format)) calonAyat = "/" + calonAyat; //$NON-NLS-1$ //$NON-NLS-2$

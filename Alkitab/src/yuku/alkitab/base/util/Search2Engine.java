@@ -28,7 +28,7 @@ import java.util.concurrent.Semaphore;
 import yuku.afw.App;
 import yuku.afw.D;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.config.BuildConfig;
+import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.bintex.BintexReader;
@@ -188,7 +188,7 @@ public class Search2Engine {
 			if (pos >= len) return 0x0;
 			
 			int ariIni = s[pos];
-			int ariKpIni = Ari.toKitabPasal(ariIni);
+			int ariKpIni = Ari.toBookChapter(ariIni);
 			
 			if (ariKpIni != ariKpTerakhir) {
 				// ketemu!
@@ -457,7 +457,7 @@ public class Search2Engine {
 			for (int i = 0, len = res.size(); i < len; i++) {
 				int ari = res.get(i);
 				
-				int ariCv = Ari.toKitabPasal(ari);
+				int ariCv = Ari.toBookChapter(ari);
 				if (ariCv != loadedAriCv) { // we can't reuse, we need to load from disk
 					Book book = S.activeVersion.getBook(Ari.toBook(ari));
 					if (book != null) {
@@ -523,7 +523,7 @@ public class Search2Engine {
 		
 		RevIndex res = new RevIndex();
 		
-		InputStream raw = new BufferedInputStream(S.openRaw(BuildConfig.get(App.context).internalPrefix + "_revindex_bt"), 65536);
+		InputStream raw = new BufferedInputStream(S.openRaw(AppConfig.get(App.context).internalPrefix + "_revindex_bt"), 65536);
 		
 		byte[] buf = new byte[256];
 		try {

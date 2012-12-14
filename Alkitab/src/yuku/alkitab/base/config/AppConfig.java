@@ -9,11 +9,12 @@ import java.util.List;
 
 import org.xmlpull.v1.XmlPullParser;
 
+import yuku.alkitab.R;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
 import yuku.alkitab.base.storage.Db;
 
-public class BuildConfig {
-	public static final String TAG = BuildConfig.class.getSimpleName();
+public class AppConfig {
+	public static final String TAG = AppConfig.class.getSimpleName();
 
 	public String internalPrefix;
 	public String internalShortName;
@@ -27,33 +28,23 @@ public class BuildConfig {
 	public List<MVersionPreset> presets;
 	public String url_prefix;
 	public String url_format;
-	public String[] url_namaKitabStandar;
+	public String[] url_standardBookNames;
 	
-	private static BuildConfig lastConfig;
+	private static AppConfig lastAppConfig;
 	private static String lastPackageName;
 	
-	private BuildConfig() {}
+	private AppConfig() {}
 	
-	public static BuildConfig get(Context context) {
+	public static AppConfig get(Context context) {
 		String packageName = context.getPackageName();
 		if (packageName.equals(lastPackageName)) {
-			return lastConfig;
+			return lastAppConfig;
 		}
 		
-		int resId;
-		if (packageName.equals("yuku.alkitab.beta")) { // special for yuku.alkitab.beta //$NON-NLS-1$
-			resId = context.getResources().getIdentifier("build_config_yuku_alkitab", "xml", packageName); //$NON-NLS-1$ //$NON-NLS-2$
-		} else {
-			resId = context.getResources().getIdentifier("build_config_" + packageName.replace('.', '_'), "xml", packageName); //$NON-NLS-1$ //$NON-NLS-2$
-			if (resId == 0) {
-				return null;
-			}
-		}
-		
-		BuildConfig res = null;
+		AppConfig res = null;
 		try {
-			res = loadConfig(context, context.getResources().getXml(resId));
-			lastConfig = res;
+			res = loadConfig(context, context.getResources().getXml(R.xml.app_config));
+			lastAppConfig = res;
 			lastPackageName = packageName;
 		} catch (Exception e) {
 			Log.e(TAG, "error in loading build config", e); //$NON-NLS-1$
@@ -62,8 +53,8 @@ public class BuildConfig {
 		return res;
 	}
 
-	private static BuildConfig loadConfig(Context context, XmlResourceParser parser) throws Exception {
-		BuildConfig res = new BuildConfig();
+	private static AppConfig loadConfig(Context context, XmlResourceParser parser) throws Exception {
+		AppConfig res = new AppConfig();
 		
 		List<MVersionPreset> xpreset = new ArrayList<MVersionPreset>();
 		int urutanPreset = 10;
@@ -95,8 +86,8 @@ public class BuildConfig {
 				// TODO support more url's if needed. now only one.
 				res.url_prefix = parser.getAttributeValue(null, "prefix"); //$NON-NLS-1$
 				res.url_format = parser.getAttributeValue(null, "format"); //$NON-NLS-1$
-				res.url_namaKitabStandar = context.getResources().getStringArray(context.getResources().getIdentifier("nama_kitab_standar_" + parser.getAttributeValue(null, "lang"), "array", context.getPackageName())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				if (res.url_prefix == null || res.url_format == null || res.url_namaKitabStandar == null) {
+				res.url_standardBookNames = context.getResources().getStringArray(context.getResources().getIdentifier("nama_kitab_standar_" + parser.getAttributeValue(null, "lang"), "array", context.getPackageName())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				if (res.url_prefix == null || res.url_format == null || res.url_standardBookNames == null) {
 					throw new RuntimeException("wrong share url config!"); //$NON-NLS-1$
 				}
 			} else if (next == XmlPullParser.END_DOCUMENT) {

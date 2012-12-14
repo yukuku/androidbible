@@ -7,6 +7,7 @@ import yuku.alkitab.base.IsiActivity;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.analytics.tracking.android.EasyTracker;
 
 public abstract class BaseActivity extends SherlockFragmentActivity {
 	public static final String TAG = BaseActivity.class.getSimpleName();
@@ -18,6 +19,16 @@ public abstract class BaseActivity extends SherlockFragmentActivity {
 		}
 		
 		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override protected void onStart() {
+		super.onStart();
+	    EasyTracker.getInstance().activityStart(this); 
+	}
+	
+	@Override protected void onStop() {
+		super.onStop();
+		EasyTracker.getInstance().activityStop(this);
 	}
 
 	public static void backToRootActivity(Context context) {
