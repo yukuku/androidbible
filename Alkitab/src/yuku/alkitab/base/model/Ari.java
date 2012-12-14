@@ -52,4 +52,30 @@ public class Ari {
 	public static int toBookChapter(int ari) {
 		return (ari & 0x00ffff00);
 	}
+
+    /** Similar to Integer.parseInt() but supports 0x and won't throw any exception when failed */
+    public static int parseInt(String s, int def) {
+        if (s == null || s.length() == 0) return def;
+
+        // need to trim?
+        if (s.charAt(0) == ' ' || s.charAt(s.length() - 1) == ' ') {
+            s = s.trim();
+        }
+
+        // 0x?
+        if (s.startsWith("0x")) {
+            try {
+                return Integer.parseInt(s.substring(2), 16);
+            } catch (NumberFormatException e) {
+                return def;
+            }
+        }
+
+        // normal decimal
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            return def;
+        }
+    }
 }

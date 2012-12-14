@@ -67,10 +67,10 @@ public class Provider extends ContentProvider {
 		
 		switch (uriMatch) {
 		case PATH_bible_verses_single_by_lid: {
-			res = getCursorForSingleVerseLid(parseInt(uri.getLastPathSegment(), Integer.MIN_VALUE), formatting);
+			res = getCursorForSingleVerseLid(Ari.parseInt(uri.getLastPathSegment(), Integer.MIN_VALUE), formatting);
 		} break;
 		case PATH_bible_verses_single_by_ari: {
-			res = getCursorForSingleVerseAri(parseInt(uri.getLastPathSegment(), Integer.MIN_VALUE), formatting);
+			res = getCursorForSingleVerseAri(Ari.parseInt(uri.getLastPathSegment(), Integer.MIN_VALUE), formatting);
 		} break;
 		case PATH_bible_verses_range_by_lid: {
 			String range = uri.getLastPathSegment();
@@ -105,10 +105,10 @@ public class Provider extends ContentProvider {
 			int start, end;
 			if (split.indexOf('-') != -1) {
 				String[] startEnd = split.split("-", 2);
-				start = parseInt(startEnd[0], Integer.MIN_VALUE);
-				end = parseInt(startEnd[1], Integer.MIN_VALUE);
+				start = Ari.parseInt(startEnd[0], Integer.MIN_VALUE);
+				end = Ari.parseInt(startEnd[1], Integer.MIN_VALUE);
 			} else {
-				start = end = parseInt(split, Integer.MIN_VALUE);
+				start = end = Ari.parseInt(split, Integer.MIN_VALUE);
 			}
 			
 			if (start != Integer.MIN_VALUE && end != Integer.MIN_VALUE) {
@@ -133,10 +133,10 @@ public class Provider extends ContentProvider {
 			int start, end;
 			if (split.indexOf('-') != -1) {
 				String[] startEnd = split.split("-", 2);
-				start = parseInt(startEnd[0], Integer.MIN_VALUE);
-				end = parseInt(startEnd[1], Integer.MIN_VALUE);
+				start = Ari.parseInt(startEnd[0], Integer.MIN_VALUE);
+				end = Ari.parseInt(startEnd[1], Integer.MIN_VALUE);
 			} else {
-				start = end = parseInt(split, Integer.MIN_VALUE);
+				start = end = Ari.parseInt(split, Integer.MIN_VALUE);
 			}
 			
 			if (start != Integer.MIN_VALUE && end != Integer.MIN_VALUE) {
@@ -306,34 +306,8 @@ public class Provider extends ContentProvider {
 		
 		return res;
 	}
-	
-	/** Similar to Integer.parseInt() but supports 0x and won't throw any exception when failed */
-	private static int parseInt(String s, int def) {
-		if (s == null || s.length() == 0) return def;
-		
-		// need to trim?
-		if (s.charAt(0) == ' ' || s.charAt(s.length() - 1) == ' ') {
-			s = s.trim();
-		}
-		
-		// 0x?
-		if (s.startsWith("0x")) {
-			try {
-				return Integer.parseInt(s.substring(2), 16);
-			} catch (NumberFormatException e) {
-				return def;
-			}
-		}
-		
-		// normal decimal
-		try {
-			return Integer.parseInt(s);
-		} catch (NumberFormatException e) {
-			return def;
-		}
-	}
-	
-	private static boolean parseBoolean(String s) {
+
+    private static boolean parseBoolean(String s) {
 		if (s == null) return false;
 		if (s.equals("0")) return false;
 		if (s.equals("1")) return true;
@@ -344,7 +318,7 @@ public class Provider extends ContentProvider {
 		if (s.equals("true")) return true;
 		if (s.equals("no")) return false;
 		if (s.equals("yes")) return true;
-		int n = parseInt(s, Integer.MIN_VALUE);
+		int n = Ari.parseInt(s, Integer.MIN_VALUE);
 		if (n == 0) return false;
 		if (n != Integer.MIN_VALUE) return true;
 		return false;
