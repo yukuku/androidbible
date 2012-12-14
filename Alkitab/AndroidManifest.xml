@@ -6,7 +6,8 @@
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="android.permission.NFC" />
-	
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+			
 	<uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 	<uses-feature android:name="android.hardware.nfc" android:required="false" />
 	
@@ -83,5 +84,15 @@
 			</intent-filter>
 		</receiver>
 		
-	</application>
+		<!-- Used for install referrer tracking -->
+        <receiver
+            android:name="com.google.analytics.tracking.android.AnalyticsReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver" >
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+    </application>
+
 </manifest>
