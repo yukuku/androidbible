@@ -1,6 +1,6 @@
 # environment vars that needs to be defined before running this
 #
-# ALKITAB_RAW_DIR = directory where the actual res/raw content (the non-free text, etc)
+# ALKITAB_PROPRIETARY_DIR = directory where the proprietary (non-opensourced) resources are located
 # ALKITAB_VERSION_CODE = (int)
 # ALKITAB_VERSION_NAME = (string)
 # ALKITAB_PACKAGE_NAME = (string)
@@ -16,8 +16,8 @@ if [ \! \( -d Alkitab -a -d AlkitabYes -a -d bibleplus -a -d ../yuku-android-uti
 	exit 1
 fi
 
-if [ "$ALKITAB_RAW_DIR" == "" ] ; then
-	echo 'ALKITAB_RAW_DIR not defined'
+if [ "$ALKITAB_PROPRIETARY_DIR" == "" ] ; then
+	echo 'ALKITAB_PROPRIETARY_DIR not defined'
 	exit 1
 fi
 
@@ -57,14 +57,14 @@ if [ "$ALKITAB_SIGN_PASSWORD" == "" ] ; then
 fi
 
 echo '========================================='
-echo 'ALKITAB_RAW_DIR       = ' $ALKITAB_RAW_DIR
-echo 'ALKITAB_VERSION_CODE  = ' $ALKITAB_VERSION_CODE
-echo 'ALKITAB_VERSION_NAME  = ' $ALKITAB_VERSION_NAME
-echo 'ALKITAB_PACKAGE_NAME  = ' $ALKITAB_PACKAGE_NAME
-echo 'ALKITAB_STABLE        = ' $ALKITAB_STABLE
-echo 'ALKITAB_SIGN_KEYSTORE = ' $ALKITAB_SIGN_KEYSTORE
-echo 'ALKITAB_SIGN_ALIAS    = ' $ALKITAB_SIGN_ALIAS
-echo 'ALKITAB_SIGN_PASSWORD = ' '.... =)'
+echo 'ALKITAB_PROPRIETARY_DIR = ' $ALKITAB_PROPRIETARY_DIR
+echo 'ALKITAB_VERSION_CODE    = ' $ALKITAB_VERSION_CODE
+echo 'ALKITAB_VERSION_NAME    = ' $ALKITAB_VERSION_NAME
+echo 'ALKITAB_PACKAGE_NAME    = ' $ALKITAB_PACKAGE_NAME
+echo 'ALKITAB_STABLE          = ' $ALKITAB_STABLE
+echo 'ALKITAB_SIGN_KEYSTORE   = ' $ALKITAB_SIGN_KEYSTORE
+echo 'ALKITAB_SIGN_ALIAS      = ' $ALKITAB_SIGN_ALIAS
+echo 'ALKITAB_SIGN_PASSWORD   = ' '.... =)'
 echo '========================================='
 
 
@@ -114,9 +114,11 @@ pushd $BUILD_DIR/androidbible
 		echo 'Removing (mockedup) res/raw...'
 		rm -rf res/raw
 
-		echo 'Copying overlay res/raw...'
-		if ! cp -R $ALKITAB_RAW_DIR res/ ; then
-			echo 'Copy overlay FAILED'
+		TEXT_RAW="$ALKITAB_PROPRIETARY_DIR/overlay/$ALKITAB_PACKAGE_NAME/text_raw/"
+		mkdir res/raw
+		echo "Copying text overlay from $TEXT_RAW..."
+		if ! cp -R $TEXT_RAW res/raw ; then
+			echo 'Copy text overlay FAILED'
 			exit 1
 		fi
 
