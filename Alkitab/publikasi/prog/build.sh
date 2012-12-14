@@ -11,7 +11,7 @@
 
 
 if [ \! \( -d Alkitab -a -d AlkitabYes -a -d bibleplus -a -d ../yuku-android-util \) ] ; then
-	echo 'Must be run from androidbible dir, which contains Alkitab, AlkitabYes, etc directory'
+	echo 'Must be run from androidbible dir, which contains Alkitab, BiblePlus, etc directories'
 	echo 'and has yuku-android-util at the parent'
 	exit 1
 fi
@@ -93,47 +93,86 @@ cp -R * $BUILD_DIR/androidbible/
 echo 'Going to' $BUILD_DIR/androidbible
 pushd $BUILD_DIR/androidbible
 
-cd Alkitab
+	pushd Alkitab
 
-echo 'Removing (mockedup) res/raw...'
-rm -rf res/raw
+		echo 'Making sure that AndroidManifest.xml contains the correct package name, versionCode, and versionName'
+		grep '<manifest .*package="'$ALKITAB_PACKAGE_NAME'"' AndroidManifest.xml > /dev/null || {
+			echo 'Finding package="'$ALKITAB_PACKAGE_NAME'" in AndroidManifest.xml FAILED'
+			exit 1
+		}
 
-echo 'Copying overlay res/raw...'
-if ! cp -R $ALKITAB_RAW_DIR res/ ; then
-	echo 'Copy overlay FAILED'
-	exit 1
-fi
+		grep '<manifest .*android:versionCode="'$ALKITAB_VERSION_CODE'"' AndroidManifest.xml > /dev/null || {
+			echo 'Finding android:versionCode="'$ALKITAB_VERSION_CODE'" in AndroidManifest.xml FAILED'
+			exit 1
+		}
 
+		grep '<manifest .*android:versionName="'$ALKITAB_VERSION_NAME'"' AndroidManifest.xml > /dev/null || {
+			echo 'Finding android:versionName="'$ALKITAB_VERSION_NAME'" in AndroidManifest.xml FAILED'
+			exit 1
+		}
 
-ant clean
-ant release
+		echo 'Removing (mockedup) res/raw...'
+		rm -rf res/raw
 
-if [ \! -r $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-unsigned.apk ] ; then
-	echo $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-unsigned.apk ' not found. '
-	echo 'Ant FAILED'
-	exit 1
-fi
+		echo 'Copying overlay res/raw...'
+		if ! cp -R $ALKITAB_RAW_DIR res/ ; then
+			echo 'Copy overlay FAILED'
+			exit 1
+		fi
 
-jarsigner -keystore "$ALKITAB_SIGN_KEYSTORE" -storepass "$ALKITAB_SIGN_PASSWORD" -keypass "$ALKITAB_SIGN_PASSWORD" -signedjar $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-signed.apk $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-unsigned.apk "$ALKITAB_SIGN_ALIAS"
+	popd
 
-if [ \! -r $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-signed.apk ] ; then
-	echo $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-signed.apk ' not found. '
-	echo 'Sign FAILED'
-	exit 1
-fi
+	overlay() {
+		P_SRC="$1"
+		P_DST="$2"
 
-zipalign 4 $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-signed.apk $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-signed-aligned.apk
+		SRC="$BUILD_DIR/androidbible/Alkitab/publikasi/overlay/$ALKITAB_PACKAGE_NAME/$P_SRC"
+		DST="$BUILD_DIR/androidbible/Alkitab/$P_DST"
 
-if [ \! -r $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-signed-aligned.apk ] ; then
-	echo $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-signed-aligned.apk ' not found. '
-	echo 'zipalign FAILED'
-	exit 1
-fi
+		echo "Overlaying $P_DST with $P_SRC..."
+		cp "$SRC" "$DST" || read
+	}
 
-OUTPUT=$BUILD_DIR/Alkitab-$ALKITAB_VERSION_CODE-$ALKITAB_VERSION_NAME-$ALKITAB_PACKAGE_NAME.apk
-mv $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-signed-aligned.apk "$OUTPUT"
-echo 'BUILD SUCCESSFUL. Output:' $OUTPUT
+	overlay 'analytics_trackingId.xml' 'res/values/analytics_trackingId.xml'
+	overlay 'app_config.xml' 'res/xml/app_config.xml'
+	overlay 'app_name.xml' 'res/values/app_name.xml'
+	overlay 'pref_language_default.xml' 'res/values/pref_language_default.xml'
+	overlay 'drawable-mdpi/ic_launcher.png' 'res/drawable-mdpi/ic_launcher.png'
+	overlay 'drawable-hdpi/ic_launcher.png' 'res/drawable-hdpi/ic_launcher.png'
+	overlay 'drawable-xhdpi/ic_launcher.png' 'res/drawable-xhdpi/ic_launcher.png'
 
+	pushd Alkitab
+
+		ant clean
+		ant release
+
+		if [ \! -r $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-unsigned.apk ] ; then
+			echo $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-unsigned.apk ' not found. '
+			echo 'Ant FAILED'
+			exit 1
+		fi
+
+		jarsigner -keystore "$ALKITAB_SIGN_KEYSTORE" -storepass "$ALKITAB_SIGN_PASSWORD" -keypass "$ALKITAB_SIGN_PASSWORD" -signedjar $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-signed.apk $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-unsigned.apk "$ALKITAB_SIGN_ALIAS"
+
+		if [ \! -r $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-signed.apk ] ; then
+			echo $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-signed.apk ' not found. '
+			echo 'Sign FAILED'
+			exit 1
+		fi
+
+		zipalign 4 $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-signed.apk $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-signed-aligned.apk
+
+		if [ \! -r $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-signed-aligned.apk ] ; then
+			echo $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-signed-aligned.apk ' not found. '
+			echo 'zipalign FAILED'
+			exit 1
+		fi
+
+		OUTPUT=$BUILD_DIR/Alkitab-$ALKITAB_VERSION_CODE-$ALKITAB_VERSION_NAME-$ALKITAB_PACKAGE_NAME.apk
+		mv $BUILD_DIR/androidbible/Alkitab/bin/Alkitab-release-signed-aligned.apk "$OUTPUT"
+		echo 'BUILD SUCCESSFUL. Output:' $OUTPUT
+
+	popd
 popd
 
 

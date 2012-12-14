@@ -40,7 +40,7 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.config.BuildConfig;
+import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog.ConvertOptionsCallback;
@@ -438,7 +438,7 @@ public class VersionsActivity extends BaseActivity {
 	void handleFileOpenYes(String filename, String namapdbasal) {
 		{ // cari dup
 			boolean dup = false;
-			BuildConfig c = BuildConfig.get(getApplicationContext());
+			AppConfig c = AppConfig.get(getApplicationContext());
 			for (MVersionPreset preset: c.presets) {
 				if (filename.equals(AddonManager.getVersionPath(preset.presetFilename))) {
 					dup = true;
@@ -716,7 +716,7 @@ public class VersionsActivity extends BaseActivity {
 		List<MVersionYes> yeses;
 		
 		public void init() {
-			BuildConfig c = BuildConfig.get(getApplicationContext());
+			AppConfig c = AppConfig.get(getApplicationContext());
 			
 			internal = new MVersionInternal();
 			internal.setActive(true);
