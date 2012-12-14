@@ -94,6 +94,9 @@ public class Provider extends ContentProvider {
 		return res;
 	}
 
+	/**
+	 * @return [start, end, start, end, ...]
+	 */
 	private IntArrayList decodeLidRange(String range) {
 		IntArrayList res = new IntArrayList();
 		
@@ -109,9 +112,8 @@ public class Provider extends ContentProvider {
 			}
 			
 			if (start != Integer.MIN_VALUE && end != Integer.MIN_VALUE) {
-				for (int i = start; i <= end; i++) {
-					res.add(i);
-				}
+				res.add(start);
+				res.add(end);
 			}
 		}
 		
@@ -120,6 +122,8 @@ public class Provider extends ContentProvider {
 	
 	/**
 	 * Also supports verse 0 for the whole chapter (0xbbcc00)
+	 * 
+	 * @return [start, end, start, end, ...]
 	 */
 	private IntArrayList decodeAriRange(String range) {
 		IntArrayList res = new IntArrayList();
@@ -139,11 +143,10 @@ public class Provider extends ContentProvider {
 				start &= 0xffffff;
 				end &= 0xffffff;
 				
-				// case: 0xXXYY00 - 0xXXYY00 (whole single chapter) 
 				if (start == end && Ari.toVerse(start) == 0) {
-					for (int i = start | 0x01, to = start | 0xff; i <= to; i++) {
-						res.add(i);
-					}
+					// case: 0xXXYY00 - 0xXXYY00 (whole single chapter)
+					res.add(start | 0x01);
+					res.add(start | 0xff);
 				} else if (end >= start) {
 					if (Ari.toVerse(start) == 0) {
 						start = start | 0x01;
@@ -151,9 +154,8 @@ public class Provider extends ContentProvider {
 					if (Ari.toVerse(end) == 0) {
 						end = end | 0xff;
 					}
-					for (int i = start; i <= end; i++) {
-						if ((i & 0xff) != 0) res.add(i);
-					}
+					res.add(start);
+					res.add(end);
 				}
 			}
 		}
@@ -185,15 +187,35 @@ public class Provider extends ContentProvider {
 		return res;
 	}
 	
-	/* TODO optimize for cases where the different verses of same chapter are accessed */ 
 	private Cursor getCursorForRangeVerseLid(IntArrayList lids, boolean formatting) {
-		MatrixCursor res = new MatrixCursor(new String[] {"_id", "ari", "bookName", "text"});
+		IntArrayList aris = new IntArrayList(lids.size());
+		for (int i = 0, len = lids.size(); i < len; i+=2) {
+			int lid_start = lids.get(i);
+			int lid_end = lids.get(i + 1);
+			int ari_start = LidToAri.lidToAri(lid_start);
+			int ari_end = LidToAri.lidToAri(lid_end);
+			aris.add(ari_start);
+			aris.add(ari_end);
+		}
 		
+		return getCursorForRangeVerseAri(aris, formatting);
+	}
+
+	private Cursor getCursorForRangeVerseAri(IntArrayList aris, boolean formatting) {
+		MatrixCursor res = new MatrixCursor(new String[] {"_id", "ari", "bookName", "text"});
+
 		int c = 0;
-		for (int i = 0, len = lids.size(); i < len; i++) {
-			int lid = lids.get(i);
-			int ari = LidToAri.lidToAri(lid);
-			if (ari != 0) {
+		for (int i = 0, len = aris.size(); i < len; i+=2) {
+			int ari_start = aris.get(i);
+			int ari_end = aris.get(i + 1);
+			
+			if (ari_start == 0 || ari_end == 0) {
+				continue;
+			}
+			
+			if (ari_start == ari_end) {
+				// case: single verse
+				int ari = ari_start;
 				Book book = S.activeVersion.getBook(Ari.toBook(ari));
 				if (book != null) {
 					String text = S.loadVerseText(S.activeVersion, ari);
@@ -202,31 +224,31 @@ public class Provider extends ContentProvider {
 					}
 					res.addRow(new Object[] {++c, ari, book.judul, text});
 				}
-			}
-		}
-		
-		return res;
-	}
-	
-	/* TODO optimize for cases where the different verses of same chapter are accessed */ 
-	private Cursor getCursorForRangeVerseAri(IntArrayList aris, boolean formatting) {
-		MatrixCursor res = new MatrixCursor(new String[] {"_id", "ari", "bookName", "text"});
-
-		int c = 0;
-		for (int i = 0, len = aris.size(); i < len; i++) {
-			int ari = aris.get(i);
-			if (ari != 0) {
-				Book book = S.activeVersion.getBook(Ari.toBook(ari));
-				if (book != null) {
-					int chapter_1 = Ari.toChapter(ari);
-					if (chapter_1 >= 1 && chapter_1 <= book.nchapter) {
-						int verse_1 = Ari.toVerse(ari);
-						if (verse_1 >= 1 && verse_1 <= book.nverses[chapter_1-1]) {
-							String text = S.loadVerseText(S.activeVersion, ari);
-							if (formatting == false) {
-								text = U.removeSpecialCodes(text);
-							}
-							res.addRow(new Object[] {++c, ari, book.judul, text});
+			} else {
+				int ari_start_bc = Ari.toBookChapter(ari_start);
+				int ari_end_bc = Ari.toBookChapter(ari_end);
+				
+				if (ari_start_bc == ari_end_bc) {
+					// case: multiple verses in the same chapter
+					Book book = S.activeVersion.getBook(Ari.toBook(ari_start));
+					if (book != null) {
+						c += resultForOneChapter(res, book, c, ari_start_bc, Ari.toVerse(ari_start), Ari.toVerse(ari_end), formatting);
+					}
+				} else {
+					// case: multiple verses in different chapters
+					for (int ari_bc = ari_start_bc; ari_bc <= ari_end_bc; ari_bc += 0x0100) {
+						Book book = S.activeVersion.getBook(Ari.toBook(ari_bc));
+						int chapter_1 = Ari.toChapter(ari_bc);
+						if (book == null || chapter_1 <= 0 || chapter_1 > book.nchapter) {
+							continue;
+						}
+						
+						if (ari_bc == ari_start_bc) { // we're at the first requested chapter
+							c += resultForOneChapter(res, book, c, ari_bc, Ari.toVerse(ari_start), 0xff, formatting); 
+						} else if (ari_bc == ari_end_bc) { // we're at the last requested chapter
+							c += resultForOneChapter(res, book, c, ari_bc, 0x01, Ari.toVerse(ari_end), formatting);
+						} else { // we're at the middle, request all verses!
+							c += resultForOneChapter(res, book, c, ari_bc, 0x01, 0xff, formatting);
 						}
 					}
 				}
@@ -234,6 +256,31 @@ public class Provider extends ContentProvider {
 		}
 		
 		return res;
+	}
+	
+	/**
+	 * @param book 
+	 * @return number of verses put into the cursor
+	 */
+	private int resultForOneChapter(MatrixCursor cursor, Book book, int last_c, int ari_bc, int v_1_start, int v_1_end, boolean formatting) {
+		int count = 0;
+		String[] chapterText = S.loadChapterText(S.activeVersion, book, Ari.toChapter(ari_bc));
+		for (int v_1 = v_1_start; v_1 <= v_1_end; v_1++) {
+			int v_0 = v_1 - 1;
+			if (v_0 < chapterText.length) {
+				int ari = ari_bc | v_1;
+				String text = chapterText[v_0];
+				if (formatting == false) {
+					text = U.removeSpecialCodes(text);
+				}
+				count++;
+				cursor.addRow(new Object[] {last_c + count, ari, book.judul, text});
+			} else {
+				// we're done with this chapter, no need to loop again
+				break;
+			}
+		}
+		return count;
 	}
 	
 	private Cursor getCursorForBibleVersions() {

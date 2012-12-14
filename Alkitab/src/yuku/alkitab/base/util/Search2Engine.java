@@ -188,7 +188,7 @@ public class Search2Engine {
 			if (pos >= len) return 0x0;
 			
 			int ariIni = s[pos];
-			int ariKpIni = Ari.toKitabPasal(ariIni);
+			int ariKpIni = Ari.toBookChapter(ariIni);
 			
 			if (ariKpIni != ariKpTerakhir) {
 				// ketemu!
@@ -457,7 +457,7 @@ public class Search2Engine {
 			for (int i = 0, len = res.size(); i < len; i++) {
 				int ari = res.get(i);
 				
-				int ariCv = Ari.toKitabPasal(ari);
+				int ariCv = Ari.toBookChapter(ari);
 				if (ariCv != loadedAriCv) { // we can't reuse, we need to load from disk
 					Book book = S.activeVersion.getBook(Ari.toBook(ari));
 					if (book != null) {
