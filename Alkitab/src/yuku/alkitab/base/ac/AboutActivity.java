@@ -24,7 +24,8 @@ public class AboutActivity extends BaseActivity {
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_about);
-		setTitle(String.format("%s %s (%s)", getString(R.string.app_name), App.getVersionName(), App.getVersionCode()));
+		setTitle(String.format("%s %s", getString(R.string.app_name), App.getVersionName()));
+		getSupportActionBar().setSubtitle(String.format("%s %s", App.getVersionCode(), getString(R.string.last_commit_hash)));
 		
 		lAbout = V.get(this, R.id.lAbout);
 		lTranslators = V.get(this, R.id.lTranslators);

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="last_commit_hash" tools:ignore="MissingTranslation">0000000</string>
+
+</resources>

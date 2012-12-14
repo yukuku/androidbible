@@ -84,11 +84,11 @@ fi
 
 echo 'Copying yuku-android-util...'
 mkdir $BUILD_DIR/yuku-android-util
-cp -R ../yuku-android-util/* $BUILD_DIR/yuku-android-util/
+cp -R ../yuku-android-util/ $BUILD_DIR/yuku-android-util/
 
 echo 'Copying androidbible...'
 mkdir $BUILD_DIR/androidbible
-cp -R * $BUILD_DIR/androidbible/
+cp -R ./ $BUILD_DIR/androidbible/
 
 echo 'Going to' $BUILD_DIR/androidbible
 pushd $BUILD_DIR/androidbible
@@ -144,6 +144,11 @@ pushd $BUILD_DIR/androidbible
 	overlay 'drawable-xhdpi/ic_launcher.png' 'res/drawable-xhdpi/ic_launcher.png'
 
 	pushd Alkitab
+
+		LAST_COMMIT_HASH=`git log -1 --format='format:%h'`
+		echo 'Setting last commit hash: '$LAST_COMMIT_HASH
+		sed "s/0000000/$LAST_COMMIT_HASH/" res/values/last_commit.xml > res/values/last_commit.xml.2
+		mv res/values/last_commit.xml.2 res/values/last_commit.xml
 
 		ant clean
 		ant release
