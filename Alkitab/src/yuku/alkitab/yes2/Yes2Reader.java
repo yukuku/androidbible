@@ -27,6 +27,7 @@ public class Yes2Reader implements BibleReader {
 	private RandomAccessFile file_;
 	private VerseTextDecoder decoder_;
 
+	// TODO replace with sectionindex entries
 	private long text_offsetBase_;
 	private long pericopeBlock_offsetBase_;
 
