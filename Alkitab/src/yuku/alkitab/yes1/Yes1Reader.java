@@ -13,6 +13,7 @@ import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.PericopeIndex;
+import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.BibleReader;
 import yuku.alkitab.base.storage.OldVerseTextDecoder;
@@ -36,6 +37,22 @@ public class Yes1Reader implements BibleReader {
 	private int nkitab;
 	private int perikopAda = 0; // default ga ada
 	private int encoding = 1; // 1 = ascii; 2 = utf-8;
+	
+	static class Yes1SingleChapterVerses extends SingleChapterVerses {
+		private final String[] verses;
+
+		public Yes1SingleChapterVerses(String[] verses) {
+			this.verses = verses;
+		}
+		
+		@Override public String getVerse(int verse_0) {
+			return verses[verse_0];
+		}
+
+		@Override public int getVerseCount() {
+			return verses.length;
+		}
+	}
 	
 	public Yes1Reader(String nf) {
 		this.nf = nf;
@@ -251,7 +268,7 @@ public class Yes1Reader implements BibleReader {
 	}
 	
 	@Override
-	public String[] loadVerseText(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+	public Yes1SingleChapterVerses loadVerseText(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
 		// init pembacaDecoder
 		if (verseTextDecoder == null) {
 			if (encoding == 1) {
@@ -287,13 +304,13 @@ public class Yes1Reader implements BibleReader {
 			f.read(ba);
 			
 			if (janganPisahAyat) {
-				return new String[] {verseTextDecoder.makeIntoSingleString(ba, hurufKecil)};
+				return new Yes1SingleChapterVerses(new String[] {verseTextDecoder.makeIntoSingleString(ba, hurufKecil)});
 			} else {
 				String[] xayat = verseTextDecoder.separateIntoVerses(ba, hurufKecil);
 				if (D.EBUG) for (int i = 0; i < xayat.length; i++) {
 					Log.d(TAG, "ayat_1 " + (i+1) + ": " + U.dumpChars(xayat[i]));  //$NON-NLS-1$//$NON-NLS-2$
 				}
-				return xayat;
+				return new Yes1SingleChapterVerses(xayat);
 			}
 		} catch (Exception e) {
 			Log.e(TAG, "muatTeks error", e); //$NON-NLS-1$

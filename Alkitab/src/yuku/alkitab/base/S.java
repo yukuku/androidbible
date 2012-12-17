@@ -18,6 +18,7 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.renungan.Downloader;
 import yuku.alkitab.base.storage.InternalDb;
@@ -176,57 +177,57 @@ public class S {
 		if (book == null) {
 			return notAvailableText;
 		}
-		String[] xayat = loadChapterText(version, book, pasal_1, false, false);
+		SingleChapterVerses verses = loadChapterText(version, book, pasal_1, false, false);
 		
-		if (xayat == null) {
+		if (verses == null) {
 			return notAvailableText;
 		}
 		
-		int ayat_0 = ayat_1 - 1;
-		if (ayat_0 >= xayat.length) {
+		int verse_0 = ayat_1 - 1;
+		if (verse_0 >= verses.getVerseCount()) {
 			return notAvailableText;
 		}
-		return xayat[ayat_0];
+		return verses.getVerse(verse_0);
 	}
 	
 	public static synchronized String loadVerseText(Version version, int ari) {
 		return loadVerseText(version, version.getBook(Ari.toBook(ari)), Ari.toChapter(ari), Ari.toVerse(ari));
 	}
 
-	public static synchronized String[] loadChapterText(Version version, Book book, int pasal_1) {
+	public static synchronized SingleChapterVerses loadChapterText(Version version, Book book, int pasal_1) {
 		if (book == null) {
-			return notAvailableTextArray;
-		}
-		String[] xayat = loadChapterText(version, book, pasal_1, false, false);
-		
-		if (xayat == null) {
-			return notAvailableTextArray;
+			return null;
 		}
 		
-		return xayat;
+		return loadChapterText(version, book, pasal_1, false, false);
 	}
 
-	public static synchronized String[] loadChapterTextLowercased(Version version, Book book, int pasal_1) {
+	public static synchronized SingleChapterVerses loadChapterTextLowercased(Version version, Book book, int pasal_1) {
 		if (book == null) {
-			return notAvailableTextArray;
+			return null;
 		}
 		return loadChapterText(version, book, pasal_1, false, true);
 	}
 	
+	/** TODO optimize */
 	public static synchronized String loadChapterTextLowercasedWithoutSplit(Version version, Book book, int pasal_1) {
 		if (book == null) {
 			return notAvailableText;
 		}
-		String[] xayat_denganSatuElemen = loadChapterText(version, book, pasal_1, true, true);
+		SingleChapterVerses verses = loadChapterText(version, book, pasal_1, true, true);
 		
-		if (xayat_denganSatuElemen == null) {
+		if (verses == null) {
 			return notAvailableText;
 		}
 		
-		return xayat_denganSatuElemen[0];
+		StringBuilder sb = new StringBuilder();  
+		for (int i = 0, len = verses.getVerseCount(); i < len; i++) {
+			sb.append(verses.getVerse(i)).append('\n');
+		}
+		return sb.toString();
 	}
 	
-	private static String[] loadChapterText(Version version, Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+	private static SingleChapterVerses loadChapterText(Version version, Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
 		return version.bibleReader.loadVerseText(book, pasal_1, janganPisahAyat, hurufKecil);
 	}
 

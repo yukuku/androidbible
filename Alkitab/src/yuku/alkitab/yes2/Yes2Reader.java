@@ -11,6 +11,7 @@ import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.PericopeIndex;
+import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.BibleReader;
 import yuku.alkitab.yes2.io.RandomInputStream;
@@ -18,7 +19,6 @@ import yuku.alkitab.yes2.io.Yes2VerseTextDecoder;
 import yuku.alkitab.yes2.model.SectionIndex;
 import yuku.alkitab.yes2.model.Yes2Book;
 import yuku.alkitab.yes2.section.BooksInfoSection;
-import yuku.alkitab.yes2.section.PericopeIndexSection;
 import yuku.alkitab.yes2.section.TextSection;
 import yuku.alkitab.yes2.section.VersionInfoSection;
 import yuku.bintex.BintexReader;
@@ -33,6 +33,22 @@ public class Yes2Reader implements BibleReader {
 
 	private VersionInfoSection versionInfo_;
 
+	static class Yes2SingleChapterVerses extends SingleChapterVerses {
+		private final String[] verses;
+
+		public Yes2SingleChapterVerses(String[] verses) {
+			this.verses = verses;
+		}
+		
+		@Override public String getVerse(int verse_0) {
+			return verses[verse_0];
+		}
+
+		@Override public int getVerseCount() {
+			return verses.length;
+		}
+	}
+	
 	public Yes2Reader(String filename) {
 		this.filename_ = filename;
 	}
@@ -119,7 +135,7 @@ public class Yes2Reader implements BibleReader {
 		}
 	}
 
-	@Override public String[] loadVerseText(Book book, int chapter_1, boolean dontSeparateVerses, boolean lowercase) {
+	@Override public Yes2SingleChapterVerses loadVerseText(Book book, int chapter_1, boolean dontSeparateVerses, boolean lowercase) {
 		Yes2Book yes2Book = (Yes2Book) book;
 		
 		try {
@@ -150,11 +166,11 @@ public class Yes2Reader implements BibleReader {
 			BintexReader br = new BintexReader(file_);
 
 			if (dontSeparateVerses) {
-				return new String[] { 
+				return new Yes2SingleChapterVerses(new String[] { 
 					decoder_.makeIntoSingleString(br, verse_count, lowercase),
-				};
+				});
 			} else {
-				return decoder_.separateIntoVerses(br, verse_count, lowercase);
+				return new Yes2SingleChapterVerses(decoder_.separateIntoVerses(br, verse_count, lowercase));
 			}
 		} catch (Exception e) {
 			Log.e(TAG, "loadVerseText error", e); //$NON-NLS-1$
@@ -185,49 +201,41 @@ public class Yes2Reader implements BibleReader {
 		try {
 			loadSectionIndex();
 
-			if (D.EBUG) Log.d(TAG, "muatPerikop dipanggil untuk kitab=" + bookId + " pasal_1=" + chapter_1); //$NON-NLS-1$ //$NON-NLS-2$
-
 			PericopeIndex pericopeIndex = version.getIndexPerikop();
 			if (pericopeIndex == null) {
-				return 0; // ga ada perikop!
+				return 0; // no pericopes
 			}
 
 			int ariMin = Ari.encode(bookId, chapter_1, 0);
 			int ariMax = Ari.encode(bookId, chapter_1 + 1, 0);
 
-			int pertama = pericopeIndex.findFirst(ariMin, ariMax);
-			if (pertama == -1) {
+			int first = pericopeIndex.findFirst(ariMin, ariMax);
+			if (first == -1) {
 				return 0;
 			}
 
-			int kini = pertama;
+			int cur = first;
 			int res = 0;
 
-			if (pericopeBlock_offsetBase_ != 0) {
-				file_.seek(pericopeBlock_offsetBase_);
-			} else {
-				skipUntilSection("perikopBlok"); //$NON-NLS-1$
-				pericopeBlock_offsetBase_ = file_.getFilePointer();
-			}
-
-			BintexReader in = new BintexReader(new RandomInputStream(file_));
-			while (true) {
-				int ari = pericopeIndex.getAri(kini);
-
-				if (ari >= ariMax) {
-					// habis. Uda ga relevan
-					break;
-				}
-
-				PericopeBlock pericopeBlock = pericopeIndex.getBlock(in, kini);
-				kini++;
-
-				if (res < max) {
-					aris[res] = ari;
-					blocks[res] = pericopeBlock;
-					res++;
-				} else {
-					break;
+			if (sectionIndex_.seekToSection(PericopeBlocksSection.SECTION_NAME, file_)) {
+				while (true) {
+					int ari = pericopeIndex.getAri(cur);
+					if (ari >= ariMax) { // no more
+						break;
+					}
+					
+					int offset = pericopeIndex.offsets[cur];
+					PericopeBlocksSection.read
+					PericopeBlock block = pericopeIndex.getBlock(in, cur);
+					cur++;
+					
+					if (res < max) {
+						aris[res] = ari;
+						blocks[res] = block;
+						res++;
+					} else {
+						break;
+					}
 				}
 			}
 

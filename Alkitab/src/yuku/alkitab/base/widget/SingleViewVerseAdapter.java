@@ -2,7 +2,6 @@ package yuku.alkitab.base.widget;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
@@ -21,7 +20,6 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.util.Appearances;
-import yuku.alkitab.base.util.OsisBookNames;
 import yuku.alkitab.base.widget.CallbackSpan.OnClickListener;
 
 
@@ -39,7 +37,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		if (id >= 0) {
 			// AYAT. bukan judul perikop.
 
-			String text = verseTextData_[id];
+			String text = verses_.getVerse(id);
 			boolean withBookmark = attributeMap_ == null ? false : (attributeMap_[id] & 0x1) != 0;
 			boolean withNote = attributeMap_ == null ? false : (attributeMap_[id] & 0x2) != 0;
 			boolean withHighlight = attributeMap_ == null ? false : (attributeMap_[id] & 0x4) != 0;

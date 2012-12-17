@@ -20,6 +20,7 @@ import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.LidToAri;
 
@@ -264,12 +265,12 @@ public class Provider extends ContentProvider {
 	 */
 	private int resultForOneChapter(MatrixCursor cursor, Book book, int last_c, int ari_bc, int v_1_start, int v_1_end, boolean formatting) {
 		int count = 0;
-		String[] chapterText = S.loadChapterText(S.activeVersion, book, Ari.toChapter(ari_bc));
+		SingleChapterVerses verses = S.loadChapterText(S.activeVersion, book, Ari.toChapter(ari_bc));
 		for (int v_1 = v_1_start; v_1 <= v_1_end; v_1++) {
 			int v_0 = v_1 - 1;
-			if (v_0 < chapterText.length) {
+			if (v_0 < verses.getVerseCount()) {
 				int ari = ari_bc | v_1;
-				String text = chapterText[v_0];
+				String text = verses.getVerse(v_0);
 				if (formatting == false) {
 					text = U.removeSpecialCodes(text);
 				}

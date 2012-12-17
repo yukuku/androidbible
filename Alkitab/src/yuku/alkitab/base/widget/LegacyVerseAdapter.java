@@ -45,7 +45,7 @@ public class LegacyVerseAdapter extends VerseAdapter {
 
 			VerseItem res;
 
-			String text = verseTextData_[id];
+			String text = verses_.getVerse(id);
 			boolean withBookmark = attributeMap_ == null ? false : (attributeMap_[id] & 0x1) != 0;
 			boolean withNote = attributeMap_ == null ? false : (attributeMap_[id] & 0x2) != 0;
 			boolean withHighlight = attributeMap_ == null ? false : (attributeMap_[id] & 0x4) != 0;

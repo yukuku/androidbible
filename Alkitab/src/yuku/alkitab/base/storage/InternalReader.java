@@ -12,6 +12,7 @@ import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.InternalBook;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.PericopeIndex;
+import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.yes1.Yes1PericopeIndex;
 import yuku.bintex.BintexReader;
@@ -36,12 +37,32 @@ public class InternalReader implements BibleReader {
 		this.verseTextDecoder = verseTextDecoder;
 	}
 	
+	static class InternalSingleChapterVerses extends SingleChapterVerses {
+		private final String[] verses;
+
+		public InternalSingleChapterVerses(String[] verses) {
+			this.verses = verses;
+		}
+		
+		@Override public String getVerse(int verse_0) {
+			return verses[verse_0];
+		}
+
+		@Override public int getVerseCount() {
+			return verses.length;
+		}
+	}
+	
 	@Override public String getShortName() {
 		return edisiShortName;
 	}
 
 	@Override public String getLongName() {
 		return edisiLongName;
+	}
+	
+	@Override public String getDescription() {
+		return null;
 	}
 
 	@Override public Book[] loadBooks() {
@@ -93,7 +114,7 @@ public class InternalReader implements BibleReader {
 		return k;
 	}
 
-	@Override public String[] loadVerseText(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+	@Override public SingleChapterVerses loadVerseText(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
 		InternalBook internalBook = (InternalBook) book;
 
 		if (pasal_1 < 1 || pasal_1 > book.chapter_count) {
@@ -165,12 +186,12 @@ public class InternalReader implements BibleReader {
 			// jangan ditutup walau uda baca. Siapa tau masih sama filenya dengan sebelumnya.
 
 			if (janganPisahAyat) {
-				return new String[] { verseTextDecoder.makeIntoSingleString(ba, hurufKecil) };
+				return new InternalSingleChapterVerses(new String[] { verseTextDecoder.makeIntoSingleString(ba, hurufKecil) });
 			} else {
-				return verseTextDecoder.separateIntoVerses(ba, hurufKecil);
+				return new InternalSingleChapterVerses(verseTextDecoder.separateIntoVerses(ba, hurufKecil));
 			}
 		} catch (IOException e) {
-			return new String[] { e.getMessage() };
+			return new InternalSingleChapterVerses(new String[] { e.getMessage() });
 		}
 	}
 

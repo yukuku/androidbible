@@ -72,6 +72,7 @@ import yuku.alkitab.base.dialog.TypeNoteDialog;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
+import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.util.History;
@@ -1276,7 +1277,10 @@ public class IsiActivity extends BaseActivity {
 			PericopeBlock[] pericope_blocks;
 			int nblock;
 			
-			String[] verses = S.loadChapterText(S.activeVersion, S.activeBook, chapter_1);
+			SingleChapterVerses verses = S.loadChapterText(S.activeVersion, S.activeBook, chapter_1);
+			if (verses == null) {
+				return 0;
+			}
 			
 			//# max is set to 30 (one chapter has max of 30 blocks. Already almost impossible)
 			int max = 30;
