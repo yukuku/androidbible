@@ -187,9 +187,9 @@ public class Yes2Writer {
 
 		alog(output.getFilePointer(), "write footer");
 		bw.writeUint8(0);
-		bw.close();
 		
 		alog(output.getFilePointer(), "done");
+		bw.close();
 	}
 
 }
