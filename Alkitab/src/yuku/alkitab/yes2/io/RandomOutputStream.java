@@ -25,4 +25,16 @@ public class RandomOutputStream extends OutputStream {
 	public void write(byte[] buffer, int offset, int count) throws IOException {
 		f.write(buffer, offset, count);
 	}
+	
+	public long getFilePointer() throws IOException {
+		return f.getFilePointer();
+	}
+	
+	public void seek(long pos) throws IOException {
+		f.seek(pos);
+	}
+	
+	@Override public void close() throws IOException {
+		f.close();
+	}
 }

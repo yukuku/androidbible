@@ -23,9 +23,9 @@ import yuku.alkitab.base.renungan.Downloader;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.InternalDbHelper;
 import yuku.alkitab.base.storage.InternalReader;
+import yuku.alkitab.base.storage.OldVerseTextDecoder;
 import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.base.storage.SongDbHelper;
-import yuku.alkitab.base.storage.VerseTextDecoder;
 import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.base.util.IntArrayList;
 
@@ -99,7 +99,7 @@ public class S {
 	public static synchronized Version getInternalVersion() {
 		if (internalVersion == null) {
 			AppConfig c = AppConfig.get(App.context);
-			internalVersion = new Version(new InternalReader(c.internalPrefix, c.internalShortName, c.internalLongName, new VerseTextDecoder.Utf8()));
+			internalVersion = new Version(new InternalReader(c.internalPrefix, c.internalShortName, c.internalLongName, new OldVerseTextDecoder.Utf8()));
 		}
 		return internalVersion;
 	}

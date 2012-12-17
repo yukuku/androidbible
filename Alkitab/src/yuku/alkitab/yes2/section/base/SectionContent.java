@@ -1,7 +1,7 @@
 package yuku.alkitab.yes2.section.base;
 
 import yuku.alkitab.yes2.io.RandomInputStream;
-import yuku.bintex.BintexWriter;
+import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.bintex.ValueMap;
 
 public class SectionContent {
@@ -47,7 +47,7 @@ public class SectionContent {
 	}
 
 	public interface Writer {
-		void write(BintexWriter writer) throws Exception;
+		void write(RandomOutputStream output) throws Exception;
 	}
 	
 	public interface Reader<T extends SectionContent> {

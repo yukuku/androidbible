@@ -2,7 +2,6 @@ package yuku.alkitab.yes2;
 
 import android.util.Log;
 
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,24 +18,24 @@ import yuku.bintex.ValueMap;
  * Note: int is 32-bit integer
  * 
  * {
- * uint8[8] header = 0x98 0x58 0x0d 0x0a 0x00 0x5d 0xe0 0x02 // version 2
- * int section_count
- * uint8 sectionIndexVersion = 1
- * int sectionIndex.size
- * {
- * uint8 sectionName.length
- * char8[sectionName.length] sectionName
- * int offset // from start of sections
- * int attributes_size
- * int content_size
- * byte[4] reserved
- * }[section_count] sectionIndex
- * {
- * value section.attributes
- * byte[section.content.size] section.content
- * }[section_count] sections
+ * | uint8[8] header = 0x98 0x58 0x0d 0x0a 0x00 0x5d 0xe0 0x02 // version 2
+ * | int sectionIndex.size
+ * | uint8 sectionIndexVersion = 1
+ * | int section_count
+ * | {
+ * | | uint8 sectionName.length
+ * | | char8[sectionName.length] sectionName
+ * | | int offset // from start of sections
+ * | | int attributes_size
+ * | | int content_size
+ * | | byte[4] reserved
+ * | }[section_count] sectionIndex
+ * | {
+ * | | value section.attributes
+ * | | byte[section.content.size] section.content
+ * | }[section_count] sections
+ * | uint8 footer = 0
  * }
- * uint8 footer = 0
  */
 public class Yes2Writer {
 	private static final String TAG = Yes2Writer.class.getSimpleName();
@@ -76,19 +75,16 @@ public class Yes2Writer {
 
 	public List<SectionContent> sections = new ArrayList<SectionContent>();
 
-	public void writeToFile(RandomAccessFile file) throws Exception {
-		BintexWriter bw = new BintexWriter(new RandomOutputStream(file));
+	public void writeToFile(RandomOutputStream output) throws Exception {
+		BintexWriter bw = new BintexWriter(output);
 		
 		int section_count = sections.size();
 		
 		////////// HEADERS //////////
 		
-		alog(file.getFilePointer(), "write yes header");
+		alog(output.getFilePointer(), "write yes header");
 		bw.writeRaw(YES_HEADER);
 		
-		alog(file.getFilePointer(), "write section_count: " + section_count);
-		bw.writeInt(section_count);
-
 		///////// SECTION INDEX ///////////
 		
 		long savedpos_sectionIndexSize = -1;
@@ -99,15 +95,18 @@ public class Yes2Writer {
 		int[] savedsizes_sectionAttributes = new int[section_count];
 		int[] savedsizes_sectionContent = new int[section_count];
 		
-		alog(file.getFilePointer(), "write sectionIndexVersion: 1");
-		bw.writeUint8(1);
-		
 		{ // section index size is not known, just save position and reserve bytes
-			savedpos_sectionIndexSize = file.getFilePointer();
+			savedpos_sectionIndexSize = output.getFilePointer();
 			bw.writeInt(-1); // for sectionIndex size
 		}
 		
-		savedpos_startOfSectionIndex = file.getFilePointer();
+		alog(output.getFilePointer(), "write sectionIndexVersion: 1");
+		bw.writeUint8(1);
+		
+		alog(output.getFilePointer(), "write section_count: " + section_count);
+		bw.writeInt(section_count);
+		
+		savedpos_startOfSectionIndex = output.getFilePointer();
 		
 		for (int i = 0; i < section_count; i++) {
 			SectionContent section = sections.get(i);
@@ -115,12 +114,12 @@ public class Yes2Writer {
 			{ // section name
 				String name = section.getName();
 				byte[] name_bytes = section.getNameAsBytesWithLength();
-				alog(file.getFilePointer(), "write sectionName: " + name);
+				alog(output.getFilePointer(), "write sectionName: " + name);
 				bw.writeRaw(name_bytes);
 			}
 			
 			{ // sizes are not known, just save position and reserve bytes
-				savedpos_sectionIndexSizeEntries[i] = file.getFilePointer();
+				savedpos_sectionIndexSizeEntries[i] = output.getFilePointer();
 				bw.writeInt(-1); // for offset
 				bw.writeInt(-1); // for attributes_size
 				bw.writeInt(-1); // for content_size
@@ -129,43 +128,43 @@ public class Yes2Writer {
 		}
 		
 		{ // now we know the size of the section index, write it into the placeholder
-			long lastPos = file.getFilePointer();
-			file.seek(savedpos_sectionIndexSize);
+			long lastPos = output.getFilePointer();
+			output.seek(savedpos_sectionIndexSize);
 			int size = (int) (lastPos - savedpos_startOfSectionIndex);
-			alog(file.getFilePointer(), "write section index size: " + size);
+			alog(output.getFilePointer(), "write section index size: " + size);
 			bw.writeInt(size);
-			file.seek(lastPos);
+			output.seek(lastPos);
 		}
 		
 		//////////////// SECTION ATTRIBUTES AND CONTENT /////////////////
 		
-		savedpos_startOfSections = file.getFilePointer();
+		savedpos_startOfSections = output.getFilePointer();
 		
 		for (int i = 0; i < section_count; i++) {
 			SectionContent section = sections.get(i);
 			String section_name = section.getName();
 			
-			saved_sectionOffset[i] = (int) (file.getFilePointer() - savedpos_startOfSections);
+			saved_sectionOffset[i] = (int) (output.getFilePointer() - savedpos_startOfSections);
 
 			{ // attributes
-				int posBeforeAttributes = (int) file.getFilePointer();
-				alog(file.getFilePointer(), "write section attributes: " + section_name);
+				int posBeforeAttributes = (int) output.getFilePointer();
+				alog(output.getFilePointer(), "write section attributes: " + section_name);
 				ValueMap attributes = section.getAttributes();
 				bw.writeValueSimpleMap(attributes == null? new ValueMap(): attributes);
-				savedsizes_sectionAttributes[i] = (int) file.getFilePointer() - posBeforeAttributes;
+				savedsizes_sectionAttributes[i] = (int) output.getFilePointer() - posBeforeAttributes;
 			}
 			
 			{ // contents
-				int posBeforeContent = (int) file.getFilePointer();
-				alog(file.getFilePointer(), "write section content: " + section_name);
-				((SectionContent.Writer) section).write(bw);
-				savedsizes_sectionContent[i] = (int) file.getFilePointer() - posBeforeContent;
+				int posBeforeContent = (int) output.getFilePointer();
+				alog(output.getFilePointer(), "write section content: " + section_name);
+				((SectionContent.Writer) section).write(output);
+				savedsizes_sectionContent[i] = (int) output.getFilePointer() - posBeforeContent;
 			}
 		}
 		
 		//////////// WRITE INTO PLACEHOLDERS ////////////////
 		
-		long lastPos = file.getFilePointer();
+		long lastPos = output.getFilePointer();
 
 		{ // offsets and sizes in the section index
 			for (int i = 0; i < section_count; i++) {
@@ -176,21 +175,21 @@ public class Yes2Writer {
 				int attributes_size = savedsizes_sectionAttributes[i];
 				int content_size = savedsizes_sectionContent[i];
 				
-				file.seek(savedpos_sectionIndexSizeEntries[i]);
-				alog(file.getFilePointer(), "write offset, attributes_size, content_size of section " + section_name + ": " + offset + ", " + attributes_size + ", " + content_size); 
+				output.seek(savedpos_sectionIndexSizeEntries[i]);
+				alog(output.getFilePointer(), "write offset, attributes_size, content_size of section " + section_name + ": " + offset + ", " + attributes_size + ", " + content_size); 
 				bw.writeInt(offset);
 				bw.writeInt(attributes_size);
 				bw.writeInt(content_size);
 			}
 		}
 		
-		file.seek(lastPos);
+		output.seek(lastPos);
 
-		alog(file.getFilePointer(), "write footer");
+		alog(output.getFilePointer(), "write footer");
 		bw.writeUint8(0);
 		bw.close();
 		
-		alog(file.getFilePointer(), "done");
+		alog(output.getFilePointer(), "done");
 	}
 
 }

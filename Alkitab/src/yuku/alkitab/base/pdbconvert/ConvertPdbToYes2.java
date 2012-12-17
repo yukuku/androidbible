@@ -15,12 +15,12 @@ import java.util.List;
 import yuku.alkitab.R;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.yes2.Yes2Writer;
+import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitab.yes2.model.Yes2Book;
-import yuku.alkitab.yes2.section.BooksInfo;
-import yuku.alkitab.yes2.section.PericopeBlock;
-import yuku.alkitab.yes2.section.PericopeIndex;
-import yuku.alkitab.yes2.section.VersionInfo;
+import yuku.alkitab.yes2.section.BooksInfoSection;
+import yuku.alkitab.yes2.section.PericopesSection;
+import yuku.alkitab.yes2.section.VersionInfoSection;
 import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexWriter;
 
@@ -139,36 +139,29 @@ public class ConvertPdbToYes2 {
 			
 			progress(100, context.getString(R.string.cp_constructing_book_info));
 			// this will also build the pericope blocks and indexes
-			BooksInfo booksInfo = getBooksInfo(context, 100, params.includeAddlTitle, sortedBookIds);
+			BooksInfoSection booksInfoSection = getBooksInfo(context, 100, params.includeAddlTitle, sortedBookIds);
 			
 			progress(200, context.getString(R.string.cp_constructing_version_info));
-			VersionInfo versionInfo = getVersionInfo();
-			
-			progress(400, context.getString(R.string.cp_constructing_translated_file));
-			
-			progress(500, context.getString(R.string.cp_opening_translated_file));
-			RandomAccessFile out = new RandomAccessFile(yesFilename, "rw"); //$NON-NLS-1$
+			VersionInfoSection versionInfoSection = getVersionInfo();
 			
 			Yes2Writer yesWriter = new Yes2Writer();
-			yesWriter.sections.add(versionInfo);
-			yesWriter.sections.add(booksInfo);
+			yesWriter.sections.add(versionInfoSection);
+			yesWriter.sections.add(booksInfoSection);
 			
 			if (pericopeData_ != null) {
 				progress(510, context.getString(R.string.cp_writing_num_section_pericope_titles, pericopeData_.entries.size()));
-				PericopeBlock pericopeBlock = new PericopeBlock(pericopeData_);
-				yesWriter.sections.add(pericopeBlock);
-				
-				progress(520, context.getString(R.string.cp_writing_num_section_pericope_indexes, pericopeData_.entries.size()));
-				PericopeIndex pericopeIndex = new PericopeIndex(pericopeData_);
-				yesWriter.sections.add(pericopeIndex);
+				PericopesSection pericopesSection = new PericopesSection(pericopeData_);
+				yesWriter.sections.add(pericopesSection);
 			}
 			
 			LazyText lazyText = new LazyText(context, 800, sortedBookIds);
 			yesWriter.sections.add(lazyText);
 			
 			progress(700, context.getString(R.string.cp_writing_translated_file));
-			yesWriter.writeToFile(out);
-			out.close();
+			RandomOutputStream output = new RandomOutputStream(new RandomAccessFile(yesFilename, "rw")); //$NON-NLS-1$
+			
+			yesWriter.writeToFile(output);
+			output.close();
 			
 			pdb_.close();
 		} catch (Throwable e) {
@@ -180,8 +173,8 @@ public class ConvertPdbToYes2 {
 		return res;
 	}
 	
-	private VersionInfo getVersionInfo() {
-		VersionInfo res = new VersionInfo();
+	private VersionInfoSection getVersionInfo() {
+		VersionInfoSection res = new VersionInfoSection();
 		res.book_count = bookIdToPdbBookPosMap_.size();
 		res.description = pdb_.getVersionInfo();
 		res.hasPericopes = pericopeData_ == null? 0: 1;
@@ -192,7 +185,7 @@ public class ConvertPdbToYes2 {
 		return res;
 	}
 
-	private BooksInfo getBooksInfo(final Context context, int baseProgress, boolean includeAddlTitle, int[] sortedBookIds) throws Exception {
+	private BooksInfoSection getBooksInfo(final Context context, int baseProgress, boolean includeAddlTitle, int[] sortedBookIds) throws Exception {
 		// no nulls allowed
 		final List<Yes2Book> yes2books = new ArrayList<Yes2Book>();
 		
@@ -246,7 +239,7 @@ public class ConvertPdbToYes2 {
 			throw new RuntimeException("Some internal error, res size != bookIdToPdbBookPosMap_ size"); //$NON-NLS-1$
 		}
 		
-		BooksInfo res = new BooksInfo();
+		BooksInfoSection res = new BooksInfoSection();
 		res.yes2Books = yes2books;
 		return res;
 	}
@@ -315,6 +308,12 @@ public class ConvertPdbToYes2 {
 		pericopeData_.addEntry(entry);
 	}
 
+	/**
+	 * Each verse is written as follows:
+	 *
+	 *	- varuint length_in_bytes
+	 *  - byte[length_in_bytes] encoded_text
+	 */
 	public class LazyText extends SectionContent implements SectionContent.Writer {
 		private final int baseProgress;
 		private final Context context;
@@ -329,7 +328,9 @@ public class ConvertPdbToYes2 {
 			this.charset = Charset.forName("utf-8");
 		}
 		
-		@Override public void write(BintexWriter writer) throws Exception {
+		@Override public void write(RandomOutputStream output) throws Exception {
+			BintexWriter bw = new BintexWriter(output);
+			
 			for (int bookId: sortedBookIds) {
 				int pdbBookPos = bookIdToPdbBookPosMap_.get(bookId);
 				BookInfo pdbBookInfo = pdb_.getBook(pdbBookPos);
@@ -346,8 +347,9 @@ public class ConvertPdbToYes2 {
 						byte[] bytes = new byte[buf.limit()];
 						buf.position(0);
 						buf.get(bytes);
-						writer.writeRaw(bytes);
-						writer.writeUint8('\n');
+						
+						bw.writeVarUint(bytes.length);
+						bw.writeRaw(bytes);
 					}
 				}
 			}

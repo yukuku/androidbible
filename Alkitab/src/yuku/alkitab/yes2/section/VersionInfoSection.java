@@ -4,12 +4,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import yuku.alkitab.yes2.io.RandomInputStream;
+import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexReader;
 import yuku.bintex.BintexWriter;
 import yuku.bintex.ValueMap;
 
-public class VersionInfo extends SectionContent implements SectionContent.Writer {
+public class VersionInfoSection extends SectionContent implements SectionContent.Writer {
 	public String shortName;
 	public String longName;
 	public String description;
@@ -18,11 +19,13 @@ public class VersionInfo extends SectionContent implements SectionContent.Writer
 	public int hasPericopes;
 	public int textEncoding; // 1 = ascii; 2 = utf-8 (default)
 	
-	public VersionInfo() {
+	public VersionInfoSection() {
 		super("versionInfo");
 	}
 
-	@Override public void write(BintexWriter writer) throws Exception {
+	@Override public void write(RandomOutputStream output) throws Exception {
+		BintexWriter bw = new BintexWriter(output);
+		
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		map.put("version", 3);
 		if (shortName != null) map.put("shortName", shortName);
@@ -32,14 +35,14 @@ public class VersionInfo extends SectionContent implements SectionContent.Writer
 		map.put("book_count", book_count);
 		map.put("hasPericopes", hasPericopes);
 		map.put("textEncoding", textEncoding);
-		writer.writeValueSimpleMap(map);
+		bw.writeValueSimpleMap(map);
 	}
 	
-	public static class Reader implements SectionContent.Reader<VersionInfo> {
-		@Override public VersionInfo read(RandomInputStream input) throws Exception {
+	public static class Reader implements SectionContent.Reader<VersionInfoSection> {
+		@Override public VersionInfoSection read(RandomInputStream input) throws Exception {
 			BintexReader br = new BintexReader(input);
 			ValueMap map = br.readValueSimpleMap();
-			VersionInfo res = new VersionInfo();
+			VersionInfoSection res = new VersionInfoSection();
 			res.shortName = map.getString("shortName");
 			res.longName = map.getString("longName");
 			res.description = map.getString("description");

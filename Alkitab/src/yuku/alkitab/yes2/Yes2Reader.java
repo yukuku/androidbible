@@ -2,9 +2,9 @@ package yuku.alkitab.yes2;
 
 import android.util.Log;
 
-import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
+import java.util.List;
 
 import yuku.afw.D;
 import yuku.alkitab.base.model.Ari;
@@ -13,140 +13,106 @@ import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.PericopeIndex;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.BibleReader;
-import yuku.alkitab.base.storage.VerseTextDecoder;
 import yuku.alkitab.yes2.io.RandomInputStream;
+import yuku.alkitab.yes2.io.Yes2VerseTextDecoder;
+import yuku.alkitab.yes2.model.SectionIndex;
 import yuku.alkitab.yes2.model.Yes2Book;
-import yuku.alkitab.yes2.section.BooksInfo;
-import yuku.alkitab.yes2.section.VersionInfo;
+import yuku.alkitab.yes2.section.BooksInfoSection;
+import yuku.alkitab.yes2.section.PericopeIndexSection;
+import yuku.alkitab.yes2.section.TextSection;
+import yuku.alkitab.yes2.section.VersionInfoSection;
 import yuku.bintex.BintexReader;
 
 public class Yes2Reader implements BibleReader {
 	private static final String TAG = Yes2Reader.class.getSimpleName();
 
 	private String filename_;
-	private RandomAccessFile file_;
-	private VerseTextDecoder decoder_;
+	private RandomInputStream file_;
+	private SectionIndex sectionIndex_;
+	private Yes2VerseTextDecoder decoder_;
 
-	// TODO replace with sectionindex entries
-	private long text_offsetBase_;
-	private long pericopeBlock_offsetBase_;
-
-	private VersionInfo versionInfo_;
+	private VersionInfoSection versionInfo_;
 
 	public Yes2Reader(String filename) {
 		this.filename_ = filename;
 	}
 
-	/**
-	 * Jump to a section. After this method, the file pointer will be at the beginning of a section content.
-	 * 
-	 * @return section size or -1 if fails
-	 */
-	private int skipUntilSection(String sectionName) throws Exception {
-		file_.seek(8); // setelah header
+	/** Read section index */
+	private synchronized void loadSectionIndex() throws Exception {
+		if (file_ != null) { // we have read it previously.
+			return;
+		}
+			
+		file_ = new RandomInputStream(new RandomAccessFile(filename_, "r")); //$NON-NLS-1$
+		file_.seek(0);
 
-		while (true) {
-			String name = readSectionName(file_);
-
-			if (name == null || name.equals("")) { //$NON-NLS-1$
-				// We have reached EOF. Tell that the looked for section does not exist
-				Log.d(TAG, "Section not found: " + sectionName); //$NON-NLS-1$
-				return -1;
+		{ // check header
+			byte[] buf = new byte[8];
+			file_.read(buf);
+			if (!Arrays.equals(buf, new byte[] { (byte) 0x98, 0x58, 0x0d, 0x0a, 0x00, 0x5d, (byte) 0xe0, 0x02 /* yes version 2 */})) {
+				throw new RuntimeException("YES2: Header is incorrect. Found: " + Arrays.toString(buf)); //$NON-NLS-1$
 			}
-
-			int size = readSectionSize(file_);
-
-			if (name.equals(sectionName)) {
-				return size;
-			} else {
-				Log.d(TAG, "section skipped: " + name); //$NON-NLS-1$
-				file_.skipBytes(size);
-			}
+		}
+		
+		file_.seek(12); // start of sectionIndex
+		sectionIndex_ = SectionIndex.read(new BintexReader(file_));
+	}
+	
+	private synchronized void loadVersionInfo() throws Exception {
+		if (seekToSection("versionInfo")) {
+			versionInfo_ = new VersionInfoSection.Reader().read(file_);
 		}
 	}
-
-	private synchronized void init() throws Exception {
-		if (file_ == null) {
-			file_ = new RandomAccessFile(filename_, "r"); //$NON-NLS-1$
-			file_.seek(0);
-
-			{ // check header
-				byte[] buf = new byte[8];
-				file_.read(buf);
-				if (!Arrays.equals(buf, new byte[] { (byte) 0x98, 0x58, 0x0d, 0x0a, 0x00, 0x5d, (byte) 0xe0, 0x02 /* yes version 2 */})) {
-					throw new RuntimeException("YES2: Header is incorrect. Found: " + Arrays.toString(buf)); //$NON-NLS-1$
-				}
-			}
-
-			readVersionInfo();
-
-			skipUntilSection("text"); //$NON-NLS-1$
-			text_offsetBase_ = file_.getFilePointer();
-			Log.d(TAG, "text_offsetBase_=" + text_offsetBase_); //$NON-NLS-1$
-		}
+	
+	private synchronized boolean seekToSection(String sectionName) throws Exception {
+		loadSectionIndex();
+		
+		if (sectionIndex_ == null) return false;
+		return sectionIndex_.seekToSection(sectionName, file_);
 	}
 
 	@Override public String getShortName() {
 		try {
-			init();
+			loadVersionInfo();
 			return versionInfo_.shortName;
 		} catch (Exception e) {
-			Log.e(TAG, "init error", e); //$NON-NLS-1$
+			Log.e(TAG, "yes load version info error", e); //$NON-NLS-1$
 			return ""; //$NON-NLS-1$
 		}
 	}
 
 	@Override public String getLongName() {
 		try {
-			init();
+			loadVersionInfo();
 			return versionInfo_.longName;
 		} catch (Exception e) {
-			Log.e(TAG, "init error", e); //$NON-NLS-1$
+			Log.e(TAG, "yes load version info error", e); //$NON-NLS-1$
 			return ""; //$NON-NLS-1$
 		}
 	}
 
 	public String getDescription() {
 		try {
-			init();
+			loadVersionInfo();
 			return versionInfo_.description;
 		} catch (Exception e) {
-			Log.e(TAG, "init error", e); //$NON-NLS-1$
-			return null;
-		}
-	}
-
-	public void readVersionInfo() {
-		Log.d(TAG, "@@readVersionInfo"); //$NON-NLS-1$
-
-		try {
-			skipUntilSection("versionInfo"); //$NON-NLS-1$
-
-			RandomInputStream ris = new RandomInputStream(file_);
-			versionInfo_ = new VersionInfo.Reader().read(ris);
-
-			Log.d(TAG, "readVersionInfo done");
-		} catch (Exception e) {
-			Log.e(TAG, "readVersionInfo error", e); //$NON-NLS-1$
+			Log.e(TAG, "yes load version info error", e); //$NON-NLS-1$
+			return ""; //$NON-NLS-1$
 		}
 	}
 
 	@Override public Book[] loadBooks() {
-		Log.d(TAG, "@@loadBooks"); //$NON-NLS-1$
-
 		try {
-			init();
+			loadVersionInfo();
 
-			skipUntilSection("booksInfo"); //$NON-NLS-1$
-			RandomInputStream ris = new RandomInputStream(file_);
-			BooksInfo booksInfo = new BooksInfo.Reader().read(ris);
-
-			Book[] res = new Book[booksInfo.yes2Books.size()];
-			for (int i = 0; i < res.length; i++) {
-				res[i] = booksInfo.yes2Books.get(i);
+			if (seekToSection(BooksInfoSection.SECTION_NAME)) {
+				BooksInfoSection section = new BooksInfoSection.Reader().read(file_);
+				List<Yes2Book> books = section.yes2Books;
+				return books.toArray(new Yes2Book[books.size()]);
 			}
-
-			return res;
+			
+			Log.e(TAG, "no section named " + BooksInfoSection.SECTION_NAME); //$NON-NLS-1$
+			return null;
 		} catch (Exception e) {
 			Log.e(TAG, "loadBooks error", e); //$NON-NLS-1$
 			return null;
@@ -156,40 +122,39 @@ public class Yes2Reader implements BibleReader {
 	@Override public String[] loadVerseText(Book book, int chapter_1, boolean dontSeparateVerses, boolean lowercase) {
 		Yes2Book yes2Book = (Yes2Book) book;
 		
-		// init text decoder 
-		if (decoder_ == null) {
-			int textEncoding = versionInfo_.textEncoding;
-			if (textEncoding == 1) {
-				decoder_ = new VerseTextDecoder.Ascii();
-			} else if (textEncoding == 2) {
-				decoder_ = new VerseTextDecoder.Utf8();
-			} else {
-				Log.e(TAG, "Text encoding " + textEncoding + " not supported! Fallback to ascii."); //$NON-NLS-1$ //$NON-NLS-2$
-				decoder_ = new VerseTextDecoder.Ascii();
-			}
-		}
-
 		try {
-			init();
-
+			// init text decoder 
+			if (decoder_ == null) {
+				int textEncoding = versionInfo_.textEncoding;
+				if (textEncoding == 1) {
+					decoder_ = new Yes2VerseTextDecoder.Ascii();
+				} else if (textEncoding == 2) {
+					decoder_ = new Yes2VerseTextDecoder.Utf8();
+				} else {
+					Log.e(TAG, "Text encoding " + textEncoding + " not supported! Fallback to ascii."); //$NON-NLS-1$ //$NON-NLS-2$
+					decoder_ = new Yes2VerseTextDecoder.Ascii();
+				}
+			}
+			
 			if (chapter_1 <= 0 || chapter_1 > yes2Book.chapter_count) {
 				return null;
 			}
 
-			long seekTo = text_offsetBase_;
+			long seekTo = sectionIndex_.getOffsetForSection(TextSection.SECTION_NAME);
 			seekTo += yes2Book.offset;
 			seekTo += yes2Book.chapter_offsets[chapter_1 - 1];
 			file_.seek(seekTo);
 
-			int length = yes2Book.chapter_offsets[chapter_1] - yes2Book.chapter_offsets[chapter_1 - 1];
-
-			byte[] ba = new byte[length];
-			file_.read(ba);
+			int verse_count = yes2Book.verse_counts[chapter_1 - 1];
+			
+			BintexReader br = new BintexReader(file_);
 
 			if (dontSeparateVerses) {
-				return new String[] { decoder_.makeIntoSingleString(ba, lowercase) };
+				return new String[] { 
+					decoder_.makeIntoSingleString(br, verse_count, lowercase),
+				};
 			} else {
-				return decoder_.separateIntoVerses(ba, lowercase);
+				return decoder_.separateIntoVerses(br, verse_count, lowercase);
 			}
 		} catch (Exception e) {
 			Log.e(TAG, "loadVerseText error", e); //$NON-NLS-1$
@@ -197,55 +162,38 @@ public class Yes2Reader implements BibleReader {
 		}
 	}
 
-	@SuppressWarnings("deprecation") static String readSectionName(RandomAccessFile f) throws IOException {
-		byte[] buf = new byte[12];
-		int read = f.read(buf);
-		return read <= 0 ? null : new String(buf, 0);
-	}
-
-	static int readSectionSize(RandomAccessFile f) throws IOException {
-		return f.readInt();
-	}
-
 	@Override public PericopeIndex loadPericopeIndex() {
-		long wmulai = System.currentTimeMillis();
 		try {
-			init();
+			loadVersionInfo();
 
 			if (versionInfo_.hasPericopes == 0) {
 				return null;
 			}
 
-			int ukuran = skipUntilSection("perikopIndex"); //$NON-NLS-1$
-
-			if (ukuran < 0) {
-				Log.d(TAG, "Tidak ada seksi 'perikopIndex'"); //$NON-NLS-1$
+			if (sectionIndex_.seekToSection(PericopeIndexSection.SECTION_NAME, file_)) {
+				return new PericopeIndexSection.Reader().read(file_);
+			} else {
 				return null;
 			}
-
-			BintexReader in = new BintexReader(new RandomInputStream(file_));
-			return PericopeIndex.read(in);
 		} catch (Exception e) {
-			Log.e(TAG, "bacaIndexPerikop error", e); //$NON-NLS-1$
+			Log.e(TAG, "loadPericopeIndex error", e); //$NON-NLS-1$
 			return null;
-		} finally {
-			Log.d(TAG, "Muat index perikop butuh ms: " + (System.currentTimeMillis() - wmulai)); //$NON-NLS-1$
 		}
 	}
 
-	@Override public int loadPericope(Version version, int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max) {
+	@Override public int loadPericope(Version version, int bookId, int chapter_1, int[] aris, PericopeBlock[] blocks, int max) {
 		try {
-			init();
+			loadSectionIndex();
 
-			if (D.EBUG) Log.d(TAG, "muatPerikop dipanggil untuk kitab=" + kitab + " pasal_1=" + pasal); //$NON-NLS-1$ //$NON-NLS-2$
+			if (D.EBUG) Log.d(TAG, "muatPerikop dipanggil untuk kitab=" + bookId + " pasal_1=" + chapter_1); //$NON-NLS-1$ //$NON-NLS-2$
 
 			PericopeIndex pericopeIndex = version.getIndexPerikop();
 			if (pericopeIndex == null) {
 				return 0; // ga ada perikop!
 			}
 
-			int ariMin = Ari.encode(kitab, pasal, 0);
-			int ariMax = Ari.encode(kitab, pasal + 1, 0);
+			int ariMin = Ari.encode(bookId, chapter_1, 0);
+			int ariMax = Ari.encode(bookId, chapter_1 + 1, 0);
 
 			int pertama = pericopeIndex.findFirst(ariMin, ariMax);
 			if (pertama == -1) {
@@ -275,8 +223,8 @@ public class Yes2Reader implements BibleReader {
 				kini++;
 
 				if (res < max) {
-					xari[res] = ari;
-					xblok[res] = pericopeBlock;
+					aris[res] = ari;
+					blocks[res] = pericopeBlock;
 					res++;
 				} else {
 					break;

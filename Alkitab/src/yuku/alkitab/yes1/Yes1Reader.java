@@ -15,6 +15,7 @@ import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.PericopeIndex;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.BibleReader;
+import yuku.alkitab.base.storage.OldVerseTextDecoder;
 import yuku.alkitab.base.storage.VerseTextDecoder;
 import yuku.bintex.BintexReader;
 
@@ -254,12 +255,12 @@ public class Yes1Reader implements BibleReader {
 		// init pembacaDecoder
 		if (verseTextDecoder == null) {
 			if (encoding == 1) {
-				verseTextDecoder = new VerseTextDecoder.Ascii();
+				verseTextDecoder = new OldVerseTextDecoder.Ascii();
 			} else if (encoding == 2) {
-				verseTextDecoder = new VerseTextDecoder.Utf8();
+				verseTextDecoder = new OldVerseTextDecoder.Utf8();
 			} else {
 				Log.e(TAG, "Encoding " + encoding + " not recognized!");  //$NON-NLS-1$//$NON-NLS-2$
-				verseTextDecoder = new VerseTextDecoder.Ascii();
+				verseTextDecoder = new OldVerseTextDecoder.Ascii();
 			}
 			Log.d(TAG, "encoding " + encoding + " so decoder is " + verseTextDecoder.getClass().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}

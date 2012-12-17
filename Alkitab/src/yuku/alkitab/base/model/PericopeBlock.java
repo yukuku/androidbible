@@ -7,6 +7,6 @@ public class PericopeBlock {
 	public String[] parallels;
 
 	@Override public String toString() {
-		return "Blok{title=" + title + " parallels=" + Arrays.toString(parallels) + "}"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return "PericopeBlock{title=" + title + " parallels=" + Arrays.toString(parallels) + "}"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }
