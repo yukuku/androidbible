@@ -11,8 +11,6 @@ public class Version {
 	
 	private Book[] volatile_xkitab;
 	private Book[] volatile_xkitabConsecutive;
-	private PericopeIndex volatile_indexPerikop;
-	private boolean volatile_indexPerikopSudahCobaBaca = false;
 	
 	private synchronized Book[] getXkitab() {
 		if (volatile_xkitab == null) {
@@ -72,13 +70,5 @@ public class Version {
 		}
 		// aneh skali kalo kena ini, tapi toh kena juga
 		throw new RuntimeException("Ga ketemu satu pun kitab yang ga null. Info edisi: " + (this.bibleReader == null? "pembaca=null": (this.bibleReader.getLongName() + " nkitab=" + xkitab.length)));    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-	}
-	
-	public synchronized PericopeIndex getIndexPerikop() {
-		if (!volatile_indexPerikopSudahCobaBaca) {
-			volatile_indexPerikop = this.bibleReader.loadPericopeIndex();
-			volatile_indexPerikopSudahCobaBaca = true;
-		}
-		return volatile_indexPerikop;
 	}
 }

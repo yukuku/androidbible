@@ -12,7 +12,6 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
-import yuku.alkitab.base.model.PericopeIndex;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.BibleReader;
@@ -37,6 +36,8 @@ public class Yes1Reader implements BibleReader {
 	private int nkitab;
 	private int perikopAda = 0; // default ga ada
 	private int encoding = 1; // 1 = ascii; 2 = utf-8;
+
+	private Yes1PericopeIndex pericopeIndex_;
 	
 	static class Yes1SingleChapterVerses extends SingleChapterVerses {
 		private final String[] verses;
@@ -328,8 +329,11 @@ public class Yes1Reader implements BibleReader {
 		return f.readInt();
 	}
 
-	@Override
-	public PericopeIndex loadPericopeIndex() {
+	private Yes1PericopeIndex loadPericopeIndex() {
+		if (pericopeIndex_ != null) {
+			return pericopeIndex_;
+		}
+		
 		long wmulai = System.currentTimeMillis();
 		try {
 			init();
@@ -346,7 +350,9 @@ public class Yes1Reader implements BibleReader {
 			}
 			
 			BintexReader in = new BintexReader(new RandomInputStream(f));
-			return Yes1PericopeIndex.read(in);
+			
+			pericopeIndex_ = Yes1PericopeIndex.read(in);
+			return pericopeIndex_;
 		} catch (Exception e) {
 			Log.e(TAG, "bacaIndexPerikop error", e); //$NON-NLS-1$
 			return null;
@@ -355,14 +361,13 @@ public class Yes1Reader implements BibleReader {
 		}
 	}
 
-	@Override
-	public int loadPericope(Version version, int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max) {
+	@Override public int loadPericope(Version version, int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max) {
 		try {
 			init();
 			
 			if (D.EBUG) Log.d(TAG, "muatPerikop dipanggil untuk kitab=" + kitab + " pasal_1=" + pasal); //$NON-NLS-1$ //$NON-NLS-2$
 			
-			Yes1PericopeIndex pericopeIndex = (Yes1PericopeIndex) version.getIndexPerikop();
+			Yes1PericopeIndex pericopeIndex = loadPericopeIndex();
 			if (pericopeIndex == null) {
 				return 0; // ga ada perikop!
 			}

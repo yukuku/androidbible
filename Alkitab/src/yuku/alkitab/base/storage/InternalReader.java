@@ -11,7 +11,6 @@ import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.InternalBook;
 import yuku.alkitab.base.model.PericopeBlock;
-import yuku.alkitab.base.model.PericopeIndex;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.yes1.Yes1PericopeIndex;
@@ -29,6 +28,8 @@ public class InternalReader implements BibleReader {
 	private final String edisiShortName;
 	private final String edisiLongName;
 	private final VerseTextDecoder verseTextDecoder;
+
+	private Yes1PericopeIndex pericopeIndex_;
 
 	public InternalReader(String edisiPrefix, String edisiShortName, String edisiLongName, VerseTextDecoder verseTextDecoder) {
 		this.edisiPrefix = edisiPrefix;
@@ -195,7 +196,11 @@ public class InternalReader implements BibleReader {
 		}
 	}
 
-	@Override public PericopeIndex loadPericopeIndex() {
+	private Yes1PericopeIndex loadPericopeIndex() {
+		if (pericopeIndex_ != null) {
+			return pericopeIndex_;
+		}
+		
 		long wmulai = System.currentTimeMillis();
 
 		InputStream is = S.openRaw(edisiPrefix + "_pericope_index_bt"); //$NON-NLS-1$
@@ -205,7 +210,8 @@ public class InternalReader implements BibleReader {
 
 		BintexReader in = new BintexReader(is);
 		try {
-			return Yes1PericopeIndex.read(in);
+			pericopeIndex_ = Yes1PericopeIndex.read(in);
+			return pericopeIndex_;
 
 		} catch (IOException e) {
 			Log.e(TAG, "baca perikop index ngaco", e); //$NON-NLS-1$
@@ -217,7 +223,7 @@ public class InternalReader implements BibleReader {
 	}
 
 	@Override public int loadPericope(Version version, int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max) {
-		Yes1PericopeIndex pericopeIndex = (Yes1PericopeIndex) version.getIndexPerikop();
+		Yes1PericopeIndex pericopeIndex = loadPericopeIndex();
 
 		if (pericopeIndex == null) {
 			return 0; // ga ada perikop!
