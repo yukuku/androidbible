@@ -28,6 +28,7 @@ public class PericopesSection extends SectionContent implements SectionContent.W
 		long savedpos_indexSize;
 		long[] savedpos_entryOffsets;
 		int[] savedoffset_entryOffsets;
+		long savedpos_sectionEnd;
 		
 		// uint8 version: 2
 		bw.writeUint8(2);
@@ -75,8 +76,8 @@ public class PericopesSection extends SectionContent implements SectionContent.W
 				}
 			}
 		}
-		
-		int section_size = (int) (output.getFilePointer() - savedpos_sectionBegin);
+		savedpos_sectionEnd = output.getFilePointer();
+		int section_size = (int) (savedpos_sectionEnd - savedpos_sectionBegin);
 		
 		{ // patches
 			output.seek(savedpos_indexSize);
@@ -87,6 +88,8 @@ public class PericopesSection extends SectionContent implements SectionContent.W
 				bw.writeInt(savedoffset_entryOffsets[i]);
 			}
 		}
+		
+		output.seek(savedpos_sectionEnd);
 	}
 	
 
