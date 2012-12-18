@@ -1,10 +1,14 @@
 package yuku.alkitab.yes2.section;
 
+import java.io.IOException;
+
+import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.PericopeIndex;
 import yuku.alkitab.yes2.io.RandomInputStream;
 import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitab.yes2.model.PericopeData.Entry;
+import yuku.alkitab.yes2.model.Yes2PericopeBlock;
 import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexReader;
 import yuku.bintex.BintexWriter;
@@ -12,15 +16,29 @@ import yuku.bintex.BintexWriter;
 public class PericopesSection extends SectionContent implements SectionContent.Writer {
 	public static final String SECTION_NAME = "pericopes";
 	
-	private final PericopeData data;
-	int data_offset = 0;
+	// for writing:
+	PericopeData data_;
+	
+	// for reading:
+	RandomInputStream input_;
+	int data_offset_ = 0;
+	PericopeIndex index_;
 
-	public PericopesSection(PericopeData data) {
+	private PericopesSection() {
 		super(SECTION_NAME);
-		this.data = data;
 	}
 	
-
+	public PericopesSection(PericopeData data) {
+		super(SECTION_NAME);
+		this.data_ = data;
+	}
+	
+	public Yes2PericopeBlock readBlock(int position) throws IOException {
+		int offset = index_.offsets[position];
+		input_.seek(data_offset_ + offset);
+		return Yes2PericopeBlock.read(input_);
+	}
+	
 	@Override public void write(RandomOutputStream output) throws Exception {
 		BintexWriter bw = new BintexWriter(output);
 		
@@ -38,13 +56,13 @@ public class PericopesSection extends SectionContent implements SectionContent.W
 		bw.writeInt(-1);
 		
 		// int entry_count
-		int entry_count = data.entries.size();
+		int entry_count = data_.entries.size();
 		bw.writeInt(entry_count); 
 		
 		// Entry[entry_count]
 		savedpos_entryOffsets = new long[entry_count];
 		for (int i = 0; i < entry_count; i++) {
-			Entry entry = data.entries.get(i);
+			Entry entry = data_.entries.get(i);
 		
 			bw.writeInt(entry.ari);
 			savedpos_entryOffsets[i] = output.getFilePointer();
@@ -55,7 +73,7 @@ public class PericopesSection extends SectionContent implements SectionContent.W
 		
 		savedoffset_entryOffsets = new int[entry_count];
 		for (int i = 0; i < entry_count; i++) {
-			Entry entry = data.entries.get(i);
+			Entry entry = data_.entries.get(i);
 			savedoffset_entryOffsets[i] = (int) (output.getFilePointer() - dataBeginOffset);
 			
 			/* Blok {
@@ -92,29 +110,73 @@ public class PericopesSection extends SectionContent implements SectionContent.W
 		output.seek(savedpos_sectionEnd);
 	}
 	
-
-	public static class Reader {
-		public PericopeIndex read(RandomInputStream input) throws Exception {
+	
+	public static class Reader implements SectionContent.Reader<PericopesSection> {
+		@Override public PericopesSection read(RandomInputStream input) throws Exception {
 			BintexReader br = new BintexReader(input);
+			
 			int version = br.readUint8();
 			if (version != 2) {
 				throw new RuntimeException("PericopeIndex version not supported: " + version);
 			}
 			
-			PericopeIndex res = new PericopeIndex();
+			/* int index_size = */ br.readInt();
 			
 			int entry_count = br.readInt();
 			
-			res.aris = new int[entry_count];
-			res.offsets = new int[entry_count];
+			PericopesSection res = new PericopesSection();
+			res.index_ = new PericopeIndex();
+			int[] aris = new int[entry_count];
+			res.index_.aris = aris;
+			int[] offsets = new int[entry_count];
+			res.index_.offsets = offsets;
 			
 			for (int i = 0; i < entry_count; i++) {
-				res.aris[i] = br.readInt();
-				res.offsets[i] = br.readInt();
+				aris[i] = br.readInt();
+				offsets[i] = br.readInt();
 			}
+			
+			res.input_ = input;
+			res.data_offset_ = (int) input.getFilePointer();
 			
 			return res;
 		}
+	}
+
+	/**
+	 * @param aris (result param) the actual aris of the pericopes 
+	 * @param blocks (result param) the pericope blocks found
+	 * @param max maximum number of results to return, must be less than or equal to min(aris.length, blocks.length)
+	 * @return number of pericopes loaded by this method
+	 */
+	public int getPericopesForAris(int ari_from, int ari_to, int[] aris, PericopeBlock[] blocks, int max) throws IOException {
+		int first = index_.findFirst(ari_from, ari_to);
+		if (first == -1) {
+			return 0;
+		}
+
+		int cur = first;
+		int res = 0;
+
+		while (true) {
+			int ari = index_.getAri(cur);
+			if (ari >= ari_to) { // no more
+				break;
+			}
+			
+			Yes2PericopeBlock block = readBlock(cur);
+			cur++;
+			
+			if (res < max) {
+				aris[res] = ari;
+				blocks[res] = block;
+				res++;
+			} else {
+				break;
+			}
+		}
+		
+		return res;
 	}
 }
 

@@ -31,6 +31,10 @@ public class RandomInputStream extends InputStream {
 		f.seek(n);
 	}
 	
+	public long getFilePointer() throws IOException {
+		return f.getFilePointer();
+	}
+	
 	@Override public void close() throws IOException {
 		f.close();
 	}

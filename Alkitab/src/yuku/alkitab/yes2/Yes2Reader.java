@@ -6,11 +6,9 @@ import java.io.RandomAccessFile;
 import java.util.Arrays;
 import java.util.List;
 
-import yuku.afw.D;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
-import yuku.alkitab.base.model.PericopeIndex;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.BibleReader;
@@ -19,6 +17,7 @@ import yuku.alkitab.yes2.io.Yes2VerseTextDecoder;
 import yuku.alkitab.yes2.model.SectionIndex;
 import yuku.alkitab.yes2.model.Yes2Book;
 import yuku.alkitab.yes2.section.BooksInfoSection;
+import yuku.alkitab.yes2.section.PericopesSection;
 import yuku.alkitab.yes2.section.TextSection;
 import yuku.alkitab.yes2.section.VersionInfoSection;
 import yuku.bintex.BintexReader;
@@ -31,8 +30,10 @@ public class Yes2Reader implements BibleReader {
 	private SectionIndex sectionIndex_;
 	private Yes2VerseTextDecoder decoder_;
 
+	// cached in memory
 	private VersionInfoSection versionInfo_;
-
+	private PericopesSection pericopesSection_;
+	
 	static class Yes2SingleChapterVerses extends SingleChapterVerses {
 		private final String[] verses;
 
@@ -178,70 +179,33 @@ public class Yes2Reader implements BibleReader {
 		}
 	}
 
-	@Override public PericopeIndex loadPericopeIndex() {
-		try {
-			loadVersionInfo();
-
-			if (versionInfo_.hasPericopes == 0) {
-				return null;
-			}
-
-			if (sectionIndex_.seekToSection(PericopeIndexSection.SECTION_NAME, file_)) {
-				return new PericopeIndexSection.Reader().read(file_);
-			} else {
-				return null;
-			}
-		} catch (Exception e) {
-			Log.e(TAG, "loadPericopeIndex error", e); //$NON-NLS-1$
-			return null;
-		}
-	}
-
 	@Override public int loadPericope(Version version, int bookId, int chapter_1, int[] aris, PericopeBlock[] blocks, int max) {
 		try {
-			loadSectionIndex();
-
-			PericopeIndex pericopeIndex = version.getIndexPerikop();
-			if (pericopeIndex == null) {
-				return 0; // no pericopes
+			loadVersionInfo();
+			
+			if (versionInfo_.hasPericopes == 0) {
+				return 0;
 			}
-
+			
+			if (pericopesSection_ == null) { // not yet loaded!
+				if (sectionIndex_.seekToSection(PericopesSection.SECTION_NAME, file_)) {
+					pericopesSection_ = new PericopesSection.Reader().read(file_);
+				} else {
+					return 0;
+				}
+			}
+			
+			if (pericopesSection_ == null) { 
+				Log.e(TAG, "Didn't succeed in loading pericopes section");
+				return 0;
+			}
+		
 			int ariMin = Ari.encode(bookId, chapter_1, 0);
 			int ariMax = Ari.encode(bookId, chapter_1 + 1, 0);
 
-			int first = pericopeIndex.findFirst(ariMin, ariMax);
-			if (first == -1) {
-				return 0;
-			}
-
-			int cur = first;
-			int res = 0;
-
-			if (sectionIndex_.seekToSection(PericopeBlocksSection.SECTION_NAME, file_)) {
-				while (true) {
-					int ari = pericopeIndex.getAri(cur);
-					if (ari >= ariMax) { // no more
-						break;
-					}
-					
-					int offset = pericopeIndex.offsets[cur];
-					PericopeBlocksSection.read
-					PericopeBlock block = pericopeIndex.getBlock(in, cur);
-					cur++;
-					
-					if (res < max) {
-						aris[res] = ari;
-						blocks[res] = block;
-						res++;
-					} else {
-						break;
-					}
-				}
-			}
-
-			return res;
+			return pericopesSection_.getPericopesForAris(ariMin, ariMax, aris, blocks, max);
 		} catch (Exception e) {
-			Log.e(TAG, "gagal muatPerikop", e); //$NON-NLS-1$
+			Log.e(TAG, "General exception in loading pericope block", e); //$NON-NLS-1$
 			return 0;
 		}
 	}
