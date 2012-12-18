@@ -80,14 +80,8 @@ public interface Yes2VerseTextDecoder {
 			return res;
 		}
 
-		/* TODO Optimize */
 		@Override public String makeIntoSingleString(BintexReader br, int verse_count, boolean lowercased) throws Exception {
-			StringBuilder sb = new StringBuilder();
-			String[] verses = separateIntoVerses(br, verse_count, lowercased);
-			for (String verse: verses) {
-				sb.append(verse).append('\n');
-			}
-			return sb.toString();
+			return Utf8Decoder.toStringFromVersesWithPrependedLengths(br, verse_count, lowercased);
 		}
 	}
 }

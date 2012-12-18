@@ -209,22 +209,18 @@ public class S {
 		return loadChapterText(version, book, pasal_1, false, true);
 	}
 	
-	/** TODO optimize */
 	public static synchronized String loadChapterTextLowercasedWithoutSplit(Version version, Book book, int pasal_1) {
 		if (book == null) {
 			return notAvailableText;
 		}
-		SingleChapterVerses verses = loadChapterText(version, book, pasal_1, true, true);
 		
-		if (verses == null) {
+		SingleChapterVerses singleVerse = version.bibleReader.loadVerseText(book, pasal_1, true, true);
+		
+		if (singleVerse == null) {
 			return notAvailableText;
 		}
 		
-		StringBuilder sb = new StringBuilder();  
-		for (int i = 0, len = verses.getVerseCount(); i < len; i++) {
-			sb.append(verses.getVerse(i)).append('\n');
-		}
-		return sb.toString();
+		return singleVerse.getVerse(0);
 	}
 	
 	private static SingleChapterVerses loadChapterText(Version version, Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {

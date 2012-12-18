@@ -5,9 +5,9 @@ import android.util.Log;
 
 import gnu.trove.map.hash.TIntIntHashMap;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -215,7 +215,7 @@ public class ConvertPdbToYes2 {
 				
 				for (int verse_0 = 0; verse_0 < b.verse_counts[chapter_0]; verse_0++) {
 					String[] complete = getCompleteVerseWithPreprocess(pdbBookInfo, chapter_0, verse_0);
-					offsetPassed += complete[0].getBytes("utf-8").length + 1; // +1 for the '\n'
+					offsetPassed += VerseBytes.bytesForAVerse(complete[0]).length;
 					
 					// pericopes!
 					if (includeAddlTitle) {
@@ -307,6 +307,30 @@ public class ConvertPdbToYes2 {
 		entry.block.title = title;
 		pericopeData_.addEntry(entry);
 	}
+	
+	/** Get the complete bytes (including information about length and/or separators for a verse */
+	static class VerseBytes {
+		static ThreadLocal<ByteArrayOutputStream> baos_ = new ThreadLocal<ByteArrayOutputStream>() {
+			@Override protected ByteArrayOutputStream initialValue() {
+				return new ByteArrayOutputStream(1000);
+			}
+		};
+		
+		static byte[] bytesForAVerse(String verse) {
+			ByteArrayOutputStream baos = baos_.get();
+			baos.reset();
+			BintexWriter bw = new BintexWriter(baos);
+			
+			try {
+				byte[] verse_bytes = verse.getBytes("utf-8");
+				bw.writeVarUint(verse_bytes.length);
+				bw.writeRaw(verse_bytes);
+				return baos.toByteArray();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
 
 	/**
 	 * Each verse is written as follows:
@@ -318,14 +342,12 @@ public class ConvertPdbToYes2 {
 		private final int baseProgress;
 		private final Context context;
 		private final int[] sortedBookIds;
-		private final Charset charset;
 		
 		public LazyText(Context context, int baseProgress, int[] sortedBookIds) {
 			super("text");
 			this.context = context;
 			this.baseProgress = baseProgress;
 			this.sortedBookIds = sortedBookIds;
-			this.charset = Charset.forName("utf-8");
 		}
 		
 		@Override public void write(RandomOutputStream output) throws Exception {
@@ -343,12 +365,7 @@ public class ConvertPdbToYes2 {
 					int verse_count = pdbBookInfo.getVerseCount(chapter_0 + 1);
 					for (int verse_0 = 0; verse_0 < verse_count; verse_0++) {
 						String s = getCompleteVerseWithPreprocess(pdbBookInfo, chapter_0, verse_0)[0];
-						ByteBuffer buf = charset.encode(s);
-						byte[] bytes = new byte[buf.limit()];
-						buf.position(0);
-						buf.get(bytes);
-						
-						bw.writeVarUint(bytes.length);
+						byte[] bytes = VerseBytes.bytesForAVerse(s);
 						bw.writeRaw(bytes);
 					}
 				}

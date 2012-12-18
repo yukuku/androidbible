@@ -163,7 +163,7 @@ public class Yes2Reader implements BibleReader {
 				return null;
 			}
 
-			long seekTo = sectionIndex_.getOffsetForSection(TextSection.SECTION_NAME);
+			long seekTo = sectionIndex_.getAbsoluteOffsetForSectionContent(TextSection.SECTION_NAME);
 			seekTo += yes2Book.offset;
 			seekTo += yes2Book.chapter_offsets[chapter_1 - 1];
 			file_.seek(seekTo);

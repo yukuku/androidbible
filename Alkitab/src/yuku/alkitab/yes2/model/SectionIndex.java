@@ -83,12 +83,12 @@ public class SectionIndex {
 		}
 	}
 	
-	public long getOffsetForSection(String name) {
+	public long getAbsoluteOffsetForSectionContent(String name) {
 		Entry e = entries.get(name);
 		if (e == null) {
 			return -1;
 		} else {
-			return e.offset;
+			return this.sectionDataStartOffset + e.offset + e.attributes_size;
 		}
 	}
 }
