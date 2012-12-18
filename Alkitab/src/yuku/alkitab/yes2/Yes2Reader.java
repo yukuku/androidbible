@@ -69,7 +69,7 @@ public class Yes2Reader implements BibleReader {
 		}
 		
 		file_.seek(12); // start of sectionIndex
-		sectionIndex_ = SectionIndex.read(new BintexReader(file_));
+		sectionIndex_ = SectionIndex.read(file_);
 	}
 	
 	private synchronized void loadVersionInfo() throws Exception {
@@ -81,8 +81,17 @@ public class Yes2Reader implements BibleReader {
 	private synchronized boolean seekToSection(String sectionName) throws Exception {
 		loadSectionIndex();
 		
-		if (sectionIndex_ == null) return false;
-		return sectionIndex_.seekToSection(sectionName, file_);
+		if (sectionIndex_ == null) {
+			Log.e(TAG, "@@seekToSection Could not load section index");
+			return false;
+		}
+		
+		if (sectionIndex_.seekToSectionContent(sectionName, file_)) {
+			return true;
+		} else {
+			Log.e(TAG, "@@seekToSection Could not seek to section: " + sectionName);
+			return false;
+		}
 	}
 
 	@Override public String getShortName() {

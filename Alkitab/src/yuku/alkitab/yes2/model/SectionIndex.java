@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import yuku.afw.D;
 import yuku.alkitab.yes2.io.RandomInputStream;
 import yuku.bintex.BintexReader;
+import yuku.bintex.ValueMap;
 
 public class SectionIndex {
 	public static final String TAG = SectionIndex.class.getSimpleName();
@@ -20,8 +21,11 @@ public class SectionIndex {
 	}
 	
 	private LinkedHashMap<String, Entry> entries;
+	private int sectionDataStartOffset;
 	
-	@SuppressWarnings("deprecation") public static SectionIndex read(BintexReader br) throws IOException {
+	@SuppressWarnings("deprecation") public static SectionIndex read(RandomInputStream input) throws IOException {
+		BintexReader br = new BintexReader(input);
+		
 		int version = br.readUint8();
 		if (version != 1) {
 			Log.d(TAG, "Unsupported section index version: " + version);
@@ -32,7 +36,6 @@ public class SectionIndex {
 		res.entries = new LinkedHashMap<String, Entry>();
 		
 		int section_count = br.readInt();
-		br.readInt(); // sectionIndex.size in bytes, we don't actually need this
 		
 		for (int i = 0; i < section_count; i++) {
 			Entry e = new Entry();
@@ -51,15 +54,31 @@ public class SectionIndex {
 			}
 		}
 		
+		res.sectionDataStartOffset = (int) input.getFilePointer();
+		
+		if (D.EBUG) {
+			Log.d(TAG, "@@read start of section data offset: " + res.sectionDataStartOffset);
+		}
+		
 		return res;
 	}
 
-	public boolean seekToSection(String name, RandomInputStream file_) throws IOException {
-		Entry e = entries.get(name);
+	public ValueMap getSectionAttributes(String sectionName, RandomInputStream file_) throws IOException {
+		Entry e = entries.get(sectionName);
+		if (e == null) {
+			return null;
+		} else {
+			file_.seek(this.sectionDataStartOffset + e.offset);
+			return new BintexReader(file_).readValueSimpleMap();
+		}
+	}
+	
+	public boolean seekToSectionContent(String sectionName, RandomInputStream file_) throws IOException {
+		Entry e = entries.get(sectionName);
 		if (e == null) {
 			return false;
 		} else {
-			file_.seek(e.offset);
+			file_.seek(this.sectionDataStartOffset + e.offset + e.attributes_size);
 			return true;
 		}
 	}
