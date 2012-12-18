@@ -22,8 +22,8 @@ import yuku.bintex.BintexReader;
 public class Yes1Reader implements BibleReader {
 	private static final String TAG = Yes1Reader.class.getSimpleName();
 	
-	private String nf;
 	private RandomAccessFile f;
+	private boolean initted = false;
 	private VerseTextDecoder verseTextDecoder;
 	
 	private long teks_dasarOffset;
@@ -55,8 +55,8 @@ public class Yes1Reader implements BibleReader {
 		}
 	}
 	
-	public Yes1Reader(String nf) {
-		this.nf = nf;
+	public Yes1Reader(RandomAccessFile f) {
+		this.f = f;
 	}
 	
 	/**
@@ -86,8 +86,9 @@ public class Yes1Reader implements BibleReader {
 	}
 	
 	private synchronized void init() throws Exception {
-		if (f == null) {
-			f = new RandomAccessFile(nf, "r"); //$NON-NLS-1$
+		if (initted == false) {
+			initted = true;
+			
 			f.seek(0);
 			
 			// cek header

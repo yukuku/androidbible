@@ -5,6 +5,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 
+import yuku.afw.D;
 import yuku.alkitab.yes2.io.RandomInputStream;
 import yuku.bintex.BintexReader;
 
@@ -44,6 +45,10 @@ public class SectionIndex {
 			e.content_size = br.readInt();
 			br.skip(4); // reserved
 			res.entries.put(e.name, e);
+			
+			if (D.EBUG) {
+				Log.d(TAG, "@@read: " + e.name + " offset=" + e.offset + " attributes_size=" + e.attributes_size + " content_size=" + e.content_size);
+			}
 		}
 		
 		return res;

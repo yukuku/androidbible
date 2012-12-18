@@ -2,7 +2,6 @@ package yuku.alkitab.yes2;
 
 import android.util.Log;
 
-import java.io.RandomAccessFile;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,7 +24,6 @@ import yuku.bintex.BintexReader;
 public class Yes2Reader implements BibleReader {
 	private static final String TAG = Yes2Reader.class.getSimpleName();
 
-	private String filename_;
 	private RandomInputStream file_;
 	private SectionIndex sectionIndex_;
 	private Yes2VerseTextDecoder decoder_;
@@ -50,17 +48,16 @@ public class Yes2Reader implements BibleReader {
 		}
 	}
 	
-	public Yes2Reader(String filename) {
-		this.filename_ = filename;
+	public Yes2Reader(RandomInputStream input) {
+		this.file_ = input;
 	}
 
 	/** Read section index */
 	private synchronized void loadSectionIndex() throws Exception {
-		if (file_ != null) { // we have read it previously.
+		if (sectionIndex_ != null) { // we have read it previously.
 			return;
 		}
 			
-		file_ = new RandomInputStream(new RandomAccessFile(filename_, "r")); //$NON-NLS-1$
 		file_.seek(0);
 
 		{ // check header
@@ -188,7 +185,7 @@ public class Yes2Reader implements BibleReader {
 			}
 			
 			if (pericopesSection_ == null) { // not yet loaded!
-				if (sectionIndex_.seekToSection(PericopesSection.SECTION_NAME, file_)) {
+				if (seekToSection(PericopesSection.SECTION_NAME)) {
 					pericopesSection_ = new PericopesSection.Reader().read(file_);
 				} else {
 					return 0;
