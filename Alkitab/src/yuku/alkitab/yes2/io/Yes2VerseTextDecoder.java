@@ -65,6 +65,12 @@ public interface Yes2VerseTextDecoder {
 			
 			for (int i = 0; i < verse_count; i++) {
 				int verse_len = br.readVarUint();
+				
+				if (verse_len > verseBuf.length) {
+					verseBuf = new byte[verse_len + 1000];
+					verseBuf_.set(verseBuf);
+				}
+				
 				br.readRaw(verseBuf, 0, verse_len);
 				
 				String verse;
