@@ -132,6 +132,7 @@
   <string name="ed_type_built_in">Jenis: Terlampir</string>
   <string name="ed_type_preset">Jenis: Teratur</string>
   <string name="ed_type_add_on">Jenis: Tambahan</string>
+  <string name="ed_shortName_shortName">Nama singkat: %s</string>
   <string name="ed_title_title">Judul: %s</string>
   <string name="ed_stored_in_file">Disimpan di: %s</string>
   <string name="ed_default_filename_file">Nama file semula: %s</string>
@@ -207,6 +208,7 @@
   <string name="get_more_fonts">Dapatkan huruf lainnya…</string>
   <string name="about_translators">Penerjemah:</string>
   <string name="intent_filter_import_from_backup">Impor dari cadangan</string>
+  <string name="redownload">Unduh ulang</string>
   <string name="goto_tab_dialer_label">Telusuri</string>
   <string name="goto_tab_direct_label">Ketik</string>
   <string name="goto_tab_grid_label">Pilih</string>

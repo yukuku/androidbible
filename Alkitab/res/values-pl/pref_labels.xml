@@ -5,9 +5,10 @@
   <string name="pref_bahasa_language">Język</string>
   <string name="pref_atur_warna_teks_latar_belakang_dan">Ustaw kolor tekstu, tła i numeracji wersetów zgodnie z tematem.</string>
   <string name="pref_tema_warna">Kolor tematu</string>
-  <string name="pref_warna_teks_alkitab">Kolor tekstu Biblii</string>
-  <string name="pref_warna_latar_belakang">Kolor tła</string>
-  <string name="pref_warna_nomor_ayat">Kolor numeru wersetu</string>
+  <string name="pref_warna_teks_alkitab">Tekst Biblii</string>
+  <string name="pref_warna_latar_belakang">Tło</string>
+  <string name="pref_warna_nomor_ayat">Numer wersetu</string>
+  <string name="pref_redTextColor_title">Słowa Jezusa</string>
   <string name="pref_pakai_huruf_yang_dicetak_tebal_bold">Uzywaj pogrubionych czcionek.</string>
   <string name="pref_tebalkan_huruf">Tekst pogrubiony</string>
   <string name="pref_ganti_bentuk_huruf_teks_alkitab">Zmodyfikuj wygląd tekstu Biblijnego.</string>

@@ -233,14 +233,4 @@
   <string name="desc_open_verse_menu">Verse-Menu öffnen</string>
   <string name="desc_previous_chapter">Voriges Kapitel</string>
   <string name="desc_next_chapter">Nächstes Kapitel</string>
-  <string name="teks_about">Entwikelt von [b]yuku[/b], 2009-2012[br/]	
-    	• Website: androidbible.blogspot.com[br/] 
-	• Google+: gplus.to/androidbible[br/]
-    	• Mailing list: groups.google.com/group/androidbible[br/]
-    	[br/]
-		[b]Mitarbeiter:[/b][br/]
-		• [b]Oluss Studio[/b] program icon[br/]
-		• [b]Jaya Satrio[/b] various icons[br/]
-		• [b]Yohanes Nugroho[/b] PDB reader[br/]
-		• etc.</string>
 </resources>

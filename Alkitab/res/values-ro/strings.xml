@@ -132,6 +132,7 @@
   <string name="ed_type_built_in">Tip: Intern</string>
   <string name="ed_type_preset">Tip: Presetat</string>
   <string name="ed_type_add_on">Tip: Add-on</string>
+  <string name="ed_shortName_shortName">Prescurtare: %s</string>
   <string name="ed_title_title">Titlu: %s</string>
   <string name="ed_stored_in_file">Stocat în: %s</string>
   <string name="ed_default_filename_file">Fişier implicit: %s</string>
@@ -193,7 +194,7 @@
   <string name="bl_clear_filter">Şterge filtrare</string>
   <string name="bl_filtering_titiktiga">Filtrare…</string>
   <string name="bl_no_items_match_the_filter_above">Nu sunt elemente să se potrivească cu filtrul de mai sus.</string>
-  <string name="bl_send_backup">Transfer</string>
+  <string name="bl_send_backup">Transferă</string>
   <string name="bl_file_not_found_filename">Fişierul nu este găsit: %s</string>
   <string name="bl_send_backup_confirmation">Creați și trimiteți o copie de rezervă a marcajelor, notelor, și evidențierilor? Puteți de exemplu, să trimiteți fișierul atașat prin e-mail la un dispozitiv nou, sau doar pentru arhivare.</string>
   <string name="labels_titikdua">Etichete:</string>

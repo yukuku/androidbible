@@ -5,9 +5,10 @@
   <string name="pref_bahasa_language">Limba</string>
   <string name="pref_atur_warna_teks_latar_belakang_dan">Alege culoare text, fundal şi număr verset conform unei teme.</string>
   <string name="pref_tema_warna">Culoare temă</string>
-  <string name="pref_warna_teks_alkitab">Culoare text Biblie</string>
-  <string name="pref_warna_latar_belakang">Culoare fundal</string>
-  <string name="pref_warna_nomor_ayat">Culoare număr verset</string>
+  <string name="pref_warna_teks_alkitab">Text Biblic</string>
+  <string name="pref_warna_latar_belakang">Fundal</string>
+  <string name="pref_warna_nomor_ayat">Verset numărul</string>
+  <string name="pref_redTextColor_title">Cuvintele Domnului Isus</string>
   <string name="pref_pakai_huruf_yang_dicetak_tebal_bold">Utilizează font aldin.</string>
   <string name="pref_tebalkan_huruf">Text aldin</string>
   <string name="pref_ganti_bentuk_huruf_teks_alkitab">Schimbă aspectul textului Bibliei.</string>

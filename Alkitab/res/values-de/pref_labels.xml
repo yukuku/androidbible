@@ -5,9 +5,6 @@
   <string name="pref_bahasa_language">Sprache</string>
   <string name="pref_atur_warna_teks_latar_belakang_dan">Farbschema ändern</string>
   <string name="pref_tema_warna">Farbschemen</string>
-  <string name="pref_warna_teks_alkitab">Bibeltextfarbe</string>
-  <string name="pref_warna_latar_belakang">Hintergrundfarbe</string>
-  <string name="pref_warna_nomor_ayat">Versnummerfarbe</string>
   <string name="pref_pakai_huruf_yang_dicetak_tebal_bold">Fette Schrift</string>
   <string name="pref_tebalkan_huruf">Text markieren</string>
   <string name="pref_ganti_bentuk_huruf_teks_alkitab">Schriftart ändern</string>
