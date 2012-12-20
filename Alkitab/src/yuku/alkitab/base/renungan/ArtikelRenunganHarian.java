@@ -10,9 +10,12 @@ public class ArtikelRenunganHarian extends ArtikelDariSabda {
 		super(tgl, judul, headerHtml, isiHtml, siapPakai);
 	}
 
-	@Override
-	public CharSequence getKopiraitHtml() {
-		return "Renungan Harian.<br/>diambil dari <b>sabda.org</b>"; //$NON-NLS-1$
+	@Override public CharSequence getKopiraitHtml() {
+		return "__________<br/>" +
+				"Renungan Harian / e-Renungan Harian<br/>" +
+				"Bahan renungan yang diterbitkan secara teratur oleh Yayasan Gloria dan diterbitkan secara elektronik oleh Yayasan Lembaga SABDA (YLSA).<br/>" + 
+				"© 1999-2012 Yayasan Lembaga SABDA (YLSA). <br/>" + 
+				"Isi boleh disimpan untuk tujuan pribadi atau non-komersial. Atas setiap publikasi atau pencetakan wajib menyebutkan alamat situs SABDA.org sebagai sumber tulisan dan mengirim pemberitahuan ke webmaster@sabda.org";
 	}
 
 	@Override
