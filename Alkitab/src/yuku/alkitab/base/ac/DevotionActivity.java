@@ -64,7 +64,6 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 	TextView lIsi;
 	ScrollView scrollIsi;
-	TextView lHeader;
 	ImageButton bKiri;
 	ImageButton bKanan;
 	Button bGanti;
@@ -127,7 +126,6 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		
 		memudar = AnimationUtils.loadAnimation(this, R.anim.fade_out);
 
-		lHeader = (TextView) findViewById(R.id.lHeader);
 		lIsi = (TextView) findViewById(R.id.lIsi);
 		scrollIsi = (ScrollView) findViewById(R.id.scrollIsi);
 		bKiri = (ImageButton) findViewById(R.id.bKiri);
@@ -231,7 +229,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
 		if (itemId == R.id.menuCopy) {
-			String salinan = lHeader.getText() + "\n" + lIsi.getText(); //$NON-NLS-1$
+			String salinan = getSupportActionBar().getTitle() + "\n" + getSupportActionBar().getSubtitle();
 			U.copyToClipboard(salinan);
 			
 			Toast.makeText(this, R.string.renungan_sudah_disalin, Toast.LENGTH_SHORT).show();
@@ -240,8 +238,8 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		} else if (itemId == R.id.menuShare) {
 			Intent intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain"); //$NON-NLS-1$
-			intent.putExtra(Intent.EXTRA_SUBJECT, lHeader.getText());
-			intent.putExtra(Intent.EXTRA_TEXT, lHeader.getText() + "\n" + lIsi.getText()); //$NON-NLS-1$
+			intent.putExtra(Intent.EXTRA_SUBJECT, getSupportActionBar().getTitle().toString());
+			intent.putExtra(Intent.EXTRA_TEXT, getSupportActionBar().getTitle().toString() + '\n' + lIsi.getText()); 
 			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_renungan)), REQCODE_bagikan);
 			
 			return true;
@@ -378,7 +376,8 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			}
 		}
 		
-		lHeader.setText(judul + "\n" + namaHari(tanggalan) + ", " + DateFormat.getDateFormat(this).format(tanggalan));  //$NON-NLS-1$//$NON-NLS-2$
+		getSupportActionBar().setTitle(judul);
+		getSupportActionBar().setSubtitle(namaHari(tanggalan) + ", " + DateFormat.getDateFormat(this).format(tanggalan));  //$NON-NLS-1$
 	}
 
 	private static final int[] NAMA_HARI_RESID = {R.string.hari_minggu, R.string.hari_senin, R.string.hari_selasa, R.string.hari_rabu, R.string.hari_kamis, R.string.hari_jumat, R.string.hari_sabtu};
