@@ -132,6 +132,7 @@
   <string name="ed_type_built_in">类型： 内建的</string>
   <string name="ed_type_preset">类型： 预设</string>
   <string name="ed_type_add_on">类型： 附加</string>
+  <string name="ed_shortName_shortName">简短名称: %s</string>
   <string name="ed_title_title">标题： %s</string>
   <string name="ed_stored_in_file">存储在： %s</string>
   <string name="ed_default_filename_file">默认的文件名： %s</string>

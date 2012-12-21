@@ -132,6 +132,7 @@
   <string name="ed_type_built_in">Jenis: Terlampir</string>
   <string name="ed_type_preset">Jenis: Teratur</string>
   <string name="ed_type_add_on">Jenis: Tambahan</string>
+  <string name="ed_shortName_shortName">Nama singkat: %s</string>
   <string name="ed_title_title">Judul: %s</string>
   <string name="ed_stored_in_file">Disimpan di: %s</string>
   <string name="ed_default_filename_file">Nama file semula: %s</string>
@@ -207,6 +208,7 @@
   <string name="get_more_fonts">Dapatkan huruf lainnya…</string>
   <string name="about_translators">Penerjemah:</string>
   <string name="intent_filter_import_from_backup">Impor dari cadangan</string>
+  <string name="redownload">Unduh ulang</string>
   <string name="goto_tab_dialer_label">Telusuri</string>
   <string name="goto_tab_direct_label">Ketik</string>
   <string name="goto_tab_grid_label">Pilih</string>
@@ -243,16 +245,15 @@
   <string name="desc_open_verse_menu">Buka menu ayat</string>
   <string name="desc_previous_chapter">Pasal sebelum</string>
   <string name="desc_next_chapter">Pasal berikut</string>
-  <string name="teks_about">Dikembangkan oleh [b]yuku[/b] dan SABDA, 2009-2012[br/]
+  <string name="teks_about">Dikembangkan oleh [b]yuku[/b], 2009-2013[br/]
 • Situs: androidbible.blogspot.com[br/]
 • Google+: gplus.to/androidbible[br/]
 • Milis: groups.google.com/group/androidbible[br/]
 [br/]
-Terjemahan Baru © LAI[br/]
+Terjemahan Baru, Bahasa Indonesia Sehari-hari © Lembaga Alkitab Indonesia[br/]
 [br/]
 [b]Bantuan:[/b][br/]
 • [b]Jaya Satrio[/b] ikon dan desain[br/]
 • [b]Yohanes Nugroho[/b] pembaca PDB[br/]
-• dan banyak lagi orang-orang yang menyumbangkan ide, perbaikan, laporan masalah, salinan kidung, informasi terjemahan Alkitab, dll!
-</string>
+• dan banyak lagi orang-orang yang menyumbangkan ide, perbaikan, laporan masalah, salinan kidung, informasi terjemahan Alkitab, dll!</string>
 </resources>

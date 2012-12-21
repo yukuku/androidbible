@@ -132,6 +132,7 @@
   <string name="ed_type_built_in">Typ: Wbudowany</string>
   <string name="ed_type_preset">Typ: Doodany</string>
   <string name="ed_type_add_on">Typ: Dodatek</string>
+  <string name="ed_shortName_shortName">Krótka nazwa: %s</string>
   <string name="ed_title_title">Tytuł: %s</string>
   <string name="ed_stored_in_file">Przechowywane w: %s</string>
   <string name="ed_default_filename_file">Domyślna nazwa pliku: %s</string>
@@ -207,6 +208,7 @@
   <string name="get_more_fonts">Pobierz więcej czcionek…</string>
   <string name="about_translators">Tłumacze:</string>
   <string name="intent_filter_import_from_backup">Import z kopii</string>
+  <string name="redownload">Pobierz ponownie</string>
   <string name="goto_tab_dialer_label">Dialer</string>
   <string name="goto_tab_direct_label">Bezpośrednio</string>
   <string name="goto_tab_grid_label">Siatka</string>

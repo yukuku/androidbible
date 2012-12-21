@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:id="@+id/aaa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/popup"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+		android:padding="8dp" 
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/bChange"
+            style="@style/DevotionSelectChangeButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="*devotion name" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <ImageButton
+                android:id="@+id/bPrev"
+                style="@style/DevotionSelectNavButton"
+                android:src="@drawable/left_arrow" />
+
+            <TextView
+                android:id="@+id/tCurrentDate"
+                style="@style/DevotionSelectCurrentDate"
+                android:text="*current date" />
+
+            <ImageButton
+                android:id="@+id/bNext"
+                style="@style/DevotionSelectNavButton"
+                android:src="@drawable/right_arrow" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/arrow_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/arrow_up" />
+
+</RelativeLayout>
