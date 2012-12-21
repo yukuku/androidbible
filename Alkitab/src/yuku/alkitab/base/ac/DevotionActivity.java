@@ -378,8 +378,17 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			}
 		}
 		
-		getSupportActionBar().setTitle(judul);
-		getSupportActionBar().setSubtitle(namaHari(tanggalan) + ", " + DateFormat.getDateFormat(this).format(tanggalan));  //$NON-NLS-1$
+		{ // widget texts
+			String dateDisplay = namaHari(tanggalan) + ", " + DateFormat.getDateFormat(this).format(tanggalan);  //$NON-NLS-1$
+			
+			// action bar
+			getSupportActionBar().setTitle(judul);
+			getSupportActionBar().setSubtitle(dateDisplay);
+			
+			// popup texts
+			popup.setDevotionName(judul);
+			popup.setDevotionDate(dateDisplay);
+		}
 	}
 
 	private static final int[] NAMA_HARI_RESID = {R.string.hari_minggu, R.string.hari_senin, R.string.hari_selasa, R.string.hari_rabu, R.string.hari_kamis, R.string.hari_jumat, R.string.hari_sabtu};

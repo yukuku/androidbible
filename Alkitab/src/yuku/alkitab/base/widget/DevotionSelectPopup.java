@@ -9,8 +9,10 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupWindow.OnDismissListener;
+import android.widget.TextView;
 
 import net.londatiga.android.PopupWindows;
 import yuku.afw.V;
@@ -24,9 +26,10 @@ public class DevotionSelectPopup extends PopupWindows implements OnDismissListen
 
 	private final Context context;
 	
-	View bChange;
+	Button bChange;
 	View bPrev;
 	View bNext;
+	TextView tCurrentDate;
 	ImageView mArrowUp;
 	
 	DevotionSelectPopupListener listener;
@@ -45,6 +48,7 @@ public class DevotionSelectPopup extends PopupWindows implements OnDismissListen
 		bChange = V.get(mRootView, R.id.bChange);
 		bPrev = V.get(mRootView, R.id.bPrev);
 		bNext = V.get(mRootView, R.id.bNext);
+		tCurrentDate = V.get(mRootView, R.id.tCurrentDate);
 
 		bChange.setOnClickListener(button_click);
 		bPrev.setOnClickListener(button_click);
@@ -131,8 +135,16 @@ public class DevotionSelectPopup extends PopupWindows implements OnDismissListen
 
 	public void setDevotionSelectListener(DevotionSelectPopupListener listener) {
 		setOnDismissListener(this);
-
+		
 		this.listener = listener;
+	}
+	
+	public void setDevotionDate(CharSequence date) {
+		tCurrentDate.setText(date);
+	}
+	
+	public void setDevotionName(CharSequence name) {
+		bChange.setText(name);
 	}
 
 	@Override public void onDismiss() {
