@@ -42,6 +42,7 @@ import yuku.alkitab.base.renungan.Downloader.OnStatusDonlotListener;
 import yuku.alkitab.base.renungan.IArtikel;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.widget.CallbackSpan;
+import yuku.alkitab.base.widget.DevotionSelectPopup;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -68,6 +69,8 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	ImageButton bKanan;
 	Button bGanti;
 	TextView lStatus;
+	
+	DevotionSelectPopup popup;
 	
 	boolean renderBerhasilBaik = false;
 	long terakhirCobaTampilLagi = 0;
@@ -168,6 +171,8 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			}
 		});
 		
+		popup = new DevotionSelectPopup(this);
+		
 		//# atur difot! 
 		if (S.temporary.devotion_date == null) S.temporary.devotion_date = new Date();
 		if (S.temporary.devotion_name == null) S.temporary.devotion_name = DEFAULT;
@@ -228,7 +233,12 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
-		if (itemId == R.id.menuCopy) {
+		if (itemId == R.id.menuChangeDate) {
+			View anchor = findViewById(R.id.menuChangeDate);
+			popup.show(anchor);
+			
+			return true;
+		} else if (itemId == R.id.menuCopy) {
 			String salinan = getSupportActionBar().getTitle() + "\n" + getSupportActionBar().getSubtitle();
 			U.copyToClipboard(salinan);
 			
