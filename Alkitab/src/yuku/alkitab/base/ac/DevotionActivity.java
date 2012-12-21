@@ -17,8 +17,6 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
@@ -43,6 +41,7 @@ import yuku.alkitab.base.renungan.IArtikel;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.DevotionSelectPopup;
+import yuku.alkitab.base.widget.DevotionSelectPopup.DevotionSelectPopupListener;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -65,9 +64,6 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 	TextView lIsi;
 	ScrollView scrollIsi;
-	ImageButton bKiri;
-	ImageButton bKanan;
-	Button bGanti;
 	TextView lStatus;
 	
 	DevotionSelectPopup popup;
@@ -120,6 +116,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	}
 	
 	Handler penampilStatusDonlot = new PenampilStatusDonlotHandler(this);
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -131,47 +128,12 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 		lIsi = (TextView) findViewById(R.id.lIsi);
 		scrollIsi = (ScrollView) findViewById(R.id.scrollIsi);
-		bKiri = (ImageButton) findViewById(R.id.bKiri);
 		lStatus = (TextView) findViewById(R.id.lStatus);
 		
 		scrollIsi.setBackgroundColor(S.applied.backgroundColor);
 		
-		bKiri.setOnClickListener(new View.OnClickListener() {
-			@Override public void onClick(View v) {
-				tanggalan.setTime(tanggalan.getTime() - 3600*24*1000);
-				tampilkan(0);
-			}
-		});
-		
-		bKanan = (ImageButton) findViewById(R.id.bKanan);
-		bKanan.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				tanggalan.setTime(tanggalan.getTime() + 3600*24*1000);
-				tampilkan(0);
-			}
-		});
-		
-		bGanti = (Button) findViewById(R.id.bGanti);
-		bGanti.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				int index = 0;
-				
-				for (int i = 0; i < AVAILABLE_NAMES.length; i++) {
-					if (AVAILABLE_NAMES[i].equals(nama)) {
-						index = i;
-						break;
-					}
-				}
-				
-				index = (index + 1) % AVAILABLE_NAMES.length;
-				nama = AVAILABLE_NAMES[index];
-				tampilkan(0);
-			}
-		});
-		
 		popup = new DevotionSelectPopup(this);
+		popup.setDevotionSelectListener(popup_listener);
 		
 		//# atur difot! 
 		if (S.temporary.devotion_date == null) S.temporary.devotion_date = new Date();
@@ -260,7 +222,37 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	DevotionSelectPopupListener popup_listener = new DevotionSelectPopupListener() {
+		@Override public void onDismiss(DevotionSelectPopup popup) {
+		}
+		
+		@Override public void onButtonClick(DevotionSelectPopup popup, View v) {
+			int id = v.getId();
+			if (id == R.id.bPrev) {
+				tanggalan.setTime(tanggalan.getTime() - 3600*24*1000);
+				tampilkan(0);
+			} else if (id == R.id.bNext) {
+				tanggalan.setTime(tanggalan.getTime() + 3600*24*1000);
+				tampilkan(0);
+			} else if (id == R.id.bChange) {
+				int index = 0;
+				
+				for (int i = 0; i < AVAILABLE_NAMES.length; i++) {
+					if (AVAILABLE_NAMES[i].equals(nama)) {
+						index = i;
+						break;
+					}
+				}
+				
+				index = (index + 1) % AVAILABLE_NAMES.length;
+				nama = AVAILABLE_NAMES[index];
+				tampilkan(0);
+			}
+		}
+	};
 
+	
 	void tampilkan(int skrol) {
 		pengulangTampil.removeMessages(0);
 		

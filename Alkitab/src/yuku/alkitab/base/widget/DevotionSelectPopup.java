@@ -24,6 +24,7 @@ public class DevotionSelectPopup extends PopupWindows implements OnDismissListen
 
 	private final Context context;
 	
+	View bChange;
 	View bPrev;
 	View bNext;
 	ImageView mArrowUp;
@@ -41,9 +42,14 @@ public class DevotionSelectPopup extends PopupWindows implements OnDismissListen
 	public void setRootViewId(int id) {
 		mRootView = LayoutInflater.from(context).inflate(id, null);
 		mArrowUp = (ImageView) mRootView.findViewById(R.id.arrow_up);
+		bChange = V.get(mRootView, R.id.bChange);
 		bPrev = V.get(mRootView, R.id.bPrev);
 		bNext = V.get(mRootView, R.id.bNext);
 
+		bChange.setOnClickListener(button_click);
+		bPrev.setOnClickListener(button_click);
+		bNext.setOnClickListener(button_click);
+		
 		// This was previously defined on show() method, moved here to prevent force close that occured
 		// when tapping fastly on a view to show quickaction dialog.
 		// Thanx to zammbi (github.com/zammbi)
