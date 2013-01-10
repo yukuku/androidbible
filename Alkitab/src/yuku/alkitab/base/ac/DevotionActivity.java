@@ -76,24 +76,35 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	String nama;
 	Date tanggalan;
 
-	Handler pengulangTampil = new Handler() {
+	static class PengulangTampil extends Handler {
+		final WeakReference<DevotionActivity> ac;
+		
+		public PengulangTampil(DevotionActivity activity) {
+			ac = new WeakReference<DevotionActivity>(activity);
+		}
+		
 		@Override public void handleMessage(Message msg) {
+			DevotionActivity activity = ac.get();
+			if (activity == null) return;
+			
 			{
 				long kini = SystemClock.currentThreadTimeMillis();
-				if (kini - terakhirCobaTampilLagi < 500) {
+				if (kini - activity.terakhirCobaTampilLagi < 500) {
 					return; // ANEH. Terlalu cepat.
 				}
 				
-				terakhirCobaTampilLagi = kini;
+				activity.terakhirCobaTampilLagi = kini;
 			}
 			
-			tuju(true, 0);
+			activity.tuju(true, 0);
 			
-			if (!renderBerhasilBaik) {
-				pengulangTampil.sendEmptyMessageDelayed(0, 12000);
+			if (!activity.renderBerhasilBaik) {
+				activity.pengulangTampil.sendEmptyMessageDelayed(0, 12000);
 			}
 		}
-	};
+	}
+
+	Handler pengulangTampil = new PengulangTampil(this);
 	
 	static class PenampilStatusDonlotHandler extends Handler {
 		private WeakReference<DevotionActivity> ac;
