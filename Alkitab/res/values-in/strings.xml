@@ -16,10 +16,12 @@
   <string name="ekspor_berhasil_file_yang_dihasilkan_file">Pembuatan cadangan berhasil.\n\nFile yang dihasilkan: %s</string>
   <string name="impor_berhasil_angka_diproses">Pemulihan berhasil. Semuanya ada %1$d pembatas buku, catatan, dan/atau sorotan, serta %2$d label yang diproses.</string>
   <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Terjadi kesalahan ketika membuat cadangan: %s</string>
+  <string name="ekspor_pembatas_buku_dan_catatan_tanya">Buat cadangan marka buku, catatan, dan sorotan di SD Card atau penyimpanan USB?</string>
   <string name="ekspor_judul">Buat cadangan</string>
   <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Terjadi kesalahan ketika memulihkan: %s</string>
   <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Apakah Anda mau menumpuk pembatas buku, catatan, dan sorotan yang sudah ada saat ini?</string>
   <string name="file_tidak_bisa_dibaca_file">File tidak ada atau tidak bisa dibaca: %s</string>
+  <string name="impor_pembatas_buku_dan_catatan_dari_tanya">Pulihkan marka buku, catatan, dan sorotan dari file cadangan pada SD Card atau penyimpanan USB?\n\nFile: %s</string>
   <string name="impor_judul">Pulihkan dari cadangan</string>
   <string name="impor_dari_sd_card">Pulihkan</string>
   <string name="ekspor_ke_sd_card">Buat cadangan</string>
@@ -129,6 +131,7 @@
   <string name="ed_version_info_info">Informasi versi: %s</string>
   <string name="ed_version_details">Rincian versi</string>
   <string name="ed_choose_pdb_or_yes_file">Pilih file .pdb atau .yes</string>
+  <string name="ed_no_external_storage">Tidak ditemukan SD Card atau penyimpanan USB.</string>
   <string name="ed_invalid_file_selected">File tidak dikenal yang dipilih.</string>
   <string name="ed_file_file_sudah_ada_dalam_daftar_versi">File %s sudah ada dalam daftar versi.</string>
   <string name="ed_error_encountered">Ada kesalahan</string>

@@ -14,6 +14,7 @@
   <string name="pref_jenis_huruf">Jenis Huruf</string>
   <string name="pref_ubah_ukuran_huruf_teks_alkitab_perbesar_atau_perkecil">Ubah ukuran huruf teks Alkitab (perbesar atau perkecil).</string>
   <string name="pref_ukuran_huruf">Ukuran Huruf</string>
+  <string name="pref_warna">Warna</string>
   <string name="pref_atur_warna_teks_latar_belakang_dan_nomor_ayat">Atur warna teks, latar belakang, dan nomor ayat.</string>
   <string name="pref_penggunaan">Penggunaan</string>
   <string name="pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah">Tekan ← dan → untuk berpindah pasal. Tekan judul untuk pindah.</string>
@@ -25,5 +26,6 @@
   <string name="pref_penampilan_teks">Penampilan Teks</string>
   <string name="pref_penampilan_layar">Penampilan Layar</string>
   <string name="pref_tombolVolumeBuatPindah_title">Berpindah dengan Volume</string>
+  <string name="pref_tombolVolumeBuatPindah_summary">Pakai tombol volume untuk berpindah ayat atau pasal.</string>
   <string name="pref_lineSpacingMult_title">Jarak Antarbaris</string>
 </resources>
