@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import yuku.afw.V;
 import yuku.alkitab.R;
@@ -564,7 +565,7 @@ public class BookmarkListActivity extends BaseActivity {
 			
 			String[] xkata = QueryTokenizer.tokenize(constraint.toString());
 			for (int i = 0; i < xkata.length; i++) {
-				xkata[i] = xkata[i].toLowerCase();
+				xkata[i] = xkata[i].toLowerCase(Locale.getDefault());
 			}
 			this.xkata = xkata;
 			
@@ -583,7 +584,7 @@ public class BookmarkListActivity extends BaseActivity {
 					String tulisan = c.getString(col_tulisan);
 					
 					if (filter_jenis != Db.Bukmak2.jenis_stabilo) { // "tulisan" di stabilo cuma simpen info tentang warna, jadi ga ada gunanya dicek.
-						String tulisan_lc = tulisan.toLowerCase();
+						String tulisan_lc = tulisan.toLowerCase(Locale.getDefault());
 						if (Search2Engine.memenuhiCarian(tulisan_lc, xkata)) {
 							memenuhi = true;
 						}
@@ -593,7 +594,7 @@ public class BookmarkListActivity extends BaseActivity {
 					if (!memenuhi) {
 						// coba isi ayatnya!
 						String ayat = S.loadVerseText(S.activeVersion, ari);
-						String ayat_lc = ayat.toLowerCase();
+						String ayat_lc = ayat.toLowerCase(Locale.getDefault());
 						if (Search2Engine.memenuhiCarian(ayat_lc, xkata)) {
 							memenuhi = true;
 						}

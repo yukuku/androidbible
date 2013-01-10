@@ -15,6 +15,8 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.util.Locale;
+
 import net.londatiga.android.QuickAction;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -179,7 +181,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		
 		if (song.authors_lyric != null && song.authors_lyric.size() > 0) sb.append(TextUtils.join("; ", song.authors_lyric)).append('\n'); //$NON-NLS-1$
 		if (song.authors_music != null && song.authors_music.size() > 0) sb.append(TextUtils.join("; ", song.authors_music)).append('\n'); //$NON-NLS-1$
-		if (song.tune != null) sb.append(song.tune.toUpperCase()).append('\n');
+		if (song.tune != null) sb.append(song.tune.toUpperCase(Locale.getDefault())).append('\n');
 		sb.append('\n');
 		
 		if (song.scriptureReferences != null) sb.append(renderScriptureReferences(null, song.scriptureReferences)).append('\n');

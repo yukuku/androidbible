@@ -25,6 +25,7 @@ import android.widget.Toast;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,7 +53,11 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	public static final String EXTRA_alamat = "alamat"; //$NON-NLS-1$
 	private static final int REQCODE_bagikan = 0;
 
-	ThreadLocal<SimpleDateFormat> tgl_format = U.getThreadLocalSimpleDateFormat("yyyyMMdd"); //$NON-NLS-1$
+	static ThreadLocal<SimpleDateFormat> tgl_format = new ThreadLocal<SimpleDateFormat>() {
+		@Override protected SimpleDateFormat initialValue() {
+			return new SimpleDateFormat("yyyyMMdd", Locale.US); //$NON-NLS-1$
+		}
+	}; 
 	
 	public static final String[] AVAILABLE_NAMES = {
 		"sh", "rh",  //$NON-NLS-1$//$NON-NLS-2$
@@ -227,7 +232,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			
 			return true;
 		} else if (itemId == R.id.menuRedownload) {
-			akanPerlu(this.nama, this.tgl_format.get().format(tanggalan), true);
+			akanPerlu(this.nama, tgl_format.get().format(tanggalan), true);
 			
 			return true;
 		}

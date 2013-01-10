@@ -245,14 +245,6 @@ public class U {
 		return a.equals(b);
 	}
 	
-	public static ThreadLocal<SimpleDateFormat> getThreadLocalSimpleDateFormat(final String pattern) {
-		return new ThreadLocal<SimpleDateFormat>() {
-			@Override protected SimpleDateFormat initialValue() {
-				return new SimpleDateFormat(pattern);
-			}
-		};
-	}
-
 	public static void applyLabelColor(Label label, TextView view) {
 		int bgColorRgb = U.decodeLabelBackgroundColor(label.backgroundColor);
 		if (bgColorRgb == -1) {

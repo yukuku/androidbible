@@ -5,6 +5,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -310,7 +311,7 @@ public class Jumper {
 				ArrayList<Jumper.KitabRef> a = new ArrayList<Jumper.KitabRef>();
 				
 				for (Book k: xkitab) {
-					String judul = k.judul.replaceAll("(\\s|-|_)+", "").toLowerCase(); //$NON-NLS-1$ //$NON-NLS-2$
+					String judul = k.judul.replaceAll("(\\s|-|_)+", "").toLowerCase(Locale.getDefault()); //$NON-NLS-1$ //$NON-NLS-2$
 					
 					{
 						Jumper.KitabRef ref = new KitabRef();
@@ -339,7 +340,7 @@ public class Jumper {
 		
 		// 0 juga. bersihin p_kitab
 		Jumper.KitabRef[] refs = pendekCache.get(xkitab);
-		p_kitab = p_kitab.replaceAll("(\\s|-|_)", "").toLowerCase(); //$NON-NLS-1$ //$NON-NLS-2$
+		p_kitab = p_kitab.replaceAll("(\\s|-|_)", "").toLowerCase(Locale.getDefault()); //$NON-NLS-1$ //$NON-NLS-2$
 		Log.d(TAG, "tebakKitab fase 0: p_kitab = " + p_kitab); //$NON-NLS-1$
 		
 		// 1. coba cocokin keseluruhan (co: "kejadian", "yohanes")

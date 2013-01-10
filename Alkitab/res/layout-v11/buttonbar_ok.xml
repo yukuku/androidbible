@@ -4,7 +4,6 @@
     android:id="@+id/ok_panel"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="vertical"
     android:paddingTop="8dp"
