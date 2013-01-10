@@ -65,7 +65,6 @@
 		<ListPreference
 			android:key="@string/pref_bahasa_key"
 			android:title="@string/pref_bahasa_language"
-			android:summary="@string/pref_bahasa_yang_digunakan_pada_menu_dan" 
 			android:defaultValue="@string/pref_bahasa_default"
 			android:entries="@array/pref_bahasa_label"
 			android:entryValues="@array/pref_bahasa_value"

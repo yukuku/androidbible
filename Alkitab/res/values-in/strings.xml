@@ -16,18 +16,15 @@
   <string name="ekspor_berhasil_file_yang_dihasilkan_file">Pembuatan cadangan berhasil.\n\nFile yang dihasilkan: %s</string>
   <string name="impor_berhasil_angka_diproses">Pemulihan berhasil. Semuanya ada %1$d pembatas buku, catatan, dan/atau sorotan, serta %2$d label yang diproses.</string>
   <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Terjadi kesalahan ketika membuat cadangan: %s</string>
-  <string name="ekspor_pembatas_buku_dan_catatan_tanya">Buat cadangan pembatas buku, catatan, dan sorotan ke penyimpanan eksternal atau SD Card?</string>
   <string name="ekspor_judul">Buat cadangan</string>
   <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Terjadi kesalahan ketika memulihkan: %s</string>
   <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Apakah Anda mau menumpuk pembatas buku, catatan, dan sorotan yang sudah ada saat ini?</string>
   <string name="file_tidak_bisa_dibaca_file">File tidak ada atau tidak bisa dibaca: %s</string>
-  <string name="impor_pembatas_buku_dan_catatan_dari_tanya">Pulihkan pembatas buku, catatan, dan sorotan dari cadangan di penyimpanan eksternal atau SD Card?\n\nFile: %s</string>
   <string name="impor_judul">Pulihkan dari cadangan</string>
   <string name="impor_dari_sd_card">Pulihkan</string>
   <string name="ekspor_ke_sd_card">Buat cadangan</string>
   <string name="menuBantuan">Bantuan</string>
   <string name="beri_saran_title">Beri Saran</string>
-  <string name="beri_saran_titik3">Beri Saran…</string>
   <string name="versi">Versi</string>
   <string name="renungan">Renungan</string>
   <string name="cari_v">Cari</string>
@@ -44,7 +41,6 @@
   <string name="perj_baru">Perj. Baru</string>
   <string name="perj_lama">Perj. Lama</string>
   <string name="search_bookname_only">%s saja</string>
-  <string name="ganti_v">Ganti</string>
   <string name="ayat_sebelumangka">Ayat</string>
   <string name="pasal_sebelumangka">Pasal</string>
   <string name="loncat_ke_alamat_titikdua">Loncat ke: (Contoh: %s)</string>
@@ -57,7 +53,6 @@
   <string name="mengunduh_namaumum_tgl_tgl">Mengunduh %1$s tgl %2$s…</string>
   <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Belum tersedia. Mungkin tanggal yang diminta belum disiapkan, atau terjadi kesalahan dalam mengenali sumber data.\n\nJika dirasa perlu, tolong beritahu pembuat program ini dengan kembali ke layar tampilan ayat, lalu buka menu dan pilih Beri Saran.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Belum tersedia. Menunggu pengambilan data lewat Internet…\n\n(Pastikan ada koneksi Internet untuk mengambil renungan.)</string>
-  <string name="namaprog_versi_build">Alkitab %1$s (%2$d)</string>
   <string name="hari_sabtu">Sabtu</string>
   <string name="hari_jumat">Jumat</string>
   <string name="hari_kamis">Kamis</string>
@@ -80,9 +75,6 @@
   <string name="mengunduh_tambahan">Mengunduh tambahan</string>
   <string name="pilih_edisi">Pilih Versi</string>
   <string name="tuju_v">Tuju</string>
-  <string name="gebug">Gebug</string>
-  <string name="loncat_v">Loncat</string>
-  <string name="loncat">Loncat</string>
   <string name="bagikan_alamat">Bagikan %s</string>
   <string name="alamat_sudah_disalin">%s sudah disalin.</string>
   <string name="alamat_tidak_sah_alamat">Alamat tidak sah: %s</string>
@@ -97,12 +89,8 @@
   <string name="url_help_index">file:///android_asset/help/html-in/index.html</string>
   <string name="tidak_bisa_membuat_folder">Tidak bisa membuat folder %s</string>
   <string name="menuPengaturan">Pengaturan</string>
-  <string name="tampilan_n">Tampilan</string>
   <string name="pilihKitab_s">Pilih kitab</string>
   <string name="menuTentang">Tentang</string>
-  <string name="menuTuju">Tuju</string>
-  <string name="peringatanBeta_s">Kami mengharapkan saran, kritik, dan komentar Anda. Sertakan alamat imel Anda jika perlu. Terima kasih!</string>
-  <string name="fidbekMakasih_s">Terima kasih atas komentar anda!</string>
   <string name="bantuan_judul">Bantuan</string>
   <string name="pengaturan_alkitab">Pengaturan Alkitab</string>
   <string name="kelola_versi">Kelola Versi</string>
@@ -141,7 +129,6 @@
   <string name="ed_version_info_info">Informasi versi: %s</string>
   <string name="ed_version_details">Rincian versi</string>
   <string name="ed_choose_pdb_or_yes_file">Pilih file .pdb atau .yes</string>
-  <string name="ed_no_external_storage">Tidak ditemukan penyimpanan eksternal (seperti SD Card).</string>
   <string name="ed_invalid_file_selected">File tidak dikenal yang dipilih.</string>
   <string name="ed_file_file_sudah_ada_dalam_daftar_versi">File %s sudah ada dalam daftar versi.</string>
   <string name="ed_error_encountered">Ada kesalahan</string>
@@ -233,27 +220,26 @@
   <string name="sn_delete_all_songs">Hapus semua lagu</string>
   <string name="sn_delete_all_songs_explanation">Hapus semua lagu dari penyimpanan lokal? Hal ini akan menghemat pemakaian penyimpanan.</string>
   <string name="sn_delete_all_songs_result">Penghapusan selesai. Lagu yang dihapus: %s</string>
-  <string name="desc_type_verse_reference_directly">Langsung ketik alamat ayat</string>
   <string name="desc_previous_day">Hari sebelumnya</string>
   <string name="desc_next_day">Hari berikutnya</string>
   <string name="desc_open_bookmark">Buka pembatas</string>
   <string name="desc_open_note">Buka catatan</string>
-  <string name="desc_go_to_verse">Menuju ke ayat</string>
   <string name="desc_delete">Hapus</string>
   <string name="desc_change_selected_books">Ganti buku yang dipilih</string>
   <string name="desc_download">Unduh</string>
   <string name="desc_open_verse_menu">Buka menu ayat</string>
   <string name="desc_previous_chapter">Pasal sebelum</string>
   <string name="desc_next_chapter">Pasal berikut</string>
-  <string name="teks_about">Dikembangkan oleh [b]yuku[/b], 2009-2013[br/]
+  <string name="teks_about">Dikembangkan oleh [b]yuku[/b] dan SABDA, 2009-2012[br/]
 • Situs: androidbible.blogspot.com[br/]
 • Google+: gplus.to/androidbible[br/]
 • Milis: groups.google.com/group/androidbible[br/]
 [br/]
-Terjemahan Baru, Bahasa Indonesia Sehari-hari © Lembaga Alkitab Indonesia[br/]
+Terjemahan Baru © LAI[br/]
 [br/]
 [b]Bantuan:[/b][br/]
 • [b]Jaya Satrio[/b] ikon dan desain[br/]
 • [b]Yohanes Nugroho[/b] pembaca PDB[br/]
-• dan banyak lagi orang-orang yang menyumbangkan ide, perbaikan, laporan masalah, salinan kidung, informasi terjemahan Alkitab, dll!</string>
+• dan banyak lagi orang-orang yang menyumbangkan ide, perbaikan, laporan masalah, salinan kidung, informasi terjemahan Alkitab, dll!
+</string>
 </resources>
