@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="translators_list">
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string-array name="translators_list" tools:ignore="MissingTranslation">
         <item>English: author</item>
         <item>Chinese: Jandi Lau</item>
         <item>German: Ribka Ling</item>

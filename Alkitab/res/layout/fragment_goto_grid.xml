@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
 
@@ -19,25 +20,27 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content" >
 
             <TextView
                 android:id="@+id/lSelectedBook"
+                style="@style/Widget.Sherlock.ActionButton"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:gravity="center"
-				style="@style/Widget.Sherlock.ActionButton"
                 android:text="*Selected book"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                tools:ignore="HardcodedText" />
 
             <TextView
                 android:id="@+id/lSelectedChapter"
+                style="@style/Widget.Sherlock.ActionButton"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:gravity="center"
-				style="@style/Widget.Sherlock.ActionButton"
                 android:text="*chap"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                tools:ignore="HardcodedText" />
 
         </LinearLayout>
 

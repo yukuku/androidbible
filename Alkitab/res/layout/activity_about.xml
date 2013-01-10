@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    tools:ignore="MergeRootFrame" >
 
     <ScrollView
         android:layout_width="wrap_content"

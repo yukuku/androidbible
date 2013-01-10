@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?> <!-- Button bar with OK button -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ok_panel"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
     android:orientation="vertical"
     android:paddingTop="8dp"
     android:showDividers="beginning" >
@@ -29,7 +29,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:maxLines="2"
-            android:text="@string/ok" />
+            android:text="@string/ok"
+            tools:ignore="ButtonOrder" />
 
         <LinearLayout
             android:id="@+id/rightSpacer"
