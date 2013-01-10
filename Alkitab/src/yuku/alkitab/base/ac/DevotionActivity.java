@@ -201,7 +201,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			
 			return true;
 		} else if (itemId == R.id.menuCopy) {
-			String salinan = getSupportActionBar().getTitle() + "\n" + getSupportActionBar().getSubtitle();
+			String salinan = getSupportActionBar().getTitle() + "\n" + lIsi.getText();
 			U.copyToClipboard(salinan);
 			
 			Toast.makeText(this, R.string.renungan_sudah_disalin, Toast.LENGTH_SHORT).show();

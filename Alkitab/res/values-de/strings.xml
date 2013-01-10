@@ -132,6 +132,7 @@
   <string name="ed_type_built_in">Typ: Eingebettet</string>
   <string name="ed_type_preset">Typ: Vorgegeben</string>
   <string name="ed_type_add_on">Typ: Add-on</string>
+  <string name="ed_shortName_shortName">Kurtzname: %s</string>
   <string name="ed_title_title">Titel: %s</string>
   <string name="ed_stored_in_file">Gespeichert in: %s</string>
   <string name="ed_default_filename_file">Vorgegebene Dateiname: %s</string>
@@ -193,6 +194,8 @@
   <string name="bl_clear_filter">Filter zurückstellen</string>
   <string name="bl_filtering_titiktiga">Filtern…</string>
   <string name="bl_no_items_match_the_filter_above">Kein Ergebnis</string>
+  <string name="bl_send_backup">übertragen</string>
+  <string name="bl_file_not_found_filename">Datei nicht gefunden: %s</string>
   <string name="labels_titikdua">Label:</string>
   <string name="tambah_titiktiga">Hinfügen…</string>
   <string name="nama_label_titikdua">Label-Name:</string>
@@ -203,6 +206,11 @@
   <string name="juga_hapus_file_datanya_file">Soll die Datei auch gelöscht werden?\nDatei: %s</string>
   <string name="get_more_fonts">Weitere Schriftarten downloaden…</string>
   <string name="about_translators">Übersetzer:</string>
+  <string name="intent_filter_import_from_backup">Import aus Backup</string>
+  <string name="redownload">Erneut herunterladen</string>
+  <string name="goto_tab_dialer_label">Wähler</string>
+  <string name="goto_tab_direct_label">Direkt</string>
+  <string name="goto_tab_grid_label">Tabelle</string>
   <string name="fm_activity_title">Schriftart-Manager</string>
   <string name="fm_need_to_log_in_to_wifi">Bitte mit einem (Wi-Fi) Netzwek anschliessen</string>
   <string name="fm_do_you_want_to_delete">Willst Du %s löschen?</string>
@@ -221,6 +229,7 @@
   <string name="sn_download_song_books">Liederbuch downloaden</string>
   <string name="sn_lyric_version_version">Version %s</string>
   <string name="sn_lyric_refrain_marker">Ref.</string>
+  <string name="sn_delete_all_songs">Löschen alle Songs</string>
   <string name="desc_type_verse_reference_directly">Versereferezen direkt tippen</string>
   <string name="desc_previous_day">Voriger Tag</string>
   <string name="desc_next_day">Nächster Tag</string>
