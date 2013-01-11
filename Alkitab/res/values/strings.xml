@@ -88,7 +88,6 @@
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
-    <string name="url_help_index">file:///android_asset/help/html-en/index.html</string>
     <string name="tidak_bisa_membuat_folder">Could not create folder %s</string>
     <string name="menuPengaturan">Settings</string>
     <string name="pilihKitab_s">Choose a Book</string>
@@ -199,6 +198,7 @@
     <string name="about_translators">Translators:</string>
     <string name="intent_filter_import_from_backup">Import from backup</string>
     <string name="redownload">Redownload</string>
+    <string name="read_faq_before_suggest">Please read the above FAQ before sending a suggestion. Continue with sending a suggestion?</string>
 
     <string name="goto_tab_dialer_label">Dialer</string>
     <string name="goto_tab_direct_label">Direct</string>
