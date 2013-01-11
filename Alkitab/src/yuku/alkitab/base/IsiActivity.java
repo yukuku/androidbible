@@ -1098,10 +1098,10 @@ public class IsiActivity extends BaseActivity {
 			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
 			return true;
 		case R.id.menuBantuan:
-			startActivity(new Intent(this, HelpActivity.class));
+			startActivity(HelpActivity.createIntent(false));
 			return true;
 		case R.id.menuSendMessage:
-			startActivity(new Intent(App.context, com.example.android.wizardpager.MainActivity.class));
+			startActivity(HelpActivity.createIntent(true));
 			return true;
 		case R.id.menuDonasi:
 			openDonationDialog();

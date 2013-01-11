@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?> <!-- Button bar with OK button -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ok_panel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:divider="?android:attr/dividerHorizontal"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:showDividers="beginning" >
+
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:measureWithLargestChild="true"
+        android:orientation="horizontal"
+        tools:ignore="UselessParent" >
+
+        <LinearLayout
+            android:id="@+id/leftSpacer"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:orientation="horizontal"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/bCancel"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:text="@string/cancel"/>
+
+        <Button
+            android:id="@+id/bOk"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:text="@string/ok"/>
+
+        <LinearLayout
+            android:id="@+id/rightSpacer"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:orientation="horizontal"
+            android:visibility="gone" />
+    </LinearLayout>
+
+</LinearLayout>
