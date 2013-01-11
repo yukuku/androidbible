@@ -14,6 +14,7 @@
   <string name="pref_jenis_huruf">Czcionka</string>
   <string name="pref_ubah_ukuran_huruf_teks_alkitab_perbesar_atau_perkecil">Zmodyfikuj rozmiar tekstu Biblijnego (powiększ lub pomniejsz).</string>
   <string name="pref_ukuran_huruf">Rozmiar tekstu</string>
+  <string name="pref_warna">Kolory</string>
   <string name="pref_atur_warna_teks_latar_belakang_dan_nomor_ayat">Ustaw kolor tekstu, tła i numeracji wersetów.</string>
   <string name="pref_penggunaan">Użycie</string>
   <string name="pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah">Naciśnij ← i → aby poruszać się pomiędzy rozdziałami, lub naciśnij tytuł.</string>
@@ -25,5 +26,6 @@
   <string name="pref_penampilan_teks">Wygląd tekstu</string>
   <string name="pref_penampilan_layar">Wyświetlacz</string>
   <string name="pref_tombolVolumeBuatPindah_title">Nawigacja przyciskami głoścności</string>
+  <string name="pref_tombolVolumeBuatPindah_summary">Użyj sprzętowych przycisków zmiany głośności, aby przenosić się między wersami lub rozdziałami.</string>
   <string name="pref_lineSpacingMult_title">Odstepy pomiędzy liniami</string>
 </resources>

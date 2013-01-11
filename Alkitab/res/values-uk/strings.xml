@@ -16,10 +16,12 @@
   <string name="ekspor_berhasil_file_yang_dihasilkan_file">Резервну копію створено вдало.\n\nВідомості в файлі: %s</string>
   <string name="impor_berhasil_angka_diproses">Відновлення пройшло успішно. Загалом %1$d закладок,нотаток,і/або виділень, підкреслювань, та також %2$d позначок було оброблено.</string>
   <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Сталася помилка(и) під час створення резервної копії: %s</string>
+  <string name="ekspor_pembatas_buku_dan_catatan_tanya">Створити резервну копію закладок, нотаток, виділень та підкреслень на SD картці або USB носії?</string>
   <string name="ekspor_judul">Створити резервну копію</string>
   <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Була помилка(помилок) під час відновлення: %s</string>
   <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Чи ви хочете перезаписати закладки, нотатки та виділення(підкреслення) поверх існуючих?</string>
   <string name="file_tidak_bisa_dibaca_file">Файлу не існує або його не може бути прочитано: %s</string>
+  <string name="impor_pembatas_buku_dan_catatan_dari_tanya">Відновити закладки, нотатки, виділення та підкреслення з файлу резервної копії на SD картці або носії USB?\n\nFile: %s</string>
   <string name="impor_judul">Відновити з резервної копії</string>
   <string name="impor_dari_sd_card">Відновити</string>
   <string name="ekspor_ke_sd_card">Резервна копія</string>
@@ -86,7 +88,6 @@
   <string name="delete">Видалити</string>
   <string name="cancel">Скасувати</string>
   <string name="ok">ТАК</string>
-  <string name="url_help_index">file:///android_asset/help/html-en/index.html</string>
   <string name="tidak_bisa_membuat_folder">Неможливо створити теку %s</string>
   <string name="menuPengaturan">Налаштування</string>
   <string name="pilihKitab_s">Виберіть книгу</string>
@@ -129,6 +130,7 @@
   <string name="ed_version_info_info">Інфо про версію: %s</string>
   <string name="ed_version_details">Деталі версії</string>
   <string name="ed_choose_pdb_or_yes_file">Виберіть .pdb або .yes файл</string>
+  <string name="ed_no_external_storage">Не знайдено SD картки або USB носія.</string>
   <string name="ed_invalid_file_selected">Вибрано непідтримуваний файл.</string>
   <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Файл %s вже знаходиться в списку.</string>
   <string name="ed_error_encountered">Сталася помилка</string>

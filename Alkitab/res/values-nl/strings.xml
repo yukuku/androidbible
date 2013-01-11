@@ -16,10 +16,12 @@
   <string name="ekspor_berhasil_file_yang_dihasilkan_file">Reservekopie was succesvol.\n\nResultaten staan in bestand: %s</string>
   <string name="impor_berhasil_angka_diproses">Terugzetten was succesvol. In totaal %1$d bladwijzer(s), notitie(s), en/of markeringen, en %2$d labels zijn verwerkt.</string>
   <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Er waren één of meer fouten bij het maken van de reservekopie: %s</string>
+  <string name="ekspor_pembatas_buku_dan_catatan_tanya">Reservekopie maken van bladwijzers, notities en markeringen naar SD-kaart of USB opslag?</string>
   <string name="ekspor_judul">Maak reservekopie</string>
   <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Er waren één of meer fouten bij terugzetten: %s</string>
   <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Wil je de bestaande bladwijzers, notities en markeringen overschrijven?</string>
   <string name="file_tidak_bisa_dibaca_file">Het bestand %s bestaat niet of kon niet worden gelezen</string>
+  <string name="impor_pembatas_buku_dan_catatan_dari_tanya">Terugzetten van bladwijzers, notities en markeringen van een reservekopie op de SD-kaart of USB opslag?\n\nBestand: %s</string>
   <string name="impor_judul">Terugzetten van reservekopie</string>
   <string name="impor_dari_sd_card">Terugzetten</string>
   <string name="ekspor_ke_sd_card">Reservekopie</string>
@@ -86,7 +88,6 @@
   <string name="delete">Verwijderen</string>
   <string name="cancel">Annuleren</string>
   <string name="ok">OK</string>
-  <string name="url_help_index">file:///android_asset/help/html-en/index.html</string>
   <string name="tidak_bisa_membuat_folder">Kan map %s niet aanmaken</string>
   <string name="menuPengaturan">Instellingen</string>
   <string name="pilihKitab_s">Kies een Boek</string>
@@ -129,6 +130,7 @@
   <string name="ed_version_info_info">Versie info: %s</string>
   <string name="ed_version_details">Versie details</string>
   <string name="ed_choose_pdb_or_yes_file">Kies een .pdb of .yes bestand</string>
+  <string name="ed_no_external_storage">Geen SD-kaart of USB opslag gevonden.</string>
   <string name="ed_invalid_file_selected">Ongeldig bestand geselecteerd.</string>
   <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Bestand %s is al op de lijst.</string>
   <string name="ed_error_encountered">Er is een fout opgetreden</string>

@@ -86,7 +86,6 @@
   <string name="delete">Şterge</string>
   <string name="cancel">Anulează</string>
   <string name="ok">Ok</string>
-  <string name="url_help_index">file:///android_asset/help/html-en/index.html</string>
   <string name="tidak_bisa_membuat_folder">Nu pot crea dosarul %s</string>
   <string name="menuPengaturan">Setări</string>
   <string name="pilihKitab_s">Alege o Carte</string>

@@ -86,7 +86,6 @@
   <string name="delete">Löschen</string>
   <string name="cancel">Abbrehen</string>
   <string name="ok">OK</string>
-  <string name="url_help_index">file:///android_asset/help/html-en/index.html</string>
   <string name="tidak_bisa_membuat_folder">Ordner kann nicht erstellt werden %s</string>
   <string name="menuPengaturan">Einstellungen</string>
   <string name="pilihKitab_s">Buch Auswählen</string>

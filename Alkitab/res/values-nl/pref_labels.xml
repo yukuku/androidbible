@@ -14,6 +14,7 @@
   <string name="pref_jenis_huruf">Lettertype</string>
   <string name="pref_ubah_ukuran_huruf_teks_alkitab_perbesar_atau_perkecil">Pas de lettergrootte van de Bijbeltekst aan (vergroot of verklein).</string>
   <string name="pref_ukuran_huruf">Lettergrootte</string>
+  <string name="pref_warna">Kleuren</string>
   <string name="pref_atur_warna_teks_latar_belakang_dan_nomor_ayat">Stel de kleuren van de tekst, achtergrond en versnummers in.</string>
   <string name="pref_penggunaan">Gebruik</string>
   <string name="pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah">Gebruik ← en → om tussen hoofdstukken te navigeren, of klik op de titel.</string>
@@ -25,5 +26,6 @@
   <string name="pref_penampilan_teks">Tekstweergave</string>
   <string name="pref_penampilan_layar">Scherm</string>
   <string name="pref_tombolVolumeBuatPindah_title">Volumetoets navigatie</string>
+  <string name="pref_tombolVolumeBuatPindah_summary">Gebruik hardware volumetoetsen om te navigeren tussen verzen of hoofdstukken.</string>
   <string name="pref_lineSpacingMult_title">Regelafstand</string>
 </resources>

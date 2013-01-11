@@ -14,6 +14,7 @@
   <string name="pref_jenis_huruf">Шрифт</string>
   <string name="pref_ubah_ukuran_huruf_teks_alkitab_perbesar_atau_perkecil">Зміна розміру тексту Біблії (збільшення або зменшення).</string>
   <string name="pref_ukuran_huruf">Розмір тексту</string>
+  <string name="pref_warna">Кольори</string>
   <string name="pref_atur_warna_teks_latar_belakang_dan_nomor_ayat">Налаштування кольорів тексту, фону та номерів віршів</string>
   <string name="pref_penggunaan">Користування</string>
   <string name="pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah">Натисніть ← або → для зміни між розділами або натисніть заголовок.</string>
@@ -25,5 +26,6 @@
   <string name="pref_penampilan_teks">Вигляд тексту</string>
   <string name="pref_penampilan_layar"> Екран</string>
   <string name="pref_tombolVolumeBuatPindah_title"> Навігація клавішею гучності</string>
+  <string name="pref_tombolVolumeBuatPindah_summary">Використовувати клавіші гучності для навігації між віршами або розділами.</string>
   <string name="pref_lineSpacingMult_title">Відстань між рядками</string>
 </resources>
