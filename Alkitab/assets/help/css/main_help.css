@@ -1,5 +1,9 @@
 @CHARSET "UTF-8";
 
+html, body {
+	font-family: sans-serif;
+}
+
 .kod {
 	background-color: #beb;
 	font-size: 10pt;
