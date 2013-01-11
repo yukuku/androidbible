@@ -39,3 +39,10 @@ kbd {
 	line-height: 120%;
 }
 
+.faq .q {
+	font-weight: bold;
+}
+
+.faq .a {
+	color: #111;
+}
