@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <string-array name="pref_bahasa_label">
+    <string-array name="pref_bahasa_label" tools:ignore="MissingTranslation">
         <item>Default</item>
         <item>English</item>
         <item>Bahasa Indonesia</item>
         <item>Deutsch</item>
+        <item>Nederlands</item>
         <item>Polski</item>
         <item>Română</item>
         <item>Українська</item>
         <item>中文</item>
     </string-array>
-    <string-array name="pref_bahasa_value">
+    <string-array name="pref_bahasa_value" translatable="false">
         <item>DEFAULT</item>
         <item>en</item>
         <item>in</item>
         <item>de</item>
+        <item>nl</item>
         <item>pl</item>
         <item>ro</item>
         <item>uk</item>

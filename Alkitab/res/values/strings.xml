@@ -16,18 +16,17 @@
     <string name="ekspor_berhasil_file_yang_dihasilkan_file">Backup was successful.\n\nResults are in file: %s</string>
     <string name="impor_berhasil_angka_diproses">Restore was successful. In total %1$d bookmarks, notes, and/or highlights, and also %2$d labels were processed.</string>
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">There were error(s) when creating backup: %s</string>
-    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Create backup of bookmarks, notes, and highlights to external storage or SD Card?</string>
+    <string name="ekspor_pembatas_buku_dan_catatan_tanya">Create backup of bookmarks, notes, and highlights to SD Card or USB Storage?</string>
     <string name="ekspor_judul">Create backup</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">There were error(s) when restoring: %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Do you want to overwrite the bookmarks, notes, and highlights you currently have?</string>
     <string name="file_tidak_bisa_dibaca_file">The file does not exist or could not be read: %s</string>
-    <string name="impor_pembatas_buku_dan_catatan_dari_tanya">Restore bookmarks, notes, and highlights from a backup file on the external storage or SD Card?\n\nFile: %s</string>
+    <string name="impor_pembatas_buku_dan_catatan_dari_tanya">Restore bookmarks, notes, and highlights from a backup file on the SD Card or USB Storage?\n\nFile: %s</string>
     <string name="impor_judul">Restore from backup</string>
     <string name="impor_dari_sd_card">Restore</string>
     <string name="ekspor_ke_sd_card">Backup</string>
     <string name="menuBantuan">Help</string>
     <string name="beri_saran_title">Suggest</string>
-    <string name="beri_saran_titik3">Suggest…</string>
     <string name="versi">Version</string>
     <string name="renungan">Devotion</string>
     <string name="cari_v">Search</string>
@@ -44,7 +43,6 @@
     <string name="perj_baru">New Test.</string>
     <string name="perj_lama">Old Test.</string>
     <string name="search_bookname_only">%s only</string>
-    <string name="ganti_v">Switch</string>
     <string name="ayat_sebelumangka">Verse</string>
     <string name="pasal_sebelumangka">Chapter</string>
     <string name="loncat_ke_alamat_titikdua">Jump to: (Example: %s)</string>
@@ -55,9 +53,8 @@
     <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Error in downloading %1$s dated %2$s: %3$s</string>
     <string name="berhasil_mengunduh_namaumum_tgl_tgl">Succeeded in downloading %1$s dated %2$s</string>
     <string name="mengunduh_namaumum_tgl_tgl">Downloading %1$s dated %2$s…</string>
-    <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Not yet available. Probably the requested date\'s material is not prepared yet, or there are some errors in recognizing the data source.\n\nIf you think necessary, please inform the software developers by going back to the main verse view, open the menu and choose Suggest.</string>
+    <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Not yet available. Probably the requested date\'s material is not prepared yet, or there are some errors in recognizing the data source. Please try again later.</string>
     <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Not yet available. Fetching from the Internet…\n\n(Ensure there is Internet connection to fetch the devotion materials.)</string>
-    <string name="namaprog_versi_build">Quick Bible %1$s (%2$d)</string>
     <string name="hari_sabtu">Sat</string>
     <string name="hari_jumat">Fri</string>
     <string name="hari_kamis">Thu</string>
@@ -80,9 +77,6 @@
     <string name="mengunduh_tambahan">Downloading add-on</string>
     <string name="pilih_edisi">Choose a Version</string>
     <string name="tuju_v">Go to</string>
-    <string name="gebug">Debug</string>
-    <string name="loncat_v">Jump to</string>
-    <string name="loncat">Jump</string>
     <string name="bagikan_alamat">Share %s</string>
     <string name="alamat_sudah_disalin">%s has been copied.</string>
     <string name="alamat_tidak_sah_alamat">Invalid address: %s</string>
@@ -94,15 +88,10 @@
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
-    <string name="url_help_index">file:///android_asset/help/html-en/index.html</string>
     <string name="tidak_bisa_membuat_folder">Could not create folder %s</string>
     <string name="menuPengaturan">Settings</string>
-    <string name="tampilan_n">Appearance</string>
     <string name="pilihKitab_s">Choose a Book</string>
     <string name="menuTentang">About</string>
-    <string name="menuTuju">Go to</string>
-    <string name="peringatanBeta_s">We are looking for your suggestions, complaints, and comments. Include your email address if needed. Thank you!</string>
-    <string name="fidbekMakasih_s">Thank you for your feedback!</string>
     <string name="bantuan_judul">Help</string>
     <string name="pengaturan_alkitab">Bible Settings</string>
     <string name="kelola_versi">Manage Versions</string>
@@ -141,7 +130,7 @@
     <string name="ed_version_info_info">Version info: %s</string>
     <string name="ed_version_details">Version details</string>
     <string name="ed_choose_pdb_or_yes_file">Choose an .pdb or .yes file</string>
-    <string name="ed_no_external_storage">No external storage found (such as SD Card).</string>
+    <string name="ed_no_external_storage">No SD Card or USB storage found.</string>
     <string name="ed_invalid_file_selected">Invalid file selected.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">File %s is already on the list.</string>
     <string name="ed_error_encountered">Error encountered</string>
@@ -209,6 +198,7 @@
     <string name="about_translators">Translators:</string>
     <string name="intent_filter_import_from_backup">Import from backup</string>
     <string name="redownload">Redownload</string>
+    <string name="read_faq_before_suggest">Please read the above FAQ before sending a suggestion. Continue with sending a suggestion?</string>
 
     <string name="goto_tab_dialer_label">Dialer</string>
     <string name="goto_tab_direct_label">Direct</string>
@@ -240,12 +230,10 @@
     <string name="sn_delete_all_songs_result">Deletion completed. Songs deleted: %s</string>
     
     <!-- Content descriptions, for blind users -->
-    <string name="desc_type_verse_reference_directly">Type verse reference directly</string>
     <string name="desc_previous_day">Previous day</string>
     <string name="desc_next_day">Next day</string>
     <string name="desc_open_bookmark">Open bookmark</string>
     <string name="desc_open_note">Open note</string>
-    <string name="desc_go_to_verse">Go to verse</string>
     <string name="desc_delete">Delete</string>
     <string name="desc_change_selected_books">Change selected books</string>
     <string name="desc_download">Download</string>

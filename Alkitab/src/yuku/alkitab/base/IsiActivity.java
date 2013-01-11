@@ -773,15 +773,7 @@ public class IsiActivity extends BaseActivity {
 		}
 		
 		if (item == menu.menuCopyVerse) { // copy, can be multiple
-			StringBuilder textToCopy = new StringBuilder();
-			textToCopy.append(reference).append("  "); //$NON-NLS-1$
-			
-			// append each selected verse
-			for (int i = 0; i < selected.size(); i++) {
-				int verse_1 = selected.get(i);
-				if (i != 0) textToCopy.append('\n');
-				textToCopy.append(U.removeSpecialCodes(verseAdapter_.getVerse(verse_1)));
-			}
+			CharSequence textToCopy = prepareTextForCopyShare(selected, reference);
 			
 			U.copyToClipboard(textToCopy);
 			uncheckAll();
@@ -831,15 +823,7 @@ public class IsiActivity extends BaseActivity {
 				}
 			}, warnaRgb, reference).bukaDialog();
 		} else if (item == menu.menuShare) {
-			StringBuilder sb = new StringBuilder();
-			sb.append(reference).append("  "); //$NON-NLS-1$
-			
-			// append each selected verse
-			for (int i = 0; i < selected.size(); i++) {
-				int verse_1 = selected.get(i);
-				if (i != 0) sb.append('\n');
-				sb.append(U.removeSpecialCodes(verseAdapter_.getVerse(verse_1)));
-			}
+			CharSequence textToShare = prepareTextForCopyShare(selected, reference);
 			
 			String verseUrl;
 			if (selected.size() == 1) {
@@ -853,7 +837,7 @@ public class IsiActivity extends BaseActivity {
 			Intent intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain"); //$NON-NLS-1$
 			intent.putExtra(Intent.EXTRA_SUBJECT, reference); 
-			intent.putExtra(Intent.EXTRA_TEXT, sb.toString());
+			intent.putExtra(Intent.EXTRA_TEXT, textToShare.toString());
 			intent.putExtra(EXTRA_verseUrl, verseUrl);
 			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, reference)), REQCODE_share);
 
@@ -869,6 +853,34 @@ public class IsiActivity extends BaseActivity {
 				Log.e(TAG, "ESVSB starting", e); //$NON-NLS-1$
 			}
 		}
+	}
+
+	private CharSequence prepareTextForCopyShare(IntArrayList selectedVerses_1, CharSequence reference) {
+		StringBuilder res = new StringBuilder();
+		res.append(reference);
+		
+		if (Preferences.getBoolean(getString(R.string.pref_copyWithVerseNumbers_key), false) && selectedVerses_1.size() > 1) {
+			res.append('\n');
+
+			// append each selected verse with verse number prepended
+			for (int i = 0; i < selectedVerses_1.size(); i++) {
+				int verse_1 = selectedVerses_1.get(i);
+				res.append(verse_1);
+				res.append(' ');
+				res.append(U.removeSpecialCodes(verseAdapter_.getVerse(verse_1)));
+				res.append('\n');
+			}
+		} else {
+			res.append("  "); //$NON-NLS-1$
+			
+			// append each selected verse without verse number prepended
+			for (int i = 0; i < selectedVerses_1.size(); i++) {
+				int verse_1 = selectedVerses_1.get(i);
+				if (i != 0) res.append('\n');
+				res.append(U.removeSpecialCodes(verseAdapter_.getVerse(verse_1)));
+			}
+		}
+		return res;
 	}
 
 	private void scrollToShowVerse(int mainVerse_1) {
@@ -1086,10 +1098,10 @@ public class IsiActivity extends BaseActivity {
 			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
 			return true;
 		case R.id.menuBantuan:
-			startActivity(new Intent(this, HelpActivity.class));
+			startActivity(HelpActivity.createIntent(false));
 			return true;
 		case R.id.menuSendMessage:
-			startActivity(new Intent(App.context, com.example.android.wizardpager.MainActivity.class));
+			startActivity(HelpActivity.createIntent(true));
 			return true;
 		case R.id.menuDonasi:
 			openDonationDialog();

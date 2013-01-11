@@ -2,6 +2,7 @@ package yuku.alkitab.base.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,7 +28,7 @@ public class QueryTokenizer {
 	public static String[] tokenize(String query) {
 		List<String> raw_tokens = new ArrayList<String>();
 		
-		Matcher matcher = QueryTokenizer.oneToken.matcher(query.toLowerCase());
+		Matcher matcher = QueryTokenizer.oneToken.matcher(query.toLowerCase(Locale.getDefault()));
 		while (matcher.find()) {
 			raw_tokens.add(matcher.group(1) + matcher.group(2));
 		}

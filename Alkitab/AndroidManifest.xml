@@ -63,7 +63,7 @@
 		<activity android:name="yuku.alkitab.base.ac.VersionsActivity" android:label="@string/kelola_versi" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.Search2Activity" android:label="@string/cari_v" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:theme="@style/Theme.Sherlock.NoActionBar" />
 		<activity android:name="yuku.alkitab.base.ac.DevotionActivity" android:label="@string/renungan" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
-		<activity android:name="yuku.alkitab.base.ac.HelpActivity" android:label="@string/bantuan_judul" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
+		<activity android:name="yuku.alkitab.base.ac.HelpActivity" android:label="@string/bantuan_judul" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:theme="@style/Theme.Sherlock.Light.DarkActionBar" />
 		<activity android:name="yuku.alkitab.base.ac.AboutActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.ShareActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.FontManagerActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />

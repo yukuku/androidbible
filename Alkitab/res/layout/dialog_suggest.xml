@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="fill_parent" android:layout_height="fill_parent">
-	<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:padding="4dp">
-		<TextView android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_height="wrap_content" android:text="@string/peringatanBeta_s" android:textSize="16dp" android:id="@+id/lSaran" android:layout_width="fill_parent" android:layout_marginBottom="6dp" />
-		<EditText android:layout_alignParentLeft="true" android:layout_width="fill_parent" android:gravity="top" android:id="@+id/tSaran" android:layout_alignParentBottom="true" android:inputType="textCapSentences|textAutoCorrect|textMultiLine" android:layout_below="@+id/lSaran" android:layout_height="fill_parent" android:minLines="4"/>
-	</RelativeLayout>
-</ScrollView>

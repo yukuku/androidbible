@@ -29,8 +29,16 @@
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:maxLines="2"
-            android:text="@string/ok"
-            tools:ignore="ButtonOrder" />
+            android:text="@string/ok"/>
+
+        <Button
+            android:id="@+id/bCancel"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:text="@string/cancel"/>
 
         <LinearLayout
             android:id="@+id/rightSpacer"

@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 
+import java.util.Locale;
+
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.ac.base.BasePreferenceActivity;
@@ -22,7 +24,7 @@ public class SettingsActivity extends BasePreferenceActivity {
 		autoUpdateSummary(R.string.pref_ukuranHuruf2_key, new PreferenceUpdate() {
 			@Override public String withValue(Object value) {
 				float dp = value == null? 17.f: (Float) value;
-				return String.format("%.1f dp (%.1f pt)", dp, dp * 0.45f); //$NON-NLS-1$
+				return String.format(Locale.getDefault(), "%.1f dp (%.1f pt)", dp, dp * 0.45f); //$NON-NLS-1$
 			}
 		});
 		

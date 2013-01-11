@@ -381,7 +381,7 @@ public class VersionsActivity extends BaseActivity {
 		
 			final String filename = result.firstFilename;
 			
-			if (filename.toLowerCase().endsWith(".yes.gz")) { //$NON-NLS-1$
+			if (filename.toLowerCase(Locale.US).endsWith(".yes.gz")) { //$NON-NLS-1$
 				// decompress or see if the same filename without .gz exists
 				final File maybeDecompressed = new File(filename.substring(0, filename.length() - 3));
 				if (maybeDecompressed.exists() && !maybeDecompressed.isDirectory() && maybeDecompressed.canRead()) {
@@ -425,9 +425,9 @@ public class VersionsActivity extends BaseActivity {
 						};
 					}.execute();
 				}
-			} else if (filename.toLowerCase().endsWith(".yes")) { //$NON-NLS-1$
+			} else if (filename.toLowerCase(Locale.US).endsWith(".yes")) { //$NON-NLS-1$
 				handleFileOpenYes(filename, null);
-			} else if (filename.toLowerCase().endsWith(".pdb")) { //$NON-NLS-1$
+			} else if (filename.toLowerCase(Locale.US).endsWith(".pdb")) { //$NON-NLS-1$
 				handleFileOpenPdb(filename);
 			} else {
 				Toast.makeText(getApplicationContext(), R.string.ed_invalid_file_selected, Toast.LENGTH_SHORT).show();

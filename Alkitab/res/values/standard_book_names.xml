@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <string-array name="nama_kitab_standar_in" tools:ignore="UnusedResources">
+    <string-array name="nama_kitab_standar_in" tools:ignore="UnusedResources" translatable="false">
         <item>Kejadian</item>
         <item>Keluaran</item>
         <item>Imamat</item>
@@ -69,7 +69,7 @@
         <item>Yudas</item>
         <item>Wahyu</item>
     </string-array>
-    <string-array name="nama_kitab_standar_en" tools:ignore="UnusedResources">
+    <string-array name="nama_kitab_standar_en" tools:ignore="UnusedResources" translatable="false">
         <item>Genesis</item>
         <item>Exodus</item>
         <item>Leviticus</item>

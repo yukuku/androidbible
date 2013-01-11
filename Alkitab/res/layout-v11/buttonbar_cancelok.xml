@@ -4,15 +4,18 @@
     android:id="@+id/ok_panel"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:divider="?android:attr/dividerHorizontal"
     android:orientation="vertical"
     android:paddingTop="8dp"
     android:showDividers="beginning" >
 
     <LinearLayout
+        style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:measureWithLargestChild="true"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        tools:ignore="UselessParent" >
 
         <LinearLayout
             android:id="@+id/leftSpacer"
@@ -24,13 +27,23 @@
 
         <Button
             android:id="@+id/bOk"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:maxLines="2"
-            android:text="@string/ok"
-            tools:ignore="ButtonOrder" />
+            android:text="@string/ok"/>
+
+        <Button
+            android:id="@+id/bCancel"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:text="@string/cancel"/>
 
         <LinearLayout
             android:id="@+id/rightSpacer"

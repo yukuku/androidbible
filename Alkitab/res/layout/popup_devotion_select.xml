@@ -19,7 +19,8 @@
             style="@style/DevotionSelectChangeButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="*devotion name" />
+            android:text="*devotion name"
+            tools:ignore="HardcodedText" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -30,17 +31,21 @@
             <ImageButton
                 android:id="@+id/bPrev"
                 style="@style/DevotionSelectNavButton"
+                android:contentDescription="@string/desc_previous_day"
                 android:src="@drawable/left_arrow" />
 
             <TextView
                 android:id="@+id/tCurrentDate"
                 style="@style/DevotionSelectCurrentDate"
-                android:text="*current date" />
+                android:text="*current date"
+                tools:ignore="HardcodedText" />
 
             <ImageButton
                 android:id="@+id/bNext"
                 style="@style/DevotionSelectNavButton"
+                android:contentDescription="@string/desc_next_day"
                 android:src="@drawable/right_arrow" />
+
         </LinearLayout>
     </LinearLayout>
 
@@ -48,6 +53,7 @@
         android:id="@+id/arrow_up"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/arrow_up" />
+        android:src="@drawable/arrow_up"
+        tools:ignore="ContentDescription" />
 
 </RelativeLayout>

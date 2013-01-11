@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
@@ -655,7 +656,7 @@ public class Search2Engine {
 			xkata = xkata2;
 		}
 		
-		s = s.toLowerCase();
+		s = s.toLowerCase(Locale.getDefault());
 		
 		int pos = 0;
 		int[] coba = new int[nkata];

@@ -12,9 +12,4 @@ public class Book {
 	public int pdbBookNumber;
 	/** Hanya dipake di YesPembaca */
 	public int offset = -1;
-
-	@Override
-	public String toString() {
-		return String.format("%s (%d pasal)", judul, nchapter); //$NON-NLS-1$
-	}
 }
