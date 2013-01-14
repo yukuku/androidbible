@@ -28,4 +28,6 @@
   <string name="pref_tombolVolumeBuatPindah_title">Nawigacja przyciskami głoścności</string>
   <string name="pref_tombolVolumeBuatPindah_summary">Użyj sprzętowych przycisków zmiany głośności, aby przenosić się między wersami lub rozdziałami.</string>
   <string name="pref_lineSpacingMult_title">Odstepy pomiędzy liniami</string>
+  <string name="pref_copyWithVerseNumbers_title">Załącz numer wersu</string>
+  <string name="pref_copyWithVerseNumbers_summary">Umieść numer wersu przy każdym wersecie przy kopiowaniu/dzieleniu się.</string>
 </resources>

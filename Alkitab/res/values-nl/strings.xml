@@ -38,7 +38,7 @@
   <string name="tulis_catatan">Schrijf notitie</string>
   <string name="tambah_pembatas_buku">Voeg bladwijzer toe</string>
   <string name="salin_ayat">Kopiëer vers</string>
-  <string name="pada_mulanya">In the beginning God created the heaven and the earth. And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters. And God said, Let there be light: and there was light. And God saw the light, that it was good: and God divided the light from, the darkness. And God called the light Day, and the darkness he called Night. And the evening and the morning were the first day.</string>
+  <string name="pada_mulanya">In het begin schiep God de hemel en de aarde. De aarde nu was woest en leeg, en duisternis lag over de watervloed; en de Geest van God zweefde boven het water. En God zei: Laat er licht zijn! En er was licht. En God zag het licht dat het goed was; en God maakte scheiding tussen het licht en de duisternis. En God noemde het licht dag en de duisternis noemde Hij nacht. Toen was het avond geweest en het was morgen geweest: de eerste dag.</string>
   <string name="contoh_tulisan_titikdua">Voorbeeldtekst:</string>
   <string name="perj_baru">Nieuwe Test.</string>
   <string name="perj_lama">Oude Test.</string>
@@ -53,7 +53,7 @@
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Fout in downloaden van %1$s gedateerd op %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">Downloaden van %1$s gedateerd op %2$s is gelukt</string>
   <string name="mengunduh_namaumum_tgl_tgl">Downloaden van %1$s gedateerd op %2$s…</string>
-  <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Nog niet beschikbaar. Waarschijnlijk is het materiaal nog niet voorbereid, of er zijn fouten in het herkennen van de gegevensbron.\n\nNeem zo nodig contact op met de softwareontwikkelaars, door terug te gaan naar het hoofdscherm en te kiezen voor Suggesties.</string>
+  <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Nog niet beschikbaar. Waarschijnlijk is het materiaal nog niet voorbereid of er zijn fouten in het herkennen van de databron. Probeer het later nog eens.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Nog niet beschikbaar. Ophalen van internet…\n\n(Zorg voor een internetverbinding om het materiaal te kunnen downloaden.)</string>
   <string name="hari_sabtu">Za</string>
   <string name="hari_jumat">Vr</string>
@@ -198,6 +198,7 @@
   <string name="about_translators">Vertalers:</string>
   <string name="intent_filter_import_from_backup">Importeer van reservekopie</string>
   <string name="redownload">Download opnieuw</string>
+  <string name="read_faq_before_suggest">Lees alsjeblieft de FAQ voordat je een suggestie instuurt. Doorgaan met verzenden van een suggestie?</string>
   <string name="goto_tab_dialer_label">Kiezer</string>
   <string name="goto_tab_direct_label">Direct</string>
   <string name="goto_tab_grid_label">Tabel</string>
