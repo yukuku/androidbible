@@ -21,6 +21,7 @@
   <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Nastąpił błąd(błędy) podczas przywracania: %s</string>
   <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Czy chcesz nadpisać zakładki, notatki i podkreślenia, które obecnie posiadasz?</string>
   <string name="file_tidak_bisa_dibaca_file">Plik nie istnieje lub nie może być odczytany: %s</string>
+  <string name="impor_pembatas_buku_dan_catatan_dari_tanya">Przywrócić zakładki, notatki, podkreślenia z pliku kopii na karcie SD lub dysku USB?\n\nPlik: %s</string>
   <string name="impor_judul">Przywróć z kopii</string>
   <string name="impor_dari_sd_card">Przywróć</string>
   <string name="ekspor_ke_sd_card">Kopia</string>
@@ -52,7 +53,7 @@
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Błąd pobierania %1$s z dnia %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">Udane pobieranie %1$s z dnia %2$s</string>
   <string name="mengunduh_namaumum_tgl_tgl">Pobieranie %1$s z dnia %2$s…</string>
-  <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Rozważanie nie jest jeszcze dostępne. Prawdopodobnie żądany materiał nie został jeszcze przygotowany, lub są problemy w rozpoznaniu źródła daty.\n\nJeżeli uważasz to za konieczne, poinformuj proszę autora aplikacji, poprzez powrót do początkowego ekranu wersetu, otwarcie menu i wybór Sugestie.</string>
+  <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Nie dostępne. Prawdopodobnie materiały z żądanej daty nie są jeszcze gotowe lub są jakieś będy w odczytaniu danych z podanej daty. Proszę spróbować jeszcze raz.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Rozważanie nie jest jeszcze dostępne. Pobieranie z internetu.…\n\n(Upewnij się, że istnieje połączenie internetowe, aby pobrać materiały.)</string>
   <string name="hari_sabtu">Sobota</string>
   <string name="hari_jumat">Piątek</string>
@@ -197,6 +198,7 @@
   <string name="about_translators">Tłumacze:</string>
   <string name="intent_filter_import_from_backup">Import z kopii</string>
   <string name="redownload">Pobierz ponownie</string>
+  <string name="read_faq_before_suggest">Proszę przeczytaj powyższe FAQ nim wyślesz sugestię. Czy nadal chcesz wysłać sugestię?</string>
   <string name="goto_tab_dialer_label">Dialer</string>
   <string name="goto_tab_direct_label">Bezpośrednio</string>
   <string name="goto_tab_grid_label">Siatka</string>
