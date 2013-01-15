@@ -548,16 +548,6 @@ public class IsiActivity extends BaseActivity {
 		return false;
 	}
 
-	private synchronized void keepScreenOnWhenRequested() {
-		if (Preferences.getBoolean(getString(R.string.pref_nyalakanTerusLayar_key), getResources().getBoolean(R.bool.pref_nyalakanTerusLayar_default))) {
-			lsText.setKeepScreenOn(true);
-		}
-	}
-
-	private synchronized void turnScreenOffIfAllowedToTurnOff() {
-		lsText.setKeepScreenOn(false);
-	}
-	
 	/**
 	 * Jump to a given verse reference in string format.
 	 * @return ari of the parsed reference
@@ -941,13 +931,15 @@ public class IsiActivity extends BaseActivity {
 		history.simpan(editor);
 		editor.commit();
 		
-		turnScreenOffIfAllowedToTurnOff();
+		lsText.setKeepScreenOn(false);
 	}
 	
 	@Override protected void onStart() {
 		super.onStart();
 		
-		keepScreenOnWhenRequested();
+		if (Preferences.getBoolean(getString(R.string.pref_nyalakanTerusLayar_key), getResources().getBoolean(R.bool.pref_nyalakanTerusLayar_default))) {
+			lsText.setKeepScreenOn(true);
+		}
 	}
 	
 	/**

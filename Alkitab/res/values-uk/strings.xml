@@ -53,7 +53,7 @@
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Помилка при завантаженні %1$s датована %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">Вдалі завантаження %1$s датовані %2$s</string>
   <string name="mengunduh_namaumum_tgl_tgl">Завантаження %1$s датовані %2$s…</string>
-  <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Поки що немає. Ймовірно, матеріал на запитану дату ще не готовий, чи є деякі помилки в розпізнаванні джерела даних.\n\nЯкщо ви вважаєте за необхідне, будь ласка, повідомте це розробникам програмного забезпечення,повернувшись до огляду віршів, відкрийте меню та виберіть Запропонувати.</string>
+  <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Тепер недоступно. Мабуть запитані дані та матеріали ще не готові, або виникли помилки в розпізнаванні джерела даних. Будь ласка спробуйте ще раз пізніше.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Поки що недоступно. Отримати або пошукати в інтернеті...\n\n(Переконайтеся в наявності підключення до інтернету для отримання матеріалів для вивчення.)</string>
   <string name="hari_sabtu">Сб</string>
   <string name="hari_jumat">Пт</string>
@@ -198,6 +198,7 @@
   <string name="about_translators">Перекладачі:</string>
   <string name="intent_filter_import_from_backup">Імпорт з резервної копії</string>
   <string name="redownload">Перезавантажити</string>
+  <string name="read_faq_before_suggest">Будь ласка читайте вище FAQ перед відсиланням пропозиції або запитання. Продовжити надсилання пропозиції або запитання?</string>
   <string name="goto_tab_dialer_label">Номеронабирач</string>
   <string name="goto_tab_direct_label">Прямолінійний</string>
   <string name="goto_tab_grid_label">Сітка</string>

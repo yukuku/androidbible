@@ -77,6 +77,13 @@ public class Jumper {
 		
 		Log.d(TAG, "peloncat tahap 0: " + alamat); //$NON-NLS-1$
 		
+		//# TAHAP 4: replace en-dash and em-dash to normal dash
+		if (alamat.contains("\u2013") || alamat.contains("\u2014")) {
+			alamat = alamat.replaceAll("[\u2013\u2014]", "-");
+
+			Log.d(TAG, "peloncat tahap 4: " + alamat); //$NON-NLS-1$
+		}
+		
 		//# TAHAP 5: Buang spasi di sebelah kiri-kanan tanda "-"
 		if (alamat.contains("-")) { //$NON-NLS-1$
 			alamat = alamat.replaceAll("\\s+-\\s+|\\s+-|-\\s+", "-"); //$NON-NLS-1$ //$NON-NLS-2$

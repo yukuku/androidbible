@@ -14,6 +14,7 @@
   <string name="pref_jenis_huruf">字体</string>
   <string name="pref_ubah_ukuran_huruf_teks_alkitab_perbesar_atau_perkecil">修改圣经的文字大小（放大或缩小）。</string>
   <string name="pref_ukuran_huruf">文字大小</string>
+  <string name="pref_warna">颜色</string>
   <string name="pref_atur_warna_teks_latar_belakang_dan_nomor_ayat">设置文字，背景和经文号码的颜色。</string>
   <string name="pref_penggunaan">用法</string>
   <string name="pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah">按←和→移动之间的章节, 或按标题。</string>

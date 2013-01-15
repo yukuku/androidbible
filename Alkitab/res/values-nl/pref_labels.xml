@@ -28,4 +28,6 @@
   <string name="pref_tombolVolumeBuatPindah_title">Volumetoets navigatie</string>
   <string name="pref_tombolVolumeBuatPindah_summary">Gebruik hardware volumetoetsen om te navigeren tussen verzen of hoofdstukken.</string>
   <string name="pref_lineSpacingMult_title">Regelafstand</string>
+  <string name="pref_copyWithVerseNumbers_title">Inclusief versnummers</string>
+  <string name="pref_copyWithVerseNumbers_summary">Plaats versnummers voor elk vers bij kopiëren/delen.</string>
 </resources>

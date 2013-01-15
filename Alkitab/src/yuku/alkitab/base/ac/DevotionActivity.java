@@ -178,6 +178,14 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		tampilkan(S.temporary.devotion_scroll);
 	}
 	
+	@Override protected void onStart() {
+		super.onStart();
+		
+		if (Preferences.getBoolean(getString(R.string.pref_nyalakanTerusLayar_key), getResources().getBoolean(R.bool.pref_nyalakanTerusLayar_default))) {
+			lIsi.setKeepScreenOn(true);
+		}
+	}
+	
 	@Override protected void onDestroy() {
 		super.onDestroy();
 		
