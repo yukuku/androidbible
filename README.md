@@ -1,7 +1,7 @@
 Bible for Android
 =================
 
-**Really Quick Bible App. 100% Free, No-Ads, Straight-Forward and Friendly.**
+**Really Quick Bible App. 100% Free, No-Ads, Quick and Friendly.**
 
 - Blog: http://androidbible.blogspot.com
 - Google+: https://plus.google.com/109017775855333478187
@@ -13,7 +13,8 @@ Bible translations/versions
 ---------------------------
 
 This app natively uses *.yes* files for the Bible text. You can create a *.yes* file easily by creating a plain text file
-called a *.yet* file and converting it using the Yet2Yes
+called a *.yet* file and converting it using the Yet2Yes utility. You will need just Java, you don't need Eclipse or Android SDK.
+Here are the instructions: http://goo.gl/QEw0j
 
 Building
 --------
@@ -22,5 +23,4 @@ You'll need `http://code.google.com/p/yuku-android-util/` cloned to a directory 
 as this repo's cloned directory. So you will have `yuku-android-util` and `androidbible` side-by-side. 
 The main project is `Alkitab` inside `androidbible`. BTW, Alkitab is Indonesian word for Bible.
 
-This repository does not contain any Bible text, partially because they are sometimes copyrighted. 
-
+This repository does not contain any Bible text.
