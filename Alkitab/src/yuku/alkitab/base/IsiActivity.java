@@ -559,9 +559,8 @@ public class IsiActivity extends BaseActivity {
 		
 		Log.d(TAG, "going to jump to " + reference); //$NON-NLS-1$
 		
-		Jumper jumper = new Jumper();
-		boolean success = jumper.parse(reference);
-		if (! success) {
+		Jumper jumper = new Jumper(reference);
+		if (! jumper.getParseSucceeded()) {
 			Toast.makeText(this, getString(R.string.alamat_tidak_sah_alamat, reference), Toast.LENGTH_SHORT).show();
 			return 0;
 		}
@@ -1211,13 +1210,11 @@ public class IsiActivity extends BaseActivity {
 				}
 			}
 		} else if (requestCode == REQCODE_devotion) {
-			if (data != null) {
-				String alamat = data.getStringExtra(DevotionActivity.EXTRA_alamat);
-				if (alamat != null) {
-					int ari = jumpTo(alamat);
-					if (ari != 0) {
-						history.add(ari);
-					}
+			if (resultCode == RESULT_OK) {
+				DevotionActivity.Result result = DevotionActivity.obtainResult(data);
+				if (result != null && result.ari != 0) {
+					jumpToAri(result.ari);
+					history.add(result.ari);
 				}
 			}
 		} else if (requestCode == REQCODE_songs) {

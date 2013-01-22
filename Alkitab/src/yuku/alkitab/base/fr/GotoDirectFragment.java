@@ -111,9 +111,8 @@ public class GotoDirectFragment extends BaseGotoFragment {
 				return; // do nothing
 			}
 			
-			Jumper jumper = new Jumper();
-			boolean success = jumper.parse(reference);
-			if (! success) {
+			Jumper jumper = new Jumper(reference);
+			if (! jumper.getParseSucceeded()) {
 				new AlertDialog.Builder(getActivity())
 				.setMessage(getString(R.string.alamat_tidak_sah_alamat, reference))
 				.setPositiveButton(R.string.ok, null)

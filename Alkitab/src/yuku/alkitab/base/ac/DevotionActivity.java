@@ -1,5 +1,6 @@
 package yuku.alkitab.base.ac;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,12 +35,14 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.renungan.ArtikelRenunganHarian;
 import yuku.alkitab.base.renungan.ArtikelSantapanHarian;
 import yuku.alkitab.base.renungan.Downloader;
 import yuku.alkitab.base.renungan.Downloader.OnStatusDonlotListener;
 import yuku.alkitab.base.renungan.IArtikel;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.DevotionSelectPopup;
 import yuku.alkitab.base.widget.DevotionSelectPopup.DevotionSelectPopupListener;
@@ -50,9 +53,20 @@ import com.actionbarsherlock.view.MenuItem;
 public class DevotionActivity extends BaseActivity implements OnStatusDonlotListener {
 	public static final String TAG = DevotionActivity.class.getSimpleName();
 
-	public static final String EXTRA_alamat = "alamat"; //$NON-NLS-1$
-	private static final int REQCODE_bagikan = 0;
+	public static final String EXTRA_ari = "ari"; //$NON-NLS-1$
+	private static final int REQCODE_bagikan = 1;
 
+	public static class Result {
+		public int ari;
+	}
+	
+	public static Result obtainResult(Intent data) {
+		if (data == null) return null;
+		Result res = new Result();
+		res.ari = data.getIntExtra(EXTRA_ari, 0);
+		return res;
+	}
+	
 	static ThreadLocal<SimpleDateFormat> tgl_format = new ThreadLocal<SimpleDateFormat>() {
 		@Override protected SimpleDateFormat initialValue() {
 			return new SimpleDateFormat("yyyyMMdd", Locale.US); //$NON-NLS-1$
@@ -301,13 +315,34 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 	CallbackSpan.OnClickListener ayatKlikListener = new CallbackSpan.OnClickListener() {
 		@Override
-		public void onClick(View widget, Object data) {
-			Log.d(TAG, "Dalam renungan, ada yang diklik: " + data); //$NON-NLS-1$
-
-			Intent res = new Intent();
-			res.putExtra(EXTRA_alamat, (String)data);
+		public void onClick(View widget, Object _data) {
+			String reference = (String) _data;
 			
-			setResult(RESULT_OK, res);
+			Log.d(TAG, "Clicked verse reference inside devotion: " + reference); //$NON-NLS-1$
+
+			Jumper jumper = new Jumper(reference);
+			if (! jumper.getParseSucceeded()) {
+				new AlertDialog.Builder(DevotionActivity.this)
+				.setMessage(getString(R.string.alamat_tidak_sah_alamat, reference))
+				.setPositiveButton(R.string.ok, null)
+				.show();
+				return;
+			}
+			
+			// TODO support english devotions too
+			String[] bookNames = getResources().getStringArray(R.array.nama_kitab_standar_in);
+			int[] bookIds = new int[bookNames.length];
+			for (int i = 0, len = bookNames.length; i < len; i++) {
+				bookIds[i] = i;
+			}
+
+			int bookId = jumper.getBookId(bookNames, bookIds);
+			int chapter_1 = jumper.getChapter();
+			int verse_1 = jumper.getVerse();
+			
+			Intent data = new Intent();
+			data.putExtra(EXTRA_ari, Ari.encode(bookId, chapter_1, verse_1));
+			setResult(RESULT_OK, data);
 			finish();
 		}
 	};
