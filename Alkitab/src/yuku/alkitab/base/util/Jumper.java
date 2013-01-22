@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.WeakHashMap;
 import java.util.regex.Matcher;
@@ -35,7 +36,7 @@ public class Jumper {
 		}
 	}
 	
-	private static WeakHashMap<Book[], Jumper.KitabRef[]> pendekCache = new WeakHashMap<Book[], Jumper.KitabRef[]>();
+	private static WeakHashMap<Book[], List<KitabRef>> pendekCache = new WeakHashMap<Book[], List<KitabRef>>();
 	
 	public Jumper(String referenceToParse) {
 		parseSucceeded = parse(referenceToParse);
@@ -308,50 +309,43 @@ public class Jumper {
 		return res;
 	}
 	
-	private int tebakKitab(Book[] xkitab) {
+	private List<KitabRef> createBookCandidates(String[] bookNames, int[] bookIds) {
+		// bikin cache semua judul kitab yang dibuang spasinya dan dikecilin semua dan 1 jadi I, 2 jadi II, dst
+		final List<KitabRef> res = new ArrayList<KitabRef>();
+		
+		for (int i = 0, len = bookNames.length; i < len; i++) {
+			String judul = bookNames[i].replaceAll("(\\s|-|_)+", "").toLowerCase(Locale.getDefault()); //$NON-NLS-1$ //$NON-NLS-2$
+
+			{
+				KitabRef ref = new KitabRef();
+				ref.pendek = judul;
+				ref.pos = bookIds[i];
+					
+				res.add(ref);
+			}
+			
+			if (judul.contains("1") || judul.contains("2") || judul.contains("3")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				judul = judul.replace("1", "i").replace("2", "ii").replace("3", "iii");    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+				
+				KitabRef ref = new KitabRef();
+				ref.pendek = judul;
+				ref.pos = bookIds[i];
+				
+				res.add(ref);
+			}
+		}
+		
+		return res;
+	}
+	
+	private int tebakKitab(List<KitabRef> refs) {
 		if (p_kitab == null) {
 			return -1;
 		}
 		
 		int res = -1;
 		
-		// 0. bikin cache semua judul kitab yang dibuang spasinya dan dikecilin semua dan 1 jadi I, 2 jadi II, dst
-		{
-			Jumper.KitabRef[] refs = pendekCache.get(xkitab);
-			
-			if (refs == null) {
-				ArrayList<Jumper.KitabRef> a = new ArrayList<Jumper.KitabRef>();
-				
-				for (Book k: xkitab) {
-					String judul = k.judul.replaceAll("(\\s|-|_)+", "").toLowerCase(Locale.getDefault()); //$NON-NLS-1$ //$NON-NLS-2$
-					
-					{
-						Jumper.KitabRef ref = new KitabRef();
-						ref.pendek = judul;
-						ref.pos = k.bookId;
-						
-						a.add(ref);
-					}
-					
-					if (judul.contains("1") || judul.contains("2") || judul.contains("3")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						judul = judul.replaceAll("1", "i").replaceAll("2", "ii").replaceAll("3", "iii");    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-						
-						Jumper.KitabRef ref = new KitabRef();
-						ref.pendek = judul;
-						ref.pos = k.bookId;
-						
-						a.add(ref);
-					}
-				}
-				
-				refs = a.toArray(new Jumper.KitabRef[0]);
-				pendekCache.put(xkitab, refs);
-				Log.d(TAG, "entri pendekCache baru: " + Arrays.toString(refs)); //$NON-NLS-1$
-			}
-		}
-		
-		// 0 juga. bersihin p_kitab
-		Jumper.KitabRef[] refs = pendekCache.get(xkitab);
+		// 0. bersihin p_kitab
 		p_kitab = p_kitab.replaceAll("(\\s|-|_)", "").toLowerCase(Locale.getDefault()); //$NON-NLS-1$ //$NON-NLS-2$
 		Log.d(TAG, "tebakKitab fase 0: p_kitab = " + p_kitab); //$NON-NLS-1$
 		
@@ -424,11 +418,38 @@ public class Jumper {
 	}
 	
 	/**
+	 * @param books list of books from which the looked for book is searched
 	 * @return bookId of one of the books (or -1).
 	 */
 	public int getBookId(Book[] books) {
 		if (p_bookIdFromOsis != -1) return p_bookIdFromOsis;
-		return tebakKitab(books);
+		
+		List<KitabRef> refs = pendekCache.get(books);
+		if (refs == null) {
+			String[] bookNames = new String[books.length];
+			int[] bookIds = new int[books.length];
+			
+			for (int i = 0; i < books.length; i++) {
+				bookNames[i] = books[i].judul;
+				bookIds[i] = books[i].bookId;
+			}
+			
+			refs = createBookCandidates(bookNames, bookIds);
+			pendekCache.put(books, refs);
+			Log.d(TAG, "entri pendekCache baru: " + refs); //$NON-NLS-1$
+		}
+		
+		return tebakKitab(refs);
+	}
+	
+	/**
+	 * @param books list of (bookName, bookId) from which the looked for book is searched
+	 * @return bookId of one of the books (or -1).
+	 */
+	public int getBookId(String[] bookNames, int[] bookIds) {
+		if (p_bookIdFromOsis != -1) return p_bookIdFromOsis;
+		
+		return tebakKitab(createBookCandidates(bookNames, bookIds));
 	}
 	
 	public int getChapter() {
