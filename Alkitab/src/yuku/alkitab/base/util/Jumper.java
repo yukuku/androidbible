@@ -430,7 +430,7 @@ public class Jumper {
 			int[] bookIds = new int[books.length];
 			
 			for (int i = 0; i < books.length; i++) {
-				bookNames[i] = books[i].judul;
+				bookNames[i] = books[i].shortName;
 				bookIds[i] = books[i].bookId;
 			}
 			

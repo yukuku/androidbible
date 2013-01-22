@@ -20,6 +20,7 @@ import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.LidToAri;
 
@@ -180,7 +181,7 @@ public class Provider extends ContentProvider {
 				if (formatting == false) {
 					text = U.removeSpecialCodes(text);
 				}
-				res.addRow(new Object[] {1, ari, book.judul, text});
+				res.addRow(new Object[] {1, ari, book.shortName, text});
 			}
 		}
 		
@@ -222,7 +223,7 @@ public class Provider extends ContentProvider {
 					if (formatting == false) {
 						text = U.removeSpecialCodes(text);
 					}
-					res.addRow(new Object[] {++c, ari, book.judul, text});
+					res.addRow(new Object[] {++c, ari, book.shortName, text});
 				}
 			} else {
 				int ari_start_bc = Ari.toBookChapter(ari_start);
@@ -239,7 +240,7 @@ public class Provider extends ContentProvider {
 					for (int ari_bc = ari_start_bc; ari_bc <= ari_end_bc; ari_bc += 0x0100) {
 						Book book = S.activeVersion.getBook(Ari.toBook(ari_bc));
 						int chapter_1 = Ari.toChapter(ari_bc);
-						if (book == null || chapter_1 <= 0 || chapter_1 > book.nchapter) {
+						if (book == null || chapter_1 <= 0 || chapter_1 > book.chapter_count) {
 							continue;
 						}
 						
@@ -264,17 +265,17 @@ public class Provider extends ContentProvider {
 	 */
 	private int resultForOneChapter(MatrixCursor cursor, Book book, int last_c, int ari_bc, int v_1_start, int v_1_end, boolean formatting) {
 		int count = 0;
-		String[] chapterText = S.loadChapterText(S.activeVersion, book, Ari.toChapter(ari_bc));
+		SingleChapterVerses verses = S.loadChapterText(S.activeVersion, book, Ari.toChapter(ari_bc));
 		for (int v_1 = v_1_start; v_1 <= v_1_end; v_1++) {
 			int v_0 = v_1 - 1;
-			if (v_0 < chapterText.length) {
+			if (v_0 < verses.getVerseCount()) {
 				int ari = ari_bc | v_1;
-				String text = chapterText[v_0];
+				String text = verses.getVerse(v_0);
 				if (formatting == false) {
 					text = U.removeSpecialCodes(text);
 				}
 				count++;
-				cursor.addRow(new Object[] {last_c + count, ari, book.judul, text});
+				cursor.addRow(new Object[] {last_c + count, ari, book.shortName, text});
 			} else {
 				// we're done with this chapter, no need to loop again
 				break;

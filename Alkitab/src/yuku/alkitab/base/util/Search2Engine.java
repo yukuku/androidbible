@@ -32,6 +32,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.bintex.BintexReader;
 
 public class Search2Engine {
@@ -218,7 +219,7 @@ public class Search2Engine {
 					continue; // ga termasuk dalam kitab yang dipilih
 				}
 				
-				int npasal = k.nchapter;
+				int npasal = k.chapter_count;
 				
 				for (int pasal_1 = 1; pasal_1 <= npasal; pasal_1++) {
 					// coba sepasal sekaligus dulu.
@@ -229,7 +230,7 @@ public class Search2Engine {
 					}
 				}
 	
-				if (D.EBUG) Log.d(TAG, "cariDalam kitab " + k.nama + " selesai. res.size = " + res.size()); //$NON-NLS-1$ //$NON-NLS-2$
+				if (D.EBUG) Log.d(TAG, "cariDalam kitab " + k.shortName + " selesai. res.size = " + res.size()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else {
 			// cari hanya pada kp (kitab pasal) yang ada di sumber.
@@ -453,7 +454,7 @@ public class Search2Engine {
 				multiwords_plussed[i] = QueryTokenizer.isPlussedToken(multiword);
 			}
 			
-			String[] loadedChapter = null; // the currently loaded chapter, to prevent repeated loading of same chapter
+			SingleChapterVerses loadedChapter = null; // the currently loaded chapter, to prevent repeated loading of same chapter
 			int loadedAriCv = 0; // chapter and verse of current Ari
 			for (int i = 0, len = res.size(); i < len; i++) {
 				int ari = res.get(i);
@@ -468,8 +469,8 @@ public class Search2Engine {
 				}
 				
 				int verse_1 = Ari.toVerse(ari);
-				if (verse_1 >= 1 && verse_1 <= loadedChapter.length) {
-					String text = loadedChapter[verse_1 - 1];
+				if (verse_1 >= 1 && verse_1 <= loadedChapter.getVerseCount()) {
+					String text = loadedChapter.getVerse(verse_1 - 1);
 					if (text != null) {
 						boolean passed = true;
 						for (int j = 0, len2 = multiwords_bare.length; j < len2; j++) {

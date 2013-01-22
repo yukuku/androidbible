@@ -1,9 +1,11 @@
-package yuku.alkitab.yes;
+package yuku.alkitab.yes2.io;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
 
 public class RandomOutputStream extends OutputStream {
-	private RandomAccessFile f;
+	private final RandomAccessFile f;
 
 	public RandomOutputStream(RandomAccessFile f) {
 		this.f = f;
@@ -22,5 +24,17 @@ public class RandomOutputStream extends OutputStream {
 	@Override
 	public void write(byte[] buffer, int offset, int count) throws IOException {
 		f.write(buffer, offset, count);
+	}
+	
+	public long getFilePointer() throws IOException {
+		return f.getFilePointer();
+	}
+	
+	public void seek(long pos) throws IOException {
+		f.seek(pos);
+	}
+	
+	@Override public void close() throws IOException {
+		f.close();
 	}
 }

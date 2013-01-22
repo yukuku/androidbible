@@ -1,22 +1,20 @@
 package yuku.alkitab.base.model;
 
-import yuku.alkitab.base.storage.Reader;
+import yuku.alkitab.base.storage.BibleReader;
 
 public class Version {
-	public Reader reader;
+	public BibleReader bibleReader;
 	
-	public Version(Reader reader) {
-		this.reader = reader;
+	public Version(BibleReader bibleReader) {
+		this.bibleReader = bibleReader;
 	}
 	
 	private Book[] volatile_xkitab;
 	private Book[] volatile_xkitabConsecutive;
-	private PericopeIndex volatile_indexPerikop;
-	private boolean volatile_indexPerikopSudahCobaBaca = false;
 	
 	private synchronized Book[] getXkitab() {
 		if (volatile_xkitab == null) {
-			volatile_xkitab = this.reader.loadBooks();
+			volatile_xkitab = this.bibleReader.loadBooks();
 		}
 		return volatile_xkitab;
 	}
@@ -71,14 +69,6 @@ public class Version {
 			if (k != null) return k;
 		}
 		// aneh skali kalo kena ini, tapi toh kena juga
-		throw new RuntimeException("Ga ketemu satu pun kitab yang ga null. Info edisi: " + (this.reader == null? "pembaca=null": (this.reader.getLongName() + " nkitab=" + xkitab.length)));    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-	}
-	
-	public synchronized PericopeIndex getIndexPerikop() {
-		if (!volatile_indexPerikopSudahCobaBaca) {
-			volatile_indexPerikop = this.reader.loadPericopeIndex();
-			volatile_indexPerikopSudahCobaBaca = true;
-		}
-		return volatile_indexPerikop;
+		throw new RuntimeException("Ga ketemu satu pun kitab yang ga null. Info edisi: " + (this.bibleReader == null? "pembaca=null": (this.bibleReader.getLongName() + " nkitab=" + xkitab.length)));    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 }

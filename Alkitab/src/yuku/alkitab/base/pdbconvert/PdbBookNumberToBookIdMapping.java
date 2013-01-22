@@ -1,10 +1,10 @@
 package yuku.alkitab.base.pdbconvert;
 
-public class PdbNumberToAriMapping {
-	public static final String TAG = PdbNumberToAriMapping.class.getSimpleName();
+public class PdbBookNumberToBookIdMapping {
+	public static final String TAG = PdbBookNumberToBookIdMapping.class.getSimpleName();
 	
 	// ref: http://sourceforge.net/projects/palmbibleplus/files/zDocumentation/1.0/
-	private static final int[] bookNumber = {
+	private static final int[] pdbBookNumbers = {
 		10,
 		20,
 		30,
@@ -118,25 +118,20 @@ public class PdbNumberToAriMapping {
 		66, 67, 79, 82, 83,
 	};
 	
-	public static int pdbNumberToAriKitab(int pdbNumber) {
-		for (int i = 0; i < bookNumber.length; i++) {
-			if (bookNumber[i] == pdbNumber) {
+	public static int pdbBookNumberToBookId(int pdbBookNumber) {
+		for (int i = 0; i < pdbBookNumbers.length; i++) {
+			if (pdbBookNumbers[i] == pdbBookNumber) {
 				return i;
 			}
 		}
 		
 		// try alternate book numbers
 		for (int i = 0; i < altBookNumberFrom.length; i++) {
-			if (altBookNumberFrom[i] == pdbNumber) {
+			if (altBookNumberFrom[i] == pdbBookNumber) {
 				return altBookNumberTo[i];
 			}
 		}
 		
 		return -1;
-	}
-	
-	public static int ariKitabToPdbNumber(int ari_kitab) {
-		if (ari_kitab < 0 || ari_kitab >= bookNumber.length) return -1;
-		return bookNumber[ari_kitab];
 	}
 }

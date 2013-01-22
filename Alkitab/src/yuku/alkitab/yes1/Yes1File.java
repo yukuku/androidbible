@@ -1,4 +1,4 @@
-package yuku.alkitab.yes;
+package yuku.alkitab.yes1;
 
 import android.util.Log;
 
@@ -8,12 +8,13 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import yuku.alkitab.yes.YesFile.PericopeData.Entry;
+import yuku.alkitab.yes1.Yes1File.PericopeData.Entry;
 import yuku.bintex.BintexWriter;
 
-public class YesFile {
+@Deprecated
+public class Yes1File {
 	private static final byte FILE_VERSI = 0x01;
-	private static final String TAG = YesFile.class.getSimpleName();
+	private static final String TAG = Yes1File.class.getSimpleName();
 	
 	byte[] FILE_HEADER = {(byte) 0x98, 0x58, 0x0d, 0x0a, 0x00, 0x5d, (byte) 0xe0, FILE_VERSI};
 	

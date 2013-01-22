@@ -7,13 +7,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-import yuku.alkitab.yes.YesFile;
-import yuku.alkitab.yes.YesFile.InfoEdisi;
-import yuku.alkitab.yes.YesFile.InfoKitab;
-import yuku.alkitab.yes.YesFile.Kitab;
-import yuku.alkitab.yes.YesFile.PerikopBlok;
-import yuku.alkitab.yes.YesFile.PerikopIndex;
-import yuku.alkitab.yes.YesFile.Teks;
+import yuku.alkitab.yes1.Yes1File;
+import yuku.alkitab.yes1.Yes1File.InfoEdisi;
+import yuku.alkitab.yes1.Yes1File.InfoKitab;
+import yuku.alkitab.yes1.Yes1File.Kitab;
+import yuku.alkitab.yes1.Yes1File.PerikopBlok;
+import yuku.alkitab.yes1.Yes1File.PerikopIndex;
+import yuku.alkitab.yes1.Yes1File.Teks;
 import yuku.alkitabconverter.util.Rec;
 
 public class YesCommon {
@@ -134,8 +134,8 @@ public class YesCommon {
 		}};
 	}
 
-	public static YesFile bikinYesFile(final InfoEdisi infoEdisi, final InfoKitab infoKitab, final Teks teks, final PerikopBlok perikopBlok, final PerikopIndex perikopIndex) {
-		return new YesFile() {{
+	public static Yes1File bikinYesFile(final InfoEdisi infoEdisi, final InfoKitab infoKitab, final Teks teks, final PerikopBlok perikopBlok, final PerikopIndex perikopIndex) {
+		return new Yes1File() {{
 			this.xseksi = new Seksi[] {
 				new Seksi() {
 					@Override public byte[] nama() {
@@ -186,8 +186,8 @@ public class YesCommon {
 		}};
 	}
 
-	public static YesFile bikinYesFile(final InfoEdisi infoEdisi, final InfoKitab infoKitab, final Teks teks) {
-		return new YesFile() {{
+	public static Yes1File bikinYesFile(final InfoEdisi infoEdisi, final InfoKitab infoKitab, final Teks teks) {
+		return new Yes1File() {{
 			this.xseksi = new Seksi[] {
 				new Seksi() {
 					@Override public byte[] nama() {

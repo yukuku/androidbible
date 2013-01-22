@@ -1,4 +1,4 @@
-package yuku.alkitab.base.storage;
+package yuku.alkitab.yes1;
 
 import java.io.IOException;
 import java.io.InputStream;

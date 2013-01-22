@@ -17,19 +17,19 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.util.IntArrayList;
-import yuku.alkitab.yes.YesFile;
-import yuku.alkitab.yes.YesFile.InfoEdisi;
-import yuku.alkitab.yes.YesFile.InfoKitab;
-import yuku.alkitab.yes.YesFile.IsiSeksi;
-import yuku.alkitab.yes.YesFile.Kitab;
+import yuku.alkitab.yes1.Yes1File;
+import yuku.alkitab.yes1.Yes1File.InfoEdisi;
+import yuku.alkitab.yes1.Yes1File.InfoKitab;
+import yuku.alkitab.yes1.Yes1File.IsiSeksi;
+import yuku.alkitab.yes1.Yes1File.Kitab;
 import yuku.bintex.BintexWriter;
 
 import com.compactbyte.android.bible.PDBFileStream;
 import com.compactbyte.bibleplus.reader.BiblePlusPDB;
 import com.compactbyte.bibleplus.reader.BookInfo;
 
-public class ConvertPdbToYes {
-	public static final String TAG = ConvertPdbToYes.class.getSimpleName();
+public class ConvertPdbToYes1 {
+	public static final String TAG = ConvertPdbToYes1.class.getSimpleName();
 
 	public static final int VERSI_CONVERTER = 1;
 
@@ -75,7 +75,7 @@ public class ConvertPdbToYes {
 		}
 	}
 	
-	public ConvertPdbToYes() {
+	public ConvertPdbToYes1() {
 	}
 	
 	public ConvertResult convert(final Context context, String filenamepdb, String namafileyes, ConvertParams params) {
@@ -109,7 +109,7 @@ public class ConvertPdbToYes {
 					BookInfo bookInfo = pdb.getBook(bookPos);
 					bookInfo.openBook();
 					int bookNumber = bookInfo.getBookNumber();
-					int kitabPos = PdbNumberToAriMapping.pdbNumberToAriKitab(bookNumber);
+					int kitabPos = PdbBookNumberToBookIdMapping.pdbBookNumberToBookId(bookNumber);
 					if (kitabPos < 0) {
 						Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL"); //$NON-NLS-1$ //$NON-NLS-2$
 						if (res.wronglyConvertedBookNames == null) {
@@ -127,7 +127,7 @@ public class ConvertPdbToYes {
 				bookInfo.openBook();
 
 				int bookNumber = bookInfo.getBookNumber();
-				int kitabPos = PdbNumberToAriMapping.pdbNumberToAriKitab(bookNumber);
+				int kitabPos = PdbBookNumberToBookIdMapping.pdbBookNumberToBookId(bookNumber);
 				if (kitabPos < 0) {
 					Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
@@ -158,7 +158,7 @@ public class ConvertPdbToYes {
 			final InfoEdisi infoEdisi = getInfoEdisi();
 			
 			progress(400, context.getString(R.string.cp_constructing_translated_file));
-			YesFile file = new YesFile() {{
+			Yes1File file = new Yes1File() {{
 				boolean adaPerikop = nblokPerikop_ > 0;
 				this.xseksi = new Seksi[adaPerikop? 5: 3];
 				

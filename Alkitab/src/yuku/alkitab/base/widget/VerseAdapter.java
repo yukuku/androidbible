@@ -24,6 +24,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
+import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.storage.Db.Bukmak2;
 import yuku.alkitab.base.widget.CallbackSpan.OnClickListener;
 
@@ -148,7 +149,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	// # field setData
 	Book book_;
 	int chapter_1_;
-	String[] verseTextData_;
+	SingleChapterVerses verses_;
 	PericopeBlock[] pericopeBlocks_;
 	/**
 	 * Tiap elemen, kalo 0 sampe positif, berarti menunjuk ke AYAT di rendered_
@@ -199,12 +200,12 @@ public abstract class VerseAdapter extends BaseAdapter {
 		}
 	}
 	
-	public synchronized void setData(Book book, int chapter_1, String[] verseTextData, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
+	public synchronized void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
 		book_ = book;
 		chapter_1_ = chapter_1;
-		verseTextData_ = verseTextData.clone();
+		verses_ = verses;
 		pericopeBlocks_ = pericopeBlocks;
-		itemPointer_ = makeItemPointer(verseTextData_.length, pericopeAris, pericopeBlocks, nblock);
+		itemPointer_ = makeItemPointer(verses_.getVerseCount(), pericopeAris, pericopeBlocks, nblock);
 	}
 
 	public synchronized void loadAttributeMap() {
@@ -213,7 +214,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 		int ariBc = Ari.encode(book_.bookId, chapter_1_, 0x00);
 		if (S.getDb().countAtribut(ariBc) > 0) {
-			attributeMap = new int[verseTextData_.length];
+			attributeMap = new int[verses_.getVerseCount()];
 			highlightMap = S.getDb().putAtribut(ariBc, attributeMap);
 		}
 
@@ -224,7 +225,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	}
 
 	@Override public synchronized int getCount() {
-		if (verseTextData_ == null) return 0;
+		if (verses_ == null) return 0;
 
 		return itemPointer_.length;
 	}
@@ -233,7 +234,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 		int id = itemPointer_[position];
 
 		if (id >= 0) {
-			return verseTextData_[position].toString();
+			return verses_.getVerse(position);
 		} else {
 			return pericopeBlocks_[-id - 1].toString();
 		}
@@ -338,9 +339,9 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 
 	public String getVerse(int verse_1) {
-		if (verseTextData_ == null) return "[?]"; //$NON-NLS-1$
-		if (verse_1 < 1 || verse_1 > verseTextData_.length) return "[?]"; //$NON-NLS-1$
-		return verseTextData_[verse_1 - 1];
+		if (verses_ == null) return "[?]"; //$NON-NLS-1$
+		if (verse_1 < 1 || verse_1 > verses_.getVerseCount()) return "[?]"; //$NON-NLS-1$
+		return verses_.getVerse(verse_1 - 1);
 	}
 
 	@Override public boolean areAllItemsEnabled() {
