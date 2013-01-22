@@ -1210,13 +1210,11 @@ public class IsiActivity extends BaseActivity {
 				}
 			}
 		} else if (requestCode == REQCODE_devotion) {
-			if (data != null) {
-				String alamat = data.getStringExtra(DevotionActivity.EXTRA_alamat);
-				if (alamat != null) {
-					int ari = jumpTo(alamat);
-					if (ari != 0) {
-						history.add(ari);
-					}
+			if (resultCode == RESULT_OK) {
+				DevotionActivity.Result result = DevotionActivity.obtainResult(data);
+				if (result != null && result.ari != 0) {
+					jumpToAri(result.ari);
+					history.add(result.ari);
 				}
 			}
 		} else if (requestCode == REQCODE_songs) {
