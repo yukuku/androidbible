@@ -559,9 +559,8 @@ public class IsiActivity extends BaseActivity {
 		
 		Log.d(TAG, "going to jump to " + reference); //$NON-NLS-1$
 		
-		Jumper jumper = new Jumper();
-		boolean success = jumper.parse(reference);
-		if (! success) {
+		Jumper jumper = new Jumper(reference);
+		if (! jumper.getParseSucceeded()) {
 			Toast.makeText(this, getString(R.string.alamat_tidak_sah_alamat, reference), Toast.LENGTH_SHORT).show();
 			return 0;
 		}

@@ -4,13 +4,12 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.IdentityHashMap;
 import java.util.Locale;
+import java.util.WeakHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import yuku.alkitab.base.model.Book;
-import yuku.alkitab.base.model.Version;
 
 public class Jumper {
 	public static final String TAG = Jumper.class.getSimpleName();
@@ -21,6 +20,8 @@ public class Jumper {
 	
 	/** If bookId found from OSIS book names, set this to other than -1 and this will be returned */
 	private int p_bookIdFromOsis = -1;
+
+	private boolean parseSucceeded = false;
 	
 	private static class KitabRef {
 		String pendek;
@@ -34,7 +35,11 @@ public class Jumper {
 		}
 	}
 	
-	private static IdentityHashMap<Book[], Jumper.KitabRef[]> pendekCache = new IdentityHashMap<Book[], Jumper.KitabRef[]>();
+	private static WeakHashMap<Book[], Jumper.KitabRef[]> pendekCache = new WeakHashMap<Book[], Jumper.KitabRef[]>();
+	
+	public Jumper(String referenceToParse) {
+		parseSucceeded = parse(referenceToParse);
+	}
 	
 	/**
 	 * Ga bisa diparse sebagai bilangan. "4-5" true. "Halo" true. "123" false.
@@ -293,7 +298,7 @@ public class Jumper {
 		return false;
 	}
 	
-	public boolean parse(String alamat) {
+	private boolean parse(String alamat) {
 		boolean res = parse0(alamat);
 		
 		Log.d(TAG, "peloncat sesudah parse0: p_kitab=" + p_kitab); //$NON-NLS-1$
@@ -412,11 +417,18 @@ public class Jumper {
 	}
 	
 	/**
-	 * @return pos dari kitab, bukan index dari {@link Version#getConsecutiveBooks()}
+	 * @return whether the parsing succeeded
 	 */
-	public int getBookId(Book[] xkitab) {
+	public boolean getParseSucceeded() {
+		return parseSucceeded;
+	}
+	
+	/**
+	 * @return bookId of one of the books (or -1).
+	 */
+	public int getBookId(Book[] books) {
 		if (p_bookIdFromOsis != -1) return p_bookIdFromOsis;
-		return tebakKitab(xkitab);
+		return tebakKitab(books);
 	}
 	
 	public int getChapter() {
