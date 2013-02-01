@@ -1,40 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:paddingLeft="8dp" >
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/drag_handle"
+        android:gravity="center_vertical"
+        android:minHeight="64dp"
+        android:paddingLeft="8dp" >
+
+        <ImageView
+            android:id="@+id/imgFilterIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/attribute_type_note"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/lFilterLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/label_filter_bg"
+            android:paddingBottom="4dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="4dp"
+            android:text="*label"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#000"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/lFilterCaption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="*nonlabel"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
 
     <ImageView
-        android:id="@+id/imgFilterIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        android:src="@drawable/attribute_type_note"
-        tools:ignore="ContentDescription" />
+        android:id="@+id/drag_handle"
+        android:layout_width="48dp"
+        android:layout_height="64dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:scaleType="center"
+        android:background="@null"
+        android:contentDescription="@string/desc_drag_to_reorder_labels"
+        android:src="@drawable/ic_drag_handle" />
 
-    <TextView
-        android:id="@+id/lFilterLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/label_filter_bg"
-        android:paddingBottom="4dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="4dp"
-        android:text="Suatu label"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#000"
-        tools:ignore="HardcodedText" />
-
-    <TextView
-        android:id="@+id/lFilterCaption"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Catatan"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        tools:ignore="HardcodedText" />
-
-</LinearLayout>
+</RelativeLayout>
