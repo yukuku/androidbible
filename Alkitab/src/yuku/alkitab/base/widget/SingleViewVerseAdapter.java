@@ -14,20 +14,18 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
 import yuku.alkitab.R;
-import yuku.alkitab.base.IsiActivity.AttributeListener;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.util.Appearances;
-import yuku.alkitab.base.widget.CallbackSpan.OnClickListener;
 
 
 public class SingleViewVerseAdapter extends VerseAdapter {
 	public static final String TAG = SingleViewVerseAdapter.class.getSimpleName();
 	
-	public SingleViewVerseAdapter(Context context, OnClickListener paralelListener, AttributeListener attributeListener) {
-		super(context, paralelListener, attributeListener);
+	public SingleViewVerseAdapter(Context context) {
+		super(context);
 	}
 
 	@Override public synchronized View getView(int position, View convertView, ViewGroup parent) {

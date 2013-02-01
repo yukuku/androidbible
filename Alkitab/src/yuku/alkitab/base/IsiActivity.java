@@ -20,22 +20,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,7 +57,6 @@ import yuku.alkitab.base.ac.VersionsActivity.MVersionInternal;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.compat.Api8;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeHighlightDialog;
@@ -82,6 +74,7 @@ import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.base.util.Search2Engine.Query;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.VerseAdapter;
+import yuku.alkitab.base.widget.VersesView;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -109,7 +102,7 @@ public class IsiActivity extends BaseActivity {
 
 	private static final String EXTRA_verseUrl = "urlAyat"; //$NON-NLS-1$
 
-	ListView lsText;
+	VersesView lsText;
 	Button bGoto;
 	ImageButton bLeft;
 	ImageButton bRight;
@@ -121,7 +114,6 @@ public class IsiActivity extends BaseActivity {
 	int chapter_1 = 0;
 	SharedPreferences instant_pref;
 	
-	VerseAdapter verseAdapter_;
 	History history;
 	NfcAdapter nfcAdapter;
 
@@ -131,9 +123,6 @@ public class IsiActivity extends BaseActivity {
 	int search2_selectedPosition = -1;
 	
 	// temporary states
-	Animation fadeInAnimation;
-	Animation fadeOutAnimation;
-	boolean showingContextMenuButton = false;
 	Boolean hasEsvsbAsal;
 	
 	CallbackSpan.OnClickListener parallel_click = new CallbackSpan.OnClickListener() {
@@ -178,9 +167,6 @@ public class IsiActivity extends BaseActivity {
 		root = V.get(this, R.id.root);
 		
 		applyPreferences(false);
-
-		lsText.setOnItemClickListener(lsText_itemClick);
-		lsText.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		
 		bGoto.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) { bGoto_click(); }
@@ -217,9 +203,9 @@ public class IsiActivity extends BaseActivity {
 			}
 		});
 		
-		// adapter
-		verseAdapter_ = new VerseAdapter.Factory().create(this, parallel_click, new AttributeListener());
-		lsText.setAdapter(verseAdapter_);
+		// listener
+		lsText.setParallelListener(parallel_click);
+		lsText.setAttributeListener(attribute_click);
 		
 		// muat preferences_instan, dan atur renungan
 		instant_pref = App.getPreferencesInstan();
@@ -328,7 +314,7 @@ public class IsiActivity extends BaseActivity {
 				@Override public NdefMessage createNdefMessage(NfcEvent event) {
 					JSONObject obj = new JSONObject();
 					try {
-						obj.put("ari", Ari.encode(S.activeBook.bookId, IsiActivity.this.chapter_1, IsiActivity.this.getVerseBasedOnScroll())); //$NON-NLS-1$
+						obj.put("ari", Ari.encode(S.activeBook.bookId, IsiActivity.this.chapter_1, lsText.getVerseBasedOnScroll())); //$NON-NLS-1$
 					} catch (JSONException e) { // won't happen
 					}
 					byte[] payload = obj.toString().getBytes();
@@ -453,7 +439,7 @@ public class IsiActivity extends BaseActivity {
 					S.activeBook = S.activeVersion.getFirstBook(); // too bad, it was not found
 				}
 				
-				display(chapter_1, getVerseBasedOnScroll(), false);
+				display(chapter_1, lsText.getVerseBasedOnScroll(), false);
 			} else {
 				new AlertDialog.Builder(IsiActivity.this)
 				.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()))
@@ -472,83 +458,20 @@ public class IsiActivity extends BaseActivity {
 		}
 	}
 	
-	@Override protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-		
-		hideOrShowContextMenuButton();
-	}
-	
-	void showContextMenuButton() {
-		if (! showingContextMenuButton) {
-			if (fadeInAnimation == null) {
-				fadeInAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
-			}
-			bContextMenu.setVisibility(View.VISIBLE);
-			bContextMenu.startAnimation(fadeInAnimation);
-			bContextMenu.setEnabled(true);
-			showingContextMenuButton = true;
-		}
-	}
-	
-	void hideContextButton() {
-		if (showingContextMenuButton) {
-			if (fadeOutAnimation == null) {
-				fadeOutAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_out);
-			}
-			fadeOutAnimation.setAnimationListener(fadeOutAnimation_animation);
-			bContextMenu.startAnimation(fadeOutAnimation);
-			bContextMenu.setEnabled(false);
-			showingContextMenuButton = false;
-		}
-	}
-
-	private AnimationListener fadeOutAnimation_animation = new AnimationListener() {
-		@Override public void onAnimationStart(Animation animation) {}
-		@Override public void onAnimationRepeat(Animation animation) {}
-		@Override public void onAnimationEnd(Animation animation) {
-			bContextMenu.setVisibility(View.INVISIBLE);
-		}
-	};
-	
-	protected boolean press(int keyCode) {
-		String volumeButtonsForNavigation = Preferences.getString(getString(R.string.pref_tombolVolumeBuatPindah_key), getString(R.string.pref_tombolVolumeBuatPindah_default));
-		if (U.equals(volumeButtonsForNavigation, "pasal" /* chapter */)) { //$NON-NLS-1$
-			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_RIGHT;
-			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_LEFT;
-		} else if (U.equals(volumeButtonsForNavigation, "ayat" /* verse */)) { //$NON-NLS-1$
-			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_DOWN;
-			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_UP;
-		}
-
+	boolean press(int keyCode) {
 		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
 			bLeft_click();
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
 			bRight_click();
 			return true;
-		} else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-			int oldPos = getPositionBasedOnScroll();
-			if (oldPos < verseAdapter_.getCount() - 1) {
-				lsText.setSelectionFromTop(oldPos+1, lsText.getVerticalFadingEdgeLength());
-			}
-			return true;
-		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-			int oldPos = getPositionBasedOnScroll();
-			if (oldPos >= 1) {
-				int newPos = oldPos - 1;
-				while (newPos > 0) { // cek disabled, kalo iya, mundurin lagi
-					if (verseAdapter_.isEnabled(newPos)) break;
-					newPos--;
-				}
-				lsText.setSelectionFromTop(newPos, lsText.getVerticalFadingEdgeLength());
-			} else {
-				lsText.setSelectionFromTop(0, lsText.getVerticalFadingEdgeLength());
-			}
-			return true;
-		}
+		} 
+		
+		if (lsText.press(keyCode)) return true;
+		
 		return false;
 	}
-
+	
 	/**
 	 * Jump to a given verse reference in string format.
 	 * @return ari of the parsed reference
@@ -614,46 +537,6 @@ public class IsiActivity extends BaseActivity {
 		}
 		
 		display(Ari.toChapter(ari), Ari.toVerse(ari));
-	}
-
-	private OnItemClickListener lsText_itemClick = new OnItemClickListener() {
-		@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-			verseAdapter_.notifyDataSetChanged();
-			hideOrShowContextMenuButton();
-		}
-	};
-	
-	void hideOrShowContextMenuButton() {
-		SparseBooleanArray checkedPositions = lsText.getCheckedItemPositions();
-		boolean anyChecked = false;
-		for (int i = 0; i < checkedPositions.size(); i++) if (checkedPositions.valueAt(i)) {
-			anyChecked = true; 
-			break;
-		}
-		
-		if (anyChecked) {
-			showContextMenuButton();
-		} else {
-			hideContextButton();
-		}
-	}
-
-	private IntArrayList getSelectedVerses_1() {
-		// count how many are selected
-		SparseBooleanArray positions = lsText.getCheckedItemPositions();
-		if (positions == null) {
-			return new IntArrayList(0);
-		}
-		
-		IntArrayList res = new IntArrayList(positions.size());
-		for (int i = 0, len = positions.size(); i < len; i++) {
-			if (positions.valueAt(i)) {
-				int position = positions.keyAt(i);
-				int verse_1 = verseAdapter_.getVerseFromPosition(position);
-				if (verse_1 >= 1) res.add(verse_1);
-			}
-		}
-		return res;
 	}
 	
 	private CharSequence referenceFromSelectedVerses(IntArrayList selectedVerses) {
@@ -732,7 +615,7 @@ public class IsiActivity extends BaseActivity {
 	
 
 	public void showFakeContextMenu() {
-		IntArrayList selected = getSelectedVerses_1();
+		IntArrayList selected = lsText.getSelectedVerses_1();
 		if (selected.size() == 0) return;
 
 		// creating the menu manually
@@ -751,7 +634,7 @@ public class IsiActivity extends BaseActivity {
 	}
 	
 	public void onFakeContextMenuSelected(FakeContextMenu menu, Item item) {
-		IntArrayList selected = getSelectedVerses_1();
+		IntArrayList selected = lsText.getSelectedVerses_1();
 		if (selected.size() == 0) return;
 		
 		CharSequence reference = referenceFromSelectedVerses(selected);
@@ -766,7 +649,7 @@ public class IsiActivity extends BaseActivity {
 			CharSequence textToCopy = prepareTextForCopyShare(selected, reference);
 			
 			U.copyToClipboard(textToCopy);
-			uncheckAll();
+			lsText.uncheckAll();
 			
 			Toast.makeText(this, getString(R.string.alamat_sudah_disalin, reference), Toast.LENGTH_SHORT).show();
 		} else if (item == menu.menuAddBookmark) {
@@ -774,7 +657,7 @@ public class IsiActivity extends BaseActivity {
 				// no main verse, scroll to show the relevant one!
 				mainVerse_1 = selected.get(0);
 				
-				scrollToShowVerse(mainVerse_1);
+				lsText.scrollToShowVerse(mainVerse_1);
 			}
 			
 			final int ari = Ari.encode(S.activeBook.bookId, this.chapter_1, mainVerse_1);
@@ -782,8 +665,8 @@ public class IsiActivity extends BaseActivity {
 			TypeBookmarkDialog dialog = new TypeBookmarkDialog(this, S.reference(S.activeBook, this.chapter_1, mainVerse_1), ari);
 			dialog.setListener(new TypeBookmarkDialog.Listener() {
 				@Override public void onOk() {
-					uncheckAll();
-					verseAdapter_.loadAttributeMap();
+					lsText.uncheckAll();
+					lsText.loadAttributeMap();
 				}
 			});
 			dialog.show();
@@ -792,13 +675,13 @@ public class IsiActivity extends BaseActivity {
 				// no main verse, scroll to show the relevant one!
 				mainVerse_1 = selected.get(0);
 				
-				scrollToShowVerse(mainVerse_1);
+				lsText.scrollToShowVerse(mainVerse_1);
 			}
 			
 			TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, S.activeBook, this.chapter_1, mainVerse_1, new TypeNoteDialog.RefreshCallback() {
 				@Override public void onDone() {
-					uncheckAll();
-					verseAdapter_.loadAttributeMap();
+					lsText.uncheckAll();
+					lsText.loadAttributeMap();
 				}
 			});
 			dialog.show();
@@ -808,8 +691,8 @@ public class IsiActivity extends BaseActivity {
 			
 			new TypeHighlightDialog(this, ariKp, selected, new TypeHighlightDialog.JenisStabiloCallback() {
 				@Override public void onOk(int warnaRgb) {
-					uncheckAll();
-					verseAdapter_.loadAttributeMap();
+					lsText.uncheckAll();
+					lsText.loadAttributeMap();
 				}
 			}, warnaRgb, reference).bukaDialog();
 		} else if (item == menu.menuShare) {
@@ -831,7 +714,7 @@ public class IsiActivity extends BaseActivity {
 			intent.putExtra(EXTRA_verseUrl, verseUrl);
 			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, reference)), REQCODE_share);
 
-			uncheckAll();
+			lsText.uncheckAll();
 		} else if (item == menu.menuEsvsbasal) {
 			final int ari = Ari.encode(S.activeBook.bookId, this.chapter_1, mainVerse_1);
 
@@ -857,7 +740,7 @@ public class IsiActivity extends BaseActivity {
 				int verse_1 = selectedVerses_1.get(i);
 				res.append(verse_1);
 				res.append(' ');
-				res.append(U.removeSpecialCodes(verseAdapter_.getVerse(verse_1)));
+				res.append(U.removeSpecialCodes(lsText.getVerse(verse_1)));
 				res.append('\n');
 			}
 		} else {
@@ -867,19 +750,10 @@ public class IsiActivity extends BaseActivity {
 			for (int i = 0; i < selectedVerses_1.size(); i++) {
 				int verse_1 = selectedVerses_1.get(i);
 				if (i != 0) res.append('\n');
-				res.append(U.removeSpecialCodes(verseAdapter_.getVerse(verse_1)));
+				res.append(U.removeSpecialCodes(lsText.getVerse(verse_1)));
 			}
 		}
 		return res;
-	}
-
-	private void scrollToShowVerse(int mainVerse_1) {
-		int position = verseAdapter_.getPositionOfPericopeBeginningFromVerse(mainVerse_1);
-		if (Build.VERSION.SDK_INT >= 8) {
-			Api8.ListView_smoothScrollToPosition(lsText, position);
-		} else {
-			lsText.setSelectionFromTop(position, lsText.getVerticalFadingEdgeLength());
-		}
 	}
 
 	private void applyPreferences(boolean languageToo) {
@@ -925,7 +799,7 @@ public class IsiActivity extends BaseActivity {
 		Editor editor = instant_pref.edit();
 		editor.putInt(PREFKEY_lastBook, S.activeBook.bookId);
 		editor.putInt(PREFKEY_lastChapter, chapter_1);
-		editor.putInt(PREFKEY_lastVerse, getVerseBasedOnScroll());
+		editor.putInt(PREFKEY_lastVerse, lsText.getVerseBasedOnScroll());
 		editor.putString(PREFKEY_devotion_name, S.temporary.devotion_name);
 		editor.putString(PREFKEY_lastVersion, S.activeVersionId);
 		history.simpan(editor);
@@ -942,36 +816,8 @@ public class IsiActivity extends BaseActivity {
 		}
 	}
 	
-	/**
-	 * @return 1-based verse
-	 */
-	int getVerseBasedOnScroll() {
-		return verseAdapter_.getVerseFromPosition(getPositionBasedOnScroll());
-	}
-	
-	int getPositionBasedOnScroll() {
-		int pos = lsText.getFirstVisiblePosition();
-
-		// check if the top one has been scrolled 
-		View child = lsText.getChildAt(0); 
-		if (child != null) {
-			int top = child.getTop();
-			if (top == 0) {
-				return pos;
-			}
-			int bottom = child.getBottom();
-			if (bottom > lsText.getVerticalFadingEdgeLength()) {
-				return pos;
-			} else {
-				return pos+1;
-			}
-		}
-		
-		return pos;
-	}
-
 	void bGoto_click() {
-		startActivityForResult(GotoActivity.createIntent(S.activeBook.bookId, this.chapter_1, getVerseBasedOnScroll()), REQCODE_goto);
+		startActivityForResult(GotoActivity.createIntent(S.activeBook.bookId, this.chapter_1, lsText.getVerseBasedOnScroll()), REQCODE_goto);
 	}
 	
 	void bGoto_longClick() {
@@ -1187,7 +1033,7 @@ public class IsiActivity extends BaseActivity {
 				}
 			}
 		} else if (requestCode == REQCODE_bookmark) {
-			verseAdapter_.loadAttributeMap();
+			lsText.loadAttributeMap();
 
 			if (resultCode == RESULT_OK) {
 				int ari = data.getIntExtra(BookmarkActivity.EXTRA_ariTerpilih, 0);
@@ -1289,35 +1135,13 @@ public class IsiActivity extends BaseActivity {
 			pericope_blocks = new PericopeBlock[max];
 			nblock = S.activeVersion.bibleReader.loadPericope(S.activeVersion, S.activeBook.bookId, chapter_1, pericope_aris, pericope_blocks, max); 
 			
-			//# fill adapter with new data. make sure all checked states are reset
-			IntArrayList selectedVerses_1 = null;
-			if (uncheckAllVerses || chapter_1 != current_chapter_1) {
-				// let selectedVerses_1 still null
-			} else {
-				selectedVerses_1 = getSelectedVerses_1();
-			}
-			uncheckAll();
-			
-			verseAdapter_.setData(S.activeBook, chapter_1, verses, pericope_aris, pericope_blocks, nblock);
-			verseAdapter_.loadAttributeMap();
-			
-			if (selectedVerses_1 != null) {
-				for (int i = 0, len = selectedVerses_1.size(); i < len; i++) {
-					int pos = verseAdapter_.getPositionAbaikanPerikopDariAyat(selectedVerses_1.get(i));
-					if (pos != -1) lsText.setItemChecked(pos, true);
-				}
-			}
+			boolean retainSelectedVerses = (!uncheckAllVerses && chapter_1 == current_chapter_1);
+			lsText.setDataWithRetainSelectedVerses(retainSelectedVerses, chapter_1, pericope_aris, pericope_blocks, nblock, verses);
 			
 			// tell activity
 			this.chapter_1 = chapter_1;
 			
-			final int position = verseAdapter_.getPositionOfPericopeBeginningFromVerse(verse_1);
-			
-			if (position == -1) {
-				Log.w(TAG, "could not find verse=" + verse_1 + ", weird!"); //$NON-NLS-1$ //$NON-NLS-2$
-			} else {
-				lsText.setSelectionFromTop(position, lsText.getVerticalFadingEdgeLength());
-			}
+			lsText.scrollToVerse(verse_1);
 		}
 		
 		String title = S.reference(S.activeBook, chapter_1);
@@ -1327,18 +1151,6 @@ public class IsiActivity extends BaseActivity {
 		return Ari.encode(0, chapter_1, verse_1);
 	}
 
-	void uncheckAll() {
-		SparseBooleanArray checkedPositions = lsText.getCheckedItemPositions();
-		if (checkedPositions != null && checkedPositions.size() > 0) {
-			for (int i = checkedPositions.size() - 1; i >= 0; i--) {
-				if (checkedPositions.valueAt(i)) {
-					lsText.setItemChecked(checkedPositions.keyAt(i), false);
-				}
-			}
-		}
-		hideContextButton();
-	}
-	
 	@Override public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (press(keyCode)) return true;
 		return super.onKeyDown(keyCode, event);
@@ -1413,7 +1225,7 @@ public class IsiActivity extends BaseActivity {
 		return true;
 	}
 
-	public class AttributeListener {
+	VerseAdapter.AttributeListener attribute_click = new VerseAdapter.AttributeListener() {
 		public void onClick(Book book, int chapter_1, int verse_1, int kind) {
 			if (kind == Db.Bukmak2.kind_bookmark) {
 				final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
@@ -1421,18 +1233,18 @@ public class IsiActivity extends BaseActivity {
 				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, alamat, ari);
 				dialog.setListener(new TypeBookmarkDialog.Listener() {
 					@Override public void onOk() {
-						verseAdapter_.loadAttributeMap();
+						lsText.loadAttributeMap();
 					}
 				});
 				dialog.show();
 			} else if (kind == Db.Bukmak2.kind_note) {
 				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, book, chapter_1, verse_1, new TypeNoteDialog.RefreshCallback() {
 					@Override public void onDone() {
-						verseAdapter_.loadAttributeMap();
+						lsText.loadAttributeMap();
 					}
 				});
 				dialog.show();
 			}
 		}
-	}
+	};
 }
