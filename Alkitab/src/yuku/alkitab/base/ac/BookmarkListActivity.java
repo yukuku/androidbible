@@ -162,7 +162,7 @@ public class BookmarkListActivity extends BaseActivity {
             } else {
                 Label label = S.getDb().getLabelById(filter_labelId);
                 if (label != null) {
-                    title = getString(R.string.bl_bookmarks_labeled_label, label.judul);
+                    title = label.judul;
                     nothingText = getString(R.string.bl_there_are_no_bookmarks_with_the_label_label, label.judul);
                 }
             }

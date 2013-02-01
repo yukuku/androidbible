@@ -175,9 +175,8 @@
     <string name="bl_highlights">Highlights</string>
     <string name="bl_no_highlighted_verses">No highlighted verses.\nTap on verses to start highlighting them.</string>
     <string name="bl_all_bookmarks">All bookmarks</string>
-    <string name="bl_all_bookmarks_without_labels">All bookmarks without labels</string>
+    <string name="bl_all_bookmarks_without_labels">Bookmarks without labels</string>
     <string name="bl_there_are_no_bookmarks_without_any_labels">There are no bookmarks without any labels.</string>
-    <string name="bl_bookmarks_labeled_label">"Bookmarks labeled '%s'"</string>
     <string name="bl_there_are_no_bookmarks_with_the_label_label">"There are no bookmarks with the label '%s'."</string>
     <string name="bl_filter_by_some_keywords">Filter by some keywords</string>
     <string name="bl_clear_filter">Clear filter</string>
