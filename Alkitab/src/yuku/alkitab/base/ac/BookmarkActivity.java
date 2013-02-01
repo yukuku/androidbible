@@ -646,7 +646,14 @@ public class BookmarkActivity extends BaseActivity {
 
 		@Override public View onCreateFloatView(int position) {
 			mDraggedPos = position;
-			return super.onCreateFloatView(position);
+			View res = adapter.getView(position, null, lv);
+			res.setBackgroundColor(0x22ffffff);
+			return res;
+		}
+		
+		@Override public void onDestroyFloatView(View floatView) {
+			// Do not call super and do not remove this override.
+			floatView.setBackgroundColor(0);
 		}
 
 		@Override public void onDragFloatView(View floatView, Point floatPoint, Point touchPoint) {
