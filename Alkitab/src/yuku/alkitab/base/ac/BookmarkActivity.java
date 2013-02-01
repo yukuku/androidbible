@@ -49,6 +49,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 import org.xmlpull.v1.XmlSerializer;
 
+import yuku.afw.D;
 import yuku.afw.V;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
@@ -695,8 +696,13 @@ public class BookmarkActivity extends BaseActivity {
 
 		@Override public void drop(int from, int to) {
 			if (from != to) {
-				// TODO
-				notifyDataSetChanged();
+				Label fromLabel = getItem(from);
+				Label toLabel = getItem(to);
+				
+				if (fromLabel != null && toLabel != null) {
+					S.getDb().reorderLabels(fromLabel, toLabel);
+					adapter.reload();
+				}
 			}
 		}
 
@@ -748,6 +754,14 @@ public class BookmarkActivity extends BaseActivity {
 		
 		void reload() {
 			labels = S.getDb().listSemuaLabel();
+			
+			if (D.EBUG) {
+				Log.d(TAG, "_id  title                ordering backgroundColor");
+				for (Label label: labels) {
+					Log.d(TAG, String.format("%4d %20s %8d %s", label._id, label.judul, label.urutan, label.backgroundColor));
+				}
+			}
+			
 			notifyDataSetChanged();
 		}
 	}
