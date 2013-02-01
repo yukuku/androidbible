@@ -30,9 +30,8 @@
     <string name="versi">Version</string>
     <string name="renungan">Devotion</string>
     <string name="cari_v">Search</string>
-    <string name="judul_bukmak_activity">Bookmarks, notes, and highlights</string>
+    <string name="judul_bukmak_activity">Bookmarks, etc</string>
     <string name="pembatas_buku">Bookmarks</string>
-    <string name="pembatas_condensed">Bookmarks</string>
     <string name="hapus_pembatas_buku">Delete bookmark</string>
     <string name="bagikan">Share</string>
     <string name="tulis_catatan">Write note</string>
@@ -170,12 +169,8 @@
     <string name="bmcat_notes">Notes</string>
     <string name="bmcat_highlights">Highlights</string>
     <string name="bmcat_unlabeled_bookmarks">Unlabeled bookmarks</string>
-    <string name="bl_notes">Notes</string>
     <string name="bl_no_notes_written_yet">No notes written yet.\nTap on a verse to begin writing a note.</string>
-    <string name="bl_highlights">Highlights</string>
     <string name="bl_no_highlighted_verses">No highlighted verses.\nTap on verses to start highlighting them.</string>
-    <string name="bl_all_bookmarks">All bookmarks</string>
-    <string name="bl_all_bookmarks_without_labels">Bookmarks without labels</string>
     <string name="bl_there_are_no_bookmarks_without_any_labels">There are no bookmarks without any labels.</string>
     <string name="bl_there_are_no_bookmarks_with_the_label_label">"There are no bookmarks with the label '%s'."</string>
     <string name="bl_filter_by_some_keywords">Filter by some keywords</string>

@@ -143,17 +143,17 @@ public class BookmarkListActivity extends BaseActivity {
         
         // atur judul berdasarkan filter
         if (filter_jenis == Db.Bukmak2.kind_note) {
-            title = getString(R.string.bl_notes);
+            title = getString(R.string.bmcat_notes);
             nothingText = getString(R.string.bl_no_notes_written_yet);
         } else if (filter_jenis == Db.Bukmak2.jenis_stabilo) {
-            title = getString(R.string.bl_highlights);
+            title = getString(R.string.bmcat_highlights);
             nothingText = getString(R.string.bl_no_highlighted_verses);
         } else if (filter_jenis == Db.Bukmak2.kind_bookmark) {
             if (filter_labelId == 0) {
-                title = getString(R.string.bl_all_bookmarks);
+                title = getString(R.string.bmcat_all_bookmarks);
                 nothingText = getString(R.string.belum_ada_pembatas_buku);
             } else if (filter_labelId == LABELID_noLabel) {
-                title = getString(R.string.bl_all_bookmarks_without_labels);
+                title = getString(R.string.bmcat_unlabeled_bookmarks);
                 nothingText = getString(R.string.bl_there_are_no_bookmarks_without_any_labels);
             } else {
                 Label label = S.getDb().getLabelById(filter_labelId);
