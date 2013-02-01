@@ -260,6 +260,9 @@ public class BookmarkListActivity extends BaseActivity {
 			searchView = (SearchView) menuSearch.getActionView();
 	        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 				@Override public boolean onQueryTextChange(String newText) {
+					if (newText.length() == 0) {
+						return searchView_search(newText);
+					}
 					return false;
 				}
 	
