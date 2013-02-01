@@ -2,9 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/menuSearch"
+        android:actionLayout="@layout/menu_search_action"
+        android:icon="@drawable/ic_menu_search"
+        android:showAsAction="always"
+        android:title="Search"/>
+    <item
         android:id="@+id/menuSort"
         android:icon="@drawable/ic_menu_sort"
-        android:showAsAction="ifRoom|withText"
+        android:showAsAction="ifRoom"
         android:title="@string/menuSort"/>
 
 </menu>

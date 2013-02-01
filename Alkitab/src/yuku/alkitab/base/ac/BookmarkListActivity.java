@@ -51,10 +51,10 @@ import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.Search2Engine;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.devoxx.flowlayout.FlowLayout;
-import yuku.searchbar.SearchWidget;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.SearchView;
 
 public class BookmarkListActivity extends BaseActivity {
 	public static final String TAG = BookmarkListActivity.class.getSimpleName();
@@ -72,7 +72,7 @@ public class BookmarkListActivity extends BaseActivity {
     View empty;
     TextView tEmpty;
     View bClearFilter;
-    SearchWidget searchWidget;
+	SearchView searchView;
 	ListView lv;
 	View emptyView;
     
@@ -106,16 +106,12 @@ public class BookmarkListActivity extends BaseActivity {
 		empty = V.get(this, android.R.id.empty);
 		tEmpty = V.get(this, R.id.tEmpty);
 		bClearFilter = V.get(this, R.id.bClearFilter);
-		searchWidget = V.get(this, R.id.searchBar);
 		lv = V.get(this, android.R.id.list);
 		emptyView = V.get(this, android.R.id.empty);
 		
 		filter_jenis = getIntent().getIntExtra(EXTRA_filter_jenis, 0);
 		filter_labelId = getIntent().getLongExtra(EXTRA_filter_labelId, 0);
 		
-		searchWidget.setHint(R.string.bl_filter_by_some_keywords);
-		searchWidget.setOnQueryTextListener(searchWidget_queryText);
-
 		bClearFilter.setOnClickListener(bClearFilter_click);
 		
         setTitleAndNothingText();
@@ -185,32 +181,26 @@ public class BookmarkListActivity extends BaseActivity {
         }
 	}
 
-    SearchWidget.OnQueryTextListener searchWidget_queryText = new SearchWidget.OnQueryTextListener() {
-		@Override public boolean onQueryTextChange(SearchWidget searchWidget, String newText) {
-			return false;
-		}
-
-		@Override public boolean onQueryTextSubmit(SearchWidget searchWidget, String query) {
-			String carian = query.toString().trim();
-			if (carian.length() == 0) {
-				buangFilter();
-				return true;
-			}
-			
-			String[] xtoken = QueryTokenizer.tokenize(carian);
-			if (xtoken.length == 0) {
-				buangFilter();
-				return true;
-			}
-			
-			pasangFilter(carian);
+	boolean searchView_search(String query) {
+		String carian = query.toString().trim();
+		if (carian.length() == 0) {
+			buangFilter();
 			return true;
 		}
-	};
+		
+		String[] xtoken = QueryTokenizer.tokenize(carian);
+		if (xtoken.length == 0) {
+			buangFilter();
+			return true;
+		}
+		
+		pasangFilter(carian);
+		return true;
+	}
 
 	OnClickListener bClearFilter_click = new OnClickListener() {
 		@Override public void onClick(View v) {
-			searchWidget.setText(""); //$NON-NLS-1$
+			searchView.setQuery("", false); //$NON-NLS-1$
 			buangFilter();
 		}
 	};
@@ -264,6 +254,18 @@ public class BookmarkListActivity extends BaseActivity {
 	private void bikinMenu(Menu menu) {
 		menu.clear();
 		getSupportMenuInflater().inflate(R.menu.activity_bookmark_list, menu);
+		
+        final MenuItem menuSearch = menu.findItem(R.id.menuSearch);
+		searchView = (SearchView) menuSearch.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+			@Override public boolean onQueryTextChange(String newText) {
+				return false;
+			}
+
+		    @Override public boolean onQueryTextSubmit(String query) {
+		    	return searchView_search(query);
+			}
+		});
 	}
 	
 	@Override
@@ -347,7 +349,7 @@ public class BookmarkListActivity extends BaseActivity {
 			}
 
 			private void sort(String column, boolean ascending, int columnId) {
-				searchWidget.setText(""); //$NON-NLS-1$
+				searchView.setQuery("", false); //$NON-NLS-1$
 				lagiPakeFilter = null;
 				setTitleAndNothingText();
 				sort_column = column;
