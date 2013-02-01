@@ -256,16 +256,18 @@ public class BookmarkListActivity extends BaseActivity {
 		getSupportMenuInflater().inflate(R.menu.activity_bookmark_list, menu);
 		
         final MenuItem menuSearch = menu.findItem(R.id.menuSearch);
-		searchView = (SearchView) menuSearch.getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-			@Override public boolean onQueryTextChange(String newText) {
-				return false;
-			}
-
-		    @Override public boolean onQueryTextSubmit(String query) {
-		    	return searchView_search(query);
-			}
-		});
+        if (menuSearch != null) {
+			searchView = (SearchView) menuSearch.getActionView();
+	        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+				@Override public boolean onQueryTextChange(String newText) {
+					return false;
+				}
+	
+			    @Override public boolean onQueryTextSubmit(String query) {
+			    	return searchView_search(query);
+				}
+			});
+        }
 	}
 	
 	@Override
