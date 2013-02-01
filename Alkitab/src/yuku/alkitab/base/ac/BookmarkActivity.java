@@ -749,6 +749,13 @@ public class BookmarkActivity extends BaseActivity {
 				U.applyLabelColor(label, lFilterLabel);
 			}
 			
+			View drag_handle = V.get(res, R.id.drag_handle);
+			if (position < 4) {
+				drag_handle.setVisibility(View.GONE);
+			} else {
+				drag_handle.setVisibility(View.VISIBLE);
+			}
+			
 			return res;
 		}
 		
