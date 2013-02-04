@@ -31,7 +31,6 @@
   <string name="cari_v">搜索</string>
   <string name="judul_bukmak_activity">书签，笔记，和亮点</string>
   <string name="pembatas_buku">书签</string>
-  <string name="pembatas_condensed">书签</string>
   <string name="hapus_pembatas_buku">删除书签</string>
   <string name="bagikan">共享</string>
   <string name="tulis_catatan">写笔记</string>
@@ -169,14 +168,9 @@
   <string name="bmcat_notes">笔记</string>
   <string name="bmcat_highlights">亮点</string>
   <string name="bmcat_unlabeled_bookmarks">未标记的书签</string>
-  <string name="bl_notes">笔记</string>
   <string name="bl_no_notes_written_yet">还没有编写笔记。\n点选一节经文，开始写了一张字条。</string>
-  <string name="bl_highlights">亮点</string>
   <string name="bl_no_highlighted_verses">没有突出的诗句。\n点选诗句来开始亮点。</string>
-  <string name="bl_all_bookmarks">所有书签</string>
-  <string name="bl_all_bookmarks_without_labels">无标签的所有书签</string>
   <string name="bl_there_are_no_bookmarks_without_any_labels">没有书签没有标签。</string>
-  <string name="bl_bookmarks_labeled_label">"书签标记为\'%s\'"</string>
   <string name="bl_there_are_no_bookmarks_with_the_label_label">"没有书签标记为 \'%s\'."</string>
   <string name="bl_filter_by_some_keywords">筛选用关键字</string>
   <string name="bl_clear_filter">删除筛选器</string>

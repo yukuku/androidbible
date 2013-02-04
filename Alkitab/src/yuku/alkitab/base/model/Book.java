@@ -2,14 +2,8 @@ package yuku.alkitab.base.model;
 
 
 public class Book {
-	public int[] nverses;
-	public int nchapter;
-	public int[] pasal_offset;
-	public String nama;
-	public String judul;
-	public String file;
-	public int bookId = -1;
-	public int pdbBookNumber;
-	/** Hanya dipake di YesPembaca */
-	public int offset = -1;
+	public int bookId;
+	public String shortName;
+	public int chapter_count;
+	public int[] verse_counts;
 }

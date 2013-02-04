@@ -9,12 +9,14 @@ import java.util.ArrayList;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.InternalBook;
 import yuku.alkitab.base.model.PericopeBlock;
-import yuku.alkitab.base.model.PericopeIndex;
+import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
+import yuku.alkitab.yes1.Yes1PericopeIndex;
 import yuku.bintex.BintexReader;
 
-public class InternalReader implements Reader {
+public class InternalReader implements BibleReader {
 	public static final String TAG = InternalReader.class.getSimpleName();
 
 	// # buat cache Asset
@@ -25,13 +27,31 @@ public class InternalReader implements Reader {
 	private final String edisiPrefix;
 	private final String edisiShortName;
 	private final String edisiLongName;
-	private final ReaderDecoder readerDecoder;
+	private final VerseTextDecoder verseTextDecoder;
 
-	public InternalReader(String edisiPrefix, String edisiShortName, String edisiLongName, ReaderDecoder readerDecoder) {
+	private Yes1PericopeIndex pericopeIndex_;
+
+	public InternalReader(String edisiPrefix, String edisiShortName, String edisiLongName, VerseTextDecoder verseTextDecoder) {
 		this.edisiPrefix = edisiPrefix;
 		this.edisiShortName = edisiShortName;
 		this.edisiLongName = edisiLongName;
-		this.readerDecoder = readerDecoder;
+		this.verseTextDecoder = verseTextDecoder;
+	}
+	
+	static class InternalSingleChapterVerses extends SingleChapterVerses {
+		private final String[] verses;
+
+		public InternalSingleChapterVerses(String[] verses) {
+			this.verses = verses;
+		}
+		
+		@Override public String getVerse(int verse_0) {
+			return verses[verse_0];
+		}
+
+		@Override public int getVerseCount() {
+			return verses.length;
+		}
 	}
 	
 	@Override public String getShortName() {
@@ -40,6 +60,10 @@ public class InternalReader implements Reader {
 
 	@Override public String getLongName() {
 		return edisiLongName;
+	}
+	
+	@Override public String getDescription() {
+		return null;
 	}
 
 	@Override public Book[] loadBooks() {
@@ -64,8 +88,8 @@ public class InternalReader implements Reader {
 		}
 	}
 
-	private static Book bacaKitab(BintexReader in, int pos) throws IOException {
-		Book k = new Book();
+	private static InternalBook bacaKitab(BintexReader in, int pos) throws IOException {
+		InternalBook k = new InternalBook();
 		k.bookId = pos;
 
 		// autostring bookName
@@ -74,29 +98,31 @@ public class InternalReader implements Reader {
 		// uint8[chapter_count] verse_counts
 		// int[chapter_count+1] chapter_offsets
 
-		k.nama = k.judul = in.readAutoString();
+		k.shortName = in.readAutoString();
 		k.file = in.readShortString();
-		k.nchapter = in.readInt();
+		k.chapter_count = in.readInt();
 
-		k.nverses = new int[k.nchapter];
-		for (int i = 0; i < k.nchapter; i++) {
-			k.nverses[i] = in.readUint8();
+		k.verse_counts = new int[k.chapter_count];
+		for (int i = 0; i < k.chapter_count; i++) {
+			k.verse_counts[i] = in.readUint8();
 		}
 
-		k.pasal_offset = new int[k.nchapter + 1];
-		for (int i = 0; i < k.nchapter + 1; i++) {
-			k.pasal_offset[i] = in.readInt();
+		k.chapter_offsets = new int[k.chapter_count + 1];
+		for (int i = 0; i < k.chapter_count + 1; i++) {
+			k.chapter_offsets[i] = in.readInt();
 		}
 
 		return k;
 	}
 
-	@Override public String[] loadVerseText(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
-		if (pasal_1 < 1 || pasal_1 > book.nchapter) {
+	@Override public SingleChapterVerses loadVerseText(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+		InternalBook internalBook = (InternalBook) book;
+
+		if (pasal_1 < 1 || pasal_1 > book.chapter_count) {
 			return null;
 		}
-
-		int offset = book.pasal_offset[pasal_1 - 1];
+		
+		int offset = internalBook.chapter_offsets[pasal_1 - 1];
 		int length = 0;
 
 		try {
@@ -106,16 +132,16 @@ public class InternalReader implements Reader {
 			// Log.d("alki", "muatTeks cache_file=" + cache_file + " cache_posInput=" + cache_posInput);
 			if (cache_inputStream == null) {
 				// kasus 1: belum buka apapun
-				in = S.openRaw(book.file);
+				in = S.openRaw(internalBook.file);
 				cache_inputStream = in;
-				cache_file = book.file;
+				cache_file = internalBook.file;
 
 				in.skip(offset);
 				cache_posInput = offset;
 				// Log.d("alki", "muatTeks masuk kasus 1");
 			} else {
 				// kasus 2: uda pernah buka. Cek apakah filenya sama
-				if (book.file.equals(cache_file)) {
+				if (internalBook.file.equals(cache_file)) {
 					// kasus 2.1: filenya sama.
 					if (offset >= cache_posInput) {
 						// bagus, kita bisa maju.
@@ -128,7 +154,7 @@ public class InternalReader implements Reader {
 						// ga bisa mundur. tutup dan buka lagi.
 						cache_inputStream.close();
 
-						in = S.openRaw(book.file);
+						in = S.openRaw(internalBook.file);
 						cache_inputStream = in;
 
 						in.skip(offset);
@@ -139,9 +165,9 @@ public class InternalReader implements Reader {
 					// kasus 2.2: filenya beda, tutup dan buka baru
 					cache_inputStream.close();
 
-					in = S.openRaw(book.file);
+					in = S.openRaw(internalBook.file);
 					cache_inputStream = in;
-					cache_file = book.file;
+					cache_file = internalBook.file;
 
 					in.skip(offset);
 					cache_posInput = offset;
@@ -149,10 +175,10 @@ public class InternalReader implements Reader {
 				}
 			}
 
-			if (pasal_1 == book.nchapter) {
+			if (pasal_1 == internalBook.chapter_count) {
 				length = in.available();
 			} else {
-				length = book.pasal_offset[pasal_1] - offset;
+				length = internalBook.chapter_offsets[pasal_1] - offset;
 			}
 
 			byte[] ba = new byte[length];
@@ -161,16 +187,20 @@ public class InternalReader implements Reader {
 			// jangan ditutup walau uda baca. Siapa tau masih sama filenya dengan sebelumnya.
 
 			if (janganPisahAyat) {
-				return new String[] { readerDecoder.jadikanStringTunggal(ba, hurufKecil) };
+				return new InternalSingleChapterVerses(new String[] { verseTextDecoder.makeIntoSingleString(ba, hurufKecil) });
 			} else {
-				return readerDecoder.pisahJadiAyat(ba, hurufKecil);
+				return new InternalSingleChapterVerses(verseTextDecoder.separateIntoVerses(ba, hurufKecil));
 			}
 		} catch (IOException e) {
-			return new String[] { e.getMessage() };
+			return new InternalSingleChapterVerses(new String[] { e.getMessage() });
 		}
 	}
 
-	@Override public PericopeIndex loadPericopeIndex() {
+	private Yes1PericopeIndex loadPericopeIndex() {
+		if (pericopeIndex_ != null) {
+			return pericopeIndex_;
+		}
+		
 		long wmulai = System.currentTimeMillis();
 
 		InputStream is = S.openRaw(edisiPrefix + "_pericope_index_bt"); //$NON-NLS-1$
@@ -180,7 +210,8 @@ public class InternalReader implements Reader {
 
 		BintexReader in = new BintexReader(is);
 		try {
-			return PericopeIndex.read(in);
+			pericopeIndex_ = Yes1PericopeIndex.read(in);
+			return pericopeIndex_;
 
 		} catch (IOException e) {
 			Log.e(TAG, "baca perikop index ngaco", e); //$NON-NLS-1$
@@ -192,7 +223,7 @@ public class InternalReader implements Reader {
 	}
 
 	@Override public int loadPericope(Version version, int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max) {
-		PericopeIndex pericopeIndex = version.getIndexPerikop();
+		Yes1PericopeIndex pericopeIndex = loadPericopeIndex();
 
 		if (pericopeIndex == null) {
 			return 0; // ga ada perikop!

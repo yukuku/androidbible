@@ -72,6 +72,7 @@ import yuku.alkitab.base.dialog.TypeNoteDialog;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
+import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.util.History;
@@ -559,9 +560,8 @@ public class IsiActivity extends BaseActivity {
 		
 		Log.d(TAG, "going to jump to " + reference); //$NON-NLS-1$
 		
-		Jumper jumper = new Jumper();
-		boolean success = jumper.parse(reference);
-		if (! success) {
+		Jumper jumper = new Jumper(reference);
+		if (! jumper.getParseSucceeded()) {
 			Toast.makeText(this, getString(R.string.alamat_tidak_sah_alamat, reference), Toast.LENGTH_SHORT).show();
 			return 0;
 		}
@@ -1211,13 +1211,11 @@ public class IsiActivity extends BaseActivity {
 				}
 			}
 		} else if (requestCode == REQCODE_devotion) {
-			if (data != null) {
-				String alamat = data.getStringExtra(DevotionActivity.EXTRA_alamat);
-				if (alamat != null) {
-					int ari = jumpTo(alamat);
-					if (ari != 0) {
-						history.add(ari);
-					}
+			if (resultCode == RESULT_OK) {
+				DevotionActivity.Result result = DevotionActivity.obtainResult(data);
+				if (result != null && result.ari != 0) {
+					jumpToAri(result.ari);
+					history.add(result.ari);
 				}
 			}
 		} else if (requestCode == REQCODE_songs) {
@@ -1269,10 +1267,10 @@ public class IsiActivity extends BaseActivity {
 		int current_chapter_1 = this.chapter_1; 
 		
 		if (chapter_1 < 1) chapter_1 = 1;
-		if (chapter_1 > S.activeBook.nchapter) chapter_1 = S.activeBook.nchapter;
+		if (chapter_1 > S.activeBook.chapter_count) chapter_1 = S.activeBook.chapter_count;
 		
 		if (verse_1 < 1) verse_1 = 1;
-		if (verse_1 > S.activeBook.nverses[chapter_1 - 1]) verse_1 = S.activeBook.nverses[chapter_1 - 1];
+		if (verse_1 > S.activeBook.verse_counts[chapter_1 - 1]) verse_1 = S.activeBook.verse_counts[chapter_1 - 1];
 		
 		// loading data no need to use async. // 20100417 updated to not use async, it's not useful.
 		{
@@ -1280,13 +1278,16 @@ public class IsiActivity extends BaseActivity {
 			PericopeBlock[] pericope_blocks;
 			int nblock;
 			
-			String[] verses = S.loadChapterText(S.activeVersion, S.activeBook, chapter_1);
+			SingleChapterVerses verses = S.loadChapterText(S.activeVersion, S.activeBook, chapter_1);
+			if (verses == null) {
+				return 0;
+			}
 			
 			//# max is set to 30 (one chapter has max of 30 blocks. Already almost impossible)
 			int max = 30;
 			pericope_aris = new int[max];
 			pericope_blocks = new PericopeBlock[max];
-			nblock = S.activeVersion.reader.loadPericope(S.activeVersion, S.activeBook.bookId, chapter_1, pericope_aris, pericope_blocks, max); 
+			nblock = S.activeVersion.bibleReader.loadPericope(S.activeVersion, S.activeBook.bookId, chapter_1, pericope_aris, pericope_blocks, max); 
 			
 			//# fill adapter with new data. make sure all checked states are reset
 			IntArrayList selectedVerses_1 = null;
@@ -1366,7 +1367,7 @@ public class IsiActivity extends BaseActivity {
 				Book newBook = S.activeVersion.getBook(tryBookId);
 				if (newBook != null) {
 					S.activeBook = newBook;
-					int newChapter_1 = newBook.nchapter; // to the last chapter
+					int newChapter_1 = newBook.chapter_count; // to the last chapter
 					display(newChapter_1, 1);
 					break;
 				}
@@ -1381,7 +1382,7 @@ public class IsiActivity extends BaseActivity {
 	
 	void bRight_click() {
 		Book currentBook = S.activeBook;
-		if (chapter_1 >= currentBook.nchapter) {
+		if (chapter_1 >= currentBook.chapter_count) {
 			int maxBookId = S.activeVersion.getMaxBookIdPlusOne();
 			int tryBookId = currentBook.bookId + 1;
 			while (tryBookId < maxBookId) {

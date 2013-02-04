@@ -18,12 +18,13 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.renungan.Downloader;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.InternalDbHelper;
 import yuku.alkitab.base.storage.InternalReader;
-import yuku.alkitab.base.storage.ReaderDecoder;
+import yuku.alkitab.base.storage.OldVerseTextDecoder;
 import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.base.storage.SongDbHelper;
 import yuku.alkitab.base.util.FontManager;
@@ -99,7 +100,7 @@ public class S {
 	public static synchronized Version getInternalVersion() {
 		if (internalVersion == null) {
 			AppConfig c = AppConfig.get(App.context);
-			internalVersion = new Version(new InternalReader(c.internalPrefix, c.internalShortName, c.internalLongName, new ReaderDecoder.Utf8()));
+			internalVersion = new Version(new InternalReader(c.internalPrefix, c.internalShortName, c.internalLongName, new OldVerseTextDecoder.Utf8()));
 		}
 		return internalVersion;
 	}
@@ -176,39 +177,34 @@ public class S {
 		if (book == null) {
 			return notAvailableText;
 		}
-		String[] xayat = loadChapterText(version, book, pasal_1, false, false);
+		SingleChapterVerses verses = loadChapterText(version, book, pasal_1, false, false);
 		
-		if (xayat == null) {
+		if (verses == null) {
 			return notAvailableText;
 		}
 		
-		int ayat_0 = ayat_1 - 1;
-		if (ayat_0 >= xayat.length) {
+		int verse_0 = ayat_1 - 1;
+		if (verse_0 >= verses.getVerseCount()) {
 			return notAvailableText;
 		}
-		return xayat[ayat_0];
+		return verses.getVerse(verse_0);
 	}
 	
 	public static synchronized String loadVerseText(Version version, int ari) {
 		return loadVerseText(version, version.getBook(Ari.toBook(ari)), Ari.toChapter(ari), Ari.toVerse(ari));
 	}
 
-	public static synchronized String[] loadChapterText(Version version, Book book, int pasal_1) {
+	public static synchronized SingleChapterVerses loadChapterText(Version version, Book book, int pasal_1) {
 		if (book == null) {
-			return notAvailableTextArray;
-		}
-		String[] xayat = loadChapterText(version, book, pasal_1, false, false);
-		
-		if (xayat == null) {
-			return notAvailableTextArray;
+			return null;
 		}
 		
-		return xayat;
+		return loadChapterText(version, book, pasal_1, false, false);
 	}
 
-	public static synchronized String[] loadChapterTextLowercased(Version version, Book book, int pasal_1) {
+	public static synchronized SingleChapterVerses loadChapterTextLowercased(Version version, Book book, int pasal_1) {
 		if (book == null) {
-			return notAvailableTextArray;
+			return null;
 		}
 		return loadChapterText(version, book, pasal_1, false, true);
 	}
@@ -217,17 +213,18 @@ public class S {
 		if (book == null) {
 			return notAvailableText;
 		}
-		String[] xayat_denganSatuElemen = loadChapterText(version, book, pasal_1, true, true);
 		
-		if (xayat_denganSatuElemen == null) {
+		SingleChapterVerses singleVerse = version.bibleReader.loadVerseText(book, pasal_1, true, true);
+		
+		if (singleVerse == null) {
 			return notAvailableText;
 		}
 		
-		return xayat_denganSatuElemen[0];
+		return singleVerse.getVerse(0);
 	}
 	
-	private static String[] loadChapterText(Version version, Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
-		return version.reader.loadVerseText(book, pasal_1, janganPisahAyat, hurufKecil);
+	private static SingleChapterVerses loadChapterText(Version version, Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+		return version.bibleReader.loadVerseText(book, pasal_1, janganPisahAyat, hurufKecil);
 	}
 
 	public static String reference(Version version, int ari) {
@@ -240,7 +237,7 @@ public class S {
 		if (k == null) {
 			hasil.append('[').append(kitabPos).append("] "); //$NON-NLS-1$
 		} else {
-			hasil.append(k.judul).append(' ');
+			hasil.append(k.shortName).append(' ');
 		}
 		
 		hasil.append(pasal_1);
@@ -251,15 +248,15 @@ public class S {
 	}
 
 	public static String reference(Book book, int pasal_1) {
-		return (book == null? "[?]": book.judul) + " " + pasal_1; //$NON-NLS-1$ //$NON-NLS-2$
+		return (book == null? "[?]": book.shortName) + " " + pasal_1; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public static String reference(Book book, int pasal_1, int ayat_1) {
-		return (book == null? "[?]": book.judul) + " " + pasal_1 + ":" + ayat_1;  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		return (book == null? "[?]": book.shortName) + " " + pasal_1 + ":" + ayat_1;  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	public static CharSequence reference(Book book, int pasal_1, IntArrayList xayat_1) {
-		StringBuilder sb = new StringBuilder(book == null? "[?]": book.judul); //$NON-NLS-1$
+		StringBuilder sb = new StringBuilder(book == null? "[?]": book.shortName); //$NON-NLS-1$
 		sb.append(' ').append(pasal_1);
 		if (xayat_1 == null || xayat_1.size() == 0) {
 			return sb;

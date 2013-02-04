@@ -32,7 +32,6 @@
   <string name="cari_v">Cari</string>
   <string name="judul_bukmak_activity">Marka</string>
   <string name="pembatas_buku">Marka</string>
-  <string name="pembatas_condensed">Marka</string>
   <string name="hapus_pembatas_buku">Hapus marka buku</string>
   <string name="bagikan">Bagikan</string>
   <string name="tulis_catatan">Tulis catatan</string>
@@ -170,14 +169,9 @@
   <string name="bmcat_notes">Catatan</string>
   <string name="bmcat_highlights">Sorotan</string>
   <string name="bmcat_unlabeled_bookmarks">Marka buku tanpa label</string>
-  <string name="bl_notes">Catatan</string>
   <string name="bl_no_notes_written_yet">Belum ada catatan.\nTekan salah satu ayat untuk mulai menulis catatan.</string>
-  <string name="bl_highlights">Sorotan</string>
   <string name="bl_no_highlighted_verses">Belum ada ayat yang disorot.\nTekan ayat untuk mulai menyorot.</string>
-  <string name="bl_all_bookmarks">Semua marka buku</string>
-  <string name="bl_all_bookmarks_without_labels">Semua marka buku tanpa label</string>
   <string name="bl_there_are_no_bookmarks_without_any_labels">Tidak ada marka buku yang tidak berlabel.</string>
-  <string name="bl_bookmarks_labeled_label">"Marka buku berlabel \'%s\'"</string>
   <string name="bl_there_are_no_bookmarks_with_the_label_label">"Tidak ada marka buku yang berlabel \'%s\'."</string>
   <string name="bl_filter_by_some_keywords">Saring dengan kata-kata</string>
   <string name="bl_clear_filter">Hapus saringan</string>
@@ -233,16 +227,16 @@
   <string name="desc_open_verse_menu">Buka menu ayat</string>
   <string name="desc_previous_chapter">Pasal sebelum</string>
   <string name="desc_next_chapter">Pasal berikut</string>
-  <string name="teks_about">Dikembangkan oleh [b]yuku[/b] dan SABDA, 2009-2012[br/]
+  <string name="teks_about">Dikembangkan oleh [b]yuku[/b], 2009-2013[br/]
 • Situs: androidbible.blogspot.com[br/]
 • Google+: gplus.to/androidbible[br/]
 • Milis: groups.google.com/group/androidbible[br/]
 [br/]
-Terjemahan Baru © LAI[br/]
+Terjemahan Baru, Bahasa Indonesia Sehari-hari © Lembaga Alkitab Indonesia[br/]
 [br/]
 [b]Bantuan:[/b][br/]
 • [b]Jaya Satrio[/b] ikon dan desain[br/]
 • [b]Yohanes Nugroho[/b] pembaca PDB[br/]
-• dan banyak lagi orang-orang yang menyumbangkan ide, perbaikan, laporan masalah, salinan kidung, informasi terjemahan Alkitab, dll!
-</string>
+• dan banyak lagi orang-orang yang menyumbangkan ide, perbaikan, laporan masalah, salinan kidung, informasi terjemahan Alkitab, dll!</string>
+  <string name="desc_drag_to_reorder_labels">Geser untuk mengatur urutan label</string>
 </resources>

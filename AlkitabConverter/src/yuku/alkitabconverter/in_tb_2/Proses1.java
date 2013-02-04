@@ -4,10 +4,10 @@ import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
-import yuku.alkitab.yes.YesFile;
-import yuku.alkitab.yes.YesFile.InfoEdisi;
-import yuku.alkitab.yes.YesFile.InfoKitab;
-import yuku.alkitab.yes.YesFile.Teks;
+import yuku.alkitab.yes1.Yes1File;
+import yuku.alkitab.yes1.Yes1File.InfoEdisi;
+import yuku.alkitab.yes1.Yes1File.InfoKitab;
+import yuku.alkitab.yes1.Yes1File.Teks;
 import yuku.alkitabconverter.bdb.BdbProses;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
@@ -104,7 +104,7 @@ public class Proses1 {
 		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
 		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
 		
-		YesFile file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks);
+		Yes1File file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks);
 		
 		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
 	}

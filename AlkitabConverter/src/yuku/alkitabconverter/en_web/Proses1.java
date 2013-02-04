@@ -5,10 +5,10 @@ import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 
-import yuku.alkitab.yes.YesFile;
-import yuku.alkitab.yes.YesFile.InfoEdisi;
-import yuku.alkitab.yes.YesFile.InfoKitab;
-import yuku.alkitab.yes.YesFile.Teks;
+import yuku.alkitab.yes1.Yes1File;
+import yuku.alkitab.yes1.Yes1File.InfoEdisi;
+import yuku.alkitab.yes1.Yes1File.InfoKitab;
+import yuku.alkitab.yes1.Yes1File.Teks;
 import yuku.alkitabconverter.unboundbible.UnboundBibleReader;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
@@ -54,7 +54,7 @@ public class Proses1 {
 		//final PerikopBlok perikopBlok = new PerikopBlok(perikopData);
 		//final PerikopIndex perikopIndex = new PerikopIndex(perikopData);
 		
-		YesFile file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks); //, perikopBlok, perikopIndex);
+		Yes1File file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks); //, perikopBlok, perikopIndex);
 		
 		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
 	}

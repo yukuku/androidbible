@@ -1,7 +1,23 @@
 package yuku.alkitab.base.util;
 
+import java.io.IOException;
+
+import yuku.bintex.BintexReader;
+
 public class Utf8Decoder {
 	public static char[] buf = new char[1000];
+	
+	static ThreadLocal<byte[]> byte_buf_ = new ThreadLocal<byte[]>() {
+		@Override protected byte[] initialValue() {
+			return new byte[1000];
+		}
+	};
+	
+	static ThreadLocal<char[]> char_buf_ = new ThreadLocal<char[]>() {
+		@Override protected char[] initialValue() {
+			return new char[8000];
+		}
+	};
 
 	public static String toString(byte[] ba) {
 		return toString(ba, 0, ba.length);
@@ -93,5 +109,64 @@ public class Utf8Decoder {
 		}
 
 		return new String(buf, 0, pos);
+	}
+	
+	public static String toStringFromVersesWithPrependedLengths(BintexReader br, int verse_count, boolean lowercased) throws IOException {
+		byte[] byte_buf = byte_buf_.get();
+		char[] char_buf = char_buf_.get();
+
+		int char_pos = 0;
+		for (int v = 0; v < verse_count; v++) {
+			int verse_len = br.readVarUint();
+			
+			if (verse_len > byte_buf.length) {
+				byte_buf = new byte[verse_len + 100];
+				byte_buf_.set(byte_buf);
+			}
+			
+			int will_need_char_len = char_pos + verse_len + 1 /*for separator*/;
+			if (will_need_char_len > char_buf.length) {
+				char_buf = new char[will_need_char_len + 1000];
+				char_buf_.set(char_buf);
+			}
+			
+			br.readRaw(byte_buf, 0, verse_len);
+			
+			for (int i = 0; i < verse_len; i++) {
+				int c0 = byte_buf[i] & 0xff;
+
+				if (c0 < 0x80) {
+					// input 1 byte, output 7 bit
+					
+					if (lowercased && (c0 >= 'A' && c0 <= 'Z')) {
+						char_buf[char_pos++] = (char) (c0 | 0x20);
+					} else {
+						char_buf[char_pos++] = (char) c0;
+					}
+					
+					continue;
+				}
+
+				i++;
+				int c1 = byte_buf[i] & 0xff;
+
+				if (c0 < 0xe0) {
+					// input 2 byte, output 5+6 = 11 bit
+					char_buf[char_pos++] = (char) (((c0 & 0x1f) << 6) | (c1 & 0x3f));
+					continue;
+				}
+
+				i++;
+				int c2 = byte_buf[i] & 0xff;
+
+				// input 3 byte, output 4+6+6 = 16 bit
+				char_buf[char_pos++] =  (char) (((c0 & 0x0f) << 12) | ((c1 & 0x3f) << 6) | (c2 & 0x3f));
+			}
+			
+			// verse separator
+			char_buf[char_pos++] = '\n';
+		}
+		
+		return new String(char_buf, 0, char_pos);
 	}
 }

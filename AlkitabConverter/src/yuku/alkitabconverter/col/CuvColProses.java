@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-import yuku.alkitab.yes.YesFile;
-import yuku.alkitab.yes.YesFile.InfoEdisi;
-import yuku.alkitab.yes.YesFile.InfoKitab;
-import yuku.alkitab.yes.YesFile.Kitab;
-import yuku.alkitab.yes.YesFile.Teks;
+import yuku.alkitab.yes1.Yes1File;
+import yuku.alkitab.yes1.Yes1File.InfoEdisi;
+import yuku.alkitab.yes1.Yes1File.InfoKitab;
+import yuku.alkitab.yes1.Yes1File.Kitab;
+import yuku.alkitab.yes1.Yes1File.Teks;
 import yuku.alkitabconverter.util.Rec;
 
 public class CuvColProses {
@@ -54,7 +54,7 @@ public class CuvColProses {
 		final InfoKitab infoKitab = infoKitab(xrec);
 		final Teks teks = teks(xrec);
 		
-		YesFile file = new YesFile() {{
+		Yes1File file = new Yes1File() {{
 			this.xseksi = new Seksi[] {
 				new Seksi() {
 					@Override public byte[] nama() {

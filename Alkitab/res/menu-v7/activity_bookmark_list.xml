@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!-- ABS SearchView does not support API level less than 8
+		so just don't show it -->
+    <item
+        android:id="@+id/menuSort"
+        android:icon="@drawable/ic_menu_sort"
+        android:showAsAction="ifRoom"
+        android:title="@string/menuSort"/>
+
+</menu>

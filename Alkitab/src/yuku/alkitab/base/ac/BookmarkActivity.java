@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.util.Xml;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -22,7 +24,6 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import gnu.trove.list.TIntList;
@@ -48,6 +49,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 import org.xmlpull.v1.XmlSerializer;
 
+import yuku.afw.D;
 import yuku.afw.V;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
@@ -63,6 +65,8 @@ import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.mobeta.android.dslv.DragSortController;
+import com.mobeta.android.dslv.DragSortListView;
 
 public class BookmarkActivity extends BaseActivity {
 	public static final String TAG = BookmarkActivity.class.getSimpleName();
@@ -72,7 +76,9 @@ public class BookmarkActivity extends BaseActivity {
 
 	private static final int REQCODE_bukmakList = 1;
 
-	BukmakFilterAdapter adapter;
+	DragSortListView lv;
+	
+	BookmarkFilterAdapter adapter;
 	
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -80,13 +86,18 @@ public class BookmarkActivity extends BaseActivity {
 		setContentView(R.layout.activity_bookmark);
 		setTitle(R.string.judul_bukmak_activity);
 		
-		adapter = new BukmakFilterAdapter();
+		adapter = new BookmarkFilterAdapter();
 		adapter.reload();
 		
 		lv = V.get(this, android.R.id.list);
-		lv.setAdapter(adapter);
+		lv.setDropListener(adapter);
 		lv.setOnItemClickListener(lv_click);
-		
+		lv.setAdapter(adapter);
+
+        BookmarkFilterController c = new BookmarkFilterController(lv, adapter);
+        lv.setFloatViewManager(c);
+        lv.setOnTouchListener(c);
+
 		registerForContextMenu(lv);
 		
 		Intent intent = getIntent();
@@ -466,8 +477,6 @@ public class BookmarkActivity extends BaseActivity {
 	private static final String Bukmak2_Label_XMLATTR_bukmak2_relId = "bukmak2_relId"; //$NON-NLS-1$
 	private static final String Bukmak2_Label_XMLATTR_label_relId = "label_relId"; //$NON-NLS-1$
 
-	private ListView lv;
-
 	void writeBukmak2_LabelXml(XmlSerializer xml, int bukmak2_relId, int label_relId) throws IOException {
 		xml.startTag(null, Bukmak2_Label_XMLTAG_Bukmak2_Label);
 		xml.attribute(null, Bukmak2_Label_XMLATTR_bukmak2_relId, String.valueOf(bukmak2_relId));
@@ -611,15 +620,71 @@ public class BookmarkActivity extends BaseActivity {
 		
 		adapter.reload();
 	}
-	
-	class BukmakFilterAdapter extends BaseAdapter {
+
+	private class BookmarkFilterController extends DragSortController {
+		int mDivPos;
+		int mDraggedPos;
+		final DragSortListView lv;
+
+		public BookmarkFilterController(DragSortListView lv, BookmarkFilterAdapter adapter) {
+			super(lv, R.id.drag_handle, DragSortController.ON_DOWN, 0);
+
+			this.lv = lv;
+
+			mDivPos = adapter.getDivPosition();
+			setRemoveEnabled(false);
+		}
+
+		@Override public int startDragPosition(MotionEvent ev) {
+			int res = super.dragHandleHitPosition(ev);
+			if (res < mDivPos) {
+				return DragSortController.MISS;
+			}
+
+			return res;
+		}
+
+		@Override public View onCreateFloatView(int position) {
+			mDraggedPos = position;
+			View res = adapter.getView(position, null, lv);
+			res.setBackgroundColor(0x22ffffff);
+			return res;
+		}
+		
+		@Override public void onDestroyFloatView(View floatView) {
+			// Do not call super and do not remove this override.
+			floatView.setBackgroundColor(0);
+		}
+
+		@Override public void onDragFloatView(View floatView, Point floatPoint, Point touchPoint) {
+			super.onDragFloatView(floatView, floatPoint, touchPoint);
+
+			final int first = lv.getFirstVisiblePosition();
+			final int lvDivHeight = lv.getDividerHeight();
+
+			View div = lv.getChildAt(mDivPos - first - 1);
+
+			if (div != null) {
+				if (mDraggedPos >= mDivPos) {
+					// don't allow floating View to go above section divider
+					final int limit = div.getBottom() + lvDivHeight;
+					if (floatPoint.y < limit) {
+						floatPoint.y = limit;
+					}
+				}
+			}
+		}
+	}
+
+	private class BookmarkFilterAdapter extends BaseAdapter implements DragSortListView.DropListener {
 		// 0. [icon] All bookmarks
 		// 1. [icon] Notes
 		// 2. [icon] Highlights
 		// 3. Unlabeled bookmarks
 		// 4. dst label2
-		
+
 		List<Label> labels;
+		
 		private String[] presetCaptions = {
 			getString(R.string.bmcat_all_bookmarks),
 			getString(R.string.bmcat_notes),
@@ -627,14 +692,6 @@ public class BookmarkActivity extends BaseActivity {
 			getString(R.string.bmcat_unlabeled_bookmarks),
 		};
 		
-		private boolean hasLabels() {
-			return labels != null && labels.size() > 0;
-		}
-		
-		@Override public int getCount() {
-			return 3 + (hasLabels()? 1 + labels.size(): 0);
-		}
-
 		@Override public Label getItem(int position) {
 			if (position < 4) return null;
 			return labels.get(position - 4);
@@ -642,6 +699,30 @@ public class BookmarkActivity extends BaseActivity {
 
 		@Override public long getItemId(int position) {
 			return position;
+		}
+
+		@Override public void drop(int from, int to) {
+			if (from != to) {
+				Label fromLabel = getItem(from);
+				Label toLabel = getItem(to);
+				
+				if (fromLabel != null && toLabel != null) {
+					S.getDb().reorderLabels(fromLabel, toLabel);
+					adapter.reload();
+				}
+			}
+		}
+
+		private boolean hasLabels() {
+			return labels != null && labels.size() > 0;
+		}
+
+		@Override public int getCount() {
+			return 3 + (hasLabels() ? 1 + labels.size() : 0);
+		}
+
+		public int getDivPosition() {
+			return 4;
 		}
 
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
@@ -675,11 +756,26 @@ public class BookmarkActivity extends BaseActivity {
 				U.applyLabelColor(label, lFilterLabel);
 			}
 			
+			View drag_handle = V.get(res, R.id.drag_handle);
+			if (position < 4) {
+				drag_handle.setVisibility(View.GONE);
+			} else {
+				drag_handle.setVisibility(View.VISIBLE);
+			}
+			
 			return res;
 		}
 		
 		void reload() {
 			labels = S.getDb().listSemuaLabel();
+			
+			if (D.EBUG) {
+				Log.d(TAG, "_id  title                ordering backgroundColor");
+				for (Label label: labels) {
+					Log.d(TAG, String.format("%4d %20s %8d %s", label._id, label.judul, label.urutan, label.backgroundColor));
+				}
+			}
+			
 			notifyDataSetChanged();
 		}
 	}

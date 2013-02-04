@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import yuku.afw.D;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.BookmarkListActivity;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
@@ -708,5 +709,41 @@ public class InternalDb {
 	public int deleteDevotionsWithLessThanInTitle() {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		return db.delete(Db.TABEL_Renungan, Db.Renungan.judul + " like '%<%'", null);
+	}
+
+	public void reorderLabels(Label from, Label to) {
+		// original order: A101 B[102] C103 D[104] E105
+		
+		// case: move up from=104 to=102:
+		//   increase ordering for (to <= ordering < from)
+		//   A101 B[103] C104 D[104] E105
+		//   replace ordering of 'from' to 'to'
+		//   A101 B[103] C104 D[102] E105
+				
+		// case: move down from=102 to=104:
+		//   decrease ordering for (from < ordering <= to)
+		//   A101 B[102] C102 D[103] E105
+		//   replace ordering of 'from' to 'to'
+		//   A101 B[104] C102 D[103] E105
+		
+		if (D.EBUG) {
+			Log.d(TAG, "@@reorderLabels from _id=" + from._id + " ordering=" + from.urutan + " to _id=" + to._id + " ordering=" + to.urutan);
+		}
+		
+		SQLiteDatabase db = helper.getWritableDatabase();
+		db.beginTransaction();
+		try {
+			if (from.urutan > to.urutan) { // move up
+				db.execSQL("update " + Db.TABEL_Label + " set " + Db.Label.urutan + "=(" + Db.Label.urutan + "+1) where ?<=" + Db.Label.urutan + " and " + Db.Label.urutan + "<?", new Object[] {to.urutan, from.urutan});
+				db.execSQL("update " + Db.TABEL_Label + " set " + Db.Label.urutan + "=? where _id=?", new Object[] {to.urutan, from._id});
+			} else if (from.urutan < to.urutan) { // move down
+				db.execSQL("update " + Db.TABEL_Label + " set " + Db.Label.urutan + "=(" + Db.Label.urutan + "-1) where ?<" + Db.Label.urutan + " and " + Db.Label.urutan + "<=?", new Object[] {from.urutan, to.urutan});
+				db.execSQL("update " + Db.TABEL_Label + " set " + Db.Label.urutan + "=? where _id=?", new Object[] {to.urutan, from._id});
+			}
+			
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
 	}
 }

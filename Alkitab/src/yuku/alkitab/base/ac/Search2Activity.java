@@ -205,7 +205,7 @@ public class Search2Activity extends BaseActivity {
 			
 			kitabPosTerbuka = intent.getIntExtra(EXTRA_kitabPosTerbuka, -1);
 			Book book = S.activeVersion.getBook(kitabPosTerbuka);
-			cFilterKitabSaja.setText(getString(R.string.search_bookname_only, book.judul));
+			cFilterKitabSaja.setText(getString(R.string.search_bookname_only, book.shortName));
 			
 			if (query != null) {
 				if (!useSearchView()) {
@@ -320,7 +320,7 @@ public class Search2Activity extends BaseActivity {
 							Book book = S.activeVersion.getBook(kitabPos);
 							if (book != null) {
 								if (sb.length() != 0) sb.append(", "); //$NON-NLS-1$
-								sb.append(book.judul);
+								sb.append(book.shortName);
 							}
 						}
 					}
@@ -461,7 +461,7 @@ public class Search2Activity extends BaseActivity {
 			CheckedTextView res = (CheckedTextView) (convertView != null? convertView: getLayoutInflater().inflate(android.R.layout.select_dialog_multichoice, null));
 			
 			Book k = getItem(position);
-			res.setText(k.judul);
+			res.setText(k.shortName);
 			res.setTextColor(U.getColorBasedOnBookId(k.bookId));
 			
 			return res;

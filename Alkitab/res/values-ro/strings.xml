@@ -16,10 +16,12 @@
   <string name="ekspor_berhasil_file_yang_dihasilkan_file">Rezerva s-a creat.\n\nRezultatele sunt în fişierul: %s</string>
   <string name="impor_berhasil_angka_diproses">Restabilire cu succes. În total sunt %1$d favorite, note, şi/sau marcaje, şi %2$d etichete au fost procesate.</string>
   <string name="terjadi_kesalahan_ketika_mengekspor_pesan">A apărut o eroare când s-a creat restabilirea: %s</string>
+  <string name="ekspor_pembatas_buku_dan_catatan_tanya">Creați o rezervă a versetelor favorite, notelor și evidențierilor pe cardul SD sau de stocare USB?</string>
   <string name="ekspor_judul">Creează rezervă</string>
   <string name="terjadi_kesalahan_ketika_mengimpor_pesan">A apărut o eroare la restabilire: %s</string>
   <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Vreţi să rescrieţi favorite, note şi marcaje peste cele ce sunt deja?</string>
   <string name="file_tidak_bisa_dibaca_file">Fişierul nu există sau nu poate fi citit: %s</string>
+  <string name="impor_pembatas_buku_dan_catatan_dari_tanya">Restaurare favorite, note și evidențieri dintr-un fișier rezervă de pe cardul SD sau stocare USB?\n\nFile: %s</string>
   <string name="impor_judul">Restabileşte din rezervă</string>
   <string name="impor_dari_sd_card">Restabileşte</string>
   <string name="ekspor_ke_sd_card">Rezerve</string>
@@ -30,7 +32,6 @@
   <string name="cari_v">Caută</string>
   <string name="judul_bukmak_activity">Favorite, notițe si marcaje</string>
   <string name="pembatas_buku">Favorite</string>
-  <string name="pembatas_condensed">Favorite</string>
   <string name="hapus_pembatas_buku">Şterge favorit</string>
   <string name="bagikan">Trimite</string>
   <string name="tulis_catatan">Scrie o notă</string>
@@ -51,7 +52,7 @@
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Eroare în descărcare %1$s data %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">Descărcare reuşită %1$s data %2$s</string>
   <string name="mengunduh_namaumum_tgl_tgl">Descărcare %1$s data %2$s…</string>
-  <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Nu este disponibilă. Probabil materialul solicitat nu este pregătit, sau sunt unele erori în recunoaşterea datelor sursă.\n\nDacă este necesar, vă rugăm să informaţi dezvoltatorii softwarelui, mergând înapoi la vizualizarea versetelor, deschideţi Meniul şi alegeţi Sugestie.</string>
+  <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Nu sunt disponibile. Probabil că datele solicitate nu sunt pregătite sau sunt unele orori in recunoașterea sursei cu date. Vă rog să încercați din nou mai târziu.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Nu este disponibilă. Preluarea de pe Internet…\n\n(Asiguraţi-vă că există conexiune la Internet pentru a descărca materiale devoţionale.)</string>
   <string name="hari_sabtu">Sam</string>
   <string name="hari_jumat">Vin</string>
@@ -128,6 +129,7 @@
   <string name="ed_version_info_info">Despre versiune: %s</string>
   <string name="ed_version_details">Detalii versiune</string>
   <string name="ed_choose_pdb_or_yes_file">Alege un fişier .pdb sau .yes</string>
+  <string name="ed_no_external_storage">Nu s-a găasit cardul SD sau unitatea USB.</string>
   <string name="ed_invalid_file_selected">Fişier selectat invalid.</string>
   <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Fişierul %s este deja în listă.</string>
   <string name="ed_error_encountered">Eroare…</string>
@@ -167,14 +169,9 @@
   <string name="bmcat_notes">Note</string>
   <string name="bmcat_highlights">Marcaje</string>
   <string name="bmcat_unlabeled_bookmarks">Favorite neetichetate</string>
-  <string name="bl_notes">Note</string>
   <string name="bl_no_notes_written_yet">Nu sunt note scrise.\nApăsaţi pe un verset pentru a scrie o notă.</string>
-  <string name="bl_highlights">Marchează</string>
   <string name="bl_no_highlighted_verses">Nu sunt versete marcate.\nApăsati pe un verset pentru a fi marcat.</string>
-  <string name="bl_all_bookmarks">Versete favorite</string>
-  <string name="bl_all_bookmarks_without_labels">Versete favorite fără etichetă</string>
   <string name="bl_there_are_no_bookmarks_without_any_labels">Nu sunt versete favorite fără etichetă.</string>
-  <string name="bl_bookmarks_labeled_label">"Favorite etichetate \'%s\'"</string>
   <string name="bl_there_are_no_bookmarks_with_the_label_label">" Nu sunt favorite cu eticheta \'%s\'."</string>
   <string name="bl_filter_by_some_keywords">Filtrare după cuvintele cheie</string>
   <string name="bl_clear_filter">Şterge filtrare</string>
@@ -194,6 +191,8 @@
   <string name="get_more_fonts">Descarca mai multe fonturi…</string>
   <string name="about_translators">Traducători:</string>
   <string name="intent_filter_import_from_backup">Importă din copia de rezervă</string>
+  <string name="redownload">Descărcare nouă</string>
+  <string name="read_faq_before_suggest">Vă rog să citiți FAQ înainte de a trimite o sugestie. Continuați cu trimiterea sugestiei?</string>
   <string name="goto_tab_dialer_label">Formare număr</string>
   <string name="goto_tab_direct_label">Direct</string>
   <string name="goto_tab_grid_label">Grilă</string>

@@ -4,14 +4,14 @@ import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
-import yuku.alkitab.yes.YesFile;
-import yuku.alkitab.yes.YesFile.InfoEdisi;
-import yuku.alkitab.yes.YesFile.InfoKitab;
-import yuku.alkitab.yes.YesFile.PericopeData;
-import yuku.alkitab.yes.YesFile.PericopeData.Entry;
-import yuku.alkitab.yes.YesFile.PerikopBlok;
-import yuku.alkitab.yes.YesFile.PerikopIndex;
-import yuku.alkitab.yes.YesFile.Teks;
+import yuku.alkitab.yes1.Yes1File;
+import yuku.alkitab.yes1.Yes1File.InfoEdisi;
+import yuku.alkitab.yes1.Yes1File.InfoKitab;
+import yuku.alkitab.yes1.Yes1File.PericopeData;
+import yuku.alkitab.yes1.Yes1File.PerikopBlok;
+import yuku.alkitab.yes1.Yes1File.PerikopIndex;
+import yuku.alkitab.yes1.Yes1File.Teks;
+import yuku.alkitab.yes1.Yes1File.PericopeData.Entry;
 import yuku.alkitabconverter.bdb.BdbProses;
 import yuku.alkitabconverter.bdb.BdbProses.PericopeTester;
 import yuku.alkitabconverter.util.Ari;
@@ -69,7 +69,7 @@ public class Proses1 {
 		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
 		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
 		
-		YesFile file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(pericopeData), new PerikopIndex(pericopeData));
+		Yes1File file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(pericopeData), new PerikopIndex(pericopeData));
 		
 		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
 	}

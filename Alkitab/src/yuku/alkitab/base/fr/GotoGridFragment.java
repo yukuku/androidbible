@@ -130,7 +130,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 	}
 	
 	protected void displaySelectedBookAndChapter() {
-		lSelectedBook.setText(underline(selectedBook.judul));
+		lSelectedBook.setText(underline(selectedBook.shortName));
 		if (selectedChapter == 0) {
 			lSelectedChapter.setVisibility(View.GONE);
 		} else {
@@ -231,13 +231,13 @@ public class GotoGridFragment extends BaseGotoFragment {
 
 		@Override CharSequence textForView(int position) {
 			Book book = getItem(position);
-			String title = book.judul;
+			String title = book.shortName;
 			
 			// remove spaces and '.'
-			if (book.judul.indexOf(' ') != -1) {
+			if (book.shortName.indexOf(' ') != -1) {
 				title = title.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			} 
-			if (book.judul.indexOf('.') != -1) {
+			if (book.shortName.indexOf('.') != -1) {
 				title = title.replace(".", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
@@ -273,7 +273,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 		}
 		
 		@Override public int getCount() {
-			return book.nchapter;
+			return book.chapter_count;
 		}
 		
 		@Override CharSequence textForView(int position) {
@@ -292,7 +292,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 
 		@Override public int getCount() {
 			int chapter_0 = chapter_1 - 1;
-			return chapter_0 < 0 || chapter_0 >= book.nverses.length? 0: book.nverses[chapter_0];
+			return chapter_0 < 0 || chapter_0 >= book.verse_counts.length? 0: book.verse_counts[chapter_0];
 		}
 
 		@Override CharSequence textForView(int position) {

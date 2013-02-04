@@ -32,7 +32,7 @@
                 android:id="@+id/bPrev"
                 style="@style/DevotionSelectNavButton"
                 android:contentDescription="@string/desc_previous_day"
-                android:src="@drawable/left_arrow" />
+                android:src="@drawable/ic_nav_arrow_left" />
 
             <TextView
                 android:id="@+id/tCurrentDate"
@@ -44,7 +44,7 @@
                 android:id="@+id/bNext"
                 style="@style/DevotionSelectNavButton"
                 android:contentDescription="@string/desc_next_day"
-                android:src="@drawable/right_arrow" />
+                android:src="@drawable/ic_nav_arrow_right" />
 
         </LinearLayout>
     </LinearLayout>
