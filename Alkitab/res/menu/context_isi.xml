@@ -11,7 +11,11 @@
         android:icon="@drawable/ic_menu_share"
         android:showAsAction="always"
         android:title="@string/bagikan"/>
-    <item android:id="@+id/menuAddSomething" android:title="Add…" android:showAsAction="always">
+    <item
+        android:id="@+id/menuAddSomething"
+        android:icon="@drawable/ic_menu_add"
+        android:showAsAction="always"
+        android:title="Add…">
         <menu>
             <item
                 android:id="@+id/menuAddBookmark"
