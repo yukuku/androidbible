@@ -23,7 +23,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -41,7 +40,6 @@ import org.json.JSONObject;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
-import yuku.alkitab.base.IsiActivity.FakeContextMenu.Item;
 import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.BookmarkActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
@@ -76,6 +74,7 @@ import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.VerseAdapter;
 import yuku.alkitab.base.widget.VersesView;
 
+import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
@@ -108,7 +107,6 @@ public class IsiActivity extends BaseActivity {
 	ImageButton bRight;
 	View titleContainer;
 	TextView lTitle;
-	View bContextMenu;
 	View root;
 	
 	int chapter_1 = 0;
@@ -116,6 +114,7 @@ public class IsiActivity extends BaseActivity {
 	
 	History history;
 	NfcAdapter nfcAdapter;
+	ActionMode actionMode;
 
 	//# state storage for search2
 	Query search2_query = null;
@@ -163,7 +162,6 @@ public class IsiActivity extends BaseActivity {
 		bRight = V.get(this, R.id.bKanan);
 		titleContainer = V.get(this, R.id.tempatJudul);
 		lTitle = V.get(this, R.id.lJudul);
-		bContextMenu = V.get(this, R.id.bContext);
 		root = V.get(this, R.id.root);
 		
 		applyPreferences(false);
@@ -189,8 +187,6 @@ public class IsiActivity extends BaseActivity {
 			@Override public void onClick(View v) { bRight_click(); }
 		});
 		
-		bContextMenu.setOnClickListener(bContextMenu_click);
-		
 		lsText.setOnKeyListener(new View.OnKeyListener() {
 			@Override public boolean onKey(View v, int keyCode, KeyEvent event) {
 				int action = event.getAction();
@@ -203,9 +199,10 @@ public class IsiActivity extends BaseActivity {
 			}
 		});
 		
-		// listener
+		// listeners
 		lsText.setParallelListener(parallel_click);
 		lsText.setAttributeListener(attribute_click);
+		lsText.setSelectedVersesListener(lsText_selectedVerses);
 		
 		// muat preferences_instan, dan atur renungan
 		instant_pref = App.getPreferencesInstan();
@@ -550,185 +547,7 @@ public class IsiActivity extends BaseActivity {
 		}
 	}
 	
-	static class FakeContextMenu {
-		static class Item {
-			String label;
-			Item(String label) {
-				this.label = label;
-			}
-		}
-		
-		Item menuCopyVerse;
-		Item menuAddBookmark;
-		Item menuAddNote;
-		Item menuAddHighlight;
-		Item menuShare;
-		Item menuEsvsbasal;
-		List<Item> items;
-		
-		String[] getLabels() {
-			String[] res = new String[items.size()];
-			for (int i = 0, len = items.size(); i < len; i++) {
-				res[i] = items.get(i).label;
-			}
-			return res;
-		}
-	}
-	
-	FakeContextMenu getFakeContextMenu() {
-		FakeContextMenu res = new FakeContextMenu();
-		res.menuCopyVerse = new Item(getString(R.string.salin_ayat));
-		res.menuAddBookmark = new Item(getString(R.string.tambah_pembatas_buku));
-		res.menuAddNote = new Item(getString(R.string.tulis_catatan));
-		res.menuAddHighlight = new Item(getString(R.string.highlight_stabilo));
-		res.menuShare = new Item(getString(R.string.bagikan));
-		
-		/* The following "esvsbasal" thing is a personal thing by yuku that doesn't matter to anyone else. 
-		 * Please ignore it and leave it intact. */
-		if (hasEsvsbAsal == null) {
-			try {
-				getPackageManager().getApplicationInfo("yuku.esvsbasal", 0); //$NON-NLS-1$
-				hasEsvsbAsal = true;
-			} catch (NameNotFoundException e) {
-				hasEsvsbAsal = false;
-			}
-		}
-		
-		if (hasEsvsbAsal) {
-			res.menuEsvsbasal = new Item("ESV Study Bible"); //$NON-NLS-1$
-		}
-		
-		ArrayList<Item> items = new ArrayList<Item>(6);
-		items.add(res.menuCopyVerse);
-		items.add(res.menuAddBookmark);
-		items.add(res.menuAddNote);
-		items.add(res.menuAddHighlight);
-		items.add(res.menuShare);
-		
-		if (hasEsvsbAsal) {
-			items.add(res.menuEsvsbasal);
-		}
-		res.items = items;
-		
-		return res;
-	};
-	
-
-	public void showFakeContextMenu() {
-		IntArrayList selected = lsText.getSelectedVerses_1();
-		if (selected.size() == 0) return;
-
-		// creating the menu manually
-		final FakeContextMenu menu = getFakeContextMenu();
-		
-		new AlertDialog.Builder(this)
-		.setTitle(referenceFromSelectedVerses(selected))
-		.setItems(menu.getLabels(), new DialogInterface.OnClickListener() {
-			@Override public void onClick(DialogInterface dialog, int which) {
-				if (which >= 0 && which < menu.items.size()) {
-					onFakeContextMenuSelected(menu, menu.items.get(which));
-				}
-			}
-		})
-		.show();
-	}
-	
-	public void onFakeContextMenuSelected(FakeContextMenu menu, Item item) {
-		IntArrayList selected = lsText.getSelectedVerses_1();
-		if (selected.size() == 0) return;
-		
-		CharSequence reference = referenceFromSelectedVerses(selected);
-		
-		// the main verse (0 if not exist), which is only when only one verse is selected
-		int mainVerse_1 = 0;
-		if (selected.size() == 1) { 
-			mainVerse_1 = selected.get(0);
-		}
-		
-		if (item == menu.menuCopyVerse) { // copy, can be multiple
-			CharSequence textToCopy = prepareTextForCopyShare(selected, reference);
-			
-			U.copyToClipboard(textToCopy);
-			lsText.uncheckAll();
-			
-			Toast.makeText(this, getString(R.string.alamat_sudah_disalin, reference), Toast.LENGTH_SHORT).show();
-		} else if (item == menu.menuAddBookmark) {
-			if (mainVerse_1 == 0) {
-				// no main verse, scroll to show the relevant one!
-				mainVerse_1 = selected.get(0);
-				
-				lsText.scrollToShowVerse(mainVerse_1);
-			}
-			
-			final int ari = Ari.encode(S.activeBook.bookId, this.chapter_1, mainVerse_1);
-			
-			TypeBookmarkDialog dialog = new TypeBookmarkDialog(this, S.reference(S.activeBook, this.chapter_1, mainVerse_1), ari);
-			dialog.setListener(new TypeBookmarkDialog.Listener() {
-				@Override public void onOk() {
-					lsText.uncheckAll();
-					lsText.loadAttributeMap();
-				}
-			});
-			dialog.show();
-		} else if (item == menu.menuAddNote) {
-			if (mainVerse_1 == 0) {
-				// no main verse, scroll to show the relevant one!
-				mainVerse_1 = selected.get(0);
-				
-				lsText.scrollToShowVerse(mainVerse_1);
-			}
-			
-			TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, S.activeBook, this.chapter_1, mainVerse_1, new TypeNoteDialog.RefreshCallback() {
-				@Override public void onDone() {
-					lsText.uncheckAll();
-					lsText.loadAttributeMap();
-				}
-			});
-			dialog.show();
-		} else if (item == menu.menuAddHighlight) {
-			final int ariKp = Ari.encode(S.activeBook.bookId, this.chapter_1, 0);
-			int warnaRgb = S.getDb().getWarnaRgbStabilo(ariKp, selected);
-			
-			new TypeHighlightDialog(this, ariKp, selected, new TypeHighlightDialog.JenisStabiloCallback() {
-				@Override public void onOk(int warnaRgb) {
-					lsText.uncheckAll();
-					lsText.loadAttributeMap();
-				}
-			}, warnaRgb, reference).bukaDialog();
-		} else if (item == menu.menuShare) {
-			CharSequence textToShare = prepareTextForCopyShare(selected, reference);
-			
-			String verseUrl;
-			if (selected.size() == 1) {
-				verseUrl = S.createVerseUrl(S.activeBook, this.chapter_1, String.valueOf(selected.get(0)));
-			} else {
-				StringBuilder sb2 = new StringBuilder();
-				S.writeVerseRange(selected, sb2);
-				verseUrl = S.createVerseUrl(S.activeBook, this.chapter_1, sb2.toString()); // use verse range
-			}
-			
-			Intent intent = new Intent(Intent.ACTION_SEND);
-			intent.setType("text/plain"); //$NON-NLS-1$
-			intent.putExtra(Intent.EXTRA_SUBJECT, reference); 
-			intent.putExtra(Intent.EXTRA_TEXT, textToShare.toString());
-			intent.putExtra(EXTRA_verseUrl, verseUrl);
-			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, reference)), REQCODE_share);
-
-			lsText.uncheckAll();
-		} else if (item == menu.menuEsvsbasal) {
-			final int ari = Ari.encode(S.activeBook.bookId, this.chapter_1, mainVerse_1);
-
-			try {
-				Intent intent = new Intent("yuku.esvsbasal.action.GOTO"); //$NON-NLS-1$
-				intent.putExtra("ari", ari); //$NON-NLS-1$
-				startActivity(intent);
-			} catch (Exception e) {
-				Log.e(TAG, "ESVSB starting", e); //$NON-NLS-1$
-			}
-		}
-	}
-
-	private CharSequence prepareTextForCopyShare(IntArrayList selectedVerses_1, CharSequence reference) {
+	CharSequence prepareTextForCopyShare(IntArrayList selectedVerses_1, CharSequence reference) {
 		StringBuilder res = new StringBuilder();
 		res.append(reference);
 		
@@ -1212,12 +1031,6 @@ public class IsiActivity extends BaseActivity {
 			display(newChapter, 1);
 		}
 	}
-
-	private OnClickListener bContextMenu_click = new OnClickListener() {
-		@Override public void onClick(View v) {
-			showFakeContextMenu();
-		}
-	};
 	
 	@Override public boolean onSearchRequested() {
 		menuSearch2_click();
@@ -1245,6 +1058,163 @@ public class IsiActivity extends BaseActivity {
 				});
 				dialog.show();
 			}
+		}
+	};
+	
+	VersesView.SelectedVersesListener lsText_selectedVerses = new VersesView.SelectedVersesListener() {
+		@Override public void onSomeVersesSelected(VersesView v) {
+			if (actionMode == null) {
+				actionMode = startActionMode(actionMode_callback);
+			} 
+		}
+
+		@Override public void onNoVersesSelected(VersesView v) {
+			if (actionMode != null) {
+				actionMode.finish();
+			}
+		}
+	};
+
+	ActionMode.Callback actionMode_callback = new ActionMode.Callback() {
+		@Override public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			mode.getMenuInflater().inflate(R.menu.context_isi, menu);
+			
+			/* The following "esvsbasal" thing is a personal thing by yuku that doesn't matter to anyone else. 
+			 * Please ignore it and leave it intact. */
+			if (hasEsvsbAsal == null) {
+				try {
+					getPackageManager().getApplicationInfo("yuku.esvsbasal", 0); //$NON-NLS-1$
+					hasEsvsbAsal = true;
+				} catch (NameNotFoundException e) {
+					hasEsvsbAsal = false;
+				}
+			}
+			
+			if (hasEsvsbAsal) {
+				MenuItem esvsb = menu.findItem(R.id.menuEsvsb);
+				if (esvsb != null) esvsb.setVisible(true);
+			}
+			
+			return true;
+		}
+
+		@Override public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			return false;
+		}
+
+		@Override public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+			IntArrayList selected = lsText.getSelectedVerses_1();
+			if (selected.size() == 0) return true;
+			
+			CharSequence reference = referenceFromSelectedVerses(selected);
+			
+			// the main verse (0 if not exist), which is only when only one verse is selected
+			int mainVerse_1 = 0;
+			if (selected.size() == 1) { 
+				mainVerse_1 = selected.get(0);
+			}
+			
+			int itemId = item.getItemId();
+			switch (itemId) {
+			case R.id.menuCopy: { // copy, can be multiple
+				CharSequence textToCopy = prepareTextForCopyShare(selected, reference);
+				
+				U.copyToClipboard(textToCopy);
+				lsText.uncheckAll();
+				
+				Toast.makeText(App.context, getString(R.string.alamat_sudah_disalin, reference), Toast.LENGTH_SHORT).show();
+				mode.finish();
+			} return true;
+			case R.id.menuShare: {
+				CharSequence textToShare = prepareTextForCopyShare(selected, reference);
+				
+				String verseUrl;
+				if (selected.size() == 1) {
+					verseUrl = S.createVerseUrl(S.activeBook, IsiActivity.this.chapter_1, String.valueOf(selected.get(0)));
+				} else {
+					StringBuilder sb2 = new StringBuilder();
+					S.writeVerseRange(selected, sb2);
+					verseUrl = S.createVerseUrl(S.activeBook, IsiActivity.this.chapter_1, sb2.toString()); // use verse range
+				}
+				
+				Intent intent = new Intent(Intent.ACTION_SEND);
+				intent.setType("text/plain"); //$NON-NLS-1$
+				intent.putExtra(Intent.EXTRA_SUBJECT, reference); 
+				intent.putExtra(Intent.EXTRA_TEXT, textToShare.toString());
+				intent.putExtra(EXTRA_verseUrl, verseUrl);
+				startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, reference)), REQCODE_share);
+
+				lsText.uncheckAll();
+				mode.finish();
+			} return true;
+			case R.id.menuAddBookmark: {
+				if (mainVerse_1 == 0) {
+					// no main verse, scroll to show the relevant one!
+					mainVerse_1 = selected.get(0);
+					
+					lsText.scrollToShowVerse(mainVerse_1);
+				}
+				
+				final int ari = Ari.encode(S.activeBook.bookId, IsiActivity.this.chapter_1, mainVerse_1);
+				
+				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, S.reference(S.activeBook, IsiActivity.this.chapter_1, mainVerse_1), ari);
+				dialog.setListener(new TypeBookmarkDialog.Listener() {
+					@Override public void onOk() {
+						lsText.uncheckAll();
+						lsText.loadAttributeMap();
+					}
+				});
+				dialog.show();
+
+				mode.finish();
+			} return true;
+			case R.id.menuAddNote: {
+				if (mainVerse_1 == 0) {
+					// no main verse, scroll to show the relevant one!
+					mainVerse_1 = selected.get(0);
+					
+					lsText.scrollToShowVerse(mainVerse_1);
+				}
+				
+				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, S.activeBook, IsiActivity.this.chapter_1, mainVerse_1, new TypeNoteDialog.RefreshCallback() {
+					@Override public void onDone() {
+						lsText.uncheckAll();
+						lsText.loadAttributeMap();
+					}
+				});
+				dialog.show();
+				mode.finish();
+			} return true;
+			case R.id.menuAddHighlight: {
+				final int ariKp = Ari.encode(S.activeBook.bookId, IsiActivity.this.chapter_1, 0);
+				int warnaRgb = S.getDb().getWarnaRgbStabilo(ariKp, selected);
+				
+				new TypeHighlightDialog(IsiActivity.this, ariKp, selected, new TypeHighlightDialog.JenisStabiloCallback() {
+					@Override public void onOk(int warnaRgb) {
+						lsText.uncheckAll();
+						lsText.loadAttributeMap();
+					}
+				}, warnaRgb, reference).bukaDialog();
+				mode.finish();
+			} return true;
+			case R.id.menuEsvsb: {
+				final int ari = Ari.encode(S.activeBook.bookId, IsiActivity.this.chapter_1, mainVerse_1);
+
+				try {
+					Intent intent = new Intent("yuku.esvsbasal.action.GOTO"); //$NON-NLS-1$
+					intent.putExtra("ari", ari); //$NON-NLS-1$
+					startActivity(intent);
+				} catch (Exception e) {
+					Log.e(TAG, "ESVSB starting", e); //$NON-NLS-1$
+				}
+			} return true;
+			}
+			return false;
+		}
+
+		@Override public void onDestroyActionMode(ActionMode mode) {
+			actionMode = null;
+			lsText.uncheckAll();
 		}
 	};
 }

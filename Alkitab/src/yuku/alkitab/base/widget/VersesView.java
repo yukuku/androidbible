@@ -8,9 +8,6 @@ import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -27,13 +24,14 @@ import yuku.alkitab.base.widget.VerseAdapter.AttributeListener;
 
 public class VersesView extends ListView {
 	public static final String TAG = VersesView.class.getSimpleName();
+	
+	public interface SelectedVersesListener {
+		void onSomeVersesSelected(VersesView v);
+		void onNoVersesSelected(VersesView v);
+	}
 
 	VerseAdapter adapter;
-
-	// temporary states
-	Animation fadeInAnimation;
-	Animation fadeOutAnimation;
-	boolean showingContextMenuButton = false;
+	private SelectedVersesListener listener;
 
 	public VersesView(Context context) {
 		super(context);
@@ -120,27 +118,6 @@ public class VersesView extends ListView {
 		}
 	};
 
-	void hideContextButton() {
-		if (showingContextMenuButton) {
-			if (fadeOutAnimation == null) {
-				fadeOutAnimation = AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_out);
-			}
-			fadeOutAnimation.setAnimationListener(fadeOutAnimation_animation);
-			bContextMenu.startAnimation(fadeOutAnimation);
-			bContextMenu.setEnabled(false);
-			showingContextMenuButton = false;
-		}
-	}
-
-	private AnimationListener fadeOutAnimation_animation = new AnimationListener() {
-		@Override public void onAnimationStart(Animation animation) {}
-		@Override public void onAnimationRepeat(Animation animation) {}
-		@Override public void onAnimationEnd(Animation animation) {
-			bContextMenu.setVisibility(View.INVISIBLE);
-		}
-	};
-	
-
 	public void uncheckAll() {
 		SparseBooleanArray checkedPositions = getCheckedItemPositions();
 		if (checkedPositions != null && checkedPositions.size() > 0) {
@@ -150,7 +127,7 @@ public class VersesView extends ListView {
 				}
 			}
 		}
-		hideContextButton();
+		if (listener != null) listener.onNoVersesSelected(this);
 	}
 
 	void hideOrShowContextMenuButton() {
@@ -162,21 +139,9 @@ public class VersesView extends ListView {
 		}
 		
 		if (anyChecked) {
-			showContextMenuButton();
+			if (listener != null) listener.onSomeVersesSelected(this);
 		} else {
-			hideContextButton();
-		}
-	}
-	
-	void showContextMenuButton() {
-		if (! showingContextMenuButton) {
-			if (fadeInAnimation == null) {
-				fadeInAnimation = AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_in);
-			}
-			bContextMenu.setVisibility(View.VISIBLE);
-			bContextMenu.startAnimation(fadeInAnimation);
-			bContextMenu.setEnabled(true);
-			showingContextMenuButton = true;
+			if (listener != null) listener.onNoVersesSelected(this);
 		}
 	}
 
@@ -267,5 +232,9 @@ public class VersesView extends ListView {
 			// TODO use smooth scroll?
 			setSelectionFromTop(position, getVerticalFadingEdgeLength());
 		}
+	}
+
+	public void setSelectedVersesListener(SelectedVersesListener listener) {
+		this.listener = listener;
 	}
 }

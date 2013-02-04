@@ -43,7 +43,7 @@
         android:layout_height="0dp"
         android:layout_weight="1" >
 
-        <ListView
+        <yuku.alkitab.base.widget.VersesView
             android:id="@+id/lsIsi"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -53,7 +53,7 @@
             android:listSelector="@android:color/transparent" >
 
             <!-- Preview: listitem=@layout/item_ayat_sederhana -->
-        </ListView>
+        </yuku.alkitab.base.widget.VersesView>
 
         <ImageButton
             android:id="@+id/bContext"
