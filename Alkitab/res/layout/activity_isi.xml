@@ -78,7 +78,7 @@
             android:layout_height="64dp"
             android:padding="16dp"
             android:scaleType="center"
-            android:src="@drawable/left_arrow" android:contentDescription="@string/desc_previous_chapter"/>
+            android:src="@drawable/ic_nav_arrow_left" android:contentDescription="@string/desc_previous_chapter"/>
 
         <Button
             android:id="@+id/bTuju"
@@ -95,7 +95,7 @@
             android:layout_height="64dp"
             android:padding="16dp"
             android:scaleType="center"
-            android:src="@drawable/right_arrow" android:contentDescription="@string/desc_next_chapter"/>
+            android:src="@drawable/ic_nav_arrow_right" android:contentDescription="@string/desc_next_chapter"/>
     </LinearLayout>
 
 </LinearLayout>
