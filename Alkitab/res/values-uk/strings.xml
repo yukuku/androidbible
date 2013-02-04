@@ -32,7 +32,6 @@
   <string name="cari_v">Пошук</string>
   <string name="judul_bukmak_activity">Закладки, нотатки, та виділення,підкреслення</string>
   <string name="pembatas_buku">Закладки</string>
-  <string name="pembatas_condensed">Закладки</string>
   <string name="hapus_pembatas_buku">Видалити закладку</string>
   <string name="bagikan">Поділитись</string>
   <string name="tulis_catatan">Написати нотатку</string>
@@ -170,14 +169,9 @@
   <string name="bmcat_notes">Нотатки</string>
   <string name="bmcat_highlights">Виділення, підкреслення</string>
   <string name="bmcat_unlabeled_bookmarks">Закладки без позначок</string>
-  <string name="bl_notes">Нотатки</string>
   <string name="bl_no_notes_written_yet">Ще не написано жодної нотатки. \nТапни по віршу щоб почати писати нотатку.</string>
-  <string name="bl_highlights">Виділення, підкреслення</string>
   <string name="bl_no_highlighted_verses">Немає виділених, підкреслених віршів.\nТапни по віршу щоб виділити, підкреслити його.</string>
-  <string name="bl_all_bookmarks">Всі закладки</string>
-  <string name="bl_all_bookmarks_without_labels">Всі закладки без позначок</string>
   <string name="bl_there_are_no_bookmarks_without_any_labels">Немає закладок без позначок.</string>
-  <string name="bl_bookmarks_labeled_label">"Закладки помічені, позначені \'%s\'"</string>
   <string name="bl_there_are_no_bookmarks_with_the_label_label">Немає закладок позначених \'%s\'.\"</string>
   <string name="bl_filter_by_some_keywords">Фільтр за деякими словами</string>
   <string name="bl_clear_filter">Очистити фільтр</string>

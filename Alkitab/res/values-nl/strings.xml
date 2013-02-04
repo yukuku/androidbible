@@ -32,7 +32,6 @@
   <string name="cari_v">Zoeken</string>
   <string name="judul_bukmak_activity">Bladwijzers, notities en markeringen</string>
   <string name="pembatas_buku">Bladwijzers</string>
-  <string name="pembatas_condensed">Bladwijzers</string>
   <string name="hapus_pembatas_buku">Verwijder bladwijzer</string>
   <string name="bagikan">Deel</string>
   <string name="tulis_catatan">Schrijf notitie</string>
@@ -74,7 +73,7 @@
   <string name="mulai_mengunduh">Starten van de download…</string>
   <string name="mengunduh_nama">Downloaden van %s</string>
   <string name="file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya">Kon bestand \'%s\' niet vinden. Wil je het downloaden?</string>
-  <string name="mengunduh_tambahan">Add-on aan het downloaden</string>
+  <string name="mengunduh_tambahan">Add-on downloaden</string>
   <string name="pilih_edisi">Kies een versie</string>
   <string name="tuju_v">Ga naar</string>
   <string name="bagikan_alamat">Deel %s</string>
@@ -170,14 +169,9 @@
   <string name="bmcat_notes">Notities</string>
   <string name="bmcat_highlights">Markeringen</string>
   <string name="bmcat_unlabeled_bookmarks">Ongelabelde bladwijzers</string>
-  <string name="bl_notes">Notities</string>
   <string name="bl_no_notes_written_yet">Er zijn nog geen notities geschreven.\nKlik op een vers om een notitie te schrijven.</string>
-  <string name="bl_highlights">Markeringen</string>
   <string name="bl_no_highlighted_verses">Er zijn geen gemarkeerde verzen.\nKlik op een vers om het te markeren.</string>
-  <string name="bl_all_bookmarks">Alle bladwijzers</string>
-  <string name="bl_all_bookmarks_without_labels">Alle bladwijzers zonder labels</string>
   <string name="bl_there_are_no_bookmarks_without_any_labels">Er zijn geen bladwijzers zonder labels.</string>
-  <string name="bl_bookmarks_labeled_label">"Bladwijzers gelabeld \'%s\'"</string>
   <string name="bl_there_are_no_bookmarks_with_the_label_label">"Er zijn geen bladwijzers met het label \'%s\'."</string>
   <string name="bl_filter_by_some_keywords">Filter via sleutelwoorden</string>
   <string name="bl_clear_filter">Reset filter</string>

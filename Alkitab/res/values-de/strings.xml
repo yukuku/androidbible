@@ -30,7 +30,6 @@
   <string name="cari_v">Suche</string>
   <string name="judul_bukmak_activity">Lesezeichen, Notizen, und Markierungen</string>
   <string name="pembatas_buku">Lesezeichen</string>
-  <string name="pembatas_condensed">Lesezeichen</string>
   <string name="hapus_pembatas_buku">Lesezeichen löschen</string>
   <string name="bagikan">Mitteilen</string>
   <string name="tulis_catatan">Notiz schreiben</string>
@@ -51,7 +50,6 @@
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Fehler beim Downloaden %1$s Datum: %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">Download erfolgreich %1$s Datum: %2$s</string>
   <string name="mengunduh_namaumum_tgl_tgl">Downloaden %1$s Datum %2$s…</string>
-  <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Nicht vorhanden. Entweder das Material wurde noch nicht hochgeladen, oder es gab Fehler beim Dateilesen.\n\nDu kannst uns anregen, vom Hauptansichtsmenü \"Anregen\".</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Nicht vorhanden. Es wird heruntergeladen…\n\n(Eine sichere Netzverbindung ist nötig)</string>
   <string name="hari_sabtu">Samstag</string>
   <string name="hari_jumat">Freitag</string>
@@ -167,14 +165,9 @@
   <string name="bmcat_notes">Notizen</string>
   <string name="bmcat_highlights">Markierungen</string>
   <string name="bmcat_unlabeled_bookmarks">Unlabeled Lesezeichen</string>
-  <string name="bl_notes">Notizen</string>
   <string name="bl_no_notes_written_yet">Keine Notizen.\nTippe auf eine Verse um ein Notiz hinzufügen</string>
-  <string name="bl_highlights">Markierungen</string>
   <string name="bl_no_highlighted_verses">Keine markierte Verse.\nTippe auf eine Verse um eine Markierung hinzufügen</string>
-  <string name="bl_all_bookmarks">Alle Lesezeichen</string>
-  <string name="bl_all_bookmarks_without_labels">Alle Lesezeichen ohne Label</string>
   <string name="bl_there_are_no_bookmarks_without_any_labels">Es gibt keine Lesezeichen ohne Label</string>
-  <string name="bl_bookmarks_labeled_label">"Lesezeichen mit Label \'%s\'"</string>
   <string name="bl_there_are_no_bookmarks_with_the_label_label">"Es gibt keine Lesezeichen mit dem Label \'%s\'."</string>
   <string name="bl_filter_by_some_keywords">mit Schlüsselwörter filtrieren</string>
   <string name="bl_clear_filter">Filter zurückstellen</string>
