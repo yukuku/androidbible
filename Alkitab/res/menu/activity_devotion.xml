@@ -19,5 +19,6 @@
 	<item
 		android:title="@string/redownload" 
 		android:id="@+id/menuRedownload"
+		android:icon="@drawable/ic_menu_download" 
 		android:showAsAction="never" />
 </menu>
