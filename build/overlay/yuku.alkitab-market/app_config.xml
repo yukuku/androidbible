@@ -13,7 +13,7 @@
 		<preset locale="el"                       longName="Westcott/Hort, UBS4 variants" namafile_preset="el-whubs4.yes" url="http://alkitab-host.appspot.com/addon/yes/el-whubs4/el-whubs4.yes.gz" />
 		<preset locale="en"   shortName="ASV"     longName="American Standard" namafile_preset="en-asv.yes" url="http://alkitab-host.appspot.com/addon/yes/en-asv/en-asv.yes.gz" />
 		<preset locale="en"   shortName="BBE"     longName="Bible in Basic English" namafile_preset="en-bbe.yes" url="http://alkitab-host.appspot.com/addon/yes/en-bbe/en-bbe.yes.gz" />
-		<preset locale="en"   shortName="KJV"     longName="King James" namafile_preset="kjv.yes" url="http://alkitab-host.appspot.com/addon/yes/kjv-italics/kjv.yes.gz" />
+		<preset locale="en"   shortName="KJV"     longName="King James" namafile_preset="kjv.yes" url="http://alkitab-host.appspot.com/addon/yes/kjv-r20130205/kjv.yes.gz" />
 		<preset locale="en"   shortName="WEB"     longName="World English Bible" namafile_preset="en-web.yes" url="http://alkitab-host.appspot.com/addon/yes/en-web/en-web.yes.gz" />
 		<preset locale="en"   shortName="YLT"     longName="Young's Literal Translation" namafile_preset="en-ylt.yes" url="http://alkitab-host.appspot.com/addon/yes/en-ylt/en-ylt.yes.gz" />
 		<preset locale="es"                       longName="Reina-Valera (1909)" namafile_preset="es-reinavalera1909.yes" url="http://alkitab-host.appspot.com/addon/yes/es-reinavalera1909/es-reinavalera1909.yes.gz" />

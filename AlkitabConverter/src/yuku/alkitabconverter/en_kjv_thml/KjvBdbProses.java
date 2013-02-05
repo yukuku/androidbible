@@ -16,8 +16,9 @@ import yuku.alkitabconverter.bdb.BdbProses;
 import yuku.alkitabconverter.util.Rec;
 
 public class KjvBdbProses {
-	private static final String KJV_TEKS_BDB = "./bahan/en-kjv-thml/kjv3_teks_bdb.txt";
-	private static final String KJV_YES_OUTPUT = "./bahan/en-kjv-thml/kjv3.yes";
+	private static final String BOOK_NAMES = "./bahan/en-kjv-thml/in/kjv_kitab.txt";
+	private static final String KJV_TEKS_BDB = "./bahan/en-kjv-thml/in/kjv3_teks_bdb.txt";
+	private static final String KJV_YES_OUTPUT = "./bahan/en-kjv-thml/out/kjv.yes";
 
 	public static void main(String[] args) throws Exception {
 		final Charset ascii = Charset.forName("ascii");
@@ -101,7 +102,7 @@ public class KjvBdbProses {
 		xnama = new String[66];
 		int p = 0;
 		
-		Scanner sc = new Scanner(new File("./bahan/en-kjv-thml/kjv_kitab.txt"));
+		Scanner sc = new Scanner(new File(BOOK_NAMES));
 		while (sc.hasNextLine()) {
 			String judul = sc.nextLine().trim();
 			if (judul.length() > 0) {
