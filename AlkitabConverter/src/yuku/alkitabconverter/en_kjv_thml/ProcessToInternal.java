@@ -5,7 +5,9 @@ import java.util.ArrayList;
 
 import yuku.alkitabconverter.bdb.BdbProses;
 import yuku.alkitabconverter.internal_common.InternalCommon;
+import yuku.alkitabconverter.internal_common.ReverseIndexer;
 import yuku.alkitabconverter.util.Rec;
+import yuku.alkitabconverter.util.TeksDb;
 
 public class ProcessToInternal {
 	
@@ -15,6 +17,18 @@ public class ProcessToInternal {
 
 	public static void main(String[] args) throws Exception {
 		ArrayList<Rec> recs = new BdbProses().parse(INPUT_TEKS_1, INPUT_TEKS_ENCODING);
+		
+		TeksDb teksDb = new TeksDb();
+		for (Rec rec: recs) {
+			teksDb.append(rec.book_1 - 1, rec.chapter_1, rec.verse_1, rec.text, 0);
+		}
+		
+		////////// CREATE REVERSE INDEX
+		
+		{
+			File outDir = new File("./bahan/en-kjv-thml/raw");
+			ReverseIndexer.createReverseIndex(outDir, "kjv", teksDb);
+		}
 		
 		////////// PROSES KE INTERNAL
 		
