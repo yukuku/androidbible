@@ -731,8 +731,7 @@ public class BookmarkActivity extends BaseActivity {
 			ImageView imgFilterIcon = V.get(res, R.id.imgFilterIcon);
 			if (position < 3) {
 				imgFilterIcon.setVisibility(View.VISIBLE);
-				imgFilterIcon.setImageResource(position == 0? R.drawable.attribute_type_bookmark: position == 1? R.drawable.attribute_type_note: position == 2? R.drawable.highlight_color_checked: 0);
-				imgFilterIcon.setBackgroundColor(position == 2? 0xffffff00: 0);
+				imgFilterIcon.setImageResource(position == 0? R.drawable.ic_attr_bookmark: position == 1? R.drawable.ic_attr_note: position == 2? R.drawable.ic_attr_highlight: 0);
 			} else {
 				imgFilterIcon.setVisibility(View.GONE);
 			}

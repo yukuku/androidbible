@@ -155,7 +155,7 @@ public class TypeBookmarkDialog {
 		new AlertDialog.Builder(context)
 		.setView(dialogView)
 		.setTitle(alamat)
-		.setIcon(R.drawable.attribute_type_bookmark)
+		.setIcon(R.drawable.ic_attr_bookmark)
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
 				Bookmark2 bukmakGaFinal = bukmak;
