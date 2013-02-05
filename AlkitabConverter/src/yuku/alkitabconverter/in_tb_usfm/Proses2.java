@@ -23,10 +23,10 @@ import yuku.alkitab.yes1.Yes1File;
 import yuku.alkitab.yes1.Yes1File.InfoEdisi;
 import yuku.alkitab.yes1.Yes1File.InfoKitab;
 import yuku.alkitab.yes1.Yes1File.PericopeData;
+import yuku.alkitab.yes1.Yes1File.PericopeData.Entry;
 import yuku.alkitab.yes1.Yes1File.PerikopBlok;
 import yuku.alkitab.yes1.Yes1File.PerikopIndex;
 import yuku.alkitab.yes1.Yes1File.Teks;
-import yuku.alkitab.yes1.Yes1File.PericopeData.Entry;
 import yuku.alkitabconverter.internal_common.InternalCommon;
 import yuku.alkitabconverter.internal_common.ReverseIndexer;
 import yuku.alkitabconverter.util.Ari;
@@ -102,9 +102,15 @@ public class Proses2 {
 					as.text = "@@" + as.text;
 				}
 				
+				// patch for "S e l a", "S el a", and "H i g a y o n"
 				as.text = as.text.replace("S e l a", "Sela");
 				as.text = as.text.replace("S el a", "Sela");
 				as.text = as.text.replace("H i g a y o n", "Higayon");
+				
+				// patch for John 12:34
+				if (ari == Ari.encode(42, 12, 34)) {
+					as.text = as.text.replace("bahwa@6Anak Manusia", "bahwa @6Anak Manusia");
+				}
 			}
 		});
 		
