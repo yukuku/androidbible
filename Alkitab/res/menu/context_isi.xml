@@ -19,17 +19,17 @@
         <menu>
             <item
                 android:id="@+id/menuAddBookmark"
-                android:icon="@drawable/ic_menu_bookmark"
+                android:icon="@drawable/ic_menu_add_bookmark"
                 android:showAsAction="always"
                 android:title="@string/tambah_pembatas_buku"/>
             <item
                 android:id="@+id/menuAddNote"
-                android:icon="@drawable/attribute_type_note"
+                android:icon="@drawable/ic_menu_add_note"
                 android:showAsAction="always"
                 android:title="@string/tulis_catatan"/>
             <item
                 android:id="@+id/menuAddHighlight"
-                android:icon="@drawable/highlight_color_cross"
+                android:icon="@drawable/ic_menu_add_highlight"
                 android:showAsAction="always"
                 android:title="@string/highlight_stabilo"/>
         </menu>
