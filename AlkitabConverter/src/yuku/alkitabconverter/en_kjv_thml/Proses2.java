@@ -69,7 +69,7 @@ public class Proses2 {
 	private void tulis(String parsed, StringBuilder isi) {
 		if (prosesParsed(parsed)) {
 			output('\t');
-			String isi2 = isi.toString().trim().replaceAll("\u2019", "'").replaceAll("<i>", "@9").replaceAll("</i>", "@7").replaceAll("<red>", "@6").replaceAll("</red>", "@5").replaceAll("\\s+@5$", "@5").replaceAll("@6@5", "");
+			String isi2 = isi.toString().trim().replaceAll("\u2019", "'").replace("<i>", "@9").replace("</i>", "@7").replace("<red>", "@6").replace("</red>", "@5").replaceAll("\\s+@5$", "@5").replace("@6@5", "").replace("- ", "-");
 			if (isi2.indexOf('@') != -1) {
 				isi2 = "@@" + isi2;
 			}
