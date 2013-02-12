@@ -109,7 +109,6 @@ public class BookmarkActivity extends BaseActivity {
 					
 					final AlertDialog[] dialog = {null};
 					dialog[0] = new AlertDialog.Builder(BookmarkActivity.this)
-					.setTitle(R.string.impor_judul)
 					.setMessage(R.string.apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya)
 					.setNegativeButton(R.string.cancel, null)
 					.setNeutralButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -128,10 +127,7 @@ public class BookmarkActivity extends BaseActivity {
 					dialog[0].setOnDismissListener(finishActivityListener);
 
 				} catch (FileNotFoundException e) {
-					new AlertDialog.Builder(this)
-					.setTitle(R.string.impor_judul)
-					.setMessage(getString(R.string.bl_file_not_found_filename, data.toString()))
-					.show()
+					msgbox(getString(R.string.bl_file_not_found_filename, data.toString()))
 					.setOnDismissListener(finishActivityListener);
 				}
 			}
@@ -158,9 +154,8 @@ public class BookmarkActivity extends BaseActivity {
 		return true;
 	}
 	
-	void msgbox(String title, String message) {
-		new AlertDialog.Builder(this)
-		.setTitle(title)
+	AlertDialog msgbox(String message) {
+		return new AlertDialog.Builder(this)
 		.setMessage(message)
 		.setPositiveButton(R.string.ok, null)
 		.show();
@@ -172,19 +167,17 @@ public class BookmarkActivity extends BaseActivity {
 			final File f = getFileBackup();
 			
 			new AlertDialog.Builder(this)
-			.setTitle(R.string.impor_judul)
 			.setMessage(getString(R.string.impor_pembatas_buku_dan_catatan_dari_tanya, f.getAbsolutePath()))
 			.setNegativeButton(R.string.no, null)
 			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					if (!f.exists() || !f.canRead()) {
-						msgbox(getString(R.string.impor_judul), getString(R.string.file_tidak_bisa_dibaca_file, f.getAbsolutePath()));
+						msgbox(getString(R.string.file_tidak_bisa_dibaca_file, f.getAbsolutePath()));
 						return;
 					}
 
 					new AlertDialog.Builder(BookmarkActivity.this)
-					.setTitle(R.string.impor_judul)
 					.setMessage(R.string.apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya)
 					.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 						@Override
@@ -205,8 +198,12 @@ public class BookmarkActivity extends BaseActivity {
 			
 			return true;
 		} else if (itemId == R.id.menuEkspor) {
+			if (S.getDb().countAllBookmarks() == 0) {
+				msgbox(getString(R.string.no_bookmarks_for_backup));
+				return true;
+			}
+			
 			new AlertDialog.Builder(this)
-			.setTitle(R.string.ekspor_judul)
 			.setMessage(R.string.ekspor_pembatas_buku_dan_catatan_tanya)
 			.setNegativeButton(R.string.no, null)
 			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -218,6 +215,11 @@ public class BookmarkActivity extends BaseActivity {
 			
 			return true;
 		} else if (itemId == R.id.menuSendBackup) {
+			if (S.getDb().countAllBookmarks() == 0) {
+				msgbox(getString(R.string.no_bookmarks_for_backup));
+				return true;
+			}
+			
 			new AlertDialog.Builder(this)
 			.setMessage(R.string.bl_send_backup_confirmation)
 			.setNegativeButton(R.string.no, null)
@@ -252,7 +254,6 @@ public class BookmarkActivity extends BaseActivity {
 			@Override
 			protected void onPreExecute() {
 				pd = new ProgressDialog(BookmarkActivity.this);
-				pd.setTitle(R.string.impor_judul);
 				pd.setMessage(getString(R.string.mengimpor_titiktiga));
 				pd.setIndeterminate(true);
 				pd.setCancelable(false);
@@ -346,24 +347,15 @@ public class BookmarkActivity extends BaseActivity {
 			@Override protected void onPostExecute(Object result) {
 				pd.dismiss();
 				
+				AlertDialog dialog;
 				if (result instanceof Exception) {
-					AlertDialog dialog = new AlertDialog.Builder(BookmarkActivity.this)
-					.setTitle(R.string.impor_judul)
-					.setMessage(getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, ((Exception) result).getMessage()))
-					.setPositiveButton(R.string.ok, null)
-					.show();
-					if (finishActivityAfterwards) {
-						dialog.setOnDismissListener(finishActivityListener);
-					}
+					dialog = msgbox(getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, ((Exception) result).getMessage()));
 				} else {
-					AlertDialog dialog = new AlertDialog.Builder(BookmarkActivity.this)
-					.setTitle(R.string.impor_judul)
-					.setMessage(getString(R.string.impor_berhasil_angka_diproses, count_bookmark, count_label))
-					.setPositiveButton(R.string.ok, null)
-					.show();
-					if (finishActivityAfterwards) {
-						dialog.setOnDismissListener(finishActivityListener);
-					}
+					dialog = msgbox(getString(R.string.impor_berhasil_angka_diproses, count_bookmark, count_label));
+				}
+				
+				if (finishActivityAfterwards) {
+					dialog.setOnDismissListener(finishActivityListener);
 				}
 				
 				adapter.reload();
@@ -378,7 +370,6 @@ public class BookmarkActivity extends BaseActivity {
 			@Override
 			protected void onPreExecute() {
 				pd = new ProgressDialog(BookmarkActivity.this);
-				pd.setTitle(R.string.ekspor_judul);
 				pd.setMessage(getString(R.string.mengekspor_titiktiga));
 				pd.setIndeterminate(true);
 				pd.setCancelable(false);
@@ -455,7 +446,7 @@ public class BookmarkActivity extends BaseActivity {
 				
 				if (result instanceof String) {
 					if (!sendBackup) {
-						msgbox(getString(R.string.ekspor_judul), getString(R.string.ekspor_berhasil_file_yang_dihasilkan_file, result));
+						msgbox(getString(R.string.ekspor_berhasil_file_yang_dihasilkan_file, result));
 					} else {
 						Uri uri = Uri.fromFile(new File((String) result));
 						
@@ -467,7 +458,7 @@ public class BookmarkActivity extends BaseActivity {
 						startActivity(intent);
 					}
 				} else if (result instanceof Exception) {
-					msgbox(getString(R.string.ekspor_judul), getString(R.string.terjadi_kesalahan_ketika_mengekspor_pesan, ((Exception) result).getMessage()));
+					msgbox(getString(R.string.terjadi_kesalahan_ketika_mengekspor_pesan, ((Exception) result).getMessage()));
 				}
 			}
 		}.execute();
@@ -566,7 +557,6 @@ public class BookmarkActivity extends BaseActivity {
 				adapter.reload();
 			} else {
 				new AlertDialog.Builder(this)
-				.setTitle(R.string.delete_label_title)
 				.setMessage(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, nbukmak))
 				.setNegativeButton(R.string.cancel, null)
 				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
