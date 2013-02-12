@@ -44,6 +44,8 @@ public class VersesView extends ListView {
 	}
 
 	private void init() {
+		if (isInEditMode()) return;
+		
 		setAdapter(adapter = new VerseAdapter.Factory().create(getContext()));
 		setOnItemClickListener(itemClick);
 		setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
