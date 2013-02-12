@@ -10,7 +10,6 @@ import android.util.Log;
 
 import yuku.afw.App;
 import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.storage.Db.Bukmak;
 import yuku.alkitab.base.storage.Db.Bookmark2;
 
 public class InternalDbHelper extends SQLiteOpenHelper {
@@ -152,7 +151,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		
 		if (oldVersion <= 23) {
 			// konvert dari Bukmak ke Bukmak2
-			konvertDariBukmakKeBukmak2(db);
+			convertFromBookmarkToBookmark2(db);
 		}
 
 		if (oldVersion <= 50) {
@@ -194,14 +193,23 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL(String.format("create index if not exists index_303 on %s (%s)", Db.TABLE_Version, Db.Version.title)); //$NON-NLS-1$
 	}
 
-	@SuppressWarnings("deprecation") private void konvertDariBukmakKeBukmak2(SQLiteDatabase db) {
+	private void convertFromBookmarkToBookmark2(SQLiteDatabase db) {
+		String TABEL_Bukmak = "Bukmak"; //$NON-NLS-1$
+		class Bukmak {
+			public static final String alamat = "alamat"; //$NON-NLS-1$
+			public static final String waktuTambah = "waktuTambah"; //$NON-NLS-1$
+			public static final String kitab = "kitab"; //$NON-NLS-1$
+			public static final String pasal = "pasal"; //$NON-NLS-1$
+			public static final String ayat = "ayat"; //$NON-NLS-1$
+		}
+
 		bikinTabelBukmak2(db);
 		bikinIndexBukmak2(db);
 		
 		// pindahin data dari Bukmak ke Bukmak2
 		db.beginTransaction();
 		try {
-			Cursor cursor = db.query(Db.TABEL_Bukmak, new String[] {Bukmak.alamat, Bukmak.kitab, Bukmak.pasal, Bukmak.ayat, Bukmak.waktuTambah}, null, null, null, null, null);
+			Cursor cursor = db.query(TABEL_Bukmak, new String[] {Bukmak.alamat, Bukmak.kitab, Bukmak.pasal, Bukmak.ayat, Bukmak.waktuTambah}, null, null, null, null, null);
 
 			int kolom_alamat = cursor.getColumnIndex(Bukmak.alamat);
 			int kolom_kitab = cursor.getColumnIndex(Bukmak.kitab);

@@ -1,16 +1,6 @@
 package yuku.alkitab.base.storage;
 
 public class Db {
-	@Deprecated public static final String TABEL_Bukmak = "Bukmak"; //$NON-NLS-1$
-	public static final class Bukmak {
-		@Deprecated public static final String alamat = "alamat"; //$NON-NLS-1$
-		@Deprecated public static final String cuplikan = "cuplikan"; //$NON-NLS-1$
-		@Deprecated public static final String waktuTambah = "waktuTambah"; //$NON-NLS-1$
-		@Deprecated public static final String kitab = "kitab"; //$NON-NLS-1$
-		@Deprecated public static final String pasal = "pasal"; //$NON-NLS-1$
-		@Deprecated public static final String ayat = "ayat"; //$NON-NLS-1$
-	}
-	
 	public static final String TABLE_Bookmark2 = "Bukmak2"; //$NON-NLS-1$
 	public static final class Bookmark2 {
 		public static final String ari = "ari"; //$NON-NLS-1$
