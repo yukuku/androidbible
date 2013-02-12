@@ -25,7 +25,7 @@ import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
-import yuku.alkitab.base.storage.Db.Bukmak2;
+import yuku.alkitab.base.storage.Db.Bookmark2;
 import yuku.alkitab.base.widget.CallbackSpan.OnClickListener;
 
 public abstract class VerseAdapter extends BaseAdapter {
@@ -247,7 +247,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	protected void setClickListenerForBookmark(View imgBukmak, final int pasal_1, final int ayat_1) {
 		imgBukmak.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
-				attributeListener_.onClick(book_, pasal_1, ayat_1, Bukmak2.kind_bookmark);
+				attributeListener_.onClick(book_, pasal_1, ayat_1, Bookmark2.kind_bookmark);
 			}
 		});
 	}
@@ -255,7 +255,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	protected void setClickListenerForNote(View imgCatatan, final int pasal_1, final int ayat_1) {
 		imgCatatan.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
-				attributeListener_.onClick(book_, pasal_1, ayat_1, Bukmak2.kind_note);
+				attributeListener_.onClick(book_, pasal_1, ayat_1, Bookmark2.kind_note);
 			}
 		});
 	}

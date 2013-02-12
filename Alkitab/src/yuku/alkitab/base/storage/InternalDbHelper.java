@@ -11,7 +11,7 @@ import android.util.Log;
 import yuku.afw.App;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.storage.Db.Bukmak;
-import yuku.alkitab.base.storage.Db.Bukmak2;
+import yuku.alkitab.base.storage.Db.Bookmark2;
 
 public class InternalDbHelper extends SQLiteOpenHelper {
 	public static final String TAG = InternalDbHelper.class.getSimpleName();
@@ -52,20 +52,20 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			"%s text, " + // tulisan //$NON-NLS-1$
 			"%s integer, " + // waktuTambah //$NON-NLS-1$
 			"%s integer)", // waktuUbah //$NON-NLS-1$
-			Db.TABEL_Bukmak2, Db.Bukmak2.ari, Db.Bukmak2.jenis, Db.Bukmak2.tulisan, Db.Bukmak2.waktuTambah, Db.Bukmak2.waktuUbah));
+			Db.TABLE_Bookmark2, Db.Bookmark2.ari, Db.Bookmark2.kind, Db.Bookmark2.caption, Db.Bookmark2.addTime, Db.Bookmark2.modifyTime));
 	}
 	
 	private void bikinIndexBukmak2(SQLiteDatabase db) throws SQLException {
 		// index Bukmak2(ari)
-		db.execSQL(String.format("create index if not exists index_201 on %s (%s)", Db.TABEL_Bukmak2, Db.Bukmak2.ari)); //$NON-NLS-1$
+		db.execSQL(String.format("create index if not exists index_201 on %s (%s)", Db.TABLE_Bookmark2, Db.Bookmark2.ari)); //$NON-NLS-1$
 		// index Bukmak2(jenis,ari)
-		db.execSQL(String.format("create index if not exists index_202 on %s (%s, %s)", Db.TABEL_Bukmak2, Db.Bukmak2.jenis, Db.Bukmak2.ari)); //$NON-NLS-1$
+		db.execSQL(String.format("create index if not exists index_202 on %s (%s, %s)", Db.TABLE_Bookmark2, Db.Bookmark2.kind, Db.Bookmark2.ari)); //$NON-NLS-1$
 		// index Bukmak2(jenis,waktuUbah)
-		db.execSQL(String.format("create index if not exists index_203 on %s (%s, %s)", Db.TABEL_Bukmak2, Db.Bukmak2.jenis, Db.Bukmak2.waktuUbah)); //$NON-NLS-1$
+		db.execSQL(String.format("create index if not exists index_203 on %s (%s, %s)", Db.TABLE_Bookmark2, Db.Bookmark2.kind, Db.Bookmark2.modifyTime)); //$NON-NLS-1$
 		// index Bukmak2(jenis,waktuTambah)
-		db.execSQL(String.format("create index if not exists index_204 on %s (%s, %s)", Db.TABEL_Bukmak2, Db.Bukmak2.jenis, Db.Bukmak2.waktuTambah)); //$NON-NLS-1$
+		db.execSQL(String.format("create index if not exists index_204 on %s (%s, %s)", Db.TABLE_Bookmark2, Db.Bookmark2.kind, Db.Bookmark2.addTime)); //$NON-NLS-1$
 		// index Bukmak2(jenis,tulisan)
-		db.execSQL(String.format("create index if not exists index_205 on %s (%s, %s collate NOCASE)", Db.TABEL_Bukmak2, Db.Bukmak2.jenis, Db.Bukmak2.tulisan)); //$NON-NLS-1$
+		db.execSQL(String.format("create index if not exists index_205 on %s (%s, %s collate NOCASE)", Db.TABLE_Bookmark2, Db.Bookmark2.kind, Db.Bookmark2.caption)); //$NON-NLS-1$
 	}
 	
 	private void bikinTabelRenungan(SQLiteDatabase db) throws SQLException {
@@ -78,72 +78,72 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			"%s text, " + // isi //$NON-NLS-1$
 			"%s integer," + // siap pakai //$NON-NLS-1$
 			"%s integer)", // waktuSentuh //$NON-NLS-1$
-			Db.TABEL_Renungan, Db.Renungan.nama, Db.Renungan.tgl, Db.Renungan.header, Db.Renungan.judul, Db.Renungan.isi, Db.Renungan.siapPakai, Db.Renungan.waktuSentuh));
+			Db.TABLE_Devotion, Db.Devotion.name, Db.Devotion.date, Db.Devotion.header, Db.Devotion.title, Db.Devotion.body, Db.Devotion.readyToUse, Db.Devotion.touchTime));
 	}
 
 	private void bikinIndexRenungan(SQLiteDatabase db) throws SQLException {
 		// index Renungan(nama)
-		db.execSQL(String.format("create index if not exists index_101 on %s (%s)", Db.TABEL_Renungan, Db.Renungan.nama)); //$NON-NLS-1$
+		db.execSQL(String.format("create index if not exists index_101 on %s (%s)", Db.TABLE_Devotion, Db.Devotion.name)); //$NON-NLS-1$
 		// index Renungan(nama,tgl)
-		db.execSQL(String.format("create index if not exists index_102 on %s (%s, %s)", Db.TABEL_Renungan, Db.Renungan.nama, Db.Renungan.tgl)); //$NON-NLS-1$
+		db.execSQL(String.format("create index if not exists index_102 on %s (%s, %s)", Db.TABLE_Devotion, Db.Devotion.name, Db.Devotion.date)); //$NON-NLS-1$
 		// index Renungan(tgl)
-		db.execSQL(String.format("create index if not exists index_103 on %s (%s)", Db.TABEL_Renungan, Db.Renungan.tgl)); //$NON-NLS-1$
+		db.execSQL(String.format("create index if not exists index_103 on %s (%s)", Db.TABLE_Devotion, Db.Devotion.date)); //$NON-NLS-1$
 		// index Renungan(waktuSentuh)
-		db.execSQL(String.format("create index if not exists index_104 on %s (%s)", Db.TABEL_Renungan, Db.Renungan.waktuSentuh)); //$NON-NLS-1$
+		db.execSQL(String.format("create index if not exists index_104 on %s (%s)", Db.TABLE_Devotion, Db.Devotion.touchTime)); //$NON-NLS-1$
 	}
 	
 	private void bikinTabelEdisi(SQLiteDatabase db) throws SQLException {
-		db.execSQL("create table if not exists " + Db.TABEL_Edisi + " (" + //$NON-NLS-1$ //$NON-NLS-2$
+		db.execSQL("create table if not exists " + Db.TABLE_Version + " (" + //$NON-NLS-1$ //$NON-NLS-2$
 			"_id integer primary key autoincrement, " + //$NON-NLS-1$
-			Db.Edisi.shortName + " text, " + //$NON-NLS-1$
-			Db.Edisi.judul + " text, " + // judul (keliatan sama user) //$NON-NLS-1$
-			Db.Edisi.jenis + " text, " + // jenis (yes) //$NON-NLS-1$
-			Db.Edisi.keterangan + " text, " + // keterangan tambahan, mungkin bisa diedit user kalo perlu //$NON-NLS-1$
-			Db.Edisi.namafile + " text, " + // nama file di sd card (full path) //$NON-NLS-1$
-			Db.Edisi.namafile_pdbasal + " text, " + // nama file kalau bekas dikonvert dari pdb (nama doang) //$NON-NLS-1$
-			Db.Edisi.aktif + " integer, " + // tampilkan di daftar edisi? //$NON-NLS-1$
-			Db.Edisi.urutan + " integer)"); //$NON-NLS-1$
+			Db.Version.shortName + " text, " + //$NON-NLS-1$
+			Db.Version.title + " text, " + // judul (keliatan sama user) //$NON-NLS-1$
+			Db.Version.kind + " text, " + // jenis (yes) //$NON-NLS-1$
+			Db.Version.description + " text, " + // keterangan tambahan, mungkin bisa diedit user kalo perlu //$NON-NLS-1$
+			Db.Version.filename + " text, " + // nama file di sd card (full path) //$NON-NLS-1$
+			Db.Version.filename_originalpdb + " text, " + // nama file kalau bekas dikonvert dari pdb (nama doang) //$NON-NLS-1$
+			Db.Version.active + " integer, " + // tampilkan di daftar edisi? //$NON-NLS-1$
+			Db.Version.ordering + " integer)"); //$NON-NLS-1$
 		
 	}
 	
 	private void bikinIndexEdisi(SQLiteDatabase db) throws SQLException {
 		// index Edisi(urutan)
-		db.execSQL(String.format("create index if not exists index_301 on %s (%s)", Db.TABEL_Edisi, Db.Edisi.urutan)); //$NON-NLS-1$
+		db.execSQL(String.format("create index if not exists index_301 on %s (%s)", Db.TABLE_Version, Db.Version.ordering)); //$NON-NLS-1$
 		
 		// index Edisi(shortName)
-		db.execSQL(String.format("create index if not exists index_302 on %s (%s)", Db.TABEL_Edisi, Db.Edisi.shortName)); //$NON-NLS-1$
+		db.execSQL(String.format("create index if not exists index_302 on %s (%s)", Db.TABLE_Version, Db.Version.shortName)); //$NON-NLS-1$
 		
 		// index Edisi(judul)
-		db.execSQL(String.format("create index if not exists index_303 on %s (%s)", Db.TABEL_Edisi, Db.Edisi.judul)); //$NON-NLS-1$
+		db.execSQL(String.format("create index if not exists index_303 on %s (%s)", Db.TABLE_Version, Db.Version.title)); //$NON-NLS-1$
 	}
 	
 	private void bikinTabelLabel(SQLiteDatabase db) throws SQLException {
-		db.execSQL("create table if not exists " + Db.TABEL_Label + " (" + //$NON-NLS-1$ //$NON-NLS-2$
+		db.execSQL("create table if not exists " + Db.TABLE_Label + " (" + //$NON-NLS-1$ //$NON-NLS-2$
 			"_id integer primary key autoincrement, " + //$NON-NLS-1$
-			Db.Label.judul + " text, " + //$NON-NLS-1$
-			Db.Label.urutan + " integer, " + //$NON-NLS-1$
-			Db.Label.warnaLatar + " text)"); //$NON-NLS-1$
+			Db.Label.title + " text, " + //$NON-NLS-1$
+			Db.Label.ordering + " integer, " + //$NON-NLS-1$
+			Db.Label.backgroundColor + " text)"); //$NON-NLS-1$
 	}
 	
 	private void bikinIndexLabel(SQLiteDatabase db) throws SQLException {
 		// index Label(urutan)
-		db.execSQL(String.format("create index if not exists index_401 on %s (%s)", Db.TABEL_Label, Db.Label.urutan)); //$NON-NLS-1$
+		db.execSQL(String.format("create index if not exists index_401 on %s (%s)", Db.TABLE_Label, Db.Label.ordering)); //$NON-NLS-1$
 	}
 	
 	private void bikinTabelBukmak2_Label(SQLiteDatabase db) throws SQLException {
-		db.execSQL("create table if not exists " + Db.TABEL_Bukmak2_Label + " (" + //$NON-NLS-1$ //$NON-NLS-2$
+		db.execSQL("create table if not exists " + Db.TABLE_Bookmark2_Label + " (" + //$NON-NLS-1$ //$NON-NLS-2$
 				"_id integer primary key autoincrement, " + //$NON-NLS-1$
-				Db.Bukmak2_Label.bukmak2_id + " integer, " + //$NON-NLS-1$
-				Db.Bukmak2_Label.label_id + " integer)"); //$NON-NLS-1$
+				Db.Bookmark2_Label.bookmark2_id + " integer, " + //$NON-NLS-1$
+				Db.Bookmark2_Label.label_id + " integer)"); //$NON-NLS-1$
 	}
 	
 	private void bikinIndexBukmak2_Label(SQLiteDatabase db) throws SQLException {
 		// index Bukmak2_Label(bukmak2_id)
-		db.execSQL(String.format("create index if not exists index_501 on %s (%s)", Db.TABEL_Bukmak2_Label, Db.Bukmak2_Label.bukmak2_id)); //$NON-NLS-1$
+		db.execSQL(String.format("create index if not exists index_501 on %s (%s)", Db.TABLE_Bookmark2_Label, Db.Bookmark2_Label.bookmark2_id)); //$NON-NLS-1$
 		// index Bukmak2_Label(label_id)
-		db.execSQL(String.format("create index if not exists index_502 on %s (%s)", Db.TABEL_Bukmak2_Label, Db.Bukmak2_Label.label_id)); //$NON-NLS-1$
+		db.execSQL(String.format("create index if not exists index_502 on %s (%s)", Db.TABLE_Bookmark2_Label, Db.Bookmark2_Label.label_id)); //$NON-NLS-1$
 		// unique index Bukmak2_Label(bukmak2_id, label_id)
-		db.execSQL(String.format("create unique index if not exists index_503 on %s (%s, %s)", Db.TABEL_Bukmak2_Label, Db.Bukmak2_Label.bukmak2_id, Db.Bukmak2_Label.label_id)); //$NON-NLS-1$
+		db.execSQL(String.format("create unique index if not exists index_503 on %s (%s, %s)", Db.TABLE_Bookmark2_Label, Db.Bookmark2_Label.bookmark2_id, Db.Bookmark2_Label.label_id)); //$NON-NLS-1$
 		
 	}
 	
@@ -185,13 +185,13 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	}
 
 	private void addShortNameColumnAndIndexToEdisi(SQLiteDatabase db) {
-		db.execSQL("alter table " + Db.TABEL_Edisi + " add column " + Db.Edisi.shortName + " text");
+		db.execSQL("alter table " + Db.TABLE_Version + " add column " + Db.Version.shortName + " text");
 		
 		// index Edisi(shortName)
-		db.execSQL(String.format("create index if not exists index_302 on %s (%s)", Db.TABEL_Edisi, Db.Edisi.shortName)); //$NON-NLS-1$
+		db.execSQL(String.format("create index if not exists index_302 on %s (%s)", Db.TABLE_Version, Db.Version.shortName)); //$NON-NLS-1$
 		
 		// index Edisi(judul)
-		db.execSQL(String.format("create index if not exists index_303 on %s (%s)", Db.TABEL_Edisi, Db.Edisi.judul)); //$NON-NLS-1$
+		db.execSQL(String.format("create index if not exists index_303 on %s (%s)", Db.TABLE_Version, Db.Version.title)); //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("deprecation") private void konvertDariBukmakKeBukmak2(SQLiteDatabase db) {
@@ -212,7 +212,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			ContentValues cv = new ContentValues();
 			
 			// default
-			cv.put(Bukmak2.jenis, Bukmak2.kind_bookmark);
+			cv.put(Bookmark2.kind, Bookmark2.kind_bookmark);
 
 			while (true) {
 		    	boolean more = cursor.moveToNext();
@@ -220,18 +220,18 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		    		break;
 		    	}
 
-		    	cv.put(Bukmak2.tulisan, cursor.getString(kolom_alamat));
+		    	cv.put(Bookmark2.caption, cursor.getString(kolom_alamat));
 		    	
 		    	int kitab = cursor.getInt(kolom_kitab);
 		    	int pasal = cursor.getInt(kolom_pasal);
 		    	int ayat = cursor.getInt(kolom_ayat);
 		    	int ari = Ari.encode(kitab, pasal, ayat);
 		    	
-		    	cv.put(Bukmak2.ari, ari);
+		    	cv.put(Bookmark2.ari, ari);
 		    	Integer waktu = Integer.valueOf(cursor.getString(kolom_waktuTambah));
-		    	cv.put(Bukmak2.waktuTambah, waktu);
-		    	cv.put(Bukmak2.waktuUbah, waktu);
-				db.insertOrThrow(Db.TABEL_Bukmak2, null, cv);
+		    	cv.put(Bookmark2.addTime, waktu);
+		    	cv.put(Bookmark2.modifyTime, waktu);
+				db.insertOrThrow(Db.TABLE_Bookmark2, null, cv);
 		    }
 		    cursor.close();
 			

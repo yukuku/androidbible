@@ -84,9 +84,9 @@ public class TypeNoteDialog {
 	public void show() {
 		this.dialog.setTitle(context.getString(R.string.catatan_alamat, alamat));
 		
-		this.bukmak = S.getDb().getBukmakByAri(ari, Db.Bukmak2.kind_note);
+		this.bukmak = S.getDb().getBukmakByAri(ari, Db.Bookmark2.kind_note);
 		if (bukmak != null) {
-			tCatatan.setText(bukmak.tulisan);
+			tCatatan.setText(bukmak.caption);
 		}
 		
 		dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -99,15 +99,15 @@ public class TypeNoteDialog {
 		Date kini = new Date();
 		if (bukmak != null) {
 			if (tulisan.length() == 0) {
-				S.getDb().hapusBukmakByAri(ari, Db.Bukmak2.kind_note);
+				S.getDb().hapusBukmakByAri(ari, Db.Bookmark2.kind_note);
 			} else {
-				bukmak.tulisan = tulisan;
-				bukmak.waktuUbah = kini;
+				bukmak.caption = tulisan;
+				bukmak.modifyTime = kini;
 				S.getDb().updateBukmak(bukmak);
 			}
 		} else { // bukmak == null; belum ada sebelumnya, maka hanya insert kalo ada tulisan.
 			if (tulisan.length() > 0) {
-				bukmak = S.getDb().insertBukmak(ari, Db.Bukmak2.kind_note, tulisan, kini, kini);
+				bukmak = S.getDb().insertBukmak(ari, Db.Bookmark2.kind_note, tulisan, kini, kini);
 			}
 		}
 		
@@ -124,7 +124,7 @@ public class TypeNoteDialog {
 				@Override public void onClick(DialogInterface dialog, int which) {
 					if (bukmak != null) {
 						// beneran hapus dari db
-						S.getDb().hapusBukmakByAri(ari, Db.Bukmak2.kind_note);
+						S.getDb().hapusBukmakByAri(ari, Db.Bookmark2.kind_note);
 					} else {
 						// ga ngapa2in, karena emang ga ada di db, cuma di editor buffer
 					}
