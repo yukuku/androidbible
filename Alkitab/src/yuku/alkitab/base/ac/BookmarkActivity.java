@@ -109,29 +109,25 @@ public class BookmarkActivity extends BaseActivity {
 					
 					final AlertDialog[] dialog = {null};
 					dialog[0] = new AlertDialog.Builder(BookmarkActivity.this)
-					.setTitle(R.string.impor_judul)
 					.setMessage(R.string.apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya)
 					.setNegativeButton(R.string.cancel, null)
 					.setNeutralButton(R.string.no, new DialogInterface.OnClickListener() {
 						@Override public void onClick(DialogInterface dialog_, int which) {
 							dialog[0].setOnDismissListener(null);
-							impor(inputStream, false, true);
+							importBookmarks(inputStream, false, true);
 						}
 					})
 					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 						@Override public void onClick(DialogInterface dialog_, int which) {
 							dialog[0].setOnDismissListener(null);
-							impor(inputStream, true, true);
+							importBookmarks(inputStream, true, true);
 						}
 					})
 					.show();
 					dialog[0].setOnDismissListener(finishActivityListener);
 
 				} catch (FileNotFoundException e) {
-					new AlertDialog.Builder(this)
-					.setTitle(R.string.impor_judul)
-					.setMessage(getString(R.string.bl_file_not_found_filename, data.toString()))
-					.show()
+					msgbox(getString(R.string.bl_file_not_found_filename, data.toString()))
 					.setOnDismissListener(finishActivityListener);
 				}
 			}
@@ -158,9 +154,8 @@ public class BookmarkActivity extends BaseActivity {
 		return true;
 	}
 	
-	void msgbox(String title, String message) {
-		new AlertDialog.Builder(this)
-		.setTitle(title)
+	AlertDialog msgbox(String message) {
+		return new AlertDialog.Builder(this)
 		.setMessage(message)
 		.setPositiveButton(R.string.ok, null)
 		.show();
@@ -172,30 +167,28 @@ public class BookmarkActivity extends BaseActivity {
 			final File f = getFileBackup();
 			
 			new AlertDialog.Builder(this)
-			.setTitle(R.string.impor_judul)
 			.setMessage(getString(R.string.impor_pembatas_buku_dan_catatan_dari_tanya, f.getAbsolutePath()))
 			.setNegativeButton(R.string.no, null)
 			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					if (!f.exists() || !f.canRead()) {
-						msgbox(getString(R.string.impor_judul), getString(R.string.file_tidak_bisa_dibaca_file, f.getAbsolutePath()));
+						msgbox(getString(R.string.file_tidak_bisa_dibaca_file, f.getAbsolutePath()));
 						return;
 					}
 
 					new AlertDialog.Builder(BookmarkActivity.this)
-					.setTitle(R.string.impor_judul)
 					.setMessage(R.string.apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya)
 					.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							impor(null, false, false);
+							importBookmarks(null, false, false);
 						}
 					})
 					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							impor(null, true, false);
+							importBookmarks(null, true, false);
 						}
 					})
 					.show();
@@ -205,25 +198,34 @@ public class BookmarkActivity extends BaseActivity {
 			
 			return true;
 		} else if (itemId == R.id.menuEkspor) {
+			if (S.getDb().countAllBookmarks() == 0) {
+				msgbox(getString(R.string.no_bookmarks_for_backup));
+				return true;
+			}
+			
 			new AlertDialog.Builder(this)
-			.setTitle(R.string.ekspor_judul)
 			.setMessage(R.string.ekspor_pembatas_buku_dan_catatan_tanya)
 			.setNegativeButton(R.string.no, null)
 			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
-					ekspor(false);
+					exportBookmarks(false);
 				}
 			})
 			.show();
 			
 			return true;
 		} else if (itemId == R.id.menuSendBackup) {
+			if (S.getDb().countAllBookmarks() == 0) {
+				msgbox(getString(R.string.no_bookmarks_for_backup));
+				return true;
+			}
+			
 			new AlertDialog.Builder(this)
 			.setMessage(R.string.bl_send_backup_confirmation)
 			.setNegativeButton(R.string.no, null)
 			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
-					ekspor(true);
+					exportBookmarks(true);
 				}
 			})
 			.show();
@@ -243,16 +245,15 @@ public class BookmarkActivity extends BaseActivity {
 		return new File(dir, getPackageName() + "-backup.xml"); //$NON-NLS-1$
 	}
 
-	public void impor(final InputStream inputStream, boolean tumpuk, final boolean finishActivityAfterwards) {
+	public void importBookmarks(final InputStream inputStream, boolean overwriteExisting, final boolean finishActivityAfterwards) {
 		new AsyncTask<Boolean, Integer, Object>() {
 			ProgressDialog pd;
-			int count_bukmak = 0;
+			int count_bookmark = 0;
 			int count_label = 0;
 			
 			@Override
 			protected void onPreExecute() {
 				pd = new ProgressDialog(BookmarkActivity.this);
-				pd.setTitle(R.string.impor_judul);
 				pd.setMessage(getString(R.string.mengimpor_titiktiga));
 				pd.setIndeterminate(true);
 				pd.setCancelable(false);
@@ -262,12 +263,12 @@ public class BookmarkActivity extends BaseActivity {
 			@Override protected Object doInBackground(Boolean... params) {
 				final boolean tumpuk = params[0];
 				
-				final List<Bookmark2> xbukmak = new ArrayList<Bookmark2>();
-				final TObjectIntHashMap<Bookmark2> bukmakToRelIdMap = new TObjectIntHashMap<Bookmark2>();
-				final List<Label> xlabel = new ArrayList<Label>();
+				final List<Bookmark2> bookmarks = new ArrayList<Bookmark2>();
+				final TObjectIntHashMap<Bookmark2> bookmarkToRelIdMap = new TObjectIntHashMap<Bookmark2>();
+				final List<Label> labels = new ArrayList<Label>();
 				final TObjectIntHashMap<Label> labelToRelIdMap = new TObjectIntHashMap<Label>();
 				final TIntLongHashMap labelRelIdToAbsIdMap = new TIntLongHashMap();
-				final TIntObjectHashMap<TIntList> bukmak2RelIdToLabelRelIdsMap = new TIntObjectHashMap<TIntList>();
+				final TIntObjectHashMap<TIntList> bookmark2RelIdToLabelRelIdsMap = new TIntObjectHashMap<TIntList>();
 				
 				try {
 					InputStream fis;
@@ -282,25 +283,25 @@ public class BookmarkActivity extends BaseActivity {
 					Xml.parse(fis, Xml.Encoding.UTF_8, new DefaultHandler2() {
 						@Override public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 							if (localName.equals(Bookmark2.XMLTAG_Bukmak2)) {
-								Bookmark2 bukmak = Bookmark2.dariAttributes(attributes);
-								int bukmak2_relId = Bookmark2.getRelId(attributes); 
-								xbukmak.add(bukmak);
-								bukmakToRelIdMap.put(bukmak, bukmak2_relId);
-								count_bukmak++;
+								Bookmark2 bookmark = Bookmark2.fromAttributes(attributes);
+								int bookmark2_relId = Bookmark2.getRelId(attributes); 
+								bookmarks.add(bookmark);
+								bookmarkToRelIdMap.put(bookmark, bookmark2_relId);
+								count_bookmark++;
 							} else if (localName.equals(Label.XMLTAG_Label)) {
 								Label label = Label.dariAttributes(attributes);
 								int label_relId = Label.getRelId(attributes); 
-								xlabel.add(label);
+								labels.add(label);
 								labelToRelIdMap.put(label, label_relId);
 								count_label++;
-							} else if (localName.equals(Bukmak2_Label_XMLTAG_Bukmak2_Label)) {
-								int bukmak2_relId = Integer.parseInt(attributes.getValue("", Bukmak2_Label_XMLATTR_bukmak2_relId)); //$NON-NLS-1$
-								int label_relId = Integer.parseInt(attributes.getValue("", Bukmak2_Label_XMLATTR_label_relId)); //$NON-NLS-1$
+							} else if (localName.equals(Bookmark2_Label.XMLTAG_Bookmark2_Label)) {
+								int bookmark2_relId = Integer.parseInt(attributes.getValue("", Bookmark2_Label.XMLATTR_bookmark2_relId)); //$NON-NLS-1$
+								int label_relId = Integer.parseInt(attributes.getValue("", Bookmark2_Label.XMLATTR_label_relId)); //$NON-NLS-1$
 								
-								TIntList labelRelIds = bukmak2RelIdToLabelRelIdsMap.get(bukmak2_relId);
+								TIntList labelRelIds = bookmark2RelIdToLabelRelIdsMap.get(bookmark2_relId);
 								if (labelRelIds == null) {
 									labelRelIds = new TIntArrayList();
-									bukmak2RelIdToLabelRelIdsMap.put(bukmak2_relId, labelRelIds);
+									bookmark2RelIdToLabelRelIdsMap.put(bookmark2_relId, labelRelIds);
 								}
 								labelRelIds.add(label_relId);
 							}
@@ -313,15 +314,15 @@ public class BookmarkActivity extends BaseActivity {
 				
 				{ // bikin label-label yang diperlukan, juga map relId dengan id dari label.
 					HashMap<String, Label> judulMap = new HashMap<String, Label>();
-					List<Label> xlabelLama = S.getDb().listSemuaLabel();
+					List<Label> xlabelLama = S.getDb().getAllLabels();
 					
 					for (Label labelLama: xlabelLama) {
-						judulMap.put(labelLama.judul, labelLama);
+						judulMap.put(labelLama.title, labelLama);
 					}
 					
-					for (Label label: xlabel) {
+					for (Label label: labels) {
 						// cari apakah label yang judulnya persis sama udah ada
-						Label labelLama = judulMap.get(label.judul);
+						Label labelLama = judulMap.get(label.title);
 						if (labelLama != null) {
 							// update warna label lama
 							if (tumpuk && label.backgroundColor != null && label.backgroundColor.length() > 0) {
@@ -331,14 +332,14 @@ public class BookmarkActivity extends BaseActivity {
 							labelRelIdToAbsIdMap.put(labelToRelIdMap.get(label), labelLama._id);
 							Log.d(TAG, "label (lama) r->a : " + labelToRelIdMap.get(label) + "->" + labelLama._id); //$NON-NLS-1$ //$NON-NLS-2$
 						} else { // belum ada, harus bikin baru
-							Label labelBaru = S.getDb().tambahLabel(label.judul, label.backgroundColor);
+							Label labelBaru = S.getDb().tambahLabel(label.title, label.backgroundColor);
 							labelRelIdToAbsIdMap.put(labelToRelIdMap.get(label), labelBaru._id);
 							Log.d(TAG, "label (baru) r->a : " + labelToRelIdMap.get(label) + "->" + labelBaru._id); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					}
 				}
 				
-				S.getDb().importBukmak(xbukmak, tumpuk, bukmakToRelIdMap, labelRelIdToAbsIdMap, bukmak2RelIdToLabelRelIdsMap);
+				S.getDb().importBookmarks(bookmarks, tumpuk, bookmarkToRelIdMap, labelRelIdToAbsIdMap, bookmark2RelIdToLabelRelIdsMap);
 			
 				return null;
 			}
@@ -346,39 +347,29 @@ public class BookmarkActivity extends BaseActivity {
 			@Override protected void onPostExecute(Object result) {
 				pd.dismiss();
 				
+				AlertDialog dialog;
 				if (result instanceof Exception) {
-					AlertDialog dialog = new AlertDialog.Builder(BookmarkActivity.this)
-					.setTitle(R.string.impor_judul)
-					.setMessage(getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, ((Exception) result).getMessage()))
-					.setPositiveButton(R.string.ok, null)
-					.show();
-					if (finishActivityAfterwards) {
-						dialog.setOnDismissListener(finishActivityListener);
-					}
+					dialog = msgbox(getString(R.string.terjadi_kesalahan_ketika_mengimpor_pesan, ((Exception) result).getMessage()));
 				} else {
-					AlertDialog dialog = new AlertDialog.Builder(BookmarkActivity.this)
-					.setTitle(R.string.impor_judul)
-					.setMessage(getString(R.string.impor_berhasil_angka_diproses, count_bukmak, count_label))
-					.setPositiveButton(R.string.ok, null)
-					.show();
-					if (finishActivityAfterwards) {
-						dialog.setOnDismissListener(finishActivityListener);
-					}
+					dialog = msgbox(getString(R.string.impor_berhasil_angka_diproses, count_bookmark, count_label));
+				}
+				
+				if (finishActivityAfterwards) {
+					dialog.setOnDismissListener(finishActivityListener);
 				}
 				
 				adapter.reload();
 			}
-		}.execute((Boolean)tumpuk);
+		}.execute((Boolean)overwriteExisting);
 	}
 	
-	public void ekspor(final boolean sendBackup) {
+	public void exportBookmarks(final boolean sendBackup) {
 		new AsyncTask<Void, Integer, Object>() {
 			ProgressDialog pd;
 			
 			@Override
 			protected void onPreExecute() {
 				pd = new ProgressDialog(BookmarkActivity.this);
-				pd.setTitle(R.string.ekspor_judul);
 				pd.setMessage(getString(R.string.mengekspor_titiktiga));
 				pd.setIndeterminate(true);
 				pd.setCancelable(false);
@@ -396,14 +387,14 @@ public class BookmarkActivity extends BaseActivity {
 					xml.startDocument("utf-8", null); //$NON-NLS-1$
 					xml.startTag(null, "backup"); //$NON-NLS-1$
 					
-					List<Bookmark2> xbukmak = new ArrayList<Bookmark2>();
+					List<Bookmark2> bookmarks = new ArrayList<Bookmark2>();
 					{ // write bookmarks
-						Cursor cursor = S.getDb().listSemuaBukmak();
+						Cursor cursor = S.getDb().listAllBookmarks();
 						try {
 							while (cursor.moveToNext()) {
-								Bookmark2 bukmak = Bookmark2.dariCursor(cursor);
-								xbukmak.add(bukmak); // daftarkan bukmak
-								bukmak.writeXml(xml, xbukmak.size() /* 1-based relId */);
+								Bookmark2 bookmark = Bookmark2.fromCursor(cursor);
+								bookmarks.add(bookmark); // register bookmark
+								bookmark.writeXml(xml, bookmarks.size() /* 1-based relId */);
 							}
 						} finally {
 							cursor.close();
@@ -411,29 +402,29 @@ public class BookmarkActivity extends BaseActivity {
 					}
 					
 					TLongIntHashMap labelAbsIdToRelIdMap = new TLongIntHashMap();
-					List<Label> xlabel = S.getDb().listSemuaLabel();
+					List<Label> labels = S.getDb().getAllLabels();
 					{ // write labels
-						for (int i = 0; i < xlabel.size(); i++) {
-							Label label = xlabel.get(i);
+						for (int i = 0; i < labels.size(); i++) {
+							Label label = labels.get(i);
 							label.writeXml(xml, i + 1 /* 1-based relId */);
 							labelAbsIdToRelIdMap.put(label._id, i + 1 /* 1-based relId */);
 						}
 					}
 					
-					{ // write mapping from bukmak to label
-						for (int bukmak2_relId_0 = 0; bukmak2_relId_0 < xbukmak.size(); bukmak2_relId_0++) {
-							Bookmark2 bukmak = xbukmak.get(bukmak2_relId_0);
-							TLongList labelIds = S.getDb().listLabelIds(bukmak._id);
+					{ // write mapping from bookmark to label
+						for (int bookmark2_relId_0 = 0; bookmark2_relId_0 < bookmarks.size(); bookmark2_relId_0++) {
+							Bookmark2 bookmark = bookmarks.get(bookmark2_relId_0);
+							TLongList labelIds = S.getDb().getLabelIds(bookmark._id);
 							if (labelIds != null && labelIds.size() > 0) {
 								for (int i = 0; i < labelIds.size(); i++) {
 									long labelId = labelIds.get(i);
 									
-									// we now need 2 relids, bukmak relid and label relid
-									int bukmak2_relId = bukmak2_relId_0 + 1; // 1-based
+									// we now need 2 relids, bookmark relid and label relid
+									int bookmark2_relId = bookmark2_relId_0 + 1; // 1-based
 									int label_relId = labelAbsIdToRelIdMap.get(labelId);
 									
 									if (label_relId != labelAbsIdToRelIdMap.getNoEntryValue()) { // just in case
-										writeBukmak2_LabelXml(xml, bukmak2_relId, label_relId);
+										writeBookmark2_LabelXml(xml, bookmark2_relId, label_relId);
 									}
 								}
 							}
@@ -455,7 +446,7 @@ public class BookmarkActivity extends BaseActivity {
 				
 				if (result instanceof String) {
 					if (!sendBackup) {
-						msgbox(getString(R.string.ekspor_judul), getString(R.string.ekspor_berhasil_file_yang_dihasilkan_file, result));
+						msgbox(getString(R.string.ekspor_berhasil_file_yang_dihasilkan_file, result));
 					} else {
 						Uri uri = Uri.fromFile(new File((String) result));
 						
@@ -467,38 +458,42 @@ public class BookmarkActivity extends BaseActivity {
 						startActivity(intent);
 					}
 				} else if (result instanceof Exception) {
-					msgbox(getString(R.string.ekspor_judul), getString(R.string.terjadi_kesalahan_ketika_mengekspor_pesan, ((Exception) result).getMessage()));
+					msgbox(getString(R.string.terjadi_kesalahan_ketika_mengekspor_pesan, ((Exception) result).getMessage()));
 				}
 			}
 		}.execute();
 	}
-
-	public static final String Bukmak2_Label_XMLTAG_Bukmak2_Label = "Bukmak2_Label"; //$NON-NLS-1$
-	private static final String Bukmak2_Label_XMLATTR_bukmak2_relId = "bukmak2_relId"; //$NON-NLS-1$
-	private static final String Bukmak2_Label_XMLATTR_label_relId = "label_relId"; //$NON-NLS-1$
-
-	void writeBukmak2_LabelXml(XmlSerializer xml, int bukmak2_relId, int label_relId) throws IOException {
-		xml.startTag(null, Bukmak2_Label_XMLTAG_Bukmak2_Label);
-		xml.attribute(null, Bukmak2_Label_XMLATTR_bukmak2_relId, String.valueOf(bukmak2_relId));
-		xml.attribute(null, Bukmak2_Label_XMLATTR_label_relId, String.valueOf(label_relId));
-		xml.endTag(null, Bukmak2_Label_XMLTAG_Bukmak2_Label);
+	
+	
+	// constants
+	static class Bookmark2_Label { // DO NOT CHANGE CONSTANT VALUES!
+		static final String XMLTAG_Bookmark2_Label = "Bukmak2_Label"; //$NON-NLS-1$
+		static final String XMLATTR_bookmark2_relId = "bukmak2_relId"; //$NON-NLS-1$
+		static final String XMLATTR_label_relId = "label_relId"; //$NON-NLS-1$
+	}
+	
+	void writeBookmark2_LabelXml(XmlSerializer xml, int bookmark2_relId, int label_relId) throws IOException {
+		xml.startTag(null, Bookmark2_Label.XMLTAG_Bookmark2_Label);
+		xml.attribute(null, Bookmark2_Label.XMLATTR_bookmark2_relId, String.valueOf(bookmark2_relId));
+		xml.attribute(null, Bookmark2_Label.XMLATTR_label_relId, String.valueOf(label_relId));
+		xml.endTag(null, Bookmark2_Label.XMLTAG_Bookmark2_Label);
 	}
 
 	private OnItemClickListener lv_click = new OnItemClickListener() {
 		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 			Intent intent;
 			if (position == 0) {
-				intent = BookmarkListActivity.createIntent(getApplicationContext(), Db.Bukmak2.kind_bookmark, 0);
+				intent = BookmarkListActivity.createIntent(getApplicationContext(), Db.Bookmark2.kind_bookmark, 0);
 			} else if (position == 1) {
-				intent = BookmarkListActivity.createIntent(getApplicationContext(), Db.Bukmak2.kind_note, 0);
+				intent = BookmarkListActivity.createIntent(getApplicationContext(), Db.Bookmark2.kind_note, 0);
 			} else if (position == 2) {
-				intent = BookmarkListActivity.createIntent(getApplicationContext(), Db.Bukmak2.jenis_stabilo, 0);
+				intent = BookmarkListActivity.createIntent(getApplicationContext(), Db.Bookmark2.kind_highlight, 0);
 			} else if (position == 3) {
-				intent = BookmarkListActivity.createIntent(getApplicationContext(), Db.Bukmak2.kind_bookmark, BookmarkListActivity.LABELID_noLabel);
+				intent = BookmarkListActivity.createIntent(getApplicationContext(), Db.Bookmark2.kind_bookmark, BookmarkListActivity.LABELID_noLabel);
 			} else {
 				Label label = adapter.getItem(position);
 				if (label != null) {
-					intent = BookmarkListActivity.createIntent(getApplicationContext(), Db.Bukmak2.kind_bookmark, label._id);
+					intent = BookmarkListActivity.createIntent(getApplicationContext(), Db.Bookmark2.kind_bookmark, label._id);
 				} else {
 					return;
 				}
@@ -539,9 +534,9 @@ public class BookmarkActivity extends BaseActivity {
 				return true;
 			}
 			
-			LabelEditorDialog.show(this, label.judul, getString(R.string.rename_label_title), new OkListener() {
+			LabelEditorDialog.show(this, label.title, getString(R.string.rename_label_title), new OkListener() {
 				@Override public void onOk(String judul) {
-					label.judul = judul;
+					label.title = judul;
 					S.getDb().updateLabel(label);
 					adapter.notifyDataSetChanged();
 				}
@@ -562,8 +557,7 @@ public class BookmarkActivity extends BaseActivity {
 				adapter.reload();
 			} else {
 				new AlertDialog.Builder(this)
-				.setTitle(R.string.delete_label_title)
-				.setMessage(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.judul, nbukmak))
+				.setMessage(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, nbukmak))
 				.setNegativeButton(R.string.cancel, null)
 				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
@@ -751,7 +745,7 @@ public class BookmarkActivity extends BaseActivity {
 			} else {
 				Label label = getItem(position);
 				lFilterLabel.setVisibility(View.VISIBLE);
-				lFilterLabel.setText(label.judul);
+				lFilterLabel.setText(label.title);
 				
 				U.applyLabelColor(label, lFilterLabel);
 			}
@@ -767,12 +761,12 @@ public class BookmarkActivity extends BaseActivity {
 		}
 		
 		void reload() {
-			labels = S.getDb().listSemuaLabel();
+			labels = S.getDb().getAllLabels();
 			
 			if (D.EBUG) {
 				Log.d(TAG, "_id  title                ordering backgroundColor");
 				for (Label label: labels) {
-					Log.d(TAG, String.format("%4d %20s %8d %s", label._id, label.judul, label.urutan, label.backgroundColor));
+					Log.d(TAG, String.format("%4d %20s %8d %s", label._id, label.title, label.ordering, label.backgroundColor));
 				}
 			}
 			

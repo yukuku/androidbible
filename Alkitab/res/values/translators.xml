@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string-array name="translators_list" tools:ignore="MissingTranslation">
-        <item>English: author</item>
+        <item>Afrikaans: Sakkie Theron</item>
         <item>Chinese: Jandi Lau</item>
         <item>Dutch: Vcfrth</item>
+        <item>English: author</item>
         <item>German: Ribka Ling</item>
         <item>Indonesian: author</item>
         <item>Polish: Artur Szymczak</item>
         <item>Romanian: Liviu Foltut</item>
+        <item>Spanish: Nadle</item>
         <item>Ukrainian: Volodymyr</item>
         <item>Please help us [http://crowdin.net/project/alkitab/]translate this Bible app to more languages!</item>
     </string-array>

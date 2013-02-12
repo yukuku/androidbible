@@ -74,7 +74,7 @@ public class AppConfig {
 				res.internalPrefix = parser.getAttributeValue(null, "prefix"); //$NON-NLS-1$
 			} else if (next == XmlPullParser.START_TAG && "preset".equals(parser.getName())) { //$NON-NLS-1$
 				MVersionPreset preset = new MVersionPreset();
-				preset.type = Db.Edisi.jenis_preset;
+				preset.type = Db.Version.kind_preset;
 				preset.shortName = parser.getAttributeValue(null, "shortName"); //$NON-NLS-1$
 				preset.longName = parser.getAttributeValue(null, "longName"); //$NON-NLS-1$
 				preset.presetFilename = parser.getAttributeValue(null, "namafile_preset"); //$NON-NLS-1$

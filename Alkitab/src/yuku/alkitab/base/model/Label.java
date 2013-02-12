@@ -15,8 +15,8 @@ public class Label implements Comparable<Label> {
 	public static final String TAG = Label.class.getSimpleName();
 	
 	public long _id;
-	public String judul;
-	public int urutan;
+	public String title;
+	public int ordering;
 	public String backgroundColor;
 	
 	private Label() {
@@ -24,35 +24,35 @@ public class Label implements Comparable<Label> {
 	
 	public Label(long _id, String judul, int urutan, String warnaLatar) {
 		this._id = _id;
-		this.judul = judul;
-		this.urutan = urutan;
+		this.title = judul;
+		this.ordering = urutan;
 		this.backgroundColor = warnaLatar;
 	}
 
 	public static Label fromCursor(Cursor c) {
 		Label res = new Label();
 		res._id = c.getLong(c.getColumnIndexOrThrow(BaseColumns._ID));
-		res.judul = c.getString(c.getColumnIndexOrThrow(Db.Label.judul));
-		res.urutan = c.getInt(c.getColumnIndexOrThrow(Db.Label.urutan));
-		res.backgroundColor = c.getString(c.getColumnIndexOrThrow(Db.Label.warnaLatar));
+		res.title = c.getString(c.getColumnIndexOrThrow(Db.Label.title));
+		res.ordering = c.getInt(c.getColumnIndexOrThrow(Db.Label.ordering));
+		res.backgroundColor = c.getString(c.getColumnIndexOrThrow(Db.Label.backgroundColor));
 		return res;
 	}
 	
 	public ContentValues toContentValues() {
 		ContentValues res = new ContentValues();
 		// skip _id
-		res.put(Db.Label.judul, judul);
-		res.put(Db.Label.urutan, urutan);
-		res.put(Db.Label.warnaLatar, backgroundColor);
+		res.put(Db.Label.title, title);
+		res.put(Db.Label.ordering, ordering);
+		res.put(Db.Label.backgroundColor, backgroundColor);
 		return res;
 	}
 
 	@Override public int compareTo(Label another) {
-		return this.urutan - another.urutan;
+		return this.ordering - another.ordering;
 	}
 	
 	@Override public String toString() {
-		return this.judul + " (" + this._id + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		return this.title + " (" + this._id + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 
@@ -65,7 +65,7 @@ public class Label implements Comparable<Label> {
 		// urutan ga/belum dibekap
 		xml.startTag(null, XMLTAG_Label);
 		xml.attribute(null, XMLATTR_relId, String.valueOf(relId));
-		xml.attribute(null, XMLATTR_judul, judul);
+		xml.attribute(null, XMLATTR_judul, title);
 		if (backgroundColor != null) xml.attribute(null, XMLATTR_warnaLatar, backgroundColor);
 		xml.endTag(null, XMLTAG_Label);
 	}

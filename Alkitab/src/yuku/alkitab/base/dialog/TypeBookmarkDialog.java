@@ -99,7 +99,7 @@ public class TypeBookmarkDialog {
 			
 			new AlertDialog.Builder(context)
 			.setTitle(R.string.remove_label_title)
-			.setMessage(context.getString(R.string.do_you_want_to_remove_the_label_label_from_this_bookmark, label.judul))
+			.setMessage(context.getString(R.string.do_you_want_to_remove_the_label_label_from_this_bookmark, label.title))
 			.setPositiveButton(R.string.ok, new OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
 					labels.remove(label);
@@ -112,7 +112,7 @@ public class TypeBookmarkDialog {
 	};
 
 	public void show() {
-		final Bookmark2 bukmak = this.ari == 0? S.getDb().getBukmakById(id): S.getDb().getBukmakByAri(ari, Db.Bukmak2.kind_bookmark);
+		final Bookmark2 bukmak = this.ari == 0? S.getDb().getBukmakById(id): S.getDb().getBukmakByAri(ari, Db.Bookmark2.kind_bookmark);
 		
 		// set yang belum diset
 		if (this.ari == 0 && bukmak != null) {
@@ -145,12 +145,12 @@ public class TypeBookmarkDialog {
 		
 		if (bukmak != null) {
 			labels = new TreeSet<Label>();
-			List<Label> ll = S.getDb().listLabels(bukmak._id);
+			List<Label> ll = S.getDb().getLabels(bukmak._id);
 			if (ll != null) labels.addAll(ll);
 		}
 		setLabelsText();
 		
-		tTulisan.setText(bukmak != null? bukmak.tulisan: alamat);
+		tTulisan.setText(bukmak != null? bukmak.caption: alamat);
 		
 		new AlertDialog.Builder(context)
 		.setView(dialogView)
@@ -167,11 +167,11 @@ public class TypeBookmarkDialog {
 				}
 				
 				if (bukmakGaFinal != null) {
-					bukmakGaFinal.tulisan = tulisan;
-					bukmakGaFinal.waktuUbah = new Date();
+					bukmakGaFinal.caption = tulisan;
+					bukmakGaFinal.modifyTime = new Date();
 					S.getDb().updateBukmak(bukmakGaFinal);
 				} else {
-					bukmakGaFinal = S.getDb().insertBukmak(ari, Db.Bukmak2.kind_bookmark, tulisan, new Date(), new Date());
+					bukmakGaFinal = S.getDb().insertBukmak(ari, Db.Bookmark2.kind_bookmark, tulisan, new Date(), new Date());
 				}
 				
 				if (bukmakGaFinal != null) {
@@ -201,7 +201,7 @@ public class TypeBookmarkDialog {
 	private View getLabelView(Label label) {
 		TextView res = (TextView) LayoutInflater.from(context).inflate(R.layout.label_x, null);
 		res.setLayoutParams(panelLabels.generateDefaultLayoutParams());
-		res.setText(label.judul);
+		res.setText(label.title);
 		res.setTag(R.id.TAG_label, label);
 		res.setOnClickListener(lJudul_click);
 		
@@ -215,7 +215,7 @@ public class TypeBookmarkDialog {
 		private Context dialogContext;
 
 		public LabelAdapter() {
-			labels = S.getDb().listSemuaLabel();
+			labels = S.getDb().getAllLabels();
 			dialogContext = context;
 		}
 		
@@ -242,7 +242,7 @@ public class TypeBookmarkDialog {
 			if (type == 0) {
 				TextView text1 = V.get(res, android.R.id.text1); 
 				Label label = getItem(position);
-				text1.setText(label.judul);
+				text1.setText(label.title);
 				U.applyLabelColor(label, text1);
 			} else {
 				TextView text1 = V.get(res, android.R.id.text1); 

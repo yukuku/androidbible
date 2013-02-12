@@ -462,7 +462,7 @@ public class VersionsActivity extends BaseActivity {
 			if (urutanTerbesar == 0) urutanTerbesar = 100; // default
 			
 			MVersionYes yes = new MVersionYes();
-			yes.type = Db.Edisi.jenis_yes;
+			yes.type = Db.Version.kind_yes;
 			yes.shortName = pembaca.getShortName();
 			yes.longName = pembaca.getLongName();
 			yes.description = pembaca.getDescription();
@@ -770,7 +770,7 @@ public class VersionsActivity extends BaseActivity {
 			
 			internal = new MVersionInternal();
 			internal.setActive(true);
-			internal.type = Db.Edisi.jenis_internal;
+			internal.type = Db.Version.kind_internal;
 			internal.longName = c.internalLongName;
 			internal.ordering = 1;
 			
@@ -788,7 +788,7 @@ public class VersionsActivity extends BaseActivity {
 		}
 		
 		public void initYesVersionList() {
-			yeses = S.getDb().listAllVersions();
+			yeses = S.getDb().getAllVersions();
 		}
 
 		@Override

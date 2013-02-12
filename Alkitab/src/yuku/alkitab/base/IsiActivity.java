@@ -419,7 +419,7 @@ public class IsiActivity extends BaseActivity {
 		}
 		
 		// masih belum cocok, mari kita cari di daftar yes
-		List<MVersionYes> yeses = S.getDb().listAllVersions();
+		List<MVersionYes> yeses = S.getDb().getAllVersions();
 		for (MVersionYes yes: yeses) {
 			if (yes.getVersionId().equals(lastVersion)) {
 				if (yes.hasDataFile()) {
@@ -1124,7 +1124,7 @@ public class IsiActivity extends BaseActivity {
 		}
 		
 		// 3. active yeses
-		List<MVersionYes> yeses = S.getDb().listAllVersions();
+		List<MVersionYes> yeses = S.getDb().getAllVersions();
 		for (MVersionYes yes: yeses) {
 			if (yes.hasDataFile() && yes.getActive()) {
 				options.add(yes.longName);
@@ -1415,7 +1415,7 @@ public class IsiActivity extends BaseActivity {
 
 	public class AttributeListener {
 		public void onClick(Book book, int chapter_1, int verse_1, int kind) {
-			if (kind == Db.Bukmak2.kind_bookmark) {
+			if (kind == Db.Bookmark2.kind_bookmark) {
 				final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
 				String alamat = S.reference(S.activeVersion, ari);
 				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, alamat, ari);
@@ -1425,7 +1425,7 @@ public class IsiActivity extends BaseActivity {
 					}
 				});
 				dialog.show();
-			} else if (kind == Db.Bukmak2.kind_note) {
+			} else if (kind == Db.Bookmark2.kind_note) {
 				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, book, chapter_1, verse_1, new TypeNoteDialog.RefreshCallback() {
 					@Override public void onDone() {
 						verseAdapter_.loadAttributeMap();

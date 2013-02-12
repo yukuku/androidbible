@@ -25,8 +25,8 @@
   <string name="pref_biarkan_layar_menyala">Utrzymuj ekran włączony</string>
   <string name="pref_penampilan_teks">Wygląd tekstu</string>
   <string name="pref_penampilan_layar">Wyświetlacz</string>
-  <string name="pref_tombolVolumeBuatPindah_title">Nawigacja przyciskami głoścności</string>
-  <string name="pref_tombolVolumeBuatPindah_summary">Użyj sprzętowych przycisków zmiany głośności, aby przenosić się między wersami lub rozdziałami.</string>
+  <string name="pref_tombolVolumeBuatPindah_title">Nawigacja przyciskami głośności</string>
+  <string name="pref_tombolVolumeBuatPindah_summary">Użyj sprzętowych przycisków zmiany głośności, aby przenosić się pomiędzy wersami lub rozdziałami.</string>
   <string name="pref_lineSpacingMult_title">Odstepy pomiędzy liniami</string>
   <string name="pref_copyWithVerseNumbers_title">Załącz numer wersu</string>
   <string name="pref_copyWithVerseNumbers_summary">Umieść numer wersu przy każdym wersecie przy kopiowaniu/dzieleniu się.</string>

@@ -52,7 +52,7 @@ public class LabelEditorDialog {
 		final Button bOk = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
 		bOk.setEnabled(false);
 		
-		final List<Label> semuaLabel = S.getDb().listSemuaLabel();
+		final List<Label> semuaLabel = S.getDb().getAllLabels();
 		
 		tJudul.addTextChangedListener(new TextWatcher() {
 			@Override public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -68,7 +68,7 @@ public class LabelEditorDialog {
 				} else {
 					String judulBaruTrim = s.toString().trim();
 					for (Label label: semuaLabel) {
-						if (label.judul.trim().equals(judulBaruTrim)) {
+						if (label.title.trim().equals(judulBaruTrim)) {
 							bOk.setEnabled(false);
 							return;
 						}
