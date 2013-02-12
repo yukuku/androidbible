@@ -16,12 +16,9 @@
   <string name="ekspor_berhasil_file_yang_dihasilkan_file">备份成功。\n\n结果是在文件： %s</string>
   <string name="impor_berhasil_angka_diproses">恢复是成功。 总共 %1$d 书签，笔记，和/或亮点，也是 %2$d 标签被处理.</string>
   <string name="terjadi_kesalahan_ketika_mengekspor_pesan">创建备份时，有错误： %s</string>
-  <string name="ekspor_pembatas_buku_dan_catatan_tanya">你想创建备份的书签，笔记和亮点，到SD卡或USB存储吗？</string>
-  <string name="ekspor_judul">创建备份</string>
   <string name="terjadi_kesalahan_ketika_mengimpor_pesan">恢复时有错误： %s</string>
   <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">你要覆盖您目前有的书签，笔记，和突出？</string>
   <string name="file_tidak_bisa_dibaca_file">文件不存在或无法读取： %s</string>
-  <string name="impor_judul">从备份恢复</string>
   <string name="impor_dari_sd_card">恢复</string>
   <string name="ekspor_ke_sd_card">备份</string>
   <string name="menuBantuan">帮助</string>
@@ -29,7 +26,6 @@
   <string name="versi">版本</string>
   <string name="renungan">灵修</string>
   <string name="cari_v">搜索</string>
-  <string name="judul_bukmak_activity">书签，笔记，和亮点</string>
   <string name="pembatas_buku">书签</string>
   <string name="hapus_pembatas_buku">删除书签</string>
   <string name="bagikan">共享</string>
@@ -162,7 +158,6 @@
   <string name="create_label_titik3">创建标签...</string>
   <string name="select_books_to_search">选择您要搜索的书籍</string>
   <string name="rename_label_title">重命名标签</string>
-  <string name="delete_label_title">删除标签</string>
   <string name="are_you_sure_you_want_to_delete_the_label_label">"你确定要删除标签 \'%1$s\'? 这标签将被删除书签 %2$s。"</string>
   <string name="bmcat_all_bookmarks">所有书签</string>
   <string name="bmcat_notes">笔记</string>

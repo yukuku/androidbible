@@ -16,13 +16,10 @@
   <string name="ekspor_berhasil_file_yang_dihasilkan_file">Kopia wykonana.\n\nRezultat został zapisany w pliku: %s</string>
   <string name="impor_berhasil_angka_diproses">Pomyślne przywrócenie kopii. W sumie %1$d zakładek, notatek, i/lub podkreśleń. Przetworzono również %2$d etykiet.</string>
   <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Nastąpił błąd(błędy) podczas tworzenia kopii: %s</string>
-  <string name="ekspor_pembatas_buku_dan_catatan_tanya">Stworzyć kopię zakładek, notatek i podkreśleń na karcie SD lub dysku USB?</string>
-  <string name="ekspor_judul">Stwórz kopię</string>
   <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Nastąpił błąd(błędy) podczas przywracania: %s</string>
   <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Czy chcesz nadpisać zakładki, notatki i podkreślenia, które obecnie posiadasz?</string>
   <string name="file_tidak_bisa_dibaca_file">Plik nie istnieje lub nie może być odczytany: %s</string>
   <string name="impor_pembatas_buku_dan_catatan_dari_tanya">Przywrócić zakładki, notatki, podkreślenia z pliku kopii na karcie SD lub dysku USB?\n\nPlik: %s</string>
-  <string name="impor_judul">Przywróć z kopii</string>
   <string name="impor_dari_sd_card">Przywróć</string>
   <string name="ekspor_ke_sd_card">Kopia</string>
   <string name="menuBantuan">Pomoc</string>
@@ -30,7 +27,7 @@
   <string name="versi">Przekład</string>
   <string name="renungan">Rozważania</string>
   <string name="cari_v">Szukaj</string>
-  <string name="judul_bukmak_activity">Zakładki, notatki i podkreślenia</string>
+  <string name="judul_bukmak_activity">Zakładki, itp</string>
   <string name="pembatas_buku">Zakładki</string>
   <string name="hapus_pembatas_buku">Usuń zakładkę</string>
   <string name="bagikan">Podziel się</string>
@@ -163,7 +160,6 @@
   <string name="create_label_titik3">Stwórz etykietę…</string>
   <string name="select_books_to_search">Wybierz księgi do przeszukania</string>
   <string name="rename_label_title">Zmień nazwę etykiety</string>
-  <string name="delete_label_title">Usuń etykietę</string>
   <string name="are_you_sure_you_want_to_delete_the_label_label">"Czy jesteś pewien, że chcesz usunąć etykietę \'%1$s\'? Ta etykieta zostanie usunięta z %2$s zakładek."</string>
   <string name="bmcat_all_bookmarks">Wszystkie zakładki</string>
   <string name="bmcat_notes">Notatki</string>
@@ -236,4 +232,5 @@
 • [b]Jaya Satrio Hendrick[/b] ikony[br/]
 • [b]Yohanes Nugroho[/b] czytnik plików PDB z BiblePlus+ PDB[br/]
 • i wiele innych osób, które zasugerowały pomysł, poprawki, raportowały błędy, kopiowały pieśni, dodały informacje o przekładach Biblii, itp!</string>
+  <string name="desc_drag_to_reorder_labels">Przeciągnij, aby zmienić kolejność etykiet</string>
 </resources>
