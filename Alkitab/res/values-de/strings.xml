@@ -16,11 +16,9 @@
   <string name="ekspor_berhasil_file_yang_dihasilkan_file">Export erfolgreich.\n\nDatei wird gespeichert: %s</string>
   <string name="impor_berhasil_angka_diproses">Import erfolgreich. In Summe werden %1$d Lesezeichen, Notizen, und/oder Markierungen, und %2$d Labels durchgeführt.</string>
   <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Fehler beim Exportieren: %s</string>
-  <string name="ekspor_judul">Export</string>
   <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Fehler beim Importieren: %s</string>
   <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Bestehende Lesezeichen, Notizen, und Markierungen überschreiben?</string>
   <string name="file_tidak_bisa_dibaca_file">Datei existiert nicht oder unlesbar: %s</string>
-  <string name="impor_judul">Import</string>
   <string name="impor_dari_sd_card">Importieren</string>
   <string name="ekspor_ke_sd_card">Exportieren</string>
   <string name="menuBantuan">Hilfe</string>
@@ -159,7 +157,6 @@
   <string name="create_label_titik3">Label erstellen…</string>
   <string name="select_books_to_search">Bücher zur Suche auswählen</string>
   <string name="rename_label_title">Label umbenennen</string>
-  <string name="delete_label_title">Label löschen</string>
   <string name="are_you_sure_you_want_to_delete_the_label_label">"Bist du sicher, das Label \'%1$s\' zu entfernen? Dieses Label wird vom %2$s Lesezeichen entfernt."</string>
   <string name="bmcat_all_bookmarks">Alle Lesezeichen</string>
   <string name="bmcat_notes">Notizen</string>

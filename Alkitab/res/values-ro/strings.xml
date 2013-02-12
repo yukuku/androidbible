@@ -16,13 +16,10 @@
   <string name="ekspor_berhasil_file_yang_dihasilkan_file">Rezerva s-a creat.\n\nRezultatele sunt în fişierul: %s</string>
   <string name="impor_berhasil_angka_diproses">Restabilire cu succes. În total sunt %1$d favorite, note, şi/sau marcaje, şi %2$d etichete au fost procesate.</string>
   <string name="terjadi_kesalahan_ketika_mengekspor_pesan">A apărut o eroare când s-a creat restabilirea: %s</string>
-  <string name="ekspor_pembatas_buku_dan_catatan_tanya">Creați o rezervă a versetelor favorite, notelor și evidențierilor pe cardul SD sau de stocare USB?</string>
-  <string name="ekspor_judul">Creează rezervă</string>
   <string name="terjadi_kesalahan_ketika_mengimpor_pesan">A apărut o eroare la restabilire: %s</string>
   <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Vreţi să rescrieţi favorite, note şi marcaje peste cele ce sunt deja?</string>
   <string name="file_tidak_bisa_dibaca_file">Fişierul nu există sau nu poate fi citit: %s</string>
   <string name="impor_pembatas_buku_dan_catatan_dari_tanya">Restaurare favorite, note și evidențieri dintr-un fișier rezervă de pe cardul SD sau stocare USB?\n\nFile: %s</string>
-  <string name="impor_judul">Restabileşte din rezervă</string>
   <string name="impor_dari_sd_card">Restabileşte</string>
   <string name="ekspor_ke_sd_card">Rezerve</string>
   <string name="menuBantuan">Ajutor</string>
@@ -30,7 +27,6 @@
   <string name="versi">Versiune</string>
   <string name="renungan">Devoţional</string>
   <string name="cari_v">Caută</string>
-  <string name="judul_bukmak_activity">Favorite, notițe si marcaje</string>
   <string name="pembatas_buku">Favorite</string>
   <string name="hapus_pembatas_buku">Şterge favorit</string>
   <string name="bagikan">Trimite</string>
@@ -163,7 +159,6 @@
   <string name="create_label_titik3">Creează etichetă…</string>
   <string name="select_books_to_search">Selectează cartea pentru căutare</string>
   <string name="rename_label_title">Redenumeşte eticheta</string>
-  <string name="delete_label_title">Şterge eticheta</string>
   <string name="are_you_sure_you_want_to_delete_the_label_label">"Sunteţi sigur ca vreţi să ştergeţi eticheta \'%1$s\'? Eticheta va fi ştearsă din %2$s favorit."</string>
   <string name="bmcat_all_bookmarks">Versete favorite</string>
   <string name="bmcat_notes">Note</string>
