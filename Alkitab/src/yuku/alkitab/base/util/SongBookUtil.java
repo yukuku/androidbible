@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.os.AsyncTask;
+import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
@@ -43,13 +44,13 @@ public class SongBookUtil {
 		
 		for (String k: new String[] {
 			// bookName :: dataFormatVersion :: downloadUrl :: bookDescription
-			"KJ   :: 1 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kj-1.ser.gz   :: Kidung Jemaat, buku terbitan Yayasan Musik Gereja di Indonesia (YAMUGER).", //$NON-NLS-1$
-			"KPKA :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpka-3.ser.gz :: Kidung Pasamuan Kristen (Bahasa Jawa), terbitan Badan Musyawarah Gereja-gereja Jawa (BMGJ).", //$NON-NLS-1$
-			"KPRI :: 2 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpri-2.ser.gz :: Kidung Persekutuan Reformed Injili, buku terbitan Sinode Gereja Reformed Injili Indonesia (GRII).", //$NON-NLS-1$
-			"NKB  :: 1 :: http://alkitab-host.appspot.com/addon/songs/v1/data/nkb-1.ser.gz  :: Nyanyikanlah Kidung Baru, buku terbitan Badan Pengerja Majelis Sinode Gereja Kristen Indonesia.",  //$NON-NLS-1$
-			"NP   :: 2 :: http://alkitab-host.appspot.com/addon/songs/v1/data/np-2.ser.gz   :: Nyanyian Pujian, buku terbitan Lembaga Literatur Baptis yang digunakan gereja-gereja Baptis.", //$NON-NLS-1$
-			"PKJ  :: 1 :: http://alkitab-host.appspot.com/addon/songs/v1/data/pkj-1.ser.gz  :: Pelengkap Kidung Jemaat, buku terbitan Yayasan Musik Gereja di Indonesia (YAMUGER).", //$NON-NLS-1$
-			"PPK  :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/ppk-3.ser.gz  :: Puji-pujian Kristen, buku terbitan Seminari Alkitab Asia Tenggara (SAAT).", //$NON-NLS-1$
+			"KJ   :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kj-3.ser.gz   :: <b>Kidung Jemaat</b> terbitan Yayasan Musik Gereja di Indonesia (YAMUGER)", //$NON-NLS-1$
+			"KPKA :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpka-3.ser.gz :: <b>Kidung Pasamuan Kristen</b> (bahasa Jawa) terbitan Badan Musyawarah Gereja-gereja Jawa (BMGJ)", //$NON-NLS-1$
+			"KPRI :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpri-3.ser.gz :: <b>Kidung Persekutuan Reformed Injili</b> terbitan Sinode Gereja Reformed Injili Indonesia (GRII)", //$NON-NLS-1$
+			"NKB  :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/nkb-3.ser.gz  :: <b>Nyanyikanlah Kidung Baru</b> terbitan Badan Pengerja Majelis Sinode Gereja Kristen Indonesia",  //$NON-NLS-1$
+			"NP   :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/np-3.ser.gz   :: <b>Nyanyian Pujian</b> terbitan Lembaga Literatur Baptis", //$NON-NLS-1$
+			"PKJ  :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/pkj-3.ser.gz  :: <b>Pelengkap Kidung Jemaat</b> terbitan Yayasan Musik Gereja di Indonesia (YAMUGER)", //$NON-NLS-1$
+			"PPK  :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/ppk-3.ser.gz  :: <b>Puji-pujian Kristen</b> terbitan Seminari Alkitab Asia Tenggara (SAAT)", //$NON-NLS-1$
 		}) {
 			String[] ss = k.split("::"); //$NON-NLS-1$
 			SongBookInfo bookInfo = new SongBookInfo();
@@ -75,16 +76,16 @@ public class SongBookUtil {
 			int sb_len = sb.length();
 			sb.append(context.getString(R.string.sn_bookselector_all_desc));
 			sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
-			sb.setSpan(new ForegroundColorSpan(0xff4488bb), sb_len, sb.length(), 0);
+			sb.setSpan(new ForegroundColorSpan(0xffa0a0a0), sb_len, sb.length(), 0);
         	res.addActionItem(new ActionItem(0, sb));
         }
 		int n = 1;
 		for (SongBookInfo bookInfo: knownSongBooks) {
 			SpannableStringBuilder sb = new SpannableStringBuilder(bookInfo.bookName + '\n');
 			int sb_len = sb.length();
-			sb.append(bookInfo.description);
+			sb.append(Html.fromHtml(bookInfo.description));
 			sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
-			sb.setSpan(new ForegroundColorSpan(0xff4488bb), sb_len, sb.length(), 0);
+			sb.setSpan(new ForegroundColorSpan(0xffa0a0a0), sb_len, sb.length(), 0);
 			res.addActionItem(new ActionItem(n++, sb));
 		}
 		return res;
