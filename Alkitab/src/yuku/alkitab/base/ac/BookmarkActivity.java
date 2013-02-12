@@ -198,6 +198,11 @@ public class BookmarkActivity extends BaseActivity {
 			
 			return true;
 		} else if (itemId == R.id.menuEkspor) {
+			if (S.getDb().countAllBookmarks() == 0) {
+				msgbox(getString(R.string.no_bookmarks_for_backup));
+				return true;
+			}
+			
 			new AlertDialog.Builder(this)
 			.setMessage(R.string.ekspor_pembatas_buku_dan_catatan_tanya)
 			.setNegativeButton(R.string.no, null)
@@ -210,6 +215,11 @@ public class BookmarkActivity extends BaseActivity {
 			
 			return true;
 		} else if (itemId == R.id.menuSendBackup) {
+			if (S.getDb().countAllBookmarks() == 0) {
+				msgbox(getString(R.string.no_bookmarks_for_backup));
+				return true;
+			}
+			
 			new AlertDialog.Builder(this)
 			.setMessage(R.string.bl_send_backup_confirmation)
 			.setNegativeButton(R.string.no, null)

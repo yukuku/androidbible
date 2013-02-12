@@ -243,9 +243,19 @@ public class InternalDb {
 			db.endTransaction();
 		}
 	}
-
+	
 	public Cursor listAllBookmarks() {
 		return helper.getReadableDatabase().query(Db.TABLE_Bookmark2, null, null, null, null, null, null);
+	}
+
+	public int countAllBookmarks() {
+		Cursor c = helper.getReadableDatabase().rawQuery("select count(*) from " + Db.TABLE_Bookmark2, null);
+		try {
+			c.moveToNext();
+			return c.getInt(0);
+		} finally {
+			c.close();
+		}
 	}
 
 	private SQLiteStatement stmt_countAtribut = null;
