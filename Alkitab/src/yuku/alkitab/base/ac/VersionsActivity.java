@@ -507,7 +507,7 @@ public class VersionsActivity extends BaseActivity {
 			private void showPdbReadErrorDialog(Throwable exception) {
 				new AlertDialog.Builder(VersionsActivity.this)
 				.setTitle(R.string.ed_error_reading_pdb_file)
-				.setMessage(getString(R.string.ed_details) + U.showException(exception))
+				.setMessage(exception instanceof ConvertOptionsDialog.PdbKnownErrorException? exception.getMessage(): (getString(R.string.ed_details) + U.showException(exception)))
 				.setPositiveButton(R.string.ok, null)
 				.show();
 			};
