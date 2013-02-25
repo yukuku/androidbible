@@ -13,7 +13,7 @@ import java.util.Scanner;
 import yuku.alkitab.yes1.Yes1File.PericopeData;
 import yuku.alkitabconverter.util.CountingOutputStream;
 import yuku.alkitabconverter.util.Rec;
-import yuku.alkitabconverter.util.TeksDb;
+import yuku.alkitabconverter.util.TextDb;
 import yuku.bintex.BintexWriter;
 
 public class InternalCommon {
@@ -25,7 +25,7 @@ public class InternalCommon {
 	/**
 	 * @param prefix e.g. "tb"
 	 */
-	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, TeksDb teksDb, PericopeData pericopeData) {
+	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, TextDb teksDb, PericopeData pericopeData) {
 		createInternalFiles(outDir, prefix, bookNames, teksDb.toRecList(), pericopeData);
 	}
 	

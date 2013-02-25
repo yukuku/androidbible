@@ -19,6 +19,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 
+import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.yes1.Yes1File;
 import yuku.alkitab.yes1.Yes1File.InfoEdisi;
 import yuku.alkitab.yes1.Yes1File.InfoKitab;
@@ -29,12 +30,11 @@ import yuku.alkitab.yes1.Yes1File.PerikopIndex;
 import yuku.alkitab.yes1.Yes1File.Teks;
 import yuku.alkitabconverter.internal_common.InternalCommon;
 import yuku.alkitabconverter.internal_common.ReverseIndexer;
-import yuku.alkitabconverter.util.Ari;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
-import yuku.alkitabconverter.util.TeksDb;
-import yuku.alkitabconverter.util.TeksDb.AyatState;
-import yuku.alkitabconverter.util.TeksDb.TextProcessor;
+import yuku.alkitabconverter.util.TextDb;
+import yuku.alkitabconverter.util.TextDb.TextProcessor;
+import yuku.alkitabconverter.util.TextDb.VerseState;
 import yuku.alkitabconverter.yes_common.YesCommon;
 
 public class Proses2 {
@@ -52,7 +52,7 @@ public class Proses2 {
 	static String INPUT_TEKS_2 = "./bahan/in-tb-usfm/mid/"; 
 
 
-	TeksDb teksDb = new TeksDb();
+	TextDb teksDb = new TextDb();
 	StringBuilder misteri = new StringBuilder();
 	PericopeData pericopeData = new PericopeData();
 	{
@@ -96,7 +96,7 @@ public class Proses2 {
 		teksDb.normalize();
 
 		teksDb.processEach(new TextProcessor() {
-			@Override public void process(int ari, AyatState as) {
+			@Override public void process(int ari, VerseState as) {
 				// tambah @@ kalo perlu
 				if (as.text.contains("@") && !as.text.startsWith("@@")) {
 					as.text = "@@" + as.text;
@@ -148,7 +148,7 @@ public class Proses2 {
 		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
 	}
 
-	private void dumpForYetTesting(List<String> bookNames, TeksDb teksDb, PericopeData pericopeData) {
+	private void dumpForYetTesting(List<String> bookNames, TextDb teksDb, PericopeData pericopeData) {
 		class Row {
 			int ari;
 			int type;
@@ -187,14 +187,14 @@ public class Proses2 {
 		
 		for (Row row: rows) {
 			if (row.type == 1) {
-				System.out.printf("%s\t%d\t%d\t%d\t%s%n", "pericope", Ari.toKitab(row.ari) + 1, Ari.toPasal(row.ari), Ari.toAyat(row.ari), row.entry.block.title);
+				System.out.printf("%s\t%d\t%d\t%d\t%s%n", "pericope", Ari.toBook(row.ari) + 1, Ari.toChapter(row.ari), Ari.toVerse(row.ari), row.entry.block.title);
 				if (row.entry.block.parallels != null) {
 					for (String parallel: row.entry.block.parallels) {
 						System.out.printf("%s\t%s%n", "parallel", parallel);
 					}
 				}
 			} else {
-				System.out.printf("%s\t%d\t%d\t%d\t%s%n", "verse", Ari.toKitab(row.ari) + 1, Ari.toPasal(row.ari), Ari.toAyat(row.ari), row.rec.text);
+				System.out.printf("%s\t%d\t%d\t%d\t%s%n", "verse", Ari.toBook(row.ari) + 1, Ari.toChapter(row.ari), Ari.toVerse(row.ari), row.rec.text);
 			}
 		}
 	}

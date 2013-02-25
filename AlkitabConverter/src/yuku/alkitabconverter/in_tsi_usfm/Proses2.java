@@ -16,18 +16,18 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 
+import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.yes1.Yes1File;
 import yuku.alkitab.yes1.Yes1File.InfoEdisi;
 import yuku.alkitab.yes1.Yes1File.InfoKitab;
 import yuku.alkitab.yes1.Yes1File.PericopeData;
+import yuku.alkitab.yes1.Yes1File.PericopeData.Entry;
 import yuku.alkitab.yes1.Yes1File.PerikopBlok;
 import yuku.alkitab.yes1.Yes1File.PerikopIndex;
 import yuku.alkitab.yes1.Yes1File.Teks;
-import yuku.alkitab.yes1.Yes1File.PericopeData.Entry;
-import yuku.alkitabconverter.util.Ari;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
-import yuku.alkitabconverter.util.TeksDb;
+import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.yes_common.YesCommon;
 
 public class Proses2 {
@@ -43,7 +43,7 @@ public class Proses2 {
 	static String INFO_KETERANGAN = "Terjemahan Sederhana Indonesia (TSI) diterbitkan oleh Pioneer Bible Translators. Teks TSI lengkap dengan catatan-catatan kaki dapat dibaca di m.bahasakita.net atau tsi.bahasakita.net. Tim penerjemah memohon Anda menulis masukan, usulan, atau komentar lain halaman di Facebook “tsi sederhana.” Anda boleh pesan buku-buku TSI yang lain melalui e-mail kepada tim.kita@bahasakita.net. Anda bebas juga untuk mencetak kitab-kitab TSI sesuai informasi yang terdapat di http://bahasakita.net.";
 	static String INPUT_TEKS_2 = "./bahan/in-tsi-usfm/mid/"; 
 
-	TeksDb teksDb = new TeksDb();
+	TextDb teksDb = new TextDb();
 	StringBuilder misteri = new StringBuilder();
 	PericopeData pericopeData = new PericopeData();
 	{
