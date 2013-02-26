@@ -35,7 +35,7 @@ import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.TextDb.TextProcessor;
 import yuku.alkitabconverter.util.TextDb.VerseState;
-import yuku.alkitabconverter.yes_common.YesCommon;
+import yuku.alkitabconverter.yes_common.Yes1Common;
 
 public class Proses2 {
 	final SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -139,11 +139,11 @@ public class Proses2 {
 		
 		////////// PROSES KE YES
 		
-		final InfoEdisi infoEdisi = YesCommon.infoEdisi(INFO_NAMA, INFO_SHORT_NAME, INFO_LONG_NAME, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES, null);
-		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
-		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
+		final InfoEdisi infoEdisi = Yes1Common.infoEdisi(INFO_NAMA, INFO_SHORT_NAME, INFO_LONG_NAME, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES, null);
+		final InfoKitab infoKitab = Yes1Common.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
+		final Teks teks = Yes1Common.teks(xrec, INPUT_TEKS_ENCODING);
 		
-		Yes1File file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(pericopeData), new PerikopIndex(pericopeData));
+		Yes1File file = Yes1Common.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(pericopeData), new PerikopIndex(pericopeData));
 		
 		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
 	}

@@ -11,7 +11,7 @@ import yuku.alkitab.yes1.Yes1File.Teks;
 import yuku.alkitabconverter.unboundbible.UnboundBibleReader;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
-import yuku.alkitabconverter.yes_common.YesCommon;
+import yuku.alkitabconverter.yes_common.Yes1Common;
 
 public class Proses1 {
 	public static final String TAG = Proses1.class.getSimpleName();
@@ -41,13 +41,13 @@ public class Proses1 {
 
 		////////// PROSES KE YES
 
-		final InfoEdisi infoEdisi = YesCommon.infoEdisi(INFO_NAMA, null, INFO_JUDUL, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES, null);
-		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
-		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
+		final InfoEdisi infoEdisi = Yes1Common.infoEdisi(INFO_NAMA, null, INFO_JUDUL, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES, null);
+		final InfoKitab infoKitab = Yes1Common.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
+		final Teks teks = Yes1Common.teks(xrec, INPUT_TEKS_ENCODING);
 		//final PerikopBlok perikopBlok = new PerikopBlok(perikopData);
 		//final PerikopIndex perikopIndex = new PerikopIndex(perikopData);
 		
-		Yes1File file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks); //, perikopBlok, perikopIndex);
+		Yes1File file = Yes1Common.bikinYesFile(infoEdisi, infoKitab, teks); //, perikopBlok, perikopIndex);
 		
 		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
 	}

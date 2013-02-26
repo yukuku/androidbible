@@ -13,7 +13,7 @@ import yuku.alkitab.yes1.Yes1File.PerikopBlok;
 import yuku.alkitab.yes1.Yes1File.PerikopIndex;
 import yuku.alkitab.yes1.Yes1File.Teks;
 import yuku.alkitabconverter.util.Rec;
-import yuku.alkitabconverter.yes_common.YesCommon;
+import yuku.alkitabconverter.yes_common.Yes1Common;
 import yuku.alkitabconverter.yet.YetFileInput.YetFileInputResult;
 
 import com.beust.jcommander.JCommander;
@@ -82,14 +82,14 @@ public class YetToYes {
 			}
 		}
 		
-		InfoEdisi infoEdisi = YesCommon.infoEdisi(null, result.infos.get("shortName"), result.infos.get("longName"), result.numberOfBooks, result.pericopeData == null? 0: 1, result.infos.get("description"), 2 /* utf-8 */, result.infos.get("locale"));
-		InfoKitab infoKitab = YesCommon.infoKitab(result.recs, "utf-8", result.bookNames);
-		Teks teks = YesCommon.teks(result.recs, "utf-8");
+		InfoEdisi infoEdisi = Yes1Common.infoEdisi(null, result.infos.get("shortName"), result.infos.get("longName"), result.numberOfBooks, result.pericopeData == null? 0: 1, result.infos.get("description"), 2 /* utf-8 */, result.infos.get("locale"));
+		InfoKitab infoKitab = Yes1Common.infoKitab(result.recs, "utf-8", result.bookNames);
+		Teks teks = Yes1Common.teks(result.recs, "utf-8");
 		Yes1File out;
 		if (result.pericopeData != null) {
-			out = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(result.pericopeData), new PerikopIndex(result.pericopeData));
+			out = Yes1Common.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(result.pericopeData), new PerikopIndex(result.pericopeData));
 		} else {
-			out = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks);
+			out = Yes1Common.bikinYesFile(infoEdisi, infoKitab, teks);
 		}
 		
 		out.output(new RandomAccessFile(yesfile, "rw"));
