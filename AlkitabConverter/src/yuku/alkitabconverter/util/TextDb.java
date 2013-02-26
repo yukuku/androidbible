@@ -2,6 +2,7 @@ package yuku.alkitabconverter.util;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -192,5 +193,62 @@ public class TextDb {
 		for (Map.Entry<Integer, VerseState> e: map.entrySet()) {
 			textProcessor.process(e.getKey(), e.getValue());
 		}
+	}
+
+	public int getBookCount() {
+		Set<Integer> bookIds = new LinkedHashSet<>();
+		for (Map.Entry<Integer, VerseState> e: map.entrySet()) {
+			int bookId = Ari.toBook(e.getKey());
+			bookIds.add(bookId);
+		}
+		return bookIds.size();
+	}
+	
+	public int[] getBookIds() {
+		Set<Integer> bookIds = new TreeSet<>();
+		for (Map.Entry<Integer, VerseState> e: map.entrySet()) {
+			int bookId = Ari.toBook(e.getKey());
+			bookIds.add(bookId);
+		}
+		int[] res = new int[bookIds.size()];
+		int c = 0;
+		for (Integer bookId: bookIds) {
+			res[c++] = bookId;
+		}
+		return res;
+	}
+	
+	/**
+	 * No skipped chapters recognized. So if a book has chapters [1, 5, 6], this returns 6, not 3. 
+	 */
+	public int getChapterCountForBook(int bookId) {
+		int maxChapter = 0;
+		for (Map.Entry<Integer, VerseState> e: map.entrySet()) {
+			int ari = e.getKey();
+			if (Ari.toBook(ari) == bookId) {
+				int chapter_1 = Ari.toChapter(ari);
+				if (chapter_1 > maxChapter) maxChapter = chapter_1; 
+			}
+		}
+		return maxChapter;
+	}
+
+	/**
+	 * No skipped verses recognized. So if a chapter has verses [1, 5, 6], this returns 6, not 3. 
+	 */
+	public int getVerseCountForBookChapter(int bookId, int chapter_1) {
+		int maxVerse = 0;
+		for (Map.Entry<Integer, VerseState> e: map.entrySet()) {
+			int ari = e.getKey();
+			if (Ari.toBook(ari) == bookId && Ari.toChapter(ari) == chapter_1) {
+				int verse_1 = Ari.toVerse(ari);
+				if (verse_1 > maxVerse) maxVerse = verse_1; 
+			}
+		}
+		return maxVerse;
+	}
+
+	public String getVerseText(int bookId, int chapter_1, int verse_1) {
+		return map.get(Ari.encode(bookId, chapter_1, verse_1)).text;
 	}
 }

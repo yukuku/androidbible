@@ -5,5 +5,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/BintexWriter"/>
 	<classpathentry kind="lib" path="libs/jcommander-1.30.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Alkitab"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/BintexReader"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
