@@ -13,6 +13,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Scanner;
 import java.util.Set;
 
 import yuku.alkitab.base.model.Ari;
@@ -88,6 +89,15 @@ public class UnboundBatchConverter {
 			versionInfo.longName = prop.getProperty("versionInfo.longName");
 			versionInfo.description = prop.getProperty("versionInfo.description");
 			outputName = prop.getProperty("output.name");
+		}
+		
+		// read booknames file
+		try (Scanner sc = new Scanner(new File(superdir, dir.getName() + ".booknames.txt"))) {
+			List<String> bookNames = new ArrayList<>();
+			while (sc.hasNextLine()) {
+				bookNames.add(sc.nextLine());
+			}
+			versionInfo.setBookNames(bookNames);
 		}
 		
 		TextDb textDb = processTextFile(superdir.getName(), dir.getName(), textFile, mapped);
@@ -285,7 +295,23 @@ public class UnboundBatchConverter {
 					} else {
 						prefix = "";
 					}
-					textDb.append(bookId, chapter_1, verse_1, prefix + brokenLine[col_text], -1, " ");
+					
+					// post-process
+					String verseText = brokenLine[col_text];
+					{ // look for <I> (italics)
+						if (verseText.contains("<I>") && verseText.contains("</I>")) {
+							verseText = verseText.replaceAll("<I>", "@9").replaceAll("</I>", "@7");
+						} else if ((verseText.contains("<I>") ^ verseText.contains("</I>")) == true) {
+							throw new RuntimeException("Verse contains <I> or </I> but no corresponding tag");
+						}
+					}
+					{ // look for start para marker ¶
+						if (verseText.contains("\u0086")) {
+							verseText = verseText.replaceAll("\u0086", "@^");
+						}
+					}
+					
+					textDb.append(bookId, chapter_1, verse_1, prefix + verseText, -1, " ");
 				} catch (Exception e) {
 					System.out.println("error when processing: " + Arrays.toString(brokenLine));
 					e.printStackTrace();

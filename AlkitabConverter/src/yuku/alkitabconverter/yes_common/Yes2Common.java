@@ -26,8 +26,14 @@ public class Yes2Common {
 		public String longName;
 		public String description;
 		
+		private List<String> bookNames;
+		
 		public String getBookShortName(int bookId) {
-			return "bookId " + bookId;
+			return bookNames.get(bookId);
+		}
+
+		public void setBookNames(List<String> bookNames) {
+			this.bookNames = bookNames;
 		}
 	}
 
