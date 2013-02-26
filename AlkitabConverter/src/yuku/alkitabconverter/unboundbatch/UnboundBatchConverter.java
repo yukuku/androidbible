@@ -12,13 +12,13 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.TextDb.VerseState;
 import yuku.alkitabconverter.yes_common.Yes2Common;
-import yuku.alkitabconverter.yes_common.Yes2Common.VersionInfo;
 
 public class UnboundBatchConverter {
 	static String DATA_DIR = "/Users/yuku/j/operasi/unbound";
@@ -28,16 +28,18 @@ public class UnboundBatchConverter {
 	}
 
 	void convertAll() throws Exception {
+		// look for directories starting with "ready-" 
 		File[] superdirs = new File(DATA_DIR).listFiles(new FileFilter() {
 			@Override public boolean accept(File f) {
 				return f.isDirectory() && f.getName().startsWith("ready-");
 			}
 		});
 	
-		for (File superdir: superdirs) {
+		// look for all directories under them but only those with corresponding ".properties" file 
+		for (final File superdir: superdirs) {
 			File[] dirs = superdir.listFiles(new FileFilter() {
 				@Override public boolean accept(File f) {
-					return f.isDirectory();
+					return f.isDirectory() && new File(superdir, f.getName() + ".properties").exists();
 				}
 			});
 			
@@ -74,10 +76,32 @@ public class UnboundBatchConverter {
 			throw new RuntimeException("text file not found in dir " + dir);
 		}
 		
-		processTextFile(superdir.getName(), dir.getName(), textFile, mapped);
+		// read properties file
+		Yes2Common.VersionInfo versionInfo = new Yes2Common.VersionInfo();
+		String outputName;
+		
+		try (FileInputStream propInput = new FileInputStream(new File(superdir, dir.getName() + ".properties"))) {
+			Properties prop = new Properties();
+			prop.load(propInput);
+			versionInfo.locale = prop.getProperty("versionInfo.locale");
+			versionInfo.shortName = prop.getProperty("versionInfo.shortName");
+			versionInfo.longName = prop.getProperty("versionInfo.longName");
+			versionInfo.description = prop.getProperty("versionInfo.description");
+			outputName = prop.getProperty("output.name");
+		}
+		
+		TextDb textDb = processTextFile(superdir.getName(), dir.getName(), textFile, mapped);
+		
+		try (PrintStream ps = new PrintStream(new File("/tmp/" + outputName + ".txt"))) {
+			textDb.dump(ps);
+		}
+		
+		Yes2Common.createYesFile(new File("/tmp", outputName + ".yes"), versionInfo, textDb);
+		
+		System.out.println("Processing finished, total verses: " + textDb.size());
 	}
 
-	void processTextFile(String categoryName, String versionName, File textFile, boolean mapped) throws Exception {
+	TextDb processTextFile(String categoryName, String versionName, File textFile, boolean mapped) throws Exception {
 		List<String> rawLines = new ArrayList<>();
 		List<String[]> brokenLines = new ArrayList<>();
 		Map<String, Integer> columns = new LinkedHashMap<>();
@@ -101,22 +125,20 @@ public class UnboundBatchConverter {
 				}
 			}
 			
-			if (mapped) {
-				System.out.println(versionName + " mapped=" + mapped + " has rawLines " + rawLines.size());
-				
-				// check required columns
-				if (!columns.containsKey("orig_book_index")) throw new RuntimeException("column orig_book_index not found");
-				if (!columns.containsKey("orig_chapter")) throw new RuntimeException("column orig_chapter not found");
-				if (!columns.containsKey("orig_verse")) throw new RuntimeException("column orig_verse not found");
-				if (!columns.containsKey("text")) throw new RuntimeException("column text not found");
-				
-				// check if all verses belong to kjv
-				checkVersesAllKjv(categoryName, versionName, rawLines, brokenLines, columns, mapped);
-			}
+			System.out.println(versionName + " mapped=" + mapped + " has rawLines " + rawLines.size());
+			
+			// check required columns
+			if (!columns.containsKey("orig_book_index")) throw new RuntimeException("column orig_book_index not found");
+			if (!columns.containsKey("orig_chapter")) throw new RuntimeException("column orig_chapter not found");
+			if (!columns.containsKey("orig_verse")) throw new RuntimeException("column orig_verse not found");
+			if (!columns.containsKey("text")) throw new RuntimeException("column text not found");
+			
+			// check if all verses belong to kjv
+			return checkVersesAllKjv(categoryName, versionName, rawLines, brokenLines, columns, mapped);
 		}
 	}
 
-	void checkVersesAllKjv(String categoryName, String versionName, List<String> rawLines, List<String[]> brokenLines, Map<String, Integer> columns, boolean mapped) throws Exception {
+	TextDb checkVersesAllKjv(String categoryName, String versionName, List<String> rawLines, List<String[]> brokenLines, Map<String, Integer> columns, boolean mapped) throws Exception {
 		TextDb textDb = new TextDb();
 		
 		int col_text = columns.get("text");
@@ -327,18 +349,6 @@ public class UnboundBatchConverter {
 			}
 		}
 		
-		try (PrintStream ps = new PrintStream(new File("/tmp/" + versionName + ".txt"))) {
-			textDb.dump(ps);
-		}
-		
-		VersionInfo versionInfo = new VersionInfo();
-		versionInfo.locale = "en";
-		versionInfo.shortName = versionName;
-		versionInfo.longName = versionName;
-		versionInfo.description = versionName;
-		
-		Yes2Common.createYesFile(new File("/tmp", versionName + ".yes"), versionInfo, textDb);
-		
-		System.out.println("Processing finished, total verses: " + textDb.size());
+		return textDb;
 	}
 }
