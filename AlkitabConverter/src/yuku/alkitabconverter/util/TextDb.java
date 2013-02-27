@@ -80,7 +80,7 @@ public class TextDb {
 //			}
 		}
 		
-		if (!isNew) {
+		if (!isNew && separatorWhenExisting != null) {
 			as.text += separatorWhenExisting;
 		}
 		
