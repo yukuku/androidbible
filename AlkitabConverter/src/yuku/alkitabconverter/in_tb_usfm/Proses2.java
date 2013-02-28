@@ -33,14 +33,14 @@ import yuku.alkitab.yes1.Yes1File.Teks;
 import yuku.alkitabconverter.in_tb_usfm.XrefDb.XrefEntry;
 import yuku.alkitabconverter.internal_common.InternalCommon;
 import yuku.alkitabconverter.internal_common.ReverseIndexer;
+import yuku.alkitabconverter.util.DesktopVerseFinder;
+import yuku.alkitabconverter.util.DesktopVerseParser;
 import yuku.alkitabconverter.util.IntArrayList;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.TextDb.TextProcessor;
 import yuku.alkitabconverter.util.TextDb.VerseState;
-import yuku.alkitabconverter.util.VerseFinder;
-import yuku.alkitabconverter.util.VerseParser;
 import yuku.alkitabconverter.yes_common.Yes1Common;
 
 public class Proses2 {
@@ -104,7 +104,7 @@ public class Proses2 {
 		xrefDb.processEach(new XrefDb.XrefProcessor() {
 			@Override public void process(XrefEntry xe, int ari, int entryIndex) {
 				final List<int[]> pairs = new ArrayList<>();
-				VerseFinder.findInText(xe.target, new VerseFinder.DetectorListener() {
+				DesktopVerseFinder.findInText(xe.target, new DesktopVerseFinder.DetectorListener() {
 					@Override public boolean onVerseDetected(int start, int end, String verse) {
 						pairs.add(new int[] {start, end});
 						return true;
@@ -119,7 +119,7 @@ public class Proses2 {
 					int[] pair = pairs.get(i);
 					String verse = target.substring(pair[0], pair[1]);
 					
-					IntArrayList ariRanges = VerseParser.verseStringToAriWithShiftTb(verse);
+					IntArrayList ariRanges = DesktopVerseParser.verseStringToAriWithShiftTb(verse);
 					
 					target = target.substring(0, pair[0]) + "@<" + ariRanges + "@>" + verse + "@/" + target.substring(pair[1]);
 				}

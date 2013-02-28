@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class VerseParser {
-	public static final String TAG = VerseParser.class.getSimpleName();
+public class DesktopVerseParser {
+	public static final String TAG = DesktopVerseParser.class.getSimpleName();
 
 	///////////////////////////////////// 1 complete verse address (book chapter verse)
 	/////////////////////////////////////  2 book name with optional period and spaces after it
@@ -171,7 +171,7 @@ public class VerseParser {
 		IntArrayList ariRanges = verseStringToAri(verse);
 		if (ariRanges == null) return null;
 		
-		return ariRanges; // FIXME ShiftTb.shiftFromTb(ariRanges);
+		return DesktopShiftTb.shiftFromTb(ariRanges);
 	}
 
 	private static int parseCv(String cv, boolean singleChapterBook, int previousChapter) {

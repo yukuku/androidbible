@@ -3,8 +3,8 @@ package yuku.alkitabconverter.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class VerseFinder {
-	public static final String TAG = VerseFinder.class.getSimpleName();
+public class DesktopVerseFinder {
+	public static final String TAG = DesktopVerseFinder.class.getSimpleName();
 
 	public interface DetectorListener {
 		boolean onVerseDetected(int start, int end, String verse);
