@@ -114,4 +114,21 @@ public class KjvUtils {
 		if (verse_1 < 1 || verse_1 > maxVerse) return 0;
 		return lids[bcs_index] + verse_1 - 1;
 	}
+	
+	public static int getVerseCount(int bookId, int chapter_1) {
+		int bcs_index = Arrays.binarySearch(bcs, (bookId << 8) | chapter_1);
+		if (bcs_index < 0) return 0;
+		
+		int maxVerse;
+		if (bookId == 65 && chapter_1 == 22) {
+			// special case
+			maxVerse = 21;
+		} else {
+			int lid = lids[bcs_index];
+			int lidnext = lids[bcs_index+1];
+			maxVerse = lidnext - lid;
+		}
+		
+		return maxVerse;
+	}
 }

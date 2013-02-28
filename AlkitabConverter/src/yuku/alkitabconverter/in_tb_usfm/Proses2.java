@@ -33,6 +33,7 @@ import yuku.alkitab.yes1.Yes1File.Teks;
 import yuku.alkitabconverter.in_tb_usfm.XrefDb.XrefEntry;
 import yuku.alkitabconverter.internal_common.InternalCommon;
 import yuku.alkitabconverter.internal_common.ReverseIndexer;
+import yuku.alkitabconverter.unboundbatch.KjvUtils;
 import yuku.alkitabconverter.util.DesktopVerseFinder;
 import yuku.alkitabconverter.util.DesktopVerseParser;
 import yuku.alkitabconverter.util.IntArrayList;
@@ -121,7 +122,29 @@ public class Proses2 {
 					
 					IntArrayList ariRanges = DesktopVerseParser.verseStringToAriWithShiftTb(verse);
 					
-					target = target.substring(0, pair[0]) + "@<" + ariRanges + "@>" + verse + "@/" + target.substring(pair[1]);
+					// we need to process 00 verses (entire chapter) to 1 for start and the last verse for end. 
+					boolean isStart = true;
+					for (int j = 0; j < ariRanges.size(); j++, isStart = !isStart) {
+						int ari2 = ariRanges.get(j);
+						if (Ari.toVerse(ari2) == 0) {
+							if (isStart) {
+								ari2 = Ari.encodeWithBc(Ari.toBookChapter(ari2), 1);
+							} else {
+								int lastVerse_1 = KjvUtils.getVerseCount(Ari.toBook(ari2), Ari.toChapter(ari2));
+								ari2 = Ari.encodeWithBc(Ari.toBookChapter(ari2), lastVerse_1);
+							}
+						}
+						ariRanges.set(j, ari2);
+					}
+					
+					StringBuilder lid_s = new StringBuilder();
+					for (int j = 0; j < ariRanges.size(); j++) {
+						int lid = KjvUtils.ariToLid(ariRanges.get(j));
+						lid_s.append(String.format("%d#", lid));
+						if (lid <= 0) throw new RuntimeException(String.format("invalid ari found 0x%06x", ariRanges.get(j)));
+					}
+					
+					target = target.substring(0, pair[0]) + "@<" + lid_s + "@>" + verse + "@/" + target.substring(pair[1]);
 				}
 				
 				xe.target = target;
