@@ -9,7 +9,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
+import java.util.TreeMap;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -28,13 +30,17 @@ import yuku.alkitab.yes1.Yes1File.PericopeData.Entry;
 import yuku.alkitab.yes1.Yes1File.PerikopBlok;
 import yuku.alkitab.yes1.Yes1File.PerikopIndex;
 import yuku.alkitab.yes1.Yes1File.Teks;
+import yuku.alkitabconverter.in_tb_usfm.XrefDb.XrefEntry;
 import yuku.alkitabconverter.internal_common.InternalCommon;
 import yuku.alkitabconverter.internal_common.ReverseIndexer;
+import yuku.alkitabconverter.util.IntArrayList;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.TextDb.TextProcessor;
 import yuku.alkitabconverter.util.TextDb.VerseState;
+import yuku.alkitabconverter.util.VerseFinder;
+import yuku.alkitabconverter.util.VerseParser;
 import yuku.alkitabconverter.yes_common.Yes1Common;
 
 public class Proses2 {
@@ -54,6 +60,8 @@ public class Proses2 {
 
 	TextDb teksDb = new TextDb();
 	StringBuilder misteri = new StringBuilder();
+	XrefDb xrefDb = new XrefDb();
+	
 	PericopeData pericopeData = new PericopeData();
 	{
 		pericopeData.entries = new ArrayList<Entry>();
@@ -88,8 +96,39 @@ public class Proses2 {
 			System.out.println("file " + file + " done; now total rec: " + teksDb.size());
 		}
 		
-		System.out.println("MISTERI:");
+		System.out.println("OUTPUT MISTERI:");
 		System.out.println(misteri);
+		
+		System.out.println("OUTPUT XREF:");
+
+		xrefDb.processEach(new XrefDb.XrefProcessor() {
+			@Override public void process(XrefEntry xe, int ari, int entryIndex) {
+				final List<int[]> pairs = new ArrayList<>();
+				VerseFinder.findInText(xe.target, new VerseFinder.DetectorListener() {
+					@Override public boolean onVerseDetected(int start, int end, String verse) {
+						pairs.add(new int[] {start, end});
+						return true;
+					}
+					
+					@Override public void onNoMoreDetected() {
+					}
+				});
+				
+				String target = xe.target;
+				for (int i = pairs.size() - 1; i >= 0; i--) {
+					int[] pair = pairs.get(i);
+					String verse = target.substring(pair[0], pair[1]);
+					
+					IntArrayList ariRanges = VerseParser.verseStringToAriWithShiftTb(verse);
+					
+					target = target.substring(0, pair[0]) + "@<" + ariRanges + "@>" + verse + "@/" + target.substring(pair[1]);
+				}
+				
+				xe.target = target;
+			}
+		});
+		
+		xrefDb.dump();
 		
 		// POST-PROCESS
 		
@@ -221,8 +260,10 @@ public class Proses2 {
 		List<PericopeData.Entry> perikopBuffer = new ArrayList<PericopeData.Entry>();
 		boolean afterThisMustStartNewPerikop = true; // if true, we have done with a pericope title, so the next text must become a new pericope title instead of appending to existing one
 		
+		// states
 		int sLevel = 0;
 		int menjorokTeks = -1; // -2 adalah para start; 0 1 2 3 4 adalah q level;
+		int xref_state = -1; // 0 is initial (just encountered xref tag <x>), 1 is source, 2 is target
 		
 		public Handler(int kitab_0) {
 			this.kitab_0 = kitab_0;
@@ -312,6 +353,11 @@ public class Proses2 {
 				sLevel = Integer.parseInt(attributes.getValue("level"));
 			} else if (alamat.endsWith("/x")) {
 				tujuanTulis.push(tujuanTulis_xref);
+				xref_state = 0;
+			} else if (alamat.endsWith("/x/milestone")) { // after milestone, we will have xref source 
+				xref_state = 1;
+			} else if (alamat.endsWith("/x/xt")) { // after xt, we will have xref target 
+				xref_state = 2;
 			} else if (alamat.endsWith("/wj")) {
 				tujuanTulis.push(tujuanTulis_teks);
 				tulis("@6");
@@ -399,7 +445,17 @@ public class Proses2 {
 					throw new RuntimeException("sLevel = " + sLevel + " not understood: " + judul);
 				}
 			} else if (tujuan == tujuanTulis_xref) {
-				System.out.println("$tulis ke xref " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
+				System.out.println("$tulis ke xref (state=" + xref_state + ") " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
+				int ari = Ari.encode(kitab_0, pasal_1, ayat_1);
+				if (xref_state == 0) {
+					xrefDb.addBegin(ari);
+				} else if (xref_state == 1) {
+					xrefDb.addSource(ari, chars);
+				} else if (xref_state == 2) {
+					xrefDb.addTarget(ari, chars);
+				} else {
+					throw new RuntimeException("xref_state not supported");
+				}
 			} else if (tujuan == tujuanTulis_footnote) {
 				System.out.println("$tulis ke footnote " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
 			}
@@ -473,5 +529,79 @@ public class Proses2 {
 		}
 
 		return res;
+	}
+}
+
+class XrefDb {
+	static class XrefEntry {
+		String source;
+		String target;
+	}
+	
+	static interface XrefProcessor {
+		void process(XrefEntry xe, int ari, int entryIndex);
+	}
+	
+	Map<Integer, List<XrefEntry>> map = new TreeMap<>();
+	
+	void addBegin(int ari) {
+		List<XrefEntry> list = map.get(ari);
+		if (list == null) {
+			list = new ArrayList<>();
+			map.put(ari, list);
+		}
+		
+		XrefEntry xe = new XrefEntry();
+		list.add(xe);
+	}
+	
+	/** must be after addBegin */
+	void addSource(int ari, String source) {
+		List<XrefEntry> list = map.get(ari);
+		if (list == null) {
+			throw new RuntimeException("Must be after addBegin (1)");
+		}
+		
+		XrefEntry xe = list.get(list.size() - 1);
+		if (xe.source != null || xe.target != null) {
+			throw new RuntimeException("Must be directly after addBegin (2)");
+		}
+		
+		xe.source = source.trim();
+	}
+	
+	/* must be after addSource */
+	void addTarget(int ari, String target) {
+		List<XrefEntry> list = map.get(ari);
+		if (list == null) {
+			throw new RuntimeException("Must be after addSource (1)");
+		}
+		
+		XrefEntry xe = list.get(list.size() - 1);
+		if (xe.source == null || xe.target != null) {
+			throw new RuntimeException("Must be directly after addSource (2)");
+		}
+		
+		xe.target = target.trim();
+	}
+	
+	void dump() {
+		for (Map.Entry<Integer, List<XrefEntry>> e: map.entrySet()) {
+			List<XrefEntry> xes = e.getValue();
+			for (int i = 0; i < xes.size(); i++) {
+				XrefEntry xe = xes.get(i);
+				System.out.printf("xref 0x%06x(%d): [%s] [%s]%n", e.getKey(), i, xe.source, xe.target);
+			}
+		}
+	}
+	
+	void processEach(XrefProcessor processor) {
+		for (Map.Entry<Integer, List<XrefEntry>> e: map.entrySet()) {
+			List<XrefEntry> xes = e.getValue();
+			for (int i = 0; i < xes.size(); i++) {
+				XrefEntry xe = xes.get(i);
+				processor.process(xe, e.getKey(), i);
+			}
+		}
 	}
 }
