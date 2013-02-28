@@ -1,8 +1,11 @@
 package yuku.alkitabconverter.in_tb_usfm;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +25,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 
 import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.util.Base64Mod;
 import yuku.alkitab.yes1.Yes1File;
 import yuku.alkitab.yes1.Yes1File.InfoEdisi;
 import yuku.alkitab.yes1.Yes1File.InfoKitab;
@@ -43,6 +47,7 @@ import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.TextDb.TextProcessor;
 import yuku.alkitabconverter.util.TextDb.VerseState;
 import yuku.alkitabconverter.yes_common.Yes1Common;
+import yuku.bintex.BintexWriter;
 
 public class Proses2 {
 	final SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -62,6 +67,7 @@ public class Proses2 {
 	TextDb teksDb = new TextDb();
 	StringBuilder misteri = new StringBuilder();
 	XrefDb xrefDb = new XrefDb();
+	BintexWriter xrefBw;
 	
 	PericopeData pericopeData = new PericopeData();
 	{
@@ -101,7 +107,7 @@ public class Proses2 {
 		System.out.println(misteri);
 		
 		System.out.println("OUTPUT XREF:");
-
+		
 		xrefDb.processEach(new XrefDb.XrefProcessor() {
 			@Override public void process(XrefEntry xe, int ari, int entryIndex) {
 				final List<int[]> pairs = new ArrayList<>();
@@ -122,32 +128,116 @@ public class Proses2 {
 					
 					IntArrayList ariRanges = DesktopVerseParser.verseStringToAriWithShiftTb(verse);
 					
-					// we need to process 00 verses (entire chapter) to 1 for start and the last verse for end. 
-					boolean isStart = true;
-					for (int j = 0; j < ariRanges.size(); j++, isStart = !isStart) {
-						int ari2 = ariRanges.get(j);
-						if (Ari.toVerse(ari2) == 0) {
-							if (isStart) {
-								ari2 = Ari.encodeWithBc(Ari.toBookChapter(ari2), 1);
-							} else {
-								int lastVerse_1 = KjvUtils.getVerseCount(Ari.toBook(ari2), Ari.toChapter(ari2));
-								ari2 = Ari.encodeWithBc(Ari.toBookChapter(ari2), lastVerse_1);
+					{ // we need to process 00 verses (entire chapter) to 1 for start and the last verse for end. 
+						boolean isStart = true;
+						for (int j = 0; j < ariRanges.size(); j++, isStart = !isStart) {
+							int ari2 = ariRanges.get(j);
+							if (Ari.toVerse(ari2) == 0) {
+								if (isStart) {
+									ari2 = Ari.encodeWithBc(Ari.toBookChapter(ari2), 1);
+								} else {
+									int lastVerse_1 = KjvUtils.getVerseCount(Ari.toBook(ari2), Ari.toChapter(ari2));
+									ari2 = Ari.encodeWithBc(Ari.toBookChapter(ari2), lastVerse_1);
+								}
 							}
+							ariRanges.set(j, ari2);
 						}
-						ariRanges.set(j, ari2);
 					}
 					
-					StringBuilder lid_s = new StringBuilder();
-					for (int j = 0; j < ariRanges.size(); j++) {
-						int lid = KjvUtils.ariToLid(ariRanges.get(j));
-						lid_s.append(String.format("%d#", lid));
-						if (lid <= 0) throw new RuntimeException(String.format("invalid ari found 0x%06x", ariRanges.get(j)));
-					}
+					{
+						StringBuilder lid_s = new StringBuilder();
+						int last_lid = 0;
+						boolean isStart = true;
+						boolean endWritten = false; // this can be set to true in isstart portion if the end verse does not need to be written
+						
+						for (int j = 0; j < ariRanges.size(); j++, isStart = !isStart) {
+							int lid = KjvUtils.ariToLid(ariRanges.get(j));
+							if (lid <= 0) throw new RuntimeException(String.format("invalid ari found 0x%06x", ariRanges.get(j)));
+							
+							int enc_value = -1; // just to prevent forgetting
+							char[] chars;
+							if (isStart) {
+								endWritten = false;
+								// 00 <addr 4bit> = 1char positive delta from last lid (max 16)
+								// 01 <addr 4bit> = 1char positive delta from last lid (max 16), end == start
+								// 100 <addr 9bit> = 2char positive delta from last lid (max 512)
+								// 101 <addr 9bit> = 2char positive delta from last lid (max 512), end == start
+								// 110 <addr 15bit> = 3char absolute
+								// 111 <addr 15bit> = 3char absolute, end == start
+								int lid_end = KjvUtils.ariToLid(ariRanges.get(j + 1));
+								if (last_lid == 0 || (lid - last_lid) > 512 || (lid - last_lid) < 0) { // use 3 6-bit chars
+									if (lid_end == lid) {
+										enc_value = 0x38000 | lid;
+										endWritten = true;
+									} else {
+										enc_value = 0x30000 | lid;
+									}
+									chars = Base64Mod.encodeToThreeChars(enc_value);
+								} else if ((lid - last_lid) > 16) { // use 2 6-bit chars
+									if (lid_end == lid) {
+										enc_value = 0xa00 | (lid - last_lid);
+										endWritten = true;
+									} else {
+										enc_value = 0x800 | (lid - last_lid);
+									}
+									chars = Base64Mod.encodeToTwoChars(enc_value);
+								} else { // use 1 6-bit char
+									if (lid_end == lid) {
+										enc_value = 0x10 | (lid - last_lid);
+										endWritten = true;
+									} else {
+										enc_value = (lid - last_lid);
+									}
+									chars = Base64Mod.encodeToOneChar(enc_value);
+								}
+							} else {
+								// 0 <delta 5bit> = 1char positive delta from start (min 1, max 32)
+								// 10 <delta 10bit> = 2char positive delta from start (max 1024)
+								// 110 <addr 15bit> = 3char absolute
+								if (endWritten) { // already mentioned by start, no need to do anything
+									chars = new char[0];
+								} else if ((lid - last_lid) > 1024) { // use 3 6-bit chars
+									enc_value = 0x30000 | lid;
+									chars = Base64Mod.encodeToThreeChars(enc_value);
+								} else if ((lid - last_lid) > 32) { // use 2 6-bit chars
+									enc_value = 0x800 | (lid - last_lid);
+									chars = Base64Mod.encodeToTwoChars(enc_value);
+								} else { // use 1 6-bit char
+									enc_value = (lid - last_lid);
+									chars = Base64Mod.encodeToOneChar(enc_value);
+								}
+							}
+							lid_s.append(chars);
+							// for debug lid_s.append("(").append(String.format("0x%x", enc_value)).append(")");
+							
+							last_lid = lid;
+						}
 					
-					target = target.substring(0, pair[0]) + "@<" + lid_s + "@>" + verse + "@/" + target.substring(pair[1]);
+						target = target.substring(0, pair[0]) + "@<t" + lid_s + "@>" + verse + "@/" + target.substring(pair[1]);
+					}
 				}
 				
 				xe.target = target;
+			}
+		});
+		
+		// prepare for xref file
+		final IntArrayList xref_index_ari_to_pos = new IntArrayList();
+		final IntArrayList xref_index_pos_to_offset = new IntArrayList();
+		final ByteArrayOutputStream xref_content_buf = new ByteArrayOutputStream();
+		final BintexWriter xref_content_bw = new BintexWriter(xref_content_buf);
+		xrefDb.processEach(new XrefDb.XrefProcessor() {
+			@Override public void process(XrefEntry xe, int ari, int entryIndex) {
+				try {
+					int offset = xref_content_bw.getPos();
+					xref_content_bw.writeValueString(xe.source);
+					xref_content_bw.writeValueString(xe.target);
+					
+					xref_index_ari_to_pos.add(ari);
+					xref_index_pos_to_offset.add(offset);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
 			}
 		});
 		
@@ -189,6 +279,59 @@ public class Proses2 {
 		{
 			File outDir = new File("./bahan/in-tb-usfm/raw");
 			ReverseIndexer.createReverseIndex(outDir, "tb", teksDb);
+		}
+		
+		////////// CREATE XREF FILE
+
+		try (BintexWriter bw = new BintexWriter(new FileOutputStream(new File("./bahan/in-tb-usfm/raw", "tb_xref_bt.bt")))) {
+			assert xref_index_ari_to_pos.size() == xref_index_pos_to_offset.size();
+			
+			// TB has 3238 xrefentries. Write size first.
+			bw.writeInt(xref_index_ari_to_pos.size());
+			
+			// Index  ari -> pos
+			//  0 <delta 7bit> = relative
+			//  10 <delta 14bit> = relative
+			//  1100 0000 <ari 24bit> = absolute
+			// total ~ 5 KB
+			{ 
+				int last_ari = 0;
+				for (int i = 0; i < xref_index_ari_to_pos.size(); i++) {
+					int ari = xref_index_ari_to_pos.get(i);
+					if (last_ari == 0 || (ari - last_ari > 16383)) { // 4 byte
+						bw.writeInt(0xc0000000 | ari);
+					} else if ((ari - last_ari) > 127) { // 2 byte
+						bw.writeUint16(0x8000 | (ari-last_ari));
+					} else {
+						bw.writeUint8(ari-last_ari);
+					}
+					last_ari = ari;
+				}
+			}
+			
+			// Index  pos -> xref_content
+			//  0 <delta 7bit> = relative
+			//  10 <delta 14bit> = relative
+			//  1100 0000 <offset 24bit> = absolute
+			//
+			// total ~ 4 KB 
+			{
+				int last_offset = 0;
+				for (int i = 0; i < xref_index_pos_to_offset.size(); i++) {
+					int offset = xref_index_pos_to_offset.get(i);
+					if (last_offset == 0 || (offset - last_offset > 16383)) { // 4 byte
+						bw.writeInt(0xc0000000 | offset);
+					} else if ((offset - last_offset) > 127) { // 2 byte
+						bw.writeUint16(0x8000 | (offset-last_offset));
+					} else { // 1 byte
+						bw.writeUint8(offset-last_offset);
+					}
+					last_offset = offset;
+				}
+			}
+			
+			// content
+			bw.writeRaw(xref_content_buf.toByteArray());
 		}
 		
 		////////// PROSES KE INTERNAL
