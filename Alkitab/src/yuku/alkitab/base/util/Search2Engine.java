@@ -515,6 +515,31 @@ public class Search2Engine {
 		}.start();
 	}
 	
+	/**
+	 * Revindex: an index used for searching quickly.
+	 * The index is keyed on the word for searching, and the value is the list of verses' lid (KJV verse number, 1..31102).
+	 * 
+	 * Format of the Revindex file:
+	 *   int total_word_count
+	 *   {
+	 *      uint8 word_len
+	 *      int word_by_len_count // the number of words having length of word_len
+	 *      {
+	 *          byte[word_len] word // the word itself, stored as 8-bit per character
+	 *          uint16 lid_count // the number of verses having this word
+	 *          byte[] verse_list // see below
+	 *      }[word_by_len_count]
+	 *   }[] // until total_word_count is taken
+	 *   
+	 * The verses in verse_list are stored in either 8bit or 16bit, depending on the difference to the last entry before the current entry.
+	 * The first entry on the list is always 16 bit.
+	 * If one verse is specified in 16 bits, the 15-bit LSB is the verse lid itself (max 32767, although 31102 is the real max)
+	 * in binary: 1xxxxxxx xxxxxxxx where x is the absolute verse lid as 15 bit uint.
+	 * If one verse is specified in 8 bits, the 7-bit LSB is the difference between this verse and the last verse.
+	 * in binary: 0ddddddd where d is the relative verse lid as 7 bit uint.
+	 * For example, if a word is located at lids [0xff, 0x100, 0x300, 0x305], the stored data in the disk will be 
+	 * in bytes: 0x80, 0xff, 0x01, 0x83, 0x00, 0x05.
+	 */
 	private static RevIndex loadRevIndex() {
 		if (cache_revIndex != null) {
 			RevIndex res = cache_revIndex.get();
