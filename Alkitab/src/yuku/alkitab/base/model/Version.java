@@ -157,4 +157,22 @@ public class Version {
 		
 		return singleVerse.getVerse(0);
 	}
+	
+	/**
+	 * Get the number of xref entries for each verse of the specified book and chapter.
+	 * The result with index verse_1 will be filled with the number of xref entries on the verse_1.
+	 * @param result must have at least 256 elements. The result will be put here.
+	 * @return Total number of xref entries. 0 if none or no xref support on this version.
+	 */
+	public synchronized int getXrefEntryCounts(int[] result, int bookId, int chapter_1) {
+		return bibleReader.getXrefEntryCounts(result, bookId, chapter_1);
+	}
+
+	/**
+	 * @param which Each verse can have more than one xref entry. Starts from 0.
+	 */
+	public synchronized XrefEntry getXrefEntry(int bookId, int chapter_1, int verse_1, int which) {
+		return bibleReader.getXrefEntry(bookId, chapter_1, verse_1, which);
+	}
+	
 }

@@ -5,14 +5,16 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.InternalBook;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
-import yuku.alkitab.base.model.Version;
+import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.yes1.Yes1PericopeIndex;
 import yuku.bintex.BintexReader;
 
@@ -30,6 +32,7 @@ public class InternalReader implements BibleReader {
 	private final VerseTextDecoder verseTextDecoder;
 
 	private Yes1PericopeIndex pericopeIndex_;
+	private XrefTable xrefTable_;
 
 	public InternalReader(String edisiPrefix, String edisiShortName, String edisiLongName, VerseTextDecoder verseTextDecoder) {
 		this.edisiPrefix = edisiPrefix;
@@ -53,7 +56,139 @@ public class InternalReader implements BibleReader {
 			return verses.length;
 		}
 	}
-	
+
+	static class XrefTable {
+		boolean available = false;
+		int[] index_ari; // ari to pos
+		int[] index_offset; // pos to content offset
+		int content_start_offset; // offset of start of content
+		
+		public XrefTable() {
+			InputStream input = S.openRaw(AppConfig.get().internalPrefix + "_xref_bt");
+			if (input == null) {
+				return;
+			}
+			
+			try {
+				BintexReader br = new BintexReader(input);
+				
+				int count = br.readInt();
+				
+				index_ari = new int[count];
+				readAriOrOffset(br, index_ari, count);
+				index_offset = new int[count];
+				readAriOrOffset(br, index_offset, count);
+				
+				content_start_offset = br.getPos();
+				available = true;
+			} catch (IOException e) {
+				Log.e(TAG, "error loading xref", e);
+				return;
+			}
+		}
+
+		// Index  pos -> xref_content
+		// or Index  ari -> pos
+		//  0 <delta 7bit> = relative
+		//  10 <delta 14bit> = relative
+		//  1100 0000 <offset 24bit> = absolute
+		// They have the same format!
+		private void readAriOrOffset(BintexReader br, int[] index_ao, int count) throws IOException {
+			int ao_last = 0;
+			byte[] buf = new byte[3];
+			for (int i = 0; i < count; i++) {
+				int ao;
+				int b0 = br.readUint8();
+				if ((b0 & 0x80) == 0) { // delta 7bit
+					ao = ao_last + b0;
+				} else if ((b0 & 0x40) == 0) { // delta 14bit
+					int b1 = br.readUint8();
+					ao = ao_last + ((b0 & 0x3f) << 8 | b1);
+				} else { // absolute
+					br.readRaw(buf, 0, 3);
+					ao = buf[0] << 16 | buf[1] << 8 | buf[2];
+				}
+				index_ao[i] = ao;
+				ao_last = ao;
+			}
+		}
+		
+		boolean isAvailable() {
+			return available;
+		}
+		
+		int getXrefEntryCounts(int[] result, int bookId, int chapter_1) {
+			Arrays.fill(result, 0);
+			
+			// binary search on index_ari with verse_1 = 0
+			int ariBc = Ari.encode(bookId, chapter_1, 0);
+			int startPos = Arrays.binarySearch(index_ari, ariBc);
+			if (startPos < 0) {
+				startPos = -startPos - 1;
+			}
+			
+			// move forward along index_ari to get all positions matching the book-chapter of requested book-chapter
+			int pos = startPos;
+			int res = 0;
+			while (true) {
+				if (pos >= index_ari.length) break;
+				int ari = index_ari[pos];
+				if ((ari & 0xffff00) != ariBc) {
+					break;
+				}
+				
+				int verse_1 = (ari & 0xff);
+				result[verse_1]++;
+				res++;
+			}
+			
+			return res;
+		}
+		
+		XrefEntry getXrefEntry(int bookId, int chapter_1, int verse_1, int which) {
+			int ari = Ari.encode(bookId, chapter_1, verse_1);
+			int pos = Arrays.binarySearch(index_ari, ari);
+			if (pos < 0) {
+				return null;
+			}
+			
+			// we found the ari at the index, now look back to find the first entry
+			int pos_first = pos;
+			for (int pos_try = pos - 1; pos_try >= 0; pos_try--) {
+				if (index_ari[pos_try] == ari) {
+					pos_first = pos_try;
+				} else {
+					break;
+				}
+			}
+			
+			// now we know the real pos
+			pos = pos_first + which;
+			
+			// check for invalid which
+			if (pos >= index_ari.length || index_ari[pos] != ari) {
+				return null;
+			}
+			
+			// OK
+			int offset = index_offset[pos];
+			int abs_offset = content_start_offset + offset;
+			try {
+				XrefEntry res = new XrefEntry();
+				InputStream input = S.openRaw(AppConfig.get().internalPrefix + "_xref_bt");
+				input.skip(abs_offset);
+				BintexReader br = new BintexReader(input);
+				res.source = br.readValueString();
+				res.target = br.readValueString();
+				br.close();
+				return res;
+			} catch (IOException e) {
+				Log.e(TAG, "load xref failed", e);
+				return null;
+			}
+		}
+	}
+
 	@Override public String getShortName() {
 		return edisiShortName;
 	}
@@ -267,5 +402,29 @@ public class InternalReader implements BibleReader {
 		}
 
 		return res;
+	}
+	
+	@Override public int getXrefEntryCounts(int[] result, int bookId, int chapter_1) {
+		if (xrefTable_ == null) {
+			xrefTable_ = new XrefTable();
+		}
+		
+		if (!xrefTable_.isAvailable()) {
+			return 0;
+		}
+		
+		return xrefTable_.getXrefEntryCounts(result, bookId, chapter_1);
+	}
+
+	@Override public XrefEntry getXrefEntry(int bookId, int chapter_1, int verse_1, int which) {
+		if (xrefTable_ == null) {
+			xrefTable_ = new XrefTable();
+		}
+		
+		if (!xrefTable_.isAvailable()) {
+			return null;
+		}
+		
+		return xrefTable_.getXrefEntry(bookId, chapter_1, verse_1, which);
 	}
 }

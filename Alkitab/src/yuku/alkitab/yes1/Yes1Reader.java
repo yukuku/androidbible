@@ -13,6 +13,7 @@ import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
+import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.base.storage.BibleReader;
 import yuku.alkitab.base.storage.OldVerseTextDecoder;
 import yuku.alkitab.base.storage.VerseTextDecoder;
@@ -429,5 +430,15 @@ public class Yes1Reader implements BibleReader {
 			Log.e(TAG, "init error", e); //$NON-NLS-1$
 			return null;
 		}
+	}
+
+	@Override public int getXrefEntryCounts(int[] result, int bookId, int chapter_1) {
+		// YES1 file cannot contain any xref entries.
+		return 0;
+	}
+
+	@Override public XrefEntry getXrefEntry(int bookId, int chapter_1, int verse_1, int which) {
+		// YES1 file cannot contain any xref entries.
+		return null;
 	}
 }
