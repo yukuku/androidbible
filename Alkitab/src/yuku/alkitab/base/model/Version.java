@@ -1,74 +1,178 @@
 package yuku.alkitab.base.model;
 
+import android.util.Log;
+
+import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.storage.BibleReader;
+import yuku.alkitab.base.storage.InternalReader;
+import yuku.alkitab.base.storage.OldVerseTextDecoder;
 
 public class Version {
-	public BibleReader bibleReader;
+	public static final String TAG = Version.class.getSimpleName();
+	private static final String NOT_AVAILABLE_TEXT = "[?]"; //$NON-NLS-1$
 	
+	private BibleReader bibleReader;
+	
+	private Book[] cache_books;
+	private Book[] cache_consecutiveBooks;
+	
+	private static Version internalVersion;
+
 	public Version(BibleReader bibleReader) {
 		this.bibleReader = bibleReader;
 	}
 	
-	private Book[] volatile_xkitab;
-	private Book[] volatile_xkitabConsecutive;
-	
-	private synchronized Book[] getXkitab() {
-		if (volatile_xkitab == null) {
-			volatile_xkitab = this.bibleReader.loadBooks();
+	public static synchronized Version getInternalVersion() {
+		if (internalVersion == null) {
+			AppConfig c = AppConfig.get();
+			internalVersion = new Version(new InternalReader(c.internalPrefix, c.internalShortName, c.internalLongName, new OldVerseTextDecoder.Utf8()));
 		}
-		return volatile_xkitab;
+		return internalVersion;
+	}
+
+	/**
+	 * Some books can be null. Using this method, the return value indexed will have the same value as the {@link Book#bookId}.
+	 * i.e. return_value[bookId].bookId == bookId.
+	 */
+	private synchronized Book[] getBooks() {
+		if (cache_books == null) {
+			cache_books = this.bibleReader.loadBooks();
+		}
+		return cache_books;
 	}
 	
 	/**
-	 * @return kitab pos yang tertinggi (walau tengah2nya bisa ada null) + 1
+	 * @return The highest bookId on this version plus one.
 	 */
 	public synchronized int getMaxBookIdPlusOne() {
-		return getXkitab().length;
+		return getBooks().length;
 	}
 	
 	/**
-	 * @return same as getXkitab, but none of the array elements are null. For enumerating available kitabs.
-	 * Note that using this, no guarantee that return_value[pos].pos == pos.
+	 * @return same as {@link #getBooks()}, but none of the array elements is null. 
+	 * For enumerating available books.
+	 * Note that using this, no guarantee that return_value[bookId].bookId == bookId.
 	 */
 	public synchronized Book[] getConsecutiveBooks() {
-		if (volatile_xkitabConsecutive == null) {
-			Book[] xkitab1 = getXkitab();
+		if (cache_consecutiveBooks == null) {
+			Book[] books1 = getBooks();
 			// count
-			int nkitabc = 0;
-			for (Book k: xkitab1) {
-				if (k != null) {
-					nkitabc++;
+			int book_count = 0;
+			for (Book b: books1) {
+				if (b != null) {
+					book_count++;
 				}
 			}
-			Book[] xkitab2 = new Book[nkitabc];
+			Book[] books2 = new Book[book_count];
 			int c = 0;
-			for (Book k: xkitab1) {
-				if (k != null) {
-					xkitab2[c++] = k;
+			for (Book b: books1) {
+				if (b != null) {
+					books2[c++] = b;
 				}
 			}
-			volatile_xkitabConsecutive = xkitab2;
+			cache_consecutiveBooks = books2;
 		}
-		return volatile_xkitabConsecutive;
+		return cache_consecutiveBooks;
 	}
 	
 	/**
-	 * @return null if kitabPos is out of range, or the kitab is not available.
+	 * @return null if bookId is out of range, or the book is not available on this version.
 	 */
-	public synchronized Book getBook(int kitabPos) {
-		Book[] xkitab = getXkitab();
-		if (kitabPos < 0 || kitabPos >= xkitab.length) {
+	public synchronized Book getBook(int bookId) {
+		Book[] books = getBooks();
+		if (bookId < 0 || bookId >= books.length) {
 			return null;
 		}
-		return xkitab[kitabPos];
+		return books[bookId];
 	}
 	
 	public synchronized Book getFirstBook() {
-		Book[] xkitab = getXkitab();
-		for (Book k: xkitab) {
-			if (k != null) return k;
+		Book[] books = getBooks();
+		for (Book b: books) {
+			if (b != null) return b;
 		}
-		// aneh skali kalo kena ini, tapi toh kena juga
-		throw new RuntimeException("Ga ketemu satu pun kitab yang ga null. Info edisi: " + (this.bibleReader == null? "pembaca=null": (this.bibleReader.getLongName() + " nkitab=" + xkitab.length)));    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+
+		Log.e(TAG, "No books available on this version. Version info: " + (this.bibleReader == null? "reader=null": (this.bibleReader.getLongName() + " books.length=" + books.length)));    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		return null;
 	}
+
+	public synchronized String loadVerseText(int ari) {
+		return loadVerseText(getBook(Ari.toBook(ari)), Ari.toChapter(ari), Ari.toVerse(ari));
+	}
+
+	public synchronized String loadVerseText(Book book, int chapter_1, int verse_1) {
+		if (book == null) {
+			return NOT_AVAILABLE_TEXT;
+		}
+		SingleChapterVerses verses = bibleReader.loadVerseText(book, chapter_1, false, false);
+		
+		if (verses == null) {
+			return NOT_AVAILABLE_TEXT;
+		}
+		
+		int verse_0 = verse_1 - 1;
+		if (verse_0 >= verses.getVerseCount()) {
+			return NOT_AVAILABLE_TEXT;
+		}
+		return verses.getVerse(verse_0);
+	}
+
+	/**
+	 * Loads the list of pericopes for a chapter
+	 * @param aris output parameter; will be filled in with the aris where the pericopes start
+	 * @param pericopeBlocks output parameter; will be filled with the content of the pericopes
+	 * @param max the maximum number of pericopes to return. The output arrays must have at least max entries.
+	 * @return the number of pericopes loaded. 0 if the version does not have pericopes or some errors happen.
+	 */
+	public synchronized int loadPericope(int bookId, int chapter_1, int[] aris, PericopeBlock[] pericopeBlocks, int max) {
+		return bibleReader.loadPericope(bookId, chapter_1, aris, pericopeBlocks, max);
+	}
+
+	public synchronized SingleChapterVerses loadChapterText(Book book, int chapter_1) {
+		if (book == null) {
+			return null;
+		}
+		
+		return bibleReader.loadVerseText(book, chapter_1, false, false);
+	}
+
+	public synchronized SingleChapterVerses loadChapterTextLowercased(Book book, int chapter_1) {
+		if (book == null) {
+			return null;
+		}
+		
+		return bibleReader.loadVerseText(book, chapter_1, false, true);
+	}
+
+	public synchronized String loadChapterTextLowercasedWithoutSplit(Book book, int chapter_1) {
+		if (book == null) {
+			return NOT_AVAILABLE_TEXT;
+		}
+		
+		SingleChapterVerses singleVerse = bibleReader.loadVerseText(book, chapter_1, true, true);
+		
+		if (singleVerse == null) {
+			return NOT_AVAILABLE_TEXT;
+		}
+		
+		return singleVerse.getVerse(0);
+	}
+	
+	/**
+	 * Get the number of xref entries for each verse of the specified book and chapter.
+	 * The result with index verse_1 will be filled with the number of xref entries on the verse_1.
+	 * @param result must have at least 256 elements. The result will be put here.
+	 * @return Total number of xref entries. 0 if none or no xref support on this version.
+	 */
+	public synchronized int getXrefEntryCounts(int[] result, int bookId, int chapter_1) {
+		return bibleReader.getXrefEntryCounts(result, bookId, chapter_1);
+	}
+
+	/**
+	 * @param which Each verse can have more than one xref entry. Starts from 0.
+	 */
+	public synchronized XrefEntry getXrefEntry(int bookId, int chapter_1, int verse_1, int which) {
+		return bibleReader.getXrefEntry(bookId, chapter_1, verse_1, which);
+	}
+	
 }

@@ -437,7 +437,7 @@ public class VersionsActivity extends BaseActivity {
 	void handleFileOpenYes(String filename, String namapdbasal) {
 		{ // cari dup
 			boolean dup = false;
-			AppConfig c = AppConfig.get(getApplicationContext());
+			AppConfig c = AppConfig.get();
 			for (MVersionPreset preset: c.presets) {
 				if (filename.equals(AddonManager.getVersionPath(preset.presetFilename))) {
 					dup = true;
@@ -673,7 +673,7 @@ public class VersionsActivity extends BaseActivity {
 
 		@Override
 		public Version getVersion() {
-			return S.getInternalVersion();
+			return Version.getInternalVersion();
 		}
 
 		@Override
@@ -766,7 +766,7 @@ public class VersionsActivity extends BaseActivity {
 		List<MVersionYes> yeses;
 		
 		public void init() {
-			AppConfig c = AppConfig.get(getApplicationContext());
+			AppConfig c = AppConfig.get();
 			
 			internal = new MVersionInternal();
 			internal.setActive(true);

@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import yuku.afw.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
@@ -177,7 +176,7 @@ public class Provider extends ContentProvider {
 		if (ari != Integer.MIN_VALUE && ari != 0) {
 			Book book = S.activeVersion.getBook(Ari.toBook(ari));
 			if (book != null) {
-				String text = S.loadVerseText(S.activeVersion, ari);
+				String text = S.activeVersion.loadVerseText(ari);
 				if (formatting == false) {
 					text = U.removeSpecialCodes(text);
 				}
@@ -219,7 +218,7 @@ public class Provider extends ContentProvider {
 				int ari = ari_start;
 				Book book = S.activeVersion.getBook(Ari.toBook(ari));
 				if (book != null) {
-					String text = S.loadVerseText(S.activeVersion, ari);
+					String text = S.activeVersion.loadVerseText(ari);
 					if (formatting == false) {
 						text = U.removeSpecialCodes(text);
 					}
@@ -265,7 +264,7 @@ public class Provider extends ContentProvider {
 	 */
 	private int resultForOneChapter(MatrixCursor cursor, Book book, int last_c, int ari_bc, int v_1_start, int v_1_end, boolean formatting) {
 		int count = 0;
-		SingleChapterVerses verses = S.loadChapterText(S.activeVersion, book, Ari.toChapter(ari_bc));
+		SingleChapterVerses verses = S.activeVersion.loadChapterText(book, Ari.toChapter(ari_bc));
 		for (int v_1 = v_1_start; v_1 <= v_1_end; v_1++) {
 			int v_0 = v_1 - 1;
 			if (v_0 < verses.getVerseCount()) {
@@ -289,11 +288,11 @@ public class Provider extends ContentProvider {
 
 		long _id = 0;
 		{ // internal
-			AppConfig c = AppConfig.get(getContext());
+			AppConfig c = AppConfig.get();
 			res.addRow(new Object[] {++_id, "internal", 1, c.internalShortName, c.internalLongName, c.internalLongName});
 		}
 		{ // presets
-			List<MVersionPreset> presets = AppConfig.get(App.context).presets;
+			List<MVersionPreset> presets = AppConfig.get().presets;
 			for (MVersionPreset preset: presets) {
 				res.addRow(new Object[] {++_id, "preset", preset.hasDataFile()? 1: 0, preset.shortName != null? preset.shortName: preset.longName, preset.longName, preset.longName});
 			}

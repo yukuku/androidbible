@@ -388,7 +388,7 @@ public class IsiActivity extends BaseActivity {
 			return; // we are now already on internal, no need to do anything!
 		}
 		
-		AppConfig c = AppConfig.get(this);
+		AppConfig c = AppConfig.get();
 		
 		// coba preset dulu!
 		for (MVersionPreset preset: c.presets) { // 2. preset
@@ -703,7 +703,7 @@ public class IsiActivity extends BaseActivity {
 		menu.clear();
 		getSupportMenuInflater().inflate(R.menu.activity_isi, menu);
 		
-		AppConfig c = AppConfig.get(this);
+		AppConfig c = AppConfig.get();
 
 		if (c.menuGebug) {
 			// SubMenu menuGebug = menu.addSubMenu(R.string.gebug);
@@ -774,7 +774,7 @@ public class IsiActivity extends BaseActivity {
 		// 2. presets that have been DOWNLOADED and ACTIVE
 		// 3. yeses that are ACTIVE
 		
-		AppConfig c = AppConfig.get(this);
+		AppConfig c = AppConfig.get();
 		final List<String> options = new ArrayList<String>(); // sync with below line
 		final List<MVersion> data = new ArrayList<MVersion>();  // sync with above line
 		
@@ -943,7 +943,7 @@ public class IsiActivity extends BaseActivity {
 			PericopeBlock[] pericope_blocks;
 			int nblock;
 			
-			SingleChapterVerses verses = S.loadChapterText(S.activeVersion, S.activeBook, chapter_1);
+			SingleChapterVerses verses = S.activeVersion.loadChapterText(S.activeBook, chapter_1);
 			if (verses == null) {
 				return 0;
 			}
@@ -952,7 +952,7 @@ public class IsiActivity extends BaseActivity {
 			int max = 30;
 			pericope_aris = new int[max];
 			pericope_blocks = new PericopeBlock[max];
-			nblock = S.activeVersion.bibleReader.loadPericope(S.activeVersion, S.activeBook.bookId, chapter_1, pericope_aris, pericope_blocks, max); 
+			nblock = S.activeVersion.loadPericope(S.activeBook.bookId, chapter_1, pericope_aris, pericope_blocks, max); 
 			
 			boolean retainSelectedVerses = (!uncheckAllVerses && chapter_1 == current_chapter_1);
 			lsText.setDataWithRetainSelectedVerses(retainSelectedVerses, chapter_1, pericope_aris, pericope_blocks, nblock, verses);

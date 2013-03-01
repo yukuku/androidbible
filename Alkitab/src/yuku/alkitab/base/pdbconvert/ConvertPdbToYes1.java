@@ -28,7 +28,7 @@ import com.compactbyte.android.bible.PDBFileStream;
 import com.compactbyte.bibleplus.reader.BiblePlusPDB;
 import com.compactbyte.bibleplus.reader.BookInfo;
 
-public class ConvertPdbToYes1 {
+@SuppressWarnings("deprecation") public class ConvertPdbToYes1 {
 	public static final String TAG = ConvertPdbToYes1.class.getSimpleName();
 
 	public static final int VERSI_CONVERTER = 1;

@@ -578,7 +578,7 @@ public class Search2Activity extends BaseActivity {
 			SpannableStringBuilder sb = new SpannableStringBuilder(S.reference(book, pasal_1, ayat_1));
 			Appearances.applySearchResultReferenceAppearance(lAlamat, sb);
 			
-			String ayat = S.loadVerseText(S.activeVersion, book, pasal_1, ayat_1);
+			String ayat = S.activeVersion.loadVerseText(book, pasal_1, ayat_1);
 			ayat = U.removeSpecialCodes(ayat);
 			lCuplikan.setText(Search2Engine.hilite(ayat, xkata, warnaHilite));
 			Appearances.applyTextAppearance(lCuplikan);
