@@ -28,8 +28,7 @@
             android:layout_height="wrap_content"
             android:drawablePadding="6dp"
             android:text="Bahasa Indonesia Sehari-hari"
-            android:textColor="#fff"
-            android:textSize="18dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             tools:ignore="HardcodedText" />
 
         <TextView

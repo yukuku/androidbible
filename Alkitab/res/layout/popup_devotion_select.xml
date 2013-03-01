@@ -38,6 +38,8 @@
                 android:id="@+id/tCurrentDate"
                 style="@style/DevotionSelectCurrentDate"
                 android:text="*current date"
+                android:textAppearance="?android:attr/textAppearanceSmallInverse"
+                android:textColor="#ddd"
                 tools:ignore="HardcodedText" />
 
             <ImageButton
