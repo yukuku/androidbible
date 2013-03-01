@@ -277,7 +277,7 @@ public class S {
 	 * Jika ayat_1_range adalah null, ayat akan diabaikan (jadi cuma kitab dan pasal).
 	 */
 	public static String createVerseUrl(Book book, int pasal_1, String ayat_1_range) {
-		AppConfig c = AppConfig.get(App.context);
+		AppConfig c = AppConfig.get();
 		if (book.bookId >= c.url_standardBookNames.length) {
 			return null;
 		}

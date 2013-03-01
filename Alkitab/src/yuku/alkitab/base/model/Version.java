@@ -2,7 +2,6 @@ package yuku.alkitab.base.model;
 
 import android.util.Log;
 
-import yuku.alkitab.base.App;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.storage.BibleReader;
 import yuku.alkitab.base.storage.InternalReader;
@@ -25,7 +24,7 @@ public class Version {
 	
 	public static synchronized Version getInternalVersion() {
 		if (internalVersion == null) {
-			AppConfig c = AppConfig.get(App.context);
+			AppConfig c = AppConfig.get();
 			internalVersion = new Version(new InternalReader(c.internalPrefix, c.internalShortName, c.internalLongName, new OldVerseTextDecoder.Utf8()));
 		}
 		return internalVersion;

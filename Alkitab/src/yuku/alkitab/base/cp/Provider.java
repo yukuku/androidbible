@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import yuku.afw.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
@@ -289,11 +288,11 @@ public class Provider extends ContentProvider {
 
 		long _id = 0;
 		{ // internal
-			AppConfig c = AppConfig.get(getContext());
+			AppConfig c = AppConfig.get();
 			res.addRow(new Object[] {++_id, "internal", 1, c.internalShortName, c.internalLongName, c.internalLongName});
 		}
 		{ // presets
-			List<MVersionPreset> presets = AppConfig.get(App.context).presets;
+			List<MVersionPreset> presets = AppConfig.get().presets;
 			for (MVersionPreset preset: presets) {
 				res.addRow(new Object[] {++_id, "preset", preset.hasDataFile()? 1: 0, preset.shortName != null? preset.shortName: preset.longName, preset.longName, preset.longName});
 			}

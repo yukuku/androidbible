@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
 
-import yuku.afw.App;
 import yuku.afw.D;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.config.AppConfig;
@@ -525,7 +524,7 @@ public class Search2Engine {
 		
 		RevIndex res = new RevIndex();
 		
-		InputStream raw = new BufferedInputStream(S.openRaw(AppConfig.get(App.context).internalPrefix + "_revindex_bt"), 65536);
+		InputStream raw = new BufferedInputStream(S.openRaw(AppConfig.get().internalPrefix + "_revindex_bt"), 65536);
 		
 		byte[] buf = new byte[256];
 		try {

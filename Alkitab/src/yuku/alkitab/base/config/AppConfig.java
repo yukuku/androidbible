@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.xmlpull.v1.XmlPullParser;
 
+import yuku.afw.App;
 import yuku.alkitab.R;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
 import yuku.alkitab.base.storage.Db;
@@ -35,15 +36,15 @@ public class AppConfig {
 	
 	private AppConfig() {}
 	
-	public static AppConfig get(Context context) {
-		String packageName = context.getPackageName();
+	public static AppConfig get() {
+		String packageName = App.context.getPackageName();
 		if (packageName.equals(lastPackageName)) {
 			return lastAppConfig;
 		}
 		
 		AppConfig res = null;
 		try {
-			res = loadConfig(context, context.getResources().getXml(R.xml.app_config));
+			res = loadConfig(App.context, App.context.getResources().getXml(R.xml.app_config));
 			lastAppConfig = res;
 			lastPackageName = packageName;
 		} catch (Exception e) {

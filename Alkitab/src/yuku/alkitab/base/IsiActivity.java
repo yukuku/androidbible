@@ -405,7 +405,7 @@ public class IsiActivity extends BaseActivity {
 			return; // we are now already on internal, no need to do anything!
 		}
 		
-		AppConfig c = AppConfig.get(this);
+		AppConfig c = AppConfig.get();
 		
 		// coba preset dulu!
 		for (MVersionPreset preset: c.presets) { // 2. preset
@@ -1038,7 +1038,7 @@ public class IsiActivity extends BaseActivity {
 		menu.clear();
 		getSupportMenuInflater().inflate(R.menu.activity_isi, menu);
 		
-		AppConfig c = AppConfig.get(this);
+		AppConfig c = AppConfig.get();
 
 		if (c.menuGebug) {
 			// SubMenu menuGebug = menu.addSubMenu(R.string.gebug);
@@ -1109,7 +1109,7 @@ public class IsiActivity extends BaseActivity {
 		// 2. presets that have been DOWNLOADED and ACTIVE
 		// 3. yeses that are ACTIVE
 		
-		AppConfig c = AppConfig.get(this);
+		AppConfig c = AppConfig.get();
 		final List<String> options = new ArrayList<String>(); // sync with below line
 		final List<MVersion> data = new ArrayList<MVersion>();  // sync with above line
 		

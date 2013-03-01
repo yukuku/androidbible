@@ -25,6 +25,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 
 import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.base.util.Base64Mod;
 import yuku.alkitab.yes1.Yes1File;
 import yuku.alkitab.yes1.Yes1File.InfoEdisi;
@@ -34,7 +35,6 @@ import yuku.alkitab.yes1.Yes1File.PericopeData.Entry;
 import yuku.alkitab.yes1.Yes1File.PerikopBlok;
 import yuku.alkitab.yes1.Yes1File.PerikopIndex;
 import yuku.alkitab.yes1.Yes1File.Teks;
-import yuku.alkitabconverter.in_tb_usfm.XrefDb.XrefEntry;
 import yuku.alkitabconverter.internal_common.InternalCommon;
 import yuku.alkitabconverter.internal_common.ReverseIndexer;
 import yuku.alkitabconverter.unboundbatch.KjvUtils;
@@ -699,11 +699,6 @@ public class Proses2 {
 }
 
 class XrefDb {
-	static class XrefEntry {
-		String source;
-		String target;
-	}
-	
 	static interface XrefProcessor {
 		void process(XrefEntry xe, int ari, int entryIndex);
 	}
