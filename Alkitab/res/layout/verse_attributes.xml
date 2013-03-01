@@ -9,16 +9,16 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:id="@+id/imgAtributBukmak"
-		android:src="@drawable/attribute_type_bookmark"
+		android:src="@drawable/ic_attr_bookmark"
 		android:background="@null"
-		android:paddingRight="6dp"
+		android:paddingRight="4dp"
 		android:contentDescription="@string/desc_open_bookmark"/>
 	<ImageView
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:id="@+id/imgAtributCatatan"
-		android:src="@drawable/attribute_type_note"
+		android:src="@drawable/ic_attr_note"
 		android:background="@null"
-		android:paddingRight="6dp"
+		android:paddingRight="4dp"
 		android:contentDescription="@string/desc_open_note"/>
 </LinearLayout>

@@ -49,7 +49,7 @@ public class TypeNoteDialog {
 		
 		this.dialog = new AlertDialog.Builder(context)
 		.setView(dialogLayout)
-		.setIcon(R.drawable.attribute_type_note)
+		.setIcon(R.drawable.ic_attr_note)
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
