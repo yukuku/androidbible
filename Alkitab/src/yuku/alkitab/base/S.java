@@ -18,13 +18,10 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
-import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.renungan.Downloader;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.InternalDbHelper;
-import yuku.alkitab.base.storage.InternalReader;
-import yuku.alkitab.base.storage.OldVerseTextDecoder;
 import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.base.storage.SongDbHelper;
 import yuku.alkitab.base.util.FontManager;
@@ -85,28 +82,10 @@ public class S {
 
 	public static Downloader downloader;
 	
-	static {
-		int a = R.drawable.ambilwarna_cursor;
-		if (a == 0) throw new RuntimeException(); // cuma mencegah project ambilwarna lupa dibuka
-	}
-	
-	private static synchronized void prepareVersion() {
-		if (activeVersion == null) {
-			activeVersion = getInternalVersion();
-		}
-	}
-
-	private static Version internalVersion;
-	public static synchronized Version getInternalVersion() {
-		if (internalVersion == null) {
-			AppConfig c = AppConfig.get(App.context);
-			internalVersion = new Version(new InternalReader(c.internalPrefix, c.internalShortName, c.internalLongName, new OldVerseTextDecoder.Utf8()));
-		}
-		return internalVersion;
-	}
-
 	public static synchronized void prepareBook() {
-		prepareVersion();
+		if (activeVersion == null) {
+			activeVersion = Version.getInternalVersion();
+		}
 		
 		if (activeBook != null) return;
 		activeBook = activeVersion.getFirstBook(); // nanti diset sama luar waktu init 
@@ -165,66 +144,6 @@ public class S {
 			applied.fontRedColor = Preferences.getInt(App.context.getString(R.string.pref_redTextColor_key), App.context.getResources().getInteger(R.integer.pref_redTextColor_default));
 
 		}
-	}
-	
-	private static final String notAvailableText = "[?]"; //$NON-NLS-1$
-	
-	private static final String[] notAvailableTextArray = {
-		notAvailableText,
-	};
-
-	public static synchronized String loadVerseText(Version version, Book book, int pasal_1, int ayat_1) {
-		if (book == null) {
-			return notAvailableText;
-		}
-		SingleChapterVerses verses = loadChapterText(version, book, pasal_1, false, false);
-		
-		if (verses == null) {
-			return notAvailableText;
-		}
-		
-		int verse_0 = ayat_1 - 1;
-		if (verse_0 >= verses.getVerseCount()) {
-			return notAvailableText;
-		}
-		return verses.getVerse(verse_0);
-	}
-	
-	public static synchronized String loadVerseText(Version version, int ari) {
-		return loadVerseText(version, version.getBook(Ari.toBook(ari)), Ari.toChapter(ari), Ari.toVerse(ari));
-	}
-
-	public static synchronized SingleChapterVerses loadChapterText(Version version, Book book, int pasal_1) {
-		if (book == null) {
-			return null;
-		}
-		
-		return loadChapterText(version, book, pasal_1, false, false);
-	}
-
-	public static synchronized SingleChapterVerses loadChapterTextLowercased(Version version, Book book, int pasal_1) {
-		if (book == null) {
-			return null;
-		}
-		return loadChapterText(version, book, pasal_1, false, true);
-	}
-	
-	public static synchronized String loadChapterTextLowercasedWithoutSplit(Version version, Book book, int pasal_1) {
-		if (book == null) {
-			return notAvailableText;
-		}
-		
-		SingleChapterVerses singleVerse = version.bibleReader.loadVerseText(book, pasal_1, true, true);
-		
-		if (singleVerse == null) {
-			return notAvailableText;
-		}
-		
-		return singleVerse.getVerse(0);
-	}
-	
-	private static SingleChapterVerses loadChapterText(Version version, Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
-		return version.bibleReader.loadVerseText(book, pasal_1, janganPisahAyat, hurufKecil);
 	}
 
 	public static String reference(Version version, int ari) {

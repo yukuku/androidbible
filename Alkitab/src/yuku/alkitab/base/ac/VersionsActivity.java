@@ -673,7 +673,7 @@ public class VersionsActivity extends BaseActivity {
 
 		@Override
 		public Version getVersion() {
-			return S.getInternalVersion();
+			return Version.getInternalVersion();
 		}
 
 		@Override

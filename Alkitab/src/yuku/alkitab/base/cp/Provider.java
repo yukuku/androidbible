@@ -177,7 +177,7 @@ public class Provider extends ContentProvider {
 		if (ari != Integer.MIN_VALUE && ari != 0) {
 			Book book = S.activeVersion.getBook(Ari.toBook(ari));
 			if (book != null) {
-				String text = S.loadVerseText(S.activeVersion, ari);
+				String text = S.activeVersion.loadVerseText(ari);
 				if (formatting == false) {
 					text = U.removeSpecialCodes(text);
 				}
@@ -219,7 +219,7 @@ public class Provider extends ContentProvider {
 				int ari = ari_start;
 				Book book = S.activeVersion.getBook(Ari.toBook(ari));
 				if (book != null) {
-					String text = S.loadVerseText(S.activeVersion, ari);
+					String text = S.activeVersion.loadVerseText(ari);
 					if (formatting == false) {
 						text = U.removeSpecialCodes(text);
 					}
@@ -265,7 +265,7 @@ public class Provider extends ContentProvider {
 	 */
 	private int resultForOneChapter(MatrixCursor cursor, Book book, int last_c, int ari_bc, int v_1_start, int v_1_end, boolean formatting) {
 		int count = 0;
-		SingleChapterVerses verses = S.loadChapterText(S.activeVersion, book, Ari.toChapter(ari_bc));
+		SingleChapterVerses verses = S.activeVersion.loadChapterText(book, Ari.toChapter(ari_bc));
 		for (int v_1 = v_1_start; v_1 <= v_1_end; v_1++) {
 			int v_0 = v_1 - 1;
 			if (v_0 < verses.getVerseCount()) {

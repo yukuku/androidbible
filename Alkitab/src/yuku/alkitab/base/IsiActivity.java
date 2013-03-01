@@ -1278,7 +1278,7 @@ public class IsiActivity extends BaseActivity {
 			PericopeBlock[] pericope_blocks;
 			int nblock;
 			
-			SingleChapterVerses verses = S.loadChapterText(S.activeVersion, S.activeBook, chapter_1);
+			SingleChapterVerses verses = S.activeVersion.loadChapterText(S.activeBook, chapter_1);
 			if (verses == null) {
 				return 0;
 			}
@@ -1287,7 +1287,7 @@ public class IsiActivity extends BaseActivity {
 			int max = 30;
 			pericope_aris = new int[max];
 			pericope_blocks = new PericopeBlock[max];
-			nblock = S.activeVersion.bibleReader.loadPericope(S.activeVersion, S.activeBook.bookId, chapter_1, pericope_aris, pericope_blocks, max); 
+			nblock = S.activeVersion.loadPericope(S.activeVersion, S.activeBook.bookId, chapter_1, pericope_aris, pericope_blocks, max); 
 			
 			//# fill adapter with new data. make sure all checked states are reset
 			IntArrayList selectedVerses_1 = null;

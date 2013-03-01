@@ -512,7 +512,7 @@ public class BookmarkListActivity extends BaseActivity {
 			Book book = S.activeVersion.getBook(Ari.toBook(ari));
 			String alamat = S.reference(S.activeVersion, ari);
 			
-			String isi = S.loadVerseText(S.activeVersion, book, Ari.toChapter(ari), Ari.toVerse(ari));
+			String isi = S.activeVersion.loadVerseText(book, Ari.toChapter(ari), Ari.toVerse(ari));
 			isi = U.removeSpecialCodes(isi);
 			
 			String tulisan = cursor.getString(col_tulisan);
@@ -600,7 +600,7 @@ public class BookmarkListActivity extends BaseActivity {
 					int ari = c.getInt(col_ari);
 					if (!memenuhi) {
 						// coba isi ayatnya!
-						String ayat = S.loadVerseText(S.activeVersion, ari);
+						String ayat = S.activeVersion.loadVerseText(ari);
 						String ayat_lc = ayat.toLowerCase(Locale.getDefault());
 						if (Search2Engine.memenuhiCarian(ayat_lc, xkata)) {
 							memenuhi = true;
