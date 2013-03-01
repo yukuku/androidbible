@@ -13,7 +13,6 @@ import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
-import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.BibleReader;
 import yuku.alkitab.base.storage.OldVerseTextDecoder;
 import yuku.alkitab.base.storage.VerseTextDecoder;
@@ -362,7 +361,7 @@ public class Yes1Reader implements BibleReader {
 		}
 	}
 
-	@Override public int loadPericope(Version version, int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max) {
+	@Override public int loadPericope(int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max) {
 		try {
 			init();
 			

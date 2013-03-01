@@ -117,8 +117,15 @@ public class Version {
 		return verses.getVerse(verse_0);
 	}
 
-	public synchronized int loadPericope(Version version, int bookId, int chapter_1, int[] aris, PericopeBlock[] pericopeBlocks, int max) {
-		return bibleReader.loadPericope(version, bookId, chapter_1, aris, pericopeBlocks, max);
+	/**
+	 * Loads the list of pericopes for a chapter
+	 * @param aris output parameter; will be filled in with the aris where the pericopes start
+	 * @param pericopeBlocks output parameter; will be filled with the content of the pericopes
+	 * @param max the maximum number of pericopes to return. The output arrays must have at least max entries.
+	 * @return the number of pericopes loaded. 0 if the version does not have pericopes or some errors happen.
+	 */
+	public synchronized int loadPericope(int bookId, int chapter_1, int[] aris, PericopeBlock[] pericopeBlocks, int max) {
+		return bibleReader.loadPericope(bookId, chapter_1, aris, pericopeBlocks, max);
 	}
 
 	public synchronized SingleChapterVerses loadChapterText(Book book, int chapter_1) {

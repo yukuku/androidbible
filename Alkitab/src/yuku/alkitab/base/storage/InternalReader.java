@@ -222,7 +222,7 @@ public class InternalReader implements BibleReader {
 		}
 	}
 
-	@Override public int loadPericope(Version version, int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max) {
+	@Override public int loadPericope(int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max) {
 		Yes1PericopeIndex pericopeIndex = loadPericopeIndex();
 
 		if (pericopeIndex == null) {
