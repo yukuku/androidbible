@@ -18,15 +18,12 @@ import android.widget.BaseAdapter;
 import java.util.Arrays;
 
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.base.IsiActivity;
-import yuku.alkitab.base.IsiActivity.AttributeListener;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
-import yuku.alkitab.base.storage.Db.Bookmark2;
-import yuku.alkitab.base.widget.CallbackSpan.OnClickListener;
+import yuku.alkitab.base.storage.Db;
 
 public abstract class VerseAdapter extends BaseAdapter {
 	public static final String TAG = VerseAdapter.class.getSimpleName();
@@ -34,7 +31,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	public static class Factory {
 		int impl = 0; // 0 need check, 1 new (single view), 2 legacy
 		
-		public VerseAdapter create(Context context, OnClickListener paralelListener, AttributeListener attributeListener) {
+		public VerseAdapter create(Context context) {
 			if (impl == 0) {
 				String useLegacyVerseRenderer = Preferences.getString("useLegacyVerseRenderer", "auto");
 				if ("auto".equals(useLegacyVerseRenderer)) { // determine based on device
@@ -53,13 +50,17 @@ public abstract class VerseAdapter extends BaseAdapter {
 			}
 			
 			if (impl == 1) {
-				return new SingleViewVerseAdapter(context, paralelListener, attributeListener);
+				return new SingleViewVerseAdapter(context);
 			} else if (impl == 2) {
-				return new LegacyVerseAdapter(context, paralelListener, attributeListener);
+				return new LegacyVerseAdapter(context);
 			}
 			
 			return null;
 		}
+	}
+	
+	public interface AttributeListener {
+		void onClick(Book book, int chapter_1, int verse_1, int kind);
 	}
 	
 	static class ParagraphSpacingBefore implements LineHeightSpan {
@@ -142,8 +143,8 @@ public abstract class VerseAdapter extends BaseAdapter {
 	
 	// # field ctor
 	final Context context_;
-	final CallbackSpan.OnClickListener parallelListener_;
-	final IsiActivity.AttributeListener attributeListener_;
+	CallbackSpan.OnClickListener parallelListener_;
+	AttributeListener attributeListener_;
 	final float density_;
 
 	// # field setData
@@ -164,10 +165,8 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 	LayoutInflater inflater_;
 	
-	public VerseAdapter(Context context, CallbackSpan.OnClickListener paralelListener, IsiActivity.AttributeListener attributeListener) {
+	public VerseAdapter(Context context) {
 		context_ = context;
-		parallelListener_ = paralelListener;
-		attributeListener_ = attributeListener;
 		density_ = context.getResources().getDisplayMetrics().density;
 		inflater_ = LayoutInflater.from(context_);
 	}
@@ -247,7 +246,9 @@ public abstract class VerseAdapter extends BaseAdapter {
 	protected void setClickListenerForBookmark(View imgBukmak, final int pasal_1, final int ayat_1) {
 		imgBukmak.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
-				attributeListener_.onClick(book_, pasal_1, ayat_1, Bookmark2.kind_bookmark);
+				if (attributeListener_ != null) {
+					attributeListener_.onClick(book_, pasal_1, ayat_1, Db.Bookmark2.kind_bookmark);
+				}
 			}
 		});
 	}
@@ -255,9 +256,21 @@ public abstract class VerseAdapter extends BaseAdapter {
 	protected void setClickListenerForNote(View imgCatatan, final int pasal_1, final int ayat_1) {
 		imgCatatan.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
-				attributeListener_.onClick(book_, pasal_1, ayat_1, Bookmark2.kind_note);
+				if (attributeListener_ != null) {
+					attributeListener_.onClick(book_, pasal_1, ayat_1, Db.Bookmark2.kind_note);
+				}
 			}
 		});
+	}
+	
+	public void setParallelListener(CallbackSpan.OnClickListener parallelListener) {
+		parallelListener_ = parallelListener;
+		notifyDataSetChanged();
+	}
+	
+	public void setAttributeListener(AttributeListener attributeListener) {
+		attributeListener_ = attributeListener;
+		notifyDataSetChanged();
 	}
 
 	/**

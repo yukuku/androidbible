@@ -38,33 +38,15 @@
 
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" >
-
-        <ListView
-            android:id="@+id/lsIsi"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:divider="@null"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:listSelector="@android:color/transparent" >
-
-            <!-- Preview: listitem=@layout/item_ayat_sederhana -->
-        </ListView>
-
-        <ImageButton
-            android:id="@+id/bContext"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="4dp"
-            android:src="@drawable/ic_btn_round_more_normal"
-            android:visibility="invisible" android:contentDescription="@string/desc_open_verse_menu"/>
-    </RelativeLayout>
+	<yuku.alkitab.base.widget.VersesView
+		android:id="@+id/lsIsi"
+		android:layout_width="fill_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1" 
+		android:divider="@null"
+		android:focusable="false"
+		android:focusableInTouchMode="false"
+		android:listSelector="@android:color/transparent" />
 
     <LinearLayout
         android:id="@+id/panelNavigasi"
