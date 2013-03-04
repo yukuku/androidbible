@@ -23,7 +23,7 @@
 			android:title="@string/pref_lineSpacingMult_title"
 			android:positiveButtonText="@string/ok"
 			android:negativeButtonText="@string/cancel"
-			android:defaultValue="1.0" />
+			android:defaultValue="1.15" />
 		<CheckBoxPreference
 			android:key="@string/pref_boldHuruf_key"
 			android:title="@string/pref_tebalkan_huruf"

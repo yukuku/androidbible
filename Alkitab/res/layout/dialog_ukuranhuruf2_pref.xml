@@ -7,18 +7,13 @@
     android:padding="6dp" >
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/contoh_tulisan_titikdua" />
-
-    <TextView
         android:id="@+id/lContoh"
         android:layout_width="wrap_content"
         android:layout_height="90dp"
         android:fadingEdge="vertical"
         android:padding="6dp"
         android:text="@string/pada_mulanya"
-        android:textColor="#fff"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textSize="17dp" />
 
     <LinearLayout

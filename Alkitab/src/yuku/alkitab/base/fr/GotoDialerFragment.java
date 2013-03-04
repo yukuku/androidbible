@@ -326,8 +326,8 @@ public class GotoDialerFragment extends BaseGotoFragment {
 	}
 
 	private void warnain() {
-		if (aktif != null) aktif.setBackgroundColor(0x803030f0);
-		if (pasif != null) pasif.setBackgroundDrawable(null);
+		if (aktif != null) aktif.setBackgroundColor(0xff33b5e5);
+		if (pasif != null) pasif.setBackgroundColor(0x0);
 	}
 
 	private class KitabAdapter extends BaseAdapter {
