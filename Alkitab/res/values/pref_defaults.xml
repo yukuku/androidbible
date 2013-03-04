@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<integer name="pref_ukuranHuruf2_default">18</integer>
+
+    <integer name="pref_ukuranHuruf2_default">18</integer>
+
+    <bool name="pref_nyalakanTerusLayar_default">true</bool>
+    <bool name="pref_tanpaNavigasi_default">false</bool>
+
+    <string name="pref_tombolVolumeBuatPindah_default">default</string>
+
+    <bool name="pref_sortKitabAlfabet_default">false</bool>
+
+    <integer name="pref_warnaHuruf_int_default">0xff562707</integer>
+    <integer name="pref_warnaLatar_int_default">0xfff3eddb</integer>
+    <integer name="pref_warnaNomerAyat_int_default">0xffe36b09</integer>
+    <integer name="pref_redTextColor_default">0xffb45b16</integer>
+
 </resources>

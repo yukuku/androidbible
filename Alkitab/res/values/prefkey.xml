@@ -1,31 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 	<string name="pref_nyalakanTerusLayar_key">nyalakanTerusLayar</string>
-	<bool name="pref_nyalakanTerusLayar_default">true</bool>
 	
 	<string name="pref_tanpaNavigasi_key">tanpaNavigasi</string>
-	<bool name="pref_tanpaNavigasi_default">false</bool>
 	
 	<string name="pref_tombolVolumeBuatPindah_key">tombolVolumeBuatPindah</string>
-	<string name="pref_tombolVolumeBuatPindah_default">default</string>
 	
 	<string name="pref_sortKitabAlfabet_key">sortKitabAlfabet</string>
-	<bool name="pref_sortKitabAlfabet_default">false</bool>
-	
+		
+	<!-- defined in pref_language_default.xml : pref_bahasa_default -->
 	<string name="pref_bahasa_key">bahasa</string>
-	<!-- ditentukan di bahasa_default.xml : pref_bahasa_default -->
 	
 	<string name="pref_warnaHuruf_int_key">warnaHuruf</string>
-	<integer name="pref_warnaHuruf_int_default">0xfff0f0f0</integer>
 	
 	<string name="pref_warnaLatar_int_key">warnaLatar</string>
-	<integer name="pref_warnaLatar_int_default">0xff000000</integer>
 
 	<string name="pref_warnaNomerAyat_int_key">warnaNomerAyat</string>
-	<integer name="pref_warnaNomerAyat_int_default">0xff9090ff</integer>
 	
 	<string name="pref_redTextColor_key">redTextColor</string>
-	<integer name="pref_redTextColor_default">0xffff9090</integer>
 	
 	<string name="pref_boldHuruf_key">boldHuruf</string>
 	
