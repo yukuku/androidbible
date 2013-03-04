@@ -1,15 +1,7 @@
 package yuku.alkitab.base.widget;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Paint.FontMetricsInt;
 import android.os.Build;
-import android.text.Layout;
-import android.text.TextPaint;
-import android.text.style.LeadingMarginSpan;
-import android.text.style.LineHeightSpan;
-import android.text.style.MetricAffectingSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,73 +55,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 		void onClick(Book book, int chapter_1, int verse_1, int kind);
 	}
 	
-	static class ParagraphSpacingBefore implements LineHeightSpan {
-		private final int before;
-		
-		ParagraphSpacingBefore(int before) {
-			this.before = before;
-		}
-		
-		@Override public void chooseHeight(CharSequence text, int start, int end, int spanstartv, int v, FontMetricsInt fm) {
-			if (spanstartv == v) {
-				fm.top -= before;
-				fm.ascent -= before;
-			}
-		}
-	}
-	
-	/**
-	 * This is used instead of {@link LeadingMarginSpan.Standard} to overcome
-	 * a bug in CyanogenMod 7.x. If we don't support CM 7 anymore, we 
-	 * can use that instead of this, which seemingly *a bit* more efficient. 
-	 */
-	static class LeadingMarginSpanFixed implements LeadingMarginSpan.LeadingMarginSpan2 {
-		private final int first;
-		private final int rest;
-
-		@Override public void drawLeadingMargin(Canvas c, Paint p, int x, int dir, int top, int baseline, int bottom, CharSequence text, int start, int end, boolean first, Layout layout) {}
-		
-		public LeadingMarginSpanFixed(int all) {
-			this.first = all;
-			this.rest = all;
-		}
-
-		public LeadingMarginSpanFixed(int first, int rest) {
-			this.first = first;
-			this.rest = rest;
-		}
-		
-		@Override public int getLeadingMargin(boolean first) {
-			return first? this.first: this.rest;
-		}
-
-		@Override public int getLeadingMarginLineCount() {
-			return 1;
-		}
-	}
-
-	static class VerseNumberSpan extends MetricAffectingSpan {
-		private final boolean applyColor;
-
-		public VerseNumberSpan(boolean applyColor) {
-			this.applyColor = applyColor;
-		}
-		
-		@Override public void updateMeasureState(TextPaint tp) {
-			tp.baselineShift += (int) (tp.ascent() * 0.3f + 0.5f);
-			tp.setTextSize(tp.getTextSize() * 0.7f);
-		}
-
-		@Override public void updateDrawState(TextPaint tp) {
-			tp.baselineShift += (int) (tp.ascent() * 0.3f + 0.5f);
-			tp.setTextSize(tp.getTextSize() * 0.7f);
-			if (applyColor) {
-				tp.setColor(S.applied.verseNumberColor);
-			}
-		}
-	}
-
-    public static class ParallelTypeAri {
+	public static class ParallelTypeAri {
         public int ariStart;
     }
 
@@ -172,34 +98,6 @@ public abstract class VerseAdapter extends BaseAdapter {
 		inflater_ = LayoutInflater.from(context_);
 	}
 
-	/** 0 undefined. 1 and 2 based on version. */
-	private static int leadingMarginSpanVersion = 0;
-	
-	/** Creates a leading margin span based on version:
-	 * - API 7 or 11 and above: LeadingMarginSpan.Standard
-	 * - API 8..10: LeadingMarginSpanFixed, which is based on LeadingMarginSpan.LeadingMarginSpan2
-	 */
-	static Object createLeadingMarginSpan(int all) {
-		return createLeadingMarginSpan(all, all);
-	}
-	
-	/** Creates a leading margin span based on version:
-	 * - API 7 or 11 and above: LeadingMarginSpan.Standard
-	 * - API 8..10: LeadingMarginSpanFixed, which is based on LeadingMarginSpan.LeadingMarginSpan2
-	 */
-	static Object createLeadingMarginSpan(int first, int rest) {
-		if (leadingMarginSpanVersion == 0) {
-			int v = Build.VERSION.SDK_INT;
-			leadingMarginSpanVersion = (v == 7 || v >= 11)? 1: 2; 
-		}
-		
-		if (leadingMarginSpanVersion == 1) {
-			return new LeadingMarginSpan.Standard(first, rest); 
-		} else {
-			return new LeadingMarginSpanFixed(first, rest);
-		}
-	}
-	
 	public synchronized void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock, int[] xrefEntryCounts) {
 		book_ = book;
 		chapter_1_ = chapter_1;
