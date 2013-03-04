@@ -63,6 +63,7 @@ import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
+import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.IntArrayList;
@@ -121,7 +122,7 @@ public class IsiActivity extends BaseActivity {
 	// temporary states
 	Boolean hasEsvsbAsal;
 	
-	CallbackSpan.OnClickListener parallel_click = new CallbackSpan.OnClickListener() {
+	CallbackSpan.OnClickListener parallelListener = new CallbackSpan.OnClickListener() {
 		@Override public void onClick(View widget, Object data) {
             if (data instanceof String) {
                 int ari = jumpTo((String) data);
@@ -188,8 +189,9 @@ public class IsiActivity extends BaseActivity {
 		});
 		
 		// listeners
-		lsText.setParallelListener(parallel_click);
-		lsText.setAttributeListener(attribute_click);
+		lsText.setParallelListener(parallelListener);
+		lsText.setAttributeListener(attributeListener);
+		lsText.setXrefListener(xrefListener);
 		lsText.setSelectedVersesListener(lsText_selectedVerses);
 		
 		// muat preferences_instan, dan atur renungan
@@ -1006,8 +1008,8 @@ public class IsiActivity extends BaseActivity {
 		return true;
 	}
 
-	VerseAdapter.AttributeListener attribute_click = new VerseAdapter.AttributeListener() {
-		public void onClick(Book book, int chapter_1, int verse_1, int kind) {
+	VersesView.AttributeListener attributeListener = new VersesView.AttributeListener() {
+		public void onAttributeClick(Book book, int chapter_1, int verse_1, int kind) {
 			if (kind == Db.Bookmark2.kind_bookmark) {
 				final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
 				String alamat = S.reference(S.activeVersion, ari);
@@ -1026,6 +1028,17 @@ public class IsiActivity extends BaseActivity {
 				});
 				dialog.show();
 			}
+		}
+	};
+	
+	VersesView.XrefListener xrefListener = new VersesView.XrefListener() {
+		@Override public void onXrefClick(int ari, int which) {
+			XrefEntry xe = S.activeVersion.getXrefEntry(ari, which);
+			
+			new AlertDialog.Builder(IsiActivity.this)
+			.setMessage(U.removeSpecialCodes(xe.source + " " + xe.target, true))
+			.setPositiveButton("OK", null)
+			.show();
 		}
 	};
 	

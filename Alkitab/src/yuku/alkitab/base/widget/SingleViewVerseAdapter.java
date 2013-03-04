@@ -30,12 +30,13 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		
 		if (id >= 0) {
 			// AYAT. bukan judul perikop.
+			int verse_1 = id + 1;
 
 			String text = verses_.getVerse(id);
 			boolean withBookmark = attributeMap_ == null ? false : (attributeMap_[id] & 0x1) != 0;
 			boolean withNote = attributeMap_ == null ? false : (attributeMap_[id] & 0x2) != 0;
 			boolean withHighlight = attributeMap_ == null ? false : (attributeMap_[id] & 0x4) != 0;
-			int withXref = xrefEntryCounts_ == null? 0: xrefEntryCounts_[id + 1];
+			int withXref = xrefEntryCounts_ == null? 0: xrefEntryCounts_[verse_1];
 			int highlightColor = withHighlight ? (highlightMap_ == null ? 0 : U.alphaMixHighlight(highlightMap_[id])) : 0;
 
 			boolean checked = false;
@@ -54,10 +55,10 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			VerseTextView lText = (VerseTextView) res.findViewById(R.id.lText);
 			TextView lVerseNumber = (TextView) res.findViewById(R.id.lVerseNumber);
 			
-			int ari = Ari.encode(book_.bookId, chapter_1_, id + 1);
+			int ari = Ari.encode(book_.bookId, chapter_1_, verse_1);
 			
 			boolean dontPutSpacingBefore = (position > 0 && itemPointer_[position - 1] < 0) || position == 0;
-			VerseRenderer.render(lText, lVerseNumber, ari, id + 1, text, highlightColor, checked, dontPutSpacingBefore, withXref);
+			VerseRenderer.render(lText, lVerseNumber, ari, verse_1, text, highlightColor, checked, dontPutSpacingBefore, withXref, xrefListener_);
 			
 			Appearances.applyTextAppearance(lText);
 			if (checked) {
@@ -67,12 +68,12 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			View imgAttributeBookmark = res.findViewById(R.id.imgAtributBukmak);
 			imgAttributeBookmark.setVisibility(withBookmark ? View.VISIBLE : View.GONE);
 			if (withBookmark) {
-				setClickListenerForBookmark(imgAttributeBookmark, chapter_1_, id + 1);
+				setClickListenerForBookmark(imgAttributeBookmark, chapter_1_, verse_1);
 			}
 			View imgAttributeNote = res.findViewById(R.id.imgAtributCatatan);
 			imgAttributeNote.setVisibility(withNote ? View.VISIBLE : View.GONE);
 			if (withNote) {
-				setClickListenerForNote(imgAttributeNote, chapter_1_, id + 1);
+				setClickListenerForNote(imgAttributeNote, chapter_1_, verse_1);
 			}
 			
 //			{ // DUMP

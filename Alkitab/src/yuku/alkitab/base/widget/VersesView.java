@@ -20,7 +20,6 @@ import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.util.IntArrayList;
-import yuku.alkitab.base.widget.VerseAdapter.AttributeListener;
 
 public class VersesView extends ListView {
 	public static final String TAG = VersesView.class.getSimpleName();
@@ -28,6 +27,14 @@ public class VersesView extends ListView {
 	public interface SelectedVersesListener {
 		void onSomeVersesSelected(VersesView v);
 		void onNoVersesSelected(VersesView v);
+	}
+
+	public interface AttributeListener {
+		void onAttributeClick(Book book, int chapter_1, int verse_1, int kind);
+	}
+
+	public interface XrefListener {
+		void onXrefClick(int ari, int which);
 	}
 
 	VerseAdapter adapter;
@@ -59,8 +66,12 @@ public class VersesView extends ListView {
 		adapter.setParallelListener(parallelListener);
 	}
 
-	public void setAttributeListener(AttributeListener attributeListener) {
+	public void setAttributeListener(VersesView.AttributeListener attributeListener) {
 		adapter.setAttributeListener(attributeListener);
+	}
+	
+	public void setXrefListener(VersesView.XrefListener xrefListener) {
+		adapter.setXrefListener(xrefListener);
 	}
 	
 	public void loadAttributeMap() {

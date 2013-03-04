@@ -1,6 +1,5 @@
 package yuku.alkitab.base.widget;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -24,7 +23,6 @@ import android.widget.TextView;
 
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.base.util.Appearances;
 
 public class VerseRenderer {
@@ -144,7 +142,7 @@ public class VerseRenderer {
 	/**
 	 * @param dontPutSpacingBefore this verse is right after a pericope title or on the 0th position
 	 */
-	public static void render(TextView lText, TextView lVerseNumber, int ari, int verse_1, String text, int highlightColor, boolean checked, boolean dontPutSpacingBefore, int withXref) {
+	public static void render(TextView lText, TextView lVerseNumber, int ari, int verse_1, String text, int highlightColor, boolean checked, boolean dontPutSpacingBefore, int withXref, VersesView.XrefListener xrefListener) {
 		// @@ = start a verse containing paragraphs or formatting
 		// @0 = start with indent 0 [paragraph]
 		// @1 = start with indent 1 [paragraph]
@@ -166,7 +164,7 @@ public class VerseRenderer {
 		// Formatted verses start with "@@".
 		// Second character must be '@' too, if not it's wrong, we will fallback to simple render.
 		if (text_len < 2 || text.charAt(0) != '@' || text.charAt(1) != '@') {
-			simpleRender(lText, lVerseNumber, ari, verse_1, text, highlightColor, checked, withXref);
+			simpleRender(lText, lVerseNumber, ari, verse_1, text, highlightColor, checked, withXref, xrefListener);
 			return;
 		}
 
@@ -297,7 +295,7 @@ public class VerseRenderer {
 		}
 		
 		for (int i = 0; i < withXref; i++) {
-			addXrefLink(lText.getContext(), sb, ari, i);
+			addXrefLink(lText.getContext(), sb, ari, i, xrefListener);
 		}
 	
 		lText.setText(sb);
@@ -361,7 +359,7 @@ public class VerseRenderer {
 		}
 	}
 
-	public static void simpleRender(TextView lText, TextView lVerseNumber, int ari, int verse_1, String text, int highlightColor, boolean checked, int withXref) {
+	public static void simpleRender(TextView lText, TextView lVerseNumber, int ari, int verse_1, String text, int highlightColor, boolean checked, int withXref, VersesView.XrefListener xrefListener) {
 		// initialize lVerseNumber to have no padding first
 		lVerseNumber.setPadding(0, 0, 0, 0);
 		
@@ -380,14 +378,14 @@ public class VerseRenderer {
 		}
 		
 		for (int i = 0; i < withXref; i++) {
-			addXrefLink(lText.getContext(), sb, ari, i);
+			addXrefLink(lText.getContext(), sb, ari, i, xrefListener);
 		}
 	
 		lText.setText(sb);
 		lVerseNumber.setText("");
 	}
 
-	static void addXrefLink(final Context context, SpannableStringBuilder sb, final int ari, final int which) {
+	static void addXrefLink(final Context context, SpannableStringBuilder sb, final int ari, final int which, final VersesView.XrefListener xrefListener) {
 		// if last char of this sb is newline, move back.
 		int sb_start = sb.length();
 		if (sb.length() > 0 && sb.charAt(sb.length() - 1) == '\n') {
@@ -400,12 +398,9 @@ public class VerseRenderer {
 		sb.setSpan(new ImageSpan(context, R.drawable.ic_btn_search, DynamicDrawableSpan.ALIGN_BASELINE), sb_start, sb_start+1, 0);
 		sb.setSpan(new ClickableSpan() {
 			@Override public void onClick(View widget) {
-				XrefEntry xe = S.activeVersion.getXrefEntry(ari, which);
-				
-				new AlertDialog.Builder(context)
-				.setMessage("source: " + xe.source + "\n\ntarget: " + xe.target)
-				.setPositiveButton("OK", null)
-				.show();
+				if (xrefListener != null) {
+					xrefListener.onXrefClick(ari, which);
+				}
 			}
 		}, sb_start, sb_end, 0);
 	}

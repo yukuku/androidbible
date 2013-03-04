@@ -51,10 +51,6 @@ public abstract class VerseAdapter extends BaseAdapter {
 		}
 	}
 	
-	public interface AttributeListener {
-		void onClick(Book book, int chapter_1, int verse_1, int kind);
-	}
-	
 	public static class ParallelTypeAri {
         public int ariStart;
     }
@@ -70,7 +66,8 @@ public abstract class VerseAdapter extends BaseAdapter {
 	// # field ctor
 	final Context context_;
 	CallbackSpan.OnClickListener parallelListener_;
-	AttributeListener attributeListener_;
+	VersesView.AttributeListener attributeListener_;
+	VersesView.XrefListener xrefListener_; 
 	final float density_;
 
 	// # field setData
@@ -147,7 +144,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 		imgBukmak.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
 				if (attributeListener_ != null) {
-					attributeListener_.onClick(book_, pasal_1, ayat_1, Db.Bookmark2.kind_bookmark);
+					attributeListener_.onAttributeClick(book_, pasal_1, ayat_1, Db.Bookmark2.kind_bookmark);
 				}
 			}
 		});
@@ -157,7 +154,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 		imgCatatan.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
 				if (attributeListener_ != null) {
-					attributeListener_.onClick(book_, pasal_1, ayat_1, Db.Bookmark2.kind_note);
+					attributeListener_.onAttributeClick(book_, pasal_1, ayat_1, Db.Bookmark2.kind_note);
 				}
 			}
 		});
@@ -168,8 +165,13 @@ public abstract class VerseAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 	
-	public void setAttributeListener(AttributeListener attributeListener) {
+	public void setAttributeListener(VersesView.AttributeListener attributeListener) {
 		attributeListener_ = attributeListener;
+		notifyDataSetChanged();
+	}
+	
+	public void setXrefListener(VersesView.XrefListener xrefListener) {
+		xrefListener_ = xrefListener;
 		notifyDataSetChanged();
 	}
 
