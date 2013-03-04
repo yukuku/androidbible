@@ -102,6 +102,8 @@ public abstract class VerseAdapter extends BaseAdapter {
 		pericopeBlocks_ = pericopeBlocks;
 		itemPointer_ = makeItemPointer(verses_.getVerseCount(), pericopeAris, pericopeBlocks, nblock);
 		xrefEntryCounts_ = xrefEntryCounts;
+		
+		notifyDataSetChanged();
 	}
 
 	public synchronized void loadAttributeMap() {
