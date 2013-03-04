@@ -15,16 +15,22 @@ public class U {
 
 	/**
 	 * If verse doesn't start with @: don't do anything.
-	 * Otherwise, remove all @'s and one character after that.
-	 * 
-	 * @param text a verse
+	 * Otherwise, remove all @'s and one character after that and also text between @&lt; and @&gt;.
 	 */
 	public static String removeSpecialCodes(String text) {
+		return removeSpecialCodes(text, false);
+	}
+	
+	/**
+	 * If verse doesn't start with @: don't do anything, except when force is set to true.
+	 * Otherwise, remove all @'s and one character after that and also text between @&lt; and @&gt;.
+	 */
+	public static String removeSpecialCodes(String text, boolean force) {
 		if (text.length() == 0) return text;
-		if (text.charAt(0) != '@') return text;
+		if (!force && text.charAt(0) != '@') return text;
 
 		StringBuilder sb = new StringBuilder(text.length());
-		int pos = 2;
+		int pos = 0;
 
 		while (true) {
 			int p = text.indexOf('@', pos);
@@ -34,6 +40,16 @@ public class U {
 
 			sb.append(text, pos, p);
 			pos = p + 2;
+			
+			// did we skip "@<"?
+			if (p + 1 < text.length() && text.charAt(p + 1) == '<') {
+				// look for matching "@>"
+				int q = text.indexOf("@>", pos);
+				if (q != -1) {
+					pos = q + 2;
+				}
+			}
+			
 		}
 
 		sb.append(text, pos, text.length());
