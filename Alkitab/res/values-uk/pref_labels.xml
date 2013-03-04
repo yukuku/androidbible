@@ -17,8 +17,6 @@
   <string name="pref_warna">Кольори</string>
   <string name="pref_atur_warna_teks_latar_belakang_dan_nomor_ayat">Налаштування кольорів тексту, фону та номерів віршів</string>
   <string name="pref_penggunaan">Користування</string>
-  <string name="pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah">Натисніть ← або → для зміни між розділами або натисніть заголовок.</string>
-  <string name="pref_tanpa_tombol_navigasi">Без клавіш навігації</string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Показати сувій книг в алфавітному порядку (a-z) замість оригінального.</string>
   <string name="pref_kitab_menurut_abjad">Сортувати книги в алфавітному порядку</string>
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Постійне підсвічування екрану при читанні Біблії.</string>

@@ -7,36 +7,6 @@
     android:baselineAligned="false"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:id="@+id/tempatJudul"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/lJudul"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/titlebar_bg"
-            android:paddingBottom="2dp"
-            android:paddingLeft="4dp"
-            android:paddingTop="2dp"
-            android:shadowColor="#bb000000"
-            android:shadowRadius="2.75"
-            android:singleLine="true"
-            android:text="Kitab 0:0"
-            android:textColor="#fff"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1px"
-            android:background="#000"
-            tools:ignore="PxUsage" />
-    </LinearLayout>
-
     <yuku.alkitab.base.widget.VersesView
         android:id="@+id/lsIsi"
         android:layout_width="fill_parent"

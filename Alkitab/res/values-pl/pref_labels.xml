@@ -17,8 +17,6 @@
   <string name="pref_warna">Kolory</string>
   <string name="pref_atur_warna_teks_latar_belakang_dan_nomor_ayat">Ustaw kolor tekstu, tła i numeracji wersetów.</string>
   <string name="pref_penggunaan">Użycie</string>
-  <string name="pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah">Naciśnij ← i → aby poruszać się pomiędzy rozdziałami, lub naciśnij tytuł.</string>
-  <string name="pref_tanpa_tombol_navigasi">Brak klawiszy nawigacji</string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Pokaż listę ksiąg w kolejności alfabetycznej (a-z) zamiast kolejności oryginalnej.</string>
   <string name="pref_kitab_menurut_abjad">Sortuj księgi alfabetycznie</string>
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Ekran urządzenia nie będzie się wyłączał podczas czytania tekstu Biblii.</string>

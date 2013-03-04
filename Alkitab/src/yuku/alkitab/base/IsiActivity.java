@@ -104,8 +104,6 @@ public class IsiActivity extends BaseActivity {
 	Button bGoto;
 	ImageButton bLeft;
 	ImageButton bRight;
-	View titleContainer;
-	TextView lTitle;
 	View root;
 	
 	int chapter_1 = 0;
@@ -159,8 +157,6 @@ public class IsiActivity extends BaseActivity {
 		bGoto = V.get(this, R.id.bTuju);
 		bLeft = V.get(this, R.id.bKiri);
 		bRight = V.get(this, R.id.bKanan);
-		titleContainer = V.get(this, R.id.tempatJudul);
-		lTitle = V.get(this, R.id.lJudul);
 		root = V.get(this, R.id.root);
 		
 		applyPreferences(false);
@@ -169,13 +165,6 @@ public class IsiActivity extends BaseActivity {
 			@Override public void onClick(View v) { bGoto_click(); }
 		});
 		bGoto.setOnLongClickListener(new View.OnLongClickListener() {
-			@Override public boolean onLongClick(View v) { bGoto_longClick(); return true; }
-		});
-		
-		lTitle.setOnClickListener(new View.OnClickListener() { // pinjem bTuju
-			@Override public void onClick(View v) { bGoto_click(); }
-		});
-		lTitle.setOnLongClickListener(new View.OnLongClickListener() { // pinjem bTuju
 			@Override public boolean onLongClick(View v) { bGoto_longClick(); return true; }
 		});
 		
@@ -581,18 +570,6 @@ public class IsiActivity extends BaseActivity {
 			lsText.setCacheColorHint(S.applied.backgroundColor);
 		}
 		
-		// appliance of hide navigation
-		{
-			View navigationPanel = findViewById(R.id.panelNavigasi);
-			if (Preferences.getBoolean(getString(R.string.pref_tanpaNavigasi_key), getResources().getBoolean(R.bool.pref_tanpaNavigasi_default))) {
-				navigationPanel.setVisibility(View.GONE);
-				titleContainer.setVisibility(View.VISIBLE);
-			} else {
-				navigationPanel.setVisibility(View.VISIBLE);
-				titleContainer.setVisibility(View.GONE);
-			}
-		}
-		
 		if (languageToo) {
 			S.applyLanguagePreference(null, 0);
 		}
@@ -956,9 +933,7 @@ public class IsiActivity extends BaseActivity {
 			lsText.scrollToVerse(verse_1);
 		}
 		
-		String title = S.reference(S.activeBook, chapter_1);
-		lTitle.setText(title);
-		bGoto.setText(title);
+		bGoto.setText(S.reference(S.activeBook, chapter_1));
 		
 		return Ari.encode(0, chapter_1, verse_1);
 	}

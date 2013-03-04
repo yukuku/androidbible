@@ -17,8 +17,6 @@
   <string name="pref_warna">Culori</string>
   <string name="pref_atur_warna_teks_latar_belakang_dan_nomor_ayat">Alege culoare text, fundal şi număr verset.</string>
   <string name="pref_penggunaan">Utilizare</string>
-  <string name="pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah">Apăsaţi ← şi → pentru a vă deplasa între capitole sau apăsaţi pe titlu.</string>
-  <string name="pref_tanpa_tombol_navigasi">Fără butoane de navigare</string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Arată lista de cărţi în ordine alfabetică (a-z) în loc de versiunea originală.</string>
   <string name="pref_kitab_menurut_abjad">Ordonare alfabetică</string>
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Afişajul nu se închide atunci când se citeşte textulul Bibliei.</string>

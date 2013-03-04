@@ -16,8 +16,6 @@
   <string name="pref_ukuran_huruf">Schriftgröße</string>
   <string name="pref_atur_warna_teks_latar_belakang_dan_nomor_ayat">Farbschema ändern</string>
   <string name="pref_penggunaan">Nutzung</string>
-  <string name="pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah">Zum Kapitelwechseln ←, → , oder die Überschrift drücken</string>
-  <string name="pref_tanpa_tombol_navigasi">Ohne Navigationsknopf</string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Bücher alphabetisch sortieren (a-z)</string>
   <string name="pref_kitab_menurut_abjad">Bücher alphabetisch sortieren</string>
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Bildschirm während der Lesung an lassen</string>

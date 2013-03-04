@@ -16,8 +16,6 @@
     <string name="pref_warna">Colors</string>
     <string name="pref_atur_warna_teks_latar_belakang_dan_nomor_ayat">Set colors of text, background, and verse numbers.</string>
     <string name="pref_penggunaan">Usage</string>
-    <string name="pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah">Press ← and → to move between chapters, or press the title.</string>
-    <string name="pref_tanpa_tombol_navigasi">No Navigation Buttons</string>
     <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Show list of books in alphabetic order (a-z) instead of the original.</string>
     <string name="pref_kitab_menurut_abjad">Sort Books Alphabetically</string>
     <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Device screen will not turn off when reading the Bible text.</string>

@@ -17,8 +17,6 @@
   <string name="pref_warna">Kleure</string>
   <string name="pref_atur_warna_teks_latar_belakang_dan_nomor_ayat">Stel teks,agtergrond en vers nommer kleure.</string>
   <string name="pref_penggunaan">Gebruik</string>
-  <string name="pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah">Druk← en → vir navigasie in hoofstukke,of druk titel.</string>
-  <string name="pref_tanpa_tombol_navigasi">Geen navigasie knoppies</string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Vertoon boek lys alfabeties (a-z) instede van oorspronlik.</string>
   <string name="pref_kitab_menurut_abjad">Vertoon Boeke alfabeties</string>
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Skerm sal nie afskakel terwyl teks gelees word nie.</string>

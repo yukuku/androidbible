@@ -74,11 +74,6 @@
 			android:title="@string/pref_biarkan_layar_menyala"
 			android:key="@string/pref_nyalakanTerusLayar_key"
 			android:summary="@string/pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab" />
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:title="@string/pref_tanpa_tombol_navigasi"
-			android:key="@string/pref_tanpaNavigasi_key"
-			android:summary="@string/pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah" />
 	</PreferenceCategory>
 
 	<PreferenceCategory

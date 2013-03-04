@@ -17,8 +17,6 @@
   <string name="pref_warna">Kleuren</string>
   <string name="pref_atur_warna_teks_latar_belakang_dan_nomor_ayat">Stel de kleuren van de tekst, achtergrond en versnummers in.</string>
   <string name="pref_penggunaan">Gebruik</string>
-  <string name="pref_tekan_dan_untuk_berpindah_pasal_tekan_judul_untuk_pindah">Gebruik ← en → om tussen hoofdstukken te navigeren, of klik op de titel.</string>
-  <string name="pref_tanpa_tombol_navigasi">Geen navigatieknoppen</string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Geef lijst van Bijbelboeken weer in alfabetische volgorde (a-z) in plaats van de originele.</string>
   <string name="pref_kitab_menurut_abjad">Sorteer Bijbelboeken op alfabet</string>
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Scherm gaat niet uit tijdens het lezen van de Bijbeltekst.</string>
