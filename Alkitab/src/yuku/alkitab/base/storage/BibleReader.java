@@ -21,5 +21,5 @@ public interface BibleReader {
 
 	int getXrefEntryCounts(int[] result, int bookId, int chapter_1);
 	
-	XrefEntry getXrefEntry(int bookId, int chapter_1, int verse_1, int which);
+	XrefEntry getXrefEntry(int ari, int which);
 }

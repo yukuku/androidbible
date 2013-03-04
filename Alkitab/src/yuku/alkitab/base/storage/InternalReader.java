@@ -146,8 +146,7 @@ public class InternalReader implements BibleReader {
 			return res;
 		}
 		
-		XrefEntry getXrefEntry(int bookId, int chapter_1, int verse_1, int which) {
-			int ari = Ari.encode(bookId, chapter_1, verse_1);
+		XrefEntry getXrefEntry(int ari, int which) {
 			int pos = Arrays.binarySearch(index_ari, ari);
 			if (pos < 0) {
 				return null;
@@ -417,7 +416,7 @@ public class InternalReader implements BibleReader {
 		return xrefTable_.getXrefEntryCounts(result, bookId, chapter_1);
 	}
 
-	@Override public XrefEntry getXrefEntry(int bookId, int chapter_1, int verse_1, int which) {
+	@Override public XrefEntry getXrefEntry(int ari, int which) {
 		if (xrefTable_ == null) {
 			xrefTable_ = new XrefTable();
 		}
@@ -426,6 +425,6 @@ public class InternalReader implements BibleReader {
 			return null;
 		}
 		
-		return xrefTable_.getXrefEntry(bookId, chapter_1, verse_1, which);
+		return xrefTable_.getXrefEntry(ari, which);
 	}
 }

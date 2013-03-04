@@ -492,7 +492,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		sb.setSpan(new ImageSpan(context, R.drawable.ic_btn_search, DynamicDrawableSpan.ALIGN_BASELINE), sb_start, sb_start+1, 0);
 		sb.setSpan(new ClickableSpan() {
 			@Override public void onClick(View widget) {
-				XrefEntry xe = S.activeVersion.getXrefEntry(Ari.toBook(ari), Ari.toChapter(ari), Ari.toVerse(ari), which);
+				XrefEntry xe = S.activeVersion.getXrefEntry(ari, which);
 				
 				new AlertDialog.Builder(context)
 				.setMessage("source: " + xe.source + "\n\ntarget: " + xe.target)

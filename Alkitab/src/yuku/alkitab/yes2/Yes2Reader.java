@@ -221,7 +221,7 @@ public class Yes2Reader implements BibleReader {
 		return 0;
 	}
 
-	@Override public XrefEntry getXrefEntry(int bookId, int chapter_1, int verse_1, int which) {
+	@Override public XrefEntry getXrefEntry(int ari, int which) {
 		// TODO YES2 file may contain xref entries, but not yet implemented.
 		return null;
 	}

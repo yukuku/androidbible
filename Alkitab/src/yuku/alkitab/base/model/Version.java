@@ -171,8 +171,8 @@ public class Version {
 	/**
 	 * @param which Each verse can have more than one xref entry. Starts from 0.
 	 */
-	public synchronized XrefEntry getXrefEntry(int bookId, int chapter_1, int verse_1, int which) {
-		return bibleReader.getXrefEntry(bookId, chapter_1, verse_1, which);
+	public synchronized XrefEntry getXrefEntry(int ari, int which) {
+		return bibleReader.getXrefEntry(ari, which);
 	}
 	
 }
