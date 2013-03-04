@@ -17,6 +17,7 @@ import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
 import yuku.alkitab.base.model.Book;
 
@@ -255,13 +256,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 		}
 		
 		@Override int textColorForView(int position) {
-			if (position >= 0 && position < 39) {
-				return 0xffffcccf;
-			} else if (position >= 39 && position < 66) {
-				return 0xffccccff;
-			} else {
-				return 0xffffffff;
-			}
+			return U.getColorBasedOnBookId(position);
 		}
 	}
 	

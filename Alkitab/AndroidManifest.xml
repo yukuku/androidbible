@@ -14,7 +14,7 @@
 	<supports-screens android:largeScreens="true" android:resizeable="true" android:smallScreens="true" android:normalScreens="true" android:anyDensity="true" />
 
 	<application android:name="yuku.alkitab.base.App" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:hardwareAccelerated="true" android:theme="@style/Theme.Sherlock.Light.DarkActionBar" android:allowBackup="true">
-		<activity android:name="yuku.alkitab.base.IsiActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:theme="@style/Theme.AlkitabIsi">
+		<activity android:name="yuku.alkitab.base.IsiActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:theme="@style/Theme.Alkitab.Content">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
@@ -61,9 +61,9 @@
 
 		<activity android:name="yuku.alkitab.base.ac.BookmarkListActivity" android:label="@string/pembatas_buku" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:windowSoftInputMode="adjustResize|stateHidden" />
 		<activity android:name="yuku.alkitab.base.ac.VersionsActivity" android:label="@string/kelola_versi" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
-		<activity android:name="yuku.alkitab.base.ac.Search2Activity" android:label="@string/cari_v" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:theme="@style/Theme.Sherlock.NoActionBar" />
+		<activity android:name="yuku.alkitab.base.ac.Search2Activity" android:label="@string/cari_v" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:theme="@style/Theme.Alkitab.NoActionBar" />
 		<activity android:name="yuku.alkitab.base.ac.DevotionActivity" android:label="@string/renungan" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
-		<activity android:name="yuku.alkitab.base.ac.HelpActivity" android:label="@string/bantuan_judul" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:theme="@style/Theme.Sherlock.Light.DarkActionBar" />
+		<activity android:name="yuku.alkitab.base.ac.HelpActivity" android:label="@string/bantuan_judul" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.AboutActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.ShareActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.FontManagerActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />

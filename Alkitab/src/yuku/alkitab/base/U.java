@@ -4,12 +4,10 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
-import android.os.Build;
 import android.widget.TextView;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
 
 import yuku.alkitab.base.model.Label;
 
@@ -194,36 +192,18 @@ public class U {
 		return sb.toString();
 	}
 	
-	public static boolean isHolo() {
-		return Build.VERSION.SDK_INT /* ini diambil waktu runtime */ >= 11 /* HONEYCOMB */;
-	}
-	
 	@SuppressWarnings("deprecation") public static void copyToClipboard(CharSequence salinan) {
 		android.text.ClipboardManager clipboardManager = (android.text.ClipboardManager) App.context.getSystemService(Context.CLIPBOARD_SERVICE);
 		clipboardManager.setText(salinan); 
 	}
 
-	private static int[] colorSet;
 	public static int getColorBasedOnBookId(int pos) {
-		if (colorSet == null) {
-			colorSet = new int[3];
-			if (U.isHolo()) {
-				colorSet[0] = 0xffffcccf;
-				colorSet[1] = 0xffccccff;
-				colorSet[2] = 0xffffffff;
-			} else {
-				colorSet[0] = 0xff990022; // pl
-				colorSet[1] = 0xff000099; // pb 
-				colorSet[2] = 0xff000000; // dll
-			}
-		}
-
 		if (pos >= 0 && pos < 39) {
-			return colorSet[0];
+			return 0xff990022;
 		} else if (pos >= 39 && pos < 66) {
-			return colorSet[1];
+			return 0xff000099;
 		} else {
-			return colorSet[2];
+			return 0xff000000;
 		}
 	}
 
