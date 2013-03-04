@@ -46,15 +46,15 @@ public class Base64Mod {
     public static char[] encodeToThreeChars(int value) {
     	if (value < 0 || value > 0x3ffff) throw new IllegalArgumentException("value out of range: " + value);
     	char c2 = ENCODE[value >>> 12];
-    	char c1 = ENCODE[(value & 0x7c0) >>> 6];
+    	char c1 = ENCODE[(value & 0xfc0) >>> 6];
     	char c0 = ENCODE[value & 0x3f];
     	return new char[] {c2, c1, c0};
     }
 
     public static int decodeFromChars(char[] chars, int start, int len) {
     	int res = 0;
-    	for (int i = start + len - 1; i >= start; i--) {
-    		if (res != 0) res <<= 6;
+    	for (int i = start, to = start + len; i < to; i++) {
+    		res <<= 6;
     		char c = chars[i];
     		if (c > 0x7f) throw new IllegalArgumentException("invalid char in base64mod: " + c);
     		int v = DECODE[c];
