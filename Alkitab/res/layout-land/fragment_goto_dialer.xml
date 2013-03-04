@@ -24,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="8dp"
-                android:minWidth="200sp" />
+                android:minWidth="200sp" tools:listitem="@android:layout/simple_spinner_dropdown_item"/>
 
             <TextView
                 android:id="@+id/lPasal"

@@ -7,9 +7,8 @@
     android:padding="2dp" >
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:gravity="center_horizontal"
         android:orientation="vertical" >
 
@@ -19,25 +18,17 @@
             android:gravity="center_horizontal"
             android:orientation="vertical" >
 
-            <LinearLayout
-                android:layout_width="fill_parent"
+            <Spinner
+                android:id="@+id/cbKitab"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal" >
-
-                <Spinner
-                    android:id="@+id/cbKitab"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:minWidth="200sp"
-                    android:prompt="@string/pilihKitab_s" />
-            </LinearLayout>
+                android:minWidth="480dp"
+                android:prompt="@string/pilihKitab_s"
+                tools:listitem="@android:layout/simple_spinner_dropdown_item" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
                 android:gravity="center_vertical|center_horizontal"
                 android:minHeight="48sp"
                 android:orientation="horizontal" >
@@ -46,47 +37,50 @@
                     android:id="@+id/lLabelPasal"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
+                    android:layout_marginRight="8dp"
                     android:gravity="fill_vertical"
-                    android:text="@string/pasal_sebelumangka" />
+                    android:text="@string/pasal_sebelumangka"
+                    android:textSize="24sp" />
 
                 <TextView
                     android:id="@+id/lPasal"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginTop="4dp"
                     android:focusable="true"
                     android:gravity="center_vertical|center_horizontal"
-                    android:minHeight="64dp"
-                    android:minWidth="64dp"
+                    android:minHeight="64sp"
+                    android:minWidth="64sp"
                     android:text="1"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textSize="30dp"
+                    android:textSize="36sp"
                     tools:ignore="HardcodedText" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minEms="1" />
 
                 <TextView
                     android:id="@+id/lLabelAyat"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="8dp"
                     android:gravity="center_vertical"
-                    android:text="@string/ayat_sebelumangka" />
+                    android:text="@string/ayat_sebelumangka"
+                    android:textSize="24sp" />
 
                 <TextView
                     android:id="@+id/lAyat"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginTop="4dp"
                     android:focusable="true"
                     android:gravity="center_vertical|center_horizontal"
-                    android:minHeight="64dp"
-                    android:minWidth="64dp"
+                    android:minHeight="64sp"
+                    android:minWidth="64sp"
                     android:text="2"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textSize="30dp"
+                    android:textSize="36sp"
                     tools:ignore="HardcodedText" />
-
             </LinearLayout>
         </LinearLayout>
 
@@ -100,7 +94,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             layout="@layout/buttonbar_ok" />
-        
     </LinearLayout>
 
 </ScrollView>

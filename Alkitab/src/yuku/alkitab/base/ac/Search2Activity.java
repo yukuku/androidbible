@@ -458,7 +458,7 @@ public class Search2Activity extends BaseActivity {
 		}
 
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
-			CheckedTextView res = (CheckedTextView) (convertView != null? convertView: getLayoutInflater().inflate(android.R.layout.select_dialog_multichoice, null));
+			CheckedTextView res = (CheckedTextView) (convertView != null? convertView: getLayoutInflater().inflate(android.R.layout.simple_list_item_multiple_choice, parent, false));
 			
 			Book k = getItem(position);
 			res.setText(k.shortName);

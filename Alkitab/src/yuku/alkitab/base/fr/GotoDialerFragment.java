@@ -376,14 +376,14 @@ public class GotoDialerFragment extends BaseGotoFragment {
 			return position;
 		}
 
-		@Override public View getView(int position, View convertView, ViewGroup viewGroup) {
-			TextView res = (TextView) (convertView != null ? convertView : LayoutInflater.from(getActivity()).inflate(android.R.layout.simple_spinner_item, null));
+		@Override public View getView(int position, View convertView, ViewGroup parent) {
+			TextView res = (TextView) (convertView != null ? convertView : LayoutInflater.from(getActivity()).inflate(android.R.layout.simple_spinner_item, parent, false));
 			res.setText(xkitabc_[position].shortName);
 			return res;
 		}
 
 		@Override public View getDropDownView(int position, View convertView, ViewGroup parent) {
-			CheckedTextView res = (CheckedTextView) (convertView != null ? convertView : LayoutInflater.from(getActivity()).inflate(android.R.layout.select_dialog_singlechoice, null));
+			CheckedTextView res = (CheckedTextView) (convertView != null ? convertView : LayoutInflater.from(getActivity()).inflate(android.R.layout.simple_spinner_dropdown_item, parent, false));
 
 			Book k = getItem(position);
 			res.setText(k.shortName);

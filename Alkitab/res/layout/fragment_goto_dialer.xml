@@ -18,19 +18,13 @@
             android:gravity="center_horizontal"
             android:orientation="vertical" >
 
-            <LinearLayout
+            <Spinner
+                android:id="@+id/cbKitab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal" >
-
-                <Spinner
-                    android:id="@+id/cbKitab"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="200sp"
-                    android:prompt="@string/pilihKitab_s" />
-            </LinearLayout>
+                android:minWidth="300dp"
+                android:prompt="@string/pilihKitab_s"
+                tools:listitem="@android:layout/simple_spinner_dropdown_item" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -51,14 +45,15 @@
                     android:id="@+id/lPasal"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:layout_marginTop="4dp"
                     android:layout_marginBottom="4dp"
+                    android:layout_marginTop="4dp"
                     android:focusable="true"
                     android:gravity="center_vertical|center_horizontal"
                     android:minHeight="40sp"
                     android:minWidth="40sp"
                     android:text="1"
                     android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="24sp"
                     tools:ignore="HardcodedText" />
 
                 <TextView
@@ -74,16 +69,16 @@
                     android:id="@+id/lAyat"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:layout_marginTop="4dp"
                     android:layout_marginBottom="4dp"
+                    android:layout_marginTop="4dp"
                     android:focusable="true"
                     android:gravity="center_vertical|center_horizontal"
                     android:minHeight="40sp"
                     android:minWidth="40sp"
                     android:text="2"
                     android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="24sp"
                     tools:ignore="HardcodedText" />
-
             </LinearLayout>
         </LinearLayout>
 
@@ -97,7 +92,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             layout="@layout/buttonbar_ok" />
-        
     </LinearLayout>
 
 </ScrollView>
