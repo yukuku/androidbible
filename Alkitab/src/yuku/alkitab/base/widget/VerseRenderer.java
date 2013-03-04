@@ -124,6 +124,23 @@ public class VerseRenderer {
 		}
 	}
 	
+	private static ThreadLocal<char[]> buf_char_ = new ThreadLocal<char[]>() {
+		@Override protected char[] initialValue() {
+			return new char[1024];
+		}
+	};
+	
+	private static final String[] VERSE_NUMBER_STRINGS = {
+		"0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+		"10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+		"20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
+		"30", "31", "32", "33", "34", "35", "36", "37", "38", "39",
+		"40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+		"50", "51", "52", "53", "54", "55", "56", "57", "58", "59",
+		"60", "61", "62", "63", "64", "65", "66", "67", "68", "69",
+		"70", "71", "72", "73", "74", "75", "76", "77", "78", "79",
+	}; // up to [79]
+	
 	/**
 	 * @param dontPutSpacingBefore this verse is right after a pericope title or on the 0th position
 	 */
@@ -143,16 +160,23 @@ public class VerseRenderer {
 		// @< to @> = special tags
 		// @/ = end of special tags (for those need to be closed)
 		
+		int text_len = text.length();
+		
 		// Determine if this verse text is a simple verse or formatted verse. 
 		// Formatted verses start with "@@".
 		// Second character must be '@' too, if not it's wrong, we will fallback to simple render.
-		if (text.length() < 2 || text.charAt(0) != '@' || text.charAt(1) != '@') {
+		if (text_len < 2 || text.charAt(0) != '@' || text.charAt(1) != '@') {
 			simpleRender(lText, lVerseNumber, ari, verse_1, text, highlightColor, checked, withXref);
 			return;
 		}
 
 		// optimization, to prevent repeated calls to charAt()
-		char[] text_c = text.toCharArray();
+		char[] text_c = buf_char_.get();
+		if (text_c.length < text_len) {
+			text_c = new char[text_len];
+			buf_char_.set(text_c);
+		}
+		text.getChars(0, text_len, text_c, 0);
 		
 		/**
 		 * '0'..'4', '^' indent 0..4 or new para
@@ -178,12 +202,12 @@ public class VerseRenderer {
 		// - to check whether a verse number has been written
 		// - to check whether we need to put a new line when encountering a new para 
 		int startPosAfterVerseNumber = 0;
-		String verseNumber_s = Integer.toString(verse_1);
+		String verseNumber_s = verse_1 < 80? VERSE_NUMBER_STRINGS[verse_1]: Integer.toString(verse_1);
 	
 		int pos = 2; // we start after "@@"
 	
 		// write verse number inline only when no @[1234^] on the beginning of text
-		if (text_c.length >= 4 && text_c[pos] == '@' && (text_c[pos+1] == '^' || (text_c[pos+1] >= '1' && text_c[pos+1] <= '4'))) {
+		if (text_len >= 4 && text_c[pos] == '@' && (text_c[pos+1] == '^' || (text_c[pos+1] >= '1' && text_c[pos+1] <= '4'))) {
 			// don't write verse number now
 		} else {
 			sb.append(verseNumber_s);
@@ -197,14 +221,14 @@ public class VerseRenderer {
 		lVerseNumber.setPadding(0, 0, 0, 0);
 		
 		while (true) {
-			if (pos >= text_c.length) {
+			if (pos >= text_len) {
 				break;
 			}
 	
 			int nextAt = text.indexOf('@', pos);
 			
 			if (nextAt == -1) { // no more, just append till the end of everything and exit
-				sb.append(text, pos, text.length());
+				sb.append(text, pos, text_len);
 				break;
 			}
 			
@@ -216,7 +240,7 @@ public class VerseRenderer {
 			
 			pos++;
 			// just in case 
-			if (pos >= text_c.length) {
+			if (pos >= text_len) {
 				break;
 			}
 			
@@ -344,15 +368,15 @@ public class VerseRenderer {
 		SpannableStringBuilder sb = new SpannableStringBuilder();
 	
 		// verse number
-		String verse_s = Integer.toString(verse_1);
-		sb.append(verse_s).append("  ").append(text);
-		sb.setSpan(new VerseRenderer.VerseNumberSpan(!checked), 0, verse_s.length(), 0);
+		String verseNumber_s = verse_1 < 80? VERSE_NUMBER_STRINGS[verse_1]: Integer.toString(verse_1);
+		sb.append(verseNumber_s).append("  ").append(text);
+		sb.setSpan(new VerseRenderer.VerseNumberSpan(!checked), 0, verseNumber_s.length(), 0);
 	
 		// verse text
 		sb.setSpan(createLeadingMarginSpan(0, S.applied.indentParagraphRest), 0, sb.length(), 0);
 	
 		if (highlightColor != 0) {
-			sb.setSpan(new BackgroundColorSpan(highlightColor), verse_s.length() + 1, sb.length(), 0);
+			sb.setSpan(new BackgroundColorSpan(highlightColor), verseNumber_s.length() + 1, sb.length(), 0);
 		}
 		
 		for (int i = 0; i < withXref; i++) {
