@@ -660,7 +660,7 @@ public class IsiActivity extends BaseActivity {
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
 			TextView res = (TextView) convertView;
 			if (res == null) {
-				res = (TextView) LayoutInflater.from(IsiActivity.this).inflate(android.R.layout.select_dialog_item, null);
+				res = (TextView) getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
 			}
 			int ari = history.getAri(position);
 			res.setText(S.reference(S.activeVersion, ari));
