@@ -109,8 +109,8 @@ public class VersesView extends ListView {
 		return pos;
 	}
 
-	public void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
-		adapter.setData(book, chapter_1, verses, pericopeAris, pericopeBlocks, nblock);
+	public void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock, int[] xrefEntryCounts) {
+		adapter.setData(book, chapter_1, verses, pericopeAris, pericopeBlocks, nblock, xrefEntryCounts);
 	}
 
 	private OnItemClickListener itemClick = new OnItemClickListener() {
@@ -204,7 +204,7 @@ public class VersesView extends ListView {
 		return false;
 	}
 
-	public void setDataWithRetainSelectedVerses(boolean retainSelectedVerses, int chapter_1, int[] pericope_aris, PericopeBlock[] pericope_blocks, int nblock, SingleChapterVerses verses) {
+	public void setDataWithRetainSelectedVerses(boolean retainSelectedVerses, int chapter_1, int[] pericope_aris, PericopeBlock[] pericope_blocks, int nblock, SingleChapterVerses verses, int[] xrefEntryCounts) {
 		IntArrayList selectedVerses_1 = null;
 		if (retainSelectedVerses) {
 			selectedVerses_1 = getSelectedVerses_1();
@@ -212,7 +212,7 @@ public class VersesView extends ListView {
 		
 		//# fill adapter with new data. make sure all checked states are reset
 		uncheckAll();
-		setData(S.activeBook, chapter_1, verses, pericope_aris, pericope_blocks, nblock);
+		setData(S.activeBook, chapter_1, verses, pericope_aris, pericope_blocks, nblock, xrefEntryCounts);
 		loadAttributeMap();
 		
 		if (selectedVerses_1 != null) {

@@ -954,8 +954,12 @@ public class IsiActivity extends BaseActivity {
 			pericope_blocks = new PericopeBlock[max];
 			nblock = S.activeVersion.loadPericope(S.activeBook.bookId, chapter_1, pericope_aris, pericope_blocks, max); 
 			
+			// load xref
+			int[] xrefEntryCounts = new int[256];
+			S.activeVersion.getXrefEntryCounts(xrefEntryCounts, S.activeBook.bookId, chapter_1);
+			
 			boolean retainSelectedVerses = (!uncheckAllVerses && chapter_1 == current_chapter_1);
-			lsText.setDataWithRetainSelectedVerses(retainSelectedVerses, chapter_1, pericope_aris, pericope_blocks, nblock, verses);
+			lsText.setDataWithRetainSelectedVerses(retainSelectedVerses, chapter_1, pericope_aris, pericope_blocks, nblock, verses, xrefEntryCounts);
 			
 			// tell activity
 			this.chapter_1 = chapter_1;

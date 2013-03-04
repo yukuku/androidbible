@@ -162,7 +162,8 @@ public abstract class VerseAdapter extends BaseAdapter {
 	int[] itemPointer_;
 	int[] attributeMap_; // bit 0(0x1) = bukmak; bit 1(0x2) = catatan; bit 2(0x4) = stabilo;
 	int[] highlightMap_; // null atau warna stabilo
-
+	int[] xrefEntryCounts_;
+	
 	LayoutInflater inflater_;
 	
 	public VerseAdapter(Context context) {
@@ -199,12 +200,13 @@ public abstract class VerseAdapter extends BaseAdapter {
 		}
 	}
 	
-	public synchronized void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
+	public synchronized void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock, int[] xrefEntryCounts) {
 		book_ = book;
 		chapter_1_ = chapter_1;
 		verses_ = verses;
 		pericopeBlocks_ = pericopeBlocks;
 		itemPointer_ = makeItemPointer(verses_.getVerseCount(), pericopeAris, pericopeBlocks, nblock);
+		xrefEntryCounts_ = xrefEntryCounts;
 	}
 
 	public synchronized void loadAttributeMap() {

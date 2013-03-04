@@ -140,6 +140,7 @@ public class InternalReader implements BibleReader {
 				int verse_1 = (ari & 0xff);
 				result[verse_1]++;
 				res++;
+				pos++;
 			}
 			
 			return res;

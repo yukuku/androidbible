@@ -10,7 +10,6 @@ import android.text.style.DynamicDrawableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +22,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.PericopeBlock;
+import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.base.util.Appearances;
 
 
@@ -44,7 +44,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			boolean withBookmark = attributeMap_ == null ? false : (attributeMap_[id] & 0x1) != 0;
 			boolean withNote = attributeMap_ == null ? false : (attributeMap_[id] & 0x2) != 0;
 			boolean withHighlight = attributeMap_ == null ? false : (attributeMap_[id] & 0x4) != 0;
-			int withXref = /* FIXME */ id % 3;
+			int withXref = xrefEntryCounts_ == null? 0: xrefEntryCounts_[id + 1];
 			int highlightColor = withHighlight ? (highlightMap_ == null ? 0 : U.alphaMixHighlight(highlightMap_[id])) : 0;
 
 			boolean checked = false;
@@ -63,6 +63,8 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			VerseTextView lText = (VerseTextView) res.findViewById(R.id.lText);
 			TextView lVerseNumber = (TextView) res.findViewById(R.id.lVerseNumber);
 			
+			int ari = Ari.encode(book_.bookId, chapter_1_, id + 1);
+			
 			// Udah ditentukan bahwa ini ayat dan bukan perikop, sekarang tinggal tentukan
 			// apakah ayat ini pake formating biasa (tanpa menjorok dsb) atau ada formating
 			if (text.length() > 0 && text.charAt(0) == '@') {
@@ -73,9 +75,9 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 
 				boolean dontPutSpacingBefore = (position > 0 && itemPointer_[position - 1] < 0) || position == 0;
 				
-				tiledVerseDisplay(lText, lVerseNumber, id + 1, text, highlightColor, checked, dontPutSpacingBefore, withXref);
+				tiledVerseDisplay(lText, lVerseNumber, ari, id + 1, text, highlightColor, checked, dontPutSpacingBefore, withXref);
 			} else {
-				simpleVerseDisplay(lText, lVerseNumber, id + 1, text, highlightColor, checked, withXref);
+				simpleVerseDisplay(lText, lVerseNumber, ari, id + 1, text, highlightColor, checked, withXref);
 			}
 			
 			Appearances.applyTextAppearance(lText);
@@ -251,7 +253,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 	 * @param dontPutSpacingBefore this verse is right after a pericope title or on the 0th position
      * @param withXref 
 	 */
-	private static void tiledVerseDisplay(TextView lText, TextView lVerseNumber, int verse_1, String text, int highlightColor, boolean checked, boolean dontPutSpacingBefore, int withXref) {
+	private static void tiledVerseDisplay(TextView lText, TextView lVerseNumber, int ari, int verse_1, String text, int highlightColor, boolean checked, boolean dontPutSpacingBefore, int withXref) {
 		// @@ = start a verse containing paragraphs or formatting
 		// @0 = start with indent 0 [paragraph]
 		// @1 = start with indent 1 [paragraph]
@@ -387,7 +389,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		}
 		
 		for (int i = 0; i < withXref; i++) {
-			addXrefLink(lText.getContext(), s, verse_1, i);
+			addXrefLink(lText.getContext(), s, ari, i);
 		}
 
 		lText.setText(s);
@@ -451,7 +453,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		}
 	}
 
-	protected static void simpleVerseDisplay(TextView lText, TextView lVerseNumber, int verse_1, String text, int highlightColor, boolean checked, int withXref) {
+	protected static void simpleVerseDisplay(TextView lText, TextView lVerseNumber, int ari, int verse_1, String text, int highlightColor, boolean checked, int withXref) {
 		// initialize lVerseNumber to have no padding first
 		lVerseNumber.setPadding(0, 0, 0, 0);
 		
@@ -470,14 +472,14 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		}
 		
 		for (int i = 0; i < withXref; i++) {
-			addXrefLink(lText.getContext(), s, verse_1, i);
+			addXrefLink(lText.getContext(), s, ari, i);
 		}
 
 		lText.setText(s);
 		lVerseNumber.setText("");
 	}
 	
-	static void addXrefLink(final Context context, SpannableStringBuilder sb, final int verse_1, final int pos) {
+	static void addXrefLink(final Context context, SpannableStringBuilder sb, final int ari, final int which) {
 		// if last char of this sb is newline, move back.
 		int sb_start = sb.length();
 		if (sb.length() > 0 && sb.charAt(sb.length() - 1) == '\n') {
@@ -490,10 +492,10 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		sb.setSpan(new ImageSpan(context, R.drawable.ic_btn_search, DynamicDrawableSpan.ALIGN_BASELINE), sb_start, sb_start+1, 0);
 		sb.setSpan(new ClickableSpan() {
 			@Override public void onClick(View widget) {
-				Log.d(TAG, "CLICK! " + verse_1 + " " + pos);
+				XrefEntry xe = S.activeVersion.getXrefEntry(Ari.toBook(ari), Ari.toChapter(ari), Ari.toVerse(ari), which);
 				
 				new AlertDialog.Builder(context)
-				.setMessage("click verse_1=" + verse_1 + " pos=" + pos)
+				.setMessage("source: " + xe.source + "\n\ntarget: " + xe.target)
 				.setPositiveButton("OK", null)
 				.show();
 			}
