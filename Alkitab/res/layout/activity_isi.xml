@@ -35,49 +35,55 @@
             android:layout_height="1px"
             android:background="#000"
             tools:ignore="PxUsage" />
-
     </LinearLayout>
 
-	<yuku.alkitab.base.widget.VersesView
-		android:id="@+id/lsIsi"
-		android:layout_width="fill_parent"
-		android:layout_height="0dp"
-		android:layout_weight="1" 
-		android:divider="@null"
-		android:focusable="false"
-		android:focusableInTouchMode="false"
-		android:listSelector="@android:color/transparent" />
+    <yuku.alkitab.base.widget.VersesView
+        android:id="@+id/lsIsi"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@null"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:listSelector="@android:color/transparent" />
 
     <LinearLayout
         android:id="@+id/panelNavigasi"
+        style="?attr/actionBarStyle"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp" >
+        android:layout_height="@dimen/abs__action_bar_default_height"
+        android:layout_marginTop="4dp" >
 
         <ImageButton
             android:id="@+id/bKiri"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            style="?attr/actionButtonStyle"
+            android:layout_width="@dimen/abs__action_button_min_width"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/desc_previous_chapter"
             android:padding="16dp"
             android:scaleType="center"
-            android:src="@drawable/ic_nav_arrow_left" android:contentDescription="@string/desc_previous_chapter"/>
+            android:src="@drawable/ic_nav_arrow_left" />
 
         <Button
             android:id="@+id/bTuju"
+            style="?attr/actionButtonStyle"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:text="Nama Kitab Agak Panjang 20"
+            android:textColor="#f0f0f0"
             android:textSize="18dp"
             tools:ignore="HardcodedText" />
 
         <ImageButton
             android:id="@+id/bKanan"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            style="?attr/actionButtonStyle"
+            android:layout_width="@dimen/abs__action_button_min_width"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/desc_next_chapter"
             android:padding="16dp"
             android:scaleType="center"
-            android:src="@drawable/ic_nav_arrow_right" android:contentDescription="@string/desc_next_chapter"/>
+            android:src="@drawable/ic_nav_arrow_right" />
     </LinearLayout>
 
 </LinearLayout>
