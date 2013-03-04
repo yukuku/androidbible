@@ -12,7 +12,7 @@
 			android:name="android.test.runner" />
 	</application>
 	<uses-sdk
-		android:minSdkVersion="3" />
+		android:minSdkVersion="7" />
 	<instrumentation
 		android:targetPackage="yuku.alkitab"
 		android:name="android.test.InstrumentationTestRunner" />
