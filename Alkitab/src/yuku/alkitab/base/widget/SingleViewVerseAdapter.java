@@ -32,7 +32,6 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			// AYAT. bukan judul perikop.
 			int verse_1 = id + 1;
 
-			String text = verses_.getVerse(id);
 			boolean withBookmark = attributeMap_ == null ? false : (attributeMap_[id] & 0x1) != 0;
 			boolean withNote = attributeMap_ == null ? false : (attributeMap_[id] & 0x2) != 0;
 			boolean withHighlight = attributeMap_ == null ? false : (attributeMap_[id] & 0x4) != 0;
@@ -56,9 +55,10 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			TextView lVerseNumber = (TextView) res.findViewById(R.id.lVerseNumber);
 			
 			int ari = Ari.encode(book_.bookId, chapter_1_, verse_1);
-			
+			String text = verses_.getVerse(id);
+			String verseNumberText = verses_.getVerseNumberText(id);
 			boolean dontPutSpacingBefore = (position > 0 && itemPointer_[position - 1] < 0) || position == 0;
-			VerseRenderer.render(lText, lVerseNumber, ari, verse_1, text, highlightColor, checked, dontPutSpacingBefore, withXref, xrefListener_);
+			VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightColor, checked, dontPutSpacingBefore, withXref, xrefListener_);
 			
 			Appearances.applyTextAppearance(lText);
 			if (checked) {

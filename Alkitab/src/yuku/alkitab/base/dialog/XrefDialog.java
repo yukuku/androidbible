@@ -230,7 +230,8 @@ public class XrefDialog extends BaseDialog {
 		
 		Book b = null;
 		int chapter_1 = 0;
-		final List<String> verses = new ArrayList<String>();
+		final List<String> verseTexts = new ArrayList<String>();
+		final List<String> verseNumberTexts = new ArrayList<String>();
 		for (int i = 0, len = ranges.size(); i < len; i += 2) {
 			int ari_start = ranges.get(i);
 			int ari_end = ranges.get(i + 1);
@@ -243,17 +244,24 @@ public class XrefDialog extends BaseDialog {
 			
 			for (int ari = ari_start; ari <= ari_end; ari++) {
 				String verseText = S.activeVersion.loadVerseText(ari);
-				verses.add(verseText);
+				verseTexts.add(verseText);
+				
+				String verseNumberText = Ari.toChapter(ari) + ":" + Ari.toVerse(ari);
+				verseNumberTexts.add(verseNumberText);
 			}
 		}
 		
 		class Verses extends SingleChapterVerses {
 			@Override public String getVerse(int verse_0) {
-				return verses.get(verse_0);
+				return verseTexts.get(verse_0);
 			}
 			
 			@Override public int getVerseCount() {
-				return verses.size();
+				return verseTexts.size();
+			}
+			
+			@Override public String getVerseNumberText(int verse_0) {
+				return verseNumberTexts.get(verse_0);
 			}
 		}
 

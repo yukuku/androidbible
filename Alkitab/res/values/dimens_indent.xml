@@ -16,8 +16,8 @@
 	<dimen name="pericopeSpacingBottom">5dp</dimen>
 	
 	 <!-- 
-	 Special for verse number >= 100 because it needs more indent 
-	 in order for the verse numbers not to overlap with text.
+	 Special for verse numbers with 3 or more characters because it needs more indent 
+	 in order for the verse numbers not to overlap with text. The amount here is for each character.
 	 -->
-	<dimen name="indentExtra">10dp</dimen>
+	<dimen name="indentExtra">6dp</dimen>
 </resources>
