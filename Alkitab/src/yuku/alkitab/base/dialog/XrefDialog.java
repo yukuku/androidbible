@@ -235,46 +235,38 @@ public class XrefDialog extends BaseDialog {
 			Log.d(TAG, "linkPos " + linkPos + " target=" + encodedTarget + " ranges=" + ranges);
 		}
 		
-		Book b = null;
-		int chapter_1 = 0;
 		displayedVerseTexts = new ArrayList<String>();
 		displayedVerseNumberTexts = new ArrayList<String>();
 		displayedRealAris = new IntArrayList();
-		for (int i = 0, len = ranges.size(); i < len; i += 2) {
-			int ari_start = ranges.get(i);
-			int ari_end = ranges.get(i + 1);
-			if (b == null) {
-				b = S.activeVersion.getBook(Ari.toBook(ari_start));
-			}
-			if (chapter_1 == 0) {
-				chapter_1 = Ari.toChapter(ari_start);
-			}
-			
-			for (int ari = ari_start; ari <= ari_end; ari++) {
-				String verseText = S.activeVersion.loadVerseText(ari);
-				String verseNumberText = Ari.toChapter(ari) + ":" + Ari.toVerse(ari);
 
-				displayedVerseTexts.add(verseText);
-				displayedVerseNumberTexts.add(verseNumberText);
-				displayedRealAris.add(ari);
+		int verse_count = S.activeVersion.loadVersesByAriRanges(ranges, displayedRealAris, displayedVerseTexts);
+		if (verse_count > 0) {
+			// set up verse number texts
+			for (int i = 0; i < verse_count; i++) {
+				int ari = displayedRealAris.get(i);
+				displayedVerseNumberTexts.add(Ari.toChapter(ari) + ":" + Ari.toVerse(ari));
 			}
-		}
 		
-		class Verses extends SingleChapterVerses {
-			@Override public String getVerse(int verse_0) {
-				return displayedVerseTexts.get(verse_0);
+			class Verses extends SingleChapterVerses {
+				@Override public String getVerse(int verse_0) {
+					return displayedVerseTexts.get(verse_0);
+				}
+				
+				@Override public int getVerseCount() {
+					return displayedVerseTexts.size();
+				}
+				
+				@Override public String getVerseNumberText(int verse_0) {
+					return displayedVerseNumberTexts.get(verse_0);
+				}
 			}
+	
+			int firstAri = displayedRealAris.get(0);
+			Book book = S.activeVersion.getBook(Ari.toBook(firstAri));
+			int chapter_1 = Ari.toChapter(firstAri);
 			
-			@Override public int getVerseCount() {
-				return displayedVerseTexts.size();
-			}
-			
-			@Override public String getVerseNumberText(int verse_0) {
-				return displayedVerseNumberTexts.get(verse_0);
-			}
+			versesView.setData(book, chapter_1, new Verses(), null, null, 0, null); 
 		}
-
-		versesView.setData(b, chapter_1, new Verses(), null, null, 0, null); 
 		
 		renderXrefText();
 	}
