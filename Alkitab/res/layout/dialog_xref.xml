@@ -10,12 +10,18 @@
         android:id="@+id/tXrefText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/padding_medium"
         android:layout_weight="0"
+        android:background="#30808080"
         android:padding="@dimen/padding_medium"
         android:text="*1:1: Abc 2:3-4"
         android:textAppearance="?android:attr/textAppearanceMedium"
         tools:ignore="HardcodedText" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        tools:ignore="ContentDescription" />
 
     <yuku.alkitab.base.widget.VersesView
         android:id="@+id/versesView"
