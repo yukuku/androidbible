@@ -31,6 +31,7 @@ import yuku.alkitab.base.util.Base64Mod;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.base.widget.VersesView;
+import yuku.alkitab.base.widget.VersesView.VerseSelectionMode;
 
 public class XrefDialog extends BaseDialog {
 	public static final String TAG = XrefDialog.class.getSimpleName();
@@ -39,7 +40,7 @@ public class XrefDialog extends BaseDialog {
 	private static final String EXTRA_which = "which"; //$NON-NLS-1$
 
 	public interface XrefDialogListener {
-		void onVerseSelected(int ari);
+		void onVerseSelected(XrefDialog dialog, int ari_source, int ari_target);
 	}
 	
 	TextView tXrefText;
@@ -47,8 +48,12 @@ public class XrefDialog extends BaseDialog {
 	
 	XrefDialogListener listener;
 
+	int ari_source;
 	XrefEntry xrefEntry;
 	int displayedLinkPos = -1; // -1 indicates that we should auto-select the first link
+	List<String> displayedVerseTexts;
+	List<String> displayedVerseNumberTexts;
+	IntArrayList displayedRealAris;
 	
 	public XrefDialog() {
 	}
@@ -78,9 +83,9 @@ public class XrefDialog extends BaseDialog {
 		super.onCreate(savedInstanceState);
 		setStyle(DialogFragment.STYLE_NO_TITLE, 0);
 
-		int ari = getArguments().getInt(EXTRA_ari);
+		ari_source = getArguments().getInt(EXTRA_ari);
 		int which = getArguments().getInt(EXTRA_which);
-		xrefEntry = S.activeVersion.getXrefEntry(ari, which);
+		xrefEntry = S.activeVersion.getXrefEntry(ari_source, which);
 	}
 	
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -91,6 +96,8 @@ public class XrefDialog extends BaseDialog {
 		
 		res.setBackgroundColor(S.applied.backgroundColor);
 		versesView.setCacheColorHint(S.applied.backgroundColor);
+		versesView.setVerseSelectionMode(VerseSelectionMode.singleClick);
+		versesView.setSelectedVersesListener(versesView_selectedVerses);
 		tXrefText.setMovementMethod(LinkMovementMethod.getInstance());
 		renderXrefText();
 		
@@ -230,8 +237,9 @@ public class XrefDialog extends BaseDialog {
 		
 		Book b = null;
 		int chapter_1 = 0;
-		final List<String> verseTexts = new ArrayList<String>();
-		final List<String> verseNumberTexts = new ArrayList<String>();
+		displayedVerseTexts = new ArrayList<String>();
+		displayedVerseNumberTexts = new ArrayList<String>();
+		displayedRealAris = new IntArrayList();
 		for (int i = 0, len = ranges.size(); i < len; i += 2) {
 			int ari_start = ranges.get(i);
 			int ari_end = ranges.get(i + 1);
@@ -244,24 +252,25 @@ public class XrefDialog extends BaseDialog {
 			
 			for (int ari = ari_start; ari <= ari_end; ari++) {
 				String verseText = S.activeVersion.loadVerseText(ari);
-				verseTexts.add(verseText);
-				
 				String verseNumberText = Ari.toChapter(ari) + ":" + Ari.toVerse(ari);
-				verseNumberTexts.add(verseNumberText);
+
+				displayedVerseTexts.add(verseText);
+				displayedVerseNumberTexts.add(verseNumberText);
+				displayedRealAris.add(ari);
 			}
 		}
 		
 		class Verses extends SingleChapterVerses {
 			@Override public String getVerse(int verse_0) {
-				return verseTexts.get(verse_0);
+				return displayedVerseTexts.get(verse_0);
 			}
 			
 			@Override public int getVerseCount() {
-				return verseTexts.size();
+				return displayedVerseTexts.size();
 			}
 			
 			@Override public String getVerseNumberText(int verse_0) {
-				return verseNumberTexts.get(verse_0);
+				return displayedVerseNumberTexts.get(verse_0);
 			}
 		}
 
@@ -270,6 +279,16 @@ public class XrefDialog extends BaseDialog {
 		renderXrefText();
 	}
 	
+	VersesView.SelectedVersesListener versesView_selectedVerses = new VersesView.SelectedVersesListener() {
+		@Override public void onVerseSingleClick(VersesView v, int verse_1) {
+			listener.onVerseSelected(XrefDialog.this, ari_source, displayedRealAris.get(verse_1 - 1));
+		}
+		
+		@Override public void onSomeVersesSelected(VersesView v) {}
+		
+		@Override public void onNoVersesSelected(VersesView v) {}
+	};
+
 	interface FindTagsListener {
 		void onPlainText(int start, int end);
 		void onTaggedText(String tag, int start, int end);

@@ -1009,8 +1009,13 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		return true;
 	}
 
-	@Override public void onVerseSelected(int ari) {
-		Log.d(TAG, "callback from xrefdialog: " + ari);
+	@Override public void onVerseSelected(XrefDialog dialog, int ari_source, int ari_target) {
+		dialog.dismiss();
+		jumpToAri(ari_target);
+		
+		// add both xref source and target, so user can go back to source easily
+		history.add(ari_source);
+		history.add(ari_target);
 	}
 
 	VersesView.AttributeListener attributeListener = new VersesView.AttributeListener() {
@@ -1056,6 +1061,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				actionMode.finish();
 			}
 		}
+
+		@Override public void onVerseSingleClick(VersesView v, int verse_1) {}
 	};
 
 	ActionMode.Callback actionMode_callback = new ActionMode.Callback() {
