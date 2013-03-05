@@ -196,7 +196,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 		abstract CharSequence textForView(int position);
 		
 		int textColorForView(int position) {
-			return 0xffffffff;
+			return 0xff000000;
 		}
 	}
 	
