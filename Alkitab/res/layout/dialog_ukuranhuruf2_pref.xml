@@ -36,7 +36,6 @@
             android:layout_marginLeft="6dp"
             android:minWidth="50dp"
             android:text="17.0"
-            android:textColor="#fff"
             android:textSize="20dp"
             tools:ignore="HardcodedText" />
     </LinearLayout>
