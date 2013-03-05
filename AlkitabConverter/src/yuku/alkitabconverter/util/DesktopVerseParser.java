@@ -15,7 +15,7 @@ public class DesktopVerseParser {
 	
 	static Pattern numberRangeSplitter = Pattern.compile("\\s*(;|,|dan)\\s*" /* NOT case insensitive */);
 	
-	static Pattern numberStartEndSplitter = Pattern.compile("\\s*-\\s*");
+	static Pattern numberStartEndSplitter = Pattern.compile("\\s*--?\\s*");
 
 	static Pattern chapterVerse = Pattern.compile("(\\d+)\\s*[:.]\\s*(\\d+)");
 

@@ -127,6 +127,9 @@ public class Proses2 {
 					String verse = target.substring(pair[0], pair[1]);
 					
 					IntArrayList ariRanges = DesktopVerseParser.verseStringToAriWithShiftTb(verse);
+					if (ariRanges == null || ariRanges.size() == 0) {
+						throw new RuntimeException("verse cannot be parsed: " + verse);
+					}
 					
 					{ // we need to process 00 verses (entire chapter) to 1 for start and the last verse for end. 
 						boolean isStart = true;
