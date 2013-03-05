@@ -26,6 +26,7 @@ import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.XrefEntry;
+import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.Base64Mod;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.LidToAri;
@@ -135,6 +136,8 @@ public class XrefDialog extends BaseDialog {
 				sb.append(xrefEntry.target, start, end);
 			}
 		});
+		
+		Appearances.applyTextAppearance(tXrefText);
 		
 		tXrefText.setText(sb);
 	}

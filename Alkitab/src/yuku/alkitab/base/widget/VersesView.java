@@ -1,6 +1,7 @@
 package yuku.alkitab.base.widget;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -52,6 +53,10 @@ public class VersesView extends ListView {
 
 	private void init() {
 		if (isInEditMode()) return;
+		
+		setDivider(null);
+		setFocusable(false);
+		setSelector(new ColorDrawable(0x0));
 		
 		setAdapter(adapter = new VerseAdapter.Factory().create(getContext()));
 		setOnItemClickListener(itemClick);
