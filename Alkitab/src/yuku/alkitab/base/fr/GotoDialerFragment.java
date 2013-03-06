@@ -341,6 +341,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
 			TextView res = (TextView) (convertView != null ? convertView : LayoutInflater.from(getActivity()).inflate(android.R.layout.simple_spinner_item, parent, false));
 			res.setText(booksc_[position].shortName);
+			res.setTextSize(18);
 			return res;
 		}
 
@@ -349,6 +350,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 
 			Book k = getItem(position);
 			res.setText(k.shortName);
+			res.setTextSize(18);
 			res.setTextColor(U.getColorBasedOnBookId(k.bookId));
 
 			return res;
