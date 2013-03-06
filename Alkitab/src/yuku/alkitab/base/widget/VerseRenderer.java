@@ -12,11 +12,11 @@ import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
-import android.text.style.DynamicDrawableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.LineHeightSpan;
 import android.text.style.MetricAffectingSpan;
+import android.text.style.ReplacementSpan;
 import android.text.style.StyleSpan;
 import android.view.View;
 import android.widget.TextView;
@@ -94,27 +94,16 @@ public class VerseRenderer {
 		}
 	}
 	
-	static class XrefAttrSpan extends DynamicDrawableSpan {
+	static class XrefAttrSpan extends ReplacementSpan {
 		private final Context context;
         private Drawable drawable;
         private int drawable_width;
 		private int drawable_height;
 		
 		public XrefAttrSpan(Context context) {
-			super(ALIGN_BOTTOM);
 			this.context = context;
 		}
 
-		@Override public Drawable getDrawable() {
-			init();
-			return drawable;
-		}
-
-        @Override public int getSize(Paint paint, CharSequence text, int start, int end, FontMetricsInt fm) {
-        	init();
-            return drawable_width;
-        }
-        
         private void init() {
         	if (drawable == null) {
         		drawable = context.getResources().getDrawable(R.drawable.ic_attr_xref);
@@ -123,6 +112,25 @@ public class VerseRenderer {
 				drawable.setBounds(0, 0, drawable_width, drawable_height);
         	}
         }
+		
+        @Override public int getSize(Paint paint, CharSequence text, int start, int end, FontMetricsInt fm) {
+        	init();
+            return drawable_width;
+        }
+        
+		@Override public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
+			init();
+			canvas.save();
+
+			FontMetricsInt fm = paint.getFontMetricsInt();
+			int lineHeight = fm.descent - fm.ascent;
+			
+			int transY = top + (lineHeight - drawable_height) / 2;
+			canvas.translate(x, transY);
+			drawable.draw(canvas);
+			
+			canvas.restore();
+		}
 	}
 	
 	/** 0 undefined. 1 and 2 based on version. */
