@@ -74,11 +74,11 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		View res = inflater.inflate(R.layout.fragment_goto_dialer, container, false);
 		
 		bOk = V.get(res, R.id.bOk);
-		tChapter = V.get(res, R.id.lPasal);
-		tChapterLabel = V.get(res, R.id.lLabelPasal);
-		tVerse = V.get(res, R.id.lAyat);
-		tVerseLabel = V.get(res, R.id.lLabelAyat);
-		cbBook = V.get(res, R.id.cbKitab);
+		tChapter = V.get(res, R.id.tChapter);
+		tChapterLabel = V.get(res, R.id.tChapterLabel);
+		tVerse = V.get(res, R.id.tVerse);
+		tVerseLabel = V.get(res, R.id.tVerseLabel);
+		cbBook = V.get(res, R.id.cbBook);
 		cbBook.setAdapter(adapter = new BookAdapter());
 
 		tChapter.setOnClickListener(tChapter_click);
@@ -91,18 +91,18 @@ public class GotoDialerFragment extends BaseGotoFragment {
 			tVerseLabel.setOnClickListener(tVerse_click);
 		}
 
-		res.findViewById(R.id.bAngka0).setOnClickListener(button_click);
-		res.findViewById(R.id.bAngka1).setOnClickListener(button_click);
-		res.findViewById(R.id.bAngka2).setOnClickListener(button_click);
-		res.findViewById(R.id.bAngka3).setOnClickListener(button_click);
-		res.findViewById(R.id.bAngka4).setOnClickListener(button_click);
-		res.findViewById(R.id.bAngka5).setOnClickListener(button_click);
-		res.findViewById(R.id.bAngka6).setOnClickListener(button_click);
-		res.findViewById(R.id.bAngka7).setOnClickListener(button_click);
-		res.findViewById(R.id.bAngka8).setOnClickListener(button_click);
-		res.findViewById(R.id.bAngka9).setOnClickListener(button_click);
-		res.findViewById(R.id.bAngkaC).setOnClickListener(button_click);
-		res.findViewById(R.id.bAngkaPindah).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit0).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit1).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit2).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit3).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit4).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit5).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit6).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit7).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit8).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigit9).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigitC).setOnClickListener(button_click);
+		res.findViewById(R.id.bDigitSwitch).setOnClickListener(button_click);
 
 		return res;
 	}
@@ -178,18 +178,18 @@ public class GotoDialerFragment extends BaseGotoFragment {
 	View.OnClickListener button_click = new View.OnClickListener() {
 		@Override public void onClick(View v) {
 			int id = v.getId();
-			if (id == R.id.bAngka0) press("0"); //$NON-NLS-1$
-			if (id == R.id.bAngka1) press("1"); //$NON-NLS-1$
-			if (id == R.id.bAngka2) press("2"); //$NON-NLS-1$
-			if (id == R.id.bAngka3) press("3"); //$NON-NLS-1$
-			if (id == R.id.bAngka4) press("4"); //$NON-NLS-1$
-			if (id == R.id.bAngka5) press("5"); //$NON-NLS-1$
-			if (id == R.id.bAngka6) press("6"); //$NON-NLS-1$
-			if (id == R.id.bAngka7) press("7"); //$NON-NLS-1$
-			if (id == R.id.bAngka8) press("8"); //$NON-NLS-1$
-			if (id == R.id.bAngka9) press("9"); //$NON-NLS-1$
-			if (id == R.id.bAngkaC) press("C"); //$NON-NLS-1$
-			if (id == R.id.bAngkaPindah) press(":"); //$NON-NLS-1$
+			if (id == R.id.bDigit0) press("0"); //$NON-NLS-1$
+			if (id == R.id.bDigit1) press("1"); //$NON-NLS-1$
+			if (id == R.id.bDigit2) press("2"); //$NON-NLS-1$
+			if (id == R.id.bDigit3) press("3"); //$NON-NLS-1$
+			if (id == R.id.bDigit4) press("4"); //$NON-NLS-1$
+			if (id == R.id.bDigit5) press("5"); //$NON-NLS-1$
+			if (id == R.id.bDigit6) press("6"); //$NON-NLS-1$
+			if (id == R.id.bDigit7) press("7"); //$NON-NLS-1$
+			if (id == R.id.bDigit8) press("8"); //$NON-NLS-1$
+			if (id == R.id.bDigit9) press("9"); //$NON-NLS-1$
+			if (id == R.id.bDigitC) press("C"); //$NON-NLS-1$
+			if (id == R.id.bDigitSwitch) press(":"); //$NON-NLS-1$
 		}
 	};
 	

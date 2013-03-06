@@ -20,14 +20,14 @@
             android:orientation="horizontal" >
 
             <Spinner
-                android:id="@+id/cbKitab"
+                android:id="@+id/cbBook"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="8dp"
                 android:minWidth="200sp" tools:listitem="@android:layout/simple_spinner_dropdown_item"/>
 
             <TextView
-                android:id="@+id/lPasal"
+                android:id="@+id/tChapter"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:focusable="true"
@@ -45,7 +45,7 @@
                 tools:ignore="HardcodedText" />
 
             <TextView
-                android:id="@+id/lAyat"
+                android:id="@+id/tVerse"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:focusable="true"

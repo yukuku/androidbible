@@ -19,7 +19,7 @@
             android:orientation="vertical" >
 
             <Spinner
-                android:id="@+id/cbKitab"
+                android:id="@+id/cbBook"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minWidth="480dp"
@@ -34,7 +34,7 @@
                 android:orientation="horizontal" >
 
                 <TextView
-                    android:id="@+id/lLabelPasal"
+                    android:id="@+id/tChapterLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
                     android:layout_marginRight="8dp"
@@ -43,7 +43,7 @@
                     android:textSize="24sp" />
 
                 <TextView
-                    android:id="@+id/lPasal"
+                    android:id="@+id/tChapter"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
                     android:layout_marginBottom="4dp"
@@ -58,7 +58,7 @@
                     tools:ignore="HardcodedText" />
 
                 <TextView
-                    android:id="@+id/lLabelAyat"
+                    android:id="@+id/tVerseLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
                     android:layout_marginLeft="16dp"
@@ -68,7 +68,7 @@
                     android:textSize="24sp" />
 
                 <TextView
-                    android:id="@+id/lAyat"
+                    android:id="@+id/tVerse"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
                     android:layout_marginBottom="4dp"

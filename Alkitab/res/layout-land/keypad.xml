@@ -11,7 +11,7 @@
         android:gravity="center_horizontal" >
 
         <Button
-            android:id="@+id/bAngka1"
+            android:id="@+id/bDigit1"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_margin="2dp"
@@ -20,7 +20,7 @@
         </Button>
 
         <Button
-            android:id="@+id/bAngka2"
+            android:id="@+id/bDigit2"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_margin="2dp"
@@ -29,7 +29,7 @@
         </Button>
 
         <Button
-            android:id="@+id/bAngka3"
+            android:id="@+id/bDigit3"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_margin="2dp"
@@ -38,7 +38,7 @@
         </Button>
 
         <Button
-            android:id="@+id/bAngka4"
+            android:id="@+id/bDigit4"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_margin="2dp"
@@ -47,7 +47,7 @@
         </Button>
 
         <Button
-            android:id="@+id/bAngka5"
+            android:id="@+id/bDigit5"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_margin="2dp"
@@ -56,7 +56,7 @@
         </Button>
 
         <Button
-            android:id="@+id/bAngkaC"
+            android:id="@+id/bDigitC"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_margin="2dp"
@@ -71,7 +71,7 @@
         android:gravity="center_horizontal" >
 
         <Button
-            android:id="@+id/bAngka6"
+            android:id="@+id/bDigit6"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_margin="2dp"
@@ -80,7 +80,7 @@
         </Button>
 
         <Button
-            android:id="@+id/bAngka7"
+            android:id="@+id/bDigit7"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_margin="2dp"
@@ -89,7 +89,7 @@
         </Button>
 
         <Button
-            android:id="@+id/bAngka8"
+            android:id="@+id/bDigit8"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_margin="2dp"
@@ -98,7 +98,7 @@
         </Button>
 
         <Button
-            android:id="@+id/bAngka9"
+            android:id="@+id/bDigit9"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_margin="2dp"
@@ -107,7 +107,7 @@
         </Button>
 
         <Button
-            android:id="@+id/bAngka0"
+            android:id="@+id/bDigit0"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_margin="2dp"
@@ -116,7 +116,7 @@
         </Button>
 
         <Button
-            android:id="@+id/bAngkaPindah"
+            android:id="@+id/bDigitSwitch"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_margin="2dp"
