@@ -4,6 +4,7 @@
 
 	<style name="Theme.Alkitab.Content" parent="@style/Theme.Alkitab">
 	    <item name="android:windowContentOverlay">@null</item>
+	    <item name="android:windowBackground">@null</item>
 	</style>
 
 	<style name="Theme.Alkitab.NoActionBar" parent="@style/Theme.Sherlock.Light.NoActionBar" />
