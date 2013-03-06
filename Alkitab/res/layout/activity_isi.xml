@@ -19,7 +19,7 @@
 
     <LinearLayout
         android:id="@+id/panelNavigasi"
-        style="?attr/actionBarStyle"
+        android:background="@drawable/abs__ab_solid_dark_holo"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/abs__action_bar_default_height" >
 
