@@ -13,15 +13,16 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
-import java.util.HashMap;
-
+import yuku.afw.App;
 import yuku.afw.V;
+import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.util.BookNameSorter;
 
 public class GotoGridFragment extends BaseGotoFragment {
 	public static final String TAG = GotoGridFragment.class.getSimpleName();
@@ -37,7 +38,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 	GridView gridChapter;
 	GridView gridVerse;
 
-	Book[] xkitab;
+	Book[] books;
 	BookAdapter bookAdapter;
 	ChapterAdapter chapterAdapter;
 	VerseAdapter verseAdapter;
@@ -175,7 +176,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 	@Override public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		
-		xkitab = S.activeVersion.getConsecutiveBooks();
+		books = S.activeVersion.getConsecutiveBooks();
 		gridBook.setAdapter(bookAdapter = new BookAdapter());
 	}
 	
@@ -204,96 +205,35 @@ public class GotoGridFragment extends BaseGotoFragment {
 	}
 	
 	class BookAdapter extends GridAdapter {
-		final int[] numberedBookMap;
-		final String[] numberedBookStartsWiths = {null, "I", "II", "III", "IV", "V"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-		final String[] numberedBookReplaceWiths = {null, "1", "2", "3", "4", "5"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-		final HashMap<String, String> hardcodedAbbrs = new HashMap<String, String>();
+		final Book[] books_grid;
 		
 		public BookAdapter() {
-			// for these book numbers, replace "I", "II", "III", "IV", "V" with numbers 
-			// to save space, to make them still understandable when truncated
-			int[] numberedBooks_1 = {0 /*moses*/, 8, 10, 12, 45, 51, 53, 59, 61, 66, 70, };
-			int[] numberedBooks_2 = {1 /*moses*/, 9, 11, 13, 46, 52, 54, 60, 62, 67, 71, }; 
-			int[] numberedBooks_3 = {2 /*moses*/, 63 /*john*/, 72 /*makabe*/, };
-			int[] numberedBooks_4 = {3 /*moses*/, 73 /*makabe*/, };
-			int[] numberedBooks_5 = {4 /*moses*/, };
-			
-			numberedBookMap = new int[74]; // as large as the max number above + 1
-			for (int bookId: numberedBooks_1) numberedBookMap[bookId] = 1;
-			for (int bookId: numberedBooks_2) numberedBookMap[bookId] = 2;
-			for (int bookId: numberedBooks_3) numberedBookMap[bookId] = 3;
-			for (int bookId: numberedBooks_4) numberedBookMap[bookId] = 4;
-			for (int bookId: numberedBooks_5) numberedBookMap[bookId] = 5;
-			
-			hardcodedAbbrs.put("Filemon", "Flm");
-			hardcodedAbbrs.put("Amos", "Amos");
-			hardcodedAbbrs.put("Ayub", "Ayub");
-			hardcodedAbbrs.put("Yoel", "Yoel");
-			hardcodedAbbrs.put("Pengkhotbah", "Pkh");
-			hardcodedAbbrs.put("Wahyu", "Why");
-			hardcodedAbbrs.put("1 Timotius", "1Tim");
-			hardcodedAbbrs.put("2 Timotius", "2Tim");
-			hardcodedAbbrs.put("1 Tesalonika", "1Tes");
-			hardcodedAbbrs.put("2 Tesalonika", "2Tes");
-			hardcodedAbbrs.put("1 Korintus", "1Kor");
-			hardcodedAbbrs.put("2 Korintus", "2Kor");
-			hardcodedAbbrs.put("1 Raja-raja", "1Raj");
-			hardcodedAbbrs.put("2 Raja-raja", "2Raj");
-			hardcodedAbbrs.put("1 Petrus", "1Pet");
-			hardcodedAbbrs.put("2 Petrus", "2Pet");
-			hardcodedAbbrs.put("1 Samuel", "1Sam");
-			hardcodedAbbrs.put("2 Samuel", "2Sam");
-			hardcodedAbbrs.put("1 Yohanes", "1Yoh");
-			hardcodedAbbrs.put("2 Yohanes", "2Yoh");
-			hardcodedAbbrs.put("3 Yohanes", "3Yoh");
-			
-			hardcodedAbbrs.put("Philemon", "Phm");
-			hardcodedAbbrs.put("Philippians", "Phil");
-			hardcodedAbbrs.put("Song of Solomon", "Song");
+			// sort or not based on pref
+			if (Preferences.getBoolean(App.context.getString(R.string.pref_sortKitabAlfabet_key), App.context.getResources().getBoolean(R.bool.pref_sortKitabAlfabet_default))) {
+				books_grid = BookNameSorter.sortAlphabetically(books);
+			} else {
+				books_grid = books.clone();
+			}
 		}
 		
 		@Override public int getCount() {
-			return xkitab.length;
+			return books_grid.length;
 		}
 
 		@Override public Book getItem(int position) {
-			return xkitab[position];
+			return books_grid[position];
 		}
 
 		@Override CharSequence textForView(int position) {
 			Book book = getItem(position);
-			String title = book.shortName;
 			
-			{
-				String hardcodedAbbr = hardcodedAbbrs.get(title);
-				if (hardcodedAbbr != null) {
-					return hardcodedAbbr;
-				}
-			}
-			
-			// remove spaces and '.'
-			if (book.shortName.indexOf(' ') != -1) {
-				title = title.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
-			} 
-			if (book.shortName.indexOf('.') != -1) {
-				title = title.replace(".", ""); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			
-			int numberedBookCategory = position >= numberedBookMap.length? 0: numberedBookMap[position];
-			if (numberedBookCategory > 0) {
-				String startsWith = numberedBookStartsWiths[numberedBookCategory];
-				String replaceWith = numberedBookReplaceWiths[numberedBookCategory];
-				if (title.startsWith(startsWith)) {
-					title = replaceWith + title.substring(startsWith.length());
-				}
-			}
-			
-			if (title.length() > 3) title = title.substring(0, 3);
-			return title;
+			return BookNameSorter.getBookAbbr(book);
 		}
 		
 		@Override int textColorForView(int position) {
-			return U.getColorBasedOnBookId(position);
+			Book book = getItem(position);
+			
+			return U.getColorBasedOnBookId(book.bookId);
 		}
 	}
 	
