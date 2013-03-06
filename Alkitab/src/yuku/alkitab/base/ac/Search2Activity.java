@@ -33,6 +33,8 @@ import android.widget.Toast;
 import java.util.Arrays;
 
 import yuku.afw.V;
+import yuku.afw.storage.Preferences;
+import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -42,6 +44,7 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.base.util.BookNameSorter;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.Search2Engine;
@@ -68,7 +71,7 @@ public class Search2Activity extends BaseActivity {
 	View bEditFilter;
 	
 	int warnaHilite;
-	SparseBooleanArray xkitabPosTerpilih = new SparseBooleanArray();
+	SparseBooleanArray selectedBookIds = new SparseBooleanArray();
 	int kitabPosTerbuka;
 	int filterUserAction = 0; // when it's not user action, set to nonzero 
 	
@@ -222,10 +225,10 @@ public class Search2Activity extends BaseActivity {
 			
 			if (query == null) { // default: semua kitab
 				for (Book k: S.activeVersion.getConsecutiveBooks()) {
-					xkitabPosTerpilih.put(k.bookId, true);
+					selectedBookIds.put(k.bookId, true);
 				}
 			} else if (query.xkitabPos != null) {
-				xkitabPosTerpilih = query.xkitabPos;
+				selectedBookIds = query.xkitabPos;
 			}
 			
 			aturTampilanFilterLamaBaru();
@@ -255,7 +258,7 @@ public class Search2Activity extends BaseActivity {
 		{
 			int c_nyala = 0, c_mati = 0;
 			for (int i = 0; i < 39; i++) {
-				boolean nyala = xkitabPosTerpilih.get(i, false);
+				boolean nyala = selectedBookIds.get(i, false);
 				if (nyala) c_nyala++; else c_mati++;
 			}
 			if (c_nyala == 39) lama = true;
@@ -265,7 +268,7 @@ public class Search2Activity extends BaseActivity {
 		{
 			int c_nyala = 0, c_mati = 0;
 			for (int i = 39; i < 66; i++) {
-				boolean nyala = xkitabPosTerpilih.get(i, false);
+				boolean nyala = selectedBookIds.get(i, false);
 				if (nyala) c_nyala++; else c_mati++;
 			}
 			if (c_nyala == 27) baru = true;
@@ -275,9 +278,9 @@ public class Search2Activity extends BaseActivity {
 		{
 			int c = 0;
 			int k = 0;
-			for (int i = 0, len = xkitabPosTerpilih.size(); i < len; i++) {
-				if (xkitabPosTerpilih.valueAt(i)) {
-					k = xkitabPosTerpilih.keyAt(i);
+			for (int i = 0, len = selectedBookIds.size(); i < len; i++) {
+				if (selectedBookIds.valueAt(i)) {
+					k = selectedBookIds.keyAt(i);
 					c++;
 					if (c > 1) break;
 				}
@@ -314,9 +317,9 @@ public class Search2Activity extends BaseActivity {
 					cFilterKitabSaja.setVisibility(View.GONE);
 					tFilterRumit.setVisibility(View.VISIBLE);
 					StringBuilder sb = new StringBuilder();
-					for (int i = 0, len = xkitabPosTerpilih.size(); i < len; i++) {
-						if (xkitabPosTerpilih.valueAt(i) == true) {
-							int kitabPos = xkitabPosTerpilih.keyAt(i);
+					for (int i = 0, len = selectedBookIds.size(); i < len; i++) {
+						if (selectedBookIds.valueAt(i) == true) {
+							int kitabPos = selectedBookIds.keyAt(i);
 							Book book = S.activeVersion.getBook(kitabPos);
 							if (book != null) {
 								if (sb.length() != 0) sb.append(", "); //$NON-NLS-1$
@@ -378,10 +381,10 @@ public class Search2Activity extends BaseActivity {
 	};
 	
 	protected void setXkitabPosTerpilihBerdasarkanFilter() {
-		xkitabPosTerpilih.clear();
-		if (cFilterLama.isChecked()) for (int i = 0; i < 39; i++) xkitabPosTerpilih.put(i, true);
-		if (cFilterBaru.isChecked()) for (int i = 39; i < 66; i++) xkitabPosTerpilih.put(i, true);
-		if (cFilterKitabSaja.isChecked()) xkitabPosTerpilih.put(kitabPosTerbuka, true);
+		selectedBookIds.clear();
+		if (cFilterLama.isChecked()) for (int i = 0; i < 39; i++) selectedBookIds.put(i, true);
+		if (cFilterBaru.isChecked()) for (int i = 39; i < 66; i++) selectedBookIds.put(i, true);
+		if (cFilterKitabSaja.isChecked()) selectedBookIds.put(kitabPosTerbuka, true);
 	}
 	
 	protected Query getQuery() {
@@ -391,7 +394,7 @@ public class Search2Activity extends BaseActivity {
 		} else {
 			res.carian = api11_compat.getSearchViewQuery();
 		}
-		res.xkitabPos = xkitabPosTerpilih;
+		res.xkitabPos = selectedBookIds;
 		return res;
 	}
 
@@ -405,14 +408,14 @@ public class Search2Activity extends BaseActivity {
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface _unused_, int which) {
 				ListView lv = dialog[0].getListView();
-				xkitabPosTerpilih.clear();
-				SparseBooleanArray xpos = lv.getCheckedItemPositions();
-				for (int i = 0, len = xpos.size(); i < len; i++) {
-					if (xpos.valueAt(i) == true) {
-						int position = xpos.keyAt(i);
-						Book k = adapter.getItem(position);
-						if (k != null) {
-							xkitabPosTerpilih.put(k.bookId, true);
+				selectedBookIds.clear();
+				SparseBooleanArray positions = lv.getCheckedItemPositions();
+				for (int i = 0, len = positions.size(); i < len; i++) {
+					if (positions.valueAt(i) == true) {
+						int position = positions.keyAt(i);
+						Book book = adapter.getItem(position);
+						if (book != null) {
+							selectedBookIds.put(book.bookId, true);
 						}
 					}
 				}
@@ -431,40 +434,44 @@ public class Search2Activity extends BaseActivity {
 		
 		// set checked items
 		for (int position = 0, count = adapter.getCount(); position < count; position++) {
-			Book k = adapter.getItem(position);
-			if (k != null && xkitabPosTerpilih.get(k.bookId, false) == true) {
+			Book book = adapter.getItem(position);
+			if (book != null && selectedBookIds.get(book.bookId, false) == true) {
 				lv.setItemChecked(position, true);
 			}
 		}
 	}
 	
-	class SearchFilterAdapter extends BaseAdapter {
-		private Book[] xkitab;
+	class SearchFilterAdapter extends EasyAdapter {
+		private Book[] books;
 
 		public SearchFilterAdapter() {
-			xkitab = S.activeVersion.getConsecutiveBooks();
+			Book[] books_original = S.activeVersion.getConsecutiveBooks();
+			
+			if (Preferences.getBoolean(App.context.getString(R.string.pref_sortKitabAlfabet_key), App.context.getResources().getBoolean(R.bool.pref_sortKitabAlfabet_default))) {
+				books = BookNameSorter.sortAlphabetically(books_original);
+			} else {
+				books = books_original.clone();
+			}
+		}
+		
+		@Override public Book getItem(int position) {
+			return books[position];
 		}
 		
 		@Override public int getCount() {
-			return xkitab.length;
+			return books.length;
 		}
 
-		@Override public Book getItem(int position) {
-			return xkitab[position];
+		@Override public View newView(int position, ViewGroup parent) {
+			return getLayoutInflater().inflate(android.R.layout.simple_list_item_multiple_choice, parent, false);
 		}
 
-		@Override public long getItemId(int position) {
-			return position;
-		}
-
-		@Override public View getView(int position, View convertView, ViewGroup parent) {
-			CheckedTextView res = (CheckedTextView) (convertView != null? convertView: getLayoutInflater().inflate(android.R.layout.simple_list_item_multiple_choice, parent, false));
+		@Override public void bindView(View view, int position, ViewGroup parent) {
+			CheckedTextView text = (CheckedTextView) view;
 			
-			Book k = getItem(position);
-			res.setText(k.shortName);
-			res.setTextColor(U.getColorBasedOnBookId(k.bookId));
-			
-			return res;
+			Book book = getItem(position);
+			text.setText(book.shortName);
+			text.setTextColor(U.getColorBasedOnBookId(book.bookId));
 		}
 	}
 
@@ -475,7 +482,7 @@ public class Search2Activity extends BaseActivity {
 		
 		// cek apakah ga ada yang terpilih
 		{
-			int terpilihPertama = xkitabPosTerpilih.indexOfValue(true);
+			int terpilihPertama = selectedBookIds.indexOfValue(true);
 			if (terpilihPertama < 0) {
 				new AlertDialog.Builder(this)
 				.setMessage(R.string.pilih_setidaknya_satu_kitab)
