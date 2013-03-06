@@ -58,6 +58,10 @@ public class BookNameSorter {
 		hardcodedAbbrs.put("Philemon", "Phm");
 		hardcodedAbbrs.put("Philippians", "Phil");
 		hardcodedAbbrs.put("Song of Solomon", "Song");
+		hardcodedAbbrs.put("Zephaniah", "Zeph");
+		hardcodedAbbrs.put("Ruth", "Ruth");
+		hardcodedAbbrs.put("1 Corinthians", "1Cor");
+		hardcodedAbbrs.put("2 Corinthians", "2Cor");
 	}
 	
 	public static String getBookAbbr(Book book) {
