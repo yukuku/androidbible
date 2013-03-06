@@ -5,18 +5,18 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.Layout;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
-import android.text.style.DynamicDrawableSpan;
 import android.text.style.ForegroundColorSpan;
-import android.text.style.ImageSpan;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.LineHeightSpan;
 import android.text.style.MetricAffectingSpan;
+import android.text.style.ReplacementSpan;
 import android.text.style.StyleSpan;
 import android.view.View;
 import android.widget.TextView;
@@ -93,7 +93,46 @@ public class VerseRenderer {
 			}
 		}
 	}
+	
+	static class XrefAttrSpan extends ReplacementSpan {
+		private final Context context;
+        private Drawable drawable;
+        private int drawable_width;
+		private int drawable_height;
+		
+		public XrefAttrSpan(Context context) {
+			this.context = context;
+		}
+		
+		private void init() {
+			if (drawable == null) {
+				drawable = context.getResources().getDrawable(R.drawable.ic_attr_xref);
+				drawable_width = drawable.getIntrinsicWidth();
+				drawable_height = drawable.getIntrinsicHeight();
+				drawable.setBounds(0, 0, drawable_width, drawable_height);
+			}
+		}
+		
+        @Override public int getSize(Paint paint, CharSequence text, int start, int end, FontMetricsInt fm) {
+        	init();
+            return drawable_width;
+        }
+        
+		@Override public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
+			init();
+			canvas.save();
 
+			FontMetricsInt fm = paint.getFontMetricsInt();
+			int lineHeight = fm.descent - fm.ascent;
+			
+			int transY = top + (lineHeight - drawable_height) / 2;
+			canvas.translate(x, transY);
+			drawable.draw(canvas);
+			
+			canvas.restore();
+		}
+	}
+	
 	/** 0 undefined. 1 and 2 based on version. */
 	private static int leadingMarginSpanVersion = 0;
 	
@@ -128,21 +167,10 @@ public class VerseRenderer {
 		}
 	};
 	
-	private static final String[] VERSE_NUMBER_STRINGS = {
-		"0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
-		"10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
-		"20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
-		"30", "31", "32", "33", "34", "35", "36", "37", "38", "39",
-		"40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
-		"50", "51", "52", "53", "54", "55", "56", "57", "58", "59",
-		"60", "61", "62", "63", "64", "65", "66", "67", "68", "69",
-		"70", "71", "72", "73", "74", "75", "76", "77", "78", "79",
-	}; // up to [79]
-	
 	/**
 	 * @param dontPutSpacingBefore this verse is right after a pericope title or on the 0th position
 	 */
-	public static void render(TextView lText, TextView lVerseNumber, int ari, int verse_1, String text, int highlightColor, boolean checked, boolean dontPutSpacingBefore, int withXref, VersesView.XrefListener xrefListener) {
+	public static void render(TextView lText, TextView lVerseNumber, int ari, String text, String verseNumberText, int highlightColor, boolean checked, boolean dontPutSpacingBefore, int withXref, VersesView.XrefListener xrefListener) {
 		// @@ = start a verse containing paragraphs or formatting
 		// @0 = start with indent 0 [paragraph]
 		// @1 = start with indent 1 [paragraph]
@@ -164,7 +192,7 @@ public class VerseRenderer {
 		// Formatted verses start with "@@".
 		// Second character must be '@' too, if not it's wrong, we will fallback to simple render.
 		if (text_len < 2 || text.charAt(0) != '@' || text.charAt(1) != '@') {
-			simpleRender(lText, lVerseNumber, ari, verse_1, text, highlightColor, checked, withXref, xrefListener);
+			simpleRender(lText, lVerseNumber, ari, text, verseNumberText, highlightColor, checked, withXref, xrefListener);
 			return;
 		}
 
@@ -200,7 +228,6 @@ public class VerseRenderer {
 		// - to check whether a verse number has been written
 		// - to check whether we need to put a new line when encountering a new para 
 		int startPosAfterVerseNumber = 0;
-		String verseNumber_s = verse_1 < 80? VERSE_NUMBER_STRINGS[verse_1]: Integer.toString(verse_1);
 	
 		int pos = 2; // we start after "@@"
 	
@@ -208,7 +235,7 @@ public class VerseRenderer {
 		if (text_len >= 4 && text_c[pos] == '@' && (text_c[pos+1] == '^' || (text_c[pos+1] >= '1' && text_c[pos+1] <= '4'))) {
 			// don't write verse number now
 		} else {
-			sb.append(verseNumber_s);
+			sb.append(verseNumberText);
 			sb.setSpan(new VerseRenderer.VerseNumberSpan(!checked), 0, sb.length(), 0);
 			sb.append("  ");
 			startPosAfterVerseNumber = sb.length();
@@ -251,7 +278,7 @@ public class VerseRenderer {
 			case '4':
 			case '^':
 				// apply previous
-				applyParaStyle(sb, paraType, startPara, verse_1, startPosAfterVerseNumber > 0, dontPutSpacingBefore && startPara <= startPosAfterVerseNumber, startPara <= startPosAfterVerseNumber, lVerseNumber);
+				applyParaStyle(sb, paraType, startPara, verseNumberText, startPosAfterVerseNumber > 0, dontPutSpacingBefore && startPara <= startPosAfterVerseNumber, startPara <= startPosAfterVerseNumber, lVerseNumber);
 				if (sb.length() > startPosAfterVerseNumber) {
 					sb.append("\n");
 				}
@@ -288,10 +315,10 @@ public class VerseRenderer {
 		}
 		
 		// apply unapplied
-		applyParaStyle(sb, paraType, startPara, verse_1, startPosAfterVerseNumber > 0, dontPutSpacingBefore && startPara <= startPosAfterVerseNumber, startPara <= startPosAfterVerseNumber, lVerseNumber);
+		applyParaStyle(sb, paraType, startPara, verseNumberText, startPosAfterVerseNumber > 0, dontPutSpacingBefore && startPara <= startPosAfterVerseNumber, startPara <= startPosAfterVerseNumber, lVerseNumber);
 	
 		if (highlightColor != 0) {
-			sb.setSpan(new BackgroundColorSpan(highlightColor), startPosAfterVerseNumber == 0? 0: verseNumber_s.length() + 1, sb.length(), 0);
+			sb.setSpan(new BackgroundColorSpan(highlightColor), startPosAfterVerseNumber == 0? 0: verseNumberText.length() + 1, sb.length(), 0);
 		}
 		
 		for (int i = 0; i < withXref; i++) {
@@ -304,7 +331,7 @@ public class VerseRenderer {
 		if (startPosAfterVerseNumber > 0) {
 			lVerseNumber.setText(""); //$NON-NLS-1$
 		} else {
-			lVerseNumber.setText(verseNumber_s);
+			lVerseNumber.setText(verseNumberText);
 			Appearances.applyVerseNumberAppearance(lVerseNumber);
 			if (checked) {
 				lVerseNumber.setTextColor(0xff000000); // override with black!
@@ -319,10 +346,12 @@ public class VerseRenderer {
 	 * @param dontPutSpacingBefore if this paragraph is just after pericope title or on the 0th position, in this case we don't apply paragraph spacing before.
 	 * @return whether we should put a top-spacing to the detached verse number too
 	 */
-	static void applyParaStyle(SpannableStringBuilder sb, int paraType, int startPara, int verse_1, boolean firstLineWithVerseNumber, boolean dontPutSpacingBefore, boolean firstParagraph, TextView lVerseNumber) {
+	static void applyParaStyle(SpannableStringBuilder sb, int paraType, int startPara, String verseNumberText, boolean firstLineWithVerseNumber, boolean dontPutSpacingBefore, boolean firstParagraph, TextView lVerseNumber) {
 		int len = sb.length();
 		
 		if (startPara == len) return;
+		
+		int indentSpacingExtraUnits = verseNumberText.length() < 3? 0: (verseNumberText.length() - 2);
 		
 		switch (paraType) {
 		case -1:
@@ -336,16 +365,16 @@ public class VerseRenderer {
 			}
 			break;
 		case '1':
-			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing1 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0)), startPara, len, 0);
+			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing1 + indentSpacingExtraUnits * S.applied.indentSpacingExtra), startPara, len, 0);
 			break;
 		case '2':
-			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing2 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0)), startPara, len, 0);
+			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing2 + indentSpacingExtraUnits * S.applied.indentSpacingExtra), startPara, len, 0);
 			break;
 		case '3':
-			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing3 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0)), startPara, len, 0);
+			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing3 + indentSpacingExtraUnits * S.applied.indentSpacingExtra), startPara, len, 0);
 			break;
 		case '4':
-			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing4 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0)), startPara, len, 0);
+			sb.setSpan(createLeadingMarginSpan(S.applied.indentSpacing4 + indentSpacingExtraUnits * S.applied.indentSpacingExtra), startPara, len, 0);
 			break;
 		case '^':
 			if (!dontPutSpacingBefore) {
@@ -359,22 +388,21 @@ public class VerseRenderer {
 		}
 	}
 
-	public static void simpleRender(TextView lText, TextView lVerseNumber, int ari, int verse_1, String text, int highlightColor, boolean checked, int withXref, VersesView.XrefListener xrefListener) {
+	public static void simpleRender(TextView lText, TextView lVerseNumber, int ari, String text, String verseNumberText, int highlightColor, boolean checked, int withXref, VersesView.XrefListener xrefListener) {
 		// initialize lVerseNumber to have no padding first
 		lVerseNumber.setPadding(0, 0, 0, 0);
 		
 		SpannableStringBuilder sb = new SpannableStringBuilder();
 	
 		// verse number
-		String verseNumber_s = verse_1 < 80? VERSE_NUMBER_STRINGS[verse_1]: Integer.toString(verse_1);
-		sb.append(verseNumber_s).append("  ").append(text);
-		sb.setSpan(new VerseRenderer.VerseNumberSpan(!checked), 0, verseNumber_s.length(), 0);
+		sb.append(verseNumberText).append("  ").append(text);
+		sb.setSpan(new VerseRenderer.VerseNumberSpan(!checked), 0, verseNumberText.length(), 0);
 	
 		// verse text
 		sb.setSpan(createLeadingMarginSpan(0, S.applied.indentParagraphRest), 0, sb.length(), 0);
 	
 		if (highlightColor != 0) {
-			sb.setSpan(new BackgroundColorSpan(highlightColor), verseNumber_s.length() + 1, sb.length(), 0);
+			sb.setSpan(new BackgroundColorSpan(highlightColor), verseNumberText.length() + 1, sb.length(), 0);
 		}
 		
 		for (int i = 0; i < withXref; i++) {
@@ -392,16 +420,17 @@ public class VerseRenderer {
 			sb_start --;
 		}
 		
-		sb.insert(sb_start, "\u2022 "); // append space after it to prevent false click detection
-		int sb_end = sb_start+1;
+		sb.insert(sb_start, " \u2022 "); 
 		
-		sb.setSpan(new ImageSpan(context, R.drawable.ic_btn_search, DynamicDrawableSpan.ALIGN_BASELINE), sb_start, sb_start+1, 0);
+		sb.setSpan(new XrefAttrSpan(context), sb_start+1, sb_start+2, 0);
 		sb.setSpan(new ClickableSpan() {
+			@Override public void updateDrawState(TextPaint ds) { /* prevent underline */ }
+			
 			@Override public void onClick(View widget) {
 				if (xrefListener != null) {
 					xrefListener.onXrefClick(ari, which);
 				}
 			}
-		}, sb_start, sb_end, 0);
+		}, sb_start, sb_start+3, 0);
 	}
 }

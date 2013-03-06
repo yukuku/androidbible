@@ -26,6 +26,7 @@ public class Appearances {
 		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
 		t.setIncludeFontPadding(false);
 		t.setTextColor(S.applied.fontColor);
+		t.setLinkTextColor(S.applied.fontColor);
 		t.setLineSpacing(0.f, S.applied.lineSpacingMult);
 	}
 

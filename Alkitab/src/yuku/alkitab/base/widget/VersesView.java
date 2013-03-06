@@ -1,7 +1,10 @@
 package yuku.alkitab.base.widget;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -22,11 +25,17 @@ import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.util.IntArrayList;
 
 public class VersesView extends ListView {
+	public enum VerseSelectionMode {
+		multiple,
+		singleClick,
+	}
+
 	public static final String TAG = VersesView.class.getSimpleName();
 	
 	public interface SelectedVersesListener {
 		void onSomeVersesSelected(VersesView v);
 		void onNoVersesSelected(VersesView v);
+		void onVerseSingleClick(VersesView v, int verse_1);
 	}
 
 	public interface AttributeListener {
@@ -37,8 +46,10 @@ public class VersesView extends ListView {
 		void onXrefClick(int ari, int which);
 	}
 
-	VerseAdapter adapter;
+	private VerseAdapter adapter;
 	private SelectedVersesListener listener;
+	private VerseSelectionMode verseSelectionMode;
+	private Drawable originalSelector;
 
 	public VersesView(Context context) {
 		super(context);
@@ -53,9 +64,14 @@ public class VersesView extends ListView {
 	private void init() {
 		if (isInEditMode()) return;
 		
+		originalSelector = getSelector();
+		
+		setDivider(null);
+		setFocusable(false);
+		
 		setAdapter(adapter = new VerseAdapter.Factory().create(getContext()));
 		setOnItemClickListener(itemClick);
-		setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		setVerseSelectionMode(VerseSelectionMode.multiple);
 	}
 	
 	@Override public VerseAdapter getAdapter() {
@@ -74,6 +90,23 @@ public class VersesView extends ListView {
 		adapter.setXrefListener(xrefListener);
 	}
 	
+	public void setVerseSelectionMode(VerseSelectionMode mode) {
+		this.verseSelectionMode = mode;
+		
+		if (mode == VerseSelectionMode.singleClick) {
+			setSelector(originalSelector);
+			uncheckAll();
+			setChoiceMode(ListView.CHOICE_MODE_NONE);
+		} else if (mode == VerseSelectionMode.multiple) {
+			setSelector(new ColorDrawable(0x0));
+			setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		}
+	}
+	
+	// TODO external should provide the attribute map into this widget similar to setData(), 
+	// instead of this widget itself accessing persistent data.
+	// When this is done, we do not need to provide Book and chapter_1 as parameters to setData(),
+	// because in reality, VersesViews could contain verses taken from multiple books and chapters.
 	public void loadAttributeMap() {
 		adapter.loadAttributeMap();
 	}
@@ -126,8 +159,12 @@ public class VersesView extends ListView {
 
 	private OnItemClickListener itemClick = new OnItemClickListener() {
 		@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-			adapter.notifyDataSetChanged();
-			hideOrShowContextMenuButton();
+			if (verseSelectionMode == VerseSelectionMode.singleClick) {
+				if (listener != null) listener.onVerseSingleClick(VersesView.this, adapter.getVerseFromPosition(position));
+			} else if (verseSelectionMode == VerseSelectionMode.multiple) {
+				adapter.notifyDataSetChanged();
+				hideOrShowContextMenuButton();
+			}
 		}
 	};
 
@@ -144,6 +181,8 @@ public class VersesView extends ListView {
 	}
 
 	void hideOrShowContextMenuButton() {
+		if (verseSelectionMode != VerseSelectionMode.multiple) return;
+		
 		SparseBooleanArray checkedPositions = getCheckedItemPositions();
 		boolean anyChecked = false;
 		for (int i = 0; i < checkedPositions.size(); i++) if (checkedPositions.valueAt(i)) {
@@ -176,8 +215,20 @@ public class VersesView extends ListView {
 		return res;
 	}
 	
+	@Override public Parcelable onSaveInstanceState() {
+		Bundle b = new Bundle();
+		Parcelable superState = super.onSaveInstanceState();
+		b.putParcelable("superState", superState);
+		b.putInt("verseSelectionMode", verseSelectionMode.ordinal());
+		return b;
+	}
+	
 	@Override public void onRestoreInstanceState(Parcelable state) {
-		super.onRestoreInstanceState(state);
+		if (state instanceof Bundle) {
+			Bundle b = (Bundle) state;
+			super.onRestoreInstanceState(b.getParcelable("superState"));
+			setVerseSelectionMode(VerseSelectionMode.values()[b.getInt("verseSelectionMode")]);
+		}
 		
 		hideOrShowContextMenuButton();
 	}

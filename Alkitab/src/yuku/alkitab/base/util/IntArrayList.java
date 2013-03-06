@@ -5,16 +5,14 @@ import android.os.Parcelable;
 
 public class IntArrayList implements Parcelable {
 	int[] buf;
-	int cap;
 	int len;
 
 	public IntArrayList() {
 		this(16);
 	}
 
-	public IntArrayList(int cap) {
-		buf = new int[cap];
-		this.cap = cap;
+	public IntArrayList(int capacity) {
+		buf = new int[capacity];
 		this.len = 0;
 	}
 
@@ -22,16 +20,15 @@ public class IntArrayList implements Parcelable {
 		return this.len;
 	}
 
-	private void perbesar() {
-		this.cap <<= 1;
-		int[] baru = new int[this.cap];
-		System.arraycopy(this.buf, 0, baru, 0, this.len);
-		this.buf = baru;
+	private void expand() {
+		int[] newArray = new int[this.buf.length << 1];
+		System.arraycopy(this.buf, 0, newArray, 0, this.len);
+		this.buf = newArray;
 	}
 
 	public void add(int a) {
-		if (this.len >= this.cap) {
-			perbesar();
+		if (this.len >= this.buf.length) {
+			expand();
 		}
 
 		this.buf[this.len++] = a;
@@ -52,9 +49,14 @@ public class IntArrayList implements Parcelable {
 	/**
 	 * DANGEROUS. Do not mess with this buffer carelessly.
 	 * Use this for faster access to the underlying buffer only.
+	 * The length of the returned array will be the same or larger than {@link #size()}.
 	 */
 	public int[] buffer() {
 		return buf;
+	}
+	
+	public void clear() {
+		this.len = 0;
 	}
 
 	@Override
@@ -79,7 +81,6 @@ public class IntArrayList implements Parcelable {
 			for (int i = 0; i < len; i++) {
 				res.buf[i] = in.readInt();
 			}
-			res.cap = len;
 			res.len = len;
 			return res;
 		}

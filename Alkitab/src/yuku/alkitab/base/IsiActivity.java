@@ -19,6 +19,7 @@ import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -58,12 +59,12 @@ import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeHighlightDialog;
 import yuku.alkitab.base.dialog.TypeNoteDialog;
+import yuku.alkitab.base.dialog.XrefDialog;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
-import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.IntArrayList;
@@ -78,7 +79,7 @@ import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public class IsiActivity extends BaseActivity {
+public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
 	
 	// The followings are for instant_pref
@@ -1008,6 +1009,15 @@ public class IsiActivity extends BaseActivity {
 		return true;
 	}
 
+	@Override public void onVerseSelected(XrefDialog dialog, int ari_source, int ari_target) {
+		dialog.dismiss();
+		jumpToAri(ari_target);
+		
+		// add both xref source and target, so user can go back to source easily
+		history.add(ari_source);
+		history.add(ari_target);
+	}
+
 	VersesView.AttributeListener attributeListener = new VersesView.AttributeListener() {
 		public void onAttributeClick(Book book, int chapter_1, int verse_1, int kind) {
 			if (kind == Db.Bookmark2.kind_bookmark) {
@@ -1033,12 +1043,9 @@ public class IsiActivity extends BaseActivity {
 	
 	VersesView.XrefListener xrefListener = new VersesView.XrefListener() {
 		@Override public void onXrefClick(int ari, int which) {
-			XrefEntry xe = S.activeVersion.getXrefEntry(ari, which);
-			
-			new AlertDialog.Builder(IsiActivity.this)
-			.setMessage(U.removeSpecialCodes(xe.source + " " + xe.target, true))
-			.setPositiveButton("OK", null)
-			.show();
+			FragmentManager fm = getSupportFragmentManager();
+			XrefDialog dialog = XrefDialog.newInstance(ari, which);
+			dialog.show(fm, XrefDialog.class.getSimpleName());
 		}
 	};
 	
@@ -1054,6 +1061,8 @@ public class IsiActivity extends BaseActivity {
 				actionMode.finish();
 			}
 		}
+
+		@Override public void onVerseSingleClick(VersesView v, int verse_1) {}
 	};
 
 	ActionMode.Callback actionMode_callback = new ActionMode.Callback() {

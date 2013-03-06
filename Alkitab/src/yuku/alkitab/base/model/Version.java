@@ -2,10 +2,13 @@ package yuku.alkitab.base.model;
 
 import android.util.Log;
 
+import java.util.List;
+
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.storage.BibleReader;
 import yuku.alkitab.base.storage.InternalReader;
 import yuku.alkitab.base.storage.OldVerseTextDecoder;
+import yuku.alkitab.base.util.IntArrayList;
 
 public class Version {
 	public static final String TAG = Version.class.getSimpleName();
@@ -115,6 +118,90 @@ public class Version {
 			return NOT_AVAILABLE_TEXT;
 		}
 		return verses.getVerse(verse_0);
+	}
+	
+	/**
+	 * @param ariRanges list of aris where even-indexed elements are start and odd-indexed elements are end (inclusive) aris
+	 * @param result_aris (non-null, will be cleared first) list of aris loaded 
+	 * @param result_verses (non-null, will be cleared first) list of verse texts loaded
+	 * @return the number of verses successfully loaded
+	 */
+	public synchronized int loadVersesByAriRanges(IntArrayList ariRanges, IntArrayList result_aris, List<String> result_verses) {
+		int res = 0;
+		
+		result_aris.clear();
+		result_verses.clear();
+
+		for (int i = 0, len = ariRanges.size(); i < len; i+=2) {
+			int ari_start = ariRanges.get(i);
+			int ari_end = ariRanges.get(i + 1);
+			
+			if (ari_start == 0 || ari_end == 0) {
+				continue;
+			}
+			
+			if (ari_start == ari_end) {
+				// case: single verse
+				int ari = ari_start;
+				Book book = getBook(Ari.toBook(ari));
+				if (book != null) {
+					result_aris.add(ari);
+					result_verses.add(loadVerseText(ari));
+					res++;
+				}
+			} else {
+				int ari_start_bc = Ari.toBookChapter(ari_start);
+				int ari_end_bc = Ari.toBookChapter(ari_end);
+				
+				if (ari_start_bc == ari_end_bc) {
+					// case: multiple verses in the same chapter
+					Book book = getBook(Ari.toBook(ari_start));
+					if (book != null) {
+						res += resultForOneChapter(book, ari_start_bc, Ari.toVerse(ari_start), Ari.toVerse(ari_end), result_aris, result_verses);
+					}
+				} else {
+					// case: multiple verses in different chapters
+					for (int ari_bc = ari_start_bc; ari_bc <= ari_end_bc; ari_bc += 0x0100) {
+						Book book = getBook(Ari.toBook(ari_bc));
+						int chapter_1 = Ari.toChapter(ari_bc);
+						if (book == null || chapter_1 <= 0 || chapter_1 > book.chapter_count) {
+							continue;
+						}
+						
+						if (ari_bc == ari_start_bc) { // we're at the first requested chapter
+							res += resultForOneChapter(book, ari_bc, Ari.toVerse(ari_start), 0xff, result_aris, result_verses);
+						} else if (ari_bc == ari_end_bc) { // we're at the last requested chapter
+							res += resultForOneChapter(book, ari_bc, 0x01, Ari.toVerse(ari_end), result_aris, result_verses);
+						} else { // we're at the middle, request all verses!
+							res += resultForOneChapter(book, ari_bc, 0x01, 0xff, result_aris, result_verses);
+						}
+					}
+				}
+			}
+		}
+
+		return res;
+	}
+	
+	/**
+	 * @return number of verses put into the cursor
+	 */
+	private int resultForOneChapter(Book book, int ari_bc, int v_1_start, int v_1_end, IntArrayList result_aris, List<String> result_verses) {
+		int count = 0;
+		SingleChapterVerses verses = loadChapterText(book, Ari.toChapter(ari_bc));
+		for (int v_1 = v_1_start; v_1 <= v_1_end; v_1++) {
+			int v_0 = v_1 - 1;
+			if (v_0 < verses.getVerseCount()) {
+				int ari = ari_bc | v_1;
+				result_aris.add(ari);
+				result_verses.add(verses.getVerse(v_0));
+				count++;
+			} else {
+				// we're done with this chapter, no need to loop again
+				break;
+			}
+		}
+		return count;
 	}
 
 	/**

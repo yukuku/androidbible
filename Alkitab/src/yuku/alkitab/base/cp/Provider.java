@@ -201,13 +201,13 @@ public class Provider extends ContentProvider {
 		return getCursorForRangeVerseAri(aris, formatting);
 	}
 
-	private Cursor getCursorForRangeVerseAri(IntArrayList aris, boolean formatting) {
+	private Cursor getCursorForRangeVerseAri(IntArrayList ariRanges, boolean formatting) {
 		MatrixCursor res = new MatrixCursor(new String[] {"_id", "ari", "bookName", "text"});
 
 		int c = 0;
-		for (int i = 0, len = aris.size(); i < len; i+=2) {
-			int ari_start = aris.get(i);
-			int ari_end = aris.get(i + 1);
+		for (int i = 0, len = ariRanges.size(); i < len; i+=2) {
+			int ari_start = ariRanges.get(i);
+			int ari_end = ariRanges.get(i + 1);
 			
 			if (ari_start == 0 || ari_end == 0) {
 				continue;
@@ -259,7 +259,6 @@ public class Provider extends ContentProvider {
 	}
 	
 	/**
-	 * @param book 
 	 * @return number of verses put into the cursor
 	 */
 	private int resultForOneChapter(MatrixCursor cursor, Book book, int last_c, int ari_bc, int v_1_start, int v_1_end, boolean formatting) {
