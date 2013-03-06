@@ -3,7 +3,6 @@ package yuku.alkitab.base.fr;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -31,22 +30,22 @@ public class GotoDialerFragment extends BaseGotoFragment {
 	private static final String EXTRA_chapter = "chapter"; //$NON-NLS-1$
 	private static final String EXTRA_bookId = "bookId"; //$NON-NLS-1$
 
-	TextView aktif;
-	TextView pasif;
+	TextView active;
+	TextView passive;
 
 	Button bOk;
-	TextView lPasal;
-	View lLabelPasal;
-	TextView lAyat;
-	View lLabelAyat;
-	Spinner cbKitab;
+	TextView tChapter;
+	View tChapterLabel;
+	TextView tVerse;
+	View tVerseLabel;
+	Spinner cbBook;
 
-	boolean lPasal_pertamaKali = true;
-	boolean lAyat_pertamaKali = true;
+	boolean tChapter_firstTime = true;
+	boolean tVerse_firstTime = true;
 
-	int maxPasal = 0;
-	int maxAyat = 0;
-	KitabAdapter adapter;
+	int maxChapter = 0;
+	int maxVerse = 0;
+	BookAdapter adapter;
 	
 	int bookId;
 	int chapter_1;
@@ -75,35 +74,35 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		View res = inflater.inflate(R.layout.fragment_goto_dialer, container, false);
 		
 		bOk = V.get(res, R.id.bOk);
-		lPasal = V.get(res, R.id.lPasal);
-		lLabelPasal = V.get(res, R.id.lLabelPasal);
-		lAyat = V.get(res, R.id.lAyat);
-		lLabelAyat = V.get(res, R.id.lLabelAyat);
-		cbKitab = V.get(res, R.id.cbKitab);
-		cbKitab.setAdapter(adapter = new KitabAdapter());
+		tChapter = V.get(res, R.id.lPasal);
+		tChapterLabel = V.get(res, R.id.lLabelPasal);
+		tVerse = V.get(res, R.id.lAyat);
+		tVerseLabel = V.get(res, R.id.lLabelAyat);
+		cbBook = V.get(res, R.id.cbKitab);
+		cbBook.setAdapter(adapter = new BookAdapter());
 
-		lPasal.setOnClickListener(tombolPasalListener);
-		if (lLabelPasal != null) { // not always present in layout
-			lLabelPasal.setOnClickListener(tombolPasalListener);
+		tChapter.setOnClickListener(tChapter_click);
+		if (tChapterLabel != null) { // not always present in layout
+			tChapterLabel.setOnClickListener(tChapter_click);
 		}
 
-		lAyat.setOnClickListener(tombolAyatListener);
-		if (lLabelAyat != null) { // not always present in layout
-			lLabelAyat.setOnClickListener(tombolAyatListener);
+		tVerse.setOnClickListener(tVerse_click);
+		if (tVerseLabel != null) { // not always present in layout
+			tVerseLabel.setOnClickListener(tVerse_click);
 		}
 
-		res.findViewById(R.id.bAngka0).setOnClickListener(tombolListener);
-		res.findViewById(R.id.bAngka1).setOnClickListener(tombolListener);
-		res.findViewById(R.id.bAngka2).setOnClickListener(tombolListener);
-		res.findViewById(R.id.bAngka3).setOnClickListener(tombolListener);
-		res.findViewById(R.id.bAngka4).setOnClickListener(tombolListener);
-		res.findViewById(R.id.bAngka5).setOnClickListener(tombolListener);
-		res.findViewById(R.id.bAngka6).setOnClickListener(tombolListener);
-		res.findViewById(R.id.bAngka7).setOnClickListener(tombolListener);
-		res.findViewById(R.id.bAngka8).setOnClickListener(tombolListener);
-		res.findViewById(R.id.bAngka9).setOnClickListener(tombolListener);
-		res.findViewById(R.id.bAngkaC).setOnClickListener(tombolListener);
-		res.findViewById(R.id.bAngkaPindah).setOnClickListener(tombolListener);
+		res.findViewById(R.id.bAngka0).setOnClickListener(button_click);
+		res.findViewById(R.id.bAngka1).setOnClickListener(button_click);
+		res.findViewById(R.id.bAngka2).setOnClickListener(button_click);
+		res.findViewById(R.id.bAngka3).setOnClickListener(button_click);
+		res.findViewById(R.id.bAngka4).setOnClickListener(button_click);
+		res.findViewById(R.id.bAngka5).setOnClickListener(button_click);
+		res.findViewById(R.id.bAngka6).setOnClickListener(button_click);
+		res.findViewById(R.id.bAngka7).setOnClickListener(button_click);
+		res.findViewById(R.id.bAngka8).setOnClickListener(button_click);
+		res.findViewById(R.id.bAngka9).setOnClickListener(button_click);
+		res.findViewById(R.id.bAngkaC).setOnClickListener(button_click);
+		res.findViewById(R.id.bAngkaPindah).setOnClickListener(button_click);
 
 		return res;
 	}
@@ -111,116 +110,90 @@ public class GotoDialerFragment extends BaseGotoFragment {
 	@Override public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		// set kitab, pasal, ayat kini
-		cbKitab.setSelection(adapter.getPositionDariPos(S.activeBook.bookId));
-		cbKitab.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+		// check current bookId, chapter, and verse
+		cbBook.setSelection(adapter.getPositionFromBookId(S.activeBook.bookId));
+		cbBook.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override public void onNothingSelected(AdapterView<?> parent) {}
 
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				Book k = adapter.getItem(position);
-				maxPasal = k.chapter_count;
+				Book book = adapter.getItem(position);
+				maxChapter = book.chapter_count;
 
-				int pasal_0 = cobaBacaPasal() - 1;
-				if (pasal_0 >= 0 && pasal_0 < k.chapter_count) {
-					maxAyat = k.verse_counts[pasal_0];
+				int chapter_0 = tryReadChapter() - 1;
+				if (chapter_0 >= 0 && chapter_0 < book.chapter_count) {
+					maxVerse = book.verse_counts[chapter_0];
 				}
 
-				betulinPasalKelebihan();
-				betulinAyatKelebihan();
+				fixChapterOverflow();
+				fixVerseOverflow();
 			}
 		});
 
-		bOk.setOnClickListener(new OnClickListener() {
+		bOk.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
-				int pasal = 0;
-				int ayat = 0;
+				int chapter = 0;
+				int verse = 0;
 
 				try {
-					pasal = Integer.parseInt(lPasal.getText().toString());
-					ayat = Integer.parseInt(lAyat.getText().toString());
+					chapter = Integer.parseInt(tChapter.getText().toString());
+					verse = Integer.parseInt(tVerse.getText().toString());
 				} catch (NumberFormatException e) {
-					// biarin 0 aja
+					// let it still be 0
 				}
 
-				int kitab = adapter.getItem(cbKitab.getSelectedItemPosition()).bookId;
+				int bookId = adapter.getItem(cbBook.getSelectedItemPosition()).bookId;
 
-				((GotoFinishListener) getActivity()).onGotoFinished(GotoFinishListener.GOTO_TAB_dialer, kitab, pasal, ayat);
+				((GotoFinishListener) getActivity()).onGotoFinished(GotoFinishListener.GOTO_TAB_dialer, bookId, chapter, verse);
 			}
 		});
 
-		aktif = lPasal;
-		pasif = lAyat;
+		active = tChapter;
+		passive = tVerse;
 
 		{
-			int pasal = chapter_1;
-			if (pasal != 0) {
-				lPasal.setText(String.valueOf(pasal));
+			if (chapter_1 != 0) {
+				tChapter.setText(String.valueOf(chapter_1));
 			}
-			int ayat = verse_1;
-			if (ayat != 0) {
-				lAyat.setText(String.valueOf(ayat));
+			if (verse_1 != 0) {
+				tVerse.setText(String.valueOf(verse_1));
 			}
 		}
 
-		warnain();
+		colorize();
 	}
 
-	OnClickListener tombolPasalListener = new OnClickListener() {
+	View.OnClickListener tChapter_click = new View.OnClickListener() {
 		@Override public void onClick(View v) {
-			aktifin(lPasal, lAyat);
+			activate(tChapter, tVerse);
 		}
 	};
 	
-	OnClickListener tombolAyatListener = new OnClickListener() {
+	View.OnClickListener tVerse_click = new View.OnClickListener() {
 		@Override public void onClick(View v) {
-			aktifin(lAyat, lPasal);
+			activate(tVerse, tChapter);
 		}
 	};
 
-	OnClickListener tombolListener = new OnClickListener() {
+	View.OnClickListener button_click = new View.OnClickListener() {
 		@Override public void onClick(View v) {
 			int id = v.getId();
-			if (id == R.id.bAngka0) pencet("0"); //$NON-NLS-1$
-			if (id == R.id.bAngka1) pencet("1"); //$NON-NLS-1$
-			if (id == R.id.bAngka2) pencet("2"); //$NON-NLS-1$
-			if (id == R.id.bAngka3) pencet("3"); //$NON-NLS-1$
-			if (id == R.id.bAngka4) pencet("4"); //$NON-NLS-1$
-			if (id == R.id.bAngka5) pencet("5"); //$NON-NLS-1$
-			if (id == R.id.bAngka6) pencet("6"); //$NON-NLS-1$
-			if (id == R.id.bAngka7) pencet("7"); //$NON-NLS-1$
-			if (id == R.id.bAngka8) pencet("8"); //$NON-NLS-1$
-			if (id == R.id.bAngka9) pencet("9"); //$NON-NLS-1$
-			if (id == R.id.bAngkaC) pencet("C"); //$NON-NLS-1$
-			if (id == R.id.bAngkaPindah) pencet(":"); //$NON-NLS-1$
+			if (id == R.id.bAngka0) press("0"); //$NON-NLS-1$
+			if (id == R.id.bAngka1) press("1"); //$NON-NLS-1$
+			if (id == R.id.bAngka2) press("2"); //$NON-NLS-1$
+			if (id == R.id.bAngka3) press("3"); //$NON-NLS-1$
+			if (id == R.id.bAngka4) press("4"); //$NON-NLS-1$
+			if (id == R.id.bAngka5) press("5"); //$NON-NLS-1$
+			if (id == R.id.bAngka6) press("6"); //$NON-NLS-1$
+			if (id == R.id.bAngka7) press("7"); //$NON-NLS-1$
+			if (id == R.id.bAngka8) press("8"); //$NON-NLS-1$
+			if (id == R.id.bAngka9) press("9"); //$NON-NLS-1$
+			if (id == R.id.bAngkaC) press("C"); //$NON-NLS-1$
+			if (id == R.id.bAngkaPindah) press(":"); //$NON-NLS-1$
 		}
 	};
 	
-
-	@Override public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		if (outState == null) return;
-		outState.putString("lPasal.text", lPasal.getText().toString()); //$NON-NLS-1$
-		outState.putString("lAyat.text", lAyat.getText().toString()); //$NON-NLS-1$
-		outState.putBoolean("lPasal_pertamaKali", lPasal_pertamaKali); //$NON-NLS-1$
-		outState.putBoolean("lAyat_pertamaKali", lAyat_pertamaKali); //$NON-NLS-1$
-		outState.putInt("cbKitab.selectedItemPosition", cbKitab.getSelectedItemPosition()); //$NON-NLS-1$
-		outState.putInt("maxPasal", maxPasal); //$NON-NLS-1$
-		outState.putInt("maxAyat", maxAyat); //$NON-NLS-1$
-	}
-
-//	TODO (move to oncreate) protected void onRestoreInstanceState(Bundle savedInstanceState) {
-//		super.onRestoreInstanceState(savedInstanceState);
-//		lPasal.setText(savedInstanceState.getString("lPasal.text")); //$NON-NLS-1$
-//		lAyat.setText(savedInstanceState.getString("lAyat.text")); //$NON-NLS-1$
-//		lPasal_pertamaKali = savedInstanceState.getBoolean("lPasal_pertamaKali"); //$NON-NLS-1$
-//		lAyat_pertamaKali = savedInstanceState.getBoolean("lAyat_pertamaKali"); //$NON-NLS-1$
-//		cbKitab.setSelection(savedInstanceState.getInt("cbKitab.selectedItemPosition")); //$NON-NLS-1$
-//		maxPasal = savedInstanceState.getInt("maxPasal"); //$NON-NLS-1$
-//		maxAyat = savedInstanceState.getInt("maxAyat"); //$NON-NLS-1$
-//	}
-
-//	TODO (move to activity) @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+//	TODO (move to activity to support keyboard) @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
 //		if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) {
 //			pencet(String.valueOf((char) ('0' + keyCode - KeyEvent.KEYCODE_0)));
 //			return true;
@@ -235,129 +208,127 @@ public class GotoDialerFragment extends BaseGotoFragment {
 //		return super.onKeyDown(keyCode, event);
 //	}
 
-	int cobaBacaPasal() {
+	int tryReadChapter() {
 		try {
-			return Integer.parseInt("0" + lPasal.getText().toString()); //$NON-NLS-1$
+			return Integer.parseInt("0" + tChapter.getText().toString()); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
 			return 0;
 		}
 	}
 
-	int cobaBacaAyat() {
+	int tryReadVerse() {
 		try {
-			return Integer.parseInt("0" + lAyat.getText().toString()); //$NON-NLS-1$
+			return Integer.parseInt("0" + tVerse.getText().toString()); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
 			return 0;
 		}
 	}
 
-	void betulinAyatKelebihan() {
-		int ayat = cobaBacaAyat();
+	void fixVerseOverflow() {
+		int verse = tryReadVerse();
 
-		if (ayat > maxAyat) {
-			ayat = maxAyat;
-		} else if (ayat <= 0) {
-			ayat = 1;
+		if (verse > maxVerse) {
+			verse = maxVerse;
+		} else if (verse <= 0) {
+			verse = 1;
 		}
 
-		lAyat.setText(String.valueOf(ayat));
+		tVerse.setText(String.valueOf(verse));
 	}
 
-	void betulinPasalKelebihan() {
-		int pasal = cobaBacaPasal();
+	void fixChapterOverflow() {
+		int chapter = tryReadChapter();
 
-		if (pasal > maxPasal) {
-			pasal = maxPasal;
-		} else if (pasal <= 0) {
-			pasal = 1;
+		if (chapter > maxChapter) {
+			chapter = maxChapter;
+		} else if (chapter <= 0) {
+			chapter = 1;
 		}
 
-		lPasal.setText(String.valueOf(pasal));
+		tChapter.setText(String.valueOf(chapter));
 	}
 
-	void pencet(String s) {
-		if (aktif != null) {
+	void press(String s) {
+		if (active != null) {
 			if (s.equals("C")) { //$NON-NLS-1$
-				aktif.setText(""); //$NON-NLS-1$
+				active.setText(""); //$NON-NLS-1$
 				return;
 			} else if (s.equals(":")) { //$NON-NLS-1$
-				if (pasif != null) {
-					aktifin(pasif, aktif);
+				if (passive != null) {
+					activate(passive, active);
 				}
 				return;
 			}
 
-			if (aktif == lPasal) {
-				if (lPasal_pertamaKali) {
-					aktif.setText(s);
-					lPasal_pertamaKali = false;
+			if (active == tChapter) {
+				if (tChapter_firstTime) {
+					active.setText(s);
+					tChapter_firstTime = false;
 				} else {
-					aktif.append(s);
+					active.append(s);
 				}
 
-				if (cobaBacaPasal() > maxPasal || cobaBacaPasal() <= 0) {
-					aktif.setText(s);
+				if (tryReadChapter() > maxChapter || tryReadChapter() <= 0) {
+					active.setText(s);
 				}
 				
-				Book k = adapter.getItem(cbKitab.getSelectedItemPosition());
-				int pasal_1 = cobaBacaPasal();
-				if (pasal_1 >= 1 && pasal_1 <= k.verse_counts.length) {
-					maxAyat = k.verse_counts[pasal_1 - 1];
+				Book book = adapter.getItem(cbBook.getSelectedItemPosition());
+				int chapter_1 = tryReadChapter();
+				if (chapter_1 >= 1 && chapter_1 <= book.verse_counts.length) {
+					maxVerse = book.verse_counts[chapter_1 - 1];
 				}
-			} else if (aktif == lAyat) {
-				if (lAyat_pertamaKali) {
-					aktif.setText(s);
-					lAyat_pertamaKali = false;
+			} else if (active == tVerse) {
+				if (tVerse_firstTime) {
+					active.setText(s);
+					tVerse_firstTime = false;
 				} else {
-					aktif.append(s);
+					active.append(s);
 				}
 
-				if (cobaBacaAyat() > maxAyat || cobaBacaAyat() <= 0) {
-					aktif.setText(s);
+				if (tryReadVerse() > maxVerse || tryReadVerse() <= 0) {
+					active.setText(s);
 				}
 			}
 		}
 	}
 
-	void aktifin(TextView aktif, TextView pasif) {
-		this.aktif = aktif;
-		this.pasif = pasif;
-		warnain();
+	void activate(TextView active, TextView passive) {
+		this.active = active;
+		this.passive = passive;
+		colorize();
 	}
 
-	private void warnain() {
-		if (aktif != null) aktif.setBackgroundColor(0xff33b5e5);
-		if (pasif != null) pasif.setBackgroundColor(0x0);
+	private void colorize() {
+		if (active != null) active.setBackgroundColor(0xff33b5e5);
+		if (passive != null) passive.setBackgroundColor(0x0);
 	}
 
-	private class KitabAdapter extends BaseAdapter {
-		Book[] xkitabc_;
+	private class BookAdapter extends BaseAdapter {
+		Book[] booksc_;
 		
-		public KitabAdapter() {
-			Book[] xkitabc = S.activeVersion.getConsecutiveBooks();
+		public BookAdapter() {
+			Book[] booksc = S.activeVersion.getConsecutiveBooks();
 			
 			if (Preferences.getBoolean(App.context.getString(R.string.pref_sortKitabAlfabet_key), App.context.getResources().getBoolean(R.bool.pref_sortKitabAlfabet_default))) {
-				// bikin kopian, supaya ga obok2 array lama
-				xkitabc_ = new Book[xkitabc.length];
-				System.arraycopy(xkitabc, 0, xkitabc_, 0, xkitabc.length);
+				booksc_ = booksc.clone();
 
 				// sort!
-				Arrays.sort(xkitabc_, new Comparator<Book>() {
+				Arrays.sort(booksc_, new Comparator<Book>() {
 					@Override public int compare(Book a, Book b) {
 						return a.shortName.compareToIgnoreCase(b.shortName);
 					}
 				});
 			} else {
-				xkitabc_ = xkitabc;
+				booksc_ = booksc;
 			}
 		}
 
 		/**
-		 * @return 0 kalo ga ada (biar default dan ga eror)
+		 * @return 0 when not found (not -1, because we just want to select the first book)
 		 */
-		public int getPositionDariPos(int pos) {
-			for (int i = 0; i < xkitabc_.length; i++) {
-				if (xkitabc_[i].bookId == pos) {
+		public int getPositionFromBookId(int pos) {
+			for (int i = 0; i < booksc_.length; i++) {
+				if (booksc_[i].bookId == pos) {
 					return i;
 				}
 			}
@@ -365,11 +336,11 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		}
 
 		@Override public int getCount() {
-			return xkitabc_.length;
+			return booksc_.length;
 		}
 
 		@Override public Book getItem(int position) {
-			return xkitabc_[position];
+			return booksc_[position];
 		}
 
 		@Override public long getItemId(int position) {
@@ -378,7 +349,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
 			TextView res = (TextView) (convertView != null ? convertView : LayoutInflater.from(getActivity()).inflate(android.R.layout.simple_spinner_item, parent, false));
-			res.setText(xkitabc_[position].shortName);
+			res.setText(booksc_[position].shortName);
 			return res;
 		}
 
