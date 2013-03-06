@@ -1,9 +1,12 @@
 package yuku.alkitab.base.fr;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -30,6 +33,8 @@ public class GotoGridFragment extends BaseGotoFragment {
 	private static final String EXTRA_verse = "verse"; //$NON-NLS-1$
 	private static final String EXTRA_chapter = "chapter"; //$NON-NLS-1$
 	private static final String EXTRA_bookId = "bookId"; //$NON-NLS-1$
+
+	private static final int ANIM_DURATION = 200;
 
 	View panelChapterVerse;
 	TextView lSelectedBook;
@@ -83,22 +88,22 @@ public class GotoGridFragment extends BaseGotoFragment {
 		}
 	};
 	
-	@Override public void onResume() {
-		super.onResume();
-		
-		Log.d(TAG, "ONresume");
-	};
-	
-	void transitionBookToChapter() {
-		// TODO Animate
+	@TargetApi(12) void transitionBookToChapter() {
 		gridBook.setVisibility(View.INVISIBLE);
 		panelChapterVerse.setVisibility(View.VISIBLE);
 		gridChapter.setVisibility(View.VISIBLE);
 		gridChapter.setAdapter(chapterAdapter = new ChapterAdapter(selectedBook));
 		gridVerse.setVisibility(View.INVISIBLE);
+		
+		if (Build.VERSION.SDK_INT >= 12) { // animate
+			animateFadeOutAndSlideLeft(gridBook, gridChapter);
+			lSelectedBook.setAlpha(0.f);
+			lSelectedBook.animate().alpha(1.f).setDuration(ANIM_DURATION);
+		}
+		
 		displaySelectedBookAndChapter();
 	}
-	
+
 	void transitionChapterToBook() {
 		// TODO Animate
 		gridBook.setVisibility(View.VISIBLE);
@@ -106,12 +111,16 @@ public class GotoGridFragment extends BaseGotoFragment {
 	}
 	
 	void transitionChapterToVerse() {
-		// TODO Animate
 		gridBook.setVisibility(View.INVISIBLE);
 		panelChapterVerse.setVisibility(View.VISIBLE);
 		gridChapter.setVisibility(View.INVISIBLE);
 		gridVerse.setVisibility(View.VISIBLE);
 		gridVerse.setAdapter(verseAdapter = new VerseAdapter(selectedBook, selectedChapter));
+
+		if (Build.VERSION.SDK_INT >= 12) { // animate
+			animateFadeOutAndSlideLeft(gridChapter, gridVerse);
+		}
+		
 		displaySelectedBookAndChapter();
 	}
 	
@@ -123,6 +132,22 @@ public class GotoGridFragment extends BaseGotoFragment {
 		gridChapter.setAdapter(chapterAdapter = new ChapterAdapter(selectedBook));
 		gridVerse.setVisibility(View.INVISIBLE);
 		displaySelectedBookAndChapter();
+	}
+
+	@TargetApi(12) static void animateFadeOutAndSlideLeft(final GridView fadingOut, final GridView slidingLeft) {
+		fadingOut.setVisibility(View.VISIBLE);
+		fadingOut.animate().alpha(0.f).setDuration(ANIM_DURATION).setListener(new AnimatorListenerAdapter() {
+			@Override public void onAnimationEnd(Animator animation) {
+				fadingOut.setAlpha(1.f);
+				fadingOut.setVisibility(View.INVISIBLE);
+			}
+		});
+		slidingLeft.setX(slidingLeft.getWidth());
+		slidingLeft.animate().translationXBy(-slidingLeft.getWidth()).setDuration(ANIM_DURATION).setListener(new AnimatorListenerAdapter() {
+			@Override public void onAnimationEnd(Animator animation) {
+				slidingLeft.setVisibility(View.VISIBLE);
+			}
+		});
 	}
 
 	public static Bundle createArgs(int bookId, int chapter_1, int verse_1) {
