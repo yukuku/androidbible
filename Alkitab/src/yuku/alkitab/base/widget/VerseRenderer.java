@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.Layout;
 import android.text.SpannableStringBuilder;
@@ -13,7 +14,6 @@ import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ForegroundColorSpan;
-import android.text.style.ImageSpan;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.LineHeightSpan;
 import android.text.style.MetricAffectingSpan;
@@ -93,7 +93,38 @@ public class VerseRenderer {
 			}
 		}
 	}
+	
+	static class XrefAttrSpan extends DynamicDrawableSpan {
+		private final Context context;
+        private Drawable drawable;
+        private int drawable_width;
+		private int drawable_height;
+		
+		public XrefAttrSpan(Context context) {
+			super(ALIGN_BOTTOM);
+			this.context = context;
+		}
 
+		@Override public Drawable getDrawable() {
+			init();
+			return drawable;
+		}
+
+        @Override public int getSize(Paint paint, CharSequence text, int start, int end, FontMetricsInt fm) {
+        	init();
+            return drawable_width;
+        }
+        
+        private void init() {
+        	if (drawable == null) {
+        		drawable = context.getResources().getDrawable(R.drawable.ic_attr_xref);
+        		drawable_width = drawable.getIntrinsicWidth();
+        		drawable_height = drawable.getIntrinsicHeight();
+				drawable.setBounds(0, 0, drawable_width, drawable_height);
+        	}
+        }
+	}
+	
 	/** 0 undefined. 1 and 2 based on version. */
 	private static int leadingMarginSpanVersion = 0;
 	
@@ -384,7 +415,7 @@ public class VerseRenderer {
 		sb.insert(sb_start, "\u2022 "); // append space after it to prevent false click detection
 		int sb_end = sb_start+1;
 		
-		sb.setSpan(new ImageSpan(context, R.drawable.ic_btn_search, DynamicDrawableSpan.ALIGN_BASELINE), sb_start, sb_start+1, 0);
+		sb.setSpan(new XrefAttrSpan(context), sb_start, sb_start+1, 0);
 		sb.setSpan(new ClickableSpan() {
 			@Override public void onClick(View widget) {
 				if (xrefListener != null) {
