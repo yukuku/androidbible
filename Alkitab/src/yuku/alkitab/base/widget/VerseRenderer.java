@@ -103,15 +103,15 @@ public class VerseRenderer {
 		public XrefAttrSpan(Context context) {
 			this.context = context;
 		}
-
-        private void init() {
-        	if (drawable == null) {
-        		drawable = context.getResources().getDrawable(R.drawable.ic_attr_xref);
-        		drawable_width = drawable.getIntrinsicWidth();
-        		drawable_height = drawable.getIntrinsicHeight();
+		
+		private void init() {
+			if (drawable == null) {
+				drawable = context.getResources().getDrawable(R.drawable.ic_attr_xref);
+				drawable_width = drawable.getIntrinsicWidth();
+				drawable_height = drawable.getIntrinsicHeight();
 				drawable.setBounds(0, 0, drawable_width, drawable_height);
-        	}
-        }
+			}
+		}
 		
         @Override public int getSize(Paint paint, CharSequence text, int start, int end, FontMetricsInt fm) {
         	init();
@@ -420,16 +420,17 @@ public class VerseRenderer {
 			sb_start --;
 		}
 		
-		sb.insert(sb_start, "\u2022 "); // append space after it to prevent false click detection
-		int sb_end = sb_start+1;
+		sb.insert(sb_start, " \u2022 "); 
 		
-		sb.setSpan(new XrefAttrSpan(context), sb_start, sb_start+1, 0);
+		sb.setSpan(new XrefAttrSpan(context), sb_start+1, sb_start+2, 0);
 		sb.setSpan(new ClickableSpan() {
+			@Override public void updateDrawState(TextPaint ds) { /* prevent underline */ }
+			
 			@Override public void onClick(View widget) {
 				if (xrefListener != null) {
 					xrefListener.onXrefClick(ari, which);
 				}
 			}
-		}, sb_start, sb_end, 0);
+		}, sb_start, sb_start+3, 0);
 	}
 }
