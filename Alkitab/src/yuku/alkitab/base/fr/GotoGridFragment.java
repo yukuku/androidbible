@@ -134,6 +134,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 	
 	protected void displaySelectedBookAndChapter() {
 		lSelectedBook.setText(underline(selectedBook.shortName));
+		lSelectedBook.setTextColor(U.getColorBasedOnBookId(selectedBook.bookId));
 		if (selectedChapter == 0) {
 			lSelectedChapter.setVisibility(View.GONE);
 		} else {
