@@ -11,9 +11,6 @@ import android.widget.CheckedTextView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.util.Arrays;
-import java.util.Comparator;
-
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -22,6 +19,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.util.BookNameSorter;
 
 public class GotoDialerFragment extends BaseGotoFragment {
 	public static final String TAG = GotoDialerFragment.class.getSimpleName();
@@ -310,16 +308,9 @@ public class GotoDialerFragment extends BaseGotoFragment {
 			Book[] booksc = S.activeVersion.getConsecutiveBooks();
 			
 			if (Preferences.getBoolean(App.context.getString(R.string.pref_sortKitabAlfabet_key), App.context.getResources().getBoolean(R.bool.pref_sortKitabAlfabet_default))) {
-				booksc_ = booksc.clone();
-
-				// sort!
-				Arrays.sort(booksc_, new Comparator<Book>() {
-					@Override public int compare(Book a, Book b) {
-						return a.shortName.compareToIgnoreCase(b.shortName);
-					}
-				});
+				booksc_ = BookNameSorter.sortAlphabetically(booksc); 
 			} else {
-				booksc_ = booksc;
+				booksc_ = booksc.clone();
 			}
 		}
 
