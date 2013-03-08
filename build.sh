@@ -132,6 +132,12 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 		echo 'Replacing R references in Java files...'
 		find src/ -name '*.java' -exec sed -i '' 's/import yuku.alkitab.R/import '$BUILD_PACKAGE_NAME'.R/g' {} \; 
 
+		if [ "$BUILD_PACKAGE_NAME" == "yuku.alkitab.beta" ] ; then
+			echo 'Replacing provider name for BETA version...'
+			sed -i '' 's/android:authorities="yuku.alkitab.provider"/android:authorities="yuku.alkitab.provider.beta"/' AndroidManifest.xml
+			sed -i '' 's/AUTHORITY = "yuku.alkitab.provider"/AUTHORITY = "yuku.alkitab.provider.beta"/' src/yuku/alkitab/base/cp/Provider.java
+		fi
+
 		echo 'Removing (mockedup) res/raw...'
 		rm -rf res/raw
 

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config package="yuku.alkitab">
+	<menu renungan="true" gebug="false" edisi="true" bantuan="true" donasi="false" songs="true" />
+	<edisi>
+		<internal locale="in" shortName="TB"      longName="Terjemahan Baru" prefix="tb" />
+		<preset locale="in"   shortName="BIS"     longName="Bahasa Indonesia Sehari-hari" namafile_preset="bis.yes" url="http://alkitab-host.appspot.com/addon/yes/bis.yes.gz" />
+		<preset locale="bbc"                      longName="Batak Toba" namafile_preset="toba.yes" url="http://alkitab-host.appspot.com/addon/yes/toba.yes.gz" />
+		<preset locale="af"   shortName="AF1953"  longName="Afrikaans Die Bybel (1953)" namafile_preset="af-1953.yes" url="http://alkitab-host.appspot.com/addon/yes/af-1953/af-1953.yes.gz" />
+		<preset locale="de"                       longName="Lutherbibel (1912)" namafile_preset="de-luther1912.yes" url="http://alkitab-host.appspot.com/addon/yes/de-luther1912/de-luther1912.yes.gz" />
+		<preset locale="el"                       longName="Byzantine/Majority Text (2000)" namafile_preset="el-byzantine.yes" url="http://alkitab-host.appspot.com/addon/yes/el-byzantine/el-byzantine.yes.gz" />
+		<preset locale="el"                       longName="Textus Receptus (1550/1894)" namafile_preset="el-textusreceptus.yes" url="http://alkitab-host.appspot.com/addon/yes/el-textusreceptus/el-textusreceptus.yes.gz" />
+		<preset locale="el"                       longName="Tischendorf 8th Ed." namafile_preset="el-tischendorf.yes" url="http://alkitab-host.appspot.com/addon/yes/el-tischendorf/el-tischendorf.yes.gz" />
+		<preset locale="el"                       longName="Westcott/Hort, UBS4 variants" namafile_preset="el-whubs4.yes" url="http://alkitab-host.appspot.com/addon/yes/el-whubs4/el-whubs4.yes.gz" />
+		<preset locale="en"   shortName="ASV"     longName="American Standard" namafile_preset="en-asv.yes" url="http://alkitab-host.appspot.com/addon/yes/en-asv/en-asv.yes.gz" />
+		<preset locale="en"   shortName="BBE"     longName="Bible in Basic English" namafile_preset="en-bbe.yes" url="http://alkitab-host.appspot.com/addon/yes/en-bbe/en-bbe.yes.gz" />
+		<preset locale="en"   shortName="KJV"     longName="King James" namafile_preset="kjv.yes" url="http://alkitab-host.appspot.com/addon/yes/kjv-r20130205/kjv.yes.gz" />
+		<preset locale="en"   shortName="WEB"     longName="World English Bible" namafile_preset="en-web.yes" url="http://alkitab-host.appspot.com/addon/yes/en-web/en-web.yes.gz" />
+		<preset locale="en"   shortName="YLT"     longName="Young's Literal Translation" namafile_preset="en-ylt.yes" url="http://alkitab-host.appspot.com/addon/yes/en-ylt/en-ylt.yes.gz" />
+		<preset locale="es"                       longName="Reina-Valera (1909)" namafile_preset="es-reinavalera1909.yes" url="http://alkitab-host.appspot.com/addon/yes/es-reinavalera1909/es-reinavalera1909.yes.gz" />
+		<preset locale="ja"                       longName="口語訳" namafile_preset="ja-kougo.yes" url="http://alkitab-host.appspot.com/addon/yes/ja-kougo/ja-kougo.yes.gz" />
+		<preset locale="ko"   shortName="KRV"     longName="Korean Revised Version" namafile_preset="ko-krv.yes" url="http://alkitab-host.appspot.com/addon/yes/ko-krv/ko-krv.yes.gz" />
+		<preset locale="no"                       longName="Det Norsk Bibelselskap" namafile_preset="no-dnb1930.yes" url="http://alkitab-host.appspot.com/addon/yes/no-dnb1930/no-dnb1930.yes.gz" />
+		<preset locale="pl"                       longName="Nowa Biblia Gdańska" namafile_preset="pl-nbg.yes" url="http://alkitab-host.appspot.com/addon/yes/pl-nbg/pl-nbg.yes.gz" />
+		<preset locale="pl"                       longName="Uwspółcześniona Biblia Gdańska" namafile_preset="pl-ubg.yes" url="http://alkitab-host.appspot.com/addon/yes/pl-ubg/pl-ubg.yes.gz" />
+		<preset locale="pl"                       longName="Biblia Gdańska (1632)" namafile_preset="pl-gdanska1632.yes" url="http://alkitab-host.appspot.com/addon/yes/pl-gdanska1632/pl-gdanska1632.yes.gz" />
+		<preset locale="sq"                       longName="Albanian" namafile_preset="sq-kk.yes" url="http://alkitab-host.appspot.com/addon/yes/sq-kk/sq-kk.yes.gz" />
+		<preset locale="ro"                       longName="Cornilescu" namafile_preset="ro-cornilescu.yes" url="http://alkitab-host.appspot.com/addon/yes/ro-cornilescu/ro-cornilescu.yes.gz" />
+		<preset locale="ro"                       longName="Biblia Ortodoxa" namafile_preset="ro-ortodoxa.yes" url="http://alkitab-host.appspot.com/addon/yes/ro-ortodoxa/ro-ortodoxa.yes.gz" />
+		<preset locale="tl"                       longName="Ang Biblia (1905)" namafile_preset="tl-angbiblia1905.yes" url="http://alkitab-host.appspot.com/addon/yes/tl-angbiblia1905/tl-angbiblia1905.yes.gz" />
+		<preset locale="zh"   shortName="CUVS"    longName="Chinese Union (Simplified)" namafile_preset="cuvs.yes" url="http://alkitab-host.appspot.com/addon/yes/cuvs.yes.gz" />
+		<preset locale="zh"   shortName="CUVT"    longName="Chinese Union (Traditional)" namafile_preset="cuvt.yes" url="http://alkitab-host.appspot.com/addon/yes/cuvt.yes.gz" />
+	</edisi>
+	<share>
+		<url prefix="http://alkitab.me/" format="slash1 slash2 nospace0" lang="in" />
+	</share>
+</config>
