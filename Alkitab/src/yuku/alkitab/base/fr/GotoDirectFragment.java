@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
 import android.view.KeyEvent;
@@ -120,14 +121,21 @@ public class GotoDirectFragment extends BaseGotoFragment {
 				return;
 			}
 			
-			int bookId = jumper.getBookId(S.activeVersion.getConsecutiveBooks());
-			int chapter = jumper.getChapter();
-			int verse = jumper.getVerse();
+			final int bookId = jumper.getBookId(S.activeVersion.getConsecutiveBooks());
+			final int chapter = jumper.getChapter();
+			final int verse = jumper.getVerse();
 			
 			InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(tAlamatLoncat.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+			imm.hideSoftInputFromWindow(tAlamatLoncat.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 			
-			((GotoFinishListener) getActivity()).onGotoFinished(GotoFinishListener.GOTO_TAB_direct, bookId, chapter, verse);
+			// try to fix a BUG on Samsung and HTC devices
+			bOk.setEnabled(false);
+			new Handler().postDelayed(new Runnable() {
+				@Override public void run() {
+					((GotoFinishListener) getActivity()).onGotoFinished(GotoFinishListener.GOTO_TAB_direct, bookId, chapter, verse);
+				}
+			}, 1000);
 		}
 	};
 
