@@ -22,27 +22,28 @@ import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.LidToAri;
+import yuku.alkitabintegration.AlkitabIntegrationUtil;
+import yuku.alkitabintegration.provider.VerseProvider;
 
 public class Provider extends ContentProvider {
 	public static final String TAG = Provider.class.getSimpleName();
 
-	private static final String AUTHORITY = "yuku.alkitab.provider";
-	private static final int PATH_bible_verses_single_by_lid = 1;
-	private static final int PATH_bible_verses_single_by_ari = 2;
-	private static final int PATH_bible_verses_range_by_lid = 3;
-	private static final int PATH_bible_verses_range_by_ari = 4;
-	private static final int PATH_bible_versions = 5;
+	private static final int PATHID_bible_verses_single_by_lid = 1;
+	private static final int PATHID_bible_verses_single_by_ari = 2;
+	private static final int PATHID_bible_verses_range_by_lid = 3;
+	private static final int PATHID_bible_verses_range_by_ari = 4;
+	private static final int PATHID_bible_versions = 5;
 	
     private static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
     	Log.d(TAG, Provider.class.getName() + " @@static_init");
     	
-    	uriMatcher.addURI(AUTHORITY, "bible/verses/single/by-lid/#", PATH_bible_verses_single_by_lid); 
-    	uriMatcher.addURI(AUTHORITY, "bible/verses/single/by-ari/#", PATH_bible_verses_single_by_ari); 
-    	uriMatcher.addURI(AUTHORITY, "bible/verses/range/by-lid/*", PATH_bible_verses_range_by_lid); 
-    	uriMatcher.addURI(AUTHORITY, "bible/verses/range/by-ari/*", PATH_bible_verses_range_by_ari); 
-    	uriMatcher.addURI(AUTHORITY, "bible/versions", PATH_bible_versions); 
+    	uriMatcher.addURI(AlkitabIntegrationUtil.DEFAULT_ALKITAB_PROVIDER_AUTHORITY, VerseProvider.PATH_bible_verses_single_by_lid + "#", PATHID_bible_verses_single_by_lid); 
+    	uriMatcher.addURI(AlkitabIntegrationUtil.DEFAULT_ALKITAB_PROVIDER_AUTHORITY, VerseProvider.PATH_bible_verses_single_by_ari + "#", PATHID_bible_verses_single_by_ari); 
+    	uriMatcher.addURI(AlkitabIntegrationUtil.DEFAULT_ALKITAB_PROVIDER_AUTHORITY, VerseProvider.PATH_bible_verses_range_by_lid + "*", PATHID_bible_verses_range_by_lid); 
+    	uriMatcher.addURI(AlkitabIntegrationUtil.DEFAULT_ALKITAB_PROVIDER_AUTHORITY, VerseProvider.PATH_bible_verses_range_by_ari + "*", PATHID_bible_verses_range_by_ari); 
+    	uriMatcher.addURI(AlkitabIntegrationUtil.DEFAULT_ALKITAB_PROVIDER_AUTHORITY, "bible/versions", PATHID_bible_versions); 
     }
 
     @Override public boolean onCreate() {
@@ -66,23 +67,23 @@ public class Provider extends ContentProvider {
 		Cursor res;
 		
 		switch (uriMatch) {
-		case PATH_bible_verses_single_by_lid: {
+		case PATHID_bible_verses_single_by_lid: {
 			res = getCursorForSingleVerseLid(Ari.parseInt(uri.getLastPathSegment(), Integer.MIN_VALUE), formatting);
 		} break;
-		case PATH_bible_verses_single_by_ari: {
+		case PATHID_bible_verses_single_by_ari: {
 			res = getCursorForSingleVerseAri(Ari.parseInt(uri.getLastPathSegment(), Integer.MIN_VALUE), formatting);
 		} break;
-		case PATH_bible_verses_range_by_lid: {
+		case PATHID_bible_verses_range_by_lid: {
 			String range = uri.getLastPathSegment();
 			IntArrayList lids = decodeLidRange(range);
 			res = getCursorForRangeVerseLid(lids, formatting);
 		} break;
-		case PATH_bible_verses_range_by_ari: {
+		case PATHID_bible_verses_range_by_ari: {
 			String range = uri.getLastPathSegment();
 			IntArrayList aris = decodeAriRange(range);
 			res = getCursorForRangeVerseAri(aris, formatting);
 		} break;
-		case PATH_bible_versions: {
+		case PATHID_bible_versions: {
 			res = getCursorForBibleVersions();
 		} break;
 		default: {
@@ -169,7 +170,7 @@ public class Provider extends ContentProvider {
 	}
 
 	private Cursor getCursorForSingleVerseAri(int ari, boolean formatting) {
-		MatrixCursor res = new MatrixCursor(new String[] {"_id", "ari", "bookName", "text"});
+		MatrixCursor res = new MatrixCursor(new String[] {"_id", VerseProvider.COLUMN_ari, VerseProvider.COLUMN_bookName, VerseProvider.COLUMN_text});
 		
 		Log.d(TAG, "getting ari 0x" + Integer.toHexString(ari));
 		
@@ -202,7 +203,7 @@ public class Provider extends ContentProvider {
 	}
 
 	private Cursor getCursorForRangeVerseAri(IntArrayList ariRanges, boolean formatting) {
-		MatrixCursor res = new MatrixCursor(new String[] {"_id", "ari", "bookName", "text"});
+		MatrixCursor res = new MatrixCursor(new String[] {"_id", VerseProvider.COLUMN_ari, VerseProvider.COLUMN_bookName, VerseProvider.COLUMN_text});
 
 		int c = 0;
 		for (int i = 0, len = ariRanges.size(); i < len; i+=2) {
