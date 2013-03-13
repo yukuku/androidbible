@@ -105,8 +105,8 @@ public class Yes2Reader implements BibleReader {
 		}
 
 		@Override public int read() throws IOException {
-			int remaining = uncompressed_len - current_block_skip;
-			if (remaining == 0) {
+			int can_read = uncompressed_len - current_block_skip;
+			if (can_read == 0) {
 				if (current_block_index >= compressed_block_sizes.length) {
 					return -1; // EOF
 				} else {
@@ -120,10 +120,36 @@ public class Yes2Reader implements BibleReader {
 			current_block_skip++;
 			return res;
 		}
-//		
-//		@Override public int read(byte[] buffer, int offset, int length) throws IOException {
-//			return 0;
-//		}
+
+		@Override public int read(byte[] buffer, int offset, int length) throws IOException {
+			int res = 0;
+			int want_read = length; 
+			
+			while (want_read > 0) {
+				int can_read = uncompressed_len - current_block_skip;
+				if (can_read == 0) {
+					if (current_block_index >= compressed_block_sizes.length) { // EOF
+						if (res == 0) return -1; // we didn't manage to read any
+						return res;
+					} else {
+						// need to move to the next block
+						current_block_index++;
+						current_block_skip = 0;
+						prepareBuffer();
+						can_read = uncompressed_len;
+					}
+				}
+				
+				int will_read = want_read > can_read? can_read: want_read;
+				System.arraycopy(uncompressed_buf, current_block_skip, buffer, offset, will_read);
+				current_block_skip += will_read;
+				offset += will_read;
+				want_read -= will_read;
+				res += will_read;
+			}
+			
+			return res;
+		}
 	}
 	
 	/** 
@@ -184,6 +210,7 @@ public class Yes2Reader implements BibleReader {
 					Log.d(TAG, "so going to block " + block_index + " where compressed offset is " + compressed_offsets[block_index]);
 					Log.d(TAG, "skipping " + block_skip + " uncompressed bytes");
 				}
+				
 				snappyInputStream.init(file_, sectionContentOffset_, block_size, block_index, block_skip, compressed_block_sizes, compressed_offsets);
 				br = new BintexReader(snappyInputStream);
 			} else {
