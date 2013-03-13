@@ -172,6 +172,7 @@ public class Yes2Reader implements BibleReader {
 			
 			if (sectionAttributes != null) {
 				String compressionName = sectionAttributes.getString("compression.name");
+				if (compressionName != null) {
 				if ("snappy-blocks".equals(compressionName)) {
 					int compressionVersion = sectionAttributes.getInt("compression.version", 0);
 					if (compressionVersion > 1) {
@@ -194,6 +195,7 @@ public class Yes2Reader implements BibleReader {
 					throw new Exception("Compression " + compressionName + " is not supported");
 				}
 			}
+		}
 		}
 
 		public Yes2SingleChapterVerses loadVerseText(Yes2Book yes2Book, int chapter_1, boolean dontSeparateVerses, boolean lowercase) throws Exception {
