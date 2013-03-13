@@ -2,6 +2,8 @@ package yuku.alkitab.yes2;
 
 import android.util.Log;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,17 +22,19 @@ import yuku.alkitab.yes2.section.PericopesSection;
 import yuku.alkitab.yes2.section.TextSection;
 import yuku.alkitab.yes2.section.VersionInfoSection;
 import yuku.bintex.BintexReader;
+import yuku.bintex.ValueMap;
+import yuku.snappy.codec.Snappy;
 
 public class Yes2Reader implements BibleReader {
 	private static final String TAG = Yes2Reader.class.getSimpleName();
 
 	private RandomInputStream file_;
 	private SectionIndex sectionIndex_;
-	private Yes2VerseTextDecoder decoder_;
 
 	// cached in memory
 	private VersionInfoSection versionInfo_;
 	private PericopesSection pericopesSection_;
+	private TextSectionReader textSectionReader_;
 	
 	static class Yes2SingleChapterVerses extends SingleChapterVerses {
 		private final String[] verses;
@@ -45,6 +49,184 @@ public class Yes2Reader implements BibleReader {
 
 		@Override public int getVerseCount() {
 			return verses.length;
+		}
+	}
+	
+	static class SnappyInputStream extends InputStream {
+		private final Snappy snappy;
+		private final RandomInputStream file;
+		private final long baseOffset;
+		private final int[] compressed_block_sizes;
+		private final int[] compressed_block_offsets;
+		private int current_block_index;
+		private int current_block_skip;
+		private byte[] compressed_buf;
+		private int uncompressed_block_index = -1;
+		private byte[] uncompressed_buf;
+		private int uncompressed_len;
+		
+		public SnappyInputStream(RandomInputStream file, long baseOffset, int block_size, int[] compressed_block_sizes, int[] compressed_block_offsets) {
+			this.snappy = new Snappy.Factory().newInstance();
+			this.file = file;
+			this.baseOffset = baseOffset;
+			this.compressed_block_sizes = compressed_block_sizes;
+			this.compressed_block_offsets = compressed_block_offsets;
+			if (compressed_buf == null || compressed_buf.length < snappy.maxCompressedLength(block_size)) {
+				compressed_buf = new byte[snappy.maxCompressedLength(block_size)];
+			}
+			if (uncompressed_buf == null || uncompressed_buf.length != block_size) {
+				uncompressed_buf = new byte[block_size];
+			}
+		}
+
+		public void prepareForRead(int current_block_index, int current_block_skip) throws IOException {
+			this.current_block_index = current_block_index;
+			this.current_block_skip = current_block_skip;
+			prepareBuffer();
+		}
+		
+		private void prepareBuffer() throws IOException {
+			int block_index = current_block_index;
+			
+			// if uncompressed_block_index is already equal to the requested block_index
+			// then we do not need to re-decompress again
+			if (uncompressed_block_index != block_index) {
+				file.seek(baseOffset + compressed_block_offsets[block_index]);
+				file.read(compressed_buf, 0, compressed_block_sizes[block_index]);
+				uncompressed_len = snappy.decompress(compressed_buf, 0, uncompressed_buf, 0, compressed_block_sizes[block_index]);
+				if (uncompressed_len < 0) {
+					throw new IOException("Error in decompressing: " + uncompressed_len);
+				}
+				uncompressed_block_index = block_index;
+			}
+		}
+
+		@Override public int read() throws IOException {
+			int can_read = uncompressed_len - current_block_skip;
+			if (can_read == 0) {
+				if (current_block_index >= compressed_block_sizes.length) {
+					return -1; // EOF
+				} else {
+					// need to move to the next block
+					current_block_index++;
+					current_block_skip = 0;
+					prepareBuffer();
+				}
+			}
+			int res = /* need to convert to uint8: */ 0xff & uncompressed_buf[current_block_skip];
+			current_block_skip++;
+			return res;
+		}
+
+		@Override public int read(byte[] buffer, int offset, int length) throws IOException {
+			int res = 0;
+			int want_read = length; 
+			
+			while (want_read > 0) {
+				int can_read = uncompressed_len - current_block_skip;
+				if (can_read == 0) {
+					if (current_block_index >= compressed_block_sizes.length) { // EOF
+						if (res == 0) return -1; // we didn't manage to read any
+						return res;
+					} else {
+						// need to move to the next block
+						current_block_index++;
+						current_block_skip = 0;
+						prepareBuffer();
+						can_read = uncompressed_len;
+					}
+				}
+				
+				int will_read = want_read > can_read? can_read: want_read;
+				System.arraycopy(uncompressed_buf, current_block_skip, buffer, offset, will_read);
+				current_block_skip += will_read;
+				offset += will_read;
+				want_read -= will_read;
+				res += will_read;
+			}
+			
+			return res;
+		}
+	}
+	
+	/** 
+	 * This class simplify many operations regarding reading the verse texts from the yes file.
+	 * This stores the offset to the beginning of text section content 
+	 * and also understands the text section attributes (compression, encryption etc.)
+	 */
+	static class TextSectionReader {
+		private final RandomInputStream file_;
+		private final Yes2VerseTextDecoder decoder_;
+		private final long sectionContentOffset_;
+		private BintexReader br_;
+		
+		private int block_size = 0; // 0 means no compression
+		private SnappyInputStream snappyInputStream;
+		private int[] compressed_block_sizes;
+		private int[] compressed_block_offsets;
+		
+		public TextSectionReader(RandomInputStream file, Yes2VerseTextDecoder decoder, ValueMap sectionAttributes, long sectionContentOffset) throws Exception {
+			file_ = file;
+			decoder_ = decoder;
+			sectionContentOffset_ = sectionContentOffset;
+			br_ = new BintexReader(null);
+			
+			if (sectionAttributes != null) {
+				String compressionName = sectionAttributes.getString("compression.name");
+				if (compressionName != null) {
+					if ("snappy-blocks".equals(compressionName)) {
+						int compressionVersion = sectionAttributes.getInt("compression.version", 0);
+						if (compressionVersion > 1) {
+							throw new Exception("Compression " + compressionName + " version " + compressionVersion + " is not supported");
+						}
+						ValueMap compressionInfo = sectionAttributes.getSimpleMap("compression.info");
+						block_size = compressionInfo.getInt("block_size");
+						compressed_block_sizes = compressionInfo.getIntArray("compressed_block_sizes");
+						{ // convert compressed_block_sizes into offsets
+							compressed_block_offsets = new int[compressed_block_sizes.length + 1];
+							int c = 0;
+							for (int i = 0, len = compressed_block_sizes.length; i < len; i++) {
+								compressed_block_offsets[i] = c;
+								c += compressed_block_sizes[i];
+							}
+							compressed_block_offsets[compressed_block_sizes.length] = c;
+						}
+						snappyInputStream = new SnappyInputStream(file_, sectionContentOffset, block_size, compressed_block_sizes, compressed_block_offsets);
+					} else {
+						throw new Exception("Compression " + compressionName + " is not supported");
+					}
+				}
+			}
+		}
+
+		public Yes2SingleChapterVerses loadVerseText(Yes2Book yes2Book, int chapter_1, boolean dontSeparateVerses, boolean lowercase) throws Exception {
+			int contentOffset = yes2Book.offset; 
+			contentOffset += yes2Book.chapter_offsets[chapter_1 - 1];
+			
+			BintexReader br;
+			if (block_size != 0) { // compressed!
+				int block_index = contentOffset / block_size;
+				int block_skip = contentOffset % block_size;
+				
+//				Log.d(TAG, "want to read contentOffset=" + contentOffset + " but compressed"); 
+//				Log.d(TAG, "so going to block " + block_index + " where compressed offset is " + compressed_block_offsets[block_index]);
+//				Log.d(TAG, "skipping " + block_skip + " uncompressed bytes");
+				
+				snappyInputStream.prepareForRead(block_index, block_skip);
+				br = br_.reuse(snappyInputStream);
+			} else {
+				file_.seek(sectionContentOffset_ + contentOffset);
+				br = br_.reuse(file_);
+			}
+
+			int verse_count = yes2Book.verse_counts[chapter_1 - 1];
+			if (dontSeparateVerses) {
+				return new Yes2SingleChapterVerses(new String[] { 
+					decoder_.makeIntoSingleString(br, verse_count, lowercase),
+				});
+			} else {
+				return new Yes2SingleChapterVerses(decoder_.separateIntoVerses(br, verse_count, lowercase));
+			}
 		}
 	}
 	
@@ -146,39 +328,30 @@ public class Yes2Reader implements BibleReader {
 		Yes2Book yes2Book = (Yes2Book) book;
 		
 		try {
-			// init text decoder 
-			if (decoder_ == null) {
-				int textEncoding = versionInfo_.textEncoding;
-				if (textEncoding == 1) {
-					decoder_ = new Yes2VerseTextDecoder.Ascii();
-				} else if (textEncoding == 2) {
-					decoder_ = new Yes2VerseTextDecoder.Utf8();
-				} else {
-					Log.e(TAG, "Text encoding " + textEncoding + " not supported! Fallback to ascii."); //$NON-NLS-1$ //$NON-NLS-2$
-					decoder_ = new Yes2VerseTextDecoder.Ascii();
-				}
-			}
-			
 			if (chapter_1 <= 0 || chapter_1 > yes2Book.chapter_count) {
 				return null;
 			}
 
-			long seekTo = sectionIndex_.getAbsoluteOffsetForSectionContent(TextSection.SECTION_NAME);
-			seekTo += yes2Book.offset;
-			seekTo += yes2Book.chapter_offsets[chapter_1 - 1];
-			file_.seek(seekTo);
-
-			int verse_count = yes2Book.verse_counts[chapter_1 - 1];
-			
-			BintexReader br = new BintexReader(file_);
-
-			if (dontSeparateVerses) {
-				return new Yes2SingleChapterVerses(new String[] { 
-					decoder_.makeIntoSingleString(br, verse_count, lowercase),
-				});
-			} else {
-				return new Yes2SingleChapterVerses(decoder_.separateIntoVerses(br, verse_count, lowercase));
+			if (textSectionReader_ == null) {
+				ValueMap sectionAttributes = sectionIndex_.getSectionAttributes(TextSection.SECTION_NAME, file_);
+				long sectionContentOffset = sectionIndex_.getAbsoluteOffsetForSectionContent(TextSection.SECTION_NAME);
+				
+				// init text decoder 
+				Yes2VerseTextDecoder decoder;
+				int textEncoding = versionInfo_.textEncoding;
+				if (textEncoding == 1) {
+					decoder = new Yes2VerseTextDecoder.Ascii();
+				} else if (textEncoding == 2) {
+					decoder = new Yes2VerseTextDecoder.Utf8();
+				} else {
+					Log.e(TAG, "Text encoding " + textEncoding + " not supported! Fallback to ascii."); //$NON-NLS-1$ //$NON-NLS-2$
+					decoder = new Yes2VerseTextDecoder.Ascii();
+				}
+				
+				textSectionReader_ = new TextSectionReader(file_, decoder, sectionAttributes, sectionContentOffset);
 			}
+			
+			return textSectionReader_.loadVerseText(yes2Book, chapter_1, dontSeparateVerses, lowercase);
 		} catch (Exception e) {
 			Log.e(TAG, "loadVerseText error", e); //$NON-NLS-1$
 			return null;
