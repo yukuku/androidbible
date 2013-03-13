@@ -592,7 +592,7 @@ public class BookmarkListActivity extends BaseActivity {
 					
 					if (filter_jenis != Db.Bookmark2.kind_highlight) { // "tulisan" di stabilo cuma simpen info tentang warna, jadi ga ada gunanya dicek.
 						String tulisan_lc = tulisan.toLowerCase(Locale.getDefault());
-						if (Search2Engine.memenuhiCarian(tulisan_lc, xkata)) {
+						if (Search2Engine.satisfiesQuery(tulisan_lc, xkata)) {
 							memenuhi = true;
 						}
 					}
@@ -602,7 +602,7 @@ public class BookmarkListActivity extends BaseActivity {
 						// coba isi ayatnya!
 						String ayat = S.activeVersion.loadVerseText(ari);
 						String ayat_lc = ayat.toLowerCase(Locale.getDefault());
-						if (Search2Engine.memenuhiCarian(ayat_lc, xkata)) {
+						if (Search2Engine.satisfiesQuery(ayat_lc, xkata)) {
 							memenuhi = true;
 						}
 					}

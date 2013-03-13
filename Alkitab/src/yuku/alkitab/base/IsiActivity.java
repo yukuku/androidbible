@@ -385,7 +385,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		for (MVersionPreset preset: c.presets) { // 2. preset
 			if (preset.getVersionId().equals(lastVersion)) {
 				if (preset.hasDataFile()) {
-					loadVersion(preset);
+					loadVersion(preset, false);
 				} else { 
 					return; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
 				}
@@ -397,7 +397,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		for (MVersionYes yes: yeses) {
 			if (yes.getVersionId().equals(lastVersion)) {
 				if (yes.hasDataFile()) {
-					loadVersion(yes);
+					loadVersion(yes, false);
 				} else { 
 					return; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
 				}
@@ -405,7 +405,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 	
-	protected void loadVersion(final MVersion mv) {
+	protected void loadVersion(final MVersion mv, boolean display) {
 		// for rollback
 		Version oldActiveVersion = S.activeVersion;
 		String oldActiveVersionId = S.activeVersionId;
@@ -427,7 +427,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					S.activeBook = S.activeVersion.getFirstBook(); // too bad, it was not found
 				}
 				
-				display(chapter_1, lsText.getVerseBasedOnScroll(), false);
+				if (display) {
+					display(chapter_1, lsText.getVerseBasedOnScroll(), false);
+				}
 			} else {
 				new AlertDialog.Builder(IsiActivity.this)
 				.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()))
@@ -785,7 +787,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			@Override public void onClick(DialogInterface dialog, int which) {
 				final MVersion mv = data.get(which);
 				
-				loadVersion(mv);
+				loadVersion(mv, true);
 				dialog.dismiss();
 			}
 		})
