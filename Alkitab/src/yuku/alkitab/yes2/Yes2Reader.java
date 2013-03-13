@@ -163,7 +163,7 @@ public class Yes2Reader implements BibleReader {
 		private int block_size = 0; // 0 means no compression
 		private SnappyInputStream snappyInputStream;
 		private int[] compressed_block_sizes;
-		private int[] compressed_offsets;
+		private int[] compressed_block_offsets;
 		
 		public TextSectionReader(RandomInputStream file, Yes2VerseTextDecoder decoder, ValueMap sectionAttributes, long sectionContentOffset) throws Exception {
 			file_ = file;
@@ -181,15 +181,15 @@ public class Yes2Reader implements BibleReader {
 					block_size = compressionInfo.getInt("block_size");
 					compressed_block_sizes = compressionInfo.getIntArray("compressed_block_sizes");
 					{ // convert compressed_block_sizes into offsets
-						compressed_offsets = new int[compressed_block_sizes.length + 1];
+						compressed_block_offsets = new int[compressed_block_sizes.length + 1];
 						int c = 0;
 						for (int i = 0, len = compressed_block_sizes.length; i < len; i++) {
-							compressed_offsets[i] = c;
+							compressed_block_offsets[i] = c;
 							c += compressed_block_sizes[i];
 						}
-						compressed_offsets[compressed_block_sizes.length] = c;
+						compressed_block_offsets[compressed_block_sizes.length] = c;
 					}
-					snappyInputStream = new SnappyInputStream(file_, sectionContentOffset, block_size, compressed_block_sizes, compressed_offsets);
+					snappyInputStream = new SnappyInputStream(file_, sectionContentOffset, block_size, compressed_block_sizes, compressed_block_offsets);
 				} else {
 					throw new Exception("Compression " + compressionName + " is not supported");
 				}
@@ -207,7 +207,7 @@ public class Yes2Reader implements BibleReader {
 				
 				if (D.EBUG) {
 					Log.d(TAG, "want to read contentOffset=" + contentOffset + " but compressed"); 
-					Log.d(TAG, "so going to block " + block_index + " where compressed offset is " + compressed_offsets[block_index]);
+					Log.d(TAG, "so going to block " + block_index + " where compressed offset is " + compressed_block_offsets[block_index]);
 					Log.d(TAG, "skipping " + block_skip + " uncompressed bytes");
 				}
 				
