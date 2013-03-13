@@ -158,9 +158,12 @@ public class Yes2Common {
 		@Override public ValueMap getAttributes() {
 			ValueMap res = new ValueMap();
 			if (compressed) {
-				res.put("compression", "snappy-blocks");
-				res.put("snappy.blocks.block_size", COMPRESS_BLOCK_SIZE);
-				res.put("snappy.blocks.compressed_block_sizes", compressed_block_sizes);
+				ValueMap compressionInfo = new ValueMap();
+				compressionInfo.put("block_size", COMPRESS_BLOCK_SIZE);
+				compressionInfo.put("compressed_block_sizes", compressed_block_sizes);
+				res.put("compression.name", "snappy-blocks");
+				res.put("compression.version", 1);
+				res.put("compression.info", compressionInfo);
 			}
 			return res;
 		}
