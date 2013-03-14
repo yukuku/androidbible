@@ -171,14 +171,14 @@ public class Yes2Common {
 		}
 		
 		@SuppressWarnings("resource") private void processNow() {
-			Compressor compressor = null;
+			SnappyOutputStream snappyOutputStream = null;
 			
 			final BintexWriter bw;
 			if (!this.compressed) {
 				bw = new BintexWriter(toOutput);
 			} else {
-				compressor = new Compressor(toOutput);
-				bw = new BintexWriter(compressor);
+				snappyOutputStream = new SnappyOutputStream(toOutput);
+				bw = new BintexWriter(snappyOutputStream);
 			}
 			
 			textDb.processEach(new TextDb.TextProcessor() {
@@ -192,10 +192,10 @@ public class Yes2Common {
 				}
 			});
 			
-			if (compressor != null) {
+			if (snappyOutputStream != null) {
 				try {
-					compressor.flush();
-					compressed_block_sizes = compressor.getCompressedBlockSizes();
+					snappyOutputStream.flush();
+					compressed_block_sizes = snappyOutputStream.getCompressedBlockSizes();
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
@@ -206,8 +206,8 @@ public class Yes2Common {
 			toOutput.writeTo(output);
 		}
 
-		public class Compressor extends FilterOutputStream {
-			public final String TAG = Compressor.class.getSimpleName();
+		public class SnappyOutputStream extends FilterOutputStream {
+			public final String TAG = SnappyOutputStream.class.getSimpleName();
 			
 			private Snappy s;
 			private byte[] uncompressed = new byte[COMPRESS_BLOCK_SIZE];
@@ -215,7 +215,7 @@ public class Yes2Common {
 			private int uncompressed_offset;
 			private List<Integer> compressed_block_sizes = new ArrayList<>(); 
 
-			public Compressor(OutputStream out) {
+			public SnappyOutputStream(OutputStream out) {
 				super(out);
 				this.s = new Snappy.Factory().newInstance();
 				this.compressed = new byte[s.maxCompressedLength(uncompressed.length)];
