@@ -48,12 +48,12 @@ public class PericopesSection extends SectionContent implements SectionContent.W
 		int[] savedoffset_entryOffsets;
 		long savedpos_sectionEnd;
 		
-		// uint8 version: 2
-		bw.writeUint8(2);
+		// uint8 data_format_version: 3
+		bw.writeUint8(3);
 		
 		// int index_size
 		savedpos_indexSize = output.getFilePointer();
-		bw.writeInt(-1);
+		bw.writeInt(-1); // placeholder
 		
 		// int entry_count
 		int entry_count = data_.entries.size();
@@ -61,12 +61,25 @@ public class PericopesSection extends SectionContent implements SectionContent.W
 		
 		// Entry[entry_count]
 		savedpos_entryOffsets = new long[entry_count];
+		int last_entry_ari = 0;
 		for (int i = 0; i < entry_count; i++) {
 			Entry entry = data_.entries.get(i);
 		
-			bw.writeInt(entry.ari);
+			// entry.ari is written as follows:
+			// if difference to existing ari is <= 0x7fff, it's written in 2bytes: (0x8000 | difference)
+			// otherwise it's written in 4 bytes: (0x00000000 | (0x00ffffff & ari))
+			int diff_ari = entry.ari - last_entry_ari;
+			if (last_entry_ari == 0 || (diff_ari < 0 || diff_ari > 0x7fff)) {
+				bw.writeInt(0x00000000 | (0x00ffffff & entry.ari));
+			} else {
+				bw.writeUint16(0x8000 | diff_ari);
+			}
+			last_entry_ari = entry.ari;
+			
+			// entry.offset is always written as uint16 delta to the last one (with the first one considered offset 0), 
+			// so max size in bytes for a pericope entry is 65536 bytes.
 			savedpos_entryOffsets[i] = output.getFilePointer();
-			bw.writeInt(-1); // placeholder for later
+			bw.writeUint16(0xffff); // placeholder for later
 		}
 		
 		long dataBeginOffset = output.getFilePointer();
@@ -77,18 +90,18 @@ public class PericopesSection extends SectionContent implements SectionContent.W
 			savedoffset_entryOffsets[i] = (int) (output.getFilePointer() - dataBeginOffset);
 			
 			/* Blok {
-			 * uint8 version = 4
+			 * uint8 data_format_version = 4
 			 * value title
 			 * uint8 parallel_count
 			 * value[parallel_count] parallels
 			 * }
 			 */				
 			
-			bw.writeUint8(4); // version
+			bw.writeUint8(4); // data_format_version
 			
 			bw.writeValueString(entry.block.title); // title
 			bw.writeUint8(entry.block.parallels == null? 0: entry.block.parallels.size()); // parallel_count
-			if (entry.block.parallels != null) { // xparalel
+			if (entry.block.parallels != null) { // parallels
 				for (String parallel: entry.block.parallels) {
 					bw.writeValueString(parallel);
 				}
@@ -101,9 +114,15 @@ public class PericopesSection extends SectionContent implements SectionContent.W
 			output.seek(savedpos_indexSize);
 			bw.writeInt(section_size);
 			
+			int last_offset = 0;
 			for (int i = 0; i < entry_count; i++) {
+				int diff_offset = savedoffset_entryOffsets[i] - last_offset;
+				if (diff_offset > 0xffff) {
+					throw new RuntimeException("a pericope entry can't be larger than 65535 bytes");
+				}
 				output.seek(savedpos_entryOffsets[i]);
-				bw.writeInt(savedoffset_entryOffsets[i]);
+				bw.writeUint16(diff_offset);
+				last_offset = savedoffset_entryOffsets[i];
 			}
 		}
 		
@@ -116,7 +135,7 @@ public class PericopesSection extends SectionContent implements SectionContent.W
 			BintexReader br = new BintexReader(input);
 			
 			int version = br.readUint8();
-			if (version != 2) {
+			if (version != 2 && version != 3) {
 				throw new RuntimeException("PericopeIndex version not supported: " + version);
 			}
 			
@@ -131,9 +150,33 @@ public class PericopesSection extends SectionContent implements SectionContent.W
 			int[] offsets = new int[entry_count];
 			res.index_.offsets = offsets;
 			
-			for (int i = 0; i < entry_count; i++) {
-				aris[i] = br.readInt();
-				offsets[i] = br.readInt();
+			if (version == 2) {
+				for (int i = 0; i < entry_count; i++) {
+					aris[i] = br.readInt();
+					offsets[i] = br.readInt();
+				}
+			} else if (version == 3) {
+				int last_entry_ari = 0;
+				int last_entry_offset = 0;
+				for (int i = 0; i < entry_count; i++) {
+					// entry.ari is written as follows:
+					// if difference to existing ari is <= 0x7fff, it's written in 2bytes: (0x8000 | difference)
+					// otherwise it's written in 4 bytes: (0x00000000 | (0x00ffffff & ari))
+					int data_ari = br.readUint16();
+					int ari;
+					if ((data_ari & 0x8000) == 0) { // absolute
+						ari = (data_ari << 16) | br.readUint16();
+					} else { // relative
+						ari = last_entry_ari + (data_ari & 0x7fff);
+					}
+					aris[i] = last_entry_ari = ari;
+					
+					// entry.offset is always written as uint16 delta to the last one (with the first one considered offset 0), 
+					// so max size in bytes for a pericope entry is 65536 bytes.
+					int data_offset = br.readUint16();
+					int offset = last_entry_offset + data_offset;
+					offsets[i] = last_entry_offset = offset;
+				}
 			}
 			
 			res.input_ = input;
