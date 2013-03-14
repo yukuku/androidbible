@@ -3,9 +3,8 @@ package yuku.alkitab.yes2.compress;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
+import yuku.alkitab.base.util.IntArrayList;
 import yuku.snappy.codec.Snappy;
 
 public class SnappyOutputStream extends FilterOutputStream {
@@ -16,7 +15,7 @@ public class SnappyOutputStream extends FilterOutputStream {
 	private byte[] uncompressed_buf;
 	private byte[] compressed_buf;
 	private int uncompressed_offset;
-	private List<Integer> compressed_block_sizes = new ArrayList<Integer>();
+	private IntArrayList compressed_block_sizes = new IntArrayList();
 
 	public SnappyOutputStream(OutputStream out, int block_size) {
 		super(out);
@@ -71,9 +70,7 @@ public class SnappyOutputStream extends FilterOutputStream {
 	
 	public int[] getCompressedBlockSizes() {
 		int[] res = new int[compressed_block_sizes.size()];
-		for (int i = 0; i < res.length; i++) {
-			res[i] = compressed_block_sizes.get(i);
-		}
+		System.arraycopy(compressed_block_sizes.buffer(), 0, res, 0, res.length);
 		return res;
 	}
 }
