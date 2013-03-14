@@ -2,14 +2,13 @@ package yuku.alkitabconverter.yes_common;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FilterOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
 import yuku.alkitab.yes2.Yes2Writer;
+import yuku.alkitab.yes2.compress.SnappyOutputStream;
 import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitab.yes2.model.Yes2Book;
@@ -21,7 +20,6 @@ import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.TextDb.VerseState;
 import yuku.bintex.BintexWriter;
 import yuku.bintex.ValueMap;
-import yuku.snappy.codec.Snappy;
 
 public class Yes2Common {
 	public static final String TAG = Yes2Common.class.getSimpleName();
@@ -181,7 +179,7 @@ public class Yes2Common {
 			if (!this.compressed) {
 				bw = new BintexWriter(toOutput);
 			} else {
-				snappyOutputStream = new SnappyOutputStream(toOutput);
+				snappyOutputStream = new SnappyOutputStream(toOutput, COMPRESS_BLOCK_SIZE);
 				bw = new BintexWriter(snappyOutputStream);
 			}
 			
@@ -208,73 +206,6 @@ public class Yes2Common {
 
 		@Override public void write(RandomOutputStream output) throws Exception {
 			toOutput.writeTo(output);
-		}
-
-		public class SnappyOutputStream extends FilterOutputStream {
-			public final String TAG = SnappyOutputStream.class.getSimpleName();
-			
-			private Snappy s;
-			private byte[] uncompressed = new byte[COMPRESS_BLOCK_SIZE];
-			private byte[] compressed;
-			private int uncompressed_offset;
-			private List<Integer> compressed_block_sizes = new ArrayList<>(); 
-
-			public SnappyOutputStream(OutputStream out) {
-				super(out);
-				this.s = new Snappy.Factory().newInstance();
-				this.compressed = new byte[s.maxCompressedLength(uncompressed.length)];
-			}
-
-			@Override public void write(int b) throws IOException {
-				if (uncompressed_offset >= uncompressed.length) {
-					dump();
-				}
-				
-				uncompressed[uncompressed_offset++] = (byte) b;
-			}
-			
-			@Override public void write(byte[] b, int off, int len) throws IOException {
-				int remaining = len;
-				int src_off = off;
-				
-				while (remaining > 0) {
-					int can_write = uncompressed.length - uncompressed_offset;
-					int will_write = Math.min(remaining, can_write);
-					
-					System.arraycopy(b, src_off, uncompressed, uncompressed_offset, will_write);
-					uncompressed_offset += will_write;
-					src_off += will_write;
-					remaining -= will_write;
-					
-					if (uncompressed_offset >= uncompressed.length) {
-						dump();
-					}
-				}
-				
-				assert src_off == off + len;
-			}
-			
-			private void dump() throws IOException {
-				if (uncompressed_offset > 0) {
-					int compressed_len = s.compress(uncompressed, 0, compressed, 0, uncompressed_offset);
-					out.write(compressed, 0, compressed_len);
-					compressed_block_sizes.add(compressed_len);
-					uncompressed_offset = 0;
-				}
-			}
-			
-			@Override public void flush() throws IOException {
-				dump();
-				out.flush();
-			}
-			
-			public int[] getCompressedBlockSizes() {
-				int[] res = new int[compressed_block_sizes.size()];
-				for (int i = 0; i < res.length; i++) {
-					res[i] = compressed_block_sizes.get(i);
-				}
-				return res;
-			}
 		}
 	}
 }
