@@ -104,7 +104,9 @@ public class Yes2Common {
 		yesWriter.sections.add(booksInfoSection);
 		yesWriter.sections.add(new LazyText(textDb, compressed));
 		
-		RandomOutputStream output = new RandomOutputStream(new RandomAccessFile(outputFile, "rw")); //$NON-NLS-1$
+		RandomAccessFile raf = new RandomAccessFile(outputFile, "rw"); //$NON-NLS-1$
+		raf.setLength(0);
+		RandomOutputStream output = new RandomOutputStream(raf);
 		yesWriter.writeToFile(output);
 		
 		output.close();
