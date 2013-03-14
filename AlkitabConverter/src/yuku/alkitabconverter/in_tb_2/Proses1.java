@@ -11,7 +11,7 @@ import yuku.alkitab.yes1.Yes1File.Teks;
 import yuku.alkitabconverter.bdb.BdbProses;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
-import yuku.alkitabconverter.yes_common.YesCommon;
+import yuku.alkitabconverter.yes_common.Yes1Common;
 
 public class Proses1 {
 	static String INPUT_TEKS_1 = "./bahan/in-tb-2/in/TB(2)-utf8.txt";
@@ -100,11 +100,11 @@ public class Proses1 {
 		
 		////////// PROSES KE YES
 		
-		final InfoEdisi infoEdisi = YesCommon.infoEdisi(INFO_NAMA, null, INFO_JUDUL, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES, null);
-		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
-		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
+		final InfoEdisi infoEdisi = Yes1Common.infoEdisi(INFO_NAMA, null, INFO_JUDUL, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES, null);
+		final InfoKitab infoKitab = Yes1Common.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
+		final Teks teks = Yes1Common.teks(xrec, INPUT_TEKS_ENCODING);
 		
-		Yes1File file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks);
+		Yes1File file = Yes1Common.bikinYesFile(infoEdisi, infoKitab, teks);
 		
 		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
 	}

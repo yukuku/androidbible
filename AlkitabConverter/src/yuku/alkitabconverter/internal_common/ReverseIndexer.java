@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import yuku.alkitabconverter.util.Rec;
-import yuku.alkitabconverter.util.TeksDb;
+import yuku.alkitabconverter.util.TextDb;
 import yuku.bintex.BintexWriter;
 
 public class ReverseIndexer {
@@ -22,7 +22,7 @@ public class ReverseIndexer {
 	public final static Charset ascii = Charset.forName("ascii");
 	public final static Charset utf8 = Charset.forName("utf8");
 
-	public static void createReverseIndex(File outDir, String prefix, TeksDb teksDb) {
+	public static void createReverseIndex(File outDir, String prefix, TextDb teksDb) {
 		Pattern p_word = Pattern.compile("[A-Za-z]+(?:[-'][A-Za-z]+)*");
 
 		Map<String, Set<Integer>> map = new TreeMap<String, Set<Integer>>(new Comparator<String>() {

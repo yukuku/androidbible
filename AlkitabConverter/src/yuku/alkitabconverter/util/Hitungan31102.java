@@ -2,6 +2,8 @@ package yuku.alkitabconverter.util;
 
 import java.util.Arrays;
 
+import yuku.alkitab.base.model.Ari;
+
 public class Hitungan31102 {
 	public static final String TAG = Hitungan31102.class.getSimpleName();
 	
@@ -68,15 +70,15 @@ public class Hitungan31102 {
 	}
 	
 	public static int kitab_1(int offset_0) {
-		return Ari.toKitab(ari(offset_0)) + 1;
+		return Ari.toBook(ari(offset_0)) + 1;
 	}
 	
 	public static int pasal_1(int offset_0) {
-		return Ari.toPasal(ari(offset_0));
+		return Ari.toChapter(ari(offset_0));
 	}
 	
 	public static int ayat_1(int offset_0) {
-		return Ari.toAyat(ari(offset_0));
+		return Ari.toVerse(ari(offset_0));
 	}
 	
 	// @Test
