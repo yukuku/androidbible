@@ -11,8 +11,10 @@ import java.util.List;
 
 import yuku.alkitab.yes2.Yes2Writer;
 import yuku.alkitab.yes2.io.RandomOutputStream;
+import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitab.yes2.model.Yes2Book;
 import yuku.alkitab.yes2.section.BooksInfoSection;
+import yuku.alkitab.yes2.section.PericopesSection;
 import yuku.alkitab.yes2.section.VersionInfoSection;
 import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.alkitabconverter.util.TextDb;
@@ -94,14 +96,16 @@ public class Yes2Common {
 		return res;
 	}
 
-	// TODO support for pericopes
-	public static void createYesFile(final File outputFile, final VersionInfo versionInfo, final TextDb textDb, boolean compressed) throws Exception {
-		VersionInfoSection versionInfoSection = getVersionInfoSection(versionInfo, textDb, false);
+	public static void createYesFile(final File outputFile, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed) throws Exception {
+		VersionInfoSection versionInfoSection = getVersionInfoSection(versionInfo, textDb, pericopeData != null);
 		BooksInfoSection booksInfoSection = getBooksInfoSection(versionInfo, textDb);
 		
 		Yes2Writer yesWriter = new Yes2Writer();
 		yesWriter.sections.add(versionInfoSection);
 		yesWriter.sections.add(booksInfoSection);
+		if (pericopeData != null) {
+			yesWriter.sections.add(new PericopesSection(pericopeData));
+		}
 		yesWriter.sections.add(new LazyText(textDb, compressed));
 		
 		RandomAccessFile raf = new RandomAccessFile(outputFile, "rw"); //$NON-NLS-1$

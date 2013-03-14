@@ -106,7 +106,7 @@ public class UnboundBatchConverter {
 			textDb.dump(ps);
 		}
 		
-		Yes2Common.createYesFile(new File("/tmp", outputName + ".yes"), versionInfo, textDb, true);
+		Yes2Common.createYesFile(new File("/tmp", outputName + ".yes"), versionInfo, textDb, null, true);
 		
 		System.out.println("Processing finished, total verses: " + textDb.size());
 	}

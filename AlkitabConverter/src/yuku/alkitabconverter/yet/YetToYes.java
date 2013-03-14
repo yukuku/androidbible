@@ -92,7 +92,7 @@ public class YetToYes {
 		
 		// TODO
 		boolean compressed = true;
-		Yes2Common.createYesFile(new File(yesfile), versionInfo, textDb, compressed); 
+		Yes2Common.createYesFile(new File(yesfile), versionInfo, textDb, result.pericopeData, compressed); 
 
 		// TODO pericopes
 		
