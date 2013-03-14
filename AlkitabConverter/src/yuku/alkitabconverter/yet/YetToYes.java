@@ -1,19 +1,14 @@
 package yuku.alkitabconverter.yet;
 
-import java.io.RandomAccessFile;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import yuku.alkitab.yes1.Yes1File;
-import yuku.alkitab.yes1.Yes1File.InfoEdisi;
-import yuku.alkitab.yes1.Yes1File.InfoKitab;
-import yuku.alkitab.yes1.Yes1File.PerikopBlok;
-import yuku.alkitab.yes1.Yes1File.PerikopIndex;
-import yuku.alkitab.yes1.Yes1File.Teks;
 import yuku.alkitabconverter.util.Rec;
-import yuku.alkitabconverter.yes_common.Yes1Common;
+import yuku.alkitabconverter.util.TextDb;
+import yuku.alkitabconverter.yes_common.Yes2Common;
 import yuku.alkitabconverter.yet.YetFileInput.YetFileInputResult;
 
 import com.beust.jcommander.JCommander;
@@ -82,17 +77,25 @@ public class YetToYes {
 			}
 		}
 		
-		InfoEdisi infoEdisi = Yes1Common.infoEdisi(null, result.infos.get("shortName"), result.infos.get("longName"), result.numberOfBooks, result.pericopeData == null? 0: 1, result.infos.get("description"), 2 /* utf-8 */, result.infos.get("locale"));
-		InfoKitab infoKitab = Yes1Common.infoKitab(result.recs, "utf-8", result.bookNames);
-		Teks teks = Yes1Common.teks(result.recs, "utf-8");
-		Yes1File out;
-		if (result.pericopeData != null) {
-			out = Yes1Common.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(result.pericopeData), new PerikopIndex(result.pericopeData));
-		} else {
-			out = Yes1Common.bikinYesFile(infoEdisi, infoKitab, teks);
+		Yes2Common.VersionInfo versionInfo = new Yes2Common.VersionInfo();
+		versionInfo.locale = result.infos.get("locale");
+		versionInfo.shortName = result.infos.get("shortName");
+		versionInfo.longName = result.infos.get("longName");
+		versionInfo.description = result.infos.get("description");
+		versionInfo.setBookNames(result.bookNames);
+		
+		// convert recs to textdb
+		TextDb textDb = new TextDb();
+		for (Rec rec: result.recs) {
+			textDb.append(rec.book_1 - 1, rec.chapter_1, rec.verse_1, rec.text, -1);
 		}
 		
-		out.output(new RandomAccessFile(yesfile, "rw"));
+		// TODO
+		boolean compressed = true;
+		Yes2Common.createYesFile(new File(yesfile), versionInfo, textDb, result.pericopeData, compressed); 
+
+		// TODO pericopes
+		
 		return 0;
 	}
 }

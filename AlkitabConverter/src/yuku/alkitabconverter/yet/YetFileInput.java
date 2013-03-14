@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
-import yuku.alkitab.yes1.Yes1File.PericopeData;
+import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitabconverter.util.Rec;
 
 public class YetFileInput {
@@ -53,7 +53,6 @@ public class YetFileInput {
 	public YetFileInputResult parse(String nf) throws Exception {
 		LinkedHashMap<Integer, Integer> nversePerBook = new LinkedHashMap<Integer, Integer>();
 		
-		Scanner sc = new Scanner(new File(nf), "utf-8");
 		
 		int lastBook_1 = 1;
 		int lastChapter_1 = 1;
@@ -65,7 +64,7 @@ public class YetFileInput {
 		int report_line_number = 0;
 		String report_line_text = null;
 		
-		try {
+		try (Scanner sc = new Scanner(new File(nf), "utf-8")) {
 			while (sc.hasNextLine()) {
 				String line = sc.nextLine();
 				
@@ -90,10 +89,12 @@ public class YetFileInput {
 					
 					lastPericopeEntry.ari = ((book_1 - 1) << 16) | (chapter_1 << 8) | verse_1;
 					lastPericopeEntry.block = new PericopeData.Block();
-					lastPericopeEntry.block.version = 3;
 					lastPericopeEntry.block.title = text;
 				} else if ("parallel".equals(command)) {
 					String text = splits[1];
+					if (lastPericopeEntry == null) {
+						throw new RuntimeException("parallel encountered before pericope title: " + line);
+					}
 					lastPericopeEntry.block.addParallel(text);
 				} else if ("book_name".equals(command)) {
 					int bookId = Integer.parseInt(splits[1]);
