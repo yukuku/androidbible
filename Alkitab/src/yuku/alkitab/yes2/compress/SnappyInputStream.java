@@ -35,8 +35,6 @@ public class SnappyInputStream extends RandomInputStream {
 		if (uncompressed_buf == null || uncompressed_buf.length != block_size) {
 			uncompressed_buf = new byte[block_size];
 		}
-		
-		prepareBuffer();
 	}
 
 	@Override public void seek(long n) throws IOException {
