@@ -29,12 +29,8 @@ public class SnappyInputStream extends RandomInputStream {
 		this.baseOffset = baseOffset;
 		this.compressed_block_sizes = compressed_block_sizes;
 		this.compressed_block_offsets = compressed_block_offsets;
-		if (compressed_buf == null || compressed_buf.length < snappy.maxCompressedLength(block_size)) {
-			compressed_buf = new byte[snappy.maxCompressedLength(block_size)];
-		}
-		if (uncompressed_buf == null || uncompressed_buf.length != block_size) {
-			uncompressed_buf = new byte[block_size];
-		}
+		this.compressed_buf = new byte[snappy.maxCompressedLength(block_size)];
+		this.uncompressed_buf = new byte[block_size];
 	}
 
 	@Override public void seek(long n) throws IOException {
