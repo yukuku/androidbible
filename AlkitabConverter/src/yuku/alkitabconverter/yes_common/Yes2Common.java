@@ -3,12 +3,14 @@ package yuku.alkitabconverter.yes_common;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
 import yuku.alkitab.yes2.Yes2Writer;
 import yuku.alkitab.yes2.compress.SnappyOutputStream;
+import yuku.alkitab.yes2.io.MemoryRandomAccessFile;
 import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitab.yes2.model.Yes2Book;
@@ -102,9 +104,9 @@ public class Yes2Common {
 		yesWriter.sections.add(versionInfoSection);
 		yesWriter.sections.add(booksInfoSection);
 		if (pericopeData != null) {
-			yesWriter.sections.add(new PericopesSection(pericopeData));
+			yesWriter.sections.add(new CompressiblePericopesSection(pericopeData, compressed));
 		}
-		yesWriter.sections.add(new LazyText(textDb, compressed));
+		yesWriter.sections.add(new CompressibleLazyText(textDb, compressed));
 		
 		RandomAccessFile raf = new RandomAccessFile(outputFile, "rw"); //$NON-NLS-1$
 		raf.setLength(0);
@@ -143,7 +145,7 @@ public class Yes2Common {
 	 *	- varuint length_in_bytes
 	 *  - byte[length_in_bytes] encoded_text
 	 */
-	static class LazyText extends SectionContent implements SectionContent.Writer {
+	static class CompressibleLazyText extends SectionContent implements SectionContent.Writer {
 		private final TextDb textDb;
 		private final boolean compressed;
 		private final int COMPRESS_BLOCK_SIZE = 32768; 
@@ -151,7 +153,7 @@ public class Yes2Common {
 		private int[] compressed_block_sizes;
 		private ByteArrayOutputStream toOutput = new ByteArrayOutputStream();
 		
-		public LazyText(TextDb textDb, boolean compressed) {
+		public CompressibleLazyText(TextDb textDb, boolean compressed) {
 			super("text");
 			this.textDb = textDb;
 			this.compressed = compressed;
@@ -206,6 +208,68 @@ public class Yes2Common {
 
 		@Override public void write(RandomOutputStream output) throws Exception {
 			toOutput.writeTo(output);
+		}
+	}
+
+	static class CompressiblePericopesSection extends PericopesSection implements SectionContent.Writer {
+		private final boolean compressed;
+		private final int COMPRESS_BLOCK_SIZE = 32768; 
+		
+		private int[] compressed_block_sizes;
+		private ByteArrayOutputStream compressedOutput = new ByteArrayOutputStream();
+		
+		public CompressiblePericopesSection(PericopeData pericopeData, boolean compressed) {
+			super(pericopeData);
+			this.compressed = compressed;
+			
+			processNow();
+		}
+		
+		@Override public ValueMap getAttributes() {
+			ValueMap res = new ValueMap();
+			if (compressed) {
+				ValueMap compressionInfo = new ValueMap();
+				compressionInfo.put("block_size", COMPRESS_BLOCK_SIZE);
+				compressionInfo.put("compressed_block_sizes", compressed_block_sizes);
+				res.put("compression.name", "snappy-blocks");
+				res.put("compression.version", 1);
+				res.put("compression.info", compressionInfo);
+			}
+			return res;
+		}
+		
+		private void processNow() {
+			MemoryRandomAccessFile mem = null;
+			try {
+				mem = new MemoryRandomAccessFile();
+				super.write(new RandomOutputStream(mem));
+				
+				SnappyOutputStream snappyOutputStream = null;
+				final OutputStream os;
+				if (!this.compressed) {
+					os = compressedOutput;
+				} else {
+					os = snappyOutputStream = new SnappyOutputStream(compressedOutput, COMPRESS_BLOCK_SIZE);
+				}
+				
+				os.write(mem.getBuffer(), mem.getBufferOffset(), mem.getBufferLength());
+				if (snappyOutputStream != null) {
+					snappyOutputStream.flush();
+					try {
+						snappyOutputStream.flush();
+						compressed_block_sizes = snappyOutputStream.getCompressedBlockSizes();
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+				}
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		@Override public void write(RandomOutputStream output) throws Exception {
+			// DO NOT CALL SUPER!
+			compressedOutput.writeTo(output);
 		}
 	}
 }

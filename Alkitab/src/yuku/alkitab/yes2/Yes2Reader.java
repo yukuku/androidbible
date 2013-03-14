@@ -61,10 +61,7 @@ public class Yes2Reader implements BibleReader {
 		private final long sectionContentOffset_;
 		private BintexReader br_;
 		
-		private int block_size = 0; // 0 means no compression
-		private SnappyInputStream snappyInputStream;
-		private int[] compressed_block_sizes;
-		private int[] compressed_block_offsets;
+		private SnappyInputStream snappyInputStream;  // null means no compression
 		
 		public TextSectionReader(RandomInputStream file, Yes2VerseTextDecoder decoder, ValueMap sectionAttributes, long sectionContentOffset) throws Exception {
 			file_ = file;
@@ -76,23 +73,7 @@ public class Yes2Reader implements BibleReader {
 				String compressionName = sectionAttributes.getString("compression.name");
 				if (compressionName != null) {
 					if ("snappy-blocks".equals(compressionName)) {
-						int compressionVersion = sectionAttributes.getInt("compression.version", 0);
-						if (compressionVersion > 1) {
-							throw new Exception("Compression " + compressionName + " version " + compressionVersion + " is not supported");
-						}
-						ValueMap compressionInfo = sectionAttributes.getSimpleMap("compression.info");
-						block_size = compressionInfo.getInt("block_size");
-						compressed_block_sizes = compressionInfo.getIntArray("compressed_block_sizes");
-						{ // convert compressed_block_sizes into offsets
-							compressed_block_offsets = new int[compressed_block_sizes.length + 1];
-							int c = 0;
-							for (int i = 0, len = compressed_block_sizes.length; i < len; i++) {
-								compressed_block_offsets[i] = c;
-								c += compressed_block_sizes[i];
-							}
-							compressed_block_offsets[compressed_block_sizes.length] = c;
-						}
-						snappyInputStream = new SnappyInputStream(file_, sectionContentOffset, block_size, compressed_block_sizes, compressed_block_offsets);
+						snappyInputStream = SnappyInputStream.getInstanceFromAttributes(file_, sectionAttributes, sectionContentOffset);
 					} else {
 						throw new Exception("Compression " + compressionName + " is not supported");
 					}
@@ -105,7 +86,7 @@ public class Yes2Reader implements BibleReader {
 			contentOffset += yes2Book.chapter_offsets[chapter_1 - 1];
 			
 			BintexReader br;
-			if (block_size != 0) { // compressed!
+			if (snappyInputStream != null) {
 				snappyInputStream.seek(contentOffset);
 				br = br_.reuse(snappyInputStream);
 			} else {
@@ -227,9 +208,6 @@ public class Yes2Reader implements BibleReader {
 			}
 
 			if (textSectionReader_ == null) {
-				ValueMap sectionAttributes = sectionIndex_.getSectionAttributes(TextSection.SECTION_NAME, file_);
-				long sectionContentOffset = sectionIndex_.getAbsoluteOffsetForSectionContent(TextSection.SECTION_NAME);
-				
 				// init text decoder 
 				Yes2VerseTextDecoder decoder;
 				int textEncoding = versionInfo_.textEncoding;
@@ -242,6 +220,8 @@ public class Yes2Reader implements BibleReader {
 					decoder = new Yes2VerseTextDecoder.Ascii();
 				}
 				
+				ValueMap sectionAttributes = sectionIndex_.getSectionAttributes(TextSection.SECTION_NAME, file_);
+				long sectionContentOffset = sectionIndex_.getAbsoluteOffsetForSectionContent(TextSection.SECTION_NAME);
 				textSectionReader_ = new TextSectionReader(file_, decoder, sectionAttributes, sectionContentOffset);
 			}
 			
@@ -261,8 +241,28 @@ public class Yes2Reader implements BibleReader {
 			}
 			
 			if (pericopesSection_ == null) { // not yet loaded!
+				ValueMap sectionAttributes = sectionIndex_.getSectionAttributes(PericopesSection.SECTION_NAME, file_);
+				long sectionContentOffset = sectionIndex_.getAbsoluteOffsetForSectionContent(PericopesSection.SECTION_NAME);
+				
+				RandomInputStream sectionInput = null;
+				if (sectionAttributes != null) {
+					String compressionName = sectionAttributes.getString("compression.name");
+					if (compressionName != null) {
+						if ("snappy-blocks".equals(compressionName)) {
+							sectionInput = SnappyInputStream.getInstanceFromAttributes(file_, sectionAttributes, sectionContentOffset);
+						} else {
+							throw new Exception("Compression " + compressionName + " is not supported");
+						}
+					}
+				}
+				
+				// no compression detected
+				if (sectionInput == null) {
+					sectionInput = file_;
+				}
+				
 				if (seekToSection(PericopesSection.SECTION_NAME)) {
-					pericopesSection_ = new PericopesSection.Reader().read(file_);
+					pericopesSection_ = new PericopesSection.Reader().read(sectionInput);
 				} else {
 					return 0;
 				}
