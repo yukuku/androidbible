@@ -15,12 +15,13 @@ public class SnappyInputStream extends InputStream {
 	private final int block_size;
 	private final int[] compressed_block_sizes;
 	private final int[] compressed_block_offsets;
-	private int current_block_index;
-	private int current_block_skip;
+	private int current_block_index = 0;
+	private int current_block_skip = 0;
 	private byte[] compressed_buf;
 	private int uncompressed_block_index = -1;
 	private byte[] uncompressed_buf;
-	private int uncompressed_len;
+	private int uncompressed_len = -1; // -1 means not initialized
+
 
 	public SnappyInputStream(RandomInputStream file, long baseOffset, int block_size, int[] compressed_block_sizes, int[] compressed_block_offsets) {
 		this.block_size = block_size;
@@ -35,6 +36,8 @@ public class SnappyInputStream extends InputStream {
 		if (uncompressed_buf == null || uncompressed_buf.length != block_size) {
 			uncompressed_buf = new byte[block_size];
 		}
+		
+		prepareBuffer();
 	}
 
 	public void seek(int offset) throws IOException {
@@ -67,6 +70,10 @@ public class SnappyInputStream extends InputStream {
 	}
 
 	@Override public int read() throws IOException {
+		if (uncompressed_len == -1) {
+			prepareBuffer();
+		}
+		
 		int can_read = uncompressed_len - current_block_skip;
 		if (can_read == 0) {
 			if (current_block_index >= compressed_block_sizes.length) {
@@ -84,6 +91,10 @@ public class SnappyInputStream extends InputStream {
 	}
 
 	@Override public int read(byte[] buffer, int offset, int length) throws IOException {
+		if (uncompressed_len == -1) {
+			prepareBuffer();
+		}
+		
 		int res = 0;
 		int want_read = length; 
 		
