@@ -2,7 +2,6 @@ package yuku.alkitabconverter.yes_common;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
@@ -10,16 +9,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import yuku.alkitab.yes2.Yes2Writer;
+import yuku.alkitab.yes2.compress.SnappyOutputStream;
+import yuku.alkitab.yes2.io.MemoryRandomAccessFile;
 import yuku.alkitab.yes2.io.RandomOutputStream;
+import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitab.yes2.model.Yes2Book;
 import yuku.alkitab.yes2.section.BooksInfoSection;
+import yuku.alkitab.yes2.section.PericopesSection;
 import yuku.alkitab.yes2.section.VersionInfoSection;
 import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.TextDb.VerseState;
 import yuku.bintex.BintexWriter;
 import yuku.bintex.ValueMap;
-import yuku.snappy.codec.Snappy;
 
 public class Yes2Common {
 	public static final String TAG = Yes2Common.class.getSimpleName();
@@ -94,17 +96,21 @@ public class Yes2Common {
 		return res;
 	}
 
-	// TODO support for pericopes
-	public static void createYesFile(final File outputFile, final VersionInfo versionInfo, final TextDb textDb, boolean compressed) throws Exception {
-		VersionInfoSection versionInfoSection = getVersionInfoSection(versionInfo, textDb, false);
+	public static void createYesFile(final File outputFile, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed) throws Exception {
+		VersionInfoSection versionInfoSection = getVersionInfoSection(versionInfo, textDb, pericopeData != null);
 		BooksInfoSection booksInfoSection = getBooksInfoSection(versionInfo, textDb);
 		
 		Yes2Writer yesWriter = new Yes2Writer();
 		yesWriter.sections.add(versionInfoSection);
 		yesWriter.sections.add(booksInfoSection);
-		yesWriter.sections.add(new LazyText(textDb, compressed));
+		if (pericopeData != null) {
+			yesWriter.sections.add(new CompressiblePericopesSection(pericopeData, compressed));
+		}
+		yesWriter.sections.add(new CompressibleLazyText(textDb, compressed));
 		
-		RandomOutputStream output = new RandomOutputStream(new RandomAccessFile(outputFile, "rw")); //$NON-NLS-1$
+		RandomAccessFile raf = new RandomAccessFile(outputFile, "rw"); //$NON-NLS-1$
+		raf.setLength(0);
+		RandomOutputStream output = new RandomOutputStream(raf);
 		yesWriter.writeToFile(output);
 		
 		output.close();
@@ -139,7 +145,7 @@ public class Yes2Common {
 	 *	- varuint length_in_bytes
 	 *  - byte[length_in_bytes] encoded_text
 	 */
-	static class LazyText extends SectionContent implements SectionContent.Writer {
+	static class CompressibleLazyText extends SectionContent implements SectionContent.Writer {
 		private final TextDb textDb;
 		private final boolean compressed;
 		private final int COMPRESS_BLOCK_SIZE = 32768; 
@@ -147,7 +153,7 @@ public class Yes2Common {
 		private int[] compressed_block_sizes;
 		private ByteArrayOutputStream toOutput = new ByteArrayOutputStream();
 		
-		public LazyText(TextDb textDb, boolean compressed) {
+		public CompressibleLazyText(TextDb textDb, boolean compressed) {
 			super("text");
 			this.textDb = textDb;
 			this.compressed = compressed;
@@ -169,14 +175,14 @@ public class Yes2Common {
 		}
 		
 		@SuppressWarnings("resource") private void processNow() {
-			Compressor compressor = null;
+			SnappyOutputStream snappyOutputStream = null;
 			
 			final BintexWriter bw;
 			if (!this.compressed) {
 				bw = new BintexWriter(toOutput);
 			} else {
-				compressor = new Compressor(toOutput);
-				bw = new BintexWriter(compressor);
+				snappyOutputStream = new SnappyOutputStream(toOutput, COMPRESS_BLOCK_SIZE);
+				bw = new BintexWriter(snappyOutputStream);
 			}
 			
 			textDb.processEach(new TextDb.TextProcessor() {
@@ -190,10 +196,10 @@ public class Yes2Common {
 				}
 			});
 			
-			if (compressor != null) {
+			if (snappyOutputStream != null) {
 				try {
-					compressor.flush();
-					compressed_block_sizes = compressor.getCompressedBlockSizes();
+					snappyOutputStream.flush();
+					compressed_block_sizes = snappyOutputStream.getCompressedBlockSizes();
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
@@ -203,72 +209,67 @@ public class Yes2Common {
 		@Override public void write(RandomOutputStream output) throws Exception {
 			toOutput.writeTo(output);
 		}
+	}
 
-		public class Compressor extends FilterOutputStream {
-			public final String TAG = Compressor.class.getSimpleName();
+	static class CompressiblePericopesSection extends PericopesSection implements SectionContent.Writer {
+		private final boolean compressed;
+		private final int COMPRESS_BLOCK_SIZE = 32768; 
+		
+		private int[] compressed_block_sizes;
+		private ByteArrayOutputStream compressedOutput = new ByteArrayOutputStream();
+		
+		public CompressiblePericopesSection(PericopeData pericopeData, boolean compressed) {
+			super(pericopeData);
+			this.compressed = compressed;
 			
-			private Snappy s;
-			private byte[] uncompressed = new byte[COMPRESS_BLOCK_SIZE];
-			private byte[] compressed;
-			private int uncompressed_offset;
-			private List<Integer> compressed_block_sizes = new ArrayList<>(); 
-
-			public Compressor(OutputStream out) {
-				super(out);
-				this.s = new Snappy.Factory().newInstance();
-				this.compressed = new byte[s.maxCompressedLength(uncompressed.length)];
+			processNow();
+		}
+		
+		@Override public ValueMap getAttributes() {
+			ValueMap res = new ValueMap();
+			if (compressed) {
+				ValueMap compressionInfo = new ValueMap();
+				compressionInfo.put("block_size", COMPRESS_BLOCK_SIZE);
+				compressionInfo.put("compressed_block_sizes", compressed_block_sizes);
+				res.put("compression.name", "snappy-blocks");
+				res.put("compression.version", 1);
+				res.put("compression.info", compressionInfo);
 			}
-
-			@Override public void write(int b) throws IOException {
-				if (uncompressed_offset >= uncompressed.length) {
-					dump();
+			return res;
+		}
+		
+		private void processNow() {
+			MemoryRandomAccessFile mem = null;
+			try {
+				mem = new MemoryRandomAccessFile();
+				super.write(new RandomOutputStream(mem));
+				
+				SnappyOutputStream snappyOutputStream = null;
+				final OutputStream os;
+				if (!this.compressed) {
+					os = compressedOutput;
+				} else {
+					os = snappyOutputStream = new SnappyOutputStream(compressedOutput, COMPRESS_BLOCK_SIZE);
 				}
 				
-				uncompressed[uncompressed_offset++] = (byte) b;
-			}
-			
-			@Override public void write(byte[] b, int off, int len) throws IOException {
-				int remaining = len;
-				int src_off = off;
-				
-				while (remaining > 0) {
-					int can_write = uncompressed.length - uncompressed_offset;
-					int will_write = Math.min(remaining, can_write);
-					
-					System.arraycopy(b, src_off, uncompressed, uncompressed_offset, will_write);
-					uncompressed_offset += will_write;
-					src_off += will_write;
-					remaining -= will_write;
-					
-					if (uncompressed_offset >= uncompressed.length) {
-						dump();
+				os.write(mem.getBuffer(), mem.getBufferOffset(), mem.getBufferLength());
+				if (snappyOutputStream != null) {
+					snappyOutputStream.flush();
+					try {
+						snappyOutputStream.flush();
+						compressed_block_sizes = snappyOutputStream.getCompressedBlockSizes();
+					} catch (IOException e) {
+						throw new RuntimeException(e);
 					}
 				}
-				
-				assert src_off == off + len;
+			} catch (Exception e) {
+				throw new RuntimeException(e);
 			}
-			
-			private void dump() throws IOException {
-				if (uncompressed_offset > 0) {
-					int compressed_len = s.compress(uncompressed, 0, compressed, 0, uncompressed_offset);
-					out.write(compressed, 0, compressed_len);
-					compressed_block_sizes.add(compressed_len);
-					uncompressed_offset = 0;
-				}
-			}
-			
-			@Override public void flush() throws IOException {
-				dump();
-				out.flush();
-			}
-			
-			public int[] getCompressedBlockSizes() {
-				int[] res = new int[compressed_block_sizes.size()];
-				for (int i = 0; i < res.length; i++) {
-					res[i] = compressed_block_sizes.get(i);
-				}
-				return res;
-			}
+		}
+
+		@Override public void write(RandomOutputStream output) throws Exception {
+			// DO NOT CALL SUPER!
+			compressedOutput.writeTo(output);
 		}
 	}
 }

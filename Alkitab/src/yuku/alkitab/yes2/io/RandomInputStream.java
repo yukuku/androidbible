@@ -38,4 +38,8 @@ public class RandomInputStream extends InputStream {
 	@Override public void close() throws IOException {
 		f.close();
 	}
+
+	public RandomAccessFile getFile() {
+		return f;
+	}
 }
