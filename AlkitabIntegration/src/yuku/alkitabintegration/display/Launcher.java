@@ -48,6 +48,7 @@ public class Launcher {
 	public static Intent openAppAtBibleLocation(int ari) {
 		Intent res = new Intent("yuku.alkitab.action.VIEW");
 		res.putExtra("ari", ari);
+		res.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
 		return res;
 	}
 	
@@ -64,6 +65,7 @@ public class Launcher {
 		+ context.getPackageName());
 		Intent res = new Intent(Intent.ACTION_VIEW);
 		res.setData(uri);
+		res.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
 		return res;
 	}
 }
