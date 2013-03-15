@@ -3,10 +3,11 @@
 	<menu renungan="true" gebug="false" edisi="true" bantuan="true" donasi="false" songs="true" />
 	<edisi>
 		<internal locale="in" shortName="TB"      longName="Terjemahan Baru" prefix="tb" />
+		<preset locale="in"   shortName="TL"      longName="Terjemahan Lama" namafile_preset="in-tl.yes" url="http://alkitab-host.appspot.com/addon/yes2/in-tl--1.yes.gz" />
 		<preset locale="in"   shortName="BIS"     longName="Bahasa Indonesia Sehari-hari" namafile_preset="bis.yes" url="http://alkitab-host.appspot.com/addon/yes/bis.yes.gz" />
-		<preset locale="bbc"                      longName="Batak Toba" namafile_preset="toba.yes" url="http://alkitab-host.appspot.com/addon/yes/toba.yes.gz" />
-		<preset locale="jw"   shortName="JAWA"    longName="Jawa (1981)" namafile_preset="jv-jawa.yes" url="http://alkitab-host.appspot.com/addon/yes2/jv-jawa--1.yes.gz" />
-		<preset locale="su"   shortName="SUNDA"   longName="Sunda (1991)" namafile_preset="su-sunda.yes" url="http://alkitab-host.appspot.com/addon/yes2/su-sunda--1.yes.gz" />
+		<preset locale="jw"   shortName="JAWA"    longName="Jawa" namafile_preset="jv-jawa.yes" url="http://alkitab-host.appspot.com/addon/yes2/jv-jawa--1.yes.gz" />
+		<preset locale="su"   shortName="SUNDA"   longName="Sunda" namafile_preset="su-sunda.yes" url="http://alkitab-host.appspot.com/addon/yes2/su-sunda--1.yes.gz" />
+		<preset locale="bbc"  shortName="TOBA"    longName="Batak Toba" namafile_preset="toba.yes" url="http://alkitab-host.appspot.com/addon/yes/toba.yes.gz" />
 		<preset locale="af"   shortName="AF1953"  longName="Afrikaans Die Bybel (1953)" namafile_preset="af-1953.yes" url="http://alkitab-host.appspot.com/addon/yes/af-1953/af-1953.yes.gz" />
 		<preset locale="de"                       longName="Lutherbibel (1912)" namafile_preset="de-luther1912.yes" url="http://alkitab-host.appspot.com/addon/yes/de-luther1912/de-luther1912.yes.gz" />
 		<preset locale="el"                       longName="Byzantine/Majority Text (2000)" namafile_preset="el-byzantine.yes" url="http://alkitab-host.appspot.com/addon/yes/el-byzantine/el-byzantine.yes.gz" />
