@@ -14,13 +14,21 @@ import yuku.alkitabconverter.yet.YetFileInput.YetFileInputResult;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
-public class YetToYes {
+public class YetToYes2 {
 	@Parameter private List<String> params = new ArrayList<String>();
-
+	@Parameter(names = "--help", help = true, description = "Show this help") private boolean help = false;
+	@Parameter(names = "--no-compress", description = "Disable compression on the resultant yes file") private boolean nocompress = false;
+	
 	public static void main(String[] args) throws Exception {
-		YetToYes main = new YetToYes();
-		new JCommander(main, args);
+		YetToYes2 main = new YetToYes2();
+		JCommander jc = new JCommander(main, args);
 
+		if (main.help) {
+			jc.setProgramName("java -jar YetToYes2.jar");
+			jc.usage();
+			System.exit(0);
+		}
+		
 		int retval = main.main();
 		System.exit(retval);
 	}
@@ -90,11 +98,8 @@ public class YetToYes {
 			textDb.append(rec.book_1 - 1, rec.chapter_1, rec.verse_1, rec.text, -1);
 		}
 		
-		// TODO
-		boolean compressed = true;
+		boolean compressed = !nocompress;
 		Yes2Common.createYesFile(new File(yesfile), versionInfo, textDb, result.pericopeData, compressed); 
-
-		// TODO pericopes
 		
 		return 0;
 	}
