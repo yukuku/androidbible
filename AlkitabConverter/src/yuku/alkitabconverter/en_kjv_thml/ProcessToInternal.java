@@ -7,7 +7,7 @@ import yuku.alkitabconverter.bdb.BdbProses;
 import yuku.alkitabconverter.internal_common.InternalCommon;
 import yuku.alkitabconverter.internal_common.ReverseIndexer;
 import yuku.alkitabconverter.util.Rec;
-import yuku.alkitabconverter.util.TeksDb;
+import yuku.alkitabconverter.util.TextDb;
 
 public class ProcessToInternal {
 	
@@ -18,7 +18,7 @@ public class ProcessToInternal {
 	public static void main(String[] args) throws Exception {
 		ArrayList<Rec> recs = new BdbProses().parse(INPUT_TEKS_1, INPUT_TEKS_ENCODING);
 		
-		TeksDb teksDb = new TeksDb();
+		TextDb teksDb = new TextDb();
 		for (Rec rec: recs) {
 			teksDb.append(rec.book_1 - 1, rec.chapter_1, rec.verse_1, rec.text, 0);
 		}

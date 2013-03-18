@@ -411,7 +411,7 @@ public class IsiActivity extends BaseActivity {
 		for (MVersionPreset preset: c.presets) { // 2. preset
 			if (preset.getVersionId().equals(lastVersion)) {
 				if (preset.hasDataFile()) {
-					loadVersion(preset);
+					loadVersion(preset, false);
 				} else { 
 					return; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
 				}
@@ -423,7 +423,7 @@ public class IsiActivity extends BaseActivity {
 		for (MVersionYes yes: yeses) {
 			if (yes.getVersionId().equals(lastVersion)) {
 				if (yes.hasDataFile()) {
-					loadVersion(yes);
+					loadVersion(yes, false);
 				} else { 
 					return; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
 				}
@@ -431,7 +431,7 @@ public class IsiActivity extends BaseActivity {
 		}
 	}
 	
-	protected void loadVersion(final MVersion mv) {
+	protected void loadVersion(final MVersion mv, boolean display) {
 		// for rollback
 		Version oldActiveVersion = S.activeVersion;
 		String oldActiveVersionId = S.activeVersionId;
@@ -453,7 +453,9 @@ public class IsiActivity extends BaseActivity {
 					S.activeBook = S.activeVersion.getFirstBook(); // too bad, it was not found
 				}
 				
-				display(chapter_1, getVerseBasedOnScroll(), false);
+				if (display) {
+					display(chapter_1, getVerseBasedOnScroll(), false);
+				}
 			} else {
 				new AlertDialog.Builder(IsiActivity.this)
 				.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()))
@@ -1151,7 +1153,7 @@ public class IsiActivity extends BaseActivity {
 			@Override public void onClick(DialogInterface dialog, int which) {
 				final MVersion mv = data.get(which);
 				
-				loadVersion(mv);
+				loadVersion(mv, true);
 				dialog.dismiss();
 			}
 		})
@@ -1316,7 +1318,12 @@ public class IsiActivity extends BaseActivity {
 			if (position == -1) {
 				Log.w(TAG, "could not find verse=" + verse_1 + ", weird!"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				lsText.setSelectionFromTop(position, lsText.getVerticalFadingEdgeLength());
+				// need to use post(), otherwise sometimes list is not scrolled.
+				lsText.post(new Runnable() {
+					@Override public void run() {
+						lsText.setSelectionFromTop(position, lsText.getVerticalFadingEdgeLength());
+					}
+				});
 			}
 		}
 		

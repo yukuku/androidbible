@@ -16,8 +16,8 @@ import yuku.alkitab.yes1.Yes1File.PerikopIndex;
 import yuku.alkitab.yes1.Yes1File.Teks;
 import yuku.alkitabconverter.util.Rec;
 
-public class YesCommon {
-	public static final String TAG = YesCommon.class.getSimpleName();
+public class Yes1Common {
+	public static final String TAG = Yes1Common.class.getSimpleName();
 
 	public final static Charset ascii = Charset.forName("ascii");
 

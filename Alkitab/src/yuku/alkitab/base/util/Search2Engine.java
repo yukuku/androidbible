@@ -39,23 +39,23 @@ public class Search2Engine {
 	public static final String TAG = Search2Engine.class.getSimpleName();
 
 	public static class Query implements Parcelable {
-		public String carian;
-		public SparseBooleanArray xkitabPos;
+		public String query_string;
+		public SparseBooleanArray bookIds;
 		
 		@Override public int describeContents() {
 			return 0;
 		}
 		
 		@Override public void writeToParcel(Parcel dest, int flags) {
-			dest.writeString(carian);
-			dest.writeSparseBooleanArray(xkitabPos);
+			dest.writeString(query_string);
+			dest.writeSparseBooleanArray(bookIds);
 		}
 
 		public static final Parcelable.Creator<Query> CREATOR = new Parcelable.Creator<Query>() {
 			@Override public Query createFromParcel(Parcel in) {
 				Query res = new Query();
-				res.carian = in.readString();
-				res.xkitabPos = in.readSparseBooleanArray();
+				res.query_string = in.readString();
+				res.bookIds = in.readSparseBooleanArray();
 				return res;
 			}
 
@@ -75,10 +75,10 @@ public class Search2Engine {
 	private static Semaphore revIndexLoading = new Semaphore(1);
 	
 	public static IntArrayList searchByGrep(Query query) {
-		String[] xkata = QueryTokenizer.tokenize(query.carian);
+		String[] words = QueryTokenizer.tokenize(query.query_string);
 		
 		// urutkan berdasarkan panjang, lalu abjad
-		Arrays.sort(xkata, new Comparator<String>() {
+		Arrays.sort(words, new Comparator<String>() {
 			@Override
 			public int compare(String object1, String object2) {
 				int len1 = object1.length();
@@ -94,55 +94,53 @@ public class Search2Engine {
 		
 		// buang ganda
 		{
-			ArrayList<String> akata = new ArrayList<String>();
-			String terakhir = null;
-			for (String kata: xkata) {
-				if (!kata.equals(terakhir)) {
-					akata.add(kata);
+			ArrayList<String> awords = new ArrayList<String>();
+			String last = null;
+			for (String word: words) {
+				if (!word.equals(last)) {
+					awords.add(word);
 				}
-				terakhir = kata;
+				last = word;
 			}
-			xkata = akata.toArray(new String[akata.size()]);
-			Log.d(TAG, "xkata = " + Arrays.toString(xkata)); //$NON-NLS-1$
+			words = awords.toArray(new String[awords.size()]);
+			if (D.EBUG) Log.d(TAG, "words = " + Arrays.toString(words)); //$NON-NLS-1$
 		}
 		
-		// cari betulan
-		IntArrayList hasil = null;
+		// really search
+		IntArrayList result = null;
 		
 		{
 			int index = 0;
 			
 			while (true) {
-				if (index >= xkata.length) {
+				if (index >= words.length) {
 					break;
 				}
 				
-				String kata = xkata[index];
+				String word = words[index];
 				
-				//Debug.startMethodTracing();
-				IntArrayList lama = hasil;
+				IntArrayList prev = result;
 	
 				{
 					long ms = System.currentTimeMillis();
-					hasil = searchByGrepInside(kata, lama, query.xkitabPos);
-					Log.d(TAG, "cari kata '" + kata + "' pake waktu: " + (System.currentTimeMillis() - ms) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					result = searchByGrepInside(word, prev, query.bookIds);
+					Log.d(TAG, "search word '" + word + "' needed: " + (System.currentTimeMillis() - ms) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 	
-				if (lama != null) {
-					Log.d(TAG, "Akan mengiris " + lama.size() + " elemen dengan " + hasil.size() + " elemen..."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					hasil = iris(lama, hasil);
-					Log.d(TAG, "... hasilnya " + hasil.size() + " elemen");  //$NON-NLS-1$//$NON-NLS-2$
+				if (prev != null) {
+					Log.d(TAG, "Will intersect " + prev.size() + " elements with " + result.size() + " elements..."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					result = intersect(prev, result);
+					Log.d(TAG, "... the result is " + result.size() + " elements");  //$NON-NLS-1$//$NON-NLS-2$
 				}
-				//Debug.stopMethodTracing();
 				
 				index++;
 			}
 		}
 		
-		return hasil;
+		return result;
 	}
 
-	private static IntArrayList iris(IntArrayList a, IntArrayList b) {
+	private static IntArrayList intersect(IntArrayList a, IntArrayList b) {
 		IntArrayList res = new IntArrayList(a.size());
 		
 		int[] aa = a.buffer();
@@ -181,22 +179,22 @@ public class Search2Engine {
 	 * Keluarkan ari (kitab pasal saja) berikutnya setelah ariKpTerakhir dengan ngesken sumber mulai pos.
 	 * @param ppos pointer ke pos. pos akan berubah jadi SATU SETELAH POSISI KETEMU. Jadi jangan ++ lagi di luar sini.
 	 */
-	private static int ariBerikutnya(IntArrayList sumber, int[] ppos, int ariKpTerakhir) {
-		int[] s = sumber.buffer();
-		int len = sumber.size();
+	private static int nextAri(IntArrayList source, int[] ppos, int lastAriBc) {
+		int[] s = source.buffer();
+		int len = source.size();
 		int pos = ppos[0];
 		
 		while (true) {
 			if (pos >= len) return 0x0;
 			
-			int ariIni = s[pos];
-			int ariKpIni = Ari.toBookChapter(ariIni);
+			int curAri = s[pos];
+			int curAriBc = Ari.toBookChapter(curAri);
 			
-			if (ariKpIni != ariKpTerakhir) {
+			if (curAriBc != lastAriBc) {
 				// ketemu!
 				pos++;
 				ppos[0] = pos;
-				return ariKpIni;
+				return curAriBc;
 			} else {
 				// masih sama, maju.
 				pos++;
@@ -204,99 +202,99 @@ public class Search2Engine {
 		}
 	}
 
-	static IntArrayList searchByGrepInside(String kata, IntArrayList sumber, SparseBooleanArray xkitabPos) {
+	static IntArrayList searchByGrepInside(String word, IntArrayList source, SparseBooleanArray bookIds) {
 		IntArrayList res = new IntArrayList();
 		boolean pakeTambah = false;
 		
-		if (QueryTokenizer.isPlussedToken(kata)) {
+		if (QueryTokenizer.isPlussedToken(word)) {
 			pakeTambah = true;
-			kata = QueryTokenizer.tokenWithoutPlus(kata);
+			word = QueryTokenizer.tokenWithoutPlus(word);
 		}
 	
-		if (sumber == null) {
-			for (Book k: S.activeVersion.getConsecutiveBooks()) {
-				if (xkitabPos.get(k.bookId, false) == false) {
+		if (source == null) {
+			for (Book book: S.activeVersion.getConsecutiveBooks()) {
+				if (bookIds.get(book.bookId, false) == false) {
 					continue; // ga termasuk dalam kitab yang dipilih
 				}
 				
-				int npasal = k.chapter_count;
+				int chapter_count = book.chapter_count;
 				
-				for (int pasal_1 = 1; pasal_1 <= npasal; pasal_1++) {
+				for (int chapter_1 = 1; chapter_1 <= chapter_count; chapter_1++) {
 					// coba sepasal sekaligus dulu.
-					String sepasal = S.loadChapterTextLowercasedWithoutSplit(S.activeVersion, k, pasal_1);
-					if (sepasal.indexOf(kata) >= 0) {
-						// hanya lakukan ini jika dalam sepasal kedetek ada kata
-						searchByGrepInChapter(sepasal, kata, res, Ari.encode(k.bookId, pasal_1, 0), pakeTambah);
+					String oneChapter = S.loadChapterTextLowercasedWithoutSplit(S.activeVersion, book, chapter_1);
+					if (oneChapter.indexOf(word) >= 0) {
+						// hanya lakukan ini jika dalam sepasal kedetek ada word
+						searchByGrepInChapter(oneChapter, word, res, Ari.encode(book.bookId, chapter_1, 0), pakeTambah);
 					}
 				}
 	
-				if (D.EBUG) Log.d(TAG, "cariDalam kitab " + k.shortName + " selesai. res.size = " + res.size()); //$NON-NLS-1$ //$NON-NLS-2$
+				if (D.EBUG) Log.d(TAG, "searchByGrepInside book " + book.shortName + " done. res.size = " + res.size()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else {
-			// cari hanya pada kp (kitab pasal) yang ada di sumber.
-			int hitung = 0; // buat statistik aja
+			// search only on book-chapters that are in the source
+			int count = 0; // for stats
 			
 			int[] ppos = new int[1];
-			int ariKpKini = 0x000000;
+			int curAriBc = 0x000000;
 			
 			while (true) {
-				ariKpKini = ariBerikutnya(sumber, ppos, ariKpKini);
-				if (ariKpKini == 0) break; // habis
+				curAriBc = nextAri(source, ppos, curAriBc);
+				if (curAriBc == 0) break; // habis
 				
 				// ga usa cek kitab null, karena masuk sini hanya kalau udah pernah search token sebelumnya
 				// yang berdasarkan getConsecutiveXkitab yang ga mungkin ada nullnya.
-				Book k = S.activeVersion.getBook(Ari.toBook(ariKpKini));
-				int pasal_1 = Ari.toChapter(ariKpKini);
+				Book book = S.activeVersion.getBook(Ari.toBook(curAriBc));
+				int chapter_1 = Ari.toChapter(curAriBc);
 				
-				String sepasal = S.loadChapterTextLowercasedWithoutSplit(S.activeVersion, k, pasal_1);
-				if (sepasal.indexOf(kata) >= 0) {
-					// hanya lakukan ini jika dalam sepasal kedetek ada kata
-					searchByGrepInChapter(sepasal, kata, res, ariKpKini, pakeTambah);
+				String oneChapter = S.loadChapterTextLowercasedWithoutSplit(S.activeVersion, book, chapter_1);
+				if (oneChapter.indexOf(word) >= 0) {
+					// hanya lakukan ini jika dalam sepasal kedetek ada word
+					searchByGrepInChapter(oneChapter, word, res, curAriBc, pakeTambah);
 				}
 				
-				hitung++;
+				count++;
 			}
 			
-			Log.d(TAG, "cariDalam kitab dengan sumber " + sumber.size() + " perlu baca kp sebanyak " + hitung + " res.size=" + res.size()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (D.EBUG) Log.d(TAG, "searchByGrepInside book with source " + source.size() + " needed to read as many as " + count + " book-chapter. res.size=" + res.size()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		
 		return res;
 	}
 
-	private static void searchByGrepInChapter(String sepasal, String kata, IntArrayList res, int base, boolean pakeTambah) {
-		int a = 0;
-		int aterakhir = -1;
+	private static void searchByGrepInChapter(String oneChapter, String word, IntArrayList res, int base, boolean hasPlus) {
+		int verse_0 = 0;
+		int lastV = -1;
 		
-		int posKata;
-		if (pakeTambah) {
-			posKata = indexOfWholeWord(sepasal, kata, 0);
-			if (posKata == -1) {
+		int posWord;
+		if (hasPlus) {
+			posWord = indexOfWholeWord(oneChapter, word, 0);
+			if (posWord == -1) {
 				return;
 			}
 		} else {
-			posKata = sepasal.indexOf(kata);
+			posWord = oneChapter.indexOf(word);
 		}
 		
-		int posN = sepasal.indexOf(0x0a);
+		int posN = oneChapter.indexOf(0x0a);
 		
 		while (true) {
-			if (posN < posKata) {
-				a++;
-				posN = sepasal.indexOf(0x0a, posN+1);
+			if (posN < posWord) {
+				verse_0++;
+				posN = oneChapter.indexOf(0x0a, posN+1);
 				if (posN == -1) {
 					return;
 				}
 			} else {
-				if (a != aterakhir) {
-					res.add(base + a + 1); // +1 supaya jadi ayat_1
-					aterakhir = a;
+				if (verse_0 != lastV) {
+					res.add(base + verse_0 + 1); // +1 to make it verse_1
+					lastV = verse_0;
 				}
-				if (pakeTambah) {
-					posKata = indexOfWholeWord(sepasal, kata, posKata+1);
+				if (hasPlus) {
+					posWord = indexOfWholeWord(oneChapter, word, posWord+1);
 				} else {
-					posKata = sepasal.indexOf(kata, posKata+1);
+					posWord = oneChapter.indexOf(word, posWord+1);
 				}
-				if (posKata == -1) {
+				if (posWord == -1) {
 					return;
 				}
 			}
@@ -326,7 +324,7 @@ public class Search2Engine {
 		List<String> tokens; // this will be: "a" "b" "c" "+d" "+e" "+f"
 		List<String> multiwords = null; // this will be: "a b" "+d e"
 		{
-			Set<String> tokenSet = new LinkedHashSet<String>(Arrays.asList(QueryTokenizer.tokenize(query.carian)));
+			Set<String> tokenSet = new LinkedHashSet<String>(Arrays.asList(QueryTokenizer.tokenize(query.query_string)));
 			Log.d(TAG, "Tokens before retokenization:");
 			for (String token: tokenSet) {
 				Log.d(TAG, "- token: " + token);
@@ -353,15 +351,17 @@ public class Search2Engine {
 				}
 			}
 			
-			Log.d(TAG, "Tokens after retokenization:");
-			for (String token: tokenSet2) {
-				Log.d(TAG, "- token: " + token);
-			}
-			
-			if (multiwords != null) {
-				Log.d(TAG, "Multiwords:");
-				for (String multiword: multiwords) {
-					Log.d(TAG, "- multiword: " + multiword);
+			if (D.EBUG) {
+				Log.d(TAG, "Tokens after retokenization:");
+				for (String token: tokenSet2) {
+					Log.d(TAG, "- token: " + token);
+				}
+				
+				if (multiwords != null) {
+					Log.d(TAG, "Multiwords:");
+					for (String multiword: multiwords) {
+						Log.d(TAG, "- multiword: " + multiword);
+					}
 				}
 			}
 			
@@ -373,11 +373,11 @@ public class Search2Engine {
 		// optimization, if user doesn't filter any books
 		boolean wholeBibleSearched = true;
 		boolean[] searchedBookIds = new boolean[66];
-		if (query.xkitabPos == null) {
+		if (query.bookIds == null) {
 			Arrays.fill(searchedBookIds, true);
 		} else {
 			for (int i = 0; i < 66; i++) {
-				searchedBookIds[i] = query.xkitabPos.get(i, false);
+				searchedBookIds[i] = query.bookIds.get(i, false);
 				if (searchedBookIds[i] == false) {
 					wholeBibleSearched = false;
 				}
@@ -515,6 +515,31 @@ public class Search2Engine {
 		}.start();
 	}
 	
+	/**
+	 * Revindex: an index used for searching quickly.
+	 * The index is keyed on the word for searching, and the value is the list of verses' lid (KJV verse number, 1..31102).
+	 * 
+	 * Format of the Revindex file:
+	 *   int total_word_count
+	 *   {
+	 *      uint8 word_len
+	 *      int word_by_len_count // the number of words having length of word_len
+	 *      {
+	 *          byte[word_len] word // the word itself, stored as 8-bit per character
+	 *          uint16 lid_count // the number of verses having this word
+	 *          byte[] verse_list // see below
+	 *      }[word_by_len_count]
+	 *   }[] // until total_word_count is taken
+	 *   
+	 * The verses in verse_list are stored in either 8bit or 16bit, depending on the difference to the last entry before the current entry.
+	 * The first entry on the list is always 16 bit.
+	 * If one verse is specified in 16 bits, the 15-bit LSB is the verse lid itself (max 32767, although 31102 is the real max)
+	 * in binary: 1xxxxxxx xxxxxxxx where x is the absolute verse lid as 15 bit uint.
+	 * If one verse is specified in 8 bits, the 7-bit LSB is the difference between this verse and the last verse.
+	 * in binary: 0ddddddd where d is the relative verse lid as 7 bit uint.
+	 * For example, if a word is located at lids [0xff, 0x100, 0x300, 0x305], the stored data in the disk will be 
+	 * in bytes: 0x80, 0xff, 0x01, 0x83, 0x00, 0x05.
+	 */
 	private static RevIndex loadRevIndex() {
 		if (cache_revIndex != null) {
 			RevIndex res = cache_revIndex.get();
@@ -576,24 +601,24 @@ public class Search2Engine {
 	}
 
 	/**
-	 * case sensitive! pastikan s dan xkata sudah dilowercase sebelum masuk sini.
+	 * case sensitive! pastikan s dan words sudah dilowercase sebelum masuk sini.
 	 */
-	public static boolean memenuhiCarian(String s, String[] xkata) {
-		for (String kata: xkata) {
-			boolean pakeTambah = false;
+	public static boolean satisfiesQuery(String s, String[] words) {
+		for (String word: words) {
+			boolean hasPlus = false;
 			
-			if (QueryTokenizer.isPlussedToken(kata)) {
-				pakeTambah = true;
-				kata = QueryTokenizer.tokenWithoutPlus(kata);
+			if (QueryTokenizer.isPlussedToken(word)) {
+				hasPlus = true;
+				word = QueryTokenizer.tokenWithoutPlus(word);
 			}
 			
-			int posKata;
-			if (pakeTambah) {
-				posKata = indexOfWholeWord(s, kata, 0);
+			int wordPos;
+			if (hasPlus) {
+				wordPos = indexOfWholeWord(s, word, 0);
 			} else {
-				posKata = s.indexOf(kata);
+				wordPos = s.indexOf(word);
 			}
-			if (posKata == -1) {
+			if (wordPos == -1) {
 				return false;
 			}
 		}
@@ -605,7 +630,6 @@ public class Search2Engine {
 		
 		while (true) {
 			int pos = text.indexOf(word, start);
-			//Log.d(TAG, "pos=" + pos + " untuk " + kata + " pada: " + sepasal);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 			if (pos == -1) return -1;
 			
 			// pos bukan -1
@@ -636,60 +660,60 @@ public class Search2Engine {
 		}
 	}
 
-	public static SpannableStringBuilder hilite(String s, String[] xkata, int warnaHilite) {
+	public static SpannableStringBuilder hilite(String s, String[] words, int warnaHilite) {
 		SpannableStringBuilder res = new SpannableStringBuilder(s);
 		
-		if (xkata == null) {
+		if (words == null) {
 			return res;
 		}
 		
-		int nkata = xkata.length;
-		boolean[] xpakeTambah = new boolean[nkata];
+		int word_count = words.length;
+		boolean[] hasPlusses = new boolean[word_count];
 		{ // point to copy
-			String[] xkata2 = new String[nkata];
-			System.arraycopy(xkata, 0, xkata2, 0, nkata);
-			for (int i = 0; i < nkata; i++) {
-				if (QueryTokenizer.isPlussedToken(xkata2[i])) {
-					xkata2[i] = QueryTokenizer.tokenWithoutPlus(xkata2[i]);
-					xpakeTambah[i] = true;
+			String[] words2 = new String[word_count];
+			System.arraycopy(words, 0, words2, 0, word_count);
+			for (int i = 0; i < word_count; i++) {
+				if (QueryTokenizer.isPlussedToken(words2[i])) {
+					words2[i] = QueryTokenizer.tokenWithoutPlus(words2[i]);
+					hasPlusses[i] = true;
 				}
 			}
-			xkata = xkata2;
+			words = words2;
 		}
 		
 		s = s.toLowerCase(Locale.getDefault());
 		
 		int pos = 0;
-		int[] coba = new int[nkata];
+		int[] attempt = new int[word_count];
 		
 		while (true) {
-			for (int i = 0; i < nkata; i++) {
-				if (xpakeTambah[i]) {
-					coba[i] = indexOfWholeWord(s, xkata[i], pos);
+			for (int i = 0; i < word_count; i++) {
+				if (hasPlusses[i]) {
+					attempt[i] = indexOfWholeWord(s, words[i], pos);
 				} else {
-					coba[i] = s.indexOf(xkata[i], pos);
+					attempt[i] = s.indexOf(words[i], pos);
 				}
 			}
 			
 			int minpos = Integer.MAX_VALUE;
-			int minkata = -1;
+			int minword = -1;
 			
-			for (int i = 0; i < nkata; i++) {
-				if (coba[i] >= 0) { // bukan -1 yang berarti ga ketemu
-					if (coba[i] < minpos) {
-						minpos = coba[i];
-						minkata = i;
+			for (int i = 0; i < word_count; i++) {
+				if (attempt[i] >= 0) { // bukan -1 yang berarti ga ketemu
+					if (attempt[i] < minpos) {
+						minpos = attempt[i];
+						minword = i;
 					}
 				}
 			}
 			
-			if (minkata == -1) {
+			if (minword == -1) {
 				break; // ga ada lagi
 			}
 			
-			pos = minpos + xkata[minkata].length();
+			pos = minpos + words[minword].length();
 			
-			int kepos = minpos + xkata[minkata].length();
+			int kepos = minpos + words[minword].length();
 			res.setSpan(new StyleSpan(Typeface.BOLD), minpos, kepos, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 			res.setSpan(new ForegroundColorSpan(warnaHilite), minpos, kepos, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 		}

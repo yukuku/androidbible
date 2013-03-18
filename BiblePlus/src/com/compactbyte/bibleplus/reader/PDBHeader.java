@@ -25,7 +25,7 @@ import java.io.*;
 /**
  * Represents PDBHeader
  */
-class PDBHeader {
+public class PDBHeader {
 	/* 78 bytes total */
 	// char name[ dmDBNameLength ]; /*0*/
 	private byte[] _name;

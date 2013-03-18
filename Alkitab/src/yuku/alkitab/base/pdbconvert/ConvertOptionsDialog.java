@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import yuku.afw.App;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 
@@ -49,13 +50,36 @@ public class ConvertOptionsDialog {
 		void onPdbReadError(Throwable e);
 	}
 	
+	public static class PdbKnownErrorException extends Exception {
+		public PdbKnownErrorException(BiblePlusPDB pdb) {
+			super(constructExceptionString(pdb));
+		}
+
+		static String constructExceptionString(BiblePlusPDB pdb) {
+			int reason = pdb.getFailReason();
+			if (reason == BiblePlusPDB.ERR_NOT_BIBLE_PLUS_FILE) {
+				String type = pdb.getHeader().getType();
+				String creator = pdb.getHeader().getCreator();
+				return App.context.getString(R.string.pdb_error_not_palmbible, type, creator); 
+			} else if (reason == BiblePlusPDB.ERR_FILE_CORRUPTED) {
+				return App.context.getString(R.string.pdb_error_corrupted);
+			} else if (reason == BiblePlusPDB.ERR_NOT_PDB_FILE) {
+				return App.context.getString(R.string.pdb_error_not_pdb_file);
+			}
+			return null;
+		}
+	}
+	
 	public ConvertOptionsDialog(Context context, String filenamepdb, ConvertOptionsCallback callback) {
 		this.context = context;
 		this.callback = callback;
 		
 		try {
 			pdb = new BiblePlusPDB(new PDBFileStream(filenamepdb), Tabs.hebrewTab, Tabs.greekTab);
-			pdb.loadVersionInfo();
+			boolean versionInfoOk = pdb.loadVersionInfo();
+			if (versionInfoOk == false) {
+				throw new PdbKnownErrorException(pdb);
+			}
 			pdb.loadWordIndex();
 			pdb.getBookCount();
 			

@@ -13,6 +13,8 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import java.util.HashMap;
+
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.R;
@@ -180,7 +182,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 		
 		@Override public View newView(int position, ViewGroup parent) {
 			TextView res = new TextView(getActivity());
-			res.setLayoutParams(new GridView.LayoutParams((int)(64.f * density), (int)(40 * density)));
+			res.setLayoutParams(new GridView.LayoutParams(getResources().getDimensionPixelSize(R.dimen.goto_grid_cell_width), getResources().getDimensionPixelSize(R.dimen.goto_grid_cell_height)));
 			res.setGravity(Gravity.CENTER);
 			res.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
 			return res;
@@ -203,6 +205,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 		final int[] numberedBookMap;
 		final String[] numberedBookStartsWiths = {null, "I", "II", "III", "IV", "V"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		final String[] numberedBookReplaceWiths = {null, "1", "2", "3", "4", "5"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		final HashMap<String, String> hardcodedAbbrs = new HashMap<String, String>();
 		
 		public BookAdapter() {
 			// for these book numbers, replace "I", "II", "III", "IV", "V" with numbers 
@@ -219,6 +222,32 @@ public class GotoGridFragment extends BaseGotoFragment {
 			for (int bookId: numberedBooks_3) numberedBookMap[bookId] = 3;
 			for (int bookId: numberedBooks_4) numberedBookMap[bookId] = 4;
 			for (int bookId: numberedBooks_5) numberedBookMap[bookId] = 5;
+			
+			hardcodedAbbrs.put("Filemon", "Flm");
+			hardcodedAbbrs.put("Amos", "Amos");
+			hardcodedAbbrs.put("Ayub", "Ayub");
+			hardcodedAbbrs.put("Yoel", "Yoel");
+			hardcodedAbbrs.put("Pengkhotbah", "Pkh");
+			hardcodedAbbrs.put("Wahyu", "Why");
+			hardcodedAbbrs.put("1 Timotius", "1Tim");
+			hardcodedAbbrs.put("2 Timotius", "2Tim");
+			hardcodedAbbrs.put("1 Tesalonika", "1Tes");
+			hardcodedAbbrs.put("2 Tesalonika", "2Tes");
+			hardcodedAbbrs.put("1 Korintus", "1Kor");
+			hardcodedAbbrs.put("2 Korintus", "2Kor");
+			hardcodedAbbrs.put("1 Raja-raja", "1Raj");
+			hardcodedAbbrs.put("2 Raja-raja", "2Raj");
+			hardcodedAbbrs.put("1 Petrus", "1Pet");
+			hardcodedAbbrs.put("2 Petrus", "2Pet");
+			hardcodedAbbrs.put("1 Samuel", "1Sam");
+			hardcodedAbbrs.put("2 Samuel", "2Sam");
+			hardcodedAbbrs.put("1 Yohanes", "1Yoh");
+			hardcodedAbbrs.put("2 Yohanes", "2Yoh");
+			hardcodedAbbrs.put("3 Yohanes", "3Yoh");
+			
+			hardcodedAbbrs.put("Philemon", "Phm");
+			hardcodedAbbrs.put("Philippians", "Phil");
+			hardcodedAbbrs.put("Song of Solomon", "Song");
 		}
 		
 		@Override public int getCount() {
@@ -232,6 +261,13 @@ public class GotoGridFragment extends BaseGotoFragment {
 		@Override CharSequence textForView(int position) {
 			Book book = getItem(position);
 			String title = book.shortName;
+			
+			{
+				String hardcodedAbbr = hardcodedAbbrs.get(title);
+				if (hardcodedAbbr != null) {
+					return hardcodedAbbr;
+				}
+			}
 			
 			// remove spaces and '.'
 			if (book.shortName.indexOf(' ') != -1) {

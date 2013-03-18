@@ -209,13 +209,13 @@ public class Search2Activity extends BaseActivity {
 			
 			if (query != null) {
 				if (!useSearchView()) {
-					searchBar.setText(query.carian);
+					searchBar.setText(query.query_string);
 				} else {
-					api11_compat.setSearchViewQuery(query.carian);
+					api11_compat.setSearchViewQuery(query.query_string);
 				}
 				
 				if (hasilCari != null) {
-					String[] xkata = QueryTokenizer.tokenize(query.carian);
+					String[] xkata = QueryTokenizer.tokenize(query.query_string);
 					lsHasilCari.setAdapter(new Search2Adapter(hasilCari, xkata));
 				}
 			}
@@ -224,8 +224,8 @@ public class Search2Activity extends BaseActivity {
 				for (Book k: S.activeVersion.getConsecutiveBooks()) {
 					xkitabPosTerpilih.put(k.bookId, true);
 				}
-			} else if (query.xkitabPos != null) {
-				xkitabPosTerpilih = query.xkitabPos;
+			} else if (query.bookIds != null) {
+				xkitabPosTerpilih = query.bookIds;
 			}
 			
 			aturTampilanFilterLamaBaru();
@@ -387,11 +387,11 @@ public class Search2Activity extends BaseActivity {
 	protected Query getQuery() {
 		Query res = new Query();
 		if (!useSearchView()) {
-			res.carian = searchBar.getText().toString();
+			res.query_string = searchBar.getText().toString();
 		} else {
-			res.carian = api11_compat.getSearchViewQuery();
+			res.query_string = api11_compat.getSearchViewQuery();
 		}
-		res.xkitabPos = xkitabPosTerpilih;
+		res.bookIds = xkitabPosTerpilih;
 		return res;
 	}
 

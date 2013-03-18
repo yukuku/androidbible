@@ -16,19 +16,19 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 
+import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.yes1.Yes1File;
 import yuku.alkitab.yes1.Yes1File.InfoEdisi;
 import yuku.alkitab.yes1.Yes1File.InfoKitab;
 import yuku.alkitab.yes1.Yes1File.PericopeData;
+import yuku.alkitab.yes1.Yes1File.PericopeData.Entry;
 import yuku.alkitab.yes1.Yes1File.PerikopBlok;
 import yuku.alkitab.yes1.Yes1File.PerikopIndex;
 import yuku.alkitab.yes1.Yes1File.Teks;
-import yuku.alkitab.yes1.Yes1File.PericopeData.Entry;
-import yuku.alkitabconverter.util.Ari;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
-import yuku.alkitabconverter.util.TeksDb;
-import yuku.alkitabconverter.yes_common.YesCommon;
+import yuku.alkitabconverter.util.TextDb;
+import yuku.alkitabconverter.yes_common.Yes1Common;
 
 public class Proses2 {
 	final SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -43,7 +43,7 @@ public class Proses2 {
 	static String INFO_KETERANGAN = "Terjemahan Sederhana Indonesia (TSI) diterbitkan oleh Pioneer Bible Translators. Teks TSI lengkap dengan catatan-catatan kaki dapat dibaca di m.bahasakita.net atau tsi.bahasakita.net. Tim penerjemah memohon Anda menulis masukan, usulan, atau komentar lain halaman di Facebook “tsi sederhana.” Anda boleh pesan buku-buku TSI yang lain melalui e-mail kepada tim.kita@bahasakita.net. Anda bebas juga untuk mencetak kitab-kitab TSI sesuai informasi yang terdapat di http://bahasakita.net.";
 	static String INPUT_TEKS_2 = "./bahan/in-tsi-usfm/mid/"; 
 
-	TeksDb teksDb = new TeksDb();
+	TextDb teksDb = new TextDb();
 	StringBuilder misteri = new StringBuilder();
 	PericopeData pericopeData = new PericopeData();
 	{
@@ -87,11 +87,11 @@ public class Proses2 {
 
 		List<Rec> xrec = teksDb.toRecList();
 		
-		final InfoEdisi infoEdisi = YesCommon.infoEdisi(INFO_NAMA, null, INFO_JUDUL, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES, null);
-		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
-		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
+		final InfoEdisi infoEdisi = Yes1Common.infoEdisi(INFO_NAMA, null, INFO_JUDUL, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES, null);
+		final InfoKitab infoKitab = Yes1Common.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
+		final Teks teks = Yes1Common.teks(xrec, INPUT_TEKS_ENCODING);
 		
-		Yes1File file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(pericopeData), new PerikopIndex(pericopeData));
+		Yes1File file = Yes1Common.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(pericopeData), new PerikopIndex(pericopeData));
 		
 		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
 	}

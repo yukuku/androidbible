@@ -679,7 +679,7 @@ public class BiblePlusPDB {
 	/**
 	 * Get PDB Header
 	 */
-	PDBHeader getHeader() {
+	public PDBHeader getHeader() {
 		return header;
 	}
 

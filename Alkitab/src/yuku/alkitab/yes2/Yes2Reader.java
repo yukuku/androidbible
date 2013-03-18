@@ -11,6 +11,7 @@ import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.BibleReader;
+import yuku.alkitab.yes2.compress.SnappyInputStream;
 import yuku.alkitab.yes2.io.RandomInputStream;
 import yuku.alkitab.yes2.io.Yes2VerseTextDecoder;
 import yuku.alkitab.yes2.model.SectionIndex;
@@ -20,17 +21,18 @@ import yuku.alkitab.yes2.section.PericopesSection;
 import yuku.alkitab.yes2.section.TextSection;
 import yuku.alkitab.yes2.section.VersionInfoSection;
 import yuku.bintex.BintexReader;
+import yuku.bintex.ValueMap;
 
 public class Yes2Reader implements BibleReader {
 	private static final String TAG = Yes2Reader.class.getSimpleName();
 
 	private RandomInputStream file_;
 	private SectionIndex sectionIndex_;
-	private Yes2VerseTextDecoder decoder_;
 
 	// cached in memory
 	private VersionInfoSection versionInfo_;
 	private PericopesSection pericopesSection_;
+	private TextSectionReader textSectionReader_;
 	
 	static class Yes2SingleChapterVerses extends SingleChapterVerses {
 		private final String[] verses;
@@ -45,6 +47,61 @@ public class Yes2Reader implements BibleReader {
 
 		@Override public int getVerseCount() {
 			return verses.length;
+		}
+	}
+	
+	/** 
+	 * This class simplify many operations regarding reading the verse texts from the yes file.
+	 * This stores the offset to the beginning of text section content 
+	 * and also understands the text section attributes (compression, encryption etc.)
+	 */
+	static class TextSectionReader {
+		private final RandomInputStream file_;
+		private final Yes2VerseTextDecoder decoder_;
+		private final long sectionContentOffset_;
+		private BintexReader br_;
+		
+		private SnappyInputStream snappyInputStream;  // null means no compression
+		
+		public TextSectionReader(RandomInputStream file, Yes2VerseTextDecoder decoder, ValueMap sectionAttributes, long sectionContentOffset) throws Exception {
+			file_ = file;
+			decoder_ = decoder;
+			sectionContentOffset_ = sectionContentOffset;
+			br_ = new BintexReader(null);
+			
+			if (sectionAttributes != null) {
+				String compressionName = sectionAttributes.getString("compression.name");
+				if (compressionName != null) {
+					if ("snappy-blocks".equals(compressionName)) {
+						snappyInputStream = SnappyInputStream.getInstanceFromAttributes(file_, sectionAttributes, sectionContentOffset);
+					} else {
+						throw new Exception("Compression " + compressionName + " is not supported");
+					}
+				}
+			}
+		}
+
+		public Yes2SingleChapterVerses loadVerseText(Yes2Book yes2Book, int chapter_1, boolean dontSeparateVerses, boolean lowercase) throws Exception {
+			int contentOffset = yes2Book.offset; 
+			contentOffset += yes2Book.chapter_offsets[chapter_1 - 1];
+			
+			BintexReader br;
+			if (snappyInputStream != null) {
+				snappyInputStream.seek(contentOffset);
+				br = br_.reuse(snappyInputStream);
+			} else {
+				file_.seek(sectionContentOffset_ + contentOffset);
+				br = br_.reuse(file_);
+			}
+
+			int verse_count = yes2Book.verse_counts[chapter_1 - 1];
+			if (dontSeparateVerses) {
+				return new Yes2SingleChapterVerses(new String[] { 
+					decoder_.makeIntoSingleString(br, verse_count, lowercase),
+				});
+			} else {
+				return new Yes2SingleChapterVerses(decoder_.separateIntoVerses(br, verse_count, lowercase));
+			}
 		}
 	}
 	
@@ -146,39 +203,29 @@ public class Yes2Reader implements BibleReader {
 		Yes2Book yes2Book = (Yes2Book) book;
 		
 		try {
-			// init text decoder 
-			if (decoder_ == null) {
-				int textEncoding = versionInfo_.textEncoding;
-				if (textEncoding == 1) {
-					decoder_ = new Yes2VerseTextDecoder.Ascii();
-				} else if (textEncoding == 2) {
-					decoder_ = new Yes2VerseTextDecoder.Utf8();
-				} else {
-					Log.e(TAG, "Text encoding " + textEncoding + " not supported! Fallback to ascii."); //$NON-NLS-1$ //$NON-NLS-2$
-					decoder_ = new Yes2VerseTextDecoder.Ascii();
-				}
-			}
-			
 			if (chapter_1 <= 0 || chapter_1 > yes2Book.chapter_count) {
 				return null;
 			}
 
-			long seekTo = sectionIndex_.getAbsoluteOffsetForSectionContent(TextSection.SECTION_NAME);
-			seekTo += yes2Book.offset;
-			seekTo += yes2Book.chapter_offsets[chapter_1 - 1];
-			file_.seek(seekTo);
-
-			int verse_count = yes2Book.verse_counts[chapter_1 - 1];
-			
-			BintexReader br = new BintexReader(file_);
-
-			if (dontSeparateVerses) {
-				return new Yes2SingleChapterVerses(new String[] { 
-					decoder_.makeIntoSingleString(br, verse_count, lowercase),
-				});
-			} else {
-				return new Yes2SingleChapterVerses(decoder_.separateIntoVerses(br, verse_count, lowercase));
+			if (textSectionReader_ == null) {
+				// init text decoder 
+				Yes2VerseTextDecoder decoder;
+				int textEncoding = versionInfo_.textEncoding;
+				if (textEncoding == 1) {
+					decoder = new Yes2VerseTextDecoder.Ascii();
+				} else if (textEncoding == 2) {
+					decoder = new Yes2VerseTextDecoder.Utf8();
+				} else {
+					Log.e(TAG, "Text encoding " + textEncoding + " not supported! Fallback to ascii."); //$NON-NLS-1$ //$NON-NLS-2$
+					decoder = new Yes2VerseTextDecoder.Ascii();
+				}
+				
+				ValueMap sectionAttributes = sectionIndex_.getSectionAttributes(TextSection.SECTION_NAME, file_);
+				long sectionContentOffset = sectionIndex_.getAbsoluteOffsetForSectionContent(TextSection.SECTION_NAME);
+				textSectionReader_ = new TextSectionReader(file_, decoder, sectionAttributes, sectionContentOffset);
 			}
+			
+			return textSectionReader_.loadVerseText(yes2Book, chapter_1, dontSeparateVerses, lowercase);
 		} catch (Exception e) {
 			Log.e(TAG, "loadVerseText error", e); //$NON-NLS-1$
 			return null;
@@ -194,8 +241,28 @@ public class Yes2Reader implements BibleReader {
 			}
 			
 			if (pericopesSection_ == null) { // not yet loaded!
+				ValueMap sectionAttributes = sectionIndex_.getSectionAttributes(PericopesSection.SECTION_NAME, file_);
+				long sectionContentOffset = sectionIndex_.getAbsoluteOffsetForSectionContent(PericopesSection.SECTION_NAME);
+				
+				RandomInputStream sectionInput = null;
+				if (sectionAttributes != null) {
+					String compressionName = sectionAttributes.getString("compression.name");
+					if (compressionName != null) {
+						if ("snappy-blocks".equals(compressionName)) {
+							sectionInput = SnappyInputStream.getInstanceFromAttributes(file_, sectionAttributes, sectionContentOffset);
+						} else {
+							throw new Exception("Compression " + compressionName + " is not supported");
+						}
+					}
+				}
+				
+				// no compression detected
+				if (sectionInput == null) {
+					sectionInput = file_;
+				}
+				
 				if (seekToSection(PericopesSection.SECTION_NAME)) {
-					pericopesSection_ = new PericopesSection.Reader().read(file_);
+					pericopesSection_ = new PericopesSection.Reader().read(sectionInput);
 				} else {
 					return 0;
 				}

@@ -18,7 +18,7 @@ import yuku.alkitab.yes1.Yes1File.PericopeData.Block;
 import yuku.alkitab.yes1.Yes1File.PericopeData.Entry;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
-import yuku.alkitabconverter.yes_common.YesCommon;
+import yuku.alkitabconverter.yes_common.Yes1Common;
 
 public class Proses1 {
 	public static final String TAG = Proses1.class.getSimpleName();
@@ -89,13 +89,13 @@ public class Proses1 {
 
 		////////// PROSES KE YES
 
-		final InfoEdisi infoEdisi = YesCommon.infoEdisi("ro-cornilescu", null, "Cornilescu", RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, "Biblia sau Sfânta Scriptură a Vechiului şi Noului Testament - Traducerea: Dumitru Cornilescu, 1921", INPUT_TEKS_ENCODING_YES, null);
-		final InfoKitab infoKitab = YesCommon.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
-		final Teks teks = YesCommon.teks(xrec, INPUT_TEKS_ENCODING);
+		final InfoEdisi infoEdisi = Yes1Common.infoEdisi("ro-cornilescu", null, "Cornilescu", RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, "Biblia sau Sfânta Scriptură a Vechiului şi Noului Testament - Traducerea: Dumitru Cornilescu, 1921", INPUT_TEKS_ENCODING_YES, null);
+		final InfoKitab infoKitab = Yes1Common.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
+		final Teks teks = Yes1Common.teks(xrec, INPUT_TEKS_ENCODING);
 		final PerikopBlok perikopBlok = new PerikopBlok(pericopeData);
 		final PerikopIndex perikopIndex = new PerikopIndex(pericopeData);
 		
-		Yes1File file = YesCommon.bikinYesFile(infoEdisi, infoKitab, teks, perikopBlok, perikopIndex);
+		Yes1File file = Yes1Common.bikinYesFile(infoEdisi, infoKitab, teks, perikopBlok, perikopIndex);
 		
 		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
 	}
