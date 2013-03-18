@@ -293,8 +293,11 @@ public class VersesView extends ListView {
 		if (position == -1) {
 			Log.w(TAG, "could not find verse=" + verse_1 + ", weird!"); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
-			// TODO use smooth scroll?
-			setSelectionFromTop(position, getVerticalFadingEdgeLength());
+			post(new Runnable() {
+				@Override public void run() {
+					setSelectionFromTop(position, getVerticalFadingEdgeLength());
+				}
+			});
 		}
 	}
 
