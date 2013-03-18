@@ -1318,7 +1318,12 @@ public class IsiActivity extends BaseActivity {
 			if (position == -1) {
 				Log.w(TAG, "could not find verse=" + verse_1 + ", weird!"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				lsText.setSelectionFromTop(position, lsText.getVerticalFadingEdgeLength());
+				// need to use post(), otherwise sometimes list is not scrolled.
+				lsText.post(new Runnable() {
+					@Override public void run() {
+						lsText.setSelectionFromTop(position, lsText.getVerticalFadingEdgeLength());
+					}
+				});
 			}
 		}
 		
