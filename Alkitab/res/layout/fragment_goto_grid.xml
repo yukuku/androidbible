@@ -8,9 +8,9 @@
         android:id="@+id/gridBook"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:columnWidth="64dp"
-        android:numColumns="auto_fit" >
-    </GridView>
+        android:columnWidth="@dimen/goto_grid_cell_width"
+        android:listSelector="@drawable/goto_grid_selector"
+        android:numColumns="auto_fit" />
 
     <LinearLayout
         android:id="@+id/panelChapterVerse"
@@ -41,7 +41,6 @@
                 android:text="*chap"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 tools:ignore="HardcodedText" />
-
         </LinearLayout>
 
         <FrameLayout
@@ -52,17 +51,17 @@
                 android:id="@+id/gridChapter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:columnWidth="64dp"
-                android:numColumns="auto_fit" >
-            </GridView>
+                android:columnWidth="@dimen/goto_grid_cell_width"
+                android:listSelector="@drawable/goto_grid_selector"
+                android:numColumns="auto_fit" />
 
             <GridView
                 android:id="@+id/gridVerse"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:columnWidth="64dp"
-                android:numColumns="auto_fit" >
-            </GridView>
+                android:columnWidth="@dimen/goto_grid_cell_width"
+                android:listSelector="@drawable/goto_grid_selector"
+                android:numColumns="auto_fit" />
         </FrameLayout>
     </LinearLayout>
 
