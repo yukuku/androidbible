@@ -210,7 +210,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 		
 		@Override public View newView(int position, ViewGroup parent) {
 			TextView res = new TextView(getActivity());
-			res.setLayoutParams(new GridView.LayoutParams((int)(64.f * density), (int)(40 * density)));
+			res.setLayoutParams(new GridView.LayoutParams(getResources().getDimensionPixelSize(R.dimen.goto_grid_cell_width), getResources().getDimensionPixelSize(R.dimen.goto_grid_cell_height)));
 			res.setGravity(Gravity.CENTER);
 			res.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
 			return res;
