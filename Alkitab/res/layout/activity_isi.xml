@@ -7,17 +7,31 @@
     android:baselineAligned="false"
     android:orientation="vertical" >
 
-    <yuku.alkitab.base.widget.VersesView
-        android:id="@+id/lsIsi"
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:orientation="vertical"
+        tools:ignore="NestedWeights" >
+
+        <yuku.alkitab.base.widget.VersesView
+            android:id="@+id/lsSplit0"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <yuku.alkitab.base.widget.VersesView
+            android:id="@+id/lsSplit1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/panelNavigasi"
-        android:background="@drawable/abs__ab_solid_dark_holo"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/abs__action_bar_default_height" >
+        android:layout_height="@dimen/abs__action_bar_default_height"
+        android:background="@drawable/abs__ab_solid_dark_holo" >
 
         <ImageButton
             android:id="@+id/bKiri"

@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -103,6 +104,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private static final String EXTRA_verseUrl = "urlAyat"; //$NON-NLS-1$
 
 	VersesView lsText;
+	VersesView lsSplit1;
 	Button bGoto;
 	ImageButton bLeft;
 	ImageButton bRight;
@@ -156,7 +158,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		
 		setContentView(R.layout.activity_isi);
 		
-		lsText = V.get(this, R.id.lsIsi);
+		lsText = V.get(this, R.id.lsSplit0);
+		lsSplit1 = V.get(this, R.id.lsSplit1);
 		bGoto = V.get(this, R.id.bTuju);
 		bLeft = V.get(this, R.id.bKiri);
 		bRight = V.get(this, R.id.bKanan);
@@ -195,6 +198,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsText.setAttributeListener(attributeListener);
 		lsText.setXrefListener(xrefListener);
 		lsText.setSelectedVersesListener(lsText_selectedVerses);
+		lsText.setOnScrollListener(lsText_scroll);
+		
+		// additional setup for split1
+		lsSplit1.setVerseSelectionMode(VersesView.VerseSelectionMode.singleClick);
 		
 		// muat preferences_instan, dan atur renungan
 		instant_pref = App.getPreferencesInstan();
@@ -566,6 +573,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		{
 			root.setBackgroundColor(S.applied.backgroundColor);
 			lsText.setCacheColorHint(S.applied.backgroundColor);
+			lsSplit1.setCacheColorHint(S.applied.backgroundColor);
 		}
 		
 		if (languageToo) {
@@ -574,6 +582,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		
 		// necessary
 		lsText.invalidateViews();
+		lsSplit1.invalidateViews();
 	}
 	
 	@Override protected void onStop() {
@@ -923,12 +932,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			S.activeVersion.getXrefEntryCounts(xrefEntryCounts, this.activeBook.bookId, chapter_1);
 			
 			boolean retainSelectedVerses = (!uncheckAllVerses && chapter_1 == current_chapter_1);
-			lsText.setDataWithRetainSelectedVerses(retainSelectedVerses, this.activeBook, chapter_1, pericope_aris, pericope_blocks, nblock, verses, xrefEntryCounts);
 			
 			// tell activity
 			this.chapter_1 = chapter_1;
 			
+			lsText.setDataWithRetainSelectedVerses(retainSelectedVerses, this.activeBook, chapter_1, pericope_aris, pericope_blocks, nblock, verses, xrefEntryCounts);
 			lsText.scrollToVerse(verse_1);
+			
+			lsSplit1.setDataWithRetainSelectedVerses(retainSelectedVerses, this.activeBook, chapter_1, pericope_aris, pericope_blocks, nblock, verses, xrefEntryCounts);
+			lsSplit1.scrollToVerse(verse_1);
 		}
 		
 		bGoto.setText(this.activeBook.reference(chapter_1));
@@ -1077,6 +1089,36 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 
 		@Override public void onVerseSingleClick(VersesView v, int verse_1) {}
+	};
+	
+	AbsListView.OnScrollListener lsText_scroll = new AbsListView.OnScrollListener() {
+		@Override public void onScrollStateChanged(AbsListView view, int scrollState) {
+		}
+		
+		@Override public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+			if (visibleItemCount == 0) return;
+			
+			if (view.getChildCount() > 0) {
+				float prop = 0.f;
+				int position = -1;
+				
+				View firstChild = view.getChildAt(0);
+				// if first child is on top, top == fading edge length
+				int bottom = firstChild.getBottom();
+				int remaining = bottom - view.getVerticalFadingEdgeLength();
+				if (remaining >= 0) {
+					position = firstVisibleItem;
+					prop = 1.f - (float) remaining / firstChild.getHeight();
+				} else { // we should have a second child
+					if (view.getChildCount() > 1) {
+						View secondChild = view.getChildAt(1);
+						position = firstVisibleItem + 1;
+						prop = (float) -remaining / secondChild.getHeight();
+					}
+				}
+				Log.d(TAG, "pos=" + position + " prop=" + prop);
+			}
+		}
 	};
 
 	ActionMode.Callback actionMode_callback = new ActionMode.Callback() {
