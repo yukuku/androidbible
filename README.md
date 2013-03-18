@@ -6,8 +6,17 @@ Bible for Android
 - Blog: http://androidbible.blogspot.com
 - Google+: https://plus.google.com/109017775855333478187
 - Mailing list: http://groups.google.com/group/androidbible
-- Official app with Indonesian as default, **Alkitab**: https://play.google.com/store/apps/details?id=yuku.alkitab
-- Official app with English KJV as default, **Quick Bible**: https://play.google.com/store/apps/details?id=yuku.alkitab.kjv
+- Official app with Indonesian as default, "Alkitab": https://play.google.com/store/apps/details?id=yuku.alkitab
+- Official app with English KJV as default, "Quick Bible": https://play.google.com/store/apps/details?id=yuku.alkitab.kjv
+
+Integration with other apps
+---------------------------
+
+If you build an app that refer to the Bible, you can let the user read the Bible either in this app or in your app.
+There is a Android library project `AlkitabIntegration` that you can include in your project, so your app can easily 
+open this Bible app at a specified verse location or get verses from this Bible app and display them in your app.
+
+If you need help integrating it, you can contact me.
 
 Bible translations/versions
 ---------------------------
