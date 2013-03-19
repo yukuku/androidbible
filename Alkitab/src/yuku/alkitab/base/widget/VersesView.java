@@ -11,6 +11,7 @@ import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -23,8 +24,9 @@ import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.util.IntArrayList;
 
-public class VersesView extends ListView {
+public class VersesView extends ListView implements AbsListView.OnScrollListener {
 	public enum VerseSelectionMode {
+		none,
 		multiple,
 		singleClick,
 	}
@@ -44,12 +46,19 @@ public class VersesView extends ListView {
 	public interface XrefListener {
 		void onXrefClick(int ari, int which);
 	}
+	
+	public interface OnVerseScrollListener {
+		void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop);
+	}
 
 	private VerseAdapter adapter;
 	private SelectedVersesListener listener;
 	private VerseSelectionMode verseSelectionMode;
 	private Drawable originalSelector;
-
+	private OnVerseScrollListener onVerseScrollListener;
+	private AbsListView.OnScrollListener userOnScrollListener;
+	private int scrollState = 0;
+	
 	public VersesView(Context context) {
 		super(context);
 		init();
@@ -71,13 +80,19 @@ public class VersesView extends ListView {
 		setAdapter(adapter = new VerseAdapter.Factory().create(getContext()));
 		setOnItemClickListener(itemClick);
 		setVerseSelectionMode(VerseSelectionMode.multiple);
+		
+		super.setOnScrollListener(this);
+	}
+	
+	@Override public final void setOnScrollListener(AbsListView.OnScrollListener l) {
+		userOnScrollListener = l;
 	}
 	
 	@Override public VerseAdapter getAdapter() {
 		return adapter;
 	}
 
-	public void setParallelListener(yuku.alkitab.base.widget.CallbackSpan.OnClickListener parallelListener) {
+	public void setParallelListener(CallbackSpan.OnClickListener parallelListener) {
 		adapter.setParallelListener(parallelListener);
 	}
 
@@ -99,9 +114,16 @@ public class VersesView extends ListView {
 		} else if (mode == VerseSelectionMode.multiple) {
 			setSelector(new ColorDrawable(0x0));
 			setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		} else if (mode == VerseSelectionMode.none) {
+			setSelector(new ColorDrawable(0x0));
+			setChoiceMode(ListView.CHOICE_MODE_NONE);
 		}
 	}
-	
+
+	public void setOnVerseScrollListener(OnVerseScrollListener onVerseScrollListener) {
+		this.onVerseScrollListener = onVerseScrollListener;
+	}
+
 	// TODO external should provide the attribute map into this widget similar to setData(), 
 	// instead of this widget itself accessing persistent data.
 	// When this is done, we do not need to provide Book and chapter_1 as parameters to setData(),
@@ -122,7 +144,6 @@ public class VersesView extends ListView {
 			setSelectionFromTop(position, getVerticalFadingEdgeLength());
 		}
 	}
-
 	
 	/**
 	 * @return 1-based verse
@@ -278,7 +299,7 @@ public class VersesView extends ListView {
 		
 		if (selectedVerses_1 != null) {
 			for (int i = 0, len = selectedVerses_1.size(); i < len; i++) {
-				int pos = adapter.getPositionAbaikanPerikopDariAyat(selectedVerses_1.get(i));
+				int pos = adapter.getPositionIgnoringPericopeFromVerse(selectedVerses_1.get(i));
 				if (pos != -1) {
 					setItemChecked(pos, true);
 				}
@@ -299,8 +320,91 @@ public class VersesView extends ListView {
 			});
 		}
 	}
+	
+	public void scrollToVerse(int verse_1, final float prop) {
+		final int position = adapter.getPositionIgnoringPericopeFromVerse(verse_1);
+		
+		if (position == -1) {
+			Log.w(TAG, "could not find verse=" + verse_1 + ", weird!"); //$NON-NLS-1$ //$NON-NLS-2$
+		} else {
+			post(new Runnable() {
+				@Override public void run() {
+					boolean needMeasure = false;
+					int shifty = getVerticalFadingEdgeLength();
+					int firstPos = getFirstVisiblePosition();
+					if (position >= firstPos) {
+						int lastPos = getLastVisiblePosition();
+						if (position <= lastPos) {
+							// we have this on screen, no need to measure again
+							View child = getChildAt(position - firstPos);
+					        Log.d(TAG, "position " + position + " height = " + child.getHeight());
+							setSelectionFromTop(position, shifty - (int) (prop * child.getHeight()));
+						} else {
+							needMeasure = true;
+						}
+					} else {
+						needMeasure = true;
+					}
+					
+					if (needMeasure) {
+						Log.d(TAG, "ouch we need to measure :(");
+						View convertView = null; // TODO optimize using recycled view
+						View child = adapter.getView(position, convertView, VersesView.this);
+				        child.measure(MeasureSpec.makeMeasureSpec(VersesView.this.getWidth() - VersesView.this.getPaddingLeft() - VersesView.this.getPaddingRight(), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+				        Log.d(TAG, "position " + position + " height = " + child.getMeasuredHeight());
+				        setSelectionFromTop(position, shifty - (int) (prop * child.getMeasuredHeight()));
+					}
+				}
+			});
+		}
+	}
 
 	public void setSelectedVersesListener(SelectedVersesListener listener) {
 		this.listener = listener;
+	}
+
+	@Override public void onScrollStateChanged(AbsListView view, int scrollState) {
+		if (userOnScrollListener != null) userOnScrollListener.onScrollStateChanged(view, scrollState);
+		
+		this.scrollState = scrollState;
+	}
+	
+	@Override public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+		if (userOnScrollListener != null) userOnScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+		
+		if (onVerseScrollListener == null) return;
+		
+		if (view.getChildCount() > 0) {
+			float prop = 0.f;
+			int position = -1;
+			
+			View firstChild = view.getChildAt(0);
+			// if first child is on top, top == fading edge length
+			int bottom = firstChild.getBottom();
+			int remaining = bottom - view.getVerticalFadingEdgeLength();
+			if (remaining >= 0) {
+				position = firstVisibleItem;
+				prop = 1.f - (float) remaining / firstChild.getHeight();
+			} else { // we should have a second child
+				if (view.getChildCount() > 1) {
+					View secondChild = view.getChildAt(1);
+					position = firstVisibleItem + 1;
+					prop = (float) -remaining / secondChild.getHeight();
+				}
+			}
+			
+			int verse_1 = adapter.getVerseOrPericopeFromPosition(position);
+			
+			if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+				Log.d(TAG, "suppressing onversescroll");
+			} else {
+				Log.d(TAG, "onversescroll on " + scrollState);
+				if (verse_1 > 0) {
+					onVerseScrollListener.onVerseScroll(this, false, verse_1, prop);
+				} else {
+					onVerseScrollListener.onVerseScroll(this, true, 0, 0);
+				}
+			}
+		}
 	}
 }

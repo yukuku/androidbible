@@ -24,7 +24,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -198,10 +197,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsText.setAttributeListener(attributeListener);
 		lsText.setXrefListener(xrefListener);
 		lsText.setSelectedVersesListener(lsText_selectedVerses);
-		lsText.setOnScrollListener(lsText_scroll);
+		lsText.setOnVerseScrollListener(lsText_verseScroll);
 		
 		// additional setup for split1
-		lsSplit1.setVerseSelectionMode(VersesView.VerseSelectionMode.singleClick);
+		lsSplit1.setVerseSelectionMode(VersesView.VerseSelectionMode.none);
+		lsSplit1.setOnVerseScrollListener(lsSplit1_verseScroll);
 		
 		// muat preferences_instan, dan atur renungan
 		instant_pref = App.getPreferencesInstan();
@@ -1091,36 +1091,22 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		@Override public void onVerseSingleClick(VersesView v, int verse_1) {}
 	};
 	
-	AbsListView.OnScrollListener lsText_scroll = new AbsListView.OnScrollListener() {
-		@Override public void onScrollStateChanged(AbsListView view, int scrollState) {
-		}
-		
-		@Override public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-			if (visibleItemCount == 0) return;
-			
-			if (view.getChildCount() > 0) {
-				float prop = 0.f;
-				int position = -1;
-				
-				View firstChild = view.getChildAt(0);
-				// if first child is on top, top == fading edge length
-				int bottom = firstChild.getBottom();
-				int remaining = bottom - view.getVerticalFadingEdgeLength();
-				if (remaining >= 0) {
-					position = firstVisibleItem;
-					prop = 1.f - (float) remaining / firstChild.getHeight();
-				} else { // we should have a second child
-					if (view.getChildCount() > 1) {
-						View secondChild = view.getChildAt(1);
-						position = firstVisibleItem + 1;
-						prop = (float) -remaining / secondChild.getHeight();
-					}
-				}
-				Log.d(TAG, "pos=" + position + " prop=" + prop);
+	VersesView.OnVerseScrollListener lsText_verseScroll = new VersesView.OnVerseScrollListener() {
+		@Override public void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop) {
+			if (!isPericope) {
+				lsSplit1.scrollToVerse(verse_1, prop);
 			}
 		}
 	};
-
+	
+	VersesView.OnVerseScrollListener lsSplit1_verseScroll = new VersesView.OnVerseScrollListener() {
+		@Override public void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop) {
+			if (!isPericope) {
+				lsText.scrollToVerse(verse_1, prop);
+			}
+		}
+	};
+	
 	ActionMode.Callback actionMode_callback = new ActionMode.Callback() {
 		@Override public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 			mode.getMenuInflater().inflate(R.menu.context_isi, menu);

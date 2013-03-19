@@ -208,52 +208,70 @@ public abstract class VerseAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Kalau pos 0: perikop; pos 1: ayat_1 1;
-	 * maka fungsi ini (ayat_1: 1) akan return 1.
+	 * Let's say pos 0 is pericope and pos 1 is verse_1 1;
+	 * then this method called with verse_1=1 returns 1.
 	 * 
-	 * @return position di adapter ini atau -1 kalo ga ketemu
+	 * @return position or -1 if not found
 	 */
-	public int getPositionAbaikanPerikopDariAyat(int ayat_1) {
+	public int getPositionIgnoringPericopeFromVerse(int verse_1) {
 		if (itemPointer_ == null) return -1;
 
-		int ayat_0 = ayat_1 - 1;
+		int verse_0 = verse_1 - 1;
 
 		for (int i = 0, len = itemPointer_.length; i < len; i++) {
-			if (itemPointer_[i] == ayat_0) return i;
+			if (itemPointer_[i] == verse_0) return i;
 		}
 
 		return -1;
 	}
 
 	/**
-	 * @return ayat (mulai dari 1). atau 0 kalo ga masuk akal
+	 * @return verse_1 or 0 if doesn't make sense
 	 */
 	public int getVerseFromPosition(int position) {
 		if (itemPointer_ == null) return 0;
-
+		
 		if (position >= itemPointer_.length) {
 			position = itemPointer_.length - 1;
+		}
+		
+		int id = itemPointer_[position];
+		
+		if (id >= 0) {
+			return id + 1;
+		}
+		
+		// perikop nih. Susuri sampe abis
+		for (int i = position + 1; i < itemPointer_.length; i++) {
+			id = itemPointer_[i];
+			
+			if (id >= 0) {
+				return id + 1;
+			}
+		}
+		
+		Log.w(TAG, "masa judul perikop di paling bawah? Ga masuk akal."); //$NON-NLS-1$
+		return 0;
+	}
+	
+	/**
+	 * Similar to {@link #getVerseFromPosition(int)}, but returns 0 if the specified position is a pericope or doesn't make sense.
+	 */
+	public int getVerseOrPericopeFromPosition(int position) {
+		if (itemPointer_ == null) return 0;
+
+		if (position < 0 || position >= itemPointer_.length) {
+			return 0;
 		}
 
 		int id = itemPointer_[position];
 
 		if (id >= 0) {
 			return id + 1;
+		} else {
+			return 0;
 		}
-
-		// perikop nih. Susuri sampe abis
-		for (int i = position + 1; i < itemPointer_.length; i++) {
-			id = itemPointer_[i];
-
-			if (id >= 0) {
-				return id + 1;
-			}
-		}
-
-		Log.w(TAG, "masa judul perikop di paling bawah? Ga masuk akal."); //$NON-NLS-1$
-		return 0;
 	}
-
 
 	public String getVerse(int verse_1) {
 		if (verses_ == null) return "[?]"; //$NON-NLS-1$
