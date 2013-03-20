@@ -126,8 +126,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	// temporary states
 	Boolean hasEsvsbAsal;
 	Version activeSplitVersion;
-	String activeSplitVersionId;
-	Book activeSplitBook;
 	
 	CallbackSpan.OnClickListener parallelListener = new CallbackSpan.OnClickListener() {
 		@Override public void onClick(View widget, Object data) {
@@ -452,31 +450,24 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 	
-	void loadSplitVersion(final MVersion mv, boolean display) {
-		// for rollback
-		Version oldActiveVersion = activeSplitVersion;
-		String oldActiveVersionId = activeSplitVersionId;
-		
-		boolean success = false;
+	boolean loadSplitVersion(final MVersion mv) {
 		try {
 			Version version = mv.getVersion();
 			
 			if (version != null) {
 				activeSplitVersion = version;
-				activeSplitVersionId = mv.getVersionId();
 				
-				if (display) {
-					display(chapter_1, lsText.getVerseBasedOnScroll(), false);
-				}
+				return true;
+			} else {
+				throw new RuntimeException(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()));
 			}
-			success = true;
 		} catch (Throwable e) { // so we don't crash on the beginning of the app
-			Log.e(TAG, "failed in loadVersion", e);  //$NON-NLS-1$
-		} finally {
-			if (!success) {
-				activeSplitVersion = oldActiveVersion;
-				activeSplitVersionId = oldActiveVersionId;
-			}
+			new AlertDialog.Builder(IsiActivity.this)
+			.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()))
+			.setPositiveButton(R.string.ok, null)
+			.show();
+			
+			return false;
 		}
 	}
 	
@@ -857,7 +848,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			@Override public void onClick(DialogInterface dialog, int which) {
 				final MVersion mv = data.get(which);
 				
-				loadSplitVersion(mv, true);
+				boolean ok = loadSplitVersion(mv);
+				if (ok) {
+					displaySplitFollowingMaster();
+				}
+				
 				dialog.dismiss();
 			}
 		})
@@ -972,66 +967,59 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		if (verse_1 < 1) verse_1 = 1;
 		if (verse_1 > this.activeBook.verse_counts[chapter_1 - 1]) verse_1 = this.activeBook.verse_counts[chapter_1 - 1];
 		
-		// loading data no need to use async. // 20100417 updated to not use async, it's not useful.
-		{
-			int[] pericope_aris;
-			PericopeBlock[] pericope_blocks;
-			int nblock;
-			
-			SingleChapterVerses verses = S.activeVersion.loadChapterText(this.activeBook, chapter_1);
-			if (verses == null) {
-				return 0;
-			}
-			
-			//# max is set to 30 (one chapter has max of 30 blocks. Already almost impossible)
-			int max = 30;
-			pericope_aris = new int[max];
-			pericope_blocks = new PericopeBlock[max];
-			nblock = S.activeVersion.loadPericope(this.activeBook.bookId, chapter_1, pericope_aris, pericope_blocks, max); 
-			
-			// load xref
-			int[] xrefEntryCounts = new int[256];
-			S.activeVersion.getXrefEntryCounts(xrefEntryCounts, this.activeBook.bookId, chapter_1);
-			
-			boolean retainSelectedVerses = (!uncheckAllVerses && chapter_1 == current_chapter_1);
+		{ // split0
+			boolean ok = loadChapterToVersesView(lsText, S.activeVersion, this.activeBook, chapter_1, current_chapter_1, uncheckAllVerses);
+			if (!ok) return 0;
 			
 			// tell activity
 			this.chapter_1 = chapter_1;
-			
-			lsText.setDataWithRetainSelectedVerses(retainSelectedVerses, this.activeBook, chapter_1, pericope_aris, pericope_blocks, nblock, verses, xrefEntryCounts);
 			lsText.scrollToVerse(verse_1);
 		}
-			
-		if (activeSplitVersion != null) {
-			int[] pericope_aris;
-			PericopeBlock[] pericope_blocks;
-			int nblock;
-			
-			activeSplitBook = activeSplitVersion.getBook(this.activeBook.bookId);
-			SingleChapterVerses verses = activeSplitVersion.loadChapterText(activeSplitBook, chapter_1);
-			if (verses == null) {
-				return 0;
-			}
-			
-			//# max is set to 30 (one chapter has max of 30 blocks. Already almost impossible)
-			int max = 30;
-			pericope_aris = new int[max];
-			pericope_blocks = new PericopeBlock[max];
-			nblock = activeSplitVersion.loadPericope(activeSplitBook.bookId, chapter_1, pericope_aris, pericope_blocks, max); 
-			
-			// load xref
-			int[] xrefEntryCounts = new int[256];
-			activeSplitVersion.getXrefEntryCounts(xrefEntryCounts, activeSplitBook.bookId, chapter_1);
-			
-			boolean retainSelectedVerses = (!uncheckAllVerses && chapter_1 == current_chapter_1);
-			
-			lsSplit1.setDataWithRetainSelectedVerses(retainSelectedVerses, this.activeBook, chapter_1, pericope_aris, pericope_blocks, nblock, verses, xrefEntryCounts);
-			lsSplit1.scrollToVerse(verse_1);
-		}
+		
+		displaySplitFollowingMaster(verse_1);
 		
 		bGoto.setText(this.activeBook.reference(chapter_1));
 		
 		return Ari.encode(0, chapter_1, verse_1);
+	}
+
+	void displaySplitFollowingMaster() {
+		displaySplitFollowingMaster(lsText.getVerseBasedOnScroll());
+	}
+
+	private void displaySplitFollowingMaster(int verse_1) {
+		if (activeSplitVersion != null) { // split1
+			Book splitBook = activeSplitVersion.getBook(this.activeBook.bookId);
+			if (splitBook == null) {
+				// TODO blank it out
+			} else {
+				loadChapterToVersesView(lsSplit1, activeSplitVersion, splitBook, this.chapter_1, this.chapter_1, true);
+				lsSplit1.scrollToVerse(verse_1);
+			}
+		}
+	}
+
+	static boolean loadChapterToVersesView(VersesView versesView, Version version, Book book, int chapter_1, int current_chapter_1, boolean uncheckAllVerses) {
+		SingleChapterVerses verses = version.loadChapterText(book, chapter_1);
+		if (verses == null) {
+			return false;
+		}
+		
+		//# max is set to 30 (one chapter has max of 30 blocks. Already almost impossible)
+		int max = 30;
+		int[] pericope_aris = new int[max];
+		PericopeBlock[] pericope_blocks = new PericopeBlock[max];
+		int nblock = version.loadPericope(book.bookId, chapter_1, pericope_aris, pericope_blocks, max); 
+		
+		// load xref
+		int[] xrefEntryCounts = new int[256];
+		version.getXrefEntryCounts(xrefEntryCounts, book.bookId, chapter_1);
+		
+		boolean retainSelectedVerses = (!uncheckAllVerses && chapter_1 == current_chapter_1);
+		
+		versesView.setDataWithRetainSelectedVerses(retainSelectedVerses, book, chapter_1, pericope_aris, pericope_blocks, nblock, verses, xrefEntryCounts);
+		
+		return true;
 	}
 
 	@Override public boolean onKeyDown(int keyCode, KeyEvent event) {
