@@ -195,6 +195,7 @@
     <string name="pdb_error_corrupted">The PDB file is corrupted.</string>
     <string name="pdb_error_not_pdb_file">The selected file is not a PDB file.</string>
     <string name="menu_split_version">Split version</string>
+    <string name="split_version_none">None</string>
     
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Dialer</string>

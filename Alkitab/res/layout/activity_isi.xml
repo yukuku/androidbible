@@ -8,6 +8,7 @@
     android:orientation="vertical" >
 
     <LinearLayout
+        android:id="@+id/splitRoot"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -17,19 +18,25 @@
         <yuku.alkitab.base.widget.VersesView
             android:id="@+id/lsSplit0"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_height="match_parent" />
 
-        <ImageView
+        <FrameLayout
+            android:id="@+id/splitHandle"
             android:layout_width="match_parent"
-            android:layout_height="4dp"
-            tools:ignore="ContentDescription" />
+            android:layout_height="wrap_content"
+            android:visibility="gone" >
+
+            <yuku.alkitab.base.widget.SplitHandleButton
+                android:id="@+id/splitHandleButton"
+                android:layout_width="match_parent"
+                android:layout_height="12dp"
+                tools:ignore="ContentDescription" />
+        </FrameLayout>
 
         <yuku.alkitab.base.widget.VersesView
             android:id="@+id/lsSplit1"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_height="match_parent" />
     </LinearLayout>
 
     <LinearLayout

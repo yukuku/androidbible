@@ -24,6 +24,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -73,6 +74,7 @@ import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.base.util.Search2Engine.Query;
 import yuku.alkitab.base.widget.CallbackSpan;
+import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.VerseAdapter;
 import yuku.alkitab.base.widget.VersesView;
 
@@ -105,6 +107,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	VersesView lsText;
 	VersesView lsSplit1;
+	View splitRoot;
+	View splitHandle;
+	SplitHandleButton splitHandleButton;
 	Button bGoto;
 	ImageButton bLeft;
 	ImageButton bRight;
@@ -161,6 +166,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		
 		lsText = V.get(this, R.id.lsSplit0);
 		lsSplit1 = V.get(this, R.id.lsSplit1);
+		splitRoot = V.get(this, R.id.splitRoot);
+		splitHandle = V.get(this, R.id.splitHandle);
+		splitHandleButton = V.get(this, R.id.splitHandleButton);
 		bGoto = V.get(this, R.id.bTuju);
 		bLeft = V.get(this, R.id.bKiri);
 		bRight = V.get(this, R.id.bKanan);
@@ -204,6 +212,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		// additional setup for split1
 		lsSplit1.setVerseSelectionMode(VersesView.VerseSelectionMode.none);
 		lsSplit1.setOnVerseScrollListener(lsSplit1_verseScroll);
+		
+		// for splitting
+		splitHandleButton.setListener(splitHandleButton_listener);
 		
 		// muat preferences_instan, dan atur renungan
 		instant_pref = App.getPreferencesInstan();
@@ -842,18 +853,62 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		final List<String> options = versions.first;
 		final List<MVersion> data = versions.second;
 		
+		options.add(0, getString(R.string.split_version_none));
+		data.add(0, null);
+		
 		new AlertDialog.Builder(this)
 		.setTitle(R.string.pilih_edisi)
 		.setItems(options.toArray(new String[options.size()]), new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
 				final MVersion mv = data.get(which);
 				
-				boolean ok = loadSplitVersion(mv);
-				if (ok) {
-					displaySplitFollowingMaster();
+				if (mv == null) { // closing split version
+					activeSplitVersion = null;
+					closeSplit();
+				} else {
+					boolean ok = loadSplitVersion(mv);
+					if (ok) {
+						openSplit();
+						displaySplitFollowingMaster();
+					} else {
+						activeSplitVersion = null;
+						closeSplit();
+					}
 				}
 				
 				dialog.dismiss();
+			}
+			
+			void openSplit() {
+				// measure split handle
+				splitHandle.setVisibility(View.VISIBLE);
+				splitHandle.measure(MeasureSpec.makeMeasureSpec(lsText.getWidth(), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+				int splitHandleHeight = splitHandle.getMeasuredHeight();
+				int totalHeight = splitRoot.getHeight();
+				int masterHeight = totalHeight / 2 - splitHandleHeight / 2;
+				
+				// divide by 2 the screen space
+				{ // master
+					ViewGroup.LayoutParams lp = lsText.getLayoutParams();
+					lp.height = masterHeight;
+					lsText.setLayoutParams(lp);
+				}
+				{ // split
+					lsSplit1.setVisibility(View.VISIBLE);
+					// no need to set height, because it has been set to match_parent, so it takes
+					// the remaining space.
+//					ViewGroup.LayoutParams lp = lsSplit1.getLayoutParams();
+//					lp.height = splitHeight;
+//					lsSplit1.setLayoutParams(lp);
+				}
+			}
+
+			void closeSplit() {
+				splitHandle.setVisibility(View.GONE);
+				lsSplit1.setVisibility(View.GONE);
+				ViewGroup.LayoutParams lp = lsText.getLayoutParams();
+				lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+				lsText.setLayoutParams(lp);
 			}
 		})
 		.setNegativeButton(R.string.cancel, null)
@@ -1322,6 +1377,34 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		@Override public void onDestroyActionMode(ActionMode mode) {
 			actionMode = null;
 			lsText.uncheckAll();
+		}
+	};
+
+	SplitHandleButton.SplitHandleButtonListener splitHandleButton_listener = new SplitHandleButton.SplitHandleButtonListener() {
+		int aboveH;
+		int handleH;
+		int rootH;
+		
+		@Override public void onHandleDragStart() {
+			Log.d(TAG, "start");
+			
+			aboveH = lsText.getHeight();
+			handleH = splitHandle.getHeight();
+			rootH = splitRoot.getHeight();
+		}
+		
+		@Override public void onHandleDragMove(float dySinceLast, float dySinceStart) {
+			Log.d(TAG, "move " + dySinceLast + " " + dySinceStart);
+			
+			int newH = (int) (aboveH + dySinceStart);
+			int maxH = rootH - handleH;
+			ViewGroup.LayoutParams lp = lsText.getLayoutParams();
+			lp.height = newH < 0? 0: newH > maxH? maxH: newH;
+			lsText.setLayoutParams(lp);
+		}
+		
+		@Override public void onHandleDragStop() {
+			Log.d(TAG, "stop");
 		}
 	};
 }
