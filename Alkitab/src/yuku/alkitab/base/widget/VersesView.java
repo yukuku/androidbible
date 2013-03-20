@@ -15,6 +15,9 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.U;
@@ -25,13 +28,40 @@ import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.util.IntArrayList;
 
 public class VersesView extends ListView implements AbsListView.OnScrollListener {
+	public static final String TAG = VersesView.class.getSimpleName();
+	
+	// http://stackoverflow.com/questions/6369491/stop-listview-scroll-animation
+	static class StopListFling {
+
+	    private static Field mFlingEndField = null;
+	    private static Method mFlingEndMethod = null;
+
+	    static {
+	        try {
+	            mFlingEndField = AbsListView.class.getDeclaredField("mFlingRunnable");
+	            mFlingEndField.setAccessible(true);
+	            mFlingEndMethod = mFlingEndField.getType().getDeclaredMethod("endFling");
+	            mFlingEndMethod.setAccessible(true);
+	        } catch (Exception e) {
+	            mFlingEndMethod = null;
+	        }
+	    }
+
+	    public static void stop(ListView list) {
+	        if (mFlingEndMethod != null) {
+	            try {
+	                mFlingEndMethod.invoke(mFlingEndField.get(list));
+	            } catch (Exception e) {
+	            }
+	        }
+	    }
+	}
+
 	public enum VerseSelectionMode {
 		none,
 		multiple,
 		singleClick,
 	}
-
-	public static final String TAG = VersesView.class.getSimpleName();
 	
 	public interface SelectedVersesListener {
 		void onSomeVersesSelected(VersesView v);
@@ -43,8 +73,14 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		void onAttributeClick(Book book, int chapter_1, int verse_1, int kind);
 	}
 
-	public interface XrefListener {
-		void onXrefClick(int ari, int which);
+	public abstract static class XrefListener {
+		public abstract void onXrefClick(VersesView versesView, int ari, int which);
+		
+		private VersesView owner;
+		
+		VersesView getOwner() {
+			return owner;
+		}
 	}
 	
 	public interface OnVerseScrollListener {
@@ -101,6 +137,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	}
 	
 	public void setXrefListener(VersesView.XrefListener xrefListener) {
+		xrefListener.owner = this;
 		adapter.setXrefListener(xrefListener);
 	}
 	
@@ -141,6 +178,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		if (Build.VERSION.SDK_INT >= 8) {
 			Api8.ListView_smoothScrollToPosition(this, position);
 		} else {
+			stopFling();
 			setSelectionFromTop(position, getVerticalFadingEdgeLength());
 		}
 	}
@@ -175,6 +213,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 
 	public void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock, int[] xrefEntryCounts) {
 		adapter.setData(book, chapter_1, verses, pericopeAris, pericopeBlocks, nblock, xrefEntryCounts);
+		stopFling();
 	}
 
 	private OnItemClickListener itemClick = new OnItemClickListener() {
@@ -266,6 +305,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
 			int oldPos = getPositionBasedOnScroll();
 			if (oldPos < adapter.getCount() - 1) {
+				stopFling();
 				setSelectionFromTop(oldPos+1, getVerticalFadingEdgeLength());
 			}
 			return true;
@@ -277,8 +317,10 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 					if (adapter.isEnabled(newPos)) break;
 					newPos--;
 				}
+				stopFling();
 				setSelectionFromTop(newPos, getVerticalFadingEdgeLength());
 			} else {
+				stopFling();
 				setSelectionFromTop(0, getVerticalFadingEdgeLength());
 			}
 			return true;
@@ -315,6 +357,10 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		} else {
 			post(new Runnable() {
 				@Override public void run() {
+					// this may happen async from above, so check first if pos is still valid
+					if (position >= getCount()) return;
+					
+					stopFling();
 					setSelectionFromTop(position, getVerticalFadingEdgeLength());
 				}
 			});
@@ -329,6 +375,9 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		} else {
 			post(new Runnable() {
 				@Override public void run() {
+					// this may happen async from above, so check first if pos is still valid
+					if (position >= getCount()) return;
+					
 					boolean needMeasure = false;
 					int shifty = getVerticalFadingEdgeLength();
 					int firstPos = getFirstVisiblePosition();
@@ -337,6 +386,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 						if (position <= lastPos) {
 							// we have this on screen, no need to measure again
 							View child = getChildAt(position - firstPos);
+							stopFling();
 							setSelectionFromTop(position, shifty - (int) (prop * child.getHeight()));
 						} else {
 							needMeasure = true;
@@ -349,6 +399,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 						View convertView = null; // TODO optimize using recycled view
 						View child = adapter.getView(position, convertView, VersesView.this);
 				        child.measure(MeasureSpec.makeMeasureSpec(VersesView.this.getWidth() - VersesView.this.getPaddingLeft() - VersesView.this.getPaddingRight(), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+						stopFling();
 				        setSelectionFromTop(position, shifty - (int) (prop * child.getMeasuredHeight()));
 					}
 				}
@@ -404,5 +455,9 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 
 	public void setDataEmpty() {
 		adapter.setDataEmpty();
+	}
+	
+	public void stopFling() {
+		StopListFling.stop(this);
 	}
 }

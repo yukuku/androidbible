@@ -428,7 +428,7 @@ public class VerseRenderer {
 			
 			@Override public void onClick(View widget) {
 				if (xrefListener != null) {
-					xrefListener.onXrefClick(ari, which);
+					xrefListener.onXrefClick(xrefListener.getOwner(), ari, which);
 				}
 			}
 		}, sb_start, sb_start+3, 0);

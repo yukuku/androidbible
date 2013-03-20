@@ -213,8 +213,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		
 		// additional setup for split1
 		lsSplit1.setVerseSelectionMode(VersesView.VerseSelectionMode.none);
-		lsSplit1.setOnVerseScrollListener(lsSplit1_verseScroll);
 		lsSplit1.setEmptyView(tSplitEmpty);
+		lsSplit1.setParallelListener(parallelListener);
+		lsSplit1.setAttributeListener(attributeListener);
+		lsSplit1.setXrefListener(xrefListener);
+		lsSplit1.setOnVerseScrollListener(lsSplit1_verseScroll);
 		
 		// for splitting
 		splitHandleButton.setListener(splitHandleButton_listener);
@@ -944,6 +947,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		} else if (requestCode == REQCODE_bookmark) {
 			lsText.loadAttributeMap();
 
+			if (activeSplitVersion != null) {
+				lsSplit1.loadAttributeMap();
+			}
+
 			if (resultCode == RESULT_OK) {
 				int ari = data.getIntExtra(BookmarkActivity.EXTRA_ariTerpilih, 0);
 				if (ari != 0) { // 0 means nothing, because we don't have chapter 0 verse 0
@@ -1183,11 +1190,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		public void onAttributeClick(Book book, int chapter_1, int verse_1, int kind) {
 			if (kind == Db.Bookmark2.kind_bookmark) {
 				final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
-				String alamat = S.activeVersion.reference(ari);
-				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, alamat, ari);
+				String reference = book.reference(chapter_1, verse_1);
+				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, reference, ari);
 				dialog.setListener(new TypeBookmarkDialog.Listener() {
 					@Override public void onOk() {
 						lsText.loadAttributeMap();
+						
+						if (activeSplitVersion != null) {
+							lsSplit1.loadAttributeMap();
+						}
 					}
 				});
 				dialog.show();
@@ -1195,6 +1206,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, book, chapter_1, verse_1, new TypeNoteDialog.RefreshCallback() {
 					@Override public void onDone() {
 						lsText.loadAttributeMap();
+						
+						if (activeSplitVersion != null) {
+							lsSplit1.loadAttributeMap();
+						}
 					}
 				});
 				dialog.show();
@@ -1203,9 +1218,16 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	};
 	
 	VersesView.XrefListener xrefListener = new VersesView.XrefListener() {
-		@Override public void onXrefClick(int ari, int which) {
-			FragmentManager fm = getSupportFragmentManager();
+		@Override public void onXrefClick(VersesView versesView, int ari, int which) {
 			XrefDialog dialog = XrefDialog.newInstance(ari, which);
+			// TODO setSourceVersion here is not restored when dialog is restored
+			if (versesView == lsText) { // use activeVersion
+				dialog.setSourceVersion(S.activeVersion);
+			} else if (versesView == lsSplit1) { // use activeSplitVersion
+				dialog.setSourceVersion(activeSplitVersion);
+			}
+			
+			FragmentManager fm = getSupportFragmentManager();
 			dialog.show(fm, XrefDialog.class.getSimpleName());
 		}
 	};
@@ -1329,6 +1351,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					@Override public void onOk() {
 						lsText.uncheckAll();
 						lsText.loadAttributeMap();
+
+						if (activeSplitVersion != null) {
+							lsSplit1.loadAttributeMap();
+						}
 					}
 				});
 				dialog.show();
@@ -1347,6 +1373,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					@Override public void onDone() {
 						lsText.uncheckAll();
 						lsText.loadAttributeMap();
+						
+						if (activeSplitVersion != null) {
+							lsSplit1.loadAttributeMap();
+						}
 					}
 				});
 				dialog.show();
@@ -1360,6 +1390,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					@Override public void onOk(int warnaRgb) {
 						lsText.uncheckAll();
 						lsText.loadAttributeMap();
+
+						if (activeSplitVersion != null) {
+							lsSplit1.loadAttributeMap();
+						}
 					}
 				}, warnaRgb, reference).bukaDialog();
 				mode.finish();

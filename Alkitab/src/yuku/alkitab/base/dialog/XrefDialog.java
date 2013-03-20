@@ -25,6 +25,7 @@ import yuku.alkitab.base.dialog.base.BaseDialog;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.SingleChapterVerses;
+import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.Base64Mod;
@@ -54,6 +55,7 @@ public class XrefDialog extends BaseDialog {
 	List<String> displayedVerseTexts;
 	List<String> displayedVerseNumberTexts;
 	IntArrayList displayedRealAris;
+	Version sourceVersion = S.activeVersion;
 	
 	public XrefDialog() {
 	}
@@ -85,7 +87,7 @@ public class XrefDialog extends BaseDialog {
 
 		ari_source = getArguments().getInt(EXTRA_ari);
 		int which = getArguments().getInt(EXTRA_which);
-		xrefEntry = S.activeVersion.getXrefEntry(ari_source, which);
+		xrefEntry = sourceVersion.getXrefEntry(ari_source, which);
 	}
 	
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -239,7 +241,7 @@ public class XrefDialog extends BaseDialog {
 		displayedVerseNumberTexts = new ArrayList<String>();
 		displayedRealAris = new IntArrayList();
 
-		int verse_count = S.activeVersion.loadVersesByAriRanges(ranges, displayedRealAris, displayedVerseTexts);
+		int verse_count = sourceVersion.loadVersesByAriRanges(ranges, displayedRealAris, displayedVerseTexts);
 		if (verse_count > 0) {
 			// set up verse number texts
 			for (int i = 0; i < verse_count; i++) {
@@ -262,7 +264,7 @@ public class XrefDialog extends BaseDialog {
 			}
 	
 			int firstAri = displayedRealAris.get(0);
-			Book book = S.activeVersion.getBook(Ari.toBook(firstAri));
+			Book book = sourceVersion.getBook(Ari.toBook(firstAri));
 			int chapter_1 = Ari.toChapter(firstAri);
 			
 			versesView.setData(book, chapter_1, new Verses(), null, null, 0, null); 
@@ -306,5 +308,9 @@ public class XrefDialog extends BaseDialog {
 		}
 		
 		listener.onPlainText(pos, s.length());
+	}
+
+	public void setSourceVersion(Version sourceVersion) {
+		this.sourceVersion = sourceVersion;
 	}
 }
