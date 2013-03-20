@@ -401,4 +401,8 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 			}
 		}
 	}
+
+	public void setDataEmpty() {
+		adapter.setDataEmpty();
+	}
 }

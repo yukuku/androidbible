@@ -106,6 +106,17 @@ public abstract class VerseAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
+	public synchronized void setDataEmpty() {
+		book_ = null;
+		chapter_1_ = 0;
+		verses_ = null;
+		pericopeBlocks_ = null;
+		itemPointer_ = null;
+		xrefEntryCounts_ = null;
+		
+		notifyDataSetChanged();
+	}
+
 	public synchronized void loadAttributeMap() {
 		int[] attributeMap = null;
 		int[] highlightMap = null;

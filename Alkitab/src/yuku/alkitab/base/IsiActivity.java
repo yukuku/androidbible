@@ -107,6 +107,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	VersesView lsText;
 	VersesView lsSplit1;
+	TextView tSplitEmpty;
 	View splitRoot;
 	View splitHandle;
 	SplitHandleButton splitHandleButton;
@@ -166,6 +167,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		
 		lsText = V.get(this, R.id.lsSplit0);
 		lsSplit1 = V.get(this, R.id.lsSplit1);
+		tSplitEmpty = V.get(this, R.id.tSplitEmpty);
 		splitRoot = V.get(this, R.id.splitRoot);
 		splitHandle = V.get(this, R.id.splitHandle);
 		splitHandleButton = V.get(this, R.id.splitHandleButton);
@@ -212,6 +214,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		// additional setup for split1
 		lsSplit1.setVerseSelectionMode(VersesView.VerseSelectionMode.none);
 		lsSplit1.setOnVerseScrollListener(lsSplit1_verseScroll);
+		lsSplit1.setEmptyView(tSplitEmpty);
 		
 		// for splitting
 		splitHandleButton.setListener(splitHandleButton_listener);
@@ -1048,7 +1051,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		if (activeSplitVersion != null) { // split1
 			Book splitBook = activeSplitVersion.getBook(this.activeBook.bookId);
 			if (splitBook == null) {
-				// TODO blank it out
+				tSplitEmpty.setText(getString(R.string.split_version_cant_display_verse, this.activeBook.reference(this.chapter_1), activeSplitVersion.getLongName()));
+				lsSplit1.setDataEmpty();
 			} else {
 				loadChapterToVersesView(lsSplit1, activeSplitVersion, splitBook, this.chapter_1, this.chapter_1, true);
 				lsSplit1.scrollToVerse(verse_1);
@@ -1224,7 +1228,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	
 	VersesView.OnVerseScrollListener lsText_verseScroll = new VersesView.OnVerseScrollListener() {
 		@Override public void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop) {
-			if (!isPericope) {
+			if (!isPericope && activeSplitVersion != null) {
 				lsSplit1.scrollToVerse(verse_1, prop);
 			}
 		}

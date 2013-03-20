@@ -33,10 +33,23 @@
                 tools:ignore="ContentDescription" />
         </FrameLayout>
 
-        <yuku.alkitab.base.widget.VersesView
-            android:id="@+id/lsSplit1"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent" >
+
+            <yuku.alkitab.base.widget.VersesView
+                android:id="@+id/lsSplit1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/tSplitEmpty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                tools:ignore="SelectableText" />
+        </FrameLayout>
     </LinearLayout>
 
     <LinearLayout

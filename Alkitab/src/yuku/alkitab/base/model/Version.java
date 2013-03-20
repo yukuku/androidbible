@@ -33,6 +33,10 @@ public class Version {
 		return internalVersion;
 	}
 
+	public String getLongName() {
+		return bibleReader.getLongName();
+	}
+
 	/**
 	 * Some books can be null. Using this method, the return value indexed will have the same value as the {@link Book#bookId}.
 	 * i.e. return_value[bookId].bookId == bookId.
