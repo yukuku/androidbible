@@ -880,6 +880,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 			
 			void openSplit() {
+				if (splitHandle.getVisibility() == View.VISIBLE) {
+					return; // it's already split, no need to do anything
+				}
+				
 				// measure split handle
 				splitHandle.setVisibility(View.VISIBLE);
 				splitHandle.measure(MeasureSpec.makeMeasureSpec(lsText.getWidth(), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
@@ -888,22 +892,20 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				int masterHeight = totalHeight / 2 - splitHandleHeight / 2;
 				
 				// divide by 2 the screen space
-				{ // master
-					ViewGroup.LayoutParams lp = lsText.getLayoutParams();
-					lp.height = masterHeight;
-					lsText.setLayoutParams(lp);
-				}
-				{ // split
-					lsSplit1.setVisibility(View.VISIBLE);
-					// no need to set height, because it has been set to match_parent, so it takes
-					// the remaining space.
-//					ViewGroup.LayoutParams lp = lsSplit1.getLayoutParams();
-//					lp.height = splitHeight;
-//					lsSplit1.setLayoutParams(lp);
-				}
+				ViewGroup.LayoutParams lp = lsText.getLayoutParams();
+				lp.height = masterHeight;
+				lsText.setLayoutParams(lp);
+
+				// no need to set height, because it has been set to match_parent, so it takes
+				// the remaining space.
+				lsSplit1.setVisibility(View.VISIBLE);
 			}
 
 			void closeSplit() {
+				if (splitHandle.getVisibility() == View.GONE) {
+					return; // it's already not split, no need to do anything
+				}
+				
 				splitHandle.setVisibility(View.GONE);
 				lsSplit1.setVisibility(View.GONE);
 				ViewGroup.LayoutParams lp = lsText.getLayoutParams();
@@ -1223,7 +1225,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	VersesView.OnVerseScrollListener lsText_verseScroll = new VersesView.OnVerseScrollListener() {
 		@Override public void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop) {
 			if (!isPericope) {
-				Log.d(TAG, "verse=" + verse_1 + " prop=" + prop);
 				lsSplit1.scrollToVerse(verse_1, prop);
 			}
 		}

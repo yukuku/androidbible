@@ -337,7 +337,6 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 						if (position <= lastPos) {
 							// we have this on screen, no need to measure again
 							View child = getChildAt(position - firstPos);
-					        Log.d(TAG, "position " + position + " height = " + child.getHeight());
 							setSelectionFromTop(position, shifty - (int) (prop * child.getHeight()));
 						} else {
 							needMeasure = true;
@@ -347,11 +346,9 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 					}
 					
 					if (needMeasure) {
-						Log.d(TAG, "ouch we need to measure :(");
 						View convertView = null; // TODO optimize using recycled view
 						View child = adapter.getView(position, convertView, VersesView.this);
 				        child.measure(MeasureSpec.makeMeasureSpec(VersesView.this.getWidth() - VersesView.this.getPaddingLeft() - VersesView.this.getPaddingRight(), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-				        Log.d(TAG, "position " + position + " height = " + child.getMeasuredHeight());
 				        setSelectionFromTop(position, shifty - (int) (prop * child.getMeasuredHeight()));
 					}
 				}
@@ -395,10 +392,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 			
 			int verse_1 = adapter.getVerseOrPericopeFromPosition(position);
 			
-			if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-				Log.d(TAG, "suppressing onversescroll");
-			} else {
-				Log.d(TAG, "onversescroll on " + scrollState);
+			if (scrollState != AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
 				if (verse_1 > 0) {
 					onVerseScrollListener.onVerseScroll(this, false, verse_1, prop);
 				} else {
