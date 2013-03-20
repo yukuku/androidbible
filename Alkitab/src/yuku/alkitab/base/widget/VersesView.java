@@ -16,7 +16,6 @@ import android.widget.ListView;
 
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.compat.Api8;
 import yuku.alkitab.base.model.Book;
@@ -266,7 +265,7 @@ public class VersesView extends ListView {
 		return false;
 	}
 
-	public void setDataWithRetainSelectedVerses(boolean retainSelectedVerses, int chapter_1, int[] pericope_aris, PericopeBlock[] pericope_blocks, int nblock, SingleChapterVerses verses, int[] xrefEntryCounts) {
+	public void setDataWithRetainSelectedVerses(boolean retainSelectedVerses, Book book, int chapter_1, int[] pericope_aris, PericopeBlock[] pericope_blocks, int nblock, SingleChapterVerses verses, int[] xrefEntryCounts) {
 		IntArrayList selectedVerses_1 = null;
 		if (retainSelectedVerses) {
 			selectedVerses_1 = getSelectedVerses_1();
@@ -274,7 +273,7 @@ public class VersesView extends ListView {
 		
 		//# fill adapter with new data. make sure all checked states are reset
 		uncheckAll();
-		setData(S.activeBook, chapter_1, verses, pericope_aris, pericope_blocks, nblock, xrefEntryCounts);
+		setData(book, chapter_1, verses, pericope_aris, pericope_blocks, nblock, xrefEntryCounts);
 		loadAttributeMap();
 		
 		if (selectedVerses_1 != null) {

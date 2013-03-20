@@ -109,7 +109,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 		super.onActivityCreated(savedInstanceState);
 
 		// check current bookId, chapter, and verse
-		cbBook.setSelection(adapter.getPositionFromBookId(S.activeBook.bookId));
+		cbBook.setSelection(adapter.getPositionFromBookId(bookId));
 		cbBook.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override public void onNothingSelected(AdapterView<?> parent) {}
 

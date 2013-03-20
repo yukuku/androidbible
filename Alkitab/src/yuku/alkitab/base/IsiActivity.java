@@ -108,6 +108,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	ImageButton bRight;
 	View root;
 	
+	Book activeBook;
 	int chapter_1 = 0;
 	SharedPreferences instant_pref;
 	
@@ -221,7 +222,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		{ // load book
 			Book book = S.activeVersion.getBook(lastBook);
 			if (book != null) {
-				S.activeBook = book;
+				this.activeBook = book;
 			}
 		}
 		
@@ -302,7 +303,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				@Override public NdefMessage createNdefMessage(NfcEvent event) {
 					JSONObject obj = new JSONObject();
 					try {
-						obj.put("ari", Ari.encode(S.activeBook.bookId, IsiActivity.this.chapter_1, lsText.getVerseBasedOnScroll())); //$NON-NLS-1$
+						obj.put("ari", Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, lsText.getVerseBasedOnScroll())); //$NON-NLS-1$
 					} catch (JSONException e) { // won't happen
 					}
 					byte[] payload = obj.toString().getBytes();
@@ -385,7 +386,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		for (MVersionPreset preset: c.presets) { // 2. preset
 			if (preset.getVersionId().equals(lastVersion)) {
 				if (preset.hasDataFile()) {
-					loadVersion(preset, false);
+					if (loadVersion(preset, false)) return;
 				} else { 
 					return; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
 				}
@@ -397,7 +398,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		for (MVersionYes yes: yeses) {
 			if (yes.getVersionId().equals(lastVersion)) {
 				if (yes.hasDataFile()) {
-					loadVersion(yes, false);
+					if (loadVersion(yes, false)) return;
 				} else { 
 					return; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
 				}
@@ -405,46 +406,38 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 	
-	protected void loadVersion(final MVersion mv, boolean display) {
-		// for rollback
-		Version oldActiveVersion = S.activeVersion;
-		String oldActiveVersionId = S.activeVersionId;
-		
-		boolean success = false;
+	protected boolean loadVersion(final MVersion mv, boolean display) {
 		try {
 			Version version = mv.getVersion();
 			
 			if (version != null) {
+				if (this.activeBook != null) { // we already have some other version loaded, so make the new version open the same book
+					int bookId = this.activeBook.bookId;
+					Book book = version.getBook(bookId);
+					if (book != null) { // we load the new book succesfully
+						this.activeBook = book;
+					} else { // too bad, this book was not found, get any book
+						this.activeBook = version.getFirstBook();
+					}
+				}
 				S.activeVersion = version;
 				S.activeVersionId = mv.getVersionId();
-				S.prepareBook();
-				
-				Book book = S.activeVersion.getBook(S.activeBook.bookId);
-				if (book != null) {
-					// assign active book with the new one, no need to consider the pos
-					S.activeBook = book;
-				} else {
-					S.activeBook = S.activeVersion.getFirstBook(); // too bad, it was not found
-				}
 				
 				if (display) {
 					display(chapter_1, lsText.getVerseBasedOnScroll(), false);
 				}
+				
+				return true;
 			} else {
-				new AlertDialog.Builder(IsiActivity.this)
-				.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()))
-				.setPositiveButton(R.string.ok, null)
-				.show();
+				throw new RuntimeException(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()));
 			}
-			success = true;
 		} catch (Throwable e) { // so we don't crash on the beginning of the app
-			Log.e(TAG, "failed in loadVersion", e);  //$NON-NLS-1$
-		} finally {
-			if (!success) {
-				S.activeVersion = oldActiveVersion;
-				S.activeVersionId = oldActiveVersionId;
-				S.prepareBook();
-			}
+			new AlertDialog.Builder(IsiActivity.this)
+			.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()))
+			.setPositiveButton(R.string.ok, null)
+			.show();
+			
+			return false;
 		}
 	}
 	
@@ -487,14 +480,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				selected = book;
 			} else {
 				// not avail, just fallback
-				selected = S.activeBook;
+				selected = this.activeBook;
 			}
 		} else {
-			selected = S.activeBook;
+			selected = this.activeBook;
 		}
 		
 		// set book
-		S.activeBook = selected;
+		this.activeBook = selected;
 		
 		int chapter = jumper.getChapter();
 		int verse = jumper.getVerse();
@@ -520,7 +513,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		Book book = S.activeVersion.getBook(bookId);
 		
 		if (book != null) {
-			S.activeBook = book;
+			this.activeBook = book;
 		} else {
 			Log.w(TAG, "bookId=" + bookId + " not found for ari=" + ari); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
@@ -532,11 +525,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private CharSequence referenceFromSelectedVerses(IntArrayList selectedVerses) {
 		if (selectedVerses.size() == 0) {
 			// should not be possible. So we don't do anything.
-			return S.reference(S.activeBook, this.chapter_1);
+			return S.reference(this.activeBook, this.chapter_1);
 		} else if (selectedVerses.size() == 1) {
-			return S.reference(S.activeBook, this.chapter_1, selectedVerses.get(0));
+			return S.reference(this.activeBook, this.chapter_1, selectedVerses.get(0));
 		} else {
-			return S.reference(S.activeBook, this.chapter_1, selectedVerses);
+			return S.reference(this.activeBook, this.chapter_1, selectedVerses);
 		}
 	}
 	
@@ -587,7 +580,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		super.onStop();
 		
 		Editor editor = instant_pref.edit();
-		editor.putInt(PREFKEY_lastBook, S.activeBook.bookId);
+		editor.putInt(PREFKEY_lastBook, this.activeBook.bookId);
 		editor.putInt(PREFKEY_lastChapter, chapter_1);
 		editor.putInt(PREFKEY_lastVerse, lsText.getVerseBasedOnScroll());
 		editor.putString(PREFKEY_devotion_name, S.temporary.devotion_name);
@@ -607,7 +600,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 	
 	void bGoto_click() {
-		startActivityForResult(GotoActivity.createIntent(S.activeBook.bookId, this.chapter_1, lsText.getVerseBasedOnScroll()), REQCODE_goto);
+		startActivityForResult(GotoActivity.createIntent(this.activeBook.bookId, this.chapter_1, lsText.getVerseBasedOnScroll()), REQCODE_goto);
 	}
 	
 	void bGoto_longClick() {
@@ -802,7 +795,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	private void menuSearch2_click() {
-		startActivityForResult(Search2Activity.createIntent(search2_query, search2_results, search2_selectedPosition, S.activeBook.bookId), REQCODE_search);
+		startActivityForResult(Search2Activity.createIntent(search2_query, search2_results, search2_selectedPosition, this.activeBook.bookId), REQCODE_search);
 	}
 	
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -813,9 +806,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					// change book
 					Book book = S.activeVersion.getBook(result.bookId);
 					if (book != null) {
-						S.activeBook = book;
+						this.activeBook = book;
 					} else { // no book, just chapter and verse.
-						result.bookId = S.activeBook.bookId;
+						result.bookId = this.activeBook.bookId;
 					}
 					
 					int ari_cv = display(result.chapter_1, result.verse_1);
@@ -903,10 +896,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		int current_chapter_1 = this.chapter_1; 
 		
 		if (chapter_1 < 1) chapter_1 = 1;
-		if (chapter_1 > S.activeBook.chapter_count) chapter_1 = S.activeBook.chapter_count;
+		if (chapter_1 > this.activeBook.chapter_count) chapter_1 = this.activeBook.chapter_count;
 		
 		if (verse_1 < 1) verse_1 = 1;
-		if (verse_1 > S.activeBook.verse_counts[chapter_1 - 1]) verse_1 = S.activeBook.verse_counts[chapter_1 - 1];
+		if (verse_1 > this.activeBook.verse_counts[chapter_1 - 1]) verse_1 = this.activeBook.verse_counts[chapter_1 - 1];
 		
 		// loading data no need to use async. // 20100417 updated to not use async, it's not useful.
 		{
@@ -914,7 +907,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			PericopeBlock[] pericope_blocks;
 			int nblock;
 			
-			SingleChapterVerses verses = S.activeVersion.loadChapterText(S.activeBook, chapter_1);
+			SingleChapterVerses verses = S.activeVersion.loadChapterText(this.activeBook, chapter_1);
 			if (verses == null) {
 				return 0;
 			}
@@ -923,14 +916,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			int max = 30;
 			pericope_aris = new int[max];
 			pericope_blocks = new PericopeBlock[max];
-			nblock = S.activeVersion.loadPericope(S.activeBook.bookId, chapter_1, pericope_aris, pericope_blocks, max); 
+			nblock = S.activeVersion.loadPericope(this.activeBook.bookId, chapter_1, pericope_aris, pericope_blocks, max); 
 			
 			// load xref
 			int[] xrefEntryCounts = new int[256];
-			S.activeVersion.getXrefEntryCounts(xrefEntryCounts, S.activeBook.bookId, chapter_1);
+			S.activeVersion.getXrefEntryCounts(xrefEntryCounts, this.activeBook.bookId, chapter_1);
 			
 			boolean retainSelectedVerses = (!uncheckAllVerses && chapter_1 == current_chapter_1);
-			lsText.setDataWithRetainSelectedVerses(retainSelectedVerses, chapter_1, pericope_aris, pericope_blocks, nblock, verses, xrefEntryCounts);
+			lsText.setDataWithRetainSelectedVerses(retainSelectedVerses, this.activeBook, chapter_1, pericope_aris, pericope_blocks, nblock, verses, xrefEntryCounts);
 			
 			// tell activity
 			this.chapter_1 = chapter_1;
@@ -938,7 +931,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			lsText.scrollToVerse(verse_1);
 		}
 		
-		bGoto.setText(S.reference(S.activeBook, chapter_1));
+		bGoto.setText(S.reference(this.activeBook, chapter_1));
 		
 		return Ari.encode(0, chapter_1, verse_1);
 	}
@@ -963,14 +956,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 	
 	void bLeft_click() {
-		Book currentBook = S.activeBook;
+		Book currentBook = this.activeBook;
 		if (chapter_1 == 1) {
 			// we are in the beginning of the book, so go to prev book
 			int tryBookId = currentBook.bookId - 1;
 			while (tryBookId >= 0) {
 				Book newBook = S.activeVersion.getBook(tryBookId);
 				if (newBook != null) {
-					S.activeBook = newBook;
+					this.activeBook = newBook;
 					int newChapter_1 = newBook.chapter_count; // to the last chapter
 					display(newChapter_1, 1);
 					break;
@@ -985,14 +978,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 	
 	void bRight_click() {
-		Book currentBook = S.activeBook;
+		Book currentBook = this.activeBook;
 		if (chapter_1 >= currentBook.chapter_count) {
 			int maxBookId = S.activeVersion.getMaxBookIdPlusOne();
 			int tryBookId = currentBook.bookId + 1;
 			while (tryBookId < maxBookId) {
 				Book newBook = S.activeVersion.getBook(tryBookId);
 				if (newBook != null) {
-					S.activeBook = newBook;
+					this.activeBook = newBook;
 					display(1, 1);
 					break;
 				}
@@ -1122,11 +1115,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				
 				String verseUrl;
 				if (selected.size() == 1) {
-					verseUrl = S.createVerseUrl(S.activeBook, IsiActivity.this.chapter_1, String.valueOf(selected.get(0)));
+					verseUrl = S.createVerseUrl(IsiActivity.this.activeBook, IsiActivity.this.chapter_1, String.valueOf(selected.get(0)));
 				} else {
 					StringBuilder sb2 = new StringBuilder();
 					S.writeVerseRange(selected, sb2);
-					verseUrl = S.createVerseUrl(S.activeBook, IsiActivity.this.chapter_1, sb2.toString()); // use verse range
+					verseUrl = S.createVerseUrl(IsiActivity.this.activeBook, IsiActivity.this.chapter_1, sb2.toString()); // use verse range
 				}
 				
 				Intent intent = new Intent(Intent.ACTION_SEND);
@@ -1147,9 +1140,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					lsText.scrollToShowVerse(mainVerse_1);
 				}
 				
-				final int ari = Ari.encode(S.activeBook.bookId, IsiActivity.this.chapter_1, mainVerse_1);
+				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, mainVerse_1);
 				
-				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, S.reference(S.activeBook, IsiActivity.this.chapter_1, mainVerse_1), ari);
+				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, S.reference(IsiActivity.this.activeBook, IsiActivity.this.chapter_1, mainVerse_1), ari);
 				dialog.setListener(new TypeBookmarkDialog.Listener() {
 					@Override public void onOk() {
 						lsText.uncheckAll();
@@ -1168,7 +1161,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					lsText.scrollToShowVerse(mainVerse_1);
 				}
 				
-				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, S.activeBook, IsiActivity.this.chapter_1, mainVerse_1, new TypeNoteDialog.RefreshCallback() {
+				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, IsiActivity.this.activeBook, IsiActivity.this.chapter_1, mainVerse_1, new TypeNoteDialog.RefreshCallback() {
 					@Override public void onDone() {
 						lsText.uncheckAll();
 						lsText.loadAttributeMap();
@@ -1178,7 +1171,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				mode.finish();
 			} return true;
 			case R.id.menuAddHighlight: {
-				final int ariKp = Ari.encode(S.activeBook.bookId, IsiActivity.this.chapter_1, 0);
+				final int ariKp = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
 				int warnaRgb = S.getDb().getWarnaRgbStabilo(ariKp, selected);
 				
 				new TypeHighlightDialog(IsiActivity.this, ariKp, selected, new TypeHighlightDialog.JenisStabiloCallback() {
@@ -1190,7 +1183,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				mode.finish();
 			} return true;
 			case R.id.menuEsvsb: {
-				final int ari = Ari.encode(S.activeBook.bookId, IsiActivity.this.chapter_1, mainVerse_1);
+				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, mainVerse_1);
 
 				try {
 					Intent intent = new Intent("yuku.esvsbasal.action.GOTO"); //$NON-NLS-1$

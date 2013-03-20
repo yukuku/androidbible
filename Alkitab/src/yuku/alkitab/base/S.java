@@ -77,18 +77,14 @@ public class S {
 	
 	//# 22nya harus siap di siapinKitab
 	public static Version activeVersion;
-	public static Book activeBook;
 	public static String activeVersionId;
 
 	public static Downloader downloader;
 	
-	public static synchronized void prepareBook() {
+	public static synchronized void prepareInternalVersion() {
 		if (activeVersion == null) {
 			activeVersion = Version.getInternalVersion();
 		}
-		
-		if (activeBook != null) return;
-		activeBook = activeVersion.getFirstBook(); // nanti diset sama luar waktu init 
 	}
 	
 	public static void calculateAppliedValuesBasedOnPreferences() {
