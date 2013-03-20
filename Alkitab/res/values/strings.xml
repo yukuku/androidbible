@@ -194,6 +194,7 @@
     <string name="pdb_error_not_palmbible">This PDB file is not in PalmBible+ format. This PDB has type of \'%1$s\' and creator id of \'%2$s\', which is not supported by this app.</string>
     <string name="pdb_error_corrupted">The PDB file is corrupted.</string>
     <string name="pdb_error_not_pdb_file">The selected file is not a PDB file.</string>
+    <string name="menu_split_version">Split version</string>
     
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Dialer</string>

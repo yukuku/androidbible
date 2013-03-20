@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -124,6 +125,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	
 	// temporary states
 	Boolean hasEsvsbAsal;
+	Version activeSplitVersion;
+	String activeSplitVersionId;
+	Book activeSplitBook;
 	
 	CallbackSpan.OnClickListener parallelListener = new CallbackSpan.OnClickListener() {
 		@Override public void onClick(View widget, Object data) {
@@ -413,7 +417,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 	
-	protected boolean loadVersion(final MVersion mv, boolean display) {
+	boolean loadVersion(final MVersion mv, boolean display) {
 		try {
 			Version version = mv.getVersion();
 			
@@ -445,6 +449,34 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			.show();
 			
 			return false;
+		}
+	}
+	
+	void loadSplitVersion(final MVersion mv, boolean display) {
+		// for rollback
+		Version oldActiveVersion = activeSplitVersion;
+		String oldActiveVersionId = activeSplitVersionId;
+		
+		boolean success = false;
+		try {
+			Version version = mv.getVersion();
+			
+			if (version != null) {
+				activeSplitVersion = version;
+				activeSplitVersionId = mv.getVersionId();
+				
+				if (display) {
+					display(chapter_1, lsText.getVerseBasedOnScroll(), false);
+				}
+			}
+			success = true;
+		} catch (Throwable e) { // so we don't crash on the beginning of the app
+			Log.e(TAG, "failed in loadVersion", e);  //$NON-NLS-1$
+		} finally {
+			if (!success) {
+				activeSplitVersion = oldActiveVersion;
+				activeSplitVersionId = oldActiveVersionId;
+			}
 		}
 	}
 	
@@ -713,7 +745,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			menuSearch2_click();
 			return true;
 		case R.id.menuEdisi:
-			bukaDialogEdisi();
+			openVersionDialog();
+			return true;
+		case R.id.menuSplitVersion:
+			openSplitVersionDialog();
 			return true;
 		case R.id.menuRenungan: 
 			startActivityForResult(new Intent(this, DevotionActivity.class), REQCODE_devotion);
@@ -741,7 +776,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		return super.onOptionsItemSelected(item); 
 	}
 
-	private void bukaDialogEdisi() {
+	private Pair<List<String>, List<MVersion>> getAvailableVersions() {
 		// populate with 
 		// 1. internal
 		// 2. presets that have been DOWNLOADED and ACTIVE
@@ -770,6 +805,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 		}
 		
+		return Pair.create(options, data);
+	}
+	
+	void openVersionDialog() {
+		Pair<List<String>, List<MVersion>> versions = getAvailableVersions();
+		final List<String> options = versions.first;
+		final List<MVersion> data = versions.second;
+		
 		int selected = -1;
 		if (S.activeVersionId == null) {
 			selected = 0;
@@ -782,7 +825,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				}
 			}
 		}
-
+		
 		new AlertDialog.Builder(this)
 		.setTitle(R.string.pilih_edisi)
 		.setSingleChoiceItems(options.toArray(new String[options.size()]), selected, new DialogInterface.OnClickListener() {
@@ -797,6 +840,25 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			@Override public void onClick(DialogInterface dialog, int which) {
 				Intent intent = new Intent(getApplicationContext(), VersionsActivity.class);
 				startActivityForResult(intent, REQCODE_version);
+			}
+		})
+		.setNegativeButton(R.string.cancel, null)
+		.show();
+	}
+	
+	void openSplitVersionDialog() {
+		Pair<List<String>, List<MVersion>> versions = getAvailableVersions();
+		final List<String> options = versions.first;
+		final List<MVersion> data = versions.second;
+		
+		new AlertDialog.Builder(this)
+		.setTitle(R.string.pilih_edisi)
+		.setItems(options.toArray(new String[options.size()]), new DialogInterface.OnClickListener() {
+			@Override public void onClick(DialogInterface dialog, int which) {
+				final MVersion mv = data.get(which);
+				
+				loadSplitVersion(mv, true);
+				dialog.dismiss();
 			}
 		})
 		.setNegativeButton(R.string.cancel, null)
@@ -938,6 +1000,30 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			
 			lsText.setDataWithRetainSelectedVerses(retainSelectedVerses, this.activeBook, chapter_1, pericope_aris, pericope_blocks, nblock, verses, xrefEntryCounts);
 			lsText.scrollToVerse(verse_1);
+		}
+			
+		if (activeSplitVersion != null) {
+			int[] pericope_aris;
+			PericopeBlock[] pericope_blocks;
+			int nblock;
+			
+			activeSplitBook = activeSplitVersion.getBook(this.activeBook.bookId);
+			SingleChapterVerses verses = activeSplitVersion.loadChapterText(activeSplitBook, chapter_1);
+			if (verses == null) {
+				return 0;
+			}
+			
+			//# max is set to 30 (one chapter has max of 30 blocks. Already almost impossible)
+			int max = 30;
+			pericope_aris = new int[max];
+			pericope_blocks = new PericopeBlock[max];
+			nblock = activeSplitVersion.loadPericope(activeSplitBook.bookId, chapter_1, pericope_aris, pericope_blocks, max); 
+			
+			// load xref
+			int[] xrefEntryCounts = new int[256];
+			activeSplitVersion.getXrefEntryCounts(xrefEntryCounts, activeSplitBook.bookId, chapter_1);
+			
+			boolean retainSelectedVerses = (!uncheckAllVerses && chapter_1 == current_chapter_1);
 			
 			lsSplit1.setDataWithRetainSelectedVerses(retainSelectedVerses, this.activeBook, chapter_1, pericope_aris, pericope_blocks, nblock, verses, xrefEntryCounts);
 			lsSplit1.scrollToVerse(verse_1);
@@ -1094,6 +1180,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	VersesView.OnVerseScrollListener lsText_verseScroll = new VersesView.OnVerseScrollListener() {
 		@Override public void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop) {
 			if (!isPericope) {
+				Log.d(TAG, "verse=" + verse_1 + " prop=" + prop);
 				lsSplit1.scrollToVerse(verse_1, prop);
 			}
 		}
