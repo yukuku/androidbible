@@ -433,7 +433,7 @@ public class BookmarkListActivity extends BaseActivity {
 				Cursor cursor = (Cursor) adapter.getItem(info.position);
 				int ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bookmark2.ari));
 				int warnaRgb = U.decodeHighlight(cursor.getString(cursor.getColumnIndexOrThrow(Db.Bookmark2.caption)));
-				String alamat = S.reference(S.activeVersion, ari);
+				String alamat = S.activeVersion.reference(ari);
 				
 				new TypeHighlightDialog(this, ari, new JenisStabiloCallback() {
 					@Override public void onOk(int warnaRgb) {
@@ -510,7 +510,7 @@ public class BookmarkListActivity extends BaseActivity {
 			
 			int ari = cursor.getInt(col_ari);
 			Book book = S.activeVersion.getBook(Ari.toBook(ari));
-			String alamat = S.reference(S.activeVersion, ari);
+			String alamat = S.activeVersion.reference(ari);
 			
 			String isi = S.activeVersion.loadVerseText(book, Ari.toChapter(ari), Ari.toVerse(ari));
 			isi = U.removeSpecialCodes(isi);

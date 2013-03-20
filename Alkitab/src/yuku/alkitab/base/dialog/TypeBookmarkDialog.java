@@ -117,7 +117,7 @@ public class TypeBookmarkDialog {
 		// set yang belum diset
 		if (this.ari == 0 && bukmak != null) {
 			this.ari = bukmak.ari;
-			this.alamat = S.reference(S.activeVersion, bukmak.ari);
+			this.alamat = S.activeVersion.reference(bukmak.ari);
 		}
 		
 		View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_bookmark, null);

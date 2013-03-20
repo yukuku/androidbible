@@ -81,15 +81,15 @@ public class GotoDirectFragment extends BaseGotoFragment {
 		super.onActivityCreated(savedInstanceState);
 
 		{
-			String alamatContoh = S.reference(S.activeVersion.getBook(bookId), chapter_1, verse_1);
+			String example = S.activeVersion.reference(bookId, chapter_1, verse_1);
 			String text = getString(R.string.loncat_ke_alamat_titikdua);
 			int pos = text.indexOf("%s"); //$NON-NLS-1$
 			if (pos >= 0) {
 				SpannableStringBuilder sb = new SpannableStringBuilder();
 				sb.append(text.substring(0, pos));
-				sb.append(alamatContoh);
+				sb.append(example);
 				sb.append(text.substring(pos + 2));
-				sb.setSpan(new StyleSpan(Typeface.BOLD), pos, pos + alamatContoh.length(), 0);
+				sb.setSpan(new StyleSpan(Typeface.BOLD), pos, pos + example.length(), 0);
 				lContohLoncat.setText(sb, BufferType.SPANNABLE);
 			}
 		}

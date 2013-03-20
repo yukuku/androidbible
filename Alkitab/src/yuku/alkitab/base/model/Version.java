@@ -261,5 +261,25 @@ public class Version {
 	public synchronized XrefEntry getXrefEntry(int ari, int which) {
 		return bibleReader.getXrefEntry(ari, which);
 	}
-	
+
+	public String reference(int ari) {
+		int bookId = Ari.toBook(ari);
+		int chapter_1 = Ari.toChapter(ari);
+		int verse_1 = Ari.toVerse(ari);
+		
+		Book book = getBook(bookId);
+		if (book == null) {
+			return "[?]";
+		} 
+		
+		return book.reference(chapter_1, verse_1);
+	}
+
+	public String reference(int bookId, int chapter_1, int verse_1) {
+		Book book = getBook(bookId);
+		if (book == null) {
+			return "[?]";
+		}
+		return book.reference(chapter_1, verse_1);
+	}
 }

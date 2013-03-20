@@ -15,9 +15,6 @@ import java.util.Locale;
 import yuku.afw.D;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
-import yuku.alkitab.base.config.AppConfig;
-import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.renungan.Downloader;
 import yuku.alkitab.base.storage.InternalDb;
@@ -25,7 +22,6 @@ import yuku.alkitab.base.storage.InternalDbHelper;
 import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.base.storage.SongDbHelper;
 import yuku.alkitab.base.util.FontManager;
-import yuku.alkitab.base.util.IntArrayList;
 
 
 public class S {
@@ -141,80 +137,6 @@ public class S {
 
 		}
 	}
-
-	public static String reference(Version version, int ari) {
-		int kitabPos = Ari.toBook(ari);
-		int pasal_1 = Ari.toChapter(ari);
-		int ayat_1 = Ari.toVerse(ari);
-		
-		StringBuilder hasil = new StringBuilder(40);
-		Book k = version.getBook(kitabPos);
-		if (k == null) {
-			hasil.append('[').append(kitabPos).append("] "); //$NON-NLS-1$
-		} else {
-			hasil.append(k.shortName).append(' ');
-		}
-		
-		hasil.append(pasal_1);
-		if (ayat_1 != 0) {
-			hasil.append(':').append(ayat_1);
-		}
-		return hasil.toString();
-	}
-
-	public static String reference(Book book, int pasal_1) {
-		return (book == null? "[?]": book.shortName) + " " + pasal_1; //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
-	public static String reference(Book book, int pasal_1, int ayat_1) {
-		return (book == null? "[?]": book.shortName) + " " + pasal_1 + ":" + ayat_1;  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-	}
-	
-	public static CharSequence reference(Book book, int pasal_1, IntArrayList xayat_1) {
-		StringBuilder sb = new StringBuilder(book == null? "[?]": book.shortName); //$NON-NLS-1$
-		sb.append(' ').append(pasal_1);
-		if (xayat_1 == null || xayat_1.size() == 0) {
-			return sb;
-		}
-		sb.append(':');
-		writeVerseRange(xayat_1, sb);
-		return sb;
-	}
-	
-	public static void writeVerseRange(IntArrayList xayat_1, StringBuilder sb) {
-		int origLen = sb.length();
-		int lastAyat_1 = 0;
-		int awalAyat_1 = 0;
-		
-		for (int i = 0; i < xayat_1.size(); i++) {
-			int ayat_1 = xayat_1.get(i);
-			
-			if (lastAyat_1 == 0) {
-				// blum ada, diam dulu aja
-			} else if (lastAyat_1 == ayat_1 - 1) {
-				// masih terusan, simpen awalnya
-				if (awalAyat_1 == 0) awalAyat_1 = lastAyat_1;
-			} else {
-				// abis loncat
-				if (awalAyat_1 != 0) {
-					sb.append(origLen == sb.length()? "": ", ").append(awalAyat_1).append('-').append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
-					awalAyat_1 = 0;
-				} else {
-					sb.append(origLen == sb.length()? "": ", ").append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-			}
-			
-			lastAyat_1 = xayat_1.get(i);
-		}
-		
-		// penghabisan
-		if (awalAyat_1 != 0) {
-			sb.append(origLen == sb.length()? "": ", ").append(awalAyat_1).append('-').append(lastAyat_1);  //$NON-NLS-1$//$NON-NLS-2$
-			awalAyat_1 = 0; // ga perlu, tapi biar konsisten aja dengan atas
-		} else {
-			sb.append(origLen == sb.length()? "": ", ").append(lastAyat_1); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
 	
 	/**
 	 * @param handler Jangan null kalo mau dicek ulang 200ms kemudian. Harus null kalo jangan ulang lagi. 20110620 Uda ga dipake lagi.
@@ -267,24 +189,5 @@ public class S {
 		}
 		
 		return songDb;
-	}
-	
-	/**
-	 * Jika ayat_1_range adalah null, ayat akan diabaikan (jadi cuma kitab dan pasal).
-	 */
-	public static String createVerseUrl(Book book, int pasal_1, String ayat_1_range) {
-		AppConfig c = AppConfig.get();
-		if (book.bookId >= c.url_standardBookNames.length) {
-			return null;
-		}
-		String calonKitab = c.url_standardBookNames[book.bookId], calonPasal = String.valueOf(pasal_1), calonAyat = ayat_1_range;
-		for (String format: c.url_format.split(" ")) { //$NON-NLS-1$
-			if ("slash1".equals(format)) calonPasal = "/" + calonPasal; //$NON-NLS-1$ //$NON-NLS-2$
-			if ("slash2".equals(format)) calonAyat = "/" + calonAyat; //$NON-NLS-1$ //$NON-NLS-2$
-			if ("dot1".equals(format)) calonPasal = "." + calonPasal; //$NON-NLS-1$ //$NON-NLS-2$
-			if ("dot2".equals(format)) calonAyat = "." + calonAyat; //$NON-NLS-1$ //$NON-NLS-2$
-			if ("nospace0".equals(format)) calonKitab = calonKitab.replaceAll("\\s+", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-		return c.url_prefix + calonKitab + calonPasal + (ayat_1_range == null? "": calonAyat); //$NON-NLS-1$
 	}
 }

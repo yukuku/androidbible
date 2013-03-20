@@ -525,11 +525,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private CharSequence referenceFromSelectedVerses(IntArrayList selectedVerses) {
 		if (selectedVerses.size() == 0) {
 			// should not be possible. So we don't do anything.
-			return S.reference(this.activeBook, this.chapter_1);
+			return this.activeBook.reference(this.chapter_1);
 		} else if (selectedVerses.size() == 1) {
-			return S.reference(this.activeBook, this.chapter_1, selectedVerses.get(0));
+			return this.activeBook.reference(this.chapter_1, selectedVerses.get(0));
 		} else {
-			return S.reference(this.activeBook, this.chapter_1, selectedVerses);
+			return this.activeBook.reference(this.chapter_1, selectedVerses);
 		}
 	}
 	
@@ -627,7 +627,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				res = (TextView) getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
 			}
 			int ari = history.getAri(position);
-			res.setText(S.reference(S.activeVersion, ari));
+			res.setText(S.activeVersion.reference(ari));
 			return res;
 		}
 		
@@ -931,7 +931,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			lsText.scrollToVerse(verse_1);
 		}
 		
-		bGoto.setText(S.reference(this.activeBook, chapter_1));
+		bGoto.setText(this.activeBook.reference(chapter_1));
 		
 		return Ari.encode(0, chapter_1, verse_1);
 	}
@@ -1013,11 +1013,30 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		history.add(ari_target);
 	}
 
+	/**
+	 * If verse_1_ranges is null, verses will be ignored.
+	 */
+	public static String createVerseUrl(Book book, int chapter_1, String verse_1_ranges) {
+		AppConfig c = AppConfig.get();
+		if (book.bookId >= c.url_standardBookNames.length) {
+			return null;
+		}
+		String tobeBook = c.url_standardBookNames[book.bookId], tobeChapter = String.valueOf(chapter_1), tobeVerse = verse_1_ranges;
+		for (String format: c.url_format.split(" ")) { //$NON-NLS-1$
+			if ("slash1".equals(format)) tobeChapter = "/" + tobeChapter; //$NON-NLS-1$ //$NON-NLS-2$
+			if ("slash2".equals(format)) tobeVerse = "/" + tobeVerse; //$NON-NLS-1$ //$NON-NLS-2$
+			if ("dot1".equals(format)) tobeChapter = "." + tobeChapter; //$NON-NLS-1$ //$NON-NLS-2$
+			if ("dot2".equals(format)) tobeVerse = "." + tobeVerse; //$NON-NLS-1$ //$NON-NLS-2$
+			if ("nospace0".equals(format)) tobeBook = tobeBook.replaceAll("\\s+", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+		return c.url_prefix + tobeBook + tobeChapter + (verse_1_ranges == null? "": tobeVerse); //$NON-NLS-1$
+	}
+
 	VersesView.AttributeListener attributeListener = new VersesView.AttributeListener() {
 		public void onAttributeClick(Book book, int chapter_1, int verse_1, int kind) {
 			if (kind == Db.Bookmark2.kind_bookmark) {
 				final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
-				String alamat = S.reference(S.activeVersion, ari);
+				String alamat = S.activeVersion.reference(ari);
 				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, alamat, ari);
 				dialog.setListener(new TypeBookmarkDialog.Listener() {
 					@Override public void onOk() {
@@ -1115,11 +1134,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				
 				String verseUrl;
 				if (selected.size() == 1) {
-					verseUrl = S.createVerseUrl(IsiActivity.this.activeBook, IsiActivity.this.chapter_1, String.valueOf(selected.get(0)));
+					verseUrl = IsiActivity.createVerseUrl(IsiActivity.this.activeBook, IsiActivity.this.chapter_1, String.valueOf(selected.get(0)));
 				} else {
-					StringBuilder sb2 = new StringBuilder();
-					S.writeVerseRange(selected, sb2);
-					verseUrl = S.createVerseUrl(IsiActivity.this.activeBook, IsiActivity.this.chapter_1, sb2.toString()); // use verse range
+					StringBuilder sb = new StringBuilder();
+					Book.writeVerseRange(selected, sb);
+					verseUrl = IsiActivity.createVerseUrl(IsiActivity.this.activeBook, IsiActivity.this.chapter_1, sb.toString()); // use verse range
 				}
 				
 				Intent intent = new Intent(Intent.ACTION_SEND);
@@ -1142,7 +1161,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				
 				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, mainVerse_1);
 				
-				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, S.reference(IsiActivity.this.activeBook, IsiActivity.this.chapter_1, mainVerse_1), ari);
+				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, IsiActivity.this.activeBook.reference(IsiActivity.this.chapter_1, mainVerse_1), ari);
 				dialog.setListener(new TypeBookmarkDialog.Listener() {
 					@Override public void onOk() {
 						lsText.uncheckAll();
