@@ -74,10 +74,6 @@ public class BookNameSorter {
 			}
 		}
 		
-		// remove spaces and '.'
-		name = name.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		name = name.replace(".", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		
 		int numberedBookCategory = book.bookId >= numberedBookMap.length? 0: numberedBookMap[book.bookId];
 		if (numberedBookCategory > 0) {
 			String startsWith = numberedBookStartsWiths[numberedBookCategory];
@@ -86,6 +82,10 @@ public class BookNameSorter {
 				name = replaceWith + name.substring(startsWith.length());
 			}
 		}
+		
+		// remove spaces and '.'
+		name = name.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		name = name.replace(".", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		if (name.length() > 3) name = name.substring(0, 3);
 		return name;
