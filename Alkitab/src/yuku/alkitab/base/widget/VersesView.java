@@ -391,7 +391,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 					if (needMeasure) {
 						View convertView = null; // TODO optimize using recycled view
 						View child = adapter.getView(position, convertView, VersesView.this);
-				        child.measure(MeasureSpec.makeMeasureSpec(VersesView.this.getWidth() - VersesView.this.getPaddingLeft() - VersesView.this.getPaddingRight(), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+				        child.measure(MeasureSpec.makeMeasureSpec(VersesView.this.getWidth() - VersesView.this.getPaddingLeft() - VersesView.this.getPaddingRight(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
 						stopFling();
 				        setSelectionFromTop(position, shifty - (int) (prop * child.getMeasuredHeight()));
 					}
