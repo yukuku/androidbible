@@ -168,7 +168,7 @@ public class VersionsActivity extends BaseActivity {
 				.setMessage(getString(R.string.juga_hapus_file_datanya_file, edisiYes.filename))
 				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
-						S.getDb().hapusEdisiYes(edisiYes);
+						S.getDb().deleteYesVersion(edisiYes);
 						adapter.initYesVersionList();
 						adapter.notifyDataSetChanged();
 						new File(edisiYes.filename).delete();
@@ -176,7 +176,7 @@ public class VersionsActivity extends BaseActivity {
 				})
 				.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
-						S.getDb().hapusEdisiYes(edisiYes);
+						S.getDb().deleteYesVersion(edisiYes);
 						adapter.initYesVersionList();
 						adapter.notifyDataSetChanged();
 					}
@@ -342,7 +342,7 @@ public class VersionsActivity extends BaseActivity {
 				.setMessage(getString(R.string.the_file_for_this_version_is_no_longer_available_file, edisi.filename))
 				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
-						S.getDb().hapusEdisiYes(edisi);
+						S.getDb().deleteYesVersion(edisi);
 						adapter.initYesVersionList();
 						adapter.notifyDataSetChanged();
 					}
@@ -445,7 +445,7 @@ public class VersionsActivity extends BaseActivity {
 				}
 			}
 			
-			if (!dup) dup = S.getDb().adakahEdisiYesDenganNamafile(filename);
+			if (!dup) dup = S.getDb().hasYesVersionWithFilename(filename);
 			
 			if (dup) {
 				new AlertDialog.Builder(this)
@@ -458,7 +458,7 @@ public class VersionsActivity extends BaseActivity {
 		
 		try {
 			BibleReader pembaca = YesReaderFactory.createYesReader(filename);
-			int urutanTerbesar = S.getDb().getUrutanTerbesarEdisiYes();
+			int urutanTerbesar = S.getDb().getYesVersionMaxOrdering();
 			if (urutanTerbesar == 0) urutanTerbesar = 100; // default
 			
 			MVersionYes yes = new MVersionYes();
@@ -470,7 +470,7 @@ public class VersionsActivity extends BaseActivity {
 			yes.originalPdbFilename = namapdbasal;
 			yes.ordering = urutanTerbesar + 1;
 			
-			S.getDb().tambahEdisiYesDenganAktif(yes, true);
+			S.getDb().insertYesVersionWithActive(yes, true);
 			adapter.initYesVersionList();
 			adapter.notifyDataSetChanged();
 		} catch (Exception e) {
@@ -486,7 +486,7 @@ public class VersionsActivity extends BaseActivity {
 		final String namayes = yesName(pdbFilename, ConvertPdbToYes1.VERSI_CONVERTER);
 		
 		// cek apakah sudah ada.
-		if (S.getDb().adakahEdisiYesDenganNamafile(AddonManager.getVersionPath(namayes))) {
+		if (S.getDb().hasYesVersionWithFilename(AddonManager.getVersionPath(namayes))) {
 			new AlertDialog.Builder(this)
 			.setMessage(R.string.ed_this_file_is_already_on_the_list)
 			.setPositiveButton(R.string.ok, null)
@@ -746,7 +746,7 @@ public class VersionsActivity extends BaseActivity {
 		@Override
 		public void setActive(boolean aktif) {
 			this.cache_active = aktif;
-			S.getDb().setEdisiYesAktif(this.filename, aktif);
+			S.getDb().setYesVersionActive(this.filename, aktif);
 		}
 
 		@Override
@@ -788,7 +788,7 @@ public class VersionsActivity extends BaseActivity {
 		}
 		
 		public void initYesVersionList() {
-			yeses = S.getDb().getAllVersions();
+			yeses = S.getDb().listAllVersions();
 		}
 
 		@Override

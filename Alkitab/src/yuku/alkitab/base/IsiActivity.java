@@ -419,7 +419,7 @@ public class IsiActivity extends BaseActivity {
 		}
 		
 		// masih belum cocok, mari kita cari di daftar yes
-		List<MVersionYes> yeses = S.getDb().getAllVersions();
+		List<MVersionYes> yeses = S.getDb().listAllVersions();
 		for (MVersionYes yes: yeses) {
 			if (yes.getVersionId().equals(lastVersion)) {
 				if (yes.hasDataFile()) {
@@ -805,15 +805,15 @@ public class IsiActivity extends BaseActivity {
 			});
 			dialog.show();
 		} else if (item == menu.menuAddHighlight) {
-			final int ariKp = Ari.encode(S.activeBook.bookId, this.chapter_1, 0);
-			int warnaRgb = S.getDb().getWarnaRgbStabilo(ariKp, selected);
+			final int ari_bookchapter = Ari.encode(S.activeBook.bookId, this.chapter_1, 0);
+			int colorRgb = S.getDb().getHighlightColorRgb(ari_bookchapter, selected);
 			
-			new TypeHighlightDialog(this, ariKp, selected, new TypeHighlightDialog.JenisStabiloCallback() {
-				@Override public void onOk(int warnaRgb) {
+			new TypeHighlightDialog(this, ari_bookchapter, selected, new TypeHighlightDialog.Callback() {
+				@Override public void onOk(int colorRgb) {
 					uncheckAll();
 					verseAdapter_.loadAttributeMap();
 				}
-			}, warnaRgb, reference).bukaDialog();
+			}, colorRgb, reference).bukaDialog();
 		} else if (item == menu.menuShare) {
 			CharSequence textToShare = prepareTextForCopyShare(selected, reference);
 			
@@ -1048,10 +1048,10 @@ public class IsiActivity extends BaseActivity {
 		}
 		
 		//# build config
-		menu.findItem(R.id.menuRenungan).setVisible(c.menuDevotion);
-		menu.findItem(R.id.menuEdisi).setVisible(c.menuVersions);
-		menu.findItem(R.id.menuBantuan).setVisible(c.menuHelp);
-		menu.findItem(R.id.menuDonasi).setVisible(c.menuDonation);
+		menu.findItem(R.id.menuDevotion).setVisible(c.menuDevotion);
+		menu.findItem(R.id.menuVersions).setVisible(c.menuVersions);
+		menu.findItem(R.id.menuHelp).setVisible(c.menuHelp);
+		menu.findItem(R.id.menuDonation).setVisible(c.menuDonation);
 		menu.findItem(R.id.menuSongs).setVisible(c.menuSongs);
 	}
 	
@@ -1070,34 +1070,34 @@ public class IsiActivity extends BaseActivity {
 	
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menuBukmak:
+		case R.id.menuBookmark:
 			startActivityForResult(new Intent(this, BookmarkActivity.class), REQCODE_bookmark);
 			return true;
 		case R.id.menuSearch2:
 			menuSearch2_click();
 			return true;
-		case R.id.menuEdisi:
+		case R.id.menuVersions:
 			bukaDialogEdisi();
 			return true;
-		case R.id.menuRenungan: 
+		case R.id.menuDevotion: 
 			startActivityForResult(new Intent(this, DevotionActivity.class), REQCODE_devotion);
 			return true;
 		case R.id.menuSongs: 
 			startActivityForResult(SongViewActivity.createIntent(), REQCODE_songs);
 			return true;
-		case R.id.menuTentang:
+		case R.id.menuAbout:
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
-		case R.id.menuPengaturan:
+		case R.id.menuSettings:
 			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
 			return true;
-		case R.id.menuBantuan:
+		case R.id.menuHelp:
 			startActivity(HelpActivity.createIntent(false));
 			return true;
 		case R.id.menuSendMessage:
 			startActivity(HelpActivity.createIntent(true));
 			return true;
-		case R.id.menuDonasi:
+		case R.id.menuDonation:
 			openDonationDialog();
 			return true;
 		}
@@ -1126,7 +1126,7 @@ public class IsiActivity extends BaseActivity {
 		}
 		
 		// 3. active yeses
-		List<MVersionYes> yeses = S.getDb().getAllVersions();
+		List<MVersionYes> yeses = S.getDb().listAllVersions();
 		for (MVersionYes yes: yeses) {
 			if (yes.hasDataFile() && yes.getActive()) {
 				options.add(yes.longName);

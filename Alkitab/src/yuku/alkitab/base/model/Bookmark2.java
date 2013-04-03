@@ -80,10 +80,10 @@ public class Bookmark2 {
 		int ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bookmark2.ari));
 		int jenis = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bookmark2.kind));
 		
-		return dariCursor(cursor, ari, jenis);
+		return fromCursor(cursor, ari, jenis);
 	}
 
-	public static Bookmark2 dariCursor(Cursor cursor, int ari, int kind) {
+	public static Bookmark2 fromCursor(Cursor cursor, int ari, int kind) {
 		long _id = cursor.getLong(cursor.getColumnIndexOrThrow(BaseColumns._ID));
 		String caption = cursor.getString(cursor.getColumnIndexOrThrow(Db.Bookmark2.caption));
 		Date addTime = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bookmark2.addTime)));

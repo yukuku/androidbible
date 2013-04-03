@@ -38,7 +38,7 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog.Listener;
 import yuku.alkitab.base.dialog.TypeHighlightDialog;
-import yuku.alkitab.base.dialog.TypeHighlightDialog.JenisStabiloCallback;
+import yuku.alkitab.base.dialog.TypeHighlightDialog.Callback;
 import yuku.alkitab.base.dialog.TypeNoteDialog;
 import yuku.alkitab.base.dialog.TypeNoteDialog.RefreshCallback;
 import yuku.alkitab.base.model.Ari;
@@ -401,7 +401,7 @@ public class BookmarkListActivity extends BaseActivity {
 		
 		if (itemId == R.id.menuHapusBukmak) {
 			// jenisnya apapun, cara hapusnya sama
-			S.getDb().hapusBukmakById(info.id);
+			S.getDb().deleteBookmarkById(info.id);
 			adapter.getCursor().requery();
 			if (lagiPakeFilter != null) filterPakeLagiPakeFilter();
 			
@@ -435,7 +435,7 @@ public class BookmarkListActivity extends BaseActivity {
 				int warnaRgb = U.decodeHighlight(cursor.getString(cursor.getColumnIndexOrThrow(Db.Bookmark2.caption)));
 				String alamat = S.reference(S.activeVersion, ari);
 				
-				new TypeHighlightDialog(this, ari, new JenisStabiloCallback() {
+				new TypeHighlightDialog(this, ari, new Callback() {
 					@Override public void onOk(int warnaRgb) {
 						adapter.getCursor().requery();
 						if (lagiPakeFilter != null) filterPakeLagiPakeFilter();
@@ -525,7 +525,7 @@ public class BookmarkListActivity extends BaseActivity {
 				Appearances.applyBookmarkSnippetContentAndAppearance(lCuplikan, alamat, cuplikan);
 				
 				long _id = cursor.getLong(col__id);
-				List<Label> labels = S.getDb().getLabels(_id);
+				List<Label> labels = S.getDb().listLabelsByBookmarkId(_id);
 				if (labels != null && labels.size() != 0) {
 					panelLabels.setVisibility(View.VISIBLE);
 					panelLabels.removeAllViews();

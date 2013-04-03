@@ -22,11 +22,11 @@ public class Label implements Comparable<Label> {
 	private Label() {
 	}
 	
-	public Label(long _id, String judul, int urutan, String warnaLatar) {
+	public Label(long _id, String title, int ordering, String bgColor) {
 		this._id = _id;
-		this.title = judul;
-		this.ordering = urutan;
-		this.backgroundColor = warnaLatar;
+		this.title = title;
+		this.ordering = ordering;
+		this.backgroundColor = bgColor;
 	}
 
 	public static Label fromCursor(Cursor c) {
@@ -57,24 +57,24 @@ public class Label implements Comparable<Label> {
 	
 
 	public static final String XMLTAG_Label = "Label"; //$NON-NLS-1$
-	private static final String XMLATTR_judul = "judul"; //$NON-NLS-1$
+	private static final String XMLATTR_title = "judul"; //$NON-NLS-1$
 	private static final String XMLATTR_relId = "relId"; //$NON-NLS-1$
-	private static final String XMLATTR_warnaLatar = "warnaLatar"; //$NON-NLS-1$
+	private static final String XMLATTR_bgColor = "warnaLatar"; //$NON-NLS-1$
 	
 	public void writeXml(XmlSerializer xml, int relId) throws IOException {
 		// urutan ga/belum dibekap
 		xml.startTag(null, XMLTAG_Label);
 		xml.attribute(null, XMLATTR_relId, String.valueOf(relId));
-		xml.attribute(null, XMLATTR_judul, title);
-		if (backgroundColor != null) xml.attribute(null, XMLATTR_warnaLatar, backgroundColor);
+		xml.attribute(null, XMLATTR_title, title);
+		if (backgroundColor != null) xml.attribute(null, XMLATTR_bgColor, backgroundColor);
 		xml.endTag(null, XMLTAG_Label);
 	}
 
-	public static Label dariAttributes(Attributes attributes) {
-		String judul = attributes.getValue("", XMLATTR_judul); //$NON-NLS-1$
-		String warnaLatar = attributes.getValue("", XMLATTR_warnaLatar); //$NON-NLS-1$
+	public static Label fromAttributes(Attributes attributes) {
+		String title = attributes.getValue("", XMLATTR_title); //$NON-NLS-1$
+		String bgColor = attributes.getValue("", XMLATTR_bgColor); //$NON-NLS-1$
 		
-		return new Label(-1, judul, 0, warnaLatar);
+		return new Label(-1, title, 0, bgColor);
 	}
 	
 	public static int getRelId(Attributes attributes) {

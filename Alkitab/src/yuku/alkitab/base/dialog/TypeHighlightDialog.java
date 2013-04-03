@@ -15,7 +15,7 @@ import yuku.alkitab.base.util.IntArrayList;
 
 public class TypeHighlightDialog {
 	final AlertDialog alert;
-	final JenisStabiloCallback callback;
+	final Callback callback;
 	
 	View dialogView;
 	
@@ -31,7 +31,7 @@ public class TypeHighlightDialog {
 	final int ariKp;
 	final IntArrayList ayatTerpilih;
 
-	public interface JenisStabiloCallback {
+	public interface Callback {
 		/**
 		 * @param warnaRgb -1 untuk ga terpilih
 		 */
@@ -42,7 +42,7 @@ public class TypeHighlightDialog {
 	 * Buka dialog buat 1 ayat
 	 * @param warnaRgb -1 kalo ga terpilih. #rrggbb ga pake alpha
 	 */
-	public TypeHighlightDialog(Context context, int ari, JenisStabiloCallback callback, int warnaRgb, CharSequence judul) {
+	public TypeHighlightDialog(Context context, int ari, Callback callback, int warnaRgb, CharSequence judul) {
 		this(context, Ari.toBookChapter(ari), satuSaja(Ari.toVerse(ari)), callback, warnaRgb, judul);
 	}
 	
@@ -57,7 +57,7 @@ public class TypeHighlightDialog {
 	 * @param warnaRgb -1 kalo ga terpilih. #rrggbb ga pake alpha
 	 * @param ayatTerpilih ayat2 yang dipilih.
 	 */
-	public TypeHighlightDialog(Context context, int ariKp, IntArrayList ayatTerpilih, JenisStabiloCallback callback, int warnaRgb, CharSequence judul) {
+	public TypeHighlightDialog(Context context, int ariKp, IntArrayList ayatTerpilih, Callback callback, int warnaRgb, CharSequence judul) {
 		this.ariKp = ariKp;
 		this.ayatTerpilih = ayatTerpilih;
 		this.callback = callback;
@@ -107,7 +107,7 @@ public class TypeHighlightDialog {
 		}
 
 		private void select(int warnaRgb) {
-			S.getDb().updateAtauInsertStabilo(ariKp, ayatTerpilih, warnaRgb);
+			S.getDb().updateOrInsertHighlights(ariKp, ayatTerpilih, warnaRgb);
 			if (callback != null) callback.onOk(warnaRgb);
 			alert.dismiss();
 		}

@@ -289,7 +289,7 @@ public class BookmarkActivity extends BaseActivity {
 								bookmarkToRelIdMap.put(bookmark, bookmark2_relId);
 								count_bookmark++;
 							} else if (localName.equals(Label.XMLTAG_Label)) {
-								Label label = Label.dariAttributes(attributes);
+								Label label = Label.fromAttributes(attributes);
 								int label_relId = Label.getRelId(attributes); 
 								labels.add(label);
 								labelToRelIdMap.put(label, label_relId);
@@ -314,7 +314,7 @@ public class BookmarkActivity extends BaseActivity {
 				
 				{ // bikin label-label yang diperlukan, juga map relId dengan id dari label.
 					HashMap<String, Label> judulMap = new HashMap<String, Label>();
-					List<Label> xlabelLama = S.getDb().getAllLabels();
+					List<Label> xlabelLama = S.getDb().listAllLabels();
 					
 					for (Label labelLama: xlabelLama) {
 						judulMap.put(labelLama.title, labelLama);
@@ -332,7 +332,7 @@ public class BookmarkActivity extends BaseActivity {
 							labelRelIdToAbsIdMap.put(labelToRelIdMap.get(label), labelLama._id);
 							Log.d(TAG, "label (lama) r->a : " + labelToRelIdMap.get(label) + "->" + labelLama._id); //$NON-NLS-1$ //$NON-NLS-2$
 						} else { // belum ada, harus bikin baru
-							Label labelBaru = S.getDb().tambahLabel(label.title, label.backgroundColor);
+							Label labelBaru = S.getDb().insertLabel(label.title, label.backgroundColor);
 							labelRelIdToAbsIdMap.put(labelToRelIdMap.get(label), labelBaru._id);
 							Log.d(TAG, "label (baru) r->a : " + labelToRelIdMap.get(label) + "->" + labelBaru._id); //$NON-NLS-1$ //$NON-NLS-2$
 						}
@@ -402,7 +402,7 @@ public class BookmarkActivity extends BaseActivity {
 					}
 					
 					TLongIntHashMap labelAbsIdToRelIdMap = new TLongIntHashMap();
-					List<Label> labels = S.getDb().getAllLabels();
+					List<Label> labels = S.getDb().listAllLabels();
 					{ // write labels
 						for (int i = 0; i < labels.size(); i++) {
 							Label label = labels.get(i);
@@ -414,7 +414,7 @@ public class BookmarkActivity extends BaseActivity {
 					{ // write mapping from bookmark to label
 						for (int bookmark2_relId_0 = 0; bookmark2_relId_0 < bookmarks.size(); bookmark2_relId_0++) {
 							Bookmark2 bookmark = bookmarks.get(bookmark2_relId_0);
-							TLongList labelIds = S.getDb().getLabelIds(bookmark._id);
+							TLongList labelIds = S.getDb().listLabelIdsByBookmarkId(bookmark._id);
 							if (labelIds != null && labelIds.size() > 0) {
 								for (int i = 0; i < labelIds.size(); i++) {
 									long labelId = labelIds.get(i);
@@ -549,11 +549,11 @@ public class BookmarkActivity extends BaseActivity {
 				return true;
 			}
 			
-			int nbukmak = S.getDb().countBukmakDenganLabel(label);
+			int nbukmak = S.getDb().countBookmarkWithLabel(label);
 
 			if (nbukmak == 0) {
 				// tiada, langsung hapus aja!
-				S.getDb().hapusLabelById(label._id);
+				S.getDb().deleteLabelById(label._id);
 				adapter.reload();
 			} else {
 				new AlertDialog.Builder(this)
@@ -561,7 +561,7 @@ public class BookmarkActivity extends BaseActivity {
 				.setNegativeButton(R.string.cancel, null)
 				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
-						S.getDb().hapusLabelById(label._id);
+						S.getDb().deleteLabelById(label._id);
 						adapter.reload();
 					}
 				})
@@ -761,7 +761,7 @@ public class BookmarkActivity extends BaseActivity {
 		}
 		
 		void reload() {
-			labels = S.getDb().getAllLabels();
+			labels = S.getDb().listAllLabels();
 			
 			if (D.EBUG) {
 				Log.d(TAG, "_id  title                ordering backgroundColor");

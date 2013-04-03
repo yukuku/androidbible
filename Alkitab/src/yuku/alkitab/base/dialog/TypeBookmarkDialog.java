@@ -77,7 +77,7 @@ public class TypeBookmarkDialog {
 			if (which == adapter.getCount() - 1) { // new label
 				LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), new OkListener() { //$NON-NLS-1$
 					@Override public void onOk(String judul) {
-						Label labelBaru = S.getDb().tambahLabel(judul, null);
+						Label labelBaru = S.getDb().insertLabel(judul, null);
 						if (labelBaru != null) {
 							labels.add(labelBaru);
 							setLabelsText();
@@ -112,7 +112,7 @@ public class TypeBookmarkDialog {
 	};
 
 	public void show() {
-		final Bookmark2 bukmak = this.ari == 0? S.getDb().getBukmakById(id): S.getDb().getBukmakByAri(ari, Db.Bookmark2.kind_bookmark);
+		final Bookmark2 bukmak = this.ari == 0? S.getDb().getBookmarkById(id): S.getDb().getBookmarkByAri(ari, Db.Bookmark2.kind_bookmark);
 		
 		// set yang belum diset
 		if (this.ari == 0 && bukmak != null) {
@@ -145,7 +145,7 @@ public class TypeBookmarkDialog {
 		
 		if (bukmak != null) {
 			labels = new TreeSet<Label>();
-			List<Label> ll = S.getDb().getLabels(bukmak._id);
+			List<Label> ll = S.getDb().listLabelsByBookmarkId(bukmak._id);
 			if (ll != null) labels.addAll(ll);
 		}
 		setLabelsText();
@@ -169,9 +169,9 @@ public class TypeBookmarkDialog {
 				if (bukmakGaFinal != null) {
 					bukmakGaFinal.caption = tulisan;
 					bukmakGaFinal.modifyTime = new Date();
-					S.getDb().updateBukmak(bukmakGaFinal);
+					S.getDb().updateBookmark(bukmakGaFinal);
 				} else {
-					bukmakGaFinal = S.getDb().insertBukmak(ari, Db.Bookmark2.kind_bookmark, tulisan, new Date(), new Date());
+					bukmakGaFinal = S.getDb().insertBookmark(ari, Db.Bookmark2.kind_bookmark, tulisan, new Date(), new Date());
 				}
 				
 				if (bukmakGaFinal != null) {
@@ -215,7 +215,7 @@ public class TypeBookmarkDialog {
 		private Context dialogContext;
 
 		public LabelAdapter() {
-			labels = S.getDb().getAllLabels();
+			labels = S.getDb().listAllLabels();
 			dialogContext = context;
 		}
 		

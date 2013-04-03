@@ -52,7 +52,7 @@ public class LabelEditorDialog {
 		final Button bOk = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
 		bOk.setEnabled(false);
 		
-		final List<Label> semuaLabel = S.getDb().getAllLabels();
+		final List<Label> semuaLabel = S.getDb().listAllLabels();
 		
 		tJudul.addTextChangedListener(new TextWatcher() {
 			@Override public void onTextChanged(CharSequence s, int start, int before, int count) {

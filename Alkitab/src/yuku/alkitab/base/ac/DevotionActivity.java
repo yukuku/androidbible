@@ -299,7 +299,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 	void tuju(boolean penting, int skrol) {
 		String tgl = tgl_format.get().format(tanggalan);
-		IArticle artikel = S.getDb().cobaAmbilRenungan(nama, tgl);
+		IArticle artikel = S.getDb().tryGetDevotion(nama, tgl);
 		if (artikel == null || !artikel.getReadyToUse()) {
 			akanPerlu(nama, tgl, penting);
 			render(artikel, skrol);
@@ -491,7 +491,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			Date hariIni = new Date();
 			
 			// hapus yang sudah lebih lama dari 3 bulan (90 hari)!
-			int terhapus = S.getDb().hapusRenunganBerwaktuSentuhSebelum(new Date(hariIni.getTime() - 90 * 86400000L));
+			int terhapus = S.getDb().deleteDevotionsWithTouchTimeBefore(new Date(hariIni.getTime() - 90 * 86400000L));
 			if (terhapus > 0) {
 				Log.d(TAG, "penghapusan renungan berhasil menghapus " + terhapus); //$NON-NLS-1$
 			}
@@ -500,7 +500,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			try {
 				for (int i = 0; i < 31; i++) { // 31 hari ke depan
 					String tgl = tgl_format.get().format(hariIni);
-					if (S.getDb().cobaAmbilRenungan(nama, tgl) == null) {
+					if (S.getDb().tryGetDevotion(nama, tgl) == null) {
 						Log.d(TAG, "PemintaMasaDepan perlu minta " + tgl); //$NON-NLS-1$
 						akanPerlu(nama, tgl, false);
 						
