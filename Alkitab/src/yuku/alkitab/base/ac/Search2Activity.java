@@ -72,6 +72,7 @@ public class Search2Activity extends BaseActivity {
 	SparseBooleanArray selectedBookIds = new SparseBooleanArray();
 	int openedBookId;
 	int filterUserAction = 0; // when it's not user action, set to nonzero
+	Search2Adapter adapter;
 	
 	public static class Result {
 		public Query query;
@@ -172,7 +173,7 @@ public class Search2Activity extends BaseActivity {
 		
 		lsSearchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				int ari = (int) parent.getItemIdAtPosition(position);
+				int ari = adapter.getSearchResults().get(position);
 				
 				Intent data = new Intent();
 				data.putExtra(EXTRA_query, getQuery());
@@ -217,7 +218,7 @@ public class Search2Activity extends BaseActivity {
 				
 				if (searchResults != null) {
 					String[] tokens = QueryTokenizer.tokenize(query.query_string);
-					lsSearchResults.setAdapter(new Search2Adapter(searchResults, tokens));
+					lsSearchResults.setAdapter(adapter = new Search2Adapter(searchResults, tokens));
 				}
 			}
 			
@@ -521,7 +522,7 @@ public class Search2Activity extends BaseActivity {
 					result = new IntArrayList(); // empty result
 				}
 				
-				lsSearchResults.setAdapter(new Search2Adapter(result, tokens));
+				lsSearchResults.setAdapter(adapter = new Search2Adapter(result, tokens));
 				Toast.makeText(Search2Activity.this, getString(R.string.size_hasil, result.size()), Toast.LENGTH_SHORT).show();
 				
 				if (result.size() > 0) {
