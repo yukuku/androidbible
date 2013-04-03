@@ -23,7 +23,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/lJudul"
+            android:layout_below="@+id/lTitle"
             android:imeOptions="actionGo"
             android:inputType="textCapSentences"
             android:selectAllOnFocus="true"
@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/tTulisan"
+            android:layout_below="@+id/tCaption"
             app:horizontalSpacing="8dp"
             app:verticalSpacing="6dp" >
 

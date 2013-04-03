@@ -74,9 +74,9 @@
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="Nama Kitab Agak Panjang 20"
+            android:text="*Long Name Of Book 123"
             android:textColor="#f0f0f0"
-            android:textSize="18dp"
+            android:textSize="18sp"
             tools:ignore="HardcodedText" />
 
         <ImageButton
