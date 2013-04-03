@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -24,19 +25,21 @@ import yuku.alkitabconverter.yes_common.Yes2Common;
 public class UnboundBatchConverter {
 	static String DATA_DIR = "/Users/yuku/j/operasi/unbound";
 	
+	List<String> appConfigEntries = new ArrayList<>();
+	
 	public static void main(String[] args) throws Exception {
 		new UnboundBatchConverter().convertAll();
 	}
 
 	void convertAll() throws Exception {
-		// look for directories starting with "ready-" 
+		// look for directories starting with "ready-"
 		File[] superdirs = new File(DATA_DIR).listFiles(new FileFilter() {
 			@Override public boolean accept(File f) {
 				return f.isDirectory() && f.getName().startsWith("ready-");
 			}
 		});
 	
-		// look for all directories under them but only those with corresponding ".properties" file 
+		// look for all directories under them but only those with corresponding ".properties" file
 		for (final File superdir: superdirs) {
 			File[] dirs = superdir.listFiles(new FileFilter() {
 				@Override public boolean accept(File f) {
@@ -47,6 +50,12 @@ public class UnboundBatchConverter {
 			for (File dir: dirs) {
 				processVersion(superdir, dir);
 			}
+		}
+		
+		Collections.sort(appConfigEntries);
+		
+		for (String s: appConfigEntries) {
+			System.out.println(s);
 		}
 	}
 
@@ -81,7 +90,7 @@ public class UnboundBatchConverter {
 		Yes2Common.VersionInfo versionInfo = new Yes2Common.VersionInfo();
 		String outputName;
 		
-		try (FileInputStream propInput = new FileInputStream(new File(superdir, dir.getName() + ".properties"))) {
+		try (InputStreamReader propInput = new InputStreamReader(new FileInputStream(new File(superdir, dir.getName() + ".properties")), "utf-8")) {
 			Properties prop = new Properties();
 			prop.load(propInput);
 			versionInfo.locale = prop.getProperty("versionInfo.locale");
@@ -108,7 +117,13 @@ public class UnboundBatchConverter {
 		
 		Yes2Common.createYesFile(new File("/tmp", outputName + ".yes"), versionInfo, textDb, null, true);
 		
+		appConfigEntries.add(String.format("<preset locale=%-6s shortName=%-9s longName=%s filename_preset=%s url=%s />", q(versionInfo.locale), q(versionInfo.shortName), q(versionInfo.longName), q(outputName + ".yes"), q("http://alkitab-host.appspot.com/addon/yes2/" + outputName + "--1.yes.gz")));
+		
 		System.out.println("Processing finished, total verses: " + textDb.size());
+	}
+
+	String q(String s) {
+		return '"' + s.replace("\"", "&quot;") + '"';
 	}
 
 	TextDb processTextFile(String categoryName, String versionName, File textFile, boolean mapped) throws Exception {
@@ -154,7 +169,7 @@ public class UnboundBatchConverter {
 		int col_text = columns.get("text");
 		
 		// These versions has a bug (?) that Ps 66 has only 19 verses according to NRSVA
-		// but their orig_verses has 1-20 verses which is correct. The NRSVA itself contains 20 verses. 
+		// but their orig_verses has 1-20 verses which is correct. The NRSVA itself contains 20 verses.
 		// So it seems like unnecessary verse shift.
 		boolean versionWithPsalm66bug = Arrays.asList("afrikaans_1953_ucs2", "french_ostervald_1996_ucs2", "norwegian_ucs2", "wlc_consonants_ucs2", "wlc_ucs2", "wlc_vowels_ucs2").contains(versionName);
 		
@@ -179,7 +194,11 @@ public class UnboundBatchConverter {
 					if (!KjvUtils.isValidKjv(bookId, chapter_1, verse_1)) {
 						System.out.printf("NOT VALID KJV: %s %s %s\n", bookId, chapter_1, verse_1);
 					} else {
-						textDb.append(bookId, chapter_1, verse_1, brokenLine[col_text], -1);
+						// post-process
+						String verseText = brokenLine[col_text];
+						verseText = postProcessText(verseText);
+
+						textDb.append(bookId, chapter_1, verse_1, verseText, -1);
 					}
 				} catch (Exception e) {
 					System.out.println("error when processing: " + Arrays.toString(brokenLine));
@@ -200,8 +219,8 @@ public class UnboundBatchConverter {
 			int orig_verse_1 = 0;
 			
 			// Some of the files contain invalid NRSVA bcvs on the book of psalms,
-			// we need to register that and make the NRSVA verses 1+2 -> KJV verse 1 
-			// and subsequent NRSVA verses n -> KJV verse (n-1) 
+			// we need to register that and make the NRSVA verses 1+2 -> KJV verse 1
+			// and subsequent NRSVA verses n -> KJV verse (n-1)
 			Set<Integer> psalmChaptersWithInvalidNrsvaBcv = new LinkedHashSet<>();
 			int[] psalmChaptersCanHaveInvalidNrsvaBcv = {30,51,52,54,60,84,85};
 			
@@ -298,18 +317,7 @@ public class UnboundBatchConverter {
 					
 					// post-process
 					String verseText = brokenLine[col_text];
-					{ // look for <I> (italics)
-						if (verseText.contains("<I>") && verseText.contains("</I>")) {
-							verseText = verseText.replaceAll("<I>", "@9").replaceAll("</I>", "@7");
-						} else if ((verseText.contains("<I>") ^ verseText.contains("</I>")) == true) {
-							throw new RuntimeException("Verse contains <I> or </I> but no corresponding tag");
-						}
-					}
-					{ // look for start para marker ¶
-						if (verseText.contains("\u0086")) {
-							verseText = verseText.replaceAll("\u0086", "@^");
-						}
-					}
+					verseText = postProcessText(verseText);
 					
 					textDb.append(bookId, chapter_1, verse_1, prefix + verseText, -1, " ");
 				} catch (Exception e) {
@@ -338,7 +346,7 @@ public class UnboundBatchConverter {
 			// In NRSVA, 2Cor 13 has 13 verses, in KJV has 14 verses
 			// NRSVA verse 12 -> KJV verse 12+13
 			// NRSVA verse 13 -> KJV verse 14
-			// This is for those versions originally following NRSVA (not KJV) so we need to append empty verse 14. 
+			// This is for those versions originally following NRSVA (not KJV) so we need to append empty verse 14.
 			if (notexists.contains(0x2e0d0e) && !notexists.contains(0x2e0d0d)) {
 				System.out.println("info: adding 2cor 13:14");
 				textDb.append(0x2e0d0e, "", -1);
@@ -376,5 +384,21 @@ public class UnboundBatchConverter {
 		}
 		
 		return textDb;
+	}
+
+	private static String postProcessText(String verseText) {
+		{ // look for <I> (italics)
+			if (verseText.contains("<I>") && verseText.contains("</I>")) {
+				verseText = verseText.replaceAll("<I>", "@9").replaceAll("</I>", "@7");
+			} else if ((verseText.contains("<I>") ^ verseText.contains("</I>")) == true) {
+				throw new RuntimeException("Verse contains <I> or </I> but no corresponding tag");
+			}
+		}
+		{ // look for start para marker ¶
+			if (verseText.contains("\u00B6")) {
+				verseText = verseText.replaceAll("\u00B6 ?", "@^");
+			}
+		}
+		return verseText;
 	}
 }
