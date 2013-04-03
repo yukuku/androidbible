@@ -79,6 +79,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	
 	public interface OnVerseScrollListener {
 		void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop);
+		void onScrollToTop(VersesView v);
 	}
 
 	private VerseAdapter adapter;
@@ -406,6 +407,14 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 			});
 		}
 	}
+	
+	public void scrollToTop() {
+		post(new Runnable() {
+			@Override public void run() {
+		        setSelectionFromTop(0, 0);
+			}
+		});
+	}
 
 	public void setSelectedVersesListener(SelectedVersesListener listener) {
 		this.listener = listener;
@@ -448,6 +457,10 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 					onVerseScrollListener.onVerseScroll(this, false, verse_1, prop);
 				} else {
 					onVerseScrollListener.onVerseScroll(this, true, 0, 0);
+				}
+				
+				if (position == 0 && prop == 0.f) {
+					onVerseScrollListener.onScrollToTop(this);
 				}
 			}
 		}

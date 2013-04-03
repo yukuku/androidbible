@@ -1254,6 +1254,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				lsSplit1.scrollToVerse(verse_1, prop);
 			}
 		}
+
+		@Override public void onScrollToTop(VersesView v) {
+			lsSplit1.scrollToTop();
+		}
 	};
 	
 	VersesView.OnVerseScrollListener lsSplit1_verseScroll = new VersesView.OnVerseScrollListener() {
@@ -1261,6 +1265,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if (!isPericope) {
 				lsText.scrollToVerse(verse_1, prop);
 			}
+		}
+
+		@Override public void onScrollToTop(VersesView v) {
+			lsText.scrollToTop();
 		}
 	};
 	
