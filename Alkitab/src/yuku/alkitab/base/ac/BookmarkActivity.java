@@ -163,7 +163,7 @@ public class BookmarkActivity extends BaseActivity {
 	
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
-		if (itemId == R.id.menuImpor) {
+		if (itemId == R.id.menuImport) {
 			final File f = getFileBackup();
 			
 			new AlertDialog.Builder(this)
@@ -197,7 +197,7 @@ public class BookmarkActivity extends BaseActivity {
 			.show();
 			
 			return true;
-		} else if (itemId == R.id.menuEkspor) {
+		} else if (itemId == R.id.menuExport) {
 			if (S.getDb().countAllBookmarks() == 0) {
 				msgbox(getString(R.string.no_bookmarks_for_backup));
 				return true;
@@ -284,13 +284,13 @@ public class BookmarkActivity extends BaseActivity {
 						@Override public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 							if (localName.equals(Bookmark2.XMLTAG_Bukmak2)) {
 								Bookmark2 bookmark = Bookmark2.fromAttributes(attributes);
-								int bookmark2_relId = Bookmark2.getRelId(attributes); 
+								int bookmark2_relId = Bookmark2.getRelId(attributes);
 								bookmarks.add(bookmark);
 								bookmarkToRelIdMap.put(bookmark, bookmark2_relId);
 								count_bookmark++;
 							} else if (localName.equals(Label.XMLTAG_Label)) {
 								Label label = Label.fromAttributes(attributes);
-								int label_relId = Label.getRelId(attributes); 
+								int label_relId = Label.getRelId(attributes);
 								labels.add(label);
 								labelToRelIdMap.put(label, label_relId);
 								count_label++;
@@ -549,7 +549,7 @@ public class BookmarkActivity extends BaseActivity {
 				return true;
 			}
 			
-			int nbukmak = S.getDb().countBookmarkWithLabel(label);
+			int nbukmak = S.getDb().countBookmarksWithLabel(label);
 
 			if (nbukmak == 0) {
 				// tiada, langsung hapus aja!

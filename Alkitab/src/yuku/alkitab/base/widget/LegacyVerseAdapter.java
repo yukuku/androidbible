@@ -115,8 +115,8 @@ public class LegacyVerseAdapter extends VerseAdapter {
 
 			PericopeBlock pericopeBlock = pericopeBlocks_[-id - 1];
 
-			TextView lJudul = (TextView) res.findViewById(R.id.lJudul);
-			TextView lXparalel = (TextView) res.findViewById(R.id.lXparalel);
+			TextView lJudul = (TextView) res.findViewById(R.id.lCaption);
+			TextView lXparalel = (TextView) res.findViewById(R.id.lParallels);
 
 			lJudul.setText(pericopeBlock.title);
 

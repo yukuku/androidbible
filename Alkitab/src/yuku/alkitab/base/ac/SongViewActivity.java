@@ -151,14 +151,14 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 	
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menuSalin: {
+		case R.id.menuCopy: {
 			if (currentSong != null) {
 				U.copyToClipboard(convertSongToText(currentSong));
 
 				Toast.makeText(this, R.string.sn_copied, Toast.LENGTH_SHORT).show();
 			}
 		} return true;
-		case R.id.menuBagikan: {
+		case R.id.menuShare: {
 			if (currentSong != null) {
 				Intent intent = new Intent(Intent.ACTION_SEND);
 				intent.setType("text/plain"); //$NON-NLS-1$

@@ -13,13 +13,11 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.util.SparseBooleanArray;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CheckedTextView;
 import android.widget.CompoundButton;
@@ -33,6 +31,7 @@ import android.widget.Toast;
 import java.util.Arrays;
 
 import yuku.afw.V;
+import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -53,38 +52,38 @@ public class Search2Activity extends BaseActivity {
 	public static final String TAG = Search2Activity.class.getSimpleName();
 	
 	private static final String EXTRA_query = "query"; //$NON-NLS-1$
-	private static final String EXTRA_hasilCari = "hasilCari"; //$NON-NLS-1$
-	private static final String EXTRA_posisiTerpilih = "posisiTerpilih"; //$NON-NLS-1$
-	private static final String EXTRA_kitabPosTerbuka = "kitabPosTerbuka"; //$NON-NLS-1$
-	private static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
+	private static final String EXTRA_searchResults = "searchResults"; //$NON-NLS-1$
+	private static final String EXTRA_selectedPosition = "selectedPosition"; //$NON-NLS-1$
+	private static final String EXTRA_openedBookId = "openedBookId"; //$NON-NLS-1$
+	private static final String EXTRA_selectedAri = "selectedAri"; //$NON-NLS-1$
 	
-	ListView lsHasilCari;
+	ListView lsSearchResults;
 	SearchBar searchBar;
 	View panelFilter;
-	CheckBox cFilterLama;
-	CheckBox cFilterBaru;
-	CheckBox cFilterKitabSaja;
-	TextView tFilterRumit;
+	CheckBox cFilterOlds;
+	CheckBox cFilterNews;
+	CheckBox cFilterSingleBook;
+	TextView tFilterAdvanced;
 	View bEditFilter;
 	
-	int warnaHilite;
-	SparseBooleanArray xkitabPosTerpilih = new SparseBooleanArray();
-	int kitabPosTerbuka;
+	int hiliteColor;
+	SparseBooleanArray selectedBookIds = new SparseBooleanArray();
+	int openedBookId;
 	int filterUserAction = 0; // when it's not user action, set to nonzero 
 	
 	public static class Result {
 		public Query query;
-		public IntArrayList hasilCari;
-		public int posisiTerpilih;
-		public int ariTerpilih;
+		public IntArrayList searchResults;
+		public int selectedPosition;
+		public int selectedAri;
 	}
 	
-	public static Intent createIntent(Query query, IntArrayList hasilCari, int posisiTerpilih, int kitabPosTerbuka) {
+	public static Intent createIntent(Query query, IntArrayList searchResults, int selectedPosition, int openedBookId) {
 		Intent res = new Intent(App.context, Search2Activity.class);
 		res.putExtra(EXTRA_query, query);
-		res.putExtra(EXTRA_hasilCari, hasilCari);
-		res.putExtra(EXTRA_posisiTerpilih, posisiTerpilih);
-		res.putExtra(EXTRA_kitabPosTerbuka, kitabPosTerbuka);
+		res.putExtra(EXTRA_searchResults, searchResults);
+		res.putExtra(EXTRA_selectedPosition, selectedPosition);
+		res.putExtra(EXTRA_openedBookId, openedBookId);
 		return res;
 	}
 	
@@ -92,9 +91,9 @@ public class Search2Activity extends BaseActivity {
 		if (data == null) return null;
 		Result res = new Result();
 		res.query = data.getParcelableExtra(EXTRA_query);
-		res.hasilCari = data.getParcelableExtra(EXTRA_hasilCari);
-		res.posisiTerpilih = data.getIntExtra(EXTRA_posisiTerpilih, -1);
-		res.ariTerpilih = data.getIntExtra(EXTRA_ariTerpilih, -1);		
+		res.searchResults = data.getParcelableExtra(EXTRA_searchResults);
+		res.selectedPosition = data.getIntExtra(EXTRA_selectedPosition, -1);
+		res.selectedAri = data.getIntExtra(EXTRA_selectedAri, -1);		
 		return res;
 	}
 
@@ -116,8 +115,8 @@ public class Search2Activity extends BaseActivity {
 			});
 		}
 
-		public void setSearchViewQuery(String carian) {
-			searchView.setQuery(carian, false);
+		public void setSearchViewQuery(String query) {
+			searchView.setQuery(query, false);
 		}
 
 		public String getSearchViewQuery() {
@@ -137,12 +136,12 @@ public class Search2Activity extends BaseActivity {
 		
 		setContentView(R.layout.activity_search2);
 
-		lsHasilCari = V.get(this, R.id.lsHasilCari);
+		lsSearchResults = V.get(this, R.id.lsSearchResults);
 		panelFilter = V.get(this, R.id.panelFilter);
-		cFilterLama = V.get(this, R.id.cFilterLama);
-		cFilterBaru = V.get(this, R.id.cFilterBaru);
-		cFilterKitabSaja = V.get(this, R.id.cFilterKitabSaja);
-		tFilterRumit = V.get(this, R.id.tFilterRumit);
+		cFilterOlds = V.get(this, R.id.cFilterOlds);
+		cFilterNews = V.get(this, R.id.cFilterNews);
+		cFilterSingleBook = V.get(this, R.id.cFilterSingleBook);
+		tFilterAdvanced = V.get(this, R.id.tFilterAdvanced);
 		bEditFilter = V.get(this, R.id.bEditFilter);
 		
 		if (useSearchView()) {
@@ -158,18 +157,18 @@ public class Search2Activity extends BaseActivity {
 				}
 			});
 			// the background of the search bar is bright, so let's make all text black
-			cFilterLama.setTextColor(0xff000000);
-			cFilterBaru.setTextColor(0xff000000);
-			cFilterKitabSaja.setTextColor(0xff000000);
-			tFilterRumit.setTextColor(0xff000000);
+			cFilterOlds.setTextColor(0xff000000);
+			cFilterNews.setTextColor(0xff000000);
+			cFilterSingleBook.setTextColor(0xff000000);
+			tFilterAdvanced.setTextColor(0xff000000);
 		}
 		
-		lsHasilCari.setBackgroundColor(S.applied.backgroundColor);
-		lsHasilCari.setCacheColorHint(S.applied.backgroundColor);
+		lsSearchResults.setBackgroundColor(S.applied.backgroundColor);
+		lsSearchResults.setCacheColorHint(S.applied.backgroundColor);
 		
-		warnaHilite = U.getHighlightColorByBrightness(S.applied.backgroundBrightness);
+		hiliteColor = U.getHighlightColorByBrightness(S.applied.backgroundBrightness);
 		
-		lsHasilCari.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		lsSearchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				int ari = (int) parent.getItemIdAtPosition(position);
 				
@@ -178,11 +177,11 @@ public class Search2Activity extends BaseActivity {
 				
 				Search2Adapter adapter = (Search2Adapter) parent.getAdapter();
 				if (adapter != null) {
-					data.putExtra(EXTRA_hasilCari, adapter.getHasilCari());
+					data.putExtra(EXTRA_searchResults, adapter.getSearchResults());
 				}
 				
-				data.putExtra(EXTRA_posisiTerpilih, position);
-				data.putExtra(EXTRA_ariTerpilih, ari);
+				data.putExtra(EXTRA_selectedPosition, position);
+				data.putExtra(EXTRA_selectedAri, ari);
 				
 				setResult(RESULT_OK, data);
 				finish();
@@ -193,19 +192,19 @@ public class Search2Activity extends BaseActivity {
 				bEditFilter_click();
 			}
 		});
-		cFilterLama.setOnCheckedChangeListener(cFilterLama_checkedChange);
-		cFilterBaru.setOnCheckedChangeListener(cFilterBaru_checkedChange);
-		cFilterKitabSaja.setOnCheckedChangeListener(cFilterKitabSaja_checkedChange);
+		cFilterOlds.setOnCheckedChangeListener(cFilterOlds_checkedChange);
+		cFilterNews.setOnCheckedChangeListener(cFilterNews_checkedChange);
+		cFilterSingleBook.setOnCheckedChangeListener(cFilterSingleBook_checkedChange);
 		
 		{
 			Intent intent = getIntent();
 			Query query = intent.getParcelableExtra(EXTRA_query);
-			IntArrayList hasilCari = intent.getParcelableExtra(EXTRA_hasilCari);
-			int posisiTerpilih = intent.getIntExtra(EXTRA_posisiTerpilih, -1);
+			IntArrayList searchResults = intent.getParcelableExtra(EXTRA_searchResults);
+			int selectedPosition = intent.getIntExtra(EXTRA_selectedPosition, -1);
 			
-			kitabPosTerbuka = intent.getIntExtra(EXTRA_kitabPosTerbuka, -1);
-			Book book = S.activeVersion.getBook(kitabPosTerbuka);
-			cFilterKitabSaja.setText(getString(R.string.search_bookname_only, book.shortName));
+			openedBookId = intent.getIntExtra(EXTRA_openedBookId, -1);
+			Book book = S.activeVersion.getBook(openedBookId);
+			cFilterSingleBook.setText(getString(R.string.search_bookname_only, book.shortName));
 			
 			if (query != null) {
 				if (!useSearchView()) {
@@ -214,24 +213,24 @@ public class Search2Activity extends BaseActivity {
 					api11_compat.setSearchViewQuery(query.query_string);
 				}
 				
-				if (hasilCari != null) {
-					String[] xkata = QueryTokenizer.tokenize(query.query_string);
-					lsHasilCari.setAdapter(new Search2Adapter(hasilCari, xkata));
+				if (searchResults != null) {
+					String[] tokens = QueryTokenizer.tokenize(query.query_string);
+					lsSearchResults.setAdapter(new Search2Adapter(searchResults, tokens));
 				}
 			}
 			
-			if (query == null) { // default: semua kitab
+			if (query == null) { // default: all books
 				for (Book k: S.activeVersion.getConsecutiveBooks()) {
-					xkitabPosTerpilih.put(k.bookId, true);
+					selectedBookIds.put(k.bookId, true);
 				}
 			} else if (query.bookIds != null) {
-				xkitabPosTerpilih = query.bookIds;
+				selectedBookIds = query.bookIds;
 			}
 			
-			aturTampilanFilterLamaBaru();
+			configureFilterDisplayOldNewTest();
 			
-			if (posisiTerpilih != -1) {
-				lsHasilCari.setSelection(posisiTerpilih);
+			if (selectedPosition != -1) {
+				lsSearchResults.setSelection(selectedPosition);
 			}
 		}
 		
@@ -244,144 +243,145 @@ public class Search2Activity extends BaseActivity {
 		return VERSION.SDK_INT >= 11;
 	}
 	
-	void aturTampilanFilterLamaBaru() {
-		// kondisi: kalau sebagian nyala sebagian ga, null.
-		// semua nyala: true.
-		// semua ga nyala: false.
-		Boolean lama = null;
-		Boolean baru = null;
-		int satuSatunyaNyala = -1;
+	void configureFilterDisplayOldNewTest() {
+		// the following variables will have value:
+		// if some are off and some are on -> null.
+		// if all on -> true.
+		// if all off -> false.
+		Boolean olds = null;
+		Boolean news = null;
+		int oneOfThemOn = -1;
 		
 		{
-			int c_nyala = 0, c_mati = 0;
+			int c_on = 0, c_off = 0;
 			for (int i = 0; i < 39; i++) {
-				boolean nyala = xkitabPosTerpilih.get(i, false);
-				if (nyala) c_nyala++; else c_mati++;
+				boolean on = selectedBookIds.get(i, false);
+				if (on) c_on++; else c_off++;
 			}
-			if (c_nyala == 39) lama = true;
-			if (c_mati == 39) lama = false;
+			if (c_on == 39) olds = true;
+			if (c_off == 39) olds = false;
 		}
 		
 		{
-			int c_nyala = 0, c_mati = 0;
+			int c_on = 0, c_off = 0;
 			for (int i = 39; i < 66; i++) {
-				boolean nyala = xkitabPosTerpilih.get(i, false);
-				if (nyala) c_nyala++; else c_mati++;
+				boolean nyala = selectedBookIds.get(i, false);
+				if (nyala) c_on++; else c_off++;
 			}
-			if (c_nyala == 27) baru = true;
-			if (c_mati == 27) baru = false;
+			if (c_on == 27) news = true;
+			if (c_off == 27) news = false;
 		}
 		
 		{
 			int c = 0;
 			int k = 0;
-			for (int i = 0, len = xkitabPosTerpilih.size(); i < len; i++) {
-				if (xkitabPosTerpilih.valueAt(i)) {
-					k = xkitabPosTerpilih.keyAt(i);
+			for (int i = 0, len = selectedBookIds.size(); i < len; i++) {
+				if (selectedBookIds.valueAt(i)) {
+					k = selectedBookIds.keyAt(i);
 					c++;
 					if (c > 1) break;
 				}
 			}
 			if (c == 1) {
-				satuSatunyaNyala = k;
+				oneOfThemOn = k;
 			}
 		}
 		
 		filterUserAction++; {
-			if (lama != null && baru != null) {	// 22nya true atau false
-				cFilterLama.setVisibility(View.VISIBLE);
-				cFilterLama.setChecked(lama);
-				cFilterBaru.setVisibility(View.VISIBLE);
-				cFilterBaru.setChecked(baru);
-				cFilterKitabSaja.setVisibility(View.VISIBLE);
-				cFilterKitabSaja.setChecked(false);
-				tFilterRumit.setVisibility(View.GONE);
+			if (olds != null && news != null) {	// 22nya true atau false
+				cFilterOlds.setVisibility(View.VISIBLE);
+				cFilterOlds.setChecked(olds);
+				cFilterNews.setVisibility(View.VISIBLE);
+				cFilterNews.setChecked(news);
+				cFilterSingleBook.setVisibility(View.VISIBLE);
+				cFilterSingleBook.setChecked(false);
+				tFilterAdvanced.setVisibility(View.GONE);
 			} else {
-				if (satuSatunyaNyala != -1 && satuSatunyaNyala == kitabPosTerbuka) {
-					cFilterLama.setVisibility(View.VISIBLE);
-					cFilterLama.setChecked(false);
-					cFilterBaru.setVisibility(View.VISIBLE);
-					cFilterBaru.setChecked(false);
-					cFilterKitabSaja.setVisibility(View.VISIBLE);
-					cFilterKitabSaja.setChecked(true);
-					tFilterRumit.setVisibility(View.GONE);
+				if (oneOfThemOn != -1 && oneOfThemOn == openedBookId) {
+					cFilterOlds.setVisibility(View.VISIBLE);
+					cFilterOlds.setChecked(false);
+					cFilterNews.setVisibility(View.VISIBLE);
+					cFilterNews.setChecked(false);
+					cFilterSingleBook.setVisibility(View.VISIBLE);
+					cFilterSingleBook.setChecked(true);
+					tFilterAdvanced.setVisibility(View.GONE);
 				} else {
 					// tidak demikian, kita tulis label saja.
-					cFilterLama.setVisibility(View.VISIBLE);
-					cFilterLama.setChecked(false);
-					cFilterBaru.setVisibility(View.VISIBLE);
-					cFilterBaru.setChecked(false);
-					cFilterKitabSaja.setVisibility(View.GONE);
-					tFilterRumit.setVisibility(View.VISIBLE);
+					cFilterOlds.setVisibility(View.VISIBLE);
+					cFilterOlds.setChecked(false);
+					cFilterNews.setVisibility(View.VISIBLE);
+					cFilterNews.setChecked(false);
+					cFilterSingleBook.setVisibility(View.GONE);
+					tFilterAdvanced.setVisibility(View.VISIBLE);
 					StringBuilder sb = new StringBuilder();
-					for (int i = 0, len = xkitabPosTerpilih.size(); i < len; i++) {
-						if (xkitabPosTerpilih.valueAt(i) == true) {
-							int kitabPos = xkitabPosTerpilih.keyAt(i);
-							Book book = S.activeVersion.getBook(kitabPos);
+					for (int i = 0, len = selectedBookIds.size(); i < len; i++) {
+						if (selectedBookIds.valueAt(i) == true) {
+							int bookId = selectedBookIds.keyAt(i);
+							Book book = S.activeVersion.getBook(bookId);
 							if (book != null) {
 								if (sb.length() != 0) sb.append(", "); //$NON-NLS-1$
 								sb.append(book.shortName);
 							}
 						}
 					}
-					tFilterRumit.setText(sb);
+					tFilterAdvanced.setText(sb);
 				}
 			} filterUserAction--;
 		}
 	}
 
-	private OnCheckedChangeListener cFilterLama_checkedChange = new OnCheckedChangeListener() {
+	private OnCheckedChangeListener cFilterOlds_checkedChange = new OnCheckedChangeListener() {
 		@Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			if (filterUserAction != 0) return;
 			
 			filterUserAction++; {
 				if (isChecked) {
-					cFilterKitabSaja.setVisibility(View.VISIBLE);
-					cFilterKitabSaja.setChecked(false);
-					tFilterRumit.setVisibility(View.GONE);
+					cFilterSingleBook.setVisibility(View.VISIBLE);
+					cFilterSingleBook.setChecked(false);
+					tFilterAdvanced.setVisibility(View.GONE);
 				}
 				
-				setXkitabPosTerpilihBerdasarkanFilter();
+				setSelectedBookIdsBasedOnFilter();
 			} filterUserAction--;
 		}
 	};
 	
-	private OnCheckedChangeListener cFilterBaru_checkedChange = new OnCheckedChangeListener() {
+	private OnCheckedChangeListener cFilterNews_checkedChange = new OnCheckedChangeListener() {
 		@Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			if (filterUserAction != 0) return;
 			
 			filterUserAction++; {
 				if (isChecked) {
-					cFilterKitabSaja.setVisibility(View.VISIBLE);
-					cFilterKitabSaja.setChecked(false);
-					tFilterRumit.setVisibility(View.GONE);
+					cFilterSingleBook.setVisibility(View.VISIBLE);
+					cFilterSingleBook.setChecked(false);
+					tFilterAdvanced.setVisibility(View.GONE);
 				}
 				
-				setXkitabPosTerpilihBerdasarkanFilter();
+				setSelectedBookIdsBasedOnFilter();
 			} filterUserAction--;
 		}
 	};
 	
-	private OnCheckedChangeListener cFilterKitabSaja_checkedChange = new OnCheckedChangeListener() {
+	private OnCheckedChangeListener cFilterSingleBook_checkedChange = new OnCheckedChangeListener() {
 		@Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			if (filterUserAction != 0) return;
 			
 			filterUserAction++; {
 				if (isChecked) {
-					cFilterLama.setChecked(false);
-					cFilterBaru.setChecked(false);
+					cFilterOlds.setChecked(false);
+					cFilterNews.setChecked(false);
 				}
 				
-				setXkitabPosTerpilihBerdasarkanFilter();
+				setSelectedBookIdsBasedOnFilter();
 			} filterUserAction--;
 		}
 	};
 	
-	protected void setXkitabPosTerpilihBerdasarkanFilter() {
-		xkitabPosTerpilih.clear();
-		if (cFilterLama.isChecked()) for (int i = 0; i < 39; i++) xkitabPosTerpilih.put(i, true);
-		if (cFilterBaru.isChecked()) for (int i = 39; i < 66; i++) xkitabPosTerpilih.put(i, true);
-		if (cFilterKitabSaja.isChecked()) xkitabPosTerpilih.put(kitabPosTerbuka, true);
+	protected void setSelectedBookIdsBasedOnFilter() {
+		selectedBookIds.clear();
+		if (cFilterOlds.isChecked()) for (int i = 0; i < 39; i++) selectedBookIds.put(i, true);
+		if (cFilterNews.isChecked()) for (int i = 39; i < 66; i++) selectedBookIds.put(i, true);
+		if (cFilterSingleBook.isChecked()) selectedBookIds.put(openedBookId, true);
 	}
 	
 	protected Query getQuery() {
@@ -391,7 +391,7 @@ public class Search2Activity extends BaseActivity {
 		} else {
 			res.query_string = api11_compat.getSearchViewQuery();
 		}
-		res.bookIds = xkitabPosTerpilih;
+		res.bookIds = selectedBookIds;
 		return res;
 	}
 
@@ -405,18 +405,18 @@ public class Search2Activity extends BaseActivity {
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface _unused_, int which) {
 				ListView lv = dialog[0].getListView();
-				xkitabPosTerpilih.clear();
-				SparseBooleanArray xpos = lv.getCheckedItemPositions();
-				for (int i = 0, len = xpos.size(); i < len; i++) {
-					if (xpos.valueAt(i) == true) {
-						int position = xpos.keyAt(i);
-						Book k = adapter.getItem(position);
-						if (k != null) {
-							xkitabPosTerpilih.put(k.bookId, true);
+				selectedBookIds.clear();
+				SparseBooleanArray poses = lv.getCheckedItemPositions();
+				for (int i = 0, len = poses.size(); i < len; i++) {
+					if (poses.valueAt(i) == true) {
+						int position = poses.keyAt(i);
+						Book book = adapter.getItem(position);
+						if (book != null) {
+							selectedBookIds.put(book.bookId, true);
 						}
 					}
 				}
-				aturTampilanFilterLamaBaru();
+				configureFilterDisplayOldNewTest();
 			}
 		})
 		.setNegativeButton(R.string.cancel, null)
@@ -431,52 +431,50 @@ public class Search2Activity extends BaseActivity {
 		
 		// set checked items
 		for (int position = 0, count = adapter.getCount(); position < count; position++) {
-			Book k = adapter.getItem(position);
-			if (k != null && xkitabPosTerpilih.get(k.bookId, false) == true) {
+			Book book = adapter.getItem(position);
+			if (book != null && selectedBookIds.get(book.bookId, false) == true) {
 				lv.setItemChecked(position, true);
 			}
 		}
 	}
 	
-	class SearchFilterAdapter extends BaseAdapter {
-		private Book[] xkitab;
+	class SearchFilterAdapter extends EasyAdapter {
+		private Book[] books;
 
 		public SearchFilterAdapter() {
-			xkitab = S.activeVersion.getConsecutiveBooks();
+			books = S.activeVersion.getConsecutiveBooks();
 		}
 		
-		@Override public int getCount() {
-			return xkitab.length;
-		}
-
 		@Override public Book getItem(int position) {
-			return xkitab[position];
+			return books[position];
 		}
 
-		@Override public long getItemId(int position) {
-			return position;
+		@Override public int getCount() {
+			return books.length;
 		}
 
-		@Override public View getView(int position, View convertView, ViewGroup parent) {
-			CheckedTextView res = (CheckedTextView) (convertView != null? convertView: getLayoutInflater().inflate(android.R.layout.select_dialog_multichoice, null));
+		@Override public View newView(int position, ViewGroup parent) {
+			return getLayoutInflater().inflate(android.R.layout.select_dialog_multichoice, parent, false);
+		}
+
+		@Override public void bindView(View v, int position, ViewGroup parent) {
+			CheckedTextView view = (CheckedTextView) v;
 			
-			Book k = getItem(position);
-			res.setText(k.shortName);
-			res.setTextColor(U.getColorBasedOnBookId(k.bookId));
-			
-			return res;
+			Book book = books[position];
+			view.setText(book.shortName);
+			view.setTextColor(U.getColorBasedOnBookId(book.bookId));
 		}
 	}
 
-	protected void search(String carian) {
-		if (carian.trim().length() == 0) {
+	protected void search(String query) {
+		if (query.trim().length() == 0) {
 			return;
 		}
 		
-		// cek apakah ga ada yang terpilih
+		// check if there is anything chosen
 		{
-			int terpilihPertama = xkitabPosTerpilih.indexOfValue(true);
-			if (terpilihPertama < 0) {
+			int firstSelected = selectedBookIds.indexOfValue(true);
+			if (firstSelected < 0) {
 				new AlertDialog.Builder(this)
 				.setMessage(R.string.pilih_setidaknya_satu_kitab)
 				.setPositiveButton(R.string.ok, null)
@@ -485,16 +483,15 @@ public class Search2Activity extends BaseActivity {
 			}
 		}
 		
-		final String[] xkata = QueryTokenizer.tokenize(carian);
+		final String[] tokens = QueryTokenizer.tokenize(query);
 		
 		final ProgressDialog pd = new ProgressDialog(this);
-		pd.setTitle(getString(R.string.mencari));
-		pd.setMessage(Html.fromHtml(String.format(U.preprocessHtml(getString(R.string.sedang_mencari_ayat_yang_mengandung_kata_kata_xkata)), Arrays.toString(xkata))));
+		pd.setMessage(Html.fromHtml(String.format(U.preprocessHtml(getString(R.string.sedang_mencari_ayat_yang_mengandung_kata_kata_xkata)), Arrays.toString(tokens))));
 		pd.setCancelable(false);
 		pd.setIndeterminate(true);
 		pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
 			@Override public void onDismiss(DialogInterface dialog) {
-				// paksa muncul
+				// force show
 				pd.show();
 			}
 		});
@@ -511,22 +508,22 @@ public class Search2Activity extends BaseActivity {
 				}
 			}
 
-			@Override protected void onPostExecute(IntArrayList hasil) {
-				if (hasil == null) {
-					hasil = new IntArrayList(); // empty result
+			@Override protected void onPostExecute(IntArrayList result) {
+				if (result == null) {
+					result = new IntArrayList(); // empty result
 				}
 				
-				lsHasilCari.setAdapter(new Search2Adapter(hasil, xkata));
-				Toast.makeText(Search2Activity.this, getString(R.string.size_hasil, hasil.size()), Toast.LENGTH_SHORT).show();
+				lsSearchResults.setAdapter(new Search2Adapter(result, tokens));
+				Toast.makeText(Search2Activity.this, getString(R.string.size_hasil, result.size()), Toast.LENGTH_SHORT).show();
 				
-				if (hasil.size() > 0) {
+				if (result.size() > 0) {
 					//# close soft keyboard 
 					InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); 
 					if (!useSearchView()) {
 						inputManager.hideSoftInputFromWindow(searchBar.getSearchField().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 					} else {
 						api11_compat.hideSoftInputFromSearchView(inputManager);
-						lsHasilCari.requestFocus();
+						lsSearchResults.requestFocus();
 					}
 				}
 				
@@ -540,54 +537,43 @@ public class Search2Activity extends BaseActivity {
 		return S.activeVersionId == null || S.activeVersionId.equals(MVersionInternal.getVersionInternalId());
 	}
 
-	class Search2Adapter extends BaseAdapter {
-		IntArrayList hasilCari;
-		String[] xkata;
+	class Search2Adapter extends EasyAdapter {
+		IntArrayList searchResults;
+		String[] tokens;
 		
-		public Search2Adapter(IntArrayList hasilCari, String[] xkata) {
-			this.hasilCari = hasilCari;
-			this.xkata = xkata;
+		public Search2Adapter(IntArrayList searchResults, String[] tokens) {
+			this.searchResults = searchResults;
+			this.tokens = tokens;
 		}
 
 		@Override
 		public int getCount() {
-			return hasilCari.size();
-		}
-
-		@Override
-		public Object getItem(int position) {
-			return null;
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return hasilCari.get(position);
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View res = convertView != null? convertView: LayoutInflater.from(Search2Activity.this).inflate(R.layout.item_search2, null);
-
-			TextView lAlamat = (TextView) res.findViewById(R.id.lAlamat);
-			TextView lCuplikan = (TextView) res.findViewById(R.id.lCuplikan);
-			
-			int ari = hasilCari.get(position);
-			Book book = S.activeVersion.getBook(Ari.toBook(ari));
-			int pasal_1 = Ari.toChapter(ari);
-			int ayat_1 = Ari.toVerse(ari);
-			SpannableStringBuilder sb = new SpannableStringBuilder(S.reference(book, pasal_1, ayat_1));
-			Appearances.applySearchResultReferenceAppearance(lAlamat, sb);
-			
-			String ayat = S.loadVerseText(S.activeVersion, book, pasal_1, ayat_1);
-			ayat = U.removeSpecialCodes(ayat);
-			lCuplikan.setText(Search2Engine.hilite(ayat, xkata, warnaHilite));
-			Appearances.applyTextAppearance(lCuplikan);
-			
-			return res;
+			return searchResults.size();
 		}
 		
-		IntArrayList getHasilCari() {
-			return hasilCari;
+		@Override public View newView(int position, ViewGroup parent) {
+			return getLayoutInflater().inflate(R.layout.item_search2, parent, false);
+		}
+		
+		@Override public void bindView(View view, int position, ViewGroup parent) {
+			TextView lReference = V.get(view, R.id.lReference);
+			TextView lSnippet = V.get(view, R.id.lSnippet);
+			
+			int ari = searchResults.get(position);
+			Book book = S.activeVersion.getBook(Ari.toBook(ari));
+			int chapter_1 = Ari.toChapter(ari);
+			int verse_1 = Ari.toVerse(ari);
+			SpannableStringBuilder sb = new SpannableStringBuilder(S.reference(book, chapter_1, verse_1));
+			Appearances.applySearchResultReferenceAppearance(lReference, sb);
+			
+			String verseText = S.loadVerseText(S.activeVersion, book, chapter_1, verse_1);
+			verseText = U.removeSpecialCodes(verseText);
+			lSnippet.setText(Search2Engine.hilite(verseText, tokens, hiliteColor));
+			Appearances.applyTextAppearance(lSnippet);
+		}
+		
+		IntArrayList getSearchResults() {
+			return searchResults;
 		}
 	}
 }

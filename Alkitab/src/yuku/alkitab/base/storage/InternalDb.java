@@ -691,8 +691,15 @@ public class InternalDb {
 		db.update(Db.TABLE_Label, cv, "_id=?", new String[] {String.valueOf(label._id)}); //$NON-NLS-1$
 	}
 
-	public int countBookmarkWithLabel(Label label) {
-		return (int) DatabaseUtils.queryNumEntries(helper.getReadableDatabase(), Db.TABLE_Bookmark2_Label, Db.Bookmark2_Label.label_id + "=?", new String[] {"" + label._id}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	public int countBookmarksWithLabel(Label label) {
+		SQLiteDatabase db = helper.getReadableDatabase();
+		SQLiteStatement stmt = db.compileStatement("select count(*) from " + Db.TABLE_Bookmark2_Label + " where " + Db.Bookmark2_Label.label_id + "=?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		try {
+			stmt.bindLong(1, label._id);
+			return (int) stmt.simpleQueryForLong();
+		} finally {
+			stmt.close();
+		}
 	}
 
 	public int deleteDevotionsWithLessThanInTitle() {

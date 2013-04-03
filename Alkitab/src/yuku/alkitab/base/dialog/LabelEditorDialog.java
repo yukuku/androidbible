@@ -29,7 +29,7 @@ public class LabelEditorDialog {
 	
 	public static void show(Context context, String initialText, String title, final OkListener okListener) {
 		View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_label, null);
-		final EditText tJudul = V.get(dialogView, R.id.tJudul);
+		final EditText tJudul = V.get(dialogView, R.id.tCaption);
 		tJudul.setText(initialText);
 		
 		final AlertDialog dialog = new AlertDialog.Builder(context)

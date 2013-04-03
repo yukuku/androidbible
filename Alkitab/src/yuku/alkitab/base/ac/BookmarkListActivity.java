@@ -38,9 +38,7 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog.Listener;
 import yuku.alkitab.base.dialog.TypeHighlightDialog;
-import yuku.alkitab.base.dialog.TypeHighlightDialog.Callback;
 import yuku.alkitab.base.dialog.TypeNoteDialog;
-import yuku.alkitab.base.dialog.TypeNoteDialog.RefreshCallback;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.Label;
@@ -60,10 +58,10 @@ public class BookmarkListActivity extends BaseActivity {
 	public static final String TAG = BookmarkListActivity.class.getSimpleName();
 	
     // out
-	public static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
+	public static final String EXTRA_selectedAri = "selectedAri"; //$NON-NLS-1$
 
     // in
-    private static final String EXTRA_filter_jenis = "filter_jenis"; //$NON-NLS-1$
+    private static final String EXTRA_filter_kind = "filter_kind"; //$NON-NLS-1$
     private static final String EXTRA_filter_labelId = "filter_labelId"; //$NON-NLS-1$
 
     public static final int LABELID_noLabel = -1;
@@ -82,17 +80,17 @@ public class BookmarkListActivity extends BaseActivity {
 	String sort_column;
 	boolean sort_ascending;
 	int sort_columnId;
-	String lagiPakeFilter;
+	String currentlyUsedFilter;
 
-    int filter_jenis;
+    int filter_kind;
     long filter_labelId;
 
-	int warnaHilite;
+	int hiliteColor;
 
 
-    public static Intent createIntent(Context context, int filter_jenis, long filter_labelId) {
+    public static Intent createIntent(Context context, int filter_kind, long filter_labelId) {
     	Intent res = new Intent(context, BookmarkListActivity.class);
-    	res.putExtra(EXTRA_filter_jenis, filter_jenis);
+    	res.putExtra(EXTRA_filter_kind, filter_kind);
     	res.putExtra(EXTRA_filter_labelId, filter_labelId);
     	return res;
     }
@@ -109,7 +107,7 @@ public class BookmarkListActivity extends BaseActivity {
 		lv = V.get(this, android.R.id.list);
 		emptyView = V.get(this, android.R.id.empty);
 		
-		filter_jenis = getIntent().getIntExtra(EXTRA_filter_jenis, 0);
+		filter_kind = getIntent().getIntExtra(EXTRA_filter_kind, 0);
 		filter_labelId = getIntent().getLongExtra(EXTRA_filter_labelId, 0);
 		
 		bClearFilter.setOnClickListener(bClearFilter_click);
@@ -120,14 +118,14 @@ public class BookmarkListActivity extends BaseActivity {
         sort_column = Db.Bookmark2.addTime;
         sort_ascending = false;
         sort_columnId = R.string.menuSortWaktuTambah;
-		gantiCursor();
+		replaceCursor();
 		
 		adapter = new BukmakListAdapter(this, cursor);
 
 		panelList.setBackgroundColor(S.applied.backgroundColor);
 		tEmpty.setTextColor(S.applied.fontColor);
 		
-		warnaHilite = U.getHighlightColorByBrightness(S.applied.backgroundBrightness);
+		hiliteColor = U.getHighlightColorByBrightness(S.applied.backgroundBrightness);
 		
 		lv.setAdapter(adapter);
 		lv.setCacheColorHint(S.applied.backgroundColor);
@@ -141,14 +139,14 @@ public class BookmarkListActivity extends BaseActivity {
         String title = null;
         String nothingText = null;
         
-        // atur judul berdasarkan filter
-        if (filter_jenis == Db.Bookmark2.kind_note) {
+        // set title based on filter
+        if (filter_kind == Db.Bookmark2.kind_note) {
             title = getString(R.string.bmcat_notes);
             nothingText = getString(R.string.bl_no_notes_written_yet);
-        } else if (filter_jenis == Db.Bookmark2.kind_highlight) {
+        } else if (filter_kind == Db.Bookmark2.kind_highlight) {
             title = getString(R.string.bmcat_highlights);
             nothingText = getString(R.string.bl_no_highlighted_verses);
-        } else if (filter_jenis == Db.Bookmark2.kind_bookmark) {
+        } else if (filter_kind == Db.Bookmark2.kind_bookmark) {
             if (filter_labelId == 0) {
                 title = getString(R.string.bmcat_all_bookmarks);
                 nothingText = getString(R.string.belum_ada_pembatas_buku);
@@ -164,8 +162,8 @@ public class BookmarkListActivity extends BaseActivity {
             }
         }
         
-        // kalau lagi pake filter teks (bukan filter jenis), nothingTextnya lain
-        if (lagiPakeFilter != null) {
+        // if we're using text filter (as opposed to kind filter), we use a different nothingText
+        if (currentlyUsedFilter != null) {
         	nothingText = getString(R.string.bl_no_items_match_the_filter_above);
         	bClearFilter.setVisibility(View.VISIBLE);
         } else {
@@ -182,56 +180,56 @@ public class BookmarkListActivity extends BaseActivity {
 	}
 
 	boolean searchView_search(String query) {
-		String carian = query.toString().trim();
-		if (carian.length() == 0) {
-			buangFilter();
+		query = query.trim();
+		if (query.length() == 0) {
+			removeFilter();
 			return true;
 		}
 		
-		String[] xtoken = QueryTokenizer.tokenize(carian);
-		if (xtoken.length == 0) {
-			buangFilter();
+		String[] tokens = QueryTokenizer.tokenize(query);
+		if (tokens.length == 0) {
+			removeFilter();
 			return true;
 		}
 		
-		pasangFilter(carian);
+		applyFilter(query);
 		return true;
 	}
 
 	OnClickListener bClearFilter_click = new OnClickListener() {
 		@Override public void onClick(View v) {
 			searchView.setQuery("", false); //$NON-NLS-1$
-			buangFilter();
+			removeFilter();
 		}
 	};
 
-	protected void buangFilter() {
+	protected void removeFilter() {
 		adapter.getFilter().filter(null);
-		lagiPakeFilter = null;
+		currentlyUsedFilter = null;
 		setTitleAndNothingText();
 	}
 	
-	protected void pasangFilter(String carian) {
-		lagiPakeFilter = carian;
-		filterPakeLagiPakeFilter();
+	protected void applyFilter(String query) {
+		currentlyUsedFilter = query;
+		filterUsingCurrentlyUsedFilter();
 		setTitleAndNothingText();
 	}
 
-	void filterPakeLagiPakeFilter() {
+	void filterUsingCurrentlyUsedFilter() {
 		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.bl_filtering_titiktiga), true, false);
-		adapter.getFilter().filter(lagiPakeFilter, new FilterListener() {
+		adapter.getFilter().filter(currentlyUsedFilter, new FilterListener() {
 			@Override public void onFilterComplete(int count) {
 				pd.dismiss();
 			}
 		});
 	}
 
-	@SuppressWarnings("deprecation") void gantiCursor() {
+	@SuppressWarnings("deprecation") void replaceCursor() {
 		if (cursor != null) {
 			stopManagingCursor(cursor);
 		}
 		
-		cursor = S.getDb().listBookmarks(filter_jenis, filter_labelId, sort_column, sort_ascending);
+		cursor = S.getDb().listBookmarks(filter_kind, filter_labelId, sort_column, sort_ascending);
 		startManagingCursor(cursor);
 		
 		if (adapter != null) {
@@ -243,7 +241,7 @@ public class BookmarkListActivity extends BaseActivity {
 		View res = LayoutInflater.from(this).inflate(R.layout.label, null);
 		res.setLayoutParams(panelLabels.generateDefaultLayoutParams());
 		
-		TextView lJudul = V.get(res, R.id.lJudul);
+		TextView lJudul = V.get(res, R.id.lCaption);
 		lJudul.setText(label.title);
 		
 		U.applyLabelColor(label, lJudul);
@@ -307,12 +305,12 @@ public class BookmarkListActivity extends BaseActivity {
 		labels.add(getString(R.string.menuSortAri));
 		values.add(R.string.menuSortAri);
 		
-		if (filter_jenis == Db.Bookmark2.kind_bookmark) {
+		if (filter_kind == Db.Bookmark2.kind_bookmark) {
 			labels.add(getString(R.string.menuSortTulisan));
 			values.add(R.string.menuSortTulisan);
-		} else if (filter_jenis == Db.Bookmark2.kind_note) {
+		} else if (filter_kind == Db.Bookmark2.kind_note) {
 			// nop
-		} else if (filter_jenis == Db.Bookmark2.kind_highlight) {
+		} else if (filter_kind == Db.Bookmark2.kind_highlight) {
 			labels.add(getString(R.string.menuSortTulisan_warna));
 			values.add(R.string.menuSortTulisan);
 		}
@@ -355,12 +353,12 @@ public class BookmarkListActivity extends BaseActivity {
 
 			private void sort(String column, boolean ascending, int columnId) {
 				searchView.setQuery("", false); //$NON-NLS-1$
-				lagiPakeFilter = null;
+				currentlyUsedFilter = null;
 				setTitleAndNothingText();
 				sort_column = column;
 				sort_ascending = ascending;
 				sort_columnId = columnId;
-				gantiCursor();
+				replaceCursor();
 			}
 		})
 		.setTitle(R.string.menuSort)
@@ -373,7 +371,7 @@ public class BookmarkListActivity extends BaseActivity {
 			int ari = o.getInt(o.getColumnIndexOrThrow(Db.Bookmark2.ari));
 			
 			Intent res = new Intent();
-			res.putExtra(EXTRA_ariTerpilih, ari);
+			res.putExtra(EXTRA_selectedAri, ari);
 			
 			setResult(RESULT_OK, res);
 			finish();
@@ -384,63 +382,63 @@ public class BookmarkListActivity extends BaseActivity {
 		getMenuInflater().inflate(R.menu.context_bookmark_list, menu);
 		
 		// sesuaikan string berdasarkan jenis.
-		android.view.MenuItem menuHapusBukmak = menu.findItem(R.id.menuHapusBukmak);
-		if (filter_jenis == Db.Bookmark2.kind_bookmark) menuHapusBukmak.setTitle(R.string.hapus_pembatas_buku);
-		if (filter_jenis == Db.Bookmark2.kind_note) menuHapusBukmak.setTitle(R.string.hapus_catatan);
-		if (filter_jenis == Db.Bookmark2.kind_highlight) menuHapusBukmak.setTitle(R.string.hapus_stabilo);
+		android.view.MenuItem menuDeleteBookmark = menu.findItem(R.id.menuDeleteBookmark);
+		if (filter_kind == Db.Bookmark2.kind_bookmark) menuDeleteBookmark.setTitle(R.string.hapus_pembatas_buku);
+		if (filter_kind == Db.Bookmark2.kind_note) menuDeleteBookmark.setTitle(R.string.hapus_catatan);
+		if (filter_kind == Db.Bookmark2.kind_highlight) menuDeleteBookmark.setTitle(R.string.hapus_stabilo);
 
-		android.view.MenuItem menuUbahBukmak = menu.findItem(R.id.menuUbahBukmak);
-		if (filter_jenis == Db.Bookmark2.kind_bookmark) menuUbahBukmak.setTitle(R.string.ubah_bukmak);
-		if (filter_jenis == Db.Bookmark2.kind_note) menuUbahBukmak.setTitle(R.string.ubah_catatan);
-		if (filter_jenis == Db.Bookmark2.kind_highlight) menuUbahBukmak.setTitle(R.string.ubah_stabilo);
+		android.view.MenuItem menuModifyBookmark = menu.findItem(R.id.menuModifyBookmark);
+		if (filter_kind == Db.Bookmark2.kind_bookmark) menuModifyBookmark.setTitle(R.string.ubah_bukmak);
+		if (filter_kind == Db.Bookmark2.kind_note) menuModifyBookmark.setTitle(R.string.ubah_catatan);
+		if (filter_kind == Db.Bookmark2.kind_highlight) menuModifyBookmark.setTitle(R.string.ubah_stabilo);
 	}
 	
 	@SuppressWarnings("deprecation") @Override public boolean onContextItemSelected(android.view.MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		int itemId = item.getItemId();
 		
-		if (itemId == R.id.menuHapusBukmak) {
-			// jenisnya apapun, cara hapusnya sama
+		if (itemId == R.id.menuDeleteBookmark) {
+			// whatever the kind is, the way to delete is the same
 			S.getDb().deleteBookmarkById(info.id);
 			adapter.getCursor().requery();
-			if (lagiPakeFilter != null) filterPakeLagiPakeFilter();
+			if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
 			
 			return true;
-		} else if (itemId == R.id.menuUbahBukmak) {
-			if (filter_jenis == Db.Bookmark2.kind_bookmark) {
+		} else if (itemId == R.id.menuModifyBookmark) {
+			if (filter_kind == Db.Bookmark2.kind_bookmark) {
 				TypeBookmarkDialog dialog = new TypeBookmarkDialog(this, info.id);
 				dialog.setListener(new Listener() {
 					@Override public void onOk() {
 						adapter.getCursor().requery();
-						if (lagiPakeFilter != null) filterPakeLagiPakeFilter();
+						if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
 					}
 				});
 				dialog.show();
 				
-			} else if (filter_jenis == Db.Bookmark2.kind_note) {
+			} else if (filter_kind == Db.Bookmark2.kind_note) {
 				Cursor cursor = (Cursor) adapter.getItem(info.position);
 				int ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bookmark2.ari));
 				
-				TypeNoteDialog dialog = new TypeNoteDialog(this, S.activeVersion.getBook(Ari.toBook(ari)), Ari.toChapter(ari), Ari.toVerse(ari), new RefreshCallback() {
+				TypeNoteDialog dialog = new TypeNoteDialog(this, S.activeVersion.getBook(Ari.toBook(ari)), Ari.toChapter(ari), Ari.toVerse(ari), new TypeNoteDialog.Listener() {
 					@Override public void onDone() {
 						adapter.getCursor().requery();
-						if (lagiPakeFilter != null) filterPakeLagiPakeFilter();
+						if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
 					}
 				});
 				dialog.show();
 				
-			} else if (filter_jenis == Db.Bookmark2.kind_highlight) {
+			} else if (filter_kind == Db.Bookmark2.kind_highlight) {
 				Cursor cursor = (Cursor) adapter.getItem(info.position);
 				int ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bookmark2.ari));
-				int warnaRgb = U.decodeHighlight(cursor.getString(cursor.getColumnIndexOrThrow(Db.Bookmark2.caption)));
-				String alamat = S.reference(S.activeVersion, ari);
+				int colorRgb = U.decodeHighlight(cursor.getString(cursor.getColumnIndexOrThrow(Db.Bookmark2.caption)));
+				String reference = S.reference(S.activeVersion, ari);
 				
-				new TypeHighlightDialog(this, ari, new Callback() {
+				new TypeHighlightDialog(this, ari, new TypeHighlightDialog.Listener() {
 					@Override public void onOk(int warnaRgb) {
 						adapter.getCursor().requery();
-						if (lagiPakeFilter != null) filterPakeLagiPakeFilter();
+						if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
 					}
-				}, warnaRgb, alamat).bukaDialog();
+				}, colorRgb, reference).show();
 			}
 			
 			return true;
@@ -455,9 +453,9 @@ public class BookmarkListActivity extends BaseActivity {
 		// must also modify FilterQueryProvider below!!!
 		private int col__id;
 		private int col_ari;
-		private int col_tulisan;
-		private int col_waktuTambah;
-		private int col_waktuUbah;
+		private int col_caption;
+		private int col_addTime;
+		private int col_modifyTime;
 		//////////////////////////////
 		
 		BukmakListAdapter(Context context, Cursor cursor) {
@@ -479,9 +477,9 @@ public class BookmarkListActivity extends BaseActivity {
 			if (c != null) {
 				col__id = c.getColumnIndexOrThrow(BaseColumns._ID);
 				col_ari = c.getColumnIndexOrThrow(Db.Bookmark2.ari);
-				col_tulisan = c.getColumnIndexOrThrow(Db.Bookmark2.caption);
-				col_waktuTambah = c.getColumnIndexOrThrow(Db.Bookmark2.addTime);
-				col_waktuUbah = c.getColumnIndexOrThrow(Db.Bookmark2.modifyTime);
+				col_caption = c.getColumnIndexOrThrow(Db.Bookmark2.caption);
+				col_addTime = c.getColumnIndexOrThrow(Db.Bookmark2.addTime);
+				col_modifyTime = c.getColumnIndexOrThrow(Db.Bookmark2.modifyTime);
 			}
 		}
 		
@@ -490,39 +488,39 @@ public class BookmarkListActivity extends BaseActivity {
 		}
 		
 		@Override public void bindView(View view, Context context, Cursor cursor) {
-			TextView lTanggal = V.get(view, R.id.lTanggal);
-			TextView lTulisan = V.get(view, R.id.lTulisan);
-			TextView lCuplikan = V.get(view, R.id.lCuplikan);
+			TextView lDate = V.get(view, R.id.lDate);
+			TextView lCaption = V.get(view, R.id.lCaption);
+			TextView lSnippet = V.get(view, R.id.lSnippet);
 			FlowLayout panelLabels = V.get(view, R.id.panelLabels);
 			
 			{
-				int waktuTambah_i = cursor.getInt(col_waktuTambah);
-				int waktuUbah_i = cursor.getInt(col_waktuUbah);
+				int addTime_i = cursor.getInt(col_addTime);
+				int modifyTime_i = cursor.getInt(col_modifyTime);
 				
-				if (waktuTambah_i == waktuUbah_i) {
-					lTanggal.setText(Sqlitil.toLocaleDateMedium(waktuTambah_i));
+				if (addTime_i == modifyTime_i) {
+					lDate.setText(Sqlitil.toLocaleDateMedium(addTime_i));
 				} else {
-					lTanggal.setText(getString(R.string.waktuTambah_edited_waktuUbah, Sqlitil.toLocaleDateMedium(waktuTambah_i), Sqlitil.toLocaleDateMedium(waktuUbah_i)));
+					lDate.setText(getString(R.string.waktuTambah_edited_waktuUbah, Sqlitil.toLocaleDateMedium(addTime_i), Sqlitil.toLocaleDateMedium(modifyTime_i)));
 				}
 				
-				Appearances.applyBookmarkDateTextAppearance(lTanggal);
+				Appearances.applyBookmarkDateTextAppearance(lDate);
 			}
 			
 			int ari = cursor.getInt(col_ari);
 			Book book = S.activeVersion.getBook(Ari.toBook(ari));
-			String alamat = S.reference(S.activeVersion, ari);
+			String reference = S.reference(S.activeVersion, ari);
 			
-			String isi = S.loadVerseText(S.activeVersion, book, Ari.toChapter(ari), Ari.toVerse(ari));
-			isi = U.removeSpecialCodes(isi);
+			String verseText = S.loadVerseText(S.activeVersion, book, Ari.toChapter(ari), Ari.toVerse(ari));
+			verseText = U.removeSpecialCodes(verseText);
 			
-			String tulisan = cursor.getString(col_tulisan);
+			String caption = cursor.getString(col_caption);
 			
-			if (filter_jenis == Db.Bookmark2.kind_bookmark) {
-				lTulisan.setText(lagiPakeFilter != null? Search2Engine.hilite(tulisan, filterQueryProvider.getXkata(), warnaHilite): tulisan);
-				Appearances.applyBookmarkTitleTextAppearance(lTulisan);
-				CharSequence cuplikan = lagiPakeFilter != null? Search2Engine.hilite(isi, filterQueryProvider.getXkata(), warnaHilite): isi;
+			if (filter_kind == Db.Bookmark2.kind_bookmark) {
+				lCaption.setText(currentlyUsedFilter != null? Search2Engine.hilite(caption, filterQueryProvider.getTokens(), hiliteColor): caption);
+				Appearances.applyBookmarkTitleTextAppearance(lCaption);
+				CharSequence snippet = currentlyUsedFilter != null? Search2Engine.hilite(verseText, filterQueryProvider.getTokens(), hiliteColor): verseText;
 
-				Appearances.applyBookmarkSnippetContentAndAppearance(lCuplikan, alamat, cuplikan);
+				Appearances.applyBookmarkSnippetContentAndAppearance(lSnippet, reference, snippet);
 				
 				long _id = cursor.getLong(col__id);
 				List<Label> labels = S.getDb().listLabelsByBookmarkId(_id);
@@ -536,84 +534,84 @@ public class BookmarkListActivity extends BaseActivity {
 					panelLabels.setVisibility(View.GONE);
 				}
 				
-			} else if (filter_jenis == Db.Bookmark2.kind_note) {
-				lTulisan.setText(alamat);
-				Appearances.applyBookmarkTitleTextAppearance(lTulisan);
-				lCuplikan.setText(lagiPakeFilter != null? Search2Engine.hilite(tulisan, filterQueryProvider.getXkata(), warnaHilite): tulisan);
-				Appearances.applyTextAppearance(lCuplikan);
+			} else if (filter_kind == Db.Bookmark2.kind_note) {
+				lCaption.setText(reference);
+				Appearances.applyBookmarkTitleTextAppearance(lCaption);
+				lSnippet.setText(currentlyUsedFilter != null? Search2Engine.hilite(caption, filterQueryProvider.getTokens(), hiliteColor): caption);
+				Appearances.applyTextAppearance(lSnippet);
 				
-			} else if (filter_jenis == Db.Bookmark2.kind_highlight) {
-				lTulisan.setText(alamat);
-				Appearances.applyBookmarkTitleTextAppearance(lTulisan);
+			} else if (filter_kind == Db.Bookmark2.kind_highlight) {
+				lCaption.setText(reference);
+				Appearances.applyBookmarkTitleTextAppearance(lCaption);
 				
-				SpannableStringBuilder cuplikan = lagiPakeFilter != null? Search2Engine.hilite(isi, filterQueryProvider.getXkata(), warnaHilite): new SpannableStringBuilder(isi);
-				int warnaStabilo = U.decodeHighlight(tulisan);
-				if (warnaStabilo != -1) {
-					cuplikan.setSpan(new BackgroundColorSpan(U.alphaMixHighlight(warnaStabilo)), 0, cuplikan.length(), 0);
+				SpannableStringBuilder snippet = currentlyUsedFilter != null? Search2Engine.hilite(verseText, filterQueryProvider.getTokens(), hiliteColor): new SpannableStringBuilder(verseText);
+				int highlightColor = U.decodeHighlight(caption);
+				if (highlightColor != -1) {
+					snippet.setSpan(new BackgroundColorSpan(U.alphaMixHighlight(highlightColor)), 0, snippet.length(), 0);
 				}
-				lCuplikan.setText(cuplikan);
-				Appearances.applyTextAppearance(lCuplikan);
+				lSnippet.setText(snippet);
+				Appearances.applyTextAppearance(lSnippet);
 			}
 		}
 	};
 	
 	class BukmakFilterQueryProvider implements FilterQueryProvider {
-		private String[] xkata;
+		private String[] tokens;
 		
-		public String[] getXkata() {
-			return xkata;
+		public String[] getTokens() {
+			return tokens;
 		}
 		
 		@Override public Cursor runQuery(CharSequence constraint) {
 			if (constraint == null || constraint.length() == 0) {
-				this.xkata = null;
-				return S.getDb().listBookmarks(filter_jenis, filter_labelId, sort_column, sort_ascending);
+				this.tokens = null;
+				return S.getDb().listBookmarks(filter_kind, filter_labelId, sort_column, sort_ascending);
 			}
 			
-			String[] xkata = QueryTokenizer.tokenize(constraint.toString());
-			for (int i = 0; i < xkata.length; i++) {
-				xkata[i] = xkata[i].toLowerCase(Locale.getDefault());
+			String[] tokens = QueryTokenizer.tokenize(constraint.toString());
+			for (int i = 0; i < tokens.length; i++) {
+				tokens[i] = tokens[i].toLowerCase(Locale.getDefault());
 			}
-			this.xkata = xkata;
+			this.tokens = tokens;
 			
 			MatrixCursor res = new MatrixCursor(new String[] {BaseColumns._ID, Db.Bookmark2.ari, Db.Bookmark2.caption, Db.Bookmark2.addTime, Db.Bookmark2.modifyTime});
-			Cursor c = S.getDb().listBookmarks(filter_jenis, filter_labelId, sort_column, sort_ascending);
+			Cursor c = S.getDb().listBookmarks(filter_kind, filter_labelId, sort_column, sort_ascending);
 			try {
 				int col__id = c.getColumnIndexOrThrow(BaseColumns._ID);
 				int col_ari = c.getColumnIndexOrThrow(Db.Bookmark2.ari);
-				int col_tulisan = c.getColumnIndexOrThrow(Db.Bookmark2.caption);
-				int col_waktuTambah = c.getColumnIndexOrThrow(Db.Bookmark2.addTime);
-				int col_waktuUbah = c.getColumnIndexOrThrow(Db.Bookmark2.modifyTime);
+				int col_caption = c.getColumnIndexOrThrow(Db.Bookmark2.caption);
+				int col_addTime = c.getColumnIndexOrThrow(Db.Bookmark2.addTime);
+				int col_modifyTime = c.getColumnIndexOrThrow(Db.Bookmark2.modifyTime);
 				
 				while (c.moveToNext()) {
-					boolean memenuhi = false;
+					boolean fulfills = false;
 					
-					String tulisan = c.getString(col_tulisan);
+					String caption = c.getString(col_caption);
 					
-					if (filter_jenis != Db.Bookmark2.kind_highlight) { // "tulisan" di stabilo cuma simpen info tentang warna, jadi ga ada gunanya dicek.
-						String tulisan_lc = tulisan.toLowerCase(Locale.getDefault());
-						if (Search2Engine.satisfiesQuery(tulisan_lc, xkata)) {
-							memenuhi = true;
+					if (filter_kind != Db.Bookmark2.kind_highlight) { // "caption" in highlights only stores color information, so it's useless to check
+						String tulisan_lc = caption.toLowerCase(Locale.getDefault());
+						if (Search2Engine.satisfiesQuery(tulisan_lc, tokens)) {
+							fulfills = true;
 						}
 					}
 					
 					int ari = c.getInt(col_ari);
-					if (!memenuhi) {
-						// coba isi ayatnya!
-						String ayat = S.loadVerseText(S.activeVersion, ari);
-						String ayat_lc = ayat.toLowerCase(Locale.getDefault());
-						if (Search2Engine.satisfiesQuery(ayat_lc, xkata)) {
-							memenuhi = true;
+					if (!fulfills) {
+						// try the verse text!
+						String verseText = S.loadVerseText(S.activeVersion, ari);
+						String verseText_lc = verseText.toLowerCase(Locale.getDefault());
+						if (Search2Engine.satisfiesQuery(verseText_lc, tokens)) {
+							fulfills = true;
 						}
 					}
 					
-					if (memenuhi) {
+					if (fulfills) {
 						res.newRow()
 						.add(c.getLong(col__id))
 						.add(ari)
-						.add(tulisan)
-						.add(c.getInt(col_waktuTambah))
-						.add(c.getInt(col_waktuUbah));
+						.add(caption)
+						.add(c.getInt(col_addTime))
+						.add(c.getInt(col_modifyTime));
 					}
 				}
 			} finally {

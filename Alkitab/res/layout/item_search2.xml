@@ -6,27 +6,27 @@
     android:padding="8dip" >
 
     <TextView
-        android:id="@+id/lAlamat"
+        android:id="@+id/lReference"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:gravity="center_vertical"
-        android:text="Alamat ayat"
+        android:text="*reference"
         android:textAppearance="?android:attr/textAppearanceMedium"
         tools:ignore="HardcodedText" />
 
     <TextView
-        android:id="@+id/lCuplikan"
+        android:id="@+id/lSnippet"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@id/lAlamat"
+        android:layout_below="@id/lReference"
         android:gravity="top"
-        android:text="Simple application that shows how to use RelativeLayout bla balbl balblbalbal balbalbalbalbala"
+        android:text="*snippet"
         tools:ignore="HardcodedText" />
 
 </RelativeLayout>

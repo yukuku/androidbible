@@ -112,7 +112,7 @@ public class VersionsActivity extends BaseActivity {
 
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menuTambah:
+		case R.id.menuAdd:
 			clickOnOpenFile();
 			return true;
 		}
@@ -146,7 +146,7 @@ public class VersionsActivity extends BaseActivity {
 		} else {
 			getMenuInflater().inflate(R.menu.context_version, menu);
 		
-			android.view.MenuItem menuBuang = menu.findItem(R.id.menuBuang);
+			android.view.MenuItem menuBuang = menu.findItem(R.id.menuDelete);
 			if (menuBuang != null) {
 				menuBuang.setEnabled(false);
 				MVersion item = adapter.getItem(info.position);
@@ -159,7 +159,7 @@ public class VersionsActivity extends BaseActivity {
 	
 	@Override public boolean onContextItemSelected(android.view.MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menuBuang: {
+		case R.id.menuDelete: {
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 			final MVersion edisi = adapter.getItem(info.position);
 			if (edisi instanceof MVersionYes) {
@@ -321,7 +321,6 @@ public class VersionsActivity extends BaseActivity {
 				};
 				
 				new AlertDialog.Builder(VersionsActivity.this)
-				.setTitle(R.string.mengunduh_tambahan)
 				.setMessage(getString(R.string.file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya, AddonManager.getVersionPath(edisi.presetFilename)))
 				.setPositiveButton(R.string.yes, clickListener)
 				.setNegativeButton(R.string.no, null)
@@ -338,7 +337,6 @@ public class VersionsActivity extends BaseActivity {
 				edisi.setActive(true);
 			} else {
 				new AlertDialog.Builder(this)
-				.setTitle(R.string.cannot_find_data_file)
 				.setMessage(getString(R.string.the_file_for_this_version_is_no_longer_available_file, edisi.filename))
 				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
@@ -815,7 +813,7 @@ public class VersionsActivity extends BaseActivity {
 			View res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_version, null);
 			
 			CheckBox cAktif = V.get(res, R.id.cAktif);
-			TextView lJudul = V.get(res, R.id.lJudul);
+			TextView lJudul = V.get(res, R.id.lCaption);
 			TextView lNamafile = V.get(res, R.id.lNamafile);
 			TextView lBahasa = V.get(res, R.id.lBahasa);
 			

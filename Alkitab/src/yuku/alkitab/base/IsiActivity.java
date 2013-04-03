@@ -169,11 +169,11 @@ public class IsiActivity extends BaseActivity {
 		setContentView(R.layout.activity_isi);
 		
 		lsText = V.get(this, R.id.lsIsi);
-		bGoto = V.get(this, R.id.bTuju);
-		bLeft = V.get(this, R.id.bKiri);
-		bRight = V.get(this, R.id.bKanan);
-		titleContainer = V.get(this, R.id.tempatJudul);
-		lTitle = V.get(this, R.id.lJudul);
+		bGoto = V.get(this, R.id.bGoto);
+		bLeft = V.get(this, R.id.bLeft);
+		bRight = V.get(this, R.id.bRight);
+		titleContainer = V.get(this, R.id.panelTitle);
+		lTitle = V.get(this, R.id.lTitle);
 		bContextMenu = V.get(this, R.id.bContext);
 		root = V.get(this, R.id.root);
 		
@@ -797,7 +797,7 @@ public class IsiActivity extends BaseActivity {
 				scrollToShowVerse(mainVerse_1);
 			}
 			
-			TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, S.activeBook, this.chapter_1, mainVerse_1, new TypeNoteDialog.RefreshCallback() {
+			TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, S.activeBook, this.chapter_1, mainVerse_1, new TypeNoteDialog.Listener() {
 				@Override public void onDone() {
 					uncheckAll();
 					verseAdapter_.loadAttributeMap();
@@ -808,12 +808,12 @@ public class IsiActivity extends BaseActivity {
 			final int ari_bookchapter = Ari.encode(S.activeBook.bookId, this.chapter_1, 0);
 			int colorRgb = S.getDb().getHighlightColorRgb(ari_bookchapter, selected);
 			
-			new TypeHighlightDialog(this, ari_bookchapter, selected, new TypeHighlightDialog.Callback() {
+			new TypeHighlightDialog(this, ari_bookchapter, selected, new TypeHighlightDialog.Listener() {
 				@Override public void onOk(int colorRgb) {
 					uncheckAll();
 					verseAdapter_.loadAttributeMap();
 				}
-			}, colorRgb, reference).bukaDialog();
+			}, colorRgb, reference).show();
 		} else if (item == menu.menuShare) {
 			CharSequence textToShare = prepareTextForCopyShare(selected, reference);
 			
@@ -903,7 +903,7 @@ public class IsiActivity extends BaseActivity {
 		
 		// appliance of hide navigation
 		{
-			View navigationPanel = findViewById(R.id.panelNavigasi);
+			View navigationPanel = findViewById(R.id.panelNavigation);
 			if (Preferences.getBoolean(getString(R.string.pref_tanpaNavigasi_key), getResources().getBoolean(R.bool.pref_tanpaNavigasi_default))) {
 				navigationPanel.setVisibility(View.GONE);
 				titleContainer.setVisibility(View.VISIBLE);
@@ -1022,7 +1022,6 @@ public class IsiActivity extends BaseActivity {
 	
 	public void openDonationDialog() {
 		new AlertDialog.Builder(this)
-		.setTitle(R.string.donasi_judul)
 		.setMessage(R.string.donasi_keterangan)
 		.setPositiveButton(R.string.donasi_tombol_ok, new DialogInterface.OnClickListener() {
 			@Override
@@ -1073,11 +1072,11 @@ public class IsiActivity extends BaseActivity {
 		case R.id.menuBookmark:
 			startActivityForResult(new Intent(this, BookmarkActivity.class), REQCODE_bookmark);
 			return true;
-		case R.id.menuSearch2:
-			menuSearch2_click();
+		case R.id.menuSearch:
+			menuSearch_click();
 			return true;
 		case R.id.menuVersions:
-			bukaDialogEdisi();
+			openVersionsDialog();
 			return true;
 		case R.id.menuDevotion: 
 			startActivityForResult(new Intent(this, DevotionActivity.class), REQCODE_devotion);
@@ -1105,7 +1104,7 @@ public class IsiActivity extends BaseActivity {
 		return super.onOptionsItemSelected(item); 
 	}
 
-	private void bukaDialogEdisi() {
+	private void openVersionsDialog() {
 		// populate with 
 		// 1. internal
 		// 2. presets that have been DOWNLOADED and ACTIVE
@@ -1148,7 +1147,6 @@ public class IsiActivity extends BaseActivity {
 		}
 
 		new AlertDialog.Builder(this)
-		.setTitle(R.string.pilih_edisi)
 		.setSingleChoiceItems(options.toArray(new String[options.size()]), selected, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
 				final MVersion mv = data.get(which);
@@ -1167,7 +1165,7 @@ public class IsiActivity extends BaseActivity {
 		.show();
 	}
 
-	private void menuSearch2_click() {
+	private void menuSearch_click() {
 		startActivityForResult(Search2Activity.createIntent(search2_query, search2_results, search2_selectedPosition, S.activeBook.bookId), REQCODE_search);
 	}
 	
@@ -1202,14 +1200,14 @@ public class IsiActivity extends BaseActivity {
 			if (resultCode == RESULT_OK) {
 				Search2Activity.Result result = Search2Activity.obtainResult(data);
 				if (result != null) {
-					if (result.ariTerpilih != -1) {
-						jumpToAri(result.ariTerpilih);
-						history.add(result.ariTerpilih);
+					if (result.selectedAri != -1) {
+						jumpToAri(result.selectedAri);
+						history.add(result.selectedAri);
 					}
 					
 					search2_query = result.query;
-					search2_results = result.hasilCari;
-					search2_selectedPosition = result.posisiTerpilih;
+					search2_results = result.searchResults;
+					search2_selectedPosition = result.selectedPosition;
 				}
 			}
 		} else if (requestCode == REQCODE_devotion) {
@@ -1415,7 +1413,7 @@ public class IsiActivity extends BaseActivity {
 	};
 	
 	@Override public boolean onSearchRequested() {
-		menuSearch2_click();
+		menuSearch_click();
 		
 		return true;
 	}
@@ -1424,8 +1422,8 @@ public class IsiActivity extends BaseActivity {
 		public void onClick(Book book, int chapter_1, int verse_1, int kind) {
 			if (kind == Db.Bookmark2.kind_bookmark) {
 				final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
-				String alamat = S.reference(S.activeVersion, ari);
-				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, alamat, ari);
+				String reference = S.reference(S.activeVersion, ari);
+				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, reference, ari);
 				dialog.setListener(new TypeBookmarkDialog.Listener() {
 					@Override public void onOk() {
 						verseAdapter_.loadAttributeMap();
@@ -1433,7 +1431,7 @@ public class IsiActivity extends BaseActivity {
 				});
 				dialog.show();
 			} else if (kind == Db.Bookmark2.kind_note) {
-				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, book, chapter_1, verse_1, new TypeNoteDialog.RefreshCallback() {
+				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, book, chapter_1, verse_1, new TypeNoteDialog.Listener() {
 					@Override public void onDone() {
 						verseAdapter_.loadAttributeMap();
 					}

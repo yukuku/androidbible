@@ -21,29 +21,29 @@ import yuku.alkitab.base.storage.Db;
 public class TypeNoteDialog {
 	final Context context;
 	final AlertDialog dialog;
-	final RefreshCallback refreshCallback;
+	final Listener listener;
 	final Book book;
-	final int pasal_1;
-	final int ayat_1;
+	final int chapter_1;
+	final int verse_1;
 	
-	EditText tCatatan;
+	EditText tCaption;
 	
 	int ari;
-	String alamat;
-	Bookmark2 bukmak;
+	String reference;
+	Bookmark2 bookmark;
 
-	public interface RefreshCallback {
+	public interface Listener {
 		void onDone();
 	}
 	
-	public TypeNoteDialog(Context context, Book book, int pasal_1, int ayat_1, RefreshCallback refreshCallback) {
+	public TypeNoteDialog(Context context, Book book, int chapter_1, int verse_1, Listener listener) {
 		this.book = book;
-		this.pasal_1 = pasal_1;
-		this.ayat_1 = ayat_1;
-		this.ari = Ari.encode(book.bookId, pasal_1, ayat_1);
-		this.alamat = S.reference(book, pasal_1, ayat_1);
+		this.chapter_1 = chapter_1;
+		this.verse_1 = verse_1;
+		this.ari = Ari.encode(book.bookId, chapter_1, verse_1);
+		this.reference = S.reference(book, chapter_1, verse_1);
 		this.context = context;
-		this.refreshCallback = refreshCallback;
+		this.listener = listener;
 		
 		View dialogLayout = LayoutInflater.from(context).inflate(R.layout.dialog_edit_note, null);
 		
@@ -59,17 +59,17 @@ public class TypeNoteDialog {
 		.setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				bHapus_click();
+				bDelete_click();
 			}
 		})
 		.create();
 
-		tCatatan = (EditText) dialogLayout.findViewById(R.id.tCatatan);
+		tCaption = (EditText) dialogLayout.findViewById(R.id.tCaption);
 		
-		tCatatan.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+		tCaption.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override public void onFocusChange(View v, boolean hasFocus) {
 				if (hasFocus) {
-					if (tCatatan.length() == 0) {
+					if (tCaption.length() == 0) {
 						dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 					}
 				}
@@ -77,16 +77,16 @@ public class TypeNoteDialog {
 		});
 	}
 	
-	void setCatatan(CharSequence catatan) {
-		tCatatan.setText(catatan);
+	void setCaption(CharSequence catatan) {
+		tCaption.setText(catatan);
 	}
 
 	public void show() {
-		this.dialog.setTitle(context.getString(R.string.catatan_alamat, alamat));
+		this.dialog.setTitle(context.getString(R.string.catatan_alamat, reference));
 		
-		this.bukmak = S.getDb().getBookmarkByAri(ari, Db.Bookmark2.kind_note);
-		if (bukmak != null) {
-			tCatatan.setText(bukmak.caption);
+		this.bookmark = S.getDb().getBookmarkByAri(ari, Db.Bookmark2.kind_note);
+		if (bookmark != null) {
+			tCaption.setText(bookmark.caption);
 		}
 		
 		dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -95,47 +95,46 @@ public class TypeNoteDialog {
 	}
 
 	protected void bOk_click() {
-		String tulisan = tCatatan.getText().toString();
-		Date kini = new Date();
-		if (bukmak != null) {
-			if (tulisan.length() == 0) {
+		CharSequence caption = tCaption.getText();
+		Date now = new Date();
+		if (bookmark != null) {
+			if (caption.length() == 0) {
 				S.getDb().deleteBookmarkByAri(ari, Db.Bookmark2.kind_note);
 			} else {
-				bukmak.caption = tulisan;
-				bukmak.modifyTime = kini;
-				S.getDb().updateBookmark(bukmak);
+				bookmark.caption = caption.toString();
+				bookmark.modifyTime = now;
+				S.getDb().updateBookmark(bookmark);
 			}
-		} else { // bukmak == null; belum ada sebelumnya, maka hanya insert kalo ada tulisan.
-			if (tulisan.length() > 0) {
-				bukmak = S.getDb().insertBookmark(ari, Db.Bookmark2.kind_note, tulisan, kini, kini);
+		} else { // bookmark == null; not existing, so only insert when there is some text
+			if (caption.length() > 0) {
+				bookmark = S.getDb().insertBookmark(ari, Db.Bookmark2.kind_note, caption.toString(), now, now);
 			}
 		}
 		
-		if (refreshCallback != null) refreshCallback.onDone();
+		if (listener != null) listener.onDone();
 	}
 
-	protected void bHapus_click() {
-		// kalo emang ga ada, cek apakah udah ada teks, kalau udah ada, tanya dulu
-		if (bukmak != null || (bukmak == null && tCatatan.length() > 0)) {
+	protected void bDelete_click() {
+		// if it's indeed not exist, check if we have some text, if we do, prompt first
+		if (bookmark != null || (bookmark == null && tCaption.length() > 0)) {
 			new AlertDialog.Builder(context)
-			.setTitle(R.string.hapus_catatan)
 			.setMessage(R.string.anda_yakin_mau_menghapus_catatan_ini)
 			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
-					if (bukmak != null) {
-						// beneran hapus dari db
+					if (bookmark != null) {
+						// really delete from db
 						S.getDb().deleteBookmarkByAri(ari, Db.Bookmark2.kind_note);
 					} else {
-						// ga ngapa2in, karena emang ga ada di db, cuma di editor buffer
+						// do nothing, because it's indeed not in the db, only in editor buffer
 					}
 					
-					if (refreshCallback != null) refreshCallback.onDone();
+					if (listener != null) listener.onDone();
 				}
 			})
 			.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface _unused_, int which) {
-					TypeNoteDialog dialog = new TypeNoteDialog(context, book, pasal_1, ayat_1, refreshCallback);
-					dialog.setCatatan(tCatatan.getText());
+					TypeNoteDialog dialog = new TypeNoteDialog(context, book, chapter_1, verse_1, listener);
+					dialog.setCaption(tCaption.getText());
 					dialog.show();
 				}
 			})

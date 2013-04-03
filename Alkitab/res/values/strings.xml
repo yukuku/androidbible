@@ -6,7 +6,6 @@
     <string name="donasi_tombol_gamau">Not now</string>
     <string name="donasi_tombol_ok">Donate</string>
     <string name="donasi_keterangan">If you are blessed by this Bible app, please make some donation to the developer. Your donation would be very helpful. Thank you!</string>
-    <string name="donasi_judul">Donation</string>
     <string name="menuDonasi">Donation</string>
     <string name="mengimpor_titiktiga">Restoring…</string>
     <string name="mengekspor_titiktiga">Creating backup…</string>
@@ -61,7 +60,6 @@
     <string name="hari_minggu">Sun</string>
     <string name="size_hasil">%d results</string>
     <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Searching for verses containing the following words: [b]%s[/b]</string>
-    <string name="mencari">Searching</string>
     <string name="pilih_setidaknya_satu_kitab">Choose at least one book to search.</string>
     <string name="pengunduhan_dibatalkan">Download canceled.</string>
     <string name="sedang_mendekompres_harap_tunggu">Decompressing. Please wait…</string>
@@ -71,8 +69,6 @@
     <string name="mulai_mengunduh">Starting download…</string>
     <string name="mengunduh_nama">Downloading %s</string>
     <string name="file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya">Could not find file \'%s\'. Do you want to download it?</string>
-    <string name="mengunduh_tambahan">Downloading add-on</string>
-    <string name="pilih_edisi">Choose a Version</string>
     <string name="tuju_v">Go to</string>
     <string name="bagikan_alamat">Share %s</string>
     <string name="alamat_sudah_disalin">%s has been copied.</string>
@@ -152,10 +148,8 @@
     <string name="menuSortTulisan">Title</string>
     <string name="menuSortTulisan_warna">Highlight color</string>
     <string name="waktuTambah_edited_waktuUbah">%1$s\n(edited %2$s)</string>
-    <string name="cannot_find_data_file">Cannot find data file</string>
     <string name="the_file_for_this_version_is_no_longer_available_file">The file for this version is no longer available. Do you want to remove this version from the list?\nFile: %s</string>
     <string name="create_label_title">Create label</string>
-    <string name="remove_label_title">Remove label</string>
     <string name="do_you_want_to_remove_the_label_label_from_this_bookmark">"Do you want to remove the label '%s' from this bookmark?"</string>
     <string name="add_label_title">Add label</string>
     <string name="create_label_titik3">Create label…</string>
@@ -218,7 +212,6 @@
     <string name="sn_download_song_books">Download song books</string>
     <string name="sn_copied">The song has been copied.</string>
     <string name="sn_share_title">Share song</string>
-    <string name="sn_download_song_books">Download song books</string>
     <string name="sn_lyric_version_version">Version %s</string>
     <string name="sn_lyric_refrain_marker">Ref.</string>
     <string name="sn_delete_all_songs">Delete all songs</string>

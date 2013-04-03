@@ -2,19 +2,19 @@
 <menu
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
-		android:id="@+id/menuBukmak"
+		android:id="@+id/menuBookmark"
 		android:title="@string/pembatas_buku" 
 		android:icon="@drawable/ic_menu_bookmark" android:showAsAction="ifRoom"/>
 	<item
-		android:id="@+id/menuSearch2" 
+		android:id="@+id/menuSearch" 
 		android:title="@string/cari_v"
 		android:icon="@drawable/ic_menu_search" android:showAsAction="always"/>
 	<item
-		android:id="@+id/menuEdisi"
+		android:id="@+id/menuVersions"
 		android:title="@string/versi" 
 		android:icon="@drawable/ic_menu_versions" android:showAsAction="always" />
 	<item
-		android:id="@+id/menuRenungan"
+		android:id="@+id/menuDevotion"
 		android:title="@string/renungan"
 		android:icon="@drawable/ic_menu_devotion" android:showAsAction="ifRoom" />
 	<item
@@ -22,15 +22,15 @@
 		android:title="@string/menuSongs"
 		android:icon="@drawable/ic_menu_songs" android:showAsAction="ifRoom" />
 	<item
-		android:id="@+id/menuPengaturan"
+		android:id="@+id/menuSettings"
 		android:title="@string/menuPengaturan" 
 		android:icon="@drawable/ic_menu_settings" android:showAsAction="ifRoom" />
 	<item
-		android:id="@+id/menuDonasi"
+		android:id="@+id/menuDonation"
 		android:title="@string/menuDonasi"
 		android:icon="@drawable/ic_menu_donation" android:showAsAction="never" />
 	<item
-		android:id="@+id/menuBantuan"
+		android:id="@+id/menuHelp"
 		android:title="@string/menuBantuan"
 		android:showAsAction="never" />
 	<item
@@ -38,7 +38,7 @@
 		android:title="@string/beri_saran_title"
 		android:showAsAction="never" />
 	<item
-		android:id="@+id/menuTentang"
+		android:id="@+id/menuAbout"
 		android:title="@string/menuTentang"
 		android:showAsAction="never" />
 </menu>
