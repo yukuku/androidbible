@@ -66,15 +66,17 @@ public class DevotionSelectPopup extends PopupWindows implements OnDismissListen
 		preShow();
 
 		int[] location = new int[2];
+		
+		Rect anchorRect;
 		if (anchor != null) {
 			anchor.getLocationOnScreen(location);
+			anchorRect = new Rect(location[0], location[1], location[0] + anchor.getWidth(), location[1] + anchor.getHeight());
 		} else {
 			float d = context.getResources().getDisplayMetrics().density;
 			location[0] = (int) (d * 50.f);
 			location[1] = (int) (d * 50.f);
+			anchorRect = new Rect(location[0], location[1], location[0] + (int)(d * 50.f), location[1] + (int)(d * 50.f));
 		}
-
-		Rect anchorRect = new Rect(location[0], location[1], location[0] + anchor.getWidth(), location[1] + anchor.getHeight());
 
 		mRootView.measure(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
