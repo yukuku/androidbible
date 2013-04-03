@@ -1274,7 +1274,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 
 		@Override public void onScrollToTop(VersesView v) {
-			lsSplit1.scrollToTop();
+			if (activeSplitVersion != null) {
+				lsSplit1.scrollToTop();
+			}
 		}
 	};
 	
