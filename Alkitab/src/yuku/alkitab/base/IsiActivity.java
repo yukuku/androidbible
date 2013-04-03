@@ -171,9 +171,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		splitRoot = V.get(this, R.id.splitRoot);
 		splitHandle = V.get(this, R.id.splitHandle);
 		splitHandleButton = V.get(this, R.id.splitHandleButton);
-		bGoto = V.get(this, R.id.bTuju);
-		bLeft = V.get(this, R.id.bKiri);
-		bRight = V.get(this, R.id.bKanan);
+		bGoto = V.get(this, R.id.bGoto);
+		bLeft = V.get(this, R.id.bLeft);
+		bRight = V.get(this, R.id.bRight);
 		root = V.get(this, R.id.root);
 		
 		applyPreferences(false);
@@ -305,7 +305,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				.setPositiveButton(R.string.ok, null)
 				.show();
 			}
-		} 
+		}
 		
 		if (intent.hasExtra("lid")) {
 			int lid = intent.getIntExtra("lid", 0);
@@ -334,7 +334,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					}
 					byte[] payload = obj.toString().getBytes();
 					NdefRecord record = new NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".getBytes(), new byte[0], payload); //$NON-NLS-1$
-					NdefMessage msg = new NdefMessage(new NdefRecord[] { 
+					NdefMessage msg = new NdefMessage(new NdefRecord[] {
 						record,
 						NdefRecord.createApplicationRecord(getPackageName()),
 					});
@@ -413,19 +413,19 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if (preset.getVersionId().equals(lastVersion)) {
 				if (preset.hasDataFile()) {
 					if (loadVersion(preset, false)) return;
-				} else { 
+				} else {
 					return; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
 				}
 			}
 		}
 		
 		// masih belum cocok, mari kita cari di daftar yes
-		List<MVersionYes> yeses = S.getDb().getAllVersions();
+		List<MVersionYes> yeses = S.getDb().listAllVersions();
 		for (MVersionYes yes: yeses) {
 			if (yes.getVersionId().equals(lastVersion)) {
 				if (yes.hasDataFile()) {
 					if (loadVersion(yes, false)) return;
-				} else { 
+				} else {
 					return; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
 				}
 			}
@@ -495,7 +495,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		} else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
 			bRight_click();
 			return true;
-		} 
+		}
 		
 		if (lsText.press(keyCode)) return true;
 		
@@ -698,7 +698,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	
 	public void openDonationDialog() {
 		new AlertDialog.Builder(this)
-		.setTitle(R.string.donasi_judul)
 		.setMessage(R.string.donasi_keterangan)
 		.setPositiveButton(R.string.donasi_tombol_ok, new DialogInterface.OnClickListener() {
 			@Override
@@ -724,10 +723,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 		
 		//# build config
-		menu.findItem(R.id.menuRenungan).setVisible(c.menuDevotion);
-		menu.findItem(R.id.menuEdisi).setVisible(c.menuVersions);
-		menu.findItem(R.id.menuBantuan).setVisible(c.menuHelp);
-		menu.findItem(R.id.menuDonasi).setVisible(c.menuDonation);
+		menu.findItem(R.id.menuDevotion).setVisible(c.menuDevotion);
+		menu.findItem(R.id.menuVersions).setVisible(c.menuVersions);
+		menu.findItem(R.id.menuHelp).setVisible(c.menuHelp);
+		menu.findItem(R.id.menuDonation).setVisible(c.menuDonation);
 		menu.findItem(R.id.menuSongs).setVisible(c.menuSongs);
 	}
 	
@@ -746,46 +745,46 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menuBukmak:
+		case R.id.menuBookmark:
 			startActivityForResult(new Intent(this, BookmarkActivity.class), REQCODE_bookmark);
 			return true;
-		case R.id.menuSearch2:
-			menuSearch2_click();
+		case R.id.menuSearch:
+			menuSearch_click();
 			return true;
-		case R.id.menuEdisi:
-			openVersionDialog();
+		case R.id.menuVersions:
+			openVersionsDialog();
 			return true;
 		case R.id.menuSplitVersion:
 			openSplitVersionDialog();
 			return true;
-		case R.id.menuRenungan: 
+		case R.id.menuDevotion:
 			startActivityForResult(new Intent(this, DevotionActivity.class), REQCODE_devotion);
 			return true;
-		case R.id.menuSongs: 
+		case R.id.menuSongs:
 			startActivityForResult(SongViewActivity.createIntent(), REQCODE_songs);
 			return true;
-		case R.id.menuTentang:
+		case R.id.menuAbout:
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
-		case R.id.menuPengaturan:
+		case R.id.menuSettings:
 			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
 			return true;
-		case R.id.menuBantuan:
+		case R.id.menuHelp:
 			startActivity(HelpActivity.createIntent(false));
 			return true;
 		case R.id.menuSendMessage:
 			startActivity(HelpActivity.createIntent(true));
 			return true;
-		case R.id.menuDonasi:
+		case R.id.menuDonation:
 			openDonationDialog();
 			return true;
 		}
 		
-		return super.onOptionsItemSelected(item); 
+		return super.onOptionsItemSelected(item);
 	}
 
 	private Pair<List<String>, List<MVersion>> getAvailableVersions() {
-		// populate with 
+		// populate with
 		// 1. internal
 		// 2. presets that have been DOWNLOADED and ACTIVE
 		// 3. yeses that are ACTIVE
@@ -805,7 +804,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 		
 		// 3. active yeses
-		List<MVersionYes> yeses = S.getDb().getAllVersions();
+		List<MVersionYes> yeses = S.getDb().listAllVersions();
 		for (MVersionYes yes: yeses) {
 			if (yes.hasDataFile() && yes.getActive()) {
 				options.add(yes.longName);
@@ -816,7 +815,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		return Pair.create(options, data);
 	}
 	
-	void openVersionDialog() {
+	void openVersionsDialog() {
 		Pair<List<String>, List<MVersion>> versions = getAvailableVersions();
 		final List<String> options = versions.first;
 		final List<MVersion> data = versions.second;
@@ -835,7 +834,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 		
 		new AlertDialog.Builder(this)
-		.setTitle(R.string.pilih_edisi)
 		.setSingleChoiceItems(options.toArray(new String[options.size()]), selected, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
 				final MVersion mv = data.get(which);
@@ -923,7 +921,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		.show();
 	}
 
-	private void menuSearch2_click() {
+	private void menuSearch_click() {
 		startActivityForResult(Search2Activity.createIntent(search2_query, search2_results, search2_selectedPosition, this.activeBook.bookId), REQCODE_search);
 	}
 	
@@ -962,14 +960,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if (resultCode == RESULT_OK) {
 				Search2Activity.Result result = Search2Activity.obtainResult(data);
 				if (result != null) {
-					if (result.ariTerpilih != -1) {
-						jumpToAri(result.ariTerpilih);
-						history.add(result.ariTerpilih);
+					if (result.selectedAri != -1) {
+						jumpToAri(result.selectedAri);
+						history.add(result.selectedAri);
 					}
 					
 					search2_query = result.query;
-					search2_results = result.hasilCari;
-					search2_selectedPosition = result.posisiTerpilih;
+					search2_results = result.searchResults;
+					search2_selectedPosition = result.selectedPosition;
 				}
 			}
 		} else if (requestCode == REQCODE_devotion) {
@@ -1021,12 +1019,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	/**
-	 * Display specified chapter and verse of the active book. 
+	 * Display specified chapter and verse of the active book.
 	 * @param uncheckAllVerses whether we want to always make all verses unchecked after this operation.
 	 * @return Ari that contains only chapter and verse. Book always set to 0.
 	 */
 	int display(int chapter_1, int verse_1, boolean uncheckAllVerses) {
-		int current_chapter_1 = this.chapter_1; 
+		int current_chapter_1 = this.chapter_1;
 		
 		if (chapter_1 < 1) chapter_1 = 1;
 		if (chapter_1 > this.activeBook.chapter_count) chapter_1 = this.activeBook.chapter_count;
@@ -1077,7 +1075,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		int max = 30;
 		int[] pericope_aris = new int[max];
 		PericopeBlock[] pericope_blocks = new PericopeBlock[max];
-		int nblock = version.loadPericope(book.bookId, chapter_1, pericope_aris, pericope_blocks, max); 
+		int nblock = version.loadPericope(book.bookId, chapter_1, pericope_aris, pericope_blocks, max);
 		
 		// load xref
 		int[] xrefEntryCounts = new int[256];
@@ -1153,7 +1151,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 	
 	@Override public boolean onSearchRequested() {
-		menuSearch2_click();
+		menuSearch_click();
 		
 		return true;
 	}
@@ -1203,7 +1201,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				});
 				dialog.show();
 			} else if (kind == Db.Bookmark2.kind_note) {
-				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, book, chapter_1, verse_1, new TypeNoteDialog.RefreshCallback() {
+				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, book, chapter_1, verse_1, new TypeNoteDialog.Listener() {
 					@Override public void onDone() {
 						lsText.loadAttributeMap();
 						
@@ -1236,7 +1234,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		@Override public void onSomeVersesSelected(VersesView v) {
 			if (actionMode == null) {
 				actionMode = startActionMode(actionMode_callback);
-			} 
+			}
 		}
 
 		@Override public void onNoVersesSelected(VersesView v) {
@@ -1276,7 +1274,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		@Override public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 			mode.getMenuInflater().inflate(R.menu.context_isi, menu);
 			
-			/* The following "esvsbasal" thing is a personal thing by yuku that doesn't matter to anyone else. 
+			/* The following "esvsbasal" thing is a personal thing by yuku that doesn't matter to anyone else.
 			 * Please ignore it and leave it intact. */
 			if (hasEsvsbAsal == null) {
 				try {
@@ -1307,7 +1305,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			
 			// the main verse (0 if not exist), which is only when only one verse is selected
 			int mainVerse_1 = 0;
-			if (selected.size() == 1) { 
+			if (selected.size() == 1) {
 				mainVerse_1 = selected.get(0);
 			}
 			
@@ -1336,7 +1334,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				
 				Intent intent = new Intent(Intent.ACTION_SEND);
 				intent.setType("text/plain"); //$NON-NLS-1$
-				intent.putExtra(Intent.EXTRA_SUBJECT, reference); 
+				intent.putExtra(Intent.EXTRA_SUBJECT, reference);
 				intent.putExtra(Intent.EXTRA_TEXT, textToShare.toString());
 				intent.putExtra(EXTRA_verseUrl, verseUrl);
 				startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, reference)), REQCODE_share);
@@ -1377,7 +1375,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					lsText.scrollToShowVerse(mainVerse_1);
 				}
 				
-				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, IsiActivity.this.activeBook, IsiActivity.this.chapter_1, mainVerse_1, new TypeNoteDialog.RefreshCallback() {
+				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, IsiActivity.this.activeBook, IsiActivity.this.chapter_1, mainVerse_1, new TypeNoteDialog.Listener() {
 					@Override public void onDone() {
 						lsText.uncheckAll();
 						lsText.loadAttributeMap();
@@ -1392,10 +1390,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			} return true;
 			case R.id.menuAddHighlight: {
 				final int ariKp = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
-				int warnaRgb = S.getDb().getWarnaRgbStabilo(ariKp, selected);
+				int colorRgb = S.getDb().getHighlightColorRgb(ariKp, selected);
 				
-				new TypeHighlightDialog(IsiActivity.this, ariKp, selected, new TypeHighlightDialog.JenisStabiloCallback() {
-					@Override public void onOk(int warnaRgb) {
+				new TypeHighlightDialog(IsiActivity.this, ariKp, selected, new TypeHighlightDialog.Listener() {
+					@Override public void onOk(int colorRgb) {
 						lsText.uncheckAll();
 						lsText.loadAttributeMap();
 
@@ -1403,7 +1401,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 							lsSplit1.loadAttributeMap();
 						}
 					}
-				}, warnaRgb, reference).bukaDialog();
+				}, colorRgb, reference).show();
 				mode.finish();
 			} return true;
 			case R.id.menuEsvsb: {

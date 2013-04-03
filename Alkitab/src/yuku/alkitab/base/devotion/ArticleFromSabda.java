@@ -1,12 +1,12 @@
-package yuku.alkitab.base.renungan;
+package yuku.alkitab.base.devotion;
 
 import android.util.Log;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class ArtikelDariSabda implements IArtikel {
-	public static final String TAG = ArtikelDariSabda.class.getSimpleName();
+public abstract class ArticleFromSabda implements IArticle {
+	public static final String TAG = ArticleFromSabda.class.getSimpleName();
 	
 	private static Pattern pattern1;
 	private static Pattern pattern2;
@@ -26,7 +26,7 @@ public abstract class ArtikelDariSabda implements IArtikel {
 	private boolean siapPakai_;
 	protected String tgl_;
 	
-	protected ArtikelDariSabda(String tgl) {
+	protected ArticleFromSabda(String tgl) {
 		tgl_ = tgl;
 	}
 	
@@ -34,7 +34,7 @@ public abstract class ArtikelDariSabda implements IArtikel {
 	 * Pulih dari db
 	 * @param siapPakai 
 	 */
-	public ArtikelDariSabda(String tgl, String judul, String header, String isi, boolean siapPakai) {
+	public ArticleFromSabda(String tgl, String judul, String header, String isi, boolean siapPakai) {
 		tgl_ = tgl;
 		judul_ = judul;
 		headerHtml_ = header;
@@ -43,7 +43,7 @@ public abstract class ArtikelDariSabda implements IArtikel {
 	}
 
 	@Override
-	public void isikan(String mentah) {
+	public void fillIn(String mentah) {
 		int poin = 0;
 		
 		if (mentah.startsWith("NG")) { //$NON-NLS-1$
@@ -71,7 +71,7 @@ public abstract class ArtikelDariSabda implements IArtikel {
 			}
 		}
 		
-		if (this instanceof ArtikelRenunganHarian) {
+		if (this instanceof ArticleRenunganHarian) {
 			Matcher matcher = pattern3.matcher(mentah);
 			if (matcher.find()) {
 				headerHtml_ = matcher.group(1);
@@ -97,12 +97,12 @@ public abstract class ArtikelDariSabda implements IArtikel {
 	
 
 	@Override
-	public String getIsiHtml() {
+	public String getBodyHtml() {
 		return isiHtml_;
 	}
 
 	@Override
-	public CharSequence getJudul() {
+	public CharSequence getTitle() {
 		return judul_;
 	}
 
@@ -112,19 +112,19 @@ public abstract class ArtikelDariSabda implements IArtikel {
 	}
 	
 	@Override
-	public boolean getSiapPakai() {
+	public boolean getReadyToUse() {
 		return siapPakai_;
 	}
 	
 	@Override
 	public boolean equals(Object o) {
 		if (o == null) return false;
-		if (! (o instanceof ArtikelDariSabda)) return false;
+		if (! (o instanceof ArticleFromSabda)) return false;
 		if (this == o) return true;
 		
-		ArtikelDariSabda x = (ArtikelDariSabda) o;
+		ArticleFromSabda x = (ArticleFromSabda) o;
 		
-		if (x.tgl_.equals(tgl_) && x.getNama().equals(getNama())) {
+		if (x.tgl_.equals(tgl_) && x.getName().equals(getName())) {
 			return true;
 		}
 		
@@ -133,21 +133,21 @@ public abstract class ArtikelDariSabda implements IArtikel {
 	
 	@Override
 	public int hashCode() {
-		return tgl_.hashCode() * 31 + getNama().hashCode();
+		return tgl_.hashCode() * 31 + getName().hashCode();
 	}
 	
 	@Override
-	public String getMentahEncoding() {
+	public String getRawEncoding() {
 		return "iso-8859-1"; //$NON-NLS-1$
 	}
 	
 	@Override
-	public String getTgl() {
+	public String getDate() {
 		return tgl_;
 	}
 	
 	@Override
 	public String getUrl() {
-		return "http://www.kejut.com/prog/android/alkitab/renungan-proxy.php?nama=" + getNama() + "&tgl=" + tgl_; //$NON-NLS-1$ //$NON-NLS-2$
+		return "http://www.kejut.com/prog/android/alkitab/renungan-proxy.php?nama=" + getName() + "&tgl=" + tgl_; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

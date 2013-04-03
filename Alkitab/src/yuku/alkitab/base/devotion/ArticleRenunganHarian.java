@@ -1,16 +1,16 @@
-package yuku.alkitab.base.renungan;
+package yuku.alkitab.base.devotion;
 
 
-public class ArtikelRenunganHarian extends ArtikelDariSabda {
-	public ArtikelRenunganHarian(String tgl) {
-		super(tgl);
+public class ArticleRenunganHarian extends ArticleFromSabda {
+	public ArticleRenunganHarian(String date) {
+		super(date);
 	}
 	
-	public ArtikelRenunganHarian(String tgl, String judul, String headerHtml, String isiHtml, boolean siapPakai) {
-		super(tgl, judul, headerHtml, isiHtml, siapPakai);
+	public ArticleRenunganHarian(String date, String title, String headerHtml, String bodyHtml, boolean readyToUse) {
+		super(date, title, headerHtml, bodyHtml, readyToUse);
 	}
 
-	@Override public CharSequence getKopiraitHtml() {
+	@Override public CharSequence getCopyrightHtml() {
 		return "__________<br/>" +
 				"<small>Renungan Harian / e-Renungan Harian<br/>" +
 				"Bahan renungan yang diterbitkan secara teratur oleh Yayasan Gloria dan diterbitkan secara elektronik oleh Yayasan Lembaga SABDA (YLSA).<br/>" + 
@@ -19,12 +19,12 @@ public class ArtikelRenunganHarian extends ArtikelDariSabda {
 	}
 
 	@Override
-	public String getNama() {
+	public String getName() {
 		return "rh"; //$NON-NLS-1$
 	}
 	
 	@Override
-	public String getNamaUmum() {
+	public String getDevotionTitle() {
 		return "Renungan Harian"; //$NON-NLS-1$
 	}
 }

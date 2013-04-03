@@ -15,8 +15,8 @@ import java.util.Locale;
 import yuku.afw.D;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
+import yuku.alkitab.base.devotion.Downloader;
 import yuku.alkitab.base.model.Version;
-import yuku.alkitab.base.renungan.Downloader;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.InternalDbHelper;
 import yuku.alkitab.base.storage.SongDb;
@@ -38,7 +38,7 @@ public class S {
 		public static float lineSpacingMult;
 		public static int fontBold;
 		
-		public static int fontColor; 
+		public static int fontColor;
 		public static int fontRedColor;
 		public static int backgroundColor;
 		public static int verseNumberColor;
@@ -99,7 +99,7 @@ public class S {
 		//# atur warna teks, latar, dan nomer ayat
 		{
 			applied.fontColor = Preferences.getInt(App.context.getString(R.string.pref_warnaHuruf_int_key), App.context.getResources().getInteger(R.integer.pref_warnaHuruf_int_default));
-			applied.backgroundColor = Preferences.getInt(App.context.getString(R.string.pref_warnaLatar_int_key), App.context.getResources().getInteger(R.integer.pref_warnaLatar_int_default)); 
+			applied.backgroundColor = Preferences.getInt(App.context.getString(R.string.pref_warnaLatar_int_key), App.context.getResources().getInteger(R.integer.pref_warnaLatar_int_default));
 			applied.verseNumberColor = Preferences.getInt(App.context.getString(R.string.pref_warnaNomerAyat_int_key), App.context.getResources().getInteger(R.integer.pref_warnaNomerAyat_int_default));
 			applied.fontRedColor = Preferences.getInt(App.context.getString(R.string.pref_redTextColor_key), App.context.getResources().getInteger(R.integer.pref_redTextColor_default));
 			
@@ -125,13 +125,13 @@ public class S {
 		applied.pericopeSpacingBottom = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.pericopeSpacingBottom) + 0.5f);
 		
 		if (D.EBUG) {
-			Toast.makeText(App.context, String.format(" text 0x%08x %n bg 0x%08x %n versenumber 0x%08x %n redtext 0x%08x", 
+			Toast.makeText(App.context, String.format(" text 0x%08x %n bg 0x%08x %n versenumber 0x%08x %n redtext 0x%08x",
 				applied.fontColor,
 				applied.backgroundColor,
 				applied.verseNumberColor,
 				applied.fontRedColor), Toast.LENGTH_LONG).show();
 			applied.fontColor = Preferences.getInt(App.context.getString(R.string.pref_warnaHuruf_int_key), App.context.getResources().getInteger(R.integer.pref_warnaHuruf_int_default));
-			applied.backgroundColor = Preferences.getInt(App.context.getString(R.string.pref_warnaLatar_int_key), App.context.getResources().getInteger(R.integer.pref_warnaLatar_int_default)); 
+			applied.backgroundColor = Preferences.getInt(App.context.getString(R.string.pref_warnaLatar_int_key), App.context.getResources().getInteger(R.integer.pref_warnaLatar_int_default));
 			applied.verseNumberColor = Preferences.getInt(App.context.getString(R.string.pref_warnaNomerAyat_int_key), App.context.getResources().getInteger(R.integer.pref_warnaNomerAyat_int_default));
 			applied.fontRedColor = Preferences.getInt(App.context.getString(R.string.pref_redTextColor_key), App.context.getResources().getInteger(R.integer.pref_redTextColor_default));
 

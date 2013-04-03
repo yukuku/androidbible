@@ -25,11 +25,11 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 	}
 
 	@Override public synchronized View getView(int position, View convertView, ViewGroup parent) {
-		// Harus tentukan apakah ini perikop ato ayat.
+		// Need to determine this is pericope or verse
 		int id = itemPointer_[position];
 		
 		if (id >= 0) {
-			// AYAT. bukan judul perikop.
+			// VERSE. not pericope
 			int verse_1 = id + 1;
 
 			boolean withBookmark = attributeMap_ == null ? false : (attributeMap_[id] & 0x1) != 0;
@@ -45,7 +45,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 
 			VerseItem res;
 			if (convertView == null || convertView.getId() != R.layout.item_verse) {
-				res = (VerseItem) inflater_.inflate(R.layout.item_verse, null);
+				res = (VerseItem) inflater_.inflate(R.layout.item_verse, parent, false);
 				res.setId(R.layout.item_verse);
 			} else {
 				res = (VerseItem) convertView;
@@ -89,11 +89,11 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 
 			return res;
 		} else {
-			// JUDUL PERIKOP. bukan ayat.
+			// PERICOPE. not verse.
 
 			View res;
 			if (convertView == null || convertView.getId() != R.layout.item_pericope_header) {
-				res = LayoutInflater.from(context_).inflate(R.layout.item_pericope_header, null);
+				res = LayoutInflater.from(context_).inflate(R.layout.item_pericope_header, parent, false);
 				res.setId(R.layout.item_pericope_header);
 			} else {
 				res = convertView;
@@ -101,10 +101,10 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 
 			PericopeBlock pericopeBlock = pericopeBlocks_[-id - 1];
 
-			TextView lJudul = (TextView) res.findViewById(R.id.lJudul);
-			TextView lXparalel = (TextView) res.findViewById(R.id.lXparalel);
+			TextView lCaption = (TextView) res.findViewById(R.id.lCaption);
+			TextView lParallels = (TextView) res.findViewById(R.id.lParallels);
 
-			lJudul.setText(pericopeBlock.title);
+			lCaption.setText(pericopeBlock.title);
 
 			int paddingTop;
 			// turn off top padding if the position == 0 OR before this is also a pericope title
@@ -116,13 +116,13 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			
 			res.setPadding(0, paddingTop, 0, S.applied.pericopeSpacingBottom);
 
-			Appearances.applyPericopeTitleAppearance(lJudul);
+			Appearances.applyPericopeTitleAppearance(lCaption);
 
-			// gonekan paralel kalo ga ada
+			// make parallel gone if not exist
 			if (pericopeBlock.parallels.length == 0) {
-				lXparalel.setVisibility(View.GONE);
+				lParallels.setVisibility(View.GONE);
 			} else {
-				lXparalel.setVisibility(View.VISIBLE);
+				lParallels.setVisibility(View.VISIBLE);
 
 				SpannableStringBuilder sb = new SpannableStringBuilder("("); //$NON-NLS-1$
 
@@ -131,7 +131,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 					String parallel = pericopeBlock.parallels[i];
 
 					if (i > 0) {
-						// paksa new line untuk pola2 paralel tertentu
+						// force new line for certain parallel patterns
 						if ((total == 6 && i == 3) || (total == 4 && i == 2) || (total == 5 && i == 3)) {
 							sb.append("; \n"); //$NON-NLS-1$
 						} else {
@@ -143,8 +143,8 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				}
 				sb.append(')');
 
-				lXparalel.setText(sb, BufferType.SPANNABLE);
-				Appearances.applyPericopeParallelTextAppearance(lXparalel);
+				lParallels.setText(sb, BufferType.SPANNABLE);
+				Appearances.applyPericopeParallelTextAppearance(lParallels);
 			}
 
 			return res;

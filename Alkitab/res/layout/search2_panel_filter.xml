@@ -6,7 +6,7 @@
     android:paddingLeft="12dp" >
 
     <CheckBox
-        android:id="@+id/cFilterLama"
+        android:id="@+id/cFilterOlds"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -14,11 +14,11 @@
         android:text="@string/perj_lama" />
 
     <CheckBox
-        android:id="@+id/cFilterBaru"
+        android:id="@+id/cFilterNews"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/cFilterLama"
-        android:layout_toRightOf="@+id/cFilterLama"
+        android:layout_alignBaseline="@+id/cFilterOlds"
+        android:layout_toRightOf="@+id/cFilterOlds"
         android:checked="true"
         android:text="@string/perj_baru" />
 
@@ -37,11 +37,11 @@
         android:src="@drawable/btn_arrow" />
 
     <TextView
-        android:id="@+id/tFilterRumit"
+        android:id="@+id/tFilterAdvanced"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/cFilterLama"
+        android:layout_below="@+id/cFilterOlds"
         android:layout_toLeftOf="@+id/bEditFilter"
         android:ellipsize="end"
         android:maxLines="2"
@@ -52,10 +52,10 @@
         tools:ignore="HardcodedText" />
 
     <CheckBox
-        android:id="@+id/cFilterKitabSaja"
+        android:id="@+id/cFilterSingleBook"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/cFilterLama"
+        android:layout_below="@+id/cFilterOlds"
         android:text="(Nama kitab) saja"
         tools:ignore="HardcodedText" />
 

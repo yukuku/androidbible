@@ -298,7 +298,7 @@ public class Provider extends ContentProvider {
 			}
 		}
 		{ // yes
-			List<MVersionYes> yeses = S.getDb().getAllVersions();
+			List<MVersionYes> yeses = S.getDb().listAllVersions();
 			for (MVersionYes yes: yeses) {
 				res.addRow(new Object[] {++_id, "yes", yes.hasDataFile()? 1:0, yes.shortName != null? yes.shortName: yes.longName, yes.longName, yes.description});
 			}

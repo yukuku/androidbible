@@ -32,7 +32,7 @@ public class Yes1Reader implements BibleReader {
 	private String shortName;
 	private String longName;
 	private String description;
-	private String locale;
+	@SuppressWarnings("unused") private String locale;
 	private int nkitab;
 	private int perikopAda = 0; // default ga ada
 	private int encoding = 1; // 1 = ascii; 2 = utf-8;
@@ -169,7 +169,7 @@ public class Yes1Reader implements BibleReader {
 				} else if (key.equals("end")) { //$NON-NLS-1$
 					break;
 				} else {
-					Log.w(TAG, "ada key ga dikenal di infoEdisi: " + key); //$NON-NLS-1$ 
+					Log.w(TAG, "ada key ga dikenal di infoEdisi: " + key); //$NON-NLS-1$
 					break;
 				}
 			}

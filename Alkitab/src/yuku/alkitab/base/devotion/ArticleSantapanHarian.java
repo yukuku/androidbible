@@ -1,16 +1,16 @@
-package yuku.alkitab.base.renungan;
+package yuku.alkitab.base.devotion;
 
 
-public class ArtikelSantapanHarian extends ArtikelDariSabda {
-	public ArtikelSantapanHarian(String tgl) {
-		super(tgl);
+public class ArticleSantapanHarian extends ArticleFromSabda {
+	public ArticleSantapanHarian(String date) {
+		super(date);
 	}
 
-	public ArtikelSantapanHarian(String tgl, String judul, String headerHtml, String isiHtml, boolean siapPakai) {
-		super(tgl, judul, headerHtml, isiHtml, siapPakai);
+	public ArticleSantapanHarian(String date, String title, String headerHtml, String bodyHtml, boolean readyToUse) {
+		super(date, title, headerHtml, bodyHtml, readyToUse);
 	}
 
-	@Override public CharSequence getKopiraitHtml() {
+	@Override public CharSequence getCopyrightHtml() {
 		return "__________<br/>" +
 		"<small>Santapan Harian / e-Santapan Harian<br/>" + 
 		"Bahan saat teduh yang diterbitkan secara teratur oleh Persekutuan Pembaca Alkitab (PPA) dan diterbitkan secara elektronik oleh Yayasan Lembaga SABDA (YLSA). <br/>" + 
@@ -19,12 +19,12 @@ public class ArtikelSantapanHarian extends ArtikelDariSabda {
 	}
 
 	@Override
-	public String getNama() {
+	public String getName() {
 		return "sh"; //$NON-NLS-1$
 	}
 	
 	@Override
-	public String getNamaUmum() {
+	public String getDevotionTitle() {
 		return "Santapan Harian"; //$NON-NLS-1$
 	}
 }

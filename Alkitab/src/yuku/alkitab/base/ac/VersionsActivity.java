@@ -44,7 +44,6 @@ import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog.ConvertOptionsCallback;
-import yuku.alkitab.base.pdbconvert.ConvertPdbToYes1;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes2;
 import yuku.alkitab.base.storage.BibleReader;
 import yuku.alkitab.base.storage.Db;
@@ -112,7 +111,7 @@ public class VersionsActivity extends BaseActivity {
 
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menuTambah:
+		case R.id.menuAdd:
 			clickOnOpenFile();
 			return true;
 		}
@@ -146,7 +145,7 @@ public class VersionsActivity extends BaseActivity {
 		} else {
 			getMenuInflater().inflate(R.menu.context_version, menu);
 		
-			android.view.MenuItem menuBuang = menu.findItem(R.id.menuBuang);
+			android.view.MenuItem menuBuang = menu.findItem(R.id.menuDelete);
 			if (menuBuang != null) {
 				menuBuang.setEnabled(false);
 				MVersion item = adapter.getItem(info.position);
@@ -159,7 +158,7 @@ public class VersionsActivity extends BaseActivity {
 	
 	@Override public boolean onContextItemSelected(android.view.MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menuBuang: {
+		case R.id.menuDelete: {
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 			final MVersion edisi = adapter.getItem(info.position);
 			if (edisi instanceof MVersionYes) {
@@ -168,7 +167,7 @@ public class VersionsActivity extends BaseActivity {
 				.setMessage(getString(R.string.juga_hapus_file_datanya_file, edisiYes.filename))
 				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
-						S.getDb().hapusEdisiYes(edisiYes);
+						S.getDb().deleteYesVersion(edisiYes);
 						adapter.initYesVersionList();
 						adapter.notifyDataSetChanged();
 						new File(edisiYes.filename).delete();
@@ -176,7 +175,7 @@ public class VersionsActivity extends BaseActivity {
 				})
 				.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
-						S.getDb().hapusEdisiYes(edisiYes);
+						S.getDb().deleteYesVersion(edisiYes);
 						adapter.initYesVersionList();
 						adapter.notifyDataSetChanged();
 					}
@@ -197,7 +196,7 @@ public class VersionsActivity extends BaseActivity {
 			if (edisi instanceof MVersionPreset) {
 				MVersionPreset preset = (MVersionPreset) edisi;
 				if (AddonManager.hasVersion(preset.presetFilename)) {
-					details.append(getString(R.string.ed_stored_in_file, AddonManager.getVersionPath(preset.presetFilename)) + '\n'); 
+					details.append(getString(R.string.ed_stored_in_file, AddonManager.getVersionPath(preset.presetFilename)) + '\n');
 				} else {
 					details.append(getString(R.string.ed_default_filename_file, preset.presetFilename) + '\n');
 					details.append(getString(R.string.ed_download_url_url, preset.url) + '\n');
@@ -321,7 +320,6 @@ public class VersionsActivity extends BaseActivity {
 				};
 				
 				new AlertDialog.Builder(VersionsActivity.this)
-				.setTitle(R.string.mengunduh_tambahan)
 				.setMessage(getString(R.string.file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya, AddonManager.getVersionPath(edisi.presetFilename)))
 				.setPositiveButton(R.string.yes, clickListener)
 				.setNegativeButton(R.string.no, null)
@@ -338,11 +336,10 @@ public class VersionsActivity extends BaseActivity {
 				edisi.setActive(true);
 			} else {
 				new AlertDialog.Builder(this)
-				.setTitle(R.string.cannot_find_data_file)
 				.setMessage(getString(R.string.the_file_for_this_version_is_no_longer_available_file, edisi.filename))
 				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
-						S.getDb().hapusEdisiYes(edisi);
+						S.getDb().deleteYesVersion(edisi);
 						adapter.initYesVersionList();
 						adapter.notifyDataSetChanged();
 					}
@@ -445,7 +442,7 @@ public class VersionsActivity extends BaseActivity {
 				}
 			}
 			
-			if (!dup) dup = S.getDb().adakahEdisiYesDenganNamafile(filename);
+			if (!dup) dup = S.getDb().hasYesVersionWithFilename(filename);
 			
 			if (dup) {
 				new AlertDialog.Builder(this)
@@ -458,7 +455,7 @@ public class VersionsActivity extends BaseActivity {
 		
 		try {
 			BibleReader pembaca = YesReaderFactory.createYesReader(filename);
-			int urutanTerbesar = S.getDb().getUrutanTerbesarEdisiYes();
+			int urutanTerbesar = S.getDb().getYesVersionMaxOrdering();
 			if (urutanTerbesar == 0) urutanTerbesar = 100; // default
 			
 			MVersionYes yes = new MVersionYes();
@@ -470,7 +467,7 @@ public class VersionsActivity extends BaseActivity {
 			yes.originalPdbFilename = namapdbasal;
 			yes.ordering = urutanTerbesar + 1;
 			
-			S.getDb().tambahEdisiYesDenganAktif(yes, true);
+			S.getDb().insertYesVersionWithActive(yes, true);
 			adapter.initYesVersionList();
 			adapter.notifyDataSetChanged();
 		} catch (Exception e) {
@@ -483,10 +480,10 @@ public class VersionsActivity extends BaseActivity {
 	}
 
 	private void handleFileOpenPdb(final String pdbFilename) {
-		final String namayes = yesName(pdbFilename, ConvertPdbToYes1.VERSI_CONVERTER);
+		final String yesName = yesName(pdbFilename, 1);
 		
 		// cek apakah sudah ada.
-		if (S.getDb().adakahEdisiYesDenganNamafile(AddonManager.getVersionPath(namayes))) {
+		if (S.getDb().hasYesVersionWithFilename(AddonManager.getVersionPath(yesName))) {
 			new AlertDialog.Builder(this)
 			.setMessage(R.string.ed_this_file_is_already_on_the_list)
 			.setPositiveButton(R.string.ok, null)
@@ -537,55 +534,8 @@ public class VersionsActivity extends BaseActivity {
 				showPdbReadErrorDialog(e);
 			}
 			
-			@Override public void onOkYes1(final ConvertPdbToYes1.ConvertParams params) {
-				final String namafileyes = AddonManager.getVersionPath(namayes);
-				final ProgressDialog pd = ProgressDialog.show(VersionsActivity.this, null, getString(R.string.ed_reading_pdb_file), true, false);
-				pd.setOnKeyListener(new OnKeyListener() {
-					@Override public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-						if (keyCode == KeyEvent.KEYCODE_SEARCH) {
-							return true;
-						}
-						return false;
-					}
-				});
-				
-				new AsyncTask<String, Object, ConvertPdbToYes1.ConvertResult>() {
-					@Override protected ConvertPdbToYes1.ConvertResult doInBackground(String... _unused_) {
-						ConvertPdbToYes1 converter = new ConvertPdbToYes1();
-						converter.setConvertProgressListener(new ConvertPdbToYes1.ConvertProgressListener() {
-							@Override public void onProgress(int at, String message) {
-								Log.d(TAG, "Progress " + at + ": " + message); //$NON-NLS-1$ //$NON-NLS-2$
-								publishProgress(at, message);
-							}
-							
-							@Override public void onFinish() {
-								Log.d(TAG, "Finish"); //$NON-NLS-1$
-								publishProgress(null, null);
-							}
-						});
-						return converter.convert(getApplicationContext(), pdbFilename, namafileyes, params);
-					}
-					
-					@Override protected void onProgressUpdate(Object... values) {
-						if (values[0] == null) {
-							pd.setMessage(getString(R.string.ed_finished));
-						} else {
-							int at = (Integer) values[0];
-							String message = (String) values[1];
-							pd.setMessage("(" + at + ") " + message + "...");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-						}
-					};
-					
-					@Override protected void onPostExecute(ConvertPdbToYes1.ConvertResult result) {
-						pd.dismiss();
-						
-						showResult(pdbFilename, namafileyes, result.exception, result.wronglyConvertedBookNames);
-					}
-				}.execute();
-			}
-			
 			@Override public void onOkYes2(final ConvertPdbToYes2.ConvertParams params) {
-				final String yesFilename = AddonManager.getVersionPath(namayes);
+				final String yesFilename = AddonManager.getVersionPath(yesName);
 				final ProgressDialog pd = ProgressDialog.show(VersionsActivity.this, null, getString(R.string.ed_reading_pdb_file), true, false);
 				pd.setOnKeyListener(new OnKeyListener() {
 					@Override public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
@@ -746,7 +696,7 @@ public class VersionsActivity extends BaseActivity {
 		@Override
 		public void setActive(boolean aktif) {
 			this.cache_active = aktif;
-			S.getDb().setEdisiYesAktif(this.filename, aktif);
+			S.getDb().setYesVersionActive(this.filename, aktif);
 		}
 
 		@Override
@@ -788,7 +738,7 @@ public class VersionsActivity extends BaseActivity {
 		}
 		
 		public void initYesVersionList() {
-			yeses = S.getDb().getAllVersions();
+			yeses = S.getDb().listAllVersions();
 		}
 
 		@Override
@@ -815,7 +765,7 @@ public class VersionsActivity extends BaseActivity {
 			View res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_version, null);
 			
 			CheckBox cAktif = V.get(res, R.id.cAktif);
-			TextView lJudul = V.get(res, R.id.lJudul);
+			TextView lJudul = V.get(res, R.id.lCaption);
 			TextView lNamafile = V.get(res, R.id.lNamafile);
 			TextView lBahasa = V.get(res, R.id.lBahasa);
 			
@@ -845,7 +795,7 @@ public class VersionsActivity extends BaseActivity {
 						lNamafile.setVisibility(View.GONE);
 					} else {
 						lNamafile.setVisibility(View.VISIBLE);
-						lNamafile.setText(R.string.ed_tekan_untuk_mengunduh); 
+						lNamafile.setText(R.string.ed_tekan_untuk_mengunduh);
 					}
 					if (locale != null && locale.length() > 0) {
 						String display = cache_displayLanguage.get(locale);

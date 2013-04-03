@@ -13,7 +13,7 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/lTanggal"
+            android:id="@+id/lDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -24,12 +24,12 @@
             tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/lTulisan"
+            android:id="@+id/lCaption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/lTanggal"
+            android:layout_toLeftOf="@+id/lDate"
             android:text="Keterangan atau Alamat Ayat dsb"
             android:textColor="#fff"
             android:textSize="18dp"
@@ -38,7 +38,7 @@
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/lCuplikan"
+        android:id="@+id/lSnippet"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"

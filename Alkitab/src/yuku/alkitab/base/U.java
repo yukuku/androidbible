@@ -171,7 +171,7 @@ public class U {
 		else if (h_ < 5) { r_ = x; g_ = 0; b_ = c; }
 		else             { r_ = c; g_ = 0; b_ = x; }
 		
-		float m = l - (0.5f * c); 
+		float m = l - (0.5f * c);
 		int r = (int)((r_ + m) * (255.f) + 0.5f);
 		int g = (int)((g_ + m) * (255.f) + 0.5f);
 		int b = (int)((b_ + m) * (255.f) + 0.5f);
@@ -210,7 +210,7 @@ public class U {
 	
 	@SuppressWarnings("deprecation") public static void copyToClipboard(CharSequence salinan) {
 		android.text.ClipboardManager clipboardManager = (android.text.ClipboardManager) App.context.getSystemService(Context.CLIPBOARD_SERVICE);
-		clipboardManager.setText(salinan); 
+		clipboardManager.setText(salinan);
 	}
 
 	public static int getColorBasedOnBookId(int pos) {

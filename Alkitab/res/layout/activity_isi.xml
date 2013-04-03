@@ -53,13 +53,13 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/panelNavigasi"
+        android:id="@+id/panelNavigation"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/abs__action_bar_default_height"
         android:background="@drawable/abs__ab_solid_dark_holo" >
 
         <ImageButton
-            android:id="@+id/bKiri"
+            android:id="@+id/bLeft"
             style="?attr/actionButtonStyle"
             android:layout_width="@dimen/abs__action_button_min_width"
             android:layout_height="match_parent"
@@ -69,7 +69,7 @@
             android:src="@drawable/ic_nav_arrow_left" />
 
         <Button
-            android:id="@+id/bTuju"
+            android:id="@+id/bGoto"
             style="?attr/actionButtonStyle"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
@@ -80,7 +80,7 @@
             tools:ignore="HardcodedText" />
 
         <ImageButton
-            android:id="@+id/bKanan"
+            android:id="@+id/bRight"
             style="?attr/actionButtonStyle"
             android:layout_width="@dimen/abs__action_button_min_width"
             android:layout_height="match_parent"

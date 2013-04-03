@@ -23,7 +23,7 @@
             tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/lJudul"
+            android:id="@+id/lCaption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawablePadding="6dp"

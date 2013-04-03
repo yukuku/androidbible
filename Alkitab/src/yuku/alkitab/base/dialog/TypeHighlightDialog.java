@@ -15,7 +15,7 @@ import yuku.alkitab.base.util.IntArrayList;
 
 public class TypeHighlightDialog {
 	final AlertDialog alert;
-	final JenisStabiloCallback callback;
+	final Listener listener;
 	
 	View dialogView;
 	
@@ -28,39 +28,39 @@ public class TypeHighlightDialog {
 		0x00ffff, 0x0080ff, 0x0000ff, 0x8000ff, 0xff00ff, 0xff0080,
 	};
 	
-	final int ariKp;
-	final IntArrayList ayatTerpilih;
+	final int ari_bookchapter;
+	final IntArrayList selectedVerses;
 
-	public interface JenisStabiloCallback {
+	public interface Listener {
 		/**
-		 * @param warnaRgb -1 untuk ga terpilih
+		 * @param colorRgb -1 if not colored
 		 */
-		void onOk(int warnaRgb);
+		void onOk(int colorRgb);
 	}
 	
 	/**
 	 * Buka dialog buat 1 ayat
-	 * @param warnaRgb -1 kalo ga terpilih. #rrggbb ga pake alpha
+	 * @param colorRgb -1 kalo ga terpilih. #rrggbb ga pake alpha
 	 */
-	public TypeHighlightDialog(Context context, int ari, JenisStabiloCallback callback, int warnaRgb, CharSequence judul) {
-		this(context, Ari.toBookChapter(ari), satuSaja(Ari.toVerse(ari)), callback, warnaRgb, judul);
+	public TypeHighlightDialog(Context context, int ari, Listener listener, int colorRgb, CharSequence title) {
+		this(context, Ari.toBookChapter(ari), onlyOne(Ari.toVerse(ari)), listener, colorRgb, title);
 	}
 	
-	private static IntArrayList satuSaja(int ayat_1) {
+	private static IntArrayList onlyOne(int verse_1) {
 		IntArrayList res = new IntArrayList(1);
-		res.add(ayat_1);
+		res.add(verse_1);
 		return res;
 	}
 
 	/**
 	 * Buka dialog buat lebih dari 1 ayat (atau 1 ayat juga boleh).
-	 * @param warnaRgb -1 kalo ga terpilih. #rrggbb ga pake alpha
-	 * @param ayatTerpilih ayat2 yang dipilih.
+	 * @param colorRgb -1 kalo ga terpilih. #rrggbb ga pake alpha
+	 * @param selectedVerses ayat2 yang dipilih.
 	 */
-	public TypeHighlightDialog(Context context, int ariKp, IntArrayList ayatTerpilih, JenisStabiloCallback callback, int warnaRgb, CharSequence judul) {
-		this.ariKp = ariKp;
-		this.ayatTerpilih = ayatTerpilih;
-		this.callback = callback;
+	public TypeHighlightDialog(Context context, int ari_bookchapter, IntArrayList selectedVerses, Listener listener, int colorRgb, CharSequence title) {
+		this.ari_bookchapter = ari_bookchapter;
+		this.selectedVerses = selectedVerses;
+		this.listener = listener;
 		this.dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_highlight, null);
 		
 		this.alert = new AlertDialog.Builder(context)
@@ -71,20 +71,20 @@ public class TypeHighlightDialog {
 		
 		dialogView.setBackgroundColor(S.applied.backgroundColor);
 		
-		if (judul != null) {
-			this.alert.setTitle(judul);
+		if (title != null) {
+			this.alert.setTitle(title);
 		}
 		
 		for (int i = 0; i < xid.length; i++) {
 			CheckBox cb = V.get(dialogView, xid[i]);
-			if (warnaRgb == xrgb[i]) {
+			if (colorRgb == xrgb[i]) {
 				cb.setChecked(true);
 			}
 			cb.setOnClickListener(cb_click);
 		}
 		
 		CheckBox cb = V.get(dialogView, R.id.c00);
-		if (warnaRgb == -1) {
+		if (colorRgb == -1) {
 			cb.setChecked(true);
 		}
 		cb.setOnClickListener(cb_click);
@@ -108,13 +108,13 @@ public class TypeHighlightDialog {
 		}
 
 		private void select(int warnaRgb) {
-			S.getDb().updateAtauInsertStabilo(ariKp, ayatTerpilih, warnaRgb);
-			if (callback != null) callback.onOk(warnaRgb);
+			S.getDb().updateOrInsertHighlights(ari_bookchapter, selectedVerses, warnaRgb);
+			if (listener != null) listener.onOk(warnaRgb);
 			alert.dismiss();
 		}
 	};
 
-	public void bukaDialog() {
+	public void show() {
 		alert.show();
 	}
 }

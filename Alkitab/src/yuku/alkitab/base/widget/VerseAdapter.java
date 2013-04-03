@@ -123,9 +123,9 @@ public abstract class VerseAdapter extends BaseAdapter {
 		int[] highlightMap = null;
 
 		int ariBc = Ari.encode(book_.bookId, chapter_1_, 0x00);
-		if (S.getDb().countAtribut(ariBc) > 0) {
+		if (S.getDb().countAttributes(ariBc) > 0) {
 			attributeMap = new int[verses_.getVerseCount()];
-			highlightMap = S.getDb().putAtribut(ariBc, attributeMap);
+			highlightMap = S.getDb().putAttributes(ariBc, attributeMap);
 		}
 
 		attributeMap_ = attributeMap;

@@ -6,7 +6,7 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/lJudul"
+        android:id="@+id/lCaption"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
@@ -19,7 +19,7 @@
     </TextView>
 
     <TextView
-        android:id="@+id/lXparalel"
+        android:id="@+id/lParallels"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"

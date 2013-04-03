@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import yuku.afw.App;
-import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 
 import com.compactbyte.android.bible.PDBFileStream;
@@ -45,7 +44,6 @@ public class ConvertOptionsDialog {
 	ArrayAdapter<String> encodingAdapter;
 
 	public interface ConvertOptionsCallback {
-		void onOkYes1(ConvertPdbToYes1.ConvertParams params);
 		void onOkYes2(ConvertPdbToYes2.ConvertParams params);
 		void onPdbReadError(Throwable e);
 	}
@@ -60,7 +58,7 @@ public class ConvertOptionsDialog {
 			if (reason == BiblePlusPDB.ERR_NOT_BIBLE_PLUS_FILE) {
 				String type = pdb.getHeader().getType();
 				String creator = pdb.getHeader().getCreator();
-				return App.context.getString(R.string.pdb_error_not_palmbible, type, creator); 
+				return App.context.getString(R.string.pdb_error_not_palmbible, type, creator);
 			} else if (reason == BiblePlusPDB.ERR_FILE_CORRUPTED) {
 				return App.context.getString(R.string.pdb_error_corrupted);
 			} else if (reason == BiblePlusPDB.ERR_NOT_PDB_FILE) {
@@ -156,7 +154,7 @@ public class ConvertOptionsDialog {
 	}
 
 	void showSample(String encoding) {
-		pdb.setEncoding(encoding); 
+		pdb.setEncoding(encoding);
 		
 		String bookName = bookInfo.getFullName();
 		String verse = bookInfo.getVerse(1, 1);
@@ -184,16 +182,9 @@ public class ConvertOptionsDialog {
 	protected void bOk_click() {
 		pdb.close();
 		
-		if (Preferences.getBoolean("outputYesVersion2", false) == false) {
-			ConvertPdbToYes1.ConvertParams params = new ConvertPdbToYes1.ConvertParams();
-			params.inputEncoding = encodingAdapter.getItem(cbEncoding.getSelectedItemPosition());
-			params.includeAddlTitle = cAddlTitle.isChecked();
-			callback.onOkYes1(params);
-		} else {
-			ConvertPdbToYes2.ConvertParams params = new ConvertPdbToYes2.ConvertParams();
-			params.inputEncoding = encodingAdapter.getItem(cbEncoding.getSelectedItemPosition());
-			params.includeAddlTitle = cAddlTitle.isChecked();
-			callback.onOkYes2(params);
-		}
+		ConvertPdbToYes2.ConvertParams params = new ConvertPdbToYes2.ConvertParams();
+		params.inputEncoding = encodingAdapter.getItem(cbEncoding.getSelectedItemPosition());
+		params.includeAddlTitle = cAddlTitle.isChecked();
+		callback.onOkYes2(params);
 	}
 }

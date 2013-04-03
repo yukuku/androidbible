@@ -1,28 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="wrap_content">
-	<RelativeLayout android:layout_height="wrap_content" android:padding="8dp" android:layout_width="match_parent">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
 
-		<TextView
-		    android:id="@+id/lJudul"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_alignParentLeft="true"
-		    android:layout_alignParentTop="true"
-		    android:text="@string/judul_titikdua"
-		    android:textAppearance="?android:attr/textAppearanceSmall" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp" >
 
-		<EditText android:layout_alignParentLeft="true" android:layout_below="@+id/lJudul" android:id="@+id/tTulisan" android:layout_width="fill_parent" android:layout_height="wrap_content" android:inputType="textCapSentences" android:imeOptions="actionGo" android:singleLine="true" android:selectAllOnFocus="true" />
-		<yuku.devoxx.flowlayout.FlowLayout android:layout_alignParentLeft="true" android:layout_below="@+id/tTulisan" android:layout_height="wrap_content" android:id="@+id/panelLabels" android:layout_width="wrap_content" app:horizontalSpacing="8dp" app:verticalSpacing="6dp">
+        <TextView
+            android:id="@+id/lTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/judul_titikdua"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
-			<TextView
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:layout_marginRight="8dp"
-			    android:paddingTop="8dp"
-			    android:text="@string/labels_titikdua"
-			    android:textAppearance="?android:attr/textAppearanceSmall" />
+        <EditText
+            android:id="@+id/tCaption"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/lJudul"
+            android:imeOptions="actionGo"
+            android:inputType="textCapSentences"
+            android:selectAllOnFocus="true"
+            android:singleLine="true" />
 
-			<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/bAddLabel" android:text="@string/tambah_titiktiga"/>
-		</yuku.devoxx.flowlayout.FlowLayout>
-	</RelativeLayout>
+        <yuku.devoxx.flowlayout.FlowLayout
+            android:id="@+id/panelLabels"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/tTulisan"
+            app:horizontalSpacing="8dp"
+            app:verticalSpacing="6dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:paddingTop="8dp"
+                android:text="@string/labels_titikdua"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <Button
+                android:id="@+id/bAddLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tambah_titiktiga" />
+        </yuku.devoxx.flowlayout.FlowLayout>
+    </RelativeLayout>
+
 </ScrollView>

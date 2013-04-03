@@ -177,11 +177,9 @@ public class AddonManager {
 				Log.w(TAG, "Gagal donlot", ex); //$NON-NLS-1$
 				if (e.listener != null) e.listener.onDownloadFailed(e, null, ex);
 			} finally {
-				if (wakelock != null) {
-					wakelock.release();
-				}
+				wakelock.release();
 				
-				Log.d(TAG, "menghapus tmpfile: " + tmpfile); //$NON-NLS-1$
+				Log.d(TAG, "deleting tmpfile: " + tmpfile); //$NON-NLS-1$
 				new File(tmpfile).delete();
 			}
 		}
