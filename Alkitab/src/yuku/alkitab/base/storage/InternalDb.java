@@ -23,12 +23,12 @@ import yuku.afw.D;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.BookmarkListActivity;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
+import yuku.alkitab.base.devotion.ArticleRenunganHarian;
+import yuku.alkitab.base.devotion.ArticleSantapanHarian;
+import yuku.alkitab.base.devotion.IArticle;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Bookmark2;
 import yuku.alkitab.base.model.Label;
-import yuku.alkitab.base.renungan.ArtikelRenunganHarian;
-import yuku.alkitab.base.renungan.ArtikelSantapanHarian;
-import yuku.alkitab.base.renungan.IArtikel;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.Sqlitil;
 
@@ -422,7 +422,7 @@ public class InternalDb {
 		}
 	}
 
-	public boolean simpanArtikelKeRenungan(IArtikel artikel) {
+	public boolean storeArticleToDevotions(IArticle artikel) {
 		boolean res = false;
 		
 		SQLiteDatabase db = helper.getWritableDatabase();
@@ -430,16 +430,16 @@ public class InternalDb {
 		db.beginTransaction();
 		try {
 			// hapus dulu yang lama.
-			db.delete(Db.TABLE_Devotion, Db.Devotion.name + "=? and " + Db.Devotion.date + "=?", new String[] {artikel.getNama(), artikel.getTgl()}); //$NON-NLS-1$ //$NON-NLS-2$
+			db.delete(Db.TABLE_Devotion, Db.Devotion.name + "=? and " + Db.Devotion.date + "=?", new String[] {artikel.getName(), artikel.getDate()}); //$NON-NLS-1$ //$NON-NLS-2$
 
 			ContentValues values = new ContentValues();
-			values.put(Db.Devotion.name, artikel.getNama());
-			values.put(Db.Devotion.date, artikel.getTgl());
-			values.put(Db.Devotion.readyToUse, artikel.getSiapPakai()? 1: 0);
+			values.put(Db.Devotion.name, artikel.getName());
+			values.put(Db.Devotion.date, artikel.getDate());
+			values.put(Db.Devotion.readyToUse, artikel.getReadyToUse()? 1: 0);
 			
-			if (artikel.getSiapPakai()) {
-				values.put(Db.Devotion.title, artikel.getJudul().toString());
-				values.put(Db.Devotion.body, artikel.getIsiHtml());
+			if (artikel.getReadyToUse()) {
+				values.put(Db.Devotion.title, artikel.getTitle().toString());
+				values.put(Db.Devotion.body, artikel.getBodyHtml());
 				values.put(Db.Devotion.header, artikel.getHeaderHtml());
 			} else {
 				values.put(Db.Devotion.title, (String)null);
@@ -469,13 +469,13 @@ public class InternalDb {
 	/**
 	 * Coba ambil artikel dari db lokal. Artikel ga siap pakai pun akan direturn.
 	 */
-	public IArtikel cobaAmbilRenungan(String nama, String tgl) {
+	public IArticle cobaAmbilRenungan(String nama, String tgl) {
 		Cursor c = helper.getReadableDatabase().query(Db.TABLE_Devotion, null, Db.Devotion.name + "=? and " + Db.Devotion.date + "=?", new String[] { nama, tgl }, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			if (c.moveToNext()) {
-				IArtikel res = null;
+				IArticle res = null;
 				if (nama.equals("rh")) { //$NON-NLS-1$
-					res = new ArtikelRenunganHarian(
+					res = new ArticleRenunganHarian(
 						tgl,
 						c.getString(c.getColumnIndexOrThrow(Db.Devotion.title)),
 						c.getString(c.getColumnIndexOrThrow(Db.Devotion.header)),
@@ -483,7 +483,7 @@ public class InternalDb {
 						c.getInt(c.getColumnIndexOrThrow(Db.Devotion.readyToUse)) > 0
 					);
 				} else if (nama.equals("sh")) { //$NON-NLS-1$
-					res = new ArtikelSantapanHarian(
+					res = new ArticleSantapanHarian(
 						tgl,
 						c.getString(c.getColumnIndexOrThrow(Db.Devotion.title)),
 						c.getString(c.getColumnIndexOrThrow(Db.Devotion.header)),

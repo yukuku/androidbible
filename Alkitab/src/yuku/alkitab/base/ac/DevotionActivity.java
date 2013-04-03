@@ -35,12 +35,12 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.devotion.ArticleRenunganHarian;
+import yuku.alkitab.base.devotion.ArticleSantapanHarian;
+import yuku.alkitab.base.devotion.Downloader;
+import yuku.alkitab.base.devotion.IArticle;
+import yuku.alkitab.base.devotion.Downloader.OnStatusDonlotListener;
 import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.renungan.ArtikelRenunganHarian;
-import yuku.alkitab.base.renungan.ArtikelSantapanHarian;
-import yuku.alkitab.base.renungan.Downloader;
-import yuku.alkitab.base.renungan.Downloader.OnStatusDonlotListener;
-import yuku.alkitab.base.renungan.IArtikel;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.widget.CallbackSpan;
@@ -299,8 +299,8 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 	void tuju(boolean penting, int skrol) {
 		String tgl = tgl_format.get().format(tanggalan);
-		IArtikel artikel = S.getDb().cobaAmbilRenungan(nama, tgl);
-		if (artikel == null || !artikel.getSiapPakai()) {
+		IArticle artikel = S.getDb().cobaAmbilRenungan(nama, tgl);
+		if (artikel == null || !artikel.getReadyToUse()) {
 			akanPerlu(nama, tgl, penting);
 			render(artikel, skrol);
 			
@@ -347,25 +347,25 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		}
 	};
 
-	private void render(IArtikel artikel, final int skrol) {
+	private void render(IArticle artikel, final int skrol) {
 		if (artikel == null) {
 			Log.d(TAG, "merender artikel null"); //$NON-NLS-1$
 		} else {
-			Log.d(TAG, "merender artikel nama=" + artikel.getNama() + " tgl=" + artikel.getTgl() + " siapPakai=" + artikel.getSiapPakai()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Log.d(TAG, "merender artikel nama=" + artikel.getName() + " tgl=" + artikel.getDate() + " siapPakai=" + artikel.getReadyToUse()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		
-		if (artikel != null && artikel.getSiapPakai()) {
+		if (artikel != null && artikel.getReadyToUse()) {
 			renderBerhasilBaik = true;
 			
 			Spanned header = Html.fromHtml(artikel.getHeaderHtml());
 			SpannableStringBuilder ss = new SpannableStringBuilder(header);
 			
-			if (artikel.getNama().equals("sh")) { //$NON-NLS-1$
-				SpannableStringBuilder judul = new SpannableStringBuilder(Html.fromHtml("<h3>" + artikel.getJudul() + "</h3>")); //$NON-NLS-1$ //$NON-NLS-2$
-				judul.setSpan(new CallbackSpan(artikel.getJudul(), ayatKlikListener), 0, judul.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			if (artikel.getName().equals("sh")) { //$NON-NLS-1$
+				SpannableStringBuilder judul = new SpannableStringBuilder(Html.fromHtml("<h3>" + artikel.getTitle() + "</h3>")); //$NON-NLS-1$ //$NON-NLS-2$
+				judul.setSpan(new CallbackSpan(artikel.getTitle(), ayatKlikListener), 0, judul.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 				
 				ss.append(judul);
-			} else if (artikel.getNama().equals("rh")) { //$NON-NLS-1$
+			} else if (artikel.getName().equals("rh")) { //$NON-NLS-1$
 				// cari "Bacaan Setahun : " dst
 				{
 					String s = header.toString();
@@ -383,12 +383,12 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 					}
 				}
 				
-				ss.append(Html.fromHtml("<br/><h3>" + artikel.getJudul() + "</h3><br/>"));  //$NON-NLS-1$//$NON-NLS-2$
+				ss.append(Html.fromHtml("<br/><h3>" + artikel.getTitle() + "</h3><br/>"));  //$NON-NLS-1$//$NON-NLS-2$
 			}
 			
 			int ofsetSebelumIsi = ss.length();
 			
-			Spanned isiDanKopirait = Html.fromHtml(artikel.getIsiHtml() + "<br/><br/>" + artikel.getKopiraitHtml()); //$NON-NLS-1$
+			Spanned isiDanKopirait = Html.fromHtml(artikel.getBodyHtml() + "<br/><br/>" + artikel.getCopyrightHtml()); //$NON-NLS-1$
 			ss.append(isiDanKopirait);
 			
 			// cari "Bacaan : " dst dan pasang link
@@ -463,16 +463,16 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			S.downloader.start();
 		}
 
-		IArtikel artikel = null;
+		IArticle artikel = null;
 		if (nama.equals("rh")) { //$NON-NLS-1$
-			artikel = new ArtikelRenunganHarian(tgl);
+			artikel = new ArticleRenunganHarian(tgl);
 		} else if (nama.equals("sh")) { //$NON-NLS-1$
-			artikel = new ArtikelSantapanHarian(tgl);
+			artikel = new ArticleSantapanHarian(tgl);
 		}
 
 		if (artikel != null) {
 			boolean tertambah = S.downloader.tambah(artikel, penting);
-			if (tertambah) S.downloader.interruptKaloNganggur();
+			if (tertambah) S.downloader.interruptWhenIdle();
 		}
 	}
 	
@@ -520,7 +520,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		}
 	}
 
-	@Override public void onStatusDonlot(final String s) {
+	@Override public void onDownloadStatus(final String s) {
 		Message msg = Message.obtain(penampilStatusDonlot);
 		msg.obj = s;
 		msg.sendToTarget();
