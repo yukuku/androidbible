@@ -88,6 +88,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	private OnVerseScrollListener onVerseScrollListener;
 	private AbsListView.OnScrollListener userOnScrollListener;
 	private int scrollState = 0;
+	private View[] scrollToVerseConvertViews;
 	
 	public VersesView(Context context) {
 		super(context);
@@ -389,9 +390,15 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 					}
 					
 					if (needMeasure) {
-						View convertView = null; // TODO optimize using recycled view
+						// initialize scrollToVerseConvertViews if needed
+						if (scrollToVerseConvertViews == null) {
+							scrollToVerseConvertViews = new View[adapter.getViewTypeCount()];
+						}
+						int itemType = adapter.getItemViewType(position);
+						View convertView = scrollToVerseConvertViews[itemType];
 						View child = adapter.getView(position, convertView, VersesView.this);
 				        child.measure(MeasureSpec.makeMeasureSpec(VersesView.this.getWidth() - VersesView.this.getPaddingLeft() - VersesView.this.getPaddingRight(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+				        scrollToVerseConvertViews[itemType] = child;
 						stopFling();
 				        setSelectionFromTop(position, shifty - (int) (prop * child.getMeasuredHeight()));
 					}
