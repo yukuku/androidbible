@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
 
 import yuku.alkitab.base.model.Label;
 
@@ -157,7 +156,7 @@ public class U {
 		else if (h_ < 5) { r_ = x; g_ = 0; b_ = c; }
 		else             { r_ = c; g_ = 0; b_ = x; }
 		
-		float m = l - (0.5f * c); 
+		float m = l - (0.5f * c);
 		int r = (int)((r_ + m) * (255.f) + 0.5f);
 		int g = (int)((g_ + m) * (255.f) + 0.5f);
 		int b = (int)((b_ + m) * (255.f) + 0.5f);
@@ -200,7 +199,7 @@ public class U {
 	
 	@SuppressWarnings("deprecation") public static void copyToClipboard(CharSequence salinan) {
 		android.text.ClipboardManager clipboardManager = (android.text.ClipboardManager) App.context.getSystemService(Context.CLIPBOARD_SERVICE);
-		clipboardManager.setText(salinan); 
+		clipboardManager.setText(salinan);
 	}
 
 	private static int[] colorSet;
@@ -213,7 +212,7 @@ public class U {
 				colorSet[2] = 0xffffffff;
 			} else {
 				colorSet[0] = 0xff990022; // pl
-				colorSet[1] = 0xff000099; // pb 
+				colorSet[1] = 0xff000099; // pb
 				colorSet[2] = 0xff000000; // dll
 			}
 		}
