@@ -34,6 +34,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
+import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
@@ -71,6 +72,10 @@ public class VersionsActivity extends BaseActivity {
 	VersionAdapter adapter;
 	
 	Map<String, String> cache_displayLanguage = new HashMap<String, String>();
+	
+	public static Intent createIntent() {
+		return new Intent(App.context, VersionsActivity.class);
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

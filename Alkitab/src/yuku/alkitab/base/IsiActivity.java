@@ -132,6 +132,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	// temporary states
 	Boolean hasEsvsbAsal;
 	Version activeSplitVersion;
+	String activeSplitVersionId;
 	
 	CallbackSpan.OnClickListener parallelListener = new CallbackSpan.OnClickListener() {
 		@Override public void onClick(View widget, Object data) {
@@ -473,6 +474,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			
 			if (version != null) {
 				activeSplitVersion = version;
+				activeSplitVersionId = mv.getVersionId();
 				
 				return true;
 			} else {
@@ -755,7 +757,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			openVersionsDialog();
 			return true;
 		case R.id.menuSplitVersion:
-			openSplitVersionDialog();
+			openSplitVersionsDialog();
 			return true;
 		case R.id.menuDevotion:
 			startActivityForResult(new Intent(this, DevotionActivity.class), REQCODE_devotion);
@@ -844,15 +846,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		})
 		.setPositiveButton(R.string.versi_lainnya, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
-				Intent intent = new Intent(getApplicationContext(), VersionsActivity.class);
-				startActivityForResult(intent, REQCODE_version);
+				startActivityForResult(VersionsActivity.createIntent(), REQCODE_version);
 			}
 		})
 		.setNegativeButton(R.string.cancel, null)
 		.show();
 	}
 	
-	void openSplitVersionDialog() {
+	void openSplitVersionsDialog() {
 		Pair<List<String>, List<MVersion>> versions = getAvailableVersions();
 		final List<String> options = versions.first;
 		final List<MVersion> data = versions.second;
@@ -860,14 +861,27 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		options.add(0, getString(R.string.split_version_none));
 		data.add(0, null);
 		
+		int selected = -1;
+		if (this.activeSplitVersionId == null) {
+			selected = 0;
+		} else {
+			for (int i = 1 /* because 0 is null */; i < data.size(); i++) {
+				MVersion mv = data.get(i);
+				if (mv.getVersionId().equals(this.activeSplitVersionId)) {
+					selected = i;
+					break;
+				}
+			}
+		}
+		
 		new AlertDialog.Builder(this)
-		.setTitle(R.string.pilih_edisi)
-		.setItems(options.toArray(new String[options.size()]), new DialogInterface.OnClickListener() {
+		.setSingleChoiceItems(options.toArray(new String[options.size()]), selected, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
 				final MVersion mv = data.get(which);
 				
 				if (mv == null) { // closing split version
 					activeSplitVersion = null;
+					activeSplitVersionId = null;
 					closeSplit();
 				} else {
 					boolean ok = loadSplitVersion(mv);
@@ -876,6 +890,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						displaySplitFollowingMaster();
 					} else {
 						activeSplitVersion = null;
+						activeSplitVersionId = null;
 						closeSplit();
 					}
 				}
@@ -915,6 +930,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				ViewGroup.LayoutParams lp = lsText.getLayoutParams();
 				lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
 				lsText.setLayoutParams(lp);
+			}
+		})
+		.setPositiveButton(R.string.versi_lainnya, new DialogInterface.OnClickListener() {
+			@Override public void onClick(DialogInterface dialog, int which) {
+				startActivityForResult(VersionsActivity.createIntent(), REQCODE_version);
 			}
 		})
 		.setNegativeButton(R.string.cancel, null)
