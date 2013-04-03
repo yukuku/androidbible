@@ -56,7 +56,7 @@ public class Version {
 	}
 	
 	/**
-	 * @return same as {@link #getBooks()}, but none of the array elements is null. 
+	 * @return same as {@link #getBooks()}, but none of the array elements is null.
 	 * For enumerating available books.
 	 * Note that using this, no guarantee that return_value[bookId].bookId == bookId.
 	 */
@@ -87,10 +87,19 @@ public class Version {
 	 */
 	public synchronized Book getBook(int bookId) {
 		Book[] books = getBooks();
-		if (bookId < 0 || bookId >= books.length) {
-			return null;
+		if (bookId < 0) return null;
+		if (bookId < books.length) {
+			// fast path for OT+NT complete versions
+			Book book = books[bookId];
+			if (book.bookId == bookId) return book;
 		}
-		return books[bookId];
+		// linear search
+		for (Book book: books) {
+			if (book.bookId == bookId) {
+				return book;
+			}
+		}
+		return null;
 	}
 	
 	public synchronized Book getFirstBook() {
@@ -126,7 +135,7 @@ public class Version {
 	
 	/**
 	 * @param ariRanges list of aris where even-indexed elements are start and odd-indexed elements are end (inclusive) aris
-	 * @param result_aris (non-null, will be cleared first) list of aris loaded 
+	 * @param result_aris (non-null, will be cleared first) list of aris loaded
 	 * @param result_verses (non-null, will be cleared first) list of verse texts loaded
 	 * @return the number of verses successfully loaded
 	 */
@@ -274,7 +283,7 @@ public class Version {
 		Book book = getBook(bookId);
 		if (book == null) {
 			return "[?]";
-		} 
+		}
 		
 		return book.reference(chapter_1, verse_1);
 	}
