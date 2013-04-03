@@ -58,7 +58,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			String text = verses_.getVerse(id);
 			String verseNumberText = verses_.getVerseNumberText(id);
 			boolean dontPutSpacingBefore = (position > 0 && itemPointer_[position - 1] < 0) || position == 0;
-			VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightColor, checked, dontPutSpacingBefore, withXref, xrefListener_);
+			VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightColor, checked, dontPutSpacingBefore, withXref, xrefListener_, owner_);
 			
 			Appearances.applyTextAppearance(lText);
 			if (checked) {

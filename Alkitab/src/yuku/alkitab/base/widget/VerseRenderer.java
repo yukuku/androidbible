@@ -169,8 +169,9 @@ public class VerseRenderer {
 	
 	/**
 	 * @param dontPutSpacingBefore this verse is right after a pericope title or on the 0th position
+	 * @param optionalVersesView must be not-null if xrefListener is not-null 
 	 */
-	public static void render(TextView lText, TextView lVerseNumber, int ari, String text, String verseNumberText, int highlightColor, boolean checked, boolean dontPutSpacingBefore, int withXref, VersesView.XrefListener xrefListener) {
+	public static void render(TextView lText, TextView lVerseNumber, int ari, String text, String verseNumberText, int highlightColor, boolean checked, boolean dontPutSpacingBefore, int withXref, VersesView.XrefListener xrefListener, VersesView optionalVersesView) {
 		// @@ = start a verse containing paragraphs or formatting
 		// @0 = start with indent 0 [paragraph]
 		// @1 = start with indent 1 [paragraph]
@@ -192,7 +193,7 @@ public class VerseRenderer {
 		// Formatted verses start with "@@".
 		// Second character must be '@' too, if not it's wrong, we will fallback to simple render.
 		if (text_len < 2 || text.charAt(0) != '@' || text.charAt(1) != '@') {
-			simpleRender(lText, lVerseNumber, ari, text, verseNumberText, highlightColor, checked, withXref, xrefListener);
+			simpleRender(lText, lVerseNumber, ari, text, verseNumberText, highlightColor, checked, withXref, xrefListener, optionalVersesView);
 			return;
 		}
 
@@ -322,7 +323,7 @@ public class VerseRenderer {
 		}
 		
 		for (int i = 0; i < withXref; i++) {
-			addXrefLink(lText.getContext(), sb, ari, i, xrefListener);
+			addXrefLink(lText.getContext(), sb, ari, i, xrefListener, optionalVersesView);
 		}
 	
 		lText.setText(sb);
@@ -388,7 +389,10 @@ public class VerseRenderer {
 		}
 	}
 
-	public static void simpleRender(TextView lText, TextView lVerseNumber, int ari, String text, String verseNumberText, int highlightColor, boolean checked, int withXref, VersesView.XrefListener xrefListener) {
+	/**
+	 * @param optionalVersesView must be not-null if xrefListener is not-null
+	 */
+	public static void simpleRender(TextView lText, TextView lVerseNumber, int ari, String text, String verseNumberText, int highlightColor, boolean checked, int withXref, VersesView.XrefListener xrefListener, VersesView optionalVersesView) {
 		// initialize lVerseNumber to have no padding first
 		lVerseNumber.setPadding(0, 0, 0, 0);
 		
@@ -406,14 +410,14 @@ public class VerseRenderer {
 		}
 		
 		for (int i = 0; i < withXref; i++) {
-			addXrefLink(lText.getContext(), sb, ari, i, xrefListener);
+			addXrefLink(lText.getContext(), sb, ari, i, xrefListener, optionalVersesView);
 		}
 	
 		lText.setText(sb);
 		lVerseNumber.setText("");
 	}
 
-	static void addXrefLink(final Context context, SpannableStringBuilder sb, final int ari, final int which, final VersesView.XrefListener xrefListener) {
+	static void addXrefLink(final Context context, SpannableStringBuilder sb, final int ari, final int which, final VersesView.XrefListener xrefListener, final VersesView optionalVersesView) {
 		// if last char of this sb is newline, move back.
 		int sb_start = sb.length();
 		if (sb.length() > 0 && sb.charAt(sb.length() - 1) == '\n') {
@@ -428,7 +432,7 @@ public class VerseRenderer {
 			
 			@Override public void onClick(View widget) {
 				if (xrefListener != null) {
-					xrefListener.onXrefClick(xrefListener.getOwner(), ari, which);
+					xrefListener.onXrefClick(optionalVersesView, ari, which);
 				}
 			}
 		}, sb_start, sb_start+3, 0);

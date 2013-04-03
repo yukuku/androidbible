@@ -75,12 +75,6 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 
 	public abstract static class XrefListener {
 		public abstract void onXrefClick(VersesView versesView, int ari, int which);
-		
-		private VersesView owner;
-		
-		VersesView getOwner() {
-			return owner;
-		}
 	}
 	
 	public interface OnVerseScrollListener {
@@ -137,8 +131,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	}
 	
 	public void setXrefListener(VersesView.XrefListener xrefListener) {
-		xrefListener.owner = this;
-		adapter.setXrefListener(xrefListener);
+		adapter.setXrefListener(xrefListener, this);
 	}
 	
 	public void setVerseSelectionMode(VerseSelectionMode mode) {

@@ -88,6 +88,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	int[] xrefEntryCounts_;
 	
 	LayoutInflater inflater_;
+	VersesView owner_;
 	
 	public VerseAdapter(Context context) {
 		context_ = context;
@@ -183,8 +184,9 @@ public abstract class VerseAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 	
-	public void setXrefListener(VersesView.XrefListener xrefListener) {
+	public void setXrefListener(VersesView.XrefListener xrefListener, VersesView owner) {
 		xrefListener_ = xrefListener;
+		owner_ = owner;
 		notifyDataSetChanged();
 	}
 
