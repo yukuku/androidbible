@@ -28,6 +28,7 @@ import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
@@ -75,7 +76,7 @@ import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.base.util.Search2Engine.Query;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.SplitHandleButton;
-import yuku.alkitab.base.widget.TextAppearancePopup;
+import yuku.alkitab.base.widget.TextAppearancePanel;
 import yuku.alkitab.base.widget.VerseAdapter;
 import yuku.alkitab.base.widget.VersesView;
 
@@ -106,6 +107,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	private static final String EXTRA_verseUrl = "urlAyat"; //$NON-NLS-1$
 
+	FrameLayout overlayContainer;
+	View root;
 	VersesView lsText;
 	VersesView lsSplit1;
 	TextView tSplitEmpty;
@@ -115,7 +118,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	Button bGoto;
 	ImageButton bLeft;
 	ImageButton bRight;
-	View root;
 	
 	Book activeBook;
 	int chapter_1 = 0;
@@ -167,6 +169,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		
 		setContentView(R.layout.activity_isi);
 		
+		overlayContainer = V.get(this, R.id.overlayContainer);
+		root = V.get(this, R.id.root);
 		lsText = V.get(this, R.id.lsSplit0);
 		lsSplit1 = V.get(this, R.id.lsSplit1);
 		tSplitEmpty = V.get(this, R.id.tSplitEmpty);
@@ -176,7 +180,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		bGoto = V.get(this, R.id.bGoto);
 		bLeft = V.get(this, R.id.bLeft);
 		bRight = V.get(this, R.id.bRight);
-		root = V.get(this, R.id.root);
 		
 		applyPreferences(false);
 		
@@ -790,8 +793,13 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	void popupTextAppearance() {
-		TextAppearancePopup popup = new TextAppearancePopup(this, getLayoutInflater(), root);
-		popup.show();
+		TextAppearancePanel panel = new TextAppearancePanel(this, getLayoutInflater(), overlayContainer, new TextAppearancePanel.Listener() {
+			@Override public void onValueChanged() {
+				S.calculateAppliedValuesBasedOnPreferences();
+				applyPreferences(false);
+			}
+		});
+		panel.show();
 	}
 
 	private Pair<List<String>, List<MVersion>> getAvailableVersions() {
