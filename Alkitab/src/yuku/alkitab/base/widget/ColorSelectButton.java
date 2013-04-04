@@ -33,6 +33,11 @@ public class ColorSelectButton extends ImageButton {
 		this.bgColor = bgColor;
 		invalidate();
 	}
+	
+	public void setColors(int[] colors) {
+		this.colors = colors;
+		invalidate();
+	}
 
 	@Override protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);

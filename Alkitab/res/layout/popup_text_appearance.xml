@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#4000"
+    android:baselineAligned="false"
+    android:orientation="vertical"
+    tools:context=".base.IsiActivity" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp" >
+
+        <Spinner
+            android:id="@+id/cbTypeface"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+
+        <Button
+            android:id="@+id/bTextSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp" >
+
+        <ToggleButton
+            android:id="@+id/cBold"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textOff="BOLD"
+            android:textOn="BOLD" />
+
+        <ImageButton
+            android:id="@+id/bLineSpacing"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@android:drawable/ic_menu_sort_by_size" />
+
+        <yuku.alkitab.base.widget.ColorSelectButton
+            android:id="@+id/bColors"
+            android:layout_width="144dp"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -75,6 +75,7 @@ import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.base.util.Search2Engine.Query;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.SplitHandleButton;
+import yuku.alkitab.base.widget.TextAppearancePopup;
 import yuku.alkitab.base.widget.VerseAdapter;
 import yuku.alkitab.base.widget.VersesView;
 
@@ -768,6 +769,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		case R.id.menuAbout:
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
+		case R.id.menuTextAppearance:
+			popupTextAppearance();
+			return true;
 		case R.id.menuSettings:
 			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
 			return true;
@@ -783,6 +787,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 		
 		return super.onOptionsItemSelected(item);
+	}
+
+	void popupTextAppearance() {
+		TextAppearancePopup popup = new TextAppearancePopup(this, getLayoutInflater(), root);
+		popup.show();
 	}
 
 	private Pair<List<String>, List<MVersion>> getAvailableVersions() {

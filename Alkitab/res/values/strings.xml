@@ -191,6 +191,7 @@
     <string name="menu_split_version">Split version</string>
     <string name="split_version_none">None</string>
     <string name="split_version_cant_display_verse">%1$s is not available in %2$s.</string>
+    <string name="menuTextAppearance">Text Appearance</string>
     
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Dialer</string>
