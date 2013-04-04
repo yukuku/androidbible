@@ -126,6 +126,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	History history;
 	NfcAdapter nfcAdapter;
 	ActionMode actionMode;
+	TextAppearancePanel textAppearancePanel;
 
 	//# state storage for search2
 	Query search2_query = null;
@@ -654,6 +655,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 	
+	@Override public void onBackPressed() {
+		if (textAppearancePanel != null) {
+			textAppearancePanel.hide();
+			textAppearancePanel = null;
+		} else {
+			super.onBackPressed();
+		}
+	}
+	
 	void bGoto_click() {
 		startActivityForResult(GotoActivity.createIntent(this.activeBook.bookId, this.chapter_1, lsText.getVerseBasedOnScroll()), REQCODE_goto);
 	}
@@ -773,7 +783,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
 		case R.id.menuTextAppearance:
-			popupTextAppearance();
+			showTextAppearancePanel();
 			return true;
 		case R.id.menuSettings:
 			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
@@ -792,14 +802,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		return super.onOptionsItemSelected(item);
 	}
 
-	void popupTextAppearance() {
-		TextAppearancePanel panel = new TextAppearancePanel(this, getLayoutInflater(), overlayContainer, new TextAppearancePanel.Listener() {
+	void showTextAppearancePanel() {
+		textAppearancePanel = new TextAppearancePanel(this, getLayoutInflater(), overlayContainer, new TextAppearancePanel.Listener() {
 			@Override public void onValueChanged() {
 				S.calculateAppliedValuesBasedOnPreferences();
 				applyPreferences(false);
 			}
 		});
-		panel.show();
+		textAppearancePanel.show();
 	}
 
 	private Pair<List<String>, List<MVersion>> getAvailableVersions() {
