@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,7 @@ import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.R;
+import yuku.alkitab.base.ac.ColorSettingsActivity;
 import yuku.alkitab.base.ac.FontManagerActivity;
 import yuku.alkitab.base.util.FontManager;
 
@@ -58,6 +60,7 @@ public class TextAppearancePanel {
 	ColorThemeAdapter colorThemeAdapter;
 	boolean shown = false;
 	boolean initialColorThemeSelection = true;
+	int preventColorThemeItemSelection = 0;
 
 	public TextAppearancePanel(Activity activity, LayoutInflater inflater, FrameLayout parent, Listener listener, int reqcodeGetFonts, int reqcodeCustomColors) {
 		this.activity = activity;
@@ -106,11 +109,17 @@ public class TextAppearancePanel {
 	
 		{
 			int[] currentColors = ColorThemes.getCurrentColors();
+			Log.d(TAG, "@@displayValues currentColors=" + String.format("%08x %08x %08x %08x", currentColors[0], currentColors[1], currentColors[2], currentColors[3]));
+			
 			int selectedPosition = colorThemeAdapter.getPositionByColors(currentColors);
 			if (selectedPosition == -1) {
+				preventColorThemeItemSelection++;
 				cbColorTheme.setSelection(colorThemeAdapter.getPositionOfCustomColors());
+				preventColorThemeItemSelection--;
 			} else {
+				preventColorThemeItemSelection++;
 				cbColorTheme.setSelection(selectedPosition);
+				preventColorThemeItemSelection--;
 			}
 			colorThemeAdapter.notifyDataSetChanged();
 		}
@@ -142,8 +151,6 @@ public class TextAppearancePanel {
 			String name = typefaceAdapter.getNameByPosition(position);
 			if (name == null) {
 				activity.startActivityForResult(FontManagerActivity.createIntent(), reqcodeGetFonts);
-				// TODO refresh font list
-				displayValues();
 			} else {
 				Preferences.setString(App.context.getString(R.string.pref_jenisHuruf_key), name);
 				listener.onValueChanged();
@@ -160,14 +167,20 @@ public class TextAppearancePanel {
 				return;
 			}
 			
+			if (preventColorThemeItemSelection > 0) {
+				Log.d(TAG, "not continuing because of preventColorThemeItemSelection");
+				return;
+			}
+			
 			if (position != colorThemeAdapter.getPositionOfCustomColors()) {
 				int[] colors = colorThemeAdapter.getColorsAtPosition(position);
 				ColorThemes.setCurrentColors(colors);
 				listener.onValueChanged();
 				colorThemeAdapter.notifyDataSetChanged();
 			} else {
-				// TODO open custom colors dialog
-				displayValues();
+				displayValues(); // immediately set it to current
+				Log.d(TAG, "@@", new Throwable().fillInStackTrace());
+				activity.startActivityForResult(ColorSettingsActivity.createIntent(), reqcodeCustomColors);
 			}
 		}
 

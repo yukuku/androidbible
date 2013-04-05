@@ -1,63 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
 	xmlns:android="http://schemas.android.com/apk/res/android">
-	<PreferenceCategory
-		android:title="@string/pref_penampilan_teks">
-
-		<yuku.alkitab.base.widget.FontSize2Preference
-			android:key="@string/pref_ukuranHuruf2_key"
-			android:title="@string/pref_ukuran_huruf"
-			android:summary="@string/pref_ubah_ukuran_huruf_teks_alkitab_perbesar_atau_perkecil"
-			android:positiveButtonText="@string/ok"
-			android:negativeButtonText="@string/cancel"
-			android:defaultValue="@integer/pref_ukuranHuruf2_default" />
-		<yuku.alkitab.base.widget.FontFacePreference 
-			android:key="@string/pref_jenisHuruf_key"
-			android:title="@string/pref_jenis_huruf"
-			android:summary="@string/pref_ganti_bentuk_huruf_teks_alkitab"
-			android:entries="@array/pref_jenisHuruf_label"
-			android:entryValues="@array/pref_jenisHuruf_value"
-			android:defaultValue="DEFAULT" />
-		<yuku.alkitab.base.widget.LineSpacingMultPreference
-			android:key="@string/pref_lineSpacingMult_key"
-			android:title="@string/pref_lineSpacingMult_title"
-			android:positiveButtonText="@string/ok"
-			android:negativeButtonText="@string/cancel"
-			android:defaultValue="1.15" />
-		<CheckBoxPreference
-			android:key="@string/pref_boldHuruf_key"
-			android:title="@string/pref_tebalkan_huruf"
-			android:summary="@string/pref_pakai_huruf_yang_dicetak_tebal_bold"
-			android:defaultValue="false" />
-
-		<PreferenceScreen
-			android:summary="@string/pref_atur_warna_teks_latar_belakang_dan_nomor_ayat"
-			android:title="@string/pref_warna">
-			<yuku.alkitab.base.widget.ColorThemePreference
-				android:key="_gapake_temaWarna"
-				android:title="@string/pref_tema_warna"
-				android:summary="@string/pref_atur_warna_teks_latar_belakang_dan" 
-				android:entries="@array/pref_temaWarna_label"
-				android:entryValues="@array/pref_temaWarna_value"
-				/>
-			<yuku.ambilwarna.widget.AmbilWarnaPreference
-				android:key="@string/pref_warnaHuruf_int_key"
-				android:defaultValue="@integer/pref_warnaHuruf_int_default"
-				android:title="@string/pref_warna_teks_alkitab" />
-			<yuku.ambilwarna.widget.AmbilWarnaPreference
-				android:key="@string/pref_warnaLatar_int_key"
-				android:defaultValue="@integer/pref_warnaLatar_int_default"
-				android:title="@string/pref_warna_latar_belakang" />
-			<yuku.ambilwarna.widget.AmbilWarnaPreference
-				android:key="@string/pref_warnaNomerAyat_int_key"
-				android:defaultValue="@integer/pref_warnaNomerAyat_int_default"
-				android:title="@string/pref_warna_nomor_ayat" />
-			<yuku.ambilwarna.widget.AmbilWarnaPreference
-				android:key="@string/pref_redTextColor_key"
-				android:defaultValue="@integer/pref_redTextColor_default"
-				android:title="@string/pref_redTextColor_title" />
-		</PreferenceScreen>
-	</PreferenceCategory>
 
 	<PreferenceCategory
 		android:title="@string/pref_penampilan_layar">
