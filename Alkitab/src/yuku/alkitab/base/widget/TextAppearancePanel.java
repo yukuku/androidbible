@@ -1,8 +1,10 @@
 package yuku.alkitab.base.widget;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Typeface;
-import android.util.Log;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,8 +34,6 @@ import yuku.alkitab.base.util.FontManager;
 public class TextAppearancePanel {
 	public static final String TAG = TextAppearancePanel.class.getSimpleName();
 	
-	private static final int REQCODE_fontManager = 1;
-	
 	public interface Listener {
 		void onValueChanged();
 	}
@@ -43,6 +43,8 @@ public class TextAppearancePanel {
 	final FrameLayout parent;
 	final Listener listener;
 	final View content;
+	final int reqcodeGetFonts;
+	final int reqcodeCustomColors;
 	
 	Spinner cbTypeface;
 	TextView lTextSize;
@@ -55,13 +57,15 @@ public class TextAppearancePanel {
 	TypefaceAdapter typefaceAdapter;
 	ColorThemeAdapter colorThemeAdapter;
 	boolean shown = false;
-	
+	boolean initialColorThemeSelection = true;
 
-	public TextAppearancePanel(Activity activity, LayoutInflater inflater, FrameLayout parent, Listener listener) {
+	public TextAppearancePanel(Activity activity, LayoutInflater inflater, FrameLayout parent, Listener listener, int reqcodeGetFonts, int reqcodeCustomColors) {
 		this.activity = activity;
 		this.inflater = inflater;
 		this.parent = parent;
 		this.listener = listener;
+		this.reqcodeGetFonts = reqcodeGetFonts;
+		this.reqcodeCustomColors = reqcodeCustomColors;
 		this.content = inflater.inflate(R.layout.panel_text_appearance, parent, false);
 	    
 	    cbTypeface = V.get(content, R.id.cbTypeface);
@@ -84,11 +88,13 @@ public class TextAppearancePanel {
 	}
 	
 	void displayValues() {
-		int selectedPosition = typefaceAdapter.getPositionByName(Preferences.getString(App.context.getString(R.string.pref_jenisHuruf_key)));
-		if (selectedPosition >= 0) {
-			cbTypeface.setSelection(selectedPosition);
+		{
+			int selectedPosition = typefaceAdapter.getPositionByName(Preferences.getString(App.context.getString(R.string.pref_jenisHuruf_key)));
+			if (selectedPosition >= 0) {
+				cbTypeface.setSelection(selectedPosition);
+			}
 		}
-		
+			
 		boolean bold = Preferences.getBoolean(App.context.getString(R.string.pref_boldHuruf_key), false);
 		cBold.setChecked(bold);
 		
@@ -97,13 +103,17 @@ public class TextAppearancePanel {
 		
 		float lineSpacing = Preferences.getFloat(App.context.getString(R.string.pref_lineSpacingMult_key), 1.2f);
 		sbLineSpacing.setProgress(Math.round((lineSpacing - 1.f) * 20.f));
-		
-		int[] colors = {
-			Preferences.getInt(App.context.getString(R.string.pref_warnaHuruf_int_key), App.context.getResources().getInteger(R.integer.pref_warnaHuruf_int_default)),
-			Preferences.getInt(App.context.getString(R.string.pref_warnaLatar_int_key), App.context.getResources().getInteger(R.integer.pref_warnaLatar_int_default)),
-			Preferences.getInt(App.context.getString(R.string.pref_warnaNomerAyat_int_key), App.context.getResources().getInteger(R.integer.pref_warnaNomerAyat_int_default)),
-			Preferences.getInt(App.context.getString(R.string.pref_redTextColor_key), App.context.getResources().getInteger(R.integer.pref_redTextColor_default)),
-		};
+	
+		{
+			int[] currentColors = ColorThemes.getCurrentColors();
+			int selectedPosition = colorThemeAdapter.getPositionByColors(currentColors);
+			if (selectedPosition == -1) {
+				cbColorTheme.setSelection(colorThemeAdapter.getPositionOfCustomColors());
+			} else {
+				cbColorTheme.setSelection(selectedPosition);
+			}
+			colorThemeAdapter.notifyDataSetChanged();
+		}
 	}
 
 	public void show() {
@@ -118,11 +128,20 @@ public class TextAppearancePanel {
 		shown = false;
 	}
 	
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == reqcodeGetFonts) {
+			typefaceAdapter.reload();
+			displayValues();
+		} else if (requestCode == reqcodeCustomColors) {
+			displayValues();
+		}
+	}
+	
 	AdapterView.OnItemSelectedListener cbTypeface_itemSelected = new AdapterView.OnItemSelectedListener() {
 		@Override public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
 			String name = typefaceAdapter.getNameByPosition(position);
 			if (name == null) {
-				activity.startActivityForResult(FontManagerActivity.createIntent(), REQCODE_fontManager);
+				activity.startActivityForResult(FontManagerActivity.createIntent(), reqcodeGetFonts);
 				// TODO refresh font list
 				displayValues();
 			} else {
@@ -136,7 +155,20 @@ public class TextAppearancePanel {
 	
 	AdapterView.OnItemSelectedListener cbColorTheme_itemSelected = new AdapterView.OnItemSelectedListener() {
 		@Override public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
-			int[] colors = colorThemeAdapter.getColorsAtPosition(position);
+			if (initialColorThemeSelection) {
+				initialColorThemeSelection = false;
+				return;
+			}
+			
+			if (position != colorThemeAdapter.getPositionOfCustomColors()) {
+				int[] colors = colorThemeAdapter.getColorsAtPosition(position);
+				ColorThemes.setCurrentColors(colors);
+				listener.onValueChanged();
+				colorThemeAdapter.notifyDataSetChanged();
+			} else {
+				// TODO open custom colors dialog
+				displayValues();
+			}
 		}
 
 		@Override public void onNothingSelected(AdapterView<?> parent) {}
@@ -179,9 +211,14 @@ public class TextAppearancePanel {
 		List<FontManager.FontEntry> fontEntries;
 
 		public TypefaceAdapter() {
-			fontEntries = FontManager.getInstalledFonts();
+			reload();
 		}
 		
+		public void reload() {
+			fontEntries = FontManager.getInstalledFonts();
+			notifyDataSetChanged();
+		}
+
 		@Override public int getCount() {
 			return 3 + fontEntries.size() + 1;
 		}
@@ -237,24 +274,18 @@ public class TextAppearancePanel {
 
 	class ColorThemeAdapter extends EasyAdapter {
 		List<int[]> themes;
+		List<String> themeNames;
 
 		public ColorThemeAdapter() {
 			themes = new ArrayList<int[]>();
-			Log.d(TAG, Arrays.toString(activity.getResources().getStringArray(R.array.pref_temaWarna_value)));
 			for (String themeString: activity.getResources().getStringArray(R.array.pref_temaWarna_value)) {
-				// text color, bg color, verse number color, red text color
-				themes.add(new int[] {
-					(int) Long.parseLong(themeString.substring(0, 8), 16),
-					(int) Long.parseLong(themeString.substring(9, 17), 16),
-					(int) Long.parseLong(themeString.substring(18, 26), 16),
-					(int) Long.parseLong(themeString.substring(27, 35), 16),
-				});
+				themes.add(ColorThemes.themeStringToColors(themeString));
 			}
+			themeNames = Arrays.asList(activity.getResources().getStringArray(R.array.pref_temaWarna_label));
 		}
-		
+
 		@Override public int getCount() {
-			Log.d(TAG, "returning " + themes.size());
-			return themes.size();
+			return themes.size() + 1;
 		}
 		
 		@Override public View newView(int position, ViewGroup parent) {
@@ -262,20 +293,60 @@ public class TextAppearancePanel {
 		}
 
 		@Override public void bindView(View view, int position, ViewGroup parent) {
-			MultiColorView theme = (MultiColorView) view;
-			theme.setBgColor(0xff000000);
-			theme.setColors(themes.get(position));
+			MultiColorView mcv = (MultiColorView) view;
+			mcv.setBgColor(0xff000000);
 			
-			LayoutParams lp = theme.getLayoutParams();
+			if (position == getPositionOfCustomColors()) {
+				mcv.setColors(ColorThemes.getCurrentColors());
+			} else {
+				mcv.setColors(themes.get(position));
+			}
+			
+			LayoutParams lp = mcv.getLayoutParams();
 			if (lp == null) {
 				lp = new AbsListView.LayoutParams(LayoutParams.MATCH_PARENT, 0);
 			}
-			lp.height = (int) (48 * theme.getResources().getDisplayMetrics().density);
-			theme.setLayoutParams(lp);
+			lp.height = (int) (48 * mcv.getResources().getDisplayMetrics().density);
+			mcv.setLayoutParams(lp);
+		}
+		
+		@Override public View newDropDownView(int position, ViewGroup parent) {
+			return inflater.inflate(android.R.layout.simple_list_item_single_choice, parent, false);
+		}
+		
+		@Override public void bindDropDownView(View view, int position, ViewGroup parent) {
+			TextView text1 = (TextView) view;
+			if (position != getPositionOfCustomColors()) {
+				int colors[] = themes.get(position);
+				SpannableStringBuilder sb = new SpannableStringBuilder();
+				sb.append("" + (position+1));
+				sb.setSpan(new ForegroundColorSpan(colors[2]), 0, sb.length(), 0);
+				int sb_len = sb.length();
+				sb.append(" " + themeNames.get(position));
+				sb.setSpan(new ForegroundColorSpan(colors[0]), sb_len, sb.length(), 0);
+				text1.setText(sb);
+				text1.setBackgroundColor(colors[1]);
+			} else {
+				text1.setText("Customize…");
+				text1.setBackgroundColor(0xffffffff);
+			}
 		}
 		
 		public int[] getColorsAtPosition(int position) {
 			return themes.get(position);
+		}
+		
+		public int getPositionByColors(int[] colors) {
+			for (int i = 0; i < themes.size(); i++) {
+				if (Arrays.equals(colors, themes.get(i))) {
+					return i;
+				}
+			}
+			return -1;
+		}
+		
+		public int getPositionOfCustomColors() {
+			return themes.size();
 		}
 	}
 }

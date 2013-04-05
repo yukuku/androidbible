@@ -104,6 +104,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private static final int REQCODE_search = 6;
 	private static final int REQCODE_share = 7;
 	private static final int REQCODE_songs = 8;
+	private static final int REQCODE_textAppearanceGetFonts = 9;
+	private static final int REQCODE_textAppearanceCustomColors = 10;
 
 	private static final String EXTRA_verseUrl = "urlAyat"; //$NON-NLS-1$
 
@@ -804,7 +806,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	void showTextAppearancePanel() {
 		if (textAppearancePanel != null) {
-			return; // we are already showing it.
+			// we are already showing it.
+			textAppearancePanel.hide();
+			textAppearancePanel = null;
+			return;
 		}
 		
 		textAppearancePanel = new TextAppearancePanel(this, getLayoutInflater(), overlayContainer, new TextAppearancePanel.Listener() {
@@ -812,7 +817,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				S.calculateAppliedValuesBasedOnPreferences();
 				applyPreferences(false);
 			}
-		});
+		}, REQCODE_textAppearanceGetFonts, REQCODE_textAppearanceCustomColors);
 		textAppearancePanel.show();
 	}
 
@@ -1058,6 +1063,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					startActivity(chosenIntent);
 				}
 			}
+		} else if (requestCode == REQCODE_textAppearanceGetFonts) {
+			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode, resultCode, data);
+		} else if (requestCode == REQCODE_textAppearanceCustomColors) {
+			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode, resultCode, data);
 		}
 	}
 
