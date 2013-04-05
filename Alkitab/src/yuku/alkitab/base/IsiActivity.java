@@ -803,6 +803,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	void showTextAppearancePanel() {
+		if (textAppearancePanel != null) {
+			return; // we are already showing it.
+		}
+		
 		textAppearancePanel = new TextAppearancePanel(this, getLayoutInflater(), overlayContainer, new TextAppearancePanel.Listener() {
 			@Override public void onValueChanged() {
 				S.calculateAppliedValuesBasedOnPreferences();

@@ -4,17 +4,17 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.widget.ImageButton;
+import android.widget.TextView;
 
-public class ColorSelectButton extends ImageButton {
-	public static final String TAG = ColorSelectButton.class.getSimpleName();
+public class MultiColorView extends TextView {
+	public static final String TAG = MultiColorView.class.getSimpleName();
 	
 	float density;
 	Paint p;
 	int bgColor;
 	int[] colors;
 	
-	public ColorSelectButton(Context context, AttributeSet attrs) {
+	public MultiColorView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init();
 	}
@@ -40,7 +40,7 @@ public class ColorSelectButton extends ImageButton {
 	}
 
 	@Override protected void onDraw(Canvas canvas) {
-		super.onDraw(canvas);
+		// not calling super.onDraw(canvas)
 		
 		int w = getWidth();
 		int h = getHeight();

@@ -2,10 +2,13 @@ package yuku.alkitab.base.widget;
 
 import android.app.Activity;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
@@ -14,6 +17,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import yuku.afw.App;
@@ -45,9 +50,10 @@ public class TextAppearancePanel {
 	TextView lLineSpacing;
 	SeekBar sbLineSpacing;
 	ToggleButton cBold;
-	ColorSelectButton bColors;
+	Spinner cbColorTheme;
 
 	TypefaceAdapter typefaceAdapter;
+	ColorThemeAdapter colorThemeAdapter;
 	boolean shown = false;
 	
 
@@ -64,13 +70,15 @@ public class TextAppearancePanel {
 	    sbTextSize = V.get(content, R.id.sbTextSize);
 	    lLineSpacing = V.get(content, R.id.lLineSpacing);
 	    sbLineSpacing = V.get(content, R.id.sbLineSpacing);
-	    bColors = V.get(content, R.id.bColors);
+	    cbColorTheme = V.get(content, R.id.cbColorTheme);
 	    
 	    cbTypeface.setAdapter(typefaceAdapter = new TypefaceAdapter());
 	    cbTypeface.setOnItemSelectedListener(cbTypeface_itemSelected);
 	    sbTextSize.setOnSeekBarChangeListener(sbTextSize_seekBarChange);
 	    sbLineSpacing.setOnSeekBarChangeListener(sbLineSpacing_seekBarChange);
 	    cBold.setOnCheckedChangeListener(cBold_checkedChange);
+	    cbColorTheme.setAdapter(colorThemeAdapter = new ColorThemeAdapter());
+	    cbColorTheme.setOnItemSelectedListener(cbColorTheme_itemSelected);
 	    
 	    displayValues();
 	}
@@ -96,8 +104,6 @@ public class TextAppearancePanel {
 			Preferences.getInt(App.context.getString(R.string.pref_warnaNomerAyat_int_key), App.context.getResources().getInteger(R.integer.pref_warnaNomerAyat_int_default)),
 			Preferences.getInt(App.context.getString(R.string.pref_redTextColor_key), App.context.getResources().getInteger(R.integer.pref_redTextColor_default)),
 		};
-		bColors.setBgColor(0xff000000);
-		bColors.setColors(colors);
 	}
 
 	public void show() {
@@ -123,6 +129,14 @@ public class TextAppearancePanel {
 				Preferences.setString(App.context.getString(R.string.pref_jenisHuruf_key), name);
 				listener.onValueChanged();
 			}
+		}
+		
+		@Override public void onNothingSelected(AdapterView<?> parent) {}
+	};
+	
+	AdapterView.OnItemSelectedListener cbColorTheme_itemSelected = new AdapterView.OnItemSelectedListener() {
+		@Override public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+			int[] colors = colorThemeAdapter.getColorsAtPosition(position);
 		}
 
 		@Override public void onNothingSelected(AdapterView<?> parent) {}
@@ -218,6 +232,50 @@ public class TextAppearancePanel {
 				}
 			}
 			return -1;
+		}
+	}
+
+	class ColorThemeAdapter extends EasyAdapter {
+		List<int[]> themes;
+
+		public ColorThemeAdapter() {
+			themes = new ArrayList<int[]>();
+			Log.d(TAG, Arrays.toString(activity.getResources().getStringArray(R.array.pref_temaWarna_value)));
+			for (String themeString: activity.getResources().getStringArray(R.array.pref_temaWarna_value)) {
+				// text color, bg color, verse number color, red text color
+				themes.add(new int[] {
+					(int) Long.parseLong(themeString.substring(0, 8), 16),
+					(int) Long.parseLong(themeString.substring(9, 17), 16),
+					(int) Long.parseLong(themeString.substring(18, 26), 16),
+					(int) Long.parseLong(themeString.substring(27, 35), 16),
+				});
+			}
+		}
+		
+		@Override public int getCount() {
+			Log.d(TAG, "returning " + themes.size());
+			return themes.size();
+		}
+		
+		@Override public View newView(int position, ViewGroup parent) {
+			return new MultiColorView(activity, null);
+		}
+
+		@Override public void bindView(View view, int position, ViewGroup parent) {
+			MultiColorView theme = (MultiColorView) view;
+			theme.setBgColor(0xff000000);
+			theme.setColors(themes.get(position));
+			
+			LayoutParams lp = theme.getLayoutParams();
+			if (lp == null) {
+				lp = new AbsListView.LayoutParams(LayoutParams.MATCH_PARENT, 0);
+			}
+			lp.height = (int) (48 * theme.getResources().getDisplayMetrics().density);
+			theme.setLayoutParams(lp);
+		}
+		
+		public int[] getColorsAtPosition(int position) {
+			return themes.get(position);
 		}
 	}
 }

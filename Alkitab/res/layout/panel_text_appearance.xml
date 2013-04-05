@@ -89,9 +89,10 @@
             tools:ignore="HardcodedText" />
     </LinearLayout>
 
-    <yuku.alkitab.base.widget.ColorSelectButton
-        android:id="@+id/bColors"
-        android:layout_width="144dp"
-        android:layout_height="wrap_content" />
+    <Spinner
+        android:id="@+id/cbColorTheme"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        tools:listitem="@android:layout/simple_spinner_dropdown_item" />
 
 </LinearLayout>
