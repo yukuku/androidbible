@@ -1364,6 +1364,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				lsText.uncheckAll();
 				mode.finish();
 			} return true;
+			case R.id.menuVersions: {
+				openVersionsDialog();
+			} return true;
 			case R.id.menuAddBookmark: {
 				if (mainVerse_1 == 0) {
 					// no main verse, scroll to show the relevant one!

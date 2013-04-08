@@ -12,10 +12,15 @@
         android:showAsAction="always"
         android:title="@string/bagikan"/>
     <item
+        android:id="@+id/menuVersions"
+        android:icon="@drawable/ic_menu_versions"
+        android:showAsAction="always"
+        android:title="@string/versi"/>
+    <item
         android:id="@+id/menuAddSomething"
         android:icon="@drawable/ic_menu_add"
         android:showAsAction="always"
-        android:title="Add…">
+        android:title="@string/menuAddSomething">
         <menu>
             <item
                 android:id="@+id/menuAddBookmark"
