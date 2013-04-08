@@ -2,7 +2,6 @@ package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -55,7 +54,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	public static final String TAG = DevotionActivity.class.getSimpleName();
 
 	public static final String EXTRA_ari = "ari"; //$NON-NLS-1$
-	private static final int REQCODE_bagikan = 1;
+	private static final int REQCODE_share = 1;
 
 	public static class Result {
 		public int ari;
@@ -68,7 +67,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		return res;
 	}
 	
-	static ThreadLocal<SimpleDateFormat> tgl_format = new ThreadLocal<SimpleDateFormat>() {
+	static ThreadLocal<SimpleDateFormat> date_format = new ThreadLocal<SimpleDateFormat>() {
 		@Override protected SimpleDateFormat initialValue() {
 			return new SimpleDateFormat("yyyyMMdd", Locale.US); //$NON-NLS-1$
 		}
@@ -78,28 +77,28 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		"sh", "rh",  //$NON-NLS-1$//$NON-NLS-2$
 	};
 	public static final String DEFAULT = "sh"; //$NON-NLS-1$
-	private static final String[] ADA_JUDUL = {
+	private static final String[] AVAILABLE_TITLES = {
 		"Santapan Harian", "Renungan Harian", //$NON-NLS-1$ //$NON-NLS-2$
 	};
 
-	TextView lIsi;
-	ScrollView scrollIsi;
+	TextView lContent;
+	ScrollView scrollContent;
 	TextView lStatus;
 	
 	DevotionSelectPopup popup;
 	
-	boolean renderBerhasilBaik = false;
-	long terakhirCobaTampilLagi = 0;
-	Animation memudar;
+	boolean renderSucceeded = false;
+	long lastTryToDisplay = 0;
+	Animation fadeOutAnim;
 	
-	// yang ditampilin saat ini
-	String nama;
-	Date tanggalan;
+	// currently shown
+	String currentName;
+	Date currentDate;
 
-	static class PengulangTampil extends Handler {
+	static class DisplayRepeater extends Handler {
 		final WeakReference<DevotionActivity> ac;
 		
-		public PengulangTampil(DevotionActivity activity) {
+		public DisplayRepeater(DevotionActivity activity) {
 			ac = new WeakReference<DevotionActivity>(activity);
 		}
 		
@@ -109,27 +108,27 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			
 			{
 				long kini = SystemClock.currentThreadTimeMillis();
-				if (kini - activity.terakhirCobaTampilLagi < 500) {
+				if (kini - activity.lastTryToDisplay < 500) {
 					return; // ANEH. Terlalu cepat.
 				}
 				
-				activity.terakhirCobaTampilLagi = kini;
+				activity.lastTryToDisplay = kini;
 			}
 			
-			activity.tuju(true, 0);
+			activity.goTo(true, 0);
 			
-			if (!activity.renderBerhasilBaik) {
-				activity.pengulangTampil.sendEmptyMessageDelayed(0, 12000);
+			if (!activity.renderSucceeded) {
+				activity.displayRepeater.sendEmptyMessageDelayed(0, 12000);
 			}
 		}
 	}
 
-	Handler pengulangTampil = new PengulangTampil(this);
+	Handler displayRepeater = new DisplayRepeater(this);
 	
-	static class PenampilStatusDonlotHandler extends Handler {
+	static class DownloadStatusDisplayer extends Handler {
 		private WeakReference<DevotionActivity> ac;
 
-		public PenampilStatusDonlotHandler(DevotionActivity ac) {
+		public DownloadStatusDisplayer(DevotionActivity ac) {
 			this.ac = new WeakReference<DevotionActivity>(ac);
 		}
 		
@@ -141,12 +140,12 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			if (s != null) {
 				ac.lStatus.setText(s);
 				ac.lStatus.setVisibility(View.VISIBLE);
-				ac.lStatus.startAnimation(ac.memudar);
+				ac.lStatus.startAnimation(ac.fadeOutAnim);
 			}
 		}
 	}
 	
-	Handler penampilStatusDonlot = new PenampilStatusDonlotHandler(this);
+	Handler downloadStatusDisplayer = new DownloadStatusDisplayer(this);
 
 	
 	@Override
@@ -155,23 +154,22 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		
 		setContentView(R.layout.activity_devotion);
 		
-		memudar = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+		fadeOutAnim = AnimationUtils.loadAnimation(this, R.anim.fade_out);
 
-		lIsi = (TextView) findViewById(R.id.lIsi);
-		scrollIsi = (ScrollView) findViewById(R.id.scrollIsi);
+		lContent = (TextView) findViewById(R.id.lContent);
+		scrollContent = (ScrollView) findViewById(R.id.scrollContent);
 		lStatus = (TextView) findViewById(R.id.lStatus);
 		
-		scrollIsi.setBackgroundColor(S.applied.backgroundColor);
+		scrollContent.setBackgroundColor(S.applied.backgroundColor);
 		
 		popup = new DevotionSelectPopup(this);
 		popup.setDevotionSelectListener(popup_listener);
 		
-		//# atur difot!
 		if (S.temporary.devotion_date == null) S.temporary.devotion_date = new Date();
 		if (S.temporary.devotion_name == null) S.temporary.devotion_name = DEFAULT;
 		
-		nama = S.temporary.devotion_name;
-		tanggalan = S.temporary.devotion_date;
+		currentName = S.temporary.devotion_name;
+		currentDate = S.temporary.devotion_date;
 		
 		// Workaround for crashes due to html tags in the title
 		// We remove all rows that contain '<' in the judul
@@ -181,7 +179,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			Preferences.setBoolean(Prefkey.patch_devotionSlippedHtmlTags, true);
 		}
 		
-		new PemintaMasaDepan().execute();
+		new Prefetcher().start();
 		
 		{ // betulin ui update
 			Downloader td = S.downloader;
@@ -190,42 +188,40 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			}
 		}
 		
-		tampilkan(S.temporary.devotion_scroll);
+		display(S.temporary.devotion_scroll);
 	}
 	
 	@Override protected void onStart() {
 		super.onStart();
 		
 		if (Preferences.getBoolean(getString(R.string.pref_nyalakanTerusLayar_key), getResources().getBoolean(R.bool.pref_nyalakanTerusLayar_default))) {
-			lIsi.setKeepScreenOn(true);
+			lContent.setKeepScreenOn(true);
 		}
 	}
 	
 	@Override protected void onDestroy() {
 		super.onDestroy();
 		
-		S.temporary.devotion_name = nama;
-		S.temporary.devotion_date = tanggalan;
-		S.temporary.devotion_scroll = scrollIsi.getScrollY();
-		
-		Log.d(TAG, "renungan_skrol = " + S.temporary.devotion_scroll); //$NON-NLS-1$
+		S.temporary.devotion_name = currentName;
+		S.temporary.devotion_date = currentDate;
+		S.temporary.devotion_scroll = scrollContent.getScrollY();
 	}
 		
-	private void bikinMenu(Menu menu) {
+	private void buildMenu(Menu menu) {
 		menu.clear();
 		getSupportMenuInflater().inflate(R.menu.activity_devotion, menu);
 	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		bikinMenu(menu);
+		buildMenu(menu);
 		
 		return true;
 	}
 	
 	@Override public boolean onPrepareOptionsMenu(Menu menu) {
 		if (menu != null) {
-			bikinMenu(menu);
+			buildMenu(menu);
 		}
 		
 		return true;
@@ -240,8 +236,8 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			
 			return true;
 		} else if (itemId == R.id.menuCopy) {
-			String salinan = getSupportActionBar().getTitle() + "\n" + lIsi.getText();
-			U.copyToClipboard(salinan);
+			String toCopy = getSupportActionBar().getTitle() + "\n" + lContent.getText();
+			U.copyToClipboard(toCopy);
 			
 			Toast.makeText(this, R.string.renungan_sudah_disalin, Toast.LENGTH_SHORT).show();
 			
@@ -250,13 +246,13 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			Intent intent = ShareCompat.IntentBuilder.from(DevotionActivity.this)
 			.setType("text/plain") //$NON-NLS-1$
 			.setSubject(getSupportActionBar().getTitle().toString())
-			.setText(getSupportActionBar().getTitle().toString() + '\n' + lIsi.getText())
+			.setText(getSupportActionBar().getTitle().toString() + '\n' + lContent.getText())
 			.getIntent();
-			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_renungan)), REQCODE_bagikan);
+			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_renungan)), REQCODE_share);
 			
 			return true;
 		} else if (itemId == R.id.menuRedownload) {
-			akanPerlu(this.nama, tgl_format.get().format(tanggalan), true);
+			willNeed(this.currentName, date_format.get().format(currentDate), true);
 			
 			return true;
 		}
@@ -270,52 +266,52 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		@Override public void onButtonClick(DevotionSelectPopup popup, View v) {
 			int id = v.getId();
 			if (id == R.id.bPrev) {
-				tanggalan.setTime(tanggalan.getTime() - 3600*24*1000);
-				tampilkan(0);
+				currentDate.setTime(currentDate.getTime() - 3600*24*1000);
+				display(0);
 			} else if (id == R.id.bNext) {
-				tanggalan.setTime(tanggalan.getTime() + 3600*24*1000);
-				tampilkan(0);
+				currentDate.setTime(currentDate.getTime() + 3600*24*1000);
+				display(0);
 			} else if (id == R.id.bChange) {
 				int index = 0;
 				
 				for (int i = 0; i < AVAILABLE_NAMES.length; i++) {
-					if (AVAILABLE_NAMES[i].equals(nama)) {
+					if (AVAILABLE_NAMES[i].equals(currentName)) {
 						index = i;
 						break;
 					}
 				}
 				
 				index = (index + 1) % AVAILABLE_NAMES.length;
-				nama = AVAILABLE_NAMES[index];
-				tampilkan(0);
+				currentName = AVAILABLE_NAMES[index];
+				display(0);
 			}
 		}
 	};
 
 	
-	void tampilkan(int skrol) {
-		pengulangTampil.removeMessages(0);
+	void display(int skrol) {
+		displayRepeater.removeMessages(0);
 		
-		tuju(true, skrol);
+		goTo(true, skrol);
 	}
 
-	void tuju(boolean penting, int skrol) {
-		String tgl = tgl_format.get().format(tanggalan);
-		IArticle artikel = S.getDb().tryGetDevotion(nama, tgl);
+	void goTo(boolean prioritize, int scroll) {
+		String tgl = date_format.get().format(currentDate);
+		IArticle artikel = S.getDb().tryGetDevotion(currentName, tgl);
 		if (artikel == null || !artikel.getReadyToUse()) {
-			akanPerlu(nama, tgl, penting);
-			render(artikel, skrol);
+			willNeed(currentName, tgl, prioritize);
+			render(artikel, scroll);
 			
-			pengulangTampil.sendEmptyMessageDelayed(0, 3000);
+			displayRepeater.sendEmptyMessageDelayed(0, 3000);
 		} else {
 			Log.d(TAG, "sudah siap tampil, kita syuh yang tersisa dari pengulang tampil"); //$NON-NLS-1$
-			pengulangTampil.removeMessages(0);
+			displayRepeater.removeMessages(0);
 			
-			render(artikel, skrol);
+			render(artikel, scroll);
 		}
 	}
 
-	CallbackSpan.OnClickListener ayatKlikListener = new CallbackSpan.OnClickListener() {
+	CallbackSpan.OnClickListener verseClickListener = new CallbackSpan.OnClickListener() {
 		@Override
 		public void onClick(View widget, Object _data) {
 			String reference = (String) _data;
@@ -349,25 +345,25 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		}
 	};
 
-	private void render(IArticle artikel, final int skrol) {
-		if (artikel == null) {
-			Log.d(TAG, "merender artikel null"); //$NON-NLS-1$
+	private void render(IArticle article, final int skrol) {
+		if (article == null) {
+			Log.d(TAG, "rendering null article"); //$NON-NLS-1$
 		} else {
-			Log.d(TAG, "merender artikel nama=" + artikel.getName() + " tgl=" + artikel.getDate() + " siapPakai=" + artikel.getReadyToUse()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Log.d(TAG, "rendering article name=" + article.getName() + " date=" + article.getDate() + " readyToUse=" + article.getReadyToUse()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		
-		if (artikel != null && artikel.getReadyToUse()) {
-			renderBerhasilBaik = true;
+		if (article != null && article.getReadyToUse()) {
+			renderSucceeded = true;
 			
-			Spanned header = Html.fromHtml(artikel.getHeaderHtml());
+			Spanned header = Html.fromHtml(article.getHeaderHtml());
 			SpannableStringBuilder ss = new SpannableStringBuilder(header);
 			
-			if (artikel.getName().equals("sh")) { //$NON-NLS-1$
-				SpannableStringBuilder judul = new SpannableStringBuilder(Html.fromHtml("<h3>" + artikel.getTitle() + "</h3>")); //$NON-NLS-1$ //$NON-NLS-2$
-				judul.setSpan(new CallbackSpan(artikel.getTitle(), ayatKlikListener), 0, judul.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			if (article.getName().equals("sh")) { //$NON-NLS-1$
+				SpannableStringBuilder title = new SpannableStringBuilder(Html.fromHtml("<h3>" + article.getTitle() + "</h3>")); //$NON-NLS-1$ //$NON-NLS-2$
+				title.setSpan(new CallbackSpan(article.getTitle(), verseClickListener), 0, title.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 				
-				ss.append(judul);
-			} else if (artikel.getName().equals("rh")) { //$NON-NLS-1$
+				ss.append(title);
+			} else if (article.getName().equals("rh")) { //$NON-NLS-1$
 				// cari "Bacaan Setahun : " dst
 				{
 					String s = header.toString();
@@ -379,132 +375,131 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 						
 						while (n.find()) {
 							Log.d(TAG, "Ketemu salah satu bacaan setahun: #" + n.group(1) + "#"); //$NON-NLS-1$ //$NON-NLS-2$
-							CallbackSpan span = new CallbackSpan(n.group(1), ayatKlikListener);
+							CallbackSpan span = new CallbackSpan(n.group(1), verseClickListener);
 							ss.setSpan(span, m.start(1) + n.start(1), m.start(1) + n.end(1), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 						}
 					}
 				}
 				
-				ss.append(Html.fromHtml("<br/><h3>" + artikel.getTitle() + "</h3><br/>"));  //$NON-NLS-1$//$NON-NLS-2$
+				ss.append(Html.fromHtml("<br/><h3>" + article.getTitle() + "</h3><br/>"));  //$NON-NLS-1$//$NON-NLS-2$
 			}
 			
-			int ofsetSebelumIsi = ss.length();
+			int offsetBeforeBody = ss.length();
 			
-			Spanned isiDanKopirait = Html.fromHtml(artikel.getBodyHtml() + "<br/><br/>" + artikel.getCopyrightHtml()); //$NON-NLS-1$
-			ss.append(isiDanKopirait);
+			Spanned contentAndCopyright = Html.fromHtml(article.getBodyHtml() + "<br/><br/>" + article.getCopyrightHtml()); //$NON-NLS-1$
+			ss.append(contentAndCopyright);
 			
 			// cari "Bacaan : " dst dan pasang link
 			{
-				String s = isiDanKopirait.toString();
+				String s = contentAndCopyright.toString();
 				Matcher m = Pattern.compile("Bacaan\\s*:\\s*(.*?)\\s*$", Pattern.MULTILINE).matcher(s); //$NON-NLS-1$
 				while (m.find()) {
 					Log.d(TAG, "Ketemu \"Bacaan : \": #" + m.group(1) + "#"); //$NON-NLS-1$ //$NON-NLS-2$
-					CallbackSpan span = new CallbackSpan(m.group(1), ayatKlikListener);
-					ss.setSpan(span, ofsetSebelumIsi + m.start(1), ofsetSebelumIsi + m.end(1), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+					CallbackSpan span = new CallbackSpan(m.group(1), verseClickListener);
+					ss.setSpan(span, offsetBeforeBody + m.start(1), offsetBeforeBody + m.end(1), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 				}
 			}
 			
-			lIsi.setText(ss, BufferType.SPANNABLE);
-			lIsi.setLinksClickable(true);
-			lIsi.setMovementMethod(LinkMovementMethod.getInstance());
+			lContent.setText(ss, BufferType.SPANNABLE);
+			lContent.setLinksClickable(true);
+			lContent.setMovementMethod(LinkMovementMethod.getInstance());
 			
 			// text formats
-			lIsi.setTextColor(S.applied.fontColor);
-			lIsi.setBackgroundColor(S.applied.backgroundColor);
-			lIsi.setTypeface(S.applied.fontFace, S.applied.fontBold);
-			lIsi.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
-			lIsi.setLineSpacing(0, S.applied.lineSpacingMult);
+			lContent.setTextColor(S.applied.fontColor);
+			lContent.setBackgroundColor(S.applied.backgroundColor);
+			lContent.setTypeface(S.applied.fontFace, S.applied.fontBold);
+			lContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
+			lContent.setLineSpacing(0, S.applied.lineSpacingMult);
 			
 			if (skrol != 0) {
-				scrollIsi.post(new Runnable() {
+				scrollContent.post(new Runnable() {
 					@Override public void run() {
-						scrollIsi.scrollTo(0, skrol);
+						scrollContent.scrollTo(0, skrol);
 					}
 				});
 			}
 		} else {
-			renderBerhasilBaik  = false;
+			renderSucceeded  = false;
 			
-			if (artikel == null) {
-				lIsi.setText(R.string.belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada);
+			if (article == null) {
+				lContent.setText(R.string.belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada);
 			} else { // berarti belum siap pakai
-				lIsi.setText(R.string.belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan);
+				lContent.setText(R.string.belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan);
 			}
 		}
 		
-		String judul = ""; //$NON-NLS-1$
+		String title = ""; //$NON-NLS-1$
 		for (int i = 0; i < AVAILABLE_NAMES.length; i++) {
-			if (AVAILABLE_NAMES[i].equals(nama)) {
-				judul = ADA_JUDUL[i];
+			if (AVAILABLE_NAMES[i].equals(currentName)) {
+				title = AVAILABLE_TITLES[i];
 			}
 		}
 		
 		{ // widget texts
-			String dateDisplay = namaHari(tanggalan) + ", " + DateFormat.getDateFormat(this).format(tanggalan);  //$NON-NLS-1$
+			String dateDisplay = namaHari(currentDate) + ", " + DateFormat.getDateFormat(this).format(currentDate);  //$NON-NLS-1$
 			
 			// action bar
-			getSupportActionBar().setTitle(judul);
+			getSupportActionBar().setTitle(title);
 			getSupportActionBar().setSubtitle(dateDisplay);
 			
 			// popup texts
-			popup.setDevotionName(judul);
+			popup.setDevotionName(title);
 			popup.setDevotionDate(dateDisplay);
 		}
 	}
 
-	private static final int[] NAMA_HARI_RESID = {R.string.hari_minggu, R.string.hari_senin, R.string.hari_selasa, R.string.hari_rabu, R.string.hari_kamis, R.string.hari_jumat, R.string.hari_sabtu};
+	private static final int[] WEEKDAY_NAMES_RESIDS = {R.string.hari_minggu, R.string.hari_senin, R.string.hari_selasa, R.string.hari_rabu, R.string.hari_kamis, R.string.hari_jumat, R.string.hari_sabtu};
 
 	private String namaHari(Date date) {
 		@SuppressWarnings("deprecation") int day = date.getDay();
-		return getString(NAMA_HARI_RESID[day]);
+		return getString(WEEKDAY_NAMES_RESIDS[day]);
 	}
 
-	synchronized void akanPerlu(String nama, String tgl, boolean penting) {
+	synchronized void willNeed(String name, String date, boolean prioritize) {
 		if (S.downloader == null) {
 			S.downloader = new Downloader(this, this);
 			S.downloader.start();
 		}
 
-		IArticle artikel = null;
-		if (nama.equals("rh")) { //$NON-NLS-1$
-			artikel = new ArticleRenunganHarian(tgl);
-		} else if (nama.equals("sh")) { //$NON-NLS-1$
-			artikel = new ArticleSantapanHarian(tgl);
+		IArticle article = null;
+		if (name.equals("rh")) { //$NON-NLS-1$
+			article = new ArticleRenunganHarian(date);
+		} else if (name.equals("sh")) { //$NON-NLS-1$
+			article = new ArticleSantapanHarian(date);
 		}
 
-		if (artikel != null) {
-			boolean tertambah = S.downloader.tambah(artikel, penting);
-			if (tertambah) S.downloader.interruptWhenIdle();
+		if (article != null) {
+			boolean added = S.downloader.add(article, prioritize);
+			if (added) S.downloader.interruptWhenIdle();
 		}
 	}
 	
-	static boolean pemintaMasaDepanLagiJalan = false;
+	static boolean prefetcherRunning = false;
 	
-	class PemintaMasaDepan extends AsyncTask<Void, Void, Void> {
-		@Override protected Void doInBackground(Void... params) {
-			if (pemintaMasaDepanLagiJalan) {
-				Log.d(TAG, "peminta masa depan lagi jalan"); //$NON-NLS-1$
-				return null;
+	class Prefetcher extends Thread {
+		@Override public void run() {
+			if (prefetcherRunning) {
+				Log.d(TAG, "prefetcher is now running"); //$NON-NLS-1$
 			}
 			
 			// diem dulu 6 detik
 			SystemClock.sleep(6000);
 			
-			Date hariIni = new Date();
+			Date today = new Date();
 			
-			// hapus yang sudah lebih lama dari 3 bulan (90 hari)!
-			int terhapus = S.getDb().deleteDevotionsWithTouchTimeBefore(new Date(hariIni.getTime() - 90 * 86400000L));
-			if (terhapus > 0) {
-				Log.d(TAG, "penghapusan renungan berhasil menghapus " + terhapus); //$NON-NLS-1$
+			// hapus yang sudah lebih lama dari 6 bulan (180 hari)!
+			int deleted = S.getDb().deleteDevotionsWithTouchTimeBefore(new Date(today.getTime() - 180 * 86400000L));
+			if (deleted > 0) {
+				Log.d(TAG, "old devotions deleted: " + deleted); //$NON-NLS-1$
 			}
 			
-			pemintaMasaDepanLagiJalan = true;
+			prefetcherRunning = true;
 			try {
 				for (int i = 0; i < 31; i++) { // 31 hari ke depan
-					String tgl = tgl_format.get().format(hariIni);
-					if (S.getDb().tryGetDevotion(nama, tgl) == null) {
-						Log.d(TAG, "PemintaMasaDepan perlu minta " + tgl); //$NON-NLS-1$
-						akanPerlu(nama, tgl, false);
+					String date = date_format.get().format(today);
+					if (S.getDb().tryGetDevotion(currentName, date) == null) {
+						Log.d(TAG, "Prefetcher need to get " + date); //$NON-NLS-1$
+						willNeed(currentName, date, false);
 						
 						SystemClock.sleep(1000);
 					} else {
@@ -512,31 +507,29 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 					}
 					
 					// maju ke besoknya
-					hariIni.setTime(hariIni.getTime() + 3600*24*1000);
+					today.setTime(today.getTime() + 3600*24*1000);
 				}
 			} finally {
-				pemintaMasaDepanLagiJalan = false;
+				prefetcherRunning = false;
 			}
-			
-			return null;
 		}
 	}
 
 	@Override public void onDownloadStatus(final String s) {
-		Message msg = Message.obtain(penampilStatusDonlot);
+		Message msg = Message.obtain(downloadStatusDisplayer);
 		msg.obj = s;
 		msg.sendToTarget();
 	}
 	
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == REQCODE_bagikan) {
+		if (requestCode == REQCODE_share) {
 			if (resultCode == RESULT_OK) {
 				ShareActivity.Result result = ShareActivity.obtainResult(data);
 				if (result != null && result.chosenIntent != null) {
 					Intent chosenIntent = result.chosenIntent;
 					if (U.equals(chosenIntent.getComponent().getPackageName(), "com.facebook.katana")) { //$NON-NLS-1$
-						if (U.equals(nama, "sh")) chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-sh/print/?edisi=" + tgl_format.get().format(tanggalan)); // change text to url //$NON-NLS-1$ //$NON-NLS-2$
-						if (U.equals(nama, "rh")) chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-rh/print/?edisi=" + tgl_format.get().format(tanggalan)); // change text to url //$NON-NLS-1$ //$NON-NLS-2$
+						if (U.equals(currentName, "sh")) chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-sh/print/?edisi=" + date_format.get().format(currentDate)); // change text to url //$NON-NLS-1$ //$NON-NLS-2$
+						if (U.equals(currentName, "rh")) chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-rh/print/?edisi=" + date_format.get().format(currentDate)); // change text to url //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					startActivity(chosenIntent);
 				}

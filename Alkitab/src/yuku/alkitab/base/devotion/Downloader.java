@@ -39,7 +39,7 @@ public class Downloader extends Thread {
 		this.listener_ = listener;
 	}
 	
-	public synchronized boolean tambah(IArticle article, boolean prioritize) {
+	public synchronized boolean add(IArticle article, boolean prioritize) {
 		for (IArticle a: queue_) {
 			if (a.equals(article)) {
 				return false;
