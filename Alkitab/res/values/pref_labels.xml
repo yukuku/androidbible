@@ -14,7 +14,6 @@
     <string name="pref_ubah_ukuran_huruf_teks_alkitab_perbesar_atau_perkecil">Modify the size of the Bible text (enlarge or reduce).</string>
     <string name="pref_ukuran_huruf">Text Size</string>
     <string name="pref_warna">Colors</string>
-    <string name="pref_atur_warna_teks_latar_belakang_dan_nomor_ayat">Set colors of text, background, and verse numbers.</string>
     <string name="pref_penggunaan">Usage</string>
     <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Show list of books in alphabetic order (a-z) instead of the original.</string>
     <string name="pref_kitab_menurut_abjad">Sort Books Alphabetically</string>

@@ -29,6 +29,7 @@ import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
@@ -76,6 +77,7 @@ import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.base.util.Search2Engine.Query;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.SplitHandleButton;
+import yuku.alkitab.base.widget.TextAppearancePanel;
 import yuku.alkitab.base.widget.VerseAdapter;
 import yuku.alkitab.base.widget.VersesView;
 
@@ -103,9 +105,13 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private static final int REQCODE_search = 6;
 	private static final int REQCODE_share = 7;
 	private static final int REQCODE_songs = 8;
+	private static final int REQCODE_textAppearanceGetFonts = 9;
+	private static final int REQCODE_textAppearanceCustomColors = 10;
 
 	private static final String EXTRA_verseUrl = "urlAyat"; //$NON-NLS-1$
 
+	FrameLayout overlayContainer;
+	View root;
 	VersesView lsText;
 	VersesView lsSplit1;
 	TextView tSplitEmpty;
@@ -115,7 +121,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	Button bGoto;
 	ImageButton bLeft;
 	ImageButton bRight;
-	View root;
 	
 	Book activeBook;
 	int chapter_1 = 0;
@@ -124,6 +129,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	History history;
 	NfcAdapter nfcAdapter;
 	ActionMode actionMode;
+	TextAppearancePanel textAppearancePanel;
 
 	//# state storage for search2
 	Query search2_query = null;
@@ -167,6 +173,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		
 		setContentView(R.layout.activity_isi);
 		
+		overlayContainer = V.get(this, R.id.overlayContainer);
+		root = V.get(this, R.id.root);
 		lsText = V.get(this, R.id.lsSplit0);
 		lsSplit1 = V.get(this, R.id.lsSplit1);
 		tSplitEmpty = V.get(this, R.id.tSplitEmpty);
@@ -176,7 +184,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		bGoto = V.get(this, R.id.bGoto);
 		bLeft = V.get(this, R.id.bLeft);
 		bRight = V.get(this, R.id.bRight);
-		root = V.get(this, R.id.root);
 		
 		applyPreferences(false);
 		
@@ -651,6 +658,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 	
+	@Override public void onBackPressed() {
+		if (textAppearancePanel != null) {
+			textAppearancePanel.hide();
+			textAppearancePanel = null;
+		} else {
+			super.onBackPressed();
+		}
+	}
+	
 	void bGoto_click() {
 		startActivityForResult(GotoActivity.createIntent(this.activeBook.bookId, this.chapter_1, lsText.getVerseBasedOnScroll()), REQCODE_goto);
 	}
@@ -769,6 +785,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		case R.id.menuAbout:
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
+		case R.id.menuTextAppearance:
+			showTextAppearancePanel();
+			return true;
 		case R.id.menuSettings:
 			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
 			return true;
@@ -784,6 +803,23 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 		
 		return super.onOptionsItemSelected(item);
+	}
+
+	void showTextAppearancePanel() {
+		if (textAppearancePanel != null) {
+			// we are already showing it.
+			textAppearancePanel.hide();
+			textAppearancePanel = null;
+			return;
+		}
+		
+		textAppearancePanel = new TextAppearancePanel(this, getLayoutInflater(), overlayContainer, new TextAppearancePanel.Listener() {
+			@Override public void onValueChanged() {
+				S.calculateAppliedValuesBasedOnPreferences();
+				applyPreferences(false);
+			}
+		}, REQCODE_textAppearanceGetFonts, REQCODE_textAppearanceCustomColors);
+		textAppearancePanel.show();
 	}
 
 	private Pair<List<String>, List<MVersion>> getAvailableVersions() {
@@ -1028,6 +1064,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					startActivity(chosenIntent);
 				}
 			}
+		} else if (requestCode == REQCODE_textAppearanceGetFonts) {
+			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode, resultCode, data);
+		} else if (requestCode == REQCODE_textAppearanceCustomColors) {
+			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode, resultCode, data);
 		}
 	}
 

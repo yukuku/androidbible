@@ -27,9 +27,13 @@
 		android:title="@string/menuSongs"
 		android:icon="@drawable/ic_menu_songs" android:showAsAction="ifRoom" />
 	<item
+		android:id="@+id/menuTextAppearance"
+		android:title="@string/menuTextAppearance" 
+		android:showAsAction="never" />
+	<item
 		android:id="@+id/menuSettings"
 		android:title="@string/menuPengaturan" 
-		android:icon="@drawable/ic_menu_settings" android:showAsAction="ifRoom" />
+		android:icon="@drawable/ic_menu_settings" android:showAsAction="never" />
 	<item
 		android:id="@+id/menuDonation"
 		android:title="@string/menuDonasi"
