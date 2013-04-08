@@ -89,10 +89,26 @@
             tools:ignore="HardcodedText" />
     </LinearLayout>
 
-    <Spinner
-        android:id="@+id/cbColorTheme"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <Spinner
+            android:id="@+id/cbColorTheme"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+
+        <Button
+            android:id="@+id/bCustomColors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="…"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
 
 </LinearLayout>

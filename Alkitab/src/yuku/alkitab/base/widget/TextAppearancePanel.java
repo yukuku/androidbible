@@ -55,12 +55,12 @@ public class TextAppearancePanel {
 	SeekBar sbLineSpacing;
 	ToggleButton cBold;
 	Spinner cbColorTheme;
+	View bCustomColors;
 
 	TypefaceAdapter typefaceAdapter;
 	ColorThemeAdapter colorThemeAdapter;
 	boolean shown = false;
 	boolean initialColorThemeSelection = true;
-	int preventColorThemeItemSelection = 0;
 
 	public TextAppearancePanel(Activity activity, LayoutInflater inflater, FrameLayout parent, Listener listener, int reqcodeGetFonts, int reqcodeCustomColors) {
 		this.activity = activity;
@@ -78,6 +78,7 @@ public class TextAppearancePanel {
 	    lLineSpacing = V.get(content, R.id.lLineSpacing);
 	    sbLineSpacing = V.get(content, R.id.sbLineSpacing);
 	    cbColorTheme = V.get(content, R.id.cbColorTheme);
+	    bCustomColors = V.get(content, R.id.bCustomColors);
 	    
 	    cbTypeface.setAdapter(typefaceAdapter = new TypefaceAdapter());
 	    cbTypeface.setOnItemSelectedListener(cbTypeface_itemSelected);
@@ -86,6 +87,7 @@ public class TextAppearancePanel {
 	    cBold.setOnCheckedChangeListener(cBold_checkedChange);
 	    cbColorTheme.setAdapter(colorThemeAdapter = new ColorThemeAdapter());
 	    cbColorTheme.setOnItemSelectedListener(cbColorTheme_itemSelected);
+	    bCustomColors.setOnClickListener(bCustomColors_click);
 	    
 	    displayValues();
 	}
@@ -113,13 +115,9 @@ public class TextAppearancePanel {
 			
 			int selectedPosition = colorThemeAdapter.getPositionByColors(currentColors);
 			if (selectedPosition == -1) {
-				preventColorThemeItemSelection++;
 				cbColorTheme.setSelection(colorThemeAdapter.getPositionOfCustomColors());
-				preventColorThemeItemSelection--;
 			} else {
-				preventColorThemeItemSelection++;
 				cbColorTheme.setSelection(selectedPosition);
-				preventColorThemeItemSelection--;
 			}
 			colorThemeAdapter.notifyDataSetChanged();
 		}
@@ -167,24 +165,23 @@ public class TextAppearancePanel {
 				return;
 			}
 			
-			if (preventColorThemeItemSelection > 0) {
-				Log.d(TAG, "not continuing because of preventColorThemeItemSelection");
-				return;
-			}
-			
 			if (position != colorThemeAdapter.getPositionOfCustomColors()) {
 				int[] colors = colorThemeAdapter.getColorsAtPosition(position);
 				ColorThemes.setCurrentColors(colors);
 				listener.onValueChanged();
 				colorThemeAdapter.notifyDataSetChanged();
 			} else {
-				displayValues(); // immediately set it to current
-				Log.d(TAG, "@@", new Throwable().fillInStackTrace());
-				activity.startActivityForResult(ColorSettingsActivity.createIntent(), reqcodeCustomColors);
+				// we are at the last item
 			}
 		}
 
 		@Override public void onNothingSelected(AdapterView<?> parent) {}
+	};
+	
+	View.OnClickListener bCustomColors_click = new View.OnClickListener() {
+		@Override public void onClick(View v) {
+			activity.startActivityForResult(ColorSettingsActivity.createIntent(), reqcodeCustomColors);
+		}
 	};
 	
 	SeekBar.OnSeekBarChangeListener sbTextSize_seekBarChange = new SeekBar.OnSeekBarChangeListener() {
@@ -340,7 +337,7 @@ public class TextAppearancePanel {
 				text1.setText(sb);
 				text1.setBackgroundColor(colors[1]);
 			} else {
-				text1.setText("Customize…");
+				text1.setText("Custom…");
 				text1.setBackgroundColor(0xffffffff);
 			}
 		}
