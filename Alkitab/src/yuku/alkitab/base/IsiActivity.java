@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.ShareCompat;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -1354,10 +1355,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					verseUrl = IsiActivity.createVerseUrl(IsiActivity.this.activeBook, IsiActivity.this.chapter_1, sb.toString()); // use verse range
 				}
 				
-				Intent intent = new Intent(Intent.ACTION_SEND);
-				intent.setType("text/plain"); //$NON-NLS-1$
-				intent.putExtra(Intent.EXTRA_SUBJECT, reference);
-				intent.putExtra(Intent.EXTRA_TEXT, textToShare.toString());
+				Intent intent = ShareCompat.IntentBuilder.from(IsiActivity.this)
+				.setType("text/plain") //$NON-NLS-1$
+				.setSubject(reference.toString())
+				.setText(textToShare.toString())
+				.getIntent();
 				intent.putExtra(EXTRA_verseUrl, verseUrl);
 				startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, reference)), REQCODE_share);
 

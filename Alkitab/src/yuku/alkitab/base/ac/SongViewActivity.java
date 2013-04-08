@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ShareCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -160,10 +161,11 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		} return true;
 		case R.id.menuShare: {
 			if (currentSong != null) {
-				Intent intent = new Intent(Intent.ACTION_SEND);
-				intent.setType("text/plain"); //$NON-NLS-1$
-				intent.putExtra(Intent.EXTRA_SUBJECT, currentBookName + ' ' + currentSong.code + ' ' + currentSong.title);
-				intent.putExtra(Intent.EXTRA_TEXT, (CharSequence) convertSongToText(currentSong)); 
+				Intent intent = ShareCompat.IntentBuilder.from(SongViewActivity.this)
+				.setType("text/plain") //$NON-NLS-1$
+				.setSubject(currentBookName + ' ' + currentSong.code + ' ' + currentSong.title)
+				.setText(convertSongToText(currentSong).toString())
+				.getIntent();
 				startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.sn_share_title)), REQCODE_share);
 			}
 		} return true;
@@ -395,7 +397,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			if (currentBookName == null) return;
 			
 			codeKeypad.show(v);
-			codeKeypad.setOkButtonEnabled(false); 
+			codeKeypad.setOkButtonEnabled(false);
 			
 			codeKeypad.setSongCodePopupListener(new SongCodePopupListener() { // do not make this a field. Need to create a new instance to init fields correctly.
 				CharSequence originalCode = bChangeCode.getText();

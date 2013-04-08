@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.v4.app.ShareCompat;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -38,8 +39,8 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
 import yuku.alkitab.base.devotion.Downloader;
-import yuku.alkitab.base.devotion.IArticle;
 import yuku.alkitab.base.devotion.Downloader.OnStatusDonlotListener;
+import yuku.alkitab.base.devotion.IArticle;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Jumper;
@@ -71,7 +72,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		@Override protected SimpleDateFormat initialValue() {
 			return new SimpleDateFormat("yyyyMMdd", Locale.US); //$NON-NLS-1$
 		}
-	}; 
+	};
 	
 	public static final String[] AVAILABLE_NAMES = {
 		"sh", "rh",  //$NON-NLS-1$//$NON-NLS-2$
@@ -165,7 +166,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		popup = new DevotionSelectPopup(this);
 		popup.setDevotionSelectListener(popup_listener);
 		
-		//# atur difot! 
+		//# atur difot!
 		if (S.temporary.devotion_date == null) S.temporary.devotion_date = new Date();
 		if (S.temporary.devotion_name == null) S.temporary.devotion_name = DEFAULT;
 		
@@ -182,7 +183,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		
 		new PemintaMasaDepan().execute();
 		
-		{ // betulin ui update 
+		{ // betulin ui update
 			Downloader td = S.downloader;
 			if (td != null) {
 				td.setListener(this);
@@ -246,10 +247,11 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			
 			return true;
 		} else if (itemId == R.id.menuShare) {
-			Intent intent = new Intent(Intent.ACTION_SEND);
-			intent.setType("text/plain"); //$NON-NLS-1$
-			intent.putExtra(Intent.EXTRA_SUBJECT, getSupportActionBar().getTitle().toString());
-			intent.putExtra(Intent.EXTRA_TEXT, getSupportActionBar().getTitle().toString() + '\n' + lIsi.getText()); 
+			Intent intent = ShareCompat.IntentBuilder.from(DevotionActivity.this)
+			.setType("text/plain") //$NON-NLS-1$
+			.setSubject(getSupportActionBar().getTitle().toString())
+			.setText(getSupportActionBar().getTitle().toString() + '\n' + lIsi.getText())
+			.getIntent();
 			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_renungan)), REQCODE_bagikan);
 			
 			return true;
