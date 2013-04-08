@@ -37,7 +37,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Text size"
+            android:text="@string/text_appearance_text_size"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <SeekBar
@@ -68,7 +68,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Line spacing"
+            android:text="@string/text_appearance_line_spacing"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <SeekBar
@@ -108,7 +108,6 @@
             android:layout_height="wrap_content"
             android:text="…"
             tools:ignore="HardcodedText" />
-
     </LinearLayout>
 
 </LinearLayout>

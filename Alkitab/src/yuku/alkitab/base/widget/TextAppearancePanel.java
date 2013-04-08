@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -111,8 +110,7 @@ public class TextAppearancePanel {
 	
 		{
 			int[] currentColors = ColorThemes.getCurrentColors();
-			Log.d(TAG, "@@displayValues currentColors=" + String.format("%08x %08x %08x %08x", currentColors[0], currentColors[1], currentColors[2], currentColors[3]));
-			
+
 			int selectedPosition = colorThemeAdapter.getPositionByColors(currentColors);
 			if (selectedPosition == -1) {
 				cbColorTheme.setSelection(colorThemeAdapter.getPositionOfCustomColors());
@@ -337,7 +335,7 @@ public class TextAppearancePanel {
 				text1.setText(sb);
 				text1.setBackgroundColor(colors[1]);
 			} else {
-				text1.setText("Custom…");
+				text1.setText(R.string.text_appearance_theme_custom);
 				text1.setBackgroundColor(0xffffffff);
 			}
 		}
