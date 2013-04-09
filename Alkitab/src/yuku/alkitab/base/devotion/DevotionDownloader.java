@@ -18,8 +18,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 
-public class Downloader extends Thread {
-	private static final String TAG = Downloader.class.getSimpleName();
+public class DevotionDownloader extends Thread {
+	private static final String TAG = DevotionDownloader.class.getSimpleName();
 	
 	public interface OnStatusDonlotListener {
 		void onDownloadStatus(String s);
@@ -27,10 +27,10 @@ public class Downloader extends Thread {
 	
 	private Context context_;
 	private OnStatusDonlotListener listener_;
-	private LinkedList<IArticle> queue_ = new LinkedList<IArticle>();
+	private LinkedList<DevotionArticle> queue_ = new LinkedList<DevotionArticle>();
 	private boolean idle_;
 	
-	public Downloader(Context context, OnStatusDonlotListener listener) {
+	public DevotionDownloader(Context context, OnStatusDonlotListener listener) {
 		context_ = context;
 		listener_ = listener;
 	}
@@ -39,12 +39,8 @@ public class Downloader extends Thread {
 		this.listener_ = listener;
 	}
 	
-	public synchronized boolean tambah(IArticle article, boolean prioritize) {
-		for (IArticle a: queue_) {
-			if (a.equals(article)) {
-				return false;
-			}
-		}
+	public synchronized boolean add(DevotionArticle article, boolean prioritize) {
+		if (queue_.contains(article)) return false;
 		
 		if (prioritize) {
 			queue_.addFirst(article);
@@ -55,13 +51,13 @@ public class Downloader extends Thread {
 		return true;
 	}
 	
-	private synchronized IArticle dequeue() {
+	private synchronized DevotionArticle dequeue() {
 		while (true) {
 			if (queue_.size() == 0) {
 				return null;
 			}
 			
-			IArticle article = queue_.getFirst();
+			DevotionArticle article = queue_.getFirst();
 			queue_.removeFirst();
 			
 			if (article.getReadyToUse()) {
@@ -81,7 +77,7 @@ public class Downloader extends Thread {
 	@Override
 	public void run() {
 		while (true) {
-			IArticle article = dequeue();
+			DevotionArticle article = dequeue();
 			
 			if (article == null) {
 				try {

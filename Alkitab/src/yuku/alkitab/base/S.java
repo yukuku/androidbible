@@ -8,12 +8,10 @@ import android.os.Handler;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
 import java.io.InputStream;
-import java.util.Date;
 import java.util.Locale;
 
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
-import yuku.alkitab.base.devotion.Downloader;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.InternalDbHelper;
@@ -57,23 +55,9 @@ public class S {
 		public static int pericopeSpacingBottom;
 	}
 	
-	/**
-	 * Settings that are still alive even when activities are destroyed.
-	 * Ensure there is no references to any activity to prevent memory leak.
-	 * 
-	 * TODO this is not a good practice
-	 */
-	public static class temporary {
-		public static String devotion_name = null;
-		public static Date devotion_date = null;
-		public static int devotion_scroll = 0;
-	}
-	
 	//# 22nya harus siap di siapinKitab
 	public static Version activeVersion;
 	public static String activeVersionId;
-
-	public static Downloader downloader;
 	
 	public static synchronized void prepareInternalVersion() {
 		if (activeVersion == null) {

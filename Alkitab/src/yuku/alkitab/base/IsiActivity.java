@@ -239,7 +239,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if (devotion_name != null) {
 				for (String nama: DevotionActivity.AVAILABLE_NAMES) {
 					if (devotion_name.equals(nama)) {
-						S.temporary.devotion_name = devotion_name;
+						DevotionActivity.Temporaries.devotion_name = devotion_name;
 					}
 				}
 			}
@@ -642,7 +642,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		editor.putInt(PREFKEY_lastBook, this.activeBook.bookId);
 		editor.putInt(PREFKEY_lastChapter, chapter_1);
 		editor.putInt(PREFKEY_lastVerse, lsText.getVerseBasedOnScroll());
-		editor.putString(PREFKEY_devotion_name, S.temporary.devotion_name);
+		editor.putString(PREFKEY_devotion_name, DevotionActivity.Temporaries.devotion_name);
 		editor.putString(PREFKEY_lastVersion, S.activeVersionId);
 		history.simpan(editor);
 		editor.commit();
