@@ -60,7 +60,7 @@ public class ArticleMorningEveningEnglish implements DevotionArticle {
 		for (URLSpan oldSpan: spans) {
 			String url = oldSpan.getURL();
 			CallbackSpan newSpan = new CallbackSpan(url, verseClickListener);
-			sb.setSpan(newSpan, sb.getSpanStart(oldSpan), sb.getSpanEnd(newSpan), 0);
+			sb.setSpan(newSpan, sb.getSpanStart(oldSpan), sb.getSpanEnd(oldSpan), 0);
 			sb.removeSpan(oldSpan);
 		}
 		
