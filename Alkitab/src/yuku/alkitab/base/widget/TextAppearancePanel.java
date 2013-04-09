@@ -104,9 +104,11 @@ public class TextAppearancePanel {
 		
 		float textSize = Preferences.getFloat(App.context.getString(R.string.pref_ukuranHuruf2_key), 17.f);
 		sbTextSize.setProgress((int) ((textSize - 2.f) * 2));
+		displayTextSizeText(textSize);
 		
 		float lineSpacing = Preferences.getFloat(App.context.getString(R.string.pref_lineSpacingMult_key), 1.2f);
 		sbLineSpacing.setProgress(Math.round((lineSpacing - 1.f) * 20.f));
+		displayLineSpacingText(lineSpacing);
 	
 		{
 			int[] currentColors = ColorThemes.getCurrentColors();
@@ -190,10 +192,14 @@ public class TextAppearancePanel {
 		@Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 			float textSize = progress * 0.5f + 2.f;
 			Preferences.setFloat(App.context.getString(R.string.pref_ukuranHuruf2_key), textSize);
-			lTextSize.setText(String.format("%.1f", textSize));
+			displayTextSizeText(textSize);
 			listener.onValueChanged();
 		}
 	};
+	
+	void displayTextSizeText(float textSize) {
+		lTextSize.setText(String.format("%.1f", textSize));
+	}
 	
 	SeekBar.OnSeekBarChangeListener sbLineSpacing_seekBarChange = new SeekBar.OnSeekBarChangeListener() {
 		@Override public void onStopTrackingTouch(SeekBar seekBar) {}
@@ -203,10 +209,14 @@ public class TextAppearancePanel {
 		@Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 			float lineSpacing = 1.f + progress * 0.05f;
 			Preferences.setFloat(App.context.getString(R.string.pref_lineSpacingMult_key), lineSpacing);
-			lLineSpacing.setText(String.format("%.2f", lineSpacing));
+			displayLineSpacingText(lineSpacing);
 			listener.onValueChanged();
 		}
 	};
+	
+	void displayLineSpacingText(float lineSpacing) {
+		lLineSpacing.setText(String.format("%.2f", lineSpacing));
+	}
 	
 	CompoundButton.OnCheckedChangeListener cBold_checkedChange = new CompoundButton.OnCheckedChangeListener() {
 		@Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
