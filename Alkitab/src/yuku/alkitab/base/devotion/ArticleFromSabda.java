@@ -5,7 +5,7 @@ import android.util.Log;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class ArticleFromSabda implements IArticle {
+public abstract class ArticleFromSabda implements DevotionArticle {
 	public static final String TAG = ArticleFromSabda.class.getSimpleName();
 	
 	private static Pattern pattern1;
@@ -20,41 +20,41 @@ public abstract class ArticleFromSabda implements IArticle {
 		pattern4 = Pattern.compile("<td width=\"50%\" class=\"wn\" align=\"right\">.*?<b>(.*?)</b>", Pattern.MULTILINE | Pattern.DOTALL); //header //$NON-NLS-1$
 	}
 	
-	private String judul_;
-	private String isiHtml_;
-	private String headerHtml_;
-	private boolean siapPakai_;
-	protected String tgl_;
+	String title;
+	String bodyHtml;
+	String headerHtml;
+	boolean readyToUse;
+	String date;
 	
-	protected ArticleFromSabda(String tgl) {
-		tgl_ = tgl;
+	protected ArticleFromSabda(String date) {
+		this.date = date;
 	}
 	
 	/**
 	 * Pulih dari db
-	 * @param siapPakai 
+	 * @param readyToUse
 	 */
-	public ArticleFromSabda(String tgl, String judul, String header, String isi, boolean siapPakai) {
-		tgl_ = tgl;
-		judul_ = judul;
-		headerHtml_ = header;
-		isiHtml_ = isi;
-		siapPakai_ = siapPakai;
+	public ArticleFromSabda(String date, String title, String headerHtml, String bodyHtml, boolean readyToUse) {
+		this.date = date;
+		this.title = title;
+		this.headerHtml = headerHtml;
+		this.bodyHtml = bodyHtml;
+		this.readyToUse = readyToUse;
 	}
 
 	@Override
-	public void fillIn(String mentah) {
+	public void fillIn(String raw) {
 		int poin = 0;
 		
-		if (mentah.startsWith("NG")) { //$NON-NLS-1$
-			Log.d(TAG, "isikan tapi mentahnya " + mentah); //$NON-NLS-1$
+		if (raw.startsWith("NG")) { //$NON-NLS-1$
+			Log.d(TAG, "isikan tapi mentahnya " + raw); //$NON-NLS-1$
 			return;
 		}
 		
 		{
-			Matcher matcher = pattern1.matcher(mentah);
+			Matcher matcher = pattern1.matcher(raw);
 			if (matcher.find()) {
-				judul_ = matcher.group(1);
+				title = matcher.group(1);
 				poin += 5;
 			} else {
 				Log.w(TAG, "ArtikelDariSabda ga dapat judul"); //$NON-NLS-1$
@@ -62,9 +62,9 @@ public abstract class ArticleFromSabda implements IArticle {
 		}
 		
 		{
-			Matcher matcher = pattern2.matcher(mentah);
+			Matcher matcher = pattern2.matcher(raw);
 			if (matcher.find()) {
-				isiHtml_ = matcher.group(1);
+				bodyHtml = matcher.group(1);
 				poin += 10;
 			} else {
 				Log.w(TAG, "ArtikelDariSabda ga dapat isi"); //$NON-NLS-1$
@@ -72,48 +72,32 @@ public abstract class ArticleFromSabda implements IArticle {
 		}
 		
 		if (this instanceof ArticleRenunganHarian) {
-			Matcher matcher = pattern3.matcher(mentah);
+			Matcher matcher = pattern3.matcher(raw);
 			if (matcher.find()) {
-				headerHtml_ = matcher.group(1);
+				headerHtml = matcher.group(1);
 				poin += 5;
 			} else {
 				Log.w(TAG, "ArtikelDariSabda ga dapat header"); //$NON-NLS-1$
 			}
 		} else {
-			Matcher matcher = pattern4.matcher(mentah);
+			Matcher matcher = pattern4.matcher(raw);
 			if (matcher.find()) {
-				headerHtml_ = matcher.group(1);
+				headerHtml = matcher.group(1);
 				poin += 5;
 			} else {
 				Log.w(TAG, "ArtikelDariSabda ga dapat header"); //$NON-NLS-1$
-				headerHtml_ = ""; //$NON-NLS-1$
+				headerHtml = ""; //$NON-NLS-1$
 			}
 		}
 		
 		if (poin >= 15) {
-			siapPakai_ = true;
+			readyToUse = true;
 		}
-	}
-	
-
-	@Override
-	public String getBodyHtml() {
-		return isiHtml_;
-	}
-
-	@Override
-	public CharSequence getTitle() {
-		return judul_;
-	}
-
-	@Override
-	public String getHeaderHtml() {
-		return headerHtml_;
 	}
 	
 	@Override
 	public boolean getReadyToUse() {
-		return siapPakai_;
+		return readyToUse;
 	}
 	
 	@Override
@@ -124,7 +108,7 @@ public abstract class ArticleFromSabda implements IArticle {
 		
 		ArticleFromSabda x = (ArticleFromSabda) o;
 		
-		if (x.tgl_.equals(tgl_) && x.getName().equals(getName())) {
+		if (x.date.equals(date) && x.getName().equals(getName())) {
 			return true;
 		}
 		
@@ -133,7 +117,7 @@ public abstract class ArticleFromSabda implements IArticle {
 	
 	@Override
 	public int hashCode() {
-		return tgl_.hashCode() * 31 + getName().hashCode();
+		return date.hashCode() * 31 + getName().hashCode();
 	}
 	
 	@Override
@@ -143,11 +127,15 @@ public abstract class ArticleFromSabda implements IArticle {
 	
 	@Override
 	public String getDate() {
-		return tgl_;
+		return date;
 	}
 	
 	@Override
 	public String getUrl() {
-		return "http://www.kejut.com/prog/android/alkitab/renungan-proxy.php?nama=" + getName() + "&tgl=" + tgl_; //$NON-NLS-1$ //$NON-NLS-2$
+		return "http://www.kejut.com/prog/android/alkitab/renungan-proxy.php?nama=" + getName() + "&tgl=" + date; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	@Override public String[] getHeaderTitleBody() {
+		return new String[] {headerHtml, title, bodyHtml};
 	}
 }
