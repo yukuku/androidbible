@@ -2,8 +2,8 @@
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content" 
-    tools:ignore="HardcodedText">
+    android:layout_height="wrap_content"
+    tools:ignore="HardcodedText" >
 
     <TableRow
         android:layout_width="wrap_content"
@@ -14,28 +14,23 @@
             android:id="@+id/bDigit1"
             android:layout_width="160dp"
             android:layout_height="106dp"
-            android:layout_margin="3dp"
             android:text="1"
-            android:textSize="36sp" >
-        </Button>
+            android:textSize="36sp" />
 
         <Button
             android:id="@+id/bDigit2"
             android:layout_width="160dp"
             android:layout_height="106dp"
-            android:layout_margin="3dp"
             android:text="2"
-            android:textSize="36sp" >
-        </Button>
+            android:textSize="36sp" />
 
         <Button
             android:id="@+id/bDigit3"
+            style="@style/KeypadButtonStyle"
             android:layout_width="160dp"
             android:layout_height="106dp"
-            android:layout_margin="3dp"
             android:text="3"
-            android:textSize="36sp" >
-        </Button>
+            android:textSize="36sp" />
     </TableRow>
 
     <TableRow
@@ -46,28 +41,22 @@
             android:id="@+id/bDigit4"
             android:layout_width="160dp"
             android:layout_height="106dp"
-            android:layout_margin="3dp"
             android:text="4"
-            android:textSize="36sp" >
-        </Button>
+            android:textSize="36sp" />
 
         <Button
             android:id="@+id/bDigit5"
             android:layout_width="160dp"
             android:layout_height="106dp"
-            android:layout_margin="3dp"
             android:text="5"
-            android:textSize="36sp" >
-        </Button>
+            android:textSize="36sp" />
 
         <Button
             android:id="@+id/bDigit6"
             android:layout_width="160dp"
             android:layout_height="106dp"
-            android:layout_margin="3dp"
             android:text="6"
-            android:textSize="36sp" >
-        </Button>
+            android:textSize="36sp" />
     </TableRow>
 
     <TableRow
@@ -79,28 +68,22 @@
             android:id="@+id/bDigit7"
             android:layout_width="160dp"
             android:layout_height="106dp"
-            android:layout_margin="3dp"
             android:text="7"
-            android:textSize="36sp" >
-        </Button>
+            android:textSize="36sp" />
 
         <Button
             android:id="@+id/bDigit8"
             android:layout_width="160dp"
             android:layout_height="106dp"
-            android:layout_margin="3dp"
             android:text="8"
-            android:textSize="36sp" >
-        </Button>
+            android:textSize="36sp" />
 
         <Button
             android:id="@+id/bDigit9"
             android:layout_width="160dp"
             android:layout_height="106dp"
-            android:layout_margin="3dp"
             android:text="9"
-            android:textSize="36sp" >
-        </Button>
+            android:textSize="36sp" />
     </TableRow>
 
     <TableRow
@@ -112,30 +95,24 @@
             android:id="@+id/bDigitC"
             android:layout_width="160dp"
             android:layout_height="106dp"
-            android:layout_margin="3dp"
             android:text="C"
             android:textSize="36sp"
-            android:textStyle="bold" >
-        </Button>
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/bDigit0"
             android:layout_width="160dp"
             android:layout_height="106dp"
-            android:layout_margin="3dp"
             android:text="0"
-            android:textSize="36sp" >
-        </Button>
+            android:textSize="36sp" />
 
         <Button
             android:id="@+id/bDigitSwitch"
             android:layout_width="160dp"
             android:layout_height="106dp"
-            android:layout_margin="3dp"
             android:text=":"
             android:textSize="36sp"
-            android:textStyle="bold" >
-        </Button>
+            android:textStyle="bold" />
     </TableRow>
 
 </TableLayout>
