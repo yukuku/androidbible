@@ -61,7 +61,7 @@ public class Proses2 {
 	static String INFO_SHORT_NAME = "TB";
 	static String INFO_LONG_NAME = "Terjemahan Baru";
 	static String INFO_KETERANGAN = "Terjemahan Baru (1974), Lembaga Alkitab Indonesia";
-	static String INPUT_TEKS_2 = "./bahan/in-tb-usfm/mid/"; 
+	static String INPUT_TEKS_2 = "./bahan/in-tb-usfm/mid/";
 
 
 	TextDb teksDb = new TextDb();
@@ -131,7 +131,7 @@ public class Proses2 {
 						throw new RuntimeException("verse cannot be parsed: " + verse);
 					}
 					
-					{ // we need to process 00 verses (entire chapter) to 1 for start and the last verse for end. 
+					{ // we need to process 00 verses (entire chapter) to 1 for start and the last verse for end.
 						boolean isStart = true;
 						for (int j = 0; j < ariRanges.size(); j++, isStart = !isStart) {
 							int ari2 = ariRanges.get(j);
@@ -266,6 +266,16 @@ public class Proses2 {
 				if (ari == Ari.encode(42, 12, 34)) {
 					as.text = as.text.replace("bahwa@6Anak Manusia", "bahwa @6Anak Manusia");
 				}
+				
+				// patch for words of Jesus after colon, there must be a space after the colon
+				if (as.text.contains(":@6")) {
+					as.text = as.text.replace(":@6", ": @6");
+				}
+				
+				// replace "--" that is used not to separate verses in verse ranges with emdash
+				if (as.text.contains("--")) {
+					as.text = as.text.replaceAll("--(?=[^a-z0-9])", "\u2014");
+				}
 			}
 		});
 		
@@ -297,7 +307,7 @@ public class Proses2 {
 			//  10 <delta 14bit> = relative
 			//  1100 0000 <ari 24bit> = absolute
 			// total ~ 5 KB
-			{ 
+			{
 				int last_ari = 0;
 				for (int i = 0; i < xref_index_ari_to_pos.size(); i++) {
 					int ari = xref_index_ari_to_pos.get(i);
@@ -317,7 +327,7 @@ public class Proses2 {
 			//  10 <delta 14bit> = relative
 			//  1100 0000 <offset 24bit> = absolute
 			//
-			// total ~ 4 KB 
+			// total ~ 4 KB
 			{
 				int last_offset = 0;
 				for (int i = 0; i < xref_index_pos_to_offset.size(); i++) {
@@ -462,7 +472,7 @@ public class Proses2 {
 					for (int pos = 0; pos < id.length(); pos++) {
 						if (!Character.isDigit(id.charAt(pos))) {
 							String s = id.substring(0, pos);
-							ayat_1 = Integer.parseInt(s); 
+							ayat_1 = Integer.parseInt(s);
 							System.out.println("// number format exception simplified to: " + s);
 							break;
 						}
@@ -523,9 +533,9 @@ public class Proses2 {
 			} else if (alamat.endsWith("/x")) {
 				tujuanTulis.push(tujuanTulis_xref);
 				xref_state = 0;
-			} else if (alamat.endsWith("/x/milestone")) { // after milestone, we will have xref source 
+			} else if (alamat.endsWith("/x/milestone")) { // after milestone, we will have xref source
 				xref_state = 1;
-			} else if (alamat.endsWith("/x/xt")) { // after xt, we will have xref target 
+			} else if (alamat.endsWith("/x/xt")) { // after xt, we will have xref target
 				xref_state = 2;
 			} else if (alamat.endsWith("/wj")) {
 				tujuanTulis.push(tujuanTulis_teks);
@@ -590,7 +600,7 @@ public class Proses2 {
 				if (sLevel == 0 || sLevel == 1 || sLevel == LEVEL_p_mr || sLevel == LEVEL_p_ms) {
 					if (afterThisMustStartNewPerikop || perikopBuffer.size() == 0) {
 						PericopeData.Entry entry = new PericopeData.Entry();
-						entry.ari = 0; // done later when writing teks so we know which verse this pericope starts from 
+						entry.ari = 0; // done later when writing teks so we know which verse this pericope starts from
 						entry.block = new PericopeData.Block();
 						entry.block.version = 2;
 						entry.block.title = judul;
