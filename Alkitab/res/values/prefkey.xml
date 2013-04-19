@@ -26,4 +26,6 @@
 	<string name="pref_lineSpacingMult_key">lineSpacingMult</string>
 	
 	<string name="pref_copyWithVerseNumbers_key">copyWithVerseNumbers</string>
+
+	<string name="pref_help_text_appearance_key">help_text_appearance</string>
 </resources>

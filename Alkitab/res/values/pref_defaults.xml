@@ -4,9 +4,8 @@
     <integer name="pref_ukuranHuruf2_default">18</integer>
 
     <bool name="pref_nyalakanTerusLayar_default">true</bool>
-    <bool name="pref_tanpaNavigasi_default">false</bool>
 
-    <string name="pref_tombolVolumeBuatPindah_default">default</string>
+    <string name="pref_tombolVolumeBuatPindah_default" translatable="false">default</string>
 
     <bool name="pref_sortKitabAlfabet_default">false</bool>
 

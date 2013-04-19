@@ -1,43 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-	xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-	<PreferenceCategory
-		android:title="@string/pref_penampilan_layar">
-	
-		<ListPreference
-			android:key="@string/pref_bahasa_key"
-			android:title="@string/pref_bahasa_language"
-			android:defaultValue="@string/pref_bahasa_default"
-			android:entries="@array/pref_bahasa_label"
-			android:entryValues="@array/pref_bahasa_value"
-		/>
-		<CheckBoxPreference
-			android:defaultValue="@bool/pref_nyalakanTerusLayar_default"
-			android:title="@string/pref_biarkan_layar_menyala"
-			android:key="@string/pref_nyalakanTerusLayar_key"
-			android:summary="@string/pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab" />
-	</PreferenceCategory>
+    <Preference
+        android:key="@string/pref_help_text_appearance_key"
+        android:persistent="false"
+        android:summary="@string/pref_help_text_appearance_summary"
+        android:title="@string/pref_help_text_appearance_title" />
 
-	<PreferenceCategory
-		android:title="@string/pref_penggunaan">
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:title="@string/pref_kitab_menurut_abjad"
-			android:key="@string/pref_sortKitabAlfabet_key"
-			android:summary="@string/pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya" />
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:title="@string/pref_copyWithVerseNumbers_title"
-			android:key="@string/pref_copyWithVerseNumbers_key"
-			android:summary="@string/pref_copyWithVerseNumbers_summary" />
-		<ListPreference
-			android:defaultValue="@string/pref_tombolVolumeBuatPindah_default"
-			android:title="@string/pref_tombolVolumeBuatPindah_title"
-			android:key="@string/pref_tombolVolumeBuatPindah_key"
-			android:summary="@string/pref_tombolVolumeBuatPindah_summary" 
-			android:entries="@array/pref_tombolVolumeBuatPindah_labels"
-			android:entryValues="@array/pref_tombolVolumeBuatPindah_values"
-		/>
-	</PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_penampilan_layar" >
+        <ListPreference
+            android:defaultValue="@string/pref_bahasa_default"
+            android:entries="@array/pref_bahasa_label"
+            android:entryValues="@array/pref_bahasa_value"
+            android:key="@string/pref_bahasa_key"
+            android:title="@string/pref_bahasa_language" />
+
+        <CheckBoxPreference
+            android:defaultValue="@bool/pref_nyalakanTerusLayar_default"
+            android:key="@string/pref_nyalakanTerusLayar_key"
+            android:summary="@string/pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab"
+            android:title="@string/pref_biarkan_layar_menyala" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_penggunaan" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_sortKitabAlfabet_key"
+            android:summary="@string/pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya"
+            android:title="@string/pref_kitab_menurut_abjad" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_copyWithVerseNumbers_key"
+            android:summary="@string/pref_copyWithVerseNumbers_summary"
+            android:title="@string/pref_copyWithVerseNumbers_title" />
+
+        <ListPreference
+            android:defaultValue="@string/pref_tombolVolumeBuatPindah_default"
+            android:entries="@array/pref_tombolVolumeBuatPindah_labels"
+            android:entryValues="@array/pref_tombolVolumeBuatPindah_values"
+            android:key="@string/pref_tombolVolumeBuatPindah_key"
+            android:summary="@string/pref_tombolVolumeBuatPindah_summary"
+            android:title="@string/pref_tombolVolumeBuatPindah_title" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

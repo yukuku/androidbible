@@ -106,7 +106,7 @@ public class TextAppearancePanel {
 		sbTextSize.setProgress((int) ((textSize - 2.f) * 2));
 		displayTextSizeText(textSize);
 		
-		float lineSpacing = Preferences.getFloat(App.context.getString(R.string.pref_lineSpacingMult_key), 1.2f);
+		float lineSpacing = Preferences.getFloat(App.context.getString(R.string.pref_lineSpacingMult_key), 1.15f);
 		sbLineSpacing.setProgress(Math.round((lineSpacing - 1.f) * 20.f));
 		displayLineSpacingText(lineSpacing);
 	

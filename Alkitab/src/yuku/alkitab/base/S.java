@@ -68,13 +68,13 @@ public class S {
 	public static void calculateAppliedValuesBasedOnPreferences() {
 		//# atur ukuran huruf isi berdasarkan pengaturan
 		{
-			applied.fontSize2dp = Preferences.getFloat(App.context.getString(R.string.pref_ukuranHuruf2_key), 17.f);
+			applied.fontSize2dp = Preferences.getFloat(App.context.getString(R.string.pref_ukuranHuruf2_key), (float) App.context.getResources().getInteger(R.integer.pref_ukuranHuruf2_default));
 		}
 		
 		//# atur jenis huruf, termasuk boldnya
 		{
 			applied.fontFace = FontManager.typeface(Preferences.getString(App.context.getString(R.string.pref_jenisHuruf_key), null));
-			applied.lineSpacingMult = Preferences.getFloat(App.context.getString(R.string.pref_lineSpacingMult_key), 1.f);
+			applied.lineSpacingMult = Preferences.getFloat(App.context.getString(R.string.pref_lineSpacingMult_key), 1.15f);
 			applied.fontBold = Preferences.getBoolean(App.context.getString(R.string.pref_boldHuruf_key), false)? Typeface.BOLD: Typeface.NORMAL;
 		}
 		

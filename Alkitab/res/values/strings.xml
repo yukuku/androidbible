@@ -27,7 +27,7 @@
     <string name="versi">Version</string>
     <string name="renungan">Devotion</string>
     <string name="cari_v">Search</string>
-    <string name="judul_bukmak_activity">Bookmarks, etc</string>
+    <string name="judul_bukmak_activity">Markers</string>
     <string name="pembatas_buku">Bookmarks</string>
     <string name="hapus_pembatas_buku">Delete bookmark</string>
     <string name="bagikan">Share</string>
@@ -35,7 +35,6 @@
     <string name="tambah_pembatas_buku">Add bookmark</string>
     <string name="salin_ayat">Copy verse</string>
     <string name="pada_mulanya">In the beginning God created the heaven and the earth. And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters. And God said, Let there be light: and there was light. And God saw the light, that it was good: and God divided the light from, the darkness. And God called the light Day, and the darkness he called Night. And the evening and the morning were the first day.</string>
-    <string name="contoh_tulisan_titikdua">Sample text:</string>
     <string name="perj_baru">New Test.</string>
     <string name="perj_lama">Old Test.</string>
     <string name="search_bookname_only">%s only</string>
@@ -104,10 +103,7 @@
     <string name="cp_mapping_books">Mapping books</string>
     <string name="cp_constructing_book_info">Constructing book info</string>
     <string name="cp_constructing_version_info">Constructing version info</string>
-    <string name="cp_constructing_translated_file">Constructing translated file</string>
-    <string name="cp_writing_num_section_pericope_indexes">Writing %s section/pericope indexes</string>
     <string name="cp_writing_num_section_pericope_titles">Writing %s section/pericope titles</string>
-    <string name="cp_opening_translated_file">Opening translated file</string>
     <string name="cp_writing_translated_file">Writing translated file</string>
     <string name="cp_reading_book_info">Reading book info: %s</string>
     <string name="cp_writing_text_of_book_chapters">Writing text of book %1$s (%2$s chapters)</string>
@@ -239,6 +235,7 @@
     <string name="desc_download">Download</string>
     <string name="desc_previous_chapter">Previous chapter</string>
     <string name="desc_next_chapter">Next chapter</string>
+    <string name="desc_drag_to_reorder_labels">Drag to reorder labels</string>
     
     <!-- Lastly, about -->
     <string name="teks_about">Developed by [b]yuku[/b], 2009-2012[br/]
@@ -250,6 +247,5 @@
 		• [b]Jaya Satrio Hendrick[/b] icons[br/]
 		• [b]Yohanes Nugroho[/b] BiblePlus+ PDB reader[br/]
 		• and many more people who contributed ideas, patches, bug reports, copy of songs, information about Bible translations, etc!</string>
-    <string name="desc_drag_to_reorder_labels">Drag to reorder labels</string>
 		
 </resources>
