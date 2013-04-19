@@ -6,7 +6,6 @@
   <string name="donasi_tombol_gamau">不是现在</string>
   <string name="donasi_tombol_ok">捐款</string>
   <string name="donasi_keterangan">如果你已经被祝福使用本圣经，请捐赠给应用程序开发。 您的捐款将会非常有益的。谢谢！</string>
-  <string name="donasi_judul">捐款</string>
   <string name="menuDonasi">捐款</string>
   <string name="mengimpor_titiktiga">正在进行恢复...</string>
   <string name="mengekspor_titiktiga">创建备份...</string>
@@ -33,7 +32,6 @@
   <string name="tambah_pembatas_buku">添加书签</string>
   <string name="salin_ayat">复制诗句</string>
   <string name="pada_mulanya">起初，神创造天地。地是空虚混沌，渊面黑暗；神的灵运行在水面上。 神说：要有光，就有了光。神看光是好的，就把光暗分开了。 神称光为昼，称暗为夜 。 有晚上，有早晨，这是头一日。</string>
-  <string name="contoh_tulisan_titikdua">示例文本：</string>
   <string name="perj_baru">新约</string>
   <string name="perj_lama">旧约</string>
   <string name="search_bookname_only">%s 只有</string>
@@ -58,7 +56,6 @@
   <string name="hari_minggu">星期日</string>
   <string name="size_hasil">%d 的结果</string>
   <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">正在寻找含有下列词语的诗句： [b]%s[/b]</string>
-  <string name="mencari">正在搜索</string>
   <string name="pilih_setidaknya_satu_kitab">要搜索, 至少选择一本书。</string>
   <string name="pengunduhan_dibatalkan">下载取消.</string>
   <string name="sedang_mendekompres_harap_tunggu">正在解压。 请稍候…</string>
@@ -68,8 +65,6 @@
   <string name="mulai_mengunduh">开始下载…</string>
   <string name="mengunduh_nama">正在下载 %s</string>
   <string name="file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya">找不到文件 \'%s\'. 你要下载吗？</string>
-  <string name="mengunduh_tambahan">下载附加组件</string>
-  <string name="pilih_edisi">选择一个版本</string>
   <string name="tuju_v">转到</string>
   <string name="bagikan_alamat">共享 %s</string>
   <string name="alamat_sudah_disalin">%s 已被复制.</string>
@@ -105,10 +100,7 @@
   <string name="cp_mapping_books">正在测绘图书</string>
   <string name="cp_constructing_book_info">正在构建书信息</string>
   <string name="cp_constructing_version_info">正在构建版本信息</string>
-  <string name="cp_constructing_translated_file">正在构建翻译文件</string>
-  <string name="cp_writing_num_section_pericope_indexes">写作 %s 部分指标</string>
   <string name="cp_writing_num_section_pericope_titles">写作 %s 部分的标题</string>
-  <string name="cp_opening_translated_file">正在打开翻译文件</string>
   <string name="cp_writing_translated_file">正在写作翻译文件</string>
   <string name="cp_reading_book_info">正在读图书信息 %s</string>
   <string name="cp_writing_text_of_book_chapters">写这本书的文字： %1$s (%2$s 章)</string>
@@ -149,10 +141,8 @@
   <string name="menuSortTulisan">标题</string>
   <string name="menuSortTulisan_warna">高亮颜色</string>
   <string name="waktuTambah_edited_waktuUbah">%1$s\n(编辑过 %2$s)</string>
-  <string name="cannot_find_data_file">无法找到数据文件</string>
   <string name="the_file_for_this_version_is_no_longer_available_file">这个版本的文件不再可用。 你要从列表中删除此版本？\n文件： %s</string>
   <string name="create_label_title">创建标签</string>
-  <string name="remove_label_title">删除标签</string>
   <string name="do_you_want_to_remove_the_label_label_from_this_bookmark">你要删除此书签 \'%s\' 的标签？\"</string>
   <string name="add_label_title">添加标签</string>
   <string name="create_label_titik3">创建标签...</string>
@@ -205,7 +195,6 @@
   <string name="sn_download_song_books">下载歌曲的书籍</string>
   <string name="sn_copied">这首歌已被复制。</string>
   <string name="sn_share_title">分享歌曲</string>
-  <string name="sn_download_song_books">下载歌曲的书籍</string>
   <string name="sn_lyric_version_version">版本 %s</string>
   <string name="sn_lyric_refrain_marker">副歌</string>
   <string name="sn_delete_all_songs">删除所有歌曲</string>
@@ -218,7 +207,6 @@
   <string name="desc_delete">删除</string>
   <string name="desc_change_selected_books">改变选定书</string>
   <string name="desc_download">下载</string>
-  <string name="desc_open_verse_menu">打开诗句选单</string>
   <string name="desc_previous_chapter">前章</string>
   <string name="desc_next_chapter">后章</string>
   <string name="teks_about">开发人员 [b]yuku[/b], 2009-2012[br/]

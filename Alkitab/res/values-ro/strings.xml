@@ -6,7 +6,6 @@
   <string name="donasi_tombol_gamau">Nu acum</string>
   <string name="donasi_tombol_ok">Donează</string>
   <string name="donasi_keterangan">Dacă sunteţi binecuvântaţi de această aplicaţie - Biblia, vă rugăm să faceţi o donaţie dezvoltatorului. Donaţia dvs. este de un real de ajutor. Vă mulţumim!</string>
-  <string name="donasi_judul">Donează</string>
   <string name="menuDonasi">Donează</string>
   <string name="mengimpor_titiktiga">Restabilire…</string>
   <string name="mengekspor_titiktiga">Creează rezervă…</string>
@@ -34,7 +33,6 @@
   <string name="tambah_pembatas_buku">Adaugă la favorite</string>
   <string name="salin_ayat">Copiază versetul</string>
   <string name="pada_mulanya">La început, Dumnezeu a făcut cerurile şi pămîntul. Pămîntul era pustiu şi gol; peste faţa adîncului de ape era întuneric, şi Duhul lui Dumnezeu se mişca pe deasupra apelor. Dumnezeu a zis: ,,Să fie lumină!” Şi a fost lumină. Dumnezeu a văzut că lumina era bună; şi Dumnezeu a despărţit lumina de întunerec. Dumnezeu a numit lumina zi, iar întunerecul l-a numit noapte. Astfel, a fost o seară şi apoi a fost o dimineaţă: aceasta a fost ziua întîi.</string>
-  <string name="contoh_tulisan_titikdua">Exemplu text:</string>
   <string name="perj_baru">Noul Test.</string>
   <string name="perj_lama">Vechiul Test.</string>
   <string name="search_bookname_only">Numai %s</string>
@@ -59,7 +57,6 @@
   <string name="hari_minggu">Dum</string>
   <string name="size_hasil">%d rezultate</string>
   <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Caută versetele ce conţin următoarele cuvinte: [b]%s[/b]</string>
-  <string name="mencari">Căutare</string>
   <string name="pilih_setidaknya_satu_kitab">Alege cel puţin o carte pentru a căuta.</string>
   <string name="pengunduhan_dibatalkan">Descărcare anulată.</string>
   <string name="sedang_mendekompres_harap_tunggu">Dezarhivare. Vă rog să aşteptaţi…</string>
@@ -69,8 +66,6 @@
   <string name="mulai_mengunduh">Start descărcare…</string>
   <string name="mengunduh_nama">Descărcare %s</string>
   <string name="file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya">Nu se găseşte fişierul \'%s\'. Vreţi să îl descărcaţi?</string>
-  <string name="mengunduh_tambahan">Descarcă adăugire</string>
-  <string name="pilih_edisi">Alege versiunea</string>
   <string name="tuju_v">Alege</string>
   <string name="bagikan_alamat">Partajează %s</string>
   <string name="alamat_sudah_disalin">%s au fost copiate.</string>
@@ -106,10 +101,7 @@
   <string name="cp_mapping_books">Harta Cărţilor</string>
   <string name="cp_constructing_book_info">Construieşte info carte</string>
   <string name="cp_constructing_version_info">Generează info versiune</string>
-  <string name="cp_constructing_translated_file">Generează fişier tradus</string>
-  <string name="cp_writing_num_section_pericope_indexes">Scriere %s secţiune/pasaj indexe</string>
   <string name="cp_writing_num_section_pericope_titles">Scriere %s secţiune/pasaj titluri</string>
-  <string name="cp_opening_translated_file">Deschide fişierul tradus</string>
   <string name="cp_writing_translated_file">Scriere fişier tradus</string>
   <string name="cp_reading_book_info">Citeşte info carte: %s</string>
   <string name="cp_writing_text_of_book_chapters">Scrie textul cărţii %1$s (%2$s capitole)</string>
@@ -150,10 +142,8 @@
   <string name="menuSortTulisan">Titlu</string>
   <string name="menuSortTulisan_warna">Culoare marcaj</string>
   <string name="waktuTambah_edited_waktuUbah">%1$s\n(editat %2$s)</string>
-  <string name="cannot_find_data_file">Nu găsesc fişier de date</string>
   <string name="the_file_for_this_version_is_no_longer_available_file">Fişierul pentru această versiune nu mai este disponibil. Doriţi să eliminaţi această versiune din listă?\nFişier: %s</string>
   <string name="create_label_title">Creează etichetă</string>
-  <string name="remove_label_title">Şterge etichetă</string>
   <string name="do_you_want_to_remove_the_label_label_from_this_bookmark">"Vreţi să ştergeţi eticheta \'%s\' din acest favorit?"</string>
   <string name="add_label_title">Adaugă etichetă</string>
   <string name="create_label_titik3">Creează etichetă…</string>
@@ -206,7 +196,6 @@
   <string name="sn_download_song_books">Descarcă cântece</string>
   <string name="sn_copied">Cântecul a fost copiat.</string>
   <string name="sn_share_title">Partajează cântec</string>
-  <string name="sn_download_song_books">Descarcă cântece</string>
   <string name="sn_lyric_version_version">Versiunea %s </string>
   <string name="sn_lyric_refrain_marker">Ref.</string>
   <string name="sn_delete_all_songs">Şterge toate cântecele</string>
@@ -219,7 +208,6 @@
   <string name="desc_delete">Şterge</string>
   <string name="desc_change_selected_books">Schimbă cărţile selectate</string>
   <string name="desc_download">Descarcă</string>
-  <string name="desc_open_verse_menu">Deschide meniul versetului</string>
   <string name="desc_previous_chapter">Capitolul precedent</string>
   <string name="desc_next_chapter">Capitolul următor</string>
   <string name="teks_about">Dezvoltat de [b]Yuku[/b], 2009-2012[br/]

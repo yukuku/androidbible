@@ -6,7 +6,6 @@
   <string name="donasi_tombol_gamau">Noch nicht</string>
   <string name="donasi_tombol_ok">Spenden</string>
   <string name="donasi_keterangan">Wenn Du Dich durch dieses App gesegnet fühlst, kannst du uns Unterstützen, das App weiterzuentwickeln. Vielen Dank!</string>
-  <string name="donasi_judul">Spende</string>
   <string name="menuDonasi">Spende</string>
   <string name="mengimpor_titiktiga">datei importieren…</string>
   <string name="mengekspor_titiktiga">datei exportieren…</string>
@@ -26,7 +25,6 @@
   <string name="versi">Version</string>
   <string name="renungan">Andacht</string>
   <string name="cari_v">Suche</string>
-  <string name="judul_bukmak_activity">Lesezeichen, Notizen, und Markierungen</string>
   <string name="pembatas_buku">Lesezeichen</string>
   <string name="hapus_pembatas_buku">Lesezeichen löschen</string>
   <string name="bagikan">Mitteilen</string>
@@ -34,7 +32,6 @@
   <string name="tambah_pembatas_buku">Lesezeichen hinfügen</string>
   <string name="salin_ayat">Vers kopieren</string>
   <string name="pada_mulanya">Am Anfang schuf Gott Himmel und Erde. Und die Erde war wüst und leer, und es war finster auf der Tiefe; und der Geist Gottes schwebte auf dem Wasser. Und Gott sprach: Es werde Licht! Und es ward Licht. Und Gott sah, dass das Licht gut war. Da schied Gott das Licht von der Finsternis und nannte das Licht Tag und die Finsternis Nacht. Da ward aus Abend und Morgen der erste Tag.</string>
-  <string name="contoh_tulisan_titikdua">Schriftbeispiel:</string>
   <string name="perj_baru">Neues Test.</string>
   <string name="perj_lama">Altes Test.</string>
   <string name="search_bookname_only">%s nur</string>
@@ -58,7 +55,6 @@
   <string name="hari_minggu">Sonntag</string>
   <string name="size_hasil">%d Ergebnis</string>
   <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Verse mit folgenden Wörten gesucht: [b]%s[/b]</string>
-  <string name="mencari">Suchen</string>
   <string name="pilih_setidaknya_satu_kitab">Gebe mindestens ein Buch zur Suche an</string>
   <string name="pengunduhan_dibatalkan">Download abgebrochen</string>
   <string name="sedang_mendekompres_harap_tunggu">Dekomprimieren. Bitte gedulden…</string>
@@ -68,8 +64,6 @@
   <string name="mulai_mengunduh">Download wird gestartet…</string>
   <string name="mengunduh_nama">Downloaden %s</string>
   <string name="file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya">Datei nicht gefunden \'%s\'. Willst Du es herunterladen?</string>
-  <string name="mengunduh_tambahan">Add-on wird gedownloaden</string>
-  <string name="pilih_edisi">Version auswählen</string>
   <string name="tuju_v">Gehe zu</string>
   <string name="bagikan_alamat">Mitteilen %s</string>
   <string name="alamat_sudah_disalin">%s wird mitgeteilt.</string>
@@ -105,10 +99,7 @@
   <string name="cp_mapping_books">Bücher aufzeichnen</string>
   <string name="cp_constructing_book_info">Buch-Info auffassen</string>
   <string name="cp_constructing_version_info">Version-Info auffassen</string>
-  <string name="cp_constructing_translated_file">Übersetzte Datei auffassen</string>
-  <string name="cp_writing_num_section_pericope_indexes"> %s Sektion/pericope Index schreiben</string>
   <string name="cp_writing_num_section_pericope_titles"> %s Sektion/pericope Titel schreiben</string>
-  <string name="cp_opening_translated_file">Übersetzte Datei öffnen</string>
   <string name="cp_writing_translated_file">Übersetzte Datei schreiben</string>
   <string name="cp_reading_book_info">Buch-Info lesen: %s</string>
   <string name="cp_writing_text_of_book_chapters">Text bom Buch %1$s (%2$s Kapitel) schreiben</string>
@@ -148,10 +139,8 @@
   <string name="menuSortTulisan">Titel</string>
   <string name="menuSortTulisan_warna">Markierungsfarbe</string>
   <string name="waktuTambah_edited_waktuUbah">%1$s\n(bearbeitet %2$s)</string>
-  <string name="cannot_find_data_file">Datei nicht gefunden</string>
   <string name="the_file_for_this_version_is_no_longer_available_file">Die Datei für diese Version is nicht mehr vorhanden. Möchtest du es löschen?\nDatei: %s</string>
   <string name="create_label_title">Label hinzufügen</string>
-  <string name="remove_label_title">Label entfernen</string>
   <string name="do_you_want_to_remove_the_label_label_from_this_bookmark">"Willst du das Label \'%s\' vom Lesezeichen entfernen?"</string>
   <string name="add_label_title">Label hinzufügen</string>
   <string name="create_label_titik3">Label erstellen…</string>
@@ -202,7 +191,6 @@
   <string name="sn_download_song_books">Liederbuch downloaden</string>
   <string name="sn_copied">Das Lied ist kopiert</string>
   <string name="sn_share_title">Lied mitteilen</string>
-  <string name="sn_download_song_books">Liederbuch downloaden</string>
   <string name="sn_lyric_version_version">Version %s</string>
   <string name="sn_lyric_refrain_marker">Ref.</string>
   <string name="sn_delete_all_songs">Löschen alle Songs</string>
@@ -213,7 +201,6 @@
   <string name="desc_delete">Löschen</string>
   <string name="desc_change_selected_books">Ausgewählte Bücher ändern</string>
   <string name="desc_download">Download</string>
-  <string name="desc_open_verse_menu">Verse-Menu öffnen</string>
   <string name="desc_previous_chapter">Voriges Kapitel</string>
   <string name="desc_next_chapter">Nächstes Kapitel</string>
 </resources>

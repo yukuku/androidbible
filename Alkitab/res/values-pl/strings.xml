@@ -6,7 +6,6 @@
   <string name="donasi_tombol_gamau">Nie teraz</string>
   <string name="donasi_tombol_ok">Wesprzyj</string>
   <string name="donasi_keterangan">Jeżeli zostałeś ubłogosławiony przez tę aplikację, proszę dokonaj darowizny na rzecz autor. Twoje wsparcie będzie bardzo pomocne. Dziękuję!</string>
-  <string name="donasi_judul">Darowizna</string>
   <string name="menuDonasi">Darowizna</string>
   <string name="mengimpor_titiktiga">Przywracanie kopii…</string>
   <string name="mengekspor_titiktiga">Tworzenie kopii…</string>
@@ -16,6 +15,7 @@
   <string name="ekspor_berhasil_file_yang_dihasilkan_file">Kopia wykonana.\n\nRezultat został zapisany w pliku: %s</string>
   <string name="impor_berhasil_angka_diproses">Pomyślne przywrócenie kopii. W sumie %1$d zakładek, notatek, i/lub podkreśleń. Przetworzono również %2$d etykiet.</string>
   <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Nastąpił błąd(błędy) podczas tworzenia kopii: %s</string>
+  <string name="ekspor_pembatas_buku_dan_catatan_tanya">Stworzyć kopię zakładek, notatek oraz podkreśleń na karcie SD lub dysku USB? Istniejąca kopia zostanie nadpisana.</string>
   <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Nastąpił błąd(błędy) podczas przywracania: %s</string>
   <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Czy chcesz nadpisać zakładki, notatki i podkreślenia, które obecnie posiadasz?</string>
   <string name="file_tidak_bisa_dibaca_file">Plik nie istnieje lub nie może być odczytany: %s</string>
@@ -27,7 +27,6 @@
   <string name="versi">Przekład</string>
   <string name="renungan">Rozważania</string>
   <string name="cari_v">Szukaj</string>
-  <string name="judul_bukmak_activity">Zakładki, itp</string>
   <string name="pembatas_buku">Zakładki</string>
   <string name="hapus_pembatas_buku">Usuń zakładkę</string>
   <string name="bagikan">Podziel się</string>
@@ -35,7 +34,6 @@
   <string name="tambah_pembatas_buku">Dodaj zakładkę</string>
   <string name="salin_ayat">Skopiuj werset</string>
   <string name="pada_mulanya">Na początku stworzył Bóg niebo i ziemię. A ziemia była niekształtowna i próżna, i ciemność była nad przepaścią, a Duch Boży unaszał się nad wodami. I rzekł Bóg: Niech będzie światłość; i stała się światłość. I widział Bóg światłość, że była dobra; i uczynił Bóg rozdział między światłością i między ciemnością. I nazwał Bóg światłość dniem a ciemność nazwał nocą; i stał się wieczór, i stał się zaranek, dzień pierwszy.</string>
-  <string name="contoh_tulisan_titikdua">Przykładowy tekst:</string>
   <string name="perj_baru">NT</string>
   <string name="perj_lama">ST</string>
   <string name="search_bookname_only">Tylko %s</string>
@@ -60,7 +58,6 @@
   <string name="hari_minggu">Niedziela</string>
   <string name="size_hasil">%d wyników</string>
   <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Szukanie wersetów zawierających następujące słowa: [b]%s[/b]</string>
-  <string name="mencari">Szukanie</string>
   <string name="pilih_setidaknya_satu_kitab">Wybierz przynajmniej jedną księg do przeszukania.</string>
   <string name="pengunduhan_dibatalkan">Anulowano pobieranie.</string>
   <string name="sedang_mendekompres_harap_tunggu">Wypakowywanie. Proszę czekać…</string>
@@ -70,8 +67,6 @@
   <string name="mulai_mengunduh">Rozpoczynanie pobierania…</string>
   <string name="mengunduh_nama">Pobieranie %s</string>
   <string name="file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya">Nie można znaleźć pliku \'%s\'. Czy chcesz go pobrać?</string>
-  <string name="mengunduh_tambahan">Pobieranie dodatku</string>
-  <string name="pilih_edisi">Wybierz przekład</string>
   <string name="tuju_v">Idź do</string>
   <string name="bagikan_alamat">Podziel się %s</string>
   <string name="alamat_sudah_disalin">%s zostało skopiowane.</string>
@@ -107,10 +102,7 @@
   <string name="cp_mapping_books">Mapowanie ksiąg</string>
   <string name="cp_constructing_book_info">Tworzenie informacji o księdze</string>
   <string name="cp_constructing_version_info">Tworzenie informacji o przekładzie</string>
-  <string name="cp_constructing_translated_file">Tworzenie przetłumaczonego pliku</string>
-  <string name="cp_writing_num_section_pericope_indexes">Zapisywanie %s sekcji/perykop indeksów</string>
   <string name="cp_writing_num_section_pericope_titles">Zapisywanie %s sekcji/perykop tytułów</string>
-  <string name="cp_opening_translated_file">Otwieranie przetłumaczonego pliku</string>
   <string name="cp_writing_translated_file">Zapisywanie przetłumaczonego pliku</string>
   <string name="cp_reading_book_info">Odczytywanie informacji o księdze: %s</string>
   <string name="cp_writing_text_of_book_chapters">Zapisywanie tekstu księgi %1$s (%2$s rozdziałów)</string>
@@ -151,10 +143,8 @@
   <string name="menuSortTulisan">Tytuł</string>
   <string name="menuSortTulisan_warna">Kolor podkreślenia</string>
   <string name="waktuTambah_edited_waktuUbah">%1$s\n(wyedytowano %2$s)</string>
-  <string name="cannot_find_data_file">Nie można znaleźć pliku z danymi</string>
   <string name="the_file_for_this_version_is_no_longer_available_file">Plik dla tego przekładu nie jest już dostępny. Czy chcesz usunąć ten przeład z listy?\nPlik: %s</string>
   <string name="create_label_title">Stwórz etykietę</string>
-  <string name="remove_label_title">Usuń etykietę</string>
   <string name="do_you_want_to_remove_the_label_label_from_this_bookmark">"Czy chcesz usunąć etykietę \'%s\' z tej zakładki?"</string>
   <string name="add_label_title">Dodaj etykietę</string>
   <string name="create_label_titik3">Stwórz etykietę…</string>
@@ -189,6 +179,7 @@
   <string name="intent_filter_import_from_backup">Import z kopii</string>
   <string name="redownload">Pobierz ponownie</string>
   <string name="read_faq_before_suggest">Proszę przeczytaj powyższe FAQ nim wyślesz sugestię. Czy nadal chcesz wysłać sugestię?</string>
+  <string name="no_bookmarks_for_backup">Nie posiadasz żadnych zakładek, notatek lub podkreśleń, aby wykonać kopię.</string>
   <string name="goto_tab_dialer_label">Dialer</string>
   <string name="goto_tab_direct_label">Bezpośrednio</string>
   <string name="goto_tab_grid_label">Siatka</string>
@@ -207,7 +198,6 @@
   <string name="sn_download_song_books">Pobierz śpiewnik</string>
   <string name="sn_copied">Pieśń została skopiowana.</string>
   <string name="sn_share_title">Podziel się pieśnią</string>
-  <string name="sn_download_song_books">Pobierz śpiewnik</string>
   <string name="sn_lyric_version_version">Wersja %s</string>
   <string name="sn_lyric_refrain_marker">Ref.</string>
   <string name="sn_delete_all_songs">Usuń wszystkie pieśni</string>
@@ -220,9 +210,9 @@
   <string name="desc_delete">Usuń</string>
   <string name="desc_change_selected_books">Zmień zaznaczoną księgę</string>
   <string name="desc_download">Pobierz</string>
-  <string name="desc_open_verse_menu">Otwórz menu wersetu</string>
   <string name="desc_previous_chapter">Poprzedni rozdział</string>
   <string name="desc_next_chapter">Następny rozdział</string>
+  <string name="desc_drag_to_reorder_labels">Przeciągnij, aby zmienić kolejność etykiet</string>
   <string name="teks_about">Rozwijane przez [b]yuku[/b], 2009-2012[br/]
 • Strona: androidbible.blogspot.com[br/] 
 • Google+: gplus.to/androidbible[br/]
@@ -232,5 +222,4 @@
 • [b]Jaya Satrio Hendrick[/b] ikony[br/]
 • [b]Yohanes Nugroho[/b] czytnik plików PDB z BiblePlus+ PDB[br/]
 • i wiele innych osób, które zasugerowały pomysł, poprawki, raportowały błędy, kopiowały pieśni, dodały informacje o przekładach Biblii, itp!</string>
-  <string name="desc_drag_to_reorder_labels">Przeciągnij, aby zmienić kolejność etykiet</string>
 </resources>
