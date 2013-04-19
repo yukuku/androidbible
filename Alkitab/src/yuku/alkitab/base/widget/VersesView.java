@@ -156,7 +156,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		this.onVerseScrollListener = onVerseScrollListener;
 	}
 
-	// TODO external should provide the attribute map into this widget similar to setData(), 
+	// TODO external should provide the attribute map into this widget similar to setData(),
 	// instead of this widget itself accessing persistent data.
 	// When this is done, we do not need to provide Book and chapter_1 as parameters to setData(),
 	// because in reality, VersesViews could contain verses taken from multiple books and chapters.
@@ -188,8 +188,8 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	public int getPositionBasedOnScroll() {
 		int pos = getFirstVisiblePosition();
 
-		// check if the top one has been scrolled 
-		View child = getChildAt(0); 
+		// check if the top one has been scrolled
+		View child = getChildAt(0);
 		if (child != null) {
 			int top = child.getTop();
 			if (top == 0) {
@@ -240,7 +240,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		SparseBooleanArray checkedPositions = getCheckedItemPositions();
 		boolean anyChecked = false;
 		for (int i = 0; i < checkedPositions.size(); i++) if (checkedPositions.valueAt(i)) {
-			anyChecked = true; 
+			anyChecked = true;
 			break;
 		}
 		
@@ -334,13 +334,19 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		setData(book, chapter_1, verses, pericope_aris, pericope_blocks, nblock, xrefEntryCounts);
 		loadAttributeMap();
 		
+		boolean anySelected = false;
 		if (selectedVerses_1 != null) {
 			for (int i = 0, len = selectedVerses_1.size(); i < len; i++) {
 				int pos = adapter.getPositionIgnoringPericopeFromVerse(selectedVerses_1.get(i));
 				if (pos != -1) {
 					setItemChecked(pos, true);
+					anySelected = true;
 				}
 			}
+		}
+		
+		if (anySelected) {
+			if (listener != null) listener.onSomeVersesSelected(this);
 		}
 	}
 
