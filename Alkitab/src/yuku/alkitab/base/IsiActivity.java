@@ -26,6 +26,7 @@ import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.MeasureSpec;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -1069,6 +1070,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode, resultCode, data);
 		} else if (requestCode == REQCODE_textAppearanceCustomColors) {
 			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode, resultCode, data);
+			
+			// MUST reload preferences
+			S.calculateAppliedValuesBasedOnPreferences();
+			
+			applyPreferences(true);
 		}
 	}
 
@@ -1244,6 +1250,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if ("nospace0".equals(format)) tobeBook = tobeBook.replaceAll("\\s+", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return c.url_prefix + tobeBook + tobeChapter + (verse_1_ranges == null? "": tobeVerse); //$NON-NLS-1$
+	}
+	
+	@TargetApi(14) boolean hasHardwareMenuKey() {
+		if (Build.VERSION.SDK_INT <= 10) return true;
+		if (Build.VERSION.SDK_INT <= 13) return false; // Honeycomb tablets
+		return ViewConfiguration.get(this).hasPermanentMenuKey();
 	}
 
 	VersesView.AttributeListener attributeListener = new VersesView.AttributeListener() {

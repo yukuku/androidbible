@@ -193,7 +193,7 @@
     <string name="split_version_cant_display_verse">%1$s is not available in %2$s.</string>
     <string name="menuAddSomething">Add marker</string>
     <string name="color_settings">Customize colors</string>
-    <string name="menuTextAppearance">Text Appearance</string>
+    <string name="menuTextAppearance">Text appearance</string>
     <string name="text_appearance_theme_custom">Custom…</string>
     <string name="text_appearance_text_size">Text size</string>
     <string name="text_appearance_line_spacing">Line spacing</string>
