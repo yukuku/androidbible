@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     android:background="#efff"
     android:orientation="vertical"
-    tools:context=".base.IsiActivity" >
+    tools:context=".base.IsiActivity"
+    tools:ignore="Overdraw" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,8 +24,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:textOff="BOLD"
-            android:textOn="BOLD" />
+            android:textOff="@string/text_appearance_bold_switch_off"
+            android:textOn="@string/text_appearance_bold_switch_on" />
     </LinearLayout>
 
     <LinearLayout

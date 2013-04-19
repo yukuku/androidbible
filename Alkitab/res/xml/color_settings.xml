@@ -3,14 +3,6 @@
     android:summary="@string/pref_atur_warna_teks_latar_belakang_dan_nomor_ayat"
     android:title="@string/pref_warna" >
 
-    <yuku.alkitab.base.widget.ColorThemePreference
-        android:entries="@array/pref_temaWarna_label"
-        android:entryValues="@array/pref_temaWarna_value"
-        android:key="_notused_temaWarna"
-        android:persistent="false"
-        android:summary="@string/pref_atur_warna_teks_latar_belakang_dan"
-        android:title="@string/pref_tema_warna" />
-
     <yuku.ambilwarna.widget.AmbilWarnaPreference
         android:defaultValue="@integer/pref_warnaHuruf_int_default"
         android:key="@string/pref_warnaHuruf_int_key"

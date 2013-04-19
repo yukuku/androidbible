@@ -197,6 +197,8 @@
     <string name="text_appearance_theme_custom">Custom…</string>
     <string name="text_appearance_text_size">Text size</string>
     <string name="text_appearance_line_spacing">Line spacing</string>
+    <string name="text_appearance_bold_switch_off">BOLD</string>
+    <string name="text_appearance_bold_switch_on"><b>BOLD</b></string>
     
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Dialer</string>
