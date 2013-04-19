@@ -195,6 +195,8 @@
     <string name="text_appearance_bold_switch_off">BOLD</string>
     <string name="text_appearance_bold_switch_on"><b>BOLD</b></string>
     <string name="devotion_change_date">Change date</string>
+    <string name="bookmark_search">Search</string>
+    <string name="history_hint">Long-press here for history</string>
     
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Dialer</string>
@@ -247,6 +249,5 @@
 		• [b]Jaya Satrio Hendrick[/b] icons[br/]
 		• [b]Yohanes Nugroho[/b] BiblePlus+ PDB reader[br/]
 		• and many more people who contributed ideas, patches, bug reports, copy of songs, information about Bible translations, etc!</string>
-    <string name="bookmark_search">Search</string>
 		
 </resources>

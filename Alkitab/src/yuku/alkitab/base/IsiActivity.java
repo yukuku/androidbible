@@ -21,6 +21,8 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
+import android.text.SpannableStringBuilder;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -71,6 +73,7 @@ import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.Db;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.Jumper;
@@ -681,6 +684,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					int ari = history.getAri(which);
 					jumpToAri(ari);
 					history.add(ari);
+					Preferences.setBoolean(Prefkey.history_button_understood, true);
 				}
 			})
 			.setNegativeButton(R.string.cancel, null)
@@ -788,7 +792,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
 		case R.id.menuTextAppearance:
-			showTextAppearancePanel();
+			showTextAppearancePanel(false);
 			return true;
 		case R.id.menuSettings:
 			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
@@ -807,11 +811,13 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		return super.onOptionsItemSelected(item);
 	}
 
-	void showTextAppearancePanel() {
+	void showTextAppearancePanel(boolean showOnly) {
 		if (textAppearancePanel != null) {
-			// we are already showing it.
-			textAppearancePanel.hide();
-			textAppearancePanel = null;
+			// we are already showing it. Hide, except when this method is called with showOnly
+			if (!showOnly) {
+				textAppearancePanel.hide();
+				textAppearancePanel = null;
+			}
 			return;
 		}
 		
@@ -1054,7 +1060,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			applyPreferences(true);
 			
 			if (resultCode == SettingsActivity.RESULT_openTextAppearance) {
-				
+				showTextAppearancePanel(true);
 			}
 		} else if (requestCode == REQCODE_share) {
 			if (resultCode == RESULT_OK) {
@@ -1115,7 +1121,18 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		
 		displaySplitFollowingMaster(verse_1);
 		
-		bGoto.setText(this.activeBook.reference(chapter_1));
+		// set goto button text
+		String reference = this.activeBook.reference(chapter_1);
+		if (Preferences.getBoolean(Prefkey.history_button_understood, false) || history.getN() == 0) {
+			bGoto.setText(reference);
+		} else {
+			SpannableStringBuilder sb = new SpannableStringBuilder();
+			sb.append(reference).append("\n");
+			int sb_len = sb.length();
+			sb.append(getString(R.string.history_hint));
+			sb.setSpan(new RelativeSizeSpan(0.6f), sb_len, sb.length(), 0);
+			bGoto.setText(sb);
+		}
 		
 		return Ari.encode(0, chapter_1, verse_1);
 	}
