@@ -34,7 +34,6 @@
     <string name="tulis_catatan">Write note</string>
     <string name="tambah_pembatas_buku">Add bookmark</string>
     <string name="salin_ayat">Copy verse</string>
-    <string name="pada_mulanya">In the beginning God created the heaven and the earth. And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters. And God said, Let there be light: and there was light. And God saw the light, that it was good: and God divided the light from, the darkness. And God called the light Day, and the darkness he called Night. And the evening and the morning were the first day.</string>
     <string name="perj_baru">New Test.</string>
     <string name="perj_lama">Old Test.</string>
     <string name="search_bookname_only">%s only</string>
@@ -195,6 +194,7 @@
     <string name="text_appearance_line_spacing">Line spacing</string>
     <string name="text_appearance_bold_switch_off">BOLD</string>
     <string name="text_appearance_bold_switch_on"><b>BOLD</b></string>
+    <string name="devotion_change_date">Change date</string>
     
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Dialer</string>
@@ -247,5 +247,6 @@
 		• [b]Jaya Satrio Hendrick[/b] icons[br/]
 		• [b]Yohanes Nugroho[/b] BiblePlus+ PDB reader[br/]
 		• and many more people who contributed ideas, patches, bug reports, copy of songs, information about Bible translations, etc!</string>
+    <string name="bookmark_search">Search</string>
 		
 </resources>

@@ -2,7 +2,7 @@
 <menu
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
-		android:title="Change date"
+		android:title="@string/devotion_change_date"
 		android:id="@+id/menuChangeDate"
 		android:icon="@drawable/ic_menu_change_date" 
 		android:showAsAction="ifRoom" />
