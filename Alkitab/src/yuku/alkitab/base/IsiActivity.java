@@ -170,7 +170,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	};
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState, false);
 		
 		setContentView(R.layout.activity_isi);
 		
@@ -1052,6 +1052,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			S.calculateAppliedValuesBasedOnPreferences();
 			
 			applyPreferences(true);
+			
+			if (resultCode == SettingsActivity.RESULT_openTextAppearance) {
+				
+			}
 		} else if (requestCode == REQCODE_share) {
 			if (resultCode == RESULT_OK) {
 				ShareActivity.Result result = ShareActivity.obtainResult(data);

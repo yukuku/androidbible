@@ -20,7 +20,7 @@ public class SettingsActivity extends BasePreferenceActivity {
 
 	void setupTextAppearanceHelper() {
 		String key = getString(R.string.pref_help_text_appearance_key);
-		Preference pref = findPreference(key);
+		@SuppressWarnings("deprecation") Preference pref = findPreference(key);
 		pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 			@Override public boolean onPreferenceClick(Preference preference) {
 				setResult(RESULT_openTextAppearance);

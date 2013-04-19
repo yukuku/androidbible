@@ -170,7 +170,8 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			}
 		} return true;
 		}
-		return false;
+		
+		return super.onOptionsItemSelected(item);
 	}
 
 	private StringBuilder convertSongToText(Song song) {

@@ -257,6 +257,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			
 			return true;
 		}
+		
 		return super.onOptionsItemSelected(item);
 	}
 	

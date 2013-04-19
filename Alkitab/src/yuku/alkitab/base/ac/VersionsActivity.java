@@ -120,6 +120,7 @@ public class VersionsActivity extends BaseActivity {
 			clickOnOpenFile();
 			return true;
 		}
+		
 		return super.onOptionsItemSelected(item);
 	}
 	
