@@ -307,6 +307,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			int ari = intent.getIntExtra("ari", 0);
 			if (ari != 0) {
 				jumpToAri(ari);
+				history.add(ari);
 				return;
 			} else {
 				new AlertDialog.Builder(this)
@@ -314,13 +315,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				.setPositiveButton(R.string.ok, null)
 				.show();
 			}
-		}
-		
-		if (intent.hasExtra("lid")) {
+		} else if (intent.hasExtra("lid")) {
 			int lid = intent.getIntExtra("lid", 0);
 			int ari = LidToAri.lidToAri(lid);
 			if (ari != 0) {
 				jumpToAri(ari);
+				history.add(ari);
 				return;
 			} else {
 				new AlertDialog.Builder(this)
@@ -400,7 +400,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						JSONObject obj = new JSONObject(json);
 						int ari = obj.optInt("ari", -1); //$NON-NLS-1$
 						if (ari != -1) {
-							IsiActivity.this.jumpToAri(ari);
+							jumpToAri(ari);
+							history.add(ari);
 						}
 					} catch (JSONException e) {
 						Log.e(TAG, "Malformed json from nfc", e); //$NON-NLS-1$
