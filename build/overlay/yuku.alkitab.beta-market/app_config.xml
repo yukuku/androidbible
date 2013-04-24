@@ -10,7 +10,7 @@
 		<preset locale="bbc"  shortName="TOBA"    longName="Batak Toba" filename_preset="toba.yes" url="http://alkitab-host.appspot.com/addon/yes/toba.yes.gz" />
 
 		<preset locale="af"   shortName="AF1953"  longName="Afrikaans 1953" filename_preset="af-1953.yes" url="http://alkitab-host.appspot.com/addon/yes/af-1953/af-1953.yes.gz" />
-		<preset locale="de"                       longName="Lutherbibel 1912" filename_preset="de-luther1912.yes" url="http://alkitab-host.appspot.com/addon/yes/de-luther1912/de-luther1912.yes.gz" />
+		<preset locale="de"   shortName="DELUT"   longName="Lutherbibel 1912" filename_preset="de-luther1912.yes" url="http://alkitab-host.appspot.com/addon/yes/de-luther1912/de-luther1912.yes.gz" />
 		<preset locale="el"   shortName="GB"      longName="Byzantine" filename_preset="el-byzantine.yes" url="http://alkitab-host.appspot.com/addon/yes2/el-byzantine--1.yes.gz" />
 		<preset locale="el"   shortName="GBP"     longName="Byzantine Parsed" filename_preset="el-byzantineparsed.yes" url="http://alkitab-host.appspot.com/addon/yes2/el-byzantineparsed--1.yes.gz" />
 		<preset locale="el"   shortName="LXX"     longName="Septuagint " filename_preset="el-lxx.yes" url="http://alkitab-host.appspot.com/addon/yes2/el-lxx--1.yes.gz" />
