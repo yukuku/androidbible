@@ -1,4 +1,4 @@
-package yuku.alkitabconverter.unboundbatch;
+package yuku.alkitabconverter.util;
 
 import java.util.Arrays;
 
