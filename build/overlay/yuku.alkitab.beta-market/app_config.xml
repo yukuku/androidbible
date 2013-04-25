@@ -37,6 +37,7 @@
 		<preset locale="ja"                       longName="口語訳" filename_preset="ja-kougo.yes" url="http://alkitab-host.appspot.com/addon/yes/ja-kougo/ja-kougo.yes.gz" />
 		<preset locale="ko"   shortName="KRV"     longName="Korean Revised Version" filename_preset="ko-krv.yes" url="http://alkitab-host.appspot.com/addon/yes/ko-krv/ko-krv.yes.gz" />
 		<preset locale="hr"   shortName="CRO"     longName="Croatian" filename_preset="hr-croatian.yes" url="http://alkitab-host.appspot.com/addon/yes2/hr-croatian--1.yes.gz" />
+		<preset locale="hu"   shortName="KAR"     longName="Karoli" filename_preset="hu-karoli.yes" url="http://alkitab-host.appspot.com/addon/yes/hu-karoli/hu-karoli.yes.gz" />
 		<preset locale="kab"  shortName="KAB"     longName="Kabyle New Testament" filename_preset="kab-kabyle.yes" url="http://alkitab-host.appspot.com/addon/yes2/kab-kabyle--1.yes.gz" />
 		<preset locale="la"   shortName="CLEM"    longName="Clementine Vulgate" filename_preset="la-clementine.yes" url="http://alkitab-host.appspot.com/addon/yes2/la-clementine--1.yes.gz" />
 		<preset locale="la"   shortName="NOVA"    longName="Nova Vulgata" filename_preset="la-nova.yes" url="http://alkitab-host.appspot.com/addon/yes2/la-nova--1.yes.gz" />
