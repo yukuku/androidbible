@@ -13,4 +13,15 @@ public enum Prefkey {
 	 * to open history. So let us remove the hint.
 	 */
 	history_button_understood,
+	
+	// Moved from prefkey.xml, since we're not using it via PreferenceActivity any more.
+	/** Bold */
+	boldHuruf,
+	/** Typeface */
+	jenisHuruf,
+	/** Size of text in dp */
+	ukuranHuruf2,
+	/** Line spacing multiplier in proportional (float) */
+	lineSpacingMult,
+	
 }

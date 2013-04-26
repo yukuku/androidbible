@@ -113,7 +113,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		templateCustomVars.putString("line_spacing_mult", String.valueOf(S.applied.lineSpacingMult)); //$NON-NLS-1$
 		
 		{
-			String fontName = Preferences.getString(getString(R.string.pref_jenisHuruf_key), null);
+			String fontName = Preferences.getString(Prefkey.jenisHuruf, null);
 			if (FontManager.isCustomFont(fontName)) {
 				templateCustomVars.putString("custom_font_loader", String.format("@font-face{ font-family: '%s'; src: url('%s'); }", fontName, FontManager.getCustomFontUri(fontName))); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {

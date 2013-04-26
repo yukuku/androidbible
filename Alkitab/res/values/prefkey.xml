@@ -17,14 +17,6 @@
 	
 	<string name="pref_redTextColor_key">redTextColor</string>
 	
-	<string name="pref_boldHuruf_key">boldHuruf</string>
-	
-	<string name="pref_jenisHuruf_key">jenisHuruf</string>
-	
-	<string name="pref_ukuranHuruf2_key">ukuranHuruf2</string>
-	
-	<string name="pref_lineSpacingMult_key">lineSpacingMult</string>
-	
 	<string name="pref_copyWithVerseNumbers_key">copyWithVerseNumbers</string>
 
 	<string name="pref_help_text_appearance_key">help_text_appearance</string>

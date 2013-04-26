@@ -15,6 +15,7 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.InternalDbHelper;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.base.storage.SongDbHelper;
 import yuku.alkitab.base.util.FontManager;
@@ -68,14 +69,14 @@ public class S {
 	public static void calculateAppliedValuesBasedOnPreferences() {
 		//# atur ukuran huruf isi berdasarkan pengaturan
 		{
-			applied.fontSize2dp = Preferences.getFloat(App.context.getString(R.string.pref_ukuranHuruf2_key), (float) App.context.getResources().getInteger(R.integer.pref_ukuranHuruf2_default));
+			applied.fontSize2dp = Preferences.getFloat(Prefkey.ukuranHuruf2, (float) App.context.getResources().getInteger(R.integer.pref_ukuranHuruf2_default));
 		}
 		
 		//# atur jenis huruf, termasuk boldnya
 		{
-			applied.fontFace = FontManager.typeface(Preferences.getString(App.context.getString(R.string.pref_jenisHuruf_key), null));
-			applied.lineSpacingMult = Preferences.getFloat(App.context.getString(R.string.pref_lineSpacingMult_key), 1.15f);
-			applied.fontBold = Preferences.getBoolean(App.context.getString(R.string.pref_boldHuruf_key), false)? Typeface.BOLD: Typeface.NORMAL;
+			applied.fontFace = FontManager.typeface(Preferences.getString(Prefkey.jenisHuruf, null));
+			applied.lineSpacingMult = Preferences.getFloat(Prefkey.lineSpacingMult, 1.15f);
+			applied.fontBold = Preferences.getBoolean(Prefkey.boldHuruf, false)? Typeface.BOLD: Typeface.NORMAL;
 		}
 		
 		//# atur warna teks, latar, dan nomer ayat

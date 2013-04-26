@@ -30,6 +30,7 @@ import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.R;
 import yuku.alkitab.base.ac.ColorSettingsActivity;
 import yuku.alkitab.base.ac.FontManagerActivity;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.FontManager;
 
 public class TextAppearancePanel {
@@ -93,20 +94,20 @@ public class TextAppearancePanel {
 	
 	void displayValues() {
 		{
-			int selectedPosition = typefaceAdapter.getPositionByName(Preferences.getString(App.context.getString(R.string.pref_jenisHuruf_key)));
+			int selectedPosition = typefaceAdapter.getPositionByName(Preferences.getString(Prefkey.jenisHuruf));
 			if (selectedPosition >= 0) {
 				cbTypeface.setSelection(selectedPosition);
 			}
 		}
 			
-		boolean bold = Preferences.getBoolean(App.context.getString(R.string.pref_boldHuruf_key), false);
+		boolean bold = Preferences.getBoolean(Prefkey.boldHuruf, false);
 		cBold.setChecked(bold);
 		
-		float textSize = Preferences.getFloat(App.context.getString(R.string.pref_ukuranHuruf2_key), 17.f);
+		float textSize = Preferences.getFloat(Prefkey.ukuranHuruf2, (float) App.context.getResources().getInteger(R.integer.pref_ukuranHuruf2_default));
 		sbTextSize.setProgress((int) ((textSize - 2.f) * 2));
 		displayTextSizeText(textSize);
 		
-		float lineSpacing = Preferences.getFloat(App.context.getString(R.string.pref_lineSpacingMult_key), 1.15f);
+		float lineSpacing = Preferences.getFloat(Prefkey.lineSpacingMult, 1.15f);
 		sbLineSpacing.setProgress(Math.round((lineSpacing - 1.f) * 20.f));
 		displayLineSpacingText(lineSpacing);
 	
@@ -150,7 +151,7 @@ public class TextAppearancePanel {
 			if (name == null) {
 				activity.startActivityForResult(FontManagerActivity.createIntent(), reqcodeGetFonts);
 			} else {
-				Preferences.setString(App.context.getString(R.string.pref_jenisHuruf_key), name);
+				Preferences.setString(Prefkey.jenisHuruf, name);
 				listener.onValueChanged();
 			}
 		}
@@ -191,7 +192,7 @@ public class TextAppearancePanel {
 		
 		@Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 			float textSize = progress * 0.5f + 2.f;
-			Preferences.setFloat(App.context.getString(R.string.pref_ukuranHuruf2_key), textSize);
+			Preferences.setFloat(Prefkey.ukuranHuruf2, textSize);
 			displayTextSizeText(textSize);
 			listener.onValueChanged();
 		}
@@ -208,7 +209,7 @@ public class TextAppearancePanel {
 		
 		@Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 			float lineSpacing = 1.f + progress * 0.05f;
-			Preferences.setFloat(App.context.getString(R.string.pref_lineSpacingMult_key), lineSpacing);
+			Preferences.setFloat(Prefkey.lineSpacingMult, lineSpacing);
 			displayLineSpacingText(lineSpacing);
 			listener.onValueChanged();
 		}
@@ -220,7 +221,7 @@ public class TextAppearancePanel {
 	
 	CompoundButton.OnCheckedChangeListener cBold_checkedChange = new CompoundButton.OnCheckedChangeListener() {
 		@Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-			Preferences.setBoolean(App.context.getString(R.string.pref_boldHuruf_key), isChecked);
+			Preferences.setBoolean(Prefkey.boldHuruf, isChecked);
 			listener.onValueChanged();
 		}
 	};
