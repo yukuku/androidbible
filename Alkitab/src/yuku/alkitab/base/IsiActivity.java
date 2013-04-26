@@ -1330,6 +1330,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if (actionMode == null) {
 				actionMode = startActionMode(actionMode_callback);
 			}
+			
+			if (actionMode != null) {
+				actionMode.invalidate();
+			}
 		}
 
 		@Override public void onNoVersesSelected(VersesView v) {
@@ -1391,7 +1395,22 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 
 		@Override public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-			return false;
+			MenuItem menuAddBookmark = menu.findItem(R.id.menuAddBookmark);
+			MenuItem menuAddNote = menu.findItem(R.id.menuAddNote);
+
+			IntArrayList selected = lsText.getSelectedVerses_1();
+			boolean single = selected.size() == 1;
+			
+			boolean changed1 = menuAddBookmark.isVisible() ^ single;
+			boolean changed2 = menuAddNote.isVisible() ^ single;
+			boolean changed = changed1 || changed2;
+			
+			if (changed) {
+				menuAddBookmark.setVisible(single);
+				menuAddNote.setVisible(single);
+			}
+			
+			return changed;
 		}
 
 		@Override public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
