@@ -693,7 +693,12 @@ public class VersionsActivity extends BaseActivity {
 		@Override
 		public Version getVersion() {
 			if (hasDataFile()) {
-				return new Version(YesReaderFactory.createYesReader(filename));
+				BibleReader yesReader = YesReaderFactory.createYesReader(filename);
+				if (yesReader == null) {
+					Log.e(TAG, "YesReaderFactory failed to open the yes file");
+					return null;
+				}
+				return new Version(yesReader);
 			} else {
 				return null;
 			}
