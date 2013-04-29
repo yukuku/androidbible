@@ -33,6 +33,10 @@ public class Version {
 		return internalVersion;
 	}
 
+	public String getShortName() {
+		return bibleReader.getShortName();
+	}
+
 	public String getLongName() {
 		return bibleReader.getLongName();
 	}
@@ -91,11 +95,11 @@ public class Version {
 		if (bookId < books.length) {
 			// fast path for OT+NT complete versions
 			Book book = books[bookId];
-			if (book.bookId == bookId) return book;
+			if (book != null && book.bookId == bookId) return book;
 		}
 		// linear search
 		for (Book book: books) {
-			if (book.bookId == bookId) {
+			if (book != null && book.bookId == bookId) {
 				return book;
 			}
 		}

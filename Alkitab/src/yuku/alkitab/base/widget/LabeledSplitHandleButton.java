@@ -31,6 +31,7 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 		labelPaint.setColor(0xffffffff);
 		labelPaint.setShadowLayer(2.f * density, 0, 0, 0xff000000);
 		labelPaint.setTextSize(textSize * density);
+		labelPaint.setAntiAlias(true);
 		bezelPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 	}
 	

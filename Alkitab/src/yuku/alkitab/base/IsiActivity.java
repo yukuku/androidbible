@@ -80,6 +80,7 @@ import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.base.util.Search2Engine.Query;
 import yuku.alkitab.base.widget.CallbackSpan;
+import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
 import yuku.alkitab.base.widget.VerseAdapter;
@@ -121,7 +122,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	TextView tSplitEmpty;
 	View splitRoot;
 	View splitHandle;
-	SplitHandleButton splitHandleButton;
+	LabeledSplitHandleButton splitHandleButton;
 	Button bGoto;
 	ImageButton bLeft;
 	ImageButton bRight;
@@ -462,6 +463,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				}
 				S.activeVersion = version;
 				S.activeVersionId = mv.getVersionId();
+				splitHandleButton.setLabel1("↑ " + getSplitHandleVersionName(mv, version));
 				
 				if (display) {
 					display(chapter_1, lsText.getVerseBasedOnScroll(), false);
@@ -488,6 +490,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if (version != null) {
 				activeSplitVersion = version;
 				activeSplitVersionId = mv.getVersionId();
+				splitHandleButton.setLabel2(getSplitHandleVersionName(mv, version) + " ↓");
 				
 				return true;
 			} else {
@@ -500,6 +503,20 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			.show();
 			
 			return false;
+		}
+	}
+	
+	String getSplitHandleVersionName(MVersion mv, Version version) {
+		String shortName = version.getShortName();
+		if (shortName != null) {
+			return shortName;
+		} else {
+			// try to get it from the model
+			if (mv.shortName != null) {
+				return mv.shortName;
+			}
+			
+			return version.getLongName(); // this will not be null
 		}
 	}
 	
