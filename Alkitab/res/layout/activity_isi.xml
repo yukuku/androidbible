@@ -28,13 +28,13 @@
             <FrameLayout
                 android:id="@+id/splitHandle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="20dp"
                 android:visibility="gone" >
 
-                <yuku.alkitab.base.widget.SplitHandleButton
+                <yuku.alkitab.base.widget.LabeledSplitHandleButton
                     android:id="@+id/splitHandleButton"
                     android:layout_width="match_parent"
-                    android:layout_height="12dp"
+                    android:layout_height="match_parent"
                     tools:ignore="ContentDescription" />
             </FrameLayout>
 
