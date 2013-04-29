@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -24,9 +25,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +49,6 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
-import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog.ConvertOptionsCallback;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes2;
 import yuku.alkitab.base.storage.BibleReader;
 import yuku.alkitab.base.storage.Db;
@@ -92,8 +96,93 @@ public class VersionsActivity extends BaseActivity {
 		lsEdisi.setOnItemClickListener(lsEdisi_itemClick);
 		
 		registerForContextMenu(lsEdisi);
+		
+		processIntent(getIntent(), "onCreate");
 	}
-	
+
+	private void processIntent(Intent intent, String via) {
+		Log.d(TAG, "Got intent via " + via);
+		Log.d(TAG, "  action: " + intent.getAction());
+		Log.d(TAG, "  data uri: " + intent.getData());
+		Log.d(TAG, "  component: " + intent.getComponent());
+		Log.d(TAG, "  flags: 0x" + Integer.toHexString(intent.getFlags()));
+		Log.d(TAG, "  mime: " + intent.getType());
+		Bundle extras = intent.getExtras();
+		Log.d(TAG, "  extras: " + (extras == null? "null": extras.size()));
+		if (extras != null) {
+			for (String key: extras.keySet()) {
+				Log.d(TAG, "    " + key + " = " + extras.get(key));
+			}
+		}
+		
+		checkAndProcessOpenFileIntent(intent);
+	}
+
+	private void checkAndProcessOpenFileIntent(Intent intent) {
+		if (!U.equals(intent.getAction(), Intent.ACTION_VIEW)) return;
+
+		Uri uri = intent.getData();
+		
+		boolean isLocalFile = U.equals("file", uri.getScheme());
+		boolean isYesFile = uri.getPath().endsWith(".yes");
+		
+		try {
+			if (!isYesFile) { // pdb file
+				// copy the file to cache first
+				File cacheFile = new File(getCacheDir(), "datafile");
+				InputStream input = getContentResolver().openInputStream(uri);
+				copyStreamToFile(input, cacheFile);
+				input.close();
+				
+				handleFileOpenPdb(cacheFile.getAbsolutePath());
+			} else if (isLocalFile) { // opening a local yes file
+				handleFileOpenYes(uri.getPath(), null);
+			} else { // opening a nonlocal yes file
+				boolean mkdirOk = AddonManager.mkYesDir();
+				if (!mkdirOk) {
+					new AlertDialog.Builder(this)
+					.setMessage(getString(R.string.tidak_bisa_membuat_folder, AddonManager.getYesPath()))
+					.setPositiveButton(R.string.ok, null)
+					.show();
+					return;
+				}
+
+				String yesname = uri.getLastPathSegment();
+				File localFile = new File(AddonManager.getYesPath(), yesname);
+				if (localFile.exists()) {
+					new AlertDialog.Builder(this)
+					.setMessage(getString(R.string.open_yes_file_name_conflict, localFile.getName(), AddonManager.getYesPath()))
+					.setPositiveButton(R.string.ok, null)
+					.show();
+					return;
+				}
+				
+				InputStream input = getContentResolver().openInputStream(uri);
+				copyStreamToFile(input, localFile);
+				input.close();
+				
+				handleFileOpenYes(localFile.getAbsolutePath(), null);
+			}
+		} catch (Exception e) {
+			new AlertDialog.Builder(this)
+			.setMessage(R.string.open_file_cant_read_source)
+			.setPositiveButton(R.string.ok, null)
+			.show();
+			return;
+		}
+	}
+
+	private static void copyStreamToFile(InputStream input, File file) throws IOException {
+		OutputStream output = new BufferedOutputStream(new FileOutputStream(file));
+		byte[] buf = new byte[4096];
+		while (true) {
+			int read = input.read(buf, 0, buf.length);
+			if (read < 0) break;
+			output.write(buf, 0, read);
+		}
+		output.close();
+	}
+
 	private void buildMenu(Menu menu) {
 		menu.clear();
 		getSupportMenuInflater().inflate(R.menu.activity_versions, menu);
@@ -312,10 +401,7 @@ public class VersionsActivity extends BaseActivity {
 	
 						DownloadThread downloadThread = AddonManager.getDownloadThread(getApplicationContext());
 						final Element e = downloadThread.enqueue(edisi.url, AddonManager.getVersionPath(edisi.presetFilename), downloadListener);
-						if (e != null) {
-							pd.show();
-						}
-	
+						pd.show();
 						pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
 							@Override
 							public void onCancel(DialogInterface dialog) {
@@ -506,7 +592,7 @@ public class VersionsActivity extends BaseActivity {
 			return;
 		}
 		
-		ConvertOptionsCallback callback = new ConvertOptionsCallback() {
+		ConvertOptionsDialog.ConvertOptionsCallback callback = new ConvertOptionsDialog.ConvertOptionsCallback() {
 			private void showPdbReadErrorDialog(Throwable exception) {
 				new AlertDialog.Builder(VersionsActivity.this)
 				.setTitle(R.string.ed_error_reading_pdb_file)

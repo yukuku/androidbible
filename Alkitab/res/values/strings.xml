@@ -250,4 +250,9 @@
 		• [b]Yohanes Nugroho[/b] BiblePlus+ PDB reader[br/]
 		• and many more people who contributed ideas, patches, bug reports, copy of songs, information about Bible translations, etc!</string>
 		
+    <string name="desc_drag_to_reorder_labels">Drag to reorder labels</string>
+    <string name="intent_filter_open_yes_file">Open YES file</string>
+    <string name="intent_filter_open_pdb_file">Open PDB file</string>
+	<string name="open_yes_file_name_conflict">A YES file named \'%1$s\' already exists in \'%2$s\'.</string>
+	<string name="open_file_cant_read_source">The source could not be successfully read.</string>
 </resources>

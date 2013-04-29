@@ -61,7 +61,39 @@
    		</activity>
 
 		<activity android:name="yuku.alkitab.base.ac.BookmarkListActivity" android:label="@string/pembatas_buku" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:windowSoftInputMode="adjustResize|stateHidden" />
-		<activity android:name="yuku.alkitab.base.ac.VersionsActivity" android:label="@string/kelola_versi" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
+		<activity android:name="yuku.alkitab.base.ac.VersionsActivity" android:label="@string/kelola_versi" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection">
+		    <intent-filter android:label="@string/intent_filter_open_yes_file">
+		        <action android:name="android.intent.action.VIEW" />
+		        <category android:name="android.intent.category.DEFAULT" />
+		        <category android:name="android.intent.category.BROWSABLE" />
+		        <data android:scheme="file" />
+		        <data android:scheme="content" />
+		        <data android:mimeType="*/*" />
+		        <data android:host="*" />
+		        <data android:pathPattern=".*\\.yes" />
+		        <data android:pathPattern=".*\\..*\\.yes" />
+		        <data android:pathPattern=".*\\..*\\..*\\.yes" />
+		        <data android:pathPattern=".*\\..*\\..*\\..*\\.yes" />
+		        <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.yes" />
+		        <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.yes" />
+		    </intent-filter>
+		    <intent-filter android:label="@string/intent_filter_open_pdb_file">
+		        <action android:name="android.intent.action.VIEW" />
+		        <category android:name="android.intent.category.DEFAULT" />
+		        <category android:name="android.intent.category.BROWSABLE" />
+		        <data android:scheme="file" />
+		        <data android:scheme="content" />
+		        <data android:mimeType="*/*" />
+		        <data android:host="*" />
+		        <data android:pathPattern=".*\\.pdb" />
+		        <data android:pathPattern=".*\\..*\\.pdb" />
+		        <data android:pathPattern=".*\\..*\\..*\\.pdb" />
+		        <data android:pathPattern=".*\\..*\\..*\\..*\\.pdb" />
+		        <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.pdb" />
+		        <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.pdb" />
+		    </intent-filter>
+		</activity>
+		
 		<activity android:name="yuku.alkitab.base.ac.Search2Activity" android:label="@string/cari_v" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:theme="@style/Theme.Alkitab.NoActionBar" />
 		<activity android:name="yuku.alkitab.base.ac.DevotionActivity" android:label="@string/renungan" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.HelpActivity" android:label="@string/bantuan_judul" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
