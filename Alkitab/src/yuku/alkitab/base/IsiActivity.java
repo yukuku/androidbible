@@ -173,6 +173,13 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	};
 
+	public static Intent createIntent(int ari) {
+		Intent res = new Intent(App.context, IsiActivity.class);
+		res.setAction("yuku.alkitab.action.VIEW");
+		res.putExtra("ari", ari);
+		return res;
+	}
+	
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState, false);
 		
@@ -1029,14 +1036,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 			if (activeSplitVersion != null) {
 				lsSplit1.loadAttributeMap();
-			}
-
-			if (resultCode == RESULT_OK) {
-				int ari = data.getIntExtra(BookmarkActivity.EXTRA_ariTerpilih, 0);
-				if (ari != 0) { // 0 means nothing, because we don't have chapter 0 verse 0
-					jumpToAri(ari);
-					history.add(ari);
-				}
 			}
 		} else if (requestCode == REQCODE_search) {
 			if (resultCode == RESULT_OK) {

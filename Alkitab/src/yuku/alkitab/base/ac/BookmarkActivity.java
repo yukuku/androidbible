@@ -71,9 +71,6 @@ import com.mobeta.android.dslv.DragSortListView;
 public class BookmarkActivity extends BaseActivity {
 	public static final String TAG = BookmarkActivity.class.getSimpleName();
 	
-    // out
-	public static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
-
 	private static final int REQCODE_bukmakList = 1;
 
 	DragSortListView lv;
@@ -600,19 +597,8 @@ public class BookmarkActivity extends BaseActivity {
 	
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQCODE_bukmakList) {
-			if (resultCode == RESULT_OK) {
-				int ari = data.getIntExtra(BookmarkActivity.EXTRA_ariTerpilih, 0);
-				if (ari != 0) { // 0 berarti ga ada apa2, karena ga ada pasal 0 ayat 0
-					Intent res = new Intent();
-					res.putExtra(EXTRA_ariTerpilih, ari);
-					
-					setResult(RESULT_OK, res);
-					finish();
-				}
-			}
+			adapter.reload();
 		}
-		
-		adapter.reload();
 	}
 
 	private class BookmarkFilterController extends DragSortController {
