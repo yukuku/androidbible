@@ -6,9 +6,14 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -24,10 +29,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -38,13 +48,13 @@ import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
+import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
-import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog.ConvertOptionsCallback;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes2;
 import yuku.alkitab.base.storage.BibleReader;
 import yuku.alkitab.base.storage.Db;
@@ -92,8 +102,138 @@ public class VersionsActivity extends BaseActivity {
 		lsEdisi.setOnItemClickListener(lsEdisi_itemClick);
 		
 		registerForContextMenu(lsEdisi);
+		
+		processIntent(getIntent(), "onCreate");
 	}
-	
+
+	private void processIntent(Intent intent, String via) {
+		Log.d(TAG, "Got intent via " + via);
+		Log.d(TAG, "  action: " + intent.getAction());
+		Log.d(TAG, "  data uri: " + intent.getData());
+		Log.d(TAG, "  component: " + intent.getComponent());
+		Log.d(TAG, "  flags: 0x" + Integer.toHexString(intent.getFlags()));
+		Log.d(TAG, "  mime: " + intent.getType());
+		Bundle extras = intent.getExtras();
+		Log.d(TAG, "  extras: " + (extras == null? "null": extras.size()));
+		if (extras != null) {
+			for (String key: extras.keySet()) {
+				Log.d(TAG, "    " + key + " = " + extras.get(key));
+			}
+		}
+		
+		checkAndProcessOpenFileIntent(intent);
+	}
+
+	private void checkAndProcessOpenFileIntent(Intent intent) {
+		if (!U.equals(intent.getAction(), Intent.ACTION_VIEW)) return;
+
+		Uri uri = intent.getData();
+		
+		final boolean isLocalFile = U.equals("file", uri.getScheme());
+		final Boolean isYesFile; // false:pdb true:yes null:cannotdetermine
+		final String filelastname;
+		
+		if (isLocalFile) {
+			String pathlc = uri.getPath().toLowerCase(Locale.US);
+			if (pathlc.endsWith(".yes")) {
+				isYesFile = true;
+			} else if (pathlc.endsWith(".pdb")) {
+				isYesFile = false;
+			} else {
+				isYesFile = null;
+			}
+			filelastname = uri.getLastPathSegment();
+		} else {
+			// try to read display name from content
+			Cursor c = getContentResolver().query(uri, null, null, null, null);
+			String[] cns = c.getColumnNames();
+			Log.d(TAG, Arrays.toString(cns));
+			c.moveToNext();
+			for (int i = 0, len = c.getColumnCount(); i < len; i++) {
+				Log.d(TAG, cns[i] + ": " + c.getString(i));
+			}
+			
+			int col = c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
+			if (col != -1) {
+				String name = c.getString(col);
+				String namelc = name.toLowerCase(Locale.US);
+				if (namelc.endsWith(".yes")) {
+					isYesFile = true;
+				} else if (namelc.endsWith(".pdb")) {
+					isYesFile = false;
+				} else {
+					isYesFile = null;
+				}
+				filelastname = name;
+			} else {
+				isYesFile = null;
+				filelastname = null;
+			}
+			c.close();
+		}
+		
+		try {
+			if (isYesFile == null) { // can't be determined
+				new AlertDialog.Builder(this)
+				.setMessage(R.string.open_file_unknown_file_format)
+				.setPositiveButton(R.string.ok, null)
+				.show();
+				return;
+			} else if (!isYesFile) { // pdb file
+				// copy the file to cache first
+				File cacheFile = new File(getCacheDir(), "datafile");
+				InputStream input = getContentResolver().openInputStream(uri);
+				copyStreamToFile(input, cacheFile);
+				input.close();
+				
+				handleFileOpenPdb(cacheFile.getAbsolutePath());
+			} else if (isLocalFile) { // opening a local yes file
+				handleFileOpenYes(uri.getPath(), null);
+			} else { // opening a nonlocal yes file
+				boolean mkdirOk = AddonManager.mkYesDir();
+				if (!mkdirOk) {
+					new AlertDialog.Builder(this)
+					.setMessage(getString(R.string.tidak_bisa_membuat_folder, AddonManager.getYesPath()))
+					.setPositiveButton(R.string.ok, null)
+					.show();
+					return;
+				}
+
+				File localFile = new File(AddonManager.getYesPath(), filelastname);
+				if (localFile.exists()) {
+					new AlertDialog.Builder(this)
+					.setMessage(getString(R.string.open_yes_file_name_conflict, filelastname, AddonManager.getYesPath()))
+					.setPositiveButton(R.string.ok, null)
+					.show();
+					return;
+				}
+				
+				InputStream input = getContentResolver().openInputStream(uri);
+				copyStreamToFile(input, localFile);
+				input.close();
+				
+				handleFileOpenYes(localFile.getAbsolutePath(), null);
+			}
+		} catch (Exception e) {
+			new AlertDialog.Builder(this)
+			.setMessage(R.string.open_file_cant_read_source)
+			.setPositiveButton(R.string.ok, null)
+			.show();
+			return;
+		}
+	}
+
+	private static void copyStreamToFile(InputStream input, File file) throws IOException {
+		OutputStream output = new BufferedOutputStream(new FileOutputStream(file));
+		byte[] buf = new byte[4096];
+		while (true) {
+			int read = input.read(buf, 0, buf.length);
+			if (read < 0) break;
+			output.write(buf, 0, read);
+		}
+		output.close();
+	}
+
 	private void buildMenu(Menu menu) {
 		menu.clear();
 		getSupportMenuInflater().inflate(R.menu.activity_versions, menu);
@@ -118,6 +258,20 @@ public class VersionsActivity extends BaseActivity {
 		switch (item.getItemId()) {
 		case R.id.menuAdd:
 			clickOnOpenFile();
+			return true;
+		case android.R.id.home:
+			Intent upIntent = new Intent(this, IsiActivity.class);
+            if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                // This activity is not part of the application's task, so create a new task
+                // with a synthesized back stack.
+                TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
+                finish();
+            } else {
+                // This activity is part of the application's task, so simply
+                // navigate up to the hierarchical parent activity.
+                // sample code uses this: NavUtils.navigateUpTo(this, upIntent);
+            	finish();
+            }
 			return true;
 		}
 		
@@ -312,10 +466,7 @@ public class VersionsActivity extends BaseActivity {
 	
 						DownloadThread downloadThread = AddonManager.getDownloadThread(getApplicationContext());
 						final Element e = downloadThread.enqueue(edisi.url, AddonManager.getVersionPath(edisi.presetFilename), downloadListener);
-						if (e != null) {
-							pd.show();
-						}
-	
+						pd.show();
 						pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
 							@Override
 							public void onCancel(DialogInterface dialog) {
@@ -444,6 +595,9 @@ public class VersionsActivity extends BaseActivity {
 			for (MVersionPreset preset: c.presets) {
 				if (filename.equals(AddonManager.getVersionPath(preset.presetFilename))) {
 					dup = true;
+					// automatically activate it (THIS IS A SIDE EFFECT!)
+					preset.setActive(true);
+					adapter.notifyDataSetChanged();
 					break;
 				}
 			}
@@ -506,7 +660,7 @@ public class VersionsActivity extends BaseActivity {
 			return;
 		}
 		
-		ConvertOptionsCallback callback = new ConvertOptionsCallback() {
+		ConvertOptionsDialog.ConvertOptionsCallback callback = new ConvertOptionsDialog.ConvertOptionsCallback() {
 			private void showPdbReadErrorDialog(Throwable exception) {
 				new AlertDialog.Builder(VersionsActivity.this)
 				.setTitle(R.string.ed_error_reading_pdb_file)

@@ -11,7 +11,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.util.Xml;
 import android.view.ContextMenu;
@@ -52,6 +54,7 @@ import org.xmlpull.v1.XmlSerializer;
 import yuku.afw.D;
 import yuku.afw.V;
 import yuku.alkitab.R;
+import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -227,6 +230,20 @@ public class BookmarkActivity extends BaseActivity {
 			})
 			.show();
 			
+			return true;
+		} else if (itemId == android.R.id.home) {
+			Intent upIntent = new Intent(this, IsiActivity.class);
+            if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                // This activity is not part of the application's task, so create a new task
+                // with a synthesized back stack.
+                TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
+                finish();
+            } else {
+                // This activity is part of the application's task, so simply
+                // navigate up to the hierarchical parent activity.
+                // sample code uses this: NavUtils.navigateUpTo(this, upIntent);
+            	finish();
+            }
 			return true;
 		}
 		
