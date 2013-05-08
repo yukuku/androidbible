@@ -32,7 +32,7 @@
             android:layout_toLeftOf="@+id/lDate"
             android:text="Keterangan atau Alamat Ayat dsb"
             android:textColor="#fff"
-            android:textSize="18dp"
+            android:textSize="18sp"
             tools:ignore="HardcodedText" />
 
     </RelativeLayout>

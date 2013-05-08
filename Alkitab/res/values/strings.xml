@@ -249,7 +249,6 @@
 		• [b]Yohanes Nugroho[/b] BiblePlus+ PDB reader[br/]
 		• and many more people who contributed ideas, patches, bug reports, copy of songs, information about Bible translations, etc!</string>
 		
-    <string name="desc_drag_to_reorder_labels">Drag to reorder labels</string>
     <string name="intent_filter_open_yes_file">Open YES file</string>
     <string name="intent_filter_open_pdb_file">Open PDB file</string>
     <string name="intent_filter_open_pdb_or_yes_file">Open PDB/YES file</string>

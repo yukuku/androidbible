@@ -19,7 +19,7 @@
             android:height="48dp"
             android:minEms="3"
             android:text="––––"
-            android:textSize="18dp"
+            android:textSize="18sp"
             tools:ignore="HardcodedText" />
 
         <Button
@@ -29,7 +29,7 @@
             android:height="48dp"
             android:minEms="3"
             android:text="––––"
-            android:textSize="18dp"
+            android:textSize="18sp"
             tools:ignore="HardcodedText" />
 
         <TextView
@@ -44,7 +44,7 @@
             android:height="48dp"
             android:minEms="3"
             android:text="@string/cari_v"
-            android:textSize="18dp" />
+            android:textSize="18sp" />
 
     </LinearLayout>
 
