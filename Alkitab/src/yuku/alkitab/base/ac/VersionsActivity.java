@@ -6,10 +6,12 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -33,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -123,11 +126,57 @@ public class VersionsActivity extends BaseActivity {
 
 		Uri uri = intent.getData();
 		
-		boolean isLocalFile = U.equals("file", uri.getScheme());
-		boolean isYesFile = uri.getPath().endsWith(".yes");
+		final boolean isLocalFile = U.equals("file", uri.getScheme());
+		final Boolean isYesFile; // false:pdb true:yes null:cannotdetermine
+		final String filelastname;
+		
+		if (isLocalFile) {
+			String pathlc = uri.getPath().toLowerCase(Locale.US);
+			if (pathlc.endsWith(".yes")) {
+				isYesFile = true;
+			} else if (pathlc.endsWith(".pdb")) {
+				isYesFile = false;
+			} else {
+				isYesFile = null;
+			}
+			filelastname = uri.getLastPathSegment();
+		} else {
+			// try to read display name from content
+			Cursor c = getContentResolver().query(uri, null, null, null, null);
+			String[] cns = c.getColumnNames();
+			Log.d(TAG, Arrays.toString(cns));
+			c.moveToNext();
+			for (int i = 0, len = c.getColumnCount(); i < len; i++) {
+				Log.d(TAG, cns[i] + ": " + c.getString(i));
+			}
+			
+			int col = c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
+			if (col != -1) {
+				String name = c.getString(col);
+				String namelc = name.toLowerCase(Locale.US);
+				if (namelc.endsWith(".yes")) {
+					isYesFile = true;
+				} else if (namelc.endsWith(".pdb")) {
+					isYesFile = false;
+				} else {
+					isYesFile = null;
+				}
+				filelastname = name;
+			} else {
+				isYesFile = null;
+				filelastname = null;
+			}
+			c.close();
+		}
 		
 		try {
-			if (!isYesFile) { // pdb file
+			if (isYesFile == null) { // can't be determined
+				new AlertDialog.Builder(this)
+				.setMessage(R.string.open_file_unknown_file_format)
+				.setPositiveButton(R.string.ok, null)
+				.show();
+				return;
+			} else if (!isYesFile) { // pdb file
 				// copy the file to cache first
 				File cacheFile = new File(getCacheDir(), "datafile");
 				InputStream input = getContentResolver().openInputStream(uri);
@@ -147,11 +196,10 @@ public class VersionsActivity extends BaseActivity {
 					return;
 				}
 
-				String yesname = uri.getLastPathSegment();
-				File localFile = new File(AddonManager.getYesPath(), yesname);
+				File localFile = new File(AddonManager.getYesPath(), filelastname);
 				if (localFile.exists()) {
 					new AlertDialog.Builder(this)
-					.setMessage(getString(R.string.open_yes_file_name_conflict, localFile.getName(), AddonManager.getYesPath()))
+					.setMessage(getString(R.string.open_yes_file_name_conflict, filelastname, AddonManager.getYesPath()))
 					.setPositiveButton(R.string.ok, null)
 					.show();
 					return;
@@ -530,6 +578,9 @@ public class VersionsActivity extends BaseActivity {
 			for (MVersionPreset preset: c.presets) {
 				if (filename.equals(AddonManager.getVersionPath(preset.presetFilename))) {
 					dup = true;
+					// automatically activate it (THIS IS A SIDE EFFECT!)
+					preset.setActive(true);
+					adapter.notifyDataSetChanged();
 					break;
 				}
 			}
