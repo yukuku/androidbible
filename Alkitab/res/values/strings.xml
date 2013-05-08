@@ -172,7 +172,7 @@
     <string name="rename_label">Rename label</string>
     <string name="delete_label">Delete label</string>
     <string name="please_wait_titik3">Please wait…</string>
-    <string name="juga_hapus_file_datanya_file">Also delete the data file?\nFile: %s</string>
+    <string name="juga_hapus_file_datanya_file">Also delete the data file \'%s\'?</string>
     <string name="get_more_fonts">Download more fonts…</string>
     <string name="about_translators">Translators:</string>
     <string name="intent_filter_import_from_backup">Import from backup</string>
@@ -256,4 +256,5 @@
 	<string name="open_yes_file_name_conflict">A YES file named \'%1$s\' already exists in \'%2$s\'.</string>
 	<string name="open_file_cant_read_source">The source could not be successfully read.</string>
 	<string name="open_file_unknown_file_format">Could not determine whether this is a PDB or YES file.</string>
+	<string name="version_preset_delete_filename">Delete the data file \'%s\'?</string>
 </resources>

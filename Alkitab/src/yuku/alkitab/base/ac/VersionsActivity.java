@@ -305,25 +305,29 @@ public class VersionsActivity extends BaseActivity {
 		} else {
 			getMenuInflater().inflate(R.menu.context_version, menu);
 		
-			android.view.MenuItem menuBuang = menu.findItem(R.id.menuDelete);
-			if (menuBuang != null) {
-				menuBuang.setEnabled(false);
-				MVersion item = adapter.getItem(info.position);
-				if (item instanceof MVersionYes) {
-					menuBuang.setEnabled(true);
+			android.view.MenuItem menuDelete = menu.findItem(R.id.menuDelete);
+			if (menuDelete == null) return;
+			
+			MVersion mv = adapter.getItem(info.position);
+			if (mv instanceof MVersionInternal) {
+				menuDelete.setEnabled(false);
+			} else if (mv instanceof MVersionPreset) {
+				if (!AddonManager.hasVersion(((MVersionPreset) mv).presetFilename)) {
+					menuDelete.setEnabled(false);
 				}
 			}
 		}
 	}
 	
 	@Override public boolean onContextItemSelected(android.view.MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.menuDelete: {
-			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-			final MVersion mv = adapter.getItem(info.position);
+		int itemId = item.getItemId();
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		final MVersion mv = adapter.getItem(info.position);
+		
+		if (itemId == R.id.menuDelete) {
 			if (mv instanceof MVersionYes) {
 				final MVersionYes mvYes = (MVersionYes) mv;
-				new AlertDialog.Builder(VersionsActivity.this)
+				new AlertDialog.Builder(this)
 				.setMessage(getString(R.string.juga_hapus_file_datanya_file, mvYes.filename))
 				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
@@ -341,12 +345,22 @@ public class VersionsActivity extends BaseActivity {
 					}
 				})
 				.show();
+			} else if (mv instanceof MVersionPreset) {
+				final MVersionPreset mvPreset = (MVersionPreset) mv;
+				new AlertDialog.Builder(this)
+				.setMessage(getString(R.string.version_preset_delete_filename, mvPreset.presetFilename))
+				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+					@Override public void onClick(DialogInterface dialog, int which) {
+						mvPreset.setActive(false);
+						new File(AddonManager.getVersionPath(mvPreset.presetFilename)).delete();
+						adapter.notifyDataSetChanged();
+					}
+				})
+				.setNegativeButton(R.string.no, null)
+				.show();
 			}
 			return true;
-		}
-		case R.id.menuDetails: {
-			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-			MVersion mv = adapter.getItem(info.position);
+		} else if (itemId == R.id.menuDetails) {
 			StringBuilder details = new StringBuilder();
 			if (mv instanceof MVersionInternal) details.append(getString(R.string.ed_type_built_in) + '\n');
 			if (mv instanceof MVersionPreset) details.append(getString(R.string.ed_type_preset) + '\n');
@@ -372,15 +386,12 @@ public class VersionsActivity extends BaseActivity {
 					details.append(getString(R.string.ed_version_info_info, yes.description) + '\n');
 				}
 			}
-			
 			new AlertDialog.Builder(this)
 			.setTitle(R.string.ed_version_details)
 			.setMessage(details)
 			.setPositiveButton(R.string.ok, null)
 			.show();
-			
 			return true;
-		}
 		}
 		return false;
 	}
