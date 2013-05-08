@@ -20,7 +20,7 @@
         android:title="@string/versi"/>
     <item
         android:id="@+id/menuAddSomething"
-        android:icon="@drawable/ic_menu_add"
+        android:icon="@drawable/ic_menu_add_light"
         android:showAsAction="always"
         android:title="@string/menuAddSomething">
         <menu>

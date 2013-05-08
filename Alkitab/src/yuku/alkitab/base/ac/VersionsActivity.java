@@ -78,7 +78,7 @@ public class VersionsActivity extends BaseActivity {
 
 	private static final int REQCODE_openFile = 1;
 	
-	ListView lsEdisi;
+	ListView lsVersions;
 	VersionAdapter adapter;
 	
 	Map<String, String> cache_displayLanguage = new HashMap<String, String>();
@@ -97,11 +97,11 @@ public class VersionsActivity extends BaseActivity {
 		adapter = new VersionAdapter();
 		adapter.init();
 		
-		lsEdisi = (ListView) findViewById(R.id.lsEdisi);
-		lsEdisi.setAdapter(adapter);
-		lsEdisi.setOnItemClickListener(lsEdisi_itemClick);
+		lsVersions = V.get(this, R.id.lsVersions);
+		lsVersions.setAdapter(adapter);
+		lsVersions.setOnItemClickListener(lsVersions_itemClick);
 		
-		registerForContextMenu(lsEdisi);
+		registerForContextMenu(lsVersions);
 		
 		processIntent(getIntent(), "onCreate");
 	}
@@ -278,16 +278,16 @@ public class VersionsActivity extends BaseActivity {
 		return super.onOptionsItemSelected(item);
 	}
 	
-	private OnItemClickListener lsEdisi_itemClick = new OnItemClickListener() {
+	private OnItemClickListener lsVersions_itemClick = new OnItemClickListener() {
 		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 			MVersion item = adapter.getItem(position);
 			
 			if (item instanceof MVersionInternal) {
 				// ga ngapa2in, wong internal ko
 			} else if (item instanceof MVersionPreset) {
-				clickOnPresetVersion((CheckBox) v.findViewById(R.id.cAktif), (MVersionPreset) item);
+				clickOnPresetVersion(V.<CheckBox>get(v, R.id.cActive), (MVersionPreset) item);
 			} else if (item instanceof MVersionYes) {
-				clickOnYesVersion((CheckBox) v.findViewById(R.id.cAktif), (MVersionYes) item);
+				clickOnYesVersion(V.<CheckBox>get(v, R.id.cActive), (MVersionYes) item);
 			} else if (position == adapter.getCount() - 1) {
 				clickOnOpenFile();
 			}
@@ -301,7 +301,7 @@ public class VersionsActivity extends BaseActivity {
 		if (menu == null) return;
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
 		if (info.position == adapter.getCount() - 1) {
-			// ga ada menu untuk Buka file
+			// no context menu for "open pdb"
 		} else {
 			getMenuInflater().inflate(R.menu.context_version, menu);
 		
@@ -320,22 +320,22 @@ public class VersionsActivity extends BaseActivity {
 		switch (item.getItemId()) {
 		case R.id.menuDelete: {
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-			final MVersion edisi = adapter.getItem(info.position);
-			if (edisi instanceof MVersionYes) {
-				final MVersionYes edisiYes = (MVersionYes) edisi;
+			final MVersion mv = adapter.getItem(info.position);
+			if (mv instanceof MVersionYes) {
+				final MVersionYes mvYes = (MVersionYes) mv;
 				new AlertDialog.Builder(VersionsActivity.this)
-				.setMessage(getString(R.string.juga_hapus_file_datanya_file, edisiYes.filename))
+				.setMessage(getString(R.string.juga_hapus_file_datanya_file, mvYes.filename))
 				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
-						S.getDb().deleteYesVersion(edisiYes);
+						S.getDb().deleteYesVersion(mvYes);
 						adapter.initYesVersionList();
 						adapter.notifyDataSetChanged();
-						new File(edisiYes.filename).delete();
+						new File(mvYes.filename).delete();
 					}
 				})
 				.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
-						S.getDb().deleteYesVersion(edisiYes);
+						S.getDb().deleteYesVersion(mvYes);
 						adapter.initYesVersionList();
 						adapter.notifyDataSetChanged();
 					}
@@ -346,15 +346,15 @@ public class VersionsActivity extends BaseActivity {
 		}
 		case R.id.menuDetails: {
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-			MVersion edisi = adapter.getItem(info.position);
+			MVersion mv = adapter.getItem(info.position);
 			StringBuilder details = new StringBuilder();
-			if (edisi instanceof MVersionInternal) details.append(getString(R.string.ed_type_built_in) + '\n');
-			if (edisi instanceof MVersionPreset) details.append(getString(R.string.ed_type_preset) + '\n');
-			if (edisi instanceof MVersionYes) details.append(getString(R.string.ed_type_add_on) + '\n');
-			if (edisi.shortName != null) details.append(getString(R.string.ed_shortName_shortName, edisi.shortName) + '\n');
-			details.append(getString(R.string.ed_title_title, edisi.longName) + '\n');
-			if (edisi instanceof MVersionPreset) {
-				MVersionPreset preset = (MVersionPreset) edisi;
+			if (mv instanceof MVersionInternal) details.append(getString(R.string.ed_type_built_in) + '\n');
+			if (mv instanceof MVersionPreset) details.append(getString(R.string.ed_type_preset) + '\n');
+			if (mv instanceof MVersionYes) details.append(getString(R.string.ed_type_add_on) + '\n');
+			if (mv.shortName != null) details.append(getString(R.string.ed_shortName_shortName, mv.shortName) + '\n');
+			details.append(getString(R.string.ed_title_title, mv.longName) + '\n');
+			if (mv instanceof MVersionPreset) {
+				MVersionPreset preset = (MVersionPreset) mv;
 				if (AddonManager.hasVersion(preset.presetFilename)) {
 					details.append(getString(R.string.ed_stored_in_file, AddonManager.getVersionPath(preset.presetFilename)) + '\n');
 				} else {
@@ -362,8 +362,8 @@ public class VersionsActivity extends BaseActivity {
 					details.append(getString(R.string.ed_download_url_url, preset.url) + '\n');
 				}
 			}
-			if (edisi instanceof MVersionYes) {
-				MVersionYes yes = (MVersionYes) edisi;
+			if (mv instanceof MVersionYes) {
+				MVersionYes yes = (MVersionYes) mv;
 				if (yes.originalPdbFilename != null) {
 					details.append(getString(R.string.ed_pdb_file_name_original_file, yes.originalPdbFilename) + '\n');
 				}
@@ -385,13 +385,13 @@ public class VersionsActivity extends BaseActivity {
 		return false;
 	}
 	
-	void clickOnPresetVersion(final CheckBox cAktif, final MVersionPreset edisi) {
-		if (cAktif.isChecked()) {
-			edisi.setActive(false);
+	void clickOnPresetVersion(final CheckBox cActive, final MVersionPreset mv) {
+		if (cActive.isChecked()) {
+			mv.setActive(false);
 		} else {
 			// tergantung uda ada belum, kalo uda ada filenya sih centang aja
-			if (edisi.hasDataFile()) {
-				edisi.setActive(true);
+			if (mv.hasDataFile()) {
+				mv.setActive(true);
 			} else {
 				DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
 					final ProgressDialog pd = new ProgressDialog(VersionsActivity.this);
@@ -401,7 +401,7 @@ public class VersionsActivity extends BaseActivity {
 							VersionsActivity.this.runOnUiThread(new Runnable() {
 								@Override public void run() {
 									Toast.makeText(getApplicationContext(),
-										getString(R.string.selesai_mengunduh_edisi_judul_disimpan_di_path, edisi.longName, AddonManager.getVersionPath(edisi.presetFilename)),
+										getString(R.string.selesai_mengunduh_edisi_judul_disimpan_di_path, mv.longName, AddonManager.getVersionPath(mv.presetFilename)),
 										Toast.LENGTH_LONG).show();
 								}
 							});
@@ -409,13 +409,13 @@ public class VersionsActivity extends BaseActivity {
 						}
 						
 						@Override
-						public void onDownloadFailed(Element e, final String keterangan, final Throwable t) {
+						public void onDownloadFailed(Element e, final String description, final Throwable t) {
 							VersionsActivity.this.runOnUiThread(new Runnable() {
 								@Override public void run() {
 									Toast.makeText(
-										getApplicationContext(),
-										keterangan != null ? keterangan : getString(R.string.gagal_mengunduh_edisi_judul_ex_pastikan_internet, edisi.longName,
-											t == null ? "null" : t.getClass().getCanonicalName() + ": " + t.getMessage()), Toast.LENGTH_LONG).show(); //$NON-NLS-1$ //$NON-NLS-2$
+									getApplicationContext(),
+									description != null ? description : getString(R.string.gagal_mengunduh_edisi_judul_ex_pastikan_internet, mv.longName,
+										t == null ? "null" : t.getClass().getCanonicalName() + ": " + t.getMessage()), Toast.LENGTH_LONG).show(); //$NON-NLS-1$ //$NON-NLS-2$
 								}
 							});
 							pd.dismiss();
@@ -451,13 +451,13 @@ public class VersionsActivity extends BaseActivity {
 						pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 						pd.setCancelable(true);
 						pd.setIndeterminate(true);
-						pd.setTitle(getString(R.string.mengunduh_nama, edisi.presetFilename));
+						pd.setTitle(getString(R.string.mengunduh_nama, mv.presetFilename));
 						pd.setMessage(getString(R.string.mulai_mengunduh));
 						pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
 							@Override
 							public void onDismiss(DialogInterface dialog) {
-								if (AddonManager.hasVersion(edisi.presetFilename)) {
-									edisi.setActive(true);
+								if (AddonManager.hasVersion(mv.presetFilename)) {
+									mv.setActive(true);
 								}
 								adapter.initYesVersionList();
 								adapter.notifyDataSetChanged();
@@ -465,7 +465,7 @@ public class VersionsActivity extends BaseActivity {
 						});
 	
 						DownloadThread downloadThread = AddonManager.getDownloadThread(getApplicationContext());
-						final Element e = downloadThread.enqueue(edisi.url, AddonManager.getVersionPath(edisi.presetFilename), downloadListener);
+						final Element e = downloadThread.enqueue(mv.url, AddonManager.getVersionPath(mv.presetFilename), downloadListener);
 						pd.show();
 						pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
 							@Override
@@ -477,7 +477,7 @@ public class VersionsActivity extends BaseActivity {
 				};
 				
 				new AlertDialog.Builder(VersionsActivity.this)
-				.setMessage(getString(R.string.file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya, AddonManager.getVersionPath(edisi.presetFilename)))
+				.setMessage(getString(R.string.file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya, AddonManager.getVersionPath(mv.presetFilename)))
 				.setPositiveButton(R.string.yes, clickListener)
 				.setNegativeButton(R.string.no, null)
 				.show();
@@ -485,18 +485,18 @@ public class VersionsActivity extends BaseActivity {
 		}
 	}
 
-	void clickOnYesVersion(final CheckBox cAktif, final MVersionYes edisi) {
-		if (cAktif.isChecked()) {
-			edisi.setActive(false);
+	void clickOnYesVersion(final CheckBox cActive, final MVersionYes mv) {
+		if (cActive.isChecked()) {
+			mv.setActive(false);
 		} else {
-			if (edisi.hasDataFile()) {
-				edisi.setActive(true);
+			if (mv.hasDataFile()) {
+				mv.setActive(true);
 			} else {
 				new AlertDialog.Builder(this)
-				.setMessage(getString(R.string.the_file_for_this_version_is_no_longer_available_file, edisi.filename))
+				.setMessage(getString(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename))
 				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
-						S.getDb().deleteYesVersion(edisi);
+						S.getDb().deleteYesVersion(mv);
 						adapter.initYesVersionList();
 						adapter.notifyDataSetChanged();
 					}
@@ -560,7 +560,7 @@ public class VersionsActivity extends BaseActivity {
 								
 								boolean renameOk = new File(tmpfile3).renameTo(maybeDecompressed);
 								if (!renameOk) {
-									throw new RuntimeException("Gagal rename!"); //$NON-NLS-1$
+									throw new RuntimeException("Failed to rename!"); //$NON-NLS-1$
 								}
 							} catch (Exception e) {
 								return null;
@@ -588,7 +588,7 @@ public class VersionsActivity extends BaseActivity {
 		}
 	}
 	
-	void handleFileOpenYes(String filename, String namapdbasal) {
+	void handleFileOpenYes(String filename, String originalpdbname) {
 		{ // cari dup
 			boolean dup = false;
 			AppConfig c = AppConfig.get();
@@ -615,8 +615,8 @@ public class VersionsActivity extends BaseActivity {
 		
 		try {
 			BibleReader pembaca = YesReaderFactory.createYesReader(filename);
-			int urutanTerbesar = S.getDb().getYesVersionMaxOrdering();
-			if (urutanTerbesar == 0) urutanTerbesar = 100; // default
+			int maxOrdering = S.getDb().getYesVersionMaxOrdering();
+			if (maxOrdering == 0) maxOrdering = 100; // default
 			
 			MVersionYes yes = new MVersionYes();
 			yes.type = Db.Version.kind_yes;
@@ -624,8 +624,8 @@ public class VersionsActivity extends BaseActivity {
 			yes.longName = pembaca.getLongName();
 			yes.description = pembaca.getDescription();
 			yes.filename = filename;
-			yes.originalPdbFilename = namapdbasal;
-			yes.ordering = urutanTerbesar + 1;
+			yes.originalPdbFilename = originalpdbname;
+			yes.ordering = maxOrdering + 1;
 			
 			S.getDb().insertYesVersionWithActive(yes, true);
 			adapter.initYesVersionList();
@@ -640,7 +640,7 @@ public class VersionsActivity extends BaseActivity {
 	}
 
 	private void handleFileOpenPdb(final String pdbFilename) {
-		final String yesName = yesName(pdbFilename, 1);
+		final String yesName = yesName(pdbFilename);
 		
 		// cek apakah sudah ada.
 		if (S.getDb().hasYesVersionWithFilename(AddonManager.getVersionPath(yesName))) {
@@ -669,12 +669,12 @@ public class VersionsActivity extends BaseActivity {
 				.show();
 			};
 
-			private void showResult(final String namafilepdb, final String namafileyes, Throwable exception, List<String> wronglyConvertedBookNames) {
+			private void showResult(final String filenamepdb, final String filenameyes, Throwable exception, List<String> wronglyConvertedBookNames) {
 				if (exception != null) {
 					showPdbReadErrorDialog(exception);
 				} else {
 					// sukses.
-					handleFileOpenYes(namafileyes, new File(namafilepdb).getName());
+					handleFileOpenYes(filenameyes, new File(filenamepdb).getName());
 					
 					if (wronglyConvertedBookNames != null && wronglyConvertedBookNames.size() > 0) {
 						StringBuilder msg = new StringBuilder(getString(R.string.ed_the_following_books_from_the_pdb_file_are_not_recognized) + '\n');
@@ -749,11 +749,11 @@ public class VersionsActivity extends BaseActivity {
 	/**
 	 * @return a filename for yes that will be converted from pdb file, such as "pdb-1234abcd-1.yes". Path not included.
 	 */
-	private String yesName(String namafilepdb, int versi) {
-		byte[] digest = Digester.digestFile(DigestType.SHA1, new File(namafilepdb));
+	private String yesName(String filenamepdb) {
+		byte[] digest = Digester.digestFile(DigestType.SHA1, new File(filenamepdb));
 		if (digest == null) return null;
 		String hash = Digester.toHex(digest).substring(0, 8);
-		return "pdb-" + hash + "-" + String.valueOf(versi) + ".yes";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		return "pdb-" + hash + "-1.yes";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 
 	// model
@@ -763,11 +763,11 @@ public class VersionsActivity extends BaseActivity {
 		public int type;
 		public int ordering;
 		
-		/** id unik untuk dibandingkan */
+		/** unique id for comparison purposes */
 		public abstract String getVersionId();
-		/** return edisi supaya bisa mulai dibaca. null kalau ga memungkinkan */
+		/** return version so that it can be read. Null when not possible */
 		public abstract Version getVersion();
-		public abstract void setActive(boolean aktif);
+		public abstract void setActive(boolean active);
 		public abstract boolean getActive();
 		public abstract boolean hasDataFile();
 	}
@@ -787,17 +787,17 @@ public class VersionsActivity extends BaseActivity {
 		}
 
 		@Override
-		public void setActive(boolean aktif) {
+		public void setActive(boolean active) {
 			// NOOP
 		}
 
 		@Override
 		public boolean getActive() {
-			return true; // selalu aktif
+			return true; // always active
 		}
 
 		@Override public boolean hasDataFile() {
-			return true; // selalu ada
+			return true; // always has
 		}
 	}
 	
@@ -810,8 +810,8 @@ public class VersionsActivity extends BaseActivity {
 			return Preferences.getBoolean("edisi/preset/" + this.presetFilename + "/aktif", true); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
-		@Override public void setActive(boolean aktif) {
-			Preferences.setBoolean("edisi/preset/" + this.presetFilename + "/aktif", aktif); //$NON-NLS-1$ //$NON-NLS-2$
+		@Override public void setActive(boolean active) {
+			Preferences.setBoolean("edisi/preset/" + this.presetFilename + "/aktif", active); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		@Override
@@ -859,9 +859,9 @@ public class VersionsActivity extends BaseActivity {
 		}
 
 		@Override
-		public void setActive(boolean aktif) {
-			this.cache_active = aktif;
-			S.getDb().setYesVersionActive(this.filename, aktif);
+		public void setActive(boolean active) {
+			this.cache_active = active;
+			S.getDb().setYesVersionActive(this.filename, active);
 		}
 
 		@Override
@@ -929,39 +929,34 @@ public class VersionsActivity extends BaseActivity {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_version, null);
 			
-			CheckBox cAktif = V.get(res, R.id.cAktif);
-			TextView lJudul = V.get(res, R.id.lCaption);
-			TextView lNamafile = V.get(res, R.id.lNamafile);
-			TextView lBahasa = V.get(res, R.id.lBahasa);
+			CheckBox cActive = V.get(res, R.id.cActive);
+			TextView lLongTitle = V.get(res, R.id.lLongTitle);
+			TextView lDescription = V.get(res, R.id.lDescription);
+			TextView lLanguage = V.get(res, R.id.lLanguage);
 			
 			if (position == getCount() - 1) { // open file
-				cAktif.setVisibility(View.GONE);
-				lJudul.setText(R.string.ed_buka_file_pdb_yes_lainnya);
-				lJudul.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_add, 0, 0, 0);
-				lNamafile.setVisibility(View.GONE);
-				lBahasa.setVisibility(View.GONE);
+				cActive.setVisibility(View.GONE);
+				lLongTitle.setText(R.string.ed_buka_file_pdb_yes_lainnya);
+				lLongTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_add_dark, 0, 0, 0);
+				lDescription.setVisibility(View.GONE);
+				lLanguage.setVisibility(View.GONE);
 			} else { // one of the available versions
-				MVersion medisi = getItem(position);
-				cAktif.setVisibility(View.VISIBLE);
-				cAktif.setFocusable(false);
-				cAktif.setClickable(false);
-				cAktif.setChecked(medisi.getActive());
-				lJudul.setText(medisi.longName);
-				lJudul.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-				if (medisi instanceof MVersionInternal) {
-					cAktif.setEnabled(false);
-					lNamafile.setVisibility(View.GONE);
-					lBahasa.setVisibility(View.GONE);
-				} else if (medisi instanceof MVersionPreset) {
-					cAktif.setEnabled(true);
-					String namafile_preset = ((MVersionPreset) medisi).presetFilename;
-					String locale = ((MVersionPreset) medisi).locale;
-					if (AddonManager.hasVersion(namafile_preset)) {
-						lNamafile.setVisibility(View.GONE);
-					} else {
-						lNamafile.setVisibility(View.VISIBLE);
-						lNamafile.setText(R.string.ed_tekan_untuk_mengunduh);
-					}
+				MVersion mv = getItem(position);
+				cActive.setVisibility(View.VISIBLE);
+				cActive.setFocusable(false);
+				cActive.setClickable(false);
+				cActive.setChecked(mv.getActive());
+				lLongTitle.setText(mv.longName);
+				lLongTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+				if (mv instanceof MVersionInternal) {
+					cActive.setEnabled(false);
+					lDescription.setVisibility(View.GONE);
+					lLanguage.setVisibility(View.GONE);
+				} else if (mv instanceof MVersionPreset) {
+					cActive.setEnabled(true);
+					String locale = ((MVersionPreset) mv).locale;
+					lDescription.setVisibility(View.GONE);
+					
 					if (locale != null && locale.length() > 0) {
 						String display = cache_displayLanguage.get(locale);
 						if (display == null) {
@@ -973,24 +968,24 @@ public class VersionsActivity extends BaseActivity {
 						}
 						
 						if (display != null) {
-							lBahasa.setVisibility(View.VISIBLE);
-							lBahasa.setText(display);
+							lLanguage.setVisibility(View.VISIBLE);
+							lLanguage.setText(display);
 						} else {
-							lBahasa.setVisibility(View.GONE);
+							lLanguage.setVisibility(View.GONE);
 						}
 					} else {
-						lBahasa.setVisibility(View.GONE);
+						lLanguage.setVisibility(View.GONE);
 					}
-				} else if (medisi instanceof MVersionYes) {
-					cAktif.setEnabled(true);
-					lNamafile.setVisibility(View.VISIBLE);
-					lBahasa.setVisibility(View.GONE);
-					MVersionYes yes = (MVersionYes) medisi;
+				} else if (mv instanceof MVersionYes) {
+					cActive.setEnabled(true);
+					lDescription.setVisibility(View.VISIBLE);
+					lLanguage.setVisibility(View.GONE);
+					MVersionYes yes = (MVersionYes) mv;
 					String extra = ""; //$NON-NLS-1$
 					if (yes.description != null) {
 						extra += yes.description;
 					}
-					lNamafile.setText(extra);
+					lDescription.setText(extra);
 				}
 			}
 			
