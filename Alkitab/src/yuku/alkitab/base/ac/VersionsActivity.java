@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
+import android.support.v4.app.ShareCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -77,6 +78,7 @@ public class VersionsActivity extends BaseActivity {
 	public static final String TAG = VersionsActivity.class.getSimpleName();
 
 	private static final int REQCODE_openFile = 1;
+	private static final int REQCODE_share = 2;
 	
 	ListView lsVersions;
 	VersionAdapter adapter;
@@ -306,14 +308,30 @@ public class VersionsActivity extends BaseActivity {
 			getMenuInflater().inflate(R.menu.context_version, menu);
 		
 			android.view.MenuItem menuDelete = menu.findItem(R.id.menuDelete);
-			if (menuDelete == null) return;
-			
-			MVersion mv = adapter.getItem(info.position);
-			if (mv instanceof MVersionInternal) {
-				menuDelete.setEnabled(false);
-			} else if (mv instanceof MVersionPreset) {
-				if (!AddonManager.hasVersion(((MVersionPreset) mv).presetFilename)) {
+			if (menuDelete != null) {
+				MVersion mv = adapter.getItem(info.position);
+				if (mv instanceof MVersionInternal) {
 					menuDelete.setEnabled(false);
+				} else if (mv instanceof MVersionPreset) {
+					if (!AddonManager.hasVersion(((MVersionPreset) mv).presetFilename)) {
+						menuDelete.setEnabled(false);
+					}
+				}
+			}
+			
+			android.view.MenuItem menuSend = menu.findItem(R.id.menuShare);
+			if (menuSend != null) {
+				MVersion mv = adapter.getItem(info.position);
+				if (mv instanceof MVersionInternal) {
+					menuSend.setEnabled(false);
+				} else if (mv instanceof MVersionPreset) {
+					if (!AddonManager.hasVersion(((MVersionPreset) mv).presetFilename)) {
+						menuSend.setEnabled(false);
+					}
+				} else if (mv instanceof MVersionYes) {
+					if (!mv.hasDataFile()) {
+						menuSend.setEnabled(false);
+					}
 				}
 			}
 		}
@@ -392,8 +410,24 @@ public class VersionsActivity extends BaseActivity {
 			.setPositiveButton(R.string.ok, null)
 			.show();
 			return true;
+		} else if (itemId == R.id.menuShare) {
+			ShareCompat.IntentBuilder builder = ShareCompat.IntentBuilder.from(this)
+			.setType("application/octet-stream");
+			
+			if (mv instanceof MVersionYes) {
+				MVersionYes mvYes = (MVersionYes) mv;
+				builder.addStream(Uri.fromFile(new File(mvYes.filename)));
+				startActivityForResult(ShareActivity.createIntent(builder.getIntent(), getString(R.string.version_share_title)), REQCODE_share);
+			} else if (mv instanceof MVersionPreset) {
+				MVersionPreset mvPreset = (MVersionPreset) mv;
+				builder.addStream(Uri.fromFile(new File(AddonManager.getVersionPath(mvPreset.presetFilename))));
+				startActivityForResult(ShareActivity.createIntent(builder.getIntent(), getString(R.string.version_share_title)), REQCODE_share);
+			}
+			
+			return true;
 		}
-		return false;
+		
+		return super.onContextItemSelected(item);
 	}
 	
 	void clickOnPresetVersion(final CheckBox cActive, final MVersionPreset mv) {
@@ -595,6 +629,11 @@ public class VersionsActivity extends BaseActivity {
 				handleFileOpenPdb(filename);
 			} else {
 				Toast.makeText(getApplicationContext(), R.string.ed_invalid_file_selected, Toast.LENGTH_SHORT).show();
+			}
+		} else if (requestCode == REQCODE_share) {
+			ShareActivity.Result result = ShareActivity.obtainResult(data);
+			if (result != null && result.chosenIntent != null) {
+				startActivity(result.chosenIntent);
 			}
 		}
 	}

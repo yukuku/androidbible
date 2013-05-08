@@ -256,4 +256,6 @@
 	<string name="open_file_cant_read_source">The source could not be successfully read.</string>
 	<string name="open_file_unknown_file_format">Could not determine whether this is a PDB or YES file.</string>
 	<string name="version_preset_delete_filename">Delete the data file \'%s\'?</string>
+	<string name="version_menu_share">Share</string>
+	<string name="version_share_title">Share version to:</string>
 </resources>
