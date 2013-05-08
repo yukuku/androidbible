@@ -74,7 +74,7 @@
     <string name="no">No</string>
     <string name="yes">Yes</string>
     <string name="anda_yakin_mau_menghapus_catatan_ini">Are you sure you want to delete this note?</string>
-    <string name="hapus_catatan">Delete Note</string>
+    <string name="hapus_catatan">Delete note</string>
     <string name="catatan_alamat">Note on %s</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
