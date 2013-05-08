@@ -73,7 +73,7 @@
                 android:contentDescription="@string/desc_previous_chapter"
                 android:padding="16dp"
                 android:scaleType="center"
-                android:src="@drawable/ic_nav_arrow_left" />
+                android:src="@drawable/ic_nav_left_light" />
 
             <Button
                 android:id="@+id/bGoto"
@@ -94,7 +94,7 @@
                 android:contentDescription="@string/desc_next_chapter"
                 android:padding="16dp"
                 android:scaleType="center"
-                android:src="@drawable/ic_nav_arrow_right" />
+                android:src="@drawable/ic_nav_right_light" />
         </LinearLayout>
     </LinearLayout>
 

@@ -7,11 +7,11 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:background="@drawable/popup"
         android:gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-		android:padding="8dp" 
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:padding="8dp" >
 
         <Button
             android:id="@+id/bChange"
@@ -24,14 +24,13 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal" >
 
             <ImageButton
                 android:id="@+id/bPrev"
                 style="@style/DevotionSelectNavButton"
                 android:contentDescription="@string/desc_previous_day"
-                android:src="@drawable/ic_nav_arrow_left" />
+                android:src="@drawable/ic_nav_left_dark" />
 
             <TextView
                 android:id="@+id/tCurrentDate"
@@ -45,8 +44,7 @@
                 android:id="@+id/bNext"
                 style="@style/DevotionSelectNavButton"
                 android:contentDescription="@string/desc_next_day"
-                android:src="@drawable/ic_nav_arrow_right" />
-
+                android:src="@drawable/ic_nav_right_dark" />
         </LinearLayout>
     </LinearLayout>
 
