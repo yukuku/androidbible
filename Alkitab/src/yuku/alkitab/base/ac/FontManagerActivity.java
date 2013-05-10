@@ -46,7 +46,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 	
 	private static final String URL_fontList = "http://alkitab-host.appspot.com/addon/fonts/v1/list-v2.txt"; //$NON-NLS-1$
 	private static final String URL_fontData = "http://alkitab-host.appspot.com/addon/fonts/v1/data/%s.zip"; //$NON-NLS-1$
-	private static final String URL_fontPreview = "http://alkitab-host.appspot.com/addon/fonts/v1/preview/%s-384x84.png"; //$NON-NLS-1$
+	private static final String URL_fontPreview = "http://alkitab-host.appspot.com/addon/fonts/v1/preview-black/%s-384x84.png"; //$NON-NLS-1$
 
 	public static Intent createIntent() {
 		return new Intent(App.context, FontManagerActivity.class);
@@ -273,7 +273,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 				if (dls.getEntry(dlkey) == null) {
 					new File(FontManager.getFontsPath()).mkdirs();
 					dls.startDownload(
-						dlkey, 
+						dlkey,
 						String.format(URL_fontData, item.name),
 						getFontDownloadDestination(item.name)
 					);
@@ -326,7 +326,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 		
 		if (entry.state == DownloadService.State.finished) {
 			String fontName = getFontNameFromDownloadKey(entry.key);
-			if (fontName == null) { // this download doesn't belong to font manager. 
+			if (fontName == null) { // this download doesn't belong to font manager.
 				return;
 			}
 			
