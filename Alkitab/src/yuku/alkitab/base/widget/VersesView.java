@@ -141,7 +141,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		
 		if (mode == VerseSelectionMode.singleClick) {
 			setSelector(originalSelector);
-			uncheckAll();
+			uncheckAllVerses(false);
 			setChoiceMode(ListView.CHOICE_MODE_NONE);
 		} else if (mode == VerseSelectionMode.multiple) {
 			setSelector(new ColorDrawable(0x0));
@@ -222,7 +222,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		}
 	};
 
-	public void uncheckAll() {
+	public void uncheckAllVerses(boolean callListener) {
 		SparseBooleanArray checkedPositions = getCheckedItemPositions();
 		if (checkedPositions != null && checkedPositions.size() > 0) {
 			for (int i = checkedPositions.size() - 1; i >= 0; i--) {
@@ -231,9 +231,35 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 				}
 			}
 		}
-		if (listener != null) listener.onNoVersesSelected(this);
+		
+		if (callListener) {
+			if (listener != null) listener.onNoVersesSelected(this);
+		}
 	}
-
+	
+	public void checkVerses(IntArrayList verses_1, boolean callListener) {
+		uncheckAllVerses(false);
+		
+		int checked_count = 0;
+		for (int i = 0, len = verses_1.size(); i < len; i++) {
+			int verse_1 = verses_1.get(i);
+			int count = adapter.getCount();
+			int pos = adapter.getPositionIgnoringPericopeFromVerse(verse_1);
+			if (pos != -1 && pos < count) {
+				setItemChecked(pos, true);
+				checked_count++;
+			}
+		}
+		
+		if (callListener) {
+			if (checked_count > 0) {
+				if (listener != null) listener.onSomeVersesSelected(this);
+			} else {
+				if (listener != null) listener.onNoVersesSelected(this);
+			}
+		}
+	}
+	
 	void hideOrShowContextMenuButton() {
 		if (verseSelectionMode != VerseSelectionMode.multiple) return;
 		
@@ -330,7 +356,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		}
 		
 		//# fill adapter with new data. make sure all checked states are reset
-		uncheckAll();
+		uncheckAllVerses(true);
 		setData(book, chapter_1, verses, pericope_aris, pericope_blocks, nblock, xrefEntryCounts);
 		loadAttributeMap();
 		

@@ -231,11 +231,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsText.setOnVerseScrollListener(lsText_verseScroll);
 		
 		// additional setup for split1
-		lsSplit1.setVerseSelectionMode(VersesView.VerseSelectionMode.none);
+		lsSplit1.setVerseSelectionMode(VersesView.VerseSelectionMode.multiple);
 		lsSplit1.setEmptyView(tSplitEmpty);
 		lsSplit1.setParallelListener(parallelListener);
 		lsSplit1.setAttributeListener(attributeListener);
 		lsSplit1.setXrefListener(xrefListener);
+		lsSplit1.setSelectedVersesListener(lsSplit1_selectedVerses);
 		lsSplit1.setOnVerseScrollListener(lsSplit1_verseScroll);
 		
 		// for splitting
@@ -1341,6 +1342,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	
 	VersesView.SelectedVersesListener lsText_selectedVerses = new VersesView.SelectedVersesListener() {
 		@Override public void onSomeVersesSelected(VersesView v) {
+			if (activeSplitVersion != null) {
+				// synchronize the selection with the split view
+				IntArrayList selectedVerses = v.getSelectedVerses_1();
+				lsSplit1.checkVerses(selectedVerses, false);
+			}
+			
 			if (actionMode == null) {
 				actionMode = startActionMode(actionMode_callback);
 			}
@@ -1349,11 +1356,30 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				actionMode.invalidate();
 			}
 		}
-
+		
 		@Override public void onNoVersesSelected(VersesView v) {
+			if (activeSplitVersion != null) {
+				// synchronize the selection with the split view
+				lsSplit1.uncheckAllVerses(false);
+			}
+
 			if (actionMode != null) {
 				actionMode.finish();
 			}
+		}
+		
+		@Override public void onVerseSingleClick(VersesView v, int verse_1) {}
+	};
+	
+	VersesView.SelectedVersesListener lsSplit1_selectedVerses = new VersesView.SelectedVersesListener() {
+		@Override public void onSomeVersesSelected(VersesView v) {
+			// synchronize the selection with the main view
+			IntArrayList selectedVerses = v.getSelectedVerses_1();
+			lsText.checkVerses(selectedVerses, true);
+		}
+
+		@Override public void onNoVersesSelected(VersesView v) {
+			lsText.uncheckAllVerses(true);
 		}
 
 		@Override public void onVerseSingleClick(VersesView v, int verse_1) {}
@@ -1445,7 +1471,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				CharSequence textToCopy = prepareTextForCopyShare(selected, reference);
 				
 				U.copyToClipboard(textToCopy);
-				lsText.uncheckAll();
+				lsText.uncheckAllVerses(true);
 				
 				Toast.makeText(App.context, getString(R.string.alamat_sudah_disalin, reference), Toast.LENGTH_SHORT).show();
 				mode.finish();
@@ -1470,7 +1496,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				intent.putExtra(EXTRA_verseUrl, verseUrl);
 				startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, reference)), REQCODE_share);
 
-				lsText.uncheckAll();
+				lsText.uncheckAllVerses(true);
 				mode.finish();
 			} return true;
 			case R.id.menuVersions: {
@@ -1489,7 +1515,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, IsiActivity.this.activeBook.reference(IsiActivity.this.chapter_1, mainVerse_1), ari);
 				dialog.setListener(new TypeBookmarkDialog.Listener() {
 					@Override public void onOk() {
-						lsText.uncheckAll();
+						lsText.uncheckAllVerses(true);
 						lsText.loadAttributeMap();
 
 						if (activeSplitVersion != null) {
@@ -1511,7 +1537,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				
 				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, IsiActivity.this.activeBook, IsiActivity.this.chapter_1, mainVerse_1, new TypeNoteDialog.Listener() {
 					@Override public void onDone() {
-						lsText.uncheckAll();
+						lsText.uncheckAllVerses(true);
 						lsText.loadAttributeMap();
 						
 						if (activeSplitVersion != null) {
@@ -1528,7 +1554,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				
 				new TypeHighlightDialog(IsiActivity.this, ariKp, selected, new TypeHighlightDialog.Listener() {
 					@Override public void onOk(int colorRgb) {
-						lsText.uncheckAll();
+						lsText.uncheckAllVerses(true);
 						lsText.loadAttributeMap();
 
 						if (activeSplitVersion != null) {
@@ -1555,7 +1581,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		@Override public void onDestroyActionMode(ActionMode mode) {
 			actionMode = null;
-			lsText.uncheckAll();
+			lsText.uncheckAllVerses(true);
 		}
 	};
 
