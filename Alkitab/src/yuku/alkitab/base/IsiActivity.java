@@ -100,8 +100,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private static final String PREFKEY_lastVersion = "edisiTerakhir"; //$NON-NLS-1$
 	private static final String PREFKEY_devotion_name = "renungan_nama"; //$NON-NLS-1$
 
-	public static final int RESULT_pindahCara = RESULT_FIRST_USER + 1;
-
 	private static final int REQCODE_goto = 1;
 	private static final int REQCODE_bookmark = 2;
 	private static final int REQCODE_devotion = 3;
@@ -470,7 +468,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				}
 				S.activeVersion = version;
 				S.activeVersionId = mv.getVersionId();
-				splitHandleButton.setLabel1("↑ " + getSplitHandleVersionName(mv, version));
+				splitHandleButton.setLabel1("\u25b2 " + getSplitHandleVersionName(mv, version));
 				
 				if (display) {
 					display(chapter_1, lsText.getVerseBasedOnScroll(), false);
@@ -497,7 +495,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if (version != null) {
 				activeSplitVersion = version;
 				activeSplitVersionId = mv.getVersionId();
-				splitHandleButton.setLabel2(getSplitHandleVersionName(mv, version) + " ↓");
+				splitHandleButton.setLabel2(getSplitHandleVersionName(mv, version) + " \u25bc");
 				
 				return true;
 			} else {
