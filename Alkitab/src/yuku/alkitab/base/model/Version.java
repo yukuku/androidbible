@@ -56,7 +56,13 @@ public class Version {
 	 * @return The highest bookId on this version plus one.
 	 */
 	public synchronized int getMaxBookIdPlusOne() {
-		return getBooks().length;
+		int max = -1;
+		for (Book b: getBooks()) {
+			if (b != null) {
+				if (b.bookId > max) max = b.bookId;
+			}
+		}
+		return max + 1;
 	}
 	
 	/**
