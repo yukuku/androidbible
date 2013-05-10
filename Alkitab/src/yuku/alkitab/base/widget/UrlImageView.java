@@ -114,7 +114,7 @@ public class UrlImageView extends ImageView {
 				Log.d(TAG, "Error when reading disk cache: ", e); //$NON-NLS-1$
 				return null;
 			} finally {
-				if (D.EBUG) Log.d(TAG, "retrieveFromDiskCache (" + buf.length + " bytes) took " + (SystemClock.uptimeMillis() - startTime) + " ms. From '" + key + "', thread=" + Thread.currentThread().getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+				if (D.EBUG) Log.d(TAG, "retrieveFromDiskCache (" + (buf == null? "null": buf.length) + " bytes) took " + (SystemClock.uptimeMillis() - startTime) + " ms. From '" + key + "', thread=" + Thread.currentThread().getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			}
 		}
 
