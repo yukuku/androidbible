@@ -1,12 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
-	<FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:id="@+id/panelList">
-		<ListView android:id="@android:id/list" android:layout_width="fill_parent" android:layout_height="fill_parent" android:fastScrollEnabled="true">
-    	    <!-- Preview: listitem=@layout/item_bukmak -->
-		</ListView>
-		<LinearLayout android:id="@android:id/empty" android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical" android:gravity="center">
-			<TextView android:id="@+id/tEmpty" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/belum_ada_pembatas_buku" android:textSize="16dp" android:gravity="center_horizontal" android:paddingLeft="12dp" android:paddingRight="12dp"/>
-			<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/bClearFilter" android:text="@string/bl_clear_filter"/>
-		</LinearLayout>
-	</FrameLayout>
-</LinearLayout>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/panelList"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fastScrollEnabled="true" >
+
+        <!-- Preview: listitem=@layout/item_bukmak -->
+    </ListView>
+
+    <LinearLayout
+        android:id="@android:id/empty"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tEmpty"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:text="@string/belum_ada_pembatas_buku"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/bClearFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bl_clear_filter" />
+    </LinearLayout>
+
+</FrameLayout>

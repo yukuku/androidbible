@@ -6,7 +6,6 @@
   <string name="donasi_tombol_gamau">Не тепер</string>
   <string name="donasi_tombol_ok">Пожертвувати</string>
   <string name="donasi_keterangan">Якщо ви благословляєте цей застосунок для Біблії, будьте ласкаві зробіть деяку пожертву розробнику. Ваш дарунок дуже допоможе. Гарно дякую!</string>
-  <string name="donasi_judul">Пожертва</string>
   <string name="menuDonasi">Пожертва</string>
   <string name="mengimpor_titiktiga"> Відновлення...</string>
   <string name="mengekspor_titiktiga">Створення резервної копії...</string>
@@ -16,6 +15,7 @@
   <string name="ekspor_berhasil_file_yang_dihasilkan_file">Резервну копію створено вдало.\n\nВідомості в файлі: %s</string>
   <string name="impor_berhasil_angka_diproses">Відновлення пройшло успішно. Загалом %1$d закладок,нотаток,і/або виділень, підкреслювань, та також %2$d позначок було оброблено.</string>
   <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Сталася помилка(и) під час створення резервної копії: %s</string>
+  <string name="ekspor_pembatas_buku_dan_catatan_tanya">Створити резервну копію закладок, нотаток, виділень та підкреслень на SD-картці або USB накопичувачі? Існуючі резервні копії будуть перезаписані.</string>
   <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Була помилка(помилок) під час відновлення: %s</string>
   <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Чи ви хочете перезаписати закладки, нотатки та виділення(підкреслення) поверх існуючих?</string>
   <string name="file_tidak_bisa_dibaca_file">Файлу не існує або його не може бути прочитано: %s</string>
@@ -27,15 +27,13 @@
   <string name="versi">Версія</string>
   <string name="renungan">Вивчення Біблії</string>
   <string name="cari_v">Пошук</string>
-  <string name="judul_bukmak_activity">Закладки, та інш.</string>
+  <string name="judul_bukmak_activity">Закладки</string>
   <string name="pembatas_buku">Закладки</string>
   <string name="hapus_pembatas_buku">Видалити закладку</string>
   <string name="bagikan">Поділитись</string>
   <string name="tulis_catatan">Написати нотатку</string>
   <string name="tambah_pembatas_buku">Додати закладку</string>
   <string name="salin_ayat">Скопіювати вірш</string>
-  <string name="pada_mulanya">На початку Бог створив Небо та землю. А земля була пуста та порожня, і темрява була над безоднею, і Дух Божий ширяв над поверхнею води. І сказав Бог: Хай станеться світло! І сталося світло. І побачив Бог світло, що добре воно, і Бог відділив світло від темряви. І Бог назвав світло: День, а темряву назвав: Ніч. І був вечір, і був ранок, день перший.</string>
-  <string name="contoh_tulisan_titikdua">Зразок тексту:</string>
   <string name="perj_baru">Новий Завіт.</string>
   <string name="perj_lama">Старий Завіт.</string>
   <string name="search_bookname_only">Тільки %s</string>
@@ -60,7 +58,6 @@
   <string name="hari_minggu">Нд</string>
   <string name="size_hasil">%d результатів</string>
   <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Шукати вірші які містять наступні слова: [b]%s[/b]</string>
-  <string name="mencari">Пошук</string>
   <string name="pilih_setidaknya_satu_kitab">Виберіть принаймі одну книгу для пошуку</string>
   <string name="pengunduhan_dibatalkan">Завантаження відмінено.</string>
   <string name="sedang_mendekompres_harap_tunggu">Витягання. Будь-ласка зачекайте...</string>
@@ -70,8 +67,6 @@
   <string name="mulai_mengunduh">Початок завантаження...</string>
   <string name="mengunduh_nama">Завантаження %s</string>
   <string name="file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya">Неможливо знайти файл  \'%s\'. Чи хочете його завантажити?</string>
-  <string name="mengunduh_tambahan">Завантаження додатків</string>
-  <string name="pilih_edisi">Виберіть версію</string>
   <string name="tuju_v">Перейти до</string>
   <string name="bagikan_alamat">Поділитись %s</string>
   <string name="alamat_sudah_disalin">%s було скопійовано.</string>
@@ -79,7 +74,6 @@
   <string name="no">Ні</string>
   <string name="yes">Так</string>
   <string name="anda_yakin_mau_menghapus_catatan_ini">Ви дійсно хочете видалити цю нотатку?</string>
-  <string name="hapus_catatan">Видалити нотатку</string>
   <string name="catatan_alamat">Нотатка до %s</string>
   <string name="delete">Видалити</string>
   <string name="cancel">Скасувати</string>
@@ -107,10 +101,7 @@
   <string name="cp_mapping_books">Створення карти книг</string>
   <string name="cp_constructing_book_info">Створення інформації про книгу</string>
   <string name="cp_constructing_version_info">Створення інформації про версію</string>
-  <string name="cp_constructing_translated_file">Створення файлу перекладу</string>
-  <string name="cp_writing_num_section_pericope_indexes">Запис індексу %s частин/абзаців</string>
   <string name="cp_writing_num_section_pericope_titles">Запис %s частин/абзаців заголовків</string>
-  <string name="cp_opening_translated_file">Відкриття перекладеного файлу</string>
   <string name="cp_writing_translated_file">Запис перекладеного файлу</string>
   <string name="cp_reading_book_info">Читання інфо про книгу: %s</string>
   <string name="cp_writing_text_of_book_chapters">Запис тексту книги  %1$s (%2$s розділів)</string>
@@ -137,7 +128,6 @@
   <string name="ed_error_reading_pdb_file">Помилка читання PDB файлу</string>
   <string name="ed_details">Деталі:</string>
   <string name="ed_buka_file_pdb_yes_lainnya">Відкрити .pdb/.yes файл</string>
-  <string name="ed_tekan_untuk_mengunduh">Натисни тут для завантаження</string>
   <string name="info_terperinci">Деталі</string>
   <string name="buang_dari_daftar">Видалити зі списку</string>
   <string name="ubah_bukmak">Редагувати закладку</string>
@@ -151,10 +141,8 @@
   <string name="menuSortTulisan">Заголовок</string>
   <string name="menuSortTulisan_warna">Колір виділення, підкреслення</string>
   <string name="waktuTambah_edited_waktuUbah">%1$s\n(редаговано %2$s)</string>
-  <string name="cannot_find_data_file">Неможливо знайти файл з даними</string>
   <string name="the_file_for_this_version_is_no_longer_available_file">Файлу для цієї версії більше не існує. Чи бажаєте видалити цю версію зі списку?\nФайл: %s</string>
   <string name="create_label_title">Створити позначку</string>
-  <string name="remove_label_title">Видалити позначку</string>
   <string name="do_you_want_to_remove_the_label_label_from_this_bookmark">"Ви дійсно хочете видалити позначку \'%s\'цієї закладки?"</string>
   <string name="add_label_title">Додати позначку</string>
   <string name="create_label_titik3">Створення позначок...</string>
@@ -183,12 +171,16 @@
   <string name="rename_label">Перейменувати позначку</string>
   <string name="delete_label">Видалити позначку</string>
   <string name="please_wait_titik3">Будь-ласка зачекайте...</string>
-  <string name="juga_hapus_file_datanya_file">Чи видалити також файл даних?\nФайл: %s</string>
   <string name="get_more_fonts">Завантажити більше шрифтів...</string>
   <string name="about_translators">Перекладачі:</string>
   <string name="intent_filter_import_from_backup">Імпорт з резервної копії</string>
   <string name="redownload">Перезавантажити</string>
   <string name="read_faq_before_suggest">Будь ласка читайте вище FAQ перед відсиланням пропозиції або запитання. Продовжити надсилання пропозиції або запитання?</string>
+  <string name="no_bookmarks_for_backup">У вас немає жодної закладки, нотатки,виділення або підкреслення для резервного копіювання.</string>
+  <string name="pdb_error_not_palmbible">Цей  PDB файл не в форматі PalmBible +. Цей PDB має тип \"%1$s\'   створює ід
+\'%2$s\' , що не підтримується цим додотком.</string>
+  <string name="pdb_error_corrupted">PDB файл пошкоджений.</string>
+  <string name="pdb_error_not_pdb_file">Вибраний файл не є  PDB файлом.</string>
   <string name="goto_tab_dialer_label">Номеронабирач</string>
   <string name="goto_tab_direct_label">Прямолінійний</string>
   <string name="goto_tab_grid_label">Сітка</string>
@@ -207,7 +199,6 @@
   <string name="sn_download_song_books">Завантажити книги псалмів, пісень</string>
   <string name="sn_copied">Пісню було скопійовано.</string>
   <string name="sn_share_title">Поділитися піснею</string>
-  <string name="sn_download_song_books">Завантажити книги псалмів, пісень</string>
   <string name="sn_lyric_version_version">Версія %s</string>
   <string name="sn_lyric_refrain_marker">Присп.</string>
   <string name="sn_delete_all_songs">Видалити всі пісні</string>
@@ -220,9 +211,9 @@
   <string name="desc_delete">Видалити</string>
   <string name="desc_change_selected_books">Змінити вибрані книги</string>
   <string name="desc_download">Завантажити</string>
-  <string name="desc_open_verse_menu">Відкрити меню вірша</string>
   <string name="desc_previous_chapter">Попередній розділ</string>
   <string name="desc_next_chapter">Наступний розділ</string>
+  <string name="desc_drag_to_reorder_labels">Перетягніть, щоб змінити порядок позначок</string>
   <string name="teks_about">Розроблено [b]yuku[/b], 2009-2012[br/]
 • Сайт: androidbible.blogspot.com[br/]
 • Google+: gplus.to/androidbible[br/]
@@ -232,5 +223,4 @@
 • [b]Jaya Satrio Hendrick[/b] icons[br/]
 • [b]Yohanes Nugroho[/b] BiblePlus+ PDB reader[br/]
 • і багато інших людей, які поділилися своїми ідеями, патчами, повідомленнями про помилки,які копіювали пісні,псалми, інформацію про переклади Біблії, і т.д.!</string>
-  <string name="desc_drag_to_reorder_labels">Перетягніть, щоб змінити порядок позначок</string>
 </resources>

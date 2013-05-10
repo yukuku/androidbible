@@ -51,9 +51,8 @@ public class App extends yuku.afw.App {
 			updateConfigurationWithLocale(config, locale);
 		}
 
-		// all activities need at least the activeVersion and activeBook from S
-		// so initialize it here.
-		S.prepareBook();
+		// all activities need at least the activeVersion from S, so initialize it here.
+		S.prepareInternalVersion();
 		
 		// also pre-calculate calculated preferences value here
 		S.calculateAppliedValuesBasedOnPreferences();

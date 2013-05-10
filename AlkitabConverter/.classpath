@@ -7,5 +7,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/Alkitab"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/BintexReader"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Snappy"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SimpleTrove"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -20,17 +20,17 @@
             android:orientation="horizontal" >
 
             <Button
-                android:id="@+id/bAngka1"
+                android:id="@+id/bDigit1"
                 style="@style/SongCodeKeypadButton"
                 android:text="1" />
 
             <Button
-                android:id="@+id/bAngka2"
+                android:id="@+id/bDigit2"
                 style="@style/SongCodeKeypadButton"
                 android:text="2" />
 
             <Button
-                android:id="@+id/bAngka3"
+                android:id="@+id/bDigit3"
                 style="@style/SongCodeKeypadButton"
                 android:text="3" />
         </LinearLayout>
@@ -42,17 +42,17 @@
             android:orientation="horizontal" >
 
             <Button
-                android:id="@+id/bAngka4"
+                android:id="@+id/bDigit4"
                 style="@style/SongCodeKeypadButton"
                 android:text="4" />
 
             <Button
-                android:id="@+id/bAngka5"
+                android:id="@+id/bDigit5"
                 style="@style/SongCodeKeypadButton"
                 android:text="5" />
 
             <Button
-                android:id="@+id/bAngka6"
+                android:id="@+id/bDigit6"
                 style="@style/SongCodeKeypadButton"
                 android:text="6" />
         </LinearLayout>
@@ -64,17 +64,17 @@
             android:orientation="horizontal" >
 
             <Button
-                android:id="@+id/bAngka7"
+                android:id="@+id/bDigit7"
                 style="@style/SongCodeKeypadButton"
                 android:text="7" />
 
             <Button
-                android:id="@+id/bAngka8"
+                android:id="@+id/bDigit8"
                 style="@style/SongCodeKeypadButton"
                 android:text="8" />
 
             <Button
-                android:id="@+id/bAngka9"
+                android:id="@+id/bDigit9"
                 style="@style/SongCodeKeypadButton"
                 android:text="9" />
         </LinearLayout>
@@ -86,7 +86,7 @@
             android:orientation="horizontal" >
 
             <Button
-                android:id="@+id/bAngka0"
+                android:id="@+id/bDigit0"
                 style="@style/SongCodeKeypadButton"
                 android:text="0" />
 

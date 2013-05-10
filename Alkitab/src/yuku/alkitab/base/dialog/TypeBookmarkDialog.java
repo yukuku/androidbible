@@ -38,10 +38,10 @@ public class TypeBookmarkDialog {
 	FlowLayout panelLabels;
 	LabelAdapter adapter;
 
-	// init ini...
-	String alamat = null;
+	// init this...
+	String reference = null;
 	int ari = 0;
-	//... atau ini
+	//... or this
 	long id = -1;
 	
 	// optional
@@ -50,21 +50,21 @@ public class TypeBookmarkDialog {
 	// current labels (can be not in the db)
 	SortedSet<Label> labels = new TreeSet<Label>();
 	
-	public TypeBookmarkDialog(Context context, CharSequence alamat, int ari) {
-		// wajib
+	public TypeBookmarkDialog(Context context, String reference, int ari) {
+		// required
 		this.context = context;
 		
-		// pilihan
-		this.alamat = alamat.toString();
+		// optional
+		this.reference = reference;
 		this.ari = ari;
 	}
 
 	public TypeBookmarkDialog(Context context, long id) {
-		// wajib
+		// required
 		this.context = context;
 
-		// pilihan
-		this.alamat = null;
+		// optional
+		this.reference = null;
 		this.id = id;
 	}
 	
@@ -77,7 +77,7 @@ public class TypeBookmarkDialog {
 			if (which == adapter.getCount() - 1) { // new label
 				LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), new OkListener() { //$NON-NLS-1$
 					@Override public void onOk(String judul) {
-						Label labelBaru = S.getDb().tambahLabel(judul, null);
+						Label labelBaru = S.getDb().insertLabel(judul, null);
 						if (labelBaru != null) {
 							labels.add(labelBaru);
 							setLabelsText();
@@ -98,7 +98,6 @@ public class TypeBookmarkDialog {
 			if (label == null) return;
 			
 			new AlertDialog.Builder(context)
-			.setTitle(R.string.remove_label_title)
 			.setMessage(context.getString(R.string.do_you_want_to_remove_the_label_label_from_this_bookmark, label.title))
 			.setPositiveButton(R.string.ok, new OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
@@ -112,18 +111,18 @@ public class TypeBookmarkDialog {
 	};
 
 	public void show() {
-		final Bookmark2 bukmak = this.ari == 0? S.getDb().getBukmakById(id): S.getDb().getBukmakByAri(ari, Db.Bookmark2.kind_bookmark);
+		final Bookmark2 bookmark = this.ari == 0? S.getDb().getBookmarkById(id): S.getDb().getBookmarkByAri(ari, Db.Bookmark2.kind_bookmark);
 		
 		// set yang belum diset
-		if (this.ari == 0 && bukmak != null) {
-			this.ari = bukmak.ari;
-			this.alamat = S.reference(S.activeVersion, bukmak.ari);
+		if (this.ari == 0 && bookmark != null) {
+			this.ari = bookmark.ari;
+			this.reference = S.activeVersion.reference(bookmark.ari);
 		}
 		
 		View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_bookmark, null);
 		this.panelLabels = V.get(dialogView, R.id.panelLabels);
 		
-		final EditText tTulisan = V.get(dialogView, R.id.tTulisan);
+		final EditText tCaption = V.get(dialogView, R.id.tCaption);
 		final Button bAddLabel = V.get(dialogView, R.id.bAddLabel);
 		
 		bAddLabel.setOnClickListener(new View.OnClickListener() {
@@ -143,39 +142,39 @@ public class TypeBookmarkDialog {
 			}
 		});
 		
-		if (bukmak != null) {
+		if (bookmark != null) {
 			labels = new TreeSet<Label>();
-			List<Label> ll = S.getDb().getLabels(bukmak._id);
+			List<Label> ll = S.getDb().listLabelsByBookmarkId(bookmark._id);
 			if (ll != null) labels.addAll(ll);
 		}
 		setLabelsText();
 		
-		tTulisan.setText(bukmak != null? bukmak.caption: alamat);
+		tCaption.setText(bookmark != null? bookmark.caption: reference);
 		
 		new AlertDialog.Builder(context)
 		.setView(dialogView)
-		.setTitle(alamat)
-		.setIcon(R.drawable.attribute_type_bookmark)
+		.setTitle(reference)
+		.setIcon(R.drawable.ic_attr_bookmark)
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
-				Bookmark2 bukmakGaFinal = bukmak;
-				String tulisan = tTulisan.getText().toString();
+				Bookmark2 nonfinalBookmark = bookmark;
+				String caption = tCaption.getText().toString();
 				
-				// kalo ga ada tulisan, kasi alamat aja.
-				if (tulisan.length() == 0 || tulisan.trim().length() == 0) {
-					tulisan = alamat;
+				// If there is no caption, show reference
+				if (caption.length() == 0 || caption.trim().length() == 0) {
+					caption = reference;
 				}
 				
-				if (bukmakGaFinal != null) {
-					bukmakGaFinal.caption = tulisan;
-					bukmakGaFinal.modifyTime = new Date();
-					S.getDb().updateBukmak(bukmakGaFinal);
+				if (nonfinalBookmark != null) {
+					nonfinalBookmark.caption = caption;
+					nonfinalBookmark.modifyTime = new Date();
+					S.getDb().updateBookmark(nonfinalBookmark);
 				} else {
-					bukmakGaFinal = S.getDb().insertBukmak(ari, Db.Bookmark2.kind_bookmark, tulisan, new Date(), new Date());
+					nonfinalBookmark = S.getDb().insertBookmark(ari, Db.Bookmark2.kind_bookmark, caption, new Date(), new Date());
 				}
 				
-				if (bukmakGaFinal != null) {
-					S.getDb().updateLabels(bukmakGaFinal, labels);
+				if (nonfinalBookmark != null) {
+					S.getDb().updateLabels(nonfinalBookmark, labels);
 				}
 				
 				if (listener != null) listener.onOk();
@@ -215,7 +214,7 @@ public class TypeBookmarkDialog {
 		private Context dialogContext;
 
 		public LabelAdapter() {
-			labels = S.getDb().getAllLabels();
+			labels = S.getDb().listAllLabels();
 			dialogContext = context;
 		}
 		
@@ -240,12 +239,12 @@ public class TypeBookmarkDialog {
 			View res = convertView != null? convertView: LayoutInflater.from(dialogContext).inflate(type == 0? R.layout.item_label_chooser: android.R.layout.simple_list_item_1, null);
 
 			if (type == 0) {
-				TextView text1 = V.get(res, android.R.id.text1); 
+				TextView text1 = V.get(res, android.R.id.text1);
 				Label label = getItem(position);
 				text1.setText(label.title);
 				U.applyLabelColor(label, text1);
 			} else {
-				TextView text1 = V.get(res, android.R.id.text1); 
+				TextView text1 = V.get(res, android.R.id.text1);
 				text1.setText(context.getString(R.string.create_label_titik3));
 				
 				// for API 10 or lower, forcefully set text color

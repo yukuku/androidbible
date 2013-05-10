@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-	<item android:title="@string/tambah" android:id="@+id/menuTambah" android:icon="@drawable/ic_menu_add" android:showAsAction="ifRoom|withText"/>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menuAdd"
+        android:icon="@drawable/ic_menu_add_light"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/tambah"/>
+
 </menu>

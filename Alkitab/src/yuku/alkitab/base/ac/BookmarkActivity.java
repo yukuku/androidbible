@@ -11,7 +11,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.util.Xml;
 import android.view.ContextMenu;
@@ -52,6 +54,7 @@ import org.xmlpull.v1.XmlSerializer;
 import yuku.afw.D;
 import yuku.afw.V;
 import yuku.alkitab.R;
+import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -71,9 +74,6 @@ import com.mobeta.android.dslv.DragSortListView;
 public class BookmarkActivity extends BaseActivity {
 	public static final String TAG = BookmarkActivity.class.getSimpleName();
 	
-    // out
-	public static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
-
 	private static final int REQCODE_bukmakList = 1;
 
 	DragSortListView lv;
@@ -163,7 +163,7 @@ public class BookmarkActivity extends BaseActivity {
 	
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
-		if (itemId == R.id.menuImpor) {
+		if (itemId == R.id.menuImport) {
 			final File f = getFileBackup();
 			
 			new AlertDialog.Builder(this)
@@ -197,7 +197,7 @@ public class BookmarkActivity extends BaseActivity {
 			.show();
 			
 			return true;
-		} else if (itemId == R.id.menuEkspor) {
+		} else if (itemId == R.id.menuExport) {
 			if (S.getDb().countAllBookmarks() == 0) {
 				msgbox(getString(R.string.no_bookmarks_for_backup));
 				return true;
@@ -230,6 +230,20 @@ public class BookmarkActivity extends BaseActivity {
 			})
 			.show();
 			
+			return true;
+		} else if (itemId == android.R.id.home) {
+			Intent upIntent = new Intent(this, IsiActivity.class);
+            if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                // This activity is not part of the application's task, so create a new task
+                // with a synthesized back stack.
+                TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
+                finish();
+            } else {
+                // This activity is part of the application's task, so simply
+                // navigate up to the hierarchical parent activity.
+                // sample code uses this: NavUtils.navigateUpTo(this, upIntent);
+            	finish();
+            }
 			return true;
 		}
 		
@@ -284,13 +298,13 @@ public class BookmarkActivity extends BaseActivity {
 						@Override public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 							if (localName.equals(Bookmark2.XMLTAG_Bukmak2)) {
 								Bookmark2 bookmark = Bookmark2.fromAttributes(attributes);
-								int bookmark2_relId = Bookmark2.getRelId(attributes); 
+								int bookmark2_relId = Bookmark2.getRelId(attributes);
 								bookmarks.add(bookmark);
 								bookmarkToRelIdMap.put(bookmark, bookmark2_relId);
 								count_bookmark++;
 							} else if (localName.equals(Label.XMLTAG_Label)) {
-								Label label = Label.dariAttributes(attributes);
-								int label_relId = Label.getRelId(attributes); 
+								Label label = Label.fromAttributes(attributes);
+								int label_relId = Label.getRelId(attributes);
 								labels.add(label);
 								labelToRelIdMap.put(label, label_relId);
 								count_label++;
@@ -314,7 +328,7 @@ public class BookmarkActivity extends BaseActivity {
 				
 				{ // bikin label-label yang diperlukan, juga map relId dengan id dari label.
 					HashMap<String, Label> judulMap = new HashMap<String, Label>();
-					List<Label> xlabelLama = S.getDb().getAllLabels();
+					List<Label> xlabelLama = S.getDb().listAllLabels();
 					
 					for (Label labelLama: xlabelLama) {
 						judulMap.put(labelLama.title, labelLama);
@@ -332,7 +346,7 @@ public class BookmarkActivity extends BaseActivity {
 							labelRelIdToAbsIdMap.put(labelToRelIdMap.get(label), labelLama._id);
 							Log.d(TAG, "label (lama) r->a : " + labelToRelIdMap.get(label) + "->" + labelLama._id); //$NON-NLS-1$ //$NON-NLS-2$
 						} else { // belum ada, harus bikin baru
-							Label labelBaru = S.getDb().tambahLabel(label.title, label.backgroundColor);
+							Label labelBaru = S.getDb().insertLabel(label.title, label.backgroundColor);
 							labelRelIdToAbsIdMap.put(labelToRelIdMap.get(label), labelBaru._id);
 							Log.d(TAG, "label (baru) r->a : " + labelToRelIdMap.get(label) + "->" + labelBaru._id); //$NON-NLS-1$ //$NON-NLS-2$
 						}
@@ -402,7 +416,7 @@ public class BookmarkActivity extends BaseActivity {
 					}
 					
 					TLongIntHashMap labelAbsIdToRelIdMap = new TLongIntHashMap();
-					List<Label> labels = S.getDb().getAllLabels();
+					List<Label> labels = S.getDb().listAllLabels();
 					{ // write labels
 						for (int i = 0; i < labels.size(); i++) {
 							Label label = labels.get(i);
@@ -414,7 +428,7 @@ public class BookmarkActivity extends BaseActivity {
 					{ // write mapping from bookmark to label
 						for (int bookmark2_relId_0 = 0; bookmark2_relId_0 < bookmarks.size(); bookmark2_relId_0++) {
 							Bookmark2 bookmark = bookmarks.get(bookmark2_relId_0);
-							TLongList labelIds = S.getDb().getLabelIds(bookmark._id);
+							TLongList labelIds = S.getDb().listLabelIdsByBookmarkId(bookmark._id);
 							if (labelIds != null && labelIds.size() > 0) {
 								for (int i = 0; i < labelIds.size(); i++) {
 									long labelId = labelIds.get(i);
@@ -549,11 +563,11 @@ public class BookmarkActivity extends BaseActivity {
 				return true;
 			}
 			
-			int nbukmak = S.getDb().countBukmakDenganLabel(label);
+			int nbukmak = S.getDb().countBookmarksWithLabel(label);
 
 			if (nbukmak == 0) {
 				// tiada, langsung hapus aja!
-				S.getDb().hapusLabelById(label._id);
+				S.getDb().deleteLabelById(label._id);
 				adapter.reload();
 			} else {
 				new AlertDialog.Builder(this)
@@ -561,7 +575,7 @@ public class BookmarkActivity extends BaseActivity {
 				.setNegativeButton(R.string.cancel, null)
 				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
-						S.getDb().hapusLabelById(label._id);
+						S.getDb().deleteLabelById(label._id);
 						adapter.reload();
 					}
 				})
@@ -600,19 +614,8 @@ public class BookmarkActivity extends BaseActivity {
 	
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQCODE_bukmakList) {
-			if (resultCode == RESULT_OK) {
-				int ari = data.getIntExtra(BookmarkActivity.EXTRA_ariTerpilih, 0);
-				if (ari != 0) { // 0 berarti ga ada apa2, karena ga ada pasal 0 ayat 0
-					Intent res = new Intent();
-					res.putExtra(EXTRA_ariTerpilih, ari);
-					
-					setResult(RESULT_OK, res);
-					finish();
-				}
-			}
+			adapter.reload();
 		}
-		
-		adapter.reload();
 	}
 
 	private class BookmarkFilterController extends DragSortController {
@@ -725,8 +728,7 @@ public class BookmarkActivity extends BaseActivity {
 			ImageView imgFilterIcon = V.get(res, R.id.imgFilterIcon);
 			if (position < 3) {
 				imgFilterIcon.setVisibility(View.VISIBLE);
-				imgFilterIcon.setImageResource(position == 0? R.drawable.attribute_type_bookmark: position == 1? R.drawable.attribute_type_note: position == 2? R.drawable.highlight_color_checked: 0);
-				imgFilterIcon.setBackgroundColor(position == 2? 0xffffff00: 0);
+				imgFilterIcon.setImageResource(position == 0? R.drawable.ic_attr_bookmark: position == 1? R.drawable.ic_attr_note: position == 2? R.drawable.ic_attr_highlight: 0);
 			} else {
 				imgFilterIcon.setVisibility(View.GONE);
 			}
@@ -761,7 +763,7 @@ public class BookmarkActivity extends BaseActivity {
 		}
 		
 		void reload() {
-			labels = S.getDb().getAllLabels();
+			labels = S.getDb().listAllLabels();
 			
 			if (D.EBUG) {
 				Log.d(TAG, "_id  title                ordering backgroundColor");

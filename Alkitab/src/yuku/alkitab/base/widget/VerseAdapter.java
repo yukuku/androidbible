@@ -1,15 +1,7 @@
 package yuku.alkitab.base.widget;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Paint.FontMetricsInt;
 import android.os.Build;
-import android.text.Layout;
-import android.text.TextPaint;
-import android.text.style.LeadingMarginSpan;
-import android.text.style.LineHeightSpan;
-import android.text.style.MetricAffectingSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,15 +10,12 @@ import android.widget.BaseAdapter;
 import java.util.Arrays;
 
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.base.IsiActivity;
-import yuku.alkitab.base.IsiActivity.AttributeListener;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
-import yuku.alkitab.base.storage.Db.Bookmark2;
-import yuku.alkitab.base.widget.CallbackSpan.OnClickListener;
+import yuku.alkitab.base.storage.Db;
 
 public abstract class VerseAdapter extends BaseAdapter {
 	public static final String TAG = VerseAdapter.class.getSimpleName();
@@ -34,7 +23,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	public static class Factory {
 		int impl = 0; // 0 need check, 1 new (single view), 2 legacy
 		
-		public VerseAdapter create(Context context, OnClickListener paralelListener, AttributeListener attributeListener) {
+		public VerseAdapter create(Context context) {
 			if (impl == 0) {
 				String useLegacyVerseRenderer = Preferences.getString("useLegacyVerseRenderer", "auto");
 				if ("auto".equals(useLegacyVerseRenderer)) { // determine based on device
@@ -53,82 +42,16 @@ public abstract class VerseAdapter extends BaseAdapter {
 			}
 			
 			if (impl == 1) {
-				return new SingleViewVerseAdapter(context, paralelListener, attributeListener);
+				return new SingleViewVerseAdapter(context);
 			} else if (impl == 2) {
-				return new LegacyVerseAdapter(context, paralelListener, attributeListener);
+				return new LegacyVerseAdapter(context);
 			}
 			
 			return null;
 		}
 	}
 	
-	static class ParagraphSpacingBefore implements LineHeightSpan {
-		private final int before;
-		
-		ParagraphSpacingBefore(int before) {
-			this.before = before;
-		}
-		
-		@Override public void chooseHeight(CharSequence text, int start, int end, int spanstartv, int v, FontMetricsInt fm) {
-			if (spanstartv == v) {
-				fm.top -= before;
-				fm.ascent -= before;
-			}
-		}
-	}
-	
-	/**
-	 * This is used instead of {@link LeadingMarginSpan.Standard} to overcome
-	 * a bug in CyanogenMod 7.x. If we don't support CM 7 anymore, we 
-	 * can use that instead of this, which seemingly *a bit* more efficient. 
-	 */
-	static class LeadingMarginSpanFixed implements LeadingMarginSpan.LeadingMarginSpan2 {
-		private final int first;
-		private final int rest;
-
-		@Override public void drawLeadingMargin(Canvas c, Paint p, int x, int dir, int top, int baseline, int bottom, CharSequence text, int start, int end, boolean first, Layout layout) {}
-		
-		public LeadingMarginSpanFixed(int all) {
-			this.first = all;
-			this.rest = all;
-		}
-
-		public LeadingMarginSpanFixed(int first, int rest) {
-			this.first = first;
-			this.rest = rest;
-		}
-		
-		@Override public int getLeadingMargin(boolean first) {
-			return first? this.first: this.rest;
-		}
-
-		@Override public int getLeadingMarginLineCount() {
-			return 1;
-		}
-	}
-
-	static class VerseNumberSpan extends MetricAffectingSpan {
-		private final boolean applyColor;
-
-		public VerseNumberSpan(boolean applyColor) {
-			this.applyColor = applyColor;
-		}
-		
-		@Override public void updateMeasureState(TextPaint tp) {
-			tp.baselineShift += (int) (tp.ascent() * 0.3f + 0.5f);
-			tp.setTextSize(tp.getTextSize() * 0.7f);
-		}
-
-		@Override public void updateDrawState(TextPaint tp) {
-			tp.baselineShift += (int) (tp.ascent() * 0.3f + 0.5f);
-			tp.setTextSize(tp.getTextSize() * 0.7f);
-			if (applyColor) {
-				tp.setColor(S.applied.verseNumberColor);
-			}
-		}
-	}
-
-    public static class ParallelTypeAri {
+	public static class ParallelTypeAri {
         public int ariStart;
     }
 
@@ -142,8 +65,9 @@ public abstract class VerseAdapter extends BaseAdapter {
 	
 	// # field ctor
 	final Context context_;
-	final CallbackSpan.OnClickListener parallelListener_;
-	final IsiActivity.AttributeListener attributeListener_;
+	CallbackSpan.OnClickListener parallelListener_;
+	VersesView.AttributeListener attributeListener_;
+	VersesView.XrefListener xrefListener_; 
 	final float density_;
 
 	// # field setData
@@ -161,51 +85,37 @@ public abstract class VerseAdapter extends BaseAdapter {
 	int[] itemPointer_;
 	int[] attributeMap_; // bit 0(0x1) = bukmak; bit 1(0x2) = catatan; bit 2(0x4) = stabilo;
 	int[] highlightMap_; // null atau warna stabilo
-
-	LayoutInflater inflater_;
+	int[] xrefEntryCounts_;
 	
-	public VerseAdapter(Context context, CallbackSpan.OnClickListener paralelListener, IsiActivity.AttributeListener attributeListener) {
+	LayoutInflater inflater_;
+	VersesView owner_;
+	
+	public VerseAdapter(Context context) {
 		context_ = context;
-		parallelListener_ = paralelListener;
-		attributeListener_ = attributeListener;
 		density_ = context.getResources().getDisplayMetrics().density;
 		inflater_ = LayoutInflater.from(context_);
 	}
 
-	/** 0 undefined. 1 and 2 based on version. */
-	private static int leadingMarginSpanVersion = 0;
-	
-	/** Creates a leading margin span based on version:
-	 * - API 7 or 11 and above: LeadingMarginSpan.Standard
-	 * - API 8..10: LeadingMarginSpanFixed, which is based on LeadingMarginSpan.LeadingMarginSpan2
-	 */
-	static Object createLeadingMarginSpan(int all) {
-		return createLeadingMarginSpan(all, all);
-	}
-	
-	/** Creates a leading margin span based on version:
-	 * - API 7 or 11 and above: LeadingMarginSpan.Standard
-	 * - API 8..10: LeadingMarginSpanFixed, which is based on LeadingMarginSpan.LeadingMarginSpan2
-	 */
-	static Object createLeadingMarginSpan(int first, int rest) {
-		if (leadingMarginSpanVersion == 0) {
-			int v = Build.VERSION.SDK_INT;
-			leadingMarginSpanVersion = (v == 7 || v >= 11)? 1: 2; 
-		}
-		
-		if (leadingMarginSpanVersion == 1) {
-			return new LeadingMarginSpan.Standard(first, rest); 
-		} else {
-			return new LeadingMarginSpanFixed(first, rest);
-		}
-	}
-	
-	public synchronized void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
+	public synchronized void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock, int[] xrefEntryCounts) {
 		book_ = book;
 		chapter_1_ = chapter_1;
 		verses_ = verses;
 		pericopeBlocks_ = pericopeBlocks;
 		itemPointer_ = makeItemPointer(verses_.getVerseCount(), pericopeAris, pericopeBlocks, nblock);
+		xrefEntryCounts_ = xrefEntryCounts;
+		
+		notifyDataSetChanged();
+	}
+
+	public synchronized void setDataEmpty() {
+		book_ = null;
+		chapter_1_ = 0;
+		verses_ = null;
+		pericopeBlocks_ = null;
+		itemPointer_ = null;
+		xrefEntryCounts_ = null;
+		
+		notifyDataSetChanged();
 	}
 
 	public synchronized void loadAttributeMap() {
@@ -213,9 +123,9 @@ public abstract class VerseAdapter extends BaseAdapter {
 		int[] highlightMap = null;
 
 		int ariBc = Ari.encode(book_.bookId, chapter_1_, 0x00);
-		if (S.getDb().countAtribut(ariBc) > 0) {
+		if (S.getDb().countAttributes(ariBc) > 0) {
 			attributeMap = new int[verses_.getVerseCount()];
-			highlightMap = S.getDb().putAtribut(ariBc, attributeMap);
+			highlightMap = S.getDb().putAttributes(ariBc, attributeMap);
 		}
 
 		attributeMap_ = attributeMap;
@@ -247,7 +157,9 @@ public abstract class VerseAdapter extends BaseAdapter {
 	protected void setClickListenerForBookmark(View imgBukmak, final int pasal_1, final int ayat_1) {
 		imgBukmak.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
-				attributeListener_.onClick(book_, pasal_1, ayat_1, Bookmark2.kind_bookmark);
+				if (attributeListener_ != null) {
+					attributeListener_.onAttributeClick(book_, pasal_1, ayat_1, Db.Bookmark2.kind_bookmark);
+				}
 			}
 		});
 	}
@@ -255,9 +167,27 @@ public abstract class VerseAdapter extends BaseAdapter {
 	protected void setClickListenerForNote(View imgCatatan, final int pasal_1, final int ayat_1) {
 		imgCatatan.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) {
-				attributeListener_.onClick(book_, pasal_1, ayat_1, Bookmark2.kind_note);
+				if (attributeListener_ != null) {
+					attributeListener_.onAttributeClick(book_, pasal_1, ayat_1, Db.Bookmark2.kind_note);
+				}
 			}
 		});
+	}
+	
+	public void setParallelListener(CallbackSpan.OnClickListener parallelListener) {
+		parallelListener_ = parallelListener;
+		notifyDataSetChanged();
+	}
+	
+	public void setAttributeListener(VersesView.AttributeListener attributeListener) {
+		attributeListener_ = attributeListener;
+		notifyDataSetChanged();
+	}
+	
+	public void setXrefListener(VersesView.XrefListener xrefListener, VersesView owner) {
+		xrefListener_ = xrefListener;
+		owner_ = owner;
+		notifyDataSetChanged();
 	}
 
 	/**
@@ -291,52 +221,70 @@ public abstract class VerseAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Kalau pos 0: perikop; pos 1: ayat_1 1;
-	 * maka fungsi ini (ayat_1: 1) akan return 1.
+	 * Let's say pos 0 is pericope and pos 1 is verse_1 1;
+	 * then this method called with verse_1=1 returns 1.
 	 * 
-	 * @return position di adapter ini atau -1 kalo ga ketemu
+	 * @return position or -1 if not found
 	 */
-	public int getPositionAbaikanPerikopDariAyat(int ayat_1) {
+	public int getPositionIgnoringPericopeFromVerse(int verse_1) {
 		if (itemPointer_ == null) return -1;
 
-		int ayat_0 = ayat_1 - 1;
+		int verse_0 = verse_1 - 1;
 
 		for (int i = 0, len = itemPointer_.length; i < len; i++) {
-			if (itemPointer_[i] == ayat_0) return i;
+			if (itemPointer_[i] == verse_0) return i;
 		}
 
 		return -1;
 	}
 
 	/**
-	 * @return ayat (mulai dari 1). atau 0 kalo ga masuk akal
+	 * @return verse_1 or 0 if doesn't make sense
 	 */
 	public int getVerseFromPosition(int position) {
 		if (itemPointer_ == null) return 0;
-
+		
 		if (position >= itemPointer_.length) {
 			position = itemPointer_.length - 1;
+		}
+		
+		int id = itemPointer_[position];
+		
+		if (id >= 0) {
+			return id + 1;
+		}
+		
+		// perikop nih. Susuri sampe abis
+		for (int i = position + 1; i < itemPointer_.length; i++) {
+			id = itemPointer_[i];
+			
+			if (id >= 0) {
+				return id + 1;
+			}
+		}
+		
+		Log.w(TAG, "masa judul perikop di paling bawah? Ga masuk akal."); //$NON-NLS-1$
+		return 0;
+	}
+	
+	/**
+	 * Similar to {@link #getVerseFromPosition(int)}, but returns 0 if the specified position is a pericope or doesn't make sense.
+	 */
+	public int getVerseOrPericopeFromPosition(int position) {
+		if (itemPointer_ == null) return 0;
+
+		if (position < 0 || position >= itemPointer_.length) {
+			return 0;
 		}
 
 		int id = itemPointer_[position];
 
 		if (id >= 0) {
 			return id + 1;
+		} else {
+			return 0;
 		}
-
-		// perikop nih. Susuri sampe abis
-		for (int i = position + 1; i < itemPointer_.length; i++) {
-			id = itemPointer_[i];
-
-			if (id >= 0) {
-				return id + 1;
-			}
-		}
-
-		Log.w(TAG, "masa judul perikop di paling bawah? Ga masuk akal."); //$NON-NLS-1$
-		return 0;
 	}
-
 
 	public String getVerse(int verse_1) {
 		if (verses_ == null) return "[?]"; //$NON-NLS-1$

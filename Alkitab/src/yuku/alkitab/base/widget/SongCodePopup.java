@@ -45,16 +45,16 @@ public class SongCodePopup extends PopupWindows implements OnDismissListener {
 		
 		// all buttons
 		for (int buttonId: new int[] {
-		R.id.bAngka0, 
-		R.id.bAngka1, 
-		R.id.bAngka2, 
-		R.id.bAngka3, 
-		R.id.bAngka4, 
-		R.id.bAngka5, 
-		R.id.bAngka6, 
-		R.id.bAngka7, 
-		R.id.bAngka8, 
-		R.id.bAngka9, 
+		R.id.bDigit0, 
+		R.id.bDigit1, 
+		R.id.bDigit2, 
+		R.id.bDigit3, 
+		R.id.bDigit4, 
+		R.id.bDigit5, 
+		R.id.bDigit6, 
+		R.id.bDigit7, 
+		R.id.bDigit8, 
+		R.id.bDigit9, 
 		R.id.bOk, 
 		}) {
 			mRootView.findViewById(buttonId).setOnClickListener(button_click);

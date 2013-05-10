@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<yuku.alkitab.base.widget.DragGripView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="64dp"
+    android:layout_height="match_parent"
+    android:layout_gravity="fill_vertical|right"
+    android:gravity="right"
+    android:paddingBottom="12dp"
+    android:paddingRight="16dp"
+    android:paddingTop="12dp"
+    android:color="#2333" />

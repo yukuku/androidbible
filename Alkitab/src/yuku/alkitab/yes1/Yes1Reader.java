@@ -13,7 +13,7 @@ import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
-import yuku.alkitab.base.model.Version;
+import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.base.storage.BibleReader;
 import yuku.alkitab.base.storage.OldVerseTextDecoder;
 import yuku.alkitab.base.storage.VerseTextDecoder;
@@ -32,7 +32,7 @@ public class Yes1Reader implements BibleReader {
 	private String shortName;
 	private String longName;
 	private String description;
-	private String locale;
+	@SuppressWarnings("unused") private String locale;
 	private int nkitab;
 	private int perikopAda = 0; // default ga ada
 	private int encoding = 1; // 1 = ascii; 2 = utf-8;
@@ -169,7 +169,7 @@ public class Yes1Reader implements BibleReader {
 				} else if (key.equals("end")) { //$NON-NLS-1$
 					break;
 				} else {
-					Log.w(TAG, "ada key ga dikenal di infoEdisi: " + key); //$NON-NLS-1$ 
+					Log.w(TAG, "ada key ga dikenal di infoEdisi: " + key); //$NON-NLS-1$
 					break;
 				}
 			}
@@ -362,7 +362,7 @@ public class Yes1Reader implements BibleReader {
 		}
 	}
 
-	@Override public int loadPericope(Version version, int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max) {
+	@Override public int loadPericope(int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max) {
 		try {
 			init();
 			
@@ -430,5 +430,15 @@ public class Yes1Reader implements BibleReader {
 			Log.e(TAG, "init error", e); //$NON-NLS-1$
 			return null;
 		}
+	}
+
+	@Override public int getXrefEntryCounts(int[] result, int bookId, int chapter_1) {
+		// YES1 file cannot contain any xref entries.
+		return 0;
+	}
+
+	@Override public XrefEntry getXrefEntry(int ari, int which) {
+		// YES1 file cannot contain any xref entries.
+		return null;
 	}
 }

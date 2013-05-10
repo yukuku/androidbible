@@ -6,7 +6,7 @@
     android:gravity="center_vertical"
     android:minHeight="64dp"
     android:orientation="horizontal"
-    android:padding="8dip" >
+    android:padding="8dp" >
 
     <LinearLayout
         android:layout_width="0dp"
@@ -15,35 +15,34 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/lBahasa"
+            android:id="@+id/lLanguage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="(Bahasa)"
+            android:text="*Language"
             android:textAppearance="?android:attr/textAppearanceSmall"
             tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/lJudul"
+            android:id="@+id/lLongTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawablePadding="6dp"
-            android:text="Bahasa Indonesia Sehari-hari"
-            android:textColor="#fff"
-            android:textSize="18dp"
+            android:text="*Long version name"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/lNamafile"
+            android:id="@+id/lDescription"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="/mnt/sdcard/nama/file/bis.yes"
+            android:text="*Description"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             tools:ignore="HardcodedText" />
-
     </LinearLayout>
 
     <CheckBox
-        android:id="@+id/cAktif"
+        android:id="@+id/cActive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical" />

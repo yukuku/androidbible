@@ -18,12 +18,10 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
 import yuku.alkitab.R;
-import yuku.alkitab.base.IsiActivity.AttributeListener;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.util.Appearances;
-import yuku.alkitab.base.widget.CallbackSpan.OnClickListener;
 
 /**
  * This has been completely superseded by {@link SingleViewVerseAdapter}, but because
@@ -32,8 +30,8 @@ import yuku.alkitab.base.widget.CallbackSpan.OnClickListener;
 public class LegacyVerseAdapter extends VerseAdapter {
 	public static final String TAG = LegacyVerseAdapter.class.getSimpleName();
 	
-	public LegacyVerseAdapter(Context context, OnClickListener paralelListener, AttributeListener attributeListener) {
-		super(context, paralelListener, attributeListener);
+	public LegacyVerseAdapter(Context context) {
+		super(context);
 	}
 
 	@Override public synchronized View getView(int position, View convertView, ViewGroup parent) {
@@ -115,8 +113,8 @@ public class LegacyVerseAdapter extends VerseAdapter {
 
 			PericopeBlock pericopeBlock = pericopeBlocks_[-id - 1];
 
-			TextView lJudul = (TextView) res.findViewById(R.id.lJudul);
-			TextView lXparalel = (TextView) res.findViewById(R.id.lXparalel);
+			TextView lJudul = (TextView) res.findViewById(R.id.lCaption);
+			TextView lXparalel = (TextView) res.findViewById(R.id.lParallels);
 
 			lJudul.setText(pericopeBlock.title);
 

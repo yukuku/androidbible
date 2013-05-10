@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="wrap_content" android:layout_width="wrap_content" android:orientation="vertical" android:padding="8dp">
-	<TextView android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#fff" android:id="@+id/lLabel" android:text="@string/nama_label_titikdua"/>
-	<EditText android:layout_alignParentLeft="true" android:id="@+id/tJudul" android:layout_width="fill_parent" android:layout_height="wrap_content" android:inputType="text" android:selectAllOnFocus="true" android:maxLength="24" android:layout_below="@+id/lLabel"/>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp" >
+
+    <TextView
+        android:id="@+id/lLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/nama_label_titikdua"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <EditText
+        android:id="@+id/tCaption"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/lLabel"
+        android:inputType="text"
+        android:maxLength="24"
+        android:selectAllOnFocus="true" />
+
 </RelativeLayout>

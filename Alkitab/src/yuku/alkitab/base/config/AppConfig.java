@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.xmlpull.v1.XmlPullParser;
 
+import yuku.afw.App;
 import yuku.alkitab.R;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
 import yuku.alkitab.base.storage.Db;
@@ -35,15 +36,15 @@ public class AppConfig {
 	
 	private AppConfig() {}
 	
-	public static AppConfig get(Context context) {
-		String packageName = context.getPackageName();
+	public static AppConfig get() {
+		String packageName = App.context.getPackageName();
 		if (packageName.equals(lastPackageName)) {
 			return lastAppConfig;
 		}
 		
 		AppConfig res = null;
 		try {
-			res = loadConfig(context, context.getResources().getXml(R.xml.app_config));
+			res = loadConfig(App.context, App.context.getResources().getXml(R.xml.app_config));
 			lastAppConfig = res;
 			lastPackageName = packageName;
 		} catch (Exception e) {
@@ -56,8 +57,8 @@ public class AppConfig {
 	private static AppConfig loadConfig(Context context, XmlResourceParser parser) throws Exception {
 		AppConfig res = new AppConfig();
 		
-		List<MVersionPreset> xpreset = new ArrayList<MVersionPreset>();
-		int urutanPreset = 10;
+		List<MVersionPreset> presets = new ArrayList<MVersionPreset>();
+		int presetOrdering = 10;
 
 		while (true) {
 			int next = parser.next();
@@ -77,11 +78,11 @@ public class AppConfig {
 				preset.type = Db.Version.kind_preset;
 				preset.shortName = parser.getAttributeValue(null, "shortName"); //$NON-NLS-1$
 				preset.longName = parser.getAttributeValue(null, "longName"); //$NON-NLS-1$
-				preset.presetFilename = parser.getAttributeValue(null, "namafile_preset"); //$NON-NLS-1$
+				preset.presetFilename = parser.getAttributeValue(null, "filename_preset"); //$NON-NLS-1$
 				preset.url = parser.getAttributeValue(null, "url"); //$NON-NLS-1$
-				preset.ordering = ++urutanPreset;
+				preset.ordering = ++presetOrdering;
 				preset.locale = parser.getAttributeValue(null, "locale"); //$NON-NLS-1$
-				xpreset.add(preset);
+				presets.add(preset);
 			} else if (next == XmlPullParser.START_TAG && "url".equals(parser.getName())) { //$NON-NLS-1$
 				// TODO support more url's if needed. now only one.
 				res.url_prefix = parser.getAttributeValue(null, "prefix"); //$NON-NLS-1$
@@ -95,7 +96,7 @@ public class AppConfig {
 			}
 		}
 		
-		res.presets = xpreset;
+		res.presets = presets;
 		
 		return res;
 	}

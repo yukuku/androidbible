@@ -80,15 +80,15 @@ public class GotoDirectFragment extends BaseGotoFragment {
 		super.onActivityCreated(savedInstanceState);
 
 		{
-			String alamatContoh = S.reference(S.activeVersion.getBook(bookId), chapter_1, verse_1);
+			String example = S.activeVersion.reference(bookId, chapter_1, verse_1);
 			String text = getString(R.string.loncat_ke_alamat_titikdua);
 			int pos = text.indexOf("%s"); //$NON-NLS-1$
 			if (pos >= 0) {
 				SpannableStringBuilder sb = new SpannableStringBuilder();
 				sb.append(text.substring(0, pos));
-				sb.append(alamatContoh);
+				sb.append(example);
 				sb.append(text.substring(pos + 2));
-				sb.setSpan(new StyleSpan(Typeface.BOLD), pos, pos + alamatContoh.length(), 0);
+				sb.setSpan(new StyleSpan(Typeface.BOLD), pos, pos + example.length(), 0);
 				lContohLoncat.setText(sb, BufferType.SPANNABLE);
 			}
 		}
@@ -120,12 +120,13 @@ public class GotoDirectFragment extends BaseGotoFragment {
 				return;
 			}
 			
-			int bookId = jumper.getBookId(S.activeVersion.getConsecutiveBooks());
-			int chapter = jumper.getChapter();
-			int verse = jumper.getVerse();
+			final int bookId = jumper.getBookId(S.activeVersion.getConsecutiveBooks());
+			final int chapter = jumper.getChapter();
+			final int verse = jumper.getVerse();
 			
 			InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(tAlamatLoncat.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+			imm.hideSoftInputFromWindow(tAlamatLoncat.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 			
 			((GotoFinishListener) getActivity()).onGotoFinished(GotoFinishListener.GOTO_TAB_direct, bookId, chapter, verse);
 		}
@@ -137,8 +138,8 @@ public class GotoDirectFragment extends BaseGotoFragment {
 
 	private void showKeyboard() {
 		if (getActivity() != null) { 
-					InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-					imm.showSoftInput(tAlamatLoncat, InputMethodManager.SHOW_IMPLICIT);
-				}
+			InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.showSoftInput(tAlamatLoncat, InputMethodManager.SHOW_IMPLICIT);
+		}
 	}
 }

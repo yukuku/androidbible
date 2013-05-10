@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import yuku.afw.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
@@ -178,7 +177,7 @@ public class Provider extends ContentProvider {
 		if (ari != Integer.MIN_VALUE && ari != 0) {
 			Book book = S.activeVersion.getBook(Ari.toBook(ari));
 			if (book != null) {
-				String text = S.loadVerseText(S.activeVersion, ari);
+				String text = S.activeVersion.loadVerseText(ari);
 				if (formatting == false) {
 					text = U.removeSpecialCodes(text);
 				}
@@ -203,13 +202,13 @@ public class Provider extends ContentProvider {
 		return getCursorForRangeVerseAri(aris, formatting);
 	}
 
-	private Cursor getCursorForRangeVerseAri(IntArrayList aris, boolean formatting) {
+	private Cursor getCursorForRangeVerseAri(IntArrayList ariRanges, boolean formatting) {
 		MatrixCursor res = new MatrixCursor(new String[] {"_id", VerseProvider.COLUMN_ari, VerseProvider.COLUMN_bookName, VerseProvider.COLUMN_text});
 
 		int c = 0;
-		for (int i = 0, len = aris.size(); i < len; i+=2) {
-			int ari_start = aris.get(i);
-			int ari_end = aris.get(i + 1);
+		for (int i = 0, len = ariRanges.size(); i < len; i+=2) {
+			int ari_start = ariRanges.get(i);
+			int ari_end = ariRanges.get(i + 1);
 			
 			if (ari_start == 0 || ari_end == 0) {
 				continue;
@@ -220,7 +219,7 @@ public class Provider extends ContentProvider {
 				int ari = ari_start;
 				Book book = S.activeVersion.getBook(Ari.toBook(ari));
 				if (book != null) {
-					String text = S.loadVerseText(S.activeVersion, ari);
+					String text = S.activeVersion.loadVerseText(ari);
 					if (formatting == false) {
 						text = U.removeSpecialCodes(text);
 					}
@@ -261,12 +260,11 @@ public class Provider extends ContentProvider {
 	}
 	
 	/**
-	 * @param book 
 	 * @return number of verses put into the cursor
 	 */
 	private int resultForOneChapter(MatrixCursor cursor, Book book, int last_c, int ari_bc, int v_1_start, int v_1_end, boolean formatting) {
 		int count = 0;
-		SingleChapterVerses verses = S.loadChapterText(S.activeVersion, book, Ari.toChapter(ari_bc));
+		SingleChapterVerses verses = S.activeVersion.loadChapterText(book, Ari.toChapter(ari_bc));
 		for (int v_1 = v_1_start; v_1 <= v_1_end; v_1++) {
 			int v_0 = v_1 - 1;
 			if (v_0 < verses.getVerseCount()) {
@@ -290,17 +288,17 @@ public class Provider extends ContentProvider {
 
 		long _id = 0;
 		{ // internal
-			AppConfig c = AppConfig.get(getContext());
+			AppConfig c = AppConfig.get();
 			res.addRow(new Object[] {++_id, "internal", 1, c.internalShortName, c.internalLongName, c.internalLongName});
 		}
 		{ // presets
-			List<MVersionPreset> presets = AppConfig.get(App.context).presets;
+			List<MVersionPreset> presets = AppConfig.get().presets;
 			for (MVersionPreset preset: presets) {
 				res.addRow(new Object[] {++_id, "preset", preset.hasDataFile()? 1: 0, preset.shortName != null? preset.shortName: preset.longName, preset.longName, preset.longName});
 			}
 		}
 		{ // yes
-			List<MVersionYes> yeses = S.getDb().getAllVersions();
+			List<MVersionYes> yeses = S.getDb().listAllVersions();
 			for (MVersionYes yes: yeses) {
 				res.addRow(new Object[] {++_id, "yes", yes.hasDataFile()? 1:0, yes.shortName != null? yes.shortName: yes.longName, yes.longName, yes.description});
 			}

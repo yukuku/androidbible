@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<style name="GotoWideOkButton" parent="@style/Widget.Sherlock.ActionButton">
-		<item name="android:textAppearance">?attr/actionMenuTextAppearance</item>
-	</style>
+
+    <style name="GotoWideOkButton" parent="@style/Widget.Sherlock.ActionButton">
+        <item name="android:textAppearance">?attr/actionMenuTextAppearance</item>
+    </style>
+
+    <style name="KeypadButtonStyle" parent="@android:style/Widget.Button" />
+
 </resources>

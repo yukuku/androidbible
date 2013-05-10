@@ -92,6 +92,7 @@ public class Yes2Common {
 		res.locale = versionInfo.locale;
 		res.longName = versionInfo.longName;
 		res.shortName = versionInfo.shortName;
+		res.buildTime = (int) (System.currentTimeMillis() / 1000);
 		res.textEncoding = 2; // utf-8
 		return res;
 	}
@@ -148,7 +149,7 @@ public class Yes2Common {
 	static class CompressibleLazyText extends SectionContent implements SectionContent.Writer {
 		private final TextDb textDb;
 		private final boolean compressed;
-		private final int COMPRESS_BLOCK_SIZE = 32768; 
+		private final int COMPRESS_BLOCK_SIZE = 32768;
 		
 		private int[] compressed_block_sizes;
 		private ByteArrayOutputStream toOutput = new ByteArrayOutputStream();
@@ -213,7 +214,7 @@ public class Yes2Common {
 
 	static class CompressiblePericopesSection extends PericopesSection implements SectionContent.Writer {
 		private final boolean compressed;
-		private final int COMPRESS_BLOCK_SIZE = 32768; 
+		private final int COMPRESS_BLOCK_SIZE = 32768;
 		
 		private int[] compressed_block_sizes;
 		private ByteArrayOutputStream compressedOutput = new ByteArrayOutputStream();

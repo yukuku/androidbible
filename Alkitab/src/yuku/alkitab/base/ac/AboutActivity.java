@@ -33,11 +33,6 @@ public class AboutActivity extends BaseActivity {
 		// preprocess html
 		lAbout.setText(Html.fromHtml(U.preprocessHtml(lAbout.getText().toString())));
 		
-		// disable changing color on press
-		lAbout.setTextColor(lAbout.getTextColors().getDefaultColor());
-		
-		lAbout.setLinkTextColor(0xffc0c0ff);
-		
 		String[] translators = getResources().getStringArray(R.array.translators_list);
 		SpannableStringBuilder sb = new SpannableStringBuilder();
 		sb.append(getString(R.string.about_translators)).append('\n'); 
