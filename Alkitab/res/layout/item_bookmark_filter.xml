@@ -44,16 +44,11 @@
             tools:ignore="HardcodedText" />
     </LinearLayout>
 
-    <yuku.alkitab.base.widget.DragGripView
+    <!-- using include for API<=10 compat -->
+
+    <include
         android:id="@+id/drag_handle"
-        android:layout_width="64dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="fill_vertical|right"
-        android:contentDescription="@string/desc_drag_to_reorder_labels"
-        android:gravity="right"
-        android:paddingBottom="12dp"
-        android:paddingRight="16dp"
-        android:paddingTop="12dp"
-        android:color="#2333" />
+        layout="@layout/bookmark_filter_drag_handle"
+        android:contentDescription="@string/desc_drag_to_reorder_labels" />
 
 </FrameLayout>
