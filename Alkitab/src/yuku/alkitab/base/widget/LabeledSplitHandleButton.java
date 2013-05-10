@@ -15,8 +15,8 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 
 	float[] tmp_hsl = {0.f, 0.f, 0.f};
 	Rect tmp_rect = new Rect();
-	String label1 = "↑ TB";
-	String label2 = "KJV ↓";
+	String label1 = null;
+	String label2 = null;
 	Paint labelPaint = new Paint();
 	Paint bezelPaint = new Paint();
 	float textSize = 11.5f;
@@ -71,10 +71,14 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 		bezelPaint.setColor(U.hslToRgb(tmp_hsl) | 0xff000000);
 		canvas.drawRect(0, getHeight() - bezelHeight, getWidth(), getHeight(), bezelPaint);
 		
-		labelPaint.setTextAlign(Paint.Align.LEFT);
-		canvas.drawText(label1, 8.f * density, getHeight() * 0.5f + textSize * density * 0.3f, labelPaint);
+		if (label1 != null) {
+			labelPaint.setTextAlign(Paint.Align.LEFT);
+			canvas.drawText(label1, 8.f * density, getHeight() * 0.5f + textSize * density * 0.3f, labelPaint);
+		}
 		
-		labelPaint.setTextAlign(Paint.Align.RIGHT);
-		canvas.drawText(label2, getWidth() - 8.f * density, getHeight() * 0.5f + textSize * density * 0.3f, labelPaint);
+		if (label2 != null) {
+			labelPaint.setTextAlign(Paint.Align.RIGHT);
+			canvas.drawText(label2, getWidth() - 8.f * density, getHeight() * 0.5f + textSize * density * 0.3f, labelPaint);
+		}
 	}
 }

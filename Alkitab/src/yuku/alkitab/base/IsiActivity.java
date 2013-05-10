@@ -423,11 +423,13 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	private void loadLastVersion(String lastVersion) {
-		if (lastVersion == null || MVersionInternal.getVersionInternalId().equals(lastVersion)) {
-			return; // we are now already on internal, no need to do anything!
-		}
-		
 		AppConfig c = AppConfig.get();
+		
+		if (lastVersion == null || MVersionInternal.getVersionInternalId().equals(lastVersion)) {
+			// we are now already on internal
+			splitHandleButton.setLabel1("\u25b2 " + c.internalShortName);
+			return;
+		}
 		
 		// coba preset dulu!
 		for (MVersionPreset preset: c.presets) { // 2. preset
@@ -1161,6 +1163,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			Book splitBook = activeSplitVersion.getBook(this.activeBook.bookId);
 			if (splitBook == null) {
 				tSplitEmpty.setText(getString(R.string.split_version_cant_display_verse, this.activeBook.reference(this.chapter_1), activeSplitVersion.getLongName()));
+				tSplitEmpty.setTextColor(S.applied.fontColor);
 				lsSplit1.setDataEmpty();
 			} else {
 				loadChapterToVersesView(lsSplit1, activeSplitVersion, splitBook, this.chapter_1, this.chapter_1, true);
