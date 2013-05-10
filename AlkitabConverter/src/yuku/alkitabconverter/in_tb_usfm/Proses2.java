@@ -1,15 +1,20 @@
 package yuku.alkitabconverter.in_tb_usfm;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
+import java.util.TreeMap;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -20,6 +25,8 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 
 import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.model.XrefEntry;
+import yuku.alkitab.base.util.Base64Mod;
 import yuku.alkitab.yes1.Yes1File;
 import yuku.alkitab.yes1.Yes1File.InfoEdisi;
 import yuku.alkitab.yes1.Yes1File.InfoKitab;
@@ -30,12 +37,17 @@ import yuku.alkitab.yes1.Yes1File.PerikopIndex;
 import yuku.alkitab.yes1.Yes1File.Teks;
 import yuku.alkitabconverter.internal_common.InternalCommon;
 import yuku.alkitabconverter.internal_common.ReverseIndexer;
+import yuku.alkitabconverter.util.DesktopVerseFinder;
+import yuku.alkitabconverter.util.DesktopVerseParser;
+import yuku.alkitabconverter.util.IntArrayList;
+import yuku.alkitabconverter.util.KjvUtils;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.TextDb.TextProcessor;
 import yuku.alkitabconverter.util.TextDb.VerseState;
 import yuku.alkitabconverter.yes_common.Yes1Common;
+import yuku.bintex.BintexWriter;
 
 public class Proses2 {
 	final SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -49,11 +61,14 @@ public class Proses2 {
 	static String INFO_SHORT_NAME = "TB";
 	static String INFO_LONG_NAME = "Terjemahan Baru";
 	static String INFO_KETERANGAN = "Terjemahan Baru (1974), Lembaga Alkitab Indonesia";
-	static String INPUT_TEKS_2 = "./bahan/in-tb-usfm/mid/"; 
+	static String INPUT_TEKS_2 = "./bahan/in-tb-usfm/mid/";
 
 
 	TextDb teksDb = new TextDb();
 	StringBuilder misteri = new StringBuilder();
+	XrefDb xrefDb = new XrefDb();
+	BintexWriter xrefBw;
+	
 	PericopeData pericopeData = new PericopeData();
 	{
 		pericopeData.entries = new ArrayList<Entry>();
@@ -88,8 +103,148 @@ public class Proses2 {
 			System.out.println("file " + file + " done; now total rec: " + teksDb.size());
 		}
 		
-		System.out.println("MISTERI:");
+		System.out.println("OUTPUT MISTERI:");
 		System.out.println(misteri);
+		
+		System.out.println("OUTPUT XREF:");
+		
+		xrefDb.processEach(new XrefDb.XrefProcessor() {
+			@Override public void process(XrefEntry xe, int ari, int entryIndex) {
+				final List<int[]> pairs = new ArrayList<>();
+				DesktopVerseFinder.findInText(xe.target, new DesktopVerseFinder.DetectorListener() {
+					@Override public boolean onVerseDetected(int start, int end, String verse) {
+						pairs.add(new int[] {start, end});
+						return true;
+					}
+					
+					@Override public void onNoMoreDetected() {
+					}
+				});
+				
+				String target = xe.target;
+				for (int i = pairs.size() - 1; i >= 0; i--) {
+					int[] pair = pairs.get(i);
+					String verse = target.substring(pair[0], pair[1]);
+					
+					IntArrayList ariRanges = DesktopVerseParser.verseStringToAriWithShiftTb(verse);
+					if (ariRanges == null || ariRanges.size() == 0) {
+						throw new RuntimeException("verse cannot be parsed: " + verse);
+					}
+					
+					{ // we need to process 00 verses (entire chapter) to 1 for start and the last verse for end.
+						boolean isStart = true;
+						for (int j = 0; j < ariRanges.size(); j++, isStart = !isStart) {
+							int ari2 = ariRanges.get(j);
+							if (Ari.toVerse(ari2) == 0) {
+								if (isStart) {
+									ari2 = Ari.encodeWithBc(Ari.toBookChapter(ari2), 1);
+								} else {
+									int lastVerse_1 = KjvUtils.getVerseCount(Ari.toBook(ari2), Ari.toChapter(ari2));
+									ari2 = Ari.encodeWithBc(Ari.toBookChapter(ari2), lastVerse_1);
+								}
+							}
+							ariRanges.set(j, ari2);
+						}
+					}
+					
+					{
+						StringBuilder lid_s = new StringBuilder();
+						int last_lid = 0;
+						boolean isStart = true;
+						boolean endWritten = false; // this can be set to true in isstart portion if the end verse does not need to be written
+						
+						for (int j = 0; j < ariRanges.size(); j++, isStart = !isStart) {
+							int lid = KjvUtils.ariToLid(ariRanges.get(j));
+							if (lid <= 0) throw new RuntimeException(String.format("invalid ari found 0x%06x", ariRanges.get(j)));
+							
+							int enc_value = -1; // just to prevent forgetting
+							char[] chars;
+							if (isStart) {
+								endWritten = false;
+								// 00 <addr 4bit> = 1char positive delta from last lid (max 16)
+								// 01 <addr 4bit> = 1char positive delta from last lid (max 16), end == start
+								// 100 <addr 9bit> = 2char positive delta from last lid (max 512)
+								// 101 <addr 9bit> = 2char positive delta from last lid (max 512), end == start
+								// 110 <addr 15bit> = 3char absolute
+								// 111 <addr 15bit> = 3char absolute, end == start
+								int lid_end = KjvUtils.ariToLid(ariRanges.get(j + 1));
+								if (last_lid == 0 || (lid - last_lid) > 512 || (lid - last_lid) < 0) { // use 3 6-bit chars
+									if (lid_end == lid) {
+										enc_value = 0x38000 | lid;
+										endWritten = true;
+									} else {
+										enc_value = 0x30000 | lid;
+									}
+									chars = Base64Mod.encodeToThreeChars(enc_value);
+								} else if ((lid - last_lid) > 16) { // use 2 6-bit chars
+									if (lid_end == lid) {
+										enc_value = 0xa00 | (lid - last_lid);
+										endWritten = true;
+									} else {
+										enc_value = 0x800 | (lid - last_lid);
+									}
+									chars = Base64Mod.encodeToTwoChars(enc_value);
+								} else { // use 1 6-bit char
+									if (lid_end == lid) {
+										enc_value = 0x10 | (lid - last_lid);
+										endWritten = true;
+									} else {
+										enc_value = (lid - last_lid);
+									}
+									chars = Base64Mod.encodeToOneChar(enc_value);
+								}
+							} else {
+								// 0 <delta 5bit> = 1char positive delta from start (min 1, max 32)
+								// 10 <delta 10bit> = 2char positive delta from start (max 1024)
+								// 110 <addr 15bit> = 3char absolute
+								if (endWritten) { // already mentioned by start, no need to do anything
+									chars = new char[0];
+								} else if ((lid - last_lid) > 1024) { // use 3 6-bit chars
+									enc_value = 0x30000 | lid;
+									chars = Base64Mod.encodeToThreeChars(enc_value);
+								} else if ((lid - last_lid) > 32) { // use 2 6-bit chars
+									enc_value = 0x800 | (lid - last_lid);
+									chars = Base64Mod.encodeToTwoChars(enc_value);
+								} else { // use 1 6-bit char
+									enc_value = (lid - last_lid);
+									chars = Base64Mod.encodeToOneChar(enc_value);
+								}
+							}
+							lid_s.append(chars);
+							// for debug lid_s.append("(").append(String.format("0x%x", enc_value)).append(")");
+							
+							last_lid = lid;
+						}
+					
+						target = target.substring(0, pair[0]) + "@<t" + lid_s + "@>" + verse + "@/" + target.substring(pair[1]);
+					}
+				}
+				
+				xe.target = target;
+			}
+		});
+		
+		// prepare for xref file
+		final IntArrayList xref_index_ari_to_pos = new IntArrayList();
+		final IntArrayList xref_index_pos_to_offset = new IntArrayList();
+		final ByteArrayOutputStream xref_content_buf = new ByteArrayOutputStream();
+		final BintexWriter xref_content_bw = new BintexWriter(xref_content_buf);
+		xrefDb.processEach(new XrefDb.XrefProcessor() {
+			@Override public void process(XrefEntry xe, int ari, int entryIndex) {
+				try {
+					int offset = xref_content_bw.getPos();
+					xref_content_bw.writeValueString(xe.source);
+					xref_content_bw.writeValueString(xe.target);
+					
+					xref_index_ari_to_pos.add(ari);
+					xref_index_pos_to_offset.add(offset);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		});
+		
+		xrefDb.dump();
 		
 		// POST-PROCESS
 		
@@ -111,6 +266,16 @@ public class Proses2 {
 				if (ari == Ari.encode(42, 12, 34)) {
 					as.text = as.text.replace("bahwa@6Anak Manusia", "bahwa @6Anak Manusia");
 				}
+				
+				// patch for words of Jesus after colon, there must be a space after the colon
+				if (as.text.contains(":@6")) {
+					as.text = as.text.replace(":@6", ": @6");
+				}
+				
+				// replace "--" that is used not to separate verses in verse ranges with emdash
+				if (as.text.contains("--")) {
+					as.text = as.text.replaceAll("--(?=[^a-z0-9])", "\u2014");
+				}
 			}
 		});
 		
@@ -127,6 +292,59 @@ public class Proses2 {
 		{
 			File outDir = new File("./bahan/in-tb-usfm/raw");
 			ReverseIndexer.createReverseIndex(outDir, "tb", teksDb);
+		}
+		
+		////////// CREATE XREF FILE
+
+		try (BintexWriter bw = new BintexWriter(new FileOutputStream(new File("./bahan/in-tb-usfm/raw", "tb_xref_bt.bt")))) {
+			assert xref_index_ari_to_pos.size() == xref_index_pos_to_offset.size();
+			
+			// TB has 3238 xrefentries. Write size first.
+			bw.writeInt(xref_index_ari_to_pos.size());
+			
+			// Index  ari -> pos
+			//  0 <delta 7bit> = relative
+			//  10 <delta 14bit> = relative
+			//  1100 0000 <ari 24bit> = absolute
+			// total ~ 5 KB
+			{
+				int last_ari = 0;
+				for (int i = 0; i < xref_index_ari_to_pos.size(); i++) {
+					int ari = xref_index_ari_to_pos.get(i);
+					if (last_ari == 0 || (ari - last_ari > 16383)) { // 4 byte
+						bw.writeInt(0xc0000000 | ari);
+					} else if ((ari - last_ari) > 127) { // 2 byte
+						bw.writeUint16(0x8000 | (ari-last_ari));
+					} else {
+						bw.writeUint8(ari-last_ari);
+					}
+					last_ari = ari;
+				}
+			}
+			
+			// Index  pos -> xref_content
+			//  0 <delta 7bit> = relative
+			//  10 <delta 14bit> = relative
+			//  1100 0000 <offset 24bit> = absolute
+			//
+			// total ~ 4 KB
+			{
+				int last_offset = 0;
+				for (int i = 0; i < xref_index_pos_to_offset.size(); i++) {
+					int offset = xref_index_pos_to_offset.get(i);
+					if (last_offset == 0 || (offset - last_offset > 16383)) { // 4 byte
+						bw.writeInt(0xc0000000 | offset);
+					} else if ((offset - last_offset) > 127) { // 2 byte
+						bw.writeUint16(0x8000 | (offset-last_offset));
+					} else { // 1 byte
+						bw.writeUint8(offset-last_offset);
+					}
+					last_offset = offset;
+				}
+			}
+			
+			// content
+			bw.writeRaw(xref_content_buf.toByteArray());
 		}
 		
 		////////// PROSES KE INTERNAL
@@ -221,8 +439,10 @@ public class Proses2 {
 		List<PericopeData.Entry> perikopBuffer = new ArrayList<PericopeData.Entry>();
 		boolean afterThisMustStartNewPerikop = true; // if true, we have done with a pericope title, so the next text must become a new pericope title instead of appending to existing one
 		
+		// states
 		int sLevel = 0;
 		int menjorokTeks = -1; // -2 adalah para start; 0 1 2 3 4 adalah q level;
+		int xref_state = -1; // 0 is initial (just encountered xref tag <x>), 1 is source, 2 is target
 		
 		public Handler(int kitab_0) {
 			this.kitab_0 = kitab_0;
@@ -252,7 +472,7 @@ public class Proses2 {
 					for (int pos = 0; pos < id.length(); pos++) {
 						if (!Character.isDigit(id.charAt(pos))) {
 							String s = id.substring(0, pos);
-							ayat_1 = Integer.parseInt(s); 
+							ayat_1 = Integer.parseInt(s);
 							System.out.println("// number format exception simplified to: " + s);
 							break;
 						}
@@ -312,6 +532,11 @@ public class Proses2 {
 				sLevel = Integer.parseInt(attributes.getValue("level"));
 			} else if (alamat.endsWith("/x")) {
 				tujuanTulis.push(tujuanTulis_xref);
+				xref_state = 0;
+			} else if (alamat.endsWith("/x/milestone")) { // after milestone, we will have xref source
+				xref_state = 1;
+			} else if (alamat.endsWith("/x/xt")) { // after xt, we will have xref target
+				xref_state = 2;
 			} else if (alamat.endsWith("/wj")) {
 				tujuanTulis.push(tujuanTulis_teks);
 				tulis("@6");
@@ -375,7 +600,7 @@ public class Proses2 {
 				if (sLevel == 0 || sLevel == 1 || sLevel == LEVEL_p_mr || sLevel == LEVEL_p_ms) {
 					if (afterThisMustStartNewPerikop || perikopBuffer.size() == 0) {
 						PericopeData.Entry entry = new PericopeData.Entry();
-						entry.ari = 0; // done later when writing teks so we know which verse this pericope starts from 
+						entry.ari = 0; // done later when writing teks so we know which verse this pericope starts from
 						entry.block = new PericopeData.Block();
 						entry.block.version = 2;
 						entry.block.title = judul;
@@ -399,7 +624,17 @@ public class Proses2 {
 					throw new RuntimeException("sLevel = " + sLevel + " not understood: " + judul);
 				}
 			} else if (tujuan == tujuanTulis_xref) {
-				System.out.println("$tulis ke xref " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
+				System.out.println("$tulis ke xref (state=" + xref_state + ") " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
+				int ari = Ari.encode(kitab_0, pasal_1, ayat_1);
+				if (xref_state == 0) {
+					xrefDb.addBegin(ari);
+				} else if (xref_state == 1) {
+					xrefDb.addSource(ari, chars);
+				} else if (xref_state == 2) {
+					xrefDb.addTarget(ari, chars);
+				} else {
+					throw new RuntimeException("xref_state not supported");
+				}
 			} else if (tujuan == tujuanTulis_footnote) {
 				System.out.println("$tulis ke footnote " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
 			}
@@ -473,5 +708,74 @@ public class Proses2 {
 		}
 
 		return res;
+	}
+}
+
+class XrefDb {
+	static interface XrefProcessor {
+		void process(XrefEntry xe, int ari, int entryIndex);
+	}
+	
+	Map<Integer, List<XrefEntry>> map = new TreeMap<>();
+	
+	void addBegin(int ari) {
+		List<XrefEntry> list = map.get(ari);
+		if (list == null) {
+			list = new ArrayList<>();
+			map.put(ari, list);
+		}
+		
+		XrefEntry xe = new XrefEntry();
+		list.add(xe);
+	}
+	
+	/** must be after addBegin */
+	void addSource(int ari, String source) {
+		List<XrefEntry> list = map.get(ari);
+		if (list == null) {
+			throw new RuntimeException("Must be after addBegin (1)");
+		}
+		
+		XrefEntry xe = list.get(list.size() - 1);
+		if (xe.source != null || xe.target != null) {
+			throw new RuntimeException("Must be directly after addBegin (2)");
+		}
+		
+		xe.source = source.trim();
+	}
+	
+	/* must be after addSource */
+	void addTarget(int ari, String target) {
+		List<XrefEntry> list = map.get(ari);
+		if (list == null) {
+			throw new RuntimeException("Must be after addSource (1)");
+		}
+		
+		XrefEntry xe = list.get(list.size() - 1);
+		if (xe.source == null || xe.target != null) {
+			throw new RuntimeException("Must be directly after addSource (2)");
+		}
+		
+		xe.target = target.trim();
+	}
+	
+	void dump() {
+		for (Map.Entry<Integer, List<XrefEntry>> e: map.entrySet()) {
+			List<XrefEntry> xes = e.getValue();
+			for (int i = 0; i < xes.size(); i++) {
+				XrefEntry xe = xes.get(i);
+				System.out.printf("xref 0x%06x(%d): [%s] [%s]%n", e.getKey(), i, xe.source, xe.target);
+			}
+		}
+	}
+	
+	void processEach(XrefProcessor processor) {
+		for (Map.Entry<Integer, List<XrefEntry>> e: map.entrySet()) {
+			List<XrefEntry> xes = e.getValue();
+			for (int i = 0; i < xes.size(); i++) {
+				XrefEntry xe = xes.get(i);
+				processor.process(xe, e.getKey(), i);
+			}
+		}
 	}
 }

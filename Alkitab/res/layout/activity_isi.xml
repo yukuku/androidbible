@@ -1,101 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root"
+    android:id="@+id/overlayContainer"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:baselineAligned="false"
-    android:orientation="vertical" >
+    android:layout_height="fill_parent" >
 
     <LinearLayout
-        android:id="@+id/panelTitle"
+        android:id="@+id/root"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        tools:ignore="UselessParent" >
 
-        <TextView
-            android:id="@+id/lTitle"
+        <LinearLayout
+            android:id="@+id/splitRoot"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/titlebar_bg"
-            android:paddingBottom="2dp"
-            android:paddingLeft="4dp"
-            android:paddingTop="2dp"
-            android:shadowColor="#bb000000"
-            android:shadowRadius="2.75"
-            android:singleLine="true"
-            android:text="Kitab 0:0"
-            android:textColor="#fff"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1px"
-            android:background="#000"
-            tools:ignore="PxUsage" />
-
-    </LinearLayout>
-
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" >
-
-        <ListView
-            android:id="@+id/lsIsi"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:divider="@null"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:listSelector="@android:color/transparent" >
-
-            <!-- Preview: listitem=@layout/item_ayat_sederhana -->
-        </ListView>
-
-        <ImageButton
-            android:id="@+id/bContext"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="4dp"
-            android:src="@drawable/ic_btn_round_more_normal"
-            android:visibility="invisible" android:contentDescription="@string/desc_open_verse_menu"/>
-    </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/panelNavigation"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp" >
-
-        <ImageButton
-            android:id="@+id/bLeft"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:padding="16dp"
-            android:scaleType="center"
-            android:src="@drawable/ic_nav_arrow_left" android:contentDescription="@string/desc_previous_chapter"/>
-
-        <Button
-            android:id="@+id/bGoto"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="Nama Kitab Agak Panjang 20"
-            android:textSize="18dp"
-            tools:ignore="HardcodedText" />
+            android:orientation="vertical"
+            tools:ignore="NestedWeights" >
 
-        <ImageButton
-            android:id="@+id/bRight"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:padding="16dp"
-            android:scaleType="center"
-            android:src="@drawable/ic_nav_arrow_right" android:contentDescription="@string/desc_next_chapter"/>
+            <yuku.alkitab.base.widget.VersesView
+                android:id="@+id/lsSplit0"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <FrameLayout
+                android:id="@+id/splitHandle"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:visibility="gone" >
+
+                <yuku.alkitab.base.widget.LabeledSplitHandleButton
+                    android:id="@+id/splitHandleButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:ignore="ContentDescription" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <yuku.alkitab.base.widget.VersesView
+                    android:id="@+id/lsSplit1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/tSplitEmpty"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:paddingLeft="32dp"
+                    android:paddingRight="32dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    tools:ignore="SelectableText" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/panelNavigation"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/abs__action_bar_default_height"
+            android:background="@drawable/abs__ab_solid_dark_holo" >
+
+            <ImageButton
+                android:id="@+id/bLeft"
+                style="?attr/actionButtonStyle"
+                android:layout_width="@dimen/abs__action_button_min_width"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/desc_previous_chapter"
+                android:padding="16dp"
+                android:scaleType="center"
+                android:src="@drawable/ic_nav_left_light" />
+
+            <Button
+                android:id="@+id/bGoto"
+                style="?attr/actionButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:text="*Long Name Of Book 123"
+                android:textColor="#f0f0f0"
+                android:textSize="18sp"
+                tools:ignore="HardcodedText" />
+
+            <ImageButton
+                android:id="@+id/bRight"
+                style="?attr/actionButtonStyle"
+                android:layout_width="@dimen/abs__action_button_min_width"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/desc_next_chapter"
+                android:padding="16dp"
+                android:scaleType="center"
+                android:src="@drawable/ic_nav_right_light" />
+        </LinearLayout>
     </LinearLayout>
 
-</LinearLayout>
+</FrameLayout>

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
-import android.os.Build;
 import android.widget.TextView;
 
 import java.io.PrintWriter;
@@ -16,16 +15,22 @@ public class U {
 
 	/**
 	 * If verse doesn't start with @: don't do anything.
-	 * Otherwise, remove all @'s and one character after that.
-	 * 
-	 * @param text a verse
+	 * Otherwise, remove all @'s and one character after that and also text between @&lt; and @&gt;.
 	 */
 	public static String removeSpecialCodes(String text) {
+		return removeSpecialCodes(text, false);
+	}
+	
+	/**
+	 * If verse doesn't start with @: don't do anything, except when force is set to true.
+	 * Otherwise, remove all @'s and one character after that and also text between @&lt; and @&gt;.
+	 */
+	public static String removeSpecialCodes(String text, boolean force) {
 		if (text.length() == 0) return text;
-		if (text.charAt(0) != '@') return text;
+		if (!force && text.charAt(0) != '@') return text;
 
 		StringBuilder sb = new StringBuilder(text.length());
-		int pos = 2;
+		int pos = 0;
 
 		while (true) {
 			int p = text.indexOf('@', pos);
@@ -35,6 +40,16 @@ public class U {
 
 			sb.append(text, pos, p);
 			pos = p + 2;
+			
+			// did we skip "@<"?
+			if (p + 1 < text.length() && text.charAt(p + 1) == '<') {
+				// look for matching "@>"
+				int q = text.indexOf("@>", pos);
+				if (q != -1) {
+					pos = q + 2;
+				}
+			}
+			
 		}
 
 		sb.append(text, pos, text.length());
@@ -193,36 +208,18 @@ public class U {
 		return sb.toString();
 	}
 	
-	public static boolean isHolo() {
-		return Build.VERSION.SDK_INT /* ini diambil waktu runtime */ >= 11 /* HONEYCOMB */;
-	}
-	
 	@SuppressWarnings("deprecation") public static void copyToClipboard(CharSequence salinan) {
 		android.text.ClipboardManager clipboardManager = (android.text.ClipboardManager) App.context.getSystemService(Context.CLIPBOARD_SERVICE);
 		clipboardManager.setText(salinan);
 	}
 
-	private static int[] colorSet;
 	public static int getColorBasedOnBookId(int pos) {
-		if (colorSet == null) {
-			colorSet = new int[3];
-			if (U.isHolo()) {
-				colorSet[0] = 0xffffcccf;
-				colorSet[1] = 0xffccccff;
-				colorSet[2] = 0xffffffff;
-			} else {
-				colorSet[0] = 0xff990022; // pl
-				colorSet[1] = 0xff000099; // pb
-				colorSet[2] = 0xff000000; // dll
-			}
-		}
-
 		if (pos >= 0 && pos < 39) {
-			return colorSet[0];
+			return 0xff990022;
 		} else if (pos >= 39 && pos < 66) {
-			return colorSet[1];
+			return 0xff000099;
 		} else {
-			return colorSet[2];
+			return 0xff000000;
 		}
 	}
 

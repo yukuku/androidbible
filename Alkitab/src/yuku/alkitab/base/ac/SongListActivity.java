@@ -140,8 +140,8 @@ public class SongListActivity extends BaseActivity {
 	}
 	
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		super.onCreate(savedInstanceState);
 		setProgressBarIndeterminate(true);
 		
 		setContentView(R.layout.activity_song_list);
@@ -161,12 +161,12 @@ public class SongListActivity extends BaseActivity {
 		lsSong.setOnItemClickListener(lsSong_itemClick);
 		
 		qaChangeBook = SongBookUtil.getSongBookQuickAction(this, true);
-		qaChangeBook.setOnActionItemClickListener(SongBookUtil.getOnActionItemConverter(songBookSelected)); 
+		qaChangeBook.setOnActionItemClickListener(SongBookUtil.getOnActionItemConverter(songBookSelected));
 		
 		bChangeBook.setOnClickListener(bChangeBook_click);
 		cDeepSearch.setOnCheckedChangeListener(cDeepSearch_checkedChange);
 		
-		// if we're using SearchBar instead of SearchView, move filter panel to 
+		// if we're using SearchBar instead of SearchView, move filter panel to
 		// the bottom view of the SearchBar for better appearance
 		if (searchWidget.getSearchBarIfUsed() != null) {
 			((ViewGroup) panelFilter.getParent()).removeView(panelFilter);
@@ -201,7 +201,7 @@ public class SongListActivity extends BaseActivity {
         		return loader;
         	}
         	
-        	@Override public void onLoadFinished(Loader<List<SongInfo>> loader, List<SongInfo> data) { 
+        	@Override public void onLoadFinished(Loader<List<SongInfo>> loader, List<SongInfo> data) {
         		adapter.setData(data);
         		setProgressBarIndeterminateVisibility(false);
         	}
@@ -230,6 +230,7 @@ public class SongListActivity extends BaseActivity {
 			.setNegativeButton(R.string.cancel, null)
 			.show();
 		}
+		
 		return super.onOptionsItemSelected(item);
 	}
 	

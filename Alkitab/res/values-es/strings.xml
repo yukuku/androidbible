@@ -6,7 +6,6 @@
   <string name="donasi_tombol_gamau">Ahora no</string>
   <string name="donasi_tombol_ok">Donar</string>
   <string name="donasi_keterangan">Si has sido bendecido por esta aplicación de la Biblia por favor hazle una donación al programador. Tú donación será de mucha ayuda. ¡Gracias!</string>
-  <string name="donasi_judul">Donación</string>
   <string name="menuDonasi">Donación</string>
   <string name="mengimpor_titiktiga">Restaurando…</string>
   <string name="mengekspor_titiktiga">Creando respaldo…</string>
@@ -16,6 +15,7 @@
   <string name="ekspor_berhasil_file_yang_dihasilkan_file">Respaldo exitoso.\n\nLos resultados están en el archivo: %s</string>
   <string name="impor_berhasil_angka_diproses">Restauración exitosa. En total %1$d marcadores, notas y/o resaltos, y además  %2$d etiquetas fueron procesadas.</string>
   <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Ocurrió un error (o errores) creando el respaldo: %s</string>
+  <string name="ekspor_pembatas_buku_dan_catatan_tanya">¿Crear respaldo de marcadores, notas y resaltos a la Tarjeta SD o al Almacenamiento USB? Los respaldos existentes serán sobreescritos.</string>
   <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Ocurrió un error (o errores) restaurando: %s</string>
   <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">¿Deseas sobrescribir los marcadores, notas y resaltos que tienes actualmente?</string>
   <string name="file_tidak_bisa_dibaca_file">El archivo no existe o no puede ser leído: %s</string>
@@ -27,15 +27,13 @@
   <string name="versi">Versión</string>
   <string name="renungan">Devoción</string>
   <string name="cari_v">Buscar</string>
-  <string name="judul_bukmak_activity">Marcadores, etc</string>
+  <string name="judul_bukmak_activity">Marcadores</string>
   <string name="pembatas_buku">Marcadores</string>
   <string name="hapus_pembatas_buku">Eliminar marcador</string>
   <string name="bagikan">Compartir</string>
   <string name="tulis_catatan">Escribir nota</string>
   <string name="tambah_pembatas_buku">Agregar marcador</string>
   <string name="salin_ayat">Copiar versículo</string>
-  <string name="pada_mulanya">En el principio creó Dios los cielos y la tierra. Y la tierra estaba desordenada y vacía, y las tinieblas estaban sobre la faz del abismo, y el Espíritu de Dios se movía sobre la faz de las aguas. Y dijo Dios: Sea la luz; y fue la luz. Y vio Dios que la luz era buena; y separó Dios la luz de las tinieblas. Y llamó Dios a la luz Día, y a las tinieblas llamó Noche. Y fue la tarde y la mañana un día.</string>
-  <string name="contoh_tulisan_titikdua">Texto de ejemplo:</string>
   <string name="perj_baru">Nuevo Testamento.</string>
   <string name="perj_lama">Viejo Testamento.</string>
   <string name="search_bookname_only">Solo %s</string>
@@ -60,7 +58,6 @@
   <string name="hari_minggu">Dom</string>
   <string name="size_hasil">%d resultados</string>
   <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Buscando versículos que contengan las siguientes palabras:[b]%s[/b]</string>
-  <string name="mencari">Buscando</string>
   <string name="pilih_setidaknya_satu_kitab">Elija al menos un libro para buscar.</string>
   <string name="pengunduhan_dibatalkan">Descarga cancelada.</string>
   <string name="sedang_mendekompres_harap_tunggu">Descomprimiendo. Por favor espere…</string>
@@ -70,8 +67,6 @@
   <string name="mulai_mengunduh">Iniciando descarga…</string>
   <string name="mengunduh_nama">Descargando %s</string>
   <string name="file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya">No se encuentra el archivo \'%s\'. ¿Desea descargarlo?</string>
-  <string name="mengunduh_tambahan">Descargando add-on</string>
-  <string name="pilih_edisi">Elija una Versión</string>
   <string name="tuju_v">Ir a</string>
   <string name="bagikan_alamat">Compartir %s</string>
   <string name="alamat_sudah_disalin">%s ha sido copiado.</string>
@@ -79,7 +74,6 @@
   <string name="no">No</string>
   <string name="yes">Sí</string>
   <string name="anda_yakin_mau_menghapus_catatan_ini">¿Está seguro que desea eliminar esta nota?</string>
-  <string name="hapus_catatan">Eliminar Nota</string>
   <string name="catatan_alamat">Nota en %s</string>
   <string name="delete">Eliminar</string>
   <string name="cancel">Cancelar</string>
@@ -107,10 +101,7 @@
   <string name="cp_mapping_books">Mapeando libros</string>
   <string name="cp_constructing_book_info">Construyendo información del libro</string>
   <string name="cp_constructing_version_info">Construyendo información de versión</string>
-  <string name="cp_constructing_translated_file">Construyendo archivo traducido</string>
-  <string name="cp_writing_num_section_pericope_indexes">Escribiendo %s indices de sección/fragmento</string>
   <string name="cp_writing_num_section_pericope_titles">Escribiendo %s titulos de sección/fragmento</string>
-  <string name="cp_opening_translated_file">Abriendo archivo traducido</string>
   <string name="cp_writing_translated_file">Escribiendo archivo traducido</string>
   <string name="cp_reading_book_info">Leyendo información del libro: %s</string>
   <string name="cp_writing_text_of_book_chapters">Escribiendo texto del libro %1$s (%2$s capítulos)</string>
@@ -137,7 +128,6 @@
   <string name="ed_error_reading_pdb_file">Error leyendo archivo PDB</string>
   <string name="ed_details">Detalles: </string>
   <string name="ed_buka_file_pdb_yes_lainnya">Abrir un archivo .pdb/.yes…</string>
-  <string name="ed_tekan_untuk_mengunduh">Toque aquí para descargar</string>
   <string name="info_terperinci">Detalles</string>
   <string name="buang_dari_daftar">Remover de la lista</string>
   <string name="ubah_bukmak">Editar marcador</string>
@@ -151,10 +141,8 @@
   <string name="menuSortTulisan">Título</string>
   <string name="menuSortTulisan_warna">Colo de resalto</string>
   <string name="waktuTambah_edited_waktuUbah">%1$s\n(editado %2$s)</string>
-  <string name="cannot_find_data_file">Archivo de dato no encontrado</string>
   <string name="the_file_for_this_version_is_no_longer_available_file">El archivo para esta versión ya no está disponible. ¿Deseas remover está versión de la lista?\nArchivo: %s</string>
   <string name="create_label_title">Crear etiqueta</string>
-  <string name="remove_label_title">Remover etiqueta</string>
   <string name="do_you_want_to_remove_the_label_label_from_this_bookmark">"¿Desea remover la etiqueta \'%s\' de este marcador?"</string>
   <string name="add_label_title">Agregar etiqueta</string>
   <string name="create_label_titik3">Crear etiqueta…</string>
@@ -183,12 +171,29 @@
   <string name="rename_label">Renombrar etiqueta</string>
   <string name="delete_label">Eliminar etiqueta</string>
   <string name="please_wait_titik3">Por favor espere…</string>
-  <string name="juga_hapus_file_datanya_file">¿También eliminar el archivo?\nArchivo: %s</string>
   <string name="get_more_fonts">Descargar más fuentes…</string>
   <string name="about_translators">Traductores:</string>
   <string name="intent_filter_import_from_backup">Importar desde respaldo</string>
   <string name="redownload">Re-descargar</string>
   <string name="read_faq_before_suggest">Por favor lea el FAQ anterior antes de enviar una sugerencia. ¿Continuar enviando sugerencia?</string>
+  <string name="no_bookmarks_for_backup">No hay ningún marcador, nota o resalto para respaldar.</string>
+  <string name="pdb_error_not_palmbible">Este archivo PDB no está en formato PalmBible+. Este PDB es del tipo \'%1$s\' y con el id de creador \'%2$s\', el cual no es soportado por esta aplicación.</string>
+  <string name="pdb_error_corrupted">El archivo PDB está corrupto.</string>
+  <string name="pdb_error_not_pdb_file">El archivo seleccionado no es un archivo PDB.</string>
+  <string name="menu_split_version">Versión dividida</string>
+  <string name="split_version_none">Ninguno</string>
+  <string name="split_version_cant_display_verse">%1$s no está disponible en %2$s.</string>
+  <string name="menuAddSomething">Agregar marcador</string>
+  <string name="color_settings">Personalizar colores</string>
+  <string name="menuTextAppearance">Apariencia del texto</string>
+  <string name="text_appearance_theme_custom">Personalizado…</string>
+  <string name="text_appearance_text_size">Tamaño de texto</string>
+  <string name="text_appearance_line_spacing">Espaciado de líneas</string>
+  <string name="text_appearance_bold_switch_off">NEGRITA</string>
+  <string name="text_appearance_bold_switch_on"><b>NEGRITA</b></string>
+  <string name="devotion_change_date">Cambiar fecha</string>
+  <string name="bookmark_search">Buscar</string>
+  <string name="history_hint">Para el historial mantenga presionado aquí</string>
   <string name="goto_tab_dialer_label">Marcador</string>
   <string name="goto_tab_direct_label">Directo</string>
   <string name="goto_tab_grid_label">Rejilla</string>
@@ -207,7 +212,6 @@
   <string name="sn_download_song_books">Descargar canciones de libros</string>
   <string name="sn_copied">La canción ha sido copiada.</string>
   <string name="sn_share_title">Compartir canción</string>
-  <string name="sn_download_song_books">Descargar canciones de libros</string>
   <string name="sn_lyric_version_version">Versión %s</string>
   <string name="sn_lyric_refrain_marker">Ref.</string>
   <string name="sn_delete_all_songs">Eliminar todas las canciones</string>
@@ -220,9 +224,9 @@
   <string name="desc_delete">Eliminar</string>
   <string name="desc_change_selected_books">Cambiar los libros seleccionados</string>
   <string name="desc_download">Descargar</string>
-  <string name="desc_open_verse_menu">Abrir menú de versículo</string>
   <string name="desc_previous_chapter">Capítulo anterior</string>
   <string name="desc_next_chapter">Capítulo siguiente</string>
+  <string name="desc_drag_to_reorder_labels">Arrastrar para reordenar etiquetas</string>
   <string name="teks_about">Desarrolado por [b]yuku[/b], 2009-2012[br/]
     	• Website: androidbible.blogspot.com[br/] 
 		• Google+: gplus.to/androidbible[br/]
@@ -232,5 +236,4 @@
 		• [b]Jaya Satrio Hendrick[/b] iconos[br/]
 		• [b]Yohanes Nugroho[/b] BiblePlus+ lector de PDB[br/]
 		• y a las muchas personas que contribuyeron con ideas, parches, reportes de fallos, copia de canciones, información sobre traducciones de la Biblia, etc!</string>
-  <string name="desc_drag_to_reorder_labels">Arrastrar para reordenar etiquetas</string>
 </resources>

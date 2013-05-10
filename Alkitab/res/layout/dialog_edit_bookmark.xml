@@ -10,20 +10,20 @@
         android:padding="8dp" >
 
         <TextView
-            android:id="@+id/lCaption"
+            android:id="@+id/lTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:text="@string/judul_titikdua"
-            android:textColor="#fff" />
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <EditText
             android:id="@+id/tCaption"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/lCaption"
+            android:layout_below="@+id/lTitle"
             android:imeOptions="actionGo"
             android:inputType="textCapSentences"
             android:selectAllOnFocus="true"
@@ -44,7 +44,7 @@
                 android:layout_marginRight="8dp"
                 android:paddingTop="8dp"
                 android:text="@string/labels_titikdua"
-                android:textColor="#fff" />
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <Button
                 android:id="@+id/bAddLabel"

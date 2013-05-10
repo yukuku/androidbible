@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ShareCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -112,7 +113,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		templateCustomVars.putString("line_spacing_mult", String.valueOf(S.applied.lineSpacingMult)); //$NON-NLS-1$
 		
 		{
-			String fontName = Preferences.getString(getString(R.string.pref_jenisHuruf_key), null);
+			String fontName = Preferences.getString(Prefkey.jenisHuruf, null);
 			if (FontManager.isCustomFont(fontName)) {
 				templateCustomVars.putString("custom_font_loader", String.format("@font-face{ font-family: '%s'; src: url('%s'); }", fontName, FontManager.getCustomFontUri(fontName))); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
@@ -160,15 +161,17 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		} return true;
 		case R.id.menuShare: {
 			if (currentSong != null) {
-				Intent intent = new Intent(Intent.ACTION_SEND);
-				intent.setType("text/plain"); //$NON-NLS-1$
-				intent.putExtra(Intent.EXTRA_SUBJECT, currentBookName + ' ' + currentSong.code + ' ' + currentSong.title);
-				intent.putExtra(Intent.EXTRA_TEXT, (CharSequence) convertSongToText(currentSong)); 
+				Intent intent = ShareCompat.IntentBuilder.from(SongViewActivity.this)
+				.setType("text/plain") //$NON-NLS-1$
+				.setSubject(currentBookName + ' ' + currentSong.code + ' ' + currentSong.title)
+				.setText(convertSongToText(currentSong).toString())
+				.getIntent();
 				startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.sn_share_title)), REQCODE_share);
 			}
 		} return true;
 		}
-		return false;
+		
+		return super.onOptionsItemSelected(item);
 	}
 
 	private StringBuilder convertSongToText(Song song) {
@@ -338,7 +341,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 					}
 					
 					if (full) {
-						res = verse_1 == 0? S.reference(book, chapter_1): S.reference(book, chapter_1, verse_1);
+						res = verse_1 == 0? book.reference(chapter_1): book.reference(chapter_1, verse_1);
 					}
 				}
 			}
@@ -395,7 +398,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			if (currentBookName == null) return;
 			
 			codeKeypad.show(v);
-			codeKeypad.setOkButtonEnabled(false); 
+			codeKeypad.setOkButtonEnabled(false);
 			
 			codeKeypad.setSongCodePopupListener(new SongCodePopupListener() { // do not make this a field. Need to create a new instance to init fields correctly.
 				CharSequence originalCode = bChangeCode.getText();
@@ -411,8 +414,8 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 				
 				@Override public void onButtonClick(SongCodePopup songCodePopup, View v) {
 					int[] numIds = {
-					R.id.bAngka0, R.id.bAngka1, R.id.bAngka2, R.id.bAngka3, R.id.bAngka4,
-					R.id.bAngka5, R.id.bAngka6, R.id.bAngka7, R.id.bAngka8, R.id.bAngka9,
+					R.id.bDigit0, R.id.bDigit1, R.id.bDigit2, R.id.bDigit3, R.id.bDigit4,
+					R.id.bDigit5, R.id.bDigit6, R.id.bDigit7, R.id.bDigit8, R.id.bDigit9,
 					};
 					
 					int id = v.getId();

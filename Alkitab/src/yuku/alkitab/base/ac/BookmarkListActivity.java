@@ -32,6 +32,7 @@ import java.util.Locale;
 
 import yuku.afw.V;
 import yuku.alkitab.R;
+import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -57,9 +58,6 @@ import com.actionbarsherlock.widget.SearchView;
 public class BookmarkListActivity extends BaseActivity {
 	public static final String TAG = BookmarkListActivity.class.getSimpleName();
 	
-    // out
-	public static final String EXTRA_selectedAri = "selectedAri"; //$NON-NLS-1$
-
     // in
     private static final String EXTRA_filter_kind = "filter_kind"; //$NON-NLS-1$
     private static final String EXTRA_filter_labelId = "filter_labelId"; //$NON-NLS-1$
@@ -370,11 +368,9 @@ public class BookmarkListActivity extends BaseActivity {
 			Cursor o = (Cursor) adapter.getItem(position);
 			int ari = o.getInt(o.getColumnIndexOrThrow(Db.Bookmark2.ari));
 			
-			Intent res = new Intent();
-			res.putExtra(EXTRA_selectedAri, ari);
-			
-			setResult(RESULT_OK, res);
-			finish();
+			Intent intent = IsiActivity.createIntent(ari);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
 		}
 	};
 	
@@ -431,7 +427,7 @@ public class BookmarkListActivity extends BaseActivity {
 				Cursor cursor = (Cursor) adapter.getItem(info.position);
 				int ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bookmark2.ari));
 				int colorRgb = U.decodeHighlight(cursor.getString(cursor.getColumnIndexOrThrow(Db.Bookmark2.caption)));
-				String reference = S.reference(S.activeVersion, ari);
+				String reference = S.activeVersion.reference(ari);
 				
 				new TypeHighlightDialog(this, ari, new TypeHighlightDialog.Listener() {
 					@Override public void onOk(int warnaRgb) {
@@ -508,9 +504,9 @@ public class BookmarkListActivity extends BaseActivity {
 			
 			int ari = cursor.getInt(col_ari);
 			Book book = S.activeVersion.getBook(Ari.toBook(ari));
-			String reference = S.reference(S.activeVersion, ari);
+			String reference = S.activeVersion.reference(ari);
 			
-			String verseText = S.loadVerseText(S.activeVersion, book, Ari.toChapter(ari), Ari.toVerse(ari));
+			String verseText = S.activeVersion.loadVerseText(book, Ari.toChapter(ari), Ari.toVerse(ari));
 			verseText = U.removeSpecialCodes(verseText);
 			
 			String caption = cursor.getString(col_caption);
@@ -598,7 +594,7 @@ public class BookmarkListActivity extends BaseActivity {
 					int ari = c.getInt(col_ari);
 					if (!fulfills) {
 						// try the verse text!
-						String verseText = S.loadVerseText(S.activeVersion, ari);
+						String verseText = S.activeVersion.loadVerseText(ari);
 						String verseText_lc = verseText.toLowerCase(Locale.getDefault());
 						if (Search2Engine.satisfiesQuery(verseText_lc, tokens)) {
 							fulfills = true;

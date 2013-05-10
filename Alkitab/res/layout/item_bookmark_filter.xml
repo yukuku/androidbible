@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:minHeight="64dp" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/drag_handle"
+        android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
-        android:minHeight="64dp"
-        android:paddingLeft="8dp" >
+        android:paddingLeft="8dp"
+        android:paddingRight="64dp" >
 
         <ImageView
             android:id="@+id/imgFilterIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="8dp"
-            android:src="@drawable/attribute_type_note"
+            android:src="@drawable/ic_attr_note"
             tools:ignore="ContentDescription" />
 
         <TextView
@@ -44,15 +44,16 @@
             tools:ignore="HardcodedText" />
     </LinearLayout>
 
-    <ImageView
+    <yuku.alkitab.base.widget.DragGripView
         android:id="@+id/drag_handle"
-        android:layout_width="48dp"
-        android:layout_height="64dp"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:scaleType="center"
-        android:background="@null"
+        android:layout_width="64dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="fill_vertical|right"
         android:contentDescription="@string/desc_drag_to_reorder_labels"
-        android:src="@drawable/ic_drag_handle" />
+        android:gravity="right"
+        android:paddingBottom="12dp"
+        android:paddingRight="16dp"
+        android:paddingTop="12dp"
+        android:color="#2333" />
 
-</RelativeLayout>
+</FrameLayout>

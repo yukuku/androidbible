@@ -1,6 +1,7 @@
 # Google Android
 bin/
 gen/
+xtend-gen/
 local.properties
 
 # Mac

@@ -27,15 +27,13 @@
     <string name="versi">Version</string>
     <string name="renungan">Devotion</string>
     <string name="cari_v">Search</string>
-    <string name="judul_bukmak_activity">Bookmarks, etc</string>
+    <string name="judul_bukmak_activity">Markers</string>
     <string name="pembatas_buku">Bookmarks</string>
     <string name="hapus_pembatas_buku">Delete bookmark</string>
     <string name="bagikan">Share</string>
     <string name="tulis_catatan">Write note</string>
     <string name="tambah_pembatas_buku">Add bookmark</string>
     <string name="salin_ayat">Copy verse</string>
-    <string name="pada_mulanya">In the beginning God created the heaven and the earth. And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters. And God said, Let there be light: and there was light. And God saw the light, that it was good: and God divided the light from, the darkness. And God called the light Day, and the darkness he called Night. And the evening and the morning were the first day.</string>
-    <string name="contoh_tulisan_titikdua">Sample text:</string>
     <string name="perj_baru">New Test.</string>
     <string name="perj_lama">Old Test.</string>
     <string name="search_bookname_only">%s only</string>
@@ -76,7 +74,7 @@
     <string name="no">No</string>
     <string name="yes">Yes</string>
     <string name="anda_yakin_mau_menghapus_catatan_ini">Are you sure you want to delete this note?</string>
-    <string name="hapus_catatan">Delete Note</string>
+    <string name="hapus_catatan">Delete note</string>
     <string name="catatan_alamat">Note on %s</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
@@ -104,10 +102,7 @@
     <string name="cp_mapping_books">Mapping books</string>
     <string name="cp_constructing_book_info">Constructing book info</string>
     <string name="cp_constructing_version_info">Constructing version info</string>
-    <string name="cp_constructing_translated_file">Constructing translated file</string>
-    <string name="cp_writing_num_section_pericope_indexes">Writing %s section/pericope indexes</string>
     <string name="cp_writing_num_section_pericope_titles">Writing %s section/pericope titles</string>
-    <string name="cp_opening_translated_file">Opening translated file</string>
     <string name="cp_writing_translated_file">Writing translated file</string>
     <string name="cp_reading_book_info">Reading book info: %s</string>
     <string name="cp_writing_text_of_book_chapters">Writing text of book %1$s (%2$s chapters)</string>
@@ -134,7 +129,6 @@
     <string name="ed_error_reading_pdb_file">Error reading PDB file</string>
     <string name="ed_details">Details: </string>
     <string name="ed_buka_file_pdb_yes_lainnya">Open a .pdb/.yes file…</string>
-    <string name="ed_tekan_untuk_mengunduh">Tap here to download</string>
     <string name="info_terperinci">Details</string>
     <string name="buang_dari_daftar">Remove from list</string>
     <string name="ubah_bukmak">Edit bookmark</string>
@@ -178,7 +172,7 @@
     <string name="rename_label">Rename label</string>
     <string name="delete_label">Delete label</string>
     <string name="please_wait_titik3">Please wait…</string>
-    <string name="juga_hapus_file_datanya_file">Also delete the data file?\nFile: %s</string>
+    <string name="juga_hapus_file_datanya_file">Also delete the data file \'%s\'?</string>
     <string name="get_more_fonts">Download more fonts…</string>
     <string name="about_translators">Translators:</string>
     <string name="intent_filter_import_from_backup">Import from backup</string>
@@ -188,6 +182,20 @@
     <string name="pdb_error_not_palmbible">This PDB file is not in PalmBible+ format. This PDB has type of \'%1$s\' and creator id of \'%2$s\', which is not supported by this app.</string>
     <string name="pdb_error_corrupted">The PDB file is corrupted.</string>
     <string name="pdb_error_not_pdb_file">The selected file is not a PDB file.</string>
+    <string name="menu_split_version">Split version</string>
+    <string name="split_version_none">None</string>
+    <string name="split_version_cant_display_verse">%1$s is not available in %2$s.</string>
+    <string name="menuAddSomething">Add marker</string>
+    <string name="color_settings">Customize colors</string>
+    <string name="menuTextAppearance">Text appearance</string>
+    <string name="text_appearance_theme_custom">Custom…</string>
+    <string name="text_appearance_text_size">Text size</string>
+    <string name="text_appearance_line_spacing">Line spacing</string>
+    <string name="text_appearance_bold_switch_off">BOLD</string>
+    <string name="text_appearance_bold_switch_on"><b>BOLD</b></string>
+    <string name="devotion_change_date">Change date</string>
+    <string name="bookmark_search">Search</string>
+    <string name="history_hint">Long-press here for history</string>
     
     <!-- Goto tabs -->
     <string name="goto_tab_dialer_label">Dialer</string>
@@ -226,12 +234,12 @@
     <string name="desc_delete">Delete</string>
     <string name="desc_change_selected_books">Change selected books</string>
     <string name="desc_download">Download</string>
-    <string name="desc_open_verse_menu">Open verse menu</string>
     <string name="desc_previous_chapter">Previous chapter</string>
     <string name="desc_next_chapter">Next chapter</string>
+    <string name="desc_drag_to_reorder_labels">Drag to reorder labels</string>
     
     <!-- Lastly, about -->
-    <string name="teks_about">Developed by [b]yuku[/b], 2009-2012[br/]
+    <string name="teks_about">Developed by [b]yuku[/b], 2009-2013[br/]
     	• Website: androidbible.blogspot.com[br/] 
 		• Google+: gplus.to/androidbible[br/]
     	• Mailing list: groups.google.com/group/androidbible[br/]
@@ -240,6 +248,14 @@
 		• [b]Jaya Satrio Hendrick[/b] icons[br/]
 		• [b]Yohanes Nugroho[/b] BiblePlus+ PDB reader[br/]
 		• and many more people who contributed ideas, patches, bug reports, copy of songs, information about Bible translations, etc!</string>
-    <string name="desc_drag_to_reorder_labels">Drag to reorder labels</string>
 		
+    <string name="intent_filter_open_yes_file">Open YES file</string>
+    <string name="intent_filter_open_pdb_file">Open PDB file</string>
+    <string name="intent_filter_open_pdb_or_yes_file">Open PDB/YES file</string>
+	<string name="open_yes_file_name_conflict">A YES file named \'%1$s\' already exists in \'%2$s\'.</string>
+	<string name="open_file_cant_read_source">The source could not be successfully read.</string>
+	<string name="open_file_unknown_file_format">Could not determine whether this is a PDB or YES file.</string>
+	<string name="version_preset_delete_filename">Delete the data file \'%s\'?</string>
+	<string name="version_menu_share">Share</string>
+	<string name="version_share_title">Share version to:</string>
 </resources>

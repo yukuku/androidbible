@@ -24,9 +24,10 @@ import yuku.afw.D;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.BookmarkListActivity;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
+import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
-import yuku.alkitab.base.devotion.IArticle;
+import yuku.alkitab.base.devotion.DevotionArticle;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Bookmark2;
 import yuku.alkitab.base.model.Label;
@@ -44,10 +45,10 @@ public class InternalDb {
 	
 	public Bookmark2 getBookmarkByAri(int ari, int kind) {
 		Cursor cursor = helper.getReadableDatabase().query(
-			Db.TABLE_Bookmark2, 
-			new String[] {BaseColumns._ID, Db.Bookmark2.caption, Db.Bookmark2.addTime, Db.Bookmark2.modifyTime}, 
+			Db.TABLE_Bookmark2,
+			new String[] {BaseColumns._ID, Db.Bookmark2.caption, Db.Bookmark2.addTime, Db.Bookmark2.modifyTime},
 			Db.Bookmark2.ari + "=? and " + Db.Bookmark2.kind + "=?",  //$NON-NLS-1$ //$NON-NLS-2$
-			new String[] {String.valueOf(ari), String.valueOf(kind)}, 
+			new String[] {String.valueOf(ari), String.valueOf(kind)},
 			null, null, null
 		);
 		
@@ -62,10 +63,10 @@ public class InternalDb {
 	
 	public Bookmark2 getBookmarkById(long id) {
 		Cursor cursor = helper.getReadableDatabase().query(
-			Db.TABLE_Bookmark2, 
-			null, 
+			Db.TABLE_Bookmark2,
+			null,
 			"_id=?", //$NON-NLS-1$
-			new String[] {String.valueOf(id)}, 
+			new String[] {String.valueOf(id)},
 			null, null, null
 		);
 		
@@ -345,7 +346,7 @@ public class InternalDb {
 							// no need to do, from no color to no color
 						} else {
 							Date now = new Date();
-							Bookmark2 bookmark = new Bookmark2(ari, Db.Bookmark2.kind_highlight, U.encodeHighlight(colorRgb), now, now); 
+							Bookmark2 bookmark = new Bookmark2(ari, Db.Bookmark2.kind_highlight, U.encodeHighlight(colorRgb), now, now);
 							db.insert(Db.TABLE_Bookmark2, null, bookmark.toContentValues());
 						}
 					}
@@ -390,7 +391,7 @@ public class InternalDb {
 			int tulisan_col = c.getColumnIndexOrThrow(Db.Bookmark2.caption);
 			
 			// put to array first
-			while (c.moveToNext()) { 
+			while (c.moveToNext()) {
 				int ari = c.getInt(ari_col);
 				int index = ari & 0xff;
 				int color = U.decodeHighlight(c.getString(tulisan_col));
@@ -415,7 +416,7 @@ public class InternalDb {
 		}
 	}
 
-	public void storeArticleToDevotions(IArticle article) {
+	public void storeArticleToDevotions(DevotionArticle article) {
 		SQLiteDatabase db = helper.getWritableDatabase();
 
 		db.beginTransaction();
@@ -429,13 +430,14 @@ public class InternalDb {
 			values.put(Db.Devotion.readyToUse, article.getReadyToUse()? 1: 0);
 			
 			if (article.getReadyToUse()) {
-				values.put(Db.Devotion.title, article.getTitle().toString());
-				values.put(Db.Devotion.body, article.getBodyHtml());
-				values.put(Db.Devotion.header, article.getHeaderHtml());
+				String[] headerTitleBody = article.getHeaderTitleBody();
+				values.put(Db.Devotion.header, headerTitleBody[0]);
+				values.put(Db.Devotion.title, headerTitleBody[1]);
+				values.put(Db.Devotion.body, headerTitleBody[2]);
 			} else {
-				values.put(Db.Devotion.title, (String)null);
-				values.put(Db.Devotion.body, (String)null);
-				values.put(Db.Devotion.header, (String)null);
+				values.putNull(Db.Devotion.header);
+				values.putNull(Db.Devotion.title);
+				values.putNull(Db.Devotion.body);
 			}
 			
 			values.put(Db.Devotion.touchTime, Sqlitil.nowDateTime());
@@ -456,27 +458,34 @@ public class InternalDb {
 	/**
 	 * Try to get article from local db. Non ready-to-use article will be returned too.
 	 */
-	public IArticle tryGetDevotion(String name, String date) {
+	public DevotionArticle tryGetDevotion(String name, String date) {
 		Cursor c = helper.getReadableDatabase().query(Db.TABLE_Devotion, null, Db.Devotion.name + "=? and " + Db.Devotion.date + "=?", new String[] { name, date }, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
+			int col_title = c.getColumnIndexOrThrow(Db.Devotion.title);
+			int col_header = c.getColumnIndexOrThrow(Db.Devotion.header);
+			int col_body = c.getColumnIndexOrThrow(Db.Devotion.body);
+			int col_readyToUse = c.getColumnIndexOrThrow(Db.Devotion.readyToUse);
+			
 			if (c.moveToNext()) {
-				IArticle res = null;
+				DevotionArticle res = null;
 				if (name.equals("rh")) { //$NON-NLS-1$
 					res = new ArticleRenunganHarian(
 						date,
-						c.getString(c.getColumnIndexOrThrow(Db.Devotion.title)),
-						c.getString(c.getColumnIndexOrThrow(Db.Devotion.header)),
-						c.getString(c.getColumnIndexOrThrow(Db.Devotion.body)),
-						c.getInt(c.getColumnIndexOrThrow(Db.Devotion.readyToUse)) > 0
+						c.getString(col_title),
+						c.getString(col_header),
+						c.getString(col_body),
+						c.getInt(col_readyToUse) > 0
 					);
 				} else if (name.equals("sh")) { //$NON-NLS-1$
 					res = new ArticleSantapanHarian(
 						date,
-						c.getString(c.getColumnIndexOrThrow(Db.Devotion.title)),
-						c.getString(c.getColumnIndexOrThrow(Db.Devotion.header)),
-						c.getString(c.getColumnIndexOrThrow(Db.Devotion.body)),
-						c.getInt(c.getColumnIndexOrThrow(Db.Devotion.readyToUse)) > 0
+						c.getString(col_title),
+						c.getString(col_header),
+						c.getString(col_body),
+						c.getInt(col_readyToUse) > 0
 					);
+				} else if (name.equals("me-en")) {
+					res = new ArticleMorningEveningEnglish(date, c.getString(col_body), true);
 				}
 	
 				return res;
@@ -626,7 +635,7 @@ public class InternalDb {
 	}
 
 	public Label insertLabel(String title, String bgColor) {
-		Label res = new Label(-1, title, getLabelMaxOrdering() + 1, bgColor); 
+		Label res = new Label(-1, title, getLabelMaxOrdering() + 1, bgColor);
 		SQLiteDatabase db = helper.getWritableDatabase();
 		long _id = db.insert(Db.TABLE_Label, null, res.toContentValues());
 		if (_id == -1) {

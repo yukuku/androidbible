@@ -116,7 +116,7 @@ public class TypeBookmarkDialog {
 		// set yang belum diset
 		if (this.ari == 0 && bookmark != null) {
 			this.ari = bookmark.ari;
-			this.reference = S.reference(S.activeVersion, bookmark.ari);
+			this.reference = S.activeVersion.reference(bookmark.ari);
 		}
 		
 		View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_bookmark, null);
@@ -154,7 +154,7 @@ public class TypeBookmarkDialog {
 		new AlertDialog.Builder(context)
 		.setView(dialogView)
 		.setTitle(reference)
-		.setIcon(R.drawable.attribute_type_bookmark)
+		.setIcon(R.drawable.ic_attr_bookmark)
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
 				Bookmark2 nonfinalBookmark = bookmark;
@@ -239,12 +239,12 @@ public class TypeBookmarkDialog {
 			View res = convertView != null? convertView: LayoutInflater.from(dialogContext).inflate(type == 0? R.layout.item_label_chooser: android.R.layout.simple_list_item_1, null);
 
 			if (type == 0) {
-				TextView text1 = V.get(res, android.R.id.text1); 
+				TextView text1 = V.get(res, android.R.id.text1);
 				Label label = getItem(position);
 				text1.setText(label.title);
 				U.applyLabelColor(label, text1);
 			} else {
-				TextView text1 = V.get(res, android.R.id.text1); 
+				TextView text1 = V.get(res, android.R.id.text1);
 				text1.setText(context.getString(R.string.create_label_titik3));
 				
 				// for API 10 or lower, forcefully set text color

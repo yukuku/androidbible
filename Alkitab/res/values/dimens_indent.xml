@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 
+    The following are the sizes tailored for 17dp font size. 
+    When the font size used is not 17dp, these values will be scaled
+    accordingly.  
+    -->
+	<dimen name="indentParagraphFirst">38dp</dimen>
+	<dimen name="indentParagraphRest">5dp</dimen>
+	<dimen name="indent_1">22dp</dimen>
+	<dimen name="indent_2">38dp</dimen>
+	<dimen name="indent_3">54dp</dimen>
+	<dimen name="indent_4">70dp</dimen>
+	<dimen name="paragraphSpacingBefore">10dp</dimen>
+	<dimen name="pericopeSpacingTop">15dp</dimen>
+	<dimen name="pericopeSpacingBottom">5dp</dimen>
+	
+	 <!-- 
+	 Special for verse numbers with 3 or more characters because it needs more indent 
+	 in order for the verse numbers not to overlap with text. The amount here is for each character.
+	 -->
+	<dimen name="indentExtra">6dp</dimen>
+</resources>

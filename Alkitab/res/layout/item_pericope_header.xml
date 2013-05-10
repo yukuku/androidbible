@@ -13,7 +13,6 @@
         android:layout_marginRight="12dp"
         android:gravity="center_horizontal"
         android:text="Judul Perikop"
-        android:textSize="17dp"
         android:textStyle="bold"
         tools:ignore="HardcodedText" >
     </TextView>

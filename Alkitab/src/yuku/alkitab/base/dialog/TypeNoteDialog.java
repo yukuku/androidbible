@@ -41,7 +41,7 @@ public class TypeNoteDialog {
 		this.chapter_1 = chapter_1;
 		this.verse_1 = verse_1;
 		this.ari = Ari.encode(book.bookId, chapter_1, verse_1);
-		this.reference = S.reference(book, chapter_1, verse_1);
+		this.reference = book.reference(chapter_1, verse_1);
 		this.context = context;
 		this.listener = listener;
 		
@@ -49,7 +49,7 @@ public class TypeNoteDialog {
 		
 		this.dialog = new AlertDialog.Builder(context)
 		.setView(dialogLayout)
-		.setIcon(R.drawable.attribute_type_note)
+		.setIcon(R.drawable.ic_attr_note)
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {

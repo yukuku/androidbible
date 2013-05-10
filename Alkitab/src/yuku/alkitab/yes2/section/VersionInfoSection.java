@@ -18,6 +18,7 @@ public class VersionInfoSection extends SectionContent implements SectionContent
 	public int book_count;
 	public int hasPericopes;
 	public int textEncoding; // 1 = ascii; 2 = utf-8 (default)
+	public int buildTime; // unix time in seconds
 	
 	public VersionInfoSection() {
 		super("versionInfo");
@@ -32,6 +33,7 @@ public class VersionInfoSection extends SectionContent implements SectionContent
 		if (longName != null) map.put("longName", longName);
 		if (description != null) map.put("description", description);
 		if (locale != null) map.put("locale", locale);
+		if (buildTime != 0) map.put("buildTime", buildTime);
 		map.put("book_count", book_count);
 		map.put("hasPericopes", hasPericopes);
 		map.put("textEncoding", textEncoding);

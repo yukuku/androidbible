@@ -9,7 +9,7 @@ import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
-import yuku.alkitab.base.model.Version;
+import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.base.storage.BibleReader;
 import yuku.alkitab.yes2.compress.SnappyInputStream;
 import yuku.alkitab.yes2.io.RandomInputStream;
@@ -232,7 +232,7 @@ public class Yes2Reader implements BibleReader {
 		}
 	}
 
-	@Override public int loadPericope(Version version, int bookId, int chapter_1, int[] aris, PericopeBlock[] blocks, int max) {
+	@Override public int loadPericope(int bookId, int chapter_1, int[] aris, PericopeBlock[] blocks, int max) {
 		try {
 			loadVersionInfo();
 			
@@ -281,5 +281,15 @@ public class Yes2Reader implements BibleReader {
 			Log.e(TAG, "General exception in loading pericope block", e); //$NON-NLS-1$
 			return 0;
 		}
+	}
+
+	@Override public int getXrefEntryCounts(int[] result, int bookId, int chapter_1) {
+		// TODO YES2 file may contain xref entries, but not yet implemented.
+		return 0;
+	}
+
+	@Override public XrefEntry getXrefEntry(int ari, int which) {
+		// TODO YES2 file may contain xref entries, but not yet implemented.
+		return null;
 	}
 }

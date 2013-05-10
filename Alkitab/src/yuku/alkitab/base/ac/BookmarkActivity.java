@@ -11,7 +11,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.util.Xml;
 import android.view.ContextMenu;
@@ -52,6 +54,7 @@ import org.xmlpull.v1.XmlSerializer;
 import yuku.afw.D;
 import yuku.afw.V;
 import yuku.alkitab.R;
+import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -71,9 +74,6 @@ import com.mobeta.android.dslv.DragSortListView;
 public class BookmarkActivity extends BaseActivity {
 	public static final String TAG = BookmarkActivity.class.getSimpleName();
 	
-    // out
-	public static final String EXTRA_ariTerpilih = "ariTerpilih"; //$NON-NLS-1$
-
 	private static final int REQCODE_bukmakList = 1;
 
 	DragSortListView lv;
@@ -230,6 +230,20 @@ public class BookmarkActivity extends BaseActivity {
 			})
 			.show();
 			
+			return true;
+		} else if (itemId == android.R.id.home) {
+			Intent upIntent = new Intent(this, IsiActivity.class);
+            if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                // This activity is not part of the application's task, so create a new task
+                // with a synthesized back stack.
+                TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
+                finish();
+            } else {
+                // This activity is part of the application's task, so simply
+                // navigate up to the hierarchical parent activity.
+                // sample code uses this: NavUtils.navigateUpTo(this, upIntent);
+            	finish();
+            }
 			return true;
 		}
 		
@@ -600,19 +614,8 @@ public class BookmarkActivity extends BaseActivity {
 	
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQCODE_bukmakList) {
-			if (resultCode == RESULT_OK) {
-				int ari = data.getIntExtra(BookmarkActivity.EXTRA_ariTerpilih, 0);
-				if (ari != 0) { // 0 berarti ga ada apa2, karena ga ada pasal 0 ayat 0
-					Intent res = new Intent();
-					res.putExtra(EXTRA_ariTerpilih, ari);
-					
-					setResult(RESULT_OK, res);
-					finish();
-				}
-			}
+			adapter.reload();
 		}
-		
-		adapter.reload();
 	}
 
 	private class BookmarkFilterController extends DragSortController {
@@ -725,8 +728,7 @@ public class BookmarkActivity extends BaseActivity {
 			ImageView imgFilterIcon = V.get(res, R.id.imgFilterIcon);
 			if (position < 3) {
 				imgFilterIcon.setVisibility(View.VISIBLE);
-				imgFilterIcon.setImageResource(position == 0? R.drawable.attribute_type_bookmark: position == 1? R.drawable.attribute_type_note: position == 2? R.drawable.highlight_color_checked: 0);
-				imgFilterIcon.setBackgroundColor(position == 2? 0xffffff00: 0);
+				imgFilterIcon.setImageResource(position == 0? R.drawable.ic_attr_bookmark: position == 1? R.drawable.ic_attr_note: position == 2? R.drawable.ic_attr_highlight: 0);
 			} else {
 				imgFilterIcon.setVisibility(View.GONE);
 			}

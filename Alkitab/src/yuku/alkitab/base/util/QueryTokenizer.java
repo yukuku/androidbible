@@ -19,7 +19,7 @@ public class QueryTokenizer {
 	 *   a b => 'a', 'b'
 	 *   "a b" c => 'a b', 'c'
 	 *   a"bc"d => 'abcd' 
-	 *   +"a bc" => '+abc'
+	 *   +"a bc" => '+a bc'
 	 *   +a bc => '+a', 'bc'
 	 *   +a+b => '+a+b'
 	 *   

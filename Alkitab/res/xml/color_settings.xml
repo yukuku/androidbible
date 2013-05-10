@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/pref_warna" >
+
+    <yuku.ambilwarna.widget.AmbilWarnaPreference
+        android:defaultValue="@integer/pref_warnaHuruf_int_default"
+        android:key="@string/pref_warnaHuruf_int_key"
+        android:title="@string/pref_warna_teks_alkitab" />
+    <yuku.ambilwarna.widget.AmbilWarnaPreference
+        android:defaultValue="@integer/pref_warnaLatar_int_default"
+        android:key="@string/pref_warnaLatar_int_key"
+        android:title="@string/pref_warna_latar_belakang" />
+    <yuku.ambilwarna.widget.AmbilWarnaPreference
+        android:defaultValue="@integer/pref_warnaNomerAyat_int_default"
+        android:key="@string/pref_warnaNomerAyat_int_key"
+        android:title="@string/pref_warna_nomor_ayat" />
+    <yuku.ambilwarna.widget.AmbilWarnaPreference
+        android:defaultValue="@integer/pref_redTextColor_default"
+        android:key="@string/pref_redTextColor_key"
+        android:title="@string/pref_redTextColor_title" />
+
+</PreferenceScreen>

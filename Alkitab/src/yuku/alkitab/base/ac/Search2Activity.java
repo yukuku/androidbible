@@ -31,6 +31,7 @@ import android.widget.Toast;
 import java.util.Arrays;
 
 import yuku.afw.V;
+import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.R;
 import yuku.alkitab.base.App;
@@ -41,6 +42,7 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.base.util.BookNameSorter;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.Search2Engine;
@@ -443,7 +445,13 @@ public class Search2Activity extends BaseActivity {
 		private Book[] books;
 
 		public SearchFilterAdapter() {
-			books = S.activeVersion.getConsecutiveBooks();
+			Book[] books_original = S.activeVersion.getConsecutiveBooks();
+			
+			if (Preferences.getBoolean(App.context.getString(R.string.pref_sortKitabAlfabet_key), App.context.getResources().getBoolean(R.bool.pref_sortKitabAlfabet_default))) {
+				books = BookNameSorter.sortAlphabetically(books_original);
+			} else {
+				books = books_original.clone();
+			}
 		}
 		
 		@Override public Book getItem(int position) {
@@ -455,15 +463,15 @@ public class Search2Activity extends BaseActivity {
 		}
 
 		@Override public View newView(int position, ViewGroup parent) {
-			return getLayoutInflater().inflate(android.R.layout.select_dialog_multichoice, parent, false);
+			return getLayoutInflater().inflate(android.R.layout.simple_list_item_multiple_choice, parent, false);
 		}
 
-		@Override public void bindView(View v, int position, ViewGroup parent) {
-			CheckedTextView view = (CheckedTextView) v;
+		@Override public void bindView(View view, int position, ViewGroup parent) {
+			CheckedTextView text = (CheckedTextView) view;
 			
-			Book book = books[position];
-			view.setText(book.shortName);
-			view.setTextColor(U.getColorBasedOnBookId(book.bookId));
+			Book book = getItem(position);
+			text.setText(book.shortName);
+			text.setTextColor(U.getColorBasedOnBookId(book.bookId));
 		}
 	}
 
@@ -564,10 +572,10 @@ public class Search2Activity extends BaseActivity {
 			Book book = S.activeVersion.getBook(Ari.toBook(ari));
 			int chapter_1 = Ari.toChapter(ari);
 			int verse_1 = Ari.toVerse(ari);
-			SpannableStringBuilder sb = new SpannableStringBuilder(S.reference(book, chapter_1, verse_1));
+			SpannableStringBuilder sb = new SpannableStringBuilder(book.reference(chapter_1, verse_1));
 			Appearances.applySearchResultReferenceAppearance(lReference, sb);
 			
-			String verseText = S.loadVerseText(S.activeVersion, book, chapter_1, verse_1);
+			String verseText = S.activeVersion.loadVerseText(book, chapter_1, verse_1);
 			verseText = U.removeSpecialCodes(verseText);
 			lSnippet.setText(Search2Engine.hilite(verseText, tokens, hiliteColor));
 			Appearances.applyTextAppearance(lSnippet);

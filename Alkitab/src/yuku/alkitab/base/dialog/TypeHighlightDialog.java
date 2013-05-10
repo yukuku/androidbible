@@ -65,6 +65,7 @@ public class TypeHighlightDialog {
 		
 		this.alert = new AlertDialog.Builder(context)
 		.setView(dialogView)
+		.setIcon(R.drawable.ic_attr_highlight)
 		.setNegativeButton(R.string.cancel, null)
 		.create();
 		

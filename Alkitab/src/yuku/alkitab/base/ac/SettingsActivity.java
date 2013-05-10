@@ -2,57 +2,31 @@ package yuku.alkitab.base.ac;
 
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
 
-import java.util.Locale;
-
-import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.ac.base.BasePreferenceActivity;
 
 public class SettingsActivity extends BasePreferenceActivity {
-	interface PreferenceUpdate {
-		String withValue(Object value);
-	}
+	public static final int RESULT_openTextAppearance = 1;
 	
 	@SuppressWarnings("deprecation") @Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		addPreferencesFromResource(R.xml.settings);
 		setTitle(R.string.pengaturan_alkitab);
 		
-		autoUpdateSummary(R.string.pref_ukuranHuruf2_key, new PreferenceUpdate() {
-			@Override public String withValue(Object value) {
-				float dp = value == null? 17.f: (Float) value;
-				return String.format(Locale.getDefault(), "%.1f dp (%.1f pt)", dp, dp * 0.45f); //$NON-NLS-1$
-			}
-		});
-		
-		autoUpdateSummary(R.string.pref_jenisHuruf_key, new PreferenceUpdate() {
-			@Override public String withValue(Object value) {
-				return value != null? (String) value: "Default"; //$NON-NLS-1$
-			}
-		});
-		
-		autoUpdateSummary(R.string.pref_lineSpacingMult_key, new PreferenceUpdate() {
-			@Override public String withValue(Object value) {
-				float lineSpacingMult = value == null? 1.0f: (Float) value;
-				return String.valueOf(lineSpacingMult) + "x"; //$NON-NLS-1$
-			}
-		});
+		setupTextAppearanceHelper();
 	}
 
-	private void autoUpdateSummary(int keyResId, final PreferenceUpdate pu) {
-		String key = getString(keyResId);
-		@SuppressWarnings("deprecation") final Preference pref = findPreference(key);
-		if (pref != null) {
-			pref.setSummary(pu.withValue(Preferences.get(key)));
-			pref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-				@Override public boolean onPreferenceChange(Preference preference, Object newValue) {
-					pref.setSummary(pu.withValue(newValue));
-					return true;
-				}
-			});
-		}
+	void setupTextAppearanceHelper() {
+		String key = getString(R.string.pref_help_text_appearance_key);
+		@SuppressWarnings("deprecation") Preference pref = findPreference(key);
+		pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+			@Override public boolean onPreferenceClick(Preference preference) {
+				setResult(RESULT_openTextAppearance);
+				finish();
+				return true;
+			}
+		});
 	}
 }

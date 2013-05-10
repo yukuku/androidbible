@@ -6,7 +6,7 @@
         android:actionLayout="@layout/menu_search_action"
         android:icon="@drawable/ic_menu_search"
         android:showAsAction="always"
-        android:title="Search"/>
+        android:title="@string/bookmark_search"/>
     <item
         android:id="@+id/menuSort"
         android:icon="@drawable/ic_menu_sort"
