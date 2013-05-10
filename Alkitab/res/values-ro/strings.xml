@@ -32,7 +32,6 @@
   <string name="tulis_catatan">Scrie o notă</string>
   <string name="tambah_pembatas_buku">Adaugă la favorite</string>
   <string name="salin_ayat">Copiază versetul</string>
-  <string name="pada_mulanya">La început, Dumnezeu a făcut cerurile şi pămîntul. Pămîntul era pustiu şi gol; peste faţa adîncului de ape era întuneric, şi Duhul lui Dumnezeu se mişca pe deasupra apelor. Dumnezeu a zis: ,,Să fie lumină!” Şi a fost lumină. Dumnezeu a văzut că lumina era bună; şi Dumnezeu a despărţit lumina de întunerec. Dumnezeu a numit lumina zi, iar întunerecul l-a numit noapte. Astfel, a fost o seară şi apoi a fost o dimineaţă: aceasta a fost ziua întîi.</string>
   <string name="perj_baru">Noul Test.</string>
   <string name="perj_lama">Vechiul Test.</string>
   <string name="search_bookname_only">Numai %s</string>
@@ -73,7 +72,6 @@
   <string name="no">Nu</string>
   <string name="yes">Da</string>
   <string name="anda_yakin_mau_menghapus_catatan_ini">Eşti sigur că vrei să ştergi această notă?</string>
-  <string name="hapus_catatan">Şterge Nota</string>
   <string name="catatan_alamat">Nota la %s</string>
   <string name="delete">Şterge</string>
   <string name="cancel">Anulează</string>
@@ -128,7 +126,6 @@
   <string name="ed_error_reading_pdb_file">Eroare la citirea fişierului PDB</string>
   <string name="ed_details">Detalii:</string>
   <string name="ed_buka_file_pdb_yes_lainnya">Deschide un fişier .pdb/.yes…</string>
-  <string name="ed_tekan_untuk_mengunduh">Apăsaţi aici pentru descărcare</string>
   <string name="info_terperinci">Detalii</string>
   <string name="buang_dari_daftar">Şterge din listă</string>
   <string name="ubah_bukmak">Editează favorite</string>
@@ -172,7 +169,6 @@
   <string name="rename_label">Redenumeşte eticheta</string>
   <string name="delete_label">Şterge eticheta</string>
   <string name="please_wait_titik3">Vă rugăm să aşteptaţi...</string>
-  <string name="juga_hapus_file_datanya_file">De asemenea, şterge fişierul de date?\nFile: %s</string>
   <string name="get_more_fonts">Descarca mai multe fonturi…</string>
   <string name="about_translators">Traducători:</string>
   <string name="intent_filter_import_from_backup">Importă din copia de rezervă</string>

@@ -23,7 +23,7 @@
   <string name="impor_dari_sd_card">Pulihkan</string>
   <string name="ekspor_ke_sd_card">Buat cadangan</string>
   <string name="menuBantuan">Bantuan</string>
-  <string name="beri_saran_title">Beri Saran</string>
+  <string name="beri_saran_title">Beri saran</string>
   <string name="versi">Versi</string>
   <string name="renungan">Renungan</string>
   <string name="cari_v">Cari</string>
@@ -34,7 +34,6 @@
   <string name="tulis_catatan">Tulis catatan</string>
   <string name="tambah_pembatas_buku">Tambah marka buku</string>
   <string name="salin_ayat">Salin ayat</string>
-  <string name="pada_mulanya">Pada mulanya Allah menciptakan langit dan bumi. Bumi belum berbentuk dan kosong; gelap gulita menutupi samudera raya, dan Roh Allah melayang-layang di atas permukaan air. Berfirmanlah Allah: \"Jadilah terang.\" Lalu terang itu jadi. Allah melihat bahwa terang itu baik, lalu dipisahkan-Nyalah terang itu dari gelap. Dan Allah menamai terang itu siang, dan gelap itu malam. Jadilah petang dan jadilah pagi, itulah hari pertama.</string>
   <string name="perj_baru">Perj. Baru</string>
   <string name="perj_lama">Perj. Lama</string>
   <string name="search_bookname_only">%s saja</string>
@@ -75,7 +74,7 @@
   <string name="no">Tidak</string>
   <string name="yes">Ya</string>
   <string name="anda_yakin_mau_menghapus_catatan_ini">Anda yakin mau menghapus catatan ini?</string>
-  <string name="hapus_catatan">Hapus Catatan</string>
+  <string name="hapus_catatan">Hapus catatan</string>
   <string name="catatan_alamat">Catatan %s</string>
   <string name="delete">Hapus</string>
   <string name="cancel">Batal</string>
@@ -130,7 +129,6 @@
   <string name="ed_error_reading_pdb_file">Kesalahan dalam membaca file PDB</string>
   <string name="ed_details">Keterangan: </string>
   <string name="ed_buka_file_pdb_yes_lainnya">Buka file .pdb/.yes lainnya…</string>
-  <string name="ed_tekan_untuk_mengunduh">Tekan untuk mengunduh</string>
   <string name="info_terperinci">Info terperinci</string>
   <string name="buang_dari_daftar">Buang dari daftar</string>
   <string name="ubah_bukmak">Edit marka buku</string>
@@ -174,7 +172,7 @@
   <string name="rename_label">Ganti nama label</string>
   <string name="delete_label">Hapus label</string>
   <string name="please_wait_titik3">Harap tunggu…</string>
-  <string name="juga_hapus_file_datanya_file">Juga hapus file datanya?\nFile: %s</string>
+  <string name="juga_hapus_file_datanya_file">Juga hapus file datanya \'%s\'?</string>
   <string name="get_more_fonts">Dapatkan huruf lainnya…</string>
   <string name="about_translators">Penerjemah:</string>
   <string name="intent_filter_import_from_backup">Impor dari cadangan</string>
@@ -195,6 +193,9 @@
   <string name="text_appearance_line_spacing">Jarak antarbaris</string>
   <string name="text_appearance_bold_switch_off">TEBAL</string>
   <string name="text_appearance_bold_switch_on"><b>TEBAL</b></string>
+  <string name="devotion_change_date">Ganti tanggal</string>
+  <string name="bookmark_search">Cari</string>
+  <string name="history_hint">Tekan terus untuk membuka sejarah</string>
   <string name="goto_tab_dialer_label">Telusuri</string>
   <string name="goto_tab_direct_label">Ketik</string>
   <string name="goto_tab_grid_label">Pilih</string>
@@ -239,4 +240,13 @@ Terjemahan Baru, Bahasa Indonesia Sehari-hari © Lembaga Alkitab Indonesia[br/]
 • [b]Jaya Satrio[/b] ikon dan desain[br/]
 • [b]Yohanes Nugroho[/b] pembaca PDB[br/]
 • dan banyak lagi orang-orang yang menyumbangkan ide, perbaikan, laporan masalah, salinan kidung, informasi terjemahan Alkitab, dll!</string>
+  <string name="intent_filter_open_yes_file">Buka file YES</string>
+  <string name="intent_filter_open_pdb_file">Buka file PDB</string>
+  <string name="intent_filter_open_pdb_or_yes_file">Buka file PDB/YES</string>
+  <string name="open_yes_file_name_conflict">File YES bernama \'%1$s\' sudah ada dalam \'%2$s\'.</string>
+  <string name="open_file_cant_read_source">Sumber data tidak berhasil dibaca.</string>
+  <string name="open_file_unknown_file_format">Tidak dapat memutuskan apakah ini file PDB atau YES.</string>
+  <string name="version_preset_delete_filename">Hapus file data \'%s\'?</string>
+  <string name="version_menu_share">Bagikan</string>
+  <string name="version_share_title">Bagikan versi ini ke:</string>
 </resources>

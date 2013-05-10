@@ -31,7 +31,6 @@
   <string name="tulis_catatan">写笔记</string>
   <string name="tambah_pembatas_buku">添加书签</string>
   <string name="salin_ayat">复制诗句</string>
-  <string name="pada_mulanya">起初，神创造天地。地是空虚混沌，渊面黑暗；神的灵运行在水面上。 神说：要有光，就有了光。神看光是好的，就把光暗分开了。 神称光为昼，称暗为夜 。 有晚上，有早晨，这是头一日。</string>
   <string name="perj_baru">新约</string>
   <string name="perj_lama">旧约</string>
   <string name="search_bookname_only">%s 只有</string>
@@ -72,7 +71,6 @@
   <string name="no">不是</string>
   <string name="yes">是</string>
   <string name="anda_yakin_mau_menghapus_catatan_ini">你确定要删除本说明吗？</string>
-  <string name="hapus_catatan">删除笔记</string>
   <string name="catatan_alamat">Note on %s</string>
   <string name="delete">删除</string>
   <string name="cancel">取消</string>
@@ -127,7 +125,6 @@
   <string name="ed_error_reading_pdb_file">读取PDB文件时出错</string>
   <string name="ed_details">详细说明： </string>
   <string name="ed_buka_file_pdb_yes_lainnya">打开一个 .pdb 或 .yes 文件。</string>
-  <string name="ed_tekan_untuk_mengunduh">点这里下载</string>
   <string name="info_terperinci">详细说明</string>
   <string name="buang_dari_daftar">从列表中删除</string>
   <string name="ubah_bukmak">编辑书签</string>
@@ -171,7 +168,6 @@
   <string name="rename_label">重命标签</string>
   <string name="delete_label">删除标签</string>
   <string name="please_wait_titik3">请稍候…</string>
-  <string name="juga_hapus_file_datanya_file">同时删除数据文件吗？\n文件： %s</string>
   <string name="get_more_fonts">下载更多的字体...</string>
   <string name="about_translators">翻译：</string>
   <string name="intent_filter_import_from_backup">进口从备份</string>

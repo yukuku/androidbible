@@ -27,13 +27,13 @@
   <string name="versi">Przekład</string>
   <string name="renungan">Rozważania</string>
   <string name="cari_v">Szukaj</string>
+  <string name="judul_bukmak_activity">Znaczniki</string>
   <string name="pembatas_buku">Zakładki</string>
   <string name="hapus_pembatas_buku">Usuń zakładkę</string>
   <string name="bagikan">Podziel się</string>
   <string name="tulis_catatan">Utwórz notatkę</string>
   <string name="tambah_pembatas_buku">Dodaj zakładkę</string>
   <string name="salin_ayat">Skopiuj werset</string>
-  <string name="pada_mulanya">Na początku stworzył Bóg niebo i ziemię. A ziemia była niekształtowna i próżna, i ciemność była nad przepaścią, a Duch Boży unaszał się nad wodami. I rzekł Bóg: Niech będzie światłość; i stała się światłość. I widział Bóg światłość, że była dobra; i uczynił Bóg rozdział między światłością i między ciemnością. I nazwał Bóg światłość dniem a ciemność nazwał nocą; i stał się wieczór, i stał się zaranek, dzień pierwszy.</string>
   <string name="perj_baru">NT</string>
   <string name="perj_lama">ST</string>
   <string name="search_bookname_only">Tylko %s</string>
@@ -129,7 +129,6 @@
   <string name="ed_error_reading_pdb_file">Błąd podczas czytania pliku PDB</string>
   <string name="ed_details">Detale: </string>
   <string name="ed_buka_file_pdb_yes_lainnya">Otwórz plik .pdb/.yes…</string>
-  <string name="ed_tekan_untuk_mengunduh">Naciśnij, aby pobrać</string>
   <string name="info_terperinci">Detale</string>
   <string name="buang_dari_daftar">Usuń z listy</string>
   <string name="ubah_bukmak">Edytuj zakładkę</string>
@@ -173,13 +172,30 @@
   <string name="rename_label">Zmień nazwę etykiety</string>
   <string name="delete_label">Usuń etykietę</string>
   <string name="please_wait_titik3">Proszę czekać…</string>
-  <string name="juga_hapus_file_datanya_file">Czy usunąć również plik danych?\nPlik: %s</string>
+  <string name="juga_hapus_file_datanya_file">Czy usunąć również plik \'%s\'?</string>
   <string name="get_more_fonts">Pobierz więcej czcionek…</string>
   <string name="about_translators">Tłumacze:</string>
   <string name="intent_filter_import_from_backup">Import z kopii</string>
   <string name="redownload">Pobierz ponownie</string>
   <string name="read_faq_before_suggest">Proszę przeczytaj powyższe FAQ nim wyślesz sugestię. Czy nadal chcesz wysłać sugestię?</string>
   <string name="no_bookmarks_for_backup">Nie posiadasz żadnych zakładek, notatek lub podkreśleń, aby wykonać kopię.</string>
+  <string name="pdb_error_not_palmbible">Ten plik PDB nie jest w formacie PalmBible+. Ten plik PDB ma typ \'%1$s\' i id twórcy \'%2$s\', które nie są obsługiwane przez tę aplikację.</string>
+  <string name="pdb_error_corrupted">Plik PDB jest uszkodzony.</string>
+  <string name="pdb_error_not_pdb_file">Wybrany plik nie jest plikiem PDB.</string>
+  <string name="menu_split_version">Widok paralelny</string>
+  <string name="split_version_none">Brak</string>
+  <string name="split_version_cant_display_verse">%1$s nie jest dostępny w %2$s.</string>
+  <string name="menuAddSomething">Dodaj znacznik</string>
+  <string name="color_settings">Dostosuj kolory</string>
+  <string name="menuTextAppearance">Wygląd tekstu</string>
+  <string name="text_appearance_theme_custom">Własne…</string>
+  <string name="text_appearance_text_size">Rozmiar tekstu</string>
+  <string name="text_appearance_line_spacing">Odstęp między liniami</string>
+  <string name="text_appearance_bold_switch_off">POGRUBIONE</string>
+  <string name="text_appearance_bold_switch_on"><b>POGRUBIONE</b></string>
+  <string name="devotion_change_date">Zmień datę</string>
+  <string name="bookmark_search">Szukaj</string>
+  <string name="history_hint">Przytrzymaj w tym miejscu, aby uzyskać historię</string>
   <string name="goto_tab_dialer_label">Dialer</string>
   <string name="goto_tab_direct_label">Bezpośrednio</string>
   <string name="goto_tab_grid_label">Siatka</string>
@@ -222,4 +238,12 @@
 • [b]Jaya Satrio Hendrick[/b] ikony[br/]
 • [b]Yohanes Nugroho[/b] czytnik plików PDB z BiblePlus+ PDB[br/]
 • i wiele innych osób, które zasugerowały pomysł, poprawki, raportowały błędy, kopiowały pieśni, dodały informacje o przekładach Biblii, itp!</string>
+  <string name="intent_filter_open_yes_file">Otwórz plik YES</string>
+  <string name="intent_filter_open_pdb_file">Otwórz plik PDB</string>
+  <string name="intent_filter_open_pdb_or_yes_file">Otwórz plik PDB/YES</string>
+  <string name="open_yes_file_name_conflict">Plik YES o nazwie \'%1$s\' już istnieje w \'%2$s\'.</string>
+  <string name="open_file_cant_read_source">Nie można odczytać źródła.</string>
+  <string name="open_file_unknown_file_format">Nie można rozpoznać czyjest to plik PDB lub YES.</string>
+  <string name="version_preset_delete_filename">Czy usunąć plik danych \'%s\'?</string>
+  <string name="version_menu_share">Podziel się</string>
 </resources>

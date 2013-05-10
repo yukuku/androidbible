@@ -31,7 +31,6 @@
   <string name="tulis_catatan">Notiz schreiben</string>
   <string name="tambah_pembatas_buku">Lesezeichen hinfügen</string>
   <string name="salin_ayat">Vers kopieren</string>
-  <string name="pada_mulanya">Am Anfang schuf Gott Himmel und Erde. Und die Erde war wüst und leer, und es war finster auf der Tiefe; und der Geist Gottes schwebte auf dem Wasser. Und Gott sprach: Es werde Licht! Und es ward Licht. Und Gott sah, dass das Licht gut war. Da schied Gott das Licht von der Finsternis und nannte das Licht Tag und die Finsternis Nacht. Da ward aus Abend und Morgen der erste Tag.</string>
   <string name="perj_baru">Neues Test.</string>
   <string name="perj_lama">Altes Test.</string>
   <string name="search_bookname_only">%s nur</string>
@@ -71,7 +70,6 @@
   <string name="no">Nein</string>
   <string name="yes">Ja</string>
   <string name="anda_yakin_mau_menghapus_catatan_ini">Bist Du es sicher, das Notiz zu löschen?</string>
-  <string name="hapus_catatan">Notiz gelöscht</string>
   <string name="catatan_alamat">Notiz an %s</string>
   <string name="delete">Löschen</string>
   <string name="cancel">Abbrehen</string>
@@ -125,7 +123,6 @@
   <string name="ed_error_reading_pdb_file">Error beim PDB-Datei lesen</string>
   <string name="ed_details">Detail: </string>
   <string name="ed_buka_file_pdb_yes_lainnya">Eine .pdb/.yes Datei lesen…</string>
-  <string name="ed_tekan_untuk_mengunduh">Tippe hier zum Downloaden</string>
   <string name="info_terperinci">Detail</string>
   <string name="buang_dari_daftar">Von der Liste entfernen</string>
   <string name="ubah_bukmak">Lesezeichen bearbeiten</string>
@@ -168,7 +165,6 @@
   <string name="rename_label">Label umbenennen</string>
   <string name="delete_label">Label löschen</string>
   <string name="please_wait_titik3">Bitte gedulden…</string>
-  <string name="juga_hapus_file_datanya_file">Soll die Datei auch gelöscht werden?\nDatei: %s</string>
   <string name="get_more_fonts">Weitere Schriftarten downloaden…</string>
   <string name="about_translators">Übersetzer:</string>
   <string name="intent_filter_import_from_backup">Import aus Backup</string>

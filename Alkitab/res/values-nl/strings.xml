@@ -34,7 +34,6 @@
   <string name="tulis_catatan">Schrijf notitie</string>
   <string name="tambah_pembatas_buku">Voeg bladwijzer toe</string>
   <string name="salin_ayat">Kopiëer vers</string>
-  <string name="pada_mulanya">In het begin schiep God de hemel en de aarde. De aarde nu was woest en leeg, en duisternis lag over de watervloed; en de Geest van God zweefde boven het water. En God zei: Laat er licht zijn! En er was licht. En God zag het licht dat het goed was; en God maakte scheiding tussen het licht en de duisternis. En God noemde het licht dag en de duisternis noemde Hij nacht. Toen was het avond geweest en het was morgen geweest: de eerste dag.</string>
   <string name="perj_baru">Nieuwe Test.</string>
   <string name="perj_lama">Oude Test.</string>
   <string name="search_bookname_only">Alleen in %s</string>
@@ -130,7 +129,6 @@
   <string name="ed_error_reading_pdb_file">Fout bij lezen PDB bestand</string>
   <string name="ed_details">Details: </string>
   <string name="ed_buka_file_pdb_yes_lainnya">Open een .pdb / .yes bestand…</string>
-  <string name="ed_tekan_untuk_mengunduh">Klik hier om te downloaden</string>
   <string name="info_terperinci">Details</string>
   <string name="buang_dari_daftar">Verwijder van de lijst</string>
   <string name="ubah_bukmak">Bewerk bladwijzer</string>
@@ -174,7 +172,7 @@
   <string name="rename_label">Hernoem label</string>
   <string name="delete_label">Verwijder label</string>
   <string name="please_wait_titik3">Even geduld…</string>
-  <string name="juga_hapus_file_datanya_file">Ook het databestand verwijderen?\nBestand: %s</string>
+  <string name="juga_hapus_file_datanya_file">Verwijder ook het databestand \'%s\'?</string>
   <string name="get_more_fonts">Download meer lettertypen…</string>
   <string name="about_translators">Vertalers:</string>
   <string name="intent_filter_import_from_backup">Importeer van reservekopie</string>
@@ -195,6 +193,9 @@
   <string name="text_appearance_line_spacing">Regelafstand</string>
   <string name="text_appearance_bold_switch_off">VET</string>
   <string name="text_appearance_bold_switch_on"><b>VET</b></string>
+  <string name="devotion_change_date">Wijzig datum</string>
+  <string name="bookmark_search">Zoeken</string>
+  <string name="history_hint">Ingedrukt houden voor geschiedenis</string>
   <string name="goto_tab_dialer_label">Kiezer</string>
   <string name="goto_tab_direct_label">Direct</string>
   <string name="goto_tab_grid_label">Tabel</string>
@@ -237,4 +238,13 @@
 		• [b]Jaya Satrio Hendrick[/b] icons[br/]
 		• [b]Yohanes Nugroho[/b] BiblePlus+ PDB reader[br/]
 		• en vele anderen die o.a. ideeën hebben aangedragen, geholpen hebben met patches, foutrapportages, vertalingen, etc.!</string>
+  <string name="intent_filter_open_yes_file">Open YES bestand</string>
+  <string name="intent_filter_open_pdb_file">Open PDB bestand</string>
+  <string name="intent_filter_open_pdb_or_yes_file">Open PDB/YES bestand</string>
+  <string name="open_yes_file_name_conflict">Een YES bestand met de naam \'%1$s\' bestaat al in \'%2$s\'.</string>
+  <string name="open_file_cant_read_source">De bron kon niet worden gelezen.</string>
+  <string name="open_file_unknown_file_format">Kon niet bepalen of dit een PDB of een YES bestand is.</string>
+  <string name="version_preset_delete_filename">Bestand \'%s\' verwijderen?</string>
+  <string name="version_menu_share">Delen</string>
+  <string name="version_share_title">Deel versie met:</string>
 </resources>
