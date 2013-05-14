@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
+import android.util.Pair;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,12 +53,14 @@ public class DownloadService extends Service {
 				return;
 			case MSG_progress:
 				if (sv.listener != null) {
-					sv.listener.onProgress((DownloadEntry) msg.obj);
+					@SuppressWarnings("unchecked") Pair<DownloadEntry, State> obj = (Pair<DownloadEntry, State>) msg.obj;
+					sv.listener.onProgress(obj.first, obj.second);
 				}
 				return;
 			case MSG_stateChanged:
 				if (sv.listener != null) {
-					sv.listener.onStateChanged((DownloadEntry) msg.obj);
+					@SuppressWarnings("unchecked") Pair<DownloadEntry, State> obj = (Pair<DownloadEntry, State>) msg.obj;
+					sv.listener.onStateChanged(obj.first, obj.second);
 				}
 				return;
 			}
@@ -67,8 +70,8 @@ public class DownloadService extends Service {
 	private Handler handler = new ListenerHandler(this);
 	
 	public interface DownloadListener {
-		void onStateChanged(DownloadEntry entry);
-		void onProgress(DownloadEntry entry);
+		void onStateChanged(DownloadEntry entry, State originalState);
+		void onProgress(DownloadEntry entry, State originalState);
 	}
 	
 	public enum State {
@@ -234,10 +237,11 @@ public class DownloadService extends Service {
 	}
 	
 	public void dispatchProgress(DownloadEntry entry) {
-		Message.obtain(handler, MSG_progress, entry).sendToTarget();
+		Message.obtain(handler, MSG_progress, Pair.create(entry, entry.state)).sendToTarget();
 	}
 	
 	public void dispatchStateChanged(DownloadEntry entry) {
-		Message.obtain(handler, MSG_stateChanged, entry).sendToTarget();
+		Log.d(TAG, "dispatch state", new Throwable().fillInStackTrace());
+		Message.obtain(handler, MSG_stateChanged, Pair.create(entry, entry.state)).sendToTarget();
 	}
 }

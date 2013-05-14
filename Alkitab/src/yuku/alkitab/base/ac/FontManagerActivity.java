@@ -46,7 +46,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 	
 	private static final String URL_fontList = "http://alkitab-host.appspot.com/addon/fonts/v1/list-v2.txt"; //$NON-NLS-1$
 	private static final String URL_fontData = "http://alkitab-host.appspot.com/addon/fonts/v1/data/%s.zip"; //$NON-NLS-1$
-	private static final String URL_fontPreview = "http://alkitab-host.appspot.com/addon/fonts/v1/preview/%s-384x84.png"; //$NON-NLS-1$
+	private static final String URL_fontPreview = "http://alkitab-host.appspot.com/addon/fonts/v1/preview-black/%s-384x84.png"; //$NON-NLS-1$
 
 	public static Intent createIntent() {
 		return new Intent(App.context, FontManagerActivity.class);
@@ -273,7 +273,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 				if (dls.getEntry(dlkey) == null) {
 					new File(FontManager.getFontsPath()).mkdirs();
 					dls.startDownload(
-						dlkey, 
+						dlkey,
 						String.format(URL_fontData, item.name),
 						getFontDownloadDestination(item.name)
 					);
@@ -320,13 +320,12 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 		};
 	}
 
-	@Override public void onStateChanged(DownloadEntry entry) {
-		// TODO optimize
+	@Override public void onStateChanged(DownloadEntry entry, DownloadService.State originalState) {
 		adapter.notifyDataSetChanged();
 		
-		if (entry.state == DownloadService.State.finished) {
+		if (originalState == DownloadService.State.finished) {
 			String fontName = getFontNameFromDownloadKey(entry.key);
-			if (fontName == null) { // this download doesn't belong to font manager. 
+			if (fontName == null) { // this download doesn't belong to font manager.
 				return;
 			}
 			
@@ -335,7 +334,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 				File fontDir = FontManager.getFontDir(fontName);
 				fontDir.mkdirs();
 				
-				Log.d(TAG, "Going to unzip " + downloadedZip); //$NON-NLS-1$
+				Log.d(TAG, "Going to unzip " + downloadedZip, new Throwable().fillInStackTrace()); //$NON-NLS-1$
 				
 				ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(downloadedZip)));
 				try {
@@ -369,8 +368,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 		}
 	}
 
-	@Override public void onProgress(DownloadEntry entry) {
+	@Override public void onProgress(DownloadEntry entry, DownloadService.State originalState) {
 		adapter.notifyDataSetChanged();
-		// TODO optimize
 	}
 }
