@@ -320,11 +320,10 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 		};
 	}
 
-	@Override public void onStateChanged(DownloadEntry entry) {
-		// TODO optimize
+	@Override public void onStateChanged(DownloadEntry entry, DownloadService.State originalState) {
 		adapter.notifyDataSetChanged();
 		
-		if (entry.state == DownloadService.State.finished) {
+		if (originalState == DownloadService.State.finished) {
 			String fontName = getFontNameFromDownloadKey(entry.key);
 			if (fontName == null) { // this download doesn't belong to font manager.
 				return;
@@ -335,7 +334,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 				File fontDir = FontManager.getFontDir(fontName);
 				fontDir.mkdirs();
 				
-				Log.d(TAG, "Going to unzip " + downloadedZip); //$NON-NLS-1$
+				Log.d(TAG, "Going to unzip " + downloadedZip, new Throwable().fillInStackTrace()); //$NON-NLS-1$
 				
 				ZipInputStream zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(downloadedZip)));
 				try {
@@ -369,8 +368,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 		}
 	}
 
-	@Override public void onProgress(DownloadEntry entry) {
+	@Override public void onProgress(DownloadEntry entry, DownloadService.State originalState) {
 		adapter.notifyDataSetChanged();
-		// TODO optimize
 	}
 }
