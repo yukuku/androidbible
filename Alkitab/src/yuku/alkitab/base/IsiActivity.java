@@ -85,6 +85,7 @@ import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
 import yuku.alkitab.base.widget.VerseAdapter;
 import yuku.alkitab.base.widget.VersesView;
+import yuku.alkitab.base.widget.VersesView.PressResult;
 
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
@@ -537,9 +538,19 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			return true;
 		}
 		
-		if (lsText.press(keyCode)) return true;
-		
-		return false;
+		PressResult pressResult = lsText.press(keyCode);
+		switch (pressResult) {
+		case left:
+			bLeft_click();
+			return true;
+		case right:
+			bRight_click();
+			return true;
+		case consumed:
+			return true;
+		default:
+			return false;
+		}
 	}
 	
 	/**
