@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<yuku.alkitab.base.widget.TouchInterceptFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/overlayContainer"
     android:layout_width="fill_parent"
@@ -59,43 +59,48 @@
             </FrameLayout>
         </LinearLayout>
 
-        <LinearLayout
+        <com.actionbarsherlock.internal.nineoldandroids.widget.NineFrameLayout
             android:id="@+id/panelNavigation"
             android:layout_width="fill_parent"
-            android:layout_height="@dimen/abs__action_bar_default_height"
-            android:background="@drawable/abs__ab_solid_dark_holo" >
+            android:layout_height="@dimen/abs__action_bar_default_height" >
 
-            <ImageButton
-                android:id="@+id/bLeft"
-                style="?attr/actionButtonStyle"
-                android:layout_width="@dimen/abs__action_button_min_width"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/desc_previous_chapter"
-                android:padding="16dp"
-                android:scaleType="center"
-                android:src="@drawable/ic_nav_left_light" />
-
-            <Button
-                android:id="@+id/bGoto"
-                style="?attr/actionButtonStyle"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:text="*Long Name Of Book 123"
-                android:textColor="#f0f0f0"
-                android:textSize="18sp"
-                tools:ignore="HardcodedText" />
+                android:background="@drawable/abs__ab_solid_dark_holo" >
 
-            <ImageButton
-                android:id="@+id/bRight"
-                style="?attr/actionButtonStyle"
-                android:layout_width="@dimen/abs__action_button_min_width"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/desc_next_chapter"
-                android:padding="16dp"
-                android:scaleType="center"
-                android:src="@drawable/ic_nav_right_light" />
-        </LinearLayout>
+                <ImageButton
+                    android:id="@+id/bLeft"
+                    style="?attr/actionButtonStyle"
+                    android:layout_width="@dimen/abs__action_button_min_width"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/desc_previous_chapter"
+                    android:padding="16dp"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_nav_left_light" />
+
+                <Button
+                    android:id="@+id/bGoto"
+                    style="?attr/actionButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:text="*Long Name Of Book 123"
+                    android:textColor="#f0f0f0"
+                    android:textSize="18sp"
+                    tools:ignore="HardcodedText" />
+
+                <ImageButton
+                    android:id="@+id/bRight"
+                    style="?attr/actionButtonStyle"
+                    android:layout_width="@dimen/abs__action_button_min_width"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/desc_next_chapter"
+                    android:padding="16dp"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_nav_right_light" />
+            </LinearLayout>
+        </com.actionbarsherlock.internal.nineoldandroids.widget.NineFrameLayout>
     </LinearLayout>
 
-</FrameLayout>
+</yuku.alkitab.base.widget.TouchInterceptFrameLayout>

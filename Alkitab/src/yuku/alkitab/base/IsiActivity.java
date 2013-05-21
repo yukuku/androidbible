@@ -18,21 +18,25 @@ import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
@@ -83,10 +87,17 @@ import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
+import yuku.alkitab.base.widget.TouchInterceptFrameLayout;
 import yuku.alkitab.base.widget.VerseAdapter;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.PressResult;
 
+import com.actionbarsherlock.internal.nineoldandroids.animation.Animator;
+import com.actionbarsherlock.internal.nineoldandroids.animation.Animator.AnimatorListener;
+import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorListenerAdapter;
+import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorSet;
+import com.actionbarsherlock.internal.nineoldandroids.animation.ObjectAnimator;
+import com.actionbarsherlock.internal.nineoldandroids.widget.NineFrameLayout;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -114,7 +125,103 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	private static final String EXTRA_verseUrl = "urlAyat"; //$NON-NLS-1$
 
-	FrameLayout overlayContainer;
+	class ActionBarController {
+	    private Animator mCurrentShowAnim;
+	    private boolean mShowHideAnimationEnabled = true;
+
+	    Handler h = new Handler() {
+			@Override public void handleMessage(Message msg) {
+				if (msg.what == 1 /* hide */) {
+					hidePermanently();
+				}
+			}
+		};
+		
+		final AnimatorListener mHideListener = new AnimatorListenerAdapter() {
+			@TargetApi(11) @Override public void onAnimationEnd(Animator animation) {
+	            if (panelNavigation != null) {
+	                panelNavigation.setTranslationY(0);
+	            }
+	            panelNavigation.setVisibility(View.GONE);
+	            mCurrentShowAnim = null;
+	        }
+	    };
+
+	    final AnimatorListener mShowListener = new AnimatorListenerAdapter() {
+	        @TargetApi(11) @Override public void onAnimationEnd(Animator animation) {
+	            mCurrentShowAnim = null;
+	            panelNavigation.requestLayout();
+	        }
+	    };
+
+	    @TargetApi(11) void hidePanelNavigation() {
+	        if (mCurrentShowAnim != null) {
+	            mCurrentShowAnim.end();
+	        }
+	        
+	        if (panelNavigation.getVisibility() == View.GONE) {
+	            return;
+	        }
+
+	        if (mShowHideAnimationEnabled) {
+	        	panelNavigation.setAlpha(1);
+	            AnimatorSet anim = new AnimatorSet();
+	            AnimatorSet.Builder b = anim.play(ObjectAnimator.ofFloat(panelNavigation, "alpha", 0));
+	            if (panelNavigation != null) {
+	                b.with(ObjectAnimator.ofFloat(panelNavigation, "translationY", 0, +panelNavigation.getHeight()));
+	            }
+	            anim.addListener(mHideListener);
+	            mCurrentShowAnim = anim;
+	            anim.start();
+	        } else {
+	            mHideListener.onAnimationEnd(null);
+	        }
+	    }
+
+	    @TargetApi(11) void showPanelNavigation() {
+	        if (mCurrentShowAnim != null) {
+	            mCurrentShowAnim.end();
+	        }
+	        if (panelNavigation.getVisibility() == View.VISIBLE) {
+	            return;
+	        }
+	        panelNavigation.setVisibility(View.VISIBLE);
+
+	        if (mShowHideAnimationEnabled) {
+	        	panelNavigation.setAlpha(0);
+	            AnimatorSet anim = new AnimatorSet();
+	            AnimatorSet.Builder b = anim.play(ObjectAnimator.ofFloat(panelNavigation, "alpha", 1));
+                b.with(ObjectAnimator.ofFloat(panelNavigation, "translationY", +panelNavigation.getHeight(), 0));
+	            anim.addListener(mShowListener);
+	            mCurrentShowAnim = anim;
+	            anim.start();
+	        } else {
+	        	panelNavigation.setAlpha(1);
+	        	panelNavigation.setTranslationY(0);
+	            mShowListener.onAnimationEnd(null);
+	        }
+	    }
+
+	    void hidePermanently() {
+			getSupportActionBar().hide();
+			hidePanelNavigation();
+		}
+		
+		void showPermanently() {
+			getSupportActionBar().show();
+			showPanelNavigation();
+			h.removeMessages(1);
+		}
+		
+		void showTemporarily(long ms) {
+			getSupportActionBar().show();
+			showPanelNavigation();
+			h.removeMessages(1);
+			h.sendEmptyMessageDelayed(1, ms);
+		}
+	}
+	
+	TouchInterceptFrameLayout overlayContainer;
 	View root;
 	VersesView lsText;
 	VersesView lsSplit1;
@@ -122,6 +229,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	View splitRoot;
 	View splitHandle;
 	LabeledSplitHandleButton splitHandleButton;
+	NineFrameLayout panelNavigation;
 	Button bGoto;
 	ImageButton bLeft;
 	ImageButton bRight;
@@ -129,6 +237,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	Book activeBook;
 	int chapter_1 = 0;
 	SharedPreferences instant_pref;
+	boolean fullScreen;
+	ActionBarController actionBarController = new ActionBarController();
 	
 	History history;
 	NfcAdapter nfcAdapter;
@@ -192,6 +302,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		splitRoot = V.get(this, R.id.splitRoot);
 		splitHandle = V.get(this, R.id.splitHandle);
 		splitHandleButton = V.get(this, R.id.splitHandleButton);
+		panelNavigation = V.get(this, R.id.panelNavigation);
 		bGoto = V.get(this, R.id.bGoto);
 		bLeft = V.get(this, R.id.bLeft);
 		bRight = V.get(this, R.id.bRight);
@@ -223,6 +334,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				return false;
 			}
 		});
+		
+		overlayContainer.setInterceptTouchEventListener(overlayContainer_interceptTouch);
 		
 		// listeners
 		lsText.setParallelListener(parallelListener);
@@ -730,6 +843,50 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 	
+	View.OnTouchListener overlayContainer_interceptTouch = new View.OnTouchListener() {
+		int touchSlop = -1;
+		float downX = -1.f, downY = -1.f;
+		
+		boolean isHot(float x, float y) {
+			if (!fullScreen) return false;
+			return y <= 64 * getResources().getDisplayMetrics().density;
+		}
+		
+		@Override public boolean onTouch(View v, MotionEvent event) {
+			if (touchSlop == -1) {
+				touchSlop = ViewConfiguration.get(IsiActivity.this).getScaledTouchSlop();
+			}
+			
+			int action = MotionEventCompat.getActionMasked(event);
+			if (action == MotionEvent.ACTION_DOWN) {
+				float x = event.getX();
+				float y = event.getY();
+				
+				if (isHot(x, y)) {
+					downX = x;
+					downY = y;
+				}
+			} else if (action == MotionEvent.ACTION_MOVE) {
+				if (downX != -1.f && downY != -1.f) {
+					// detect DOWN
+					float x = event.getX();
+					float y = event.getY();
+					if (y - downY > touchSlop && Math.abs(x - downX) < touchSlop * 0.5f) {
+						Log.d(TAG, "Down!");
+						setFullScreen(false);
+						return true;
+					} else {
+						Log.d(TAG, "Not yet down!");
+					}
+				}
+			} else {
+				downX = downY = -1.f;
+			}
+			
+			return false;
+		}
+	};
+	
 	private ListAdapter historyAdapter = new BaseAdapter() {
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
 			TextView res = (TextView) convertView;
@@ -789,6 +946,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		menu.findItem(R.id.menuHelp).setVisible(c.menuHelp);
 		menu.findItem(R.id.menuDonation).setVisible(c.menuDonation);
 		menu.findItem(R.id.menuSongs).setVisible(c.menuSongs);
+		
+		// checkable menu items
+		menu.findItem(R.id.menuFullScreen).setChecked(fullScreen);
 	}
 	
 	@Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -827,6 +987,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		case R.id.menuAbout:
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
+		case R.id.menuFullScreen:
+			setFullScreen(!item.isChecked());
+			return true;
 		case R.id.menuTextAppearance:
 			showTextAppearancePanel(false);
 			return true;
@@ -845,6 +1008,18 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 		
 		return super.onOptionsItemSelected(item);
+	}
+
+	void setFullScreen(boolean yes) {
+		if (yes) {
+			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+			actionBarController.hidePermanently();
+			fullScreen = true;
+		} else {
+			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+			actionBarController.showPermanently();
+			fullScreen = false;
+		}
 	}
 
 	void showTextAppearancePanel(boolean showOnly) {
