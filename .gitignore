@@ -6,3 +6,4 @@ local.properties
 
 # Mac
 .DS_Store
+.idea/workspace.xml

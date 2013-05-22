@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -37,13 +38,17 @@ import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import com.actionbarsherlock.internal.nineoldandroids.animation.Animator;
+import com.actionbarsherlock.internal.nineoldandroids.animation.Animator.AnimatorListener;
+import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorListenerAdapter;
+import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorSet;
+import com.actionbarsherlock.internal.nineoldandroids.animation.ObjectAnimator;
+import com.actionbarsherlock.internal.nineoldandroids.widget.NineFrameLayout;
+import com.actionbarsherlock.view.ActionMode;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
@@ -87,9 +92,8 @@ import yuku.alkitab.base.widget.VerseAdapter;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.PressResult;
 
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import java.util.ArrayList;
+import java.util.List;
 
 public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
@@ -114,6 +118,86 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	private static final String EXTRA_verseUrl = "urlAyat"; //$NON-NLS-1$
 
+	class FullScreenController {
+	    private Animator mCurrentShowAnim;
+	    private boolean mShowHideAnimationEnabled = true;
+
+		final AnimatorListener mHideListener = new AnimatorListenerAdapter() {
+			@TargetApi(11) @Override public void onAnimationEnd(Animator animation) {
+	            if (panelNavigation != null) {
+	                panelNavigation.setTranslationY(0);
+	            }
+	            panelNavigation.setVisibility(View.GONE);
+	            mCurrentShowAnim = null;
+	        }
+	    };
+
+	    final AnimatorListener mShowListener = new AnimatorListenerAdapter() {
+	        @TargetApi(11) @Override public void onAnimationEnd(Animator animation) {
+	            mCurrentShowAnim = null;
+	            panelNavigation.requestLayout();
+	        }
+	    };
+
+	    @TargetApi(11) void hidePanelNavigation() {
+	        if (mCurrentShowAnim != null) {
+	            mCurrentShowAnim.end();
+	        }
+	        
+	        if (panelNavigation.getVisibility() == View.GONE) {
+	            return;
+	        }
+
+	        if (mShowHideAnimationEnabled) {
+	        	panelNavigation.setAlpha(1);
+	            AnimatorSet anim = new AnimatorSet();
+	            AnimatorSet.Builder b = anim.play(ObjectAnimator.ofFloat(panelNavigation, "alpha", 0));
+	            if (panelNavigation != null) {
+	                b.with(ObjectAnimator.ofFloat(panelNavigation, "translationY", 0, +panelNavigation.getHeight()));
+	            }
+	            anim.addListener(mHideListener);
+	            mCurrentShowAnim = anim;
+	            anim.start();
+	        } else {
+	            mHideListener.onAnimationEnd(null);
+	        }
+	    }
+
+	    @TargetApi(11) void showPanelNavigation() {
+	        if (mCurrentShowAnim != null) {
+	            mCurrentShowAnim.end();
+	        }
+	        if (panelNavigation.getVisibility() == View.VISIBLE) {
+	            return;
+	        }
+	        panelNavigation.setVisibility(View.VISIBLE);
+
+	        if (mShowHideAnimationEnabled) {
+	        	panelNavigation.setAlpha(0);
+	            AnimatorSet anim = new AnimatorSet();
+	            AnimatorSet.Builder b = anim.play(ObjectAnimator.ofFloat(panelNavigation, "alpha", 1));
+                b.with(ObjectAnimator.ofFloat(panelNavigation, "translationY", +panelNavigation.getHeight(), 0));
+	            anim.addListener(mShowListener);
+	            mCurrentShowAnim = anim;
+	            anim.start();
+	        } else {
+	        	panelNavigation.setAlpha(1);
+	        	panelNavigation.setTranslationY(0);
+	            mShowListener.onAnimationEnd(null);
+	        }
+	    }
+
+	    void hidePermanently() {
+			getSupportActionBar().hide();
+			hidePanelNavigation();
+		}
+		
+		void showPermanently() {
+			getSupportActionBar().show();
+			showPanelNavigation();
+		}
+	}
+	
 	FrameLayout overlayContainer;
 	View root;
 	VersesView lsText;
@@ -122,6 +206,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	View splitRoot;
 	View splitHandle;
 	LabeledSplitHandleButton splitHandleButton;
+	NineFrameLayout panelNavigation;
 	Button bGoto;
 	ImageButton bLeft;
 	ImageButton bRight;
@@ -129,6 +214,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	Book activeBook;
 	int chapter_1 = 0;
 	SharedPreferences instant_pref;
+	boolean fullScreen;
+	FullScreenController fullScreenController = new FullScreenController();
+	Toast fullScreenDismissHint;
 	
 	History history;
 	NfcAdapter nfcAdapter;
@@ -192,6 +280,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		splitRoot = V.get(this, R.id.splitRoot);
 		splitHandle = V.get(this, R.id.splitHandle);
 		splitHandleButton = V.get(this, R.id.splitHandleButton);
+		panelNavigation = V.get(this, R.id.panelNavigation);
 		bGoto = V.get(this, R.id.bGoto);
 		bLeft = V.get(this, R.id.bLeft);
 		bRight = V.get(this, R.id.bRight);
@@ -223,7 +312,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				return false;
 			}
 		});
-		
+
 		// listeners
 		lsText.setParallelListener(parallelListener);
 		lsText.setAttributeListener(attributeListener);
@@ -385,7 +474,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	@TargetApi(14) private void enableNfcForegroundDispatchIfAvailable() {
 		if (nfcAdapter != null) {
-			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, IsiActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 			IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
 			try {
 			    ndef.addDataType("application/vnd.yuku.alkitab.nfc.beam"); //$NON-NLS-1$
@@ -700,7 +789,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 	
 	@Override public void onBackPressed() {
-		if (textAppearancePanel != null) {
+		if (fullScreen) {
+			setFullScreen(false);
+		} else if (textAppearancePanel != null) {
 			textAppearancePanel.hide();
 			textAppearancePanel = null;
 		} else {
@@ -789,6 +880,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		menu.findItem(R.id.menuHelp).setVisible(c.menuHelp);
 		menu.findItem(R.id.menuDonation).setVisible(c.menuDonation);
 		menu.findItem(R.id.menuSongs).setVisible(c.menuSongs);
+		
+		// checkable menu items
+		menu.findItem(R.id.menuTextAppearance).setChecked(textAppearancePanel != null);
+		menu.findItem(R.id.menuFullScreen).setChecked(fullScreen);
 	}
 	
 	@Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -827,8 +922,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		case R.id.menuAbout:
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
+		case R.id.menuFullScreen:
+			setFullScreen(!item.isChecked());
+			return true;
 		case R.id.menuTextAppearance:
-			showTextAppearancePanel(false);
+			setShowTextAppearancePanel(!item.isChecked());
 			return true;
 		case R.id.menuSettings:
 			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
@@ -847,23 +945,42 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		return super.onOptionsItemSelected(item);
 	}
 
-	void showTextAppearancePanel(boolean showOnly) {
-		if (textAppearancePanel != null) {
-			// we are already showing it. Hide, except when this method is called with showOnly
-			if (!showOnly) {
+	void setFullScreen(boolean yes) {
+		if (yes) {
+			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+			fullScreenController.hidePermanently();
+			fullScreen = true;
+
+			if (fullScreenDismissHint == null) {
+				fullScreenDismissHint = Toast.makeText(this, R.string.full_screen_dismiss_hint, Toast.LENGTH_SHORT);
+			}
+			fullScreenDismissHint.show();
+		} else {
+			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+			fullScreenController.showPermanently();
+			fullScreen = false;
+		}
+	}
+
+	void setShowTextAppearancePanel(boolean yes) {
+		if (yes) {
+			if (textAppearancePanel != null) {
+				// we are already showing it. Do nothing.
+			} else {
+				textAppearancePanel = new TextAppearancePanel(this, getLayoutInflater(), overlayContainer, new TextAppearancePanel.Listener() {
+					@Override public void onValueChanged() {
+						S.calculateAppliedValuesBasedOnPreferences();
+						applyPreferences(false);
+					}
+				}, REQCODE_textAppearanceGetFonts, REQCODE_textAppearanceCustomColors);
+				textAppearancePanel.show();
+			}
+		} else {
+			if (textAppearancePanel != null) {
 				textAppearancePanel.hide();
 				textAppearancePanel = null;
 			}
-			return;
 		}
-		
-		textAppearancePanel = new TextAppearancePanel(this, getLayoutInflater(), overlayContainer, new TextAppearancePanel.Listener() {
-			@Override public void onValueChanged() {
-				S.calculateAppliedValuesBasedOnPreferences();
-				applyPreferences(false);
-			}
-		}, REQCODE_textAppearanceGetFonts, REQCODE_textAppearanceCustomColors);
-		textAppearancePanel.show();
 	}
 
 	private Pair<List<String>, List<MVersion>> getAvailableVersions() {
@@ -1088,7 +1205,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			applyPreferences(true);
 			
 			if (resultCode == SettingsActivity.RESULT_openTextAppearance) {
-				showTextAppearancePanel(true);
+				setShowTextAppearancePanel(true);
 			}
 		} else if (requestCode == REQCODE_share) {
 			if (resultCode == RESULT_OK) {
