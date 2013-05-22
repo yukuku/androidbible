@@ -21,13 +21,11 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
-import android.support.v4.view.MotionEventCompat;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewConfiguration;
@@ -37,17 +35,20 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import com.actionbarsherlock.internal.nineoldandroids.animation.Animator;
+import com.actionbarsherlock.internal.nineoldandroids.animation.Animator.AnimatorListener;
+import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorListenerAdapter;
+import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorSet;
+import com.actionbarsherlock.internal.nineoldandroids.animation.ObjectAnimator;
+import com.actionbarsherlock.internal.nineoldandroids.widget.NineFrameLayout;
+import com.actionbarsherlock.view.ActionMode;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
@@ -87,20 +88,12 @@ import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
-import yuku.alkitab.base.widget.TouchInterceptFrameLayout;
 import yuku.alkitab.base.widget.VerseAdapter;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.PressResult;
 
-import com.actionbarsherlock.internal.nineoldandroids.animation.Animator;
-import com.actionbarsherlock.internal.nineoldandroids.animation.Animator.AnimatorListener;
-import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorListenerAdapter;
-import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorSet;
-import com.actionbarsherlock.internal.nineoldandroids.animation.ObjectAnimator;
-import com.actionbarsherlock.internal.nineoldandroids.widget.NineFrameLayout;
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import java.util.ArrayList;
+import java.util.List;
 
 public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
@@ -481,7 +474,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	@TargetApi(14) private void enableNfcForegroundDispatchIfAvailable() {
 		if (nfcAdapter != null) {
-			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, IsiActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 			IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
 			try {
 			    ndef.addDataType("application/vnd.yuku.alkitab.nfc.beam"); //$NON-NLS-1$
@@ -889,6 +882,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		menu.findItem(R.id.menuSongs).setVisible(c.menuSongs);
 		
 		// checkable menu items
+		menu.findItem(R.id.menuTextAppearance).setChecked(textAppearancePanel != null);
 		menu.findItem(R.id.menuFullScreen).setChecked(fullScreen);
 	}
 	
@@ -932,7 +926,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			setFullScreen(!item.isChecked());
 			return true;
 		case R.id.menuTextAppearance:
-			showTextAppearancePanel(false);
+			setShowTextAppearancePanel(!item.isChecked());
 			return true;
 		case R.id.menuSettings:
 			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
@@ -968,23 +962,25 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 
-	void showTextAppearancePanel(boolean showOnly) {
-		if (textAppearancePanel != null) {
-			// we are already showing it. Hide, except when this method is called with showOnly
-			if (!showOnly) {
+	void setShowTextAppearancePanel(boolean yes) {
+		if (yes) {
+			if (textAppearancePanel != null) {
+				// we are already showing it. Do nothing.
+			} else {
+				textAppearancePanel = new TextAppearancePanel(this, getLayoutInflater(), overlayContainer, new TextAppearancePanel.Listener() {
+					@Override public void onValueChanged() {
+						S.calculateAppliedValuesBasedOnPreferences();
+						applyPreferences(false);
+					}
+				}, REQCODE_textAppearanceGetFonts, REQCODE_textAppearanceCustomColors);
+				textAppearancePanel.show();
+			}
+		} else {
+			if (textAppearancePanel != null) {
 				textAppearancePanel.hide();
 				textAppearancePanel = null;
 			}
-			return;
 		}
-		
-		textAppearancePanel = new TextAppearancePanel(this, getLayoutInflater(), overlayContainer, new TextAppearancePanel.Listener() {
-			@Override public void onValueChanged() {
-				S.calculateAppliedValuesBasedOnPreferences();
-				applyPreferences(false);
-			}
-		}, REQCODE_textAppearanceGetFonts, REQCODE_textAppearanceCustomColors);
-		textAppearancePanel.show();
 	}
 
 	private Pair<List<String>, List<MVersion>> getAvailableVersions() {
@@ -1209,7 +1205,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			applyPreferences(true);
 			
 			if (resultCode == SettingsActivity.RESULT_openTextAppearance) {
-				showTextAppearancePanel(true);
+				setShowTextAppearancePanel(true);
 			}
 		} else if (requestCode == REQCODE_share) {
 			if (resultCode == RESULT_OK) {

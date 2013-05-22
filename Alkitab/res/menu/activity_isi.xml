@@ -39,7 +39,8 @@
     <item
         android:id="@+id/menuTextAppearance"
         android:showAsAction="never"
-        android:title="@string/menuTextAppearance"/>
+        android:title="@string/menuTextAppearance"
+        android:checkable="true" />
     <item
         android:id="@+id/menuSettings"
         android:icon="@drawable/ic_menu_settings"
