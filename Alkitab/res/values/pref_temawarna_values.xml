@@ -3,7 +3,8 @@
 
     <!-- text color, bg color, verse number color, red text color -->
     <string-array name="pref_temaWarna_value" translatable="false">
-        <!-- kertas -->
+
+        <!-- kertas -->
         <item>ff000000 ffeeeeee ff6666ff ffd11712</item>
         <!-- papan -->
         <item>fff0f0f0 ff000000 ff9090ff ffff9090</item>
