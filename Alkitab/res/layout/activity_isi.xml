@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<yuku.alkitab.base.widget.TouchInterceptFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/overlayContainer"
     android:layout_width="fill_parent"
@@ -103,4 +103,4 @@
         </com.actionbarsherlock.internal.nineoldandroids.widget.NineFrameLayout>
     </LinearLayout>
 
-</yuku.alkitab.base.widget.TouchInterceptFrameLayout>
+</FrameLayout>

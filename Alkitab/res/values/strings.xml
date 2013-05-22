@@ -259,4 +259,5 @@
 	<string name="version_menu_share">Share</string>
 	<string name="version_share_title">Share version to:</string>
 	<string name="menuFullScreen">Full screen</string>
+    <string name="full_screen_dismiss_hint">Press <b>Back</b> to return from full screen</string>
 </resources>

@@ -18,8 +18,6 @@ import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
@@ -37,7 +35,9 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -125,18 +125,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	private static final String EXTRA_verseUrl = "urlAyat"; //$NON-NLS-1$
 
-	class ActionBarController {
+	class FullScreenController {
 	    private Animator mCurrentShowAnim;
 	    private boolean mShowHideAnimationEnabled = true;
 
-	    Handler h = new Handler() {
-			@Override public void handleMessage(Message msg) {
-				if (msg.what == 1 /* hide */) {
-					hidePermanently();
-				}
-			}
-		};
-		
 		final AnimatorListener mHideListener = new AnimatorListenerAdapter() {
 			@TargetApi(11) @Override public void onAnimationEnd(Animator animation) {
 	            if (panelNavigation != null) {
@@ -210,18 +202,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		void showPermanently() {
 			getSupportActionBar().show();
 			showPanelNavigation();
-			h.removeMessages(1);
-		}
-		
-		void showTemporarily(long ms) {
-			getSupportActionBar().show();
-			showPanelNavigation();
-			h.removeMessages(1);
-			h.sendEmptyMessageDelayed(1, ms);
 		}
 	}
 	
-	TouchInterceptFrameLayout overlayContainer;
+	FrameLayout overlayContainer;
 	View root;
 	VersesView lsText;
 	VersesView lsSplit1;
@@ -238,7 +222,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	int chapter_1 = 0;
 	SharedPreferences instant_pref;
 	boolean fullScreen;
-	ActionBarController actionBarController = new ActionBarController();
+	FullScreenController fullScreenController = new FullScreenController();
+	Toast fullScreenDismissHint;
 	
 	History history;
 	NfcAdapter nfcAdapter;
@@ -334,9 +319,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				return false;
 			}
 		});
-		
-		overlayContainer.setInterceptTouchEventListener(overlayContainer_interceptTouch);
-		
+
 		// listeners
 		lsText.setParallelListener(parallelListener);
 		lsText.setAttributeListener(attributeListener);
@@ -813,7 +796,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 	
 	@Override public void onBackPressed() {
-		if (textAppearancePanel != null) {
+		if (fullScreen) {
+			setFullScreen(false);
+		} else if (textAppearancePanel != null) {
 			textAppearancePanel.hide();
 			textAppearancePanel = null;
 		} else {
@@ -842,50 +827,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			Toast.makeText(this, R.string.belum_ada_sejarah, Toast.LENGTH_SHORT).show();
 		}
 	}
-	
-	View.OnTouchListener overlayContainer_interceptTouch = new View.OnTouchListener() {
-		int touchSlop = -1;
-		float downX = -1.f, downY = -1.f;
-		
-		boolean isHot(float x, float y) {
-			if (!fullScreen) return false;
-			return y <= 64 * getResources().getDisplayMetrics().density;
-		}
-		
-		@Override public boolean onTouch(View v, MotionEvent event) {
-			if (touchSlop == -1) {
-				touchSlop = ViewConfiguration.get(IsiActivity.this).getScaledTouchSlop();
-			}
-			
-			int action = MotionEventCompat.getActionMasked(event);
-			if (action == MotionEvent.ACTION_DOWN) {
-				float x = event.getX();
-				float y = event.getY();
-				
-				if (isHot(x, y)) {
-					downX = x;
-					downY = y;
-				}
-			} else if (action == MotionEvent.ACTION_MOVE) {
-				if (downX != -1.f && downY != -1.f) {
-					// detect DOWN
-					float x = event.getX();
-					float y = event.getY();
-					if (y - downY > touchSlop && Math.abs(x - downX) < touchSlop * 0.5f) {
-						Log.d(TAG, "Down!");
-						setFullScreen(false);
-						return true;
-					} else {
-						Log.d(TAG, "Not yet down!");
-					}
-				}
-			} else {
-				downX = downY = -1.f;
-			}
-			
-			return false;
-		}
-	};
 	
 	private ListAdapter historyAdapter = new BaseAdapter() {
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
@@ -1013,11 +954,16 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	void setFullScreen(boolean yes) {
 		if (yes) {
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-			actionBarController.hidePermanently();
+			fullScreenController.hidePermanently();
 			fullScreen = true;
+
+			if (fullScreenDismissHint == null) {
+				fullScreenDismissHint = Toast.makeText(this, R.string.full_screen_dismiss_hint, Toast.LENGTH_SHORT);
+			}
+			fullScreenDismissHint.show();
 		} else {
 			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-			actionBarController.showPermanently();
+			fullScreenController.showPermanently();
 			fullScreen = false;
 		}
 	}
