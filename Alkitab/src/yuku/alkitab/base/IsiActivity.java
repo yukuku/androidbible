@@ -117,6 +117,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private static final int REQCODE_textAppearanceCustomColors = 10;
 
 	private static final String EXTRA_verseUrl = "urlAyat"; //$NON-NLS-1$
+	private boolean uncheckVersesWhenActionModeDestroyed = true;
 
 	class FullScreenController {
 	    private Animator mCurrentShowAnim;
@@ -572,6 +573,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				throw new RuntimeException(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()));
 			}
 		} catch (Throwable e) { // so we don't crash on the beginning of the app
+			Log.e(TAG, "Error opening main version", e);
+
 			new AlertDialog.Builder(IsiActivity.this)
 			.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()))
 			.setPositiveButton(R.string.ok, null)
@@ -595,6 +598,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				throw new RuntimeException(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()));
 			}
 		} catch (Throwable e) { // so we don't crash on the beginning of the app
+			Log.e(TAG, "Error opening split version", e);
+
 			new AlertDialog.Builder(IsiActivity.this)
 			.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()))
 			.setPositiveButton(R.string.ok, null)
@@ -1255,10 +1260,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		if (verse_1 < 1) verse_1 = 1;
 		if (verse_1 > this.activeBook.verse_counts[chapter_1 - 1]) verse_1 = this.activeBook.verse_counts[chapter_1 - 1];
 		
-		{ // split0
-			boolean ok = loadChapterToVersesView(lsText, S.activeVersion, this.activeBook, chapter_1, current_chapter_1, uncheckAllVerses);
-			if (!ok) return 0;
-			
+		{ // main
+			this.uncheckVersesWhenActionModeDestroyed = false;
+			try {
+				boolean ok = loadChapterToVersesView(lsText, S.activeVersion, this.activeBook, chapter_1, current_chapter_1, uncheckAllVerses);
+				if (!ok) return 0;
+			} finally {
+				this.uncheckVersesWhenActionModeDestroyed = true;
+			}
+
 			// tell activity
 			this.chapter_1 = chapter_1;
 			lsText.scrollToVerse(verse_1);
@@ -1294,7 +1304,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				tSplitEmpty.setTextColor(S.applied.fontColor);
 				lsSplit1.setDataEmpty();
 			} else {
-				loadChapterToVersesView(lsSplit1, activeSplitVersion, splitBook, this.chapter_1, this.chapter_1, true);
+				this.uncheckVersesWhenActionModeDestroyed = false;
+				try {
+					loadChapterToVersesView(lsSplit1, activeSplitVersion, splitBook, this.chapter_1, this.chapter_1, true);
+				} finally {
+					this.uncheckVersesWhenActionModeDestroyed = true;
+				}
 				lsSplit1.scrollToVerse(verse_1);
 			}
 		}
@@ -1317,9 +1332,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		version.getXrefEntryCounts(xrefEntryCounts, book.bookId, chapter_1);
 		
 		boolean retainSelectedVerses = (!uncheckAllVerses && chapter_1 == current_chapter_1);
-		
 		versesView.setDataWithRetainSelectedVerses(retainSelectedVerses, book, chapter_1, pericope_aris, pericope_blocks, nblock, verses, xrefEntryCounts);
-		
+
 		return true;
 	}
 
@@ -1496,6 +1510,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 			if (actionMode != null) {
 				actionMode.finish();
+				actionMode = null;
 			}
 		}
 		
@@ -1712,7 +1727,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		@Override public void onDestroyActionMode(ActionMode mode) {
 			actionMode = null;
-			lsText.uncheckAllVerses(true);
+
+			// FIXME even with this guard, verses are still unchecked when switching version while both Fullscreen and Split is active.
+			// This guard only fixes unchecking of verses when in fullscreen mode.
+			if (uncheckVersesWhenActionModeDestroyed) {
+				lsText.uncheckAllVerses(true);
+			}
 		}
 	};
 
