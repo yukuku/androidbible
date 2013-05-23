@@ -28,7 +28,6 @@ import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.MeasureSpec;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
@@ -127,8 +126,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			@TargetApi(11) @Override public void onAnimationEnd(Animator animation) {
 	            if (panelNavigation != null) {
 	                panelNavigation.setTranslationY(0);
+	                panelNavigation.setVisibility(View.GONE);
 	            }
-	            panelNavigation.setVisibility(View.GONE);
 	            mCurrentShowAnim = null;
 	        }
 	    };
@@ -410,7 +409,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if (ari != 0) {
 				jumpToAri(ari);
 				history.add(ari);
-				return;
 			} else {
 				new AlertDialog.Builder(this)
 				.setMessage("Invalid ari: " + ari)
@@ -423,7 +421,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if (ari != 0) {
 				jumpToAri(ari);
 				history.add(ari);
-				return;
 			} else {
 				new AlertDialog.Builder(this)
 				.setMessage("Invalid lid: " + lid)
@@ -445,11 +442,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					}
 					byte[] payload = obj.toString().getBytes();
 					NdefRecord record = new NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".getBytes(), new byte[0], payload); //$NON-NLS-1$
-					NdefMessage msg = new NdefMessage(new NdefRecord[] {
+					return new NdefMessage(new NdefRecord[] {
 						record,
 						NdefRecord.createApplicationRecord(getPackageName()),
 					});
-					return msg;
 				}
 			}, this);
 		}
@@ -874,11 +870,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		
 		AppConfig c = AppConfig.get();
 
-		if (c.menuGebug) {
-			// SubMenu menuGebug = menu.addSubMenu(R.string.gebug);
-			// menuGebug.add(0, 0x985801, 0, "gebug 1: dump p+p"); //$NON-NLS-1$
-		}
-		
 		//# build config
 		menu.findItem(R.id.menuDevotion).setVisible(c.menuDevotion);
 		menu.findItem(R.id.menuVersions).setVisible(c.menuVersions);
@@ -969,9 +960,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	void setShowTextAppearancePanel(boolean yes) {
 		if (yes) {
-			if (textAppearancePanel != null) {
-				// we are already showing it. Do nothing.
-			} else {
+			if (textAppearancePanel == null) { // not showing yet
 				textAppearancePanel = new TextAppearancePanel(this, getLayoutInflater(), overlayContainer, new TextAppearancePanel.Listener() {
 					@Override public void onValueChanged() {
 						S.calculateAppliedValuesBasedOnPreferences();
@@ -995,8 +984,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		// 3. yeses that are ACTIVE
 		
 		AppConfig c = AppConfig.get();
-		final List<String> options = new ArrayList<String>(); // sync with below line
-		final List<MVersion> data = new ArrayList<MVersion>();  // sync with above line
+		final List<String> options = new ArrayList<>(); // sync with below line
+		final List<MVersion> data = new ArrayList<>();  // sync with above line
 		
 		options.add(c.internalLongName); // 1. internal
 		data.add(new MVersionInternal());
@@ -1433,12 +1422,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		return c.url_prefix + tobeBook + tobeChapter + (verse_1_ranges == null? "": tobeVerse); //$NON-NLS-1$
 	}
 	
-	@TargetApi(14) boolean hasHardwareMenuKey() {
-		if (Build.VERSION.SDK_INT <= 10) return true;
-		if (Build.VERSION.SDK_INT <= 13) return false; // Honeycomb tablets
-		return ViewConfiguration.get(this).hasPermanentMenuKey();
-	}
-
 	VersesView.AttributeListener attributeListener = new VersesView.AttributeListener() {
 		public void onAttributeClick(Book book, int chapter_1, int verse_1, int kind) {
 			if (kind == Db.Bookmark2.kind_bookmark) {
