@@ -15,9 +15,12 @@
   <string name="ekspor_berhasil_file_yang_dihasilkan_file">Export erfolgreich.\n\nDatei wird gespeichert: %s</string>
   <string name="impor_berhasil_angka_diproses">Import erfolgreich. In Summe werden %1$d Lesezeichen, Notizen, und/oder Markierungen, und %2$d Labels durchgeführt.</string>
   <string name="terjadi_kesalahan_ketika_mengekspor_pesan">Fehler beim Exportieren: %s</string>
+  <string name="ekspor_pembatas_buku_dan_catatan_tanya">Sollen die Lesezeichen, Notizen und Markierungen auf der SD-Karte oder USB-Stick gesichert werden?
+Existierende Sicherungen werden überschrieben.</string>
   <string name="terjadi_kesalahan_ketika_mengimpor_pesan">Fehler beim Importieren: %s</string>
   <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Bestehende Lesezeichen, Notizen, und Markierungen überschreiben?</string>
   <string name="file_tidak_bisa_dibaca_file">Datei existiert nicht oder unlesbar: %s</string>
+  <string name="impor_pembatas_buku_dan_catatan_dari_tanya">Sollen die Lesezeichen, Notizen und Markierungen von einer Sicherung auf der SD-Karte oder USB-Stick wiederhergestellt werden?\n\nFile: %s</string>
   <string name="impor_dari_sd_card">Importieren</string>
   <string name="ekspor_ke_sd_card">Exportieren</string>
   <string name="menuBantuan">Hilfe</string>
@@ -25,6 +28,7 @@
   <string name="versi">Version</string>
   <string name="renungan">Andacht</string>
   <string name="cari_v">Suche</string>
+  <string name="judul_bukmak_activity">Lesezeichen und Co</string>
   <string name="pembatas_buku">Lesezeichen</string>
   <string name="hapus_pembatas_buku">Lesezeichen löschen</string>
   <string name="bagikan">Mitteilen</string>
@@ -44,6 +48,7 @@
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Fehler beim Downloaden %1$s Datum: %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">Download erfolgreich %1$s Datum: %2$s</string>
   <string name="mengunduh_namaumum_tgl_tgl">Downloaden %1$s Datum %2$s…</string>
+  <string name="belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan">Zurzeit nicht verfügbar. Wahrscheinlich sind die gewünschte Daten noch nicht bereit, oder es gibt einige Fehler beim Erkennen der Datenquelle. Bitte versuchen Sie es später erneut.</string>
   <string name="belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada">Nicht vorhanden. Es wird heruntergeladen…\n\n(Eine sichere Netzverbindung ist nötig)</string>
   <string name="hari_sabtu">Samstag</string>
   <string name="hari_jumat">Freitag</string>
@@ -70,6 +75,7 @@
   <string name="no">Nein</string>
   <string name="yes">Ja</string>
   <string name="anda_yakin_mau_menghapus_catatan_ini">Bist Du es sicher, das Notiz zu löschen?</string>
+  <string name="hapus_catatan">Notiz löschen</string>
   <string name="catatan_alamat">Notiz an %s</string>
   <string name="delete">Löschen</string>
   <string name="cancel">Abbrehen</string>
@@ -113,6 +119,7 @@
   <string name="ed_version_info_info">Version-Info: %s</string>
   <string name="ed_version_details">Version-Detail</string>
   <string name="ed_choose_pdb_or_yes_file">Eine .pdb or .yes Datei auswählen</string>
+  <string name="ed_no_external_storage">Keine SD-Karte oder USB-Stick gefunden.</string>
   <string name="ed_invalid_file_selected">Datei ungültig</string>
   <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Datei %s ist bereits aufgenommen</string>
   <string name="ed_error_encountered">Error aufgetretten</string>
@@ -158,6 +165,7 @@
   <string name="bl_no_items_match_the_filter_above">Kein Ergebnis</string>
   <string name="bl_send_backup">übertragen</string>
   <string name="bl_file_not_found_filename">Datei nicht gefunden: %s</string>
+  <string name="bl_send_backup_confirmation">Soll eine Sicherung der Lesezeichen, Notizen und Markierungen erstellt und gesendet werden? Du kannst die Datei, z.B. als Anhang in einer E-Mail an dein neues Gerät senden, oder für andere Zwecke archivieren.</string>
   <string name="labels_titikdua">Label:</string>
   <string name="tambah_titiktiga">Hinfügen…</string>
   <string name="nama_label_titikdua">Label-Name:</string>
@@ -165,10 +173,30 @@
   <string name="rename_label">Label umbenennen</string>
   <string name="delete_label">Label löschen</string>
   <string name="please_wait_titik3">Bitte gedulden…</string>
+  <string name="juga_hapus_file_datanya_file">Soll auch \'%s\' gelöscht werden?</string>
   <string name="get_more_fonts">Weitere Schriftarten downloaden…</string>
   <string name="about_translators">Übersetzer:</string>
   <string name="intent_filter_import_from_backup">Import aus Backup</string>
   <string name="redownload">Erneut herunterladen</string>
+  <string name="read_faq_before_suggest">Bitte lies zuerst die FAQ, bevor du uns deinen Vorschlag sendest. Möchtest du deinen Vorschlag jetzt senden?</string>
+  <string name="no_bookmarks_for_backup">Du hast keine Lesezeichen, Notizen oder Markierungen zum Sichern.</string>
+  <string name="pdb_error_not_palmbible">Diese PDB-Datei ist nicht im PalmBible+ format. Diese PDB ist vom Typ \'%1$s\', erstellt von \'%2$s\'. Er unterstützt diese App nicht.</string>
+  <string name="pdb_error_corrupted">Die PDB-Datei ist beschädigt.</string>
+  <string name="pdb_error_not_pdb_file">DIe gewählte Datei ist nicht vom Typ PDB.</string>
+  <string name="menu_split_version">Geteilte Ansicht</string>
+  <string name="split_version_none">Nichts</string>
+  <string name="split_version_cant_display_verse">%1$s ist nicht in %2$s verfügbar.</string>
+  <string name="menuAddSomething">Markierung hinzufügen</string>
+  <string name="color_settings">Farben verwalten</string>
+  <string name="menuTextAppearance">Formatierung des Text</string>
+  <string name="text_appearance_theme_custom">Individuell...</string>
+  <string name="text_appearance_text_size">Textgröße</string>
+  <string name="text_appearance_line_spacing">Zeilenabstand</string>
+  <string name="text_appearance_bold_switch_off">FETT</string>
+  <string name="text_appearance_bold_switch_on"><b>FETT</b></string>
+  <string name="devotion_change_date">Ändere Tag</string>
+  <string name="bookmark_search">Suchen</string>
+  <string name="history_hint">Lange drücken für den Verlauf</string>
   <string name="goto_tab_dialer_label">Wähler</string>
   <string name="goto_tab_direct_label">Direkt</string>
   <string name="goto_tab_grid_label">Tabelle</string>
@@ -190,6 +218,8 @@
   <string name="sn_lyric_version_version">Version %s</string>
   <string name="sn_lyric_refrain_marker">Ref.</string>
   <string name="sn_delete_all_songs">Löschen alle Songs</string>
+  <string name="sn_delete_all_songs_explanation">Sollen alle Lieder vom internen Speicher gelöscht werden? Das würde etwas Platz schaffen.</string>
+  <string name="sn_delete_all_songs_result">Ich bin fertig mit Löschen. Anzahl der gelöschten Lieder: %s</string>
   <string name="desc_previous_day">Voriger Tag</string>
   <string name="desc_next_day">Nächster Tag</string>
   <string name="desc_open_bookmark">Lesezeichen öffnen</string>
@@ -199,4 +229,14 @@
   <string name="desc_download">Download</string>
   <string name="desc_previous_chapter">Voriges Kapitel</string>
   <string name="desc_next_chapter">Nächstes Kapitel</string>
+  <string name="desc_drag_to_reorder_labels">Ziehen, um Labels neu Anzuordnen</string>
+  <string name="intent_filter_open_yes_file">Öffne YES-Datei</string>
+  <string name="intent_filter_open_pdb_file">Öffne PDB-Datei</string>
+  <string name="intent_filter_open_pdb_or_yes_file">Öffne PDB-/YES-Datei</string>
+  <string name="open_yes_file_name_conflict">Die YES-Datei \'%1$s\' existiert schon in \'%2$s\'.</string>
+  <string name="open_file_cant_read_source">Die Quelle konnte nicht gelesen werden.</string>
+  <string name="open_file_unknown_file_format">Konnte nicht bestimmen, ob es eine PDB- oder YES-Datei ist.</string>
+  <string name="version_preset_delete_filename">Datei \'%s\' löschen?</string>
+  <string name="version_menu_share">Teilen</string>
+  <string name="version_share_title">Teile deine Bibelübersetzung über:</string>
 </resources>
