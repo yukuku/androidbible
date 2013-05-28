@@ -984,8 +984,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		// 3. yeses that are ACTIVE
 		
 		AppConfig c = AppConfig.get();
-		final List<String> options = new ArrayList<>(); // sync with below line
-		final List<MVersion> data = new ArrayList<>();  // sync with above line
+		final List<String> options = new ArrayList<String>(); // sync with below line
+		final List<MVersion> data = new ArrayList<MVersion>();  // sync with above line
 		
 		options.add(c.internalLongName); // 1. internal
 		data.add(new MVersionInternal());
