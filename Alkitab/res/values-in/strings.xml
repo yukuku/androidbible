@@ -237,9 +237,9 @@
 Terjemahan Baru, Bahasa Indonesia Sehari-hari © Lembaga Alkitab Indonesia[br/]
 [br/]
 [b]Bantuan:[/b][br/]
-• [b]Jaya Satrio[/b] ikon dan desain[br/]
-• [b]Yohanes Nugroho[/b] pembaca PDB[br/]
-• dan banyak lagi orang-orang yang menyumbangkan ide, perbaikan, laporan masalah, salinan kidung, informasi terjemahan Alkitab, dll!</string>
+• [b]Jaya Satrio Hendrick[/b] ikon dan banner[br/]
+• [b]Yohanes Nugroho[/b] pembaca PDB BiblePlus+[br/]
+• dan banyak lagi orang-orang yang menyumbangkan ide, perbaikan, laporan masalah, salinan kidung, informasi terjemahan Alkitab, dll.</string>
   <string name="intent_filter_open_yes_file">Buka file YES</string>
   <string name="intent_filter_open_pdb_file">Buka file PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Buka file PDB/YES</string>
@@ -249,4 +249,6 @@ Terjemahan Baru, Bahasa Indonesia Sehari-hari © Lembaga Alkitab Indonesia[br/]
   <string name="version_preset_delete_filename">Hapus file data \'%s\'?</string>
   <string name="version_menu_share">Bagikan</string>
   <string name="version_share_title">Bagikan versi ini ke:</string>
+  <string name="menuFullScreen">Layar penuh</string>
+  <string name="full_screen_dismiss_hint">Tekan <b>Back</b> untuk kembali dari layar penuh</string>
 </resources>

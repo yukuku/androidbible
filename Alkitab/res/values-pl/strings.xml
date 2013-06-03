@@ -229,15 +229,6 @@
   <string name="desc_previous_chapter">Poprzedni rozdział</string>
   <string name="desc_next_chapter">Następny rozdział</string>
   <string name="desc_drag_to_reorder_labels">Przeciągnij, aby zmienić kolejność etykiet</string>
-  <string name="teks_about">Rozwijane przez [b]yuku[/b], 2009-2012[br/]
-• Strona: androidbible.blogspot.com[br/] 
-• Google+: gplus.to/androidbible[br/]
-• Lista mailingowa: groups.google.com/group/androidbible[br/]
-[br/]
-[b]Współpracownicy:[/b][br/]
-• [b]Jaya Satrio Hendrick[/b] ikony[br/]
-• [b]Yohanes Nugroho[/b] czytnik plików PDB z BiblePlus+ PDB[br/]
-• i wiele innych osób, które zasugerowały pomysł, poprawki, raportowały błędy, kopiowały pieśni, dodały informacje o przekładach Biblii, itp!</string>
   <string name="intent_filter_open_yes_file">Otwórz plik YES</string>
   <string name="intent_filter_open_pdb_file">Otwórz plik PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Otwórz plik PDB/YES</string>

@@ -74,6 +74,7 @@
   <string name="no">Não</string>
   <string name="yes">Sim</string>
   <string name="anda_yakin_mau_menghapus_catatan_ini">Tem certeza que deseja apagar esta anotação?</string>
+  <string name="hapus_catatan">Remover nota</string>
   <string name="catatan_alamat">Nota em %s</string>
   <string name="delete">Remover</string>
   <string name="cancel">Cancelar</string>
@@ -171,6 +172,7 @@
   <string name="rename_label">Renomear etiqueta</string>
   <string name="delete_label">Remover etiqueta</string>
   <string name="please_wait_titik3">Por gentileza, aguarde…</string>
+  <string name="juga_hapus_file_datanya_file">Também remover o arquivo de dados \'%s\'?</string>
   <string name="get_more_fonts">Baixar mais fontes…</string>
   <string name="about_translators">Tradutores:</string>
   <string name="intent_filter_import_from_backup">Importar do backup</string>
@@ -227,14 +229,13 @@
   <string name="desc_previous_chapter">Capítulo anterior</string>
   <string name="desc_next_chapter">Capítulo seguinte</string>
   <string name="desc_drag_to_reorder_labels">Arraste para reorganizar etiquetas</string>
-  <string name="teks_about">Desenvolvido por [b]yuku[/b], 2009-2012[br/]
-    	• Website: androidbible.blogspot.com[br/] 
-		• Google+: gplus.to/androidbible[br/]
-    	• Mailing list: groups.google.com/group/androidbible[br/]
-    	[br/]
-		[b]Contribuidores:[/b][br/]
-		• [b]Jaya Satrio Hendrick[/b] ícones[br/]
-		• [b]Yohanes Nugroho[/b] BiblePlus+ PDB reader[br/]
-		• [b]Rony Gabriel[/b] tradução da interface em Pt-Br[br/]
-		• e muito mais pessoas que contribuíram com ideias, correções, bugs encontrados, cópias de canções, e informações sobre traduções da Bíblia, etc!</string>
+  <string name="intent_filter_open_yes_file">Abrir arquivo YES</string>
+  <string name="intent_filter_open_pdb_file">Abrir arquivo PDB</string>
+  <string name="intent_filter_open_pdb_or_yes_file">Abrir arquivo PDB/YES</string>
+  <string name="open_yes_file_name_conflict">O arquivo YES nomeado \'%1$s\' já existe em \'%2$s\'.</string>
+  <string name="open_file_cant_read_source">Não foi possível ler a origem.</string>
+  <string name="open_file_unknown_file_format">Não foi possível determinar se este é um arquivo PDB ou YES.</string>
+  <string name="version_preset_delete_filename">Remover o arquivo de dados \'%s\'?</string>
+  <string name="version_menu_share">Compartilhar</string>
+  <string name="version_share_title">Compartilhar versão com:</string>
 </resources>
