@@ -205,14 +205,4 @@
   <string name="desc_download">下载</string>
   <string name="desc_previous_chapter">前章</string>
   <string name="desc_next_chapter">后章</string>
-  <string name="teks_about">开发人员 [b]yuku[/b], 2009-2012[br/]
-• 网站: androidbible.blogspot.com[br/] 
-• Google+: gplus.to/androidbible[br/]
-• 邮寄清单: groups.google.com/group/androidbible[br/]
-[br/]
-[b]贡献者:[/b][br/]
-• [b]Jaya Satrio[/b] 各种图标[br/]
-• [b]Yohanes Nugroho[/b] BiblePlus+PDB读者[br/]
-• 还有许多人贡献想法，补丁，错误报告，拷贝的歌曲，圣经翻译的信息，等等!
-</string>
 </resources>

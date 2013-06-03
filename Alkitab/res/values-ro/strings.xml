@@ -26,6 +26,7 @@
   <string name="versi">Versiune</string>
   <string name="renungan">Devoţional</string>
   <string name="cari_v">Caută</string>
+  <string name="judul_bukmak_activity">Însemnari</string>
   <string name="pembatas_buku">Favorite</string>
   <string name="hapus_pembatas_buku">Şterge favorit</string>
   <string name="bagikan">Trimite</string>
@@ -115,7 +116,7 @@
   <string name="ed_version_info_info">Despre versiune: %s</string>
   <string name="ed_version_details">Detalii versiune</string>
   <string name="ed_choose_pdb_or_yes_file">Alege un fişier .pdb sau .yes</string>
-  <string name="ed_no_external_storage">Nu s-a găasit cardul SD sau unitatea USB.</string>
+  <string name="ed_no_external_storage">Nu s-a găsit cardul SD sau unitatea USB.</string>
   <string name="ed_invalid_file_selected">Fişier selectat invalid.</string>
   <string name="ed_file_file_sudah_ada_dalam_daftar_versi">Fişierul %s este deja în listă.</string>
   <string name="ed_error_encountered">Eroare…</string>
@@ -174,7 +175,11 @@
   <string name="intent_filter_import_from_backup">Importă din copia de rezervă</string>
   <string name="redownload">Descărcare nouă</string>
   <string name="read_faq_before_suggest">Vă rog să citiți FAQ înainte de a trimite o sugestie. Continuați cu trimiterea sugestiei?</string>
-  <string name="goto_tab_dialer_label">Formare număr</string>
+  <string name="menu_split_version">Compară versiuni</string>
+  <string name="split_version_none">O singură versiune</string>
+  <string name="split_version_cant_display_verse">%1$s nu este disponibil în %2$s.</string>
+  <string name="text_appearance_line_spacing">Spațiu rânduri</string>
+  <string name="goto_tab_dialer_label">Numeric</string>
   <string name="goto_tab_direct_label">Direct</string>
   <string name="goto_tab_grid_label">Grilă</string>
   <string name="fm_activity_title">Gestionare Fonturi</string>
@@ -206,13 +211,5 @@
   <string name="desc_download">Descarcă</string>
   <string name="desc_previous_chapter">Capitolul precedent</string>
   <string name="desc_next_chapter">Capitolul următor</string>
-  <string name="teks_about">Dezvoltat de [b]Yuku[/b], 2009-2012[br/]
- •Website: androidbible.blogspot.com[br /]
- •Google+: gplus.to/androidbible[br /]
- •Lista de discuții: groups.google.com/grup/androidbible[br/]
-  [br/]
-  [b]Colaboratori:[/b][br/]
- •[b]Jaya Satrio Hendrick[/b] iconițe[br/]
- •[b]Yohanes Nugroho[/ b] BiblePlus+ PPB reader[br/]
- • alți oameni care au contribuit cu idei, patch-uri, rapoarte de bug-uri, copie de cântece, informații despre traducerile Bibliei, etc!</string>
+  <string name="version_share_title">Partajați versiunea la:</string>
 </resources>

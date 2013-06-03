@@ -81,6 +81,13 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop);
 		void onScrollToTop(VersesView v);
 	}
+	
+	public enum PressResult {
+		left,
+		right,
+		consumed,
+		nop,
+	}
 
 	private VerseAdapter adapter;
 	private SelectedVersesListener listener;
@@ -313,11 +320,15 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		hideOrShowContextMenuButton();
 	}
 	
-	public boolean press(int keyCode) {
+	public PressResult press(int keyCode) {
 		String volumeButtonsForNavigation = Preferences.getString(getContext().getString(R.string.pref_tombolVolumeBuatPindah_key), getContext().getString(R.string.pref_tombolVolumeBuatPindah_default));
 		if (U.equals(volumeButtonsForNavigation, "pasal" /* chapter */)) { //$NON-NLS-1$
-			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_RIGHT;
-			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_LEFT;
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+				return PressResult.right;
+			}
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+				return PressResult.left;
+			}
 		} else if (U.equals(volumeButtonsForNavigation, "ayat" /* verse */)) { //$NON-NLS-1$
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_DOWN;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) keyCode = KeyEvent.KEYCODE_DPAD_UP;
@@ -329,7 +340,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 				stopFling();
 				setSelectionFromTop(oldPos+1, getVerticalFadingEdgeLength());
 			}
-			return true;
+			return PressResult.consumed;
 		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
 			int oldPos = getPositionBasedOnScroll();
 			if (oldPos >= 1) {
@@ -344,9 +355,9 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 				stopFling();
 				setSelectionFromTop(0, getVerticalFadingEdgeLength());
 			}
-			return true;
+			return PressResult.consumed;
 		}
-		return false;
+		return PressResult.nop;
 	}
 
 	public void setDataWithRetainSelectedVerses(boolean retainSelectedVerses, Book book, int chapter_1, int[] pericope_aris, PericopeBlock[] pericope_blocks, int nblock, SingleChapterVerses verses, int[] xrefEntryCounts) {

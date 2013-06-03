@@ -1,7 +1,6 @@
 package yuku.alkitab.base.ac;
 
 import android.os.Bundle;
-
 import yuku.alkitab.R;
 import yuku.alkitab.base.ac.base.BasePreferenceActivity;
 

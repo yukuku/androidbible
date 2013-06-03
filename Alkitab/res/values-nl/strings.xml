@@ -229,15 +229,6 @@
   <string name="desc_previous_chapter">Vorig hoofdstuk</string>
   <string name="desc_next_chapter">Volgende hoofdstuk</string>
   <string name="desc_drag_to_reorder_labels">Sleep om labels te sorteren</string>
-  <string name="teks_about">Ontwikkeld door [b]yuku[/b], 2009-2013[br/]
-    	• Website: androidbible.blogspot.com[br/] 
-		• Google+: gplus.to/androidbible[br/]
-    	• Maillijst: groups.google.com/group/androidbible[br/]
-    	[br/]
-		[b]Medewerkers:[/b][br/]
-		• [b]Jaya Satrio Hendrick[/b] icons[br/]
-		• [b]Yohanes Nugroho[/b] BiblePlus+ PDB reader[br/]
-		• en vele anderen die o.a. ideeën hebben aangedragen, geholpen hebben met patches, foutrapportages, vertalingen, etc.!</string>
   <string name="intent_filter_open_yes_file">Open YES bestand</string>
   <string name="intent_filter_open_pdb_file">Open PDB bestand</string>
   <string name="intent_filter_open_pdb_or_yes_file">Open PDB/YES bestand</string>

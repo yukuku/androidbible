@@ -74,6 +74,7 @@
   <string name="no">Nee</string>
   <string name="yes">Ja</string>
   <string name="anda_yakin_mau_menghapus_catatan_ini">Seker U wil die nota uitvee?</string>
+  <string name="hapus_catatan">Vee nota uit</string>
   <string name="catatan_alamat">Nota aan %s</string>
   <string name="delete">Vee uit</string>
   <string name="cancel">Kanselleer</string>
@@ -171,6 +172,7 @@
   <string name="rename_label">Hernoem etiket</string>
   <string name="delete_label">Verwyder etiket</string>
   <string name="please_wait_titik3">Wag asseblief</string>
+  <string name="juga_hapus_file_datanya_file">Vee data leêr ook uit \'%s\'?</string>
   <string name="get_more_fonts">Laai meer lettertipes af</string>
   <string name="about_translators">Vertalers:</string>
   <string name="intent_filter_import_from_backup">Voer in vanaf rugsteun</string>
@@ -227,13 +229,13 @@
   <string name="desc_previous_chapter">Vorige hoofstuk</string>
   <string name="desc_next_chapter">Volgende hoofstuk</string>
   <string name="desc_drag_to_reorder_labels">Trek om etikette te bestel</string>
-  <string name="teks_about">Developed by [b]yuku[/b], 2009-2012[br/]
-• Website: androidbible.blogspot.com[br/]
-• Google+: gplus.to/androidbible[br/]
-• Mailing list: groups.google.com/group/androidbible[br/]
-[br/]
-[b]Contributors:[/b][br/]
-• [b]Jaya Satrio Hendrick[/b] icons[br/]
-• [b]Yohanes Nugroho[/b] BiblePlus+ PDB reader[br/]
-• and many more people who contributed ideas, patches, bug reports, copy of songs, information about Bible translations, etc!</string>
+  <string name="intent_filter_open_yes_file">Maak Yes leêr oop</string>
+  <string name="intent_filter_open_pdb_file">Maak PDB leêr oop</string>
+  <string name="intent_filter_open_pdb_or_yes_file">Maak PDB/YES leêr oop</string>
+  <string name="open_yes_file_name_conflict">\'n YES leêr genaamd \'%1$s\' bestaan alreeds in  \'%2$s\'.</string>
+  <string name="open_file_cant_read_source">Die bron nie suksesvol gelees.</string>
+  <string name="open_file_unknown_file_format">Kon nie tipe leêr PDB/YES  vasstel nie.</string>
+  <string name="version_preset_delete_filename">Vee data leêr uit  \'%s\'?</string>
+  <string name="version_menu_share">Deel</string>
+  <string name="version_share_title">Deel weergawe met:</string>
 </resources>
