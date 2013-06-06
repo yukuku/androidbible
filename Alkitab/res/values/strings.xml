@@ -260,4 +260,6 @@
 	<string name="version_share_title">Share version to:</string>
 	<string name="menuFullScreen">Full screen</string>
     <string name="full_screen_dismiss_hint">Press <b>Back</b> to return from full screen</string>
+    <string name="desc_drawer_open">Open drawer</string>
+    <string name="desc_drawer_close">Close drawer</string>
 </resources>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/overlayContainer"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:id="@+id/root"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        tools:ignore="UselessParent" >
+
+        <LinearLayout
+            android:id="@+id/splitRoot"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            tools:ignore="NestedWeights" >
+
+            <yuku.alkitab.base.widget.VersesView
+                android:id="@+id/lsSplit0"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <FrameLayout
+                android:id="@+id/splitHandle"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:visibility="gone" >
+
+                <yuku.alkitab.base.widget.LabeledSplitHandleButton
+                    android:id="@+id/splitHandleButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:ignore="ContentDescription" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <yuku.alkitab.base.widget.VersesView
+                    android:id="@+id/lsSplit1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/tSplitEmpty"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:paddingLeft="32dp"
+                    android:paddingRight="32dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    tools:ignore="SelectableText" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <com.actionbarsherlock.internal.nineoldandroids.widget.NineFrameLayout
+            android:id="@+id/panelNavigation"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/abs__action_bar_default_height" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@drawable/abs__ab_solid_dark_holo" >
+
+                <ImageButton
+                    android:id="@+id/bLeft"
+                    style="?attr/actionButtonStyle"
+                    android:layout_width="@dimen/abs__action_button_min_width"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/desc_previous_chapter"
+                    android:padding="16dp"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_nav_left_light" />
+
+                <Button
+                    android:id="@+id/bGoto"
+                    style="?attr/actionButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:text="*Long Name Of Book 123"
+                    android:textColor="#f0f0f0"
+                    android:textSize="18sp"
+                    tools:ignore="HardcodedText" />
+
+                <ImageButton
+                    android:id="@+id/bRight"
+                    style="?attr/actionButtonStyle"
+                    android:layout_width="@dimen/abs__action_button_min_width"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/desc_next_chapter"
+                    android:padding="16dp"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_nav_right_light" />
+            </LinearLayout>
+        </com.actionbarsherlock.internal.nineoldandroids.widget.NineFrameLayout>
+    </LinearLayout>
+
+</FrameLayout>
