@@ -38,7 +38,6 @@ import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.AboutActivity;
-import yuku.alkitab.base.ac.BookmarkActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.GotoActivity;
 import yuku.alkitab.base.ac.HelpActivity;
@@ -86,7 +85,6 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 	private static final String PREFKEY_devotion_name = "renungan_nama"; //$NON-NLS-1$
 
 	private static final int REQCODE_goto = 1;
-	private static final int REQCODE_bookmark = 2;
 	private static final int REQCODE_devotion = 3;
 	private static final int REQCODE_settings = 4;
 	private static final int REQCODE_version = 5;
@@ -644,9 +642,6 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.menuBookmark:
-				startActivityForResult(new Intent(App.context, BookmarkActivity.class), REQCODE_bookmark);
-				return true;
 			case R.id.menuSearch:
 				menuSearch_click();
 				return true;
@@ -885,12 +880,12 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 					history.add(Ari.encode(result.bookId, ari_cv));
 				}
 			}
-		} else if (requestCode == REQCODE_bookmark) {
-			lsText.loadAttributeMap();
+		// } else if (requestCode == REQCODE_bookmark) {
+			// TODO reload lsText.loadAttributeMap();
 
-			if (activeSplitVersion != null) {
-				lsSplit1.loadAttributeMap();
-			}
+			// TODO if (activeSplitVersion != null) {
+				//lsSplit1.loadAttributeMap();
+			// }
 		} else if (requestCode == REQCODE_search) {
 			if (resultCode == Activity.RESULT_OK) {
 				Search2Activity.Result result = Search2Activity.obtainResult(data);

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -37,6 +38,7 @@ import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.fr.MarkersFragment;
 import yuku.alkitab.base.fr.TextFragment;
 import yuku.alkitab.base.util.LidToAri;
 
@@ -51,15 +53,20 @@ public class IsiActivity extends BaseActivity {
 	private int drawerSelection = 0;
 	private int drawerOldSelection = -1;
 
-	public boolean isFullScreen() {
-		return fullScreen;
-	}
-
 	FullScreenController fullScreenController;
 	NfcAdapter nfcAdapter;
 	boolean fullScreen;
 	Toast fullScreenDismissHint;
+
 	TextFragment textFragment;
+	MarkersFragment markersFragment;
+
+	public static Intent createIntent(int ari) {
+		Intent res = new Intent(App.context, IsiActivity.class);
+		res.setAction("yuku.alkitab.action.VIEW");
+		res.putExtra("ari", ari);
+		return res;
+	}
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -130,8 +137,16 @@ public class IsiActivity extends BaseActivity {
 
 		if (drawerSelection != drawerOldSelection) {
 			FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-			tx.replace(R.id.main, Fragment.instantiate(this, classes[drawerSelection].getName()));
+			final Fragment fragment = Fragment.instantiate(this, classes[drawerSelection].getName());
+			tx.replace(R.id.main, fragment);
 			tx.commit();
+
+			if (fragment instanceof TextFragment) {
+				textFragment = (TextFragment) fragment;
+			} else if (fragment instanceof MarkersFragment) {
+				markersFragment = (MarkersFragment) fragment;
+			}
+
 			drawerOldSelection = drawerSelection;
 		}
 	}
@@ -212,16 +227,31 @@ public class IsiActivity extends BaseActivity {
 			}
 		}
 
-		if (Build.VERSION.SDK_INT >= 14) {
-			checkAndProcessBeamIntent(intent);
-		}
+		if ((intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0) {
+			if (Build.VERSION.SDK_INT >= 14) {
+				checkAndProcessBeamIntent(intent);
+			}
 
-		checkAndProcessViewIntent(intent);
+			checkAndProcessAlkitabViewIntent(intent);
+
+			checkAndProcessOpenBackupIntent(intent);
+		}
 	}
 
+	private void checkAndProcessOpenBackupIntent(final Intent intent) {
+		if (U.equals(intent.getAction(), Intent.ACTION_VIEW)) {
+			Uri data = intent.getData();
+			if (data != null && (U.equals(data.getScheme(), "content") || U.equals(data.getScheme(), "file"))) { //$NON-NLS-1$ //$NON-NLS-2$
+				if (markersFragment != null) { // TODO activate this
+					markersFragment.handleOpenBackupIntent(intent);
+				}
+			}
+		}
 
-	/** did we get here from VIEW intent? */
-	private void checkAndProcessViewIntent(Intent intent) {
+	}
+
+	/** did we get here from yuku.alkitab.action.VIEW intent? */
+	private void checkAndProcessAlkitabViewIntent(Intent intent) {
 		if (!U.equals(intent.getAction(), "yuku.alkitab.action.VIEW")) return;
 
 		if (intent.hasExtra("ari")) {
@@ -431,10 +461,7 @@ public class IsiActivity extends BaseActivity {
 		}
 	}
 
-	public static Intent createIntent(int ari) {
-		Intent res = new Intent(App.context, IsiActivity.class);
-		res.setAction("yuku.alkitab.action.VIEW");
-		res.putExtra("ari", ari);
-		return res;
+	public boolean isFullScreen() {
+		return fullScreen;
 	}
 }

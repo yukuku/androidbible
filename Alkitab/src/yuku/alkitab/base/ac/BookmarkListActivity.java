@@ -32,6 +32,7 @@ import java.util.Locale;
 
 import yuku.afw.V;
 import yuku.alkitab.R;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -86,8 +87,8 @@ public class BookmarkListActivity extends BaseActivity {
 	int hiliteColor;
 
 
-    public static Intent createIntent(Context context, int filter_kind, long filter_labelId) {
-    	Intent res = new Intent(context, BookmarkListActivity.class);
+    public static Intent createIntent(int filter_kind, long filter_labelId) {
+    	Intent res = new Intent(App.context, BookmarkListActivity.class);
     	res.putExtra(EXTRA_filter_kind, filter_kind);
     	res.putExtra(EXTRA_filter_labelId, filter_labelId);
     	return res;

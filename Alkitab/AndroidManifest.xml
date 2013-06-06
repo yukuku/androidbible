@@ -26,37 +26,35 @@
                 <action android:name="yuku.alkitab.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-		</activity>
+            <intent-filter android:label="@string/intent_filter_import_from_backup">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:mimeType="text/xml" />
+                <data android:host="*" />
+            </intent-filter>
+            <intent-filter android:label="@string/intent_filter_import_from_backup">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:mimeType="*/*" />
+                <data android:host="*" />
+                <data android:pathPattern=".*\\.xml" />
+                <data android:pathPattern=".*\\..*\\.xml" />
+                <data android:pathPattern=".*\\..*\\..*\\.xml" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.xml" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.xml" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.xml" />
+            </intent-filter>
+        </activity>
 
 		<activity android:name="yuku.alkitab.base.ac.GotoActivity" android:label="@string/tuju_v" android:configChanges="locale|layoutDirection" android:windowSoftInputMode="adjustNothing" />
 		<activity android:name="yuku.alkitab.base.ac.SettingsActivity" android:label="@string/pengaturan_alkitab" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.ColorSettingsActivity" android:label="@string/color_settings" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
-		<activity android:name="yuku.alkitab.base.ac.BookmarkActivity" android:label="@string/judul_bukmak_activity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" tools:ignore="ExportedActivity">
-		    <intent-filter android:label="@string/intent_filter_import_from_backup">
-		        <action android:name="android.intent.action.VIEW" />
-		        <category android:name="android.intent.category.DEFAULT" />
-		        <category android:name="android.intent.category.BROWSABLE" />
-		        <data android:scheme="file" />
-		        <data android:scheme="content" />
-		        <data android:mimeType="text/xml" />
-		        <data android:host="*" />
-		    </intent-filter>
-		    <intent-filter android:label="@string/intent_filter_import_from_backup">
-		        <action android:name="android.intent.action.VIEW" />
-		        <category android:name="android.intent.category.DEFAULT" />
-		        <category android:name="android.intent.category.BROWSABLE" />
-		        <data android:scheme="file" />
-		        <data android:scheme="content" />
-		        <data android:mimeType="*/*" />
-		        <data android:host="*" />
-		        <data android:pathPattern=".*\\.xml" />
-		        <data android:pathPattern=".*\\..*\\.xml" />
-		        <data android:pathPattern=".*\\..*\\..*\\.xml" />
-		        <data android:pathPattern=".*\\..*\\..*\\..*\\.xml" />
-		        <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.xml" />
-		        <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.xml" />
-		    </intent-filter>
-   		</activity>
 
 		<activity android:name="yuku.alkitab.base.ac.BookmarkListActivity" android:label="@string/pembatas_buku" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:windowSoftInputMode="adjustResize|stateHidden" />
 		<activity android:name="yuku.alkitab.base.ac.VersionsActivity" android:label="@string/kelola_versi" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection">
