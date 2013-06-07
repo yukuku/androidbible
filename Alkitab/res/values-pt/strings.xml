@@ -229,6 +229,15 @@
   <string name="desc_previous_chapter">Capítulo anterior</string>
   <string name="desc_next_chapter">Capítulo seguinte</string>
   <string name="desc_drag_to_reorder_labels">Arraste para reorganizar etiquetas</string>
+  <string name="teks_about">Desenvolvido por [b]yuku[/b], 2009-2013[br/]
+• Website: androidbible.blogspot.com[br/] 
+• Google+: gplus.to/androidbible[br/]
+• Mailing list: groups.google.com/group/androidbible[br/]
+[br/]
+[b]Contribuintes:[/b][br/]
+• [b]Jaya Satrio Hendrick[/b] icons[br/]
+• [b]Yohanes Nugroho[/b] BiblePlus+ PDB reader[br/]
+• e muitas outras pessoas que contribuíram com ideias, alterações, erros encontrados, cópias de músicas, informações sobre a tradução da Biblia, etc!</string>
   <string name="intent_filter_open_yes_file">Abrir arquivo YES</string>
   <string name="intent_filter_open_pdb_file">Abrir arquivo PDB</string>
   <string name="intent_filter_open_pdb_or_yes_file">Abrir arquivo PDB/YES</string>
@@ -238,4 +247,6 @@
   <string name="version_preset_delete_filename">Remover o arquivo de dados \'%s\'?</string>
   <string name="version_menu_share">Compartilhar</string>
   <string name="version_share_title">Compartilhar versão com:</string>
+  <string name="menuFullScreen">Tela cheia</string>
+  <string name="full_screen_dismiss_hint">Pressione <b>Voltar</b> para sair da tela cheia</string>
 </resources>
