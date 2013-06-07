@@ -230,6 +230,15 @@ Existierende Sicherungen werden überschrieben.</string>
   <string name="desc_previous_chapter">Voriges Kapitel</string>
   <string name="desc_next_chapter">Nächstes Kapitel</string>
   <string name="desc_drag_to_reorder_labels">Ziehen, um Labels neu Anzuordnen</string>
+  <string name="teks_about">Entwickelt von [b]yuku[/b], 2009-2013[br/]
+    	• Webseite: androidbible.blogspot.com[br/] 
+		• Google+: gplus.to/androidbible[br/]
+    	• FAQ: groups.google.com/group/androidbible[br/]
+    	[br/]
+		[b]Mitarbeiter:[/b][br/]
+		• [b]Jaya Satrio Hendrick[/b] icons[br/]
+		• [b]Yohanes Nugroho[/b] BiblePlus+ PDB reader[br/]
+		• und viele andere Personen die Ideen, Patches, Fehlermeldungen, Kopien von Liedern, Informationen über Bibelübersetzungen, etc beigesteuert haben!</string>
   <string name="intent_filter_open_yes_file">Öffne YES-Datei</string>
   <string name="intent_filter_open_pdb_file">Öffne PDB-Datei</string>
   <string name="intent_filter_open_pdb_or_yes_file">Öffne PDB-/YES-Datei</string>
@@ -239,4 +248,6 @@ Existierende Sicherungen werden überschrieben.</string>
   <string name="version_preset_delete_filename">Datei \'%s\' löschen?</string>
   <string name="version_menu_share">Teilen</string>
   <string name="version_share_title">Teile deine Bibelübersetzung über:</string>
+  <string name="menuFullScreen">Vollbild</string>
+  <string name="full_screen_dismiss_hint">Wähle <b>zurück</b> um die Vollbildansicht zu schließen</string>
 </resources>

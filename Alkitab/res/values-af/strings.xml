@@ -229,6 +229,20 @@
   <string name="desc_previous_chapter">Vorige hoofstuk</string>
   <string name="desc_next_chapter">Volgende hoofstuk</string>
   <string name="desc_drag_to_reorder_labels">Trek om etikette te bestel</string>
+  <string name="teks_about">Ontwikkel deur [b]yuku[/b], 2009-2013[br/] 
+• Webwerf: androidbible.blogspot.com[br/]
+• Google+: gplus.to/androidbible[br/]
+• E-pos lys: groups.google.com/group/androidbible[br/]
+[br/]
+[b]Bydraers:[/b][br/]
+• [b]Jaya Satrio Hendrick[/b] ikone[br/]
+• [b]Yohanes Nugroho[/b] BiblePlus+ PDB leser[br/] 
+• en vele meer wat bydraes gelewer het t.o.v. idees, foute, musiek,informasie t.o.v. Bybel vertalings,ens ! 
+
+
+
+
+</string>
   <string name="intent_filter_open_yes_file">Maak Yes leêr oop</string>
   <string name="intent_filter_open_pdb_file">Maak PDB leêr oop</string>
   <string name="intent_filter_open_pdb_or_yes_file">Maak PDB/YES leêr oop</string>
@@ -238,4 +252,6 @@
   <string name="version_preset_delete_filename">Vee data leêr uit  \'%s\'?</string>
   <string name="version_menu_share">Deel</string>
   <string name="version_share_title">Deel weergawe met:</string>
+  <string name="menuFullScreen">Vol skerm</string>
+  <string name="full_screen_dismiss_hint">Druk <b>Back</b> om na vol skerm terug te keer</string>
 </resources>

@@ -184,12 +184,16 @@
   <string name="pdb_error_corrupted">PDB файл пошкоджений.</string>
   <string name="pdb_error_not_pdb_file">Вибраний файл не є  PDB файлом.</string>
   <string name="menu_split_version">Подвійна версія</string>
+  <string name="split_version_none">Жоден</string>
+  <string name="split_version_cant_display_verse">%1$s недоступний в %2$s.</string>
   <string name="menuAddSomething">Додати позначку</string>
   <string name="color_settings">Налаштування кольорів</string>
   <string name="menuTextAppearance">Вигляд тексту</string>
   <string name="text_appearance_theme_custom">Індивідуалізація...</string>
   <string name="text_appearance_text_size">Розмір тексту</string>
   <string name="text_appearance_line_spacing">Міжрядковий інтервал</string>
+  <string name="text_appearance_bold_switch_off">ЖИРНИЙ</string>
+  <string name="text_appearance_bold_switch_on"><b>ЖИРНИЙ</b></string>
   <string name="devotion_change_date">Зміна дати</string>
   <string name="bookmark_search">Пошук</string>
   <string name="history_hint">Натисніть тут для перегляду історії</string>
@@ -226,7 +230,24 @@
   <string name="desc_previous_chapter">Попередній розділ</string>
   <string name="desc_next_chapter">Наступний розділ</string>
   <string name="desc_drag_to_reorder_labels">Перетягніть, щоб змінити порядок позначок</string>
+  <string name="teks_about">Розроблено [b]Yuku[/b], 2009-2013[br/]
+• Сайт: androidbible.blogspot.com[br/]
+• Google+: gplus.to/androidbible[br/]
+• список розсилок: groups.google.com/group/androidbible[br/]
+[br/]
+[b]Співавтори:[/b][br/]
+• [b]Jaya Satrio Hendrick[/b] іконки[br/]
+• [b]Yohanes Nugroho[/b] BiblePlus+ PDB читалка[br/]
+• і багато інших людей, які поділилися своїми ідеями, патчами, повідомленнями про помилки, копіями пісень, інформацією про переклади Біблії, і т.д.!</string>
   <string name="intent_filter_open_yes_file">Відкрити YES файл</string>
   <string name="intent_filter_open_pdb_file">Відкрити PDB файл</string>
   <string name="intent_filter_open_pdb_or_yes_file">Відкрити PDB/YES файл</string>
+  <string name="open_yes_file_name_conflict">YES файл з ім\'ям \'%1$s\' вже існує в \'%2$s\'.</string>
+  <string name="open_file_cant_read_source">Джерело не може бути успішно прочитано.</string>
+  <string name="open_file_unknown_file_format">Не вдалося встановити, чи є це PDB або YES файл.</string>
+  <string name="version_preset_delete_filename">Видалити файл даних \'%s\'?</string>
+  <string name="version_menu_share">Поділитись</string>
+  <string name="version_share_title">Відкрити в іншій програмі:</string>
+  <string name="menuFullScreen">Повноекранний режим</string>
+  <string name="full_screen_dismiss_hint">Натисніть <b>Назад</b> щоб вийти з повноекранного режиму</string>
 </resources>
