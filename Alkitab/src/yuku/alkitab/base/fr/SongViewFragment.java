@@ -1,5 +1,6 @@
-package yuku.alkitab.base.ac;
+package yuku.alkitab.base.fr;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -8,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ShareCompat;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -15,9 +17,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.Toast;
-
-import java.util.Locale;
-
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import net.londatiga.android.QuickAction;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -25,8 +27,10 @@ import yuku.alkitab.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
+import yuku.alkitab.base.ac.ShareActivity;
+import yuku.alkitab.base.ac.SongListActivity;
 import yuku.alkitab.base.ac.SongListActivity.SearchState;
-import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.fr.base.BaseFragment;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.FontManager;
@@ -44,11 +48,10 @@ import yuku.kpri.model.VerseKind;
 import yuku.kpriviewer.fr.SongFragment;
 import yuku.kpriviewer.fr.SongFragment.ShouldOverrideUrlLoadingHandler;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import java.util.Locale;
 
-public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlLoadingHandler {
-	public static final String TAG = SongViewActivity.class.getSimpleName();
+public class SongViewFragment extends BaseFragment implements ShouldOverrideUrlLoadingHandler {
+	public static final String TAG = SongViewFragment.class.getSimpleName();
 
 	private static final String PROTOCOL = "bible"; //$NON-NLS-1$
 	private static final int REQCODE_songList = 1;
@@ -57,7 +60,10 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 	public static final int RESULT_gotoScripture = 1;
 
 	public static final String EXTRA_ref = "ref"; //$NON-NLS-1$
-	
+
+	Activity activity;
+	LayoutInflater inflater;
+
 	ViewGroup song_container;
 	ViewGroup no_song_data_container;
 	Button bChangeBook;
@@ -66,7 +72,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 	View bDownload;
 	QuickAction qaChangeBook;
 	SongCodePopup codeKeypad;
-	
+
 	Bundle templateCustomVars;
 	String currentBookName;
 	Song currentSong;
@@ -75,27 +81,39 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 	SearchState last_searchState = null;
 
 	public static Intent createIntent() {
-		Intent res = new Intent(App.context, SongViewActivity.class);
+		Intent res = new Intent(App.context, SongViewFragment.class);
 		return res;
 	}
 
-	@Override protected void onCreate(Bundle savedInstanceState) {
+	@Override
+	public void onAttach(final Activity activity) {
+		super.onAttach(activity);
+		this.activity = activity;
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_song_view);
+	}
+
+	@Override
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+		this.inflater = inflater;
+		View res = inflater.inflate(R.layout.activity_song_view, container, false);
 		
-		setTitle(R.string.sn_songs_activity_title);
+		// TODO setTitle(R.string.sn_songs_activity_title);
 		
-		song_container = V.get(this, R.id.song_container);
-		no_song_data_container = V.get(this, R.id.no_song_data_container);
-		bChangeBook = V.get(this, R.id.bChangeBook);
-		bChangeCode = V.get(this, R.id.bChangeCode);
-		bSearch = V.get(this, R.id.bSearch);
-		bDownload = V.get(this, R.id.bDownload);
+		song_container = V.get(res, R.id.song_container);
+		no_song_data_container = V.get(res, R.id.no_song_data_container);
+		bChangeBook = V.get(res, R.id.bChangeBook);
+		bChangeCode = V.get(res, R.id.bChangeCode);
+		bSearch = V.get(res, R.id.bSearch);
+		bDownload = V.get(res, R.id.bDownload);
 		
-		qaChangeBook = SongBookUtil.getSongBookQuickAction(this, false);
+		qaChangeBook = SongBookUtil.getSongBookQuickAction(activity, false);
 		qaChangeBook.setOnActionItemClickListener(SongBookUtil.getOnActionItemConverter(songBookSelected));
 		
-		codeKeypad = new SongCodePopup(this);
+		codeKeypad = new SongCodePopup(activity);
 		
 		bChangeBook.setOnClickListener(bChangeBook_click);
 		bChangeCode.setOnClickListener(bChangeCode_click);
@@ -103,7 +121,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		bDownload.setOnClickListener(bDownload_click);
 		
 		// for colors of bg, text, etc
-		V.get(this, android.R.id.content).setBackgroundColor(S.applied.backgroundColor);
+		V.get(activity, android.R.id.content).setBackgroundColor(S.applied.backgroundColor);
 		
 		templateCustomVars = new Bundle();
 		templateCustomVars.putString("background_color", String.format("#%06x", S.applied.backgroundColor & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -132,36 +150,27 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 				displaySong(bookName, S.getSongDb().getSong(bookName, code));
 			}
 		}
+
+		return res;
 	}
-	
-	private void bikinMenu(Menu menu) {
-		menu.clear();
-		getSupportMenuInflater().inflate(R.menu.activity_song_view, menu);
+
+	@Override
+	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
+		inflater.inflate(R.menu.fragment_song_view, menu);
 	}
-	
-	@Override public boolean onCreateOptionsMenu(Menu menu) {
-		bikinMenu(menu);
-		return true;
-	}
-	
-	@Override public boolean onPrepareOptionsMenu(Menu menu) {
-		super.onPrepareOptionsMenu(menu);
-		if (menu != null) bikinMenu(menu);
-		return true;
-	}
-	
+
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menuCopy: {
 			if (currentSong != null) {
 				U.copyToClipboard(convertSongToText(currentSong));
 
-				Toast.makeText(this, R.string.sn_copied, Toast.LENGTH_SHORT).show();
+				Toast.makeText(activity, R.string.sn_copied, Toast.LENGTH_SHORT).show();
 			}
 		} return true;
 		case R.id.menuShare: {
 			if (currentSong != null) {
-				Intent intent = ShareCompat.IntentBuilder.from(SongViewActivity.this)
+				Intent intent = ShareCompat.IntentBuilder.from(activity)
 				.setType("text/plain") //$NON-NLS-1$
 				.setSubject(currentBookName + ' ' + currentSong.code + ' ' + currentSong.title)
 				.setText(convertSongToText(currentSong).toString())
@@ -361,7 +370,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			String scripture_references = renderScriptureReferences(PROTOCOL, song.scriptureReferences);
 			templateCustomVars.putString("scripture_references", scripture_references); //$NON-NLS-1$
 			
-			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			FragmentTransaction ft = getFragmentManager().beginTransaction();
 			ft.replace(R.id.song_container, SongFragment.create(song, "templates/song.html", templateCustomVars)); //$NON-NLS-1$
 			ft.commitAllowingStateLoss();
 
@@ -459,10 +468,10 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			if (song != null) {
 				displaySong(songBookInfo.bookName, song);
 			} else {
-				SongBookUtil.downloadSongBook(SongViewActivity.this, songBookInfo, new OnDownloadSongBookListener() {
+				SongBookUtil.downloadSongBook(activity, songBookInfo, new OnDownloadSongBookListener() {
 					@Override public void onFailedOrCancelled(SongBookInfo songBookInfo, Exception e) {
 						if (e != null) {
-							new AlertDialog.Builder(SongViewActivity.this)
+							new AlertDialog.Builder(activity)
 							.setMessage(e.getClass().getSimpleName() + ' ' + e.getMessage())
 							.setPositiveButton(R.string.ok, null)
 							.show();
@@ -478,9 +487,10 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		}
 	};
 
-	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQCODE_songList) {
-			if (resultCode == RESULT_OK) {
+			if (resultCode == Activity.RESULT_OK) {
 				SongListActivity.Result result = SongListActivity.obtainResult(data);
 				if (result != null) {
 					displaySong(result.bookName, S.getSongDb().getSong(result.bookName, result.code));
@@ -489,7 +499,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 				}
 			}
 		} else if (requestCode == REQCODE_share) {
-			if (resultCode == RESULT_OK) {
+			if (resultCode == Activity.RESULT_OK) {
 				ShareActivity.Result result = ShareActivity.obtainResult(data);
 				if (result != null && result.chosenIntent != null) {
 					startActivity(result.chosenIntent);
@@ -503,8 +513,8 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		if (U.equals(uri.getScheme(), PROTOCOL)) {
 			Intent data = new Intent();
 			data.putExtra(EXTRA_ref, uri.getSchemeSpecificPart());
-			setResult(RESULT_gotoScripture, data);
-			finish();
+			// TODO setResult(RESULT_gotoScripture, data);
+			// finish();
 			return true;
 		}
 		return false;

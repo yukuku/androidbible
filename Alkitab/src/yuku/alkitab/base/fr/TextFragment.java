@@ -44,7 +44,6 @@ import yuku.alkitab.base.ac.HelpActivity;
 import yuku.alkitab.base.ac.Search2Activity;
 import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.ShareActivity;
-import yuku.alkitab.base.ac.SongViewActivity;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
@@ -90,7 +89,6 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 	private static final int REQCODE_version = 5;
 	private static final int REQCODE_search = 6;
 	private static final int REQCODE_share = 7;
-	private static final int REQCODE_songs = 8;
 	private static final int REQCODE_textAppearanceGetFonts = 9;
 	private static final int REQCODE_textAppearanceCustomColors = 10;
 
@@ -631,7 +629,6 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 		menu.findItem(R.id.menuVersions).setVisible(c.menuVersions);
 		menu.findItem(R.id.menuHelp).setVisible(c.menuHelp);
 		menu.findItem(R.id.menuDonation).setVisible(c.menuDonation);
-		menu.findItem(R.id.menuSongs).setVisible(c.menuSongs);
 	}
 
 	@Override public void onPrepareOptionsMenu(Menu menu) {
@@ -653,9 +650,6 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 				return true;
 			case R.id.menuDevotion:
 				startActivityForResult(new Intent(App.context, DevotionActivity.class), REQCODE_devotion);
-				return true;
-			case R.id.menuSongs:
-				startActivityForResult(SongViewActivity.createIntent(), REQCODE_songs);
 				return true;
 			case R.id.menuAbout:
 				startActivity(new Intent(App.context, AboutActivity.class));
@@ -908,16 +902,16 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 					history.add(result.ari);
 				}
 			}
-		} else if (requestCode == REQCODE_songs) {
-			if (resultCode == SongViewActivity.RESULT_gotoScripture && data != null) {
-				String ref = data.getStringExtra(SongViewActivity.EXTRA_ref);
-				if (ref != null) { // TODO
-					int ari = jumpTo(ref);
-					if (ari != 0) {
-						history.add(ari);
-					}
-				}
-			}
+		// TODO } else if (requestCode == REQCODE_songs) {
+//			if (resultCode == SongViewFragment.RESULT_gotoScripture && data != null) {
+//				String ref = data.getStringExtra(SongViewFragment.EXTRA_ref);
+//				if (ref != null) { // TODO
+//					int ari = jumpTo(ref);
+//					if (ari != 0) {
+//						history.add(ari);
+//					}
+//				}
+//			}
 		} else if (requestCode == REQCODE_settings) {
 			// MUST reload preferences
 			S.calculateAppliedValuesBasedOnPreferences();
