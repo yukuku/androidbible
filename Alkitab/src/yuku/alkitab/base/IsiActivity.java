@@ -45,8 +45,8 @@ import yuku.alkitab.base.util.LidToAri;
 public class IsiActivity extends BaseActivity {
 	public static final String TAG = IsiActivity.class.getSimpleName();
 
-	final String[] names = {"Alkitab", "Kidung", "Renungan"};
-	final Class<?>[] classes = {TextFragment.class, TextFragment.class, TextFragment.class};
+	final String[] names = {"Alkitab", "Marka", "Kidung", "Renungan"};
+	final Class<?>[] classes = {TextFragment.class, MarkersFragment.class, TextFragment.class, TextFragment.class};
 	DrawerLayout drawer;
 	ActionBarDrawerToggle drawerToggle;
 	ListView navList;
