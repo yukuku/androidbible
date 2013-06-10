@@ -1,5 +1,6 @@
-package yuku.alkitab.base.ac;
+package yuku.alkitab.base.fr;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,30 +12,31 @@ import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
-
-import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
 import yuku.alkitab.base.devotion.DevotionArticle;
 import yuku.alkitab.base.devotion.DevotionDownloader;
-import yuku.alkitab.base.devotion.DevotionDownloader.OnStatusDonlotListener;
+import yuku.alkitab.base.fr.base.BaseFragment;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Jumper;
@@ -42,11 +44,13 @@ import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.DevotionSelectPopup;
 import yuku.alkitab.base.widget.DevotionSelectPopup.DevotionSelectPopupListener;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
-public class DevotionActivity extends BaseActivity implements OnStatusDonlotListener {
-	public static final String TAG = DevotionActivity.class.getSimpleName();
+public class DevotionFragment extends BaseFragment implements DevotionDownloader.DownloadStatusListener {
+	public static final String TAG = DevotionFragment.class.getSimpleName();
 
 	public static final String EXTRA_ari = "ari"; //$NON-NLS-1$
 	private static final int REQCODE_share = 1;
@@ -54,20 +58,20 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	public static class Result {
 		public int ari;
 	}
-	
+
 	public static Result obtainResult(Intent data) {
 		if (data == null) return null;
 		Result res = new Result();
 		res.ari = data.getIntExtra(EXTRA_ari, 0);
 		return res;
 	}
-	
+
 	static ThreadLocal<SimpleDateFormat> date_format = new ThreadLocal<SimpleDateFormat>() {
 		@Override protected SimpleDateFormat initialValue() {
 			return new SimpleDateFormat("yyyyMMdd", Locale.US); //$NON-NLS-1$
 		}
 	};
-	
+
 	public static final String[] AVAILABLE_NAMES = {
 		"sh", "rh", "me-en"  //$NON-NLS-1$//$NON-NLS-2$
 	};
@@ -76,29 +80,31 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		"Santapan Harian", "Renungan Harian", "Morning & Evening" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	};
 
+	Activity activity;
+
 	TextView lContent;
 	ScrollView scrollContent;
 	TextView lStatus;
-	
+
 	DevotionSelectPopup popup;
-	
+
 	boolean renderSucceeded = false;
 	long lastTryToDisplay = 0;
 	Animation fadeOutAnim;
-	
+
 	// currently shown
 	String currentName;
 	Date currentDate;
 
 	static class DisplayRepeater extends Handler {
-		final WeakReference<DevotionActivity> ac;
+		final WeakReference<DevotionFragment> ac;
 		
-		public DisplayRepeater(DevotionActivity activity) {
-			ac = new WeakReference<DevotionActivity>(activity);
+		public DisplayRepeater(DevotionFragment activity) {
+			ac = new WeakReference<DevotionFragment>(activity);
 		}
 		
 		@Override public void handleMessage(Message msg) {
-			DevotionActivity activity = ac.get();
+			DevotionFragment activity = ac.get();
 			if (activity == null) return;
 			
 			{
@@ -121,14 +127,14 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	Handler displayRepeater = new DisplayRepeater(this);
 	
 	static class DownloadStatusDisplayer extends Handler {
-		private WeakReference<DevotionActivity> ac;
+		private WeakReference<DevotionFragment> ac;
 
-		public DownloadStatusDisplayer(DevotionActivity ac) {
-			this.ac = new WeakReference<DevotionActivity>(ac);
+		public DownloadStatusDisplayer(DevotionFragment ac) {
+			this.ac = new WeakReference<DevotionFragment>(ac);
 		}
 		
 		@Override public void handleMessage(Message msg) {
-			DevotionActivity ac = this.ac.get();
+			DevotionFragment ac = this.ac.get();
 			if (ac == null) return;
 			
 			String s = (String) msg.obj;
@@ -142,19 +148,28 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	
 	Handler downloadStatusDisplayer = new DownloadStatusDisplayer(this);
 
-	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		setContentView(R.layout.activity_devotion);
-		
-		fadeOutAnim = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+	public void onAttach(final Activity activity) {
+		super.onAttach(activity);
+		this.activity = activity;
+	}
 
-		lContent = (TextView) findViewById(R.id.lContent);
-		scrollContent = (ScrollView) findViewById(R.id.scrollContent);
-		lStatus = (TextView) findViewById(R.id.lStatus);
-		
+	@Override
+	public void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
+	}
+
+	@Override
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+		View res = inflater.inflate(R.layout.fragment_devotion, container, false);
+
+		fadeOutAnim = AnimationUtils.loadAnimation(App.context, R.anim.fade_out);
+
+		lContent = V.get(res, R.id.lContent);
+		scrollContent = V.get(res, R.id.scrollContent);
+		lStatus = V.get(res, R.id.lStatus);
+
 		// text formats
 		lContent.setTextColor(S.applied.fontColor);
 		lContent.setBackgroundColor(S.applied.backgroundColor);
@@ -163,16 +178,16 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		lContent.setLineSpacing(0, S.applied.lineSpacingMult);
 
 		scrollContent.setBackgroundColor(S.applied.backgroundColor);
-		
-		popup = new DevotionSelectPopup(this);
+
+		popup = new DevotionSelectPopup(getActivity());
 		popup.setDevotionSelectListener(popup_listener);
-		
+
 		if (Temporaries.devotion_date == null) Temporaries.devotion_date = new Date();
 		if (Temporaries.devotion_name == null) Temporaries.devotion_name = DEFAULT_NAME;
-		
+
 		currentName = Temporaries.devotion_name;
 		currentDate = Temporaries.devotion_date;
-		
+
 		// Workaround for crashes due to html tags in the title
 		// We remove all rows that contain '<' in the judul
 		if (Preferences.getBoolean(Prefkey.patch_devotionSlippedHtmlTags, false) == false) {
@@ -180,19 +195,22 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			Log.d(TAG, "patch_devotionSlippedHtmlTags: deleted " + deleted);
 			Preferences.setBoolean(Prefkey.patch_devotionSlippedHtmlTags, true);
 		}
-		
+
 		new Prefetcher().start();
-		
+
 		{ // betulin ui update
 			if (devotionDownloader != null) {
 				devotionDownloader.setListener(this);
 			}
 		}
-		
+
 		display(Temporaries.devotion_scroll);
+
+		return res;
 	}
 	
-	@Override protected void onStart() {
+	@Override
+	public void onStart() {
 		super.onStart();
 		
 		if (Preferences.getBoolean(getString(R.string.pref_nyalakanTerusLayar_key), getResources().getBoolean(R.bool.pref_nyalakanTerusLayar_default))) {
@@ -200,54 +218,40 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		}
 	}
 	
-	@Override protected void onDestroy() {
+	@Override
+	public void onDestroy() {
 		super.onDestroy();
 		
 		Temporaries.devotion_name = currentName;
 		Temporaries.devotion_date = currentDate;
 		Temporaries.devotion_scroll = scrollContent.getScrollY();
 	}
-		
-	private void buildMenu(Menu menu) {
-		menu.clear();
-		getSupportMenuInflater().inflate(R.menu.activity_devotion, menu);
-	}
-	
+
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		buildMenu(menu);
-		
-		return true;
-	}
-	
-	@Override public boolean onPrepareOptionsMenu(Menu menu) {
-		if (menu != null) {
-			buildMenu(menu);
-		}
-		
-		return true;
+	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
+		inflater.inflate(R.menu.fragment_devotion, menu);
 	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
 		if (itemId == R.id.menuChangeDate) {
-			View anchor = findViewById(R.id.menuChangeDate);
+			View anchor = activity.findViewById(R.id.menuChangeDate);
 			popup.show(anchor);
 			
 			return true;
 		} else if (itemId == R.id.menuCopy) {
-			String toCopy = getSupportActionBar().getTitle() + "\n" + lContent.getText();
+			String toCopy = activity.getActionBar().getTitle() + "\n" + lContent.getText();
 			U.copyToClipboard(toCopy);
 			
-			Toast.makeText(this, R.string.renungan_sudah_disalin, Toast.LENGTH_SHORT).show();
+			Toast.makeText(activity, R.string.renungan_sudah_disalin, Toast.LENGTH_SHORT).show();
 			
 			return true;
 		} else if (itemId == R.id.menuShare) {
-			Intent intent = ShareCompat.IntentBuilder.from(DevotionActivity.this)
+			Intent intent = ShareCompat.IntentBuilder.from(activity)
 			.setType("text/plain") //$NON-NLS-1$
-			.setSubject(getSupportActionBar().getTitle().toString())
-			.setText(getSupportActionBar().getTitle().toString() + '\n' + lContent.getText())
+			.setSubject(activity.getActionBar().getTitle().toString())
+			.setText(activity.getActionBar().getTitle().toString() + '\n' + lContent.getText())
 			.getIntent();
 			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_renungan)), REQCODE_share);
 			
@@ -326,7 +330,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			} else {
 				Jumper jumper = new Jumper(reference);
 				if (! jumper.getParseSucceeded()) {
-					new AlertDialog.Builder(DevotionActivity.this)
+					new AlertDialog.Builder(activity)
 					.setMessage(getString(R.string.alamat_tidak_sah_alamat, reference))
 					.setPositiveButton(R.string.ok, null)
 					.show();
@@ -348,8 +352,9 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			
 			Intent data = new Intent();
 			data.putExtra(EXTRA_ari, ari);
-			setResult(RESULT_OK, data);
-			finish();
+			// TODO jump verse
+//			setResult(RESULT_OK, data);
+//			finish();
 		}
 	};
 
@@ -392,11 +397,11 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		}
 		
 		{ // widget texts
-			String dateDisplay = namaHari(currentDate) + ", " + DateFormat.getDateFormat(this).format(currentDate);  //$NON-NLS-1$
+			String dateDisplay = namaHari(currentDate) + ", " + DateFormat.getDateFormat(activity).format(currentDate);  //$NON-NLS-1$
 			
 			// action bar
-			getSupportActionBar().setTitle(title);
-			getSupportActionBar().setSubtitle(dateDisplay);
+			activity.getActionBar().setTitle(title);
+			activity.getActionBar().setSubtitle(dateDisplay);
 			
 			// popup texts
 			popup.setDevotionName(title);
@@ -413,7 +418,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 	synchronized void willNeed(String name, String date, boolean prioritize) {
 		if (devotionDownloader == null) {
-			devotionDownloader = new DevotionDownloader(this, this);
+			devotionDownloader = new DevotionDownloader(this);
 			devotionDownloader.start();
 		}
 
@@ -493,9 +498,10 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		msg.sendToTarget();
 	}
 	
-	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQCODE_share) {
-			if (resultCode == RESULT_OK) {
+			if (resultCode == Activity.RESULT_OK) {
 				ShareActivity.Result result = ShareActivity.obtainResult(data);
 				if (result != null && result.chosenIntent != null) {
 					Intent chosenIntent = result.chosenIntent;

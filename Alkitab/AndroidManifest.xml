@@ -100,7 +100,7 @@
 		</activity>
 		
 		<activity android:name="yuku.alkitab.base.ac.Search2Activity" android:label="@string/cari_v" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:theme="@style/Theme.Alkitab.NoActionBar" />
-		<activity android:name="yuku.alkitab.base.ac.DevotionActivity" android:label="@string/renungan" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
+		<activity android:name=".base.fr.DevotionFragment" android:label="@string/renungan" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.HelpActivity" android:label="@string/bantuan_judul" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.AboutActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.ShareActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />

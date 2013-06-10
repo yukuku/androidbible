@@ -38,7 +38,6 @@ import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.AboutActivity;
-import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.GotoActivity;
 import yuku.alkitab.base.ac.HelpActivity;
 import yuku.alkitab.base.ac.Search2Activity;
@@ -84,7 +83,6 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 	private static final String PREFKEY_devotion_name = "renungan_nama"; //$NON-NLS-1$
 
 	private static final int REQCODE_goto = 1;
-	private static final int REQCODE_devotion = 3;
 	private static final int REQCODE_settings = 4;
 	private static final int REQCODE_version = 5;
 	private static final int REQCODE_search = 6;
@@ -242,9 +240,9 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 		{
 			String devotion_name = instant_pref.getString(PREFKEY_devotion_name, null);
 			if (devotion_name != null) {
-				for (String nama: DevotionActivity.AVAILABLE_NAMES) {
+				for (String nama: DevotionFragment.AVAILABLE_NAMES) {
 					if (devotion_name.equals(nama)) {
-						DevotionActivity.Temporaries.devotion_name = devotion_name;
+						DevotionFragment.Temporaries.devotion_name = devotion_name;
 					}
 				}
 			}
@@ -537,7 +535,7 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 		editor.putInt(PREFKEY_lastBook, this.activeBook.bookId);
 		editor.putInt(PREFKEY_lastChapter, chapter_1);
 		editor.putInt(PREFKEY_lastVerse, lsText.getVerseBasedOnScroll());
-		editor.putString(PREFKEY_devotion_name, DevotionActivity.Temporaries.devotion_name);
+		editor.putString(PREFKEY_devotion_name, DevotionFragment.Temporaries.devotion_name);
 		editor.putString(PREFKEY_lastVersion, S.activeVersionId);
 		history.simpan(editor);
 		editor.commit();
@@ -625,7 +623,6 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 		AppConfig c = AppConfig.get();
 
 		//# build config
-		menu.findItem(R.id.menuDevotion).setVisible(c.menuDevotion);
 		menu.findItem(R.id.menuVersions).setVisible(c.menuVersions);
 		menu.findItem(R.id.menuHelp).setVisible(c.menuHelp);
 		menu.findItem(R.id.menuDonation).setVisible(c.menuDonation);
@@ -647,9 +644,6 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 				return true;
 			case R.id.menuSplitVersion:
 				openSplitVersionsDialog();
-				return true;
-			case R.id.menuDevotion:
-				startActivityForResult(new Intent(App.context, DevotionActivity.class), REQCODE_devotion);
 				return true;
 			case R.id.menuAbout:
 				startActivity(new Intent(App.context, AboutActivity.class));
@@ -894,14 +888,14 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 					search2_selectedPosition = result.selectedPosition;
 				}
 			}
-		} else if (requestCode == REQCODE_devotion) {
-			if (resultCode == Activity.RESULT_OK) {
-				DevotionActivity.Result result = DevotionActivity.obtainResult(data);
-				if (result != null && result.ari != 0) {
-					jumpToAri(result.ari);
-					history.add(result.ari);
-				}
-			}
+		// TODO } else if (requestCode == REQCODE_devotion) {
+//			if (resultCode == Activity.RESULT_OK) {
+//				DevotionFragment.Result result = DevotionFragment.obtainResult(data);
+//				if (result != null && result.ari != 0) {
+//					jumpToAri(result.ari);
+//					history.add(result.ari);
+//				}
+//			}
 		// TODO } else if (requestCode == REQCODE_songs) {
 //			if (resultCode == SongViewFragment.RESULT_gotoScripture && data != null) {
 //				String ref = data.getStringExtra(SongViewFragment.EXTRA_ref);

@@ -1,41 +1,37 @@
 package yuku.alkitab.base.devotion;
 
-import android.content.Context;
 import android.os.SystemClock;
 import android.util.Log;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import yuku.alkitab.R;
+import yuku.alkitab.base.App;
+import yuku.alkitab.base.S;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import yuku.alkitab.R;
-import yuku.alkitab.base.S;
-
 public class DevotionDownloader extends Thread {
 	private static final String TAG = DevotionDownloader.class.getSimpleName();
 	
-	public interface OnStatusDonlotListener {
+	public interface DownloadStatusListener {
 		void onDownloadStatus(String s);
 	}
 	
-	private Context context_;
-	private OnStatusDonlotListener listener_;
+	private DownloadStatusListener listener_;
 	private LinkedList<DevotionArticle> queue_ = new LinkedList<DevotionArticle>();
 	private boolean idle_;
 	
-	public DevotionDownloader(Context context, OnStatusDonlotListener listener) {
-		context_ = context;
+	public DevotionDownloader(DownloadStatusListener listener) {
 		listener_ = listener;
 	}
 	
-	public void setListener(OnStatusDonlotListener listener) {
+	public void setListener(DownloadStatusListener listener) {
 		this.listener_ = listener;
 	}
 	
@@ -93,7 +89,7 @@ public class DevotionDownloader extends Thread {
 				String output = null;
 				
 				Log.d(TAG, "Downloader starts downloading name=" + article.getName() + " date=" + article.getDate()); //$NON-NLS-1$ //$NON-NLS-2$
-				listener_.onDownloadStatus(context_.getString(R.string.mengunduh_namaumum_tgl_tgl, article.getDevotionTitle(), article.getDate()));
+				listener_.onDownloadStatus(App.context.getString(R.string.mengunduh_namaumum_tgl_tgl, article.getDevotionTitle(), article.getDate()));
 				
 				try {
 					HttpClient client = new DefaultHttpClient();
@@ -116,11 +112,11 @@ public class DevotionDownloader extends Thread {
 					output = new String(baos.toByteArray(), article.getRawEncoding());
 					
 					// success!
-					listener_.onDownloadStatus(context_.getString(R.string.berhasil_mengunduh_namaumum_tgl_tgl, article.getDevotionTitle(), article.getDate()));
+					listener_.onDownloadStatus(App.context.getString(R.string.berhasil_mengunduh_namaumum_tgl_tgl, article.getDevotionTitle(), article.getDate()));
 					
 					article.fillIn(output);
 					if (output.startsWith("NG")) { //$NON-NLS-1$
-						listener_.onDownloadStatus(context_.getString(R.string.kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output, article.getDevotionTitle(), article.getDate(), output));
+						listener_.onDownloadStatus(App.context.getString(R.string.kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output, article.getDevotionTitle(), article.getDate(), output));
 					}
 					
 					// let's now store it to db
@@ -129,7 +125,7 @@ public class DevotionDownloader extends Thread {
 					Log.w(TAG, "@@run", e); //$NON-NLS-1$
 					
 					if (article != null) {
-						listener_.onDownloadStatus(context_.getString(R.string.gagal_mengunduh_namaumum_tgl_tgl, article.getDevotionTitle(), article.getDate()));
+						listener_.onDownloadStatus(App.context.getString(R.string.gagal_mengunduh_namaumum_tgl_tgl, article.getDevotionTitle(), article.getDate()));
 						Log.d(TAG, "Downloader failed to download"); //$NON-NLS-1$
 					}
 				}

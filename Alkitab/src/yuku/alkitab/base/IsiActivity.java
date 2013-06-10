@@ -38,6 +38,7 @@ import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.fr.DevotionFragment;
 import yuku.alkitab.base.fr.MarkersFragment;
 import yuku.alkitab.base.fr.SongViewFragment;
 import yuku.alkitab.base.fr.TextFragment;
@@ -47,7 +48,7 @@ public class IsiActivity extends BaseActivity {
 	public static final String TAG = IsiActivity.class.getSimpleName();
 
 	final String[] names = {"Alkitab", "Marka", "Kidung", "Renungan"};
-	final Class<?>[] classes = {TextFragment.class, MarkersFragment.class, SongViewFragment.class, TextFragment.class};
+	final Class<?>[] classes = {TextFragment.class, MarkersFragment.class, SongViewFragment.class, DevotionFragment.class};
 	DrawerLayout drawer;
 	ActionBarDrawerToggle drawerToggle;
 	ListView navList;
