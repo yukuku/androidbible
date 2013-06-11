@@ -47,31 +47,28 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.fr.DevotionFragment;
 import yuku.alkitab.base.fr.MarkersFragment;
+import yuku.alkitab.base.fr.ReadingPlanFragment;
 import yuku.alkitab.base.fr.SongViewFragment;
 import yuku.alkitab.base.fr.TextFragment;
 import yuku.alkitab.base.util.LidToAri;
 
 public class IsiActivity extends BaseActivity {
 	public static final String TAG = IsiActivity.class.getSimpleName();
-
-	private static final int REQCODE_settings = 4;
 	public static final String ACTION_SETTINGS_UPDATED = "yuku.alkitab.action.settingsUpdated";
-
-	final String[] names = {"Alkitab", "Marka", "Kidung", "Renungan"};
-	final Class<?>[] classes = {TextFragment.class, MarkersFragment.class, SongViewFragment.class, DevotionFragment.class};
+	private static final int REQCODE_settings = 4;
+	final String[] names = {"Alkitab", "Marka", "Kidung", "Renungan", "Pembacaan"};
+	final Class<?>[] classes = {TextFragment.class, MarkersFragment.class, SongViewFragment.class, DevotionFragment.class, ReadingPlanFragment.class};
 	DrawerLayout drawer;
 	ActionBarDrawerToggle drawerToggle;
 	ListView navList;
-	private int drawerSelection = 0;
-	private int drawerOldSelection = -1;
-
 	FullScreenController fullScreenController;
 	NfcAdapter nfcAdapter;
 	boolean fullScreen;
 	Toast fullScreenDismissHint;
-
 	TextFragment textFragment;
 	MarkersFragment markersFragment;
+	private int drawerSelection = 0;
+	private int drawerOldSelection = -1;
 
 	public static Intent createIntent(int ari) {
 		Intent res = new Intent(App.context, IsiActivity.class);
@@ -176,7 +173,6 @@ public class IsiActivity extends BaseActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-
 	public void openDonationDialog() {
 		new AlertDialog.Builder(this)
 		.setMessage(R.string.donasi_keterangan)
@@ -202,6 +198,11 @@ public class IsiActivity extends BaseActivity {
 			tx.replace(R.id.main, fragment);
 			tx.commit();
 
+			// clear first
+			textFragment = null;
+			markersFragment = null;
+
+			// assign when suitable
 			if (fragment instanceof TextFragment) {
 				textFragment = (TextFragment) fragment;
 			} else if (fragment instanceof MarkersFragment) {
@@ -212,31 +213,36 @@ public class IsiActivity extends BaseActivity {
 		}
 	}
 
-	@Override protected void onNewIntent(Intent intent) {
+	@Override
+	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 
 		processIntent(intent, "onNewIntent");
 	}
 
-	@Override protected void onPause() {
+	@Override
+	protected void onPause() {
 		super.onPause();
 		if (Build.VERSION.SDK_INT >= 14) {
 			disableNfcForegroundDispatchIfAvailable();
 		}
 	}
 
-	@TargetApi(14) private void disableNfcForegroundDispatchIfAvailable() {
+	@TargetApi(14)
+	private void disableNfcForegroundDispatchIfAvailable() {
 		if (nfcAdapter != null) nfcAdapter.disableForegroundDispatch(this);
 	}
 
-	@Override protected void onResume() {
+	@Override
+	protected void onResume() {
 		super.onResume();
 		if (Build.VERSION.SDK_INT >= 14) {
 			enableNfcForegroundDispatchIfAvailable();
 		}
 	}
 
-	@Override public void onBackPressed() {
+	@Override
+	public void onBackPressed() {
 		if (fullScreen && fullScreenController != null) {
 			setFullScreen(null, false);
 			return;
@@ -249,14 +255,16 @@ public class IsiActivity extends BaseActivity {
 		super.onBackPressed();
 	}
 
-	@Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (textFragment != null) {
 			if (textFragment.press(keyCode)) return true;
 		}
 		return super.onKeyDown(keyCode, event);
 	}
 
-	@Override public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
+	@Override
+	public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
 		if (textFragment != null) {
 			if (textFragment.press(keyCode)) return true;
 		}
@@ -264,9 +272,10 @@ public class IsiActivity extends BaseActivity {
 	}
 
 	// prevent the default sound effect from emitting
-	@Override public boolean onKeyUp(int keyCode, KeyEvent event) {
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		String volumeButtonsForNavigation = Preferences.getString(getString(R.string.pref_tombolVolumeBuatPindah_key), getString(R.string.pref_tombolVolumeBuatPindah_default));
-		if (! U.equals(volumeButtonsForNavigation, "default")) { // consume here //$NON-NLS-1$
+		if (!U.equals(volumeButtonsForNavigation, "default")) { // consume here //$NON-NLS-1$
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) return true;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) return true;
 		}
@@ -290,7 +299,7 @@ public class IsiActivity extends BaseActivity {
 		Bundle extras = intent.getExtras();
 		Log.d(TAG, "  extras: " + (extras == null? "null": extras.size()));
 		if (extras != null) {
-			for (String key: extras.keySet()) {
+			for (String key : extras.keySet()) {
 				Log.d(TAG, "    " + key + " = " + extras.get(key));
 			}
 		}
@@ -318,7 +327,9 @@ public class IsiActivity extends BaseActivity {
 
 	}
 
-	/** did we get here from yuku.alkitab.action.VIEW intent? */
+	/**
+	 * did we get here from yuku.alkitab.action.VIEW intent?
+	 */
 	private void checkAndProcessAlkitabViewIntent(Intent intent) {
 		if (!U.equals(intent.getAction(), "yuku.alkitab.action.VIEW")) return;
 
@@ -352,7 +363,8 @@ public class IsiActivity extends BaseActivity {
 		}
 	}
 
-	@TargetApi(14) private void initNfcIfAvailable() {
+	@TargetApi(14)
+	private void initNfcIfAvailable() {
 		nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
 		if (nfcAdapter != null) {
 			if (textFragment == null) {
@@ -378,8 +390,8 @@ public class IsiActivity extends BaseActivity {
 		}
 	}
 
-
-	@TargetApi(14) private void enableNfcForegroundDispatchIfAvailable() {
+	@TargetApi(14)
+	private void enableNfcForegroundDispatchIfAvailable() {
 		if (nfcAdapter != null) {
 			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, IsiActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 			IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
@@ -388,12 +400,13 @@ public class IsiActivity extends BaseActivity {
 			} catch (IntentFilter.MalformedMimeTypeException e) {
 				throw new RuntimeException("fail mime type", e); //$NON-NLS-1$
 			}
-			IntentFilter[] intentFiltersArray = new IntentFilter[] {ndef, };
+			IntentFilter[] intentFiltersArray = new IntentFilter[] {ndef,};
 			nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, null);
 		}
 	}
 
-	@TargetApi(14) private void checkAndProcessBeamIntent(Intent intent) {
+	@TargetApi(14)
+	private void checkAndProcessBeamIntent(Intent intent) {
 		String action = intent.getAction();
 		if (U.equals(action, NfcAdapter.ACTION_NDEF_DISCOVERED)) {
 			Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
@@ -444,13 +457,15 @@ public class IsiActivity extends BaseActivity {
 		}
 	}
 
-	class FullScreenController {
-		private NineFrameLayout panelNavigation;
-		private Animator mCurrentShowAnim;
-		private boolean mShowHideAnimationEnabled = true;
+	public boolean isFullScreen() {
+		return fullScreen;
+	}
 
+	class FullScreenController {
 		final Animator.AnimatorListener mHideListener = new AnimatorListenerAdapter() {
-			@TargetApi(11) @Override public void onAnimationEnd(Animator animation) {
+			@TargetApi(11)
+			@Override
+			public void onAnimationEnd(Animator animation) {
 				if (panelNavigation != null) {
 					panelNavigation.setTranslationY(0);
 					panelNavigation.setVisibility(View.GONE);
@@ -458,19 +473,24 @@ public class IsiActivity extends BaseActivity {
 				mCurrentShowAnim = null;
 			}
 		};
-
 		final Animator.AnimatorListener mShowListener = new AnimatorListenerAdapter() {
-			@TargetApi(11) @Override public void onAnimationEnd(Animator animation) {
+			@TargetApi(11)
+			@Override
+			public void onAnimationEnd(Animator animation) {
 				mCurrentShowAnim = null;
 				panelNavigation.requestLayout();
 			}
 		};
+		private NineFrameLayout panelNavigation;
+		private Animator mCurrentShowAnim;
+		private boolean mShowHideAnimationEnabled = true;
 
 		public FullScreenController(final NineFrameLayout panelNavigation) {
 			this.panelNavigation = panelNavigation;
 		}
 
-		@TargetApi(11) void hidePanelNavigation() {
+		@TargetApi(11)
+		void hidePanelNavigation() {
 			if (mCurrentShowAnim != null) {
 				mCurrentShowAnim.end();
 			}
@@ -494,7 +514,8 @@ public class IsiActivity extends BaseActivity {
 			}
 		}
 
-		@TargetApi(11) void showPanelNavigation() {
+		@TargetApi(11)
+		void showPanelNavigation() {
 			if (mCurrentShowAnim != null) {
 				mCurrentShowAnim.end();
 			}
@@ -527,9 +548,5 @@ public class IsiActivity extends BaseActivity {
 			getSupportActionBar().show();
 			showPanelNavigation();
 		}
-	}
-
-	public boolean isFullScreen() {
-		return fullScreen;
 	}
 }
