@@ -90,6 +90,8 @@ public class MarkersFragment extends BaseFragment {
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		this.inflater = inflater;
 		final View res = inflater.inflate(R.layout.fragment_markers, container, false);
+		res.setBackgroundColor(0xffeeeeee);
+
 		// TODO setTitle(R.string.judul_bukmak_activity);
 
 		lv = V.get(res, android.R.id.list);
