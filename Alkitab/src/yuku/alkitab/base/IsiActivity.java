@@ -3,6 +3,7 @@ package yuku.alkitab.base;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
@@ -16,6 +17,7 @@ import android.os.Parcelable;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -31,13 +33,18 @@ import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorListener
 import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorSet;
 import com.actionbarsherlock.internal.nineoldandroids.animation.ObjectAnimator;
 import com.actionbarsherlock.internal.nineoldandroids.widget.NineFrameLayout;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import org.json.JSONException;
 import org.json.JSONObject;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
+import yuku.alkitab.base.ac.AboutActivity;
+import yuku.alkitab.base.ac.HelpActivity;
+import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.fr.DevotionFragment;
 import yuku.alkitab.base.fr.MarkersFragment;
 import yuku.alkitab.base.fr.SongViewFragment;
@@ -46,6 +53,9 @@ import yuku.alkitab.base.util.LidToAri;
 
 public class IsiActivity extends BaseActivity {
 	public static final String TAG = IsiActivity.class.getSimpleName();
+
+	private static final int REQCODE_settings = 4;
+	public static final String ACTION_SETTINGS_UPDATED = "yuku.alkitab.action.settingsUpdated";
 
 	final String[] names = {"Alkitab", "Marka", "Kidung", "Renungan"};
 	final Class<?>[] classes = {TextFragment.class, MarkersFragment.class, SongViewFragment.class, DevotionFragment.class};
@@ -122,6 +132,19 @@ public class IsiActivity extends BaseActivity {
 	}
 
 	@Override
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.activity_isi, menu);
+
+		AppConfig c = AppConfig.get();
+
+		//# build config
+		menu.findItem(R.id.menuHelp).setVisible(c.menuHelp);
+		menu.findItem(R.id.menuDonation).setVisible(c.menuDonation);
+
+		return true;
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		if (item.getItemId() == android.R.id.home && drawerToggle.isDrawerIndicatorEnabled()) {
 			if (drawer.isDrawerVisible(GravityCompat.START)) {
@@ -132,7 +155,41 @@ public class IsiActivity extends BaseActivity {
 			return true;
 		}
 
+		switch (item.getItemId()) {
+			case R.id.menuSettings:
+				startActivityForResult(new Intent(App.context, SettingsActivity.class), REQCODE_settings);
+				return true;
+			case R.id.menuDonation:
+				openDonationDialog();
+				return true;
+			case R.id.menuHelp:
+				startActivity(HelpActivity.createIntent(false));
+				return true;
+			case R.id.menuSendMessage:
+				startActivity(HelpActivity.createIntent(true));
+				return true;
+			case R.id.menuAbout:
+				startActivity(new Intent(App.context, AboutActivity.class));
+				return true;
+		}
+
 		return super.onOptionsItemSelected(item);
+	}
+
+
+	public void openDonationDialog() {
+		new AlertDialog.Builder(this)
+		.setMessage(R.string.donasi_keterangan)
+		.setPositiveButton(R.string.donasi_tombol_ok, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				String donation_url = getString(R.string.alamat_donasi);
+				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(donation_url));
+				startActivity(intent);
+			}
+		})
+		.setNegativeButton(R.string.donasi_tombol_gamau, null)
+		.show();
 	}
 
 	private void updateContent() {
@@ -214,6 +271,13 @@ public class IsiActivity extends BaseActivity {
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) return true;
 		}
 		return super.onKeyUp(keyCode, event);
+	}
+
+	@Override
+	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		if (requestCode == REQCODE_settings) {
+			LocalBroadcastManager.getInstance(App.context).sendBroadcast(new Intent(ACTION_SETTINGS_UPDATED));
+		}
 	}
 
 	private void processIntent(Intent intent, String via) {

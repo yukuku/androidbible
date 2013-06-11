@@ -2,14 +2,17 @@ package yuku.alkitab.base.fr;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
@@ -37,9 +40,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.GotoActivity;
-import yuku.alkitab.base.ac.HelpActivity;
 import yuku.alkitab.base.ac.Search2Activity;
 import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.ShareActivity;
@@ -83,7 +84,6 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 	private static final String PREFKEY_devotion_name = "renungan_nama"; //$NON-NLS-1$
 
 	private static final int REQCODE_goto = 1;
-	private static final int REQCODE_settings = 4;
 	private static final int REQCODE_version = 5;
 	private static final int REQCODE_search = 6;
 	private static final int REQCODE_share = 7;
@@ -157,6 +157,16 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 		}
 	};
 
+	BroadcastReceiver settingsUpdatedReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			// MUST reload preferences
+			S.calculateAppliedValuesBasedOnPreferences();
+
+			applyPreferences(true);
+		}
+	};
+
 	@Override
 	public void onAttach(final Activity activity) {
 		super.onAttach(activity);
@@ -167,6 +177,15 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
+
+		LocalBroadcastManager.getInstance(App.context).registerReceiver(settingsUpdatedReceiver, new IntentFilter(IsiActivity.ACTION_SETTINGS_UPDATED));
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		LocalBroadcastManager.getInstance(App.context).unregisterReceiver(settingsUpdatedReceiver);
 	}
 
 	@Override
@@ -601,31 +620,14 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 		}
 	};
 
-	public void openDonationDialog() {
-		new AlertDialog.Builder(activity)
-		.setMessage(R.string.donasi_keterangan)
-		.setPositiveButton(R.string.donasi_tombol_ok, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				String donation_url = getString(R.string.alamat_donasi);
-				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(donation_url));
-				startActivity(intent);
-			}
-		})
-		.setNegativeButton(R.string.donasi_tombol_gamau, null)
-		.show();
-	}
-
 	@Override
 	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
-		inflater.inflate(R.menu.activity_isi, menu);
+		inflater.inflate(R.menu.fragment_text, menu);
 
 		AppConfig c = AppConfig.get();
 
 		//# build config
 		menu.findItem(R.id.menuVersions).setVisible(c.menuVersions);
-		menu.findItem(R.id.menuHelp).setVisible(c.menuHelp);
-		menu.findItem(R.id.menuDonation).setVisible(c.menuDonation);
 	}
 
 	@Override public void onPrepareOptionsMenu(Menu menu) {
@@ -645,26 +647,11 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 			case R.id.menuSplitVersion:
 				openSplitVersionsDialog();
 				return true;
-			case R.id.menuAbout:
-				startActivity(new Intent(App.context, AboutActivity.class));
-				return true;
 			case R.id.menuFullScreen:
 				activity.setFullScreen(panelNavigation, !item.isChecked());
 				return true;
 			case R.id.menuTextAppearance:
 				setShowTextAppearancePanel(!item.isChecked());
-				return true;
-			case R.id.menuSettings:
-				startActivityForResult(new Intent(App.context, SettingsActivity.class), REQCODE_settings);
-				return true;
-			case R.id.menuHelp:
-				startActivity(HelpActivity.createIntent(false));
-				return true;
-			case R.id.menuSendMessage:
-				startActivity(HelpActivity.createIntent(true));
-				return true;
-			case R.id.menuDonation:
-				openDonationDialog();
 				return true;
 		}
 
@@ -906,15 +893,6 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 //					}
 //				}
 //			}
-		} else if (requestCode == REQCODE_settings) {
-			// MUST reload preferences
-			S.calculateAppliedValuesBasedOnPreferences();
-
-			applyPreferences(true);
-
-			if (resultCode == SettingsActivity.RESULT_openTextAppearance) {
-				setShowTextAppearancePanel(true);
-			}
 		} else if (requestCode == REQCODE_share) {
 			if (resultCode == Activity.RESULT_OK) {
 				ShareActivity.Result result = ShareActivity.obtainResult(data);
