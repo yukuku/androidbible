@@ -94,6 +94,7 @@ public class IsiActivity extends BaseActivity {
 			public void onDrawerOpened(final View drawerView) {
 				super.onDrawerOpened(drawerView);
 				getSupportActionBar().setTitle(R.string.app_name);
+				getSupportActionBar().setSubtitle(null);
 			}
 
 			@Override
@@ -136,6 +137,7 @@ public class IsiActivity extends BaseActivity {
 
 	private void updateContent() {
 		getSupportActionBar().setTitle(names[drawerSelection]);
+		getSupportActionBar().setSubtitle(null);
 
 		if (drawerSelection != drawerOldSelection) {
 			FragmentTransaction tx = getSupportFragmentManager().beginTransaction();

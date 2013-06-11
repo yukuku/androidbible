@@ -359,6 +359,8 @@ public class DevotionFragment extends BaseFragment implements DevotionDownloader
 	};
 
 	private void render(DevotionArticle article, final int skrol) {
+		if (!isAdded()) return; // already removed from activity
+
 		if (article == null) {
 			Log.d(TAG, "rendering null article"); //$NON-NLS-1$
 		} else {
