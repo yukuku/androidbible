@@ -1,14 +1,13 @@
 package yuku.alkitab.base.model;
 
 import android.util.Log;
-
-import java.util.List;
-
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.storage.BibleReader;
 import yuku.alkitab.base.storage.InternalReader;
 import yuku.alkitab.base.storage.OldVerseTextDecoder;
 import yuku.alkitab.base.util.IntArrayList;
+
+import java.util.List;
 
 public class Version {
 	public static final String TAG = Version.class.getSimpleName();
@@ -20,6 +19,7 @@ public class Version {
 	private Book[] cache_consecutiveBooks;
 	
 	private static Version internalVersion;
+	private String fallbackShortName;
 
 	public Version(BibleReader bibleReader) {
 		this.bibleReader = bibleReader;
@@ -33,8 +33,16 @@ public class Version {
 		return internalVersion;
 	}
 
+	/**
+	 * Get the short name (abbreviation) of this version. If unavailable from the BibleReader,
+	 * it will take from fallbackShortName.
+	 */
 	public String getShortName() {
-		return bibleReader.getShortName();
+		final String res = bibleReader.getShortName();
+		if (res == null && fallbackShortName != null) {
+			return fallbackShortName;
+		}
+		return res;
 	}
 
 	public String getLongName() {
@@ -304,5 +312,13 @@ public class Version {
 			return "[?]";
 		}
 		return book.reference(chapter_1, verse_1);
+	}
+
+	/**
+	 * Set the short name to be used as fallback when the BibleReader
+	 * does not provide a short name.
+	 */
+	public void setFallbackShortName(final String fallbackShortName) {
+		this.fallbackShortName = fallbackShortName;
 	}
 }

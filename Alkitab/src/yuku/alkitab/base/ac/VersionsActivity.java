@@ -29,22 +29,8 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.zip.GZIPInputStream;
-
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -71,8 +57,20 @@ import yuku.filechooser.FileChooserConfig;
 import yuku.filechooser.FileChooserConfig.Mode;
 import yuku.filechooser.FileChooserResult;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 public class VersionsActivity extends BaseActivity {
 	public static final String TAG = VersionsActivity.class.getSimpleName();
@@ -872,7 +870,9 @@ public class VersionsActivity extends BaseActivity {
 		@Override
 		public Version getVersion() {
 			if (hasDataFile()) {
-				return new Version(YesReaderFactory.createYesReader(AddonManager.getVersionPath(presetFilename)));
+				final Version res = new Version(YesReaderFactory.createYesReader(AddonManager.getVersionPath(presetFilename)));
+				res.setFallbackShortName(shortName);
+				return res;
 			} else {
 				return null;
 			}
