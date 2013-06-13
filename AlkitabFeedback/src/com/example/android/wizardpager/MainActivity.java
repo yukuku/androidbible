@@ -32,13 +32,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
-
-import java.util.List;
-
-import yuku.alkitabfeedback.AlkitabFeedbackModel;
-import yuku.alkitabfeedback.FeedbackSender;
-import yuku.alkitabfeedback.R;
-
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.example.android.wizardpager.wizard.model.AbstractWizardModel;
 import com.example.android.wizardpager.wizard.model.CustomerInfoPage;
@@ -48,6 +41,11 @@ import com.example.android.wizardpager.wizard.model.TextareaPage;
 import com.example.android.wizardpager.wizard.ui.PageFragmentCallbacks;
 import com.example.android.wizardpager.wizard.ui.ReviewFragment;
 import com.example.android.wizardpager.wizard.ui.StepPagerStrip;
+import yuku.alkitabfeedback.AlkitabFeedbackModel;
+import yuku.alkitabfeedback.FeedbackSender;
+import yuku.alkitabfeedback.R;
+
+import java.util.List;
 
 public class MainActivity extends SherlockFragmentActivity implements
         PageFragmentCallbacks,
@@ -82,7 +80,10 @@ public class MainActivity extends SherlockFragmentActivity implements
 
         mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
         mPager = (ViewPager) findViewById(R.id.pager);
-        mPager.setAdapter(mPagerAdapter);
+
+	    mCurrentPageSequence = mWizardModel.getCurrentPageSequence();
+
+	    mPager.setAdapter(mPagerAdapter);
         mStepPagerStrip = (StepPagerStrip) findViewById(R.id.strip);
         mStepPagerStrip.setOnPageSelectedListener(new StepPagerStrip.OnPageSelectedListener() {
             @Override
