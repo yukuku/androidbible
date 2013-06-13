@@ -30,6 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
+                android:gravity="center_horizontal"
                 android:orientation="vertical">
 
             <com.google.android.gms.common.SignInButton
@@ -49,6 +50,12 @@
                     android:layout_height="wrap_content"
                     android:text="Sign out"
                     android:id="@+id/bSignOut" />
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Make dirty"
+                    android:id="@+id/bMakeDirty" />
 
         </LinearLayout>
 

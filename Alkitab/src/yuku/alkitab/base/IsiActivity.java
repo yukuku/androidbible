@@ -1,10 +1,12 @@
 package yuku.alkitab.base;
 
+import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -62,6 +64,7 @@ import yuku.alkitab.base.fr.ReadingPlanFragment;
 import yuku.alkitab.base.fr.SongViewFragment;
 import yuku.alkitab.base.fr.TextFragment;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.syncadapter.SyncProvider;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.androidsdk.accountchooser.AccountManagerCompat;
 
@@ -84,6 +87,7 @@ public class IsiActivity extends BaseActivity {
 	SignInButton bGSignIn;
 	TextView tSignedInAs;
 	Button bSignOut;
+	Button bMakeDirty;
 
 	FullScreenController fullScreenController;
 	NfcAdapter nfcAdapter;
@@ -109,7 +113,15 @@ public class IsiActivity extends BaseActivity {
 			GoogleAuthUtil.invalidateToken(IsiActivity.this, token);
 			Preferences.setString(Prefkey.auth_google_account_name, null);
 			Preferences.setString(Prefkey.auth_google_token, null);
+			configureSyncEnableness();
 			displaySignButtons();
+		}
+	};
+
+	private View.OnClickListener bMakeDirty_click = new View.OnClickListener() {
+		@Override
+		public void onClick(final View v) {
+			ContentResolver.requestSync(new Account(Preferences.getString(Prefkey.auth_google_account_name), GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE), SyncProvider.AUTHORITY, new Bundle());
 		}
 	};
 
@@ -130,10 +142,12 @@ public class IsiActivity extends BaseActivity {
 		bGSignIn = V.get(this, R.id.bGSignIn);
 		tSignedInAs = V.get(this, R.id.tSignedInAs);
 		bSignOut = V.get(this, R.id.bSignOut);
+		bMakeDirty = V.get(this, R.id.bMakeDirty);
 
 		bGSignIn.setSize(SignInButton.SIZE_WIDE);
 		bGSignIn.setOnClickListener(bGSignIn_click);
 		bSignOut.setOnClickListener(bSignout_click);
+		bMakeDirty.setOnClickListener(bMakeDirty_click);
 
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, names);
 		navList.setAdapter(adapter);
@@ -434,6 +448,7 @@ public class IsiActivity extends BaseActivity {
 						public void run() {
 							Preferences.setString(Prefkey.auth_google_account_name, accountName);
 							Preferences.setString(Prefkey.auth_google_token, finalToken);
+							configureSyncEnableness();
 							displaySignButtons();
 						}
 					});
@@ -442,12 +457,23 @@ public class IsiActivity extends BaseActivity {
 		}.start();
 	}
 
+	private void configureSyncEnableness() {
+		final String activeAccountName = Preferences.getString(Prefkey.auth_google_account_name);
+		final Account[] accounts = AccountManager.get(this).getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+		if (accounts != null) {
+			for (Account account : accounts) {
+				ContentResolver.setIsSyncable(account, SyncProvider.AUTHORITY, U.equals(account.name, activeAccountName)? 1: 0);
+			}
+		}
+	}
+
 	void displaySignButtons() {
 		boolean signedIn = Preferences.getString(Prefkey.auth_google_token) != null;
 
 		bGSignIn.setVisibility(signedIn? View.GONE: View.VISIBLE);
 		tSignedInAs.setVisibility(!signedIn? View.GONE: View.VISIBLE);
 		bSignOut.setVisibility(!signedIn? View.GONE: View.VISIBLE);
+		bMakeDirty.setVisibility(!signedIn? View.GONE: View.VISIBLE);
 
 		if (signedIn) {
 			tSignedInAs.setText(Preferences.getString(Prefkey.auth_google_account_name));
