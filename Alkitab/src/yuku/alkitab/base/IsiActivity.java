@@ -1,8 +1,10 @@
 package yuku.alkitab.base;
 
+import android.accounts.AccountManager;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -26,7 +28,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.actionbarsherlock.internal.nineoldandroids.animation.Animator;
 import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorListenerAdapter;
@@ -35,10 +39,17 @@ import com.actionbarsherlock.internal.nineoldandroids.animation.ObjectAnimator;
 import com.actionbarsherlock.internal.nineoldandroids.widget.NineFrameLayout;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
+import com.google.android.gms.auth.UserRecoverableAuthException;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.SignInButton;
 import org.json.JSONException;
 import org.json.JSONObject;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.BuildConfig;
 import yuku.alkitab.R;
 import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.HelpActivity;
@@ -50,17 +61,30 @@ import yuku.alkitab.base.fr.MarkersFragment;
 import yuku.alkitab.base.fr.ReadingPlanFragment;
 import yuku.alkitab.base.fr.SongViewFragment;
 import yuku.alkitab.base.fr.TextFragment;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.LidToAri;
+import yuku.androidsdk.accountchooser.AccountManagerCompat;
+
+import java.io.IOException;
 
 public class IsiActivity extends BaseActivity {
 	public static final String TAG = IsiActivity.class.getSimpleName();
 	public static final String ACTION_SETTINGS_UPDATED = "yuku.alkitab.action.settingsUpdated";
 	private static final int REQCODE_settings = 4;
+	private static final int REQCODE_pickAccount = 5;
+	private static final int REQCODE_RECOVER_FROM_AUTH_ERROR = 6;
+	private static final int REQCODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 7;
+
 	final String[] names = {"Alkitab", "Marka", "Kidung", "Renungan", "Pembacaan"};
 	final Class<?>[] classes = {TextFragment.class, MarkersFragment.class, SongViewFragment.class, DevotionFragment.class, ReadingPlanFragment.class};
+
 	DrawerLayout drawer;
 	ActionBarDrawerToggle drawerToggle;
 	ListView navList;
+	SignInButton bGSignIn;
+	TextView tSignedInAs;
+	Button bSignOut;
+
 	FullScreenController fullScreenController;
 	NfcAdapter nfcAdapter;
 	boolean fullScreen;
@@ -69,6 +93,25 @@ public class IsiActivity extends BaseActivity {
 	MarkersFragment markersFragment;
 	private int drawerSelection = 0;
 	private int drawerOldSelection = -1;
+
+	private View.OnClickListener bGSignIn_click = new View.OnClickListener() {
+		@Override
+		public void onClick(final View v) {
+			final Intent intent = AccountManagerCompat.newChooseAccountIntent(App.context, null, null, new String[] {GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, true, null, null, null, null);
+			startActivityForResult(intent, REQCODE_pickAccount);
+		}
+	};
+
+	private View.OnClickListener bSignout_click = new View.OnClickListener() {
+		@Override
+		public void onClick(final View v) {
+			String token = Preferences.getString(Prefkey.auth_google_token);
+			GoogleAuthUtil.invalidateToken(IsiActivity.this, token);
+			Preferences.setString(Prefkey.auth_google_account_name, null);
+			Preferences.setString(Prefkey.auth_google_token, null);
+			displaySignButtons();
+		}
+	};
 
 	public static Intent createIntent(int ari) {
 		Intent res = new Intent(App.context, IsiActivity.class);
@@ -82,11 +125,17 @@ public class IsiActivity extends BaseActivity {
 		super.onCreate(savedInstanceState, false);
 		setContentView(R.layout.activity_isi);
 
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, names);
-
 		drawer = V.get(this, R.id.drawer_layout);
-
 		navList = V.get(this, R.id.drawer);
+		bGSignIn = V.get(this, R.id.bGSignIn);
+		tSignedInAs = V.get(this, R.id.tSignedInAs);
+		bSignOut = V.get(this, R.id.bSignOut);
+
+		bGSignIn.setSize(SignInButton.SIZE_WIDE);
+		bGSignIn.setOnClickListener(bGSignIn_click);
+		bSignOut.setOnClickListener(bSignout_click);
+
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, names);
 		navList.setAdapter(adapter);
 		navList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
@@ -111,9 +160,11 @@ public class IsiActivity extends BaseActivity {
 			}
 		};
 		drawer.setDrawerListener(drawerToggle);
+
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
 		updateContent();
+		displaySignButtons();
 
 		if (Build.VERSION.SDK_INT >= 14) {
 			initNfcIfAvailable();
@@ -286,6 +337,120 @@ public class IsiActivity extends BaseActivity {
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		if (requestCode == REQCODE_settings) {
 			LocalBroadcastManager.getInstance(App.context).sendBroadcast(new Intent(ACTION_SETTINGS_UPDATED));
+		} else if (requestCode == REQCODE_pickAccount) {
+			if (resultCode == RESULT_OK) {
+				final String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+				if (accountName != null) {
+					getAccessToken(accountName);
+				}
+			}
+		} else if (requestCode == REQCODE_RECOVER_FROM_AUTH_ERROR) {
+			if (data == null) {
+				new AlertDialog.Builder(this)
+				.setMessage("Unknown error, please click the button again.")
+				.setPositiveButton(R.string.ok, null)
+				.show();
+				return;
+			}
+			if (resultCode == RESULT_OK) {
+				new AlertDialog.Builder(this)
+				.setMessage("Please retry.")
+				.setPositiveButton(R.string.ok, null)
+				.show();
+				return;
+			}
+			if (resultCode == RESULT_CANCELED) {
+				Log.i(TAG, "User rejected authorization.");
+				return;
+			}
+		}
+	}
+
+	private void getAccessToken(final String accountName) {
+		final boolean[] cancelled = {false};
+
+		final ProgressDialog pd = ProgressDialog.show(this, null, "Signing in…", true, true, new DialogInterface.OnCancelListener() {
+			@Override
+			public void onCancel(final DialogInterface dialog) {
+				cancelled[0] = true;
+			}
+		});
+
+		new Thread() {
+			@Override
+			public void run() {
+				Log.d(TAG, "getting token for account name: " + accountName);
+
+				String token = null;
+				try {
+					try {
+						token = GoogleAuthUtil.getToken(IsiActivity.this, accountName, "audience:server:client_id:642181239976.apps.googleusercontent.com");
+						if (BuildConfig.DEBUG) {
+							Log.d(TAG, "token is: " + token);
+						}
+					} finally {
+						pd.dismiss();
+					}
+				} catch (final GooglePlayServicesAvailabilityException playEx) {
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							GooglePlayServicesUtil.getErrorDialog(playEx.getConnectionStatusCode(), IsiActivity.this, REQCODE_RECOVER_FROM_PLAY_SERVICES_ERROR).show();
+						}
+					});
+				} catch (UserRecoverableAuthException recoverableException) {
+					Intent recoveryIntent = recoverableException.getIntent();
+					startActivityForResult(recoveryIntent, REQCODE_RECOVER_FROM_AUTH_ERROR);
+				} catch (final GoogleAuthException authEx) {
+					// This is likely unrecoverable.
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							new AlertDialog.Builder(IsiActivity.this)
+							.setMessage("Unrecoverable authentication error: " + authEx.getMessage())
+							.setPositiveButton(R.string.ok, null)
+							.show();
+							return;
+						}
+					});
+				} catch (final IOException ioEx) {
+					Log.i(TAG, "transient error encountered: " + ioEx.getMessage());
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							new AlertDialog.Builder(IsiActivity.this)
+							.setMessage("Temporary error: " + ioEx.getMessage() + "\n\nPlease try again.")
+							.setPositiveButton(R.string.ok, null)
+							.show();
+							return;
+						}
+					});
+				}
+
+				if (token != null) {
+					final String finalToken = token;
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							Preferences.setString(Prefkey.auth_google_account_name, accountName);
+							Preferences.setString(Prefkey.auth_google_token, finalToken);
+							displaySignButtons();
+						}
+					});
+				}
+			}
+		}.start();
+	}
+
+	void displaySignButtons() {
+		boolean signedIn = Preferences.getString(Prefkey.auth_google_token) != null;
+
+		bGSignIn.setVisibility(signedIn? View.GONE: View.VISIBLE);
+		tSignedInAs.setVisibility(!signedIn? View.GONE: View.VISIBLE);
+		bSignOut.setVisibility(!signedIn? View.GONE: View.VISIBLE);
+
+		if (signedIn) {
+			tSignedInAs.setText(Preferences.getString(Prefkey.auth_google_account_name));
 		}
 	}
 
