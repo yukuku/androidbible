@@ -13,6 +13,12 @@
     <facet type="android" name="Android">
       <configuration>
         <option name="UPDATE_PROPERTY_FILES" value="false" />
+        <notImportedProperties>
+          <property>MANIFEST_FILE_PATH</property>
+          <property>RESOURCES_DIR_PATH</property>
+          <property>ASSETS_DIR_PATH</property>
+          <property>NATIVE_LIBS_DIR_PATH</property>
+        </notImportedProperties>
       </configuration>
     </facet>
   </component>
