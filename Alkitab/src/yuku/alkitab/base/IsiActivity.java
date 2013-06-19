@@ -350,9 +350,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		// for splitting
 		splitHandleButton.setListener(splitHandleButton_listener);
 		
-		// muat preferences_instan, dan atur renungan
+		history = History.getInstance();
+
+		// configure devotion
 		instant_pref = App.getPreferencesInstan();
-		history = new History(instant_pref);
 		{
 			String devotion_name = instant_pref.getString(PREFKEY_devotion_name, null);
 			if (devotion_name != null) {
@@ -363,7 +364,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				}
 			}
 		}
-		
+
 		// restore the last (version; book; chapter and verse).
 		String lastVersion = instant_pref.getString(PREFKEY_lastVersion, null);
 		int lastBook = instant_pref.getInt(PREFKEY_lastBook, 0);
@@ -796,15 +797,20 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	@Override protected void onStop() {
 		super.onStop();
 		
-		Editor editor = instant_pref.edit();
+		final Editor editor = instant_pref.edit();
 		editor.putInt(PREFKEY_lastBook, this.activeBook.bookId);
 		editor.putInt(PREFKEY_lastChapter, chapter_1);
 		editor.putInt(PREFKEY_lastVerse, lsText.getVerseBasedOnScroll());
 		editor.putString(PREFKEY_devotion_name, DevotionActivity.Temporaries.devotion_name);
 		editor.putString(PREFKEY_lastVersion, S.activeVersionId);
-		history.simpan(editor);
-		editor.commit();
-		
+		if (Build.VERSION.SDK_INT >= 9) {
+			editor.apply();
+		} else {
+			editor.commit();
+		}
+
+		history.save();
+
 		lsText.setKeepScreenOn(false);
 	}
 	
@@ -832,7 +838,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 	
 	void bGoto_longClick() {
-		if (history.getN() > 0) {
+		if (history.getSize() > 0) {
 			new AlertDialog.Builder(this)
 			.setAdapter(historyAdapter, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
@@ -872,7 +878,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		
 		@Override
 		public int getCount() {
-			return history.getN();
+			return history.getSize();
 		}
 	};
 	
@@ -1174,6 +1180,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 	
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
 		if (requestCode == REQCODE_goto) {
 			if (resultCode == RESULT_OK) {
 				GotoActivity.Result result = GotoActivity.obtainResult(data);
@@ -1185,7 +1193,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					} else { // no book, just chapter and verse.
 						result.bookId = this.activeBook.bookId;
 					}
-					
+
 					int ari_cv = display(result.chapter_1, result.verse_1);
 					history.add(Ari.encode(result.bookId, ari_cv));
 				}
@@ -1204,7 +1212,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						jumpToAri(result.selectedAri);
 						history.add(result.selectedAri);
 					}
-					
+
 					search2_query = result.query;
 					search2_results = result.searchResults;
 					search2_selectedPosition = result.selectedPosition;
@@ -1231,9 +1239,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		} else if (requestCode == REQCODE_settings) {
 			// MUST reload preferences
 			S.calculateAppliedValuesBasedOnPreferences();
-			
+
 			applyPreferences(true);
-			
+
 			if (resultCode == SettingsActivity.RESULT_openTextAppearance) {
 				setShowTextAppearancePanel(true);
 			}
@@ -1255,10 +1263,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode, resultCode, data);
 		} else if (requestCode == REQCODE_textAppearanceCustomColors) {
 			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode, resultCode, data);
-			
+
 			// MUST reload preferences
 			S.calculateAppliedValuesBasedOnPreferences();
-			
+
 			applyPreferences(true);
 		}
 	}
@@ -1303,7 +1311,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		
 		// set goto button text
 		String reference = this.activeBook.reference(chapter_1);
-		if (Preferences.getBoolean(Prefkey.history_button_understood, false) || history.getN() == 0) {
+		if (Preferences.getBoolean(Prefkey.history_button_understood, false) || history.getSize() == 0) {
 			bGoto.setText(reference);
 		} else {
 			SpannableStringBuilder sb = new SpannableStringBuilder();
