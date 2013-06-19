@@ -11,6 +11,7 @@
       <module fileurl="file://$PROJECT_DIR$/AlkitabFeedback/AlkitabFeedback.iml" filepath="$PROJECT_DIR$/AlkitabFeedback/AlkitabFeedback.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabIntegration/AlkitabIntegration.iml" filepath="$PROJECT_DIR$/AlkitabIntegration/AlkitabIntegration.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabIntegrationTest/AlkitabIntegrationTest.iml" filepath="$PROJECT_DIR$/AlkitabIntegrationTest/AlkitabIntegrationTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../androidbible-sync/AlkitabSyncModel/AlkitabSyncModel.iml" filepath="$PROJECT_DIR$/../androidbible-sync/AlkitabSyncModel/AlkitabSyncModel.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabTest/AlkitabTest.iml" filepath="$PROJECT_DIR$/AlkitabTest/AlkitabTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/AmbilWarna/AmbilWarna.iml" filepath="$PROJECT_DIR$/../yuku-android-util/AmbilWarna/AmbilWarna.iml" />
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/AndroidCrypto/AndroidCrypto.iml" filepath="$PROJECT_DIR$/../yuku-android-util/AndroidCrypto/AndroidCrypto.iml" />

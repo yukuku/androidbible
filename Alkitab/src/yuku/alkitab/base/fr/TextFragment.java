@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
@@ -42,7 +43,6 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.GotoActivity;
 import yuku.alkitab.base.ac.Search2Activity;
-import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.config.AppConfig;
@@ -58,6 +58,7 @@ import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.syncadapter.SyncUtil;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.Jumper;
@@ -254,8 +255,8 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 		splitHandleButton.setListener(splitHandleButton_listener);
 
 		// muat preferences_instan, dan atur renungan
-		instant_pref = App.getPreferencesInstan();
-		history = new History(instant_pref);
+		instant_pref = App.getInstantPreferences();
+		history = History.getInstance();
 		{
 			String devotion_name = instant_pref.getString(PREFKEY_devotion_name, null);
 			if (devotion_name != null) {
@@ -556,8 +557,14 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 		editor.putInt(PREFKEY_lastVerse, lsText.getVerseBasedOnScroll());
 		editor.putString(PREFKEY_devotion_name, DevotionFragment.Temporaries.devotion_name);
 		editor.putString(PREFKEY_lastVersion, S.activeVersionId);
-		history.simpan(editor);
-		editor.commit();
+		if (Build.VERSION.SDK_INT >= 9) {
+			editor.apply();
+		} else {
+			editor.commit();
+		}
+
+		history.save();
+		SyncUtil.requestSync();
 
 		lsText.setKeepScreenOn(false);
 	}
@@ -576,7 +583,7 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 	}
 
 	void bGoto_longClick() {
-		if (history.getN() > 0) {
+		if (history.getSize() > 0) {
 			new AlertDialog.Builder(activity)
 			.setAdapter(historyAdapter, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
@@ -616,7 +623,7 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 
 		@Override
 		public int getCount() {
-			return history.getN();
+			return history.getSize();
 		}
 	};
 
@@ -855,11 +862,11 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 					history.add(Ari.encode(result.bookId, ari_cv));
 				}
 			}
-		// } else if (requestCode == REQCODE_bookmark) {
+			// } else if (requestCode == REQCODE_bookmark) {
 			// TODO reload lsText.loadAttributeMap();
 
 			// TODO if (activeSplitVersion != null) {
-				//lsSplit1.loadAttributeMap();
+			//lsSplit1.loadAttributeMap();
 			// }
 		} else if (requestCode == REQCODE_search) {
 			if (resultCode == Activity.RESULT_OK) {
@@ -875,7 +882,7 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 					search2_selectedPosition = result.selectedPosition;
 				}
 			}
-		// TODO } else if (requestCode == REQCODE_devotion) {
+			// TODO } else if (requestCode == REQCODE_devotion) {
 //			if (resultCode == Activity.RESULT_OK) {
 //				DevotionFragment.Result result = DevotionFragment.obtainResult(data);
 //				if (result != null && result.ari != 0) {
@@ -883,7 +890,7 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 //					history.add(result.ari);
 //				}
 //			}
-		// TODO } else if (requestCode == REQCODE_songs) {
+			// TODO } else if (requestCode == REQCODE_songs) {
 //			if (resultCode == SongViewFragment.RESULT_gotoScripture && data != null) {
 //				String ref = data.getStringExtra(SongViewFragment.EXTRA_ref);
 //				if (ref != null) { // TODO
@@ -959,7 +966,7 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 
 		// set goto button text
 		String reference = this.activeBook.reference(chapter_1);
-		if (Preferences.getBoolean(Prefkey.history_button_understood, false) || history.getN() == 0) {
+		if (Preferences.getBoolean(Prefkey.history_button_understood, false) || history.getSize() == 0) {
 			bGoto.setText(reference);
 		} else {
 			SpannableStringBuilder sb = new SpannableStringBuilder();

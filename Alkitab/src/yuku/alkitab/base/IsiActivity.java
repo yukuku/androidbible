@@ -349,6 +349,8 @@ public class IsiActivity extends BaseActivity {
 
 	@Override
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
 		if (requestCode == REQCODE_settings) {
 			LocalBroadcastManager.getInstance(App.context).sendBroadcast(new Intent(ACTION_SETTINGS_UPDATED));
 		} else if (requestCode == REQCODE_pickAccount) {
@@ -398,7 +400,7 @@ public class IsiActivity extends BaseActivity {
 				String token = null;
 				try {
 					try {
-						token = GoogleAuthUtil.getToken(IsiActivity.this, accountName, "audience:server:client_id:642181239976.apps.googleusercontent.com");
+						token = GoogleAuthUtil.getToken(IsiActivity.this, accountName, "audience:server:client_id:26835819100.apps.googleusercontent.com");
 						if (BuildConfig.DEBUG) {
 							Log.d(TAG, "token is: " + token);
 						}

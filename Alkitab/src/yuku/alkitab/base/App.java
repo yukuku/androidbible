@@ -103,7 +103,7 @@ public class App extends yuku.afw.App {
 	}
 
 	private static PengirimFidbek siapinPengirimFidbek(final Context context) {
-		PengirimFidbek res = new PengirimFidbek(context, getPreferencesInstan());
+		PengirimFidbek res = new PengirimFidbek(context, getInstantPreferences());
 		res.activateDefaultUncaughtExceptionHandler();
 		res.setOnSuccessListener(new PengirimFidbek.OnSuccessListener() {
 			@Override public void onSuccess(final byte[] response) {
@@ -113,7 +113,7 @@ public class App extends yuku.afw.App {
 		return res;
 	}
 
-	public static SharedPreferences getPreferencesInstan() {
+	public static SharedPreferences getInstantPreferences() {
 		return context.getSharedPreferences(context.getPackageName(), 0);
 	}
 }
