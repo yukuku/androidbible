@@ -5,15 +5,15 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-
-import java.io.File;
-import java.util.Locale;
-
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitabfeedback.FeedbackSender;
 import yuku.kirimfidbek.PengirimFidbek;
+
+import java.io.File;
+import java.util.Locale;
 
 public class App extends yuku.afw.App {
 	public static final String TAG = App.class.getSimpleName();
@@ -27,6 +27,10 @@ public class App extends yuku.afw.App {
 		Log.d(TAG, "@@onCreate");
 
 		staticInit();
+	}
+
+	public static LocalBroadcastManager getLocalBroadcastManager() {
+		return LocalBroadcastManager.getInstance(context);
 	}
 
 	public synchronized static void staticInit() {

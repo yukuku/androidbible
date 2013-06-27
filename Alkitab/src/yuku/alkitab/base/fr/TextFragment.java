@@ -13,7 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.SpannableStringBuilder;
 import android.text.format.DateFormat;
 import android.text.style.ForegroundColorSpan;
@@ -27,7 +26,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.actionbarsherlock.internal.nineoldandroids.widget.NineFrameLayout;
@@ -60,7 +58,6 @@ import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.storage.Prefkey;
-import yuku.alkitab.base.syncadapter.SyncUtil;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.Jumper;
@@ -172,6 +169,13 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 		}
 	};
 
+	BroadcastReceiver historyUpdatedReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			historyAdapter.notifyDataSetChanged();
+		}
+	};
+
 	@Override
 	public void onAttach(final Activity activity) {
 		super.onAttach(activity);
@@ -183,14 +187,16 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
 
-		LocalBroadcastManager.getInstance(App.context).registerReceiver(settingsUpdatedReceiver, new IntentFilter(IsiActivity.ACTION_SETTINGS_UPDATED));
+		App.getLocalBroadcastManager().registerReceiver(settingsUpdatedReceiver, new IntentFilter(IsiActivity.ACTION_SETTINGS_UPDATED));
+		App.getLocalBroadcastManager().registerReceiver(historyUpdatedReceiver, new IntentFilter(History.ACTION_HISTORY_UPDATED));
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
 
-		LocalBroadcastManager.getInstance(App.context).unregisterReceiver(settingsUpdatedReceiver);
+		App.getLocalBroadcastManager().unregisterReceiver(settingsUpdatedReceiver);
+		App.getLocalBroadcastManager().unregisterReceiver(historyUpdatedReceiver);
 	}
 
 	@Override
@@ -603,7 +609,7 @@ public class TextFragment extends BaseFragment implements XrefDialog.XrefDialogL
 		}
 	}
 
-	private ListAdapter historyAdapter = new EasyAdapter() {
+	private EasyAdapter historyAdapter = new EasyAdapter() {
 
 		private final java.text.DateFormat timeFormat = DateFormat.getTimeFormat(App.context);
 		private final java.text.DateFormat mediumDateFormat = DateFormat.getMediumDateFormat(App.context);

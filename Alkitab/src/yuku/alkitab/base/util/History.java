@@ -1,5 +1,6 @@
 package yuku.alkitab.base.util;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
@@ -15,6 +16,9 @@ import java.util.regex.Pattern;
 
 public class History {
 	private static final String TAG = History.class.getSimpleName();
+
+	public static final String ACTION_HISTORY_UPDATED = History.class.getName() + ".action.HISTORY_UPDATED";
+
 	private static final String HISTORY_PREFIX = "sejarah/"; //$NON-NLS-1$
 	private static final int MAX = 20;
 	private static final String FIELD_SEPARATOR_STRING = ":";
@@ -87,32 +91,34 @@ public class History {
 	}
 	
 	public synchronized void add(int ari) {
-		// check: do we have this previously?
-		for (int i = 0, len = entries.size(); i < len; i++) {
-			final ClientHistoryEntry entry = entries.get(i);
-			if (entry.ari == ari) {
-				// YES. Move this to the front and update timestamp
-				entries.remove(i);
-				entry.timestamp = System.currentTimeMillis();
-				entry.savedInServer = false;
-				entries.add(0, entry);
-				SyncUtil.requestSync("history_add");
-				return;
+		try {
+			// check: do we have this previously?
+			for (int i = 0, len = entries.size(); i < len; i++) {
+				final ClientHistoryEntry entry = entries.get(i);
+				if (entry.ari == ari) {
+					// YES. Move this to the front and update timestamp
+					entries.remove(i);
+					entry.timestamp = System.currentTimeMillis();
+					entry.savedInServer = false;
+					entries.add(0, entry);
+					return;
+				}
 			}
-		}
-		
-		// NO. Add it to the front and remove if overflow
-		ClientHistoryEntry entry = new ClientHistoryEntry();
-		entry.ari = ari;
-		entry.timestamp = System.currentTimeMillis();
-		entry.savedInServer = false;
-		entries.add(0, entry);
 
-		if (entries.size() > MAX) {
-			entries.remove(MAX);
-		}
+			// NO. Add it to the front and remove if overflow
+			ClientHistoryEntry entry = new ClientHistoryEntry();
+			entry.ari = ari;
+			entry.timestamp = System.currentTimeMillis();
+			entry.savedInServer = false;
+			entries.add(0, entry);
 
-		SyncUtil.requestSync("history_add");
+			if (entries.size() > MAX) {
+				entries.remove(MAX);
+			}
+		} finally {
+			App.getLocalBroadcastManager().sendBroadcast(new Intent(ACTION_HISTORY_UPDATED));
+			SyncUtil.requestSync("history_add");
+		}
 	}
 
 	public synchronized int getSize() {
@@ -142,6 +148,8 @@ public class History {
 			final ClientHistoryEntry clientEntry = ClientHistoryEntry.fromHistoryEntry(true, serverEntry);
 			entries.add(clientEntry);
 		}
+
+		App.getLocalBroadcastManager().sendBroadcast(new Intent(ACTION_HISTORY_UPDATED));
 	}
 
 	public long getTimestamp(final int position) {
