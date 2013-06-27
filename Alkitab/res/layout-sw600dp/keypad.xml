@@ -26,7 +26,6 @@
 
         <Button
             android:id="@+id/bDigit3"
-            style="@style/KeypadButtonStyle"
             android:layout_width="160dp"
             android:layout_height="106dp"
             android:text="3"
