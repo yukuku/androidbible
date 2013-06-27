@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.syncadapter.SyncUtil;
 import yuku.alkitabsync.history.model.client.ClientHistoryEntry;
 import yuku.alkitabsync.history.model.common.HistoryEntry;
 
@@ -95,6 +96,7 @@ public class History {
 				entry.timestamp = System.currentTimeMillis();
 				entry.savedInServer = false;
 				entries.add(0, entry);
+				SyncUtil.requestSync("history_add");
 				return;
 			}
 		}
@@ -109,6 +111,8 @@ public class History {
 		if (entries.size() > MAX) {
 			entries.remove(MAX);
 		}
+
+		SyncUtil.requestSync("history_add");
 	}
 
 	public synchronized int getSize() {
@@ -138,5 +142,9 @@ public class History {
 			final ClientHistoryEntry clientEntry = ClientHistoryEntry.fromHistoryEntry(true, serverEntry);
 			entries.add(clientEntry);
 		}
+	}
+
+	public long getTimestamp(final int position) {
+		return entries.get(position).timestamp;
 	}
 }

@@ -9,12 +9,17 @@ import yuku.alkitab.base.storage.Prefkey;
 public class SyncUtil {
 	public static final String TAG = SyncUtil.class.getSimpleName();
 
-	public static void requestSync() {
+	/**
+	 * This is no-op if the user is not signed in.
+	 */
+	public static void requestSync(String source) {
 		String accountName = Preferences.getString(Prefkey.auth_google_account_name);
 		if (accountName == null) {
 			return;
 		}
 
-		ContentResolver.requestSync(new Account(accountName, "com.google"), SyncProvider.AUTHORITY, new Bundle());
+		final Bundle bundle = new Bundle();
+		bundle.putString("source", source);
+		ContentResolver.requestSync(new Account(accountName, "com.google"), SyncProvider.AUTHORITY, bundle);
 	}
 }

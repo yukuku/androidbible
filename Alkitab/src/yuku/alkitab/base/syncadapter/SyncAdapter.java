@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.gson.Gson;
 import com.squareup.okhttp.OkHttpClient;
 import yuku.afw.storage.Preferences;
@@ -44,13 +46,27 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		Log.d(TAG, "- provider: " + provider);
 		Log.d(TAG, "- syncresult: " + syncResult);
 
-		final String token = Preferences.getString(Prefkey.auth_google_token);
-		if (token == null) {
+		final String accountName = Preferences.getString(Prefkey.auth_google_account_name);
+		if (accountName == null) {
+			Log.e(TAG, "onPerformSync called when we don't have user account saved");
 			syncResult.stats.numAuthExceptions++;
 			return;
 		}
 
-		// TODO try to get token again, maybe previous token is already expired
+		String token;
+		try {
+			token = GoogleAuthUtil.getTokenWithNotification(getContext(), accountName, SyncProvider.SCOPE, new Bundle());
+			Preferences.setString(Prefkey.auth_google_token, token);
+			Log.d(TAG, "token updated");
+		} catch (IOException e) {
+			Log.w(TAG, "io exception when getTokenWithNotification in onPerformSync");
+			syncResult.stats.numIoExceptions++;
+			return;
+		} catch (GoogleAuthException e) {
+			Log.w(TAG, "google auth exception when getTokenWithNotification in onPerformSync");
+			syncResult.stats.numIoExceptions++;
+			return;
+		}
 
 		// Section 1: HISTORY
 		final History historyInstance = History.getInstance();
@@ -73,6 +89,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			return;
 		}
 
+		Log.d(TAG, "Got " + responsePayload.historyEntries.size() + " entries from server");
 		historyInstance.replaceAllWithServerData(responsePayload.historyEntries);
 		historyInstance.save();
 	}

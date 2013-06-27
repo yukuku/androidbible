@@ -65,6 +65,7 @@ import yuku.alkitab.base.fr.SongViewFragment;
 import yuku.alkitab.base.fr.TextFragment;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.syncadapter.SyncProvider;
+import yuku.alkitab.base.syncadapter.SyncUtil;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.androidsdk.accountchooser.AccountManagerCompat;
 
@@ -400,7 +401,7 @@ public class IsiActivity extends BaseActivity {
 				String token = null;
 				try {
 					try {
-						token = GoogleAuthUtil.getToken(IsiActivity.this, accountName, "audience:server:client_id:26835819100.apps.googleusercontent.com");
+						token = GoogleAuthUtil.getToken(IsiActivity.this, accountName, SyncProvider.SCOPE);
 						if (BuildConfig.DEBUG) {
 							Log.d(TAG, "token is: " + token);
 						}
@@ -452,6 +453,7 @@ public class IsiActivity extends BaseActivity {
 							Preferences.setString(Prefkey.auth_google_token, finalToken);
 							configureSyncEnableness();
 							displaySignButtons();
+							SyncUtil.requestSync("signin");
 						}
 					});
 				}
@@ -464,13 +466,17 @@ public class IsiActivity extends BaseActivity {
 		final Account[] accounts = AccountManager.get(this).getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
 		if (accounts != null) {
 			for (Account account : accounts) {
-				ContentResolver.setIsSyncable(account, SyncProvider.AUTHORITY, U.equals(account.name, activeAccountName)? 1: 0);
+				final boolean isEnabledAccount = U.equals(account.name, activeAccountName);
+				ContentResolver.setIsSyncable(account, SyncProvider.AUTHORITY, isEnabledAccount? 1: 0);
+				if (isEnabledAccount) {
+					ContentResolver.setSyncAutomatically(account, SyncProvider.AUTHORITY, true);
+				}
 			}
 		}
 	}
 
 	void displaySignButtons() {
-		boolean signedIn = Preferences.getString(Prefkey.auth_google_token) != null;
+		boolean signedIn = Preferences.getString(Prefkey.auth_google_account_name) != null;
 
 		bGSignIn.setVisibility(signedIn? View.GONE: View.VISIBLE);
 		tSignedInAs.setVisibility(!signedIn? View.GONE: View.VISIBLE);

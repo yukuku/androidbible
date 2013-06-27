@@ -8,6 +8,7 @@ import android.net.Uri;
 public class SyncProvider extends ContentProvider {
 	public static final String TAG = SyncProvider.class.getSimpleName();
 	public static final String AUTHORITY = "yuku.alkitab.syncadapter.provider";
+	public static final String SCOPE = "audience:server:client_id:26835819100.apps.googleusercontent.com";
 
 	@Override
 	public boolean onCreate() {
