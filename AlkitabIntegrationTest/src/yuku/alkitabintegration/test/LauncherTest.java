@@ -7,6 +7,9 @@ import android.test.AndroidTestCase;
 import yuku.alkitabintegration.display.Launcher;
 import yuku.alkitabintegration.display.Launcher.Product;
 
+import static junit.framework.Assert.*;
+
+
 public class LauncherTest extends AndroidTestCase {
 	public void testOpenApp() {
 		{
