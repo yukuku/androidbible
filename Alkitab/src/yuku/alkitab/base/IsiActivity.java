@@ -711,18 +711,18 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		display(Ari.toChapter(ari), Ari.toVerse(ari));
 	}
 	
-	private CharSequence referenceFromSelectedVerses(IntArrayList selectedVerses) {
+	private CharSequence referenceFromSelectedVerses(IntArrayList selectedVerses, Book book) {
 		if (selectedVerses.size() == 0) {
 			// should not be possible. So we don't do anything.
-			return this.activeBook.reference(this.chapter_1);
+			return book.reference(this.chapter_1);
 		} else if (selectedVerses.size() == 1) {
-			return this.activeBook.reference(this.chapter_1, selectedVerses.get(0));
+			return book.reference(this.chapter_1, selectedVerses.get(0));
 		} else {
-			return this.activeBook.reference(this.chapter_1, selectedVerses);
+			return book.reference(this.chapter_1, selectedVerses);
 		}
 	}
 	
-	CharSequence prepareTextForCopyShare(IntArrayList selectedVerses_1, CharSequence reference) {
+	CharSequence prepareTextForCopyShare(IntArrayList selectedVerses_1, CharSequence reference, boolean isSplitVersion) {
 		StringBuilder res = new StringBuilder();
 		res.append(reference);
 		
@@ -734,7 +734,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				int verse_1 = selectedVerses_1.get(i);
 				res.append(verse_1);
 				res.append(' ');
-				res.append(U.removeSpecialCodes(lsText.getVerse(verse_1)));
+				if (isSplitVersion) {
+					res.append(U.removeSpecialCodes(lsSplit1.getVerse(verse_1)));
+				} else {
+					res.append(U.removeSpecialCodes(lsText.getVerse(verse_1)));
+				}
 				res.append('\n');
 			}
 		} else {
@@ -744,7 +748,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			for (int i = 0; i < selectedVerses_1.size(); i++) {
 				int verse_1 = selectedVerses_1.get(i);
 				if (i != 0) res.append('\n');
-				res.append(U.removeSpecialCodes(lsText.getVerse(verse_1)));
+				if (isSplitVersion) {
+					res.append(U.removeSpecialCodes(lsSplit1.getVerse(verse_1)));
+				} else {
+					res.append(U.removeSpecialCodes(lsText.getVerse(verse_1)));
+				}
 			}
 		}
 		return res;
@@ -1597,10 +1605,18 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		@Override public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 			IntArrayList selected = lsText.getSelectedVerses_1();
+
 			if (selected.size() == 0) return true;
-			
-			CharSequence reference = referenceFromSelectedVerses(selected);
-			
+
+			CharSequence reference = referenceFromSelectedVerses(selected, activeBook);
+
+			IntArrayList selectedSplit = null;
+			CharSequence referenceSplit = null;
+			if (activeSplitVersion != null) {
+				selectedSplit = lsSplit1.getSelectedVerses_1();
+				referenceSplit = referenceFromSelectedVerses(selectedSplit, activeSplitVersion.getBook(activeBook.bookId));
+			}
+
 			// the main verse (0 if not exist), which is only when only one verse is selected
 			int mainVerse_1 = 0;
 			if (selected.size() == 1) {
@@ -1610,7 +1626,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			int itemId = item.getItemId();
 			switch (itemId) {
 			case R.id.menuCopy: { // copy, can be multiple
-				CharSequence textToCopy = prepareTextForCopyShare(selected, reference);
+				CharSequence textToCopy = prepareTextForCopyShare(selected, reference, false);
+				if (activeSplitVersion != null) {
+					textToCopy = textToCopy + "\n\n" + prepareTextForCopyShare(selectedSplit, referenceSplit, true);
+				}
 				
 				U.copyToClipboard(textToCopy);
 				lsText.uncheckAllVerses(true);
@@ -1619,8 +1638,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				mode.finish();
 			} return true;
 			case R.id.menuShare: {
-				CharSequence textToShare = prepareTextForCopyShare(selected, reference);
-				
+				CharSequence textToShare = prepareTextForCopyShare(selected, reference, false);
+				if (activeSplitVersion != null) {
+					textToShare = textToShare + "\n\n" + prepareTextForCopyShare(selectedSplit, referenceSplit, true);
+				}
+
 				String verseUrl;
 				if (selected.size() == 1) {
 					verseUrl = createVerseUrl(S.activeVersion.getShortName(), IsiActivity.this.activeBook, IsiActivity.this.chapter_1, String.valueOf(selected.get(0)));
