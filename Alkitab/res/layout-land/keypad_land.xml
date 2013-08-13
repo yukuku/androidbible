@@ -12,7 +12,6 @@
 
         <Button
             android:id="@+id/bDigit1"
-            style="@style/KeypadButtonStyle"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="1"
@@ -20,7 +19,6 @@
 
         <Button
             android:id="@+id/bDigit2"
-            style="@style/KeypadButtonStyle"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="2"
@@ -28,7 +26,6 @@
 
         <Button
             android:id="@+id/bDigit3"
-            style="@style/KeypadButtonStyle"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="3"
@@ -36,7 +33,6 @@
 
         <Button
             android:id="@+id/bDigit4"
-            style="@style/KeypadButtonStyle"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="4"
@@ -44,7 +40,6 @@
 
         <Button
             android:id="@+id/bDigit5"
-            style="@style/KeypadButtonStyle"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="5"
@@ -52,7 +47,6 @@
 
         <Button
             android:id="@+id/bDigitC"
-            style="@style/KeypadButtonStyle"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="C"
@@ -66,7 +60,6 @@
 
         <Button
             android:id="@+id/bDigit6"
-            style="@style/KeypadButtonStyle"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="6"
@@ -74,7 +67,6 @@
 
         <Button
             android:id="@+id/bDigit7"
-            style="@style/KeypadButtonStyle"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="7"
@@ -82,7 +74,6 @@
 
         <Button
             android:id="@+id/bDigit8"
-            style="@style/KeypadButtonStyle"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="8"
@@ -90,7 +81,6 @@
 
         <Button
             android:id="@+id/bDigit9"
-            style="@style/KeypadButtonStyle"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="9"
@@ -98,7 +88,6 @@
 
         <Button
             android:id="@+id/bDigit0"
-            style="@style/KeypadButtonStyle"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="0"
@@ -106,7 +95,6 @@
 
         <Button
             android:id="@+id/bDigitSwitch"
-            style="@style/KeypadButtonStyle"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text=":"

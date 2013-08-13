@@ -1,13 +1,5 @@
 package yuku.alkitabconverter.yes_common;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
-import java.util.ArrayList;
-import java.util.List;
-
 import yuku.alkitab.yes2.Yes2Writer;
 import yuku.alkitab.yes2.compress.SnappyOutputStream;
 import yuku.alkitab.yes2.io.MemoryRandomAccessFile;
@@ -22,6 +14,14 @@ import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.TextDb.VerseState;
 import yuku.bintex.BintexWriter;
 import yuku.bintex.ValueMap;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Yes2Common {
 	public static final String TAG = Yes2Common.class.getSimpleName();
@@ -129,11 +129,16 @@ public class Yes2Common {
 			ByteArrayOutputStream baos = baos_.get();
 			baos.reset();
 			
-			try (BintexWriter bw = new BintexWriter(baos)) {
-				byte[] verse_bytes = verse.getBytes("utf-8");
-				bw.writeVarUint(verse_bytes.length);
-				bw.writeRaw(verse_bytes);
-				return baos.toByteArray();
+			try {
+				BintexWriter bw = new BintexWriter(baos);
+				try {
+					byte[] verse_bytes = verse.getBytes("utf-8");
+					bw.writeVarUint(verse_bytes.length);
+					bw.writeRaw(verse_bytes);
+					return baos.toByteArray();
+				} finally {
+					bw.close();
+				}
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}

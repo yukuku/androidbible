@@ -5,6 +5,4 @@
         <item name="android:textAppearance">?attr/actionMenuTextAppearance</item>
     </style>
 
-    <style name="KeypadButtonStyle" parent="@android:style/Widget.Button" />
-
 </resources>
