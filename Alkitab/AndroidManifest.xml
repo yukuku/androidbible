@@ -116,8 +116,19 @@
 		<service android:name="yuku.alkitab.base.sv.DownloadService" />
 		
 		<provider android:name="yuku.alkitab.base.cp.Provider" android:authorities="yuku.alkitab.provider" android:exported="true" tools:ignore="ExportedContentProvider" />
-		
-		<receiver android:name="yuku.alkitab.base.br.SecretSettingsReceiver" tools:ignore="ExportedReceiver">
+
+        <!-- file provider for exporting markers -->
+        <provider
+                android:name="android.support.v4.content.FileProvider"
+                android:authorities="@string/file_provider_markers_export_authority"
+                android:grantUriPermissions="true"
+                android:exported="false">
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/file_provider_markers_export" />
+        </provider>
+
+        <receiver android:name="yuku.alkitab.base.br.SecretSettingsReceiver" tools:ignore="ExportedReceiver">
 			<intent-filter>
 				<action android:name="android.provider.Telephony.SECRET_CODE" />
 				<data android:scheme="android_secret_code" android:host="2554822" />
