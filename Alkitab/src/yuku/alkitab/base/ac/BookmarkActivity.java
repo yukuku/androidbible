@@ -69,10 +69,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class BookmarkActivity extends BaseActivity {
+public class BookmarkActivity extends BaseActivity implements ExportBookmarkDialog.Listener {
 	public static final String TAG = BookmarkActivity.class.getSimpleName();
 	
 	private static final int REQCODE_bukmakList = 1;
+	private static final int REQCODE_share = 2;
 
 	DragSortListView lv;
 	
@@ -480,8 +481,20 @@ public class BookmarkActivity extends BaseActivity {
 			}
 		}.execute();
 	}
-	
-	
+
+	@Override
+	public void onOk(final Uri uri) {
+		Log.d(TAG, "Uri for sharing: " + uri);
+
+		final Intent intent = ShareCompat.IntentBuilder.from(this)
+		.setStream(uri)
+		.setType("text/html")
+		.getIntent();
+
+		startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.me_export_markers)), REQCODE_share);
+	}
+
+
 	// constants
 	static class Bookmark2_Label { // DO NOT CHANGE CONSTANT VALUES!
 		static final String XMLTAG_Bookmark2_Label = "Bukmak2_Label"; //$NON-NLS-1$
@@ -610,7 +623,12 @@ public class BookmarkActivity extends BaseActivity {
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQCODE_bukmakList) {
 			adapter.reload();
+		} else if (requestCode == REQCODE_share && resultCode == RESULT_OK) {
+			final ShareActivity.Result result = ShareActivity.obtainResult(data);
+			startActivity(result.chosenIntent);
 		}
+
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	private class BookmarkFilterController extends DragSortController {

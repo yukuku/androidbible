@@ -260,7 +260,7 @@
 	<string name="version_share_title">Share version to:</string>
 	<string name="menuFullScreen">Full screen</string>
     <string name="full_screen_dismiss_hint">Press <b>Back</b> to return from full screen</string>
-    <string name="me_export_markers">Export bookmarks</string>
+    <string name="me_export_markers">Export markers</string>
     <string name="me_export_menu_item">Export</string>
     <string name="me_all_notes">All notes</string>
     <string name="me_all_highlights">All highlights</string>

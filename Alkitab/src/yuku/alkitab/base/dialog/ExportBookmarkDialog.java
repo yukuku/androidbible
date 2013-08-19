@@ -1,22 +1,21 @@
 package yuku.alkitab.base.dialog;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.ShareCompat;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.ListView;
+import yuku.afw.V;
+import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -38,7 +37,19 @@ import java.util.UUID;
 
 public class ExportBookmarkDialog extends DialogFragment {
 	public static final String TAG = ExportBookmarkDialog.class.getSimpleName();
+
+	public static interface Listener {
+		void onOk(Uri uri);
+	}
+
 	LayoutInflater inflater;
+	Listener listener;
+
+	@Override
+	public void onAttach(final Activity activity) {
+		super.onAttach(activity);
+		this.listener = (Listener) activity;
+	}
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
@@ -46,14 +57,14 @@ public class ExportBookmarkDialog extends DialogFragment {
 		this.inflater = inflater;
 		View view = inflater.inflate(R.layout.dialog_export, container, false);
 		getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-		ListView lsBookmark = (ListView) view.findViewById(R.id.lsBookmark);
+		ListView lsBookmark = V.get(view, R.id.lsBookmark);
 		final BookmarkAdapter adapter = new BookmarkAdapter();
 		adapter.load();
 		lsBookmark.setAdapter(adapter);
 		lsBookmark.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-				CheckedTextView checkedTextView = (CheckedTextView) view.findViewById(android.R.id.text1);
+				CheckedTextView checkedTextView = V.get(view, android.R.id.text1);
 				boolean isChecked = checkedTextView.isChecked();
 				List<ItemAdapter> items = adapter.items;
 				items.get(position).checks = !isChecked;
@@ -96,14 +107,14 @@ public class ExportBookmarkDialog extends DialogFragment {
 				adapter.notifyDataSetChanged();
 			}
 		});
-		Button bCancel = (Button) view.findViewById(R.id.bCancel);
+		Button bCancel = V.get(view, R.id.bCancel);
 		bCancel.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
 				ExportBookmarkDialog.this.dismiss();
 			}
 		});
-		Button bOk = (Button) view.findViewById(R.id.bOk);
+		Button bOk = V.get(view, R.id.bOk);
 		bOk.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
@@ -124,7 +135,11 @@ public class ExportBookmarkDialog extends DialogFragment {
 					}
 				}
 				ExportData data = getAllData(showNoLabelBookmarks, exportedLabels, showNotes, showHighlights);
-				exportFile(writeHtml(data));
+				final File file = writeHtml(data);
+
+				final Uri uri = new Uri.Builder().scheme("content").authority(getString(R.string.file_provider_authority)).encodedPath("cache/" + file.getName()).build();
+				listener.onOk(uri);
+
 				ExportBookmarkDialog.this.dismiss();
 			}
 		});
@@ -326,21 +341,6 @@ public class ExportBookmarkDialog extends DialogFragment {
 		return file;
 	}
 
-	private void exportFile(File file) {
-		Uri uri = FileProvider.getUriForFile(App.context, getString(R.string.file_provider_markers_export_authority), file);
-
-		Log.d(TAG, "uri buat share: " + uri);
-		final Intent intent = ShareCompat.IntentBuilder.from(getActivity())
-		.setStream(uri)
-		.setType("text/html")
-		.getIntent()
-		.setData(uri)
-		.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-		startActivity(Intent.createChooser(intent, getString(R.string.me_export_markers)));
-
-	}
-
 	public enum ItemType {notes, highlight, allBookmarks, label, unlabel}
 
 	class ItemAdapter {
@@ -349,7 +349,7 @@ public class ExportBookmarkDialog extends DialogFragment {
 		Label label;
 	}
 
-	class BookmarkAdapter extends BaseAdapter {
+	class BookmarkAdapter extends EasyAdapter {
 
 		List<Bookmark2> bookmarks = new ArrayList<Bookmark2>();
 		List<Label> labels;
@@ -388,31 +388,17 @@ public class ExportBookmarkDialog extends DialogFragment {
 
 		@Override
 		public int getCount() {
-			int count = 4 + labels.size();
-			return count;
+			return 4 + labels.size();
 		}
 
 		@Override
-		public Object getItem(final int position) {
-			return null;
+		public View newView(final int position, final ViewGroup parent) {
+			return inflater.inflate(android.R.layout.simple_list_item_multiple_choice, parent, false);
 		}
 
 		@Override
-		public long getItemId(final int position) {
-			return 0;
-		}
-
-		@Override
-		public View getView(final int position, final View convertView, final ViewGroup parent) {
-
-			View rowView;
-			if (convertView == null) {
-				rowView = inflater.inflate(android.R.layout.simple_list_item_multiple_choice, parent, false);
-			} else {
-				rowView = convertView;
-			}
-
-			CheckedTextView textView = (CheckedTextView) rowView.findViewById(android.R.id.text1);
+		public void bindView(final View view, final int position, final ViewGroup parent) {
+			CheckedTextView textView = V.get(view, android.R.id.text1);
 			if (position == 0) {
 				textView.setText(R.string.me_all_notes);
 			} else if (position == 1) {
@@ -420,13 +406,11 @@ public class ExportBookmarkDialog extends DialogFragment {
 			} else if (position == 2) {
 				textView.setText(R.string.me_all_bookmarks);
 			} else if (position == 3) {
-				textView.setText("- " + getString(R.string.me_no_labels));
+				textView.setText("– " + getString(R.string.me_no_labels));
 			} else {
-				textView.setText("- " + labels.get(position - 4).title);
+				textView.setText("– " + labels.get(position - 4).title);
 			}
 			textView.setChecked(items.get(position).checks);
-			return rowView;
 		}
-
 	}
 }

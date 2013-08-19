@@ -119,14 +119,10 @@
 
         <!-- file provider for exporting markers -->
         <provider
-                android:name="android.support.v4.content.FileProvider"
-                android:authorities="@string/file_provider_markers_export_authority"
-                android:grantUriPermissions="true"
-                android:exported="false">
-            <meta-data
-                    android:name="android.support.FILE_PROVIDER_PATHS"
-                    android:resource="@xml/file_provider_markers_export" />
-        </provider>
+                android:name="yuku.alkitab.base.cp.FileProvider"
+                android:authorities="@string/file_provider_authority"
+                android:exported="true"
+                tools:ignore="ExportedContentProvider" />
 
         <receiver android:name="yuku.alkitab.base.br.SecretSettingsReceiver" tools:ignore="ExportedReceiver">
 			<intent-filter>
