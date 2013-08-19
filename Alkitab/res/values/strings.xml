@@ -266,4 +266,5 @@
     <string name="me_all_highlights">All highlights</string>
     <string name="me_all_bookmarks">All bookmarks</string>
     <string name="me_no_labels">No labels</string>
+    <string name="me_edited_modify_date">(edited %s)</string>
 </resources>

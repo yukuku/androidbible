@@ -243,7 +243,7 @@ public class ExportBookmarkDialog extends DialogFragment {
 						pw.print("<dt>\n");
 						pw.print("<span class='title'>" + noLabelBookmark.caption + "</span>\n<span class='times'>\n");
 						pw.print("<span class='createTime' data-unixtime='" + noLabelBookmark.addTime.getTime() + "'>" + Sqlitil.toLocaleDateMedium(noLabelBookmark.addTime) + "</span>\n");
-						pw.print("<span class='modifyTime' data-unixtime='" + noLabelBookmark.modifyTime.getTime() + "'>(diedit " + Sqlitil.toLocaleDateMedium(noLabelBookmark.modifyTime) + ")</span>\n");
+						pw.print("<span class='modifyTime' data-unixtime='" + noLabelBookmark.modifyTime.getTime() + "'>" + getString(R.string.me_edited_modify_date, Sqlitil.toLocaleDateMedium(noLabelBookmark.modifyTime)) + "</span>\n");
 						pw.print("</span><br/>\n");
 						pw.print("<span class='reference' data-ari='" + noLabelBookmark.ari + "'>" + noLabelBookmark.caption + "</span> <span class='snippet'>" + verseText + "</span>\n");
 						pw.print("</dt>\n");
@@ -266,7 +266,7 @@ public class ExportBookmarkDialog extends DialogFragment {
 							pw.print("<span class='title'>" + bookmark.caption + "</span>\n");
 							pw.print("<span class='times'>\n");
 							pw.print("<span class='createTime' data-unixtime='" + bookmark.ari + "'>" + Sqlitil.toLocaleDateMedium(bookmark.addTime) + "</span>\n");
-							pw.print("<span class='modifyTime' data-unixtime='" + bookmark.modifyTime.getTime() + "'>(diedit " + Sqlitil.toLocaleDateMedium(bookmark.modifyTime) + ")</span>\n");
+							pw.print("<span class='modifyTime' data-unixtime='" + bookmark.modifyTime.getTime() + "'>" + getString(R.string.me_edited_modify_date, Sqlitil.toLocaleDateMedium(bookmark.modifyTime)) + "</span>\n");
 							pw.print("</span><br/>\n");
 							pw.print("<span class='reference' data-ari='" + bookmark.ari + "'>" + bookmark.caption + "</span> <span class='snippet'>" + verseText + "</span>\n");
 							pw.print("</dt>\n");
@@ -287,7 +287,7 @@ public class ExportBookmarkDialog extends DialogFragment {
 					pw.print("<span class='reference' data-ari='" + note.ari + "'>" + reference + "</span>\n");
 					pw.print("<span class='times'>\n");
 					pw.print("<span class='createTime' data-unixtime='" + note.addTime.getTime() + "'>" + Sqlitil.toLocaleDateMedium(note.addTime) + "</span>\n");
-					pw.print("<span class='modifyTime' data-unixtime='" + note.modifyTime.getTime() + "'>(diedit " + Sqlitil.toLocaleDateMedium(note.modifyTime) + ")</span><br/>\n");
+					pw.print("<span class='modifyTime' data-unixtime='" + note.modifyTime.getTime() + "'>" + getString(R.string.me_edited_modify_date, Sqlitil.toLocaleDateMedium(note.modifyTime)) + "</span><br/>\n");
 					pw.print("</span><br/>\n");
 					pw.print("<span class='text'>" + note.caption + "</span>\n");
 					pw.print("</dt>\n");
@@ -309,7 +309,7 @@ public class ExportBookmarkDialog extends DialogFragment {
 					pw.print("<span class='reference' data-ari='" + highlight.ari + "'>" + reference + "</span>\n");
 					pw.print("<span class='times'>\n");
 					pw.print("<span class='createTime' data-unixtime='" + highlight.addTime.getTime() + "'>" + Sqlitil.toLocaleDateMedium(highlight.addTime) + "</span>\n");
-					pw.print("<span class='modifyTime'  data-unixtime='" + highlight.modifyTime.getTime() + "'>(diedit " + Sqlitil.toLocaleDateMedium(highlight.modifyTime) + ")</span><br/>\n");
+					pw.print("<span class='modifyTime' data-unixtime='" + highlight.modifyTime.getTime() + "'>" + getString(R.string.me_edited_modify_date, Sqlitil.toLocaleDateMedium(highlight.modifyTime)) + "</span><br/>\n");
 					pw.print("</span><br/>\n");
 					pw.print("<span class='snippet' data-bgcolor='" + Integer.toHexString(color) + "' style='background-color: #" + Integer.toHexString(color) + "'>" + verseText + "</span>\n");
 					pw.print("</dt>\n");
