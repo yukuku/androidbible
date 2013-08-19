@@ -526,18 +526,10 @@ public class BookmarkActivity extends BaseActivity {
 	};
 	
 	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		getMenuInflater().inflate(R.menu.context_bookmark, menu);
-
-		android.view.MenuItem menuRenameLabel = menu.findItem(R.id.menuRenameLabel);
-		android.view.MenuItem menuDeleteLabel = menu.findItem(R.id.menuDeleteLabel);
 
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-		if (info.position < 4) {
-			menuRenameLabel.setEnabled(false);
-			menuDeleteLabel.setEnabled(false);
-		} else {
-			menuRenameLabel.setEnabled(true);
-			menuDeleteLabel.setEnabled(true);
+		if (info.position >= 4) {
+			getMenuInflater().inflate(R.menu.context_bookmark, menu);
 		}
 	}
 
