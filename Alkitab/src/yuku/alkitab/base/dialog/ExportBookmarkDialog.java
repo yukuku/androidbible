@@ -332,7 +332,7 @@ public class ExportBookmarkDialog extends DialogFragment {
 
 	private void printBookmarks(final PrintWriter pw, final Label label, final List<Bookmark2> bookmarks) {
 		String backgroundString = "";
-		String labelName = "Tanpa label";
+		String labelName = getString(R.string.me_no_labels);
 		if (label != null) {
 			int color = U.decodeLabelBackgroundColor(label.backgroundColor);
 			if (color != -1) {
