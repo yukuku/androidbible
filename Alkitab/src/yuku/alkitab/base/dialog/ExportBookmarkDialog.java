@@ -272,10 +272,10 @@ public class ExportBookmarkDialog extends DialogFragment {
 							"\t\t\ttext-decoration: underline;\n" +
 							"\t\t}\n" +
 							"\t</style>\n" +
-							"</head>";
+							"</head>\n";
 			pw.print(str);
 
-			pw.print("<body>");
+			pw.print("<body>\n");
 
 			if (noLabelBookmarks.size() + labeledBookmarks.size() > 0) {
 				pw.print("<h1>" + getString(R.string.pembatas_buku) + "</h1>\n<dl id='bookmark_list'>\n");
