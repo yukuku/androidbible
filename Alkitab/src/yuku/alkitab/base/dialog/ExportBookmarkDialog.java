@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -149,6 +149,7 @@ public class ExportBookmarkDialog extends DialogFragment {
 	private ExportData getAllData(boolean showNoLabelBookmarks, List<Label> exportedlabels, boolean showNotes, boolean showHighlights) {
 
 		List<Bookmark2> noLabelBookmarks = new ArrayList<Bookmark2>();
+		List<Pair<Label, List<Bookmark2>>> labeledBookmarks = new ArrayList<Pair<Label, List<Bookmark2>>>();
 		List<Bookmark2> notes = new ArrayList<Bookmark2>();
 		List<Bookmark2> highlights = new ArrayList<Bookmark2>();
 
@@ -158,6 +159,24 @@ public class ExportBookmarkDialog extends DialogFragment {
 			while (cursor.moveToNext()) {
 				Bookmark2 bookmark = Bookmark2.fromCursor(cursor);
 				noLabelBookmarks.add(bookmark);
+			}
+			cursor.close();
+		}
+
+		//with label
+		if (exportedlabels.size() > 0) {
+			for (Label label : exportedlabels) {
+				List<Bookmark2> bookmarks = new ArrayList<Bookmark2>();
+				Cursor cursor = S.getDb().listBookmarks(Db.Bookmark2.kind_bookmark, label._id, Db.Bookmark2.addTime, false);
+				while (cursor.moveToNext()) {
+					Bookmark2 bookmark = Bookmark2.fromCursor(cursor);
+					bookmarks.add(bookmark);
+				}
+				cursor.close();
+				if (bookmarks.size() > 0) {
+					Pair<Label, List<Bookmark2>> pair = new Pair<Label, List<Bookmark2>>(label, bookmarks);
+					labeledBookmarks.add(pair);
+				}
 			}
 		}
 
@@ -183,7 +202,7 @@ public class ExportBookmarkDialog extends DialogFragment {
 
 		ExportData exportData = new ExportData();
 		exportData.noLabelBookmarks = noLabelBookmarks;
-		exportData.labels = exportedlabels;
+		exportData.labeledBookmarks = labeledBookmarks;
 		exportData.notes = notes;
 		exportData.highlights = highlights;
 
@@ -192,14 +211,14 @@ public class ExportBookmarkDialog extends DialogFragment {
 
 	class ExportData {
 		List<Bookmark2> noLabelBookmarks;
+		List<Pair<Label, List<Bookmark2>>> labeledBookmarks;
 		List<Bookmark2> notes;
 		List<Bookmark2> highlights;
-		List<Label> labels;
 	}
 
 	private File writeHtml(ExportData data) {
 		List<Bookmark2> noLabelBookmarks = data.noLabelBookmarks;
-		List<Label> labels = data.labels;
+		List<Pair<Label, List<Bookmark2>>> labeledBookmarks = data.labeledBookmarks;
 		List<Bookmark2> notes = data.notes;
 		List<Bookmark2> highlights = data.highlights;
 
@@ -246,48 +265,19 @@ public class ExportBookmarkDialog extends DialogFragment {
 
 			pw.print("<body>");
 
-			if (noLabelBookmarks.size() + labels.size() > 0) {
+			if (noLabelBookmarks.size() + labeledBookmarks.size() > 0) {
 				pw.print("<h1>" + getString(R.string.pembatas_buku) + "</h1>\n<dl id='bookmark_list'>\n");
 
 				//write no label bookmarks
 				if (noLabelBookmarks.size() > 0) {
-					pw.print("<span class='label'>Tanpa label</span>\n");
-					for (Bookmark2 noLabelBookmark : noLabelBookmarks) {
-						String verseText = S.activeVersion.loadVerseText(noLabelBookmark.ari);
-						verseText = U.removeSpecialCodes(verseText);
-						pw.print("<dt>\n");
-						pw.print("<span class='title'>" + noLabelBookmark.caption + "</span>\n<span class='times'>\n");
-						pw.print("<span class='createTime' data-unixtime='" + noLabelBookmark.addTime.getTime() + "'>" + Sqlitil.toLocaleDateMedium(noLabelBookmark.addTime) + "</span>\n");
-						pw.print("<span class='modifyTime' data-unixtime='" + noLabelBookmark.modifyTime.getTime() + "'>" + getString(R.string.me_edited_modify_date, Sqlitil.toLocaleDateMedium(noLabelBookmark.modifyTime)) + "</span>\n");
-						pw.print("</span><br/>\n");
-						pw.print("<span class='reference' data-ari='" + noLabelBookmark.ari + "'>" + noLabelBookmark.caption + "</span> <span class='snippet'>" + verseText + "</span>\n");
-						pw.print("</dt>\n");
-					}
+					printBookmarks(pw, null, noLabelBookmarks);
 				}
-				//write labeled bookmarks
-				if (labels.size() > 0) {
-					int color;
-					String labelName;
-					for (Label label : labels) {
-						color = U.decodeLabelBackgroundColor(label.backgroundColor);
-						labelName = label.title;
-						pw.print("<span class='label' data-bgcolor='" + Integer.toHexString(color) + "' style='background: #" + Integer.toHexString(color) + "'>" + labelName + "</span>\n");
-						Cursor cursor = S.getDb().listBookmarks(Db.Bookmark2.kind_bookmark, label._id, Db.Bookmark2.addTime, false);
-						while (cursor.moveToNext()) {
-							Bookmark2 bookmark = Bookmark2.fromCursor(cursor);
-							String verseText = S.activeVersion.loadVerseText(bookmark.ari);
-							verseText = U.removeSpecialCodes(verseText);
-							pw.print("<dt>\n");
-							pw.print("<span class='title'>" + bookmark.caption + "</span>\n");
-							pw.print("<span class='times'>\n");
-							pw.print("<span class='createTime' data-unixtime='" + bookmark.ari + "'>" + Sqlitil.toLocaleDateMedium(bookmark.addTime) + "</span>\n");
-							pw.print("<span class='modifyTime' data-unixtime='" + bookmark.modifyTime.getTime() + "'>" + getString(R.string.me_edited_modify_date, Sqlitil.toLocaleDateMedium(bookmark.modifyTime)) + "</span>\n");
-							pw.print("</span><br/>\n");
-							pw.print("<span class='reference' data-ari='" + bookmark.ari + "'>" + bookmark.caption + "</span> <span class='snippet'>" + verseText + "</span>\n");
-							pw.print("</dt>\n");
-						}
-					}
 
+				//write labeled bookmarks
+				if (labeledBookmarks.size() > 0) {
+					for (Pair<Label, List<Bookmark2>> pair : labeledBookmarks) {
+						printBookmarks(pw, pair.first, pair.second);
+					}
 				}
 
 				pw.print("</dl>");
@@ -338,6 +328,31 @@ public class ExportBookmarkDialog extends DialogFragment {
 			e.printStackTrace();
 		}
 		return file;
+	}
+
+	private void printBookmarks(final PrintWriter pw, final Label label, final List<Bookmark2> bookmarks) {
+		String backgroundString = "";
+		String labelName = "Tanpa label";
+		if (label != null) {
+			int color = U.decodeLabelBackgroundColor(label.backgroundColor);
+			if (color != -1) {
+				backgroundString = " data-bgcolor='" + Integer.toHexString(color) + "' style='background: #" + Integer.toHexString(color);
+			}
+			labelName = label.title;
+		}
+		pw.print("<span class='label'" + backgroundString + "'>" + labelName + "</span>\n");
+		for (Bookmark2 bookmark : bookmarks) {
+			String verseText = S.activeVersion.loadVerseText(bookmark.ari);
+			verseText = U.removeSpecialCodes(verseText);
+			pw.print("<dt>\n");
+			pw.print("<span class='title'>" + bookmark.caption + "</span>\n");
+			pw.print("<span class='times'>\n");
+			pw.print("<span class='createTime' data-unixtime='" + bookmark.addTime.getTime() + "'>" + Sqlitil.toLocaleDateMedium(bookmark.addTime) + "</span>\n");
+			pw.print("<span class='modifyTime' data-unixtime='" + bookmark.modifyTime.getTime() + "'>" + getString(R.string.me_edited_modify_date, Sqlitil.toLocaleDateMedium(bookmark.modifyTime)) + "</span>\n");
+			pw.print("</span><br/>\n");
+			pw.print("<span class='reference' data-ari='" + bookmark.ari + "'>" + bookmark.caption + "</span> <span class='snippet'>" + verseText + "</span>\n");
+			pw.print("</dt>\n");
+		}
 	}
 
 	public enum ItemType {notes, highlight, allBookmarks, label, unlabel}
