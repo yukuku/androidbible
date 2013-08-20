@@ -317,7 +317,6 @@ public class ExportBookmarkDialog extends DialogFragment {
 				for (Bookmark2 highlight : highlights) {
 					String verseText = S.activeVersion.loadVerseText(highlight.ari);
 					verseText = U.removeSpecialCodes(verseText);
-					Log.d(TAG, "warna highlight: " + highlight.caption);
 					int color = U.decodeHighlight(highlight.caption);
 					String reference = S.activeVersion.reference(highlight.ari);
 					pw.print("<dt>\n");
