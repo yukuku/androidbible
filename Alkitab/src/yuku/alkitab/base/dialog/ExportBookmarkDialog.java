@@ -57,6 +57,9 @@ public class ExportBookmarkDialog extends DialogFragment {
 		this.inflater = inflater;
 		View view = inflater.inflate(R.layout.dialog_export, container, false);
 		getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+		final Button bOk = V.get(view, R.id.bOk);
+		final Button bCancel = V.get(view, R.id.bCancel);
+
 		ListView lsBookmark = V.get(view, R.id.lsBookmark);
 		final BookmarkAdapter adapter = new BookmarkAdapter();
 		adapter.load();
@@ -105,16 +108,25 @@ public class ExportBookmarkDialog extends DialogFragment {
 					}
 				}
 				adapter.notifyDataSetChanged();
+
+				boolean enable = false;
+				for (ItemAdapter itemAdapter : adapter.items) {
+					if (itemAdapter.checks) {
+						enable = true;
+						break;
+					}
+				}
+				bOk.setEnabled(enable);
 			}
 		});
-		Button bCancel = V.get(view, R.id.bCancel);
+
 		bCancel.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
 				ExportBookmarkDialog.this.dismiss();
 			}
 		});
-		Button bOk = V.get(view, R.id.bOk);
+
 		bOk.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
