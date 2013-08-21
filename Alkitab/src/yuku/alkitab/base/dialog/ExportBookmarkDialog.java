@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.text.TextUtils;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -301,10 +303,12 @@ public class ExportBookmarkDialog extends DialogFragment {
 				pw.print("<h1>" + getString(R.string.bmcat_notes) + "</h1>\n<dl id='note_list'>\n");
 				for (Bookmark2 note : notes) {
 					String reference = S.activeVersion.reference(note.ari);
+					String noteText = TextUtils.htmlEncode(note.caption);
+					Log.d(TAG, noteText);
 					pw.print("<dt>\n");
 					pw.print("<span class='reference' data-ari='" + note.ari + "'>" + reference + "</span>\n");
 					printTimes(pw, note);
-					pw.print("<span class='text'>" + note.caption + "</span>\n");
+					pw.print("<span class='text'>" + noteText + "</span>\n");
 					pw.print("</dt>\n");
 				}
 				pw.print("</dl>\n");
@@ -343,7 +347,7 @@ public class ExportBookmarkDialog extends DialogFragment {
 	}
 
 	private void printBookmarks(final PrintWriter pw, final Label label, final List<Bookmark2> bookmarks) {
-		String labelName = getString(R.string.me_no_labels);
+		String labelName = TextUtils.htmlEncode(getString(R.string.me_no_labels));
 		String backgroundString = "";
 		if (label != null) {
 			final int backgroundColor = U.decodeLabelBackgroundColor(label.backgroundColor);
@@ -356,12 +360,13 @@ public class ExportBookmarkDialog extends DialogFragment {
 		}
 		pw.print("<span class='label' " + backgroundString + ">" + labelName + "</span>\n");
 		for (Bookmark2 bookmark : bookmarks) {
+			String reference = S.activeVersion.reference(bookmark.ari);
 			String verseText = S.activeVersion.loadVerseText(bookmark.ari);
 			verseText = U.removeSpecialCodes(verseText);
 			pw.print("<dt>\n");
-			pw.print("<span class='title'>" + bookmark.caption + "</span>\n");
+			pw.print("<span class='title'>" + TextUtils.htmlEncode(bookmark.caption) + "</span>\n");
 			printTimes(pw, bookmark);
-			pw.print("<span class='reference' data-ari='" + bookmark.ari + "'>" + bookmark.caption + "</span> <span class='snippet'>" + verseText + "</span>\n");
+			pw.print("<span class='reference' data-ari='" + bookmark.ari + "'>" + reference + "</span> <span class='snippet'>" + verseText + "</span>\n");
 			pw.print("</dt>\n");
 		}
 	}
