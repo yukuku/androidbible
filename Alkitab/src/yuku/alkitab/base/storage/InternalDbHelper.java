@@ -7,7 +7,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
 import yuku.afw.App;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.storage.Db.Bookmark2;
@@ -144,6 +143,20 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		// unique index Bukmak2_Label(bukmak2_id, label_id)
 		db.execSQL(String.format("create unique index if not exists index_503 on %s (%s, %s)", Db.TABLE_Bookmark2_Label, Db.Bookmark2_Label.bookmark2_id, Db.Bookmark2_Label.label_id)); //$NON-NLS-1$
 		
+	}
+
+	private void bikinTabelProgressMark(SQLiteDatabase db) {
+		db.execSQL("create table if not exists " + Db.TABLE_Progress_Mark + " (" +
+				"_id integer primary key autoincrement, " +
+				Db.ProgressMark.caption + " text");
+	}
+
+	private void bikinTabelProgressHistory(SQLiteDatabase db) {
+		db.execSQL("create table if not exists " + Db.TABLE_Progress_History + " (" +
+				"_id integer primary key autoincrement, " +
+				Db.ProgressHistory.progress_mark_id + " integer, " +
+				Db.ProgressHistory.ari + " integer" +
+				Db.ProgressHistory.time + " integer");
 	}
 	
 	@Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
