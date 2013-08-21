@@ -33,6 +33,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public class ExportBookmarkDialog extends DialogFragment {
@@ -345,13 +346,15 @@ public class ExportBookmarkDialog extends DialogFragment {
 		String labelName = getString(R.string.me_no_labels);
 		String backgroundString = "";
 		if (label != null) {
-			String colorString = getColorString(U.decodeLabelBackgroundColor(label.backgroundColor));
-			if (colorString != null) {
-				backgroundString = " data-bgcolor='" + colorString + "' style='background-color: #" + colorString;
+			final int backgroundColor = U.decodeLabelBackgroundColor(label.backgroundColor);
+			if (backgroundColor != -1) {
+				final int foregroundColor = U.getLabelForegroundColorBasedOnBackgroundColor(backgroundColor);
+				final String colorString = getColorString(backgroundColor);
+				backgroundString = String.format(Locale.US, " data-bgcolor='%s' style='background-color: #%s; color: #%s' ", colorString, colorString, getColorString(foregroundColor));
 			}
 			labelName = label.title;
 		}
-		pw.print("<span class='label'" + backgroundString + "'>" + labelName + "</span>\n");
+		pw.print("<span class='label' " + backgroundString + ">" + labelName + "</span>\n");
 		for (Bookmark2 bookmark : bookmarks) {
 			String verseText = S.activeVersion.loadVerseText(bookmark.ari);
 			verseText = U.removeSpecialCodes(verseText);
@@ -365,8 +368,8 @@ public class ExportBookmarkDialog extends DialogFragment {
 
 	private void printTimes(final PrintWriter pw, final Bookmark2 bookmark) {
 		pw.print("<span class='times'>\n");
-		pw.print("<span class='createTime' data-unixtime='" + bookmark.addTime.getTime() + "'>" + Sqlitil.toLocaleDateMedium(bookmark.addTime) + "</span>\n");
-		pw.print("<span class='modifyTime' data-unixtime='" + bookmark.modifyTime.getTime() + "'>" + getString(R.string.me_edited_modify_date, Sqlitil.toLocaleDateMedium(bookmark.modifyTime)) + "</span>\n");
+		pw.print("<span class='createTime' data-unixtime='" + Sqlitil.toInt(bookmark.addTime) + "'>" + Sqlitil.toLocaleDateMedium(bookmark.addTime) + "</span>\n");
+		pw.print("<span class='modifyTime' data-unixtime='" + Sqlitil.toInt(bookmark.modifyTime) + "'" + (bookmark.addTime.equals(bookmark.modifyTime)? " style='display: none' ": "") + ">" + getString(R.string.me_edited_modify_date, Sqlitil.toLocaleDateMedium(bookmark.modifyTime)) + "</span>\n");
 		pw.print("</span><br/>\n");
 	}
 
