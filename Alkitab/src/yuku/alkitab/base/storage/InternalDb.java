@@ -24,7 +24,6 @@ import yuku.alkitab.base.devotion.DevotionArticle;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Bookmark2;
 import yuku.alkitab.base.model.Label;
-import yuku.alkitab.base.model.ProgressHistory;
 import yuku.alkitab.base.model.ProgressMark;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.Sqlitil;
@@ -752,36 +751,12 @@ public class InternalDb {
 		}
 	}
 
-	public ProgressMark insertProgressMark(String caption) {
-		ProgressMark progressMark = new ProgressMark(caption);
-		SQLiteDatabase db = helper.getWritableDatabase();
-		long _id = db.insert(Db.TABLE_Progress_Mark, null, progressMark.toContentValues());
-		if (_id == -1) {
-			return null;
-		} else {
-			progressMark._id = _id;
-			return progressMark;
-		}
-	}
-
-	public ProgressHistory insertProgressHistory(ProgressMark progressMark, int ari, int time) {
-		ProgressHistory progressHistory = new ProgressHistory(progressMark._id, ari, time);
-		SQLiteDatabase db = helper.getWritableDatabase();
-		long _id = db.insert(Db.TABLE_Progress_History, null, progressHistory.toContentValues());
-		if (_id == -1) {
-			return null;
-		} else {
-			progressHistory._id = _id;
-			return progressHistory;
-		}
-	}
-
 	public List<ProgressMark> listAllProgressMarks() {
 		List<ProgressMark> res = new ArrayList<ProgressMark>();
-		Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Progress_Mark, null, null, null, null, null, null);
+		Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_ProgressMark, null, null, null, null, null, null);
 		try {
 			while (cursor.moveToNext()) {
-				res.add(Label.fromCursor(cursor));
+				res.add(ProgressMark.fromCursor(cursor));
 			}
 		} finally {
 			cursor.close();

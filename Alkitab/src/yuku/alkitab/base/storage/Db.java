@@ -53,15 +53,11 @@ public class Db {
 		public static final String label_id = "label_id"; //$NON-NLS-1$
 	}
 
-	public static final String TABLE_Progress_Mark = "ProgressMark";
+	public static final String TABLE_ProgressMark = "ProgressMark";
 	public static final class ProgressMark {
 		public static final String caption = "caption";
+		public static final String modifyTime = "modifyTime";
+		public static final String ari = "ari";
 	}
 
-	public static final String TABLE_Progress_History = "progress_history";
-	public static final class ProgressHistory {
-		public static final String progress_mark_id = "progress_mark_id";
-		public static final String ari = "ari";
-		public static final String time = "time";
-	}
 }
