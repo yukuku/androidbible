@@ -913,9 +913,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			startActivityForResult(new Intent(this, BookmarkActivity.class), REQCODE_bookmark);
 			return true;
 		case R.id.menuListProgressMark:
-			FragmentManager fm = getSupportFragmentManager();
-			ProgressMarkDialog dialog = new ProgressMarkDialog();
-			dialog.show(fm, "progress_mark_dialog");
+			openProgressMarkDialog();
 			return true;
 		case R.id.menuSearch:
 			menuSearch_click();
@@ -1061,7 +1059,19 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		.setNegativeButton(R.string.cancel, null)
 		.show();
 	}
-	
+
+	private void openProgressMarkDialog() {FragmentManager fm = getSupportFragmentManager();
+		ProgressMarkDialog dialog = new ProgressMarkDialog();
+		dialog.setOnProgressMarkSelected(new ProgressMarkDialog.OnProgressMarkSelected() {
+			@Override
+			public void onSelect(final int ari) {
+				jumpToAri(ari);
+				history.add(ari);
+			}
+		});
+		dialog.show(fm, "progress_mark_dialog");
+	}
+
 	void openSplitVersionsDialog() {
 		Pair<List<String>, List<MVersion>> versions = getAvailableVersions();
 		final List<String> options = versions.first;

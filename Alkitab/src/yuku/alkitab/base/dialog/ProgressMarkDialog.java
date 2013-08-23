@@ -2,7 +2,6 @@ package yuku.alkitab.base.dialog;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.R;
-import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.ProgressMark;
@@ -29,6 +27,12 @@ public class ProgressMarkDialog extends DialogFragment{
 	public static final String TAG = ProgressMarkDialog.class.getSimpleName();
 
 	LayoutInflater inflater;
+
+	public interface OnProgressMarkSelected {
+		void onSelect(int ari);
+	}
+
+	OnProgressMarkSelected onProgressMarkSelected;
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
@@ -45,9 +49,7 @@ public class ProgressMarkDialog extends DialogFragment{
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 				int ari = adapter.progressMarks.get(position).ari;
 				if (ari != 0) {
-					Intent intent = IsiActivity.createIntent(ari);
-					intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					startActivity(intent);
+					onProgressMarkSelected.onSelect(ari);
 					getDialog().dismiss();
 				} else {
 					AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
@@ -97,6 +99,10 @@ public class ProgressMarkDialog extends DialogFragment{
 		lsProgressMark.setAdapter(adapter);
 
 		return view;
+	}
+
+	public void setOnProgressMarkSelected(OnProgressMarkSelected onProgressMarkSelected) {
+		this.onProgressMarkSelected = onProgressMarkSelected;
 	}
 
 	class ProgressMarkAdapter extends EasyAdapter {
