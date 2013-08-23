@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,16 +73,21 @@ public class ProgressMarkDialog extends DialogFragment{
 							if (which == 0) {
 								final View v = inflater.inflate(R.layout.item_progress_mark_edit, container, false);
 								final TextView tCaption = V.get(v, R.id.tCaption);
+								final String originalCaption = progressMark.caption;
+								tCaption.setText(originalCaption);
 								AlertDialog.Builder editDialog = new AlertDialog.Builder(getActivity());
 								editDialog.setView(v)
 								.setNegativeButton(getString(R.string.cancel), null)
 								.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
 									@Override
 									public void onClick(final DialogInterface dialog, final int which) {
-										progressMark.caption = String.valueOf(tCaption.getText());
-										progressMark.modifyTime = new Date();
-										S.getDb().updateProgressMark(progressMark);
-										adapter.notifyDataSetChanged();
+										final String name = String.valueOf(tCaption.getText());
+										if (originalCaption != null && !TextUtils.isEmpty(name) && !originalCaption.equals(name)) {
+											progressMark.caption = name;
+											progressMark.modifyTime = new Date();
+											S.getDb().updateProgressMark(progressMark);
+											adapter.notifyDataSetChanged();
+										}
 									}
 								})
 								.show();
