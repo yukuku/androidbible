@@ -7,6 +7,11 @@
         android:showAsAction="ifRoom"
         android:title="@string/pembatas_buku"/>
     <item
+            android:id="@+id/menuListProgressMark"
+            android:icon="@drawable/ic_nav_right_dark"
+            android:showAsAction="ifRoom"
+            android:title="@string/pm_progress_mark"/>
+    <item
         android:id="@+id/menuSearch"
         android:icon="@drawable/ic_menu_search"
         android:showAsAction="always"

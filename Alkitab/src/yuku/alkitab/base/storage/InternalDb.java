@@ -764,4 +764,28 @@ public class InternalDb {
 		return res;
 	}
 
+	public ProgressMark getProgressMarkById(long id) {
+		Cursor cursor = helper.getReadableDatabase().query(
+		Db.TABLE_ProgressMark,
+		null,
+		"_id=?",
+		new String[] {String.valueOf(id)},
+		null, null, null
+		);
+
+		try {
+			if (!cursor.moveToNext()) return null;
+
+			return ProgressMark.fromCursor(cursor);
+		} finally {
+			cursor.close();
+		}
+	}
+
+	public int updateProgressMark(ProgressMark progressMark) {
+		return helper.getWritableDatabase().update(Db.TABLE_ProgressMark, progressMark.toContentValues(), "_id=?", new String[] {String.valueOf(progressMark._id)});
+	}
+
+
+
 }

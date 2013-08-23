@@ -67,6 +67,7 @@ import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.config.AppConfig;
+import yuku.alkitab.base.dialog.ProgressMarkDialog;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeHighlightDialog;
 import yuku.alkitab.base.dialog.TypeNoteDialog;
@@ -74,6 +75,7 @@ import yuku.alkitab.base.dialog.XrefDialog;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
+import yuku.alkitab.base.model.ProgressMark;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.Db;
@@ -93,6 +95,7 @@ import yuku.alkitab.base.widget.VersesView.PressResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener {
@@ -909,6 +912,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		case R.id.menuBookmark:
 			startActivityForResult(new Intent(this, BookmarkActivity.class), REQCODE_bookmark);
 			return true;
+		case R.id.menuListProgressMark:
+			FragmentManager fm = getSupportFragmentManager();
+			ProgressMarkDialog dialog = new ProgressMarkDialog();
+			dialog.show(fm, "progress_mark_dialog");
+			return true;
 		case R.id.menuSearch:
 			menuSearch_click();
 			return true;
@@ -1580,26 +1588,41 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				MenuItem esvsb = menu.findItem(R.id.menuEsvsb);
 				if (esvsb != null) esvsb.setVisible(true);
 			}
-			
+
+			List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
+			MenuItem item1 = menu.findItem(R.id.menuProgress1);
+			item1.setTitle(progressMarks.get(0).caption);
+			MenuItem item2 = menu.findItem(R.id.menuProgress2);
+			item2.setTitle(progressMarks.get(1).caption);
+			MenuItem item3 = menu.findItem(R.id.menuProgress3);
+			item3.setTitle(progressMarks.get(2).caption);
+			MenuItem item4 = menu.findItem(R.id.menuProgress4);
+			item4.setTitle(progressMarks.get(3).caption);
+			MenuItem item5 = menu.findItem(R.id.menuProgress5);
+			item5.setTitle(progressMarks.get(4).caption);
+
 			return true;
 		}
 
 		@Override public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 			MenuItem menuAddBookmark = menu.findItem(R.id.menuAddBookmark);
 			MenuItem menuAddNote = menu.findItem(R.id.menuAddNote);
+			MenuItem menuProgressMark = menu.findItem(R.id.menuProgressMark);
 
 			IntArrayList selected = lsText.getSelectedVerses_1();
 			boolean single = selected.size() == 1;
 			
-			boolean changed1 = menuAddBookmark.isVisible() ^ single;
-			boolean changed2 = menuAddNote.isVisible() ^ single;
-			boolean changed = changed1 || changed2;
+			boolean changed1 = menuAddBookmark.isVisible() != single;
+			boolean changed2 = menuAddNote.isVisible() != single;
+			boolean changed3 = menuProgressMark.isVisible() != single;
+			boolean changed = changed1 || changed2 || changed3;
 			
 			if (changed) {
 				menuAddBookmark.setVisible(single);
 				menuAddNote.setVisible(single);
+				menuProgressMark.setVisible(single);
 			}
-			
+
 			return changed;
 		}
 
@@ -1739,6 +1762,22 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					Log.e(TAG, "ESVSB starting", e); //$NON-NLS-1$
 				}
 			} return true;
+			case R.id.menuProgress1: {
+				moveProgressMark(mainVerse_1, 0);
+			} return true;
+			case R.id.menuProgress2: {
+				moveProgressMark(mainVerse_1, 1);
+			} return true;
+			case R.id.menuProgress3: {
+				moveProgressMark(mainVerse_1, 2);
+			} return true;
+			case R.id.menuProgress4: {
+				moveProgressMark(mainVerse_1, 3);
+			} return true;
+			case R.id.menuProgress5: {
+				moveProgressMark(mainVerse_1, 4);
+			} return true;
+
 			}
 			return false;
 		}
@@ -1754,22 +1793,26 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	};
 
+	private void moveProgressMark(final int mainVerse_1, int position) {
+		final int ari = Ari.encode(this.activeBook.bookId, this.chapter_1, mainVerse_1);
+		List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
+		progressMarks.get(position).ari = ari;
+		progressMarks.get(position).modifyTime = new Date();
+		S.getDb().updateProgressMark(progressMarks.get(position));
+	}
+
 	SplitHandleButton.SplitHandleButtonListener splitHandleButton_listener = new SplitHandleButton.SplitHandleButtonListener() {
 		int aboveH;
 		int handleH;
 		int rootH;
 		
 		@Override public void onHandleDragStart() {
-			Log.d(TAG, "start");
-			
 			aboveH = lsText.getHeight();
 			handleH = splitHandle.getHeight();
 			rootH = splitRoot.getHeight();
 		}
 		
 		@Override public void onHandleDragMove(float dySinceLast, float dySinceStart) {
-			Log.d(TAG, "move " + dySinceLast + " " + dySinceStart);
-			
 			int newH = (int) (aboveH + dySinceStart);
 			int maxH = rootH - handleH;
 			ViewGroup.LayoutParams lp = lsText.getLayoutParams();
@@ -1778,7 +1821,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 		
 		@Override public void onHandleDragStop() {
-			Log.d(TAG, "stop");
 		}
 	};
 }

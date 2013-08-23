@@ -36,6 +36,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		createTableBukmak2_Label(db);
 		createIndexBukmak2_Label(db);
 		createTableProgressMark(db);
+		insertDefaultProgressMarks(db);
 	}
 
 	private void createTableBukmak2(SQLiteDatabase db) {
@@ -147,6 +148,21 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 				Db.ProgressMark.caption + " text, " +
 				Db.ProgressMark.ari + " integer, " +
 				Db.ProgressMark.modifyTime + " integer)");
+	}
+
+	private void insertDefaultProgressMarks(SQLiteDatabase db) {
+		ContentValues cv = new ContentValues();
+		cv.put(Db.ProgressMark.caption, "Progress 1"); //TODO name/caption!!
+		db.insert(Db.TABLE_ProgressMark, null, cv);
+		cv.put(Db.ProgressMark.caption, "Progress 2");
+		db.insert(Db.TABLE_ProgressMark, null, cv);
+		cv.put(Db.ProgressMark.caption, "Progress 3");
+		db.insert(Db.TABLE_ProgressMark, null, cv);
+		cv.put(Db.ProgressMark.caption, "Progress 4");
+		db.insert(Db.TABLE_ProgressMark, null, cv);
+		cv.put(Db.ProgressMark.caption, "Progress 5");
+		db.insert(Db.TABLE_ProgressMark, null, cv);
+
 	}
 	
 	@Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

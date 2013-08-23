@@ -1,5 +1,6 @@
 package yuku.alkitab.base.model;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.provider.BaseColumns;
 import yuku.alkitab.base.storage.Db;
@@ -23,6 +24,14 @@ public class ProgressMark {
 		res.modifyTime = Sqlitil.toDate(c.getInt(c.getColumnIndexOrThrow(Db.ProgressMark.modifyTime)));
 
 		return res;
+	}
+
+	public ContentValues toContentValues() {
+		ContentValues cv = new ContentValues();
+		cv.put(Db.ProgressMark.caption, caption);
+		cv.put(Db.ProgressMark.ari, ari);
+		cv.put(Db.ProgressMark.modifyTime, Sqlitil.toInt(modifyTime));
+		return cv;
 	}
 
 }
