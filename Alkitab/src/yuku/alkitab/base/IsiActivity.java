@@ -1601,15 +1601,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 			List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
 			MenuItem item1 = menu.findItem(R.id.menuProgress1);
-			item1.setTitle(progressMarks.get(0).caption);
+			setProgressMenuTitle(progressMarks, item1, 0);
 			MenuItem item2 = menu.findItem(R.id.menuProgress2);
-			item2.setTitle(progressMarks.get(1).caption);
+			setProgressMenuTitle(progressMarks, item2, 1);
 			MenuItem item3 = menu.findItem(R.id.menuProgress3);
-			item3.setTitle(progressMarks.get(2).caption);
+			setProgressMenuTitle(progressMarks, item3, 2);
 			MenuItem item4 = menu.findItem(R.id.menuProgress4);
-			item4.setTitle(progressMarks.get(3).caption);
+			setProgressMenuTitle(progressMarks, item4, 3);
 			MenuItem item5 = menu.findItem(R.id.menuProgress5);
-			item5.setTitle(progressMarks.get(4).caption);
+			setProgressMenuTitle(progressMarks, item5, 4);
 
 			return true;
 		}
@@ -1802,6 +1802,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 		}
 	};
+
+	private void setProgressMenuTitle(final List<ProgressMark> progressMarks, final MenuItem item, int position) {
+		item.setTitle(progressMarks.get(position).ari == 0? getString(ProgressMark.getDefaultProgressMarkResource(position)): progressMarks.get(position).caption);
+	}
 
 	private void moveProgressMark(final int mainVerse_1, int position) {
 		final int ari = Ari.encode(this.activeBook.bookId, this.chapter_1, mainVerse_1);

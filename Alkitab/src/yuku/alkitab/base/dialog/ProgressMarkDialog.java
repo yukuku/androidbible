@@ -73,7 +73,13 @@ public class ProgressMarkDialog extends DialogFragment{
 							if (which == 0) {
 								final View v = inflater.inflate(R.layout.item_progress_mark_edit, container, false);
 								final TextView tCaption = V.get(v, R.id.tCaption);
-								final String originalCaption = progressMark.caption;
+								final String originalCaption;
+								final String caption = progressMark.caption;
+								if (TextUtils.isEmpty(caption)) {
+									originalCaption = getString(ProgressMark.getDefaultProgressMarkResource(position));
+								} else {
+									originalCaption = caption;
+								}
 								tCaption.setText(originalCaption);
 								AlertDialog.Builder editDialog = new AlertDialog.Builder(getActivity());
 								editDialog.setView(v)
@@ -93,6 +99,7 @@ public class ProgressMarkDialog extends DialogFragment{
 								.show();
 							} else {
 								progressMark.ari = 0;
+								progressMark.caption = "";
 								S.getDb().updateProgressMark(progressMark);
 								adapter.notifyDataSetChanged();
 							}
@@ -110,6 +117,8 @@ public class ProgressMarkDialog extends DialogFragment{
 	public void setOnProgressMarkSelected(OnProgressMarkSelected onProgressMarkSelected) {
 		this.onProgressMarkSelected = onProgressMarkSelected;
 	}
+
+
 
 	class ProgressMarkAdapter extends EasyAdapter {
 
@@ -134,13 +143,20 @@ public class ProgressMarkDialog extends DialogFragment{
 			TextView tDate = V.get(view, R.id.lDate);
 			TextView tVerseText = V.get(view, R.id.lSnippet);
 
-			tCaption.setText(progressMarks.get(position).caption);
+			final ProgressMark progressMark = progressMarks.get(position);
+
+			if (progressMark.ari == 0) {
+				tCaption.setText(ProgressMark.getDefaultProgressMarkResource(position));
+			} else {
+				tCaption.setText(progressMark.caption);
+			}
 			Appearances.applyBookmarkTitleTextAppearance(tCaption);
-			int ari = progressMarks.get(position).ari;
+
+			int ari = progressMark.ari;
 			String verseText = "";
 			String date = "";
 			if (ari != 0) {
-				date = Sqlitil.toLocaleDateMedium(progressMarks.get(position).modifyTime);
+				date = Sqlitil.toLocaleDateMedium(progressMark.modifyTime);
 				tDate.setText(date);
 
 				String reference = S.activeVersion.reference(ari);
@@ -155,4 +171,5 @@ public class ProgressMarkDialog extends DialogFragment{
 		}
 
 	}
+
 }
