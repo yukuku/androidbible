@@ -118,8 +118,6 @@ public class ProgressMarkDialog extends DialogFragment{
 		this.onProgressMarkSelected = onProgressMarkSelected;
 	}
 
-
-
 	class ProgressMarkAdapter extends EasyAdapter {
 
 		List<ProgressMark> progressMarks;

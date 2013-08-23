@@ -52,7 +52,7 @@
         android:id="@+id/menuProgressMark"
         android:icon="@android:drawable/arrow_up_float"
         android:showAsAction="always"
-        android:title="@string/pm_progress_mark">
+        android:title="@string/pm_menu_save_progresses">
         <menu>
             <item
                 android:id="@+id/menuProgress1"

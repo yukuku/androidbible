@@ -261,12 +261,14 @@
 	<string name="menuFullScreen">Full screen</string>
     <string name="full_screen_dismiss_hint">Press <b>Back</b> to return from full screen</string>
 
-    <string name="pm_progress_mark">Progress Mark</string>
     <string name="pm_progress_1">Progress 1</string>
     <string name="pm_progress_2">Progress 2</string>
     <string name="pm_progress_3">Progress 3</string>
     <string name="pm_progress_4">Progress 4</string>
     <string name="pm_progress_5">Progress 5</string>
+    <string name="pm_menu_save_progress">Save</string>
+    <string name="pm_menu_save_progresses">Save Progress</string>
+    <string name="pm_menu_view_progress">View Progress</string>
     <string name="pm_progress_name">Progress name</string>
     <string name="pm_edit_name">Edit name</string>
     <string name="pm_delete_progress">Delete progress</string>

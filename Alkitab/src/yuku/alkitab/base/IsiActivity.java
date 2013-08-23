@@ -1804,7 +1804,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	};
 
 	private void setProgressMenuTitle(final List<ProgressMark> progressMarks, final MenuItem item, int position) {
-		item.setTitle(progressMarks.get(position).ari == 0? getString(ProgressMark.getDefaultProgressMarkResource(position)): progressMarks.get(position).caption);
+		String title = progressMarks.get(position).ari == 0 ? getString(ProgressMark.getDefaultProgressMarkResource(position)): progressMarks.get(position).caption;
+
+		item.setTitle(getString(R.string.pm_menu_save_progress) + " " + title);
 	}
 
 	private void moveProgressMark(final int mainVerse_1, int position) {
