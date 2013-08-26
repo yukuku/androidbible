@@ -45,6 +45,7 @@ public class ProgressMarkDialog extends DialogFragment{
 		ListView lsProgressMark = V.get(view, R.id.lsProgressMark);
 		final ProgressMarkAdapter adapter = new ProgressMarkAdapter();
 		adapter.load();
+		lsProgressMark.setBackgroundColor(S.applied.backgroundColor);
 		lsProgressMark.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
@@ -166,6 +167,7 @@ public class ProgressMarkDialog extends DialogFragment{
 				view.setEnabled(true);
 			}
 			tDate.setText(date);
+			Appearances.applyBookmarkDateTextAppearance(tDate);
 		}
 
 	}
