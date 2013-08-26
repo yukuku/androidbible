@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import yuku.afw.V;
@@ -141,6 +142,25 @@ public class ProgressMarkDialog extends DialogFragment{
 			TextView tCaption = V.get(view, R.id.lCaption);
 			TextView tDate = V.get(view, R.id.lDate);
 			TextView tVerseText = V.get(view, R.id.lSnippet);
+			ImageView imgIcon = V.get(view, R.id.imgIcon);
+
+			switch (position) {
+				case 0:
+					imgIcon.setImageResource(R.drawable.ic_attr_progress_mark_1);
+					break;
+				case 1:
+					imgIcon.setImageResource(R.drawable.ic_attr_progress_mark_2);
+					break;
+				case 2:
+					imgIcon.setImageResource(R.drawable.ic_attr_progress_mark_3);
+					break;
+				case 3:
+					imgIcon.setImageResource(R.drawable.ic_attr_progress_mark_4);
+					break;
+				case 4:
+					imgIcon.setImageResource(R.drawable.ic_attr_progress_mark_5);
+					break;
+			}
 
 			final ProgressMark progressMark = progressMarks.get(position);
 
