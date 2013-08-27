@@ -98,7 +98,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener {
+public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener, ProgressMarkDialog.OnProgressMarkSelected {
 	public static final String TAG = IsiActivity.class.getSimpleName();
 	
 	// The followings are for instant_pref
@@ -121,6 +121,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	private static final String EXTRA_verseUrl = "urlAyat"; //$NON-NLS-1$
 	private boolean uncheckVersesWhenActionModeDestroyed = true;
+
+	@Override
+	public void onSelect(final int ari) {
+		jumpToAri(ari);
+		history.add(ari);
+	}
 
 	class FullScreenController {
 	    private Animator mCurrentShowAnim;
@@ -1060,15 +1066,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		.show();
 	}
 
-	private void openProgressMarkDialog() {FragmentManager fm = getSupportFragmentManager();
+	private void openProgressMarkDialog() {
+		FragmentManager fm = getSupportFragmentManager();
 		ProgressMarkDialog dialog = new ProgressMarkDialog();
-		dialog.setOnProgressMarkSelected(new ProgressMarkDialog.OnProgressMarkSelected() {
-			@Override
-			public void onSelect(final int ari) {
-				jumpToAri(ari);
-				history.add(ari);
-			}
-		});
 		dialog.show(fm, "progress_mark_dialog");
 	}
 

@@ -1,5 +1,6 @@
 package yuku.alkitab.base.dialog;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -35,6 +36,12 @@ public class ProgressMarkDialog extends DialogFragment{
 	}
 
 	OnProgressMarkSelected onProgressMarkSelected;
+
+	@Override
+	public void onAttach(final Activity activity) {
+		super.onAttach(activity);
+		onProgressMarkSelected = (OnProgressMarkSelected) activity;
+	}
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
@@ -114,10 +121,6 @@ public class ProgressMarkDialog extends DialogFragment{
 		lsProgressMark.setAdapter(adapter);
 
 		return view;
-	}
-
-	public void setOnProgressMarkSelected(OnProgressMarkSelected onProgressMarkSelected) {
-		this.onProgressMarkSelected = onProgressMarkSelected;
 	}
 
 	class ProgressMarkAdapter extends EasyAdapter {
