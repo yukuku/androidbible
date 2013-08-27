@@ -50,33 +50,33 @@
         tools:ignore="HardcodedText"/>
     <item
         android:id="@+id/menuProgressMark"
-        android:icon="@android:drawable/arrow_up_float"
+        android:icon="@drawable/ic_attr_progress_mark_0"
         android:showAsAction="always"
-        android:title="@string/pm_progress_mark">
+        android:title="@string/pm_menu_save_progresses">
         <menu>
             <item
                 android:id="@+id/menuProgress1"
-                android:icon="@drawable/ic_nav_right_dark"
+                android:icon="@drawable/ic_attr_progress_mark_1"
                 android:showAsAction="always"
                 android:title="@string/pm_progress_1"/>
             <item
                 android:id="@+id/menuProgress2"
-                android:icon="@drawable/ic_nav_right_dark"
+                android:icon="@drawable/ic_attr_progress_mark_2"
                 android:showAsAction="always"
                 android:title="@string/pm_progress_2"/>
             <item
                 android:id="@+id/menuProgress3"
-                android:icon="@drawable/ic_nav_right_dark"
+                android:icon="@drawable/ic_attr_progress_mark_3"
                 android:showAsAction="always"
                 android:title="@string/pm_progress_3"/>
             <item
                 android:id="@+id/menuProgress4"
-                android:icon="@drawable/ic_nav_right_dark"
+                android:icon="@drawable/ic_attr_progress_mark_4"
                 android:showAsAction="always"
                 android:title="@string/pm_progress_4"/>
             <item
                 android:id="@+id/menuProgress5"
-                android:icon="@drawable/ic_nav_right_dark"
+                android:icon="@drawable/ic_attr_progress_mark_5"
                 android:showAsAction="always"
                 android:title="@string/pm_progress_5"/>
         </menu>

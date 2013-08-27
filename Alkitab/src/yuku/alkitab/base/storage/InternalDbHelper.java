@@ -152,15 +152,11 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 
 	private void insertDefaultProgressMarks(SQLiteDatabase db) {
 		ContentValues cv = new ContentValues();
-		cv.put(Db.ProgressMark.caption, "Progress 1"); //TODO name/caption!!
+		cv.put(Db.ProgressMark.ari, 0);
 		db.insert(Db.TABLE_ProgressMark, null, cv);
-		cv.put(Db.ProgressMark.caption, "Progress 2");
 		db.insert(Db.TABLE_ProgressMark, null, cv);
-		cv.put(Db.ProgressMark.caption, "Progress 3");
 		db.insert(Db.TABLE_ProgressMark, null, cv);
-		cv.put(Db.ProgressMark.caption, "Progress 4");
 		db.insert(Db.TABLE_ProgressMark, null, cv);
-		cv.put(Db.ProgressMark.caption, "Progress 5");
 		db.insert(Db.TABLE_ProgressMark, null, cv);
 
 	}

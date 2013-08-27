@@ -26,13 +26,18 @@
                 android:id="@+id/lCaption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentLeft="false"
                 android:layout_alignParentTop="true"
                 android:layout_toLeftOf="@+id/lDate"
                 android:text="Keterangan atau Alamat Ayat dsb"
                 android:textColor="#fff"
                 android:textSize="18sp"
-                tools:ignore="HardcodedText" />
+                tools:ignore="HardcodedText" android:layout_toRightOf="@+id/imgIcon" android:layout_marginLeft="4dp"/>
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imgIcon" android:layout_alignParentLeft="true" android:layout_alignParentTop="true"
+                android:focusableInTouchMode="false"/>
 
     </RelativeLayout>
 

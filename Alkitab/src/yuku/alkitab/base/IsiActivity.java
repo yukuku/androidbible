@@ -98,7 +98,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener {
+public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener, ProgressMarkDialog.OnProgressMarkSelected {
 	public static final String TAG = IsiActivity.class.getSimpleName();
 	
 	// The followings are for instant_pref
@@ -121,6 +121,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	private static final String EXTRA_verseUrl = "urlAyat"; //$NON-NLS-1$
 	private boolean uncheckVersesWhenActionModeDestroyed = true;
+
+	@Override
+	public void onSelect(final int ari) {
+		jumpToAri(ari);
+		history.add(ari);
+	}
 
 	class FullScreenController {
 	    private Animator mCurrentShowAnim;
@@ -1060,15 +1066,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		.show();
 	}
 
-	private void openProgressMarkDialog() {FragmentManager fm = getSupportFragmentManager();
+	private void openProgressMarkDialog() {
+		FragmentManager fm = getSupportFragmentManager();
 		ProgressMarkDialog dialog = new ProgressMarkDialog();
-		dialog.setOnProgressMarkSelected(new ProgressMarkDialog.OnProgressMarkSelected() {
-			@Override
-			public void onSelect(final int ari) {
-				jumpToAri(ari);
-				history.add(ari);
-			}
-		});
 		dialog.show(fm, "progress_mark_dialog");
 	}
 
@@ -1601,15 +1601,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 			List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
 			MenuItem item1 = menu.findItem(R.id.menuProgress1);
-			item1.setTitle(progressMarks.get(0).caption);
+			setProgressMenuTitle(progressMarks, item1, 0);
 			MenuItem item2 = menu.findItem(R.id.menuProgress2);
-			item2.setTitle(progressMarks.get(1).caption);
+			setProgressMenuTitle(progressMarks, item2, 1);
 			MenuItem item3 = menu.findItem(R.id.menuProgress3);
-			item3.setTitle(progressMarks.get(2).caption);
+			setProgressMenuTitle(progressMarks, item3, 2);
 			MenuItem item4 = menu.findItem(R.id.menuProgress4);
-			item4.setTitle(progressMarks.get(3).caption);
+			setProgressMenuTitle(progressMarks, item4, 3);
 			MenuItem item5 = menu.findItem(R.id.menuProgress5);
-			item5.setTitle(progressMarks.get(4).caption);
+			setProgressMenuTitle(progressMarks, item5, 4);
 
 			return true;
 		}
@@ -1802,6 +1802,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 		}
 	};
+
+	private void setProgressMenuTitle(final List<ProgressMark> progressMarks, final MenuItem item, int position) {
+		String title = progressMarks.get(position).ari == 0 ? getString(ProgressMark.getDefaultProgressMarkResource(position)): progressMarks.get(position).caption;
+
+		item.setTitle(getString(R.string.pm_menu_save_progress) + " " + title);
+	}
 
 	private void moveProgressMark(final int mainVerse_1, int position) {
 		final int ari = Ari.encode(this.activeBook.bookId, this.chapter_1, mainVerse_1);

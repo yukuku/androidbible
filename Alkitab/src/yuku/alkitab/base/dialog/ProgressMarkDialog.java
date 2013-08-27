@@ -1,14 +1,17 @@
 package yuku.alkitab.base.dialog;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import yuku.afw.V;
@@ -35,6 +38,12 @@ public class ProgressMarkDialog extends DialogFragment{
 	OnProgressMarkSelected onProgressMarkSelected;
 
 	@Override
+	public void onAttach(final Activity activity) {
+		super.onAttach(activity);
+		onProgressMarkSelected = (OnProgressMarkSelected) activity;
+	}
+
+	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 
 		this.inflater = inflater;
@@ -44,6 +53,7 @@ public class ProgressMarkDialog extends DialogFragment{
 		ListView lsProgressMark = V.get(view, R.id.lsProgressMark);
 		final ProgressMarkAdapter adapter = new ProgressMarkAdapter();
 		adapter.load();
+		lsProgressMark.setBackgroundColor(S.applied.backgroundColor);
 		lsProgressMark.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
@@ -72,21 +82,33 @@ public class ProgressMarkDialog extends DialogFragment{
 							if (which == 0) {
 								final View v = inflater.inflate(R.layout.item_progress_mark_edit, container, false);
 								final TextView tCaption = V.get(v, R.id.tCaption);
+								final String originalCaption;
+								final String caption = progressMark.caption;
+								if (TextUtils.isEmpty(caption)) {
+									originalCaption = getString(ProgressMark.getDefaultProgressMarkResource(position));
+								} else {
+									originalCaption = caption;
+								}
+								tCaption.setText(originalCaption);
 								AlertDialog.Builder editDialog = new AlertDialog.Builder(getActivity());
 								editDialog.setView(v)
 								.setNegativeButton(getString(R.string.cancel), null)
 								.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
 									@Override
 									public void onClick(final DialogInterface dialog, final int which) {
-										progressMark.caption = String.valueOf(tCaption.getText());
-										progressMark.modifyTime = new Date();
-										S.getDb().updateProgressMark(progressMark);
-										adapter.notifyDataSetChanged();
+										final String name = String.valueOf(tCaption.getText());
+										if (originalCaption != null && !TextUtils.isEmpty(name) && !originalCaption.equals(name)) {
+											progressMark.caption = name;
+											progressMark.modifyTime = new Date();
+											S.getDb().updateProgressMark(progressMark);
+											adapter.notifyDataSetChanged();
+										}
 									}
 								})
 								.show();
 							} else {
 								progressMark.ari = 0;
+								progressMark.caption = "";
 								S.getDb().updateProgressMark(progressMark);
 								adapter.notifyDataSetChanged();
 							}
@@ -99,10 +121,6 @@ public class ProgressMarkDialog extends DialogFragment{
 		lsProgressMark.setAdapter(adapter);
 
 		return view;
-	}
-
-	public void setOnProgressMarkSelected(OnProgressMarkSelected onProgressMarkSelected) {
-		this.onProgressMarkSelected = onProgressMarkSelected;
 	}
 
 	class ProgressMarkAdapter extends EasyAdapter {
@@ -127,14 +145,40 @@ public class ProgressMarkDialog extends DialogFragment{
 			TextView tCaption = V.get(view, R.id.lCaption);
 			TextView tDate = V.get(view, R.id.lDate);
 			TextView tVerseText = V.get(view, R.id.lSnippet);
+			ImageView imgIcon = V.get(view, R.id.imgIcon);
 
-			tCaption.setText(progressMarks.get(position).caption);
+			switch (position) {
+				case 0:
+					imgIcon.setImageResource(R.drawable.ic_attr_progress_mark_1);
+					break;
+				case 1:
+					imgIcon.setImageResource(R.drawable.ic_attr_progress_mark_2);
+					break;
+				case 2:
+					imgIcon.setImageResource(R.drawable.ic_attr_progress_mark_3);
+					break;
+				case 3:
+					imgIcon.setImageResource(R.drawable.ic_attr_progress_mark_4);
+					break;
+				case 4:
+					imgIcon.setImageResource(R.drawable.ic_attr_progress_mark_5);
+					break;
+			}
+
+			final ProgressMark progressMark = progressMarks.get(position);
+
+			if (progressMark.ari == 0) {
+				tCaption.setText(ProgressMark.getDefaultProgressMarkResource(position));
+			} else {
+				tCaption.setText(progressMark.caption);
+			}
 			Appearances.applyBookmarkTitleTextAppearance(tCaption);
-			int ari = progressMarks.get(position).ari;
+
+			int ari = progressMark.ari;
 			String verseText = "";
 			String date = "";
 			if (ari != 0) {
-				date = Sqlitil.toLocaleDateMedium(progressMarks.get(position).modifyTime);
+				date = Sqlitil.toLocaleDateMedium(progressMark.modifyTime);
 				tDate.setText(date);
 
 				String reference = S.activeVersion.reference(ari);
@@ -146,7 +190,9 @@ public class ProgressMarkDialog extends DialogFragment{
 				view.setEnabled(true);
 			}
 			tDate.setText(date);
+			Appearances.applyBookmarkDateTextAppearance(tDate);
 		}
 
 	}
+
 }

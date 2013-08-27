@@ -3,6 +3,7 @@ package yuku.alkitab.base.model;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.provider.BaseColumns;
+import yuku.alkitab.R;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.util.Sqlitil;
 
@@ -32,6 +33,28 @@ public class ProgressMark {
 		cv.put(Db.ProgressMark.ari, ari);
 		cv.put(Db.ProgressMark.modifyTime, Sqlitil.toInt(modifyTime));
 		return cv;
+	}
+
+	public static int getDefaultProgressMarkResource(int position) {
+		int res = 0;
+		switch (position) {
+			case 0:
+				res = R.string.pm_progress_1;
+				break;
+			case 1:
+				res = R.string.pm_progress_2;
+				break;
+			case 2:
+				res = R.string.pm_progress_3;
+				break;
+			case 3:
+				res = R.string.pm_progress_4;
+				break;
+			case 4:
+				res = R.string.pm_progress_5;
+				break;
+		}
+		return res;
 	}
 
 }
