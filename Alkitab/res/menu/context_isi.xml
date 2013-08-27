@@ -3,16 +3,24 @@
     xmlns:tools="http://schemas.android.com/tools" >
 
     <item
-        android:id="@+id/menuCopy"
-        android:icon="@drawable/ic_menu_copy"
+        android:id="@+id/menuCopyShare"
+        android:icon="@drawable/ic_menu_copyshare"
         android:showAsAction="always"
-        android:title="@string/salin_ayat"
-        tools:ignore="AlwaysShowAction"/>
-    <item
-        android:id="@+id/menuShare"
-        android:icon="@drawable/ic_menu_share"
-        android:showAsAction="always"
-        android:title="@string/bagikan"/>
+        android:title="@string/copy_share"
+        tools:ignore="AlwaysShowAction">
+        <menu>
+            <item
+                android:id="@+id/menuCopy"
+                android:icon="@drawable/ic_menu_copy"
+                android:showAsAction="always"
+                android:title="@string/salin_ayat"/>
+            <item
+                android:id="@+id/menuShare"
+                android:icon="@drawable/ic_menu_share"
+                android:showAsAction="always"
+                android:title="@string/bagikan"/>
+        </menu>
+    </item>
     <item
         android:id="@+id/menuVersions"
         android:icon="@drawable/ic_menu_versions"
