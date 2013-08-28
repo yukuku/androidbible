@@ -31,16 +31,16 @@ public class ProgressMarkDialog extends DialogFragment{
 
 	LayoutInflater inflater;
 
-	public interface OnProgressMarkSelected {
-		void onSelect(int ari);
+	public interface ProgressMarkDialogListener {
+		void onProgressMarkSelected(int ari);
 	}
 
-	OnProgressMarkSelected onProgressMarkSelected;
+	ProgressMarkDialogListener onProgressMarkSelected;
 
 	@Override
 	public void onAttach(final Activity activity) {
 		super.onAttach(activity);
-		onProgressMarkSelected = (OnProgressMarkSelected) activity;
+		onProgressMarkSelected = (ProgressMarkDialogListener) activity;
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class ProgressMarkDialog extends DialogFragment{
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 				int ari = adapter.progressMarks.get(position).ari;
 				if (ari != 0) {
-					onProgressMarkSelected.onSelect(ari);
+					onProgressMarkSelected.onProgressMarkSelected(ari);
 					getDialog().dismiss();
 				} else {
 					AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
