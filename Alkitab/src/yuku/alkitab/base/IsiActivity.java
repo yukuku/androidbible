@@ -98,7 +98,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener, ProgressMarkDialog.OnProgressMarkSelected {
+public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener, ProgressMarkDialog.ProgressMarkDialogListener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
 	
 	// The followings are for instant_pref
@@ -123,7 +123,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private boolean uncheckVersesWhenActionModeDestroyed = true;
 
 	@Override
-	public void onSelect(final int ari) {
+	public void onProgressMarkSelected(final int ari) {
 		jumpToAri(ari);
 		history.add(ari);
 	}
