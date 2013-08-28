@@ -1,5 +1,11 @@
 package yuku.alkitabconverter.thewordbatch;
 
+import yuku.alkitab.base.model.Ari;
+import yuku.alkitabconverter.util.KjvUtils;
+import yuku.alkitabconverter.util.Rec;
+import yuku.alkitabconverter.util.TextDb;
+import yuku.alkitabconverter.yes_common.Yes2Common;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -11,16 +17,10 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
-import yuku.alkitab.base.model.Ari;
-import yuku.alkitabconverter.util.KjvUtils;
-import yuku.alkitabconverter.util.Rec;
-import yuku.alkitabconverter.util.TextDb;
-import yuku.alkitabconverter.yes_common.Yes2Common;
-
 public class TheWordBatchConverter {
 	static String DATA_DIR = "/Users/yuku/j/operasi/theword";
 	
-	List<String> appConfigEntries = new ArrayList<>();
+	List<String> appConfigEntries = new ArrayList<String>();
 	
 	public static void main(String[] args) throws Exception {
 		new TheWordBatchConverter().convertAll();
@@ -71,33 +71,31 @@ public class TheWordBatchConverter {
 		
 		// read properties file
 		Yes2Common.VersionInfo versionInfo = new Yes2Common.VersionInfo();
-		String outputName;
-		
-		try (InputStreamReader propInput = new InputStreamReader(new FileInputStream(new File(superdir, dir.getName() + ".properties")), "utf-8")) {
-			Properties prop = new Properties();
-			prop.load(propInput);
-			versionInfo.locale = prop.getProperty("versionInfo.locale");
-			versionInfo.shortName = prop.getProperty("versionInfo.shortName");
-			versionInfo.longName = prop.getProperty("versionInfo.longName");
-			versionInfo.description = prop.getProperty("versionInfo.description");
-			outputName = prop.getProperty("output.name");
-		}
+
+		InputStreamReader propInput = new InputStreamReader(new FileInputStream(new File(superdir, dir.getName() + ".properties")), "utf-8");			Properties prop = new Properties();
+		prop.load(propInput);
+		versionInfo.locale = prop.getProperty("versionInfo.locale");
+		versionInfo.shortName = prop.getProperty("versionInfo.shortName");
+		versionInfo.longName = prop.getProperty("versionInfo.longName");
+		versionInfo.description = prop.getProperty("versionInfo.description");
+		String outputName = prop.getProperty("output.name");
+		propInput.close();
 		
 		// read booknames file
-		try (Scanner sc = new Scanner(new File(superdir, dir.getName() + ".booknames.txt"))) {
-			List<String> bookNames = new ArrayList<>();
-			while (sc.hasNextLine()) {
-				bookNames.add(sc.nextLine());
-			}
-			versionInfo.setBookNames(bookNames);
+		Scanner sc = new Scanner(new File(superdir, dir.getName() + ".booknames.txt"));
+		List<String> bookNames = new ArrayList<String>();
+		while (sc.hasNextLine()) {
+			bookNames.add(sc.nextLine());
 		}
-		
-		TextDb textDb = processTextFile(superdir.getName(), dir.getName(), textFile);
-		
-		try (PrintStream ps = new PrintStream(new File("/tmp/" + outputName + ".txt"))) {
-			textDb.dump(ps);
-		}
-		
+		versionInfo.setBookNames(bookNames);
+		sc.close();
+
+		TextDb textDb = processTextFile(textFile);
+
+		PrintStream ps = new PrintStream(new File("/tmp/" + outputName + ".txt"));
+		textDb.dump(ps);
+		ps.close();
+
 		Yes2Common.createYesFile(new File("/tmp", outputName + ".yes"), versionInfo, textDb, null, true);
 		
 		appConfigEntries.add(String.format("<preset locale=%-6s shortName=%-9s longName=%s filename_preset=%s url=%s />", q(versionInfo.locale), q(versionInfo.shortName), q(versionInfo.longName), q(outputName + ".yes"), q("http://alkitab-host.appspot.com/addon/yes2/" + outputName + "--1.yes.gz")));
@@ -109,32 +107,32 @@ public class TheWordBatchConverter {
 		return '"' + s.replace("\"", "&quot;") + '"';
 	}
 
-	TextDb processTextFile(String categoryName, String versionName, File textFile) throws Exception {
+	TextDb processTextFile(File textFile) throws Exception {
 		List<Rec> recs = new ArrayList<Rec>();
-		
-		try (Scanner sc = new Scanner(textFile, "utf-8")) {
-			int lid = 0;
-			while (sc.hasNextLine()) {
-				String line = sc.nextLine();
-				line = line.trim();
-				
-				lid++;
-				int ari = KjvUtils.lidToAri(lid);
-				
-				Rec rec = new Rec();
-				rec.book_1 = Ari.toBook(ari) + 1;
-				rec.chapter_1 = Ari.toChapter(ari);
-				rec.verse_1 = Ari.toVerse(ari);
-				rec.text = line;
-				
-				recs.add(rec);
-				
-				if (lid == 31102) {
-					break; // done, don't continue
-				}
+
+		Scanner sc = new Scanner(textFile, "utf-8");
+		int lid = 0;
+		while (sc.hasNextLine()) {
+			String line = sc.nextLine();
+			line = line.trim();
+
+			lid++;
+			int ari = KjvUtils.lidToAri(lid);
+
+			Rec rec = new Rec();
+			rec.book_1 = Ari.toBook(ari) + 1;
+			rec.chapter_1 = Ari.toChapter(ari);
+			rec.verse_1 = Ari.toVerse(ari);
+			rec.text = line;
+
+			recs.add(rec);
+
+			if (lid == 31102) {
+				break; // done, don't continue
 			}
 		}
-		
+		sc.close();
+
 		TextDb textDb = new TextDb();
 		
 		for (Rec rec: recs) {
@@ -152,7 +150,7 @@ public class TheWordBatchConverter {
 		{ // look for <I> (italics)
 			if (verseText.contains("<I>") && verseText.contains("</I>")) {
 				verseText = verseText.replaceAll("<I>", "@9").replaceAll("</I>", "@7");
-			} else if ((verseText.contains("<I>") ^ verseText.contains("</I>")) == true) {
+			} else if (verseText.contains("<I>") ^ verseText.contains("</I>")) {
 				throw new RuntimeException("Verse contains <I> or </I> but no corresponding tag");
 			}
 		}
