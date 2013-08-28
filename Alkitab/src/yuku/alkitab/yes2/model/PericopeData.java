@@ -11,9 +11,7 @@ public class PericopeData {
 	public static class Block {
 		public String title;
 		public List<String> parallels;
-		
-		public int _offset = -1;
-		
+
 		public void addParallel(String parallel) {
 			if (parallels == null) parallels = new ArrayList<String>();
 			parallels.add(parallel);
