@@ -273,6 +273,7 @@
     <string name="pm_edit_name">Edit name</string>
     <string name="pm_delete_progress">Delete progress</string>
     <string name="pm_activate_tutorial">Select any verse then select the progress from menu to activate this progress mark.</string>
+    <string name="pm_icon_click_message">"at %1$s \nsaved on %2$s"</string>
 
     <string name="copy_share">Copy or share</string>
 </resources>

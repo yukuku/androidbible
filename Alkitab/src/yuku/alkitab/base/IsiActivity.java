@@ -22,6 +22,7 @@ import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.util.Pair;
@@ -85,6 +86,7 @@ import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.base.util.Search2Engine.Query;
+import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.SplitHandleButton;
@@ -126,6 +128,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	public void onProgressMarkSelected(final int ari) {
 		jumpToAri(ari);
 		history.add(ari);
+	}
+
+	@Override
+	public void onProgressMarkDeleted(final int ari) {
+		reloadVerse();
 	}
 
 	class FullScreenController {
@@ -326,6 +333,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		// listeners
 		lsText.setParallelListener(parallelListener);
 		lsText.setAttributeListener(attributeListener);
+		lsText.setProgressAttributeListener(progressAttributeListener);
 		lsText.setXrefListener(xrefListener);
 		lsText.setSelectedVersesListener(lsText_selectedVerses);
 		lsText.setOnVerseScrollListener(lsText_verseScroll);
@@ -335,6 +343,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsSplit1.setEmptyView(tSplitEmpty);
 		lsSplit1.setParallelListener(parallelListener);
 		lsSplit1.setAttributeListener(attributeListener);
+		lsSplit1.setProgressAttributeListener(progressAttributeListener);
 		lsSplit1.setXrefListener(xrefListener);
 		lsSplit1.setSelectedVersesListener(lsSplit1_selectedVerses);
 		lsSplit1.setOnVerseScrollListener(lsSplit1_verseScroll);
@@ -1491,6 +1500,39 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 		}
 	};
+
+	VersesView.ProgressAttributeListener progressAttributeListener = new VersesView.ProgressAttributeListener() {
+		@Override
+		public void onProgressAttributeClick(final int progressId) {
+
+			ProgressMark progressMark = S.getDb().getProgressMarkById(progressId);
+
+			int iconRes = ProgressMark.getProgressMarkIconResource(progressId);
+			String title;
+
+			if (progressMark.ari == 0 || TextUtils.isEmpty(progressMark.caption)) {
+				title = getString(ProgressMark.getDefaultProgressMarkResource(progressId));
+			} else {
+				title = progressMark.caption;
+			}
+
+			String verseText = "";
+			int ari = progressMark.ari;
+			if (ari != 0) {
+				String date = Sqlitil.toLocaleDateMedium(progressMark.modifyTime);
+
+				String reference = S.activeVersion.reference(ari);
+				verseText = getString(R.string.pm_icon_click_message, reference, date);
+			}
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(IsiActivity.this);
+			builder.setPositiveButton(getString(R.string.ok), null)
+			.setIcon(iconRes)
+			.setTitle(title)
+			.setMessage(verseText)
+			.show();
+		}
+	};
 	
 	VersesView.XrefListener xrefListener = new VersesView.XrefListener() {
 		@Override public void onXrefClick(VersesView versesView, int ari, int which) {
@@ -1712,12 +1754,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, IsiActivity.this.activeBook.reference(IsiActivity.this.chapter_1, mainVerse_1), ari);
 				dialog.setListener(new TypeBookmarkDialog.Listener() {
 					@Override public void onOk() {
-						lsText.uncheckAllVerses(true);
-						lsText.loadAttributeMap();
-
-						if (activeSplitVersion != null) {
-							lsSplit1.loadAttributeMap();
-						}
+						reloadVerse();
 					}
 				});
 				dialog.show();
@@ -1734,12 +1771,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				
 				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, IsiActivity.this.activeBook, IsiActivity.this.chapter_1, mainVerse_1, new TypeNoteDialog.Listener() {
 					@Override public void onDone() {
-						lsText.uncheckAllVerses(true);
-						lsText.loadAttributeMap();
-						
-						if (activeSplitVersion != null) {
-							lsSplit1.loadAttributeMap();
-						}
+						reloadVerse();
 					}
 				});
 				dialog.show();
@@ -1751,12 +1783,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				
 				new TypeHighlightDialog(IsiActivity.this, ariKp, selected, new TypeHighlightDialog.Listener() {
 					@Override public void onOk(int colorRgb) {
-						lsText.uncheckAllVerses(true);
-						lsText.loadAttributeMap();
-
-						if (activeSplitVersion != null) {
-							lsSplit1.loadAttributeMap();
-						}
+						reloadVerse();
 					}
 				}, colorRgb, reference).show();
 				mode.finish();
@@ -1774,18 +1801,23 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			} return true;
 			case R.id.menuProgress1: {
 				moveProgressMark(mainVerse_1, 0);
+				reloadVerse();
 			} return true;
 			case R.id.menuProgress2: {
 				moveProgressMark(mainVerse_1, 1);
+				reloadVerse();
 			} return true;
 			case R.id.menuProgress3: {
 				moveProgressMark(mainVerse_1, 2);
+				reloadVerse();
 			} return true;
 			case R.id.menuProgress4: {
 				moveProgressMark(mainVerse_1, 3);
+				reloadVerse();
 			} return true;
 			case R.id.menuProgress5: {
 				moveProgressMark(mainVerse_1, 4);
+				reloadVerse();
 			} return true;
 
 			}
@@ -1803,8 +1835,17 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	};
 
+	private void reloadVerse() {
+		lsText.uncheckAllVerses(true);
+		lsText.loadAttributeMap();
+
+		if (activeSplitVersion != null) {
+			lsSplit1.loadAttributeMap();
+		}
+	}
+
 	private void setProgressMenuTitle(final List<ProgressMark> progressMarks, final MenuItem item, int position) {
-		String title = progressMarks.get(position).ari == 0 ? getString(ProgressMark.getDefaultProgressMarkResource(position)): progressMarks.get(position).caption;
+		String title = (progressMarks.get(position).ari == 0 || TextUtils.isEmpty(progressMarks.get(position).caption)) ? getString(ProgressMark.getDefaultProgressMarkResource(position)): progressMarks.get(position).caption;
 
 		item.setTitle(getString(R.string.pm_menu_save_progress) + " " + title);
 	}

@@ -14,10 +14,6 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.U;
@@ -26,6 +22,9 @@ import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.util.IntArrayList;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public class VersesView extends ListView implements AbsListView.OnScrollListener {
 	public static final String TAG = VersesView.class.getSimpleName();
@@ -71,6 +70,10 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 
 	public interface AttributeListener {
 		void onAttributeClick(Book book, int chapter_1, int verse_1, int kind);
+	}
+
+	public interface ProgressAttributeListener {
+		void onProgressAttributeClick(int progressId);
 	}
 
 	public abstract static class XrefListener {
@@ -137,6 +140,10 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 
 	public void setAttributeListener(VersesView.AttributeListener attributeListener) {
 		adapter.setAttributeListener(attributeListener);
+	}
+
+	public void setProgressAttributeListener(VersesView.ProgressAttributeListener progressAttributeListener) {
+		adapter.setProgressAttributeListener(progressAttributeListener);
 	}
 	
 	public void setXrefListener(VersesView.XrefListener xrefListener) {

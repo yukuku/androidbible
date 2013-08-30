@@ -6,9 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.BaseAdapter;
-
-import java.util.Arrays;
-
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
@@ -16,6 +13,8 @@ import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.storage.Db;
+
+import java.util.Arrays;
 
 public abstract class VerseAdapter extends BaseAdapter {
 	public static final String TAG = VerseAdapter.class.getSimpleName();
@@ -67,6 +66,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	final Context context_;
 	CallbackSpan.OnClickListener parallelListener_;
 	VersesView.AttributeListener attributeListener_;
+	VersesView.ProgressAttributeListener progressAttributeListener_;
 	VersesView.XrefListener xrefListener_; 
 	final float density_;
 
@@ -85,6 +85,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	int[] itemPointer_;
 	int[] attributeMap_; // bit 0(0x1) = bukmak; bit 1(0x2) = catatan; bit 2(0x4) = stabilo;
 	int[] highlightMap_; // null atau warna stabilo
+	int[] progressAttributeMap_; //null or progress mark
 	int[] xrefEntryCounts_;
 	
 	LayoutInflater inflater_;
@@ -121,6 +122,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	public synchronized void loadAttributeMap() {
 		int[] attributeMap = null;
 		int[] highlightMap = null;
+		int[] progressAttributeMap = null;
 
 		int ariBc = Ari.encode(book_.bookId, chapter_1_, 0x00);
 		if (S.getDb().countAttributes(ariBc) > 0) {
@@ -130,6 +132,12 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 		attributeMap_ = attributeMap;
 		highlightMap_ = highlightMap;
+
+		if (S.getDb().countProgressAttributes(ariBc) > 0) {
+			progressAttributeMap = new int[verses_.getVerseCount()];
+			S.getDb().putProgressAttributes(ariBc, progressAttributeMap);
+		}
+		progressAttributeMap_ = progressAttributeMap;
 
 		notifyDataSetChanged();
 	}
@@ -164,16 +172,51 @@ public abstract class VerseAdapter extends BaseAdapter {
 		});
 	}
 
+	protected void setClickListenerForBookmark(AttributeView imgBookmark, final int pasal_1, final int ayat_1) {
+		imgBookmark.setOnBookmarkClickListener(new AttributeView.OnItemClickListener() {
+			@Override
+			public void onClick() {
+				if (attributeListener_ != null) {
+					attributeListener_.onAttributeClick(book_, pasal_1, ayat_1, Db.Bookmark2.kind_bookmark);
+				}
+			}
+		}
+		);
+	}
+
 	protected void setClickListenerForNote(View imgCatatan, final int pasal_1, final int ayat_1) {
 		imgCatatan.setOnClickListener(new View.OnClickListener() {
-			@Override public void onClick(View v) {
+			@Override
+			public void onClick(View v) {
 				if (attributeListener_ != null) {
 					attributeListener_.onAttributeClick(book_, pasal_1, ayat_1, Db.Bookmark2.kind_note);
 				}
 			}
 		});
 	}
-	
+
+	protected void setClickListenerForNote(AttributeView imgNote, final int pasal_1, final int ayat_1) {
+		imgNote.setOnNoteClickListener(new AttributeView.OnItemClickListener() {
+			@Override
+			public void onClick() {
+				if (attributeListener_ != null) {
+					attributeListener_.onAttributeClick(book_, pasal_1, ayat_1, Db.Bookmark2.kind_note);
+				}
+			}
+		});
+	}
+
+	protected void setClickListenerForProgress(AttributeView imgProgress, final int progressId) {
+		imgProgress.setOnProgressClickListeners(progressId, new AttributeView.OnItemClickListener() {
+			@Override
+			public void onClick() {
+				if (progressAttributeListener_ != null) {
+					progressAttributeListener_.onProgressAttributeClick(progressId);
+				}
+			}
+		});
+	}
+
 	public void setParallelListener(CallbackSpan.OnClickListener parallelListener) {
 		parallelListener_ = parallelListener;
 		notifyDataSetChanged();
@@ -181,6 +224,11 @@ public abstract class VerseAdapter extends BaseAdapter {
 	
 	public void setAttributeListener(VersesView.AttributeListener attributeListener) {
 		attributeListener_ = attributeListener;
+		notifyDataSetChanged();
+	}
+
+	public void setProgressAttributeListener(VersesView.ProgressAttributeListener progressAttributeListener) {
+		progressAttributeListener_ = progressAttributeListener;
 		notifyDataSetChanged();
 	}
 	

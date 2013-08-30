@@ -57,4 +57,26 @@ public class ProgressMark {
 		return res;
 	}
 
+	public static int getProgressMarkIconResource(int position) {
+		int iconRes = 0;
+		switch (position) {
+			case 0:
+				iconRes = R.drawable.ic_attr_progress_mark_1;
+				break;
+			case 1:
+				iconRes = R.drawable.ic_attr_progress_mark_2;
+				break;
+			case 2:
+				iconRes = R.drawable.ic_attr_progress_mark_3;
+				break;
+			case 3:
+				iconRes = R.drawable.ic_attr_progress_mark_4;
+				break;
+			case 4:
+				iconRes = R.drawable.ic_attr_progress_mark_5;
+				break;
+		}
+		return iconRes;
+	}
+
 }

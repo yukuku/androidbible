@@ -24,4 +24,7 @@
         <include
                 layout="@layout/verse_attributes"
                 android:id="@+id/atributayat" />
+        <include
+                layout="@layout/verse_bookmark_progress_attributes"
+                android:id="@+id/verse_bookmark_progress_attributes"/>
 </yuku.alkitab.base.widget.VerseItem>

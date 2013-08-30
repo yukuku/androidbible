@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content">
+    <view android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          class="yuku.alkitab.base.widget.AttributeView" android:id="@+id/view_bookmark_progress_attributes"/>
+
+</LinearLayout>

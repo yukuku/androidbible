@@ -33,14 +33,16 @@ public class ProgressMarkDialog extends DialogFragment{
 
 	public interface ProgressMarkDialogListener {
 		void onProgressMarkSelected(int ari);
+
+		void onProgressMarkDeleted(int ari);
 	}
 
-	ProgressMarkDialogListener onProgressMarkSelected;
+	ProgressMarkDialogListener progressMarkListener;
 
 	@Override
 	public void onAttach(final Activity activity) {
 		super.onAttach(activity);
-		onProgressMarkSelected = (ProgressMarkDialogListener) activity;
+		progressMarkListener = (ProgressMarkDialogListener) activity;
 	}
 
 	@Override
@@ -59,7 +61,7 @@ public class ProgressMarkDialog extends DialogFragment{
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 				int ari = adapter.progressMarks.get(position).ari;
 				if (ari != 0) {
-					onProgressMarkSelected.onProgressMarkSelected(ari);
+					progressMarkListener.onProgressMarkSelected(ari);
 					getDialog().dismiss();
 				} else {
 					AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
@@ -73,7 +75,8 @@ public class ProgressMarkDialog extends DialogFragment{
 			@Override
 			public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 				final ProgressMark progressMark = adapter.progressMarks.get(position);
-				if (progressMark.ari != 0) {
+				final int ari = progressMark.ari;
+				if (ari != 0) {
 					String[] menuContext = {getString(R.string.pm_edit_name), getString(R.string.pm_delete_progress)};
 					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 					builder.setItems(menuContext, new DialogInterface.OnClickListener() {
@@ -111,6 +114,7 @@ public class ProgressMarkDialog extends DialogFragment{
 								progressMark.caption = "";
 								S.getDb().updateProgressMark(progressMark);
 								adapter.notifyDataSetChanged();
+								progressMarkListener.onProgressMarkDeleted(ari);
 							}
 						}
 					}).show();
@@ -147,27 +151,11 @@ public class ProgressMarkDialog extends DialogFragment{
 			TextView tVerseText = V.get(view, R.id.lSnippet);
 			ImageView imgIcon = V.get(view, R.id.imgIcon);
 
-			switch (position) {
-				case 0:
-					imgIcon.setImageResource(R.drawable.ic_attr_progress_mark_1);
-					break;
-				case 1:
-					imgIcon.setImageResource(R.drawable.ic_attr_progress_mark_2);
-					break;
-				case 2:
-					imgIcon.setImageResource(R.drawable.ic_attr_progress_mark_3);
-					break;
-				case 3:
-					imgIcon.setImageResource(R.drawable.ic_attr_progress_mark_4);
-					break;
-				case 4:
-					imgIcon.setImageResource(R.drawable.ic_attr_progress_mark_5);
-					break;
-			}
+			imgIcon.setImageResource(ProgressMark.getProgressMarkIconResource(position));
 
 			final ProgressMark progressMark = progressMarks.get(position);
 
-			if (progressMark.ari == 0) {
+			if (progressMark.ari == 0 || TextUtils.isEmpty(progressMark.caption)) {
 				tCaption.setText(ProgressMark.getDefaultProgressMarkResource(position));
 			} else {
 				tCaption.setText(progressMark.caption);

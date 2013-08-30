@@ -153,12 +153,9 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	private void insertDefaultProgressMarks(SQLiteDatabase db) {
 		ContentValues cv = new ContentValues();
 		cv.put(Db.ProgressMark.ari, 0);
-		db.insert(Db.TABLE_ProgressMark, null, cv);
-		db.insert(Db.TABLE_ProgressMark, null, cv);
-		db.insert(Db.TABLE_ProgressMark, null, cv);
-		db.insert(Db.TABLE_ProgressMark, null, cv);
-		db.insert(Db.TABLE_ProgressMark, null, cv);
-
+		for (int i = 0; i < 5; i++) {
+			db.insert(Db.TABLE_ProgressMark, null, cv);
+		}
 	}
 	
 	@Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

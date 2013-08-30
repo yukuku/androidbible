@@ -30,7 +30,6 @@
                 android:layout_alignParentTop="true"
                 android:layout_toLeftOf="@+id/lDate"
                 android:text="Keterangan atau Alamat Ayat dsb"
-                android:textColor="#fff"
                 android:textSize="18sp"
                 tools:ignore="HardcodedText" android:layout_toRightOf="@+id/imgIcon" android:layout_marginLeft="4dp"/>
         <ImageView

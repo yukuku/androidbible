@@ -47,6 +47,20 @@ public class LegacyVerseAdapter extends VerseAdapter {
 			boolean withBookmark = attributeMap_ == null ? false : (attributeMap_[id] & 0x1) != 0;
 			boolean withNote = attributeMap_ == null ? false : (attributeMap_[id] & 0x2) != 0;
 			boolean withHighlight = attributeMap_ == null ? false : (attributeMap_[id] & 0x4) != 0;
+			boolean[] withProgressMarks = new boolean[5];
+			for (int i = 0; i < 5; i++) {
+				if (i == 0) {
+					withProgressMarks[i] = progressAttributeMap_ != null && (progressAttributeMap_[id] & 0x1) != 0;
+				} else if (i == 1) {
+					withProgressMarks[i] = progressAttributeMap_ != null && (progressAttributeMap_[id] & 0x2) != 0;
+				} else if (i == 2) {
+					withProgressMarks[i] = progressAttributeMap_ != null && (progressAttributeMap_[id] & 0x4) != 0;
+				} else if (i == 3) {
+					withProgressMarks[i] = progressAttributeMap_ != null && (progressAttributeMap_[id] & 0x8) != 0;
+				} else if (i == 4) {
+					withProgressMarks[i] = progressAttributeMap_ != null && (progressAttributeMap_[id] & 0x10) != 0;
+				}
+			}
 			int highlightColor = withHighlight ? (highlightMap_ == null ? 0 : U.alphaMixHighlight(highlightMap_[id])) : 0;
 
 			boolean checked = false;
@@ -88,16 +102,24 @@ public class LegacyVerseAdapter extends VerseAdapter {
 				if (checked) lIsiAyat.setTextColor(0xff000000); // override with black!
 			}
 
-			View imgAttributeBookmark = res.findViewById(R.id.imgAtributBukmak);
-			imgAttributeBookmark.setVisibility(withBookmark ? View.VISIBLE : View.GONE);
+			AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_bookmark_progress_attributes);
+			attributeView.showBookmark(withBookmark);
+			attributeView.showNote(withNote);
+			attributeView.showProgress(withProgressMarks);
 			if (withBookmark) {
-				setClickListenerForBookmark(imgAttributeBookmark, chapter_1_, id + 1);
+				setClickListenerForBookmark(attributeView, chapter_1_, id + 1);
 			}
-			View imgAttributeNote = res.findViewById(R.id.imgAtributCatatan);
-			imgAttributeNote.setVisibility(withNote ? View.VISIBLE : View.GONE);
 			if (withNote) {
-				setClickListenerForNote(imgAttributeNote, chapter_1_, id + 1);
+				setClickListenerForNote(attributeView, chapter_1_, id + 1);
 			}
+			for (int i = 0; i < withProgressMarks.length; i++) {
+				setClickListenerForProgress(attributeView, i);
+			}
+
+			View imgAttributeBookmark = res.findViewById(R.id.imgAtributBukmak);
+			imgAttributeBookmark.setVisibility(View.GONE);
+			View imgAttributeNote = res.findViewById(R.id.imgAtributCatatan);
+			imgAttributeNote.setVisibility(View.GONE);
 
 			return res;
 		} else {
