@@ -1,29 +1,9 @@
 package yuku.alkitabconverter.in_tb_usfm;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-import java.util.TreeMap;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
-
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.base.util.Base64Mod;
@@ -49,6 +29,24 @@ import yuku.alkitabconverter.util.TextDb.VerseState;
 import yuku.alkitabconverter.yes_common.Yes1Common;
 import yuku.bintex.BintexWriter;
 
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+import java.util.TreeMap;
+
 public class Proses2 {
 	final SAXParserFactory factory = SAXParserFactory.newInstance();
 	
@@ -67,8 +65,7 @@ public class Proses2 {
 	TextDb teksDb = new TextDb();
 	StringBuilder misteri = new StringBuilder();
 	XrefDb xrefDb = new XrefDb();
-	BintexWriter xrefBw;
-	
+
 	PericopeData pericopeData = new PericopeData();
 	{
 		pericopeData.entries = new ArrayList<Entry>();
@@ -110,7 +107,7 @@ public class Proses2 {
 		
 		xrefDb.processEach(new XrefDb.XrefProcessor() {
 			@Override public void process(XrefEntry xe, int ari, int entryIndex) {
-				final List<int[]> pairs = new ArrayList<>();
+				final List<int[]> pairs = new ArrayList<int[]>();
 				DesktopVerseFinder.findInText(xe.target, new DesktopVerseFinder.DetectorListener() {
 					@Override public boolean onVerseDetected(int start, int end, String verse) {
 						pairs.add(new int[] {start, end});
@@ -296,56 +293,56 @@ public class Proses2 {
 		
 		////////// CREATE XREF FILE
 
-		try (BintexWriter bw = new BintexWriter(new FileOutputStream(new File("./bahan/in-tb-usfm/raw", "tb_xref_bt.bt")))) {
-			assert xref_index_ari_to_pos.size() == xref_index_pos_to_offset.size();
-			
-			// TB has 3238 xrefentries. Write size first.
-			bw.writeInt(xref_index_ari_to_pos.size());
-			
-			// Index  ari -> pos
-			//  0 <delta 7bit> = relative
-			//  10 <delta 14bit> = relative
-			//  1100 0000 <ari 24bit> = absolute
-			// total ~ 5 KB
-			{
-				int last_ari = 0;
-				for (int i = 0; i < xref_index_ari_to_pos.size(); i++) {
-					int ari = xref_index_ari_to_pos.get(i);
-					if (last_ari == 0 || (ari - last_ari > 16383)) { // 4 byte
-						bw.writeInt(0xc0000000 | ari);
-					} else if ((ari - last_ari) > 127) { // 2 byte
-						bw.writeUint16(0x8000 | (ari-last_ari));
-					} else {
-						bw.writeUint8(ari-last_ari);
-					}
-					last_ari = ari;
+		final BintexWriter bw = new BintexWriter(new FileOutputStream(new File("./bahan/in-tb-usfm/raw", "tb_xref_bt.bt")));
+		assert xref_index_ari_to_pos.size() == xref_index_pos_to_offset.size();
+
+		// TB has 3238 xrefentries. Write size first.
+		bw.writeInt(xref_index_ari_to_pos.size());
+
+		// Index  ari -> pos
+		//  0 <delta 7bit> = relative
+		//  10 <delta 14bit> = relative
+		//  1100 0000 <ari 24bit> = absolute
+		// total ~ 5 KB
+		{
+			int last_ari = 0;
+			for (int i = 0; i < xref_index_ari_to_pos.size(); i++) {
+				int ari = xref_index_ari_to_pos.get(i);
+				if (last_ari == 0 || (ari - last_ari > 16383)) { // 4 byte
+					bw.writeInt(0xc0000000 | ari);
+				} else if ((ari - last_ari) > 127) { // 2 byte
+					bw.writeUint16(0x8000 | (ari-last_ari));
+				} else {
+					bw.writeUint8(ari-last_ari);
 				}
+				last_ari = ari;
 			}
-			
-			// Index  pos -> xref_content
-			//  0 <delta 7bit> = relative
-			//  10 <delta 14bit> = relative
-			//  1100 0000 <offset 24bit> = absolute
-			//
-			// total ~ 4 KB
-			{
-				int last_offset = 0;
-				for (int i = 0; i < xref_index_pos_to_offset.size(); i++) {
-					int offset = xref_index_pos_to_offset.get(i);
-					if (last_offset == 0 || (offset - last_offset > 16383)) { // 4 byte
-						bw.writeInt(0xc0000000 | offset);
-					} else if ((offset - last_offset) > 127) { // 2 byte
-						bw.writeUint16(0x8000 | (offset-last_offset));
-					} else { // 1 byte
-						bw.writeUint8(offset-last_offset);
-					}
-					last_offset = offset;
-				}
-			}
-			
-			// content
-			bw.writeRaw(xref_content_buf.toByteArray());
 		}
+
+		// Index  pos -> xref_content
+		//  0 <delta 7bit> = relative
+		//  10 <delta 14bit> = relative
+		//  1100 0000 <offset 24bit> = absolute
+		//
+		// total ~ 4 KB
+		{
+			int last_offset = 0;
+			for (int i = 0; i < xref_index_pos_to_offset.size(); i++) {
+				int offset = xref_index_pos_to_offset.get(i);
+				if (last_offset == 0 || (offset - last_offset > 16383)) { // 4 byte
+					bw.writeInt(0xc0000000 | offset);
+				} else if ((offset - last_offset) > 127) { // 2 byte
+					bw.writeUint16(0x8000 | (offset-last_offset));
+				} else { // 1 byte
+					bw.writeUint8(offset-last_offset);
+				}
+				last_offset = offset;
+			}
+		}
+
+		// content
+		bw.writeRaw(xref_content_buf.toByteArray());
+		bw.close();
 		
 		////////// PROSES KE INTERNAL
 		
@@ -716,12 +713,12 @@ class XrefDb {
 		void process(XrefEntry xe, int ari, int entryIndex);
 	}
 	
-	Map<Integer, List<XrefEntry>> map = new TreeMap<>();
+	Map<Integer, List<XrefEntry>> map = new TreeMap<Integer, List<XrefEntry>>();
 	
 	void addBegin(int ari) {
 		List<XrefEntry> list = map.get(ari);
 		if (list == null) {
-			list = new ArrayList<>();
+			list = new ArrayList<XrefEntry>();
 			map.put(ari, list);
 		}
 		

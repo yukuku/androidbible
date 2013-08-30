@@ -1,7 +1,9 @@
 package yuku.alkitab.yes2.io;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.UUID;
 
 public class MemoryRandomAccessFile extends RandomAccessFile {
 	public static final String TAG = MemoryRandomAccessFile.class.getSimpleName();
@@ -11,7 +13,7 @@ public class MemoryRandomAccessFile extends RandomAccessFile {
 	private byte[] buf = new byte[16];
 	
 	public MemoryRandomAccessFile() throws IOException {
-		super("/dev/null", "r");
+		super(File.createTempFile(UUID.randomUUID().toString(), "memoryrandomaccessfile"), "r");
 	}
 	
 	@Override public void setLength(long newLength) throws IOException {
