@@ -193,6 +193,11 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		if (oldVersion <= 102) { // 103: 2.7.1 
 			addShortNameColumnAndIndexToEdisi(db);
 		}
+
+		if (oldVersion <= 125) { // 126: 3.2.0
+			createTableProgressMark(db);
+			insertDefaultProgressMarks(db);
+		}
 	}
 
 	private void addShortNameColumnAndIndexToEdisi(SQLiteDatabase db) {
