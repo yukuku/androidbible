@@ -21,10 +21,7 @@
 
     </FrameLayout>
 
-	<include
-		layout="@layout/verse_attributes"
-		android:id="@+id/verse_attributes" />
     <include
-        layout="@layout/verse_bookmark_progress_attributes"
-        android:id="@+id/verse_bookmark_progress_attributes"/>
+        layout="@layout/verse_attributes"
+        android:id="@+id/verse_attributes"/>
 </yuku.alkitab.base.widget.VerseItem>

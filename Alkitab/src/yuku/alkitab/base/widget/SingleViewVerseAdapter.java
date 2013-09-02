@@ -79,7 +79,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				lText.setTextColor(0xff000000); // override with black!
 			}
 
-			AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_bookmark_progress_attributes);
+			AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_attributes);
 			attributeView.showBookmark(withBookmark);
 			attributeView.showNote(withNote);
 			attributeView.showProgress(withProgressMarks);
@@ -92,11 +92,6 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			for (int i = 0; i < withProgressMarks.length; i++) {
 				setClickListenerForProgress(attributeView, i);
 			}
-
-			View imgAttributeBookmark = res.findViewById(R.id.imgAtributBukmak);
-			imgAttributeBookmark.setVisibility(View.GONE);
-			View imgAttributeNote = res.findViewById(R.id.imgAtributCatatan);
-			imgAttributeNote.setVisibility(View.GONE);
 
 //			{ // DUMP
 //				Log.d(TAG, "==== DUMP verse " + (id + 1));
