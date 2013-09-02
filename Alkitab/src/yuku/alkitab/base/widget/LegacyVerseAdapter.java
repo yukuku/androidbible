@@ -44,13 +44,8 @@ public class LegacyVerseAdapter extends VerseAdapter {
 			VerseItem res;
 
 			String text = verses_.getVerse(id);
-			boolean withBookmark = attributeMap_ == null ? false : (attributeMap_[id] & 0x1) != 0;
-			boolean withNote = attributeMap_ == null ? false : (attributeMap_[id] & 0x2) != 0;
-			boolean withHighlight = attributeMap_ == null ? false : (attributeMap_[id] & 0x4) != 0;
-			boolean[] withProgressMarks = new boolean[5];
-			for (int i = 0; i < 5; i++) {
-				withProgressMarks[i] = attributeMap_ != null && (attributeMap_[id] & (1 << (8 + i))) != 0;
-			}
+
+			boolean withHighlight = attributeMap_ != null && (attributeMap_[id] & 0x4) != 0;
 			int highlightColor = withHighlight ? (highlightMap_ == null ? 0 : U.alphaMixHighlight(highlightMap_[id])) : 0;
 
 			boolean checked = false;
@@ -93,9 +88,9 @@ public class LegacyVerseAdapter extends VerseAdapter {
 			}
 
 			AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_attributes);
-			attributeView.showBookmark(withBookmark);
-			attributeView.showNote(withNote);
-			attributeView.showProgressMarks(withProgressMarks);
+			attributeView.showBookmark(attributeMap_ != null && (attributeMap_[id] & 0x1) != 0);
+			attributeView.showNote(attributeMap_ != null && (attributeMap_[id] & 0x2) != 0);
+			attributeView.showProgressMarks(attributeMap_ == null? 0: attributeMap_[id]);
 			attributeView.setAttributeListener(attributeListener_, book_, chapter_1_, id + 1);
 
 			return res;

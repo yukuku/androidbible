@@ -86,6 +86,7 @@ import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.base.util.Search2Engine.Query;
 import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.base.widget.AttributeView;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.SplitHandleButton;
@@ -1503,11 +1504,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		public void onProgressMarkAttributeClick(final int preset_id) {
 			ProgressMark progressMark = S.getDb().getProgressMarkByPresetId(preset_id);
 
-			int iconRes = ProgressMark.getProgressMarkIconResource(preset_id);
+			int iconRes = AttributeView.getProgressMarkIconResource(preset_id);
 			String title;
 
 			if (progressMark.ari == 0 || TextUtils.isEmpty(progressMark.caption)) {
-				title = getString(ProgressMark.getDefaultProgressMarkResource(preset_id));
+				title = getString(AttributeView.getDefaultProgressMarkStringResource(preset_id));
 			} else {
 				title = progressMark.caption;
 			}
@@ -1522,8 +1523,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				;
 			}
 
-			AlertDialog.Builder builder = new AlertDialog.Builder(IsiActivity.this);
-			builder.setPositiveButton(getString(R.string.ok), null)
+			new AlertDialog.Builder(IsiActivity.this)
+			.setPositiveButton(getString(R.string.ok), null)
 			.setIcon(iconRes)
 			.setTitle(title)
 			.setMessage(verseText)
@@ -1832,7 +1833,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 
 		private void setProgressMarkMenuItemTitle(final List<ProgressMark> progressMarks, final MenuItem item, int position) {
-			String title = (progressMarks.get(position).ari == 0 || TextUtils.isEmpty(progressMarks.get(position).caption)) ? getString(ProgressMark.getDefaultProgressMarkResource(position)): progressMarks.get(position).caption;
+			String title = (progressMarks.get(position).ari == 0 || TextUtils.isEmpty(progressMarks.get(position).caption)) ? getString(AttributeView.getDefaultProgressMarkStringResource(position)): progressMarks.get(position).caption;
 
 			item.setTitle(getString(R.string.pm_menu_save_progress) + " " + title);
 		}

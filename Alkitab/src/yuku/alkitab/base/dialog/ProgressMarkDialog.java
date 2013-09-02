@@ -22,6 +22,7 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.ProgressMark;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.base.widget.AttributeView;
 
 import java.util.Date;
 import java.util.List;
@@ -88,7 +89,7 @@ public class ProgressMarkDialog extends DialogFragment{
 								final String originalCaption;
 								final String caption = progressMark.caption;
 								if (TextUtils.isEmpty(caption)) {
-									originalCaption = getString(ProgressMark.getDefaultProgressMarkResource(position));
+									originalCaption = getString(AttributeView.getDefaultProgressMarkStringResource(position));
 								} else {
 									originalCaption = caption;
 								}
@@ -151,12 +152,12 @@ public class ProgressMarkDialog extends DialogFragment{
 			TextView tVerseText = V.get(view, R.id.lSnippet);
 			ImageView imgIcon = V.get(view, R.id.imgIcon);
 
-			imgIcon.setImageResource(ProgressMark.getProgressMarkIconResource(position));
+			imgIcon.setImageResource(AttributeView.getProgressMarkIconResource(position));
 
 			final ProgressMark progressMark = progressMarks.get(position);
 
 			if (progressMark.ari == 0 || TextUtils.isEmpty(progressMark.caption)) {
-				tCaption.setText(ProgressMark.getDefaultProgressMarkResource(position));
+				tCaption.setText(AttributeView.getDefaultProgressMarkStringResource(position));
 			} else {
 				tCaption.setText(progressMark.caption);
 			}

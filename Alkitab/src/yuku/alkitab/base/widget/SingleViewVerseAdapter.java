@@ -31,17 +31,6 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			// VERSE. not pericope
 			int verse_1 = id + 1;
 
-			boolean withBookmark = attributeMap_ != null && (attributeMap_[id] & 0x1) != 0;
-			boolean withNote = attributeMap_ != null && (attributeMap_[id] & 0x2) != 0;
-			boolean withHighlight = attributeMap_ != null && (attributeMap_[id] & 0x4) != 0;
-			boolean[] withProgressMarks = new boolean[5];
-			for (int i = 0; i < 5; i++) {
-				withProgressMarks[i] = attributeMap_ != null && (attributeMap_[id] & (1 << (i + 8))) != 0;
-			}
-
-			int withXref = xrefEntryCounts_ == null? 0: xrefEntryCounts_[verse_1];
-			int highlightColor = withHighlight ? (highlightMap_ == null ? 0 : U.alphaMixHighlight(highlightMap_[id])) : 0;
-
 			boolean checked = false;
 			if (parent instanceof ListView) {
 				checked = ((ListView) parent).isItemChecked(position);
@@ -54,25 +43,28 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			} else {
 				res = (VerseItem) convertView;
 			}
-			
+
 			VerseTextView lText = (VerseTextView) res.findViewById(R.id.lText);
 			TextView lVerseNumber = (TextView) res.findViewById(R.id.lVerseNumber);
-			
+
 			int ari = Ari.encode(book_.bookId, chapter_1_, verse_1);
 			String text = verses_.getVerse(id);
 			String verseNumberText = verses_.getVerseNumberText(id);
 			boolean dontPutSpacingBefore = (position > 0 && itemPointer_[position - 1] < 0) || position == 0;
+			boolean withHighlight = attributeMap_ != null && (attributeMap_[id] & 0x4) != 0;
+			int highlightColor = withHighlight ? (highlightMap_ == null ? 0 : U.alphaMixHighlight(highlightMap_[id])) : 0;
+			int withXref = xrefEntryCounts_ == null? 0: xrefEntryCounts_[verse_1];
 			VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightColor, checked, dontPutSpacingBefore, withXref, xrefListener_, owner_);
-			
+
 			Appearances.applyTextAppearance(lText);
 			if (checked) {
 				lText.setTextColor(0xff000000); // override with black!
 			}
 
 			AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_attributes);
-			attributeView.showBookmark(withBookmark);
-			attributeView.showNote(withNote);
-			attributeView.showProgressMarks(withProgressMarks);
+			attributeView.showBookmark(attributeMap_ != null && (attributeMap_[id] & 0x1) != 0);
+			attributeView.showNote(attributeMap_ != null && (attributeMap_[id] & 0x2) != 0);
+			attributeView.showProgressMarks(attributeMap_ == null? 0: attributeMap_[id]);
 			attributeView.setAttributeListener(attributeListener_, book_, chapter_1_, verse_1);
 
 //			{ // DUMP
