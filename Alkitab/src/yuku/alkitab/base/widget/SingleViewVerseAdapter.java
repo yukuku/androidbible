@@ -82,7 +82,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_attributes);
 			attributeView.showBookmark(withBookmark);
 			attributeView.showNote(withNote);
-			attributeView.showProgress(withProgressMarks);
+			attributeView.showProgressMarks(withProgressMarks);
 			if (withBookmark) {
 				setClickListenerForBookmark(attributeView, chapter_1_, verse_1);
 			}

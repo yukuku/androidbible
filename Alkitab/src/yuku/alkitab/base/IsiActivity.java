@@ -1191,10 +1191,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				}
 			}
 		} else if (requestCode == REQCODE_bookmark) {
-			lsText.loadAttributeMap();
+			lsText.reloadAttributeMap();
 
 			if (activeSplitVersion != null) {
-				lsSplit1.loadAttributeMap();
+				lsSplit1.reloadAttributeMap();
 			}
 		} else if (requestCode == REQCODE_search) {
 			if (resultCode == RESULT_OK) {
@@ -1478,10 +1478,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, reference, ari);
 				dialog.setListener(new TypeBookmarkDialog.Listener() {
 					@Override public void onOk() {
-						lsText.loadAttributeMap();
+						lsText.reloadAttributeMap();
 						
 						if (activeSplitVersion != null) {
-							lsSplit1.loadAttributeMap();
+							lsSplit1.reloadAttributeMap();
 						}
 					}
 				});
@@ -1489,10 +1489,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			} else if (kind == Db.Bookmark2.kind_note) {
 				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, book, chapter_1, verse_1, new TypeNoteDialog.Listener() {
 					@Override public void onDone() {
-						lsText.loadAttributeMap();
+						lsText.reloadAttributeMap();
 						
 						if (activeSplitVersion != null) {
-							lsSplit1.loadAttributeMap();
+							lsSplit1.reloadAttributeMap();
 						}
 					}
 				});
@@ -1522,7 +1522,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				String date = Sqlitil.toLocaleDateMedium(progressMark.modifyTime);
 
 				String reference = S.activeVersion.reference(ari);
-				verseText = getString(R.string.pm_icon_click_message, reference, date);
+				verseText = getString(R.string.pm_icon_click_message, reference, date)
+				;
 			}
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(IsiActivity.this);
@@ -1643,15 +1644,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 			List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
 			MenuItem item1 = menu.findItem(R.id.menuProgress1);
-			setProgressMenuTitle(progressMarks, item1, 0);
+			setProgressMarkMenuItemTitle(progressMarks, item1, 0);
 			MenuItem item2 = menu.findItem(R.id.menuProgress2);
-			setProgressMenuTitle(progressMarks, item2, 1);
+			setProgressMarkMenuItemTitle(progressMarks, item2, 1);
 			MenuItem item3 = menu.findItem(R.id.menuProgress3);
-			setProgressMenuTitle(progressMarks, item3, 2);
+			setProgressMarkMenuItemTitle(progressMarks, item3, 2);
 			MenuItem item4 = menu.findItem(R.id.menuProgress4);
-			setProgressMenuTitle(progressMarks, item4, 3);
+			setProgressMarkMenuItemTitle(progressMarks, item4, 3);
 			MenuItem item5 = menu.findItem(R.id.menuProgress5);
-			setProgressMenuTitle(progressMarks, item5, 4);
+			setProgressMarkMenuItemTitle(progressMarks, item5, 4);
 
 			return true;
 		}
@@ -1833,21 +1834,21 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				lsText.uncheckAllVerses(true);
 			}
 		}
+
+		private void setProgressMarkMenuItemTitle(final List<ProgressMark> progressMarks, final MenuItem item, int position) {
+			String title = (progressMarks.get(position).ari == 0 || TextUtils.isEmpty(progressMarks.get(position).caption)) ? getString(ProgressMark.getDefaultProgressMarkResource(position)): progressMarks.get(position).caption;
+
+			item.setTitle(getString(R.string.pm_menu_save_progress) + " " + title);
+		}
 	};
 
 	private void reloadVerse() {
 		lsText.uncheckAllVerses(true);
-		lsText.loadAttributeMap();
+		lsText.reloadAttributeMap();
 
 		if (activeSplitVersion != null) {
-			lsSplit1.loadAttributeMap();
+			lsSplit1.reloadAttributeMap();
 		}
-	}
-
-	private void setProgressMenuTitle(final List<ProgressMark> progressMarks, final MenuItem item, int position) {
-		String title = (progressMarks.get(position).ari == 0 || TextUtils.isEmpty(progressMarks.get(position).caption)) ? getString(ProgressMark.getDefaultProgressMarkResource(position)): progressMarks.get(position).caption;
-
-		item.setTitle(getString(R.string.pm_menu_save_progress) + " " + title);
 	}
 
 	private void moveProgressMark(final int mainVerse_1, int position) {

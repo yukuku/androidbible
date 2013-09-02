@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.BaseAdapter;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
@@ -119,7 +118,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
-	public synchronized void loadAttributeMap() {
+	public synchronized void reloadAttributeMap() {
 		int[] attributeMap = null;
 		int[] highlightMap = null;
 		int[] progressAttributeMap = null;
@@ -162,20 +161,10 @@ public abstract class VerseAdapter extends BaseAdapter {
 		return itemPointer_[position];
 	}
 
-	protected void setClickListenerForBookmark(View imgBukmak, final int pasal_1, final int ayat_1) {
-		imgBukmak.setOnClickListener(new View.OnClickListener() {
-			@Override public void onClick(View v) {
-				if (attributeListener_ != null) {
-					attributeListener_.onAttributeClick(book_, pasal_1, ayat_1, Db.Bookmark2.kind_bookmark);
-				}
-			}
-		});
-	}
-
 	protected void setClickListenerForBookmark(AttributeView imgBookmark, final int pasal_1, final int ayat_1) {
 		imgBookmark.setOnBookmarkClickListener(new AttributeView.OnItemClickListener() {
 			@Override
-			public void onClick() {
+			public void onItemClick() {
 				if (attributeListener_ != null) {
 					attributeListener_.onAttributeClick(book_, pasal_1, ayat_1, Db.Bookmark2.kind_bookmark);
 				}
@@ -184,21 +173,10 @@ public abstract class VerseAdapter extends BaseAdapter {
 		);
 	}
 
-	protected void setClickListenerForNote(View imgCatatan, final int pasal_1, final int ayat_1) {
-		imgCatatan.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (attributeListener_ != null) {
-					attributeListener_.onAttributeClick(book_, pasal_1, ayat_1, Db.Bookmark2.kind_note);
-				}
-			}
-		});
-	}
-
 	protected void setClickListenerForNote(AttributeView imgNote, final int pasal_1, final int ayat_1) {
 		imgNote.setOnNoteClickListener(new AttributeView.OnItemClickListener() {
 			@Override
-			public void onClick() {
+			public void onItemClick() {
 				if (attributeListener_ != null) {
 					attributeListener_.onAttributeClick(book_, pasal_1, ayat_1, Db.Bookmark2.kind_note);
 				}
@@ -209,7 +187,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	protected void setClickListenerForProgress(AttributeView imgProgress, final int progressId) {
 		imgProgress.setOnProgressClickListeners(progressId, new AttributeView.OnItemClickListener() {
 			@Override
-			public void onClick() {
+			public void onItemClick() {
 				if (progressAttributeListener_ != null) {
 					progressAttributeListener_.onProgressAttributeClick(progressId);
 				}

@@ -174,8 +174,8 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	// instead of this widget itself accessing persistent data.
 	// When this is done, we do not need to provide Book and chapter_1 as parameters to setData(),
 	// because in reality, VersesViews could contain verses taken from multiple books and chapters.
-	public void loadAttributeMap() {
-		adapter.loadAttributeMap();
+	public void reloadAttributeMap() {
+		adapter.reloadAttributeMap();
 	}
 	
 	public String getVerse(int verse_1) {
@@ -376,7 +376,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		//# fill adapter with new data. make sure all checked states are reset
 		uncheckAllVerses(true);
 		setData(book, chapter_1, verses, pericope_aris, pericope_blocks, nblock, xrefEntryCounts);
-		loadAttributeMap();
+		reloadAttributeMap();
 		
 		boolean anySelected = false;
 		if (selectedVerses_1 != null) {

@@ -24,7 +24,7 @@ public class AttributeView extends View {
 
 	private boolean showBookmark;
 	private boolean showNote;
-	private boolean[] showProgresses;
+	private boolean[] showProgressMarks;
 
 	private OnItemClickListener onBookmarkClickListener;
 	private OnItemClickListener onNoteClickListener;
@@ -50,8 +50,8 @@ public class AttributeView extends View {
 		invalidate();
 	}
 
-	public void showProgress(final boolean[] showProgresses) {
-		this.showProgresses = showProgresses;
+	public void showProgressMarks(final boolean[] showProgressMarks) {
+		this.showProgressMarks = showProgressMarks;
 		requestLayout();
 		invalidate();
 	}
@@ -96,9 +96,9 @@ public class AttributeView extends View {
 				totalWidth = noteBitmap.getWidth();
 			}
 		}
-		if (showProgresses != null) {
-			for (int i = 0; i < showProgresses.length; i++) {
-				if (showProgresses[i]) {
+		if (showProgressMarks != null) {
+			for (int i = 0; i < showProgressMarks.length; i++) {
+				if (showProgressMarks[i]) {
 					final Bitmap progressMarkBitmapById = getProgressMarkBitmapById(i);
 					totalHeight += progressMarkBitmapById.getHeight();
 					if (totalWidth < progressMarkBitmapById.getWidth()) {
@@ -125,9 +125,9 @@ public class AttributeView extends View {
 			canvas.drawBitmap(noteBitmap, 2, totalHeight, null);
 			totalHeight += noteBitmap.getHeight();
 		}
-		if (showProgresses != null) {
-			for (int i = 0; i < showProgresses.length; i++) {
-				if (showProgresses[i]) {
+		if (showProgressMarks != null) {
+			for (int i = 0; i < showProgressMarks.length; i++) {
+				if (showProgressMarks[i]) {
 					final Bitmap progressMarkBitmapById = getProgressMarkBitmapById(i);
 					canvas.drawBitmap(progressMarkBitmapById, 0, totalHeight, null);
 					totalHeight += progressMarkBitmapById.getHeight();
@@ -145,7 +145,7 @@ public class AttributeView extends View {
 				final Bitmap bookmarkBitmap = getBookmarkBitmap();
 				totalHeight += bookmarkBitmap.getHeight();
 				if (totalHeight > y) {
-					onBookmarkClickListener.onClick();
+					onBookmarkClickListener.onItemClick();
 					return true;
 				}
 			}
@@ -153,17 +153,17 @@ public class AttributeView extends View {
 				final Bitmap noteBitmap = getNoteBitmap();
 				totalHeight += noteBitmap.getHeight();
 				if (totalHeight > y) {
-					onNoteClickListener.onClick();
+					onNoteClickListener.onItemClick();
 					return true;
 				}
 			}
-			if (showProgresses != null) {
-				for (int i = 0; i < showProgresses.length; i++) {
-					if (showProgresses[i]) {
+			if (showProgressMarks != null) {
+				for (int i = 0; i < showProgressMarks.length; i++) {
+					if (showProgressMarks[i]) {
 						final Bitmap progressMarkBitmapById = getProgressMarkBitmapById(i);
 						totalHeight += progressMarkBitmapById.getHeight();
 						if (totalHeight > y) {
-							onProgressClickListeners[i].onClick();
+							onProgressClickListeners[i].onItemClick();
 							return true;
 						}
 					}
@@ -176,7 +176,7 @@ public class AttributeView extends View {
 	}
 
 	public interface OnItemClickListener {
-		public void onClick();
+		public void onItemClick();
 	}
 
 	public void setOnBookmarkClickListener(OnItemClickListener onBookmarkClickListener) {
@@ -187,8 +187,8 @@ public class AttributeView extends View {
 		this.onNoteClickListener = onNoteClickListener;
 	}
 
-	public void setOnProgressClickListeners(int id, OnItemClickListener onBookmarkClickListener) {
-		this.onProgressClickListeners[id] = onBookmarkClickListener;
+	public void setOnProgressClickListeners(int id, OnItemClickListener onProgressClickListener) {
+		this.onProgressClickListeners[id] = onProgressClickListener;
 	}
 
 }
