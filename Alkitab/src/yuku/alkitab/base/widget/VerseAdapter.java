@@ -13,6 +13,7 @@ import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.ProgressMark;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.storage.Db;
+import yuku.alkitab.base.storage.InternalDb;
 
 import java.util.Arrays;
 import java.util.List;
@@ -84,9 +85,8 @@ public abstract class VerseAdapter extends BaseAdapter {
 	 * Konvert b ke a: -b-1;
 	 */
 	int[] itemPointer_;
-	int[] attributeMap_; // bit 0(0x1) = bukmak; bit 1(0x2) = catatan; bit 2(0x4) = stabilo;
+	int[] attributeMap_; // bit 0(0x1) = bookmark; bit 1(0x2) = notes; bit 2(0x4) = highlight; bit 8-12 = progress mark
 	int[] highlightMap_; // null atau warna stabilo
-	int[] progressAttributeMap_; //null or progress mark
 	int[] xrefEntryCounts_;
 	
 	LayoutInflater inflater_;
@@ -123,7 +123,6 @@ public abstract class VerseAdapter extends BaseAdapter {
 	public synchronized void reloadAttributeMap() {
 		int[] attributeMap = null;
 		int[] highlightMap = null;
-		int[] progressAttributeMap = null;
 
 		int ariBc = Ari.encode(book_.bookId, chapter_1_, 0x00);
 		if (S.getDb().countAttributes(ariBc) > 0) {
@@ -131,23 +130,29 @@ public abstract class VerseAdapter extends BaseAdapter {
 			highlightMap = S.getDb().putAttributes(ariBc, attributeMap);
 		}
 
-		attributeMap_ = attributeMap;
-		highlightMap_ = highlightMap;
-
 		int ariMin = ariBc & 0x00ffff00;
 		int ariMax = ariBc | 0x000000ff;
 
 		List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
 
-		for (ProgressMark progressMark:progressMarks) {
-			if (progressMark.ari >= ariMin && progressMark.ari < ariMax) {          //if has at least a progress mark
-				progressAttributeMap = new int[verses_.getVerseCount()];
-				S.getDb().putProgressAttributes(ariBc, progressAttributeMap);
-				break;
+		for (ProgressMark progressMark: progressMarks) {
+			final int ari = progressMark.ari;
+			if (ari >= ariMin && ari < ariMax) {
+				if (attributeMap == null) {
+					attributeMap = new int[verses_.getVerseCount()];
+				}
+
+				int mapOffset = Ari.toVerse(ari) - 1;
+				if (mapOffset >= attributeMap.length) {
+					Log.e(InternalDb.TAG, "ofsetMap kebanyakan " + mapOffset + " terjadi pada ari 0x" + Integer.toHexString(ari));
+				} else {
+					attributeMap[mapOffset] |= 1 << (progressMark.preset_id + 8);
+				}
 			}
 		}
 
-		progressAttributeMap_ = progressAttributeMap;
+		attributeMap_ = attributeMap;
+		highlightMap_ = highlightMap;
 
 		notifyDataSetChanged();
 	}
@@ -195,12 +200,12 @@ public abstract class VerseAdapter extends BaseAdapter {
 		});
 	}
 
-	protected void setClickListenerForProgress(AttributeView imgProgress, final int progressId) {
-		imgProgress.setOnProgressClickListeners(progressId, new AttributeView.OnItemClickListener() {
+	protected void setClickListenerForProgress(AttributeView imgProgress, final int preset_id) {
+		imgProgress.setOnProgressClickListeners(preset_id, new AttributeView.OnItemClickListener() {
 			@Override
 			public void onItemClick() {
 				if (progressAttributeListener_ != null) {
-					progressAttributeListener_.onProgressAttributeClick(progressId);
+					progressAttributeListener_.onProgressAttributeClick(preset_id);
 				}
 			}
 		});

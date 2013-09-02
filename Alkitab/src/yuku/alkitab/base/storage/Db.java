@@ -55,6 +55,7 @@ public class Db {
 
 	public static final String TABLE_ProgressMark = "ProgressMark";
 	public static final class ProgressMark {
+		public static final String preset_id = "preset_id";
 		public static final String caption = "caption";
 		public static final String modifyTime = "modifyTime";
 		public static final String ari = "ari";

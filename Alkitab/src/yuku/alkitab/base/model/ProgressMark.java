@@ -11,6 +11,7 @@ import java.util.Date;
 
 public class ProgressMark {
 	public long _id;
+	public int preset_id;
 	public String caption;
 	public int ari;
 	public Date modifyTime;
@@ -20,6 +21,7 @@ public class ProgressMark {
 	public static ProgressMark fromCursor(Cursor c) {
 		ProgressMark res = new ProgressMark();
 		res._id = c.getLong(c.getColumnIndexOrThrow(BaseColumns._ID));
+		res.preset_id = c.getInt(c.getColumnIndexOrThrow(Db.ProgressMark.preset_id));
 		res.caption = c.getString(c.getColumnIndexOrThrow(Db.ProgressMark.caption));
 		res.ari = c.getInt(c.getColumnIndexOrThrow(Db.ProgressMark.ari));
 		res.modifyTime = Sqlitil.toDate(c.getInt(c.getColumnIndexOrThrow(Db.ProgressMark.modifyTime)));
@@ -29,15 +31,16 @@ public class ProgressMark {
 
 	public ContentValues toContentValues() {
 		ContentValues cv = new ContentValues();
+		cv.put(Db.ProgressMark.preset_id, preset_id);
 		cv.put(Db.ProgressMark.caption, caption);
 		cv.put(Db.ProgressMark.ari, ari);
 		cv.put(Db.ProgressMark.modifyTime, Sqlitil.toInt(modifyTime));
 		return cv;
 	}
 
-	public static int getDefaultProgressMarkResource(int position) {
+	public static int getDefaultProgressMarkResource(int preset_id) {
 		int res = 0;
-		switch (position) {
+		switch (preset_id) {
 			case 0:
 				res = R.string.pm_progress_1;
 				break;
@@ -57,9 +60,9 @@ public class ProgressMark {
 		return res;
 	}
 
-	public static int getProgressMarkIconResource(int position) {
+	public static int getProgressMarkIconResource(int preset_id) {
 		int iconRes = 0;
-		switch (position) {
+		switch (preset_id) {
 			case 0:
 				iconRes = R.drawable.ic_attr_progress_mark_1;
 				break;

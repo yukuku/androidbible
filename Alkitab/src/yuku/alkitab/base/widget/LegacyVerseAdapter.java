@@ -49,17 +49,7 @@ public class LegacyVerseAdapter extends VerseAdapter {
 			boolean withHighlight = attributeMap_ == null ? false : (attributeMap_[id] & 0x4) != 0;
 			boolean[] withProgressMarks = new boolean[5];
 			for (int i = 0; i < 5; i++) {
-				if (i == 0) {
-					withProgressMarks[i] = progressAttributeMap_ != null && (progressAttributeMap_[id] & 0x1) != 0;
-				} else if (i == 1) {
-					withProgressMarks[i] = progressAttributeMap_ != null && (progressAttributeMap_[id] & 0x2) != 0;
-				} else if (i == 2) {
-					withProgressMarks[i] = progressAttributeMap_ != null && (progressAttributeMap_[id] & 0x4) != 0;
-				} else if (i == 3) {
-					withProgressMarks[i] = progressAttributeMap_ != null && (progressAttributeMap_[id] & 0x8) != 0;
-				} else if (i == 4) {
-					withProgressMarks[i] = progressAttributeMap_ != null && (progressAttributeMap_[id] & 0x10) != 0;
-				}
+				withProgressMarks[i] = attributeMap_ != null && (attributeMap_[id] & (1 << (8 + i))) != 0;
 			}
 			int highlightColor = withHighlight ? (highlightMap_ == null ? 0 : U.alphaMixHighlight(highlightMap_[id])) : 0;
 

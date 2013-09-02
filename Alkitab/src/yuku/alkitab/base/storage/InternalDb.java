@@ -764,42 +764,12 @@ public class InternalDb {
 		return res;
 	}
 
-	public void putProgressAttributes(int ari_bookchapter, int[] map_0) {
-		int ariMin = ari_bookchapter & 0x00ffff00;
-		int ariMax = ari_bookchapter | 0x000000ff;
-
-		List<ProgressMark> progressMarks = listAllProgressMarks();
-
-		for (int i = 0; i < progressMarks.size(); i++) {
-			final int ari = progressMarks.get(i).ari;
-			if (ari >= ariMin && ari < ariMax) {
-				int mapOffset = Ari.toVerse(ari) - 1;
-				if (mapOffset >= map_0.length) {
-					Log.e(TAG, "ofsetMap kebanyakan " + mapOffset + " terjadi pada ari 0x" + Integer.toHexString(ari));
-				} else {
-					if (i == 0) {
-						map_0[mapOffset] |= 0x1;
-					} else if (i == 1) {
-						map_0[mapOffset] |= 0x2;
-					} else if (i == 2) {
-						map_0[mapOffset] |= 0x4;
-					} else if (i == 3) {
-						map_0[mapOffset] |= 0x8;
-					} else if (i == 4) {
-						map_0[mapOffset] |= 0x10;
-					}
-				}
-			}
-		}
-
-	}
-
-	public ProgressMark getProgressMarkById(long id) {
+	public ProgressMark getProgressMarkByPresetId(final int preset_id) {
 		Cursor cursor = helper.getReadableDatabase().query(
 		Db.TABLE_ProgressMark,
 		null,
-		"_id=?",
-		new String[] {String.valueOf(id + 1)},
+		Db.ProgressMark.preset_id + "=?",
+		new String[] {String.valueOf(preset_id)},
 		null, null, null
 		);
 

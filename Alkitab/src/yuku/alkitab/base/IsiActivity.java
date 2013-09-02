@@ -1503,15 +1503,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	VersesView.ProgressAttributeListener progressAttributeListener = new VersesView.ProgressAttributeListener() {
 		@Override
-		public void onProgressAttributeClick(final int progressId) {
+		public void onProgressAttributeClick(final int preset_id) {
 
-			ProgressMark progressMark = S.getDb().getProgressMarkById(progressId);
+			ProgressMark progressMark = S.getDb().getProgressMarkByPresetId(preset_id);
 
-			int iconRes = ProgressMark.getProgressMarkIconResource(progressId);
+			int iconRes = ProgressMark.getProgressMarkIconResource(preset_id);
 			String title;
 
 			if (progressMark.ari == 0 || TextUtils.isEmpty(progressMark.caption)) {
-				title = getString(ProgressMark.getDefaultProgressMarkResource(progressId));
+				title = getString(ProgressMark.getDefaultProgressMarkResource(preset_id));
 			} else {
 				title = progressMark.caption;
 			}
