@@ -69,11 +69,9 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	}
 
 	public interface AttributeListener {
-		void onAttributeClick(Book book, int chapter_1, int verse_1, int kind);
-	}
-
-	public interface ProgressAttributeListener {
-		void onProgressAttributeClick(int progressId);
+		void onBookmarkAttributeClick(Book book, int chapter_1, int verse_1);
+		void onNoteAttributeClick(Book book, int chapter_1, int verse_1);
+		void onProgressMarkAttributeClick(int preset_id);
 	}
 
 	public abstract static class XrefListener {
@@ -142,10 +140,6 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		adapter.setAttributeListener(attributeListener);
 	}
 
-	public void setProgressAttributeListener(VersesView.ProgressAttributeListener progressAttributeListener) {
-		adapter.setProgressAttributeListener(progressAttributeListener);
-	}
-	
 	public void setXrefListener(VersesView.XrefListener xrefListener) {
 		adapter.setXrefListener(xrefListener, this);
 	}

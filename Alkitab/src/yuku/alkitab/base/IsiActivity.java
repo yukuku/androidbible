@@ -79,7 +79,6 @@ import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.ProgressMark;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
-import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.IntArrayList;
@@ -333,7 +332,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		// listeners
 		lsText.setParallelListener(parallelListener);
 		lsText.setAttributeListener(attributeListener);
-		lsText.setProgressAttributeListener(progressAttributeListener);
 		lsText.setXrefListener(xrefListener);
 		lsText.setSelectedVersesListener(lsText_selectedVerses);
 		lsText.setOnVerseScrollListener(lsText_verseScroll);
@@ -343,7 +341,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsSplit1.setEmptyView(tSplitEmpty);
 		lsSplit1.setParallelListener(parallelListener);
 		lsSplit1.setAttributeListener(attributeListener);
-		lsSplit1.setProgressAttributeListener(progressAttributeListener);
 		lsSplit1.setXrefListener(xrefListener);
 		lsSplit1.setSelectedVersesListener(lsSplit1_selectedVerses);
 		lsSplit1.setOnVerseScrollListener(lsSplit1_verseScroll);
@@ -1471,40 +1468,39 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 	
 	VersesView.AttributeListener attributeListener = new VersesView.AttributeListener() {
-		public void onAttributeClick(Book book, int chapter_1, int verse_1, int kind) {
-			if (kind == Db.Bookmark2.kind_bookmark) {
-				final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
-				String reference = book.reference(chapter_1, verse_1);
-				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, reference, ari);
-				dialog.setListener(new TypeBookmarkDialog.Listener() {
-					@Override public void onOk() {
-						lsText.reloadAttributeMap();
-						
-						if (activeSplitVersion != null) {
-							lsSplit1.reloadAttributeMap();
-						}
-					}
-				});
-				dialog.show();
-			} else if (kind == Db.Bookmark2.kind_note) {
-				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, book, chapter_1, verse_1, new TypeNoteDialog.Listener() {
-					@Override public void onDone() {
-						lsText.reloadAttributeMap();
-						
-						if (activeSplitVersion != null) {
-							lsSplit1.reloadAttributeMap();
-						}
-					}
-				});
-				dialog.show();
-			}
-		}
-	};
-
-	VersesView.ProgressAttributeListener progressAttributeListener = new VersesView.ProgressAttributeListener() {
 		@Override
-		public void onProgressAttributeClick(final int preset_id) {
+		public void onBookmarkAttributeClick(final Book book, final int chapter_1, final int verse_1) {
+			final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
+			String reference = book.reference(chapter_1, verse_1);
+			TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, reference, ari);
+			dialog.setListener(new TypeBookmarkDialog.Listener() {
+				@Override public void onOk() {
+					lsText.reloadAttributeMap();
 
+					if (activeSplitVersion != null) {
+						lsSplit1.reloadAttributeMap();
+					}
+				}
+			});
+			dialog.show();
+		}
+
+		@Override
+		public void onNoteAttributeClick(final Book book, final int chapter_1, final int verse_1) {
+			TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, book, chapter_1, verse_1, new TypeNoteDialog.Listener() {
+				@Override public void onDone() {
+					lsText.reloadAttributeMap();
+
+					if (activeSplitVersion != null) {
+						lsSplit1.reloadAttributeMap();
+					}
+				}
+			});
+			dialog.show();
+		}
+
+		@Override
+		public void onProgressMarkAttributeClick(final int preset_id) {
 			ProgressMark progressMark = S.getDb().getProgressMarkByPresetId(preset_id);
 
 			int iconRes = ProgressMark.getProgressMarkIconResource(preset_id);
@@ -1534,7 +1530,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			.show();
 		}
 	};
-	
+
 	VersesView.XrefListener xrefListener = new VersesView.XrefListener() {
 		@Override public void onXrefClick(VersesView versesView, int ari, int which) {
 			XrefDialog dialog = XrefDialog.newInstance(ari, which);

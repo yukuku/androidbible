@@ -12,7 +12,6 @@ import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.ProgressMark;
 import yuku.alkitab.base.model.SingleChapterVerses;
-import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.storage.InternalDb;
 
 import java.util.Arrays;
@@ -68,8 +67,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	final Context context_;
 	CallbackSpan.OnClickListener parallelListener_;
 	VersesView.AttributeListener attributeListener_;
-	VersesView.ProgressAttributeListener progressAttributeListener_;
-	VersesView.XrefListener xrefListener_; 
+	VersesView.XrefListener xrefListener_;
 	final float density_;
 
 	// # field setData
@@ -177,40 +175,6 @@ public abstract class VerseAdapter extends BaseAdapter {
 		return itemPointer_[position];
 	}
 
-	protected void setClickListenerForBookmark(AttributeView imgBookmark, final int pasal_1, final int ayat_1) {
-		imgBookmark.setOnBookmarkClickListener(new AttributeView.OnItemClickListener() {
-			@Override
-			public void onItemClick() {
-				if (attributeListener_ != null) {
-					attributeListener_.onAttributeClick(book_, pasal_1, ayat_1, Db.Bookmark2.kind_bookmark);
-				}
-			}
-		}
-		);
-	}
-
-	protected void setClickListenerForNote(AttributeView imgNote, final int pasal_1, final int ayat_1) {
-		imgNote.setOnNoteClickListener(new AttributeView.OnItemClickListener() {
-			@Override
-			public void onItemClick() {
-				if (attributeListener_ != null) {
-					attributeListener_.onAttributeClick(book_, pasal_1, ayat_1, Db.Bookmark2.kind_note);
-				}
-			}
-		});
-	}
-
-	protected void setClickListenerForProgress(AttributeView imgProgress, final int preset_id) {
-		imgProgress.setOnProgressClickListeners(preset_id, new AttributeView.OnItemClickListener() {
-			@Override
-			public void onItemClick() {
-				if (progressAttributeListener_ != null) {
-					progressAttributeListener_.onProgressAttributeClick(preset_id);
-				}
-			}
-		});
-	}
-
 	public void setParallelListener(CallbackSpan.OnClickListener parallelListener) {
 		parallelListener_ = parallelListener;
 		notifyDataSetChanged();
@@ -221,11 +185,6 @@ public abstract class VerseAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
-	public void setProgressAttributeListener(VersesView.ProgressAttributeListener progressAttributeListener) {
-		progressAttributeListener_ = progressAttributeListener;
-		notifyDataSetChanged();
-	}
-	
 	public void setXrefListener(VersesView.XrefListener xrefListener, VersesView owner) {
 		xrefListener_ = xrefListener;
 		owner_ = owner;
@@ -233,18 +192,18 @@ public abstract class VerseAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Kalau pos 0: perikop; pos 1: ayat_1 1;
-	 * maka fungsi ini (ayat_1: 1) akan return 0.
+	 * Kalau pos 0: perikop; pos 1: verse_1 1;
+	 * maka fungsi ini (verse_1: 1) akan return 0.
 	 * 
 	 * @return position di adapter ini atau -1 kalo ga ketemu
 	 */
-	public int getPositionOfPericopeBeginningFromVerse(int ayat_1) {
+	public int getPositionOfPericopeBeginningFromVerse(int verse_1) {
 		if (itemPointer_ == null) return -1;
 
-		int ayat_0 = ayat_1 - 1;
+		int verse_0 = verse_1 - 1;
 
 		for (int i = 0, len = itemPointer_.length; i < len; i++) {
-			if (itemPointer_[i] == ayat_0) {
+			if (itemPointer_[i] == verse_0) {
 				// ketemu, tapi kalo ada judul perikop, akan lebih baik. Coba cek mundur dari sini
 				for (int j = i - 1; j >= 0; j--) {
 					if (itemPointer_[j] < 0) {

@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import yuku.alkitab.R;
+import yuku.alkitab.base.model.Book;
 
 public class AttributeView extends View {
 
@@ -27,9 +28,10 @@ public class AttributeView extends View {
 	private boolean showNote;
 	private boolean[] showProgressMarks;
 
-	private OnItemClickListener onBookmarkClickListener;
-	private OnItemClickListener onNoteClickListener;
-	private OnItemClickListener[] onProgressClickListeners = new OnItemClickListener[5];
+	private VersesView.AttributeListener attributeListener;
+	private Book book;
+	private int chapter_1;
+	private int verse_1;
 
 	public AttributeView(final Context context) {
 		super(context);
@@ -146,7 +148,7 @@ public class AttributeView extends View {
 				final Bitmap bookmarkBitmap = getBookmarkBitmap();
 				totalHeight += bookmarkBitmap.getHeight();
 				if (totalHeight > y) {
-					onBookmarkClickListener.onItemClick();
+					attributeListener.onBookmarkAttributeClick(book, chapter_1, verse_1);
 					return true;
 				}
 			}
@@ -154,7 +156,7 @@ public class AttributeView extends View {
 				final Bitmap noteBitmap = getNoteBitmap();
 				totalHeight += noteBitmap.getHeight();
 				if (totalHeight > y) {
-					onNoteClickListener.onItemClick();
+					attributeListener.onNoteAttributeClick(book, chapter_1, verse_1);
 					return true;
 				}
 			}
@@ -164,7 +166,7 @@ public class AttributeView extends View {
 						final Bitmap progressMarkBitmapById = getProgressMarkBitmapById(i);
 						totalHeight += progressMarkBitmapById.getHeight();
 						if (totalHeight > y) {
-							onProgressClickListeners[i].onItemClick();
+							attributeListener.onProgressMarkAttributeClick(i);
 							return true;
 						}
 					}
@@ -180,16 +182,10 @@ public class AttributeView extends View {
 		public void onItemClick();
 	}
 
-	public void setOnBookmarkClickListener(OnItemClickListener onBookmarkClickListener) {
-		this.onBookmarkClickListener = onBookmarkClickListener;
+	public void setAttributeListener(VersesView.AttributeListener attributeListener, Book book, int chapter_1, int verse_1) {
+		this.attributeListener = attributeListener;
+		this.book = book;
+		this.chapter_1 = chapter_1;
+		this.verse_1 = verse_1;
 	}
-
-	public void setOnNoteClickListener(OnItemClickListener onNoteClickListener) {
-		this.onNoteClickListener = onNoteClickListener;
-	}
-
-	public void setOnProgressClickListeners(int id, OnItemClickListener onProgressClickListener) {
-		this.onProgressClickListeners[id] = onProgressClickListener;
-	}
-
 }

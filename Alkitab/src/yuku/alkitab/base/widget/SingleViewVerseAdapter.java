@@ -73,15 +73,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			attributeView.showBookmark(withBookmark);
 			attributeView.showNote(withNote);
 			attributeView.showProgressMarks(withProgressMarks);
-			if (withBookmark) {
-				setClickListenerForBookmark(attributeView, chapter_1_, verse_1);
-			}
-			if (withNote) {
-				setClickListenerForNote(attributeView, chapter_1_, verse_1);
-			}
-			for (int i = 0; i < withProgressMarks.length; i++) {
-				setClickListenerForProgress(attributeView, i);
-			}
+			attributeView.setAttributeListener(attributeListener_, book_, chapter_1_, verse_1);
 
 //			{ // DUMP
 //				Log.d(TAG, "==== DUMP verse " + (id + 1));
