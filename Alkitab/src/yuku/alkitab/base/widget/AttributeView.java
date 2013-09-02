@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -140,7 +141,7 @@ public class AttributeView extends View {
 	public boolean onTouchEvent(final MotionEvent event) {
 		float y = event.getY();
 		int totalHeight = 0;
-		if (event.getAction() == MotionEvent.ACTION_UP) {
+		if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_UP) {
 			if (showBookmark) {
 				final Bitmap bookmarkBitmap = getBookmarkBitmap();
 				totalHeight += bookmarkBitmap.getHeight();
@@ -169,7 +170,7 @@ public class AttributeView extends View {
 					}
 				}
 			}
-		} else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+		} else if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
 			return true;
 		}
 		return false;
