@@ -768,13 +768,11 @@ public class InternalDb {
 		int ariMin = ari_bookchapter & 0x00ffff00;
 		int ariMax = ari_bookchapter | 0x000000ff;
 
-		sql_putAttributes_params[0] = String.valueOf(ariMin);
-		sql_putAttributes_params[1] = String.valueOf(ariMax);
 		List<ProgressMark> progressMarks = listAllProgressMarks();
 
 		for (int i = 0; i < progressMarks.size(); i++) {
 			final int ari = progressMarks.get(i).ari;
-			if (ari >= Integer.parseInt(sql_putAttributes_params[0]) && ari < Integer.parseInt(sql_putAttributes_params[1])) {
+			if (ari >= ariMin && ari < ariMax) {
 				int mapOffset = Ari.toVerse(ari) - 1;
 				if (mapOffset >= map_0.length) {
 					Log.e(TAG, "ofsetMap kebanyakan " + mapOffset + " terjadi pada ari 0x" + Integer.toHexString(ari));
@@ -796,28 +794,12 @@ public class InternalDb {
 
 	}
 
-	private SQLiteStatement stmt_countProgressAttribute = null;
-	public int countProgressAttributes(int ari_bookchapter) {
-		int ariMin = ari_bookchapter & 0x00ffff00;
-		int ariMax = ari_bookchapter | 0x000000ff;
-
-		if (stmt_countProgressAttribute == null) {
-			stmt_countProgressAttribute = helper.getReadableDatabase().compileStatement("select count(*) from " + Db.TABLE_ProgressMark + " where " + Db.ProgressMark.ari + ">=? and " + Db.ProgressMark.ari + "<?");
-		}
-
-		stmt_countProgressAttribute.clearBindings();
-		stmt_countProgressAttribute.bindLong(1, ariMin);
-		stmt_countProgressAttribute.bindLong(2, ariMax);
-
-		return (int) stmt_countProgressAttribute.simpleQueryForLong();
-	}
-
 	public ProgressMark getProgressMarkById(long id) {
 		Cursor cursor = helper.getReadableDatabase().query(
 		Db.TABLE_ProgressMark,
 		null,
 		"_id=?",
-		new String[] {String.valueOf(id+1)},
+		new String[] {String.valueOf(id + 1)},
 		null, null, null
 		);
 

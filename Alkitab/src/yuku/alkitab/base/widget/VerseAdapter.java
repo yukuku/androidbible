@@ -10,10 +10,12 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
+import yuku.alkitab.base.model.ProgressMark;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.storage.Db;
 
 import java.util.Arrays;
+import java.util.List;
 
 public abstract class VerseAdapter extends BaseAdapter {
 	public static final String TAG = VerseAdapter.class.getSimpleName();
@@ -132,10 +134,19 @@ public abstract class VerseAdapter extends BaseAdapter {
 		attributeMap_ = attributeMap;
 		highlightMap_ = highlightMap;
 
-		if (S.getDb().countProgressAttributes(ariBc) > 0) {
-			progressAttributeMap = new int[verses_.getVerseCount()];
-			S.getDb().putProgressAttributes(ariBc, progressAttributeMap);
+		int ariMin = ariBc & 0x00ffff00;
+		int ariMax = ariBc | 0x000000ff;
+
+		List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
+
+		for (ProgressMark progressMark:progressMarks) {
+			if (progressMark.ari >= ariMin && progressMark.ari < ariMax) {          //if has at least a progress mark
+				progressAttributeMap = new int[verses_.getVerseCount()];
+				S.getDb().putProgressAttributes(ariBc, progressAttributeMap);
+				break;
+			}
 		}
+
 		progressAttributeMap_ = progressAttributeMap;
 
 		notifyDataSetChanged();
