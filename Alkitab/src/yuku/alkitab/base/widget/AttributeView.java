@@ -117,12 +117,12 @@ public class AttributeView extends View {
 		int totalHeight = 0;
 		if (showBookmark) {
 			final Bitmap bookmarkBitmap = getBookmarkBitmap();
-			canvas.drawBitmap(bookmarkBitmap, 0, totalHeight, null);
+			canvas.drawBitmap(bookmarkBitmap, 2, totalHeight, null);
 			totalHeight += bookmarkBitmap.getHeight();
 		}
 		if (showNote) {
 			final Bitmap noteBitmap = getNoteBitmap();
-			canvas.drawBitmap(noteBitmap, 0, totalHeight, null);
+			canvas.drawBitmap(noteBitmap, 2, totalHeight, null);
 			totalHeight += noteBitmap.getHeight();
 		}
 		if (showProgresses != null) {
