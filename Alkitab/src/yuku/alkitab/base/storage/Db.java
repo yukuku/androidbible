@@ -61,4 +61,12 @@ public class Db {
 		public static final String ari = "ari";
 	}
 
+	public static final String TABLE_ProgressMarkHistory = "ProgressMarkHistory";
+	public static final class ProgressMarkHistory {
+		public static final String progress_mark_preset_id = "progress_mark_preset_id";
+		public static final String progress_mark_caption = "progress_mark_caption";
+		public static final String ari = "ari";
+		public static final String createTime = "createTime";
+	}
+
 }

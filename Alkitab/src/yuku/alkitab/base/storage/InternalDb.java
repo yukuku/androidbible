@@ -784,8 +784,17 @@ public class InternalDb {
 
 	public int updateProgressMark(ProgressMark progressMark) {
 		return helper.getWritableDatabase().update(Db.TABLE_ProgressMark, progressMark.toContentValues(), "_id=?", new String[] {String.valueOf(progressMark._id)});
+		updateProgressMarkHistory(progressMark);
 	}
 
 
+	public void updateProgressMarkHistory(ProgressMark progressMark) {
+		ContentValues cv = new ContentValues();
+		cv.put(Db.ProgressMarkHistory.progress_mark_preset_id, progressMark.preset_id);
+		cv.put(Db.ProgressMarkHistory.progress_mark_caption, progressMark.caption);
+		cv.put(Db.ProgressMarkHistory.ari, progressMark.ari);
+		cv.put(Db.ProgressMarkHistory.createTime, Sqlitil.toInt(progressMark.modifyTime));
+		helper.getWritableDatabase().insert(Db.TABLE_ProgressMarkHistory, null, cv);
+	}
 
 }
