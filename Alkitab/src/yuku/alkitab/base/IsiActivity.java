@@ -78,6 +78,7 @@ import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.BackupManager;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.Jumper;
@@ -369,6 +370,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		if (Build.VERSION.SDK_INT >= 14) {
 			initNfcIfAvailable();
 		}
+		backupBookmarks();
 		
 		processIntent(getIntent(), "onCreate");
 	}
@@ -507,6 +509,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					}
 				}
 			}
+		}
+	}
+
+	private void backupBookmarks() {
+		long backupDate = Preferences.getLong(Prefkey.lastBackupDate, 0L);
+		long elapsedDays = (System.currentTimeMillis() - backupDate) / (1000 * 60 * 60 * 24);
+		if (elapsedDays >= BackupManager.backupTime) {
+			BackupManager.backupBookmark(null);
 		}
 	}
 

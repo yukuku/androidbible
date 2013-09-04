@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -27,30 +26,18 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.mobeta.android.dslv.DragSortController;
+import com.mobeta.android.dslv.DragSortListView;
 import gnu.trove.list.TIntList;
-import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.map.hash.TIntLongHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.map.hash.TLongIntHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
-import org.xmlpull.v1.XmlSerializer;
-
 import yuku.afw.D;
 import yuku.afw.V;
 import yuku.alkitab.R;
@@ -63,13 +50,17 @@ import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
 import yuku.alkitab.base.model.Bookmark2;
 import yuku.alkitab.base.model.Label;
 import yuku.alkitab.base.storage.Db;
+import yuku.alkitab.base.util.BackupManager;
 import yuku.ambilwarna.AmbilWarnaDialog;
 import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.mobeta.android.dslv.DragSortController;
-import com.mobeta.android.dslv.DragSortListView;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class BookmarkActivity extends BaseActivity {
 	public static final String TAG = BookmarkActivity.class.getSimpleName();
@@ -378,121 +369,49 @@ public class BookmarkActivity extends BaseActivity {
 	}
 	
 	public void exportBookmarks(final boolean sendBackup) {
-		new AsyncTask<Void, Integer, Object>() {
+		BackupManager.backupBookmark(new BackupManager.BackupListener() {
 			ProgressDialog pd;
-			
 			@Override
-			protected void onPreExecute() {
+			public void onBackupPreExecute() {
 				pd = new ProgressDialog(BookmarkActivity.this);
 				pd.setMessage(getString(R.string.mengekspor_titiktiga));
 				pd.setIndeterminate(true);
 				pd.setCancelable(false);
 				pd.show();
 			}
-			
-			@Override
-			protected Object doInBackground(Void... params) {
-				File out = getFileBackup();
-				try {
-					FileOutputStream fos = new FileOutputStream(out);
-					
-					XmlSerializer xml = Xml.newSerializer();
-					xml.setOutput(fos, "utf-8"); //$NON-NLS-1$
-					xml.startDocument("utf-8", null); //$NON-NLS-1$
-					xml.startTag(null, "backup"); //$NON-NLS-1$
-					
-					List<Bookmark2> bookmarks = new ArrayList<Bookmark2>();
-					{ // write bookmarks
-						Cursor cursor = S.getDb().listAllBookmarks();
-						try {
-							while (cursor.moveToNext()) {
-								Bookmark2 bookmark = Bookmark2.fromCursor(cursor);
-								bookmarks.add(bookmark); // register bookmark
-								bookmark.writeXml(xml, bookmarks.size() /* 1-based relId */);
-							}
-						} finally {
-							cursor.close();
-						}
-					}
-					
-					TLongIntHashMap labelAbsIdToRelIdMap = new TLongIntHashMap();
-					List<Label> labels = S.getDb().listAllLabels();
-					{ // write labels
-						for (int i = 0; i < labels.size(); i++) {
-							Label label = labels.get(i);
-							label.writeXml(xml, i + 1 /* 1-based relId */);
-							labelAbsIdToRelIdMap.put(label._id, i + 1 /* 1-based relId */);
-						}
-					}
-					
-					{ // write mapping from bookmark to label
-						for (int bookmark2_relId_0 = 0; bookmark2_relId_0 < bookmarks.size(); bookmark2_relId_0++) {
-							Bookmark2 bookmark = bookmarks.get(bookmark2_relId_0);
-							TLongList labelIds = S.getDb().listLabelIdsByBookmarkId(bookmark._id);
-							if (labelIds != null && labelIds.size() > 0) {
-								for (int i = 0; i < labelIds.size(); i++) {
-									long labelId = labelIds.get(i);
-									
-									// we now need 2 relids, bookmark relid and label relid
-									int bookmark2_relId = bookmark2_relId_0 + 1; // 1-based
-									int label_relId = labelAbsIdToRelIdMap.get(labelId);
-									
-									if (label_relId != labelAbsIdToRelIdMap.getNoEntryValue()) { // just in case
-										writeBookmark2_LabelXml(xml, bookmark2_relId, label_relId);
-									}
-								}
-							}
-						}
-					}
-					
-					xml.endTag(null, "backup"); //$NON-NLS-1$
-					xml.endDocument();
-					fos.close();
 
-					return out.getAbsolutePath();
-				} catch (Exception e) {
-					return e;
-				}
-			}
-			
-			@Override protected void onPostExecute(Object result) {
+			@Override
+			public void onBackupPostExecute(final Object result) {
 				pd.dismiss();
-				
+
 				if (result instanceof String) {
 					if (!sendBackup) {
 						msgbox(getString(R.string.ekspor_berhasil_file_yang_dihasilkan_file, result));
 					} else {
 						Uri uri = Uri.fromFile(new File((String) result));
-						
+
 						Intent intent = ShareCompat.IntentBuilder.from(BookmarkActivity.this)
 						.setStream(uri)
 						.setType("text/xml") //$NON-NLS-1$
 						.createChooserIntent();
-						
+
 						startActivity(intent);
 					}
 				} else if (result instanceof Exception) {
 					msgbox(getString(R.string.terjadi_kesalahan_ketika_mengekspor_pesan, ((Exception) result).getMessage()));
 				}
 			}
-		}.execute();
+		});
 	}
 	
 	
 	// constants
-	static class Bookmark2_Label { // DO NOT CHANGE CONSTANT VALUES!
-		static final String XMLTAG_Bookmark2_Label = "Bukmak2_Label"; //$NON-NLS-1$
-		static final String XMLATTR_bookmark2_relId = "bukmak2_relId"; //$NON-NLS-1$
-		static final String XMLATTR_label_relId = "label_relId"; //$NON-NLS-1$
+	public static class Bookmark2_Label { // DO NOT CHANGE CONSTANT VALUES!
+		public static final String XMLTAG_Bookmark2_Label = "Bukmak2_Label"; //$NON-NLS-1$
+		public static final String XMLATTR_bookmark2_relId = "bukmak2_relId"; //$NON-NLS-1$
+		public static final String XMLATTR_label_relId = "label_relId"; //$NON-NLS-1$
 	}
 	
-	void writeBookmark2_LabelXml(XmlSerializer xml, int bookmark2_relId, int label_relId) throws IOException {
-		xml.startTag(null, Bookmark2_Label.XMLTAG_Bookmark2_Label);
-		xml.attribute(null, Bookmark2_Label.XMLATTR_bookmark2_relId, String.valueOf(bookmark2_relId));
-		xml.attribute(null, Bookmark2_Label.XMLATTR_label_relId, String.valueOf(label_relId));
-		xml.endTag(null, Bookmark2_Label.XMLTAG_Bookmark2_Label);
-	}
-
 	private OnItemClickListener lv_click = new OnItemClickListener() {
 		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 			Intent intent;
