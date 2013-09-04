@@ -39,6 +39,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 import yuku.afw.D;
 import yuku.afw.V;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
@@ -49,7 +50,9 @@ import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
 import yuku.alkitab.base.model.Bookmark2;
 import yuku.alkitab.base.model.Label;
 import yuku.alkitab.base.storage.Db;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.BackupManager;
+import yuku.alkitab.base.util.Sqlitil;
 import yuku.ambilwarna.AmbilWarnaDialog;
 import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
 
@@ -58,6 +61,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -69,7 +73,8 @@ public class BookmarkActivity extends BaseActivity {
 	DragSortListView lv;
 	
 	BookmarkFilterAdapter adapter;
-	
+	private TextView tLastBackup;
+
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
@@ -78,7 +83,10 @@ public class BookmarkActivity extends BaseActivity {
 		
 		adapter = new BookmarkFilterAdapter();
 		adapter.reload();
-		
+
+		tLastBackup = V.get(this, R.id.tLastBackup);
+		updateLastBackup();
+
 		lv = V.get(this, android.R.id.list);
 		lv.setDropListener(adapter);
 		lv.setOnItemClickListener(lv_click);
@@ -121,6 +129,15 @@ public class BookmarkActivity extends BaseActivity {
 					.setOnDismissListener(finishActivityListener);
 				}
 			}
+		}
+	}
+
+	private void updateLastBackup() {
+		long lastBackup = Preferences.getLong(Prefkey.lastBackupDate, 0L);
+		if (lastBackup != 0) {
+			tLastBackup.setText(getString(R.string.last_backup,  Sqlitil.toLocalDateTimeSimple(new Date(lastBackup))));
+		} else {
+			tLastBackup.setText("");
 		}
 	}
 
@@ -375,6 +392,7 @@ public class BookmarkActivity extends BaseActivity {
 				pd.dismiss();
 
 				if (result instanceof String) {
+					updateLastBackup();
 					if (!sendBackup) {
 						msgbox(getString(R.string.ekspor_berhasil_file_yang_dihasilkan_file, result));
 					} else {

@@ -1,6 +1,7 @@
 package yuku.alkitab.base.util;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Sqlitil {
@@ -22,5 +23,9 @@ public class Sqlitil {
 	
 	public static String toLocaleDateMedium(int date) {
 		 return toLocaleDateMedium(new Date((long)date * 1000));
+	}
+
+	public static String toLocalDateTimeSimple(Date date) {
+		return new SimpleDateFormat("hh:mm, dd-MM-yyyy").format(date);
 	}
 }
