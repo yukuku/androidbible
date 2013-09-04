@@ -1799,22 +1799,27 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			} return true;
 			case R.id.menuProgress1: {
 				moveProgressMark(mainVerse_1, 0);
+				AttributeView.startAnimationForProgressMark(0);
 				reloadVerse();
 			} return true;
 			case R.id.menuProgress2: {
 				moveProgressMark(mainVerse_1, 1);
+				AttributeView.startAnimationForProgressMark(1);
 				reloadVerse();
 			} return true;
 			case R.id.menuProgress3: {
 				moveProgressMark(mainVerse_1, 2);
+				AttributeView.startAnimationForProgressMark(2);
 				reloadVerse();
 			} return true;
 			case R.id.menuProgress4: {
 				moveProgressMark(mainVerse_1, 3);
+				AttributeView.startAnimationForProgressMark(3);
 				reloadVerse();
 			} return true;
 			case R.id.menuProgress5: {
 				moveProgressMark(mainVerse_1, 4);
+				AttributeView.startAnimationForProgressMark(4);
 				reloadVerse();
 			} return true;
 
@@ -1851,9 +1856,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private void moveProgressMark(final int mainVerse_1, int position) {
 		final int ari = Ari.encode(this.activeBook.bookId, this.chapter_1, mainVerse_1);
 		List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
-		progressMarks.get(position).ari = ari;
-		progressMarks.get(position).modifyTime = new Date();
-		S.getDb().updateProgressMark(progressMarks.get(position));
+		final ProgressMark progressMark = progressMarks.get(position);
+		progressMark.ari = ari;
+		progressMark.modifyTime = new Date();
+		S.getDb().updateProgressMark(progressMark);
 	}
 
 	SplitHandleButton.SplitHandleButtonListener splitHandleButton_listener = new SplitHandleButton.SplitHandleButtonListener() {

@@ -4,8 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
+import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 import yuku.alkitab.R;
@@ -16,6 +18,7 @@ public class AttributeView extends View {
 	static Bitmap bookmarkBitmap = null;
 	static Bitmap noteBitmap = null;
 	static Bitmap[] progressMarkBitmap = new Bitmap[5];
+	static Paint alphaPaint = new Paint();
 
 	private boolean showBookmark;
 	private boolean showNote;
@@ -25,6 +28,8 @@ public class AttributeView extends View {
 	private Book book;
 	private int chapter_1;
 	private int verse_1;
+
+	private static SparseArray<Long> progressMarkAnimationStartTimes = new SparseArray<Long>();
 
 	public AttributeView(final Context context) {
 		super(context);
@@ -93,9 +98,9 @@ public class AttributeView extends View {
 			}
 		}
 		if (attribute != 0) {
-			for (int i = 0; i < 5; i++) {
-				if (isProgressMarkSetFromAttribute(i)) {
-					final Bitmap progressMarkBitmapById = getProgressMarkBitmapByPresetId(i);
+			for (int preset_id = 0; preset_id < 5; preset_id++) {
+				if (isProgressMarkSetFromAttribute(preset_id)) {
+					final Bitmap progressMarkBitmapById = getProgressMarkBitmapByPresetId(preset_id);
 					totalHeight += progressMarkBitmapById.getHeight();
 					if (totalWidth < progressMarkBitmapById.getWidth()) {
 						totalWidth = progressMarkBitmapById.getWidth();
@@ -125,10 +130,25 @@ public class AttributeView extends View {
 			totalHeight += noteBitmap.getHeight();
 		}
 		if (attribute != 0) {
-			for (int i = 0; i < 5; i++) {
-				if (isProgressMarkSetFromAttribute(i)) {
-					final Bitmap progressMarkBitmapById = getProgressMarkBitmapByPresetId(i);
-					canvas.drawBitmap(progressMarkBitmapById, 0, totalHeight, null);
+			for (int preset_id = 0; preset_id < 5; preset_id++) {
+				if (isProgressMarkSetFromAttribute(preset_id)) {
+					final Bitmap progressMarkBitmapById = getProgressMarkBitmapByPresetId(preset_id);
+					final Long animationStartTime = progressMarkAnimationStartTimes.get(preset_id);
+					final Paint p;
+					if (animationStartTime == null) {
+						p = null;
+					} else {
+						final int animationElapsed = (int) (System.currentTimeMillis() - animationStartTime);
+						final int animationDuration = 800;
+						if (animationElapsed >= animationDuration) {
+							p = null;
+						} else {
+							alphaPaint.setAlpha(animationElapsed * 255 / animationDuration);
+							p = alphaPaint;
+							invalidate(); // animation is still running so request for invalidate
+						}
+					}
+					canvas.drawBitmap(progressMarkBitmapById, 0, totalHeight, p);
 					totalHeight += progressMarkBitmapById.getHeight();
 				}
 			}
@@ -157,12 +177,12 @@ public class AttributeView extends View {
 				}
 			}
 			if (attribute != 0) {
-				for (int i = 0; i < 5; i++) {
-					if (isProgressMarkSetFromAttribute(i)) {
-						final Bitmap progressMarkBitmapById = getProgressMarkBitmapByPresetId(i);
+				for (int preset_id = 0; preset_id < 5; preset_id++) {
+					if (isProgressMarkSetFromAttribute(preset_id)) {
+						final Bitmap progressMarkBitmapById = getProgressMarkBitmapByPresetId(preset_id);
 						totalHeight += progressMarkBitmapById.getHeight();
 						if (totalHeight > y) {
-							attributeListener.onProgressMarkAttributeClick(i);
+							attributeListener.onProgressMarkAttributeClick(preset_id);
 							return true;
 						}
 					}
@@ -179,6 +199,10 @@ public class AttributeView extends View {
 		this.book = book;
 		this.chapter_1 = chapter_1;
 		this.verse_1 = verse_1;
+	}
+
+	public static void startAnimationForProgressMark(final int preset_id) {
+		progressMarkAnimationStartTimes.put(preset_id, System.currentTimeMillis());
 	}
 
 	public static int getDefaultProgressMarkStringResource(int preset_id) {
