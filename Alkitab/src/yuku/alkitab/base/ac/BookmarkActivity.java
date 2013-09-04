@@ -9,7 +9,6 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -155,7 +154,7 @@ public class BookmarkActivity extends BaseActivity {
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
 		if (itemId == R.id.menuImport) {
-			final File f = getFileBackup();
+			final File f = BackupManager.getFileBackup();
 			
 			new AlertDialog.Builder(this)
 			.setMessage(getString(R.string.impor_pembatas_buku_dan_catatan_dari_tanya, f.getAbsolutePath()))
@@ -241,15 +240,6 @@ public class BookmarkActivity extends BaseActivity {
 		return super.onOptionsItemSelected(item);
 	}
 	
-	File getFileBackup() {
-		File dir = new File(Environment.getExternalStorageDirectory(), "bible"); //$NON-NLS-1$
-		if (!dir.exists()) {
-			dir.mkdir();
-		}
-		
-		return new File(dir, getPackageName() + "-backup.xml"); //$NON-NLS-1$
-	}
-
 	public void importBookmarks(final InputStream inputStream, boolean overwriteExisting, final boolean finishActivityAfterwards) {
 		new AsyncTask<Boolean, Integer, Object>() {
 			ProgressDialog pd;
@@ -279,7 +269,7 @@ public class BookmarkActivity extends BaseActivity {
 					InputStream fis;
 					
 					if (inputStream == null) {
-						File in = getFileBackup();
+						File in = BackupManager.getFileBackup();
 						fis = new FileInputStream(in);
 					} else {
 						fis = inputStream;

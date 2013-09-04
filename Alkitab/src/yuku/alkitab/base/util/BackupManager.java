@@ -115,15 +115,6 @@ public class BackupManager {
 				}
 			}
 
-			File getFileBackup() {
-				File dir = new File(Environment.getExternalStorageDirectory(), "bible"); //$NON-NLS-1$
-				if (!dir.exists()) {
-					dir.mkdir();
-				}
-
-				return new File(dir, App.context.getPackageName() + "-backup.xml"); //$NON-NLS-1$
-			}
-
 			void writeBookmark2_LabelXml(XmlSerializer xml, int bookmark2_relId, int label_relId) throws IOException {
 				xml.startTag(null, BookmarkActivity.Bookmark2_Label.XMLTAG_Bookmark2_Label);
 				xml.attribute(null, BookmarkActivity.Bookmark2_Label.XMLATTR_bookmark2_relId, String.valueOf(bookmark2_relId));
@@ -133,6 +124,15 @@ public class BackupManager {
 
 		}.execute();
 
+	}
+
+	public static File getFileBackup() {
+		File dir = new File(Environment.getExternalStorageDirectory(), "bible"); //$NON-NLS-1$
+		if (!dir.exists()) {
+			dir.mkdir();
+		}
+
+		return new File(dir, App.context.getPackageName() + "-backup.xml"); //$NON-NLS-1$
 	}
 
 }
