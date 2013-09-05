@@ -39,6 +39,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		createIndexProgressMark(db);
 		insertDefaultProgressMarks(db);
 		createTableProgressMarkHistory(db);
+		createIndexProgressMarkHistory(db);
 	}
 
 	private void createTableBukmak2(SQLiteDatabase db) {
@@ -167,6 +168,11 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL(String.format("create index if not exists index_601 on %s (%s)", Db.TABLE_ProgressMark, Db.ProgressMark.preset_id)); //$NON-NLS-1$
 	}
 
+	private void createIndexProgressMarkHistory(SQLiteDatabase db) {
+		// index ProgressMarkHistory(progress_mark_preset_id, createTime)
+		db.execSQL(String.format("create index if not exists index_701 on %s (%s, %s)", Db.TABLE_ProgressMarkHistory, Db.ProgressMarkHistory.progress_mark_preset_id, Db.ProgressMarkHistory.createTime));
+	}
+
 	private void insertDefaultProgressMarks(SQLiteDatabase db) {
 		ContentValues cv = new ContentValues();
 		cv.put(Db.ProgressMark.ari, 0);
@@ -217,6 +223,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			createIndexProgressMark(db);
 			insertDefaultProgressMarks(db);
 			createTableProgressMarkHistory(db);
+			createIndexProgressMarkHistory(db);
 		}
 	}
 
