@@ -783,11 +783,11 @@ public class InternalDb {
 	}
 
 	public int updateProgressMark(ProgressMark progressMark) {
-		updateProgressMarkHistory(progressMark);
+		insertProgressMarkHistory(progressMark);
 		return helper.getWritableDatabase().update(Db.TABLE_ProgressMark, progressMark.toContentValues(), Db.ProgressMark.preset_id + "=?", new String[] {String.valueOf(progressMark.preset_id)});
 	}
 
-	public void updateProgressMarkHistory(ProgressMark progressMark) {
+	public void insertProgressMarkHistory(ProgressMark progressMark) {
 		ContentValues cv = new ContentValues();
 		cv.put(Db.ProgressMarkHistory.progress_mark_preset_id, progressMark.preset_id);
 		cv.put(Db.ProgressMarkHistory.progress_mark_caption, progressMark.caption);
