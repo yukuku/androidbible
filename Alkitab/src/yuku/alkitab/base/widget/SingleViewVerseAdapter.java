@@ -95,7 +95,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			TextView lCaption = (TextView) res.findViewById(R.id.lCaption);
 			TextView lParallels = (TextView) res.findViewById(R.id.lParallels);
 
-			lCaption.setText(pericopeBlock.title);
+			PericopeRenderer.render(lCaption, pericopeBlock.title);
 
 			int paddingTop;
 			// turn off top padding if the position == 0 OR before this is also a pericope title

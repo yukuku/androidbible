@@ -110,7 +110,7 @@ public class LegacyVerseAdapter extends VerseAdapter {
 			TextView lJudul = (TextView) res.findViewById(R.id.lCaption);
 			TextView lXparalel = (TextView) res.findViewById(R.id.lParallels);
 
-			lJudul.setText(pericopeBlock.title);
+			PericopeRenderer.render(lJudul, pericopeBlock.title);
 
 			// matikan padding atas kalau position == 0 ATAU sebelum ini juga judul perikop
 			if (position == 0 || itemPointer_[position - 1] < 0) {

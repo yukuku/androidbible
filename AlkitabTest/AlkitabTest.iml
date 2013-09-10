@@ -16,7 +16,7 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="module" module-name="Alkitab" />
+    <orderEntry type="module" module-name="Alkitab" scope="PROVIDED" />
   </component>
 </module>
 
