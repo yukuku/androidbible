@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
+
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -70,7 +71,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				setClickListenerForBookmark(imgAttributeBookmark, chapter_1_, verse_1);
 			}
 			View imgAttributeNote = res.findViewById(R.id.imgAtributCatatan);
-			imgAttributeNote.setVisibility(withNote? View.VISIBLE: View.GONE);
+			imgAttributeNote.setVisibility(withNote ? View.VISIBLE : View.GONE);
 			if (withNote) {
 				setClickListenerForNote(imgAttributeNote, chapter_1_, verse_1);
 			}
@@ -150,7 +151,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		}
 	}
 
-	private void appendParallel(SpannableStringBuilder sb, String parallel) {
+    private void appendParallel(SpannableStringBuilder sb, String parallel) {
         int sb_len = sb.length();
 
         linked: {
