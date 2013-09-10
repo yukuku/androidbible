@@ -3,11 +3,9 @@ package yuku.alkitab.base.storage;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
 import yuku.afw.App;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.storage.Db.Bookmark2;
@@ -22,28 +20,29 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	@Override
 	public void onOpen(SQLiteDatabase db) {
 		// db.execSQL("PRAGMA synchronous=OFF");
-	};
+	}
 
 	@Override public void onCreate(SQLiteDatabase db) {
 		Log.d(TAG, "onCreate dipanggil"); //$NON-NLS-1$
 		
-		try {
-			bikinTabelBukmak2(db);
-			bikinIndexBukmak2(db);
-			bikinTabelRenungan(db);
-			bikinIndexRenungan(db);
-			bikinTabelEdisi(db);
-			bikinIndexEdisi(db);
-			bikinTabelLabel(db);
-			bikinIndexLabel(db);
-			bikinTabelBukmak2_Label(db);
-			bikinIndexBukmak2_Label(db);
-		} catch (SQLException e) {
-			Log.e(TAG, "onCreate db ngaco!", e); //$NON-NLS-1$
-		}
+		createTableBukmak2(db);
+		createIndexBukmak2(db);
+		createTableRenungan(db);
+		createIndexRenungan(db);
+		createTableEdisi(db);
+		createIndexEdisi(db);
+		createTableLabel(db);
+		createIndexLabel(db);
+		createTableBukmak2_Label(db);
+		createIndexBukmak2_Label(db);
+		createTableProgressMark(db);
+		createIndexProgressMark(db);
+		insertDefaultProgressMarks(db);
+		createTableProgressMarkHistory(db);
+		createIndexProgressMarkHistory(db);
 	}
 
-	private void bikinTabelBukmak2(SQLiteDatabase db) throws SQLException {
+	private void createTableBukmak2(SQLiteDatabase db) {
 		db.execSQL(String.format("create table if not exists %s (" + //$NON-NLS-1$
 			"_id integer primary key autoincrement, " + //$NON-NLS-1$
 			"%s integer, " + // ari //$NON-NLS-1$
@@ -54,7 +53,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			Db.TABLE_Bookmark2, Db.Bookmark2.ari, Db.Bookmark2.kind, Db.Bookmark2.caption, Db.Bookmark2.addTime, Db.Bookmark2.modifyTime));
 	}
 	
-	private void bikinIndexBukmak2(SQLiteDatabase db) throws SQLException {
+	private void createIndexBukmak2(SQLiteDatabase db) {
 		// index Bukmak2(ari)
 		db.execSQL(String.format("create index if not exists index_201 on %s (%s)", Db.TABLE_Bookmark2, Db.Bookmark2.ari)); //$NON-NLS-1$
 		// index Bukmak2(jenis,ari)
@@ -67,7 +66,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL(String.format("create index if not exists index_205 on %s (%s, %s collate NOCASE)", Db.TABLE_Bookmark2, Db.Bookmark2.kind, Db.Bookmark2.caption)); //$NON-NLS-1$
 	}
 	
-	private void bikinTabelRenungan(SQLiteDatabase db) throws SQLException {
+	private void createTableRenungan(SQLiteDatabase db) {
 		db.execSQL(String.format("create table if not exists %s (" + //$NON-NLS-1$
 			"_id integer primary key autoincrement, " + //$NON-NLS-1$
 			"%s text, " + // nama //$NON-NLS-1$
@@ -80,7 +79,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			Db.TABLE_Devotion, Db.Devotion.name, Db.Devotion.date, Db.Devotion.header, Db.Devotion.title, Db.Devotion.body, Db.Devotion.readyToUse, Db.Devotion.touchTime));
 	}
 
-	private void bikinIndexRenungan(SQLiteDatabase db) throws SQLException {
+	private void createIndexRenungan(SQLiteDatabase db) {
 		// index Renungan(nama)
 		db.execSQL(String.format("create index if not exists index_101 on %s (%s)", Db.TABLE_Devotion, Db.Devotion.name)); //$NON-NLS-1$
 		// index Renungan(nama,tgl)
@@ -91,7 +90,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL(String.format("create index if not exists index_104 on %s (%s)", Db.TABLE_Devotion, Db.Devotion.touchTime)); //$NON-NLS-1$
 	}
 	
-	private void bikinTabelEdisi(SQLiteDatabase db) throws SQLException {
+	private void createTableEdisi(SQLiteDatabase db) {
 		db.execSQL("create table if not exists " + Db.TABLE_Version + " (" + //$NON-NLS-1$ //$NON-NLS-2$
 			"_id integer primary key autoincrement, " + //$NON-NLS-1$
 			Db.Version.shortName + " text, " + //$NON-NLS-1$
@@ -105,7 +104,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		
 	}
 	
-	private void bikinIndexEdisi(SQLiteDatabase db) throws SQLException {
+	private void createIndexEdisi(SQLiteDatabase db) {
 		// index Edisi(urutan)
 		db.execSQL(String.format("create index if not exists index_301 on %s (%s)", Db.TABLE_Version, Db.Version.ordering)); //$NON-NLS-1$
 		
@@ -116,7 +115,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL(String.format("create index if not exists index_303 on %s (%s)", Db.TABLE_Version, Db.Version.title)); //$NON-NLS-1$
 	}
 	
-	private void bikinTabelLabel(SQLiteDatabase db) throws SQLException {
+	private void createTableLabel(SQLiteDatabase db) {
 		db.execSQL("create table if not exists " + Db.TABLE_Label + " (" + //$NON-NLS-1$ //$NON-NLS-2$
 			"_id integer primary key autoincrement, " + //$NON-NLS-1$
 			Db.Label.title + " text, " + //$NON-NLS-1$
@@ -124,19 +123,19 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			Db.Label.backgroundColor + " text)"); //$NON-NLS-1$
 	}
 	
-	private void bikinIndexLabel(SQLiteDatabase db) throws SQLException {
+	private void createIndexLabel(SQLiteDatabase db) {
 		// index Label(urutan)
 		db.execSQL(String.format("create index if not exists index_401 on %s (%s)", Db.TABLE_Label, Db.Label.ordering)); //$NON-NLS-1$
 	}
 	
-	private void bikinTabelBukmak2_Label(SQLiteDatabase db) throws SQLException {
+	private void createTableBukmak2_Label(SQLiteDatabase db) {
 		db.execSQL("create table if not exists " + Db.TABLE_Bookmark2_Label + " (" + //$NON-NLS-1$ //$NON-NLS-2$
 				"_id integer primary key autoincrement, " + //$NON-NLS-1$
 				Db.Bookmark2_Label.bookmark2_id + " integer, " + //$NON-NLS-1$
 				Db.Bookmark2_Label.label_id + " integer)"); //$NON-NLS-1$
 	}
 	
-	private void bikinIndexBukmak2_Label(SQLiteDatabase db) throws SQLException {
+	private void createIndexBukmak2_Label(SQLiteDatabase db) {
 		// index Bukmak2_Label(bukmak2_id)
 		db.execSQL(String.format("create index if not exists index_501 on %s (%s)", Db.TABLE_Bookmark2_Label, Db.Bookmark2_Label.bookmark2_id)); //$NON-NLS-1$
 		// index Bukmak2_Label(label_id)
@@ -144,6 +143,43 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		// unique index Bukmak2_Label(bukmak2_id, label_id)
 		db.execSQL(String.format("create unique index if not exists index_503 on %s (%s, %s)", Db.TABLE_Bookmark2_Label, Db.Bookmark2_Label.bookmark2_id, Db.Bookmark2_Label.label_id)); //$NON-NLS-1$
 		
+	}
+
+	private void createTableProgressMark(SQLiteDatabase db) {
+		db.execSQL("create table if not exists " + Db.TABLE_ProgressMark + " (" +
+				"_id integer primary key autoincrement, " +
+				Db.ProgressMark.preset_id + " integer, " +
+				Db.ProgressMark.caption + " text, " +
+				Db.ProgressMark.ari + " integer, " +
+				Db.ProgressMark.modifyTime + " integer)");
+	}
+
+	private void createTableProgressMarkHistory(SQLiteDatabase db) {
+		db.execSQL("create table if not exists " + Db.TABLE_ProgressMarkHistory + " (" +
+				"_id integer primary key autoincrement, " +
+				Db.ProgressMarkHistory.progress_mark_preset_id + " integer, " +
+				Db.ProgressMarkHistory.progress_mark_caption + " integer, " +
+				Db.ProgressMarkHistory.ari + " integer, " +
+				Db.ProgressMarkHistory.createTime + " integer)");
+	}
+
+	private void createIndexProgressMark(SQLiteDatabase db) {
+		// index ProgressMark(preset_id)
+		db.execSQL(String.format("create index if not exists index_601 on %s (%s)", Db.TABLE_ProgressMark, Db.ProgressMark.preset_id)); //$NON-NLS-1$
+	}
+
+	private void createIndexProgressMarkHistory(SQLiteDatabase db) {
+		// index ProgressMarkHistory(progress_mark_preset_id, createTime)
+		db.execSQL(String.format("create index if not exists index_701 on %s (%s, %s)", Db.TABLE_ProgressMarkHistory, Db.ProgressMarkHistory.progress_mark_preset_id, Db.ProgressMarkHistory.createTime));
+	}
+
+	private void insertDefaultProgressMarks(SQLiteDatabase db) {
+		ContentValues cv = new ContentValues();
+		cv.put(Db.ProgressMark.ari, 0);
+		for (int i = 0; i < 5; i++) {
+			cv.put(Db.ProgressMark.preset_id, i);
+			db.insert(Db.TABLE_ProgressMark, null, cv);
+		}
 	}
 	
 	@Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -156,30 +192,38 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 
 		if (oldVersion <= 50) {
 			// tambah tabel Edisi
-			bikinTabelEdisi(db);
-			bikinIndexEdisi(db);
+			createTableEdisi(db);
+			createIndexEdisi(db);
 		}
 		
 		if (oldVersion <= 69) { // 70: 2.0.0
 			// tambah tabel Label dan Bukmak2_Label
-			bikinTabelLabel(db);
-			bikinIndexLabel(db);
-			bikinTabelBukmak2_Label(db);
-			bikinIndexBukmak2_Label(db);
+			createTableLabel(db);
+			createIndexLabel(db);
+			createTableBukmak2_Label(db);
+			createIndexBukmak2_Label(db);
 		}
 		
 		if (oldVersion <= 70) { // 71: 2.0.0 juga
 			// tambah index di Bukmak2
-			bikinIndexBukmak2(db);
+			createIndexBukmak2(db);
 		}
 		
 		if (oldVersion <= 71) { // 72: 2.0.0 juga
 			// tambah index di Renungan
-			bikinIndexRenungan(db);
+			createIndexRenungan(db);
 		}
 		
 		if (oldVersion <= 102) { // 103: 2.7.1 
 			addShortNameColumnAndIndexToEdisi(db);
+		}
+
+		if (oldVersion <= 126) { // 127: 3.2.0
+			createTableProgressMark(db);
+			createIndexProgressMark(db);
+			insertDefaultProgressMarks(db);
+			createTableProgressMarkHistory(db);
+			createIndexProgressMarkHistory(db);
 		}
 	}
 
@@ -203,8 +247,8 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			public static final String ayat = "ayat"; //$NON-NLS-1$
 		}
 
-		bikinTabelBukmak2(db);
-		bikinIndexBukmak2(db);
+		createTableBukmak2(db);
+		createIndexBukmak2(db);
 		
 		// pindahin data dari Bukmak ke Bukmak2
 		db.beginTransaction();

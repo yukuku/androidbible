@@ -52,4 +52,21 @@ public class Db {
 		public static final String bookmark2_id = "bukmak2_id"; //$NON-NLS-1$
 		public static final String label_id = "label_id"; //$NON-NLS-1$
 	}
+
+	public static final String TABLE_ProgressMark = "ProgressMark";
+	public static final class ProgressMark {
+		public static final String preset_id = "preset_id";
+		public static final String caption = "caption";
+		public static final String modifyTime = "modifyTime";
+		public static final String ari = "ari";
+	}
+
+	public static final String TABLE_ProgressMarkHistory = "ProgressMarkHistory";
+	public static final class ProgressMarkHistory {
+		public static final String progress_mark_preset_id = "progress_mark_preset_id";
+		public static final String progress_mark_caption = "progress_mark_caption";
+		public static final String ari = "ari";
+		public static final String createTime = "createTime";
+	}
+
 }

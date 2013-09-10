@@ -1,5 +1,8 @@
 package yuku.alkitabconverter.yet;
 
+import yuku.alkitab.yes2.model.PericopeData;
+import yuku.alkitabconverter.util.Rec;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -7,9 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
-
-import yuku.alkitab.yes2.model.PericopeData;
-import yuku.alkitabconverter.util.Rec;
 
 public class YetFileInput {
 	public static class YetFileInputResult {
@@ -63,8 +63,9 @@ public class YetFileInput {
 		
 		int report_line_number = 0;
 		String report_line_text = null;
-		
-		try (Scanner sc = new Scanner(new File(nf), "utf-8")) {
+
+		try {
+			final Scanner sc = new Scanner(new File(nf), "utf-8");
 			while (sc.hasNextLine()) {
 				String line = sc.nextLine();
 				

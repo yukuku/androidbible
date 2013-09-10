@@ -1,5 +1,7 @@
 package yuku.alkitabconverter.util;
 
+import yuku.alkitab.base.model.Ari;
+
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -9,8 +11,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
-import yuku.alkitab.base.model.Ari;
 
 
 
@@ -38,7 +38,6 @@ public class TextDb {
 	
 	/**
 	 * @param currentIndent if -1, don't write anything. 
-	 * @return
 	 */
 	public String append(int ari, String s, int currentIndent) {
 		return append(ari, s, currentIndent, null);
@@ -47,7 +46,6 @@ public class TextDb {
 	/**
 	 * @param separatorWhenExisting if the text is appended to an ari that has already some text, append this first, then the text. 
 	 * @param currentIndent if -1, don't write anything. 
-	 * @return
 	 */
 	public String append(int ari, String text, int currentIndent, String separatorWhenExisting) {
 		VerseState as = map.get(ari);
@@ -196,7 +194,7 @@ public class TextDb {
 	}
 
 	public int getBookCount() {
-		Set<Integer> bookIds = new LinkedHashSet<>();
+		Set<Integer> bookIds = new LinkedHashSet<Integer>();
 		for (Map.Entry<Integer, VerseState> e: map.entrySet()) {
 			int bookId = Ari.toBook(e.getKey());
 			bookIds.add(bookId);
@@ -205,7 +203,7 @@ public class TextDb {
 	}
 	
 	public int[] getBookIds() {
-		Set<Integer> bookIds = new TreeSet<>();
+		Set<Integer> bookIds = new TreeSet<Integer>();
 		for (Map.Entry<Integer, VerseState> e: map.entrySet()) {
 			int bookId = Ari.toBook(e.getKey());
 			bookIds.add(bookId);
