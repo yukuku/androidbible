@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	package="yuku.alkitab.test"
-	android:versionCode="1"
-	android:versionName="1.0">
-	<application
-		android:icon="@drawable/icon"
-		android:label="@string/app_name" android:debuggable="true">
+<!-- package name must be unique so suffix with "test" so package loader doesn't ignore us -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
+          package="yuku.alkitab.test"
+          android:versionCode="1"
+          android:versionName="1.0">
 
-		<uses-library
-			android:name="android.test.runner" />
-	</application>
-	<uses-sdk
-		android:minSdkVersion="7" />
-	<instrumentation
-		android:targetPackage="yuku.alkitab"
-		android:name="android.test.InstrumentationTestRunner" />
-</manifest> 
+    <!-- We add an application tag here just so that we can indicate that
+         this package needs to link against the android.test library,
+         which is needed when building test cases. -->
+    <application tools:ignore="MissingApplicationIcon">
+        <uses-library android:name="android.test.runner"/>
+    </application>
+
+    <!--
+    This declares that this application uses the instrumentation test runner targeting
+    the package of yuku.alkitab.  To run the tests use the command:
+    "adb shell am instrument -w yuku.alkitab.test/android.test.InstrumentationTestRunner"
+    -->
+    <instrumentation android:name="android.test.InstrumentationTestRunner"
+                     android:targetPackage="yuku.alkitab" />
+</manifest>
