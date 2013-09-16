@@ -136,8 +136,22 @@ public class BackupManager {
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
-
 		if (autoBackup) {
+			List<File> backupFiles = listBackupFiles();
+			int count = 0;
+			File oldestFile = null;
+			for (File file : backupFiles) {
+				if (file.getName().contains("autobackup")) {
+					count++;
+					if (oldestFile == null || file.lastModified() < oldestFile.lastModified()) {
+						oldestFile = file;
+						continue;
+					}
+				}
+			}
+			if (count > 9 && oldestFile != null) {
+				oldestFile.delete();
+			}
 			String time = new SimpleDateFormat("yyyyMMdd-hhmmss").format(new Date());
 			return new File(dir, App.context.getPackageName() + "-autobackup-" + time + ".xml");
 		} else {
