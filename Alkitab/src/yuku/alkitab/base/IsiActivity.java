@@ -516,7 +516,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		long backupDate = Preferences.getLong(Prefkey.lastBackupDate, 0L);
 		long elapsedDays = (System.currentTimeMillis() - backupDate) / (1000 * 60 * 60 * 24);
 		if (elapsedDays >= BackupManager.backupTime) {
-			BackupManager.backupBookmark(null);
+			BackupManager.backupBookmark(true, null);
 		}
 	}
 

@@ -9,6 +9,7 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -45,6 +46,7 @@ import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.dialog.ChooseBackupFileDialog;
 import yuku.alkitab.base.dialog.LabelEditorDialog;
 import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
 import yuku.alkitab.base.model.Bookmark2;
@@ -171,38 +173,46 @@ public class BookmarkActivity extends BaseActivity {
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
 		if (itemId == R.id.menuImport) {
-			final File f = BackupManager.getFileBackup();
-			
-			new AlertDialog.Builder(this)
-			.setMessage(getString(R.string.impor_pembatas_buku_dan_catatan_dari_tanya, f.getAbsolutePath()))
-			.setNegativeButton(R.string.no, null)
-			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+			List<File> backupFiles = BackupManager.listBackupFiles();
+			if (backupFiles.size() == 0) {
+				msgbox(getString(R.string.file_tidak_bisa_dibaca_file, BackupManager.getFileDir().getAbsolutePath()));
+			}
+			final FragmentManager fm = getSupportFragmentManager();
+			final ChooseBackupFileDialog dialog = ChooseBackupFileDialog.getInstance(backupFiles);
+			dialog.setChooseBackupFileListener(new ChooseBackupFileDialog.ChooseBackupFileListener() {
 				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					if (!f.exists() || !f.canRead()) {
-						msgbox(getString(R.string.file_tidak_bisa_dibaca_file, f.getAbsolutePath()));
+				public void onSelect(final File file) {
+					dialog.dismiss();
+					if (!file.exists() || !file.canRead()) {
+						msgbox(getString(R.string.file_tidak_bisa_dibaca_file, file.getAbsolutePath()));
 						return;
 					}
 
-					new AlertDialog.Builder(BookmarkActivity.this)
-					.setMessage(R.string.apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya)
-					.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							importBookmarks(null, false, false);
-						}
-					})
-					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							importBookmarks(null, true, false);
-						}
-					})
-					.show();
+					try {
+						final InputStream inputStream = new FileInputStream(file);
+						new AlertDialog.Builder(BookmarkActivity.this)
+						.setMessage(R.string.apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya)
+						.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								importBookmarks(inputStream, false, false);
+							}
+						})
+						.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								importBookmarks(inputStream, true, false);
+							}
+						})
+						.show();
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
+
 				}
-			})
-			.show();
-			
+			});
+			dialog.show(fm, "choose file dialog");
+
 			return true;
 		} else if (itemId == R.id.menuExport) {
 			if (S.getDb().countAllBookmarks() == 0) {
@@ -286,7 +296,7 @@ public class BookmarkActivity extends BaseActivity {
 					InputStream fis;
 					
 					if (inputStream == null) {
-						File in = BackupManager.getFileBackup();
+						File in = BackupManager.getFileBackup(false);
 						fis = new FileInputStream(in);
 					} else {
 						fis = inputStream;
@@ -376,7 +386,7 @@ public class BookmarkActivity extends BaseActivity {
 	}
 	
 	public void exportBookmarks(final boolean sendBackup) {
-		BackupManager.backupBookmark(new BackupManager.BackupListener() {
+		BackupManager.backupBookmark(false, new BackupManager.BackupListener() {
 			ProgressDialog pd;
 			@Override
 			public void onBackupPreExecute() {

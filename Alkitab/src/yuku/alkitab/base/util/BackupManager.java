@@ -18,8 +18,12 @@ import yuku.alkitab.base.storage.Prefkey;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BackupManager {
 
@@ -31,7 +35,7 @@ public class BackupManager {
 
 	public static final long backupTime = 3;
 
-	public static void backupBookmark(final BackupListener backupListener) {
+	public static void backupBookmark(final boolean autoBackup, final BackupListener backupListener) {
 		new AsyncTask<Void, Integer, Object>() {
 
 			@Override
@@ -43,7 +47,7 @@ public class BackupManager {
 
 			@Override
 			protected Object doInBackground(Void... params) {
-				File out = getFileBackup();
+				File out = getFileBackup(autoBackup);
 				try {
 					FileOutputStream fos = new FileOutputStream(out);
 
@@ -126,13 +130,37 @@ public class BackupManager {
 
 	}
 
-	public static File getFileBackup() {
-		File dir = new File(Environment.getExternalStorageDirectory(), "bible"); //$NON-NLS-1$
+	public static File getFileBackup(boolean autoBackup) {
+		File dir = getFileDir();
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
 
-		return new File(dir, App.context.getPackageName() + "-backup.xml"); //$NON-NLS-1$
+		if (autoBackup) {
+			String time = new SimpleDateFormat("yyyyMMdd-hhmmss").format(new Date());
+			return new File(dir, App.context.getPackageName() + "-autobackup-" + time + ".xml");
+		} else {
+			return new File(dir, App.context.getPackageName() + "-backup.xml");
+		}
+	}
+
+	public static List<File> listBackupFiles() {
+		File dir = getFileDir();
+		List<File> backupFiles = new ArrayList<File>();
+		File[] files = dir.listFiles();
+		for (File file : files) {
+			Pattern pattern = Pattern.compile(App.context.getPackageName() + ".*?\\.xml");
+			String filename = file.getName();
+			Matcher matcher = pattern.matcher(filename);
+			if (matcher.matches()) {
+				backupFiles.add(file);
+			}
+		}
+		return backupFiles;
+	}
+
+	public static File getFileDir() {
+		return new File(Environment.getExternalStorageDirectory(), "bible");
 	}
 
 }
