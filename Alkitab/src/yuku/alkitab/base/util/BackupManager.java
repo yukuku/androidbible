@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -148,6 +149,7 @@ public class BackupManager {
 		File dir = getFileDir();
 		List<File> backupFiles = new ArrayList<File>();
 		File[] files = dir.listFiles();
+		Arrays.sort(files);
 		for (File file : files) {
 			Pattern pattern = Pattern.compile(App.context.getPackageName() + ".*?\\.xml");
 			String filename = file.getName();
