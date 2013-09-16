@@ -263,4 +263,5 @@
     <string name="last_backup">Last backup: %s</string>
     <string name="autobackup_at">Autobackup at %s</string>
     <string name="backup_at">Backup at %s</string>
+    <string name="select_backup_file">Select backup file</string>
 </resources>

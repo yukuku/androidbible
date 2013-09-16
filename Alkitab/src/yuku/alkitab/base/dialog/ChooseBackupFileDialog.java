@@ -6,7 +6,6 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -55,7 +54,7 @@ public class ChooseBackupFileDialog extends DialogFragment {
 			}
 		});
 
-		getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+		getDialog().setTitle(App.context.getString(R.string.select_backup_file));
 		return view;
 	}
 
@@ -87,10 +86,10 @@ public class ChooseBackupFileDialog extends DialogFragment {
 
 		@Override
 		public void bindView(final View view, final int position, final ViewGroup parent) {
-			TextView textView = V.get(view, android.R.id.text1);
-			TextView textView2 = V.get(view, android.R.id.text2);
-			textView.setText(backupFiles.get(position).first.getName());
-			textView2.setText(backupFiles.get(position).second);
+			TextView tFilename = V.get(view, android.R.id.text1);
+			TextView tFileDescription = V.get(view, android.R.id.text2);
+			tFilename.setText(backupFiles.get(position).first.getName());
+			tFileDescription.setText(backupFiles.get(position).second);
 		}
 
 		@Override
