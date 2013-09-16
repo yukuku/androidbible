@@ -21,7 +21,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -180,10 +180,10 @@ public class BackupManager {
 				}
 			}
 		});
-		Arrays.sort(files);
 		for (File file : files) {
 			backupFiles.add(file);
 		}
+		Collections.sort(backupFiles, Collections.reverseOrder());
 		return backupFiles;
 	}
 
