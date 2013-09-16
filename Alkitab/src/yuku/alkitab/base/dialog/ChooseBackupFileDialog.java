@@ -13,6 +13,7 @@ import android.widget.TextView;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.R;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.util.Sqlitil;
 
 import java.io.File;
@@ -70,9 +71,9 @@ public class ChooseBackupFileDialog extends DialogFragment {
 				Pattern pattern = Pattern.compile(".*?autobackup.*?");
 				Matcher matcher = pattern.matcher(file.getAbsolutePath());
 				if (matcher.matches()) {
-					description = "Autobackup at " + description;
+					description = App.context.getString(R.string.autobackup_at, description);
 				} else {
-					description = "Backup at " + description;
+					description = App.context.getString(R.string.backup_at, description);
 				}
 				Pair<File, String> backupFile = new Pair<File, String>(file, description);
 				this.backupFiles.add(backupFile);

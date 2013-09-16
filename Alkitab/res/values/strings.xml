@@ -261,4 +261,6 @@
 	<string name="menuFullScreen">Full screen</string>
     <string name="full_screen_dismiss_hint">Press <b>Back</b> to return from full screen</string>
     <string name="last_backup">Last backup: %s</string>
+    <string name="autobackup_at">Autobackup at %s</string>
+    <string name="backup_at">Backup at %s</string>
 </resources>
