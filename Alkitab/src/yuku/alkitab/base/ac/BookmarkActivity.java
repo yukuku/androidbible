@@ -176,6 +176,7 @@ public class BookmarkActivity extends BaseActivity {
 			List<File> backupFiles = BackupManager.listBackupFiles();
 			if (backupFiles.size() == 0) {
 				msgbox(getString(R.string.file_tidak_bisa_dibaca_file, BackupManager.getFileDir().getAbsolutePath()));
+				return true;
 			}
 			final FragmentManager fm = getSupportFragmentManager();
 			final ChooseBackupFileDialog dialog = ChooseBackupFileDialog.getInstance(backupFiles);
