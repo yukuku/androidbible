@@ -66,7 +66,7 @@ public class ChooseBackupFileDialog extends DialogFragment {
 		public void load(List<File> backupFiles) {
 			for (File file : backupFiles) {
 				String description = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss").format(file.lastModified());
-				Pattern pattern = Pattern.compile("autobackup");
+				Pattern pattern = Pattern.compile(".*?autobackup.*?");
 				Matcher matcher = pattern.matcher(file.getAbsolutePath());
 				if (matcher.matches()) {
 					description = "Autobackup at " + description;
