@@ -17,6 +17,7 @@ import yuku.alkitab.base.storage.Prefkey;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -162,15 +163,26 @@ public class BackupManager {
 	public static List<File> listBackupFiles() {
 		File dir = getFileDir();
 		List<File> backupFiles = new ArrayList<File>();
-		File[] files = dir.listFiles();
+		File manualBackupFile = new File(dir, App.context.getPackageName() + "-backup.xml");
+		if (manualBackupFile.exists()) {
+			backupFiles.add(manualBackupFile);
+		}
+
+		File[] files = dir.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(final File dir, final String filename) {
+				Pattern pattern = Pattern.compile(".*?autobackup.*?\\.xml");
+				Matcher matcher = pattern.matcher(filename);
+				if (matcher.matches()) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		});
 		Arrays.sort(files);
 		for (File file : files) {
-			Pattern pattern = Pattern.compile(App.context.getPackageName() + ".*?\\.xml");
-			String filename = file.getName();
-			Matcher matcher = pattern.matcher(filename);
-			if (matcher.matches()) {
-				backupFiles.add(file);
-			}
+			backupFiles.add(file);
 		}
 		return backupFiles;
 	}
