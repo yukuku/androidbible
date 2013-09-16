@@ -13,10 +13,11 @@ import android.widget.TextView;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.R;
+import yuku.alkitab.base.util.Sqlitil;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,7 +66,7 @@ public class ChooseBackupFileDialog extends DialogFragment {
 		List<Pair<File, String>> backupFiles = new ArrayList<Pair<File, String>>();
 		public void load(List<File> backupFiles) {
 			for (File file : backupFiles) {
-				String description = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss").format(file.lastModified());
+				String description = Sqlitil.toLocalDateTimeSimple(new Date(file.lastModified()));
 				Pattern pattern = Pattern.compile(".*?autobackup.*?");
 				Matcher matcher = pattern.matcher(file.getAbsolutePath());
 				if (matcher.matches()) {
