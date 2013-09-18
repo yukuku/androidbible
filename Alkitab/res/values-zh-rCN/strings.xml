@@ -15,9 +15,11 @@
   <string name="ekspor_berhasil_file_yang_dihasilkan_file">备份成功。\n\n结果是在文件： %s</string>
   <string name="impor_berhasil_angka_diproses">恢复是成功。 总共 %1$d 书签，笔记，和/或亮点，也是 %2$d 标签被处理.</string>
   <string name="terjadi_kesalahan_ketika_mengekspor_pesan">创建备份时，有错误： %s</string>
+  <string name="ekspor_pembatas_buku_dan_catatan_tanya">创建书签、笔记与/或标识的备份到SD记忆卡或USB储存装置？现有的备份将被覆写。</string>
   <string name="terjadi_kesalahan_ketika_mengimpor_pesan">恢复时有错误： %s</string>
   <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">你要覆盖您目前有的书签，笔记，和突出？</string>
   <string name="file_tidak_bisa_dibaca_file">文件不存在或无法读取： %s</string>
+  <string name="impor_pembatas_buku_dan_catatan_dari_tanya">从SD卡或USB储存装至上的备份档案里回复书签,笔记与标识吗？\n\n档案：%s</string>
   <string name="impor_dari_sd_card">恢复</string>
   <string name="ekspor_ke_sd_card">备份</string>
   <string name="menuBantuan">帮助</string>
@@ -25,6 +27,7 @@
   <string name="versi">版本</string>
   <string name="renungan">灵修</string>
   <string name="cari_v">搜索</string>
+  <string name="judul_bukmak_activity">记号</string>
   <string name="pembatas_buku">书签</string>
   <string name="hapus_pembatas_buku">删除书签</string>
   <string name="bagikan">共享</string>
@@ -38,7 +41,6 @@
   <string name="pasal_sebelumangka">章</string>
   <string name="loncat_ke_alamat_titikdua">跳到： (例子： %s)</string>
   <string name="tidak_ada_catatan">（没有笔记）</string>
-  <string name="belum_ada_pembatas_buku">还没有书签。\n要添加书签, 点选一个诗句和点选按钮</string>
   <string name="judul_titikdua">标题：</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">下载 %1$s 失败, 日期 %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">错误发生在 %1$s 文件下载 日期 %2$s: %3$s</string>
@@ -71,6 +73,7 @@
   <string name="no">不是</string>
   <string name="yes">是</string>
   <string name="anda_yakin_mau_menghapus_catatan_ini">你确定要删除本说明吗？</string>
+  <string name="hapus_catatan">删除笔记</string>
   <string name="catatan_alamat">Note on %s</string>
   <string name="delete">删除</string>
   <string name="cancel">取消</string>
@@ -168,11 +171,30 @@
   <string name="rename_label">重命标签</string>
   <string name="delete_label">删除标签</string>
   <string name="please_wait_titik3">请稍候…</string>
+  <string name="juga_hapus_file_datanya_file">也删除资料档案\'%s\'？</string>
   <string name="get_more_fonts">下载更多的字体...</string>
   <string name="about_translators">翻译：</string>
   <string name="intent_filter_import_from_backup">进口从备份</string>
   <string name="redownload">重新下载</string>
   <string name="read_faq_before_suggest">发送一个建议之前，请仔细阅读上面的常见问题.继续发送一个建议吗？</string>
+  <string name="no_bookmarks_for_backup">你没有任何书签、笔记与标识以供备份</string>
+  <string name="pdb_error_not_palmbible">此PDB档案不是PalmBible+格式。此PDB档案有\'%1$s\'形式与\'%2$s\'创建id，这些在本程式中不支援。</string>
+  <string name="pdb_error_corrupted">这PDB档已损坏</string>
+  <string name="pdb_error_not_pdb_file">所选的档案不是PDB档案</string>
+  <string name="menu_split_version">并排显示</string>
+  <string name="split_version_none">没有</string>
+  <string name="split_version_cant_display_verse">%2$s里没有%1$s</string>
+  <string name="menuAddSomething">添加标记</string>
+  <string name="color_settings">设置颜色</string>
+  <string name="menuTextAppearance">文字外观</string>
+  <string name="text_appearance_theme_custom">设置</string>
+  <string name="text_appearance_text_size">文字大小</string>
+  <string name="text_appearance_line_spacing">行距</string>
+  <string name="text_appearance_bold_switch_off">粗体</string>
+  <string name="text_appearance_bold_switch_on"><b>粗体</b></string>
+  <string name="devotion_change_date">更改日期</string>
+  <string name="bookmark_search">搜寻</string>
+  <string name="history_hint">长按观看浏览历史</string>
   <string name="goto_tab_dialer_label">拨号</string>
   <string name="goto_tab_direct_label">直接</string>
   <string name="goto_tab_grid_label">格</string>
@@ -205,4 +227,25 @@
   <string name="desc_download">下载</string>
   <string name="desc_previous_chapter">前章</string>
   <string name="desc_next_chapter">后章</string>
+  <string name="desc_drag_to_reorder_labels">拖放以更动标签次序</string>
+  <string name="teks_about">程式开发者: [b]yuku[/b], 2009-2013[br/]
+    	• 网址: androidbible.blogspot.com[br/] 
+		• Google+: gplus.to/androidbible[br/]
+    	• Mailing list: groups.google.com/group/androidbible[br/]
+    	[br/]
+		[b]贡献者:[/b][br/]
+		• [b]Jaya Satrio Hendrick[/b]图标[br/]
+		• [b]Yohanes Nugroho[/b] BiblePlus+ PDB reader[br/]
+		• 还有更多人献计, 更新, 除错, 诗歌与圣经翻译版本等等!</string>
+  <string name="intent_filter_open_yes_file">打开YES档案</string>
+  <string name="intent_filter_open_pdb_file">打开PDB档案</string>
+  <string name="intent_filter_open_pdb_or_yes_file">打开PDB/YES档案</string>
+  <string name="open_yes_file_name_conflict">在\'%2$s\'里有以经有个叫做\'%1$s\'档案存在了。</string>
+  <string name="open_file_cant_read_source">无法成功读取来源</string>
+  <string name="open_file_unknown_file_format">无法判定这是PDB还是YES档案。</string>
+  <string name="version_preset_delete_filename">删除资料档\'%s\'？</string>
+  <string name="version_menu_share">分享</string>
+  <string name="version_share_title">分享此版本给：</string>
+  <string name="menuFullScreen">全萤幕</string>
+  <string name="full_screen_dismiss_hint">按下<b>上一页</b>离开全萤幕</string>
 </resources>

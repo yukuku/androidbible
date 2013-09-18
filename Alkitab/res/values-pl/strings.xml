@@ -249,4 +249,22 @@
   <string name="version_share_title">Podziel się tekstem z:</string>
   <string name="menuFullScreen">Pełen ekran</string>
   <string name="full_screen_dismiss_hint">Naciśnij <b>Wstecz</b>, aby powrócić z widoku pełnego ekranu</string>
+  <string name="me_export_markers">Eksportuj znaczniki</string>
+  <string name="me_export_menu_item">Eksportuj</string>
+  <string name="me_all_notes">Wszystkie notatki</string>
+  <string name="me_all_highlights">Eksportuj podkreślenia</string>
+  <string name="me_all_bookmarks">Wszystkie zakładki</string>
+  <string name="me_no_labels">Brak etykiet</string>
+  <string name="me_edited_modify_date">(wyedytowano %s)</string>
+  <string name="pm_progress_1">Postęp 1</string>
+  <string name="pm_progress_2">Postęp 2</string>
+  <string name="pm_progress_3">Postęp 3</string>
+  <string name="pm_progress_4">Postęp 4</string>
+  <string name="pm_progress_5">Postęp 5</string>
+  <string name="pm_menu_save_progresses">Zapisz postęp</string>
+  <string name="pm_menu_view_progress">Zobacz postęp</string>
+  <string name="pm_progress_name">Nazwa dla postępu</string>
+  <string name="pm_edit_name">Edytuj nazwę</string>
+  <string name="pm_delete_progress">Usuń postęp</string>
+  <string name="copy_share">Skopiuj lub podziel się</string>
 </resources>

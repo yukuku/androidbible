@@ -41,7 +41,7 @@
   <string name="pasal_sebelumangka">Pasal</string>
   <string name="loncat_ke_alamat_titikdua">Loncat ke: (Contoh: %s)</string>
   <string name="tidak_ada_catatan">(tidak ada catatan)</string>
-  <string name="belum_ada_pembatas_buku">Belum ada marka buku.\nPilih suatu ayat dan tekan tombol menu ayat untuk menambahkan marka buku.</string>
+  <string name="belum_ada_pembatas_buku">Belum ada pembatas buku.\nPilih satu ayat untuk menambah pembatas buku.</string>
   <string name="judul_titikdua">Judul:</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Gagal mengunduh %1$s tgl %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Kesalahan dalam mengunduh %1$s tgl %2$s: %3$s</string>
@@ -251,4 +251,25 @@ Terjemahan Baru, Bahasa Indonesia Sehari-hari © Lembaga Alkitab Indonesia[br/]
   <string name="version_share_title">Bagikan versi ini ke:</string>
   <string name="menuFullScreen">Layar penuh</string>
   <string name="full_screen_dismiss_hint">Tekan <b>Back</b> untuk kembali dari layar penuh</string>
+  <string name="me_export_markers">Ekspor marka</string>
+  <string name="me_export_menu_item">Ekspor</string>
+  <string name="me_all_notes">Semua catatan</string>
+  <string name="me_all_highlights">Semua sorotan</string>
+  <string name="me_all_bookmarks">Semua pembatas buku</string>
+  <string name="me_no_labels">Tanpa label</string>
+  <string name="me_edited_modify_date">(diedit %s)</string>
+  <string name="pm_progress_1">Jejak 1</string>
+  <string name="pm_progress_2">Jejak 2</string>
+  <string name="pm_progress_3">Jejak 3</string>
+  <string name="pm_progress_4">Jejak 4</string>
+  <string name="pm_progress_5">Jejak 5</string>
+  <string name="pm_menu_save_progress">Pasang %s</string>
+  <string name="pm_menu_save_progresses">Pasang jejak</string>
+  <string name="pm_menu_view_progress">Lihat jejak</string>
+  <string name="pm_progress_name">Nama jejak</string>
+  <string name="pm_edit_name">Edit nama</string>
+  <string name="pm_delete_progress">Hapus jejak</string>
+  <string name="pm_activate_tutorial">Pilih satu ayat untuk memasang jejak.</string>
+  <string name="pm_icon_click_message">"di %1$s \ndipasang pada %2$s"</string>
+  <string name="copy_share">Salin atau bagikan</string>
 </resources>
