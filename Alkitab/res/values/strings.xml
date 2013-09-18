@@ -41,7 +41,7 @@
     <string name="pasal_sebelumangka">Chapter</string>
     <string name="loncat_ke_alamat_titikdua">Jump to: (Example: %s)</string>
     <string name="tidak_ada_catatan">(no notes)</string>
-    <string name="belum_ada_pembatas_buku">No bookmarks yet.\nSelect a verse and tap the verse menu button to add a bookmark.</string>
+    <string name="belum_ada_pembatas_buku">No bookmarks yet.\nSelect a verse to add a bookmark.</string>
     <string name="judul_titikdua">Title:</string>
     <string name="gagal_mengunduh_namaumum_tgl_tgl">Failed to download %1$s dated %2$s</string>
     <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Error in downloading %1$s dated %2$s: %3$s</string>
@@ -274,13 +274,13 @@
     <string name="pm_progress_3">Progress 3</string>
     <string name="pm_progress_4">Progress 4</string>
     <string name="pm_progress_5">Progress 5</string>
-    <string name="pm_menu_save_progress">Save</string>
+    <string name="pm_menu_save_progress">Save %s</string>
     <string name="pm_menu_save_progresses">Save progress</string>
     <string name="pm_menu_view_progress">View progress</string>
     <string name="pm_progress_name">Progress name</string>
     <string name="pm_edit_name">Edit name</string>
     <string name="pm_delete_progress">Delete progress</string>
-    <string name="pm_activate_tutorial">Select any verse then select the progress from menu to activate this progress mark.</string>
+    <string name="pm_activate_tutorial">Select a verse to save a progress.</string>
     <string name="pm_icon_click_message">"at %1$s \nsaved on %2$s"</string>
 
     <string name="copy_share">Copy or share</string>
