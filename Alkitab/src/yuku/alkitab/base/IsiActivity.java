@@ -783,7 +783,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 		
 		if (languageToo) {
-			S.applyLanguagePreference(null, 0);
+			App.updateConfigurationWithPreferencesLocale();
 		}
 		
 		// necessary

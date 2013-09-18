@@ -3,13 +3,7 @@ package yuku.alkitab.base;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.os.Handler;
-
 import gnu.trove.map.hash.TObjectIntHashMap;
-
-import java.io.InputStream;
-import java.util.Locale;
-
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.model.Version;
@@ -19,6 +13,9 @@ import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.storage.SongDb;
 import yuku.alkitab.base.storage.SongDbHelper;
 import yuku.alkitab.base.util.FontManager;
+
+import java.io.InputStream;
+import java.util.Locale;
 
 
 public class S {
@@ -108,22 +105,6 @@ public class S {
 		applied.pericopeSpacingBottom = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.pericopeSpacingBottom) + 0.5f);
 	}
 	
-	/**
-	 * @param handler Jangan null kalo mau dicek ulang 200ms kemudian. Harus null kalo jangan ulang lagi. 20110620 Uda ga dipake lagi.
-	 */
-	public static void applyLanguagePreference(final Handler handler, final int cobaLagi) {
-		String bahasa = Preferences.getString(App.context.getString(R.string.pref_bahasa_key), App.context.getString(R.string.pref_bahasa_default));
-
-		Locale locale;
-		if ("DEFAULT".equals(bahasa)) { //$NON-NLS-1$
-			locale = Locale.getDefault();
-		} else {
-			locale = new Locale(bahasa);
-		}
-		
-		App.updateConfigurationWithLocale(App.context.getResources().getConfiguration(), locale);
-	}
-
 	private static TObjectIntHashMap<String> cache_rawResId = new TObjectIntHashMap<String>(32);
 	
 	public static InputStream openRaw(String name) {

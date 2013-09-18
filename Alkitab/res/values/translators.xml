@@ -2,7 +2,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string-array name="translators_list" tools:ignore="MissingTranslation">
         <item>Afrikaans: Sakkie Theron</item>
-        <item>Chinese: Jandi Lau</item>
+        <item>Chinese: Jandi Lau, Scribe</item>
+        <item>Czech: Karol_PS, Ichtyl</item>
         <item>Dutch: Vcfrth</item>
         <item>English: author</item>
         <item>German: Ribka Ling</item>

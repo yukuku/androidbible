@@ -6,14 +6,13 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
-
-import java.io.File;
-import java.util.Locale;
-
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitabfeedback.FeedbackSender;
 import yuku.kirimfidbek.PengirimFidbek;
+
+import java.io.File;
+import java.util.Locale;
 
 public class App extends yuku.afw.App {
 	public static final String TAG = App.class.getSimpleName();
@@ -44,12 +43,7 @@ public class App extends yuku.afw.App {
 		PreferenceManager.setDefaultValues(context, R.xml.settings, false);
 		PreferenceManager.setDefaultValues(context, R.xml.secret_settings, false);
 
-		Configuration config = context.getResources().getConfiguration();
-		Locale locale = getLocaleFromPreferences();
-		if (!config.locale.getLanguage().equals(locale.getLanguage())) {
-			Log.d(TAG, "onCreate: locale will be updated to: " + locale); //$NON-NLS-1$
-			updateConfigurationWithLocale(config, locale);
-		}
+		updateConfigurationWithPreferencesLocale();
 
 		// all activities need at least the activeVersion from S, so initialize it here.
 		S.prepareInternalVersion();
@@ -83,21 +77,29 @@ public class App extends yuku.afw.App {
 			lang = Locale.getDefault().getLanguage();
 		}
 
-		return new Locale(lang);
+		if ("zh-CN".equals(lang)) {
+			return Locale.SIMPLIFIED_CHINESE;
+		} else if ("zh-TW".equals(lang)) {
+			return Locale.TRADITIONAL_CHINESE;
+		} else {
+			return new Locale(lang);
+		}
 	}
 
 	@Override public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 
-		Log.d(TAG, "onConfigurationChanged: config changed to: " + newConfig); //$NON-NLS-1$
-		updateConfigurationWithLocale(newConfig, getLocaleFromPreferences());
+		Log.d(TAG, "@@onConfigurationChanged: config changed to: " + newConfig); //$NON-NLS-1$
+		updateConfigurationWithPreferencesLocale();
 	}
 
-	public static void updateConfigurationWithLocale(Configuration config, Locale locale) {
-		if (locale != null) {
-			config.locale = locale;
+	public static void updateConfigurationWithPreferencesLocale() {
+		final Configuration config = context.getResources().getConfiguration();
+		final Locale locale = getLocaleFromPreferences();
+		if (!U.equals(config.locale.getLanguage(), locale.getLanguage()) || !U.equals(config.locale.getCountry(), locale.getCountry())) {
+			Log.d(TAG, "@@updateConfigurationWithPreferencesLocale: locale will be updated to: " + locale); //$NON-NLS-1$
 
-			Log.d(TAG, "updateConfigurationWithLocale: config updated to locale: " + locale); //$NON-NLS-1$
+			config.locale = locale;
 			context.getResources().updateConfiguration(config, null);
 		}
 	}
