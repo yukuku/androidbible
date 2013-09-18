@@ -5,7 +5,7 @@
         android:id="@+id/menuBookmark"
         android:icon="@drawable/ic_menu_bookmark"
         android:showAsAction="ifRoom"
-        android:title="@string/pembatas_buku"/>
+        android:title="@string/menu_markers"/>
     <item
         android:id="@+id/menuListProgressMark"
         android:icon="@drawable/ic_nav_right_dark"

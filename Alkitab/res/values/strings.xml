@@ -28,7 +28,7 @@
     <string name="renungan">Devotion</string>
     <string name="cari_v">Search</string>
     <string name="judul_bukmak_activity">Markers</string>
-    <string name="pembatas_buku">Bookmarks</string>
+    <string name="menu_markers">Markers</string>
     <string name="hapus_pembatas_buku">Delete bookmark</string>
     <string name="bagikan">Share</string>
     <string name="tulis_catatan">Write note</string>
@@ -266,6 +266,9 @@
     <string name="me_all_notes">All notes</string>
     <string name="me_all_highlights">All highlights</string>
     <string name="me_all_bookmarks">All bookmarks</string>
+    <string name="me_section_bookmarks">Bookmarks</string>
+    <string name="me_section_notes">Notes</string>
+    <string name="me_section_highlights">Highlights</string>
     <string name="me_no_labels">No labels</string>
     <string name="me_edited_modify_date">(edited %s)</string>
 

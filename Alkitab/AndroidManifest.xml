@@ -58,7 +58,7 @@
 		    </intent-filter>
    		</activity>
 
-		<activity android:name="yuku.alkitab.base.ac.BookmarkListActivity" android:label="@string/pembatas_buku" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:windowSoftInputMode="adjustResize|stateHidden" />
+		<activity android:name="yuku.alkitab.base.ac.BookmarkListActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:windowSoftInputMode="adjustResize|stateHidden" />
 		<activity android:name="yuku.alkitab.base.ac.VersionsActivity" android:label="@string/kelola_versi" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection">
 		    <intent-filter android:label="@string/intent_filter_open_yes_file">
 		        <action android:name="android.intent.action.VIEW" />

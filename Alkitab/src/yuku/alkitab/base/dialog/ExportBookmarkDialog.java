@@ -281,7 +281,7 @@ public class ExportBookmarkDialog extends DialogFragment {
 			pw.print("<body>\n");
 
 			if (noLabelBookmarks.size() + labeledBookmarks.size() > 0) {
-				pw.print("<h1>" + getString(R.string.pembatas_buku) + "</h1>\n<dl id='bookmark_list'>\n");
+				pw.print("<h1>" + getString(R.string.me_section_bookmarks) + "</h1>\n<dl id='bookmark_list'>\n");
 
 				//write no label bookmarks
 				if (noLabelBookmarks.size() > 0) {
@@ -300,7 +300,7 @@ public class ExportBookmarkDialog extends DialogFragment {
 
 			//write notes
 			if (notes.size() > 0) {
-				pw.print("<h1>" + getString(R.string.bmcat_notes) + "</h1>\n<dl id='note_list'>\n");
+				pw.print("<h1>" + getString(R.string.me_section_notes) + "</h1>\n<dl id='note_list'>\n");
 				for (Bookmark2 note : notes) {
 					String reference = S.activeVersion.reference(note.ari);
 					String noteText = TextUtils.htmlEncode(note.caption);
@@ -316,7 +316,7 @@ public class ExportBookmarkDialog extends DialogFragment {
 
 			//write highlights
 			if (highlights.size() > 0) {
-				pw.print("<h1>" + getString(R.string.bmcat_highlights) + "</h1>\n");
+				pw.print("<h1>" + getString(R.string.me_section_highlights) + "</h1>\n");
 				pw.print("<dl id='highlight_list'>\n");
 				for (Bookmark2 highlight : highlights) {
 					String verseText = S.activeVersion.loadVerseText(highlight.ari);
@@ -347,16 +347,21 @@ public class ExportBookmarkDialog extends DialogFragment {
 	}
 
 	private void printBookmarks(final PrintWriter pw, final Label label, final List<Bookmark2> bookmarks) {
-		String labelName = TextUtils.htmlEncode(getString(R.string.me_no_labels));
-		String backgroundString = "";
+		final String labelName;
+		final String backgroundString;
 		if (label != null) {
 			final int backgroundColor = U.decodeLabelBackgroundColor(label.backgroundColor);
 			if (backgroundColor != -1) {
 				final int foregroundColor = U.getLabelForegroundColorBasedOnBackgroundColor(backgroundColor);
 				final String colorString = getColorString(backgroundColor);
 				backgroundString = String.format(Locale.US, " data-bgcolor='%s' style='background-color: #%s; color: #%s' ", colorString, colorString, getColorString(foregroundColor));
+			} else {
+				backgroundString = "";
 			}
 			labelName = label.title;
+		} else {
+			labelName = TextUtils.htmlEncode(getString(R.string.me_no_labels));
+			backgroundString = "";
 		}
 		pw.print("<span class='label' " + backgroundString + ">" + labelName + "</span>\n");
 		for (Bookmark2 bookmark : bookmarks) {
