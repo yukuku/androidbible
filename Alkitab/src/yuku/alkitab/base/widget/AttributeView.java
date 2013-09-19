@@ -30,13 +30,20 @@ public class AttributeView extends View {
 	private int verse_1;
 
 	private static SparseArray<Long> progressMarkAnimationStartTimes = new SparseArray<Long>();
+	private int drawOffsetLeft;
 
 	public AttributeView(final Context context) {
 		super(context);
+		init();
 	}
 
 	public AttributeView(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
+		init();
+	}
+
+	private void init() {
+		drawOffsetLeft = Math.round(1 * getResources().getDisplayMetrics().density);
 	}
 
 	public void showBookmark(final boolean showBookmark) {
@@ -121,12 +128,12 @@ public class AttributeView extends View {
 		int totalHeight = 0;
 		if (showBookmark) {
 			final Bitmap bookmarkBitmap = getBookmarkBitmap();
-			canvas.drawBitmap(bookmarkBitmap, 2, totalHeight, null);
+			canvas.drawBitmap(bookmarkBitmap, drawOffsetLeft, totalHeight, null);
 			totalHeight += bookmarkBitmap.getHeight();
 		}
 		if (showNote) {
 			final Bitmap noteBitmap = getNoteBitmap();
-			canvas.drawBitmap(noteBitmap, 2, totalHeight, null);
+			canvas.drawBitmap(noteBitmap, drawOffsetLeft, totalHeight, null);
 			totalHeight += noteBitmap.getHeight();
 		}
 		if (attribute != 0) {
