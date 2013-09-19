@@ -1,10 +1,10 @@
 package yuku.alkitab.base.util;
 
+import yuku.alkitab.base.model.Book;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-
-import yuku.alkitab.base.model.Book;
 
 public class BookNameSorter {
 	public static final String TAG = BookNameSorter.class.getSimpleName();
@@ -65,15 +65,19 @@ public class BookNameSorter {
 	}
 	
 	public static String getBookAbbr(Book book) {
+		if (book.abbreviation != null) {
+			return book.abbreviation;
+		}
+
 		String name = book.shortName;
-		
+
 		{
 			String hardcodedAbbr = hardcodedAbbrs.get(name);
 			if (hardcodedAbbr != null) {
 				return hardcodedAbbr;
 			}
 		}
-		
+
 		int numberedBookCategory = book.bookId >= numberedBookMap.length? 0: numberedBookMap[book.bookId];
 		if (numberedBookCategory > 0) {
 			String startsWith = numberedBookStartsWiths[numberedBookCategory];
@@ -82,11 +86,11 @@ public class BookNameSorter {
 				name = replaceWith + name.substring(startsWith.length());
 			}
 		}
-		
+
 		// remove spaces and '.'
 		name = name.replace(" ", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		name = name.replace(".", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		if (name.length() > 3) name = name.substring(0, 3);
 		return name;
 	}

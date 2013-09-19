@@ -89,7 +89,7 @@ public class YetToYes2 {
 		versionInfo.shortName = result.infos.get("shortName");
 		versionInfo.longName = result.infos.get("longName");
 		versionInfo.description = result.infos.get("description");
-		versionInfo.setBookNames(result.bookNames);
+		versionInfo.setBookNamesAndAbbreviations(result.bookNames, result.bookAbbreviations);
 		
 		// convert recs to textdb
 		TextDb textDb = new TextDb();

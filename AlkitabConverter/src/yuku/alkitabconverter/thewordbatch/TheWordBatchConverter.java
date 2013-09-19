@@ -87,7 +87,7 @@ public class TheWordBatchConverter {
 		while (sc.hasNextLine()) {
 			bookNames.add(sc.nextLine());
 		}
-		versionInfo.setBookNames(bookNames);
+		versionInfo.setBookNamesAndAbbreviations(bookNames, null);
 		sc.close();
 
 		TextDb textDb = processTextFile(textFile);

@@ -106,7 +106,7 @@ public class UnboundBatchConverter {
 		while (sc.hasNextLine()) {
 			bookNames.add(sc.nextLine());
 		}
-		versionInfo.setBookNames(bookNames);
+		versionInfo.setBookNamesAndAbbreviations(bookNames, null);
 		sc.close();
 		
 		TextDb textDb = processTextFile(superdir.getName(), dir.getName(), textFile, mapped);
