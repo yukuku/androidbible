@@ -33,13 +33,20 @@ public class Yes2Common {
 		public String description;
 		
 		private List<String> bookNames;
-		
+		private List<String> bookAbbreviations;
+
 		public String getBookShortName(int bookId) {
 			return bookNames.get(bookId);
 		}
 
-		public void setBookNames(List<String> bookNames) {
+		public String getBookAbbreviation(final int bookId) {
+			if (bookAbbreviations == null) return null;
+			return bookAbbreviations.get(bookId);
+		}
+
+		public void setBookNamesAndAbbreviations(List<String> bookNames, List<String> bookAbbreviations) {
 			this.bookNames = bookNames;
+			this.bookAbbreviations = bookAbbreviations;
 		}
 	}
 
@@ -59,6 +66,7 @@ public class Yes2Common {
 			b.chapter_offsets = new int[b.chapter_count + 1];
 			b.offset = offsetTotal;
 			b.shortName = versionInfo.getBookShortName(bookId);
+			b.abbreviation = versionInfo.getBookAbbreviation(bookId);
 			b.verse_counts = new int[b.chapter_count];
 			
 			b.chapter_offsets[0] = 0;
