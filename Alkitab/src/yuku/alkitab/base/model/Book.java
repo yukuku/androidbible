@@ -8,6 +8,7 @@ public class Book {
 	public String shortName;
 	public int chapter_count;
 	public int[] verse_counts;
+	public String abbreviation;
 
 	public String reference(int chapter_1) {
 		return this.shortName + " " + chapter_1; //$NON-NLS-1$ 
