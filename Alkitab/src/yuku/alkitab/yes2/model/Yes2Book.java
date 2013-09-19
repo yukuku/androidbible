@@ -22,7 +22,7 @@ public class Yes2Book extends Book {
 		map.put("chapter_count", chapter_count);
 		map.put("verse_counts", verse_counts);
 		map.put("chapter_offsets", chapter_offsets);
-		map.put("abbreviation", abbreviation);
+		if (abbreviation != null) map.put("abbreviation", abbreviation);
 		bw.writeValueSimpleMap(map);
 	}
 	
