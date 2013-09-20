@@ -4,7 +4,7 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@drawable/widget_frame">
+              android:background="@drawable/widget_frame" android:id="@+id/lBackground">
 
     <TextView
             android:layout_width="wrap_content"
@@ -12,6 +12,11 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Small Text"
             android:id="@+id/tAppWidgetVerse" android:layout_gravity="left|center_vertical"
-            android:layout_alignParentLeft="true" android:layout_marginLeft="0dp" android:layout_alignParentTop="true"
-            android:layout_marginTop="0dp"/>
+            android:layout_alignParentTop="true" android:layout_alignParentLeft="true"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Randomize"
+            android:id="@+id/bRandom"
+            android:layout_alignParentBottom="true" android:layout_alignParentLeft="true"/>
 </RelativeLayout>
