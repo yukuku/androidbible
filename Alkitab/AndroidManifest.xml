@@ -112,8 +112,8 @@
 		<activity android:name="yuku.alkitab.base.ac.SecretSettingsActivity" android:label="Secret settings" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.filechooser.FileChooserActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="com.example.android.wizardpager.MainActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:theme="@style/AlkitabFeedback.Theme" />
-		
-		<service android:name="yuku.alkitab.base.sv.DownloadService" />
+
+        <service android:name="yuku.alkitab.base.sv.DownloadService" />
 		
 		<provider android:name="yuku.alkitab.base.cp.Provider" android:authorities="yuku.alkitab.provider.debug" android:exported="true" tools:ignore="ExportedContentProvider" />
 
@@ -133,6 +133,7 @@
 		
         <!-- Used for install referral measurement -->
         <service android:name="com.google.analytics.tracking.android.CampaignTrackingService" />
+        <service android:name=".base.sv.UpdateVerseWidgetService"/>
 
         <receiver android:name="com.google.analytics.tracking.android.CampaignTrackingReceiver" android:exported="true" tools:ignore="ExportedReceiver">
             <intent-filter>
@@ -145,6 +146,7 @@
             android:icon="@drawable/ic_launcher">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
             <meta-data android:name="android.appwidget.provider"
                        android:resource="@xml/app_widget_provider"/>
