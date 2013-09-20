@@ -1,6 +1,5 @@
 package yuku.alkitab.base.widget;
 
-import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -24,20 +23,12 @@ import java.util.List;
 
 public class DailyVerseAppWidget extends AppWidgetProvider {
 
-	private PendingIntent service = null;
-
 	@Override
 	public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
 
 		ComponentName componentName = new ComponentName(context, DailyVerseAppWidget.class);
 		appWidgetManager.updateAppWidget(componentName, buildUpdate(context, appWidgetIds));
 
-	}
-
-	@Override
-	public void onDisabled(final Context context) {
-		final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-		alarmManager.cancel(service);
 	}
 
 	private RemoteViews buildUpdate(Context context, int[] appWidgetIds) {
