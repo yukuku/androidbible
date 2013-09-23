@@ -25,6 +25,7 @@ import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Bookmark2;
 import yuku.alkitab.base.model.Label;
 import yuku.alkitab.base.model.ProgressMark;
+import yuku.alkitab.base.model.ProgressMarkHistory;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.Sqlitil;
 
@@ -796,4 +797,16 @@ public class InternalDb {
 		helper.getWritableDatabase().insert(Db.TABLE_ProgressMarkHistory, null, cv);
 	}
 
+	public List<ProgressMarkHistory> listProgressMarkHistoryByPresetId(final int preset_id) {
+		final Cursor c = helper.getReadableDatabase().rawQuery("select * from " + Db.TABLE_ProgressMarkHistory + " where " + Db.ProgressMarkHistory.progress_mark_preset_id + "=? order by " + Db.ProgressMarkHistory.createTime + " asc", new String[] {String.valueOf(preset_id)});
+		try {
+			final List<ProgressMarkHistory> res = new ArrayList<ProgressMarkHistory>();
+			while (c.moveToNext()) {
+				res.add(ProgressMarkHistory.fromCursor(c));
+			}
+			return res;
+		} finally {
+			c.close();
+		}
+	}
 }
