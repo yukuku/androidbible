@@ -49,7 +49,6 @@ get_attr() {
 # replace '0000000' on the specified filename with the last commit hash of the git repo
 write_last_commit_hash() {
 	FILE="$1"
-	LAST_COMMIT_HASH=`git log -1 --format='format:%h'`
 	echo 'Setting last commit hash: '$LAST_COMMIT_HASH' to '$FILE
 	sed -i '' "s/0000000/$LAST_COMMIT_HASH/g" "$FILE"
 }
@@ -100,13 +99,17 @@ if [ ! -d $BUILD_DIR ] ; then
 	exit 1
 fi
 
+echo -n 'Last commit hash: '
+LAST_COMMIT_HASH=`git log -1 --format='format:%h'`
+echo $LAST_COMMIT_HASH
+
 echo 'Copying yuku-android-util...'
 mkdir $BUILD_DIR/yuku-android-util
-cp -R ../yuku-android-util/ $BUILD_DIR/yuku-android-util/
+rsync -a --exclude ".git/" ../yuku-android-util/ $BUILD_DIR/yuku-android-util/
 
 echo "Copying $SUPER_PROJECT_NAME..."
 mkdir $BUILD_DIR/$SUPER_PROJECT_NAME
-cp -R ./ $BUILD_DIR/$SUPER_PROJECT_NAME/
+rsync -a --exclude ".git/" ./ $BUILD_DIR/$SUPER_PROJECT_NAME/
 
 echo 'Going to' $BUILD_DIR/$SUPER_PROJECT_NAME
 pushd $BUILD_DIR/$SUPER_PROJECT_NAME
