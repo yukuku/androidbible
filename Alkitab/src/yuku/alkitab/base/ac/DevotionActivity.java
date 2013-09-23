@@ -1,11 +1,13 @@
 package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.support.v4.app.ShareCompat;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
@@ -17,18 +19,17 @@ import android.view.animation.AnimationUtils;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
+import android.widget.TimePicker;
 import android.widget.Toast;
-
-import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.br.DevotionReminderReceiver;
 import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
@@ -42,8 +43,10 @@ import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.DevotionSelectPopup;
 import yuku.alkitab.base.widget.DevotionSelectPopup.DevotionSelectPopupListener;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class DevotionActivity extends BaseActivity implements OnStatusDonlotListener {
 	public static final String TAG = DevotionActivity.class.getSimpleName();
@@ -256,6 +259,35 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			willNeed(this.currentName, date_format.get().format(currentDate), true);
 			
 			return true;
+		} else if (itemId == R.id.menuReminder) {
+			final View view = getLayoutInflater().inflate(R.layout.dialog_devotion_reminder, null);
+			final TimePicker timePicker = V.get(view, R.id.tpTime);
+			int timeFormat = 0;
+			try {
+				timeFormat = Settings.System.getInt(getContentResolver(), Settings.System.TIME_12_24);
+			} catch (Settings.SettingNotFoundException e) {
+				e.printStackTrace();
+			}
+			if (timeFormat == 24) {
+				timePicker.setIs24HourView(true);
+			} else {
+				timePicker.setIs24HourView(false);
+			}
+
+			new AlertDialog.Builder(this)
+			.setView(view)
+			.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(final DialogInterface dialog, final int which) {
+					String time = "" + String.format("%02d", timePicker.getCurrentHour()) + String.format("%02d", timePicker.getCurrentMinute());
+					Preferences.setString("reminder_time", time);
+					DevotionReminderReceiver.scheduleAlarm(DevotionActivity.this);
+				}
+			})
+			.setNegativeButton("Cancel", null)
+			.show();
+
+			return false;
 		}
 		
 		return super.onOptionsItemSelected(item);

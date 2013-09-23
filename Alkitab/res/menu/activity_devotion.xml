@@ -21,4 +21,8 @@
 		android:id="@+id/menuRedownload"
 		android:icon="@drawable/ic_menu_download" 
 		android:showAsAction="never" />
+    <item
+        android:title="@string/reminder"
+        android:id="@+id/menuReminder"
+        android:showAsAction="never" />
 </menu>
