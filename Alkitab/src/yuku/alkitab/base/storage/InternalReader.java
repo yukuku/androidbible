@@ -1,12 +1,6 @@
 package yuku.alkitab.base.storage;
 
 import android.util.Log;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Ari;
@@ -17,6 +11,11 @@ import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.yes1.Yes1PericopeIndex;
 import yuku.bintex.BintexReader;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class InternalReader implements BibleReader {
 	public static final String TAG = InternalReader.class.getSimpleName();
@@ -250,14 +249,14 @@ public class InternalReader implements BibleReader {
 		return k;
 	}
 
-	@Override public SingleChapterVerses loadVerseText(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+	@Override public SingleChapterVerses loadVerseText(Book book, int chapter_1, boolean dontSplitVerses, boolean lowercased) {
 		InternalBook internalBook = (InternalBook) book;
 
-		if (pasal_1 < 1 || pasal_1 > book.chapter_count) {
+		if (chapter_1 < 1 || chapter_1 > book.chapter_count) {
 			return null;
 		}
 		
-		int offset = internalBook.chapter_offsets[pasal_1 - 1];
+		int offset = internalBook.chapter_offsets[chapter_1 - 1];
 		int length = 0;
 
 		try {
@@ -310,10 +309,10 @@ public class InternalReader implements BibleReader {
 				}
 			}
 
-			if (pasal_1 == internalBook.chapter_count) {
+			if (chapter_1 == internalBook.chapter_count) {
 				length = in.available();
 			} else {
-				length = internalBook.chapter_offsets[pasal_1] - offset;
+				length = internalBook.chapter_offsets[chapter_1] - offset;
 			}
 
 			byte[] ba = new byte[length];
@@ -321,10 +320,10 @@ public class InternalReader implements BibleReader {
 			cache_posInput += ba.length;
 			// jangan ditutup walau uda baca. Siapa tau masih sama filenya dengan sebelumnya.
 
-			if (janganPisahAyat) {
-				return new InternalSingleChapterVerses(new String[] { verseTextDecoder.makeIntoSingleString(ba, hurufKecil) });
+			if (dontSplitVerses) {
+				return new InternalSingleChapterVerses(new String[] { verseTextDecoder.makeIntoSingleString(ba, lowercased) });
 			} else {
-				return new InternalSingleChapterVerses(verseTextDecoder.separateIntoVerses(ba, hurufKecil));
+				return new InternalSingleChapterVerses(verseTextDecoder.separateIntoVerses(ba, lowercased));
 			}
 		} catch (IOException e) {
 			return new InternalSingleChapterVerses(new String[] { e.getMessage() });

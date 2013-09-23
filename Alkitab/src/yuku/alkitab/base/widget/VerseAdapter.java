@@ -333,7 +333,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 		if (res.length != pos_itemPointer) {
 			// ada yang ngaco! di algo di atas
-			throw new RuntimeException("Algo selip2an perikop salah! posPK=" + pos_itemPointer + " posAyat=" + pos_verse + " posBlok=" + pos_block + " nayat=" + nverse + " nblok=" + nblock //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			throw new RuntimeException("Algorithm to insert pericopes error!! pos_itemPointer=" + pos_itemPointer + " pos_verse=" + pos_verse + " pos_block=" + pos_block + " nverse=" + nverse + " nblock=" + nblock //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					+ " xari:" + Arrays.toString(perikop_xari) + " xblok:" + Arrays.toString(perikop_xblok));  //$NON-NLS-1$//$NON-NLS-2$
 		}
 

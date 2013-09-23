@@ -39,13 +39,13 @@ public class TypeHighlightDialog {
 	}
 	
 	/**
-	 * Buka dialog buat 1 ayat
-	 * @param colorRgb -1 kalo ga terpilih. #rrggbb ga pake alpha
+	 * Open dialog for a single verse
+	 * @param colorRgb -1 if not selected. #rrggbb without alpha.
 	 */
 	public TypeHighlightDialog(Context context, int ari, Listener listener, int colorRgb, CharSequence title) {
 		this(context, Ari.toBookChapter(ari), onlyOne(Ari.toVerse(ari)), listener, colorRgb, title);
 	}
-	
+
 	private static IntArrayList onlyOne(int verse_1) {
 		IntArrayList res = new IntArrayList(1);
 		res.add(verse_1);
@@ -53,9 +53,9 @@ public class TypeHighlightDialog {
 	}
 
 	/**
-	 * Buka dialog buat lebih dari 1 ayat (atau 1 ayat juga boleh).
-	 * @param colorRgb -1 kalo ga terpilih. #rrggbb ga pake alpha
-	 * @param selectedVerses ayat2 yang dipilih.
+	 * Open dialog for more than one verse (or one verse only).
+	 * @param colorRgb -1 if not selected. #rrggbb without alpha.
+	 * @param selectedVerses selected verses.
 	 */
 	public TypeHighlightDialog(Context context, int ari_bookchapter, IntArrayList selectedVerses, Listener listener, int colorRgb, CharSequence title) {
 		this.ari_bookchapter = ari_bookchapter;

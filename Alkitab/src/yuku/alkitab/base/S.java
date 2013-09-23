@@ -15,7 +15,6 @@ import yuku.alkitab.base.storage.SongDbHelper;
 import yuku.alkitab.base.util.FontManager;
 
 import java.io.InputStream;
-import java.util.Locale;
 
 
 public class S {
@@ -64,23 +63,23 @@ public class S {
 	}
 	
 	public static void calculateAppliedValuesBasedOnPreferences() {
-		//# atur ukuran huruf isi berdasarkan pengaturan
+		//# configure font size
 		{
 			applied.fontSize2dp = Preferences.getFloat(Prefkey.ukuranHuruf2, (float) App.context.getResources().getInteger(R.integer.pref_ukuranHuruf2_default));
 		}
 		
-		//# atur jenis huruf, termasuk boldnya
+		//# configure fonts
 		{
 			applied.fontFace = FontManager.typeface(Preferences.getString(Prefkey.jenisHuruf, null));
 			applied.lineSpacingMult = Preferences.getFloat(Prefkey.lineSpacingMult, 1.15f);
 			applied.fontBold = Preferences.getBoolean(Prefkey.boldHuruf, false)? Typeface.BOLD: Typeface.NORMAL;
 		}
 		
-		//# atur warna teks, latar, dan nomer ayat
+		//# configure text color, red text color, bg color, and verse color
 		{
-			applied.fontColor = Preferences.getInt(App.context.getString(R.string.pref_warnaHuruf_int_key), App.context.getResources().getInteger(R.integer.pref_warnaHuruf_int_default));
-			applied.backgroundColor = Preferences.getInt(App.context.getString(R.string.pref_warnaLatar_int_key), App.context.getResources().getInteger(R.integer.pref_warnaLatar_int_default));
-			applied.verseNumberColor = Preferences.getInt(App.context.getString(R.string.pref_warnaNomerAyat_int_key), App.context.getResources().getInteger(R.integer.pref_warnaNomerAyat_int_default));
+			applied.fontColor = Preferences.getInt(App.context.getString(R.string.pref_textColor_key), App.context.getResources().getInteger(R.integer.pref_warnaHuruf_int_default));
+			applied.backgroundColor = Preferences.getInt(App.context.getString(R.string.pref_bgColor_key), App.context.getResources().getInteger(R.integer.pref_warnaLatar_int_default));
+			applied.verseNumberColor = Preferences.getInt(App.context.getString(R.string.pref_verseColor_key), App.context.getResources().getInteger(R.integer.pref_warnaNomerAyat_int_default));
 			applied.fontRedColor = Preferences.getInt(App.context.getString(R.string.pref_redTextColor_key), App.context.getResources().getInteger(R.integer.pref_redTextColor_default));
 			
 			// calculation of backgroundColor brightness. Used somewhere else.
@@ -92,17 +91,17 @@ public class S {
 		
 		Resources res = App.context.getResources();
 		
-		float skalaBerdasarUkuranHuruf = applied.fontSize2dp / 17.f;
-		applied.indentParagraphFirst = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.indentParagraphFirst) + 0.5f);
-		applied.indentParagraphRest = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.indentParagraphRest) + 0.5f);
-		applied.indentSpacing1 = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.indent_1) + 0.5f);
-		applied.indentSpacing2 = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.indent_2) + 0.5f);
-		applied.indentSpacing3 = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.indent_3) + 0.5f);
-		applied.indentSpacing4 = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.indent_4) + 0.5f);
-		applied.indentSpacingExtra = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.indentExtra) + 0.5f);
-		applied.paragraphSpacingBefore = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.paragraphSpacingBefore) + 0.5f);
-		applied.pericopeSpacingTop = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.pericopeSpacingTop) + 0.5f);
-		applied.pericopeSpacingBottom = (int) (skalaBerdasarUkuranHuruf * res.getDimensionPixelOffset(R.dimen.pericopeSpacingBottom) + 0.5f);
+		float scaleBasedOnFontSize = applied.fontSize2dp / 17.f;
+		applied.indentParagraphFirst = (int) (scaleBasedOnFontSize * res.getDimensionPixelOffset(R.dimen.indentParagraphFirst) + 0.5f);
+		applied.indentParagraphRest = (int) (scaleBasedOnFontSize * res.getDimensionPixelOffset(R.dimen.indentParagraphRest) + 0.5f);
+		applied.indentSpacing1 = (int) (scaleBasedOnFontSize * res.getDimensionPixelOffset(R.dimen.indent_1) + 0.5f);
+		applied.indentSpacing2 = (int) (scaleBasedOnFontSize * res.getDimensionPixelOffset(R.dimen.indent_2) + 0.5f);
+		applied.indentSpacing3 = (int) (scaleBasedOnFontSize * res.getDimensionPixelOffset(R.dimen.indent_3) + 0.5f);
+		applied.indentSpacing4 = (int) (scaleBasedOnFontSize * res.getDimensionPixelOffset(R.dimen.indent_4) + 0.5f);
+		applied.indentSpacingExtra = (int) (scaleBasedOnFontSize * res.getDimensionPixelOffset(R.dimen.indentExtra) + 0.5f);
+		applied.paragraphSpacingBefore = (int) (scaleBasedOnFontSize * res.getDimensionPixelOffset(R.dimen.paragraphSpacingBefore) + 0.5f);
+		applied.pericopeSpacingTop = (int) (scaleBasedOnFontSize * res.getDimensionPixelOffset(R.dimen.pericopeSpacingTop) + 0.5f);
+		applied.pericopeSpacingBottom = (int) (scaleBasedOnFontSize * res.getDimensionPixelOffset(R.dimen.pericopeSpacingBottom) + 0.5f);
 	}
 	
 	private static TObjectIntHashMap<String> cache_rawResId = new TObjectIntHashMap<String>(32);

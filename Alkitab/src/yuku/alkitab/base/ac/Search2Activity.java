@@ -27,9 +27,6 @@ import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.Arrays;
-
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
@@ -49,6 +46,8 @@ import yuku.alkitab.base.util.Search2Engine;
 import yuku.alkitab.base.util.Search2Engine.Query;
 import yuku.androidsdk.searchbar.SearchBar;
 import yuku.androidsdk.searchbar.SearchBar.OnSearchListener;
+
+import java.util.Arrays;
 
 public class Search2Activity extends BaseActivity {
 	public static final String TAG = Search2Activity.class.getSimpleName();
@@ -447,7 +446,7 @@ public class Search2Activity extends BaseActivity {
 		public SearchFilterAdapter() {
 			Book[] books_original = S.activeVersion.getConsecutiveBooks();
 			
-			if (Preferences.getBoolean(App.context.getString(R.string.pref_sortKitabAlfabet_key), App.context.getResources().getBoolean(R.bool.pref_sortKitabAlfabet_default))) {
+			if (Preferences.getBoolean(App.context.getString(R.string.pref_alphabeticBookSort_key), App.context.getResources().getBoolean(R.bool.pref_sortKitabAlfabet_default))) {
 				books = BookNameSorter.sortAlphabetically(books_original);
 			} else {
 				books = books_original.clone();

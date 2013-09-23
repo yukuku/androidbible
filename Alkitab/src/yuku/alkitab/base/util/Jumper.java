@@ -16,8 +16,8 @@ public class Jumper {
 	public static final String TAG = Jumper.class.getSimpleName();
 	
 	private String p_kitab;
-	private int p_pasal;
-	private int p_ayat;
+	private int p_chapter;
+	private int p_verse;
 	
 	/** If bookId found from OSIS book names, set this to other than -1 and this will be returned */
 	private int p_bookIdFromOsis = -1;
@@ -126,13 +126,13 @@ public class Jumper {
 				
 				try {
 					p_bookIdFromOsis = OsisBookNames.osisBookNameToBookId(osisBookName);
-					p_pasal = Integer.parseInt(chapter_s);
-					p_ayat = (verse_s == null || verse_s.length() == 0)? 0: Integer.parseInt(verse_s);
+					p_chapter = Integer.parseInt(chapter_s);
+					p_verse = (verse_s == null || verse_s.length() == 0)? 0: Integer.parseInt(verse_s);
 				} catch (Exception e) {
 					Log.e(TAG, "Should not happen. In peloncat tahap 7", e); //$NON-NLS-1$
 				}
 				
-				Log.d(TAG, "peloncat tahap 7: successfully parsed osis id: " + p_bookIdFromOsis + ' ' + p_pasal + ' ' + p_ayat); //$NON-NLS-1$
+				Log.d(TAG, "peloncat tahap 7: successfully parsed osis id: " + p_bookIdFromOsis + ' ' + p_chapter + ' ' + p_verse); //$NON-NLS-1$
 				return true;
 			}
 		}
@@ -140,32 +140,32 @@ public class Jumper {
 		//# TAHAP 10: BELAH BERDASAR SPASI, :, TITIK, dan kosong di antara - dan angka.
 		//# Contoh output salah: [Kisah, rasul34, 6-7, 8]
 		//# Contoh output betul: [Kisah, rasul34, 6, -, 7, 8]
-		String[] bagian = alamat.split("((\\s|:|\\.)+|(?=[0-9])(?<=-)|(?=-)(?<=[0-9]))"); //$NON-NLS-1$
-		Log.d(TAG, "peloncat tahap 10: " + Arrays.toString(bagian)); //$NON-NLS-1$
+		String[] parts = alamat.split("((\\s|:|\\.)+|(?=[0-9])(?<=-)|(?=-)(?<=[0-9]))"); //$NON-NLS-1$
+		Log.d(TAG, "peloncat tahap 10: " + Arrays.toString(parts)); //$NON-NLS-1$
 
 		//# TAHAP 12: buang string dari bagian yang kosong
 		{
 			int adaKosong = 0;
-			for (String b: bagian) {
+			for (String b: parts) {
 				if (b.length() == 0) {
 					adaKosong++;
 					break;
 				}
 			}
 			if (adaKosong > 0) {
-				String[] bagianTanpaKosong = new String[bagian.length - adaKosong];
+				String[] partsWithoutEmpties = new String[parts.length - adaKosong];
 				int c = 0;
-				for (String b: bagian) {
+				for (String b: parts) {
 					if (b.length() != 0) {
-						bagianTanpaKosong[c++] = b;
+						partsWithoutEmpties[c++] = b;
 					}
 				}
-				bagian = bagianTanpaKosong;
+				parts = partsWithoutEmpties;
 			}
 		}
-		Log.d(TAG, "peloncat tahap 12: " + Arrays.toString(bagian)); //$NON-NLS-1$
+		Log.d(TAG, "peloncat tahap 12: " + Arrays.toString(parts)); //$NON-NLS-1$
 		
-		if (bagian.length == 0) {
+		if (parts.length == 0) {
 			return false;
 		}
 		
@@ -174,7 +174,7 @@ public class Jumper {
 		{
 			ArrayList<String> bel = new ArrayList<String>();
 			
-			for (String b: bagian) {
+			for (String b: parts) {
 				if (isKata(b)) {
 					String angka = ""; //$NON-NLS-1$
 					for (int i = b.length() - 1; i >= 0; i--) {
@@ -198,9 +198,9 @@ public class Jumper {
 				}
 			}
 			
-			bagian = bel.toArray(bagian);
+			parts = bel.toArray(parts);
 		}
-		Log.d(TAG, "peloncat tahap 20: " + Arrays.toString(bagian)); //$NON-NLS-1$
+		Log.d(TAG, "peloncat tahap 20: " + Arrays.toString(parts)); //$NON-NLS-1$
 		
 
 		//# TAHAP 25: cari elemen bagian yang "-", lalu buang mulai itu sampe belakang.
@@ -208,8 +208,8 @@ public class Jumper {
 			boolean adaStrip = false;
 			int di = -1;
 			
-			for (int i = 0; i < bagian.length; i++) {
-				if ("-".equals(bagian[i]) || "--".equals(bagian[i])) { //$NON-NLS-1$
+			for (int i = 0; i < parts.length; i++) {
+				if ("-".equals(parts[i]) || "--".equals(parts[i])) { //$NON-NLS-1$
 					adaStrip = true;
 					di = i;
 					break;
@@ -218,10 +218,10 @@ public class Jumper {
 			
 			if (adaStrip) {
 				String[] bel = new String[di];
-				System.arraycopy(bagian, 0, bel, 0, di);
-				bagian = bel;
+				System.arraycopy(parts, 0, bel, 0, di);
+				parts = bel;
 				
-				Log.d(TAG, "peloncat tahap 25: " + Arrays.toString(bagian)); //$NON-NLS-1$
+				Log.d(TAG, "peloncat tahap 25: " + Arrays.toString(parts)); //$NON-NLS-1$
 			}
 		}
 		
@@ -232,15 +232,15 @@ public class Jumper {
 			int mulaiKata = 0;
 			
 			// liat dari kanan mana yang bukan angka, itu mulainya kitab
-			for (int i = bagian.length - 1; i >= 0; i--) {
-				if (! isAngka(bagian[i])) {
+			for (int i = parts.length - 1; i >= 0; i--) {
+				if (! isAngka(parts[i])) {
 					// ini dan depannya semua adalah kitab
 					mulaiKata = i;
 					
 					break;
 				}
 				
-				if (i == 0 && bagian.length > 2) {
+				if (i == 0 && parts.length > 2) {
 					// kebanyakan, masa lebih dari 2 bilangan
 					return false;
 				}
@@ -248,51 +248,51 @@ public class Jumper {
 
 			String s = null;
 			for (int j = 0; j <= mulaiKata; j++) {
-				s = (s == null)? bagian[j]: s + " " + bagian[j]; //$NON-NLS-1$
+				s = (s == null)? parts[j]: s + " " + parts[j]; //$NON-NLS-1$
 			}
 			
 			bel.add(s);
-			for (int j = mulaiKata+1; j < bagian.length; j++) {
-				bel.add(bagian[j]);
+			for (int j = mulaiKata+1; j < parts.length; j++) {
+				bel.add(parts[j]);
 			}
 
-			bagian = bel.toArray(new String[0]);
+			parts = bel.toArray(new String[0]);
 		}
-		Log.d(TAG, "peloncat tahap 30: " + Arrays.toString(bagian)); //$NON-NLS-1$
+		Log.d(TAG, "peloncat tahap 30: " + Arrays.toString(parts)); //$NON-NLS-1$
 		
-		if (bagian.length == 1) { // 1 bagian doang
-			// , berati PASAL ato KITAB doang
-			if (isKata(bagian[0])) {
+		if (parts.length == 1) { // 1 part only
+			// It means it can be CHAPTER or BOOK only
+			if (isKata(parts[0])) {
 				// kitab
-				p_kitab = bagian[0];
+				p_kitab = parts[0];
 				return true;
 			} else {
-				p_pasal = angkain(bagian[0]);
+				p_chapter = angkain(parts[0]);
 				return true;
 			}
 		}
 
-		if (bagian.length == 2) { // 2 bagian
-			// , berarti bisa PASAL AYAT (dalam kitab sama)
-			if (isAngka(bagian[0]) && isAngka(bagian[1])) {
-				p_pasal = angkain(bagian[0]);
-				p_ayat = angkain(bagian[1]);
+		if (parts.length == 2) { // 2 parts
+			// means it could be CHAPTER VERSE (in the same book)
+			if (isAngka(parts[0]) && isAngka(parts[1])) {
+				p_chapter = angkain(parts[0]);
+				p_verse = angkain(parts[1]);
 				return true;
 			}
-			// atau KITAB PASAL
-			else if (isAngka(bagian[1])) {
-				p_kitab = bagian[0];
-				p_pasal = angkain(bagian[1]);
+			// or BOOK CHAPTER
+			else if (isAngka(parts[1])) {
+				p_kitab = parts[0];
+				p_chapter = angkain(parts[1]);
 				return true;
 			}
 			return false;
 		}
 		
-		if (bagian.length == 3) { // 3 bagian
-			// , berarti harus KITAB PASAL AYAT. Ga boleh yang lain
-			p_kitab = bagian[0];
-			p_pasal = angkain(bagian[1]);
-			p_ayat = angkain(bagian[2]);
+		if (parts.length == 3) { // 3 parts
+			// it means it must be BOOK CHAPTER VERSE. Could not be otherwise.
+			p_kitab = parts[0];
+			p_chapter = angkain(parts[1]);
+			p_verse = angkain(parts[2]);
 			return true;
 		}
 		
@@ -303,8 +303,8 @@ public class Jumper {
 		boolean res = parse0(alamat);
 		
 		Log.d(TAG, "peloncat sesudah parse0: p_kitab=" + p_kitab); //$NON-NLS-1$
-		Log.d(TAG, "peloncat sesudah parse0: p_pasal=" + p_pasal); //$NON-NLS-1$
-		Log.d(TAG, "peloncat sesudah parse0: p_ayat=" + p_ayat); //$NON-NLS-1$
+		Log.d(TAG, "peloncat sesudah parse0: p_chapter=" + p_chapter); //$NON-NLS-1$
+		Log.d(TAG, "peloncat sesudah parse0: p_verse=" + p_verse); //$NON-NLS-1$
 		
 		return res;
 	}
@@ -453,10 +453,10 @@ public class Jumper {
 	}
 	
 	public int getChapter() {
-		return p_pasal;
+		return p_chapter;
 	}
 	
 	public int getVerse() {
-		return p_ayat;
+		return p_verse;
 	}
 }
