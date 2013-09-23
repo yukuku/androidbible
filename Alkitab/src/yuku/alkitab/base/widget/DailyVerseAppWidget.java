@@ -31,7 +31,8 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 
 		AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 		mgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pi);
-		super.onReceive(context, intent);
+
+		//super.onReceive(context, intent);
 	}
 
 

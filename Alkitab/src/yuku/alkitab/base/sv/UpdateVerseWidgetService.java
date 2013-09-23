@@ -18,7 +18,9 @@ import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.widget.DailyVerseAppWidget;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class UpdateVerseWidgetService extends IntentService {
@@ -46,7 +48,8 @@ public class UpdateVerseWidgetService extends IntentService {
 		SpannableStringBuilder verseText = getText(bibleVersion, aris);
 
 		RemoteViews remoteViews = new RemoteViews(this.getPackageName(), R.layout.app_widget);
-		remoteViews.setTextViewText(R.id.tAppWidgetVerse, verseText);
+		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss dd-MM-yyyy");
+		remoteViews.setTextViewText(R.id.tAppWidgetVerse, verseText + " gen at " + format.format(new Date())); //TODO delete last strings. for debugging only
 
 		Intent intent = new Intent(this, DailyVerseAppWidget.class);
 		intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
