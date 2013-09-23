@@ -32,7 +32,7 @@ public class DevotionReminderReceiver extends BroadcastReceiver {
 		.setContentText(context.getString(R.string.dr_notification_text))
 		.setContentTitle(context.getString(R.string.dr_notification_title))
 		.setContentIntent(pi)
-		.setSmallIcon(R.drawable.ic_launcher);
+		.setSmallIcon(R.drawable.ic_stat_reminder);
 
 		String reminder_sound = Preferences.getString("reminder_sound");
 		boolean reminder_vibrate = Preferences.getBoolean("reminder_vibrate", false);

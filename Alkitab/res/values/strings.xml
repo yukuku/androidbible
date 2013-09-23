@@ -292,5 +292,5 @@
     <string name="dr_vibrate">Vibrate</string>
     <string name="dr_set_alarm">Set alarm</string>
     <string name="dr_notification_title">Daily devotion</string>
-    <string name="dr_notification_text">Read today's devotion now.</string>
+    <string name="dr_notification_text">Read today\'s devotion now.</string>
 </resources>
