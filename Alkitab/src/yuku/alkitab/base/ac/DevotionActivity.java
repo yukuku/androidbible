@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -277,7 +278,9 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		final View view = getLayoutInflater().inflate(R.layout.dialog_devotion_reminder, null);
 		final TimePicker timePicker = V.get(view, R.id.tpTime);
 		final Spinner sRingTone = V.get(view, R.id.sRing);
+		final CheckBox cVibrate = V.get(view, R.id.cVibrate);
 
+		//display current alarm setting
 		int timeFormat = 0;
 		try {
 			timeFormat = Settings.System.getInt(getContentResolver(), Settings.System.TIME_12_24);
@@ -290,11 +293,14 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			timePicker.setIs24HourView(false);
 		}
 		String reminder_time = Preferences.getString("reminder_time");
-		int hour = Integer.parseInt(reminder_time.substring(0, 2));
-		int minute = Integer.parseInt(reminder_time.substring(2, 4));
-		timePicker.setCurrentHour(hour);
-		timePicker.setCurrentMinute(minute);
+		if (reminder_time != null) {
+			int hour = Integer.parseInt(reminder_time.substring(0, 2));
+			int minute = Integer.parseInt(reminder_time.substring(2, 4));
+			timePicker.setCurrentHour(hour);
+			timePicker.setCurrentMinute(minute);
+		}
 
+		//populate spinner with available ringtones
 		final RingtoneManager manager = new RingtoneManager(this);
 		Cursor cursor = manager.getCursor();
 
@@ -321,8 +327,14 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		}
 		sRingTone.setSelection(currentSpinnerPosition);
 
+		//display the current vibration option
+		boolean reminder_vibrate = Preferences.getBoolean("reminder_vibrate", false);
+		cVibrate.setChecked(reminder_vibrate);
+
+		//show the dialog
 		new AlertDialog.Builder(this)
 		.setView(view)
+		.setTitle("Set Alarm")
 		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(final DialogInterface dialog, final int which) {
@@ -330,6 +342,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 				Preferences.setString("reminder_time", time);
 				final String uriString = manager.getRingtoneUri(sRingTone.getSelectedItemPosition()).toString();
 				Preferences.setString("reminder_sound", uriString);
+				Preferences.setBoolean("reminder_vibrate", cVibrate.isChecked());
 				DevotionReminderReceiver.scheduleAlarm(DevotionActivity.this);
 			}
 		})

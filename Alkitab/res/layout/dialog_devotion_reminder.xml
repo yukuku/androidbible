@@ -10,13 +10,13 @@
             android:layout_height="wrap_content"
             android:id="@+id/tpTime" android:layout_gravity="left|center_vertical"/>
     <Spinner
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/sRing" android:layout_gravity="left|center_vertical"/>
     <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New CheckBox"
+            android:text="Vibrate"
             android:id="@+id/cVibrate" android:layout_gravity="left|center_vertical"/>
 
 
