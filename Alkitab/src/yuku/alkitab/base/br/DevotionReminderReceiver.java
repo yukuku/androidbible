@@ -29,8 +29,8 @@ public class DevotionReminderReceiver extends BroadcastReceiver {
 
 		NotificationCompat.Builder b = new NotificationCompat.Builder(context)
 		.setAutoCancel(true)
-		.setContentText("Ayo baca renungan hari ini")
-		.setContentTitle("Renungan harian")
+		.setContentText(context.getString(R.string.dr_notification_text))
+		.setContentTitle(context.getString(R.string.dr_notification_title))
 		.setContentIntent(pi)
 		.setSmallIcon(R.drawable.ic_launcher);
 

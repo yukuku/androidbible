@@ -22,7 +22,7 @@
 		android:icon="@drawable/ic_menu_download" 
 		android:showAsAction="never" />
     <item
-        android:title="@string/reminder"
+        android:title="@string/dr_reminder"
         android:id="@+id/menuReminder"
         android:showAsAction="never" />
 </menu>

@@ -334,8 +334,8 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		//show the dialog
 		new AlertDialog.Builder(this)
 		.setView(view)
-		.setTitle("Set Alarm")
-		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		.setTitle(this.getString(R.string.dr_set_alarm))
+		.setPositiveButton(this.getString(R.string.ok), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(final DialogInterface dialog, final int which) {
 				final String time = "" + String.format("%02d", timePicker.getCurrentHour()) + String.format("%02d", timePicker.getCurrentMinute());
@@ -346,7 +346,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 				DevotionReminderReceiver.scheduleAlarm(DevotionActivity.this);
 			}
 		})
-		.setNegativeButton("Cancel", null)
+		.setNegativeButton(this.getString(R.string.cancel), null)
 		.show();
 
 	}
