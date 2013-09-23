@@ -182,7 +182,7 @@
   <string name="pdb_error_not_palmbible">Este arquivo PDB não é um arquivo no formato PalmBible+. Este arquivo PDB tem o tipo \'%1$s\' e a identificação do criador é \'%2$s\', que não é suportado por este aplicativo.</string>
   <string name="pdb_error_corrupted">O arquivo PDB está corrompido.</string>
   <string name="pdb_error_not_pdb_file">O arquivo selecionado não é um arquivo PDB.</string>
-  <string name="menu_split_version">Versão segmentada</string>
+  <string name="menu_split_version">Tela dividida</string>
   <string name="split_version_none">Nenhum</string>
   <string name="split_version_cant_display_verse">%1$s não está disponível em %2$s.</string>
   <string name="menuAddSomething">Adicionar marcador</string>

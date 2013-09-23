@@ -29,7 +29,7 @@ If you are blessed by this Bible app, please make some donation to the developer
   <string name="renungan">靈修心得</string>
   <string name="cari_v">搜尋</string>
   <string name="judul_bukmak_activity">記號</string>
-  <string name="pembatas_buku">書籤</string>
+  <string name="menu_markers">標記</string>
   <string name="hapus_pembatas_buku">刪除書籤</string>
   <string name="bagikan">分享</string>
   <string name="tulis_catatan">寫筆記</string>
@@ -42,6 +42,7 @@ If you are blessed by this Bible app, please make some donation to the developer
   <string name="pasal_sebelumangka">章</string>
   <string name="loncat_ke_alamat_titikdua">跳到: (範例: %s)</string>
   <string name="tidak_ada_catatan">(沒有筆記)</string>
+  <string name="belum_ada_pembatas_buku">未有書簽。\n選取一節經文以加入書簽。</string>
   <string name="judul_titikdua">標題:</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">下載 %1$s 失敗. 日期: %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">下載 %1$s 時失敗, 日期 %2$s: %3$s</string>
@@ -249,4 +250,28 @@ If you are blessed by this Bible app, please make some donation to the developer
   <string name="version_share_title">分享此版本給：</string>
   <string name="menuFullScreen">全螢幕</string>
   <string name="full_screen_dismiss_hint">按下<b>上一頁</b>離開全螢幕</string>
+  <string name="me_export_markers">匯出標記</string>
+  <string name="me_export_menu_item">匯出</string>
+  <string name="me_all_notes">所有筆記</string>
+  <string name="me_all_highlights">所有突出</string>
+  <string name="me_all_bookmarks">所有書簽</string>
+  <string name="me_section_bookmarks">書簽</string>
+  <string name="me_section_notes">筆記</string>
+  <string name="me_section_highlights">突出</string>
+  <string name="me_no_labels">沒有標簽</string>
+  <string name="me_edited_modify_date">(編輯於%s)</string>
+  <string name="pm_progress_1">進度一</string>
+  <string name="pm_progress_2">進度二</string>
+  <string name="pm_progress_3">進度三</string>
+  <string name="pm_progress_4">進度四</string>
+  <string name="pm_progress_5">進度五</string>
+  <string name="pm_menu_save_progress">儲存%s</string>
+  <string name="pm_menu_save_progresses">儲存進度</string>
+  <string name="pm_menu_view_progress">檢視進度</string>
+  <string name="pm_progress_name">進度名稱</string>
+  <string name="pm_edit_name">編輯名稱</string>
+  <string name="pm_delete_progress">刪除進度</string>
+  <string name="pm_activate_tutorial">選取一節經文以儲存進度。</string>
+  <string name="pm_icon_click_message">"於%1$s \n儲存%2$s"</string>
+  <string name="copy_share">複製或分享</string>
 </resources>

@@ -28,7 +28,7 @@
   <string name="renungan">灵修</string>
   <string name="cari_v">搜索</string>
   <string name="judul_bukmak_activity">记号</string>
-  <string name="pembatas_buku">书签</string>
+  <string name="menu_markers">标记</string>
   <string name="hapus_pembatas_buku">删除书签</string>
   <string name="bagikan">共享</string>
   <string name="tulis_catatan">写笔记</string>
@@ -41,6 +41,7 @@
   <string name="pasal_sebelumangka">章</string>
   <string name="loncat_ke_alamat_titikdua">跳到： (例子： %s)</string>
   <string name="tidak_ada_catatan">（没有笔记）</string>
+  <string name="belum_ada_pembatas_buku">未有书签。\n选取一节经文以加入书签。</string>
   <string name="judul_titikdua">标题：</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">下载 %1$s 失败, 日期 %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">错误发生在 %1$s 文件下载 日期 %2$s: %3$s</string>
@@ -248,4 +249,28 @@
   <string name="version_share_title">分享此版本给：</string>
   <string name="menuFullScreen">全萤幕</string>
   <string name="full_screen_dismiss_hint">按下<b>上一页</b>离开全萤幕</string>
+  <string name="me_export_markers">汇出标记</string>
+  <string name="me_export_menu_item">汇出</string>
+  <string name="me_all_notes">所有笔记</string>
+  <string name="me_all_highlights">所有突出</string>
+  <string name="me_all_bookmarks">所有书签</string>
+  <string name="me_section_bookmarks">书签</string>
+  <string name="me_section_notes">笔记</string>
+  <string name="me_section_highlights">突出</string>
+  <string name="me_no_labels">没有标签</string>
+  <string name="me_edited_modify_date">(编辑于%s)</string>
+  <string name="pm_progress_1">进度一</string>
+  <string name="pm_progress_2">进度二</string>
+  <string name="pm_progress_3">进度三</string>
+  <string name="pm_progress_4">进度四</string>
+  <string name="pm_progress_5">进度五</string>
+  <string name="pm_menu_save_progress">储存%s</string>
+  <string name="pm_menu_save_progresses">储存进度</string>
+  <string name="pm_menu_view_progress">检视进度</string>
+  <string name="pm_progress_name">进度名称</string>
+  <string name="pm_edit_name">编辑名称</string>
+  <string name="pm_delete_progress">删除进度</string>
+  <string name="pm_activate_tutorial">选取一节经文以储存进度。</string>
+  <string name="pm_icon_click_message">"于%1$s \n储存%2$s"</string>
+  <string name="copy_share">复制或分享</string>
 </resources>
