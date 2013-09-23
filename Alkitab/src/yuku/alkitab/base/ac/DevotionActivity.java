@@ -273,6 +273,11 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			} else {
 				timePicker.setIs24HourView(false);
 			}
+			String reminder_time = Preferences.getString("reminder_time");
+			int hour = Integer.parseInt(reminder_time.substring(0, 2));
+			int minute = Integer.parseInt(reminder_time.substring(2, 4));
+			timePicker.setCurrentHour(hour);
+			timePicker.setCurrentMinute(minute);
 
 			new AlertDialog.Builder(this)
 			.setView(view)
