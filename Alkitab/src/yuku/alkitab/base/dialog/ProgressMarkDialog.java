@@ -101,8 +101,12 @@ public class ProgressMarkDialog extends DialogFragment{
 									@Override
 									public void onClick(final DialogInterface dialog, final int which) {
 										final String name = String.valueOf(tCaption.getText());
-										if (originalCaption != null && !TextUtils.isEmpty(name) && !originalCaption.equals(name)) {
-											progressMark.caption = name;
+										if (originalCaption != null && !originalCaption.equals(name)) {
+											if (TextUtils.isEmpty(name)) {
+												progressMark.caption = null;
+											} else {
+												progressMark.caption = name;
+											}
 											progressMark.modifyTime = new Date();
 											S.getDb().updateProgressMark(progressMark);
 											adapter.notifyDataSetChanged();
@@ -112,7 +116,7 @@ public class ProgressMarkDialog extends DialogFragment{
 								.show();
 							} else {
 								progressMark.ari = 0;
-								progressMark.caption = "";
+								progressMark.caption = null;
 								S.getDb().updateProgressMark(progressMark);
 								adapter.notifyDataSetChanged();
 								progressMarkListener.onProgressMarkDeleted(ari);
