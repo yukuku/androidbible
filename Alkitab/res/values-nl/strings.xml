@@ -28,7 +28,7 @@
   <string name="renungan">Devotie</string>
   <string name="cari_v">Zoeken</string>
   <string name="judul_bukmak_activity">Markers</string>
-  <string name="pembatas_buku">Bladwijzers</string>
+  <string name="menu_markers">Markeringen</string>
   <string name="hapus_pembatas_buku">Verwijder bladwijzer</string>
   <string name="bagikan">Deel</string>
   <string name="tulis_catatan">Schrijf notitie</string>
@@ -41,7 +41,7 @@
   <string name="pasal_sebelumangka">Hoofdstuk</string>
   <string name="loncat_ke_alamat_titikdua">Spring naar: (Voorbeeld: %s)</string>
   <string name="tidak_ada_catatan">(geen notities)</string>
-  <string name="belum_ada_pembatas_buku">Er zijn nog geen bladwijzers.\nSelecteer een vers en klik op de vers-menutoets om een bladwijzer toe te voegen.</string>
+  <string name="belum_ada_pembatas_buku">Er zijn nog geen bladwijzers.\nSelecteer een vers om een bladwijzer toe te voegen.</string>
   <string name="judul_titikdua">Titel:</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Download mislukt van %1$s gedateerd op %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Fout in downloaden van %1$s gedateerd op %2$s: %3$s</string>
@@ -249,4 +249,28 @@
   <string name="version_share_title">Deel versie met:</string>
   <string name="menuFullScreen">Volledig scherm</string>
   <string name="full_screen_dismiss_hint">Klik <b>Terug</b> om volledig scherm te verlaten</string>
+  <string name="me_export_markers">Exporteer markeringen</string>
+  <string name="me_export_menu_item">Exporteren</string>
+  <string name="me_all_notes">Alle notities</string>
+  <string name="me_all_highlights">Alle highlights</string>
+  <string name="me_all_bookmarks">Alle bladwijzers</string>
+  <string name="me_section_bookmarks">Bladwijzers</string>
+  <string name="me_section_notes">Notities</string>
+  <string name="me_section_highlights">Highlights</string>
+  <string name="me_no_labels">Geen labels</string>
+  <string name="me_edited_modify_date">(bewerkt %s)</string>
+  <string name="pm_progress_1">Voortgang 1</string>
+  <string name="pm_progress_2">Voortgang 2</string>
+  <string name="pm_progress_3">Voortgang 3</string>
+  <string name="pm_progress_4">Voortgang 4</string>
+  <string name="pm_progress_5">Voortgang 5</string>
+  <string name="pm_menu_save_progress">Opslaan %s</string>
+  <string name="pm_menu_save_progresses">Sla voortgang op</string>
+  <string name="pm_menu_view_progress">Geef voortgang weer</string>
+  <string name="pm_progress_name">Naam voortgang</string>
+  <string name="pm_edit_name">Wijzig naam</string>
+  <string name="pm_delete_progress">Verwijder voortgang</string>
+  <string name="pm_activate_tutorial">Selecteer een vers om de voortgang op te slaan.</string>
+  <string name="pm_icon_click_message">"op %1$s \nopgeslagen om %2$s"</string>
+  <string name="copy_share">Kopiëer of deel</string>
 </resources>

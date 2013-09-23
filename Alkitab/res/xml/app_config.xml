@@ -59,6 +59,6 @@
 		<preset locale="zh"   shortName="CUVT"    longName="Chinese Union (Traditional)" filename_preset="cuvt.yes" url="http://alkitab-host.appspot.com/addon/yes/cuvt.yes.gz" />
 	</versions>
 	<share>
-		<url prefix="http://alkitab.me/" format="slash1 slash2 nospace0" lang="in" />
+        <url prefix="http://ref.ly/" format="dot2 nospace0 version_refly" lang="en" />
 	</share>
 </config>

@@ -1,5 +1,11 @@
 package yuku.alkitabconverter.unboundbatch;
 
+import yuku.alkitab.base.model.Ari;
+import yuku.alkitabconverter.util.KjvUtils;
+import yuku.alkitabconverter.util.TextDb;
+import yuku.alkitabconverter.util.TextDb.VerseState;
+import yuku.alkitabconverter.yes_common.Yes2Common;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
@@ -17,16 +23,10 @@ import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
 
-import yuku.alkitab.base.model.Ari;
-import yuku.alkitabconverter.util.KjvUtils;
-import yuku.alkitabconverter.util.TextDb;
-import yuku.alkitabconverter.util.TextDb.VerseState;
-import yuku.alkitabconverter.yes_common.Yes2Common;
-
 public class UnboundBatchConverter {
 	static String DATA_DIR = "/Users/yuku/j/operasi/unbound";
 	
-	List<String> appConfigEntries = new ArrayList<>();
+	List<String> appConfigEntries = new ArrayList<String>();
 	
 	public static void main(String[] args) throws Exception {
 		new UnboundBatchConverter().convertAll();
@@ -89,33 +89,32 @@ public class UnboundBatchConverter {
 		
 		// read properties file
 		Yes2Common.VersionInfo versionInfo = new Yes2Common.VersionInfo();
-		String outputName;
-		
-		try (InputStreamReader propInput = new InputStreamReader(new FileInputStream(new File(superdir, dir.getName() + ".properties")), "utf-8")) {
-			Properties prop = new Properties();
-			prop.load(propInput);
-			versionInfo.locale = prop.getProperty("versionInfo.locale");
-			versionInfo.shortName = prop.getProperty("versionInfo.shortName");
-			versionInfo.longName = prop.getProperty("versionInfo.longName");
-			versionInfo.description = prop.getProperty("versionInfo.description");
-			outputName = prop.getProperty("output.name");
-		}
+
+		final InputStreamReader propInput = new InputStreamReader(new FileInputStream(new File(superdir, dir.getName() + ".properties")), "utf-8");
+		Properties prop = new Properties();
+		prop.load(propInput);
+		versionInfo.locale = prop.getProperty("versionInfo.locale");
+		versionInfo.shortName = prop.getProperty("versionInfo.shortName");
+		versionInfo.longName = prop.getProperty("versionInfo.longName");
+		versionInfo.description = prop.getProperty("versionInfo.description");
+		final String outputName = prop.getProperty("output.name");
+		propInput.close();
 		
 		// read booknames file
-		try (Scanner sc = new Scanner(new File(superdir, dir.getName() + ".booknames.txt"))) {
-			List<String> bookNames = new ArrayList<>();
-			while (sc.hasNextLine()) {
-				bookNames.add(sc.nextLine());
-			}
-			versionInfo.setBookNames(bookNames);
+		Scanner sc = new Scanner(new File(superdir, dir.getName() + ".booknames.txt"));
+		List<String> bookNames = new ArrayList<String>();
+		while (sc.hasNextLine()) {
+			bookNames.add(sc.nextLine());
 		}
+		versionInfo.setBookNamesAndAbbreviations(bookNames, null);
+		sc.close();
 		
 		TextDb textDb = processTextFile(superdir.getName(), dir.getName(), textFile, mapped);
-		
-		try (PrintStream ps = new PrintStream(new File("/tmp/" + outputName + ".txt"))) {
-			textDb.dump(ps);
-		}
-		
+
+		PrintStream ps = new PrintStream(new File("/tmp/" + outputName + ".txt"));
+		textDb.dump(ps);
+		ps.close();
+
 		Yes2Common.createYesFile(new File("/tmp", outputName + ".yes"), versionInfo, textDb, null, true);
 		
 		appConfigEntries.add(String.format("<preset locale=%-6s shortName=%-9s longName=%s filename_preset=%s url=%s />", q(versionInfo.locale), q(versionInfo.shortName), q(versionInfo.longName), q(outputName + ".yes"), q("http://alkitab-host.appspot.com/addon/yes2/" + outputName + "--1.yes.gz")));
@@ -128,40 +127,39 @@ public class UnboundBatchConverter {
 	}
 
 	TextDb processTextFile(String categoryName, String versionName, File textFile, boolean mapped) throws Exception {
-		List<String> rawLines = new ArrayList<>();
-		List<String[]> brokenLines = new ArrayList<>();
-		Map<String, Integer> columns = new LinkedHashMap<>();
-		
-		try (BufferedReader sc = new BufferedReader(new InputStreamReader(new FileInputStream(textFile), "utf-8"))) {
-			
-			while (true) {
-				String rawLine = sc.readLine();
-				if (rawLine == null) break;
-				
-				if (rawLine.startsWith("#columns")) {
-					String[] splits = rawLine.split("\t");
-					for (int i = 1; i < splits.length; i++) {
-						columns.put(splits[i], i-1);
-					}
-				} else if (rawLine.startsWith("#") || rawLine.length() == 0) {
-					// nop
-				} else {
-					rawLines.add(rawLine);
-					brokenLines.add(rawLine.split("\t", -1));
+		List<String> rawLines = new ArrayList<String>();
+		List<String[]> brokenLines = new ArrayList<String[]>();
+		Map<String, Integer> columns = new LinkedHashMap<String, Integer>();
+
+		BufferedReader sc = new BufferedReader(new InputStreamReader(new FileInputStream(textFile), "utf-8"));
+		while (true) {
+			String rawLine = sc.readLine();
+			if (rawLine == null) break;
+
+			if (rawLine.startsWith("#columns")) {
+				String[] splits = rawLine.split("\t");
+				for (int i = 1; i < splits.length; i++) {
+					columns.put(splits[i], i-1);
 				}
+			} else if (rawLine.startsWith("#") || rawLine.length() == 0) {
+				// nop
+			} else {
+				rawLines.add(rawLine);
+				brokenLines.add(rawLine.split("\t", -1));
 			}
-			
-			System.out.println(versionName + " mapped=" + mapped + " has rawLines " + rawLines.size());
-			
-			// check required columns
-			if (!columns.containsKey("orig_book_index")) throw new RuntimeException("column orig_book_index not found");
-			if (!columns.containsKey("orig_chapter")) throw new RuntimeException("column orig_chapter not found");
-			if (!columns.containsKey("orig_verse")) throw new RuntimeException("column orig_verse not found");
-			if (!columns.containsKey("text")) throw new RuntimeException("column text not found");
-			
-			// check if all verses belong to kjv
-			return checkVersesAllKjv(categoryName, versionName, rawLines, brokenLines, columns, mapped);
 		}
+
+		System.out.println(versionName + " mapped=" + mapped + " has rawLines " + rawLines.size());
+
+		// check required columns
+		if (!columns.containsKey("orig_book_index")) throw new RuntimeException("column orig_book_index not found");
+		if (!columns.containsKey("orig_chapter")) throw new RuntimeException("column orig_chapter not found");
+		if (!columns.containsKey("orig_verse")) throw new RuntimeException("column orig_verse not found");
+		if (!columns.containsKey("text")) throw new RuntimeException("column text not found");
+		sc.close();
+
+		// check if all verses belong to kjv
+		return checkVersesAllKjv(categoryName, versionName, rawLines, brokenLines, columns, mapped);
 	}
 
 	TextDb checkVersesAllKjv(String categoryName, String versionName, List<String> rawLines, List<String[]> brokenLines, Map<String, Integer> columns, boolean mapped) throws Exception {
@@ -222,7 +220,7 @@ public class UnboundBatchConverter {
 			// Some of the files contain invalid NRSVA bcvs on the book of psalms,
 			// we need to register that and make the NRSVA verses 1+2 -> KJV verse 1
 			// and subsequent NRSVA verses n -> KJV verse (n-1)
-			Set<Integer> psalmChaptersWithInvalidNrsvaBcv = new LinkedHashSet<>();
+			Set<Integer> psalmChaptersWithInvalidNrsvaBcv = new LinkedHashSet<Integer>();
 			int[] psalmChaptersCanHaveInvalidNrsvaBcv = {30,51,52,54,60,84,85};
 			
 			for (String[] brokenLine : brokenLines) {
@@ -335,7 +333,7 @@ public class UnboundBatchConverter {
 					lids[KjvUtils.ariToLid(ari) - 1] = true;
 				}
 			});
-			List<Integer> notexists = new ArrayList<>();
+			List<Integer> notexists = new ArrayList<Integer>();
 			for (int i = 0; i < lids.length; i++) {
 				boolean exist = lids[i];
 				if (!exist) {

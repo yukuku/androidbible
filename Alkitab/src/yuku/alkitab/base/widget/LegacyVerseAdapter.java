@@ -44,9 +44,8 @@ public class LegacyVerseAdapter extends VerseAdapter {
 			VerseItem res;
 
 			String text = verses_.getVerse(id);
-			boolean withBookmark = attributeMap_ == null ? false : (attributeMap_[id] & 0x1) != 0;
-			boolean withNote = attributeMap_ == null ? false : (attributeMap_[id] & 0x2) != 0;
-			boolean withHighlight = attributeMap_ == null ? false : (attributeMap_[id] & 0x4) != 0;
+
+			boolean withHighlight = attributeMap_ != null && (attributeMap_[id] & 0x4) != 0;
 			int highlightColor = withHighlight ? (highlightMap_ == null ? 0 : U.alphaMixHighlight(highlightMap_[id])) : 0;
 
 			boolean checked = false;
@@ -88,16 +87,11 @@ public class LegacyVerseAdapter extends VerseAdapter {
 				if (checked) lIsiAyat.setTextColor(0xff000000); // override with black!
 			}
 
-			View imgAttributeBookmark = res.findViewById(R.id.imgAtributBukmak);
-			imgAttributeBookmark.setVisibility(withBookmark ? View.VISIBLE : View.GONE);
-			if (withBookmark) {
-				setClickListenerForBookmark(imgAttributeBookmark, chapter_1_, id + 1);
-			}
-			View imgAttributeNote = res.findViewById(R.id.imgAtributCatatan);
-			imgAttributeNote.setVisibility(withNote ? View.VISIBLE : View.GONE);
-			if (withNote) {
-				setClickListenerForNote(imgAttributeNote, chapter_1_, id + 1);
-			}
+			AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_attributes);
+			attributeView.showBookmark(attributeMap_ != null && (attributeMap_[id] & 0x1) != 0);
+			attributeView.showNote(attributeMap_ != null && (attributeMap_[id] & 0x2) != 0);
+			attributeView.showProgressMarks(attributeMap_ == null? 0: attributeMap_[id]);
+			attributeView.setAttributeListener(attributeListener_, book_, chapter_1_, id + 1);
 
 			return res;
 		} else {
@@ -116,7 +110,7 @@ public class LegacyVerseAdapter extends VerseAdapter {
 			TextView lJudul = (TextView) res.findViewById(R.id.lCaption);
 			TextView lXparalel = (TextView) res.findViewById(R.id.lParallels);
 
-			lJudul.setText(pericopeBlock.title);
+			PericopeRenderer.render(lJudul, pericopeBlock.title);
 
 			// matikan padding atas kalau position == 0 ATAU sebelum ini juga judul perikop
 			if (position == 0 || itemPointer_[position - 1] < 0) {

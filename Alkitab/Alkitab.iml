@@ -27,7 +27,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="module" module-name="KirimFidbek" />
     <orderEntry type="module" module-name="BiblePlus" />
-    <orderEntry type="module" module-name="AlkitabIntegration" />
+    <orderEntry type="module" module-name="AlkitabIntegration" exported="" />
     <orderEntry type="module" module-name="Snappy" />
     <orderEntry type="module" module-name="BintexWriter" />
     <orderEntry type="module" module-name="AlkitabFeedback" />

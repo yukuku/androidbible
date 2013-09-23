@@ -6,4 +6,7 @@ local.properties
 
 # Mac
 .DS_Store
+
+# IntelliJ
 .idea/workspace.xml
+/out/

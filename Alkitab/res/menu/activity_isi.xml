@@ -5,7 +5,12 @@
         android:id="@+id/menuBookmark"
         android:icon="@drawable/ic_menu_bookmark"
         android:showAsAction="ifRoom"
-        android:title="@string/pembatas_buku"/>
+        android:title="@string/menu_markers"/>
+    <item
+        android:id="@+id/menuListProgressMark"
+        android:icon="@drawable/ic_nav_right_dark"
+        android:showAsAction="ifRoom"
+        android:title="@string/pm_menu_view_progress"/>
     <item
         android:id="@+id/menuSearch"
         android:icon="@drawable/ic_menu_search"

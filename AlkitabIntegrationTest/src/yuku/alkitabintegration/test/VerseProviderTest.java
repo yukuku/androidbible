@@ -2,12 +2,13 @@ package yuku.alkitabintegration.test;
 
 import android.content.ContentResolver;
 import android.test.AndroidTestCase;
-
-import java.util.List;
-
 import yuku.alkitabintegration.provider.VerseProvider;
 import yuku.alkitabintegration.provider.VerseProvider.Verse;
 import yuku.alkitabintegration.provider.VerseProvider.VerseRanges;
+
+import java.util.List;
+
+import static junit.framework.Assert.*;
 
 public class VerseProviderTest extends AndroidTestCase {
 	public void testSingleVerse() throws Throwable {

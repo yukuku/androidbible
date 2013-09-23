@@ -4,18 +4,18 @@ import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.BaseAdapter;
-
-import java.util.Arrays;
-
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
+import yuku.alkitab.base.model.ProgressMark;
 import yuku.alkitab.base.model.SingleChapterVerses;
-import yuku.alkitab.base.storage.Db;
+import yuku.alkitab.base.storage.InternalDb;
+
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class VerseAdapter extends BaseAdapter {
 	public static final String TAG = VerseAdapter.class.getSimpleName();
@@ -67,7 +67,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	final Context context_;
 	CallbackSpan.OnClickListener parallelListener_;
 	VersesView.AttributeListener attributeListener_;
-	VersesView.XrefListener xrefListener_; 
+	VersesView.XrefListener xrefListener_;
 	final float density_;
 
 	// # field setData
@@ -83,7 +83,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	 * Konvert b ke a: -b-1;
 	 */
 	int[] itemPointer_;
-	int[] attributeMap_; // bit 0(0x1) = bukmak; bit 1(0x2) = catatan; bit 2(0x4) = stabilo;
+	int[] attributeMap_; // bit 0(0x1) = bookmark; bit 1(0x2) = notes; bit 2(0x4) = highlight; bit 8-12 = progress mark
 	int[] highlightMap_; // null atau warna stabilo
 	int[] xrefEntryCounts_;
 	
@@ -118,7 +118,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
-	public synchronized void loadAttributeMap() {
+	public synchronized void reloadAttributeMap() {
 		int[] attributeMap = null;
 		int[] highlightMap = null;
 
@@ -126,6 +126,27 @@ public abstract class VerseAdapter extends BaseAdapter {
 		if (S.getDb().countAttributes(ariBc) > 0) {
 			attributeMap = new int[verses_.getVerseCount()];
 			highlightMap = S.getDb().putAttributes(ariBc, attributeMap);
+		}
+
+		int ariMin = ariBc & 0x00ffff00;
+		int ariMax = ariBc | 0x000000ff;
+
+		List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
+
+		for (ProgressMark progressMark: progressMarks) {
+			final int ari = progressMark.ari;
+			if (ari >= ariMin && ari < ariMax) {
+				if (attributeMap == null) {
+					attributeMap = new int[verses_.getVerseCount()];
+				}
+
+				int mapOffset = Ari.toVerse(ari) - 1;
+				if (mapOffset >= attributeMap.length) {
+					Log.e(InternalDb.TAG, "ofsetMap kebanyakan " + mapOffset + " terjadi pada ari 0x" + Integer.toHexString(ari));
+				} else {
+					attributeMap[mapOffset] |= 1 << (progressMark.preset_id + 8);
+				}
+			}
 		}
 
 		attributeMap_ = attributeMap;
@@ -154,26 +175,6 @@ public abstract class VerseAdapter extends BaseAdapter {
 		return itemPointer_[position];
 	}
 
-	protected void setClickListenerForBookmark(View imgBukmak, final int pasal_1, final int ayat_1) {
-		imgBukmak.setOnClickListener(new View.OnClickListener() {
-			@Override public void onClick(View v) {
-				if (attributeListener_ != null) {
-					attributeListener_.onAttributeClick(book_, pasal_1, ayat_1, Db.Bookmark2.kind_bookmark);
-				}
-			}
-		});
-	}
-
-	protected void setClickListenerForNote(View imgCatatan, final int pasal_1, final int ayat_1) {
-		imgCatatan.setOnClickListener(new View.OnClickListener() {
-			@Override public void onClick(View v) {
-				if (attributeListener_ != null) {
-					attributeListener_.onAttributeClick(book_, pasal_1, ayat_1, Db.Bookmark2.kind_note);
-				}
-			}
-		});
-	}
-	
 	public void setParallelListener(CallbackSpan.OnClickListener parallelListener) {
 		parallelListener_ = parallelListener;
 		notifyDataSetChanged();
@@ -183,7 +184,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 		attributeListener_ = attributeListener;
 		notifyDataSetChanged();
 	}
-	
+
 	public void setXrefListener(VersesView.XrefListener xrefListener, VersesView owner) {
 		xrefListener_ = xrefListener;
 		owner_ = owner;
@@ -191,18 +192,18 @@ public abstract class VerseAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Kalau pos 0: perikop; pos 1: ayat_1 1;
-	 * maka fungsi ini (ayat_1: 1) akan return 0.
+	 * Kalau pos 0: perikop; pos 1: verse_1 1;
+	 * maka fungsi ini (verse_1: 1) akan return 0.
 	 * 
 	 * @return position di adapter ini atau -1 kalo ga ketemu
 	 */
-	public int getPositionOfPericopeBeginningFromVerse(int ayat_1) {
+	public int getPositionOfPericopeBeginningFromVerse(int verse_1) {
 		if (itemPointer_ == null) return -1;
 
-		int ayat_0 = ayat_1 - 1;
+		int verse_0 = verse_1 - 1;
 
 		for (int i = 0, len = itemPointer_.length; i < len; i++) {
-			if (itemPointer_[i] == ayat_0) {
+			if (itemPointer_[i] == verse_0) {
 				// ketemu, tapi kalo ada judul perikop, akan lebih baik. Coba cek mundur dari sini
 				for (int j = i - 1; j >= 0; j--) {
 					if (itemPointer_[j] < 0) {

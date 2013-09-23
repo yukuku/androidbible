@@ -1,13 +1,13 @@
 package yuku.alkitab.yes2.model;
 
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import yuku.alkitab.base.model.Book;
 import yuku.bintex.BintexReader;
 import yuku.bintex.BintexWriter;
 import yuku.bintex.ValueMap;
+
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class Yes2Book extends Book {
 	public int offset = -1;
@@ -22,6 +22,7 @@ public class Yes2Book extends Book {
 		map.put("chapter_count", chapter_count);
 		map.put("verse_counts", verse_counts);
 		map.put("chapter_offsets", chapter_offsets);
+		if (abbreviation != null) map.put("abbreviation", abbreviation);
 		bw.writeValueSimpleMap(map);
 	}
 	
@@ -35,6 +36,7 @@ public class Yes2Book extends Book {
 		res.chapter_count = map.getInt("chapter_count");
 		res.verse_counts = map.getIntArray("verse_counts");
 		res.chapter_offsets = map.getIntArray("chapter_offsets");
+		res.abbreviation = map.getString("abbreviation");
 		return res;
 	}
 }

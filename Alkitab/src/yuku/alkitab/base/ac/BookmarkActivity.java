@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -27,7 +28,10 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.mobeta.android.dslv.DragSortController;
+import com.mobeta.android.dslv.DragSortListView;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TIntArrayList;
@@ -35,6 +39,25 @@ import gnu.trove.map.hash.TIntLongHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TLongIntHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.ext.DefaultHandler2;
+import org.xmlpull.v1.XmlSerializer;
+import yuku.afw.D;
+import yuku.afw.V;
+import yuku.alkitab.R;
+import yuku.alkitab.base.IsiActivity;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.dialog.ExportBookmarkDialog;
+import yuku.alkitab.base.dialog.LabelEditorDialog;
+import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
+import yuku.alkitab.base.model.Bookmark2;
+import yuku.alkitab.base.model.Label;
+import yuku.alkitab.base.storage.Db;
+import yuku.ambilwarna.AmbilWarnaDialog;
+import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,35 +69,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.ext.DefaultHandler2;
-import org.xmlpull.v1.XmlSerializer;
-
-import yuku.afw.D;
-import yuku.afw.V;
-import yuku.alkitab.R;
-import yuku.alkitab.base.IsiActivity;
-import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
-import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.dialog.LabelEditorDialog;
-import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
-import yuku.alkitab.base.model.Bookmark2;
-import yuku.alkitab.base.model.Label;
-import yuku.alkitab.base.storage.Db;
-import yuku.ambilwarna.AmbilWarnaDialog;
-import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.mobeta.android.dslv.DragSortController;
-import com.mobeta.android.dslv.DragSortListView;
-
-public class BookmarkActivity extends BaseActivity {
+public class BookmarkActivity extends BaseActivity implements ExportBookmarkDialog.Listener {
 	public static final String TAG = BookmarkActivity.class.getSimpleName();
 	
 	private static final int REQCODE_bukmakList = 1;
+	private static final int REQCODE_share = 2;
 
 	DragSortListView lv;
 	
@@ -244,6 +243,11 @@ public class BookmarkActivity extends BaseActivity {
                 // sample code uses this: NavUtils.navigateUpTo(this, upIntent);
             	finish();
             }
+			return true;
+		} else if (itemId == R.id.menuExportBookmarks) {
+			FragmentManager fm = getSupportFragmentManager();
+			ExportBookmarkDialog dialog = new ExportBookmarkDialog();
+			dialog.show(fm, "export_dialog");
 			return true;
 		}
 		
@@ -477,8 +481,20 @@ public class BookmarkActivity extends BaseActivity {
 			}
 		}.execute();
 	}
-	
-	
+
+	@Override
+	public void onOk(final Uri uri) {
+		Log.d(TAG, "Uri for sharing: " + uri);
+
+		final Intent intent = ShareCompat.IntentBuilder.from(this)
+		.setStream(uri)
+		.setType("text/html")
+		.getIntent();
+
+		startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.me_export_markers)), REQCODE_share);
+	}
+
+
 	// constants
 	static class Bookmark2_Label { // DO NOT CHANGE CONSTANT VALUES!
 		static final String XMLTAG_Bookmark2_Label = "Bukmak2_Label"; //$NON-NLS-1$
@@ -523,18 +539,10 @@ public class BookmarkActivity extends BaseActivity {
 	};
 	
 	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		getMenuInflater().inflate(R.menu.context_bookmark, menu);
-
-		android.view.MenuItem menuRenameLabel = menu.findItem(R.id.menuRenameLabel);
-		android.view.MenuItem menuDeleteLabel = menu.findItem(R.id.menuDeleteLabel);
 
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-		if (info.position < 4) {
-			menuRenameLabel.setEnabled(false);
-			menuDeleteLabel.setEnabled(false);
-		} else {
-			menuRenameLabel.setEnabled(true);
-			menuDeleteLabel.setEnabled(true);
+		if (info.position >= 4) {
+			getMenuInflater().inflate(R.menu.context_bookmark, menu);
 		}
 	}
 
@@ -615,7 +623,12 @@ public class BookmarkActivity extends BaseActivity {
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQCODE_bukmakList) {
 			adapter.reload();
+		} else if (requestCode == REQCODE_share && resultCode == RESULT_OK) {
+			final ShareActivity.Result result = ShareActivity.obtainResult(data);
+			startActivity(result.chosenIntent);
 		}
+
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	private class BookmarkFilterController extends DragSortController {

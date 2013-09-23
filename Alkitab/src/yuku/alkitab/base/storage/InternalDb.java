@@ -7,19 +7,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.provider.BaseColumns;
 import android.util.Log;
-
 import gnu.trove.list.TIntList;
 import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TLongArrayList;
 import gnu.trove.map.hash.TIntLongHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
 import yuku.afw.D;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.BookmarkListActivity;
@@ -31,8 +24,15 @@ import yuku.alkitab.base.devotion.DevotionArticle;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Bookmark2;
 import yuku.alkitab.base.model.Label;
+import yuku.alkitab.base.model.ProgressMark;
+import yuku.alkitab.base.model.ProgressMarkHistory;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.Sqlitil;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 public class InternalDb {
 	public static final String TAG = InternalDb.class.getSimpleName();
@@ -94,7 +94,7 @@ public class InternalDb {
 			return res;
 		}
 	}
-	
+
 	public void deleteBookmarkByAri(int ari, int kind) {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
@@ -749,6 +749,64 @@ public class InternalDb {
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
+		}
+	}
+
+	public List<ProgressMark> listAllProgressMarks() {
+		List<ProgressMark> res = new ArrayList<ProgressMark>();
+		Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_ProgressMark, null, null, null, null, null, null);
+		try {
+			while (cursor.moveToNext()) {
+				res.add(ProgressMark.fromCursor(cursor));
+			}
+		} finally {
+			cursor.close();
+		}
+		return res;
+	}
+
+	public ProgressMark getProgressMarkByPresetId(final int preset_id) {
+		Cursor cursor = helper.getReadableDatabase().query(
+		Db.TABLE_ProgressMark,
+		null,
+		Db.ProgressMark.preset_id + "=?",
+		new String[] {String.valueOf(preset_id)},
+		null, null, null
+		);
+
+		try {
+			if (!cursor.moveToNext()) return null;
+
+			return ProgressMark.fromCursor(cursor);
+		} finally {
+			cursor.close();
+		}
+	}
+
+	public int updateProgressMark(ProgressMark progressMark) {
+		insertProgressMarkHistory(progressMark);
+		return helper.getWritableDatabase().update(Db.TABLE_ProgressMark, progressMark.toContentValues(), Db.ProgressMark.preset_id + "=?", new String[] {String.valueOf(progressMark.preset_id)});
+	}
+
+	public void insertProgressMarkHistory(ProgressMark progressMark) {
+		ContentValues cv = new ContentValues();
+		cv.put(Db.ProgressMarkHistory.progress_mark_preset_id, progressMark.preset_id);
+		cv.put(Db.ProgressMarkHistory.progress_mark_caption, progressMark.caption);
+		cv.put(Db.ProgressMarkHistory.ari, progressMark.ari);
+		cv.put(Db.ProgressMarkHistory.createTime, Sqlitil.toInt(progressMark.modifyTime));
+		helper.getWritableDatabase().insert(Db.TABLE_ProgressMarkHistory, null, cv);
+	}
+
+	public List<ProgressMarkHistory> listProgressMarkHistoryByPresetId(final int preset_id) {
+		final Cursor c = helper.getReadableDatabase().rawQuery("select * from " + Db.TABLE_ProgressMarkHistory + " where " + Db.ProgressMarkHistory.progress_mark_preset_id + "=? order by " + Db.ProgressMarkHistory.createTime + " asc", new String[] {String.valueOf(preset_id)});
+		try {
+			final List<ProgressMarkHistory> res = new ArrayList<ProgressMarkHistory>();
+			while (c.moveToNext()) {
+				res.add(ProgressMarkHistory.fromCursor(c));
+			}
+			return res;
+		} finally {
+			c.close();
 		}
 	}
 }

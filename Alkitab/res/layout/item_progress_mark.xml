@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:padding="8dp" >
+
+    <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+        <TextView
+                android:id="@+id/lDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="2dp"
+                android:gravity="top|right"
+                android:text="2099-12-32"
+                tools:ignore="HardcodedText" />
+
+        <TextView
+                android:id="@+id/lCaption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="false"
+                android:layout_alignParentTop="true"
+                android:layout_toLeftOf="@+id/lDate"
+                android:text="Keterangan atau Alamat Ayat dsb"
+                android:textSize="18sp"
+                tools:ignore="HardcodedText" android:layout_toRightOf="@+id/imgIcon" android:layout_marginLeft="4dp"/>
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imgIcon" android:layout_alignParentLeft="true" android:layout_alignParentTop="true"
+                android:focusableInTouchMode="false"/>
+
+    </RelativeLayout>
+
+    <TextView
+            android:id="@+id/lSnippet"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Cuplikan ayat kalau bisa ditampilin Cuplikan ayat kalau bisa ditampilin Cuplikan ayat kalau bisa ditampilin Cuplikan ayat kalau bisa ditampilin "
+            tools:ignore="HardcodedText" />
+
+</LinearLayout>

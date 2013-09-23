@@ -11,7 +11,6 @@
 		<preset locale="en"   shortName="WEB"     longName="World English Bible" filename_preset="en-web.yes" url="http://alkitab-host.appspot.com/addon/yes/en-web/en-web.yes.gz" />
 		<preset locale="en"   shortName="YLT"     longName="Young's Literal Translation" filename_preset="en-ylt.yes" url="http://alkitab-host.appspot.com/addon/yes/en-ylt/en-ylt.yes.gz" />
 
-		<preset locale="af"   shortName="AF1953"  longName="Afrikaans 1953" filename_preset="af-1953.yes" url="http://alkitab-host.appspot.com/addon/yes/af-1953/af-1953.yes.gz" />
 		<preset locale="ar"   shortName="AVD"     longName="Van Dyke" filename_preset="ar-vandyke.yes" url="http://alkitab-host.appspot.com/addon/yes2/ar-vandyke--1.yes.gz" />
 		<preset locale="cs"   shortName="CSBKR"   longName="Bible Kralická" filename_preset="cs-kralicka.yes" url="http://alkitab-host.appspot.com/addon/yes2/cs-kralicka--1.yes.gz" />
 		<preset locale="cs"   shortName="CSCEP"   longName="Ekumenicky Cesky" filename_preset="cs-ekumenicky.yes" url="http://alkitab-host.appspot.com/addon/yes2/cs-ekumenicky--1.yes.gz" />
@@ -70,9 +69,13 @@
 		<preset locale="tl"   shortName="TLAB"    longName="Ang Biblia 1905" filename_preset="tl-angbiblia1905.yes" url="http://alkitab-host.appspot.com/addon/yes/tl-angbiblia1905/tl-angbiblia1905.yes.gz" />
 		<preset locale="uk"   shortName="UKK"     longName="Ukrainian NT P.Kulish" filename_preset="uk-kulish.yes" url="http://alkitab-host.appspot.com/addon/yes2/uk-kulish--1.yes.gz" />
 		<preset locale="vi"   shortName="VI1934"  longName="Vietnamese 1934" filename_preset="vi-1934.yes" url="http://alkitab-host.appspot.com/addon/yes2/vi-1934--1.yes.gz" />
-		<preset locale="xh"   shortName="XHO75"   longName="Xhosa 1975" filename_preset="xh-1975.yes" url="http://alkitab-host.appspot.com/addon/yes2/xh-1975--1.yes.gz" />
-		<preset locale="zh"   shortName="CUVS"    longName="Chinese Union (Simplified)" filename_preset="cuvs.yes" url="http://alkitab-host.appspot.com/addon/yes/cuvs.yes.gz" />
+		<!-- preset locale="zh"   shortName="CUVS"    longName="Chinese Union (Simplified)" filename_preset="cuvs.yes" url="http://alkitab-host.appspot.com/addon/yes/cuvs.yes.gz" / -->
+		<preset locale="zh"   shortName="CUVMPS"  longName="Chinese Union (Simplified)" filename_preset="zh-cuvmps.yes" url="http://alkitab-host.appspot.com/addon/yes2/zh-cuvmps--1.yes.gz" />
 		<preset locale="zh"   shortName="CUVT"    longName="Chinese Union (Traditional)" filename_preset="cuvt.yes" url="http://alkitab-host.appspot.com/addon/yes/cuvt.yes.gz" />
+		<preset locale="zh"   shortName="CKJVGS"  longName="中文英皇钦定本神版简体" filename_preset="zh-ckjvgs.yes" url="http://alkitab-host.appspot.com/addon/yes2/zh-ckjvgs--1.yes.gz" />
+		<preset locale="zh"   shortName="CKJVGT"  longName="中文英皇欽定本神版繁體" filename_preset="zh-ckjvgt.yes" url="http://alkitab-host.appspot.com/addon/yes2/zh-ckjvgt--1.yes.gz" />
+		<preset locale="zh"   shortName="CKJVSDS" longName="中文英皇钦定本上帝版简体" filename_preset="zh-ckjvsds.yes" url="http://alkitab-host.appspot.com/addon/yes2/zh-ckjvsds--1.yes.gz" />
+		<preset locale="zh"   shortName="CKJVSDT" longName="中文英皇欽定本上帝版繁體" filename_preset="zh-ckjvsdt.yes" url="http://alkitab-host.appspot.com/addon/yes2/zh-ckjvsdt--1.yes.gz" />
 		<preset locale="zh"   shortName="PINYIN"  longName="Pinyin" filename_preset="zh-pinyin.yes" url="http://alkitab-host.appspot.com/addon/yes2/zh-pinyin--1.yes.gz" />
 	</versions>
 	<share>

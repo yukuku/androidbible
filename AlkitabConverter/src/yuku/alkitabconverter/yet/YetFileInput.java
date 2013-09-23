@@ -1,5 +1,8 @@
 package yuku.alkitabconverter.yet;
 
+import yuku.alkitab.yes2.model.PericopeData;
+import yuku.alkitabconverter.util.Rec;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -8,9 +11,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
-import yuku.alkitab.yes2.model.PericopeData;
-import yuku.alkitabconverter.util.Rec;
-
 public class YetFileInput {
 	public static class YetFileInputResult {
 		List<Rec> recs;
@@ -18,7 +18,8 @@ public class YetFileInput {
 		Map<String, String> infos;
 		int numberOfBooks;
 		List<String> bookNames;
-		
+		List<String> bookAbbreviations;
+
 		void addInfo(String k, String v) {
 			if (infos == null) infos = new LinkedHashMap<String, String>();
 			infos.put(k, v);
@@ -34,15 +35,18 @@ public class YetFileInput {
 			recs.add(rec);
 		}
 		
-		void addBookName(int bookId, String bookName) {
+		void addBookName(int book_1, String bookName, String bookAbbreviation) {
 			if (bookNames == null) {
 				bookNames = new ArrayList<String>();
+				bookAbbreviations = new ArrayList<String>();
 				for (int i = 0; i < 66; i++) {
 					bookNames.add(null);
+					bookAbbreviations.add(null);
 				}
 			}
 			
-			bookNames.set(bookId - 1, bookName);
+			bookNames.set(book_1 - 1, bookName);
+			bookAbbreviations.set(book_1 - 1, bookAbbreviation);
 		}
 
 		void setNumberOfBooks(int numberOfBooks) {
@@ -63,8 +67,9 @@ public class YetFileInput {
 		
 		int report_line_number = 0;
 		String report_line_text = null;
-		
-		try (Scanner sc = new Scanner(new File(nf), "utf-8")) {
+
+		try {
+			final Scanner sc = new Scanner(new File(nf), "utf-8");
 			while (sc.hasNextLine()) {
 				String line = sc.nextLine();
 				
@@ -97,10 +102,17 @@ public class YetFileInput {
 					}
 					lastPericopeEntry.block.addParallel(text);
 				} else if ("book_name".equals(command)) {
-					int bookId = Integer.parseInt(splits[1]);
+					int book_1 = Integer.parseInt(splits[1]);
 					String bookName = splits[2];
-					
-					res.addBookName(bookId, bookName);
+					String bookAbbreviation;
+
+					if (splits.length > 3 && splits[3] != null && !splits[3].isEmpty()) {
+						bookAbbreviation = splits[3];
+					} else {
+						bookAbbreviation = null;
+					}
+
+					res.addBookName(book_1, bookName, bookAbbreviation);
 				} else if ("verse".equals(command)) {
 					int book_1 = Integer.parseInt(splits[1]);
 					int chapter_1 = Integer.parseInt(splits[2]);

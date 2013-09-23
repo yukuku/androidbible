@@ -3,16 +3,24 @@
     xmlns:tools="http://schemas.android.com/tools" >
 
     <item
-        android:id="@+id/menuCopy"
-        android:icon="@drawable/ic_menu_copy"
+        android:id="@+id/menuCopyShare"
+        android:icon="@drawable/ic_menu_copyshare"
         android:showAsAction="always"
-        android:title="@string/salin_ayat"
-        tools:ignore="AlwaysShowAction"/>
-    <item
-        android:id="@+id/menuShare"
-        android:icon="@drawable/ic_menu_share"
-        android:showAsAction="always"
-        android:title="@string/bagikan"/>
+        android:title="@string/copy_share"
+        tools:ignore="AlwaysShowAction">
+        <menu>
+            <item
+                android:id="@+id/menuCopy"
+                android:icon="@drawable/ic_menu_copy"
+                android:showAsAction="always"
+                android:title="@string/salin_ayat"/>
+            <item
+                android:id="@+id/menuShare"
+                android:icon="@drawable/ic_menu_share"
+                android:showAsAction="always"
+                android:title="@string/bagikan"/>
+        </menu>
+    </item>
     <item
         android:id="@+id/menuVersions"
         android:icon="@drawable/ic_menu_versions"
@@ -48,5 +56,38 @@
         android:title="ESV Study Bible"
         android:visible="false"
         tools:ignore="HardcodedText"/>
+    <item
+        android:id="@+id/menuProgressMark"
+        android:icon="@drawable/ic_menu_progress_mark"
+        android:showAsAction="always"
+        android:title="@string/pm_menu_save_progresses">
+        <menu>
+            <item
+                android:id="@+id/menuProgress1"
+                android:icon="@drawable/ic_attr_progress_mark_1"
+                android:showAsAction="always"
+                android:title="@string/pm_progress_1"/>
+            <item
+                android:id="@+id/menuProgress2"
+                android:icon="@drawable/ic_attr_progress_mark_2"
+                android:showAsAction="always"
+                android:title="@string/pm_progress_2"/>
+            <item
+                android:id="@+id/menuProgress3"
+                android:icon="@drawable/ic_attr_progress_mark_3"
+                android:showAsAction="always"
+                android:title="@string/pm_progress_3"/>
+            <item
+                android:id="@+id/menuProgress4"
+                android:icon="@drawable/ic_attr_progress_mark_4"
+                android:showAsAction="always"
+                android:title="@string/pm_progress_4"/>
+            <item
+                android:id="@+id/menuProgress5"
+                android:icon="@drawable/ic_attr_progress_mark_5"
+                android:showAsAction="always"
+                android:title="@string/pm_progress_5"/>
+        </menu>
+    </item>
 
 </menu>

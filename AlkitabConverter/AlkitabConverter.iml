@@ -13,20 +13,12 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
     <orderEntry type="module" module-name="BintexWriter" />
-    <orderEntry type="module-library">
-      <library name="jcommander-1.30.jar">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/jcommander-1.30.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module" module-name="Alkitab" />
+    <orderEntry type="module" module-name="Alkitab" exported="" />
     <orderEntry type="module" module-name="BintexReader" />
     <orderEntry type="module" module-name="Snappy" />
+    <orderEntry type="module" module-name="SimpleTrove" />
   </component>
 </module>
 
