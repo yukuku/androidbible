@@ -55,7 +55,7 @@ public class DevotionReminderReceiver extends BroadcastReceiver {
 
 	public static void scheduleAlarm(Context context) {
 		String reminder_time = Preferences.getString("reminder_time");
-		//String reminder_sound = Preferences.getString("reminder_sound");
+		String reminder_sound = Preferences.getString("reminder_sound");
 		//boolean reminder_vibrate = Preferences.getBoolean("reminder_vibrate", false);
 
 		Log.d(TAG, "@@scheduleAlarms");

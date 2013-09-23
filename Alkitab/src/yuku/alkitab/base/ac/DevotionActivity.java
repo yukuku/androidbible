@@ -3,6 +3,10 @@ package yuku.alkitab.base.ac;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,7 +20,9 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.TimePicker;
@@ -260,44 +266,78 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			
 			return true;
 		} else if (itemId == R.id.menuReminder) {
-			final View view = getLayoutInflater().inflate(R.layout.dialog_devotion_reminder, null);
-			final TimePicker timePicker = V.get(view, R.id.tpTime);
-			int timeFormat = 0;
-			try {
-				timeFormat = Settings.System.getInt(getContentResolver(), Settings.System.TIME_12_24);
-			} catch (Settings.SettingNotFoundException e) {
-				e.printStackTrace();
-			}
-			if (timeFormat == 24) {
-				timePicker.setIs24HourView(true);
-			} else {
-				timePicker.setIs24HourView(false);
-			}
-			String reminder_time = Preferences.getString("reminder_time");
-			int hour = Integer.parseInt(reminder_time.substring(0, 2));
-			int minute = Integer.parseInt(reminder_time.substring(2, 4));
-			timePicker.setCurrentHour(hour);
-			timePicker.setCurrentMinute(minute);
-
-			new AlertDialog.Builder(this)
-			.setView(view)
-			.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(final DialogInterface dialog, final int which) {
-					String time = "" + String.format("%02d", timePicker.getCurrentHour()) + String.format("%02d", timePicker.getCurrentMinute());
-					Preferences.setString("reminder_time", time);
-					DevotionReminderReceiver.scheduleAlarm(DevotionActivity.this);
-				}
-			})
-			.setNegativeButton("Cancel", null)
-			.show();
-
-			return false;
+			setAlarm();
+			return true;
 		}
 		
 		return super.onOptionsItemSelected(item);
 	}
-	
+
+	private void setAlarm() {
+		final View view = getLayoutInflater().inflate(R.layout.dialog_devotion_reminder, null);
+		final TimePicker timePicker = V.get(view, R.id.tpTime);
+		final Spinner sRingTone = V.get(view, R.id.sRing);
+
+		int timeFormat = 0;
+		try {
+			timeFormat = Settings.System.getInt(getContentResolver(), Settings.System.TIME_12_24);
+		} catch (Settings.SettingNotFoundException e) {
+			e.printStackTrace();
+		}
+		if (timeFormat == 24) {
+			timePicker.setIs24HourView(true);
+		} else {
+			timePicker.setIs24HourView(false);
+		}
+		String reminder_time = Preferences.getString("reminder_time");
+		int hour = Integer.parseInt(reminder_time.substring(0, 2));
+		int minute = Integer.parseInt(reminder_time.substring(2, 4));
+		timePicker.setCurrentHour(hour);
+		timePicker.setCurrentMinute(minute);
+
+		final RingtoneManager manager = new RingtoneManager(this);
+		Cursor cursor = manager.getCursor();
+
+		int size = cursor.getCount();
+		Ringtone[] ringTones = new Ringtone[size];
+		while (cursor.moveToNext()) {
+			int position = cursor.getPosition();
+			ringTones[position] = manager.getRingtone(position);
+		}
+
+		String[] ringToneTitles = new String[size];
+		for (int i = 0; i < size; i++) {
+			ringToneTitles[i] = ringTones[i].getTitle(this);
+		}
+
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, ringToneTitles);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		sRingTone.setAdapter(adapter);
+
+		String reminder_sound = Preferences.getString("reminder_sound");
+		int currentSpinnerPosition = 0;
+		if (reminder_sound != null) {
+			currentSpinnerPosition = manager.getRingtonePosition(Uri.parse(reminder_sound));
+		}
+		sRingTone.setSelection(currentSpinnerPosition);
+
+		new AlertDialog.Builder(this)
+		.setView(view)
+		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(final DialogInterface dialog, final int which) {
+				final String time = "" + String.format("%02d", timePicker.getCurrentHour()) + String.format("%02d", timePicker.getCurrentMinute());
+				Preferences.setString("reminder_time", time);
+				final String uriString = manager.getRingtoneUri(sRingTone.getSelectedItemPosition()).toString();
+				Preferences.setString("reminder_sound", uriString);
+				DevotionReminderReceiver.scheduleAlarm(DevotionActivity.this);
+			}
+		})
+		.setNegativeButton("Cancel", null)
+		.show();
+
+	}
+
 	DevotionSelectPopupListener popup_listener = new DevotionSelectPopupListener() {
 		@Override public void onDismiss(DevotionSelectPopup popup) {
 		}
