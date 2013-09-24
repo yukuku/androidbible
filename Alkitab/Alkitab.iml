@@ -33,7 +33,6 @@
     <orderEntry type="module" module-name="AlkitabFeedback" />
     <orderEntry type="module" module-name="AmbilWarna" />
     <orderEntry type="module" module-name="NewQuickAction3DLib" />
-    <orderEntry type="module" module-name="DragSortListView" />
     <orderEntry type="module" module-name="BintexReader" />
     <orderEntry type="module" module-name="FileChooser" />
     <orderEntry type="module" module-name="FlowLayout" />
@@ -55,6 +54,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="DragSortListView" />
   </component>
 </module>
 
