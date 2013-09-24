@@ -21,12 +21,15 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
+import android.support.v7.view.ActionMode;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
@@ -38,15 +41,10 @@ import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.actionbarsherlock.internal.nineoldandroids.animation.Animator;
-import com.actionbarsherlock.internal.nineoldandroids.animation.Animator.AnimatorListener;
-import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorListenerAdapter;
-import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorSet;
-import com.actionbarsherlock.internal.nineoldandroids.animation.ObjectAnimator;
-import com.actionbarsherlock.internal.nineoldandroids.widget.NineFrameLayout;
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.AnimatorListenerAdapter;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
 import org.json.JSONException;
 import org.json.JSONObject;
 import yuku.afw.V;
@@ -100,6 +98,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
+
 public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener, ProgressMarkDialog.ProgressMarkDialogListener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
 	
@@ -139,24 +139,24 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	    private Animator mCurrentShowAnim;
 	    private boolean mShowHideAnimationEnabled = true;
 
-		final AnimatorListener mHideListener = new AnimatorListenerAdapter() {
+		final Animator.AnimatorListener mHideListener = new AnimatorListenerAdapter() {
 			@TargetApi(11) @Override public void onAnimationEnd(Animator animation) {
 	            if (panelNavigation != null) {
-	                panelNavigation.setTranslationY(0);
+	                animate(panelNavigation).translationY(0);
 	                panelNavigation.setVisibility(View.GONE);
 	            }
 	            mCurrentShowAnim = null;
 	        }
 	    };
 
-	    final AnimatorListener mShowListener = new AnimatorListenerAdapter() {
+	    final Animator.AnimatorListener mShowListener = new AnimatorListenerAdapter() {
 	        @TargetApi(11) @Override public void onAnimationEnd(Animator animation) {
 	            mCurrentShowAnim = null;
 	            panelNavigation.requestLayout();
 	        }
 	    };
 
-	    @TargetApi(11) void hidePanelNavigation() {
+	    void hidePanelNavigation() {
 	        if (mCurrentShowAnim != null) {
 	            mCurrentShowAnim.end();
 	        }
@@ -166,21 +166,21 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	        }
 
 	        if (mShowHideAnimationEnabled) {
-	        	panelNavigation.setAlpha(1);
-	            AnimatorSet anim = new AnimatorSet();
-	            AnimatorSet.Builder b = anim.play(ObjectAnimator.ofFloat(panelNavigation, "alpha", 0));
-	            if (panelNavigation != null) {
-	                b.with(ObjectAnimator.ofFloat(panelNavigation, "translationY", 0, +panelNavigation.getHeight()));
-	            }
-	            anim.addListener(mHideListener);
-	            mCurrentShowAnim = anim;
-	            anim.start();
+		        animate(panelNavigation).alpha(1);
+		        AnimatorSet anim = new AnimatorSet();
+		        AnimatorSet.Builder b = anim.play(ObjectAnimator.ofFloat(panelNavigation, "alpha", 0));
+		        if (panelNavigation != null) {
+			        b.with(ObjectAnimator.ofFloat(panelNavigation, "translationY", 0, +panelNavigation.getHeight()));
+		        }
+		        anim.addListener(mHideListener);
+		        mCurrentShowAnim = anim;
+		        anim.start();
 	        } else {
 	            mHideListener.onAnimationEnd(null);
 	        }
 	    }
 
-	    @TargetApi(11) void showPanelNavigation() {
+	    void showPanelNavigation() {
 	        if (mCurrentShowAnim != null) {
 	            mCurrentShowAnim.end();
 	        }
@@ -190,7 +190,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	        panelNavigation.setVisibility(View.VISIBLE);
 
 	        if (mShowHideAnimationEnabled) {
-	        	panelNavigation.setAlpha(0);
+	        	animate(panelNavigation).alpha(0);
 	            AnimatorSet anim = new AnimatorSet();
 	            AnimatorSet.Builder b = anim.play(ObjectAnimator.ofFloat(panelNavigation, "alpha", 1));
                 b.with(ObjectAnimator.ofFloat(panelNavigation, "translationY", +panelNavigation.getHeight(), 0));
@@ -198,9 +198,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	            mCurrentShowAnim = anim;
 	            anim.start();
 	        } else {
-	        	panelNavigation.setAlpha(1);
-	        	panelNavigation.setTranslationY(0);
-	            mShowListener.onAnimationEnd(null);
+		        animate(panelNavigation).alpha(1);
+		        animate(panelNavigation).translationY(0);
+		        mShowListener.onAnimationEnd(null);
 	        }
 	    }
 
@@ -223,7 +223,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	View splitRoot;
 	View splitHandle;
 	LabeledSplitHandleButton splitHandleButton;
-	NineFrameLayout panelNavigation;
+	FrameLayout panelNavigation;
 	Button bGoto;
 	ImageButton bLeft;
 	ImageButton bRight;
@@ -891,7 +891,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	public void buildMenu(Menu menu) {
 		menu.clear();
-		getSupportMenuInflater().inflate(R.menu.activity_isi, menu);
+		getMenuInflater().inflate(R.menu.activity_isi, menu);
 		
 		AppConfig c = AppConfig.get();
 
@@ -1556,7 +1556,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 			
 			if (actionMode == null) {
-				actionMode = startActionMode(actionMode_callback);
+				actionMode = startSupportActionMode(actionMode_callback);
 			}
 			
 			if (actionMode != null) {

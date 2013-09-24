@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ShareCompat;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -15,9 +17,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.Toast;
-
-import java.util.Locale;
-
 import net.londatiga.android.QuickAction;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -44,8 +43,7 @@ import yuku.kpri.model.VerseKind;
 import yuku.kpriviewer.fr.SongFragment;
 import yuku.kpriviewer.fr.SongFragment.ShouldOverrideUrlLoadingHandler;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import java.util.Locale;
 
 public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlLoadingHandler {
 	public static final String TAG = SongViewActivity.class.getSimpleName();
@@ -134,19 +132,19 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		}
 	}
 	
-	private void bikinMenu(Menu menu) {
+	private void buildMenu(Menu menu) {
 		menu.clear();
-		getSupportMenuInflater().inflate(R.menu.activity_song_view, menu);
+		getMenuInflater().inflate(R.menu.activity_song_view, menu);
 	}
 	
 	@Override public boolean onCreateOptionsMenu(Menu menu) {
-		bikinMenu(menu);
+		buildMenu(menu);
 		return true;
 	}
 	
 	@Override public boolean onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
-		if (menu != null) bikinMenu(menu);
+		if (menu != null) buildMenu(menu);
 		return true;
 	}
 	

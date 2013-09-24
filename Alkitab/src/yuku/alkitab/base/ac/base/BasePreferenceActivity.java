@@ -1,13 +1,14 @@
 package yuku.alkitab.base.ac.base;
 
+import android.annotation.TargetApi;
+import android.app.ActionBar;
+import android.os.Build;
 import android.os.Bundle;
-
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
-import com.actionbarsherlock.view.MenuItem;
+import android.preference.PreferenceActivity;
+import android.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 
-public abstract class BasePreferenceActivity extends SherlockPreferenceActivity {
+public abstract class BasePreferenceActivity extends PreferenceActivity {
 	/**
 	 * By default we put the up button on each activity.
 	 * And the behavior is to just finish() the current activity.
@@ -22,11 +23,18 @@ public abstract class BasePreferenceActivity extends SherlockPreferenceActivity 
 	protected void onCreate(Bundle savedInstanceState, boolean withUpButton) {
 		super.onCreate(savedInstanceState);
 		
-		if (withUpButton) {
-			ActionBar actionBar = getSupportActionBar();
-			if (actionBar != null) {
-				actionBar.setDisplayHomeAsUpEnabled(true);
+		if (Build.VERSION.SDK_INT >= 11) {
+			if (withUpButton) {
+				enableUpButton();
 			}
+		}
+	}
+
+	@TargetApi(11)
+	private void enableUpButton() {
+		final ActionBar actionBar = getActionBar();
+		if (actionBar != null) {
+			actionBar.setDisplayHomeAsUpEnabled(true);
 		}
 	}
 	

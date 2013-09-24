@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/ATree/ATree.iml" filepath="$PROJECT_DIR$/../yuku-android-util/ATree/ATree.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/ActionBarSherlock4/ActionBarSherlock4.iml" filepath="$PROJECT_DIR$/../yuku-android-util/ActionBarSherlock4/ActionBarSherlock4.iml" />
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/Afw/Afw.iml" filepath="$PROJECT_DIR$/../yuku-android-util/Afw/Afw.iml" />
       <module fileurl="file://$PROJECT_DIR$/Alkitab/Alkitab.iml" filepath="$PROJECT_DIR$/Alkitab/Alkitab.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabConverter/AlkitabConverter.iml" filepath="$PROJECT_DIR$/AlkitabConverter/AlkitabConverter.iml" />
@@ -29,6 +28,7 @@
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/Snappy/Snappy.iml" filepath="$PROJECT_DIR$/../yuku-android-util/Snappy/Snappy.iml" />
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/TimesSquare/TimesSquare.iml" filepath="$PROJECT_DIR$/../yuku-android-util/TimesSquare/TimesSquare.iml" />
       <module fileurl="file://$PROJECT_DIR$/YetToYes2/YetToYes2.iml" filepath="$PROJECT_DIR$/YetToYes2/YetToYes2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AppCompat/android-support-v7-appcompat.iml" filepath="$PROJECT_DIR$/AppCompat/android-support-v7-appcompat.iml" />
     </modules>
   </component>
 </project>

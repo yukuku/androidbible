@@ -1,6 +1,6 @@
 package yuku.alkitab.base.fr.base;
 
-public class BaseGotoFragment extends BaseFragment {
+public abstract class BaseGotoFragment extends BaseFragment {
 	public static final String TAG = BaseGotoFragment.class.getSimpleName();
 	
 	public interface GotoFinishListener {

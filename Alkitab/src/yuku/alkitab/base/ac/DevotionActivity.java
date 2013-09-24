@@ -11,6 +11,8 @@ import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -18,12 +20,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
-
-import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
@@ -42,8 +38,10 @@ import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.DevotionSelectPopup;
 import yuku.alkitab.base.widget.DevotionSelectPopup.DevotionSelectPopupListener;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class DevotionActivity extends BaseActivity implements OnStatusDonlotListener {
 	public static final String TAG = DevotionActivity.class.getSimpleName();
@@ -210,7 +208,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		
 	private void buildMenu(Menu menu) {
 		menu.clear();
-		getSupportMenuInflater().inflate(R.menu.activity_devotion, menu);
+		getMenuInflater().inflate(R.menu.activity_devotion, menu);
 	}
 	
 	@Override

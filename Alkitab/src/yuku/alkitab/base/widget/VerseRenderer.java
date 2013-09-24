@@ -1,5 +1,6 @@
 package yuku.alkitab.base.widget;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -48,17 +49,13 @@ public class VerseRenderer {
 	 * a bug in CyanogenMod 7.x. If we don't support CM 7 anymore, we 
 	 * can use that instead of this, which seemingly *a bit* more efficient. 
 	 */
+	@TargetApi(8)
 	static class LeadingMarginSpanFixed implements LeadingMarginSpan.LeadingMarginSpan2 {
 		private final int first;
 		private final int rest;
 	
 		@Override public void drawLeadingMargin(Canvas c, Paint p, int x, int dir, int top, int baseline, int bottom, CharSequence text, int start, int end, boolean first, Layout layout) {}
-		
-		public LeadingMarginSpanFixed(int all) {
-			this.first = all;
-			this.rest = all;
-		}
-	
+
 		public LeadingMarginSpanFixed(int first, int rest) {
 			this.first = first;
 			this.rest = rest;

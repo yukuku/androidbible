@@ -27,8 +27,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="module" module-name="KirimFidbek" />
-    <orderEntry type="module" module-name="ActionBarSherlock4" />
     <orderEntry type="library" scope="PROVIDED" name="android-support-v4" level="project" />
+    <orderEntry type="module" module-name="android-support-v7-appcompat" />
   </component>
 </module>
 

@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.view.inputmethod.InputMethodManager;
-
 import yuku.afw.App;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
@@ -17,9 +17,6 @@ import yuku.alkitab.base.fr.GotoDirectFragment;
 import yuku.alkitab.base.fr.GotoGridFragment;
 import yuku.alkitab.base.fr.base.BaseGotoFragment.GotoFinishListener;
 import yuku.alkitab.base.storage.Prefkey;
-
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
 
 public class GotoActivity extends BaseActivity implements GotoFinishListener {
 	public static final String TAG = GotoActivity.class.getSimpleName();
@@ -69,7 +66,7 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 
 		ActionBar actionBar = getSupportActionBar();
 
-		if (getResources().getBoolean(R.bool.screen_sw_check_min_600dp) == false) {
+		if (!getResources().getBoolean(R.bool.screen_sw_check_min_600dp)) {
 	        // The following two options trigger the collapsing of the main action bar view.
 	        actionBar.setDisplayShowHomeEnabled(false);
 	        actionBar.setDisplayShowTitleEnabled(false);
@@ -103,10 +100,6 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 		private final Bundle mArgs;
 		private Fragment mFragment;
 
-		public TabListener(BaseActivity activity, String tag, Class<T> clz) {
-			this(activity, tag, clz, null);
-		}
-
 		public TabListener(BaseActivity activity, String tag, Class<T> clz, Bundle args) {
 			mActivity = activity;
 			mTag = tag;
@@ -125,7 +118,7 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 			}
 		}
 
-		@Override public void onTabSelected(Tab tab, FragmentTransaction ft) {
+		@Override public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
 			if (mFragment == null) {
 				mFragment = Fragment.instantiate(mActivity, mClass.getName(), mArgs);
 				ft.add(android.R.id.content, mFragment, mTag);
@@ -141,13 +134,13 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 			}
 		}
 
-		@Override public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+		@Override public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
 			if (mFragment != null) {
 				ft.detach(mFragment);
 			}
 		}
 
-		@Override public void onTabReselected(Tab tab, FragmentTransaction ft) {
+		@Override public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
 			if (mFragment instanceof GotoDirectFragment) {
 				((GotoDirectFragment) mFragment).onTabSelected();
 			}
