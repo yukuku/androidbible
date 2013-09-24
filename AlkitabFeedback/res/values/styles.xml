@@ -19,7 +19,7 @@
     <!-- Empty parent idiom -->
     <style name="NoParent" />
     
-    <style name="AlkitabFeedback.Theme" parent="Theme.Sherlock.Light.DarkActionBar">
+    <style name="AlkitabFeedback.Theme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- API 11+ (compatibility) -->
         <item name="buttonBarStyle">@style/Compat.ButtonBar</item>
         <item name="buttonBarButtonStyle">@style/Compat.ButtonBarButton</item>

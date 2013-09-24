@@ -15,7 +15,7 @@
   -->
 
 <resources>
-    <style name="AlkitabFeedback.Theme" parent="Theme.Sherlock.Light.DarkActionBar">
+    <style name="AlkitabFeedback.Theme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- API 11+ -->
         <item name="buttonBarStyle">?android:buttonBarStyle</item>
         <item name="buttonBarButtonStyle">?android:buttonBarButtonStyle</item>

@@ -12,7 +12,7 @@
   <component name="FacetManager">
     <facet type="android" name="Android">
       <configuration>
-        <option name="UPDATE_PROPERTY_FILES" value="false" />
+        <option name="UPDATE_PROPERTY_FILES" value="true" />
       </configuration>
     </facet>
   </component>
@@ -41,11 +41,20 @@
     <orderEntry type="module" module-name="SdkSearchBar" />
     <orderEntry type="module" module-name="AndroidCrypto" />
     <orderEntry type="module" module-name="Afw" />
-    <orderEntry type="module" module-name="ActionBarSherlock4" />
     <orderEntry type="module" module-name="KpriModel" />
     <orderEntry type="module" module-name="SimpleTrove" />
     <orderEntry type="library" name="libGoogleAnalyticsV2" level="project" />
     <orderEntry type="library" name="android-support-v4" level="project" />
+    <orderEntry type="module" module-name="android-support-v7-appcompat" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/libs/nineoldandroids-2.4.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
 

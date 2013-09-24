@@ -11,6 +11,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -24,10 +26,6 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import net.londatiga.android.QuickAction;
 import yuku.afw.App;
 import yuku.afw.V;
@@ -42,8 +40,8 @@ import yuku.alkitab.base.util.SongBookUtil.SongBookInfo;
 import yuku.alkitab.base.util.SongFilter;
 import yuku.searchbar.SearchWidget;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Everytime we want to do a search, make sure 3 things:
@@ -214,7 +212,7 @@ public class SongListActivity extends BaseActivity {
 	}
 	
 	@Override public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.activity_song_list, menu);
+		getMenuInflater().inflate(R.menu.activity_song_list, menu);
 		return true;
 	}
 	

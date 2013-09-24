@@ -1,13 +1,12 @@
 package yuku.alkitab.base.ac.base;
 
 import android.os.Bundle;
-
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 
-public abstract class BaseActivity extends SherlockFragmentActivity {
+public abstract class BaseActivity extends ActionBarActivity {
 	public static final String TAG = BaseActivity.class.getSimpleName();
 	
 	/**

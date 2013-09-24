@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="JAVA_MODULE" version="4">
-  <component name="EclipseModuleManager">
-    <conelement value="com.android.ide.eclipse.adt.DEPENDENCIES" />
-    <src_description expected_position="0">
+  <component name="EclipseModuleManager" forced_jdk="true">
+    <src_description expected_position="1">
       <src_folder value="file://$MODULE_DIR$/src" expected_position="0" />
       <src_folder value="file://$MODULE_DIR$/gen" expected_position="1" />
       <src_folder value="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK" expected_position="2" />
@@ -13,7 +12,6 @@
     <facet type="android" name="Android">
       <configuration>
         <option name="LIBRARY_PROJECT" value="true" />
-        <option name="UPDATE_PROPERTY_FILES" value="true" />
       </configuration>
     </facet>
   </component>
@@ -24,11 +22,18 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" />
     </content>
+    <orderEntry type="jdk" jdkName="Android 4.1.2 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="inheritedJdk" />
-    <orderEntry type="module" module-name="KirimFidbek" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/libs/android-support-v7-appcompat.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="library" scope="PROVIDED" name="android-support-v4" level="project" />
-    <orderEntry type="module" module-name="android-support-v7-appcompat" />
   </component>
 </module>
 
