@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-import yuku.alkitab.yes1.Yes1File.PericopeData;
+import yuku.alkitabconverter.yes1.Yes1File.PericopeData;
 import yuku.alkitabconverter.util.CountingOutputStream;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.TextDb;

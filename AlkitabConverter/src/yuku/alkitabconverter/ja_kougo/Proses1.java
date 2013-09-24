@@ -15,15 +15,15 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 
-import yuku.alkitab.yes1.Yes1File;
-import yuku.alkitab.yes1.Yes1File.InfoEdisi;
-import yuku.alkitab.yes1.Yes1File.InfoKitab;
-import yuku.alkitab.yes1.Yes1File.PericopeData;
-import yuku.alkitab.yes1.Yes1File.PerikopBlok;
-import yuku.alkitab.yes1.Yes1File.PerikopIndex;
-import yuku.alkitab.yes1.Yes1File.Teks;
-import yuku.alkitab.yes1.Yes1File.PericopeData.Block;
-import yuku.alkitab.yes1.Yes1File.PericopeData.Entry;
+import yuku.alkitabconverter.yes1.Yes1File;
+import yuku.alkitabconverter.yes1.Yes1File.InfoEdisi;
+import yuku.alkitabconverter.yes1.Yes1File.InfoKitab;
+import yuku.alkitabconverter.yes1.Yes1File.PericopeData;
+import yuku.alkitabconverter.yes1.Yes1File.PerikopBlok;
+import yuku.alkitabconverter.yes1.Yes1File.PerikopIndex;
+import yuku.alkitabconverter.yes1.Yes1File.Teks;
+import yuku.alkitabconverter.yes1.Yes1File.PericopeData.Block;
+import yuku.alkitabconverter.yes1.Yes1File.PericopeData.Entry;
 import yuku.alkitabconverter.OsisBookNames;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;
@@ -91,7 +91,7 @@ public class Proses1 {
 		final InfoKitab infoKitab = Yes1Common.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
 		final Teks teks = Yes1Common.teks(xrec, INPUT_TEKS_ENCODING);
 		
-		Yes1File file = Yes1Common.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(pericopeData), new PerikopIndex(pericopeData));
+		Yes1File file = Yes1Common.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(), new PerikopIndex());
 		
 		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
 	}

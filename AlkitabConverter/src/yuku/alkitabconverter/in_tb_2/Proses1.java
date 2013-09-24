@@ -4,10 +4,10 @@ import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
-import yuku.alkitab.yes1.Yes1File;
-import yuku.alkitab.yes1.Yes1File.InfoEdisi;
-import yuku.alkitab.yes1.Yes1File.InfoKitab;
-import yuku.alkitab.yes1.Yes1File.Teks;
+import yuku.alkitabconverter.yes1.Yes1File;
+import yuku.alkitabconverter.yes1.Yes1File.InfoEdisi;
+import yuku.alkitabconverter.yes1.Yes1File.InfoKitab;
+import yuku.alkitabconverter.yes1.Yes1File.Teks;
 import yuku.alkitabconverter.bdb.BdbProses;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;

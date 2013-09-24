@@ -1,4 +1,4 @@
-package yuku.alkitab.yes1;
+package yuku.alkitabconverter.yes1;
 
 import android.util.Log;
 
@@ -8,7 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import yuku.alkitab.yes1.Yes1File.PericopeData.Entry;
+import yuku.alkitabconverter.yes1.Yes1File.PericopeData.Entry;
 import yuku.bintex.BintexWriter;
 
 @Deprecated

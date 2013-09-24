@@ -1,4 +1,4 @@
-package yuku.alkitab.yes1;
+package yuku.alkitabconverter.yes1;
 
 import java.io.*;
 
