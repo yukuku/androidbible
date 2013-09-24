@@ -72,7 +72,7 @@ public class App extends yuku.afw.App {
 	}
 
 	private static Locale getLocaleFromPreferences() {
-		String lang = Preferences.getString(context.getString(R.string.pref_bahasa_key), context.getString(R.string.pref_bahasa_default));
+		String lang = Preferences.getString(context.getString(R.string.pref_language_key), context.getString(R.string.pref_bahasa_default));
 		if (lang == null || "DEFAULT".equals(lang)) { //$NON-NLS-1$
 			lang = Locale.getDefault().getLanguage();
 		}

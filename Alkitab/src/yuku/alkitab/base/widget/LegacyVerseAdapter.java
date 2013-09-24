@@ -58,7 +58,7 @@ public class LegacyVerseAdapter extends VerseAdapter {
 			if (text.length() > 0 && text.charAt(0) == '@') {
 				// karakter kedua harus '@' juga, kalo bukan ada ngaco
 				if (text.charAt(1) != '@') {
-					throw new RuntimeException("Karakter kedua bukan @. Isi ayat: " + text); //$NON-NLS-1$
+					throw new RuntimeException("Second character is not @. Verse text: " + text); //$NON-NLS-1$
 				}
 
 				if (convertView == null || convertView.getId() != R.layout.item_legacy_verse_tiled) {
@@ -160,7 +160,7 @@ public class LegacyVerseAdapter extends VerseAdapter {
 		}
 	}
 
-	public void tiledVerseDisplay(View res, int ayat_1, String text, int warnaStabilo, boolean checked, boolean rightAfterPericope) {
+	public void tiledVerseDisplay(View res, int verse_1, String text, int highlightColor, boolean checked, boolean rightAfterPericope) {
 		// Don't forget to modify indexOfPenehel below too
 		// @@ = start a verse containing tiles or formatting
 		// @0 = start with indent 0 [tiler]
@@ -201,20 +201,20 @@ public class LegacyVerseAdapter extends VerseAdapter {
 				{ // create a tile
 					TextView tile = new TextView(context_);
 					if (indent == 1) {
-						tile.setPadding(S.applied.indentSpacing1 + (ayat_1 >= 100 ? S.applied.indentSpacingExtra : 0), 0, 0, 0);
+						tile.setPadding(S.applied.indentSpacing1 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0), 0, 0, 0);
 					} else if (indent == 2) {
-						tile.setPadding(S.applied.indentSpacing2 + (ayat_1 >= 100 ? S.applied.indentSpacingExtra : 0), 0, 0, 0);
+						tile.setPadding(S.applied.indentSpacing2 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0), 0, 0, 0);
 					} else if (indent == 3) {
-						tile.setPadding(S.applied.indentSpacing3 + (ayat_1 >= 100 ? S.applied.indentSpacingExtra : 0), 0, 0, 0);
+						tile.setPadding(S.applied.indentSpacing3 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0), 0, 0, 0);
 					} else if (indent == 4) {
-						tile.setPadding(S.applied.indentSpacing4 + (ayat_1 >= 100 ? S.applied.indentSpacingExtra : 0), 0, 0, 0);
+						tile.setPadding(S.applied.indentSpacing4 + (verse_1 >= 100 ? S.applied.indentSpacingExtra : 0), 0, 0, 0);
 					}
 
 					// case: no tile yet and the first tile has 0 indent
 					if (noTileYet && indent == 0) {
 						// # kasih no ayat di depannya
 						SpannableStringBuilder s = new SpannableStringBuilder();
-						String verse_s = String.valueOf(ayat_1);
+						String verse_s = String.valueOf(verse_1);
 						s.append(verse_s).append(' ');
 						
 						// special case: if @^ is at the beginning
@@ -227,8 +227,8 @@ public class LegacyVerseAdapter extends VerseAdapter {
 							s.setSpan(new ForegroundColorSpan(S.applied.verseNumberColor), 0, verse_s.length(), 0);
 						}
 						s.setSpan(new LeadingMarginSpan.Standard(0, S.applied.indentParagraphRest), 0, s.length(), 0);
-						if (warnaStabilo != 0) {
-							s.setSpan(new BackgroundColorSpan(warnaStabilo), verse_s.length() + 1, s.length(), 0);
+						if (highlightColor != 0) {
+							s.setSpan(new BackgroundColorSpan(highlightColor), verse_s.length() + 1, s.length(), 0);
 						}
 						tile.setText(s, BufferType.SPANNABLE);
 
@@ -237,8 +237,8 @@ public class LegacyVerseAdapter extends VerseAdapter {
 					} else {
 						SpannableStringBuilder s = new SpannableStringBuilder();
 						appendFormattedText2(s, text, text_c, parsingPos, pos_until);
-						if (warnaStabilo != 0) {
-							s.setSpan(new BackgroundColorSpan(warnaStabilo), 0, s.length(), 0);
+						if (highlightColor != 0) {
+							s.setSpan(new BackgroundColorSpan(highlightColor), 0, s.length(), 0);
 						}
 						tile.setText(s);
 					}
@@ -272,7 +272,7 @@ public class LegacyVerseAdapter extends VerseAdapter {
 		if (verseNumberWritten) {
 			lAyat.setText(""); //$NON-NLS-1$
 		} else {
-			lAyat.setText(String.valueOf(ayat_1));
+			lAyat.setText(String.valueOf(verse_1));
 			
             lAyat.setTypeface(S.applied.fontFace, S.applied.fontBold);
             lAyat.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
@@ -373,7 +373,7 @@ public class LegacyVerseAdapter extends VerseAdapter {
 		}
 	}
 
-	static void simpleVerseDisplay(TextView lIsiAyat, int verse_1, String text, int highlightColor, boolean checked) {
+	static void simpleVerseDisplay(TextView lVerseText, int verse_1, String text, int highlightColor, boolean checked) {
 		SpannableStringBuilder verse = new SpannableStringBuilder(
 			"1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" + //$NON-NLS-1$
 			"1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" + //$NON-NLS-1$
@@ -396,7 +396,7 @@ public class LegacyVerseAdapter extends VerseAdapter {
 			verse.setSpan(new BackgroundColorSpan(highlightColor), verse_s.length() + 1, verse.length(), 0);
 		}
 
-		lIsiAyat.setText(verse, BufferType.SPANNABLE);
+		lVerseText.setText(verse, BufferType.SPANNABLE);
 	}
 
 }
