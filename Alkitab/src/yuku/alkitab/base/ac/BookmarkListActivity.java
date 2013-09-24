@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.text.SpannableStringBuilder;
 import android.text.style.BackgroundColorSpan;
@@ -251,19 +252,22 @@ public class BookmarkListActivity extends BaseActivity {
 		
         final MenuItem menuSearch = menu.findItem(R.id.menuSearch);
         if (menuSearch != null) {
-			searchView = (SearchView) menuSearch.getActionView();
+	        searchView = (SearchView) MenuItemCompat.getActionView(menuSearch);
+	        searchView.setQueryHint(getString(R.string.bl_filter_by_some_keywords));
 	        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-				@Override public boolean onQueryTextChange(String newText) {
-					if (newText.length() == 0) {
-						return searchView_search(newText);
-					}
-					return false;
-				}
-	
-			    @Override public boolean onQueryTextSubmit(String query) {
-			    	return searchView_search(query);
-				}
-			});
+		        @Override
+		        public boolean onQueryTextChange(String newText) {
+			        if (newText.length() == 0) {
+				        return searchView_search(newText);
+			        }
+			        return false;
+		        }
+
+		        @Override
+		        public boolean onQueryTextSubmit(String query) {
+			        return searchView_search(query);
+		        }
+	        });
         }
 	}
 	
