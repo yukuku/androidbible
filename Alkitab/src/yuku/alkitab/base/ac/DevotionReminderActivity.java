@@ -77,7 +77,7 @@ public class DevotionReminderActivity extends SherlockPreferenceActivity impleme
 		final String currentValue = sp.getString("reminder_time", null);
 
 		if (currentValue == null) {
-			timePreference.setSummary("Off");
+			timePreference.setSummary(this.getString(R.string.dr_off));
 		} else {
 			Calendar time = GregorianCalendar.getInstance();
 			time.set(Calendar.HOUR_OF_DAY, Integer.parseInt(currentValue.substring(0, 2)));
