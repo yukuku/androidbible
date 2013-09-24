@@ -45,9 +45,6 @@ import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
-import com.nineoldandroids.view.animation.AnimatorProxy;
-
-import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 import org.json.JSONException;
 import org.json.JSONObject;
 import yuku.afw.V;
@@ -100,6 +97,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 
 public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener, ProgressMarkDialog.ProgressMarkDialogListener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
@@ -157,7 +156,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	        }
 	    };
 
-	    @TargetApi(11) void hidePanelNavigation() {
+	    void hidePanelNavigation() {
 	        if (mCurrentShowAnim != null) {
 	            mCurrentShowAnim.end();
 	        }
@@ -181,7 +180,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	        }
 	    }
 
-	    @TargetApi(11) void showPanelNavigation() {
+	    void showPanelNavigation() {
 	        if (mCurrentShowAnim != null) {
 	            mCurrentShowAnim.end();
 	        }
@@ -191,7 +190,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	        panelNavigation.setVisibility(View.VISIBLE);
 
 	        if (mShowHideAnimationEnabled) {
-	        	panelNavigation.setAlpha(0);
+	        	animate(panelNavigation).alpha(0);
 	            AnimatorSet anim = new AnimatorSet();
 	            AnimatorSet.Builder b = anim.play(ObjectAnimator.ofFloat(panelNavigation, "alpha", 1));
                 b.with(ObjectAnimator.ofFloat(panelNavigation, "translationY", +panelNavigation.getHeight(), 0));
@@ -199,9 +198,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	            mCurrentShowAnim = anim;
 	            anim.start();
 	        } else {
-	        	panelNavigation.setAlpha(1);
-	        	panelNavigation.setTranslationY(0);
-	            mShowListener.onAnimationEnd(null);
+		        animate(panelNavigation).alpha(1);
+		        animate(panelNavigation).translationY(0);
+		        mShowListener.onAnimationEnd(null);
 	        }
 	    }
 
