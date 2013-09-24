@@ -262,8 +262,6 @@ public class InternalReader implements BibleReader {
 		try {
 			InputStream in;
 
-			// Log.d("alki", "muatTeks kitab=" + kitab.nama + " pasal[1base]=" + pasal + " offset=" + offset);
-			// Log.d("alki", "muatTeks cache_file=" + cache_file + " cache_posInput=" + cache_posInput);
 			if (cache_inputStream == null) {
 				// kasus 1: belum buka apapun
 				in = S.openRaw(internalBook.file);
@@ -356,15 +354,15 @@ public class InternalReader implements BibleReader {
 		}
 	}
 
-	@Override public int loadPericope(int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max) {
+	@Override public int loadPericope(int bookId, int chapter_1, int[] aris, PericopeBlock[] pericopeBlocks, int max) {
 		Yes1PericopeIndex pericopeIndex = loadPericopeIndex();
 
 		if (pericopeIndex == null) {
-			return 0; // ga ada perikop!
+			return 0; // no pericopes!
 		}
 
-		int ariMin = Ari.encode(kitab, pasal, 0);
-		int ariMax = Ari.encode(kitab, pasal + 1, 0);
+		int ariMin = Ari.encode(bookId, chapter_1, 0);
+		int ariMax = Ari.encode(bookId, chapter_1 + 1, 0);
 		int res = 0;
 
 		int pertama = pericopeIndex.findFirst(ariMin, ariMax);
@@ -389,8 +387,8 @@ public class InternalReader implements BibleReader {
 				kini++;
 
 				if (res < max) {
-					xari[res] = ari;
-					xblok[res] = pericopeBlock;
+					aris[res] = ari;
+					pericopeBlocks[res] = pericopeBlock;
 					res++;
 				} else {
 					break;

@@ -210,7 +210,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL("create index if not exists index_303 on " + Db.TABLE_Version + " (" + Db.Version.title + ")"); //$NON-NLS-1$
 	}
 
-	// Legacy code
+	// Legacy code, so most of them are not in English
 	private void convertFromBookmarkToBookmark2(SQLiteDatabase db) {
 		String TABEL_Bukmak = "Bukmak"; //$NON-NLS-1$
 		class Bukmak {
