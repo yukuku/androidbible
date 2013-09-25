@@ -12,6 +12,7 @@
       <module fileurl="file://$PROJECT_DIR$/AlkitabIntegrationTest/AlkitabIntegrationTest.iml" filepath="$PROJECT_DIR$/AlkitabIntegrationTest/AlkitabIntegrationTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabTest/AlkitabTest.iml" filepath="$PROJECT_DIR$/AlkitabTest/AlkitabTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/AmbilWarna/AmbilWarna.iml" filepath="$PROJECT_DIR$/../yuku-android-util/AmbilWarna/AmbilWarna.iml" />
+      <module fileurl="file://$PROJECT_DIR$/androidbiblereminder/AndroidBibleReminder.iml" filepath="$PROJECT_DIR$/androidbiblereminder/AndroidBibleReminder.iml" />
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/AndroidCrypto/AndroidCrypto.iml" filepath="$PROJECT_DIR$/../yuku-android-util/AndroidCrypto/AndroidCrypto.iml" />
       <module fileurl="file://$PROJECT_DIR$/BiblePlus/BiblePlus.iml" filepath="$PROJECT_DIR$/BiblePlus/BiblePlus.iml" />
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/BintexReader/BintexReader.iml" filepath="$PROJECT_DIR$/../yuku-android-util/BintexReader/BintexReader.iml" />

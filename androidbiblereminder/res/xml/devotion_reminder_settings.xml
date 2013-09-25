@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <yuku.alkitab.reminder.widget.ReminderTimePreference
+        android:key="reminder_time"
+        android:title="@string/dr_alarm"/>
+    <RingtonePreference
+        android:key="reminder_sound"
+        android:title="@string/dr_sound"/>
+    <CheckBoxPreference
+        android:key="reminder_vibrate"
+        android:title="@string/dr_vibrate" />
+
+</PreferenceScreen>
