@@ -8,6 +8,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -53,6 +56,8 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 	ViewPager viewPager;
 	GotoPagerAdapter pagerAdapter;
 
+	boolean okToHideKeyboard = false;
+
 	int bookId;
 	int chapter_1;
 	int verse_1;
@@ -81,6 +86,16 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 			public void onPageSelected(int position) {
 				// When swiping between pages, select the corresponding tab.
 				actionBar.setSelectedNavigationItem(position);
+
+				Log.d(TAG, " di sini");
+				if (okToHideKeyboard && position != 1) {
+					final View editText = findViewById(R.id.tDirectReference);
+					if (editText != null) {
+						final InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+						imm.hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+						imm.hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+					}
+				}
 			}
 		});
 
@@ -113,6 +128,22 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 			int tabUsed = Preferences.getInt(Prefkey.goto_last_tab, 0);
 			if (tabUsed >= 1 && tabUsed <= 3) {
 				actionBar.setSelectedNavigationItem(tabUsed - 1 /* to make it 0-based */);
+			}
+
+			if (tabUsed == 2) {
+				viewPager.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						final View editText = V.get(GotoActivity.this, R.id.tDirectReference);
+						if (editText != null) {
+							InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+							imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+						}
+						okToHideKeyboard = true;
+					}
+				}, 100);
+			} else {
+				okToHideKeyboard = true;
 			}
 		} else {
 			actionBar.setSelectedNavigationItem(savedInstanceState.getInt(INSTANCE_STATE_tab, 0));
