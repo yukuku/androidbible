@@ -1,14 +1,18 @@
 package yuku.alkitab.base.ac;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import yuku.afw.App;
+import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -49,9 +53,10 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 		return res;
 	}
 
-	private Object tab_dialer = new Object();
-	private Object tab_direct = new Object();
-	private Object tab_grid = new Object();
+	ViewPager viewPager;
+	GotoPagerAdapter pagerAdapter;
+
+	boolean okToHideKeyboard = false;
 
 	int bookId;
 	int chapter_1;
@@ -59,29 +64,86 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 
 	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_goto);
 
 		bookId = getIntent().getIntExtra(EXTRA_bookId, -1);
 		chapter_1 = getIntent().getIntExtra(EXTRA_chapter, 0);
 		verse_1 = getIntent().getIntExtra(EXTRA_verse, 0);
 
-		ActionBar actionBar = getSupportActionBar();
+		final ActionBar actionBar = getSupportActionBar();
 
 		if (!getResources().getBoolean(R.bool.screen_sw_check_min_600dp)) {
 	        // The following two options trigger the collapsing of the main action bar view.
 	        actionBar.setDisplayShowHomeEnabled(false);
 	        actionBar.setDisplayShowTitleEnabled(false);
 		}
-		
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		actionBar.addTab(actionBar.newTab().setTag(tab_dialer).setText(R.string.goto_tab_dialer_label).setTabListener(new TabListener<GotoDialerFragment>(this, "dialer", GotoDialerFragment.class, GotoDialerFragment.createArgs(bookId, chapter_1, verse_1)))); //$NON-NLS-1$
-		actionBar.addTab(actionBar.newTab().setTag(tab_direct).setText(R.string.goto_tab_direct_label).setTabListener(new TabListener<GotoDirectFragment>(this, "direct", GotoDirectFragment.class, GotoDirectFragment.createArgs(bookId, chapter_1, verse_1)))); //$NON-NLS-1$
-		actionBar.addTab(actionBar.newTab().setTag(tab_grid).setText(R.string.goto_tab_grid_label).setTabListener(new TabListener<GotoGridFragment>(this, "grid", GotoGridFragment.class, GotoGridFragment.createArgs(bookId, chapter_1, verse_1)))); //$NON-NLS-1$
+
+		// ViewPager and its adapters use support library fragments, so use getSupportFragmentManager.
+		viewPager = V.get(this, R.id.viewPager);
+		viewPager.setAdapter(pagerAdapter = new GotoPagerAdapter(getSupportFragmentManager()));
+		viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+			@Override
+			public void onPageSelected(int position) {
+				// When swiping between pages, select the corresponding tab.
+				actionBar.setSelectedNavigationItem(position);
+
+				Log.d(TAG, " di sini");
+				if (okToHideKeyboard && position != 1) {
+					final View editText = findViewById(R.id.tDirectReference);
+					if (editText != null) {
+						final InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+						imm.hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+						imm.hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+					}
+				}
+			}
+		});
+
+		// Specify that tabs should be displayed in the action bar.
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+		// Create a tab listener that is called when the user changes tabs.
+		ActionBar.TabListener tabListener = new ActionBar.TabListener() {
+			public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+				// When the tab is selected, switch to the corresponding page in the ViewPager.
+				viewPager.setCurrentItem(tab.getPosition());
+			}
+
+			public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
+				// hide the given tab
+			}
+
+			public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
+				// probably ignore this event
+			}
+		};
+
+		// Add 3 tabs, specifying the tab's text and TabListener
+		actionBar.addTab(actionBar.newTab().setText(R.string.goto_tab_dialer_label).setTabListener(tabListener));
+		actionBar.addTab(actionBar.newTab().setText(R.string.goto_tab_direct_label).setTabListener(tabListener));
+		actionBar.addTab(actionBar.newTab().setText(R.string.goto_tab_grid_label).setTabListener(tabListener));
 
 		if (savedInstanceState == null) {
 			// get from preferences
 			int tabUsed = Preferences.getInt(Prefkey.goto_last_tab, 0);
 			if (tabUsed >= 1 && tabUsed <= 3) {
 				actionBar.setSelectedNavigationItem(tabUsed - 1 /* to make it 0-based */);
+			}
+
+			if (tabUsed == 2) {
+				viewPager.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						final View editText = V.get(GotoActivity.this, R.id.tDirectReference);
+						if (editText != null) {
+							InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+							imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+						}
+						okToHideKeyboard = true;
+					}
+				}, 100);
+			} else {
+				okToHideKeyboard = true;
 			}
 		} else {
 			actionBar.setSelectedNavigationItem(savedInstanceState.getInt(INSTANCE_STATE_tab, 0));
@@ -93,57 +155,34 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 		outState.putInt(INSTANCE_STATE_tab, getSupportActionBar().getSelectedNavigationIndex());
 	}
 
-	public static class TabListener<T extends Fragment> implements ActionBar.TabListener {
-		private final BaseActivity mActivity;
-		private final String mTag;
-		private final Class<T> mClass;
-		private final Bundle mArgs;
-		private Fragment mFragment;
+	public class GotoPagerAdapter extends FragmentPagerAdapter {
+		final int[] pageTitleResIds = {R.string.goto_tab_dialer_label, R.string.goto_tab_direct_label, R.string.goto_tab_grid_label};
 
-		public TabListener(BaseActivity activity, String tag, Class<T> clz, Bundle args) {
-			mActivity = activity;
-			mTag = tag;
-			mClass = clz;
-			mArgs = args;
-
-			// Check to see if we already have a fragment for this tab, probably
-			// from a previously saved state. If so, deactivate it, because our
-			// initial state is that a tab isn't shown.
-			FragmentManager fm = mActivity.getSupportFragmentManager();
-			mFragment = fm.findFragmentByTag(mTag);
-			if (mFragment != null && !mFragment.isDetached()) {
-				FragmentTransaction ft = fm.beginTransaction();
-				ft.detach(mFragment);
-				ft.commit();
-			}
+		public GotoPagerAdapter(FragmentManager fm) {
+			super(fm);
 		}
 
-		@Override public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-			if (mFragment == null) {
-				mFragment = Fragment.instantiate(mActivity, mClass.getName(), mArgs);
-				ft.add(android.R.id.content, mFragment, mTag);
+		@Override
+		public Fragment getItem(final int position) {
+			final Fragment res;
+			if (position == 0) {
+				res = Fragment.instantiate(GotoActivity.this, GotoDialerFragment.class.getName(), GotoDialerFragment.createArgs(bookId, chapter_1, verse_1));
+			} else if (position == 1) {
+				res = Fragment.instantiate(GotoActivity.this, GotoDirectFragment.class.getName(), GotoDirectFragment.createArgs(bookId, chapter_1, verse_1));
 			} else {
-				ft.attach(mFragment);
+				res = Fragment.instantiate(GotoActivity.this, GotoGridFragment.class.getName(), GotoGridFragment.createArgs(bookId, chapter_1, verse_1));
 			}
-			
-			if (mFragment instanceof GotoDirectFragment) {
-				((GotoDirectFragment) mFragment).onTabSelected();
-			} else {
-				InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-				imm.hideSoftInputFromWindow(mActivity.findViewById(android.R.id.content).getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
-			}
+			return res;
 		}
 
-		@Override public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-			if (mFragment != null) {
-				ft.detach(mFragment);
-			}
+		@Override
+		public int getCount() {
+			return pageTitleResIds.length;
 		}
 
-		@Override public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-			if (mFragment instanceof GotoDirectFragment) {
-				((GotoDirectFragment) mFragment).onTabSelected();
-			}
+		@Override
+		public CharSequence getPageTitle(int position) {
+			return getString(pageTitleResIds[position]);
 		}
 	}
 
