@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.mobeta.android.dslv.DragSortListView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@android:id/list"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" android:orientation="vertical">
+
+
+    <com.mobeta.android.dslv.DragSortListView
+                android:id="@android:id/list"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" android:layout_weight="1"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Small Text"
+            android:id="@+id/tLastBackup" android:layout_marginBottom="4dp" android:layout_marginLeft="4dp"/>
+</LinearLayout>

@@ -78,6 +78,7 @@ import yuku.alkitab.base.model.ProgressMark;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.BackupManager;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.Jumper;
@@ -385,6 +386,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		if (Build.VERSION.SDK_INT >= 14) {
 			initNfcIfAvailable();
 		}
+		BackupManager.startAutoBackup();
 		
 		processIntent(getIntent(), "onCreate");
 	}

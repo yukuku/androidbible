@@ -287,4 +287,9 @@
     <string name="pm_icon_click_message">"at %1$s \nsaved on %2$s"</string>
 
     <string name="copy_share">Copy or share</string>
+
+    <string name="backup_last_time">Last backup: %s</string>
+    <string name="backup_selection_autobackup_at">Auto backup at %s</string>
+    <string name="backup_selection_manualbackup_at">Backup at %s</string>
+    <string name="backup_select_file">Select backup file</string>
 </resources>
