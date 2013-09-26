@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class BackupManager {
 
@@ -35,7 +33,7 @@ public class BackupManager {
 		public void onBackupPostExecute(Object result);
 	}
 
-	public static final long backupTime = 3;
+	static final String autobackupBaseName = App.context.getPackageName() + "-autobackup";
 
 	public static void backupBookmark(final boolean autoBackup, final BackupListener backupListener) {
 		new AsyncTask<Void, Integer, Object>() {
@@ -142,11 +140,10 @@ public class BackupManager {
 			int count = 0;
 			File oldestFile = null;
 			for (File file : backupFiles) {
-				if (file.getName().contains("autobackup")) {
+				if (file.getName().startsWith(autobackupBaseName)) {
 					count++;
 					if (oldestFile == null || file.lastModified() < oldestFile.lastModified()) {
 						oldestFile = file;
-						continue;
 					}
 				}
 			}
@@ -154,7 +151,7 @@ public class BackupManager {
 				oldestFile.delete();
 			}
 			String time = new SimpleDateFormat("yyyyMMdd-hhmmss").format(new Date());
-			return new File(dir, App.context.getPackageName() + "-autobackup-" + time + ".xml");
+			return new File(dir, autobackupBaseName + "-" + time + ".xml");
 		} else {
 			return new File(dir, App.context.getPackageName() + "-backup.xml");
 		}
@@ -168,21 +165,13 @@ public class BackupManager {
 			backupFiles.add(manualBackupFile);
 		}
 
-		File[] files = dir.listFiles(new FilenameFilter() {
+		final File[] files = dir.listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(final File dir, final String filename) {
-				Pattern pattern = Pattern.compile(".*?autobackup.*?\\.xml");
-				Matcher matcher = pattern.matcher(filename);
-				if (matcher.matches()) {
-					return true;
-				} else {
-					return false;
-				}
+				return filename.startsWith(autobackupBaseName) && filename.endsWith(".xml");
 			}
 		});
-		for (File file : files) {
-			backupFiles.add(file);
-		}
+		Collections.addAll(backupFiles, files);
 		Collections.sort(backupFiles, Collections.reverseOrder());
 		return backupFiles;
 	}
