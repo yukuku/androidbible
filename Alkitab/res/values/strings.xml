@@ -260,8 +260,9 @@
 	<string name="version_share_title">Share version to:</string>
 	<string name="menuFullScreen">Full screen</string>
     <string name="full_screen_dismiss_hint">Press <b>Back</b> to return from full screen</string>
-    <string name="last_backup">Last backup: %s</string>
-    <string name="autobackup_at">Autobackup at %s</string>
-    <string name="backup_at">Backup at %s</string>
-    <string name="select_backup_file">Select backup file</string>
+
+    <string name="backup_last_time">Last backup: %s</string>
+    <string name="backup_selection_autobackup_at">Auto backup at %s</string>
+    <string name="backup_selection_manualbackup_at">Backup at %s</string>
+    <string name="backup_select_file">Select backup file</string>
 </resources>

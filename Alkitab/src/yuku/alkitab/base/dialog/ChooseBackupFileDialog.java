@@ -54,7 +54,7 @@ public class ChooseBackupFileDialog extends DialogFragment {
 			}
 		});
 
-		getDialog().setTitle(App.context.getString(R.string.select_backup_file));
+		getDialog().setTitle(App.context.getString(R.string.backup_select_file));
 		return view;
 	}
 
@@ -70,9 +70,9 @@ public class ChooseBackupFileDialog extends DialogFragment {
 				Pattern pattern = Pattern.compile(".*?autobackup.*?");
 				Matcher matcher = pattern.matcher(file.getAbsolutePath());
 				if (matcher.matches()) {
-					description = App.context.getString(R.string.autobackup_at, description);
+					description = App.context.getString(R.string.backup_selection_autobackup_at, description);
 				} else {
-					description = App.context.getString(R.string.backup_at, description);
+					description = App.context.getString(R.string.backup_selection_manualbackup_at, description);
 				}
 				Pair<File, String> backupFile = new Pair<File, String>(file, description);
 				this.backupFiles.add(backupFile);

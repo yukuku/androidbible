@@ -137,7 +137,7 @@ public class BookmarkActivity extends BaseActivity {
 	private void updateLastBackup() {
 		long lastBackup = Preferences.getLong(Prefkey.lastBackupDate, 0L);
 		if (lastBackup != 0) {
-			tLastBackup.setText(getString(R.string.last_backup,  Sqlitil.toLocalDateTimeSimple(new Date(lastBackup))));
+			tLastBackup.setText(getString(R.string.backup_last_time,  Sqlitil.toLocalDateTimeSimple(new Date(lastBackup))));
 		} else {
 			tLastBackup.setText("");
 		}
