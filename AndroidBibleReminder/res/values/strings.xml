@@ -7,4 +7,5 @@
     <string name="dr_alarm">Alarm</string>
     <string name="dr_sound">Sound</string>
     <string name="dr_vibrate">Vibrate</string>
+    <string name="dr_pref_notification_message">Reminder Message</string>
 </resources>

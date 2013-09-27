@@ -11,5 +11,8 @@
     <CheckBoxPreference
         android:key="reminder_vibrate"
         android:title="@string/dr_vibrate" />
+    <EditTextPreference
+        android:key="reminder_text"
+        android:title="@string/dr_pref_notification_message" />
 
 </PreferenceScreen>

@@ -4,13 +4,16 @@ import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.reminder.R;
-import yuku.alkitab.reminder.br.DevotionReminderReceiver;
+import yuku.alkitab.reminder.util.DevotionReminder;
 import yuku.alkitab.reminder.widget.ReminderTimePreference;
 
 import java.util.Calendar;
@@ -26,37 +29,42 @@ public class DevotionReminderActivity extends SherlockPreferenceActivity impleme
 
 		updateReminderTypeEnabledness();
 
-		updateSummary();
+		updateDisplayedValue();
 	}
 
 	@SuppressWarnings("deprecation") void updateReminderTypeEnabledness() {
-		Preference reminder_time = findPreference("reminder_time");
-		Preference reminder_sound = findPreference("reminder_sound");
-		Preference reminder_vibrate = findPreference("reminder_vibrate");
+		Preference reminder_time = findPreference(DevotionReminder.REMINDER_TIME);
+		Preference reminder_sound = findPreference(DevotionReminder.REMINDER_SOUND);
+		Preference reminder_vibrate = findPreference(DevotionReminder.REMINDER_VIBRATE);
+		Preference reminder_text = findPreference(DevotionReminder.REMINDER_TEXT);
 
 		boolean disable = reminder_time.shouldDisableDependents();
 
 		reminder_sound.setEnabled(!disable);
 		reminder_vibrate.setEnabled(!disable);
+		reminder_text.setEnabled(!disable);
 	}
 
-	@Override public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+	@SuppressWarnings("deprecation") @Override public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		updateReminderTypeEnabledness();
-		updateSummary();
-		DevotionReminderReceiver.scheduleAlarm(this);
+		if (TextUtils.isEmpty(Preferences.getString(DevotionReminder.REMINDER_TEXT))) {
+			Preferences.setString(DevotionReminder.REMINDER_TEXT, DevotionReminder.getNotificationText());
+		}
+		DevotionReminder.scheduleAlarm(this);
+		updateDisplayedValue();
 	}
 
-	@SuppressWarnings("deprecation") void updateSummary() {
+	@SuppressWarnings("deprecation") void updateDisplayedValue() {
 		SharedPreferences sp = getPreferenceScreen().getSharedPreferences();
 
 		//sound
-		String soundName = RingtoneManager.getRingtone(this, Uri.parse(sp.getString("reminder_sound", ""))).getTitle(this);
-		RingtonePreference soundPreference = (RingtonePreference) findPreference("reminder_sound");
+		String soundName = RingtoneManager.getRingtone(this, Uri.parse(sp.getString(DevotionReminder.REMINDER_SOUND, ""))).getTitle(this);
+		RingtonePreference soundPreference = (RingtonePreference) findPreference(DevotionReminder.REMINDER_SOUND);
 		soundPreference.setSummary(soundName);
 
 		//time
-		final ReminderTimePreference timePreference = (ReminderTimePreference) findPreference("reminder_time");
-		final String currentValue = sp.getString("reminder_time", null);
+		final ReminderTimePreference timePreference = (ReminderTimePreference) findPreference(DevotionReminder.REMINDER_TIME);
+		final String currentValue = sp.getString(DevotionReminder.REMINDER_TIME, null);
 
 		if (currentValue == null) {
 			timePreference.setSummary(this.getString(R.string.dr_off));
@@ -67,6 +75,10 @@ public class DevotionReminderActivity extends SherlockPreferenceActivity impleme
 			timePreference.setSummary(DateFormat.getTimeFormat(this).format(time.getTime()));
 		}
 
+		//text
+		final EditTextPreference textPreference = (EditTextPreference) findPreference(DevotionReminder.REMINDER_TEXT);
+		textPreference.setSummary(DevotionReminder.getNotificationText());
+		textPreference.setText(DevotionReminder.getNotificationText());
 	}
 
 }
