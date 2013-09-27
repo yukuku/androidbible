@@ -1859,7 +1859,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			new AlertDialog.Builder(IsiActivity.this)
 			.setIcon(icon)
 			.setTitle(title)
-			.setMessage(getString(R.string.pm_delete_progress_confirm))
+			.setMessage(getString(R.string.pm_delete_progress_confirm, title))
 			.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(final DialogInterface dialog, final int which) {
