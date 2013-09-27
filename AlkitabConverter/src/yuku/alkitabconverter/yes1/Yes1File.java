@@ -1,15 +1,13 @@
 package yuku.alkitabconverter.yes1;
 
-import android.util.Log;
+import yuku.alkitabconverter.yes1.Yes1File.PericopeData.Entry;
+import yuku.bintex.BintexWriter;
 
 import java.io.FileInputStream;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-
-import yuku.alkitabconverter.yes1.Yes1File.PericopeData.Entry;
-import yuku.bintex.BintexWriter;
 
 @Deprecated
 public class Yes1File {
@@ -378,5 +376,12 @@ public class Yes1File {
 			}
 		}
 		return bisaLog;
+	}
+
+	// dummy
+	static class Log {
+		public static void d(final String tag, final String msg) {
+			System.out.println(tag + "\t" + msg);
+		}
 	}
 }

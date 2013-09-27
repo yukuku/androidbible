@@ -96,7 +96,7 @@ public class CuvColProses {
 			ss.add(rec.text);
 		}
 		
-		return new Teks() {{
+		return new Teks("utf-8") {{
 			xisi = ss.toArray(new String[ss.size()]);
 		}};
 	}

@@ -92,8 +92,8 @@ public class Proses1 {
 		final InfoEdisi infoEdisi = Yes1Common.infoEdisi("ro-cornilescu", null, "Cornilescu", RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, "Biblia sau Sfânta Scriptură a Vechiului şi Noului Testament - Traducerea: Dumitru Cornilescu, 1921", INPUT_TEKS_ENCODING_YES, null);
 		final InfoKitab infoKitab = Yes1Common.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
 		final Teks teks = Yes1Common.teks(xrec, INPUT_TEKS_ENCODING);
-		final PerikopBlok perikopBlok = new PerikopBlok();
-		final PerikopIndex perikopIndex = new PerikopIndex();
+		final PerikopBlok perikopBlok = new PerikopBlok(pericopeData);
+		final PerikopIndex perikopIndex = new PerikopIndex(pericopeData);
 		
 		Yes1File file = Yes1Common.bikinYesFile(infoEdisi, infoKitab, teks, perikopBlok, perikopIndex);
 		

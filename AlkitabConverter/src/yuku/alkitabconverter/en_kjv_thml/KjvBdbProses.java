@@ -77,7 +77,7 @@ public class KjvBdbProses {
 			ss.add(rec.text);
 		}
 		
-		return new Teks() {{
+		return new Teks("ascii") {{
 			xisi = ss.toArray(new String[ss.size()]);
 		}};
 	}

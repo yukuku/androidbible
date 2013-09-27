@@ -60,7 +60,7 @@ public class BisBdbProses {
 					
 					@Override
 					public IsiSeksi isi() {
-						return new NemplokSeksi();
+						return new NemplokSeksi("../Alkitab/publikasi/bis_perikop_index_bt.bt");
 					}
 				},
 				new Seksi() {
@@ -71,7 +71,7 @@ public class BisBdbProses {
 					
 					@Override
 					public IsiSeksi isi() {
-						return new NemplokSeksi();
+						return new NemplokSeksi("../Alkitab/publikasi/bis_perikop_blok_bt.bt");
 					}
 				},
 				new Seksi() {
@@ -98,7 +98,7 @@ public class BisBdbProses {
 			ss.add(rec.text);
 		}
 		
-		return new Teks() {{
+		return new Teks("ascii") {{
 			xisi = ss.toArray(new String[ss.size()]);
 		}};
 	}
