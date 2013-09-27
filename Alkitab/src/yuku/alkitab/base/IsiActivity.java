@@ -1800,29 +1800,19 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				}
 			} return true;
 			case R.id.menuProgress1: {
-				moveProgressMark(mainVerse_1, 0);
-				AttributeView.startAnimationForProgressMark(0);
-				reloadVerse();
+				updateProgressMark(mainVerse_1, 0);
 			} return true;
 			case R.id.menuProgress2: {
-				moveProgressMark(mainVerse_1, 1);
-				AttributeView.startAnimationForProgressMark(1);
-				reloadVerse();
+				updateProgressMark(mainVerse_1, 1);
 			} return true;
 			case R.id.menuProgress3: {
-				moveProgressMark(mainVerse_1, 2);
-				AttributeView.startAnimationForProgressMark(2);
-				reloadVerse();
+				updateProgressMark(mainVerse_1, 2);
 			} return true;
 			case R.id.menuProgress4: {
-				moveProgressMark(mainVerse_1, 3);
-				AttributeView.startAnimationForProgressMark(3);
-				reloadVerse();
+				updateProgressMark(mainVerse_1, 3);
 			} return true;
 			case R.id.menuProgress5: {
-				moveProgressMark(mainVerse_1, 4);
-				AttributeView.startAnimationForProgressMark(4);
-				reloadVerse();
+				updateProgressMark(mainVerse_1, 4);
 			} return true;
 
 			}
@@ -1855,13 +1845,39 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 
-	private void moveProgressMark(final int mainVerse_1, int position) {
+	private void updateProgressMark(final int mainVerse_1, int position) {
 		final int ari = Ari.encode(this.activeBook.bookId, this.chapter_1, mainVerse_1);
 		List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
 		final ProgressMark progressMark = progressMarks.get(position);
-		progressMark.ari = ari;
-		progressMark.modifyTime = new Date();
-		S.getDb().updateProgressMark(progressMark);
+		if (progressMark.ari == ari) {
+			int icon = AttributeView.getProgressMarkIconResource(position);
+			String title = progressMark.caption;
+			if (TextUtils.isEmpty(title)) {
+				title = getString(AttributeView.getDefaultProgressMarkStringResource(position));
+			}
+
+			new AlertDialog.Builder(IsiActivity.this)
+			.setIcon(icon)
+			.setTitle(title)
+			.setMessage(getString(R.string.pm_delete_progress_confirm))
+			.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(final DialogInterface dialog, final int which) {
+					progressMark.ari = 0;
+					progressMark.caption = null;
+					S.getDb().updateProgressMark(progressMark);
+					reloadVerse();
+				}
+			})
+			.setNegativeButton(getString(R.string.cancel), null)
+			.show();
+		} else {
+			progressMark.ari = ari;
+			progressMark.modifyTime = new Date();
+			S.getDb().updateProgressMark(progressMark);
+			AttributeView.startAnimationForProgressMark(position);
+			reloadVerse();
+		}
 	}
 
 	SplitHandleButton.SplitHandleButtonListener splitHandleButton_listener = new SplitHandleButton.SplitHandleButtonListener() {
