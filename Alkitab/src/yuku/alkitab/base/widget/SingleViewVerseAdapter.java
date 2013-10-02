@@ -61,11 +61,13 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				lText.setTextColor(0xff000000); // override with black!
 			}
 
-			AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_attributes);
+			final AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_attributes);
 			attributeView.showBookmark(attributeMap_ != null && (attributeMap_[id] & 0x1) != 0);
 			attributeView.showNote(attributeMap_ != null && (attributeMap_[id] & 0x2) != 0);
 			attributeView.showProgressMarks(attributeMap_ == null? 0: attributeMap_[id]);
 			attributeView.setAttributeListener(attributeListener_, book_, chapter_1_, verse_1);
+
+			res.setCollapsed(text.length() == 0 && !attributeView.isShowingSomething());
 
 //			{ // DUMP
 //				Log.d(TAG, "==== DUMP verse " + (id + 1));

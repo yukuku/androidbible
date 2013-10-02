@@ -14,9 +14,18 @@ public class VerseItem extends LinearLayout implements Checkable {
 	
 	private boolean checked;
 	private Drawable checkedBg;
-	
+	private boolean collapsed;
+
 	public VerseItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
+	}
+
+	@Override
+	protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		if (collapsed) {
+			setMeasuredDimension(getMeasuredWidth(), 0);
+		}
 	}
 
 	@Override protected void onDraw(Canvas canvas) {
@@ -48,5 +57,11 @@ public class VerseItem extends LinearLayout implements Checkable {
 
 	@Override public void toggle() {
 		setChecked(!checked);
+	}
+
+	public void setCollapsed(final boolean collapsed) {
+		if (this.collapsed == collapsed) return;
+		this.collapsed = collapsed;
+		requestLayout();
 	}
 }
