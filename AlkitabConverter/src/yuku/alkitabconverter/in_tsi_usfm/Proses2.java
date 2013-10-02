@@ -1,50 +1,42 @@
 package yuku.alkitabconverter.in_tsi_usfm;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.ext.DefaultHandler2;
+import yuku.alkitab.base.model.Ari;
+import yuku.alkitabconverter.util.Rec;
+import yuku.alkitabconverter.util.TextDb;
+import yuku.alkitabconverter.yes1.Yes1File.PericopeData;
+import yuku.alkitabconverter.yes1.Yes1File.PericopeData.Entry;
+import yuku.alkitabconverter.yet.YetFileOutput;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.ext.DefaultHandler2;
-
-import yuku.alkitab.base.model.Ari;
-import yuku.alkitabconverter.yes1.Yes1File;
-import yuku.alkitabconverter.yes1.Yes1File.InfoEdisi;
-import yuku.alkitabconverter.yes1.Yes1File.InfoKitab;
-import yuku.alkitabconverter.yes1.Yes1File.PericopeData;
-import yuku.alkitabconverter.yes1.Yes1File.PericopeData.Entry;
-import yuku.alkitabconverter.yes1.Yes1File.PerikopBlok;
-import yuku.alkitabconverter.yes1.Yes1File.PerikopIndex;
-import yuku.alkitabconverter.yes1.Yes1File.Teks;
-import yuku.alkitabconverter.util.Rec;
-import yuku.alkitabconverter.util.RecUtil;
-import yuku.alkitabconverter.util.TextDb;
-import yuku.alkitabconverter.yes_common.Yes1Common;
 
 public class Proses2 {
 	final SAXParserFactory factory = SAXParserFactory.newInstance();
 	
 	public static String INPUT_TEKS_ENCODING = "utf-8";
 	public static int INPUT_TEKS_ENCODING_YES = 2; // 1: ascii; 2: utf-8;
-	public static String INPUT_KITAB = "./bahan/in-tsi-usfm/in/in-tsi-usfm-kitab.txt";
-	static String OUTPUT_YES = "./bahan/in-tsi-usfm/out/in-tsi.yes";
-	public static int OUTPUT_ADA_PERIKOP = 1;
-	static String INFO_NAMA = "in-tsi";
-	static String INFO_JUDUL = "TSI";
-	static String INFO_KETERANGAN = "Terjemahan Sederhana Indonesia (TSI) diterbitkan oleh Pioneer Bible Translators. Teks TSI lengkap dengan catatan-catatan kaki dapat dibaca di m.bahasakita.net atau tsi.bahasakita.net. Tim penerjemah memohon Anda menulis masukan, usulan, atau komentar lain halaman di Facebook “tsi sederhana.” Anda boleh pesan buku-buku TSI yang lain melalui e-mail kepada tim.kita@bahasakita.net. Anda bebas juga untuk mencetak kitab-kitab TSI sesuai informasi yang terdapat di http://bahasakita.net.";
-	static String INPUT_TEKS_2 = "./bahan/in-tsi-usfm/mid/"; 
+	public static String INPUT_BOOK_NAMES = "../../../bahan-alkitab/in-tsi-usfm/in/in-tsi-usfm-kitab.txt";
+	static String INPUT_TEXT_2 = "../../../bahan-alkitab/in-tsi-usfm/mid/";
+	static String OUTPUT_YET = "../../../bahan-alkitab/in-tsi-usfm/out/in-tsi.yet";
+	static String INFO_LOCALE = "in";
+	static String INFO_SHORT_NAME = "TSI";
+	static String INFO_LONG_NAME = "Terjemahan Sederhana Indonesia";
+	static String INFO_DESCRIPTION = "Terjemahan Sederhana Indonesia (TSI) diterbitkan oleh Pioneer Bible Translators. Teks TSI lengkap dengan catatan-catatan kaki dapat dibaca di m.bahasakita.net atau tsi.bahasakita.net. Tim penerjemah memohon Anda menulis masukan, usulan, atau komentar lain halaman di Facebook “tsi sederhana.” Anda boleh pesan buku-buku TSI yang lain melalui e-mail kepada tim.kita@bahasakita.net. Anda bebas juga untuk mencetak kitab-kitab TSI sesuai informasi yang terdapat di http://bahasakita.net.";
 
 	TextDb teksDb = new TextDb();
 	StringBuilder misteri = new StringBuilder();
+	StringBuilder footnote = new StringBuilder();
 	PericopeData pericopeData = new PericopeData();
 	{
 		pericopeData.entries = new ArrayList<Entry>();
@@ -55,48 +47,67 @@ public class Proses2 {
 	}
 
 	public void u() throws Exception {
-		String[] files = new File(INPUT_TEKS_2).list(new FilenameFilter() {
+		String[] files = new File(INPUT_TEXT_2).list(new FilenameFilter() {
 			@Override public boolean accept(File dir, String name) {
 				return name.endsWith("-utf8.usfx.xml");
 			}
 		});
 		
 		Arrays.sort(files);
-		
+
+
 		for (String file : files) {
 			System.out.println("file " + file + " start;");
 			
-			FileInputStream in = new FileInputStream(new File(INPUT_TEKS_2, file));
+			FileInputStream in = new FileInputStream(new File(INPUT_TEXT_2, file));
 			SAXParser parser = factory.newSAXParser();
-			parser.getXMLReader().setFeature("http://xml.org/sax/features/namespaces", true);
+			XMLReader r = parser.getXMLReader();
+			System.out.println("input buffer size (old) = " + r.getProperty("http://apache.org/xml/properties/input-buffer-size"));
+			r.setProperty("http://apache.org/xml/properties/input-buffer-size", 1048576);
+			System.out.println("input buffer size (new) = " + r.getProperty("http://apache.org/xml/properties/input-buffer-size"));
+			r.setFeature("http://xml.org/sax/features/namespaces", true);
 			parser.parse(in, new Handler(Integer.parseInt(file.substring(0, 2))));
 			
 			System.out.println("file " + file + " done; now total rec: " + teksDb.size());
 		}
 		
-		System.out.println("MISTERI:");
+		System.out.println("### MISTERI:");
 		System.out.println(misteri);
 		
+
+		System.out.println("### FOOTNOTE:");
+		System.out.println(footnote);
+
 		// POST-PROCESS
 		
 		teksDb.normalize();
 		
 		teksDb.dump();
 
-		////////// PROSES KE YES
+		////////// PROSES KE YET
 
-		List<Rec> xrec = teksDb.toRecList();
-		
-		final InfoEdisi infoEdisi = Yes1Common.infoEdisi(INFO_NAMA, null, INFO_JUDUL, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES, null);
-		final InfoKitab infoKitab = Yes1Common.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
-		final Teks teks = Yes1Common.teks(xrec, INPUT_TEKS_ENCODING);
-		
-		Yes1File file = Yes1Common.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(pericopeData), new PerikopIndex(pericopeData));
-		
-		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
+		final List<Rec> xrec = teksDb.toRecList();
+
+		YetFileOutput yet = new YetFileOutput(new File(OUTPUT_YET));
+		yet.setInfo("locale", INFO_LOCALE);
+		yet.setInfo("shortName", INFO_SHORT_NAME);
+		yet.setInfo("longName", INFO_LONG_NAME);
+		yet.setInfo("description", INFO_DESCRIPTION);
+
+		yet.setVerses(xrec);
+
+		yet.setBooksFromFileLines(INPUT_BOOK_NAMES);
+
+		yet.setPericopeData(pericopeData);
+
+		yet.write();
 	}
 
 	public class Handler extends DefaultHandler2 {
+		private static final int LEVEL_p_r = -2;
+		private static final int LEVEL_p_ms = -3;
+		private static final int LEVEL_p_mr = -4;
+
 		int kitab_0 = -1;
 		int pasal_1 = 0;
 		int ayat_1 = 0;
@@ -110,16 +121,25 @@ public class Proses2 {
 		Object tujuanTulis_judulPerikop = new Object();
 		Object tujuanTulis_xref = new Object();
 		Object tujuanTulis_footnote = new Object();
-		
+
+		List<PericopeData.Entry> perikopBuffer = new ArrayList<PericopeData.Entry>();
+		boolean afterThisMustStartNewPerikop = true; // if true, we have done with a pericope title, so the next text must become a new pericope title instead of appending to existing one
+
+		// states
 		int sLevel = 0;
 		int menjorokTeks = -1; // -1 p; 1 2 3 adalah q level;
-		
+
+		// for preventing split of characters in text elements
+		StringBuilder charactersBuffer = new StringBuilder();
+
 		public Handler(int kitab_0) {
 			this.kitab_0 = kitab_0;
 			tujuanTulis.push(tujuanTulis_misteri);
 		}
 		
 		@Override public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+			flushCharactersBuffer();
+
 			tree[depth++] = localName;
 
 			System.out.print("(start:) ");
@@ -155,12 +175,15 @@ public class Proses2 {
 				if (sfm != null) {
 					if (sfm.equals("r")) {
 						tujuanTulis.push(tujuanTulis_judulPerikop);
+						sLevel = LEVEL_p_r;
 					} else if (sfm.equals("mt")) {
 						tujuanTulis.push(tujuanTulis_misteri);
 					} else if (sfm.equals("ms")) {
 						tujuanTulis.push(tujuanTulis_judulPerikop);
+						sLevel = LEVEL_p_ms;
 					} else if (sfm.equals("mr")) {
 						tujuanTulis.push(tujuanTulis_judulPerikop);
+						sLevel = LEVEL_p_mr;
 					} else if (sfm.equals("mi")) {
 						tujuanTulis.push(tujuanTulis_teks);
 						menjorokTeks = 2;
@@ -206,6 +229,8 @@ public class Proses2 {
 		}
 
 		@Override public void endElement(String uri, String localName, String qName) throws SAXException {
+			flushCharactersBuffer();
+
 			System.out.print("(end:) ");
 			cetak();
 
@@ -215,6 +240,7 @@ public class Proses2 {
 			} else if (alamat.endsWith("/f")) {
 				tujuanTulis.pop();
 			} else if (alamat.endsWith("/s")) {
+				afterThisMustStartNewPerikop = true;
 				tujuanTulis.pop();
 			} else if (alamat.endsWith("/x")) {
 				tujuanTulis.pop();
@@ -226,12 +252,21 @@ public class Proses2 {
 			tree[--depth] = null;
 		}
 
-		@Override public void characters(char[] ch, int start, int length) throws SAXException {
-			String chars = new String(ch, start, length);
-			if (chars.trim().length() > 0) {
-				System.out.println("#text:" + chars);
-				tulis(chars);
+		private void flushCharactersBuffer() {
+			if (charactersBuffer.length() > 0) {
+				charactersCompleted(charactersBuffer.toString());
+				charactersBuffer.setLength(0);
 			}
+		}
+
+		@Override public void characters(char[] ch, int start, int length) throws SAXException {
+			charactersBuffer.append(ch, start, length);
+		}
+
+		void charactersCompleted(String text) {
+			System.out.println("#text:" + text);
+			if (text.trim().length() == 0) return;
+			tulis(text);
 		}
 
 		private void tulis(String chars) {
@@ -241,21 +276,54 @@ public class Proses2 {
 				misteri.append(chars).append('\n');
 			} else if (tujuan == tujuanTulis_teks) {
 				System.out.println("$tulis ke teks[jenis=" + menjorokTeks + "] " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
-				teksDb.append(kitab_0, pasal_1, ayat_1, chars.replace("\n", " ").replaceAll("\\s+", " "), menjorokTeks == -1? 0: menjorokTeks);
+				teksDb.append(kitab_0, pasal_1, ayat_1, chars.replace("\n", " ").replaceAll("\\s+", " "), menjorokTeks);
+				menjorokTeks = -1; // reset
+
+				if (perikopBuffer.size() > 0) {
+					for (PericopeData.Entry pe: perikopBuffer) {
+						pe.block.title = pe.block.title.replace("\n", " ").replace("  ", " ").trim();
+						System.out.println("(commit to perikopData " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":) " + pe.block.title);
+						pe.ari = Ari.encode(kitab_0, pasal_1, ayat_1);
+						pericopeData.entries.add(pe);
+					}
+					perikopBuffer.clear();
+				}
 			} else if (tujuan == tujuanTulis_judulPerikop) {
-				System.out.println("$tulis ke judulPerikop[level=" + sLevel + "] " + kitab_0 + " " + pasal_1 + " " + ayat_1 + " level " + sLevel + ":" + chars);
 				// masukin ke data perikop
-				String judul = chars.replace("\n", " ").replace("  ", " ").trim();
-				PericopeData.Entry entry = new PericopeData.Entry();
-				entry.ari = Ari.encode(kitab_0, pasal_1, ayat_1);
-				entry.block = new PericopeData.Block();
-				entry.block.version = 2;
-				entry.block.title = judul;
-				pericopeData.entries.add(entry);
+				String judul = chars;
+
+				if (sLevel == 0 || sLevel == 1 || sLevel == LEVEL_p_mr || sLevel == LEVEL_p_ms) {
+					if (afterThisMustStartNewPerikop || perikopBuffer.size() == 0) {
+						PericopeData.Entry entry = new PericopeData.Entry();
+						entry.ari = 0; // done later when writing teks so we know which verse this pericope starts from
+						entry.block = new PericopeData.Block();
+						entry.block.version = 2;
+						entry.block.title = judul;
+						perikopBuffer.add(entry);
+						afterThisMustStartNewPerikop = false;
+						System.out.println("$tulis ke perikopBuffer (new entry) (size now: " + perikopBuffer.size() + "): " + judul);
+					} else {
+						perikopBuffer.get(perikopBuffer.size() - 1).block.title += judul;
+						System.out.println("$tulis ke perikopBuffer (append to existing) (size now: " + perikopBuffer.size() + "): " + judul);
+					}
+				} else if (sLevel == LEVEL_p_r) { // paralel
+					if (perikopBuffer.size() == 0) {
+						throw new RuntimeException("paralel found but no perikop on buffer: " + judul);
+					}
+
+					PericopeData.Entry entry = perikopBuffer.get(perikopBuffer.size() - 1);
+					entry.block.parallels = parseParalel(judul);
+				} else if (sLevel == 2) {
+					System.out.println("$tulis ke tempat sampah (perikop level 2): " + judul);
+				} else {
+					throw new RuntimeException("sLevel = " + sLevel + " not understood: " + judul);
+				}
+
 			} else if (tujuan == tujuanTulis_xref) {
 				System.out.println("$tulis ke xref " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
 			} else if (tujuan == tujuanTulis_footnote) {
 				System.out.println("$tulis ke footnote " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
+				footnote.append(chars).append('\n');
 			}
 		}
 
@@ -276,6 +344,56 @@ public class Proses2 {
 			}
 			return a.toString();
 		}
+	}
 
+	/**
+	 * (Mat. 23:1-36; Mrk. 12:38-40; Luk. 20:45-47) -> [Mat. 23:1-36, Mrk. 12:38-40, Luk. 20:45-47]
+	 * (Mat. 10:26-33, 19-20) -> [Mat. 10:26-33, Mat. 10:19-20]
+	 * (Mat. 6:25-34, 19-21) -> [Mat. 6:25-34, Mat. 6:19-21]
+	 * (Mat. 10:34-36) -> [Mat. 10:34-36]
+	 * (Mat. 26:57-58, 69-75; Mrk. 14:53-54, 66-72; Yoh. 18:12-18, 25-27) -> [Mat. 26:57-58, Mat. 26:69-75, Mrk. 14:53-54, Mrk. 14:66-72, Yoh. 18:12-18, Yoh. 18:25-27]
+	 * (2Taw. 13:1--14:1) -> [2Taw. 13:1--14:1]
+	 * (2Taw. 14:1-5, 15:16--16:13) -> [2Taw. 14:1-5, 2Taw. 15:16--16:13]
+	 * (2Taw. 2:13-14, 3:15--5:1) -> [2Taw. 2:13-14, 2Taw. 3:15--5:1]
+	 * (2Taw. 34:3-7, 35:1-27) -> [2Taw. 34:3-7, 2Taw. 35:1-27]
+	 */
+	static List<String> parseParalel(String judul) {
+		List<String> res = new ArrayList<String>();
+
+		judul = judul.trim();
+		if (judul.startsWith("(")) judul = judul.substring(1);
+		if (judul.endsWith(")")) judul = judul.substring(0, judul.length() - 1);
+
+		String kitab = null;
+		String pasal = null;
+		String ayat = null;
+
+		String[] alamats = judul.split("[;,]");
+		for (String alamat : alamats) {
+			alamat = alamat.trim();
+
+			String[] bagians = alamat.split(" +", 2);
+			String pa;
+			if (bagians.length == 1) { // no kitab;
+				if (kitab == null) throw new RuntimeException("no existing kitab");
+				pa = bagians[0];
+			} else {
+				kitab = bagians[0];
+				pa = bagians[1];
+			}
+
+			String[] parts = pa.split(":", 2);
+			if (parts.length == 1) { // no pasal
+				if (pasal == null) throw new RuntimeException("no existing pasal");
+				ayat = parts[0];
+			} else {
+				pasal = parts[0];
+				ayat = parts[1];
+			}
+
+			res.add(kitab + " " + pasal + ":" + ayat);
+		}
+
+		return res;
 	}
 }

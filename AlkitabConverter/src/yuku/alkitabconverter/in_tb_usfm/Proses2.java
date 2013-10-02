@@ -550,6 +550,8 @@ public class Proses2 {
 			String alamat = alamat();
 			if (alamat.endsWith("/p")) {
 				tujuanTulis.pop();
+			} else if (alamat.endsWith("/f")) {
+				tujuanTulis.pop();
 			} else if (alamat.endsWith("/s")) {
 				afterThisMustStartNewPerikop = true;
 				tujuanTulis.pop();
@@ -578,7 +580,7 @@ public class Proses2 {
 				misteri.append(chars).append('\n');
 			} else if (tujuan == tujuanTulis_teks) {
 				System.out.println("$tulis ke teks[jenis=" + menjorokTeks + "] " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
-				teksDb.append(kitab_0, pasal_1, ayat_1, chars.replace("\n", " ").replaceAll("\\s+", " "), menjorokTeks);
+				teksDb.append(kitab_0, pasal_1, ayat_1, chars.replace("\n", " ").replaceAll("\\s+", " "), menjorokTeks == -1? 0: menjorokTeks);
 				menjorokTeks = -1; // reset
 				
 				if (perikopBuffer.size() > 0) {
