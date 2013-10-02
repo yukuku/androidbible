@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="yuku.alkitab.reminder">
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="17"/>
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <application android:name=".App" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:theme="@style/Theme.Sherlock.Light.DarkActionBar">
+    <uses-sdk android:minSdkVersion="7"
+              android:targetSdkVersion="18"/>
+
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+    <application android:name=".App"
+                 android:icon="@drawable/ic_launcher"
+                 android:label="@string/dr_app_name"
+                 android:theme="@style/Theme.Sherlock.Light.DarkActionBar"
+                 android:allowBackup="true">
         <activity android:name=".ac.DevotionReminderActivity">
             <intent-filter>
                 <action android:name="yuku.alkitab.reminder.ACTION_REMINDER_SETTINGS"/>
