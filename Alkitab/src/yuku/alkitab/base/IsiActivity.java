@@ -855,7 +855,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			.setNegativeButton(R.string.cancel, null)
 			.show();
 		} else {
-			Toast.makeText(this, R.string.belum_ada_sejarah, Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.recentverses_not_available, Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -1353,7 +1353,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			SpannableStringBuilder sb = new SpannableStringBuilder();
 			sb.append(reference).append("\n");
 			int sb_len = sb.length();
-			sb.append(getString(R.string.history_hint));
+			sb.append(getString(R.string.recentverses_button_hint));
 			sb.setSpan(new RelativeSizeSpan(0.6f), sb_len, sb.length(), 0);
 			bGoto.setText(sb);
 		}
