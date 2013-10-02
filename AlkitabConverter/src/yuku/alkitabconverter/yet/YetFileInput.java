@@ -76,7 +76,7 @@ public class YetFileInput {
 				report_line_number++;
 				report_line_text = line;
 				
-				String[] splits = line.split("\t");
+				String[] splits = line.split("\t", -1);
 				String command = splits[0];
 				
 				if ("info".equals(command)) {
