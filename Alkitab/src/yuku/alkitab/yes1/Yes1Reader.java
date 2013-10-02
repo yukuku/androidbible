@@ -1,12 +1,6 @@
 package yuku.alkitab.yes1;
 
 import android.util.Log;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.Arrays;
-
 import yuku.afw.D;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Ari;
@@ -19,6 +13,11 @@ import yuku.alkitab.base.storage.OldVerseTextDecoder;
 import yuku.alkitab.base.storage.VerseTextDecoder;
 import yuku.bintex.BintexReader;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.Arrays;
+
 public class Yes1Reader implements BibleReader {
 	private static final String TAG = Yes1Reader.class.getSimpleName();
 	
@@ -26,15 +25,15 @@ public class Yes1Reader implements BibleReader {
 	private boolean initted = false;
 	private VerseTextDecoder verseTextDecoder;
 	
-	private long teks_dasarOffset;
-	private long perikopBlok_dasarOffset;
+	private long text_baseOffset;
+	private long pericopeBlock_baseOffset;
 	
 	private String shortName;
 	private String longName;
 	private String description;
 	@SuppressWarnings("unused") private String locale;
-	private int nkitab;
-	private int perikopAda = 0; // default ga ada
+	private int book_count;
+	private int has_pericopes = 0; // default ga ada
 	private int encoding = 1; // 1 = ascii; 2 = utf-8;
 
 	private Yes1PericopeIndex pericopeIndex_;
@@ -60,26 +59,26 @@ public class Yes1Reader implements BibleReader {
 	}
 	
 	/**
-	 * @return ukuran seksi
+	 * @return size of section
 	 */
-	private int lewatiSampeSeksi(String seksi) throws Exception {
+	private int skipUntilSection(String section) throws Exception {
 		f.seek(8); // setelah header
 		
 		while (true) {
-			String namaSeksi = readNamaSeksi(f);
+			String sectionName = readSectionName(f);
 			
-			if (namaSeksi == null || namaSeksi.equals("____________")) { //$NON-NLS-1$
+			if (sectionName == null || sectionName.equals("____________")) { //$NON-NLS-1$
 				// sudah mencapai EOF. Maka kasih tau seksi ini ga ada.
-				Log.d(TAG, "Seksi tidak ditemukan: " + seksi); //$NON-NLS-1$
+				Log.d(TAG, "Seksi tidak ditemukan: " + section); //$NON-NLS-1$
 				return -1;
 			}
 			
-			int ukuran = readUkuranSeksi(f);
+			int ukuran = readSectionSize(f);
 			
-			if (namaSeksi.equals(seksi)) {
+			if (sectionName.equals(section)) {
 				return ukuran;
 			} else {
-				Log.d(TAG, "seksi dilewati: " + namaSeksi); //$NON-NLS-1$
+				Log.d(TAG, "seksi dilewati: " + sectionName); //$NON-NLS-1$
 				f.skipBytes(ukuran);
 			}
 		}
@@ -100,11 +99,11 @@ public class Yes1Reader implements BibleReader {
 				}
 			}
 			
-			bacaInfoEdisi();
+			readVersionInfo();
 			
-			lewatiSampeSeksi("teks________"); //$NON-NLS-1$
-			teks_dasarOffset = f.getFilePointer();
-			Log.d(TAG, "teks_dasarOffset = " + teks_dasarOffset); //$NON-NLS-1$
+			skipUntilSection("teks________"); //$NON-NLS-1$
+			text_baseOffset = f.getFilePointer();
+			Log.d(TAG, "text_baseOffset = " + text_baseOffset); //$NON-NLS-1$
 		}
 	}
 	
@@ -130,12 +129,10 @@ public class Yes1Reader implements BibleReader {
 		}
 	}
 
-	public void bacaInfoEdisi() {
+	public void readVersionInfo() {
 		try {
-			Log.d(TAG, "bacaInfoEdisi dipanggil"); //$NON-NLS-1$
-			
-			int ukuran = lewatiSampeSeksi("infoEdisi___"); //$NON-NLS-1$
-			byte[] buf = new byte[ukuran];
+			int size = skipUntilSection("infoEdisi___"); //$NON-NLS-1$
+			byte[] buf = new byte[size];
 			f.read(buf);
 			BintexReader in = new BintexReader(new ByteArrayInputStream(buf));
 			
@@ -145,7 +142,7 @@ public class Yes1Reader implements BibleReader {
 				
 				if (key.equals("versi")) { //$NON-NLS-1$
 					int versi = in.readInt();
-					if (versi > 2) throw new RuntimeException("Versi Edisi: " + versi + " tidak dikenal"); //$NON-NLS-1$ //$NON-NLS-2$
+					if (versi > 2) throw new RuntimeException("Version number in version info: " + versi + " not supported"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else if (key.equals("format")) { //$NON-NLS-1$ // ini deprecated, sudah diganti jadi "versi". Tapi harus tetap dikenali, kalo ga akan crash.
 					in.readInt(); // buang
 				} else if (key.equals("nama")) { //$NON-NLS-1$
@@ -159,9 +156,9 @@ public class Yes1Reader implements BibleReader {
 				} else if (key.equals("keterangan")) { //$NON-NLS-1$
 					this.description = in.readLongString();
 				} else if (key.equals("nkitab")) { //$NON-NLS-1$
-					this.nkitab = in.readInt();
+					this.book_count = in.readInt();
 				} else if (key.equals("perikopAda")) { //$NON-NLS-1$
-					this.perikopAda = in.readInt();
+					this.has_pericopes = in.readInt();
 				} else if (key.equals("encoding")) { //$NON-NLS-1$
 					this.encoding = in.readInt();
 				} else if (key.equals("locale")) { //$NON-NLS-1$
@@ -169,14 +166,13 @@ public class Yes1Reader implements BibleReader {
 				} else if (key.equals("end")) { //$NON-NLS-1$
 					break;
 				} else {
-					Log.w(TAG, "ada key ga dikenal di infoEdisi: " + key); //$NON-NLS-1$
-					break;
+					throw new RuntimeException("got unknown key in version info: " + key); //$NON-NLS-1$
 				}
 			}
 			
-			Log.d(TAG, "bacaInfoEdisi selesai, nama=" + nama + " judul=" + longName + " nkitab=" + nkitab); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Log.d(TAG, "readVersionInfo selesai, nama=" + nama + " judul=" + longName + " book_count=" + book_count); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} catch (Exception e) {
-			Log.e(TAG, "bacaInfoEdisi error", e); //$NON-NLS-1$
+			Log.e(TAG, "readVersionInfo error", e); //$NON-NLS-1$
 		}
 	}
 
@@ -188,13 +184,13 @@ public class Yes1Reader implements BibleReader {
 			
 			Book[] res = new Book[256];
 			
-			int ukuran = lewatiSampeSeksi("infoKitab___"); //$NON-NLS-1$
+			int ukuran = skipUntilSection("infoKitab___"); //$NON-NLS-1$
 			byte[] buf = new byte[ukuran];
 			f.read(buf);
 			BintexReader in = new BintexReader(new ByteArrayInputStream(buf));
 			
-			Log.d(TAG, "akan membaca " + this.nkitab + " kitab"); //$NON-NLS-1$ //$NON-NLS-2$
-			for (int kitabIndex = 0; kitabIndex < this.nkitab; kitabIndex++) {
+			Log.d(TAG, "akan membaca " + this.book_count + " kitab"); //$NON-NLS-1$ //$NON-NLS-2$
+			for (int kitabIndex = 0; kitabIndex < this.book_count; kitabIndex++) {
 				Yes1Book k = new Yes1Book();
 				
 				// kalau true, berarti ini kitab NULL
@@ -293,7 +289,7 @@ public class Yes1Reader implements BibleReader {
 			
 			Yes1Book yesBook = (Yes1Book) book;
 			
-			long seekTo = teks_dasarOffset;
+			long seekTo = text_baseOffset;
 			seekTo += yesBook.offset;
 			seekTo += yesBook.chapter_offsets[pasal_1 - 1];
 			f.seek(seekTo);
@@ -320,13 +316,13 @@ public class Yes1Reader implements BibleReader {
 		}
 	}
 
-	@SuppressWarnings("deprecation") static String readNamaSeksi(RandomAccessFile f) throws IOException {
+	@SuppressWarnings("deprecation") static String readSectionName(RandomAccessFile f) throws IOException {
 		byte[] buf = new byte[12];
 		int read = f.read(buf);
 		return read <= 0? null: new String(buf, 0);
 	}
 
-	static int readUkuranSeksi(RandomAccessFile f) throws IOException {
+	static int readSectionSize(RandomAccessFile f) throws IOException {
 		return f.readInt();
 	}
 
@@ -339,11 +335,11 @@ public class Yes1Reader implements BibleReader {
 		try {
 			init();
 			
-			if (perikopAda == 0) {
+			if (has_pericopes == 0) {
 				return null;
 			}
 			
-			int ukuran = lewatiSampeSeksi("perikopIndex"); //$NON-NLS-1$
+			int ukuran = skipUntilSection("perikopIndex"); //$NON-NLS-1$
 			
 			if (ukuran < 0) {
 				Log.d(TAG, "Tidak ada seksi 'perikopIndex'"); //$NON-NLS-1$
@@ -384,11 +380,11 @@ public class Yes1Reader implements BibleReader {
 			int kini = pertama;
 			int res = 0;
 			
-			if (perikopBlok_dasarOffset != 0) {
-				f.seek(perikopBlok_dasarOffset);
+			if (pericopeBlock_baseOffset != 0) {
+				f.seek(pericopeBlock_baseOffset);
 			} else {
-				lewatiSampeSeksi("perikopBlok_"); //$NON-NLS-1$
-				perikopBlok_dasarOffset = f.getFilePointer();
+				skipUntilSection("perikopBlok_"); //$NON-NLS-1$
+				pericopeBlock_baseOffset = f.getFilePointer();
 			}
 			
 			BintexReader in = new BintexReader(new RandomInputStream(f));

@@ -25,18 +25,18 @@ public class InternalReader implements BibleReader {
 	private static String cache_file = null;
 	private static int cache_posInput = -1;
 
-	private final String edisiPrefix;
-	private final String edisiShortName;
-	private final String edisiLongName;
+	private final String versionPrefix;
+	private final String versionShortName;
+	private final String versionLongName;
 	private final VerseTextDecoder verseTextDecoder;
 
 	private Yes1PericopeIndex pericopeIndex_;
 	private XrefTable xrefTable_;
 
-	public InternalReader(String edisiPrefix, String edisiShortName, String edisiLongName, VerseTextDecoder verseTextDecoder) {
-		this.edisiPrefix = edisiPrefix;
-		this.edisiShortName = edisiShortName;
-		this.edisiLongName = edisiLongName;
+	public InternalReader(String versionPrefix, String versionShortName, String versionLongName, VerseTextDecoder verseTextDecoder) {
+		this.versionPrefix = versionPrefix;
+		this.versionShortName = versionShortName;
+		this.versionLongName = versionLongName;
 		this.verseTextDecoder = verseTextDecoder;
 	}
 	
@@ -82,7 +82,6 @@ public class InternalReader implements BibleReader {
 				available = true;
 			} catch (IOException e) {
 				Log.e(TAG, "error loading xref", e);
-				return;
 			}
 		}
 
@@ -189,11 +188,11 @@ public class InternalReader implements BibleReader {
 	}
 
 	@Override public String getShortName() {
-		return edisiShortName;
+		return versionShortName;
 	}
 
 	@Override public String getLongName() {
-		return edisiLongName;
+		return versionLongName;
 	}
 	
 	@Override public String getDescription() {
@@ -201,7 +200,7 @@ public class InternalReader implements BibleReader {
 	}
 
 	@Override public Book[] loadBooks() {
-		InputStream is = S.openRaw(edisiPrefix + "_index_bt"); //$NON-NLS-1$
+		InputStream is = S.openRaw(versionPrefix + "_index_bt"); //$NON-NLS-1$
 		BintexReader in = new BintexReader(is);
 		try {
 			ArrayList<Book> xkitab = new ArrayList<Book>();
@@ -257,7 +256,6 @@ public class InternalReader implements BibleReader {
 		}
 		
 		int offset = internalBook.chapter_offsets[chapter_1 - 1];
-		int length = 0;
 
 		try {
 			InputStream in;
@@ -307,6 +305,7 @@ public class InternalReader implements BibleReader {
 				}
 			}
 
+			final int length;
 			if (chapter_1 == internalBook.chapter_count) {
 				length = in.available();
 			} else {
@@ -335,7 +334,7 @@ public class InternalReader implements BibleReader {
 		
 		long wmulai = System.currentTimeMillis();
 
-		InputStream is = S.openRaw(edisiPrefix + "_pericope_index_bt"); //$NON-NLS-1$
+		InputStream is = S.openRaw(versionPrefix + "_pericope_index_bt"); //$NON-NLS-1$
 		if (is == null) {
 			return null;
 		}
@@ -373,7 +372,7 @@ public class InternalReader implements BibleReader {
 
 		int kini = pertama;
 
-		BintexReader in = new BintexReader(S.openRaw(edisiPrefix + "_pericope_blocks_bt")); //$NON-NLS-1$
+		BintexReader in = new BintexReader(S.openRaw(versionPrefix + "_pericope_blocks_bt")); //$NON-NLS-1$
 		try {
 			while (true) {
 				int ari = pericopeIndex.getAri(kini);

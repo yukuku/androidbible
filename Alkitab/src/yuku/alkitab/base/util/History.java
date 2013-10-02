@@ -30,7 +30,7 @@ public class History {
 	}
 
 	private History() {
-		this.preferences = App.getPreferencesInstan();
+		this.preferences = App.getInstantPreferences();
 
 		entries = new ArrayList<ClientHistoryEntry>();
 

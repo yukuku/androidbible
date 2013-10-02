@@ -357,7 +357,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		history = History.getInstance();
 
 		// configure devotion
-		instant_pref = App.getPreferencesInstan();
+		instant_pref = App.getInstantPreferences();
 		{
 			String devotion_name = instant_pref.getString(PREFKEY_devotion_name, null);
 			if (devotion_name != null) {
