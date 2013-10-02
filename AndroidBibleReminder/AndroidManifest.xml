@@ -18,7 +18,8 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <receiver android:name=".br.DevotionReminderReceiver">
+        <receiver android:name=".br.DevotionReminderReceiver"> </receiver>
+        <receiver android:name=".br.BootCompleteReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
