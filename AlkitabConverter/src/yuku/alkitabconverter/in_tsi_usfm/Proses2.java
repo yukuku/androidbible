@@ -81,7 +81,7 @@ public class Proses2 {
 		// POST-PROCESS
 		
 		teksDb.normalize();
-		
+		teksDb.removeEmptyVerses();
 		teksDb.dump();
 
 		////////// PROSES KE YET

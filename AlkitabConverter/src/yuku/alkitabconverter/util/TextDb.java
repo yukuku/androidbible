@@ -154,8 +154,17 @@ public class TextDb {
 			last_chapter_1 = chapter_1;
 			last_verse_1 = verse_1;
 		}
-		
+
 		System.out.println("normalize done");
+	}
+
+	public void removeEmptyVerses() {
+		for (final Entry<Integer, VerseState> entry : map.entrySet()) {
+			final VerseState vs = entry.getValue();
+			if ("@@@0".equals(vs.text)) {
+				vs.text = "";
+			}
+		}
 	}
 	
 	public void dump(PrintStream ps) {
