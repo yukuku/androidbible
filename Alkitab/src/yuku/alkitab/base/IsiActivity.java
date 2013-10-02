@@ -24,6 +24,8 @@ import android.support.v4.app.ShareCompat;
 import android.support.v7.view.ActionMode;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.util.Pair;
@@ -34,7 +36,6 @@ import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -49,6 +50,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
+import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.R;
 import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.BookmarkActivity;
@@ -96,7 +98,9 @@ import yuku.alkitab.base.widget.VersesView.PressResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
@@ -854,34 +858,66 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			Toast.makeText(this, R.string.belum_ada_sejarah, Toast.LENGTH_SHORT).show();
 		}
 	}
-	
-	private ListAdapter historyAdapter = new BaseAdapter() {
-		@Override public View getView(int position, View convertView, ViewGroup parent) {
-			TextView res = (TextView) convertView;
-			if (res == null) {
-				res = (TextView) getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
-			}
+
+	private ListAdapter historyAdapter = new EasyAdapter() {
+
+		private final java.text.DateFormat timeFormat = DateFormat.getTimeFormat(App.context);
+		private final java.text.DateFormat mediumDateFormat = DateFormat.getMediumDateFormat(App.context);
+
+		@Override
+		public View newView(final int position, final ViewGroup parent) {
+			return getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+		}
+
+		@Override
+		public void bindView(final View view, final int position, final ViewGroup parent) {
+			TextView textView = (TextView) view;
+
 			int ari = history.getAri(position);
-			res.setText(S.activeVersion.reference(ari));
-			return res;
+			SpannableStringBuilder sb = new SpannableStringBuilder();
+			sb.append(S.activeVersion.reference(ari));
+			sb.append("  ");
+			int sb_len = sb.length();
+			sb.append(formatTimestamp(history.getTimestamp(position)));
+			sb.setSpan(new ForegroundColorSpan(0xff666666), sb_len, sb.length(), 0);
+			sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
+
+			textView.setText(sb);
 		}
-		
-		@Override
-		public long getItemId(int position) {
-			return position;
+
+		private CharSequence formatTimestamp(final long timestamp) {
+			{
+				long now = System.currentTimeMillis();
+				long delta = now - timestamp;
+				if (delta <= 200000) {
+					return getString(R.string.recentverses_just_now);
+				} else if (delta <= 3600000) {
+					return getString(R.string.recentverses_min_plural_ago, Math.round(delta / 60000.0));
+				}
+			}
+
+			{
+				Calendar now = GregorianCalendar.getInstance();
+				Calendar that = GregorianCalendar.getInstance();
+				that.setTimeInMillis(timestamp);
+				if (now.get(Calendar.YEAR) == that.get(Calendar.YEAR)) {
+					if (now.get(Calendar.DAY_OF_YEAR) == that.get(Calendar.DAY_OF_YEAR)) {
+						return getString(R.string.recentverses_today_time, timeFormat.format(that.getTime()));
+					} else if (now.get(Calendar.DAY_OF_YEAR) == that.get(Calendar.DAY_OF_YEAR) + 1) {
+						return getString(R.string.recentverses_yesterday_time, timeFormat.format(that.getTime()));
+					}
+				}
+
+				return mediumDateFormat.format(that.getTime());
+			}
 		}
-		
-		@Override
-		public Integer getItem(int position) {
-			return history.getAri(position);
-		}
-		
+
 		@Override
 		public int getCount() {
 			return history.getSize();
 		}
 	};
-	
+
 	public void openDonationDialog() {
 		new AlertDialog.Builder(this)
 		.setMessage(R.string.donasi_keterangan)

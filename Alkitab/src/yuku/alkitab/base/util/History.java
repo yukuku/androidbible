@@ -113,11 +113,12 @@ public class History {
 		return entries.size();
 	}
 
-	public synchronized int getAri(int i) {
-		if (i >= entries.size()) {
-			return 0;
-		}
-		return entries.get(i).ari;
+	public synchronized int getAri(final int position) {
+		return entries.get(position).ari;
+	}
+
+	public synchronized long getTimestamp(final int position) {
+		return entries.get(position).timestamp;
 	}
 
 	public synchronized List<HistoryEntry> getEntriesToSend() {

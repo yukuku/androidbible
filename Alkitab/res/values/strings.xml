@@ -292,4 +292,9 @@
     <string name="backup_selection_autobackup_at">Auto backup at %s</string>
     <string name="backup_selection_manualbackup_at">Backup at %s</string>
     <string name="backup_select_file">Select backup file</string>
+
+    <string name="recentverses_just_now">Just now</string>
+    <string name="recentverses_min_plural_ago">%s mins ago</string>
+    <string name="recentverses_today_time">Today, %s</string>
+    <string name="recentverses_yesterday_time">Yesterday, %s</string>
 </resources>
