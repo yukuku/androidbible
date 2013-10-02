@@ -2,7 +2,6 @@ package yuku.alkitab.yes1;
 
 import android.util.Log;
 import yuku.afw.D;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
@@ -304,11 +303,7 @@ public class Yes1Reader implements BibleReader {
 			if (janganPisahAyat) {
 				return new Yes1SingleChapterVerses(new String[] {verseTextDecoder.makeIntoSingleString(ba, hurufKecil)});
 			} else {
-				String[] xayat = verseTextDecoder.separateIntoVerses(ba, hurufKecil);
-				if (D.EBUG) for (int i = 0; i < xayat.length; i++) {
-					Log.d(TAG, "ayat_1 " + (i+1) + ": " + U.dumpChars(xayat[i]));  //$NON-NLS-1$//$NON-NLS-2$
-				}
-				return new Yes1SingleChapterVerses(xayat);
+				return new Yes1SingleChapterVerses(verseTextDecoder.separateIntoVerses(ba, hurufKecil));
 			}
 		} catch (Exception e) {
 			Log.e(TAG, "muatTeks error", e); //$NON-NLS-1$

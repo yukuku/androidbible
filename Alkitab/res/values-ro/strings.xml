@@ -56,7 +56,7 @@
   <string name="hari_senin">Lun</string>
   <string name="hari_minggu">Dum</string>
   <string name="size_hasil">%d rezultate</string>
-  <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Caută versetele ce conţin următoarele cuvinte: [b]%s[/b]</string>
+  <string name="search_searching_tokens">Caută versetele ce conţin următoarele cuvinte: [b]%s[/b]</string>
   <string name="pilih_setidaknya_satu_kitab">Alege cel puţin o carte pentru a căuta.</string>
   <string name="pengunduhan_dibatalkan">Descărcare anulată.</string>
   <string name="sedang_mendekompres_harap_tunggu">Dezarhivare. Vă rog să aşteptaţi…</string>

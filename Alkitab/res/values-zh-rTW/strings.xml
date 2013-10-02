@@ -58,7 +58,7 @@ If you are blessed by this Bible app, please make some donation to the developer
   <string name="hari_senin">週一</string>
   <string name="hari_minggu">週日</string>
   <string name="size_hasil">%d 結果</string>
-  <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">搜尋包含 [b]%s[/b] 的經節中.</string>
+  <string name="search_searching_tokens">搜尋包含 [b]%s[/b] 的經節中.</string>
   <string name="pilih_setidaknya_satu_kitab">選擇至少一本書卷以搜尋</string>
   <string name="pengunduhan_dibatalkan">下載取消.</string>
   <string name="sedang_mendekompres_harap_tunggu">解壓縮中. 請等待....</string>

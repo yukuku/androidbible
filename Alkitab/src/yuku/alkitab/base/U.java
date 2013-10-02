@@ -5,10 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.widget.TextView;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import yuku.alkitab.base.model.Label;
 
 public class U {
@@ -66,7 +62,7 @@ public class U {
 		sb.append(h);
 		return sb.toString();
 	}
-	
+
 	/**
 	 * @return colorRgb (without alpha) or -1 if can't decode
 	 */
@@ -89,7 +85,7 @@ public class U {
 		sb.append(h);
 		return sb.toString();
 	}
-	
+
 	/**
 	 * @return colorRgb (without alpha) or -1 if can't decode
 	 */
@@ -177,40 +173,10 @@ public class U {
 		int b = (int)((b_ + m) * (255.f) + 0.5f);
 		return r << 16 | g << 8 | b;
 	}
-	
-	public static String showException(Throwable e) {
-		StringWriter sw = new StringWriter(400);
-		sw.append('(').append(e.getClass().getName()).append("): ").append(e.getMessage()).append('\n'); //$NON-NLS-1$
-		e.printStackTrace(new PrintWriter(sw));
-		return sw.toString();
-	}
-	
-	public static String preprocessHtml(String s) {
-		return s.replace('[', '<').replace(']', '>');
-	}
-	
-	
-	public static String dumpChars(String s) {
-		StringBuilder sb = new StringBuilder(s.length() * 8);
-		
-		for (int i = 0, len = s.length(); i < len; i++) {
-			char c = s.charAt(i);
-			sb.append(Integer.toHexString(c));
-			if (c >= 0x20) {
-				sb.append('\'');
-				sb.append(c);
-				sb.append('\'');
-			} else {
-				sb.append('|');
-			}
-		}
-		
-		return sb.toString();
-	}
-	
-	@SuppressWarnings("deprecation") public static void copyToClipboard(CharSequence salinan) {
+
+	@SuppressWarnings("deprecation") public static void copyToClipboard(CharSequence text) {
 		android.text.ClipboardManager clipboardManager = (android.text.ClipboardManager) App.context.getSystemService(Context.CLIPBOARD_SERVICE);
-		clipboardManager.setText(salinan);
+		clipboardManager.setText(text);
 	}
 
 	public static int getColorBasedOnBookId(int pos) {

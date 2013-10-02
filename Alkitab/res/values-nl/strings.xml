@@ -57,7 +57,7 @@
   <string name="hari_senin">Ma</string>
   <string name="hari_minggu">Zo</string>
   <string name="size_hasil">%d resultaten</string>
-  <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Zoeken naar verzen met de volgende woorden: [b]%s[/b]</string>
+  <string name="search_searching_tokens">Zoeken naar verzen met de volgende woorden: [b]%s[/b]</string>
   <string name="pilih_setidaknya_satu_kitab">Kies tenminste één Bijbelboek om te zoeken.</string>
   <string name="pengunduhan_dibatalkan">Download geannuleerd.</string>
   <string name="sedang_mendekompres_harap_tunggu">Uitpakken. Even geduld…</string>

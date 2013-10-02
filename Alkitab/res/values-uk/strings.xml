@@ -57,7 +57,7 @@
   <string name="hari_senin">Пн</string>
   <string name="hari_minggu">Нд</string>
   <string name="size_hasil">%d результатів</string>
-  <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Шукати вірші які містять наступні слова: [b]%s[/b]</string>
+  <string name="search_searching_tokens">Шукати вірші які містять наступні слова: [b]%s[/b]</string>
   <string name="pilih_setidaknya_satu_kitab">Виберіть принаймі одну книгу для пошуку</string>
   <string name="pengunduhan_dibatalkan">Завантаження відмінено.</string>
   <string name="sedang_mendekompres_harap_tunggu">Витягання. Будь-ласка зачекайте...</string>

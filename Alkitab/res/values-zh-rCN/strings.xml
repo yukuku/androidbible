@@ -57,7 +57,7 @@
   <string name="hari_senin">星期一</string>
   <string name="hari_minggu">星期日</string>
   <string name="size_hasil">%d 的结果</string>
-  <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">正在寻找含有下列词语的诗句： [b]%s[/b]</string>
+  <string name="search_searching_tokens">正在寻找含有下列词语的诗句： [b]%s[/b]</string>
   <string name="pilih_setidaknya_satu_kitab">要搜索, 至少选择一本书。</string>
   <string name="pengunduhan_dibatalkan">下载取消.</string>
   <string name="sedang_mendekompres_harap_tunggu">正在解压。 请稍候…</string>

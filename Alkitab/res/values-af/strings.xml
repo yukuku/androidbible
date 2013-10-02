@@ -57,7 +57,7 @@
   <string name="hari_senin">Maan</string>
   <string name="hari_minggu">Son</string>
   <string name="size_hasil">%d resultate</string>
-  <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Soek verse wat die volgende woorde bevat: [b]%s[/b]</string>
+  <string name="search_searching_tokens">Soek verse wat die volgende woorde bevat: [b]%s[/b]</string>
   <string name="pilih_setidaknya_satu_kitab">Kies ten minste een boek om te soek.</string>
   <string name="pengunduhan_dibatalkan">Aflaai gekanselleer.</string>
   <string name="sedang_mendekompres_harap_tunggu">Dekompressie. Wag asseblief</string>

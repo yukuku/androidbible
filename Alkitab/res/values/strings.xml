@@ -56,7 +56,7 @@
     <string name="hari_senin">Mon</string>
     <string name="hari_minggu">Sun</string>
     <string name="size_hasil">%d results</string>
-    <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Searching for verses containing the following words: [b]%s[/b]</string>
+    <string name="search_searching_tokens">Searching for verses containing: %s</string>
     <string name="pilih_setidaknya_satu_kitab">Choose at least one book to search.</string>
     <string name="pengunduhan_dibatalkan">Download canceled.</string>
     <string name="sedang_mendekompres_harap_tunggu">Decompressing. Please wait…</string>
@@ -236,17 +236,6 @@
     <string name="desc_next_chapter">Next chapter</string>
     <string name="desc_drag_to_reorder_labels">Drag to reorder labels</string>
     
-    <!-- Lastly, about -->
-    <string name="teks_about">Developed by [b]yuku[/b], 2009-2013[br/]
-    	• Website: androidbible.blogspot.com[br/] 
-		• Google+: gplus.to/androidbible[br/]
-    	• Mailing list: groups.google.com/group/androidbible[br/]
-    	[br/]
-		[b]Contributors:[/b][br/]
-		• [b]Jaya Satrio Hendrick[/b] icons[br/]
-		• [b]Yohanes Nugroho[/b] BiblePlus+ PDB reader[br/]
-		• and many more people who contributed ideas, patches, bug reports, copy of songs, information about Bible translations, etc!</string>
-		
     <string name="intent_filter_open_yes_file">Open YES file</string>
     <string name="intent_filter_open_pdb_file">Open PDB file</string>
     <string name="intent_filter_open_pdb_or_yes_file">Open PDB/YES file</string>

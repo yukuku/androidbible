@@ -8,14 +8,17 @@ import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 import yuku.afw.V;
 import yuku.alkitab.R;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class AboutActivity extends BaseActivity {
 	public static final String TAG = AboutActivity.class.getSimpleName();
@@ -34,8 +37,15 @@ public class AboutActivity extends BaseActivity {
 		lAbout = V.get(this, R.id.lAbout);
 		lTranslators = V.get(this, R.id.lTranslators);
 
-		// preprocess html
-		lAbout.setText(Html.fromHtml(U.preprocessHtml(lAbout.getText().toString())));
+		try {
+			final InputStream input = getAssets().open("help/about.html");
+			final byte[] buf = new byte[input.available()];
+			input.read(buf);
+			lAbout.setText(Html.fromHtml(new String(buf, "utf-8")));
+			lAbout.setMovementMethod(LinkMovementMethod.getInstance());
+		} catch (IOException e) {
+			Log.e(TAG, "reading about text", e);
+		}
 
 		String[] translators = getResources().getStringArray(R.array.translators_list);
 		SpannableStringBuilder sb = new SpannableStringBuilder();

@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.util.SparseBooleanArray;
 import android.view.View;
@@ -494,15 +493,9 @@ public class Search2Activity extends BaseActivity {
 		final String[] tokens = QueryTokenizer.tokenize(query);
 		
 		final ProgressDialog pd = new ProgressDialog(this);
-		pd.setMessage(Html.fromHtml(String.format(U.preprocessHtml(getString(R.string.sedang_mencari_ayat_yang_mengandung_kata_kata_xkata)), Arrays.toString(tokens))));
+		pd.setMessage(getString(R.string.search_searching_tokens, Arrays.toString(tokens)));
 		pd.setCancelable(false);
 		pd.setIndeterminate(true);
-		pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
-			@Override public void onDismiss(DialogInterface dialog) {
-				// force show
-				pd.show();
-			}
-		});
 		pd.show();
 		
 		new AsyncTask<Void, Void, IntArrayList>() {

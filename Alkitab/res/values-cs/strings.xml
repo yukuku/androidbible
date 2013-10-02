@@ -56,7 +56,7 @@
   <string name="hari_senin">Po</string>
   <string name="hari_minggu">Ne</string>
   <string name="size_hasil">%d výsledky</string>
-  <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Vyhledávání veršů, které obsahují tato slova: [b]%s[/b]</string>
+  <string name="search_searching_tokens">Vyhledávání veršů, které obsahují tato slova: [b]%s[/b]</string>
   <string name="pilih_setidaknya_satu_kitab">Zvolte alespoň jednu knihu pro vyhledávání.</string>
   <string name="pengunduhan_dibatalkan">Stahování přerušeno.</string>
   <string name="sedang_mendekompres_harap_tunggu">Rozbaluji. Prosím čekejte...</string>

@@ -58,7 +58,7 @@ Existierende Sicherungen werden überschrieben.</string>
   <string name="hari_senin">Montag</string>
   <string name="hari_minggu">Sonntag</string>
   <string name="size_hasil">%d Ergebnis</string>
-  <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Verse mit folgenden Wörten gesucht: [b]%s[/b]</string>
+  <string name="search_searching_tokens">Verse mit folgenden Wörten gesucht: [b]%s[/b]</string>
   <string name="pilih_setidaknya_satu_kitab">Gebe mindestens ein Buch zur Suche an</string>
   <string name="pengunduhan_dibatalkan">Download abgebrochen</string>
   <string name="sedang_mendekompres_harap_tunggu">Dekomprimieren. Bitte gedulden…</string>

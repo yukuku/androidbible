@@ -64,6 +64,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -710,9 +712,13 @@ public class VersionsActivity extends BaseActivity {
 		
 		ConvertOptionsDialog.ConvertOptionsCallback callback = new ConvertOptionsDialog.ConvertOptionsCallback() {
 			private void showPdbReadErrorDialog(Throwable exception) {
+				final StringWriter sw = new StringWriter(400);
+				sw.append('(').append(exception.getClass().getName()).append("): ").append(exception.getMessage()).append('\n'); //$NON-NLS-1$
+				exception.printStackTrace(new PrintWriter(sw));
+
 				new AlertDialog.Builder(VersionsActivity.this)
 				.setTitle(R.string.ed_error_reading_pdb_file)
-				.setMessage(exception instanceof ConvertOptionsDialog.PdbKnownErrorException? exception.getMessage(): (getString(R.string.ed_details) + U.showException(exception)))
+				.setMessage(exception instanceof ConvertOptionsDialog.PdbKnownErrorException? exception.getMessage(): (getString(R.string.ed_details) + sw.toString()))
 				.setPositiveButton(R.string.ok, null)
 				.show();
 			};

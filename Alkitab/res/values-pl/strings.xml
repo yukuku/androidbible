@@ -57,7 +57,7 @@
   <string name="hari_senin">Poniedziałek</string>
   <string name="hari_minggu">Niedziela</string>
   <string name="size_hasil">%d wyników</string>
-  <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Szukanie wersów zawierających następujące słowa: [b]%s[/b]</string>
+  <string name="search_searching_tokens">Szukanie wersów zawierających następujące słowa: [b]%s[/b]</string>
   <string name="pilih_setidaknya_satu_kitab">Wybierz przynajmniej jedną księg do przeszukania.</string>
   <string name="pengunduhan_dibatalkan">Anulowano pobieranie.</string>
   <string name="sedang_mendekompres_harap_tunggu">Rozpakowywanie. Proszę czekać…</string>

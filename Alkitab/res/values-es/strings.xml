@@ -57,7 +57,7 @@
   <string name="hari_senin">Lun</string>
   <string name="hari_minggu">Dom</string>
   <string name="size_hasil">%d resultados</string>
-  <string name="sedang_mencari_ayat_yang_mengandung_kata_kata_xkata">Buscando versículos que contengan las siguientes palabras:[b]%s[/b]</string>
+  <string name="search_searching_tokens">Buscando versículos que contengan las siguientes palabras:[b]%s[/b]</string>
   <string name="pilih_setidaknya_satu_kitab">Elija al menos un libro para buscar.</string>
   <string name="pengunduhan_dibatalkan">Descarga cancelada.</string>
   <string name="sedang_mendekompres_harap_tunggu">Descomprimiendo. Por favor espere…</string>
