@@ -1,7 +1,9 @@
 package yuku.alkitabconverter.yet;
 
 import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitabconverter.util.Rec;
+import yuku.alkitabconverter.util.XrefDb;
 import yuku.alkitabconverter.yes1.Yes1File;
 
 import java.io.File;
@@ -20,6 +22,7 @@ public class YetFileOutput {
 	private Map<Integer, String> bookNames_0 = new LinkedHashMap<Integer, String>();
 	private List<Rec> verses;
 	private Yes1File.PericopeData pericopeData;
+	private XrefDb xrefDb;
 
 	public YetFileOutput(File output) {
 		this.output = output;
@@ -49,6 +52,10 @@ public class YetFileOutput {
 		this.pericopeData = pericopeData;
 	}
 
+	public void setXrefDb(final XrefDb xrefDb) {
+		this.xrefDb = xrefDb;
+	}
+
 	public void write() throws Exception {
 		final PrintWriter pw = new PrintWriter(output, "utf-8");
 
@@ -75,6 +82,16 @@ public class YetFileOutput {
 					pw.printf(Locale.US, "%s\t%s\n", "parallel", parallel);
 				}
 			}
+		}
+
+		// xref
+		if (xrefDb != null) {
+			xrefDb.processEach(new XrefDb.XrefProcessor() {
+				@Override
+				public void process(final XrefEntry xe, final int ari, final int entryIndex) {
+					pw.printf(Locale.US, "%s\t%s\t%s\t%s\t%s\t%s\t%s\n", "xref", Ari.toBook(ari) + 1, Ari.toChapter(ari), Ari.toVerse(ari), entryIndex + 1, xe.source == null? "": xe.source, xe.target);
+				}
+			});
 		}
 
 		pw.close();

@@ -14,8 +14,11 @@ public class XrefDb {
 	}
 	
 	Map<Integer, List<XrefEntry>> map = new TreeMap<Integer, List<XrefEntry>>();
-	
-	public void addBegin(int ari) {
+
+	/**
+	 * @return index of xref for this ari, starts from 0.
+	 */
+	public int addBegin(int ari) {
 		List<XrefEntry> list = map.get(ari);
 		if (list == null) {
 			list = new ArrayList<XrefEntry>();
@@ -24,6 +27,8 @@ public class XrefDb {
 		
 		XrefEntry xe = new XrefEntry();
 		list.add(xe);
+
+		return list.size() - 1;
 	}
 	
 	/** must be after addBegin */
@@ -56,10 +61,12 @@ public class XrefDb {
 		xe.target = target.trim();
 	}
 
-	/** Combines addBegin, addSource and addTarget into a single call.
+	/**
+	 * Combines addBegin, addSource and addTarget into a single call.
 	 * @param content The complete xref between \x and \x*. e.g. "+ Joh 3:16; Joh 16:29"
+	 * @return index of xref for this ari, starts from 0.
 	 */
-	public void addComplete(final int ari, final String content) {
+	public int addComplete(final int ari, final String content) {
 		final String target;
 
 		// remove marker [a-zA-Z+-]<space> at the beginning
@@ -81,6 +88,8 @@ public class XrefDb {
 
 		xe.source = null;
 		xe.target = target;
+
+		return list.size() - 1;
 	}
 
 	public void dump() {
@@ -88,7 +97,7 @@ public class XrefDb {
 			List<XrefEntry> xes = e.getValue();
 			for (int i = 0; i < xes.size(); i++) {
 				XrefEntry xe = xes.get(i);
-				System.out.printf("xref 0x%06x(%d): [%s] [%s]%n", e.getKey(), i, xe.source, xe.target);
+				System.out.printf("xref 0x%06x(%d): [%s] [%s]%n", e.getKey(), i + 1, xe.source, xe.target);
 			}
 		}
 	}

@@ -132,6 +132,8 @@ public class Proses2 {
 
 		yet.setPericopeData(pericopeData);
 
+		yet.setXrefDb(xrefDb);
+
 		yet.write();
 	}
 
@@ -364,11 +366,13 @@ public class Proses2 {
 					// compatibility when \x and \x* are written without any \xo or \xt markers.
 					// Check chars, if it contains more than just spaces, -, +, or a character, it means it looks like a complete xref entry.
 					final String content = chars;
+					final int xrefIndex;
 					if (content.replaceFirst("[-+a-zA-Z]", "").replaceAll("\\s", "").length() > 0) {
-						xrefDb.addComplete(ari, chars);
+						xrefIndex = xrefDb.addComplete(ari, chars);
 					} else {
-						xrefDb.addBegin(ari);
+						xrefIndex = xrefDb.addBegin(ari);
 					}
+					teksDb.append(ari, "@<x" + (xrefIndex + 1) + "@>@/", -1);
 				} else if (xref_state == 1) {
 					xrefDb.addSource(ari, chars);
 				} else if (xref_state == 2) {
