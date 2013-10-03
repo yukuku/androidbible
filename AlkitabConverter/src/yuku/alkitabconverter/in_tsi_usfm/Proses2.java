@@ -5,17 +5,23 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.model.XrefEntry;
+import yuku.alkitabconverter.util.IntArrayList;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.TextDb;
+import yuku.alkitabconverter.util.XrefDb;
 import yuku.alkitabconverter.yes1.Yes1File.PericopeData;
 import yuku.alkitabconverter.yes1.Yes1File.PericopeData.Entry;
 import yuku.alkitabconverter.yet.YetFileOutput;
+import yuku.bintex.BintexWriter;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +43,8 @@ public class Proses2 {
 	TextDb teksDb = new TextDb();
 	StringBuilder misteri = new StringBuilder();
 	StringBuilder footnote = new StringBuilder();
+	XrefDb xrefDb = new XrefDb();
+
 	PericopeData pericopeData = new PericopeData();
 	{
 		pericopeData.entries = new ArrayList<Entry>();
@@ -71,12 +79,36 @@ public class Proses2 {
 			System.out.println("file " + file + " done; now total rec: " + teksDb.size());
 		}
 		
-		System.out.println("### MISTERI:");
+		System.out.println("OUTPUT MISTERI:");
 		System.out.println(misteri);
 		
-
-		System.out.println("### FOOTNOTE:");
+		System.out.println("OUTPUT FOOTNOTE:");
 		System.out.println(footnote);
+
+		System.out.println("OUTPUT XREF:");
+		xrefDb.processEach(XrefDb.defaultShiftTbProcessor);
+
+		// prepare for xref file
+		final IntArrayList xref_index_ari_to_pos = new IntArrayList();
+		final IntArrayList xref_index_pos_to_offset = new IntArrayList();
+		final ByteArrayOutputStream xref_content_buf = new ByteArrayOutputStream();
+		final BintexWriter xref_content_bw = new BintexWriter(xref_content_buf);
+		xrefDb.processEach(new XrefDb.XrefProcessor() {
+			@Override public void process(XrefEntry xe, int ari, int entryIndex) {
+				try {
+					int offset = xref_content_bw.getPos();
+					xref_content_bw.writeValueString(xe.source);
+					xref_content_bw.writeValueString(xe.target);
+
+					xref_index_ari_to_pos.add(ari);
+					xref_index_pos_to_offset.add(offset);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		});
+
+		xrefDb.dump();
 
 		// POST-PROCESS
 		
@@ -128,6 +160,7 @@ public class Proses2 {
 		// states
 		int sLevel = 0;
 		int menjorokTeks = -1; // -2 adalah para start; 0 1 2 3 4 adalah q level;
+		int xref_state = -1; // 0 is initial (just encountered xref tag <x>), 1 is source, 2 is target
 
 		// for preventing split of characters in text elements
 		StringBuilder charactersBuffer = new StringBuilder();
@@ -222,6 +255,11 @@ public class Proses2 {
 				sLevel = Integer.parseInt(attributes.getValue("level"));
 			} else if (alamat.endsWith("/x")) {
 				tujuanTulis.push(tujuanTulis_xref);
+				xref_state = 0;
+			} else if (alamat.endsWith("/x/milestone")) { // after milestone, we will have xref source
+				xref_state = 1;
+			} else if (alamat.endsWith("/x/xt")) { // after xt, we will have xref target
+				xref_state = 2;
 			} else if (alamat.endsWith("/wj")) {
 				tujuanTulis.push(tujuanTulis_teks);
 				tulis("@6");
@@ -320,7 +358,24 @@ public class Proses2 {
 				}
 
 			} else if (tujuan == tujuanTulis_xref) {
-				System.out.println("$tulis ke xref " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
+				System.out.println("$tulis ke xref (state=" + xref_state + ") " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
+				int ari = Ari.encode(kitab_0, pasal_1, ayat_1);
+				if (xref_state == 0) {
+					// compatibility when \x and \x* are written without any \xo or \xt markers.
+					// Check chars, if it contains more than just spaces, -, +, or a character, it means it looks like a complete xref entry.
+					final String content = chars;
+					if (content.replaceFirst("[-+a-zA-Z]", "").replaceAll("\\s", "").length() > 0) {
+						xrefDb.addComplete(ari, chars);
+					} else {
+						xrefDb.addBegin(ari);
+					}
+				} else if (xref_state == 1) {
+					xrefDb.addSource(ari, chars);
+				} else if (xref_state == 2) {
+					xrefDb.addTarget(ari, chars);
+				} else {
+					throw new RuntimeException("xref_state not supported");
+				}
 			} else if (tujuan == tujuanTulis_footnote) {
 				System.out.println("$tulis ke footnote " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
 				footnote.append(chars).append('\n');
