@@ -1,7 +1,9 @@
 package yuku.alkitabconverter.yet;
 
 import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.model.FootnoteEntry;
 import yuku.alkitab.base.model.XrefEntry;
+import yuku.alkitabconverter.util.FootnoteDb;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.XrefDb;
 import yuku.alkitabconverter.yes1.Yes1File;
@@ -23,6 +25,7 @@ public class YetFileOutput {
 	private List<Rec> verses;
 	private Yes1File.PericopeData pericopeData;
 	private XrefDb xrefDb;
+	private FootnoteDb footnoteDb;
 
 	public YetFileOutput(File output) {
 		this.output = output;
@@ -95,6 +98,20 @@ public class YetFileOutput {
 			});
 		}
 
+		// footnotes
+		if (footnoteDb != null) {
+			footnoteDb.processEach(new FootnoteDb.FootnoteProcessor() {
+				@Override
+				public void process(final FootnoteEntry fe, final int ari, final int entryIndex) {
+					pw.printf(Locale.US, "%s\t%s\t%s\t%s\t%s\t%s\n", "footnote", Ari.toBook(ari) + 1, Ari.toChapter(ari), Ari.toVerse(ari), entryIndex + 1, fe.content);
+				}
+			});
+		}
+
 		pw.close();
+	}
+
+	public void setFootnoteDb(final FootnoteDb footnoteDb) {
+		this.footnoteDb = footnoteDb;
 	}
 }

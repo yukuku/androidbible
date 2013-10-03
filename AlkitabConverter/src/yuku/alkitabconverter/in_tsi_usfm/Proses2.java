@@ -6,6 +6,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.XrefEntry;
+import yuku.alkitabconverter.util.FootnoteDb;
 import yuku.alkitabconverter.util.IntArrayList;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.TextDb;
@@ -42,8 +43,8 @@ public class Proses2 {
 
 	TextDb teksDb = new TextDb();
 	StringBuilder misteri = new StringBuilder();
-	StringBuilder footnote = new StringBuilder();
 	XrefDb xrefDb = new XrefDb();
+	FootnoteDb footnoteDb = new FootnoteDb();
 
 	PericopeData pericopeData = new PericopeData();
 	{
@@ -81,9 +82,6 @@ public class Proses2 {
 		
 		System.out.println("OUTPUT MISTERI:");
 		System.out.println(misteri);
-		
-		System.out.println("OUTPUT FOOTNOTE:");
-		System.out.println(footnote);
 
 		System.out.println("OUTPUT XREF:");
 		xrefDb.processEach(XrefDb.defaultShiftTbProcessor);
@@ -110,6 +108,9 @@ public class Proses2 {
 
 		xrefDb.dump();
 
+		System.out.println("OUTPUT FOOTNOTE:");
+		footnoteDb.dump();
+
 		// POST-PROCESS
 		
 		teksDb.normalize();
@@ -125,14 +126,11 @@ public class Proses2 {
 		yet.setInfo("shortName", INFO_SHORT_NAME);
 		yet.setInfo("longName", INFO_LONG_NAME);
 		yet.setInfo("description", INFO_DESCRIPTION);
-
 		yet.setVerses(xrec);
-
 		yet.setBooksFromFileLines(INPUT_BOOK_NAMES);
-
 		yet.setPericopeData(pericopeData);
-
 		yet.setXrefDb(xrefDb);
+		yet.setFootnoteDb(footnoteDb);
 
 		yet.write();
 	}
@@ -163,6 +161,7 @@ public class Proses2 {
 		int sLevel = 0;
 		int menjorokTeks = -1; // -2 adalah para start; 0 1 2 3 4 adalah q level;
 		int xref_state = -1; // 0 is initial (just encountered xref tag <x>), 1 is source, 2 is target
+		int footnote_state = -1; // 0 is initial (just encountered footnote tag <f>), 1 is fr (reference), 2 is fk (keywords), 3 is ft (text)
 
 		// for preventing split of characters in text elements
 		StringBuilder charactersBuffer = new StringBuilder();
@@ -205,6 +204,13 @@ public class Proses2 {
 				}
 			} else if (alamat.endsWith("/f")) {
 				tujuanTulis.push(tujuanTulis_footnote);
+				footnote_state = 0;
+			} else if (alamat.endsWith("/f/fr")) {
+				footnote_state = 1;
+			} else if (alamat.endsWith("/f/fk")) {
+				footnote_state = 2;
+			} else if (alamat.endsWith("/f/ft")) {
+				footnote_state = 3;
 			} else if (alamat.endsWith("/p")) {
 				String sfm = attributes.getValue("sfm");
 				if (sfm != null) {
@@ -305,7 +311,12 @@ public class Proses2 {
 
 		void charactersCompleted(String text) {
 			System.out.println("#text:" + text);
-			if (text.trim().length() == 0) return;
+			if (text.trim().length() == 0) {
+				// when processing footnotes, we still continue even though the text is whitespace only.
+				if (tujuanTulis.peek() != tujuanTulis_footnote) {
+					return;
+				}
+			}
 			tulis(text);
 		}
 
@@ -380,9 +391,35 @@ public class Proses2 {
 				} else {
 					throw new RuntimeException("xref_state not supported");
 				}
+
 			} else if (tujuan == tujuanTulis_footnote) {
-				System.out.println("$tulis ke footnote " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
-				footnote.append(chars).append('\n');
+				System.out.println("$tulis ke footnote (state=" + footnote_state + ") " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
+				final int ari = Ari.encode(kitab_0, pasal_1, ayat_1);
+				if (footnote_state == 0) {
+					final String content;
+
+					// remove caller at the beginning
+					if (chars.matches("[a-zA-Z+-]\\s.*")) {
+						// remove that first 2 characters
+						content = chars.substring(2);
+					} else {
+						content = chars;
+					}
+
+					final int footnoteIndex = footnoteDb.addBegin(ari);
+
+					if (content.trim().length() != 0) {
+						footnoteDb.appendText(ari, content.replace("\n", " "));
+					}
+
+					teksDb.append(ari, "@<f" + (footnoteIndex + 1) + "@>@/", -1);
+				} else if (footnote_state == 2) {
+					footnoteDb.appendText(ari, "@9" + chars.replace("\n", " ") + "@7");
+				} else if (footnote_state == 1 || footnote_state == 3) {
+					footnoteDb.appendText(ari, chars.replace("\n", " "));
+				} else {
+					throw new RuntimeException("footnote_state not supported");
+				}
 			}
 		}
 
