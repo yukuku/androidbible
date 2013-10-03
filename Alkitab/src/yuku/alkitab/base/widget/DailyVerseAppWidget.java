@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
 import android.widget.RemoteViews;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
@@ -49,18 +48,19 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 
 		//Bypass onReceive since the super does not pass the intent to onUpdate
 		Bundle bundle = intent.getExtras();
-		String bundleString = bundle.getString("app_widget_action");
-		if (bundleString!=null && bundleString.equals("update_widget")) {
-			intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-			int[] arrayInt = bundle.getIntArray(AppWidgetManager.EXTRA_APPWIDGET_IDS);
-			if (arrayInt != null) {
-				intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, arrayInt);
-				int buttonRequest = intent.getIntExtra("app_widget_button", 0);
-				update(context, AppWidgetManager.getInstance(context), arrayInt, buttonRequest);
+		if (bundle != null) {
+			String bundleString = bundle.getString("app_widget_action");
+			if (bundleString!=null && bundleString.equals("update_widget")) {
+				intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+				int[] arrayInt = bundle.getIntArray(AppWidgetManager.EXTRA_APPWIDGET_IDS);
+				if (arrayInt != null) {
+					intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, arrayInt);
+					int buttonRequest = intent.getIntExtra("app_widget_button", 0);
+					update(context, AppWidgetManager.getInstance(context), arrayInt, buttonRequest);
+				}
 			}
-		} else {
-			super.onReceive(context, intent);
 		}
+		super.onReceive(context, intent);
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 		if (version == null) {
 			bibleVersion = S.activeVersion;
 		} else {
-			bibleVersion = loadLastVersion(version);
+			bibleVersion = getVersion(version);
 		}
 		Integer[] aris = getVerse(appWidgetId, buttonRequest);
 		SpannableStringBuilder verseText = getText(bibleVersion, aris);
@@ -188,16 +188,20 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 		return aris.get(random);
 	}
 
-	private static Version loadLastVersion(String lastVersion) {
+	private static Version getVersion(String version) {
 		AppConfig c = AppConfig.get();
 
-		if (lastVersion == null || VersionsActivity.MVersionInternal.getVersionInternalId().equals(lastVersion)) {
+		if (version == null) {
 			return null;
+		}
+
+		if (VersionsActivity.MVersionInternal.getVersionInternalId().equals(version)) {
+			return Version.getInternalVersion();
 		}
 
 		// coba preset dulu!
 		for (VersionsActivity.MVersionPreset preset: c.presets) { // 2. preset
-			if (preset.getVersionId().equals(lastVersion)) {
+			if (preset.getVersionId().equals(version)) {
 				if (preset.hasDataFile()) {
 					return preset.getVersion();
 				} else {
@@ -209,7 +213,7 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 		// masih belum cocok, mari kita cari di daftar yes
 		List<VersionsActivity.MVersionYes> yeses = S.getDb().listAllVersions();
 		for (VersionsActivity.MVersionYes yes: yeses) {
-			if (yes.getVersionId().equals(lastVersion)) {
+			if (yes.getVersionId().equals(version)) {
 				if (yes.hasDataFile()) {
 					return yes.getVersion();
 				} else {
