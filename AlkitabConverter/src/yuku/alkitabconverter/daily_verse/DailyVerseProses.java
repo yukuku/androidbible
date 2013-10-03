@@ -1,0 +1,72 @@
+package yuku.alkitabconverter.daily_verse;
+
+import yuku.alkitab.yes2.io.RandomOutputStream;
+import yuku.bintex.BintexWriter;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class DailyVerseProses {
+
+	private static final String INPUT_FILE = System.getProperty("user.dir") + "/AlkitabConverter/file/daily_verse.csv";
+	private static final String OUTPUT_FILE = System.getProperty("user.dir") + "/AlkitabConverter/file/daily_verse.bt";
+	private List<Integer> aris = new ArrayList<>();
+	private List<Integer> verseCounts = new ArrayList<>();
+
+	public static void main(String[] args) {
+		DailyVerseProses proses = new DailyVerseProses();
+		proses.parse();
+		try {
+			File file = new File(OUTPUT_FILE);
+			RandomAccessFile raf = new RandomAccessFile(file, "rw");
+			raf.setLength(0);
+			RandomOutputStream output = new RandomOutputStream(raf);
+			BintexWriter bw = new BintexWriter(output);
+			proses.write(bw);
+			bw.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("Process finished.");
+
+	}
+	private void parse() {
+		try {
+			Scanner scanner = new Scanner(new File(INPUT_FILE), "utf-8");
+
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				String[] data = line.split(",");
+				aris.add(Integer.parseInt(data[0]));
+				verseCounts.add(Integer.parseInt(data[1]));
+			}
+
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void write(BintexWriter bw) {
+		if (aris.size() == verseCounts.size()) {
+			for (int i = 0; i < aris.size(); i++) {
+				try {
+					bw.writeInt(aris.get(i));
+					bw.writeUint8(verseCounts.get(i));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+			}
+		}
+	}
+
+}
