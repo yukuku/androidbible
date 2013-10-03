@@ -11,7 +11,9 @@ import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.UnderlineSpan;
+import android.util.Pair;
 import android.widget.RemoteViews;
+import yuku.afw.App;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
@@ -19,7 +21,10 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Version;
+import yuku.bintex.BintexReader;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -166,19 +171,8 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 	}
 
 	private static Integer[] getVerse(int appWidgetId) {
-		List<Integer[]> aris = new ArrayList<Integer[]>();
-
-		aris.add(new Integer[] {2753296});
-		aris.add(new Integer[] {257});
-		aris.add(new Integer[] {2884375, 257});
-		aris.add(new Integer[] {3146258,3146259});
-		aris.add(new Integer[] {2952461, 2952461});
-		aris.add(new Integer[] {2557449});
-		aris.add(new Integer[] {2557473});
-		aris.add(new Integer[] {3211787});
-		aris.add(new Integer[] {1185537,1185538});
-		aris.add(new Integer[] {1245702});
-		aris.add(new Integer[] {527384});
+		Pair<List<Integer>, List<Integer>> dailyVerses = listAllDailyVerses();
+		int size = dailyVerses.first.size();
 
 		String key = "app_widget_" + appWidgetId + "_click";
 		int numOfClick = Preferences.getInt(key, 0);
@@ -192,8 +186,36 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 
 		long randomNumberSeed = randomDay * 10000000 + appWidgetId * 100000 + numOfClick * 1000;
 		Random r = new Random(randomNumberSeed);
-		int random = (int) (r.nextDouble() * aris.size());
-		return aris.get(random);
+		int random = (int) (r.nextDouble() * size);
+
+		int verseCount = dailyVerses.second.get(random);
+		Integer[] verses = new Integer[verseCount];
+		verses[0] = dailyVerses.first.get(random);
+		for (int i = 1; i < verseCount; i++) {
+			verses[i] = verses[i - 1] + 1;
+		}
+		return verses;
+	}
+
+	private static Pair<List<Integer>, List<Integer>> listAllDailyVerses() {
+		List<Integer> aris = new ArrayList<Integer>();
+		List<Integer> verseCounts = new ArrayList<Integer>();
+		try {
+			InputStream is = App.context.getResources().openRawResource(R.raw.daily_verse);
+			BintexReader br = new BintexReader(is);
+			while (true) {
+				int ari = br.readInt();
+				if (ari == -1) {
+					break;
+				}
+				aris.add(ari);
+				verseCounts.add(br.readUint8());
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return Pair.create(aris, verseCounts);
 	}
 
 	private static Version getVersion(String version) {
