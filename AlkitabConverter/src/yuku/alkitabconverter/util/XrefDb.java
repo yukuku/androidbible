@@ -2,7 +2,6 @@ package yuku.alkitabconverter.util;
 
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.XrefEntry;
-import yuku.alkitab.base.util.Base64Mod;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,7 +104,7 @@ public class XrefDb {
 	}
 
 	public static XrefProcessor defaultShiftTbProcessor = new XrefDb.XrefProcessor() {
-		@Override public void process(XrefEntry xe, int ari, int entryIndex) {
+		@Override public void process(XrefEntry xe, int ari_location, int entryIndex) {
 			final List<int[]> pairs = new ArrayList<int[]>();
 			DesktopVerseFinder.findInText(xe.target, new DesktopVerseFinder.DetectorListener() {
 				@Override public boolean onVerseDetected(int start, int end, String verse) {
@@ -144,79 +143,60 @@ public class XrefDb {
 				}
 
 				{
-					StringBuilder lid_s = new StringBuilder();
-					int last_lid = 0;
+					StringBuilder ariRanges_s = new StringBuilder();
 					boolean isStart = true;
 					boolean endWritten = false; // this can be set to true in isstart portion if the end verse does not need to be written
 
 					for (int j = 0; j < ariRanges.size(); j++, isStart = !isStart) {
-						int lid = KjvUtils.ariToLid(ariRanges.get(j));
-						if (lid <= 0) throw new RuntimeException(String.format("invalid ari found 0x%06x", ariRanges.get(j)));
+						final int ari_target = ariRanges.get(j);
 
-						int enc_value = -1; // just to prevent forgetting
-						char[] chars;
+						{ // just for checking
+							int lid = KjvUtils.ariToLid(ari_target);
+							if (lid <= 0) throw new RuntimeException(String.format("invalid ari found 0x%06x", ari_target));
+						}
+
+						final String enc_value;
 						if (isStart) {
 							endWritten = false;
-							// 00 <addr 4bit> = 1char positive delta from last lid (max 16)
-							// 01 <addr 4bit> = 1char positive delta from last lid (max 16), end == start
-							// 100 <addr 9bit> = 2char positive delta from last lid (max 512)
-							// 101 <addr 9bit> = 2char positive delta from last lid (max 512), end == start
-							// 110 <addr 15bit> = 3char absolute
-							// 111 <addr 15bit> = 3char absolute, end == start
-							int lid_end = KjvUtils.ariToLid(ariRanges.get(j + 1));
-							if (last_lid == 0 || (lid - last_lid) > 512 || (lid - last_lid) < 0) { // use 3 6-bit chars
-								if (lid_end == lid) {
-									enc_value = 0x38000 | lid;
-									endWritten = true;
-								} else {
-									enc_value = 0x30000 | lid;
-								}
-								chars = Base64Mod.encodeToThreeChars(enc_value);
-							} else if ((lid - last_lid) > 16) { // use 2 6-bit chars
-								if (lid_end == lid) {
-									enc_value = 0xa00 | (lid - last_lid);
-									endWritten = true;
-								} else {
-									enc_value = 0x800 | (lid - last_lid);
-								}
-								chars = Base64Mod.encodeToTwoChars(enc_value);
-							} else { // use 1 6-bit char
-								if (lid_end == lid) {
-									enc_value = 0x10 | (lid - last_lid);
-									endWritten = true;
-								} else {
-									enc_value = (lid - last_lid);
-								}
-								chars = Base64Mod.encodeToOneChar(enc_value);
+							final int ari_end = ariRanges.get(j + 1);
+
+							enc_value = ariToString(ari_target);
+
+							if (ari_end == ari_target) {
+								endWritten = true;
 							}
 						} else {
-							// 0 <delta 5bit> = 1char positive delta from start (min 1, max 32)
-							// 10 <delta 10bit> = 2char positive delta from start (max 1024)
-							// 110 <addr 15bit> = 3char absolute
 							if (endWritten) { // already mentioned by start, no need to do anything
-								chars = new char[0];
-							} else if ((lid - last_lid) > 1024) { // use 3 6-bit chars
-								enc_value = 0x30000 | lid;
-								chars = Base64Mod.encodeToThreeChars(enc_value);
-							} else if ((lid - last_lid) > 32) { // use 2 6-bit chars
-								enc_value = 0x800 | (lid - last_lid);
-								chars = Base64Mod.encodeToTwoChars(enc_value);
-							} else { // use 1 6-bit char
-								enc_value = (lid - last_lid);
-								chars = Base64Mod.encodeToOneChar(enc_value);
+								enc_value = null;
+							} else {
+								enc_value = ariToString(ari_target);
 							}
 						}
-						lid_s.append(chars);
-						// for debug lid_s.append("(").append(String.format("0x%x", enc_value)).append(")");
 
-						last_lid = lid;
+						if (isStart) {
+							if (ariRanges_s.length() != 0) {
+								ariRanges_s.append(",");
+							}
+							ariRanges_s.append(enc_value);
+						} else {
+							if (enc_value != null) {
+								ariRanges_s.append("-").append(enc_value);
+							}
+						}
 					}
 
-					target = target.substring(0, pair[0]) + "@<t" + lid_s + "@>" + verse + "@/" + target.substring(pair[1]);
+					target = target.substring(0, pair[0]) + "@<ta:" + ariRanges_s + "@>" + verse + "@/" + target.substring(pair[1]);
 				}
 			}
 
 			xe.target = target;
+		}
+
+		private String ariToString(final int ari) {
+			final String ari_target_hex = "0x" + Integer.toHexString(ari);
+			final String ari_target_dec = Integer.toString(ari);
+
+			return ari_target_hex.length() <= ari_target_dec.length()? ari_target_hex: ari_target_dec;
 		}
 	};
 }
