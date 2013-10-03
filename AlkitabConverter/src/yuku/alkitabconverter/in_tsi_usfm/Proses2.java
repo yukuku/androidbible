@@ -127,7 +127,7 @@ public class Proses2 {
 
 		// states
 		int sLevel = 0;
-		int menjorokTeks = -1; // -1 p; 1 2 3 adalah q level;
+		int menjorokTeks = -1; // -2 adalah para start; 0 1 2 3 4 adalah q level;
 
 		// for preventing split of characters in text elements
 		StringBuilder charactersBuffer = new StringBuilder();
@@ -207,7 +207,7 @@ public class Proses2 {
 					}
 				} else {
 					tujuanTulis.push(tujuanTulis_teks);
-					menjorokTeks = -1;
+					menjorokTeks = -2;
 				}
 			} else if (alamat.endsWith("/q")) {
 				tujuanTulis.push(tujuanTulis_teks);
