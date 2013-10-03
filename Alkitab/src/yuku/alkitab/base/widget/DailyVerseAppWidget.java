@@ -1,8 +1,10 @@
 package yuku.alkitab.base.widget;
 
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,36 +32,18 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 
 	@Override
 	public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
-		update(context, appWidgetManager, appWidgetIds, 0);
-	}
-
-	private void update(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds, int buttonRequest) {
 
 		final int N = appWidgetIds.length;
 		for (int i = 0; i < N; i++) {
 			int appWidgetId = appWidgetIds[i];
 			String version = Preferences.getString("app_widget_" + appWidgetId + "_version", S.activeVersionId);
-			buildUpdate(context, appWidgetManager, appWidgetId, version, buttonRequest);
+			buildUpdate(context, appWidgetManager, appWidgetId, version);
 		}
+		setAlarm(context, appWidgetIds);
 	}
 
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
-
-		//Bypass onReceive since the super does not pass the intent to onUpdate
-		Bundle bundle = intent.getExtras();
-		if (bundle != null) {
-			String bundleString = bundle.getString("app_widget_action");
-			if (bundleString!=null && bundleString.equals("update_widget")) {
-				intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-				int[] arrayInt = bundle.getIntArray(AppWidgetManager.EXTRA_APPWIDGET_IDS);
-				if (arrayInt != null) {
-					intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, arrayInt);
-					int buttonRequest = intent.getIntExtra("app_widget_button", 0);
-					update(context, AppWidgetManager.getInstance(context), arrayInt, buttonRequest);
-				}
-			}
-		}
 		super.onReceive(context, intent);
 	}
 
@@ -67,14 +51,13 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 	public void onDeleted(final Context context, final int[] appWidgetIds) {
 		super.onDeleted(context, appWidgetIds);
 		for (int appWidgetId : appWidgetIds) {
-			String key = "app_widget_" + appWidgetId;
-			Preferences.remove(key);
-			Preferences.remove(key + "_version");
+			String keyPrefix = "app_widget_" + appWidgetId;
+			Preferences.remove(keyPrefix + "_click");
+			Preferences.remove(keyPrefix + "_version");
 		}
-
 	}
 
-	public static void buildUpdate(Context context, AppWidgetManager appWidgetManager, int appWidgetId, String version, int buttonRequest) {
+	public static void buildUpdate(Context context, AppWidgetManager appWidgetManager, int appWidgetId, String version) {
 
 		//Get the version and the verses
 		Version bibleVersion;
@@ -83,7 +66,7 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 		} else {
 			bibleVersion = getVersion(version);
 		}
-		Integer[] aris = getVerse(appWidgetId, buttonRequest);
+		Integer[] aris = getVerse(appWidgetId);
 		SpannableStringBuilder verseText = getText(bibleVersion, aris);
 
 		//Make new view
@@ -95,7 +78,7 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 		int[] ids = {appWidgetId};
 		//--Prev button
 		{
-			Intent intentPrev = new Intent(context, DailyVerseAppWidget.class);
+			Intent intentPrev = new Intent(context, ClickReceiver.class);
 			Bundle bundle = new Bundle();
 			bundle.putIntArray(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
 			bundle.putString("app_widget_action", "update_widget");
@@ -108,7 +91,7 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 
 		//--Next button
 		{
-			Intent intentNext = new Intent(context, DailyVerseAppWidget.class);
+			Intent intentNext = new Intent(context, ClickReceiver.class);
 			Bundle bundle = new Bundle();
 			bundle.putIntArray(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
 			bundle.putString("app_widget_action", "update_widget");
@@ -132,6 +115,39 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 	}
 
+	public static class ClickReceiver extends BroadcastReceiver {
+		public static final String TAG = ClickReceiver.class.getSimpleName();
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			Bundle bundle = intent.getExtras();
+			if (bundle != null) {
+				String appWidgetAction = bundle.getString("app_widget_action");
+				if (appWidgetAction != null && appWidgetAction.equals("update_widget")) {
+					int[] appWidgetIds = bundle.getIntArray(AppWidgetManager.EXTRA_APPWIDGET_IDS);
+					if (appWidgetIds != null) {
+						int buttonRequest = intent.getIntExtra("app_widget_button", 0);
+						int add = 0;
+						if (buttonRequest == 1) {
+							add = -1;
+						} else if (buttonRequest == 2) {
+							add = 1;
+						}
+
+						for (int id : appWidgetIds) {
+							String key = "app_widget_" + id + "_click";
+							int numOfClick = Preferences.getInt(key, 0) + add;
+							Preferences.setInt(key, numOfClick);
+						}
+					}
+					Intent i = new Intent(context, DailyVerseAppWidget.class);
+					i.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+					i.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+					context.sendBroadcast(i);
+				}
+			}
+		}
+	}
+
 	private static SpannableStringBuilder getText(Version version, Integer[] aris) {
 		SpannableStringBuilder sb = new SpannableStringBuilder();
 		for (int ari : aris) {
@@ -149,7 +165,7 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 		return sb;
 	}
 
-	private static Integer[] getVerse(int appWidgetId, int request) {
+	private static Integer[] getVerse(int appWidgetId) {
 		List<Integer[]> aris = new ArrayList<Integer[]>();
 
 		aris.add(new Integer[] {2753296});
@@ -164,16 +180,8 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 		aris.add(new Integer[] {1245702});
 		aris.add(new Integer[] {527384});
 
-		String key = "app_widget_" + appWidgetId;
-
-		int add = 0;
-		if (request == 1) {
-			add = -1;
-		} else if (request == 2) {
-			add = 1;
-		}
-		int numOfClick = Preferences.getInt(key, 0) + add;
-		Preferences.setInt(key, numOfClick);
+		String key = "app_widget_" + appWidgetId + "_click";
+		int numOfClick = Preferences.getInt(key, 0);
 
 		Date date = new Date();
 		Calendar calendar = Calendar.getInstance();
@@ -222,6 +230,23 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 			}
 		}
 		return null;
+	}
+
+	public static void setAlarm(Context context, int[] ids) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.add(Calendar.DAY_OF_YEAR, 1);
+
+		Intent intent = new Intent(context, DailyVerseAppWidget.class);
+		intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+
+		PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+		AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		mgr.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pi);
 	}
 
 }

@@ -1,19 +1,16 @@
 package yuku.alkitab.base.ac;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
-import android.content.Context;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.CheckedTextView;
 import android.widget.ListView;
+import android.widget.TextView;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
@@ -23,7 +20,6 @@ import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.widget.DailyVerseAppWidget;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class DailyVerseAppWidgetConfigurationActivity extends Activity {
@@ -51,7 +47,7 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 			finish();
 		}
 
-		String key = "app_widget_" + mAppWidgetId;
+		String key = "app_widget_" + mAppWidgetId + "_click";
 		Preferences.setInt(key, 0);
 
 		ListView lsVersion = V.get(this, R.id.lsVersionsAppWidget);
@@ -64,11 +60,13 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 				final DailyVerseAppWidgetConfigurationActivity context = DailyVerseAppWidgetConfigurationActivity.this;
 				AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 				String version = adapter.versions.second.get(position).getVersionId();
-				DailyVerseAppWidget.buildUpdate(context, appWidgetManager, mAppWidgetId, version, 0);
+				DailyVerseAppWidget.buildUpdate(context, appWidgetManager, mAppWidgetId, version);
 
 				Preferences.setString("app_widget_" + mAppWidgetId + "_version", version);
 
-				setAlarm(mAppWidgetId);
+				ComponentName provider = new ComponentName(context, DailyVerseAppWidget.class);
+				int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(provider);
+				DailyVerseAppWidget.setAlarm(DailyVerseAppWidgetConfigurationActivity.this, ids);
 
 				Intent resultValue = new Intent();
 				resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
@@ -76,57 +74,12 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 				finish();
 			}
 		});
-
 	}
-
-	private void setAlarm(int appWidgetId) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.HOUR_OF_DAY, 0);
-		calendar.set(Calendar.MINUTE, 0);
-		calendar.set(Calendar.SECOND, 0);
-
-		Intent intent = new Intent(this, DailyVerseAppWidget.class);
-		int[] ids = {appWidgetId};
-		Bundle bundle = new Bundle();
-		bundle.putIntArray(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-		bundle.putString("app_widget_action", "update_widget");
-
-		intent.putExtras(bundle);
-
-		PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-		AlarmManager mgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-		mgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pi);
-		Log.d(TAG, "Alarm is set now");
-	}
-
 
 	class VersionAdapter extends EasyAdapter {
-
-
 		private Pair<List<String>,List<VersionsActivity.MVersion>> versions;
-		private int selected;
 
 		void load() {
-			versions = getAvailableVersions();
-			final List<VersionsActivity.MVersion> data = versions.second;
-
-			selected = -1;
-			if (S.activeVersionId == null) {
-				selected = 0;
-			} else {
-				for (int i = 0; i < data.size(); i++) {
-					VersionsActivity.MVersion mv = data.get(i);
-					if (mv.getVersionId().equals(S.activeVersionId)) {
-						selected = i;
-						break;
-					}
-				}
-			}
-
-		}
-
-		private Pair<List<String>, List<VersionsActivity.MVersion>> getAvailableVersions() {
 			// populate with
 			// 1. internal
 			// 2. presets that have been DOWNLOADED and ACTIVE
@@ -155,21 +108,18 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 				}
 			}
 
-			return Pair.create(options, data);
+			versions = Pair.create(options, data);
 		}
 
 		@Override
 		public View newView(final int position, final ViewGroup parent) {
-			return getLayoutInflater().inflate(android.R.layout.simple_list_item_checked, parent, false);
+			return getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
 		}
 
 		@Override
 		public void bindView(final View view, final int position, final ViewGroup parent) {
-			CheckedTextView checkedTextView = V.get(view, android.R.id.text1);
-			checkedTextView.setText(versions.first.get(position));
-			if (position == selected) {
-				checkedTextView.setChecked(true);
-			}
+			TextView textViewextView = V.get(view, android.R.id.text1);
+			textViewextView.setText(versions.first.get(position));
 		}
 
 		@Override
