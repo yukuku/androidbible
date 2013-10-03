@@ -26,7 +26,6 @@
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/SdkSearchBar/SdkSearchBar.iml" filepath="$PROJECT_DIR$/../yuku-android-util/SdkSearchBar/SdkSearchBar.iml" />
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/SimpleTrove/SimpleTrove.iml" filepath="$PROJECT_DIR$/../yuku-android-util/SimpleTrove/SimpleTrove.iml" />
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/Snappy/Snappy.iml" filepath="$PROJECT_DIR$/../yuku-android-util/Snappy/Snappy.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/TimesSquare/TimesSquare.iml" filepath="$PROJECT_DIR$/../yuku-android-util/TimesSquare/TimesSquare.iml" />
       <module fileurl="file://$PROJECT_DIR$/YetToYes2/YetToYes2.iml" filepath="$PROJECT_DIR$/YetToYes2/YetToYes2.iml" />
       <module fileurl="file://$PROJECT_DIR$/AppCompat/android-support-v7-appcompat.iml" filepath="$PROJECT_DIR$/AppCompat/android-support-v7-appcompat.iml" />
     </modules>
