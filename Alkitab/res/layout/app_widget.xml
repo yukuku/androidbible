@@ -11,32 +11,44 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/widget_frame">
+        <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imageView" android:background="@drawable/ic_launcher" android:maxHeight="40dp"
+                    android:maxWidth="40dp"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/tReference"
+                    android:layout_gravity="left|center_vertical"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="false" android:layout_toRightOf="@+id/imageView"
+                    android:layout_marginTop="12dp" android:layout_marginLeft="4dp"/>
+            <Button
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:id="@+id/bPrev"
+                    android:background="@drawable/ic_nav_left_dark" android:layout_alignParentTop="true"
+                    android:layout_toLeftOf="@+id/bNext" android:layout_margin="4dp"/>
+            <Button
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:id="@+id/bNext"
+                    android:background="@drawable/ic_nav_right_dark" android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true" android:layout_margin="4dp"/>
+        </RelativeLayout>
+        <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lsVerse"/>
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Small Text"
-                android:id="@+id/tAppWidgetVerse"
-                android:layout_gravity="left|center_vertical"
-                android:layout_alignParentTop="true" android:layout_alignParentLeft="true"/>
-        <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" android:orientation="horizontal">
-            <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Previous"
-                    android:id="@+id/bPrev"
-                    android:layout_alignParentBottom="true" android:layout_alignParentLeft="true"
-                    android:layout_weight="1"/>
-
-            <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Next"
-                    android:id="@+id/bNext"
-                    android:layout_alignParentBottom="true" android:layout_alignParentLeft="true"
-                    android:layout_weight="1"/>
-        </LinearLayout>
+                android:id="@+id/tVerse"/>
     </LinearLayout>
 </LinearLayout>
