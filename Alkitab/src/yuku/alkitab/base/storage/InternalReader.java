@@ -176,8 +176,7 @@ public class InternalReader implements BibleReader {
 				InputStream input = S.openRaw(AppConfig.get().internalPrefix + "_xref_bt");
 				input.skip(abs_offset);
 				BintexReader br = new BintexReader(input);
-				res.source = br.readValueString();
-				res.target = br.readValueString();
+				res.content = br.readValueString();
 				br.close();
 				return res;
 			} catch (IOException e) {

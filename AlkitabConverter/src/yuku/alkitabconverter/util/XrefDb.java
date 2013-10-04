@@ -32,37 +32,22 @@ public class XrefDb {
 	}
 	
 	/** must be after addBegin */
-	public void addSource(int ari, String source) {
+	public void appendText(int ari, String text) {
 		List<XrefEntry> list = map.get(ari);
 		if (list == null) {
 			throw new RuntimeException("Must be after addBegin (1)");
 		}
 		
 		XrefEntry xe = list.get(list.size() - 1);
-		if (xe.source != null || xe.target != null) {
-			throw new RuntimeException("Must be directly after addBegin (2)");
+		if (xe.content == null) {
+			xe.content = text;
+		} else {
+			xe.content += text;
 		}
-		
-		xe.source = source.trim();
 	}
 	
-	/** must be after addSource */
-	public void addTarget(int ari, String target) {
-		List<XrefEntry> list = map.get(ari);
-		if (list == null) {
-			throw new RuntimeException("Must be after addSource (1)");
-		}
-		
-		XrefEntry xe = list.get(list.size() - 1);
-		if (xe.source == null || xe.target != null) {
-			throw new RuntimeException("Must be directly after addSource (2)");
-		}
-		
-		xe.target = target.trim();
-	}
-
 	/**
-	 * Combines addBegin, addSource and addTarget into a single call.
+	 * Combines addBegin and appendText into a single call.
 	 * @param content The complete xref between \x and \x*. e.g. "+ Joh 3:16; Joh 16:29"
 	 * @return index of xref for this ari, starts from 0.
 	 */
@@ -86,8 +71,7 @@ public class XrefDb {
 		XrefEntry xe = new XrefEntry();
 		list.add(xe);
 
-		xe.source = null;
-		xe.target = target;
+		xe.content = target;
 
 		return list.size() - 1;
 	}
@@ -97,7 +81,7 @@ public class XrefDb {
 			List<XrefEntry> xes = e.getValue();
 			for (int i = 0; i < xes.size(); i++) {
 				XrefEntry xe = xes.get(i);
-				System.out.printf("xref 0x%06x(%d): [%s] [%s]%n", e.getKey(), i + 1, xe.source, xe.target);
+				System.out.printf("xref 0x%06x(%d): [%s]%n", e.getKey(), i + 1, xe.content);
 			}
 		}
 	}
@@ -115,7 +99,7 @@ public class XrefDb {
 	public static XrefProcessor defaultShiftTbProcessor = new XrefDb.XrefProcessor() {
 		@Override public void process(XrefEntry xe, int ari_location, int entryIndex) {
 			final List<int[]> pairs = new ArrayList<int[]>();
-			DesktopVerseFinder.findInText(xe.target, new DesktopVerseFinder.DetectorListener() {
+			DesktopVerseFinder.findInText(xe.content, new DesktopVerseFinder.DetectorListener() {
 				@Override public boolean onVerseDetected(int start, int end, String verse) {
 					pairs.add(new int[] {start, end});
 					return true;
@@ -125,7 +109,7 @@ public class XrefDb {
 				}
 			});
 
-			String target = xe.target;
+			String target = xe.content;
 			for (int i = pairs.size() - 1; i >= 0; i--) {
 				int[] pair = pairs.get(i);
 				String verse = target.substring(pair[0], pair[1]);
@@ -198,7 +182,7 @@ public class XrefDb {
 				}
 			}
 
-			xe.target = target;
+			xe.content = target;
 		}
 
 		private String ariToString(final int ari) {

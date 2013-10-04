@@ -13,10 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import yuku.afw.D;
 import yuku.afw.V;
 import yuku.alkitab.R;
@@ -33,6 +29,9 @@ import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.VerseSelectionMode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class XrefDialog extends BaseDialog {
 	public static final String TAG = XrefDialog.class.getSimpleName();
@@ -109,17 +108,14 @@ public class XrefDialog extends BaseDialog {
 	void renderXrefText() {
 		final SpannableStringBuilder sb = new SpannableStringBuilder();
 		
-		sb.append(xrefEntry.source);
-		sb.append(" ");
-		
 		final int[] linkPos = {0};
-		findTags(xrefEntry.target, new FindTagsListener() {
+		findTags(xrefEntry.content, new FindTagsListener() {
 			@Override public void onTaggedText(final String tag, int start, int end) {
 				final int thisLinkPos = linkPos[0];
 				linkPos[0]++;
 				
 				int sb_len = sb.length();
-				sb.append(xrefEntry.target, start, end);
+				sb.append(xrefEntry.content, start, end);
 				
 				if (tag.startsWith("t")) { // the only supported tag at the moment
 					final String encodedTarget = tag.substring(1);
@@ -142,7 +138,7 @@ public class XrefDialog extends BaseDialog {
 			}
 			
 			@Override public void onPlainText(int start, int end) {
-				sb.append(xrefEntry.target, start, end);
+				sb.append(xrefEntry.content, start, end);
 			}
 		});
 		

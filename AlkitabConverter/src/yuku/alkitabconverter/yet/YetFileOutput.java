@@ -92,8 +92,7 @@ public class YetFileOutput {
 			xrefDb.processEach(new XrefDb.XrefProcessor() {
 				@Override
 				public void process(final XrefEntry xe, final int ari, final int entryIndex) {
-					final String content = xe.source == null? (xe.target): (xe.source + " " + xe.target);
-					pw.printf(Locale.US, "%s\t%s\t%s\t%s\t%s\t%s\n", "xref", Ari.toBook(ari) + 1, Ari.toChapter(ari), Ari.toVerse(ari), entryIndex + 1, content);
+					pw.printf(Locale.US, "%s\t%s\t%s\t%s\t%s\t%s\n", "xref", Ari.toBook(ari) + 1, Ari.toChapter(ari), Ari.toVerse(ari), entryIndex + 1, xe.content);
 				}
 			});
 		}
