@@ -60,9 +60,8 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 				final DailyVerseAppWidgetConfigurationActivity context = DailyVerseAppWidgetConfigurationActivity.this;
 				AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 				String version = adapter.versions.second.get(position).getVersionId();
-				DailyVerseAppWidget.buildUpdate(context, appWidgetManager, mAppWidgetId);
-
 				Preferences.setString("app_widget_" + mAppWidgetId + "_version", version);
+				DailyVerseAppWidget.buildUpdate(context, appWidgetManager, mAppWidgetId);
 
 				ComponentName provider = new ComponentName(context, DailyVerseAppWidget.class);
 				int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(provider);
