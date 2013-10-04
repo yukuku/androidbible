@@ -2,6 +2,7 @@
                     android:minWidth="250dp"
                     android:minHeight="120dp"
                     android:initialLayout="@layout/app_widget"
-                    android:configure="yuku.alkitab.base.ac.DailyVerseAppWidgetConfigurationActivity">
+                    android:configure="yuku.alkitab.base.ac.DailyVerseAppWidgetConfigurationActivity"
+                    android:resizeMode="vertical|horizontal">
 
 </appwidget-provider>
