@@ -1,5 +1,8 @@
 package yuku.alkitabconverter.yet;
 
+import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.model.FootnoteEntry;
+import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitabconverter.util.Rec;
 
@@ -19,6 +22,8 @@ public class YetFileInput {
 		int numberOfBooks;
 		List<String> bookNames;
 		List<String> bookAbbreviations;
+		LinkedHashMap<Integer, XrefEntry> xrefEntries;
+		LinkedHashMap<Integer, FootnoteEntry> footnoteEntries;
 
 		void addInfo(String k, String v) {
 			if (infos == null) infos = new LinkedHashMap<String, String>();
@@ -51,6 +56,20 @@ public class YetFileInput {
 
 		void setNumberOfBooks(int numberOfBooks) {
 			this.numberOfBooks = numberOfBooks;
+		}
+
+		public void addXrefEntry(final int arif, final XrefEntry xe) {
+			if (xrefEntries == null) {
+				xrefEntries = new LinkedHashMap<Integer, XrefEntry>();
+			}
+			xrefEntries.put(arif, xe);
+		}
+
+		public void addFootnoteEntry(final int arif, final FootnoteEntry fe) {
+			if (footnoteEntries == null) {
+				footnoteEntries = new LinkedHashMap<Integer, FootnoteEntry>();
+			}
+			footnoteEntries.put(arif, fe);
 		}
 	}
 	
@@ -139,6 +158,30 @@ public class YetFileInput {
 					lastBook_1 = book_1;
 					lastChapter_1 = chapter_1;
 					lastVerse_1 = verse_1;
+				} else if ("xref".equals(command)) {
+					int book_1 = Integer.parseInt(splits[1]);
+					int chapter_1 = Integer.parseInt(splits[2]);
+					int verse_1 = Integer.parseInt(splits[3]);
+					int field_1 = Integer.parseInt(splits[4]);
+					String content = splits[5];
+
+					XrefEntry xe = new XrefEntry();
+					xe.content = content;
+
+					res.addXrefEntry((Ari.encode(book_1 - 1, chapter_1, verse_1) << 8) | field_1, xe);
+
+				} else if ("footnote".equals(command)) {
+					int book_1 = Integer.parseInt(splits[1]);
+					int chapter_1 = Integer.parseInt(splits[2]);
+					int verse_1 = Integer.parseInt(splits[3]);
+					int field_1 = Integer.parseInt(splits[4]);
+					String content = splits[5];
+
+					FootnoteEntry fe = new FootnoteEntry();
+					fe.content = content;
+
+					res.addFootnoteEntry((Ari.encode(book_1 - 1, chapter_1, verse_1) << 8) | field_1, fe);
+
 				} else if (command.trim().startsWith("#")) {
 					// comment
 				} else {
