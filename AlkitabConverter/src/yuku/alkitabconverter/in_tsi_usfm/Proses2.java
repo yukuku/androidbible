@@ -1,18 +1,18 @@
 package yuku.alkitabconverter.in_tsi_usfm;
 
+import com.sun.tools.javac.resources.version;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.XrefEntry;
+import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitabconverter.util.FootnoteDb;
 import yuku.alkitabconverter.util.IntArrayList;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.XrefDb;
-import yuku.alkitabconverter.yes1.Yes1File.PericopeData;
-import yuku.alkitabconverter.yes1.Yes1File.PericopeData.Entry;
 import yuku.alkitabconverter.yet.YetFileOutput;
 import yuku.bintex.BintexWriter;
 
@@ -48,7 +48,7 @@ public class Proses2 {
 
 	PericopeData pericopeData = new PericopeData();
 	{
-		pericopeData.entries = new ArrayList<Entry>();
+		pericopeData.entries = new ArrayList<PericopeData.Entry>();
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -348,7 +348,6 @@ public class Proses2 {
 						PericopeData.Entry entry = new PericopeData.Entry();
 						entry.ari = 0; // done later when writing teks so we know which verse this pericope starts from
 						entry.block = new PericopeData.Block();
-						entry.block.version = 2;
 						entry.block.title = judul;
 						perikopBuffer.add(entry);
 						afterThisMustStartNewPerikop = false;

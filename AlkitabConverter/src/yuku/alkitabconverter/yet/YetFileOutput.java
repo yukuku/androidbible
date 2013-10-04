@@ -3,10 +3,10 @@ package yuku.alkitabconverter.yet;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.FootnoteEntry;
 import yuku.alkitab.base.model.XrefEntry;
+import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitabconverter.util.FootnoteDb;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.XrefDb;
-import yuku.alkitabconverter.yes1.Yes1File;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,7 +23,7 @@ public class YetFileOutput {
 	private Map<String, String> info = new LinkedHashMap<String, String>();
 	private Map<Integer, String> bookNames_0 = new LinkedHashMap<Integer, String>();
 	private List<Rec> verses;
-	private Yes1File.PericopeData pericopeData;
+	private PericopeData pericopeData;
 	private XrefDb xrefDb;
 	private FootnoteDb footnoteDb;
 
@@ -51,7 +51,7 @@ public class YetFileOutput {
 		}
 	}
 
-	public void setPericopeData(final Yes1File.PericopeData pericopeData) {
+	public void setPericopeData(final PericopeData pericopeData) {
 		this.pericopeData = pericopeData;
 	}
 
@@ -78,7 +78,7 @@ public class YetFileOutput {
 		}
 
 		// pericope data
-		for (Yes1File.PericopeData.Entry entry : pericopeData.entries) {
+		for (final PericopeData.Entry entry : pericopeData.entries) {
 			pw.printf(Locale.US, "%s\t%s\t%s\t%s\t%s\n", "pericope", Ari.toBook(entry.ari) + 1, Ari.toChapter(entry.ari), Ari.toVerse(entry.ari), entry.block.title);
 			if (entry.block.parallels != null) {
 				for (final String parallel : entry.block.parallels) {
