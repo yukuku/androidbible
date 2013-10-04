@@ -12,8 +12,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
+import android.text.style.SuperscriptSpan;
 import android.util.Pair;
 import android.widget.RemoteViews;
 import yuku.afw.App;
@@ -139,10 +141,13 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 		if (aris.length > 1) {
 			showVerseNumber = true;
 		}
-		for (int ari : aris) {
-			verseText.append(getText(version, ari, showVerseNumber));
+		for (int i = 0; i < aris.length; i++) {
+			if (i > 0) {
+				verseText.append("\n");
+			}
+			verseText.append(getText(version, aris[i], showVerseNumber));
 		}
-		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.app_widget);
+		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.app_widget_legacy);
 		remoteViews.setTextViewText(R.id.tVerse, verseText);
 
 		return remoteViews;
@@ -293,7 +298,8 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 		if (showVerseNumber) {
 			String verseNumber = "" + Ari.toVerse(ari);
 			sb.append(verseNumber + " " + verseText);
-			sb.setSpan(new RelativeSizeSpan(0.7f), 0, verseNumber.length(), 0);
+			sb.setSpan(new RelativeSizeSpan(0.7f), 0, verseNumber.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			sb.setSpan(new SuperscriptSpan(), 0, verseNumber.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		} else {
 			sb.append(verseText);
 		}

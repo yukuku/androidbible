@@ -117,7 +117,6 @@
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
-        <activity android:name=".base.sv.WidgetService"/>
 
         <service android:name="yuku.alkitab.base.sv.DownloadService" />
 		
@@ -160,7 +159,7 @@
 
         <service android:name="yuku.alkitab.base.sv.WidgetService"
                 android:permission="android.permission.BIND_REMOTEVIEWS"/>
-
+                                                                    d
     </application>
 
 </manifest>

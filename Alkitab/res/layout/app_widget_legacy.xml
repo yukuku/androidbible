@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/lBackground">
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/widget_frame">
+        <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imageView" android:background="@drawable/ic_launcher" android:maxHeight="40dp"
+                    android:maxWidth="40dp"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/tReference"
+                    android:layout_gravity="left|center_vertical"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="false" android:layout_toRightOf="@+id/imageView"
+                    android:layout_marginTop="12dp" android:layout_marginLeft="4dp"/>
+            <Button
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:id="@+id/bPrev"
+                    android:background="@drawable/ic_nav_left_dark" android:layout_alignParentTop="true"
+                    android:layout_toLeftOf="@+id/bNext" android:layout_margin="4dp"/>
+            <Button
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:id="@+id/bNext"
+                    android:background="@drawable/ic_nav_right_dark" android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true" android:layout_margin="4dp"/>
+        </RelativeLayout>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/tVerse"/>
+    </LinearLayout>
+</LinearLayout>
