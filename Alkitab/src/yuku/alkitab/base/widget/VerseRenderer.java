@@ -28,7 +28,9 @@ import yuku.alkitab.base.util.Appearances;
 
 public class VerseRenderer {
 	public static final String TAG = VerseRenderer.class.getSimpleName();
-	
+
+	static final char[] superscriptDigits = {'\u2070', '\u00b9', '\u00b2', '\u00b3', '\u2074', '\u2075', '\u2076', '\u2077', '\u2078', '\u2079'};
+
 	static class ParagraphSpacingBefore implements LineHeightSpan {
 		private final int before;
 		
@@ -164,6 +166,12 @@ public class VerseRenderer {
 		}
 	};
 	
+	private static ThreadLocal<StringBuilder> buf_tag_ = new ThreadLocal<StringBuilder>() {
+		@Override protected StringBuilder initialValue() {
+			return new StringBuilder(100);
+		}
+	};
+
 	/**
 	 * @param dontPutSpacingBefore this verse is right after a pericope title or on the 0th position
 	 * @param optionalVersesView must be not-null if xrefListener is not-null 
@@ -181,8 +189,8 @@ public class VerseRenderer {
 		// @7 = end of italic   [formatting]
 		// @8 = put a blank line to the next verse [formatting]
 		// @^ = start-of-paragraph marker
-		// @< to @> = special tags
-		// @/ = end of special tags (for those need to be closed)
+		// @< to @> = special tags (not visible for unsupported tags) [can be considered formatting]
+		// @/ = end of special tags (closing tag) (As of 2013-10-04, all special tags must be closed) [can be considered formatting]
 		
 		int text_len = text.length();
 		
@@ -219,6 +227,10 @@ public class VerseRenderer {
 		 * position of start italic marker
 		 */
 		int startItalic = -1;
+		/**
+		 * whether we are inside a tag (between @< and @>)
+		 */
+		boolean inSpecialTag = false;
 		
 		SpannableStringBuilder sb = new SpannableStringBuilder();
 	
@@ -254,11 +266,19 @@ public class VerseRenderer {
 				sb.append(text, pos, text_len);
 				break;
 			}
-			
-			// insert all text until the nextAt
-			if (nextAt != pos) /* optimization */ {
-				sb.append(text, pos, nextAt);
+
+			if (inSpecialTag) { // are we in a tag?
+				// we have encountered the end of a tag
+				final StringBuilder tag = buf_tag_.get();
+				tag.setLength(0);
+				tag.append(text, pos, nextAt);
 				pos = nextAt;
+			} else {
+				// insert all text until the nextAt
+				if (nextAt != pos) /* extra check for optimization (prevent call to sb.append()) */ {
+					sb.append(text, pos, nextAt);
+					pos = nextAt;
+				}
 			}
 			
 			pos++;
@@ -266,49 +286,58 @@ public class VerseRenderer {
 			if (pos >= text_len) {
 				break;
 			}
-			
+
 			char marker = text_c[pos];
 			switch (marker) {
-			case '0':
-			case '1':
-			case '2':
-			case '3':
-			case '4':
-			case '^':
-				// apply previous
-				applyParaStyle(sb, paraType, startPara, verseNumberText, startPosAfterVerseNumber > 0, dontPutSpacingBefore && startPara <= startPosAfterVerseNumber, startPara <= startPosAfterVerseNumber, lVerseNumber);
-				if (sb.length() > startPosAfterVerseNumber) {
-					sb.append("\n");
-				}
-				// store current
-				paraType = marker;
-				startPara = sb.length();
-				break;
-			case '6':
-				startRed = sb.length();
-				break;
-			case '9':
-				startItalic = sb.length();
-				break;
-			case '5':
-				if (startRed != -1) {
-					if (!checked) {
-						sb.setSpan(new ForegroundColorSpan(S.applied.fontRedColor), startRed, sb.length(), 0);
+				case '0':
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '^':
+					// apply previous
+					applyParaStyle(sb, paraType, startPara, verseNumberText, startPosAfterVerseNumber > 0, dontPutSpacingBefore && startPara <= startPosAfterVerseNumber, startPara <= startPosAfterVerseNumber, lVerseNumber);
+					if (sb.length() > startPosAfterVerseNumber) {
+						sb.append("\n");
 					}
-					startRed = -1;
-				}
-				break;
-			case '7':
-				if (startItalic != -1) {
-					sb.setSpan(new StyleSpan(Typeface.ITALIC), startItalic, sb.length(), 0);
-					startItalic = -1;
-				}
-				break;
-			case '8':
-				sb.append("\n");
-				break;
+					// store current
+					paraType = marker;
+					startPara = sb.length();
+					break;
+				case '6':
+					startRed = sb.length();
+					break;
+				case '5':
+					if (startRed != -1) {
+						if (!checked) {
+							sb.setSpan(new ForegroundColorSpan(S.applied.fontRedColor), startRed, sb.length(), 0);
+						}
+						startRed = -1;
+					}
+					break;
+				case '9':
+					startItalic = sb.length();
+					break;
+				case '7':
+					if (startItalic != -1) {
+						sb.setSpan(new StyleSpan(Typeface.ITALIC), startItalic, sb.length(), 0);
+						startItalic = -1;
+					}
+					break;
+				case '8':
+					sb.append("\n");
+					break;
+				case '<':
+					inSpecialTag = true;
+					break;
+				case '>':
+					inSpecialTag = false;
+					break;
+				case '/':
+					processSpecialTag(buf_tag_.get(), sb);
+					break;
 			}
-			
+
 			pos++;
 		}
 		
@@ -336,13 +365,28 @@ public class VerseRenderer {
 			}
 		}
 	}
-	
-    /**
+
+	static void processSpecialTag(final StringBuilder tag, final SpannableStringBuilder sb) {
+		if (tag.length() >= 2) {
+			// Footnote
+			if (tag.charAt(0) == 'f') {
+				final int field = Integer.parseInt(tag.substring(1));
+				if (field >= 0 && field < 10) {
+					sb.append(superscriptDigits[field]);
+				} else {
+					// TODO support for 10 or more footnotes
+				}
+			} else if (tag.charAt(0) == 'x') {
+				sb.append('\u203B');
+			}
+		}
+	}
+
+	/**
 	 * @param paraType if -1, will apply the same thing as when paraType is 0 and firstLineWithVerseNumber is true.
 	 * @param firstLineWithVerseNumber If this is formatting for the first paragraph of a verse and that paragraph contains a verse number, so we can apply more lefty first-line indent.
 	 * This only applies if the paraType is 0.
 	 * @param dontPutSpacingBefore if this paragraph is just after pericope title or on the 0th position, in this case we don't apply paragraph spacing before.
-	 * @return whether we should put a top-spacing to the detached verse number too
 	 */
 	static void applyParaStyle(SpannableStringBuilder sb, int paraType, int startPara, String verseNumberText, boolean firstLineWithVerseNumber, boolean dontPutSpacingBefore, boolean firstParagraph, TextView lVerseNumber) {
 		int len = sb.length();
