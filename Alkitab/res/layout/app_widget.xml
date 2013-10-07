@@ -28,27 +28,30 @@
                     android:layout_alignParentTop="true"
                     android:layout_alignParentLeft="false" android:layout_toRightOf="@+id/imageView"
                     android:layout_marginTop="12dp" android:layout_marginLeft="4dp"/>
-            <Button
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+            <ImageButton
                     android:id="@+id/bPrev"
-                    android:background="@drawable/ic_nav_left_dark" android:layout_alignParentTop="true"
-                    android:layout_toLeftOf="@+id/bNext" android:layout_margin="4dp"/>
-            <Button
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_toLeftOf="@+id/bNext"
+                    android:src="@drawable/ic_nav_left_light" android:padding="4dp"/>
+            <ImageButton
                     android:id="@+id/bNext"
-                    android:background="@drawable/ic_nav_right_dark" android:layout_alignParentTop="true"
-                    android:layout_alignParentRight="true" android:layout_margin="4dp"/>
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_nav_right_light" android:padding="4dp"/>
         </RelativeLayout>
+
+        <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:id="@+id/imageView2" android:background="@android:drawable/divider_horizontal_dark"
+                android:layout_marginTop="4dp" android:layout_marginBottom="4dp"/>
         <ListView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/lsVerse"/>
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:id="@+id/tVerse"/>
     </LinearLayout>
 </LinearLayout>
