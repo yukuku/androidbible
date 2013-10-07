@@ -283,6 +283,13 @@ public class Version {
 		return bibleReader.getXrefEntry(arif);
 	}
 
+	/**
+	 * @param arif 24bit ari at the MSB + which xref field at the 8bit LSB (starts from 1)
+	 */
+	public synchronized FootnoteEntry getFootnoteEntry(final int arif) {
+		return bibleReader.getFootnoteEntry(arif);
+	}
+
 	public String reference(int ari) {
 		int bookId = Ari.toBook(ari);
 		int chapter_1 = Ari.toChapter(ari);

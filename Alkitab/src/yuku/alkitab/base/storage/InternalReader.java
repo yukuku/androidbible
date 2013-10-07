@@ -6,12 +6,14 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.FootnoteEntry;
 import yuku.alkitab.base.model.InternalBook;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.yes1.Yes1PericopeIndex;
 import yuku.alkitab.yes2.io.RawResourceRandomInputStream;
+import yuku.alkitab.yes2.section.FootnotesSection;
 import yuku.alkitab.yes2.section.XrefsSection;
 import yuku.bintex.BintexReader;
 
@@ -34,7 +36,9 @@ public class InternalReader implements BibleReader {
 
 	private Yes1PericopeIndex pericopeIndex_;
 	private XrefsSection xrefsSection_;
-	private boolean xrefKnownNotAvailable;
+	private boolean xrefsKnownNotAvailable;
+	private FootnotesSection footnotesSection_;
+	private boolean footnotesKnownNotAvailable;
 
 	public InternalReader(String versionPrefix, String versionShortName, String versionLongName, VerseTextDecoder verseTextDecoder) {
 		this.versionPrefix = versionPrefix;
@@ -273,12 +277,12 @@ public class InternalReader implements BibleReader {
 	}
 	
 	@Override public XrefEntry getXrefEntry(int arif) {
-		if (xrefKnownNotAvailable) return null;
+		if (xrefsKnownNotAvailable) return null;
 
 		if (xrefsSection_ == null) {
 			final int resId = App.context.getResources().getIdentifier(AppConfig.get().internalPrefix + "_xref_bt", "raw", App.context.getPackageName());
 			if (resId == 0) {
-				xrefKnownNotAvailable = true;
+				xrefsKnownNotAvailable = true;
 				return null;
 			}
 
@@ -291,5 +295,26 @@ public class InternalReader implements BibleReader {
 		}
 
 		return xrefsSection_.getXrefEntry(arif);
+	}
+	
+	@Override public FootnoteEntry getFootnoteEntry(int arif) {
+		if (footnotesKnownNotAvailable) return null;
+
+		if (footnotesSection_ == null) {
+			final int resId = App.context.getResources().getIdentifier(AppConfig.get().internalPrefix + "_footnote_bt", "raw", App.context.getPackageName());
+			if (resId == 0) {
+				footnotesKnownNotAvailable = true;
+				return null;
+			}
+
+			try {
+				footnotesSection_ = new FootnotesSection.Reader().read(new RawResourceRandomInputStream(resId));
+			} catch (Exception e) {
+				Log.e(TAG, "Error reading footnotes section from internal", e);
+				return null;
+			}
+		}
+
+		return footnotesSection_.getFootnoteEntry(arif);
 	}
 }

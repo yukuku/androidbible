@@ -9,6 +9,7 @@ import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitab.yes2.model.Yes2Book;
 import yuku.alkitab.yes2.section.BooksInfoSection;
+import yuku.alkitab.yes2.section.FootnotesSection;
 import yuku.alkitab.yes2.section.PericopesSection;
 import yuku.alkitab.yes2.section.VersionInfoSection;
 import yuku.alkitab.yes2.section.XrefsSection;
@@ -335,7 +336,7 @@ public class Yes2Common {
 		final CompressionInfo compressionInfo;
 
 		public CompressibleFootnotesSection(final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries, boolean compressed) throws IOException {
-			super("footnotes");
+			super(FootnotesSection.SECTION_NAME);
 			compressionInfo = new CompressionInfo(compressed);
 
 			final BintexWriter bw = new BintexWriter(compressionInfo.getOutputStream());
@@ -357,7 +358,7 @@ public class Yes2Common {
 			// int offsets[entry_count] 
 			for (final Map.Entry<Integer, FootnoteEntry> entry: footnoteEntries.entrySet()) {
 				bw.writeInt(contentsBw.getPos());
-				bw.writeValueString(entry.getValue().content);
+				contentsBw.writeValueString(entry.getValue().content);
 			}
 			
 			// value<string> footnote_entry_contents[entry_count]

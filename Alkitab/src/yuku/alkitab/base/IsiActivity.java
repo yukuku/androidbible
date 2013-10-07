@@ -75,6 +75,7 @@ import yuku.alkitab.base.dialog.TypeNoteDialog;
 import yuku.alkitab.base.dialog.XrefDialog;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.FootnoteEntry;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.ProgressMark;
 import yuku.alkitab.base.model.SingleChapterVerses;
@@ -1576,11 +1577,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			return new VerseInlineLinkSpan(type, arif, source) {
 				@Override
 				public void onClick(final Type type, final int arif, final Object source) {
-					Log.d(TAG, "type=" + type + " arif=0x" + Integer.toHexString(arif));
-					// TODO change to allow footnote
+					Log.d(TAG, "verse inline link click: type=" + type + " arif=0x" + Integer.toHexString(arif));
 
 					if (type == Type.xref) {
 						XrefDialog dialog = XrefDialog.newInstance(arif);
+
 						// TODO setSourceVersion here is not restored when dialog is restored
 						if (source == lsText) { // use activeVersion
 							dialog.setSourceVersion(S.activeVersion);
@@ -1590,6 +1591,22 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 						FragmentManager fm = getSupportFragmentManager();
 						dialog.show(fm, XrefDialog.class.getSimpleName());
+					} else {
+						// TODO beautify
+
+						FootnoteEntry fe = null;
+						if (source == lsText) { // use activeVersion
+							fe = S.activeVersion.getFootnoteEntry(arif);
+						} else if (source == lsSplit1) { // use activeSplitVersion
+							fe = activeSplitVersion.getFootnoteEntry(arif);
+						}
+
+						if (fe != null) {
+							new AlertDialog.Builder(IsiActivity.this)
+							.setMessage(fe.content)
+							.setPositiveButton("OK", null)
+							.show();
+						}
 					}
 				}
 			};

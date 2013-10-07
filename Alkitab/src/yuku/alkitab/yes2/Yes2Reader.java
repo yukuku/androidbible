@@ -3,6 +3,7 @@ package yuku.alkitab.yes2;
 import android.util.Log;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.FootnoteEntry;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.XrefEntry;
@@ -14,6 +15,7 @@ import yuku.alkitab.yes2.io.Yes2VerseTextDecoder;
 import yuku.alkitab.yes2.model.SectionIndex;
 import yuku.alkitab.yes2.model.Yes2Book;
 import yuku.alkitab.yes2.section.BooksInfoSection;
+import yuku.alkitab.yes2.section.FootnotesSection;
 import yuku.alkitab.yes2.section.PericopesSection;
 import yuku.alkitab.yes2.section.TextSection;
 import yuku.alkitab.yes2.section.VersionInfoSection;
@@ -36,6 +38,7 @@ public class Yes2Reader implements BibleReader {
 	private PericopesSection pericopesSection_;
 	private TextSectionReader textSectionReader_;
 	private XrefsSection xrefsSection_;
+	private FootnotesSection footnotesSection_;
 
 	static class Yes2SingleChapterVerses extends SingleChapterVerses {
 		private final String[] verses;
@@ -285,6 +288,25 @@ public class Yes2Reader implements BibleReader {
 		}
 
 		return xrefsSection_.getXrefEntry(arif);
+	}
+
+	@Override
+	public FootnoteEntry getFootnoteEntry(final int arif) {
+		if (footnotesSection_ == null) { // not yet loaded!
+			try {
+				final RandomInputStream sectionInput = prepareLoadSection(FootnotesSection.SECTION_NAME);
+				if (sectionInput == null) {
+					return null;
+				}
+
+				footnotesSection_ = new FootnotesSection.Reader().read(sectionInput);
+			} catch (Exception e) {
+				Log.e(TAG, "General exception in loading footnote section", e); //$NON-NLS-1$
+				return null;
+			}
+		}
+
+		return footnotesSection_.getFootnoteEntry(arif);
 	}
 
 	/**

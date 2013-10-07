@@ -1,6 +1,7 @@
 package yuku.alkitab.base.storage;
 
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.FootnoteEntry;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.XrefEntry;
@@ -23,4 +24,9 @@ public interface BibleReader {
 	 * @param arif 24bit ari at the MSB + which xref field at the 8bit LSB (starts from 1)
 	 */
 	XrefEntry getXrefEntry(int arif);
+
+	/**
+	 * @param arif 24bit ari at the MSB + which xref field at the 8bit LSB (starts from 1)
+	 */
+	FootnoteEntry getFootnoteEntry(int arif);
 }
