@@ -19,7 +19,8 @@ public interface BibleReader {
 	
 	int loadPericope(int bookId, int chapter_1, int[] aris, PericopeBlock[] pericopeBlocks, int max);
 
-	int getXrefEntryCounts(int[] result, int bookId, int chapter_1);
-	
-	XrefEntry getXrefEntry(int ari, int which);
+	/**
+	 * @param arif 24bit ari at the MSB + which xref field at the 8bit LSB (starts from 1)
+	 */
+	XrefEntry getXrefEntry(int arif);
 }

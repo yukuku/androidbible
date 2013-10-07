@@ -312,7 +312,7 @@ public class Yes2Common {
 			// int offsets[entry_count] 
 			for (final Map.Entry<Integer, XrefEntry> entry : xrefEntries.entrySet()) {
 				bw.writeInt(contentsBw.getPos());
-				bw.writeValueString(entry.getValue().content);
+				contentsBw.writeValueString(entry.getValue().content);
 			}
 
 			// value<string> xref_entry_contents[entry_count]

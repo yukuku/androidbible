@@ -1,14 +1,13 @@
 package yuku.alkitab.base.storage;
 
 import android.util.Log;
+import yuku.alkitab.yes1.Yes1Reader;
+import yuku.alkitab.yes2.Yes2Reader;
+import yuku.alkitab.yes2.io.RandomAccessFileRandomInputStream;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
-
-import yuku.alkitab.yes1.Yes1Reader;
-import yuku.alkitab.yes2.Yes2Reader;
-import yuku.alkitab.yes2.io.RandomInputStream;
 
 public class YesReaderFactory {
 	public static final String TAG = YesReaderFactory.class.getSimpleName();
@@ -36,7 +35,7 @@ public class YesReaderFactory {
 			if (header[7] == 0x01) { // VERSION 1 YES
 				return new Yes1Reader(f);
 			} else if (header[7] == 0x02) { // VERSION 2 YES
-				return new Yes2Reader(new RandomInputStream(f));
+				return new Yes2Reader(new RandomAccessFileRandomInputStream(f));
 			} else {
 				Log.e(TAG, "Yes file version unsupported: " + header[7]);
 				return null;

@@ -14,6 +14,8 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.base.util.IntArrayList;
+import yuku.alkitab.base.util.TargetDecoder;
 
 
 public class SingleViewVerseAdapter extends VerseAdapter {
@@ -53,8 +55,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			boolean dontPutSpacingBefore = (position > 0 && itemPointer_[position - 1] < 0) || position == 0;
 			boolean withHighlight = attributeMap_ != null && (attributeMap_[id] & 0x4) != 0;
 			int highlightColor = withHighlight ? (highlightMap_ == null ? 0 : U.alphaMixHighlight(highlightMap_[id])) : 0;
-			int withXref = xrefEntryCounts_ == null? 0: xrefEntryCounts_[verse_1];
-			VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightColor, checked, dontPutSpacingBefore, withXref, xrefListener_, owner_);
+			VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightColor, checked, dontPutSpacingBefore, inlineLinkSpanFactory_, owner_);
 
 			Appearances.applyTextAppearance(lText);
 			if (checked) {
@@ -149,69 +150,23 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 
         linked: {
             if (parallel.startsWith("@")) {
-                Object data;
-                String display;
+	            // look for the end
+	            int targetEndPos = parallel.indexOf(' ', 1);
+	            if (targetEndPos == -1) {
+		            break linked;
+	            }
 
-                if (parallel.startsWith("@o:")) { // osis ref
-                    int space = parallel.indexOf(' ');
-                    if (space != -1) {
-                        String osis = parallel.substring(3, space);
-                        int dash = osis.indexOf('-');
-                        if (dash != -1) {
-                            osis = osis.substring(0, dash);
-                        }
-                        ParallelTypeOsis d = new ParallelTypeOsis();
-                        d.osisStart = osis;
-                        data = d;
-                        display = parallel.substring(space + 1);
-                    } else {
-                        break linked;
-                    }
-                } else if (parallel.startsWith("@a:")) { // ari ref
-                    int space = parallel.indexOf(' ');
-                    if (space != -1) {
-                        String ari_s = parallel.substring(3, space);
-                        int dash = ari_s.indexOf('-');
-                        if (dash != -1) {
-                            ari_s = ari_s.substring(0, dash);
-                        }
-                        int ari = Ari.parseInt(ari_s, 0);
-                        if (ari == 0) {
-                            break linked;
-                        }
-                        ParallelTypeAri d = new ParallelTypeAri();
-                        d.ariStart = ari;
-                        data = d;
-                        display = parallel.substring(space + 1);
-                    } else {
-                        break linked;
-                    }
-                } else if (parallel.startsWith("@lid:")) { // lid ref
-                    int space = parallel.indexOf(' ');
-                    if (space != -1) {
-                        String lid_s = parallel.substring(5, space);
-                        int dash = lid_s.indexOf('-');
-                        if (dash != -1) {
-                            lid_s = lid_s.substring(0, dash);
-                        }
-                        int lid = Ari.parseInt(lid_s, 0);
-                        if (lid == 0) {
-                            break linked;
-                        }
-                        ParallelTypeLid d = new ParallelTypeLid();
-                        d.lidStart = lid;
-                        data = d;
-                        display = parallel.substring(space + 1);
-                    } else {
-                        break linked;
-                    }
-                } else {
-                    break linked;
-                }
+	            final String target = parallel.substring(1, targetEndPos);
+	            final IntArrayList ariRanges = TargetDecoder.decode(target);
+	            if (ariRanges == null || ariRanges.size() == 0) {
+		            break linked;
+	            }
+
+	            final String display = parallel.substring(targetEndPos + 1);
 
                 // if we reach this, data and display should have values, and we must not go to fallback below
                 sb.append(display);
-                sb.setSpan(new CallbackSpan(data, parallelListener_), sb_len, sb.length(), 0);
+                sb.setSpan(new CallbackSpan(ariRanges.get(0), parallelListener_), sb_len, sb.length(), 0);
                 return; // do not remove this
             }
         }

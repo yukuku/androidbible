@@ -92,7 +92,7 @@ import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
-import yuku.alkitab.base.widget.VerseAdapter;
+import yuku.alkitab.base.widget.VerseInlineLinkSpan;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.PressResult;
 
@@ -258,26 +258,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	CallbackSpan.OnClickListener parallelListener = new CallbackSpan.OnClickListener() {
 		@Override public void onClick(View widget, Object data) {
             if (data instanceof String) {
-                int ari = jumpTo((String) data);
+                final int ari = jumpTo((String) data);
                 if (ari != 0) {
                     history.add(ari);
                 }
-            } else if (data instanceof VerseAdapter.ParallelTypeAri) {
-                int ari = ((VerseAdapter.ParallelTypeAri) data).ariStart;
-                jumpToAri(ari);
-                history.add(ari);
-            } else if (data instanceof VerseAdapter.ParallelTypeLid) {
-                int ari = LidToAri.lidToAri(((VerseAdapter.ParallelTypeLid) data).lidStart);
-                if (ari != 0) {
-                    jumpToAri(ari);
-                    history.add(ari);
-                }
-            } else if (data instanceof VerseAdapter.ParallelTypeOsis) {
-                String osis = ((VerseAdapter.ParallelTypeOsis) data).osisStart;
-                int ari = jumpTo(osis); // jumpTo handles osis well
-                if (ari != 0) {
-                    history.add(ari);
-                }
+            } else if (data instanceof Integer) {
+	            final int ari = (Integer) data;
+	            jumpToAri(ari);
+	            history.add(ari);
             }
 		}
 	};
@@ -338,7 +326,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		// listeners
 		lsText.setParallelListener(parallelListener);
 		lsText.setAttributeListener(attributeListener);
-		lsText.setXrefListener(xrefListener);
+		lsText.setInlineLinkSpanFactory(new VerseInlineLinkSpanFactory(lsText));
 		lsText.setSelectedVersesListener(lsText_selectedVerses);
 		lsText.setOnVerseScrollListener(lsText_verseScroll);
 		
@@ -347,7 +335,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsSplit1.setEmptyView(tSplitEmpty);
 		lsSplit1.setParallelListener(parallelListener);
 		lsSplit1.setAttributeListener(attributeListener);
-		lsSplit1.setXrefListener(xrefListener);
+		lsSplit1.setInlineLinkSpanFactory(new VerseInlineLinkSpanFactory(lsSplit1));
 		lsSplit1.setSelectedVersesListener(lsSplit1_selectedVerses);
 		lsSplit1.setOnVerseScrollListener(lsSplit1_verseScroll);
 		
@@ -1396,12 +1384,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		PericopeBlock[] pericope_blocks = new PericopeBlock[max];
 		int nblock = version.loadPericope(book.bookId, chapter_1, pericope_aris, pericope_blocks, max);
 		
-		// load xref
-		int[] xrefEntryCounts = new int[256];
-		version.getXrefEntryCounts(xrefEntryCounts, book.bookId, chapter_1);
-		
 		boolean retainSelectedVerses = (!uncheckAllVerses && chapter_1 == current_chapter_1);
-		versesView.setDataWithRetainSelectedVerses(retainSelectedVerses, book, chapter_1, pericope_aris, pericope_blocks, nblock, verses, xrefEntryCounts);
+		versesView.setDataWithRetainSelectedVerses(retainSelectedVerses, book, chapter_1, pericope_aris, pericope_blocks, nblock, verses);
 
 		return true;
 	}
@@ -1474,10 +1458,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		return true;
 	}
 
-	@Override public void onVerseSelected(XrefDialog dialog, int ari_source, int ari_target) {
+	@Override public void onVerseSelected(XrefDialog dialog, int arif_source, int ari_target) {
+		final int ari_source = arif_source >>> 8;
+
 		dialog.dismiss();
 		jumpToAri(ari_target);
-		
+
 		// add both xref source and target, so user can go back to source easily
 		history.add(ari_source);
 		history.add(ari_target);
@@ -1578,21 +1564,38 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	};
 
-	VersesView.XrefListener xrefListener = new VersesView.XrefListener() {
-		@Override public void onXrefClick(VersesView versesView, int ari, int which) {
-			XrefDialog dialog = XrefDialog.newInstance(ari, which);
-			// TODO setSourceVersion here is not restored when dialog is restored
-			if (versesView == lsText) { // use activeVersion
-				dialog.setSourceVersion(S.activeVersion);
-			} else if (versesView == lsSplit1) { // use activeSplitVersion
-				dialog.setSourceVersion(activeSplitVersion);
-			}
-			
-			FragmentManager fm = getSupportFragmentManager();
-			dialog.show(fm, XrefDialog.class.getSimpleName());
+	class VerseInlineLinkSpanFactory implements VerseInlineLinkSpan.Factory {
+		private final Object source;
+
+		VerseInlineLinkSpanFactory(final Object source) {
+			this.source = source;
+		}
+
+		@Override
+		public VerseInlineLinkSpan create(final VerseInlineLinkSpan.Type type, final int arif) {
+			return new VerseInlineLinkSpan(type, arif, source) {
+				@Override
+				public void onClick(final Type type, final int arif, final Object source) {
+					Log.d(TAG, "type=" + type + " arif=0x" + Integer.toHexString(arif));
+					// TODO change to allow footnote
+
+					if (type == Type.xref) {
+						XrefDialog dialog = XrefDialog.newInstance(arif);
+						// TODO setSourceVersion here is not restored when dialog is restored
+						if (source == lsText) { // use activeVersion
+							dialog.setSourceVersion(S.activeVersion);
+						} else if (source == lsSplit1) { // use activeSplitVersion
+							dialog.setSourceVersion(activeSplitVersion);
+						}
+
+						FragmentManager fm = getSupportFragmentManager();
+						dialog.show(fm, XrefDialog.class.getSimpleName());
+					}
+				}
+			};
 		}
 	};
-	
+
 	VersesView.SelectedVersesListener lsText_selectedVerses = new VersesView.SelectedVersesListener() {
 		@Override public void onSomeVersesSelected(VersesView v) {
 			if (activeSplitVersion != null) {

@@ -1,28 +1,21 @@
 package yuku.alkitab.base.widget;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.Layout;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.text.style.BackgroundColorSpan;
-import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.LineHeightSpan;
 import android.text.style.MetricAffectingSpan;
-import android.text.style.ReplacementSpan;
 import android.text.style.StyleSpan;
-import android.view.View;
 import android.widget.TextView;
-
-import yuku.alkitab.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.util.Appearances;
 
@@ -92,46 +85,7 @@ public class VerseRenderer {
 			}
 		}
 	}
-	
-	static class XrefAttrSpan extends ReplacementSpan {
-		private final Context context;
-        private Drawable drawable;
-        private int drawable_width;
-		private int drawable_height;
-		
-		public XrefAttrSpan(Context context) {
-			this.context = context;
-		}
-		
-		private void init() {
-			if (drawable == null) {
-				drawable = context.getResources().getDrawable(R.drawable.ic_attr_xref);
-				drawable_width = drawable.getIntrinsicWidth();
-				drawable_height = drawable.getIntrinsicHeight();
-				drawable.setBounds(0, 0, drawable_width, drawable_height);
-			}
-		}
-		
-        @Override public int getSize(Paint paint, CharSequence text, int start, int end, FontMetricsInt fm) {
-        	init();
-            return drawable_width;
-        }
-        
-		@Override public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
-			init();
-			canvas.save();
 
-			FontMetricsInt fm = paint.getFontMetricsInt();
-			int lineHeight = fm.descent - fm.ascent;
-			
-			int transY = top + (lineHeight - drawable_height) / 2;
-			canvas.translate(x, transY);
-			drawable.draw(canvas);
-			
-			canvas.restore();
-		}
-	}
-	
 	/** 0 undefined. 1 and 2 based on version. */
 	private static int leadingMarginSpanVersion = 0;
 	
@@ -176,7 +130,7 @@ public class VerseRenderer {
 	 * @param dontPutSpacingBefore this verse is right after a pericope title or on the 0th position
 	 * @param optionalVersesView must be not-null if xrefListener is not-null 
 	 */
-	public static void render(TextView lText, TextView lVerseNumber, int ari, String text, String verseNumberText, int highlightColor, boolean checked, boolean dontPutSpacingBefore, int withXref, VersesView.XrefListener xrefListener, VersesView optionalVersesView) {
+	public static void render(final TextView lText, final TextView lVerseNumber, final int ari, final String text, final String verseNumberText, final int highlightColor, final boolean checked, final boolean dontPutSpacingBefore, final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, VersesView optionalVersesView) {
 		// @@ = start a verse containing paragraphs or formatting
 		// @0 = start with indent 0 [paragraph]
 		// @1 = start with indent 1 [paragraph]
@@ -198,7 +152,7 @@ public class VerseRenderer {
 		// Formatted verses start with "@@".
 		// Second character must be '@' too, if not it's wrong, we will fallback to simple render.
 		if (text_len < 2 || text.charAt(0) != '@' || text.charAt(1) != '@') {
-			simpleRender(lText, lVerseNumber, ari, text, verseNumberText, highlightColor, checked, withXref, xrefListener, optionalVersesView);
+			simpleRender(lText, lVerseNumber, ari, text, verseNumberText, highlightColor, checked, optionalVersesView);
 			return;
 		}
 
@@ -231,16 +185,20 @@ public class VerseRenderer {
 		 * whether we are inside a tag (between @< and @>)
 		 */
 		boolean inSpecialTag = false;
-		
-		SpannableStringBuilder sb = new SpannableStringBuilder();
-	
+		/**
+		 * Reusable tag buffer
+		 */
+		final StringBuilder tag = buf_tag_.get();
+
+		final SpannableStringBuilder sb = new SpannableStringBuilder();
+
 		// this has two uses
 		// - to check whether a verse number has been written
-		// - to check whether we need to put a new line when encountering a new para 
+		// - to check whether we need to put a new line when encountering a new para
 		int startPosAfterVerseNumber = 0;
-	
+
 		int pos = 2; // we start after "@@"
-	
+
 		// write verse number inline only when no @[1234^] on the beginning of text
 		if (text_len >= 4 && text_c[pos] == '@' && (text_c[pos+1] == '^' || (text_c[pos+1] >= '1' && text_c[pos+1] <= '4'))) {
 			// don't write verse number now
@@ -250,18 +208,18 @@ public class VerseRenderer {
 			sb.append("  ");
 			startPosAfterVerseNumber = sb.length();
 		}
-	
-		
+
+
 		// initialize lVerseNumber to have no padding first
 		lVerseNumber.setPadding(0, 0, 0, 0);
-		
+
 		while (true) {
 			if (pos >= text_len) {
 				break;
 			}
-	
+
 			int nextAt = text.indexOf('@', pos);
-			
+
 			if (nextAt == -1) { // no more, just append till the end of everything and exit
 				sb.append(text, pos, text_len);
 				break;
@@ -269,7 +227,6 @@ public class VerseRenderer {
 
 			if (inSpecialTag) { // are we in a tag?
 				// we have encountered the end of a tag
-				final StringBuilder tag = buf_tag_.get();
 				tag.setLength(0);
 				tag.append(text, pos, nextAt);
 				pos = nextAt;
@@ -334,7 +291,7 @@ public class VerseRenderer {
 					inSpecialTag = false;
 					break;
 				case '/':
-					processSpecialTag(buf_tag_.get(), sb);
+					processSpecialTag(sb, tag, inlineLinkSpanFactory, ari);
 					break;
 			}
 
@@ -347,11 +304,7 @@ public class VerseRenderer {
 		if (highlightColor != 0) {
 			sb.setSpan(new BackgroundColorSpan(highlightColor), startPosAfterVerseNumber == 0? 0: verseNumberText.length() + 1, sb.length(), 0);
 		}
-		
-		for (int i = 0; i < withXref; i++) {
-			addXrefLink(lText.getContext(), sb, ari, i, xrefListener, optionalVersesView);
-		}
-	
+
 		lText.setText(sb);
 		
 		// show verse on lVerseNumber if not shown in lText yet
@@ -366,16 +319,23 @@ public class VerseRenderer {
 		}
 	}
 
-	static void processSpecialTag(final StringBuilder tag, final SpannableStringBuilder sb) {
+	static void processSpecialTag(final SpannableStringBuilder sb, final StringBuilder tag, final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, final int ari) {
+		final int sb_len = sb.length();
 		if (tag.length() >= 2) {
 			// Footnote
 			if (tag.charAt(0) == 'f') {
 				final int field = Integer.parseInt(tag.substring(1));
 				appendSuperscriptNumber(sb, field);
+				if (inlineLinkSpanFactory != null) {
+					sb.setSpan(inlineLinkSpanFactory.create(VerseInlineLinkSpan.Type.footnote, ari << 8 | field), sb_len, sb.length(), 0);
+				}
 			} else if (tag.charAt(0) == 'x') {
 				sb.append('\u203B'); // star mark
 				final int field = Integer.parseInt(tag.substring(1));
 				appendSuperscriptNumber(sb, field);
+				if (inlineLinkSpanFactory != null) {
+					sb.setSpan(inlineLinkSpanFactory.create(VerseInlineLinkSpan.Type.xref, ari << 8 | field), sb_len, sb.length(), 0);
+				}
 			}
 		}
 	}
@@ -444,7 +404,7 @@ public class VerseRenderer {
 	/**
 	 * @param optionalVersesView must be not-null if xrefListener is not-null
 	 */
-	public static void simpleRender(TextView lText, TextView lVerseNumber, int ari, String text, String verseNumberText, int highlightColor, boolean checked, int withXref, VersesView.XrefListener xrefListener, VersesView optionalVersesView) {
+	public static void simpleRender(TextView lText, TextView lVerseNumber, int ari, String text, String verseNumberText, int highlightColor, boolean checked, VersesView optionalVersesView) {
 		// initialize lVerseNumber to have no padding first
 		lVerseNumber.setPadding(0, 0, 0, 0);
 		
@@ -461,32 +421,7 @@ public class VerseRenderer {
 			sb.setSpan(new BackgroundColorSpan(highlightColor), verseNumberText.length() + 1, sb.length(), 0);
 		}
 		
-		for (int i = 0; i < withXref; i++) {
-			addXrefLink(lText.getContext(), sb, ari, i, xrefListener, optionalVersesView);
-		}
-	
 		lText.setText(sb);
 		lVerseNumber.setText("");
-	}
-
-	static void addXrefLink(final Context context, SpannableStringBuilder sb, final int ari, final int which, final VersesView.XrefListener xrefListener, final VersesView optionalVersesView) {
-		// if last char of this sb is newline, move back.
-		int sb_start = sb.length();
-		if (sb.length() > 0 && sb.charAt(sb.length() - 1) == '\n') {
-			sb_start --;
-		}
-		
-		sb.insert(sb_start, " \u2022 "); 
-		
-		sb.setSpan(new XrefAttrSpan(context), sb_start+1, sb_start+2, 0);
-		sb.setSpan(new ClickableSpan() {
-			@Override public void updateDrawState(TextPaint ds) { /* prevent underline */ }
-			
-			@Override public void onClick(View widget) {
-				if (xrefListener != null) {
-					xrefListener.onXrefClick(optionalVersesView, ari, which);
-				}
-			}
-		}, sb_start, sb_start+3, 0);
 	}
 }

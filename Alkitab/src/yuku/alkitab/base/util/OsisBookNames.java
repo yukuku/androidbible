@@ -1,7 +1,9 @@
 package yuku.alkitab.base.util;
 
 import gnu.trove.map.hash.TObjectIntHashMap;
+import yuku.alkitab.base.model.Ari;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class OsisBookNames {
@@ -121,11 +123,28 @@ public class OsisBookNames {
 	}
 	
 	/** 
-	 * @param bookName OSIS Book Name (only OT and NT currently supported)
+	 * @param osisBookName OSIS Book Name (only OT and NT currently supported)
 	 * @return 0 to 65 when OK, -1 when not found
 	 */
 	public static int osisBookNameToBookId(String osisBookName) {
 		if (osisBookName == null) return -1;
 		return bookNameToBookIdMap.get(osisBookName);
+	}
+
+	public static int osisToAri(final String osis) {
+		final Matcher m = getBookNameWithChapterAndOptionalVersePattern().matcher(osis);
+		if (m.matches()) {
+			String osisBookName = m.group(1);
+			String chapter_s = m.group(2);
+			String verse_s = m.group(3);
+
+			final int bookId = osisBookNameToBookId(osisBookName);
+			final int chapter_1 = Integer.parseInt(chapter_s);
+			final int verse_1 = (verse_s == null || verse_s.length() == 0)? 0: Integer.parseInt(verse_s);
+
+			return Ari.encode(bookId, chapter_1, verse_1);
+		}
+
+		return 0;
 	}
 }

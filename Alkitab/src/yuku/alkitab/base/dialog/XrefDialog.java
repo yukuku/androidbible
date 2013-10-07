@@ -24,9 +24,8 @@ import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.base.util.Appearances;
-import yuku.alkitab.base.util.Base64Mod;
 import yuku.alkitab.base.util.IntArrayList;
-import yuku.alkitab.base.util.LidToAri;
+import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.VerseSelectionMode;
 
@@ -36,11 +35,10 @@ import java.util.List;
 public class XrefDialog extends BaseDialog {
 	public static final String TAG = XrefDialog.class.getSimpleName();
 
-	private static final String EXTRA_ari = "ari"; //$NON-NLS-1$
-	private static final String EXTRA_which = "which"; //$NON-NLS-1$
+	private static final String EXTRA_arif = "arif"; //$NON-NLS-1$
 
 	public interface XrefDialogListener {
-		void onVerseSelected(XrefDialog dialog, int ari_source, int ari_target);
+		void onVerseSelected(XrefDialog dialog, int arif_source, int ari_target);
 	}
 	
 	TextView tXrefText;
@@ -48,7 +46,7 @@ public class XrefDialog extends BaseDialog {
 	
 	XrefDialogListener listener;
 
-	int ari_source;
+	int arif_source;
 	XrefEntry xrefEntry;
 	int displayedLinkPos = -1; // -1 indicates that we should auto-select the first link
 	List<String> displayedVerseTexts;
@@ -59,12 +57,11 @@ public class XrefDialog extends BaseDialog {
 	public XrefDialog() {
 	}
 	
-	public static XrefDialog newInstance(int ari, int which) {
+	public static XrefDialog newInstance(int arif) {
 		XrefDialog res = new XrefDialog();
 		
         Bundle args = new Bundle();
-        args.putInt(EXTRA_ari, ari);
-        args.putInt(EXTRA_which, which);
+        args.putInt(EXTRA_arif, arif);
         res.setArguments(args);
 
 		return res;
@@ -84,9 +81,8 @@ public class XrefDialog extends BaseDialog {
 		super.onCreate(savedInstanceState);
 		setStyle(DialogFragment.STYLE_NO_TITLE, 0);
 
-		ari_source = getArguments().getInt(EXTRA_ari);
-		int which = getArguments().getInt(EXTRA_which);
-		xrefEntry = sourceVersion.getXrefEntry(ari_source, which);
+		arif_source = getArguments().getInt(EXTRA_arif);
+		xrefEntry = sourceVersion.getXrefEntry(arif_source);
 	}
 	
 	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -146,89 +142,12 @@ public class XrefDialog extends BaseDialog {
 		
 		tXrefText.setText(sb);
 	}
-	
-	IntArrayList decodeTarget(String lid_s) {
-		char[] lid_c = lid_s.toCharArray();
-		int pos = 0;
-		int last_lid = 0;
-		IntArrayList res = new IntArrayList(8);
-		
-		boolean isStart = true;
-		boolean endWritten = false;
-		for (;; isStart = !isStart) {
-			int lid;
-			
-			if (isStart) {
-				endWritten = false;
-				// 00 <addr 4bit> = 1char positive delta from last lid (max 16)
-				// 01 <addr 4bit> = 1char positive delta from last lid (max 16), end == start
-				// 100 <addr 9bit> = 2char positive delta from last lid (max 512)
-				// 101 <addr 9bit> = 2char positive delta from last lid (max 512), end == start
-				// 110 <addr 15bit> = 3char absolute
-				// 111 <addr 15bit> = 3char absolute, end == start
-				int b0 = Base64Mod.decodeFromChars(lid_c, pos++, 1);
-				if ((b0 & 0x20) == 0x00) {
-					lid = last_lid + (b0 & 0x0f);
-					if ((b0 & 0x10) == 0x10) {
-						endWritten = true;
-					}
-				} else if ((b0 & 0x30) == 0x20) {
-					int b1 = Base64Mod.decodeFromChars(lid_c, pos++, 1);
-					lid = last_lid + ((b0 & 0x7) << 6 | b1);
-					if ((b0 & 0x08) == 0x08) {
-						endWritten = true;
-					}
-				} else if ((b0 & 0x30) == 0x30) {
-					int b1 = Base64Mod.decodeFromChars(lid_c, pos, 2);
-					pos += 2;
-					lid = (b0 & 0x7) << 12 | b1;
-					if ((b0 & 0x08) == 0x08) {
-						endWritten = true;
-					}
-				} else {
-					lid = 0;
-				}
-			} else {
-				if (endWritten) {
-					lid = last_lid;
-				} else {
-					// 0 <delta 5bit> = 1char positive delta from start (min 1, max 32)
-					// 10 <delta 10bit> = 2char positive delta from start (max 1024)
-					// 110 <addr 15bit> = 3char absolute
-					int b0 = Base64Mod.decodeFromChars(lid_c, pos++, 1);
-					if ((b0 & 0x20) == 0x00) {
-						lid = last_lid + (b0 & 0x1f);
-					} else if ((b0 & 0x30) == 0x20) {
-						int b1 = Base64Mod.decodeFromChars(lid_c, pos++, 1);
-						lid = last_lid + ((b0 & 0xf) << 6 | b1);
-					} else if ((b0 & 0x30) == 0x30) {
-						int b1 = Base64Mod.decodeFromChars(lid_c, pos, 2);
-						pos += 2;
-						lid = (b0 & 0x7) << 12 | b1;
-					} else {
-						lid = 0;
-					}
-				}
-			}
-			
-			res.add(lid);
-			last_lid = lid;
-			
-			if (!isStart && pos >= lid_c.length) break;
-		}
-		
-		return res;
-	}
 
 	void showVerses(int linkPos, String encodedTarget) {
 		displayedLinkPos = linkPos;
 		
 		final IntArrayList ranges = decodeTarget(encodedTarget);
-		for (int i = 0, len = ranges.size(); i < len; i++) {
-			int ari = LidToAri.lidToAri(ranges.get(i));
-			ranges.set(i, ari);
-		}
-		
+
 		if (D.EBUG) {
 			Log.d(TAG, "linkPos " + linkPos + " target=" + encodedTarget + " ranges=" + ranges);
 		}
@@ -263,15 +182,19 @@ public class XrefDialog extends BaseDialog {
 			Book book = sourceVersion.getBook(Ari.toBook(firstAri));
 			int chapter_1 = Ari.toChapter(firstAri);
 			
-			versesView.setData(book, chapter_1, new Verses(), null, null, 0, null); 
+			versesView.setData(book, chapter_1, new Verses(), null, null, 0);
 		}
 		
 		renderXrefText();
 	}
-	
+
+	private IntArrayList decodeTarget(final String encodedTarget) {
+		return TargetDecoder.decode(encodedTarget);
+	}
+
 	VersesView.SelectedVersesListener versesView_selectedVerses = new VersesView.SelectedVersesListener() {
 		@Override public void onVerseSingleClick(VersesView v, int verse_1) {
-			listener.onVerseSelected(XrefDialog.this, ari_source, displayedRealAris.get(verse_1 - 1));
+			listener.onVerseSelected(XrefDialog.this, arif_source, displayedRealAris.get(verse_1 - 1));
 		}
 		
 		@Override public void onSomeVersesSelected(VersesView v) {}

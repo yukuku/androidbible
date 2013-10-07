@@ -1,6 +1,7 @@
 package yuku.alkitab.base.widget;
 
 import android.content.Context;
+import android.support.v4.view.MotionEventCompat;
 import android.text.Layout;
 import android.text.Selection;
 import android.text.Spannable;
@@ -10,8 +11,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.TextView;
-
-import yuku.afw.D;
+import yuku.alkitab.BuildConfig;
 
 public class VerseTextView extends TextView {
 	public static final String TAG = VerseTextView.class.getSimpleName();
@@ -21,74 +21,63 @@ public class VerseTextView extends TextView {
 	}
 
 	@Override public boolean onTouchEvent(MotionEvent event) {
-		TextView widget = (TextView) this;
-		CharSequence text = widget.getText();
-		if (text instanceof Spanned) {
-			Spanned buffer = (Spanned) text;
+		final CharSequence text = this.getText();
+		if (!(text instanceof Spanned)) return false;
 
-			int action = event.getAction();
+		final Spanned buffer = (Spanned) text;
+		final int action = MotionEventCompat.getActionMasked(event);
 
-			if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_DOWN) {
-				int x = (int) event.getX();
-				int y = (int) event.getY();
+		if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_DOWN) {
+			final int x = (int) (event.getX() + 0.5f) - this.getTotalPaddingLeft() + this.getScrollX();
+			final int y = (int) (event.getY() + 0.5f) - this.getTotalPaddingTop() + this.getScrollY();
 
-				x -= widget.getTotalPaddingLeft();
-				y -= widget.getTotalPaddingTop();
+			final Layout layout = this.getLayout();
+			if (layout == null) return false;
 
-				x += widget.getScrollX();
-				y += widget.getScrollY();
+			final int line = layout.getLineForVertical(y);
+			final int off = layout.getOffsetForHorizontal(line, x);
 
-				Layout layout = widget.getLayout();
-				int line = layout.getLineForVertical(y);
-				int off = layout.getOffsetForHorizontal(line, x);
-
-				if (D.EBUG) {
-					Log.d(TAG, "----------");
-					Log.d(TAG, "y=" + y + " line=" + line);
-					Log.d(TAG, "x=" + x + " off=" + off);
-					String t = getText().toString();
-					if (off - 1 >= 0) {
-						Log.d(TAG, "char offset " + (off-1) + ": " + t.charAt(off-1) + " 0x" + Integer.toHexString(t.charAt(off-1)));
-					} else {
-						Log.d(TAG, "char offset " + (off-1) + " is oob");
-					}
-					if (off < t.length()) {
-						Log.d(TAG, "char offset " + (off) + ": " + t.charAt(off) + " 0x" + Integer.toHexString(t.charAt(off)));
-					} else {
-						Log.d(TAG, "char offset " + (off) + " is oob");
-					}
+			if (BuildConfig.DEBUG) {
+				Log.d(TAG, "----------");
+				Log.d(TAG, "y=" + y + " line=" + line);
+				Log.d(TAG, "x=" + x + " off=" + off);
+				final String t = buffer.toString();
+				if (off - 1 >= 0) {
+					Log.d(TAG, "char offset " + (off-1) + ": " + t.charAt(off-1) + " 0x" + Integer.toHexString(t.charAt(off-1)));
+				} else {
+					Log.d(TAG, "char offset " + (off-1) + " is oob");
 				}
-				
-				ClickableSpan[] link = buffer.getSpans(off, off, ClickableSpan.class);
+				if (off < t.length()) {
+					Log.d(TAG, "char offset " + (off) + ": " + t.charAt(off) + " 0x" + Integer.toHexString(t.charAt(off)));
+				} else {
+					Log.d(TAG, "char offset " + (off) + " is oob");
+				}
+			}
 
-				if (link.length != 0) {
-					// prevent this bug from happening
-					// [link] (end of text)      (clicked here)
-					// but still link is considered clicked.
-					// we don't allow x position of click further than 24dp away. 
-					float density = getResources().getDisplayMetrics().density;
-					float xStart = layout.getPrimaryHorizontal(off);
-					float xEnd = (off+1) >= buffer.length() ? layout.getPrimaryHorizontal(off) + 30 * density : layout.getPrimaryHorizontal(off + 1);
-					float tolerance = 24 * density;
-					
-					boolean cancelClick = false;
-					if (x < xStart - tolerance) {
-						cancelClick = true;
-					} else if (x > xEnd + tolerance) {
-						cancelClick = true;
+			final ClickableSpan[] link = buffer.getSpans(off, off, ClickableSpan.class);
+
+			if (link.length != 0) {
+				// prevent this bug from happening
+				// [link] (end of text)      (clicked here)
+				// but still link is considered clicked.
+				// we don't allow x position of click further than 24dp away.
+				float density = getResources().getDisplayMetrics().density;
+				float xStart = layout.getPrimaryHorizontal(off);
+				float xEnd = (off+1) >= buffer.length() ? layout.getPrimaryHorizontal(off) + 30 * density : layout.getPrimaryHorizontal(off + 1);
+				float tolerance = 24 * density;
+
+				boolean cancelClick = false;
+				if (x < xStart - tolerance) {
+					cancelClick = true;
+				} else if (x > xEnd + tolerance) {
+					cancelClick = true;
+				}
+
+				if (!cancelClick) {
+					if (action == MotionEvent.ACTION_UP) {
+						link[0].onClick(this);
 					}
-					
-					if (!cancelClick) {
-						if (action == MotionEvent.ACTION_UP) {
-							link[0].onClick(widget);
-							return true;
-						} else if (action == MotionEvent.ACTION_DOWN) {
-							if (buffer instanceof Spannable) {
-								Selection.setSelection((Spannable) buffer, buffer.getSpanStart(link[0]), buffer.getSpanEnd(link[0]));
-							}
-							return true;
-						}
-					}
+					return true;
 				}
 			}
 		}
