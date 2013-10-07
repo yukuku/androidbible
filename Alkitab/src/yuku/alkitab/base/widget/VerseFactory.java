@@ -50,7 +50,7 @@ public class VerseFactory implements RemoteViewsService.RemoteViewsFactory {
 
 		Intent intent = new Intent();
 		Bundle extras = new Bundle();
-		extras.putInt("ari", DailyVerseAppWidget.getVerse(appWidgetId)[position]);
+		extras.putInt("ari", aris[position]);
 		intent.putExtras(extras);
 		row.setOnClickFillInIntent(R.id.text1, intent);
 
