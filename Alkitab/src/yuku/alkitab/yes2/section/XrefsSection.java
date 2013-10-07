@@ -25,11 +25,10 @@ public class XrefsSection extends SectionContent {
 
 	// for reading:
 	RandomInputStream input_;
-	boolean available = false;
 	int entry_count;
 	int[] index_arifs; // ari to pos
 	int[] index_offset; // pos to content offset
-	int content_start_offset; // offset of start of content
+	int content_start_offset; // file offset of the start of content
 
 	XrefsSection(final RandomInputStream input) throws Exception {
 		super(SECTION_NAME);
@@ -52,18 +51,11 @@ public class XrefsSection extends SectionContent {
 			this.index_offset[i] = br.readInt();
 		}
 
-		this.content_start_offset = br.getPos();
-		this.available = true;
-
+		this.content_start_offset = (int) input.getFilePointer();
 		this.input_ = input;
 	}
 
-	boolean isAvailable() {
-		return available;
-	}
-
-	public XrefEntry getXrefEntry(final int ari, final int field) {
-		final int arif = ari << 8 | field;
+	public XrefEntry getXrefEntry(final int arif) {
 		final int pos = Arrays.binarySearch(index_arifs, arif);
 		if (pos < 0) {
 			return null;
