@@ -371,15 +371,26 @@ public class VerseRenderer {
 			// Footnote
 			if (tag.charAt(0) == 'f') {
 				final int field = Integer.parseInt(tag.substring(1));
-				if (field >= 0 && field < 10) {
-					sb.append(superscriptDigits[field]);
-				} else {
-					// TODO support for 10 or more footnotes
-				}
+				appendSuperscriptNumber(sb, field);
 			} else if (tag.charAt(0) == 'x') {
-				sb.append('\u203B');
+				sb.append('\u203B'); // star mark
+				final int field = Integer.parseInt(tag.substring(1));
+				appendSuperscriptNumber(sb, field);
 			}
 		}
+	}
+
+	private static void appendSuperscriptNumber(final SpannableStringBuilder sb, final int field) {
+		if (field >= 0 && field < 10) {
+			sb.append(superscriptDigits[field]);
+		} else if (field >= 10) {
+			final String s = String.valueOf(field);
+			for (int i = 0; i < s.length(); i++) {
+				final char c = s.charAt(i);
+				sb.append(superscriptDigits[c - '0']);
+			}
+		}
+		// should not be negative
 	}
 
 	/**
