@@ -1,4 +1,4 @@
-package yuku.alkitab.base.widget;
+package yuku.alkitab.base.br;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -27,7 +27,7 @@ import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Version;
-import yuku.alkitab.base.sv.WidgetService;
+import yuku.alkitab.base.sv.DailyVerseAppWidgetService;
 import yuku.bintex.BintexReader;
 
 import java.io.IOException;
@@ -38,8 +38,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-public class DailyVerseAppWidget extends AppWidgetProvider {
-	public static final String TAG = DailyVerseAppWidget.class.getSimpleName();
+public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
+	public static final String TAG = DailyVerseAppWidgetReceiver.class.getSimpleName();
 
 	@Override
 	public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
@@ -124,11 +124,12 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 	}
 
 	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-	private static RemoteViews getRemoteViewsApi14(final Context context, final int appWidgetId) {Intent svcIntent = new Intent(context, WidgetService.class);
+	private static RemoteViews getRemoteViewsApi14(final Context context, final int appWidgetId) {
+		Intent svcIntent = new Intent(context, DailyVerseAppWidgetService.class);
 		svcIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 		svcIntent.putExtra("random", new Random().nextInt());
 		svcIntent.setData(Uri.parse(svcIntent.toUri(Intent.URI_INTENT_SCHEME)));
-		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.app_widget);
+		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.daily_verse_app_widget);
 		remoteViews.setRemoteAdapter(R.id.lsVerse, svcIntent);
 		return remoteViews;
 	}
@@ -147,7 +148,7 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 			}
 			verseText.append(getText(version, aris[i], showVerseNumber));
 		}
-		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.app_widget_legacy);
+		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.daily_verse_app_widget_legacy);
 		remoteViews.setTextViewText(R.id.tVerse, verseText);
 
 		return remoteViews;
@@ -177,7 +178,7 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 							Preferences.setInt(key, numOfClick);
 						}
 					}
-					Intent i = new Intent(context, DailyVerseAppWidget.class);
+					Intent i = new Intent(context, DailyVerseAppWidgetReceiver.class);
 					i.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 					i.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
 					context.sendBroadcast(i);
@@ -193,7 +194,7 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 		calendar.set(Calendar.SECOND, 0);
 		calendar.add(Calendar.DAY_OF_YEAR, 1);
 
-		Intent intent = new Intent(context, DailyVerseAppWidget.class);
+		Intent intent = new Intent(context, DailyVerseAppWidgetReceiver.class);
 		intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
 

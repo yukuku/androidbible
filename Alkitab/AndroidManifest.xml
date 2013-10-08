@@ -146,18 +146,18 @@
         </receiver>
 
         <receiver
-            android:name="yuku.alkitab.base.widget.DailyVerseAppWidget"
+            android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver"
             android:icon="@drawable/ic_launcher">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
             <meta-data android:name="android.appwidget.provider"
-                       android:resource="@xml/app_widget_provider"/>
+                       android:resource="@xml/daily_verse_app_widget_provider"/>
         </receiver>
 
-        <receiver android:name="yuku.alkitab.base.widget.DailyVerseAppWidget$ClickReceiver"/>
+        <receiver android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver$ClickReceiver"/>
 
-        <service android:name="yuku.alkitab.base.sv.WidgetService"
+        <service android:name="yuku.alkitab.base.sv.DailyVerseAppWidgetService"
                 android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
     </application>

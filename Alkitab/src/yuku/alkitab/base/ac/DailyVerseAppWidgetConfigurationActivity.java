@@ -16,8 +16,8 @@ import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.R;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.br.DailyVerseAppWidgetReceiver;
 import yuku.alkitab.base.config.AppConfig;
-import yuku.alkitab.base.widget.DailyVerseAppWidget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,11 +61,11 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 				AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 				String version = adapter.versions.second.get(position).getVersionId();
 				Preferences.setString("app_widget_" + mAppWidgetId + "_version", version);
-				DailyVerseAppWidget.buildUpdate(context, appWidgetManager, mAppWidgetId);
+				DailyVerseAppWidgetReceiver.buildUpdate(context, appWidgetManager, mAppWidgetId);
 
-				ComponentName provider = new ComponentName(context, DailyVerseAppWidget.class);
+				ComponentName provider = new ComponentName(context, DailyVerseAppWidgetReceiver.class);
 				int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(provider);
-				DailyVerseAppWidget.setAlarm(DailyVerseAppWidgetConfigurationActivity.this, ids);
+				DailyVerseAppWidgetReceiver.setAlarm(DailyVerseAppWidgetConfigurationActivity.this, ids);
 
 				Intent resultValue = new Intent();
 				resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);

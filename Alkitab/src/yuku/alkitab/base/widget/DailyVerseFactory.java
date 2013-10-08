@@ -8,24 +8,25 @@ import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 import yuku.alkitab.R;
+import yuku.alkitab.base.br.DailyVerseAppWidgetReceiver;
 import yuku.alkitab.base.model.Version;
 
 @SuppressLint("NewApi")
-public class VerseFactory implements RemoteViewsService.RemoteViewsFactory {
+public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory {
 	private Context context;
 	private int appWidgetId;
 	private int[] aris;
 	private Version bibleVersion;
 
-	public VerseFactory(final Context context, final Intent intent) {
+	public DailyVerseFactory(final Context context, final Intent intent) {
 		this.context = context;
 		this.appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 	}
 
 	@Override
 	public void onCreate() {
-		bibleVersion = DailyVerseAppWidget.getVersion(appWidgetId);
-		aris = DailyVerseAppWidget.getVerse(appWidgetId);
+		bibleVersion = DailyVerseAppWidgetReceiver.getVersion(appWidgetId);
+		aris = DailyVerseAppWidgetReceiver.getVerse(appWidgetId);
 	}
 
 	@Override
@@ -46,7 +47,7 @@ public class VerseFactory implements RemoteViewsService.RemoteViewsFactory {
 		if (aris.length > 1) {
 			showVerseNumber = true;
 		}
-		row.setTextViewText(R.id.text1, DailyVerseAppWidget.getText(bibleVersion, aris[position], showVerseNumber));
+		row.setTextViewText(R.id.text1, DailyVerseAppWidgetReceiver.getText(bibleVersion, aris[position], showVerseNumber));
 
 		Intent intent = new Intent();
 		Bundle extras = new Bundle();
