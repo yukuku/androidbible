@@ -1,5 +1,6 @@
 package yuku.alkitab.base.widget;
 
+import android.text.TextPaint;
 import android.text.style.ClickableSpan;
 import android.view.View;
 
@@ -29,4 +30,10 @@ public abstract class VerseInlineLinkSpan extends ClickableSpan {
 	}
 
 	public abstract void onClick(final Type type, final int arif, final Object source);
+
+	@Override
+	public void updateDrawState(final TextPaint ds) {
+		// don't call super to prevent link underline and link coloring
+		// NOP
+	}
 }
