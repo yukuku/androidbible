@@ -95,6 +95,7 @@ import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
 import yuku.alkitab.base.widget.VerseInlineLinkSpan;
+import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.PressResult;
 
@@ -1600,8 +1601,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						}
 
 						if (fe != null) {
+							final SpannableStringBuilder footnoteText = new SpannableStringBuilder();
+							VerseRenderer.appendSuperscriptNumber(footnoteText, arif & 0xff);
+							footnoteText.append(" ");
+
 							new AlertDialog.Builder(IsiActivity.this)
-							.setMessage(FormattedTextRenderer.render(fe.content))
+							.setMessage(FormattedTextRenderer.render(fe.content, footnoteText))
 							.setPositiveButton("OK", null)
 							.show();
 						} else {

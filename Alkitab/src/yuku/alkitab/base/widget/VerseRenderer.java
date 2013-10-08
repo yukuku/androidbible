@@ -332,7 +332,6 @@ public class VerseRenderer {
 			} else if (tag.charAt(0) == 'x') {
 				sb.append('\u203B'); // star mark
 				final int field = Integer.parseInt(tag.substring(1));
-				appendSuperscriptNumber(sb, field);
 				if (inlineLinkSpanFactory != null) {
 					sb.setSpan(inlineLinkSpanFactory.create(VerseInlineLinkSpan.Type.xref, ari << 8 | field), sb_len, sb.length(), 0);
 				}
@@ -340,7 +339,7 @@ public class VerseRenderer {
 		}
 	}
 
-	private static void appendSuperscriptNumber(final SpannableStringBuilder sb, final int field) {
+	public static void appendSuperscriptNumber(final SpannableStringBuilder sb, final int field) {
 		if (field >= 0 && field < 10) {
 			sb.append(superscriptDigits[field]);
 		} else if (field >= 10) {
