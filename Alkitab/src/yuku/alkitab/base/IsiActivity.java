@@ -90,6 +90,7 @@ import yuku.alkitab.base.util.Search2Engine.Query;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.AttributeView;
 import yuku.alkitab.base.widget.CallbackSpan;
+import yuku.alkitab.base.widget.FormattedTextRenderer;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
@@ -103,6 +104,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 
@@ -1577,10 +1579,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			return new VerseInlineLinkSpan(type, arif, source) {
 				@Override
 				public void onClick(final Type type, final int arif, final Object source) {
-					Log.d(TAG, "verse inline link click: type=" + type + " arif=0x" + Integer.toHexString(arif));
-
 					if (type == Type.xref) {
-						XrefDialog dialog = XrefDialog.newInstance(arif);
+						final XrefDialog dialog = XrefDialog.newInstance(arif);
 
 						// TODO setSourceVersion here is not restored when dialog is restored
 						if (source == lsText) { // use activeVersion
@@ -1591,9 +1591,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 						FragmentManager fm = getSupportFragmentManager();
 						dialog.show(fm, XrefDialog.class.getSimpleName());
-					} else {
-						// TODO beautify
-
+					} else if (type == Type.footnote) {
 						FootnoteEntry fe = null;
 						if (source == lsText) { // use activeVersion
 							fe = S.activeVersion.getFootnoteEntry(arif);
@@ -1603,15 +1601,25 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 						if (fe != null) {
 							new AlertDialog.Builder(IsiActivity.this)
-							.setMessage(fe.content)
+							.setMessage(FormattedTextRenderer.render(fe.content))
+							.setPositiveButton("OK", null)
+							.show();
+						} else {
+							new AlertDialog.Builder(IsiActivity.this)
+							.setMessage(String.format(Locale.US, "Error: footnote arif 0x%08x couldn't be loaded", arif))
 							.setPositiveButton("OK", null)
 							.show();
 						}
+					} else {
+						new AlertDialog.Builder(IsiActivity.this)
+						.setMessage("Error: Unknown inline link type: " + type)
+						.setPositiveButton("OK", null)
+						.show();
 					}
 				}
 			};
 		}
-	};
+	}
 
 	VersesView.SelectedVersesListener lsText_selectedVerses = new VersesView.SelectedVersesListener() {
 		@Override public void onSomeVersesSelected(VersesView v) {
