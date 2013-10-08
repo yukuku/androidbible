@@ -36,7 +36,7 @@
 		<preset locale="en"   shortName="WEB"     longName="World English Bible" filename_preset="en-web.yes" url="http://alkitab-host.appspot.com/addon/yes/en-web/en-web.yes.gz" />
 		<preset locale="en"   shortName="YLT"     longName="Young's Literal Translation" filename_preset="en-ylt.yes" url="http://alkitab-host.appspot.com/addon/yes/en-ylt/en-ylt.yes.gz" />
 		<preset locale="eo"   shortName="EO"      longName="Esperanto" filename_preset="eo-esperanto.yes" url="http://alkitab-host.appspot.com/addon/yes2/eo-esperanto--1.yes.gz" />
-		<preset locale="es"   shortName="RV"      longName="Reina-Valera 1909" filename_preset="es-reinavalera1909.yes" url="http://alkitab-host.appspot.com/addon/yes/es-reinavalera1909/es-reinavalera1909.yes.gz" />
+		<preset locale="es"   shortName="RV"      longName="Reina-Valera 1909" filename_preset="es-reinavalera1909.yes" url="http://alkitab-host.appspot.com/addon/yes2/es-reinavalera1909--1.yes.gz" />
 		<preset locale="es"   shortName="SEV"     longName="Sagradas Escrituras" filename_preset="es-sagradas.yes" url="http://alkitab-host.appspot.com/addon/yes2/es-sagradas--1.yes.gz" />
 		<preset locale="eu"   shortName="BHNT"    longName="Basque 1571" filename_preset="eu-bhnt.yes" url="http://alkitab-host.appspot.com/addon/yes2/eu-bhnt--1.yes.gz" />
 		<preset locale="fi"   shortName="FI1776"  longName="Finnish 1776" filename_preset="fi-1776.yes" url="http://alkitab-host.appspot.com/addon/yes2/fi-1776--1.yes.gz" />
