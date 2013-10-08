@@ -50,24 +50,12 @@ public abstract class VerseAdapter extends BaseAdapter {
 			return null;
 		}
 	}
-	
-	public static class ParallelTypeAri {
-        public int ariStart;
-    }
 
-    public static class ParallelTypeOsis {
-        public String osisStart;
-    }
-
-    public static class ParallelTypeLid {
-        public int lidStart;
-    }
-	
 	// # field ctor
 	final Context context_;
 	CallbackSpan.OnClickListener parallelListener_;
 	VersesView.AttributeListener attributeListener_;
-	VersesView.XrefListener xrefListener_;
+	VerseInlineLinkSpan.Factory inlineLinkSpanFactory_;
 	final float density_;
 
 	// # field setData
@@ -85,8 +73,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 	int[] itemPointer_;
 	int[] attributeMap_; // bit 0(0x1) = bookmark; bit 1(0x2) = notes; bit 2(0x4) = highlight; bit 8-12 = progress mark
 	int[] highlightMap_; // null atau warna stabilo
-	int[] xrefEntryCounts_;
-	
+
 	LayoutInflater inflater_;
 	VersesView owner_;
 	
@@ -96,14 +83,13 @@ public abstract class VerseAdapter extends BaseAdapter {
 		inflater_ = LayoutInflater.from(context_);
 	}
 
-	public synchronized void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock, int[] xrefEntryCounts) {
+	public synchronized void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
 		book_ = book;
 		chapter_1_ = chapter_1;
 		verses_ = verses;
 		pericopeBlocks_ = pericopeBlocks;
 		itemPointer_ = makeItemPointer(verses_.getVerseCount(), pericopeAris, pericopeBlocks, nblock);
-		xrefEntryCounts_ = xrefEntryCounts;
-		
+
 		notifyDataSetChanged();
 	}
 
@@ -113,8 +99,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 		verses_ = null;
 		pericopeBlocks_ = null;
 		itemPointer_ = null;
-		xrefEntryCounts_ = null;
-		
+
 		notifyDataSetChanged();
 	}
 
@@ -185,8 +170,8 @@ public abstract class VerseAdapter extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 
-	public void setXrefListener(VersesView.XrefListener xrefListener, VersesView owner) {
-		xrefListener_ = xrefListener;
+	public void setInlineLinkSpanFactory(final VerseInlineLinkSpan.Factory inlineLinkSpanFactory, VersesView owner) {
+		inlineLinkSpanFactory_ = inlineLinkSpanFactory;
 		owner_ = owner;
 		notifyDataSetChanged();
 	}

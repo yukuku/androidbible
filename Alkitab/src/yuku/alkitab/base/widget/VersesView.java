@@ -74,7 +74,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		void onProgressMarkAttributeClick(int preset_id);
 	}
 
-	public abstract static class XrefListener {
+	public abstract static class InlineLinkListener {
 		public abstract void onXrefClick(VersesView versesView, int ari, int which);
 	}
 	
@@ -140,8 +140,8 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		adapter.setAttributeListener(attributeListener);
 	}
 
-	public void setXrefListener(VersesView.XrefListener xrefListener) {
-		adapter.setXrefListener(xrefListener, this);
+	public void setInlineLinkSpanFactory(final VerseInlineLinkSpan.Factory inlineLinkSpanFactory) {
+		adapter.setInlineLinkSpanFactory(inlineLinkSpanFactory, this);
 	}
 	
 	public void setVerseSelectionMode(VerseSelectionMode mode) {
@@ -214,8 +214,8 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		return pos;
 	}
 
-	public void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock, int[] xrefEntryCounts) {
-		adapter.setData(book, chapter_1, verses, pericopeAris, pericopeBlocks, nblock, xrefEntryCounts);
+	public void setData(Book book, int chapter_1, SingleChapterVerses verses, int[] pericopeAris, PericopeBlock[] pericopeBlocks, int nblock) {
+		adapter.setData(book, chapter_1, verses, pericopeAris, pericopeBlocks, nblock);
 		stopFling();
 	}
 
@@ -361,7 +361,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		return PressResult.nop;
 	}
 
-	public void setDataWithRetainSelectedVerses(boolean retainSelectedVerses, Book book, int chapter_1, int[] pericope_aris, PericopeBlock[] pericope_blocks, int nblock, SingleChapterVerses verses, int[] xrefEntryCounts) {
+	public void setDataWithRetainSelectedVerses(boolean retainSelectedVerses, Book book, int chapter_1, int[] pericope_aris, PericopeBlock[] pericope_blocks, int nblock, SingleChapterVerses verses) {
 		IntArrayList selectedVerses_1 = null;
 		if (retainSelectedVerses) {
 			selectedVerses_1 = getSelectedVerses_1();
@@ -369,7 +369,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		
 		//# fill adapter with new data. make sure all checked states are reset
 		uncheckAllVerses(true);
-		setData(book, chapter_1, verses, pericope_aris, pericope_blocks, nblock, xrefEntryCounts);
+		setData(book, chapter_1, verses, pericope_aris, pericope_blocks, nblock);
 		reloadAttributeMap();
 		
 		boolean anySelected = false;

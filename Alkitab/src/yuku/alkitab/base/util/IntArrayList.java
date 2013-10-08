@@ -3,6 +3,8 @@ package yuku.alkitab.base.util;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Arrays;
+
 public class IntArrayList implements Parcelable {
 	int[] buf;
 	int len;
@@ -102,5 +104,27 @@ public class IntArrayList implements Parcelable {
 		}
 		sb.append(']');
 		return sb.toString();
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		final IntArrayList that = (IntArrayList) o;
+
+		if (len != that.len) return false;
+		for (int i = 0; i < len; i++) {
+			if (buf[i] != that.buf[i]) return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = Arrays.hashCode(buf);
+		result = 31 * result + len;
+		return result;
 	}
 }

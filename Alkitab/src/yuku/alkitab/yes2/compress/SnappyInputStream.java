@@ -1,14 +1,17 @@
 package yuku.alkitab.yes2.compress;
 
-import java.io.IOException;
-
+import yuku.alkitab.yes2.io.RandomAccessFileRandomInputStream;
 import yuku.alkitab.yes2.io.RandomInputStream;
 import yuku.bintex.ValueMap;
 import yuku.snappy.codec.Snappy;
 
+import java.io.IOException;
+
 public class SnappyInputStream extends RandomInputStream {
 	public final String TAG = SnappyInputStream.class.getSimpleName();
 	
+	private final RandomAccessFileRandomInputStream input;
+
 	private final Snappy snappy;
 	private final long baseOffset;
 	private final int block_size;
@@ -21,9 +24,8 @@ public class SnappyInputStream extends RandomInputStream {
 	private byte[] uncompressed_buf;
 	private int uncompressed_len = -1; // -1 means not initialized
 
-	public SnappyInputStream(RandomInputStream input, long baseOffset, int block_size, int[] compressed_block_sizes, int[] compressed_block_offsets) throws IOException {
-		super(input.getFile());
-		
+	public SnappyInputStream(RandomAccessFileRandomInputStream input, long baseOffset, int block_size, int[] compressed_block_sizes, int[] compressed_block_offsets) throws IOException {
+		this.input = input;
 		this.block_size = block_size;
 		this.snappy = new Snappy.Factory().newInstance();
 		this.baseOffset = baseOffset;
@@ -49,8 +51,8 @@ public class SnappyInputStream extends RandomInputStream {
 		// if uncompressed_block_index is already equal to the requested block_index
 		// then we do not need to re-decompress again
 		if (uncompressed_block_index != block_index) {
-			super.seek(baseOffset + compressed_block_offsets[block_index]);
-			super.read(compressed_buf, 0, compressed_block_sizes[block_index]);
+			input.seek(baseOffset + compressed_block_offsets[block_index]);
+			input.read(compressed_buf, 0, compressed_block_sizes[block_index]);
 			uncompressed_len = snappy.decompress(compressed_buf, 0, uncompressed_buf, 0, compressed_block_sizes[block_index]);
 			if (uncompressed_len < 0) {
 				throw new IOException("Error in decompressing: " + uncompressed_len);
@@ -127,7 +129,7 @@ public class SnappyInputStream extends RandomInputStream {
 		return n;
 	}
 	
-	public static SnappyInputStream getInstanceFromAttributes(RandomInputStream input, ValueMap sectionAttributes, long sectionContentOffset) throws IOException {
+	public static SnappyInputStream getInstanceFromAttributes(RandomAccessFileRandomInputStream input, ValueMap sectionAttributes, long sectionContentOffset) throws IOException {
 		int compressionVersion = sectionAttributes.getInt("compression.version", 0);
 		if (compressionVersion > 1) {
 			throw new IOException("Compression version " + compressionVersion + " is not supported");

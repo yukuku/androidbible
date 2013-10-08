@@ -277,20 +277,17 @@ public class Version {
 	}
 	
 	/**
-	 * Get the number of xref entries for each verse of the specified book and chapter.
-	 * The result with index verse_1 will be filled with the number of xref entries on the verse_1.
-	 * @param result must have at least 256 elements. The result will be put here.
-	 * @return Total number of xref entries. 0 if none or no xref support on this version.
+	 * @param arif 24bit ari at the MSB + which xref field at the 8bit LSB (starts from 1)
 	 */
-	public synchronized int getXrefEntryCounts(int[] result, int bookId, int chapter_1) {
-		return bibleReader.getXrefEntryCounts(result, bookId, chapter_1);
+	public synchronized XrefEntry getXrefEntry(final int arif) {
+		return bibleReader.getXrefEntry(arif);
 	}
 
 	/**
-	 * @param which Each verse can have more than one xref entry. Starts from 0.
+	 * @param arif 24bit ari at the MSB + which xref field at the 8bit LSB (starts from 1)
 	 */
-	public synchronized XrefEntry getXrefEntry(int ari, int which) {
-		return bibleReader.getXrefEntry(ari, which);
+	public synchronized FootnoteEntry getFootnoteEntry(final int arif) {
+		return bibleReader.getFootnoteEntry(arif);
 	}
 
 	public String reference(int ari) {

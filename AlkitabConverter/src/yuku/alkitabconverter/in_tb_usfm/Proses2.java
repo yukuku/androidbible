@@ -110,9 +110,8 @@ public class Proses2 {
 			@Override public void process(XrefEntry xe, int ari, int entryIndex) {
 				try {
 					int offset = xref_content_bw.getPos();
-					xref_content_bw.writeValueString(xe.source);
-					xref_content_bw.writeValueString(xe.target);
-					
+					xref_content_bw.writeValueString(xe.content);
+
 					xref_index_ari_to_pos.add(ari);
 					xref_index_pos_to_offset.add(offset);
 				} catch (IOException e) {
@@ -508,9 +507,9 @@ public class Proses2 {
 				if (xref_state == 0) {
 					xrefDb.addBegin(ari);
 				} else if (xref_state == 1) {
-					xrefDb.addSource(ari, chars);
+					xrefDb.appendText(ari, chars);
 				} else if (xref_state == 2) {
-					xrefDb.addTarget(ari, chars);
+					xrefDb.appendText(ari, chars);
 				} else {
 					throw new RuntimeException("xref_state not supported");
 				}

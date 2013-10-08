@@ -4,6 +4,7 @@ import android.util.Log;
 import yuku.afw.D;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.FootnoteEntry;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.XrefEntry;
@@ -423,13 +424,14 @@ public class Yes1Reader implements BibleReader {
 		}
 	}
 
-	@Override public int getXrefEntryCounts(int[] result, int bookId, int chapter_1) {
-		// YES1 file cannot contain any xref entries.
-		return 0;
+	@Override public XrefEntry getXrefEntry(int arif) {
+		// YES1 file cannot contain xref entries.
+		return null;
 	}
 
-	@Override public XrefEntry getXrefEntry(int ari, int which) {
-		// YES1 file cannot contain any xref entries.
+	@Override
+	public FootnoteEntry getFootnoteEntry(final int arif) {
+		// YES1 file cannot contain footnote entries.
 		return null;
 	}
 }

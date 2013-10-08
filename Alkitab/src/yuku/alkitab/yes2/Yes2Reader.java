@@ -1,39 +1,45 @@
 package yuku.alkitab.yes2;
 
 import android.util.Log;
-
-import java.util.Arrays;
-import java.util.List;
-
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.FootnoteEntry;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.base.storage.BibleReader;
 import yuku.alkitab.yes2.compress.SnappyInputStream;
+import yuku.alkitab.yes2.io.RandomAccessFileRandomInputStream;
 import yuku.alkitab.yes2.io.RandomInputStream;
 import yuku.alkitab.yes2.io.Yes2VerseTextDecoder;
 import yuku.alkitab.yes2.model.SectionIndex;
 import yuku.alkitab.yes2.model.Yes2Book;
 import yuku.alkitab.yes2.section.BooksInfoSection;
+import yuku.alkitab.yes2.section.FootnotesSection;
 import yuku.alkitab.yes2.section.PericopesSection;
 import yuku.alkitab.yes2.section.TextSection;
 import yuku.alkitab.yes2.section.VersionInfoSection;
+import yuku.alkitab.yes2.section.XrefsSection;
 import yuku.bintex.BintexReader;
 import yuku.bintex.ValueMap;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class Yes2Reader implements BibleReader {
 	private static final String TAG = Yes2Reader.class.getSimpleName();
 
-	private RandomInputStream file_;
+	private RandomAccessFileRandomInputStream file_;
 	private SectionIndex sectionIndex_;
 
 	// cached in memory
 	private VersionInfoSection versionInfo_;
 	private PericopesSection pericopesSection_;
 	private TextSectionReader textSectionReader_;
-	
+	private XrefsSection xrefsSection_;
+	private FootnotesSection footnotesSection_;
+
 	static class Yes2SingleChapterVerses extends SingleChapterVerses {
 		private final String[] verses;
 
@@ -56,14 +62,14 @@ public class Yes2Reader implements BibleReader {
 	 * and also understands the text section attributes (compression, encryption etc.)
 	 */
 	static class TextSectionReader {
-		private final RandomInputStream file_;
+		private final RandomAccessFileRandomInputStream file_;
 		private final Yes2VerseTextDecoder decoder_;
 		private final long sectionContentOffset_;
 		private BintexReader br_;
 		
 		private SnappyInputStream snappyInputStream;  // null means no compression
 		
-		public TextSectionReader(RandomInputStream file, Yes2VerseTextDecoder decoder, ValueMap sectionAttributes, long sectionContentOffset) throws Exception {
+		public TextSectionReader(RandomAccessFileRandomInputStream file, Yes2VerseTextDecoder decoder, ValueMap sectionAttributes, long sectionContentOffset) throws Exception {
 			file_ = file;
 			decoder_ = decoder;
 			sectionContentOffset_ = sectionContentOffset;
@@ -105,12 +111,12 @@ public class Yes2Reader implements BibleReader {
 		}
 	}
 	
-	public Yes2Reader(RandomInputStream input) {
+	public Yes2Reader(RandomAccessFileRandomInputStream input) {
 		this.file_ = input;
 	}
 
 	/** Read section index */
-	private synchronized void loadSectionIndex() throws Exception {
+	private synchronized void loadSectionIndex() throws IOException {
 		if (sectionIndex_ != null) { // we have read it previously.
 			return;
 		}
@@ -135,7 +141,7 @@ public class Yes2Reader implements BibleReader {
 		}
 	}
 	
-	private synchronized boolean seekToSection(String sectionName) throws Exception {
+	private synchronized boolean seekToSection(String sectionName) throws IOException {
 		loadSectionIndex();
 		
 		if (sectionIndex_ == null) {
@@ -241,31 +247,13 @@ public class Yes2Reader implements BibleReader {
 			}
 			
 			if (pericopesSection_ == null) { // not yet loaded!
-				ValueMap sectionAttributes = sectionIndex_.getSectionAttributes(PericopesSection.SECTION_NAME, file_);
-				long sectionContentOffset = sectionIndex_.getAbsoluteOffsetForSectionContent(PericopesSection.SECTION_NAME);
-				
-				RandomInputStream sectionInput = null;
-				if (sectionAttributes != null) {
-					String compressionName = sectionAttributes.getString("compression.name");
-					if (compressionName != null) {
-						if ("snappy-blocks".equals(compressionName)) {
-							sectionInput = SnappyInputStream.getInstanceFromAttributes(file_, sectionAttributes, sectionContentOffset);
-						} else {
-							throw new Exception("Compression " + compressionName + " is not supported");
-						}
-					}
-				}
-				
-				// no compression detected
+				final RandomInputStream sectionInput = prepareLoadSection(PericopesSection.SECTION_NAME);
+
 				if (sectionInput == null) {
-					sectionInput = file_;
-				}
-				
-				if (seekToSection(PericopesSection.SECTION_NAME)) {
-					pericopesSection_ = new PericopesSection.Reader().read(sectionInput);
-				} else {
 					return 0;
 				}
+
+				pericopesSection_ = new PericopesSection.Reader().read(sectionInput);
 			}
 			
 			if (pericopesSection_ == null) { 
@@ -283,13 +271,73 @@ public class Yes2Reader implements BibleReader {
 		}
 	}
 
-	@Override public int getXrefEntryCounts(int[] result, int bookId, int chapter_1) {
-		// TODO YES2 file may contain xref entries, but not yet implemented.
-		return 0;
+	@Override
+	public XrefEntry getXrefEntry(int arif) {
+		if (xrefsSection_ == null) { // not yet loaded!
+			try {
+				final RandomInputStream sectionInput = prepareLoadSection(XrefsSection.SECTION_NAME);
+				if (sectionInput == null) {
+					return null;
+				}
+
+				xrefsSection_ = new XrefsSection.Reader().read(sectionInput);
+			} catch (Exception e) {
+				Log.e(TAG, "General exception in loading xref section", e); //$NON-NLS-1$
+				return null;
+			}
+		}
+
+		return xrefsSection_.getXrefEntry(arif);
 	}
 
-	@Override public XrefEntry getXrefEntry(int ari, int which) {
-		// TODO YES2 file may contain xref entries, but not yet implemented.
-		return null;
+	@Override
+	public FootnoteEntry getFootnoteEntry(final int arif) {
+		if (footnotesSection_ == null) { // not yet loaded!
+			try {
+				final RandomInputStream sectionInput = prepareLoadSection(FootnotesSection.SECTION_NAME);
+				if (sectionInput == null) {
+					return null;
+				}
+
+				footnotesSection_ = new FootnotesSection.Reader().read(sectionInput);
+			} catch (Exception e) {
+				Log.e(TAG, "General exception in loading footnote section", e); //$NON-NLS-1$
+				return null;
+			}
+		}
+
+		return footnotesSection_.getFootnoteEntry(arif);
+	}
+
+	/**
+	 * Prepares an input stream for a section.
+	 * @return an input stream that transparently handles compressed/uncompressed data. Null if the section name is not found.
+	 */
+	RandomInputStream prepareLoadSection(final String sectionName) throws IOException {
+		final ValueMap sectionAttributes = sectionIndex_.getSectionAttributes(sectionName, file_);
+		final long sectionContentOffset = sectionIndex_.getAbsoluteOffsetForSectionContent(sectionName);
+
+		RandomInputStream sectionInput = null;
+		if (sectionAttributes != null) {
+			String compressionName = sectionAttributes.getString("compression.name");
+			if (compressionName != null) {
+				if ("snappy-blocks".equals(compressionName)) {
+					sectionInput = SnappyInputStream.getInstanceFromAttributes(file_, sectionAttributes, sectionContentOffset);
+				} else {
+					throw new IOException("Compression " + compressionName + " is not supported");
+				}
+			}
+		}
+
+		// no compression detected
+		if (sectionInput == null) {
+			sectionInput = file_;
+		}
+
+		if (seekToSection(sectionName)) {
+			return sectionInput;
+		} else {
+			return null;
+		}
 	}
 }
