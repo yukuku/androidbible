@@ -6,7 +6,7 @@ import android.text.style.StyleSpan;
 
 public class FormattedTextRenderer {
 	/**
-	 * Renders a simple formatted text. This is a much simpler version of {@link yuku.alkitab.base.widget.VerseRenderer},
+	 * Renders a simple formatted text. This is a much simpler version of {@link VerseRenderer},
 	 * only some tags are supported. The supported tags are:
 	 * <pre>
 	 *     @9...@7 for italics
@@ -15,8 +15,38 @@ public class FormattedTextRenderer {
 	 *
 	 * @param text String with formatting tags. Optionally it can start with "@@".
 	 */
-	public static SpannableStringBuilder render(final String text) {
-		return render(text, false);
+	public static SpannableStringBuilder render(final String text) {return render(text, null);}
+
+	/**
+	 * Renders a simple formatted text. This is a much simpler version of {@link yuku.alkitab.base.widget.VerseRenderer},
+	 * only some tags are supported. The supported tags are:
+	 * <pre>
+	 *     @9...@7 for italics
+	 *     @8 for line break
+	 * </pre>
+	 *
+	 * @param text String with formatting tags. Optionally it can start with "@@".
+	 * @param appendToThis If not null, the results are appended to this string instead of newly created. Note that
+	 * the contents of this parameter will be modified.
+	 */
+	public static SpannableStringBuilder render(final String text, final SpannableStringBuilder appendToThis) {
+		return render(text, false, appendToThis);
+	}
+
+	/**
+	 * Renders a simple formatted text. This is a much simpler version of {@link VerseRenderer},
+	 * only some tags are supported. The supported tags are:
+	 * <pre>
+	 *     @9...@7 for italics
+	 *     @8 for line break
+	 * </pre>
+	 *
+	 * @param text String with formatting tags
+	 * @param mustHaveFormattedHeader when true, the text must start with "@@" to enable formatting, otherwise, the text
+	 * is treated as plain.
+	 */
+	public static SpannableStringBuilder render(final String text, final boolean mustHaveFormattedHeader) {
+		return render(text, mustHaveFormattedHeader, null);
 	}
 
 	/**
@@ -29,13 +59,19 @@ public class FormattedTextRenderer {
 	 *
 	 * @param text String with formatting tags
 	 * @param mustHaveFormattedHeader when true, the text must start with "@@" to enable formatting, otherwise, the text
-	 * is treated as plain.
+	 * @param appendToThis If not null, the results are appended to this string instead of newly created. Note that
+	 * the contents of this parameter will be modified.
 	 */
-	public static SpannableStringBuilder render(final String text, final boolean mustHaveFormattedHeader) {
+	public static SpannableStringBuilder render(final String text, final boolean mustHaveFormattedHeader, final SpannableStringBuilder appendToThis) {
 		final int text_len = text.length();
 		if (mustHaveFormattedHeader) {
 			if (text_len < 2 || text.charAt(0) != '@' || text.charAt(1) != '@') {
-				return new SpannableStringBuilder(text);
+				if (appendToThis == null) {
+					return new SpannableStringBuilder(text);
+				} else {
+					appendToThis.append(text);
+					return appendToThis;
+				}
 			}
 		}
 
@@ -45,7 +81,7 @@ public class FormattedTextRenderer {
 		}
 
 		int startItalic = -1;
-		final SpannableStringBuilder sb = new SpannableStringBuilder();
+		final SpannableStringBuilder sb = appendToThis != null? appendToThis: new SpannableStringBuilder();
 		while (true) {
 			if (pos >= text_len) {
 				break;

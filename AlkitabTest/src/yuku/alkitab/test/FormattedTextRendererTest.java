@@ -21,6 +21,12 @@ public class FormattedTextRendererTest extends AndroidTestCase {
 		assertEquals("@9ab@7", FormattedTextRenderer.render("@9ab@7", true).toString());
 		assertEquals("ab", FormattedTextRenderer.render("@@@9ab@7", true).toString());
 
+		// appending test
+		SpannableStringBuilder prefix = new SpannableStringBuilder("prefix");
+		assertEquals("prefixab", FormattedTextRenderer.render("@9ab@7", false, prefix).toString());
+		assertEquals("prefixab@9ab@7", FormattedTextRenderer.render("@9ab@7", true, prefix).toString());
+		assertEquals("prefixab@9ab@7ab", FormattedTextRenderer.render("@@@9ab@7", true, prefix).toString());
+
 		final SpannableStringBuilder text = FormattedTextRenderer.render("@@ab@9cd@7ef@9gh@7ij");
 		final Object[] spans = text.getSpans(0, text.length(), Object.class);
 		assertEquals(2, spans.length);
