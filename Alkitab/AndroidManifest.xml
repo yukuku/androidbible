@@ -155,11 +155,11 @@
                        android:resource="@xml/app_widget_provider"/>
         </receiver>
 
-        <receiver android:name="yuku.alkitab.base.widget.DailyVerseAppWidget$ClickReceiver"></receiver>
+        <receiver android:name="yuku.alkitab.base.widget.DailyVerseAppWidget$ClickReceiver"/>
 
         <service android:name="yuku.alkitab.base.sv.WidgetService"
                 android:permission="android.permission.BIND_REMOTEVIEWS"/>
-                                                                    d
+
     </application>
 
 </manifest>

@@ -211,10 +211,6 @@ public class DailyVerseAppWidget extends AppWidgetProvider {
 
 		AppConfig c = AppConfig.get();
 
-		if (version == null) {
-			return null;
-		}
-
 		if (VersionsActivity.MVersionInternal.getVersionInternalId().equals(version)) {
 			return Version.getInternalVersion();
 		}
