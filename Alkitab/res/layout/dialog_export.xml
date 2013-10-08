@@ -9,18 +9,4 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:id="@+id/lsBookmark" android:layout_weight="1"/>
-    <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-        <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/cancel"
-                android:id="@+id/bCancel"/>
-        <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ok"
-                android:id="@+id/bOk"/>
-    </LinearLayout>
 </LinearLayout>

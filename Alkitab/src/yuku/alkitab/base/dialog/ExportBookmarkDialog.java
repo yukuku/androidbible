@@ -1,6 +1,9 @@
 package yuku.alkitab.base.dialog;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,12 +11,9 @@ import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.ListView;
 import yuku.afw.V;
@@ -45,7 +45,6 @@ public class ExportBookmarkDialog extends DialogFragment {
 		void onOk(Uri uri);
 	}
 
-	LayoutInflater inflater;
 	Listener listener;
 
 	@Override
@@ -55,17 +54,58 @@ public class ExportBookmarkDialog extends DialogFragment {
 	}
 
 	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-
-		this.inflater = inflater;
-		View view = inflater.inflate(R.layout.dialog_export, container, false);
-		getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-		final Button bOk = V.get(view, R.id.bOk);
-		final Button bCancel = V.get(view, R.id.bCancel);
-
-		ListView lsBookmark = V.get(view, R.id.lsBookmark);
+	public Dialog onCreateDialog(final Bundle savedInstanceState) {
 		final BookmarkAdapter adapter = new BookmarkAdapter();
 		adapter.load();
+
+		final AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+		.setNegativeButton(getActivity().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(final DialogInterface dialog, final int which) {
+				dialog.dismiss();
+			}
+		})
+		.setPositiveButton(getActivity().getString(R.string.ok), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(final DialogInterface dialog, final int which) {
+				boolean showNoLabelBookmarks = false;
+				List<Label> exportedLabels = new ArrayList<Label>();
+				boolean showNotes = false;
+				boolean showHighlights = false;
+				boolean hasSomethingToExport = false;
+				for (ItemAdapter itemAdapter : adapter.items) {
+					if (itemAdapter.type == ItemType.notes && itemAdapter.checks) {
+						showNotes = true;
+						hasSomethingToExport = true;
+					} else if (itemAdapter.type == ItemType.highlight && itemAdapter.checks) {
+						showHighlights = true;
+						hasSomethingToExport = true;
+					} else if (itemAdapter.type == ItemType.unlabel && itemAdapter.checks) {
+						showNoLabelBookmarks = true;
+						hasSomethingToExport = true;
+					} else if (itemAdapter.type == ItemType.label && itemAdapter.checks) {
+						exportedLabels.add(itemAdapter.label);
+						hasSomethingToExport = true;
+					}
+				}
+				if (!hasSomethingToExport) {
+					return;
+				}
+
+				ExportData data = getAllData(showNoLabelBookmarks, exportedLabels, showNotes, showHighlights);
+				final File file = writeHtml(data);
+
+				final Uri uri = new Uri.Builder().scheme("content").authority(getString(R.string.file_provider_authority)).encodedPath("cache/" + file.getName()).build();
+				listener.onOk(uri);
+
+				dialog.dismiss();
+			}
+		})
+		.create();
+
+		View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_export, null);
+
+		ListView lsBookmark = V.get(view, R.id.lsBookmark);
 		lsBookmark.setAdapter(adapter);
 		lsBookmark.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
@@ -112,53 +152,19 @@ public class ExportBookmarkDialog extends DialogFragment {
 				}
 				adapter.notifyDataSetChanged();
 
-				boolean enable = false;
+				boolean enabled = false;
 				for (ItemAdapter itemAdapter : adapter.items) {
 					if (itemAdapter.checks) {
-						enable = true;
+						enabled = true;
 						break;
 					}
 				}
-				bOk.setEnabled(enable);
+				alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(enabled);
 			}
 		});
+		alertDialog.setView(view);
 
-		bCancel.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				ExportBookmarkDialog.this.dismiss();
-			}
-		});
-
-		bOk.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				boolean showNoLabelBookmarks = false;
-				List<Label> exportedLabels = new ArrayList<Label>();
-				boolean showNotes = false;
-				boolean showHighlights = false;
-
-				for (ItemAdapter itemAdapter : adapter.items) {
-					if (itemAdapter.type == ItemType.notes && itemAdapter.checks) {
-						showNotes = true;
-					} else if (itemAdapter.type == ItemType.highlight && itemAdapter.checks) {
-						showHighlights = true;
-					} else if (itemAdapter.type == ItemType.unlabel && itemAdapter.checks) {
-						showNoLabelBookmarks = true;
-					} else if (itemAdapter.type == ItemType.label && itemAdapter.checks) {
-						exportedLabels.add(itemAdapter.label);
-					}
-				}
-				ExportData data = getAllData(showNoLabelBookmarks, exportedLabels, showNotes, showHighlights);
-				final File file = writeHtml(data);
-
-				final Uri uri = new Uri.Builder().scheme("content").authority(getString(R.string.file_provider_authority)).encodedPath("cache/" + file.getName()).build();
-				listener.onOk(uri);
-
-				ExportBookmarkDialog.this.dismiss();
-			}
-		});
-		return view;
+		return alertDialog;
 	}
 
 	private ExportData getAllData(boolean showNoLabelBookmarks, List<Label> exportedlabels, boolean showNotes, boolean showHighlights) {
@@ -448,7 +454,7 @@ public class ExportBookmarkDialog extends DialogFragment {
 
 		@Override
 		public View newView(final int position, final ViewGroup parent) {
-			return inflater.inflate(android.R.layout.simple_list_item_multiple_choice, parent, false);
+			return getActivity().getLayoutInflater().inflate(android.R.layout.simple_list_item_multiple_choice, parent, false);
 		}
 
 		@Override
