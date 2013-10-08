@@ -4,7 +4,7 @@ import java.util.Locale;
 
 import yuku.afw.App;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 
 class ColorThemes {
 	// text color, bg color, verse number color, red text color

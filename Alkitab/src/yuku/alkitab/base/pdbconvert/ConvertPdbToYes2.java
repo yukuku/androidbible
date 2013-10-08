@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.yes2.Yes2Writer;
 import yuku.alkitab.yes2.io.RandomOutputStream;

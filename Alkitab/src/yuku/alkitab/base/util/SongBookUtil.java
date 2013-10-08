@@ -20,7 +20,7 @@ import java.util.zip.GZIPInputStream;
 
 import net.londatiga.android.ActionItem;
 import net.londatiga.android.QuickAction;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.rpc.SimpleHttpConnection;
 import yuku.kpri.model.Song;

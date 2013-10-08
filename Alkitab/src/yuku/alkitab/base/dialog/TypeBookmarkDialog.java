@@ -19,7 +19,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import yuku.afw.V;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.compat.Api11;

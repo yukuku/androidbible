@@ -20,7 +20,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import yuku.afw.App;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.rpc.SimpleHttpConnection;
 
 public class DownloadService extends Service {

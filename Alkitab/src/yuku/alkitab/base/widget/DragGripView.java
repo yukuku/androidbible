@@ -28,7 +28,7 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 
 public class DragGripView extends View {
     private static final int[] ATTRS = new int[]{

@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Ari;

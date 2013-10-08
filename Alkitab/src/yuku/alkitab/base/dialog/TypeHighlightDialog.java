@@ -8,7 +8,7 @@ import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 
 import yuku.afw.V;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.util.IntArrayList;

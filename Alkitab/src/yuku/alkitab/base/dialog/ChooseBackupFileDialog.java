@@ -11,7 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.util.Sqlitil;
 

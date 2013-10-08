@@ -8,7 +8,7 @@ import android.webkit.WebView;
 
 import yuku.afw.App;
 import yuku.afw.V;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 

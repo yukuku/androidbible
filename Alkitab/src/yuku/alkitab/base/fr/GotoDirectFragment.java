@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import yuku.afw.V;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
 import yuku.alkitab.base.util.Jumper;

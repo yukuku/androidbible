@@ -15,7 +15,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.compat.Api8;
 import yuku.alkitab.base.model.Book;

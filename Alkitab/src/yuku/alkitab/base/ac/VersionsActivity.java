@@ -34,7 +34,7 @@ import android.widget.Toast;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;

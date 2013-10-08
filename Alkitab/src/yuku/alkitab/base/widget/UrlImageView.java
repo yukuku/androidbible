@@ -29,7 +29,7 @@ import yuku.afw.rpc.ImageData;
 import yuku.afw.rpc.Response;
 import yuku.afw.rpc.Response.Validity;
 import yuku.afw.rpc.UrlLoader;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 
 public class UrlImageView extends ImageView {
 	public static final String TAG = UrlImageView.class.getSimpleName();

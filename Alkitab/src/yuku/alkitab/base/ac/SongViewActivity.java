@@ -20,7 +20,7 @@ import android.widget.Toast;
 import net.londatiga.android.QuickAction;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;

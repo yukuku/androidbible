@@ -5,7 +5,7 @@ import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitabfeedback.FeedbackSender;
 import yuku.kirimfidbek.PengirimFidbek;
 

@@ -7,7 +7,7 @@ import android.util.AttributeSet;
 import android.widget.Checkable;
 import android.widget.LinearLayout;
 
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 
 public class VerseItem extends LinearLayout implements Checkable {
 	public static final String TAG = VerseItem.class.getSimpleName();

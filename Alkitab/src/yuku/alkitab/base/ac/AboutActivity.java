@@ -13,7 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 import yuku.afw.V;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 

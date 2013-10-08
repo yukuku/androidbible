@@ -51,7 +51,7 @@ import org.json.JSONObject;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.BookmarkActivity;
 import yuku.alkitab.base.ac.DevotionActivity;

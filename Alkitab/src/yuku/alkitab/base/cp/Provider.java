@@ -2,16 +2,13 @@ package yuku.alkitab.base.cp;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
+import android.content.pm.ProviderInfo;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
 import android.util.Log;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
@@ -22,8 +19,14 @@ import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.LidToAri;
+import yuku.alkitab.debug.BuildConfig;
+import yuku.alkitab.debug.R;
 import yuku.alkitabintegration.AlkitabIntegrationUtil;
 import yuku.alkitabintegration.provider.VerseProvider;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 public class Provider extends ContentProvider {
 	public static final String TAG = Provider.class.getSimpleName();
@@ -34,19 +37,33 @@ public class Provider extends ContentProvider {
 	private static final int PATHID_bible_verses_range_by_ari = 4;
 	private static final int PATHID_bible_versions = 5;
 	
-    private static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    private static UriMatcher uriMatcher;
 
-    static {
-    	Log.d(TAG, Provider.class.getName() + " @@static_init");
-    	
-    	uriMatcher.addURI(AlkitabIntegrationUtil.DEFAULT_ALKITAB_PROVIDER_AUTHORITY, VerseProvider.PATH_bible_verses_single_by_lid + "#", PATHID_bible_verses_single_by_lid); 
-    	uriMatcher.addURI(AlkitabIntegrationUtil.DEFAULT_ALKITAB_PROVIDER_AUTHORITY, VerseProvider.PATH_bible_verses_single_by_ari + "#", PATHID_bible_verses_single_by_ari); 
-    	uriMatcher.addURI(AlkitabIntegrationUtil.DEFAULT_ALKITAB_PROVIDER_AUTHORITY, VerseProvider.PATH_bible_verses_range_by_lid + "*", PATHID_bible_verses_range_by_lid); 
-    	uriMatcher.addURI(AlkitabIntegrationUtil.DEFAULT_ALKITAB_PROVIDER_AUTHORITY, VerseProvider.PATH_bible_verses_range_by_ari + "*", PATHID_bible_verses_range_by_ari); 
-    	uriMatcher.addURI(AlkitabIntegrationUtil.DEFAULT_ALKITAB_PROVIDER_AUTHORITY, "bible/versions", PATHID_bible_versions); 
-    }
+	@Override
+	public void attachInfo(final Context context, final ProviderInfo info) {
+		super.attachInfo(context, info);
 
-    @Override public boolean onCreate() {
+		final String authority;
+		if (BuildConfig.DEBUG) {
+			authority = context.getString(R.string.file_provider_authority);
+		} else {
+			if (!U.equals(info.authority, AlkitabIntegrationUtil.DEFAULT_ALKITAB_PROVIDER_AUTHORITY)) {
+				throw new RuntimeException("Bad build: DEFAULT_ALKITAB_PROVIDER_AUTHORITY and manifest authority are not the same");
+			}
+			authority = AlkitabIntegrationUtil.DEFAULT_ALKITAB_PROVIDER_AUTHORITY;
+		}
+
+		if (uriMatcher == null) {
+			uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+			uriMatcher.addURI(authority, VerseProvider.PATH_bible_verses_single_by_lid + "#", PATHID_bible_verses_single_by_lid);
+			uriMatcher.addURI(authority, VerseProvider.PATH_bible_verses_single_by_ari + "#", PATHID_bible_verses_single_by_ari);
+			uriMatcher.addURI(authority, VerseProvider.PATH_bible_verses_range_by_lid + "*", PATHID_bible_verses_range_by_lid);
+			uriMatcher.addURI(authority, VerseProvider.PATH_bible_verses_range_by_ari + "*", PATHID_bible_verses_range_by_ari);
+			uriMatcher.addURI(authority, "bible/versions", PATHID_bible_versions);
+		}
+	}
+
+	@Override public boolean onCreate() {
     	Log.d(TAG, "@@onCreate");
     	
     	yuku.afw.App.initWithAppContext(getContext().getApplicationContext());

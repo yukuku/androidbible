@@ -130,16 +130,20 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 		echo '========================================='
 
 		echo 'Replacing package name in AndroidManifest.xml...'
-		sed -i '' 's/package="yuku.alkitab"/package="'$BUILD_PACKAGE_NAME'"/' AndroidManifest.xml
+		sed -i '' 's/package="yuku.alkitab.debug"/package="'$BUILD_PACKAGE_NAME'"/' AndroidManifest.xml
 
 		echo 'Replacing R references in Java files...'
-		find src/ -name '*.java' -exec sed -i '' 's/import yuku.alkitab.R/import '$BUILD_PACKAGE_NAME'.R/g' {} \; 
+		find src/ -name '*.java' -exec sed -i '' 's/import yuku.alkitab.debug.R/import '$BUILD_PACKAGE_NAME'.R/g' {} \; 
 
-		if [ "$BUILD_PACKAGE_NAME" == "yuku.alkitab.beta" ] ; then
-			echo 'Replacing provider name for BETA version...'
-			sed -i '' 's/android:authorities="yuku.alkitab.provider"/android:authorities="yuku.alkitab.provider.beta"/' AndroidManifest.xml
-			sed -i '' 's/AUTHORITY = "yuku.alkitab.provider"/AUTHORITY = "yuku.alkitab.provider.beta"/' src/yuku/alkitab/base/cp/Provider.java
-		fi
+		echo 'Replacing BuildConfig references in Java files...'
+		find src/ -name '*.java' -exec sed -i '' 's/import yuku.alkitab.debug.BuildConfig/import '$BUILD_PACKAGE_NAME'.BuildConfig/g' {} \; 
+
+		echo 'Replacing provider name to the official one "yuku.alkitab.provider"'
+		sed -i '' 's/android:authorities="yuku.alkitab.provider.debug"/android:authorities="yuku.alkitab.provider"/' AndroidManifest.xml
+
+		if [ ! -f res/values/file_providers.xml ] ; then echo 'file_providers.xml does not exist!' ; exit 1 ; fi
+		echo 'Replacing file provider name to the official one "yuku.alkitab.file_provider"'
+		sed -i '' 's/yuku.alkitab.file_provider.debug/yuku.alkitab.file_provider/' res/values/file_providers.xml
 
 		echo 'Removing (mockedup) res/raw...'
 		rm -rf res/raw

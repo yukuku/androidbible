@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import yuku.afw.D;
 import yuku.afw.V;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.dialog.base.BaseDialog;
 import yuku.alkitab.base.model.Ari;

@@ -16,7 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.ProgressMark;

@@ -11,7 +11,7 @@ import android.widget.EditText;
 
 import java.util.Date;
 
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;

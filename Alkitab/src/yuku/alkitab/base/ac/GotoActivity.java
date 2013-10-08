@@ -14,7 +14,7 @@ import android.view.inputmethod.InputMethodManager;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.fr.GotoDialerFragment;
 import yuku.alkitab.base.fr.GotoDirectFragment;

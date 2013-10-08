@@ -10,7 +10,7 @@ import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.model.Book;
 
 public class AttributeView extends View {

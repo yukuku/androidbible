@@ -1,7 +1,7 @@
 package yuku.alkitab.base.util;
 
 import android.util.Log;
-import yuku.alkitab.BuildConfig;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.base.model.Book;
 
 import java.util.ArrayList;
