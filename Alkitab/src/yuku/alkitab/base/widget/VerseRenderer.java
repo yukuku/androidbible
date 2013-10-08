@@ -23,6 +23,7 @@ public class VerseRenderer {
 	public static final String TAG = VerseRenderer.class.getSimpleName();
 
 	static final char[] superscriptDigits = {'\u2070', '\u00b9', '\u00b2', '\u00b3', '\u2074', '\u2075', '\u2076', '\u2077', '\u2078', '\u2079'};
+	public static final char XREF_MARK = '\u203b';
 
 	static class ParagraphSpacingBefore implements LineHeightSpan {
 		private final int before;
@@ -330,7 +331,7 @@ public class VerseRenderer {
 					sb.setSpan(inlineLinkSpanFactory.create(VerseInlineLinkSpan.Type.footnote, ari << 8 | field), sb_len, sb.length(), 0);
 				}
 			} else if (tag.charAt(0) == 'x') {
-				sb.append('\u203B'); // star mark
+				sb.append(XREF_MARK); // star mark
 				final int field = Integer.parseInt(tag.substring(1));
 				if (inlineLinkSpanFactory != null) {
 					sb.setSpan(inlineLinkSpanFactory.create(VerseInlineLinkSpan.Type.xref, ari << 8 | field), sb_len, sb.length(), 0);

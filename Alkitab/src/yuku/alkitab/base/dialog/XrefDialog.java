@@ -26,6 +26,7 @@ import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.TargetDecoder;
+import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.VerseSelectionMode;
 
@@ -103,6 +104,8 @@ public class XrefDialog extends BaseDialog {
 	
 	void renderXrefText() {
 		final SpannableStringBuilder sb = new SpannableStringBuilder();
+		sb.append(VerseRenderer.XREF_MARK);
+		sb.append(" ");
 		
 		final int[] linkPos = {0};
 		findTags(xrefEntry.content, new FindTagsListener() {
