@@ -1,5 +1,13 @@
 package yuku.alkitabconverter.internal_common;
 
+import yuku.alkitab.yes2.model.PericopeData;
+import yuku.alkitabconverter.util.CountingOutputStream;
+import yuku.alkitabconverter.util.FootnoteDb;
+import yuku.alkitabconverter.util.Rec;
+import yuku.alkitabconverter.util.TextDb;
+import yuku.alkitabconverter.util.XrefDb;
+import yuku.bintex.BintexWriter;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -9,12 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
-
-import yuku.alkitabconverter.yes1.Yes1File.PericopeData;
-import yuku.alkitabconverter.util.CountingOutputStream;
-import yuku.alkitabconverter.util.Rec;
-import yuku.alkitabconverter.util.TextDb;
-import yuku.bintex.BintexWriter;
 
 public class InternalCommon {
 	public static final String TAG = InternalCommon.class.getSimpleName();
@@ -33,6 +35,13 @@ public class InternalCommon {
 	 * @param prefix e.g. "tb"
 	 */
 	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, List<Rec> _recs, PericopeData pericopeData) {
+		createInternalFiles(outDir, prefix, bookNames, _recs, pericopeData, null, null);
+	}
+
+	/**
+	 * @param prefix e.g. "tb"
+	 */
+	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, List<Rec> _recs, PericopeData pericopeData, XrefDb xrefDb, FootnoteDb footnoteDb) {
 		List<List<Rec>> books = new ArrayList<List<Rec>>();
 		
 		for (int i = 1; i <= 66; i++) {
@@ -138,8 +147,21 @@ public class InternalCommon {
 				bw_index.close();
 				bw_blocks.close();
 			}
-			
-			
+
+			// xrefs
+			if (xrefDb != null) {
+				final BintexWriter bw = new BintexWriter(new FileOutputStream(new File(outDir, String.format("%s_xrefs_bt.bt", prefix))));
+				XrefDb.writeXrefEntriesTo(xrefDb.toEntries(), bw);
+				bw.close();
+			}
+
+			// footnotes
+			if (footnoteDb != null) {
+				final BintexWriter bw = new BintexWriter(new FileOutputStream(new File(outDir, String.format("%s_footnotes_bt.bt", prefix))));
+				FootnoteDb.writeFootnoteEntriesTo(footnoteDb.toEntries(), bw);
+				bw.close();
+			}
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -152,7 +174,7 @@ public class InternalCommon {
 		while (sc.hasNextLine()) {
 			String judul = sc.nextLine().trim();
 			judul = judul.replace('_', ' ');
-			System.out.println("kitabPos " + res.size() + " judul: " + judul);
+			System.out.println("bookPos " + res.size() + " title: " + judul);
 			res.add(judul);
 		}
 		sc.close();

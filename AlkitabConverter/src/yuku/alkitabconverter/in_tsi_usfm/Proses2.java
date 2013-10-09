@@ -7,6 +7,7 @@ import org.xml.sax.ext.DefaultHandler2;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.yes2.model.PericopeData;
+import yuku.alkitabconverter.internal_common.InternalCommon;
 import yuku.alkitabconverter.util.FootnoteDb;
 import yuku.alkitabconverter.util.IntArrayList;
 import yuku.alkitabconverter.util.Rec;
@@ -114,6 +115,14 @@ public class Proses2 {
 		teksDb.normalize();
 		teksDb.removeEmptyVerses();
 		teksDb.dump();
+
+		////////// PROSES KE INTERNAL
+
+		{
+			File outDir = new File("../../../bahan-alkitab/in-tsi-usfm/raw/");
+			outDir.mkdir();
+			InternalCommon.createInternalFiles(outDir, "tsi", InternalCommon.fileToBookNames(INPUT_BOOK_NAMES), teksDb.toRecList(), pericopeData, xrefDb, footnoteDb);
+		}
 
 		////////// PROSES KE YET
 

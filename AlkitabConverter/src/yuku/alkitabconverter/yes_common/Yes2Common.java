@@ -16,6 +16,7 @@ import yuku.alkitab.yes2.section.XrefsSection;
 import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.TextDb.VerseState;
+import yuku.alkitabconverter.util.XrefDb;
 import yuku.bintex.BintexWriter;
 import yuku.bintex.ValueMap;
 
@@ -295,29 +296,7 @@ public class Yes2Common {
 			compressionInfo = new CompressionInfo(compressed);
 
 			final BintexWriter bw = new BintexWriter(compressionInfo.getOutputStream());
-			// version
-			bw.writeUint8(1);
-
-			// entry_count
-			bw.writeInt(xrefEntries.size());
-
-			// int arif[entry_count]
-			for (final Map.Entry<Integer, XrefEntry> entry : xrefEntries.entrySet()) {
-				bw.writeInt(entry.getKey());
-			}
-
-			// try to calculate offset for each content. So we do the following
-			ByteArrayOutputStream contents = new ByteArrayOutputStream();
-			BintexWriter contentsBw = new BintexWriter(contents);
-
-			// int offsets[entry_count] 
-			for (final Map.Entry<Integer, XrefEntry> entry : xrefEntries.entrySet()) {
-				bw.writeInt(contentsBw.getPos());
-				contentsBw.writeValueString(entry.getValue().content);
-			}
-
-			// value<string> xref_entry_contents[entry_count]
-			bw.writeRaw(contents.toByteArray());
+			XrefDb.writeXrefEntriesTo(xrefEntries, bw);
 
 			compressionInfo.finalizeOutputStream();
 		}
@@ -340,29 +319,6 @@ public class Yes2Common {
 			compressionInfo = new CompressionInfo(compressed);
 
 			final BintexWriter bw = new BintexWriter(compressionInfo.getOutputStream());
-			// version
-			bw.writeUint8(1);
-
-			// entry_count
-			bw.writeInt(footnoteEntries.size());
-
-			// int arif[entry_count]
-			for (final Map.Entry<Integer, FootnoteEntry> entry: footnoteEntries.entrySet()) {
-				bw.writeInt(entry.getKey());
-			}
-			
-			// try to calculate offset for each content. So we do the following
-			ByteArrayOutputStream contents = new ByteArrayOutputStream();
-			BintexWriter contentsBw = new BintexWriter(contents);
-
-			// int offsets[entry_count] 
-			for (final Map.Entry<Integer, FootnoteEntry> entry: footnoteEntries.entrySet()) {
-				bw.writeInt(contentsBw.getPos());
-				contentsBw.writeValueString(entry.getValue().content);
-			}
-			
-			// value<string> footnote_entry_contents[entry_count]
-			bw.writeRaw(contents.toByteArray());
 
 			compressionInfo.finalizeOutputStream();
 		}

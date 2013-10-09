@@ -228,7 +228,7 @@ public class Proses2 {
 		{
 			File outDir = new File("./bahan/in-tb-usfm/raw");
 			outDir.mkdir();
-			InternalCommon.createInternalFiles(outDir, "tb", InternalCommon.fileToBookNames(INPUT_KITAB), teksDb, pericopeData);
+			InternalCommon.createInternalFiles(outDir, "tb", InternalCommon.fileToBookNames(INPUT_KITAB), teksDb, yes1toYes2PericopeData(pericopeData));
 		}
 		
 		////////// PROSES KE YES
@@ -240,6 +240,23 @@ public class Proses2 {
 		Yes1File file = Yes1Common.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(pericopeData), new PerikopIndex(pericopeData));
 		
 		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
+	}
+
+	private yuku.alkitab.yes2.model.PericopeData yes1toYes2PericopeData(final PericopeData pericopeData) {
+		final yuku.alkitab.yes2.model.PericopeData res = new yuku.alkitab.yes2.model.PericopeData();
+
+		for (final Entry yes1entry : pericopeData.entries) {
+			final yuku.alkitab.yes2.model.PericopeData.Entry yes2entry = new yuku.alkitab.yes2.model.PericopeData.Entry();
+			yes2entry.ari = yes1entry.ari;
+			yes2entry.block = new yuku.alkitab.yes2.model.PericopeData.Block();
+			yes2entry.block.title = yes1entry.block.title;
+			for (final String parallel : yes1entry.block.parallels) {
+				yes2entry.block.addParallel(parallel);
+			}
+			res.addEntry(yes2entry);
+		}
+
+		return res;
 	}
 
 	private void dumpForYetTesting(List<String> bookNames, TextDb teksDb, PericopeData pericopeData) {

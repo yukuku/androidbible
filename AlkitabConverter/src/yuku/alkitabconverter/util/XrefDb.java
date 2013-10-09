@@ -2,8 +2,12 @@ package yuku.alkitabconverter.util;
 
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.XrefEntry;
+import yuku.bintex.BintexWriter;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -12,8 +16,19 @@ public class XrefDb {
 	public static interface XrefProcessor {
 		void process(XrefEntry xe, int ari, int entryIndex);
 	}
-	
+
 	Map<Integer, List<XrefEntry>> map = new TreeMap<Integer, List<XrefEntry>>();
+
+	public LinkedHashMap<Integer, XrefEntry> toEntries() {
+		final LinkedHashMap<Integer, XrefEntry> res = new LinkedHashMap<Integer, XrefEntry>();
+		processEach(new XrefProcessor() {
+			@Override
+			public void process(final XrefEntry xe, final int ari, final int entryIndex) {
+				res.put(ari << 8 | (entryIndex + 1), xe);
+			}
+		});
+		return res;
+	}
 
 	/**
 	 * @return index of xref for this ari, starts from 0.
@@ -94,6 +109,32 @@ public class XrefDb {
 				processor.process(xe, e.getKey(), i);
 			}
 		}
+	}
+
+	public static void writeXrefEntriesTo(final LinkedHashMap<Integer, XrefEntry> xrefEntries, final BintexWriter bw) throws IOException {
+		// version
+		bw.writeUint8(1);
+
+		// entry_count
+		bw.writeInt(xrefEntries.size());
+
+		// int arif[entry_count]
+		for (final Map.Entry<Integer, XrefEntry> entry : xrefEntries.entrySet()) {
+			bw.writeInt(entry.getKey());
+		}
+
+		// try to calculate offset for each content. So we do the following
+		ByteArrayOutputStream contents = new ByteArrayOutputStream();
+		BintexWriter contentsBw = new BintexWriter(contents);
+
+		// int offsets[entry_count]
+		for (final Map.Entry<Integer, XrefEntry> entry : xrefEntries.entrySet()) {
+			bw.writeInt(contentsBw.getPos());
+			contentsBw.writeValueString(entry.getValue().content);
+		}
+
+		// value<string> xref_entry_contents[entry_count]
+		bw.writeRaw(contents.toByteArray());
 	}
 
 	public static XrefProcessor defaultShiftTbProcessor = new XrefDb.XrefProcessor() {
