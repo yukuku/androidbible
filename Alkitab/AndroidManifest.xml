@@ -201,6 +201,7 @@
         <activity android:name="com.example.android.wizardpager.MainActivity"
                   android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
                   android:theme="@style/AlkitabFeedback.Theme"/>
+
         <activity android:name="yuku.alkitab.base.ac.DailyVerseAppWidgetConfigurationActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
@@ -211,6 +212,7 @@
 
         <provider android:name="yuku.alkitab.base.cp.Provider"
                   android:authorities="yuku.alkitab.provider.debug"
+                  android:enabled="@bool/provider_enabled"
                   android:exported="true"
                   tools:ignore="ExportedContentProvider"/>
 
