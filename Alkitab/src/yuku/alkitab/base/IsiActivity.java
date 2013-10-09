@@ -970,6 +970,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		case R.id.menuDonation:
 			openDonationDialog();
 			return true;
+		case R.id.menuTsiIntro:
+			startActivity(HelpActivity.createIntent(false, "help/PrakataTSI-tidy.html"));
+			return true;
+		case R.id.menuTsiWebsite: {
+			final Intent intent = new Intent(Intent.ACTION_VIEW);
+			intent.setData(Uri.parse("http://www.albata.info/"));
+			startActivity(intent);
+		} break;
 		}
 		
 		return super.onOptionsItemSelected(item);

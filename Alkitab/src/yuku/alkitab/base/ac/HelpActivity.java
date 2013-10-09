@@ -14,7 +14,8 @@ import yuku.alkitab.base.ac.base.BaseActivity;
 
 public class HelpActivity extends BaseActivity {
 	private static final String EXTRA_isFaq = "isFaq";
-	
+	private static final String EXTRA_customPage = "customPage";
+
 	WebView webview;
 	View bOk;
 	View bCancel;
@@ -26,7 +27,14 @@ public class HelpActivity extends BaseActivity {
 		res.putExtra(EXTRA_isFaq, isFaq);
 		return res;
 	}
-	
+
+	public static Intent createIntent(final boolean isFaq, final String customPage) {
+		Intent res = new Intent(App.context, HelpActivity.class);
+		res.putExtra(EXTRA_isFaq, isFaq);
+		res.putExtra(EXTRA_customPage, customPage);
+		return res;
+	}
+
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_help);
@@ -54,11 +62,16 @@ public class HelpActivity extends BaseActivity {
 			setTitle(R.string.beri_saran_title);
 		}
 
-		String page = isFaq? "faq.html": "index.html";
-		if (U.equals("in", getResources().getConfiguration().locale.getLanguage())) {
-			webview.loadUrl("file:///android_asset/help/html-in/" + page);
+		final String customPage = getIntent().getStringExtra(EXTRA_customPage);
+		if (customPage != null) {
+			webview.loadUrl("file:///android_asset/" + customPage);
 		} else {
-			webview.loadUrl("file:///android_asset/help/html-en/" + page);
+			String page = isFaq? "faq.html": "index.html";
+			if (U.equals("in", getResources().getConfiguration().locale.getLanguage())) {
+				webview.loadUrl("file:///android_asset/help/html-in/" + page);
+			} else {
+				webview.loadUrl("file:///android_asset/help/html-en/" + page);
+			}
 		}
 	}
 	
