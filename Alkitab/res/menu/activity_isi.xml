@@ -50,5 +50,28 @@
         android:id="@+id/menuSupport"
         app:showAsAction="never"
         android:title="@string/menuSupport"/>
+    <item
+            android:id="@+id/menuTsiIntro"
+            app:showAsAction="never"
+            android:title="Prakata TSI"/>
+
+    <item
+            android:id="@+id/menuTsiWebsite"
+            app:showAsAction="never"
+            android:title="Caranya mendukung"/>
+    <item
+        android:id="@+id/menuDonation"
+        app:showAsAction="never"
+        android:title="@string/menuDonasi"/>
+    <item
+        android:id="@+id/menuHelp"
+        app:showAsAction="never"
+        android:title="@string/menuBantuan"/>
+    <!-- Don't show this for tsi variant -->
+    <item
+        android:id="@+id/menuSendMessage"
+        app:showAsAction="never"
+        android:visible="false"
+        android:title="@string/beri_saran_title"/>
 
 </menu>
