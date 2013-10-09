@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<menu renungan="true" gebug="false" edisi="true" bantuan="false" donasi="false" songs="false" />
+	<edisi>
+		<internal locale="in" shortName="TSI"      longName="Terjemahan Sederhana Indonesia" prefix="tsi" />
+	</edisi>
+	<share>
+		<url prefix="http://alkitab.me/" format="slash1 slash2 nospace0" lang="in" />
+	</share>
+</config>
