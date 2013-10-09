@@ -374,6 +374,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			Book book = S.activeVersion.getBook(lastBook);
 			if (book != null) {
 				this.activeBook = book;
+			} else { // can't load last book or bookId 0
+				this.activeBook = S.activeVersion.getFirstBook();
 			}
 		}
 		
