@@ -133,16 +133,31 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 		echo 'Replacing applicationId in build.gradle...'
 		sed -i '' "s/applicationId .*/applicationId '$BUILD_PACKAGE_NAME'/" build.gradle
 
-		echo 'Replacing verse provider name to the official one "yuku.alkitab.provider"'
-		sed -i '' 's/android:authorities="yuku.alkitab.provider.debug"/android:authorities="yuku.alkitab.provider"/' AndroidManifest.xml
+		echo 'Replacing R references in Java files...'
+		find src/ -name '*.java' -exec sed -i '' 's/import yuku.alkitab.debug.R/import '$BUILD_PACKAGE_NAME'.R/g' {} \; 
+
+		echo 'Replacing BuildConfig references in Java files...'
+		find src/ -name '*.java' -exec sed -i '' 's/import yuku.alkitab.debug.BuildConfig/import '$BUILD_PACKAGE_NAME'.BuildConfig/g' {} \; 
+
+		PROVIDER_AUTHORITY=yuku.alkitab.provider
+		if [ $BUILD_PACKAGE_NAME == "yuku.alkitab.tsi" ] ; then
+			PROVIDER_AUTHORITY=yuku.alkitab.provider.tsi
+		fi
+		echo 'Replacing provider name to '$PROVIDER_AUTHORITY
+		sed -i '' 's/android:authorities="yuku.alkitab.provider.debug"/android:authorities="'$PROVIDER_AUTHORITY'"/' AndroidManifest.xml
+
+		FILE_PROVIDER_AUTHORITY=yuku.alkitab.file_provider
+		if [ $BUILD_PACKAGE_NAME == "yuku.alkitab.tsi" ] ; then
+			FILE_PROVIDER_AUTHORITY=yuku.alkitab.file_provider.tsi
+		fi
+
+		echo 'Replacing file provider name to '$FILE_PROVIDER_AUTHORITY
+		if [ ! -f res/values/file_providers.xml ] ; then echo 'file_providers.xml does not exist!' ; exit 1 ; fi
+		sed -i '' 's/yuku.alkitab.file_provider.debug/'$FILE_PROVIDER_AUTHORITY'/' res/values/file_providers.xml
 
 		echo 'Replacing GCM component names to this app package name:' $BUILD_PACKAGE_NAME
 		sed -i '' 's/<category android:name="yuku.alkitab.debug"/<category android:name="'$BUILD_PACKAGE_NAME'"/' AndroidManifest.xml
 		sed -i '' 's/yuku.alkitab.debug.permission.C2D_MESSAGE/'$BUILD_PACKAGE_NAME'.permission.C2D_MESSAGE/' AndroidManifest.xml
-
-		if [ ! -f res/values/file_providers.xml ] ; then echo 'file_providers.xml does not exist!' ; exit 1 ; fi
-		echo 'Replacing file provider name to the official one "yuku.alkitab.file_provider"'
-		sed -i '' 's/yuku.alkitab.file_provider.debug/yuku.alkitab.file_provider/' res/values/file_providers.xml
 
 		echo 'Removing dummy version on assets/internal...'
 		rm -rf res/raw
