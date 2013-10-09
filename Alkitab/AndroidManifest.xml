@@ -117,6 +117,7 @@
 		<activity android:name="yuku.alkitab.base.ac.SecretSettingsActivity" android:label="Secret settings" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.filechooser.FileChooserActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="com.example.android.wizardpager.MainActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:theme="@style/AlkitabFeedback.Theme" />
+
         <activity android:name="yuku.alkitab.base.ac.DailyVerseAppWidgetConfigurationActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
@@ -124,8 +125,12 @@
         </activity>
 
         <service android:name="yuku.alkitab.base.sv.DownloadService" />
-		
-		<provider android:name="yuku.alkitab.base.cp.Provider" android:authorities="yuku.alkitab.provider.debug" android:exported="true" tools:ignore="ExportedContentProvider" />
+
+        <provider android:name="yuku.alkitab.base.cp.Provider"
+                  android:authorities="yuku.alkitab.provider.debug"
+                  android:enabled="@bool/provider_enabled"
+                  android:exported="true"
+                  tools:ignore="ExportedContentProvider"/>
 
         <!-- file provider for exporting markers -->
         <provider

@@ -76,7 +76,7 @@ public class InternalCommon {
 				for (int book_1 = 1; book_1 <= books.size(); book_1++) {
 					final List<Rec> recs = books.get(book_1 - 1);
 					if (recs == null || recs.size() == 0) continue;
-					
+
 					int chapter_count = 0;
 					for (Rec rec: recs) {
 						if (rec.chapter_1 > chapter_count) {

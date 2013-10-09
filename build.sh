@@ -70,6 +70,20 @@ overlay() {
 	cp "$SRC" "$DST" || read
 }
 
+overlay_optional() {
+	P_SRC="$1"
+	P_DST="$2"
+
+	SRC="$THIS_SCRIPT_DIR/build/overlay/$PKGDIST/$P_SRC"
+	DST="$BUILD_MAIN_PROJECT_DIR/$P_DST"
+
+	if [ \! -e "$SRC" ] ; then
+		echo "Overlay file $P_SRC not available but still OK because it's optional."
+	else
+		overlay "$1" "$2"
+	fi
+}
+
 # START BUILD-SPECIFIC
 
 if [ "$BUILD_PACKAGE_NAME" == "" ] ; then
@@ -173,6 +187,7 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 		overlay 'drawable-hdpi/ic_launcher.png' 'res/drawable-hdpi/ic_launcher.png'
 		overlay 'drawable-xhdpi/ic_launcher.png' 'res/drawable-xhdpi/ic_launcher.png'
 		overlay 'drawable-xxhdpi/ic_launcher.png' 'res/drawable-xxhdpi/ic_launcher.png'
+		overlay_optional 'provider_enabled.xml' 'res/values/provider_enabled.xml'
 
 		# END BUILD-SPECIFIC
 
