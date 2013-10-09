@@ -19,12 +19,11 @@ import yuku.bintex.BintexReader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 public class InternalReader implements BibleReader {
 	public static final String TAG = InternalReader.class.getSimpleName();
 
-	// # buat cache Asset
+	// # for asset cache
 	private static InputStream cache_inputStream = null;
 	private static String cache_file = null;
 	private static int cache_posInput = -1;
@@ -76,52 +75,54 @@ public class InternalReader implements BibleReader {
 	}
 
 	@Override public Book[] loadBooks() {
-		InputStream is = S.openRaw(versionPrefix + "_index_bt"); //$NON-NLS-1$
-		BintexReader in = new BintexReader(is);
+		final InputStream is = S.openRaw(versionPrefix + "_index_bt"); //$NON-NLS-1$
+		final BintexReader br = new BintexReader(is);
 		try {
-			ArrayList<Book> xkitab = new ArrayList<Book>();
-
-			try {
-				int pos = 0;
-				while (true) {
-					Book k = bacaKitab(in, pos++);
-					xkitab.add(k);
-				}
-			} catch (IOException e) {
-				Log.d(TAG, "siapinKitab selesai memuat"); //$NON-NLS-1$
+			// uint8 version = 3
+			// uint8 book_count
+			final int version = br.readUint8();
+			if (version != 3) throw new RuntimeException("Internal index version not supported: " + version);
+			final int book_count = br.readUint8();
+			final Book[] res = new Book[book_count];
+			for (int i = 0; i < book_count; i++) {
+				res[i] = readBook(br);
 			}
-
-			return xkitab.toArray(new Book[xkitab.size()]);
+			return res;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		} finally {
-			in.close();
+			br.close();
 		}
 	}
 
-	private static InternalBook bacaKitab(BintexReader in, int pos) throws IOException {
-		InternalBook k = new InternalBook();
-		k.bookId = pos;
-
-		// autostring bookName
-		// shortstring resName
-		// int chapter_count
+	private static InternalBook readBook(final BintexReader br) throws IOException {
+		// uint8 bookId;
+		// value<string> shortName
+		// value<string> abbreviation
+		// value<string> resName
+		// uint8 chapter_count
 		// uint8[chapter_count] verse_counts
-		// int[chapter_count+1] chapter_offsets
+		// varuint[chapter_count+1] chapter_offsets
 
-		k.shortName = in.readAutoString();
-		k.file = in.readShortString();
-		k.chapter_count = in.readInt();
+		final InternalBook res = new InternalBook();
 
-		k.verse_counts = new int[k.chapter_count];
-		for (int i = 0; i < k.chapter_count; i++) {
-			k.verse_counts[i] = in.readUint8();
+		res.bookId = br.readUint8();
+		res.shortName = br.readValueString();
+		res.abbreviation = br.readValueString();
+		res.resName = br.readValueString();
+		res.chapter_count = br.readUint8();
+
+		res.verse_counts = new int[res.chapter_count];
+		for (int i = 0; i < res.chapter_count; i++) {
+			res.verse_counts[i] = br.readUint8();
 		}
 
-		k.chapter_offsets = new int[k.chapter_count + 1];
-		for (int i = 0; i < k.chapter_count + 1; i++) {
-			k.chapter_offsets[i] = in.readInt();
+		res.chapter_offsets = new int[res.chapter_count + 1];
+		for (int i = 0; i < res.chapter_count + 1; i++) {
+			res.chapter_offsets[i] = br.readVarUint();
 		}
 
-		return k;
+		return res;
 	}
 
 	@Override public SingleChapterVerses loadVerseText(Book book, int chapter_1, boolean dontSplitVerses, boolean lowercased) {
@@ -137,47 +138,43 @@ public class InternalReader implements BibleReader {
 			InputStream in;
 
 			if (cache_inputStream == null) {
-				// kasus 1: belum buka apapun
-				in = S.openRaw(internalBook.file);
+				// case 1: haven't opened anything
+				in = S.openRaw(internalBook.resName);
 				cache_inputStream = in;
-				cache_file = internalBook.file;
+				cache_file = internalBook.resName;
 
 				in.skip(offset);
 				cache_posInput = offset;
-				// Log.d("alki", "muatTeks masuk kasus 1");
 			} else {
-				// kasus 2: uda pernah buka. Cek apakah filenya sama
-				if (internalBook.file.equals(cache_file)) {
-					// kasus 2.1: filenya sama.
+				// case 2: we have ever opened. Check if the file is the same
+				if (internalBook.resName.equals(cache_file)) {
+					// case 2.1: yes the file was the same
 					if (offset >= cache_posInput) {
-						// bagus, kita bisa maju.
+						// we can go forward
 						in = cache_inputStream;
 
 						in.skip(offset - cache_posInput);
 						cache_posInput = offset;
-						// Log.d("alki", "muatTeks masuk kasus 2.1 bagus");
 					} else {
-						// ga bisa mundur. tutup dan buka lagi.
+						// but can't go backward, so we close the stream and reopen it
 						cache_inputStream.close();
 
-						in = S.openRaw(internalBook.file);
+						in = S.openRaw(internalBook.resName);
 						cache_inputStream = in;
 
 						in.skip(offset);
 						cache_posInput = offset;
-						// Log.d("alki", "muatTeks masuk kasus 2.1 jelek");
 					}
 				} else {
-					// kasus 2.2: filenya beda, tutup dan buka baru
+					// case 2.2: different file. So close current and open the new one
 					cache_inputStream.close();
 
-					in = S.openRaw(internalBook.file);
+					in = S.openRaw(internalBook.resName);
 					cache_inputStream = in;
-					cache_file = internalBook.file;
+					cache_file = internalBook.resName;
 
 					in.skip(offset);
 					cache_posInput = offset;
-					// Log.d("alki", "muatTeks masuk kasus 2.2");
 				}
 			}
 
@@ -191,7 +188,7 @@ public class InternalReader implements BibleReader {
 			byte[] ba = new byte[length];
 			in.read(ba);
 			cache_posInput += ba.length;
-			// jangan ditutup walau uda baca. Siapa tau masih sama filenya dengan sebelumnya.
+			// do not close even though we finished reading. The asset file could be the same as before.
 
 			if (dontSplitVerses) {
 				return new InternalSingleChapterVerses(new String[] { verseTextDecoder.makeIntoSingleString(ba, lowercased) });
@@ -207,9 +204,9 @@ public class InternalReader implements BibleReader {
 		if (pericopeIndex_ != null) {
 			return pericopeIndex_;
 		}
-		
-		long wmulai = System.currentTimeMillis();
 
+		final long startTime = System.currentTimeMillis();
+		
 		InputStream is = S.openRaw(versionPrefix + "_pericope_index_bt"); //$NON-NLS-1$
 		if (is == null) {
 			return null;
@@ -221,11 +218,11 @@ public class InternalReader implements BibleReader {
 			return pericopeIndex_;
 
 		} catch (IOException e) {
-			Log.e(TAG, "baca perikop index ngaco", e); //$NON-NLS-1$
+			Log.e(TAG, "Error reading pericope index", e); //$NON-NLS-1$
 			return null;
 		} finally {
 			in.close();
-			Log.d(TAG, "Muat index perikop butuh ms: " + (System.currentTimeMillis() - wmulai)); //$NON-NLS-1$
+			Log.d(TAG, "Read pericope index needed: " + (System.currentTimeMillis() - startTime)); //$NON-NLS-1$
 		}
 	}
 

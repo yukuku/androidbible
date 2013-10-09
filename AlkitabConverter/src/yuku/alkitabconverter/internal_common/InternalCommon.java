@@ -49,20 +49,33 @@ public class InternalCommon {
 		}
 		
 		for (Rec rec: _recs) {
-			int kitab_1 = rec.book_1;
-			if (kitab_1 < 1 || kitab_1 > 66) {
-				throw new RuntimeException("kitab_1 not supported: " + kitab_1);
+			final int book_1 = rec.book_1;
+			if (book_1 < 1 || book_1 > 66) {
+				throw new RuntimeException("book_1 not supported: " + book_1);
 			}
 			
-			books.get(kitab_1 - 1).add(rec);
+			books.get(book_1 - 1).add(rec);
 		}
 		
 		try {
 			{
-				BintexWriter bw = new BintexWriter(new FileOutputStream(new File(outDir, String.format("%s_index_bt.bt", prefix))));
-				
-				for (int kitab_1 = 1; kitab_1 <= 66; kitab_1++) {
-					List<Rec> recs = books.get(kitab_1 - 1);
+				int book_count = 0;
+				for (int book_1 = 1; book_1 <= books.size(); book_1++) {
+					final List<Rec> recs = books.get(book_1 - 1);
+					if (recs != null && recs.size() > 0) {
+						book_count++;
+					}
+				}
+
+				// uint8 version = 3
+				// uint8 book_count
+				final BintexWriter bw = new BintexWriter(new FileOutputStream(new File(outDir, String.format("%s_index_bt.bt", prefix))));
+				bw.writeUint8(3);
+				bw.writeUint8(book_count);
+
+				for (int book_1 = 1; book_1 <= books.size(); book_1++) {
+					final List<Rec> recs = books.get(book_1 - 1);
+					if (recs == null || recs.size() == 0) continue;
 					
 					int chapter_count = 0;
 					for (Rec rec: recs) {
@@ -81,10 +94,13 @@ public class InternalCommon {
 	
 					int[] chapter_offsets = new int[chapter_count + 1];
 					{ // text
-						File f = new File(outDir, String.format("%s_k%02d.txt", prefix, kitab_1));
+						File f = new File(outDir, String.format("%s_k%02d.txt", prefix, book_1));
 						CountingOutputStream counter = new CountingOutputStream(new FileOutputStream(f));
 						OutputStreamWriter out = new OutputStreamWriter(counter, "utf-8");
 						for (Rec rec: recs) {
+							if (rec.text.contains("\n")) {
+								throw new RuntimeException("Now text can't contain \\n since it's used as a separator");
+							}
 							out.write(rec.text);
 							out.write('\n');
 							out.flush();
@@ -93,23 +109,27 @@ public class InternalCommon {
 						out.close();
 					}
 					{ // index for each book:
-						// autostring bookName
-						// shortstring resName
-						// int chapter_count
+						// uint8 bookId;
+						// value<string> shortName
+						// value<string> abbreviation
+						// value<string> resName
+						// uint8 chapter_count
 						// uint8[chapter_count] verse_counts
-						// int[chapter_count+1] chapter_offsets
-						bw.writeAutoString(bookNames.get(kitab_1 - 1));
-						bw.writeShortString(String.format("%s_k%02d", prefix, kitab_1));
-						bw.writeInt(chapter_count);
+						// varuint[chapter_count+1] chapter_offsets
+						bw.writeUint8(book_1 - 1);
+						bw.writeValueString(bookNames.get(book_1 - 1));
+						bw.writeValueString(null); // TODO support for abbreviation
+						bw.writeValueString(String.format("%s_k%02d", prefix, book_1));
+						bw.writeUint8(chapter_count);
 						for (int i = 0; i < chapter_count; i++) {
 							bw.writeUint8(verse_counts[i]);
 						}
 						for (int i = 0; i < chapter_count + 1; i++) {
-							bw.writeInt(chapter_offsets[i]);
+							bw.writeVarUint(chapter_offsets[i]);
 						}
 						
 					}
-					System.out.println("book: " + bookNames.get(kitab_1 - 1) + " ch_count=" + chapter_count + " v_counts=" + Arrays.toString(verse_counts) + " offsets=" + Arrays.toString(chapter_offsets));
+					System.out.println("book: " + bookNames.get(book_1 - 1) + " ch_count=" + chapter_count + " v_counts=" + Arrays.toString(verse_counts) + " offsets=" + Arrays.toString(chapter_offsets));
 				}
 			
 				bw.close();
