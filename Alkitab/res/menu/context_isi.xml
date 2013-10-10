@@ -51,7 +51,7 @@
           android:visible="false"
           tools:ignore="HardcodedText"/>
     <item android:id="@+id/menuProgressMark"
-          android:icon="@drawable/ic_menu_progress_mark"
+          android:icon="@drawable/ic_menu_progress_mark_save"
           app:showAsAction="always"
           android:title="@string/pm_menu_save_progresses">
         <menu>
