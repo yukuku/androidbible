@@ -277,8 +277,9 @@ public class InternalReader implements BibleReader {
 		if (xrefsKnownNotAvailable) return null;
 
 		if (xrefsSection_ == null) {
-			final int resId = App.context.getResources().getIdentifier(AppConfig.get().internalPrefix + "_xref_bt", "raw", App.context.getPackageName());
+			final int resId = App.context.getResources().getIdentifier(AppConfig.get().internalPrefix + "_xrefs_bt", "raw", App.context.getPackageName());
 			if (resId == 0) {
+				Log.d(TAG, "Can't load xrefs from internal, marking it as not available.");
 				xrefsKnownNotAvailable = true;
 				return null;
 			}
@@ -298,8 +299,9 @@ public class InternalReader implements BibleReader {
 		if (footnotesKnownNotAvailable) return null;
 
 		if (footnotesSection_ == null) {
-			final int resId = App.context.getResources().getIdentifier(AppConfig.get().internalPrefix + "_footnote_bt", "raw", App.context.getPackageName());
+			final int resId = App.context.getResources().getIdentifier(AppConfig.get().internalPrefix + "_footnotes_bt", "raw", App.context.getPackageName());
 			if (resId == 0) {
+				Log.d(TAG, "Can't load footnotes from internal, marking it as not available.");
 				footnotesKnownNotAvailable = true;
 				return null;
 			}
