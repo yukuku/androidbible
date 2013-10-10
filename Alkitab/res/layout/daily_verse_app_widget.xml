@@ -36,7 +36,7 @@
                     android:layout_height="48dp"
                     android:layout_alignParentTop="true"
                     android:layout_toLeftOf="@+id/bNext"
-                    android:background="@drawable/abs__item_background_holo_light"
+                    android:background="@drawable/abc_item_background_holo_light"
                     android:src="@drawable/ic_nav_left_light" android:padding="4dp"/>
             <ImageButton
                     android:id="@+id/bNext"
@@ -44,7 +44,7 @@
                     android:layout_height="48dp"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentRight="true"
-                    android:background="@drawable/abs__item_background_holo_light"
+                    android:background="@drawable/abc_item_background_holo_light"
                     android:src="@drawable/ic_nav_right_light" android:padding="4dp"/>
         </RelativeLayout>
 
