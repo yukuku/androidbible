@@ -20,7 +20,7 @@ import android.util.Pair;
 import android.widget.RemoteViews;
 import yuku.afw.App;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity;
