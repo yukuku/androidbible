@@ -9,7 +9,7 @@
         android:title="@string/menu_markers"/>
     <item
         android:id="@+id/menuListProgressMark"
-        android:icon="@drawable/ic_nav_right_dark"
+        android:icon="@drawable/ic_menu_see_progress"
         app:showAsAction="ifRoom"
         android:title="@string/pm_menu_view_progress"/>
     <item

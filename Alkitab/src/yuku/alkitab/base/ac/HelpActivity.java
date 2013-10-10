@@ -30,13 +30,12 @@ public class HelpActivity extends BaseActivity {
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_help);
-		setTitle(R.string.bantuan_judul);
-		
+
 		webview = V.get(this, R.id.webView);
 		bOk = V.get(this, R.id.bOk);
 		bCancel = V.get(this, R.id.bCancel);
 		View panelFaqOnly = V.get(this, R.id.panelFaqOnly);
-		
+
 		WebSettings webSettings = webview.getSettings();
 		webSettings.setSavePassword(false);
 		webSettings.setSaveFormData(false);
@@ -46,11 +45,13 @@ public class HelpActivity extends BaseActivity {
 
 		bOk.setOnClickListener(bOk_click);
 		bCancel.setOnClickListener(bCancel_click);
-		
+
 		isFaq = getIntent().getBooleanExtra(EXTRA_isFaq, false);
-		
 		if (!isFaq) {
+			setTitle(R.string.bantuan_judul);
 			panelFaqOnly.setVisibility(View.GONE);
+		} else {
+			setTitle(R.string.beri_saran_title);
 		}
 
 		String page = isFaq? "faq.html": "index.html";
