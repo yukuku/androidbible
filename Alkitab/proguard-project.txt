@@ -14,3 +14,5 @@
 
 -dontobfuscate
 
+# used in action bar
+-keep class android.support.v7.widget.SearchView
