@@ -15,4 +15,8 @@
 -dontobfuscate
 
 # used in action bar
--keep class android.support.v7.widget.SearchView
+-keep class android.support.v7.widget.SearchView {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
