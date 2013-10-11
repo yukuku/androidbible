@@ -272,7 +272,7 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		List<Integer> aris = new ArrayList<Integer>();
 		List<Integer> verseCounts = new ArrayList<Integer>();
 		try {
-			InputStream is = App.context.getResources().openRawResource(R.raw.daily_verse);
+			InputStream is = App.context.getResources().openRawResource(R.raw.daily_verses_bt);
 			BintexReader br = new BintexReader(is);
 			while (true) {
 				int ari = br.readInt();
