@@ -286,8 +286,8 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 	private void displayError() {
 		new AlertDialog.Builder(this)
-		.setMessage("Ada kesalahan")
-		.setPositiveButton("OK", null)
+		.setMessage(R.string.dr_error_contact_reminder)
+		.setPositiveButton(R.string.ok, null)
 		.show();
 	}
 

@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
-import android.util.Log;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.reminder.App;
 import yuku.alkitab.reminder.R;
@@ -24,14 +23,6 @@ public class DevotionReminder {
 
 	public static void scheduleAlarm(Context context) {
 		String reminder_time = Preferences.getString(REMINDER_TIME);
-		String reminder_sound = Preferences.getString(REMINDER_SOUND);
-		boolean reminder_vibrate = Preferences.getBoolean(REMINDER_VIBRATE, false);
-
-		Log.d(TAG, "@@scheduleAlarms");
-		Log.d(TAG, "- reminder_time: " + reminder_time);
-		Log.d(TAG, "- reminder_sound: " + reminder_sound);
-		Log.d(TAG, "- reminder_vibrate: " + reminder_vibrate);
-
 		setAlarm(context, reminder_time);
 	}
 
@@ -61,7 +52,6 @@ public class DevotionReminder {
 
 		am.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pi);
 
-		Log.d(TAG, "alarm set at " + c.toString());
 	}
 
 	public static String getNotificationText() {

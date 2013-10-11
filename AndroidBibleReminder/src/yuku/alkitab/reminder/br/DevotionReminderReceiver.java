@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.reminder.R;
 import yuku.alkitab.reminder.util.DevotionReminder;
@@ -17,8 +16,6 @@ public class DevotionReminderReceiver extends BroadcastReceiver {
 	public static final String TAG = DevotionReminderReceiver.class.getSimpleName();
 
 	public void onReceive(Context context, Intent intent) {
-		Log.d(TAG, "@@onReceive");
-		Log.d(TAG, "- intent data = " + intent.getDataString());
 
 		PendingIntent pi = PendingIntent.getActivity(context, 0, new Intent("yuku.alkitab.ACTION_OPEN_DEVOTION"), PendingIntent.FLAG_UPDATE_CURRENT);
 
