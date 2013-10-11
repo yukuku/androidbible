@@ -16,11 +16,10 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.SuperscriptSpan;
-import android.util.Pair;
+import android.util.Log;
 import android.widget.RemoteViews;
 import yuku.afw.App;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity;
@@ -28,18 +27,21 @@ import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.sv.DailyVerseAppWidgetService;
+import yuku.alkitab.base.util.IntArrayList;
+import yuku.alkitab.debug.R;
 import yuku.bintex.BintexReader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Random;
 
 public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 	public static final String TAG = DailyVerseAppWidgetReceiver.class.getSimpleName();
+
+	private static IntArrayList dailyVerses;
 
 	@Override
 	public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
@@ -242,51 +244,50 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 	}
 
 	public static int[] getVerse(int appWidgetId) {
-		Pair<List<Integer>, List<Integer>> dailyVerses = listAllDailyVerses();
-		int size = dailyVerses.first.size();
+		final IntArrayList dailyVerses = listAllDailyVerses();
+		int size = dailyVerses.size();
 
 		String key = "app_widget_" + appWidgetId + "_click";
 		int numOfClick = Preferences.getInt(key, 0);
 
-		Date date = new Date();
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
+		final Calendar calendar = GregorianCalendar.getInstance();
 		long year = calendar.get(Calendar.YEAR);
 		long day = calendar.get(Calendar.DAY_OF_YEAR);
 		long randomDay = (year - 1900) * 1000 + day;
 
-		long randomNumberSeed = randomDay * 10000000 + appWidgetId * 100000 + numOfClick * 1000;
+		long randomNumberSeed = randomDay * 10000 + appWidgetId * 100 + numOfClick;
 		Random r = new Random(randomNumberSeed);
-		int random = (int) (r.nextDouble() * size);
+		int random = r.nextInt(size);
 
-		int verseCount = dailyVerses.second.get(random);
-		int[] verses = new int[verseCount];
-		verses[0] = dailyVerses.first.get(random);
+		final int verseCount = dailyVerses.get(random) & 0xff;
+		final int[] verses = new int[verseCount];
+		verses[0] = dailyVerses.get(random) >>> 8;
 		for (int i = 1; i < verseCount; i++) {
 			verses[i] = verses[i - 1] + 1;
 		}
 		return verses;
 	}
 
-	private static Pair<List<Integer>, List<Integer>> listAllDailyVerses() {
-		List<Integer> aris = new ArrayList<Integer>();
-		List<Integer> verseCounts = new ArrayList<Integer>();
-		try {
-			InputStream is = App.context.getResources().openRawResource(R.raw.daily_verses_bt);
-			BintexReader br = new BintexReader(is);
-			while (true) {
-				int ari = br.readInt();
-				if (ari == -1) {
-					break;
+	private static IntArrayList listAllDailyVerses() {
+		if (dailyVerses == null) {
+			dailyVerses = new IntArrayList();
+			try {
+				InputStream is = App.context.getResources().openRawResource(R.raw.daily_verses_bt);
+				BintexReader br = new BintexReader(is);
+				while (true) {
+					int ari = br.readInt();
+					if (ari == -1) {
+						break;
+					}
+					final int verseCount = br.readUint8();
+					dailyVerses.add(ari << 8 | verseCount);
 				}
-				aris.add(ari);
-				verseCounts.add(br.readUint8());
+				br.close();
+			} catch (IOException e) {
+				Log.w(TAG, "Error reading daily verses", e);
 			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
-		return Pair.create(aris, verseCounts);
+		return dailyVerses;
 	}
 
 	public static SpannableStringBuilder getText(Version version, int ari, boolean showVerseNumber) {
