@@ -9,11 +9,11 @@
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:background="@drawable/appwidget_dark_bg">
         <RelativeLayout
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:padding="6dp"
                 >
             <ImageView
@@ -56,9 +56,11 @@
                 android:layout_marginLeft="6dp"
                 android:layout_marginRight="6dp"/>
         <ListView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_margin="6dp"
-                android:id="@+id/lsVerse"/>
+                android:dividerHeight="0dp"
+                android:id="@+id/lsVerse"
+                android:divider="@android:color/transparent"/>
     </LinearLayout>
 </LinearLayout>
