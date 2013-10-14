@@ -6,11 +6,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
+import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.reminder.R;
 import yuku.alkitab.reminder.util.DevotionReminder;
@@ -19,7 +19,7 @@ import yuku.alkitab.reminder.widget.ReminderTimePreference;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class DevotionReminderActivity extends SherlockPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
+public class DevotionReminderActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 	@SuppressWarnings("deprecation") @Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 

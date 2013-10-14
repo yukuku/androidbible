@@ -10,7 +10,7 @@
     <application android:name="yuku.alkitab.reminder.App"
                  android:icon="@drawable/ic_launcher"
                  android:label="@string/dr_app_name"
-                 android:theme="@style/Theme.Sherlock.Light.DarkActionBar"
+                 android:theme="@style/AppTheme"
                  android:allowBackup="true">
         <activity android:name="yuku.alkitab.reminder.ac.DevotionReminderActivity">
             <intent-filter>
