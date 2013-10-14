@@ -35,6 +35,9 @@ public class DesktopVerseParserTest {
 		// new abbr
 		test("wah 9:9", "0x410909 .");
 		test("zak 9:9", "0x250909 .");
+
+		// bug
+		test("Yl. 2:10, 31, 3:15", "0x1c020a . 0x1c021f . 0x1c030f .");
 	}
 
 	private void test(final String ref, final String s) {
