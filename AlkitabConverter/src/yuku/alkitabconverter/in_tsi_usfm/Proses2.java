@@ -5,24 +5,19 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitabconverter.internal_common.InternalCommon;
 import yuku.alkitabconverter.util.FootnoteDb;
-import yuku.alkitabconverter.util.IntArrayList;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.XrefDb;
 import yuku.alkitabconverter.yet.YetFileOutput;
-import yuku.bintex.BintexWriter;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -85,26 +80,6 @@ public class Proses2 {
 
 		System.out.println("OUTPUT XREF:");
 		xrefDb.processEach(XrefDb.defaultShiftTbProcessor);
-
-		// prepare for xref file
-		final IntArrayList xref_index_ari_to_pos = new IntArrayList();
-		final IntArrayList xref_index_pos_to_offset = new IntArrayList();
-		final ByteArrayOutputStream xref_content_buf = new ByteArrayOutputStream();
-		final BintexWriter xref_content_bw = new BintexWriter(xref_content_buf);
-		xrefDb.processEach(new XrefDb.XrefProcessor() {
-			@Override public void process(XrefEntry xe, int ari, int entryIndex) {
-				try {
-					int offset = xref_content_bw.getPos();
-					xref_content_bw.writeValueString(xe.content);
-
-					xref_index_ari_to_pos.add(ari);
-					xref_index_pos_to_offset.add(offset);
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			}
-		});
-
 		xrefDb.dump();
 
 		System.out.println("OUTPUT FOOTNOTE:");

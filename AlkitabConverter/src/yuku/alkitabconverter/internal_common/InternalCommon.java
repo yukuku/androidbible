@@ -91,7 +91,8 @@ public class InternalCommon {
 							verse_counts[rec.chapter_1 - 1]++;
 						}
 					}
-	
+
+					final boolean forOpenSource = "1".equals(System.getProperty("for.open.source"));
 					int[] chapter_offsets = new int[chapter_count + 1];
 					{ // text
 						File f = new File(outDir, String.format("%s_k%02d.txt", prefix, book_1));
@@ -101,7 +102,7 @@ public class InternalCommon {
 							if (rec.text.contains("\n")) {
 								throw new RuntimeException("Now text can't contain \\n since it's used as a separator");
 							}
-							out.write(rec.text);
+							out.write(forOpenSource? (rec.text.replaceAll("[A-Z]", "X").replaceAll("[a-z]", "x")): rec.text);
 							out.write('\n');
 							out.flush();
 							chapter_offsets[rec.chapter_1] = (int) counter.getCount();

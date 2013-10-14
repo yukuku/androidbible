@@ -5,36 +5,21 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.XrefEntry;
+import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitabconverter.internal_common.InternalCommon;
 import yuku.alkitabconverter.internal_common.ReverseIndexer;
-import yuku.alkitabconverter.util.IntArrayList;
 import yuku.alkitabconverter.util.Rec;
-import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.TextDb.TextProcessor;
 import yuku.alkitabconverter.util.TextDb.VerseState;
 import yuku.alkitabconverter.util.XrefDb;
-import yuku.alkitabconverter.yes1.Yes1File;
-import yuku.alkitabconverter.yes1.Yes1File.InfoEdisi;
-import yuku.alkitabconverter.yes1.Yes1File.InfoKitab;
-import yuku.alkitabconverter.yes1.Yes1File.PericopeData;
-import yuku.alkitabconverter.yes1.Yes1File.PericopeData.Entry;
-import yuku.alkitabconverter.yes1.Yes1File.PerikopBlok;
-import yuku.alkitabconverter.yes1.Yes1File.PerikopIndex;
-import yuku.alkitabconverter.yes1.Yes1File.Teks;
-import yuku.alkitabconverter.yes_common.Yes1Common;
-import yuku.bintex.BintexWriter;
+import yuku.alkitabconverter.yet.YetFileOutput;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,14 +32,14 @@ public class Proses2 {
 	
 	public static String INPUT_TEKS_ENCODING = "utf-8";
 	public static int INPUT_TEKS_ENCODING_YES = 2; // 1: ascii; 2: utf-8;
-	public static String INPUT_KITAB = "./bahan/in-tb-usfm/in/in-tb-usfm-kitab.txt";
-	static String OUTPUT_YES = "./bahan/in-tb-usfm/out/in-tb-usfm.yes";
+	public static String INPUT_BOOK_NAMES = "../../../bahan-alkitab/in-tb-usfm/in/in-tb-usfm-kitab.txt";
+	static String OUTPUT_YET = "../../../bahan-alkitab/in-tb-usfm/out/in-tb-usfm.yet";
 	public static int OUTPUT_ADA_PERIKOP = 1;
-	static String INFO_NAMA = "in-tb-usfm";
 	static String INFO_SHORT_NAME = "TB";
 	static String INFO_LONG_NAME = "Terjemahan Baru";
-	static String INFO_KETERANGAN = "Terjemahan Baru (1974), Lembaga Alkitab Indonesia";
-	static String INPUT_TEKS_2 = "./bahan/in-tb-usfm/mid/";
+	static String INFO_DESCRIPTION = "Terjemahan Baru (1974), Lembaga Alkitab Indonesia";
+	static String INFO_LOCALE = "in";
+	static String INPUT_TEKS_2 = "../../../bahan-alkitab/in-tb-usfm/mid/";
 
 
 	TextDb teksDb = new TextDb();
@@ -63,7 +48,7 @@ public class Proses2 {
 
 	PericopeData pericopeData = new PericopeData();
 	{
-		pericopeData.entries = new ArrayList<Entry>();
+		pericopeData.entries = new ArrayList<PericopeData.Entry>();
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -100,26 +85,6 @@ public class Proses2 {
 		
 		System.out.println("OUTPUT XREF:");
 		xrefDb.processEach(XrefDb.defaultShiftTbProcessor);
-		
-		// prepare for xref file
-		final IntArrayList xref_index_ari_to_pos = new IntArrayList();
-		final IntArrayList xref_index_pos_to_offset = new IntArrayList();
-		final ByteArrayOutputStream xref_content_buf = new ByteArrayOutputStream();
-		final BintexWriter xref_content_bw = new BintexWriter(xref_content_buf);
-		xrefDb.processEach(new XrefDb.XrefProcessor() {
-			@Override public void process(XrefEntry xe, int ari, int entryIndex) {
-				try {
-					int offset = xref_content_bw.getPos();
-					xref_content_bw.writeValueString(xe.content);
-
-					xref_index_ari_to_pos.add(ari);
-					xref_index_pos_to_offset.add(offset);
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			}
-		});
-		
 		xrefDb.dump();
 		
 		// POST-PROCESS
@@ -159,104 +124,39 @@ public class Proses2 {
 		
 		List<Rec> xrec = teksDb.toRecList();
 		
-		dumpForYetTesting(InternalCommon.fileToBookNames(INPUT_KITAB), teksDb, pericopeData);
+		dumpForYetTesting(InternalCommon.fileToBookNames(INPUT_BOOK_NAMES), teksDb, pericopeData);
 		
 		System.out.println("Total rec: " + xrec.size());
 		
 		////////// CREATE REVERSE INDEX
 		
 		{
-			File outDir = new File("./bahan/in-tb-usfm/raw");
+			File outDir = new File("../../../bahan-alkitab/in-tb-usfm/raw");
 			ReverseIndexer.createReverseIndex(outDir, "tb", teksDb);
 		}
-		
-		////////// CREATE XREF FILE
-
-		final BintexWriter bw = new BintexWriter(new FileOutputStream(new File("./bahan/in-tb-usfm/raw", "tb_xref_bt.bt")));
-		assert xref_index_ari_to_pos.size() == xref_index_pos_to_offset.size();
-
-		// TB has 3238 xrefentries. Write size first.
-		bw.writeInt(xref_index_ari_to_pos.size());
-
-		// Index  ari -> pos
-		//  0 <delta 7bit> = relative
-		//  10 <delta 14bit> = relative
-		//  1100 0000 <ari 24bit> = absolute
-		// total ~ 5 KB
-		{
-			int last_ari = 0;
-			for (int i = 0; i < xref_index_ari_to_pos.size(); i++) {
-				int ari = xref_index_ari_to_pos.get(i);
-				if (last_ari == 0 || (ari - last_ari > 16383)) { // 4 byte
-					bw.writeInt(0xc0000000 | ari);
-				} else if ((ari - last_ari) > 127) { // 2 byte
-					bw.writeUint16(0x8000 | (ari-last_ari));
-				} else {
-					bw.writeUint8(ari-last_ari);
-				}
-				last_ari = ari;
-			}
-		}
-
-		// Index  pos -> xref_content
-		//  0 <delta 7bit> = relative
-		//  10 <delta 14bit> = relative
-		//  1100 0000 <offset 24bit> = absolute
-		//
-		// total ~ 4 KB
-		{
-			int last_offset = 0;
-			for (int i = 0; i < xref_index_pos_to_offset.size(); i++) {
-				int offset = xref_index_pos_to_offset.get(i);
-				if (last_offset == 0 || (offset - last_offset > 16383)) { // 4 byte
-					bw.writeInt(0xc0000000 | offset);
-				} else if ((offset - last_offset) > 127) { // 2 byte
-					bw.writeUint16(0x8000 | (offset-last_offset));
-				} else { // 1 byte
-					bw.writeUint8(offset-last_offset);
-				}
-				last_offset = offset;
-			}
-		}
-
-		// content
-		bw.writeRaw(xref_content_buf.toByteArray());
-		bw.close();
 		
 		////////// PROSES KE INTERNAL
 		
 		{
-			File outDir = new File("./bahan/in-tb-usfm/raw");
+			File outDir = new File("../../../bahan-alkitab/in-tb-usfm/raw");
 			outDir.mkdir();
-			InternalCommon.createInternalFiles(outDir, "tb", InternalCommon.fileToBookNames(INPUT_KITAB), teksDb, yes1toYes2PericopeData(pericopeData));
-		}
-		
-		////////// PROSES KE YES
-		
-		final InfoEdisi infoEdisi = Yes1Common.infoEdisi(INFO_NAMA, INFO_SHORT_NAME, INFO_LONG_NAME, RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, INFO_KETERANGAN, INPUT_TEKS_ENCODING_YES, null);
-		final InfoKitab infoKitab = Yes1Common.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
-		final Teks teks = Yes1Common.teks(xrec, INPUT_TEKS_ENCODING);
-		
-		Yes1File file = Yes1Common.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(pericopeData), new PerikopIndex(pericopeData));
-		
-		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
-	}
-
-	private yuku.alkitab.yes2.model.PericopeData yes1toYes2PericopeData(final PericopeData pericopeData) {
-		final yuku.alkitab.yes2.model.PericopeData res = new yuku.alkitab.yes2.model.PericopeData();
-
-		for (final Entry yes1entry : pericopeData.entries) {
-			final yuku.alkitab.yes2.model.PericopeData.Entry yes2entry = new yuku.alkitab.yes2.model.PericopeData.Entry();
-			yes2entry.ari = yes1entry.ari;
-			yes2entry.block = new yuku.alkitab.yes2.model.PericopeData.Block();
-			yes2entry.block.title = yes1entry.block.title;
-			for (final String parallel : yes1entry.block.parallels) {
-				yes2entry.block.addParallel(parallel);
-			}
-			res.addEntry(yes2entry);
+			InternalCommon.createInternalFiles(outDir, "tb", InternalCommon.fileToBookNames(INPUT_BOOK_NAMES), teksDb.toRecList(), pericopeData, xrefDb, null);
 		}
 
-		return res;
+		////////// PROSES KE YET
+
+		YetFileOutput yet = new YetFileOutput(new File(OUTPUT_YET));
+		yet.setInfo("locale", INFO_LOCALE);
+		yet.setInfo("shortName", INFO_SHORT_NAME);
+		yet.setInfo("longName", INFO_LONG_NAME);
+		yet.setInfo("description", INFO_DESCRIPTION);
+		yet.setVerses(xrec);
+		yet.setBooksFromFileLines(INPUT_BOOK_NAMES);
+		yet.setPericopeData(pericopeData);
+		yet.setXrefDb(xrefDb);
+		// no footnotes
+
+		yet.write();
 	}
 
 	private void dumpForYetTesting(List<String> bookNames, TextDb teksDb, PericopeData pericopeData) {
@@ -476,7 +376,7 @@ public class Proses2 {
 				misteri.append(chars).append('\n');
 			} else if (tujuan == tujuanTulis_teks) {
 				System.out.println("$tulis ke teks[jenis=" + menjorokTeks + "] " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
-				teksDb.append(kitab_0, pasal_1, ayat_1, chars.replace("\n", " ").replaceAll("\\s+", " "), menjorokTeks == -1? 0: menjorokTeks);
+				teksDb.append(kitab_0, pasal_1, ayat_1, chars.replace("\n", " ").replaceAll("\\s+", " "), menjorokTeks);
 				menjorokTeks = -1; // reset
 				
 				if (perikopBuffer.size() > 0) {
@@ -497,7 +397,6 @@ public class Proses2 {
 						PericopeData.Entry entry = new PericopeData.Entry();
 						entry.ari = 0; // done later when writing teks so we know which verse this pericope starts from
 						entry.block = new PericopeData.Block();
-						entry.block.version = 2;
 						entry.block.title = judul;
 						perikopBuffer.add(entry);
 						afterThisMustStartNewPerikop = false;
@@ -522,11 +421,12 @@ public class Proses2 {
 				System.out.println("$tulis ke xref (state=" + xref_state + ") " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
 				int ari = Ari.encode(kitab_0, pasal_1, ayat_1);
 				if (xref_state == 0) {
-					xrefDb.addBegin(ari);
+					final int xrefIndex = xrefDb.addBegin(ari);
+					teksDb.append(ari, "@<x" + (xrefIndex + 1) + "@>@/", -1);
 				} else if (xref_state == 1) {
-					xrefDb.appendText(ari, chars);
+					xrefDb.appendText(ari, chars.replace("\n", " "));
 				} else if (xref_state == 2) {
-					xrefDb.appendText(ari, chars);
+					xrefDb.appendText(ari, chars.replace("\n", " "));
 				} else {
 					throw new RuntimeException("xref_state not supported");
 				}
