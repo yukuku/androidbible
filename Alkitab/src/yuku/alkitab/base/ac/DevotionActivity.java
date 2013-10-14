@@ -266,10 +266,9 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	}
 
 	private void openReminderPackage() {
-		PackageManager packageManager = getPackageManager();
 		final String reminderPackage = "yuku.alkitab.reminder";
 		try {
-			packageManager.getPackageInfo(reminderPackage, PackageManager.GET_ACTIVITIES);
+			getPackageManager().getPackageInfo(reminderPackage, 0);
 			startActivity(new Intent("yuku.alkitab.reminder.ACTION_REMINDER_SETTINGS"));
 		} catch (PackageManager.NameNotFoundException nnfe) {
 			try {
