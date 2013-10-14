@@ -7,16 +7,25 @@ import android.util.AttributeSet;
 import android.widget.Checkable;
 import android.widget.LinearLayout;
 
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 
 public class VerseItem extends LinearLayout implements Checkable {
 	public static final String TAG = VerseItem.class.getSimpleName();
 	
 	private boolean checked;
 	private Drawable checkedBg;
-	
+	private boolean collapsed;
+
 	public VerseItem(Context context, AttributeSet attrs) {
 		super(context, attrs);
+	}
+
+	@Override
+	protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		if (collapsed) {
+			setMeasuredDimension(getMeasuredWidth(), 0);
+		}
 	}
 
 	@Override protected void onDraw(Canvas canvas) {
@@ -48,5 +57,11 @@ public class VerseItem extends LinearLayout implements Checkable {
 
 	@Override public void toggle() {
 		setChecked(!checked);
+	}
+
+	public void setCollapsed(final boolean collapsed) {
+		if (this.collapsed == collapsed) return;
+		this.collapsed = collapsed;
+		requestLayout();
 	}
 }

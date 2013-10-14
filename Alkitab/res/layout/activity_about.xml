@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/root"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="8dp" >
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="8dp">
 
         <TextView
-            android:id="@+id/lAbout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:autoLink="web"
-            android:maxWidth="400dp"
-            android:text="@string/teks_about"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:id="@+id/lAbout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="400dp"
+                android:text="* About text"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                tools:ignore="HardcodedText"/>
 
         <TextView
-            android:id="@+id/lTranslators"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:maxWidth="400dp"
-            android:text="*translators"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:ignore="HardcodedText" />
+                android:id="@+id/lTranslators"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:maxWidth="400dp"
+                android:text="*translators"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                tools:ignore="HardcodedText"/>
     </LinearLayout>
 
 </ScrollView>

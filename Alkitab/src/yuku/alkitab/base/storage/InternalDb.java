@@ -360,22 +360,6 @@ public class InternalDb {
 		}
 	}
 
-	public int getHighlightColorRgb(int ari) {
-		Cursor c = helper.getReadableDatabase().query(Db.TABLE_Bookmark2, null, Db.Bookmark2.ari + "=? and " + Db.Bookmark2.kind + "=?", new String[] {String.valueOf(ari), String.valueOf(Db.Bookmark2.kind_highlight)}, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
-		try {
-			if (c.moveToNext()) {
-				// exists
-				Bookmark2 bookmark = Bookmark2.fromCursor(c);
-				return U.decodeHighlight(bookmark.caption);
-			} else {
-				// not exist
-				return -1;
-			}
-		} finally {
-			c.close();
-		}
-	}
-	
 	public int getHighlightColorRgb(int ari_bookchapter, IntArrayList selectedVerses_1) {
 		int ariMin = ari_bookchapter;
 		int ariMax = ari_bookchapter | 0xff;

@@ -5,10 +5,10 @@ import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 
-import yuku.alkitab.yes1.Yes1File;
-import yuku.alkitab.yes1.Yes1File.InfoEdisi;
-import yuku.alkitab.yes1.Yes1File.InfoKitab;
-import yuku.alkitab.yes1.Yes1File.Teks;
+import yuku.alkitabconverter.yes1.Yes1File;
+import yuku.alkitabconverter.yes1.Yes1File.InfoEdisi;
+import yuku.alkitabconverter.yes1.Yes1File.InfoKitab;
+import yuku.alkitabconverter.yes1.Yes1File.Teks;
 import yuku.alkitabconverter.unboundbible.UnboundBibleReader;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.RecUtil;

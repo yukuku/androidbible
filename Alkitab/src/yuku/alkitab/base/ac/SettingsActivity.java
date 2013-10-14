@@ -3,7 +3,7 @@ package yuku.alkitab.base.ac;
 import android.os.Bundle;
 import android.preference.Preference;
 
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.ac.base.BasePreferenceActivity;
 
 public class SettingsActivity extends BasePreferenceActivity {

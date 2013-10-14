@@ -10,3 +10,4 @@ local.properties
 # IntelliJ
 .idea/workspace.xml
 /out/
+.idea/artifacts/

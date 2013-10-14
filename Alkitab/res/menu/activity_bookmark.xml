@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menuSendBackup"
-        android:icon="@drawable/ic_menu_share"
-        android:showAsAction="never"
-        android:title="@string/bl_send_backup"/>
+            android:id="@+id/menuSendBackup"
+            android:icon="@drawable/ic_menu_share"
+            app:showAsAction="never"
+            android:title="@string/bl_send_backup"/>
     <item
-        android:id="@+id/menuExport"
-        android:icon="@drawable/ic_menu_bl_backup"
-        android:showAsAction="never"
-        android:title="@string/ekspor_ke_sd_card"/>
+            android:id="@+id/menuExport"
+            android:icon="@drawable/ic_menu_bl_backup"
+            app:showAsAction="never"
+            android:title="@string/ekspor_ke_sd_card"/>
     <item
-        android:id="@+id/menuImport"
-        android:icon="@drawable/ic_menu_bl_restore"
-        android:showAsAction="never"
-        android:title="@string/impor_dari_sd_card"/>
+            android:id="@+id/menuImport"
+            android:icon="@drawable/ic_menu_bl_restore"
+            app:showAsAction="never"
+            android:title="@string/impor_dari_sd_card"/>
     <item
-        android:id="@+id/menuExportBookmarks"
-        android:showAsAction="never"
-        android:title="@string/me_export_menu_item"/>
+            android:id="@+id/menuExportBookmarks"
+            app:showAsAction="never"
+            android:title="@string/me_export_menu_item"/>
 
 </menu>

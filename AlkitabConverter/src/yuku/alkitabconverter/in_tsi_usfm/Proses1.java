@@ -1,29 +1,20 @@
 package yuku.alkitabconverter.in_tsi_usfm;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-
-import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.Usfm2Usfx;
 import yuku.alkitabconverter.util.UsfmBookName;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
 public class Proses1 {
-	static String INPUT_TEKS_1 = "./bahan/in-tsi-usfm/in/TSI21Mar12.txt";
+	static String INPUT_TEKS_1 = "../../../bahan-alkitab/in-tsi-usfm/in/nt.sfm";
 	public static String INPUT_TEKS_ENCODING = "utf-8";
 	public static int INPUT_TEKS_ENCODING_YES = 2; // 1: ascii; 2: utf-8;
-	public static String INPUT_KITAB = "./bahan/in-tsi-usfm/in/in-tsi-usfm-kitab.txt";
-	static final String MID_DIR = "./bahan/in-tsi-usfm/mid/";
-	static String OUTPUT_YES = "./bahan/in-tsi-usfm/out/in-tsi.yes";
+	public static String INPUT_KITAB = "../../../bahan-alkitab/in-tsi-usfm/in/in-tsi-usfm-kitab.txt";
+	static final String MID_DIR = "../../../bahan-alkitab/in-tsi-usfm/mid/";
 	public static int OUTPUT_ADA_PERIKOP = 0;
-	static String INFO_NAMA = "in-tsi";
-	static String INFO_JUDUL = "TSI";
-	static String INFO_KETERANGAN = "Terjemahan Sederhana Indonesia";
-
-	List<Rec> xrec = new ArrayList<Rec>();
 
 	public static void main(String[] args) throws Exception {
 		new Proses1().u();

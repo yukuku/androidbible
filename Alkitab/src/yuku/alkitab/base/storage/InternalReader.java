@@ -1,43 +1,48 @@
 package yuku.alkitab.base.storage;
 
 import android.util.Log;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.FootnoteEntry;
 import yuku.alkitab.base.model.InternalBook;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.XrefEntry;
 import yuku.alkitab.yes1.Yes1PericopeIndex;
+import yuku.alkitab.yes2.io.RawResourceRandomInputStream;
+import yuku.alkitab.yes2.section.FootnotesSection;
+import yuku.alkitab.yes2.section.XrefsSection;
 import yuku.bintex.BintexReader;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class InternalReader implements BibleReader {
 	public static final String TAG = InternalReader.class.getSimpleName();
 
-	// # buat cache Asset
+	// # for asset cache
 	private static InputStream cache_inputStream = null;
 	private static String cache_file = null;
 	private static int cache_posInput = -1;
 
-	private final String edisiPrefix;
-	private final String edisiShortName;
-	private final String edisiLongName;
+	private final String versionPrefix;
+	private final String versionShortName;
+	private final String versionLongName;
 	private final VerseTextDecoder verseTextDecoder;
 
 	private Yes1PericopeIndex pericopeIndex_;
-	private XrefTable xrefTable_;
+	private XrefsSection xrefsSection_;
+	private boolean xrefsKnownNotAvailable;
+	private FootnotesSection footnotesSection_;
+	private boolean footnotesKnownNotAvailable;
 
-	public InternalReader(String edisiPrefix, String edisiShortName, String edisiLongName, VerseTextDecoder verseTextDecoder) {
-		this.edisiPrefix = edisiPrefix;
-		this.edisiShortName = edisiShortName;
-		this.edisiLongName = edisiLongName;
+	public InternalReader(String versionPrefix, String versionShortName, String versionLongName, VerseTextDecoder verseTextDecoder) {
+		this.versionPrefix = versionPrefix;
+		this.versionShortName = versionShortName;
+		this.versionLongName = versionLongName;
 		this.verseTextDecoder = verseTextDecoder;
 	}
 	
@@ -57,144 +62,12 @@ public class InternalReader implements BibleReader {
 		}
 	}
 
-	static class XrefTable {
-		boolean available = false;
-		int[] index_ari; // ari to pos
-		int[] index_offset; // pos to content offset
-		int content_start_offset; // offset of start of content
-		
-		public XrefTable() {
-			InputStream input = S.openRaw(AppConfig.get().internalPrefix + "_xref_bt");
-			if (input == null) {
-				return;
-			}
-			
-			try {
-				BintexReader br = new BintexReader(input);
-				
-				int count = br.readInt();
-				
-				index_ari = new int[count];
-				readAriOrOffset(br, index_ari, count);
-				index_offset = new int[count];
-				readAriOrOffset(br, index_offset, count);
-				
-				content_start_offset = br.getPos();
-				available = true;
-			} catch (IOException e) {
-				Log.e(TAG, "error loading xref", e);
-				return;
-			}
-		}
-
-		// Index  pos -> xref_content
-		// or Index  ari -> pos
-		//  0 <delta 7bit> = relative
-		//  10 <delta 14bit> = relative
-		//  1100 0000 <offset 24bit> = absolute
-		// They have the same format!
-		private void readAriOrOffset(BintexReader br, int[] index_ao, int count) throws IOException {
-			int ao_last = 0;
-			byte[] buf = new byte[3];
-			for (int i = 0; i < count; i++) {
-				int ao;
-				int b0 = br.readUint8();
-				if ((b0 & 0x80) == 0) { // delta 7bit
-					ao = ao_last + b0;
-				} else if ((b0 & 0x40) == 0) { // delta 14bit
-					int b1 = br.readUint8();
-					ao = ao_last + ((b0 & 0x3f) << 8 | b1);
-				} else { // absolute
-					br.readRaw(buf, 0, 3);
-					ao = buf[0] << 16 | buf[1] << 8 | buf[2];
-				}
-				index_ao[i] = ao;
-				ao_last = ao;
-			}
-		}
-		
-		boolean isAvailable() {
-			return available;
-		}
-		
-		int getXrefEntryCounts(int[] result, int bookId, int chapter_1) {
-			Arrays.fill(result, 0);
-			
-			// binary search on index_ari with verse_1 = 0
-			int ariBc = Ari.encode(bookId, chapter_1, 0);
-			int startPos = Arrays.binarySearch(index_ari, ariBc);
-			if (startPos < 0) {
-				startPos = -startPos - 1;
-			}
-			
-			// move forward along index_ari to get all positions matching the book-chapter of requested book-chapter
-			int pos = startPos;
-			int res = 0;
-			while (true) {
-				if (pos >= index_ari.length) break;
-				int ari = index_ari[pos];
-				if ((ari & 0xffff00) != ariBc) {
-					break;
-				}
-				
-				int verse_1 = (ari & 0xff);
-				result[verse_1]++;
-				res++;
-				pos++;
-			}
-			
-			return res;
-		}
-		
-		XrefEntry getXrefEntry(int ari, int which) {
-			int pos = Arrays.binarySearch(index_ari, ari);
-			if (pos < 0) {
-				return null;
-			}
-			
-			// we found the ari at the index, now look back to find the first entry
-			int pos_first = pos;
-			for (int pos_try = pos - 1; pos_try >= 0; pos_try--) {
-				if (index_ari[pos_try] == ari) {
-					pos_first = pos_try;
-				} else {
-					break;
-				}
-			}
-			
-			// now we know the real pos
-			pos = pos_first + which;
-			
-			// check for invalid which
-			if (pos >= index_ari.length || index_ari[pos] != ari) {
-				return null;
-			}
-			
-			// OK
-			int offset = index_offset[pos];
-			int abs_offset = content_start_offset + offset;
-			try {
-				XrefEntry res = new XrefEntry();
-				InputStream input = S.openRaw(AppConfig.get().internalPrefix + "_xref_bt");
-				input.skip(abs_offset);
-				BintexReader br = new BintexReader(input);
-				res.source = br.readValueString();
-				res.target = br.readValueString();
-				br.close();
-				return res;
-			} catch (IOException e) {
-				Log.e(TAG, "load xref failed", e);
-				return null;
-			}
-		}
-	}
-
 	@Override public String getShortName() {
-		return edisiShortName;
+		return versionShortName;
 	}
 
 	@Override public String getLongName() {
-		return edisiLongName;
+		return versionLongName;
 	}
 	
 	@Override public String getDescription() {
@@ -202,129 +75,125 @@ public class InternalReader implements BibleReader {
 	}
 
 	@Override public Book[] loadBooks() {
-		InputStream is = S.openRaw(edisiPrefix + "_index_bt"); //$NON-NLS-1$
-		BintexReader in = new BintexReader(is);
+		final InputStream is = S.openRaw(versionPrefix + "_index_bt"); //$NON-NLS-1$
+		final BintexReader br = new BintexReader(is);
 		try {
-			ArrayList<Book> xkitab = new ArrayList<Book>();
-
-			try {
-				int pos = 0;
-				while (true) {
-					Book k = bacaKitab(in, pos++);
-					xkitab.add(k);
-				}
-			} catch (IOException e) {
-				Log.d(TAG, "siapinKitab selesai memuat"); //$NON-NLS-1$
+			// uint8 version = 3
+			// uint8 book_count
+			final int version = br.readUint8();
+			if (version != 3) throw new RuntimeException("Internal index version not supported: " + version);
+			final int book_count = br.readUint8();
+			final Book[] res = new Book[book_count];
+			for (int i = 0; i < book_count; i++) {
+				res[i] = readBook(br);
 			}
-
-			return xkitab.toArray(new Book[xkitab.size()]);
+			return res;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		} finally {
-			in.close();
+			br.close();
 		}
 	}
 
-	private static InternalBook bacaKitab(BintexReader in, int pos) throws IOException {
-		InternalBook k = new InternalBook();
-		k.bookId = pos;
-
-		// autostring bookName
-		// shortstring resName
-		// int chapter_count
+	private static InternalBook readBook(final BintexReader br) throws IOException {
+		// uint8 bookId;
+		// value<string> shortName
+		// value<string> abbreviation
+		// value<string> resName
+		// uint8 chapter_count
 		// uint8[chapter_count] verse_counts
-		// int[chapter_count+1] chapter_offsets
+		// varuint[chapter_count+1] chapter_offsets
 
-		k.shortName = in.readAutoString();
-		k.file = in.readShortString();
-		k.chapter_count = in.readInt();
+		final InternalBook res = new InternalBook();
 
-		k.verse_counts = new int[k.chapter_count];
-		for (int i = 0; i < k.chapter_count; i++) {
-			k.verse_counts[i] = in.readUint8();
+		res.bookId = br.readUint8();
+		res.shortName = br.readValueString();
+		res.abbreviation = br.readValueString();
+		res.resName = br.readValueString();
+		res.chapter_count = br.readUint8();
+
+		res.verse_counts = new int[res.chapter_count];
+		for (int i = 0; i < res.chapter_count; i++) {
+			res.verse_counts[i] = br.readUint8();
 		}
 
-		k.chapter_offsets = new int[k.chapter_count + 1];
-		for (int i = 0; i < k.chapter_count + 1; i++) {
-			k.chapter_offsets[i] = in.readInt();
+		res.chapter_offsets = new int[res.chapter_count + 1];
+		for (int i = 0; i < res.chapter_count + 1; i++) {
+			res.chapter_offsets[i] = br.readVarUint();
 		}
 
-		return k;
+		return res;
 	}
 
-	@Override public SingleChapterVerses loadVerseText(Book book, int pasal_1, boolean janganPisahAyat, boolean hurufKecil) {
+	@Override public SingleChapterVerses loadVerseText(Book book, int chapter_1, boolean dontSplitVerses, boolean lowercased) {
 		InternalBook internalBook = (InternalBook) book;
 
-		if (pasal_1 < 1 || pasal_1 > book.chapter_count) {
+		if (chapter_1 < 1 || chapter_1 > book.chapter_count) {
 			return null;
 		}
 		
-		int offset = internalBook.chapter_offsets[pasal_1 - 1];
-		int length = 0;
+		int offset = internalBook.chapter_offsets[chapter_1 - 1];
 
 		try {
 			InputStream in;
 
-			// Log.d("alki", "muatTeks kitab=" + kitab.nama + " pasal[1base]=" + pasal + " offset=" + offset);
-			// Log.d("alki", "muatTeks cache_file=" + cache_file + " cache_posInput=" + cache_posInput);
 			if (cache_inputStream == null) {
-				// kasus 1: belum buka apapun
-				in = S.openRaw(internalBook.file);
+				// case 1: haven't opened anything
+				in = S.openRaw(internalBook.resName);
 				cache_inputStream = in;
-				cache_file = internalBook.file;
+				cache_file = internalBook.resName;
 
 				in.skip(offset);
 				cache_posInput = offset;
-				// Log.d("alki", "muatTeks masuk kasus 1");
 			} else {
-				// kasus 2: uda pernah buka. Cek apakah filenya sama
-				if (internalBook.file.equals(cache_file)) {
-					// kasus 2.1: filenya sama.
+				// case 2: we have ever opened. Check if the file is the same
+				if (internalBook.resName.equals(cache_file)) {
+					// case 2.1: yes the file was the same
 					if (offset >= cache_posInput) {
-						// bagus, kita bisa maju.
+						// we can go forward
 						in = cache_inputStream;
 
 						in.skip(offset - cache_posInput);
 						cache_posInput = offset;
-						// Log.d("alki", "muatTeks masuk kasus 2.1 bagus");
 					} else {
-						// ga bisa mundur. tutup dan buka lagi.
+						// but can't go backward, so we close the stream and reopen it
 						cache_inputStream.close();
 
-						in = S.openRaw(internalBook.file);
+						in = S.openRaw(internalBook.resName);
 						cache_inputStream = in;
 
 						in.skip(offset);
 						cache_posInput = offset;
-						// Log.d("alki", "muatTeks masuk kasus 2.1 jelek");
 					}
 				} else {
-					// kasus 2.2: filenya beda, tutup dan buka baru
+					// case 2.2: different file. So close current and open the new one
 					cache_inputStream.close();
 
-					in = S.openRaw(internalBook.file);
+					in = S.openRaw(internalBook.resName);
 					cache_inputStream = in;
-					cache_file = internalBook.file;
+					cache_file = internalBook.resName;
 
 					in.skip(offset);
 					cache_posInput = offset;
-					// Log.d("alki", "muatTeks masuk kasus 2.2");
 				}
 			}
 
-			if (pasal_1 == internalBook.chapter_count) {
+			final int length;
+			if (chapter_1 == internalBook.chapter_count) {
 				length = in.available();
 			} else {
-				length = internalBook.chapter_offsets[pasal_1] - offset;
+				length = internalBook.chapter_offsets[chapter_1] - offset;
 			}
 
 			byte[] ba = new byte[length];
 			in.read(ba);
 			cache_posInput += ba.length;
-			// jangan ditutup walau uda baca. Siapa tau masih sama filenya dengan sebelumnya.
+			// do not close even though we finished reading. The asset file could be the same as before.
 
-			if (janganPisahAyat) {
-				return new InternalSingleChapterVerses(new String[] { verseTextDecoder.makeIntoSingleString(ba, hurufKecil) });
+			if (dontSplitVerses) {
+				return new InternalSingleChapterVerses(new String[] { verseTextDecoder.makeIntoSingleString(ba, lowercased) });
 			} else {
-				return new InternalSingleChapterVerses(verseTextDecoder.separateIntoVerses(ba, hurufKecil));
+				return new InternalSingleChapterVerses(verseTextDecoder.separateIntoVerses(ba, lowercased));
 			}
 		} catch (IOException e) {
 			return new InternalSingleChapterVerses(new String[] { e.getMessage() });
@@ -335,10 +204,10 @@ public class InternalReader implements BibleReader {
 		if (pericopeIndex_ != null) {
 			return pericopeIndex_;
 		}
-		
-		long wmulai = System.currentTimeMillis();
 
-		InputStream is = S.openRaw(edisiPrefix + "_pericope_index_bt"); //$NON-NLS-1$
+		final long startTime = System.currentTimeMillis();
+		
+		InputStream is = S.openRaw(versionPrefix + "_pericope_index_bt"); //$NON-NLS-1$
 		if (is == null) {
 			return null;
 		}
@@ -349,23 +218,23 @@ public class InternalReader implements BibleReader {
 			return pericopeIndex_;
 
 		} catch (IOException e) {
-			Log.e(TAG, "baca perikop index ngaco", e); //$NON-NLS-1$
+			Log.e(TAG, "Error reading pericope index", e); //$NON-NLS-1$
 			return null;
 		} finally {
 			in.close();
-			Log.d(TAG, "Muat index perikop butuh ms: " + (System.currentTimeMillis() - wmulai)); //$NON-NLS-1$
+			Log.d(TAG, "Read pericope index needed: " + (System.currentTimeMillis() - startTime)); //$NON-NLS-1$
 		}
 	}
 
-	@Override public int loadPericope(int kitab, int pasal, int[] xari, PericopeBlock[] xblok, int max) {
+	@Override public int loadPericope(int bookId, int chapter_1, int[] aris, PericopeBlock[] pericopeBlocks, int max) {
 		Yes1PericopeIndex pericopeIndex = loadPericopeIndex();
 
 		if (pericopeIndex == null) {
-			return 0; // ga ada perikop!
+			return 0; // no pericopes!
 		}
 
-		int ariMin = Ari.encode(kitab, pasal, 0);
-		int ariMax = Ari.encode(kitab, pasal + 1, 0);
+		int ariMin = Ari.encode(bookId, chapter_1, 0);
+		int ariMax = Ari.encode(bookId, chapter_1 + 1, 0);
 		int res = 0;
 
 		int pertama = pericopeIndex.findFirst(ariMin, ariMax);
@@ -376,7 +245,7 @@ public class InternalReader implements BibleReader {
 
 		int kini = pertama;
 
-		BintexReader in = new BintexReader(S.openRaw(edisiPrefix + "_pericope_blocks_bt")); //$NON-NLS-1$
+		BintexReader in = new BintexReader(S.openRaw(versionPrefix + "_pericope_blocks_bt")); //$NON-NLS-1$
 		try {
 			while (true) {
 				int ari = pericopeIndex.getAri(kini);
@@ -390,8 +259,8 @@ public class InternalReader implements BibleReader {
 				kini++;
 
 				if (res < max) {
-					xari[res] = ari;
-					xblok[res] = pericopeBlock;
+					aris[res] = ari;
+					pericopeBlocks[res] = pericopeBlock;
 					res++;
 				} else {
 					break;
@@ -404,27 +273,47 @@ public class InternalReader implements BibleReader {
 		return res;
 	}
 	
-	@Override public int getXrefEntryCounts(int[] result, int bookId, int chapter_1) {
-		if (xrefTable_ == null) {
-			xrefTable_ = new XrefTable();
-		}
-		
-		if (!xrefTable_.isAvailable()) {
-			return 0;
-		}
-		
-		return xrefTable_.getXrefEntryCounts(result, bookId, chapter_1);
-	}
+	@Override public XrefEntry getXrefEntry(int arif) {
+		if (xrefsKnownNotAvailable) return null;
 
-	@Override public XrefEntry getXrefEntry(int ari, int which) {
-		if (xrefTable_ == null) {
-			xrefTable_ = new XrefTable();
+		if (xrefsSection_ == null) {
+			final int resId = App.context.getResources().getIdentifier(AppConfig.get().internalPrefix + "_xrefs_bt", "raw", App.context.getPackageName());
+			if (resId == 0) {
+				Log.d(TAG, "Can't load xrefs from internal, marking it as not available.");
+				xrefsKnownNotAvailable = true;
+				return null;
+			}
+
+			try {
+				xrefsSection_ = new XrefsSection.Reader().read(new RawResourceRandomInputStream(resId));
+			} catch (Exception e) {
+				Log.e(TAG, "Error reading xrefs section from internal", e);
+				return null;
+			}
 		}
-		
-		if (!xrefTable_.isAvailable()) {
-			return null;
+
+		return xrefsSection_.getXrefEntry(arif);
+	}
+	
+	@Override public FootnoteEntry getFootnoteEntry(int arif) {
+		if (footnotesKnownNotAvailable) return null;
+
+		if (footnotesSection_ == null) {
+			final int resId = App.context.getResources().getIdentifier(AppConfig.get().internalPrefix + "_footnotes_bt", "raw", App.context.getPackageName());
+			if (resId == 0) {
+				Log.d(TAG, "Can't load footnotes from internal, marking it as not available.");
+				footnotesKnownNotAvailable = true;
+				return null;
+			}
+
+			try {
+				footnotesSection_ = new FootnotesSection.Reader().read(new RawResourceRandomInputStream(resId));
+			} catch (Exception e) {
+				Log.e(TAG, "Error reading footnotes section from internal", e);
+				return null;
+			}
 		}
-		
-		return xrefTable_.getXrefEntry(ari, which);
+
+		return footnotesSection_.getFootnoteEntry(arif);
 	}
 }

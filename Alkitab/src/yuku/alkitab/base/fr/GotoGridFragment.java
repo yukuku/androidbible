@@ -20,7 +20,7 @@ import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
@@ -234,7 +234,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 		
 		public BookAdapter() {
 			// sort or not based on pref
-			if (Preferences.getBoolean(App.context.getString(R.string.pref_sortKitabAlfabet_key), App.context.getResources().getBoolean(R.bool.pref_sortKitabAlfabet_default))) {
+			if (Preferences.getBoolean(App.context.getString(R.string.pref_alphabeticBookSort_key), App.context.getResources().getBoolean(R.bool.pref_sortKitabAlfabet_default))) {
 				books_grid = BookNameSorter.sortAlphabetically(books);
 			} else {
 				books_grid = books.clone();

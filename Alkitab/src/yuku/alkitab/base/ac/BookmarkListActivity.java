@@ -9,11 +9,15 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.text.SpannableStringBuilder;
 import android.text.style.BackgroundColorSpan;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -25,13 +29,8 @@ import android.widget.Filter.FilterListener;
 import android.widget.FilterQueryProvider;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import yuku.afw.V;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -51,9 +50,9 @@ import yuku.alkitab.base.util.Search2Engine;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.devoxx.flowlayout.FlowLayout;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.widget.SearchView;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class BookmarkListActivity extends BaseActivity {
 	public static final String TAG = BookmarkListActivity.class.getSimpleName();
@@ -247,38 +246,41 @@ public class BookmarkListActivity extends BaseActivity {
 		return res;
 	}
 
-	private void bikinMenu(Menu menu) {
+	private void buildMenu(Menu menu) {
 		menu.clear();
-		getSupportMenuInflater().inflate(R.menu.activity_bookmark_list, menu);
+		getMenuInflater().inflate(R.menu.activity_bookmark_list, menu);
 		
         final MenuItem menuSearch = menu.findItem(R.id.menuSearch);
         if (menuSearch != null) {
-			searchView = (SearchView) menuSearch.getActionView();
+	        searchView = (SearchView) MenuItemCompat.getActionView(menuSearch);
+	        searchView.setQueryHint(getString(R.string.bl_filter_by_some_keywords));
 	        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-				@Override public boolean onQueryTextChange(String newText) {
-					if (newText.length() == 0) {
-						return searchView_search(newText);
-					}
-					return false;
-				}
-	
-			    @Override public boolean onQueryTextSubmit(String query) {
-			    	return searchView_search(query);
-				}
-			});
+		        @Override
+		        public boolean onQueryTextChange(String newText) {
+			        if (newText.length() == 0) {
+				        return searchView_search(newText);
+			        }
+			        return false;
+		        }
+
+		        @Override
+		        public boolean onQueryTextSubmit(String query) {
+			        return searchView_search(query);
+		        }
+	        });
         }
 	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		bikinMenu(menu);
+		buildMenu(menu);
 		
 		return true;
 	}
 	
 	@Override public boolean onPrepareOptionsMenu(Menu menu) {
 		if (menu != null) {
-			bikinMenu(menu);
+			buildMenu(menu);
 		}
 		
 		return true;

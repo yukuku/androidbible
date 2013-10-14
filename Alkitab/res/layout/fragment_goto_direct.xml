@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_centerHorizontal="true"
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/lContohLoncat"
+        android:id="@+id/lDirectSample"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:text="@string/loncat_ke_alamat_titikdua" />
 
     <EditText
-        android:id="@+id/tAlamatLoncat"
+        android:id="@+id/tDirectReference"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="18dp"

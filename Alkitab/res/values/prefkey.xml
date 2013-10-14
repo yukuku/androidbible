@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-	<string name="pref_nyalakanTerusLayar_key">nyalakanTerusLayar</string>
+	<string name="pref_keepScreenOn_key">nyalakanTerusLayar</string>
 	
-	<string name="pref_tombolVolumeBuatPindah_key">tombolVolumeBuatPindah</string>
+	<string name="pref_volumeButtonNavigation_key">tombolVolumeBuatPindah</string>
 	
-	<string name="pref_sortKitabAlfabet_key">sortKitabAlfabet</string>
+	<string name="pref_alphabeticBookSort_key">sortKitabAlfabet</string>
 		
 	<!-- defined in pref_language_default.xml : pref_bahasa_default -->
-	<string name="pref_bahasa_key">bahasa</string>
+	<string name="pref_language_key">bahasa</string>
 	
-	<string name="pref_warnaHuruf_int_key">warnaHuruf</string>
+	<string name="pref_textColor_key">warnaHuruf</string>
 	
-	<string name="pref_warnaLatar_int_key">warnaLatar</string>
+	<string name="pref_bgColor_key">warnaLatar</string>
 
-	<string name="pref_warnaNomerAyat_int_key">warnaNomerAyat</string>
+	<string name="pref_verseColor_key">warnaNomerAyat</string>
 	
 	<string name="pref_redTextColor_key">redTextColor</string>
 	

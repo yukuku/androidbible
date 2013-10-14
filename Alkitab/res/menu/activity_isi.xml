@@ -1,72 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/menuBookmark"
         android:icon="@drawable/ic_menu_bookmark"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/menu_markers"/>
     <item
         android:id="@+id/menuListProgressMark"
-        android:icon="@drawable/ic_nav_right_dark"
-        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_menu_see_progress"
+        app:showAsAction="ifRoom"
         android:title="@string/pm_menu_view_progress"/>
     <item
         android:id="@+id/menuSearch"
         android:icon="@drawable/ic_menu_search"
-        android:showAsAction="always"
+        app:showAsAction="always"
         android:title="@string/cari_v"/>
     <item
         android:id="@+id/menuVersions"
         android:icon="@drawable/ic_menu_versions"
-        android:showAsAction="always"
+        app:showAsAction="always"
         android:title="@string/versi"/>
     <item
         android:id="@+id/menuSplitVersion"
         android:icon="@drawable/ic_menu_versions"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/menu_split_version"/>
     <item
         android:id="@+id/menuDevotion"
         android:icon="@drawable/ic_menu_devotion"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/renungan"/>
     <item
         android:id="@+id/menuSongs"
         android:icon="@drawable/ic_menu_songs"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/menuSongs"/>
     <item
         android:id="@+id/menuFullScreen"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/menuFullScreen" 
         android:checkable="true" />
     <item
         android:id="@+id/menuTextAppearance"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/menuTextAppearance"
         android:checkable="true" />
     <item
         android:id="@+id/menuSettings"
         android:icon="@drawable/ic_menu_settings"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/menuPengaturan"/>
     <item
         android:id="@+id/menuDonation"
         android:icon="@drawable/ic_menu_donation"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/menuDonasi"/>
     <item
         android:id="@+id/menuHelp"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/menuBantuan"/>
     <item
         android:id="@+id/menuSendMessage"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/beri_saran_title"/>
     <item
         android:id="@+id/menuAbout"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/menuTentang"/>
 
 </menu>

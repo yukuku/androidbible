@@ -23,5 +23,8 @@ public enum Prefkey {
 	ukuranHuruf2,
 	/** Line spacing multiplier in proportional (float) */
 	lineSpacingMult,
+
+	/** Last backup date */
+	lastBackupDate,
 	
 }

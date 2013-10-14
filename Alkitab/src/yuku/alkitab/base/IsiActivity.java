@@ -21,37 +21,37 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
+import android.support.v7.view.ActionMode;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.actionbarsherlock.internal.nineoldandroids.animation.Animator;
-import com.actionbarsherlock.internal.nineoldandroids.animation.Animator.AnimatorListener;
-import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorListenerAdapter;
-import com.actionbarsherlock.internal.nineoldandroids.animation.AnimatorSet;
-import com.actionbarsherlock.internal.nineoldandroids.animation.ObjectAnimator;
-import com.actionbarsherlock.internal.nineoldandroids.widget.NineFrameLayout;
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.AnimatorListenerAdapter;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
 import org.json.JSONException;
 import org.json.JSONObject;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.R;
+import yuku.afw.widget.EasyAdapter;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.BookmarkActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
@@ -75,11 +75,13 @@ import yuku.alkitab.base.dialog.TypeNoteDialog;
 import yuku.alkitab.base.dialog.XrefDialog;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.FootnoteEntry;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.ProgressMark;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.BackupManager;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.Jumper;
@@ -88,17 +90,24 @@ import yuku.alkitab.base.util.Search2Engine.Query;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.AttributeView;
 import yuku.alkitab.base.widget.CallbackSpan;
+import yuku.alkitab.base.widget.FormattedTextRenderer;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
-import yuku.alkitab.base.widget.VerseAdapter;
+import yuku.alkitab.base.widget.VerseInlineLinkSpan;
+import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.PressResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
+
+import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 
 public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener, ProgressMarkDialog.ProgressMarkDialogListener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
@@ -139,24 +148,24 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	    private Animator mCurrentShowAnim;
 	    private boolean mShowHideAnimationEnabled = true;
 
-		final AnimatorListener mHideListener = new AnimatorListenerAdapter() {
+		final Animator.AnimatorListener mHideListener = new AnimatorListenerAdapter() {
 			@TargetApi(11) @Override public void onAnimationEnd(Animator animation) {
 	            if (panelNavigation != null) {
-	                panelNavigation.setTranslationY(0);
+	                animate(panelNavigation).translationY(0);
 	                panelNavigation.setVisibility(View.GONE);
 	            }
 	            mCurrentShowAnim = null;
 	        }
 	    };
 
-	    final AnimatorListener mShowListener = new AnimatorListenerAdapter() {
+	    final Animator.AnimatorListener mShowListener = new AnimatorListenerAdapter() {
 	        @TargetApi(11) @Override public void onAnimationEnd(Animator animation) {
 	            mCurrentShowAnim = null;
 	            panelNavigation.requestLayout();
 	        }
 	    };
 
-	    @TargetApi(11) void hidePanelNavigation() {
+	    void hidePanelNavigation() {
 	        if (mCurrentShowAnim != null) {
 	            mCurrentShowAnim.end();
 	        }
@@ -166,21 +175,21 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	        }
 
 	        if (mShowHideAnimationEnabled) {
-	        	panelNavigation.setAlpha(1);
-	            AnimatorSet anim = new AnimatorSet();
-	            AnimatorSet.Builder b = anim.play(ObjectAnimator.ofFloat(panelNavigation, "alpha", 0));
-	            if (panelNavigation != null) {
-	                b.with(ObjectAnimator.ofFloat(panelNavigation, "translationY", 0, +panelNavigation.getHeight()));
-	            }
-	            anim.addListener(mHideListener);
-	            mCurrentShowAnim = anim;
-	            anim.start();
+		        animate(panelNavigation).alpha(1);
+		        AnimatorSet anim = new AnimatorSet();
+		        AnimatorSet.Builder b = anim.play(ObjectAnimator.ofFloat(panelNavigation, "alpha", 0));
+		        if (panelNavigation != null) {
+			        b.with(ObjectAnimator.ofFloat(panelNavigation, "translationY", 0, +panelNavigation.getHeight()));
+		        }
+		        anim.addListener(mHideListener);
+		        mCurrentShowAnim = anim;
+		        anim.start();
 	        } else {
 	            mHideListener.onAnimationEnd(null);
 	        }
 	    }
 
-	    @TargetApi(11) void showPanelNavigation() {
+	    void showPanelNavigation() {
 	        if (mCurrentShowAnim != null) {
 	            mCurrentShowAnim.end();
 	        }
@@ -190,7 +199,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	        panelNavigation.setVisibility(View.VISIBLE);
 
 	        if (mShowHideAnimationEnabled) {
-	        	panelNavigation.setAlpha(0);
+	        	animate(panelNavigation).alpha(0);
 	            AnimatorSet anim = new AnimatorSet();
 	            AnimatorSet.Builder b = anim.play(ObjectAnimator.ofFloat(panelNavigation, "alpha", 1));
                 b.with(ObjectAnimator.ofFloat(panelNavigation, "translationY", +panelNavigation.getHeight(), 0));
@@ -198,9 +207,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	            mCurrentShowAnim = anim;
 	            anim.start();
 	        } else {
-	        	panelNavigation.setAlpha(1);
-	        	panelNavigation.setTranslationY(0);
-	            mShowListener.onAnimationEnd(null);
+		        animate(panelNavigation).alpha(1);
+		        animate(panelNavigation).translationY(0);
+		        mShowListener.onAnimationEnd(null);
 	        }
 	    }
 
@@ -223,7 +232,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	View splitRoot;
 	View splitHandle;
 	LabeledSplitHandleButton splitHandleButton;
-	NineFrameLayout panelNavigation;
+	FrameLayout panelNavigation;
 	Button bGoto;
 	ImageButton bLeft;
 	ImageButton bRight;
@@ -253,26 +262,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	CallbackSpan.OnClickListener parallelListener = new CallbackSpan.OnClickListener() {
 		@Override public void onClick(View widget, Object data) {
             if (data instanceof String) {
-                int ari = jumpTo((String) data);
+                final int ari = jumpTo((String) data);
                 if (ari != 0) {
                     history.add(ari);
                 }
-            } else if (data instanceof VerseAdapter.ParallelTypeAri) {
-                int ari = ((VerseAdapter.ParallelTypeAri) data).ariStart;
-                jumpToAri(ari);
-                history.add(ari);
-            } else if (data instanceof VerseAdapter.ParallelTypeLid) {
-                int ari = LidToAri.lidToAri(((VerseAdapter.ParallelTypeLid) data).lidStart);
-                if (ari != 0) {
-                    jumpToAri(ari);
-                    history.add(ari);
-                }
-            } else if (data instanceof VerseAdapter.ParallelTypeOsis) {
-                String osis = ((VerseAdapter.ParallelTypeOsis) data).osisStart;
-                int ari = jumpTo(osis); // jumpTo handles osis well
-                if (ari != 0) {
-                    history.add(ari);
-                }
+            } else if (data instanceof Integer) {
+	            final int ari = (Integer) data;
+	            jumpToAri(ari);
+	            history.add(ari);
             }
 		}
 	};
@@ -333,7 +330,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		// listeners
 		lsText.setParallelListener(parallelListener);
 		lsText.setAttributeListener(attributeListener);
-		lsText.setXrefListener(xrefListener);
+		lsText.setInlineLinkSpanFactory(new VerseInlineLinkSpanFactory(lsText));
 		lsText.setSelectedVersesListener(lsText_selectedVerses);
 		lsText.setOnVerseScrollListener(lsText_verseScroll);
 		
@@ -342,16 +339,17 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsSplit1.setEmptyView(tSplitEmpty);
 		lsSplit1.setParallelListener(parallelListener);
 		lsSplit1.setAttributeListener(attributeListener);
-		lsSplit1.setXrefListener(xrefListener);
+		lsSplit1.setInlineLinkSpanFactory(new VerseInlineLinkSpanFactory(lsSplit1));
 		lsSplit1.setSelectedVersesListener(lsSplit1_selectedVerses);
 		lsSplit1.setOnVerseScrollListener(lsSplit1_verseScroll);
 		
 		// for splitting
 		splitHandleButton.setListener(splitHandleButton_listener);
 		
-		// muat preferences_instan, dan atur renungan
-		instant_pref = App.getPreferencesInstan();
-		history = new History(instant_pref);
+		history = History.getInstance();
+
+		// configure devotion
+		instant_pref = App.getInstantPreferences();
 		{
 			String devotion_name = instant_pref.getString(PREFKEY_devotion_name, null);
 			if (devotion_name != null) {
@@ -362,7 +360,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				}
 			}
 		}
-		
+
 		// restore the last (version; book; chapter and verse).
 		String lastVersion = instant_pref.getString(PREFKEY_lastVersion, null);
 		int lastBook = instant_pref.getInt(PREFKEY_lastBook, 0);
@@ -376,6 +374,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			Book book = S.activeVersion.getBook(lastBook);
 			if (book != null) {
 				this.activeBook = book;
+			} else { // can't load last book or bookId 0
+				this.activeBook = S.activeVersion.getFirstBook();
 			}
 		}
 		
@@ -385,6 +385,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		if (Build.VERSION.SDK_INT >= 14) {
 			initNfcIfAvailable();
 		}
+		BackupManager.startAutoBackup();
 		
 		processIntent(getIntent(), "onCreate");
 	}
@@ -794,22 +795,27 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	@Override protected void onStop() {
 		super.onStop();
 		
-		Editor editor = instant_pref.edit();
+		final Editor editor = instant_pref.edit();
 		editor.putInt(PREFKEY_lastBook, this.activeBook.bookId);
 		editor.putInt(PREFKEY_lastChapter, chapter_1);
 		editor.putInt(PREFKEY_lastVerse, lsText.getVerseBasedOnScroll());
 		editor.putString(PREFKEY_devotion_name, DevotionActivity.Temporaries.devotion_name);
 		editor.putString(PREFKEY_lastVersion, S.activeVersionId);
-		history.simpan(editor);
-		editor.commit();
-		
+		if (Build.VERSION.SDK_INT >= 9) {
+			editor.apply();
+		} else {
+			editor.commit();
+		}
+
+		history.save();
+
 		lsText.setKeepScreenOn(false);
 	}
 	
 	@Override protected void onStart() {
 		super.onStart();
 		
-		if (Preferences.getBoolean(getString(R.string.pref_nyalakanTerusLayar_key), getResources().getBoolean(R.bool.pref_nyalakanTerusLayar_default))) {
+		if (Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_nyalakanTerusLayar_default))) {
 			lsText.setKeepScreenOn(true);
 		}
 	}
@@ -830,7 +836,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 	
 	void bGoto_longClick() {
-		if (history.getN() > 0) {
+		if (history.getSize() > 0) {
 			new AlertDialog.Builder(this)
 			.setAdapter(historyAdapter, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
@@ -843,37 +849,69 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			.setNegativeButton(R.string.cancel, null)
 			.show();
 		} else {
-			Toast.makeText(this, R.string.belum_ada_sejarah, Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.recentverses_not_available, Toast.LENGTH_SHORT).show();
 		}
 	}
-	
-	private ListAdapter historyAdapter = new BaseAdapter() {
-		@Override public View getView(int position, View convertView, ViewGroup parent) {
-			TextView res = (TextView) convertView;
-			if (res == null) {
-				res = (TextView) getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
-			}
+
+	private ListAdapter historyAdapter = new EasyAdapter() {
+
+		private final java.text.DateFormat timeFormat = DateFormat.getTimeFormat(App.context);
+		private final java.text.DateFormat mediumDateFormat = DateFormat.getMediumDateFormat(App.context);
+
+		@Override
+		public View newView(final int position, final ViewGroup parent) {
+			return getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+		}
+
+		@Override
+		public void bindView(final View view, final int position, final ViewGroup parent) {
+			TextView textView = (TextView) view;
+
 			int ari = history.getAri(position);
-			res.setText(S.activeVersion.reference(ari));
-			return res;
+			SpannableStringBuilder sb = new SpannableStringBuilder();
+			sb.append(S.activeVersion.reference(ari));
+			sb.append("  ");
+			int sb_len = sb.length();
+			sb.append(formatTimestamp(history.getTimestamp(position)));
+			sb.setSpan(new ForegroundColorSpan(0xff666666), sb_len, sb.length(), 0);
+			sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
+
+			textView.setText(sb);
 		}
-		
-		@Override
-		public long getItemId(int position) {
-			return position;
+
+		private CharSequence formatTimestamp(final long timestamp) {
+			{
+				long now = System.currentTimeMillis();
+				long delta = now - timestamp;
+				if (delta <= 200000) {
+					return getString(R.string.recentverses_just_now);
+				} else if (delta <= 3600000) {
+					return getString(R.string.recentverses_min_plural_ago, Math.round(delta / 60000.0));
+				}
+			}
+
+			{
+				Calendar now = GregorianCalendar.getInstance();
+				Calendar that = GregorianCalendar.getInstance();
+				that.setTimeInMillis(timestamp);
+				if (now.get(Calendar.YEAR) == that.get(Calendar.YEAR)) {
+					if (now.get(Calendar.DAY_OF_YEAR) == that.get(Calendar.DAY_OF_YEAR)) {
+						return getString(R.string.recentverses_today_time, timeFormat.format(that.getTime()));
+					} else if (now.get(Calendar.DAY_OF_YEAR) == that.get(Calendar.DAY_OF_YEAR) + 1) {
+						return getString(R.string.recentverses_yesterday_time, timeFormat.format(that.getTime()));
+					}
+				}
+
+				return mediumDateFormat.format(that.getTime());
+			}
 		}
-		
-		@Override
-		public Integer getItem(int position) {
-			return history.getAri(position);
-		}
-		
+
 		@Override
 		public int getCount() {
-			return history.getN();
+			return history.getSize();
 		}
 	};
-	
+
 	public void openDonationDialog() {
 		new AlertDialog.Builder(this)
 		.setMessage(R.string.donasi_keterangan)
@@ -891,7 +929,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	public void buildMenu(Menu menu) {
 		menu.clear();
-		getSupportMenuInflater().inflate(R.menu.activity_isi, menu);
+		getMenuInflater().inflate(R.menu.activity_isi, menu);
 		
 		AppConfig c = AppConfig.get();
 
@@ -1172,6 +1210,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 	
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
 		if (requestCode == REQCODE_goto) {
 			if (resultCode == RESULT_OK) {
 				GotoActivity.Result result = GotoActivity.obtainResult(data);
@@ -1183,7 +1223,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					} else { // no book, just chapter and verse.
 						result.bookId = this.activeBook.bookId;
 					}
-					
+
 					int ari_cv = display(result.chapter_1, result.verse_1);
 					history.add(Ari.encode(result.bookId, ari_cv));
 				}
@@ -1202,7 +1242,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						jumpToAri(result.selectedAri);
 						history.add(result.selectedAri);
 					}
-					
+
 					search2_query = result.query;
 					search2_results = result.searchResults;
 					search2_selectedPosition = result.selectedPosition;
@@ -1229,9 +1269,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		} else if (requestCode == REQCODE_settings) {
 			// MUST reload preferences
 			S.calculateAppliedValuesBasedOnPreferences();
-			
+
 			applyPreferences(true);
-			
+
 			if (resultCode == SettingsActivity.RESULT_openTextAppearance) {
 				setShowTextAppearancePanel(true);
 			}
@@ -1253,10 +1293,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode, resultCode, data);
 		} else if (requestCode == REQCODE_textAppearanceCustomColors) {
 			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode, resultCode, data);
-			
+
 			// MUST reload preferences
 			S.calculateAppliedValuesBasedOnPreferences();
-			
+
 			applyPreferences(true);
 		}
 	}
@@ -1301,13 +1341,13 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		
 		// set goto button text
 		String reference = this.activeBook.reference(chapter_1);
-		if (Preferences.getBoolean(Prefkey.history_button_understood, false) || history.getN() == 0) {
+		if (Preferences.getBoolean(Prefkey.history_button_understood, false) || history.getSize() == 0) {
 			bGoto.setText(reference);
 		} else {
 			SpannableStringBuilder sb = new SpannableStringBuilder();
 			sb.append(reference).append("\n");
 			int sb_len = sb.length();
-			sb.append(getString(R.string.history_hint));
+			sb.append(getString(R.string.recentverses_button_hint));
 			sb.setSpan(new RelativeSizeSpan(0.6f), sb_len, sb.length(), 0);
 			bGoto.setText(sb);
 		}
@@ -1350,12 +1390,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		PericopeBlock[] pericope_blocks = new PericopeBlock[max];
 		int nblock = version.loadPericope(book.bookId, chapter_1, pericope_aris, pericope_blocks, max);
 		
-		// load xref
-		int[] xrefEntryCounts = new int[256];
-		version.getXrefEntryCounts(xrefEntryCounts, book.bookId, chapter_1);
-		
 		boolean retainSelectedVerses = (!uncheckAllVerses && chapter_1 == current_chapter_1);
-		versesView.setDataWithRetainSelectedVerses(retainSelectedVerses, book, chapter_1, pericope_aris, pericope_blocks, nblock, verses, xrefEntryCounts);
+		versesView.setDataWithRetainSelectedVerses(retainSelectedVerses, book, chapter_1, pericope_aris, pericope_blocks, nblock, verses);
 
 		return true;
 	}
@@ -1371,7 +1407,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 	
 	@Override public boolean onKeyUp(int keyCode, KeyEvent event) {
-		String volumeButtonsForNavigation = Preferences.getString(getString(R.string.pref_tombolVolumeBuatPindah_key), getString(R.string.pref_tombolVolumeBuatPindah_default));
+		String volumeButtonsForNavigation = Preferences.getString(getString(R.string.pref_volumeButtonNavigation_key), getString(R.string.pref_tombolVolumeBuatPindah_default));
 		if (! U.equals(volumeButtonsForNavigation, "default")) { // consume here //$NON-NLS-1$
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) return true;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) return true;
@@ -1428,10 +1464,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		return true;
 	}
 
-	@Override public void onVerseSelected(XrefDialog dialog, int ari_source, int ari_target) {
+	@Override public void onVerseSelected(XrefDialog dialog, int arif_source, int ari_target) {
+		final int ari_source = arif_source >>> 8;
+
 		dialog.dismiss();
 		jumpToAri(ari_target);
-		
+
 		// add both xref source and target, so user can go back to source easily
 		history.add(ari_source);
 		history.add(ari_target);
@@ -1532,21 +1570,64 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	};
 
-	VersesView.XrefListener xrefListener = new VersesView.XrefListener() {
-		@Override public void onXrefClick(VersesView versesView, int ari, int which) {
-			XrefDialog dialog = XrefDialog.newInstance(ari, which);
-			// TODO setSourceVersion here is not restored when dialog is restored
-			if (versesView == lsText) { // use activeVersion
-				dialog.setSourceVersion(S.activeVersion);
-			} else if (versesView == lsSplit1) { // use activeSplitVersion
-				dialog.setSourceVersion(activeSplitVersion);
-			}
-			
-			FragmentManager fm = getSupportFragmentManager();
-			dialog.show(fm, XrefDialog.class.getSimpleName());
+	class VerseInlineLinkSpanFactory implements VerseInlineLinkSpan.Factory {
+		private final Object source;
+
+		VerseInlineLinkSpanFactory(final Object source) {
+			this.source = source;
 		}
-	};
-	
+
+		@Override
+		public VerseInlineLinkSpan create(final VerseInlineLinkSpan.Type type, final int arif) {
+			return new VerseInlineLinkSpan(type, arif, source) {
+				@Override
+				public void onClick(final Type type, final int arif, final Object source) {
+					if (type == Type.xref) {
+						final XrefDialog dialog = XrefDialog.newInstance(arif);
+
+						// TODO setSourceVersion here is not restored when dialog is restored
+						if (source == lsText) { // use activeVersion
+							dialog.setSourceVersion(S.activeVersion);
+						} else if (source == lsSplit1) { // use activeSplitVersion
+							dialog.setSourceVersion(activeSplitVersion);
+						}
+
+						FragmentManager fm = getSupportFragmentManager();
+						dialog.show(fm, XrefDialog.class.getSimpleName());
+					} else if (type == Type.footnote) {
+						FootnoteEntry fe = null;
+						if (source == lsText) { // use activeVersion
+							fe = S.activeVersion.getFootnoteEntry(arif);
+						} else if (source == lsSplit1) { // use activeSplitVersion
+							fe = activeSplitVersion.getFootnoteEntry(arif);
+						}
+
+						if (fe != null) {
+							final SpannableStringBuilder footnoteText = new SpannableStringBuilder();
+							VerseRenderer.appendSuperscriptNumber(footnoteText, arif & 0xff);
+							footnoteText.append(" ");
+
+							new AlertDialog.Builder(IsiActivity.this)
+							.setMessage(FormattedTextRenderer.render(fe.content, footnoteText))
+							.setPositiveButton("OK", null)
+							.show();
+						} else {
+							new AlertDialog.Builder(IsiActivity.this)
+							.setMessage(String.format(Locale.US, "Error: footnote arif 0x%08x couldn't be loaded", arif))
+							.setPositiveButton("OK", null)
+							.show();
+						}
+					} else {
+						new AlertDialog.Builder(IsiActivity.this)
+						.setMessage("Error: Unknown inline link type: " + type)
+						.setPositiveButton("OK", null)
+						.show();
+					}
+				}
+			};
+		}
+	}
+
 	VersesView.SelectedVersesListener lsText_selectedVerses = new VersesView.SelectedVersesListener() {
 		@Override public void onSomeVersesSelected(VersesView v) {
 			if (activeSplitVersion != null) {
@@ -1556,7 +1637,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 			
 			if (actionMode == null) {
-				actionMode = startActionMode(actionMode_callback);
+				actionMode = startSupportActionMode(actionMode_callback);
 			}
 			
 			if (actionMode != null) {
@@ -1798,29 +1879,19 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				}
 			} return true;
 			case R.id.menuProgress1: {
-				moveProgressMark(mainVerse_1, 0);
-				AttributeView.startAnimationForProgressMark(0);
-				reloadVerse();
+				updateProgressMark(mainVerse_1, 0);
 			} return true;
 			case R.id.menuProgress2: {
-				moveProgressMark(mainVerse_1, 1);
-				AttributeView.startAnimationForProgressMark(1);
-				reloadVerse();
+				updateProgressMark(mainVerse_1, 1);
 			} return true;
 			case R.id.menuProgress3: {
-				moveProgressMark(mainVerse_1, 2);
-				AttributeView.startAnimationForProgressMark(2);
-				reloadVerse();
+				updateProgressMark(mainVerse_1, 2);
 			} return true;
 			case R.id.menuProgress4: {
-				moveProgressMark(mainVerse_1, 3);
-				AttributeView.startAnimationForProgressMark(3);
-				reloadVerse();
+				updateProgressMark(mainVerse_1, 3);
 			} return true;
 			case R.id.menuProgress5: {
-				moveProgressMark(mainVerse_1, 4);
-				AttributeView.startAnimationForProgressMark(4);
-				reloadVerse();
+				updateProgressMark(mainVerse_1, 4);
 			} return true;
 
 			}
@@ -1853,13 +1924,39 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 
-	private void moveProgressMark(final int mainVerse_1, int position) {
+	private void updateProgressMark(final int mainVerse_1, int position) {
 		final int ari = Ari.encode(this.activeBook.bookId, this.chapter_1, mainVerse_1);
 		List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
 		final ProgressMark progressMark = progressMarks.get(position);
-		progressMark.ari = ari;
-		progressMark.modifyTime = new Date();
-		S.getDb().updateProgressMark(progressMark);
+		if (progressMark.ari == ari) {
+			int icon = AttributeView.getProgressMarkIconResource(position);
+			String title = progressMark.caption;
+			if (TextUtils.isEmpty(title)) {
+				title = getString(AttributeView.getDefaultProgressMarkStringResource(position));
+			}
+
+			new AlertDialog.Builder(IsiActivity.this)
+			.setIcon(icon)
+			.setTitle(title)
+			.setMessage(getString(R.string.pm_delete_progress_confirm, title))
+			.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(final DialogInterface dialog, final int which) {
+					progressMark.ari = 0;
+					progressMark.caption = null;
+					S.getDb().updateProgressMark(progressMark);
+					reloadVerse();
+				}
+			})
+			.setNegativeButton(getString(R.string.cancel), null)
+			.show();
+		} else {
+			progressMark.ari = ari;
+			progressMark.modifyTime = new Date();
+			S.getDb().updateProgressMark(progressMark);
+			AttributeView.startAnimationForProgressMark(position);
+			reloadVerse();
+		}
 	}
 
 	SplitHandleButton.SplitHandleButtonListener splitHandleButton_listener = new SplitHandleButton.SplitHandleButtonListener() {

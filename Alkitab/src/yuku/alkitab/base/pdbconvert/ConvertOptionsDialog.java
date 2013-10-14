@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import yuku.afw.App;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 
 import com.compactbyte.android.bible.PDBFileStream;
 import com.compactbyte.bibleplus.reader.BiblePlusPDB;

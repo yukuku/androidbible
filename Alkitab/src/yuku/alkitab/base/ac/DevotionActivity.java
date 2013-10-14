@@ -1,7 +1,10 @@
 package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,6 +14,8 @@ import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -18,14 +23,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
-
-import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -42,8 +41,10 @@ import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.DevotionSelectPopup;
 import yuku.alkitab.base.widget.DevotionSelectPopup.DevotionSelectPopupListener;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class DevotionActivity extends BaseActivity implements OnStatusDonlotListener {
 	public static final String TAG = DevotionActivity.class.getSimpleName();
@@ -195,7 +196,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	@Override protected void onStart() {
 		super.onStart();
 		
-		if (Preferences.getBoolean(getString(R.string.pref_nyalakanTerusLayar_key), getResources().getBoolean(R.bool.pref_nyalakanTerusLayar_default))) {
+		if (Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_nyalakanTerusLayar_default))) {
 			lContent.setKeepScreenOn(true);
 		}
 	}
@@ -210,7 +211,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		
 	private void buildMenu(Menu menu) {
 		menu.clear();
-		getSupportMenuInflater().inflate(R.menu.activity_devotion, menu);
+		getMenuInflater().inflate(R.menu.activity_devotion, menu);
 	}
 	
 	@Override
@@ -256,11 +257,39 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			willNeed(this.currentName, date_format.get().format(currentDate), true);
 			
 			return true;
+		} else if (itemId == R.id.menuReminder) {
+			openReminderPackage();
+			return true;
 		}
 		
 		return super.onOptionsItemSelected(item);
 	}
-	
+
+	private void openReminderPackage() {
+		final String reminderPackage = "yuku.alkitab.reminder";
+		try {
+			getPackageManager().getPackageInfo(reminderPackage, 0);
+			startActivity(new Intent("yuku.alkitab.reminder.ACTION_REMINDER_SETTINGS"));
+		} catch (PackageManager.NameNotFoundException nnfe) {
+			try {
+				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + reminderPackage)));
+			} catch (ActivityNotFoundException anfe) {
+				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + reminderPackage)));
+			} catch (Exception e) {
+				displayError();
+			}
+		} catch (Exception e) {
+			displayError();
+		}
+	}
+
+	private void displayError() {
+		new AlertDialog.Builder(this)
+		.setMessage(R.string.dr_error_contact_reminder)
+		.setPositiveButton(R.string.ok, null)
+		.show();
+	}
+
 	DevotionSelectPopupListener popup_listener = new DevotionSelectPopupListener() {
 		@Override public void onDismiss(DevotionSelectPopup popup) {
 		}

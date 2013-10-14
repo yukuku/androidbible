@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<style name="Theme.Alkitab" parent="@style/Theme.Sherlock.Light.DarkActionBar" />
+	<style name="Theme.Alkitab" parent="Theme.AppCompat.Light.DarkActionBar" />
 
 	<style name="Theme.Alkitab.Content" parent="@style/Theme.Alkitab">
 	    <item name="android:windowContentOverlay">@null</item>
 	    <item name="android:windowBackground">@null</item>
 	</style>
 
-	<style name="Theme.Alkitab.NoActionBar" parent="@style/Theme.Sherlock.Light.NoActionBar" />
+	<style name="Theme.Alkitab.NoActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="windowActionBar">false</item>
+    </style>
+
 </resources>

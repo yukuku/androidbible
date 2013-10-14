@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import yuku.afw.App;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.ac.base.BasePreferenceActivity;
 
 public class ColorSettingsActivity extends BasePreferenceActivity {

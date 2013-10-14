@@ -10,6 +10,13 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TimingLogger;
+import yuku.afw.D;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.config.AppConfig;
+import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.model.Book;
+import yuku.alkitab.base.model.SingleChapterVerses;
+import yuku.bintex.BintexReader;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -25,14 +32,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
-
-import yuku.afw.D;
-import yuku.alkitab.base.S;
-import yuku.alkitab.base.config.AppConfig;
-import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.Book;
-import yuku.alkitab.base.model.SingleChapterVerses;
-import yuku.bintex.BintexReader;
 
 public class Search2Engine {
 	public static final String TAG = Search2Engine.class.getSimpleName();
@@ -91,7 +90,7 @@ public class Search2Engine {
 			}
 		});
 		
-		// buang ganda
+		// remove duplicates
 		{
 			ArrayList<String> awords = new ArrayList<String>();
 			String last = null;
@@ -175,8 +174,8 @@ public class Search2Engine {
 	}
 
 	/**
-	 * Keluarkan ari (kitab pasal saja) berikutnya setelah ariKpTerakhir dengan ngesken sumber mulai pos.
-	 * @param ppos pointer ke pos. pos akan berubah jadi SATU SETELAH POSISI KETEMU. Jadi jangan ++ lagi di luar sini.
+	 * Return the next ari (with only book and chapter) after the lastAriBc by scanning the source starting from pos.
+	 * @param ppos pointer to pos. pos will be changed to ONE AFTER THE FOUND POSITION. So do not do another increment (++) outside this method.
 	 */
 	private static int nextAri(IntArrayList source, int[] ppos, int lastAriBc) {
 		int[] s = source.buffer();
@@ -190,12 +189,12 @@ public class Search2Engine {
 			int curAriBc = Ari.toBookChapter(curAri);
 			
 			if (curAriBc != lastAriBc) {
-				// ketemu!
+				// found!
 				pos++;
 				ppos[0] = pos;
 				return curAriBc;
 			} else {
-				// masih sama, maju.
+				// still the same one, move to next.
 				pos++;
 			}
 		}
@@ -203,27 +202,27 @@ public class Search2Engine {
 
 	static IntArrayList searchByGrepInside(String word, IntArrayList source, SparseBooleanArray bookIds) {
 		IntArrayList res = new IntArrayList();
-		boolean pakeTambah = false;
+		boolean hasPlus = false;
 		
 		if (QueryTokenizer.isPlussedToken(word)) {
-			pakeTambah = true;
+			hasPlus = true;
 			word = QueryTokenizer.tokenWithoutPlus(word);
 		}
 	
 		if (source == null) {
 			for (Book book: S.activeVersion.getConsecutiveBooks()) {
 				if (bookIds.get(book.bookId, false) == false) {
-					continue; // ga termasuk dalam kitab yang dipilih
+					continue; // the book is not included in selected books to be searched
 				}
 				
 				int chapter_count = book.chapter_count;
 				
 				for (int chapter_1 = 1; chapter_1 <= chapter_count; chapter_1++) {
-					// coba sepasal sekaligus dulu.
+					// try to find it wholly in a chapter
 					String oneChapter = S.activeVersion.loadChapterTextLowercasedWithoutSplit(book, chapter_1);
-					if (oneChapter.indexOf(word) >= 0) {
-						// hanya lakukan ini jika dalam sepasal kedetek ada word
-						searchByGrepInChapter(oneChapter, word, res, Ari.encode(book.bookId, chapter_1, 0), pakeTambah);
+					if (oneChapter.contains(word)) {
+						// only do the following when inside a chapter, word is found
+						searchByGrepInChapter(oneChapter, word, res, Ari.encode(book.bookId, chapter_1, 0), hasPlus);
 					}
 				}
 	
@@ -240,15 +239,15 @@ public class Search2Engine {
 				curAriBc = nextAri(source, ppos, curAriBc);
 				if (curAriBc == 0) break; // habis
 				
-				// ga usa cek kitab null, karena masuk sini hanya kalau udah pernah search token sebelumnya
-				// yang berdasarkan getConsecutiveXkitab yang ga mungkin ada nullnya.
+				// No need to check null book, because we go here only after searching a previous token which is based on
+				// getConsecutiveBooks which is impossible to have null books.
 				Book book = S.activeVersion.getBook(Ari.toBook(curAriBc));
 				int chapter_1 = Ari.toChapter(curAriBc);
 				
 				String oneChapter = S.activeVersion.loadChapterTextLowercasedWithoutSplit(book, chapter_1);
-				if (oneChapter.indexOf(word) >= 0) {
-					// hanya lakukan ini jika dalam sepasal kedetek ada word
-					searchByGrepInChapter(oneChapter, word, res, curAriBc, pakeTambah);
+				if (oneChapter.contains(word)) {
+					// Only to the following if inside a chapter we find the word.
+					searchByGrepInChapter(oneChapter, word, res, curAriBc, hasPlus);
 				}
 				
 				count++;

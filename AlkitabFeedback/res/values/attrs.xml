@@ -18,10 +18,10 @@
 
     <declare-styleable name="BaseTheme">
         <!-- backward-compatibility -->
-        <attr name="buttonBarStyle" format="reference" />
-        <attr name="buttonBarButtonStyle" format="reference" />
-        <attr name="dividerHorizontal" format="reference" />
         <!-- provided by ActionBarSherlock -->
+        <!-- attr name="buttonBarStyle" format="reference" /-->
+        <!-- attr name="buttonBarButtonStyle" format="reference" /-->
+        <!-- attr name="dividerHorizontal" format="reference" /-->
         <!--<attr name="indeterminateProgressStyle" format="reference" />-->
         <!--<attr name="listPreferredItemPaddingLeft" format="reference" />-->
         <!--<attr name="listPreferredItemPaddingRight" format="reference" />-->

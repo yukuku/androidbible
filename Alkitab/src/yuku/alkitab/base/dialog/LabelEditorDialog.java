@@ -16,7 +16,7 @@ import android.widget.EditText;
 import java.util.List;
 
 import yuku.afw.V;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Label;
 

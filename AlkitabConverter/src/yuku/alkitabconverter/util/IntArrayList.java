@@ -1,9 +1,10 @@
 package yuku.alkitabconverter.util;
 
+import java.util.Arrays;
+
 /** Non-parcelable version for desktop */
 public class IntArrayList {
 	int[] buf;
-	int cap;
 	int len;
 
 	public IntArrayList() {
@@ -12,7 +13,6 @@ public class IntArrayList {
 
 	public IntArrayList(int cap) {
 		buf = new int[cap];
-		this.cap = cap;
 		this.len = 0;
 	}
 
@@ -20,16 +20,15 @@ public class IntArrayList {
 		return this.len;
 	}
 
-	private void perbesar() {
-		this.cap <<= 1;
-		int[] baru = new int[this.cap];
-		System.arraycopy(this.buf, 0, baru, 0, this.len);
-		this.buf = baru;
+	private void expand() {
+		int[] newArray = new int[this.buf.length << 1];
+		System.arraycopy(this.buf, 0, newArray, 0, this.len);
+		this.buf = newArray;
 	}
 
 	public void add(int a) {
-		if (this.len >= this.cap) {
-			perbesar();
+		if (this.len >= this.buf.length) {
+			expand();
 		}
 
 		this.buf[this.len++] = a;
@@ -50,6 +49,7 @@ public class IntArrayList {
 	/**
 	 * DANGEROUS. Do not mess with this buffer carelessly.
 	 * Use this for faster access to the underlying buffer only.
+	 * The length of the returned array will be the same or larger than {@link #size()}.
 	 */
 	public int[] buffer() {
 		return buf;
@@ -67,5 +67,27 @@ public class IntArrayList {
 		}
 		sb.append(']');
 		return sb.toString();
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		final IntArrayList that = (IntArrayList) o;
+
+		if (len != that.len) return false;
+		for (int i = 0; i < len; i++) {
+			if (buf[i] != that.buf[i]) return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = Arrays.hashCode(buf);
+		result = 31 * result + len;
+		return result;
 	}
 }

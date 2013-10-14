@@ -10,14 +10,18 @@ import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.model.Book;
 
 public class AttributeView extends View {
 
+	public static final int PROGRESS_MARK_BITS_START = 8;
+	public static final int PROGRESS_MARK_TOTAL_COUNT = 5;
+	public static final int PROGRESS_MARK_BIT_MASK = (1 << PROGRESS_MARK_BITS_START) * ((1 << PROGRESS_MARK_TOTAL_COUNT) - 1);
+
 	static Bitmap bookmarkBitmap = null;
 	static Bitmap noteBitmap = null;
-	static Bitmap[] progressMarkBitmap = new Bitmap[5];
+	static Bitmap[] progressMarkBitmap = new Bitmap[PROGRESS_MARK_TOTAL_COUNT];
 	static Paint alphaPaint = new Paint();
 
 	private boolean showBookmark;
@@ -64,6 +68,9 @@ public class AttributeView extends View {
 		invalidate();
 	}
 
+	public boolean isShowingSomething() {
+		return showBookmark || showNote || ((attribute & PROGRESS_MARK_BIT_MASK) != 0);
+	}
 
 	Bitmap getBookmarkBitmap() {
 		if (bookmarkBitmap == null) {
@@ -105,7 +112,7 @@ public class AttributeView extends View {
 			}
 		}
 		if (attribute != 0) {
-			for (int preset_id = 0; preset_id < 5; preset_id++) {
+			for (int preset_id = 0; preset_id < PROGRESS_MARK_TOTAL_COUNT; preset_id++) {
 				if (isProgressMarkSetFromAttribute(preset_id)) {
 					final Bitmap progressMarkBitmapById = getProgressMarkBitmapByPresetId(preset_id);
 					totalHeight += progressMarkBitmapById.getHeight();
@@ -120,7 +127,7 @@ public class AttributeView extends View {
 	}
 
 	private boolean isProgressMarkSetFromAttribute(final int preset_id) {
-		return (attribute & (1 << (preset_id + 8))) != 0;
+		return (attribute & (1 << (preset_id + PROGRESS_MARK_BITS_START))) != 0;
 	}
 
 	@Override
@@ -137,7 +144,7 @@ public class AttributeView extends View {
 			totalHeight += noteBitmap.getHeight();
 		}
 		if (attribute != 0) {
-			for (int preset_id = 0; preset_id < 5; preset_id++) {
+			for (int preset_id = 0; preset_id < PROGRESS_MARK_TOTAL_COUNT; preset_id++) {
 				if (isProgressMarkSetFromAttribute(preset_id)) {
 					final Bitmap progressMarkBitmapById = getProgressMarkBitmapByPresetId(preset_id);
 					final Long animationStartTime = progressMarkAnimationStartTimes.get(preset_id);
@@ -184,7 +191,7 @@ public class AttributeView extends View {
 				}
 			}
 			if (attribute != 0) {
-				for (int preset_id = 0; preset_id < 5; preset_id++) {
+				for (int preset_id = 0; preset_id < PROGRESS_MARK_TOTAL_COUNT; preset_id++) {
 					if (isProgressMarkSetFromAttribute(preset_id)) {
 						final Bitmap progressMarkBitmapById = getProgressMarkBitmapByPresetId(preset_id);
 						totalHeight += progressMarkBitmapById.getHeight();

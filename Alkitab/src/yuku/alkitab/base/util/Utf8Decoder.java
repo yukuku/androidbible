@@ -1,8 +1,8 @@
 package yuku.alkitab.base.util;
 
-import java.io.IOException;
-
 import yuku.bintex.BintexReader;
+
+import java.io.IOException;
 
 public class Utf8Decoder {
 	public static char[] buf = new char[1000];
@@ -126,7 +126,9 @@ public class Utf8Decoder {
 			
 			int will_need_char_len = char_pos + verse_len + 1 /*for separator*/;
 			if (will_need_char_len > char_buf.length) {
-				char_buf = new char[will_need_char_len + 1000];
+				final char[] new_char_buf = new char[will_need_char_len + 1000];
+				System.arraycopy(char_buf, 0, new_char_buf, 0, char_buf.length);
+				char_buf = new_char_buf;
 				char_buf_.set(char_buf);
 			}
 			

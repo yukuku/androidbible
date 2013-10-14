@@ -1,92 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" >
+      xmlns:tools="http://schemas.android.com/tools"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/menuCopyShare"
-        android:icon="@drawable/ic_menu_copyshare"
-        android:showAsAction="always"
-        android:title="@string/copy_share"
-        tools:ignore="AlwaysShowAction">
+    <item android:id="@+id/menuCopyShare"
+          android:icon="@drawable/ic_menu_copyshare"
+          app:showAsAction="always"
+          android:title="@string/copy_share"
+          tools:ignore="AlwaysShowAction">
         <menu>
-            <item
-                android:id="@+id/menuCopy"
-                android:icon="@drawable/ic_menu_copy"
-                android:showAsAction="always"
-                android:title="@string/salin_ayat"/>
-            <item
-                android:id="@+id/menuShare"
-                android:icon="@drawable/ic_menu_share"
-                android:showAsAction="always"
-                android:title="@string/bagikan"/>
+            <item android:id="@+id/menuCopy"
+                  android:icon="@drawable/ic_menu_copy"
+                  app:showAsAction="always"
+                  android:title="@string/salin_ayat"/>
+            <item android:id="@+id/menuShare"
+                  android:icon="@drawable/ic_menu_share"
+                  app:showAsAction="always"
+                  android:title="@string/bagikan"/>
         </menu>
     </item>
     <item
-        android:id="@+id/menuVersions"
-        android:icon="@drawable/ic_menu_versions"
-        android:showAsAction="always"
-        android:title="@string/versi"/>
+            android:id="@+id/menuVersions"
+            android:icon="@drawable/ic_menu_versions"
+            app:showAsAction="always"
+            android:title="@string/versi"/>
     <item
-        android:id="@+id/menuAddSomething"
-        android:icon="@drawable/ic_menu_add_light"
-        android:showAsAction="always"
-        android:title="@string/menuAddSomething">
+            android:id="@+id/menuAddSomething"
+            android:icon="@drawable/ic_menu_add_light"
+            app:showAsAction="always"
+            android:title="@string/menuAddSomething">
         <menu>
-            <item
-                android:id="@+id/menuAddBookmark"
-                android:icon="@drawable/ic_menu_add_bookmark"
-                android:showAsAction="always"
-                android:title="@string/tambah_pembatas_buku"/>
-            <item
-                android:id="@+id/menuAddNote"
-                android:icon="@drawable/ic_menu_add_note"
-                android:showAsAction="always"
-                android:title="@string/tulis_catatan"/>
-            <item
-                android:id="@+id/menuAddHighlight"
-                android:icon="@drawable/ic_menu_add_highlight"
-                android:showAsAction="always"
-                android:title="@string/highlight_stabilo"/>
+            <item android:id="@+id/menuAddBookmark"
+                  android:icon="@drawable/ic_menu_add_bookmark"
+                  app:showAsAction="always"
+                  android:title="@string/tambah_pembatas_buku"/>
+            <item android:id="@+id/menuAddNote"
+                  android:icon="@drawable/ic_menu_add_note"
+                  app:showAsAction="always"
+                  android:title="@string/tulis_catatan"/>
+            <item android:id="@+id/menuAddHighlight"
+                  android:icon="@drawable/ic_menu_add_highlight"
+                  app:showAsAction="always"
+                  android:title="@string/highlight_stabilo"/>
         </menu>
     </item>
-    <item
-        android:id="@+id/menuEsvsb"
-        android:icon="@android:drawable/ic_menu_call"
-        android:showAsAction="ifRoom"
-        android:title="ESV Study Bible"
-        android:visible="false"
-        tools:ignore="HardcodedText"/>
-    <item
-        android:id="@+id/menuProgressMark"
-        android:icon="@drawable/ic_menu_progress_mark"
-        android:showAsAction="always"
-        android:title="@string/pm_menu_save_progresses">
+    <item android:id="@+id/menuEsvsb"
+          android:icon="@android:drawable/ic_menu_call"
+          app:showAsAction="ifRoom"
+          android:title="ESV Study Bible"
+          android:visible="false"
+          tools:ignore="HardcodedText"/>
+    <item android:id="@+id/menuProgressMark"
+          android:icon="@drawable/ic_menu_progress_mark_save"
+          app:showAsAction="always"
+          android:title="@string/pm_menu_save_progresses">
         <menu>
-            <item
-                android:id="@+id/menuProgress1"
-                android:icon="@drawable/ic_attr_progress_mark_1"
-                android:showAsAction="always"
-                android:title="@string/pm_progress_1"/>
-            <item
-                android:id="@+id/menuProgress2"
-                android:icon="@drawable/ic_attr_progress_mark_2"
-                android:showAsAction="always"
-                android:title="@string/pm_progress_2"/>
-            <item
-                android:id="@+id/menuProgress3"
-                android:icon="@drawable/ic_attr_progress_mark_3"
-                android:showAsAction="always"
-                android:title="@string/pm_progress_3"/>
-            <item
-                android:id="@+id/menuProgress4"
-                android:icon="@drawable/ic_attr_progress_mark_4"
-                android:showAsAction="always"
-                android:title="@string/pm_progress_4"/>
-            <item
-                android:id="@+id/menuProgress5"
-                android:icon="@drawable/ic_attr_progress_mark_5"
-                android:showAsAction="always"
-                android:title="@string/pm_progress_5"/>
+            <item android:id="@+id/menuProgress1"
+                  android:icon="@drawable/ic_attr_progress_mark_1"
+                  app:showAsAction="always"
+                  android:title="@string/pm_progress_1"/>
+            <item android:id="@+id/menuProgress2"
+                  android:icon="@drawable/ic_attr_progress_mark_2"
+                  app:showAsAction="always"
+                  android:title="@string/pm_progress_2"/>
+            <item android:id="@+id/menuProgress3"
+                  android:icon="@drawable/ic_attr_progress_mark_3"
+                  app:showAsAction="always"
+                  android:title="@string/pm_progress_3"/>
+            <item android:id="@+id/menuProgress4"
+                  android:icon="@drawable/ic_attr_progress_mark_4"
+                  app:showAsAction="always"
+                  android:title="@string/pm_progress_4"/>
+            <item android:id="@+id/menuProgress5"
+                  android:icon="@drawable/ic_attr_progress_mark_5"
+                  app:showAsAction="always"
+                  android:title="@string/pm_progress_5"/>
         </menu>
     </item>
 

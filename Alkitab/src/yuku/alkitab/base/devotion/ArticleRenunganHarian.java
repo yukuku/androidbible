@@ -5,11 +5,10 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.util.Log;
+import yuku.alkitab.base.widget.CallbackSpan;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import yuku.alkitab.base.widget.CallbackSpan;
 
 
 public class ArticleRenunganHarian extends ArticleFromSabda {
@@ -42,7 +41,7 @@ public class ArticleRenunganHarian extends ArticleFromSabda {
 			String s = header.toString();
 			Matcher m = Pattern.compile("Bacaan\\s+Setahun\\s*:\\s*(.*?)\\s*$", Pattern.MULTILINE).matcher(s); //$NON-NLS-1$
 			while (m.find()) {
-				// di dalem daftar ayat, kita cari lagi, harusnya sih dipisahkan titik-koma.
+				// look again inside the verse list. It should be split by semicolon
 				String t = m.group(1);
 				Matcher n = Pattern.compile("\\s*(\\S.*?)\\s*(;|$)", Pattern.MULTILINE).matcher(t); //$NON-NLS-1$
 				

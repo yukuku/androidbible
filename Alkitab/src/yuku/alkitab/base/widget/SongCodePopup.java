@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.PopupWindow.OnDismissListener;
 
 import net.londatiga.android.PopupWindows;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 
 public class SongCodePopup extends PopupWindows implements OnDismissListener {
 	public interface SongCodePopupListener {

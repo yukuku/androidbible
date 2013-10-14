@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-	<item android:id="@+id/menuChangeLabelColor" android:title="@string/change_label_color" />
-	<item android:id="@+id/menuRenameLabel" android:title="@string/rename_label" />
-	<item android:id="@+id/menuDeleteLabel" android:title="@string/delete_label" />
+    <item android:id="@+id/menuChangeLabelColor"
+          android:title="@string/change_label_color"/>
+    <item android:id="@+id/menuRenameLabel"
+          android:title="@string/rename_label"/>
+    <item android:id="@+id/menuDeleteLabel"
+          android:title="@string/delete_label"/>
 </menu>

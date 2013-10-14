@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import net.londatiga.android.PopupWindows;
 import yuku.afw.V;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 
 public class DevotionSelectPopup extends PopupWindows implements OnDismissListener {
 	public interface DevotionSelectPopupListener {

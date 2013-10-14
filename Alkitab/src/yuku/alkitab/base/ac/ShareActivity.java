@@ -28,7 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import yuku.afw.V;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 

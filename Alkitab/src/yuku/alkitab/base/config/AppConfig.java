@@ -10,7 +10,7 @@ import java.util.List;
 import org.xmlpull.v1.XmlPullParser;
 
 import yuku.afw.App;
-import yuku.alkitab.R;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
 import yuku.alkitab.base.storage.Db;
 
