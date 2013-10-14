@@ -117,6 +117,11 @@
 		<activity android:name="yuku.alkitab.base.ac.SecretSettingsActivity" android:label="Secret settings" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.filechooser.FileChooserActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="com.example.android.wizardpager.MainActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:theme="@style/AlkitabFeedback.Theme" />
+        <activity android:name="yuku.alkitab.base.ac.DailyVerseAppWidgetConfigurationActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+            </intent-filter>
+        </activity>
 
         <service android:name="yuku.alkitab.base.sv.DownloadService" />
 		
@@ -144,6 +149,21 @@
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
+
+        <receiver
+            android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver"
+            android:icon="@drawable/ic_launcher">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                       android:resource="@xml/daily_verse_app_widget_provider"/>
+        </receiver>
+
+        <receiver android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver$ClickReceiver"/>
+
+        <service android:name="yuku.alkitab.base.sv.DailyVerseAppWidgetService"
+                android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
     </application>
 
