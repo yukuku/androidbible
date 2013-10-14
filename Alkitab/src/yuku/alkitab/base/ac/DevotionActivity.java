@@ -1,7 +1,10 @@
 package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -254,11 +257,39 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			willNeed(this.currentName, date_format.get().format(currentDate), true);
 			
 			return true;
+		} else if (itemId == R.id.menuReminder) {
+			openReminderPackage();
+			return true;
 		}
 		
 		return super.onOptionsItemSelected(item);
 	}
-	
+
+	private void openReminderPackage() {
+		final String reminderPackage = "yuku.alkitab.reminder";
+		try {
+			getPackageManager().getPackageInfo(reminderPackage, 0);
+			startActivity(new Intent("yuku.alkitab.reminder.ACTION_REMINDER_SETTINGS"));
+		} catch (PackageManager.NameNotFoundException nnfe) {
+			try {
+				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + reminderPackage)));
+			} catch (ActivityNotFoundException anfe) {
+				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + reminderPackage)));
+			} catch (Exception e) {
+				displayError();
+			}
+		} catch (Exception e) {
+			displayError();
+		}
+	}
+
+	private void displayError() {
+		new AlertDialog.Builder(this)
+		.setMessage(R.string.dr_error_contact_reminder)
+		.setPositiveButton(R.string.ok, null)
+		.show();
+	}
+
 	DevotionSelectPopupListener popup_listener = new DevotionSelectPopupListener() {
 		@Override public void onDismiss(DevotionSelectPopup popup) {
 		}
