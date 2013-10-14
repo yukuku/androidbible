@@ -4,7 +4,7 @@
   <string name="highlight_stabilo">Sorot</string>
   <string name="donasi_tombol_gamau">Lain kali</string>
   <string name="donasi_tombol_ok">Donasi</string>
-  <string name="donasi_keterangan">Kalau program Alkitab ini berguna bagi Anda, dimohon kesediaan Anda memberikan sumbangan. Terima kasih!</string>
+  <string name="donasi_keterangan">Kalau aplikasi Alkitab ini berguna bagi Anda, dimohon kesediaan Anda memberikan sumbangan. Terima kasih!</string>
   <string name="menuDonasi">Donasi</string>
   <string name="mengimpor_titiktiga">Memulihkan…</string>
   <string name="mengekspor_titiktiga">Membuat cadangan…</string>
@@ -55,6 +55,7 @@
   <string name="hari_senin">Senin</string>
   <string name="hari_minggu">Minggu</string>
   <string name="size_hasil">%d hasil</string>
+  <string name="search_searching_tokens">Mencari ayat yang mengandung %s…</string>
   <string name="pilih_setidaknya_satu_kitab">Pilih setidaknya satu kitab untuk dicari.</string>
   <string name="pengunduhan_dibatalkan">Pengunduhan dibatalkan.</string>
   <string name="sedang_mendekompres_harap_tunggu">Sedang mendekompres. Harap tunggu…</string>
@@ -259,5 +260,18 @@
   <string name="pm_delete_progress">Hapus jejak</string>
   <string name="pm_activate_tutorial">Pilih satu ayat untuk memasang jejak.</string>
   <string name="pm_icon_click_message">"di %1$s \ndipasang pada %2$s"</string>
+  <string name="pm_delete_progress_confirm">Anda yakin mau membuang %s?</string>
   <string name="copy_share">Salin atau bagikan</string>
+  <string name="backup_last_time">Cadangan terakhir dibuat: %s</string>
+  <string name="backup_selection_autobackup_at">Cadangan otomatis pada %s</string>
+  <string name="backup_selection_manualbackup_at">Cadangan yang dibuat pada %s</string>
+  <string name="backup_select_file">Pilih file cadangan</string>
+  <string name="recentverses_not_available">Belum ada ayat yang terakhir dibuka.</string>
+  <string name="recentverses_just_now">Baru saja</string>
+  <string name="recentverses_min_plural_ago">%s menit lalu</string>
+  <string name="recentverses_today_time">Hari ini, %s</string>
+  <string name="recentverses_yesterday_time">Kemarin, %s</string>
+  <string name="recentverses_button_hint">(Tekan lama untuk membuka kembali ayat)</string>
+  <string name="dr_reminder">Pengingat</string>
+  <string name="dr_error_contact_reminder">Kesalahan menghubungi aplikasi Pengingat.</string>
 </resources>
