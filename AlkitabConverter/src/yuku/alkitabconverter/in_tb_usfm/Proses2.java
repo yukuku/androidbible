@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Proses2 {
 	final SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -92,6 +94,8 @@ public class Proses2 {
 		teksDb.normalize();
 
 		teksDb.processEach(new TextProcessor() {
+			final Pattern xrefTag = Pattern.compile("(@<x[0-9]@>@/)");
+
 			@Override public void process(int ari, VerseState as) {
 				// tambah @@ kalo perlu
 				if (as.text.contains("@") && !as.text.startsWith("@@")) {
@@ -117,6 +121,14 @@ public class Proses2 {
 				if (as.text.contains("--")) {
 					as.text = as.text.replaceAll("--(?=[^a-z0-9])", "\u2014");
 				}
+
+				// Move xrefs at the beginning of verses to the end of verses.
+				final Matcher m = xrefTag.matcher(as.text);
+				String end = "";
+				while (m.find()) {
+					end += m.group();
+				}
+				as.text = xrefTag.matcher(as.text).replaceAll("") + end;
 			}
 		});
 		
