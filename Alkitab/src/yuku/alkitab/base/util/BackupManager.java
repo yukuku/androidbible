@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class BackupManager {
 	static final int AUTOBACKUP_AFTER_DAYS = 3;
@@ -158,7 +159,7 @@ public class BackupManager {
 			if (count > 9 && oldestFile != null) {
 				oldestFile.delete();
 			}
-			String time = new SimpleDateFormat("yyyyMMdd-hhmmss").format(new Date());
+			String time = new SimpleDateFormat("yyyyMMdd-hhmmss", Locale.US).format(new Date());
 			return new File(dir, autobackupBaseName + "-" + time + ".xml");
 		} else {
 			return new File(dir, App.context.getPackageName() + "-backup.xml");

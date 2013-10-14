@@ -10,7 +10,7 @@
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="@drawable/appwidget_dark_bg">
+            android:background="@drawable/daily_verse_app_widget_dark_bg">
         <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

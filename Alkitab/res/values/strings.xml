@@ -18,7 +18,6 @@
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">There were error(s) when restoring: %s</string>
     <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Do you want to overwrite the bookmarks, notes, and highlights you currently have?</string>
     <string name="file_tidak_bisa_dibaca_file">The file does not exist or could not be read: %s</string>
-    <string name="impor_pembatas_buku_dan_catatan_dari_tanya">Restore bookmarks, notes, and highlights from a backup file on the SD Card or USB Storage?\n\nFile: %s</string>
     <string name="impor_dari_sd_card">Restore</string>
     <string name="ekspor_ke_sd_card">Backup</string>
     <string name="menuBantuan">Help</string>
