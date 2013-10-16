@@ -155,6 +155,13 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			floater.onDragComplete(screenX - floaterLocationOnScreen[0], screenY - floaterLocationOnScreen[1]);
 		}
 	};
+	private Floater.Listener floater_listener = new Floater.Listener() {
+		@Override
+		public void onSelectComplete(final int ari) {
+			jumpToAri(ari);
+			history.add(ari);
+		}
+	};
 
 	@Override
 	public void onProgressMarkSelected(final int ari) {
@@ -333,14 +340,16 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			@Override public boolean onLongClick(View v) { bGoto_longClick(); return true; }
 		});
 		bGoto.setFloaterDragListener(bGoto_floaterDrag);
-		
+
 		bLeft.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) { bLeft_click(); }
 		});
 		bRight.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) { bRight_click(); }
 		});
-		
+
+		floater.setListener(floater_listener);
+
 		lsText.setOnKeyListener(new View.OnKeyListener() {
 			@Override public boolean onKey(View v, int keyCode, KeyEvent event) {
 				int action = event.getAction();

@@ -7,17 +7,30 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.Version;
 
 public class Floater extends View {
 	public static final String TAG = Floater.class.getSimpleName();
 
+	enum State {
+		idle,
+		selectBook,
+		selectChapter,
+	}
+
+	public interface Listener {
+		void onSelectComplete(int ari);
+	}
+
 	Paint passiveBookPaint;
 	Paint activeBookPaint;
 	Version version;
 	int activeBookIndex = -1;
-	private float density;
+	float density;
+	State state;
+	Listener listener;
 
 	public Floater(final Context context) {
 		super(context);
@@ -101,6 +114,7 @@ public class Floater extends View {
 
 	public void onDragStart(final Version version) {
 		this.version = version;
+		this.state = State.selectBook;
 		this.activeBookIndex = -1;
 	}
 
@@ -133,6 +147,15 @@ public class Floater extends View {
 	public void onDragComplete(final float x, final float y) {
 		Log.d(TAG, "complete x=" + x + " y=" + y);
 
+		if (activeBookIndex != -1) {
+			listener.onSelectComplete(Ari.encode(version.getConsecutiveBooks()[activeBookIndex].bookId, 1, 1));
+		}
+
 		this.version = null; // prevent holding of memory
+		this.state = State.idle;
+	}
+
+	public void setListener(final Listener listener) {
+		this.listener = listener;
 	}
 }
