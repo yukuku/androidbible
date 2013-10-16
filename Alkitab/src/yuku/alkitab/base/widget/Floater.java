@@ -29,6 +29,7 @@ public class Floater extends View {
 	Paint passivePaint;
 	Paint activePaint;
 	Paint activeBoxPaint;
+	Paint.FontMetrics passiveFontMetrics;
 	Paint.FontMetrics activeFontMetrics;
 	Paint separatorPaint;
 	Book[] books;
@@ -90,6 +91,7 @@ public class Floater extends View {
 		separatorPaint.setColor(0xffd0d0d0);
 		separatorPaint.setStrokeWidth(1 * density);
 
+		passiveFontMetrics = new Paint.FontMetrics();
 		activeFontMetrics = new Paint.FontMetrics();
 	}
 
@@ -97,11 +99,6 @@ public class Floater extends View {
 	protected void onDraw(final Canvas canvas) {
 		final float w = getWidth() - getPaddingLeft() - getPaddingRight();
 		final float h = getHeight() - getPaddingTop() - getPaddingBottom();
-
-		final float textSize = 0.9f * h / grid_rows;
-		passivePaint.setTextSize(textSize);
-		activePaint.setTextSize(textSize);
-		activePaint.getFontMetrics(activeFontMetrics);
 
 		if (books == null) return;
 		canvas.drawColor(0xd0000000);
@@ -120,6 +117,8 @@ public class Floater extends View {
 				grid_rows = (int) FloatMath.ceil((float) book_count / grid_columns);
 			}
 
+			initFontSizes(h);
+
 			// passive books
 			for (int i = 0; i < book_count; i++) {
 				final Book book = books[i];
@@ -133,7 +132,7 @@ public class Floater extends View {
 				}
 
 				if (i == 38) { // end of old testament
-					canvas.drawLine(left - 4 * density, bottom + activeFontMetrics.descent, left + (w / grid_columns) - 4 * density, bottom + activeFontMetrics.descent, separatorPaint);
+					canvas.drawLine(left - 4 * density, bottom + passiveFontMetrics.descent, left + (w / grid_columns) - 4 * density, bottom + passiveFontMetrics.descent, separatorPaint);
 				}
 			}
 
@@ -164,6 +163,8 @@ public class Floater extends View {
 				grid_rows = (int) FloatMath.ceil((float) chapter_count / grid_columns);
 			}
 
+			initFontSizes(h);
+
 			final String prefix = grid_columns > 2? "": (book.shortName + " ");
 
 			// passive chapters
@@ -182,6 +183,13 @@ public class Floater extends View {
 				drawActiveWithBox(canvas, w, h, column, row, prefix + (activeChapterIndex + 1));
 			}
 		}
+	}
+
+	private void initFontSizes(final float h) {
+		passivePaint.setTextSize(0.9f * h / grid_rows);
+		activePaint.setTextSize(h / grid_rows);
+		passivePaint.getFontMetrics(passiveFontMetrics);
+		activePaint.getFontMetrics(activeFontMetrics);
 	}
 
 	private void drawActiveWithBox(final Canvas canvas, final float w, final float h, final int column, final int row, final String text) {
@@ -216,7 +224,7 @@ public class Floater extends View {
 		final int column = (int) (x / w * grid_columns);
 		final int row = (int) (y / h * grid_rows);
 
-		final int itemIndex = column * grid_rows + row;
+		final int itemIndex = (y < 0 || y > h)? -1: (column * grid_rows + row);
 
 		if (state == State.selectBook) {
 			// check for invalid book index
