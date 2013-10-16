@@ -1919,6 +1919,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			S.getDb().updateProgressMark(progressMark);
 			AttributeView.startAnimationForProgressMark(position);
 			reloadVerse();
+			if (progressMark.caption == null) {
+				ProgressMarkDialog.showRenameProgressDialog(this, progressMark, null);
+			}
 		}
 	}
 
