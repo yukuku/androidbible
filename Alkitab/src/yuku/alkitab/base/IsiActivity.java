@@ -42,16 +42,11 @@ import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.AnimatorListenerAdapter;
-import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
 import org.json.JSONException;
 import org.json.JSONObject;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.BookmarkActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
@@ -98,6 +93,7 @@ import yuku.alkitab.base.widget.VerseInlineLinkSpan;
 import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.PressResult;
+import yuku.alkitab.debug.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,8 +102,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-
-import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 
 public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener, ProgressMarkDialog.ProgressMarkDialogListener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
@@ -145,82 +139,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	class FullScreenController {
-	    private Animator mCurrentShowAnim;
-	    private boolean mShowHideAnimationEnabled = true;
-
-		final Animator.AnimatorListener mHideListener = new AnimatorListenerAdapter() {
-			@TargetApi(11) @Override public void onAnimationEnd(Animator animation) {
-	            if (panelNavigation != null) {
-	                animate(panelNavigation).translationY(0);
-	                panelNavigation.setVisibility(View.GONE);
-	            }
-	            mCurrentShowAnim = null;
-	        }
-	    };
-
-	    final Animator.AnimatorListener mShowListener = new AnimatorListenerAdapter() {
-	        @TargetApi(11) @Override public void onAnimationEnd(Animator animation) {
-	            mCurrentShowAnim = null;
-	            panelNavigation.requestLayout();
-	        }
-	    };
-
-	    void hidePanelNavigation() {
-	        if (mCurrentShowAnim != null) {
-	            mCurrentShowAnim.end();
-	        }
-	        
-	        if (panelNavigation.getVisibility() == View.GONE) {
-	            return;
-	        }
-
-	        if (mShowHideAnimationEnabled) {
-		        animate(panelNavigation).alpha(1);
-		        AnimatorSet anim = new AnimatorSet();
-		        AnimatorSet.Builder b = anim.play(ObjectAnimator.ofFloat(panelNavigation, "alpha", 0));
-		        if (panelNavigation != null) {
-			        b.with(ObjectAnimator.ofFloat(panelNavigation, "translationY", 0, +panelNavigation.getHeight()));
-		        }
-		        anim.addListener(mHideListener);
-		        mCurrentShowAnim = anim;
-		        anim.start();
-	        } else {
-	            mHideListener.onAnimationEnd(null);
-	        }
-	    }
-
-	    void showPanelNavigation() {
-	        if (mCurrentShowAnim != null) {
-	            mCurrentShowAnim.end();
-	        }
-	        if (panelNavigation.getVisibility() == View.VISIBLE) {
-	            return;
-	        }
-	        panelNavigation.setVisibility(View.VISIBLE);
-
-	        if (mShowHideAnimationEnabled) {
-	        	animate(panelNavigation).alpha(0);
-	            AnimatorSet anim = new AnimatorSet();
-	            AnimatorSet.Builder b = anim.play(ObjectAnimator.ofFloat(panelNavigation, "alpha", 1));
-                b.with(ObjectAnimator.ofFloat(panelNavigation, "translationY", +panelNavigation.getHeight(), 0));
-	            anim.addListener(mShowListener);
-	            mCurrentShowAnim = anim;
-	            anim.start();
-	        } else {
-		        animate(panelNavigation).alpha(1);
-		        animate(panelNavigation).translationY(0);
-		        mShowListener.onAnimationEnd(null);
-	        }
-	    }
-
-	    void hidePermanently() {
+		void hidePermanently() {
 			getSupportActionBar().hide();
-			hidePanelNavigation();
-		}
+		    panelNavigation.setVisibility(View.GONE);
+	    }
 		
 		void showPermanently() {
 			getSupportActionBar().show();
-			showPanelNavigation();
+			panelNavigation.setVisibility(View.VISIBLE);
 		}
 	}
 	

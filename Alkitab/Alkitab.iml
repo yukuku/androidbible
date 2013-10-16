@@ -45,15 +45,6 @@
     <orderEntry type="library" name="libGoogleAnalyticsV2" level="project" />
     <orderEntry type="library" name="android-support-v4" level="project" />
     <orderEntry type="module" module-name="android-support-v7-appcompat" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/nineoldandroids-2.4.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module" module-name="DragSortListView" />
   </component>
 </module>
