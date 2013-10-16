@@ -140,24 +140,26 @@ public class BackupManager {
 	}
 
 	public static File getFileBackup(boolean autoBackup) {
-		File dir = getFileDir();
+		File dir = getFileDirectory();
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
 		if (autoBackup) {
 			List<File> backupFiles = listBackupFiles();
-			int count = 0;
-			File oldestFile = null;
-			for (File file : backupFiles) {
-				if (file.getName().startsWith(autobackupBaseName)) {
-					count++;
-					if (oldestFile == null || file.lastModified() < oldestFile.lastModified()) {
-						oldestFile = file;
+			if (backupFiles.size() == 0) {
+				int count = 0;
+				File oldestFile = null;
+				for (File file : backupFiles) {
+					if (file.getName().startsWith(autobackupBaseName)) {
+						count++;
+						if (oldestFile == null || file.lastModified() < oldestFile.lastModified()) {
+							oldestFile = file;
+						}
 					}
 				}
-			}
-			if (count > 9 && oldestFile != null) {
-				oldestFile.delete();
+				if (count > 9 && oldestFile != null) {
+					oldestFile.delete();
+				}
 			}
 			String time = new SimpleDateFormat("yyyyMMdd-hhmmss", Locale.US).format(new Date());
 			return new File(dir, autobackupBaseName + "-" + time + ".xml");
@@ -167,7 +169,7 @@ public class BackupManager {
 	}
 
 	public static List<File> listBackupFiles() {
-		File dir = getFileDir();
+		File dir = getFileDirectory();
 		List<File> backupFiles = new ArrayList<File>();
 		File manualBackupFile = new File(dir, App.context.getPackageName() + "-backup.xml");
 		if (manualBackupFile.exists()) {
@@ -180,12 +182,14 @@ public class BackupManager {
 				return filename.startsWith(autobackupBaseName) && filename.endsWith(".xml");
 			}
 		});
-		Collections.addAll(backupFiles, files);
-		Collections.sort(backupFiles, Collections.reverseOrder());
+		if (files != null) {
+			Collections.addAll(backupFiles, files);
+			Collections.sort(backupFiles, Collections.reverseOrder());
+		}
 		return backupFiles;
 	}
 
-	public static File getFileDir() {
+	public static File getFileDirectory() {
 		return new File(Environment.getExternalStorageDirectory(), "bible");
 	}
 
