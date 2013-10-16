@@ -84,36 +84,12 @@ public class ProgressMarkDialog extends DialogFragment{
 						@Override
 						public void onClick(final DialogInterface dialog, final int which) {
 							if (which == 0) {
-								final View v = inflater.inflate(R.layout.item_progress_mark_edit, container, false);
-								final TextView tCaption = V.get(v, R.id.tCaption);
-								final String originalCaption;
-								final String caption = progressMark.caption;
-								if (TextUtils.isEmpty(caption)) {
-									originalCaption = getString(AttributeView.getDefaultProgressMarkStringResource(position));
-								} else {
-									originalCaption = caption;
-								}
-								tCaption.setText(originalCaption);
-								AlertDialog.Builder editDialog = new AlertDialog.Builder(getActivity());
-								editDialog.setView(v)
-								.setNegativeButton(getString(R.string.cancel), null)
-								.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+								showRenameProgressDialog(getActivity(), progressMark, new OnRenameOkListener() {
 									@Override
-									public void onClick(final DialogInterface dialog, final int which) {
-										final String name = String.valueOf(tCaption.getText());
-										if (originalCaption != null && !originalCaption.equals(name)) {
-											if (TextUtils.isEmpty(name)) {
-												progressMark.caption = null;
-											} else {
-												progressMark.caption = name;
-											}
-											progressMark.modifyTime = new Date();
-											S.getDb().updateProgressMark(progressMark);
-											adapter.notifyDataSetChanged();
-										}
+									public void okClick() {
+										adapter.notifyDataSetChanged();
 									}
-								})
-								.show();
+								});
 							} else {
 								progressMark.ari = 0;
 								progressMark.caption = null;
@@ -130,6 +106,45 @@ public class ProgressMarkDialog extends DialogFragment{
 		lsProgressMark.setAdapter(adapter);
 
 		return view;
+	}
+
+	public static void showRenameProgressDialog(final Activity activity, final ProgressMark progressMark, final OnRenameOkListener onRenameOkListener) {
+		final View v = activity.getLayoutInflater().inflate(R.layout.dialog_progress_mark_edit, null);
+		final TextView tCaption = V.get(v, R.id.tCaption);
+		final String originalCaption;
+		final String caption = progressMark.caption;
+		if (TextUtils.isEmpty(caption)) {
+			originalCaption = activity.getString(AttributeView.getDefaultProgressMarkStringResource(progressMark.preset_id));
+		} else {
+			originalCaption = caption;
+		}
+		tCaption.setText(originalCaption);
+		AlertDialog.Builder editDialog = new AlertDialog.Builder(activity);
+		editDialog.setView(v)
+		.setNegativeButton(activity.getString(R.string.cancel), null)
+		.setPositiveButton(activity.getString(R.string.ok), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(final DialogInterface dialog, final int which) {
+				final String name = String.valueOf(tCaption.getText());
+				if (originalCaption != null && !originalCaption.equals(name)) {
+					if (TextUtils.isEmpty(name)) {
+						progressMark.caption = null;
+					} else {
+						progressMark.caption = name;
+					}
+					progressMark.modifyTime = new Date();
+					S.getDb().updateProgressMark(progressMark);
+					if (onRenameOkListener != null) {
+						onRenameOkListener.okClick();
+					}
+				}
+			}
+		})
+		.show();
+	}
+
+	public interface OnRenameOkListener {
+		public void okClick();
 	}
 
 	class ProgressMarkAdapter extends EasyAdapter {

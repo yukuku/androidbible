@@ -11,7 +11,6 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/pm_progress_name"
-            android:id="@+id/textView"
             android:layout_weight="0"
             android:layout_marginRight="4dp"/>
     <EditText
@@ -19,6 +18,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/tCaption"
             android:layout_weight="1"
+            android:selectAllOnFocus="true"
             android:inputType="textCapWords|textAutoCorrect"
             android:maxLength="32"/>
 </LinearLayout>

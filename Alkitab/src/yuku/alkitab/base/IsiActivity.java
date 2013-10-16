@@ -36,22 +36,16 @@ import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.AnimatorListenerAdapter;
-import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
 import org.json.JSONException;
 import org.json.JSONObject;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.BookmarkActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
@@ -90,7 +84,9 @@ import yuku.alkitab.base.util.Search2Engine.Query;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.AttributeView;
 import yuku.alkitab.base.widget.CallbackSpan;
+import yuku.alkitab.base.widget.Floater;
 import yuku.alkitab.base.widget.FormattedTextRenderer;
+import yuku.alkitab.base.widget.GotoButton;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
@@ -98,6 +94,7 @@ import yuku.alkitab.base.widget.VerseInlineLinkSpan;
 import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.PressResult;
+import yuku.alkitab.debug.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,8 +103,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-
-import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 
 public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener, ProgressMarkDialog.ProgressMarkDialogListener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
@@ -133,6 +128,35 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private static final String EXTRA_verseUrl = "urlAyat"; //$NON-NLS-1$
 	private boolean uncheckVersesWhenActionModeDestroyed = true;
 
+	private GotoButton.FloaterDragListener bGoto_floaterDrag = new GotoButton.FloaterDragListener() {
+		final int[] floaterLocationOnScreen = {0, 0};
+
+		@Override
+		public void onFloaterDragStart(final float screenX, final float screenY) {
+			floater.setVisibility(View.VISIBLE);
+			floater.onDragStart(S.activeVersion);
+		}
+
+		@Override
+		public void onFloaterDragMove(final float screenX, final float screenY) {
+			floater.getLocationOnScreen(floaterLocationOnScreen);
+			floater.onDragMove(screenX - floaterLocationOnScreen[0], screenY - floaterLocationOnScreen[1]);
+		}
+
+		@Override
+		public void onFloaterDragComplete(final float screenX, final float screenY) {
+			floater.setVisibility(View.GONE);
+			floater.onDragComplete(screenX - floaterLocationOnScreen[0], screenY - floaterLocationOnScreen[1]);
+		}
+	};
+	private Floater.Listener floater_listener = new Floater.Listener() {
+		@Override
+		public void onSelectComplete(final int ari) {
+			jumpToAri(ari);
+			history.add(ari);
+		}
+	};
+
 	@Override
 	public void onProgressMarkSelected(final int ari) {
 		jumpToAri(ari);
@@ -145,82 +169,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	class FullScreenController {
-	    private Animator mCurrentShowAnim;
-	    private boolean mShowHideAnimationEnabled = true;
-
-		final Animator.AnimatorListener mHideListener = new AnimatorListenerAdapter() {
-			@TargetApi(11) @Override public void onAnimationEnd(Animator animation) {
-	            if (panelNavigation != null) {
-	                animate(panelNavigation).translationY(0);
-	                panelNavigation.setVisibility(View.GONE);
-	            }
-	            mCurrentShowAnim = null;
-	        }
-	    };
-
-	    final Animator.AnimatorListener mShowListener = new AnimatorListenerAdapter() {
-	        @TargetApi(11) @Override public void onAnimationEnd(Animator animation) {
-	            mCurrentShowAnim = null;
-	            panelNavigation.requestLayout();
-	        }
-	    };
-
-	    void hidePanelNavigation() {
-	        if (mCurrentShowAnim != null) {
-	            mCurrentShowAnim.end();
-	        }
-	        
-	        if (panelNavigation.getVisibility() == View.GONE) {
-	            return;
-	        }
-
-	        if (mShowHideAnimationEnabled) {
-		        animate(panelNavigation).alpha(1);
-		        AnimatorSet anim = new AnimatorSet();
-		        AnimatorSet.Builder b = anim.play(ObjectAnimator.ofFloat(panelNavigation, "alpha", 0));
-		        if (panelNavigation != null) {
-			        b.with(ObjectAnimator.ofFloat(panelNavigation, "translationY", 0, +panelNavigation.getHeight()));
-		        }
-		        anim.addListener(mHideListener);
-		        mCurrentShowAnim = anim;
-		        anim.start();
-	        } else {
-	            mHideListener.onAnimationEnd(null);
-	        }
-	    }
-
-	    void showPanelNavigation() {
-	        if (mCurrentShowAnim != null) {
-	            mCurrentShowAnim.end();
-	        }
-	        if (panelNavigation.getVisibility() == View.VISIBLE) {
-	            return;
-	        }
-	        panelNavigation.setVisibility(View.VISIBLE);
-
-	        if (mShowHideAnimationEnabled) {
-	        	animate(panelNavigation).alpha(0);
-	            AnimatorSet anim = new AnimatorSet();
-	            AnimatorSet.Builder b = anim.play(ObjectAnimator.ofFloat(panelNavigation, "alpha", 1));
-                b.with(ObjectAnimator.ofFloat(panelNavigation, "translationY", +panelNavigation.getHeight(), 0));
-	            anim.addListener(mShowListener);
-	            mCurrentShowAnim = anim;
-	            anim.start();
-	        } else {
-		        animate(panelNavigation).alpha(1);
-		        animate(panelNavigation).translationY(0);
-		        mShowListener.onAnimationEnd(null);
-	        }
-	    }
-
-	    void hidePermanently() {
+		void hidePermanently() {
 			getSupportActionBar().hide();
-			hidePanelNavigation();
-		}
+		    panelNavigation.setVisibility(View.GONE);
+	    }
 		
 		void showPermanently() {
 			getSupportActionBar().show();
-			showPanelNavigation();
+			panelNavigation.setVisibility(View.VISIBLE);
 		}
 	}
 	
@@ -233,9 +189,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	View splitHandle;
 	LabeledSplitHandleButton splitHandleButton;
 	FrameLayout panelNavigation;
-	Button bGoto;
+	GotoButton bGoto;
 	ImageButton bLeft;
 	ImageButton bRight;
+	Floater floater;
 	
 	Book activeBook;
 	int chapter_1 = 0;
@@ -298,6 +255,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		bGoto = V.get(this, R.id.bGoto);
 		bLeft = V.get(this, R.id.bLeft);
 		bRight = V.get(this, R.id.bRight);
+		floater = V.get(this, R.id.floater);
 		
 		applyPreferences(false);
 		
@@ -307,14 +265,17 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		bGoto.setOnLongClickListener(new View.OnLongClickListener() {
 			@Override public boolean onLongClick(View v) { bGoto_longClick(); return true; }
 		});
-		
+		bGoto.setFloaterDragListener(bGoto_floaterDrag);
+
 		bLeft.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) { bLeft_click(); }
 		});
 		bRight.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) { bRight_click(); }
 		});
-		
+
+		floater.setListener(floater_listener);
+
 		lsText.setOnKeyListener(new View.OnKeyListener() {
 			@Override public boolean onKey(View v, int keyCode, KeyEvent event) {
 				int action = event.getAction();
@@ -385,8 +346,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		if (Build.VERSION.SDK_INT >= 14) {
 			initNfcIfAvailable();
 		}
-		BackupManager.startAutoBackup();
-		
+		if (S.getDb().countAllBookmarks() != 0) {
+			BackupManager.startAutoBackup();
+		}
+
 		processIntent(getIntent(), "onCreate");
 	}
 	
@@ -1956,6 +1919,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			S.getDb().updateProgressMark(progressMark);
 			AttributeView.startAnimationForProgressMark(position);
 			reloadVerse();
+			if (progressMark.caption == null) {
+				ProgressMarkDialog.showRenameProgressDialog(this, progressMark, null);
+			}
 		}
 	}
 
