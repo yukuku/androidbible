@@ -17,6 +17,7 @@ public class GotoButton extends Button {
 
 	int[] screenLocation = {0, 0};
 	boolean inFloaterDrag;
+	boolean inLongClicked;
 	FloaterDragListener floaterDragListener;
 
 	public GotoButton(final Context context) {
@@ -48,23 +49,29 @@ public class GotoButton extends Button {
 		float screenX = x + screenLocation[0];
 		float screenY = y + screenLocation[1];
 
-		if (!inFloaterDrag) {
-			if (action == MotionEvent.ACTION_MOVE) {
-				if (x < 0 || y < 0 || x > getWidth() || y > getHeight()) {
-					cancelLongPress();
-					inFloaterDrag = true;
-					floaterDragListener.onFloaterDragStart(screenX, screenY);
-				}
-			}
+		if (action == MotionEvent.ACTION_DOWN) { // reset long-clicked status
+			inLongClicked = false;
 		}
 
-		// do not use "else"!
-		if (inFloaterDrag) {
-			if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
-				inFloaterDrag = false;
-				floaterDragListener.onFloaterDragComplete(screenX, screenY);
-			} else {
-				floaterDragListener.onFloaterDragMove(screenX, screenY);
+		if (!inLongClicked) { // do not continue if finger is still down but it's because long click is in progress
+			if (!inFloaterDrag) {
+				if (action == MotionEvent.ACTION_MOVE) {
+					if (x < 0 || y < 0 || x > getWidth() || y > getHeight()) {
+						cancelLongPress();
+						inFloaterDrag = true;
+						floaterDragListener.onFloaterDragStart(screenX, screenY);
+					}
+				}
+			}
+
+			// do not use "else"!
+			if (inFloaterDrag) {
+				if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+					inFloaterDrag = false;
+					floaterDragListener.onFloaterDragComplete(screenX, screenY);
+				} else {
+					floaterDragListener.onFloaterDragMove(screenX, screenY);
+				}
 			}
 		}
 
@@ -73,5 +80,11 @@ public class GotoButton extends Button {
 
 	public void setFloaterDragListener(final FloaterDragListener floaterDragListener) {
 		this.floaterDragListener = floaterDragListener;
+	}
+
+	@Override
+	public boolean performLongClick() {
+		inLongClicked = true;
+		return super.performLongClick();
 	}
 }
