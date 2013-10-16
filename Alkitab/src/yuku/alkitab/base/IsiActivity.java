@@ -346,8 +346,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		if (Build.VERSION.SDK_INT >= 14) {
 			initNfcIfAvailable();
 		}
-		BackupManager.startAutoBackup();
-		
+		if (S.getDb().countAllBookmarks() != 0) {
+			BackupManager.startAutoBackup();
+		}
+
 		processIntent(getIntent(), "onCreate");
 	}
 	
