@@ -79,7 +79,7 @@
                     android:scaleType="center"
                     android:src="@drawable/ic_nav_left_light" />
 
-                <Button
+                <yuku.alkitab.base.widget.GotoButton
                     android:id="@+id/bGoto"
                     style="?attr/actionButtonStyle"
                     android:layout_width="0dp"
@@ -102,5 +102,12 @@
             </LinearLayout>
         </FrameLayout>
     </LinearLayout>
+
+    <yuku.alkitab.base.widget.Floater
+            android:id="@+id/floater"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:visibility="gone"/>
 
 </FrameLayout>
