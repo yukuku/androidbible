@@ -36,7 +36,6 @@ import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
@@ -85,7 +84,9 @@ import yuku.alkitab.base.util.Search2Engine.Query;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.AttributeView;
 import yuku.alkitab.base.widget.CallbackSpan;
+import yuku.alkitab.base.widget.Floater;
 import yuku.alkitab.base.widget.FormattedTextRenderer;
+import yuku.alkitab.base.widget.GotoButton;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
@@ -127,6 +128,35 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private static final String EXTRA_verseUrl = "urlAyat"; //$NON-NLS-1$
 	private boolean uncheckVersesWhenActionModeDestroyed = true;
 
+	private GotoButton.FloaterDragListener bGoto_floaterDrag = new GotoButton.FloaterDragListener() {
+		final int[] floaterLocationOnScreen = {0, 0};
+
+		@Override
+		public void onFloaterDragStart(final float screenX, final float screenY) {
+			floater.setVisibility(View.VISIBLE);
+			floater.onDragStart(S.activeVersion);
+		}
+
+		@Override
+		public void onFloaterDragMove(final float screenX, final float screenY) {
+			floater.getLocationOnScreen(floaterLocationOnScreen);
+			floater.onDragMove(screenX - floaterLocationOnScreen[0], screenY - floaterLocationOnScreen[1]);
+		}
+
+		@Override
+		public void onFloaterDragComplete(final float screenX, final float screenY) {
+			floater.setVisibility(View.GONE);
+			floater.onDragComplete(screenX - floaterLocationOnScreen[0], screenY - floaterLocationOnScreen[1]);
+		}
+	};
+	private Floater.Listener floater_listener = new Floater.Listener() {
+		@Override
+		public void onSelectComplete(final int ari) {
+			jumpToAri(ari);
+			history.add(ari);
+		}
+	};
+
 	@Override
 	public void onProgressMarkSelected(final int ari) {
 		jumpToAri(ari);
@@ -159,9 +189,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	View splitHandle;
 	LabeledSplitHandleButton splitHandleButton;
 	FrameLayout panelNavigation;
-	Button bGoto;
+	GotoButton bGoto;
 	ImageButton bLeft;
 	ImageButton bRight;
+	Floater floater;
 	
 	Book activeBook;
 	int chapter_1 = 0;
@@ -224,6 +255,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		bGoto = V.get(this, R.id.bGoto);
 		bLeft = V.get(this, R.id.bLeft);
 		bRight = V.get(this, R.id.bRight);
+		floater = V.get(this, R.id.floater);
 		
 		applyPreferences(false);
 		
@@ -233,14 +265,17 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		bGoto.setOnLongClickListener(new View.OnLongClickListener() {
 			@Override public boolean onLongClick(View v) { bGoto_longClick(); return true; }
 		});
-		
+		bGoto.setFloaterDragListener(bGoto_floaterDrag);
+
 		bLeft.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) { bLeft_click(); }
 		});
 		bRight.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) { bRight_click(); }
 		});
-		
+
+		floater.setListener(floater_listener);
+
 		lsText.setOnKeyListener(new View.OnKeyListener() {
 			@Override public boolean onKey(View v, int keyCode, KeyEvent event) {
 				int action = event.getAction();
