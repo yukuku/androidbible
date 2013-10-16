@@ -109,7 +109,7 @@ public class ProgressMarkDialog extends DialogFragment{
 	}
 
 	public static void showRenameProgressDialog(final Activity activity, final ProgressMark progressMark, final OnRenameOkListener onRenameOkListener) {
-		final View v = activity.getLayoutInflater().inflate(R.layout.item_progress_mark_edit, null);
+		final View v = activity.getLayoutInflater().inflate(R.layout.dialog_progress_mark_edit, null);
 		final TextView tCaption = V.get(v, R.id.tCaption);
 		final String originalCaption;
 		final String caption = progressMark.caption;
