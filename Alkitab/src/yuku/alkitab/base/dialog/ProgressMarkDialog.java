@@ -84,7 +84,7 @@ public class ProgressMarkDialog extends DialogFragment{
 						@Override
 						public void onClick(final DialogInterface dialog, final int which) {
 							if (which == 0) {
-								showRenameProgressDialog(getActivity(), progressMark, new OnRenameOkListener() {
+								showRenameProgressDialog(getActivity(), progressMark, new OnRenameListener() {
 									@Override
 									public void okClick() {
 										adapter.notifyDataSetChanged();
@@ -108,7 +108,7 @@ public class ProgressMarkDialog extends DialogFragment{
 		return view;
 	}
 
-	public static void showRenameProgressDialog(final Activity activity, final ProgressMark progressMark, final OnRenameOkListener onRenameOkListener) {
+	public static void showRenameProgressDialog(final Activity activity, final ProgressMark progressMark, final OnRenameListener onRenameListener) {
 		final View v = activity.getLayoutInflater().inflate(R.layout.dialog_progress_mark_edit, null);
 		final TextView tCaption = V.get(v, R.id.tCaption);
 		final String originalCaption;
@@ -121,21 +121,25 @@ public class ProgressMarkDialog extends DialogFragment{
 		tCaption.setText(originalCaption);
 		AlertDialog.Builder editDialog = new AlertDialog.Builder(activity);
 		editDialog.setView(v)
-		.setNegativeButton(activity.getString(R.string.cancel), null)
+		.setNegativeButton(activity.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(final DialogInterface dialog, final int which) {
+			}
+		})
 		.setPositiveButton(activity.getString(R.string.ok), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(final DialogInterface dialog, final int which) {
 				final String name = String.valueOf(tCaption.getText());
-				if (originalCaption != null && !originalCaption.equals(name)) {
-					if (TextUtils.isEmpty(name)) {
+				if (originalCaption != null) {
+					if (TextUtils.isEmpty(name.trim())) {
 						progressMark.caption = null;
 					} else {
 						progressMark.caption = name;
 					}
 					progressMark.modifyTime = new Date();
 					S.getDb().updateProgressMark(progressMark);
-					if (onRenameOkListener != null) {
-						onRenameOkListener.okClick();
+					if (onRenameListener != null) {
+						onRenameListener.okClick();
 					}
 				}
 			}
@@ -143,7 +147,7 @@ public class ProgressMarkDialog extends DialogFragment{
 		.show();
 	}
 
-	public interface OnRenameOkListener {
+	public interface OnRenameListener {
 		public void okClick();
 	}
 
