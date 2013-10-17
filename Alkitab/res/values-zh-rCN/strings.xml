@@ -55,6 +55,7 @@
   <string name="hari_senin">星期一</string>
   <string name="hari_minggu">星期日</string>
   <string name="size_hasil">%d 的结果</string>
+  <string name="search_searching_tokens">正在搜寻包含%s的经文…</string>
   <string name="pilih_setidaknya_satu_kitab">要搜索, 至少选择一本书。</string>
   <string name="pengunduhan_dibatalkan">下载取消.</string>
   <string name="sedang_mendekompres_harap_tunggu">正在解压。 请稍候…</string>
@@ -259,5 +260,18 @@
   <string name="pm_delete_progress">删除进度</string>
   <string name="pm_activate_tutorial">选取一节经文以储存进度。</string>
   <string name="pm_icon_click_message">"于%1$s \n储存%2$s"</string>
+  <string name="pm_delete_progress_confirm">你想移除%s？</string>
   <string name="copy_share">复制或分享</string>
+  <string name="backup_last_time">最后备份：%s</string>
+  <string name="backup_selection_autobackup_at">于%s自动备份</string>
+  <string name="backup_selection_manualbackup_at">备份于%s</string>
+  <string name="backup_select_file">选取备份档案</string>
+  <string name="recentverses_not_available">暂时未有最近的经文。</string>
+  <string name="recentverses_just_now">正在</string>
+  <string name="recentverses_min_plural_ago">%s分钟之前</string>
+  <string name="recentverses_today_time">今天，%s</string>
+  <string name="recentverses_yesterday_time">昨天，%s</string>
+  <string name="recentverses_button_hint">（长按以显示最近经文）</string>
+  <string name="dr_reminder">提示</string>
+  <string name="dr_error_contact_reminder">与提示程式连接时发生错误。</string>
 </resources>
