@@ -356,8 +356,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 
 		processIntent(getIntent(), "onCreate");
+
+		updateTitle();
 	}
-	
+
+	private void updateTitle() {
+		getSupportActionBar().setTitle(S.activeVersion.getShortName());
+		getSupportActionBar().setSubtitle(S.activeVersion.getLongName());
+	}
+
 	@Override protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		
@@ -1068,6 +1075,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				
 				loadVersion(mv, true);
 				dialog.dismiss();
+				updateTitle();
 			}
 		})
 		.setPositiveButton(R.string.versi_lainnya, new DialogInterface.OnClickListener() {
