@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -50,7 +51,9 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 			int appWidgetId = appWidgetIds[i];
 			buildUpdate(context, appWidgetManager, appWidgetId);
 		}
-		setAlarm(context, appWidgetIds);
+		ComponentName componentName = new ComponentName(context, DailyVerseAppWidgetReceiver.class);
+		int[] allWidgetIds = appWidgetManager.getAppWidgetIds(componentName);
+		setAlarm(context, allWidgetIds);
 	}
 
 	@Override
