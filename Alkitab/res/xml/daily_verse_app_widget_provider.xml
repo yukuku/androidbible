@@ -3,5 +3,6 @@
                     android:minHeight="120dp"
                     android:configure="yuku.alkitab.base.ac.DailyVerseAppWidgetConfigurationActivity"
                     android:previewImage="@drawable/daily_verse_app_widget_preview"
-                    android:resizeMode="vertical|horizontal">
+                    android:resizeMode="vertical|horizontal"
+                    android:widgetCategory="keyguard|home_screen">
 </appwidget-provider>
