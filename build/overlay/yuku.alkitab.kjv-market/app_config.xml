@@ -80,6 +80,6 @@
 		<preset locale="zh"   shortName="PINYIN"  longName="Pinyin" filename_preset="zh-pinyin.yes" url="http://alkitab-host.appspot.com/addon/yes2/zh-pinyin--1.yes.gz" />
 	</versions>
 	<share>
-		<url prefix="http://ref.ly/" format="dot2 nospace0" lang="en" />
+		<url prefix="http://ref.ly/" format="dot2 nospace0 version_refly" lang="en" />
 	</share>
 </config>
