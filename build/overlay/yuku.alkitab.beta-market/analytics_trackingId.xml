@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
-
-    <!-- ...-1 is DEBUG version. -2 is Alkitab Release. -3 is Quick Bible Release. -4 is Alkitab Beta Release -->
-    <string name="ga_trackingId" tools:ignore="TypographyDashes">UA-37048448-4</string>
-
-</resources>
