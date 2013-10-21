@@ -26,6 +26,7 @@
   <string name="renungan">Rozważania</string>
   <string name="cari_v">Szukaj</string>
   <string name="judul_bukmak_activity">Znaczniki</string>
+  <string name="menu_markers">Znaczniki</string>
   <string name="hapus_pembatas_buku">Usuń zakładkę</string>
   <string name="bagikan">Podziel się</string>
   <string name="tulis_catatan">Utwórz notatkę</string>
@@ -38,6 +39,7 @@
   <string name="pasal_sebelumangka">Rozdział</string>
   <string name="loncat_ke_alamat_titikdua">Idź do: (Np.: %s)</string>
   <string name="tidak_ada_catatan">(brak notatek)</string>
+  <string name="belum_ada_pembatas_buku">Brak zakładek.\nWybierz wers, aby dodać do zakładek.</string>
   <string name="judul_titikdua">Tytuł:</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Błąd pobierania: %1$s z dnia %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Błąd pobierania %1$s z dnia %2$s: %3$s</string>
@@ -239,6 +241,9 @@
   <string name="me_all_notes">Wszystkie notatki</string>
   <string name="me_all_highlights">Eksportuj podkreślenia</string>
   <string name="me_all_bookmarks">Wszystkie zakładki</string>
+  <string name="me_section_bookmarks">Zakładki</string>
+  <string name="me_section_notes">Notatki</string>
+  <string name="me_section_highlights">Podkreślenia</string>
   <string name="me_no_labels">Brak etykiet</string>
   <string name="me_edited_modify_date">(wyedytowano %s)</string>
   <string name="pm_progress_1">Postęp 1</string>
@@ -246,10 +251,23 @@
   <string name="pm_progress_3">Postęp 3</string>
   <string name="pm_progress_4">Postęp 4</string>
   <string name="pm_progress_5">Postęp 5</string>
+  <string name="pm_menu_save_progress">Zapisano %s</string>
   <string name="pm_menu_save_progresses">Zapisz postęp</string>
   <string name="pm_menu_view_progress">Zobacz postęp</string>
   <string name="pm_progress_name">Nazwa dla postępu</string>
   <string name="pm_edit_name">Edytuj nazwę</string>
   <string name="pm_delete_progress">Usuń postęp</string>
+  <string name="pm_activate_tutorial">Zaznacz wers, aby zapisać postęp.</string>
+  <string name="pm_delete_progress_confirm">Czy chcesz usunąć %s?</string>
   <string name="copy_share">Skopiuj lub podziel się</string>
+  <string name="backup_last_time">Ostatnia kopia: %s</string>
+  <string name="backup_selection_autobackup_at">Automatyczna kopia z %s</string>
+  <string name="backup_selection_manualbackup_at">Kopia z %s</string>
+  <string name="backup_select_file">Wybierz plik kopii</string>
+  <string name="recentverses_just_now">Teraz</string>
+  <string name="recentverses_min_plural_ago">%s minut temu</string>
+  <string name="recentverses_today_time">Dziś, %s</string>
+  <string name="recentverses_yesterday_time">Wczoraj, %s</string>
+  <string name="dr_reminder">Przypomnienie</string>
+  <string name="dr_error_contact_reminder">Błąd podczas łączenia się z aplikacją Przypominacz.</string>
 </resources>

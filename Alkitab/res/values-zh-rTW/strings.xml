@@ -56,6 +56,7 @@ If you are blessed by this Bible app, please make some donation to the developer
   <string name="hari_senin">週一</string>
   <string name="hari_minggu">週日</string>
   <string name="size_hasil">%d 結果</string>
+  <string name="search_searching_tokens">正在搜尋包含%s的經文…</string>
   <string name="pilih_setidaknya_satu_kitab">選擇至少一本書卷以搜尋</string>
   <string name="pengunduhan_dibatalkan">下載取消.</string>
   <string name="sedang_mendekompres_harap_tunggu">解壓縮中. 請等待....</string>
@@ -260,5 +261,18 @@ If you are blessed by this Bible app, please make some donation to the developer
   <string name="pm_delete_progress">刪除進度</string>
   <string name="pm_activate_tutorial">選取一節經文以儲存進度。</string>
   <string name="pm_icon_click_message">"於%1$s \n儲存%2$s"</string>
+  <string name="pm_delete_progress_confirm">你想移除%s？</string>
   <string name="copy_share">複製或分享</string>
+  <string name="backup_last_time">最後備份：%s</string>
+  <string name="backup_selection_autobackup_at">於%s自動備份</string>
+  <string name="backup_selection_manualbackup_at">備份於%s</string>
+  <string name="backup_select_file">選取備份檔案</string>
+  <string name="recentverses_not_available">暫時未有最近的經文。</string>
+  <string name="recentverses_just_now">正在</string>
+  <string name="recentverses_min_plural_ago">%s分鐘之前</string>
+  <string name="recentverses_today_time">今天，%s</string>
+  <string name="recentverses_yesterday_time">昨天，%s</string>
+  <string name="recentverses_button_hint">（長按以顯示最近經文）</string>
+  <string name="dr_reminder">提示</string>
+  <string name="dr_error_contact_reminder">與提示程式連接時發生錯誤。</string>
 </resources>
