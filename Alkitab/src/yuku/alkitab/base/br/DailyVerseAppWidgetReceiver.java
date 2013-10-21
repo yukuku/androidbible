@@ -57,17 +57,19 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 	}
 
 	@Override
-	public void onReceive(final Context context, final Intent intent) {
-		super.onReceive(context, intent);
-	}
-
-	@Override
 	public void onDeleted(final Context context, final int[] appWidgetIds) {
 		super.onDeleted(context, appWidgetIds);
 		for (int appWidgetId : appWidgetIds) {
 			String keyPrefix = "app_widget_" + appWidgetId;
-			Preferences.remove(keyPrefix + "_click");
-			Preferences.remove(keyPrefix + "_version");
+			Preferences.hold();
+			try {
+				Preferences.remove(keyPrefix + "_click");
+				Preferences.remove(keyPrefix + "_version");
+				Preferences.remove(keyPrefix + "_option_transparent_background");
+				Preferences.remove(keyPrefix + "_option_dark_text");
+			} finally {
+				Preferences.unhold();
+			}
 		}
 	}
 
