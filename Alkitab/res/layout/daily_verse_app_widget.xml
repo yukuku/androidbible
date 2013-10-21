@@ -2,70 +2,64 @@
 
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/root"
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:id="@+id/appWidgetBackground">
-    <LinearLayout
-            android:orientation="vertical"
+        android:background="@drawable/daily_verse_app_widget_dark_bg">
+    <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="@drawable/daily_verse_app_widget_dark_bg">
-        <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:padding="6dp"
-                >
-            <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/imgLogo"
-                    android:background="@drawable/ic_launcher"
-                    android:maxHeight="40dp"
-                    android:maxWidth="40dp"/>
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:id="@+id/tReference"
-                    android:layout_gravity="left|center_vertical"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="false"
-                    android:layout_toRightOf="@+id/imgLogo"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginLeft="4dp"/>
-            <ImageButton
-                    android:id="@+id/bPrev"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_toLeftOf="@+id/bNext"
-                    android:background="@drawable/abc_item_background_holo_light"
-                    android:src="@drawable/ic_nav_left_light"
-                    android:padding="4dp"/>
-            <ImageButton
-                    android:id="@+id/bNext"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentRight="true"
-                    android:background="@drawable/abc_item_background_holo_light"
-                    android:src="@drawable/ic_nav_right_light"
-                    android:padding="4dp"/>
-        </RelativeLayout>
-
+            android:layout_height="wrap_content"
+            android:padding="6dp">
         <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="@android:drawable/divider_horizontal_dark"
-                android:layout_marginLeft="6dp"
-                android:layout_marginRight="6dp"/>
-        <ListView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="6dp"
-                android:dividerHeight="0dp"
-                android:id="@+id/lsVerse"
-                android:divider="@android:color/transparent"/>
-    </LinearLayout>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imgLogo"
+                android:background="@drawable/ic_launcher"
+                android:maxHeight="40dp"
+                android:maxWidth="40dp"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/tReference"
+                android:layout_gravity="left|center_vertical"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="false"
+                android:layout_toRightOf="@+id/imgLogo"
+                android:layout_marginTop="12dp"
+                android:layout_marginLeft="4dp"/>
+        <ImageButton
+                android:id="@+id/bPrev"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentTop="true"
+                android:layout_toLeftOf="@+id/bNext"
+                android:background="@drawable/abc_item_background_holo_light"
+                android:src="@drawable/ic_nav_left_light"
+                android:padding="4dp"/>
+        <ImageButton
+                android:id="@+id/bNext"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/abc_item_background_holo_light"
+                android:src="@drawable/ic_nav_right_light"
+                android:padding="4dp"/>
+    </RelativeLayout>
+
+    <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="@android:drawable/divider_horizontal_dark"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"/>
+    <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="6dp"
+            android:dividerHeight="0dp"
+            android:id="@+id/lsVerse"
+            android:divider="@android:color/transparent"/>
 </LinearLayout>

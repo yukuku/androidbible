@@ -17,6 +17,7 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 	private int appWidgetId;
 	private int[] aris;
 	private Version bibleVersion;
+	private boolean optionDarkText;
 
 	public DailyVerseFactory(final Context context, final Intent intent) {
 		this.context = context;
@@ -27,6 +28,7 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 	public void onCreate() {
 		bibleVersion = DailyVerseAppWidgetReceiver.getVersion(appWidgetId);
 		aris = DailyVerseAppWidgetReceiver.getVerse(appWidgetId);
+		optionDarkText = DailyVerseAppWidgetReceiver.getOptionDarkText(appWidgetId);
 	}
 
 	@Override
@@ -42,12 +44,15 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 
 	@Override
 	public RemoteViews getViewAt(final int position) {
-		RemoteViews row = new RemoteViews(context.getPackageName(), R.layout.item_app_widget);
+		RemoteViews row = new RemoteViews(context.getPackageName(), R.layout.item_daily_verse_app_widget);
 		boolean showVerseNumber = false;
 		if (aris.length > 1) {
 			showVerseNumber = true;
 		}
 		row.setTextViewText(R.id.text1, DailyVerseAppWidgetReceiver.getText(bibleVersion, aris[position], showVerseNumber));
+		if (optionDarkText) {
+			row.setTextColor(R.id.text1, 0xff000000);
+		}
 
 		Intent intent = new Intent();
 		Bundle extras = new Bundle();

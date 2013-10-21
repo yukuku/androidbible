@@ -136,15 +136,29 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		svcIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 		svcIntent.putExtra("random", new Random().nextInt());
 		svcIntent.setData(Uri.parse(svcIntent.toUri(Intent.URI_INTENT_SCHEME)));
+		final boolean optionTransparentBackground = getOptionTransparentBackground(appWidgetId);
+		final boolean optionDarkText = getOptionDarkText(appWidgetId);
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.daily_verse_app_widget);
+		if (optionTransparentBackground) {
+			remoteViews.setInt(R.id.root, "setBackgroundResource", android.R.color.transparent);
+		}
+		if (optionDarkText) {
+			remoteViews.setTextColor(R.id.tReference, 0xff000000);
+			remoteViews.setImageViewResource(R.id.bPrev, R.drawable.ic_nav_left_dark);
+			remoteViews.setImageViewResource(R.id.bNext, R.drawable.ic_nav_right_dark);
+		}
 		remoteViews.setRemoteAdapter(R.id.lsVerse, svcIntent);
 		return remoteViews;
 	}
 
 	private static RemoteViews getRemoteViews(final Context context, final int appWidgetId) {
 		SpannableStringBuilder verseText = new SpannableStringBuilder();
-		Version version = getVersion(appWidgetId);
-		int[] aris = getVerse(appWidgetId);
+
+		final Version version = getVersion(appWidgetId);
+		final int[] aris = getVerse(appWidgetId);
+		final boolean optionTransparentBackground = getOptionTransparentBackground(appWidgetId);
+		final boolean optionDarkText = getOptionDarkText(appWidgetId);
+
 		boolean showVerseNumber = false;
 		if (aris.length > 1) {
 			showVerseNumber = true;
@@ -156,9 +170,26 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 			verseText.append(getText(version, aris[i], showVerseNumber));
 		}
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.daily_verse_app_widget_legacy);
+		if (optionTransparentBackground && Build.VERSION.SDK_INT >= 8) { // API 7 not supported
+			remoteViews.setInt(R.id.root, "setBackgroundResource", android.R.color.transparent);
+		}
+		if (optionDarkText) {
+			remoteViews.setTextColor(R.id.tVerse, 0xff000000);
+			remoteViews.setTextColor(R.id.tReference, 0xff000000);
+			remoteViews.setImageViewResource(R.id.bPrev, R.drawable.ic_nav_left_dark);
+			remoteViews.setImageViewResource(R.id.bNext, R.drawable.ic_nav_right_dark);
+		}
 		remoteViews.setTextViewText(R.id.tVerse, verseText);
 
 		return remoteViews;
+	}
+
+	public static boolean getOptionTransparentBackground(final int appWidgetId) {
+		return Preferences.getBoolean("app_widget_" + appWidgetId + "_option_transparent_background", false);
+	}
+
+	public static boolean getOptionDarkText(final int appWidgetId) {
+		return Preferences.getBoolean("app_widget_" + appWidgetId + "_option_dark_text", false);
 	}
 
 	public static class ClickReceiver extends BroadcastReceiver {

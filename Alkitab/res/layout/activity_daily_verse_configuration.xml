@@ -16,13 +16,13 @@
         <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/dv_transparent_background"
+                android:text="@string/dv_option_transparent_background"
                 android:id="@+id/cTransparentBackground"
                 android:checked="false"/>
         <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/dv_dark_text"
+                android:text="@string/dv_option_dark_text"
                 android:id="@+id/cDarkText"
                 android:checked="false"
                 android:enabled="false"/>

@@ -10,6 +10,6 @@ public class DailyVerseAppWidgetService extends RemoteViewsService {
 
 	@Override
 	public RemoteViewsFactory onGetViewFactory(final Intent intent) {
-		return (new DailyVerseFactory(this.getApplicationContext(), intent));
+		return new DailyVerseFactory(this.getApplicationContext(), intent);
 	}
 }
