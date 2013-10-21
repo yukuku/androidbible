@@ -260,10 +260,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		applyPreferences(false);
 		
 		bGoto.setOnClickListener(new View.OnClickListener() {
-			@Override public void onClick(View v) { bGoto_click(); }
+			@Override
+			public void onClick(View v) { bGoto_click(); }
 		});
 		bGoto.setOnLongClickListener(new View.OnLongClickListener() {
-			@Override public boolean onLongClick(View v) { bGoto_longClick(); return true; }
+			@Override
+			public boolean onLongClick(View v) {
+				bGoto_longClick();
+				return true;
+			}
 		});
 		bGoto.setFloaterDragListener(bGoto_floaterDrag);
 
@@ -351,8 +356,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 
 		processIntent(getIntent(), "onCreate");
+
+		updateTitle();
 	}
-	
+
+	private void updateTitle() {
+		getSupportActionBar().setTitle(S.activeVersion.getShortName());
+		getSupportActionBar().setSubtitle(S.activeVersion.getLongName());
+	}
+
 	@Override protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		
@@ -1063,6 +1075,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				
 				loadVersion(mv, true);
 				dialog.dismiss();
+				updateTitle();
 			}
 		})
 		.setPositiveButton(R.string.versi_lainnya, new DialogInterface.OnClickListener() {
@@ -1887,7 +1900,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 
-	private void updateProgressMark(final int mainVerse_1, int position) {
+	private void updateProgressMark(final int mainVerse_1, final int position) {
 		final int ari = Ari.encode(this.activeBook.bookId, this.chapter_1, mainVerse_1);
 		List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
 		final ProgressMark progressMark = progressMarks.get(position);
@@ -1914,15 +1927,25 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			.setNegativeButton(getString(R.string.cancel), null)
 			.show();
 		} else {
-			progressMark.ari = ari;
-			progressMark.modifyTime = new Date();
-			S.getDb().updateProgressMark(progressMark);
-			AttributeView.startAnimationForProgressMark(position);
-			reloadVerse();
 			if (progressMark.caption == null) {
-				ProgressMarkDialog.showRenameProgressDialog(this, progressMark, null);
+				ProgressMarkDialog.showRenameProgressDialog(this, progressMark, new ProgressMarkDialog.OnRenameListener() {
+					@Override
+					public void okClick() {
+						saveProgress(progressMark, ari, position);
+					}
+				});
+			} else {
+				saveProgress(progressMark, ari, position);
 			}
 		}
+	}
+
+	public void saveProgress(final ProgressMark progressMark, final int ari, final int position) {
+		progressMark.ari = ari;
+		progressMark.modifyTime = new Date();
+		S.getDb().updateProgressMark(progressMark);
+		AttributeView.startAnimationForProgressMark(position);
+		reloadVerse();
 	}
 
 	SplitHandleButton.SplitHandleButtonListener splitHandleButton_listener = new SplitHandleButton.SplitHandleButtonListener() {

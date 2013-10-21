@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -50,7 +51,9 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 			int appWidgetId = appWidgetIds[i];
 			buildUpdate(context, appWidgetManager, appWidgetId);
 		}
-		setAlarm(context, appWidgetIds);
+		ComponentName componentName = new ComponentName(context, DailyVerseAppWidgetReceiver.class);
+		int[] allWidgetIds = appWidgetManager.getAppWidgetIds(componentName);
+		setAlarm(context, allWidgetIds);
 	}
 
 	@Override
@@ -253,9 +256,8 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		final Calendar calendar = GregorianCalendar.getInstance();
 		long year = calendar.get(Calendar.YEAR);
 		long day = calendar.get(Calendar.DAY_OF_YEAR);
-		long randomDay = (year - 1900) * 1000 + day;
-
-		long randomNumberSeed = randomDay * 10000 + appWidgetId * 100 + numOfClick;
+		long randomDay = ((year - 1900) << 9) | day;
+		long randomNumberSeed = (appWidgetId << 20) | (randomDay + numOfClick);
 		Random r = new Random(randomNumberSeed);
 		int random = r.nextInt(size);
 
