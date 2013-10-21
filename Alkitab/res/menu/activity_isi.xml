@@ -24,17 +24,14 @@
         android:title="@string/versi"/>
     <item
         android:id="@+id/menuSplitVersion"
-        android:icon="@drawable/ic_menu_versions"
         app:showAsAction="never"
         android:title="@string/menu_split_version"/>
     <item
         android:id="@+id/menuDevotion"
-        android:icon="@drawable/ic_menu_devotion"
         app:showAsAction="never"
         android:title="@string/renungan"/>
     <item
         android:id="@+id/menuSongs"
-        android:icon="@drawable/ic_menu_songs"
         app:showAsAction="never"
         android:title="@string/menuSongs"/>
     <item
@@ -49,12 +46,10 @@
         android:checkable="true" />
     <item
         android:id="@+id/menuSettings"
-        android:icon="@drawable/ic_menu_settings"
         app:showAsAction="never"
         android:title="@string/menuPengaturan"/>
     <item
         android:id="@+id/menuDonation"
-        android:icon="@drawable/ic_menu_donation"
         app:showAsAction="never"
         android:title="@string/menuDonasi"/>
     <item

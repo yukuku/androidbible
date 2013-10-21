@@ -16,18 +16,29 @@ import java.util.TreeSet;
 
 public class TextDb {
 	public static final String TAG = TextDb.class.getSimpleName();
-	
+
+	TreeMap<Integer, VerseState> map = new TreeMap<Integer, VerseState>();
+
+	public TextDb() {
+	}
+
+	public TextDb(final List<Rec> recs) {
+		for (final Rec rec : recs) {
+			final int key = Ari.encode(rec.book_1 - 1, rec.chapter_1, rec.verse_1);
+			final VerseState value = new VerseState();
+			value.text = rec.text;
+			map.put(key, value);
+		}
+	}
+
 	public interface TextProcessor {
 		void process(int ari, VerseState verseState);
 	}
-	
+
 	public static class VerseState {
 		// was: "public int menjorok;" but no longer used
 		public String text;
 	}
-	
-	TreeMap<Integer, VerseState> map = new TreeMap<Integer, VerseState>();
-	
 	public String append(int bookId, int chapter_1, int verse_1, String s, int currentIndent) {
 		return append(Ari.encode(bookId, chapter_1, verse_1), s, currentIndent);
 	}

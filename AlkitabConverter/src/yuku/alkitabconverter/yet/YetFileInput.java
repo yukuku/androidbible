@@ -16,14 +16,14 @@ import java.util.Scanner;
 
 public class YetFileInput {
 	public static class YetFileInputResult {
-		List<Rec> recs;
-		PericopeData pericopeData;
-		Map<String, String> infos;
-		int numberOfBooks;
-		List<String> bookNames;
-		List<String> bookAbbreviations;
-		LinkedHashMap<Integer, XrefEntry> xrefEntries;
-		LinkedHashMap<Integer, FootnoteEntry> footnoteEntries;
+		public List<Rec> recs;
+		public PericopeData pericopeData;
+		public Map<String, String> infos;
+		public int numberOfBooks;
+		public List<String> bookNames;
+		public List<String> bookAbbreviations;
+		public LinkedHashMap<Integer, XrefEntry> xrefEntries;
+		public LinkedHashMap<Integer, FootnoteEntry> footnoteEntries;
 
 		void addInfo(String k, String v) {
 			if (infos == null) infos = new LinkedHashMap<String, String>();

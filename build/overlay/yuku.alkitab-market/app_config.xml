@@ -32,6 +32,7 @@
 		<preset locale="en"   shortName="DARBY"   longName="Darby" filename_preset="en-darby.yes" url="http://alkitab-host.appspot.com/addon/yes2/en-darby--1.yes.gz" />
 		<preset locale="en"   shortName="DRA"     longName="Douay-Rheims" filename_preset="en-douayrheims.yes" url="http://alkitab-host.appspot.com/addon/yes2/en-douayrheims--1.yes.gz" />
 		<preset locale="en"   shortName="KJV"     longName="King James" filename_preset="en-kjv.yes" url="http://alkitab-host.appspot.com/addon/yes2/en-kjv--1.yes.gz" />
+		<preset locale="en"   shortName="KJVR"    longName="King James (Red Letter)" filename_preset="en-kjv-red.yes" url="http://alkitab-host.appspot.com/addon/yes2/en-kjv-red--1.yes.gz" />
 		<preset locale="en"   shortName="WBS"     longName="Webster" filename_preset="en-webster.yes" url="http://alkitab-host.appspot.com/addon/yes2/en-webster--1.yes.gz" />
 		<preset locale="en"   shortName="WEB"     longName="World English Bible" filename_preset="en-web.yes" url="http://alkitab-host.appspot.com/addon/yes/en-web/en-web.yes.gz" />
 		<preset locale="en"   shortName="YLT"     longName="Young's Literal Translation" filename_preset="en-ylt.yes" url="http://alkitab-host.appspot.com/addon/yes/en-ylt/en-ylt.yes.gz" />

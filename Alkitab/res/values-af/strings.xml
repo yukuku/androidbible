@@ -55,6 +55,7 @@
   <string name="hari_senin">Maan</string>
   <string name="hari_minggu">Son</string>
   <string name="size_hasil">%d resultate</string>
+  <string name="search_searching_tokens">Soek verse wat %s... bevat</string>
   <string name="pilih_setidaknya_satu_kitab">Kies ten minste een boek om te soek.</string>
   <string name="pengunduhan_dibatalkan">Aflaai gekanselleer.</string>
   <string name="sedang_mendekompres_harap_tunggu">Dekompressie. Wag asseblief</string>
@@ -259,5 +260,18 @@
   <string name="pm_delete_progress">Vee vordering uit</string>
   <string name="pm_activate_tutorial">Kies \'n vers om te vordering te stoor.</string>
   <string name="pm_icon_click_message">"by %1$s \ngestoor in %2$s"</string>
+  <string name="pm_delete_progress_confirm">Wil jy %s verwyder ?</string>
   <string name="copy_share">Kopieer of deel</string>
+  <string name="backup_last_time">Laaste rugsteun:%s</string>
+  <string name="backup_selection_autobackup_at">Outomatiese rugsteun op %s</string>
+  <string name="backup_selection_manualbackup_at">Rugsteun op %s</string>
+  <string name="backup_select_file">Kies rugsteun lêer</string>
+  <string name="recentverses_not_available">Geen onlangse lêers nie.</string>
+  <string name="recentverses_just_now">So pas</string>
+  <string name="recentverses_min_plural_ago">%s minute gelede</string>
+  <string name="recentverses_today_time">Vandag, %s</string>
+  <string name="recentverses_yesterday_time">Gister, %s</string>
+  <string name="recentverses_button_hint">(Lang druk vir onlangse verse)</string>
+  <string name="dr_reminder">Herinner</string>
+  <string name="dr_error_contact_reminder">Fout met kontak van herinner applikasie.</string>
 </resources>
