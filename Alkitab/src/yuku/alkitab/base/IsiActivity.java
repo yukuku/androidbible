@@ -125,7 +125,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private static final int REQCODE_textAppearanceGetFonts = 9;
 	private static final int REQCODE_textAppearanceCustomColors = 10;
 
-	private static final String EXTRA_verseUrl = "urlAyat"; //$NON-NLS-1$
+	private static final String EXTRA_verseUrl = "verseUrl"; //$NON-NLS-1$
 	private boolean uncheckVersesWhenActionModeDestroyed = true;
 
 	private GotoButton.FloaterDragListener bGoto_floaterDrag = new GotoButton.FloaterDragListener() {
