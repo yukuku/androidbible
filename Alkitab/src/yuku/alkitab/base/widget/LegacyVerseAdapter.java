@@ -26,6 +26,8 @@ import yuku.alkitab.base.util.Appearances;
 /**
  * This has been completely superseded by {@link SingleViewVerseAdapter}, but because
  * of bugs in SEMC 2.3.x handsets, we must use this for those phones.
+ *
+ * Most of the code is in Indonesian, they are not in English yet. Sorry!
  */
 public class LegacyVerseAdapter extends VerseAdapter {
 	public static final String TAG = LegacyVerseAdapter.class.getSimpleName();
@@ -174,6 +176,7 @@ public class LegacyVerseAdapter extends VerseAdapter {
 		// @7 = end of italic   [formatting]
 		// @8 = put a blank line to the next verse [formatting]
 		// @^ = start-of-paragraph marker
+		// @< (special tag) @> (text) @/ are not supported, the @'s and the special tag will be removed but not the text
 		int parsingPos = 2; // we start after "@@"
 		int indent = 0;
 		boolean pleaseExit = false;
@@ -292,6 +295,7 @@ public class LegacyVerseAdapter extends VerseAdapter {
 	private void appendFormattedText2(SpannableStringBuilder s, String text, char[] text_c, int pos_from, int pos_until) {
 		int redStart = -1; // posisi basis s. -1 artinya belum ketemu
 		int italicStart = -1; // posisi basis s. -1 artinya belum ketemu
+		boolean inSpecialTag = false; // if true, we are between @< and @>.
 		
 		for (int i = pos_from; i < pos_until; i++) {
 			// coba templok aja sampe ketemu @ berikutnya. Jadi jangan satu2.
@@ -303,7 +307,7 @@ public class LegacyVerseAdapter extends VerseAdapter {
 					return;
 				} else {
 					// tumplekin sampe sebelum @
-					if (nextAtPos != i) { // kalo ga 0 panjangnya
+					if (nextAtPos != i && !inSpecialTag) { // kalo ga 0 panjangnya and we are not inside special tag
 						s.append(text, i, nextAtPos);
 					}
 					i = nextAtPos;
@@ -349,6 +353,16 @@ public class LegacyVerseAdapter extends VerseAdapter {
 					s.setSpan(new StyleSpan(Typeface.ITALIC), italicStart, s.length(), 0);
 					italicStart = -1; // reset
 				}
+				continue;
+			}
+
+			if (d == '<') { // start of special tag
+				inSpecialTag = true;
+				continue;
+			}
+
+			if (d == '>') { // end of special tag
+				inSpecialTag = false;
 				continue;
 			}
 		}
