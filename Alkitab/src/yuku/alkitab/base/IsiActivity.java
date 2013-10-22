@@ -978,6 +978,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			intent.setData(Uri.parse("http://www.albata.info/"));
 			startActivity(intent);
 		} break;
+		case R.id.menuTsiMhk: {
+			startActivity(HelpActivity.createIntent(false, "mhk/index.html"));
+		} break;
 		}
 		
 		return super.onOptionsItemSelected(item);

@@ -27,6 +27,10 @@
         app:showAsAction="never"
         android:title="@string/menu_split_version"/>
     <item
+        android:id="@+id/menuTsiMhk"
+        app:showAsAction="never"
+        android:title="Mencari Harta Karun"/>
+    <item
         android:id="@+id/menuDevotion"
         app:showAsAction="never"
         android:title="@string/renungan"/>

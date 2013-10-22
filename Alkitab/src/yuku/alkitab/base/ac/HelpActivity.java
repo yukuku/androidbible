@@ -5,12 +5,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-
+import android.webkit.WebViewClient;
 import yuku.afw.App;
 import yuku.afw.V;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.debug.R;
 
 public class HelpActivity extends BaseActivity {
 	private static final String EXTRA_isFaq = "isFaq";
@@ -73,6 +73,17 @@ public class HelpActivity extends BaseActivity {
 				webview.loadUrl("file:///android_asset/help/html-en/" + page);
 			}
 		}
+
+		webview.setWebViewClient(new WebViewClient() {
+			@Override
+			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+				if (url.startsWith("bible:")) {
+
+					return true;
+				}
+				return false;
+			}
+		});
 	}
 	
 	View.OnClickListener bOk_click = new View.OnClickListener() {
