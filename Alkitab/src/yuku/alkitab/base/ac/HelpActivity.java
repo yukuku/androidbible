@@ -85,7 +85,17 @@ public class HelpActivity extends BaseActivity {
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
 				final Uri uri = Uri.parse(url);
-				if (U.equals(uri.getScheme(), "bible")) {
+				final String scheme = uri.getScheme();
+
+				if ("http".equals(scheme) || "https".equals(scheme)) {
+					// open in external browser
+					final Intent intent = new Intent(Intent.ACTION_VIEW);
+					intent.setData(uri);
+					startActivity(intent);
+					return true;
+				}
+
+				if ("bible".equals(scheme)) {
 					// try to decode using OSIS format
 					final String ssp = uri.getSchemeSpecificPart();
 					final IntArrayList ariRanges = TargetDecoder.decode("o:" + ssp);
