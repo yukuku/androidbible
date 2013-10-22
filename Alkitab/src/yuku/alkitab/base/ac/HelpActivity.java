@@ -1,7 +1,10 @@
 package yuku.alkitab.base.ac;
 
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -10,7 +13,11 @@ import yuku.afw.App;
 import yuku.afw.V;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.dialog.VersesDialog;
+import yuku.alkitab.base.util.IntArrayList;
+import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.debug.R;
+import yuku.alkitabintegration.display.Launcher;
 
 public class HelpActivity extends BaseActivity {
 	private static final String EXTRA_isFaq = "isFaq";
@@ -77,8 +84,28 @@ public class HelpActivity extends BaseActivity {
 		webview.setWebViewClient(new WebViewClient() {
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
-				if (url.startsWith("bible:")) {
-
+				final Uri uri = Uri.parse(url);
+				if (U.equals(uri.getScheme(), "bible")) {
+					// try to decode using OSIS format
+					final String ssp = uri.getSchemeSpecificPart();
+					final IntArrayList ariRanges = TargetDecoder.decode("o:" + ssp);
+					if (ariRanges == null || ariRanges.size() == 0) {
+						new AlertDialog.Builder(HelpActivity.this)
+						.setMessage(getString(R.string.alamat_tidak_sah_alamat, url))
+						.setPositiveButton(R.string.ok, null)
+						.show();
+					} else {
+						final VersesDialog dialog = VersesDialog.newInstance(ariRanges);
+						dialog.show(getSupportFragmentManager(), VersesDialog.class.getSimpleName());
+						dialog.setListener(new VersesDialog.VersesDialogListener() {
+							@Override
+							public void onVerseSelected(final VersesDialog dialog, final int ari) {
+								Log.d(TAG, "Verse link clicked from page");
+								final Intent intent = Launcher.openAppAtBibleLocation(ari);
+								startActivity(intent);
+							}
+						});
+					}
 					return true;
 				}
 				return false;
