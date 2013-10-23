@@ -1,4 +1,4 @@
-package yuku.alkitab.base.storage;
+package yuku.alkitab.io;
 
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.FootnoteEntry;

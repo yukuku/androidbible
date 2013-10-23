@@ -35,7 +35,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionInternal;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.util.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.BookNameSorter;

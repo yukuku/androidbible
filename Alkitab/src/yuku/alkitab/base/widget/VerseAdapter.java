@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.util.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.ProgressMark;

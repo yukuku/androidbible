@@ -29,11 +29,9 @@
     <orderEntry type="module" module-name="BiblePlus" />
     <orderEntry type="module" module-name="AlkitabIntegration" exported="" />
     <orderEntry type="module" module-name="Snappy" />
-    <orderEntry type="module" module-name="BintexWriter" />
     <orderEntry type="module" module-name="AlkitabFeedback" />
     <orderEntry type="module" module-name="AmbilWarna" />
     <orderEntry type="module" module-name="NewQuickAction3DLib" />
-    <orderEntry type="module" module-name="BintexReader" />
     <orderEntry type="module" module-name="FileChooser" />
     <orderEntry type="module" module-name="FlowLayout" />
     <orderEntry type="module" module-name="KpriViewerLib" />
@@ -46,6 +44,9 @@
     <orderEntry type="library" name="android-support-v4" level="project" />
     <orderEntry type="module" module-name="android-support-v7-appcompat" />
     <orderEntry type="module" module-name="DragSortListView" />
+    <orderEntry type="module" module-name="AlkitabYes2" />
+    <orderEntry type="module" module-name="AlkitabModel" />
+    <orderEntry type="module" module-name="AlkitabIo" />
   </component>
 </module>
 

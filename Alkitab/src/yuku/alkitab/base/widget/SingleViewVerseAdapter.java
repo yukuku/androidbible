@@ -11,7 +11,7 @@ import android.widget.TextView.BufferType;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.util.Ari;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.IntArrayList;

@@ -2,15 +2,15 @@ package yuku.alkitab.yes1;
 
 import android.util.Log;
 import yuku.afw.D;
-import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.FootnoteEntry;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.XrefEntry;
-import yuku.alkitab.base.storage.BibleReader;
 import yuku.alkitab.base.storage.OldVerseTextDecoder;
 import yuku.alkitab.base.storage.VerseTextDecoder;
+import yuku.alkitab.base.util.Ari;
+import yuku.alkitab.io.BibleReader;
 import yuku.bintex.BintexReader;
 
 import java.io.ByteArrayInputStream;

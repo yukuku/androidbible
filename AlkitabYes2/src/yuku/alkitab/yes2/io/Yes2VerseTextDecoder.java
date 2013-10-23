@@ -1,6 +1,6 @@
 package yuku.alkitab.yes2.io;
 
-import yuku.alkitab.base.util.Utf8Decoder;
+import yuku.alkitab.io.Utf8Decoder;
 import yuku.bintex.BintexReader;
 
 public interface Yes2VerseTextDecoder {

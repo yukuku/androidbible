@@ -18,7 +18,7 @@ import yuku.afw.V;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.dialog.base.BaseDialog;
-import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.util.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;

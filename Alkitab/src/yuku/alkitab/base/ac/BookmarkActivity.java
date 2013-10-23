@@ -312,15 +312,15 @@ public class BookmarkActivity extends BaseActivity implements ExportBookmarkDial
 
 					Xml.parse(fis, Xml.Encoding.UTF_8, new DefaultHandler2() {
 						@Override public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-							if (localName.equals(Bookmark2.XMLTAG_Bukmak2)) {
-								Bookmark2 bookmark = Bookmark2.fromAttributes(attributes);
-								int bookmark2_relId = Bookmark2.getRelId(attributes);
+							if (localName.equals(BackupManager.XMLTAG_Bukmak2)) {
+								Bookmark2 bookmark = BackupManager.bookmark2FromAttributes(attributes);
+								int bookmark2_relId = BackupManager.getRelId(attributes);
 								bookmarks.add(bookmark);
 								bookmarkToRelIdMap.put(bookmark, bookmark2_relId);
 								count_bookmark++;
-							} else if (localName.equals(Label.XMLTAG_Label)) {
-								Label label = Label.fromAttributes(attributes);
-								int label_relId = Label.getRelId(attributes);
+							} else if (localName.equals(BackupManager.XMLTAG_Label)) {
+								Label label = BackupManager.labelFromAttributes(attributes);
+								int label_relId = BackupManager.getRelId(attributes);
 								labels.add(label);
 								labelToRelIdMap.put(label, label_relId);
 								count_label++;

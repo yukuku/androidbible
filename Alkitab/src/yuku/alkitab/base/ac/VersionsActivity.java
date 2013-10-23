@@ -34,22 +34,23 @@ import android.widget.Toast;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Version;
+import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes2;
-import yuku.alkitab.base.storage.BibleReader;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.storage.YesReaderFactory;
 import yuku.alkitab.base.util.AddonManager;
 import yuku.alkitab.base.util.AddonManager.DownloadListener;
 import yuku.alkitab.base.util.AddonManager.DownloadThread;
 import yuku.alkitab.base.util.AddonManager.Element;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.io.BibleReader;
 import yuku.androidcrypto.DigestType;
 import yuku.androidcrypto.Digester;
 import yuku.filechooser.FileChooserActivity;
@@ -837,7 +838,7 @@ public class VersionsActivity extends BaseActivity {
 
 		@Override
 		public Version getVersion() {
-			return Version.getInternalVersion();
+			return VersionImpl.getInternalVersion();
 		}
 
 		@Override
@@ -876,7 +877,7 @@ public class VersionsActivity extends BaseActivity {
 		@Override
 		public Version getVersion() {
 			if (hasDataFile()) {
-				final Version res = new Version(YesReaderFactory.createYesReader(AddonManager.getVersionPath(presetFilename)));
+				final VersionImpl res = new VersionImpl(YesReaderFactory.createYesReader(AddonManager.getVersionPath(presetFilename)));
 				res.setFallbackShortName(shortName);
 				return res;
 			} else {
@@ -908,7 +909,7 @@ public class VersionsActivity extends BaseActivity {
 					Log.e(TAG, "YesReaderFactory failed to open the yes file");
 					return null;
 				}
-				return new Version(yesReader);
+				return new VersionImpl(yesReader);
 			} else {
 				return null;
 			}

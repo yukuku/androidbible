@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.util.Xml;
 import gnu.trove.list.TLongList;
 import gnu.trove.map.hash.TLongIntHashMap;
+import org.xml.sax.Attributes;
 import org.xmlpull.v1.XmlSerializer;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -13,6 +14,8 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.BookmarkActivity;
 import yuku.alkitab.base.model.Bookmark2;
 import yuku.alkitab.base.model.Label;
+import yuku.alkitab.base.storage.Db;
+import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.Prefkey;
 
 import java.io.File;
@@ -63,9 +66,9 @@ public class BackupManager {
 						Cursor cursor = S.getDb().listAllBookmarks();
 						try {
 							while (cursor.moveToNext()) {
-								Bookmark2 bookmark = Bookmark2.fromCursor(cursor);
+								Bookmark2 bookmark = InternalDb.bookmark2FromCursor(cursor);
 								bookmarks.add(bookmark); // register bookmark
-								bookmark.writeXml(xml, bookmarks.size() /* 1-based relId */);
+								writeXmlForBookmark2(bookmark, xml, bookmarks.size() /* 1-based relId */);
 							}
 						} finally {
 							cursor.close();
@@ -77,7 +80,7 @@ public class BackupManager {
 					{ // write labels
 						for (int i = 0; i < labels.size(); i++) {
 							Label label = labels.get(i);
-							label.writeXml(xml, i + 1 /* 1-based relId */);
+							writeXmlForLabel(label, xml, i + 1 /* 1-based relId */);
 							labelAbsIdToRelIdMap.put(label._id, i + 1 /* 1-based relId */);
 						}
 					}
@@ -193,4 +196,69 @@ public class BackupManager {
 		return new File(Environment.getExternalStorageDirectory(), "bible");
 	}
 
+	// conversions from Bookmark2 to tags
+	public static final String XMLTAG_Bukmak2 = "Bukmak2"; //$NON-NLS-1$
+	private static final String XMLATTR_ari = "ari"; //$NON-NLS-1$
+	private static final String XMLATTR_kind = "jenis"; //$NON-NLS-1$
+	private static final String XMLATTR_caption = "tulisan"; //$NON-NLS-1$
+	private static final String XMLATTR_addTime = "waktuTambah"; //$NON-NLS-1$
+	private static final String XMLATTR_modifyTime = "waktuUbah"; //$NON-NLS-1$
+	private static final String XMLATTR_relId = "relId"; //$NON-NLS-1$
+	private static final String XMLVAL_bookmark = "bukmak"; //$NON-NLS-1$
+	private static final String XMLVAL_note = "catatan"; //$NON-NLS-1$
+	private static final String XMLVAL_highlight = "stabilo"; //$NON-NLS-1$
+	public static final String XMLTAG_Label = "Label"; //$NON-NLS-1$
+	private static final String XMLATTR_title = "judul"; //$NON-NLS-1$
+	private static final String XMLATTR_bgColor = "warnaLatar"; //$NON-NLS-1$
+
+
+	private static void writeXmlForBookmark2(Bookmark2 bookmark2, XmlSerializer xml, int relId) throws IOException {
+		xml.startTag(null, XMLTAG_Bukmak2);
+		xml.attribute(null, XMLATTR_relId, String.valueOf(relId));
+		xml.attribute(null, XMLATTR_ari, String.valueOf(bookmark2.ari));
+		xml.attribute(null, XMLATTR_kind, bookmark2.kind == Db.Bookmark2.kind_bookmark? XMLVAL_bookmark: bookmark2.kind == Db.Bookmark2.kind_note? XMLVAL_note: bookmark2.kind == Db.Bookmark2.kind_highlight? XMLVAL_highlight: String.valueOf(bookmark2.kind));
+		if (bookmark2.caption != null) {
+			xml.attribute(null, XMLATTR_caption, bookmark2.caption);
+		}
+		if (bookmark2.addTime != null) {
+			xml.attribute(null, XMLATTR_addTime, String.valueOf(Sqlitil.toInt(bookmark2.addTime)));
+		}
+		if (bookmark2.modifyTime != null) {
+			xml.attribute(null, XMLATTR_modifyTime, String.valueOf(Sqlitil.toInt(bookmark2.modifyTime)));
+		}
+		xml.endTag(null, XMLTAG_Bukmak2);
+	}
+
+	public static Bookmark2 bookmark2FromAttributes(Attributes attributes) {
+		int ari = Integer.parseInt(attributes.getValue("", XMLATTR_ari)); //$NON-NLS-1$
+		String kind_s = attributes.getValue("", XMLATTR_kind); //$NON-NLS-1$
+		int kind = kind_s.equals(XMLVAL_bookmark)? Db.Bookmark2.kind_bookmark: kind_s.equals(XMLVAL_note)? Db.Bookmark2.kind_note: kind_s.equals(XMLVAL_highlight)? Db.Bookmark2.kind_highlight: Integer.parseInt(kind_s);
+		String caption = attributes.getValue("", XMLATTR_caption); //$NON-NLS-1$
+		Date addTime = Sqlitil.toDate(Integer.parseInt(attributes.getValue("", XMLATTR_addTime))); //$NON-NLS-1$
+		Date modifyTime = Sqlitil.toDate(Integer.parseInt(attributes.getValue("", XMLATTR_modifyTime))); //$NON-NLS-1$
+
+		return new Bookmark2(ari, kind, caption, addTime, modifyTime);
+	}
+
+	public static int getRelId(Attributes attributes) {
+		String s = attributes.getValue("", XMLATTR_relId); //$NON-NLS-1$
+		return s == null? 0: Integer.parseInt(s);
+	}
+
+
+	public static void writeXmlForLabel(Label label, XmlSerializer xml, int relId) throws IOException {
+		// ordering is not backed up
+		xml.startTag(null, XMLTAG_Label);
+		xml.attribute(null, XMLATTR_relId, String.valueOf(relId));
+		xml.attribute(null, XMLATTR_title, label.title);
+		if (label.backgroundColor != null) xml.attribute(null, XMLATTR_bgColor, label.backgroundColor);
+		xml.endTag(null, XMLTAG_Label);
+	}
+
+	public static Label labelFromAttributes(Attributes attributes) {
+		String title = attributes.getValue("", XMLATTR_title); //$NON-NLS-1$
+		String bgColor = attributes.getValue("", XMLATTR_bgColor); //$NON-NLS-1$
+
+		return new Label(-1, title, 0, bgColor);
+	}
 }

@@ -14,7 +14,7 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
 import yuku.alkitab.base.config.AppConfig;
-import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.util.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.util.IntArrayList;

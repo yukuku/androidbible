@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.util.FloatMath;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
-import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.util.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.Version;
 

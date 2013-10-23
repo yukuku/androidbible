@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.InternalDb;
@@ -58,7 +59,7 @@ public class S {
 	
 	public static synchronized void prepareInternalVersion() {
 		if (activeVersion == null) {
-			activeVersion = Version.getInternalVersion();
+			activeVersion = VersionImpl.getInternalVersion();
 		}
 	}
 	

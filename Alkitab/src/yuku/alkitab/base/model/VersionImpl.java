@@ -2,33 +2,35 @@ package yuku.alkitab.base.model;
 
 import android.util.Log;
 import yuku.alkitab.base.config.AppConfig;
-import yuku.alkitab.base.storage.BibleReader;
 import yuku.alkitab.base.storage.InternalReader;
 import yuku.alkitab.base.storage.OldVerseTextDecoder;
+import yuku.alkitab.base.util.Ari;
 import yuku.alkitab.base.util.IntArrayList;
+import yuku.alkitab.io.BibleReader;
 
 import java.util.List;
 
-public class Version {
-	public static final String TAG = Version.class.getSimpleName();
+public class VersionImpl implements Version {
+	public static final String TAG = VersionImpl.class.getSimpleName();
 	private static final String NOT_AVAILABLE_TEXT = "[?]"; //$NON-NLS-1$
-	
+
 	private BibleReader bibleReader;
-	
+
 	private Book[] cache_books;
 	private Book[] cache_consecutiveBooks;
-	
+
 	private static Version internalVersion;
 	private String fallbackShortName;
 
-	public Version(BibleReader bibleReader) {
+	public VersionImpl(BibleReader bibleReader) {
+		super();
 		this.bibleReader = bibleReader;
 	}
-	
+
 	public static synchronized Version getInternalVersion() {
 		if (internalVersion == null) {
 			AppConfig c = AppConfig.get();
-			internalVersion = new Version(new InternalReader(c.internalPrefix, c.internalShortName, c.internalLongName, new OldVerseTextDecoder.Utf8()));
+			internalVersion = new VersionImpl(new InternalReader(c.internalPrefix, c.internalShortName, c.internalLongName, new OldVerseTextDecoder.Utf8()));
 		}
 		return internalVersion;
 	}
@@ -37,6 +39,7 @@ public class Version {
 	 * Get the short name (abbreviation) of this version. If unavailable from the BibleReader,
 	 * it will take from fallbackShortName.
 	 */
+	@Override
 	public String getShortName() {
 		final String res = bibleReader.getShortName();
 		if (res == null && fallbackShortName != null) {
@@ -45,6 +48,7 @@ public class Version {
 		return res;
 	}
 
+	@Override
 	public String getLongName() {
 		return bibleReader.getLongName();
 	}
@@ -59,10 +63,11 @@ public class Version {
 		}
 		return cache_books;
 	}
-	
+
 	/**
 	 * @return The highest bookId on this version plus one.
 	 */
+	@Override
 	public synchronized int getMaxBookIdPlusOne() {
 		int max = -1;
 		for (Book b: getBooks()) {
@@ -72,12 +77,13 @@ public class Version {
 		}
 		return max + 1;
 	}
-	
+
 	/**
 	 * @return same as {@link #getBooks()}, but none of the array elements is null.
 	 * For enumerating available books.
 	 * Note that using this, no guarantee that return_value[bookId].bookId == bookId.
 	 */
+	@Override
 	public synchronized Book[] getConsecutiveBooks() {
 		if (cache_consecutiveBooks == null) {
 			Book[] books1 = getBooks();
@@ -99,10 +105,11 @@ public class Version {
 		}
 		return cache_consecutiveBooks;
 	}
-	
+
 	/**
 	 * @return null if bookId is out of range, or the book is not available on this version.
 	 */
+	@Override
 	public synchronized Book getBook(int bookId) {
 		Book[] books = getBooks();
 		if (bookId < 0) return null;
@@ -119,7 +126,8 @@ public class Version {
 		}
 		return null;
 	}
-	
+
+	@Override
 	public synchronized Book getFirstBook() {
 		Book[] books = getBooks();
 		for (Book b: books) {
@@ -130,47 +138,50 @@ public class Version {
 		return null;
 	}
 
+	@Override
 	public synchronized String loadVerseText(int ari) {
 		return loadVerseText(getBook(Ari.toBook(ari)), Ari.toChapter(ari), Ari.toVerse(ari));
 	}
 
+	@Override
 	public synchronized String loadVerseText(Book book, int chapter_1, int verse_1) {
 		if (book == null) {
 			return NOT_AVAILABLE_TEXT;
 		}
 		SingleChapterVerses verses = bibleReader.loadVerseText(book, chapter_1, false, false);
-		
+
 		if (verses == null) {
 			return NOT_AVAILABLE_TEXT;
 		}
-		
+
 		int verse_0 = verse_1 - 1;
 		if (verse_0 >= verses.getVerseCount()) {
 			return NOT_AVAILABLE_TEXT;
 		}
 		return verses.getVerse(verse_0);
 	}
-	
+
 	/**
 	 * @param ariRanges list of aris where even-indexed elements are start and odd-indexed elements are end (inclusive) aris
 	 * @param result_aris (non-null, will be cleared first) list of aris loaded
 	 * @param result_verses (non-null, will be cleared first) list of verse texts loaded
 	 * @return the number of verses successfully loaded
 	 */
+	@Override
 	public synchronized int loadVersesByAriRanges(IntArrayList ariRanges, IntArrayList result_aris, List<String> result_verses) {
 		int res = 0;
-		
+
 		result_aris.clear();
 		result_verses.clear();
 
 		for (int i = 0, len = ariRanges.size(); i < len; i+=2) {
 			int ari_start = ariRanges.get(i);
 			int ari_end = ariRanges.get(i + 1);
-			
+
 			if (ari_start == 0 || ari_end == 0) {
 				continue;
 			}
-			
+
 			if (ari_start == ari_end) {
 				// case: single verse
 				int ari = ari_start;
@@ -183,7 +194,7 @@ public class Version {
 			} else {
 				int ari_start_bc = Ari.toBookChapter(ari_start);
 				int ari_end_bc = Ari.toBookChapter(ari_end);
-				
+
 				if (ari_start_bc == ari_end_bc) {
 					// case: multiple verses in the same chapter
 					Book book = getBook(Ari.toBook(ari_start));
@@ -198,7 +209,7 @@ public class Version {
 						if (book == null || chapter_1 <= 0 || chapter_1 > book.chapter_count) {
 							continue;
 						}
-						
+
 						if (ari_bc == ari_start_bc) { // we're at the first requested chapter
 							res += resultForOneChapter(book, ari_bc, Ari.toVerse(ari_start), 0xff, result_aris, result_verses);
 						} else if (ari_bc == ari_end_bc) { // we're at the last requested chapter
@@ -213,7 +224,7 @@ public class Version {
 
 		return res;
 	}
-	
+
 	/**
 	 * @return number of verses put into the cursor
 	 */
@@ -242,43 +253,48 @@ public class Version {
 	 * @param max the maximum number of pericopes to return. The output arrays must have at least max entries.
 	 * @return the number of pericopes loaded. 0 if the version does not have pericopes or some errors happen.
 	 */
+	@Override
 	public synchronized int loadPericope(int bookId, int chapter_1, int[] aris, PericopeBlock[] pericopeBlocks, int max) {
 		return bibleReader.loadPericope(bookId, chapter_1, aris, pericopeBlocks, max);
 	}
 
+	@Override
 	public synchronized SingleChapterVerses loadChapterText(Book book, int chapter_1) {
 		if (book == null) {
 			return null;
 		}
-		
+
 		return bibleReader.loadVerseText(book, chapter_1, false, false);
 	}
 
+	@Override
 	public synchronized SingleChapterVerses loadChapterTextLowercased(Book book, int chapter_1) {
 		if (book == null) {
 			return null;
 		}
-		
+
 		return bibleReader.loadVerseText(book, chapter_1, false, true);
 	}
 
+	@Override
 	public synchronized String loadChapterTextLowercasedWithoutSplit(Book book, int chapter_1) {
 		if (book == null) {
 			return NOT_AVAILABLE_TEXT;
 		}
-		
+
 		SingleChapterVerses singleVerse = bibleReader.loadVerseText(book, chapter_1, true, true);
-		
+
 		if (singleVerse == null) {
 			return NOT_AVAILABLE_TEXT;
 		}
-		
+
 		return singleVerse.getVerse(0);
 	}
-	
+
 	/**
 	 * @param arif 24bit ari at the MSB + which xref field at the 8bit LSB (starts from 1)
 	 */
+	@Override
 	public synchronized XrefEntry getXrefEntry(final int arif) {
 		return bibleReader.getXrefEntry(arif);
 	}
@@ -286,23 +302,26 @@ public class Version {
 	/**
 	 * @param arif 24bit ari at the MSB + which xref field at the 8bit LSB (starts from 1)
 	 */
+	@Override
 	public synchronized FootnoteEntry getFootnoteEntry(final int arif) {
 		return bibleReader.getFootnoteEntry(arif);
 	}
 
+	@Override
 	public String reference(int ari) {
 		int bookId = Ari.toBook(ari);
 		int chapter_1 = Ari.toChapter(ari);
 		int verse_1 = Ari.toVerse(ari);
-		
+
 		Book book = getBook(bookId);
 		if (book == null) {
 			return "[?]";
 		}
-		
+
 		return book.reference(chapter_1, verse_1);
 	}
 
+	@Override
 	public String reference(int bookId, int chapter_1, int verse_1) {
 		Book book = getBook(bookId);
 		if (book == null) {
@@ -318,4 +337,5 @@ public class Version {
 	public void setFallbackShortName(final String fallbackShortName) {
 		this.fallbackShortName = fallbackShortName;
 	}
+
 }

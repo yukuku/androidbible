@@ -1,4 +1,4 @@
-package yuku.alkitab.base.util;
+package yuku.alkitab.io;
 
 import yuku.bintex.BintexReader;
 

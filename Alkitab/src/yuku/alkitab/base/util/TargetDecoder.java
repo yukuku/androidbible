@@ -1,7 +1,6 @@
 package yuku.alkitab.base.util;
 
 import android.util.Log;
-import yuku.alkitab.base.model.Ari;
 
 import java.util.regex.Pattern;
 

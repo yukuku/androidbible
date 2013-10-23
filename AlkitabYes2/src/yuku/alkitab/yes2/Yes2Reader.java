@@ -1,13 +1,13 @@
 package yuku.alkitab.yes2;
 
 import android.util.Log;
-import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.base.util.Ari;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.FootnoteEntry;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.XrefEntry;
-import yuku.alkitab.base.storage.BibleReader;
+import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.yes2.compress.SnappyInputStream;
 import yuku.alkitab.yes2.io.RandomAccessFileRandomInputStream;
 import yuku.alkitab.yes2.io.RandomInputStream;
