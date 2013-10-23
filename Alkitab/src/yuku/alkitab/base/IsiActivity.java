@@ -51,6 +51,7 @@ import yuku.alkitab.base.ac.BookmarkActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.GotoActivity;
 import yuku.alkitab.base.ac.HelpActivity;
+import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.ac.Search2Activity;
 import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.ShareActivity;
@@ -948,6 +949,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			return true;
 		case R.id.menuSongs:
 			startActivityForResult(SongViewActivity.createIntent(), REQCODE_songs);
+			return true;
+		case R.id.menuReadingPlan:
+			startActivityForResult(new Intent(this, ReadingPlanActivity.class), 12);
 			return true;
 		case R.id.menuAbout:
 			startActivity(new Intent(this, AboutActivity.class));

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/scrollView">
+    <LinearLayout
+                  android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content">
+
+                <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="@dimen/abc_action_bar_default_height"
+                        android:background="@drawable/abc_ab_solid_dark_holo" >
+
+                    <ImageButton
+                            android:id="@+id/bLeft"
+                            style="?attr/actionButtonStyle"
+                            android:layout_width="@dimen/abc_action_button_min_width"
+                            android:layout_height="match_parent"
+                            android:contentDescription="@string/desc_previous_chapter"
+                            android:padding="16dp"
+                            android:scaleType="center"
+                            android:src="@drawable/ic_nav_left_light" />
+
+                    <yuku.alkitab.base.widget.GotoButton
+                            android:id="@+id/bGoto"
+                            style="?attr/actionButtonStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1"
+                            android:text="Hari ini"
+                            android:textColor="#f0f0f0"
+                            android:textSize="18sp"
+                            tools:ignore="HardcodedText" />
+
+                    <ImageButton
+                            android:id="@+id/bRight"
+                            style="?attr/actionButtonStyle"
+                            android:layout_width="@dimen/abc_action_button_min_width"
+                            android:layout_height="match_parent"
+                            android:contentDescription="@string/desc_next_chapter"
+                            android:padding="16dp"
+                            android:scaleType="center"
+                            android:src="@drawable/ic_nav_right_light" />
+                </LinearLayout>
+
+        <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/lsTodayReadings"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Progress"
+                android:id="@+id/textView"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Small Text"
+                android:id="@+id/tActual"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Small Text"
+                android:id="@+id/tTarget"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Small Text"
+                android:id="@+id/tComment"/>
+        <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lsDailyPlan"/>
+
+    </LinearLayout>
+</ScrollView>
