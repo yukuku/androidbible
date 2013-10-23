@@ -1,8 +1,8 @@
 package yuku.alkitabconverter.yet;
 
-import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.model.FootnoteEntry;
 import yuku.alkitab.model.XrefEntry;
+import yuku.alkitab.util.Ari;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitabconverter.util.FootnoteDb;
 import yuku.alkitabconverter.util.Rec;

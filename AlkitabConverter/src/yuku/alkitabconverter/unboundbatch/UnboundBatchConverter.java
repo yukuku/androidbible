@@ -1,6 +1,6 @@
 package yuku.alkitabconverter.unboundbatch;
 
-import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.util.Ari;
 import yuku.alkitabconverter.util.KjvUtils;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.TextDb.VerseState;

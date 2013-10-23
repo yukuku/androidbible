@@ -4,7 +4,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
-import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.util.Ari;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitabconverter.internal_common.InternalCommon;
 import yuku.alkitabconverter.internal_common.ReverseIndexer;

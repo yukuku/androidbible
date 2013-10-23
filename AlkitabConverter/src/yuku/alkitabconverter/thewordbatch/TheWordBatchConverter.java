@@ -1,6 +1,6 @@
 package yuku.alkitabconverter.thewordbatch;
 
-import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.util.Ari;
 import yuku.alkitabconverter.util.KjvUtils;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.TextDb;

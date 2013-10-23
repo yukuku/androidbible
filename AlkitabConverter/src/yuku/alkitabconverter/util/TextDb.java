@@ -1,6 +1,6 @@
 package yuku.alkitabconverter.util;
 
-import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.util.Ari;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
