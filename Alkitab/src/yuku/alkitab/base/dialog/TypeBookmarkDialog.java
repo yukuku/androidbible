@@ -24,8 +24,8 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.compat.Api11;
 import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
-import yuku.alkitab.base.model.Bookmark2;
-import yuku.alkitab.base.model.Label;
+import yuku.alkitab.model.Bookmark2;
+import yuku.alkitab.model.Label;
 import yuku.alkitab.base.storage.Db;
 import yuku.devoxx.flowlayout.FlowLayout;
 

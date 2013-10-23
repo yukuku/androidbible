@@ -15,10 +15,11 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="jdk" jdkName="1.7" jdkType="JavaSDK" />
     <orderEntry type="module" module-name="BintexWriter" />
-    <orderEntry type="module" module-name="Alkitab" exported="" />
     <orderEntry type="module" module-name="BintexReader" />
     <orderEntry type="module" module-name="Snappy" />
     <orderEntry type="module" module-name="SimpleTrove" />
+    <orderEntry type="module" module-name="AlkitabYes2" />
+    <orderEntry type="module" module-name="AlkitabModel" />
   </component>
 </module>
 

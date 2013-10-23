@@ -1,4 +1,4 @@
-package yuku.alkitab.base.util;
+package yuku.alkitab.util;
 
 /**
  * Alkitab resource identifier -- 2012-01-16: not really.

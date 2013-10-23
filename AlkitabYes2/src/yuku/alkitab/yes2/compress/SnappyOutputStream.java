@@ -4,7 +4,7 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import yuku.alkitab.base.util.IntArrayList;
+import yuku.alkitab.util.IntArrayList;
 import yuku.snappy.codec.Snappy;
 
 public class SnappyOutputStream extends FilterOutputStream {

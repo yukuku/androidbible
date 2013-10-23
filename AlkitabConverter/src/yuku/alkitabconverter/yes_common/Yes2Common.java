@@ -1,7 +1,7 @@
 package yuku.alkitabconverter.yes_common;
 
-import yuku.alkitab.base.model.FootnoteEntry;
-import yuku.alkitab.base.model.XrefEntry;
+import yuku.alkitab.model.FootnoteEntry;
+import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.yes2.Yes2Writer;
 import yuku.alkitab.yes2.compress.SnappyOutputStream;
 import yuku.alkitab.yes2.io.MemoryRandomAccessFile;
@@ -28,7 +28,6 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Yes2Common {
 	public static final String TAG = Yes2Common.class.getSimpleName();

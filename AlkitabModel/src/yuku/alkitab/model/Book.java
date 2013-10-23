@@ -1,6 +1,6 @@
-package yuku.alkitab.base.model;
+package yuku.alkitab.model;
 
-import yuku.alkitab.base.util.IntArrayList;
+import yuku.alkitab.util.IntArrayList;
 
 
 public class Book {

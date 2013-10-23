@@ -1,4 +1,4 @@
-package yuku.alkitab.base.model;
+package yuku.alkitab.model;
 
 public class Label implements Comparable<Label> {
 	public static final String TAG = Label.class.getSimpleName();

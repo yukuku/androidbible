@@ -34,7 +34,7 @@ import yuku.alkitab.base.devotion.ArticleSantapanHarian;
 import yuku.alkitab.base.devotion.DevotionArticle;
 import yuku.alkitab.base.devotion.DevotionDownloader;
 import yuku.alkitab.base.devotion.DevotionDownloader.OnStatusDonlotListener;
-import yuku.alkitab.base.util.Ari;
+import yuku.alkitab.util.Ari;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.widget.CallbackSpan;

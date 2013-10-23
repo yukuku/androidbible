@@ -1,4 +1,4 @@
-package yuku.alkitab.base.model;
+package yuku.alkitab.model;
 
 public class XrefEntry {
 	public String content;

@@ -7,7 +7,7 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.base.model.Version;
+import yuku.alkitab.model.Version;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.InternalDbHelper;
 import yuku.alkitab.base.storage.Prefkey;

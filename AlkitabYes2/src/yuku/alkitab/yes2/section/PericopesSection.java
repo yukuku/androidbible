@@ -2,8 +2,8 @@ package yuku.alkitab.yes2.section;
 
 import java.io.IOException;
 
-import yuku.alkitab.base.model.PericopeBlock;
-import yuku.alkitab.base.model.PericopeIndex;
+import yuku.alkitab.model.PericopeBlock;
+import yuku.alkitab.model.PericopeIndex;
 import yuku.alkitab.yes2.io.RandomInputStream;
 import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.alkitab.yes2.model.PericopeData;

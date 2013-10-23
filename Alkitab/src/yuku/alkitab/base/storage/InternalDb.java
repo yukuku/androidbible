@@ -21,12 +21,12 @@ import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
 import yuku.alkitab.base.devotion.DevotionArticle;
-import yuku.alkitab.base.util.Ari;
-import yuku.alkitab.base.model.Bookmark2;
-import yuku.alkitab.base.model.Label;
-import yuku.alkitab.base.model.ProgressMark;
-import yuku.alkitab.base.model.ProgressMarkHistory;
-import yuku.alkitab.base.util.IntArrayList;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.model.Bookmark2;
+import yuku.alkitab.model.Label;
+import yuku.alkitab.model.ProgressMark;
+import yuku.alkitab.model.ProgressMarkHistory;
+import yuku.alkitab.util.IntArrayList;
 import yuku.alkitab.base.util.Sqlitil;
 
 import java.util.ArrayList;

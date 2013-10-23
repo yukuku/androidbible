@@ -10,8 +10,8 @@ import android.widget.CheckBox;
 import yuku.afw.V;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.util.Ari;
-import yuku.alkitab.base.util.IntArrayList;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.util.IntArrayList;
 
 public class TypeHighlightDialog {
 	final AlertDialog alert;

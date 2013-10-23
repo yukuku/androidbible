@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import yuku.alkitab.debug.R;
-import yuku.alkitab.base.util.Ari;
+import yuku.alkitab.util.Ari;
 import yuku.alkitab.yes2.Yes2Writer;
 import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.alkitab.yes2.model.PericopeData;

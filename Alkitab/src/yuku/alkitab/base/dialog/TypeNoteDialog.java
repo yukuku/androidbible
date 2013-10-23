@@ -13,9 +13,9 @@ import java.util.Date;
 
 import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.util.Ari;
-import yuku.alkitab.base.model.Book;
-import yuku.alkitab.base.model.Bookmark2;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.model.Book;
+import yuku.alkitab.model.Bookmark2;
 import yuku.alkitab.base.storage.Db;
 
 public class TypeNoteDialog {

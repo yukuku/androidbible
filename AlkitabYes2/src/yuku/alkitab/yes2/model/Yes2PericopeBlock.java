@@ -2,7 +2,7 @@ package yuku.alkitab.yes2.model;
 
 import java.io.IOException;
 
-import yuku.alkitab.base.model.PericopeBlock;
+import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.yes2.io.RandomInputStream;
 import yuku.bintex.BintexReader;
 

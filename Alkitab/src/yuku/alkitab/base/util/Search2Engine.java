@@ -13,8 +13,10 @@ import android.util.TimingLogger;
 import yuku.afw.D;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.config.AppConfig;
-import yuku.alkitab.base.model.Book;
-import yuku.alkitab.base.model.SingleChapterVerses;
+import yuku.alkitab.model.Book;
+import yuku.alkitab.model.SingleChapterVerses;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.util.IntArrayList;
 import yuku.bintex.BintexReader;
 
 import java.io.BufferedInputStream;

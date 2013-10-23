@@ -20,7 +20,7 @@ import android.widget.TextView.BufferType;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.model.PericopeBlock;
+import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.base.util.Appearances;
 
 /**

@@ -1,4 +1,4 @@
-package yuku.alkitab.base.util;
+package yuku.alkitab.util;
 
 import android.os.Parcel;
 import android.os.Parcelable;

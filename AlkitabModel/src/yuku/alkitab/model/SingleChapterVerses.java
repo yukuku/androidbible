@@ -1,4 +1,4 @@
-package yuku.alkitab.base.model;
+package yuku.alkitab.model;
 
 public abstract class SingleChapterVerses {
 	public static final String TAG = SingleChapterVerses.class.getSimpleName();

@@ -1,7 +1,7 @@
 package yuku.alkitab.yes2.section;
 
 import android.util.Log;
-import yuku.alkitab.base.model.XrefEntry;
+import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.yes2.io.RandomInputStream;
 import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexReader;

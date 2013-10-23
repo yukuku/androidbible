@@ -1,6 +1,6 @@
 package yuku.alkitab.yes2.model;
 
-import yuku.alkitab.base.model.Book;
+import yuku.alkitab.model.Book;
 import yuku.bintex.BintexReader;
 import yuku.bintex.BintexWriter;
 import yuku.bintex.ValueMap;

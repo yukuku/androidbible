@@ -2,14 +2,14 @@ package yuku.alkitab.yes1;
 
 import android.util.Log;
 import yuku.afw.D;
-import yuku.alkitab.base.model.Book;
-import yuku.alkitab.base.model.FootnoteEntry;
-import yuku.alkitab.base.model.PericopeBlock;
-import yuku.alkitab.base.model.SingleChapterVerses;
-import yuku.alkitab.base.model.XrefEntry;
+import yuku.alkitab.model.Book;
+import yuku.alkitab.model.FootnoteEntry;
+import yuku.alkitab.model.PericopeBlock;
+import yuku.alkitab.model.SingleChapterVerses;
+import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.base.storage.OldVerseTextDecoder;
 import yuku.alkitab.base.storage.VerseTextDecoder;
-import yuku.alkitab.base.util.Ari;
+import yuku.alkitab.util.Ari;
 import yuku.alkitab.io.BibleReader;
 import yuku.bintex.BintexReader;
 

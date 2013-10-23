@@ -2,7 +2,7 @@ package yuku.alkitab.base.util;
 
 import android.util.Log;
 import yuku.alkitab.debug.BuildConfig;
-import yuku.alkitab.base.model.Book;
+import yuku.alkitab.model.Book;
 
 import java.util.ArrayList;
 import java.util.Arrays;

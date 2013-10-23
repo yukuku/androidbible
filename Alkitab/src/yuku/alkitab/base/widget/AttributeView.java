@@ -11,7 +11,7 @@ import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.base.model.Book;
+import yuku.alkitab.model.Book;
 
 public class AttributeView extends View {
 
