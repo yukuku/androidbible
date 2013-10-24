@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -50,12 +51,9 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 			int appWidgetId = appWidgetIds[i];
 			buildUpdate(context, appWidgetManager, appWidgetId);
 		}
-		setAlarm(context, appWidgetIds);
-	}
-
-	@Override
-	public void onReceive(final Context context, final Intent intent) {
-		super.onReceive(context, intent);
+		ComponentName componentName = new ComponentName(context, DailyVerseAppWidgetReceiver.class);
+		int[] allWidgetIds = appWidgetManager.getAppWidgetIds(componentName);
+		setAlarm(context, allWidgetIds);
 	}
 
 	@Override
@@ -63,8 +61,15 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		super.onDeleted(context, appWidgetIds);
 		for (int appWidgetId : appWidgetIds) {
 			String keyPrefix = "app_widget_" + appWidgetId;
-			Preferences.remove(keyPrefix + "_click");
-			Preferences.remove(keyPrefix + "_version");
+			Preferences.hold();
+			try {
+				Preferences.remove(keyPrefix + "_click");
+				Preferences.remove(keyPrefix + "_version");
+				Preferences.remove(keyPrefix + "_option_transparent_background");
+				Preferences.remove(keyPrefix + "_option_dark_text");
+			} finally {
+				Preferences.unhold();
+			}
 		}
 	}
 
@@ -131,15 +136,29 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		svcIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 		svcIntent.putExtra("random", new Random().nextInt());
 		svcIntent.setData(Uri.parse(svcIntent.toUri(Intent.URI_INTENT_SCHEME)));
+		final boolean optionTransparentBackground = getOptionTransparentBackground(appWidgetId);
+		final boolean optionDarkText = getOptionDarkText(appWidgetId);
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.daily_verse_app_widget);
+		if (optionTransparentBackground) {
+			remoteViews.setInt(R.id.root, "setBackgroundResource", android.R.color.transparent);
+		}
+		if (optionDarkText) {
+			remoteViews.setTextColor(R.id.tReference, 0xff000000);
+			remoteViews.setImageViewResource(R.id.bPrev, R.drawable.ic_nav_left_dark);
+			remoteViews.setImageViewResource(R.id.bNext, R.drawable.ic_nav_right_dark);
+		}
 		remoteViews.setRemoteAdapter(R.id.lsVerse, svcIntent);
 		return remoteViews;
 	}
 
 	private static RemoteViews getRemoteViews(final Context context, final int appWidgetId) {
 		SpannableStringBuilder verseText = new SpannableStringBuilder();
-		Version version = getVersion(appWidgetId);
-		int[] aris = getVerse(appWidgetId);
+
+		final Version version = getVersion(appWidgetId);
+		final int[] aris = getVerse(appWidgetId);
+		final boolean optionTransparentBackground = getOptionTransparentBackground(appWidgetId);
+		final boolean optionDarkText = getOptionDarkText(appWidgetId);
+
 		boolean showVerseNumber = false;
 		if (aris.length > 1) {
 			showVerseNumber = true;
@@ -151,9 +170,26 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 			verseText.append(getText(version, aris[i], showVerseNumber));
 		}
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.daily_verse_app_widget_legacy);
+		if (optionTransparentBackground && Build.VERSION.SDK_INT >= 8) { // API 7 not supported
+			remoteViews.setInt(R.id.root, "setBackgroundResource", android.R.color.transparent);
+		}
+		if (optionDarkText) {
+			remoteViews.setTextColor(R.id.tVerse, 0xff000000);
+			remoteViews.setTextColor(R.id.tReference, 0xff000000);
+			remoteViews.setImageViewResource(R.id.bPrev, R.drawable.ic_nav_left_dark);
+			remoteViews.setImageViewResource(R.id.bNext, R.drawable.ic_nav_right_dark);
+		}
 		remoteViews.setTextViewText(R.id.tVerse, verseText);
 
 		return remoteViews;
+	}
+
+	public static boolean getOptionTransparentBackground(final int appWidgetId) {
+		return Preferences.getBoolean("app_widget_" + appWidgetId + "_option_transparent_background", false);
+	}
+
+	public static boolean getOptionDarkText(final int appWidgetId) {
+		return Preferences.getBoolean("app_widget_" + appWidgetId + "_option_dark_text", false);
 	}
 
 	public static class ClickReceiver extends BroadcastReceiver {
@@ -253,9 +289,8 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		final Calendar calendar = GregorianCalendar.getInstance();
 		long year = calendar.get(Calendar.YEAR);
 		long day = calendar.get(Calendar.DAY_OF_YEAR);
-		long randomDay = (year - 1900) * 1000 + day;
-
-		long randomNumberSeed = randomDay * 10000 + appWidgetId * 100 + numOfClick;
+		long randomDay = ((year - 1900) << 9) | day;
+		long randomNumberSeed = (appWidgetId << 20) | (randomDay + numOfClick);
 		Random r = new Random(randomNumberSeed);
 		int random = r.nextInt(size);
 

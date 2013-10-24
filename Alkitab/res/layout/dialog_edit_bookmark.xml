@@ -44,7 +44,8 @@
                 android:layout_marginRight="8dp"
                 android:paddingTop="8dp"
                 android:text="@string/labels_titikdua"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/lLabels"/>
 
             <Button
                 android:id="@+id/bAddLabel"
