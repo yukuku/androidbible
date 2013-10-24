@@ -4,7 +4,8 @@
 	<edisi>
 		<internal locale="in" shortName="TB"      longName="Terjemahan Baru" prefix="tb" />
 		<preset locale="in"   shortName="TL"      longName="Terjemahan Lama" filename_preset="in-tl.yes" url="http://alkitab-host.appspot.com/addon/yes2/in-tl--1.yes.gz" />
-		<preset locale="in"   shortName="BIMK"     longName="Bahasa Indonesia Masa Kini" filename_preset="bis.yes" url="http://alkitab-host.appspot.com/addon/yes/bis.yes.gz" />
+		<preset locale="in"   shortName="BIMK"    longName="Bahasa Indonesia Masa Kini" filename_preset="bis.yes" url="http://alkitab-host.appspot.com/addon/yes/bis.yes.gz" />
+		<preset locale="in"   shortName="TSI"     longName="Terjemahan Sederhana Indonesia" filename_preset="in-tsi.yes" url="http://alkitab-host.appspot.com/addon/yes2/in-tsi--1.yes.gz" />
 		<preset locale="jw"   shortName="JAWA"    longName="Jawa" filename_preset="jv-jawa.yes" url="http://alkitab-host.appspot.com/addon/yes2/jv-jawa--1.yes.gz" />
 		<preset locale="su"   shortName="SUNDA"   longName="Sunda" filename_preset="su-sunda.yes" url="http://alkitab-host.appspot.com/addon/yes2/su-sunda--1.yes.gz" />
 		<preset locale="bbc"  shortName="TOBA"    longName="Batak Toba" filename_preset="toba.yes" url="http://alkitab-host.appspot.com/addon/yes/toba.yes.gz" />

@@ -44,6 +44,8 @@
 		<preset locale="he"   shortName="HEB"     longName="Modern Hebrew" filename_preset="he-modern.yes" url="http://alkitab-host.appspot.com/addon/yes2/he-modern--1.yes.gz" />
 		<preset locale="hr"   shortName="CRO"     longName="Croatian" filename_preset="hr-croatian.yes" url="http://alkitab-host.appspot.com/addon/yes2/hr-croatian--1.yes.gz" />
 		<preset locale="hu"   shortName="KAR"     longName="Karoli" filename_preset="hu-karoli.yes" url="http://alkitab-host.appspot.com/addon/yes/hu-karoli/hu-karoli.yes.gz" />
+		<preset locale="in"   shortName="TL"      longName="Terjemahan Lama" filename_preset="in-tl.yes" url="http://alkitab-host.appspot.com/addon/yes2/in-tl--1.yes.gz" />
+		<preset locale="in"   shortName="TSI"     longName="Terjemahan Sederhana Indonesia" filename_preset="in-tsi.yes" url="http://alkitab-host.appspot.com/addon/yes2/in-tsi--1.yes.gz" />
 		<preset locale="it"   shortName="IGD"     longName="Diodati Bibbia" filename_preset="it-diodati.yes" url="http://alkitab-host.appspot.com/addon/yes2/it-diodati--1.yes.gz" />
 		<preset locale="it"   shortName="ITRIV"   longName="Riveduta" filename_preset="it-riveduta.yes" url="http://alkitab-host.appspot.com/addon/yes2/it-riveduta--1.yes.gz" />
 		<preset locale="ja"   shortName="KOUGO"   longName="口語訳" filename_preset="ja-kougo.yes" url="http://alkitab-host.appspot.com/addon/yes/ja-kougo/ja-kougo.yes.gz" />
