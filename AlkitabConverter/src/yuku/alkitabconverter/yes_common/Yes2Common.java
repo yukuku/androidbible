@@ -4,7 +4,8 @@ import yuku.alkitab.model.FootnoteEntry;
 import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.yes2.Yes2Writer;
 import yuku.alkitab.yes2.compress.SnappyOutputStream;
-import yuku.alkitab.yes2.io.MemoryRandomAccessFile;
+import yuku.alkitab.yes2.io.MemoryRandomOutputStream;
+import yuku.alkitab.yes2.io.RandomAccessFileRandomOutputStream;
 import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitab.yes2.model.Yes2Book;
@@ -137,7 +138,7 @@ public class Yes2Common {
 
 		RandomAccessFile raf = new RandomAccessFile(outputFile, "rw"); //$NON-NLS-1$
 		raf.setLength(0);
-		RandomOutputStream output = new RandomOutputStream(raf);
+		RandomOutputStream output = new RandomAccessFileRandomOutputStream(raf);
 		yesWriter.writeToFile(output);
 		
 		output.close();
@@ -252,7 +253,7 @@ public class Yes2Common {
 			return compressionInfo.getSectionAttributes();
 		}
 
-		@Override public void write(RandomOutputStream output) throws Exception {
+		@Override public void write(RandomOutputStream output) throws IOException {
 			compressionInfo.writeOutputBufferTo(output);
 		}
 	}
@@ -265,8 +266,8 @@ public class Yes2Common {
 			compressionInfo = new CompressionInfo(compressed);
 
 			try {
-				MemoryRandomAccessFile mem = new MemoryRandomAccessFile();
-				super.write(new RandomOutputStream(mem));
+				final MemoryRandomOutputStream mem = new MemoryRandomOutputStream();
+				super.write(mem);
 
 				final OutputStream os = compressionInfo.getOutputStream();
 				os.write(mem.getBuffer(), mem.getBufferOffset(), mem.getBufferLength());
@@ -281,7 +282,7 @@ public class Yes2Common {
 			return compressionInfo.getSectionAttributes();
 		}
 
-		@Override public void write(RandomOutputStream output) throws Exception {
+		@Override public void write(RandomOutputStream output) throws IOException {
 			// DO NOT CALL SUPER!
 			compressionInfo.writeOutputBufferTo(output);
 		}
@@ -304,7 +305,7 @@ public class Yes2Common {
 			return compressionInfo.getSectionAttributes();
 		}
 
-		@Override public void write(RandomOutputStream output) throws Exception {
+		@Override public void write(RandomOutputStream output) throws IOException {
 			compressionInfo.writeOutputBufferTo(output);
 		}
 	}
@@ -326,7 +327,7 @@ public class Yes2Common {
 			return compressionInfo.getSectionAttributes();
 		}
 
-		@Override public void write(RandomOutputStream output) throws Exception {
+		@Override public void write(RandomOutputStream output) throws IOException {
 			compressionInfo.writeOutputBufferTo(output);
 		}
 	}
