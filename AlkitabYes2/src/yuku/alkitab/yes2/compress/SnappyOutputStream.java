@@ -1,11 +1,10 @@
 package yuku.alkitab.yes2.compress;
 
+import yuku.snappy.codec.Snappy;
+
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
-import yuku.alkitab.util.IntArrayList;
-import yuku.snappy.codec.Snappy;
 
 public class SnappyOutputStream extends FilterOutputStream {
 	public final String TAG = SnappyOutputStream.class.getSimpleName();
@@ -15,7 +14,8 @@ public class SnappyOutputStream extends FilterOutputStream {
 	private byte[] uncompressed_buf;
 	private byte[] compressed_buf;
 	private int uncompressed_offset;
-	private IntArrayList compressed_block_sizes = new IntArrayList();
+	private int[] compressed_block_sizes = new int[100];
+	private int compressed_block_sizes_length = 0;
 
 	public SnappyOutputStream(OutputStream out, int block_size) {
 		super(out);
@@ -58,7 +58,14 @@ public class SnappyOutputStream extends FilterOutputStream {
 		if (uncompressed_offset > 0) {
 			int compressed_len = snappy.compress(uncompressed_buf, 0, compressed_buf, 0, uncompressed_offset);
 			out.write(compressed_buf, 0, compressed_len);
-			compressed_block_sizes.add(compressed_len);
+			// check for need of expanding compressed_block_sizes array
+			while (compressed_block_sizes_length >= compressed_block_sizes.length) {
+				final int[] newArray = new int[compressed_block_sizes.length << 1];
+				System.arraycopy(compressed_block_sizes, 0, newArray, 0, compressed_block_sizes_length);
+				compressed_block_sizes = newArray;
+			}
+			compressed_block_sizes[compressed_block_sizes_length] = compressed_len;
+			compressed_block_sizes_length++;
 			uncompressed_offset = 0;
 		}
 	}
@@ -69,8 +76,8 @@ public class SnappyOutputStream extends FilterOutputStream {
 	}
 	
 	public int[] getCompressedBlockSizes() {
-		int[] res = new int[compressed_block_sizes.size()];
-		System.arraycopy(compressed_block_sizes.buffer(), 0, res, 0, res.length);
+		int[] res = new int[compressed_block_sizes_length];
+		System.arraycopy(compressed_block_sizes, 0, res, 0, compressed_block_sizes_length);
 		return res;
 	}
 }
