@@ -1,8 +1,8 @@
 package yuku.alkitab.test;
 
 import android.test.AndroidTestCase;
-import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.TargetDecoder;
+import yuku.alkitab.util.IntArrayList;
 
 public class TargetDecoderTest extends AndroidTestCase {
 	void testDecode(String encoded, IntArrayList ariRanges) {
