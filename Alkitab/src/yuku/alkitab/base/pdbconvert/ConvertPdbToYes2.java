@@ -12,6 +12,7 @@ import yuku.alkitab.yes2.Yes2Writer;
 import yuku.alkitab.yes2.io.RandomAccessFileRandomOutputStream;
 import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.alkitab.yes2.model.PericopeData;
+import yuku.alkitab.yes2.model.VerseBytes;
 import yuku.alkitab.yes2.model.Yes2Book;
 import yuku.alkitab.yes2.section.BooksInfoSection;
 import yuku.alkitab.yes2.section.PericopesSection;
@@ -19,7 +20,6 @@ import yuku.alkitab.yes2.section.VersionInfoSection;
 import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexWriter;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
@@ -304,30 +304,6 @@ public class ConvertPdbToYes2 {
 		entry.block = new PericopeData.Block();
 		entry.block.title = title;
 		pericopeData_.addEntry(entry);
-	}
-	
-	/** Get the complete bytes (including information about length and/or separators for a verse */
-	static class VerseBytes {
-		static ThreadLocal<ByteArrayOutputStream> baos_ = new ThreadLocal<ByteArrayOutputStream>() {
-			@Override protected ByteArrayOutputStream initialValue() {
-				return new ByteArrayOutputStream(1000);
-			}
-		};
-		
-		static byte[] bytesForAVerse(String verse) {
-			ByteArrayOutputStream baos = baos_.get();
-			baos.reset();
-			BintexWriter bw = new BintexWriter(baos);
-			
-			try {
-				byte[] verse_bytes = verse.getBytes("utf-8");
-				bw.writeVarUint(verse_bytes.length);
-				bw.writeRaw(verse_bytes);
-				return baos.toByteArray();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
 	}
 
 	/**

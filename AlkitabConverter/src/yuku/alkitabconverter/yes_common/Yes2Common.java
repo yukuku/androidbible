@@ -8,6 +8,7 @@ import yuku.alkitab.yes2.io.MemoryRandomOutputStream;
 import yuku.alkitab.yes2.io.RandomAccessFileRandomOutputStream;
 import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.alkitab.yes2.model.PericopeData;
+import yuku.alkitab.yes2.model.VerseBytes;
 import yuku.alkitab.yes2.model.Yes2Book;
 import yuku.alkitab.yes2.section.BooksInfoSection;
 import yuku.alkitab.yes2.section.FootnotesSection;
@@ -144,34 +145,6 @@ public class Yes2Common {
 		output.close();
 	}
 
-	/** Get the complete bytes (including information about length and/or separators for a verse */
-	static class VerseBytes {
-		static ThreadLocal<ByteArrayOutputStream> baos_ = new ThreadLocal<ByteArrayOutputStream>() {
-			@Override protected ByteArrayOutputStream initialValue() {
-				return new ByteArrayOutputStream(1000);
-			}
-		};
-		
-		static byte[] bytesForAVerse(String verse) {
-			ByteArrayOutputStream baos = baos_.get();
-			baos.reset();
-			
-			try {
-				BintexWriter bw = new BintexWriter(baos);
-				try {
-					byte[] verse_bytes = verse.getBytes("utf-8");
-					bw.writeVarUint(verse_bytes.length);
-					bw.writeRaw(verse_bytes);
-					return baos.toByteArray();
-				} finally {
-					bw.close();
-				}
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
-
 	static class CompressionInfo {
 		final boolean compressed;
 		final int COMPRESS_BLOCK_SIZE = 32768;
@@ -220,12 +193,6 @@ public class Yes2Common {
 		}
 	}
 
-	/**
-	 * Each verse is written as follows:
-	 *
-	 *	- varuint length_in_bytes
-	 *  - byte[length_in_bytes] encoded_text
-	 */
 	static class CompressibleLazyText extends SectionContent implements SectionContent.Writer {
 		final CompressionInfo compressionInfo;
 
