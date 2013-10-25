@@ -18,7 +18,7 @@ public class MemoryRandomOutputStream extends RandomOutputStream {
 	}
 
 	@Override public void write(int oneByte) throws IOException {
-		if (pos >= length) {
+		if (pos >= buf.length) {
 			expandBufTo((int) (length * 1.5) + 1);
 		}
 		
