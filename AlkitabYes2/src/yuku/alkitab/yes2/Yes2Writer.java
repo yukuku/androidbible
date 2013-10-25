@@ -1,14 +1,14 @@
 package yuku.alkitab.yes2;
 
 import android.util.Log;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexWriter;
 import yuku.bintex.ValueMap;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * YES version 2 file format
@@ -75,7 +75,7 @@ public class Yes2Writer {
 
 	public List<SectionContent> sections = new ArrayList<SectionContent>();
 
-	public void writeToFile(RandomOutputStream output) throws Exception {
+	public void writeToFile(RandomOutputStream output) throws IOException {
 		BintexWriter bw = new BintexWriter(output);
 		
 		int section_count = sections.size();

@@ -13,7 +13,7 @@ public class Yes2Book extends Book {
 	public int offset = -1;
 	public int[] chapter_offsets;
 	
-	public void toBytes(BintexWriter bw) throws Exception {
+	public void toBytes(BintexWriter bw) throws IOException {
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		map.put("version", 3);
 		map.put("bookId", bookId);

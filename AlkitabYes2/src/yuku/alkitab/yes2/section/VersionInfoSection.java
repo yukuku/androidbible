@@ -1,14 +1,15 @@
 package yuku.alkitab.yes2.section;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import yuku.alkitab.yes2.io.RandomInputStream;
 import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexReader;
 import yuku.bintex.BintexWriter;
 import yuku.bintex.ValueMap;
+
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class VersionInfoSection extends SectionContent implements SectionContent.Writer {
 	public String shortName;
@@ -24,7 +25,7 @@ public class VersionInfoSection extends SectionContent implements SectionContent
 		super("versionInfo");
 	}
 
-	@Override public void write(RandomOutputStream output) throws Exception {
+	@Override public void write(RandomOutputStream output) throws IOException {
 		BintexWriter bw = new BintexWriter(output);
 		
 		Map<String, Object> map = new LinkedHashMap<String, Object>();

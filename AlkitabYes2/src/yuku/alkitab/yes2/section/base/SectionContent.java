@@ -4,6 +4,8 @@ import yuku.alkitab.yes2.io.RandomInputStream;
 import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.bintex.ValueMap;
 
+import java.io.IOException;
+
 public class SectionContent {
 	private final String name;
 	private final byte[] nameAsBytesWithLength;
@@ -47,7 +49,7 @@ public class SectionContent {
 	}
 
 	public interface Writer {
-		void write(RandomOutputStream output) throws Exception;
+		void write(RandomOutputStream output) throws IOException;
 	}
 	
 	public interface Reader<T extends SectionContent> {

@@ -1,7 +1,5 @@
 package yuku.alkitab.yes2.section;
 
-import java.io.IOException;
-
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.PericopeIndex;
 import yuku.alkitab.yes2.io.RandomInputStream;
@@ -12,6 +10,8 @@ import yuku.alkitab.yes2.model.Yes2PericopeBlock;
 import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexReader;
 import yuku.bintex.BintexWriter;
+
+import java.io.IOException;
 
 public class PericopesSection extends SectionContent implements SectionContent.Writer {
 	public static final String SECTION_NAME = "pericopes";
@@ -39,7 +39,7 @@ public class PericopesSection extends SectionContent implements SectionContent.W
 		return Yes2PericopeBlock.read(input_);
 	}
 	
-	@Override public void write(RandomOutputStream output) throws Exception {
+	@Override public void write(RandomOutputStream output) throws IOException {
 		BintexWriter bw = new BintexWriter(output);
 		
 		long savedpos_sectionBegin = output.getFilePointer();

@@ -1,14 +1,15 @@
 package yuku.alkitab.yes2.section;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import yuku.alkitab.yes2.io.RandomInputStream;
 import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.alkitab.yes2.model.Yes2Book;
 import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexReader;
 import yuku.bintex.BintexWriter;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BooksInfoSection extends SectionContent implements SectionContent.Writer {
 	public static final String SECTION_NAME = "booksInfo";
@@ -19,7 +20,7 @@ public class BooksInfoSection extends SectionContent implements SectionContent.W
 		super(SECTION_NAME);
 	}
 	
-	@Override public void write(RandomOutputStream output) throws Exception {
+	@Override public void write(RandomOutputStream output) throws IOException {
 		BintexWriter bw = new BintexWriter(output);
 		
 		// int book_count
