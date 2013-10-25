@@ -14,6 +14,7 @@ import yuku.alkitab.yes2.section.PericopesSection;
 import yuku.alkitab.yes2.section.VersionInfoSection;
 import yuku.alkitab.yes2.section.XrefsSection;
 import yuku.alkitab.yes2.section.base.SectionContent;
+import yuku.alkitabconverter.util.FootnoteDb;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.TextDb.VerseState;
 import yuku.alkitabconverter.util.XrefDb;
@@ -319,6 +320,7 @@ public class Yes2Common {
 			compressionInfo = new CompressionInfo(compressed);
 
 			final BintexWriter bw = new BintexWriter(compressionInfo.getOutputStream());
+			FootnoteDb.writeFootnoteEntriesTo(footnoteEntries, bw);
 
 			compressionInfo.finalizeOutputStream();
 		}
