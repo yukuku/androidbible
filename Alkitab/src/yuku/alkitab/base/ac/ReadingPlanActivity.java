@@ -3,20 +3,23 @@ package yuku.alkitab.base.ac;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
-import android.util.Pair;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.model.Version;
-import yuku.alkitab.base.util.IntArrayList;
+import yuku.alkitab.base.util.ReadingPlanManager;
 import yuku.alkitab.debug.R;
+
+import java.io.InputStream;
 
 public class ReadingPlanActivity extends Activity {
 
@@ -52,33 +55,18 @@ public class ReadingPlanActivity extends Activity {
 
 	private void loadReadingPlan() {
 		//TODO: proper method. Testing only
-		ReadingPlan res = new ReadingPlan();
-		res.totalDays = 2;
+		InputStream is = App.context.getResources().openRawResource(R.raw.wsts);
+		ReadingPlan res = ReadingPlanManager.readVersion1(is);
 
-		IntArrayList aris = new IntArrayList();
-		aris.set(0, 257);
-		aris.set(1, 277);
-		aris.set(2, 2886657);
-		aris.set(3, 2886659);
-		aris.set(4, 3738625);
-		aris.set(5, 3738626);
-		res.dailyVerse.add(new Pair<Integer, IntArrayList>(3, aris));
-
-		IntArrayList aris2 = new IntArrayList();
-		aris2.set(0, 3738569);
-		aris2.set(1, 3738572);
-		aris2.set(2, 3539204);
-		aris2.set(3, 3539207);
-		res.dailyVerse.add(new Pair<Integer, IntArrayList>(2, aris2));
 		readingPlan = res;
 	}
 
 	class TodayReadingsAdapter extends EasyAdapter {
 
-		private Pair<Integer,IntArrayList> todayReadings;
+		private int[] todayReadings;
 
 		public void load() {
-			todayReadings = readingPlan.dailyVerse.get(dayNumber);
+			todayReadings = readingPlan.dailyVerses.get(dayNumber);
 		}
 
 		@Override
@@ -90,13 +78,15 @@ public class ReadingPlanActivity extends Activity {
 		public void bindView(final View view, final int position, final ViewGroup parent) {
 			TextView textView = V.get(view, android.R.id.text1);
 			int start = position * 2;
-			int[] ari = {todayReadings.second.get(start), todayReadings.second.get(start + 1)};
+			Log.d(TAG, "position: " + position);
+			Log.d(TAG, "jumlah: " + todayReadings.length);
+			int[] ari = {todayReadings[start], todayReadings[start+1]};
 			textView.setText(getReference(S.activeVersion, ari));
 		}
 
 		@Override
 		public int getCount() {
-			return todayReadings.first;
+			return todayReadings.length / 2;
 		}
 	}
 
@@ -110,21 +100,20 @@ public class ReadingPlanActivity extends Activity {
 		public void bindView(final View view, final int position, final ViewGroup parent) {
 			TextView textView = V.get(view, android.R.id.text1);
 			String text = "";
-			Pair<Integer, IntArrayList> pair = readingPlan.dailyVerse.get(position);
-			for (int i = 0; i < pair.first; i++) {
-				int[] ari = {pair.second.get(i), pair.second.get(i * 2)};
+			int[] aris = readingPlan.dailyVerses.get(position);
+			for (int i = 0; i < aris.length/2; i++) {
+				int[] ariStartEnd = {aris[i*2], aris[i*2+1]};
 				if (i > 0) {
 					text += ";";
 				}
-				text += getReference(S.activeVersion, ari);
+				text += getReference(S.activeVersion, ariStartEnd);
 			}
 			textView.setText(text);
-
 		}
 
 		@Override
 		public int getCount() {
-			return readingPlan.totalDays;
+			return readingPlan.duration;
 		}
 	}
 
@@ -133,7 +122,7 @@ public class ReadingPlanActivity extends Activity {
 		String reference = version.reference(ari[0]);
 		sb.append(reference);
 		if (ari.length > 1) {
-			int lastVerse = Ari.toVerse(ari[0]) + ari.length - 1;
+			String lastVerse = Ari.toChapter(ari[1]) + ":" + Ari.toVerse(ari[1]);
 			sb.append("-" + lastVerse);
 		}
 		return sb;

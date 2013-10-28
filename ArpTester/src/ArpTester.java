@@ -39,7 +39,7 @@ public class ArpTester {
 				System.out.println(entry.getKey() + " " + entry.getValue());
 			}
 
-			int days =  (Integer) map.get("durationDay");
+			int days =  (Integer) map.get("duration");
 			List<int[]> plans = new ArrayList<int[]>();
 
 			int counter = 0;

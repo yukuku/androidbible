@@ -38,10 +38,9 @@ public class BrpToArp {
 			//Write info
 			Map<String, String> infos = brp.infos;
 			ValueMap map = new ValueMap();
-			map.put("version", 1);
-			map.put("shortName", infos.get("shortName"));
-			map.put("longName", infos.get("longName"));
-			map.put("durationDay", Integer.parseInt(infos.get("durationDay")));
+			map.put("title", infos.get("title"));
+			map.put("description", infos.get("description"));
+			map.put("duration", Integer.parseInt(infos.get("duration")));
 			writer.writeValueSimpleMap(map);
 
 			//Write plans

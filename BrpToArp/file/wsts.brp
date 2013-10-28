@@ -1,7 +1,7 @@
 info	version	1
-info	shortName	Twenty Minutes A Day
-info	longName	Twenty Minutes A Day
-info	durationDay	365
+info	title	Twenty Minutes A Day
+info	description	Twenty Minutes A Day
+info	duration	365
 plan	2	257	537	2687233	2687312
 plan	2	769	1312	2687489	2687540
 plan	2	1537	2070	2687745	2687782
