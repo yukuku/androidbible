@@ -199,10 +199,10 @@ public class ReadingPlanActivity extends Activity {
 
 		sb.append(" " + startChapter);
 
-		if (startVerse == 1) {
+		if (startVerse == 0) {
 			if (lastVerse == 0) {
-				if (startChapter != lastChapter - 1) {
-					sb.append("-" + (lastChapter - 1));
+				if (startChapter != lastChapter) {
+					sb.append("-" + lastChapter);
 				}
 			} else {
 				sb.append("-" + lastChapter + ":" + lastVerse);
