@@ -6,6 +6,7 @@ import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,6 +26,9 @@ public class ReadingPlanActivity extends Activity {
 
 	private ReadingPlan readingPlan;
 	private int dayNumber;
+	private TodayReadingsAdapter todayReadingsAdapter;
+	private ImageButton bLeft;
+	private ImageButton bRight;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,20 +37,61 @@ public class ReadingPlanActivity extends Activity {
 		ListView lsTodayReadings = V.get(this, R.id.lsTodayReadings);
 		ListView lsDailyPlan = V.get(this, R.id.lsDailyPlan);
 
-
 		loadDayNumber();
 		loadReadingPlan();
 
-		TodayReadingsAdapter todayReadingsAdapter = new TodayReadingsAdapter();
+		//List view
+		todayReadingsAdapter = new TodayReadingsAdapter();
 		todayReadingsAdapter.load();
 		lsTodayReadings.setAdapter(todayReadingsAdapter);
 
-		DailyPlanAdapter dailyPlanAdapter = new DailyPlanAdapter();
+		final DailyPlanAdapter dailyPlanAdapter = new DailyPlanAdapter();
 		lsDailyPlan.setAdapter(dailyPlanAdapter);
 
 		setListViewHeightBasedOnChildren(lsTodayReadings);
 		setListViewHeightBasedOnChildren(lsDailyPlan);
 
+		//button
+		bLeft = V.get(this, R.id.bLeft);
+		bRight = V.get(this, R.id.bRight);
+
+		updateButtonStatus();
+
+		bLeft.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				changeDay(-1);
+			}
+		});
+
+		bRight.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				changeDay(+1);
+			}
+		});
+
+	}
+
+	private void changeDay(int day) {
+		dayNumber += day;
+		todayReadingsAdapter.load();
+		todayReadingsAdapter.notifyDataSetChanged();
+
+		updateButtonStatus();
+	}
+
+	private void updateButtonStatus() {            //TODO look disabled
+		if (dayNumber == 0) {
+			bLeft.setEnabled(false);
+			bRight.setEnabled(true);
+		} else if (dayNumber == readingPlan.duration - 1) {
+			bLeft.setEnabled(true);
+			bRight.setEnabled(false);
+		} else {
+			bLeft.setEnabled(true);
+			bRight.setEnabled(true);
+		}
 	}
 
 	private void loadDayNumber() {
