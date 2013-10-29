@@ -80,6 +80,7 @@ import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
+import yuku.alkitab.base.util.OsisBookNames;
 import yuku.alkitab.base.util.Search2Engine.Query;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.AttributeView;
@@ -97,7 +98,6 @@ import yuku.alkitab.base.widget.VersesView.PressResult;
 import yuku.alkitab.debug.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -1447,31 +1447,26 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	 * If verse_1_ranges is null, verses will be ignored.
 	 */
 	public static String createVerseUrl(final String versionShortName, Book book, int chapter_1, String verse_1_ranges) {
-		AppConfig c = AppConfig.get();
-		if (book.bookId >= c.url_standardBookNames.length) {
-			return null;
+		final AppConfig c = AppConfig.get();
+		String format = c.shareUrlFormat;
+
+		String osisBookName = OsisBookNames.getBookName(book.bookId);
+		if (osisBookName == null) {
+			osisBookName = book.shortName; // fall back
 		}
-		String tobeBook = c.url_standardBookNames[book.bookId];
-		String tobeChapter = String.valueOf(chapter_1);
-		String tobeVerse = verse_1_ranges;
-		String tobeVersion = "";
-		for (String format: c.url_format.split(" ")) { //$NON-NLS-1$
-			if ("slash1".equals(format)) tobeChapter = "/" + tobeChapter; //$NON-NLS-1$ //$NON-NLS-2$
-			if ("slash2".equals(format)) tobeVerse = "/" + tobeVerse; //$NON-NLS-1$ //$NON-NLS-2$
-			if ("dot1".equals(format)) tobeChapter = "." + tobeChapter; //$NON-NLS-1$ //$NON-NLS-2$
-			if ("dot2".equals(format)) tobeVerse = "." + tobeVerse; //$NON-NLS-1$ //$NON-NLS-2$
-			if ("nospace0".equals(format)) tobeBook = tobeBook.replaceAll("\\s+", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			if ("version_refly".equals(format)) {
-				if (Arrays.asList("ESV KJV NIV DARBY ASV DRA YLT".split(" ")).contains(versionShortName)) {
-					if (versionShortName.equals("DRA")) {
-						tobeVersion = ";DOUAYRHEIMS";
-					} else {
-						tobeVersion = ";" + versionShortName;
-					}
-				}
-			}
+		format = format.replace("{book.osis}", osisBookName);
+		format = format.replace("{chapter}", String.valueOf(chapter_1));
+		format = format.replace("{verses}", verse_1_ranges == null? "": verse_1_ranges);
+
+		String versionShortName2;
+		if (versionShortName.equals("DRA")) {
+			versionShortName2 = "DOUAYRHEIMS";
+		} else {
+			versionShortName2 = versionShortName;
 		}
-		return c.url_prefix + tobeBook + tobeChapter + (verse_1_ranges == null? "": tobeVerse) + tobeVersion; //$NON-NLS-1$
+		format = format.replace("{version.shortName}", versionShortName2);
+
+		return format;
 	}
 	
 	VersesView.AttributeListener attributeListener = new VersesView.AttributeListener() {

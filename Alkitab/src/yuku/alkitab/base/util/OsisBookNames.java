@@ -147,4 +147,11 @@ public class OsisBookNames {
 
 		return 0;
 	}
+
+	public static String getBookName(final int bookId) {
+		if (bookId < 0 || bookId >= names.length) {
+			return null;
+		}
+		return names[bookId];
+	}
 }

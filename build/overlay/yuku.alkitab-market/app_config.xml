@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
-	<menu renungan="true" gebug="false" edisi="true" bantuan="true" donasi="false" songs="true" />
-	<edisi>
+	<menu 
+		devotion="true"
+		versions="true"
+		help="true"
+		donation="false"
+		songs="true" />
+	<versions>
 		<internal locale="in" shortName="TB"      longName="Terjemahan Baru" prefix="tb" />
 		<preset locale="in"   shortName="TL"      longName="Terjemahan Lama" filename_preset="in-tl.yes" url="http://alkitab-host.appspot.com/addon/yes2/in-tl--1.yes.gz" />
 		<preset locale="in"   shortName="BIMK"    longName="Bahasa Indonesia Masa Kini" filename_preset="bis.yes" url="http://alkitab-host.appspot.com/addon/yes/bis.yes.gz" />
@@ -85,8 +90,8 @@
 		<preset locale="zh"   shortName="CKJVSDS" longName="中文英皇钦定本上帝版简体" filename_preset="zh-ckjvsds.yes" url="http://alkitab-host.appspot.com/addon/yes2/zh-ckjvsds--1.yes.gz" />
 		<preset locale="zh"   shortName="CKJVSDT" longName="中文英皇欽定本上帝版繁體" filename_preset="zh-ckjvsdt.yes" url="http://alkitab-host.appspot.com/addon/yes2/zh-ckjvsdt--1.yes.gz" />
 		<preset locale="zh"   shortName="PINYIN"  longName="Pinyin" filename_preset="zh-pinyin.yes" url="http://alkitab-host.appspot.com/addon/yes2/zh-pinyin--1.yes.gz" />
-	</edisi>
+	</versions>
 	<share>
-		<url prefix="http://alkitab.me/" format="slash1 slash2 nospace0" lang="in" />
+		<url format="http://alkitab.me/{book.osis}/{chapter}/{verses}" />
 	</share>
 </config>

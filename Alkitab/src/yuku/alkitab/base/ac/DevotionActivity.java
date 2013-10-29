@@ -361,9 +361,10 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 					.show();
 					return;
 				}
-				
+
+				// Make sure references are parsed using Indonesian book names.
 				// TODO support english devotions too
-				String[] bookNames = getResources().getStringArray(R.array.nama_kitab_standar_in);
+				String[] bookNames = getResources().getStringArray(R.array.standard_book_names_in);
 				int[] bookIds = new int[bookNames.length];
 				for (int i = 0, len = bookNames.length; i < len; i++) {
 					bookIds[i] = i;

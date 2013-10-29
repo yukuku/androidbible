@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
-	<menu renungan="false" gebug="false" edisi="true" bantuan="true" donasi="true" songs="false" />
+	<menu
+		devotion="false"
+		versions="true"
+		help="true"
+		donation="true"
+		songs="false" />
 	<versions>
 		<internal locale="en" shortName="KJV"     longName="King James" prefix="kjv" />
 		<preset locale="en"   shortName="ASV"     longName="American Standard" filename_preset="en-asv.yes" url="http://alkitab-host.appspot.com/addon/yes/en-asv/en-asv.yes.gz" />
@@ -82,6 +87,6 @@
 		<preset locale="zh"   shortName="PINYIN"  longName="Pinyin" filename_preset="zh-pinyin.yes" url="http://alkitab-host.appspot.com/addon/yes2/zh-pinyin--1.yes.gz" />
 	</versions>
 	<share>
-		<url prefix="http://ref.ly/" format="dot2 nospace0 version_refly" lang="en" />
+		<url format="http://ref.ly/{book.osis}.{chapter}.{verses};{version.shortName}" />
 	</share>
 </config>
