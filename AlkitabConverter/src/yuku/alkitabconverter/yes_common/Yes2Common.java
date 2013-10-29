@@ -59,7 +59,7 @@ public class Yes2Common {
 		}
 	}
 
-	private static BooksInfoSection getBooksInfoSection(VersionInfo versionInfo, TextDb textDb) throws Exception {
+	private static BooksInfoSection getBooksInfoSection(VersionInfo versionInfo, TextDb textDb) throws IOException {
 		// no nulls allowed
 		final List<Yes2Book> yes2books = new ArrayList<Yes2Book>();
 		
@@ -114,12 +114,20 @@ public class Yes2Common {
 		return res;
 	}
 
-	public static void createYesFile(final File outputFile, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed) throws Exception {
+	public static void createYesFile(final File outputFile, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed) throws IOException {
 		createYesFile(outputFile, versionInfo, textDb, pericopeData, compressed, null, null);
 	}
 
-	public static void createYesFile(final File outputFile, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed, final LinkedHashMap<Integer, XrefEntry> xrefEntries, final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries) throws Exception {
-		VersionInfoSection versionInfoSection = getVersionInfoSection(versionInfo, textDb, pericopeData != null);
+    public static void createYesFile(final File outputFile, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed, final LinkedHashMap<Integer, XrefEntry> xrefEntries, final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries) throws IOException {
+        RandomAccessFile raf = new RandomAccessFile(outputFile, "rw"); //$NON-NLS-1$
+        raf.setLength(0);
+        RandomOutputStream output = new RandomAccessFileRandomOutputStream(raf);
+        createYesFile(output, versionInfo, textDb, pericopeData, compressed, xrefEntries, footnoteEntries);
+        output.close();
+    }
+
+    public static void createYesFile(final RandomOutputStream ros, final VersionInfo versionInfo, final TextDb textDb, PericopeData pericopeData, boolean compressed, final LinkedHashMap<Integer, XrefEntry> xrefEntries, final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries) throws IOException {
+        VersionInfoSection versionInfoSection = getVersionInfoSection(versionInfo, textDb, pericopeData != null);
 		BooksInfoSection booksInfoSection = getBooksInfoSection(versionInfo, textDb);
 		
 		Yes2Writer yesWriter = new Yes2Writer();
@@ -138,12 +146,7 @@ public class Yes2Common {
 			yesWriter.sections.add(new CompressibleFootnotesSection(footnoteEntries, compressed));
 		}
 
-		RandomAccessFile raf = new RandomAccessFile(outputFile, "rw"); //$NON-NLS-1$
-		raf.setLength(0);
-		RandomOutputStream output = new RandomAccessFileRandomOutputStream(raf);
-		yesWriter.writeToFile(output);
-		
-		output.close();
+		yesWriter.writeToFile(ros);
 	}
 
 	static class CompressionInfo {
