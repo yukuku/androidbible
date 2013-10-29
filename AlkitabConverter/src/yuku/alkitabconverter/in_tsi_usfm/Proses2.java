@@ -34,7 +34,7 @@ public class Proses2 {
 	static String INFO_LOCALE = "in";
 	static String INFO_SHORT_NAME = "TSI";
 	static String INFO_LONG_NAME = "Terjemahan Sederhana Indonesia";
-	static String INFO_DESCRIPTION = "Terjemahan Sederhana Indonesia (TSI) diterbitkan oleh Pioneer Bible Translators. Teks TSI lengkap dengan catatan-catatan kaki dapat dibaca di m.bahasakita.net atau tsi.bahasakita.net. Tim penerjemah memohon Anda menulis masukan, usulan, atau komentar lain halaman di Facebook “tsi sederhana.” Anda boleh pesan buku-buku TSI yang lain melalui e-mail kepada tim.kita@bahasakita.net. Anda bebas juga untuk mencetak kitab-kitab TSI sesuai informasi yang terdapat di http://bahasakita.net.";
+	static String INFO_DESCRIPTION = "Terjemahan Sederhana Indonesia. Copyright Yayasan Alkitab BahasaKita (Albata). Lihat http://albata.info.";
 
 	TextDb teksDb = new TextDb();
 	StringBuilder misteri = new StringBuilder();

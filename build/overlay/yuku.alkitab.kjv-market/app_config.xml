@@ -73,6 +73,7 @@
 		<preset locale="ru"   shortName="SYNO"    longName="Синодальный перевод" filename_preset="ru-synodal.yes" url="http://alkitab-host.appspot.com/addon/yes2/ru-synodal--1.yes.gz" />
 		<preset locale="sq"   shortName="ALBB"    longName="Albanian" filename_preset="sq-kk.yes" url="http://alkitab-host.appspot.com/addon/yes/sq-kk/sq-kk.yes.gz" />
 		<preset locale="sv"   shortName="SVEN"    longName="Svenska 1917" filename_preset="sv-1917.yes" url="http://alkitab-host.appspot.com/addon/yes2/sv-1917--1.yes.gz" />
+		<preset locale="te"   shortName="TBO"     longName="Telugu Original Version" filename_preset="te-tbo.yes" url="http://alkitab-host.appspot.com/addon/yes2/te-tbo--1.yes.gz" />
 		<preset locale="th"   shortName="TKJV"    longName="Thai KJV" filename_preset="th-kjv.yes" url="http://alkitab-host.appspot.com/addon/yes2/th-kjv--1.yes.gz" />
 		<preset locale="tl"   shortName="TLAB"    longName="Ang Biblia 1905" filename_preset="tl-angbiblia1905.yes" url="http://alkitab-host.appspot.com/addon/yes/tl-angbiblia1905/tl-angbiblia1905.yes.gz" />
 		<preset locale="uk"   shortName="UKK"     longName="Ukrainian NT P.Kulish" filename_preset="uk-kulish.yes" url="http://alkitab-host.appspot.com/addon/yes2/uk-kulish--1.yes.gz" />
