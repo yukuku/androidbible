@@ -1,11 +1,13 @@
 package yuku.alkitab.base.ac;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
+import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.ReadingPlan;
@@ -50,6 +53,17 @@ public class ReadingPlanActivity extends Activity {
 
 		setListViewHeightBasedOnChildren(lsTodayReadings);
 		setListViewHeightBasedOnChildren(lsDailyPlan);
+
+		lsTodayReadings.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+				int ari = todayReadingsAdapter.todayReadings[position * 2];
+
+				Intent intent = IsiActivity.createIntent(ari);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				startActivity(intent);
+			}
+		});
 
 		//button
 		bLeft = V.get(this, R.id.bLeft);
