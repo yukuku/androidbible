@@ -65,6 +65,17 @@ public class ReadingPlanActivity extends Activity {
 			}
 		});
 
+		lsDailyPlan.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+				int ari = readingPlan.dailyVerses.get(position)[0];
+
+				Intent intent = IsiActivity.createIntent(ari);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				startActivity(intent);
+			}
+		});
+
 		//button
 		bLeft = V.get(this, R.id.bLeft);
 		bRight = V.get(this, R.id.bRight);
