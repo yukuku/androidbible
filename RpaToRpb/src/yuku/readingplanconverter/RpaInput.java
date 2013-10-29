@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-public class BrpInput {
+public class RpaInput {
 
-	public static class Brp {
+	public static class Rpa {
 
 		public Map<String, String> infos;
 		public List<int[]> plans;
@@ -27,8 +27,8 @@ public class BrpInput {
 	}
 
 
-	public Brp parse(String inputFile) {
-		Brp brp = new Brp();
+	public Rpa parse(String inputFile) {
+		Rpa brp = new Rpa();
 
 		try {
 			Scanner scanner = new Scanner(new File(inputFile), "utf-8");

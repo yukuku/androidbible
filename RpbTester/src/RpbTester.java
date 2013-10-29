@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ArpTester {
-	private static final String INPUT_FILE = System.getProperty("user.dir") + "/ArpTester/file/wsts.arp";
+public class RpbTester {
+	private static final String INPUT_FILE = System.getProperty("user.dir") + "/RpbTester/file/wsts.rpb";
 	private static final byte[] ARP_HEADER = { 0x52, (byte) 0x8a, 0x61, 0x34, 0x00, (byte) 0xe0, (byte) 0xea};
 
 	public static void main(String[] args) {

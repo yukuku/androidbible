@@ -46,6 +46,7 @@ public class ReadingPlanActivity extends Activity {
 
 		setListViewHeightBasedOnChildren(lsTodayReadings);
 		setListViewHeightBasedOnChildren(lsDailyPlan);
+
 	}
 
 	private void loadDayNumber() {
@@ -104,7 +105,7 @@ public class ReadingPlanActivity extends Activity {
 			for (int i = 0; i < aris.length/2; i++) {
 				int[] ariStartEnd = {aris[i*2], aris[i*2+1]};
 				if (i > 0) {
-					text += ";";
+					text += "; ";
 				}
 				text += getReference(S.activeVersion, ariStartEnd);
 			}
@@ -119,12 +120,31 @@ public class ReadingPlanActivity extends Activity {
 
 	public static SpannableStringBuilder getReference(Version version, int[] ari) {
 		SpannableStringBuilder sb = new SpannableStringBuilder();
-		String reference = version.reference(ari[0]);
-		sb.append(reference);
-		if (ari.length > 1) {
-			String lastVerse = Ari.toChapter(ari[1]) + ":" + Ari.toVerse(ari[1]);
-			sb.append("-" + lastVerse);
+		String book = version.getBook(Ari.toBook(ari[0])).shortName;
+		sb.append(book);
+		int startChapter = Ari.toChapter(ari[0]);
+		int startVerse = Ari.toVerse(ari[0]);
+		int lastVerse = Ari.toVerse(ari[1]);
+		int lastChapter = Ari.toChapter(ari[1]);
+
+		sb.append(" " + startChapter);
+
+		if (startVerse == 1) {
+			if (lastVerse == 0) {
+				if (startChapter != lastChapter - 1) {
+					sb.append("-" + (lastChapter - 1));
+				}
+			} else {
+				sb.append("-" + lastChapter + ":" + lastVerse);
+			}
+		} else {
+			if (startChapter == lastChapter) {
+				sb.append(":" + startVerse + "-" + lastVerse);
+			} else {
+				sb.append(":" + startVerse + "-" + lastChapter + ":" + lastVerse);
+			}
 		}
+
 		return sb;
 	}
 
