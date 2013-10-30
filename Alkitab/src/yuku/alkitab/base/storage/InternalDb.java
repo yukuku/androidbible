@@ -27,11 +27,14 @@ import yuku.alkitab.base.model.Label;
 import yuku.alkitab.base.model.ProgressMark;
 import yuku.alkitab.base.model.ProgressMarkHistory;
 import yuku.alkitab.base.util.IntArrayList;
+import yuku.alkitab.base.util.ReadingPlanManager;
 import yuku.alkitab.base.util.Sqlitil;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class InternalDb {
@@ -793,4 +796,40 @@ public class InternalDb {
 			c.close();
 		}
 	}
+
+	public long insertReadingPlan(final ReadingPlanManager.ReadingPlanBinary readingPlanBinary) {
+		ContentValues cv = new ContentValues();
+		cv.put(Db.ReadingPlan.title, readingPlanBinary.title);
+		cv.put(Db.ReadingPlan.startDate, readingPlanBinary.startDate);
+		cv.put(Db.ReadingPlan.plans, readingPlanBinary.binaryReadingPlan);
+		return helper.getWritableDatabase().insert(Db.TABLE_ReadingPlan, null, cv);
+	}
+
+	public long insertReadingPlanProgress(final long readingPlanId, final int readingCode) {
+		ContentValues cv = new ContentValues();
+		cv.put(Db.ReadingPlanProgress.reading_plan_id, readingPlanId);
+		cv.put(Db.ReadingPlanProgress.reading_code, readingCode);
+		return helper.getWritableDatabase().insert(Db.TABLE_ReadingPlanProgress, null, cv);
+	}
+
+	public Map<Long, String> listAllReadingPlanIdAndTitle() {
+		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan, new String[] {"_id", Db.ReadingPlan.title}, null, null, null, null, null);
+		final Map<Long, String> res = new LinkedHashMap<Long, String>();
+		while (c.moveToNext()) {
+			res.put(c.getLong(0), c.getString(1));
+		}
+		c.close();
+		return res;
+	}
+
+	public byte[] getBinaryReadingPlanById(long id) {
+		byte[] buffer = null;
+		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan, new String[] {Db.ReadingPlan.plans}, "_id=?", new String[] {String.valueOf(id)}, null, null, null);
+		while (c.moveToNext()) {
+			buffer = c.getBlob(0);
+		}
+		c.close();
+		return buffer;
+	}
+
 }

@@ -8,6 +8,7 @@ public class ReadingPlan {
 	public String title;
 	public String description;
 	public int duration;
+	public long startDate;
 	public List<int[]> dailyVerses = new ArrayList<int[]>();
 
 }

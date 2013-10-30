@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -12,7 +14,6 @@ import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.IsiActivity;
@@ -23,7 +24,9 @@ import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.util.ReadingPlanManager;
 import yuku.alkitab.debug.R;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Map;
 
 public class ReadingPlanActivity extends Activity {
 
@@ -32,18 +35,28 @@ public class ReadingPlanActivity extends Activity {
 	private TodayReadingsAdapter todayReadingsAdapter;
 	private ImageButton bLeft;
 	private ImageButton bRight;
+	private ListView lsTodayReadings;
+	private ListView lsDailyPlan;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_reading_plan);
-		ListView lsTodayReadings = V.get(this, R.id.lsTodayReadings);
-		ListView lsDailyPlan = V.get(this, R.id.lsDailyPlan);
+		lsTodayReadings = V.get(this, R.id.lsTodayReadings);
+		lsDailyPlan = V.get(this, R.id.lsDailyPlan);
 
 		loadDayNumber();
 		loadReadingPlan();
 
-		//List view
+		if (readingPlan == null) {
+			return;
+		}
+
+		prepareDisplay();
+
+	}
+
+	public void prepareDisplay() {//List view
 		todayReadingsAdapter = new TodayReadingsAdapter();
 		todayReadingsAdapter.load();
 		lsTodayReadings.setAdapter(todayReadingsAdapter);
@@ -95,7 +108,21 @@ public class ReadingPlanActivity extends Activity {
 				changeDay(+1);
 			}
 		});
+	}
 
+	@Override
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_reading_plan, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		if (item.getItemId() == R.id.menuDownload) {
+			downloadReadingPlan();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	private void changeDay(int day) {
@@ -124,12 +151,37 @@ public class ReadingPlanActivity extends Activity {
 		dayNumber = 0;
 	}
 
+	private void downloadReadingPlan() {
+		//TODO proper method. Testing only
+		ReadingPlanManager.copyReadingPlanToDb(R.raw.wsts);
+		loadDayNumber();
+		loadReadingPlan();
+		prepareDisplay();
+	}
 	private void loadReadingPlan() {
 		//TODO: proper method. Testing only
-		InputStream is = App.context.getResources().openRawResource(R.raw.wsts);
-		ReadingPlan res = ReadingPlanManager.readVersion1(is);
+
+		Map<Long, String> idAndTitles = S.getDb().listAllReadingPlanIdAndTitle();
+		Log.d("@@@@@@@@@@@@", "jumlah reading plan: " + idAndTitles.size());
+		long testId = 0;
+		for (Map.Entry<Long, String> entry : idAndTitles.entrySet()) {
+			Log.d("@@@@@@@@ ", "Id nya: " + entry.getKey());
+			Log.d("@@@@@@@@ ", "Judulnya: " + entry.getValue());
+			testId = entry.getKey();
+		}
+
+		if (idAndTitles.size() == 0) {
+			return;
+		}
+
+		byte[] binaryReadingPlan = S.getDb().getBinaryReadingPlanById(testId);
+		Log.d("@@@@@@@@@@@@", "panjang byte: " + binaryReadingPlan.length);
+
+		InputStream inputStream = new ByteArrayInputStream(binaryReadingPlan);
+		ReadingPlan res = ReadingPlanManager.readVersion1(inputStream);
 
 		readingPlan = res;
+		Log.d("@@@@@@@@@@@@", "rp yang diload: " + readingPlan.title);
 	}
 
 	class TodayReadingsAdapter extends EasyAdapter {
