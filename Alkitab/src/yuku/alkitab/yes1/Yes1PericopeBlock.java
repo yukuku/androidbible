@@ -2,7 +2,7 @@ package yuku.alkitab.yes1;
 
 import java.io.IOException;
 
-import yuku.alkitab.base.model.PericopeBlock;
+import yuku.alkitab.model.PericopeBlock;
 import yuku.bintex.BintexReader;
 
 public class Yes1PericopeBlock extends PericopeBlock {

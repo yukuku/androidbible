@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import yuku.afw.App;
-import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.util.Ari;
 import yuku.alkitab.base.storage.Db.Bookmark2;
 
 public class InternalDbHelper extends SQLiteOpenHelper {

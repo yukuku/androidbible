@@ -1,7 +1,7 @@
 package yuku.alkitab.yes1;
 
 import android.util.Log;
-import yuku.alkitab.base.model.PericopeIndex;
+import yuku.alkitab.model.PericopeIndex;
 import yuku.bintex.BintexReader;
 
 import java.io.IOException;

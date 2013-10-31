@@ -18,7 +18,7 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
-import yuku.alkitab.base.model.Book;
+import yuku.alkitab.model.Book;
 import yuku.alkitab.base.util.BookNameSorter;
 
 public class GotoDialerFragment extends BaseGotoFragment {

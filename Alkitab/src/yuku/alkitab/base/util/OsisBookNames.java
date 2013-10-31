@@ -1,7 +1,7 @@
 package yuku.alkitab.base.util;
 
 import gnu.trove.map.hash.TObjectIntHashMap;
-import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.util.Ari;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

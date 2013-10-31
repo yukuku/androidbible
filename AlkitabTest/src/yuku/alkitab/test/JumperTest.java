@@ -2,10 +2,9 @@ package yuku.alkitab.test;
 
 import android.test.AndroidTestCase;
 import android.util.Log;
-
 import junit.framework.Assert;
-import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.util.Jumper;
+import yuku.alkitab.model.Book;
 
 public class JumperTest extends AndroidTestCase {
 	static Book[] books;

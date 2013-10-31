@@ -1,8 +1,8 @@
 package yuku.alkitab.base.storage;
 
-import java.util.ArrayList;
+import yuku.alkitab.io.Utf8Decoder;
 
-import yuku.alkitab.base.util.Utf8Decoder;
+import java.util.ArrayList;
 
 public class OldVerseTextDecoder {
 	public static class Ascii implements VerseTextDecoder {

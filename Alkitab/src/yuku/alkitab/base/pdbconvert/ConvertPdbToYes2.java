@@ -2,21 +2,17 @@ package yuku.alkitab.base.pdbconvert;
 
 import android.content.Context;
 import android.util.Log;
-
+import com.compactbyte.android.bible.PDBFileStream;
+import com.compactbyte.bibleplus.reader.BiblePlusPDB;
+import com.compactbyte.bibleplus.reader.BookInfo;
 import gnu.trove.map.hash.TIntIntHashMap;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import yuku.alkitab.debug.R;
-import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.util.Ari;
 import yuku.alkitab.yes2.Yes2Writer;
+import yuku.alkitab.yes2.io.RandomAccessFileRandomOutputStream;
 import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.alkitab.yes2.model.PericopeData;
+import yuku.alkitab.yes2.model.VerseBytes;
 import yuku.alkitab.yes2.model.Yes2Book;
 import yuku.alkitab.yes2.section.BooksInfoSection;
 import yuku.alkitab.yes2.section.PericopesSection;
@@ -24,9 +20,11 @@ import yuku.alkitab.yes2.section.VersionInfoSection;
 import yuku.alkitab.yes2.section.base.SectionContent;
 import yuku.bintex.BintexWriter;
 
-import com.compactbyte.android.bible.PDBFileStream;
-import com.compactbyte.bibleplus.reader.BiblePlusPDB;
-import com.compactbyte.bibleplus.reader.BookInfo;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ConvertPdbToYes2 {
 	public static final String TAG = ConvertPdbToYes2.class.getSimpleName();
@@ -158,7 +156,7 @@ public class ConvertPdbToYes2 {
 			yesWriter.sections.add(lazyText);
 			
 			progress(700, context.getString(R.string.cp_writing_translated_file));
-			RandomOutputStream output = new RandomOutputStream(new RandomAccessFile(yesFilename, "rw")); //$NON-NLS-1$
+			RandomOutputStream output = new RandomAccessFileRandomOutputStream(new RandomAccessFile(yesFilename, "rw")); //$NON-NLS-1$
 			
 			yesWriter.writeToFile(output);
 			output.close();
@@ -307,30 +305,6 @@ public class ConvertPdbToYes2 {
 		entry.block.title = title;
 		pericopeData_.addEntry(entry);
 	}
-	
-	/** Get the complete bytes (including information about length and/or separators for a verse */
-	static class VerseBytes {
-		static ThreadLocal<ByteArrayOutputStream> baos_ = new ThreadLocal<ByteArrayOutputStream>() {
-			@Override protected ByteArrayOutputStream initialValue() {
-				return new ByteArrayOutputStream(1000);
-			}
-		};
-		
-		static byte[] bytesForAVerse(String verse) {
-			ByteArrayOutputStream baos = baos_.get();
-			baos.reset();
-			BintexWriter bw = new BintexWriter(baos);
-			
-			try {
-				byte[] verse_bytes = verse.getBytes("utf-8");
-				bw.writeVarUint(verse_bytes.length);
-				bw.writeRaw(verse_bytes);
-				return baos.toByteArray();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
 
 	/**
 	 * Each verse is written as follows:
@@ -350,7 +324,7 @@ public class ConvertPdbToYes2 {
 			this.sortedBookIds = sortedBookIds;
 		}
 		
-		@Override public void write(RandomOutputStream output) throws Exception {
+		@Override public void write(RandomOutputStream output) throws IOException {
 			BintexWriter bw = new BintexWriter(output);
 			
 			for (int bookId: sortedBookIds) {

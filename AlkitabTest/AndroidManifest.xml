@@ -19,5 +19,5 @@
     "adb shell am instrument -w yuku.alkitab.test/android.test.InstrumentationTestRunner"
     -->
     <instrumentation android:name="android.test.InstrumentationTestRunner"
-                     android:targetPackage="yuku.alkitab" />
+                     android:targetPackage="yuku.alkitab.debug" />
 </manifest>

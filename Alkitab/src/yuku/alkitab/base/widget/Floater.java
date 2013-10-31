@@ -8,9 +8,9 @@ import android.util.AttributeSet;
 import android.util.FloatMath;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
-import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.Book;
-import yuku.alkitab.base.model.Version;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.model.Book;
+import yuku.alkitab.model.Version;
 
 public class Floater extends View {
 	public static final String TAG = Floater.class.getSimpleName();

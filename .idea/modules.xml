@@ -6,11 +6,15 @@
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/Afw/Afw.iml" filepath="$PROJECT_DIR$/../yuku-android-util/Afw/Afw.iml" />
       <module fileurl="file://$PROJECT_DIR$/Alkitab/Alkitab.iml" filepath="$PROJECT_DIR$/Alkitab/Alkitab.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabConverter/AlkitabConverter.iml" filepath="$PROJECT_DIR$/AlkitabConverter/AlkitabConverter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AlkitabConverterProcesses/AlkitabConverterProcesses.iml" filepath="$PROJECT_DIR$/AlkitabConverterProcesses/AlkitabConverterProcesses.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabConverterTest/AlkitabConverterTest.iml" filepath="$PROJECT_DIR$/AlkitabConverterTest/AlkitabConverterTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabFeedback/AlkitabFeedback.iml" filepath="$PROJECT_DIR$/AlkitabFeedback/AlkitabFeedback.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabIntegration/AlkitabIntegration.iml" filepath="$PROJECT_DIR$/AlkitabIntegration/AlkitabIntegration.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabIntegrationTest/AlkitabIntegrationTest.iml" filepath="$PROJECT_DIR$/AlkitabIntegrationTest/AlkitabIntegrationTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AlkitabIo/AlkitabIo.iml" filepath="$PROJECT_DIR$/AlkitabIo/AlkitabIo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AlkitabModel/AlkitabModel.iml" filepath="$PROJECT_DIR$/AlkitabModel/AlkitabModel.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabTest/AlkitabTest.iml" filepath="$PROJECT_DIR$/AlkitabTest/AlkitabTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AlkitabYes2/AlkitabYes2.iml" filepath="$PROJECT_DIR$/AlkitabYes2/AlkitabYes2.iml" />
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/AmbilWarna/AmbilWarna.iml" filepath="$PROJECT_DIR$/../yuku-android-util/AmbilWarna/AmbilWarna.iml" />
       <module fileurl="file://$PROJECT_DIR$/AndroidBibleReminder/AndroidBibleReminder.iml" filepath="$PROJECT_DIR$/AndroidBibleReminder/AndroidBibleReminder.iml" />
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/AndroidCrypto/AndroidCrypto.iml" filepath="$PROJECT_DIR$/../yuku-android-util/AndroidCrypto/AndroidCrypto.iml" />

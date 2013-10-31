@@ -17,6 +17,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="module" module-name="Alkitab" scope="PROVIDED" />
+    <orderEntry type="module" module-name="AlkitabModel" scope="PROVIDED" />
   </component>
 </module>
 

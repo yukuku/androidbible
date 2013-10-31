@@ -7,8 +7,8 @@ import android.preference.Preference;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BasePreferenceActivity;
-import yuku.alkitab.base.model.ProgressMark;
-import yuku.alkitab.base.model.ProgressMarkHistory;
+import yuku.alkitab.model.ProgressMark;
+import yuku.alkitab.model.ProgressMarkHistory;
 import yuku.alkitab.base.util.Sqlitil;
 
 import java.util.List;

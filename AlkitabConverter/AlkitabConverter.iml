@@ -14,11 +14,12 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="jdk" jdkName="1.7" jdkType="JavaSDK" />
-    <orderEntry type="module" module-name="BintexWriter" />
-    <orderEntry type="module" module-name="Alkitab" exported="" />
-    <orderEntry type="module" module-name="BintexReader" />
-    <orderEntry type="module" module-name="Snappy" />
-    <orderEntry type="module" module-name="SimpleTrove" />
+    <orderEntry type="module" module-name="BintexWriter" exported="" />
+    <orderEntry type="module" module-name="BintexReader" exported="" />
+    <orderEntry type="module" module-name="Snappy" exported="" />
+    <orderEntry type="module" module-name="SimpleTrove" exported="" />
+    <orderEntry type="module" module-name="AlkitabYes2" exported="" />
+    <orderEntry type="module" module-name="AlkitabModel" exported="" />
   </component>
 </module>
 

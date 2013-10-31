@@ -5,7 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.widget.TextView;
-import yuku.alkitab.base.model.Label;
+import yuku.alkitab.model.Label;
 
 public class U {
 

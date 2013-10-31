@@ -18,15 +18,16 @@ import android.widget.CheckedTextView;
 import android.widget.ListView;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.BookmarkListActivity;
-import yuku.alkitab.base.model.Bookmark2;
-import yuku.alkitab.base.model.Label;
+import yuku.alkitab.model.Bookmark2;
+import yuku.alkitab.model.Label;
 import yuku.alkitab.base.storage.Db;
+import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.debug.R;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -178,7 +179,7 @@ public class ExportBookmarkDialog extends DialogFragment {
 		if (showNoLabelBookmarks) {
 			Cursor cursor = S.getDb().listBookmarks(Db.Bookmark2.kind_bookmark, BookmarkListActivity.LABELID_noLabel, Db.Bookmark2.addTime, false);
 			while (cursor.moveToNext()) {
-				Bookmark2 bookmark = Bookmark2.fromCursor(cursor);
+				Bookmark2 bookmark = InternalDb.bookmark2FromCursor(cursor);
 				noLabelBookmarks.add(bookmark);
 			}
 			cursor.close();
@@ -190,7 +191,7 @@ public class ExportBookmarkDialog extends DialogFragment {
 				List<Bookmark2> bookmarks = new ArrayList<Bookmark2>();
 				Cursor cursor = S.getDb().listBookmarks(Db.Bookmark2.kind_bookmark, label._id, Db.Bookmark2.addTime, false);
 				while (cursor.moveToNext()) {
-					Bookmark2 bookmark = Bookmark2.fromCursor(cursor);
+					Bookmark2 bookmark = InternalDb.bookmark2FromCursor(cursor);
 					bookmarks.add(bookmark);
 				}
 				cursor.close();
@@ -205,7 +206,7 @@ public class ExportBookmarkDialog extends DialogFragment {
 		if (showNotes) {
 			Cursor cursor = S.getDb().listBookmarks(Db.Bookmark2.kind_note, 0, Db.Bookmark2.addTime, false);
 			while (cursor.moveToNext()) {
-				Bookmark2 bookmark = Bookmark2.fromCursor(cursor);
+				Bookmark2 bookmark = InternalDb.bookmark2FromCursor(cursor);
 				notes.add(bookmark);
 			}
 			cursor.close();
@@ -215,7 +216,7 @@ public class ExportBookmarkDialog extends DialogFragment {
 		if (showHighlights) {
 			Cursor cursor = S.getDb().listBookmarks(Db.Bookmark2.kind_highlight, 0, Db.Bookmark2.addTime, false);
 			while (cursor.moveToNext()) {
-				Bookmark2 bookmark2 = Bookmark2.fromCursor(cursor);
+				Bookmark2 bookmark2 = InternalDb.bookmark2FromCursor(cursor);
 				highlights.add(bookmark2);
 			}
 			cursor.close();
@@ -421,7 +422,7 @@ public class ExportBookmarkDialog extends DialogFragment {
 			Cursor cursor = S.getDb().listAllBookmarks();
 			try {
 				while (cursor.moveToNext()) {
-					Bookmark2 bookmark = Bookmark2.fromCursor(cursor);
+					Bookmark2 bookmark = InternalDb.bookmark2FromCursor(cursor);
 					bookmarks.add(bookmark);
 				}
 			} finally {
