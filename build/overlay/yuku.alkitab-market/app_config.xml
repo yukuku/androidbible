@@ -69,6 +69,8 @@
 		<preset locale="pt"   shortName="AA"      longName="Almeida Atualizada" filename_preset="pt-aa.yes" url="http://alkitab-host.appspot.com/addon/yes2/pt-aa--1.yes.gz" />
 		<preset locale="ro"   shortName="VDC"     longName="Cornilescu" filename_preset="ro-cornilescu.yes" url="http://alkitab-host.appspot.com/addon/yes/ro-cornilescu/ro-cornilescu.yes.gz" />
 		<preset locale="ro"   shortName="ORTDX"   longName="Biblia Ortodoxa" filename_preset="ro-ortodoxa.yes" url="http://alkitab-host.appspot.com/addon/yes/ro-ortodoxa/ro-ortodoxa.yes.gz" />
+		<preset locale="ro"   shortName="GBV2001" longName="Gute Botschaft Verlag" filename_preset="ro-gbv2001.yes" url="http://alkitab-host.appspot.com/addon/yes2/ro-gbv2001--1.yes.gz" />
+		<preset locale="ro"   shortName="BTF"     longName="Traducerea FIDELA" filename_preset="ro-fidela.yes" url="http://alkitab-host.appspot.com/addon/yes2/ro-fidela--1.yes.gz" />
 		<preset locale="ru"   shortName="SYNO"    longName="Синодальный перевод" filename_preset="ru-synodal.yes" url="http://alkitab-host.appspot.com/addon/yes2/ru-synodal--1.yes.gz" />
 		<preset locale="sq"   shortName="ALBB"    longName="Albanian" filename_preset="sq-kk.yes" url="http://alkitab-host.appspot.com/addon/yes/sq-kk/sq-kk.yes.gz" />
 		<preset locale="sv"   shortName="SVEN"    longName="Svenska 1917" filename_preset="sv-1917.yes" url="http://alkitab-host.appspot.com/addon/yes2/sv-1917--1.yes.gz" />
