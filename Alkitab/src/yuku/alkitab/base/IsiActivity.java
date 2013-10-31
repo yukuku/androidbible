@@ -73,6 +73,7 @@ import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.FootnoteEntry;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.ProgressMark;
+import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.Prefkey;
@@ -89,6 +90,7 @@ import yuku.alkitab.base.widget.Floater;
 import yuku.alkitab.base.widget.FormattedTextRenderer;
 import yuku.alkitab.base.widget.GotoButton;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
+import yuku.alkitab.base.widget.ReadingPlanFloatMenu;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
 import yuku.alkitab.base.widget.VerseInlineLinkSpan;
@@ -125,6 +127,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private static final int REQCODE_songs = 8;
 	private static final int REQCODE_textAppearanceGetFonts = 9;
 	private static final int REQCODE_textAppearanceCustomColors = 10;
+	private static final int REQCODE_readingPlan = 11;
 
 	private static final String EXTRA_verseUrl = "verseUrl"; //$NON-NLS-1$
 	private boolean uncheckVersesWhenActionModeDestroyed = true;
@@ -194,6 +197,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	ImageButton bLeft;
 	ImageButton bRight;
 	Floater floater;
+	ReadingPlanFloatMenu readingPlanFloatMenu;
 	
 	Book activeBook;
 	int chapter_1 = 0;
@@ -257,6 +261,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		bLeft = V.get(this, R.id.bLeft);
 		bRight = V.get(this, R.id.bRight);
 		floater = V.get(this, R.id.floater);
+		readingPlanFloatMenu = V.get(this, R.id.readingPlanFloatMenu);
 		
 		applyPreferences(false);
 		
@@ -951,7 +956,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			startActivityForResult(SongViewActivity.createIntent(), REQCODE_songs);
 			return true;
 		case R.id.menuReadingPlan:
-			startActivityForResult(new Intent(this, ReadingPlanActivity.class), 12);
+			startActivityForResult(new Intent(this, ReadingPlanActivity.class), REQCODE_readingPlan);
 			return true;
 		case R.id.menuAbout:
 			startActivity(new Intent(this, AboutActivity.class));
@@ -1270,6 +1275,43 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			S.calculateAppliedValuesBasedOnPreferences();
 
 			applyPreferences(true);
+		} else if (requestCode == REQCODE_readingPlan) {
+			if (data == null) {
+				return;
+			}
+
+			readingPlanFloatMenu.setVisibility(View.VISIBLE);
+
+			int ari = data.getIntExtra("ari", 0);
+			int[] ariRanges = data.getIntArrayExtra(ReadingPlan.READING_PLAN_ARI_RANGES);
+			boolean[] readReadings = data.getBooleanArrayExtra(ReadingPlan.ReadingPlanProgress.READING_PLAN_PROGRESS_READ);
+
+			if (ari != 0 && ariRanges != null && readReadings != null && ariRanges.length == readReadings.length) {
+				for (int i = 0; i < ariRanges.length; i++) {
+					if (ariRanges[i] == ari) {
+						jumpToAri(ari);
+						history.add(ari);
+
+						readingPlanFloatMenu.load(ariRanges, readReadings, i);
+						readingPlanFloatMenu.setLeftNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuNavigationClickListener() {
+							@Override
+							public void onClick(final int ari) {
+								jumpToAri(ari);
+								history.add(ari);
+							}
+						});
+						readingPlanFloatMenu.setRightNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuNavigationClickListener() {
+							@Override
+							public void onClick(final int ari) {
+								jumpToAri(ari);
+								history.add(ari);
+							}
+						});
+
+						break;
+					}
+				}
+			}
 		}
 	}
 

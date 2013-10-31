@@ -16,7 +16,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
-import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.ReadingPlan;
@@ -26,6 +25,8 @@ import yuku.alkitab.debug.R;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class ReadingPlanActivity extends Activity {
@@ -37,6 +38,7 @@ public class ReadingPlanActivity extends Activity {
 	private ImageButton bRight;
 	private ListView lsTodayReadings;
 	private ListView lsDailyPlan;
+	private List<boolean[]> readReadings;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -47,6 +49,7 @@ public class ReadingPlanActivity extends Activity {
 
 		loadDayNumber();
 		loadReadingPlan();
+		loadReadingPlanProgress();
 
 		if (readingPlan == null) {
 			return;
@@ -55,6 +58,20 @@ public class ReadingPlanActivity extends Activity {
 		prepareDisplay();
 
 	}
+
+	public void goToIsiActivity(final int dayNumber, final int sequence) {
+		final int[] selectedVerses = readingPlan.dailyVerses.get(dayNumber);
+		int ari = selectedVerses[sequence * 2];
+
+		Intent intent = new Intent();
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		intent.putExtra("ari", ari);
+		intent.putExtra(ReadingPlan.READING_PLAN_ARI_RANGES, selectedVerses);
+		intent.putExtra(ReadingPlan.ReadingPlanProgress.READING_PLAN_PROGRESS_READ, readReadings.get(dayNumber));
+		setResult(RESULT_OK, intent);
+		finish();
+	}
+
 
 	public void prepareDisplay() {//List view
 		todayReadingsAdapter = new TodayReadingsAdapter();
@@ -70,22 +87,15 @@ public class ReadingPlanActivity extends Activity {
 		lsTodayReadings.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-				int ari = todayReadingsAdapter.todayReadings[position * 2];
-
-				Intent intent = IsiActivity.createIntent(ari);
-				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				startActivity(intent);
+				goToIsiActivity(dayNumber, position);
 			}
+
 		});
 
 		lsDailyPlan.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-				int ari = readingPlan.dailyVerses.get(position)[0];
-
-				Intent intent = IsiActivity.createIntent(ari);
-				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				startActivity(intent);
+				goToIsiActivity(position, 0);
 			}
 		});
 
@@ -182,6 +192,14 @@ public class ReadingPlanActivity extends Activity {
 
 		readingPlan = res;
 		Log.d("@@@@@@@@@@@@", "rp yang diload: " + readingPlan.title);
+	}
+	
+	private void loadReadingPlanProgress() {
+		//TODO proper method. Testing only
+		readReadings = new ArrayList<boolean[]>();
+		for (int i = 0; i < readingPlan.dailyVerses.size(); i++) {
+			readReadings.add(new boolean[readingPlan.dailyVerses.get(i).length]);
+		}
 	}
 
 	class TodayReadingsAdapter extends EasyAdapter {
