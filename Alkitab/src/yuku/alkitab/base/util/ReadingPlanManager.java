@@ -16,26 +16,18 @@ import java.util.Map;
 public class ReadingPlanManager {
 	public static final String TAG = ReadingPlanManager.class.getSimpleName();
 
-	private static final byte[] ARP_HEADER = { 0x52, (byte) 0x8a, 0x61, 0x34, 0x00, (byte) 0xe0, (byte) 0xea};
+	private static final byte[] ARP_HEADER = {0x52, (byte) 0x8a, 0x61, 0x34, 0x00, (byte) 0xe0, (byte) 0xea};
 
 	public static long copyReadingPlanToDb(final int resId) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		byte[] buffer = new byte[256];
 
-		String title = "";
 		InputStream stream = new RawResourceRandomInputStream(resId);
 		BintexReader reader = new BintexReader(stream);
-		byte[] headers = new byte[8];
+		ReadingPlanBinary readingPlanBinary = new ReadingPlanBinary();
 
 		try {
-			reader.readRaw(headers);
-
-			ValueMap map = reader.readValueSimpleMap();
-			for (Map.Entry<String, Object> entry : map.entrySet()) {
-				if (entry.getKey().equals("title")) {
-					title = (String) entry.getValue();
-				}
-			}
+			readInfo(readingPlanBinary.info, reader);
 			stream.close();
 
 			InputStream is = new RawResourceRandomInputStream(resId);
@@ -43,20 +35,17 @@ public class ReadingPlanManager {
 				baos.write(buffer);
 			}
 			baos.close();
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		ReadingPlanBinary readingPlanBinary = new ReadingPlanBinary();
-		readingPlanBinary.title = title;
-		readingPlanBinary.startDate = new Date().getTime();
+		readingPlanBinary.info.startDate = new Date().getTime();
 		readingPlanBinary.binaryReadingPlan = baos.toByteArray();
 		return S.getDb().insertReadingPlan(readingPlanBinary);
 	}
 
-	public static void createReadingPlanProgress(final int readingPlanId, final int dayNumber, final int readingSequence) {
-		int readingCode = (dayNumber & 0xff) << 8 | (readingSequence & 0xff);
+	public static void insertReadingPlanProgress(final long readingPlanId, final int dayNumber, final int readingSequence) {
+		int readingCode = ReadingPlan.ReadingPlanProgress.toReadingCode(dayNumber, readingSequence);
 		S.getDb().insertReadingPlanProgress(readingPlanId, readingCode);
 	}
 
@@ -64,36 +53,10 @@ public class ReadingPlanManager {
 		ReadingPlan readingPlan = new ReadingPlan();
 		try {
 			BintexReader reader = new BintexReader(inputStream);
-			byte[] headers = new byte[8];
-			reader.readRaw(headers);
-			for (int i = 0; i < 7; i++) {
-				if (ARP_HEADER[i] != headers[i]) {
-					return null;
-				}
-			}
-			if (headers[7] != 1) {
-				Log.d(TAG, "It is not version 1.");
-				return null;
-			}
-			readingPlan.version = headers[7];
-
-			ValueMap map = reader.readValueSimpleMap();
-			for (Map.Entry<String, Object> entry : map.entrySet()) {
-				final String key = entry.getKey();
-				if (key.equals("title")) {
-					readingPlan.title = (String) entry.getValue();
-				} else if (key.equals("description")) {
-					readingPlan.description = (String) entry.getValue();
-				} else if (key.equals("duration")) {
-					readingPlan.duration = (Integer) entry.getValue();
-				} else {
-					Log.d(TAG, "Info not recognized: " + key);
-					return null;
-				}
-			}
+			if (readInfo(readingPlan.info, reader)) return null;
 
 			int counter = 0;
-			while (counter < readingPlan.duration) {
+			while (counter < readingPlan.info.duration) {
 				int count = reader.readUint8();
 				if (count == -1) {
 					Log.d(TAG, "Error reading.");
@@ -120,9 +83,39 @@ public class ReadingPlanManager {
 		return readingPlan;
 	}
 
+	public static boolean readInfo(final ReadingPlan.ReadingPlanInfo readingPlanInfo, final BintexReader reader) throws IOException {
+		byte[] headers = new byte[8];
+		reader.readRaw(headers);
+		for (int i = 0; i < 7; i++) {
+			if (ARP_HEADER[i] != headers[i]) {
+				return true;
+			}
+		}
+		if (headers[7] != 1) {
+			Log.d(TAG, "It is not version 1.");
+			return true;
+		}
+		readingPlanInfo.version = headers[7];
+
+		ValueMap map = reader.readValueSimpleMap();
+		for (Map.Entry<String, Object> entry : map.entrySet()) {
+			final String key = entry.getKey();
+			if (key.equals("title")) {
+				readingPlanInfo.title = (String) entry.getValue();
+			} else if (key.equals("description")) {
+				readingPlanInfo.description = (String) entry.getValue();
+			} else if (key.equals("duration")) {
+				readingPlanInfo.duration = (Integer) entry.getValue();
+			} else {
+				Log.d(TAG, "Info not recognized: " + key);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static class ReadingPlanBinary {
-		public String title;
-		public long startDate;
+		public ReadingPlan.ReadingPlanInfo info = new ReadingPlan.ReadingPlanInfo();
 		public byte[] binaryReadingPlan;
 	}
 }

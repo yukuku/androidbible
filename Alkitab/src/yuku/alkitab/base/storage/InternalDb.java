@@ -26,15 +26,14 @@ import yuku.alkitab.base.model.Bookmark2;
 import yuku.alkitab.base.model.Label;
 import yuku.alkitab.base.model.ProgressMark;
 import yuku.alkitab.base.model.ProgressMarkHistory;
+import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.ReadingPlanManager;
 import yuku.alkitab.base.util.Sqlitil;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class InternalDb {
@@ -45,37 +44,37 @@ public class InternalDb {
 	public InternalDb(InternalDbHelper helper) {
 		this.helper = helper;
 	}
-	
+
 	public Bookmark2 getBookmarkByAri(int ari, int kind) {
 		Cursor cursor = helper.getReadableDatabase().query(
-			Db.TABLE_Bookmark2,
-			new String[] {BaseColumns._ID, Db.Bookmark2.caption, Db.Bookmark2.addTime, Db.Bookmark2.modifyTime},
-			Db.Bookmark2.ari + "=? and " + Db.Bookmark2.kind + "=?",  //$NON-NLS-1$ //$NON-NLS-2$
-			new String[] {String.valueOf(ari), String.valueOf(kind)},
-			null, null, null
+		Db.TABLE_Bookmark2,
+		new String[] {BaseColumns._ID, Db.Bookmark2.caption, Db.Bookmark2.addTime, Db.Bookmark2.modifyTime},
+		Db.Bookmark2.ari + "=? and " + Db.Bookmark2.kind + "=?",  //$NON-NLS-1$ //$NON-NLS-2$
+		new String[] {String.valueOf(ari), String.valueOf(kind)},
+		null, null, null
 		);
-		
+
 		try {
 			if (!cursor.moveToNext()) return null;
-			
+
 			return Bookmark2.fromCursor(cursor, ari, kind);
 		} finally {
 			cursor.close();
 		}
 	}
-	
+
 	public Bookmark2 getBookmarkById(long id) {
 		Cursor cursor = helper.getReadableDatabase().query(
-			Db.TABLE_Bookmark2,
-			null,
-			"_id=?", //$NON-NLS-1$
-			new String[] {String.valueOf(id)},
-			null, null, null
+		Db.TABLE_Bookmark2,
+		null,
+		"_id=?", //$NON-NLS-1$
+		new String[] {String.valueOf(id)},
+		null, null, null
 		);
-		
+
 		try {
 			if (!cursor.moveToNext()) return null;
-			
+
 			return Bookmark2.fromCursor(cursor);
 		} finally {
 			cursor.close();
@@ -85,7 +84,7 @@ public class InternalDb {
 	public int updateBookmark(Bookmark2 bookmark) {
 		return helper.getWritableDatabase().update(Db.TABLE_Bookmark2, bookmark.toContentValues(), "_id=?", new String[] {String.valueOf(bookmark._id)}); //$NON-NLS-1$
 	}
-	
+
 	public Bookmark2 insertBookmark(int ari, int kind, String caption, Date addTime, Date modifyTime) {
 		Bookmark2 res = new Bookmark2(ari, kind, caption, addTime, modifyTime);
 		SQLiteDatabase db = helper.getWritableDatabase();
@@ -103,7 +102,7 @@ public class InternalDb {
 		db.beginTransaction();
 		try {
 			long _id;
-			
+
 			SQLiteStatement stmt = db.compileStatement("select _id from " + Db.TABLE_Bookmark2 + " where " + Db.Bookmark2.kind + "=? and " + Db.Bookmark2.ari + "=?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			try {
 				stmt.bindLong(1, kind);
@@ -112,7 +111,7 @@ public class InternalDb {
 			} finally {
 				stmt.close();
 			}
-			
+
 			String[] params = {String.valueOf(_id)};
 			db.delete(Db.TABLE_Bookmark2_Label, Db.Bookmark2_Label.bookmark2_id + "=?", params); //$NON-NLS-1$
 			db.delete(Db.TABLE_Bookmark2, "_id=?", params); //$NON-NLS-1$
@@ -136,17 +135,17 @@ public class InternalDb {
 	}
 
 	public Cursor listBookmarks(int kind, long labelId, String sortColumn, boolean sortAscending) {
-        SQLiteDatabase db = helper.getReadableDatabase();
+		SQLiteDatabase db = helper.getReadableDatabase();
 
-        String sortClause = sortColumn + (Db.Bookmark2.caption.equals(sortColumn)? " collate NOCASE ": "") + (sortAscending? " asc": " desc"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-        
-        if (labelId == 0) { // no restrictions
-            return db.query(Db.TABLE_Bookmark2, null, Db.Bookmark2.kind + "=?", new String[]{String.valueOf(kind)}, null, null, sortClause); //$NON-NLS-1$
-        } else if (labelId == BookmarkListActivity.LABELID_noLabel) { // only without label
-            return db.rawQuery("select " + Db.TABLE_Bookmark2 + ".* from " + Db.TABLE_Bookmark2 + " where " + Db.TABLE_Bookmark2 + "." + Db.Bookmark2.kind + "=? and " + Db.TABLE_Bookmark2 + "." + BaseColumns._ID + " not in (select " + Db.Bookmark2_Label.bookmark2_id + " from " + Db.TABLE_Bookmark2_Label + ") order by " + Db.TABLE_Bookmark2 + "." + sortClause, new String[] {String.valueOf(kind)});  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
-        } else { // filter by labelId
-            return db.rawQuery("select " + Db.TABLE_Bookmark2 + ".* from " + Db.TABLE_Bookmark2 + ", " + Db.TABLE_Bookmark2_Label + " where " + Db.Bookmark2.kind + "=? and " + Db.TABLE_Bookmark2 + "." + BaseColumns._ID + " = " + Db.TABLE_Bookmark2_Label + "." + Db.Bookmark2_Label.bookmark2_id + " and " + Db.TABLE_Bookmark2_Label + "." + Db.Bookmark2_Label.label_id + "=? order by " + Db.TABLE_Bookmark2 + "." + sortClause, new String[] {String.valueOf(kind), String.valueOf(labelId)});          //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$//$NON-NLS-6$//$NON-NLS-7$//$NON-NLS-8$//$NON-NLS-9$//$NON-NLS-10$ //$NON-NLS-11$ //$NON-NLS-12$
-        }
+		String sortClause = sortColumn + (Db.Bookmark2.caption.equals(sortColumn)? " collate NOCASE ": "") + (sortAscending? " asc": " desc"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+
+		if (labelId == 0) { // no restrictions
+			return db.query(Db.TABLE_Bookmark2, null, Db.Bookmark2.kind + "=?", new String[] {String.valueOf(kind)}, null, null, sortClause); //$NON-NLS-1$
+		} else if (labelId == BookmarkListActivity.LABELID_noLabel) { // only without label
+			return db.rawQuery("select " + Db.TABLE_Bookmark2 + ".* from " + Db.TABLE_Bookmark2 + " where " + Db.TABLE_Bookmark2 + "." + Db.Bookmark2.kind + "=? and " + Db.TABLE_Bookmark2 + "." + BaseColumns._ID + " not in (select " + Db.Bookmark2_Label.bookmark2_id + " from " + Db.TABLE_Bookmark2_Label + ") order by " + Db.TABLE_Bookmark2 + "." + sortClause, new String[] {String.valueOf(kind)});  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
+		} else { // filter by labelId
+			return db.rawQuery("select " + Db.TABLE_Bookmark2 + ".* from " + Db.TABLE_Bookmark2 + ", " + Db.TABLE_Bookmark2_Label + " where " + Db.Bookmark2.kind + "=? and " + Db.TABLE_Bookmark2 + "." + BaseColumns._ID + " = " + Db.TABLE_Bookmark2_Label + "." + Db.Bookmark2_Label.bookmark2_id + " and " + Db.TABLE_Bookmark2_Label + "." + Db.Bookmark2_Label.label_id + "=? order by " + Db.TABLE_Bookmark2 + "." + sortClause, new String[] {String.valueOf(kind), String.valueOf(labelId)});          //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$//$NON-NLS-6$//$NON-NLS-7$//$NON-NLS-8$//$NON-NLS-9$//$NON-NLS-10$ //$NON-NLS-11$ //$NON-NLS-12$
+		}
 	}
 
 	public void importBookmarks(List<Bookmark2> bookmarks, boolean overwrite, TObjectIntHashMap<Bookmark2> bookmarkToRelIdMap, TIntLongHashMap labelRelIdToAbsIdMap, TIntObjectHashMap<TIntList> bookmarkRelIdToLabelRelIdsMap) {
@@ -158,14 +157,14 @@ public class InternalDb {
 			{ // write new bookmarks
 				String[] params1 = new String[1];
 				String[] params2 = new String[2];
-				for (Bookmark2 bookmark: bookmarks) {
+				for (Bookmark2 bookmark : bookmarks) {
 					int bookmark_relId = bookmarkToRelIdMap.get(bookmark);
-					
+
 					params2[0] = String.valueOf(bookmark.ari);
 					params2[1] = String.valueOf(bookmark.kind);
-					
+
 					long _id = -1;
-					
+
 					boolean ada = false;
 					Cursor cursor = db.query(Db.TABLE_Bookmark2, null, Db.Bookmark2.ari + "=? and " + Db.Bookmark2.kind + "=?", params2, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 					if (cursor.moveToNext()) {
@@ -173,13 +172,13 @@ public class InternalDb {
 						_id = cursor.getLong(cursor.getColumnIndexOrThrow(BaseColumns._ID)); /* [1] */
 					}
 					cursor.close();
-					
+
 					// ----------------------------------------- get _id from
 					//  exists  overwrite:     delete insert     [2]
 					//  exists !overwrite: (nop)                 [1]
 					// !exists  overwrite:            insert     [2]
 					// !exists !overwrite:            insert     [2]
-					
+
 					if (ada && overwrite) {
 						params1[0] = String.valueOf(_id);
 						db.delete(Db.TABLE_Bookmark2, "_id=?", params1); //$NON-NLS-1$
@@ -188,30 +187,30 @@ public class InternalDb {
 					if ((ada && overwrite) || (!ada)) {
 						_id = db.insert(Db.TABLE_Bookmark2, null, bookmark.toContentValues()); /* [2] */
 					}
-					
+
 					// map it
 					bookmarkRelIdToAbsIdMap.put(bookmark_relId, _id);
 				}
 			}
-			
+
 			{ // now is label assignments
 				String where = Db.Bookmark2_Label.bookmark2_id + "=?"; //$NON-NLS-1$
 				String[] params = {null};
 				ContentValues cv = new ContentValues();
-				
+
 				// nlabel>0  overwrite:  delete insert
 				// nlabel>0 !overwrite: (nop)
 				// nlabel=0  overwrite:         insert
 				// nlabel=0 !overwrite:         insert
-				
-				for (int bookmark_relId: bookmarkRelIdToLabelRelIdsMap.keys()) {
+
+				for (int bookmark_relId : bookmarkRelIdToLabelRelIdsMap.keys()) {
 					TIntList label_relIds = bookmarkRelIdToLabelRelIdsMap.get(bookmark_relId);
-					
+
 					long bookmark_id = bookmarkRelIdToAbsIdMap.get(bookmark_relId);
-					
+
 					if (bookmark_id > 0) {
 						params[0] = String.valueOf(bookmark_id);
-						
+
 						// check how many labels for this bookmark_id
 						int nlabel = 0;
 						Cursor c = db.rawQuery("select count(*) from " + Db.TABLE_Bookmark2_Label + " where " + where, params); //$NON-NLS-1$ //$NON-NLS-2$
@@ -221,12 +220,12 @@ public class InternalDb {
 						} finally {
 							c.close();
 						}
-						
-						if (nlabel>0 && overwrite) {
+
+						if (nlabel > 0 && overwrite) {
 							db.delete(Db.TABLE_Bookmark2_Label, where, params);
 						}
-						if ((nlabel>0 && overwrite) || (!(nlabel>0))) {
-							for (int label_relId: label_relIds.toArray()) {
+						if ((nlabel > 0 && overwrite) || (!(nlabel > 0))) {
+							for (int label_relId : label_relIds.toArray()) {
 								long label_id = labelRelIdToAbsIdMap.get(label_relId);
 								if (label_id > 0) {
 									cv.put(Db.Bookmark2_Label.bookmark2_id, bookmark_id);
@@ -242,13 +241,13 @@ public class InternalDb {
 					}
 				}
 			}
-	
+
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
 		}
 	}
-	
+
 	public Cursor listAllBookmarks() {
 		return helper.getReadableDatabase().query(Db.TABLE_Bookmark2, null, null, null, null, null, null);
 	}
@@ -258,22 +257,24 @@ public class InternalDb {
 	}
 
 	private SQLiteStatement stmt_countAttribute = null;
+
 	public int countAttributes(int ari_bookchapter) {
 		int ariMin = ari_bookchapter & 0x00ffff00;
 		int ariMax = ari_bookchapter | 0x000000ff;
-		
+
 		if (stmt_countAttribute == null) {
 			stmt_countAttribute = helper.getReadableDatabase().compileStatement("select count(*) from " + Db.TABLE_Bookmark2 + " where " + Db.Bookmark2.ari + ">=? and " + Db.Bookmark2.ari + "<?");//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
-		
+
 		stmt_countAttribute.clearBindings();
 		stmt_countAttribute.bindLong(1, ariMin);
 		stmt_countAttribute.bindLong(2, ariMax);
-		
+
 		return (int) stmt_countAttribute.simpleQueryForLong();
 	}
-	
+
 	private String[] sql_putAttributes_params = new String[2];
+
 	/**
 	 * @param map_0 the verses 0-based.
 	 * @return null if no highlights, or colors when there are highlights according to offsets of map_0.
@@ -282,7 +283,7 @@ public class InternalDb {
 		int ariMin = ari_bookchapter & 0x00ffff00;
 		int ariMax = ari_bookchapter | 0x000000ff;
 		int[] res = null;
-		
+
 		sql_putAttributes_params[0] = String.valueOf(ariMin);
 		sql_putAttributes_params[1] = String.valueOf(ariMax);
 		Cursor cursor = helper.getReadableDatabase().rawQuery("select * from " + Db.TABLE_Bookmark2 + " where " + Db.Bookmark2.ari + ">=? and " + Db.Bookmark2.ari + "<?", sql_putAttributes_params); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -293,7 +294,7 @@ public class InternalDb {
 			while (cursor.moveToNext()) {
 				int ari = cursor.getInt(col_ari);
 				int kind = cursor.getInt(col_kind);
-				
+
 				int mapOffset = Ari.toVerse(ari) - 1;
 				if (mapOffset >= map_0.length) {
 					Log.e(TAG, "ofsetMap kebanyakan " + mapOffset + " terjadi pada ari 0x" + Integer.toHexString(ari)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -304,10 +305,10 @@ public class InternalDb {
 						map_0[mapOffset] |= 0x2;
 					} else if (kind == Db.Bookmark2.kind_highlight) {
 						map_0[mapOffset] |= 0x4;
-						
+
 						String caption = cursor.getString(col_caption);
 						int colorRgb = U.decodeHighlight(caption);
-						
+
 						if (res == null) res = new int[map_0.length];
 						res[mapOffset] = colorRgb;
 					}
@@ -321,9 +322,9 @@ public class InternalDb {
 
 	public void updateOrInsertHighlights(int ari_bookchapter, IntArrayList selectedVerses_1, int colorRgb) {
 		SQLiteDatabase db = helper.getWritableDatabase();
-		
+
 		String[] params = {null /* buat ari */, String.valueOf(Db.Bookmark2.kind_highlight)};
-		
+
 		db.beginTransaction();
 		try {
 			// every requested verses
@@ -331,7 +332,7 @@ public class InternalDb {
 				int verse_1 = selectedVerses_1.get(i);
 				int ari = Ari.encodeWithBc(ari_bookchapter, verse_1);
 				params[0] = String.valueOf(ari);
-				
+
 				Cursor c = db.query(Db.TABLE_Bookmark2, null, Db.Bookmark2.ari + "=? and " + Db.Bookmark2.kind + "=?", params, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 				try {
 					if (c.moveToNext()) { // check if bookmark exists
@@ -368,15 +369,15 @@ public class InternalDb {
 		int ariMax = ari_bookchapter | 0xff;
 		int[] colors = new int[256];
 		int res = -2;
-		
+
 		for (int i = 0; i < colors.length; i++) colors[i] = -1;
-		
+
 		// check if exists
 		Cursor c = helper.getReadableDatabase().query(Db.TABLE_Bookmark2, null, Db.Bookmark2.ari + ">? and " + Db.Bookmark2.ari + "<=? and " + Db.Bookmark2.kind + "=?", new String[] {String.valueOf(ariMin), String.valueOf(ariMax), String.valueOf(Db.Bookmark2.kind_highlight)}, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		try {
 			int ari_col = c.getColumnIndexOrThrow(Db.Bookmark2.ari);
 			int tulisan_col = c.getColumnIndexOrThrow(Db.Bookmark2.caption);
-			
+
 			// put to array first
 			while (c.moveToNext()) {
 				int ari = c.getInt(ari_col);
@@ -384,7 +385,7 @@ public class InternalDb {
 				int color = U.decodeHighlight(c.getString(tulisan_col));
 				colors[index] = color;
 			}
-			
+
 			// determine default color. If all has color x, then it's x. If one of them is not x, then it's -1.
 			for (int i = 0; i < selectedVerses_1.size(); i++) {
 				int verse_1 = selectedVerses_1.get(i);
@@ -395,7 +396,7 @@ public class InternalDb {
 					return -1;
 				}
 			}
-			
+
 			if (res == -2) return -1;
 			return res;
 		} finally {
@@ -415,7 +416,7 @@ public class InternalDb {
 			values.put(Db.Devotion.name, article.getName());
 			values.put(Db.Devotion.date, article.getDate());
 			values.put(Db.Devotion.readyToUse, article.getReadyToUse()? 1: 0);
-			
+
 			if (article.getReadyToUse()) {
 				String[] headerTitleBody = article.getHeaderTitleBody();
 				values.put(Db.Devotion.header, headerTitleBody[0]);
@@ -426,55 +427,55 @@ public class InternalDb {
 				values.putNull(Db.Devotion.title);
 				values.putNull(Db.Devotion.body);
 			}
-			
+
 			values.put(Db.Devotion.touchTime, Sqlitil.nowDateTime());
-			
+
 			db.insert(Db.TABLE_Devotion, null, values);
-			
+
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
 		}
 	}
-	
+
 	public int deleteDevotionsWithTouchTimeBefore(Date date) {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		return db.delete(Db.TABLE_Devotion, Db.Devotion.touchTime + "<?", new String[] {String.valueOf(Sqlitil.toInt(date))}); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Try to get article from local db. Non ready-to-use article will be returned too.
 	 */
 	public DevotionArticle tryGetDevotion(String name, String date) {
-		Cursor c = helper.getReadableDatabase().query(Db.TABLE_Devotion, null, Db.Devotion.name + "=? and " + Db.Devotion.date + "=?", new String[] { name, date }, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
+		Cursor c = helper.getReadableDatabase().query(Db.TABLE_Devotion, null, Db.Devotion.name + "=? and " + Db.Devotion.date + "=?", new String[] {name, date}, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			int col_title = c.getColumnIndexOrThrow(Db.Devotion.title);
 			int col_header = c.getColumnIndexOrThrow(Db.Devotion.header);
 			int col_body = c.getColumnIndexOrThrow(Db.Devotion.body);
 			int col_readyToUse = c.getColumnIndexOrThrow(Db.Devotion.readyToUse);
-			
+
 			if (c.moveToNext()) {
 				DevotionArticle res = null;
 				if (name.equals("rh")) { //$NON-NLS-1$
 					res = new ArticleRenunganHarian(
-						date,
-						c.getString(col_title),
-						c.getString(col_header),
-						c.getString(col_body),
-						c.getInt(col_readyToUse) > 0
+					date,
+					c.getString(col_title),
+					c.getString(col_header),
+					c.getString(col_body),
+					c.getInt(col_readyToUse) > 0
 					);
 				} else if (name.equals("sh")) { //$NON-NLS-1$
 					res = new ArticleSantapanHarian(
-						date,
-						c.getString(col_title),
-						c.getString(col_header),
-						c.getString(col_body),
-						c.getInt(col_readyToUse) > 0
+					date,
+					c.getString(col_title),
+					c.getString(col_header),
+					c.getString(col_body),
+					c.getInt(col_readyToUse) > 0
 					);
 				} else if (name.equals("me-en")) {
 					res = new ArticleMorningEveningEnglish(date, c.getString(col_body), true);
 				}
-	
+
 				return res;
 			} else {
 				return null;
@@ -495,7 +496,7 @@ public class InternalDb {
 			int col_filename = cursor.getColumnIndexOrThrow(Db.Version.filename);
 			int col_filename_originalpdb = cursor.getColumnIndexOrThrow(Db.Version.filename_originalpdb);
 			int col_ordering = cursor.getColumnIndexOrThrow(Db.Version.ordering);
-			
+
 			while (cursor.moveToNext()) {
 				MVersionYes yes = new MVersionYes();
 				yes.cache_active = cursor.getInt(col_active) != 0;
@@ -562,7 +563,7 @@ public class InternalDb {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.delete(Db.TABLE_Version, Db.Version.filename + "=?", new String[] {version.filename}); //$NON-NLS-1$
 	}
-	
+
 	public List<Label> listAllLabels() {
 		List<Label> res = new ArrayList<Label>();
 		Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Label, null, null, null, null, null, Db.Label.ordering + " asc"); //$NON-NLS-1$
@@ -575,7 +576,7 @@ public class InternalDb {
 		}
 		return res;
 	}
-	
+
 	/**
 	 * @return null when not found
 	 */
@@ -592,7 +593,7 @@ public class InternalDb {
 		}
 		return res;
 	}
-	
+
 	/**
 	 * @return null when not found
 	 */
@@ -639,34 +640,34 @@ public class InternalDb {
 		try {
 			// remove all
 			db.delete(Db.TABLE_Bookmark2_Label, Db.Bookmark2_Label.bookmark2_id + "=?", new String[] {String.valueOf(bookmark._id)}); //$NON-NLS-1$
-			
+
 			// add all
 			ContentValues cv = new ContentValues();
-			for (Label label: labels) {
+			for (Label label : labels) {
 				cv.put(Db.Bookmark2_Label.bookmark2_id, bookmark._id);
 				cv.put(Db.Bookmark2_Label.label_id, label._id);
 				db.insert(Db.TABLE_Bookmark2_Label, null, cv);
 			}
-			
+
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
 		}
 	}
 
-    public Label getLabelById(long labelId) {
-        SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.query(Db.TABLE_Label, null, BaseColumns._ID + "=?", new String[] {String.valueOf(labelId)}, null, null, null); //$NON-NLS-1$
-        try {
-            if (cursor.moveToNext()) {
-                return Label.fromCursor(cursor);
-            } else {
-                return null;
-            }
-        } finally {
-            cursor.close();
-        }
-    }
+	public Label getLabelById(long labelId) {
+		SQLiteDatabase db = helper.getReadableDatabase();
+		Cursor cursor = db.query(Db.TABLE_Label, null, BaseColumns._ID + "=?", new String[] {String.valueOf(labelId)}, null, null, null); //$NON-NLS-1$
+		try {
+			if (cursor.moveToNext()) {
+				return Label.fromCursor(cursor);
+			} else {
+				return null;
+			}
+		} finally {
+			cursor.close();
+		}
+	}
 
 	public void deleteLabelById(long id) {
 		SQLiteDatabase db = helper.getWritableDatabase();
@@ -705,23 +706,23 @@ public class InternalDb {
 
 	public void reorderLabels(Label from, Label to) {
 		// original order: A101 B[102] C103 D[104] E105
-		
+
 		// case: move up from=104 to=102:
 		//   increase ordering for (to <= ordering < from)
 		//   A101 B[103] C104 D[104] E105
 		//   replace ordering of 'from' to 'to'
 		//   A101 B[103] C104 D[102] E105
-				
+
 		// case: move down from=102 to=104:
 		//   decrease ordering for (from < ordering <= to)
 		//   A101 B[102] C102 D[103] E105
 		//   replace ordering of 'from' to 'to'
 		//   A101 B[104] C102 D[103] E105
-		
+
 		if (D.EBUG) {
 			Log.d(TAG, "@@reorderLabels from _id=" + from._id + " ordering=" + from.ordering + " to _id=" + to._id + " ordering=" + to.ordering);
 		}
-		
+
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
 		try {
@@ -732,7 +733,7 @@ public class InternalDb {
 				db.execSQL("update " + Db.TABLE_Label + " set " + Db.Label.ordering + "=(" + Db.Label.ordering + "-1) where ?<" + Db.Label.ordering + " and " + Db.Label.ordering + "<=?", new Object[] {from.ordering, to.ordering});
 				db.execSQL("update " + Db.TABLE_Label + " set " + Db.Label.ordering + "=? where _id=?", new Object[] {to.ordering, from._id});
 			}
-			
+
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
@@ -799,8 +800,11 @@ public class InternalDb {
 
 	public long insertReadingPlan(final ReadingPlanManager.ReadingPlanBinary readingPlanBinary) {
 		ContentValues cv = new ContentValues();
-		cv.put(Db.ReadingPlan.title, readingPlanBinary.title);
-		cv.put(Db.ReadingPlan.startDate, readingPlanBinary.startDate);
+		cv.put(Db.ReadingPlan.version, readingPlanBinary.info.version);
+		cv.put(Db.ReadingPlan.title, readingPlanBinary.info.title);
+		cv.put(Db.ReadingPlan.description, readingPlanBinary.info.description);
+		cv.put(Db.ReadingPlan.duration, readingPlanBinary.info.duration);
+		cv.put(Db.ReadingPlan.startDate, readingPlanBinary.info.startDate);
 		cv.put(Db.ReadingPlan.plans, readingPlanBinary.binaryReadingPlan);
 		return helper.getWritableDatabase().insert(Db.TABLE_ReadingPlan, null, cv);
 	}
@@ -812,14 +816,23 @@ public class InternalDb {
 		return helper.getWritableDatabase().insert(Db.TABLE_ReadingPlanProgress, null, cv);
 	}
 
-	public Map<Long, String> listAllReadingPlanIdAndTitle() {
-		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan, new String[] {"_id", Db.ReadingPlan.title}, null, null, null, null, null);
-		final Map<Long, String> res = new LinkedHashMap<Long, String>();
+	public List<ReadingPlan.ReadingPlanInfo> listAllReadingPlanInfo() {
+		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan,
+		new String[] {"_id", Db.ReadingPlan.version, Db.ReadingPlan.title, Db.ReadingPlan.description, Db.ReadingPlan.duration, Db.ReadingPlan.startDate},
+		null, null, null, null, null);
+		List<ReadingPlan.ReadingPlanInfo> infos = new ArrayList<ReadingPlan.ReadingPlanInfo>();
 		while (c.moveToNext()) {
-			res.put(c.getLong(0), c.getString(1));
+			ReadingPlan.ReadingPlanInfo info = new ReadingPlan.ReadingPlanInfo();
+			info.id = c.getLong(0);
+			info.version = c.getInt(1);
+			info.title = c.getString(2);
+			info.description = c.getString(3);
+			info.duration = c.getInt(4);
+			info.startDate = c.getLong(5);
+			infos.add(info);
 		}
 		c.close();
-		return res;
+		return infos;
 	}
 
 	public byte[] getBinaryReadingPlanById(long id) {
@@ -830,6 +843,16 @@ public class InternalDb {
 		}
 		c.close();
 		return buffer;
+	}
+
+	public IntArrayList getAllReadingCodesByReadingPlanId(long id) {
+		IntArrayList res = new IntArrayList();
+		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlanProgress, new String[] {Db.ReadingPlanProgress.reading_code}, Db.ReadingPlanProgress.reading_plan_id + "=?", new String[] {String.valueOf(id)}, null, null, null);
+		while (c.moveToNext()) {
+			res.add(c.getInt(0));
+		}
+		c.close();
+		return res;
 	}
 
 }

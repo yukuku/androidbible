@@ -21,7 +21,7 @@
             android:contentDescription="@string/desc_previous_chapter"
             android:padding="16dp"
             android:scaleType="center"
-            android:src="@drawable/ic_menu_add_light" />
+            android:src="@drawable/ic_unchecked" />
 
     <TextView
             android:id="@+id/tDescription"

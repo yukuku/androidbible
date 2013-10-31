@@ -1282,9 +1282,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 			readingPlanFloatMenu.setVisibility(View.VISIBLE);
 
-			int ari = data.getIntExtra("ari", 0);
-			int[] ariRanges = data.getIntArrayExtra(ReadingPlan.READING_PLAN_ARI_RANGES);
-			boolean[] readReadings = data.getBooleanArrayExtra(ReadingPlan.ReadingPlanProgress.READING_PLAN_PROGRESS_READ);
+			final int ari = data.getIntExtra("ari", 0);
+			final long id = data.getLongExtra(ReadingPlanActivity.READING_PLAN_ID, 0L);
+			final int dayNumber = data.getIntExtra(ReadingPlanActivity.READING_PLAN_DAY_NUMBER, 0);
+			final int[] ariRanges = data.getIntArrayExtra(ReadingPlanActivity.READING_PLAN_ARI_RANGES);
+			final boolean[] readReadings = data.getBooleanArrayExtra(ReadingPlan.ReadingPlanProgress.READING_PLAN_PROGRESS_READ);
 
 			if (ari != 0 && ariRanges != null && readReadings != null && ariRanges.length == readReadings.length) {
 				for (int i = 0; i < ariRanges.length; i++) {
@@ -1292,15 +1294,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						jumpToAri(ari);
 						history.add(ari);
 
-						readingPlanFloatMenu.load(ariRanges, readReadings, i);
-						readingPlanFloatMenu.setLeftNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuNavigationClickListener() {
+						readingPlanFloatMenu.load(id, dayNumber, ariRanges, readReadings, i);
+						readingPlanFloatMenu.setLeftNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
 							public void onClick(final int ari) {
 								jumpToAri(ari);
 								history.add(ari);
 							}
 						});
-						readingPlanFloatMenu.setRightNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuNavigationClickListener() {
+						readingPlanFloatMenu.setRightNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
 							public void onClick(final int ari) {
 								jumpToAri(ari);

@@ -165,7 +165,10 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	private void createTableReadingPlan(final SQLiteDatabase db) {
 		db.execSQL("create table if not exists " + Db.TABLE_ReadingPlan + " (" +
 		"_id integer primary key autoincrement, " +
+		Db.ReadingPlan.version + " integer, " +
 		Db.ReadingPlan.title + " text, " +
+		Db.ReadingPlan.description + " text, " +
+		Db.ReadingPlan.duration + " integer, " +
 		Db.ReadingPlan.startDate + " integer, " +
 		Db.ReadingPlan.plans + " blob)");
 	}

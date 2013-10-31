@@ -10,19 +10,25 @@ import android.widget.TextView;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
+import yuku.alkitab.base.util.ReadingPlanManager;
 import yuku.alkitab.debug.R;
 
 public class ReadingPlanFloatMenu extends LinearLayout {
 
+	private long id;
+	private int dayNumber;
 	private int[] ariRanges;
 	private boolean[] readReadings;
 	private int sequence;
 
-	private ReadingPlanFloatMenuNavigationClickListener leftNavigation;
-	private ReadingPlanFloatMenuNavigationClickListener rightNavigation;
+	private ReadingPlanFloatMenuClickListener leftNavigation;
+	private ReadingPlanFloatMenuClickListener rightNavigation;
+	private ReadingPlanFloatMenuClickListener readMark;
+
 	private TextView tDescription;
 	private ImageButton bLeft;
 	private ImageButton bRight;
+	private ImageButton bTick;
 
 	public ReadingPlanFloatMenu(final Context context) {
 		super(context);
@@ -34,7 +40,9 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		prepareLayout(context);
 	}
 
-	public void load(int[] ariRanges, boolean[] readReadings, int sequence) {
+	public void load(long readingPlanId, int dayNumber, int[] ariRanges, boolean[] readReadings, int sequence) {
+		this.id = readingPlanId;
+		this.dayNumber = dayNumber;
 		this.ariRanges = ariRanges;
 		this.readReadings = readReadings;
 		this.sequence = sequence;
@@ -47,13 +55,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		tDescription = V.get(view, R.id.tDescription);
 		bLeft = V.get(view, R.id.bNavLeft);
 		bRight = V.get(view, R.id.bNavRight);
-	}
-
-	private void updateLayout() {
-
-		if (ariRanges == null || readReadings == null) {
-			return;
-		}
+		bTick = V.get(view, R.id.bTick);
 
 		bLeft.setOnClickListener(new OnClickListener() {
 			@Override
@@ -77,6 +79,30 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 			}
 		});
 
+		bTick.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				readReadings[sequence] = !readReadings[sequence];
+				readReadings[sequence + 1] = readReadings[sequence];
+
+				ReadingPlanManager.insertReadingPlanProgress(id, dayNumber, sequence);
+				updateLayout();
+			}
+		});
+	}
+
+	private void updateLayout() {
+
+		if (ariRanges == null || readReadings == null) {
+			return;
+		}
+
+		if (readReadings[sequence]) {
+			bTick.setImageResource(R.drawable.ic_checked);
+		} else {
+			bTick.setImageResource(R.drawable.ic_unchecked);
+		}
+
 		tDescription.setText(ReadingPlanActivity.getReference(S.activeVersion, new int[] {ariRanges[sequence], ariRanges[sequence + 1]}));
 		if (sequence == 0) {
 			bLeft.setEnabled(false);
@@ -90,15 +116,19 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		}
 	}
 
-	public void setLeftNavigationClickListener(final ReadingPlanFloatMenuNavigationClickListener leftNavigation) {
+	public void setLeftNavigationClickListener(final ReadingPlanFloatMenuClickListener leftNavigation) {
 		this.leftNavigation = leftNavigation;
 	}
 
-	public void setRightNavigationClickListener(final ReadingPlanFloatMenuNavigationClickListener rightNavigation) {
+	public void setRightNavigationClickListener(final ReadingPlanFloatMenuClickListener rightNavigation) {
 		this.rightNavigation = rightNavigation;
 	}
 
-	public interface ReadingPlanFloatMenuNavigationClickListener {
+	public void setReadMarkClickListener(final ReadingPlanFloatMenuClickListener readMark) {
+		this.readMark = readMark;
+	}
+
+	public interface ReadingPlanFloatMenuClickListener {
 		public void onClick(int ari);
 	}
 

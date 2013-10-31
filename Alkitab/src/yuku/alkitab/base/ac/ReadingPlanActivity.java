@@ -20,16 +20,18 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.model.Version;
+import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.ReadingPlanManager;
 import yuku.alkitab.debug.R;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ReadingPlanActivity extends Activity {
+	public static final String READING_PLAN_ARI_RANGES = "reading_plan_ari_ranges";
+	public static final String READING_PLAN_ID = "reading_plan_id";
+	public static final String READING_PLAN_DAY_NUMBER = "reading_plan_day_number";
 
 	private ReadingPlan readingPlan;
 	private int dayNumber;
@@ -38,7 +40,7 @@ public class ReadingPlanActivity extends Activity {
 	private ImageButton bRight;
 	private ListView lsTodayReadings;
 	private ListView lsDailyPlan;
-	private List<boolean[]> readReadings;
+	private IntArrayList readingCodes;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -66,14 +68,17 @@ public class ReadingPlanActivity extends Activity {
 		Intent intent = new Intent();
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		intent.putExtra("ari", ari);
-		intent.putExtra(ReadingPlan.READING_PLAN_ARI_RANGES, selectedVerses);
-		intent.putExtra(ReadingPlan.ReadingPlanProgress.READING_PLAN_PROGRESS_READ, readReadings.get(dayNumber));
+		intent.putExtra(READING_PLAN_ID, readingPlan.info.id);
+		intent.putExtra(READING_PLAN_DAY_NUMBER, dayNumber);
+		intent.putExtra(READING_PLAN_ARI_RANGES, selectedVerses);
+		intent.putExtra(ReadingPlan.ReadingPlanProgress.READING_PLAN_PROGRESS_READ, getReadMarksByDay(dayNumber));
 		setResult(RESULT_OK, intent);
 		finish();
 	}
 
+	public void prepareDisplay() {
 
-	public void prepareDisplay() {//List view
+		//Listviews
 		todayReadingsAdapter = new TodayReadingsAdapter();
 		todayReadingsAdapter.load();
 		lsTodayReadings.setAdapter(todayReadingsAdapter);
@@ -99,7 +104,7 @@ public class ReadingPlanActivity extends Activity {
 			}
 		});
 
-		//button
+		//buttons
 		bLeft = V.get(this, R.id.bLeft);
 		bRight = V.get(this, R.id.bRight);
 
@@ -147,7 +152,7 @@ public class ReadingPlanActivity extends Activity {
 		if (dayNumber == 0) {
 			bLeft.setEnabled(false);
 			bRight.setEnabled(true);
-		} else if (dayNumber == readingPlan.duration - 1) {
+		} else if (dayNumber == readingPlan.info.duration - 1) {
 			bLeft.setEnabled(true);
 			bRight.setEnabled(false);
 		} else {
@@ -166,40 +171,49 @@ public class ReadingPlanActivity extends Activity {
 		ReadingPlanManager.copyReadingPlanToDb(R.raw.wsts);
 		loadDayNumber();
 		loadReadingPlan();
+		loadReadingPlanProgress();
 		prepareDisplay();
 	}
 	private void loadReadingPlan() {
 		//TODO: proper method. Testing only
 
-		Map<Long, String> idAndTitles = S.getDb().listAllReadingPlanIdAndTitle();
-		Log.d("@@@@@@@@@@@@", "jumlah reading plan: " + idAndTitles.size());
-		long testId = 0;
-		for (Map.Entry<Long, String> entry : idAndTitles.entrySet()) {
-			Log.d("@@@@@@@@ ", "Id nya: " + entry.getKey());
-			Log.d("@@@@@@@@ ", "Judulnya: " + entry.getValue());
-			testId = entry.getKey();
+		List<ReadingPlan.ReadingPlanInfo> infos = S.getDb().listAllReadingPlanInfo();
+		long id = 0;
+		for (ReadingPlan.ReadingPlanInfo info : infos) {
+			id = info.id;
 		}
 
-		if (idAndTitles.size() == 0) {
+		if (infos.size() == 0) {
 			return;
 		}
 
-		byte[] binaryReadingPlan = S.getDb().getBinaryReadingPlanById(testId);
-		Log.d("@@@@@@@@@@@@", "panjang byte: " + binaryReadingPlan.length);
+		byte[] binaryReadingPlan = S.getDb().getBinaryReadingPlanById(id);
 
 		InputStream inputStream = new ByteArrayInputStream(binaryReadingPlan);
 		ReadingPlan res = ReadingPlanManager.readVersion1(inputStream);
-
+		res.info.id = id;
 		readingPlan = res;
-		Log.d("@@@@@@@@@@@@", "rp yang diload: " + readingPlan.title);
 	}
 	
 	private void loadReadingPlanProgress() {
 		//TODO proper method. Testing only
-		readReadings = new ArrayList<boolean[]>();
-		for (int i = 0; i < readingPlan.dailyVerses.size(); i++) {
-			readReadings.add(new boolean[readingPlan.dailyVerses.get(i).length]);
+		if (readingPlan == null) {
+			return;
 		}
+		readingCodes = S.getDb().getAllReadingCodesByReadingPlanId(readingPlan.info.id);
+	}
+
+	private boolean[] getReadMarksByDay(int dayNumber) {
+		boolean[] res = new boolean[readingPlan.dailyVerses.get(dayNumber).length];
+		int start = dayNumber << 8;
+		int end = (dayNumber + 1) << 8;
+		for (int i = 0; i < readingCodes.size(); i++) {
+			final int readingCode = readingCodes.get(i);
+			if (readingCode >= start && readingCode < end) {
+				res[ReadingPlan.ReadingPlanProgress.toSequence(readingCode)] = true;
+			}
+		}
+		return res;
 	}
 
 	class TodayReadingsAdapter extends EasyAdapter {
@@ -254,7 +268,7 @@ public class ReadingPlanActivity extends Activity {
 
 		@Override
 		public int getCount() {
-			return readingPlan.duration;
+			return readingPlan.info.duration;
 		}
 	}
 
