@@ -44,9 +44,13 @@ public class ReadingPlanManager {
 		return S.getDb().insertReadingPlan(readingPlanBinary);
 	}
 
-	public static void insertReadingPlanProgress(final long readingPlanId, final int dayNumber, final int readingSequence) {
+	public static void updateReadingPlanProgress(final long readingPlanId, final int dayNumber, final int readingSequence, final boolean ticked) {
 		int readingCode = ReadingPlan.ReadingPlanProgress.toReadingCode(dayNumber, readingSequence);
-		S.getDb().insertReadingPlanProgress(readingPlanId, readingCode);
+		if (ticked) {
+			S.getDb().insertReadingPlanProgress(readingPlanId, readingCode);
+		} else {
+			S.getDb().deleteReadingPlanProgress(readingPlanId, readingCode);
+		}
 	}
 
 	public static ReadingPlan readVersion1(InputStream inputStream) {

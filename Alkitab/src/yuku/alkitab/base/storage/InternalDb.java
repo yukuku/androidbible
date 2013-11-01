@@ -816,6 +816,13 @@ public class InternalDb {
 		return helper.getWritableDatabase().insert(Db.TABLE_ReadingPlanProgress, null, cv);
 	}
 
+	public int deleteReadingPlanProgress(final long readingPlanId, final int readingCode) {
+		ContentValues cv = new ContentValues();
+		cv.put(Db.ReadingPlanProgress.reading_plan_id, readingPlanId);
+		cv.put(Db.ReadingPlanProgress.reading_code, readingCode);
+		return helper.getWritableDatabase().delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_id + "=? AND " + Db.ReadingPlanProgress.reading_code + "=?", new String[] {String.valueOf(readingPlanId), String.valueOf(readingCode)});
+	}
+
 	public List<ReadingPlan.ReadingPlanInfo> listAllReadingPlanInfo() {
 		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan,
 		new String[] {"_id", Db.ReadingPlan.version, Db.ReadingPlan.title, Db.ReadingPlan.description, Db.ReadingPlan.duration, Db.ReadingPlan.startDate},

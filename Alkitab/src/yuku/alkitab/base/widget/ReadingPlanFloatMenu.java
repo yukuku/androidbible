@@ -82,10 +82,11 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		bTick.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				readReadings[sequence] = !readReadings[sequence];
-				readReadings[sequence + 1] = readReadings[sequence];
+				boolean ticked = !readReadings[sequence];
+				readReadings[sequence] = ticked;
+				readReadings[sequence + 1] = ticked;
 
-				ReadingPlanManager.insertReadingPlanProgress(id, dayNumber, sequence);
+				ReadingPlanManager.updateReadingPlanProgress(id, dayNumber, sequence, ticked);
 				updateLayout();
 			}
 		});
