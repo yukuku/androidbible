@@ -4,13 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -216,13 +217,15 @@ public class ReadingPlanActivity extends Activity {
 		for (int i = 0; i < readingCodes.size(); i++) {
 			final int readingCode = readingCodes.get(i);
 			if (readingCode >= start && readingCode < end) {
-				res[ReadingPlan.ReadingPlanProgress.toSequence(readingCode)] = true;
+				final int sequence = ReadingPlan.ReadingPlanProgress.toSequence(readingCode) * 2;
+				res[sequence] = true;
+				res[sequence + 1] = true;
 			}
 		}
 		return res;
 	}
 
-	class TodayReadingsAdapter extends EasyAdapter {
+	class TodayReadingsAdapter extends BaseAdapter {
 
 		private int[] todayReadings;
 
@@ -231,23 +234,51 @@ public class ReadingPlanActivity extends Activity {
 		}
 
 		@Override
-		public View newView(final int position, final ViewGroup parent) {
-			return getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
-		}
-
-		@Override
-		public void bindView(final View view, final int position, final ViewGroup parent) {
-			TextView textView = V.get(view, android.R.id.text1);
-			int start = position * 2;
-			Log.d(TAG, "position: " + position);
-			Log.d(TAG, "jumlah: " + todayReadings.length);
-			int[] ari = {todayReadings[start], todayReadings[start+1]};
-			textView.setText(getReference(S.activeVersion, ari));
-		}
-
-		@Override
 		public int getCount() {
 			return todayReadings.length / 2;
+		}
+
+		@Override
+		public View getView(final int position, View convertView, final ViewGroup parent) {
+			if (convertView == null) {
+				convertView = getLayoutInflater().inflate(R.layout.item_today_reading, parent, false);
+			}
+
+			final ImageView bTick = V.get(convertView, R.id.bTick);
+			if (getReadMarksByDay(dayNumber)[position * 2]) {
+				bTick.setImageResource(R.drawable.ic_checked);
+			} else {
+				bTick.setImageResource(R.drawable.ic_unchecked);
+			}
+
+			bTick.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					boolean ticked = !getReadMarksByDay(dayNumber)[position * 2];
+
+					ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, dayNumber, position, ticked);
+					loadReadingPlanProgress();
+					load();
+					notifyDataSetChanged();
+				}
+			});
+
+			TextView textView = V.get(convertView, R.id.text1);
+			int start = position * 2;
+			int[] aris = {todayReadings[start], todayReadings[start + 1]};
+			textView.setText(getReference(S.activeVersion, aris));
+
+			return convertView;
+		}
+
+		@Override
+		public Object getItem(final int position) {
+			return null;
+		}
+
+		@Override
+		public long getItemId(final int position) {
+			return 0;
 		}
 	}
 
