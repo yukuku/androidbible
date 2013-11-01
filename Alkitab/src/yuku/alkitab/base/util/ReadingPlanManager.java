@@ -58,6 +58,7 @@ public class ReadingPlanManager {
 		try {
 			BintexReader reader = new BintexReader(inputStream);
 			if (readInfo(readingPlan.info, reader)) return null;
+			if (readingPlan.info.version != 1) return null;
 
 			int counter = 0;
 			while (counter < readingPlan.info.duration) {
@@ -94,10 +95,6 @@ public class ReadingPlanManager {
 			if (ARP_HEADER[i] != headers[i]) {
 				return true;
 			}
-		}
-		if (headers[7] != 1) {
-			Log.d(TAG, "It is not version 1.");
-			return true;
 		}
 		readingPlanInfo.version = headers[7];
 

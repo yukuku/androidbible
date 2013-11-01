@@ -26,6 +26,9 @@ import yuku.alkitab.debug.R;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class ReadingPlanActivity extends Activity {
@@ -179,8 +182,10 @@ public class ReadingPlanActivity extends Activity {
 
 		List<ReadingPlan.ReadingPlanInfo> infos = S.getDb().listAllReadingPlanInfo();
 		long id = 0;
+		long startDate = 0;
 		for (ReadingPlan.ReadingPlanInfo info : infos) {
 			id = info.id;
+			startDate = info.startDate;
 		}
 
 		if (infos.size() == 0) {
@@ -192,6 +197,7 @@ public class ReadingPlanActivity extends Activity {
 		InputStream inputStream = new ByteArrayInputStream(binaryReadingPlan);
 		ReadingPlan res = ReadingPlanManager.readVersion1(inputStream);
 		res.info.id = id;
+		res.info.startDate = startDate;
 		readingPlan = res;
 	}
 	
@@ -248,22 +254,36 @@ public class ReadingPlanActivity extends Activity {
 	class DailyPlanAdapter extends EasyAdapter {
 		@Override
 		public View newView(final int position, final ViewGroup parent) {
-			return getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+			return getLayoutInflater().inflate(android.R.layout.two_line_list_item, parent, false);
 		}
 
 		@Override
 		public void bindView(final View view, final int position, final ViewGroup parent) {
-			TextView textView = V.get(view, android.R.id.text1);
+			String date = "";
+			if (readingPlan.info.version == 1) {
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(new Date(readingPlan.info.startDate));
+				calendar.add(Calendar.DATE, position);
+
+				date = ": " + new SimpleDateFormat("MMMM dd, yyyy").format(calendar.getTime());
+			}
+
+			//Text1
+			TextView tTitle = V.get(view, android.R.id.text1);
+			tTitle.setText("Day " + (position + 1) + date);
+
+			//Text2
+			TextView tVerses = V.get(view, android.R.id.text2);
 			String text = "";
 			int[] aris = readingPlan.dailyVerses.get(position);
-			for (int i = 0; i < aris.length/2; i++) {
-				int[] ariStartEnd = {aris[i*2], aris[i*2+1]};
+			for (int i = 0; i < aris.length / 2; i++) {
+				int[] ariStartEnd = {aris[i * 2], aris[i * 2 + 1]};
 				if (i > 0) {
 					text += "; ";
 				}
 				text += getReference(S.activeVersion, ariStartEnd);
 			}
-			textView.setText(text);
+			tVerses.setText(text);
 		}
 
 		@Override

@@ -6,20 +6,20 @@
     <ImageButton
             android:id="@+id/bNavLeft"
             style="?attr/actionButtonStyle"
-            android:layout_width="48dp"
+            android:layout_width="36dp"
             android:layout_height="match_parent"
-            android:contentDescription="@string/desc_previous_chapter"
-            android:padding="16dp"
+            android:contentDescription="previous reading"
+            android:padding="8dp"
             android:scaleType="center"
             android:src="@drawable/ic_nav_left_light" />
 
     <ImageButton
             android:id="@+id/bTick"
             style="?attr/actionButtonStyle"
-            android:layout_width="48dp"
+            android:layout_width="32dp"
             android:layout_height="match_parent"
-            android:contentDescription="@string/desc_previous_chapter"
-            android:padding="16dp"
+            android:contentDescription="tick"
+            android:padding="4dp"
             android:scaleType="center"
             android:src="@drawable/ic_unchecked" />
 
@@ -29,15 +29,25 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textColor="#f0f0f0"/>
+            android:textColor="#f0f0f0" android:textSize="12sp"/>
+
+    <ImageButton
+            android:id="@+id/bClose"
+            style="?attr/actionButtonStyle"
+            android:layout_width="32dp"
+            android:layout_height="match_parent"
+            android:contentDescription="close reading plan mode"
+            android:padding="8dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_close_light" />
 
     <ImageButton
             android:id="@+id/bNavRight"
             style="?attr/actionButtonStyle"
-            android:layout_width="48dp"
+            android:layout_width="36dp"
             android:layout_height="match_parent"
-            android:contentDescription="@string/desc_next_chapter"
-            android:padding="16dp"
+            android:contentDescription="next reading"
+            android:padding="8dp"
             android:scaleType="center"
             android:src="@drawable/ic_nav_right_light" />
 </merge>
