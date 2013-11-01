@@ -1309,6 +1309,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 								history.add(ari);
 							}
 						});
+						readingPlanFloatMenu.setCloseReadingModeClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
+							@Override
+							public void onClick(final int ari) {
+								readingPlanFloatMenu.setVisibility(View.GONE);
+							}
+						});
 
 						break;
 					}

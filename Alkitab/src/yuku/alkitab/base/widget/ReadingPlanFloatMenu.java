@@ -21,9 +21,10 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 	private boolean[] readReadings;
 	private int sequence;
 
-	private ReadingPlanFloatMenuClickListener leftNavigation;
-	private ReadingPlanFloatMenuClickListener rightNavigation;
-	private ReadingPlanFloatMenuClickListener readMark;
+	private ReadingPlanFloatMenuClickListener leftNavigationListener;
+	private ReadingPlanFloatMenuClickListener rightNavigationListener;
+	private ReadingPlanFloatMenuClickListener readMarkListener;
+	private ReadingPlanFloatMenuClickListener closeReadingModeListener;
 
 	private TextView tDescription;
 	private ImageButton bLeft;
@@ -56,13 +57,14 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		bLeft = V.get(view, R.id.bNavLeft);
 		bRight = V.get(view, R.id.bNavRight);
 		bTick = V.get(view, R.id.bTick);
+		ImageButton bClose = V.get(view, R.id.bClose);
 
 		bLeft.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
 				if (sequence != 0) {
 					sequence += -2;
-					leftNavigation.onClick(ariRanges[sequence]);
+					leftNavigationListener.onClick(ariRanges[sequence]);
 					updateLayout();
 				}
 			}
@@ -73,7 +75,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 			public void onClick(final View v) {
 				if (sequence != ariRanges.length - 2) {
 					sequence += 2;
-					rightNavigation.onClick(ariRanges[sequence]);
+					rightNavigationListener.onClick(ariRanges[sequence]);
 					updateLayout();
 				}
 			}
@@ -90,6 +92,14 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 				updateLayout();
 			}
 		});
+
+		bClose.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				closeReadingModeListener.onClick(ariRanges[sequence]);
+			}
+		});
+
 	}
 
 	private void updateLayout() {
@@ -117,17 +127,22 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		}
 	}
 
-	public void setLeftNavigationClickListener(final ReadingPlanFloatMenuClickListener leftNavigation) {
-		this.leftNavigation = leftNavigation;
+	public void setLeftNavigationClickListener(final ReadingPlanFloatMenuClickListener leftNavigationClickListener) {
+		this.leftNavigationListener = leftNavigationClickListener;
 	}
 
-	public void setRightNavigationClickListener(final ReadingPlanFloatMenuClickListener rightNavigation) {
-		this.rightNavigation = rightNavigation;
+	public void setRightNavigationClickListener(final ReadingPlanFloatMenuClickListener rightNavigationClickListener) {
+		this.rightNavigationListener = rightNavigationClickListener;
 	}
 
-	public void setReadMarkClickListener(final ReadingPlanFloatMenuClickListener readMark) {
-		this.readMark = readMark;
+	public void setReadMarkClickListener(final ReadingPlanFloatMenuClickListener readMarkClickListener) {
+		this.readMarkListener = readMarkClickListener;
 	}
+
+	public void setCloseReadingModeClickListener(final ReadingPlanFloatMenuClickListener closeReadingModeClickListener) {
+		this.closeReadingModeListener = closeReadingModeClickListener;
+	}
+
 
 	public interface ReadingPlanFloatMenuClickListener {
 		public void onClick(int ari);
