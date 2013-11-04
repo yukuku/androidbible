@@ -112,11 +112,13 @@
 
     <yuku.alkitab.base.widget.ReadingPlanFloatMenu
             android:id="@+id/readingPlanFloatMenu"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
             android:background="@drawable/abc_ab_solid_dark_holo"
-            android:alpha="0.8" android:layout_gravity="bottom"
-            android:layout_marginBottom="64dp"
+            android:alpha="0.8"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="60dp"
+            android:layout_marginRight="8dp"
             android:visibility="gone"
             />
 

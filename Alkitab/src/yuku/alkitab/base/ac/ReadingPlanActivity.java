@@ -4,15 +4,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import yuku.afw.V;
@@ -267,8 +269,10 @@ public class ReadingPlanActivity extends Activity {
 
 			} else if (itemViewType == 2) {
 				if (convertView == null) {
-					convertView = getLayoutInflater().inflate(android.R.layout.two_line_list_item, parent, false);
+					convertView = getLayoutInflater().inflate(R.layout.item_reading_plan_one_day, parent, false);
 				}
+
+				final LinearLayout layout = V.get(convertView, R.id.llOneDayReadingPlan);
 
 				int currentViewTypePosition = position - todayReadings.length / 2 - 1;
 
@@ -281,22 +285,29 @@ public class ReadingPlanActivity extends Activity {
 					date = ": " + new SimpleDateFormat("MMMM dd, yyyy").format(calendar.getTime());
 				}
 
-				//Text1
+				//Text title
 				TextView tTitle = V.get(convertView, android.R.id.text1);
 				tTitle.setText("Day " + (currentViewTypePosition + 1) + date);
 
-				//Text2
-				TextView tVerses = V.get(convertView, android.R.id.text2);
-				String text = "";
+				//Text reading
+				while (true) {
+					final View reading = layout.findViewWithTag("reading");
+					if (reading != null) {
+						layout.removeView(reading);
+					} else {
+						break;
+					}
+				}
+
 				int[] aris = readingPlan.dailyVerses.get(currentViewTypePosition);
 				for (int i = 0; i < aris.length / 2; i++) {
 					int[] ariStartEnd = {aris[i * 2], aris[i * 2 + 1]};
-					if (i > 0) {
-						text += "; ";
-					}
-					text += getReference(S.activeVersion, ariStartEnd);
+					final SpannableStringBuilder reference = getReference(S.activeVersion, ariStartEnd);
+					CheckBox checkBox = new CheckBox(ReadingPlanActivity.this);
+					checkBox.setText(reference);
+
+					layout.addView(checkBox);
 				}
-				tVerses.setText(text);
 			}
 
 			return convertView;
@@ -359,21 +370,4 @@ public class ReadingPlanActivity extends Activity {
 		return sb;
 	}
 
-	public static void setListViewHeightBasedOnChildren(ListView listView) {
-		ListAdapter listAdapter = listView.getAdapter();
-		if (listAdapter == null) {
-			return;
-		}
-
-		int totalHeight = 0;
-		for (int i = 0; i < listAdapter.getCount(); i++) {
-			View listItem = listAdapter.getView(i, null, listView);
-			listItem.measure(0, 0);
-			totalHeight += listItem.getMeasuredHeight();
-		}
-
-		ViewGroup.LayoutParams params = listView.getLayoutParams();
-		params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-		listView.setLayoutParams(params);
-	}
 }

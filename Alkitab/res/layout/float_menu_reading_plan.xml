@@ -29,7 +29,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textColor="#f0f0f0" android:textSize="12sp"/>
+            android:textColor="#f0f0f0"
+            android:textSize="14sp"/>
 
     <ImageButton
             android:id="@+id/bClose"
