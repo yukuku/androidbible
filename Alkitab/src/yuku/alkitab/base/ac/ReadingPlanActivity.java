@@ -16,7 +16,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import yuku.afw.V;
-import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.ReadingPlan;
@@ -39,11 +38,10 @@ public class ReadingPlanActivity extends Activity {
 
 	private ReadingPlan readingPlan;
 	private int dayNumber;
-	private TodayReadingsAdapter todayReadingsAdapter;
+	private ReadingPlanAdapter readingPlanAdapter;
 	private ImageButton bLeft;
 	private ImageButton bRight;
 	private ListView lsTodayReadings;
-	private ListView lsDailyPlan;
 	private IntArrayList readingCodes;
 
 	public void onCreate(Bundle savedInstanceState) {
@@ -51,7 +49,6 @@ public class ReadingPlanActivity extends Activity {
 
 		setContentView(R.layout.activity_reading_plan);
 		lsTodayReadings = V.get(this, R.id.lsTodayReadings);
-		lsDailyPlan = V.get(this, R.id.lsDailyPlan);
 
 		loadDayNumber();
 		loadReadingPlan();
@@ -83,29 +80,21 @@ public class ReadingPlanActivity extends Activity {
 	public void prepareDisplay() {
 
 		//Listviews
-		todayReadingsAdapter = new TodayReadingsAdapter();
-		todayReadingsAdapter.load();
-		lsTodayReadings.setAdapter(todayReadingsAdapter);
-
-		final DailyPlanAdapter dailyPlanAdapter = new DailyPlanAdapter();
-		lsDailyPlan.setAdapter(dailyPlanAdapter);
-
-		setListViewHeightBasedOnChildren(lsTodayReadings);
-		setListViewHeightBasedOnChildren(lsDailyPlan);
+		readingPlanAdapter = new ReadingPlanAdapter();
+		readingPlanAdapter.load();
+		lsTodayReadings.setAdapter(readingPlanAdapter);
 
 		lsTodayReadings.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-				goToIsiActivity(dayNumber, position);
+				final int todayReadingsSize = readingPlan.dailyVerses.get(dayNumber).length / 2;
+				if (position < todayReadingsSize) {
+					goToIsiActivity(dayNumber, position);
+				} else if (position > todayReadingsSize) {
+					goToIsiActivity(position - todayReadingsSize - 1, 0);
+				}
 			}
 
-		});
-
-		lsDailyPlan.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-				goToIsiActivity(position, 0);
-			}
 		});
 
 		//buttons
@@ -146,8 +135,8 @@ public class ReadingPlanActivity extends Activity {
 
 	private void changeDay(int day) {
 		dayNumber += day;
-		todayReadingsAdapter.load();
-		todayReadingsAdapter.notifyDataSetChanged();
+		readingPlanAdapter.load();
+		readingPlanAdapter.notifyDataSetChanged();
 
 		updateButtonStatus();
 	}
@@ -225,7 +214,7 @@ public class ReadingPlanActivity extends Activity {
 		return res;
 	}
 
-	class TodayReadingsAdapter extends BaseAdapter {
+	class ReadingPlanAdapter extends BaseAdapter {
 
 		private int[] todayReadings;
 
@@ -235,38 +224,80 @@ public class ReadingPlanActivity extends Activity {
 
 		@Override
 		public int getCount() {
-			return todayReadings.length / 2;
+			return (todayReadings.length / 2) + readingPlan.info.duration + 1;
 		}
 
 		@Override
 		public View getView(final int position, View convertView, final ViewGroup parent) {
-			if (convertView == null) {
-				convertView = getLayoutInflater().inflate(R.layout.item_today_reading, parent, false);
-			}
+			final int itemViewType = getItemViewType(position);
 
-			final ImageView bTick = V.get(convertView, R.id.bTick);
-			if (getReadMarksByDay(dayNumber)[position * 2]) {
-				bTick.setImageResource(R.drawable.ic_checked);
-			} else {
-				bTick.setImageResource(R.drawable.ic_unchecked);
-			}
-
-			bTick.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					boolean ticked = !getReadMarksByDay(dayNumber)[position * 2];
-
-					ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, dayNumber, position, ticked);
-					loadReadingPlanProgress();
-					load();
-					notifyDataSetChanged();
+			if (itemViewType == 0) {
+				if (convertView == null) {
+					convertView = getLayoutInflater().inflate(R.layout.item_today_reading, parent, false);
 				}
-			});
 
-			TextView textView = V.get(convertView, R.id.text1);
-			int start = position * 2;
-			int[] aris = {todayReadings[start], todayReadings[start + 1]};
-			textView.setText(getReference(S.activeVersion, aris));
+				final ImageView bTick = V.get(convertView, R.id.bTick);
+				if (getReadMarksByDay(dayNumber)[position * 2]) {
+					bTick.setImageResource(R.drawable.ic_checked);
+				} else {
+					bTick.setImageResource(R.drawable.ic_unchecked);
+				}
+
+				bTick.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(final View v) {
+						boolean ticked = !getReadMarksByDay(dayNumber)[position * 2];
+
+						ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, dayNumber, position, ticked);
+						loadReadingPlanProgress();
+						load();
+						notifyDataSetChanged();
+					}
+				});
+
+				TextView textView = V.get(convertView, R.id.text1);
+				int start = position * 2;
+				int[] aris = {todayReadings[start], todayReadings[start + 1]};
+				textView.setText(getReference(S.activeVersion, aris));
+
+			} else if (itemViewType == 1) {
+				if (convertView == null) {
+					convertView = getLayoutInflater().inflate(R.layout.item_reading_plan_summary, parent, false);
+				}
+
+			} else if (itemViewType == 2) {
+				if (convertView == null) {
+					convertView = getLayoutInflater().inflate(android.R.layout.two_line_list_item, parent, false);
+				}
+
+				int currentViewTypePosition = position - todayReadings.length / 2 - 1;
+
+				String date = "";
+				if (readingPlan.info.version == 1) {
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(new Date(readingPlan.info.startDate));
+					calendar.add(Calendar.DATE, currentViewTypePosition);
+
+					date = ": " + new SimpleDateFormat("MMMM dd, yyyy").format(calendar.getTime());
+				}
+
+				//Text1
+				TextView tTitle = V.get(convertView, android.R.id.text1);
+				tTitle.setText("Day " + (currentViewTypePosition + 1) + date);
+
+				//Text2
+				TextView tVerses = V.get(convertView, android.R.id.text2);
+				String text = "";
+				int[] aris = readingPlan.dailyVerses.get(currentViewTypePosition);
+				for (int i = 0; i < aris.length / 2; i++) {
+					int[] ariStartEnd = {aris[i * 2], aris[i * 2 + 1]};
+					if (i > 0) {
+						text += "; ";
+					}
+					text += getReference(S.activeVersion, ariStartEnd);
+				}
+				tVerses.setText(text);
+			}
 
 			return convertView;
 		}
@@ -280,46 +311,21 @@ public class ReadingPlanActivity extends Activity {
 		public long getItemId(final int position) {
 			return 0;
 		}
-	}
 
-	class DailyPlanAdapter extends EasyAdapter {
 		@Override
-		public View newView(final int position, final ViewGroup parent) {
-			return getLayoutInflater().inflate(android.R.layout.two_line_list_item, parent, false);
+		public int getViewTypeCount() {
+			return 3;
 		}
 
 		@Override
-		public void bindView(final View view, final int position, final ViewGroup parent) {
-			String date = "";
-			if (readingPlan.info.version == 1) {
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(new Date(readingPlan.info.startDate));
-				calendar.add(Calendar.DATE, position);
-
-				date = ": " + new SimpleDateFormat("MMMM dd, yyyy").format(calendar.getTime());
+		public int getItemViewType(final int position) {
+			if (position < todayReadings.length / 2) {
+				return 0;
+			} else if (position == todayReadings.length / 2) {
+				return 1;
+			} else {
+				return 2;
 			}
-
-			//Text1
-			TextView tTitle = V.get(view, android.R.id.text1);
-			tTitle.setText("Day " + (position + 1) + date);
-
-			//Text2
-			TextView tVerses = V.get(view, android.R.id.text2);
-			String text = "";
-			int[] aris = readingPlan.dailyVerses.get(position);
-			for (int i = 0; i < aris.length / 2; i++) {
-				int[] ariStartEnd = {aris[i * 2], aris[i * 2 + 1]};
-				if (i > 0) {
-					text += "; ";
-				}
-				text += getReference(S.activeVersion, ariStartEnd);
-			}
-			tVerses.setText(text);
-		}
-
-		@Override
-		public int getCount() {
-			return readingPlan.info.duration;
 		}
 	}
 
