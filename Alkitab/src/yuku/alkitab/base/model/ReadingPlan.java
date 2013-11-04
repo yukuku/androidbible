@@ -24,11 +24,11 @@ public class ReadingPlan {
 		public int readingPlanProgressCode;
 
 		public static int toReadingCode(int dayNumber, int readingSequence) {
-			return (dayNumber & 0xff) << 8 | (readingSequence & 0xff);
+			return (dayNumber & 0xffff) << 8 | (readingSequence & 0xff);
 		}
 
 		public static int toDayNumber(int readingCode) {
-			return (readingCode & 0x0000ff00) >> 8;
+			return (readingCode & 0x00ffff00) >> 8;
 		}
 
 		public static int toSequence(int readingCode) {

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -274,7 +274,7 @@ public class ReadingPlanActivity extends Activity {
 
 				final LinearLayout layout = V.get(convertView, R.id.llOneDayReadingPlan);
 
-				int currentViewTypePosition = position - todayReadings.length / 2 - 1;
+				final int currentViewTypePosition = position - todayReadings.length / 2 - 1;
 
 				String date = "";
 				if (readingPlan.info.version == 1) {
@@ -301,11 +301,26 @@ public class ReadingPlanActivity extends Activity {
 
 				int[] aris = readingPlan.dailyVerses.get(currentViewTypePosition);
 				for (int i = 0; i < aris.length / 2; i++) {
+					final int ariPosition = i;
 					int[] ariStartEnd = {aris[i * 2], aris[i * 2 + 1]};
 					final SpannableStringBuilder reference = getReference(S.activeVersion, ariStartEnd);
 					CheckBox checkBox = new CheckBox(ReadingPlanActivity.this);
 					checkBox.setText(reference);
-
+					checkBox.setTag("reading");
+					boolean ticked = getReadMarksByDay(currentViewTypePosition)[ariPosition * 2];
+					checkBox.setChecked(ticked);
+					checkBox.setFocusable(false);
+					LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+					checkBox.setLayoutParams(layoutParams);
+					checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+						@Override
+						public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+							ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, currentViewTypePosition, ariPosition, isChecked);
+							loadReadingPlanProgress();
+							load();
+							notifyDataSetChanged();
+						}
+					});
 					layout.addView(checkBox);
 				}
 			}
