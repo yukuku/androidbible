@@ -74,7 +74,6 @@ public class ReadingPlanActivity extends Activity {
 		intent.putExtra(READING_PLAN_ID, readingPlan.info.id);
 		intent.putExtra(READING_PLAN_DAY_NUMBER, dayNumber);
 		intent.putExtra(READING_PLAN_ARI_RANGES, selectedVerses);
-		intent.putExtra(ReadingPlan.ReadingPlanProgress.READING_PLAN_PROGRESS_READ, getReadMarksByDay(dayNumber));
 		setResult(RESULT_OK, intent);
 		finish();
 	}
@@ -201,21 +200,6 @@ public class ReadingPlanActivity extends Activity {
 		readingCodes = S.getDb().getAllReadingCodesByReadingPlanId(readingPlan.info.id);
 	}
 
-	private boolean[] getReadMarksByDay(int dayNumber) {
-		boolean[] res = new boolean[readingPlan.dailyVerses.get(dayNumber).length];
-		int start = dayNumber << 8;
-		int end = (dayNumber + 1) << 8;
-		for (int i = 0; i < readingCodes.size(); i++) {
-			final int readingCode = readingCodes.get(i);
-			if (readingCode >= start && readingCode < end) {
-				final int sequence = ReadingPlan.ReadingPlanProgress.toSequence(readingCode) * 2;
-				res[sequence] = true;
-				res[sequence + 1] = true;
-			}
-		}
-		return res;
-	}
-
 	class ReadingPlanAdapter extends BaseAdapter {
 
 		private int[] todayReadings;
@@ -239,7 +223,9 @@ public class ReadingPlanActivity extends Activity {
 				}
 
 				final ImageView bTick = V.get(convertView, R.id.bTick);
-				if (getReadMarksByDay(dayNumber)[position * 2]) {
+				boolean[] readMarks = new boolean[todayReadings.length];
+				ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, dayNumber);
+				if (readMarks[position * 2]) {
 					bTick.setImageResource(R.drawable.ic_checked);
 				} else {
 					bTick.setImageResource(R.drawable.ic_unchecked);
@@ -248,7 +234,9 @@ public class ReadingPlanActivity extends Activity {
 				bTick.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(final View v) {
-						boolean ticked = !getReadMarksByDay(dayNumber)[position * 2];
+						boolean[] readMarks = new boolean[todayReadings.length];
+						ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, dayNumber);
+						boolean ticked = !readMarks[position * 2];
 
 						ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, dayNumber, position, ticked);
 						loadReadingPlanProgress();
@@ -307,8 +295,10 @@ public class ReadingPlanActivity extends Activity {
 					CheckBox checkBox = new CheckBox(ReadingPlanActivity.this);
 					checkBox.setText(reference);
 					checkBox.setTag("reading");
-					boolean ticked = getReadMarksByDay(currentViewTypePosition)[ariPosition * 2];
-					checkBox.setChecked(ticked);
+
+					boolean[] readMarks = new boolean[aris.length];
+					ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, currentViewTypePosition);
+					checkBox.setChecked(readMarks[ariPosition * 2]);
 					checkBox.setFocusable(false);
 					LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
 					checkBox.setLayoutParams(layoutParams);

@@ -119,4 +119,17 @@ public class ReadingPlanManager {
 		public ReadingPlan.ReadingPlanInfo info = new ReadingPlan.ReadingPlanInfo();
 		public byte[] binaryReadingPlan;
 	}
+
+	public static void writeReadMarksByDay(IntArrayList readingCodes, boolean[] readMarks, int dayNumber) {
+		int start = dayNumber << 8;
+		int end = (dayNumber + 1) << 8;
+		for (int i = 0; i < readingCodes.size(); i++) {
+			final int readingCode = readingCodes.get(i);
+			if (readingCode >= start && readingCode < end) {
+				final int sequence = ReadingPlan.ReadingPlanProgress.toSequence(readingCode) * 2;
+				readMarks[sequence] = true;
+				readMarks[sequence + 1] = true;
+			}
+		}
+	}
 }

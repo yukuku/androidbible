@@ -18,13 +18,12 @@ public class ReadingPlan {
 	}
 
 	public static class ReadingPlanProgress {
-		public static final String READING_PLAN_PROGRESS_READ = "reading_plan_progress_read";
 
 		public long readingPlanId;
 		public int readingPlanProgressCode;
 
 		public static int toReadingCode(int dayNumber, int readingSequence) {
-			return (dayNumber & 0xffff) << 8 | (readingSequence & 0xff);
+			return dayNumber << 8 | readingSequence;
 		}
 
 		public static int toDayNumber(int readingCode) {

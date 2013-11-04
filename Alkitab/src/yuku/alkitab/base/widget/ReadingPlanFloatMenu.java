@@ -10,6 +10,7 @@ import android.widget.TextView;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
+import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.ReadingPlanManager;
 import yuku.alkitab.debug.R;
 
@@ -41,13 +42,20 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		prepareLayout(context);
 	}
 
-	public void load(long readingPlanId, int dayNumber, int[] ariRanges, boolean[] readReadings, int sequence) {
+	public void load(long readingPlanId, int dayNumber, int[] ariRanges, int sequence) {
 		this.id = readingPlanId;
 		this.dayNumber = dayNumber;
 		this.ariRanges = ariRanges;
-		this.readReadings = readReadings;
 		this.sequence = sequence;
+		this.readReadings = new boolean[ariRanges.length];
+
+		updateProgress();
 		updateLayout();
+	}
+
+	public void updateProgress() {
+		IntArrayList readingCodes = S.getDb().getAllReadingCodesByReadingPlanId(id);
+		ReadingPlanManager.writeReadMarksByDay(readingCodes, readReadings, dayNumber);
 	}
 
 	private void prepareLayout(Context context) {
@@ -88,7 +96,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 				readReadings[sequence] = ticked;
 				readReadings[sequence + 1] = ticked;
 
-				ReadingPlanManager.updateReadingPlanProgress(id, dayNumber, sequence, ticked);
+				ReadingPlanManager.updateReadingPlanProgress(id, dayNumber, sequence / 2, ticked);
 				updateLayout();
 			}
 		});
@@ -102,7 +110,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 
 	}
 
-	private void updateLayout() {
+	public void updateLayout() {
 
 		if (ariRanges == null || readReadings == null) {
 			return;

@@ -73,7 +73,6 @@ import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.FootnoteEntry;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.ProgressMark;
-import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.Prefkey;
@@ -1276,7 +1275,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 			applyPreferences(true);
 		} else if (requestCode == REQCODE_readingPlan) {
-			if (data == null) {
+			if (data == null && readingPlanFloatMenu.getVisibility() != View.VISIBLE) {
+				return;
+			} else if (data == null) {
+				readingPlanFloatMenu.updateProgress();
+				readingPlanFloatMenu.updateLayout();
 				return;
 			}
 
@@ -1286,15 +1289,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			final long id = data.getLongExtra(ReadingPlanActivity.READING_PLAN_ID, 0L);
 			final int dayNumber = data.getIntExtra(ReadingPlanActivity.READING_PLAN_DAY_NUMBER, 0);
 			final int[] ariRanges = data.getIntArrayExtra(ReadingPlanActivity.READING_PLAN_ARI_RANGES);
-			final boolean[] readReadings = data.getBooleanArrayExtra(ReadingPlan.ReadingPlanProgress.READING_PLAN_PROGRESS_READ);
 
-			if (ari != 0 && ariRanges != null && readReadings != null && ariRanges.length == readReadings.length) {
+			if (ari != 0 && ariRanges != null) {
 				for (int i = 0; i < ariRanges.length; i++) {
 					if (ariRanges[i] == ari) {
 						jumpToAri(ari);
 						history.add(ari);
 
-						readingPlanFloatMenu.load(id, dayNumber, ariRanges, readReadings, i);
+						readingPlanFloatMenu.load(id, dayNumber, ariRanges, i);
 						readingPlanFloatMenu.setLeftNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
 							public void onClick(final int ari) {
