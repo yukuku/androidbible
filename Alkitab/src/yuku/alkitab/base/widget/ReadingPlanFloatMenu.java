@@ -1,6 +1,7 @@
 package yuku.alkitab.base.widget;
 
 import android.content.Context;
+import android.text.SpannableStringBuilder;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -122,7 +123,11 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 			bTick.setImageResource(R.drawable.ic_unchecked);
 		}
 
-		tDescription.setText(ReadingPlanActivity.getReference(S.activeVersion, new int[] {ariRanges[sequence], ariRanges[sequence + 1]}));
+		SpannableStringBuilder reference = ReadingPlanActivity.getReference(S.activeVersion, new int[] {ariRanges[sequence], ariRanges[sequence + 1]});
+		reference.append("\n");
+		reference.append("" + (sequence / 2 + 1));
+		reference.append("/" + (ariRanges.length / 2));
+		tDescription.setText(reference);
 		if (sequence == 0) {
 			bLeft.setEnabled(false);
 			bRight.setEnabled(true);
