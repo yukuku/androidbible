@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
@@ -47,6 +48,7 @@ public class ReadingPlanActivity extends Activity {
 	private ListView lsTodayReadings;
 	private IntArrayList readingCodes;
 	private Button bToday;
+	private int todayNumber;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -167,7 +169,8 @@ public class ReadingPlanActivity extends Activity {
 		if (readingPlan == null) {
 			return;
 		}
-		dayNumber = (int) ((new Date().getTime() - readingPlan.info.startDate) / (1000 * 60 * 60 * 24));
+		todayNumber = (int) ((new Date().getTime() - readingPlan.info.startDate) / (1000 * 60 * 60 * 24));
+		dayNumber = todayNumber;
 	}
 
 	private void downloadReadingPlan() {
@@ -263,8 +266,32 @@ public class ReadingPlanActivity extends Activity {
 			} else if (itemViewType == 1) {
 				if (convertView == null) {
 					convertView = getLayoutInflater().inflate(R.layout.item_reading_plan_summary, parent, false);
-
 				}
+
+				final ProgressBar pbReadingProgress = V.get(convertView, R.id.pbReadingProgress);
+				final TextView tActual = V.get(convertView, R.id.tActual);
+				final TextView tTarget = V.get(convertView, R.id.tTarget);
+				final TextView tComment = V.get(convertView, R.id.tComment);
+
+				float actualPercentage = getActualPercentage();
+				float targetPercentage = getTargetPercentage();
+
+				pbReadingProgress.setMax(100);
+				pbReadingProgress.setProgress((int) actualPercentage);
+				pbReadingProgress.setSecondaryProgress((int) targetPercentage);
+
+				tActual.setText("You have finished: " + actualPercentage + "%");
+				tTarget.setText("Target by today: " + targetPercentage + "%");
+
+				String comment;
+				if (actualPercentage == targetPercentage) {
+					comment = "You are on schedule";
+				} else {
+					float diff = (float) Math.round((targetPercentage - actualPercentage) * 100) / 100;
+					comment = "You are behind the schedule by " + diff + "%";
+				}
+
+				tComment.setText(comment);
 
 			} else if (itemViewType == 2) {
 				if (convertView == null) {
@@ -345,6 +372,41 @@ public class ReadingPlanActivity extends Activity {
 				return 2;
 			}
 		}
+	}
+
+	private float getActualPercentage() {
+		float res = (float) countRead() / (float) countAllReadings() * 100;
+		res = (float)Math.round(res * 100) / 100;
+		return res;
+	}
+
+	private float getTargetPercentage() {
+		float res = (float) countTarget() / (float) countAllReadings() * 100;
+		res = (float)Math.round(res * 100) / 100;
+		return res;
+	}
+
+	private int countRead() {
+		IntArrayList filteredReadingCodes = ReadingPlanManager.filterReadingCodesByDayStartEnd(readingCodes, 0, todayNumber);
+		for (int i = 0; i < filteredReadingCodes.size(); i++) {
+		}
+		return filteredReadingCodes.size();
+	}
+
+	private int countTarget() {
+		int res = 0;
+		for (int i = 0; i <= todayNumber; i++) {
+			res += readingPlan.dailyVerses.get(i).length / 2;
+		}
+		return res;
+	}
+
+	private int countAllReadings() {
+		int res = 0;
+		for (int i = 0; i < readingPlan.info.duration; i++) {
+			res += readingPlan.dailyVerses.get(i).length / 2;
+		}
+		return res;
 	}
 
 	public String getReadingDateHeader(final int dayNumber) {

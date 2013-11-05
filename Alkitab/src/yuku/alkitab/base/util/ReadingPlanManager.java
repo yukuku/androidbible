@@ -120,16 +120,27 @@ public class ReadingPlanManager {
 		public byte[] binaryReadingPlan;
 	}
 
-	public static void writeReadMarksByDay(IntArrayList readingCodes, boolean[] readMarks, int dayNumber) {
-		int start = dayNumber << 8;
-		int end = (dayNumber + 1) << 8;
+	public static IntArrayList filterReadingCodesByDayStartEnd(IntArrayList readingCodes, int dayStart, int dayEnd) {
+		IntArrayList res = new IntArrayList();
+		int start = dayStart << 8;
+		int end = (dayEnd + 1) << 8;
 		for (int i = 0; i < readingCodes.size(); i++) {
 			final int readingCode = readingCodes.get(i);
 			if (readingCode >= start && readingCode < end) {
-				final int sequence = ReadingPlan.ReadingPlanProgress.toSequence(readingCode) * 2;
-				readMarks[sequence] = true;
-				readMarks[sequence + 1] = true;
+				res.add(readingCode);
 			}
 		}
+		return res;
 	}
+
+	public static void writeReadMarksByDay(IntArrayList readingCodes, boolean[] readMarks, int dayNumber) {
+		readingCodes = filterReadingCodesByDayStartEnd(readingCodes, dayNumber, dayNumber);
+		for (int i = 0; i < readingCodes.size(); i++) {
+			final int readingCode = readingCodes.get(i);
+			final int sequence = ReadingPlan.ReadingPlanProgress.toSequence(readingCode) * 2;
+			readMarks[sequence] = true;
+			readMarks[sequence + 1] = true;
+		}
+	}
+
 }

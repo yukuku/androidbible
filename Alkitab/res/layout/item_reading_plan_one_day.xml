@@ -7,7 +7,7 @@
               android:layout_height="match_parent"
               android:paddingLeft="8dp">
     <TextView android:id="@android:id/text1"
-              android:textSize="16sp"
+              android:textAppearance="?android:attr/textAppearanceMedium"
               android:textStyle="bold"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
