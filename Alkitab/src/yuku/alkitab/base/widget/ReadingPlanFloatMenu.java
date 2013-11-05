@@ -74,7 +74,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 			public void onClick(final View v) {
 				if (sequence != 0) {
 					sequence += -2;
-					leftNavigationListener.onClick(ariRanges[sequence]);
+					leftNavigationListener.onClick(ariRanges[sequence], ariRanges[sequence + 1]);
 					updateLayout();
 				}
 			}
@@ -85,7 +85,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 			public void onClick(final View v) {
 				if (sequence != ariRanges.length - 2) {
 					sequence += 2;
-					rightNavigationListener.onClick(ariRanges[sequence]);
+					rightNavigationListener.onClick(ariRanges[sequence], ariRanges[sequence + 1]);
 					updateLayout();
 				}
 			}
@@ -106,7 +106,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		bClose.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				closeReadingModeListener.onClick(ariRanges[sequence]);
+				closeReadingModeListener.onClick(ariRanges[sequence], ariRanges[sequence + 1]);
 			}
 		});
 
@@ -141,6 +141,12 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		}
 	}
 
+	public int[] getAriRanges() {
+		return ariRanges;
+	}
+
+	public int getSequence() { return sequence; }
+
 	public void setLeftNavigationClickListener(final ReadingPlanFloatMenuClickListener leftNavigationClickListener) {
 		this.leftNavigationListener = leftNavigationClickListener;
 	}
@@ -159,7 +165,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 
 
 	public interface ReadingPlanFloatMenuClickListener {
-		public void onClick(int ari);
+		public void onClick(int ari_0, int ari_1);
 	}
 
 }

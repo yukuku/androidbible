@@ -517,4 +517,12 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	public void stopFling() {
 		StopListFling.stop(this);
 	}
+
+	public void setAriRangesReadingPlan(int[] ariRangesReadingPlan) {
+		adapter.ariRangesReadingPlan = ariRangesReadingPlan;
+	}
+
+	public void updateAdapter() {
+		adapter.notifyDataSetChanged();
+	}
 }

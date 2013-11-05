@@ -5,10 +5,10 @@ import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.Ari;
@@ -16,6 +16,7 @@ import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.TargetDecoder;
+import yuku.alkitab.debug.R;
 
 
 public class SingleViewVerseAdapter extends VerseAdapter {
@@ -60,6 +61,13 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			Appearances.applyTextAppearance(lText);
 			if (checked) {
 				lText.setTextColor(0xff000000); // override with black!
+			}
+
+			ImageView imageView = (ImageView) res.findViewById(R.id.imgShade);
+			if (ariRangesReadingPlan != null && (ari < ariRangesReadingPlan[0] || ari > ariRangesReadingPlan[1])) {
+				imageView.setVisibility(View.VISIBLE);
+			} else {
+				imageView.setVisibility(View.GONE);
 			}
 
 			final AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_attributes);

@@ -1296,25 +1296,37 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						jumpToAri(ari);
 						history.add(ari);
 
+						int[] ariRangesInThisSequence = new int[2];
+						ariRangesInThisSequence[0] = ariRanges[i];
+						ariRangesInThisSequence[1] = ariRanges[i + 1];
+						lsText.setAriRangesReadingPlan(ariRangesInThisSequence);
+						lsText.updateAdapter();
+
 						readingPlanFloatMenu.load(id, dayNumber, ariRanges, i);
 						readingPlanFloatMenu.setLeftNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
-							public void onClick(final int ari) {
-								jumpToAri(ari);
-								history.add(ari);
+							public void onClick(final int ari_0, final int ari_1) {
+								jumpToAri(ari_0);
+								history.add(ari_0);
+								lsText.setAriRangesReadingPlan(new int[] {ari_0, ari_1});
+								lsText.updateAdapter();
 							}
 						});
 						readingPlanFloatMenu.setRightNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
-							public void onClick(final int ari) {
-								jumpToAri(ari);
-								history.add(ari);
+							public void onClick(final int ari_0, final int ari_1) {
+								jumpToAri(ari_0);
+								history.add(ari_0);
+								lsText.setAriRangesReadingPlan(new int[] {ari_0, ari_1});
+								lsText.updateAdapter();
 							}
 						});
 						readingPlanFloatMenu.setCloseReadingModeClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
-							public void onClick(final int ari) {
+							public void onClick(final int ari_0, final int ari_1) {
 								readingPlanFloatMenu.setVisibility(View.GONE);
+								lsText.setAriRangesReadingPlan(null);
+								lsText.updateAdapter();
 							}
 						});
 
