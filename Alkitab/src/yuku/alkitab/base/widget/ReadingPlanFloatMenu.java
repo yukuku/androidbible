@@ -56,6 +56,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 
 	public void updateProgress() {
 		IntArrayList readingCodes = S.getDb().getAllReadingCodesByReadingPlanId(id);
+		readReadings = new boolean[readReadings.length];
 		ReadingPlanManager.writeReadMarksByDay(readingCodes, readReadings, dayNumber);
 	}
 

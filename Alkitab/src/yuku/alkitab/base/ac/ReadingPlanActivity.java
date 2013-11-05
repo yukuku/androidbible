@@ -164,8 +164,10 @@ public class ReadingPlanActivity extends Activity {
 
 	private void loadDayNumber() {
 		//TODO: proper method. Testing only
+		if (readingPlan == null) {
+			return;
+		}
 		dayNumber = (int) ((new Date().getTime() - readingPlan.info.startDate) / (1000 * 60 * 60 * 24));
-
 	}
 
 	private void downloadReadingPlan() {
