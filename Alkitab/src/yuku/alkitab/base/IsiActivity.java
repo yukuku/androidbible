@@ -1321,6 +1321,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 								lsText.updateAdapter();
 							}
 						});
+						readingPlanFloatMenu.setDescriptionListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
+							@Override
+							public void onClick(final int ari_0, final int ari_1) {
+								startActivityForResult(new Intent(IsiActivity.this, ReadingPlanActivity.class), REQCODE_readingPlan);
+							}
+						});
 						readingPlanFloatMenu.setCloseReadingModeClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
 							public void onClick(final int ari_0, final int ari_1) {

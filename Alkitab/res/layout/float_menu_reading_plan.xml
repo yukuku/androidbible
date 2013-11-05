@@ -23,8 +23,8 @@
             android:scaleType="center"
             android:src="@drawable/ic_unchecked" />
 
-    <TextView
-            android:id="@+id/tDescription"
+    <Button
+            android:id="@+id/bDescription"
             style="?attr/actionButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"

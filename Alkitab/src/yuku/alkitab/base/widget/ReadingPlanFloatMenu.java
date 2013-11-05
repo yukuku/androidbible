@@ -5,9 +5,9 @@ import android.text.SpannableStringBuilder;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
@@ -26,9 +26,10 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 	private ReadingPlanFloatMenuClickListener leftNavigationListener;
 	private ReadingPlanFloatMenuClickListener rightNavigationListener;
 	private ReadingPlanFloatMenuClickListener readMarkListener;
+	private ReadingPlanFloatMenuClickListener descriptionListener;
 	private ReadingPlanFloatMenuClickListener closeReadingModeListener;
 
-	private TextView tDescription;
+	private Button bDescription;
 	private ImageButton bLeft;
 	private ImageButton bRight;
 	private ImageButton bTick;
@@ -63,7 +64,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 	private void prepareLayout(Context context) {
 		View view = LayoutInflater.from(context).inflate(R.layout.float_menu_reading_plan, this, true);
 
-		tDescription = V.get(view, R.id.tDescription);
+		bDescription = V.get(view, R.id.bDescription);
 		bLeft = V.get(view, R.id.bNavLeft);
 		bRight = V.get(view, R.id.bNavRight);
 		bTick = V.get(view, R.id.bTick);
@@ -103,6 +104,13 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 			}
 		});
 
+		bDescription.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				descriptionListener.onClick(ariRanges[sequence], ariRanges[sequence + 1]);
+			}
+		});
+
 		bClose.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
@@ -128,7 +136,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		reference.append("\n");
 		reference.append("" + (sequence / 2 + 1));
 		reference.append("/" + (ariRanges.length / 2));
-		tDescription.setText(reference);
+		bDescription.setText(reference);
 		if (sequence == 0) {
 			bLeft.setEnabled(false);
 			bRight.setEnabled(true);
@@ -157,6 +165,10 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 
 	public void setReadMarkClickListener(final ReadingPlanFloatMenuClickListener readMarkClickListener) {
 		this.readMarkListener = readMarkClickListener;
+	}
+
+	public void setDescriptionListener(final ReadingPlanFloatMenuClickListener descriptionListener) {
+		this.descriptionListener = descriptionListener;
 	}
 
 	public void setCloseReadingModeClickListener(final ReadingPlanFloatMenuClickListener closeReadingModeClickListener) {
