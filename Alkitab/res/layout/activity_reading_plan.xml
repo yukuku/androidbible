@@ -22,8 +22,8 @@
                 android:scaleType="center"
                 android:src="@drawable/ic_nav_left_light" />
 
-        <yuku.alkitab.base.widget.GotoButton
-                android:id="@+id/bGoto"
+        <Button
+                android:id="@+id/bToday"
                 style="?attr/actionButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"

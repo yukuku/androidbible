@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -45,16 +46,19 @@ public class ReadingPlanActivity extends Activity {
 	private ImageButton bRight;
 	private ListView lsTodayReadings;
 	private IntArrayList readingCodes;
+	private Button bToday;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_reading_plan);
 		lsTodayReadings = V.get(this, R.id.lsTodayReadings);
+		bToday = V.get(this, R.id.bToday);
 
-		loadDayNumber();
+
 		loadReadingPlan();
 		loadReadingPlanProgress();
+		loadDayNumber();
 
 		if (readingPlan == null) {
 			return;
@@ -153,11 +157,15 @@ public class ReadingPlanActivity extends Activity {
 			bLeft.setEnabled(true);
 			bRight.setEnabled(true);
 		}
+
+		bToday.setText(getReadingDateHeader(dayNumber));
+
 	}
 
 	private void loadDayNumber() {
 		//TODO: proper method. Testing only
-		dayNumber = 0;
+		dayNumber = (int) ((new Date().getTime() - readingPlan.info.startDate) / (1000 * 60 * 60 * 24));
+
 	}
 
 	private void downloadReadingPlan() {
@@ -253,6 +261,7 @@ public class ReadingPlanActivity extends Activity {
 			} else if (itemViewType == 1) {
 				if (convertView == null) {
 					convertView = getLayoutInflater().inflate(R.layout.item_reading_plan_summary, parent, false);
+
 				}
 
 			} else if (itemViewType == 2) {
@@ -264,18 +273,9 @@ public class ReadingPlanActivity extends Activity {
 
 				final int currentViewTypePosition = position - todayReadings.length / 2 - 1;
 
-				String date = "";
-				if (readingPlan.info.version == 1) {
-					Calendar calendar = Calendar.getInstance();
-					calendar.setTime(new Date(readingPlan.info.startDate));
-					calendar.add(Calendar.DATE, currentViewTypePosition);
-
-					date = ": " + new SimpleDateFormat("MMMM dd, yyyy").format(calendar.getTime());
-				}
-
 				//Text title
 				TextView tTitle = V.get(convertView, android.R.id.text1);
-				tTitle.setText("Day " + (currentViewTypePosition + 1) + date);
+				tTitle.setText(getReadingDateHeader(currentViewTypePosition));
 
 				//Text reading
 				while (true) {
@@ -343,6 +343,18 @@ public class ReadingPlanActivity extends Activity {
 				return 2;
 			}
 		}
+	}
+
+	public String getReadingDateHeader(final int dayNumber) {
+		String date = "Day " + (dayNumber + 1) + ": ";
+		if (readingPlan.info.version == 1) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(new Date(readingPlan.info.startDate));
+			calendar.add(Calendar.DATE, dayNumber);
+
+			date += new SimpleDateFormat("MMMM dd, yyyy").format(calendar.getTime());
+		}
+		return date;
 	}
 
 	public static SpannableStringBuilder getReference(Version version, int[] ari) {
