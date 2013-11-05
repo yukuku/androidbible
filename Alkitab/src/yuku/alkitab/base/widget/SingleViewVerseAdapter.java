@@ -64,10 +64,10 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			}
 
 			ImageView imageView = (ImageView) res.findViewById(R.id.imgShade);
-			if (ariRangesReadingPlan != null && (ari < ariRangesReadingPlan[0] || ari > ariRangesReadingPlan[1])) {
-				imageView.setVisibility(View.VISIBLE);
-			} else {
+			if (ariRangesReadingPlan == null || (ari >= ariRangesReadingPlan[0] && ari <= ariRangesReadingPlan[1]) || Ari.toVerse(ariRangesReadingPlan[0]) == 0) {
 				imageView.setVisibility(View.GONE);
+			} else {
+				imageView.setVisibility(View.VISIBLE);
 			}
 
 			final AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_attributes);
