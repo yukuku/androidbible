@@ -862,4 +862,9 @@ public class InternalDb {
 		return res;
 	}
 
+	public void deleteReadingPlanById(long id) {
+		helper.getWritableDatabase().delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_id + "=?", new String[] {String.valueOf(id)});
+		helper.getWritableDatabase().delete(Db.TABLE_ReadingPlan, "_id=?", new String[] {String.valueOf(id)});
+	}
+
 }

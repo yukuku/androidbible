@@ -4,4 +4,7 @@
     <item
         android:id="@+id/menuDownload"
         android:title="Download"/>
+    <item
+        android:id="@+id/menuDelete"
+        android:title="Delete"/>
 </menu>

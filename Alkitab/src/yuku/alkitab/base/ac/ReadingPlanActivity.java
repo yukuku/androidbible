@@ -77,15 +77,13 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		bLeft = V.get(this, R.id.bLeft);
 		bRight = V.get(this, R.id.bRight);
 		bDownload = V.get(this, R.id.bDownload);
+		actionBar = getSupportActionBar();
 
 		long id = Preferences.getLong("active_reading_plan", 0);
 		loadReadingPlan(id);
 		loadReadingPlanProgress();
 		loadDayNumber();
-
-		actionBar = getSupportActionBar();
 		prepareDropDownNavigation();
-
 		prepareDisplay();
 
 	}
@@ -162,6 +160,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	public boolean prepareDropDownNavigation() {
 		if (downloadedReadingPlanInfos.size() == 0) {
 			actionBar.setDisplayShowTitleEnabled(true);
+			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 			return true;
 		}
 
@@ -207,11 +206,35 @@ public class ReadingPlanActivity extends ActionBarActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		if (item.getItemId() == R.id.menuDownload) {
+		int itemId = item.getItemId();
+		if (itemId == R.id.menuDownload) {
 			downloadReadingPlan();
+			return true;
+		} else if (itemId == R.id.menuDelete) {
+			deleteReadingPlan();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void deleteReadingPlan() {
+		new AlertDialog.Builder(this)
+		.setMessage("Delete " + readingPlan.info.title + "?")
+		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(final DialogInterface dialog, final int which) {
+				S.getDb().deleteReadingPlanById(readingPlan.info.id);
+				readingPlan = null;
+				Preferences.remove("active_reading_plan");
+				loadReadingPlan(0);
+				loadReadingPlanProgress();
+				loadDayNumber();
+				prepareDropDownNavigation();
+				prepareDisplay();
+			}
+		})
+		.setNegativeButton(R.string.cancel, null)
+		.show();
 	}
 
 	private void changeDay(int day) {
