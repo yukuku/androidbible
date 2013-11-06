@@ -73,14 +73,13 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		loadReadingPlanProgress();
 		loadDayNumber();
 
+
+		actionBar = getSupportActionBar();
+		prepareDropDownNavigation();
+
 		if (readingPlan == null) {
 			return;
 		}
-
-		actionBar = getSupportActionBar();
-		actionBar.setDisplayShowTitleEnabled(false);
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-		prepareDropDownNavigation();
 		prepareDisplay();
 
 	}
@@ -141,9 +140,13 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	}
 
 	public boolean prepareDropDownNavigation() {
-		if (downloadedReadingPlanInfos == null) {
+		if (downloadedReadingPlanInfos.size() == 0) {
+			actionBar.setDisplayShowTitleEnabled(true);
 			return true;
 		}
+
+		actionBar.setDisplayShowTitleEnabled(false);
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
 		long id = Preferences.getLong("active_reading_plan", 0);
 		int itemNumber = 0;
