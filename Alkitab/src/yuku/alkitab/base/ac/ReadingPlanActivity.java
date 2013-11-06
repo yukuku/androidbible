@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
@@ -65,6 +66,12 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	private LinearLayout llNavigations;
 	private FrameLayout flNoData;
 	private Button bDownload;
+
+	public static Intent createIntent(int dayNumber) {
+		Intent intent = new Intent(App.context, ReadingPlanActivity.class);
+		intent.putExtra(READING_PLAN_DAY_NUMBER, dayNumber);
+		return intent;
+	}
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -266,7 +273,10 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		if (readingPlan == null) {
 			return;
 		}
-		todayNumber = (int) ((new Date().getTime() - readingPlan.info.startDate) / (1000 * 60 * 60 * 24));
+		todayNumber = getIntent().getIntExtra(READING_PLAN_DAY_NUMBER, -1);
+		if (todayNumber == -1) {
+			todayNumber = (int) ((new Date().getTime() - readingPlan.info.startDate) / (1000 * 60 * 60 * 24));
+		}
 		dayNumber = todayNumber;
 	}
 
