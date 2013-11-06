@@ -62,7 +62,7 @@
         <url prefix="http://ref.ly/" format="dot2 nospace0 version_refly" lang="en" />
 	</share>
     <readingplan>
-        <rp_preset title="Twenty Minutes" description="Twenty Minutes A Day" filename_rp_preset="wsts.rpb" url="http://alkitab-host.appspot.com/addon/rpb/wsts.rpb" />
-        <rp_preset title="Twenty One Minutes" description="Twenty One Minutes A Day" filename_rp_preset="wsts_ver2.rpb" url="http://alkitab-host.appspot.com/addon/rpb/wsts_ver2.rpb" />
+        <rp_preset title="Twenty Minutes A Day" description="Twenty Minutes A Day" filename_rp_preset="wsts.rpb" url="http://alkitab-host.appspot.com/addon/rpb/wsts.rpb" />
+        <rp_preset title="TwentyOne Mnt A Day" description="Twenty One Minutes A Day" filename_rp_preset="wsts_ver2.rpb" url="http://alkitab-host.appspot.com/addon/rpb/wsts_ver2.rpb" />
     </readingplan>
 </config>
