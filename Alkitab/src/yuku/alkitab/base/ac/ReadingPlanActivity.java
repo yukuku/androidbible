@@ -287,25 +287,28 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		final List<ReadingPlan.ReadingPlanInfo> infos = config.readingPlanInfos;
 		final List<String> readingPlanTitles = new ArrayList<String>();
 
-		final boolean[] checkedItems = new boolean[infos.size()];
+		final List<Integer> resources = new ArrayList<Integer>();
 		for (int i = 0; i < infos.size(); i++) {
 			String title = infos.get(i).title;
-			readingPlanTitles.add(title);
+			boolean downloaded = false;
 			for (ReadingPlan.ReadingPlanInfo downloadedReadingPlanInfo : downloadedReadingPlanInfos) {
 				if (title.equals(downloadedReadingPlanInfo.title)) {
-					checkedItems[i] = true;
+					downloaded = true;
 					break;
 				}
 			}
+			if (!downloaded) {
+				readingPlanTitles.add(title);
+				String filename = infos.get(i).filename.replace(".rpb", "");                        //TODO: proper method. testing only
+				resources.add(getResources().getIdentifier(filename, "raw", getPackageName()));     //TODO: proper method
+			}
 		}
 
-		final int[] resource = new int[] {R.raw.wsts, R.raw.wsts_ver2};       //TODO: proper method
-
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMultiChoiceItems(readingPlanTitles.toArray(new String[infos.size()]), checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+		builder.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, readingPlanTitles), new DialogInterface.OnClickListener() {
 			@Override
-			public void onClick(final DialogInterface dialog, final int which, final boolean isChecked) {
-				long id = ReadingPlanManager.copyReadingPlanToDb(resource[which]);
+			public void onClick(final DialogInterface dialog, final int which) {
+				long id = ReadingPlanManager.copyReadingPlanToDb(resources.get(which));
 
 				Preferences.setLong(Prefkey.active_reading_plan, id);
 				loadDayNumber();
