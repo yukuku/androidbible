@@ -17,6 +17,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -60,26 +61,31 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	private ListView lsTodayReadings;
 	private ReadingPlanAdapter readingPlanAdapter;
 	private ActionBar actionBar;
+	private LinearLayout llNavigations;
+	private FrameLayout flNoData;
+	private Button bDownload;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_reading_plan);
+		llNavigations = V.get(this, R.id.llNavigations);
+		flNoData = V.get(this, R.id.flNoDataContainer);
+
 		lsTodayReadings = V.get(this, R.id.lsTodayReadings);
 		bToday = V.get(this, R.id.bToday);
+		bLeft = V.get(this, R.id.bLeft);
+		bRight = V.get(this, R.id.bRight);
+		bDownload = V.get(this, R.id.bDownload);
 
 		long id = Preferences.getLong("active_reading_plan", 0);
 		loadReadingPlan(id);
 		loadReadingPlanProgress();
 		loadDayNumber();
 
-
 		actionBar = getSupportActionBar();
 		prepareDropDownNavigation();
 
-		if (readingPlan == null) {
-			return;
-		}
 		prepareDisplay();
 
 	}
@@ -99,6 +105,22 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	}
 
 	public void prepareDisplay() {
+		if (readingPlan == null) {
+			llNavigations.setVisibility(View.GONE);
+			lsTodayReadings.setVisibility(View.GONE);
+			flNoData.setVisibility(View.VISIBLE);
+
+			bDownload.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					downloadReadingPlan();
+				}
+			});
+			return;
+		}
+		llNavigations.setVisibility(View.VISIBLE);
+		lsTodayReadings.setVisibility(View.VISIBLE);
+		flNoData.setVisibility(View.GONE);
 
 		//Listviews
 		readingPlanAdapter = new ReadingPlanAdapter();
@@ -119,8 +141,6 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		});
 
 		//buttons
-		bLeft = V.get(this, R.id.bLeft);
-		bRight = V.get(this, R.id.bRight);
 
 		updateButtonStatus();
 
@@ -265,6 +285,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		.show();
 
 	}
+
 	private void loadReadingPlan(long id) {
 
 		downloadedReadingPlanInfos = S.getDb().listAllReadingPlanInfo();
