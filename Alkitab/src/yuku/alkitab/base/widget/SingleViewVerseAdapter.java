@@ -5,7 +5,6 @@ import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
@@ -63,11 +62,10 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				lText.setTextColor(0xff000000); // override with black!
 			}
 
-			ImageView imageView = (ImageView) res.findViewById(R.id.imgShade);
 			if (ariRangesReadingPlan == null || (ari >= ariRangesReadingPlan[0] && ari <= ariRangesReadingPlan[1]) || Ari.toVerse(ariRangesReadingPlan[0]) == 0) {
-				imageView.setVisibility(View.GONE);
+				res.setShaded(false);
 			} else {
-				imageView.setVisibility(View.VISIBLE);
+				res.setShaded(true);
 			}
 
 			final AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_attributes);
