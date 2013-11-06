@@ -31,6 +31,7 @@ import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.model.Version;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.ReadingPlanManager;
 import yuku.alkitab.debug.R;
@@ -79,7 +80,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		bDownload = V.get(this, R.id.bDownload);
 		actionBar = getSupportActionBar();
 
-		long id = Preferences.getLong("active_reading_plan", 0);
+		long id = Preferences.getLong(Prefkey.active_reading_plan, 0);
 		loadReadingPlan(id);
 		loadReadingPlanProgress();
 		loadDayNumber();
@@ -167,7 +168,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		actionBar.setDisplayShowTitleEnabled(false);
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
-		long id = Preferences.getLong("active_reading_plan", 0);
+		long id = Preferences.getLong(Prefkey.active_reading_plan, 0);
 		int itemNumber = 0;
 		//Drop-down navigation
 		List<String> titles = new ArrayList<String>();
@@ -225,7 +226,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			public void onClick(final DialogInterface dialog, final int which) {
 				S.getDb().deleteReadingPlanById(readingPlan.info.id);
 				readingPlan = null;
-				Preferences.remove("active_reading_plan");
+				Preferences.remove(Prefkey.active_reading_plan);
 				loadReadingPlan(0);
 				loadReadingPlanProgress();
 				loadDayNumber();
@@ -295,7 +296,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			public void onClick(final DialogInterface dialog, final int which, final boolean isChecked) {
 				long id = ReadingPlanManager.copyReadingPlanToDb(resource[which]);
 
-				Preferences.setLong("active_reading_plan", id);
+				Preferences.setLong(Prefkey.active_reading_plan, id);
 				loadDayNumber();
 				loadReadingPlan(id);
 				loadReadingPlanProgress();
@@ -336,7 +337,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		res.info.id = id;
 		res.info.startDate = startDate;
 		readingPlan = res;
-		Preferences.setLong("active_reading_plan", id);
+		Preferences.setLong(Prefkey.active_reading_plan, id);
 	}
 	
 	private void loadReadingPlanProgress() {
