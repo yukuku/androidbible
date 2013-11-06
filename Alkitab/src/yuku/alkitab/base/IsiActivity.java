@@ -1278,6 +1278,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if (data == null && readingPlanFloatMenu.getVisibility() != View.VISIBLE) {
 				return;
 			} else if (data == null) {
+				if (readingPlanFloatMenu.getReadingPlanId() != Preferences.getLong(Prefkey.active_reading_plan, 0)) {
+					readingPlanFloatMenu.setVisibility(View.GONE);
+					return;
+				}
 				readingPlanFloatMenu.updateProgress();
 				readingPlanFloatMenu.updateLayout();
 				return;

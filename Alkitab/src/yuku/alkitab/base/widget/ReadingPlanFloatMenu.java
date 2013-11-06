@@ -149,6 +149,10 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		}
 	}
 
+	public long getReadingPlanId() {
+		return id;
+	}
+
 	public int[] getAriRanges() {
 		return ariRanges;
 	}
