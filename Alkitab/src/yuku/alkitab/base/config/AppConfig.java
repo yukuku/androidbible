@@ -3,16 +3,15 @@ package yuku.alkitab.base.config;
 import android.content.Context;
 import android.content.res.XmlResourceParser;
 import android.util.Log;
+import org.xmlpull.v1.XmlPullParser;
+import yuku.afw.App;
+import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
+import yuku.alkitab.base.model.ReadingPlan;
+import yuku.alkitab.base.storage.Db;
+import yuku.alkitab.debug.R;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.xmlpull.v1.XmlPullParser;
-
-import yuku.afw.App;
-import yuku.alkitab.debug.R;
-import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
-import yuku.alkitab.base.storage.Db;
 
 public class AppConfig {
 	public static final String TAG = AppConfig.class.getSimpleName();
@@ -30,6 +29,7 @@ public class AppConfig {
 	public String url_prefix;
 	public String url_format;
 	public String[] url_standardBookNames;
+	public List<ReadingPlan.ReadingPlanInfo> readingPlanInfos;
 	
 	private static AppConfig lastAppConfig;
 	private static String lastPackageName;
@@ -58,6 +58,7 @@ public class AppConfig {
 		AppConfig res = new AppConfig();
 		
 		List<MVersionPreset> presets = new ArrayList<MVersionPreset>();
+		List<ReadingPlan.ReadingPlanInfo> infos = new ArrayList<ReadingPlan.ReadingPlanInfo>();
 		int presetOrdering = 10;
 
 		while (true) {
@@ -91,12 +92,20 @@ public class AppConfig {
 				if (res.url_prefix == null || res.url_format == null || res.url_standardBookNames == null) {
 					throw new RuntimeException("wrong share url config!"); //$NON-NLS-1$
 				}
+			}else if (next == XmlPullParser.START_TAG && "rp_preset".equals(parser.getName())) {
+				ReadingPlan.ReadingPlanInfo info = new ReadingPlan.ReadingPlanInfo();
+				info.title = parser.getAttributeValue(null, "title");
+				info.description = parser.getAttributeValue(null, "description");
+				info.filename = parser.getAttributeValue(null, "filename_rp_preset");
+				info.url = parser.getAttributeValue(null, "url");
+				infos.add(info);
 			} else if (next == XmlPullParser.END_DOCUMENT) {
 				break;
 			}
 		}
 		
 		res.presets = presets;
+		res.readingPlanInfos = infos;
 		
 		return res;
 	}

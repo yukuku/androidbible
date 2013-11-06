@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 public class RpaToRpb {
-	private static final String INPUT_FILE = System.getProperty("user.dir") + "/RpaToRpb/file/wsts.rpa";
-	private static final String OUTPUT_FILE = System.getProperty("user.dir") + "/RpaToRpb/file/wsts.rpb";
+	private static final String INPUT_FILE = System.getProperty("user.dir") + "/RpaToRpb/file/wsts_ver2.rpa";
+	private static final String OUTPUT_FILE = System.getProperty("user.dir") + "/RpaToRpb/file/wsts_ver2.rpb";
 	private static RpaInput.Rpa rpa;
 
 	private static final byte ARP_VERSION = 0x01;

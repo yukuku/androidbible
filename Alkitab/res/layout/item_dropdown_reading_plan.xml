@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        style="?attr/actionButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:textColor="#f0f0f0"
+        android:textSize="18sp"
+        android:id="@+id/textView"/>

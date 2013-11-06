@@ -1,14 +1,18 @@
 package yuku.alkitab.base.ac;
 
-import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.text.SpannableStringBuilder;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -20,7 +24,9 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import yuku.afw.V;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.Ari;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.model.Version;
@@ -31,24 +37,29 @@ import yuku.alkitab.debug.R;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class ReadingPlanActivity extends Activity {
+public class ReadingPlanActivity extends ActionBarActivity {
 	public static final String READING_PLAN_ARI_RANGES = "reading_plan_ari_ranges";
 	public static final String READING_PLAN_ID = "reading_plan_id";
 	public static final String READING_PLAN_DAY_NUMBER = "reading_plan_day_number";
 
 	private ReadingPlan readingPlan;
+	private List<ReadingPlan.ReadingPlanInfo> downloadedReadingPlanInfos;
+	private int todayNumber;
 	private int dayNumber;
-	private ReadingPlanAdapter readingPlanAdapter;
+	private IntArrayList readingCodes;
+	private boolean newDropDownItems;
+
 	private ImageButton bLeft;
 	private ImageButton bRight;
-	private ListView lsTodayReadings;
-	private IntArrayList readingCodes;
 	private Button bToday;
-	private int todayNumber;
+	private ListView lsTodayReadings;
+	private ReadingPlanAdapter readingPlanAdapter;
+	private ActionBar actionBar;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -57,8 +68,8 @@ public class ReadingPlanActivity extends Activity {
 		lsTodayReadings = V.get(this, R.id.lsTodayReadings);
 		bToday = V.get(this, R.id.bToday);
 
-
-		loadReadingPlan();
+		long id = Preferences.getLong("active_reading_plan", 0);
+		loadReadingPlan(id);
 		loadReadingPlanProgress();
 		loadDayNumber();
 
@@ -66,6 +77,10 @@ public class ReadingPlanActivity extends Activity {
 			return;
 		}
 
+		actionBar = getSupportActionBar();
+		actionBar.setDisplayShowTitleEnabled(false);
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+		prepareDropDownNavigation();
 		prepareDisplay();
 
 	}
@@ -125,6 +140,42 @@ public class ReadingPlanActivity extends Activity {
 		});
 	}
 
+	public boolean prepareDropDownNavigation() {
+		if (downloadedReadingPlanInfos == null) {
+			return true;
+		}
+
+		long id = Preferences.getLong("active_reading_plan", 0);
+		int itemNumber = 0;
+		//Drop-down navigation
+		List<String> titles = new ArrayList<String>();
+		for (int i = 0; i < downloadedReadingPlanInfos.size(); i++) {
+			ReadingPlan.ReadingPlanInfo info = downloadedReadingPlanInfos.get(i);
+			titles.add(info.title);
+			if (info.id == id) {
+				itemNumber = i;
+			}
+		}
+
+		ArrayAdapter<String> navigationAdapter = new ArrayAdapter<String>(this, R.layout.item_dropdown_reading_plan, titles);
+
+		newDropDownItems = false;
+		actionBar.setListNavigationCallbacks(navigationAdapter, new ActionBar.OnNavigationListener() {
+			@Override
+			public boolean onNavigationItemSelected(final int i, final long l) {
+				if (newDropDownItems) {
+					loadReadingPlan(downloadedReadingPlanInfos.get(i).id);
+					loadReadingPlanProgress();
+					prepareDisplay();
+				}
+				return true;
+			}
+		});
+		actionBar.setSelectedNavigationItem(itemNumber);
+		newDropDownItems = true;
+		return false;
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_reading_plan, menu);
@@ -165,7 +216,6 @@ public class ReadingPlanActivity extends Activity {
 	}
 
 	private void loadDayNumber() {
-		//TODO: proper method. Testing only
 		if (readingPlan == null) {
 			return;
 		}
@@ -174,26 +224,62 @@ public class ReadingPlanActivity extends Activity {
 	}
 
 	private void downloadReadingPlan() {
-		//TODO proper method. Testing only
-		ReadingPlanManager.copyReadingPlanToDb(R.raw.wsts);
-		loadDayNumber();
-		loadReadingPlan();
-		loadReadingPlanProgress();
-		prepareDisplay();
-	}
-	private void loadReadingPlan() {
-		//TODO: proper method. Testing only
 
-		List<ReadingPlan.ReadingPlanInfo> infos = S.getDb().listAllReadingPlanInfo();
-		long id = 0;
-		long startDate = 0;
-		for (ReadingPlan.ReadingPlanInfo info : infos) {
-			id = info.id;
-			startDate = info.startDate;
+		AppConfig config = AppConfig.get();
+		final List<ReadingPlan.ReadingPlanInfo> infos = config.readingPlanInfos;
+		final List<String> readingPlanTitles = new ArrayList<String>();
+
+		final boolean[] checkedItems = new boolean[infos.size()];
+		for (int i = 0; i < infos.size(); i++) {
+			String title = infos.get(i).title;
+			readingPlanTitles.add(title);
+			for (ReadingPlan.ReadingPlanInfo downloadedReadingPlanInfo : downloadedReadingPlanInfos) {
+				if (title.equals(downloadedReadingPlanInfo.title)) {
+					checkedItems[i] = true;
+					break;
+				}
+			}
 		}
 
-		if (infos.size() == 0) {
+		final int[] resource = new int[] {R.raw.wsts, R.raw.wsts_ver2};       //TODO: proper method
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMultiChoiceItems(readingPlanTitles.toArray(new String[infos.size()]), checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+			@Override
+			public void onClick(final DialogInterface dialog, final int which, final boolean isChecked) {
+				long id = ReadingPlanManager.copyReadingPlanToDb(resource[which]);
+
+				Preferences.setLong("active_reading_plan", id);
+				loadDayNumber();
+				loadReadingPlan(id);
+				loadReadingPlanProgress();
+				prepareDropDownNavigation();
+				prepareDisplay();
+				dialog.dismiss();
+			}
+		})
+		.setNegativeButton("Cancel", null)
+		.show();
+
+	}
+	private void loadReadingPlan(long id) {
+
+		downloadedReadingPlanInfos = S.getDb().listAllReadingPlanInfo();
+
+		if (downloadedReadingPlanInfos.size() == 0) {
 			return;
+		}
+
+		long startDate = 0;
+		if (id == 0) {
+			id = downloadedReadingPlanInfos.get(0).id;
+			startDate = downloadedReadingPlanInfos.get(0).startDate;
+		} else {
+			for (ReadingPlan.ReadingPlanInfo info : downloadedReadingPlanInfos) {
+				if (id == info.id) {
+					startDate = info.startDate;
+				}
+			}
 		}
 
 		byte[] binaryReadingPlan = S.getDb().getBinaryReadingPlanById(id);
@@ -203,10 +289,10 @@ public class ReadingPlanActivity extends Activity {
 		res.info.id = id;
 		res.info.startDate = startDate;
 		readingPlan = res;
+		Preferences.setLong("active_reading_plan", id);
 	}
 	
 	private void loadReadingPlanProgress() {
-		//TODO proper method. Testing only
 		if (readingPlan == null) {
 			return;
 		}
@@ -261,6 +347,7 @@ public class ReadingPlanActivity extends Activity {
 				TextView textView = V.get(convertView, R.id.text1);
 				int start = position * 2;
 				int[] aris = {todayReadings[start], todayReadings[start + 1]};
+
 				textView.setText(getReference(S.activeVersion, aris));
 
 			} else if (itemViewType == 1) {
@@ -450,5 +537,4 @@ public class ReadingPlanActivity extends Activity {
 
 		return sb;
 	}
-
 }

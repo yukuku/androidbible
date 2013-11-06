@@ -15,6 +15,8 @@ public class ReadingPlan {
 		public String description;
 		public int duration;
 		public long startDate;
+		public String filename;
+		public String url;
 	}
 
 	public static class ReadingPlanProgress {
