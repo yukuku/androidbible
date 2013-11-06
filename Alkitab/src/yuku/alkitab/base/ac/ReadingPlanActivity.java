@@ -273,11 +273,12 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		if (readingPlan == null) {
 			return;
 		}
-		todayNumber = getIntent().getIntExtra(READING_PLAN_DAY_NUMBER, -1);
-		if (todayNumber == -1) {
-			todayNumber = (int) ((new Date().getTime() - readingPlan.info.startDate) / (1000 * 60 * 60 * 24));
+
+		todayNumber = (int) ((new Date().getTime() - readingPlan.info.startDate) / (1000 * 60 * 60 * 24));
+		dayNumber = getIntent().getIntExtra(READING_PLAN_DAY_NUMBER, -1);
+		if (dayNumber == -1) {
+			dayNumber = todayNumber;
 		}
-		dayNumber = todayNumber;
 	}
 
 	private void downloadReadingPlan() {
