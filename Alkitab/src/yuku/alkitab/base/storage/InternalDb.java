@@ -867,4 +867,10 @@ public class InternalDb {
 		helper.getWritableDatabase().delete(Db.TABLE_ReadingPlan, "_id=?", new String[] {String.valueOf(id)});
 	}
 
+	public int updateStartDate(long id, long startDate) {
+		ContentValues cv = new ContentValues();
+		cv.put(Db.ReadingPlan.startDate, startDate);
+		return helper.getWritableDatabase().update(Db.TABLE_ReadingPlan, cv, "_id=?", new String[] {String.valueOf(id)});
+	}
+
 }

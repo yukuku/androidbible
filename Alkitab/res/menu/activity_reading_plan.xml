@@ -2,6 +2,9 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/menuReset"
+        android:title="Reset"/>
+    <item
         android:id="@+id/menuDownload"
         android:title="Download"/>
     <item

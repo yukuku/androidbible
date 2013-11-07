@@ -257,7 +257,10 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		int itemId = item.getItemId();
-		if (itemId == R.id.menuDownload) {
+		if (itemId == R.id.menuReset) {
+			resetReadingPlan();
+			return true;
+		} else if (itemId == R.id.menuDownload) {
 			downloadReadingPlan();
 			return true;
 		} else if (itemId == R.id.menuDelete) {
@@ -265,6 +268,45 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void resetReadingPlan() {
+		new AlertDialog.Builder(this)
+		.setMessage("This action will shift your last fully read to yesterday.")
+		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(final DialogInterface dialog, final int which) {
+				int lastUnreadDay = findLastUnreadDay();
+				Calendar calendar = GregorianCalendar.getInstance();
+				calendar.add(Calendar.DATE, -lastUnreadDay);
+				S.getDb().updateStartDate(readingPlan.info.id, calendar.getTime().getTime());
+				loadReadingPlan(readingPlan.info.id);
+				loadDayNumber();
+				readingPlanAdapter.load();
+				readingPlanAdapter.notifyDataSetChanged();
+
+				updateButtonStatus();
+			}
+		})
+		.setNegativeButton(R.string.cancel, null)
+		.show();
+	}
+
+	private int findLastUnreadDay() {
+		int lastUnreadDay = dayNumber;
+
+		loop1:
+		for (int i = 0; i < dayNumber; i++) {
+			boolean[] readMarks = new boolean[readingPlan.dailyVerses.get(i).length];
+			ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, i);
+			for (boolean readMark : readMarks) {
+				if (!readMark) {
+					lastUnreadDay = i;
+					break loop1;
+				}
+			}
+		}
+		return lastUnreadDay;
 	}
 
 	private void deleteReadingPlan() {
