@@ -411,24 +411,30 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			}
 		}
 
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, readingPlanTitles), new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(final DialogInterface dialog, final int which) {
-				long id = ReadingPlanManager.copyReadingPlanToDb(resources.get(which));
+		if (readingPlanTitles.size() == 0) {
+			new AlertDialog.Builder(this)
+			.setMessage("No reading plan can be downloaded.")
+			.setPositiveButton(R.string.ok, null)
+			.show();
+		} else {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, readingPlanTitles), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(final DialogInterface dialog, final int which) {
+					long id = ReadingPlanManager.copyReadingPlanToDb(resources.get(which));
 
-				Preferences.setLong(Prefkey.active_reading_plan, id);
-				loadDayNumber();
-				loadReadingPlan(id);
-				loadReadingPlanProgress();
-				prepareDropDownNavigation();
-				prepareDisplay();
-				dialog.dismiss();
-			}
-		})
-		.setNegativeButton("Cancel", null)
-		.show();
-
+					Preferences.setLong(Prefkey.active_reading_plan, id);
+					loadDayNumber();
+					loadReadingPlan(id);
+					loadReadingPlanProgress();
+					prepareDropDownNavigation();
+					prepareDisplay();
+					dialog.dismiss();
+				}
+			})
+			.setNegativeButton("Cancel", null)
+			.show();
+		}
 	}
 
 	private void loadReadingPlan(long id) {
