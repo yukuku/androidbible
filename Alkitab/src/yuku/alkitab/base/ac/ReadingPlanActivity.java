@@ -1,6 +1,7 @@
 package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -43,6 +45,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class ReadingPlanActivity extends ActionBarActivity {
@@ -149,6 +152,45 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		//buttons
 
 		updateButtonStatus();
+
+		bToday.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(new Date(readingPlan.info.startDate));
+				calendar.add(Calendar.DATE, dayNumber);
+
+				DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+			        @Override
+			        public void onDateSet(final DatePicker view, final int year, final int monthOfYear, final int dayOfMonth) {
+				        Calendar newCalendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+				        newCalendar.set(Calendar.HOUR_OF_DAY, 0);
+				        newCalendar.set(Calendar.MINUTE, 1);                 //TODO: find another way to calculate difference
+				        newCalendar.set(Calendar.SECOND, 0);
+
+				        Calendar startCalendar = GregorianCalendar.getInstance();
+				        startCalendar.setTime(new Date(readingPlan.info.startDate));
+				        startCalendar.set(Calendar.HOUR_OF_DAY, 0);
+				        startCalendar.set(Calendar.MINUTE, 0);
+				        startCalendar.set(Calendar.SECOND, 0);
+
+				        int newDay = (int) ((newCalendar.getTime().getTime() - startCalendar.getTime().getTime()) / (1000 * 60 * 60 * 24));
+				        if (newDay < 0) {
+					        newDay = 0;
+				        } else if (newDay >= readingPlan.info.duration) {
+					        newDay = readingPlan.info.duration - 1;
+				        }
+				        dayNumber = newDay;
+				        changeDay(0);
+			        }
+		        };
+
+				DatePickerDialog datePickerDialog = new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+				datePickerDialog.getDatePicker().setCalendarViewShown(true);
+				datePickerDialog.show();
+
+			}
+		});
 
 		bLeft.setOnClickListener(new View.OnClickListener() {
 			@Override
