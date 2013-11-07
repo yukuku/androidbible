@@ -22,7 +22,6 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -487,38 +486,35 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			final int itemViewType = getItemViewType(position);
 
 			if (itemViewType == 0) {
-				if (convertView == null) {
-					convertView = getLayoutInflater().inflate(R.layout.item_today_reading, parent, false);
-				}
+				CheckBox checkBox = new CheckBox(ReadingPlanActivity.this);
+				LinearLayout layout = new LinearLayout(ReadingPlanActivity.this);
+				layout.addView(checkBox);
+				convertView = layout;
 
-				final ImageView bTick = V.get(convertView, R.id.bTick);
 				boolean[] readMarks = new boolean[todayReadings.length];
 				ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, dayNumber);
 				if (readMarks[position * 2]) {
-					bTick.setImageResource(R.drawable.ic_checked);
+					checkBox.setChecked(true);
 				} else {
-					bTick.setImageResource(R.drawable.ic_unchecked);
+					checkBox.setChecked(false);
 				}
 
-				bTick.setOnClickListener(new View.OnClickListener() {
+				checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 					@Override
-					public void onClick(final View v) {
-						boolean[] readMarks = new boolean[todayReadings.length];
-						ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, dayNumber);
-						boolean ticked = !readMarks[position * 2];
-
-						ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, dayNumber, position, ticked);
+					public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+						ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, dayNumber, position, isChecked);
 						loadReadingPlanProgress();
 						load();
 						notifyDataSetChanged();
 					}
 				});
 
-				TextView textView = V.get(convertView, R.id.text1);
 				int start = position * 2;
 				int[] aris = {todayReadings[start], todayReadings[start + 1]};
-
-				textView.setText(getReference(S.activeVersion, aris));
+				checkBox.setText(getReference(S.activeVersion, aris));
+				checkBox.setFocusable(false);
+				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+				checkBox.setLayoutParams(layoutParams);
 
 			} else if (itemViewType == 1) {
 				if (convertView == null) {
