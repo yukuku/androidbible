@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.PopupMenu;
 import android.text.SpannableStringBuilder;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -156,7 +157,34 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		bToday.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				Calendar calendar = Calendar.getInstance();
+				final PopupMenu popupMenu = new PopupMenu(ReadingPlanActivity.this, v);
+				popupMenu.getMenu().add(Menu.NONE, 1, 1, "Show Calendar");
+				popupMenu.getMenu().add(Menu.NONE, 2, 2, "Go to first unread");
+
+				popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+					@Override
+					public boolean onMenuItemClick(final MenuItem menuItem) {
+						popupMenu.dismiss();
+						int itemId = menuItem.getItemId();
+						if (itemId == 1) {
+							showCalendar();
+						} else if (itemId == 2) {
+							gotoLastUnread();
+						}
+						return true;
+					}
+
+
+				});
+				popupMenu.show();
+			}
+
+			private void gotoLastUnread() {
+				dayNumber = findLastUnreadDay();
+				changeDay(0);
+			}
+
+			public void showCalendar() {Calendar calendar = Calendar.getInstance();
 				calendar.setTime(new Date(readingPlan.info.startDate));
 				calendar.add(Calendar.DATE, dayNumber);
 
@@ -188,7 +216,6 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				DatePickerDialog datePickerDialog = new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 				datePickerDialog.getDatePicker().setCalendarViewShown(true);
 				datePickerDialog.show();
-
 			}
 		});
 
