@@ -168,7 +168,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 						if (itemId == 1) {
 							showCalendar();
 						} else if (itemId == 2) {
-							gotoLastUnread();
+							gotoFirstUnread();
 						}
 						return true;
 					}
@@ -176,8 +176,8 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				popupMenu.show();
 			}
 
-			private void gotoLastUnread() {
-				dayNumber = findLastUnreadDay();
+			private void gotoFirstUnread() {
+				dayNumber = findFirstUnreadDay(readingPlan.info.duration - 1);
 				changeDay(0);
 			}
 
@@ -299,7 +299,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(final DialogInterface dialog, final int which) {
-				int lastUnreadDay = findLastUnreadDay();
+				int lastUnreadDay = findFirstUnreadDay(dayNumber);
 				Calendar calendar = GregorianCalendar.getInstance();
 				calendar.add(Calendar.DATE, -lastUnreadDay);
 				S.getDb().updateStartDate(readingPlan.info.id, calendar.getTime().getTime());
@@ -315,11 +315,11 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		.show();
 	}
 
-	private int findLastUnreadDay() {
-		int lastUnreadDay = dayNumber;
+	private int findFirstUnreadDay(final int dayUntil) {
+		int lastUnreadDay = dayUntil;
 
 		loop1:
-		for (int i = 0; i < dayNumber; i++) {
+		for (int i = 0; i < dayUntil; i++) {
 			boolean[] readMarks = new boolean[readingPlan.dailyVerses.get(i).length];
 			ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, i);
 			for (boolean readMark : readMarks) {
