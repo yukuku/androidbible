@@ -158,7 +158,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			@Override
 			public void onClick(final View v) {
 				final PopupMenu popupMenu = new PopupMenu(ReadingPlanActivity.this, v);
-				popupMenu.getMenu().add(Menu.NONE, 1, 1, "Show Calendar");
+				popupMenu.getMenu().add(Menu.NONE, 1, 1, "Show calendar");
 				popupMenu.getMenu().add(Menu.NONE, 2, 2, "Go to first unread");
 
 				popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -173,8 +173,6 @@ public class ReadingPlanActivity extends ActionBarActivity {
 						}
 						return true;
 					}
-
-
 				});
 				popupMenu.show();
 			}
@@ -214,7 +212,6 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		        };
 
 				DatePickerDialog datePickerDialog = new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-				datePickerDialog.getDatePicker().setCalendarViewShown(true);
 				datePickerDialog.show();
 			}
 		});
