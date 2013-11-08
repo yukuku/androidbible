@@ -105,6 +105,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 
 				ReadingPlanManager.updateReadingPlanProgress(id, dayNumber, sequence / 2, ticked);
 				updateLayout();
+				readMarkListener.onClick(ariRanges[sequence], ariRanges[sequence + 1]);
 			}
 		});
 

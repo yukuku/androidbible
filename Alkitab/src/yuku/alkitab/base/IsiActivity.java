@@ -1338,6 +1338,13 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 								startActivityForResult(ReadingPlanActivity.createIntent(dayNumber), REQCODE_readingPlan);
 							}
 						});
+						readingPlanFloatMenu.setReadMarkClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
+							@Override
+							public void onClick(final int ari_0, final int ari_1) {
+								readingPlanFloatMenu.clearAnimation();
+								readingPlanFloatMenu.fadeoutAnimation(5000);
+							}
+						});
 						readingPlanFloatMenu.setCloseReadingModeClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
 							public void onClick(final int ari_0, final int ari_1) {
