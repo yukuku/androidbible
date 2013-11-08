@@ -15,13 +15,13 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.compat.Api8;
 import yuku.alkitab.base.model.Book;
 import yuku.alkitab.base.model.PericopeBlock;
 import yuku.alkitab.base.model.SingleChapterVerses;
 import yuku.alkitab.base.util.IntArrayList;
+import yuku.alkitab.debug.R;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -82,6 +82,10 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop);
 		void onScrollToTop(VersesView v);
 	}
+
+	public interface OnVerseScrollStateChangeListener {
+		void onVerseScrollStateChange(VersesView versesView, int scrollState);
+	}
 	
 	public enum PressResult {
 		left,
@@ -95,6 +99,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	private VerseSelectionMode verseSelectionMode;
 	private Drawable originalSelector;
 	private OnVerseScrollListener onVerseScrollListener;
+	private OnVerseScrollStateChangeListener onVerseScrollStateChangeListener;
 	private AbsListView.OnScrollListener userOnScrollListener;
 	private int scrollState = 0;
 	private View[] scrollToVerseConvertViews;
@@ -464,10 +469,17 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		this.listener = listener;
 	}
 
+	public void setOnVerseScrollStateChangeListener(OnVerseScrollStateChangeListener onVerseScrollStateChangeListener) {
+		this.onVerseScrollStateChangeListener = onVerseScrollStateChangeListener;
+	}
+
 	@Override public void onScrollStateChanged(AbsListView view, int scrollState) {
 		if (userOnScrollListener != null) userOnScrollListener.onScrollStateChanged(view, scrollState);
 		
 		this.scrollState = scrollState;
+		if (onVerseScrollStateChangeListener != null) {
+			onVerseScrollStateChangeListener.onVerseScrollStateChange(this, scrollState);
+		}
 	}
 	
 	@Override public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {

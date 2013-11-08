@@ -5,6 +5,8 @@ import android.text.SpannableStringBuilder;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -17,6 +19,8 @@ import yuku.alkitab.debug.R;
 
 public class ReadingPlanFloatMenu extends LinearLayout {
 
+	public boolean isActive;
+	public boolean isAnimating;
 	private long id;
 	private int dayNumber;
 	private int[] ariRanges;
@@ -147,6 +151,28 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 			bLeft.setEnabled(true);
 			bRight.setEnabled(true);
 		}
+	}
+
+	public void fadeoutAnimation(long startOffset) {
+		AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
+		alphaAnimation.setStartOffset(startOffset);
+		alphaAnimation.setDuration(1000);
+		alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+			@Override
+			public void onAnimationStart(final Animation animation) {
+				ReadingPlanFloatMenu.this.isAnimating = true;
+			}
+
+			@Override
+			public void onAnimationEnd(final Animation animation) {
+				ReadingPlanFloatMenu.this.isAnimating = false;
+				ReadingPlanFloatMenu.this.setVisibility(View.GONE);
+			}
+
+			@Override
+			public void onAnimationRepeat(final Animation animation) {}
+		});
+		this.startAnimation(alphaAnimation);
 	}
 
 	public long getReadingPlanId() {

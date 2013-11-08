@@ -36,6 +36,7 @@ import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
@@ -304,6 +305,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsText.setInlineLinkSpanFactory(new VerseInlineLinkSpanFactory(lsText));
 		lsText.setSelectedVersesListener(lsText_selectedVerses);
 		lsText.setOnVerseScrollListener(lsText_verseScroll);
+		lsText.setOnVerseScrollStateChangeListener(lsText_verseScrollState);
 		
 		// additional setup for split1
 		lsSplit1.setVerseSelectionMode(VersesView.VerseSelectionMode.multiple);
@@ -1288,6 +1290,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 
 			readingPlanFloatMenu.setVisibility(View.VISIBLE);
+			readingPlanFloatMenu.isActive = true;
 
 			final int ari = data.getIntExtra("ari", 0);
 			final long id = data.getLongExtra(ReadingPlanActivity.READING_PLAN_ID, 0L);
@@ -1310,19 +1313,23 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						readingPlanFloatMenu.setLeftNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
 							public void onClick(final int ari_0, final int ari_1) {
+								readingPlanFloatMenu.clearAnimation();
 								jumpToAri(ari_0);
 								history.add(ari_0);
 								lsText.setAriRangesReadingPlan(new int[] {ari_0, ari_1});
 								lsText.updateAdapter();
+								readingPlanFloatMenu.fadeoutAnimation(5000);
 							}
 						});
 						readingPlanFloatMenu.setRightNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
 							public void onClick(final int ari_0, final int ari_1) {
+								readingPlanFloatMenu.clearAnimation();
 								jumpToAri(ari_0);
 								history.add(ari_0);
 								lsText.setAriRangesReadingPlan(new int[] {ari_0, ari_1});
 								lsText.updateAdapter();
+								readingPlanFloatMenu.fadeoutAnimation(5000);
 							}
 						});
 						readingPlanFloatMenu.setDescriptionListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
@@ -1334,12 +1341,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						readingPlanFloatMenu.setCloseReadingModeClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
 							public void onClick(final int ari_0, final int ari_1) {
+								readingPlanFloatMenu.clearAnimation();
 								readingPlanFloatMenu.setVisibility(View.GONE);
+								readingPlanFloatMenu.isActive = false;
 								lsText.setAriRangesReadingPlan(null);
 								lsText.updateAdapter();
 							}
 						});
 
+						readingPlanFloatMenu.fadeoutAnimation(5000);
 						break;
 					}
 				}
@@ -1719,9 +1729,28 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		@Override public void onVerseSingleClick(VersesView v, int verse_1) {}
 	};
-	
+
+	VersesView.OnVerseScrollStateChangeListener lsText_verseScrollState = new VersesView.OnVerseScrollStateChangeListener() {
+		@Override
+		public void onVerseScrollStateChange(final VersesView versesView, final int scrollState) {
+			if (!readingPlanFloatMenu.isActive) {
+				return;
+			}
+			if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+				readingPlanFloatMenu.isAnimating = false;
+				readingPlanFloatMenu.clearAnimation();
+				readingPlanFloatMenu.setVisibility(View.VISIBLE);
+			} else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
+				readingPlanFloatMenu.setVisibility(View.VISIBLE);
+			} else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && readingPlanFloatMenu.getVisibility() != View.GONE) {
+				readingPlanFloatMenu.fadeoutAnimation(3000);
+			}
+		}
+	};
+
 	VersesView.OnVerseScrollListener lsText_verseScroll = new VersesView.OnVerseScrollListener() {
 		@Override public void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop) {
+
 			if (!isPericope && activeSplitVersion != null) {
 				lsSplit1.scrollToVerse(verse_1, prop);
 			}
