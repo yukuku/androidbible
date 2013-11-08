@@ -63,7 +63,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	private ImageButton bLeft;
 	private ImageButton bRight;
 	private Button bToday;
-	private ListView lsTodayReadings;
+	private ListView lsReadingPlan;
 	private ReadingPlanAdapter readingPlanAdapter;
 	private ActionBar actionBar;
 	private LinearLayout llNavigations;
@@ -84,7 +84,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		llNavigations = V.get(this, R.id.llNavigations);
 		flNoData = V.get(this, R.id.flNoDataContainer);
 
-		lsTodayReadings = V.get(this, R.id.lsTodayReadings);
+		lsReadingPlan = V.get(this, R.id.lsTodayReadings);
 		bToday = V.get(this, R.id.bToday);
 		bLeft = V.get(this, R.id.bLeft);
 		bRight = V.get(this, R.id.bRight);
@@ -122,6 +122,43 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	private void loadReadingPlan(long id) {
+
+		downloadedReadingPlanInfos = S.getDb().listAllReadingPlanInfo();
+
+		if (downloadedReadingPlanInfos.size() == 0) {
+			return;
+		}
+
+		long startDate = 0;
+		if (id == 0) {
+			id = downloadedReadingPlanInfos.get(0).id;
+			startDate = downloadedReadingPlanInfos.get(0).startDate;
+		} else {
+			for (ReadingPlan.ReadingPlanInfo info : downloadedReadingPlanInfos) {
+				if (id == info.id) {
+					startDate = info.startDate;
+				}
+			}
+		}
+
+		byte[] binaryReadingPlan = S.getDb().getBinaryReadingPlanById(id);
+
+		InputStream inputStream = new ByteArrayInputStream(binaryReadingPlan);
+		ReadingPlan res = ReadingPlanManager.readVersion1(inputStream);
+		res.info.id = id;
+		res.info.startDate = startDate;
+		readingPlan = res;
+		Preferences.setLong(Prefkey.active_reading_plan, id);
+	}
+
+	private void loadReadingPlanProgress() {
+		if (readingPlan == null) {
+			return;
+		}
+		readingCodes = S.getDb().getAllReadingCodesByReadingPlanId(readingPlan.info.id);
+	}
+
 	public void goToIsiActivity(final int dayNumber, final int sequence) {
 		final int[] selectedVerses = readingPlan.dailyVerses.get(dayNumber);
 		int ari = selectedVerses[sequence * 2];
@@ -136,10 +173,74 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		finish();
 	}
 
+	private void loadDayNumber() {
+		if (readingPlan == null) {
+			return;
+		}
+
+		Calendar newCalendar = GregorianCalendar.getInstance();
+		newCalendar.set(Calendar.HOUR_OF_DAY, 0);
+		newCalendar.set(Calendar.MINUTE, 1);                 //TODO: find another way to calculate difference
+		newCalendar.set(Calendar.SECOND, 0);
+
+		Calendar startCalendar = GregorianCalendar.getInstance();
+		startCalendar.setTime(new Date(readingPlan.info.startDate));
+		startCalendar.set(Calendar.HOUR_OF_DAY, 0);
+		startCalendar.set(Calendar.MINUTE, 0);
+		startCalendar.set(Calendar.SECOND, 0);
+
+		todayNumber = (int) ((newCalendar.getTime().getTime() - startCalendar.getTime().getTime()) / (1000 * 60 * 60 * 24));
+		dayNumber = getIntent().getIntExtra(READING_PLAN_DAY_NUMBER, -1);
+		if (dayNumber == -1) {
+			dayNumber = todayNumber;
+		}
+	}
+
+	public boolean prepareDropDownNavigation() {
+		if (downloadedReadingPlanInfos.size() == 0) {
+			actionBar.setDisplayShowTitleEnabled(true);
+			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+			return true;
+		}
+
+		actionBar.setDisplayShowTitleEnabled(false);
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+
+		long id = Preferences.getLong(Prefkey.active_reading_plan, 0);
+		int itemNumber = 0;
+		//Drop-down navigation
+		List<String> titles = new ArrayList<String>();
+		for (int i = 0; i < downloadedReadingPlanInfos.size(); i++) {
+			ReadingPlan.ReadingPlanInfo info = downloadedReadingPlanInfos.get(i);
+			titles.add(info.title);
+			if (info.id == id) {
+				itemNumber = i;
+			}
+		}
+
+		ArrayAdapter<String> navigationAdapter = new ArrayAdapter<String>(this, R.layout.item_dropdown_reading_plan, titles);
+
+		newDropDownItems = false;
+		actionBar.setListNavigationCallbacks(navigationAdapter, new ActionBar.OnNavigationListener() {
+			@Override
+			public boolean onNavigationItemSelected(final int i, final long l) {
+				if (newDropDownItems) {
+					loadReadingPlan(downloadedReadingPlanInfos.get(i).id);
+					loadReadingPlanProgress();
+					prepareDisplay();
+				}
+				return true;
+			}
+		});
+		actionBar.setSelectedNavigationItem(itemNumber);
+		newDropDownItems = true;
+		return false;
+	}
+
 	public void prepareDisplay() {
 		if (readingPlan == null) {
 			llNavigations.setVisibility(View.GONE);
-			lsTodayReadings.setVisibility(View.GONE);
+			lsReadingPlan.setVisibility(View.GONE);
 			flNoData.setVisibility(View.VISIBLE);
 
 			bDownload.setOnClickListener(new View.OnClickListener() {
@@ -151,15 +252,15 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			return;
 		}
 		llNavigations.setVisibility(View.VISIBLE);
-		lsTodayReadings.setVisibility(View.VISIBLE);
+		lsReadingPlan.setVisibility(View.VISIBLE);
 		flNoData.setVisibility(View.GONE);
 
 		//Listviews
 		readingPlanAdapter = new ReadingPlanAdapter();
 		readingPlanAdapter.load();
-		lsTodayReadings.setAdapter(readingPlanAdapter);
+		lsReadingPlan.setAdapter(readingPlanAdapter);
 
-		lsTodayReadings.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		lsReadingPlan.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 				final int todayReadingsSize = readingPlan.dailyVerses.get(dayNumber).length / 2;
@@ -204,7 +305,8 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				changeDay(0);
 			}
 
-			public void showCalendar() {Calendar calendar = Calendar.getInstance();
+			public void showCalendar() {
+				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(new Date(readingPlan.info.startDate));
 				calendar.add(Calendar.DATE, dayNumber);
 
@@ -253,47 +355,6 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		});
 	}
 
-	public boolean prepareDropDownNavigation() {
-		if (downloadedReadingPlanInfos.size() == 0) {
-			actionBar.setDisplayShowTitleEnabled(true);
-			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-			return true;
-		}
-
-		actionBar.setDisplayShowTitleEnabled(false);
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-
-		long id = Preferences.getLong(Prefkey.active_reading_plan, 0);
-		int itemNumber = 0;
-		//Drop-down navigation
-		List<String> titles = new ArrayList<String>();
-		for (int i = 0; i < downloadedReadingPlanInfos.size(); i++) {
-			ReadingPlan.ReadingPlanInfo info = downloadedReadingPlanInfos.get(i);
-			titles.add(info.title);
-			if (info.id == id) {
-				itemNumber = i;
-			}
-		}
-
-		ArrayAdapter<String> navigationAdapter = new ArrayAdapter<String>(this, R.layout.item_dropdown_reading_plan, titles);
-
-		newDropDownItems = false;
-		actionBar.setListNavigationCallbacks(navigationAdapter, new ActionBar.OnNavigationListener() {
-			@Override
-			public boolean onNavigationItemSelected(final int i, final long l) {
-				if (newDropDownItems) {
-					loadReadingPlan(downloadedReadingPlanInfos.get(i).id);
-					loadReadingPlanProgress();
-					prepareDisplay();
-				}
-				return true;
-			}
-		});
-		actionBar.setSelectedNavigationItem(itemNumber);
-		newDropDownItems = true;
-		return false;
-	}
-
 	private void resetReadingPlan() {
 		new AlertDialog.Builder(this)
 		.setMessage("This action will shift your last fully read to yesterday.")
@@ -317,7 +378,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	}
 
 	private int findFirstUnreadDay(final int dayUntil) {
-		int lastUnreadDay = dayUntil;
+		int firstUnreadDay = dayUntil;
 
 		loop1:
 		for (int i = 0; i < dayUntil; i++) {
@@ -325,12 +386,12 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, i);
 			for (boolean readMark : readMarks) {
 				if (!readMark) {
-					lastUnreadDay = i;
+					firstUnreadDay = i;
 					break loop1;
 				}
 			}
 		}
-		return lastUnreadDay;
+		return firstUnreadDay;
 	}
 
 	private void deleteReadingPlan() {
@@ -375,29 +436,6 @@ public class ReadingPlanActivity extends ActionBarActivity {
 
 		bToday.setText(getReadingDateHeader(dayNumber));
 
-	}
-
-	private void loadDayNumber() {
-		if (readingPlan == null) {
-			return;
-		}
-
-		Calendar newCalendar = GregorianCalendar.getInstance();
-		newCalendar.set(Calendar.HOUR_OF_DAY, 0);
-		newCalendar.set(Calendar.MINUTE, 1);                 //TODO: find another way to calculate difference
-		newCalendar.set(Calendar.SECOND, 0);
-
-		Calendar startCalendar = GregorianCalendar.getInstance();
-		startCalendar.setTime(new Date(readingPlan.info.startDate));
-		startCalendar.set(Calendar.HOUR_OF_DAY, 0);
-		startCalendar.set(Calendar.MINUTE, 0);
-		startCalendar.set(Calendar.SECOND, 0);
-
-		todayNumber = (int) ((newCalendar.getTime().getTime() - startCalendar.getTime().getTime()) / (1000 * 60 * 60 * 24));
-		dayNumber = getIntent().getIntExtra(READING_PLAN_DAY_NUMBER, -1);
-		if (dayNumber == -1) {
-			dayNumber = todayNumber;
-		}
 	}
 
 	private void downloadReadingPlan() {
@@ -447,43 +485,6 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			.setNegativeButton("Cancel", null)
 			.show();
 		}
-	}
-
-	private void loadReadingPlan(long id) {
-
-		downloadedReadingPlanInfos = S.getDb().listAllReadingPlanInfo();
-
-		if (downloadedReadingPlanInfos.size() == 0) {
-			return;
-		}
-
-		long startDate = 0;
-		if (id == 0) {
-			id = downloadedReadingPlanInfos.get(0).id;
-			startDate = downloadedReadingPlanInfos.get(0).startDate;
-		} else {
-			for (ReadingPlan.ReadingPlanInfo info : downloadedReadingPlanInfos) {
-				if (id == info.id) {
-					startDate = info.startDate;
-				}
-			}
-		}
-
-		byte[] binaryReadingPlan = S.getDb().getBinaryReadingPlanById(id);
-
-		InputStream inputStream = new ByteArrayInputStream(binaryReadingPlan);
-		ReadingPlan res = ReadingPlanManager.readVersion1(inputStream);
-		res.info.id = id;
-		res.info.startDate = startDate;
-		readingPlan = res;
-		Preferences.setLong(Prefkey.active_reading_plan, id);
-	}
-	
-	private void loadReadingPlanProgress() {
-		if (readingPlan == null) {
-			return;
-		}
-		readingCodes = S.getDb().getAllReadingCodesByReadingPlanId(readingPlan.info.id);
 	}
 
 	private float getActualPercentage() {

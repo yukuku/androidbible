@@ -44,9 +44,9 @@ public class ReadingPlanManager {
 		return S.getDb().insertReadingPlan(readingPlanBinary);
 	}
 
-	public static void updateReadingPlanProgress(final long readingPlanId, final int dayNumber, final int readingSequence, final boolean ticked) {
-		int readingCode = ReadingPlan.ReadingPlanProgress.toReadingCode(dayNumber, readingSequence);
-		if (ticked) {
+	public static void updateReadingPlanProgress(final long readingPlanId, final int dayNumber, final int readingSequence, final boolean checked) {
+		int readingCode = toReadingCode(dayNumber, readingSequence);
+		if (checked) {
 			S.getDb().insertReadingPlanProgress(readingPlanId, readingCode);
 		} else {
 			S.getDb().deleteReadingPlanProgress(readingPlanId, readingCode);
@@ -115,6 +115,18 @@ public class ReadingPlanManager {
 		return false;
 	}
 
+	public static int toReadingCode(int dayNumber, int readingSequence) {
+		return dayNumber << 8 | readingSequence;
+	}
+
+	public static int toDayNumber(int readingCode) {
+		return (readingCode & 0x00ffff00) >> 8;
+	}
+
+	public static int toSequence(int readingCode) {
+		return (readingCode & 0x000000ff);
+	}
+
 	public static class ReadingPlanBinary {
 		public ReadingPlan.ReadingPlanInfo info = new ReadingPlan.ReadingPlanInfo();
 		public byte[] binaryReadingPlan;
@@ -137,7 +149,7 @@ public class ReadingPlanManager {
 		readingCodes = filterReadingCodesByDayStartEnd(readingCodes, dayNumber, dayNumber);
 		for (int i = 0; i < readingCodes.size(); i++) {
 			final int readingCode = readingCodes.get(i);
-			final int sequence = ReadingPlan.ReadingPlanProgress.toSequence(readingCode) * 2;
+			final int sequence = toSequence(readingCode) * 2;
 			readMarks[sequence] = true;
 			readMarks[sequence + 1] = true;
 		}

@@ -24,7 +24,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 	private long id;
 	private int dayNumber;
 	private int[] ariRanges;
-	private boolean[] readReadings;
+	private boolean[] readMarks;
 	private int sequence;
 
 	private ReadingPlanFloatMenuClickListener leftNavigationListener;
@@ -53,7 +53,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		this.dayNumber = dayNumber;
 		this.ariRanges = ariRanges;
 		this.sequence = sequence;
-		this.readReadings = new boolean[ariRanges.length];
+		this.readMarks = new boolean[ariRanges.length];
 
 		updateProgress();
 		updateLayout();
@@ -61,8 +61,8 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 
 	public void updateProgress() {
 		IntArrayList readingCodes = S.getDb().getAllReadingCodesByReadingPlanId(id);
-		readReadings = new boolean[readReadings.length];
-		ReadingPlanManager.writeReadMarksByDay(readingCodes, readReadings, dayNumber);
+		readMarks = new boolean[readMarks.length];
+		ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, dayNumber);
 	}
 
 	private void prepareLayout(Context context) {
@@ -99,11 +99,11 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		bTick.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				boolean ticked = !readReadings[sequence];
-				readReadings[sequence] = ticked;
-				readReadings[sequence + 1] = ticked;
+				boolean checked = !readMarks[sequence];
+				readMarks[sequence] = checked;
+				readMarks[sequence + 1] = checked;
 
-				ReadingPlanManager.updateReadingPlanProgress(id, dayNumber, sequence / 2, ticked);
+				ReadingPlanManager.updateReadingPlanProgress(id, dayNumber, sequence / 2, checked);
 				updateLayout();
 				readMarkListener.onClick(ariRanges[sequence], ariRanges[sequence + 1]);
 			}
@@ -127,11 +127,11 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 
 	public void updateLayout() {
 
-		if (ariRanges == null || readReadings == null) {
+		if (ariRanges == null || readMarks == null) {
 			return;
 		}
 
-		if (readReadings[sequence]) {
+		if (readMarks[sequence]) {
 			bTick.setImageResource(R.drawable.ic_checked);
 		} else {
 			bTick.setImageResource(R.drawable.ic_unchecked);

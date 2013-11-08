@@ -1277,13 +1277,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 			applyPreferences(true);
 		} else if (requestCode == REQCODE_readingPlan) {
-			if (data == null && readingPlanFloatMenu.getVisibility() != View.VISIBLE) {
+			if (data == null && !readingPlanFloatMenu.isActive) {
 				return;
 			} else if (data == null) {
 				if (readingPlanFloatMenu.getReadingPlanId() != Preferences.getLong(Prefkey.active_reading_plan, 0)) {
 					readingPlanFloatMenu.setVisibility(View.GONE);
 					return;
 				}
+				readingPlanFloatMenu.setVisibility(View.VISIBLE);
 				readingPlanFloatMenu.updateProgress();
 				readingPlanFloatMenu.updateLayout();
 				return;
