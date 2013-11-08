@@ -76,6 +76,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		return intent;
 	}
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -97,6 +98,28 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		prepareDropDownNavigation();
 		prepareDisplay();
 
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_reading_plan, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		int itemId = item.getItemId();
+		if (itemId == R.id.menuReset) {
+			resetReadingPlan();
+			return true;
+		} else if (itemId == R.id.menuDownload) {
+			downloadReadingPlan();
+			return true;
+		} else if (itemId == R.id.menuDelete) {
+			deleteReadingPlan();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	public void goToIsiActivity(final int dayNumber, final int sequence) {
@@ -269,28 +292,6 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		actionBar.setSelectedNavigationItem(itemNumber);
 		newDropDownItems = true;
 		return false;
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_reading_plan, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		int itemId = item.getItemId();
-		if (itemId == R.id.menuReset) {
-			resetReadingPlan();
-			return true;
-		} else if (itemId == R.id.menuDownload) {
-			downloadReadingPlan();
-			return true;
-		} else if (itemId == R.id.menuDelete) {
-			deleteReadingPlan();
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	private void resetReadingPlan() {
@@ -474,6 +475,83 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		readingCodes = S.getDb().getAllReadingCodesByReadingPlanId(readingPlan.info.id);
 	}
 
+	private float getActualPercentage() {
+		float res = (float) countRead() / (float) countAllReadings() * 100;
+		res = (float)Math.round(res * 100) / 100;
+		return res;
+	}
+
+	private float getTargetPercentage() {
+		float res = (float) countTarget() / (float) countAllReadings() * 100;
+		res = (float)Math.round(res * 100) / 100;
+		return res;
+	}
+
+	private int countRead() {
+		IntArrayList filteredReadingCodes = ReadingPlanManager.filterReadingCodesByDayStartEnd(readingCodes, 0, todayNumber);
+		for (int i = 0; i < filteredReadingCodes.size(); i++) {
+		}
+		return filteredReadingCodes.size();
+	}
+
+	private int countTarget() {
+		int res = 0;
+		for (int i = 0; i <= todayNumber; i++) {
+			res += readingPlan.dailyVerses.get(i).length / 2;
+		}
+		return res;
+	}
+
+	private int countAllReadings() {
+		int res = 0;
+		for (int i = 0; i < readingPlan.info.duration; i++) {
+			res += readingPlan.dailyVerses.get(i).length / 2;
+		}
+		return res;
+	}
+
+	public String getReadingDateHeader(final int dayNumber) {
+		String date = "Day " + (dayNumber + 1) + ": ";
+		if (readingPlan.info.version == 1) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(new Date(readingPlan.info.startDate));
+			calendar.add(Calendar.DATE, dayNumber);
+
+			date += new SimpleDateFormat("MMMM dd, yyyy").format(calendar.getTime());
+		}
+		return date;
+	}
+
+	public static SpannableStringBuilder getReference(Version version, int[] ari) {
+		SpannableStringBuilder sb = new SpannableStringBuilder();
+		String book = version.getBook(Ari.toBook(ari[0])).shortName;
+		sb.append(book);
+		int startChapter = Ari.toChapter(ari[0]);
+		int startVerse = Ari.toVerse(ari[0]);
+		int lastVerse = Ari.toVerse(ari[1]);
+		int lastChapter = Ari.toChapter(ari[1]);
+
+		sb.append(" " + startChapter);
+
+		if (startVerse == 0) {
+			if (lastVerse == 0) {
+				if (startChapter != lastChapter) {
+					sb.append("-" + lastChapter);
+				}
+			} else {
+				sb.append("-" + lastChapter + ":" + lastVerse);
+			}
+		} else {
+			if (startChapter == lastChapter) {
+				sb.append(":" + startVerse + "-" + lastVerse);
+			} else {
+				sb.append(":" + startVerse + "-" + lastChapter + ":" + lastVerse);
+			}
+		}
+
+		return sb;
+	}
+
 	class ReadingPlanAdapter extends BaseAdapter {
 
 		private int[] todayReadings;
@@ -633,80 +711,4 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		}
 	}
 
-	private float getActualPercentage() {
-		float res = (float) countRead() / (float) countAllReadings() * 100;
-		res = (float)Math.round(res * 100) / 100;
-		return res;
-	}
-
-	private float getTargetPercentage() {
-		float res = (float) countTarget() / (float) countAllReadings() * 100;
-		res = (float)Math.round(res * 100) / 100;
-		return res;
-	}
-
-	private int countRead() {
-		IntArrayList filteredReadingCodes = ReadingPlanManager.filterReadingCodesByDayStartEnd(readingCodes, 0, todayNumber);
-		for (int i = 0; i < filteredReadingCodes.size(); i++) {
-		}
-		return filteredReadingCodes.size();
-	}
-
-	private int countTarget() {
-		int res = 0;
-		for (int i = 0; i <= todayNumber; i++) {
-			res += readingPlan.dailyVerses.get(i).length / 2;
-		}
-		return res;
-	}
-
-	private int countAllReadings() {
-		int res = 0;
-		for (int i = 0; i < readingPlan.info.duration; i++) {
-			res += readingPlan.dailyVerses.get(i).length / 2;
-		}
-		return res;
-	}
-
-	public String getReadingDateHeader(final int dayNumber) {
-		String date = "Day " + (dayNumber + 1) + ": ";
-		if (readingPlan.info.version == 1) {
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(new Date(readingPlan.info.startDate));
-			calendar.add(Calendar.DATE, dayNumber);
-
-			date += new SimpleDateFormat("MMMM dd, yyyy").format(calendar.getTime());
-		}
-		return date;
-	}
-
-	public static SpannableStringBuilder getReference(Version version, int[] ari) {
-		SpannableStringBuilder sb = new SpannableStringBuilder();
-		String book = version.getBook(Ari.toBook(ari[0])).shortName;
-		sb.append(book);
-		int startChapter = Ari.toChapter(ari[0]);
-		int startVerse = Ari.toVerse(ari[0]);
-		int lastVerse = Ari.toVerse(ari[1]);
-		int lastChapter = Ari.toChapter(ari[1]);
-
-		sb.append(" " + startChapter);
-
-		if (startVerse == 0) {
-			if (lastVerse == 0) {
-				if (startChapter != lastChapter) {
-					sb.append("-" + lastChapter);
-				}
-			} else {
-				sb.append("-" + lastChapter + ":" + lastVerse);
-			}
-		} else {
-			if (startChapter == lastChapter) {
-				sb.append(":" + startVerse + "-" + lastVerse);
-			} else {
-				sb.append(":" + startVerse + "-" + lastChapter + ":" + lastVerse);
-			}
-		}
-
-		return sb;
-	}
 }
