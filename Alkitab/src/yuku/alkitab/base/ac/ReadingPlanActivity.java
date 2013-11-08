@@ -382,7 +382,18 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			return;
 		}
 
-		todayNumber = (int) ((new Date().getTime() - readingPlan.info.startDate) / (1000 * 60 * 60 * 24));
+		Calendar newCalendar = GregorianCalendar.getInstance();
+		newCalendar.set(Calendar.HOUR_OF_DAY, 0);
+		newCalendar.set(Calendar.MINUTE, 1);                 //TODO: find another way to calculate difference
+		newCalendar.set(Calendar.SECOND, 0);
+
+		Calendar startCalendar = GregorianCalendar.getInstance();
+		startCalendar.setTime(new Date(readingPlan.info.startDate));
+		startCalendar.set(Calendar.HOUR_OF_DAY, 0);
+		startCalendar.set(Calendar.MINUTE, 0);
+		startCalendar.set(Calendar.SECOND, 0);
+
+		todayNumber = (int) ((newCalendar.getTime().getTime() - startCalendar.getTime().getTime()) / (1000 * 60 * 60 * 24));
 		dayNumber = getIntent().getIntExtra(READING_PLAN_DAY_NUMBER, -1);
 		if (dayNumber == -1) {
 			dayNumber = todayNumber;
