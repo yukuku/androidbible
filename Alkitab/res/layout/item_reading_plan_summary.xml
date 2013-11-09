@@ -3,37 +3,43 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent" android:padding="16dp">
+              android:layout_height="match_parent"
+              android:padding="16dp">
 
     <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Progress"
+            android:text="@string/rp_headingProgress"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/textView" android:gravity="center_horizontal" android:paddingBottom="4dp"/>
+            android:id="@+id/textView"
+            android:gravity="center_horizontal"
+            android:paddingBottom="4dp"/>
     <ProgressBar
             android:id="@+id/pbReadingProgress"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:progressDrawable="@drawable/progressbar_reading_plan"
-            android:paddingTop="4dp" android:paddingBottom="4dp"/>
+            android:layout_height="wrap_content"
+            android:progressDrawable="@drawable/progressbar_reading_plan"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"/>
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/tActual" android:paddingTop="4dp"/>
+            android:id="@+id/tActual"
+            android:paddingTop="4dp"/>
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/tTarget" android:paddingTop="4dp"/>
+            android:id="@+id/tTarget"
+            android:paddingTop="4dp"/>
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/tComment" android:paddingTop="4dp" android:paddingBottom="4dp"/>
+            android:id="@+id/tComment"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"/>
 
 </LinearLayout>

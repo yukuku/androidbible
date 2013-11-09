@@ -22,7 +22,7 @@
                     style="?attr/actionButtonStyle"
                     android:layout_width="@dimen/abc_action_button_min_width"
                     android:layout_height="match_parent"
-                    android:contentDescription="@string/desc_previous_chapter"
+                    android:contentDescription="@string/rp_navigationPreviousDay"
                     android:padding="16dp"
                     android:scaleType="center"
                     android:src="@drawable/ic_nav_left_light" />
@@ -33,6 +33,7 @@
                     android:layout_width="0dp"
                     android:layout_height="fill_parent"
                     android:layout_weight="1"
+                    android:contentDescription="@string/rp_navigationGoToDate"
                     android:text="Hari ini"
                     android:textColor="#f0f0f0"
                     android:textSize="18sp"
@@ -43,7 +44,7 @@
                     style="?attr/actionButtonStyle"
                     android:layout_width="@dimen/abc_action_button_min_width"
                     android:layout_height="match_parent"
-                    android:contentDescription="@string/desc_next_chapter"
+                    android:contentDescription="@string/rp_navigationNextDay"
                     android:padding="16dp"
                     android:scaleType="center"
                     android:src="@drawable/ic_nav_right_light" />
@@ -68,7 +69,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Download" />
+                android:contentDescription="@string/rp_menuDownload"
+                android:text="@string/rp_menuDownload" />
     </FrameLayout>
 
 </FrameLayout>

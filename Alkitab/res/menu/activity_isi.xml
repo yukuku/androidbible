@@ -37,7 +37,7 @@
     <item
         android:id="@+id/menuReadingPlan"
         android:showAsAction="never"
-        android:title="Reading Plan"/>
+        android:title="@string/rp_menuReadingPlan"/>
     <item
         android:id="@+id/menuFullScreen"
         app:showAsAction="never"

@@ -281,8 +281,8 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			@Override
 			public void onClick(final View v) {
 				final PopupMenu popupMenu = new PopupMenu(ReadingPlanActivity.this, v);
-				popupMenu.getMenu().add(Menu.NONE, 1, 1, "Show calendar");
-				popupMenu.getMenu().add(Menu.NONE, 2, 2, "Go to first unread");
+				popupMenu.getMenu().add(Menu.NONE, 1, 1, getString(R.string.rp_showCalendar));
+				popupMenu.getMenu().add(Menu.NONE, 2, 2, getString(R.string.rp_gotoFirstUnread));
 
 				popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 					@Override
@@ -357,7 +357,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 
 	private void resetReadingPlan() {
 		new AlertDialog.Builder(this)
-		.setMessage("This action will shift your last fully read to yesterday.")
+		.setMessage(getString(R.string.rp_reset))
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(final DialogInterface dialog, final int which) {
@@ -396,7 +396,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 
 	private void deleteReadingPlan() {
 		new AlertDialog.Builder(this)
-		.setMessage("Delete " + readingPlan.info.title + "?")
+		.setMessage(getString(R.string.rp_deletePlan, readingPlan.info.title))
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(final DialogInterface dialog, final int which) {
@@ -463,7 +463,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 
 		if (readingPlanTitles.size() == 0) {
 			new AlertDialog.Builder(this)
-			.setMessage("No reading plan can be downloaded.")
+			.setMessage(getString(R.string.rp_noReadingPlanAvailable))
 			.setPositiveButton(R.string.ok, null)
 			.show();
 		} else {
@@ -523,14 +523,11 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	}
 
 	public String getReadingDateHeader(final int dayNumber) {
-		String date = "Day " + (dayNumber + 1) + ": ";
-		if (readingPlan.info.version == 1) {
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(new Date(readingPlan.info.startDate));
-			calendar.add(Calendar.DATE, dayNumber);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date(readingPlan.info.startDate));
+		calendar.add(Calendar.DATE, dayNumber);
 
-			date += new SimpleDateFormat("MMMM dd, yyyy").format(calendar.getTime());
-		}
+		String date = getString(R.string.rp_dayHeader, (dayNumber + 1), new SimpleDateFormat("MMMM dd, yyyy").format(calendar.getTime()));
 		return date;
 	}
 
@@ -629,15 +626,15 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				pbReadingProgress.setProgress((int) actualPercentage);
 				pbReadingProgress.setSecondaryProgress((int) targetPercentage);
 
-				tActual.setText("You have finished: " + actualPercentage + "%");
-				tTarget.setText("Target by today: " + targetPercentage + "%");
+				tActual.setText(getString(R.string.rp_commentActual, actualPercentage));
+				tTarget.setText(getString(R.string.rp_commentTarget, targetPercentage));
 
 				String comment;
 				if (actualPercentage == targetPercentage) {
-					comment = "You are on schedule";
+					comment = getString(R.string.rp_commentOnSchedule);
 				} else {
 					float diff = (float) Math.round((targetPercentage - actualPercentage) * 100) / 100;
-					comment = "You are behind the schedule by " + diff + "%";
+					comment = getString(R.string.rp_commentBehindSchedule, diff);
 				}
 
 				tComment.setText(comment);
