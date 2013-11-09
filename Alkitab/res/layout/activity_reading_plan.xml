@@ -2,7 +2,6 @@
 
 <FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
@@ -14,7 +13,6 @@
         <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/abc_action_bar_default_height"
-                android:background="#ff707070"
                 android:id="@+id/llNavigations">
 
             <ImageButton
@@ -25,7 +23,12 @@
                     android:contentDescription="@string/rp_navigationPreviousDay"
                     android:padding="16dp"
                     android:scaleType="center"
-                    android:src="@drawable/ic_nav_left_light" />
+                    android:src="@drawable/ic_nav_left_dark" />
+
+            <View android:layout_height="fill_parent"
+                  android:layout_width="1dp"
+                  android:background="#90909090"
+                  android:layout_margin="4dp"/>
 
             <Button
                     android:id="@+id/bToday"
@@ -34,10 +37,12 @@
                     android:layout_height="fill_parent"
                     android:layout_weight="1"
                     android:contentDescription="@string/rp_navigationGoToDate"
-                    android:text="Hari ini"
-                    android:textColor="#f0f0f0"
-                    android:textSize="18sp"
-                    tools:ignore="HardcodedText" />
+                    android:textSize="18sp"/>
+
+            <View android:layout_height="fill_parent"
+                  android:layout_width="1dp"
+                  android:background="#90909090"
+                  android:layout_margin="4dp"/>
 
             <ImageButton
                     android:id="@+id/bRight"
@@ -47,8 +52,12 @@
                     android:contentDescription="@string/rp_navigationNextDay"
                     android:padding="16dp"
                     android:scaleType="center"
-                    android:src="@drawable/ic_nav_right_light" />
+                    android:src="@drawable/ic_nav_right_dark" />
         </LinearLayout>
+
+        <View android:layout_height="1dp"
+              android:layout_width="fill_parent"
+              android:background="#90909090"/>
 
         <ListView
                 android:layout_width="match_parent"
