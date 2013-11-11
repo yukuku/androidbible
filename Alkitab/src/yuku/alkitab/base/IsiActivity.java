@@ -67,17 +67,9 @@ import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeHighlightDialog;
 import yuku.alkitab.base.dialog.TypeNoteDialog;
 import yuku.alkitab.base.dialog.XrefDialog;
-import yuku.alkitab.util.Ari;
-import yuku.alkitab.model.Book;
-import yuku.alkitab.model.FootnoteEntry;
-import yuku.alkitab.model.PericopeBlock;
-import yuku.alkitab.model.ProgressMark;
-import yuku.alkitab.model.SingleChapterVerses;
-import yuku.alkitab.model.Version;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.BackupManager;
 import yuku.alkitab.base.util.History;
-import yuku.alkitab.util.IntArrayList;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.base.util.OsisBookNames;
@@ -96,6 +88,14 @@ import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.PressResult;
 import yuku.alkitab.debug.R;
+import yuku.alkitab.model.Book;
+import yuku.alkitab.model.FootnoteEntry;
+import yuku.alkitab.model.PericopeBlock;
+import yuku.alkitab.model.ProgressMark;
+import yuku.alkitab.model.SingleChapterVerses;
+import yuku.alkitab.model.Version;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.util.IntArrayList;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -880,21 +880,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	};
 
-	public void openDonationDialog() {
-		new AlertDialog.Builder(this)
-		.setMessage(R.string.donasi_keterangan)
-		.setPositiveButton(R.string.donasi_tombol_ok, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				String donation_url = getString(R.string.alamat_donasi);
-				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(donation_url));
-				startActivity(intent);
-			}
-		})
-		.setNegativeButton(R.string.donasi_tombol_gamau, null)
-		.show();
-	}
-
 	public void buildMenu(Menu menu) {
 		menu.clear();
 		getMenuInflater().inflate(R.menu.activity_isi, menu);
@@ -961,15 +946,31 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		case R.id.menuSettings:
 			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
 			return true;
-		case R.id.menuHelp:
-			startActivity(HelpActivity.createIntent(false));
-			return true;
-		case R.id.menuSendMessage:
-			startActivity(HelpActivity.createIntent(true));
-			return true;
-		case R.id.menuDonation:
-			openDonationDialog();
-			return true;
+		case R.id.menuHelp: {
+			String page;
+			if (U.equals("in", getResources().getConfiguration().locale.getLanguage())) {
+				page = "help/html-in/index.html";
+			} else {
+				page = "help/html-en/index.html";
+			}
+
+			startActivity(HelpActivity.createIntent(page, false, null, null));
+		} return true;
+		case R.id.menuSendMessage: {
+			String page;
+			if (U.equals("in", getResources().getConfiguration().locale.getLanguage())) {
+				page = "help/html-in/faq.html";
+			} else {
+				page = "help/html-en/faq.html";
+			}
+
+			startActivity(HelpActivity.createIntent(page, true, getString(R.string.read_faq_before_suggest), new Intent(yuku.afw.App.context, com.example.android.wizardpager.MainActivity.class)));
+		} return true;
+			case R.id.menuDonation: {
+				String donation_url = getString(R.string.alamat_donasi);
+				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(donation_url));
+				startActivity(HelpActivity.createIntent("help/donation.html", true, getString(R.string.send_donation_confirmation), intent));
+			} return true;
 		}
 		
 		return super.onOptionsItemSelected(item);

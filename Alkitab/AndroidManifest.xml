@@ -108,7 +108,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
 		</activity>
-		<activity android:name="yuku.alkitab.base.ac.HelpActivity" android:label="@string/bantuan_judul" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
+		<activity android:name="yuku.alkitab.base.ac.HelpActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.AboutActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.ShareActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.FontManagerActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />

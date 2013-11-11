@@ -4,7 +4,7 @@
 		devotion="true"
 		versions="true"
 		help="true"
-		donation="false"
+		donation="true"
 		songs="true" />
 	<versions>
 		<internal locale="in" shortName="TB"      longName="Terjemahan Baru" prefix="tb" />
