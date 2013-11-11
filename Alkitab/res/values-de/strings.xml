@@ -4,7 +4,6 @@
   <string name="highlight_stabilo">Markieren</string>
   <string name="donasi_tombol_gamau">Noch nicht</string>
   <string name="donasi_tombol_ok">Spenden</string>
-  <string name="donasi_keterangan">Wenn Du Dich durch dieses App gesegnet fühlst, kannst du uns Unterstützen, das App weiterzuentwickeln. Vielen Dank!</string>
   <string name="menuDonasi">Spende</string>
   <string name="mengimpor_titiktiga">datei importieren…</string>
   <string name="mengekspor_titiktiga">datei exportieren…</string>
@@ -79,7 +78,6 @@ Existierende Sicherungen werden überschrieben.</string>
   <string name="menuPengaturan">Einstellungen</string>
   <string name="pilihKitab_s">Buch Auswählen</string>
   <string name="menuTentang">Über Uns</string>
-  <string name="bantuan_judul">Hilfe</string>
   <string name="pengaturan_alkitab">Bibel Einstellungen</string>
   <string name="kelola_versi">Version Verwalten</string>
   <string name="tambah">Hinfügen</string>

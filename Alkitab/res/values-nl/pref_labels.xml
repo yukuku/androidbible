@@ -11,7 +11,7 @@
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Geef lijst van Bijbelboeken weer in alfabetische volgorde (a-z) in plaats van de originele</string>
   <string name="pref_kitab_menurut_abjad">Sorteer Bijbelboeken op alfabet</string>
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Scherm gaat niet uit tijdens het lezen van de Bijbeltekst</string>
-  <string name="pref_biarkan_layar_menyala">Houd het scherm aan</string>
+  <string name="pref_biarkan_layar_menyala">Laat het scherm aan</string>
   <string name="pref_penampilan_layar">Scherm</string>
   <string name="pref_tombolVolumeBuatPindah_title">Volumetoets navigatie</string>
   <string name="pref_tombolVolumeBuatPindah_summary">Gebruik hardware volumetoetsen om te navigeren tussen verzen of hoofdstukken</string>

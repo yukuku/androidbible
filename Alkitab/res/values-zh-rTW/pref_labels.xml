@@ -18,5 +18,5 @@
   <string name="pref_copyWithVerseNumbers_title">包含節數</string>
   <string name="pref_copyWithVerseNumbers_summary">在複製/分享時在每節加入節數</string>
   <string name="pref_help_text_appearance_title">文字外觀</string>
-  <string name="pref_help_text_appearance_summary">更改文字大小、粗細、顏色與字距</string>
+  <string name="pref_help_text_appearance_summary">更改文字大小、粗幼、顏色與間隔</string>
 </resources>

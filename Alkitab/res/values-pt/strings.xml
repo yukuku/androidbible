@@ -4,7 +4,6 @@
   <string name="highlight_stabilo">Destaque</string>
   <string name="donasi_tombol_gamau">Ainda não</string>
   <string name="donasi_tombol_ok">Oferte</string>
-  <string name="donasi_keterangan">Se você foi abençoado por este aplicativo de Bíblia, doe alguma oferta para o desenvolvedor. Sua doação será de grande ajuda. Obrigado!</string>
   <string name="menuDonasi">Doação</string>
   <string name="mengimpor_titiktiga">Restaurando…</string>
   <string name="mengekspor_titiktiga">Criando cópia de segurança…</string>
@@ -79,7 +78,6 @@
   <string name="menuPengaturan">Configurações</string>
   <string name="pilihKitab_s">Escolha um Livro</string>
   <string name="menuTentang">Sobre</string>
-  <string name="bantuan_judul">Ajuda</string>
   <string name="pengaturan_alkitab">Configurações da Bíblia</string>
   <string name="kelola_versi">Gerenciar Versões</string>
   <string name="tambah">Adicionar</string>

@@ -4,7 +4,6 @@
   <string name="highlight_stabilo">突出</string>
   <string name="donasi_tombol_gamau">不是现在</string>
   <string name="donasi_tombol_ok">捐款</string>
-  <string name="donasi_keterangan">如果你已经被祝福使用本圣经，请捐赠给应用程序开发。 您的捐款将会非常有益的。谢谢！</string>
   <string name="menuDonasi">捐款</string>
   <string name="mengimpor_titiktiga">正在进行恢复...</string>
   <string name="mengekspor_titiktiga">创建备份...</string>
@@ -14,7 +13,7 @@
   <string name="ekspor_berhasil_file_yang_dihasilkan_file">备份成功。\n\n结果是在文件： %s</string>
   <string name="impor_berhasil_angka_diproses">恢复是成功。 总共 %1$d 书签，笔记，和/或亮点，也是 %2$d 标签被处理.</string>
   <string name="terjadi_kesalahan_ketika_mengekspor_pesan">创建备份时，有错误： %s</string>
-  <string name="ekspor_pembatas_buku_dan_catatan_tanya">创建书签、笔记与/或标识的备份到SD记忆卡或USB储存装置？现有的备份将被覆写。</string>
+  <string name="ekspor_pembatas_buku_dan_catatan_tanya">新增书签、笔记与标记的备份到记忆卡或USB储存装置？现有的备份将被覆写。</string>
   <string name="terjadi_kesalahan_ketika_mengimpor_pesan">恢复时有错误： %s</string>
   <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">你要覆盖您目前有的书签，笔记，和突出？</string>
   <string name="file_tidak_bisa_dibaca_file">文件不存在或无法读取： %s</string>
@@ -39,7 +38,7 @@
   <string name="pasal_sebelumangka">章</string>
   <string name="loncat_ke_alamat_titikdua">跳到： (例子： %s)</string>
   <string name="tidak_ada_catatan">（没有笔记）</string>
-  <string name="belum_ada_pembatas_buku">未有书签。\n选取一节经文以加入书签。</string>
+  <string name="belum_ada_pembatas_buku">尚未有任何书签。\n选取一节经文以新增书签。</string>
   <string name="judul_titikdua">标题：</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">下载 %1$s 失败, 日期 %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">错误发生在 %1$s 文件下载 日期 %2$s: %3$s</string>
@@ -81,7 +80,6 @@
   <string name="menuPengaturan">设置</string>
   <string name="pilihKitab_s">选择一本书</string>
   <string name="menuTentang">关于</string>
-  <string name="bantuan_judul">帮助</string>
   <string name="pengaturan_alkitab">圣经设置</string>
   <string name="kelola_versi">管理版本</string>
   <string name="tambah">加</string>
@@ -176,14 +174,14 @@
   <string name="intent_filter_import_from_backup">进口从备份</string>
   <string name="redownload">重新下载</string>
   <string name="read_faq_before_suggest">发送一个建议之前，请仔细阅读上面的常见问题.继续发送一个建议吗？</string>
-  <string name="no_bookmarks_for_backup">你没有任何书签、笔记与标识以供备份</string>
-  <string name="pdb_error_not_palmbible">此PDB档案不是PalmBible+格式。此PDB档案有\'%1$s\'形式与\'%2$s\'创建id，这些在本程式中不支援。</string>
+  <string name="no_bookmarks_for_backup">你没有任何书签、笔记与标记要作备份。</string>
+  <string name="pdb_error_not_palmbible">此PDB档案并不是PalmBible+格式。此PDB档案有\'%1$s\'格式与建构者id \'%2$s\'，本程式并不支援此档案。</string>
   <string name="pdb_error_corrupted">这PDB档已损坏</string>
   <string name="pdb_error_not_pdb_file">所选的档案不是PDB档案</string>
   <string name="menu_split_version">并排显示</string>
   <string name="split_version_none">没有</string>
   <string name="split_version_cant_display_verse">%2$s里没有%1$s</string>
-  <string name="menuAddSomething">添加标记</string>
+  <string name="menuAddSomething">新增标记</string>
   <string name="color_settings">设置颜色</string>
   <string name="menuTextAppearance">文字外观</string>
   <string name="text_appearance_theme_custom">设置</string>
@@ -230,7 +228,7 @@
   <string name="intent_filter_open_pdb_file">打开PDB档案</string>
   <string name="intent_filter_open_pdb_or_yes_file">打开PDB/YES档案</string>
   <string name="open_yes_file_name_conflict">在\'%2$s\'里有以经有个叫做\'%1$s\'档案存在了。</string>
-  <string name="open_file_cant_read_source">无法成功读取来源</string>
+  <string name="open_file_cant_read_source">无法成功读取来源。</string>
   <string name="open_file_unknown_file_format">无法判定这是PDB还是YES档案。</string>
   <string name="version_preset_delete_filename">删除资料档\'%s\'？</string>
   <string name="version_menu_share">分享</string>

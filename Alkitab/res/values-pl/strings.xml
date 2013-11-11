@@ -4,7 +4,6 @@
   <string name="highlight_stabilo">Podkreślenia</string>
   <string name="donasi_tombol_gamau">Nie teraz</string>
   <string name="donasi_tombol_ok">Wesprzyj</string>
-  <string name="donasi_keterangan">Jeżeli zostałeś ubłogosławiony przez tę aplikację, proszę dokonaj darowizny na rzecz autor. Twoje wsparcie będzie bardzo pomocne. Dziękuję!</string>
   <string name="menuDonasi">Darowizna</string>
   <string name="mengimpor_titiktiga">Przywracanie kopii…</string>
   <string name="mengekspor_titiktiga">Tworzenie kopii…</string>
@@ -80,7 +79,6 @@
   <string name="menuPengaturan">Ustawienia</string>
   <string name="pilihKitab_s">Wybierz księgę</string>
   <string name="menuTentang">Informacje</string>
-  <string name="bantuan_judul">Pomoc</string>
   <string name="pengaturan_alkitab">Ustawienia Biblii</string>
   <string name="kelola_versi">Zarządzaj przekładami</string>
   <string name="tambah">Dodaj</string>

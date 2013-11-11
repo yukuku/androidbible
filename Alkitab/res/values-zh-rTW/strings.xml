@@ -4,8 +4,6 @@
   <string name="highlight_stabilo">標記</string>
   <string name="donasi_tombol_gamau">現在別問我</string>
   <string name="donasi_tombol_ok">捐獻</string>
-  <string name="donasi_keterangan">如果這軟體讓你得福,請捐款給開發者,你的捐獻將會非常有用,謝謝你!
-If you are blessed by this Bible app, please make some donation to the developer. Your donation would be very helpful. Thank you!</string>
   <string name="menuDonasi">捐獻</string>
   <string name="mengimpor_titiktiga">回復</string>
   <string name="mengekspor_titiktiga">創建備份</string>
@@ -15,7 +13,7 @@ If you are blessed by this Bible app, please make some donation to the developer
   <string name="ekspor_berhasil_file_yang_dihasilkan_file">備份成功.\n\n結果寫在此檔: %s</string>
   <string name="impor_berhasil_angka_diproses">回覆成功. 共計 %1$d 書籤,筆記與/或標識, 還有標記 %2$d 也已處理.</string>
   <string name="terjadi_kesalahan_ketika_mengekspor_pesan">創建備份時有錯誤: %s</string>
-  <string name="ekspor_pembatas_buku_dan_catatan_tanya"> 創建書籤、筆記與/或標識的備份到SD記憶卡或USB儲存裝置？現有的備份將被覆寫。</string>
+  <string name="ekspor_pembatas_buku_dan_catatan_tanya">新增書籤、筆記與標記的備份到記憶卡或USB儲存裝置？現有的備份將被覆寫。</string>
   <string name="terjadi_kesalahan_ketika_mengimpor_pesan">回復時有錯誤: %s</string>
   <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">你想要覆寫現有的書籤,筆記與標識嗎?</string>
   <string name="file_tidak_bisa_dibaca_file">此檔案不存在或者無法讀取: %s</string>
@@ -40,7 +38,7 @@ If you are blessed by this Bible app, please make some donation to the developer
   <string name="pasal_sebelumangka">章</string>
   <string name="loncat_ke_alamat_titikdua">跳到: (範例: %s)</string>
   <string name="tidak_ada_catatan">(沒有筆記)</string>
-  <string name="belum_ada_pembatas_buku">未有書簽。\n選取一節經文以加入書簽。</string>
+  <string name="belum_ada_pembatas_buku">尚未有任何書籤。\n選取一節經文以新增書籤。</string>
   <string name="judul_titikdua">標題:</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">下載 %1$s 失敗. 日期: %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">下載 %1$s 時失敗, 日期 %2$s: %3$s</string>
@@ -82,7 +80,6 @@ If you are blessed by this Bible app, please make some donation to the developer
   <string name="menuPengaturan">設置</string>
   <string name="pilihKitab_s">選一書卷</string>
   <string name="menuTentang">關於</string>
-  <string name="bantuan_judul">說明</string>
   <string name="pengaturan_alkitab">聖經設置</string>
   <string name="kelola_versi">版本管理</string>
   <string name="tambah">添加</string>
@@ -177,8 +174,8 @@ If you are blessed by this Bible app, please make some donation to the developer
   <string name="intent_filter_import_from_backup">從備份檔匯入</string>
   <string name="redownload">重新下載</string>
   <string name="read_faq_before_suggest">在提供建議前請先閱讀以上常見問題解答. 繼續提供建議?</string>
-  <string name="no_bookmarks_for_backup">你沒有任何書籤、筆記與標識以供備份</string>
-  <string name="pdb_error_not_palmbible">此PDB檔案不是PalmBible+格式。此PDB檔案有\'%1$s\'形式與\'%2$s\'創建id，這些在本程式中不支援。</string>
+  <string name="no_bookmarks_for_backup">你沒有任何書籤、筆記與標記要作備份。</string>
+  <string name="pdb_error_not_palmbible">此PDB檔案並不是PalmBible+格式。此PDB檔案有\'%1$s\'格式與建構者id \'%2$s\'，本程式並不支援此檔案。</string>
   <string name="pdb_error_corrupted">這PDB檔已損壞</string>
   <string name="pdb_error_not_pdb_file">所選的檔案不是PDB檔案</string>
   <string name="menu_split_version">並排顯示</string>
@@ -231,7 +228,7 @@ If you are blessed by this Bible app, please make some donation to the developer
   <string name="intent_filter_open_pdb_file">打開PDB檔案</string>
   <string name="intent_filter_open_pdb_or_yes_file">打開PDB/YES檔案</string>
   <string name="open_yes_file_name_conflict">在\'%2$s\'裡有以經有個叫做 \'%1$s\' 檔案存在了.</string>
-  <string name="open_file_cant_read_source">無法成功讀取來源</string>
+  <string name="open_file_cant_read_source">無法成功讀取來源。</string>
   <string name="open_file_unknown_file_format">無法判定這是PDB還是YES檔案。</string>
   <string name="version_preset_delete_filename">刪除資料檔\'%s\'？</string>
   <string name="version_menu_share">分享</string>
@@ -242,8 +239,8 @@ If you are blessed by this Bible app, please make some donation to the developer
   <string name="me_export_menu_item">匯出</string>
   <string name="me_all_notes">所有筆記</string>
   <string name="me_all_highlights">所有突出</string>
-  <string name="me_all_bookmarks">所有書簽</string>
-  <string name="me_section_bookmarks">書簽</string>
+  <string name="me_all_bookmarks">所有書籤</string>
+  <string name="me_section_bookmarks">書籤</string>
   <string name="me_section_notes">筆記</string>
   <string name="me_section_highlights">突出</string>
   <string name="me_no_labels">沒有標簽</string>

@@ -4,7 +4,6 @@
   <string name="highlight_stabilo">Beklemtoon</string>
   <string name="donasi_tombol_gamau">Nie nou nie</string>
   <string name="donasi_tombol_ok">Donasie</string>
-  <string name="donasi_keterangan">Indien geseën deur die Bybel program,skenk asb. donasie aan ontwikkelaar. U donasie is van groot waarde.Baie dankie!</string>
   <string name="menuDonasi">Donasie</string>
   <string name="mengimpor_titiktiga">Herstel</string>
   <string name="mengekspor_titiktiga">Skep rugsteun</string>
@@ -81,7 +80,6 @@
   <string name="menuPengaturan">Instellings</string>
   <string name="pilihKitab_s">Kies \'n Boek</string>
   <string name="menuTentang">Omtrent</string>
-  <string name="bantuan_judul">Help</string>
   <string name="pengaturan_alkitab">Bybel instellings</string>
   <string name="kelola_versi">Bestuur weergawes</string>
   <string name="tambah">Voeg by</string>
