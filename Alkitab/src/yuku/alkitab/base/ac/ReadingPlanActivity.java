@@ -181,23 +181,30 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			return;
 		}
 
-		Calendar newCalendar = GregorianCalendar.getInstance();
-		newCalendar.set(Calendar.HOUR_OF_DAY, 0);
-		newCalendar.set(Calendar.MINUTE, 1);                 //TODO: find another way to calculate difference
-		newCalendar.set(Calendar.SECOND, 0);
-
 		Calendar startCalendar = GregorianCalendar.getInstance();
 		startCalendar.setTime(new Date(readingPlan.info.startDate));
-		startCalendar.set(Calendar.HOUR_OF_DAY, 0);
-		startCalendar.set(Calendar.MINUTE, 0);
-		startCalendar.set(Calendar.SECOND, 0);
 
-		todayNumber = (int) ((newCalendar.getTime().getTime() - startCalendar.getTime().getTime()) / (1000 * 60 * 60 * 24));
+		todayNumber = calculateDaysDiff(startCalendar, GregorianCalendar.getInstance());
 		dayNumber = getIntent().getIntExtra(READING_PLAN_DAY_NUMBER, -1);
 		if (dayNumber == -1) {
 			dayNumber = todayNumber;
 		}
 	}
+
+	private int calculateDaysDiff(Calendar startCalendar, Calendar endCalendar) {
+		startCalendar.set(Calendar.HOUR_OF_DAY, 0);
+		startCalendar.set(Calendar.MINUTE, 0);
+		startCalendar.set(Calendar.SECOND, 0);
+		startCalendar.set(Calendar.MILLISECOND, 0);
+
+		endCalendar.set(Calendar.HOUR_OF_DAY, 0);
+		endCalendar.set(Calendar.MINUTE, 0);
+		endCalendar.set(Calendar.SECOND, 0);
+		endCalendar.set(Calendar.MILLISECOND, 0);
+
+		return (int) ((endCalendar.getTime().getTime() - startCalendar.getTime().getTime()) / (1000 * 60 * 60 * 24));
+	}
+
 
 	public boolean prepareDropDownNavigation() {
 		if (downloadedReadingPlanInfos.size() == 0) {
@@ -325,17 +332,10 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			        @Override
 			        public void onDateSet(final DatePicker view, final int year, final int monthOfYear, final int dayOfMonth) {
 				        Calendar newCalendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
-				        newCalendar.set(Calendar.HOUR_OF_DAY, 0);
-				        newCalendar.set(Calendar.MINUTE, 1);                 //TODO: find another way to calculate difference
-				        newCalendar.set(Calendar.SECOND, 0);
-
 				        Calendar startCalendar = GregorianCalendar.getInstance();
 				        startCalendar.setTime(new Date(readingPlan.info.startDate));
-				        startCalendar.set(Calendar.HOUR_OF_DAY, 0);
-				        startCalendar.set(Calendar.MINUTE, 0);
-				        startCalendar.set(Calendar.SECOND, 0);
 
-				        int newDay = (int) ((newCalendar.getTime().getTime() - startCalendar.getTime().getTime()) / (1000 * 60 * 60 * 24));
+				        int newDay = calculateDaysDiff(startCalendar, newCalendar);
 				        if (newDay < 0) {
 					        newDay = 0;
 				        } else if (newDay >= readingPlan.info.duration) {
