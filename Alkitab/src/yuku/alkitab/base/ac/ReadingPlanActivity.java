@@ -37,11 +37,11 @@ import yuku.alkitab.base.model.Version;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.IntArrayList;
 import yuku.alkitab.base.util.ReadingPlanManager;
+import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.R;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -163,7 +163,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	}
 
 	public void goToIsiActivity(final int dayNumber, final int sequence) {
-		final int[] selectedVerses = readingPlan.dailyVerses.get(dayNumber);
+		final int[] selectedVerses = readingPlan.dailyVerses[dayNumber];
 		int ari = selectedVerses[sequence * 2];
 
 		Intent intent = new Intent();
@@ -273,7 +273,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		lsReadingPlan.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-				final int todayReadingsSize = readingPlan.dailyVerses.get(dayNumber).length / 2;
+				final int todayReadingsSize = readingPlan.dailyVerses[dayNumber].length / 2;
 				if (position < todayReadingsSize) {
 					goToIsiActivity(dayNumber, position);
 				} else if (position > todayReadingsSize) {
@@ -391,7 +391,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	private int findFirstUnreadDay(final int dayUntil) {
 
 		for (int i = 0; i < dayUntil; i++) {
-			boolean[] readMarks = new boolean[readingPlan.dailyVerses.get(i).length];
+			boolean[] readMarks = new boolean[readingPlan.dailyVerses[i].length];
 			ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, i);
 			for (boolean readMark : readMarks) {
 				if (!readMark) {
@@ -522,7 +522,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	private int countTarget() {
 		int res = 0;
 		for (int i = 0; i <= todayNumber; i++) {
-			res += readingPlan.dailyVerses.get(i).length / 2;
+			res += readingPlan.dailyVerses[i].length / 2;
 		}
 		return res;
 	}
@@ -530,7 +530,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	private int countAllReadings() {
 		int res = 0;
 		for (int i = 0; i < readingPlan.info.duration; i++) {
-			res += readingPlan.dailyVerses.get(i).length / 2;
+			res += readingPlan.dailyVerses[i].length / 2;
 		}
 		return res;
 	}
@@ -579,7 +579,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		private int[] todayReadings;
 
 		public void load() {
-			todayReadings = readingPlan.dailyVerses.get(dayNumber);
+			todayReadings = readingPlan.dailyVerses[dayNumber];
 		}
 
 		@Override
@@ -693,7 +693,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 					}
 				}
 
-				int[] aris = readingPlan.dailyVerses.get(currentViewTypePosition);
+				int[] aris = readingPlan.dailyVerses[currentViewTypePosition];
 				for (int i = 0; i < aris.length / 2; i++) {
 					final int ariPosition = i;
 					int[] ariStartEnd = {aris[i * 2], aris[i * 2 + 1]};

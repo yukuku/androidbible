@@ -1,12 +1,9 @@
 package yuku.alkitab.base.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ReadingPlan {
 
 	public ReadingPlanInfo info = new ReadingPlanInfo();
-	public List<int[]> dailyVerses = new ArrayList<int[]>();
+	public int[][] dailyVerses;
 
 	public static class ReadingPlanInfo {
 		public long id;

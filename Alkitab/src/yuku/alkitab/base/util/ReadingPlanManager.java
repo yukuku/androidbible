@@ -59,6 +59,7 @@ public class ReadingPlanManager {
 			if (!readInfo(readingPlan.info, reader)) return null;
 			if (readingPlan.info.version != 1) return null;
 
+			int[][] dailyVerses = new int[readingPlan.info.duration][];
 			int counter = 0;
 			while (counter < readingPlan.info.duration) {
 				int count = reader.readUint8();
@@ -66,14 +67,15 @@ public class ReadingPlanManager {
 					Log.d(TAG, "Error reading.");
 					return null;
 				}
-				counter++;
 
 				int[] aris = new int[count];
 				for (int j = 0; j < count; j++) {
 					aris[j] = reader.readInt();
 				}
-				readingPlan.dailyVerses.add(aris);
+				dailyVerses[counter] = aris;
+				counter++;
 			}
+			readingPlan.dailyVerses = dailyVerses;
 
 			if (reader.readUint8() != 0) {
 				Log.d(TAG, "No footer.");
