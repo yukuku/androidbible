@@ -12,6 +12,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
@@ -121,6 +122,47 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 			@Override
 			public void onClick(final View v) {
 				closeReadingModeListener.onClick(ariRanges[sequence], ariRanges[sequence + 1]);
+			}
+		});
+
+		//tooltip
+		bLeft.setOnLongClickListener(new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(final View v) {
+				Toast.makeText(v.getContext(), R.string.rp_floatPreviousReading, Toast.LENGTH_SHORT).show();
+				return true;
+			}
+		});
+
+		bRight.setOnLongClickListener(new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(final View v) {
+				Toast.makeText(v.getContext(), R.string.rp_floatNextReading, Toast.LENGTH_SHORT).show();
+				return true;
+			}
+		});
+
+		cbTick.setOnLongClickListener(new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(final View v) {
+				Toast.makeText(v.getContext(), R.string.rp_floatCheckMark, Toast.LENGTH_SHORT).show();
+				return true;
+			}
+		});
+
+		bDescription.setOnLongClickListener(new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(final View v) {
+				Toast.makeText(v.getContext(), R.string.rp_floatDetail, Toast.LENGTH_SHORT).show();
+				return true;
+			}
+		});
+
+		bClose.setOnLongClickListener(new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(final View v) {
+				Toast.makeText(v.getContext(), R.string.rp_floatClose, Toast.LENGTH_SHORT).show();
+				return true;
 			}
 		});
 
