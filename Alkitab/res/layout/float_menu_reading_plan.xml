@@ -13,16 +13,13 @@
             android:scaleType="center"
             android:src="@drawable/ic_nav_left_light" />
 
-    <ImageButton
-            android:id="@+id/bTick"
-            style="?attr/actionButtonStyle"
+    <CheckBox
+            android:id="@+id/cbTick"
             android:layout_width="32dp"
             android:layout_height="match_parent"
             android:contentDescription="@string/rp_floatCheckMark"
-            android:padding="4dp"
-            android:scaleType="center"
-            android:src="@drawable/ic_unchecked" />
-
+            android:text=""
+            android:padding="4dp"/>
     <Button
             android:id="@+id/bDescription"
             style="?attr/actionButtonStyle"

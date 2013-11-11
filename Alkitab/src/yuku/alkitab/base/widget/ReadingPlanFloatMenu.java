@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import yuku.afw.V;
@@ -36,7 +38,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 	private Button bDescription;
 	private ImageButton bLeft;
 	private ImageButton bRight;
-	private ImageButton bTick;
+	private CheckBox cbTick;
 
 	public ReadingPlanFloatMenu(final Context context) {
 		super(context);
@@ -71,7 +73,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		bDescription = V.get(view, R.id.bDescription);
 		bLeft = V.get(view, R.id.bNavLeft);
 		bRight = V.get(view, R.id.bNavRight);
-		bTick = V.get(view, R.id.bTick);
+		cbTick = V.get(view, R.id.cbTick);
 		ImageButton bClose = V.get(view, R.id.bClose);
 
 		bLeft.setOnClickListener(new OnClickListener() {
@@ -96,14 +98,13 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 			}
 		});
 
-		bTick.setOnClickListener(new OnClickListener() {
+		cbTick.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
-			public void onClick(final View v) {
-				boolean checked = !readMarks[sequence];
-				readMarks[sequence] = checked;
-				readMarks[sequence + 1] = checked;
+			public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+				readMarks[sequence] = isChecked;
+				readMarks[sequence + 1] = isChecked;
 
-				ReadingPlanManager.updateReadingPlanProgress(id, dayNumber, sequence / 2, checked);
+				ReadingPlanManager.updateReadingPlanProgress(id, dayNumber, sequence / 2, isChecked);
 				updateLayout();
 				readMarkListener.onClick(ariRanges[sequence], ariRanges[sequence + 1]);
 			}
@@ -131,11 +132,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 			return;
 		}
 
-		if (readMarks[sequence]) {
-			bTick.setImageResource(R.drawable.ic_checked);
-		} else {
-			bTick.setImageResource(R.drawable.ic_unchecked);
-		}
+		cbTick.setChecked(readMarks[sequence]);
 
 		SpannableStringBuilder reference = ReadingPlanActivity.getReference(S.activeVersion, new int[] {ariRanges[sequence], ariRanges[sequence + 1]});
 		reference.append("\n");
