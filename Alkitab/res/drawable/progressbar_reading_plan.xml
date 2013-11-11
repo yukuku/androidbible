@@ -4,27 +4,24 @@
 
     <item android:id="@android:id/background">
         <shape>
-            <gradient
-                    android:startColor="#ff9d9e9d"
-                    android:endColor="#ff9d9e9d"/>
+            <solid
+                android:color="#ff9d9e9d"/>
         </shape>
     </item>
 
     <item android:id="@android:id/secondaryProgress">
         <clip>
             <shape>
-                <gradient
-                        android:startColor="#ffab1a1a"
-                        android:endColor="#ffab1a1a"/>
+                <solid
+                    android:color="#ffab1a1a"/>
             </shape>
         </clip>
     </item>
     <item android:id="@android:id/progress">
         <clip>
             <shape>
-                <gradient
-                        android:startColor="#ff2a9822"
-                        android:endColor="#ff2a9822"/>
+                <solid
+                    android:color="#ff2a9822"/>
             </shape>
         </clip>
     </item>
