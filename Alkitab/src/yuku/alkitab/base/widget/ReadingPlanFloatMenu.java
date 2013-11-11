@@ -205,7 +205,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 
 
 	public interface ReadingPlanFloatMenuClickListener {
-		public void onClick(int ari_0, int ari_1);
+		public void onClick(int ari_start, int ari_end);
 	}
 
 }
