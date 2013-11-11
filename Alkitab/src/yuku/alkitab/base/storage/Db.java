@@ -76,7 +76,7 @@ public class Db {
 		public static final String description = "description";
 		public static final String duration = "duration";
 		public static final String startDate = "startDate";
-		public static final String plans = "plans";
+		public static final String data = "data";
 	}
 
 	public static final String TABLE_ReadingPlanProgress = "ReadingPlanProgress";
