@@ -11,12 +11,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.Map;
 
 public class ReadingPlanManager {
 	public static final String TAG = ReadingPlanManager.class.getSimpleName();
 
-	private static final byte[] ARP_HEADER = {0x52, (byte) 0x8a, 0x61, 0x34, 0x00, (byte) 0xe0, (byte) 0xea};
+	private static final byte[] RPB_HEADER = {0x52, (byte) 0x8a, 0x61, 0x34, 0x00, (byte) 0xe0, (byte) 0xea};
 
 	public static long copyReadingPlanToDb(final int resId) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -57,7 +56,7 @@ public class ReadingPlanManager {
 		ReadingPlan readingPlan = new ReadingPlan();
 		try {
 			BintexReader reader = new BintexReader(inputStream);
-			if (readInfo(readingPlan.info, reader)) return null;
+			if (!readInfo(readingPlan.info, reader)) return null;
 			if (readingPlan.info.version != 1) return null;
 
 			int counter = 0;
@@ -92,27 +91,18 @@ public class ReadingPlanManager {
 		byte[] headers = new byte[8];
 		reader.readRaw(headers);
 		for (int i = 0; i < 7; i++) {
-			if (ARP_HEADER[i] != headers[i]) {
-				return true;
+			if (RPB_HEADER[i] != headers[i]) {
+				return false;
 			}
 		}
 		readingPlanInfo.version = headers[7];
 
 		ValueMap map = reader.readValueSimpleMap();
-		for (Map.Entry<String, Object> entry : map.entrySet()) {
-			final String key = entry.getKey();
-			if (key.equals("title")) {
-				readingPlanInfo.title = (String) entry.getValue();
-			} else if (key.equals("description")) {
-				readingPlanInfo.description = (String) entry.getValue();
-			} else if (key.equals("duration")) {
-				readingPlanInfo.duration = (Integer) entry.getValue();
-			} else {
-				Log.d(TAG, "Info not recognized: " + key);
-				return true;
-			}
-		}
-		return false;
+		readingPlanInfo.title = map.getString("title");
+		readingPlanInfo.description = map.getString("description");
+		readingPlanInfo.duration = map.getInt("duration");
+
+		return true;
 	}
 
 	public static int toReadingCode(int dayNumber, int readingSequence) {
