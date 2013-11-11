@@ -283,6 +283,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				final PopupMenu popupMenu = new PopupMenu(ReadingPlanActivity.this, v);
 				popupMenu.getMenu().add(Menu.NONE, 1, 1, getString(R.string.rp_showCalendar));
 				popupMenu.getMenu().add(Menu.NONE, 2, 2, getString(R.string.rp_gotoFirstUnread));
+				popupMenu.getMenu().add(Menu.NONE, 3, 3, getString(R.string.rp_gotoToday));
 
 				popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 					@Override
@@ -293,6 +294,8 @@ public class ReadingPlanActivity extends ActionBarActivity {
 							showCalendar();
 						} else if (itemId == 2) {
 							gotoFirstUnread();
+						} else if (itemId == 3) {
+							gotoToday();
 						}
 						return true;
 					}
@@ -300,12 +303,17 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				popupMenu.show();
 			}
 
+			private void gotoToday() {
+				loadDayNumber();
+				changeDay(0);
+			}
+
 			private void gotoFirstUnread() {
 				dayNumber = findFirstUnreadDay(readingPlan.info.duration - 1);
 				changeDay(0);
 			}
 
-			public void showCalendar() {
+			private void showCalendar() {
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(new Date(readingPlan.info.startDate));
 				calendar.add(Calendar.DATE, dayNumber);

@@ -316,4 +316,5 @@
     <string name="rp_menuReset">Reset</string>
     <string name="rp_menuDelete">Delete</string>
     <string name="rp_headingProgress">Progress</string>
+    <string name="rp_gotoToday">Today</string>
 </resources>
