@@ -510,14 +510,12 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	}
 
 	private float getActualPercentage() {
-		float res = (float) countRead() / (float) countAllReadings() * 100;
-		res = (float)Math.round(res * 100) / 100;
+		float res = 100.f * countRead() / countAllReadings();
 		return res;
 	}
 
 	private float getTargetPercentage() {
-		float res = (float) countTarget() / (float) countAllReadings() * 100;
-		res = (float)Math.round(res * 100) / 100;
+		float res = 100.f * countTarget() / countAllReadings();
 		return res;
 	}
 
@@ -653,14 +651,14 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				pbReadingProgress.setProgress((int) actualPercentage);
 				pbReadingProgress.setSecondaryProgress((int) targetPercentage);
 
-				tActual.setText(getString(R.string.rp_commentActual, actualPercentage));
-				tTarget.setText(getString(R.string.rp_commentTarget, targetPercentage));
+				tActual.setText(getString(R.string.rp_commentActual, String.format("%.2f", actualPercentage)));
+				tTarget.setText(getString(R.string.rp_commentTarget, String.format("%.2f", targetPercentage)));
 
 				String comment;
 				if (actualPercentage == targetPercentage) {
 					comment = getString(R.string.rp_commentOnSchedule);
 				} else {
-					float diff = (float) Math.round((targetPercentage - actualPercentage) * 100) / 100;
+					String diff = String.format("%.2f", targetPercentage - actualPercentage);
 					comment = getString(R.string.rp_commentBehindSchedule, diff);
 				}
 
