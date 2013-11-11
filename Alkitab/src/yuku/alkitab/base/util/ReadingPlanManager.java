@@ -1,13 +1,12 @@
 package yuku.alkitab.base.util;
 
 import android.util.Log;
+import yuku.afw.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.ReadingPlan;
-import yuku.alkitab.yes2.io.RawResourceRandomInputStream;
 import yuku.bintex.BintexReader;
 import yuku.bintex.ValueMap;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -18,29 +17,31 @@ public class ReadingPlanManager {
 	private static final byte[] RPB_HEADER = {0x52, (byte) 0x8a, 0x61, 0x34, 0x00, (byte) 0xe0, (byte) 0xea};
 
 	public static long copyReadingPlanToDb(final int resId) {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		byte[] buffer = new byte[256];
 
-		InputStream stream = new RawResourceRandomInputStream(resId);
-		BintexReader reader = new BintexReader(stream);
-		ReadingPlanBinary readingPlanBinary = new ReadingPlanBinary();
+		ReadingPlan.ReadingPlanInfo info = new ReadingPlan.ReadingPlanInfo();
+		byte[] buffer = null;
 
 		try {
-			readInfo(readingPlanBinary.info, reader);
+
+			//check the file has correct header and  infos
+			InputStream stream = App.context.getResources().openRawResource(resId);
+			BintexReader reader = new BintexReader(stream);
+
+			readInfo(info, reader);
 			stream.close();
 
-			InputStream is = new RawResourceRandomInputStream(resId);
-			while (is.read(buffer) != -1) {
-				baos.write(buffer);
-			}
-			baos.close();
+			//start copying
+			InputStream is = App.context.getResources().openRawResource(resId);
+			buffer = new byte[is.available()];
+			is.read(buffer);
+
+			info.startDate = new Date().getTime();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		readingPlanBinary.info.startDate = new Date().getTime();
-		readingPlanBinary.binaryReadingPlan = baos.toByteArray();
-		return S.getDb().insertReadingPlan(readingPlanBinary);
+		return S.getDb().insertReadingPlan(info, buffer);
 	}
 
 	public static void updateReadingPlanProgress(final long readingPlanId, final int dayNumber, final int readingSequence, final boolean checked) {
@@ -117,11 +118,6 @@ public class ReadingPlanManager {
 
 	public static int toSequence(int readingCode) {
 		return (readingCode & 0x000000ff);
-	}
-
-	public static class ReadingPlanBinary {
-		public ReadingPlan.ReadingPlanInfo info = new ReadingPlan.ReadingPlanInfo();
-		public byte[] binaryReadingPlan;
 	}
 
 	public static IntArrayList filterReadingCodesByDayStartEnd(IntArrayList readingCodes, int dayStart, int dayEnd) {

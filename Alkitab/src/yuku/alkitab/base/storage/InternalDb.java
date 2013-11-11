@@ -28,7 +28,6 @@ import yuku.alkitab.base.model.ProgressMark;
 import yuku.alkitab.base.model.ProgressMarkHistory;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.util.IntArrayList;
-import yuku.alkitab.base.util.ReadingPlanManager;
 import yuku.alkitab.base.util.Sqlitil;
 
 import java.util.ArrayList;
@@ -798,14 +797,14 @@ public class InternalDb {
 		}
 	}
 
-	public long insertReadingPlan(final ReadingPlanManager.ReadingPlanBinary readingPlanBinary) {
+	public long insertReadingPlan(final ReadingPlan.ReadingPlanInfo info, byte[] buffer) {
 		ContentValues cv = new ContentValues();
-		cv.put(Db.ReadingPlan.version, readingPlanBinary.info.version);
-		cv.put(Db.ReadingPlan.title, readingPlanBinary.info.title);
-		cv.put(Db.ReadingPlan.description, readingPlanBinary.info.description);
-		cv.put(Db.ReadingPlan.duration, readingPlanBinary.info.duration);
-		cv.put(Db.ReadingPlan.startDate, readingPlanBinary.info.startDate);
-		cv.put(Db.ReadingPlan.data, readingPlanBinary.binaryReadingPlan);
+		cv.put(Db.ReadingPlan.version, info.version);
+		cv.put(Db.ReadingPlan.title, info.title);
+		cv.put(Db.ReadingPlan.description, info.description);
+		cv.put(Db.ReadingPlan.duration, info.duration);
+		cv.put(Db.ReadingPlan.startDate, info.startDate);
+		cv.put(Db.ReadingPlan.data, buffer);
 		return helper.getWritableDatabase().insert(Db.TABLE_ReadingPlan, null, cv);
 	}
 
