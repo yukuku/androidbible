@@ -540,7 +540,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		calendar.setTime(new Date(readingPlan.info.startDate));
 		calendar.add(Calendar.DATE, dayNumber);
 
-		String date = getString(R.string.rp_dayHeader, (dayNumber + 1), new SimpleDateFormat("MMMM dd, yyyy").format(calendar.getTime()));
+		String date = getString(R.string.rp_dayHeader, (dayNumber + 1), Sqlitil.toLocaleDateMedium(calendar.getTime()));
 		return date;
 	}
 
@@ -640,9 +640,9 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				float actualPercentage = getActualPercentage();
 				float targetPercentage = getTargetPercentage();
 
-				pbReadingProgress.setMax(100);
-				pbReadingProgress.setProgress((int) actualPercentage);
-				pbReadingProgress.setSecondaryProgress((int) targetPercentage);
+				pbReadingProgress.setMax(10000);
+				pbReadingProgress.setProgress((int) actualPercentage * 100);
+				pbReadingProgress.setSecondaryProgress((int) targetPercentage * 100);
 
 				tActual.setText(getString(R.string.rp_commentActual, String.format("%.2f", actualPercentage)));
 				tTarget.setText(getString(R.string.rp_commentTarget, String.format("%.2f", targetPercentage)));
