@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.SpannableStringBuilder;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -40,6 +41,16 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 	private ImageButton bLeft;
 	private ImageButton bRight;
 	private CheckBox cbTick;
+
+	@Override
+	public boolean onInterceptTouchEvent(final MotionEvent ev) {
+		if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+			clearAnimation();
+			fadeoutAnimation(5000);
+		}
+
+		return super.onInterceptTouchEvent(ev);
+	}
 
 	public ReadingPlanFloatMenu(final Context context) {
 		super(context);
@@ -107,7 +118,9 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 
 				ReadingPlanManager.updateReadingPlanProgress(id, dayNumber, sequence / 2, isChecked);
 				updateLayout();
-				readMarkListener.onClick(ariRanges[sequence], ariRanges[sequence + 1]);
+				if (readMarkListener != null) {
+					readMarkListener.onClick(ariRanges[sequence], ariRanges[sequence + 1]);
+				}
 			}
 		});
 

@@ -1316,36 +1316,25 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						readingPlanFloatMenu.setLeftNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
 							public void onClick(final int ari_start, final int ari_end) {
-								readingPlanFloatMenu.clearAnimation();
 								jumpToAri(ari_start);
 								history.add(ari_start);
 								lsText.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
 								lsText.updateAdapter();
-								readingPlanFloatMenu.fadeoutAnimation(5000);
 							}
 						});
 						readingPlanFloatMenu.setRightNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
 							public void onClick(final int ari_start, final int ari_end) {
-								readingPlanFloatMenu.clearAnimation();
 								jumpToAri(ari_start);
 								history.add(ari_start);
 								lsText.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
 								lsText.updateAdapter();
-								readingPlanFloatMenu.fadeoutAnimation(5000);
 							}
 						});
 						readingPlanFloatMenu.setDescriptionListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
 							public void onClick(final int ari_start, final int ari_end) {
 								startActivityForResult(ReadingPlanActivity.createIntent(dayNumber), REQCODE_readingPlan);
-							}
-						});
-						readingPlanFloatMenu.setReadMarkClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
-							@Override
-							public void onClick(final int ari_start, final int ari_end) {
-								readingPlanFloatMenu.clearAnimation();
-								readingPlanFloatMenu.fadeoutAnimation(5000);
 							}
 						});
 						readingPlanFloatMenu.setCloseReadingModeClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
@@ -1359,7 +1348,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 							}
 						});
 
-						readingPlanFloatMenu.fadeoutAnimation(5000);
 						break;
 					}
 				}
