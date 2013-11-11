@@ -4,7 +4,6 @@
   <string name="highlight_stabilo">Sorot</string>
   <string name="donasi_tombol_gamau">Lain kali</string>
   <string name="donasi_tombol_ok">Donasi</string>
-  <string name="donasi_keterangan">Kalau aplikasi Alkitab ini berguna bagi Anda, dimohon kesediaan Anda memberikan sumbangan. Terima kasih!</string>
   <string name="menuDonasi">Donasi</string>
   <string name="mengimpor_titiktiga">Memulihkan…</string>
   <string name="mengekspor_titiktiga">Membuat cadangan…</string>
@@ -81,7 +80,6 @@
   <string name="menuPengaturan">Pengaturan</string>
   <string name="pilihKitab_s">Pilih kitab</string>
   <string name="menuTentang">Tentang</string>
-  <string name="bantuan_judul">Bantuan</string>
   <string name="pengaturan_alkitab">Pengaturan Alkitab</string>
   <string name="kelola_versi">Kelola Versi</string>
   <string name="tambah">Tambah</string>

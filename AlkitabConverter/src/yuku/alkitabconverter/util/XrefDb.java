@@ -1,7 +1,7 @@
 package yuku.alkitabconverter.util;
 
-import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.XrefEntry;
+import yuku.alkitab.model.XrefEntry;
+import yuku.alkitab.util.Ari;
 import yuku.bintex.BintexWriter;
 
 import java.io.ByteArrayOutputStream;

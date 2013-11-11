@@ -1,12 +1,11 @@
 package yuku.alkitabconverter.daily_verse;
 
-import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.bintex.BintexWriter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -22,11 +21,8 @@ public class DailyVerseProses {
 		DailyVerseProses proses = new DailyVerseProses();
 		proses.parse();
 		try {
-			File file = new File(OUTPUT_FILE);
-			RandomAccessFile raf = new RandomAccessFile(file, "rw");
-			raf.setLength(0);
-			RandomOutputStream output = new RandomOutputStream(raf);
-			BintexWriter bw = new BintexWriter(output);
+			FileOutputStream fos = new FileOutputStream(new File(OUTPUT_FILE));
+			BintexWriter bw = new BintexWriter(fos);
 			proses.write(bw);
 			bw.close();
 

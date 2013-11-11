@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <string-array name="pref_bahasa_label" tools:ignore="MissingTranslation">
+    <string-array name="pref_language_labels" tools:ignore="MissingTranslation">
         <item>Default</item>
         <item>Afrikaans</item>
         <item>Bahasa Indonesia</item>
@@ -14,10 +14,11 @@
         <item>Português</item>
         <item>Română</item>
         <item>Українська</item>
+        <item>日本語</item>
         <item>简体中文</item>
         <item>繁體中文</item>
     </string-array>
-    <string-array name="pref_bahasa_value" translatable="false">
+    <string-array name="pref_language_values" translatable="false">
         <item>DEFAULT</item>
         <item>af</item>
         <item>in</item>
@@ -30,6 +31,7 @@
         <item>pt</item>
         <item>ro</item>
         <item>uk</item>
+        <item>ja</item>
         <item>zh-CN</item>
         <item>zh-TW</item>
     </string-array>

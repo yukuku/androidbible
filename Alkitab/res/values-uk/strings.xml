@@ -4,7 +4,6 @@
   <string name="highlight_stabilo">Виділення, підкреслення</string>
   <string name="donasi_tombol_gamau">Не тепер</string>
   <string name="donasi_tombol_ok">Пожертвувати</string>
-  <string name="donasi_keterangan">Якщо ви благословляєте цей застосунок для Біблії, будьте ласкаві зробіть деяку пожертву розробнику. Ваш дарунок дуже допоможе. Гарно дякую!</string>
   <string name="menuDonasi">Пожертва</string>
   <string name="mengimpor_titiktiga"> Відновлення...</string>
   <string name="mengekspor_titiktiga">Створення резервної копії...</string>
@@ -55,6 +54,7 @@
   <string name="hari_senin">Пн</string>
   <string name="hari_minggu">Нд</string>
   <string name="size_hasil">%d результатів</string>
+  <string name="search_searching_tokens">Пошук віршів які містять %s…</string>
   <string name="pilih_setidaknya_satu_kitab">Виберіть принаймі одну книгу для пошуку</string>
   <string name="pengunduhan_dibatalkan">Завантаження відмінено.</string>
   <string name="sedang_mendekompres_harap_tunggu">Витягання. Будь-ласка зачекайте...</string>
@@ -80,7 +80,6 @@
   <string name="menuPengaturan">Налаштування</string>
   <string name="pilihKitab_s">Виберіть книгу</string>
   <string name="menuTentang">Про</string>
-  <string name="bantuan_judul">Допомога</string>
   <string name="pengaturan_alkitab">Налаштування Біблії</string>
   <string name="kelola_versi">Змінити версії</string>
   <string name="tambah">Додати</string>
@@ -260,5 +259,18 @@
   <string name="pm_delete_progress">Видалити прогрес</string>
   <string name="pm_activate_tutorial">Виберіть вірш щоб зберегти прогрес.</string>
   <string name="pm_icon_click_message">"У %1$s \nзбережених на %2$s"</string>
+  <string name="pm_delete_progress_confirm">Ви хочете видалити %s?</string>
   <string name="copy_share">Копіювати або поділитись</string>
+  <string name="backup_last_time">Остання резервна копія: %s</string>
+  <string name="backup_selection_autobackup_at">Автоматичне резервне копіювання в %s</string>
+  <string name="backup_selection_manualbackup_at">Резервна копія в %s</string>
+  <string name="backup_select_file">Виберіть файл резервної копії</string>
+  <string name="recentverses_not_available">Поки що немає недавно прочитаних віршів.</string>
+  <string name="recentverses_just_now">Зараз</string>
+  <string name="recentverses_min_plural_ago">%s хвилин тому</string>
+  <string name="recentverses_today_time">Сьогодні, %s</string>
+  <string name="recentverses_yesterday_time">Вчора, %s</string>
+  <string name="recentverses_button_hint">(Притримайте тут для огляду останніх прочитаних віршів)</string>
+  <string name="dr_reminder">Нагадування</string>
+  <string name="dr_error_contact_reminder">Помилка при контакті Нагадування програми</string>
 </resources>

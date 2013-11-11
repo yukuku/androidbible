@@ -9,7 +9,7 @@ import android.util.TimingLogger;
 import java.util.ArrayList;
 import java.util.List;
 
-import yuku.alkitab.base.model.SongInfo;
+import yuku.alkitab.model.SongInfo;
 import yuku.alkitab.base.util.SongFilter;
 import yuku.alkitab.base.util.SongFilter.CompiledFilter;
 import yuku.kpri.model.Song;

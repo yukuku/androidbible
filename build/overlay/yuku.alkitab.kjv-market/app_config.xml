@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
-	<menu renungan="false" gebug="false" edisi="true" bantuan="true" donasi="true" songs="false" />
+	<menu
+		devotion="false"
+		versions="true"
+		help="true"
+		donation="true"
+		songs="false" />
 	<versions>
 		<internal locale="en" shortName="KJV"     longName="King James" prefix="kjv" />
 		<preset locale="en"   shortName="ASV"     longName="American Standard" filename_preset="en-asv.yes" url="http://alkitab-host.appspot.com/addon/yes/en-asv/en-asv.yes.gz" />
@@ -65,9 +70,12 @@
 		<preset locale="pt"   shortName="AA"      longName="Almeida Atualizada" filename_preset="pt-aa.yes" url="http://alkitab-host.appspot.com/addon/yes2/pt-aa--1.yes.gz" />
 		<preset locale="ro"   shortName="VDC"     longName="Cornilescu" filename_preset="ro-cornilescu.yes" url="http://alkitab-host.appspot.com/addon/yes/ro-cornilescu/ro-cornilescu.yes.gz" />
 		<preset locale="ro"   shortName="ORTDX"   longName="Biblia Ortodoxa" filename_preset="ro-ortodoxa.yes" url="http://alkitab-host.appspot.com/addon/yes/ro-ortodoxa/ro-ortodoxa.yes.gz" />
+		<preset locale="ro"   shortName="GBV2001" longName="Gute Botschaft Verlag" filename_preset="ro-gbv2001.yes" url="http://alkitab-host.appspot.com/addon/yes2/ro-gbv2001--1.yes.gz" />
+		<preset locale="ro"   shortName="BTF"     longName="Traducerea FIDELA" filename_preset="ro-fidela.yes" url="http://alkitab-host.appspot.com/addon/yes2/ro-fidela--1.yes.gz" />
 		<preset locale="ru"   shortName="SYNO"    longName="Синодальный перевод" filename_preset="ru-synodal.yes" url="http://alkitab-host.appspot.com/addon/yes2/ru-synodal--1.yes.gz" />
 		<preset locale="sq"   shortName="ALBB"    longName="Albanian" filename_preset="sq-kk.yes" url="http://alkitab-host.appspot.com/addon/yes/sq-kk/sq-kk.yes.gz" />
 		<preset locale="sv"   shortName="SVEN"    longName="Svenska 1917" filename_preset="sv-1917.yes" url="http://alkitab-host.appspot.com/addon/yes2/sv-1917--1.yes.gz" />
+		<preset locale="te"   shortName="TBO"     longName="Telugu Original Version" filename_preset="te-tbo.yes" url="http://alkitab-host.appspot.com/addon/yes2/te-tbo--1.yes.gz" />
 		<preset locale="th"   shortName="TKJV"    longName="Thai KJV" filename_preset="th-kjv.yes" url="http://alkitab-host.appspot.com/addon/yes2/th-kjv--1.yes.gz" />
 		<preset locale="tl"   shortName="TLAB"    longName="Ang Biblia 1905" filename_preset="tl-angbiblia1905.yes" url="http://alkitab-host.appspot.com/addon/yes/tl-angbiblia1905/tl-angbiblia1905.yes.gz" />
 		<preset locale="uk"   shortName="UKK"     longName="Ukrainian NT P.Kulish" filename_preset="uk-kulish.yes" url="http://alkitab-host.appspot.com/addon/yes2/uk-kulish--1.yes.gz" />
@@ -82,6 +90,6 @@
 		<preset locale="zh"   shortName="PINYIN"  longName="Pinyin" filename_preset="zh-pinyin.yes" url="http://alkitab-host.appspot.com/addon/yes2/zh-pinyin--1.yes.gz" />
 	</versions>
 	<share>
-		<url prefix="http://ref.ly/" format="dot2 nospace0 version_refly" lang="en" />
+		<url format="http://ref.ly/{book.osis}.{chapter}.{verses};{version.shortName}" />
 	</share>
 </config>

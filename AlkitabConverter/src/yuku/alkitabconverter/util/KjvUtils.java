@@ -1,8 +1,8 @@
 package yuku.alkitabconverter.util;
 
-import java.util.Arrays;
+import yuku.alkitab.util.Ari;
 
-import yuku.alkitab.base.model.Ari;
+import java.util.Arrays;
 
 public class KjvUtils {
 	public static final String TAG = KjvUtils.class.getSimpleName();

@@ -26,7 +26,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.SongListActivity.SearchState;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.model.Book;
+import yuku.alkitab.model.Book;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.base.util.OsisBookNames;

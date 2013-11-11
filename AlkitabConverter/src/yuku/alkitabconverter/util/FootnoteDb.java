@@ -1,6 +1,6 @@
 package yuku.alkitabconverter.util;
 
-import yuku.alkitab.base.model.FootnoteEntry;
+import yuku.alkitab.model.FootnoteEntry;
 import yuku.bintex.BintexWriter;
 
 import java.io.ByteArrayOutputStream;

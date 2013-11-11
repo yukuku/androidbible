@@ -25,10 +25,11 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.config.AppConfig;
-import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.Version;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.model.Version;
+import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.sv.DailyVerseAppWidgetService;
-import yuku.alkitab.base.util.IntArrayList;
+import yuku.alkitab.util.IntArrayList;
 import yuku.alkitab.debug.R;
 import yuku.bintex.BintexReader;
 
@@ -251,7 +252,7 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		AppConfig c = AppConfig.get();
 
 		if (VersionsActivity.MVersionInternal.getVersionInternalId().equals(version)) {
-			return Version.getInternalVersion();
+			return VersionImpl.getInternalVersion();
 		}
 
 		// coba preset dulu!

@@ -4,7 +4,6 @@
   <string name="highlight_stabilo">Zvýraznit</string>
   <string name="donasi_tombol_gamau">Nyní ne</string>
   <string name="donasi_tombol_ok">Podpořit autora</string>
-  <string name="donasi_keterangan">Pokud máte požehnání z této aplikace, prosím podpořte libovolným darem vývojáře. Váš dar bude velkou pomocí. Děkuji Vám!</string>
   <string name="menuDonasi">Darování</string>
   <string name="mengimpor_titiktiga">Obnovování...</string>
   <string name="mengekspor_titiktiga">Vytvářím zálohu...</string>
@@ -78,7 +77,6 @@
   <string name="menuPengaturan">Nastavení</string>
   <string name="pilihKitab_s">Vybrat knihu</string>
   <string name="menuTentang">O...</string>
-  <string name="bantuan_judul">Nápověda</string>
   <string name="pengaturan_alkitab">Nastavení Bible</string>
   <string name="kelola_versi">Správa překladů</string>
   <string name="tambah">Přidat</string>

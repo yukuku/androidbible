@@ -9,7 +9,7 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.base.br.DailyVerseAppWidgetReceiver;
-import yuku.alkitab.base.model.Version;
+import yuku.alkitab.model.Version;
 
 @SuppressLint("NewApi")
 public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory {

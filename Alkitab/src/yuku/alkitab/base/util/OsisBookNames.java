@@ -1,7 +1,7 @@
 package yuku.alkitab.base.util;
 
 import gnu.trove.map.hash.TObjectIntHashMap;
-import yuku.alkitab.base.model.Ari;
+import yuku.alkitab.util.Ari;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -146,5 +146,12 @@ public class OsisBookNames {
 		}
 
 		return 0;
+	}
+
+	public static String getBookName(final int bookId) {
+		if (bookId < 0 || bookId >= names.length) {
+			return null;
+		}
+		return names[bookId];
 	}
 }

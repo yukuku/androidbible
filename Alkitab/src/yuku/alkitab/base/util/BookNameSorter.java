@@ -1,6 +1,6 @@
 package yuku.alkitab.base.util;
 
-import yuku.alkitab.base.model.Book;
+import yuku.alkitab.model.Book;
 
 import java.util.Arrays;
 import java.util.Comparator;

@@ -4,7 +4,6 @@
   <string name="highlight_stabilo">Markeer</string>
   <string name="donasi_tombol_gamau">Niet nu</string>
   <string name="donasi_tombol_ok">Doneer</string>
-  <string name="donasi_keterangan">Als deze Bijbel app je tot een zegen is, maak dan een donatie over naar de ontwikkelaar. Jouw donatie wordt gewaardeerd. Dank je!</string>
   <string name="menuDonasi">Donatie</string>
   <string name="mengimpor_titiktiga">Terugzetten...</string>
   <string name="mengekspor_titiktiga">Maken van een reservekopie…</string>
@@ -25,8 +24,8 @@
   <string name="versi">Versie</string>
   <string name="renungan">Devotie</string>
   <string name="cari_v">Zoeken</string>
-  <string name="judul_bukmak_activity">Markers</string>
-  <string name="menu_markers">Markeringen</string>
+  <string name="judul_bukmak_activity">Bladwijzers e.d</string>
+  <string name="menu_markers">Bladwijzers e.d.</string>
   <string name="hapus_pembatas_buku">Verwijder bladwijzer</string>
   <string name="bagikan">Deel</string>
   <string name="tulis_catatan">Schrijf notitie</string>
@@ -55,6 +54,7 @@
   <string name="hari_senin">Ma</string>
   <string name="hari_minggu">Zo</string>
   <string name="size_hasil">%d resultaten</string>
+  <string name="search_searching_tokens">Zoeken naar verzen met %s...</string>
   <string name="pilih_setidaknya_satu_kitab">Kies tenminste één Bijbelboek om te zoeken.</string>
   <string name="pengunduhan_dibatalkan">Download geannuleerd.</string>
   <string name="sedang_mendekompres_harap_tunggu">Uitpakken. Even geduld…</string>
@@ -80,7 +80,6 @@
   <string name="menuPengaturan">Instellingen</string>
   <string name="pilihKitab_s">Kies een Boek</string>
   <string name="menuTentang">Over</string>
-  <string name="bantuan_judul">Help</string>
   <string name="pengaturan_alkitab">Bijbel instellingen</string>
   <string name="kelola_versi">Beheer versies</string>
   <string name="tambah">Toevoegen</string>
@@ -179,7 +178,7 @@
   <string name="pdb_error_not_palmbible">Dit PDB bestand is niet in PalmBible+ formaat. Dit PDB bestand heeft het type van \'%1$s\' en aanmaak-id van \'%2$s\', wat niet ondersteund word door deze app.</string>
   <string name="pdb_error_corrupted">Het PDB bestand is corrupt.</string>
   <string name="pdb_error_not_pdb_file">Het geselecteerde bestand is niet een PDB bestand.</string>
-  <string name="menu_split_version">Gedeelde versie</string>
+  <string name="menu_split_version">Splitversie</string>
   <string name="split_version_none">Geen</string>
   <string name="split_version_cant_display_verse">%1$s is niet beschikbaar in %2$s.</string>
   <string name="menuAddSomething">Voeg markering toe</string>
@@ -253,11 +252,24 @@
   <string name="pm_progress_5">Voortgang 5</string>
   <string name="pm_menu_save_progress">Opslaan %s</string>
   <string name="pm_menu_save_progresses">Sla voortgang op</string>
-  <string name="pm_menu_view_progress">Geef voortgang weer</string>
+  <string name="pm_menu_view_progress">Voortgang</string>
   <string name="pm_progress_name">Naam voortgang</string>
   <string name="pm_edit_name">Wijzig naam</string>
   <string name="pm_delete_progress">Verwijder voortgang</string>
   <string name="pm_activate_tutorial">Selecteer een vers om de voortgang op te slaan.</string>
-  <string name="pm_icon_click_message">"op %1$s \nopgeslagen om %2$s"</string>
+  <string name="pm_icon_click_message">"%1$s \nopgeslagen op %2$s"</string>
+  <string name="pm_delete_progress_confirm">Wil je %s verwijderen?</string>
   <string name="copy_share">Kopiëer of deel</string>
+  <string name="backup_last_time">Laatst reservekopie: %s</string>
+  <string name="backup_selection_autobackup_at">Auto reservekopie op %s</string>
+  <string name="backup_selection_manualbackup_at">Reservekopie op %s</string>
+  <string name="backup_select_file">Selecteer een reservekopie</string>
+  <string name="recentverses_not_available">Er zijn nog geen recente versies.</string>
+  <string name="recentverses_just_now">Nu</string>
+  <string name="recentverses_min_plural_ago">%s minuten geleden</string>
+  <string name="recentverses_today_time">Vandaag, %s</string>
+  <string name="recentverses_yesterday_time">Gisteren, %s</string>
+  <string name="recentverses_button_hint">(Ingedrukt houden voor recente verzen)</string>
+  <string name="dr_reminder">Herinnering</string>
+  <string name="dr_error_contact_reminder">Fout bij verbinden met Herinnering app.</string>
 </resources>

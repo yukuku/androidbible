@@ -18,10 +18,10 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.compat.Api8;
-import yuku.alkitab.base.model.Book;
-import yuku.alkitab.base.model.PericopeBlock;
-import yuku.alkitab.base.model.SingleChapterVerses;
-import yuku.alkitab.base.util.IntArrayList;
+import yuku.alkitab.model.Book;
+import yuku.alkitab.model.PericopeBlock;
+import yuku.alkitab.model.SingleChapterVerses;
+import yuku.alkitab.util.IntArrayList;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

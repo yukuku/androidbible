@@ -21,12 +21,12 @@ import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
 import yuku.alkitab.base.devotion.DevotionArticle;
-import yuku.alkitab.base.model.Ari;
-import yuku.alkitab.base.model.Bookmark2;
-import yuku.alkitab.base.model.Label;
-import yuku.alkitab.base.model.ProgressMark;
-import yuku.alkitab.base.model.ProgressMarkHistory;
-import yuku.alkitab.base.util.IntArrayList;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.model.Bookmark2;
+import yuku.alkitab.model.Label;
+import yuku.alkitab.model.ProgressMark;
+import yuku.alkitab.model.ProgressMarkHistory;
+import yuku.alkitab.util.IntArrayList;
 import yuku.alkitab.base.util.Sqlitil;
 
 import java.util.ArrayList;
@@ -42,7 +42,42 @@ public class InternalDb {
 	public InternalDb(InternalDbHelper helper) {
 		this.helper = helper;
 	}
-	
+
+	/**
+	 * _id is not stored
+	 * @param bookmark2
+	 */
+	private static ContentValues bookmark2ToContentValues(final Bookmark2 bookmark2) {
+		ContentValues res = new ContentValues();
+
+		res.put(Db.Bookmark2.ari, bookmark2.ari);
+		res.put(Db.Bookmark2.kind, bookmark2.kind);
+		res.put(Db.Bookmark2.caption, bookmark2.caption);
+		res.put(Db.Bookmark2.addTime, Sqlitil.toInt(bookmark2.addTime));
+		res.put(Db.Bookmark2.modifyTime, Sqlitil.toInt(bookmark2.modifyTime));
+
+		return res;
+	}
+
+	public static Bookmark2 bookmark2FromCursor(Cursor cursor) {
+		int ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bookmark2.ari));
+		int jenis = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bookmark2.kind));
+
+		return bookmark2FromCursor(cursor, ari, jenis);
+	}
+
+	private static Bookmark2 bookmark2FromCursor(Cursor cursor, int ari, int kind) {
+		long _id = cursor.getLong(cursor.getColumnIndexOrThrow(BaseColumns._ID));
+		String caption = cursor.getString(cursor.getColumnIndexOrThrow(Db.Bookmark2.caption));
+		Date addTime = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bookmark2.addTime)));
+		Date modifyTime = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bookmark2.modifyTime)));
+
+		Bookmark2 res = new Bookmark2(ari, kind, caption, addTime, modifyTime);
+		res._id = _id;
+		return res;
+	}
+
+
 	public Bookmark2 getBookmarkByAri(int ari, int kind) {
 		Cursor cursor = helper.getReadableDatabase().query(
 			Db.TABLE_Bookmark2,
@@ -55,7 +90,7 @@ public class InternalDb {
 		try {
 			if (!cursor.moveToNext()) return null;
 			
-			return Bookmark2.fromCursor(cursor, ari, kind);
+			return bookmark2FromCursor(cursor, ari, kind);
 		} finally {
 			cursor.close();
 		}
@@ -73,20 +108,20 @@ public class InternalDb {
 		try {
 			if (!cursor.moveToNext()) return null;
 			
-			return Bookmark2.fromCursor(cursor);
+			return bookmark2FromCursor(cursor);
 		} finally {
 			cursor.close();
 		}
 	}
 
 	public int updateBookmark(Bookmark2 bookmark) {
-		return helper.getWritableDatabase().update(Db.TABLE_Bookmark2, bookmark.toContentValues(), "_id=?", new String[] {String.valueOf(bookmark._id)}); //$NON-NLS-1$
+		return helper.getWritableDatabase().update(Db.TABLE_Bookmark2, bookmark2ToContentValues(bookmark), "_id=?", new String[] {String.valueOf(bookmark._id)}); //$NON-NLS-1$
 	}
 	
 	public Bookmark2 insertBookmark(int ari, int kind, String caption, Date addTime, Date modifyTime) {
 		Bookmark2 res = new Bookmark2(ari, kind, caption, addTime, modifyTime);
 		SQLiteDatabase db = helper.getWritableDatabase();
-		long _id = db.insert(Db.TABLE_Bookmark2, null, res.toContentValues());
+		long _id = db.insert(Db.TABLE_Bookmark2, null, bookmark2ToContentValues(res));
 		if (_id == -1) {
 			return null;
 		} else {
@@ -183,7 +218,7 @@ public class InternalDb {
 						db.delete(Db.TABLE_Bookmark2_Label, Db.Bookmark2_Label.bookmark2_id + "=?", params1); //$NON-NLS-1$
 					}
 					if ((ada && overwrite) || (!ada)) {
-						_id = db.insert(Db.TABLE_Bookmark2, null, bookmark.toContentValues()); /* [2] */
+						_id = db.insert(Db.TABLE_Bookmark2, null, bookmark2ToContentValues(bookmark)); /* [2] */
 					}
 					
 					// map it
@@ -332,11 +367,11 @@ public class InternalDb {
 				Cursor c = db.query(Db.TABLE_Bookmark2, null, Db.Bookmark2.ari + "=? and " + Db.Bookmark2.kind + "=?", params, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 				try {
 					if (c.moveToNext()) { // check if bookmark exists
-						Bookmark2 bookmark = Bookmark2.fromCursor(c);
+						Bookmark2 bookmark = bookmark2FromCursor(c);
 						bookmark.modifyTime = new Date();
 						if (colorRgb != -1) {
 							bookmark.caption = U.encodeHighlight(colorRgb);
-							db.update(Db.TABLE_Bookmark2, bookmark.toContentValues(), "_id=?", new String[] {String.valueOf(bookmark._id)}); //$NON-NLS-1$
+							db.update(Db.TABLE_Bookmark2, bookmark2ToContentValues(bookmark), "_id=?", new String[] {String.valueOf(bookmark._id)}); //$NON-NLS-1$
 						} else {
 							// delete
 							db.delete(Db.TABLE_Bookmark2, "_id=?", new String[] {String.valueOf(bookmark._id)}); //$NON-NLS-1$
@@ -347,7 +382,7 @@ public class InternalDb {
 						} else {
 							Date now = new Date();
 							Bookmark2 bookmark = new Bookmark2(ari, Db.Bookmark2.kind_highlight, U.encodeHighlight(colorRgb), now, now);
-							db.insert(Db.TABLE_Bookmark2, null, bookmark.toContentValues());
+							db.insert(Db.TABLE_Bookmark2, null, bookmark2ToContentValues(bookmark));
 						}
 					}
 				} finally {
@@ -565,7 +600,7 @@ public class InternalDb {
 		Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Label, null, null, null, null, null, Db.Label.ordering + " asc"); //$NON-NLS-1$
 		try {
 			while (cursor.moveToNext()) {
-				res.add(Label.fromCursor(cursor));
+				res.add(labelFromCursor(cursor));
 			}
 		} finally {
 			cursor.close();
@@ -582,14 +617,32 @@ public class InternalDb {
 		try {
 			while (cursor.moveToNext()) {
 				if (res == null) res = new ArrayList<Label>();
-				res.add(Label.fromCursor(cursor));
+				res.add(labelFromCursor(cursor));
 			}
 		} finally {
 			cursor.close();
 		}
 		return res;
 	}
-	
+
+	public static Label labelFromCursor(Cursor c) {
+		Label res = new Label();
+		res._id = c.getLong(c.getColumnIndexOrThrow(BaseColumns._ID));
+		res.title = c.getString(c.getColumnIndexOrThrow(Db.Label.title));
+		res.ordering = c.getInt(c.getColumnIndexOrThrow(Db.Label.ordering));
+		res.backgroundColor = c.getString(c.getColumnIndexOrThrow(Db.Label.backgroundColor));
+		return res;
+	}
+
+	public ContentValues labelToContentValues(Label label) {
+		ContentValues res = new ContentValues();
+		// skip _id
+		res.put(Db.Label.title, label.title);
+		res.put(Db.Label.ordering, label.ordering);
+		res.put(Db.Label.backgroundColor, label.backgroundColor);
+		return res;
+	}
+
 	/**
 	 * @return null when not found
 	 */
@@ -621,7 +674,7 @@ public class InternalDb {
 	public Label insertLabel(String title, String bgColor) {
 		Label res = new Label(-1, title, getLabelMaxOrdering() + 1, bgColor);
 		SQLiteDatabase db = helper.getWritableDatabase();
-		long _id = db.insert(Db.TABLE_Label, null, res.toContentValues());
+		long _id = db.insert(Db.TABLE_Label, null, labelToContentValues(res));
 		if (_id == -1) {
 			return null;
 		} else {
@@ -656,7 +709,7 @@ public class InternalDb {
         Cursor cursor = db.query(Db.TABLE_Label, null, BaseColumns._ID + "=?", new String[] {String.valueOf(labelId)}, null, null, null); //$NON-NLS-1$
         try {
             if (cursor.moveToNext()) {
-                return Label.fromCursor(cursor);
+                return labelFromCursor(cursor);
             } else {
                 return null;
             }
@@ -680,7 +733,7 @@ public class InternalDb {
 
 	public void updateLabel(Label label) {
 		SQLiteDatabase db = helper.getWritableDatabase();
-		ContentValues cv = label.toContentValues();
+		ContentValues cv = labelToContentValues(label);
 		db.update(Db.TABLE_Label, cv, "_id=?", new String[] {String.valueOf(label._id)}); //$NON-NLS-1$
 	}
 
@@ -741,7 +794,7 @@ public class InternalDb {
 		Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_ProgressMark, null, null, null, null, null, null);
 		try {
 			while (cursor.moveToNext()) {
-				res.add(ProgressMark.fromCursor(cursor));
+				res.add(progressMarkFromCursor(cursor));
 			}
 		} finally {
 			cursor.close();
@@ -761,7 +814,7 @@ public class InternalDb {
 		try {
 			if (!cursor.moveToNext()) return null;
 
-			return ProgressMark.fromCursor(cursor);
+			return progressMarkFromCursor(cursor);
 		} finally {
 			cursor.close();
 		}
@@ -769,7 +822,7 @@ public class InternalDb {
 
 	public int updateProgressMark(ProgressMark progressMark) {
 		insertProgressMarkHistory(progressMark);
-		return helper.getWritableDatabase().update(Db.TABLE_ProgressMark, progressMark.toContentValues(), Db.ProgressMark.preset_id + "=?", new String[] {String.valueOf(progressMark.preset_id)});
+		return helper.getWritableDatabase().update(Db.TABLE_ProgressMark, progressMarkToContentValues(progressMark), Db.ProgressMark.preset_id + "=?", new String[] {String.valueOf(progressMark.preset_id)});
 	}
 
 	public void insertProgressMarkHistory(ProgressMark progressMark) {
@@ -786,11 +839,42 @@ public class InternalDb {
 		try {
 			final List<ProgressMarkHistory> res = new ArrayList<ProgressMarkHistory>();
 			while (c.moveToNext()) {
-				res.add(ProgressMarkHistory.fromCursor(c));
+				res.add(progressMarkHistoryFromCursor(c));
 			}
 			return res;
 		} finally {
 			c.close();
 		}
+	}
+
+	public static ProgressMark progressMarkFromCursor(Cursor c) {
+		ProgressMark res = new ProgressMark();
+		res._id = c.getLong(c.getColumnIndexOrThrow(BaseColumns._ID));
+		res.preset_id = c.getInt(c.getColumnIndexOrThrow(Db.ProgressMark.preset_id));
+		res.caption = c.getString(c.getColumnIndexOrThrow(Db.ProgressMark.caption));
+		res.ari = c.getInt(c.getColumnIndexOrThrow(Db.ProgressMark.ari));
+		res.modifyTime = Sqlitil.toDate(c.getInt(c.getColumnIndexOrThrow(Db.ProgressMark.modifyTime)));
+
+		return res;
+	}
+
+	public static ContentValues progressMarkToContentValues(ProgressMark progressMark) {
+		ContentValues cv = new ContentValues();
+		cv.put(Db.ProgressMark.preset_id, progressMark.preset_id);
+		cv.put(Db.ProgressMark.caption, progressMark.caption);
+		cv.put(Db.ProgressMark.ari, progressMark.ari);
+		cv.put(Db.ProgressMark.modifyTime, Sqlitil.toInt(progressMark.modifyTime));
+		return cv;
+	}
+
+	public static ProgressMarkHistory progressMarkHistoryFromCursor(Cursor c) {
+		final ProgressMarkHistory res = new ProgressMarkHistory();
+		res._id = c.getLong(c.getColumnIndexOrThrow(BaseColumns._ID));
+		res.progress_mark_preset_id = c.getInt(c.getColumnIndexOrThrow(Db.ProgressMarkHistory.progress_mark_preset_id));
+		res.progress_mark_caption = c.getString(c.getColumnIndexOrThrow(Db.ProgressMarkHistory.progress_mark_caption));
+		res.ari = c.getInt(c.getColumnIndexOrThrow(Db.ProgressMarkHistory.ari));
+		res.createTime = Sqlitil.toDate(c.getInt(c.getColumnIndexOrThrow(Db.ProgressMarkHistory.createTime)));
+
+		return res;
 	}
 }

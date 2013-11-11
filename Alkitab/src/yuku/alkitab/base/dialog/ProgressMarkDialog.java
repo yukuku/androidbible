@@ -19,7 +19,7 @@ import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.model.ProgressMark;
+import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.AttributeView;

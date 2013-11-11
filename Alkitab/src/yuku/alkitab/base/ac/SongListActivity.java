@@ -32,7 +32,7 @@ import yuku.afw.V;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.model.SongInfo;
+import yuku.alkitab.model.SongInfo;
 import yuku.alkitab.base.util.SongBookUtil;
 import yuku.alkitab.base.util.SongBookUtil.OnDownloadSongBookListener;
 import yuku.alkitab.base.util.SongBookUtil.OnSongBookSelectedListener;

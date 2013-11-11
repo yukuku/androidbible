@@ -20,10 +20,9 @@
 
 package com.compactbyte.bibleplus.reader;
 
-import android.util.*;
-
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a book in the bible
@@ -789,4 +788,10 @@ public class BookInfo {
 		return diff;
 	}
 
+
+    public static class Log {
+        public static void d(String tag, String msg) {
+            System.out.println(tag + " " + msg);
+        }
+    }
 }

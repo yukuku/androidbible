@@ -4,7 +4,6 @@
     <string name="highlight_stabilo">Highlight</string>
     <string name="donasi_tombol_gamau">Not now</string>
     <string name="donasi_tombol_ok">Donate</string>
-    <string name="donasi_keterangan">If you are blessed by this Bible app, please make some donation to the developer. Your donation would be very helpful. Thank you!</string>
     <string name="menuDonasi">Donation</string>
     <string name="mengimpor_titiktiga">Restoring…</string>
     <string name="mengekspor_titiktiga">Creating backup…</string>
@@ -81,7 +80,6 @@
     <string name="menuPengaturan">Settings</string>
     <string name="pilihKitab_s">Choose a Book</string>
     <string name="menuTentang">About</string>
-    <string name="bantuan_judul">Help</string>
     <string name="pengaturan_alkitab">Bible Settings</string>
     <string name="kelola_versi">Manage Versions</string>
     <string name="tambah">Add</string>
@@ -246,6 +244,7 @@
 	<string name="version_share_title">Share version to:</string>
 	<string name="menuFullScreen">Full screen</string>
     <string name="full_screen_dismiss_hint">Press <b>Back</b> to return from full screen</string>
+    <string name="send_donation_confirmation">Make some donation to the developer?</string>
 
     <string name="me_export_markers">Export markers</string>
     <string name="me_export_menu_item">Export</string>
