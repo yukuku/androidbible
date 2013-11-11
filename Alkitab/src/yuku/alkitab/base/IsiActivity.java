@@ -1315,42 +1315,42 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						readingPlanFloatMenu.load(id, dayNumber, ariRanges, i);
 						readingPlanFloatMenu.setLeftNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
-							public void onClick(final int ari_0, final int ari_1) {
+							public void onClick(final int ari_start, final int ari_end) {
 								readingPlanFloatMenu.clearAnimation();
-								jumpToAri(ari_0);
-								history.add(ari_0);
-								lsText.setAriRangesReadingPlan(new int[] {ari_0, ari_1});
+								jumpToAri(ari_start);
+								history.add(ari_start);
+								lsText.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
 								lsText.updateAdapter();
 								readingPlanFloatMenu.fadeoutAnimation(5000);
 							}
 						});
 						readingPlanFloatMenu.setRightNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
-							public void onClick(final int ari_0, final int ari_1) {
+							public void onClick(final int ari_start, final int ari_end) {
 								readingPlanFloatMenu.clearAnimation();
-								jumpToAri(ari_0);
-								history.add(ari_0);
-								lsText.setAriRangesReadingPlan(new int[] {ari_0, ari_1});
+								jumpToAri(ari_start);
+								history.add(ari_start);
+								lsText.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
 								lsText.updateAdapter();
 								readingPlanFloatMenu.fadeoutAnimation(5000);
 							}
 						});
 						readingPlanFloatMenu.setDescriptionListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
-							public void onClick(final int ari_0, final int ari_1) {
+							public void onClick(final int ari_start, final int ari_end) {
 								startActivityForResult(ReadingPlanActivity.createIntent(dayNumber), REQCODE_readingPlan);
 							}
 						});
 						readingPlanFloatMenu.setReadMarkClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
-							public void onClick(final int ari_0, final int ari_1) {
+							public void onClick(final int ari_start, final int ari_end) {
 								readingPlanFloatMenu.clearAnimation();
 								readingPlanFloatMenu.fadeoutAnimation(5000);
 							}
 						});
 						readingPlanFloatMenu.setCloseReadingModeClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
-							public void onClick(final int ari_0, final int ari_1) {
+							public void onClick(final int ari_start, final int ari_end) {
 								readingPlanFloatMenu.clearAnimation();
 								readingPlanFloatMenu.setVisibility(View.GONE);
 								readingPlanFloatMenu.isActive = false;
