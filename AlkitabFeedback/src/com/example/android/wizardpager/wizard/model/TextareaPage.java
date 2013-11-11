@@ -17,13 +17,10 @@
 package com.example.android.wizardpager.wizard.model;
 
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
-
-import java.util.ArrayList;
-
+import com.example.android.wizardpager.wizard.ui.TextareaFragment;
 import yuku.alkitabfeedback.R;
 
-import com.example.android.wizardpager.wizard.ui.TextareaFragment;
+import java.util.ArrayList;
 
 /**
  * A page asking for a name and an email.
@@ -52,6 +49,8 @@ public class TextareaPage extends Page {
 
     @Override
     public boolean isCompleted() {
-        return !TextUtils.isEmpty(mData.getString(Page.SIMPLE_DATA_KEY));
+	    final String data = mData.getString(Page.SIMPLE_DATA_KEY);
+	    if (data == null) return false;
+	    return data.length() >= 40;
     }
 }
