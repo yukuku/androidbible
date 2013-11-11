@@ -521,8 +521,6 @@ public class ReadingPlanActivity extends ActionBarActivity {
 
 	private int countRead() {
 		IntArrayList filteredReadingCodes = ReadingPlanManager.filterReadingCodesByDayStartEnd(readingCodes, 0, todayNumber);
-		for (int i = 0; i < filteredReadingCodes.size(); i++) {
-		}
 		return filteredReadingCodes.size();
 	}
 
