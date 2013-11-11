@@ -69,6 +69,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	private LinearLayout llNavigations;
 	private FrameLayout flNoData;
 	private Button bDownload;
+	private boolean showDetail;
 
 	public static Intent createIntent(int dayNumber) {
 		Intent intent = new Intent(App.context, ReadingPlanActivity.class);
@@ -118,6 +119,8 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		} else if (itemId == R.id.menuDelete) {
 			deleteReadingPlan();
 			return true;
+		} else if (itemId == R.id.menuAbout) {
+			showAbout();
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -422,6 +425,17 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		.show();
 	}
 
+	private void showAbout() {
+		SpannableStringBuilder sb = new SpannableStringBuilder();
+		sb.append("Title: " + readingPlan.info.title);
+		sb.append("\nDescription: " + readingPlan.info.description);
+		sb.append("\nDuration: " + readingPlan.info.duration);
+		new AlertDialog.Builder(ReadingPlanActivity.this)
+		.setMessage(sb)
+		.setPositiveButton(R.string.ok, null)
+		.show();
+	}
+
 	private void changeDay(int day) {
 		dayNumber += day;
 		readingPlanAdapter.load();
@@ -579,7 +593,11 @@ public class ReadingPlanActivity extends ActionBarActivity {
 
 		@Override
 		public int getCount() {
-			return (todayReadings.length / 2) + readingPlan.info.duration + 1;
+			if (showDetail) {
+				return (todayReadings.length / 2) + readingPlan.info.duration + 1;
+			} else {
+				return (todayReadings.length / 2) +  1;
+			}
 		}
 
 		@Override
@@ -626,6 +644,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				final TextView tActual = V.get(convertView, R.id.tActual);
 				final TextView tTarget = V.get(convertView, R.id.tTarget);
 				final TextView tComment = V.get(convertView, R.id.tComment);
+				final TextView tDetail = V.get(convertView, R.id.tDetail);
 
 				float actualPercentage = getActualPercentage();
 				float targetPercentage = getTargetPercentage();
@@ -646,6 +665,19 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				}
 
 				tComment.setText(comment);
+
+				tDetail.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(final View v) {
+						showDetail = !showDetail;
+						if (showDetail) {
+							tDetail.setText(R.string.rp_hideDetail);
+						} else {
+							tDetail.setText(R.string.rp_showDetail);
+						}
+						notifyDataSetChanged();
+					}
+				});
 
 			} else if (itemViewType == 2) {
 				if (convertView == null) {

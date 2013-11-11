@@ -10,4 +10,7 @@
     <item
         android:id="@+id/menuDelete"
         android:title="@string/rp_menuDelete"/>
+    <item
+        android:id="@+id/menuAbout"
+        android:title="@string/rp_about"/>
 </menu>

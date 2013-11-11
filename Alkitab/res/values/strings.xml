@@ -317,4 +317,7 @@
     <string name="rp_menuDelete">Delete</string>
     <string name="rp_headingProgress">Progress</string>
     <string name="rp_gotoToday">Today</string>
+    <string name="rp_showDetail">Show detail</string>
+    <string name="rp_hideDetail">Hide detail</string>
+    <string name="rp_about">About</string>
 </resources>

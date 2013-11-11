@@ -41,5 +41,13 @@
             android:id="@+id/tComment"
             android:paddingTop="4dp"
             android:paddingBottom="4dp"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/tDetail"
+            android:text="@string/rp_showDetail"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp" android:textStyle="italic"/>
 
 </LinearLayout>
