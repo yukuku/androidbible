@@ -389,20 +389,17 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	}
 
 	private int findFirstUnreadDay(final int dayUntil) {
-		int firstUnreadDay = dayUntil;
 
-		loop1:
 		for (int i = 0; i < dayUntil; i++) {
 			boolean[] readMarks = new boolean[readingPlan.dailyVerses.get(i).length];
 			ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, i);
 			for (boolean readMark : readMarks) {
 				if (!readMark) {
-					firstUnreadDay = i;
-					break loop1;
+					return i;
 				}
 			}
 		}
-		return firstUnreadDay;
+		return dayUntil;
 	}
 
 	private void deleteReadingPlan() {
