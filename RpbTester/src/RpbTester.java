@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class RpbTester {
 	private static final String INPUT_FILE = System.getProperty("user.dir") + "/RpbTester/file/wsts.rpb";
-	private static final byte[] ARP_HEADER = { 0x52, (byte) 0x8a, 0x61, 0x34, 0x00, (byte) 0xe0, (byte) 0xea};
+	private static final byte[] RPB_HEADER = { 0x52, (byte) 0x8a, 0x61, 0x34, 0x00, (byte) 0xe0, (byte) 0xea};
 
 	public static void main(String[] args) {
 		read();
@@ -24,8 +24,9 @@ public class RpbTester {
 			BintexReader reader = new BintexReader(is);
 			byte[] headers = new byte[8];
 			reader.readRaw(headers);
+
 			for (int i = 0; i < 7; i++) {
-				if (ARP_HEADER[i] != headers[i]) {
+				if (RPB_HEADER[i] != headers[i]) {
 					throw new IOException();
 				}
 				System.out.print((char)headers[i]);
