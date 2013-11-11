@@ -423,12 +423,10 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	}
 
 	private void showAbout() {
-		SpannableStringBuilder sb = new SpannableStringBuilder();
-		sb.append("Title: " + readingPlan.info.title);
-		sb.append("\nDescription: " + readingPlan.info.description);
-		sb.append("\nDuration: " + readingPlan.info.duration);
+		String message = getString(R.string.rp_aboutPlanMessage, readingPlan.info.title, readingPlan.info.description, readingPlan.info.duration);
+
 		new AlertDialog.Builder(ReadingPlanActivity.this)
-		.setMessage(sb)
+		.setMessage(message)
 		.setPositiveButton(R.string.ok, null)
 		.show();
 	}
