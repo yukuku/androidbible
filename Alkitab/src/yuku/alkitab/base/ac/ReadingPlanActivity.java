@@ -669,7 +669,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 						if (showDetail) {
 							tDetail.setText(R.string.rp_hideDetail);
 						} else {
-							tDetail.setText(R.string.rp_showDetail);
+							tDetail.setText(R.string.rp_showDetails);
 						}
 						notifyDataSetChanged();
 					}

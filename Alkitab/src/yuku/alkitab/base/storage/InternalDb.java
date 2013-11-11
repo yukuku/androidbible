@@ -805,7 +805,7 @@ public class InternalDb {
 		cv.put(Db.ReadingPlan.description, readingPlanBinary.info.description);
 		cv.put(Db.ReadingPlan.duration, readingPlanBinary.info.duration);
 		cv.put(Db.ReadingPlan.startDate, readingPlanBinary.info.startDate);
-		cv.put(Db.ReadingPlan.plans, readingPlanBinary.binaryReadingPlan);
+		cv.put(Db.ReadingPlan.data, readingPlanBinary.binaryReadingPlan);
 		return helper.getWritableDatabase().insert(Db.TABLE_ReadingPlan, null, cv);
 	}
 
@@ -844,7 +844,7 @@ public class InternalDb {
 
 	public byte[] getBinaryReadingPlanById(long id) {
 		byte[] buffer = null;
-		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan, new String[] {Db.ReadingPlan.plans}, "_id=?", new String[] {String.valueOf(id)}, null, null, null);
+		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan, new String[] {Db.ReadingPlan.data}, "_id=?", new String[] {String.valueOf(id)}, null, null, null);
 		while (c.moveToNext()) {
 			buffer = c.getBlob(0);
 		}

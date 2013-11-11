@@ -170,7 +170,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		Db.ReadingPlan.description + " text, " +
 		Db.ReadingPlan.duration + " integer, " +
 		Db.ReadingPlan.startDate + " integer, " +
-		Db.ReadingPlan.plans + " blob)");
+		Db.ReadingPlan.data + " blob)");
 	}
 
 	private void createTableReadingPlanProgress(final SQLiteDatabase db) {
