@@ -28,6 +28,6 @@ public enum Prefkey {
 	lastBackupDate,
 
 	/** default reading plan */
-	active_reading_plan,
+	active_reading_plan_id,
 	
 }

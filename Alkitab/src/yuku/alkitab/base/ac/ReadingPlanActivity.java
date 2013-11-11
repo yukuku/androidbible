@@ -92,7 +92,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		bDownload = V.get(this, R.id.bDownload);
 		actionBar = getSupportActionBar();
 
-		long id = Preferences.getLong(Prefkey.active_reading_plan, 0);
+		long id = Preferences.getLong(Prefkey.active_reading_plan_id, 0);
 		loadReadingPlan(id);
 		loadReadingPlanProgress();
 		loadDayNumber();
@@ -152,7 +152,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		res.info.id = id;
 		res.info.startDate = startDate;
 		readingPlan = res;
-		Preferences.setLong(Prefkey.active_reading_plan, id);
+		Preferences.setLong(Prefkey.active_reading_plan_id, id);
 	}
 
 	private void loadReadingPlanProgress() {
@@ -216,7 +216,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		actionBar.setDisplayShowTitleEnabled(false);
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
-		long id = Preferences.getLong(Prefkey.active_reading_plan, 0);
+		long id = Preferences.getLong(Prefkey.active_reading_plan_id, 0);
 		int itemNumber = 0;
 		//Drop-down navigation
 		List<String> titles = new ArrayList<String>();
@@ -413,7 +413,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			public void onClick(final DialogInterface dialog, final int which) {
 				S.getDb().deleteReadingPlanById(readingPlan.info.id);
 				readingPlan = null;
-				Preferences.remove(Prefkey.active_reading_plan);
+				Preferences.remove(Prefkey.active_reading_plan_id);
 				loadReadingPlan(0);
 				loadReadingPlanProgress();
 				loadDayNumber();
@@ -495,7 +495,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				public void onClick(final DialogInterface dialog, final int which) {
 					long id = ReadingPlanManager.copyReadingPlanToDb(resources.get(which));
 
-					Preferences.setLong(Prefkey.active_reading_plan, id);
+					Preferences.setLong(Prefkey.active_reading_plan_id, id);
 					loadDayNumber();
 					loadReadingPlan(id);
 					loadReadingPlanProgress();
