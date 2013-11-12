@@ -822,6 +822,16 @@ public class InternalDb {
 		return helper.getWritableDatabase().delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_id + "=? AND " + Db.ReadingPlanProgress.reading_code + "=?", new String[] {String.valueOf(readingPlanId), String.valueOf(readingCode)});
 	}
 
+	public IntArrayList getReadingPlanProgressId(final long readingPlanId, final int readingCode) {
+		IntArrayList res = new IntArrayList();
+		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlanProgress, new String[] {"_id"}, Db.ReadingPlanProgress.reading_plan_id + "=? AND " + Db.ReadingPlanProgress.reading_code + "=?", new String[] {String.valueOf(readingPlanId), String.valueOf(readingCode)}, null, null, null);
+		while (c.moveToNext()) {
+			res.add(c.getInt(0));
+		}
+		c.close();
+		return res;
+	}
+
 	public List<ReadingPlan.ReadingPlanInfo> listAllReadingPlanInfo() {
 		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan,
 		new String[] {"_id", Db.ReadingPlan.version, Db.ReadingPlan.title, Db.ReadingPlan.description, Db.ReadingPlan.duration, Db.ReadingPlan.startDate},

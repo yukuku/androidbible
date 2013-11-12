@@ -46,7 +46,12 @@ public class ReadingPlanManager {
 
 	public static void updateReadingPlanProgress(final long readingPlanId, final int dayNumber, final int readingSequence, final boolean checked) {
 		int readingCode = toReadingCode(dayNumber, readingSequence);
+
 		if (checked) {
+			IntArrayList ids = S.getDb().getReadingPlanProgressId(readingPlanId, readingCode);
+			if (ids.size() > 0) {
+				S.getDb().deleteReadingPlanProgress(readingPlanId, readingCode);
+			}
 			S.getDb().insertReadingPlanProgress(readingPlanId, readingCode);
 		} else {
 			S.getDb().deleteReadingPlanProgress(readingPlanId, readingCode);
