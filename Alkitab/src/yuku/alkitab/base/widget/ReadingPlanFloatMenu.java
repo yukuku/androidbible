@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import yuku.afw.V;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.util.IntArrayList;
@@ -54,12 +55,12 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 
 	public ReadingPlanFloatMenu(final Context context) {
 		super(context);
-		prepareLayout(context);
+		prepareLayout();
 	}
 
 	public ReadingPlanFloatMenu(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
-		prepareLayout(context);
+		prepareLayout();
 	}
 
 	public void load(long readingPlanId, int dayNumber, int[] ariRanges, int sequence) {
@@ -79,8 +80,8 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, dayNumber);
 	}
 
-	private void prepareLayout(Context context) {
-		View view = LayoutInflater.from(context).inflate(R.layout.float_menu_reading_plan, this, true);
+	private void prepareLayout() {
+		View view = LayoutInflater.from(App.context).inflate(R.layout.float_menu_reading_plan, this, true);
 
 		bDescription = V.get(view, R.id.bDescription);
 		bLeft = V.get(view, R.id.bNavLeft);

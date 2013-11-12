@@ -5,7 +5,7 @@
 
     <ImageButton
             android:id="@+id/bNavLeft"
-            style="?attr/actionButtonStyle"
+            android:background="@drawable/abc_item_background_holo_dark"
             android:layout_width="36dp"
             android:layout_height="match_parent"
             android:contentDescription="@string/rp_floatPreviousReading"
@@ -22,7 +22,7 @@
             android:padding="4dp"/>
     <Button
             android:id="@+id/bDescription"
-            style="?attr/actionButtonStyle"
+            android:background="@drawable/abc_item_background_holo_dark"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -32,7 +32,7 @@
 
     <ImageButton
             android:id="@+id/bClose"
-            style="?attr/actionButtonStyle"
+            android:background="@drawable/abc_item_background_holo_dark"
             android:layout_width="32dp"
             android:layout_height="match_parent"
             android:contentDescription="@string/rp_floatClose"
@@ -42,7 +42,7 @@
 
     <ImageButton
             android:id="@+id/bNavRight"
-            style="?attr/actionButtonStyle"
+            android:background="@drawable/abc_item_background_holo_dark"
             android:layout_width="36dp"
             android:layout_height="match_parent"
             android:contentDescription="@string/rp_floatNextReading"
