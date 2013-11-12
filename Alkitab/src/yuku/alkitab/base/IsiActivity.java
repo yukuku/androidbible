@@ -305,7 +305,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsText.setInlineLinkSpanFactory(new VerseInlineLinkSpanFactory(lsText));
 		lsText.setSelectedVersesListener(lsText_selectedVerses);
 		lsText.setOnVerseScrollListener(lsText_verseScroll);
-		lsText.setOnVerseScrollStateChangeListener(lsText_verseScrollState);
+		lsText.setOnVerseScrollStateChangeListener(verseScrollState);
 		
 		// additional setup for split1
 		lsSplit1.setVerseSelectionMode(VersesView.VerseSelectionMode.multiple);
@@ -315,6 +315,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsSplit1.setInlineLinkSpanFactory(new VerseInlineLinkSpanFactory(lsSplit1));
 		lsSplit1.setSelectedVersesListener(lsSplit1_selectedVerses);
 		lsSplit1.setOnVerseScrollListener(lsSplit1_verseScroll);
+		lsSplit1.setOnVerseScrollStateChangeListener(verseScrollState);
 		
 		// for splitting
 		splitHandleButton.setListener(splitHandleButton_listener);
@@ -1736,7 +1737,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		@Override public void onVerseSingleClick(VersesView v, int verse_1) {}
 	};
 
-	VersesView.OnVerseScrollStateChangeListener lsText_verseScrollState = new VersesView.OnVerseScrollStateChangeListener() {
+	VersesView.OnVerseScrollStateChangeListener verseScrollState = new VersesView.OnVerseScrollStateChangeListener() {
 		@Override
 		public void onVerseScrollStateChange(final VersesView versesView, final int scrollState) {
 			if (!readingPlanFloatMenu.isActive) {
