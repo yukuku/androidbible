@@ -305,7 +305,7 @@
     <string name="rp_dayHeader">Day %1$s: %2$s</string>
     <string name="rp_floatPreviousReading">Previous reading</string>
     <string name="rp_floatCheckMark">Mark as read</string>
-    <string name="rp_floatDetail">Details</string>
+    <string name="rp_floatDescription">Show reading plan</string>
     <string name="rp_floatClose">Close reading plan mode</string>
     <string name="rp_floatNextReading">Next reading</string>
     <string name="rp_navigationPreviousDay">Previous day</string>

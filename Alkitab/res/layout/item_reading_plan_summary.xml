@@ -48,6 +48,7 @@
             android:id="@+id/tDetail"
             android:text="@string/rp_showDetails"
             android:paddingTop="4dp"
-            android:paddingBottom="4dp" android:textStyle="italic"/>
+            android:paddingBottom="4dp" android:textStyle="italic"
+            android:textColor="#35b5e6"/>
 
 </LinearLayout>

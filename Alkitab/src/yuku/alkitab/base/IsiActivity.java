@@ -124,7 +124,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private static final int REQCODE_version = 5;
 	private static final int REQCODE_search = 6;
 	private static final int REQCODE_share = 7;
-	private static final int REQCODE_songs = 8;
 	private static final int REQCODE_textAppearanceGetFonts = 9;
 	private static final int REQCODE_textAppearanceCustomColors = 10;
 	private static final int REQCODE_readingPlan = 11;
@@ -940,7 +939,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			startActivityForResult(new Intent(this, DevotionActivity.class), REQCODE_devotion);
 			return true;
 		case R.id.menuSongs:
-			startActivityForResult(SongViewActivity.createIntent(), REQCODE_songs);
+			startActivity(SongViewActivity.createIntent());
 			return true;
 		case R.id.menuReadingPlan:
 			startActivityForResult(new Intent(this, ReadingPlanActivity.class), REQCODE_readingPlan);
@@ -1236,16 +1235,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					history.add(result.ari);
 				}
 			}
-		} else if (requestCode == REQCODE_songs) {
-			if (resultCode == SongViewActivity.RESULT_gotoScripture && data != null) {
-				String ref = data.getStringExtra(SongViewActivity.EXTRA_ref);
-				if (ref != null) { // TODO
-					int ari = jumpTo(ref);
-					if (ari != 0) {
-						history.add(ari);
-					}
-				}
-			}
 		} else if (requestCode == REQCODE_settings) {
 			// MUST reload preferences
 			S.calculateAppliedValuesBasedOnPreferences();
@@ -1318,28 +1307,23 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						lsSplit1.updateAdapter();
 
 						readingPlanFloatMenu.load(id, dayNumber, ariRanges, i);
-						readingPlanFloatMenu.setLeftNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
+						final ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener navigationClickListener = new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
 							public void onClick(final int ari_start, final int ari_end) {
-								jumpToAri(ari_start);
-								history.add(ari_start);
+								int ari_jump = ari_start;
+								if (Ari.toVerse(ari_start) == 0) {
+									ari_jump |= 1;
+								}
+								jumpToAri(ari_jump);
+								history.add(ari_jump);
 								lsText.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
 								lsText.updateAdapter();
 								lsSplit1.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
 								lsSplit1.updateAdapter();
 							}
-						});
-						readingPlanFloatMenu.setRightNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
-							@Override
-							public void onClick(final int ari_start, final int ari_end) {
-								jumpToAri(ari_start);
-								history.add(ari_start);
-								lsText.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
-								lsText.updateAdapter();
-								lsSplit1.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
-								lsSplit1.updateAdapter();
-							}
-						});
+						};
+						readingPlanFloatMenu.setLeftNavigationClickListener(navigationClickListener);
+						readingPlanFloatMenu.setRightNavigationClickListener(navigationClickListener);
 						readingPlanFloatMenu.setDescriptionListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
 							public void onClick(final int ari_start, final int ari_end) {

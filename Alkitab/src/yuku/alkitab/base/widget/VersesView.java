@@ -74,10 +74,6 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		void onProgressMarkAttributeClick(int preset_id);
 	}
 
-	public abstract static class InlineLinkListener {
-		public abstract void onXrefClick(VersesView versesView, int ari, int which);
-	}
-	
 	public interface OnVerseScrollListener {
 		void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop);
 		void onScrollToTop(VersesView v);
