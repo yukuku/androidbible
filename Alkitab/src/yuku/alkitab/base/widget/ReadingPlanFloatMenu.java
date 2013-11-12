@@ -197,21 +197,14 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 
 		cbTick.setChecked(readMarks[sequence]);
 
-		SpannableStringBuilder reference = ReadingPlanActivity.getReference(S.activeVersion, new int[] {ariRanges[sequence], ariRanges[sequence + 1]});
+		final SpannableStringBuilder reference = ReadingPlanActivity.getReference(S.activeVersion, new int[] {ariRanges[sequence], ariRanges[sequence + 1]});
 		reference.append("\n");
 		reference.append("" + (sequence / 2 + 1));
 		reference.append("/" + (ariRanges.length / 2));
 		bDescription.setText(reference);
-		if (sequence == 0) {
-			bLeft.setEnabled(false);
-			bRight.setEnabled(true);
-		} else if (sequence == ariRanges.length - 2) {
-			bLeft.setEnabled(true);
-			bRight.setEnabled(false);
-		} else {
-			bLeft.setEnabled(true);
-			bRight.setEnabled(true);
-		}
+
+		bLeft.setEnabled(sequence != 0);
+		bRight.setEnabled(sequence != ariRanges.length - 2);
 	}
 
 	public void fadeoutAnimation(long startOffset) {
