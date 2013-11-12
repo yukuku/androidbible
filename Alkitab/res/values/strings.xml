@@ -299,14 +299,14 @@
     <string name="rp_commentOnSchedule">On schedule</string>
     <string name="rp_commentBehindSchedule">Behind the schedule: %s%%</string>
     <string name="rp_noReadingPlanAvailable">No reading plan available.</string>
-    <string name="rp_deletePlan">Delete %s?</string>
+    <string name="rp_deletePlan">"Delete '%s'?"</string>
     <string name="rp_reset">This action will shift your last fully read to yesterday.</string>
     <string name="rp_showCalendar">Show calendar</string>
     <string name="rp_gotoFirstUnread">Go to first unread</string>
     <string name="rp_dayHeader">Day %1$s: %2$s</string>
     <string name="rp_floatPreviousReading">Previous reading</string>
     <string name="rp_floatCheckMark">Mark as read</string>
-    <string name="rp_floatDetail">Detail</string>
+    <string name="rp_floatDetail">Details</string>
     <string name="rp_floatClose">Close reading plan mode</string>
     <string name="rp_floatNextReading">Next reading</string>
     <string name="rp_navigationPreviousDay">Previous day</string>
@@ -318,7 +318,7 @@
     <string name="rp_headingProgress">Progress</string>
     <string name="rp_gotoToday">Today</string>
     <string name="rp_showDetails">Show details</string>
-    <string name="rp_hideDetail">Hide detail</string>
+    <string name="rp_hideDetails">Hide details</string>
     <string name="rp_aboutPlan">About plan</string>
     <string name="rp_aboutPlanMessage">Title: %1$s \nDescription: %2$s \nDuration: %3$s days</string>
 </resources>

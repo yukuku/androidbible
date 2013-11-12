@@ -668,7 +668,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 					public void onClick(final View v) {
 						showDetail = !showDetail;
 						if (showDetail) {
-							tDetail.setText(R.string.rp_hideDetail);
+							tDetail.setText(R.string.rp_hideDetails);
 						} else {
 							tDetail.setText(R.string.rp_showDetails);
 						}
