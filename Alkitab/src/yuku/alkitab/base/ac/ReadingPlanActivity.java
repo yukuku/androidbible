@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.PopupMenu;
-import android.text.SpannableStringBuilder;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -550,30 +549,27 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		return date;
 	}
 
-	public static SpannableStringBuilder getReference(Version version, int[] ari) {
-		SpannableStringBuilder sb = new SpannableStringBuilder();
-		String book = version.getBook(Ari.toBook(ari[0])).shortName;
-		sb.append(book);
-		int startChapter = Ari.toChapter(ari[0]);
-		int startVerse = Ari.toVerse(ari[0]);
-		int lastVerse = Ari.toVerse(ari[1]);
-		int lastChapter = Ari.toChapter(ari[1]);
-
-		sb.append(" " + startChapter);
+	public static StringBuilder getReference(final Version version, final int ari_start, final int ari_end) {
+		final StringBuilder sb = new StringBuilder();
+		sb.append(version.reference(ari_start));
+		int startChapter = Ari.toChapter(ari_start);
+		int startVerse = Ari.toVerse(ari_start);
+		int lastVerse = Ari.toVerse(ari_end);
+		int lastChapter = Ari.toChapter(ari_end);
 
 		if (startVerse == 0) {
 			if (lastVerse == 0) {
 				if (startChapter != lastChapter) {
-					sb.append("-" + lastChapter);
+					sb.append("-").append(lastChapter);
 				}
 			} else {
-				sb.append("-" + lastChapter + ":" + lastVerse);
+				sb.append("-").append(lastChapter).append(":").append(lastVerse);
 			}
 		} else {
 			if (startChapter == lastChapter) {
-				sb.append(":" + startVerse + "-" + lastVerse);
+				sb.append("-").append(lastVerse);
 			} else {
-				sb.append(":" + startVerse + "-" + lastChapter + ":" + lastVerse);
+				sb.append("-").append(lastChapter).append(":").append(lastVerse);
 			}
 		}
 
@@ -620,9 +616,8 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				});
 
 				int start = position * 2;
-				int[] aris = {todayReadings[start], todayReadings[start + 1]};
 
-				checkbox.setText(getReference(S.activeVersion, aris));
+				checkbox.setText(getReference(S.activeVersion, todayReadings[start], todayReadings[start + 1]));
 				checkbox.setChecked(readMarks[position * 2]);
 
 			} else if (itemViewType == 1) {
@@ -691,10 +686,8 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				int[] aris = readingPlan.dailyVerses[currentViewTypePosition];
 				for (int i = 0; i < aris.length / 2; i++) {
 					final int ariPosition = i;
-					int[] ariStartEnd = {aris[i * 2], aris[i * 2 + 1]};
-					final SpannableStringBuilder reference = getReference(S.activeVersion, ariStartEnd);
 					CheckBox checkBox = new CheckBox(ReadingPlanActivity.this);
-					checkBox.setText(reference);
+					checkBox.setText(getReference(S.activeVersion, aris[i * 2], aris[i * 2 + 1]));
 					checkBox.setTag("reading");
 
 					boolean[] readMarks = new boolean[aris.length];
