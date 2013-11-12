@@ -89,7 +89,7 @@ public class LegacyVerseAdapter extends VerseAdapter {
 				if (checked) lIsiAyat.setTextColor(0xff000000); // override with black!
 			}
 
-			res.setShaded(checkShaded(Ari.encode(book_.bookId, chapter_1_, id + 1)));
+			res.setShaded(checkShadedForVerse(Ari.encode(book_.bookId, chapter_1_, id + 1)));
 
 			AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_attributes);
 			attributeView.showBookmark(attributeMap_ != null && (attributeMap_[id] & 0x1) != 0);
@@ -101,12 +101,12 @@ public class LegacyVerseAdapter extends VerseAdapter {
 		} else {
 			// JUDUL PERIKOP. bukan ayat.
 
-			View res;
+			final PericopeHeaderItem res;
 			if (convertView == null || convertView.getId() != R.layout.item_pericope_header) {
-				res = LayoutInflater.from(context_).inflate(R.layout.item_pericope_header, null);
+				res = (PericopeHeaderItem) inflater_.inflate(R.layout.item_pericope_header, null);
 				res.setId(R.layout.item_pericope_header);
 			} else {
-				res = convertView;
+				res = (PericopeHeaderItem) convertView;
 			}
 
 			PericopeBlock pericopeBlock = pericopeBlocks_[-id - 1];
@@ -123,13 +123,9 @@ public class LegacyVerseAdapter extends VerseAdapter {
 				lJudul.setPadding(0, (int) (S.applied.fontSize2dp * density_), 0, 0);
 			}
 
-			Appearances.applyPericopeTitleAppearance(lJudul);
+			res.setShaded(checkShadedForPericopeHeader(Ari.encode(book_.bookId, chapter_1_, 0), position));
 
-			if (checkShaded(Ari.encode(book_.bookId, chapter_1_, itemPointer_[position + 1]) + 1)) {
-				res.setBackgroundResource(R.drawable.shade_verse);
-			} else {
-				res.setBackgroundResource(0);
-			}
+			Appearances.applyPericopeTitleAppearance(lJudul);
 
 			// gonekan paralel kalo ga ada
 			if (pericopeBlock.parallels.length == 0) {
@@ -168,35 +164,6 @@ public class LegacyVerseAdapter extends VerseAdapter {
 
 			return res;
 		}
-	}
-
-	public boolean checkShaded(final int ari) {
-		if (ariRangesReadingPlan != null) {
-
-			int ariStart = ariRangesReadingPlan[0];
-			int ariEnd = ariRangesReadingPlan[1];
-
-			int ariEndVerse = Ari.toVerse(ariEnd);
-			int ariEndChapter = Ari.toChapter(ariEnd);
-
-			if (Ari.toBook(ari) != Ari.toBook(ariRangesReadingPlan[0])) {
-				return true;
-			}
-
-			if (ari < ariStart) {
-				return true;
-			} else if (ariEndVerse == 0) {
-				if (Ari.toChapter(ari) > ariEndChapter) {
-					return true;
-				}
-			} else if (ariEndChapter != 0) {
-				if (ari > ariEnd) {
-					return true;
-				}
-			}
-
-		}
-		return false;
 	}
 
 	public void tiledVerseDisplay(View res, int verse_1, String text, int highlightColor, boolean checked, boolean rightAfterPericope) {

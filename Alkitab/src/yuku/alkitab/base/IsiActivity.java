@@ -1318,28 +1318,23 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						lsSplit1.updateAdapter();
 
 						readingPlanFloatMenu.load(id, dayNumber, ariRanges, i);
-						readingPlanFloatMenu.setLeftNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
+						final ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener navigationClickListener = new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
 							public void onClick(final int ari_start, final int ari_end) {
-								jumpToAri(ari_start);
-								history.add(ari_start);
+								int ari_jump = ari_start;
+								if (Ari.toVerse(ari_start) == 0) {
+									ari_jump |= 1;
+								}
+								jumpToAri(ari_jump);
+								history.add(ari_jump);
 								lsText.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
 								lsText.updateAdapter();
 								lsSplit1.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
 								lsSplit1.updateAdapter();
 							}
-						});
-						readingPlanFloatMenu.setRightNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
-							@Override
-							public void onClick(final int ari_start, final int ari_end) {
-								jumpToAri(ari_start);
-								history.add(ari_start);
-								lsText.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
-								lsText.updateAdapter();
-								lsSplit1.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
-								lsSplit1.updateAdapter();
-							}
-						});
+						};
+						readingPlanFloatMenu.setLeftNavigationClickListener(navigationClickListener);
+						readingPlanFloatMenu.setRightNavigationClickListener(navigationClickListener);
 						readingPlanFloatMenu.setDescriptionListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
 							public void onClick(final int ari_start, final int ari_end) {

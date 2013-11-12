@@ -879,14 +879,14 @@ public class InternalDb {
 		return res;
 	}
 
-	public long insertReadingPlan(final ReadingPlan.ReadingPlanInfo info, byte[] buffer) {
-		ContentValues cv = new ContentValues();
+	public long insertReadingPlan(final ReadingPlan.ReadingPlanInfo info, byte[] data) {
+		final ContentValues cv = new ContentValues();
 		cv.put(Db.ReadingPlan.version, info.version);
 		cv.put(Db.ReadingPlan.title, info.title);
 		cv.put(Db.ReadingPlan.description, info.description);
 		cv.put(Db.ReadingPlan.duration, info.duration);
 		cv.put(Db.ReadingPlan.startDate, info.startDate);
-		cv.put(Db.ReadingPlan.data, buffer);
+		cv.put(Db.ReadingPlan.data, data);
 		return helper.getWritableDatabase().insert(Db.TABLE_ReadingPlan, null, cv);
 	}
 

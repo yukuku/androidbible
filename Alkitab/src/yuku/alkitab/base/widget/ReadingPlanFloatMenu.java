@@ -1,7 +1,6 @@
 package yuku.alkitab.base.widget;
 
 import android.content.Context;
-import android.text.SpannableStringBuilder;
 import android.util.AttributeSet;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -165,7 +164,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		bDescription.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(final View v) {
-				showTooltip(R.string.rp_floatDetail);
+				showTooltip(R.string.rp_floatDescription);
 				return true;
 			}
 		});
@@ -197,21 +196,14 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 
 		cbTick.setChecked(readMarks[sequence]);
 
-		SpannableStringBuilder reference = ReadingPlanActivity.getReference(S.activeVersion, new int[] {ariRanges[sequence], ariRanges[sequence + 1]});
+		final StringBuilder reference = ReadingPlanActivity.getReference(S.activeVersion, ariRanges[sequence], ariRanges[sequence + 1]);
 		reference.append("\n");
-		reference.append("" + (sequence / 2 + 1));
-		reference.append("/" + (ariRanges.length / 2));
+		reference.append(sequence / 2 + 1);
+		reference.append("/").append(ariRanges.length / 2);
 		bDescription.setText(reference);
-		if (sequence == 0) {
-			bLeft.setEnabled(false);
-			bRight.setEnabled(true);
-		} else if (sequence == ariRanges.length - 2) {
-			bLeft.setEnabled(true);
-			bRight.setEnabled(false);
-		} else {
-			bLeft.setEnabled(true);
-			bRight.setEnabled(true);
-		}
+
+		bLeft.setEnabled(sequence != 0);
+		bRight.setEnabled(sequence != ariRanges.length - 2);
 	}
 
 	public void fadeoutAnimation(long startOffset) {

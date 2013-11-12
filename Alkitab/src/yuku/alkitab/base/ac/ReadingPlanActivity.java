@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.PopupMenu;
-import android.text.SpannableStringBuilder;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -69,7 +68,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	private LinearLayout llNavigations;
 	private FrameLayout flNoData;
 	private Button bDownload;
-	private boolean showDetail;
+	private boolean showDetails;
 
 	public static Intent createIntent(int dayNumber) {
 		Intent intent = new Intent(App.context, ReadingPlanActivity.class);
@@ -550,30 +549,27 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		return date;
 	}
 
-	public static SpannableStringBuilder getReference(Version version, int[] ari) {
-		SpannableStringBuilder sb = new SpannableStringBuilder();
-		String book = version.getBook(Ari.toBook(ari[0])).shortName;
-		sb.append(book);
-		int startChapter = Ari.toChapter(ari[0]);
-		int startVerse = Ari.toVerse(ari[0]);
-		int lastVerse = Ari.toVerse(ari[1]);
-		int lastChapter = Ari.toChapter(ari[1]);
-
-		sb.append(" " + startChapter);
+	public static StringBuilder getReference(final Version version, final int ari_start, final int ari_end) {
+		final StringBuilder sb = new StringBuilder();
+		sb.append(version.reference(ari_start));
+		int startChapter = Ari.toChapter(ari_start);
+		int startVerse = Ari.toVerse(ari_start);
+		int lastVerse = Ari.toVerse(ari_end);
+		int lastChapter = Ari.toChapter(ari_end);
 
 		if (startVerse == 0) {
 			if (lastVerse == 0) {
 				if (startChapter != lastChapter) {
-					sb.append("-" + lastChapter);
+					sb.append("-").append(lastChapter);
 				}
 			} else {
-				sb.append("-" + lastChapter + ":" + lastVerse);
+				sb.append("-").append(lastChapter).append(":").append(lastVerse);
 			}
 		} else {
 			if (startChapter == lastChapter) {
-				sb.append(":" + startVerse + "-" + lastVerse);
+				sb.append("-").append(lastVerse);
 			} else {
-				sb.append(":" + startVerse + "-" + lastChapter + ":" + lastVerse);
+				sb.append("-").append(lastChapter).append(":").append(lastVerse);
 			}
 		}
 
@@ -590,7 +586,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 
 		@Override
 		public int getCount() {
-			if (showDetail) {
+			if (showDetails) {
 				return (todayReadings.length / 2) + readingPlan.info.duration + 1;
 			} else {
 				return (todayReadings.length / 2) +  1;
@@ -600,22 +596,16 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		@Override
 		public View getView(final int position, View convertView, final ViewGroup parent) {
 			final int itemViewType = getItemViewType(position);
+			final View res;
 
 			if (itemViewType == 0) {
-				CheckBox checkBox = new CheckBox(ReadingPlanActivity.this);
-				LinearLayout layout = new LinearLayout(ReadingPlanActivity.this);
-				layout.addView(checkBox);
-				convertView = layout;
+				res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_reading_plan_one_reading, parent, false);
+				final CheckBox checkbox = V.get(res, R.id.checkbox);
 
 				boolean[] readMarks = new boolean[todayReadings.length];
 				ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, dayNumber);
-				if (readMarks[position * 2]) {
-					checkBox.setChecked(true);
-				} else {
-					checkBox.setChecked(false);
-				}
 
-				checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+				checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 					@Override
 					public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
 						ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, dayNumber, position, isChecked);
@@ -626,22 +616,18 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				});
 
 				int start = position * 2;
-				int[] aris = {todayReadings[start], todayReadings[start + 1]};
-				checkBox.setText(getReference(S.activeVersion, aris));
-				checkBox.setFocusable(false);
-				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-				checkBox.setLayoutParams(layoutParams);
+
+				checkbox.setText(getReference(S.activeVersion, todayReadings[start], todayReadings[start + 1]));
+				checkbox.setChecked(readMarks[position * 2]);
 
 			} else if (itemViewType == 1) {
-				if (convertView == null) {
-					convertView = getLayoutInflater().inflate(R.layout.item_reading_plan_summary, parent, false);
-				}
+				res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_reading_plan_summary, parent, false);
 
-				final ProgressBar pbReadingProgress = V.get(convertView, R.id.pbReadingProgress);
-				final TextView tActual = V.get(convertView, R.id.tActual);
-				final TextView tTarget = V.get(convertView, R.id.tTarget);
-				final TextView tComment = V.get(convertView, R.id.tComment);
-				final TextView tDetail = V.get(convertView, R.id.tDetail);
+				final ProgressBar pbReadingProgress = V.get(res, R.id.pbReadingProgress);
+				final TextView tActual = V.get(res, R.id.tActual);
+				final TextView tTarget = V.get(res, R.id.tTarget);
+				final TextView tComment = V.get(res, R.id.tComment);
+				final TextView tDetail = V.get(res, R.id.tDetail);
 
 				float actualPercentage = getActualPercentage();
 				float targetPercentage = getTargetPercentage();
@@ -666,8 +652,8 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				tDetail.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(final View v) {
-						showDetail = !showDetail;
-						if (showDetail) {
+						showDetails = !showDetails;
+						if (showDetails) {
 							tDetail.setText(R.string.rp_hideDetails);
 						} else {
 							tDetail.setText(R.string.rp_showDetails);
@@ -677,16 +663,14 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				});
 
 			} else if (itemViewType == 2) {
-				if (convertView == null) {
-					convertView = getLayoutInflater().inflate(R.layout.item_reading_plan_one_day, parent, false);
-				}
+				res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_reading_plan_one_day, parent, false);
 
-				final LinearLayout layout = V.get(convertView, R.id.llOneDayReadingPlan);
+				final LinearLayout layout = V.get(res, R.id.llOneDayReadingPlan);
 
 				final int currentViewTypePosition = position - todayReadings.length / 2 - 1;
 
 				//Text title
-				TextView tTitle = V.get(convertView, android.R.id.text1);
+				TextView tTitle = V.get(res, android.R.id.text1);
 				tTitle.setText(getReadingDateHeader(currentViewTypePosition));
 
 				//Text reading
@@ -702,10 +686,8 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				int[] aris = readingPlan.dailyVerses[currentViewTypePosition];
 				for (int i = 0; i < aris.length / 2; i++) {
 					final int ariPosition = i;
-					int[] ariStartEnd = {aris[i * 2], aris[i * 2 + 1]};
-					final SpannableStringBuilder reference = getReference(S.activeVersion, ariStartEnd);
 					CheckBox checkBox = new CheckBox(ReadingPlanActivity.this);
-					checkBox.setText(reference);
+					checkBox.setText(getReference(S.activeVersion, aris[i * 2], aris[i * 2 + 1]));
 					checkBox.setTag("reading");
 
 					boolean[] readMarks = new boolean[aris.length];
@@ -725,9 +707,11 @@ public class ReadingPlanActivity extends ActionBarActivity {
 					});
 					layout.addView(checkBox);
 				}
+			} else {
+				res = null;
 			}
 
-			return convertView;
+			return res;
 		}
 
 		@Override

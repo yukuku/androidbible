@@ -41,7 +41,7 @@ public class VerseItem extends LinearLayout implements Checkable {
 
 		if (shaded) {
 			if (shadedBg == null) {
-				shadedBg = getResources().getDrawable(R.drawable.shade_verse);
+				shadedBg = getResources().getDrawable(R.drawable.reading_plan_disabled_verses_shade_tiled);
 			}
 
 			shadedBg.setBounds(0, 0, getWidth(), getHeight());
