@@ -234,7 +234,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			}
 		}
 
-		ArrayAdapter<String> navigationAdapter = new ArrayAdapter<String>(getActionBar().getThemedContext(), R.layout.support_simple_spinner_dropdown_item, titles);
+		ArrayAdapter<String> navigationAdapter = new ArrayAdapter<String>(actionBar.getThemedContext(), R.layout.support_simple_spinner_dropdown_item, titles);
 
 		newDropDownItems = false;
 		actionBar.setListNavigationCallbacks(navigationAdapter, new ActionBar.OnNavigationListener() {
