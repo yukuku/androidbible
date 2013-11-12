@@ -306,7 +306,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsText.setSelectedVersesListener(lsText_selectedVerses);
 		lsText.setOnVerseScrollListener(lsText_verseScroll);
 		lsText.setOnVerseScrollStateChangeListener(verseScrollState);
-		
+
 		// additional setup for split1
 		lsSplit1.setVerseSelectionMode(VersesView.VerseSelectionMode.multiple);
 		lsSplit1.setEmptyView(tSplitEmpty);
@@ -316,7 +316,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsSplit1.setSelectedVersesListener(lsSplit1_selectedVerses);
 		lsSplit1.setOnVerseScrollListener(lsSplit1_verseScroll);
 		lsSplit1.setOnVerseScrollStateChangeListener(verseScrollState);
-		
+
 		// for splitting
 		splitHandleButton.setListener(splitHandleButton_listener);
 		
@@ -1294,6 +1294,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 
 			readingPlanFloatMenu.setVisibility(View.VISIBLE);
+			readingPlanFloatMenu.fadeoutAnimation(5000);
 			readingPlanFloatMenu.isActive = true;
 
 			final int ari = data.getIntExtra("ari", 0);
