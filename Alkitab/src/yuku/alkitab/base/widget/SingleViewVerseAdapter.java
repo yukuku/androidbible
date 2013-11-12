@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.util.Ari;
@@ -16,6 +15,7 @@ import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.util.IntArrayList;
 import yuku.alkitab.base.util.TargetDecoder;
+import yuku.alkitab.debug.R;
 
 
 public class SingleViewVerseAdapter extends VerseAdapter {
@@ -28,7 +28,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 	@Override public synchronized View getView(int position, View convertView, ViewGroup parent) {
 		// Need to determine this is pericope or verse
 		int id = itemPointer_[position];
-		
+
 		if (id >= 0) {
 			// VERSE. not pericope
 			int verse_1 = id + 1;
@@ -61,6 +61,8 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			if (checked) {
 				lText.setTextColor(0xff000000); // override with black!
 			}
+
+			res.setShaded(checkShaded(ari));
 
 			final AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_attributes);
 			attributeView.showBookmark(attributeMap_ != null && (attributeMap_[id] & 0x1) != 0);
@@ -107,10 +109,16 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			} else {
 				paddingTop = S.applied.pericopeSpacingTop;
 			}
-			
+
 			res.setPadding(0, paddingTop, 0, S.applied.pericopeSpacingBottom);
 
 			Appearances.applyPericopeTitleAppearance(lCaption);
+
+			if (checkShaded(Ari.encode(book_.bookId, chapter_1_, itemPointer_[position + 1]) + 1)) {
+				res.setBackgroundResource(R.drawable.shade_verse);
+			} else {
+				res.setBackgroundResource(0);
+			}
 
 			// make parallel gone if not exist
 			if (pericopeBlock.parallels.length == 0) {
@@ -145,7 +153,36 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		}
 	}
 
-    private void appendParallel(SpannableStringBuilder sb, String parallel) {
+	public boolean checkShaded(final int ari) {
+		if (ariRangesReadingPlan != null) {
+
+			int ariStart = ariRangesReadingPlan[0];
+			int ariEnd = ariRangesReadingPlan[1];
+
+			int ariEndVerse = Ari.toVerse(ariEnd);
+			int ariEndChapter = Ari.toChapter(ariEnd);
+
+			if (Ari.toBook(ari) != Ari.toBook(ariRangesReadingPlan[0])) {
+				return true;
+			}
+
+			if (ari < ariStart) {
+				return true;
+			} else if (ariEndVerse == 0) {
+				if (Ari.toChapter(ari) > ariEndChapter) {
+					return true;
+				}
+			} else if (ariEndChapter != 0) {
+				if (ari > ariEnd) {
+					return true;
+				}
+			}
+
+		}
+		return false;
+	}
+
+	private void appendParallel(SpannableStringBuilder sb, String parallel) {
         int sb_len = sb.length();
 
         linked: {

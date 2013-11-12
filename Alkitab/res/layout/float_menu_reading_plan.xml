@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal">
+
+    <ImageButton
+            android:id="@+id/bNavLeft"
+            android:background="@drawable/abc_item_background_holo_dark"
+            android:layout_width="36dp"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/rp_floatPreviousReading"
+            android:padding="8dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_nav_left_light"/>
+
+    <CheckBox
+            android:id="@+id/cbTick"
+            android:layout_width="32dp"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/rp_floatCheckMark"
+            android:text=""
+            android:padding="4dp"/>
+    <Button
+            android:id="@+id/bDescription"
+            android:background="@drawable/abc_item_background_holo_dark"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:contentDescription="@string/rp_floatDetail"
+            android:textColor="#f0f0f0"
+            android:textSize="14sp"/>
+
+    <ImageButton
+            android:id="@+id/bClose"
+            android:background="@drawable/abc_item_background_holo_dark"
+            android:layout_width="32dp"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/rp_floatClose"
+            android:padding="8dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_close_light" />
+
+    <ImageButton
+            android:id="@+id/bNavRight"
+            android:background="@drawable/abc_item_background_holo_dark"
+            android:layout_width="36dp"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/rp_floatNextReading"
+            android:padding="8dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_nav_right_light" />
+</merge>

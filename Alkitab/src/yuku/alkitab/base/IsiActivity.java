@@ -36,6 +36,7 @@ import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
@@ -51,6 +52,7 @@ import yuku.alkitab.base.ac.BookmarkActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.GotoActivity;
 import yuku.alkitab.base.ac.HelpActivity;
+import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.ac.Search2Activity;
 import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.ShareActivity;
@@ -81,6 +83,7 @@ import yuku.alkitab.base.widget.Floater;
 import yuku.alkitab.base.widget.FormattedTextRenderer;
 import yuku.alkitab.base.widget.GotoButton;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
+import yuku.alkitab.base.widget.ReadingPlanFloatMenu;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
 import yuku.alkitab.base.widget.VerseInlineLinkSpan;
@@ -124,6 +127,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private static final int REQCODE_songs = 8;
 	private static final int REQCODE_textAppearanceGetFonts = 9;
 	private static final int REQCODE_textAppearanceCustomColors = 10;
+	private static final int REQCODE_readingPlan = 11;
 
 	private static final String EXTRA_verseUrl = "verseUrl"; //$NON-NLS-1$
 	private boolean uncheckVersesWhenActionModeDestroyed = true;
@@ -193,6 +197,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	ImageButton bLeft;
 	ImageButton bRight;
 	Floater floater;
+	ReadingPlanFloatMenu readingPlanFloatMenu;
 	
 	Book activeBook;
 	int chapter_1 = 0;
@@ -256,6 +261,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		bLeft = V.get(this, R.id.bLeft);
 		bRight = V.get(this, R.id.bRight);
 		floater = V.get(this, R.id.floater);
+		readingPlanFloatMenu = V.get(this, R.id.readingPlanFloatMenu);
 		
 		applyPreferences(false);
 		
@@ -299,7 +305,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsText.setInlineLinkSpanFactory(new VerseInlineLinkSpanFactory(lsText));
 		lsText.setSelectedVersesListener(lsText_selectedVerses);
 		lsText.setOnVerseScrollListener(lsText_verseScroll);
-		
+		lsText.setOnVerseScrollStateChangeListener(verseScrollState);
+
 		// additional setup for split1
 		lsSplit1.setVerseSelectionMode(VersesView.VerseSelectionMode.multiple);
 		lsSplit1.setEmptyView(tSplitEmpty);
@@ -308,7 +315,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsSplit1.setInlineLinkSpanFactory(new VerseInlineLinkSpanFactory(lsSplit1));
 		lsSplit1.setSelectedVersesListener(lsSplit1_selectedVerses);
 		lsSplit1.setOnVerseScrollListener(lsSplit1_verseScroll);
-		
+		lsSplit1.setOnVerseScrollStateChangeListener(verseScrollState);
+
 		// for splitting
 		splitHandleButton.setListener(splitHandleButton_listener);
 		
@@ -934,6 +942,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		case R.id.menuSongs:
 			startActivityForResult(SongViewActivity.createIntent(), REQCODE_songs);
 			return true;
+		case R.id.menuReadingPlan:
+			startActivityForResult(new Intent(this, ReadingPlanActivity.class), REQCODE_readingPlan);
+			return true;
 		case R.id.menuAbout:
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
@@ -1267,6 +1278,91 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			S.calculateAppliedValuesBasedOnPreferences();
 
 			applyPreferences(true);
+		} else if (requestCode == REQCODE_readingPlan) {
+			if (data == null && !readingPlanFloatMenu.isActive) {
+				return;
+			} else if (data == null) {
+				if (readingPlanFloatMenu.getReadingPlanId() != Preferences.getLong(Prefkey.active_reading_plan_id, 0)) {
+					readingPlanFloatMenu.setVisibility(View.GONE);
+					readingPlanFloatMenu.isActive = false;
+					return;
+				}
+				readingPlanFloatMenu.setVisibility(View.VISIBLE);
+				readingPlanFloatMenu.fadeoutAnimation(5000);
+				readingPlanFloatMenu.updateProgress();
+				readingPlanFloatMenu.updateLayout();
+				return;
+			}
+
+			readingPlanFloatMenu.setVisibility(View.VISIBLE);
+			readingPlanFloatMenu.fadeoutAnimation(5000);
+			readingPlanFloatMenu.isActive = true;
+
+			final int ari = data.getIntExtra("ari", 0);
+			final long id = data.getLongExtra(ReadingPlanActivity.READING_PLAN_ID, 0L);
+			final int dayNumber = data.getIntExtra(ReadingPlanActivity.READING_PLAN_DAY_NUMBER, 0);
+			final int[] ariRanges = data.getIntArrayExtra(ReadingPlanActivity.READING_PLAN_ARI_RANGES);
+
+			if (ari != 0 && ariRanges != null) {
+				for (int i = 0; i < ariRanges.length; i++) {
+					if (ariRanges[i] == ari) {
+						jumpToAri(ari);
+						history.add(ari);
+
+						int[] ariRangesInThisSequence = new int[2];
+						ariRangesInThisSequence[0] = ariRanges[i];
+						ariRangesInThisSequence[1] = ariRanges[i + 1];
+						lsText.setAriRangesReadingPlan(ariRangesInThisSequence);
+						lsText.updateAdapter();
+						lsSplit1.setAriRangesReadingPlan(ariRangesInThisSequence);
+						lsSplit1.updateAdapter();
+
+						readingPlanFloatMenu.load(id, dayNumber, ariRanges, i);
+						readingPlanFloatMenu.setLeftNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
+							@Override
+							public void onClick(final int ari_start, final int ari_end) {
+								jumpToAri(ari_start);
+								history.add(ari_start);
+								lsText.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
+								lsText.updateAdapter();
+								lsSplit1.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
+								lsSplit1.updateAdapter();
+							}
+						});
+						readingPlanFloatMenu.setRightNavigationClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
+							@Override
+							public void onClick(final int ari_start, final int ari_end) {
+								jumpToAri(ari_start);
+								history.add(ari_start);
+								lsText.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
+								lsText.updateAdapter();
+								lsSplit1.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
+								lsSplit1.updateAdapter();
+							}
+						});
+						readingPlanFloatMenu.setDescriptionListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
+							@Override
+							public void onClick(final int ari_start, final int ari_end) {
+								startActivityForResult(ReadingPlanActivity.createIntent(dayNumber), REQCODE_readingPlan);
+							}
+						});
+						readingPlanFloatMenu.setCloseReadingModeClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
+							@Override
+							public void onClick(final int ari_start, final int ari_end) {
+								readingPlanFloatMenu.clearAnimation();
+								readingPlanFloatMenu.setVisibility(View.GONE);
+								readingPlanFloatMenu.isActive = false;
+								lsText.setAriRangesReadingPlan(null);
+								lsText.updateAdapter();
+								lsSplit1.setAriRangesReadingPlan(null);
+								lsSplit1.updateAdapter();
+							}
+						});
+
+						break;
+					}
+				}
+			}
 		}
 	}
 
@@ -1637,9 +1733,28 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		@Override public void onVerseSingleClick(VersesView v, int verse_1) {}
 	};
-	
+
+	VersesView.OnVerseScrollStateChangeListener verseScrollState = new VersesView.OnVerseScrollStateChangeListener() {
+		@Override
+		public void onVerseScrollStateChange(final VersesView versesView, final int scrollState) {
+			if (!readingPlanFloatMenu.isActive) {
+				return;
+			}
+			if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+				readingPlanFloatMenu.isAnimating = false;
+				readingPlanFloatMenu.clearAnimation();
+				readingPlanFloatMenu.setVisibility(View.VISIBLE);
+			} else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
+				readingPlanFloatMenu.setVisibility(View.VISIBLE);
+			} else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && readingPlanFloatMenu.getVisibility() != View.GONE) {
+				readingPlanFloatMenu.fadeoutAnimation(3000);
+			}
+		}
+	};
+
 	VersesView.OnVerseScrollListener lsText_verseScroll = new VersesView.OnVerseScrollListener() {
 		@Override public void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop) {
+
 			if (!isPericope && activeSplitVersion != null) {
 				lsSplit1.scrollToVerse(verse_1, prop);
 			}

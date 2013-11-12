@@ -16,12 +16,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
-
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.model.PericopeBlock;
+import yuku.alkitab.util.Ari;
 
 /**
  * This has been completely superseded by {@link SingleViewVerseAdapter}, but because
@@ -89,6 +89,8 @@ public class LegacyVerseAdapter extends VerseAdapter {
 				if (checked) lIsiAyat.setTextColor(0xff000000); // override with black!
 			}
 
+			res.setShaded(checkShaded(Ari.encode(book_.bookId, chapter_1_, id + 1)));
+
 			AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_attributes);
 			attributeView.showBookmark(attributeMap_ != null && (attributeMap_[id] & 0x1) != 0);
 			attributeView.showNote(attributeMap_ != null && (attributeMap_[id] & 0x2) != 0);
@@ -122,6 +124,12 @@ public class LegacyVerseAdapter extends VerseAdapter {
 			}
 
 			Appearances.applyPericopeTitleAppearance(lJudul);
+
+			if (checkShaded(Ari.encode(book_.bookId, chapter_1_, itemPointer_[position + 1]) + 1)) {
+				res.setBackgroundResource(R.drawable.shade_verse);
+			} else {
+				res.setBackgroundResource(0);
+			}
 
 			// gonekan paralel kalo ga ada
 			if (pericopeBlock.parallels.length == 0) {
@@ -160,6 +168,35 @@ public class LegacyVerseAdapter extends VerseAdapter {
 
 			return res;
 		}
+	}
+
+	public boolean checkShaded(final int ari) {
+		if (ariRangesReadingPlan != null) {
+
+			int ariStart = ariRangesReadingPlan[0];
+			int ariEnd = ariRangesReadingPlan[1];
+
+			int ariEndVerse = Ari.toVerse(ariEnd);
+			int ariEndChapter = Ari.toChapter(ariEnd);
+
+			if (Ari.toBook(ari) != Ari.toBook(ariRangesReadingPlan[0])) {
+				return true;
+			}
+
+			if (ari < ariStart) {
+				return true;
+			} else if (ariEndVerse == 0) {
+				if (Ari.toChapter(ari) > ariEndChapter) {
+					return true;
+				}
+			} else if (ariEndChapter != 0) {
+				if (ari > ariEnd) {
+					return true;
+				}
+			}
+
+		}
+		return false;
 	}
 
 	public void tiledVerseDisplay(View res, int verse_1, String text, int highlightColor, boolean checked, boolean rightAfterPericope) {

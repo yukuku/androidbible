@@ -40,6 +40,8 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		insertDefaultProgressMarks(db);
 		createTableProgressMarkHistory(db);
 		createIndexProgressMarkHistory(db);
+		createTableReadingPlan(db);
+		createTableReadingPlanProgress(db);
 	}
 
 	private void createTableBookmark2(SQLiteDatabase db) {
@@ -51,7 +53,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		Db.Bookmark2.addTime + " integer, " + //$NON-NLS-1$
 		Db.Bookmark2.modifyTime + " integer)"); //$NON-NLS-1$
 	}
-	
+
 	private void createIndexBookmark2(SQLiteDatabase db) {
 		db.execSQL("create index if not exists index_201 on " + Db.TABLE_Bookmark2 + " (" + Db.Bookmark2.ari + ")"); //$NON-NLS-1$
 		db.execSQL("create index if not exists index_202 on " + Db.TABLE_Bookmark2 + " (" + Db.Bookmark2.kind + ", " + Db.Bookmark2.ari + ")"); //$NON-NLS-1$
@@ -59,7 +61,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL("create index if not exists index_204 on " + Db.TABLE_Bookmark2 + " (" + Db.Bookmark2.kind + ", " + Db.Bookmark2.addTime + ")"); //$NON-NLS-1$
 		db.execSQL("create index if not exists index_205 on " + Db.TABLE_Bookmark2 + " (" + Db.Bookmark2.kind + ", " + Db.Bookmark2.caption + " collate NOCASE)"); //$NON-NLS-1$
 	}
-	
+
 	private void createTableDevotion(SQLiteDatabase db) {
 		db.execSQL("create table if not exists " + Db.TABLE_Devotion + " (" + //$NON-NLS-1$
 		"_id integer primary key autoincrement, " + //$NON-NLS-1$
@@ -78,7 +80,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL("create index if not exists index_103 on " + Db.TABLE_Devotion + " (" + Db.Devotion.date + ")"); //$NON-NLS-1$
 		db.execSQL("create index if not exists index_104 on " + Db.TABLE_Devotion + " (" + Db.Devotion.touchTime + ")"); //$NON-NLS-1$
 	}
-	
+
 	private void createTableVersion(SQLiteDatabase db) {
 		db.execSQL("create table if not exists " + Db.TABLE_Version + " (" + //$NON-NLS-1$ //$NON-NLS-2$
 		"_id integer primary key autoincrement, " + //$NON-NLS-1$
@@ -91,7 +93,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		Db.Version.active + " integer, " + //$NON-NLS-1$
 		Db.Version.ordering + " integer)"); //$NON-NLS-1$
 	}
-	
+
 	private void createIndexVersion(SQLiteDatabase db) {
 		db.execSQL("create index if not exists index_301 on " + Db.TABLE_Version + " (" + Db.Version.ordering + ")"); //$NON-NLS-1$
 
@@ -99,7 +101,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL("create index if not exists index_302 on " + Db.TABLE_Version + " (" + Db.Version.shortName + ")"); //$NON-NLS-1$
 		db.execSQL("create index if not exists index_303 on " + Db.TABLE_Version + " (" + Db.Version.title + ")"); //$NON-NLS-1$
 	}
-	
+
 	private void createTableLabel(SQLiteDatabase db) {
 		db.execSQL("create table if not exists " + Db.TABLE_Label + " (" + //$NON-NLS-1$ //$NON-NLS-2$
 		"_id integer primary key autoincrement, " + //$NON-NLS-1$
@@ -107,18 +109,18 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		Db.Label.ordering + " integer, " + //$NON-NLS-1$
 		Db.Label.backgroundColor + " text)"); //$NON-NLS-1$
 	}
-	
+
 	private void createIndexLabel(SQLiteDatabase db) {
 		db.execSQL("create index if not exists index_401 on " + Db.TABLE_Label + " (" + Db.Label.ordering + ")"); //$NON-NLS-1$
 	}
-	
+
 	private void createTableBookmark2_Label(SQLiteDatabase db) {
 		db.execSQL("create table if not exists " + Db.TABLE_Bookmark2_Label + " (" + //$NON-NLS-1$ //$NON-NLS-2$
 		"_id integer primary key autoincrement, " + //$NON-NLS-1$
 		Db.Bookmark2_Label.bookmark2_id + " integer, " + //$NON-NLS-1$
 		Db.Bookmark2_Label.label_id + " integer)"); //$NON-NLS-1$
 	}
-	
+
 	private void createIndexBookmark2_Label(SQLiteDatabase db) {
 		db.execSQL("create index if not exists index_501 on "        + Db.TABLE_Bookmark2_Label + " (" + Db.Bookmark2_Label.bookmark2_id + ")"); //$NON-NLS-1$
 		db.execSQL("create index if not exists index_502 on "        + Db.TABLE_Bookmark2_Label + " (" + Db.Bookmark2_Label.label_id + ")"); //$NON-NLS-1$
@@ -159,10 +161,28 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			db.insert(Db.TABLE_ProgressMark, null, cv);
 		}
 	}
-	
+
+	private void createTableReadingPlan(final SQLiteDatabase db) {
+		db.execSQL("create table if not exists " + Db.TABLE_ReadingPlan + " (" +
+		"_id integer primary key autoincrement, " +
+		Db.ReadingPlan.version + " integer, " +
+		Db.ReadingPlan.title + " text, " +
+		Db.ReadingPlan.description + " text, " +
+		Db.ReadingPlan.duration + " integer, " +
+		Db.ReadingPlan.startDate + " integer, " +
+		Db.ReadingPlan.data + " blob)");
+	}
+
+	private void createTableReadingPlanProgress(final SQLiteDatabase db) {
+		db.execSQL("create table if not exists " + Db.TABLE_ReadingPlanProgress + " (" +
+		"_id integer primary key autoincrement, " +
+		Db.ReadingPlanProgress.reading_plan_id + " integer, " +
+		Db.ReadingPlanProgress.reading_code + " integer)");
+	}
+
 	@Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.d(TAG, "@@onUpgrade oldVersion=" + oldVersion + " newVersion=" + newVersion); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		if (oldVersion <= 23) {
 			convertFromBookmarkToBookmark2(db);
 		}
@@ -172,7 +192,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			createTableVersion(db);
 			createIndexVersion(db);
 		}
-		
+
 		if (oldVersion <= 69) { // 70: 2.0.0
 			// new tables Label and Bookmark2_Label
 			createTableLabel(db);
@@ -180,15 +200,15 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			createTableBookmark2_Label(db);
 			createIndexBookmark2_Label(db);
 		}
-		
+
 		if (oldVersion <= 70) { // 71: 2.0.0 too
 			createIndexBookmark2(db);
 		}
-		
+
 		if (oldVersion <= 71) { // 72: 2.0.0 too
 			createIndexDevotion(db);
 		}
-		
+
 		if (oldVersion > 50 && oldVersion <= 102) { // 103: 2.7.1
 			addShortNameColumnAndIndexToVersion(db);
 		}
@@ -199,6 +219,11 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			insertDefaultProgressMarks(db);
 			createTableProgressMarkHistory(db);
 			createIndexProgressMarkHistory(db);
+		}
+
+		if (oldVersion <= 134) { //135:
+			createTableReadingPlan(db);
+			createTableReadingPlanProgress(db);
 		}
 	}
 
@@ -223,7 +248,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 
 		createTableBookmark2(db);
 		createIndexBookmark2(db);
-		
+
 		// pindahin data dari Bukmak ke Bukmak2
 		db.beginTransaction();
 		try {
@@ -234,9 +259,9 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			int kolom_pasal = cursor.getColumnIndex(Bukmak.pasal);
 			int kolom_ayat = cursor.getColumnIndex(Bukmak.ayat);
 			int kolom_waktuTambah = cursor.getColumnIndex(Bukmak.waktuTambah);
-			
+
 			ContentValues cv = new ContentValues();
-			
+
 			// default
 			cv.put(Bookmark2.kind, Bookmark2.kind_bookmark);
 
@@ -247,12 +272,12 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		    	}
 
 		    	cv.put(Bookmark2.caption, cursor.getString(kolom_alamat));
-		    	
+
 		    	int kitab = cursor.getInt(kolom_kitab);
 		    	int pasal = cursor.getInt(kolom_pasal);
 		    	int ayat = cursor.getInt(kolom_ayat);
 		    	int ari = Ari.encode(kitab, pasal, ayat);
-		    	
+
 		    	cv.put(Bookmark2.ari, ari);
 		    	Integer waktu = Integer.valueOf(cursor.getString(kolom_waktuTambah));
 		    	cv.put(Bookmark2.addTime, waktu);
@@ -260,10 +285,11 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 				db.insertOrThrow(Db.TABLE_Bookmark2, null, cv);
 		    }
 		    cursor.close();
-			
+
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
 		}
 	}
+
 }

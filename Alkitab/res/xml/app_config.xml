@@ -66,4 +66,8 @@
     <share>
         <url format="http://ref.ly/{book.osis}.{chapter}.{verses};{version.shortName}" />
     </share>
+    <readingplan>
+        <rp_preset title="Twenty Minutes A Day" description="Twenty Minutes A Day" filename_rp_preset="wsts.rpb" url="http://alkitab-host.appspot.com/addon/rpb/wsts.rpb" />
+        <rp_preset title="TwentyOne Mnt A Day" description="Twenty One Minutes A Day" filename_rp_preset="wsts_ver2.rpb" url="http://alkitab-host.appspot.com/addon/rpb/wsts_ver2.rpb" />
+    </readingplan>
 </config>
