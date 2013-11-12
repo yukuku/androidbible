@@ -8,9 +8,9 @@ import yuku.alkitab.util.IntArrayList;
 import yuku.bintex.BintexReader;
 import yuku.bintex.ValueMap;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 
 public class ReadingPlanManager {
 	public static final String TAG = ReadingPlanManager.class.getSimpleName();
@@ -18,31 +18,23 @@ public class ReadingPlanManager {
 	private static final byte[] RPB_HEADER = {0x52, (byte) 0x8a, 0x61, 0x34, 0x00, (byte) 0xe0, (byte) 0xea};
 
 	public static long copyReadingPlanToDb(final int resId) {
-
 		ReadingPlan.ReadingPlanInfo info = new ReadingPlan.ReadingPlanInfo();
-		byte[] buffer = null;
 
 		try {
-
-			//check the file has correct header and  infos
-			InputStream stream = App.context.getResources().openRawResource(resId);
-			BintexReader reader = new BintexReader(stream);
-
-			readInfo(info, reader);
-			stream.close();
-
-			//start copying
-			InputStream is = App.context.getResources().openRawResource(resId);
-			buffer = new byte[is.available()];
+			final InputStream is = App.context.getResources().openRawResource(resId);
+			final byte[] buffer = new byte[is.available()];
 			is.read(buffer);
 
-			info.startDate = new Date().getTime();
+			//check the file has correct header and  infos
+			BintexReader reader = new BintexReader(new ByteArrayInputStream(buffer));
+			readInfo(info, reader);
+			reader.close();
 
+			return S.getDb().insertReadingPlan(info, buffer);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, "error reading reading plan", e);
+			return 0;
 		}
-
-		return S.getDb().insertReadingPlan(info, buffer);
 	}
 
 	public static void updateReadingPlanProgress(final long readingPlanId, final int dayNumber, final int readingSequence, final boolean checked) {
@@ -116,10 +108,6 @@ public class ReadingPlanManager {
 
 	public static int toReadingCode(int dayNumber, int readingSequence) {
 		return dayNumber << 8 | readingSequence;
-	}
-
-	public static int toDayNumber(int readingCode) {
-		return (readingCode & 0x00ffff00) >> 8;
 	}
 
 	public static int toSequence(int readingCode) {

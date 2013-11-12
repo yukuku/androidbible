@@ -68,7 +68,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	private LinearLayout llNavigations;
 	private FrameLayout flNoData;
 	private Button bDownload;
-	private boolean showDetail;
+	private boolean showDetails;
 
 	public static Intent createIntent(int dayNumber) {
 		Intent intent = new Intent(App.context, ReadingPlanActivity.class);
@@ -586,7 +586,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 
 		@Override
 		public int getCount() {
-			if (showDetail) {
+			if (showDetails) {
 				return (todayReadings.length / 2) + readingPlan.info.duration + 1;
 			} else {
 				return (todayReadings.length / 2) +  1;
@@ -652,8 +652,8 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				tDetail.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(final View v) {
-						showDetail = !showDetail;
-						if (showDetail) {
+						showDetails = !showDetails;
+						if (showDetails) {
 							tDetail.setText(R.string.rp_hideDetails);
 						} else {
 							tDetail.setText(R.string.rp_showDetails);

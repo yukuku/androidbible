@@ -42,6 +42,55 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		createIndexProgressMarkHistory(db);
 		createTableReadingPlan(db);
 		createTableReadingPlanProgress(db);
+		createIndexReadingPlanProgress(db);
+	}
+
+	@Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		Log.d(TAG, "@@onUpgrade oldVersion=" + oldVersion + " newVersion=" + newVersion); //$NON-NLS-1$ //$NON-NLS-2$
+
+		if (oldVersion <= 23) {
+			convertFromBookmarkToBookmark2(db);
+		}
+
+		if (oldVersion <= 50) {
+			// new table Version
+			createTableVersion(db);
+			createIndexVersion(db);
+		}
+
+		if (oldVersion <= 69) { // 70: 2.0.0
+			// new tables Label and Bookmark2_Label
+			createTableLabel(db);
+			createIndexLabel(db);
+			createTableBookmark2_Label(db);
+			createIndexBookmark2_Label(db);
+		}
+
+		if (oldVersion <= 70) { // 71: 2.0.0 too
+			createIndexBookmark2(db);
+		}
+
+		if (oldVersion <= 71) { // 72: 2.0.0 too
+			createIndexDevotion(db);
+		}
+
+		if (oldVersion > 50 && oldVersion <= 102) { // 103: 2.7.1
+			addShortNameColumnAndIndexToVersion(db);
+		}
+
+		if (oldVersion <= 126) { // 127: 3.2.0
+			createTableProgressMark(db);
+			createIndexProgressMark(db);
+			insertDefaultProgressMarks(db);
+			createTableProgressMarkHistory(db);
+			createIndexProgressMarkHistory(db);
+		}
+
+		if (oldVersion <= 136) { // 137: 3.4.0
+			createTableReadingPlan(db);
+			createTableReadingPlanProgress(db);
+			createIndexReadingPlanProgress(db);
+		}
 	}
 
 	private void createTableBookmark2(SQLiteDatabase db) {
@@ -180,51 +229,8 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		Db.ReadingPlanProgress.reading_code + " integer)");
 	}
 
-	@Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		Log.d(TAG, "@@onUpgrade oldVersion=" + oldVersion + " newVersion=" + newVersion); //$NON-NLS-1$ //$NON-NLS-2$
-
-		if (oldVersion <= 23) {
-			convertFromBookmarkToBookmark2(db);
-		}
-
-		if (oldVersion <= 50) {
-			// new table Version
-			createTableVersion(db);
-			createIndexVersion(db);
-		}
-
-		if (oldVersion <= 69) { // 70: 2.0.0
-			// new tables Label and Bookmark2_Label
-			createTableLabel(db);
-			createIndexLabel(db);
-			createTableBookmark2_Label(db);
-			createIndexBookmark2_Label(db);
-		}
-
-		if (oldVersion <= 70) { // 71: 2.0.0 too
-			createIndexBookmark2(db);
-		}
-
-		if (oldVersion <= 71) { // 72: 2.0.0 too
-			createIndexDevotion(db);
-		}
-
-		if (oldVersion > 50 && oldVersion <= 102) { // 103: 2.7.1
-			addShortNameColumnAndIndexToVersion(db);
-		}
-
-		if (oldVersion <= 126) { // 127: 3.2.0
-			createTableProgressMark(db);
-			createIndexProgressMark(db);
-			insertDefaultProgressMarks(db);
-			createTableProgressMarkHistory(db);
-			createIndexProgressMarkHistory(db);
-		}
-
-		if (oldVersion <= 134) { //135:
-			createTableReadingPlan(db);
-			createTableReadingPlanProgress(db);
-		}
+	private void createIndexReadingPlanProgress(SQLiteDatabase db) {
+		db.execSQL("create index if not exists index_901 on " + Db.TABLE_ReadingPlanProgress + " (" + Db.ReadingPlanProgress.reading_plan_id + ", " + Db.ReadingPlanProgress.reading_code + ")");
 	}
 
 	private void addShortNameColumnAndIndexToVersion(SQLiteDatabase db) {
