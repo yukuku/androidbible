@@ -69,15 +69,15 @@
     <readingplan>
         <rp_preset title="Twenty Minutes A Day" description="This schedule is planned as a guide to help you read through the whole Bible with understanding in the space of one year. Reading for twenty minutes a day at the end of a year you will have read through the New Testament twice and the Old Testament once."
                    filename_rp_preset="rp_wsts_twenty_minutes_a_day.rpb" url="http://alkitab-host.appspot.com/addon/rpb/rp_wsts_twenty_minutes_a_day.rpb" />
-        <rp_preset title="ESV Chronological Reading Bible" description="Chronological Reading Bible (www.esv.org/biblereadingplans)"
+        <rp_preset title="ESV Chronological Reading Bible" description="ESV Chronological Reading Bible (www.esv.org/biblereadingplans)"
                    filename_rp_preset="rp_esv_chronological.rpb" url="http://alkitab-host.appspot.com/addon/rpb/rp_esv_chronological.rpb" />
-        <rp_preset title="ESV Daily Reading Bible" description="Daily Reading Bible (www.esv.org/biblereadingplans)"
+        <rp_preset title="ESV Daily Reading Bible" description="ESV Daily Reading Bible (www.esv.org/biblereadingplans)"
                    filename_rp_preset="rp_esv_daily_reading_bible.rpb" url="http://alkitab-host.appspot.com/addon/rpb/rp_esv_daily_reading_bible.rpb" />
-        <rp_preset title="ESV Every Day in the Word" description="Every Day in the Word (www.esv.org/biblereadingplans)"
+        <rp_preset title="ESV Every Day in the Word" description="ESV Every Day in the Word (www.esv.org/biblereadingplans)"
                    filename_rp_preset="rp_esv_everyday_in_the_word.rpb" url="http://alkitab-host.appspot.com/addon/rpb/rp_esv_everyday_in_the_word.rpb" />
-        <rp_preset title="M'Cheyne Bible Reading Plan" description="M'Cheyne Bible Reading Plan (www.esv.org/biblereadingplans)"
+        <rp_preset title="ESV M'Cheyne Bible Reading Plan" description="ESV M'Cheyne Bible Reading Plan (www.esv.org/biblereadingplans)"
                    filename_rp_preset="rp_esv_mcheyne.rpb" url="http://alkitab-host.appspot.com/addon/rpb/rp_esv_mcheyne.rpb" />
-        <rp_preset title="Through the Bible in a Year Reading Plan" description="ESV Through the Bible in a Year Reading Plan (www.esv.org/biblereadingplans)"
+        <rp_preset title="ESV Through the Bible in a Year Reading Plan" description="ESV Through the Bible in a Year Reading Plan (www.esv.org/biblereadingplans)"
                    filename_rp_preset="rp_esv_through_the_bible_in_a_year.rpb" url="http://alkitab-host.appspot.com/addon/rpb/rp_esv_through_the_bible_in_a_year.rpb" />
         <rp_preset title="Blue Letter One Year Canonical Plan" description="This plan goes straight through the Bible from Genesis to Revelation. You will be supplied with reading for each day of the week as a steady guide toward finishing the entire Bible in one calendar year."
                    filename_rp_preset="rp_blueletter_one_year_canonical.rpb" url="http://alkitab-host.appspot.com/addon/rpb/rp_blueletter_one_year_canonical.rpb" />
