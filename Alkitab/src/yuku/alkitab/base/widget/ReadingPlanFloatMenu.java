@@ -43,6 +43,8 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 	private ImageButton bRight;
 	private CheckBox cbTick;
 
+	private Toast tooltip;
+
 	@Override
 	public boolean onInterceptTouchEvent(final MotionEvent ev) {
 		if (ev.getAction() == MotionEvent.ACTION_DOWN) {
@@ -143,7 +145,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		bLeft.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(final View v) {
-				Toast.makeText(v.getContext(), R.string.rp_floatPreviousReading, Toast.LENGTH_SHORT).show();
+				showTooltip(R.string.rp_floatPreviousReading);
 				return true;
 			}
 		});
@@ -151,7 +153,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		bRight.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(final View v) {
-				Toast.makeText(v.getContext(), R.string.rp_floatNextReading, Toast.LENGTH_SHORT).show();
+				showTooltip(R.string.rp_floatNextReading);
 				return true;
 			}
 		});
@@ -159,7 +161,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		cbTick.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(final View v) {
-				Toast.makeText(v.getContext(), R.string.rp_floatCheckMark, Toast.LENGTH_SHORT).show();
+				showTooltip(R.string.rp_floatCheckMark);
 				return true;
 			}
 		});
@@ -167,7 +169,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		bDescription.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(final View v) {
-				Toast.makeText(v.getContext(), R.string.rp_floatDetail, Toast.LENGTH_SHORT).show();
+				showTooltip(R.string.rp_floatDetail);
 				return true;
 			}
 		});
@@ -175,11 +177,20 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		bClose.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(final View v) {
-				Toast.makeText(v.getContext(), R.string.rp_floatClose, Toast.LENGTH_SHORT).show();
+				showTooltip(R.string.rp_floatClose);
 				return true;
 			}
 		});
 
+	}
+
+	private void showTooltip(final int resId) {
+		if (tooltip == null) {
+			tooltip = Toast.makeText(getContext(), resId, Toast.LENGTH_SHORT);
+		} else {
+			tooltip.setText(resId);
+		}
+		tooltip.show();
 	}
 
 	public void updateLayout() {
