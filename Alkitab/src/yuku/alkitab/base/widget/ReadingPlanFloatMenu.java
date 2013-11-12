@@ -165,7 +165,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		bDescription.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(final View v) {
-				showTooltip(R.string.rp_floatDetail);
+				showTooltip(R.string.rp_floatDescription);
 				return true;
 			}
 		});

@@ -28,7 +28,8 @@
             <View android:layout_height="fill_parent"
                   android:layout_width="1dp"
                   android:background="#90909090"
-                  android:layout_margin="4dp"/>
+                  android:layout_marginTop="4dp"
+                  android:layout_marginBottom="4dp"/>
 
             <Button
                     android:id="@+id/bToday"
@@ -42,7 +43,8 @@
             <View android:layout_height="fill_parent"
                   android:layout_width="1dp"
                   android:background="#90909090"
-                  android:layout_margin="4dp"/>
+                  android:layout_marginTop="4dp"
+                  android:layout_marginBottom="4dp"/>
 
             <ImageButton
                     android:id="@+id/bRight"
