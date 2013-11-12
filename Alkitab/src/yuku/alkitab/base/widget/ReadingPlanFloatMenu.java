@@ -3,6 +3,7 @@ package yuku.alkitab.base.widget;
 import android.content.Context;
 import android.text.SpannableStringBuilder;
 import android.util.AttributeSet;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,7 +16,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import yuku.afw.V;
-import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.util.ReadingPlanManager;
@@ -34,7 +34,6 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 
 	private ReadingPlanFloatMenuClickListener leftNavigationListener;
 	private ReadingPlanFloatMenuClickListener rightNavigationListener;
-	private ReadingPlanFloatMenuClickListener readMarkListener;
 	private ReadingPlanFloatMenuClickListener descriptionListener;
 	private ReadingPlanFloatMenuClickListener closeReadingModeListener;
 
@@ -83,7 +82,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 	}
 
 	private void prepareLayout() {
-		View view = LayoutInflater.from(App.context).inflate(R.layout.float_menu_reading_plan, this, true);
+		View view = LayoutInflater.from(new ContextThemeWrapper(getContext(), R.style.Theme_AppCompat)).inflate(R.layout.float_menu_reading_plan, this, true);
 
 		bDescription = V.get(view, R.id.bDescription);
 		bLeft = V.get(view, R.id.bNavLeft);
@@ -121,9 +120,6 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 
 				ReadingPlanManager.updateReadingPlanProgress(id, dayNumber, sequence / 2, isChecked);
 				updateLayout();
-				if (readMarkListener != null) {
-					readMarkListener.onClick(ariRanges[sequence], ariRanges[sequence + 1]);
-				}
 			}
 		});
 
@@ -244,22 +240,12 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		return id;
 	}
 
-	public int[] getAriRanges() {
-		return ariRanges;
-	}
-
-	public int getSequence() { return sequence; }
-
 	public void setLeftNavigationClickListener(final ReadingPlanFloatMenuClickListener leftNavigationClickListener) {
 		this.leftNavigationListener = leftNavigationClickListener;
 	}
 
 	public void setRightNavigationClickListener(final ReadingPlanFloatMenuClickListener rightNavigationClickListener) {
 		this.rightNavigationListener = rightNavigationClickListener;
-	}
-
-	public void setReadMarkClickListener(final ReadingPlanFloatMenuClickListener readMarkClickListener) {
-		this.readMarkListener = readMarkClickListener;
 	}
 
 	public void setDescriptionListener(final ReadingPlanFloatMenuClickListener descriptionListener) {
