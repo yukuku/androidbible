@@ -124,7 +124,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private static final int REQCODE_version = 5;
 	private static final int REQCODE_search = 6;
 	private static final int REQCODE_share = 7;
-	private static final int REQCODE_songs = 8;
 	private static final int REQCODE_textAppearanceGetFonts = 9;
 	private static final int REQCODE_textAppearanceCustomColors = 10;
 	private static final int REQCODE_readingPlan = 11;
@@ -940,7 +939,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			startActivityForResult(new Intent(this, DevotionActivity.class), REQCODE_devotion);
 			return true;
 		case R.id.menuSongs:
-			startActivityForResult(SongViewActivity.createIntent(), REQCODE_songs);
+			startActivity(SongViewActivity.createIntent());
 			return true;
 		case R.id.menuReadingPlan:
 			startActivityForResult(new Intent(this, ReadingPlanActivity.class), REQCODE_readingPlan);
@@ -1234,16 +1233,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				if (result != null && result.ari != 0) {
 					jumpToAri(result.ari);
 					history.add(result.ari);
-				}
-			}
-		} else if (requestCode == REQCODE_songs) {
-			if (resultCode == SongViewActivity.RESULT_gotoScripture && data != null) {
-				String ref = data.getStringExtra(SongViewActivity.EXTRA_ref);
-				if (ref != null) { // TODO
-					int ari = jumpTo(ref);
-					if (ari != 0) {
-						history.add(ari);
-					}
 				}
 			}
 		} else if (requestCode == REQCODE_settings) {
