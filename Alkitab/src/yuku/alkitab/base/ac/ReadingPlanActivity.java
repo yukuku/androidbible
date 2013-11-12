@@ -242,6 +242,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				if (newDropDownItems) {
 					loadReadingPlan(downloadedReadingPlanInfos.get(i).id);
 					loadReadingPlanProgress();
+					loadDayNumber();
 					prepareDisplay();
 				}
 				return true;
