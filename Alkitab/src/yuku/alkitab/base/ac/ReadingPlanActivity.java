@@ -106,6 +106,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_reading_plan, menu);
 		this.menu = menu;
+		setReadingPlanMenuVisibility();
 		return true;
 	}
 
