@@ -59,6 +59,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	private IntArrayList readingCodes;
 	private boolean newDropDownItems;
 
+	private Menu menu;
 	private ImageButton bLeft;
 	private ImageButton bRight;
 	private Button bToday;
@@ -104,6 +105,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_reading_plan, menu);
+		this.menu = menu;
 		return true;
 	}
 
@@ -260,6 +262,13 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		});
 		actionBar.setSelectedNavigationItem(itemNumber);
 		return false;
+	}
+
+	private void setReadingPlanMenuVisibility() {
+		boolean visible = downloadedReadingPlanInfos.size() != 0;
+		menu.findItem(R.id.menuReset).setVisible(visible);
+		menu.findItem(R.id.menuDelete).setVisible(visible);
+		menu.findItem(R.id.menuAbout).setVisible(visible);
 	}
 
 	public void prepareDisplay() {
@@ -431,6 +440,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				loadDayNumber(true);
 				prepareDropDownNavigation();
 				prepareDisplay();
+				setReadingPlanMenuVisibility();
 			}
 		})
 		.setNegativeButton(R.string.cancel, null)
@@ -511,6 +521,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 					loadDayNumber(true);
 					prepareDropDownNavigation();
 					prepareDisplay();
+					setReadingPlanMenuVisibility();
 					dialog.dismiss();
 				}
 			})
