@@ -42,6 +42,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 	private CheckBox cbTick;
 
 	private Toast tooltip;
+	private View view;
 
 	@Override
 	public boolean onInterceptTouchEvent(final MotionEvent ev) {
@@ -55,12 +56,10 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 
 	public ReadingPlanFloatMenu(final Context context) {
 		super(context);
-		prepareLayout();
 	}
 
 	public ReadingPlanFloatMenu(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
-		prepareLayout();
 	}
 
 	public void load(long readingPlanId, int dayNumber, int[] ariRanges, int sequence) {
@@ -71,6 +70,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		this.readMarks = new boolean[ariRanges.length];
 
 		updateProgress();
+		prepareLayout();
 		updateLayout();
 	}
 
@@ -81,8 +81,10 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 	}
 
 	private void prepareLayout() {
-		View view = LayoutInflater.from(new ContextThemeWrapper(getContext(), R.style.Theme_AppCompat)).inflate(R.layout.float_menu_reading_plan, this, true);
-
+		if (view != null) {
+			return;
+		}
+		view = LayoutInflater.from(new ContextThemeWrapper(getContext(), R.style.Theme_AppCompat)).inflate(R.layout.float_menu_reading_plan, this, true);
 		bDescription = V.get(view, R.id.bDescription);
 		bLeft = V.get(view, R.id.bNavLeft);
 		bRight = V.get(view, R.id.bNavRight);
