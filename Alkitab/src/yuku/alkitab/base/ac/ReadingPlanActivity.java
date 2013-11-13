@@ -94,8 +94,8 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		long id = Preferences.getLong(Prefkey.active_reading_plan_id, 0);
 		loadReadingPlan(id);
 		loadReadingPlanProgress();
-		loadDayNumber();
 		prepareDropDownNavigation();
+		loadDayNumber(false);
 		prepareDisplay();
 
 	}
@@ -175,7 +175,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		finish();
 	}
 
-	private void loadDayNumber() {
+	private void loadDayNumber(boolean setAsToday) {
 		if (readingPlan == null) {
 			return;
 		}
@@ -190,9 +190,13 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			todayNumber = 0;
 		}
 
-		dayNumber = getIntent().getIntExtra(READING_PLAN_DAY_NUMBER, -1);
-		if (dayNumber == -1) {
+		if (setAsToday) {
 			dayNumber = todayNumber;
+		} else {
+			dayNumber = getIntent().getIntExtra(READING_PLAN_DAY_NUMBER, -1);
+			if (dayNumber == -1) {
+				dayNumber = todayNumber;
+			}
 		}
 	}
 
@@ -242,14 +246,14 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				if (newDropDownItems) {
 					loadReadingPlan(downloadedReadingPlanInfos.get(i).id);
 					loadReadingPlanProgress();
-					loadDayNumber();
+					loadDayNumber(true);
 					prepareDisplay();
 				}
+				newDropDownItems = true;
 				return true;
 			}
 		});
 		actionBar.setSelectedNavigationItem(itemNumber);
-		newDropDownItems = true;
 		return false;
 	}
 
@@ -320,7 +324,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			}
 
 			private void gotoToday() {
-				loadDayNumber();
+				loadDayNumber(true);
 				changeDay(0);
 			}
 
@@ -383,7 +387,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				calendar.add(Calendar.DATE, -firstUnreadDay);
 				S.getDb().updateStartDate(readingPlan.info.id, calendar.getTime().getTime());
 				loadReadingPlan(readingPlan.info.id);
-				loadDayNumber();
+				loadDayNumber(true);
 				readingPlanAdapter.load();
 				readingPlanAdapter.notifyDataSetChanged();
 
@@ -419,7 +423,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				Preferences.remove(Prefkey.active_reading_plan_id);
 				loadReadingPlan(0);
 				loadReadingPlanProgress();
-				loadDayNumber();
+				loadDayNumber(true);
 				prepareDropDownNavigation();
 				prepareDisplay();
 			}
@@ -497,9 +501,9 @@ public class ReadingPlanActivity extends ActionBarActivity {
 					long id = ReadingPlanManager.copyReadingPlanToDb(resources.get(which));
 
 					Preferences.setLong(Prefkey.active_reading_plan_id, id);
-					loadDayNumber();
 					loadReadingPlan(id);
 					loadReadingPlanProgress();
+					loadDayNumber(true);
 					prepareDropDownNavigation();
 					prepareDisplay();
 					dialog.dismiss();
