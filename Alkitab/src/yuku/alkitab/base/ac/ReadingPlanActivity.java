@@ -90,6 +90,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		bRight = V.get(this, R.id.bRight);
 		bDownload = V.get(this, R.id.bDownload);
 		actionBar = getSupportActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true);
 
 		long id = Preferences.getLong(Prefkey.active_reading_plan_id, 0);
 		loadReadingPlan(id);
@@ -109,7 +110,10 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		int itemId = item.getItemId();
-		if (itemId == R.id.menuReset) {
+		if (itemId == android.R.id.home) {
+			finish();
+			return true;
+		} else if (itemId == R.id.menuReset) {
 			resetReadingPlan();
 			return true;
 		} else if (itemId == R.id.menuDownload) {
@@ -218,6 +222,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	public boolean prepareDropDownNavigation() {
 		if (downloadedReadingPlanInfos.size() == 0) {
 			actionBar.setDisplayShowTitleEnabled(true);
+			actionBar.setTitle(R.string.rp_menuReadingPlan);
 			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 			return true;
 		}
