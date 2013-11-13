@@ -1,18 +1,17 @@
 package yuku.readingplanconverter;
 
-import yuku.alkitab.yes2.io.RandomOutputStream;
 import yuku.bintex.BintexWriter;
 import yuku.bintex.ValueMap;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.List;
 import java.util.Map;
 
 public class RpaToRpb {
-	private static final String INPUT_FILE = System.getProperty("user.dir") + "/RpaToRpb/file/wsts_ver2.rpa";
-	private static final String OUTPUT_FILE = System.getProperty("user.dir") + "/RpaToRpb/file/wsts_ver2.rpb";
+	private static final String INPUT_FILE = System.getProperty("user.dir") + "/RpaToRpb/file/rp_blueletter_one_year_canonical.rpa";
+	private static final String OUTPUT_FILE = System.getProperty("user.dir") + "/RpaToRpb/file/rp_blueletter_one_year_canonical.rpb";
 	private static RpaInput.Rpa rpa;
 
 	private static final byte RPB_VERSION = 0x01;
@@ -26,10 +25,7 @@ public class RpaToRpb {
 
 	private static void createRpbFile(final File file) {
 		try {
-			RandomAccessFile raf = new RandomAccessFile(file, "rw");
-			raf.setLength(0);
-			RandomOutputStream output = new RandomOutputStream(raf);
-			BintexWriter writer = new BintexWriter(output);
+			BintexWriter writer = new BintexWriter(new FileOutputStream(file));
 
 			//Write Header
 			writer.writeRaw(RPB_HEADER);
