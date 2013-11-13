@@ -14,8 +14,8 @@ public class DesktopVerseParser {
 	/////////////////////////////////////  2 book name with optional period and spaces after it
 	/////////////////////////////////////   3 book name                
 	///////////////////////////////////// ... 4 numbers (chapter or chapter:verse, with ',' or ';' or 'dan') which is not followed by nofollow
-	static Pattern reg = Pattern.compile("(((" + bookNamesPattern_indonesian + "|" + bookNamesPattern_english + ")(?:\\.?\\s+|\\.))(\\d+(?:(?:-|:|(?:;\\s*\\d+:\\s*)|,|\\.|\\d|dan|\\s)+\\d+)?))", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
-	
+	static Pattern reg = Pattern.compile("((\\b(" + bookNamesPattern_indonesian + "|" + bookNamesPattern_english + ")\\b(?:\\.?\\s+|\\.)?)(\\d+(?:(?:-|:|(?:;\\s*\\d+:\\s*)|,|\\.|\\d|dan|\\s)+\\d+)?)?)", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+
 	static Pattern numberRangeSplitter = Pattern.compile("\\s*(;|,|dan)\\s*" /* NOT case insensitive */);
 	
 	static Pattern numberStartEndSplitter = Pattern.compile("\\s*--?\\s*");
@@ -135,6 +135,16 @@ public class DesktopVerseParser {
 		IntArrayList res = new IntArrayList();
 		
 		String numbers = m.group(4);
+
+		if (numbers == null && singleChapterBook) {
+			int cv = parseCv("0", singleChapterBook, 0);
+			if (cv != 0 && singleChapterBook) {
+				res.add(book_0_shifted | cv); // start
+				res.add(book_0_shifted | cv); // end same as start
+			}
+			return res;
+		}
+
 		String[] ranges = numberRangeSplitter.split(numbers);
 		for (String range: ranges) {
 			String[] startend = numberStartEndSplitter.split(range);

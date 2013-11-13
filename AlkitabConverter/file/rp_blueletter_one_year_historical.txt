@@ -1,0 +1,365 @@
+Genesis 1-3
+Genesis 4-7
+Genesis 8-11
+Genesis 12-15
+Genesis 16-18
+Genesis 19-21
+Genesis 22-24
+Genesis 25-26
+Genesis 27-29
+Genesis 30-31
+Genesis 32-34
+Genesis 35-37
+Genesis 38-40
+Genesis 41-42
+Genesis 43-45
+Genesis 46-47
+Genesis 48-50
+Exodus 1-3
+Exodus 4-6
+Exodus 7-9
+Exodus 10-12
+Exodus 13-15
+Exodus 16-18
+Exodus 19-21
+Exodus 22-24
+Exodus 25-27
+Exodus 28-29
+Exodus 30-32
+Exodus 33-35
+Exodus 36-38
+Exodus 39-40
+Leviticus 1-4
+Leviticus 5-7
+Leviticus 8-10
+Leviticus 11-13
+Leviticus 14-15
+Leviticus 16-18
+Leviticus 19-21
+Leviticus 22-23
+Leviticus 24-25
+Leviticus 26-27
+Numbers 1-2
+Numbers 3-4
+Numbers 5-6
+Numbers 7
+Numbers 8-10
+Numbers 11-13
+Numbers 14-15
+Numbers 16-17
+Numbers 18-20
+Numbers 21-22
+Numbers 23-25
+Numbers 26-27
+Numbers 28-30
+Numbers 31-32
+Numbers 33-34
+Numbers 35-36
+Deuteronomy 1-2
+Deuteronomy 3-4
+Deuteronomy 5-7
+Deuteronomy 8-10
+Deuteronomy 11-13
+Deuteronomy 14-16
+Deuteronomy 17-20
+Deuteronomy 21-23
+Deuteronomy 24-27
+Deuteronomy 28-29
+Deuteronomy 30-31
+Deuteronomy 32-34
+Joshua 1-4
+Joshua 5-8
+Joshua 9-11
+Joshua 12-15
+Joshua 16-18
+Joshua 19-21
+Joshua 22-24
+Judges 1-2
+Judges 3-5
+Judges 6-7
+Judges 8-9
+Judges 10-12
+Judges 13-15
+Judges 16-18
+Judges 19-21
+1 Samuel 1-3
+1 Samuel 4-8
+1 Samuel 9-12
+1 Samuel 13-14
+1 Samuel 15-17
+1 Samuel 18-20
+1 Samuel 21-24
+1 Samuel 25-27
+1 Samuel 28-31
+2 Samuel 1-3
+2 Samuel 4-7
+2 Samuel 8-12
+2 Samuel 13-15
+2 Samuel 16-18
+2 Samuel 19-21
+2 Samuel 22-24
+1 Kings 1-2
+1 Kings 3-5
+1 Kings 6-7
+1 Kings 8-9
+1 Kings 10-11
+1 Kings 12-14
+1 Kings 15-17
+1 Kings 18-20
+1 Kings 21-22
+2 Kings 1-3
+2 Kings 4-5
+2 Kings 6-8
+2 Kings 9-11
+2 Kings 12-14
+2 Kings 15-17
+2 Kings 18-19
+2 Kings 20-22
+2 Kings 23-25
+Isaiah 1-4
+Isaiah 5-8
+Isaiah 9-12
+Isaiah 13-17
+Isaiah 18-22
+Isaiah 23-27
+Isaiah 28-30
+Isaiah 31-35
+Isaiah 36-41
+Isaiah 42-44
+Isaiah 45-48
+Isaiah 49-53
+Isaiah 54-58
+Isaiah 59-63
+Isaiah 64-66
+Jeremiah 1-3
+Jeremiah 4-6
+Jeremiah 7-9
+Jeremiah 10-13
+Jeremiah 14-17
+Jeremiah 18-22
+Jeremiah 23-25
+Jeremiah 26-29
+Jeremiah 30-31
+Jeremiah 32-34
+Jeremiah 35-37
+Jeremiah 38-41
+Jeremiah 42-45
+Jeremiah 46-48
+Jeremiah 49-50
+Jeremiah 51-52
+Ezekiel 1-4
+Ezekiel 5-8
+Ezekiel 9-12
+Ezekiel 13-15
+Ezekiel 16-17
+Ezekiel 18-20
+Ezekiel 21-22
+Ezekiel 23-24
+Ezekiel 25-27
+Ezekiel 28-30
+Ezekiel 31-33
+Ezekiel 34-36
+Ezekiel 37-39
+Ezekiel 40-42
+Ezekiel 43-45
+Ezekiel 46-48
+Hosea 1-7
+Hosea 8-14
+Joel 1-3
+Amos 1-5
+Amos 6-9
+Obadiah; Jonah 1-4
+Micah 1-7
+Nahum 1-3; Habakkuk 1-3
+Zephaniah 1-3; Haggai 1-2
+Zechariah 1-7
+Zechariah 8-14
+Malachi 1-4
+Psalms 1-8
+Psalms 9-16
+Psalms 17-20
+Psalms 21-25
+Psalms 26-31
+Psalms 32-35
+Psalms 36-39
+Psalms 40-45
+Psalms 46-50
+Psalms 51-57
+Psalms 58-65
+Psalms 66-69
+Psalms 70-73
+Psalms 74-77
+Psalms 78-79
+Psalms 80-85
+Psalms 86-89
+Psalms 90-95
+Psalms 96-102
+Psalms 103-105
+Psalms 106-107
+Psalms 108-114
+Psalms 115-118
+Psalm 119
+Psalms 120-125
+Psalms 126-132
+Psalms 133-139
+Psalms 140-145
+Psalms 146-150
+Proverbs 1-3
+Proverbs 4-6
+Proverbs 7-9
+Proverbs 10-12
+Proverbs 13-15
+Proverbs 16-18
+Proverbs 19-21
+Proverbs 22-23
+Proverbs 24-26
+Proverbs 27-29
+Proverbs 30-31
+Job 1-4
+Job 5-7
+Job 8-10
+Job 11-13
+Job 14-16
+Job 17-20
+Job 21-23
+Job 24-28
+Job 29-31
+Job 32-34
+Job 35-37
+Job 40-42
+Song of Solomon 1-8
+Ruth 1-4
+Lamentations 1-2
+Lamentations 3-5
+Ecclesiastes 1-3
+Ecclesiastes 4-6
+Ecclesiastes 7-9
+Ecclesiastes 10-12
+Esther 1-5
+Esther 6-10
+Daniel 1-2
+Daniel 3-4
+Daniel 5-6
+Daniel 7-8
+Daniel 9-10
+Daniel 11-12
+Ezra 1-3
+Ezra 4-7
+Ezra 8-10
+Nehemiah 1-3
+Nehemiah 4-6
+Nehemiah 7
+Nehemiah 8-9
+Nehemiah 10-11
+Nehemiah 12-13
+1 Chronicles 1-2
+1 Chronicles 3-5
+1 Chronicles 6
+1 Chronicles 7-8
+1 Chronicles 9-10
+1 Chronicles 11-12
+1 Chronicles 13-15
+1 Chronicles 16-17
+1 Chronicles 18-20
+1 Chronicles 21-23
+1 Chronicles 24-25
+1 Chronicles 26-27
+1 Chronicles 28-29
+2 Chronicles 1-4
+2 Chronicles 5-7
+2 Chronicles 8-10
+2 Chronicles 11-14
+2 Chronicles 15-18
+2 Chronicles 19-21
+2 Chronicles 22-24
+2 Chronicles 25-27
+2 Chronicles 28-29
+2 Chronicles 30-32
+2 Chronicles 33-34
+2 Chronicles 35-36
+James 1-5
+Galatians 1-3
+Galatians 4-6
+1 Thessalonians 1-5
+2 Thessalonians 1-3
+1 Corinthians 1-4
+1 Corinthians 5-8
+1 Corinthians 9-11
+1 Corinthians 12-14
+1 Corinthians 15-16
+2 Corinthians 1-4
+2 Corinthians 5-9
+2 Corinthians 10-13
+Romans 1-3
+Romans 4-7
+Romans 8-10
+Romans 11-13
+Romans 14-16
+Mark 1-3
+Mark 4-5
+Mark 6-7
+Mark 8-9
+Mark 10-11
+Mark 12-13
+Mark 14
+Mark 15-16
+Matthew 1-4
+Matthew 5-7
+Matthew 8-9
+Matthew 10-12
+Matthew 13-14
+Matthew 15-17
+Matthew 18-20
+Matthew 21-22
+Matthew 23-24
+Matthew 25-26
+Matthew 27-28
+Luke 1
+Luke 2-3
+Luke 4-5
+Luke 6-7
+Luke 8-9
+Luke 10-11
+Luke 12-13
+Luke 14-16
+Luke 17-18
+Luke 19-20
+Luke 21-22
+Luke 23-24
+Ephesians 1-3
+Ephesians 4-6
+Colossians 1-4; Phm
+Philippians 1-4
+Acts 1-3
+Acts 4-6
+Acts 7-8
+Acts 9-10
+Acts 11-13
+Acts 14-15
+Acts 16-17
+Acts 18-20
+Acts 21-23
+Acts 24-26
+Acts 27-28
+1 Timothy 1-6
+Titus 1-3; 1 Peter 1-5
+Hebrews 1-6
+Hebrews 7-10
+Hebrews 11-13
+2 Timothy 1-4
+2 Peter 1-3; Jude
+John 1-2
+John 3-4
+John 5-6
+John 7-8
+John 9-10
+John 11-12
+John 13-15
+John 16-18
+John 19-21
+1 John 1-5
+2 John; 3 John
+Revelation 1-5
+Revelation 6-11
+Revelation 12-18
+Revelation 19-22
