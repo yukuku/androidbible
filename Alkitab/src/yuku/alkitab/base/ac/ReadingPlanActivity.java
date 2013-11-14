@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.PopupMenu;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,6 +49,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 public class ReadingPlanActivity extends ActionBarActivity {
+	public static final String TAG = ReadingPlanActivity.class.getSimpleName();
+
 	public static final String READING_PLAN_ARI_RANGES = "reading_plan_ari_ranges";
 	public static final String READING_PLAN_ID = "reading_plan_id";
 	public static final String READING_PLAN_DAY_NUMBER = "reading_plan_day_number";
@@ -624,7 +627,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_reading_plan_one_reading, parent, false);
 				final CheckBox checkbox = V.get(res, R.id.checkbox);
 
-				boolean[] readMarks = new boolean[todayReadings.length];
+				final boolean[] readMarks = new boolean[todayReadings.length / 2];
 				ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, dayNumber);
 
 				checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -637,10 +640,8 @@ public class ReadingPlanActivity extends ActionBarActivity {
 					}
 				});
 
-				int start = position * 2;
-
-				checkbox.setText(getReference(S.activeVersion, todayReadings[start], todayReadings[start + 1]));
-				checkbox.setChecked(readMarks[position * 2]);
+				checkbox.setText(getReference(S.activeVersion, todayReadings[position * 2], todayReadings[position * 2 + 1]));
+				checkbox.setChecked(readMarks[position]);
 
 			} else if (itemViewType == 1) {
 				res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_reading_plan_summary, parent, false);
@@ -696,38 +697,46 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				tTitle.setText(getReadingDateHeader(currentViewTypePosition));
 
 				//Text reading
-				while (true) {
-					final View reading = layout.findViewWithTag("reading");
-					if (reading != null) {
-						layout.removeView(reading);
-					} else {
-						break;
+				int[] ariRanges = readingPlan.dailyVerses[currentViewTypePosition];
+				final int checkbox_count = ariRanges.length / 2;
+
+				{ // remove extra checkboxes
+					for (int i = layout.getChildCount() - 1; i >= 0; i--) {
+						final View view = layout.getChildAt(i);
+						if (view instanceof CheckBox && view.getTag() != null) {
+							Integer tag = (Integer) view.getTag();
+							if (tag >= checkbox_count) layout.removeViewAt(i);
+						}
 					}
 				}
 
-				int[] aris = readingPlan.dailyVerses[currentViewTypePosition];
-				for (int i = 0; i < aris.length / 2; i++) {
-					final int ariPosition = i;
-					CheckBox checkBox = new CheckBox(ReadingPlanActivity.this);
-					checkBox.setText(getReference(S.activeVersion, aris[i * 2], aris[i * 2 + 1]));
-					checkBox.setTag("reading");
+				final boolean[] readMarks = new boolean[checkbox_count];
+				ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, currentViewTypePosition);
 
-					boolean[] readMarks = new boolean[aris.length];
-					ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, currentViewTypePosition);
-					checkBox.setChecked(readMarks[ariPosition * 2]);
-					checkBox.setFocusable(false);
-					LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
-					checkBox.setLayoutParams(layoutParams);
+				for (int i = 0; i < checkbox_count; i++) {
+					final int sequence = i;
+
+					CheckBox checkBox = (CheckBox) layout.findViewWithTag(i);
+					if (checkBox == null) {
+					    checkBox = new CheckBox(ReadingPlanActivity.this);
+						checkBox.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+						checkBox.setTag(i);
+						checkBox.setFocusable(false);
+						layout.addView(checkBox);
+					}
+
+					checkBox.setOnCheckedChangeListener(null);
+					checkBox.setChecked(readMarks[sequence]);
+					checkBox.setText(getReference(S.activeVersion, ariRanges[sequence * 2], ariRanges[sequence * 2 + 1]));
 					checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 						@Override
 						public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-							ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, currentViewTypePosition, ariPosition, isChecked);
+							ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, currentViewTypePosition, sequence, isChecked);
 							loadReadingPlanProgress();
 							load();
 							notifyDataSetChanged();
 						}
 					});
-					layout.addView(checkBox);
 				}
 			} else {
 				res = null;
