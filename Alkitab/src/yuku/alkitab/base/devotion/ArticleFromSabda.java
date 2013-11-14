@@ -122,7 +122,7 @@ public abstract class ArticleFromSabda implements DevotionArticle {
 	
 	@Override
 	public String getRawEncoding() {
-		return "iso-8859-1"; //$NON-NLS-1$
+		return "utf-8"; // the proxy server outputs in utf-8, unlike the source where it is in latin-1
 	}
 	
 	@Override
