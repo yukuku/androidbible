@@ -230,7 +230,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	}
 
 	private void createIndexReadingPlanProgress(SQLiteDatabase db) {
-		db.execSQL("create index if not exists index_901 on " + Db.TABLE_ReadingPlanProgress + " (" + Db.ReadingPlanProgress.reading_plan_id + ", " + Db.ReadingPlanProgress.reading_code + ")");
+		db.execSQL("create unique index if not exists index_901 on " + Db.TABLE_ReadingPlanProgress + " (" + Db.ReadingPlanProgress.reading_plan_id + ", " + Db.ReadingPlanProgress.reading_code + ")");
 	}
 
 	private void addShortNameColumnAndIndexToVersion(SQLiteDatabase db) {
