@@ -108,10 +108,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	public static final String TAG = IsiActivity.class.getSimpleName();
 	
 	// The followings are for instant_pref
-	private static final String PREFKEY_lastBook = "kitabTerakhir"; //$NON-NLS-1$
+	private static final String PREFKEY_lastBookId = "kitabTerakhir"; //$NON-NLS-1$
 	private static final String PREFKEY_lastChapter = "pasalTerakhir"; //$NON-NLS-1$
 	private static final String PREFKEY_lastVerse = "ayatTerakhir"; //$NON-NLS-1$
-	private static final String PREFKEY_lastVersion = "edisiTerakhir"; //$NON-NLS-1$
+	private static final String PREFKEY_lastVersionId = "edisiTerakhir"; //$NON-NLS-1$
+	private static final String PREFKEY_lastSplitVersionId = "lastSplitVersionId"; //$NON-NLS-1$
 	private static final String PREFKEY_devotion_name = "renungan_nama"; //$NON-NLS-1$
 
 	private static final int REQCODE_goto = 1;
@@ -328,23 +329,29 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 
 		// restore the last (version; book; chapter and verse).
-		String lastVersion = instant_pref.getString(PREFKEY_lastVersion, null);
-		int lastBook = instant_pref.getInt(PREFKEY_lastBook, 0);
-		int lastChapter = instant_pref.getInt(PREFKEY_lastChapter, 0);
-		int lastVerse = instant_pref.getInt(PREFKEY_lastVerse, 0);
-		Log.d(TAG, "Going to the last: version=" + lastVersion + " book=" + lastBook + " chapter=" + lastBook + " verse=" + lastVerse); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		final int lastBookId = instant_pref.getInt(PREFKEY_lastBookId, 0);
+		final int lastChapter = instant_pref.getInt(PREFKEY_lastChapter, 0);
+		final int lastVerse = instant_pref.getInt(PREFKEY_lastVerse, 0);
+		final String lastVersionId = instant_pref.getString(PREFKEY_lastVersionId, null);
+		Log.d(TAG, "Going to the last: versionId=" + lastVersionId + " bookId=" + lastBookId + " chapter=" + lastBookId + " verse=" + lastVerse); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		loadLastVersion(lastVersionId, false);
 
-		loadLastVersion(lastVersion);
-		
 		{ // load book
-			Book book = S.activeVersion.getBook(lastBook);
+			Book book = S.activeVersion.getBook(lastBookId);
 			if (book != null) {
 				this.activeBook = book;
 			} else { // can't load last book or bookId 0
 				this.activeBook = S.activeVersion.getFirstBook();
 			}
 		}
-		
+
+		{ // load last split version. This must be after load book.
+			final String lastSplitVersionId = instant_pref.getString(PREFKEY_lastSplitVersionId, null);
+			if (lastSplitVersionId != null) {
+				loadLastVersion(lastSplitVersionId, true);
+			}
+		}
+
 		// load chapter and verse
 		display(lastChapter, lastVerse);
 		
@@ -495,32 +502,54 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 
-	private void loadLastVersion(String lastVersion) {
-		AppConfig c = AppConfig.get();
-		
-		if (lastVersion == null || MVersionInternal.getVersionInternalId().equals(lastVersion)) {
+	void loadLastVersion(String versionId, boolean isSplit) {
+		final AppConfig c = AppConfig.get();
+		if (versionId == null || MVersionInternal.getVersionInternalId().equals(versionId)) {
 			// we are now already on internal
-			splitHandleButton.setLabel1("\u25b2 " + c.internalShortName);
+			if (!isSplit) {
+				splitHandleButton.setLabel1("\u25b2 " + c.internalShortName);
+			} else {
+				if (loadSplitVersion(new MVersionInternal())) {
+					openSplitDisplay();
+					displaySplitFollowingMaster();
+					splitHandleButton.setLabel2(c.internalShortName + " \u25bc");
+				}
+			}
 			return;
 		}
-		
-		// coba preset dulu!
+
+		// try preset versions first
 		for (MVersionPreset preset: c.presets) { // 2. preset
-			if (preset.getVersionId().equals(lastVersion)) {
+			if (preset.getVersionId().equals(versionId)) {
 				if (preset.hasDataFile()) {
-					if (loadVersion(preset, false)) return;
+					if (!isSplit) {
+						if (loadVersion(preset, false)) return;
+					} else {
+						if (loadSplitVersion(preset)) {
+							openSplitDisplay();
+							displaySplitFollowingMaster();
+							return;
+						}
+					}
 				} else {
 					return; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
 				}
 			}
 		}
 		
-		// masih belum cocok, mari kita cari di daftar yes
-		List<MVersionYes> yeses = S.getDb().listAllVersions();
-		for (MVersionYes yes: yeses) {
-			if (yes.getVersionId().equals(lastVersion)) {
+		// still no match, let's look at yes versions
+		for (MVersionYes yes: S.getDb().listAllVersions()) {
+			if (yes.getVersionId().equals(versionId)) {
 				if (yes.hasDataFile()) {
-					if (loadVersion(yes, false)) return;
+					if (!isSplit) {
+						if (loadVersion(yes, false)) return;
+					} else {
+						if (loadSplitVersion(yes)) {
+							openSplitDisplay();
+							displaySplitFollowingMaster();
+							return;
+						}
+					}
 				} else {
 					return; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
 				}
@@ -764,11 +793,16 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		super.onStop();
 		
 		final Editor editor = instant_pref.edit();
-		editor.putInt(PREFKEY_lastBook, this.activeBook.bookId);
+		editor.putInt(PREFKEY_lastBookId, this.activeBook.bookId);
 		editor.putInt(PREFKEY_lastChapter, chapter_1);
 		editor.putInt(PREFKEY_lastVerse, lsText.getVerseBasedOnScroll());
 		editor.putString(PREFKEY_devotion_name, DevotionActivity.Temporaries.devotion_name);
-		editor.putString(PREFKEY_lastVersion, S.activeVersionId);
+		editor.putString(PREFKEY_lastVersionId, S.activeVersionId);
+		if (activeSplitVersion == null) {
+			editor.putString(PREFKEY_lastSplitVersionId, null);
+		} else {
+			editor.putString(PREFKEY_lastSplitVersionId, activeSplitVersionId);
+		}
 		if (Build.VERSION.SDK_INT >= 9) {
 			editor.apply();
 		} else {
@@ -1115,54 +1149,20 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				if (mv == null) { // closing split version
 					activeSplitVersion = null;
 					activeSplitVersionId = null;
-					closeSplit();
+					closeSplitDisplay();
 				} else {
 					boolean ok = loadSplitVersion(mv);
 					if (ok) {
-						openSplit();
+						openSplitDisplay();
 						displaySplitFollowingMaster();
 					} else {
 						activeSplitVersion = null;
 						activeSplitVersionId = null;
-						closeSplit();
+						closeSplitDisplay();
 					}
 				}
 				
 				dialog.dismiss();
-			}
-			
-			void openSplit() {
-				if (splitHandle.getVisibility() == View.VISIBLE) {
-					return; // it's already split, no need to do anything
-				}
-				
-				// measure split handle
-				splitHandle.setVisibility(View.VISIBLE);
-				splitHandle.measure(MeasureSpec.makeMeasureSpec(lsText.getWidth(), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-				int splitHandleHeight = splitHandle.getMeasuredHeight();
-				int totalHeight = splitRoot.getHeight();
-				int masterHeight = totalHeight / 2 - splitHandleHeight / 2;
-				
-				// divide by 2 the screen space
-				ViewGroup.LayoutParams lp = lsText.getLayoutParams();
-				lp.height = masterHeight;
-				lsText.setLayoutParams(lp);
-
-				// no need to set height, because it has been set to match_parent, so it takes
-				// the remaining space.
-				lsSplit1.setVisibility(View.VISIBLE);
-			}
-
-			void closeSplit() {
-				if (splitHandle.getVisibility() == View.GONE) {
-					return; // it's already not split, no need to do anything
-				}
-				
-				splitHandle.setVisibility(View.GONE);
-				lsSplit1.setVisibility(View.GONE);
-				ViewGroup.LayoutParams lp = lsText.getLayoutParams();
-				lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
-				lsText.setLayoutParams(lp);
 			}
 		})
 		.setPositiveButton(R.string.versi_lainnya, new DialogInterface.OnClickListener() {
@@ -1172,6 +1172,47 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		})
 		.setNegativeButton(R.string.cancel, null)
 		.show();
+	}
+
+	void openSplitDisplay() {
+		if (splitHandle.getVisibility() == View.VISIBLE) {
+			return; // it's already split, no need to do anything
+		}
+
+		// do it on after the layout pass
+		overlayContainer.requestLayout();
+		overlayContainer.post(new Runnable() {
+			@Override
+			public void run() {
+				// measure split handle
+				splitHandle.setVisibility(View.VISIBLE);
+				splitHandle.measure(MeasureSpec.makeMeasureSpec(lsText.getWidth(), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+				int splitHandleHeight = splitHandle.getMeasuredHeight();
+				int totalHeight = splitRoot.getHeight();
+				int masterHeight = totalHeight / 2 - splitHandleHeight / 2;
+
+				// divide by 2 the screen space
+				ViewGroup.LayoutParams lp = lsText.getLayoutParams();
+				lp.height = masterHeight;
+				lsText.setLayoutParams(lp);
+
+				// no need to set height, because it has been set to match_parent, so it takes
+				// the remaining space.
+				lsSplit1.setVisibility(View.VISIBLE);
+			}
+		});
+	}
+
+	void closeSplitDisplay() {
+		if (splitHandle.getVisibility() == View.GONE) {
+			return; // it's already not split, no need to do anything
+		}
+
+		splitHandle.setVisibility(View.GONE);
+		lsSplit1.setVisibility(View.GONE);
+		ViewGroup.LayoutParams lp = lsText.getLayoutParams();
+		lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+		lsText.setLayoutParams(lp);
 	}
 
 	private void menuSearch_click() {
