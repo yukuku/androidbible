@@ -886,7 +886,7 @@ public class InternalDb {
 		cv.put(Db.ReadingPlan.title, info.title);
 		cv.put(Db.ReadingPlan.description, info.description);
 		cv.put(Db.ReadingPlan.duration, info.duration);
-		cv.put(Db.ReadingPlan.startDate, info.startDate);
+		cv.put(Db.ReadingPlan.startTime, info.startTime);
 		cv.put(Db.ReadingPlan.data, data);
 		return helper.getWritableDatabase().insert(Db.TABLE_ReadingPlan, null, cv);
 	}
@@ -895,7 +895,7 @@ public class InternalDb {
 		ContentValues cv = new ContentValues();
 		cv.put(Db.ReadingPlanProgress.reading_plan_id, readingPlanId);
 		cv.put(Db.ReadingPlanProgress.reading_code, readingCode);
-		cv.put(Db.ReadingPlanProgress.checked_date, checkedDate);
+		cv.put(Db.ReadingPlanProgress.checkedTime, checkedDate);
 		return helper.getWritableDatabase().insert(Db.TABLE_ReadingPlanProgress, null, cv);
 	}
 
@@ -918,7 +918,7 @@ public class InternalDb {
 
 	public List<ReadingPlan.ReadingPlanInfo> listAllReadingPlanInfo() {
 		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan,
-		new String[] {"_id", Db.ReadingPlan.version, Db.ReadingPlan.name, Db.ReadingPlan.title, Db.ReadingPlan.description, Db.ReadingPlan.duration, Db.ReadingPlan.startDate},
+		new String[] {"_id", Db.ReadingPlan.version, Db.ReadingPlan.name, Db.ReadingPlan.title, Db.ReadingPlan.description, Db.ReadingPlan.duration, Db.ReadingPlan.startTime},
 		null, null, null, null, null);
 		List<ReadingPlan.ReadingPlanInfo> infos = new ArrayList<ReadingPlan.ReadingPlanInfo>();
 		while (c.moveToNext()) {
@@ -929,7 +929,7 @@ public class InternalDb {
 			info.title = c.getString(3);
 			info.description = c.getString(4);
 			info.duration = c.getInt(5);
-			info.startDate = c.getLong(6);
+			info.startTime = c.getLong(6);
 			infos.add(info);
 		}
 		c.close();
@@ -963,7 +963,7 @@ public class InternalDb {
 
 	public int updateStartDate(long id, long startDate) {
 		ContentValues cv = new ContentValues();
-		cv.put(Db.ReadingPlan.startDate, startDate);
+		cv.put(Db.ReadingPlan.startTime, startDate);
 		return helper.getWritableDatabase().update(Db.TABLE_ReadingPlan, cv, "_id=?", new String[] {String.valueOf(id)});
 	}
 }

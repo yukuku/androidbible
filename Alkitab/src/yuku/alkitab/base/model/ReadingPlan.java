@@ -12,7 +12,7 @@ public class ReadingPlan {
 		public String title;
 		public String description;
 		public int duration;
-		public long startDate;
+		public long startTime;
 		public String url;
 	}
 

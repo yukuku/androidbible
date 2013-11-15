@@ -31,7 +31,7 @@ public class ReadingPlanManager {
 			readInfo(info, reader);
 			reader.close();
 
-			info.startDate=new Date().getTime();
+			info.startTime = new Date().getTime();
 
 			return S.getDb().insertReadingPlan(info, buffer);
 		} catch (IOException e) {

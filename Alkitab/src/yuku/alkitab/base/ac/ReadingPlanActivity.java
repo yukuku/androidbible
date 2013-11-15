@@ -141,14 +141,14 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			return;
 		}
 
-		long startDate = 0;
+		long startTime = 0;
 		if (id == 0) {
 			id = downloadedReadingPlanInfos.get(0).id;
-			startDate = downloadedReadingPlanInfos.get(0).startDate;
+			startTime = downloadedReadingPlanInfos.get(0).startTime;
 		} else {
 			for (ReadingPlan.ReadingPlanInfo info : downloadedReadingPlanInfos) {
 				if (id == info.id) {
-					startDate = info.startDate;
+					startTime = info.startTime;
 				}
 			}
 		}
@@ -158,7 +158,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		InputStream inputStream = new ByteArrayInputStream(binaryReadingPlan);
 		ReadingPlan res = ReadingPlanManager.readVersion1(inputStream);
 		res.info.id = id;
-		res.info.startDate = startDate;
+		res.info.startTime = startTime;
 		readingPlan = res;
 		Preferences.setLong(Prefkey.active_reading_plan_id, id);
 	}
@@ -190,7 +190,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		}
 
 		Calendar startCalendar = GregorianCalendar.getInstance();
-		startCalendar.setTime(new Date(readingPlan.info.startDate));
+		startCalendar.setTime(new Date(readingPlan.info.startTime));
 
 		todayNumber = calculateDaysDiff(startCalendar, GregorianCalendar.getInstance());
 		if (todayNumber >= readingPlan.info.duration) {
@@ -352,7 +352,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 
 			private void showCalendar() {
 				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(new Date(readingPlan.info.startDate));
+				calendar.setTime(new Date(readingPlan.info.startTime));
 				calendar.add(Calendar.DATE, dayNumber);
 
 				DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
@@ -360,7 +360,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			        public void onDateSet(final DatePicker view, final int year, final int monthOfYear, final int dayOfMonth) {
 				        Calendar newCalendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
 				        Calendar startCalendar = GregorianCalendar.getInstance();
-				        startCalendar.setTime(new Date(readingPlan.info.startDate));
+				        startCalendar.setTime(new Date(readingPlan.info.startTime));
 
 				        int newDay = calculateDaysDiff(startCalendar, newCalendar);
 				        if (newDay < 0) {
@@ -565,7 +565,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 
 	public String getReadingDateHeader(final int dayNumber) {
 		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(new Date(readingPlan.info.startDate));
+		calendar.setTime(new Date(readingPlan.info.startTime));
 		calendar.add(Calendar.DATE, dayNumber);
 
 		String date = getString(R.string.rp_dayHeader, (dayNumber + 1), Sqlitil.toLocaleDateMedium(calendar.getTime()));

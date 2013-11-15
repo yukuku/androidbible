@@ -219,7 +219,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		Db.ReadingPlan.title + " text, " +
 		Db.ReadingPlan.description + " text, " +
 		Db.ReadingPlan.duration + " integer, " +
-		Db.ReadingPlan.startDate + " integer, " +
+		Db.ReadingPlan.startTime + " integer, " +
 		Db.ReadingPlan.data + " blob)");
 	}
 
@@ -228,7 +228,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		"_id integer primary key autoincrement, " +
 		Db.ReadingPlanProgress.reading_plan_id + " integer, " +
 		Db.ReadingPlanProgress.reading_code + " integer, " +
-		Db.ReadingPlanProgress.checked_date + " integer)");
+		Db.ReadingPlanProgress.checkedTime + " integer)");
 	}
 
 	private void createIndexReadingPlanProgress(SQLiteDatabase db) {

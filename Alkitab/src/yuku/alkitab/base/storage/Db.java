@@ -76,7 +76,7 @@ public class Db {
 		public static final String title = "title";
 		public static final String description = "description";
 		public static final String duration = "duration";
-		public static final String startDate = "startDate";
+		public static final String startTime = "startTime";
 		public static final String data = "data";
 	}
 
@@ -84,7 +84,7 @@ public class Db {
 	public static final class ReadingPlanProgress {
 		public static final String reading_plan_id = "reading_plan_id";
 		public static final String reading_code = "reading_code";
-		public static final String checked_date = "checked_date";
+		public static final String checkedTime = "checkedTime";
 	}
 
 }
