@@ -27,7 +27,7 @@ public class DesktopVerseFinder {
 	/////////////////////////////////////       2 complete verse address (book chapter verse)
 	/////////////////////////////////////        3 book name with optional period and spaces after it
 	/////////////////////////////////////         4 book name                5 numbers (chapter or chapter:verse, with ',' or ';' or 'dan') which is not followed by nofollow
-	static Pattern reg = Pattern.compile("(\\b)??((\\b(" + bookNames + ")\\b(\\.?\\s+)?)(\\d+(?:(?:-|:|(?:;\\s*\\d+:\\s*)|,|\\.|\\d|dan|\\s)+\\d+)?)?(?!\\s*(?:" + nofollow + ")\\.?\\s))", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+	static Pattern reg = Pattern.compile("(\\b)??(((" + bookNames + ")\\.?\\s+)(\\d+(?:(?:-|:|(?:;\\s*\\d+:\\s*)|,|\\.|\\d|dan|\\s)+\\d+)?)(?!\\s*(?:" + nofollow + ")\\.?\\s))", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
 	public static void findInText(CharSequence input, DetectorListener detectorListener) {
 		Matcher match_1 = reg.matcher(input);
