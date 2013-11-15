@@ -891,11 +891,11 @@ public class InternalDb {
 		return helper.getWritableDatabase().insert(Db.TABLE_ReadingPlan, null, cv);
 	}
 
-	public long insertReadingPlanProgress(final long readingPlanId, final int readingCode, final long checkedDate) {
+	public long insertReadingPlanProgress(final long readingPlanId, final int readingCode, final long checkTime) {
 		ContentValues cv = new ContentValues();
 		cv.put(Db.ReadingPlanProgress.reading_plan_id, readingPlanId);
 		cv.put(Db.ReadingPlanProgress.reading_code, readingCode);
-		cv.put(Db.ReadingPlanProgress.checkedTime, checkedDate);
+		cv.put(Db.ReadingPlanProgress.checkTime, checkTime);
 		return helper.getWritableDatabase().insert(Db.TABLE_ReadingPlanProgress, null, cv);
 	}
 

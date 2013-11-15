@@ -228,7 +228,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		"_id integer primary key autoincrement, " +
 		Db.ReadingPlanProgress.reading_plan_id + " integer, " +
 		Db.ReadingPlanProgress.reading_code + " integer, " +
-		Db.ReadingPlanProgress.checkedTime + " integer)");
+		Db.ReadingPlanProgress.checkTime + " integer)");
 	}
 
 	private void createIndexReadingPlanProgress(SQLiteDatabase db) {

@@ -84,7 +84,7 @@ public class Db {
 	public static final class ReadingPlanProgress {
 		public static final String reading_plan_id = "reading_plan_id";
 		public static final String reading_code = "reading_code";
-		public static final String checkedTime = "checkedTime";
+		public static final String checkTime = "checkTime";
 	}
 
 }
