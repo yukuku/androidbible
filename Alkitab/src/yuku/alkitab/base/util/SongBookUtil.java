@@ -10,6 +10,13 @@ import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
+import net.londatiga.android.ActionItem;
+import net.londatiga.android.QuickAction;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.rpc.SimpleHttpConnection;
+import yuku.alkitab.debug.R;
+import yuku.kpri.model.Song;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -17,13 +24,6 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
-
-import net.londatiga.android.ActionItem;
-import net.londatiga.android.QuickAction;
-import yuku.alkitab.debug.R;
-import yuku.alkitab.base.S;
-import yuku.alkitab.base.rpc.SimpleHttpConnection;
-import yuku.kpri.model.Song;
 
 public class SongBookUtil {
 	public static final String TAG = SongBookUtil.class.getSimpleName();
@@ -90,7 +90,16 @@ public class SongBookUtil {
 		}
 		return res;
 	}
-	
+
+	public static String getCopyright(final String bookName) {
+		for (final SongBookInfo knownSongBook : knownSongBooks) {
+			if (U.equals(bookName, knownSongBook.bookName)) {
+				return knownSongBook.description;
+			}
+		}
+		return "";
+	}
+
 	public static QuickAction.OnActionItemClickListener getOnActionItemConverter(final OnSongBookSelectedListener listener) {
 		return new QuickAction.OnActionItemClickListener() {
 			@Override public void onItemClick(QuickAction source, int pos, int actionId) {
