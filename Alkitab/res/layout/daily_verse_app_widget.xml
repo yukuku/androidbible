@@ -23,11 +23,9 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:id="@+id/tReference"
-                android:layout_gravity="left|center_vertical"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="false"
+                android:layout_centerVertical="true"
+                android:layout_alignParentTop="false"
                 android:layout_toRightOf="@+id/imgLogo"
-                android:layout_marginTop="12dp"
                 android:layout_marginLeft="4dp"/>
         <ImageButton
                 android:id="@+id/bPrev"

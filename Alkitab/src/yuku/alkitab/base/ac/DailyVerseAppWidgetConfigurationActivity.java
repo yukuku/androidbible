@@ -15,6 +15,8 @@ import android.widget.CheckBox;
 import android.widget.CheckedTextView;
 import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
@@ -33,6 +35,8 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 	int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 	int selectedVersionPosition = -1;
 	CheckBox cDarkText;
+	SeekBar sbTextSize;
+	TextView tTextSize;
 	private CheckBox cTransparentBackground;
 
 	public void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,8 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 		final Button bCancel = V.get(this, R.id.bCancel);
 		cTransparentBackground = V.get(this, R.id.cTransparentBackground);
 		cDarkText = V.get(this, R.id.cDarkText);
+		sbTextSize = V.get(this, R.id.sbTextSize);
+		tTextSize = V.get(this, R.id.tTextSize);
 
 		// Find the widget id from the intent.
 		Intent intent = getIntent();
@@ -83,6 +89,29 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 			cTransparentBackground.setEnabled(false); // we can't set background of app widget in API 7
 		}
 		cTransparentBackground.setOnCheckedChangeListener(cTransparentBackground_checkedChange);
+
+		sbTextSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+			@Override
+			public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
+				sbTextSize_progressChanged(progress);
+			}
+
+			@Override
+			public void onStartTrackingTouch(final SeekBar seekBar) {}
+
+			@Override
+			public void onStopTrackingTouch(final SeekBar seekBar) {}
+		});
+		sbTextSize_progressChanged(sbTextSize.getProgress());
+	}
+
+	void sbTextSize_progressChanged(final int progress) {
+		final float textSize = progressToActualTextSize(progress);
+		tTextSize.setText("" + (int) textSize);
+	}
+
+	float progressToActualTextSize(final int progress) {
+		return progress + 8.f;
 	}
 
 	private View.OnClickListener bOk_click = new View.OnClickListener() {
@@ -97,6 +126,7 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 				Preferences.setString("app_widget_" + mAppWidgetId + "_version", versionId);
 				Preferences.setBoolean("app_widget_" + mAppWidgetId + "_option_transparent_background", cTransparentBackground.isChecked());
 				Preferences.setBoolean("app_widget_" + mAppWidgetId + "_option_dark_text", cDarkText.isChecked());
+				Preferences.setFloat("app_widget_" + mAppWidgetId + "_option_text_size", progressToActualTextSize(sbTextSize.getProgress()));
 			} finally {
 				Preferences.unhold();
 			}

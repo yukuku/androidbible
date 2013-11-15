@@ -25,12 +25,12 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.config.AppConfig;
-import yuku.alkitab.util.Ari;
-import yuku.alkitab.model.Version;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.sv.DailyVerseAppWidgetService;
-import yuku.alkitab.util.IntArrayList;
 import yuku.alkitab.debug.R;
+import yuku.alkitab.model.Version;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.util.IntArrayList;
 import yuku.bintex.BintexReader;
 
 import java.io.IOException;
@@ -68,6 +68,7 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 				Preferences.remove(keyPrefix + "_version");
 				Preferences.remove(keyPrefix + "_option_transparent_background");
 				Preferences.remove(keyPrefix + "_option_dark_text");
+				Preferences.remove(keyPrefix + "_option_text_size");
 			} finally {
 				Preferences.unhold();
 			}
@@ -139,6 +140,7 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		svcIntent.setData(Uri.parse(svcIntent.toUri(Intent.URI_INTENT_SCHEME)));
 		final boolean optionTransparentBackground = getOptionTransparentBackground(appWidgetId);
 		final boolean optionDarkText = getOptionDarkText(appWidgetId);
+		final float optionTextSize = getOptionTextSize(appWidgetId);
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.daily_verse_app_widget);
 		if (optionTransparentBackground) {
 			remoteViews.setInt(R.id.root, "setBackgroundResource", android.R.color.transparent);
@@ -148,6 +150,8 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 			remoteViews.setImageViewResource(R.id.bPrev, R.drawable.ic_nav_left_dark);
 			remoteViews.setImageViewResource(R.id.bNext, R.drawable.ic_nav_right_dark);
 		}
+		remoteViews.setFloat(R.id.tReference, "setTextSize", optionTextSize);
+
 		remoteViews.setRemoteAdapter(R.id.lsVerse, svcIntent);
 		return remoteViews;
 	}
@@ -159,6 +163,7 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		final int[] aris = getVerse(appWidgetId);
 		final boolean optionTransparentBackground = getOptionTransparentBackground(appWidgetId);
 		final boolean optionDarkText = getOptionDarkText(appWidgetId);
+		final float optionTextSize = getOptionTextSize(appWidgetId);
 
 		boolean showVerseNumber = false;
 		if (aris.length > 1) {
@@ -181,6 +186,8 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 			remoteViews.setImageViewResource(R.id.bNext, R.drawable.ic_nav_right_dark);
 		}
 		remoteViews.setTextViewText(R.id.tVerse, verseText);
+		remoteViews.setFloat(R.id.tReference, "setTextSize", optionTextSize);
+		remoteViews.setFloat(R.id.tVerse, "setTextSize", optionTextSize);
 
 		return remoteViews;
 	}
@@ -191,6 +198,10 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 
 	public static boolean getOptionDarkText(final int appWidgetId) {
 		return Preferences.getBoolean("app_widget_" + appWidgetId + "_option_dark_text", false);
+	}
+
+	public static float getOptionTextSize(final int appWidgetId) {
+		return Preferences.getFloat("app_widget_" + appWidgetId + "_option_text_size", 14.f);
 	}
 
 	public static class ClickReceiver extends BroadcastReceiver {

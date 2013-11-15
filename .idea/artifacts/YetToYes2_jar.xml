@@ -3,15 +3,15 @@
     <output-path>$PROJECT_DIR$/out/artifacts/YetToYes2_jar</output-path>
     <root id="archive" name="YetToYes2.jar">
       <element id="module-output" name="YetToYes2" />
-      <element id="module-output" name="AlkitabConverter" />
+      <element id="module-output" name="AlkitabYes2" />
+      <element id="module-output" name="AlkitabModel" />
+      <element id="module-output" name="AlkitabIo" />
+      <element id="module-output" name="BintexReader" />
       <element id="module-output" name="BintexWriter" />
       <element id="module-output" name="Snappy" />
-      <element id="module-output" name="BintexReader" />
-      <element id="module-output" name="AndroidCrypto" />
+      <element id="module-output" name="AlkitabConverter" />
       <element id="module-output" name="SimpleTrove" />
       <element id="extracted-dir" path="$PROJECT_DIR$/YetToYes2/libs/jcommander-1.30.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../yuku-android-util/ActionBarSherlock4/libs/android-support-v4.jar" path-in-jar="/" />
-      <element id="module-output" name="Alkitab" />
     </root>
   </artifact>
 </component>

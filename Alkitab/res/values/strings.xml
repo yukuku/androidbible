@@ -291,6 +291,7 @@
 
     <string name="dv_option_transparent_background">Transparent background</string>
     <string name="dv_option_dark_text">Dark text</string>
+    <string name="dv_option_text_size">Text size</string>
 
     <string name="rp_menuReadingPlan">Reading plan</string>
     <string name="rp_commentActual">Finished: %s%%</string>

@@ -42,6 +42,9 @@ public class DesktopVerseParserTest {
 		test("2 john 0", "0x3E0100 .");
 		test("3 john 0", "0x3F0100 .");
 		test("jud 0", "0x400100 .");
+
+		// bug
+		test("Yl. 2:10, 31, 3:15", "0x1c020a . 0x1c021f . 0x1c030f .");
 	}
 
 	private void test(final String ref, final String s) {

@@ -362,7 +362,8 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			// construct rendition of scripture references
 			String scripture_references = renderScriptureReferences(PROTOCOL, song.scriptureReferences);
 			templateCustomVars.putString("scripture_references", scripture_references); //$NON-NLS-1$
-			
+			templateCustomVars.putString("copyright", SongBookUtil.getCopyright(bookName)); //$NON-NLS-1$
+
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			ft.replace(R.id.song_container, SongFragment.create(song, "templates/song.html", templateCustomVars)); //$NON-NLS-1$
 			ft.commitAllowingStateLoss();
@@ -370,7 +371,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			currentBookName = bookName;
 			currentSong = song;
 			
-			{ // save latest viewed song TODO optimize using new preferences fw
+			{ // save latest viewed song
 				Preferences.setString(Prefkey.song_last_bookName, bookName);
 				Preferences.setString(Prefkey.song_last_code, song.code);
 			}
