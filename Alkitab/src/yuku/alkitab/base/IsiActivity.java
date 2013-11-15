@@ -332,7 +332,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		final int lastChapter = instant_pref.getInt(PREFKEY_lastChapter, 0);
 		final int lastVerse = instant_pref.getInt(PREFKEY_lastVerse, 0);
 		final String lastVersionId = instant_pref.getString(PREFKEY_lastVersionId, null);
-		Log.d(TAG, "Going to the last: versionId=" + lastVersionId + " bookId=" + lastBookId + " chapter=" + lastBookId + " verse=" + lastVerse); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		Log.d(TAG, "Going to the last: versionId=" + lastVersionId + " bookId=" + lastBookId + " chapter=" + lastChapter + " verse=" + lastVerse); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		loadLastVersion(lastVersionId, false);
 
 		{ // load book
@@ -344,16 +344,16 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 		}
 
-		{ // load last split version. This must be after load book.
+		// load chapter and verse
+		display(lastChapter, lastVerse);
+
+		{ // load last split version. This must be after load book, chapter, and verse.
 			final String lastSplitVersionId = instant_pref.getString(PREFKEY_lastSplitVersionId, null);
 			if (lastSplitVersionId != null) {
 				loadLastVersion(lastSplitVersionId, true);
 			}
 		}
 
-		// load chapter and verse
-		display(lastChapter, lastVerse);
-		
 		if (Build.VERSION.SDK_INT >= 14) {
 			initNfcIfAvailable();
 		}
