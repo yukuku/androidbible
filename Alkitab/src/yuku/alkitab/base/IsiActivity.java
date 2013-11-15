@@ -33,7 +33,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -1184,10 +1183,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		overlayContainer.post(new Runnable() {
 			@Override
 			public void run() {
-				// measure split handle
 				splitHandle.setVisibility(View.VISIBLE);
-				splitHandle.measure(MeasureSpec.makeMeasureSpec(lsText.getWidth(), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-				int splitHandleHeight = splitHandle.getMeasuredHeight();
+				int splitHandleHeight = getResources().getDimensionPixelSize(R.dimen.split_handle_height);
 				int totalHeight = splitRoot.getHeight();
 				int masterHeight = totalHeight / 2 - splitHandleHeight / 2;
 
