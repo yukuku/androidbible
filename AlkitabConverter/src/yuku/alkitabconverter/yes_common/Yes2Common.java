@@ -31,6 +31,7 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Scanner;
 
 public class Yes2Common {
 	public static final String TAG = Yes2Common.class.getSimpleName();
@@ -56,6 +57,18 @@ public class Yes2Common {
 		public void setBookNamesAndAbbreviations(List<String> bookNames, List<String> bookAbbreviations) {
 			this.bookNames = bookNames;
 			this.bookAbbreviations = bookAbbreviations;
+		}
+
+		public void setBookNamesFromFile(final String inputBookNames) throws IOException {
+			List<String> bookNames = new ArrayList<String>();
+			final Scanner sc = new Scanner(new File(inputBookNames), "utf-8");
+			int c = 0;
+			while (sc.hasNextLine()) {
+				final String line = sc.nextLine().trim();
+				bookNames.add(line);
+				c++;
+			}
+			this.bookNames = bookNames;
 		}
 	}
 

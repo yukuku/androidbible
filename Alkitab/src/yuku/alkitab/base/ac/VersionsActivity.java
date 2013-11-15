@@ -159,13 +159,17 @@ public class VersionsActivity extends BaseActivity {
 			int col = c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
 			if (col != -1) {
 				String name = c.getString(col);
-				String namelc = name.toLowerCase(Locale.US);
-				if (namelc.endsWith(".yes")) {
-					isYesFile = true;
-				} else if (namelc.endsWith(".pdb")) {
-					isYesFile = false;
-				} else {
+				if (name == null) {
 					isYesFile = null;
+				} else {
+					final String namelc = name.toLowerCase(Locale.US);
+					if (namelc.endsWith(".yes")) {
+						isYesFile = true;
+					} else if (namelc.endsWith(".pdb")) {
+						isYesFile = false;
+					} else {
+						isYesFile = null;
+					}
 				}
 				filelastname = name;
 			} else {

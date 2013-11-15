@@ -54,6 +54,7 @@
 		<preset locale="fr"   shortName="OST"     longName="Ostervald" filename_preset="fr-ostervald.yes" url="http://alkitab-host.appspot.com/addon/yes2/fr-ostervald--1.yes.gz" />
 		<preset locale="he"   shortName="ALP"     longName="Aleppo Codex" filename_preset="he-aleppo.yes" url="http://alkitab-host.appspot.com/addon/yes2/he-aleppo--1.yes.gz" />
 		<preset locale="he"   shortName="HEB"     longName="Modern Hebrew" filename_preset="he-modern.yes" url="http://alkitab-host.appspot.com/addon/yes2/he-modern--1.yes.gz" />
+		<preset locale="hi"   shortName="HBSI"    longName="Hindi Bible (BSI)" filename_preset="hi-bsi.yes" url="http://alkitab-host.appspot.com/addon/yes2/hi-bsi--1.yes.gz" />
 		<preset locale="hr"   shortName="CRO"     longName="Croatian" filename_preset="hr-croatian.yes" url="http://alkitab-host.appspot.com/addon/yes2/hr-croatian--1.yes.gz" />
 		<preset locale="hu"   shortName="KAR"     longName="Karoli" filename_preset="hu-karoli.yes" url="http://alkitab-host.appspot.com/addon/yes/hu-karoli/hu-karoli.yes.gz" />
 		<preset locale="it"   shortName="IGD"     longName="Diodati Bibbia" filename_preset="it-diodati.yes" url="http://alkitab-host.appspot.com/addon/yes2/it-diodati--1.yes.gz" />
@@ -80,6 +81,7 @@
 		<preset locale="ru"   shortName="SYNO"    longName="Синодальный перевод" filename_preset="ru-synodal.yes" url="http://alkitab-host.appspot.com/addon/yes2/ru-synodal--1.yes.gz" />
 		<preset locale="sq"   shortName="ALBB"    longName="Albanian" filename_preset="sq-kk.yes" url="http://alkitab-host.appspot.com/addon/yes/sq-kk/sq-kk.yes.gz" />
 		<preset locale="sv"   shortName="SVEN"    longName="Svenska 1917" filename_preset="sv-1917.yes" url="http://alkitab-host.appspot.com/addon/yes2/sv-1917--1.yes.gz" />
+		<preset locale="ta"   shortName="TBSI"    longName="Tamil Bible (BSI)" filename_preset="ta-bsi.yes" url="http://alkitab-host.appspot.com/addon/yes2/ta-bsi--1.yes.gz" />
 		<preset locale="te"   shortName="TBO"     longName="Telugu Original Version" filename_preset="te-tbo.yes" url="http://alkitab-host.appspot.com/addon/yes2/te-tbo--1.yes.gz" />
 		<preset locale="th"   shortName="TKJV"    longName="Thai KJV" filename_preset="th-kjv.yes" url="http://alkitab-host.appspot.com/addon/yes2/th-kjv--1.yes.gz" />
 		<preset locale="tl"   shortName="TLAB"    longName="Ang Biblia 1905" filename_preset="tl-angbiblia1905.yes" url="http://alkitab-host.appspot.com/addon/yes/tl-angbiblia1905/tl-angbiblia1905.yes.gz" />
@@ -97,4 +99,29 @@
 	<share>
 		<url format="http://alkitab.me/{book.osis}/{chapter}/{verses}" />
 	</share>
+    <readingplan>
+        <rp_preset title="ESV Chronological Reading Bible" description="ESV Chronological Reading Bible (www.esv.org/biblereadingplans)"
+                   filename_rp_preset="esv_chronological.rpb" url="http://alkitab-host.appspot.com/addon/rpb/esv_chronological.rpb" />
+        <rp_preset title="ESV Daily Reading Bible" description="ESV Daily Reading Bible (www.esv.org/biblereadingplans)"
+                   filename_rp_preset="esv_daily_reading_bible.rpb" url="http://alkitab-host.appspot.com/addon/rpb/esv_daily_reading_bible.rpb" />
+        <rp_preset title="ESV Every Day in the Word" description="ESV Every Day in the Word (www.esv.org/biblereadingplans)"
+                   filename_rp_preset="esv_everyday_in_the_word.rpb" url="http://alkitab-host.appspot.com/addon/rpb/esv_everyday_in_the_word.rpb" />
+        <rp_preset title="ESV M'Cheyne Bible Reading Plan" description="ESV M'Cheyne Bible Reading Plan (www.esv.org/biblereadingplans)"
+                   filename_rp_preset="esv_mcheyne.rpb" url="http://alkitab-host.appspot.com/addon/rpb/esv_mcheyne.rpb" />
+        <rp_preset title="ESV Through the Bible in a Year Reading Plan" description="ESV Through the Bible in a Year Reading Plan (www.esv.org/biblereadingplans)"
+                   filename_rp_preset="esv_through_the_bible_in_a_year.rpb" url="http://alkitab-host.appspot.com/addon/rpb/esv_through_the_bible_in_a_year.rpb" />
+        <rp_preset title="Blue Letter One Year Canonical Plan" description="This plan goes straight through the Bible from Genesis to Revelation. You will be supplied with reading for each day of the week as a steady guide toward finishing the entire Bible in one calendar year."
+                   filename_rp_preset="blueletter_one_year_canonical.rpb" url="http://alkitab-host.appspot.com/addon/rpb/blueletter_one_year_canonical.rpb" />
+        <rp_preset title="Blue Letter One Year Historical Plan" description="Have you ever wondered what it would have been like to read the Old Testament in ancient Israel? Or, the New Testament as the books were written? In this plan, the order of the Old Testament readings is very similar to Israel's Hebrew Bible, progressing from Law to Prophets to Writings. The New Testament ordering is based upon research regarding the order in which the books were authored. Although this research is not conclusive, it may offer helpful insights to your Bible reading."
+                   filename_rp_preset="blueletter_one_year_historical.rpb" url="http://alkitab-host.appspot.com/addon/rpb/blueletter_one_year_historical.rpb" />
+        <rp_preset title="Blue Letter OT and NT" description="It is important to understand the fullness of God's message to the churches, and a great way of doing this is reading the Old and New Testaments simultaneously. This plan, which can be completed in two calendar years, does just that. At a slower pace than the one-year version of this plan, readings from both Testaments color one’s journey through the Bible."
+                   filename_rp_preset="blueletter_ot_and_nt_together.rpb" url="http://alkitab-host.appspot.com/addon/rpb/blueletter_ot_and_nt_together.rpb" />
+        <rp_preset title="Bible Plan Gospels" description="Read the Gospels in a month. Three chapter each day."
+                   filename_rp_preset="bibleplan_gospels.rpb" url="http://alkitab-host.appspot.com/addon/rpb/bibleplan_gospels.rpb" />
+        <rp_preset title="Bible Plan Proverbs" description="Read Proverbs in a month. One chapter each day."
+                   filename_rp_preset="bibleplan_proverbs.rpb" url="http://alkitab-host.appspot.com/addon/rpb/bibleplan_proverbs.rpb" />
+        <rp_preset title="Bible Plan Psalms" description="Read the Psalms in a month. About five chapters each day."
+                   filename_rp_preset="bibleplan_psalms.rpb" url="http://alkitab-host.appspot.com/addon/rpb/bibleplan_psalms.rpb" />
+
+    </readingplan>
 </config>

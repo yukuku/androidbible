@@ -8,9 +8,9 @@ import yuku.alkitab.util.Ari;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitabconverter.internal_common.InternalCommon;
 import yuku.alkitabconverter.util.FootnoteDb;
-import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.XrefDb;
+import yuku.alkitabconverter.yes_common.Yes2Common;
 import yuku.alkitabconverter.yet.YetFileOutput;
 
 import javax.xml.parsers.SAXParser;
@@ -101,15 +101,15 @@ public class Proses2 {
 
 		////////// PROSES KE YET
 
-		final List<Rec> xrec = teksDb.toRecList();
-
-		YetFileOutput yet = new YetFileOutput(new File(OUTPUT_YET));
-		yet.setInfo("locale", INFO_LOCALE);
-		yet.setInfo("shortName", INFO_SHORT_NAME);
-		yet.setInfo("longName", INFO_LONG_NAME);
-		yet.setInfo("description", INFO_DESCRIPTION);
-		yet.setVerses(xrec);
-		yet.setBooksFromFileLines(INPUT_BOOK_NAMES);
+		final YetFileOutput yet = new YetFileOutput(new File(OUTPUT_YET));
+		final Yes2Common.VersionInfo versionInfo = new Yes2Common.VersionInfo();
+		versionInfo.locale = INFO_LOCALE;
+		versionInfo.shortName = INFO_SHORT_NAME;
+		versionInfo.longName = INFO_LONG_NAME;
+		versionInfo.description = INFO_DESCRIPTION;
+		versionInfo.setBookNamesFromFile(INPUT_BOOK_NAMES);
+		yet.setVersionInfo(versionInfo);
+		yet.setTextDb(teksDb);
 		yet.setPericopeData(pericopeData);
 		yet.setXrefDb(xrefDb);
 		yet.setFootnoteDb(footnoteDb);

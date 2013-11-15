@@ -16,12 +16,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
-
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.base.util.Appearances;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.model.PericopeBlock;
+import yuku.alkitab.util.Ari;
 
 /**
  * This has been completely superseded by {@link SingleViewVerseAdapter}, but because
@@ -89,6 +89,8 @@ public class LegacyVerseAdapter extends VerseAdapter {
 				if (checked) lIsiAyat.setTextColor(0xff000000); // override with black!
 			}
 
+			res.setShaded(checkShadedForVerse(Ari.encode(book_.bookId, chapter_1_, id + 1)));
+
 			AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_attributes);
 			attributeView.showBookmark(attributeMap_ != null && (attributeMap_[id] & 0x1) != 0);
 			attributeView.showNote(attributeMap_ != null && (attributeMap_[id] & 0x2) != 0);
@@ -99,12 +101,12 @@ public class LegacyVerseAdapter extends VerseAdapter {
 		} else {
 			// JUDUL PERIKOP. bukan ayat.
 
-			View res;
+			final PericopeHeaderItem res;
 			if (convertView == null || convertView.getId() != R.layout.item_pericope_header) {
-				res = LayoutInflater.from(context_).inflate(R.layout.item_pericope_header, null);
+				res = (PericopeHeaderItem) inflater_.inflate(R.layout.item_pericope_header, null);
 				res.setId(R.layout.item_pericope_header);
 			} else {
-				res = convertView;
+				res = (PericopeHeaderItem) convertView;
 			}
 
 			PericopeBlock pericopeBlock = pericopeBlocks_[-id - 1];
@@ -120,6 +122,8 @@ public class LegacyVerseAdapter extends VerseAdapter {
 			} else {
 				lJudul.setPadding(0, (int) (S.applied.fontSize2dp * density_), 0, 0);
 			}
+
+			res.setShaded(checkShadedForPericopeHeader(Ari.encode(book_.bookId, chapter_1_, 0), position));
 
 			Appearances.applyPericopeTitleAppearance(lJudul);
 

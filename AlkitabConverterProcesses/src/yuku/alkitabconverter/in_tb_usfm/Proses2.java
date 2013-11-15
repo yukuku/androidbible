@@ -13,6 +13,7 @@ import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.TextDb.TextProcessor;
 import yuku.alkitabconverter.util.TextDb.VerseState;
 import yuku.alkitabconverter.util.XrefDb;
+import yuku.alkitabconverter.yes_common.Yes2Common;
 import yuku.alkitabconverter.yet.YetFileOutput;
 
 import javax.xml.parsers.SAXParser;
@@ -134,11 +135,7 @@ public class Proses2 {
 		
 		teksDb.dump();
 		
-		List<Rec> xrec = teksDb.toRecList();
-		
 		dumpForYetTesting(InternalCommon.fileToBookNames(INPUT_BOOK_NAMES), teksDb, pericopeData);
-		
-		System.out.println("Total rec: " + xrec.size());
 		
 		////////// CREATE REVERSE INDEX
 		
@@ -158,12 +155,14 @@ public class Proses2 {
 		////////// PROSES KE YET
 
 		YetFileOutput yet = new YetFileOutput(new File(OUTPUT_YET));
-		yet.setInfo("locale", INFO_LOCALE);
-		yet.setInfo("shortName", INFO_SHORT_NAME);
-		yet.setInfo("longName", INFO_LONG_NAME);
-		yet.setInfo("description", INFO_DESCRIPTION);
-		yet.setVerses(xrec);
-		yet.setBooksFromFileLines(INPUT_BOOK_NAMES);
+		final Yes2Common.VersionInfo versionInfo = new Yes2Common.VersionInfo();
+		versionInfo.locale = INFO_LOCALE;
+		versionInfo.shortName = INFO_SHORT_NAME;
+		versionInfo.longName = INFO_LONG_NAME;
+		versionInfo.description = INFO_DESCRIPTION;
+		versionInfo.setBookNamesFromFile(INPUT_BOOK_NAMES);
+		yet.setVersionInfo(versionInfo);
+		yet.setTextDb(teksDb);
 		yet.setPericopeData(pericopeData);
 		yet.setXrefDb(xrefDb);
 		// no footnotes

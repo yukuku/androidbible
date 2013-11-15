@@ -5,6 +5,7 @@ import android.util.Log;
 import org.xmlpull.v1.XmlPullParser;
 import yuku.afw.App;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
+import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.debug.R;
 
@@ -24,7 +25,8 @@ public class AppConfig {
 	public boolean menuSongs;
 	public List<MVersionPreset> presets;
 	public String shareUrlFormat;
-
+	public List<ReadingPlan.ReadingPlanInfo> readingPlanInfos;
+	
 	private static AppConfig lastAppConfig;
 
 	private AppConfig() {}
@@ -49,6 +51,7 @@ public class AppConfig {
 		AppConfig res = new AppConfig();
 		
 		List<MVersionPreset> presets = new ArrayList<MVersionPreset>();
+		List<ReadingPlan.ReadingPlanInfo> infos = new ArrayList<ReadingPlan.ReadingPlanInfo>();
 		int presetOrdering = 10;
 
 		while (true) {
@@ -75,12 +78,20 @@ public class AppConfig {
 				presets.add(preset);
 			} else if (next == XmlPullParser.START_TAG && "url".equals(parser.getName())) { //$NON-NLS-1$
 				res.shareUrlFormat = parser.getAttributeValue(null, "format"); //$NON-NLS-1$
+			} else if (next == XmlPullParser.START_TAG && "rp_preset".equals(parser.getName())) {
+				ReadingPlan.ReadingPlanInfo info = new ReadingPlan.ReadingPlanInfo();
+				info.title = parser.getAttributeValue(null, "title");
+				info.description = parser.getAttributeValue(null, "description");
+				info.name = parser.getAttributeValue(null, "filename_rp_preset");
+				info.url = parser.getAttributeValue(null, "url");
+				infos.add(info);
 			} else if (next == XmlPullParser.END_DOCUMENT) {
 				break;
 			}
 		}
 		
 		res.presets = presets;
+		res.readingPlanInfos = infos;
 		
 		return res;
 	}

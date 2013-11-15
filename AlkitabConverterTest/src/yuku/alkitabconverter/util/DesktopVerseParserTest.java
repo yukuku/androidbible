@@ -36,6 +36,13 @@ public class DesktopVerseParserTest {
 		test("wah 9:9", "0x410909 .");
 		test("zak 9:9", "0x250909 .");
 
+		// single chapter book whole book
+		test("oba 0", "0x1E0100 .");
+		test("philemon 0", "0x380100 .");
+		test("2 john 0", "0x3E0100 .");
+		test("3 john 0", "0x3F0100 .");
+		test("jud 0", "0x400100 .");
+
 		// bug
 		test("Yl. 2:10, 31, 3:15", "0x1c020a . 0x1c021f . 0x1c030f .");
 	}

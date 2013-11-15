@@ -324,7 +324,11 @@ public class VersionImpl implements Version {
 			return "[?]";
 		}
 
-		return book.reference(chapter_1, verse_1);
+		if (verse_1 == 0) {
+			return book.reference(chapter_1);
+		} else {
+			return book.reference(chapter_1, verse_1);
+		}
 	}
 
 	@Override

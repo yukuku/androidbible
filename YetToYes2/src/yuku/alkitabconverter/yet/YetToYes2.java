@@ -2,6 +2,7 @@ package yuku.alkitabconverter.yet;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import yuku.alkitabconverter.util.KjvUtils;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.yes_common.Yes2Common;
@@ -95,8 +96,11 @@ public class YetToYes2 {
 		TextDb textDb = new TextDb();
 		for (Rec rec: result.recs) {
 			textDb.append(rec.book_1 - 1, rec.chapter_1, rec.verse_1, rec.text, -1);
+			if (!KjvUtils.isValidKjv(rec.book_1 - 1, rec.chapter_1, rec.verse_1)) {
+				System.err.println("warning: is not a valid verse in KJV versification: verse " + rec.book_1 + " " + rec.chapter_1 + " " + rec.verse_1);
+			}
 		}
-		
+
 		boolean compressed = !nocompress;
 		Yes2Common.createYesFile(new File(yesfile), versionInfo, textDb, result.pericopeData, compressed, result.xrefEntries, result.footnoteEntries);
 		

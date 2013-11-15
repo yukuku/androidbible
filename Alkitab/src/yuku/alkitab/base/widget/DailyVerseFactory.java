@@ -7,8 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.br.DailyVerseAppWidgetReceiver;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
 
 @SuppressLint("NewApi")
@@ -18,6 +18,7 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 	private int[] aris;
 	private Version bibleVersion;
 	private boolean optionDarkText;
+	private float optionTextSize;
 
 	public DailyVerseFactory(final Context context, final Intent intent) {
 		this.context = context;
@@ -29,6 +30,7 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 		bibleVersion = DailyVerseAppWidgetReceiver.getVersion(appWidgetId);
 		aris = DailyVerseAppWidgetReceiver.getVerse(appWidgetId);
 		optionDarkText = DailyVerseAppWidgetReceiver.getOptionDarkText(appWidgetId);
+		optionTextSize = DailyVerseAppWidgetReceiver.getOptionTextSize(appWidgetId);
 	}
 
 	@Override
@@ -53,6 +55,7 @@ public class DailyVerseFactory implements RemoteViewsService.RemoteViewsFactory 
 		if (optionDarkText) {
 			row.setTextColor(R.id.text1, 0xff000000);
 		}
+		row.setFloat(R.id.text1, "setTextSize", optionTextSize);
 
 		Intent intent = new Intent();
 		Bundle extras = new Bundle();

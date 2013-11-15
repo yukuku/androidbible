@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/abc_action_bar_default_height"
+                android:id="@+id/llNavigations">
+
+            <ImageButton
+                    android:id="@+id/bLeft"
+                    style="?attr/actionButtonStyle"
+                    android:layout_width="@dimen/abc_action_button_min_width"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/rp_navigationPreviousDay"
+                    android:padding="16dp"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_nav_left_dark" />
+
+            <View android:layout_height="fill_parent"
+                  android:layout_width="1dp"
+                  android:background="#90909090"
+                  android:layout_marginTop="4dp"
+                  android:layout_marginBottom="4dp"/>
+
+            <Button
+                    android:id="@+id/bToday"
+                    style="?attr/actionButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/rp_navigationGoToDate"
+                    android:textSize="18sp"/>
+
+            <View android:layout_height="fill_parent"
+                  android:layout_width="1dp"
+                  android:background="#90909090"
+                  android:layout_marginTop="4dp"
+                  android:layout_marginBottom="4dp"/>
+
+            <ImageButton
+                    android:id="@+id/bRight"
+                    style="?attr/actionButtonStyle"
+                    android:layout_width="@dimen/abc_action_button_min_width"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/rp_navigationNextDay"
+                    android:padding="16dp"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_nav_right_dark" />
+        </LinearLayout>
+
+        <View android:layout_height="1dp"
+              android:layout_width="fill_parent"
+              android:background="#90909090"/>
+
+        <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/lsTodayReadings"
+                android:fastScrollEnabled="true"/>
+
+    </LinearLayout>
+
+    <FrameLayout
+            android:id="@+id/flNoDataContainer"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:visibility="gone" >
+
+        <Button
+                android:id="@+id/bDownload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="@string/rp_menuDownload"
+                android:text="@string/rp_menuDownload" />
+    </FrameLayout>
+
+</FrameLayout>
