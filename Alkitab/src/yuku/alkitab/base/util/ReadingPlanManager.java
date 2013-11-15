@@ -134,9 +134,8 @@ public class ReadingPlanManager {
 		readingCodes = filterReadingCodesByDayStartEnd(readingCodes, dayNumber, dayNumber);
 		for (int i = 0; i < readingCodes.size(); i++) {
 			final int readingCode = readingCodes.get(i);
-			final int sequence = toSequence(readingCode) * 2;
+			final int sequence = toSequence(readingCode);
 			readMarks[sequence] = true;
-			readMarks[sequence + 1] = true;
 		}
 	}
 

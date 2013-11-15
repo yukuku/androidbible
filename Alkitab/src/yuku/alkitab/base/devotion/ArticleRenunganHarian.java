@@ -72,7 +72,7 @@ public class ArticleRenunganHarian extends ArticleFromSabda {
 		String copyrightHtml = "__________<br/>" +
 		"<small>Renungan Harian / e-Renungan Harian<br/>" +
 		"Bahan renungan yang diterbitkan secara teratur oleh Yayasan Gloria dan diterbitkan secara elektronik oleh Yayasan Lembaga SABDA (YLSA).<br/>" +
-		"© 1999-2012 Yayasan Lembaga SABDA (YLSA). <br/>" +
+		"© 1999-2013 Yayasan Lembaga SABDA (YLSA). <br/>" +
 		"Isi boleh disimpan untuk tujuan pribadi atau non-komersial. Atas setiap publikasi atau pencetakan wajib menyebutkan alamat situs SABDA.org sebagai sumber tulisan dan mengirim pemberitahuan ke webmaster@sabda.org</small>";
 
 		sb.append(Html.fromHtml(copyrightHtml));
