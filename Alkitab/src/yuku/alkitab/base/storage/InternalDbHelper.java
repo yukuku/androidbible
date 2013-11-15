@@ -86,7 +86,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			createIndexProgressMarkHistory(db);
 		}
 
-		if (oldVersion <= 136) { // 137: 3.4.0
+		if (oldVersion <= 137) { // 138: 3.4.0
 			createTableReadingPlan(db);
 			createTableReadingPlanProgress(db);
 			createIndexReadingPlanProgress(db);
