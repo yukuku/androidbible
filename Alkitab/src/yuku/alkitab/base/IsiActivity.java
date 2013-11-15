@@ -1344,7 +1344,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						lsSplit1.setAriRangesReadingPlan(ariRangesInThisSequence);
 						lsSplit1.updateAdapter();
 
-						readingPlanFloatMenu.load(id, dayNumber, ariRanges, i);
+						readingPlanFloatMenu.load(id, dayNumber, ariRanges, i / 2);
 						final ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener navigationClickListener = new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
 							@Override
 							public void onClick(final int ari_start, final int ari_end) {

@@ -67,7 +67,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		this.dayNumber = dayNumber;
 		this.ariRanges = ariRanges;
 		this.sequence = sequence;
-		this.readMarks = new boolean[ariRanges.length];
+		this.readMarks = new boolean[ariRanges.length / 2];
 
 		updateProgress();
 		prepareLayout();
@@ -76,7 +76,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 
 	public void updateProgress() {
 		IntArrayList readingCodes = S.getDb().getAllReadingCodesByReadingPlanId(id);
-		readMarks = new boolean[readMarks.length];
+		readMarks = new boolean[ariRanges.length / 2];
 		ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, dayNumber);
 	}
 
@@ -95,7 +95,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 			@Override
 			public void onClick(final View v) {
 				if (sequence != 0) {
-					sequence += -2;
+					sequence += -1;
 					leftNavigationListener.onClick(ariRanges[sequence], ariRanges[sequence + 1]);
 					updateLayout();
 				}
@@ -105,8 +105,8 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		bRight.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				if (sequence != ariRanges.length - 2) {
-					sequence += 2;
+				if (sequence != ariRanges.length / 2 - 1) {
+					sequence += 1;
 					rightNavigationListener.onClick(ariRanges[sequence], ariRanges[sequence + 1]);
 					updateLayout();
 				}
@@ -117,9 +117,8 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 			@Override
 			public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
 				readMarks[sequence] = isChecked;
-				readMarks[sequence + 1] = isChecked;
 
-				ReadingPlanManager.updateReadingPlanProgress(id, dayNumber, sequence / 2, isChecked);
+				ReadingPlanManager.updateReadingPlanProgress(id, dayNumber, sequence, isChecked);
 				updateLayout();
 			}
 		});
@@ -198,14 +197,14 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 
 		cbTick.setChecked(readMarks[sequence]);
 
-		final StringBuilder reference = ReadingPlanActivity.getReference(S.activeVersion, ariRanges[sequence], ariRanges[sequence + 1]);
+		final StringBuilder reference = ReadingPlanActivity.getReference(S.activeVersion, ariRanges[sequence * 2], ariRanges[sequence * 2 + 1]);
 		reference.append("\n");
-		reference.append(sequence / 2 + 1);
+		reference.append(sequence + 1);
 		reference.append("/").append(ariRanges.length / 2);
 		bDescription.setText(reference);
 
 		bLeft.setEnabled(sequence != 0);
-		bRight.setEnabled(sequence != ariRanges.length - 2);
+		bRight.setEnabled(sequence != ariRanges.length / 2 - 1);
 	}
 
 	public void fadeoutAnimation(long startOffset) {
