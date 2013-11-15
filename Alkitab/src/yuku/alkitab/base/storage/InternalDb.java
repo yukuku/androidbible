@@ -882,6 +882,7 @@ public class InternalDb {
 	public long insertReadingPlan(final ReadingPlan.ReadingPlanInfo info, byte[] data) {
 		final ContentValues cv = new ContentValues();
 		cv.put(Db.ReadingPlan.version, info.version);
+		cv.put(Db.ReadingPlan.name, info.name);
 		cv.put(Db.ReadingPlan.title, info.title);
 		cv.put(Db.ReadingPlan.description, info.description);
 		cv.put(Db.ReadingPlan.duration, info.duration);
@@ -890,10 +891,11 @@ public class InternalDb {
 		return helper.getWritableDatabase().insert(Db.TABLE_ReadingPlan, null, cv);
 	}
 
-	public long insertReadingPlanProgress(final long readingPlanId, final int readingCode) {
+	public long insertReadingPlanProgress(final long readingPlanId, final int readingCode, final long checkedDate) {
 		ContentValues cv = new ContentValues();
 		cv.put(Db.ReadingPlanProgress.reading_plan_id, readingPlanId);
 		cv.put(Db.ReadingPlanProgress.reading_code, readingCode);
+		cv.put(Db.ReadingPlanProgress.checked_date, checkedDate);
 		return helper.getWritableDatabase().insert(Db.TABLE_ReadingPlanProgress, null, cv);
 	}
 
@@ -916,17 +918,18 @@ public class InternalDb {
 
 	public List<ReadingPlan.ReadingPlanInfo> listAllReadingPlanInfo() {
 		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan,
-		new String[] {"_id", Db.ReadingPlan.version, Db.ReadingPlan.title, Db.ReadingPlan.description, Db.ReadingPlan.duration, Db.ReadingPlan.startDate},
+		new String[] {"_id", Db.ReadingPlan.version, Db.ReadingPlan.name, Db.ReadingPlan.title, Db.ReadingPlan.description, Db.ReadingPlan.duration, Db.ReadingPlan.startDate},
 		null, null, null, null, null);
 		List<ReadingPlan.ReadingPlanInfo> infos = new ArrayList<ReadingPlan.ReadingPlanInfo>();
 		while (c.moveToNext()) {
 			ReadingPlan.ReadingPlanInfo info = new ReadingPlan.ReadingPlanInfo();
 			info.id = c.getLong(0);
 			info.version = c.getInt(1);
-			info.title = c.getString(2);
-			info.description = c.getString(3);
-			info.duration = c.getInt(4);
-			info.startDate = c.getLong(5);
+			info.name = c.getString(2);
+			info.title = c.getString(3);
+			info.description = c.getString(4);
+			info.duration = c.getInt(5);
+			info.startDate = c.getLong(6);
 			infos.add(info);
 		}
 		c.close();

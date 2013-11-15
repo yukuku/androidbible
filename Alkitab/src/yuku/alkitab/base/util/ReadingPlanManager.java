@@ -48,7 +48,7 @@ public class ReadingPlanManager {
 			if (ids.size() > 0) {
 				S.getDb().deleteReadingPlanProgress(readingPlanId, readingCode);
 			}
-			S.getDb().insertReadingPlanProgress(readingPlanId, readingCode);
+			S.getDb().insertReadingPlanProgress(readingPlanId, readingCode, new Date().getTime());
 		} else {
 			S.getDb().deleteReadingPlanProgress(readingPlanId, readingCode);
 		}
@@ -102,6 +102,7 @@ public class ReadingPlanManager {
 		readingPlanInfo.version = headers[7];
 
 		ValueMap map = reader.readValueSimpleMap();
+		readingPlanInfo.name = map.getString("name");
 		readingPlanInfo.title = map.getString("title");
 		readingPlanInfo.description = map.getString("description");
 		readingPlanInfo.duration = map.getInt("duration");

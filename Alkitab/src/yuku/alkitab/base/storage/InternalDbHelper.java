@@ -215,6 +215,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL("create table if not exists " + Db.TABLE_ReadingPlan + " (" +
 		"_id integer primary key autoincrement, " +
 		Db.ReadingPlan.version + " integer, " +
+		Db.ReadingPlan.name + " text, " +
 		Db.ReadingPlan.title + " text, " +
 		Db.ReadingPlan.description + " text, " +
 		Db.ReadingPlan.duration + " integer, " +
@@ -226,7 +227,8 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL("create table if not exists " + Db.TABLE_ReadingPlanProgress + " (" +
 		"_id integer primary key autoincrement, " +
 		Db.ReadingPlanProgress.reading_plan_id + " integer, " +
-		Db.ReadingPlanProgress.reading_code + " integer)");
+		Db.ReadingPlanProgress.reading_code + " integer, " +
+		Db.ReadingPlanProgress.checked_date + " integer)");
 	}
 
 	private void createIndexReadingPlanProgress(SQLiteDatabase db) {

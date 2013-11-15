@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.PopupMenu;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -492,18 +491,17 @@ public class ReadingPlanActivity extends ActionBarActivity {
 
 		final List<Integer> resources = new ArrayList<Integer>();
 		for (int i = 0; i < infos.size(); i++) {
-			String title = infos.get(i).title;
+			String title = infos.get(i).name.replace(".rpb", "");
 			boolean downloaded = false;
 			for (ReadingPlan.ReadingPlanInfo downloadedReadingPlanInfo : downloadedReadingPlanInfos) {
-				if (title.equals(downloadedReadingPlanInfo.title)) {
+				if (title.equals(downloadedReadingPlanInfo.name)) {
 					downloaded = true;
 					break;
 				}
 			}
 			if (!downloaded) {
-				readingPlanTitles.add(title);
-				String filename = infos.get(i).filename.replace(".rpb", "");                        //TODO: proper method. testing only
-				resources.add(getResources().getIdentifier(filename, "raw", getPackageName()));     //TODO: proper method
+				readingPlanTitles.add(infos.get(i).title);
+				resources.add(getResources().getIdentifier(title, "raw", getPackageName()));     //TODO: proper method
 			}
 		}
 

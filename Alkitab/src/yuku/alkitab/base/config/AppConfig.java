@@ -82,7 +82,7 @@ public class AppConfig {
 				ReadingPlan.ReadingPlanInfo info = new ReadingPlan.ReadingPlanInfo();
 				info.title = parser.getAttributeValue(null, "title");
 				info.description = parser.getAttributeValue(null, "description");
-				info.filename = parser.getAttributeValue(null, "filename_rp_preset");
+				info.name = parser.getAttributeValue(null, "filename_rp_preset");
 				info.url = parser.getAttributeValue(null, "url");
 				infos.add(info);
 			} else if (next == XmlPullParser.END_DOCUMENT) {
