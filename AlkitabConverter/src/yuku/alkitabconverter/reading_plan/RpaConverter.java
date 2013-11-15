@@ -11,8 +11,9 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class RpaConverter {
-	private final static String FILE_INPUT = System.getProperty("user.dir") + "/AlkitabConverter/file/rp_blueletter_one_year_canonical.txt";
-	private final static String FILE_OUTPUT = System.getProperty("user.dir") + "/AlkitabConverter/file/rp_blueletter_one_year_canonical.rpa";
+	private final static String FILE_NAME = "blueletter_one_year_canonical";
+	private final static String FILE_INPUT = System.getProperty("user.dir") + "/AlkitabConverter/file/" + FILE_NAME + ".txt";
+	private final static String FILE_OUTPUT = System.getProperty("user.dir") + "/AlkitabConverter/file/" + FILE_NAME + ".rpa";
 
 
 	public static void main(String[] args) {
