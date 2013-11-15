@@ -418,7 +418,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	private int findFirstUnreadDay() {
 
 		for (int i = 0; i < readingPlan.info.duration - 1; i++) {
-			boolean[] readMarks = new boolean[readingPlan.dailyVerses[i].length];
+			boolean[] readMarks = new boolean[readingPlan.dailyVerses[i].length / 2];
 			ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, i);
 			for (boolean readMark : readMarks) {
 				if (!readMark) {
