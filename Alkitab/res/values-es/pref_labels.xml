@@ -6,7 +6,6 @@
   <string name="pref_warna_latar_belakang">Fondo</string>
   <string name="pref_warna_nomor_ayat">Números de versículo</string>
   <string name="pref_redTextColor_title">Palabras de Jesús</string>
-  <string name="pref_warna">Colores</string>
   <string name="pref_penggunaan">Uso</string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Mostrar la lista de libros en orden alfabético (a-z) en lugar del original</string>
   <string name="pref_kitab_menurut_abjad">Ordenar los libros alfabéticamente</string>

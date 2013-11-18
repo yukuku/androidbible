@@ -25,7 +25,7 @@ public class ColorSettingsActivity extends BasePreferenceActivity {
 			setTitle(R.string.color_settings_night_title);
 		} else {
 			addPreferencesFromResource(R.xml.color_settings);
-			setTitle(R.string.color_settings);
+			setTitle(R.string.color_settings_title);
 		}
 	}
 }

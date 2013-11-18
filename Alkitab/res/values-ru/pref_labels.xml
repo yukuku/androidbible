@@ -6,7 +6,6 @@
   <string name="pref_warna_latar_belakang">Фон</string>
   <string name="pref_warna_nomor_ayat">Номера стихов</string>
   <string name="pref_redTextColor_title">Слова Иисуса</string>
-  <string name="pref_warna">Цвета</string>
   <string name="pref_penggunaan">Использование</string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Показывать список книг в алфавитном порядке (а-я) вместо их порядка в Библии</string>
   <string name="pref_kitab_menurut_abjad">Сортировать книги по алфавиту</string>
