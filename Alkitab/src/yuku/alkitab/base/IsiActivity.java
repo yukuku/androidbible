@@ -823,7 +823,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	@Override protected void onStart() {
 		super.onStart();
 		
-		if (Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_nyalakanTerusLayar_default))) {
+		if (Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default))) {
 			lsText.setKeepScreenOn(true);
 		}
 	}
@@ -1494,7 +1494,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 	
 	@Override public boolean onKeyUp(int keyCode, KeyEvent event) {
-		String volumeButtonsForNavigation = Preferences.getString(getString(R.string.pref_volumeButtonNavigation_key), getString(R.string.pref_tombolVolumeBuatPindah_default));
+		String volumeButtonsForNavigation = Preferences.getString(getString(R.string.pref_volumeButtonNavigation_key), getString(R.string.pref_volumeButtonNavigation_default));
 		if (! U.equals(volumeButtonsForNavigation, "default")) { // consume here //$NON-NLS-1$
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) return true;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) return true;

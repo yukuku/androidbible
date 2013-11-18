@@ -196,7 +196,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	@Override protected void onStart() {
 		super.onStart();
 		
-		if (Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_nyalakanTerusLayar_default))) {
+		if (Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default))) {
 			lContent.setKeepScreenOn(true);
 		}
 	}

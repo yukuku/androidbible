@@ -13,8 +13,8 @@
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Ekran urządzenia nie wyłączy się podczas czytania Biblii</string>
   <string name="pref_biarkan_layar_menyala">Utrzymuj ekran włączony</string>
   <string name="pref_penampilan_layar">Wyświetlacz</string>
-  <string name="pref_tombolVolumeBuatPindah_title">Nawigacja przyciskami głośności</string>
-  <string name="pref_tombolVolumeBuatPindah_summary">Używaj sprzętowych przycisków głośności do nawigacji pomiędzy wersami i rozdziałami</string>
+  <string name="pref_volumeButtonNavigation_title">Nawigacja przyciskami głośności</string>
+  <string name="pref_volumeButtonNavigation_summary">Używaj sprzętowych przycisków głośności do nawigacji pomiędzy wersami i rozdziałami</string>
   <string name="pref_copyWithVerseNumbers_title">Dołącz numer wersu</string>
   <string name="pref_copyWithVerseNumbers_summary">Umieszaj numer każdego wersu przy kopiowaniu/dzieleniu się</string>
   <string name="pref_help_text_appearance_title">Wygląd tekstu</string>
