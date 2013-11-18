@@ -182,7 +182,6 @@
   <string name="split_version_none">O singură versiune</string>
   <string name="split_version_cant_display_verse">%1$s nu este disponibil în %2$s.</string>
   <string name="menuAddSomething">Adaugă însemn</string>
-  <string name="color_settings">Alege culorile</string>
   <string name="menuTextAppearance">Aspect text</string>
   <string name="text_appearance_theme_custom">Personalizat...</string>
   <string name="text_appearance_text_size">Dimensiune text</string>

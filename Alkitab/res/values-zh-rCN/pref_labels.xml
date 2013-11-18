@@ -14,7 +14,7 @@
   <string name="pref_biarkan_layar_menyala">保持萤幕开启</string>
   <string name="pref_penampilan_layar">显示</string>
   <string name="pref_volumeButtonNavigation_title">音量键浏览</string>
-  <string name="pref_volumeButtonNavigation_summary">使用硬件的音量键浏览章节</string>
+  <string name="pref_volumeButtonNavigation_summary">使用硬件的音量键于章节之间浏览</string>
   <string name="pref_copyWithVerseNumbers_title">包含节数</string>
   <string name="pref_copyWithVerseNumbers_summary">在复制／分享时于所有经节加上节数</string>
   <string name="pref_help_text_appearance_title">文字外观</string>

@@ -180,7 +180,6 @@ Existierende Sicherungen werden überschrieben.</string>
   <string name="split_version_none">Nichts</string>
   <string name="split_version_cant_display_verse">%1$s ist nicht in %2$s verfügbar.</string>
   <string name="menuAddSomething">Markierung hinzufügen</string>
-  <string name="color_settings">Farben verwalten</string>
   <string name="menuTextAppearance">Formatierung des Text</string>
   <string name="text_appearance_theme_custom">Individuell...</string>
   <string name="text_appearance_text_size">Textgröße</string>

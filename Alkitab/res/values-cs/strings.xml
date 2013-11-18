@@ -179,7 +179,6 @@
   <string name="split_version_none">Žádný</string>
   <string name="split_version_cant_display_verse">%1$s není k dispozici v %2$s.</string>
   <string name="menuAddSomething">Přidat značku</string>
-  <string name="color_settings">Přizpůsobení barev</string>
   <string name="menuTextAppearance">Vzhled textu</string>
   <string name="text_appearance_theme_custom">Přizpůsobení...</string>
   <string name="text_appearance_text_size">Velikost textu</string>
