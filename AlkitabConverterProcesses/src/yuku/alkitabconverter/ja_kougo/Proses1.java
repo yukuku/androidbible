@@ -1,40 +1,33 @@
 package yuku.alkitabconverter.ja_kougo;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.ext.DefaultHandler2;
+import yuku.alkitab.yes2.model.PericopeData;
+import yuku.alkitabconverter.OsisBookNames;
+import yuku.alkitabconverter.util.Rec;
+import yuku.alkitabconverter.util.TextDb;
+import yuku.alkitabconverter.yes_common.Yes2Common;
+import yuku.alkitabconverter.yet.YetFileOutput;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.ext.DefaultHandler2;
-
-import yuku.alkitabconverter.yes1.Yes1File;
-import yuku.alkitabconverter.yes1.Yes1File.InfoEdisi;
-import yuku.alkitabconverter.yes1.Yes1File.InfoKitab;
-import yuku.alkitabconverter.yes1.Yes1File.PericopeData;
-import yuku.alkitabconverter.yes1.Yes1File.PerikopBlok;
-import yuku.alkitabconverter.yes1.Yes1File.PerikopIndex;
-import yuku.alkitabconverter.yes1.Yes1File.Teks;
-import yuku.alkitabconverter.yes1.Yes1File.PericopeData.Block;
-import yuku.alkitabconverter.yes1.Yes1File.PericopeData.Entry;
-import yuku.alkitabconverter.OsisBookNames;
-import yuku.alkitabconverter.util.Rec;
-import yuku.alkitabconverter.util.RecUtil;
-import yuku.alkitabconverter.yes_common.Yes1Common;
-
 public class Proses1 {
-	static String INPUT_TEKS_1 = "../Alkitab/publikasi/ja-kougo/xml/";
+	public static final String INFO_SHORT_NAME = "KOUGO";
+	public static final String INFO_LONG_NAME = "口語訳";
+	public static final String INFO_DESCRIPTION = "口語訳新約聖書(1954年版) Colloquial Japanese (1954)";
+	static String INPUT_TEKS_1 = "./ja-kougo/xml/";
 	public static String INPUT_TEKS_ENCODING = "utf-8";
 	public static int INPUT_TEKS_ENCODING_YES = 2; // 1: ascii; 2: utf-8;
-	public static String INPUT_KITAB = "../Alkitab/publikasi/ja-kougo/ja-kougo-kitab.txt";
-	static String OUTPUT_YES = "../Alkitab/publikasi/ja-kougo/ja-kougo.yes";
+	public static String INPUT_KITAB = "./ja-kougo/ja-kougo-kitab.txt";
+	static String OUTPUT_YET = "./ja-kougo/ja-kougo.yet";
 	public static int OUTPUT_ADA_PERIKOP = 1;
 
 	final SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -43,7 +36,7 @@ public class Proses1 {
 	List<Rec> xrec = new ArrayList<Rec>();
 	PericopeData pericopeData = new PericopeData();
 	{
-		pericopeData.entries = new ArrayList<Entry>();
+		pericopeData.entries = new ArrayList<PericopeData.Entry>();
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -85,15 +78,18 @@ public class Proses1 {
 		}
 		//System.out.println("Total rec: " + xrec.size());
 
-		////////// PROSES KE YES
-
-		final InfoEdisi infoEdisi = Yes1Common.infoEdisi("ja-kougo", null, "口語訳", RecUtil.hitungKitab(xrec), OUTPUT_ADA_PERIKOP, "新約1954年/旧約1955年", INPUT_TEKS_ENCODING_YES, null);
-		final InfoKitab infoKitab = Yes1Common.infoKitab(xrec, INPUT_KITAB, INPUT_TEKS_ENCODING, INPUT_TEKS_ENCODING_YES);
-		final Teks teks = Yes1Common.teks(xrec, INPUT_TEKS_ENCODING);
-		
-		Yes1File file = Yes1Common.bikinYesFile(infoEdisi, infoKitab, teks, new PerikopBlok(pericopeData), new PerikopIndex(pericopeData));
-		
-		file.output(new RandomAccessFile(OUTPUT_YES, "rw"));
+		////////// PROSES KE YET
+		final YetFileOutput yet = new YetFileOutput(new File(OUTPUT_YET));
+		final Yes2Common.VersionInfo versionInfo = new Yes2Common.VersionInfo();
+		versionInfo.locale = "ja";
+		versionInfo.shortName = INFO_SHORT_NAME;
+		versionInfo.longName = INFO_LONG_NAME;
+		versionInfo.description = INFO_DESCRIPTION;
+		versionInfo.setBookNamesFromFile(INPUT_KITAB);
+		yet.setVersionInfo(versionInfo);
+		yet.setPericopeData(pericopeData);
+		yet.setTextDb(new TextDb(xrec));
+		yet.write();
 	}
 
 	public class Handler extends DefaultHandler2 {
@@ -204,10 +200,9 @@ public class Proses1 {
 				b_comment.setLength(0);
 				
 				// masukin ke data perikop
-				Entry entry = new Entry();
+				PericopeData.Entry entry = new PericopeData.Entry();
 				entry.ari = (kitab_1 - 1) << 16 | pasal_1 << 8 | ayat_1;
-				entry.block = new Block();
-				entry.block.version = 2;
+				entry.block = new PericopeData.Block();
 				entry.block.title = comment;
 				pericopeData.entries.add(entry);
 				
