@@ -326,4 +326,5 @@
         Go to the 'Text appearance' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik,
         ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."
     </string>
+    <string name="menuNightMode">Night mode</string>
 </resources>

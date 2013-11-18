@@ -23,17 +23,17 @@ class ColorThemes {
 	
 	static int[] getCurrentColors() {
 		return new int[] {
-			Preferences.getInt(App.context.getString(R.string.pref_textColor_key), App.context.getResources().getInteger(R.integer.pref_warnaHuruf_int_default)),
-			Preferences.getInt(App.context.getString(R.string.pref_bgColor_key), App.context.getResources().getInteger(R.integer.pref_warnaLatar_int_default)),
-			Preferences.getInt(App.context.getString(R.string.pref_verseColor_key), App.context.getResources().getInteger(R.integer.pref_warnaNomerAyat_int_default)),
+			Preferences.getInt(App.context.getString(R.string.pref_textColor_key), App.context.getResources().getInteger(R.integer.pref_textColor_default)),
+			Preferences.getInt(App.context.getString(R.string.pref_backgroundColor_key), App.context.getResources().getInteger(R.integer.pref_backgroundColor_default)),
+			Preferences.getInt(App.context.getString(R.string.pref_verseNumberColor_key), App.context.getResources().getInteger(R.integer.pref_verseNumberColor_default)),
 			Preferences.getInt(App.context.getString(R.string.pref_redTextColor_key), App.context.getResources().getInteger(R.integer.pref_redTextColor_default)),
 		};
 	}
 	
 	static void setCurrentColors(int[] colors) {
 		Preferences.setInt(App.context.getString(R.string.pref_textColor_key), colors[0]);
-		Preferences.setInt(App.context.getString(R.string.pref_bgColor_key), colors[1]);
-		Preferences.setInt(App.context.getString(R.string.pref_verseColor_key), colors[2]);
+		Preferences.setInt(App.context.getString(R.string.pref_backgroundColor_key), colors[1]);
+		Preferences.setInt(App.context.getString(R.string.pref_verseNumberColor_key), colors[2]);
 		Preferences.setInt(App.context.getString(R.string.pref_redTextColor_key), colors[3]);
 	}
 }

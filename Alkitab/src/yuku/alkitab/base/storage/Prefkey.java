@@ -29,5 +29,7 @@ public enum Prefkey {
 
 	/** default reading plan */
 	active_reading_plan_id,
-	
+
+	/** Night mode activated (boolean) */
+	is_night_mode,
 }

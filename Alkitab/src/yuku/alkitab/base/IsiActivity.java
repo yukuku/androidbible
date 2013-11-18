@@ -209,6 +209,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	NfcAdapter nfcAdapter;
 	ActionMode actionMode;
 	TextAppearancePanel textAppearancePanel;
+	boolean isNightMode;
 
 	//# state storage for search2
 	Query search2_query = null;
@@ -261,7 +262,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		bRight = V.get(this, R.id.bRight);
 		floater = V.get(this, R.id.floater);
 		readingPlanFloatMenu = V.get(this, R.id.readingPlanFloatMenu);
-		
+
+		isNightMode = Preferences.getBoolean(Prefkey.is_night_mode, false);
+
 		applyPreferences(false);
 		
 		bGoto.setOnClickListener(new View.OnClickListener() {
@@ -934,7 +937,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		menu.findItem(R.id.menuSongs).setVisible(c.menuSongs);
 		
 		// checkable menu items
-		menu.findItem(R.id.menuTextAppearance).setChecked(textAppearancePanel != null);
+		menu.findItem(R.id.menuNightMode).setChecked(isNightMode);
 		menu.findItem(R.id.menuFullScreen).setChecked(fullScreen);
 	}
 	
@@ -984,8 +987,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			setFullScreen(!item.isChecked());
 			return true;
 		case R.id.menuTextAppearance:
-			setShowTextAppearancePanel(!item.isChecked());
+			setShowTextAppearancePanel(textAppearancePanel == null);
 			return true;
+		case R.id.menuNightMode: {
+			setNightMode(!isNightMode);
+		} return true;
 		case R.id.menuSettings:
 			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
 			return true;
@@ -1053,6 +1059,16 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				textAppearancePanel = null;
 			}
 		}
+	}
+
+	void setNightMode(boolean yes) {
+		if (isNightMode == yes) return;
+		isNightMode = yes;
+
+		Preferences.setBoolean(Prefkey.is_night_mode, yes);
+
+		S.calculateAppliedValuesBasedOnPreferences();
+		applyPreferences(false);
 	}
 
 	private Pair<List<String>, List<MVersion>> getAvailableVersions() {

@@ -10,13 +10,15 @@
 	<string name="pref_language_key">bahasa</string>
 	
 	<string name="pref_textColor_key">warnaHuruf</string>
-	
-	<string name="pref_bgColor_key">warnaLatar</string>
-
-	<string name="pref_verseColor_key">warnaNomerAyat</string>
-	
+	<string name="pref_backgroundColor_key">warnaLatar</string>
+	<string name="pref_verseNumberColor_key">warnaNomerAyat</string>
 	<string name="pref_redTextColor_key">redTextColor</string>
 	
+	<string name="pref_textColor_night_key">textColor_night</string>
+	<string name="pref_backgroundColor_night_key">backgroundColor_night</string>
+	<string name="pref_verseNumberColor_night_key">verseNumberColor_night</string>
+	<string name="pref_redTextColor_night_key">redTextColor_night</string>
+
 	<string name="pref_copyWithVerseNumbers_key">copyWithVerseNumbers</string>
 
 	<string name="pref_help_text_appearance_key">help_text_appearance</string>
