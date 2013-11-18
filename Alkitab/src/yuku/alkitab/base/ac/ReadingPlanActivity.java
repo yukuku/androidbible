@@ -460,7 +460,11 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	}
 
 	private void changeDay(int day) {
-		dayNumber += day;
+		int newDay = dayNumber + day;
+		if (newDay < 0 || newDay >= readingPlan.info.duration) {
+			return;
+		}
+		dayNumber = newDay;
 		readingPlanAdapter.load();
 		readingPlanAdapter.notifyDataSetChanged();
 
@@ -620,13 +624,16 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		public View getView(final int position, View convertView, final ViewGroup parent) {
 			final int itemViewType = getItemViewType(position);
 			final View res;
-
 			if (itemViewType == 0) {
 				res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_reading_plan_one_reading, parent, false);
 				final CheckBox checkbox = V.get(res, R.id.checkbox);
 
 				final boolean[] readMarks = new boolean[todayReadings.length / 2];
 				ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, dayNumber);
+
+				checkbox.setOnCheckedChangeListener(null);
+				checkbox.setChecked(readMarks[position]);
+				checkbox.setText(getReference(S.activeVersion, todayReadings[position * 2], todayReadings[position * 2 + 1]));
 
 				checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 					@Override
@@ -637,9 +644,6 @@ public class ReadingPlanActivity extends ActionBarActivity {
 						notifyDataSetChanged();
 					}
 				});
-
-				checkbox.setText(getReference(S.activeVersion, todayReadings[position * 2], todayReadings[position * 2 + 1]));
-				checkbox.setChecked(readMarks[position]);
 
 			} else if (itemViewType == 1) {
 				res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_reading_plan_summary, parent, false);
