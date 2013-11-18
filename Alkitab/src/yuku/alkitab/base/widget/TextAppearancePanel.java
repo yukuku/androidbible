@@ -180,7 +180,7 @@ public class TextAppearancePanel {
 	
 	View.OnClickListener bCustomColors_click = new View.OnClickListener() {
 		@Override public void onClick(View v) {
-			activity.startActivityForResult(ColorSettingsActivity.createIntent(), reqcodeCustomColors);
+			activity.startActivityForResult(ColorSettingsActivity.createIntent(Preferences.getBoolean(Prefkey.is_night_mode, false)), reqcodeCustomColors);
 		}
 	};
 	

@@ -4,8 +4,6 @@ import yuku.afw.App;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.debug.R;
 
-import java.util.Locale;
-
 class ColorThemes {
 	// text color, bg color, verse number color, red text color
 	static int[] themeStringToColors(String themeString) {
@@ -15,10 +13,6 @@ class ColorThemes {
 			(int) Long.parseLong(themeString.substring(18, 26), 16),
 			(int) Long.parseLong(themeString.substring(27, 35), 16)
 		};
-	}
-	
-	static String colorsToThemeString(int[] colors) {
-		return String.format(Locale.US, "%08x %08x %08x %08x", colors[0], colors[1], colors[2], colors[3]);
 	}
 	
 	static int[] getCurrentColors(final boolean forNightMode) {
