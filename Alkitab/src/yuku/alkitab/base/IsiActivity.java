@@ -261,7 +261,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		bRight = V.get(this, R.id.bRight);
 		floater = V.get(this, R.id.floater);
 		readingPlanFloatMenu = V.get(this, R.id.readingPlanFloatMenu);
-		
+
 		applyPreferences(false);
 		
 		bGoto.setOnClickListener(new View.OnClickListener() {
@@ -934,7 +934,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		menu.findItem(R.id.menuSongs).setVisible(c.menuSongs);
 		
 		// checkable menu items
-		menu.findItem(R.id.menuTextAppearance).setChecked(textAppearancePanel != null);
+		menu.findItem(R.id.menuNightMode).setChecked(Preferences.getBoolean(Prefkey.is_night_mode, false));
 		menu.findItem(R.id.menuFullScreen).setChecked(fullScreen);
 	}
 	
@@ -984,8 +984,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			setFullScreen(!item.isChecked());
 			return true;
 		case R.id.menuTextAppearance:
-			setShowTextAppearancePanel(!item.isChecked());
+			setShowTextAppearancePanel(textAppearancePanel == null);
 			return true;
+		case R.id.menuNightMode: {
+			setNightMode(! Preferences.getBoolean(Prefkey.is_night_mode, false));
+		} return true;
 		case R.id.menuSettings:
 			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
 			return true;
@@ -1052,6 +1055,20 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				textAppearancePanel.hide();
 				textAppearancePanel = null;
 			}
+		}
+	}
+
+	void setNightMode(boolean yes) {
+		final boolean previousValue = Preferences.getBoolean(Prefkey.is_night_mode, false);
+		if (previousValue == yes) return;
+
+		Preferences.setBoolean(Prefkey.is_night_mode, yes);
+
+		S.calculateAppliedValuesBasedOnPreferences();
+		applyPreferences(false);
+
+		if (textAppearancePanel != null) {
+			textAppearancePanel.displayValues();
 		}
 	}
 

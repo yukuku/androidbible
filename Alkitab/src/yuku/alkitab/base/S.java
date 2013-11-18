@@ -78,11 +78,18 @@ public class S {
 		
 		//# configure text color, red text color, bg color, and verse color
 		{
-			applied.fontColor = Preferences.getInt(App.context.getString(R.string.pref_textColor_key), App.context.getResources().getInteger(R.integer.pref_warnaHuruf_int_default));
-			applied.backgroundColor = Preferences.getInt(App.context.getString(R.string.pref_bgColor_key), App.context.getResources().getInteger(R.integer.pref_warnaLatar_int_default));
-			applied.verseNumberColor = Preferences.getInt(App.context.getString(R.string.pref_verseColor_key), App.context.getResources().getInteger(R.integer.pref_warnaNomerAyat_int_default));
-			applied.fontRedColor = Preferences.getInt(App.context.getString(R.string.pref_redTextColor_key), App.context.getResources().getInteger(R.integer.pref_redTextColor_default));
-			
+			if (Preferences.getBoolean(Prefkey.is_night_mode, false)) {
+				applied.fontColor = Preferences.getInt(App.context.getString(R.string.pref_textColor_night_key), App.context.getResources().getInteger(R.integer.pref_textColor_night_default));
+				applied.backgroundColor = Preferences.getInt(App.context.getString(R.string.pref_backgroundColor_night_key), App.context.getResources().getInteger(R.integer.pref_backgroundColor_night_default));
+				applied.verseNumberColor = Preferences.getInt(App.context.getString(R.string.pref_verseNumberColor_night_key), App.context.getResources().getInteger(R.integer.pref_verseNumberColor_night_default));
+				applied.fontRedColor = Preferences.getInt(App.context.getString(R.string.pref_redTextColor_night_key), App.context.getResources().getInteger(R.integer.pref_redTextColor_night_default));
+			} else {
+				applied.fontColor = Preferences.getInt(App.context.getString(R.string.pref_textColor_key), App.context.getResources().getInteger(R.integer.pref_textColor_default));
+				applied.backgroundColor = Preferences.getInt(App.context.getString(R.string.pref_backgroundColor_key), App.context.getResources().getInteger(R.integer.pref_backgroundColor_default));
+				applied.verseNumberColor = Preferences.getInt(App.context.getString(R.string.pref_verseNumberColor_key), App.context.getResources().getInteger(R.integer.pref_verseNumberColor_default));
+				applied.fontRedColor = Preferences.getInt(App.context.getString(R.string.pref_redTextColor_key), App.context.getResources().getInteger(R.integer.pref_redTextColor_default));
+			}
+
 			// calculation of backgroundColor brightness. Used somewhere else.
 			{
 				int c = applied.backgroundColor;
