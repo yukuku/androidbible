@@ -267,8 +267,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	SharedPreferences instant_pref;
 	boolean fullScreen;
 	FullScreenController fullScreenController = new FullScreenController();
-	Toast fullScreenDismissHint;
-	
+
 	History history;
 	NfcAdapter nfcAdapter;
 	ActionMode actionMode;
@@ -1093,11 +1092,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			fullScreenController.hidePermanently();
 			fullScreen = true;
-
-			if (fullScreenDismissHint == null) {
-				fullScreenDismissHint = Toast.makeText(this, R.string.full_screen_dismiss_hint, Toast.LENGTH_SHORT);
-			}
-			fullScreenDismissHint.show();
 		} else {
 			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			fullScreenController.showPermanently();

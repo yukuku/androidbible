@@ -242,7 +242,6 @@
 	<string name="version_menu_share">Share</string>
 	<string name="version_share_title">Share version to:</string>
 	<string name="menuFullScreen">Full screen</string>
-    <string name="full_screen_dismiss_hint">Press <b>Back</b> to return from full screen</string>
     <string name="send_donation_confirmation">Make some donation to the developer?</string>
 
     <string name="me_export_markers">Export markers</string>
