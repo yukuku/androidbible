@@ -18,20 +18,19 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.ac.ColorSettingsActivity;
 import yuku.alkitab.base.ac.FontManagerActivity;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.FontManager;
+import yuku.alkitab.debug.R;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class TextAppearancePanel {
 	public static final String TAG = TextAppearancePanel.class.getSimpleName();
@@ -92,7 +91,7 @@ public class TextAppearancePanel {
 	    displayValues();
 	}
 	
-	void displayValues() {
+	public void displayValues() {
 		{
 			int selectedPosition = typefaceAdapter.getPositionByName(Preferences.getString(Prefkey.jenisHuruf));
 			if (selectedPosition >= 0) {
@@ -110,9 +109,9 @@ public class TextAppearancePanel {
 		float lineSpacing = Preferences.getFloat(Prefkey.lineSpacingMult, 1.15f);
 		sbLineSpacing.setProgress(Math.round((lineSpacing - 1.f) * 20.f));
 		displayLineSpacingText(lineSpacing);
-	
+
 		{
-			int[] currentColors = ColorThemes.getCurrentColors();
+			int[] currentColors = ColorThemes.getCurrentColors(Preferences.getBoolean(Prefkey.is_night_mode, false));
 
 			int selectedPosition = colorThemeAdapter.getPositionByColors(currentColors);
 			if (selectedPosition == -1) {
@@ -168,7 +167,7 @@ public class TextAppearancePanel {
 			
 			if (position != colorThemeAdapter.getPositionOfCustomColors()) {
 				int[] colors = colorThemeAdapter.getColorsAtPosition(position);
-				ColorThemes.setCurrentColors(colors);
+				ColorThemes.setCurrentColors(colors, Preferences.getBoolean(Prefkey.is_night_mode, false));
 				listener.onValueChanged();
 				colorThemeAdapter.notifyDataSetChanged();
 			} else {
@@ -316,7 +315,7 @@ public class TextAppearancePanel {
 			mcv.setBgColor(0xff000000);
 			
 			if (position == getPositionOfCustomColors()) {
-				mcv.setColors(ColorThemes.getCurrentColors());
+				mcv.setColors(ColorThemes.getCurrentColors(Preferences.getBoolean(Prefkey.is_night_mode, false)));
 			} else {
 				mcv.setColors(themes.get(position));
 			}

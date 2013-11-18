@@ -209,7 +209,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	NfcAdapter nfcAdapter;
 	ActionMode actionMode;
 	TextAppearancePanel textAppearancePanel;
-	boolean isNightMode;
 
 	//# state storage for search2
 	Query search2_query = null;
@@ -262,8 +261,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		bRight = V.get(this, R.id.bRight);
 		floater = V.get(this, R.id.floater);
 		readingPlanFloatMenu = V.get(this, R.id.readingPlanFloatMenu);
-
-		isNightMode = Preferences.getBoolean(Prefkey.is_night_mode, false);
 
 		applyPreferences(false);
 		
@@ -937,7 +934,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		menu.findItem(R.id.menuSongs).setVisible(c.menuSongs);
 		
 		// checkable menu items
-		menu.findItem(R.id.menuNightMode).setChecked(isNightMode);
+		menu.findItem(R.id.menuNightMode).setChecked(Preferences.getBoolean(Prefkey.is_night_mode, false));
 		menu.findItem(R.id.menuFullScreen).setChecked(fullScreen);
 	}
 	
@@ -990,7 +987,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			setShowTextAppearancePanel(textAppearancePanel == null);
 			return true;
 		case R.id.menuNightMode: {
-			setNightMode(!isNightMode);
+			setNightMode(! Preferences.getBoolean(Prefkey.is_night_mode, false));
 		} return true;
 		case R.id.menuSettings:
 			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
@@ -1062,13 +1059,17 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	void setNightMode(boolean yes) {
-		if (isNightMode == yes) return;
-		isNightMode = yes;
+		final boolean previousValue = Preferences.getBoolean(Prefkey.is_night_mode, false);
+		if (previousValue == yes) return;
 
 		Preferences.setBoolean(Prefkey.is_night_mode, yes);
 
 		S.calculateAppliedValuesBasedOnPreferences();
 		applyPreferences(false);
+
+		if (textAppearancePanel != null) {
+			textAppearancePanel.displayValues();
+		}
 	}
 
 	private Pair<List<String>, List<MVersion>> getAvailableVersions() {
