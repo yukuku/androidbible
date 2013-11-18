@@ -176,6 +176,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		int maxDoubleTapDelay = ViewConfiguration.getDoubleTapTimeout();
 		int maxDoubleTapDistance = -1;
 
+		final int[] locationOnScreen = new int[2];
+
 		float distSquared(float dx, float dy) {
 			return dx * dx + dy * dy;
 		}
@@ -189,13 +191,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				maxDoubleTapDistance = ViewConfiguration.get(IsiActivity.this).getScaledDoubleTapSlop();
 			}
 
+			v.getLocationOnScreen(locationOnScreen);
+
 			if (action == MotionEvent.ACTION_DOWN) { // check for double click
 				if (lastUpTime - lastDownTime < maxDoubleTapDelay) { // first tap down to up must be fast enough
 					long thisDownTime = event.getEventTime();
 					if (thisDownTime - lastUpTime < maxDoubleTapDelay) { // second tap must be fast enough
 						if (distSquared(lastUpX - lastDownX, lastUpY - lastDownY) < maxDoubleTapDistance) { // first tap down to up must be within distance
-							float thisDownX = event.getX();
-							float thisDownY = event.getY();
+							float thisDownX = event.getX() + locationOnScreen[0];
+							float thisDownY = event.getY() + locationOnScreen[1];
 							if (distSquared(thisDownX - lastUpX, thisDownY - lastUpY) < maxDoubleTapDistance) { // second tap must be fast enough
 								// double tap success!
 								setFullScreen(!fullScreen);
@@ -208,12 +212,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 			if (action == MotionEvent.ACTION_DOWN) {
 				lastDownTime = event.getEventTime();
-				lastDownX = event.getX();
-				lastDownY = event.getY();
+				lastDownX = event.getX() + locationOnScreen[0];
+				lastDownY = event.getY() + locationOnScreen[1];
 			} else if (action == MotionEvent.ACTION_UP) {
 				lastUpTime = event.getEventTime();
-				lastUpX = event.getX();
-				lastUpY = event.getY();
+				lastUpX = event.getX() + locationOnScreen[0];
+				lastUpY = event.getY() + locationOnScreen[1];
 			}
 
 			return false;
