@@ -6,28 +6,22 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
-public class TouchInterceptFrameLayout extends FrameLayout {
-	public static final String TAG = TouchInterceptFrameLayout.class.getSimpleName();
+public class TouchInterceptLinearLayout extends LinearLayout {
+	public static final String TAG = TouchInterceptLinearLayout.class.getSimpleName();
 	
 	private View.OnTouchListener interceptTouchEventListener = null;
 	
-	public TouchInterceptFrameLayout(Context context) {
+	public TouchInterceptLinearLayout(Context context) {
 		super(context);
 	}
 	
-	public TouchInterceptFrameLayout(Context context, AttributeSet attrs) {
+	public TouchInterceptLinearLayout(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 	
-	public TouchInterceptFrameLayout(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-	}
-	
 	@Override public boolean onInterceptTouchEvent(MotionEvent ev) {
-		Log.d(TAG, "intercept action " + MotionEventCompat.getActionMasked(ev));
-		
 		if (interceptTouchEventListener == null) {
 			return super.onInterceptTouchEvent(ev);
 		} else {

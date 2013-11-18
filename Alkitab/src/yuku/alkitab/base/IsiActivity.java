@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.view.ActionMode;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -32,7 +33,9 @@ import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AbsListView;
@@ -85,6 +88,7 @@ import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.ReadingPlanFloatMenu;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
+import yuku.alkitab.base.widget.TouchInterceptLinearLayout;
 import yuku.alkitab.base.widget.VerseInlineLinkSpan;
 import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.base.widget.VersesView;
@@ -152,11 +156,67 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			floater.onDragComplete(screenX - floaterLocationOnScreen[0], screenY - floaterLocationOnScreen[1]);
 		}
 	};
+
 	private Floater.Listener floater_listener = new Floater.Listener() {
 		@Override
 		public void onSelectComplete(final int ari) {
 			jumpToAri(ari);
 			history.add(ari);
+		}
+	};
+
+	private View.OnTouchListener splitRoot_interceptTouch = new View.OnTouchListener() {
+		long lastDownTime;
+		float lastDownX;
+		float lastDownY;
+		long lastUpTime;
+		float lastUpX;
+		float lastUpY;
+
+		int maxDoubleTapDelay = ViewConfiguration.getDoubleTapTimeout();
+		int maxDoubleTapDistance = -1;
+
+		float distSquared(float dx, float dy) {
+			return dx * dx + dy * dy;
+		}
+
+		@Override
+		public boolean onTouch(final View v, final MotionEvent event) {
+			final int action = MotionEventCompat.getActionMasked(event);
+
+			// lazy
+			if (maxDoubleTapDistance == -1) {
+				maxDoubleTapDistance = ViewConfiguration.get(IsiActivity.this).getScaledDoubleTapSlop();
+			}
+
+			if (action == MotionEvent.ACTION_DOWN) { // check for double click
+				if (lastUpTime - lastDownTime < maxDoubleTapDelay) { // first tap down to up must be fast enough
+					long thisDownTime = event.getEventTime();
+					if (thisDownTime - lastUpTime < maxDoubleTapDelay) { // second tap must be fast enough
+						if (distSquared(lastUpX - lastDownX, lastUpY - lastDownY) < maxDoubleTapDistance) { // first tap down to up must be within distance
+							float thisDownX = event.getX();
+							float thisDownY = event.getY();
+							if (distSquared(thisDownX - lastUpX, thisDownY - lastUpY) < maxDoubleTapDistance) { // second tap must be fast enough
+								// double tap success!
+								setFullScreen(!fullScreen);
+								return true;
+							}
+						}
+					}
+				}
+			}
+
+			if (action == MotionEvent.ACTION_DOWN) {
+				lastDownTime = event.getEventTime();
+				lastDownX = event.getX();
+				lastDownY = event.getY();
+			} else if (action == MotionEvent.ACTION_UP) {
+				lastUpTime = event.getEventTime();
+				lastUpX = event.getX();
+				lastUpY = event.getY();
+			}
+
+			return false;
 		}
 	};
 
@@ -188,7 +248,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	VersesView lsText;
 	VersesView lsSplit1;
 	TextView tSplitEmpty;
-	View splitRoot;
+	TouchInterceptLinearLayout splitRoot;
 	View splitHandle;
 	LabeledSplitHandleButton splitHandleButton;
 	FrameLayout panelNavigation;
@@ -263,6 +323,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		readingPlanFloatMenu = V.get(this, R.id.readingPlanFloatMenu);
 
 		applyPreferences(false);
+
+		splitRoot.setInterceptTouchEventListener(splitRoot_interceptTouch);
 		
 		bGoto.setOnClickListener(new View.OnClickListener() {
 			@Override
