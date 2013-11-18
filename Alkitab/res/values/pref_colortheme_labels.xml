@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Names of the color themes -->
-	<string-array name="pref_temaWarna_label">
+	<string-array name="pref_colorTheme_labels">
 		<item>Clean Paper</item>
 		<item>Blackboard</item>
 		<item>Tropic Lush</item>
@@ -13,5 +13,6 @@
 		<item>Wet Guava</item>
 		<item>Clear Night</item>
 		<item>Starry Night</item>
+		<item>Soft Light</item>
 	</string-array>
 </resources>

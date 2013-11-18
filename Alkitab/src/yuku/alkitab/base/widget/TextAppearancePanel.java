@@ -296,10 +296,10 @@ public class TextAppearancePanel {
 
 		public ColorThemeAdapter() {
 			themes = new ArrayList<int[]>();
-			for (String themeString: activity.getResources().getStringArray(R.array.pref_temaWarna_value)) {
+			for (String themeString: activity.getResources().getStringArray(R.array.pref_colorTheme_values)) {
 				themes.add(ColorThemes.themeStringToColors(themeString));
 			}
-			themeNames = Arrays.asList(activity.getResources().getStringArray(R.array.pref_temaWarna_label));
+			themeNames = Arrays.asList(activity.getResources().getStringArray(R.array.pref_colorTheme_labels));
 		}
 
 		@Override public int getCount() {
