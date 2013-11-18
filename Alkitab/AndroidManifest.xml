@@ -30,7 +30,7 @@
 
 		<activity android:name="yuku.alkitab.base.ac.GotoActivity" android:label="@string/tuju_v" android:configChanges="locale|layoutDirection" android:windowSoftInputMode="adjustNothing" />
 		<activity android:name="yuku.alkitab.base.ac.SettingsActivity" android:label="@string/pengaturan_alkitab" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
-		<activity android:name="yuku.alkitab.base.ac.ColorSettingsActivity" android:label="@string/color_settings" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
+		<activity android:name="yuku.alkitab.base.ac.ColorSettingsActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.BookmarkActivity" android:label="@string/judul_bukmak_activity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" tools:ignore="ExportedActivity">
 		    <intent-filter android:label="@string/intent_filter_import_from_backup">
 		        <action android:name="android.intent.action.VIEW" />
