@@ -29,7 +29,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
@@ -600,7 +599,7 @@ public class Search2Engine {
 	}
 
 	/**
-	 * case sensitive! pastikan s dan words sudah dilowercase sebelum masuk sini.
+	 * Case sensitive! Make sure s and words have been lowercased (or normalized).
 	 */
 	public static boolean satisfiesQuery(String s, String[] words) {
 		for (String word: words) {
@@ -659,7 +658,7 @@ public class Search2Engine {
 		}
 	}
 
-	public static SpannableStringBuilder hilite(String s, String[] words, int warnaHilite) {
+	public static SpannableStringBuilder hilite(String s, String[] words, int hiliteColor) {
 		SpannableStringBuilder res = new SpannableStringBuilder(s);
 		
 		if (words == null) {
@@ -679,8 +678,8 @@ public class Search2Engine {
 			}
 			words = words2;
 		}
-		
-		s = s.toLowerCase(Locale.getDefault());
+
+		s = QueryTokenizer.toLowerCase(s);
 		
 		int pos = 0;
 		int[] attempt = new int[word_count];
@@ -698,7 +697,7 @@ public class Search2Engine {
 			int minword = -1;
 			
 			for (int i = 0; i < word_count; i++) {
-				if (attempt[i] >= 0) { // bukan -1 yang berarti ga ketemu
+				if (attempt[i] >= 0) { // not -1 which means not found
 					if (attempt[i] < minpos) {
 						minpos = attempt[i];
 						minword = i;
@@ -707,14 +706,14 @@ public class Search2Engine {
 			}
 			
 			if (minword == -1) {
-				break; // ga ada lagi
+				break; // no more
 			}
 			
 			pos = minpos + words[minword].length();
 			
-			int kepos = minpos + words[minword].length();
-			res.setSpan(new StyleSpan(Typeface.BOLD), minpos, kepos, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-			res.setSpan(new ForegroundColorSpan(warnaHilite), minpos, kepos, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+			int topos = minpos + words[minword].length();
+			res.setSpan(new StyleSpan(Typeface.BOLD), minpos, topos, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+			res.setSpan(new ForegroundColorSpan(hiliteColor), minpos, topos, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 		}
 		
 		return res;

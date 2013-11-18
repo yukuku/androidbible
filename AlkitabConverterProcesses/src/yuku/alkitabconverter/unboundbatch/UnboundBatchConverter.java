@@ -5,6 +5,7 @@ import yuku.alkitabconverter.util.KjvUtils;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.TextDb.VerseState;
 import yuku.alkitabconverter.yes_common.Yes2Common;
+import yuku.alkitabconverter.yet.YetFileOutput;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -108,15 +109,26 @@ public class UnboundBatchConverter {
 		}
 		versionInfo.setBookNamesAndAbbreviations(bookNames, null);
 		sc.close();
-		
+
 		TextDb textDb = processTextFile(superdir.getName(), dir.getName(), textFile, mapped);
 
+		// CREATE YET FILE
+		{
+			final YetFileOutput yet = new YetFileOutput(new File("/tmp/" + outputName + ".yet"));
+			yet.setVersionInfo(versionInfo);
+			yet.setTextDb(textDb);
+			yet.write();
+		}
+
+		// CREATE DUMP FILE
 		PrintStream ps = new PrintStream(new File("/tmp/" + outputName + ".txt"));
 		textDb.dump(ps);
 		ps.close();
 
+
+		// CREATE YES FILE
 		Yes2Common.createYesFile(new File("/tmp", outputName + ".yes"), versionInfo, textDb, null, true);
-		
+
 		appConfigEntries.add(String.format("<preset locale=%-6s shortName=%-9s longName=%s filename_preset=%s url=%s />", q(versionInfo.locale), q(versionInfo.shortName), q(versionInfo.longName), q(outputName + ".yes"), q("http://alkitab-host.appspot.com/addon/yes2/" + outputName + "--1.yes.gz")));
 		
 		System.out.println("Processing finished, total verses: " + textDb.size());

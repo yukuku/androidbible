@@ -13,8 +13,8 @@
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Постійне підсвічування екрану при читанні Біблії</string>
   <string name="pref_biarkan_layar_menyala">Включити збереження екрану</string>
   <string name="pref_penampilan_layar"> Екран</string>
-  <string name="pref_tombolVolumeBuatPindah_title">Навігація клавішею гучності</string>
-  <string name="pref_tombolVolumeBuatPindah_summary">Використовувати клавіші гучності для навігації між віршами або розділами</string>
+  <string name="pref_volumeButtonNavigation_title">Навігація клавішею гучності</string>
+  <string name="pref_volumeButtonNavigation_summary">Використовувати клавіші гучності для навігації між віршами або розділами</string>
   <string name="pref_copyWithVerseNumbers_title">Включити номери віршів</string>
   <string name="pref_copyWithVerseNumbers_summary">Вставляти номери на кожен вірш при копіюванні або обміні віршами</string>
   <string name="pref_help_text_appearance_title">Вигляд тексту</string>

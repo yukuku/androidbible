@@ -445,7 +445,7 @@ public class Search2Activity extends BaseActivity {
 		public SearchFilterAdapter() {
 			Book[] books_original = S.activeVersion.getConsecutiveBooks();
 			
-			if (Preferences.getBoolean(App.context.getString(R.string.pref_alphabeticBookSort_key), App.context.getResources().getBoolean(R.bool.pref_sortKitabAlfabet_default))) {
+			if (Preferences.getBoolean(App.context.getString(R.string.pref_alphabeticBookSort_key), App.context.getResources().getBoolean(R.bool.pref_alphabeticBookSort_default))) {
 				books = BookNameSorter.sortAlphabetically(books_original);
 			} else {
 				books = books_original.clone();

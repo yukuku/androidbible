@@ -3,15 +3,20 @@
 
     <integer name="pref_ukuranHuruf2_default">18</integer>
 
-    <bool name="pref_nyalakanTerusLayar_default">true</bool>
+    <bool name="pref_keepScreenOn_default">true</bool>
 
-    <string name="pref_tombolVolumeBuatPindah_default" translatable="false">default</string>
+    <string name="pref_volumeButtonNavigation_default" translatable="false">default</string>
 
-    <bool name="pref_sortKitabAlfabet_default">false</bool>
+    <bool name="pref_alphabeticBookSort_default">false</bool>
 
-    <integer name="pref_warnaHuruf_int_default">0xff562707</integer>
-    <integer name="pref_warnaLatar_int_default">0xfff3eddb</integer>
-    <integer name="pref_warnaNomerAyat_int_default">0xffe36b09</integer>
+    <integer name="pref_textColor_default">0xff562707</integer>
+    <integer name="pref_backgroundColor_default">0xfff3eddb</integer>
+    <integer name="pref_verseNumberColor_default">0xffe36b09</integer>
     <integer name="pref_redTextColor_default">0xffb45b16</integer>
+
+    <integer name="pref_textColor_night_default">0xffaeaeae</integer>
+    <integer name="pref_backgroundColor_night_default">0xff000000</integer>
+    <integer name="pref_verseNumberColor_night_default">0xff6c6cb3</integer>
+    <integer name="pref_redTextColor_night_default">0xffa25c5c</integer>
 
 </resources>

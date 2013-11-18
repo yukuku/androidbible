@@ -10,5 +10,6 @@ pushd data
 		mkdir /tmp/"$i"-extract
 		unzip /tmp/"$i" -d /tmp/"$i"-extract/
 		convert -size 384x84 -background transparent -fill black -font /tmp/"$i"-extract/"${i//.zip/}"-Regular.ttf -gravity west label:"${i//.zip/}" ../preview-black/"${i//.zip/}"-384x84.png 
+		convert -size 384x84 -background transparent -fill white -font /tmp/"$i"-extract/"${i//.zip/}"-Regular.ttf -gravity west label:"${i//.zip/}" ../preview/"${i//.zip/}"-384x84.png 
 	done
 popd
