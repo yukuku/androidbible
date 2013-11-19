@@ -658,8 +658,8 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				float targetPercentage = getTargetPercentage();
 
 				pbReadingProgress.setMax(10000);
-				pbReadingProgress.setProgress((int) actualPercentage * 100);
-				pbReadingProgress.setSecondaryProgress((int) targetPercentage * 100);
+				pbReadingProgress.setProgress((int) (actualPercentage * 100));
+				pbReadingProgress.setSecondaryProgress((int) (targetPercentage * 100));
 
 				tActual.setText(getString(R.string.rp_commentActual, String.format("%.2f", actualPercentage)));
 				tTarget.setText(getString(R.string.rp_commentTarget, String.format("%.2f", targetPercentage)));
