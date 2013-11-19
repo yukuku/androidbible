@@ -18,20 +18,19 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.ac.ColorSettingsActivity;
 import yuku.alkitab.base.ac.FontManagerActivity;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.FontManager;
+import yuku.alkitab.debug.R;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class TextAppearancePanel {
 	public static final String TAG = TextAppearancePanel.class.getSimpleName();
@@ -92,7 +91,7 @@ public class TextAppearancePanel {
 	    displayValues();
 	}
 	
-	void displayValues() {
+	public void displayValues() {
 		{
 			int selectedPosition = typefaceAdapter.getPositionByName(Preferences.getString(Prefkey.jenisHuruf));
 			if (selectedPosition >= 0) {
@@ -110,9 +109,9 @@ public class TextAppearancePanel {
 		float lineSpacing = Preferences.getFloat(Prefkey.lineSpacingMult, 1.15f);
 		sbLineSpacing.setProgress(Math.round((lineSpacing - 1.f) * 20.f));
 		displayLineSpacingText(lineSpacing);
-	
+
 		{
-			int[] currentColors = ColorThemes.getCurrentColors();
+			int[] currentColors = ColorThemes.getCurrentColors(Preferences.getBoolean(Prefkey.is_night_mode, false));
 
 			int selectedPosition = colorThemeAdapter.getPositionByColors(currentColors);
 			if (selectedPosition == -1) {
@@ -168,7 +167,7 @@ public class TextAppearancePanel {
 			
 			if (position != colorThemeAdapter.getPositionOfCustomColors()) {
 				int[] colors = colorThemeAdapter.getColorsAtPosition(position);
-				ColorThemes.setCurrentColors(colors);
+				ColorThemes.setCurrentColors(colors, Preferences.getBoolean(Prefkey.is_night_mode, false));
 				listener.onValueChanged();
 				colorThemeAdapter.notifyDataSetChanged();
 			} else {
@@ -181,7 +180,7 @@ public class TextAppearancePanel {
 	
 	View.OnClickListener bCustomColors_click = new View.OnClickListener() {
 		@Override public void onClick(View v) {
-			activity.startActivityForResult(ColorSettingsActivity.createIntent(), reqcodeCustomColors);
+			activity.startActivityForResult(ColorSettingsActivity.createIntent(Preferences.getBoolean(Prefkey.is_night_mode, false)), reqcodeCustomColors);
 		}
 	};
 	
@@ -297,10 +296,10 @@ public class TextAppearancePanel {
 
 		public ColorThemeAdapter() {
 			themes = new ArrayList<int[]>();
-			for (String themeString: activity.getResources().getStringArray(R.array.pref_temaWarna_value)) {
+			for (String themeString: activity.getResources().getStringArray(R.array.pref_colorTheme_values)) {
 				themes.add(ColorThemes.themeStringToColors(themeString));
 			}
-			themeNames = Arrays.asList(activity.getResources().getStringArray(R.array.pref_temaWarna_label));
+			themeNames = Arrays.asList(activity.getResources().getStringArray(R.array.pref_colorTheme_labels));
 		}
 
 		@Override public int getCount() {
@@ -316,7 +315,7 @@ public class TextAppearancePanel {
 			mcv.setBgColor(0xff000000);
 			
 			if (position == getPositionOfCustomColors()) {
-				mcv.setColors(ColorThemes.getCurrentColors());
+				mcv.setColors(ColorThemes.getCurrentColors(Preferences.getBoolean(Prefkey.is_night_mode, false)));
 			} else {
 				mcv.setColors(themes.get(position));
 			}
@@ -368,4 +367,49 @@ public class TextAppearancePanel {
 			return themes.size();
 		}
 	}
+
+	static class ColorThemes {
+		// text color, bg color, verse number color, red text color
+		static int[] themeStringToColors(String themeString) {
+			return new int[] {
+			(int) Long.parseLong(themeString.substring(0, 8), 16),
+			(int) Long.parseLong(themeString.substring(9, 17), 16),
+			(int) Long.parseLong(themeString.substring(18, 26), 16),
+			(int) Long.parseLong(themeString.substring(27, 35), 16)
+			};
+		}
+
+		static int[] getCurrentColors(final boolean forNightMode) {
+			if (forNightMode) {
+				return new int[] {
+				Preferences.getInt(App.context.getString(R.string.pref_textColor_night_key), App.context.getResources().getInteger(R.integer.pref_textColor_night_default)),
+				Preferences.getInt(App.context.getString(R.string.pref_backgroundColor_night_key), App.context.getResources().getInteger(R.integer.pref_backgroundColor_night_default)),
+				Preferences.getInt(App.context.getString(R.string.pref_verseNumberColor_night_key), App.context.getResources().getInteger(R.integer.pref_verseNumberColor_night_default)),
+				Preferences.getInt(App.context.getString(R.string.pref_redTextColor_night_key), App.context.getResources().getInteger(R.integer.pref_redTextColor_night_default)),
+				};
+			} else {
+				return new int[] {
+				Preferences.getInt(App.context.getString(R.string.pref_textColor_key), App.context.getResources().getInteger(R.integer.pref_textColor_default)),
+				Preferences.getInt(App.context.getString(R.string.pref_backgroundColor_key), App.context.getResources().getInteger(R.integer.pref_backgroundColor_default)),
+				Preferences.getInt(App.context.getString(R.string.pref_verseNumberColor_key), App.context.getResources().getInteger(R.integer.pref_verseNumberColor_default)),
+				Preferences.getInt(App.context.getString(R.string.pref_redTextColor_key), App.context.getResources().getInteger(R.integer.pref_redTextColor_default)),
+				};
+			}
+		}
+
+		static void setCurrentColors(int[] colors, final boolean forNightMode) {
+			if (forNightMode) {
+				Preferences.setInt(App.context.getString(R.string.pref_textColor_night_key), colors[0]);
+				Preferences.setInt(App.context.getString(R.string.pref_backgroundColor_night_key), colors[1]);
+				Preferences.setInt(App.context.getString(R.string.pref_verseNumberColor_night_key), colors[2]);
+				Preferences.setInt(App.context.getString(R.string.pref_redTextColor_night_key), colors[3]);
+			} else {
+				Preferences.setInt(App.context.getString(R.string.pref_textColor_key), colors[0]);
+				Preferences.setInt(App.context.getString(R.string.pref_backgroundColor_key), colors[1]);
+				Preferences.setInt(App.context.getString(R.string.pref_verseNumberColor_key), colors[2]);
+				Preferences.setInt(App.context.getString(R.string.pref_redTextColor_key), colors[3]);
+			}
+		}
+	}
+
 }

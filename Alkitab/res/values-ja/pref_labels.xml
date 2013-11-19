@@ -13,8 +13,8 @@
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">朗読中画面を点けたままにする。</string>
   <string name="pref_biarkan_layar_menyala">スクリーンをOFFしない</string>
   <string name="pref_penampilan_layar">表示</string>
-  <string name="pref_tombolVolumeBuatPindah_title">ボリュームボタンを使った操作</string>
-  <string name="pref_tombolVolumeBuatPindah_summary">ハードウェアのボリュームボタンを、章または節の移動に使用する</string>
+  <string name="pref_volumeButtonNavigation_title">ボリュームボタンを使った操作</string>
+  <string name="pref_volumeButtonNavigation_summary">ハードウェアのボリュームボタンを、章または節の移動に使用する</string>
   <string name="pref_copyWithVerseNumbers_title">節番号を追加する</string>
   <string name="pref_copyWithVerseNumbers_summary">節をコピー/共有する時に、すべての節に節番号を付ける</string>
   <string name="pref_help_text_appearance_title">テキストの表示</string>

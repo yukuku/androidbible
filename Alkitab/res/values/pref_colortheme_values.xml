@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <!-- text color, bg color, verse number color, red text color -->
-    <string-array name="pref_temaWarna_value" translatable="false">
+    <string-array name="pref_colorTheme_values" translatable="false">
 
-        <!-- kertas -->
+        <!-- paper -->
         <item>ff000000 ffeeeeee ff6666ff ffd11712</item>
-        <!-- papan -->
+        <!-- blackboard -->
         <item>fff0f0f0 ff000000 ff9090ff ffff9090</item>
-        <!-- hutan -->
+        <!-- forest -->
         <item>ff1c5009 ffe9fee7 ff543703 ffcd610a</item>
-        <!-- danau -->
+        <!-- lake -->
         <item>ff274720 ffd7e9e7 ff1916ec ffc72525</item>
-        <!-- abu -->
+        <!-- grey -->
         <item>ff2f3540 fff2ede4 ff8c8681 ffcc3cb6</item>
-        <!-- jeruk -->
+        <!-- orange -->
         <item>ff3f5765 fffffcde ff25a81e ffea550b</item>
-        <!-- padang -->
+        <!-- desert -->
         <item>ff562707 fff3eddb ffe36b09 ffb45b16</item>
-        <!-- coklat -->
+        <!-- chocolate -->
         <item>ffd4995e ff1d130f ffd8d7d7 ffede36f</item>
-        <!-- jambu -->
+        <!-- guava -->
         <item>ffffc0af ff16181c ffad8d8d ffff9090</item>
-        <!-- malam -->
+        <!-- night -->
         <item>ffe1e6fa ff122641 ffd08e11 fffeaeae</item>
-        <!-- malam bintang -->
+        <!-- starry night -->
         <item>ffffe985 ff0b1829 ffe3f5ff ffffffff</item>
+        <!-- dark -->
+        <item>ffaeaeae ff000000 ff6c6cb3 ffa25c5c</item>
     </string-array>
 
 </resources>

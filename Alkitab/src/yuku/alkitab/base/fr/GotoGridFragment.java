@@ -234,7 +234,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 		
 		public BookAdapter() {
 			// sort or not based on pref
-			if (Preferences.getBoolean(App.context.getString(R.string.pref_alphabeticBookSort_key), App.context.getResources().getBoolean(R.bool.pref_sortKitabAlfabet_default))) {
+			if (Preferences.getBoolean(App.context.getString(R.string.pref_alphabeticBookSort_key), App.context.getResources().getBoolean(R.bool.pref_alphabeticBookSort_default))) {
 				books_grid = BookNameSorter.sortAlphabetically(books);
 			} else {
 				books_grid = books.clone();
