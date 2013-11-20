@@ -1,7 +1,6 @@
 package yuku.alkitab.base.util;
 
 import android.util.Log;
-import yuku.afw.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.util.IntArrayList;
@@ -18,24 +17,25 @@ public class ReadingPlanManager {
 
 	private static final byte[] RPB_HEADER = {0x52, (byte) 0x8a, 0x61, 0x34, 0x00, (byte) 0xe0, (byte) 0xea};
 
-	public static long copyReadingPlanToDb(final int resId) {
-		ReadingPlan.ReadingPlanInfo info = new ReadingPlan.ReadingPlanInfo();
+	public static long insertReadingPlanToDb(final byte[] data) {
+		final ReadingPlan.ReadingPlanInfo info = new ReadingPlan.ReadingPlanInfo();
 
 		try {
-			final InputStream is = App.context.getResources().openRawResource(resId);
-			final byte[] buffer = new byte[is.available()];
-			is.read(buffer);
-
-			//check the file has correct header and  infos
-			BintexReader reader = new BintexReader(new ByteArrayInputStream(buffer));
-			readInfo(info, reader);
+			// check the file has correct header and infos
+			final BintexReader reader = new BintexReader(new ByteArrayInputStream(data));
+			final boolean ok = readInfo(info, reader);
 			reader.close();
+
+			if (!ok) {
+				Log.e(TAG, "Error parsing reading plan data");
+				return 0;
+			}
 
 			info.startTime = new Date().getTime();
 
-			return S.getDb().insertReadingPlan(info, buffer);
+			return S.getDb().insertReadingPlan(info, data);
 		} catch (IOException e) {
-			Log.e(TAG, "error reading reading plan", e);
+			Log.e(TAG, "Error reading reading plan, should not happen", e);
 			return 0;
 		}
 	}
@@ -91,6 +91,9 @@ public class ReadingPlanManager {
 		return readingPlan;
 	}
 
+	/**
+	 * @return false if reading plan data is not in a valid format.
+	 */
 	public static boolean readInfo(final ReadingPlan.ReadingPlanInfo readingPlanInfo, final BintexReader reader) throws IOException {
 		byte[] headers = new byte[8];
 		reader.readRaw(headers);

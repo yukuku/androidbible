@@ -2,12 +2,16 @@ package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.PopupMenu;
+import android.text.SpannableStringBuilder;
+import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,11 +29,13 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import com.google.gson.GsonBuilder;
+import com.squareup.okhttp.OkHttpClient;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
+import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.ReadingPlanManager;
@@ -40,12 +46,18 @@ import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ReadingPlanActivity extends ActionBarActivity {
 	public static final String TAG = ReadingPlanActivity.class.getSimpleName();
@@ -122,7 +134,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			resetReadingPlan();
 			return true;
 		} else if (itemId == R.id.menuDownload) {
-			downloadReadingPlan();
+			downloadReadingPlanList();
 			return true;
 		} else if (itemId == R.id.menuDelete) {
 			deleteReadingPlan();
@@ -141,10 +153,14 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			return;
 		}
 
+		byte[] binaryReadingPlan = S.getDb().getBinaryReadingPlanById(id);
+
 		long startTime = 0;
-		if (id == 0) {
+		if (id == 0 || binaryReadingPlan == null) {
 			id = downloadedReadingPlanInfos.get(0).id;
 			startTime = downloadedReadingPlanInfos.get(0).startTime;
+
+			binaryReadingPlan = S.getDb().getBinaryReadingPlanById(id);
 		} else {
 			for (ReadingPlan.ReadingPlanInfo info : downloadedReadingPlanInfos) {
 				if (id == info.id) {
@@ -152,8 +168,6 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				}
 			}
 		}
-
-		byte[] binaryReadingPlan = S.getDb().getBinaryReadingPlanById(id);
 
 		InputStream inputStream = new ByteArrayInputStream(binaryReadingPlan);
 		ReadingPlan res = ReadingPlanManager.readVersion1(inputStream);
@@ -283,7 +297,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			bDownload.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(final View v) {
-					downloadReadingPlan();
+					downloadReadingPlanList();
 				}
 			});
 			return;
@@ -472,68 +486,197 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	}
 
 	private void updateButtonStatus() {            //TODO look disabled
-		if (dayNumber == 0) {
-			bLeft.setEnabled(false);
-			bRight.setEnabled(true);
-		} else if (dayNumber == readingPlan.info.duration - 1) {
-			bLeft.setEnabled(true);
-			bRight.setEnabled(false);
-		} else {
-			bLeft.setEnabled(true);
-			bRight.setEnabled(true);
-		}
+		bLeft.setEnabled(dayNumber != 0);
+		bRight.setEnabled(dayNumber != readingPlan.info.duration - 1);
 
 		bToday.setText(getReadingDateHeader(dayNumber));
 
 	}
 
-	private void downloadReadingPlan() {
+	class ReadingPlanServerEntry {
+		public String name;
+		public String title;
+		public String description;
+		public int day_count;
+	}
 
-		AppConfig config = AppConfig.get();
-		final List<ReadingPlan.ReadingPlanInfo> infos = config.readingPlanInfos;
-		final List<String> readingPlanTitles = new ArrayList<String>();
+	private void downloadReadingPlanList() {
+		final AtomicBoolean cancelled = new AtomicBoolean(false);
+		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.rp_download_reading_plan_list_progress), true, true);
+		pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
+			@Override
+			public void onDismiss(final DialogInterface dialog) {
+				cancelled.set(true);
+			}
+		});
 
-		final List<Integer> resources = new ArrayList<Integer>();
-		for (int i = 0; i < infos.size(); i++) {
-			String title = infos.get(i).name.replace(".rpb", "");
-			boolean downloaded = false;
-			for (ReadingPlan.ReadingPlanInfo downloadedReadingPlanInfo : downloadedReadingPlanInfos) {
-				if (title.equals(downloadedReadingPlanInfo.name)) {
-					downloaded = true;
-					break;
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					download();
+				} catch (Exception e) {
+					Log.e(TAG, "downloading reading plan list", e);
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							new AlertDialog.Builder(ReadingPlanActivity.this)
+							.setMessage(getString(R.string.rp_download_reading_plan_list_failed))
+							.setPositiveButton(R.string.ok, null)
+							.show();
+						}
+					});
+				} finally {
+					pd.dismiss();
 				}
 			}
-			if (!downloaded) {
-				readingPlanTitles.add(infos.get(i).title);
-				resources.add(getResources().getIdentifier(title, "raw", getPackageName()));     //TODO: proper method
+
+			/** run on bg thread */
+			void download() throws Exception {
+				final OkHttpClient client = new OkHttpClient();
+				final HttpURLConnection conn = client.open(new URL("http://alkitab-host.appspot.com/rp/list"));
+				final ReadingPlanServerEntry[] entries = new GsonBuilder().create().fromJson(new InputStreamReader(conn.getInputStream(), "utf-8"), ReadingPlanServerEntry[].class);
+
+				if (entries == null) return;
+				if (cancelled.get()) return;
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						onReadingPlanListDownloadFinished(entries);
+					}
+				});
 			}
-		}
 
-		if (readingPlanTitles.size() == 0) {
-			new AlertDialog.Builder(this)
-			.setMessage(getString(R.string.rp_noReadingPlanAvailable))
-			.setPositiveButton(R.string.ok, null)
-			.show();
-		} else {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, readingPlanTitles), new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(final DialogInterface dialog, final int which) {
-					long id = ReadingPlanManager.copyReadingPlanToDb(resources.get(which));
-
-					Preferences.setLong(Prefkey.active_reading_plan_id, id);
-					loadReadingPlan(id);
-					loadReadingPlanProgress();
-					loadDayNumber(true);
-					prepareDropDownNavigation();
-					prepareDisplay();
-					setReadingPlanMenuVisibility();
-					dialog.dismiss();
+			/** run on ui thread */
+			void onReadingPlanListDownloadFinished(final ReadingPlanServerEntry[] entries) {
+				final List<ReadingPlanServerEntry> readingPlanDownloadableEntries = new ArrayList<ReadingPlanServerEntry>();
+				final List<String> downloadedNames = S.getDb().listReadingPlanNames();
+				for (final ReadingPlanServerEntry entry : entries) {
+					if (!downloadedNames.contains(entry.name)) {
+						readingPlanDownloadableEntries.add(entry);
+					}
 				}
-			})
-			.setNegativeButton("Cancel", null)
-			.show();
-		}
+
+				if (readingPlanDownloadableEntries.size() == 0) {
+					new AlertDialog.Builder(ReadingPlanActivity.this)
+					.setMessage(getString(R.string.rp_noReadingPlanAvailable))
+					.setPositiveButton(R.string.ok, null)
+					.show();
+					return;
+				}
+
+				final AlertDialog.Builder builder = new AlertDialog.Builder(ReadingPlanActivity.this);
+				builder.setAdapter(new EasyAdapter() {
+					@Override
+					public View newView(final int position, final ViewGroup parent) {
+						return getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+					}
+
+					@Override
+					public void bindView(final View view, final int position, final ViewGroup parent) {
+						final TextView textView = (TextView) view;
+						final ReadingPlanServerEntry entry = readingPlanDownloadableEntries.get(position);
+						final SpannableStringBuilder sb = new SpannableStringBuilder();
+						sb.append(entry.title);
+						final int sb_len = sb.length();
+						sb.append(" ");
+						sb.append(getString(R.string.rp_download_day_count_days, entry.day_count));
+						sb.append("\n");
+						sb.append(entry.description);
+						sb.setSpan(new RelativeSizeSpan(0.6f), sb_len, sb.length(), 0);
+						textView.setText(sb);
+					}
+
+					@Override
+					public int getCount() {
+						return readingPlanDownloadableEntries.size();
+					}
+				}, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(final DialogInterface dialog, final int which) {
+						onReadingPlanSelected(readingPlanDownloadableEntries.get(which));
+					}
+				})
+				.setNegativeButton(R.string.cancel, null)
+				.show();
+			}
+
+			/** run on ui thread */
+			void onReadingPlanSelected(final ReadingPlanServerEntry entry) {
+				downloadReadingPlanFromServer(entry);
+			}
+		}.start();
+	}
+
+	void downloadReadingPlanFromServer(final ReadingPlanServerEntry entry) {
+		final AtomicBoolean cancelled = new AtomicBoolean(false);
+		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.rp_download_reading_plan_progress), true, true);
+		pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
+			@Override
+			public void onDismiss(final DialogInterface dialog) {
+				cancelled.set(true);
+			}
+		});
+
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					download();
+				} catch (Exception e) {
+					Log.e(TAG, "downloading reading plan data", e);
+					new AlertDialog.Builder(ReadingPlanActivity.this)
+					.setMessage(getString(R.string.rp_download_reading_plan_failed))
+					.setPositiveButton(R.string.ok, null)
+					.show();
+				} finally {
+					pd.dismiss();
+				}
+			}
+
+			/** run on bg thread */
+			void download() throws Exception {
+				final OkHttpClient client = new OkHttpClient();
+				final HttpURLConnection conn = client.open(new URL("http://alkitab-host.appspot.com/rp/get_rp?name=" + entry.name));
+				final InputStream input = conn.getInputStream();
+				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				final byte[] buf = new byte[1024];
+				while (true) {
+					final int read = input.read(buf);
+					if (read < 0) break;
+					baos.write(buf, 0, read);
+				}
+
+				if (cancelled.get()) return;
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						onReadingPlanDownloadFinished(baos.toByteArray());
+					}
+				});
+			}
+
+			/** run on ui thread */
+			void onReadingPlanDownloadFinished(final byte[] data) {
+				final long id = ReadingPlanManager.insertReadingPlanToDb(data);
+
+				if (id == 0) {
+					new AlertDialog.Builder(ReadingPlanActivity.this)
+					.setMessage(getString(R.string.rp_download_reading_plan_data_corrupted))
+					.setPositiveButton(R.string.ok, null)
+					.show();
+					return;
+				}
+
+				Preferences.setLong(Prefkey.active_reading_plan_id, id);
+				loadReadingPlan(id);
+				loadReadingPlanProgress();
+				loadDayNumber(true);
+				prepareDropDownNavigation();
+				prepareDisplay();
+				setReadingPlanMenuVisibility();
+			}
+		}.start();
 	}
 
 	private float getActualPercentage() {
@@ -658,8 +801,8 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				float targetPercentage = getTargetPercentage();
 
 				pbReadingProgress.setMax(10000);
-				pbReadingProgress.setProgress((int) actualPercentage * 100);
-				pbReadingProgress.setSecondaryProgress((int) targetPercentage * 100);
+				pbReadingProgress.setProgress((int) (actualPercentage * 100));
+				pbReadingProgress.setSecondaryProgress((int) (targetPercentage * 100));
 
 				tActual.setText(getString(R.string.rp_commentActual, String.format("%.2f", actualPercentage)));
 				tTarget.setText(getString(R.string.rp_commentTarget, String.format("%.2f", targetPercentage)));
@@ -668,7 +811,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				if (actualPercentage == targetPercentage) {
 					comment = getString(R.string.rp_commentOnSchedule);
 				} else {
-					String diff = String.format("%.2f", targetPercentage - actualPercentage);
+					String diff = String.format(Locale.US, "%.2f", targetPercentage - actualPercentage);
 					comment = getString(R.string.rp_commentBehindSchedule, diff);
 				}
 

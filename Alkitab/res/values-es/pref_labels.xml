@@ -13,7 +13,7 @@
   <string name="pref_biarkan_layar_menyala">Mantener la pantalla encendida</string>
   <string name="pref_penampilan_layar">Mostrar</string>
   <string name="pref_volumeButtonNavigation_title">Navegación con botones de volumen</string>
-  <string name="pref_volumeButtonNavigation_summary">Utilice los botones físicos de volumen para navegar entre los versículos o capítulos</string>
+  <string name="pref_volumeButtonNavigation_summary">Usar los botones físicos para navegar entre versículos y capítulos</string>
   <string name="pref_copyWithVerseNumbers_title">Incluir números de versículo</string>
   <string name="pref_copyWithVerseNumbers_summary">Poner los números de versículo en cada versículo cuando copia/comparte</string>
   <string name="pref_help_text_appearance_title">Apariencia del texto</string>

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class RpaToRpb {
-	private static final String FILE_NAME = "blueletter_one_year_historical";
+	private static final String FILE_NAME = "esv_through_the_bible_in_a_year";
 	private static final String INPUT_FILE = System.getProperty("user.dir") + "/RpaToRpb/file/" + FILE_NAME + ".rpa";
 	private static final String OUTPUT_FILE = System.getProperty("user.dir") + "/RpaToRpb/file/" + FILE_NAME + ".rpb";
 	private static RpaInput.Rpa rpa;

@@ -966,4 +966,17 @@ public class InternalDb {
 		cv.put(Db.ReadingPlan.startTime, startDate);
 		return helper.getWritableDatabase().update(Db.TABLE_ReadingPlan, cv, "_id=?", new String[] {String.valueOf(id)});
 	}
+
+	public List<String> listReadingPlanNames() {
+		final List<String> res = new ArrayList<String>();
+		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan, new String[] {Db.ReadingPlan.name}, null, null, null, null, null);
+		try {
+			while (c.moveToNext()) {
+				res.add(c.getString(0));
+			}
+			return res;
+		} finally {
+			c.close();
+		}
+	}
 }
