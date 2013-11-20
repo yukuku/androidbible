@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/imgIcon" android:layout_alignParentLeft="true" android:layout_alignParentTop="true"
-                android:focusableInTouchMode="false"/>
+                tools:ignore="ContentDescription"/>
 
     </RelativeLayout>
 

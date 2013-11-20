@@ -414,6 +414,7 @@ public class Yes1Reader implements BibleReader {
 	/**
 	 * Mungkin null kalo ga ada.
 	 */
+	@Override
 	public String getDescription() {
 		try {
 			init();

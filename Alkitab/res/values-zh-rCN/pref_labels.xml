@@ -6,7 +6,6 @@
   <string name="pref_warna_latar_belakang">背景</string>
   <string name="pref_warna_nomor_ayat">节数</string>
   <string name="pref_redTextColor_title">耶稣的话</string>
-  <string name="pref_warna">颜色</string>
   <string name="pref_penggunaan">用法</string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">依英文字母顺序显示各书卷,而不是圣经原本顺序</string>
   <string name="pref_kitab_menurut_abjad">将各书卷依英文名排序</string>
@@ -14,7 +13,7 @@
   <string name="pref_biarkan_layar_menyala">保持萤幕开启</string>
   <string name="pref_penampilan_layar">显示</string>
   <string name="pref_volumeButtonNavigation_title">音量键浏览</string>
-  <string name="pref_volumeButtonNavigation_summary">使用硬件的音量键浏览章节</string>
+  <string name="pref_volumeButtonNavigation_summary">使用硬件的音量键于章节之间浏览</string>
   <string name="pref_copyWithVerseNumbers_title">包含节数</string>
   <string name="pref_copyWithVerseNumbers_summary">在复制／分享时于所有经节加上节数</string>
   <string name="pref_help_text_appearance_title">文字外观</string>

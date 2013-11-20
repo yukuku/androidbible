@@ -182,7 +182,8 @@
   <string name="split_version_none">沒有</string>
   <string name="split_version_cant_display_verse">%2$s裡沒有%1$s</string>
   <string name="menuAddSomething">添加標記</string>
-  <string name="color_settings">設置顏色</string>
+  <string name="color_settings_title">配色</string>
+  <string name="color_settings_night_title">配色（夜間模式）</string>
   <string name="menuTextAppearance">文字外觀</string>
   <string name="text_appearance_theme_custom">設置</string>
   <string name="text_appearance_text_size">文字大小</string>
@@ -235,6 +236,7 @@
   <string name="version_share_title">分享此版本給：</string>
   <string name="menuFullScreen">全螢幕</string>
   <string name="full_screen_dismiss_hint">按下<b>上一頁</b>離開全螢幕</string>
+  <string name="send_donation_confirmation">要捐一些款項給開發者嗎？</string>
   <string name="me_export_markers">匯出標記</string>
   <string name="me_export_menu_item">匯出</string>
   <string name="me_all_notes">所有筆記</string>
@@ -272,4 +274,38 @@
   <string name="recentverses_button_hint">（長按以顯示最近經文）</string>
   <string name="dr_reminder">提示</string>
   <string name="dr_error_contact_reminder">與提示程式連接時發生錯誤。</string>
+  <string name="dv_option_transparent_background">透明的背景</string>
+  <string name="dv_option_dark_text">深色文字</string>
+  <string name="dv_option_text_size">文字大小</string>
+  <string name="rp_menuReadingPlan">閱讀計劃</string>
+  <string name="rp_commentActual">完成度：%s%%</string>
+  <string name="rp_commentTarget">目標：%s%%</string>
+  <string name="rp_commentOnSchedule">按照原定的計劃</string>
+  <string name="rp_commentBehindSchedule">落後於計劃：%s%%</string>
+  <string name="rp_noReadingPlanAvailable">沒有任何閱讀計劃。</string>
+  <string name="rp_deletePlan">
+\"刪除\'%s\'？\"</string>
+  <string name="rp_reset">此動作將會把你最後完成的閱讀日定為昨天。</string>
+  <string name="rp_showCalendar">顯示日曆</string>
+  <string name="rp_gotoFirstUnread">去到第一個未閱讀的讀物</string>
+  <string name="rp_dayHeader">第%1$s日：%2$s</string>
+  <string name="rp_floatPreviousReading">上一個讀物</string>
+  <string name="rp_floatCheckMark">標示為已閱讀</string>
+  <string name="rp_floatDescription">顯示閱讀計劃</string>
+  <string name="rp_floatClose">關閉閱讀計劃模式</string>
+  <string name="rp_floatNextReading">下一個讀物</string>
+  <string name="rp_navigationPreviousDay">上一天</string>
+  <string name="rp_navigationGoToDate">到某日期</string>
+  <string name="rp_navigationNextDay">下一天</string>
+  <string name="rp_menuDownload">下載</string>
+  <string name="rp_menuCatchMeUp">使我趕上</string>
+  <string name="rp_menuDelete">刪除</string>
+  <string name="rp_headingProgress">進度</string>
+  <string name="rp_gotoToday">今天</string>
+  <string name="rp_showDetails">顯示詳細資料</string>
+  <string name="rp_hideDetails">隱藏詳細資料</string>
+  <string name="rp_aboutPlan">關於計劃</string>
+  <string name="rp_aboutPlanMessage">標題：%1$s \n描述：%2$s \n時續時間：%3$s天</string>
+  <string name="version_download_need_fonts">『您下載的版本需要某種字體以正確顯示。請到「文字外觀」目錄，並選擇某種字體。希臘語需要 Ubuntu 字體。緬甸語需要Parabaik，ParabaikSans 或 Myanmar3。泰米爾語需要 Akshar。泰盧固語需要 Suranna。』</string>
+  <string name="menuNightMode">夜間模式</string>
 </resources>

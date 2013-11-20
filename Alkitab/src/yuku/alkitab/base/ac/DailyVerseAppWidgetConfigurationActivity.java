@@ -39,6 +39,7 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 	TextView tTextSize;
 	private CheckBox cTransparentBackground;
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 

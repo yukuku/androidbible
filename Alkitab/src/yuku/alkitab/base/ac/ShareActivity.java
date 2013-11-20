@@ -288,7 +288,7 @@ public class ShareActivity extends BaseActivity {
 			return view;
 		}
 
-		private final void bindView(View view, final DisplayResolveInfo info) {
+		private void bindView(View view, final DisplayResolveInfo info) {
 			TextView text = (TextView) view.findViewById(android.R.id.text1);
 			TextView text2 = (TextView) view.findViewById(android.R.id.text2);
 			final ImageView icon = (ImageView) view.findViewById(R.id.icon);

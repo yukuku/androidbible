@@ -6,7 +6,6 @@
   <string name="pref_warna_latar_belakang">Фон</string>
   <string name="pref_warna_nomor_ayat">Номери віршів</string>
   <string name="pref_redTextColor_title">Слова Ісуса</string>
-  <string name="pref_warna">Кольори</string>
   <string name="pref_penggunaan">Користування</string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Показати сувій книг в алфавітному порядку (a-z) замість оригінального</string>
   <string name="pref_kitab_menurut_abjad">Сортувати книги в алфавітному порядку</string>
