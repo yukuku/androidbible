@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.PopupMenu;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -517,6 +518,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				try {
 					download();
 				} catch (Exception e) {
+					Log.e(TAG, "downloading reading plan list", e);
 					runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -601,6 +603,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				try {
 					download();
 				} catch (Exception e) {
+					Log.e(TAG, "downloading reading plan data", e);
 					new AlertDialog.Builder(ReadingPlanActivity.this)
 					.setMessage("Failed to download the selected reading plan. Please try again with a working Internet connection.")
 					.setPositiveButton(R.string.ok, null)
