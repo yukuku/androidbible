@@ -1,6 +1,6 @@
 info	version	1
 info	title	ESV Daily Reading Bible
-info	description	ESV Daily Reading Bible (www.esv.org/biblereadingplans)
+info	description	Daily Old Testament, New Testament, and Psalms (www.esv.org/biblereadingplans).
 info	duration	365
 plan	3	256	512	1179904	1179904	2556160	2556416
 plan	3	768	1024	1180160	1180160	2556672	2556928
