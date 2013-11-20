@@ -96,7 +96,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 			public void onClick(final View v) {
 				if (sequence != 0) {
 					sequence += -1;
-					leftNavigationListener.onClick(ariRanges[sequence], ariRanges[sequence + 1]);
+					leftNavigationListener.onClick(ariRanges[sequence * 2], ariRanges[sequence * 2 + 1]);
 					updateLayout();
 				}
 			}
@@ -107,7 +107,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 			public void onClick(final View v) {
 				if (sequence != ariRanges.length / 2 - 1) {
 					sequence += 1;
-					rightNavigationListener.onClick(ariRanges[sequence], ariRanges[sequence + 1]);
+					rightNavigationListener.onClick(ariRanges[sequence * 2], ariRanges[sequence * 2 + 1]);
 					updateLayout();
 				}
 			}
