@@ -480,16 +480,8 @@ public class ReadingPlanActivity extends ActionBarActivity {
 	}
 
 	private void updateButtonStatus() {            //TODO look disabled
-		if (dayNumber == 0) {
-			bLeft.setEnabled(false);
-			bRight.setEnabled(true);
-		} else if (dayNumber == readingPlan.info.duration - 1) {
-			bLeft.setEnabled(true);
-			bRight.setEnabled(false);
-		} else {
-			bLeft.setEnabled(true);
-			bRight.setEnabled(true);
-		}
+		bLeft.setEnabled(dayNumber != 0);
+		bRight.setEnabled(dayNumber != readingPlan.info.duration - 1);
 
 		bToday.setText(getReadingDateHeader(dayNumber));
 
