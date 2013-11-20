@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="file_provider_authority">yuku.alkitab.file_provider.debug</string>
+    <string name="file_provider_authority" translatable="false">yuku.alkitab.file_provider.debug</string>
 </resources>

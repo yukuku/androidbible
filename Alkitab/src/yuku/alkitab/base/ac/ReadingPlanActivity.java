@@ -56,6 +56,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ReadingPlanActivity extends ActionBarActivity {
@@ -810,7 +811,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				if (actualPercentage == targetPercentage) {
 					comment = getString(R.string.rp_commentOnSchedule);
 				} else {
-					String diff = String.format("%.2f", targetPercentage - actualPercentage);
+					String diff = String.format(Locale.US, "%.2f", targetPercentage - actualPercentage);
 					comment = getString(R.string.rp_commentBehindSchedule, diff);
 				}
 
