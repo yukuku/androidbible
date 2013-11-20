@@ -7,9 +7,9 @@
   <string name="pref_warna_nomor_ayat">节数</string>
   <string name="pref_redTextColor_title">耶稣的话</string>
   <string name="pref_penggunaan">用法</string>
-  <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">依英文字母顺序显示各书卷,而不是圣经原本顺序</string>
-  <string name="pref_kitab_menurut_abjad">将各书卷依英文名排序</string>
-  <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">读经时本机萤幕将不关闭</string>
+  <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">以英文字母次序（a-z）显示书卷的排序，而不是圣经原本的次序</string>
+  <string name="pref_kitab_menurut_abjad">按英文字母排列书卷</string>
+  <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">阅读圣经时本机萤幕将不会关闭</string>
   <string name="pref_biarkan_layar_menyala">保持萤幕开启</string>
   <string name="pref_penampilan_layar">显示</string>
   <string name="pref_volumeButtonNavigation_title">音量键浏览</string>
