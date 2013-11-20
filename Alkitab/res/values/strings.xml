@@ -319,6 +319,12 @@
     <string name="rp_hideDetails">Hide details</string>
     <string name="rp_aboutPlan">About plan</string>
     <string name="rp_aboutPlanMessage">Title: %1$s \nDescription: %2$s \nDuration: %3$s days</string>
+    <string name="rp_download_day_count_days">%s days</string>
+    <string name="rp_download_reading_plan_list_progress">Downloading list of reading plans…</string>
+    <string name="rp_download_reading_plan_list_failed">Failed to download reading plan list. Please try again with a working Internet connection.</string>
+    <string name="rp_download_reading_plan_progress">Downloading reading plan…</string>
+    <string name="rp_download_reading_plan_failed">Failed to download the selected reading plan. Please try again with a working Internet connection.</string>
+    <string name="rp_download_reading_plan_data_corrupted">Downloaded reading plan data is corrupted. Please try again later with a working Internet connection.</string>
 
     <string name="version_download_need_fonts">"The version you downloaded might need to be displayed with certain fonts. Go to the 'Text appearance' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
     <string name="menuNightMode">Night mode</string>

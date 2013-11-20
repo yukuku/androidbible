@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.PopupMenu;
+import android.text.SpannableStringBuilder;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +34,7 @@ import com.squareup.okhttp.OkHttpClient;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
+import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.storage.Prefkey;
@@ -149,10 +152,14 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			return;
 		}
 
+		byte[] binaryReadingPlan = S.getDb().getBinaryReadingPlanById(id);
+
 		long startTime = 0;
-		if (id == 0) {
+		if (id == 0 || binaryReadingPlan == null) {
 			id = downloadedReadingPlanInfos.get(0).id;
 			startTime = downloadedReadingPlanInfos.get(0).startTime;
+
+			binaryReadingPlan = S.getDb().getBinaryReadingPlanById(id);
 		} else {
 			for (ReadingPlan.ReadingPlanInfo info : downloadedReadingPlanInfos) {
 				if (id == info.id) {
@@ -160,8 +167,6 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				}
 			}
 		}
-
-		byte[] binaryReadingPlan = S.getDb().getBinaryReadingPlanById(id);
 
 		InputStream inputStream = new ByteArrayInputStream(binaryReadingPlan);
 		ReadingPlan res = ReadingPlanManager.readVersion1(inputStream);
@@ -496,7 +501,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 
 	private void downloadReadingPlanList() {
 		final AtomicBoolean cancelled = new AtomicBoolean(false);
-		final ProgressDialog pd = ProgressDialog.show(this, null, "Downloading list of reading plans…", true, true);
+		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.rp_download_reading_plan_list_progress), true, true);
 		pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
 			@Override
 			public void onDismiss(final DialogInterface dialog) {
@@ -515,7 +520,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 						@Override
 						public void run() {
 							new AlertDialog.Builder(ReadingPlanActivity.this)
-							.setMessage("Failed to download reading plan list. Please try again with a working Internet connection.")
+							.setMessage(getString(R.string.rp_download_reading_plan_list_failed))
 							.setPositiveButton(R.string.ok, null)
 							.show();
 						}
@@ -544,12 +549,10 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			/** run on ui thread */
 			void onReadingPlanListDownloadFinished(final ReadingPlanServerEntry[] entries) {
 				final List<ReadingPlanServerEntry> readingPlanDownloadableEntries = new ArrayList<ReadingPlanServerEntry>();
-				final List<String> readingPlanTitles = new ArrayList<String>();
 				final List<String> downloadedNames = S.getDb().listReadingPlanNames();
 				for (final ReadingPlanServerEntry entry : entries) {
 					if (!downloadedNames.contains(entry.name)) {
 						readingPlanDownloadableEntries.add(entry);
-						readingPlanTitles.add(entry.title);
 					}
 				}
 
@@ -562,7 +565,32 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				}
 
 				final AlertDialog.Builder builder = new AlertDialog.Builder(ReadingPlanActivity.this);
-				builder.setAdapter(new ArrayAdapter<String>(ReadingPlanActivity.this, android.R.layout.simple_list_item_1, readingPlanTitles), new DialogInterface.OnClickListener() {
+				builder.setAdapter(new EasyAdapter() {
+					@Override
+					public View newView(final int position, final ViewGroup parent) {
+						return getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+					}
+
+					@Override
+					public void bindView(final View view, final int position, final ViewGroup parent) {
+						final TextView textView = (TextView) view;
+						final ReadingPlanServerEntry entry = readingPlanDownloadableEntries.get(position);
+						final SpannableStringBuilder sb = new SpannableStringBuilder();
+						sb.append(entry.title);
+						final int sb_len = sb.length();
+						sb.append(" ");
+						sb.append(getString(R.string.rp_download_day_count_days, entry.day_count));
+						sb.append("\n");
+						sb.append(entry.description);
+						sb.setSpan(new RelativeSizeSpan(0.6f), sb_len, sb.length(), 0);
+						textView.setText(sb);
+					}
+
+					@Override
+					public int getCount() {
+						return readingPlanDownloadableEntries.size();
+					}
+				}, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(final DialogInterface dialog, final int which) {
 						onReadingPlanSelected(readingPlanDownloadableEntries.get(which));
@@ -581,7 +609,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 
 	void downloadReadingPlanFromServer(final ReadingPlanServerEntry entry) {
 		final AtomicBoolean cancelled = new AtomicBoolean(false);
-		final ProgressDialog pd = ProgressDialog.show(this, null, "Downloading reading plan…", true, true);
+		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.rp_download_reading_plan_progress), true, true);
 		pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
 			@Override
 			public void onDismiss(final DialogInterface dialog) {
@@ -597,7 +625,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 				} catch (Exception e) {
 					Log.e(TAG, "downloading reading plan data", e);
 					new AlertDialog.Builder(ReadingPlanActivity.this)
-					.setMessage("Failed to download the selected reading plan. Please try again with a working Internet connection.")
+					.setMessage(getString(R.string.rp_download_reading_plan_failed))
 					.setPositiveButton(R.string.ok, null)
 					.show();
 				} finally {
@@ -633,7 +661,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 
 				if (id == 0) {
 					new AlertDialog.Builder(ReadingPlanActivity.this)
-					.setMessage("Downloaded reading plan data is corrupted. Please try again later with a working Internet connection.")
+					.setMessage(getString(R.string.rp_download_reading_plan_data_corrupted))
 					.setPositiveButton(R.string.ok, null)
 					.show();
 					return;

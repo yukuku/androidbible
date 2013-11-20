@@ -23,14 +23,19 @@ public class ReadingPlanManager {
 		try {
 			// check the file has correct header and infos
 			final BintexReader reader = new BintexReader(new ByteArrayInputStream(data));
-			readInfo(info, reader);
+			final boolean ok = readInfo(info, reader);
 			reader.close();
+
+			if (!ok) {
+				Log.e(TAG, "Error parsing reading plan data");
+				return 0;
+			}
 
 			info.startTime = new Date().getTime();
 
 			return S.getDb().insertReadingPlan(info, data);
 		} catch (IOException e) {
-			Log.e(TAG, "error reading reading plan", e);
+			Log.e(TAG, "Error reading reading plan, should not happen", e);
 			return 0;
 		}
 	}
@@ -86,6 +91,9 @@ public class ReadingPlanManager {
 		return readingPlan;
 	}
 
+	/**
+	 * @return false if reading plan data is not in a valid format.
+	 */
 	public static boolean readInfo(final ReadingPlan.ReadingPlanInfo readingPlanInfo, final BintexReader reader) throws IOException {
 		byte[] headers = new byte[8];
 		reader.readRaw(headers);
