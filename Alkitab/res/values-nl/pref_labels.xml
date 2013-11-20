@@ -6,7 +6,6 @@
   <string name="pref_warna_latar_belakang">Achtergrond</string>
   <string name="pref_warna_nomor_ayat">Versnummers</string>
   <string name="pref_redTextColor_title">Woorden van Jezus</string>
-  <string name="pref_warna">Kleuren</string>
   <string name="pref_penggunaan">Gebruik</string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Geef lijst van Bijbelboeken weer in alfabetische volgorde (a-z) in plaats van de originele</string>
   <string name="pref_kitab_menurut_abjad">Sorteer Bijbelboeken op alfabet</string>
@@ -14,7 +13,7 @@
   <string name="pref_biarkan_layar_menyala">Laat het scherm aan</string>
   <string name="pref_penampilan_layar">Scherm</string>
   <string name="pref_volumeButtonNavigation_title">Volumetoets navigatie</string>
-  <string name="pref_volumeButtonNavigation_summary">Gebruik hardware volumetoetsen om te navigeren tussen verzen of hoofdstukken</string>
+  <string name="pref_volumeButtonNavigation_summary">Gebruik volumetoetsen om te navigeren tussen verzen of hoofdstukken</string>
   <string name="pref_copyWithVerseNumbers_title">Inclusief versnummers</string>
   <string name="pref_copyWithVerseNumbers_summary">Plaats versnummers voor elk vers bij kopiëren/delen</string>
   <string name="pref_help_text_appearance_title">Tekstweergave</string>

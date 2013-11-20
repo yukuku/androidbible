@@ -6,15 +6,14 @@
   <string name="pref_warna_latar_belakang">背景</string>
   <string name="pref_warna_nomor_ayat">節數</string>
   <string name="pref_redTextColor_title">耶穌的話</string>
-  <string name="pref_warna">顏色</string>
   <string name="pref_penggunaan">使用</string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">依英文字母順序顯示各書卷,而不是聖經原本順序</string>
   <string name="pref_kitab_menurut_abjad">將各書卷依英文名排序</string>
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">讀經時本機螢幕將不關閉</string>
   <string name="pref_biarkan_layar_menyala">保持螢幕開啟</string>
   <string name="pref_penampilan_layar">顯示</string>
-  <string name="pref_volumeButtonNavigation_title">使用聲量鍵瀏覽</string>
-  <string name="pref_volumeButtonNavigation_summary">使用硬體聲量鍵瀏覽章節</string>
+  <string name="pref_volumeButtonNavigation_title">音量鍵瀏覽</string>
+  <string name="pref_volumeButtonNavigation_summary">使用硬件的音量鍵於章節之間瀏覽</string>
   <string name="pref_copyWithVerseNumbers_title">包含節數</string>
   <string name="pref_copyWithVerseNumbers_summary">在複製/分享時在每節加入節數</string>
   <string name="pref_help_text_appearance_title">文字外觀</string>
