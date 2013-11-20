@@ -296,7 +296,7 @@
     <string name="rp_commentTarget">Target: %s%%</string>
     <string name="rp_commentOnSchedule">On schedule</string>
     <string name="rp_commentBehindSchedule">Behind the schedule: %s%%</string>
-    <string name="rp_noReadingPlanAvailable">No reading plan available.</string>
+    <string name="rp_noReadingPlanAvailable">No more reading plans available.</string>
     <string name="rp_deletePlan">"Delete '%s'?"</string>
     <string name="rp_reset">This action will shift your last fully read to yesterday.</string>
     <string name="rp_showCalendar">Show calendar</string>
