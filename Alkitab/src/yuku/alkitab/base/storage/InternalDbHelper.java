@@ -3,12 +3,13 @@ package yuku.alkitab.base.storage;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import yuku.afw.App;
-import yuku.alkitab.util.Ari;
 import yuku.alkitab.base.storage.Db.Bookmark2;
+import yuku.alkitab.util.Ari;
 
 public class InternalDbHelper extends SQLiteOpenHelper {
 	public static final String TAG = InternalDbHelper.class.getSimpleName();
@@ -84,6 +85,15 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			insertDefaultProgressMarks(db);
 			createTableProgressMarkHistory(db);
 			createIndexProgressMarkHistory(db);
+		}
+
+		// bug in 137 (3.3.3) where ReadingPlanProgress table is created with a wrong column name.
+		// so if that table has no contents, drop it and create again below.
+		if (oldVersion >= 137) {
+			final long row_count = DatabaseUtils.longForQuery(db, "select count(*) from " + Db.TABLE_ReadingPlanProgress, null);
+			if (row_count == 0) {
+				db.execSQL("drop table " + Db.TABLE_ReadingPlanProgress);
+			}
 		}
 
 		if (oldVersion <= 137) { // 138: 3.4.0
