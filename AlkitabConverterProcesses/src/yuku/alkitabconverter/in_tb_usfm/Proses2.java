@@ -8,7 +8,6 @@ import yuku.alkitab.util.Ari;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitabconverter.internal_common.InternalCommon;
 import yuku.alkitabconverter.internal_common.ReverseIndexer;
-import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.TextDb.TextProcessor;
 import yuku.alkitabconverter.util.TextDb.VerseState;
@@ -23,8 +22,6 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -95,7 +92,7 @@ public class Proses2 {
 		teksDb.normalize();
 
 		teksDb.processEach(new TextProcessor() {
-			final Pattern xrefTag = Pattern.compile("(@<x[0-9]@>@/)");
+			final Pattern xrefTag = Pattern.compile("(@<x[0-9]@>@/)\\s*");
 
 			@Override public void process(int ari, VerseState as) {
 				// tambah @@ kalo perlu
@@ -135,8 +132,6 @@ public class Proses2 {
 		
 		teksDb.dump();
 		
-		dumpForYetTesting(InternalCommon.fileToBookNames(INPUT_BOOK_NAMES), teksDb, pericopeData);
-		
 		////////// CREATE REVERSE INDEX
 		
 		{
@@ -168,57 +163,6 @@ public class Proses2 {
 		// no footnotes
 
 		yet.write();
-	}
-
-	private void dumpForYetTesting(List<String> bookNames, TextDb teksDb, PericopeData pericopeData) {
-		class Row {
-			int ari;
-			int type;
-			Rec rec;
-			PericopeData.Entry entry;
-		}
-		
-		List<Row> rows = new ArrayList<Row>();
-		
-		for (Rec rec: teksDb.toRecList()) {
-			Row row = new Row();
-			row.ari = Ari.encode(rec.book_1 - 1, rec.chapter_1, rec.verse_1);
-			row.type = 2;
-			row.rec = rec;
-			rows.add(row);
-		}
-		
-		for (PericopeData.Entry entry: pericopeData.entries) {
-			Row row = new Row();
-			row.ari = entry.ari;
-			row.type = 1;
-			row.entry = entry;
-			rows.add(row);
-		}
-		
-		Collections.sort(rows, new Comparator<Row>() {
-			@Override public int compare(Row a, Row b) {
-				if (a.ari != b.ari) return a.ari - b.ari;
-				return a.type - b.type;
-			}
-		});
-		
-		for (int i = 0; i < bookNames.size(); i++) {
-			System.out.printf("%s\t%d\t%s%n", "book_name", i + 1, bookNames.get(i));
-		}
-		
-		for (Row row: rows) {
-			if (row.type == 1) {
-				System.out.printf("%s\t%d\t%d\t%d\t%s%n", "pericope", Ari.toBook(row.ari) + 1, Ari.toChapter(row.ari), Ari.toVerse(row.ari), row.entry.block.title);
-				if (row.entry.block.parallels != null) {
-					for (String parallel: row.entry.block.parallels) {
-						System.out.printf("%s\t%s%n", "parallel", parallel);
-					}
-				}
-			} else {
-				System.out.printf("%s\t%d\t%d\t%d\t%s%n", "verse", Ari.toBook(row.ari) + 1, Ari.toChapter(row.ari), Ari.toVerse(row.ari), row.rec.text);
-			}
-		}
 	}
 
 	public class Handler extends DefaultHandler2 {
