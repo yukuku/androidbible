@@ -87,14 +87,16 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			createIndexProgressMarkHistory(db);
 		}
 
-		if (oldVersion <= 137) { // 138: 3.4.0
-			// bug in 137 (3.3.3) where ReadingPlanProgress table is created with a wrong column name.
-			// so if that table has no contents, drop it and create again below.
+		// bug in 137 (3.3.3) where ReadingPlanProgress table is created with a wrong column name.
+		// so if that table has no contents, drop it and create again below.
+		if (oldVersion >= 137) {
 			final long row_count = DatabaseUtils.longForQuery(db, "select count(*) from " + Db.TABLE_ReadingPlanProgress, null);
 			if (row_count == 0) {
-				db.rawQuery("drop table " + Db.TABLE_ReadingPlanProgress, null);
+				db.execSQL("drop table " + Db.TABLE_ReadingPlanProgress);
 			}
+		}
 
+		if (oldVersion <= 137) { // 138: 3.4.0
 			createTableReadingPlan(db);
 			createTableReadingPlanProgress(db);
 			createIndexReadingPlanProgress(db);
