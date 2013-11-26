@@ -92,9 +92,8 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			boolean needDrop = false;
 			final Cursor c = db.rawQuery("pragma table_info(" + Db.TABLE_ReadingPlanProgress + ")", null);
 			if (c != null) {
-				final int col_name = c.getColumnIndexOrThrow("name");
 				while (c.moveToNext()) {
-					final String name = c.getString(col_name);
+					final String name = c.getString(1 /* "name" column */);
 					Log.d(TAG, "column name: " + name);
 					if ("checkedTime".equals(name)) { // this is a bad column name
 						needDrop = true;
