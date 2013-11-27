@@ -3,7 +3,6 @@ package yuku.alkitab.base.storage;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -88,15 +87,27 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		}
 
 		// bug in 137 (3.3.3) where ReadingPlanProgress table is created with a wrong column name.
-		// so if that table has no contents, drop it and create again below.
-		if (oldVersion >= 137) {
-			final long row_count = DatabaseUtils.longForQuery(db, "select count(*) from " + Db.TABLE_ReadingPlanProgress, null);
-			if (row_count == 0) {
+		// so that column name is found, drop that table.
+		if (oldVersion >= 137 && oldVersion <= 142) {
+			boolean needDrop = false;
+			final Cursor c = db.rawQuery("pragma table_info(" + Db.TABLE_ReadingPlanProgress + ")", null);
+			if (c != null) {
+				while (c.moveToNext()) {
+					final String name = c.getString(1 /* "name" column */);
+					Log.d(TAG, "column name: " + name);
+					if ("checkedTime".equals(name)) { // this is a bad column name
+						needDrop = true;
+					}
+				}
+			}
+			if (needDrop) {
+				Log.d(TAG, "table need to be dropped: " + Db.TABLE_ReadingPlanProgress);
 				db.execSQL("drop table " + Db.TABLE_ReadingPlanProgress);
 			}
 		}
 
-		if (oldVersion <= 137) { // 138: 3.4.0
+		if (oldVersion <= 142) { // 143: 3.4.4
+			// (These tables were first introduced in 3.4.0, but because of the above bug, this needs to be recreated)
 			createTableReadingPlan(db);
 			createTableReadingPlanProgress(db);
 			createIndexReadingPlanProgress(db);
