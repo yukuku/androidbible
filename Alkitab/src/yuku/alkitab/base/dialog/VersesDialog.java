@@ -129,11 +129,7 @@ public class VersesDialog extends BaseDialog {
 
 	VersesView.SelectedVersesListener versesView_selectedVerses = new VersesView.SelectedVersesListener() {
 		@Override public void onVerseSingleClick(VersesView v, int verse_1) {
-<<<<<<< HEAD
-			listener.onVerseSelected(VersesDialog.this, displayedAris.get(verse_1 - 1));
-=======
 			if (listener != null) listener.onVerseSelected(VersesDialog.this, displayedAris.get(verse_1 - 1));
->>>>>>> master
 		}
 		
 		@Override public void onSomeVersesSelected(VersesView v) {}
