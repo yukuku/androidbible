@@ -18,6 +18,24 @@ public class FootnoteDb {
 
 	final Map<Integer, List<FootnoteEntry>> map = new TreeMap<Integer, List<FootnoteEntry>>();
 
+	public FootnoteDb() {}
+
+	public FootnoteDb(final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries) {
+		// make sure it's sorted
+		for (final Map.Entry<Integer, FootnoteEntry> entry : new TreeMap<Integer, FootnoteEntry>(footnoteEntries).entrySet()) {
+			final int arif = entry.getKey();
+			final int ari = arif >> 8;
+			List<FootnoteEntry> fes = map.get(ari);
+			if (fes == null) {
+				fes = new ArrayList<FootnoteEntry>();
+				map.put(ari, fes);
+			}
+			final FootnoteEntry fe = entry.getValue();
+			fes.add(fe);
+		}
+	}
+
+
 	public LinkedHashMap<Integer, FootnoteEntry> toEntries() {
 		final LinkedHashMap<Integer, FootnoteEntry> res = new LinkedHashMap<Integer, FootnoteEntry>();
 		processEach(new FootnoteProcessor() {

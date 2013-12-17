@@ -19,6 +19,23 @@ public class XrefDb {
 
 	Map<Integer, List<XrefEntry>> map = new TreeMap<Integer, List<XrefEntry>>();
 
+	public XrefDb() {}
+
+	public XrefDb(final LinkedHashMap<Integer, XrefEntry> xrefEntries) {
+		// make sure it's sorted
+		for (final Map.Entry<Integer, XrefEntry> entry : new TreeMap<Integer, XrefEntry>(xrefEntries).entrySet()) {
+			final int arif = entry.getKey();
+			final int ari = arif >> 8;
+			List<XrefEntry> xes = map.get(ari);
+			if (xes == null) {
+				xes = new ArrayList<XrefEntry>();
+				map.put(ari, xes);
+			}
+			final XrefEntry xe = entry.getValue();
+			xes.add(xe);
+		}
+	}
+
 	public LinkedHashMap<Integer, XrefEntry> toEntries() {
 		final LinkedHashMap<Integer, XrefEntry> res = new LinkedHashMap<Integer, XrefEntry>();
 		processEach(new XrefProcessor() {
@@ -186,7 +203,9 @@ public class XrefDb {
 
 						{ // just for checking
 							int lid = KjvUtils.ariToLid(ari_target);
-							if (lid <= 0) throw new RuntimeException(String.format("invalid ari found 0x%06x", ari_target));
+							if (lid <= 0) {
+								throw new RuntimeException(String.format("invalid ari found 0x%06x", ari_target));
+							}
 						}
 
 						final String enc_value;
