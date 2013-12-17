@@ -137,13 +137,26 @@ public class YetFileInput {
 					int chapter_1 = Integer.parseInt(splits[2]);
 					int verse_1 = Integer.parseInt(splits[3]);
 					String text = splits[4];
-				
-					if (verse_1 != lastVerse_1 + 1) {
-						if (chapter_1 != lastChapter_1 + 1) {
-							if (book_1 != lastBook_1 + 1) {
-								throw new RuntimeException("wrong verse ordering: " + line);
-							}
+
+					// check verse ordering
+					boolean validOrdering = false;
+					if (verse_1 == lastVerse_1 + 1) {
+						// next verse
+						validOrdering = true;
+					} else if (verse_1 == 1 && chapter_1 == lastChapter_1 + 1) {
+						// next chapter, verse 1
+						validOrdering = true;
+					} else if (verse_1 == 1 && chapter_1 == 1) {
+						// new book, chapter 1 verse 1
+						validOrdering = true;
+						if (book_1 != lastBook_1 + 1) {
+							// skipped book(s)
+							System.err.println("warning: some book(s) skipped. current book_1: " + book_1 + " previous book_1: " + lastBook_1);
 						}
+					}
+
+					if (!validOrdering) {
+						throw new RuntimeException("wrong verse ordering at line: " + line);
 					}
 					
 					Rec rec = new Rec();
