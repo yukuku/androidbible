@@ -1072,7 +1072,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			openDonationDialog();
 			return true;
 		case R.id.menuTsiIntro:
-			startActivity(HelpActivity.createIntent(false, "help/PrakataTSI-tidy.html"));
+			startActivity(HelpActivity.createIntent("help/PrakataTSI-tidy.html", false, null, null));
 			return true;
 		case R.id.menuTsiWebsite: {
 			final Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -1080,7 +1080,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			startActivity(intent);
 		} return true;
 		case R.id.menuTsiMhk: {
-			startActivity(HelpActivity.createIntent(false, "mhk/index.html"));
+			startActivity(HelpActivity.createIntent("mhk/index.html", false, null, null));
 		} return true;
 		}
 		
