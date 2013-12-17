@@ -6,8 +6,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.yes2.model.PericopeData;
-import yuku.alkitabconverter.internal_common.InternalCommon;
-import yuku.alkitabconverter.internal_common.ReverseIndexer;
+import yuku.alkitabconverter.util.FootnoteDb;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.TextDb.TextProcessor;
 import yuku.alkitabconverter.util.TextDb.VerseState;
@@ -27,14 +26,12 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// process from usfx files to yet
 public class Proses2 {
 	final SAXParserFactory factory = SAXParserFactory.newInstance();
 	
-	public static String INPUT_TEKS_ENCODING = "utf-8";
-	public static int INPUT_TEKS_ENCODING_YES = 2; // 1: ascii; 2: utf-8;
-	public static String INPUT_BOOK_NAMES = "../../../bahan-alkitab/in-tb-usfm/in/in-tb-usfm-kitab.txt";
+	static String INPUT_BOOK_NAMES = "../../../bahan-alkitab/in-tb-usfm/in/in-tb-usfm-kitab.txt";
 	static String OUTPUT_YET = "../../../bahan-alkitab/in-tb-usfm/out/in-tb-usfm.yet";
-	public static int OUTPUT_ADA_PERIKOP = 1;
 	static String INFO_SHORT_NAME = "TB";
 	static String INFO_LONG_NAME = "Terjemahan Baru";
 	static String INFO_DESCRIPTION = "Terjemahan Baru (1974), Lembaga Alkitab Indonesia";
@@ -45,6 +42,7 @@ public class Proses2 {
 	TextDb teksDb = new TextDb();
 	StringBuilder misteri = new StringBuilder();
 	XrefDb xrefDb = new XrefDb();
+	FootnoteDb footnoteDb = new FootnoteDb();
 
 	PericopeData pericopeData = new PericopeData();
 	{
@@ -132,21 +130,6 @@ public class Proses2 {
 		
 		teksDb.dump();
 		
-		////////// CREATE REVERSE INDEX
-		
-		{
-			File outDir = new File("../../../bahan-alkitab/in-tb-usfm/raw");
-			ReverseIndexer.createReverseIndex(outDir, "tb", teksDb);
-		}
-		
-		////////// PROSES KE INTERNAL
-		
-		{
-			File outDir = new File("../../../bahan-alkitab/in-tb-usfm/raw");
-			outDir.mkdir();
-			InternalCommon.createInternalFiles(outDir, "tb", InternalCommon.fileToBookNames(INPUT_BOOK_NAMES), teksDb.toRecList(), pericopeData, xrefDb, null);
-		}
-
 		////////// PROSES KE YET
 
 		YetFileOutput yet = new YetFileOutput(new File(OUTPUT_YET));
@@ -191,7 +174,8 @@ public class Proses2 {
 		int sLevel = 0;
 		int menjorokTeks = -1; // -2 adalah para start; 0 1 2 3 4 adalah q level;
 		int xref_state = -1; // 0 is initial (just encountered xref tag <x>), 1 is source, 2 is target
-		
+		int footnote_state = -1; // 0 is initial (just encountered footnote tag <f>), 1 is fr (reference), 2 is fk (keywords), 3 is ft (text)
+
 		public Handler(int kitab_0) {
 			this.kitab_0 = kitab_0;
 			tujuanTulis.push(tujuanTulis_misteri);
@@ -376,7 +360,15 @@ public class Proses2 {
 				System.out.println("$tulis ke xref (state=" + xref_state + ") " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
 				int ari = Ari.encode(kitab_0, pasal_1, ayat_1);
 				if (xref_state == 0) {
-					final int xrefIndex = xrefDb.addBegin(ari);
+					// compatibility when \x and \x* are written without any \xo or \xt markers.
+					// Check chars, if it contains more than just spaces, -, +, or a character, it means it looks like a complete xref entry.
+					final String content = chars;
+					final int xrefIndex;
+					if (content.replaceFirst("[-+a-zA-Z]", "").replaceAll("\\s", "").length() > 0) {
+						xrefIndex = xrefDb.addComplete(ari, chars);
+					} else {
+						xrefIndex = xrefDb.addBegin(ari);
+					}
 					teksDb.append(ari, "@<x" + (xrefIndex + 1) + "@>@/", -1);
 				} else if (xref_state == 1) {
 					xrefDb.appendText(ari, chars.replace("\n", " "));
@@ -386,7 +378,33 @@ public class Proses2 {
 					throw new RuntimeException("xref_state not supported");
 				}
 			} else if (tujuan == tujuanTulis_footnote) {
-				System.out.println("$tulis ke footnote " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
+				System.out.println("$tulis ke footnote (state=" + footnote_state + ") " + kitab_0 + " " + pasal_1 + " " + ayat_1 + ":" + chars);
+				final int ari = Ari.encode(kitab_0, pasal_1, ayat_1);
+				if (footnote_state == 0) {
+					final String content;
+
+					// remove caller at the beginning
+					if (chars.matches("[a-zA-Z+-]\\s.*")) {
+						// remove that first 2 characters
+						content = chars.substring(2);
+					} else {
+						content = chars;
+					}
+
+					final int footnoteIndex = footnoteDb.addBegin(ari);
+
+					if (content.trim().length() != 0) {
+						footnoteDb.appendText(ari, content.replace("\n", " "));
+					}
+
+					teksDb.append(ari, "@<f" + (footnoteIndex + 1) + "@>@/", -1);
+				} else if (footnote_state == 2) {
+					footnoteDb.appendText(ari, "@9" + chars.replace("\n", " ") + "@7");
+				} else if (footnote_state == 1 || footnote_state == 3) {
+					footnoteDb.appendText(ari, chars.replace("\n", " "));
+				} else {
+					throw new RuntimeException("footnote_state not supported");
+				}
 			}
 		}
 

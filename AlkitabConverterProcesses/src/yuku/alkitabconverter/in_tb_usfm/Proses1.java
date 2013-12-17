@@ -7,6 +7,7 @@ import java.io.FilenameFilter;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
+// process from sfm file to usfx files
 public class Proses1 {
 	static String INPUT_TEKS_1 = "../../../bahan-alkitab/in-tb-usfm/in/tb-woj-utf8-revyuku.sfm";
 	public static String INPUT_TEKS_ENCODING = "utf-8";
