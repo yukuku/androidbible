@@ -42,7 +42,7 @@ public class Proses1 {
 					splitFile.close();
 				}
 				
-				int kitab_0 = UsfmBookName.toKitab0(newId);
+				int kitab_0 = UsfmBookName.toBookId(newId);
 				
 				splitFile = new PrintWriter(new File(MID_DIR, String.format("%02d-%s-utf8.usfm", kitab_0, newId)), "utf-8");
 			}
