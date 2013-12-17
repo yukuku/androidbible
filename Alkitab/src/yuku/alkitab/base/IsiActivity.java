@@ -1065,19 +1065,26 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		case R.id.menuSettings:
 			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
 			return true;
-		case R.id.menuSendMessage:
-			startActivity(HelpActivity.createIntent(true));
-			return true;
-		case R.id.menuDonation:
-			openDonationDialog();
-			return true;
-		case R.id.menuTsiIntro:
-			startActivity(HelpActivity.createIntent("help/PrakataTSI-tidy.html", false, null, null));
-			return true;
+		case R.id.menuSendMessage: {
+			String page;
+			if (U.equals("in", getResources().getConfiguration().locale.getLanguage())) {
+				page = "help/html-in/faq.html";
+			} else {
+				page = "help/html-en/faq.html";
+			}
+
+			startActivity(HelpActivity.createIntent(page, true, getString(R.string.read_faq_before_suggest), new Intent(yuku.afw.App.context, com.example.android.wizardpager.MainActivity.class)));
+		} return true;
+		case R.id.menuDonation: {
+			String donation_url = getString(R.string.alamat_donasi);
+			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(donation_url));
+			startActivity(HelpActivity.createIntent("help/donation.html", true, getString(R.string.send_donation_confirmation), intent));
+		} return true;
+		case R.id.menuTsiIntro: {
+			startActivity(HelpActivity.createIntent("help/PrakataTSI.html", false, null, null));
+		} return true;
 		case R.id.menuTsiWebsite: {
-			final Intent intent = new Intent(Intent.ACTION_VIEW);
-			intent.setData(Uri.parse("http://www.albata.info/"));
-			startActivity(intent);
+			startActivity(HelpActivity.createIntent("help/CaranyaMendukung.html", false, null, null));
 		} return true;
 		case R.id.menuTsiMhk: {
 			startActivity(HelpActivity.createIntent("mhk/index.html", false, null, null));
