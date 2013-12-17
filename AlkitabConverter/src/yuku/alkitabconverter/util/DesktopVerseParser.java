@@ -15,7 +15,7 @@ public class DesktopVerseParser {
 	/////////////////////////////////////   3 book name                
 	///////////////////////////////////// ... 4 numbers (chapter or chapter:verse, with ',' or ';' or 'dan') which is not followed by nofollow
 	static Pattern reg = Pattern.compile("(((" + bookNamesPattern_indonesian + "|" + bookNamesPattern_english + ")(?:\\.?\\s+|\\.))(\\d+(?:(?:-|:|(?:;\\s*\\d+:\\s*)|,|\\.|\\d|dan|\\s)+\\d+)?))", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
-	
+
 	static Pattern numberRangeSplitter = Pattern.compile("\\s*(;|,|dan)\\s*" /* NOT case insensitive */);
 	
 	static Pattern numberStartEndSplitter = Pattern.compile("\\s*--?\\s*");

@@ -8,11 +8,11 @@ import yuku.alkitab.util.Ari;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitabconverter.internal_common.InternalCommon;
 import yuku.alkitabconverter.internal_common.ReverseIndexer;
-import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.TextDb.TextProcessor;
 import yuku.alkitabconverter.util.TextDb.VerseState;
 import yuku.alkitabconverter.util.XrefDb;
+import yuku.alkitabconverter.yes_common.Yes2Common;
 import yuku.alkitabconverter.yet.YetFileOutput;
 
 import javax.xml.parsers.SAXParser;
@@ -22,8 +22,6 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -94,7 +92,7 @@ public class Proses2 {
 		teksDb.normalize();
 
 		teksDb.processEach(new TextProcessor() {
-			final Pattern xrefTag = Pattern.compile("(@<x[0-9]@>@/)");
+			final Pattern xrefTag = Pattern.compile("(@<x[0-9]@>@/)\\s*");
 
 			@Override public void process(int ari, VerseState as) {
 				// tambah @@ kalo perlu
@@ -134,12 +132,6 @@ public class Proses2 {
 		
 		teksDb.dump();
 		
-		List<Rec> xrec = teksDb.toRecList();
-		
-		dumpForYetTesting(InternalCommon.fileToBookNames(INPUT_BOOK_NAMES), teksDb, pericopeData);
-		
-		System.out.println("Total rec: " + xrec.size());
-		
 		////////// CREATE REVERSE INDEX
 		
 		{
@@ -158,68 +150,19 @@ public class Proses2 {
 		////////// PROSES KE YET
 
 		YetFileOutput yet = new YetFileOutput(new File(OUTPUT_YET));
-		yet.setInfo("locale", INFO_LOCALE);
-		yet.setInfo("shortName", INFO_SHORT_NAME);
-		yet.setInfo("longName", INFO_LONG_NAME);
-		yet.setInfo("description", INFO_DESCRIPTION);
-		yet.setVerses(xrec);
-		yet.setBooksFromFileLines(INPUT_BOOK_NAMES);
+		final Yes2Common.VersionInfo versionInfo = new Yes2Common.VersionInfo();
+		versionInfo.locale = INFO_LOCALE;
+		versionInfo.shortName = INFO_SHORT_NAME;
+		versionInfo.longName = INFO_LONG_NAME;
+		versionInfo.description = INFO_DESCRIPTION;
+		versionInfo.setBookNamesFromFile(INPUT_BOOK_NAMES);
+		yet.setVersionInfo(versionInfo);
+		yet.setTextDb(teksDb);
 		yet.setPericopeData(pericopeData);
 		yet.setXrefDb(xrefDb);
 		// no footnotes
 
 		yet.write();
-	}
-
-	private void dumpForYetTesting(List<String> bookNames, TextDb teksDb, PericopeData pericopeData) {
-		class Row {
-			int ari;
-			int type;
-			Rec rec;
-			PericopeData.Entry entry;
-		}
-		
-		List<Row> rows = new ArrayList<Row>();
-		
-		for (Rec rec: teksDb.toRecList()) {
-			Row row = new Row();
-			row.ari = Ari.encode(rec.book_1 - 1, rec.chapter_1, rec.verse_1);
-			row.type = 2;
-			row.rec = rec;
-			rows.add(row);
-		}
-		
-		for (PericopeData.Entry entry: pericopeData.entries) {
-			Row row = new Row();
-			row.ari = entry.ari;
-			row.type = 1;
-			row.entry = entry;
-			rows.add(row);
-		}
-		
-		Collections.sort(rows, new Comparator<Row>() {
-			@Override public int compare(Row a, Row b) {
-				if (a.ari != b.ari) return a.ari - b.ari;
-				return a.type - b.type;
-			}
-		});
-		
-		for (int i = 0; i < bookNames.size(); i++) {
-			System.out.printf("%s\t%d\t%s%n", "book_name", i + 1, bookNames.get(i));
-		}
-		
-		for (Row row: rows) {
-			if (row.type == 1) {
-				System.out.printf("%s\t%d\t%d\t%d\t%s%n", "pericope", Ari.toBook(row.ari) + 1, Ari.toChapter(row.ari), Ari.toVerse(row.ari), row.entry.block.title);
-				if (row.entry.block.parallels != null) {
-					for (String parallel: row.entry.block.parallels) {
-						System.out.printf("%s\t%s%n", "parallel", parallel);
-					}
-				}
-			} else {
-				System.out.printf("%s\t%d\t%d\t%d\t%s%n", "verse", Ari.toBook(row.ari) + 1, Ari.toChapter(row.ari), Ari.toVerse(row.ari), row.rec.text);
-			}
-		}
 	}
 
 	public class Handler extends DefaultHandler2 {

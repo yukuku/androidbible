@@ -20,6 +20,8 @@ import android.widget.Toast;
 import net.londatiga.android.QuickAction;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.dialog.VersesDialog;
+import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -36,6 +38,8 @@ import yuku.alkitab.base.util.SongBookUtil.OnSongBookSelectedListener;
 import yuku.alkitab.base.util.SongBookUtil.SongBookInfo;
 import yuku.alkitab.base.widget.SongCodePopup;
 import yuku.alkitab.base.widget.SongCodePopup.SongCodePopupListener;
+import yuku.alkitab.util.IntArrayList;
+import yuku.alkitabintegration.display.Launcher;
 import yuku.kpri.model.Lyric;
 import yuku.kpri.model.Song;
 import yuku.kpri.model.Verse;
@@ -358,7 +362,8 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			// construct rendition of scripture references
 			String scripture_references = renderScriptureReferences(PROTOCOL, song.scriptureReferences);
 			templateCustomVars.putString("scripture_references", scripture_references); //$NON-NLS-1$
-			
+			templateCustomVars.putString("copyright", SongBookUtil.getCopyright(bookName)); //$NON-NLS-1$
+
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			ft.replace(R.id.song_container, SongFragment.create(song, "templates/song.html", templateCustomVars)); //$NON-NLS-1$
 			ft.commitAllowingStateLoss();
@@ -366,7 +371,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			currentBookName = bookName;
 			currentSong = song;
 			
-			{ // save latest viewed song TODO optimize using new preferences fw
+			{ // save latest viewed song
 				Preferences.setString(Prefkey.song_last_bookName, bookName);
 				Preferences.setString(Prefkey.song_last_code, song.code);
 			}
@@ -499,10 +504,15 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 	@Override public boolean shouldOverrideUrlLoading(WebViewClient client, WebView view, String url) {
 		Uri uri = Uri.parse(url);
 		if (U.equals(uri.getScheme(), PROTOCOL)) {
-			Intent data = new Intent();
-			data.putExtra(EXTRA_ref, uri.getSchemeSpecificPart());
-			setResult(RESULT_gotoScripture, data);
-			finish();
+			final IntArrayList ariRanges = TargetDecoder.decode("o:" + uri.getSchemeSpecificPart());
+			final VersesDialog versesDialog = VersesDialog.newInstance(ariRanges);
+			versesDialog.setListener(new VersesDialog.VersesDialogListener() {
+				@Override
+				public void onVerseSelected(final VersesDialog dialog, final int ari) {
+					startActivity(Launcher.openAppAtBibleLocation(ari));
+				}
+			});
+			versesDialog.show(getSupportFragmentManager(), VersesDialog.class.getSimpleName());
 			return true;
 		}
 		return false;

@@ -6,12 +6,13 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.Checkable;
 import android.widget.LinearLayout;
-
 import yuku.alkitab.debug.R;
 
 public class VerseItem extends LinearLayout implements Checkable {
 	public static final String TAG = VerseItem.class.getSimpleName();
-	
+
+	private boolean shaded;
+	private Drawable shadedBg;
 	private boolean checked;
 	private Drawable checkedBg;
 	private boolean collapsed;
@@ -33,11 +34,20 @@ public class VerseItem extends LinearLayout implements Checkable {
 			if (checkedBg == null) {
 				checkedBg = getResources().getDrawable(R.drawable.item_verse_bg_checked);
 			}
-			
+
 			checkedBg.setBounds(0, 0, getWidth(), getHeight());
 			checkedBg.draw(canvas);
 		}
-		
+
+		if (shaded) {
+			if (shadedBg == null) {
+				shadedBg = getResources().getDrawable(R.drawable.reading_plan_disabled_verses_shade_tiled);
+			}
+
+			shadedBg.setBounds(0, 0, getWidth(), getHeight());
+			shadedBg.draw(canvas);
+		}
+
 		super.onDraw(canvas);
 	}
 	
@@ -57,6 +67,14 @@ public class VerseItem extends LinearLayout implements Checkable {
 
 	@Override public void toggle() {
 		setChecked(!checked);
+	}
+
+	public void setShaded(boolean shaded) {
+		this.shaded = shaded;
+		if (shaded) {
+			setWillNotDraw(false);
+		}
+		invalidate();
 	}
 
 	public void setCollapsed(final boolean collapsed) {

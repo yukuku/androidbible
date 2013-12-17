@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.view.ActionMode;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -32,10 +33,12 @@ import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.MeasureSpec;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
@@ -51,6 +54,7 @@ import yuku.alkitab.base.ac.BookmarkActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.GotoActivity;
 import yuku.alkitab.base.ac.HelpActivity;
+import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.ac.Search2Activity;
 import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.ShareActivity;
@@ -67,17 +71,9 @@ import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeHighlightDialog;
 import yuku.alkitab.base.dialog.TypeNoteDialog;
 import yuku.alkitab.base.dialog.XrefDialog;
-import yuku.alkitab.util.Ari;
-import yuku.alkitab.model.Book;
-import yuku.alkitab.model.FootnoteEntry;
-import yuku.alkitab.model.PericopeBlock;
-import yuku.alkitab.model.ProgressMark;
-import yuku.alkitab.model.SingleChapterVerses;
-import yuku.alkitab.model.Version;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.BackupManager;
 import yuku.alkitab.base.util.History;
-import yuku.alkitab.util.IntArrayList;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.base.util.OsisBookNames;
@@ -89,13 +85,23 @@ import yuku.alkitab.base.widget.Floater;
 import yuku.alkitab.base.widget.FormattedTextRenderer;
 import yuku.alkitab.base.widget.GotoButton;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
+import yuku.alkitab.base.widget.ReadingPlanFloatMenu;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
+import yuku.alkitab.base.widget.TouchInterceptLinearLayout;
 import yuku.alkitab.base.widget.VerseInlineLinkSpan;
 import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.PressResult;
 import yuku.alkitab.debug.R;
+import yuku.alkitab.model.Book;
+import yuku.alkitab.model.FootnoteEntry;
+import yuku.alkitab.model.PericopeBlock;
+import yuku.alkitab.model.ProgressMark;
+import yuku.alkitab.model.SingleChapterVerses;
+import yuku.alkitab.model.Version;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.util.IntArrayList;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -108,10 +114,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	public static final String TAG = IsiActivity.class.getSimpleName();
 	
 	// The followings are for instant_pref
-	private static final String PREFKEY_lastBook = "kitabTerakhir"; //$NON-NLS-1$
+	private static final String PREFKEY_lastBookId = "kitabTerakhir"; //$NON-NLS-1$
 	private static final String PREFKEY_lastChapter = "pasalTerakhir"; //$NON-NLS-1$
 	private static final String PREFKEY_lastVerse = "ayatTerakhir"; //$NON-NLS-1$
-	private static final String PREFKEY_lastVersion = "edisiTerakhir"; //$NON-NLS-1$
+	private static final String PREFKEY_lastVersionId = "edisiTerakhir"; //$NON-NLS-1$
+	private static final String PREFKEY_lastSplitVersionId = "lastSplitVersionId"; //$NON-NLS-1$
 	private static final String PREFKEY_devotion_name = "renungan_nama"; //$NON-NLS-1$
 
 	private static final int REQCODE_goto = 1;
@@ -121,9 +128,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private static final int REQCODE_version = 5;
 	private static final int REQCODE_search = 6;
 	private static final int REQCODE_share = 7;
-	private static final int REQCODE_songs = 8;
 	private static final int REQCODE_textAppearanceGetFonts = 9;
 	private static final int REQCODE_textAppearanceCustomColors = 10;
+	private static final int REQCODE_readingPlan = 11;
 
 	private static final String EXTRA_verseUrl = "verseUrl"; //$NON-NLS-1$
 	private boolean uncheckVersesWhenActionModeDestroyed = true;
@@ -149,11 +156,71 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			floater.onDragComplete(screenX - floaterLocationOnScreen[0], screenY - floaterLocationOnScreen[1]);
 		}
 	};
+
 	private Floater.Listener floater_listener = new Floater.Listener() {
 		@Override
 		public void onSelectComplete(final int ari) {
 			jumpToAri(ari);
 			history.add(ari);
+		}
+	};
+
+	private View.OnTouchListener splitRoot_interceptTouch = new View.OnTouchListener() {
+		long lastDownTime;
+		float lastDownX;
+		float lastDownY;
+		long lastUpTime;
+		float lastUpX;
+		float lastUpY;
+
+		int maxDoubleTapDelay = ViewConfiguration.getDoubleTapTimeout();
+		int maxDoubleTapDistance = -1;
+
+		final int[] locationOnScreen = new int[2];
+
+		float distSquared(float dx, float dy) {
+			return dx * dx + dy * dy;
+		}
+
+		@Override
+		public boolean onTouch(final View v, final MotionEvent event) {
+			final int action = MotionEventCompat.getActionMasked(event);
+
+			// lazy
+			if (maxDoubleTapDistance == -1) {
+				maxDoubleTapDistance = ViewConfiguration.get(IsiActivity.this).getScaledDoubleTapSlop();
+			}
+
+			v.getLocationOnScreen(locationOnScreen);
+
+			if (action == MotionEvent.ACTION_DOWN) { // check for double click
+				if (lastUpTime - lastDownTime < maxDoubleTapDelay) { // first tap down to up must be fast enough
+					long thisDownTime = event.getEventTime();
+					if (thisDownTime - lastUpTime < maxDoubleTapDelay) { // second tap must be fast enough
+						if (distSquared(lastUpX - lastDownX, lastUpY - lastDownY) < maxDoubleTapDistance) { // first tap down to up must be within distance
+							float thisDownX = event.getX() + locationOnScreen[0];
+							float thisDownY = event.getY() + locationOnScreen[1];
+							if (distSquared(thisDownX - lastUpX, thisDownY - lastUpY) < maxDoubleTapDistance) { // second tap must be fast enough
+								// double tap success!
+								setFullScreen(!fullScreen);
+								return true;
+							}
+						}
+					}
+				}
+			}
+
+			if (action == MotionEvent.ACTION_DOWN) {
+				lastDownTime = event.getEventTime();
+				lastDownX = event.getX() + locationOnScreen[0];
+				lastDownY = event.getY() + locationOnScreen[1];
+			} else if (action == MotionEvent.ACTION_UP) {
+				lastUpTime = event.getEventTime();
+				lastUpX = event.getX() + locationOnScreen[0];
+				lastUpY = event.getY() + locationOnScreen[1];
+			}
+
+			return false;
 		}
 	};
 
@@ -185,7 +252,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	VersesView lsText;
 	VersesView lsSplit1;
 	TextView tSplitEmpty;
-	View splitRoot;
+	TouchInterceptLinearLayout splitRoot;
 	View splitHandle;
 	LabeledSplitHandleButton splitHandleButton;
 	FrameLayout panelNavigation;
@@ -193,14 +260,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	ImageButton bLeft;
 	ImageButton bRight;
 	Floater floater;
+	ReadingPlanFloatMenu readingPlanFloatMenu;
 	
 	Book activeBook;
 	int chapter_1 = 0;
 	SharedPreferences instant_pref;
 	boolean fullScreen;
 	FullScreenController fullScreenController = new FullScreenController();
-	Toast fullScreenDismissHint;
-	
+
 	History history;
 	NfcAdapter nfcAdapter;
 	ActionMode actionMode;
@@ -256,8 +323,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		bLeft = V.get(this, R.id.bLeft);
 		bRight = V.get(this, R.id.bRight);
 		floater = V.get(this, R.id.floater);
-		
+		readingPlanFloatMenu = V.get(this, R.id.readingPlanFloatMenu);
+
 		applyPreferences(false);
+
+		splitRoot.setInterceptTouchEventListener(splitRoot_interceptTouch);
 		
 		bGoto.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -299,7 +369,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsText.setInlineLinkSpanFactory(new VerseInlineLinkSpanFactory(lsText));
 		lsText.setSelectedVersesListener(lsText_selectedVerses);
 		lsText.setOnVerseScrollListener(lsText_verseScroll);
-		
+		lsText.setOnVerseScrollStateChangeListener(verseScrollState);
+
 		// additional setup for split1
 		lsSplit1.setVerseSelectionMode(VersesView.VerseSelectionMode.multiple);
 		lsSplit1.setEmptyView(tSplitEmpty);
@@ -308,7 +379,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsSplit1.setInlineLinkSpanFactory(new VerseInlineLinkSpanFactory(lsSplit1));
 		lsSplit1.setSelectedVersesListener(lsSplit1_selectedVerses);
 		lsSplit1.setOnVerseScrollListener(lsSplit1_verseScroll);
-		
+		lsSplit1.setOnVerseScrollStateChangeListener(verseScrollState);
+
 		// for splitting
 		splitHandleButton.setListener(splitHandleButton_listener);
 		
@@ -328,26 +400,32 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 
 		// restore the last (version; book; chapter and verse).
-		String lastVersion = instant_pref.getString(PREFKEY_lastVersion, null);
-		int lastBook = instant_pref.getInt(PREFKEY_lastBook, 0);
-		int lastChapter = instant_pref.getInt(PREFKEY_lastChapter, 0);
-		int lastVerse = instant_pref.getInt(PREFKEY_lastVerse, 0);
-		Log.d(TAG, "Going to the last: version=" + lastVersion + " book=" + lastBook + " chapter=" + lastBook + " verse=" + lastVerse); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		final int lastBookId = instant_pref.getInt(PREFKEY_lastBookId, 0);
+		final int lastChapter = instant_pref.getInt(PREFKEY_lastChapter, 0);
+		final int lastVerse = instant_pref.getInt(PREFKEY_lastVerse, 0);
+		final String lastVersionId = instant_pref.getString(PREFKEY_lastVersionId, null);
+		Log.d(TAG, "Going to the last: versionId=" + lastVersionId + " bookId=" + lastBookId + " chapter=" + lastChapter + " verse=" + lastVerse); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		loadLastVersion(lastVersionId, false);
 
-		loadLastVersion(lastVersion);
-		
 		{ // load book
-			Book book = S.activeVersion.getBook(lastBook);
+			Book book = S.activeVersion.getBook(lastBookId);
 			if (book != null) {
 				this.activeBook = book;
 			} else { // can't load last book or bookId 0
 				this.activeBook = S.activeVersion.getFirstBook();
 			}
 		}
-		
+
 		// load chapter and verse
 		display(lastChapter, lastVerse);
-		
+
+		{ // load last split version. This must be after load book, chapter, and verse.
+			final String lastSplitVersionId = instant_pref.getString(PREFKEY_lastSplitVersionId, null);
+			if (lastSplitVersionId != null) {
+				loadLastVersion(lastSplitVersionId, true);
+			}
+		}
+
 		if (Build.VERSION.SDK_INT >= 14) {
 			initNfcIfAvailable();
 		}
@@ -495,32 +573,54 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 
-	private void loadLastVersion(String lastVersion) {
-		AppConfig c = AppConfig.get();
-		
-		if (lastVersion == null || MVersionInternal.getVersionInternalId().equals(lastVersion)) {
+	void loadLastVersion(String versionId, boolean isSplit) {
+		final AppConfig c = AppConfig.get();
+		if (versionId == null || MVersionInternal.getVersionInternalId().equals(versionId)) {
 			// we are now already on internal
-			splitHandleButton.setLabel1("\u25b2 " + c.internalShortName);
+			if (!isSplit) {
+				splitHandleButton.setLabel1("\u25b2 " + c.internalShortName);
+			} else {
+				if (loadSplitVersion(new MVersionInternal())) {
+					openSplitDisplay();
+					displaySplitFollowingMaster();
+					splitHandleButton.setLabel2(c.internalShortName + " \u25bc");
+				}
+			}
 			return;
 		}
-		
-		// coba preset dulu!
+
+		// try preset versions first
 		for (MVersionPreset preset: c.presets) { // 2. preset
-			if (preset.getVersionId().equals(lastVersion)) {
+			if (preset.getVersionId().equals(versionId)) {
 				if (preset.hasDataFile()) {
-					if (loadVersion(preset, false)) return;
+					if (!isSplit) {
+						if (loadVersion(preset, false)) return;
+					} else {
+						if (loadSplitVersion(preset)) {
+							openSplitDisplay();
+							displaySplitFollowingMaster();
+							return;
+						}
+					}
 				} else {
 					return; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
 				}
 			}
 		}
 		
-		// masih belum cocok, mari kita cari di daftar yes
-		List<MVersionYes> yeses = S.getDb().listAllVersions();
-		for (MVersionYes yes: yeses) {
-			if (yes.getVersionId().equals(lastVersion)) {
+		// still no match, let's look at yes versions
+		for (MVersionYes yes: S.getDb().listAllVersions()) {
+			if (yes.getVersionId().equals(versionId)) {
 				if (yes.hasDataFile()) {
-					if (loadVersion(yes, false)) return;
+					if (!isSplit) {
+						if (loadVersion(yes, false)) return;
+					} else {
+						if (loadSplitVersion(yes)) {
+							openSplitDisplay();
+							displaySplitFollowingMaster();
+							return;
+						}
+					}
 				} else {
 					return; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
 				}
@@ -764,11 +864,16 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		super.onStop();
 		
 		final Editor editor = instant_pref.edit();
-		editor.putInt(PREFKEY_lastBook, this.activeBook.bookId);
+		editor.putInt(PREFKEY_lastBookId, this.activeBook.bookId);
 		editor.putInt(PREFKEY_lastChapter, chapter_1);
 		editor.putInt(PREFKEY_lastVerse, lsText.getVerseBasedOnScroll());
 		editor.putString(PREFKEY_devotion_name, DevotionActivity.Temporaries.devotion_name);
-		editor.putString(PREFKEY_lastVersion, S.activeVersionId);
+		editor.putString(PREFKEY_lastVersionId, S.activeVersionId);
+		if (activeSplitVersion == null) {
+			editor.putString(PREFKEY_lastSplitVersionId, null);
+		} else {
+			editor.putString(PREFKEY_lastSplitVersionId, activeSplitVersionId);
+		}
 		if (Build.VERSION.SDK_INT >= 9) {
 			editor.apply();
 		} else {
@@ -783,7 +888,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	@Override protected void onStart() {
 		super.onStart();
 		
-		if (Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_nyalakanTerusLayar_default))) {
+		if (Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default))) {
 			lsText.setKeepScreenOn(true);
 		}
 	}
@@ -880,21 +985,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	};
 
-	public void openDonationDialog() {
-		new AlertDialog.Builder(this)
-		.setMessage(R.string.donasi_keterangan)
-		.setPositiveButton(R.string.donasi_tombol_ok, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				String donation_url = getString(R.string.alamat_donasi);
-				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(donation_url));
-				startActivity(intent);
-			}
-		})
-		.setNegativeButton(R.string.donasi_tombol_gamau, null)
-		.show();
-	}
-
 	public void buildMenu(Menu menu) {
 		menu.clear();
 		getMenuInflater().inflate(R.menu.activity_isi, menu);
@@ -909,7 +999,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		menu.findItem(R.id.menuSongs).setVisible(c.menuSongs);
 		
 		// checkable menu items
-		menu.findItem(R.id.menuTextAppearance).setChecked(textAppearancePanel != null);
+		menu.findItem(R.id.menuNightMode).setChecked(Preferences.getBoolean(Prefkey.is_night_mode, false));
 		menu.findItem(R.id.menuFullScreen).setChecked(fullScreen);
 	}
 	
@@ -947,7 +1037,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			startActivityForResult(new Intent(this, DevotionActivity.class), REQCODE_devotion);
 			return true;
 		case R.id.menuSongs:
-			startActivityForResult(SongViewActivity.createIntent(), REQCODE_songs);
+			startActivity(SongViewActivity.createIntent());
+			return true;
+		case R.id.menuReadingPlan:
+			startActivityForResult(new Intent(this, ReadingPlanActivity.class), REQCODE_readingPlan);
 			return true;
 		case R.id.menuAbout:
 			startActivity(new Intent(this, AboutActivity.class));
@@ -956,20 +1049,39 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			setFullScreen(!item.isChecked());
 			return true;
 		case R.id.menuTextAppearance:
-			setShowTextAppearancePanel(!item.isChecked());
+			setShowTextAppearancePanel(textAppearancePanel == null);
 			return true;
+		case R.id.menuNightMode: {
+			setNightMode(! Preferences.getBoolean(Prefkey.is_night_mode, false));
+		} return true;
 		case R.id.menuSettings:
 			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
 			return true;
-		case R.id.menuHelp:
-			startActivity(HelpActivity.createIntent(false));
-			return true;
-		case R.id.menuSendMessage:
-			startActivity(HelpActivity.createIntent(true));
-			return true;
-		case R.id.menuDonation:
-			openDonationDialog();
-			return true;
+		case R.id.menuHelp: {
+			String page;
+			if (U.equals("in", getResources().getConfiguration().locale.getLanguage())) {
+				page = "help/html-in/index.html";
+			} else {
+				page = "help/html-en/index.html";
+			}
+
+			startActivity(HelpActivity.createIntent(page, false, null, null));
+		} return true;
+		case R.id.menuSendMessage: {
+			String page;
+			if (U.equals("in", getResources().getConfiguration().locale.getLanguage())) {
+				page = "help/html-in/faq.html";
+			} else {
+				page = "help/html-en/faq.html";
+			}
+
+			startActivity(HelpActivity.createIntent(page, true, getString(R.string.read_faq_before_suggest), new Intent(yuku.afw.App.context, com.example.android.wizardpager.MainActivity.class)));
+		} return true;
+		case R.id.menuDonation: {
+			String donation_url = getString(R.string.alamat_donasi);
+			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(donation_url));
+			startActivity(HelpActivity.createIntent("help/donation.html", true, getString(R.string.send_donation_confirmation), intent));
+		} return true;
 		case R.id.menuTsiIntro:
 			startActivity(HelpActivity.createIntent(false, "help/PrakataTSI-tidy.html"));
 			return true;
@@ -991,11 +1103,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			fullScreenController.hidePermanently();
 			fullScreen = true;
-
-			if (fullScreenDismissHint == null) {
-				fullScreenDismissHint = Toast.makeText(this, R.string.full_screen_dismiss_hint, Toast.LENGTH_SHORT);
-			}
-			fullScreenDismissHint.show();
 		} else {
 			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			fullScreenController.showPermanently();
@@ -1019,6 +1126,20 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				textAppearancePanel.hide();
 				textAppearancePanel = null;
 			}
+		}
+	}
+
+	void setNightMode(boolean yes) {
+		final boolean previousValue = Preferences.getBoolean(Prefkey.is_night_mode, false);
+		if (previousValue == yes) return;
+
+		Preferences.setBoolean(Prefkey.is_night_mode, yes);
+
+		S.calculateAppliedValuesBasedOnPreferences();
+		applyPreferences(false);
+
+		if (textAppearancePanel != null) {
+			textAppearancePanel.displayValues();
 		}
 	}
 
@@ -1125,54 +1246,20 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				if (mv == null) { // closing split version
 					activeSplitVersion = null;
 					activeSplitVersionId = null;
-					closeSplit();
+					closeSplitDisplay();
 				} else {
 					boolean ok = loadSplitVersion(mv);
 					if (ok) {
-						openSplit();
+						openSplitDisplay();
 						displaySplitFollowingMaster();
 					} else {
 						activeSplitVersion = null;
 						activeSplitVersionId = null;
-						closeSplit();
+						closeSplitDisplay();
 					}
 				}
 				
 				dialog.dismiss();
-			}
-			
-			void openSplit() {
-				if (splitHandle.getVisibility() == View.VISIBLE) {
-					return; // it's already split, no need to do anything
-				}
-				
-				// measure split handle
-				splitHandle.setVisibility(View.VISIBLE);
-				splitHandle.measure(MeasureSpec.makeMeasureSpec(lsText.getWidth(), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-				int splitHandleHeight = splitHandle.getMeasuredHeight();
-				int totalHeight = splitRoot.getHeight();
-				int masterHeight = totalHeight / 2 - splitHandleHeight / 2;
-				
-				// divide by 2 the screen space
-				ViewGroup.LayoutParams lp = lsText.getLayoutParams();
-				lp.height = masterHeight;
-				lsText.setLayoutParams(lp);
-
-				// no need to set height, because it has been set to match_parent, so it takes
-				// the remaining space.
-				lsSplit1.setVisibility(View.VISIBLE);
-			}
-
-			void closeSplit() {
-				if (splitHandle.getVisibility() == View.GONE) {
-					return; // it's already not split, no need to do anything
-				}
-				
-				splitHandle.setVisibility(View.GONE);
-				lsSplit1.setVisibility(View.GONE);
-				ViewGroup.LayoutParams lp = lsText.getLayoutParams();
-				lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
-				lsText.setLayoutParams(lp);
 			}
 		})
 		.setPositiveButton(R.string.versi_lainnya, new DialogInterface.OnClickListener() {
@@ -1182,6 +1269,45 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		})
 		.setNegativeButton(R.string.cancel, null)
 		.show();
+	}
+
+	void openSplitDisplay() {
+		if (splitHandle.getVisibility() == View.VISIBLE) {
+			return; // it's already split, no need to do anything
+		}
+
+		// do it on after the layout pass
+		overlayContainer.requestLayout();
+		overlayContainer.post(new Runnable() {
+			@Override
+			public void run() {
+				splitHandle.setVisibility(View.VISIBLE);
+				int splitHandleHeight = getResources().getDimensionPixelSize(R.dimen.split_handle_height);
+				int totalHeight = splitRoot.getHeight();
+				int masterHeight = totalHeight / 2 - splitHandleHeight / 2;
+
+				// divide by 2 the screen space
+				ViewGroup.LayoutParams lp = lsText.getLayoutParams();
+				lp.height = masterHeight;
+				lsText.setLayoutParams(lp);
+
+				// no need to set height, because it has been set to match_parent, so it takes
+				// the remaining space.
+				lsSplit1.setVisibility(View.VISIBLE);
+			}
+		});
+	}
+
+	void closeSplitDisplay() {
+		if (splitHandle.getVisibility() == View.GONE) {
+			return; // it's already not split, no need to do anything
+		}
+
+		splitHandle.setVisibility(View.GONE);
+		lsSplit1.setVisibility(View.GONE);
+		ViewGroup.LayoutParams lp = lsText.getLayoutParams();
+		lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+		lsText.setLayoutParams(lp);
 	}
 
 	private void menuSearch_click() {
@@ -1235,16 +1361,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					history.add(result.ari);
 				}
 			}
-		} else if (requestCode == REQCODE_songs) {
-			if (resultCode == SongViewActivity.RESULT_gotoScripture && data != null) {
-				String ref = data.getStringExtra(SongViewActivity.EXTRA_ref);
-				if (ref != null) { // TODO
-					int ari = jumpTo(ref);
-					if (ari != 0) {
-						history.add(ari);
-					}
-				}
-			}
 		} else if (requestCode == REQCODE_settings) {
 			// MUST reload preferences
 			S.calculateAppliedValuesBasedOnPreferences();
@@ -1277,6 +1393,86 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			S.calculateAppliedValuesBasedOnPreferences();
 
 			applyPreferences(true);
+		} else if (requestCode == REQCODE_readingPlan) {
+			if (data == null && !readingPlanFloatMenu.isActive) {
+				return;
+			} else if (data == null) {
+				if (readingPlanFloatMenu.getReadingPlanId() != Preferences.getLong(Prefkey.active_reading_plan_id, 0)) {
+					readingPlanFloatMenu.setVisibility(View.GONE);
+					readingPlanFloatMenu.isActive = false;
+					return;
+				}
+				readingPlanFloatMenu.setVisibility(View.VISIBLE);
+				readingPlanFloatMenu.fadeoutAnimation(5000);
+				readingPlanFloatMenu.updateProgress();
+				readingPlanFloatMenu.updateLayout();
+				return;
+			}
+
+			readingPlanFloatMenu.setVisibility(View.VISIBLE);
+			readingPlanFloatMenu.fadeoutAnimation(5000);
+			readingPlanFloatMenu.isActive = true;
+
+			final int ari = data.getIntExtra("ari", 0);
+			final long id = data.getLongExtra(ReadingPlanActivity.READING_PLAN_ID, 0L);
+			final int dayNumber = data.getIntExtra(ReadingPlanActivity.READING_PLAN_DAY_NUMBER, 0);
+			final int[] ariRanges = data.getIntArrayExtra(ReadingPlanActivity.READING_PLAN_ARI_RANGES);
+
+			if (ari != 0 && ariRanges != null) {
+				for (int i = 0; i < ariRanges.length; i++) {
+					if (ariRanges[i] == ari) {
+						jumpToAri(ari);
+						history.add(ari);
+
+						int[] ariRangesInThisSequence = new int[2];
+						ariRangesInThisSequence[0] = ariRanges[i];
+						ariRangesInThisSequence[1] = ariRanges[i + 1];
+						lsText.setAriRangesReadingPlan(ariRangesInThisSequence);
+						lsText.updateAdapter();
+						lsSplit1.setAriRangesReadingPlan(ariRangesInThisSequence);
+						lsSplit1.updateAdapter();
+
+						readingPlanFloatMenu.load(id, dayNumber, ariRanges, i / 2);
+						final ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener navigationClickListener = new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
+							@Override
+							public void onClick(final int ari_start, final int ari_end) {
+								int ari_jump = ari_start;
+								if (Ari.toVerse(ari_start) == 0) {
+									ari_jump |= 1;
+								}
+								jumpToAri(ari_jump);
+								history.add(ari_jump);
+								lsText.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
+								lsText.updateAdapter();
+								lsSplit1.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
+								lsSplit1.updateAdapter();
+							}
+						};
+						readingPlanFloatMenu.setLeftNavigationClickListener(navigationClickListener);
+						readingPlanFloatMenu.setRightNavigationClickListener(navigationClickListener);
+						readingPlanFloatMenu.setDescriptionListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
+							@Override
+							public void onClick(final int ari_start, final int ari_end) {
+								startActivityForResult(ReadingPlanActivity.createIntent(dayNumber), REQCODE_readingPlan);
+							}
+						});
+						readingPlanFloatMenu.setCloseReadingModeClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
+							@Override
+							public void onClick(final int ari_start, final int ari_end) {
+								readingPlanFloatMenu.clearAnimation();
+								readingPlanFloatMenu.setVisibility(View.GONE);
+								readingPlanFloatMenu.isActive = false;
+								lsText.setAriRangesReadingPlan(null);
+								lsText.updateAdapter();
+								lsSplit1.setAriRangesReadingPlan(null);
+								lsSplit1.updateAdapter();
+							}
+						});
+
+						break;
+					}
+				}
+			}
 		}
 	}
 
@@ -1386,7 +1582,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 	
 	@Override public boolean onKeyUp(int keyCode, KeyEvent event) {
-		String volumeButtonsForNavigation = Preferences.getString(getString(R.string.pref_volumeButtonNavigation_key), getString(R.string.pref_tombolVolumeBuatPindah_default));
+		String volumeButtonsForNavigation = Preferences.getString(getString(R.string.pref_volumeButtonNavigation_key), getString(R.string.pref_volumeButtonNavigation_default));
 		if (! U.equals(volumeButtonsForNavigation, "default")) { // consume here //$NON-NLS-1$
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) return true;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) return true;
@@ -1647,9 +1843,28 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		@Override public void onVerseSingleClick(VersesView v, int verse_1) {}
 	};
-	
+
+	VersesView.OnVerseScrollStateChangeListener verseScrollState = new VersesView.OnVerseScrollStateChangeListener() {
+		@Override
+		public void onVerseScrollStateChange(final VersesView versesView, final int scrollState) {
+			if (!readingPlanFloatMenu.isActive) {
+				return;
+			}
+			if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+				readingPlanFloatMenu.isAnimating = false;
+				readingPlanFloatMenu.clearAnimation();
+				readingPlanFloatMenu.setVisibility(View.VISIBLE);
+			} else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
+				readingPlanFloatMenu.setVisibility(View.VISIBLE);
+			} else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && readingPlanFloatMenu.getVisibility() != View.GONE) {
+				readingPlanFloatMenu.fadeoutAnimation(3000);
+			}
+		}
+	};
+
 	VersesView.OnVerseScrollListener lsText_verseScroll = new VersesView.OnVerseScrollListener() {
 		@Override public void onVerseScroll(VersesView v, boolean isPericope, int verse_1, float prop) {
+
 			if (!isPericope && activeSplitVersion != null) {
 				lsSplit1.scrollToVerse(verse_1, prop);
 			}

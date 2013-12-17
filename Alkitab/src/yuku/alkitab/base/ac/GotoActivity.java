@@ -104,15 +104,18 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 
 		// Create a tab listener that is called when the user changes tabs.
 		ActionBar.TabListener tabListener = new ActionBar.TabListener() {
+			@Override
 			public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
 				// When the tab is selected, switch to the corresponding page in the ViewPager.
 				viewPager.setCurrentItem(tab.getPosition());
 			}
 
+			@Override
 			public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
 				// hide the given tab
 			}
 
+			@Override
 			public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
 				// probably ignore this event
 			}

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_height="match_parent"
               android:layout_width="match_parent"
               android:orientation="vertical">
@@ -26,6 +27,34 @@
                 android:id="@+id/cDarkText"
                 android:checked="false"
                 android:enabled="false"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/dv_option_text_size"
+                android:layout_marginLeft="8dp"/>
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal"
+                      android:padding="8dp">
+
+            <SeekBar
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/sbTextSize"
+                    android:progress="8"
+                    android:max="20"
+                    android:indeterminate="false"
+                    android:layout_weight="1"/>
+            <TextView android:id="@+id/tTextSize"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:minWidth="64dp"
+                      android:textAppearance="?android:textAppearanceMedium"
+                      android:text="*10"
+                      android:gravity="right"
+                      tools:ignore="HardcodedText"/>
+        </LinearLayout>
         <include android:layout_width="match_parent"
                  android:layout_height="wrap_content"
                  layout="@layout/buttonbar_cancelok"/>

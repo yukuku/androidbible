@@ -6,7 +6,6 @@
   <string name="pref_warna_latar_belakang">Agtergrond</string>
   <string name="pref_warna_nomor_ayat">Vers nommers</string>
   <string name="pref_redTextColor_title">Woorde van Jesus</string>
-  <string name="pref_warna">Kleure</string>
   <string name="pref_penggunaan">Gebruik</string>
   <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Vertoon boek-lys alfabeties (a-z) in pleks van oorspronklik
  </string>
@@ -14,8 +13,8 @@
   <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Skerm bly aan terwyl Bybel gelees word </string>
   <string name="pref_biarkan_layar_menyala">Hou skerm aan</string>
   <string name="pref_penampilan_layar">Vertoon</string>
-  <string name="pref_tombolVolumeBuatPindah_title">Volume knoppie navigasie</string>
-  <string name="pref_tombolVolumeBuatPindah_summary">Gebruik volume knoppie om tussen vers en hoofstuk te navigeer</string>
+  <string name="pref_volumeButtonNavigation_title">Volume knoppie navigasie</string>
+  <string name="pref_volumeButtonNavigation_summary">Gebruik volume knoppie om tussen vers en hoofstuk te navigeer</string>
   <string name="pref_copyWithVerseNumbers_title">Sluit vers nommers in</string>
   <string name="pref_copyWithVerseNumbers_summary">Vertoon vers nommers by elke vers indien gekopieër/gedeel</string>
   <string name="pref_help_text_appearance_title">Teks voorkoms</string>

@@ -69,4 +69,22 @@ public class Db {
 		public static final String createTime = "createTime";
 	}
 
+	public static final String TABLE_ReadingPlan = "ReadingPlan";
+	public static final class ReadingPlan {
+		public static final String version = "version";
+		public static final String name = "name";
+		public static final String title = "title";
+		public static final String description = "description";
+		public static final String duration = "duration";
+		public static final String startTime = "startTime";
+		public static final String data = "data";
+	}
+
+	public static final String TABLE_ReadingPlanProgress = "ReadingPlanProgress";
+	public static final class ReadingPlanProgress {
+		public static final String reading_plan_id = "reading_plan_id";
+		public static final String reading_code = "reading_code";
+		public static final String checkTime = "checkTime";
+	}
+
 }

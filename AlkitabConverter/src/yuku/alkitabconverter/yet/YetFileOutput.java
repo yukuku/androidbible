@@ -6,50 +6,39 @@ import yuku.alkitab.util.Ari;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitabconverter.util.FootnoteDb;
 import yuku.alkitabconverter.util.Rec;
+import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.util.XrefDb;
+import yuku.alkitabconverter.yes_common.Yes2Common;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Scanner;
 
 public class YetFileOutput {
-	private final File output;
-
-	private Map<String, String> info = new LinkedHashMap<String, String>();
-	private Map<Integer, String> bookNames_0 = new LinkedHashMap<Integer, String>();
-	private List<Rec> verses;
+	private final OutputStream output;
+	private TextDb textDb;
 	private PericopeData pericopeData;
 	private XrefDb xrefDb;
 	private FootnoteDb footnoteDb;
+    private Yes2Common.VersionInfo versionInfo;
 
-	public YetFileOutput(File output) {
+    public YetFileOutput(File output) throws IOException {
+		this.output = new FileOutputStream(output);
+	}
+
+	public YetFileOutput(OutputStream output) {
 		this.output = output;
 	}
 
-	public void setInfo(final String key, final String value) {
-		info.put(key, value);
-	}
-
-	public void setVerses(final List<Rec> verses) {
-		this.verses = verses;
-	}
-
-	public void setBooksFromFileLines(final String book_name_file) throws FileNotFoundException {
-		final Scanner sc = new Scanner(new File(book_name_file), "utf-8");
-		int c = 0;
-		while (sc.hasNextLine()) {
-			final String line = sc.nextLine().trim();
-			if (line.length() > 0) {
-				bookNames_0.put(c, line.trim());
-			}
-			c++;
-		}
-	}
+	public void setTextDb(final TextDb textDb) {
+        this.textDb = textDb;
+    }
 
 	public void setPericopeData(final PericopeData pericopeData) {
 		this.pericopeData = pericopeData;
@@ -59,26 +48,47 @@ public class YetFileOutput {
 		this.xrefDb = xrefDb;
 	}
 
-	public void write() throws Exception {
-		final PrintWriter pw = new PrintWriter(output, "utf-8");
+    public void setFootnoteDb(final FootnoteDb footnoteDb) {
+        this.footnoteDb = footnoteDb;
+    }
+
+    public void setVersionInfo(Yes2Common.VersionInfo versionInfo) {
+        this.versionInfo = versionInfo;
+    }
+
+	public void write() throws IOException {
+		final PrintWriter pw = new PrintWriter(new OutputStreamWriter(output, "utf-8"));
 
 		// info
-		for (Map.Entry<String, String> e : info.entrySet()) {
-			pw.printf(Locale.US, "%s\t%s\t%s\n", "info", e.getKey(), e.getValue());
+        final Map<String, String> info = new LinkedHashMap<String, String>();
+        if (versionInfo.locale != null) info.put("locale", versionInfo.locale);
+        if (versionInfo.shortName != null) info.put("shortName", versionInfo.shortName);
+        if (versionInfo.longName != null) info.put("longName", versionInfo.longName);
+        if (versionInfo.description != null) info.put("description", versionInfo.description);
+        for (Map.Entry<String, String> e : info.entrySet()) {
+			pw.printf(Locale.US, "%s\t%s\t%s\n", "info", e.getKey(), e.getValue().replaceAll("[\\r\\n]", " ") /* no newlines allowed */);
 		}
 
-		// book names
-		for (Map.Entry<Integer, String> e : bookNames_0.entrySet()) {
-			pw.printf(Locale.US, "%s\t%s\t%s\n", "book_name", e.getKey() + 1, e.getValue());
-		}
+        final int[] bookIds = textDb.getBookIds();
+
+        // book names
+        for (final int bookId : bookIds) {
+            final String bookShortName = versionInfo.getBookShortName(bookId);
+            final String bookAbbreviation = versionInfo.getBookAbbreviation(bookId);
+            if (bookAbbreviation == null) {
+                pw.printf(Locale.US, "%s\t%s\t%s\n", "book_name", bookId + 1, bookShortName);
+            } else {
+                pw.printf(Locale.US, "%s\t%s\t%s\t%s\n", "book_name", bookId + 1, bookShortName, bookAbbreviation);
+            }
+        }
 
 		// verses
-		for (Rec rec : verses) {
+		for (Rec rec : textDb.toRecList()) {
 			pw.printf(Locale.US, "%s\t%s\t%s\t%s\t%s\n", "verse", rec.book_1, rec.chapter_1, rec.verse_1, rec.text);
 		}
 
 		// pericope data
-		for (final PericopeData.Entry entry : pericopeData.entries) {
+		if (pericopeData != null) for (final PericopeData.Entry entry : pericopeData.entries) {
 			pw.printf(Locale.US, "%s\t%s\t%s\t%s\t%s\n", "pericope", Ari.toBook(entry.ari) + 1, Ari.toChapter(entry.ari), Ari.toVerse(entry.ari), entry.block.title);
 			if (entry.block.parallels != null) {
 				for (final String parallel : entry.block.parallels) {
@@ -108,9 +118,5 @@ public class YetFileOutput {
 		}
 
 		pw.close();
-	}
-
-	public void setFootnoteDb(final FootnoteDb footnoteDb) {
-		this.footnoteDb = footnoteDb;
 	}
 }

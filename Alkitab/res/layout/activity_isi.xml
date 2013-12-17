@@ -12,7 +12,7 @@
         android:orientation="vertical"
         tools:ignore="UselessParent" >
 
-        <LinearLayout
+        <yuku.alkitab.base.widget.TouchInterceptLinearLayout
             android:id="@+id/splitRoot"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
@@ -28,7 +28,7 @@
             <FrameLayout
                 android:id="@+id/splitHandle"
                 android:layout_width="match_parent"
-                android:layout_height="20dp"
+                android:layout_height="@dimen/split_handle_height"
                 android:visibility="gone" >
 
                 <yuku.alkitab.base.widget.LabeledSplitHandleButton
@@ -57,7 +57,7 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     tools:ignore="SelectableText" />
             </FrameLayout>
-        </LinearLayout>
+        </yuku.alkitab.base.widget.TouchInterceptLinearLayout>
 
         <FrameLayout
             android:id="@+id/panelNavigation"
@@ -109,5 +109,16 @@
             android:layout_height="match_parent"
             android:padding="8dp"
             android:visibility="gone"/>
+
+    <yuku.alkitab.base.widget.ReadingPlanFloatMenu
+            android:id="@+id/readingPlanFloatMenu"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:background="#dd202020"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="60dp"
+            android:layout_marginRight="8dp"
+            android:visibility="gone"
+            />
 
 </FrameLayout>

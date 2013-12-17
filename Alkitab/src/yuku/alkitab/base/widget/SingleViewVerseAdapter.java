@@ -2,20 +2,19 @@ package yuku.alkitab.base.widget;
 
 import android.content.Context;
 import android.text.SpannableStringBuilder;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.util.Ari;
-import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.base.util.Appearances;
-import yuku.alkitab.util.IntArrayList;
 import yuku.alkitab.base.util.TargetDecoder;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.model.PericopeBlock;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.util.IntArrayList;
 
 
 public class SingleViewVerseAdapter extends VerseAdapter {
@@ -28,7 +27,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 	@Override public synchronized View getView(int position, View convertView, ViewGroup parent) {
 		// Need to determine this is pericope or verse
 		int id = itemPointer_[position];
-		
+
 		if (id >= 0) {
 			// VERSE. not pericope
 			int verse_1 = id + 1;
@@ -62,6 +61,8 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				lText.setTextColor(0xff000000); // override with black!
 			}
 
+			res.setShaded(checkShadedForVerse(ari));
+
 			final AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_attributes);
 			attributeView.showBookmark(attributeMap_ != null && (attributeMap_[id] & 0x1) != 0);
 			attributeView.showNote(attributeMap_ != null && (attributeMap_[id] & 0x2) != 0);
@@ -85,12 +86,12 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		} else {
 			// PERICOPE. not verse.
 
-			View res;
+			final PericopeHeaderItem res;
 			if (convertView == null || convertView.getId() != R.layout.item_pericope_header) {
-				res = LayoutInflater.from(context_).inflate(R.layout.item_pericope_header, parent, false);
+				res = (PericopeHeaderItem) inflater_.inflate(R.layout.item_pericope_header, parent, false);
 				res.setId(R.layout.item_pericope_header);
 			} else {
-				res = convertView;
+				res = (PericopeHeaderItem) convertView;
 			}
 
 			PericopeBlock pericopeBlock = pericopeBlocks_[-id - 1];
@@ -107,8 +108,9 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			} else {
 				paddingTop = S.applied.pericopeSpacingTop;
 			}
-			
+
 			res.setPadding(0, paddingTop, 0, S.applied.pericopeSpacingBottom);
+			res.setShaded(checkShadedForPericopeHeader(Ari.encode(book_.bookId, chapter_1_, 0), position));
 
 			Appearances.applyPericopeTitleAppearance(lCaption);
 
@@ -145,7 +147,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 		}
 	}
 
-    private void appendParallel(SpannableStringBuilder sb, String parallel) {
+	private void appendParallel(SpannableStringBuilder sb, String parallel) {
         int sb_len = sb.length();
 
         linked: {

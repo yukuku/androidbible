@@ -159,13 +159,17 @@ public class VersionsActivity extends BaseActivity {
 			int col = c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
 			if (col != -1) {
 				String name = c.getString(col);
-				String namelc = name.toLowerCase(Locale.US);
-				if (namelc.endsWith(".yes")) {
-					isYesFile = true;
-				} else if (namelc.endsWith(".pdb")) {
-					isYesFile = false;
-				} else {
+				if (name == null) {
 					isYesFile = null;
+				} else {
+					final String namelc = name.toLowerCase(Locale.US);
+					if (namelc.endsWith(".yes")) {
+						isYesFile = true;
+					} else if (namelc.endsWith(".pdb")) {
+						isYesFile = false;
+					} else {
+						isYesFile = null;
+					}
 				}
 				filelastname = name;
 			} else {
@@ -449,6 +453,14 @@ public class VersionsActivity extends BaseActivity {
 									Toast.makeText(getApplicationContext(),
 										getString(R.string.selesai_mengunduh_edisi_judul_disimpan_di_path, mv.longName, AddonManager.getVersionPath(mv.presetFilename)),
 										Toast.LENGTH_LONG).show();
+
+									final String locale = mv.locale;
+									if ("ta".equals(locale) || "te".equals(locale) || "my".equals(locale) || "el".equals(locale)) {
+										new AlertDialog.Builder(VersionsActivity.this)
+										.setMessage(R.string.version_download_need_fonts)
+										.setPositiveButton(R.string.ok, null)
+										.show();
+									}
 								}
 							});
 							pd.dismiss();

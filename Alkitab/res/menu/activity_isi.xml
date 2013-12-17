@@ -39,6 +39,10 @@
         app:showAsAction="never"
         android:title="@string/menuSongs"/>
     <item
+        android:id="@+id/menuReadingPlan"
+        android:showAsAction="never"
+        android:title="@string/rp_menuReadingPlan"/>
+    <item
         android:id="@+id/menuFullScreen"
         app:showAsAction="never"
         android:title="@string/menuFullScreen" 
@@ -46,7 +50,11 @@
     <item
         android:id="@+id/menuTextAppearance"
         app:showAsAction="never"
-        android:title="@string/menuTextAppearance"
+        android:title="@string/menuTextAppearance" />
+    <item
+        android:id="@+id/menuNightMode"
+        app:showAsAction="never"
+        android:title="@string/menuNightMode"
         android:checkable="true" />
     <item
         android:id="@+id/menuSettings"

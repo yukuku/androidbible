@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="yuku.alkitab.debug" android:installLocation="auto" android:versionCode="136" android:versionName="3.3.2" xmlns:tools="http://schemas.android.com/tools">
-	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="18" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="yuku.alkitab.debug" android:installLocation="auto" android:versionCode="143" android:versionName="3.4.4" xmlns:tools="http://schemas.android.com/tools">
+	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="19" />
 
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -30,7 +30,7 @@
 
 		<activity android:name="yuku.alkitab.base.ac.GotoActivity" android:label="@string/tuju_v" android:configChanges="locale|layoutDirection" android:windowSoftInputMode="adjustNothing" />
 		<activity android:name="yuku.alkitab.base.ac.SettingsActivity" android:label="@string/pengaturan_alkitab" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
-		<activity android:name="yuku.alkitab.base.ac.ColorSettingsActivity" android:label="@string/color_settings" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
+		<activity android:name="yuku.alkitab.base.ac.ColorSettingsActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.BookmarkActivity" android:label="@string/judul_bukmak_activity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" tools:ignore="ExportedActivity">
 		    <intent-filter android:label="@string/intent_filter_import_from_backup">
 		        <action android:name="android.intent.action.VIEW" />
@@ -108,13 +108,14 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
 		</activity>
-		<activity android:name="yuku.alkitab.base.ac.HelpActivity" android:label="@string/bantuan_judul" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
+		<activity android:name="yuku.alkitab.base.ac.HelpActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.AboutActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.ShareActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.FontManagerActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.SongListActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:windowSoftInputMode="adjustResize|stateHidden" />
 		<activity android:name="yuku.alkitab.base.ac.SongViewActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.SecretSettingsActivity" android:label="Secret settings" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
+        <activity android:name="yuku.alkitab.base.ac.ReadingPlanActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.filechooser.FileChooserActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="com.example.android.wizardpager.MainActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:theme="@style/AlkitabFeedback.Theme" />
 

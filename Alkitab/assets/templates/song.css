@@ -101,3 +101,8 @@
 	padding-left: 3em;
 	text-indent: -2em;
 }
+
+.copyright {
+    font-size: 80%;
+    font-style: italic;
+}

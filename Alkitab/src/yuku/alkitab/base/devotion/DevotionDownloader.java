@@ -3,20 +3,18 @@ package yuku.alkitab.base.devotion;
 import android.content.Context;
 import android.os.SystemClock;
 import android.util.Log;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedList;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
+import yuku.alkitab.debug.R;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.LinkedList;
 
 public class DevotionDownloader extends Thread {
 	private static final String TAG = DevotionDownloader.class.getSimpleName();
@@ -90,7 +88,7 @@ public class DevotionDownloader extends Thread {
 				}
 			} else {
 				String url = article.getUrl();
-				String output = null;
+				String output;
 				
 				Log.d(TAG, "Downloader starts downloading name=" + article.getName() + " date=" + article.getDate()); //$NON-NLS-1$ //$NON-NLS-2$
 				listener_.onDownloadStatus(context_.getString(R.string.mengunduh_namaumum_tgl_tgl, article.getDevotionTitle(), article.getDate()));

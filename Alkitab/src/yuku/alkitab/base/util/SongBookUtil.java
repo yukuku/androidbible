@@ -10,6 +10,13 @@ import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
+import net.londatiga.android.ActionItem;
+import net.londatiga.android.QuickAction;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.rpc.SimpleHttpConnection;
+import yuku.alkitab.debug.R;
+import yuku.kpri.model.Song;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -17,13 +24,6 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
-
-import net.londatiga.android.ActionItem;
-import net.londatiga.android.QuickAction;
-import yuku.alkitab.debug.R;
-import yuku.alkitab.base.S;
-import yuku.alkitab.base.rpc.SimpleHttpConnection;
-import yuku.kpri.model.Song;
 
 public class SongBookUtil {
 	public static final String TAG = SongBookUtil.class.getSimpleName();
@@ -36,21 +36,29 @@ public class SongBookUtil {
 		void onDownloadedAndInserted(SongBookInfo songBookInfo);
 		void onFailedOrCancelled(SongBookInfo songBookInfo, Exception e);
 	}
-	
+
+	public static class SongBookInfo {
+		public String bookName;
+		public int dataFormatVersion;
+		public String downloadUrl;
+		public String description;
+		public String copyright;
+	}
+
 	static List<SongBookInfo> knownSongBooks;
-	
+
 	static {
 		knownSongBooks = new ArrayList<SongBookInfo>();
-		
+
 		for (String k: new String[] {
-			// bookName :: dataFormatVersion :: downloadUrl :: bookDescription
-			"KJ   :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kj-3.ser.gz   :: <b>Kidung Jemaat</b> terbitan Yayasan Musik Gereja di Indonesia (YAMUGER)", //$NON-NLS-1$
-			"KPKA :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpka-3.ser.gz :: <b>Kidung Pasamuan Kristen</b> (bahasa Jawa) terbitan Badan Musyawarah Gereja-gereja Jawa (BMGJ)", //$NON-NLS-1$
-			"KPRI :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpri-3.ser.gz :: <b>Kidung Persekutuan Reformed Injili</b> terbitan Sinode Gereja Reformed Injili Indonesia (GRII)", //$NON-NLS-1$
-			"NKB  :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/nkb-3.ser.gz  :: <b>Nyanyikanlah Kidung Baru</b> terbitan Badan Pengerja Majelis Sinode Gereja Kristen Indonesia",  //$NON-NLS-1$
-			"NP   :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/np-3.ser.gz   :: <b>Nyanyian Pujian</b> terbitan Lembaga Literatur Baptis", //$NON-NLS-1$
-			"PKJ  :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/pkj-3.ser.gz  :: <b>Pelengkap Kidung Jemaat</b> terbitan Yayasan Musik Gereja di Indonesia (YAMUGER)", //$NON-NLS-1$
-			"PPK  :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/ppk-3.ser.gz  :: <b>Puji-pujian Kristen</b> terbitan Seminari Alkitab Asia Tenggara (SAAT)", //$NON-NLS-1$
+			// bookName :: dataFormatVersion :: downloadUrl :: description :: copyright
+			"KJ   :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kj-3.ser.gz   :: Kidung Jemaat :: (c) Yayasan Musik Gereja di Indonesia (YAMUGER)", //$NON-NLS-1$
+			"KPKA :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpka-3.ser.gz :: Kidung Pasamuan Kristen (bahasa Jawa) :: (c) Badan Musyawarah Gereja-gereja Jawa (BMGJ)", //$NON-NLS-1$
+			"KPRI :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpri-3.ser.gz :: Kidung Persekutuan Reformed Injili :: (c) Sinode Gereja Reformed Injili Indonesia (GRII)", //$NON-NLS-1$
+			"NKB  :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/nkb-3.ser.gz  :: Nyanyikanlah Kidung Baru :: (c) Badan Pengerja Majelis Sinode Gereja Kristen Indonesia (GKI)",  //$NON-NLS-1$
+			"NP   :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/np-3.ser.gz   :: Nyanyian Pujian :: (c) Lembaga Literatur Baptis", //$NON-NLS-1$
+			"PKJ  :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/pkj-3.ser.gz  :: Pelengkap Kidung Jemaat :: (c) Yayasan Musik Gereja di Indonesia (YAMUGER)", //$NON-NLS-1$
+			"PPK  :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/ppk-3.ser.gz  :: Puji-pujian Kristen :: (c) Seminari Alkitab Asia Tenggara (SAAT)", //$NON-NLS-1$
 		}) {
 			String[] ss = k.split("::"); //$NON-NLS-1$
 			SongBookInfo bookInfo = new SongBookInfo();
@@ -58,16 +66,11 @@ public class SongBookUtil {
 			bookInfo.dataFormatVersion = Integer.parseInt(ss[1].trim());
 			bookInfo.downloadUrl = ss[2].trim();
 			bookInfo.description = ss[3].trim();
+			bookInfo.copyright = ss[4].trim();
 			knownSongBooks.add(bookInfo);
 		}
 	}
-	
-	public static class SongBookInfo {
-		public String bookName;
-		public int dataFormatVersion;
-		public String downloadUrl;
-		public String description;
-	}
+
 
 	public static QuickAction getSongBookQuickAction(Context context, boolean withAll) {
         QuickAction res = new QuickAction(context, QuickAction.VERTICAL);
@@ -90,7 +93,16 @@ public class SongBookUtil {
 		}
 		return res;
 	}
-	
+
+	public static String getCopyright(final String bookName) {
+		for (final SongBookInfo knownSongBook : knownSongBooks) {
+			if (U.equals(bookName, knownSongBook.bookName)) {
+				return knownSongBook.description + " " + knownSongBook.copyright;
+			}
+		}
+		return "";
+	}
+
 	public static QuickAction.OnActionItemClickListener getOnActionItemConverter(final OnSongBookSelectedListener listener) {
 		return new QuickAction.OnActionItemClickListener() {
 			@Override public void onItemClick(QuickAction source, int pos, int actionId) {

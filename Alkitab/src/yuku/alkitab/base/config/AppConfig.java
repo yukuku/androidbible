@@ -81,7 +81,7 @@ public class AppConfig {
 		}
 		
 		res.presets = presets;
-		
+
 		return res;
 	}
 }

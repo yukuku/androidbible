@@ -2,7 +2,6 @@ package yuku.alkitab.base.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,8 +26,8 @@ public class QueryTokenizer {
 	 */
 	public static String[] tokenize(String query) {
 		List<String> raw_tokens = new ArrayList<String>();
-		
-		Matcher matcher = QueryTokenizer.oneToken.matcher(query.toLowerCase(Locale.getDefault()));
+
+		Matcher matcher = QueryTokenizer.oneToken.matcher(toLowerCase(query));
 		while (matcher.find()) {
 			raw_tokens.add(matcher.group(1) + matcher.group(2));
 		}
@@ -42,6 +41,24 @@ public class QueryTokenizer {
 			}
 		}
 		return processed.toArray(new String[processed.size()]);
+	}
+
+	/**
+	 * Implementation of toLowerCase for Latin A-Z only.
+	 * This is done because the Bible text is also lowercased using this method for searching
+	 * instead of using the more sophisticated {@link String#toLowerCase()} method.
+	 */
+	static String toLowerCase(final String s) {
+		final char[] newString = new char[s.length()];
+		for (int i = 0, len = s.length(); i < len; i++) {
+			final char c = s.charAt(i);
+			if (c >= 'A' && c <= 'Z') {
+				newString[i] = (char) (c | 0x20);
+			} else {
+				newString[i] = c;
+			}
+		}
+		return new String(newString);
 	}
 
 	static boolean isPlussedToken(String token) {

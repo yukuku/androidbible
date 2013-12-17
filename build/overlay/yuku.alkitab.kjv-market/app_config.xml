@@ -13,6 +13,7 @@
 		<preset locale="en"   shortName="DARBY"   longName="Darby" filename_preset="en-darby.yes" url="http://alkitab-host.appspot.com/addon/yes2/en-darby--1.yes.gz" />
 		<preset locale="en"   shortName="DRA"     longName="Douay-Rheims" filename_preset="en-douayrheims.yes" url="http://alkitab-host.appspot.com/addon/yes2/en-douayrheims--1.yes.gz" />
 		<preset locale="en"   shortName="KJVR"    longName="King James (Red Letter)" filename_preset="en-kjv-red.yes" url="http://alkitab-host.appspot.com/addon/yes2/en-kjv-red--1.yes.gz" />
+		<preset locale="en"   shortName="NET"     longName="New English Translation" filename_preset="en-net.yes" url="http://alkitab-host.appspot.com/addon/yes2/en-net--1.yes.gz" />
 		<preset locale="en"   shortName="WBS"     longName="Webster" filename_preset="en-webster.yes" url="http://alkitab-host.appspot.com/addon/yes2/en-webster--1.yes.gz" />
 		<preset locale="en"   shortName="WEB"     longName="World English Bible" filename_preset="en-web.yes" url="http://alkitab-host.appspot.com/addon/yes/en-web/en-web.yes.gz" />
 		<preset locale="en"   shortName="YLT"     longName="Young's Literal Translation" filename_preset="en-ylt.yes" url="http://alkitab-host.appspot.com/addon/yes/en-ylt/en-ylt.yes.gz" />
@@ -47,6 +48,7 @@
 		<preset locale="fr"   shortName="OST"     longName="Ostervald" filename_preset="fr-ostervald.yes" url="http://alkitab-host.appspot.com/addon/yes2/fr-ostervald--1.yes.gz" />
 		<preset locale="he"   shortName="ALP"     longName="Aleppo Codex" filename_preset="he-aleppo.yes" url="http://alkitab-host.appspot.com/addon/yes2/he-aleppo--1.yes.gz" />
 		<preset locale="he"   shortName="HEB"     longName="Modern Hebrew" filename_preset="he-modern.yes" url="http://alkitab-host.appspot.com/addon/yes2/he-modern--1.yes.gz" />
+		<preset locale="hi"   shortName="HBSI"    longName="Hindi Bible (BSI)" filename_preset="hi-bsi.yes" url="http://alkitab-host.appspot.com/addon/yes2/hi-bsi--1.yes.gz" />
 		<preset locale="hr"   shortName="CRO"     longName="Croatian" filename_preset="hr-croatian.yes" url="http://alkitab-host.appspot.com/addon/yes2/hr-croatian--1.yes.gz" />
 		<preset locale="hu"   shortName="KAR"     longName="Karoli" filename_preset="hu-karoli.yes" url="http://alkitab-host.appspot.com/addon/yes/hu-karoli/hu-karoli.yes.gz" />
 		<preset locale="in"   shortName="TL"      longName="Terjemahan Lama" filename_preset="in-tl.yes" url="http://alkitab-host.appspot.com/addon/yes2/in-tl--1.yes.gz" />
@@ -75,6 +77,7 @@
 		<preset locale="ru"   shortName="SYNO"    longName="Синодальный перевод" filename_preset="ru-synodal.yes" url="http://alkitab-host.appspot.com/addon/yes2/ru-synodal--1.yes.gz" />
 		<preset locale="sq"   shortName="ALBB"    longName="Albanian" filename_preset="sq-kk.yes" url="http://alkitab-host.appspot.com/addon/yes/sq-kk/sq-kk.yes.gz" />
 		<preset locale="sv"   shortName="SVEN"    longName="Svenska 1917" filename_preset="sv-1917.yes" url="http://alkitab-host.appspot.com/addon/yes2/sv-1917--1.yes.gz" />
+		<preset locale="ta"   shortName="TBSI"    longName="Tamil Bible (BSI)" filename_preset="ta-bsi.yes" url="http://alkitab-host.appspot.com/addon/yes2/ta-bsi--1.yes.gz" />
 		<preset locale="te"   shortName="TBO"     longName="Telugu Original Version" filename_preset="te-tbo.yes" url="http://alkitab-host.appspot.com/addon/yes2/te-tbo--1.yes.gz" />
 		<preset locale="th"   shortName="TKJV"    longName="Thai KJV" filename_preset="th-kjv.yes" url="http://alkitab-host.appspot.com/addon/yes2/th-kjv--1.yes.gz" />
 		<preset locale="tl"   shortName="TLAB"    longName="Ang Biblia 1905" filename_preset="tl-angbiblia1905.yes" url="http://alkitab-host.appspot.com/addon/yes/tl-angbiblia1905/tl-angbiblia1905.yes.gz" />
