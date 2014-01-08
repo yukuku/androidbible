@@ -14,12 +14,13 @@ import yuku.alkitab.model.Version;
 
 public class Floater extends View {
 	public static final String TAG = Floater.class.getSimpleName();
-	public static final int BOOK_SELECT_DELAY_MILLIS = 650;
+	public static final int LONG_PRESS_DELAY_MILLIS = 650;
 
 	enum State {
 		idle,
 		selectBook,
 		selectChapter,
+		selectVerse,
 	}
 
 	public interface Listener {
@@ -39,17 +40,31 @@ public class Floater extends View {
 	int longPressBookIndex = -1;
 	int previousActiveBookIndex;
 	int activeChapterIndex = -1;
+	int longPressChapterIndex = -1;
+	int previousActiveChapterIndex;
+	int activeVerseIndex = -1;
 	float density;
 	State state;
 	Listener listener;
 
-	Runnable checkLongPress = new Runnable() {
+	Runnable checkLongPressBook = new Runnable() {
 		@Override
 		public void run() {
 			if (activeBookIndex == longPressBookIndex) {
 				// we have been at the same bookIndex since a few ms ago!
 				performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
 				commitBook();
+			}
+		}
+	};
+
+	Runnable checkLongPressChapter = new Runnable() {
+		@Override
+		public void run() {
+			if (activeChapterIndex == longPressChapterIndex) {
+				// we have been at the same chapterIndex since a few ms ago!
+				performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+				commitChapter();
 			}
 		}
 	};
@@ -183,6 +198,42 @@ public class Floater extends View {
 				drawActiveWithBox(canvas, w, h, column, row, prefix + (activeChapterIndex + 1));
 			}
 		}
+
+		if (state == State.selectVerse) {
+			final Book book = books[activeBookIndex];
+			final int verse_count = book.verse_counts[activeChapterIndex];
+
+			if (verse_count <= 33) {
+				grid_columns = 1;
+				grid_rows = 33;
+			} else if (verse_count <= 66) {
+				grid_columns = 2;
+				grid_rows = 33;
+			} else {
+				grid_columns = 4;
+				grid_rows = (int) FloatMath.ceil((float) verse_count / grid_columns);
+			}
+
+			initFontSizes(h);
+
+			final String prefix = grid_columns > 2? ((activeChapterIndex + 1) + ":"): (book.shortName + " " + (activeChapterIndex + 1) + ":");
+
+			// passive verses
+			for (int i = 0; i < verse_count; i++) {
+				if (activeVerseIndex != i) {
+					final int column = i / grid_rows;
+					final int row = i % grid_rows;
+					canvas.drawText(prefix + (i + 1), getPaddingLeft() + column * (w / grid_columns), getPaddingTop() + (row + 1) * (h / grid_rows), passivePaint);
+				}
+			}
+
+			// active verse
+			if (activeVerseIndex != -1) {
+				final int column = activeVerseIndex / grid_rows;
+				final int row = activeVerseIndex % grid_rows;
+				drawActiveWithBox(canvas, w, h, column, row, prefix + (activeVerseIndex + 1));
+			}
+		}
 	}
 
 	private void initFontSizes(final float h) {
@@ -210,6 +261,7 @@ public class Floater extends View {
 		this.state = State.selectBook;
 		this.activeBookIndex = -1;
 		this.activeChapterIndex = -1;
+		this.activeVerseIndex = -1;
 	}
 
 	public void onDragMove(final float px, final float py) {
@@ -235,11 +287,11 @@ public class Floater extends View {
 			}
 
 			if (activeBookIndex != previousActiveBookIndex || activeBookIndex == -1) {
-				removeCallbacks(checkLongPress);
+				removeCallbacks(checkLongPressBook);
 
 				if (activeBookIndex != -1) {
 					longPressBookIndex = activeBookIndex;
-					postDelayed(checkLongPress, BOOK_SELECT_DELAY_MILLIS);
+					postDelayed(checkLongPressBook, LONG_PRESS_DELAY_MILLIS);
 				}
 			}
 
@@ -255,6 +307,28 @@ public class Floater extends View {
 			} else {
 				activeChapterIndex = itemIndex;
 			}
+
+			if (activeChapterIndex != previousActiveChapterIndex || activeChapterIndex == -1) {
+				removeCallbacks(checkLongPressChapter);
+
+				if (activeChapterIndex != -1) {
+					longPressChapterIndex = activeChapterIndex;
+					postDelayed(checkLongPressChapter, LONG_PRESS_DELAY_MILLIS);
+				}
+			}
+
+			previousActiveChapterIndex = activeChapterIndex;
+		}
+
+		if (state == State.selectVerse) {
+			final Book book = books[activeBookIndex];
+			final int verse_count = book.verse_counts[activeChapterIndex];
+
+			if (itemIndex < 0 || itemIndex >= verse_count) {
+				activeVerseIndex = -1;
+			} else {
+				activeVerseIndex = itemIndex;
+			}
 		}
 
 		invalidate();
@@ -263,7 +337,8 @@ public class Floater extends View {
 	public void onDragComplete(final float x, final float y) {
 		complete();
 
-		removeCallbacks(checkLongPress);
+		removeCallbacks(checkLongPressBook);
+		removeCallbacks(checkLongPressChapter);
 		this.books = null; // prevent holding of memory
 		this.state = State.idle;
 	}
@@ -284,6 +359,16 @@ public class Floater extends View {
 		}
 	}
 
+	void commitChapter() {
+		if (activeChapterIndex == -1) {
+			// do nothing, user hasn't selected a chapter
+			return;
+		}
+
+		state = State.selectVerse;
+		invalidate();
+	}
+
 	private void hide() {
 		setVisibility(GONE);
 	}
@@ -300,6 +385,13 @@ public class Floater extends View {
 			if (activeBookIndex != -1 && activeChapterIndex != -1) {
 				final Book book = books[activeBookIndex];
 				listener.onSelectComplete(Ari.encode(book.bookId, activeChapterIndex + 1, 1));
+			}
+		}
+
+		if (state == State.selectVerse) {
+			if (activeBookIndex != -1 && activeChapterIndex != -1 && activeVerseIndex != -1) {
+				final Book book = books[activeBookIndex];
+				listener.onSelectComplete(Ari.encode(book.bookId, activeChapterIndex + 1, activeVerseIndex + 1));
 			}
 		}
 	}
