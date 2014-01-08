@@ -5,11 +5,11 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.CheckBox;
-
 import yuku.afw.V;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 
@@ -19,11 +19,11 @@ public class TypeHighlightDialog {
 	
 	View dialogView;
 	
-	static final int[] xid = {
+	static final int[] ids = {
 		R.id.c01, R.id.c02, R.id.c03, R.id.c04, R.id.c05, R.id.c06,
 		R.id.c07, R.id.c08, R.id.c09, R.id.c10, R.id.c11, R.id.c12,
 	};
-	static final int[] xrgb = {
+	static final int[] rgbs = {
 		0xff0000, 0xff8000, 0xffff00, 0x80ff00, 0x00ff00, 0x00ff80, 
 		0x00ffff, 0x0080ff, 0x0000ff, 0x8000ff, 0xff00ff, 0xff0080,
 	};
@@ -75,41 +75,37 @@ public class TypeHighlightDialog {
 			this.alert.setTitle(title);
 		}
 		
-		for (int i = 0; i < xid.length; i++) {
-			CheckBox cb = V.get(dialogView, xid[i]);
-			if (colorRgb == xrgb[i]) {
+		for (int i = 0; i < ids.length; i++) {
+			CheckBox cb = V.get(dialogView, ids[i]);
+			if (colorRgb == rgbs[i]) {
 				cb.setChecked(true);
 			}
 			cb.setOnClickListener(cb_click);
 		}
 		
-		CheckBox cb = V.get(dialogView, R.id.c00);
-		if (colorRgb == -1) {
-			cb.setChecked(true);
-		}
-		cb.setOnClickListener(cb_click);
+		Button bClear = V.get(dialogView, R.id.c00);
+		bClear.setOnClickListener(cb_click);
 	}
 
 	private OnClickListener cb_click = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			for (int i = 0; i < xid.length; i++) {
-				if (v.getId() == xid[i]) {
-					select(xrgb[i]);
+			final int id = v.getId();
+			for (int i = 0; i < ids.length; i++) {
+				if (id == ids[i]) {
+					select(rgbs[i]);
 				} else {
-					V.<CheckBox>get(dialogView, xid[i]).setChecked(false);
+					V.<CheckBox>get(dialogView, ids[i]).setChecked(false);
 				}
 			}
-			if (v.getId() == R.id.c00) {
+			if (id == R.id.c00) {
 				select(-1);
-			} else {
-				V.<CheckBox>get(dialogView, R.id.c00).setChecked(false);
 			}
 		}
 
-		private void select(int warnaRgb) {
-			S.getDb().updateOrInsertHighlights(ari_bookchapter, selectedVerses, warnaRgb);
-			if (listener != null) listener.onOk(warnaRgb);
+		private void select(int colorRgb) {
+			S.getDb().updateOrInsertHighlights(ari_bookchapter, selectedVerses, colorRgb);
+			if (listener != null) listener.onOk(colorRgb);
 			alert.dismiss();
 		}
 	};
