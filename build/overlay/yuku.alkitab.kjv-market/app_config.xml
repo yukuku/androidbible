@@ -63,7 +63,6 @@
 		<preset locale="lt"   shortName="LITH"    longName="Lithuanian" filename_preset="lt-lithuanian.yes" url="http://alkitab-host.appspot.com/addon/yes2/lt-lithuanian--1.yes.gz" />
 		<preset locale="lv"   shortName="LJD"     longName="Latviešu Jaunā Derība" filename_preset="lv-ljd.yes" url="http://alkitab-host.appspot.com/addon/yes2/lv-ljd--1.yes.gz" />
 		<preset locale="mi"   shortName="MAOR"    longName="Maori" filename_preset="mi-maori.yes" url="http://alkitab-host.appspot.com/addon/yes2/mi-maori--1.yes.gz" />
-		<preset locale="ml"   shortName="MBSI"    longName="Malayalam (BSI)" filename_preset="ml-bsi.yes" url="http://alkitab-host.appspot.com/addon/yes2/ml-bsi--1.yes.gz" />
 		<preset locale="my"   shortName="MYJ"     longName="Judson" filename_preset="my-judson.yes" url="http://alkitab-host.appspot.com/addon/yes2/my-judson--1.yes.gz" />
 		<preset locale="nl"   shortName="SV"      longName="Statenvertaling" filename_preset="nl-statenvertaling.yes" url="http://alkitab-host.appspot.com/addon/yes2/nl-statenvertaling--1.yes.gz" />
 		<preset locale="no"   shortName="NORSK"   longName="Det Norsk Bibelselskap" filename_preset="no-dnb1930.yes" url="http://alkitab-host.appspot.com/addon/yes/no-dnb1930/no-dnb1930.yes.gz" />

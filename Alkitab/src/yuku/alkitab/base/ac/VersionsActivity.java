@@ -455,7 +455,7 @@ public class VersionsActivity extends BaseActivity {
 										Toast.LENGTH_LONG).show();
 
 									final String locale = mv.locale;
-									if ("ta".equals(locale) || "te".equals(locale) || "my".equals(locale) || "el".equals(locale) || "ml".equals(locale)) {
+									if ("ta".equals(locale) || "te".equals(locale) || "my".equals(locale) || "el".equals(locale)) {
 										new AlertDialog.Builder(VersionsActivity.this)
 										.setMessage(R.string.version_download_need_fonts)
 										.setPositiveButton(R.string.ok, null)
