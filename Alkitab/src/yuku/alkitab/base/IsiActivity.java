@@ -1655,11 +1655,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		format = format.replace("{verses}", verse_1_ranges == null? "": verse_1_ranges);
 
 		String versionShortName2;
-		if (versionShortName.equals("DRA")) {
+		if (versionShortName == null) {
+			versionShortName2 = "";
+		} else if ("DRA".equals(versionShortName)) {
 			versionShortName2 = "DOUAYRHEIMS";
 		} else {
 			versionShortName2 = versionShortName;
 		}
+
 		format = format.replace("{version.shortName}", versionShortName2);
 
 		return format;

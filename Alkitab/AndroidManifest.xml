@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="yuku.alkitab.debug" android:installLocation="auto" android:versionCode="143" android:versionName="3.4.4" xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="yuku.alkitab.debug" android:installLocation="auto" android:versionCode="144" android:versionName="3.4.5" xmlns:tools="http://schemas.android.com/tools">
 	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="19" />
 
 	<uses-permission android:name="android.permission.INTERNET" />
@@ -101,7 +101,7 @@
 		    </intent-filter>
 		</activity>
 		
-		<activity android:name="yuku.alkitab.base.ac.Search2Activity" android:label="@string/cari_v" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" android:theme="@style/Theme.Alkitab.NoActionBar" />
+		<activity android:name="yuku.alkitab.base.ac.Search2Activity" android:label="@string/cari_v" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.DevotionActivity" android:label="@string/renungan" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection">
             <intent-filter>
                 <action android:name="yuku.alkitab.ACTION_OPEN_DEVOTION"/>

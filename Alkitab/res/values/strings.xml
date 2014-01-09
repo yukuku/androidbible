@@ -328,4 +328,5 @@
 
     <string name="version_download_need_fonts">"The version you downloaded might need to be displayed with certain fonts. Go to the 'Text appearance' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
     <string name="menuNightMode">Night mode</string>
+    <string name="delete_highlight">Remove highlight</string>
 </resources>
