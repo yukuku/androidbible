@@ -31,7 +31,7 @@ public class AboutActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_about);
 		setTitle(String.format("%s %s", getString(R.string.app_name), App.getVersionName()));
-		getSupportActionBar().setSubtitle(String.format("%s %s", App.getVersionCode(), getString(R.string.last_commit_hash)));
+		getActionBar().setSubtitle(String.format("%s %s", App.getVersionCode(), getString(R.string.last_commit_hash)));
 
 		root = V.get(this, R.id.root);
 		lAbout = V.get(this, R.id.lAbout);

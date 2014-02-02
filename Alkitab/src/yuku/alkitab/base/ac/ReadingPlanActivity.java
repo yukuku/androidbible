@@ -1,14 +1,12 @@
 package yuku.alkitab.base.ac;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.PopupMenu;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
@@ -27,6 +25,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.google.gson.GsonBuilder;
@@ -36,6 +35,7 @@ import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.ReadingPlanManager;
@@ -59,7 +59,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ReadingPlanActivity extends ActionBarActivity {
+public class ReadingPlanActivity extends BaseActivity {
 	public static final String TAG = ReadingPlanActivity.class.getSimpleName();
 
 	public static final String READING_PLAN_ARI_RANGES = "reading_plan_ari_ranges";
@@ -104,7 +104,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		bLeft = V.get(this, R.id.bLeft);
 		bRight = V.get(this, R.id.bRight);
 		bDownload = V.get(this, R.id.bDownload);
-		actionBar = getSupportActionBar();
+		actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
 
 		long id = Preferences.getLong(Prefkey.active_reading_plan_id, 0);
@@ -261,7 +261,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			}
 		}
 
-		ArrayAdapter<String> navigationAdapter = new ArrayAdapter<String>(actionBar.getThemedContext(), R.layout.support_simple_spinner_dropdown_item, titles);
+		ArrayAdapter<String> navigationAdapter = new ArrayAdapter<String>(actionBar.getThemedContext(), android.R.layout.simple_spinner_dropdown_item, titles);
 
 		newDropDownItems = false;
 		actionBar.setListNavigationCallbacks(navigationAdapter, new ActionBar.OnNavigationListener() {

@@ -4,19 +4,19 @@
 
     <item
             android:id="@+id/menuSendBackup"
-            app:showAsAction="never"
+            android:showAsAction="never"
             android:title="@string/bl_send_backup"/>
     <item
             android:id="@+id/menuExport"
-            app:showAsAction="never"
+            android:showAsAction="never"
             android:title="@string/ekspor_ke_sd_card"/>
     <item
             android:id="@+id/menuImport"
-            app:showAsAction="never"
+            android:showAsAction="never"
             android:title="@string/impor_dari_sd_card"/>
     <item
             android:id="@+id/menuExportBookmarks"
-            app:showAsAction="never"
+            android:showAsAction="never"
             android:title="@string/me_export_menu_item"/>
 
 </menu>

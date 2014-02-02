@@ -1,12 +1,12 @@
 package yuku.alkitab.base.ac.base;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 
-public abstract class BaseActivity extends Activity {
+public abstract class BaseActivity extends FragmentActivity {
 	public static final String TAG = BaseActivity.class.getSimpleName();
 	
 	/**

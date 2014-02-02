@@ -5,34 +5,34 @@
     <item
         android:id="@+id/menuBookmark"
         android:icon="@drawable/ic_menu_bookmark"
-        app:showAsAction="ifRoom"
+        android:showAsAction="ifRoom"
         android:title="@string/menu_markers"/>
     <item
         android:id="@+id/menuListProgressMark"
         android:icon="@drawable/ic_menu_see_progress"
-        app:showAsAction="ifRoom"
+        android:showAsAction="ifRoom"
         android:title="@string/pm_menu_view_progress"/>
     <item
         android:id="@+id/menuSearch"
         android:icon="@drawable/ic_menu_search"
-        app:showAsAction="always"
+        android:showAsAction="always"
         android:title="@string/cari_v"/>
     <item
         android:id="@+id/menuVersions"
         android:icon="@drawable/ic_menu_versions"
-        app:showAsAction="always"
+        android:showAsAction="always"
         android:title="@string/versi"/>
     <item
         android:id="@+id/menuSplitVersion"
-        app:showAsAction="never"
+        android:showAsAction="never"
         android:title="@string/menu_split_version"/>
     <item
         android:id="@+id/menuDevotion"
-        app:showAsAction="never"
+        android:showAsAction="never"
         android:title="@string/renungan"/>
     <item
         android:id="@+id/menuSongs"
-        app:showAsAction="never"
+        android:showAsAction="never"
         android:title="@string/menuSongs"/>
     <item
         android:id="@+id/menuReadingPlan"
@@ -40,37 +40,37 @@
         android:title="@string/rp_menuReadingPlan"/>
     <item
         android:id="@+id/menuFullScreen"
-        app:showAsAction="never"
+        android:showAsAction="never"
         android:title="@string/menuFullScreen" 
         android:checkable="true" />
     <item
         android:id="@+id/menuTextAppearance"
-        app:showAsAction="never"
+        android:showAsAction="never"
         android:title="@string/menuTextAppearance" />
     <item
         android:id="@+id/menuNightMode"
-        app:showAsAction="never"
+        android:showAsAction="never"
         android:title="@string/menuNightMode"
         android:checkable="true" />
     <item
         android:id="@+id/menuSettings"
-        app:showAsAction="never"
+        android:showAsAction="never"
         android:title="@string/menuPengaturan"/>
     <item
         android:id="@+id/menuDonation"
-        app:showAsAction="never"
+        android:showAsAction="never"
         android:title="@string/menuDonasi"/>
     <item
         android:id="@+id/menuHelp"
-        app:showAsAction="never"
+        android:showAsAction="never"
         android:title="@string/menuBantuan"/>
     <item
         android:id="@+id/menuSendMessage"
-        app:showAsAction="never"
+        android:showAsAction="never"
         android:title="@string/beri_saran_title"/>
     <item
         android:id="@+id/menuAbout"
-        app:showAsAction="never"
+        android:showAsAction="never"
         android:title="@string/menuTentang"/>
 
 </menu>

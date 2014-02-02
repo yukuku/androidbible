@@ -16,13 +16,11 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcEvent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.view.MotionEventCompat;
-import android.support.v7.view.ActionMode;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
@@ -30,6 +28,7 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.util.Pair;
+import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -237,12 +236,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	class FullScreenController {
 		void hidePermanently() {
-			getSupportActionBar().hide();
+			getActionBar().hide();
 		    panelNavigation.setVisibility(View.GONE);
 	    }
 		
 		void showPermanently() {
-			getSupportActionBar().show();
+			getActionBar().show();
 			panelNavigation.setVisibility(View.VISIBLE);
 		}
 	}
@@ -1788,7 +1787,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 			
 			if (actionMode == null) {
-				actionMode = startSupportActionMode(actionMode_callback);
+				actionMode = startActionMode(actionMode_callback);
 			}
 			
 			if (actionMode != null) {

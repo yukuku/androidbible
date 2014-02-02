@@ -12,14 +12,12 @@
 
         <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="@dimen/abc_action_bar_default_height"
+                android:layout_height="?android:actionBarSize"
                 android:id="@+id/llNavigations">
 
             <ImageButton
                     android:id="@+id/bLeft"
-                    style="?attr/actionButtonStyle"
-                    android:layout_width="@dimen/abc_action_button_min_width"
-                    android:layout_height="match_parent"
+                    style="?android:actionButtonStyle"
                     android:contentDescription="@string/rp_navigationPreviousDay"
                     android:padding="16dp"
                     android:scaleType="center"
@@ -33,9 +31,8 @@
 
             <Button
                     android:id="@+id/bToday"
-                    style="?attr/actionButtonStyle"
+                    style="?android:actionButtonStyle"
                     android:layout_width="0dp"
-                    android:layout_height="fill_parent"
                     android:layout_weight="1"
                     android:contentDescription="@string/rp_navigationGoToDate"
                     android:textSize="18sp"/>
@@ -48,9 +45,7 @@
 
             <ImageButton
                     android:id="@+id/bRight"
-                    style="?attr/actionButtonStyle"
-                    android:layout_width="@dimen/abc_action_button_min_width"
-                    android:layout_height="match_parent"
+                    style="?android:actionButtonStyle"
                     android:contentDescription="@string/rp_navigationNextDay"
                     android:padding="16dp"
                     android:scaleType="center"

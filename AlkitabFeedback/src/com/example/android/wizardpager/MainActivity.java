@@ -24,10 +24,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +47,7 @@ import yuku.alkitabfeedback.R;
 
 import java.util.List;
 
-public class MainActivity extends ActionBarActivity implements
+public class MainActivity extends FragmentActivity implements
         PageFragmentCallbacks,
         ReviewFragment.Callbacks,
         ModelCallbacks {
@@ -78,8 +78,8 @@ public class MainActivity extends ActionBarActivity implements
 
         mWizardModel.registerListener(this);
 
-        mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
-        mPager = (ViewPager) findViewById(R.id.pager);
+	    mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
+	    mPager = (ViewPager) findViewById(R.id.pager);
 
 	    mCurrentPageSequence = mWizardModel.getCurrentPageSequence();
 

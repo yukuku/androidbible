@@ -4,7 +4,7 @@
 
     <item android:id="@+id/menuAdd"
           android:icon="@drawable/ic_menu_add_light"
-          app:showAsAction="ifRoom|withText"
+          android:showAsAction="ifRoom|withText"
           android:title="@string/tambah"/>
 
 </menu>

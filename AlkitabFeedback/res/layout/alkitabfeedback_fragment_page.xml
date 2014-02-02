@@ -17,7 +17,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/alkitabfeedback_WizardPageContainer">
 
-    <TextView style="@style/alkitabfeedback_WizardPageTitle" />
+    <TextView android:id="@android:id/title" style="@style/alkitabfeedback_WizardPageTitle" />
 
     <ListView android:id="@android:id/list"
         android:layout_width="match_parent"

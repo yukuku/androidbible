@@ -6,21 +6,21 @@
 		android:title="@string/devotion_change_date"
 		android:id="@+id/menuChangeDate"
 		android:icon="@drawable/ic_menu_change_date" 
-		app:showAsAction="ifRoom" />
+		android:showAsAction="ifRoom" />
 	<item
 		android:title="@string/salin_renungan"
 		android:id="@+id/menuCopy"
-		app:showAsAction="never" />
+		android:showAsAction="never" />
 	<item
 		android:title="@string/bagikan" 
 		android:id="@+id/menuShare"
-		app:showAsAction="never" />
+		android:showAsAction="never" />
 	<item
 		android:title="@string/redownload" 
 		android:id="@+id/menuRedownload"
-		app:showAsAction="never" />
+		android:showAsAction="never" />
     <item
         android:title="@string/dr_reminder"
         android:id="@+id/menuReminder"
-        app:showAsAction="never" />
+        android:showAsAction="never" />
 </menu>
