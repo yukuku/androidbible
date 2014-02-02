@@ -5,7 +5,7 @@
           android:icon="@drawable/ic_menu_search"
           android:title="@string/bookmark_search"
           android:showAsAction="always"
-          android:actionViewClass="android.support.v7.widget.SearchView"/>
+          android:actionViewClass="android.widget.SearchView"/>
     <item android:id="@+id/menuSort"
           android:icon="@drawable/ic_menu_sort"
           android:showAsAction="ifRoom"
