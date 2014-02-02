@@ -34,7 +34,6 @@
     <orderEntry type="module" module-name="FileChooser" />
     <orderEntry type="module" module-name="FlowLayout" />
     <orderEntry type="module" module-name="KpriViewerLib" />
-    <orderEntry type="module" module-name="SdkSearchBar" />
     <orderEntry type="module" module-name="AndroidCrypto" />
     <orderEntry type="module" module-name="Afw" />
     <orderEntry type="module" module-name="KpriModel" />

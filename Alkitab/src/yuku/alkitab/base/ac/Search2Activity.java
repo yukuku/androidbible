@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -41,7 +40,6 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
-import yuku.androidsdk.searchbar.SearchBar;
 
 import java.util.Arrays;
 
@@ -53,9 +51,9 @@ public class Search2Activity extends BaseActivity {
 	private static final String EXTRA_selectedPosition = "selectedPosition"; //$NON-NLS-1$
 	private static final String EXTRA_openedBookId = "openedBookId"; //$NON-NLS-1$
 	private static final String EXTRA_selectedAri = "selectedAri"; //$NON-NLS-1$
-	
+
+	SearchView searchView;
 	ListView lsSearchResults;
-	SearchBar searchBar;
 	View panelFilter;
 	CheckBox cFilterOlds;
 	CheckBox cFilterNews;
@@ -95,40 +93,6 @@ public class Search2Activity extends BaseActivity {
 		return res;
 	}
 
-	@TargetApi(11) class Api11_compat {
-		SearchView searchView;
-
-		public void configureSearchView() {
-			searchView = V.get(Search2Activity.this, R.id.searchView);
-			searchView.setSubmitButtonEnabled(true);
-			searchView.setOnQueryTextListener(new OnQueryTextListener() {
-				@Override public boolean onQueryTextSubmit(String query) {
-					search(query);
-					return true;
-				}
-				
-				@Override public boolean onQueryTextChange(String newText) {
-					return false;
-				}
-			});
-		}
-
-		public void setSearchViewQuery(String query) {
-			searchView.setQuery(query, false);
-		}
-
-		public String getSearchViewQuery() {
-			return searchView.getQuery().toString();
-		}
-
-		public void hideSoftInputFromSearchView(InputMethodManager inputManager) {
-			inputManager.hideSoftInputFromWindow(searchView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-			searchView.clearFocus();
-		}
-	}
-	
-	Api11_compat api11_compat;
-	
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
@@ -142,8 +106,18 @@ public class Search2Activity extends BaseActivity {
 		tFilterAdvanced = V.get(this, R.id.tFilterAdvanced);
 		bEditFilter = V.get(this, R.id.bEditFilter);
 
-		api11_compat = new Api11_compat();
-		api11_compat.configureSearchView();
+		searchView = V.get(Search2Activity.this, R.id.searchView);
+		searchView.setSubmitButtonEnabled(true);
+		searchView.setOnQueryTextListener(new OnQueryTextListener() {
+			@Override public boolean onQueryTextSubmit(String query1) {
+				search(query1);
+				return true;
+			}
+
+			@Override public boolean onQueryTextChange(String newText) {
+				return false;
+			}
+		});
 
 		lsSearchResults.setBackgroundColor(S.applied.backgroundColor);
 		lsSearchResults.setCacheColorHint(S.applied.backgroundColor);
@@ -189,7 +163,7 @@ public class Search2Activity extends BaseActivity {
 			cFilterSingleBook.setText(getString(R.string.search_bookname_only, book.shortName));
 			
 			if (query != null) {
-				api11_compat.setSearchViewQuery(query.query_string);
+				searchView.setQuery(query.query_string, false);
 
 				if (searchResults != null) {
 					String[] tokens = QueryTokenizer.tokenize(query.query_string);
@@ -360,7 +334,7 @@ public class Search2Activity extends BaseActivity {
 	
 	protected Query getQuery() {
 		Query res = new Query();
-		res.query_string = api11_compat.getSearchViewQuery();
+		res.query_string = searchView.getQuery().toString();
 		res.bookIds = selectedBookIds;
 		return res;
 	}
@@ -489,13 +463,14 @@ public class Search2Activity extends BaseActivity {
 				if (result.size() > 0) {
 					//# close soft keyboard
 					InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-					api11_compat.hideSoftInputFromSearchView(inputManager);
+					inputManager.hideSoftInputFromWindow(searchView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+					searchView.clearFocus();
 					lsSearchResults.requestFocus();
 				}
 				
 				pd.setOnDismissListener(null);
 				pd.dismiss();
-			};
+			}
 		}.execute();
 	}
 	
