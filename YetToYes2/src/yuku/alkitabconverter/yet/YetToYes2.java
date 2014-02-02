@@ -77,7 +77,7 @@ public class YetToYes2 {
 			}
 			
 			for (Integer book_1: books_1) {
-				String bookName = result.bookNames.get(book_1 - 1);
+				String bookName = result.bookNames.get(book_1);
 				if (bookName == null) {
 					System.err.println("yet file doesn't contain book name for book " + book_1);
 					return 1;
@@ -90,7 +90,7 @@ public class YetToYes2 {
 		versionInfo.shortName = result.infos.get("shortName");
 		versionInfo.longName = result.infos.get("longName");
 		versionInfo.description = result.infos.get("description");
-		versionInfo.setBookNamesAndAbbreviations(result.bookNames, result.bookAbbreviations);
+		versionInfo.setBookNamesAndAbbreviations(result.getBookNamesAsList(), result.getBookAbbreviationsAsList());
 		
 		// convert recs to textdb
 		TextDb textDb = new TextDb();

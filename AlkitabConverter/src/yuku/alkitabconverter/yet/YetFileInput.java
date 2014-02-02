@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 public class YetFileInput {
 	public static class YetFileInputResult {
@@ -20,8 +21,8 @@ public class YetFileInput {
 		public PericopeData pericopeData;
 		public Map<String, String> infos;
 		public int numberOfBooks;
-		public List<String> bookNames;
-		public List<String> bookAbbreviations;
+		public Map<Integer, String> bookNames; // key is book_1
+		public Map<Integer, String> bookAbbreviations; // key is book_1
 		public LinkedHashMap<Integer, XrefEntry> xrefEntries;
 		public LinkedHashMap<Integer, FootnoteEntry> footnoteEntries;
 
@@ -42,16 +43,12 @@ public class YetFileInput {
 		
 		void addBookName(int book_1, String bookName, String bookAbbreviation) {
 			if (bookNames == null) {
-				bookNames = new ArrayList<String>();
-				bookAbbreviations = new ArrayList<String>();
-				for (int i = 0; i < 66; i++) {
-					bookNames.add(null);
-					bookAbbreviations.add(null);
-				}
+				bookNames = new TreeMap<Integer, String>();
+				bookAbbreviations = new TreeMap<Integer, String>();
 			}
-			
-			bookNames.set(book_1 - 1, bookName);
-			bookAbbreviations.set(book_1 - 1, bookAbbreviation);
+
+			bookNames.put(book_1, bookName);
+			bookAbbreviations.put(book_1, bookAbbreviation);
 		}
 
 		void setNumberOfBooks(int numberOfBooks) {
@@ -70,6 +67,33 @@ public class YetFileInput {
 				footnoteEntries = new LinkedHashMap<Integer, FootnoteEntry>();
 			}
 			footnoteEntries.put(arif, fe);
+		}
+
+		/**
+		 * @return book names indexed from 0
+		 */
+		public List<String> getBookNamesAsList() {
+			final List<String> res = new ArrayList<String>();
+			for (Map.Entry<Integer, String> e : bookNames.entrySet()) {
+				final int index = e.getKey() - 1;
+				while (index + 1 > res.size()) {
+					res.add(null);
+				}
+				res.set(index, e.getValue());
+			}
+			return res;
+		}
+
+		public List<String> getBookAbbreviationsAsList() {
+			final List<String> res = new ArrayList<String>();
+			for (Map.Entry<Integer, String> e : bookAbbreviations.entrySet()) {
+				final int index = e.getKey() - 1;
+				while (index + 1 > res.size()) {
+					res.add(null);
+				}
+				res.set(index, e.getValue());
+			}
+			return res;
 		}
 	}
 	
@@ -195,8 +219,8 @@ public class YetFileInput {
 
 					res.addFootnoteEntry((Ari.encode(book_1 - 1, chapter_1, verse_1) << 8) | field_1, fe);
 
-				} else if (command.trim().startsWith("#")) {
-					// comment
+				} else if (command.trim().startsWith("#") || command.trim().length() == 0) {
+					// comment or blank line
 				} else {
 					System.err.println("unknown line encountered: " + line);
 					return null;
