@@ -1484,16 +1484,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		displaySplitFollowingMaster(verse_1);
 		
 		// set goto button text
-		String reference = this.activeBook.reference(chapter_1);
+		final String reference = this.activeBook.reference(chapter_1);
 		if (Preferences.getBoolean(Prefkey.history_button_understood, false) || history.getSize() == 0) {
 			bGoto.setText(reference);
 		} else {
-			SpannableStringBuilder sb = new SpannableStringBuilder();
-			sb.append(reference).append("\n");
-			int sb_len = sb.length();
-			sb.append(getString(R.string.recentverses_button_hint));
-			sb.setSpan(new RelativeSizeSpan(0.6f), sb_len, sb.length(), 0);
-			bGoto.setText(sb);
+			// TODO show something to indicate user can long press on goto button
+			bGoto.setText(reference);
 		}
 		
 		return Ari.encode(0, chapter_1, verse_1);
