@@ -72,6 +72,8 @@
                 <ImageButton
                     android:id="@+id/bLeft"
                     style="?android:actionButtonStyle"
+                    android:layout_width="48dp"
+                    android:layout_height="match_parent"
                     android:contentDescription="@string/desc_previous_chapter"
                     android:padding="16dp"
                     android:scaleType="center"
@@ -82,6 +84,7 @@
                     style="?android:actionButtonStyle"
                     android:layout_width="0dp"
                     android:layout_weight="1"
+                    android:layout_height="match_parent"
                     android:text="*Long Name Of Book 123"
                     android:textColor="#f0f0f0"
                     android:textSize="18sp"
@@ -90,6 +93,8 @@
                 <ImageButton
                     android:id="@+id/bRight"
                     style="?android:actionButtonStyle"
+                    android:layout_width="48dp"
+                    android:layout_height="match_parent"
                     android:contentDescription="@string/desc_next_chapter"
                     android:padding="16dp"
                     android:scaleType="center"

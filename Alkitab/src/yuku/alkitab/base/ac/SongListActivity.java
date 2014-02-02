@@ -151,7 +151,8 @@ public class SongListActivity extends BaseActivity {
 		bChangeBook = V.get(this, R.id.bChangeBook);
 		cDeepSearch = V.get(this, R.id.cDeepSearch);
 		panelFilter = V.get(this, R.id.panelFilter);
-		
+
+		searchView.setIconifiedByDefault(false);
 		searchView.setSubmitButtonEnabled(false);
 		searchView.setOnQueryTextListener(searchWidget_queryText);
 		
