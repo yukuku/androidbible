@@ -14,7 +14,6 @@ import android.widget.TextView;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.compat.Api11;
 import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.debug.R;
@@ -131,8 +130,8 @@ public class TypeBookmarkDialog {
 				.setTitle(R.string.add_label_title)
 				.setAdapter(adapter, bAddLabel_dialog_itemSelected)
 				.setNegativeButton(R.string.cancel, null);
-				
-				adapter.setDialogContext(Api11.AlertDialog_Builder_getContext(b));
+
+				adapter.setDialogContext(b.getContext());
 
 				b.show();
 			}

@@ -1,7 +1,6 @@
 package yuku.alkitab.base.br;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -11,7 +10,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -120,7 +118,6 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 	}
 
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	private static RemoteViews getRemoteViewsApi14(final Context context, final int appWidgetId) {
 		Intent svcIntent = new Intent(context, DailyVerseAppWidgetService.class);
 		svcIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);

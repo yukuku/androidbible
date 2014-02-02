@@ -2,8 +2,6 @@ package yuku.alkitab.base.fr;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.style.UnderlineSpan;
@@ -15,17 +13,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
-
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
-import yuku.alkitab.model.Book;
 import yuku.alkitab.base.util.BookNameSorter;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.model.Book;
 
 public class GotoGridFragment extends BaseGotoFragment {
 	public static final String TAG = GotoGridFragment.class.getSimpleName();
@@ -88,7 +85,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 		}
 	};
 	
-	@TargetApi(12) void transitionBookToChapter() {
+	void transitionBookToChapter() {
 		gridBook.setVisibility(View.INVISIBLE);
 		panelChapterVerse.setVisibility(View.VISIBLE);
 		gridChapter.setVisibility(View.VISIBLE);
@@ -130,7 +127,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 		displaySelectedBookAndChapter();
 	}
 
-	@TargetApi(12) static void animateFadeOutAndSlideLeft(final GridView fadingOut, final GridView slidingLeft) {
+	static void animateFadeOutAndSlideLeft(final GridView fadingOut, final GridView slidingLeft) {
 		fadingOut.setVisibility(View.VISIBLE);
 		fadingOut.animate().alpha(0.f).setDuration(ANIM_DURATION).setListener(new AnimatorListenerAdapter() {
 			@Override public void onAnimationEnd(Animator animation) {

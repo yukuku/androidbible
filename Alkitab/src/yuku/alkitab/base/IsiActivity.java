@@ -1,6 +1,5 @@
 package yuku.alkitab.base;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
@@ -490,7 +489,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 
-	@TargetApi(14) private void initNfcIfAvailable() {
+	private void initNfcIfAvailable() {
 		nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
 		if (nfcAdapter != null) {
 			nfcAdapter.setNdefPushMessageCallback(new CreateNdefMessageCallback() {
