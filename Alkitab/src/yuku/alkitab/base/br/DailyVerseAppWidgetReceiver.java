@@ -77,13 +77,7 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 
 	@SuppressLint("NewApi")
 	public static void buildUpdate(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
-		//Make new view based on API Version
-		RemoteViews remoteViews;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			remoteViews = getRemoteViewsApi14(context, appWidgetId);
-		} else {
-			remoteViews = getRemoteViews(context, appWidgetId);
-		}
+		RemoteViews remoteViews = getRemoteViewsApi14(context, appWidgetId);
 
 		remoteViews.setTextViewText(R.id.tReference, getReference(getVersion(appWidgetId), getVerse(appWidgetId)));
 
@@ -119,15 +113,9 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		//-----Set Intent to open bible
 		Intent intentOpenBible = new Intent("yuku.alkitab.action.VIEW");
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			PendingIntent pendingIntentOpenBible = PendingIntent.getActivity(context, appWidgetId, intentOpenBible, PendingIntent.FLAG_CANCEL_CURRENT);
-			remoteViews.setPendingIntentTemplate(R.id.lsVerse, pendingIntentOpenBible);
-		} else {
-			intentOpenBible.putExtra("ari", getVerse(appWidgetId)[0]);
-			PendingIntent pendingIntentOpenBible = PendingIntent.getActivity(context, appWidgetId, intentOpenBible, PendingIntent.FLAG_CANCEL_CURRENT);
+		PendingIntent pendingIntentOpenBible = PendingIntent.getActivity(context, appWidgetId, intentOpenBible, PendingIntent.FLAG_CANCEL_CURRENT);
+		remoteViews.setPendingIntentTemplate(R.id.lsVerse, pendingIntentOpenBible);
 
-			remoteViews.setOnClickPendingIntent(R.id.tVerse, pendingIntentOpenBible);
-		}
 		//-----End of Intent to open bible
 		appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 	}
@@ -153,42 +141,6 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 		remoteViews.setFloat(R.id.tReference, "setTextSize", optionTextSize);
 
 		remoteViews.setRemoteAdapter(R.id.lsVerse, svcIntent);
-		return remoteViews;
-	}
-
-	private static RemoteViews getRemoteViews(final Context context, final int appWidgetId) {
-		SpannableStringBuilder verseText = new SpannableStringBuilder();
-
-		final Version version = getVersion(appWidgetId);
-		final int[] aris = getVerse(appWidgetId);
-		final boolean optionTransparentBackground = getOptionTransparentBackground(appWidgetId);
-		final boolean optionDarkText = getOptionDarkText(appWidgetId);
-		final float optionTextSize = getOptionTextSize(appWidgetId);
-
-		boolean showVerseNumber = false;
-		if (aris.length > 1) {
-			showVerseNumber = true;
-		}
-		for (int i = 0; i < aris.length; i++) {
-			if (i > 0) {
-				verseText.append("\n");
-			}
-			verseText.append(getText(version, aris[i], showVerseNumber));
-		}
-		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.daily_verse_app_widget_legacy);
-		if (optionTransparentBackground && Build.VERSION.SDK_INT >= 8) { // API 7 not supported
-			remoteViews.setInt(R.id.root, "setBackgroundResource", android.R.color.transparent);
-		}
-		if (optionDarkText) {
-			remoteViews.setTextColor(R.id.tVerse, 0xff000000);
-			remoteViews.setTextColor(R.id.tReference, 0xff000000);
-			remoteViews.setImageViewResource(R.id.bPrev, R.drawable.ic_nav_left_dark);
-			remoteViews.setImageViewResource(R.id.bNext, R.drawable.ic_nav_right_dark);
-		}
-		remoteViews.setTextViewText(R.id.tVerse, verseText);
-		remoteViews.setFloat(R.id.tReference, "setTextSize", optionTextSize);
-		remoteViews.setFloat(R.id.tVerse, "setTextSize", optionTextSize);
-
 		return remoteViews;
 	}
 

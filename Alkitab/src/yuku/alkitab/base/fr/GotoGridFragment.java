@@ -95,12 +95,10 @@ public class GotoGridFragment extends BaseGotoFragment {
 		gridChapter.setAdapter(chapterAdapter = new ChapterAdapter(selectedBook));
 		gridVerse.setVisibility(View.INVISIBLE);
 		
-		if (Build.VERSION.SDK_INT >= 12) { // animate
-			animateFadeOutAndSlideLeft(gridBook, gridChapter);
-			lSelectedBook.setAlpha(0.f);
-			lSelectedBook.animate().alpha(1.f).setDuration(ANIM_DURATION);
-		}
-		
+		animateFadeOutAndSlideLeft(gridBook, gridChapter);
+		lSelectedBook.setAlpha(0.f);
+		lSelectedBook.animate().alpha(1.f).setDuration(ANIM_DURATION);
+
 		displaySelectedBookAndChapter();
 	}
 
@@ -117,10 +115,8 @@ public class GotoGridFragment extends BaseGotoFragment {
 		gridVerse.setVisibility(View.VISIBLE);
 		gridVerse.setAdapter(verseAdapter = new VerseAdapter(selectedBook, selectedChapter));
 
-		if (Build.VERSION.SDK_INT >= 12) { // animate
-			animateFadeOutAndSlideLeft(gridChapter, gridVerse);
-		}
-		
+		animateFadeOutAndSlideLeft(gridChapter, gridVerse);
+
 		displaySelectedBookAndChapter();
 	}
 	

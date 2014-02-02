@@ -76,11 +76,7 @@ public class History {
 			);
 		}
 
-		if (Build.VERSION.SDK_INT >= 9) {
-			editor.apply();
-		} else {
-			editor.commit();
-		}
+		editor.apply();
 	}
 	
 	public synchronized void add(int ari) {

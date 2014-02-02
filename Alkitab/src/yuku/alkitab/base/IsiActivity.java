@@ -426,9 +426,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 		}
 
-		if (Build.VERSION.SDK_INT >= 14) {
-			initNfcIfAvailable();
-		}
+		initNfcIfAvailable();
+
 		if (S.getDb().countAllBookmarks() != 0) {
 			BackupManager.startAutoBackup();
 		}
@@ -457,10 +456,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 		}
 		
-		if (Build.VERSION.SDK_INT >= 14) {
-			checkAndProcessBeamIntent(intent);
-		}
-		
+		checkAndProcessBeamIntent(intent);
+
 		checkAndProcessViewIntent(intent);
 	}
 	
@@ -517,23 +514,19 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	@Override protected void onPause() {
 		super.onPause();
-		if (Build.VERSION.SDK_INT >= 14) {
-			disableNfcForegroundDispatchIfAvailable();
-		}
+		disableNfcForegroundDispatchIfAvailable();
 	}
 
-	@TargetApi(14) private void disableNfcForegroundDispatchIfAvailable() {
+	private void disableNfcForegroundDispatchIfAvailable() {
 		if (nfcAdapter != null) nfcAdapter.disableForegroundDispatch(this);
 	}
 	
 	@Override protected void onResume() {
 		super.onResume();
-		if (Build.VERSION.SDK_INT >= 14) {
-			enableNfcForegroundDispatchIfAvailable();
-		}
+		enableNfcForegroundDispatchIfAvailable();
 	}
 
-	@TargetApi(14) private void enableNfcForegroundDispatchIfAvailable() {
+	private void enableNfcForegroundDispatchIfAvailable() {
 		if (nfcAdapter != null) {
 			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, IsiActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 			IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
@@ -547,7 +540,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 
-	@TargetApi(14) private void checkAndProcessBeamIntent(Intent intent) {
+	private void checkAndProcessBeamIntent(Intent intent) {
 		String action = intent.getAction();
 		if (U.equals(action, NfcAdapter.ACTION_NDEF_DISCOVERED)) {
 			Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
@@ -874,11 +867,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		} else {
 			editor.putString(PREFKEY_lastSplitVersionId, activeSplitVersionId);
 		}
-		if (Build.VERSION.SDK_INT >= 9) {
-			editor.apply();
-		} else {
-			editor.commit();
-		}
+		editor.apply();
 
 		history.save();
 

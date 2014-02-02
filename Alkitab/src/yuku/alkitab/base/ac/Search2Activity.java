@@ -7,9 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build.VERSION;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.util.SparseBooleanArray;
 import android.view.View;
@@ -29,22 +27,21 @@ import android.widget.Toast;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionInternal;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.util.Ari;
-import yuku.alkitab.model.Book;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.BookNameSorter;
-import yuku.alkitab.util.IntArrayList;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.Search2Engine;
 import yuku.alkitab.base.util.Search2Engine.Query;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.model.Book;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.util.IntArrayList;
 import yuku.androidsdk.searchbar.SearchBar;
-import yuku.androidsdk.searchbar.SearchBar.OnSearchListener;
 
 import java.util.Arrays;
 
@@ -144,26 +141,10 @@ public class Search2Activity extends BaseActivity {
 		cFilterSingleBook = V.get(this, R.id.cFilterSingleBook);
 		tFilterAdvanced = V.get(this, R.id.tFilterAdvanced);
 		bEditFilter = V.get(this, R.id.bEditFilter);
-		
-		if (useSearchView()) {
-			api11_compat = new Api11_compat();
-			api11_compat.configureSearchView();
-		} else {
-			searchBar = V.get(this, R.id.searchBar);
-			((ViewGroup) panelFilter.getParent()).removeView(panelFilter);
-			searchBar.setBottomView(panelFilter);
-			searchBar.setOnSearchListener(new OnSearchListener() {
-				@Override public void onSearch(SearchBar searchBar, Editable text) {
-					search(text.toString());
-				}
-			});
-			// the background of the search bar is bright, so let's make all text black
-			cFilterOlds.setTextColor(0xff000000);
-			cFilterNews.setTextColor(0xff000000);
-			cFilterSingleBook.setTextColor(0xff000000);
-			tFilterAdvanced.setTextColor(0xff000000);
-		}
-		
+
+		api11_compat = new Api11_compat();
+		api11_compat.configureSearchView();
+
 		lsSearchResults.setBackgroundColor(S.applied.backgroundColor);
 		lsSearchResults.setCacheColorHint(S.applied.backgroundColor);
 		
@@ -208,12 +189,8 @@ public class Search2Activity extends BaseActivity {
 			cFilterSingleBook.setText(getString(R.string.search_bookname_only, book.shortName));
 			
 			if (query != null) {
-				if (!useSearchView()) {
-					searchBar.setText(query.query_string);
-				} else {
-					api11_compat.setSearchViewQuery(query.query_string);
-				}
-				
+				api11_compat.setSearchViewQuery(query.query_string);
+
 				if (searchResults != null) {
 					String[] tokens = QueryTokenizer.tokenize(query.query_string);
 					lsSearchResults.setAdapter(adapter = new Search2Adapter(searchResults, tokens));
@@ -239,11 +216,7 @@ public class Search2Activity extends BaseActivity {
 			Search2Engine.preloadRevIndex();
 		}
 	}
-	
-	boolean useSearchView() {
-		return VERSION.SDK_INT >= 11;
-	}
-	
+
 	void configureFilterDisplayOldNewTest() {
 		// the following variables will have value:
 		// if some are off and some are on -> null.
@@ -387,11 +360,7 @@ public class Search2Activity extends BaseActivity {
 	
 	protected Query getQuery() {
 		Query res = new Query();
-		if (!useSearchView()) {
-			res.query_string = searchBar.getText().toString();
-		} else {
-			res.query_string = api11_compat.getSearchViewQuery();
-		}
+		res.query_string = api11_compat.getSearchViewQuery();
 		res.bookIds = selectedBookIds;
 		return res;
 	}
@@ -520,12 +489,8 @@ public class Search2Activity extends BaseActivity {
 				if (result.size() > 0) {
 					//# close soft keyboard
 					InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-					if (!useSearchView()) {
-						inputManager.hideSoftInputFromWindow(searchBar.getSearchField().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-					} else {
-						api11_compat.hideSoftInputFromSearchView(inputManager);
-						lsSearchResults.requestFocus();
-					}
+					api11_compat.hideSoftInputFromSearchView(inputManager);
+					lsSearchResults.requestFocus();
 				}
 				
 				pd.setOnDismissListener(null);

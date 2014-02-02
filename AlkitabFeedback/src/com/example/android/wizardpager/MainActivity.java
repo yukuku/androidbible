@@ -189,10 +189,8 @@ public class MainActivity extends ActionBarActivity implements
         if (position == mCurrentPageSequence.size()) {
             mNextButton.setText(R.string.alkitabfeedback_finish);
             
-            if (Build.VERSION.SDK_INT >= 11) {
-	            mNextButton.setBackgroundResource(R.drawable.alkitabfeedback_finish_background);
-	            mNextButton.setTextAppearance(this, R.style.alkitabfeedback_TextAppearanceFinish);
-            }
+            mNextButton.setBackgroundResource(R.drawable.alkitabfeedback_finish_background);
+            mNextButton.setTextAppearance(this, R.style.alkitabfeedback_TextAppearanceFinish);
         } else {
             mNextButton.setText(mEditingAfterReview
                     ? R.string.alkitabfeedback_review

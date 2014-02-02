@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.os.Build.VERSION;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,22 +11,21 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import yuku.afw.V;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.compat.Api11;
+import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
+import yuku.alkitab.base.storage.Db;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.model.Bookmark2;
+import yuku.alkitab.model.Label;
+import yuku.devoxx.flowlayout.FlowLayout;
 
 import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import yuku.afw.V;
-import yuku.alkitab.debug.R;
-import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
-import yuku.alkitab.base.compat.Api11;
-import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
-import yuku.alkitab.model.Bookmark2;
-import yuku.alkitab.model.Label;
-import yuku.alkitab.base.storage.Db;
-import yuku.devoxx.flowlayout.FlowLayout;
 
 public class TypeBookmarkDialog {
 	public interface Listener {
@@ -134,10 +132,8 @@ public class TypeBookmarkDialog {
 				.setAdapter(adapter, bAddLabel_dialog_itemSelected)
 				.setNegativeButton(R.string.cancel, null);
 				
-				if (VERSION.SDK_INT >= 11) {
-					adapter.setDialogContext(Api11.AlertDialog_Builder_getContext(b));
-				}
-				
+				adapter.setDialogContext(Api11.AlertDialog_Builder_getContext(b));
+
 				b.show();
 			}
 		});
@@ -246,11 +242,6 @@ public class TypeBookmarkDialog {
 			} else {
 				TextView text1 = V.get(res, android.R.id.text1);
 				text1.setText(context.getString(R.string.create_label_titik3));
-				
-				// for API 10 or lower, forcefully set text color
-				if (VERSION.SDK_INT <= 10) {
-					text1.setTextColor(0xff000000);
-				}
 			}
 			
 			return res;

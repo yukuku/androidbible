@@ -1,12 +1,7 @@
 package yuku.alkitab.base.widget;
 
-import android.annotation.TargetApi;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Typeface;
-import android.os.Build;
-import android.text.Layout;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.text.style.BackgroundColorSpan;
@@ -40,32 +35,6 @@ public class VerseRenderer {
 		}
 	}
 
-	/**
-	 * This is used instead of {@link LeadingMarginSpan.Standard} to overcome
-	 * a bug in CyanogenMod 7.x. If we don't support CM 7 anymore, we 
-	 * can use that instead of this, which seemingly *a bit* more efficient. 
-	 */
-	@TargetApi(8)
-	static class LeadingMarginSpanFixed implements LeadingMarginSpan.LeadingMarginSpan2 {
-		private final int first;
-		private final int rest;
-	
-		@Override public void drawLeadingMargin(Canvas c, Paint p, int x, int dir, int top, int baseline, int bottom, CharSequence text, int start, int end, boolean first, Layout layout) {}
-
-		public LeadingMarginSpanFixed(int first, int rest) {
-			this.first = first;
-			this.rest = rest;
-		}
-		
-		@Override public int getLeadingMargin(boolean first) {
-			return first? this.first: this.rest;
-		}
-	
-		@Override public int getLeadingMarginLineCount() {
-			return 1;
-		}
-	}
-
 	static class VerseNumberSpan extends MetricAffectingSpan {
 		private final boolean applyColor;
 	
@@ -87,9 +56,6 @@ public class VerseRenderer {
 		}
 	}
 
-	/** 0 undefined. 1 and 2 based on version. */
-	private static int leadingMarginSpanVersion = 0;
-	
 	/** Creates a leading margin span based on version:
 	 * - API 7 or 11 and above: LeadingMarginSpan.Standard
 	 * - API 8..10: LeadingMarginSpanFixed, which is based on LeadingMarginSpan.LeadingMarginSpan2
@@ -103,16 +69,7 @@ public class VerseRenderer {
 	 * - API 8..10: LeadingMarginSpanFixed, which is based on LeadingMarginSpan.LeadingMarginSpan2
 	 */
 	static Object createLeadingMarginSpan(int first, int rest) {
-		if (leadingMarginSpanVersion == 0) {
-			int v = Build.VERSION.SDK_INT;
-			leadingMarginSpanVersion = (v == 7 || v >= 11)? 1: 2; 
-		}
-		
-		if (leadingMarginSpanVersion == 1) {
-			return new LeadingMarginSpan.Standard(first, rest); 
-		} else {
-			return new VerseRenderer.LeadingMarginSpanFixed(first, rest);
-		}
+		return new LeadingMarginSpan.Standard(first, rest);
 	}
 	
 	private static ThreadLocal<char[]> buf_char_ = new ThreadLocal<char[]>() {

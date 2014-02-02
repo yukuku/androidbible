@@ -16,7 +16,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.compat.Api8;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.SingleChapterVerses;
@@ -179,12 +178,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 
 	public void scrollToShowVerse(int mainVerse_1) {
 		int position = adapter.getPositionOfPericopeBeginningFromVerse(mainVerse_1);
-		if (Build.VERSION.SDK_INT >= 8) {
-			Api8.ListView_smoothScrollToPosition(this, position);
-		} else {
-			stopFling();
-			setSelectionFromTop(position, getVerticalFadingEdgeLength());
-		}
+		smoothScrollToPosition(position);
 	}
 	
 	/**
