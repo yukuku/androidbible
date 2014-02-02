@@ -62,17 +62,17 @@
         <FrameLayout
             android:id="@+id/panelNavigation"
             android:layout_width="fill_parent"
-            android:layout_height="@dimen/abc_action_bar_default_height" >
+            android:layout_height="?android:actionBarSize" >
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background="@drawable/abc_ab_solid_dark_holo" >
+                style="?android:actionBarStyle">
 
                 <ImageButton
                     android:id="@+id/bLeft"
-                    style="?attr/actionButtonStyle"
-                    android:layout_width="@dimen/abc_action_button_min_width"
+                    style="?android:actionButtonStyle"
+                    android:layout_width="48dp"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/desc_previous_chapter"
                     android:padding="16dp"
@@ -81,10 +81,10 @@
 
                 <yuku.alkitab.base.widget.GotoButton
                     android:id="@+id/bGoto"
-                    style="?attr/actionButtonStyle"
+                    style="?android:actionButtonStyle"
                     android:layout_width="0dp"
-                    android:layout_height="fill_parent"
                     android:layout_weight="1"
+                    android:layout_height="match_parent"
                     android:text="*Long Name Of Book 123"
                     android:textColor="#f0f0f0"
                     android:textSize="18sp"
@@ -92,8 +92,8 @@
 
                 <ImageButton
                     android:id="@+id/bRight"
-                    style="?attr/actionButtonStyle"
-                    android:layout_width="@dimen/abc_action_button_min_width"
+                    style="?android:actionButtonStyle"
+                    android:layout_width="48dp"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/desc_next_chapter"
                     android:padding="16dp"

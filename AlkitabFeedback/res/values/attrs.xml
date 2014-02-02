@@ -15,19 +15,6 @@
   -->
 
 <resources>
-
-    <declare-styleable name="BaseTheme">
-        <!-- backward-compatibility -->
-        <!-- provided by ActionBarSherlock -->
-        <!-- attr name="buttonBarStyle" format="reference" /-->
-        <!-- attr name="buttonBarButtonStyle" format="reference" /-->
-        <!-- attr name="dividerHorizontal" format="reference" /-->
-        <!--<attr name="indeterminateProgressStyle" format="reference" />-->
-        <!--<attr name="listPreferredItemPaddingLeft" format="reference" />-->
-        <!--<attr name="listPreferredItemPaddingRight" format="reference" />-->
-        <!--<attr name="listPreferredItemHeightSmall" format="reference" />-->
-    </declare-styleable>
-    
     <declare-styleable name="alkitabfeedback_AppTheme">
         <attr name="alkitabfeedback_textAppearanceFinish" format="reference" />
     </declare-styleable>

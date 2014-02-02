@@ -1,26 +1,25 @@
 package yuku.alkitab.base.ac;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.fr.GotoDialerFragment;
 import yuku.alkitab.base.fr.GotoDirectFragment;
 import yuku.alkitab.base.fr.GotoGridFragment;
 import yuku.alkitab.base.fr.base.BaseGotoFragment.GotoFinishListener;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.debug.R;
 
 public class GotoActivity extends BaseActivity implements GotoFinishListener {
 	public static final String TAG = GotoActivity.class.getSimpleName();
@@ -70,7 +69,7 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 		chapter_1 = getIntent().getIntExtra(EXTRA_chapter, 0);
 		verse_1 = getIntent().getIntExtra(EXTRA_verse, 0);
 
-		final ActionBar actionBar = getSupportActionBar();
+		final ActionBar actionBar = getActionBar();
 
 		if (!getResources().getBoolean(R.bool.screen_sw_check_min_600dp)) {
 	        // The following two options trigger the collapsing of the main action bar view.
@@ -105,18 +104,18 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 		// Create a tab listener that is called when the user changes tabs.
 		ActionBar.TabListener tabListener = new ActionBar.TabListener() {
 			@Override
-			public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+			public void onTabSelected(final ActionBar.Tab tab, final android.app.FragmentTransaction ft) {
 				// When the tab is selected, switch to the corresponding page in the ViewPager.
 				viewPager.setCurrentItem(tab.getPosition());
 			}
 
 			@Override
-			public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
+			public void onTabUnselected(final ActionBar.Tab tab, final android.app.FragmentTransaction ft) {
 				// hide the given tab
 			}
 
 			@Override
-			public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
+			public void onTabReselected(final ActionBar.Tab tab, final android.app.FragmentTransaction ft) {
 				// probably ignore this event
 			}
 		};
@@ -155,7 +154,7 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 
 	@Override protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putInt(INSTANCE_STATE_tab, getSupportActionBar().getSelectedNavigationIndex());
+		outState.putInt(INSTANCE_STATE_tab, getActionBar().getSelectedNavigationIndex());
 	}
 
 	public class GotoPagerAdapter extends FragmentPagerAdapter {

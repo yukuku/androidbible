@@ -1,15 +1,12 @@
 package yuku.alkitab.base.ac;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build.VERSION;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.util.SparseBooleanArray;
 import android.view.View;
@@ -29,22 +26,20 @@ import android.widget.Toast;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionInternal;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.util.Ari;
-import yuku.alkitab.model.Book;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.BookNameSorter;
-import yuku.alkitab.util.IntArrayList;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.Search2Engine;
 import yuku.alkitab.base.util.Search2Engine.Query;
-import yuku.androidsdk.searchbar.SearchBar;
-import yuku.androidsdk.searchbar.SearchBar.OnSearchListener;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.model.Book;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.util.IntArrayList;
 
 import java.util.Arrays;
 
@@ -56,9 +51,9 @@ public class Search2Activity extends BaseActivity {
 	private static final String EXTRA_selectedPosition = "selectedPosition"; //$NON-NLS-1$
 	private static final String EXTRA_openedBookId = "openedBookId"; //$NON-NLS-1$
 	private static final String EXTRA_selectedAri = "selectedAri"; //$NON-NLS-1$
-	
+
+	SearchView searchView;
 	ListView lsSearchResults;
-	SearchBar searchBar;
 	View panelFilter;
 	CheckBox cFilterOlds;
 	CheckBox cFilterNews;
@@ -98,40 +93,6 @@ public class Search2Activity extends BaseActivity {
 		return res;
 	}
 
-	@TargetApi(11) class Api11_compat {
-		SearchView searchView;
-
-		public void configureSearchView() {
-			searchView = V.get(Search2Activity.this, R.id.searchView);
-			searchView.setSubmitButtonEnabled(true);
-			searchView.setOnQueryTextListener(new OnQueryTextListener() {
-				@Override public boolean onQueryTextSubmit(String query) {
-					search(query);
-					return true;
-				}
-				
-				@Override public boolean onQueryTextChange(String newText) {
-					return false;
-				}
-			});
-		}
-
-		public void setSearchViewQuery(String query) {
-			searchView.setQuery(query, false);
-		}
-
-		public String getSearchViewQuery() {
-			return searchView.getQuery().toString();
-		}
-
-		public void hideSoftInputFromSearchView(InputMethodManager inputManager) {
-			inputManager.hideSoftInputFromWindow(searchView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-			searchView.clearFocus();
-		}
-	}
-	
-	Api11_compat api11_compat;
-	
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
@@ -144,26 +105,20 @@ public class Search2Activity extends BaseActivity {
 		cFilterSingleBook = V.get(this, R.id.cFilterSingleBook);
 		tFilterAdvanced = V.get(this, R.id.tFilterAdvanced);
 		bEditFilter = V.get(this, R.id.bEditFilter);
-		
-		if (useSearchView()) {
-			api11_compat = new Api11_compat();
-			api11_compat.configureSearchView();
-		} else {
-			searchBar = V.get(this, R.id.searchBar);
-			((ViewGroup) panelFilter.getParent()).removeView(panelFilter);
-			searchBar.setBottomView(panelFilter);
-			searchBar.setOnSearchListener(new OnSearchListener() {
-				@Override public void onSearch(SearchBar searchBar, Editable text) {
-					search(text.toString());
-				}
-			});
-			// the background of the search bar is bright, so let's make all text black
-			cFilterOlds.setTextColor(0xff000000);
-			cFilterNews.setTextColor(0xff000000);
-			cFilterSingleBook.setTextColor(0xff000000);
-			tFilterAdvanced.setTextColor(0xff000000);
-		}
-		
+
+		searchView = V.get(Search2Activity.this, R.id.searchView);
+		searchView.setSubmitButtonEnabled(true);
+		searchView.setOnQueryTextListener(new OnQueryTextListener() {
+			@Override public boolean onQueryTextSubmit(String query1) {
+				search(query1);
+				return true;
+			}
+
+			@Override public boolean onQueryTextChange(String newText) {
+				return false;
+			}
+		});
+
 		lsSearchResults.setBackgroundColor(S.applied.backgroundColor);
 		lsSearchResults.setCacheColorHint(S.applied.backgroundColor);
 		
@@ -208,12 +163,8 @@ public class Search2Activity extends BaseActivity {
 			cFilterSingleBook.setText(getString(R.string.search_bookname_only, book.shortName));
 			
 			if (query != null) {
-				if (!useSearchView()) {
-					searchBar.setText(query.query_string);
-				} else {
-					api11_compat.setSearchViewQuery(query.query_string);
-				}
-				
+				searchView.setQuery(query.query_string, false);
+
 				if (searchResults != null) {
 					String[] tokens = QueryTokenizer.tokenize(query.query_string);
 					lsSearchResults.setAdapter(adapter = new Search2Adapter(searchResults, tokens));
@@ -239,11 +190,7 @@ public class Search2Activity extends BaseActivity {
 			Search2Engine.preloadRevIndex();
 		}
 	}
-	
-	boolean useSearchView() {
-		return VERSION.SDK_INT >= 11;
-	}
-	
+
 	void configureFilterDisplayOldNewTest() {
 		// the following variables will have value:
 		// if some are off and some are on -> null.
@@ -387,11 +334,7 @@ public class Search2Activity extends BaseActivity {
 	
 	protected Query getQuery() {
 		Query res = new Query();
-		if (!useSearchView()) {
-			res.query_string = searchBar.getText().toString();
-		} else {
-			res.query_string = api11_compat.getSearchViewQuery();
-		}
+		res.query_string = searchView.getQuery().toString();
 		res.bookIds = selectedBookIds;
 		return res;
 	}
@@ -520,17 +463,14 @@ public class Search2Activity extends BaseActivity {
 				if (result.size() > 0) {
 					//# close soft keyboard
 					InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-					if (!useSearchView()) {
-						inputManager.hideSoftInputFromWindow(searchBar.getSearchField().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-					} else {
-						api11_compat.hideSoftInputFromSearchView(inputManager);
-						lsSearchResults.requestFocus();
-					}
+					inputManager.hideSoftInputFromWindow(searchView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+					searchView.clearFocus();
+					lsSearchResults.requestFocus();
 				}
 				
 				pd.setOnDismissListener(null);
 				pd.dismiss();
-			};
+			}
 		}.execute();
 	}
 	

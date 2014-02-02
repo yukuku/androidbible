@@ -1,6 +1,5 @@
 package yuku.alkitab.base;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
@@ -16,13 +15,11 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcEvent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.view.MotionEventCompat;
-import android.support.v7.view.ActionMode;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
@@ -30,6 +27,7 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.util.Pair;
+import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -237,12 +235,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	class FullScreenController {
 		void hidePermanently() {
-			getSupportActionBar().hide();
+			getActionBar().hide();
 		    panelNavigation.setVisibility(View.GONE);
 	    }
 		
 		void showPermanently() {
-			getSupportActionBar().show();
+			getActionBar().show();
 			panelNavigation.setVisibility(View.VISIBLE);
 		}
 	}
@@ -426,9 +424,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 		}
 
-		if (Build.VERSION.SDK_INT >= 14) {
-			initNfcIfAvailable();
-		}
+		initNfcIfAvailable();
+
 		if (S.getDb().countAllBookmarks() != 0) {
 			BackupManager.startAutoBackup();
 		}
@@ -457,10 +454,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 		}
 		
-		if (Build.VERSION.SDK_INT >= 14) {
-			checkAndProcessBeamIntent(intent);
-		}
-		
+		checkAndProcessBeamIntent(intent);
+
 		checkAndProcessViewIntent(intent);
 	}
 	
@@ -494,7 +489,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 
-	@TargetApi(14) private void initNfcIfAvailable() {
+	private void initNfcIfAvailable() {
 		nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
 		if (nfcAdapter != null) {
 			nfcAdapter.setNdefPushMessageCallback(new CreateNdefMessageCallback() {
@@ -517,23 +512,19 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	@Override protected void onPause() {
 		super.onPause();
-		if (Build.VERSION.SDK_INT >= 14) {
-			disableNfcForegroundDispatchIfAvailable();
-		}
+		disableNfcForegroundDispatchIfAvailable();
 	}
 
-	@TargetApi(14) private void disableNfcForegroundDispatchIfAvailable() {
+	private void disableNfcForegroundDispatchIfAvailable() {
 		if (nfcAdapter != null) nfcAdapter.disableForegroundDispatch(this);
 	}
 	
 	@Override protected void onResume() {
 		super.onResume();
-		if (Build.VERSION.SDK_INT >= 14) {
-			enableNfcForegroundDispatchIfAvailable();
-		}
+		enableNfcForegroundDispatchIfAvailable();
 	}
 
-	@TargetApi(14) private void enableNfcForegroundDispatchIfAvailable() {
+	private void enableNfcForegroundDispatchIfAvailable() {
 		if (nfcAdapter != null) {
 			PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, IsiActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 			IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
@@ -547,7 +538,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 
-	@TargetApi(14) private void checkAndProcessBeamIntent(Intent intent) {
+	private void checkAndProcessBeamIntent(Intent intent) {
 		String action = intent.getAction();
 		if (U.equals(action, NfcAdapter.ACTION_NDEF_DISCOVERED)) {
 			Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
@@ -874,11 +865,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		} else {
 			editor.putString(PREFKEY_lastSplitVersionId, activeSplitVersionId);
 		}
-		if (Build.VERSION.SDK_INT >= 9) {
-			editor.apply();
-		} else {
-			editor.commit();
-		}
+		editor.apply();
 
 		history.save();
 
@@ -1799,7 +1786,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 			
 			if (actionMode == null) {
-				actionMode = startSupportActionMode(actionMode_callback);
+				actionMode = startActionMode(actionMode_callback);
 			}
 			
 			if (actionMode != null) {

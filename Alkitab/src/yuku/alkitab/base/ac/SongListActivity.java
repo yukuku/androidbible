@@ -25,6 +25,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import net.londatiga.android.QuickAction;
 import yuku.afw.App;
@@ -38,7 +39,6 @@ import yuku.alkitab.base.util.SongBookUtil.OnDownloadSongBookListener;
 import yuku.alkitab.base.util.SongBookUtil.OnSongBookSelectedListener;
 import yuku.alkitab.base.util.SongBookUtil.SongBookInfo;
 import yuku.alkitab.base.util.SongFilter;
-import yuku.searchbar.SearchWidget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +56,7 @@ public class SongListActivity extends BaseActivity {
 	private static final String EXTRA_code = "code"; //$NON-NLS-1$
 	private static final String EXTRA_searchState = "searchState"; //$NON-NLS-1$
 	
-	SearchWidget searchWidget;
+	SearchView searchView;
 	ListView lsSong;
 	Button bChangeBook;
 	QuickAction qaChangeBook;
@@ -146,14 +146,15 @@ public class SongListActivity extends BaseActivity {
 		
 		setTitle(R.string.sn_songs_activity_title);
 		
-		searchWidget = V.get(this, R.id.searchWidget);
+		searchView = V.get(this, R.id.searchView);
 		lsSong = V.get(this, R.id.lsSong);
 		bChangeBook = V.get(this, R.id.bChangeBook);
 		cDeepSearch = V.get(this, R.id.cDeepSearch);
 		panelFilter = V.get(this, R.id.panelFilter);
-		
-		searchWidget.setSubmitButtonEnabled(false);
-		searchWidget.setOnQueryTextListener(searchWidget_queryText);
+
+		searchView.setIconifiedByDefault(false);
+		searchView.setSubmitButtonEnabled(false);
+		searchView.setOnQueryTextListener(searchWidget_queryText);
 		
 		lsSong.setAdapter(adapter = new SongAdapter());
 		lsSong.setOnItemClickListener(lsSong_itemClick);
@@ -163,22 +164,13 @@ public class SongListActivity extends BaseActivity {
 		
 		bChangeBook.setOnClickListener(bChangeBook_click);
 		cDeepSearch.setOnCheckedChangeListener(cDeepSearch_checkedChange);
-		
-		// if we're using SearchBar instead of SearchView, move filter panel to
-		// the bottom view of the SearchBar for better appearance
-		if (searchWidget.getSearchBarIfUsed() != null) {
-			((ViewGroup) panelFilter.getParent()).removeView(panelFilter);
-			searchWidget.getSearchBarIfUsed().setBottomView(panelFilter);
-			// the background of the search bar is bright, so let's make all text black
-			cDeepSearch.setTextColor(0xff000000);
-		}
-		
+
 		loader = new SongLoader();
         
         SearchState searchState = getIntent().getParcelableExtra(EXTRA_searchState);
         if (searchState != null) {
         	stillUsingInitialSearchState = true; { // prevent triggering
-	        	searchWidget.setText(searchState.filter_string);
+	        	searchView.setQuery(searchState.filter_string, false);
 	        	adapter.setData(searchState.result);
 	        	cDeepSearch.setChecked(searchState.deepSearch);
 	    		lsSong.setSelection(searchState.selectedPosition);
@@ -258,7 +250,7 @@ public class SongListActivity extends BaseActivity {
 	void startSearch() {
 		if (stillUsingInitialSearchState) return;
 		setProgressBarIndeterminateVisibility(true);
-		loader.setFilterString(searchWidget.getText().toString());
+		loader.setFilterString(searchView.getQuery().toString());
 		loader.setDeepSearch(cDeepSearch.isChecked());
 		loader.forceLoad();
 	}
@@ -316,19 +308,21 @@ public class SongListActivity extends BaseActivity {
 			Intent data = new Intent();
 			data.putExtra(EXTRA_bookName, songInfo.bookName);
 			data.putExtra(EXTRA_code, songInfo.code);
-			data.putExtra(EXTRA_searchState, new SearchState(searchWidget.getText().toString(), adapter.getData(), position, loader.getSelectedBookName(), cDeepSearch.isChecked()));
+			data.putExtra(EXTRA_searchState, new SearchState(searchView.getQuery().toString(), adapter.getData(), position, loader.getSelectedBookName(), cDeepSearch.isChecked()));
 			setResult(RESULT_OK, data);
 			finish();
 		}
 	};
 
-	private SearchWidget.OnQueryTextListener searchWidget_queryText = new SearchWidget.SimpleOnQueryTextListener() {
-		@Override public boolean onQueryTextSubmit(SearchWidget searchWidget, String query) {
+	private SearchView.OnQueryTextListener searchWidget_queryText = new SearchView.OnQueryTextListener() {
+		@Override
+		public boolean onQueryTextSubmit(final String query) {
 			startSearch();
 			return true;
-		};
-		
-		@Override public boolean onQueryTextChange(SearchWidget searchWidget, String newText) {
+		}
+
+		@Override
+		public boolean onQueryTextChange(final String newText) {
 			startSearch();
 			return true;
 		}

@@ -238,7 +238,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			
 			return true;
 		} else if (itemId == R.id.menuCopy) {
-			String toCopy = getSupportActionBar().getTitle() + "\n" + lContent.getText();
+			String toCopy = getActionBar().getTitle() + "\n" + lContent.getText();
 			U.copyToClipboard(toCopy);
 			
 			Toast.makeText(this, R.string.renungan_sudah_disalin, Toast.LENGTH_SHORT).show();
@@ -247,8 +247,8 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		} else if (itemId == R.id.menuShare) {
 			Intent intent = ShareCompat.IntentBuilder.from(DevotionActivity.this)
 			.setType("text/plain") //$NON-NLS-1$
-			.setSubject(getSupportActionBar().getTitle().toString())
-			.setText(getSupportActionBar().getTitle().toString() + '\n' + lContent.getText())
+			.setSubject(getActionBar().getTitle().toString())
+			.setText(getActionBar().getTitle().toString() + '\n' + lContent.getText())
 			.getIntent();
 			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_renungan)), REQCODE_share);
 			
@@ -425,8 +425,8 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			String dateDisplay = namaHari(currentDate) + ", " + DateFormat.getDateFormat(this).format(currentDate);  //$NON-NLS-1$
 			
 			// action bar
-			getSupportActionBar().setTitle(title);
-			getSupportActionBar().setSubtitle(dateDisplay);
+			getActionBar().setTitle(title);
+			getActionBar().setSubtitle(dateDisplay);
 			
 			// popup texts
 			popup.setDevotionName(title);

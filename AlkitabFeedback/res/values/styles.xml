@@ -18,19 +18,8 @@
     
     <!-- Empty parent idiom -->
     <style name="NoParent" />
-    
-    <style name="AlkitabFeedback.Theme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- API 11+ (compatibility) -->
-        <item name="buttonBarStyle">@style/Compat.ButtonBar</item>
-        <item name="buttonBarButtonStyle">@style/Compat.ButtonBarButton</item>
-        <item name="indeterminateProgressStyle">@style/Compat.IndeterminateProgress</item>
-        <item name="dividerHorizontal" type="drawable">@null</item>
-        <!-- API 14+ (compatibility) -->
-        <item name="listPreferredItemPaddingLeft">@dimen/compat_list_preferred_item_padding_left</item>
-        <item name="listPreferredItemPaddingRight">@dimen/compat_list_preferred_item_padding_right</item>
-        <item name="listPreferredItemHeightSmall">@dimen/compat_list_preferred_item_height_small</item>
-        
-        <item name="alkitabfeedback_textAppearanceFinish">@style/alkitabfeedback_TextAppearanceFinish</item>
+
+    <style name="AlkitabFeedback.Theme" parent="android:Theme.Holo.Light.DarkActionBar">
     </style>
 
     <style name="alkitabfeedback_TextAppearanceFinish" parent="android:TextAppearance.Holo.Medium">
@@ -46,7 +35,6 @@
     </style>
 
     <style name="alkitabfeedback_WizardPageTitle">
-        <item name="android:id">@android:id/title</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginBottom">8dp</item>

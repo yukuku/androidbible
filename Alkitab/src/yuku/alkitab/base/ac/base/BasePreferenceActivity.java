@@ -1,8 +1,6 @@
 package yuku.alkitab.base.ac.base;
 
-import android.annotation.TargetApi;
 import android.app.ActionBar;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.view.MenuItem;
@@ -23,21 +21,14 @@ public abstract class BasePreferenceActivity extends PreferenceActivity {
 	protected void onCreate(Bundle savedInstanceState, boolean withUpButton) {
 		super.onCreate(savedInstanceState);
 		
-		if (Build.VERSION.SDK_INT >= 11) {
-			if (withUpButton) {
-				enableUpButton();
+		if (withUpButton) {
+			final ActionBar actionBar = getActionBar();
+			if (actionBar != null) {
+				actionBar.setDisplayHomeAsUpEnabled(true);
 			}
 		}
 	}
 
-	@TargetApi(11)
-	private void enableUpButton() {
-		final ActionBar actionBar = getActionBar();
-		if (actionBar != null) {
-			actionBar.setDisplayHomeAsUpEnabled(true);
-		}
-	}
-	
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == android.R.id.home) {
 			finish();

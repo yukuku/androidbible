@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<style name="Theme.Alkitab" parent="Theme.AppCompat.Light.DarkActionBar" />
+	<style name="Theme.Alkitab" parent="android:Theme.Holo.Light.DarkActionBar" />
 
 	<style name="Theme.Alkitab.Content" parent="@style/Theme.Alkitab">
 	    <item name="android:windowContentOverlay">@null</item>

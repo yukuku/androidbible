@@ -34,14 +34,12 @@
     <orderEntry type="module" module-name="FileChooser" />
     <orderEntry type="module" module-name="FlowLayout" />
     <orderEntry type="module" module-name="KpriViewerLib" />
-    <orderEntry type="module" module-name="SdkSearchBar" />
     <orderEntry type="module" module-name="AndroidCrypto" />
     <orderEntry type="module" module-name="Afw" />
     <orderEntry type="module" module-name="KpriModel" />
     <orderEntry type="module" module-name="SimpleTrove" />
     <orderEntry type="library" name="libGoogleAnalyticsV2" level="project" />
     <orderEntry type="library" name="android-support-v4" level="project" />
-    <orderEntry type="module" module-name="android-support-v7-appcompat" />
     <orderEntry type="module" module-name="DragSortListView" />
     <orderEntry type="module" module-name="AlkitabYes2" />
     <orderEntry type="module" module-name="AlkitabModel" />

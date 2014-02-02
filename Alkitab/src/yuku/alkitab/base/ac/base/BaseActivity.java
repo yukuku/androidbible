@@ -1,12 +1,12 @@
 package yuku.alkitab.base.ac.base;
 
+import android.app.ActionBar;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.FragmentActivity;
 import android.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 
-public abstract class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity extends FragmentActivity {
 	public static final String TAG = BaseActivity.class.getSimpleName();
 	
 	/**
@@ -24,7 +24,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		
 		if (withUpButton) {
-			ActionBar actionBar = getSupportActionBar();
+			ActionBar actionBar = getActionBar();
 			if (actionBar != null) {
 				actionBar.setDisplayHomeAsUpEnabled(true);
 			}

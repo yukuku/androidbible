@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.View;
@@ -86,9 +85,6 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 		bOk.setOnClickListener(bOk_click);
 		bCancel.setOnClickListener(bCancel_click);
 
-		if (Build.VERSION.SDK_INT <= 7) {
-			cTransparentBackground.setEnabled(false); // we can't set background of app widget in API 7
-		}
 		cTransparentBackground.setOnCheckedChangeListener(cTransparentBackground_checkedChange);
 
 		sbTextSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

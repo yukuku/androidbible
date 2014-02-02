@@ -2,7 +2,6 @@ package yuku.kpriviewer.fr;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -11,13 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.List;
-
 import yuku.afw.V;
 import yuku.kpri.model.Lyric;
 import yuku.kpri.model.Song;
@@ -25,6 +17,12 @@ import yuku.kpri.model.Verse;
 import yuku.kpri.model.VerseKind;
 import yuku.kpriviewer.R;
 import yuku.kpriviewer.fr.base.BaseFragment;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.List;
 
 public class SongFragment extends BaseFragment {
 	public static final String TAG = SongFragment.class.getSimpleName();
@@ -68,16 +66,10 @@ public class SongFragment extends BaseFragment {
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.setWebViewClient(webViewClient);
 		
-		if (Build.VERSION.SDK_INT >= 11) {
-			webView.getSettings().setSupportZoom(true);
-			webView.getSettings().setBuiltInZoomControls(true);
-			webView.getSettings().setDisplayZoomControls(false);
-		} else {
-			webView.getSettings().setSupportZoom(true);
-			webView.getSettings().setBuiltInZoomControls(true);
-			// TODO do not show zoom buttons on devices with pinch.
-			// possible solution: http://stackoverflow.com/questions/5125851/enable-disable-zoom-in-android-webview
-		}
+		webView.getSettings().setSupportZoom(true);
+		webView.getSettings().setBuiltInZoomControls(true);
+		webView.getSettings().setDisplayZoomControls(false);
+
 		return res;
 	}
 	

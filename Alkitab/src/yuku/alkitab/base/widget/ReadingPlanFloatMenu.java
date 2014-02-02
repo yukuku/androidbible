@@ -84,7 +84,7 @@ public class ReadingPlanFloatMenu extends LinearLayout {
 		if (view != null) {
 			return;
 		}
-		view = LayoutInflater.from(new ContextThemeWrapper(getContext(), R.style.Theme_AppCompat)).inflate(R.layout.float_menu_reading_plan, this, true);
+		view = LayoutInflater.from(new ContextThemeWrapper(getContext(), android.R.style.Theme_Holo)).inflate(R.layout.float_menu_reading_plan, this, true);
 		bDescription = V.get(view, R.id.bDescription);
 		bLeft = V.get(view, R.id.bNavLeft);
 		bRight = V.get(view, R.id.bNavRight);

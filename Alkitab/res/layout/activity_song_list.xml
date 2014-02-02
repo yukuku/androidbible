@@ -4,16 +4,10 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <SearchView
+        android:id="@+id/searchView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <yuku.searchbar.SearchWidget
-            android:id="@+id/searchWidget"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:id="@+id/panelFilter"
