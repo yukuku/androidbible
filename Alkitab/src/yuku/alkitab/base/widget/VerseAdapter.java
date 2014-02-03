@@ -325,45 +325,4 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 		return res;
 	}
-
-	protected boolean checkShadedForVerse(final int ari) {
-		if (ariRangesReadingPlan != null) {
-
-			int ariStart = ariRangesReadingPlan[0];
-			int ariEnd = ariRangesReadingPlan[1];
-
-			int ariEndVerse = Ari.toVerse(ariEnd);
-			int ariEndChapter = Ari.toChapter(ariEnd);
-
-			if (Ari.toBook(ari) != Ari.toBook(ariRangesReadingPlan[0])) {
-				return true;
-			}
-
-			if (ari < ariStart) {
-				return true;
-			} else if (ariEndVerse == 0) {
-				if (Ari.toChapter(ari) > ariEndChapter) {
-					return true;
-				}
-			} else if (ariEndChapter != 0) {
-				if (ari > ariEnd) {
-					return true;
-				}
-			}
-
-		}
-		return false;
-	}
-
-	protected boolean checkShadedForPericopeHeader(final int ari_bc, final int position) {
-		// look for first non-pericope
-		int testPosition = position + 1;
-		while (true) {
-			if (testPosition >= itemPointer_.length) return false;
-			if (itemPointer_[testPosition] >= 0) { // it's a verse
-				return checkShadedForVerse(Ari.encodeWithBc(ari_bc, itemPointer_[testPosition] + 1));
-			}
-			testPosition++;
-		}
-	}
 }
