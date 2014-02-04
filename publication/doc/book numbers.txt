@@ -1,29 +1,31 @@
-PDB Book Number   Name of the book                                      Bible for Android book number
+This document describes the book numbers used in Bible for Android.
 
-// 0 to 38 is OT
-// 39 to 65 is NT
-// the rest is...
+First column contains the 1-based book numbers used in YET files.
+- 1 to 39 are Old Testament books
+- 40 to 66 are New Testament books
+- and the rest are below.
 
-    145 or 740     1 esdras                                                                  66
-    146 or 750     2 esdras                                                                  67
-    170            tobit                                                                     68
-    180            judit                                                                     69
-    200            1 makabe                                                                  70 
-    210            2 makabe                                                                  71
-    215            3 makabe                                                                  72
-    216            4 makabe                                                                  73
-    231            Psalms (from Heb.) Ps (H) Vulg.: Jerome's translation from the Hebrew     74
-    235            Odes                                                                      75
-    270            wisdom of solomon                                                         76
-    280            sirach / Ecclesiasticus                                                   77
-    285            Psalms of Solomon                                                         78
-    315 or 760     Letter of Jeremiah                                                        79
-    320            baruk                                                                     80
-    335            susanna                                                                   81
-    345 or 770     Prayer of Azariah and the Song of the Three Jews                          82
-    346 or 780     Bel and the Dragon                                                        83
-    790            Prayer of Manasseh                                                        84
-    980            Additions to Esther                                                       85
-    991            mazmur / psalm 151                                                        86
-   1802            Epistle to the Laodicaeans                                                87
+Second column contains PalmBible+ PDB book numbers.
 
+67    145 or 740    1 Esdras
+68    146 or 750    2 Esdras
+69    170           Tobit
+70    180           Judith
+71    200           1 Maccabees
+72    210           2 Maccabees
+73    215           3 Maccabees
+74    216           4 Maccabees
+75    231           Psalms (from Heb.) Ps (H) Vulg.: Jerome's translation from the Hebrew
+76    235           Odes
+77    270           Wisdom of Solomon
+78    280           Sirach/Ecclesiasticus
+79    285           Psalms of Solomon
+80    315 or 760    Letter of Jeremiah
+81    320           Baruch
+82    335           Susanna
+83    345 or 770    Prayer of Azariah and the Song of the Three Jews
+84    346 or 780    Bel and the Dragon
+85    790           Prayer of Manasseh
+86    980           Additions to Esther
+87    991           Psalm 151
+88   1802           Epistle to the Laodicaeans
