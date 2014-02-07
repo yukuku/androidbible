@@ -6,7 +6,8 @@ import yuku.alkitab.util.Ari;
 import yuku.alkitab.yes2.model.PericopeData;
 import yuku.alkitabconverter.util.Rec;
 
-import java.io.File;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -112,7 +113,7 @@ public class YetFileInput {
 		String report_line_text = null;
 
 		try {
-			final Scanner sc = new Scanner(new File(nf), "utf-8");
+			final Scanner sc = new Scanner(new BufferedInputStream(new FileInputStream(nf), 20*1024*1024), "utf-8");
 			while (sc.hasNextLine()) {
 				String line = sc.nextLine();
 				

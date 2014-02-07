@@ -61,8 +61,6 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				lText.setTextColor(0xff000000); // override with black!
 			}
 
-			res.setShaded(checkShadedForVerse(ari));
-
 			final AttributeView attributeView = (AttributeView) res.findViewById(R.id.view_attributes);
 			attributeView.showBookmark(attributeMap_ != null && (attributeMap_[id] & 0x1) != 0);
 			attributeView.showNote(attributeMap_ != null && (attributeMap_[id] & 0x2) != 0);
@@ -110,7 +108,6 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			}
 
 			res.setPadding(0, paddingTop, 0, S.applied.pericopeSpacingBottom);
-			res.setShaded(checkShadedForPericopeHeader(Ari.encode(book_.bookId, chapter_1_, 0), position));
 
 			Appearances.applyPericopeTitleAppearance(lCaption);
 
