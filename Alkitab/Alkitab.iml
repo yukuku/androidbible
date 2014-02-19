@@ -33,10 +33,8 @@
     <orderEntry type="module" module-name="NewQuickAction3DLib" />
     <orderEntry type="module" module-name="FileChooser" />
     <orderEntry type="module" module-name="FlowLayout" />
-    <orderEntry type="module" module-name="KpriViewerLib" />
     <orderEntry type="module" module-name="AndroidCrypto" />
     <orderEntry type="module" module-name="Afw" />
-    <orderEntry type="module" module-name="KpriModel" />
     <orderEntry type="module" module-name="SimpleTrove" />
     <orderEntry type="library" name="libGoogleAnalyticsV2" level="project" />
     <orderEntry type="library" name="android-support-v4" level="project" />
