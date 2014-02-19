@@ -30,7 +30,6 @@
     <orderEntry type="module" module-name="Snappy" />
     <orderEntry type="module" module-name="AlkitabFeedback" />
     <orderEntry type="module" module-name="AmbilWarna" />
-    <orderEntry type="module" module-name="NewQuickAction3DLib" />
     <orderEntry type="module" module-name="FileChooser" />
     <orderEntry type="module" module-name="FlowLayout" />
     <orderEntry type="module" module-name="AndroidCrypto" />
@@ -44,6 +43,7 @@
     <orderEntry type="module" module-name="AlkitabIo" />
     <orderEntry type="library" name="gson-2.2.4" level="project" />
     <orderEntry type="library" name="okhttp-1.0.2" level="project" />
+    <orderEntry type="module" module-name="NewQuickAction3DLib" />
   </component>
 </module>
 

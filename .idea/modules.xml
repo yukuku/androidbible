@@ -25,7 +25,7 @@
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/FileChooser/FileChooser.iml" filepath="$PROJECT_DIR$/../yuku-android-util/FileChooser/FileChooser.iml" />
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/FlowLayout/FlowLayout.iml" filepath="$PROJECT_DIR$/../yuku-android-util/FlowLayout/FlowLayout.iml" />
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/KirimFidbek/KirimFidbek.iml" filepath="$PROJECT_DIR$/../yuku-android-util/KirimFidbek/KirimFidbek.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/NewQuickAction3DLib/NewQuickAction3DLib.iml" filepath="$PROJECT_DIR$/../yuku-android-util/NewQuickAction3DLib/NewQuickAction3DLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NewQuickAction3DLib/NewQuickAction3DLib.iml" filepath="$PROJECT_DIR$/NewQuickAction3DLib/NewQuickAction3DLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/RpaToRpb/RpaToRpb.iml" filepath="$PROJECT_DIR$/RpaToRpb/RpaToRpb.iml" />
       <module fileurl="file://$PROJECT_DIR$/RpbTester/RpbTester.iml" filepath="$PROJECT_DIR$/RpbTester/RpbTester.iml" />
       <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/Salsa20/Salsa20.iml" filepath="$PROJECT_DIR$/../yuku-android-util/Salsa20/Salsa20.iml" />

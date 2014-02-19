@@ -148,11 +148,6 @@
                   android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"/>
         <activity android:name="yuku.alkitab.base.ac.FontManagerActivity"
                   android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"/>
-        <activity android:name="yuku.alkitab.base.ac.SongListActivity"
-                  android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-                  android:windowSoftInputMode="adjustResize|stateHidden"/>
-        <activity android:name="yuku.alkitab.base.ac.SongViewActivity"
-                  android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"/>
         <activity android:name="yuku.alkitab.base.ac.SecretSettingsActivity"
                   android:label="Secret settings"
                   android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"/>

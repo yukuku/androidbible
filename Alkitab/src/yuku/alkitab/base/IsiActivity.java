@@ -56,7 +56,6 @@ import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.ac.Search2Activity;
 import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.ShareActivity;
-import yuku.alkitab.base.ac.SongViewActivity;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.ac.VersionsActivity.MVersion;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionInternal;
