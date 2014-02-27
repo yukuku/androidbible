@@ -1022,9 +1022,13 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		case R.id.menuDevotion:
 			startActivityForResult(new Intent(this, DevotionActivity.class), REQCODE_devotion);
 			return true;
-		case R.id.menuSongs:
-			startActivity(SongViewActivity.createIntent());
-			return true;
+		case R.id.menuSongs: {
+			// TODO fix
+			new AlertDialog.Builder(this)
+			.setMessage("Kidung has been moved to a separate app")
+			.setPositiveButton("OK", null)
+			.show();
+		} return true;
 		case R.id.menuReadingPlan:
 			startActivityForResult(new Intent(this, ReadingPlanActivity.class), REQCODE_readingPlan);
 			return true;
