@@ -148,11 +148,6 @@
                   android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"/>
         <activity android:name="yuku.alkitab.base.ac.FontManagerActivity"
                   android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"/>
-        <activity android:name="yuku.alkitab.base.ac.SongListActivity"
-                  android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-                  android:windowSoftInputMode="adjustResize|stateHidden"/>
-        <activity android:name="yuku.alkitab.base.ac.SongViewActivity"
-                  android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"/>
         <activity android:name="yuku.alkitab.base.ac.SecretSettingsActivity"
                   android:label="Secret settings"
                   android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"/>
@@ -163,6 +158,16 @@
         <activity android:name="com.example.android.wizardpager.MainActivity"
                   android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
                   android:theme="@style/AlkitabFeedback.Theme"/>
+
+        <activity android:name="yuku.alkitab.base.ac.VersesDialogActivity"
+                  android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+                  android:theme="@style/Theme.Alkitab.Transparent">
+            <intent-filter>
+                <action android:name="yuku.alkitab.action.SHOW_VERSES_DIALOG"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
         <activity android:name="yuku.alkitab.base.ac.DailyVerseAppWidgetConfigurationActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>

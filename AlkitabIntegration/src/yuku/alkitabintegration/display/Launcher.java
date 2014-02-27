@@ -51,7 +51,22 @@ public class Launcher {
 		res.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
 		return res;
 	}
-	
+
+	/**
+	 * Returns an intent that can be used to open a verse dialog at the specified target.
+	 * Call {@link Context#startActivity(Intent)} with the returned intent from your activity to open it.
+	 *
+	 * @param target Can be encoded using any of the following:
+	 * a:[ari start]-[ari end],[ari single verse] For example "a:0x000101" opens Gen 1:1, "a:0x021001-0x021002,0x021101" opens Lev 16:1-2, 17:1
+	 * o:[osis start]-[osis end],[osis single verse] For example "o:Gen.1.1-Gen.1.20" opens Gen 1:1-20
+	 * lid:[lid start]-[lid end],[lid single verse] For example "lid:11-20" opens Gen 1:11-20. Lid can be 1 to 31102.
+	 */
+	public static Intent openVersesDialogByTarget(String target) {
+		Intent res = new Intent("yuku.alkitab.action.SHOW_VERSES_DIALOG");
+		res.putExtra("target", target);
+		return res;
+	}
+
 	/**
 	 * Returns an intent that can be used to open the Google Play app on the page for the user to download the app. 
 	 * Call {@link Context#startActivity(Intent)} with the returned intent from your activity to open it.

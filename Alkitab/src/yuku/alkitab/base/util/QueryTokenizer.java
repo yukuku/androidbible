@@ -2,44 +2,59 @@ package yuku.alkitab.base.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class QueryTokenizer {
 	public static final String TAG = QueryTokenizer.class.getSimpleName();
-	
+
 	static Pattern oneToken = Pattern.compile("(\\+?)((?:\".*?\"|\\S)+)"); //$NON-NLS-1$
 
 	/**
-	 * Convert a query string into tokens. Takes care of quotes and plus signs.
-	 * Put quotes between words to make it one token, and optionally put plus sign before a token, to make it "whole phrase"
-	 * 
+	 * Convert a query string into tokens. Takes care of the quotes.
+	 * A single word without quotes means: look for words that contain it. So 'word' matches 'sword'.
+	 * A single word between quotes means: look for the exact word (aka whole-word). So '"word"' only matches 'word', not 'words' or 'sword'
+	 * Multiple words between quotes: look for the exact ordering of those words, and all of them needs to be exact. So '"mama papa"' matches 'mama papa' but not 'papa mama' or 'mamas papas' or 'mama papaya'
+	 *
 	 * Examples:
 	 *   a b => 'a', 'b'
-	 *   "a b" c => 'a b', 'c'
-	 *   a"bc"d => 'abcd' 
-	 *   +"a bc" => '+a bc'
-	 *   +a bc => '+a', 'bc'
-	 *   +a+b => '+a+b'
-	 *   
-	 * @return tokens with plus still intact but no quotes.
+	 *   "a b" c => '+a b', 'c'
+	 *   a"bc"d => 'abcd'
+	 *   "a bc" => '+a bc'
+	 *   "a" bc => '+a', 'bc'
+	 *   "a+b" => '+a+b'
+	 *
+	 * For compatibility, this also accepts + sign at the beginning of a word or quoted phrase to indicate whole-word matches.
+	 *
+	 * @return list of tokens, starting with the character '+' if it is to be matched in a whole-word/whole-phrase manner.
 	 */
 	public static String[] tokenize(String query) {
 		List<String> raw_tokens = new ArrayList<String>();
 
-		Matcher matcher = QueryTokenizer.oneToken.matcher(toLowerCase(query));
+		Matcher matcher = QueryTokenizer.oneToken.matcher(query.toLowerCase(Locale.getDefault()));
 		while (matcher.find()) {
 			raw_tokens.add(matcher.group(1) + matcher.group(2));
 		}
-		
+
 		//# process raw tokens
 		List<String> processed = new ArrayList<String>(raw_tokens.size());
 		for (int i = 0, len = raw_tokens.size(); i < len; i++) {
-			String token = raw_tokens.get(i);
-			if (token.length() > 0 && QueryTokenizer.tokenWithoutPlus(token).length() > 0) {
-				processed.add(token.replace("\"", "")); // remove quotes //$NON-NLS-1$ //$NON-NLS-2$
+			String raw_token = raw_tokens.get(i);
+			if (isPlussedToken(raw_token)) {
+				String tokenWithoutPlus = tokenWithoutPlus(raw_token);
+				if (tokenWithoutPlus.length() > 0) {
+					processed.add("+" + tokenWithoutPlus.replace("\"", ""));
+				}
+			} else {
+				if (raw_token.length() > 2 && raw_token.startsWith("\"") && raw_token.endsWith("\"")) {
+					processed.add("+" + raw_token.replace("\"", ""));
+				} else {
+					processed.add(raw_token.replace("\"", ""));
+				}
 			}
 		}
+
 		return processed.toArray(new String[processed.size()]);
 	}
 
@@ -61,11 +76,11 @@ public class QueryTokenizer {
 		return new String(newString);
 	}
 
-	static boolean isPlussedToken(String token) {
+	public static boolean isPlussedToken(String token) {
 		return (token.startsWith("+")); //$NON-NLS-1$
 	}
 
-	static String tokenWithoutPlus(String token) {
+	public static String tokenWithoutPlus(String token) {
 		int pos = 0;
 		int len = token.length();
 		while (true) {
@@ -79,7 +94,7 @@ public class QueryTokenizer {
 		if (pos == 0) return token;
 		return token.substring(pos);
 	}
-	
+
 	static boolean isMultiwordToken(String token) {
 		int start = 0;
 		if (isPlussedToken(token)) {
@@ -93,9 +108,9 @@ public class QueryTokenizer {
 		}
 		return false;
 	}
-	
-	static Pattern pattern_letters = Pattern.compile("[\\p{javaLetter}'-]+"); 
-	
+
+	static Pattern pattern_letters = Pattern.compile("[\\p{javaLetter}'-]+");
+
 	/**
 	 * For tokens such as "abc.,- def", which will be re-tokenized to "abc" "def"
 	 */

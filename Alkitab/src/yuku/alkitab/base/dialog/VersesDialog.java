@@ -1,5 +1,6 @@
 package yuku.alkitab.base.dialog;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -42,6 +43,8 @@ public class VersesDialog extends BaseDialog {
 	List<String> displayedVerseNumberTexts;
 	Version sourceVersion = S.activeVersion;
 
+	DialogInterface.OnDismissListener onDismissListener;
+
 	public VersesDialog() {
 	}
 	
@@ -54,7 +57,16 @@ public class VersesDialog extends BaseDialog {
 
 		return res;
 	}
-	
+
+	@Override
+	public void onDismiss(final DialogInterface dialog) {
+		super.onDismiss(dialog);
+
+		if (onDismissListener != null) {
+			onDismissListener.onDismiss(dialog);
+		}
+	}
+
 	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setStyle(DialogFragment.STYLE_NO_TITLE, 0);
@@ -139,5 +151,13 @@ public class VersesDialog extends BaseDialog {
 
 	public void setListener(final VersesDialogListener listener) {
 		this.listener = listener;
+	}
+
+	public DialogInterface.OnDismissListener getOnDismissListener() {
+		return onDismissListener;
+	}
+
+	public void setOnDismissListener(final DialogInterface.OnDismissListener onDismissListener) {
+		this.onDismissListener = onDismissListener;
 	}
 }
