@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item android:id="@+id/menuSearch"
+          android:icon="@drawable/ic_menu_search"
+          android:showAsAction="always"
+          android:title="@string/cari_v"/>
     <item android:id="@+id/menuCopy"
           android:icon="@drawable/ic_menu_copy"
-          android:showAsAction="ifRoom"
+          android:showAsAction="never"
           android:title="@string/salin_renungan"/>
     <item android:id="@+id/menuShare"
           android:icon="@drawable/ic_menu_share"
-          android:showAsAction="ifRoom"
+          android:showAsAction="never"
           android:title="@string/bagikan"/>
 
 </menu>

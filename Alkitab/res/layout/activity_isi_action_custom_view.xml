@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <ImageButton
+            android:id="@+id/bLeft"
+            style="?android:actionButtonStyle"
+            android:layout_width="24dp"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/desc_previous_chapter"
+            android:padding="16dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_nav_left_light"/>
+
+    <yuku.alkitab.base.widget.GotoButton
+            android:id="@+id/bGoto"
+            style="?android:actionButtonStyle"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="*Long Name Of Book 123"
+            android:textSize="16sp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            tools:ignore="HardcodedText"/>
+
+    <ImageButton
+            android:id="@+id/bRight"
+            style="?android:actionButtonStyle"
+            android:layout_width="24dp"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/desc_next_chapter"
+            android:padding="16dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_nav_right_light"/>
+</LinearLayout>

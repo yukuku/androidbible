@@ -1,5 +1,6 @@
 package yuku.alkitab.base.ac;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -64,7 +65,6 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 	ViewGroup no_song_data_container;
 	Button bChangeBook;
 	Button bChangeCode;
-	View bSearch;
 	View bDownload;
 	QuickAction qaChangeBook;
 	SongCodePopup codeKeypad;
@@ -86,12 +86,16 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		setContentView(R.layout.activity_song_view);
 		
 		setTitle(R.string.sn_songs_activity_title);
-		
+
+		final ActionBar actionBar = getActionBar();
+		final View actionCustomView = getLayoutInflater().cloneInContext(actionBar.getThemedContext()).inflate(R.layout.activity_song_view_action_custom_view, null);
+		bChangeBook = V.get(actionCustomView, R.id.bChangeBook);
+		bChangeCode = V.get(actionCustomView, R.id.bChangeCode);
+		actionBar.setCustomView(actionCustomView);
+		actionBar.setDisplayShowCustomEnabled(true);
+
 		song_container = V.get(this, R.id.song_container);
 		no_song_data_container = V.get(this, R.id.no_song_data_container);
-		bChangeBook = V.get(this, R.id.bChangeBook);
-		bChangeCode = V.get(this, R.id.bChangeCode);
-		bSearch = V.get(this, R.id.bSearch);
 		bDownload = V.get(this, R.id.bDownload);
 		
 		qaChangeBook = SongBookUtil.getSongBookQuickAction(this, false);
@@ -101,7 +105,6 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		
 		bChangeBook.setOnClickListener(bChangeBook_click);
 		bChangeCode.setOnClickListener(bChangeCode_click);
-		bSearch.setOnClickListener(bSearch_click);
 		bDownload.setOnClickListener(bDownload_click);
 		
 		// for colors of bg, text, etc
@@ -154,6 +157,9 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 	
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case R.id.menuSearch: {
+			startActivityForResult(SongListActivity.createIntent(last_searchState), REQCODE_songList);
+		} return true;
 		case R.id.menuCopy: {
 			if (currentSong != null) {
 				U.copyToClipboard(convertSongToText(currentSong));
@@ -378,12 +384,6 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		}
 	}
 
-	OnClickListener bSearch_click = new OnClickListener() {
-		@Override public void onClick(View v) {
-			startActivityForResult(SongListActivity.createIntent(last_searchState), REQCODE_songList);
-		}
-	};
-	
 	OnClickListener bDownload_click = new OnClickListener() {
 		@Override public void onClick(View v) { // just a proxy to bChangeBook
 			bChangeBook.performClick();

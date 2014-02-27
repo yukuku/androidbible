@@ -1,5 +1,6 @@
 package yuku.alkitab.base;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
@@ -233,18 +234,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		reloadVerse();
 	}
 
-	class FullScreenController {
-		void hidePermanently() {
-			getActionBar().hide();
-		    panelNavigation.setVisibility(View.GONE);
-	    }
-		
-		void showPermanently() {
-			getActionBar().show();
-			panelNavigation.setVisibility(View.VISIBLE);
-		}
-	}
-	
 	FrameLayout overlayContainer;
 	View root;
 	VersesView lsText;
@@ -253,7 +242,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	TouchInterceptLinearLayout splitRoot;
 	View splitHandle;
 	LabeledSplitHandleButton splitHandleButton;
-	FrameLayout panelNavigation;
 	GotoButton bGoto;
 	ImageButton bLeft;
 	ImageButton bRight;
@@ -264,7 +252,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	int chapter_1 = 0;
 	SharedPreferences instant_pref;
 	boolean fullScreen;
-	FullScreenController fullScreenController = new FullScreenController();
 
 	History history;
 	NfcAdapter nfcAdapter;
@@ -307,7 +294,17 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		super.onCreate(savedInstanceState, false);
 		
 		setContentView(R.layout.activity_isi);
-		
+
+		final ActionBar actionBar = getActionBar();
+		final View actionCustomView = getLayoutInflater().cloneInContext(actionBar.getThemedContext()).inflate(R.layout.activity_isi_action_custom_view, null);
+		bGoto = V.get(actionCustomView, R.id.bGoto);
+		bLeft = V.get(actionCustomView, R.id.bLeft);
+		bRight = V.get(actionCustomView, R.id.bRight);
+		actionBar.setCustomView(actionCustomView);
+		actionBar.setDisplayShowCustomEnabled(true);
+		actionBar.setDisplayShowTitleEnabled(false);
+		actionBar.setDisplayShowHomeEnabled(false);
+
 		overlayContainer = V.get(this, R.id.overlayContainer);
 		root = V.get(this, R.id.root);
 		lsText = V.get(this, R.id.lsSplit0);
@@ -316,10 +313,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		splitRoot = V.get(this, R.id.splitRoot);
 		splitHandle = V.get(this, R.id.splitHandle);
 		splitHandleButton = V.get(this, R.id.splitHandleButton);
-		panelNavigation = V.get(this, R.id.panelNavigation);
-		bGoto = V.get(this, R.id.bGoto);
-		bLeft = V.get(this, R.id.bLeft);
-		bRight = V.get(this, R.id.bRight);
 		floater = V.get(this, R.id.floater);
 		readingPlanFloatMenu = V.get(this, R.id.readingPlanFloatMenu);
 
@@ -1077,11 +1070,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	void setFullScreen(boolean yes) {
 		if (yes) {
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-			fullScreenController.hidePermanently();
+			getActionBar().hide();
 			fullScreen = true;
 		} else {
 			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-			fullScreenController.showPermanently();
+			getActionBar().show();
 			fullScreen = false;
 		}
 	}
@@ -1491,16 +1484,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		displaySplitFollowingMaster(verse_1);
 		
 		// set goto button text
-		String reference = this.activeBook.reference(chapter_1);
+		final String reference = this.activeBook.reference(chapter_1);
 		if (Preferences.getBoolean(Prefkey.history_button_understood, false) || history.getSize() == 0) {
 			bGoto.setText(reference);
 		} else {
-			SpannableStringBuilder sb = new SpannableStringBuilder();
-			sb.append(reference).append("\n");
-			int sb_len = sb.length();
-			sb.append(getString(R.string.recentverses_button_hint));
-			sb.setSpan(new RelativeSizeSpan(0.6f), sb_len, sb.length(), 0);
-			bGoto.setText(sb);
+			// TODO show something to indicate user can long press on goto button
+			bGoto.setText(reference);
 		}
 		
 		return Ari.encode(0, chapter_1, verse_1);

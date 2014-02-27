@@ -5,49 +5,6 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="#50808080"
-        android:gravity="center_vertical"
-        android:orientation="horizontal" >
-
-        <Button
-            android:id="@+id/bChangeBook"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:height="48dp"
-            android:minEms="3"
-            android:text="––––"
-            android:textSize="18sp"
-            tools:ignore="HardcodedText" />
-
-        <Button
-            android:id="@+id/bChangeCode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:height="48dp"
-            android:minEms="3"
-            android:text="––––"
-            android:textSize="18sp"
-            tools:ignore="HardcodedText" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <Button
-            android:id="@+id/bSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:height="48dp"
-            android:minEms="3"
-            android:text="@string/cari_v"
-            android:textSize="18sp" />
-
-    </LinearLayout>
-
     <FrameLayout
         android:id="@+id/song_container"
         android:layout_width="fill_parent"
