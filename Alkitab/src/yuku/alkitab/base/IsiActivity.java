@@ -70,7 +70,6 @@ import yuku.alkitab.base.dialog.TypeHighlightDialog;
 import yuku.alkitab.base.dialog.TypeNoteDialog;
 import yuku.alkitab.base.dialog.XrefDialog;
 import yuku.alkitab.base.storage.Prefkey;
-import yuku.alkitab.base.util.BackupManager;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
@@ -417,10 +416,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 
 		initNfcIfAvailable();
-
-		if (S.getDb().countAllBookmarks() != 0) {
-			BackupManager.startAutoBackup();
-		}
 
 		processIntent(getIntent(), "onCreate");
 	}
@@ -1652,7 +1647,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		public void onBookmarkAttributeClick(final Book book, final int chapter_1, final int verse_1) {
 			final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
 			String reference = book.reference(chapter_1, verse_1);
-			TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, reference, ari);
+			TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, ari, 0 /* TODO support multi bookmark */);
 			dialog.setListener(new TypeBookmarkDialog.Listener() {
 				@Override public void onOk() {
 					lsText.reloadAttributeMap();
@@ -1667,8 +1662,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		@Override
 		public void onNoteAttributeClick(final Book book, final int chapter_1, final int verse_1) {
-			TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, book, chapter_1, verse_1, new TypeNoteDialog.Listener() {
-				@Override public void onDone() {
+			final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
+
+			TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, ari, 0 /* TODO support multi note */, new TypeNoteDialog.Listener() {
+				@Override
+				public void onDone() {
 					lsText.reloadAttributeMap();
 
 					if (activeSplitVersion != null) {
@@ -1989,8 +1987,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				}
 				
 				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, mainVerse_1);
-				
-				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, IsiActivity.this.activeBook.reference(IsiActivity.this.chapter_1, mainVerse_1), ari);
+
+				// always create a new bookmark
+				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, ari);
 				dialog.setListener(new TypeBookmarkDialog.Listener() {
 					@Override public void onOk() {
 						reloadVerse();
@@ -2004,11 +2003,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				if (mainVerse_1 == 0) {
 					// no main verse, scroll to show the relevant one!
 					mainVerse_1 = selected.get(0);
-					
+
 					lsText.scrollToShowVerse(mainVerse_1);
 				}
-				
-				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, IsiActivity.this.activeBook, IsiActivity.this.chapter_1, mainVerse_1, new TypeNoteDialog.Listener() {
+
+				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, mainVerse_1);
+
+				// always create a new note
+				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, ari, new TypeNoteDialog.Listener() {
 					@Override public void onDone() {
 						reloadVerse();
 					}
@@ -2019,7 +2021,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			case R.id.menuAddHighlight: {
 				final int ariKp = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, 0);
 				int colorRgb = S.getDb().getHighlightColorRgb(ariKp, selected);
-				
+
 				new TypeHighlightDialog(IsiActivity.this, ariKp, selected, new TypeHighlightDialog.Listener() {
 					@Override public void onOk(int colorRgb) {
 						reloadVerse();

@@ -7,8 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import yuku.afw.App;
-import yuku.alkitab.base.storage.Db.Bookmark2;
-import yuku.alkitab.util.Ari;
 
 public class InternalDbHelper extends SQLiteOpenHelper {
 	public static final String TAG = InternalDbHelper.class.getSimpleName();
@@ -25,16 +23,16 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	@Override public void onCreate(SQLiteDatabase db) {
 		Log.d(TAG, "@@onCreate"); //$NON-NLS-1$
 		
-		createTableBookmark2(db);
-		createIndexBookmark2(db);
+		createTableMarker(db);
+		createIndexMarker(db);
 		createTableDevotion(db);
 		createIndexDevotion(db);
 		createTableVersion(db);
 		createIndexVersion(db);
 		createTableLabel(db);
 		createIndexLabel(db);
-		createTableBookmark2_Label(db);
-		createIndexBookmark2_Label(db);
+		createTableMarker_Label(db);
+		createIndexMarker_Label(db);
 		createTableProgressMark(db);
 		createIndexProgressMark(db);
 		insertDefaultProgressMarks(db);
@@ -48,9 +46,10 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	@Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.d(TAG, "@@onUpgrade oldVersion=" + oldVersion + " newVersion=" + newVersion); //$NON-NLS-1$ //$NON-NLS-2$
 
-		if (oldVersion <= 23) {
-			convertFromBookmarkToBookmark2(db);
-		}
+		// No more support for Bukmak version 1 table (last published: 2010-06-14)
+		// if (oldVersion <= 23) {
+		//	convertFromBookmarkToBookmark2(db);
+		// }
 
 		if (oldVersion <= 50) {
 			// new table Version
@@ -59,15 +58,15 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		}
 
 		if (oldVersion <= 69) { // 70: 2.0.0
-			// new tables Label and Bookmark2_Label
+			// new tables Label and Marker_Label
 			createTableLabel(db);
 			createIndexLabel(db);
-			createTableBookmark2_Label(db);
-			createIndexBookmark2_Label(db);
+			createTableMarker_Label(db);
+			createIndexMarker_Label(db);
 		}
 
 		if (oldVersion <= 70) { // 71: 2.0.0 too
-			createIndexBookmark2(db);
+			createIndexMarker(db);
 		}
 
 		if (oldVersion <= 71) { // 72: 2.0.0 too
@@ -112,24 +111,36 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			createTableReadingPlanProgress(db);
 			createIndexReadingPlanProgress(db);
 		}
+
+		if (oldVersion < 1000000) { // last version that don't use Marker table
+			createTableMarker(db);
+			createIndexMarker(db);
+			createTableMarker_Label(db);
+			createIndexMarker_Label(db);
+
+			convertFromBookmark2ToMarker(db);
+		}
 	}
 
-	private void createTableBookmark2(SQLiteDatabase db) {
-		db.execSQL("create table if not exists " + Db.TABLE_Bookmark2 + " (" + //$NON-NLS-1$
-		"_id integer primary key autoincrement, " + //$NON-NLS-1$
-		Db.Bookmark2.ari + " integer, " + //$NON-NLS-1$
-		Db.Bookmark2.kind + " integer, " + //$NON-NLS-1$
-		Db.Bookmark2.caption + " text, " + //$NON-NLS-1$
-		Db.Bookmark2.addTime + " integer, " + //$NON-NLS-1$
-		Db.Bookmark2.modifyTime + " integer)"); //$NON-NLS-1$
+	private void createTableMarker(SQLiteDatabase db) {
+		db.execSQL(
+			"create table if not exists " + Db.TABLE_Marker + " (" +
+			"_id integer primary key autoincrement, " +
+			Db.Marker.ari + " integer, " +
+			Db.Marker.kind + " integer, " +
+			Db.Marker.caption + " text, " +
+			Db.Marker.verseCount + " integer, " +
+			Db.Marker.createTime + " integer, " +
+			Db.Marker.modifyTime + " integer)"
+		);
 	}
 
-	private void createIndexBookmark2(SQLiteDatabase db) {
-		db.execSQL("create index if not exists index_201 on " + Db.TABLE_Bookmark2 + " (" + Db.Bookmark2.ari + ")"); //$NON-NLS-1$
-		db.execSQL("create index if not exists index_202 on " + Db.TABLE_Bookmark2 + " (" + Db.Bookmark2.kind + ", " + Db.Bookmark2.ari + ")"); //$NON-NLS-1$
-		db.execSQL("create index if not exists index_203 on " + Db.TABLE_Bookmark2 + " (" + Db.Bookmark2.kind + ", " + Db.Bookmark2.modifyTime + ")"); //$NON-NLS-1$
-		db.execSQL("create index if not exists index_204 on " + Db.TABLE_Bookmark2 + " (" + Db.Bookmark2.kind + ", " + Db.Bookmark2.addTime + ")"); //$NON-NLS-1$
-		db.execSQL("create index if not exists index_205 on " + Db.TABLE_Bookmark2 + " (" + Db.Bookmark2.kind + ", " + Db.Bookmark2.caption + " collate NOCASE)"); //$NON-NLS-1$
+	private void createIndexMarker(SQLiteDatabase db) {
+		db.execSQL("create index if not exists index_Marker_01 on " + Db.TABLE_Marker + " (" + Db.Marker.ari + ")");
+		db.execSQL("create index if not exists index_Marker_02 on " + Db.TABLE_Marker + " (" + Db.Marker.kind + ", " + Db.Marker.ari + ")");
+		db.execSQL("create index if not exists index_Marker_03 on " + Db.TABLE_Marker + " (" + Db.Marker.kind + ", " + Db.Marker.modifyTime + ")");
+		db.execSQL("create index if not exists index_Marker_04 on " + Db.TABLE_Marker + " (" + Db.Marker.kind + ", " + Db.Marker.createTime + ")");
+		db.execSQL("create index if not exists index_Marker_05 on " + Db.TABLE_Marker + " (" + Db.Marker.kind + ", " + Db.Marker.caption + " collate NOCASE)");
 	}
 
 	private void createTableDevotion(SQLiteDatabase db) {
@@ -184,17 +195,18 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL("create index if not exists index_401 on " + Db.TABLE_Label + " (" + Db.Label.ordering + ")"); //$NON-NLS-1$
 	}
 
-	private void createTableBookmark2_Label(SQLiteDatabase db) {
-		db.execSQL("create table if not exists " + Db.TABLE_Bookmark2_Label + " (" + //$NON-NLS-1$ //$NON-NLS-2$
-		"_id integer primary key autoincrement, " + //$NON-NLS-1$
-		Db.Bookmark2_Label.bookmark2_id + " integer, " + //$NON-NLS-1$
-		Db.Bookmark2_Label.label_id + " integer)"); //$NON-NLS-1$
+	private void createTableMarker_Label(SQLiteDatabase db) {
+		db.execSQL("create table if not exists " + Db.TABLE_Marker_Label + " (" +
+			"_id integer primary key autoincrement, " +
+			Db.Marker_Label.marker_id + " integer, " +
+			Db.Marker_Label.label_id + " integer)"
+		);
 	}
 
-	private void createIndexBookmark2_Label(SQLiteDatabase db) {
-		db.execSQL("create index if not exists index_501 on "        + Db.TABLE_Bookmark2_Label + " (" + Db.Bookmark2_Label.bookmark2_id + ")"); //$NON-NLS-1$
-		db.execSQL("create index if not exists index_502 on "        + Db.TABLE_Bookmark2_Label + " (" + Db.Bookmark2_Label.label_id + ")"); //$NON-NLS-1$
-		db.execSQL("create unique index if not exists index_503 on " + Db.TABLE_Bookmark2_Label + " (" + Db.Bookmark2_Label.bookmark2_id + ", " + Db.Bookmark2_Label.label_id + ")"); //$NON-NLS-1$
+	private void createIndexMarker_Label(SQLiteDatabase db) {
+		db.execSQL("create        index if not exists index_Marker_Label_01 on " + Db.TABLE_Marker_Label + " (" + Db.Marker_Label.marker_id + ")");
+		db.execSQL("create        index if not exists index_Marker_Label_02 on " + Db.TABLE_Marker_Label + " (" + Db.Marker_Label.label_id + ")");
+		db.execSQL("create unique index if not exists index_Marker_Label_03 on " + Db.TABLE_Marker_Label + " (" + Db.Marker_Label.marker_id + ", " + Db.Marker_Label.label_id + ")");
 	}
 
 	private void createTableProgressMark(SQLiteDatabase db) {
@@ -264,61 +276,64 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL("create index if not exists index_303 on " + Db.TABLE_Version + " (" + Db.Version.title + ")"); //$NON-NLS-1$
 	}
 
-	// Legacy code, so most of them are not in English
-	private void convertFromBookmarkToBookmark2(SQLiteDatabase db) {
-		String TABEL_Bukmak = "Bukmak"; //$NON-NLS-1$
-		class Bukmak {
-			public static final String alamat = "alamat"; //$NON-NLS-1$
-			public static final String waktuTambah = "waktuTambah"; //$NON-NLS-1$
-			public static final String kitab = "kitab"; //$NON-NLS-1$
-			public static final String pasal = "pasal"; //$NON-NLS-1$
-			public static final String ayat = "ayat"; //$NON-NLS-1$
+	/**
+	 * Converts Bookmark2 to Marker table
+	 * and Bookmark2_Label to Marker_Label
+	 */
+	private void convertFromBookmark2ToMarker(final SQLiteDatabase db) {
+		final String TABLE_Bookmark2 = "Bukmak2"; //$NON-NLS-1$
+		class Bookmark2 {
+			public static final String ari = "ari"; //$NON-NLS-1$
+			public static final String kind = "jenis"; //$NON-NLS-1$
+			public static final String caption = "tulisan"; //$NON-NLS-1$
+			public static final String addTime = "waktuTambah"; //$NON-NLS-1$
+			public static final String modifyTime = "waktuUbah"; //$NON-NLS-1$
 		}
 
-		createTableBookmark2(db);
-		createIndexBookmark2(db);
+		final String TABLE_Bookmark2_Label = "Bukmak2_Label"; //$NON-NLS-1$
+		class Bookmark2_Label {
+			public static final String bookmark2_id = "bukmak2_id"; //$NON-NLS-1$
+			public static final String label_id = "label_id"; //$NON-NLS-1$
+		}
 
-		// pindahin data dari Bukmak ke Bukmak2
+		// We need to maintain _id to prevent complications with Marker_Label
 		db.beginTransaction();
 		try {
-			Cursor cursor = db.query(TABEL_Bukmak, new String[] {Bukmak.alamat, Bukmak.kitab, Bukmak.pasal, Bukmak.ayat, Bukmak.waktuTambah}, null, null, null, null, null);
+			{ // Marker -> Marker
+				final Cursor c = db.query(TABLE_Bookmark2,
+					new String[] {"_id", Bookmark2.ari, Bookmark2.kind, Bookmark2.caption, Bookmark2.addTime, Bookmark2.modifyTime},
+					null, null, null, null, "_id asc"
+				);
+				final ContentValues cv = new ContentValues();
+				while (c.moveToNext()) {
+					cv.put("_id", c.getLong(0));
+					cv.put(Db.Marker.ari, c.getInt(1));
+					cv.put(Db.Marker.kind, c.getInt(2));
+					cv.put(Db.Marker.caption, c.getString(3));
+					cv.put(Db.Marker.createTime, c.getLong(4));
+					cv.put(Db.Marker.modifyTime, c.getLong(5));
+					cv.put(Db.Marker.verseCount, 1);
+					db.insert(Db.TABLE_Marker, null, cv);
+				}
+			}
 
-			int kolom_alamat = cursor.getColumnIndex(Bukmak.alamat);
-			int kolom_kitab = cursor.getColumnIndex(Bukmak.kitab);
-			int kolom_pasal = cursor.getColumnIndex(Bukmak.pasal);
-			int kolom_ayat = cursor.getColumnIndex(Bukmak.ayat);
-			int kolom_waktuTambah = cursor.getColumnIndex(Bukmak.waktuTambah);
-
-			ContentValues cv = new ContentValues();
-
-			// default
-			cv.put(Bookmark2.kind, Bookmark2.kind_bookmark);
-
-			while (true) {
-		    	boolean more = cursor.moveToNext();
-		    	if (!more) {
-		    		break;
-		    	}
-
-		    	cv.put(Bookmark2.caption, cursor.getString(kolom_alamat));
-
-		    	int kitab = cursor.getInt(kolom_kitab);
-		    	int pasal = cursor.getInt(kolom_pasal);
-		    	int ayat = cursor.getInt(kolom_ayat);
-		    	int ari = Ari.encode(kitab, pasal, ayat);
-
-		    	cv.put(Bookmark2.ari, ari);
-		    	Integer waktu = Integer.valueOf(cursor.getString(kolom_waktuTambah));
-		    	cv.put(Bookmark2.addTime, waktu);
-		    	cv.put(Bookmark2.modifyTime, waktu);
-				db.insertOrThrow(Db.TABLE_Bookmark2, null, cv);
-		    }
-		    cursor.close();
+			{ // Bookmark2_Label -> Marker_Label
+				final Cursor c = db.query(TABLE_Bookmark2_Label,
+					new String[] {"_id", Bookmark2_Label.bookmark2_id, Bookmark2_Label.label_id},
+					null, null, null, null, "_id asc"
+				);
+				final ContentValues cv = new ContentValues();
+				while (c.moveToNext()) {
+					cv.put("_id", c.getLong(0));
+					cv.put(Db.Marker_Label.marker_id, c.getLong(1));
+					cv.put(Db.Marker_Label.label_id, c.getLong(2));
+					db.insert(Db.TABLE_Marker_Label, null, cv);
+				}
+			}
 
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
 		}
 	}
-
 }

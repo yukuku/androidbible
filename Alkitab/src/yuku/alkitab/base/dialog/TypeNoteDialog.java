@@ -8,45 +8,56 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.EditText;
+import yuku.alkitab.base.S;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.model.Marker;
 
 import java.util.Date;
-
-import yuku.alkitab.debug.R;
-import yuku.alkitab.base.S;
-import yuku.alkitab.util.Ari;
-import yuku.alkitab.model.Book;
-import yuku.alkitab.model.Bookmark2;
-import yuku.alkitab.base.storage.Db;
 
 public class TypeNoteDialog {
 	final Context context;
 	final AlertDialog dialog;
 	final Listener listener;
-	final Book book;
-	final int chapter_1;
-	final int verse_1;
-	
+
 	EditText tCaption;
 	
-	int ari;
-	String reference;
-	Bookmark2 bookmark;
+	Marker marker;
+	int ariForNewNote;
 
 	public interface Listener {
 		void onDone();
 	}
-	
-	public TypeNoteDialog(Context context, Book book, int chapter_1, int verse_1, Listener listener) {
-		this.book = book;
-		this.chapter_1 = chapter_1;
-		this.verse_1 = verse_1;
-		this.ari = Ari.encode(book.bookId, chapter_1, verse_1);
-		this.reference = book.reference(chapter_1, verse_1);
+
+	/**
+	 * Open the note edit dialog, editing existing note.
+	 * @param context Activity context to create dialogs
+	 */
+	public TypeNoteDialog(Context context, long _id, Listener listener) {
+		this(context, S.getDb().getMarkerById(_id), null, listener);
+	}
+
+	/**
+	 * Open the note edit dialog for an existing note by ari and ordering (starting from 0).
+	 */
+	public TypeNoteDialog(Context context, int ari, int ordering, Listener listener) {
+		this(context, S.getDb().getMarker(ari, Marker.Kind.note, ordering), null, listener);
+	}
+
+	/**
+	 * Open the note edit dialog for a new note by ari.
+	 */
+	public TypeNoteDialog(Context context, int ari, Listener listener) {
+		this(context, null, S.activeVersion.reference(ari), listener);
+		this.ariForNewNote = ari;
+	}
+
+	private TypeNoteDialog(Context context, Marker marker, String reference, Listener listener) {
 		this.context = context;
+		this.marker = marker;
 		this.listener = listener;
-		
-		View dialogLayout = LayoutInflater.from(context).inflate(R.layout.dialog_edit_note, null);
-		
+
+		final View dialogLayout = LayoutInflater.from(context).inflate(R.layout.dialog_edit_note, null);
+
 		this.dialog = new AlertDialog.Builder(context)
 		.setView(dialogLayout)
 		.setIcon(R.drawable.ic_attr_note)
@@ -64,10 +75,17 @@ public class TypeNoteDialog {
 		})
 		.create();
 
+		if (reference == null) {
+			reference = S.activeVersion.reference(marker.ari); // TODO multi verse
+		}
+
+		this.dialog.setTitle(context.getString(R.string.catatan_alamat, reference));
+
 		tCaption = (EditText) dialogLayout.findViewById(R.id.tCaption);
-		
+
 		tCaption.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-			@Override public void onFocusChange(View v, boolean hasFocus) {
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
 				if (hasFocus) {
 					if (tCaption.length() == 0) {
 						dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
@@ -76,17 +94,14 @@ public class TypeNoteDialog {
 			}
 		});
 	}
-	
+
 	void setCaption(CharSequence catatan) {
 		tCaption.setText(catatan);
 	}
 
 	public void show() {
-		this.dialog.setTitle(context.getString(R.string.catatan_alamat, reference));
-		
-		this.bookmark = S.getDb().getBookmarkByAri(ari, Db.Bookmark2.kind_note);
-		if (bookmark != null) {
-			tCaption.setText(bookmark.caption);
+		if (marker != null) {
+			tCaption.setText(marker.caption);
 		}
 		
 		dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -94,20 +109,21 @@ public class TypeNoteDialog {
 		dialog.show();
 	}
 
-	protected void bOk_click() {
-		CharSequence caption = tCaption.getText();
-		Date now = new Date();
-		if (bookmark != null) {
-			if (caption.length() == 0) {
-				S.getDb().deleteBookmarkByAri(ari, Db.Bookmark2.kind_note);
+	void bOk_click() {
+		final String caption = tCaption.getText().toString();
+		final Date now = new Date();
+
+		if (marker != null) { // update existing marker
+			if (caption.length() == 0) { // delete instead of update
+				S.getDb().deleteNonBookmarkMarkerById(marker._id);
 			} else {
-				bookmark.caption = caption.toString();
-				bookmark.modifyTime = now;
-				S.getDb().updateBookmark(bookmark);
+				marker.caption = caption;
+				marker.modifyTime = now;
+				S.getDb().updateMarker(marker);
 			}
-		} else { // bookmark == null; not existing, so only insert when there is some text
+		} else { // marker == null; not existing, so only insert when there is some text
 			if (caption.length() > 0) {
-				bookmark = S.getDb().insertBookmark(ari, Db.Bookmark2.kind_note, caption.toString(), now, now);
+				marker = S.getDb().insertMarker(ariForNewNote, Marker.Kind.note, caption, 1, now, now);
 			}
 		}
 		
@@ -116,24 +132,31 @@ public class TypeNoteDialog {
 
 	protected void bDelete_click() {
 		// if it's indeed not exist, check if we have some text, if we do, prompt first
-		if (bookmark != null || (bookmark == null && tCaption.length() > 0)) {
+		if (marker != null || tCaption.length() > 0) {
 			new AlertDialog.Builder(context)
 			.setMessage(R.string.anda_yakin_mau_menghapus_catatan_ini)
 			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-				@Override public void onClick(DialogInterface dialog, int which) {
-					if (bookmark != null) {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					if (marker != null) {
 						// really delete from db
-						S.getDb().deleteBookmarkByAri(ari, Db.Bookmark2.kind_note);
+						S.getDb().deleteNonBookmarkMarkerById(marker._id);
 					} else {
 						// do nothing, because it's indeed not in the db, only in editor buffer
 					}
-					
+
 					if (listener != null) listener.onDone();
 				}
 			})
 			.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-				@Override public void onClick(DialogInterface _unused_, int which) {
-					TypeNoteDialog dialog = new TypeNoteDialog(context, book, chapter_1, verse_1, listener);
+				@Override
+				public void onClick(DialogInterface _unused_, int which) {
+					TypeNoteDialog dialog;
+					if (marker == null) { // we're in process of creating a new note
+						dialog = new TypeNoteDialog(context, ariForNewNote, listener);
+					} else { // we're in process of editing an existing note
+						dialog = new TypeNoteDialog(context, marker._id, listener);
+					}
 					dialog.setCaption(tCaption.getText());
 					dialog.show();
 				}

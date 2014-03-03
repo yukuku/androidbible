@@ -7,12 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.provider.BaseColumns;
 import android.util.Log;
-import gnu.trove.list.TIntList;
-import gnu.trove.list.TLongList;
-import gnu.trove.list.array.TLongArrayList;
-import gnu.trove.map.hash.TIntLongHashMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.map.hash.TObjectIntHashMap;
 import yuku.afw.D;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.BookmarkListActivity;
@@ -21,14 +15,14 @@ import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
 import yuku.alkitab.base.devotion.DevotionArticle;
-import yuku.alkitab.util.Ari;
-import yuku.alkitab.model.Bookmark2;
-import yuku.alkitab.model.Label;
-import yuku.alkitab.model.ProgressMark;
-import yuku.alkitab.model.ProgressMarkHistory;
-import yuku.alkitab.util.IntArrayList;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.model.Label;
+import yuku.alkitab.model.Marker;
+import yuku.alkitab.model.ProgressMark;
+import yuku.alkitab.model.ProgressMarkHistory;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.util.IntArrayList;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,81 +40,86 @@ public class InternalDb {
 
 	/**
 	 * _id is not stored
-	 * @param bookmark2
 	 */
-	private static ContentValues bookmark2ToContentValues(final Bookmark2 bookmark2) {
-		ContentValues res = new ContentValues();
+	private static ContentValues markerToContentValues(final Marker marker) {
+		final ContentValues res = new ContentValues();
 
-		res.put(Db.Bookmark2.ari, bookmark2.ari);
-		res.put(Db.Bookmark2.kind, bookmark2.kind);
-		res.put(Db.Bookmark2.caption, bookmark2.caption);
-		res.put(Db.Bookmark2.addTime, Sqlitil.toInt(bookmark2.addTime));
-		res.put(Db.Bookmark2.modifyTime, Sqlitil.toInt(bookmark2.modifyTime));
+		res.put(Db.Marker.ari, marker.ari);
+		res.put(Db.Marker.kind, marker.kind.code);
+		res.put(Db.Marker.caption, marker.caption);
+		res.put(Db.Marker.verseCount, marker.verseCount);
+		res.put(Db.Marker.createTime, Sqlitil.toInt(marker.createTime));
+		res.put(Db.Marker.modifyTime, Sqlitil.toInt(marker.modifyTime));
 
 		return res;
 	}
 
-	public static Bookmark2 bookmark2FromCursor(Cursor cursor) {
-		int ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bookmark2.ari));
-		int jenis = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bookmark2.kind));
+	public static Marker markerFromCursor(Cursor cursor) {
+		final int ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.ari));
+		final Marker.Kind kind = Marker.Kind.fromCode(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.kind)));
 
-		return bookmark2FromCursor(cursor, ari, jenis);
+		return markerFromCursor(cursor, ari, kind);
 	}
 
-	private static Bookmark2 bookmark2FromCursor(Cursor cursor, int ari, int kind) {
-		long _id = cursor.getLong(cursor.getColumnIndexOrThrow(BaseColumns._ID));
-		String caption = cursor.getString(cursor.getColumnIndexOrThrow(Db.Bookmark2.caption));
-		Date addTime = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bookmark2.addTime)));
-		Date modifyTime = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bookmark2.modifyTime)));
+	private static Marker markerFromCursor(Cursor cursor, int ari, Marker.Kind kind) {
+		final long _id = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
+		final String caption = cursor.getString(cursor.getColumnIndexOrThrow(Db.Marker.caption));
+		final int verseCount = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.verseCount));
+		final Date createTime = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.createTime)));
+		final Date modifyTime = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.modifyTime)));
 
-		Bookmark2 res = new Bookmark2(ari, kind, caption, addTime, modifyTime);
+		final Marker res = new Marker(ari, kind, caption, verseCount, createTime, modifyTime);
 		res._id = _id;
 		return res;
 	}
 
-
-	public Bookmark2 getBookmarkByAri(int ari, int kind) {
+	public Marker getMarkerById(long _id) {
 		Cursor cursor = helper.getReadableDatabase().query(
-		Db.TABLE_Bookmark2,
-		new String[] {BaseColumns._ID, Db.Bookmark2.caption, Db.Bookmark2.addTime, Db.Bookmark2.modifyTime},
-		Db.Bookmark2.ari + "=? and " + Db.Bookmark2.kind + "=?",  //$NON-NLS-1$ //$NON-NLS-2$
-		new String[] {String.valueOf(ari), String.valueOf(kind)},
-		null, null, null
-		);
-
-		try {
-			if (!cursor.moveToNext()) return null;
-			return bookmark2FromCursor(cursor, ari, kind);
-		} finally {
-			cursor.close();
-		}
-	}
-
-	public Bookmark2 getBookmarkById(long id) {
-		Cursor cursor = helper.getReadableDatabase().query(
-		Db.TABLE_Bookmark2,
+		Db.TABLE_Marker,
 		null,
 		"_id=?", //$NON-NLS-1$
-		new String[] {String.valueOf(id)},
+		new String[] {String.valueOf(_id)},
 		null, null, null
 		);
 
 		try {
 			if (!cursor.moveToNext()) return null;
-			return bookmark2FromCursor(cursor);
+			return markerFromCursor(cursor);
 		} finally {
 			cursor.close();
 		}
 	}
 
-	public int updateBookmark(Bookmark2 bookmark) {
-		return helper.getWritableDatabase().update(Db.TABLE_Bookmark2, bookmark2ToContentValues(bookmark), "_id=?", new String[] {String.valueOf(bookmark._id)}); //$NON-NLS-1$
+	/**
+	 * Get a marker based on ari, kind, and ordering.
+	 * @param ordering (starting from 0) in case of there are multiple markers with the same kind on a verse.
+	 * @return null if not found
+	 */
+	public Marker getMarker(int ari, Marker.Kind kind, int ordering) {
+		final Cursor cursor = helper.getReadableDatabase().query(
+			Db.TABLE_Marker,
+			null,
+			Db.Marker.ari + "=? and " + Db.Marker.kind + "=?",
+			new String[] {String.valueOf(ari), String.valueOf(kind.code)},
+			null, null, "_id asc", ordering + ",1"
+		);
+
+		try {
+			if (!cursor.moveToNext()) return null;
+			return markerFromCursor(cursor);
+		} finally {
+			cursor.close();
+		}
 	}
 
-	public Bookmark2 insertBookmark(int ari, int kind, String caption, Date addTime, Date modifyTime) {
-		Bookmark2 res = new Bookmark2(ari, kind, caption, addTime, modifyTime);
+	public int updateMarker(Marker marker) {
+		return helper.getWritableDatabase().update(Db.TABLE_Marker, markerToContentValues(marker), "_id=?", new String[] {String.valueOf(marker._id)}); //$NON-NLS-1$
+	}
+
+	public Marker insertMarker(int ari, Marker.Kind kind, String caption, int verseCount, Date createTime, Date modifyTime) {
+		Marker res = new Marker(ari, kind, caption, verseCount, createTime, modifyTime);
 		SQLiteDatabase db = helper.getWritableDatabase();
-		long _id = db.insert(Db.TABLE_Bookmark2, null, bookmark2ToContentValues(res));
+		long _id = db.insert(Db.TABLE_Marker, null, markerToContentValues(res));
 		if (_id == -1) {
 			return null;
 		} else {
@@ -129,163 +128,39 @@ public class InternalDb {
 		}
 	}
 
-	public void deleteBookmarkByAri(int ari, int kind) {
+	public void deleteBookmarkById(long _id) {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
 		try {
-			long _id;
-
-			SQLiteStatement stmt = db.compileStatement("select _id from " + Db.TABLE_Bookmark2 + " where " + Db.Bookmark2.kind + "=? and " + Db.Bookmark2.ari + "=?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			try {
-				stmt.bindLong(1, kind);
-				stmt.bindLong(2, ari);
-				_id = stmt.simpleQueryForLong();
-			} finally {
-				stmt.close();
-			}
-
-			String[] params = {String.valueOf(_id)};
-			db.delete(Db.TABLE_Bookmark2_Label, Db.Bookmark2_Label.bookmark2_id + "=?", params); //$NON-NLS-1$
-			db.delete(Db.TABLE_Bookmark2, "_id=?", params); //$NON-NLS-1$
+			final String[] params = new String[] {String.valueOf(_id)};
+			db.delete(Db.TABLE_Marker_Label, Db.Marker_Label.marker_id + "=?", params); //$NON-NLS-1$
+			db.delete(Db.TABLE_Marker, "_id=?", params); //$NON-NLS-1$
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
 		}
 	}
 
-	public void deleteBookmarkById(long id) {
+	public void deleteNonBookmarkMarkerById(long _id) {
 		SQLiteDatabase db = helper.getWritableDatabase();
-		db.beginTransaction();
-		try {
-			String[] params = new String[] {String.valueOf(id)};
-			db.delete(Db.TABLE_Bookmark2_Label, Db.Bookmark2_Label.bookmark2_id + "=?", params); //$NON-NLS-1$
-			db.delete(Db.TABLE_Bookmark2, "_id=?", params); //$NON-NLS-1$
-			db.setTransactionSuccessful();
-		} finally {
-			db.endTransaction();
-		}
+		db.delete(Db.TABLE_Marker, "_id=?", new String[] {String.valueOf(_id)});
 	}
 
-	public Cursor listBookmarks(int kind, long labelId, String sortColumn, boolean sortAscending) {
-		SQLiteDatabase db = helper.getReadableDatabase();
-
-		String sortClause = sortColumn + (Db.Bookmark2.caption.equals(sortColumn)? " collate NOCASE ": "") + (sortAscending? " asc": " desc"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	public Cursor listMarkers(Marker.Kind kind, long labelId, String sortColumn, boolean sortAscending) {
+		final SQLiteDatabase db = helper.getReadableDatabase();
+		final String sortClause = sortColumn + (Db.Marker.caption.equals(sortColumn)? " collate NOCASE ": "") + (sortAscending? " asc": " desc"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 		if (labelId == 0) { // no restrictions
-			return db.query(Db.TABLE_Bookmark2, null, Db.Bookmark2.kind + "=?", new String[] {String.valueOf(kind)}, null, null, sortClause); //$NON-NLS-1$
+			return db.query(Db.TABLE_Marker, null, Db.Marker.kind + "=?", new String[] {String.valueOf(kind.code)}, null, null, sortClause); //$NON-NLS-1$
 		} else if (labelId == BookmarkListActivity.LABELID_noLabel) { // only without label
-			return db.rawQuery("select " + Db.TABLE_Bookmark2 + ".* from " + Db.TABLE_Bookmark2 + " where " + Db.TABLE_Bookmark2 + "." + Db.Bookmark2.kind + "=? and " + Db.TABLE_Bookmark2 + "." + BaseColumns._ID + " not in (select " + Db.Bookmark2_Label.bookmark2_id + " from " + Db.TABLE_Bookmark2_Label + ") order by " + Db.TABLE_Bookmark2 + "." + sortClause, new String[] {String.valueOf(kind)});  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
+			return db.rawQuery("select " + Db.TABLE_Marker + ".* from " + Db.TABLE_Marker + " where " + Db.TABLE_Marker + "." + Db.Marker.kind + "=? and " + Db.TABLE_Marker + "._id not in (select " + Db.Marker_Label.marker_id + " from " + Db.TABLE_Marker_Label + ") order by " + Db.TABLE_Marker + "." + sortClause, new String[] {String.valueOf(kind.code)});
 		} else { // filter by labelId
-			return db.rawQuery("select " + Db.TABLE_Bookmark2 + ".* from " + Db.TABLE_Bookmark2 + ", " + Db.TABLE_Bookmark2_Label + " where " + Db.Bookmark2.kind + "=? and " + Db.TABLE_Bookmark2 + "." + BaseColumns._ID + " = " + Db.TABLE_Bookmark2_Label + "." + Db.Bookmark2_Label.bookmark2_id + " and " + Db.TABLE_Bookmark2_Label + "." + Db.Bookmark2_Label.label_id + "=? order by " + Db.TABLE_Bookmark2 + "." + sortClause, new String[] {String.valueOf(kind), String.valueOf(labelId)});          //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$//$NON-NLS-6$//$NON-NLS-7$//$NON-NLS-8$//$NON-NLS-9$//$NON-NLS-10$ //$NON-NLS-11$ //$NON-NLS-12$
+			return db.rawQuery("select " + Db.TABLE_Marker + ".* from " + Db.TABLE_Marker + ", " + Db.TABLE_Marker_Label + " where " + Db.Marker.kind + "=? and " + Db.TABLE_Marker + "._id = " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.marker_id + " and " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.label_id + "=? order by " + Db.TABLE_Marker + "." + sortClause, new String[] {String.valueOf(kind.code), String.valueOf(labelId)});
 		}
 	}
 
-	public void importBookmarks(List<Bookmark2> bookmarks, boolean overwrite, TObjectIntHashMap<Bookmark2> bookmarkToRelIdMap, TIntLongHashMap labelRelIdToAbsIdMap, TIntObjectHashMap<TIntList> bookmarkRelIdToLabelRelIdsMap) {
-		SQLiteDatabase db = helper.getWritableDatabase();
-		db.beginTransaction();
-		try {
-			TIntLongHashMap bookmarkRelIdToAbsIdMap = new TIntLongHashMap();
-
-			{ // write new bookmarks
-				String[] params1 = new String[1];
-				String[] params2 = new String[2];
-				for (Bookmark2 bookmark : bookmarks) {
-					int bookmark_relId = bookmarkToRelIdMap.get(bookmark);
-
-					params2[0] = String.valueOf(bookmark.ari);
-					params2[1] = String.valueOf(bookmark.kind);
-
-					long _id = -1;
-
-					boolean ada = false;
-					Cursor cursor = db.query(Db.TABLE_Bookmark2, null, Db.Bookmark2.ari + "=? and " + Db.Bookmark2.kind + "=?", params2, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
-					if (cursor.moveToNext()) {
-						ada = true;
-						_id = cursor.getLong(cursor.getColumnIndexOrThrow(BaseColumns._ID)); /* [1] */
-					}
-					cursor.close();
-
-					// ----------------------------------------- get _id from
-					//  exists  overwrite:     delete insert     [2]
-					//  exists !overwrite: (nop)                 [1]
-					// !exists  overwrite:            insert     [2]
-					// !exists !overwrite:            insert     [2]
-
-					if (ada && overwrite) {
-						params1[0] = String.valueOf(_id);
-						db.delete(Db.TABLE_Bookmark2, "_id=?", params1); //$NON-NLS-1$
-						db.delete(Db.TABLE_Bookmark2_Label, Db.Bookmark2_Label.bookmark2_id + "=?", params1); //$NON-NLS-1$
-					}
-					if ((ada && overwrite) || (!ada)) {
-						_id = db.insert(Db.TABLE_Bookmark2, null, bookmark2ToContentValues(bookmark)); /* [2] */
-					}
-
-					// map it
-					bookmarkRelIdToAbsIdMap.put(bookmark_relId, _id);
-				}
-			}
-
-			{ // now is label assignments
-				String where = Db.Bookmark2_Label.bookmark2_id + "=?"; //$NON-NLS-1$
-				String[] params = {null};
-				ContentValues cv = new ContentValues();
-
-				// nlabel>0  overwrite:  delete insert
-				// nlabel>0 !overwrite: (nop)
-				// nlabel=0  overwrite:         insert
-				// nlabel=0 !overwrite:         insert
-
-				for (int bookmark_relId : bookmarkRelIdToLabelRelIdsMap.keys()) {
-					TIntList label_relIds = bookmarkRelIdToLabelRelIdsMap.get(bookmark_relId);
-
-					long bookmark_id = bookmarkRelIdToAbsIdMap.get(bookmark_relId);
-
-					if (bookmark_id > 0) {
-						params[0] = String.valueOf(bookmark_id);
-
-						// check how many labels for this bookmark_id
-						int nlabel = 0;
-						Cursor c = db.rawQuery("select count(*) from " + Db.TABLE_Bookmark2_Label + " where " + where, params); //$NON-NLS-1$ //$NON-NLS-2$
-						try {
-							c.moveToNext();
-							nlabel = c.getInt(0);
-						} finally {
-							c.close();
-						}
-
-						if (nlabel > 0 && overwrite) {
-							db.delete(Db.TABLE_Bookmark2_Label, where, params);
-						}
-						if ((nlabel > 0 && overwrite) || (!(nlabel > 0))) {
-							for (int label_relId : label_relIds.toArray()) {
-								long label_id = labelRelIdToAbsIdMap.get(label_relId);
-								if (label_id > 0) {
-									cv.put(Db.Bookmark2_Label.bookmark2_id, bookmark_id);
-									cv.put(Db.Bookmark2_Label.label_id, label_id);
-									db.insert(Db.TABLE_Bookmark2_Label, null, cv);
-								} else {
-									Log.w(TAG, "label_id ngaco!: " + label_id); //$NON-NLS-1$
-								}
-							}
-						}
-					} else {
-						Log.w(TAG, "wrong bookmark_id!: " + bookmark_id); //$NON-NLS-1$
-					}
-				}
-			}
-
-			db.setTransactionSuccessful();
-		} finally {
-			db.endTransaction();
-		}
-	}
-
-	public Cursor listAllBookmarks() {
-		return helper.getReadableDatabase().query(Db.TABLE_Bookmark2, null, null, null, null, null, null);
-	}
-
-	public int countAllBookmarks() {
-		return (int) DatabaseUtils.queryNumEntries(helper.getReadableDatabase(), Db.TABLE_Bookmark2);
+	public int countAllMarkers() {
+		return (int) DatabaseUtils.queryNumEntries(helper.getReadableDatabase(), Db.TABLE_Marker);
 	}
 
 	private SQLiteStatement stmt_countAttribute = null;
@@ -295,7 +170,7 @@ public class InternalDb {
 		int ariMax = ari_bookchapter | 0x000000ff;
 
 		if (stmt_countAttribute == null) {
-			stmt_countAttribute = helper.getReadableDatabase().compileStatement("select count(*) from " + Db.TABLE_Bookmark2 + " where " + Db.Bookmark2.ari + ">=? and " + Db.Bookmark2.ari + "<?");//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			stmt_countAttribute = helper.getReadableDatabase().compileStatement("select count(*) from " + Db.TABLE_Marker + " where " + Db.Marker.ari + ">=? and " + Db.Marker.ari + "<?");
 		}
 
 		stmt_countAttribute.clearBindings();
@@ -305,9 +180,13 @@ public class InternalDb {
 		return (int) stmt_countAttribute.simpleQueryForLong();
 	}
 
-	private String[] sql_putAttributes_params = new String[2];
 
 	/**
+	 * Put attributes for each verse. Attributes are as follows:
+	 * bit 0-2 is unused (legacy)
+	 * bit 7 is on when there is a highlight (more than one highlight is considered one)
+	 * bit 8-15 are number of bookmarks *starting on* that verse (one verse can have max 255 bookmarks)
+	 * bit 16-23 are number of notes *starting on* that verse (one verse can have max 255 notes)
 	 * @param map_0 the verses 0-based.
 	 * @return null if no highlights, or colors when there are highlights according to offsets of map_0.
 	 */
@@ -316,33 +195,46 @@ public class InternalDb {
 		int ariMax = ari_bookchapter | 0x000000ff;
 		int[] res = null;
 
-		sql_putAttributes_params[0] = String.valueOf(ariMin);
-		sql_putAttributes_params[1] = String.valueOf(ariMax);
-		Cursor cursor = helper.getReadableDatabase().rawQuery("select * from " + Db.TABLE_Bookmark2 + " where " + Db.Bookmark2.ari + ">=? and " + Db.Bookmark2.ari + "<?", sql_putAttributes_params); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		final String[] params = {
+			String.valueOf(ariMin),
+			String.valueOf(ariMax),
+		};
+
+		final Cursor cursor = helper.getReadableDatabase().rawQuery("select * from " + Db.TABLE_Marker + " where " + Db.Marker.ari + ">=? and " + Db.Marker.ari + "<?", params);
 		try {
-			int col_kind = cursor.getColumnIndexOrThrow(Db.Bookmark2.kind);
-			int col_ari = cursor.getColumnIndexOrThrow(Db.Bookmark2.ari);
-			int col_caption = cursor.getColumnIndexOrThrow(Db.Bookmark2.caption);
+			final int col_kind = cursor.getColumnIndexOrThrow(Db.Marker.kind);
+			final int col_ari = cursor.getColumnIndexOrThrow(Db.Marker.ari);
+			final int col_caption = cursor.getColumnIndexOrThrow(Db.Marker.caption);
+			final int col_verseCount = cursor.getColumnIndexOrThrow(Db.Marker.verseCount);
 			while (cursor.moveToNext()) {
-				int ari = cursor.getInt(col_ari);
-				int kind = cursor.getInt(col_kind);
+				final int ari = cursor.getInt(col_ari);
+				final int kind = cursor.getInt(col_kind);
 
 				int mapOffset = Ari.toVerse(ari) - 1;
 				if (mapOffset >= map_0.length) {
-					Log.e(TAG, "ofsetMap kebanyakan " + mapOffset + " terjadi pada ari 0x" + Integer.toHexString(ari)); //$NON-NLS-1$ //$NON-NLS-2$
-				} else {
-					if (kind == Db.Bookmark2.kind_bookmark) {
-						map_0[mapOffset] |= 0x1;
-					} else if (kind == Db.Bookmark2.kind_note) {
-						map_0[mapOffset] |= 0x2;
-					} else if (kind == Db.Bookmark2.kind_highlight) {
-						map_0[mapOffset] |= 0x4;
+					Log.e(TAG, "mapOffset too many " + mapOffset + " happens on ari 0x" + Integer.toHexString(ari));
+					continue;
+				}
 
-						String caption = cursor.getString(col_caption);
-						int colorRgb = U.decodeHighlight(caption);
+				if (kind == Marker.Kind.bookmark.code) {
+					map_0[mapOffset] += 1 << 8;
+				} else if (kind == Marker.Kind.note.code) {
+					map_0[mapOffset] += 1 << 16;
+				} else if (kind == Marker.Kind.highlight.code) {
+					// traverse as far as verseCount
+					final int verseCount = cursor.getInt(col_verseCount);
+
+					for (int i = 0; i < verseCount; i++) {
+						int mapOffset2 = mapOffset + i;
+						if (mapOffset2 >= map_0.length) break; // do not go past number of verses in this chapter
+
+						map_0[mapOffset2] |= 1 << 7;
+
+						final String caption = cursor.getString(col_caption);
+						final int colorRgb = U.decodeHighlight(caption);
 
 						if (res == null) res = new int[map_0.length];
-						res[mapOffset] = colorRgb;
+						res[mapOffset2] = colorRgb;
 					}
 				}
 			}
@@ -353,37 +245,36 @@ public class InternalDb {
 	}
 
 	public void updateOrInsertHighlights(int ari_bookchapter, IntArrayList selectedVerses_1, int colorRgb) {
-		SQLiteDatabase db = helper.getWritableDatabase();
-
-		String[] params = {null /* buat ari */, String.valueOf(Db.Bookmark2.kind_highlight)};
+		final SQLiteDatabase db = helper.getWritableDatabase();
 
 		db.beginTransaction();
 		try {
+			final String[] params = {null /* for the ari */, String.valueOf(Marker.Kind.highlight.code)};
+
 			// every requested verses
 			for (int i = 0; i < selectedVerses_1.size(); i++) {
-				int verse_1 = selectedVerses_1.get(i);
-				int ari = Ari.encodeWithBc(ari_bookchapter, verse_1);
+				final int ari = Ari.encodeWithBc(ari_bookchapter, selectedVerses_1.get(i));
 				params[0] = String.valueOf(ari);
 
-				Cursor c = db.query(Db.TABLE_Bookmark2, null, Db.Bookmark2.ari + "=? and " + Db.Bookmark2.kind + "=?", params, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
+				Cursor c = db.query(Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", params, null, null, null);
 				try {
-					if (c.moveToNext()) { // check if bookmark exists
-						Bookmark2 bookmark = bookmark2FromCursor(c);
-						bookmark.modifyTime = new Date();
+					if (c.moveToNext()) { // check if marker exists
+						final Marker marker = markerFromCursor(c);
+						marker.modifyTime = new Date();
 						if (colorRgb != -1) {
-							bookmark.caption = U.encodeHighlight(colorRgb);
-							db.update(Db.TABLE_Bookmark2, bookmark2ToContentValues(bookmark), "_id=?", new String[] {String.valueOf(bookmark._id)}); //$NON-NLS-1$
+							marker.caption = U.encodeHighlight(colorRgb);
+							db.update(Db.TABLE_Marker, markerToContentValues(marker), "_id=?", new String[] {String.valueOf(marker._id)}); //$NON-NLS-1$
 						} else {
 							// delete
-							db.delete(Db.TABLE_Bookmark2, "_id=?", new String[] {String.valueOf(bookmark._id)}); //$NON-NLS-1$
+							db.delete(Db.TABLE_Marker, "_id=?", new String[] {String.valueOf(marker._id)}); //$NON-NLS-1$
 						}
 					} else {
 						if (colorRgb == -1) {
 							// no need to do, from no color to no color
 						} else {
-							Date now = new Date();
-							Bookmark2 bookmark = new Bookmark2(ari, Db.Bookmark2.kind_highlight, U.encodeHighlight(colorRgb), now, now);
-							db.insert(Db.TABLE_Bookmark2, null, bookmark2ToContentValues(bookmark));
+							final Date now = new Date();
+							Marker marker = new Marker(ari, Marker.Kind.highlight, U.encodeHighlight(colorRgb), 1, now, now);
+							db.insert(Db.TABLE_Marker, null, markerToContentValues(marker));
 						}
 					}
 				} finally {
@@ -396,6 +287,10 @@ public class InternalDb {
 		}
 	}
 
+	/**
+	 * Get the highlight color rgb of several verses.
+	 * @return the color rgb or -1 if there are multiple colors.
+	 */
 	public int getHighlightColorRgb(int ari_bookchapter, IntArrayList selectedVerses_1) {
 		int ariMin = ari_bookchapter;
 		int ariMax = ari_bookchapter | 0xff;
@@ -405,16 +300,21 @@ public class InternalDb {
 		for (int i = 0; i < colors.length; i++) colors[i] = -1;
 
 		// check if exists
-		Cursor c = helper.getReadableDatabase().query(Db.TABLE_Bookmark2, null, Db.Bookmark2.ari + ">? and " + Db.Bookmark2.ari + "<=? and " + Db.Bookmark2.kind + "=?", new String[] {String.valueOf(ariMin), String.valueOf(ariMax), String.valueOf(Db.Bookmark2.kind_highlight)}, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		final Cursor c = helper.getReadableDatabase().query(
+			Db.TABLE_Marker, null, Db.Marker.ari + ">? and " + Db.Marker.ari + "<=? and " + Db.Marker.kind + "=?",
+			new String[] {String.valueOf(ariMin), String.valueOf(ariMax), String.valueOf(Marker.Kind.highlight.code)},
+			null, null, null
+		);
+
 		try {
-			int ari_col = c.getColumnIndexOrThrow(Db.Bookmark2.ari);
-			int tulisan_col = c.getColumnIndexOrThrow(Db.Bookmark2.caption);
+			final int col_ari = c.getColumnIndexOrThrow(Db.Marker.ari);
+			final int col_caption = c.getColumnIndexOrThrow(Db.Marker.caption);
 
 			// put to array first
 			while (c.moveToNext()) {
-				int ari = c.getInt(ari_col);
+				int ari = c.getInt(col_ari);
 				int index = ari & 0xff;
-				int color = U.decodeHighlight(c.getString(tulisan_col));
+				int color = U.decodeHighlight(c.getString(col_caption));
 				colors[index] = color;
 			}
 
@@ -612,12 +512,12 @@ public class InternalDb {
 	/**
 	 * @return null when not found
 	 */
-	public List<Label> listLabelsByBookmarkId(long bookmark_id) {
+	public List<Label> listLabelsByMarkerId(long marker_id) {
 		List<Label> res = null;
-		Cursor cursor = helper.getReadableDatabase().rawQuery("select " + Db.TABLE_Label + ".* from " + Db.TABLE_Label + ", " + Db.TABLE_Bookmark2_Label + " where " + Db.TABLE_Bookmark2_Label + "." + Db.Bookmark2_Label.label_id + " = " + Db.TABLE_Label + "." + BaseColumns._ID + " and " + Db.TABLE_Bookmark2_Label + "." + Db.Bookmark2_Label.bookmark2_id + " = ?  order by " + Db.TABLE_Label + "." + Db.Label.ordering + " asc", new String[] {String.valueOf(bookmark_id)});       //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$//$NON-NLS-6$//$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$ //$NON-NLS-11$ //$NON-NLS-12$
+		final Cursor cursor = helper.getReadableDatabase().rawQuery("select " + Db.TABLE_Label + ".* from " + Db.TABLE_Label + ", " + Db.TABLE_Marker_Label + " where " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.label_id + " = " + Db.TABLE_Label + "._id and " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.marker_id + "=? order by " + Db.TABLE_Label + "." + Db.Label.ordering + " asc", new String[] {String.valueOf(marker_id)});
 		try {
 			while (cursor.moveToNext()) {
-				if (res == null) res = new ArrayList<Label>();
+				if (res == null) res = new ArrayList<>();
 				res.add(labelFromCursor(cursor));
 			}
 		} finally {
@@ -644,27 +544,9 @@ public class InternalDb {
 		return res;
 	}
 
-	/**
-	 * @return null when not found
-	 */
-	public TLongList listLabelIdsByBookmarkId(long bookmark_id) {
-		TLongList res = null;
-		Cursor cursor = helper.getReadableDatabase().rawQuery("select " + Db.TABLE_Bookmark2_Label + "." + Db.Bookmark2_Label.label_id + " from " + Db.TABLE_Bookmark2_Label + " where " + Db.TABLE_Bookmark2_Label + "." + Db.Bookmark2_Label.bookmark2_id + "=?", new String[] {String.valueOf(bookmark_id)});       //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$//$NON-NLS-6$
-		try {
-			int col_label_id = cursor.getColumnIndexOrThrow(Db.Bookmark2_Label.label_id);
-			while (cursor.moveToNext()) {
-				if (res == null) res = new TLongArrayList();
-				res.add(cursor.getLong(col_label_id));
-			}
-		} finally {
-			cursor.close();
-		}
-		return res;
-	}
-
 	public int getLabelMaxOrdering() {
 		SQLiteDatabase db = helper.getReadableDatabase();
-		SQLiteStatement stmt = db.compileStatement("select max(" + Db.Label.ordering + ") from " + Db.TABLE_Label);  //$NON-NLS-1$//$NON-NLS-2$
+		SQLiteStatement stmt = db.compileStatement("select max(" + Db.Label.ordering + ") from " + Db.TABLE_Label);
 		try {
 			return (int) stmt.simpleQueryForLong();
 		} finally {
@@ -684,19 +566,19 @@ public class InternalDb {
 		}
 	}
 
-	public void updateLabels(Bookmark2 bookmark, Set<Label> labels) {
+	public void updateLabels(Marker marker, Set<Label> labels) {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
 		try {
 			// remove all
-			db.delete(Db.TABLE_Bookmark2_Label, Db.Bookmark2_Label.bookmark2_id + "=?", new String[] {String.valueOf(bookmark._id)}); //$NON-NLS-1$
+			db.delete(Db.TABLE_Marker_Label, Db.Marker_Label.marker_id + "=?", new String[] {String.valueOf(marker._id)});
 
 			// add all
-			ContentValues cv = new ContentValues();
+			final ContentValues cv = new ContentValues();
 			for (Label label : labels) {
-				cv.put(Db.Bookmark2_Label.bookmark2_id, bookmark._id);
-				cv.put(Db.Bookmark2_Label.label_id, label._id);
-				db.insert(Db.TABLE_Bookmark2_Label, null, cv);
+				cv.put(Db.Marker_Label.marker_id, marker._id);
+				cv.put(Db.Marker_Label.label_id, label._id);
+				db.insert(Db.TABLE_Marker_Label, null, cv);
 			}
 
 			db.setTransactionSuccessful();
@@ -724,8 +606,8 @@ public class InternalDb {
 		db.beginTransaction();
 		try {
 			String[] params = new String[] {String.valueOf(id)};
-			db.delete(Db.TABLE_Bookmark2_Label, Db.Bookmark2_Label.label_id + "=?", params); //$NON-NLS-1$
-			db.delete(Db.TABLE_Label, "_id=?", params); //$NON-NLS-1$
+			db.delete(Db.TABLE_Marker_Label, Db.Marker_Label.label_id + "=?", params);
+			db.delete(Db.TABLE_Label, "_id=?", params);
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
@@ -735,12 +617,12 @@ public class InternalDb {
 	public void updateLabel(Label label) {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		ContentValues cv = labelToContentValues(label);
-		db.update(Db.TABLE_Label, cv, "_id=?", new String[] {String.valueOf(label._id)}); //$NON-NLS-1$
+		db.update(Db.TABLE_Label, cv, "_id=?", new String[] {String.valueOf(label._id)});
 	}
 
-	public int countBookmarksWithLabel(Label label) {
+	public int countMarkersWithLabel(Label label) {
 		SQLiteDatabase db = helper.getReadableDatabase();
-		SQLiteStatement stmt = db.compileStatement("select count(*) from " + Db.TABLE_Bookmark2_Label + " where " + Db.Bookmark2_Label.label_id + "=?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		SQLiteStatement stmt = db.compileStatement("select count(*) from " + Db.TABLE_Marker_Label + " where " + Db.Marker_Label.label_id + "=?");
 		try {
 			stmt.bindLong(1, label._id);
 			return (int) stmt.simpleQueryForLong();
@@ -979,4 +861,6 @@ public class InternalDb {
 			c.close();
 		}
 	}
+
+
 }

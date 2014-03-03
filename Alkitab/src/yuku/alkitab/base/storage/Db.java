@@ -1,19 +1,16 @@
 package yuku.alkitab.base.storage;
 
 public class Db {
-	public static final String TABLE_Bookmark2 = "Bukmak2"; //$NON-NLS-1$
-	public static final class Bookmark2 {
-		public static final String ari = "ari"; //$NON-NLS-1$
-		public static final String kind = "jenis"; //$NON-NLS-1$
-		public static final String caption = "tulisan"; //$NON-NLS-1$
-		public static final String addTime = "waktuTambah"; //$NON-NLS-1$
-		public static final String modifyTime = "waktuUbah"; //$NON-NLS-1$
-		public static final int kind_bookmark = 1;
-		public static final int kind_note = 2;
-		public static final int kind_highlight = 3;
+	public static final String TABLE_Marker = "Marker";
+	public static final class Marker {
+		public static final String ari = "ari";
+		public static final String kind = "kind";
+		public static final String caption = "caption";
+		public static final String verseCount = "verseCount";
+		public static final String createTime = "createTime";
+		public static final String modifyTime = "modifyTime";
 	}
-	
-	
+
 	public static final String TABLE_Devotion = "Renungan"; //$NON-NLS-1$
 	public static final class Devotion {
 		public static final String name = "nama"; //$NON-NLS-1$
@@ -46,11 +43,11 @@ public class Db {
 		public static final String ordering = "urutan"; //$NON-NLS-1$
 		public static final String backgroundColor = "warnaLatar"; //$NON-NLS-1$
 	}
-	
-	public static final String TABLE_Bookmark2_Label = "Bukmak2_Label"; //$NON-NLS-1$
-	public static final class Bookmark2_Label {
-		public static final String bookmark2_id = "bukmak2_id"; //$NON-NLS-1$
-		public static final String label_id = "label_id"; //$NON-NLS-1$
+
+	public static final String TABLE_Marker_Label = "Marker_Label";
+	public static class Marker_Label {
+		public static final String marker_id = "marker_id";
+		public static final String label_id = "label_id";
 	}
 
 	public static final String TABLE_ProgressMark = "ProgressMark";
