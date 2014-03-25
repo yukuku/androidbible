@@ -7,10 +7,9 @@
         android:id="@+id/scroller"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dip"
-        android:background="@drawable/popup"
-        android:fadingEdgeLength="5dip"
-        android:scrollbars="none" >
+        android:layout_marginTop="8dip"
+        android:overScrollMode="never"
+        android:background="@drawable/popup">
 
         <LinearLayout
             android:id="@+id/tracks"
@@ -31,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/scroller"
-        android:layout_marginTop="-4dip"
+        android:layout_marginTop="-9dip"
         android:src="@drawable/arrow_down" />
 
 </RelativeLayout>
