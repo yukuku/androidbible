@@ -1087,14 +1087,21 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		return super.onOptionsItemSelected(item);
 	}
 
+	@TargetApi(19)
 	void setFullScreen(boolean yes) {
 		if (yes) {
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			fullScreenController.hidePermanently();
+			if (Build.VERSION.SDK_INT >= 19) {
+				root.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+			}
 			fullScreen = true;
 		} else {
 			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			fullScreenController.showPermanently();
+			if (Build.VERSION.SDK_INT >= 19) {
+				root.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+			}
 			fullScreen = false;
 		}
 	}
