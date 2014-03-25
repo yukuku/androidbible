@@ -383,7 +383,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		// for splitting
 		splitHandleButton.setListener(splitHandleButton_listener);
-		
+		splitHandleButton.setOnLabelPressed(splitHandleButton_labelPressed);
+
 		history = History.getInstance();
 
 		// configure devotion
@@ -2180,6 +2181,17 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 		
 		@Override public void onHandleDragStop() {
+		}
+	};
+
+	LabeledSplitHandleButton.OnLabelPressed splitHandleButton_labelPressed = new LabeledSplitHandleButton.OnLabelPressed() {
+		@Override
+		public void onLabelPressed(final int which) {
+			if (which == 1) { // left
+				openVersionsDialog();
+			} else if (which == 2) { // right
+				openSplitVersionsDialog();
+			}
 		}
 	};
 }
