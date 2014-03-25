@@ -52,13 +52,15 @@ public class SongBookUtil {
 
 		for (String k: new String[] {
 			// bookName :: dataFormatVersion :: downloadUrl :: description :: copyright
-			"KJ   :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kj-3.ser.gz   :: Kidung Jemaat :: (c) Yayasan Musik Gereja di Indonesia (YAMUGER)", //$NON-NLS-1$
-			"KPKA :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpka-3.ser.gz :: Kidung Pasamuan Kristen (bahasa Jawa) :: (c) Badan Musyawarah Gereja-gereja Jawa (BMGJ)", //$NON-NLS-1$
-			"KPRI :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpri-3.ser.gz :: Kidung Persekutuan Reformed Injili :: (c) Sinode Gereja Reformed Injili Indonesia (GRII)", //$NON-NLS-1$
-			"NKB  :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/nkb-3.ser.gz  :: Nyanyikanlah Kidung Baru :: (c) Badan Pengerja Majelis Sinode Gereja Kristen Indonesia (GKI)",  //$NON-NLS-1$
-			"NP   :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/np-3.ser.gz   :: Nyanyian Pujian :: (c) Lembaga Literatur Baptis", //$NON-NLS-1$
-			"PKJ  :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/pkj-3.ser.gz  :: Pelengkap Kidung Jemaat :: (c) Yayasan Musik Gereja di Indonesia (YAMUGER)", //$NON-NLS-1$
-			"PPK  :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/ppk-3.ser.gz  :: Puji-pujian Kristen :: (c) Seminari Alkitab Asia Tenggara (SAAT)", //$NON-NLS-1$
+			"KJ   :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kj-3.ser.gz   :: Kidung Jemaat                         :: (c) Yayasan Musik Gereja di Indonesia (YAMUGER)", //$NON-NLS-1$
+			"KPKA :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpka-3.ser.gz :: Kidung Pasamuan Kristen Anyar         :: (c) Badan Musyawarah Gereja-gereja Jawa (BMGJ)", //$NON-NLS-1$
+			"KPKL :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpkl-3.ser.gz :: Kidung Pasamuan Kristen Lawas         :: (c) Taman Pustaka Kristen Jogjakarta", //$NON-NLS-1$
+			"KPPK :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kppk-3.ser.gz :: Kidung Puji-Pujian Kristen            :: (c) Seminari Alkitab Asia Tenggara (SAAT)", //$NON-NLS-1$
+			"KPRI :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/kpri-3.ser.gz :: Kidung Persekutuan Reformed Injili    :: (c) Sinode Gereja Reformed Injili Indonesia (GRII)", //$NON-NLS-1$
+			"NKB  :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/nkb-3.ser.gz  :: Nyanyikanlah Kidung Baru              :: (c) Badan Pengerja Majelis Sinode Gereja Kristen Indonesia (GKI)",  //$NON-NLS-1$
+			"NP   :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/np-3.ser.gz   :: Nyanyian Pujian                       :: (c) Lembaga Literatur Baptis", //$NON-NLS-1$
+			"PKJ  :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/pkj-3.ser.gz  :: Pelengkap Kidung Jemaat               :: (c) Yayasan Musik Gereja di Indonesia (YAMUGER)", //$NON-NLS-1$
+			"PPK  :: 3 :: http://alkitab-host.appspot.com/addon/songs/v1/data/ppk-3.ser.gz  :: Puji-pujian Kristen                   :: (c) Seminari Alkitab Asia Tenggara (SAAT)", //$NON-NLS-1$
 		}) {
 			String[] ss = k.split("::"); //$NON-NLS-1$
 			SongBookInfo bookInfo = new SongBookInfo();
