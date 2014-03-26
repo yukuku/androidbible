@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.os.Build;
+import android.os.Build.VERSION;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -115,17 +117,21 @@ public class TypeBookmarkDialog {
 			this.ari = bookmark.ari;
 			this.reference = S.activeVersion.reference(bookmark.ari);
 		}
-		
-		View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_bookmark, null);
+
+		final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		final Context contextForLayout = Build.VERSION.SDK_INT >= 11? builder.getContext(): context;
+
+		View dialogView = LayoutInflater.from(contextForLayout).inflate(R.layout.dialog_edit_bookmark, null);
 		this.panelLabels = V.get(dialogView, R.id.panelLabels);
 		
 		final EditText tCaption = V.get(dialogView, R.id.tCaption);
 		final Button bAddLabel = V.get(dialogView, R.id.bAddLabel);
 		
 		bAddLabel.setOnClickListener(new View.OnClickListener() {
-			@Override public void onClick(View v) {
+			@Override
+			public void onClick(View v) {
 				adapter = new LabelAdapter();
-				
+
 				AlertDialog.Builder b = new AlertDialog.Builder(context)
 				.setTitle(R.string.add_label_title)
 				.setAdapter(adapter, bAddLabel_dialog_itemSelected)
@@ -146,7 +152,7 @@ public class TypeBookmarkDialog {
 		
 		tCaption.setText(bookmark != null? bookmark.caption: reference);
 		
-		new AlertDialog.Builder(context)
+		builder
 		.setView(dialogView)
 		.setTitle(reference)
 		.setIcon(R.drawable.ic_attr_bookmark)

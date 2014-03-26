@@ -2,6 +2,7 @@ package yuku.alkitab.base.dialog;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -61,9 +62,13 @@ public class TypeHighlightDialog {
 		this.ari_bookchapter = ari_bookchapter;
 		this.selectedVerses = selectedVerses;
 		this.listener = listener;
-		this.dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_highlight, null);
-		
-		this.alert = new AlertDialog.Builder(context)
+
+		final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		final Context contextForLayout = Build.VERSION.SDK_INT >= 11? builder.getContext(): context;
+
+		this.dialogView = LayoutInflater.from(contextForLayout).inflate(R.layout.dialog_edit_highlight, null);
+
+		this.alert = builder
 		.setView(dialogView)
 		.setIcon(R.drawable.ic_attr_highlight)
 		.setNegativeButton(R.string.cancel, null)
