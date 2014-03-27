@@ -3,16 +3,16 @@
 <resources>
   <string-array name="pref_colorTheme_labels">
     <item>Papel Branco</item>
-    <item>Quadro-Negro</item>
+    <item>Quadro Negro</item>
     <item>Tropical</item>
     <item>Lago de Musgo</item>
     <item>Brasa Quente</item>
-    <item>Laranja-Doce</item>
+    <item>Laranja Doce</item>
     <item>Deserto Árido</item>
     <item>Chocolate</item>
     <item>Goiaba Molhada</item>
     <item>Noite Clara</item>
     <item>Noite Estrelada</item>
-    <item>Soft Light</item>
+    <item>Luz Suave</item>
   </string-array>
 </resources>
