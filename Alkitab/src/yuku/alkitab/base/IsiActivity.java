@@ -793,7 +793,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 	
-	CharSequence prepareTextForCopyShare(IntArrayList selectedVerses_1, CharSequence reference, boolean isSplitVersion) {
+	String prepareTextForCopyShare(IntArrayList selectedVerses_1, CharSequence reference, boolean isSplitVersion) {
 		StringBuilder res = new StringBuilder();
 		res.append(reference);
 		
@@ -826,7 +826,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				}
 			}
 		}
-		return res;
+		return res.toString();
 	}
 
 	private void applyPreferences(boolean languageToo) {
@@ -1514,7 +1514,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	private void displaySplitFollowingMaster(int verse_1) {
 		if (activeSplitVersion != null) { // split1
-			Book splitBook = activeSplitVersion.getBook(this.activeBook.bookId);
+			final Book splitBook = activeSplitVersion.getBook(this.activeBook.bookId);
 			if (splitBook == null) {
 				tSplitEmpty.setText(getString(R.string.split_version_cant_display_verse, this.activeBook.reference(this.chapter_1), activeSplitVersion.getLongName()));
 				tSplitEmpty.setTextColor(S.applied.fontColor);
@@ -1934,13 +1934,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 			CharSequence reference = referenceFromSelectedVerses(selected, activeBook);
 
-			IntArrayList selectedSplit = null;
-			CharSequence referenceSplit = null;
-			if (activeSplitVersion != null) {
-				selectedSplit = lsSplit1.getSelectedVerses_1();
-				referenceSplit = referenceFromSelectedVerses(selectedSplit, activeSplitVersion.getBook(activeBook.bookId));
-			}
-
 			// the main verse (0 if not exist), which is only when only one verse is selected
 			int mainVerse_1 = 0;
 			if (selected.size() == 1) {
@@ -1950,9 +1943,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			int itemId = item.getItemId();
 			switch (itemId) {
 			case R.id.menuCopy: { // copy, can be multiple
-				CharSequence textToCopy = prepareTextForCopyShare(selected, reference, false);
+				String textToCopy = prepareTextForCopyShare(selected, reference, false);
 				if (activeSplitVersion != null) {
-					textToCopy = textToCopy + "\n\n" + prepareTextForCopyShare(selectedSplit, referenceSplit, true);
+					textToCopy = appendSplitTextForCopyShare(textToCopy);
 				}
 				
 				U.copyToClipboard(textToCopy);
@@ -1962,9 +1955,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				mode.finish();
 			} return true;
 			case R.id.menuShare: {
-				CharSequence textToShare = prepareTextForCopyShare(selected, reference, false);
+				String textToShare = prepareTextForCopyShare(selected, reference, false);
 				if (activeSplitVersion != null) {
-					textToShare = textToShare + "\n\n" + prepareTextForCopyShare(selectedSplit, referenceSplit, true);
+					textToShare = appendSplitTextForCopyShare(textToShare);
 				}
 
 				String verseUrl;
@@ -2066,6 +2059,16 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 			}
 			return false;
+		}
+
+		String appendSplitTextForCopyShare(String textToCopy) {
+			final Book splitBook = activeSplitVersion.getBook(activeBook.bookId);
+			if (splitBook != null) {
+				IntArrayList selectedSplit = lsSplit1.getSelectedVerses_1();
+				CharSequence referenceSplit = referenceFromSelectedVerses(selectedSplit, splitBook);
+				textToCopy += "\n\n" + prepareTextForCopyShare(selectedSplit, referenceSplit, true);
+			}
+			return textToCopy;
 		}
 
 		@Override public void onDestroyActionMode(ActionMode mode) {

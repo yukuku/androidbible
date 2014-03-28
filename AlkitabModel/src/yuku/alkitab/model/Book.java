@@ -11,13 +11,21 @@ public class Book {
 	public String abbreviation;
 
 	public String reference(int chapter_1) {
-		return this.shortName + " " + chapter_1; //$NON-NLS-1$ 
+		return reference(this.shortName, chapter_1);
 	}
 
 	public String reference(int chapter_1, int verse_1) {
-		return this.shortName + " " + chapter_1 + ":" + verse_1;  //$NON-NLS-1$//$NON-NLS-2$ 
+		return reference(this.shortName, chapter_1, verse_1);
 	}
-	
+
+	public static String reference(CharSequence bookName, int chapter_1) {
+		return bookName + " " + chapter_1;
+	}
+
+	public static String reference(CharSequence bookName, int chapter_1, int verse_1) {
+		return bookName + " " + chapter_1 + ":" + verse_1;
+	}
+
 	public CharSequence reference(int chapter_1, IntArrayList verses_1) {
 		StringBuilder sb = new StringBuilder(this.shortName); 
 		sb.append(' ').append(chapter_1);

@@ -1,11 +1,11 @@
 package yuku.alkitab.base.model;
 
 import android.util.Log;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.storage.InternalReader;
 import yuku.alkitab.base.storage.OldVerseTextDecoder;
-import yuku.alkitab.util.Ari;
-import yuku.alkitab.util.IntArrayList;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
@@ -13,6 +13,8 @@ import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.model.XrefEntry;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.util.IntArrayList;
 
 import java.util.List;
 
@@ -39,6 +41,10 @@ public class VersionImpl implements Version {
 			internalVersion = new VersionImpl(new InternalReader(c.internalPrefix, c.internalShortName, c.internalLongName, new OldVerseTextDecoder.Utf8()));
 		}
 		return internalVersion;
+	}
+
+	private static class UnavailableBookNames {
+		static String[] names = App.context.getResources().getStringArray(R.array.standard_book_names_unavailable);
 	}
 
 	/**
@@ -319,9 +325,23 @@ public class VersionImpl implements Version {
 		int chapter_1 = Ari.toChapter(ari);
 		int verse_1 = Ari.toVerse(ari);
 
-		Book book = getBook(bookId);
+		return reference(bookId, chapter_1, verse_1);
+	}
+
+	@Override
+	public String reference(int bookId, int chapter_1, int verse_1) {
+		final Book book = getBook(bookId);
 		if (book == null) {
-			return "[?]";
+			if (bookId >= 0 && bookId < UnavailableBookNames.names.length) {
+				final String placeholderBookName = "[[" + UnavailableBookNames.names[bookId] + "]]";
+				if (verse_1 == 0) {
+					return Book.reference(placeholderBookName, chapter_1);
+				} else {
+					return Book.reference(placeholderBookName, chapter_1, verse_1);
+				}
+			} else {
+				return "[?]";
+			}
 		}
 
 		if (verse_1 == 0) {
@@ -329,15 +349,6 @@ public class VersionImpl implements Version {
 		} else {
 			return book.reference(chapter_1, verse_1);
 		}
-	}
-
-	@Override
-	public String reference(int bookId, int chapter_1, int verse_1) {
-		Book book = getBook(bookId);
-		if (book == null) {
-			return "[?]";
-		}
-		return book.reference(chapter_1, verse_1);
 	}
 
 	/**
