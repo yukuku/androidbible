@@ -383,7 +383,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		// for splitting
 		splitHandleButton.setListener(splitHandleButton_listener);
-		
+		splitHandleButton.setOnLabelPressed(splitHandleButton_labelPressed);
+
 		history = History.getInstance();
 
 		// configure devotion
@@ -1087,14 +1088,21 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		return super.onOptionsItemSelected(item);
 	}
 
+	@TargetApi(19)
 	void setFullScreen(boolean yes) {
 		if (yes) {
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			fullScreenController.hidePermanently();
+			if (Build.VERSION.SDK_INT >= 19) {
+				root.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+			}
 			fullScreen = true;
 		} else {
 			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			fullScreenController.showPermanently();
+			if (Build.VERSION.SDK_INT >= 19) {
+				root.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+			}
 			fullScreen = false;
 		}
 	}
@@ -2173,6 +2181,17 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 		
 		@Override public void onHandleDragStop() {
+		}
+	};
+
+	LabeledSplitHandleButton.OnLabelPressed splitHandleButton_labelPressed = new LabeledSplitHandleButton.OnLabelPressed() {
+		@Override
+		public void onLabelPressed(final int which) {
+			if (which == 1) { // left
+				openVersionsDialog();
+			} else if (which == 2) { // right
+				openSplitVersionsDialog();
+			}
 		}
 	};
 }

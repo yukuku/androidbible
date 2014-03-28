@@ -36,7 +36,7 @@ public class Proses3 {
 			File outDir = new File(OUTPUT_INTERNAL);
 			XrefDb xrefDb = yet.xrefEntries == null? null: new XrefDb(yet.xrefEntries);
 			FootnoteDb footnoteDb = yet.footnoteEntries == null? null: new FootnoteDb(yet.footnoteEntries);
-			InternalCommon.createInternalFiles(outDir, OUTPUT_PREFIX, yet.bookNames, yet.recs, yet.pericopeData, xrefDb, footnoteDb);
+			InternalCommon.createInternalFiles(outDir, OUTPUT_PREFIX, yet.getBookNamesAsList(), yet.recs, yet.pericopeData, xrefDb, footnoteDb);
 		}
 	}
 }

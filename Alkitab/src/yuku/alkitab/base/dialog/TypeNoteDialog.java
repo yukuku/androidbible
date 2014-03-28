@@ -3,20 +3,20 @@ package yuku.alkitab.base.dialog;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.EditText;
-
-import java.util.Date;
-
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
-import yuku.alkitab.util.Ari;
+import yuku.alkitab.base.storage.Db;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.Bookmark2;
-import yuku.alkitab.base.storage.Db;
+import yuku.alkitab.util.Ari;
+
+import java.util.Date;
 
 public class TypeNoteDialog {
 	final Context context;
@@ -45,10 +45,12 @@ public class TypeNoteDialog {
 		this.context = context;
 		this.listener = listener;
 		
-		View dialogLayout = LayoutInflater.from(context).inflate(R.layout.dialog_edit_note, null);
-		
-		this.dialog = new AlertDialog.Builder(context)
-		.setView(dialogLayout)
+		final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+		final Context contextForLayout = Build.VERSION.SDK_INT >= 11? builder.getContext(): context;
+		final View dialogLayout = LayoutInflater.from(contextForLayout).inflate(R.layout.dialog_edit_note, null);
+
+		builder.setView(dialogLayout)
 		.setIcon(R.drawable.ic_attr_note)
 		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
@@ -61,8 +63,9 @@ public class TypeNoteDialog {
 			public void onClick(DialogInterface dialog, int which) {
 				bDelete_click();
 			}
-		})
-		.create();
+		});
+
+		this.dialog = builder.create();
 
 		tCaption = (EditText) dialogLayout.findViewById(R.id.tCaption);
 		

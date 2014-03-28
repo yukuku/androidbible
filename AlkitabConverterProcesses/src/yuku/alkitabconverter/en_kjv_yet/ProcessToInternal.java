@@ -30,7 +30,7 @@ public class ProcessToInternal {
 		{
 			File outDir = new File(OUTPUT_INTERNAL);
 			outDir.mkdir();
-			InternalCommon.createInternalFiles(outDir, "kjv", yet.bookNames, yet.recs, yet.pericopeData);
+			InternalCommon.createInternalFiles(outDir, "kjv", yet.getBookNamesAsList(), yet.recs, yet.pericopeData);
 		}
 	}
 }
