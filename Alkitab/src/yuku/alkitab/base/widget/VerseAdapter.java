@@ -105,6 +105,9 @@ public abstract class VerseAdapter extends BaseAdapter {
 	}
 
 	public synchronized void reloadAttributeMap() {
+		// book_ can be empty when the selected (book, chapter) is not available in this version
+		if (book_ == null) return;
+
 		int[] attributeMap = null;
 		int[] highlightMap = null;
 
