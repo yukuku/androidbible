@@ -70,4 +70,75 @@
         <item>Wahyu</item>
     </string-array>
 
+    <string-array name="standard_book_names_unavailable" translatable="false">
+        <item>Gen</item>
+        <item>Ex</item>
+        <item>Lev</item>
+        <item>Num</item>
+        <item>Deut</item>
+        <item>Josh</item>
+        <item>Judg</item>
+        <item>Ruth</item>
+        <item>1Sam</item>
+        <item>2Sam</item>
+        <item>1Ki</item>
+        <item>2Ki</item>
+        <item>1Chr</item>
+        <item>2Chr</item>
+        <item>Ezr</item>
+        <item>Neh</item>
+        <item>Est</item>
+        <item>Job</item>
+        <item>Ps</item>
+        <item>Prov</item>
+        <item>Ecc</item>
+        <item>Song</item>
+        <item>Isa</item>
+        <item>Jer</item>
+        <item>Lam</item>
+        <item>Eze</item>
+        <item>Dan</item>
+        <item>Hos</item>
+        <item>Joel</item>
+        <item>Amos</item>
+        <item>Ob</item>
+        <item>Jon</item>
+        <item>Mi</item>
+        <item>Nah</item>
+        <item>Hab</item>
+        <item>Zeph</item>
+        <item>Hag</item>
+        <item>Zech</item>
+        <item>Mal</item>
+        <item>Mt</item>
+        <item>Mk</item>
+        <item>Luk</item>
+        <item>Jn</item>
+        <item>Acts</item>
+        <item>Rm</item>
+        <item>1Cor</item>
+        <item>2Cor</item>
+        <item>Gal</item>
+        <item>Eph</item>
+        <item>Php</item>
+        <item>Col</item>
+        <item>1Ths</item>
+        <item>2The</item>
+        <item>1Tim</item>
+        <item>2Tim</item>
+        <item>Tit</item>
+        <item>Phm</item>
+        <item>Hb</item>
+        <item>Jam</item>
+        <item>1Pt</item>
+        <item>2Pt</item>
+        <item>1Jn</item>
+        <item>2Jn</item>
+        <item>3Jn</item>
+        <item>Jud</item>
+        <item>Rev</item>
+    </string-array>
+
+
+
 </resources>
