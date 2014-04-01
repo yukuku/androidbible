@@ -32,4 +32,7 @@ public enum Prefkey {
 
 	/** Night mode activated (boolean) */
 	is_night_mode,
+
+	/** marker (bookmark) list selected sorting option */
+	marker_list_sort_column, marker_list_sort_ascending,
 }

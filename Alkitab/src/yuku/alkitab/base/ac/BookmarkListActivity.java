@@ -30,7 +30,7 @@ import android.widget.FilterQueryProvider;
 import android.widget.ListView;
 import android.widget.TextView;
 import yuku.afw.V;
-import yuku.alkitab.debug.R;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -39,15 +39,17 @@ import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog.Listener;
 import yuku.alkitab.base.dialog.TypeHighlightDialog;
 import yuku.alkitab.base.dialog.TypeNoteDialog;
-import yuku.alkitab.util.Ari;
-import yuku.alkitab.model.Book;
-import yuku.alkitab.model.Label;
 import yuku.alkitab.base.storage.Db;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Appearances;
-import yuku.alkitab.util.IntArrayList;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.Search2Engine;
 import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.model.Book;
+import yuku.alkitab.model.Label;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.util.IntArrayList;
 import yuku.devoxx.flowlayout.FlowLayout;
 
 import java.util.ArrayList;
@@ -111,10 +113,38 @@ public class BookmarkListActivity extends BaseActivity {
 		
         setTitleAndNothingText();
 
-        // default sort
+        // default sort ...
         sort_column = Db.Bookmark2.addTime;
         sort_ascending = false;
         sort_columnId = R.string.menuSortWaktuTambah;
+
+	    { // .. but probably there is a stored preferences about the last sort used
+		    String pref_sort_column = Preferences.getString(Prefkey.marker_list_sort_column);
+		    if (pref_sort_column != null) {
+			    sort_ascending = Preferences.getBoolean(Prefkey.marker_list_sort_ascending, false);
+			    switch (pref_sort_column) {
+				    case Db.Bookmark2.addTime:
+					    sort_column = pref_sort_column;
+					    sort_columnId = R.string.menuSortWaktuTambah;
+					    break;
+				    case Db.Bookmark2.modifyTime:
+					    sort_column = pref_sort_column;
+					    sort_columnId = R.string.menuSortWaktuUbah;
+					    break;
+				    case Db.Bookmark2.ari:
+					    sort_column = pref_sort_column;
+					    sort_columnId = R.string.menuSortAri;
+					    break;
+				    case Db.Bookmark2.caption:
+					    sort_column = pref_sort_column;
+					    sort_columnId = R.string.menuSortTulisan;
+					    break;
+				    default:
+					    // do nothing!
+			    }
+		    }
+	    }
+
 		replaceCursor();
 		
 		adapter = new BukmakListAdapter(this, cursor);
@@ -352,6 +382,10 @@ public class BookmarkListActivity extends BaseActivity {
 			}
 
 			private void sort(String column, boolean ascending, int columnId) {
+				// store for next time use
+				Preferences.setString(Prefkey.marker_list_sort_column, column);
+				Preferences.setBoolean(Prefkey.marker_list_sort_ascending, ascending);
+
 				searchView.setQuery("", false); //$NON-NLS-1$
 				currentlyUsedFilter = null;
 				setTitleAndNothingText();
@@ -509,7 +543,11 @@ public class BookmarkListActivity extends BaseActivity {
 			String reference = S.activeVersion.reference(ari);
 			
 			String verseText = S.activeVersion.loadVerseText(book, Ari.toChapter(ari), Ari.toVerse(ari));
-			verseText = U.removeSpecialCodes(verseText);
+			if (verseText == null) {
+				verseText = getString(R.string.generic_verse_not_available_in_this_version);
+			} else {
+				verseText = U.removeSpecialCodes(verseText);
+			}
 			
 			String caption = cursor.getString(col_caption);
 			
