@@ -165,6 +165,7 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 		overlay 'drawable-hdpi/ic_launcher.png' 'res/drawable-hdpi/ic_launcher.png'
 		overlay 'drawable-xhdpi/ic_launcher.png' 'res/drawable-xhdpi/ic_launcher.png'
 		overlay 'drawable-xxhdpi/ic_launcher.png' 'res/drawable-xxhdpi/ic_launcher.png'
+		overlay 'drawable-xxxhdpi/ic_launcher.png' 'res/drawable-xxxhdpi/ic_launcher.png'
 
 		# END BUILD-SPECIFIC
 
