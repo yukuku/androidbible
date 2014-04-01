@@ -35,3 +35,10 @@
     java.lang.Object writeReplace();
     java.lang.Object readResolve();
 }
+
+
+
+# http://stackoverflow.com/questions/22246280/android-studio-0-5-0-rebuild-not-working-with-proguard
+# This shouldn't be a problem as BuildConfig is only constants that should get inlined in the code anyway. You can do a temp fix with excluding only BuildConfig:
+
+-dontwarn ***.BuildConfig
