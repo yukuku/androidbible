@@ -3,8 +3,11 @@ package yuku.alkitab.base;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.util.Pair;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.ac.VersionsActivity;
+import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
@@ -14,6 +17,8 @@ import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.FontManager;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class S {
@@ -136,5 +141,38 @@ public class S {
 		}
 		
 		return db;
+	}
+
+	/**
+	 * Returns the list of versions that are:
+	 * 1. internal
+	 * 2. presets that have been DOWNLOADED and ACTIVE
+	 * 3. yeses that are ACTIVE
+	 **/
+	public static Pair<List<String>, List<VersionsActivity.MVersion>> getAvailableVersions() {
+		final List<String> options = new ArrayList<>(); // sync with below line
+		final List<VersionsActivity.MVersion> data = new ArrayList<>();  // sync with above line
+
+		final AppConfig c = AppConfig.get();
+		options.add(c.internalLongName); // 1. internal
+		data.add(new VersionsActivity.MVersionInternal());
+
+		for (VersionsActivity.MVersionPreset preset: c.presets) { // 2. preset
+			if (preset.hasDataFile() && preset.getActive()) {
+				options.add(preset.longName);
+				data.add(preset);
+			}
+		}
+
+		// 3. active yeses
+		List<VersionsActivity.MVersionYes> yeses = S.getDb().listAllVersions();
+		for (VersionsActivity.MVersionYes yes: yeses) {
+			if (yes.hasDataFile() && yes.getActive()) {
+				options.add(yes.longName);
+				data.add(yes);
+			}
+		}
+
+		return Pair.create(options, data);
 	}
 }

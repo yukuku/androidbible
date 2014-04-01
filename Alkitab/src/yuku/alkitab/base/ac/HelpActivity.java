@@ -104,8 +104,7 @@ public class HelpActivity extends BaseActivity {
 							@Override
 							public void onVerseSelected(final VersesDialog dialog, final int ari) {
 								Log.d(TAG, "Verse link clicked from page");
-								final Intent intent = Launcher.openAppAtBibleLocation(ari);
-								startActivity(intent);
+								startActivity(Launcher.openAppAtBibleLocation(ari));
 							}
 						});
 					}

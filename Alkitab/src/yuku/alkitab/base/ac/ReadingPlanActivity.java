@@ -53,7 +53,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
@@ -204,7 +203,7 @@ public class ReadingPlanActivity extends BaseActivity {
 		}
 
 		Calendar startCalendar = GregorianCalendar.getInstance();
-		startCalendar.setTime(new Date(readingPlan.info.startTime));
+		startCalendar.setTimeInMillis(readingPlan.info.startTime);
 
 		todayNumber = calculateDaysDiff(startCalendar, GregorianCalendar.getInstance());
 		if (todayNumber >= readingPlan.info.duration) {
@@ -234,7 +233,8 @@ public class ReadingPlanActivity extends BaseActivity {
 		endCalendar.set(Calendar.SECOND, 0);
 		endCalendar.set(Calendar.MILLISECOND, 0);
 
-		return (int) ((endCalendar.getTime().getTime() - startCalendar.getTime().getTime()) / (1000 * 60 * 60 * 24));
+		// add 2 hours to prevent DST-related problems
+		return (int) ((2 * 3600 * 1000 + endCalendar.getTime().getTime() - startCalendar.getTime().getTime()) / (1000 * 60 * 60 * 24));
 	}
 
 
@@ -366,7 +366,7 @@ public class ReadingPlanActivity extends BaseActivity {
 
 			private void showCalendar() {
 				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(new Date(readingPlan.info.startTime));
+				calendar.setTimeInMillis(readingPlan.info.startTime);
 				calendar.add(Calendar.DATE, dayNumber);
 
 				DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
@@ -374,7 +374,7 @@ public class ReadingPlanActivity extends BaseActivity {
 			        public void onDateSet(final DatePicker view, final int year, final int monthOfYear, final int dayOfMonth) {
 				        Calendar newCalendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
 				        Calendar startCalendar = GregorianCalendar.getInstance();
-				        startCalendar.setTime(new Date(readingPlan.info.startTime));
+				        startCalendar.setTimeInMillis(readingPlan.info.startTime);
 
 				        int newDay = calculateDaysDiff(startCalendar, newCalendar);
 				        if (newDay < 0) {
@@ -712,7 +712,7 @@ public class ReadingPlanActivity extends BaseActivity {
 
 	public String getReadingDateHeader(final int dayNumber) {
 		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(new Date(readingPlan.info.startTime));
+		calendar.setTimeInMillis(readingPlan.info.startTime);
 		calendar.add(Calendar.DATE, dayNumber);
 
 		String date = getString(R.string.rp_dayHeader, (dayNumber + 1), Sqlitil.toLocaleDateMedium(calendar.getTime()));

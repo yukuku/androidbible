@@ -73,7 +73,6 @@ public abstract class VerseAdapter extends BaseAdapter {
 	int[] itemPointer_;
 	int[] attributeMap_; // bit 0(0x1) = bookmark; bit 1(0x2) = notes; bit 2(0x4) = highlight; bit 8-12 = progress mark
 	int[] highlightMap_; // null atau warna stabilo
-	int[] ariRangesReadingPlan;
 
 	LayoutInflater inflater_;
 	VersesView owner_;

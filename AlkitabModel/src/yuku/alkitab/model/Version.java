@@ -32,8 +32,16 @@ public interface Version {
 	
 	public abstract Book getFirstBook();
 
+	/**
+	 * Load a single verse from this version.
+	 * @return null if the verse is not available.
+	 */
 	public abstract String loadVerseText(int ari);
 
+	/**
+	 * Load a single verse from this version.
+	 * @return null if the verse is not available.
+	 */
 	public abstract String loadVerseText(Book book, int chapter_1, int verse_1);
 
 	/**
@@ -57,6 +65,10 @@ public interface Version {
 
 	public abstract SingleChapterVerses loadChapterTextLowercased(Book book, int chapter_1);
 
+	/**
+	 * Load a whole chapter as a single string with verses separated by '\n' from this version.
+	 * @return null if the chapter is not available.
+	 */
 	public abstract String loadChapterTextLowercasedWithoutSplit(Book book, int chapter_1);
 	
 	/**

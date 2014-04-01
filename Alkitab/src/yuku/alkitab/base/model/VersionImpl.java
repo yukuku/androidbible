@@ -20,7 +20,6 @@ import java.util.List;
 
 public class VersionImpl implements Version {
 	public static final String TAG = VersionImpl.class.getSimpleName();
-	private static final String NOT_AVAILABLE_TEXT = "[?]"; //$NON-NLS-1$
 
 	private BibleReader bibleReader;
 
@@ -158,17 +157,17 @@ public class VersionImpl implements Version {
 	@Override
 	public synchronized String loadVerseText(Book book, int chapter_1, int verse_1) {
 		if (book == null) {
-			return NOT_AVAILABLE_TEXT;
+			return null;
 		}
 		SingleChapterVerses verses = bibleReader.loadVerseText(book, chapter_1, false, false);
 
 		if (verses == null) {
-			return NOT_AVAILABLE_TEXT;
+			return null;
 		}
 
 		int verse_0 = verse_1 - 1;
 		if (verse_0 >= verses.getVerseCount()) {
-			return NOT_AVAILABLE_TEXT;
+			return null;
 		}
 		return verses.getVerse(verse_0);
 	}
@@ -291,13 +290,13 @@ public class VersionImpl implements Version {
 	@Override
 	public synchronized String loadChapterTextLowercasedWithoutSplit(Book book, int chapter_1) {
 		if (book == null) {
-			return NOT_AVAILABLE_TEXT;
+			return null;
 		}
 
 		SingleChapterVerses singleVerse = bibleReader.loadVerseText(book, chapter_1, true, true);
 
 		if (singleVerse == null) {
-			return NOT_AVAILABLE_TEXT;
+			return null;
 		}
 
 		return singleVerse.getVerse(0);

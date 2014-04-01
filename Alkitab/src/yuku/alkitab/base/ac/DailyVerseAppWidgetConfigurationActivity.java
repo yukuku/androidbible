@@ -21,10 +21,8 @@ import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.br.DailyVerseAppWidgetReceiver;
-import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.debug.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DailyVerseAppWidgetConfigurationActivity extends Activity {
@@ -162,35 +160,7 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 		private Pair<List<String>,List<VersionsActivity.MVersion>> versions;
 
 		void load() {
-			// populate with
-			// 1. internal
-			// 2. presets that have been DOWNLOADED and ACTIVE
-			// 3. yeses that are ACTIVE
-
-			AppConfig c = AppConfig.get();
-			final List<String> options = new ArrayList<String>(); // sync with below line
-			final List<VersionsActivity.MVersion> data = new ArrayList<VersionsActivity.MVersion>();  // sync with above line
-
-			options.add(c.internalLongName); // 1. internal
-			data.add(new VersionsActivity.MVersionInternal());
-
-			for (VersionsActivity.MVersionPreset preset: c.presets) { // 2. preset
-				if (preset.hasDataFile() && preset.getActive()) {
-					options.add(preset.longName);
-					data.add(preset);
-				}
-			}
-
-			// 3. active yeses
-			List<VersionsActivity.MVersionYes> yeses = S.getDb().listAllVersions();
-			for (VersionsActivity.MVersionYes yes: yeses) {
-				if (yes.hasDataFile() && yes.getActive()) {
-					options.add(yes.longName);
-					data.add(yes);
-				}
-			}
-
-			versions = Pair.create(options, data);
+			versions = S.getAvailableVersions();
 		}
 
 		@Override
