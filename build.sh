@@ -197,7 +197,7 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 			exit 1
 		fi
 
-		jarsigner -keystore "$SIGN_KEYSTORE" -storepass "$SIGN_PASSWORD" -keypass "$SIGN_PASSWORD" -signedjar $BUILD_MAIN_PROJECT_DIR/bin/$MAIN_PROJECT_NAME-release-signed.apk $BUILD_MAIN_PROJECT_DIR/bin/$MAIN_PROJECT_NAME-release-unsigned.apk "$SIGN_ALIAS"
+		jarsigner -digestalg SHA1 -sigalg MD5withRSA -keystore "$SIGN_KEYSTORE" -storepass "$SIGN_PASSWORD" -keypass "$SIGN_PASSWORD" -signedjar $BUILD_MAIN_PROJECT_DIR/bin/$MAIN_PROJECT_NAME-release-signed.apk $BUILD_MAIN_PROJECT_DIR/bin/$MAIN_PROJECT_NAME-release-unsigned.apk "$SIGN_ALIAS"
 
 		if [ \! -r $BUILD_MAIN_PROJECT_DIR/bin/$MAIN_PROJECT_NAME-release-signed.apk ] ; then
 			echo $BUILD_MAIN_PROJECT_DIR/bin/$MAIN_PROJECT_NAME-release-signed.apk ' not found. '
