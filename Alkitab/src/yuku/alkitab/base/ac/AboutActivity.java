@@ -1,31 +1,24 @@
 package yuku.alkitab.base.ac;
 
-import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
-import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 import yuku.afw.V;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
-
-import java.io.IOException;
-import java.io.InputStream;
+import yuku.alkitab.debug.R;
 
 public class AboutActivity extends BaseActivity {
 	public static final String TAG = AboutActivity.class.getSimpleName();
 
 	View root;
-	TextView lAbout;
-	TextView lTranslators;
+	TextView tVersion;
+	TextView tTranslators;
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -34,26 +27,14 @@ public class AboutActivity extends BaseActivity {
 		getActionBar().setSubtitle(String.format("%s %s", App.getVersionCode(), getString(R.string.last_commit_hash)));
 
 		root = V.get(this, R.id.root);
-		lAbout = V.get(this, R.id.lAbout);
-		lTranslators = V.get(this, R.id.lTranslators);
+		tVersion = V.get(this, R.id.tVersion);
+		tTranslators = V.get(this, R.id.tTranslators);
 
-		try {
-			final InputStream input = getAssets().open("help/about.html");
-			final byte[] buf = new byte[input.available()];
-			input.read(buf);
-			lAbout.setText(Html.fromHtml(new String(buf, "utf-8")));
-			lAbout.setMovementMethod(LinkMovementMethod.getInstance());
-		} catch (IOException e) {
-			Log.e(TAG, "reading about text", e);
-		}
+		tVersion.setText(getString(R.string.about_version_name, App.getVersionName()));
 
 		String[] translators = getResources().getStringArray(R.array.translators_list);
 		SpannableStringBuilder sb = new SpannableStringBuilder();
-		sb.append(getString(R.string.about_translators)).append('\n');
-		sb.setSpan(new StyleSpan(Typeface.BOLD), 0, sb.length(), 0);
-
 		for (String translator: translators) {
-			sb.append("\u2022 "); //$NON-NLS-1$
 			int open = translator.indexOf('[');
 			int close = translator.indexOf(']');
 			if (open != -1 && close > open) {
@@ -66,8 +47,8 @@ public class AboutActivity extends BaseActivity {
 			}
 			sb.append('\n');
 		}
-		lTranslators.setText(sb);
-		lTranslators.setMovementMethod(LinkMovementMethod.getInstance());
+		tTranslators.setText(sb);
+		tTranslators.setMovementMethod(LinkMovementMethod.getInstance());
 
 		root.setOnTouchListener(root_touch);
 	}

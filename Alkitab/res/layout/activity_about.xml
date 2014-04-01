@@ -1,35 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/root"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
-    <LinearLayout
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:background="#e5e5e5"
+        android:id="@+id/root">
+    <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:padding="8dp">
+            >
 
-        <TextView
-                android:id="@+id/lAbout"
-                android:layout_width="wrap_content"
+        <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxWidth="400dp"
-                android:text="* About text"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                tools:ignore="HardcodedText"/>
+                android:orientation="vertical"
+                android:background="#fff"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="32dp"
+                android:gravity="center_horizontal"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp">
 
-        <TextView
-                android:id="@+id/lTranslators"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:maxWidth="400dp"
-                android:text="*translators"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                tools:ignore="HardcodedText"/>
-    </LinearLayout>
+            <ImageView
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:src="@drawable/ic_launcher"
+                    android:layout_marginTop="24dp"
+                    tools:ignore="ContentDescription"/>
 
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:tag="bold"
+                    android:textSize="24sp"
+                    android:layout_marginTop="16dp"/>
+
+            <TextView
+                    android:id="@+id/tVersion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="versi x.y.z"
+                    android:textSize="18sp"
+                    tools:ignore="HardcodedText"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="100% free Bible app, licensed under Apache License 2.0"
+                    android:textSize="16sp"
+                    android:layout_marginTop="32dp"
+                    android:gravity="center_horizontal"
+                    tools:ignore="HardcodedText"/>
+
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Team"
+                    android:textSize="18sp"
+                    android:tag="bold"
+                    android:layout_marginTop="32dp"
+                    tools:ignore="HardcodedText"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Randy Sugianto (Yuku) – developer\nRudy Kurniawan – developer\nJaya Satrio Hendrick – graphics\nYohanes Nugroho – PDB Reader"
+                    android:textSize="16sp"
+                    android:gravity="center_horizontal"
+                    tools:ignore="HardcodedText"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Project Page"
+                    android:textSize="16sp"
+                    android:tag="bold"
+                    android:layout_marginTop="32dp"
+                    tools:ignore="HardcodedText"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="github.com/yukuku/androidbible"
+                    android:autoLink="web"
+                    android:textSize="16sp"
+                    android:gravity="center_horizontal"
+                    tools:ignore="HardcodedText"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Development Blog"
+                    android:textSize="16sp"
+                    android:tag="bold"
+                    android:layout_marginTop="32dp"
+                    tools:ignore="HardcodedText"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="androidbible.blogspot.com"
+                    android:autoLink="web"
+                    android:textSize="16sp"
+                    android:gravity="center_horizontal"
+                    tools:ignore="HardcodedText"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/about_translators"
+                    android:textSize="18sp"
+                    android:tag="bold"
+                    android:layout_marginTop="32dp"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tTranslators"
+                    android:text="Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. "
+                    android:textSize="16sp"
+                    android:gravity="center_horizontal"
+                    android:layout_marginBottom="32dp"
+                    tools:ignore="HardcodedText"
+                    />
+
+        </LinearLayout>
+    </FrameLayout>
 </ScrollView>

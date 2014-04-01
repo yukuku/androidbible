@@ -168,7 +168,7 @@
     <string name="please_wait_titik3">Please wait…</string>
     <string name="juga_hapus_file_datanya_file">Also delete the data file \'%s\'?</string>
     <string name="get_more_fonts">Download more fonts…</string>
-    <string name="about_translators">Translators:</string>
+    <string name="about_translators">Translators</string>
     <string name="intent_filter_import_from_backup">Import from backup</string>
     <string name="redownload">Redownload</string>
     <string name="read_faq_before_suggest">Please read the above FAQ before sending a suggestion. Continue with sending a suggestion?</string>
@@ -331,4 +331,5 @@
     <string name="menuNightMode">Night mode</string>
     <string name="delete_highlight">Remove highlight</string>
     <string name="menu_compare">Compare</string>
+    <string name="about_version_name">version %s</string>
 </resources>
