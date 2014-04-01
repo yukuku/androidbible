@@ -1421,12 +1421,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						jumpToAri(ari);
 						history.add(ari);
 
-						int[] ariRangesInThisSequence = new int[2];
-						ariRangesInThisSequence[0] = ariRanges[i];
-						ariRangesInThisSequence[1] = ariRanges[i + 1];
-						lsText.setAriRangesReadingPlan(ariRangesInThisSequence);
 						lsText.updateAdapter();
-						lsSplit1.setAriRangesReadingPlan(ariRangesInThisSequence);
 						lsSplit1.updateAdapter();
 
 						readingPlanFloatMenu.load(id, dayNumber, ariRanges, i / 2);
@@ -1439,9 +1434,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 								}
 								jumpToAri(ari_jump);
 								history.add(ari_jump);
-								lsText.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
 								lsText.updateAdapter();
-								lsSplit1.setAriRangesReadingPlan(new int[] {ari_start, ari_end});
 								lsSplit1.updateAdapter();
 							}
 						};
@@ -1459,9 +1452,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 								readingPlanFloatMenu.clearAnimation();
 								readingPlanFloatMenu.setVisibility(View.GONE);
 								readingPlanFloatMenu.isActive = false;
-								lsText.setAriRangesReadingPlan(null);
 								lsText.updateAdapter();
-								lsSplit1.setAriRangesReadingPlan(null);
 								lsSplit1.updateAdapter();
 							}
 						});
