@@ -179,7 +179,7 @@
     <string name="menu_split_version">Split version</string>
     <string name="split_version_none">None</string>
     <string name="split_version_cant_display_verse">%1$s is not available in %2$s.</string>
-    <string name="version_compare_verse_not_available">Not available in this version.</string>
+    <string name="generic_verse_not_available_in_this_version">Not available in this version.</string>
     <string name="menuAddSomething">Add marker</string>
     <string name="color_settings_title">Colors</string>
     <string name="color_settings_night_title">Colors (Night mode)</string>

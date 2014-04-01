@@ -543,7 +543,11 @@ public class BookmarkListActivity extends BaseActivity {
 			String reference = S.activeVersion.reference(ari);
 			
 			String verseText = S.activeVersion.loadVerseText(book, Ari.toChapter(ari), Ari.toVerse(ari));
-			verseText = U.removeSpecialCodes(verseText);
+			if (verseText == null) {
+				verseText = getString(R.string.generic_verse_not_available_in_this_version);
+			} else {
+				verseText = U.removeSpecialCodes(verseText);
+			}
 			
 			String caption = cursor.getString(col_caption);
 			

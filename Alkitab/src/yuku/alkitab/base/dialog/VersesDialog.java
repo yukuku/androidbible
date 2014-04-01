@@ -210,7 +210,7 @@ public class VersesDialog extends BaseDialog {
 
 				String verseText = version.loadVerseText(ari);
 				if (verseText == null) {
-					verseText = getString(R.string.version_compare_verse_not_available);
+					verseText = getString(R.string.generic_verse_not_available_in_this_version);
 				}
 
 				// these need to be added in parallel
