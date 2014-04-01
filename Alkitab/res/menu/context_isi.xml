@@ -19,6 +19,13 @@
                   android:title="@string/bagikan"/>
         </menu>
     </item>
+
+    <item
+        android:id="@+id/menuCompare"
+        android:icon="@drawable/ic_menu_compare"
+        app:showAsAction="always"
+        android:title="@string/menu_compare" />
+
     <item
             android:id="@+id/menuVersions"
             android:icon="@drawable/ic_menu_versions"

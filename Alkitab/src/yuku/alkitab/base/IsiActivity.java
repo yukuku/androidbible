@@ -70,6 +70,7 @@ import yuku.alkitab.base.dialog.ProgressMarkDialog;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeHighlightDialog;
 import yuku.alkitab.base.dialog.TypeNoteDialog;
+import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.dialog.XrefDialog;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.BackupManager;
@@ -103,7 +104,6 @@ import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -1140,40 +1140,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 
-	private Pair<List<String>, List<MVersion>> getAvailableVersions() {
-		// populate with
-		// 1. internal
-		// 2. presets that have been DOWNLOADED and ACTIVE
-		// 3. yeses that are ACTIVE
-		
-		AppConfig c = AppConfig.get();
-		final List<String> options = new ArrayList<String>(); // sync with below line
-		final List<MVersion> data = new ArrayList<MVersion>();  // sync with above line
-		
-		options.add(c.internalLongName); // 1. internal
-		data.add(new MVersionInternal());
-		
-		for (MVersionPreset preset: c.presets) { // 2. preset
-			if (preset.hasDataFile() && preset.getActive()) {
-				options.add(preset.longName);
-				data.add(preset);
-			}
-		}
-		
-		// 3. active yeses
-		List<MVersionYes> yeses = S.getDb().listAllVersions();
-		for (MVersionYes yes: yeses) {
-			if (yes.hasDataFile() && yes.getActive()) {
-				options.add(yes.longName);
-				data.add(yes);
-			}
-		}
-		
-		return Pair.create(options, data);
-	}
-	
 	void openVersionsDialog() {
-		Pair<List<String>, List<MVersion>> versions = getAvailableVersions();
+		Pair<List<String>, List<MVersion>> versions = S.getAvailableVersions();
 		final List<String> options = versions.first;
 		final List<MVersion> data = versions.second;
 		
@@ -1215,7 +1183,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	void openSplitVersionsDialog() {
-		Pair<List<String>, List<MVersion>> versions = getAvailableVersions();
+		Pair<List<String>, List<MVersion>> versions = S.getAvailableVersions();
 		final List<String> options = versions.first;
 		final List<MVersion> data = versions.second;
 		
@@ -1919,6 +1887,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			MenuItem menuAddBookmark = menu.findItem(R.id.menuAddBookmark);
 			MenuItem menuAddNote = menu.findItem(R.id.menuAddNote);
 			MenuItem menuProgressMark = menu.findItem(R.id.menuProgressMark);
+			MenuItem menuCompare = menu.findItem(R.id.menuCompare);
 
 			IntArrayList selected = lsText.getSelectedVerses_1();
 			boolean single = selected.size() == 1;
@@ -1926,12 +1895,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			boolean changed1 = menuAddBookmark.isVisible() != single;
 			boolean changed2 = menuAddNote.isVisible() != single;
 			boolean changed3 = menuProgressMark.isVisible() != single;
-			boolean changed = changed1 || changed2 || changed3;
+			boolean changed4 = menuCompare.isVisible() != single;
+			boolean changed = changed1 || changed2 || changed3 || changed4;
 			
 			if (changed) {
 				menuAddBookmark.setVisible(single);
 				menuAddNote.setVisible(single);
 				menuProgressMark.setVisible(single);
+				menuCompare.setVisible(single);
 			}
 
 			return changed;
@@ -1989,6 +1960,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 				lsText.uncheckAllVerses(true);
 				mode.finish();
+			} return true;
+			case R.id.menuCompare: {
+				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, mainVerse_1);
+				VersesDialog.newCompareInstance(ari).show(getSupportFragmentManager(), "compare_dialog");
 			} return true;
 			case R.id.menuVersions: {
 				openVersionsDialog();

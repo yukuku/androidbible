@@ -179,6 +179,7 @@
     <string name="menu_split_version">Split version</string>
     <string name="split_version_none">None</string>
     <string name="split_version_cant_display_verse">%1$s is not available in %2$s.</string>
+    <string name="version_compare_verse_not_available">Not available in this version.</string>
     <string name="menuAddSomething">Add marker</string>
     <string name="color_settings_title">Colors</string>
     <string name="color_settings_night_title">Colors (Night mode)</string>
@@ -329,4 +330,5 @@
     <string name="version_download_need_fonts">"The version you downloaded might need to be displayed with certain fonts. Go to the 'Text appearance' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
     <string name="menuNightMode">Night mode</string>
     <string name="delete_highlight">Remove highlight</string>
+    <string name="menu_compare">Compare</string>
 </resources>
