@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.reminder.R;
@@ -29,7 +30,11 @@ public class DevotionReminderReceiver extends BroadcastReceiver {
 		String reminder_sound = Preferences.getString(DevotionReminder.REMINDER_SOUND);
 		boolean reminder_vibrate = Preferences.getBoolean(DevotionReminder.REMINDER_VIBRATE, false);
 
-		if (reminder_sound != null) {
+		if (reminder_sound == null) {
+			b.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
+		} else if (reminder_sound.length() == 0) { // None/silend
+			// Do nothing
+		} else {
 			b.setSound(Uri.parse(reminder_sound));
 		}
 

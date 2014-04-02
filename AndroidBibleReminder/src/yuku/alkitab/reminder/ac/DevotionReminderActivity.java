@@ -1,6 +1,7 @@
 package yuku.alkitab.reminder.ac;
 
 import android.content.SharedPreferences;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import yuku.afw.storage.Preferences;
@@ -55,19 +57,40 @@ public class DevotionReminderActivity extends PreferenceActivity implements Shar
 	}
 
 	@SuppressWarnings("deprecation") void updateDisplayedValue() {
-		SharedPreferences sp = getPreferenceScreen().getSharedPreferences();
-
 		//sound
-		String soundName = RingtoneManager.getRingtone(this, Uri.parse(sp.getString(DevotionReminder.REMINDER_SOUND, ""))).getTitle(this);
+		final String reminder_sound = Preferences.getString(DevotionReminder.REMINDER_SOUND);
+		Uri reminder_sound_uri;
+
+		if (reminder_sound == null) {
+			reminder_sound_uri = Settings.System.DEFAULT_NOTIFICATION_URI;
+		} else if (reminder_sound.length() != 0) {
+			reminder_sound_uri = Uri.parse(reminder_sound);
+		} else { // None/silent
+			reminder_sound_uri = null;
+		}
+
 		RingtonePreference soundPreference = (RingtonePreference) findPreference(DevotionReminder.REMINDER_SOUND);
+		String soundName;
+
+		if (reminder_sound_uri == null) { // None/silent
+			soundName = getString(R.string.dr_off);
+		} else {
+			final Ringtone ringtone = RingtoneManager.getRingtone(this, reminder_sound_uri);
+			if (ringtone != null) { // on some devices this happens!
+				soundName = ringtone.getTitle(this);
+			} else {
+				soundName = getString(R.string.dr_default_sound);
+			}
+		}
+
 		soundPreference.setSummary(soundName);
 
 		//time
 		final ReminderTimePreference timePreference = (ReminderTimePreference) findPreference(DevotionReminder.REMINDER_TIME);
-		final String currentValue = sp.getString(DevotionReminder.REMINDER_TIME, null);
+		final String currentValue = Preferences.getString(DevotionReminder.REMINDER_TIME, null);
 
 		if (currentValue == null) {
-			timePreference.setSummary(this.getString(R.string.dr_off));
+			timePreference.setSummary(R.string.dr_off);
 		} else {
 			Calendar time = GregorianCalendar.getInstance();
 			time.set(Calendar.HOUR_OF_DAY, Integer.parseInt(currentValue.substring(0, 2)));
