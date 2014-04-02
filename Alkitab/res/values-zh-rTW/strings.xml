@@ -169,7 +169,6 @@
   <string name="please_wait_titik3">請等待...</string>
   <string name="juga_hapus_file_datanya_file">也刪除資料檔案 \'%s\'?</string>
   <string name="get_more_fonts">下載更多字體...</string>
-  <string name="about_translators">翻譯者:</string>
   <string name="intent_filter_import_from_backup">從備份檔匯入</string>
   <string name="redownload">重新下載</string>
   <string name="read_faq_before_suggest">在提出建議前，請先閱讀以上常見問題解答。繼續提出建議？</string>

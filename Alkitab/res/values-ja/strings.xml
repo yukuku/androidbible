@@ -169,7 +169,7 @@
   <string name="please_wait_titik3">お待ちください...</string>
   <string name="juga_hapus_file_datanya_file">聖書データファイル \'%s\' も削除しますか?</string>
   <string name="get_more_fonts">他のフォントをダウンロード...</string>
-  <string name="about_translators">訳者：</string>
+  <string name="about_translators">翻訳者</string>
   <string name="intent_filter_import_from_backup">バックアップからインポート</string>
   <string name="redownload">再度ダウンロード</string>
   <string name="read_faq_before_suggest">提案をお寄せになる前に、FAQをぜひ読んでください. このまま提案をお寄せになりますか?</string>
@@ -180,6 +180,7 @@
   <string name="menu_split_version">分割画面表示</string>
   <string name="split_version_none">なし</string>
   <string name="split_version_cant_display_verse">%1$s は %2$s には利用できません.</string>
+  <string name="generic_verse_not_available_in_this_version">このバージョンでは利用できません。</string>
   <string name="menuAddSomething">ブックマーク等の追加</string>
   <string name="color_settings_title">色</string>
   <string name="color_settings_night_title">色（夜間モード）</string>
@@ -311,4 +312,7 @@
   <string name="rp_download_reading_plan_data_corrupted">ダウンロードした読書プランのデータは壊れています。インターネット接続を確認し、再度実行してください。</string>
   <string name="version_download_need_fonts">”ダウンロードした版は、特定のフォントで表示する必要があるかもしれません。「文字表示の設定」 メニューでフォントを選択してください。ギリシャ語にはUbuntuフォントが必要です。ビルマ語にはParabaik, ParabaikSansまたはMyanmar3フォントが必要です。タミル語にはAksharフォントが必要です。テルグ語にはSurannaフォントが必要です。\"</string>
   <string name="menuNightMode">夜間モード</string>
+  <string name="delete_highlight">マーカーを削除</string>
+  <string name="menu_compare">比較する</string>
+  <string name="about_version_name">バージョン %s</string>
 </resources>

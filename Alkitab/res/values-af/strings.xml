@@ -169,7 +169,7 @@
   <string name="please_wait_titik3">Wag asseblief</string>
   <string name="juga_hapus_file_datanya_file">Vee data leêr ook uit \'%s\'?</string>
   <string name="get_more_fonts">Laai meer lettertipes af</string>
-  <string name="about_translators">Vertalers:</string>
+  <string name="about_translators">Vertalers</string>
   <string name="intent_filter_import_from_backup">Voer in vanaf rugsteun</string>
   <string name="redownload">Heraflaai</string>
   <string name="read_faq_before_suggest">Lees asb FAQ alvorens U \'n voorstel instuur. Gaan aan met voorstel?</string>
@@ -180,6 +180,7 @@
   <string name="menu_split_version">Skei weergawe</string>
   <string name="split_version_none">Geen</string>
   <string name="split_version_cant_display_verse">%1$s is nie beskikbaar in %2$s.</string>
+  <string name="generic_verse_not_available_in_this_version">Nie beskikbaar in hierdie weergawe nie.</string>
   <string name="menuAddSomething">Voeg merker by</string>
   <string name="color_settings_title">Kleure</string>
   <string name="color_settings_night_title">Kleure (Nag Modus)</string>
@@ -311,4 +312,7 @@
   <string name="rp_download_reading_plan_data_corrupted">Gelaaide lees plan se data is korrup. Probeer asseblief weer later met \'n werkende internet konneksie.</string>
   <string name="version_download_need_fonts">"Die weergawe wat jy afgelaai het mag dalk \'n sekere lettertipe benodig. Gaan na \'Teks voorkoms\' menu en kies lettertipe. Grieks benodig Ubuntu lettertipe. Burmees benodig Parabaik, ParabaikSans, of Myanmar3. Tamil benodig Akshar en Tekugu benodig Suranna."</string>
   <string name="menuNightMode">Nag modus</string>
+  <string name="delete_highlight">Verwyder beklemtoning</string>
+  <string name="menu_compare">Vergelyk</string>
+  <string name="about_version_name">weergawe %s</string>
 </resources>
