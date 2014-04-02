@@ -170,7 +170,7 @@ Vorhandene Sicherungen werden überschrieben.</string>
   <string name="please_wait_titik3">Bitte warten&#8230;</string>
   <string name="juga_hapus_file_datanya_file">Soll auch die Datendatei \'%s\' gelöscht werden?</string>
   <string name="get_more_fonts">Weitere Schriftarten herunterladen&#8230;</string>
-  <string name="about_translators">Übersetzer:</string>
+  <string name="about_translators">Übersetzer</string>
   <string name="intent_filter_import_from_backup">Aus Sicherung importieren</string>
   <string name="redownload">Erneut herunterladen</string>
   <string name="read_faq_before_suggest">Lesen Sie zuerst die häufig gestellten Fragen, bevor Sie einen Vorschlag senden. Mit dem Senden eines Vorschlag fortfahren?</string>
@@ -181,6 +181,7 @@ Vorhandene Sicherungen werden überschrieben.</string>
   <string name="menu_split_version">Geteilte Ansicht</string>
   <string name="split_version_none">Nichts</string>
   <string name="split_version_cant_display_verse">%1$s ist in der %2$s nicht vorhanden.</string>
+  <string name="generic_verse_not_available_in_this_version">In dieser Übersetzung nicht vorhanden.</string>
   <string name="menuAddSomething">Markierung hinzufügen</string>
   <string name="color_settings_title">Farben</string>
   <string name="color_settings_night_title">Farben (Nachtmodus)</string>
@@ -312,4 +313,7 @@ Vorhandene Sicherungen werden überschrieben.</string>
   <string name="rp_download_reading_plan_data_corrupted">Der heruntergeladene Leseplan ist beschädigt. Versuchen Sie es mit einer funktionierenden Internetverbindung erneut.</string>
   <string name="version_download_need_fonts">"Die Übersetzung, die Sie heruntergeladen haben, kann nur mit speziellen Schriftarten angezeigt werden. Gehen Sie zum Menü \'Textdarstellung\' und wählen Sie eine passende Schriftart. Burmese benötigt Parabaik, ParabaikSans oder Myanmar3. Tamil benötigt Akshar. Telugu benötigt Suranna."</string>
   <string name="menuNightMode">Nachtmodus</string>
+  <string name="delete_highlight">Hervorhebung entfernen</string>
+  <string name="menu_compare">Vergleichen</string>
+  <string name="about_version_name">Version %s</string>
 </resources>

@@ -29,7 +29,8 @@
             <ImageView
                     android:layout_width="96dp"
                     android:layout_height="96dp"
-                    android:src="@drawable/ic_launcher"
+                    android:id="@+id/imgLogo"
+                    android:src="#f00"
                     android:layout_marginTop="24dp"
                     tools:ignore="ContentDescription"/>
 
