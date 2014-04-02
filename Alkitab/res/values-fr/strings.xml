@@ -169,7 +169,7 @@
   <string name="please_wait_titik3">Patientez&#8230;</string>
   <string name="juga_hapus_file_datanya_file">Supprimer aussi le fichier de données \'%s\' ?</string>
   <string name="get_more_fonts">Télécharger plus de fontes&#8230;</string>
-  <string name="about_translators">Traducteurs :</string>
+  <string name="about_translators">Traducteurs</string>
   <string name="intent_filter_import_from_backup">Récupérer depuis une sauvegarde</string>
   <string name="redownload">Télécharger à nouveau</string>
   <string name="read_faq_before_suggest">Merci de lire la FAQ ci-dessus avant d\'envoyer une suggestion. Poursuivre l\'envoi d\'une suggestion ?</string>
@@ -180,6 +180,7 @@
   <string name="menu_split_version">2 versions en parallèle</string>
   <string name="split_version_none">Aucun</string>
   <string name="split_version_cant_display_verse">%1$s est invalide dans %2$s.</string>
+  <string name="generic_verse_not_available_in_this_version">Non disponible dans cette version.</string>
   <string name="menuAddSomething">Ajouter un marque-page</string>
   <string name="color_settings_title">Couleurs</string>
   <string name="color_settings_night_title">Couleurs (Mode Nuit)</string>
@@ -311,4 +312,7 @@
   <string name="rp_download_reading_plan_data_corrupted">Le plan de lecture téléchergé est corrompu. Merci de relancer le téléchargement avec une connexion internet active.</string>
   <string name="version_download_need_fonts">"La version que vous avez téléchargée exige certaines polices de caractères pour être affichée. Allez au menu \'apparence du texte\' et sélectionnez une police de caractère. Le Grec exige les polices de caractère de Ubuntu. Burmese exige Parabaik, ParabaikSans, or Myanmar3. Tamil exige Akshar. Telugu exige Suranna."</string>
   <string name="menuNightMode">Mode nuit</string>
+  <string name="delete_highlight">Supprimer le surligné</string>
+  <string name="menu_compare">Comparer</string>
+  <string name="about_version_name">version %s</string>
 </resources>

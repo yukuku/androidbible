@@ -5,7 +5,7 @@
   <string name="highlight_stabilo">Выделить</string>
   <string name="menuDonasi">Пожертвование</string>
   <string name="mengimpor_titiktiga">Восстановление&#8230;</string>
-  <string name="mengekspor_titiktiga">Создание резервной копии...</string>
+  <string name="mengekspor_titiktiga">Создание резервной копии&#8230;</string>
   <string name="bagikan_renungan">Поделиться стихами</string>
   <string name="renungan_sudah_disalin">Стихи скопированы</string>
   <string name="salin_renungan">Скопировать стихи</string>
@@ -169,7 +169,7 @@
   <string name="please_wait_titik3">Подождите, пожалуйста&#8230;</string>
   <string name="juga_hapus_file_datanya_file">Удалить также файл данных \'%s\'?</string>
   <string name="get_more_fonts">Загрузить дополнительные шрифты&#8230;</string>
-  <string name="about_translators">Переводчики:</string>
+  <string name="about_translators">Переводчики</string>
   <string name="intent_filter_import_from_backup">Импорт из резервной копии</string>
   <string name="redownload">Загрузить повторно</string>
   <string name="read_faq_before_suggest">Пожалуйста, прочитайте часто задаваемые вопросы (выше) перед отсылкой предложения. Отослать предложение сейчас?</string>
@@ -180,6 +180,7 @@
   <string name="menu_split_version">Разделение экрана</string>
   <string name="split_version_none">Нет</string>
   <string name="split_version_cant_display_verse">%1$s не дступно в %2$s.</string>
+  <string name="generic_verse_not_available_in_this_version">Не доступно в данной версии.</string>
   <string name="menuAddSomething">Добавить отметку</string>
   <string name="color_settings_title">Цвета</string>
   <string name="color_settings_night_title">Цвета (ночной режим)</string>
@@ -187,7 +188,7 @@
   <string name="text_appearance_theme_custom">Настроить&#8230;</string>
   <string name="text_appearance_text_size">Размер текста</string>
   <string name="text_appearance_line_spacing">Межстрочное расстояние</string>
-  <string name="text_appearance_bold_switch_off">Плужирный</string>
+  <string name="text_appearance_bold_switch_off">Полужирный</string>
   <string name="text_appearance_bold_switch_on"><b>Полужирный</b></string>
   <string name="devotion_change_date">Изменить дату</string>
   <string name="bookmark_search">Поиск</string>
@@ -311,4 +312,7 @@
   <string name="rp_download_reading_plan_data_corrupted">Загруженный план чтения поврежден. Пожалуйста, повторите попытку при работающем соединении с Интернетом.</string>
   <string name="version_download_need_fonts">Загруженная вами версия может потребовать особых шрифтов. Перейдите в меню \'Вид текста\' и выберите шрифт.</string>
   <string name="menuNightMode">Ночной режим</string>
+  <string name="delete_highlight">Снять выделение</string>
+  <string name="menu_compare">Сравнить</string>
+  <string name="about_version_name">версия %s</string>
 </resources>

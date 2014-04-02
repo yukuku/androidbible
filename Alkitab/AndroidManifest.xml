@@ -15,10 +15,8 @@
     <uses-permission android:name="android.permission.NFC"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
-    <uses-feature android:name="android.hardware.touchscreen"
-                  android:required="false"/>
-    <uses-feature android:name="android.hardware.nfc"
-                  android:required="false"/>
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+    <uses-feature android:name="android.hardware.nfc" android:required="false" />
 
     <application android:name="yuku.alkitab.base.App"
                  android:icon="@drawable/ic_launcher"

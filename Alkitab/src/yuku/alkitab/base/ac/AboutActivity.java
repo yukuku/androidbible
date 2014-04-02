@@ -1,12 +1,16 @@
 package yuku.alkitab.base.ac;
 
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import yuku.afw.V;
 import yuku.alkitab.base.App;
@@ -19,6 +23,7 @@ public class AboutActivity extends BaseActivity {
 	View root;
 	TextView tVersion;
 	TextView tTranslators;
+	ImageView imgLogo;
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -29,6 +34,15 @@ public class AboutActivity extends BaseActivity {
 		root = V.get(this, R.id.root);
 		tVersion = V.get(this, R.id.tVersion);
 		tTranslators = V.get(this, R.id.tTranslators);
+		imgLogo = V.get(this, R.id.imgLogo);
+
+		Drawable logoDrawable;
+		if (Build.VERSION.SDK_INT >= 15) {
+			logoDrawable = getResources().getDrawableForDensity(R.drawable.ic_launcher, DisplayMetrics.DENSITY_XXXHIGH);
+		} else {
+			logoDrawable = getResources().getDrawable(R.drawable.ic_launcher);
+		}
+		imgLogo.setImageDrawable(logoDrawable);
 
 		tVersion.setText(getString(R.string.about_version_name, App.getVersionName()));
 
