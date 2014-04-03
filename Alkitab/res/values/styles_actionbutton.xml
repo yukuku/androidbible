@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.Alkitab.ActionButton" parent="Widget.AppCompat.ActionButton">
+        <!-- use shrinked width for old < v14 devices (we can't qualify by width) -->
+        <item name="android:minWidth">48dp</item>
+    </style>
+</resources>
