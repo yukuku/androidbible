@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.Alkitab.ActionButton" parent="Widget.AppCompat.ActionButton">
+        <!-- use default (56dp) for 360dp-wide and over screen -->
+    </style>
+</resources>
