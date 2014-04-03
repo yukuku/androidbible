@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Alkitab" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="actionButtonStyle">@style/Widget.Alkitab.ActionButton</item>
+        <item name="android:actionButtonStyle">@style/Widget.Alkitab.ActionButton</item>
+    </style>
+
+	<style name="Theme.Alkitab.Content" parent="@style/Theme.Alkitab">
+	    <item name="android:windowContentOverlay">@null</item>
+	    <item name="android:windowBackground">@null</item>
+	</style>
+
+    <style name="Widget.Alkitab.ActionButton" parent="Widget.AppCompat.ActionButton">
+        <item name="android:minWidth">32dp</item>
+    </style>
+
+</resources>
