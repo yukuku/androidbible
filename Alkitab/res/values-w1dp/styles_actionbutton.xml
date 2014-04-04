@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Widget.Alkitab.ActionButton" parent="Widget.AppCompat.ActionButton">
+    <style name="Widget.Alkitab.ActionButton" parent="android:Widget.ActionButton">
         <!-- use shrinked width for less than 360dp-wide screen -->
         <item name="android:minWidth">48dp</item>
     </style>
