@@ -1,5 +1,6 @@
 package yuku.alkitab.base.ac;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -55,6 +56,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Locale;
@@ -88,8 +90,8 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 	// for initially populating the search song activity
 	SearchState last_searchState = null;
 
-	class MediaPlayerController {
-		MediaPlayer mp;
+	static class MediaPlayerController {
+		MediaPlayer mp = new MediaPlayer();
 
 		// 0 = reset
 		// 1 = reset but media known to exist
@@ -103,33 +105,65 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		// if this is a midi file, we need to manually download to local first
 		boolean isMidiFile;
 
-		void reset() {
-			state = 0;
-			if (mp != null) mp.reset();
-			mp = new MediaPlayer();
-			bPlayPause.setEnabled(false);
-			bPlayPause.setImageResource(R.drawable.ic_action_play);
+		String url;
+		WeakReference<Activity> activityRef;
+		WeakReference<ImageButton> bPlayPauseRef;
+
+		void setUI(Activity activity, ImageButton bPlayPause) {
+			activityRef = new WeakReference<>(activity);
+			bPlayPauseRef = new WeakReference<>(bPlayPause);
 		}
 
-		void mediaKnownToExist(boolean useLocalCache) {
-			state = 1;
-			this.isMidiFile = useLocalCache;
-			bPlayPause.setEnabled(true);
+		private void setState(int newState) {
+			Log.d(TAG, "@@setState newState=" + newState);
+			state = newState;
+			updateUIByState();
+		}
+
+		void updateUIByState() {
+			final ImageButton bPlayPause = bPlayPauseRef.get();
+
+			if (state == 0) {
+				if (bPlayPause != null) {
+					bPlayPause.setEnabled(false);
+					bPlayPause.setImageResource(R.drawable.ic_action_play);
+				}
+			} else if (state == 1) {
+				if (bPlayPause != null) {
+					bPlayPause.setEnabled(true);
+				}
+			} else if (state == 3) {
+				if (bPlayPause != null) {
+					bPlayPause.setImageResource(R.drawable.ic_action_pause);
+				}
+			} else if (state == 4 || state == 5) {
+				if (bPlayPause != null) {
+					bPlayPause.setImageResource(R.drawable.ic_action_play);
+				}
+			}
+		}
+
+		void reset() {
+			setState(0);
+			mp.reset();
+		}
+
+		void mediaKnownToExist(String url, boolean isMidiFile) {
+			setState(1);
+			this.url = url;
+			this.isMidiFile = isMidiFile;
 		}
 
 		void playOrPause() {
 			if (state == 0) {
 				// play button should be disabled
 			} else if (state == 1 || state == 5 || state == 6) {
-				final String filename = getAudioFilename(currentBookName, currentSong.code);
-				final String url = "http://alkitab-host.appspot.com/addon/audio/" + filename;
-
 				if (isMidiFile) {
 					new Thread(new Runnable() {
 						@Override
 						public void run() {
 							try {
-								state = 2;
+								setState(2);
 
 								final HttpURLConnection conn = client.open(new URL(url));
 								final InputStream input = conn.getInputStream();
@@ -147,7 +181,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 								mediaPlayerPrepare(Uri.fromFile(cacheFile).toString());
 							} catch (IOException e) {
 								Log.e(TAG, "buffering to local cache", e);
-								state = 6;
+								setState(6);
 							}
 						}
 					}).start();
@@ -159,13 +193,11 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			} else if (state == 3) {
 				// pause button pressed
 				mp.pause();
-				bPlayPause.setImageResource(R.drawable.ic_action_play);
-				state = 4;
+				setState(4);
 			} else if (state == 4) {
 				// play button pressed when paused
 				mp.start();
-				bPlayPause.setImageResource(R.drawable.ic_action_pause);
-				state = 3;
+				setState(3);
 			}
 		}
 
@@ -175,42 +207,48 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 				mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 					@Override
 					public void onPrepared(final MediaPlayer mp) {
-						bPlayPause.setImageResource(R.drawable.ic_action_pause);
 						mp.start();
-						state = 3;
+						setState(3);
 					}
 				});
 				mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 					@Override
 					public void onCompletion(final MediaPlayer mp) {
 						mp.reset();
-						bPlayPause.setImageResource(R.drawable.ic_action_play);
-						state = 5;
+						setState(5);
 					}
 				});
 				mp.setOnErrorListener(new MediaPlayer.OnErrorListener() {
 					@Override
 					public boolean onError(final MediaPlayer mp, final int what, final int extra) {
-						if (!isFinishing()) {
-							new AlertDialog.Builder(SongViewActivity.this)
-							.setMessage(getString(R.string.song_player_error_description, what, extra))
-							.setPositiveButton(R.string.ok, null)
-							.show();
+						final Activity activity = activityRef.get();
+						if (activity != null) {
+							if (!activity.isFinishing()) {
+								new AlertDialog.Builder(activity)
+								.setMessage(activity.getString(R.string.song_player_error_description, what, extra))
+								.setPositiveButton(R.string.ok, null)
+								.show();
+							}
 						}
-						state = 6;
+						setState(6);
 						return false; // let OnCompletionListener be called.
 					}
 				});
 				mp.prepareAsync();
-				state = 2;
+				setState(2);
 			} catch (IOException e) {
 				Log.e(TAG, "mp setDataSource", e);
-				state = 6;
+				setState(6);
 			}
+		}
+
+		boolean canHaveNewUrl() {
+			return state == 0 || state == 1;
 		}
 	}
 
-	MediaPlayerController mediaPlayerController = new MediaPlayerController();
+	// this have to be static to prevent double media player
+	static MediaPlayerController mediaPlayerController = new MediaPlayerController();
 
 	public static Intent createIntent() {
 		Intent res = new Intent(App.context, SongViewActivity.class);
@@ -244,7 +282,10 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		
 		// for colors of bg, text, etc
 		V.get(this, android.R.id.content).setBackgroundColor(S.applied.backgroundColor);
-		
+
+		mediaPlayerController.setUI(this, bPlayPause);
+		mediaPlayerController.updateUIByState();
+
 		templateCustomVars = new Bundle();
 		templateCustomVars.putString("background_color", String.format("#%06x", S.applied.backgroundColor & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
 		templateCustomVars.putString("text_color", String.format("#%06x", S.applied.fontColor & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -267,9 +308,9 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			String code = Preferences.getString(Prefkey.song_last_code, null);
 			
 			if (bookName == null || code == null) {
-				displaySong(null, null);
+				displaySong(null, null, true);
 			} else {
-				displaySong(bookName, S.getSongDb().getSong(bookName, code));
+				displaySong(bookName, S.getSongDb().getSong(bookName, code), true);
 			}
 		}
 	}
@@ -302,10 +343,15 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 							runOnUiThread(new Runnable() {
 								@Override
 								public void run() {
-									if (response.contains("extension=mp3")) {
-										mediaPlayerController.mediaKnownToExist(false);
+									if (mediaPlayerController.canHaveNewUrl()) {
+										final String url = "http://alkitab-host.appspot.com/addon/audio/" + getAudioFilename(currentBookName, currentSong.code);
+										if (response.contains("extension=mp3")) {
+											mediaPlayerController.mediaKnownToExist(url, false);
+										} else {
+											mediaPlayerController.mediaKnownToExist(url, true);
+										}
 									} else {
-										mediaPlayerController.mediaKnownToExist(true);
+										Log.d(TAG, "mediaPlayerController can't have new URL at this moment.");
 									}
 								}
 							});
@@ -536,10 +582,16 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 	}
 
 	void displaySong(String bookName, Song song) {
+		displaySong(bookName, song, false);
+	}
+
+	void displaySong(String bookName, Song song, boolean onCreate) {
 		song_container.setVisibility(song != null? View.VISIBLE: View.GONE);
 		no_song_data_container.setVisibility(song != null? View.GONE: View.VISIBLE);
 
-		mediaPlayerController.reset();
+		if (!onCreate) {
+			mediaPlayerController.reset();
+		}
 
 		if (song == null) return;
 
