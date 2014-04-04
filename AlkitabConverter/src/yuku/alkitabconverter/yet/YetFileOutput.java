@@ -88,7 +88,7 @@ public class YetFileOutput {
 		}
 
 		// pericope data
-		if (pericopeData != null) for (final PericopeData.Entry entry : pericopeData.entries) {
+		if (pericopeData != null && pericopeData.entries != null) for (final PericopeData.Entry entry : pericopeData.entries) {
 			pw.printf(Locale.US, "%s\t%s\t%s\t%s\t%s\n", "pericope", Ari.toBook(entry.ari) + 1, Ari.toChapter(entry.ari), Ari.toVerse(entry.ari), entry.block.title);
 			if (entry.block.parallels != null) {
 				for (final String parallel : entry.block.parallels) {
