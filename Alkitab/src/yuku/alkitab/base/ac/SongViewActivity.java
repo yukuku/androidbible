@@ -1,7 +1,9 @@
 package yuku.alkitab.base.ac;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -16,19 +18,18 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
+import com.squareup.okhttp.OkHttpClient;
 import net.londatiga.android.QuickAction;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.base.dialog.VersesDialog;
-import yuku.alkitab.base.util.TargetDecoder;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.SongListActivity.SearchState;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.model.Book;
+import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.base.util.OsisBookNames;
@@ -36,8 +37,11 @@ import yuku.alkitab.base.util.SongBookUtil;
 import yuku.alkitab.base.util.SongBookUtil.OnDownloadSongBookListener;
 import yuku.alkitab.base.util.SongBookUtil.OnSongBookSelectedListener;
 import yuku.alkitab.base.util.SongBookUtil.SongBookInfo;
+import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.base.widget.SongCodePopup;
 import yuku.alkitab.base.widget.SongCodePopup.SongCodePopupListener;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.model.Book;
 import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.display.Launcher;
 import yuku.kpri.model.Lyric;
@@ -47,6 +51,14 @@ import yuku.kpri.model.VerseKind;
 import yuku.kpriviewer.fr.SongFragment;
 import yuku.kpriviewer.fr.SongFragment.ShouldOverrideUrlLoadingHandler;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Locale;
 
 public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlLoadingHandler {
@@ -64,6 +76,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 	ViewGroup no_song_data_container;
 	Button bChangeBook;
 	Button bChangeCode;
+	ImageButton bPlayPause;
 	View bSearch;
 	View bDownload;
 	QuickAction qaChangeBook;
@@ -72,9 +85,170 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 	Bundle templateCustomVars;
 	String currentBookName;
 	Song currentSong;
+	static OkHttpClient client = new OkHttpClient();
 
 	// for initially populating the search song activity
 	SearchState last_searchState = null;
+
+	static class MediaPlayerController {
+		MediaPlayer mp = new MediaPlayer();
+
+		// 0 = reset
+		// 1 = reset but media known to exist
+		// 2 = preparing
+		// 3 = playing
+		// 4 = pausing
+		// 5 = complete
+		// 6 = error
+		int state = 0;
+
+		// if this is a midi file, we need to manually download to local first
+		boolean isMidiFile;
+
+		String url;
+		WeakReference<Activity> activityRef;
+		WeakReference<ImageButton> bPlayPauseRef;
+
+		void setUI(Activity activity, ImageButton bPlayPause) {
+			activityRef = new WeakReference<>(activity);
+			bPlayPauseRef = new WeakReference<>(bPlayPause);
+		}
+
+		private void setState(int newState) {
+			Log.d(TAG, "@@setState newState=" + newState);
+			state = newState;
+			updateUIByState();
+		}
+
+		void updateUIByState() {
+			final ImageButton bPlayPause = bPlayPauseRef.get();
+
+			if (state == 0) {
+				if (bPlayPause != null) {
+					bPlayPause.setEnabled(false);
+					bPlayPause.setImageResource(R.drawable.ic_action_play);
+				}
+			} else if (state == 1) {
+				if (bPlayPause != null) {
+					bPlayPause.setEnabled(true);
+				}
+			} else if (state == 3) {
+				if (bPlayPause != null) {
+					bPlayPause.setImageResource(R.drawable.ic_action_pause);
+				}
+			} else if (state == 4 || state == 5) {
+				if (bPlayPause != null) {
+					bPlayPause.setImageResource(R.drawable.ic_action_play);
+				}
+			}
+		}
+
+		void reset() {
+			setState(0);
+			mp.reset();
+		}
+
+		void mediaKnownToExist(String url, boolean isMidiFile) {
+			setState(1);
+			this.url = url;
+			this.isMidiFile = isMidiFile;
+		}
+
+		void playOrPause() {
+			if (state == 0) {
+				// play button should be disabled
+			} else if (state == 1 || state == 5 || state == 6) {
+				if (isMidiFile) {
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								setState(2);
+
+								final HttpURLConnection conn = client.open(new URL(url));
+								final InputStream input = conn.getInputStream();
+								final File cacheFile = new File(App.context.getCacheDir(), "song_player_local_cache.mid");
+								final OutputStream output = new FileOutputStream(cacheFile);
+								final byte[] buf = new byte[1024];
+								while (true) {
+									final int read = input.read(buf);
+									if (read < 0) break;
+									output.write(buf, 0, read);
+								}
+								output.close();
+								input.close();
+
+								mediaPlayerPrepare(Uri.fromFile(cacheFile).toString());
+							} catch (IOException e) {
+								Log.e(TAG, "buffering to local cache", e);
+								setState(6);
+							}
+						}
+					}).start();
+				} else {
+					mediaPlayerPrepare(url);
+				}
+			} else if (state == 2) {
+				// this is preparing. Don't do anything.
+			} else if (state == 3) {
+				// pause button pressed
+				mp.pause();
+				setState(4);
+			} else if (state == 4) {
+				// play button pressed when paused
+				mp.start();
+				setState(3);
+			}
+		}
+
+		private void mediaPlayerPrepare(final String url) {
+			try {
+				mp.setDataSource(url);
+				mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+					@Override
+					public void onPrepared(final MediaPlayer mp) {
+						mp.start();
+						setState(3);
+					}
+				});
+				mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+					@Override
+					public void onCompletion(final MediaPlayer mp) {
+						mp.reset();
+						setState(5);
+					}
+				});
+				mp.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+					@Override
+					public boolean onError(final MediaPlayer mp, final int what, final int extra) {
+						final Activity activity = activityRef.get();
+						if (activity != null) {
+							if (!activity.isFinishing()) {
+								new AlertDialog.Builder(activity)
+								.setMessage(activity.getString(R.string.song_player_error_description, what, extra))
+								.setPositiveButton(R.string.ok, null)
+								.show();
+							}
+						}
+						setState(6);
+						return false; // let OnCompletionListener be called.
+					}
+				});
+				mp.prepareAsync();
+				setState(2);
+			} catch (IOException e) {
+				Log.e(TAG, "mp setDataSource", e);
+				setState(6);
+			}
+		}
+
+		boolean canHaveNewUrl() {
+			return state == 0 || state == 1;
+		}
+	}
+
+	// this have to be static to prevent double media player
+	static MediaPlayerController mediaPlayerController = new MediaPlayerController();
 
 	public static Intent createIntent() {
 		Intent res = new Intent(App.context, SongViewActivity.class);
@@ -91,9 +265,10 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		no_song_data_container = V.get(this, R.id.no_song_data_container);
 		bChangeBook = V.get(this, R.id.bChangeBook);
 		bChangeCode = V.get(this, R.id.bChangeCode);
+		bPlayPause = V.get(this, R.id.bPlayPause);
 		bSearch = V.get(this, R.id.bSearch);
 		bDownload = V.get(this, R.id.bDownload);
-		
+
 		qaChangeBook = SongBookUtil.getSongBookQuickAction(this, false);
 		qaChangeBook.setOnActionItemClickListener(SongBookUtil.getOnActionItemConverter(songBookSelected));
 		
@@ -101,12 +276,16 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		
 		bChangeBook.setOnClickListener(bChangeBook_click);
 		bChangeCode.setOnClickListener(bChangeCode_click);
+		bPlayPause.setOnClickListener(bPlayPause_click);
 		bSearch.setOnClickListener(bSearch_click);
 		bDownload.setOnClickListener(bDownload_click);
 		
 		// for colors of bg, text, etc
 		V.get(this, android.R.id.content).setBackgroundColor(S.applied.backgroundColor);
-		
+
+		mediaPlayerController.setUI(this, bPlayPause);
+		mediaPlayerController.updateUIByState();
+
 		templateCustomVars = new Bundle();
 		templateCustomVars.putString("background_color", String.format("#%06x", S.applied.backgroundColor & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
 		templateCustomVars.putString("text_color", String.format("#%06x", S.applied.fontColor & 0xffffff)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -129,13 +308,64 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			String code = Preferences.getString(Prefkey.song_last_code, null);
 			
 			if (bookName == null || code == null) {
-				displaySong(null, null);
+				displaySong(null, null, true);
 			} else {
-				displaySong(bookName, S.getSongDb().getSong(bookName, code));
+				displaySong(bookName, S.getSongDb().getSong(bookName, code), true);
 			}
 		}
 	}
-	
+
+	static String getAudioFilename(String bookName, String code) {
+		try {
+			final int code_int = Integer.parseInt(code);
+			return String.format("songs/v1/%s_%04d", bookName, code_int);
+		} catch (NumberFormatException e) {
+			return String.format("songs/v1/%s_%s", bookName, code);
+		}
+	}
+
+	void checkAudioExistance() {
+		if (currentBookName == null || currentSong == null) return;
+
+		final String checkedBookName = currentBookName;
+		final String checkedCode = currentSong.code;
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					final String filename = getAudioFilename(checkedBookName, checkedCode);
+					final HttpURLConnection conn = client.open(new URL("http://alkitab-host.appspot.com/addon/audio/exists?filename=" + Uri.encode(filename)));
+					final String response = U.inputStreamUtf8ToString(conn.getInputStream());
+					if (response.startsWith("OK")) {
+						// make sure this is the correct one due to possible race condition
+						if (U.equals(currentBookName, checkedBookName) && currentSong != null && U.equals(currentSong.code, checkedCode)) {
+							runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									if (mediaPlayerController.canHaveNewUrl()) {
+										final String url = "http://alkitab-host.appspot.com/addon/audio/" + getAudioFilename(currentBookName, currentSong.code);
+										if (response.contains("extension=mp3")) {
+											mediaPlayerController.mediaKnownToExist(url, false);
+										} else {
+											mediaPlayerController.mediaKnownToExist(url, true);
+										}
+									} else {
+										Log.d(TAG, "mediaPlayerController can't have new URL at this moment.");
+									}
+								}
+							});
+						}
+					} else {
+						Log.i(TAG, "@@checkAudioExistance url=" + conn.getURL().toString() + " response: " + response);
+					}
+				} catch (IOException e) {
+					Log.e(TAG, "@@checkAudioExistance", e);
+				}
+			}
+		}).start();
+	}
+
 	private void buildMenu(Menu menu) {
 		menu.clear();
 		getMenuInflater().inflate(R.menu.activity_song_view, menu);
@@ -352,30 +582,40 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 	}
 
 	void displaySong(String bookName, Song song) {
+		displaySong(bookName, song, false);
+	}
+
+	void displaySong(String bookName, Song song, boolean onCreate) {
 		song_container.setVisibility(song != null? View.VISIBLE: View.GONE);
 		no_song_data_container.setVisibility(song != null? View.GONE: View.VISIBLE);
-		
-		if (song != null) {
-			bChangeBook.setText(bookName);
-			bChangeCode.setText(song.code);
 
-			// construct rendition of scripture references
-			String scripture_references = renderScriptureReferences(PROTOCOL, song.scriptureReferences);
-			templateCustomVars.putString("scripture_references", scripture_references); //$NON-NLS-1$
-			templateCustomVars.putString("copyright", SongBookUtil.getCopyright(bookName)); //$NON-NLS-1$
-
-			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			ft.replace(R.id.song_container, SongFragment.create(song, "templates/song.html", templateCustomVars)); //$NON-NLS-1$
-			ft.commitAllowingStateLoss();
-
-			currentBookName = bookName;
-			currentSong = song;
-			
-			{ // save latest viewed song
-				Preferences.setString(Prefkey.song_last_bookName, bookName);
-				Preferences.setString(Prefkey.song_last_code, song.code);
-			}
+		if (!onCreate) {
+			mediaPlayerController.reset();
 		}
+
+		if (song == null) return;
+
+		bChangeBook.setText(bookName);
+		bChangeCode.setText(song.code);
+
+		// construct rendition of scripture references
+		String scripture_references = renderScriptureReferences(PROTOCOL, song.scriptureReferences);
+		templateCustomVars.putString("scripture_references", scripture_references); //$NON-NLS-1$
+		templateCustomVars.putString("copyright", SongBookUtil.getCopyright(bookName)); //$NON-NLS-1$
+
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		ft.replace(R.id.song_container, SongFragment.create(song, "templates/song.html", templateCustomVars)); //$NON-NLS-1$
+		ft.commitAllowingStateLoss();
+
+		currentBookName = bookName;
+		currentSong = song;
+
+		{ // save latest viewed song
+			Preferences.setString(Prefkey.song_last_bookName, bookName);
+			Preferences.setString(Prefkey.song_last_code, song.code);
+		}
+
+		checkAudioExistance();
 	}
 
 	OnClickListener bSearch_click = new OnClickListener() {
@@ -452,7 +692,16 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			});
 		}
 	};
-	
+
+	OnClickListener bPlayPause_click = new OnClickListener() {
+		@Override
+		public void onClick(final View v) {
+			if (currentBookName == null || currentSong == null) return;
+
+			mediaPlayerController.playOrPause();
+		}
+	};
+
 	OnSongBookSelectedListener songBookSelected = new OnSongBookSelectedListener() {
 		@Override public void onSongBookSelected(boolean all, SongBookInfo songBookInfo) {
 			if (all) return; // should not happen

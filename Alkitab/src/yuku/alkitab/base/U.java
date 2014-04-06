@@ -7,6 +7,10 @@ import android.graphics.drawable.StateListDrawable;
 import android.widget.TextView;
 import yuku.alkitab.model.Label;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 public class U {
 
 	/**
@@ -229,5 +233,16 @@ public class U {
 			grad.setColor(0xff000000 | bgColorRgb);
 			view.setTextColor(0xff000000 | U.getLabelForegroundColorBasedOnBackgroundColor(bgColorRgb));
 		}
+	}
+
+	public static String inputStreamUtf8ToString(InputStream input) throws IOException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final byte[] buf = new byte[1024];
+		while (true) {
+			final int read = input.read(buf);
+			if (read < 0) break;
+			baos.write(buf, 0, read);
+		}
+		return new String(baos.toByteArray(), "utf-8");
 	}
 }

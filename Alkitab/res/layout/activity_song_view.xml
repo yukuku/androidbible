@@ -32,6 +32,15 @@
             android:textSize="18sp"
             tools:ignore="HardcodedText" />
 
+        <ImageButton
+            android:id="@+id/bPlayPause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:height="48dp"
+            android:enabled="false"
+            android:src="@drawable/ic_action_play"
+            tools:ignore="HardcodedText" />
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
