@@ -29,20 +29,21 @@ import android.widget.Toast;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionInternal;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.util.Ari;
-import yuku.alkitab.model.Book;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.BookNameSorter;
-import yuku.alkitab.util.IntArrayList;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.Search2Engine;
 import yuku.alkitab.base.util.Search2Engine.Query;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.model.Book;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.util.IntArrayList;
+import yuku.alkitabintegration.display.Launcher;
 import yuku.androidsdk.searchbar.SearchBar;
 import yuku.androidsdk.searchbar.SearchBar.OnSearchListener;
 
@@ -51,12 +52,8 @@ import java.util.Arrays;
 public class Search2Activity extends BaseActivity {
 	public static final String TAG = Search2Activity.class.getSimpleName();
 	
-	private static final String EXTRA_query = "query"; //$NON-NLS-1$
-	private static final String EXTRA_searchResults = "searchResults"; //$NON-NLS-1$
-	private static final String EXTRA_selectedPosition = "selectedPosition"; //$NON-NLS-1$
 	private static final String EXTRA_openedBookId = "openedBookId"; //$NON-NLS-1$
-	private static final String EXTRA_selectedAri = "selectedAri"; //$NON-NLS-1$
-	
+
 	ListView lsSearchResults;
 	SearchBar searchBar;
 	View panelFilter;
@@ -71,30 +68,10 @@ public class Search2Activity extends BaseActivity {
 	int openedBookId;
 	int filterUserAction = 0; // when it's not user action, set to nonzero
 	Search2Adapter adapter;
-	
-	public static class Result {
-		public Query query;
-		public IntArrayList searchResults;
-		public int selectedPosition;
-		public int selectedAri;
-	}
-	
-	public static Intent createIntent(Query query, IntArrayList searchResults, int selectedPosition, int openedBookId) {
+
+	public static Intent createIntent(int openedBookId) {
 		Intent res = new Intent(App.context, Search2Activity.class);
-		res.putExtra(EXTRA_query, query);
-		res.putExtra(EXTRA_searchResults, searchResults);
-		res.putExtra(EXTRA_selectedPosition, selectedPosition);
 		res.putExtra(EXTRA_openedBookId, openedBookId);
-		return res;
-	}
-	
-	public static Result obtainResult(Intent data) {
-		if (data == null) return null;
-		Result res = new Result();
-		res.query = data.getParcelableExtra(EXTRA_query);
-		res.searchResults = data.getParcelableExtra(EXTRA_searchResults);
-		res.selectedPosition = data.getIntExtra(EXTRA_selectedPosition, -1);
-		res.selectedAri = data.getIntExtra(EXTRA_selectedAri, -1);
 		return res;
 	}
 
@@ -114,10 +91,6 @@ public class Search2Activity extends BaseActivity {
 					return false;
 				}
 			});
-		}
-
-		public void setSearchViewQuery(String query) {
-			searchView.setQuery(query, false);
 		}
 
 		public String getSearchViewQuery() {
@@ -172,20 +145,7 @@ public class Search2Activity extends BaseActivity {
 		lsSearchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				int ari = adapter.getSearchResults().get(position);
-				
-				Intent data = new Intent();
-				data.putExtra(EXTRA_query, getQuery());
-				
-				Search2Adapter adapter = (Search2Adapter) parent.getAdapter();
-				if (adapter != null) {
-					data.putExtra(EXTRA_searchResults, adapter.getSearchResults());
-				}
-				
-				data.putExtra(EXTRA_selectedPosition, position);
-				data.putExtra(EXTRA_selectedAri, ari);
-				
-				setResult(RESULT_OK, data);
-				finish();
+				startActivity(Launcher.openAppAtBibleLocation(ari));
 			}
 		});
 		bEditFilter.setOnClickListener(new OnClickListener() {
@@ -198,41 +158,16 @@ public class Search2Activity extends BaseActivity {
 		cFilterSingleBook.setOnCheckedChangeListener(cFilterSingleBook_checkedChange);
 		
 		{
-			Intent intent = getIntent();
-			Query query = intent.getParcelableExtra(EXTRA_query);
-			IntArrayList searchResults = intent.getParcelableExtra(EXTRA_searchResults);
-			int selectedPosition = intent.getIntExtra(EXTRA_selectedPosition, -1);
-			
-			openedBookId = intent.getIntExtra(EXTRA_openedBookId, -1);
+			openedBookId = getIntent().getIntExtra(EXTRA_openedBookId, -1);
+
 			Book book = S.activeVersion.getBook(openedBookId);
 			cFilterSingleBook.setText(getString(R.string.search_bookname_only, book.shortName));
-			
-			if (query != null) {
-				if (!useSearchView()) {
-					searchBar.setText(query.query_string);
-				} else {
-					api11_compat.setSearchViewQuery(query.query_string);
-				}
-				
-				if (searchResults != null) {
-					String[] tokens = QueryTokenizer.tokenize(query.query_string);
-					lsSearchResults.setAdapter(adapter = new Search2Adapter(searchResults, tokens));
-				}
+
+			for (Book k: S.activeVersion.getConsecutiveBooks()) {
+				selectedBookIds.put(k.bookId, true);
 			}
-			
-			if (query == null) { // default: all books
-				for (Book k: S.activeVersion.getConsecutiveBooks()) {
-					selectedBookIds.put(k.bookId, true);
-				}
-			} else if (query.bookIds != null) {
-				selectedBookIds = query.bookIds;
-			}
-			
+
 			configureFilterDisplayOldNewTest();
-			
-			if (selectedPosition != -1) {
-				lsSearchResults.setSelection(selectedPosition);
-			}
 		}
 		
 		if (usingRevIndex()) {
