@@ -91,7 +91,7 @@ public class DevotionDownloader extends Thread {
 				listener_.onDownloadStatus(context_.getString(R.string.mengunduh_namaumum_tgl_tgl, article.getDevotionTitle(), article.getDate()));
 				
 				try {
-					final HttpURLConnection conn = App.getHttpClient().open(new URL(url));
+					final HttpURLConnection conn = App.openHttp(new URL(url));
 					output = U.inputStreamToString(conn.getInputStream(), article.getRawEncoding());
 
 					// success!

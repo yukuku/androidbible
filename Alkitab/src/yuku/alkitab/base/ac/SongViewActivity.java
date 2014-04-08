@@ -164,7 +164,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 							try {
 								setState(2);
 
-								final HttpURLConnection conn = App.getHttpClient().open(new URL(url));
+								final HttpURLConnection conn = App.openHttp(new URL(url));
 								final InputStream input = conn.getInputStream();
 								final File cacheFile = new File(App.context.getCacheDir(), "song_player_local_cache.mid");
 								final OutputStream output = new FileOutputStream(cacheFile);
@@ -347,7 +347,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			public void run() {
 				try {
 					final String filename = getAudioFilename(checkedBookName, checkedCode);
-					final HttpURLConnection conn = App.getHttpClient().open(new URL("https://alkitab-host.appspot.com/addon/audio/exists?filename=" + Uri.encode(filename)));
+					final HttpURLConnection conn = App.openHttp(new URL("https://alkitab-host.appspot.com/addon/audio/exists?filename=" + Uri.encode(filename)));
 					final String response = U.inputStreamUtf8ToString(conn.getInputStream());
 					if (response.startsWith("OK")) {
 						// make sure this is the correct one due to possible race condition

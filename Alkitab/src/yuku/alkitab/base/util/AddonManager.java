@@ -103,7 +103,7 @@ public class AddonManager {
 			try {
 				FileOutputStream os = new FileOutputStream(tmpfile);
 
-				final HttpURLConnection conn = App.getHttpClient().open(new URL(e.url));
+				final HttpURLConnection conn = App.openHttp(new URL(e.url));
 				Log.d(TAG, "Start downloading " + e.url);
 
 				final int length = conn.getContentLength();

@@ -5,11 +5,14 @@ import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.internal.http.HttpEngine;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.debug.R;
 import yuku.alkitabfeedback.FeedbackSender;
 import yuku.kirimfidbek.PengirimFidbek;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Locale;
 
 public class App extends yuku.afw.App {
@@ -22,8 +25,11 @@ public class App extends yuku.afw.App {
 		OkHttpClient httpClient = new OkHttpClient();
 	}
 
-	public static OkHttpClient getHttpClient() {
-		return OkHttpClientWrapper.INSTANCE.httpClient;
+	public static HttpURLConnection openHttp(URL url) {
+		final HttpURLConnection conn = OkHttpClientWrapper.INSTANCE.httpClient.open(url);
+		// enable gzip to save bandwidth on server
+		conn.setRequestProperty("User-Agent", HttpEngine.getDefaultUserAgent() + " gzip");
+		return conn;
 	}
 
 	@Override public void onCreate() {
