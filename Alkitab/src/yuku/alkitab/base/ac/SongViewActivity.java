@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ShareCompat;
@@ -203,7 +204,20 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 
 		private void mediaPlayerPrepare(final String url) {
 			try {
-				mp.setDataSource(url);
+				// on Android < 18, file:// url is not accepted.
+				String dataSourcePath;
+				if (Build.VERSION.SDK_INT <= 17) {
+					Uri uri = Uri.parse(url);
+					if (U.equals("file", uri.getScheme())) {
+						dataSourcePath = uri.getPath();
+					} else {
+						dataSourcePath = url;
+					}
+				} else {
+					dataSourcePath = url;
+				}
+
+				mp.setDataSource(dataSourcePath);
 				mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 					@Override
 					public void onPrepared(final MediaPlayer mp) {
