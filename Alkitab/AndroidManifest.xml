@@ -108,13 +108,18 @@
 		</activity>
 		
 		<activity android:name="yuku.alkitab.base.ac.Search2Activity" android:label="@string/cari_v" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
-		<activity android:name="yuku.alkitab.base.ac.DevotionActivity" android:label="@string/renungan" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection">
+        <activity android:name="yuku.alkitab.base.ac.DevotionActivity"
+                  android:label="@string/renungan"
+                  android:parentActivityName="yuku.alkitab.base.IsiActivity"
+                  android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection">
             <intent-filter>
                 <action android:name="yuku.alkitab.ACTION_OPEN_DEVOTION"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
-		</activity>
-		<activity android:name="yuku.alkitab.base.ac.HelpActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                       android:value="yuku.alkitab.base.IsiActivity"/>
+        </activity>
+        <activity android:name="yuku.alkitab.base.ac.HelpActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.AboutActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.ShareActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.FontManagerActivity" android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />

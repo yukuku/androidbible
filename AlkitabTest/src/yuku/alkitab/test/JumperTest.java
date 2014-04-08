@@ -188,6 +188,14 @@ public class JumperTest extends AndroidTestCase {
 		testParse("2 yo 5:6-7", true, 62, 5, 6);
 		testParse("3y6:7-8", true, 63, 6, 7);
 
+		// verses with a b etc
+		testParse("Kejadian 11:13-22", true, 0, 11, 13);
+		testParse("Kejadian 11:13b-22", true, 0, 11, 13);
+		testParse("Kejadian 11:13a-22", true, 0, 11, 13);
+		testParse("Kejadian 11:13-22c", true, 0, 11, 13);
+		testParse("Kejadian 11:13e-22", true, 0, 11, 13);
+		testParse("Kejadian 11:13e-22e", true, 0, 11, 13);
+
 		String[] ss = { "Kej", "Kel",
 				"Im", "Bil", "Ul", "Yos",
 				"Hak", "Rut", "1Sam", "2Sam", "1Raj", "2Raj", "1Taw", "2Taw", "Ezr",
