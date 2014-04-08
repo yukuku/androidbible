@@ -123,7 +123,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	private static final int REQCODE_goto = 1;
 	private static final int REQCODE_bookmark = 2;
-	private static final int REQCODE_devotion = 3;
 	private static final int REQCODE_settings = 4;
 	private static final int REQCODE_version = 5;
 	private static final int REQCODE_search = 6;
@@ -1017,7 +1016,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			openSplitVersionsDialog();
 			return true;
 		case R.id.menuDevotion:
-			startActivityForResult(new Intent(this, DevotionActivity.class), REQCODE_devotion);
+			startActivity(DevotionActivity.createIntent());
 			return true;
 		case R.id.menuSongs: {
 			// TODO fix
@@ -1304,14 +1303,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					search2_selectedPosition = result.selectedPosition;
 				}
 			}
-		} else if (requestCode == REQCODE_devotion) {
-			if (resultCode == RESULT_OK) {
-				DevotionActivity.Result result = DevotionActivity.obtainResult(data);
-				if (result != null && result.ari != 0) {
-					jumpToAri(result.ari);
-					history.add(result.ari);
-				}
-			}
 		} else if (requestCode == REQCODE_settings) {
 			// MUST reload preferences
 			S.calculateAppliedValuesBasedOnPreferences();
@@ -1326,11 +1317,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				ShareActivity.Result result = ShareActivity.obtainResult(data);
 				if (result != null && result.chosenIntent != null) {
 					Intent chosenIntent = result.chosenIntent;
-					if (U.equals(chosenIntent.getComponent().getPackageName(), "com.facebook.katana")) { //$NON-NLS-1$
+					final String packageName = chosenIntent.getComponent().getPackageName();
+					if (U.equals(packageName, "com.facebook.katana")) { //$NON-NLS-1$
 						String verseUrl = chosenIntent.getStringExtra(EXTRA_verseUrl);
 						if (verseUrl != null) {
 							chosenIntent.putExtra(Intent.EXTRA_TEXT, verseUrl); // change text to url
 						}
+					} else if (U.equals(packageName, "com.whatsapp")) {
+						chosenIntent.removeExtra(Intent.EXTRA_SUBJECT);
 					}
 					startActivity(chosenIntent);
 				}

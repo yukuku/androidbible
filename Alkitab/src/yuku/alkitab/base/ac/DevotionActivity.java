@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -24,6 +26,7 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -40,6 +43,7 @@ import yuku.alkitab.base.widget.DevotionSelectPopup;
 import yuku.alkitab.base.widget.DevotionSelectPopup.DevotionSelectPopupListener;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.util.Ari;
+import yuku.alkitabintegration.display.Launcher;
 
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
@@ -49,25 +53,17 @@ import java.util.Locale;
 public class DevotionActivity extends BaseActivity implements OnStatusDonlotListener {
 	public static final String TAG = DevotionActivity.class.getSimpleName();
 
-	public static final String EXTRA_ari = "ari"; //$NON-NLS-1$
 	private static final int REQCODE_share = 1;
 
-	public static class Result {
-		public int ari;
-	}
-	
-	public static Result obtainResult(Intent data) {
-		if (data == null) return null;
-		Result res = new Result();
-		res.ari = data.getIntExtra(EXTRA_ari, 0);
-		return res;
-	}
-	
 	static ThreadLocal<SimpleDateFormat> date_format = new ThreadLocal<SimpleDateFormat>() {
 		@Override protected SimpleDateFormat initialValue() {
 			return new SimpleDateFormat("yyyyMMdd", Locale.US); //$NON-NLS-1$
 		}
 	};
+
+	public static Intent createIntent() {
+		return new Intent(App.context, DevotionActivity.class);
+	}
 
 	public enum DevotionKind {
 		SH("sh", "Santapan Harian"),
@@ -263,7 +259,20 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
-		if (itemId == R.id.menuChangeDate) {
+
+		if (itemId == android.R.id.home) {
+			// must try to create the back stack, since it is possible behind this activity is not the main activity
+			final Intent upIntent = NavUtils.getParentActivityIntent(this);
+			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+				TaskStackBuilder.create(this)
+				.addNextIntentWithParentStack(upIntent)
+				.startActivities();
+			} else {
+				NavUtils.navigateUpTo(this, upIntent);
+			}
+
+			return true;
+		} else if (itemId == R.id.menuChangeDate) {
 			View anchor = findViewById(R.id.menuChangeDate);
 			popup.show(anchor);
 			
@@ -399,11 +408,8 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 				int verse_1 = jumper.getVerse();
 				ari = Ari.encode(bookId, chapter_1, verse_1);
 			}
-			
-			Intent data = new Intent();
-			data.putExtra(EXTRA_ari, ari);
-			setResult(RESULT_OK, data);
-			finish();
+
+			startActivity(Launcher.openAppAtBibleLocation(ari));
 		}
 	};
 
