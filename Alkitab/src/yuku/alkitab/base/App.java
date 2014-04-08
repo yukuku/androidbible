@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import com.squareup.okhttp.OkHttpClient;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.debug.R;
 import yuku.alkitabfeedback.FeedbackSender;
@@ -15,6 +16,15 @@ public class App extends yuku.afw.App {
 	public static final String TAG = App.class.getSimpleName();
 
 	private static boolean initted = false;
+
+	enum OkHttpClientWrapper {
+		INSTANCE;
+		OkHttpClient httpClient = new OkHttpClient();
+	}
+
+	public static OkHttpClient getHttpClient() {
+		return OkHttpClientWrapper.INSTANCE.httpClient;
+	}
 
 	@Override public void onCreate() {
 		super.onCreate();

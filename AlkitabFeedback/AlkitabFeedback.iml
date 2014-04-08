@@ -28,6 +28,7 @@
     <orderEntry type="module" module-name="KirimFidbek" />
     <orderEntry type="library" scope="PROVIDED" name="android-support-v4" level="project" />
     <orderEntry type="module" module-name="android-support-v7-appcompat" />
+    <orderEntry type="library" name="okhttp" level="project" />
   </component>
 </module>
 
