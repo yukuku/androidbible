@@ -7,25 +7,21 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.util.Log;
+import com.squareup.okhttp.OkHttpClient;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.message.BasicNameValuePair;
+import yuku.capjempol.HitungCapJempol;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-
-import yuku.capjempol.HitungCapJempol;
 
 public class FeedbackSender {
 	public static final String TAG = FeedbackSender.class.getSimpleName();
@@ -45,6 +41,8 @@ public class FeedbackSender {
 		String capjempol;
 	}
 
+	static final OkHttpClient client = new OkHttpClient();
+
 	String overrideInstallationId_;
 
 	final Context context_;
@@ -56,10 +54,10 @@ public class FeedbackSender {
 	private static FeedbackSender instance;
 	
 	public static FeedbackSender getInstance(Context context) {
-		if (instance != null) {
-			return instance;
+		if (instance == null) {
+			instance = new FeedbackSender(context);
 		}
-		return new FeedbackSender(context);
+		return instance;
 	}
 	
 	private FeedbackSender(Context context) {
@@ -154,9 +152,9 @@ public class FeedbackSender {
 			Log.d(TAG, "feedback sending thread started");
 
 			try {
-				HttpClient client = new DefaultHttpClient();
-				HttpPost post = new HttpPost("http://alkitab-host.appspot.com/laban/submit"); //$NON-NLS-1$
-				List<NameValuePair> params = new ArrayList<NameValuePair>();
+				final HttpURLConnection conn = client.open(new URL("https://alkitab-host.appspot.com/laban/submit"));
+				conn.setDoOutput(true);
+				List<NameValuePair> params = new ArrayList<>();
 
 				for (Entry e : entries_) {
 					params.add(new BasicNameValuePair("timestamp[]", "" + e.timestamp));
@@ -174,11 +172,9 @@ public class FeedbackSender {
 					params.add(new BasicNameValuePair("capjempol[]", "" + e.capjempol));
 				}
 
-				post.setEntity(new UrlEncodedFormEntity(params, "utf-8")); //$NON-NLS-1$
-				HttpResponse response = client.execute(post);
+				new UrlEncodedFormEntity(params, "utf-8").writeTo(conn.getOutputStream());
 
-				HttpEntity entity = response.getEntity();
-				InputStream content = entity.getContent();
+				InputStream content = conn.getInputStream();
 				ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
 
 				while (true) {
@@ -198,12 +194,12 @@ public class FeedbackSender {
 				if (onSuccessListener_ != null) {
 					onSuccessListener_.onSuccess(out);
 				}
-				
+
 				if (success) {
 					synchronized (FeedbackSender.this) {
 						entries_.clear();
 					}
-					
+
 					save();
 				}
 			} catch (IOException e) {

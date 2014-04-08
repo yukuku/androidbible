@@ -3,17 +3,14 @@ package yuku.alkitab.base.devotion;
 import android.content.Context;
 import android.os.SystemClock;
 import android.util.Log;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
 import yuku.alkitab.debug.R;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.LinkedList;
 
 public class DevotionDownloader extends Thread {
@@ -27,7 +24,7 @@ public class DevotionDownloader extends Thread {
 	private OnStatusDonlotListener listener_;
 	private LinkedList<DevotionArticle> queue_ = new LinkedList<DevotionArticle>();
 	private boolean idle_;
-	
+
 	public DevotionDownloader(Context context, OnStatusDonlotListener listener) {
 		context_ = context;
 		listener_ = listener;
@@ -94,42 +91,24 @@ public class DevotionDownloader extends Thread {
 				listener_.onDownloadStatus(context_.getString(R.string.mengunduh_namaumum_tgl_tgl, article.getDevotionTitle(), article.getDate()));
 				
 				try {
-					HttpClient client = new DefaultHttpClient();
-					HttpGet get = new HttpGet(url);
-					
-					HttpResponse response = client.execute(get);
-					HttpEntity entity = response.getEntity();
-					
-					InputStream content = entity.getContent();
-					ByteArrayOutputStream baos = new ByteArrayOutputStream(4096 * 4);
-					
-					while (true) {
-						byte[] b = new byte[4096];
-						int read = content.read(b);
-	
-						if (read <= 0) break;
-						baos.write(b, 0, read);
-					}
-					
-					output = new String(baos.toByteArray(), article.getRawEncoding());
-					
+					final HttpURLConnection conn = App.openHttp(new URL(url));
+					output = U.inputStreamToString(conn.getInputStream(), article.getRawEncoding());
+
 					// success!
 					listener_.onDownloadStatus(context_.getString(R.string.berhasil_mengunduh_namaumum_tgl_tgl, article.getDevotionTitle(), article.getDate()));
-					
+
 					article.fillIn(output);
 					if (output.startsWith("NG")) { //$NON-NLS-1$
 						listener_.onDownloadStatus(context_.getString(R.string.kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output, article.getDevotionTitle(), article.getDate(), output));
 					}
-					
+
 					// let's now store it to db
 					S.getDb().storeArticleToDevotions(article);
 				} catch (IOException e) {
 					Log.w(TAG, "@@run", e); //$NON-NLS-1$
-					
-					if (article != null) {
-						listener_.onDownloadStatus(context_.getString(R.string.gagal_mengunduh_namaumum_tgl_tgl, article.getDevotionTitle(), article.getDate()));
-						Log.d(TAG, "Downloader failed to download"); //$NON-NLS-1$
-					}
+
+					listener_.onDownloadStatus(context_.getString(R.string.gagal_mengunduh_namaumum_tgl_tgl, article.getDevotionTitle(), article.getDate()));
+					Log.d(TAG, "Downloader failed to download"); //$NON-NLS-1$
 				}
 			}
 			

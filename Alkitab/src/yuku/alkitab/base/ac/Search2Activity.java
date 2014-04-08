@@ -40,18 +40,14 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
+import yuku.alkitabintegration.display.Launcher;
 
 import java.util.Arrays;
 
 public class Search2Activity extends BaseActivity {
 	public static final String TAG = Search2Activity.class.getSimpleName();
 	
-	private static final String EXTRA_query = "query"; //$NON-NLS-1$
-	private static final String EXTRA_searchResults = "searchResults"; //$NON-NLS-1$
-	private static final String EXTRA_selectedPosition = "selectedPosition"; //$NON-NLS-1$
 	private static final String EXTRA_openedBookId = "openedBookId"; //$NON-NLS-1$
-	private static final String EXTRA_selectedAri = "selectedAri"; //$NON-NLS-1$
-
 	SearchView searchView;
 	ListView lsSearchResults;
 	View panelFilter;
@@ -66,30 +62,10 @@ public class Search2Activity extends BaseActivity {
 	int openedBookId;
 	int filterUserAction = 0; // when it's not user action, set to nonzero
 	Search2Adapter adapter;
-	
-	public static class Result {
-		public Query query;
-		public IntArrayList searchResults;
-		public int selectedPosition;
-		public int selectedAri;
-	}
-	
-	public static Intent createIntent(Query query, IntArrayList searchResults, int selectedPosition, int openedBookId) {
+
+	public static Intent createIntent(int openedBookId) {
 		Intent res = new Intent(App.context, Search2Activity.class);
-		res.putExtra(EXTRA_query, query);
-		res.putExtra(EXTRA_searchResults, searchResults);
-		res.putExtra(EXTRA_selectedPosition, selectedPosition);
 		res.putExtra(EXTRA_openedBookId, openedBookId);
-		return res;
-	}
-	
-	public static Result obtainResult(Intent data) {
-		if (data == null) return null;
-		Result res = new Result();
-		res.query = data.getParcelableExtra(EXTRA_query);
-		res.searchResults = data.getParcelableExtra(EXTRA_searchResults);
-		res.selectedPosition = data.getIntExtra(EXTRA_selectedPosition, -1);
-		res.selectedAri = data.getIntExtra(EXTRA_selectedAri, -1);
 		return res;
 	}
 
@@ -127,20 +103,7 @@ public class Search2Activity extends BaseActivity {
 		lsSearchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				int ari = adapter.getSearchResults().get(position);
-				
-				Intent data = new Intent();
-				data.putExtra(EXTRA_query, getQuery());
-				
-				Search2Adapter adapter = (Search2Adapter) parent.getAdapter();
-				if (adapter != null) {
-					data.putExtra(EXTRA_searchResults, adapter.getSearchResults());
-				}
-				
-				data.putExtra(EXTRA_selectedPosition, position);
-				data.putExtra(EXTRA_selectedAri, ari);
-				
-				setResult(RESULT_OK, data);
-				finish();
+				startActivity(Launcher.openAppAtBibleLocation(ari));
 			}
 		});
 		bEditFilter.setOnClickListener(new OnClickListener() {
@@ -153,37 +116,16 @@ public class Search2Activity extends BaseActivity {
 		cFilterSingleBook.setOnCheckedChangeListener(cFilterSingleBook_checkedChange);
 		
 		{
-			Intent intent = getIntent();
-			Query query = intent.getParcelableExtra(EXTRA_query);
-			IntArrayList searchResults = intent.getParcelableExtra(EXTRA_searchResults);
-			int selectedPosition = intent.getIntExtra(EXTRA_selectedPosition, -1);
-			
-			openedBookId = intent.getIntExtra(EXTRA_openedBookId, -1);
+			openedBookId = getIntent().getIntExtra(EXTRA_openedBookId, -1);
+
 			Book book = S.activeVersion.getBook(openedBookId);
 			cFilterSingleBook.setText(getString(R.string.search_bookname_only, book.shortName));
-			
-			if (query != null) {
-				searchView.setQuery(query.query_string, false);
 
-				if (searchResults != null) {
-					String[] tokens = QueryTokenizer.tokenize(query.query_string);
-					lsSearchResults.setAdapter(adapter = new Search2Adapter(searchResults, tokens));
-				}
+			for (Book k: S.activeVersion.getConsecutiveBooks()) {
+				selectedBookIds.put(k.bookId, true);
 			}
-			
-			if (query == null) { // default: all books
-				for (Book k: S.activeVersion.getConsecutiveBooks()) {
-					selectedBookIds.put(k.bookId, true);
-				}
-			} else if (query.bookIds != null) {
-				selectedBookIds = query.bookIds;
-			}
-			
+
 			configureFilterDisplayOldNewTest();
-			
-			if (selectedPosition != -1) {
-				lsSearchResults.setSelection(selectedPosition);
-			}
 		}
 		
 		if (usingRevIndex()) {

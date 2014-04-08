@@ -132,7 +132,7 @@ public abstract class ArticleFromSabda implements DevotionArticle {
 	
 	@Override
 	public String getUrl() {
-		return "http://alkitab-host.appspot.com/devotion/get?name=" + getName() + "&date=" + date; //$NON-NLS-1$ //$NON-NLS-2$
+		return "https://alkitab-host.appspot.com/devotion/get?name=" + getName() + "&date=" + date; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	@Override public String[] getHeaderTitleBody() {

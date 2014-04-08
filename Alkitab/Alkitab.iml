@@ -42,7 +42,7 @@
     <orderEntry type="module" module-name="AlkitabModel" />
     <orderEntry type="module" module-name="AlkitabIo" />
     <orderEntry type="library" name="gson-2.2.4" level="project" />
-    <orderEntry type="library" name="okhttp-1.0.2" level="project" />
+    <orderEntry type="library" name="okhttp" level="project" />
     <orderEntry type="module" module-name="NewQuickAction3DLib" />
   </component>
 </module>

@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="okhttp-1.0.2">
+  <library name="okhttp">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/Alkitab/libs/okhttp-1.0.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Alkitab/libs/okhttp-1.5.3.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
