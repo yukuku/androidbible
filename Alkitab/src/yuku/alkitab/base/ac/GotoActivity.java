@@ -8,19 +8,18 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.fr.GotoDialerFragment;
 import yuku.alkitab.base.fr.GotoDirectFragment;
 import yuku.alkitab.base.fr.GotoGridFragment;
 import yuku.alkitab.base.fr.base.BaseGotoFragment.GotoFinishListener;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.debug.R;
 
 public class GotoActivity extends BaseActivity implements GotoFinishListener {
 	public static final String TAG = GotoActivity.class.getSimpleName();
@@ -73,7 +72,8 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 		final ActionBar actionBar = getSupportActionBar();
 
 		if (!getResources().getBoolean(R.bool.screen_sw_check_min_600dp)) {
-	        // The following two options trigger the collapsing of the main action bar view.
+	        // The following three options trigger the collapsing of the main action bar view.
+			actionBar.setDisplayHomeAsUpEnabled(false);
 	        actionBar.setDisplayShowHomeEnabled(false);
 	        actionBar.setDisplayShowTitleEnabled(false);
 		}
@@ -87,7 +87,6 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 				// When swiping between pages, select the corresponding tab.
 				actionBar.setSelectedNavigationItem(position);
 
-				Log.d(TAG, " di sini");
 				if (okToHideKeyboard && position != 1) {
 					final View editText = findViewById(R.id.tDirectReference);
 					if (editText != null) {
