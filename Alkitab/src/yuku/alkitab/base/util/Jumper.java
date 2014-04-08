@@ -40,7 +40,8 @@ public class Jumper {
 	}
 	
 	/**
-	 * Can't be parsed as a number. "4-5": true. "Hello": true. "123": false.
+	 * Can't be parsed as a pure number. "4-5": true. "Hello": true. "123": false. "12b": false.
+	 * This is not the opposite of isNumber.
 	 */
 	private static boolean isWord(String s) {
 		char c = s.charAt(0);
@@ -53,20 +54,58 @@ public class Jumper {
 			return true;
 		}
 	}
-	
+
+	/**
+	 * @return true if s is a number, or s is a number followed by a single lowercase character 'a'-'z' inclusive.
+	 * That is for handling verse parts like 12a or 15b.
+	 */
 	private static boolean isNumber(String s) {
 		try {
 			Integer.parseInt(s);
+			return true;
+		} catch (NumberFormatException e) {
+			// try special case
+			if (s.length() > 1 && s.charAt(s.length() - 1) >= 'a' && s.charAt(s.length() - 1) <= 'z') {
+				try {
+					Integer.parseInt(s.substring(0, s.length() - 1));
+					return true;
+				} catch (NumberFormatException e2) {
+					return false;
+				}
+			}
+			return false;
+		}
+	}
+
+	/**
+	 * @return true if s is a number.
+	 */
+	private static boolean isPureNumber(String s) {
+		try {
+			Integer.parseInt(s);
+			return true;
 		} catch (NumberFormatException e) {
 			return false;
 		}
-		return true;
 	}
-	
+
+	/**
+	 * @return integer value of s if s is a number, or s is a number followed by a single lowercase character 'a'-'z' inclusive.
+	 * That is for handling verse parts like 12a or 15b.
+	 * Returns 0 when it's unable to parse.
+	 */
 	private static int numberize(String s) {
 		try {
 			return Integer.parseInt(s);
 		} catch (NumberFormatException e) {
+			// try special case
+			if (s.length() > 1 && s.charAt(s.length() - 1) >= 'a' && s.charAt(s.length() - 1) <= 'z') {
+				try {
+					return Integer.parseInt(s.substring(0, s.length() - 1));
+				} catch (NumberFormatException e2) {
+					return 0;
+				}
+			}
 			return 0;
 		}
 	}
@@ -137,7 +176,7 @@ public class Jumper {
 		//# STAGE 10: Split based on SPACE, :, PERIOD, and whitespaces between -'s and numbers.
 		//# Sample of wrong output: [Kisah, rasul34, 6-7, 8]
 		//# Sample of right output: [Kisah, rasul34, 6, -, 7, 8]
-		String[] parts = reference.split("((\\s|:|\\.)+|(?=[0-9])(?<=-)|(?=-)(?<=[0-9]))"); //$NON-NLS-1$
+		String[] parts = reference.split("((\\s|:|\\.)+|(?=[0-9])(?<=-)|(?=-)(?<=[0-9][a-z]?))"); //$NON-NLS-1$
 		if (BuildConfig.DEBUG) Log.d(TAG, "jumper stage 10: " + Arrays.toString(parts)); //$NON-NLS-1$
 
 		//# STAGE 12: Remove string from empty parts
@@ -230,15 +269,25 @@ public class Jumper {
 			
 			// see from the right which one is not a number. That is the start of book.
 			for (int i = parts.length - 1; i >= 0; i--) {
-				if (! isNumber(parts[i])) {
+				final String part = parts[i];
+
+				if (!isNumber(part)) {
 					// this and all earlier than this is the book.
 					startWord = i;
-					
+
 					break;
 				}
-				
-				if (i == 0 && parts.length > 2) {
-					// too much, how come there are more than 2 numbers
+
+				if (i == 0) { // special case, probably the first part is something like "1j" or "1y" for 1 John.
+					if (isWord(part)) {
+						startWord = i;
+
+						break;
+					}
+
+					if (BuildConfig.DEBUG) {
+						Log.d(TAG, "jumper stage 30: too much, how come there are more than 2 numbers: returning false");
+					}
 					return false;
 				}
 			}
@@ -262,7 +311,7 @@ public class Jumper {
 			if (isWord(parts[0])) { // it's a BOOK
 				p_book = parts[0];
 				return true;
-			} else {
+			} else { // it's a CHAPTER
 				p_chapter = numberize(parts[0]);
 				return true;
 			}
@@ -270,13 +319,14 @@ public class Jumper {
 
 		if (parts.length == 2) { // 2 parts
 			// means it could be CHAPTER VERSE (in the same book)
-			if (isNumber(parts[0]) && isNumber(parts[1])) {
+			if (isPureNumber(parts[0]) && isNumber(parts[1])) {
 				p_chapter = numberize(parts[0]);
 				p_verse = numberize(parts[1]);
 				return true;
 			}
+
 			// or BOOK CHAPTER
-			else if (isNumber(parts[1])) {
+			if (isPureNumber(parts[1])) {
 				p_book = parts[0];
 				p_chapter = numberize(parts[1]);
 				return true;
