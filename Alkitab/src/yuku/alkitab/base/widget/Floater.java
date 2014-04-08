@@ -15,6 +15,8 @@ import yuku.alkitab.model.Version;
 public class Floater extends View {
 	public static final String TAG = Floater.class.getSimpleName();
 	public static final int LONG_PRESS_DELAY_MILLIS = 650;
+	private int currentBookId;
+	private int currentChapter_1;
 
 	enum State {
 		idle,
@@ -29,6 +31,7 @@ public class Floater extends View {
 
 	Paint passivePaint;
 	Paint activePaint;
+	Paint currentPaint; // paint for drawing "current" box
 	Paint activeBoxPaint;
 	Paint.FontMetrics passiveFontMetrics;
 	Paint.FontMetrics activeFontMetrics;
@@ -97,6 +100,11 @@ public class Floater extends View {
 		activePaint.setColor(0xffffffff);
 		activePaint.setTypeface(Typeface.DEFAULT_BOLD);
 
+		currentPaint = new Paint();
+		currentPaint.setColor(0xff247c94);
+		currentPaint.setStrokeWidth(1 * density);
+		currentPaint.setStyle(Paint.Style.STROKE);
+
 		activeBoxPaint = new Paint();
 		activeBoxPaint.setColor(0xff247c94);
 		activeBoxPaint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -144,9 +152,14 @@ public class Floater extends View {
 
 				if (activeBookIndex != i) {
 					canvas.drawText(book.shortName, left, bottom, passivePaint);
+
+					if (book.bookId == currentBookId) {
+						float textWidth = passivePaint.measureText(book.shortName);
+						canvas.drawRect(left - 4 * density, bottom + passiveFontMetrics.ascent, left + textWidth + 4 * density, bottom + passiveFontMetrics.descent, currentPaint);
+					}
 				}
 
-				if (i == 38) { // end of old testament
+				if (book.bookId == 38) { // end of old testament
 					canvas.drawLine(left - 4 * density, bottom + passiveFontMetrics.descent, left + (w / grid_columns) - 4 * density, bottom + passiveFontMetrics.descent, separatorPaint);
 				}
 			}
@@ -187,7 +200,15 @@ public class Floater extends View {
 				if (activeChapterIndex != i) {
 					final int column = i / grid_rows;
 					final int row = i % grid_rows;
-					canvas.drawText(prefix + (i + 1), getPaddingLeft() + column * (w / grid_columns), getPaddingTop() + (row + 1) * (h / grid_rows), passivePaint);
+					final float left = getPaddingLeft() + column * (w / grid_columns);
+					final float bottom = getPaddingTop() + (row + 1) * (h / grid_rows);
+					final String text = prefix + (i + 1);
+					canvas.drawText(text, left, bottom, passivePaint);
+
+					if (books[activeBookIndex].bookId == currentBookId && i + 1 == currentChapter_1) {
+						float textWidth = passivePaint.measureText(text);
+						canvas.drawRect(left - 4 * density, bottom + passiveFontMetrics.ascent, left + textWidth + 4 * density, bottom + passiveFontMetrics.descent, currentPaint);
+					}
 				}
 			}
 
@@ -369,7 +390,13 @@ public class Floater extends View {
 		invalidate();
 	}
 
-	private void hide() {
+	public void show(int bookId, int chapter_1) {
+		this.currentBookId = bookId;
+		this.currentChapter_1 = chapter_1;
+		setVisibility(VISIBLE);
+	}
+
+	public void hide() {
 		setVisibility(GONE);
 	}
 

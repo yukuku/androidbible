@@ -139,7 +139,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		@Override
 		public void onFloaterDragStart(final float screenX, final float screenY) {
-			floater.setVisibility(View.VISIBLE);
+			floater.show(activeBook.bookId, chapter_1);
 			floater.onDragStart(S.activeVersion);
 		}
 
@@ -151,7 +151,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		@Override
 		public void onFloaterDragComplete(final float screenX, final float screenY) {
-			floater.setVisibility(View.GONE);
+			floater.hide();
 			floater.onDragComplete(screenX - floaterLocationOnScreen[0], screenY - floaterLocationOnScreen[1]);
 		}
 	};
