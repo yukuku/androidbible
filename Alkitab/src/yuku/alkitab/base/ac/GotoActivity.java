@@ -72,7 +72,8 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 		final ActionBar actionBar = getActionBar();
 
 		if (!getResources().getBoolean(R.bool.screen_sw_check_min_600dp)) {
-	        // The following two options trigger the collapsing of the main action bar view.
+	        // The following three options trigger the collapsing of the main action bar view.
+			actionBar.setDisplayHomeAsUpEnabled(false);
 	        actionBar.setDisplayShowHomeEnabled(false);
 	        actionBar.setDisplayShowTitleEnabled(false);
 		}
@@ -86,7 +87,6 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 				// When swiping between pages, select the corresponding tab.
 				actionBar.setSelectedNavigationItem(position);
 
-				Log.d(TAG, " di sini");
 				if (okToHideKeyboard && position != 1) {
 					final View editText = findViewById(R.id.tDirectReference);
 					if (editText != null) {
