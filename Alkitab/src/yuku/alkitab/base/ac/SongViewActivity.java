@@ -21,7 +21,6 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
-import com.squareup.okhttp.OkHttpClient;
 import net.londatiga.android.QuickAction;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -86,7 +85,6 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 	Bundle templateCustomVars;
 	String currentBookName;
 	Song currentSong;
-	static OkHttpClient client = new OkHttpClient();
 
 	// for initially populating the search song activity
 	SearchState last_searchState = null;
@@ -166,7 +164,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 							try {
 								setState(2);
 
-								final HttpURLConnection conn = client.open(new URL(url));
+								final HttpURLConnection conn = App.openHttp(new URL(url));
 								final InputStream input = conn.getInputStream();
 								final File cacheFile = new File(App.context.getCacheDir(), "song_player_local_cache.mid");
 								final OutputStream output = new FileOutputStream(cacheFile);
@@ -349,7 +347,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			public void run() {
 				try {
 					final String filename = getAudioFilename(checkedBookName, checkedCode);
-					final HttpURLConnection conn = client.open(new URL("http://alkitab-host.appspot.com/addon/audio/exists?filename=" + Uri.encode(filename)));
+					final HttpURLConnection conn = App.openHttp(new URL("https://alkitab-host.appspot.com/addon/audio/exists?filename=" + Uri.encode(filename)));
 					final String response = U.inputStreamUtf8ToString(conn.getInputStream());
 					if (response.startsWith("OK")) {
 						// make sure this is the correct one due to possible race condition
@@ -358,7 +356,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 								@Override
 								public void run() {
 									if (mediaPlayerController.canHaveNewUrl()) {
-										final String url = "http://alkitab-host.appspot.com/addon/audio/" + getAudioFilename(currentBookName, currentSong.code);
+										final String url = "https://alkitab-host.appspot.com/addon/audio/" + getAudioFilename(currentBookName, currentSong.code);
 										if (response.contains("extension=mp3")) {
 											mediaPlayerController.mediaKnownToExist(url, false);
 										} else {

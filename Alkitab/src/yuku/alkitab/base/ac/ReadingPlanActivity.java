@@ -30,11 +30,10 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.google.gson.GsonBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.storage.Prefkey;
@@ -252,7 +251,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		long id = Preferences.getLong(Prefkey.active_reading_plan_id, 0);
 		int itemNumber = 0;
 		//Drop-down navigation
-		List<String> titles = new ArrayList<String>();
+		List<String> titles = new ArrayList<>();
 		for (int i = 0; i < downloadedReadingPlanInfos.size(); i++) {
 			ReadingPlan.ReadingPlanInfo info = downloadedReadingPlanInfos.get(i);
 			titles.add(info.title);
@@ -533,8 +532,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 
 			/** run on bg thread */
 			void download() throws Exception {
-				final OkHttpClient client = new OkHttpClient();
-				final HttpURLConnection conn = client.open(new URL("http://alkitab-host.appspot.com/rp/list"));
+				final HttpURLConnection conn = App.openHttp(new URL("https://alkitab-host.appspot.com/rp/list"));
 				final ReadingPlanServerEntry[] entries = new GsonBuilder().create().fromJson(new InputStreamReader(conn.getInputStream(), "utf-8"), ReadingPlanServerEntry[].class);
 
 				if (entries == null) return;
@@ -636,8 +634,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 
 			/** run on bg thread */
 			void download() throws Exception {
-				final OkHttpClient client = new OkHttpClient();
-				final HttpURLConnection conn = client.open(new URL("http://alkitab-host.appspot.com/rp/get_rp?name=" + entry.name));
+				final HttpURLConnection conn = App.openHttp(new URL("https://alkitab-host.appspot.com/rp/get_rp?name=" + entry.name));
 				final InputStream input = conn.getInputStream();
 				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				final byte[] buf = new byte[1024];

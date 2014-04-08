@@ -16,6 +16,18 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import yuku.afw.V;
+import yuku.alkitab.base.App;
+import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.rpc.SimpleHttpConnection;
+import yuku.alkitab.base.sv.DownloadService;
+import yuku.alkitab.base.sv.DownloadService.DownloadBinder;
+import yuku.alkitab.base.sv.DownloadService.DownloadEntry;
+import yuku.alkitab.base.sv.DownloadService.DownloadListener;
+import yuku.alkitab.base.util.FontManager;
+import yuku.alkitab.base.widget.UrlImageView;
+import yuku.alkitab.base.widget.UrlImageView.OnStateChangeListener;
+import yuku.alkitab.debug.R;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -28,25 +40,12 @@ import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import yuku.afw.V;
-import yuku.alkitab.debug.R;
-import yuku.alkitab.base.App;
-import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.rpc.SimpleHttpConnection;
-import yuku.alkitab.base.sv.DownloadService;
-import yuku.alkitab.base.sv.DownloadService.DownloadBinder;
-import yuku.alkitab.base.sv.DownloadService.DownloadEntry;
-import yuku.alkitab.base.sv.DownloadService.DownloadListener;
-import yuku.alkitab.base.util.FontManager;
-import yuku.alkitab.base.widget.UrlImageView;
-import yuku.alkitab.base.widget.UrlImageView.OnStateChangeListener;
-
 public class FontManagerActivity extends BaseActivity implements DownloadListener {
 	public static final String TAG = FontManagerActivity.class.getSimpleName();
 	
-	private static final String URL_fontList = "http://alkitab-host.appspot.com/addon/fonts/v1/list-v2.txt"; //$NON-NLS-1$
-	private static final String URL_fontData = "http://alkitab-host.appspot.com/addon/fonts/v1/data/%s.zip"; //$NON-NLS-1$
-	private static final String URL_fontPreview = "http://alkitab-host.appspot.com/addon/fonts/v1/preview-black/%s-384x84.png"; //$NON-NLS-1$
+	private static final String URL_fontList = "https://alkitab-host.appspot.com/addon/fonts/v1/list-v2.txt"; //$NON-NLS-1$
+	private static final String URL_fontData = "https://alkitab-host.appspot.com/addon/fonts/v1/data/%s.zip"; //$NON-NLS-1$
+	private static final String URL_fontPreview = "https://alkitab-host.appspot.com/addon/fonts/v1/preview-black/%s-384x84.png"; //$NON-NLS-1$
 
 	public static Intent createIntent() {
 		return new Intent(App.context, FontManagerActivity.class);

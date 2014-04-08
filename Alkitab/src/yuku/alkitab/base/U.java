@@ -236,6 +236,10 @@ public class U {
 	}
 
 	public static String inputStreamUtf8ToString(InputStream input) throws IOException {
+		return inputStreamToString(input, "utf-8");
+	}
+
+	public static String inputStreamToString(final InputStream input, final String encoding) throws IOException {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		final byte[] buf = new byte[1024];
 		while (true) {
@@ -243,6 +247,6 @@ public class U {
 			if (read < 0) break;
 			baos.write(buf, 0, read);
 		}
-		return new String(baos.toByteArray(), "utf-8");
+		return new String(baos.toByteArray(), encoding);
 	}
 }

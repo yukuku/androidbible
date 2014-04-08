@@ -78,7 +78,6 @@ import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.base.util.OsisBookNames;
-import yuku.alkitab.base.util.Search2Engine.Query;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.AttributeView;
 import yuku.alkitab.base.widget.CallbackSpan;
@@ -124,8 +123,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private static final int REQCODE_goto = 1;
 	private static final int REQCODE_bookmark = 2;
 	private static final int REQCODE_settings = 4;
-	private static final int REQCODE_version = 5;
-	private static final int REQCODE_search = 6;
 	private static final int REQCODE_share = 7;
 	private static final int REQCODE_textAppearanceGetFonts = 9;
 	private static final int REQCODE_textAppearanceCustomColors = 10;
@@ -272,11 +269,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	ActionMode actionMode;
 	TextAppearancePanel textAppearancePanel;
 
-	//# state storage for search2
-	Query search2_query = null;
-	IntArrayList search2_results = null;
-	int search2_selectedPosition = -1;
-	
 	// temporary states
 	Boolean hasEsvsbAsal;
 	Version activeSplitVersion;
@@ -1169,7 +1161,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		})
 		.setPositiveButton(R.string.versi_lainnya, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
-				startActivityForResult(VersionsActivity.createIntent(), REQCODE_version);
+				startActivity(VersionsActivity.createIntent());
 			}
 		})
 		.setNegativeButton(R.string.cancel, null)
@@ -1229,7 +1221,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		})
 		.setPositiveButton(R.string.versi_lainnya, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
-				startActivityForResult(VersionsActivity.createIntent(), REQCODE_version);
+				startActivity(VersionsActivity.createIntent());
 			}
 		})
 		.setNegativeButton(R.string.cancel, null)
@@ -1276,7 +1268,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	private void menuSearch_click() {
-		startActivityForResult(Search2Activity.createIntent(search2_query, search2_results, search2_selectedPosition, this.activeBook.bookId), REQCODE_search);
+		startActivity(Search2Activity.createIntent(this.activeBook.bookId));
 	}
 	
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1303,20 +1295,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 			if (activeSplitVersion != null) {
 				lsSplit1.reloadAttributeMap();
-			}
-		} else if (requestCode == REQCODE_search) {
-			if (resultCode == RESULT_OK) {
-				Search2Activity.Result result = Search2Activity.obtainResult(data);
-				if (result != null) {
-					if (result.selectedAri != -1) {
-						jumpToAri(result.selectedAri);
-						history.add(result.selectedAri);
-					}
-
-					search2_query = result.query;
-					search2_results = result.searchResults;
-					search2_selectedPosition = result.selectedPosition;
-				}
 			}
 		} else if (requestCode == REQCODE_settings) {
 			// MUST reload preferences

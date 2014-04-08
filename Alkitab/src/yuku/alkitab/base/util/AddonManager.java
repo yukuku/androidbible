@@ -5,26 +5,23 @@ import android.os.Environment;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
+import yuku.alkitab.base.App;
+import yuku.alkitab.debug.R;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.concurrent.Semaphore;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import yuku.alkitab.debug.R;
-
 public class AddonManager {
 	public static final String TAG = AddonManager.class.getSimpleName();
+
 	public static class Element {
 		public String url;
 		public String dest;
@@ -105,17 +102,14 @@ public class AddonManager {
 			
 			try {
 				FileOutputStream os = new FileOutputStream(tmpfile);
+
+				final HttpURLConnection conn = App.openHttp(new URL(e.url));
+				Log.d(TAG, "Start downloading " + e.url);
+
+				final int length = conn.getContentLength();
 				
-				HttpClient client = new DefaultHttpClient();
-				HttpGet get = new HttpGet(e.url);
-				
-				Log.d(TAG, "Mulai donlot " + e.url); //$NON-NLS-1$
-				HttpResponse response = client.execute(get);
-				HttpEntity entity = response.getEntity();
-				int length = (int) entity.getContentLength();
-				
-				Log.d(TAG, "Donlot sudah berjalan. Length: " + length); //$NON-NLS-1$
-				InputStream content = entity.getContent();
+				Log.d(TAG, "Download starting. Length: " + length);
+				final InputStream content = conn.getInputStream();
 				
 				byte[] b = new byte[4096 * 4];
 				while (true) {
@@ -128,7 +122,7 @@ public class AddonManager {
 					if (e.listener != null) e.listener.onDownloadProgress(e, e.downloaded, length);
 					
 					if (e.cancelled) {
-						get.abort();
+						conn.disconnect();
 						if (e.listener != null) e.listener.onDownloadCancelled(e);
 						os.close();
 						return;
