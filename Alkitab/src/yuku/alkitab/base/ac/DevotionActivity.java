@@ -24,7 +24,6 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -34,12 +33,13 @@ import yuku.alkitab.base.devotion.ArticleSantapanHarian;
 import yuku.alkitab.base.devotion.DevotionArticle;
 import yuku.alkitab.base.devotion.DevotionDownloader;
 import yuku.alkitab.base.devotion.DevotionDownloader.OnStatusDonlotListener;
-import yuku.alkitab.util.Ari;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.DevotionSelectPopup;
 import yuku.alkitab.base.widget.DevotionSelectPopup.DevotionSelectPopupListener;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.util.Ari;
 
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
@@ -68,14 +68,45 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			return new SimpleDateFormat("yyyyMMdd", Locale.US); //$NON-NLS-1$
 		}
 	};
-	
-	public static final String[] AVAILABLE_NAMES = {
-		"sh", "rh", "me-en"  //$NON-NLS-1$//$NON-NLS-2$
-	};
-	public static final String DEFAULT_NAME = "sh"; //$NON-NLS-1$
-	private static final String[] AVAILABLE_TITLES = {
-		"Santapan Harian", "Renungan Harian", "Morning & Evening" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	};
+
+	public enum DevotionKind {
+		SH("sh", "Santapan Harian"),
+		RH("rh", "Renungan Harian"),
+		ME_EN("me-en", "Morning & Evening"),
+		;
+
+		public final String name;
+		public final String title;
+
+		DevotionKind(final String name, final String title) {
+			this.name = name;
+			this.title = title;
+		}
+
+		public static DevotionKind getByName(String name) {
+			if (name == null) return null;
+			for (final DevotionKind kind : values()) {
+				if (name.equals(kind.name)) {
+					return kind;
+				}
+			}
+			return null;
+		}
+
+		public DevotionArticle getArticle(final String date) {
+			switch (this) {
+				case SH:
+					return new ArticleSantapanHarian(date);
+				case RH:
+					return new ArticleRenunganHarian(date);
+				case ME_EN:
+					return new ArticleMorningEveningEnglish(date);
+			}
+			throw new RuntimeException("@@getArticle enum not complete");
+		}
+	}
+
+	public static final DevotionKind DEFAULT_DEVOTION_KIND = DevotionKind.SH;
 
 	TextView lContent;
 	ScrollView scrollContent;
@@ -88,14 +119,14 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	Animation fadeOutAnim;
 	
 	// currently shown
-	String currentName;
+	DevotionKind currentKind;
 	Date currentDate;
 
 	static class DisplayRepeater extends Handler {
 		final WeakReference<DevotionActivity> ac;
 		
 		public DisplayRepeater(DevotionActivity activity) {
-			ac = new WeakReference<DevotionActivity>(activity);
+			ac = new WeakReference<>(activity);
 		}
 		
 		@Override public void handleMessage(Message msg) {
@@ -125,7 +156,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		private WeakReference<DevotionActivity> ac;
 
 		public DownloadStatusDisplayer(DevotionActivity ac) {
-			this.ac = new WeakReference<DevotionActivity>(ac);
+			this.ac = new WeakReference<>(ac);
 		}
 		
 		@Override public void handleMessage(Message msg) {
@@ -169,9 +200,9 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		popup.setDevotionSelectListener(popup_listener);
 		
 		if (Temporaries.devotion_date == null) Temporaries.devotion_date = new Date();
-		if (Temporaries.devotion_name == null) Temporaries.devotion_name = DEFAULT_NAME;
-		
-		currentName = Temporaries.devotion_name;
+		if (Temporaries.devotion_kind == null) Temporaries.devotion_kind = DEFAULT_DEVOTION_KIND;
+
+		currentKind = Temporaries.devotion_kind;
 		currentDate = Temporaries.devotion_date;
 		
 		// Workaround for crashes due to html tags in the title
@@ -182,7 +213,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			Preferences.setBoolean(Prefkey.patch_devotionSlippedHtmlTags, true);
 		}
 		
-		new Prefetcher().start();
+		new Prefetcher(currentKind).start();
 		
 		{ // betulin ui update
 			if (devotionDownloader != null) {
@@ -203,8 +234,8 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	
 	@Override protected void onDestroy() {
 		super.onDestroy();
-		
-		Temporaries.devotion_name = currentName;
+
+		Temporaries.devotion_kind = currentKind;
 		Temporaries.devotion_date = currentDate;
 		Temporaries.devotion_scroll = scrollContent.getScrollY();
 	}
@@ -254,7 +285,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			
 			return true;
 		} else if (itemId == R.id.menuRedownload) {
-			willNeed(this.currentName, date_format.get().format(currentDate), true);
+			willNeed(this.currentKind, date_format.get().format(currentDate), true);
 			
 			return true;
 		} else if (itemId == R.id.menuReminder) {
@@ -303,17 +334,10 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 				currentDate.setTime(currentDate.getTime() + 3600*24*1000);
 				display(0);
 			} else if (id == R.id.bChange) {
-				int index = 0;
-				
-				for (int i = 0; i < AVAILABLE_NAMES.length; i++) {
-					if (AVAILABLE_NAMES[i].equals(currentName)) {
-						index = i;
-						break;
-					}
-				}
-				
-				index = (index + 1) % AVAILABLE_NAMES.length;
-				currentName = AVAILABLE_NAMES[index];
+				int index = currentKind.ordinal();
+				final DevotionKind[] values = DevotionKind.values();
+				index = (index + 1) % values.length;
+				currentKind = values[index];
 				display(0);
 			}
 		}
@@ -328,9 +352,9 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 	void goTo(boolean prioritize, int scroll) {
 		String date = date_format.get().format(currentDate);
-		DevotionArticle article = S.getDb().tryGetDevotion(currentName, date);
+		DevotionArticle article = S.getDb().tryGetDevotion(currentKind.name, date);
 		if (article == null || !article.getReadyToUse()) {
-			willNeed(currentName, date, prioritize);
+			willNeed(currentKind, date, prioritize);
 			render(article, scroll);
 			
 			displayRepeater.sendEmptyMessageDelayed(0, 3000);
@@ -413,14 +437,9 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 				lContent.setText(R.string.belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan);
 			}
 		}
-		
-		String title = ""; //$NON-NLS-1$
-		for (int i = 0; i < AVAILABLE_NAMES.length; i++) {
-			if (AVAILABLE_NAMES[i].equals(currentName)) {
-				title = AVAILABLE_TITLES[i];
-			}
-		}
-		
+
+		String title = currentKind.title;
+
 		{ // widget texts
 			String dateDisplay = namaHari(currentDate) + ", " + DateFormat.getDateFormat(this).format(currentDate);  //$NON-NLS-1$
 			
@@ -441,30 +460,26 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		return getString(WEEKDAY_NAMES_RESIDS[day]);
 	}
 
-	synchronized void willNeed(String name, String date, boolean prioritize) {
+	synchronized void willNeed(DevotionKind kind, String date, boolean prioritize) {
 		if (devotionDownloader == null) {
 			devotionDownloader = new DevotionDownloader(this, this);
 			devotionDownloader.start();
 		}
 
-		DevotionArticle article = null;
-		if (name.equals("rh")) { //$NON-NLS-1$
-			article = new ArticleRenunganHarian(date);
-		} else if (name.equals("sh")) { //$NON-NLS-1$
-			article = new ArticleSantapanHarian(date);
-		} else if (name.equals("me-en")) { //$NON-NLS-1$
-			article = new ArticleMorningEveningEnglish(date);
-		}
-
-		if (article != null) {
-			boolean added = devotionDownloader.add(article, prioritize);
-			if (added) devotionDownloader.interruptWhenIdle();
-		}
+		final DevotionArticle article = kind.getArticle(date);
+		boolean added = devotionDownloader.add(article, prioritize);
+		if (added) devotionDownloader.interruptWhenIdle();
 	}
 	
 	static boolean prefetcherRunning = false;
 	
 	class Prefetcher extends Thread {
+		private final DevotionKind prefetchKind;
+
+		public Prefetcher(final DevotionKind kind) {
+			prefetchKind = kind;
+		}
+
 		@Override public void run() {
 			if (prefetcherRunning) {
 				Log.d(TAG, "prefetcher is now running"); //$NON-NLS-1$
@@ -483,11 +498,16 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			
 			prefetcherRunning = true;
 			try {
-				for (int i = 0; i < 31; i++) { // 31 hari ke depan
+				int DAYS = 31;
+				if (prefetchKind == DevotionKind.RH) {
+					DAYS = 3;
+				}
+
+				for (int i = 0; i < DAYS; i++) {
 					String date = date_format.get().format(today);
-					if (S.getDb().tryGetDevotion(currentName, date) == null) {
+					if (S.getDb().tryGetDevotion(prefetchKind.name, date) == null) {
 						Log.d(TAG, "Prefetcher need to get " + date); //$NON-NLS-1$
-						willNeed(currentName, date, false);
+						willNeed(prefetchKind, date, false);
 						
 						SystemClock.sleep(1000);
 					} else {
@@ -510,7 +530,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	 * TODO this is not a good practice
 	 */
 	public static class Temporaries {
-		public static String devotion_name = null;
+		public static DevotionKind devotion_kind = null;
 		public static Date devotion_date = null;
 		public static int devotion_scroll = 0;
 	}
@@ -530,9 +550,17 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 				if (result != null && result.chosenIntent != null) {
 					Intent chosenIntent = result.chosenIntent;
 					if (U.equals(chosenIntent.getComponent().getPackageName(), "com.facebook.katana")) { //$NON-NLS-1$
-						if (U.equals(currentName, "sh")) chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-sh/print/?edisi=" + date_format.get().format(currentDate)); // change text to url //$NON-NLS-1$ //$NON-NLS-2$
-						if (U.equals(currentName, "rh")) chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-rh/print/?edisi=" + date_format.get().format(currentDate)); // change text to url //$NON-NLS-1$ //$NON-NLS-2$
-						if (U.equals(currentName, "me-en")) chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.ccel.org/ccel/spurgeon/morneve.d" + date_format.get().format(currentDate) + "am.html"); // change text to url //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						switch (currentKind) {
+							case SH:
+								chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-sh/print/?edisi=" + date_format.get().format(currentDate)); // change text to url //$NON-NLS-1$ //$NON-NLS-2$
+								break;
+							case RH:
+								chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-rh/print/?edisi=" + date_format.get().format(currentDate)); // change text to url //$NON-NLS-1$ //$NON-NLS-2$
+								break;
+							case ME_EN:
+								chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.ccel.org/ccel/spurgeon/morneve.d" + date_format.get().format(currentDate) + "am.html"); // change text to url //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								break;
+						}
 					}
 					startActivity(chosenIntent);
 				}
