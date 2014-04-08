@@ -1341,11 +1341,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				ShareActivity.Result result = ShareActivity.obtainResult(data);
 				if (result != null && result.chosenIntent != null) {
 					Intent chosenIntent = result.chosenIntent;
-					if (U.equals(chosenIntent.getComponent().getPackageName(), "com.facebook.katana")) { //$NON-NLS-1$
+					final String packageName = chosenIntent.getComponent().getPackageName();
+					if (U.equals(packageName, "com.facebook.katana")) { //$NON-NLS-1$
 						String verseUrl = chosenIntent.getStringExtra(EXTRA_verseUrl);
 						if (verseUrl != null) {
 							chosenIntent.putExtra(Intent.EXTRA_TEXT, verseUrl); // change text to url
 						}
+					} else if (U.equals(packageName, "com.whatsapp")) {
+						chosenIntent.removeExtra(Intent.EXTRA_SUBJECT);
 					}
 					startActivity(chosenIntent);
 				}
