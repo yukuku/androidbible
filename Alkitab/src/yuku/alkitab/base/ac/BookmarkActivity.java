@@ -424,8 +424,9 @@ public class BookmarkActivity extends BaseActivity implements ExportBookmarkDial
 
 						startActivity(intent);
 					}
-				} else if (result instanceof Exception) {
-					msgbox(getString(R.string.terjadi_kesalahan_ketika_mengekspor_pesan, ((Exception) result).getMessage()));
+				} else if (result instanceof Throwable) {
+					msgbox(getString(R.string.terjadi_kesalahan_ketika_mengekspor_pesan, ((Throwable) result).getMessage()));
+					Log.e(TAG, "Error creating backup", (Throwable) result);
 				}
 			}
 		});

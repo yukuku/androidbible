@@ -12,11 +12,11 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.BookmarkActivity;
-import yuku.alkitab.model.Bookmark2;
-import yuku.alkitab.model.Label;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.model.Bookmark2;
+import yuku.alkitab.model.Label;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BackupManager {
 	static final int AUTOBACKUP_AFTER_DAYS = 3;
@@ -218,7 +220,7 @@ public class BackupManager {
 		xml.attribute(null, XMLATTR_ari, String.valueOf(bookmark2.ari));
 		xml.attribute(null, XMLATTR_kind, bookmark2.kind == Db.Bookmark2.kind_bookmark? XMLVAL_bookmark: bookmark2.kind == Db.Bookmark2.kind_note? XMLVAL_note: bookmark2.kind == Db.Bookmark2.kind_highlight? XMLVAL_highlight: String.valueOf(bookmark2.kind));
 		if (bookmark2.caption != null) {
-			xml.attribute(null, XMLATTR_caption, bookmark2.caption);
+			xml.attribute(null, XMLATTR_caption, escapeHighUnicode(bookmark2.caption));
 		}
 		if (bookmark2.addTime != null) {
 			xml.attribute(null, XMLATTR_addTime, String.valueOf(Sqlitil.toInt(bookmark2.addTime)));
@@ -233,7 +235,7 @@ public class BackupManager {
 		int ari = Integer.parseInt(attributes.getValue("", XMLATTR_ari)); //$NON-NLS-1$
 		String kind_s = attributes.getValue("", XMLATTR_kind); //$NON-NLS-1$
 		int kind = kind_s.equals(XMLVAL_bookmark)? Db.Bookmark2.kind_bookmark: kind_s.equals(XMLVAL_note)? Db.Bookmark2.kind_note: kind_s.equals(XMLVAL_highlight)? Db.Bookmark2.kind_highlight: Integer.parseInt(kind_s);
-		String caption = attributes.getValue("", XMLATTR_caption); //$NON-NLS-1$
+		String caption = unescapeHighUnicode(attributes.getValue("", XMLATTR_caption)); //$NON-NLS-1$
 		Date addTime = Sqlitil.toDate(Integer.parseInt(attributes.getValue("", XMLATTR_addTime))); //$NON-NLS-1$
 		Date modifyTime = Sqlitil.toDate(Integer.parseInt(attributes.getValue("", XMLATTR_modifyTime))); //$NON-NLS-1$
 
@@ -250,15 +252,77 @@ public class BackupManager {
 		// ordering is not backed up
 		xml.startTag(null, XMLTAG_Label);
 		xml.attribute(null, XMLATTR_relId, String.valueOf(relId));
-		xml.attribute(null, XMLATTR_title, label.title);
+		xml.attribute(null, XMLATTR_title, escapeHighUnicode(label.title));
 		if (label.backgroundColor != null) xml.attribute(null, XMLATTR_bgColor, label.backgroundColor);
 		xml.endTag(null, XMLTAG_Label);
 	}
 
 	public static Label labelFromAttributes(Attributes attributes) {
-		String title = attributes.getValue("", XMLATTR_title); //$NON-NLS-1$
+		String title = unescapeHighUnicode(attributes.getValue("", XMLATTR_title)); //$NON-NLS-1$
 		String bgColor = attributes.getValue("", XMLATTR_bgColor); //$NON-NLS-1$
 
 		return new Label(-1, title, 0, bgColor);
+	}
+
+	// use [[~Uxxxxxx~]] for escaping where the 6x are hexadecimal digits
+	public static String escapeHighUnicode(String input) {
+		if (input == null) return null;
+
+		boolean hasHigh = false;
+		final int cplen = input.codePointCount(0, input.length());
+		for (int i = 0, cpi = 0; i < cplen; i++) {
+			final int cp = input.codePointAt(cpi);
+			cpi += Character.charCount(cp);
+			if (cp > 0xffff) {
+				hasHigh = true;
+				break;
+			}
+		}
+
+		if (!hasHigh) return input;
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0, cpi = 0; i < cplen; i++) {
+			final int cp = input.codePointAt(cpi);
+			cpi += Character.charCount(cp);
+			if (cp > 0xffff) {
+				sb.append("[[~U");
+				final String s = Integer.toHexString(cp);
+				for (int pad = 0; pad < (6-s.length()); pad++) {
+					sb.append('0');
+				}
+				sb.append(s);
+				sb.append("~]]");
+			} else {
+				sb.append((char) cp);
+			}
+		}
+
+		return sb.toString();
+	}
+
+	static ThreadLocal<Matcher> highUnicodeMatcher = new ThreadLocal<Matcher>() {
+		@Override
+		protected Matcher initialValue() {
+			return Pattern.compile("\\[\\[~U([0-9A-Fa-f]{6})~\\]\\]").matcher("");
+		}
+	};
+
+	public static String unescapeHighUnicode(String input) {
+		if (input == null) return null;
+
+		final Matcher m = highUnicodeMatcher.get();
+
+		m.reset(input);
+
+		StringBuffer res = new StringBuffer();
+		while (m.find()) {
+			String s = m.group(1);
+			final int cp = Integer.parseInt(s, 16);
+			m.appendReplacement(res, new String(new int[] {cp}, 0, 1));
+		}
+		m.appendTail(res);
+
+		return res.toString();
 	}
 }
