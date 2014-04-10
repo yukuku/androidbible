@@ -215,7 +215,8 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 					dataSourcePath = url;
 				}
 
-				mp.setDataSource(dataSourcePath);
+				setState(2);
+
 				mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 					@Override
 					public void onPrepared(final MediaPlayer mp) {
@@ -246,8 +247,9 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 						return false; // let OnCompletionListener be called.
 					}
 				});
+
+				mp.setDataSource(dataSourcePath);
 				mp.prepareAsync();
-				setState(2);
 			} catch (IOException e) {
 				Log.e(TAG, "mp setDataSource", e);
 				setState(6);
