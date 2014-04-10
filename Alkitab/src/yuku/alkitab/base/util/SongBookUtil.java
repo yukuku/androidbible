@@ -16,14 +16,13 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.rpc.SimpleHttpConnection;
 import yuku.alkitab.debug.R;
+import yuku.alkitab.io.OptionalGzipInputStream;
 import yuku.kpri.model.Song;
 
-import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
 
 public class SongBookUtil {
 	public static final String TAG = SongBookUtil.class.getSimpleName();
@@ -136,13 +135,13 @@ public class SongBookUtil {
 				
 				SimpleHttpConnection conn = new SimpleHttpConnection(songBookInfo.downloadUrl);
 				try {
-					InputStream is = conn.load();
-					if (is == null) {
+					final InputStream originalInput = conn.load();
+					if (originalInput == null) {
 						throw conn.getException();
 					}
-					
-					GZIPInputStream gzis = new GZIPInputStream(new BufferedInputStream(is));
-					ObjectInputStream ois = new ObjectInputStream(gzis);
+
+					final InputStream ogis = new OptionalGzipInputStream(originalInput);
+					final ObjectInputStream ois = new ObjectInputStream(ogis);
 					songs = (List<Song>) ois.readObject();
 					ois.close();
 				} catch (Exception e) {
