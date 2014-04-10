@@ -5,10 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.text.SpannableStringBuilder;
@@ -24,14 +21,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.CursorAdapter;
-import android.widget.Filter.FilterListener;
-import android.widget.FilterQueryProvider;
 import android.widget.ListView;
 import android.widget.TextView;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.base.IsiActivity;
+import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -47,12 +41,15 @@ import yuku.alkitab.base.util.Search2Engine;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
+import yuku.alkitab.model.Bookmark2;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
+import yuku.alkitabintegration.display.Launcher;
 import yuku.devoxx.flowlayout.FlowLayout;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -73,14 +70,14 @@ public class BookmarkListActivity extends BaseActivity {
 	ListView lv;
 	View emptyView;
     
-	CursorAdapter adapter;
-	Cursor cursor;
-	
+	BookmarkListAdapter adapter;
+
 	String sort_column;
 	boolean sort_ascending;
 	int sort_columnId;
 	String currentlyUsedFilter;
 
+	List<Bookmark2> allBookmarks;
     int filter_kind;
     long filter_labelId;
 
@@ -145,9 +142,8 @@ public class BookmarkListActivity extends BaseActivity {
 		    }
 	    }
 
-		replaceCursor();
-		
-		adapter = new BukmakListAdapter(this, cursor);
+	    adapter = new BookmarkListAdapter();
+	    loadAndFilter();
 
 		panelList.setBackgroundColor(S.applied.backgroundColor);
 		tEmpty.setTextColor(S.applied.fontColor);
@@ -160,6 +156,33 @@ public class BookmarkListActivity extends BaseActivity {
 		lv.setEmptyView(emptyView);
 
 		registerForContextMenu(lv);
+	}
+
+	private void loadAndFilter() {
+		allBookmarks = S.getDb().listBookmarks(filter_kind, filter_labelId, sort_column, sort_ascending);
+		filterUsingCurrentlyUsedFilter();
+	}
+
+	protected void removeFilter() {
+		currentlyUsedFilter = null;
+		filterUsingCurrentlyUsedFilter();
+		setTitleAndNothingText();
+	}
+
+	protected void applyFilter(String query) {
+		currentlyUsedFilter = query;
+		filterUsingCurrentlyUsedFilter();
+		setTitleAndNothingText();
+	}
+
+	void filterUsingCurrentlyUsedFilter() {
+		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.bl_filtering_titiktiga), true, false);
+		adapter.filterAsync(currentlyUsedFilter, new Runnable() {
+			@Override
+			public void run() {
+				pd.dismiss();
+			}
+		});
 	}
 
 	void setTitleAndNothingText() {
@@ -202,7 +225,6 @@ public class BookmarkListActivity extends BaseActivity {
             tEmpty.setText(nothingText);
         } else {
             finish(); // shouldn't happen
-            return;
         }
 	}
 
@@ -229,40 +251,6 @@ public class BookmarkListActivity extends BaseActivity {
 			removeFilter();
 		}
 	};
-
-	protected void removeFilter() {
-		adapter.getFilter().filter(null);
-		currentlyUsedFilter = null;
-		setTitleAndNothingText();
-	}
-	
-	protected void applyFilter(String query) {
-		currentlyUsedFilter = query;
-		filterUsingCurrentlyUsedFilter();
-		setTitleAndNothingText();
-	}
-
-	void filterUsingCurrentlyUsedFilter() {
-		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.bl_filtering_titiktiga), true, false);
-		adapter.getFilter().filter(currentlyUsedFilter, new FilterListener() {
-			@Override public void onFilterComplete(int count) {
-				pd.dismiss();
-			}
-		});
-	}
-
-	@SuppressWarnings("deprecation") void replaceCursor() {
-		if (cursor != null) {
-			stopManagingCursor(cursor);
-		}
-		
-		cursor = S.getDb().listBookmarks(filter_kind, filter_labelId, sort_column, sort_ascending);
-		startManagingCursor(cursor);
-		
-		if (adapter != null) {
-			adapter.changeCursor(cursor);
-		}
-	}
 
 	protected View getLabelView(FlowLayout panelLabels, Label label) {
 		View res = LayoutInflater.from(this).inflate(R.layout.label, null);
@@ -392,7 +380,7 @@ public class BookmarkListActivity extends BaseActivity {
 				sort_column = column;
 				sort_ascending = ascending;
 				sort_columnId = columnId;
-				replaceCursor();
+				loadAndFilter();
 			}
 		})
 		.setTitle(R.string.menuSort)
@@ -401,12 +389,9 @@ public class BookmarkListActivity extends BaseActivity {
 
 	private OnItemClickListener lv_click = new OnItemClickListener() {
 		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-			Cursor o = (Cursor) adapter.getItem(position);
-			int ari = o.getInt(o.getColumnIndexOrThrow(Db.Bookmark2.ari));
-			
-			Intent intent = IsiActivity.createIntent(ari);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intent);
+			Bookmark2 bookmark = adapter.getItem(position);
+
+			startActivity(Launcher.openAppAtBibleLocation(bookmark.ari));
 		}
 	};
 	
@@ -432,7 +417,7 @@ public class BookmarkListActivity extends BaseActivity {
 		if (itemId == R.id.menuDeleteBookmark) {
 			// whatever the kind is, the way to delete is the same
 			S.getDb().deleteBookmarkById(info.id);
-			adapter.getCursor().requery();
+			loadAndFilter();
 			if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
 			
 			return true;
@@ -441,33 +426,34 @@ public class BookmarkListActivity extends BaseActivity {
 				TypeBookmarkDialog dialog = new TypeBookmarkDialog(this, info.id);
 				dialog.setListener(new Listener() {
 					@Override public void onOk() {
-						adapter.getCursor().requery();
+						loadAndFilter();
 						if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
 					}
 				});
 				dialog.show();
 				
 			} else if (filter_kind == Db.Bookmark2.kind_note) {
-				Cursor cursor = (Cursor) adapter.getItem(info.position);
-				int ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bookmark2.ari));
-				
+				final Bookmark2 bookmark = adapter.getItem(info.position);
+				final int ari = bookmark.ari;
+
 				TypeNoteDialog dialog = new TypeNoteDialog(this, S.activeVersion.getBook(Ari.toBook(ari)), Ari.toChapter(ari), Ari.toVerse(ari), new TypeNoteDialog.Listener() {
-					@Override public void onDone() {
-						adapter.getCursor().requery();
+					@Override
+					public void onDone() {
+						loadAndFilter();
 						if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
 					}
 				});
 				dialog.show();
-				
+
 			} else if (filter_kind == Db.Bookmark2.kind_highlight) {
-				Cursor cursor = (Cursor) adapter.getItem(info.position);
-				int ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Bookmark2.ari));
-				int colorRgb = U.decodeHighlight(cursor.getString(cursor.getColumnIndexOrThrow(Db.Bookmark2.caption)));
+				final Bookmark2 bookmark = adapter.getItem(info.position);
+				final int ari = bookmark.ari;
+				int colorRgb = U.decodeHighlight(bookmark.caption);
 				String reference = S.activeVersion.reference(ari);
 				
 				new TypeHighlightDialog(this, ari, new TypeHighlightDialog.Listener() {
 					@Override public void onOk(int warnaRgb) {
-						adapter.getCursor().requery();
+						loadAndFilter();
 						if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
 					}
 				}, colorRgb, reference).show();
@@ -478,109 +464,156 @@ public class BookmarkListActivity extends BaseActivity {
 		
 		return false;
 	}
-	
-	class BukmakListAdapter extends CursorAdapter {
-		BukmakFilterQueryProvider filterQueryProvider;
-		
-		// must also modify FilterQueryProvider below!!!
-		private int col__id;
-		private int col_ari;
-		private int col_caption;
-		private int col_addTime;
-		private int col_modifyTime;
-		//////////////////////////////
-		
-		BukmakListAdapter(Context context, Cursor cursor) {
-			super(context, cursor, false);
-			
-			getColumnIndexes();
-			
-			setFilterQueryProvider(filterQueryProvider = new BukmakFilterQueryProvider());
-		}
-		
-		@Override public void notifyDataSetChanged() {
-			getColumnIndexes();
-			
-			super.notifyDataSetChanged();
+
+	/** The real work of filtering happens here */
+	public static List<Bookmark2> filterEngine(List<Bookmark2> allBookmarks, int filter_kind, String[] tokens) {
+		List<Bookmark2> res = new ArrayList<>();
+
+		if (tokens == null || tokens.length == 0) {
+			res.addAll(allBookmarks);
+			return res;
 		}
 
-		private void getColumnIndexes() {
-			Cursor c = getCursor();
-			if (c != null) {
-				col__id = c.getColumnIndexOrThrow(BaseColumns._ID);
-				col_ari = c.getColumnIndexOrThrow(Db.Bookmark2.ari);
-				col_caption = c.getColumnIndexOrThrow(Db.Bookmark2.caption);
-				col_addTime = c.getColumnIndexOrThrow(Db.Bookmark2.addTime);
-				col_modifyTime = c.getColumnIndexOrThrow(Db.Bookmark2.modifyTime);
+		for (final Bookmark2 bookmark : allBookmarks) {
+			if (filter_kind != Db.Bookmark2.kind_highlight) { // "caption" in highlights only stores color information, so it's useless to check
+				String caption_lc = bookmark.caption.toLowerCase(Locale.getDefault());
+				if (Search2Engine.satisfiesQuery(caption_lc, tokens)) {
+					res.add(bookmark);
+					continue;
+				}
+			}
+
+			// try the verse text!
+			String verseText = S.activeVersion.loadVerseText(bookmark.ari);
+			if (verseText != null) { // this can be null! so beware.
+				String verseText_lc = verseText.toLowerCase(Locale.getDefault());
+				if (Search2Engine.satisfiesQuery(verseText_lc, tokens)) {
+					res.add(bookmark);
+				}
 			}
 		}
-		
-		@Override public View newView(Context context, Cursor cursor, ViewGroup parent) {
+
+		return res;
+	}
+
+
+	class BookmarkListAdapter extends EasyAdapter {
+		List<Bookmark2> filteredBookmarks = new ArrayList<>();
+		String[] tokens;
+
+		void setupTokens(final String query) {
+			if (query == null || query.length() == 0) {
+				this.tokens = null;
+			} else {
+				this.tokens = QueryTokenizer.tokenize(query);
+				for (int i = 0; i < tokens.length; i++) {
+					tokens[i] = tokens[i].toLowerCase(Locale.getDefault());
+				}
+			}
+		}
+
+		public void filterSync(String query) {
+			setupTokens(query);
+
+			filteredBookmarks = filterEngine(allBookmarks, filter_kind, tokens);
+			notifyDataSetChanged();
+		}
+
+		public void filterAsync(final String query, final Runnable callback) {
+			final List<Bookmark2> allBookmarks = BookmarkListActivity.this.allBookmarks;
+			final int filter_kind = BookmarkListActivity.this.filter_kind;
+
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					setupTokens(query);
+
+					filteredBookmarks = filterEngine(allBookmarks, filter_kind, tokens);
+
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							notifyDataSetChanged();
+							callback.run();
+						}
+					});
+				}
+			}).start();
+		}
+
+		@Override
+		public Bookmark2 getItem(final int position) {
+			return filteredBookmarks.get(position);
+		}
+
+		@Override
+		public View newView(final int position, final ViewGroup parent) {
 			return getLayoutInflater().inflate(R.layout.item_bookmark, null);
 		}
-		
-		@Override public void bindView(View view, Context context, Cursor cursor) {
+
+		@Override
+		public void bindView(final View view, final int position, final ViewGroup parent) {
 			TextView lDate = V.get(view, R.id.lDate);
 			TextView lCaption = V.get(view, R.id.lCaption);
 			TextView lSnippet = V.get(view, R.id.lSnippet);
 			FlowLayout panelLabels = V.get(view, R.id.panelLabels);
-			
+
+			final Bookmark2 bookmark = filteredBookmarks.get(position);
+
 			{
-				int addTime_i = cursor.getInt(col_addTime);
-				int modifyTime_i = cursor.getInt(col_modifyTime);
-				
-				if (addTime_i == modifyTime_i) {
-					lDate.setText(Sqlitil.toLocaleDateMedium(addTime_i));
+				final Date addTime = bookmark.addTime;
+				final Date modifyTime = bookmark.modifyTime;
+
+				if (addTime.equals(modifyTime)) {
+					lDate.setText(Sqlitil.toLocaleDateMedium(addTime));
 				} else {
-					lDate.setText(getString(R.string.waktuTambah_edited_waktuUbah, Sqlitil.toLocaleDateMedium(addTime_i), Sqlitil.toLocaleDateMedium(modifyTime_i)));
+					lDate.setText(getString(R.string.waktuTambah_edited_waktuUbah, Sqlitil.toLocaleDateMedium(addTime), Sqlitil.toLocaleDateMedium(modifyTime)));
 				}
-				
+
 				Appearances.applyBookmarkDateTextAppearance(lDate);
 			}
-			
-			int ari = cursor.getInt(col_ari);
+
+			final int ari = bookmark.ari;
 			Book book = S.activeVersion.getBook(Ari.toBook(ari));
 			String reference = S.activeVersion.reference(ari);
-			
+
 			String verseText = S.activeVersion.loadVerseText(book, Ari.toChapter(ari), Ari.toVerse(ari));
 			if (verseText == null) {
 				verseText = getString(R.string.generic_verse_not_available_in_this_version);
 			} else {
 				verseText = U.removeSpecialCodes(verseText);
 			}
-			
-			String caption = cursor.getString(col_caption);
-			
+
+			final String caption = bookmark.caption;
 			if (filter_kind == Db.Bookmark2.kind_bookmark) {
-				lCaption.setText(currentlyUsedFilter != null? Search2Engine.hilite(caption, filterQueryProvider.getTokens(), hiliteColor): caption);
+				lCaption.setText(currentlyUsedFilter != null? Search2Engine.hilite(caption, tokens, hiliteColor): caption);
 				Appearances.applyBookmarkTitleTextAppearance(lCaption);
-				CharSequence snippet = currentlyUsedFilter != null? Search2Engine.hilite(verseText, filterQueryProvider.getTokens(), hiliteColor): verseText;
+				CharSequence snippet = currentlyUsedFilter != null? Search2Engine.hilite(verseText, tokens, hiliteColor): verseText;
 
 				Appearances.applyBookmarkSnippetContentAndAppearance(lSnippet, reference, snippet);
-				
-				long _id = cursor.getLong(col__id);
-				List<Label> labels = S.getDb().listLabelsByBookmarkId(_id);
+
+				final List<Label> labels = S.getDb().listLabelsByBookmarkId(bookmark._id);
 				if (labels != null && labels.size() != 0) {
 					panelLabels.setVisibility(View.VISIBLE);
 					panelLabels.removeAllViews();
-					for (int i = 0, len = labels.size(); i < len; i++) {
-						panelLabels.addView(getLabelView(panelLabels, labels.get(i)));
+					for (Label label : labels) {
+						panelLabels.addView(getLabelView(panelLabels, label));
 					}
 				} else {
 					panelLabels.setVisibility(View.GONE);
 				}
-				
+
 			} else if (filter_kind == Db.Bookmark2.kind_note) {
 				lCaption.setText(reference);
 				Appearances.applyBookmarkTitleTextAppearance(lCaption);
-				lSnippet.setText(currentlyUsedFilter != null? Search2Engine.hilite(caption, filterQueryProvider.getTokens(), hiliteColor): caption);
+				lSnippet.setText(currentlyUsedFilter != null? Search2Engine.hilite(caption, tokens, hiliteColor): caption);
 				Appearances.applyTextAppearance(lSnippet);
-				
+
 			} else if (filter_kind == Db.Bookmark2.kind_highlight) {
 				lCaption.setText(reference);
 				Appearances.applyBookmarkTitleTextAppearance(lCaption);
-				
-				SpannableStringBuilder snippet = currentlyUsedFilter != null? Search2Engine.hilite(verseText, filterQueryProvider.getTokens(), hiliteColor): new SpannableStringBuilder(verseText);
+
+				SpannableStringBuilder snippet = currentlyUsedFilter != null? Search2Engine.hilite(verseText, tokens, hiliteColor): new SpannableStringBuilder(verseText);
 				int highlightColor = U.decodeHighlight(caption);
 				if (highlightColor != -1) {
 					snippet.setSpan(new BackgroundColorSpan(U.alphaMixHighlight(highlightColor)), 0, snippet.length(), 0);
@@ -589,72 +622,11 @@ public class BookmarkListActivity extends BaseActivity {
 				Appearances.applyTextAppearance(lSnippet);
 			}
 		}
-	};
-	
-	class BukmakFilterQueryProvider implements FilterQueryProvider {
-		private String[] tokens;
-		
-		public String[] getTokens() {
-			return tokens;
-		}
-		
-		@Override public Cursor runQuery(CharSequence constraint) {
-			if (constraint == null || constraint.length() == 0) {
-				this.tokens = null;
-				return S.getDb().listBookmarks(filter_kind, filter_labelId, sort_column, sort_ascending);
-			}
-			
-			String[] tokens = QueryTokenizer.tokenize(constraint.toString());
-			for (int i = 0; i < tokens.length; i++) {
-				tokens[i] = tokens[i].toLowerCase(Locale.getDefault());
-			}
-			this.tokens = tokens;
-			
-			MatrixCursor res = new MatrixCursor(new String[] {BaseColumns._ID, Db.Bookmark2.ari, Db.Bookmark2.caption, Db.Bookmark2.addTime, Db.Bookmark2.modifyTime});
-			Cursor c = S.getDb().listBookmarks(filter_kind, filter_labelId, sort_column, sort_ascending);
-			try {
-				int col__id = c.getColumnIndexOrThrow(BaseColumns._ID);
-				int col_ari = c.getColumnIndexOrThrow(Db.Bookmark2.ari);
-				int col_caption = c.getColumnIndexOrThrow(Db.Bookmark2.caption);
-				int col_addTime = c.getColumnIndexOrThrow(Db.Bookmark2.addTime);
-				int col_modifyTime = c.getColumnIndexOrThrow(Db.Bookmark2.modifyTime);
-				
-				while (c.moveToNext()) {
-					boolean fulfills = false;
-					
-					String caption = c.getString(col_caption);
-					
-					if (filter_kind != Db.Bookmark2.kind_highlight) { // "caption" in highlights only stores color information, so it's useless to check
-						String tulisan_lc = caption.toLowerCase(Locale.getDefault());
-						if (Search2Engine.satisfiesQuery(tulisan_lc, tokens)) {
-							fulfills = true;
-						}
-					}
-					
-					int ari = c.getInt(col_ari);
-					if (!fulfills) {
-						// try the verse text!
-						String verseText = S.activeVersion.loadVerseText(ari);
-						String verseText_lc = verseText.toLowerCase(Locale.getDefault());
-						if (Search2Engine.satisfiesQuery(verseText_lc, tokens)) {
-							fulfills = true;
-						}
-					}
-					
-					if (fulfills) {
-						res.newRow()
-						.add(c.getLong(col__id))
-						.add(ari)
-						.add(caption)
-						.add(c.getInt(col_addTime))
-						.add(c.getInt(col_modifyTime));
-					}
-				}
-			} finally {
-				c.close();
-			}
 
-			return res;
+		@Override
+		public int getCount() {
+			return filteredBookmarks.size();
 		}
 	}
+
 }
