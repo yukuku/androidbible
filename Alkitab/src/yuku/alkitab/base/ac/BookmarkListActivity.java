@@ -410,20 +410,20 @@ public class BookmarkListActivity extends BaseActivity {
 		if (filter_kind == Db.Bookmark2.kind_highlight) menuModifyBookmark.setTitle(R.string.ubah_stabilo);
 	}
 	
-	@SuppressWarnings("deprecation") @Override public boolean onContextItemSelected(android.view.MenuItem item) {
-		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-		int itemId = item.getItemId();
+	@Override public boolean onContextItemSelected(android.view.MenuItem item) {
+		final Bookmark2 bookmark = adapter.getItem(((AdapterContextMenuInfo) item.getMenuInfo()).position);
+		final int itemId = item.getItemId();
 		
 		if (itemId == R.id.menuDeleteBookmark) {
 			// whatever the kind is, the way to delete is the same
-			S.getDb().deleteBookmarkById(info.id);
+			S.getDb().deleteBookmarkById(bookmark._id);
 			loadAndFilter();
 			if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
-			
+
 			return true;
 		} else if (itemId == R.id.menuModifyBookmark) {
 			if (filter_kind == Db.Bookmark2.kind_bookmark) {
-				TypeBookmarkDialog dialog = new TypeBookmarkDialog(this, info.id);
+				TypeBookmarkDialog dialog = new TypeBookmarkDialog(this, bookmark._id);
 				dialog.setListener(new Listener() {
 					@Override public void onOk() {
 						loadAndFilter();
@@ -433,7 +433,6 @@ public class BookmarkListActivity extends BaseActivity {
 				dialog.show();
 				
 			} else if (filter_kind == Db.Bookmark2.kind_note) {
-				final Bookmark2 bookmark = adapter.getItem(info.position);
 				final int ari = bookmark.ari;
 
 				TypeNoteDialog dialog = new TypeNoteDialog(this, S.activeVersion.getBook(Ari.toBook(ari)), Ari.toChapter(ari), Ari.toVerse(ari), new TypeNoteDialog.Listener() {
@@ -446,7 +445,6 @@ public class BookmarkListActivity extends BaseActivity {
 				dialog.show();
 
 			} else if (filter_kind == Db.Bookmark2.kind_highlight) {
-				final Bookmark2 bookmark = adapter.getItem(info.position);
 				final int ari = bookmark.ari;
 				int colorRgb = U.decodeHighlight(bookmark.caption);
 				String reference = S.activeVersion.reference(ari);
