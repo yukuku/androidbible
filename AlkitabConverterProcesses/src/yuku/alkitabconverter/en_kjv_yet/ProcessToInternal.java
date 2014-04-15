@@ -9,8 +9,8 @@ import java.io.File;
 
 public class ProcessToInternal {
 	
-	static String INPUT_YET = "../../../bahan-alkitab/en-kjv-yet/in/kjv.yet";
-	static String OUTPUT_INTERNAL = "../../../bahan-alkitab/en-kjv-yet/raw";
+	static String INPUT_YET = "./bahan-alkitab/en-kjv-fusion-yet/in/en-kjv.yet";
+	static String OUTPUT_INTERNAL = "./bahan-alkitab/en-kjv-fusion-yet/raw";
 
 	public static void main(String[] args) throws Exception {
 		////////// READ YET FILE
