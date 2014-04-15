@@ -105,6 +105,21 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.yes"/>
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.yes"/>
             </intent-filter>
+            <intent-filter android:label="@string/intent_filter_open_yes_file">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="file"/>
+                <data android:scheme="content"/>
+                <data android:mimeType="*/*"/>
+                <data android:host="*"/>
+                <data android:pathPattern=".*\\.YES"/>
+                <data android:pathPattern=".*\\..*\\.YES"/>
+                <data android:pathPattern=".*\\..*\\..*\\.YES"/>
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.YES"/>
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.YES"/>
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.YES"/>
+            </intent-filter>
             <intent-filter android:label="@string/intent_filter_open_pdb_file">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -119,6 +134,21 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\.pdb"/>
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.pdb"/>
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.pdb"/>
+            </intent-filter>
+            <intent-filter android:label="@string/intent_filter_open_pdb_file">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="file"/>
+                <data android:scheme="content"/>
+                <data android:mimeType="*/*"/>
+                <data android:host="*"/>
+                <data android:pathPattern=".*\\.PDB"/>
+                <data android:pathPattern=".*\\..*\\.PDB"/>
+                <data android:pathPattern=".*\\..*\\..*\\.PDB"/>
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.PDB"/>
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.PDB"/>
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.PDB"/>
             </intent-filter>
             <intent-filter android:label="@string/intent_filter_open_pdb_or_yes_file">
                 <action android:name="android.intent.action.VIEW"/>
