@@ -13,7 +13,6 @@
 		<preset locale="en"   shortName="BBE"     longName="Bible in Basic English" filename_preset="en-bbe.yes" url="https://alkitab-host.appspot.com/addon/yes2/en-bbe--1.yes.gz" />
 		<preset locale="en"   shortName="DARBY"   longName="Darby" filename_preset="en-darby.yes" url="https://alkitab-host.appspot.com/addon/yes2/en-darby--1.yes.gz" />
 		<preset locale="en"   shortName="DRA"     longName="Douay-Rheims" filename_preset="en-douayrheims.yes" url="https://alkitab-host.appspot.com/addon/yes2/en-douayrheims--1.yes.gz" />
-		<preset locale="en"   shortName="KJVR"    longName="King James (Red Letter)" filename_preset="en-kjv-red.yes" url="https://alkitab-host.appspot.com/addon/yes2/en-kjv-red--1.yes.gz" />
 		<preset locale="en"   shortName="NET"     longName="New English Translation" filename_preset="en-net.yes" url="https://alkitab-host.appspot.com/addon/yes2/en-net--1.yes.gz" />
 		<preset locale="en"   shortName="WBS"     longName="Webster" filename_preset="en-webster.yes" url="https://alkitab-host.appspot.com/addon/yes2/en-webster--1.yes.gz" />
 		<preset locale="en"   shortName="WEB"     longName="World English Bible" filename_preset="en-web.yes" url="https://alkitab-host.appspot.com/addon/yes2/en-web--1.yes.gz" />
@@ -94,6 +93,6 @@
 		<preset locale="zh"   shortName="PINYIN"  longName="Pinyin" filename_preset="zh-pinyin.yes" url="https://alkitab-host.appspot.com/addon/yes2/zh-pinyin--1.yes.gz" />
 	</versions>
 	<share>
-		<url format="https://ref.ly/{book.osis}.{chapter}.{verses};{version.shortName}" />
+		<url format="http://ref.ly/{book.osis}.{chapter}.{verses};{version.shortName}" />
 	</share>
 </config>
