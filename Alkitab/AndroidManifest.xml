@@ -3,8 +3,8 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="yuku.alkitab.debug"
           android:installLocation="auto"
-          android:versionCode="150"
-          android:versionName="3.5.3">
+          android:versionCode="151"
+          android:versionName="3.5.4">
     <uses-sdk android:minSdkVersion="7"
               android:targetSdkVersion="19"/>
 

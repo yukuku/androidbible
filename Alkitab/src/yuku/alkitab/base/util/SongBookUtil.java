@@ -16,14 +16,13 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.rpc.SimpleHttpConnection;
 import yuku.alkitab.debug.R;
+import yuku.alkitab.io.OptionalGzipInputStream;
 import yuku.kpri.model.Song;
 
-import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
 
 public class SongBookUtil {
 	public static final String TAG = SongBookUtil.class.getSimpleName();
@@ -52,15 +51,16 @@ public class SongBookUtil {
 
 		for (String k: new String[] {
 			// bookName :: dataFormatVersion :: downloadUrl :: description :: copyright
-			"KJ   :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/kj-3.ser.gz   :: Kidung Jemaat                         :: (c) Yayasan Musik Gereja di Indonesia (YAMUGER)", //$NON-NLS-1$
-			"KPKA :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/kpka-3.ser.gz :: Kidung Pasamuan Kristen Anyar         :: (c) Badan Musyawarah Gereja-gereja Jawa (BMGJ)", //$NON-NLS-1$
-			"KPKL :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/kpkl-3.ser.gz :: Kidung Pasamuan Kristen Lawas         :: (c) Taman Pustaka Kristen Jogjakarta", //$NON-NLS-1$
-			"KPPK :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/kppk-3.ser.gz :: Kidung Puji-Pujian Kristen            :: (c) Seminari Alkitab Asia Tenggara (SAAT)", //$NON-NLS-1$
-			"KPRI :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/kpri-3.ser.gz :: Kidung Persekutuan Reformed Injili    :: (c) Sinode Gereja Reformed Injili Indonesia (GRII)", //$NON-NLS-1$
-			"NKB  :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/nkb-3.ser.gz  :: Nyanyikanlah Kidung Baru              :: (c) Badan Pengerja Majelis Sinode Gereja Kristen Indonesia (GKI)",  //$NON-NLS-1$
-			"NP   :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/np-3.ser.gz   :: Nyanyian Pujian                       :: (c) Lembaga Literatur Baptis", //$NON-NLS-1$
-			"PKJ  :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/pkj-3.ser.gz  :: Pelengkap Kidung Jemaat               :: (c) Yayasan Musik Gereja di Indonesia (YAMUGER)", //$NON-NLS-1$
-			"PPK  :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/ppk-3.ser.gz  :: Puji-pujian Kristen                   :: (c) Seminari Alkitab Asia Tenggara (SAAT)", //$NON-NLS-1$
+			"KJ   :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/kj-3.ser.gz   :: Kidung Jemaat                         :: (c) Yayasan Musik Gereja di Indonesia (YAMUGER)",
+			"KPKA :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/kpka-3.ser.gz :: Kidung Pasamuan Kristen Anyar         :: (c) Badan Musyawarah Gereja-gereja Jawa (BMGJ)",
+			"KPKL :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/kpkl-3.ser.gz :: Kidung Pasamuan Kristen Lawas         :: (c) Taman Pustaka Kristen Jogjakarta",
+			"KPPK :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/kppk-3.ser.gz :: Kidung Puji-Pujian Kristen            :: (c) Seminari Alkitab Asia Tenggara (SAAT)",
+			"KPRI :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/kpri-3.ser.gz :: Kidung Persekutuan Reformed Injili    :: (c) Sinode Gereja Reformed Injili Indonesia (GRII)",
+			"NKB  :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/nkb-3.ser.gz  :: Nyanyikanlah Kidung Baru              :: (c) Badan Pengerja Majelis Sinode Gereja Kristen Indonesia (GKI)",
+			"NKI  :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/nki-3.ser.gz  :: Nyanyian Kemenangan Iman              :: (c) Kalam Hidup",
+			"NP   :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/np-3.ser.gz   :: Nyanyian Pujian                       :: (c) Lembaga Literatur Baptis",
+			"PKJ  :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/pkj-3.ser.gz  :: Pelengkap Kidung Jemaat               :: (c) Yayasan Musik Gereja di Indonesia (YAMUGER)",
+			"PPK  :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/ppk-3.ser.gz  :: Puji-pujian Kristen                   :: (c) Seminari Alkitab Asia Tenggara (SAAT)",
 		}) {
 			String[] ss = k.split("::"); //$NON-NLS-1$
 			SongBookInfo bookInfo = new SongBookInfo();
@@ -136,13 +136,13 @@ public class SongBookUtil {
 				
 				SimpleHttpConnection conn = new SimpleHttpConnection(songBookInfo.downloadUrl);
 				try {
-					InputStream is = conn.load();
-					if (is == null) {
+					final InputStream originalInput = conn.load();
+					if (originalInput == null) {
 						throw conn.getException();
 					}
-					
-					GZIPInputStream gzis = new GZIPInputStream(new BufferedInputStream(is));
-					ObjectInputStream ois = new ObjectInputStream(gzis);
+
+					final InputStream ogis = new OptionalGzipInputStream(originalInput);
+					final ObjectInputStream ois = new ObjectInputStream(ogis);
 					songs = (List<Song>) ois.readObject();
 					ois.close();
 				} catch (Exception e) {

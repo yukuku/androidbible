@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ShareCompat;
@@ -52,6 +51,8 @@ import yuku.kpriviewer.fr.SongFragment;
 import yuku.kpriviewer.fr.SongFragment.ShouldOverrideUrlLoadingHandler;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,10 +69,6 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 	private static final int REQCODE_songList = 1;
 	private static final int REQCODE_share = 2;
 
-	public static final int RESULT_gotoScripture = 1;
-
-	public static final String EXTRA_ref = "ref"; //$NON-NLS-1$
-	
 	ViewGroup song_container;
 	ViewGroup no_song_data_container;
 	Button bChangeBook;
@@ -177,7 +174,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 								output.close();
 								input.close();
 
-								mediaPlayerPrepare(Uri.fromFile(cacheFile).toString());
+								mediaPlayerPrepare(true, cacheFile.getAbsolutePath());
 							} catch (IOException e) {
 								Log.e(TAG, "buffering to local cache", e);
 								setState(6);
@@ -185,7 +182,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 						}
 					}).start();
 				} else {
-					mediaPlayerPrepare(url);
+					mediaPlayerPrepare(false, url);
 				}
 			} else if (state == 2) {
 				// this is preparing. Don't do anything.
@@ -200,22 +197,13 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			}
 		}
 
-		private void mediaPlayerPrepare(final String url) {
+		/**
+		 * @param url local path if isLocalPath is true, url (http/https) if isLocalPath is false
+		 */
+		private void mediaPlayerPrepare(boolean isLocalPath, final String url) {
 			try {
-				// on Android < 18, file:// url is not accepted.
-				String dataSourcePath;
-				if (Build.VERSION.SDK_INT <= 17) {
-					Uri uri = Uri.parse(url);
-					if (U.equals("file", uri.getScheme())) {
-						dataSourcePath = uri.getPath();
-					} else {
-						dataSourcePath = url;
-					}
-				} else {
-					dataSourcePath = url;
-				}
+				setState(2);
 
-				mp.setDataSource(dataSourcePath);
 				mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 					@Override
 					public void onPrepared(final MediaPlayer mp) {
@@ -246,8 +234,17 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 						return false; // let OnCompletionListener be called.
 					}
 				});
+
+				if (isLocalPath) {
+					final FileInputStream fis = new FileInputStream(url);
+					final FileDescriptor fd = fis.getFD();
+					mp.setDataSource(fd);
+					fis.close();
+				} else {
+					mp.setDataSource(url);
+				}
+
 				mp.prepareAsync();
-				setState(2);
 			} catch (IOException e) {
 				Log.e(TAG, "mp setDataSource", e);
 				setState(6);

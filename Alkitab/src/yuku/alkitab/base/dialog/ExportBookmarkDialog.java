@@ -177,24 +177,13 @@ public class ExportBookmarkDialog extends DialogFragment {
 
 		//no label
 		if (showNoLabelBookmarks) {
-			Cursor cursor = S.getDb().listBookmarks(Db.Bookmark2.kind_bookmark, BookmarkListActivity.LABELID_noLabel, Db.Bookmark2.addTime, false);
-			while (cursor.moveToNext()) {
-				Bookmark2 bookmark = InternalDb.bookmark2FromCursor(cursor);
-				noLabelBookmarks.add(bookmark);
-			}
-			cursor.close();
+			noLabelBookmarks.addAll(S.getDb().listBookmarks(Db.Bookmark2.kind_bookmark, BookmarkListActivity.LABELID_noLabel, Db.Bookmark2.addTime, false));
 		}
 
 		//with label
 		if (exportedlabels.size() > 0) {
 			for (Label label : exportedlabels) {
-				List<Bookmark2> bookmarks = new ArrayList<Bookmark2>();
-				Cursor cursor = S.getDb().listBookmarks(Db.Bookmark2.kind_bookmark, label._id, Db.Bookmark2.addTime, false);
-				while (cursor.moveToNext()) {
-					Bookmark2 bookmark = InternalDb.bookmark2FromCursor(cursor);
-					bookmarks.add(bookmark);
-				}
-				cursor.close();
+				List<Bookmark2> bookmarks = S.getDb().listBookmarks(Db.Bookmark2.kind_bookmark, label._id, Db.Bookmark2.addTime, false);
 				if (bookmarks.size() > 0) {
 					Pair<Label, List<Bookmark2>> pair = new Pair<Label, List<Bookmark2>>(label, bookmarks);
 					labeledBookmarks.add(pair);
@@ -204,22 +193,12 @@ public class ExportBookmarkDialog extends DialogFragment {
 
 		//notes
 		if (showNotes) {
-			Cursor cursor = S.getDb().listBookmarks(Db.Bookmark2.kind_note, 0, Db.Bookmark2.addTime, false);
-			while (cursor.moveToNext()) {
-				Bookmark2 bookmark = InternalDb.bookmark2FromCursor(cursor);
-				notes.add(bookmark);
-			}
-			cursor.close();
+			notes.addAll(S.getDb().listBookmarks(Db.Bookmark2.kind_note, 0, Db.Bookmark2.addTime, false));
 		}
 
 		//highlight
 		if (showHighlights) {
-			Cursor cursor = S.getDb().listBookmarks(Db.Bookmark2.kind_highlight, 0, Db.Bookmark2.addTime, false);
-			while (cursor.moveToNext()) {
-				Bookmark2 bookmark2 = InternalDb.bookmark2FromCursor(cursor);
-				highlights.add(bookmark2);
-			}
-			cursor.close();
+			highlights.addAll(S.getDb().listBookmarks(Db.Bookmark2.kind_highlight, 0, Db.Bookmark2.addTime, false));
 		}
 
 		ExportData exportData = new ExportData();
