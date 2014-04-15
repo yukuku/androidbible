@@ -42,3 +42,6 @@
 # This shouldn't be a problem as BuildConfig is only constants that should get inlined in the code anyway. You can do a temp fix with excluding only BuildConfig:
 
 -dontwarn ***.BuildConfig
+
+# OkHttp referencing Java 8 methods
+-dontwarn com.squareup.okhttp.internal.**

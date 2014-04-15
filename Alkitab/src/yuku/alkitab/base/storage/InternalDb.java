@@ -166,18 +166,27 @@ public class InternalDb {
 		}
 	}
 
-	public Cursor listBookmarks(int kind, long labelId, String sortColumn, boolean sortAscending) {
+	public List<Bookmark2> listBookmarks(int kind, long labelId, String sortColumn, boolean sortAscending) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 
 		String sortClause = sortColumn + (Db.Bookmark2.caption.equals(sortColumn)? " collate NOCASE ": "") + (sortAscending? " asc": " desc"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
+		List<Bookmark2> res = new ArrayList<>();
+
+		Cursor c;
 		if (labelId == 0) { // no restrictions
-			return db.query(Db.TABLE_Bookmark2, null, Db.Bookmark2.kind + "=?", new String[] {String.valueOf(kind)}, null, null, sortClause); //$NON-NLS-1$
+			c = db.query(Db.TABLE_Bookmark2, null, Db.Bookmark2.kind + "=?", new String[] {String.valueOf(kind)}, null, null, sortClause); //$NON-NLS-1$
 		} else if (labelId == BookmarkListActivity.LABELID_noLabel) { // only without label
-			return db.rawQuery("select " + Db.TABLE_Bookmark2 + ".* from " + Db.TABLE_Bookmark2 + " where " + Db.TABLE_Bookmark2 + "." + Db.Bookmark2.kind + "=? and " + Db.TABLE_Bookmark2 + "." + BaseColumns._ID + " not in (select " + Db.Bookmark2_Label.bookmark2_id + " from " + Db.TABLE_Bookmark2_Label + ") order by " + Db.TABLE_Bookmark2 + "." + sortClause, new String[] {String.valueOf(kind)});  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
+			c = db.rawQuery("select " + Db.TABLE_Bookmark2 + ".* from " + Db.TABLE_Bookmark2 + " where " + Db.TABLE_Bookmark2 + "." + Db.Bookmark2.kind + "=? and " + Db.TABLE_Bookmark2 + "." + BaseColumns._ID + " not in (select " + Db.Bookmark2_Label.bookmark2_id + " from " + Db.TABLE_Bookmark2_Label + ") order by " + Db.TABLE_Bookmark2 + "." + sortClause, new String[] {String.valueOf(kind)});  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 		} else { // filter by labelId
-			return db.rawQuery("select " + Db.TABLE_Bookmark2 + ".* from " + Db.TABLE_Bookmark2 + ", " + Db.TABLE_Bookmark2_Label + " where " + Db.Bookmark2.kind + "=? and " + Db.TABLE_Bookmark2 + "." + BaseColumns._ID + " = " + Db.TABLE_Bookmark2_Label + "." + Db.Bookmark2_Label.bookmark2_id + " and " + Db.TABLE_Bookmark2_Label + "." + Db.Bookmark2_Label.label_id + "=? order by " + Db.TABLE_Bookmark2 + "." + sortClause, new String[] {String.valueOf(kind), String.valueOf(labelId)});          //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$//$NON-NLS-6$//$NON-NLS-7$//$NON-NLS-8$//$NON-NLS-9$//$NON-NLS-10$ //$NON-NLS-11$ //$NON-NLS-12$
+			c = db.rawQuery("select " + Db.TABLE_Bookmark2 + ".* from " + Db.TABLE_Bookmark2 + ", " + Db.TABLE_Bookmark2_Label + " where " + Db.Bookmark2.kind + "=? and " + Db.TABLE_Bookmark2 + "." + BaseColumns._ID + " = " + Db.TABLE_Bookmark2_Label + "." + Db.Bookmark2_Label.bookmark2_id + " and " + Db.TABLE_Bookmark2_Label + "." + Db.Bookmark2_Label.label_id + "=? order by " + Db.TABLE_Bookmark2 + "." + sortClause, new String[] {String.valueOf(kind), String.valueOf(labelId)});          //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$//$NON-NLS-6$//$NON-NLS-7$//$NON-NLS-8$//$NON-NLS-9$//$NON-NLS-10$ //$NON-NLS-11$ //$NON-NLS-12$
 		}
+
+		while (c.moveToNext()) {
+			res.add(bookmark2FromCursor(c));
+		}
+
+		return res;
 	}
 
 	public void importBookmarks(List<Bookmark2> bookmarks, boolean overwrite, TObjectIntHashMap<Bookmark2> bookmarkToRelIdMap, TIntLongHashMap labelRelIdToAbsIdMap, TIntObjectHashMap<TIntList> bookmarkRelIdToLabelRelIdsMap) {

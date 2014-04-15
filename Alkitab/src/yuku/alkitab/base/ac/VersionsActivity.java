@@ -506,31 +506,32 @@ public class VersionsActivity extends BaseActivity {
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
+						final DownloadThread downloadThread = AddonManager.getDownloadThread(getApplicationContext());
+						final Element e = downloadThread.enqueue(mv.url, AddonManager.getVersionPath(mv.presetFilename), downloadListener);
+
 						pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 						pd.setCancelable(true);
 						pd.setIndeterminate(true);
 						pd.setTitle(getString(R.string.mengunduh_nama, mv.presetFilename));
 						pd.setMessage(getString(R.string.mulai_mengunduh));
-						pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
-							@Override
-							public void onDismiss(DialogInterface dialog) {
-								if (AddonManager.hasVersion(mv.presetFilename)) {
-									mv.setActive(true);
-								}
-								adapter.initYesVersionList();
-								adapter.notifyDataSetChanged();
-							}
-						});
-	
-						DownloadThread downloadThread = AddonManager.getDownloadThread(getApplicationContext());
-						final Element e = downloadThread.enqueue(mv.url, AddonManager.getVersionPath(mv.presetFilename), downloadListener);
-						pd.show();
 						pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
 							@Override
 							public void onCancel(DialogInterface dialog) {
 								e.cancelled = true;
 							}
 						});
+						pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
+							@Override
+							public void onDismiss(DialogInterface dialog) {
+								if (!e.cancelled && AddonManager.hasVersion(mv.presetFilename)) {
+									mv.setActive(true);
+								}
+								adapter.initYesVersionList();
+								adapter.notifyDataSetChanged();
+							}
+						});
+
+						pd.show();
 					}
 				};
 				

@@ -4,12 +4,13 @@ import android.content.Context;
 import android.os.Environment;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.support.v4.util.AtomicFile;
 import android.util.Log;
 import yuku.alkitab.base.App;
 import yuku.alkitab.debug.R;
+import yuku.alkitab.io.OptionalGzipInputStream;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +18,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.concurrent.Semaphore;
-import java.util.zip.GZIPInputStream;
 
 public class AddonManager {
 	public static final String TAG = AddonManager.class.getSimpleName();
@@ -99,76 +99,47 @@ public class AddonManager {
 			WakeLock wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "donlot"); //$NON-NLS-1$
 			wakelock.setReferenceCounted(false);
 			wakelock.acquire();
-			
+
+			final AtomicFile atomicFile = new AtomicFile(new File(e.dest));
+			FileOutputStream os = null;
 			try {
-				FileOutputStream os = new FileOutputStream(tmpfile);
+				os = atomicFile.startWrite();
 
 				final HttpURLConnection conn = App.openHttp(new URL(e.url));
 				Log.d(TAG, "Start downloading " + e.url);
 
 				final int length = conn.getContentLength();
-				
+
 				Log.d(TAG, "Download starting. Length: " + length);
-				final InputStream content = conn.getInputStream();
-				
+				final InputStream content = new OptionalGzipInputStream(conn.getInputStream());
+
 				byte[] b = new byte[4096 * 4];
 				while (true) {
 					int read = content.read(b);
 
 					if (read <= 0) break;
 					os.write(b, 0, read);
-					
+
 					e.downloaded += read;
 					if (e.listener != null) e.listener.onDownloadProgress(e, e.downloaded, length);
-					
+
 					if (e.cancelled) {
 						conn.disconnect();
+						atomicFile.failWrite(os);
 						if (e.listener != null) e.listener.onDownloadCancelled(e);
 						os.close();
 						return;
 					}
 				}
-				
-				os.close();
 
-				if (e.url.endsWith(".gz")) { //$NON-NLS-1$
-					if (e.listener != null) e.listener.onDownloadProgress(e, -1, length); // tanda lagi dekompres
-					
-					GZIPInputStream in = new GZIPInputStream(new FileInputStream(tmpfile));
-					String tmpfile2 = e.dest + (int)(Math.random() * 100000) + ".tmp2"; //$NON-NLS-1$
-					FileOutputStream out = new FileOutputStream(tmpfile2);
-			    
-					try {
-				        // Transfer bytes from the compressed file to the output file
-				        byte[] buf = new byte[4096 * 4];
-				        while (true) {
-					        int len = in.read(buf);
-					        if (len <= 0) break;
-				            out.write(buf, 0, len);
-				        }
-				        
-				        out.close();
-				        
-						boolean renameOk = new File(tmpfile2).renameTo(new File(e.dest));
-						if (!renameOk) {
-							Log.d(TAG, "Gagal rename!"); //$NON-NLS-1$
-						}
-					} finally {
-						Log.d(TAG, "menghapus tmpfile2: " + tmpfile); //$NON-NLS-1$
-						new File(tmpfile2).delete();
-					}
-			        in.close();
-				} else {
-					boolean renameOk = new File(tmpfile).renameTo(new File(e.dest));
-					if (!renameOk) {
-						Log.d(TAG, "Gagal rename!"); //$NON-NLS-1$
-					}
-				}
-				
+				atomicFile.finishWrite(os);
+
 				if (e.listener != null) e.listener.onDownloadFinished(e);
 				e.finished = true;
 			} catch (IOException ex) {
-				Log.w(TAG, "Gagal donlot", ex); //$NON-NLS-1$
+				atomicFile.failWrite(os);
+
+				Log.w(TAG, "Error downloading", ex);
 				if (e.listener != null) e.listener.onDownloadFailed(e, null, ex);
 			} finally {
 				wakelock.release();

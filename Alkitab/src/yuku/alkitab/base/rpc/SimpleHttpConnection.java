@@ -1,15 +1,14 @@
 package yuku.alkitab.base.rpc;
 
 import android.util.Log;
+import yuku.alkitab.base.App;
+import yuku.alkitab.base.ac.FontManagerActivity;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import yuku.alkitab.base.ac.FontManagerActivity;
 
 public class SimpleHttpConnection {
 	public static final String TAG = SimpleHttpConnection.class.getSimpleName(); 
@@ -29,8 +28,8 @@ public class SimpleHttpConnection {
 	
 	public InputStream load() {
 		try {
-			conn = (HttpURLConnection) url.openConnection();
-			in = new BufferedInputStream(conn.getInputStream());
+			conn = App.openHttp(url);
+			in = conn.getInputStream();
 			return in;
 		} catch (IOException e) {
 			this.ex = e;

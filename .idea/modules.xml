@@ -12,6 +12,7 @@
       <module fileurl="file://$PROJECT_DIR$/AlkitabIntegration/AlkitabIntegration.iml" filepath="$PROJECT_DIR$/AlkitabIntegration/AlkitabIntegration.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabIntegrationTest/AlkitabIntegrationTest.iml" filepath="$PROJECT_DIR$/AlkitabIntegrationTest/AlkitabIntegrationTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabIo/AlkitabIo.iml" filepath="$PROJECT_DIR$/AlkitabIo/AlkitabIo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AlkitabIoTest/AlkitabIoTest.iml" filepath="$PROJECT_DIR$/AlkitabIoTest/AlkitabIoTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabModel/AlkitabModel.iml" filepath="$PROJECT_DIR$/AlkitabModel/AlkitabModel.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabTest/AlkitabTest.iml" filepath="$PROJECT_DIR$/AlkitabTest/AlkitabTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabYes2/AlkitabYes2.iml" filepath="$PROJECT_DIR$/AlkitabYes2/AlkitabYes2.iml" />
