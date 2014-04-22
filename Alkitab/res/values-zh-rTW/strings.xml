@@ -169,6 +169,7 @@
   <string name="please_wait_titik3">請等待...</string>
   <string name="juga_hapus_file_datanya_file">也刪除資料檔案 \'%s\'?</string>
   <string name="get_more_fonts">下載更多字體...</string>
+  <string name="about_translators">譯者</string>
   <string name="intent_filter_import_from_backup">從備份檔匯入</string>
   <string name="redownload">重新下載</string>
   <string name="read_faq_before_suggest">在提出建議前，請先閱讀以上常見問題解答。繼續提出建議？</string>
@@ -179,6 +180,7 @@
   <string name="menu_split_version">並排顯示</string>
   <string name="split_version_none">沒有</string>
   <string name="split_version_cant_display_verse">%2$s裡沒有%1$s</string>
+  <string name="generic_verse_not_available_in_this_version">不適用於這個版本。</string>
   <string name="menuAddSomething">新增標記</string>
   <string name="color_settings_title">配色</string>
   <string name="color_settings_night_title">配色（夜間模式）</string>
@@ -311,4 +313,7 @@
   <string name="rp_download_reading_plan_data_corrupted">已下載的閱讀計劃資料損毀，請以有效的互聯網連線再次嘗試。</string>
   <string name="version_download_need_fonts">"您下載的版本需要某種字體以正確顯示。請到「文字外觀」目錄，並選擇某種字體。希臘語需要 Ubuntu 字體。緬甸語需要Parabaik，ParabaikSans 或 Myanmar3。泰米爾語需要 Akshar。泰盧固語需要 Suranna。"</string>
   <string name="menuNightMode">夜間模式</string>
+  <string name="delete_highlight">移除標記</string>
+  <string name="menu_compare">比較</string>
+  <string name="about_version_name">版本 %s</string>
 </resources>
