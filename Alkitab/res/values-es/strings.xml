@@ -169,6 +169,7 @@
   <string name="please_wait_titik3">Por favor espere&#8230;</string>
   <string name="juga_hapus_file_datanya_file">¿También eliminar el archivo de datos\'%s\'?</string>
   <string name="get_more_fonts">Descargar más fuentes&#8230;</string>
+  <string name="about_translators">Traductores</string>
   <string name="intent_filter_import_from_backup">Importar desde respaldo</string>
   <string name="redownload">Re-descargar</string>
   <string name="read_faq_before_suggest">Por favor lea el FAQ anterior antes de enviar una sugerencia. ¿Continuar enviando sugerencia?</string>
@@ -179,6 +180,7 @@
   <string name="menu_split_version">Versión dividida</string>
   <string name="split_version_none">Ninguno</string>
   <string name="split_version_cant_display_verse">%1$s no está disponible en %2$s.</string>
+  <string name="generic_verse_not_available_in_this_version">No disponible en esta versión.</string>
   <string name="menuAddSomething">Agregar marcador</string>
   <string name="color_settings_title">Colores</string>
   <string name="color_settings_night_title">Colores (Modo nocturno)</string>
@@ -310,4 +312,7 @@
   <string name="rp_download_reading_plan_data_corrupted">Los datos del plan de lectura descargado están dañados. Por favor trate de nuevo con una conexión a Internet que funcione.</string>
   <string name="version_download_need_fonts">"La versión que descargaste puede necesitar ciertas fuentes para mostrarse. Ve al menú de \'Apariencia de texto\' y elige una fuente. Griego necesita la fuente Ubuntu. Birmano necesita Parabaik, ParabaikSans o Myanmar3. Tamil necesita Suranna."</string>
   <string name="menuNightMode">Modo nocturno</string>
+  <string name="delete_highlight">Remover resalto</string>
+  <string name="menu_compare">Comparar</string>
+  <string name="about_version_name">versión %s</string>
 </resources>

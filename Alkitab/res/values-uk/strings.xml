@@ -169,6 +169,7 @@
   <string name="please_wait_titik3">Будь-ласка зачекайте...</string>
   <string name="juga_hapus_file_datanya_file">Також видалити файл даних %s\'? </string>
   <string name="get_more_fonts">Завантажити більше шрифтів...</string>
+  <string name="about_translators">Перекладачі</string>
   <string name="intent_filter_import_from_backup">Імпорт з резервної копії</string>
   <string name="redownload">Перезавантажити</string>
   <string name="read_faq_before_suggest">Будь ласка читайте вище FAQ перед відсиланням пропозиції або запитання. Продовжити надсилання пропозиції або запитання?</string>
@@ -180,6 +181,7 @@
   <string name="menu_split_version">Подвійна версія</string>
   <string name="split_version_none">Жоден</string>
   <string name="split_version_cant_display_verse">%1$s недоступний в %2$s.</string>
+  <string name="generic_verse_not_available_in_this_version">Не доступно в цій версії.</string>
   <string name="menuAddSomething">Додати позначку</string>
   <string name="color_settings_title">Кольори</string>
   <string name="color_settings_night_title">Кольори (Нічний режим)</string>
@@ -311,4 +313,7 @@
   <string name="rp_download_reading_plan_data_corrupted">Завантажені дані плану читання пошкоджено. Будь ласка спробуйте ще раз з доступним підключенням до інтернету.</string>
   <string name="version_download_need_fonts">"Версія яку ви завантажили можливо потребує для коректного відображення деякі шрифти. Перейдіть в меню до \"Вигляд тексту\" та виберіть потрібний шрифт. Грецька потребує шрифт Ubuntu. Бурмезька потребує Parabaik, ParabaikSans чи Myanmar3. Тамільська потребує Akshar. Телузька потребує Suranna."</string>
   <string name="menuNightMode">Нічний режим</string>
+  <string name="delete_highlight">Видалити підкреслення, виділення</string>
+  <string name="menu_compare">Порівняти</string>
+  <string name="about_version_name">Версія складання %s</string>
 </resources>

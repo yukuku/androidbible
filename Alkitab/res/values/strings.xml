@@ -333,4 +333,7 @@
     <string name="menu_compare">Compare</string>
     <string name="about_version_name">version %s</string>
     <string name="song_player_error_description">An error was encountered when playing this song: %1$d, %2$d.</string>
+
+    <string name="beta_tester_program_title">Beta Tester</string>
+    <string name="beta_tester_program_desc">Join our Beta Tester program and get early access to new features and have opportunity to shape Quick Bible: goo.gl/JjYTK1</string>
 </resources>
