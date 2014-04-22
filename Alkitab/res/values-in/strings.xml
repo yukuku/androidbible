@@ -315,4 +315,7 @@
   <string name="delete_highlight">Hapus sorotan</string>
   <string name="menu_compare">Bandingkan</string>
   <string name="about_version_name">versi %s</string>
+  <string name="song_player_error_description">Ada kesalahan ketika memainkan lagu ini: %1$d, %2$d.</string>
+  <string name="beta_tester_program_title">Beta Tester</string>
+  <string name="beta_tester_program_desc">Ikuti program Beta Tester untuk mendapatkan fitur baru lebih awal dan kesempatan untuk membentuk aplikasi Alkitab. goo.gl/JjYTK1</string>
 </resources>

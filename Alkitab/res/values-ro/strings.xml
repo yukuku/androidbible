@@ -310,4 +310,7 @@
   <string name="rp_download_reading_plan_data_corrupted">Planul de citire descărcat este corupt. Încearcă încă o dată având o conexiune la internet.</string>
   <string name="version_download_need_fonts">"Versiunea ce s-a descărcat, ar putea avea nevoie de anumite fonturi. Mergi la meniul \"aspect Text \" și selectați un font. Grec are nevoie de fontul Ubuntu. Pentru limba birmaneză Parabaik, ParabaikSans sau Myanmar3. Tamil are nevoie de Akshar. Telugu are nevoie de Suranna."</string>
   <string name="menuNightMode">Mod nocturn</string>
+  <string name="delete_highlight">Șterge selecție</string>
+  <string name="menu_compare">Compară</string>
+  <string name="about_version_name">versiune %s</string>
 </resources>
