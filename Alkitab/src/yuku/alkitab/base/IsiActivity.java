@@ -706,7 +706,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 		
 		PressResult pressResult = lsText.press(keyCode);
-		switch (pressResult) {
+		switch (pressResult.kind) {
 		case left:
 			bLeft_click();
 			return true;
@@ -714,6 +714,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			bRight_click();
 			return true;
 		case consumed:
+			if (activeSplitVersion != null) {
+				lsSplit1.scrollToVerse(pressResult.targetVerse_1);
+			}
 			return true;
 		default:
 			return false;
@@ -1511,8 +1514,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 	
 	@Override public boolean onKeyUp(int keyCode, KeyEvent event) {
-		String volumeButtonsForNavigation = Preferences.getString(getString(R.string.pref_volumeButtonNavigation_key), getString(R.string.pref_volumeButtonNavigation_default));
-		if (! U.equals(volumeButtonsForNavigation, "default")) { // consume here //$NON-NLS-1$
+		final String volumeButtonsForNavigation = Preferences.getString(getString(R.string.pref_volumeButtonNavigation_key), getString(R.string.pref_volumeButtonNavigation_default));
+		if (! U.equals(volumeButtonsForNavigation, "default")) { // consume here
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) return true;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) return true;
 		}

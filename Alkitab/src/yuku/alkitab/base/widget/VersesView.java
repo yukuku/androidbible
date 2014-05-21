@@ -83,11 +83,30 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		void onVerseScrollStateChange(VersesView versesView, int scrollState);
 	}
 	
-	public enum PressResult {
+	public enum PressKind {
 		left,
 		right,
 		consumed,
 		nop,
+	}
+
+	public static class PressResult {
+		public final PressKind kind;
+		public final int targetVerse_1;
+
+		public static PressResult LEFT = new PressResult(PressKind.left);
+		public static PressResult RIGHT = new PressResult(PressKind.right);
+		public static PressResult NOP = new PressResult(PressKind.nop);
+
+		private PressResult(final PressKind kind) {
+			this.kind = kind;
+			this.targetVerse_1 = 0;
+		}
+
+		public PressResult(final PressKind kind, final int targetVerse_1) {
+			this.kind = kind;
+			this.targetVerse_1 = targetVerse_1;
+		}
 	}
 
 	private VerseAdapter adapter;
@@ -326,10 +345,10 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		String volumeButtonsForNavigation = Preferences.getString(getContext().getString(R.string.pref_volumeButtonNavigation_key), getContext().getString(R.string.pref_volumeButtonNavigation_default));
 		if (U.equals(volumeButtonsForNavigation, "pasal" /* chapter */)) { //$NON-NLS-1$
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-				return PressResult.right;
+				return PressResult.LEFT;
 			}
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-				return PressResult.left;
+				return PressResult.RIGHT;
 			}
 		} else if (U.equals(volumeButtonsForNavigation, "ayat" /* verse */)) { //$NON-NLS-1$
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_DOWN;
@@ -337,29 +356,32 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		}
 
 		if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-			int oldPos = getPositionBasedOnScroll();
-			if (oldPos < adapter.getCount() - 1) {
-				stopFling();
-				setSelectionFromTop(oldPos+1, getVerticalFadingEdgeLength());
-			}
-			return PressResult.consumed;
-		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-			int oldPos = getPositionBasedOnScroll();
-			if (oldPos >= 1) {
-				int newPos = oldPos - 1;
-				while (newPos > 0) { // cek disabled, kalo iya, mundurin lagi
-					if (adapter.isEnabled(newPos)) break;
-					newPos--;
-				}
-				stopFling();
-				setSelectionFromTop(newPos, getVerticalFadingEdgeLength());
+			final int oldVerse_1 = getVerseBasedOnScroll();
+			final int newVerse_1;
+
+			stopFling();
+			if (oldVerse_1 < adapter.getVerseCount()) {
+				newVerse_1 = oldVerse_1 + 1;
 			} else {
-				stopFling();
-				setSelectionFromTop(0, getVerticalFadingEdgeLength());
+				newVerse_1 = oldVerse_1;
 			}
-			return PressResult.consumed;
+			scrollToVerse(newVerse_1);
+			return new PressResult(PressKind.consumed, newVerse_1);
+		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+			final int oldVerse_1 = getVerseBasedOnScroll();
+			final int newVerse_1;
+
+			stopFling();
+			if (oldVerse_1 > 1) { // can still go prev
+				newVerse_1 = oldVerse_1 - 1;
+			} else {
+				newVerse_1 = oldVerse_1;
+			}
+			scrollToVerse(newVerse_1);
+			return new PressResult(PressKind.consumed, newVerse_1);
 		}
-		return PressResult.nop;
+
+		return PressResult.NOP;
 	}
 
 	public void setDataWithRetainSelectedVerses(boolean retainSelectedVerses, Book book, int chapter_1, int[] pericope_aris, PericopeBlock[] pericope_blocks, int nblock, SingleChapterVerses verses) {
