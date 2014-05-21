@@ -303,7 +303,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		
 		SparseBooleanArray checkedPositions = getCheckedItemPositions();
 		boolean anyChecked = false;
-		for (int i = 0; i < checkedPositions.size(); i++) if (checkedPositions.valueAt(i)) {
+		if (checkedPositions != null) for (int i = 0; i < checkedPositions.size(); i++) if (checkedPositions.valueAt(i)) {
 			anyChecked = true;
 			break;
 		}
