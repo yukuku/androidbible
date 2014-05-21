@@ -80,22 +80,20 @@ public class AddonManager {
 		}
 		
 		private void download(Element e) {
-			new File(e.dest).delete(); // hapus dulu.. jangan2 kacau
-			
-			String tmpfile = e.dest + "-" + (int)(Math.random() * 100000) + ".tmp";  //$NON-NLS-1$//$NON-NLS-2$
-			
+			final AtomicFile atomicFile = new AtomicFile(new File(e.dest));
+			atomicFile.delete(); // delete it first, just in case
+
 			boolean mkdirOk = mkYesDir();
 			if (!mkdirOk) {
 				if (e.listener != null) e.listener.onDownloadFailed(e, App.context.getString(R.string.tidak_bisa_membuat_folder, getYesPath()), null);
 				return;
 			}
-			
+
 			PowerManager pm = (PowerManager) App.context.getSystemService(Context.POWER_SERVICE);
 			WakeLock wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "donlot"); //$NON-NLS-1$
 			wakelock.setReferenceCounted(false);
 			wakelock.acquire();
 
-			final AtomicFile atomicFile = new AtomicFile(new File(e.dest));
 			FileOutputStream os = null;
 			try {
 				os = atomicFile.startWrite();
@@ -138,9 +136,6 @@ public class AddonManager {
 				if (e.listener != null) e.listener.onDownloadFailed(e, null, ex);
 			} finally {
 				wakelock.release();
-				
-				Log.d(TAG, "deleting tmpfile: " + tmpfile); //$NON-NLS-1$
-				new File(tmpfile).delete();
 			}
 		}
 
