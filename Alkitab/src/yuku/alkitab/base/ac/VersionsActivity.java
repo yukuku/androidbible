@@ -84,7 +84,7 @@ public class VersionsActivity extends BaseActivity {
 	ListView lsVersions;
 	VersionAdapter adapter;
 	
-	Map<String, String> cache_displayLanguage = new HashMap<String, String>();
+	Map<String, String> cache_displayLanguage = new HashMap<>();
 	
 	public static Intent createIntent() {
 		return new Intent(App.context, VersionsActivity.class);
@@ -446,11 +446,12 @@ public class VersionsActivity extends BaseActivity {
 			return;
 		}
 
-		final ProgressDialog pd = new ProgressDialog(VersionsActivity.this);
+		final ProgressDialog pd = ProgressDialog.show(this, getString(R.string.mengunduh_nama, mv.longName), getString(R.string.mulai_mengunduh), true, true);
+
 		final DownloadListener downloadListener = new DownloadListener() {
 			@Override
 			public void onDownloadFinished(Element e) {
-				VersionsActivity.this.runOnUiThread(new Runnable() {
+				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
 						Toast.makeText(App.context,
@@ -471,7 +472,7 @@ public class VersionsActivity extends BaseActivity {
 
 			@Override
 			public void onDownloadFailed(Element e, final String description, final Throwable t) {
-				VersionsActivity.this.runOnUiThread(new Runnable() {
+				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
 						Toast.makeText(
@@ -486,7 +487,7 @@ public class VersionsActivity extends BaseActivity {
 
 			@Override
 			public void onDownloadProgress(Element e, final int sampe, int total) {
-				VersionsActivity.this.runOnUiThread(new Runnable() {
+				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
 						if (sampe >= 0) {
@@ -496,12 +497,11 @@ public class VersionsActivity extends BaseActivity {
 						}
 					}
 				});
-				Log.d(TAG, "onProgress " + sampe); //$NON-NLS-1$
 			}
 
 			@Override
 			public void onDownloadCancelled(Element e) {
-				VersionsActivity.this.runOnUiThread(new Runnable() {
+				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
 						Toast.makeText(App.context, R.string.pengunduhan_dibatalkan, Toast.LENGTH_SHORT).show();
@@ -514,11 +514,8 @@ public class VersionsActivity extends BaseActivity {
 		final DownloadThread downloadThread = AddonManager.getDownloadThread();
 		final Element e = downloadThread.enqueue(mv.url, AddonManager.getVersionPath(mv.presetFilename), downloadListener);
 
-		pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		pd.setCancelable(true);
-		pd.setIndeterminate(true);
-		pd.setTitle(getString(R.string.mengunduh_nama, mv.presetFilename));
-		pd.setMessage(getString(R.string.mulai_mengunduh));
+		downloadThread.start();
+
 		pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
 			@Override
 			public void onCancel(DialogInterface dialog) {
@@ -535,8 +532,6 @@ public class VersionsActivity extends BaseActivity {
 				adapter.notifyDataSetChanged();
 			}
 		});
-
-		pd.show();
 	}
 
 	void clickOnYesVersion(final CheckBox cActive, final MVersionYes mv) {

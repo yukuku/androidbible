@@ -56,27 +56,32 @@ public class AddonManager {
 	public static class DownloadThread extends Thread {
 		Semaphore sema = new Semaphore(0);
 		LinkedList<Element> queue = new LinkedList<Element>();
-		
+		boolean isFinished = false;
+
+		public boolean isFinished() {
+			return isFinished;
+		}
+
 		@Override
 		public void run() {
+			sema.acquireUninterruptibly();
+			Log.d(TAG, "DownloadThread sema count: " + sema.availablePermits()); //$NON-NLS-1$
+
 			while (true) {
-				sema.acquireUninterruptibly();
-				Log.d(TAG, "DownloadThread sema count: " + sema.availablePermits()); //$NON-NLS-1$
-				
-				while (true) {
-					Element e;
-					synchronized (this) {
-						if (queue.size() == 0) {
-							Log.d(TAG, "tiada lagi antrian donlot"); //$NON-NLS-1$
-							break;
-						}
-						
-						e = queue.poll();
+				Element e;
+				synchronized (this) {
+					if (queue.size() == 0) {
+						Log.d(TAG, "No more to download");
+						break;
 					}
-					
-					download(e);
+
+					e = queue.poll();
 				}
+
+				download(e);
 			}
+
+			isFinished = true;
 		}
 		
 		private void download(Element e) {
@@ -165,9 +170,8 @@ public class AddonManager {
 	private static DownloadThread downloadThread;
 	
 	public synchronized static DownloadThread getDownloadThread() {
-		if (downloadThread == null) {
+		if (downloadThread == null || downloadThread.isFinished()) {
 			downloadThread = new DownloadThread();
-			downloadThread.start();
 		}
 		return downloadThread;
 	}
