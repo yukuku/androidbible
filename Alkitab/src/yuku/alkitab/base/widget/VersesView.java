@@ -17,6 +17,7 @@ import android.widget.ListView;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.compat.Api8;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.SingleChapterVerses;
@@ -118,15 +119,24 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	private AbsListView.OnScrollListener userOnScrollListener;
 	private int scrollState = 0;
 	private View[] scrollToVerseConvertViews;
-	
+	private String name;
+	private boolean firstTimeScroll = true;
+
 	public VersesView(Context context) {
 		super(context);
 		init();
 	}
-	
+
 	public VersesView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init();
+	}
+
+	/**
+	 * Set the name of this VersesView for debugging.
+	 */
+	public void setName(final String name) {
+		this.name = name;
 	}
 
 	private void init() {
@@ -411,21 +421,30 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		}
 	}
 
-	public void scrollToVerse(int verse_1) {
+	public void scrollToVerse(final int verse_1) {
 		final int position = adapter.getPositionOfPericopeBeginningFromVerse(verse_1);
-		
+
+		if (BuildConfig.DEBUG) Log.d(TAG, this + " @@scrollToVerse begin verse_1=" + verse_1 + " position=" + position, new Throwable().fillInStackTrace());
+
 		if (position == -1) {
-			Log.w(TAG, "could not find verse=" + verse_1 + ", weird!"); //$NON-NLS-1$ //$NON-NLS-2$
+			Log.w(TAG, "could not find verse_1=" + verse_1 + ", weird!");
 		} else {
-			post(new Runnable() {
-				@Override public void run() {
+			final int delay = firstTimeScroll? 34: 0;
+
+			postDelayed(new Runnable() {
+				@Override
+				public void run() {
 					// this may happen async from above, so check first if pos is still valid
 					if (position >= getCount()) return;
-					
+
+					if (BuildConfig.DEBUG) Log.d(TAG, VersesView.this + " @@scrollToVerse post verse_1=" + verse_1 + " position=" + position, new Throwable().fillInStackTrace());
+
 					stopFling();
 					setSelectionFromTop(position, getVerticalFadingEdgeLength());
+
+					firstTimeScroll = false;
 				}
-			});
+			}, delay);
 		}
 	}
 	
@@ -433,7 +452,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		final int position = adapter.getPositionIgnoringPericopeFromVerse(verse_1);
 		
 		if (position == -1) {
-			Log.w(TAG, "could not find verse=" + verse_1 + ", weird!"); //$NON-NLS-1$ //$NON-NLS-2$
+			Log.w(TAG, "could not find verse_1=" + verse_1 + ", weird!");
 		} else {
 			post(new Runnable() {
 				@Override public void run() {
@@ -550,5 +569,10 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 
 	public void updateAdapter() {
 		adapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public String toString() {
+		return name != null? ("VersesView{name=" + name + "}"): "VersesView";
 	}
 }
