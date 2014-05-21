@@ -54,13 +54,8 @@ public class AddonManager {
 	}
 	
 	public static class DownloadThread extends Thread {
-		final Context appContext;
 		Semaphore sema = new Semaphore(0);
 		LinkedList<Element> queue = new LinkedList<Element>();
-		
-		public DownloadThread(Context appContext) {
-			this.appContext = appContext;
-		}
 		
 		@Override
 		public void run() {
@@ -91,11 +86,11 @@ public class AddonManager {
 			
 			boolean mkdirOk = mkYesDir();
 			if (!mkdirOk) {
-				if (e.listener != null) e.listener.onDownloadFailed(e, appContext.getString(R.string.tidak_bisa_membuat_folder, getYesPath()), null);
+				if (e.listener != null) e.listener.onDownloadFailed(e, App.context.getString(R.string.tidak_bisa_membuat_folder, getYesPath()), null);
 				return;
 			}
 			
-			PowerManager pm = (PowerManager) appContext.getSystemService(Context.POWER_SERVICE);
+			PowerManager pm = (PowerManager) App.context.getSystemService(Context.POWER_SERVICE);
 			WakeLock wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "donlot"); //$NON-NLS-1$
 			wakelock.setReferenceCounted(false);
 			wakelock.acquire();
@@ -174,9 +169,9 @@ public class AddonManager {
 	
 	private static DownloadThread downloadThread;
 	
-	public synchronized static DownloadThread getDownloadThread(Context appContext) {
+	public synchronized static DownloadThread getDownloadThread() {
 		if (downloadThread == null) {
-			downloadThread = new DownloadThread(appContext);
+			downloadThread = new DownloadThread();
 			downloadThread.start();
 		}
 		return downloadThread;

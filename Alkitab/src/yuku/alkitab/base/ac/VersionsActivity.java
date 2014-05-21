@@ -290,7 +290,7 @@ public class VersionsActivity extends BaseActivity {
 			MVersion item = adapter.getItem(position);
 			
 			if (item instanceof MVersionInternal) {
-				// ga ngapa2in, wong internal ko
+				// nothing to do, this is internal version
 			} else if (item instanceof MVersionPreset) {
 				clickOnPresetVersion(V.<CheckBox>get(v, R.id.cActive), (MVersionPreset) item);
 			} else if (item instanceof MVersionYes) {
@@ -438,110 +438,105 @@ public class VersionsActivity extends BaseActivity {
 	void clickOnPresetVersion(final CheckBox cActive, final MVersionPreset mv) {
 		if (cActive.isChecked()) {
 			mv.setActive(false);
-		} else {
-			// tergantung uda ada belum, kalo uda ada filenya sih centang aja
-			if (mv.hasDataFile()) {
-				mv.setActive(true);
-			} else {
-				DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
-					final ProgressDialog pd = new ProgressDialog(VersionsActivity.this);
-					DownloadListener downloadListener = new DownloadListener() {
-						@Override
-						public void onDownloadFinished(Element e) {
-							VersionsActivity.this.runOnUiThread(new Runnable() {
-								@Override public void run() {
-									Toast.makeText(getApplicationContext(),
-										getString(R.string.selesai_mengunduh_edisi_judul_disimpan_di_path, mv.longName, AddonManager.getVersionPath(mv.presetFilename)),
-										Toast.LENGTH_LONG).show();
-
-									final String locale = mv.locale;
-									if ("ta".equals(locale) || "te".equals(locale) || "my".equals(locale) || "el".equals(locale)) {
-										new AlertDialog.Builder(VersionsActivity.this)
-										.setMessage(R.string.version_download_need_fonts)
-										.setPositiveButton(R.string.ok, null)
-										.show();
-									}
-								}
-							});
-							pd.dismiss();
-						}
-						
-						@Override
-						public void onDownloadFailed(Element e, final String description, final Throwable t) {
-							VersionsActivity.this.runOnUiThread(new Runnable() {
-								@Override public void run() {
-									Toast.makeText(
-									getApplicationContext(),
-									description != null ? description : getString(R.string.gagal_mengunduh_edisi_judul_ex_pastikan_internet, mv.longName,
-										t == null ? "null" : t.getClass().getCanonicalName() + ": " + t.getMessage()), Toast.LENGTH_LONG).show(); //$NON-NLS-1$ //$NON-NLS-2$
-								}
-							});
-							pd.dismiss();
-						}
-						
-						@Override
-						public void onDownloadProgress(Element e, final int sampe, int total) {
-							VersionsActivity.this.runOnUiThread(new Runnable() {
-								@Override public void run() {
-									if (sampe >= 0) {
-										pd.setMessage(getString(R.string.terunduh_sampe_byte, sampe));
-									} else {
-										pd.setMessage(getString(R.string.sedang_mendekompres_harap_tunggu));
-									}
-								}
-							});
-							Log.d(TAG, "onProgress " + sampe); //$NON-NLS-1$
-						}
-						
-						@Override
-						public void onDownloadCancelled(Element e) {
-							VersionsActivity.this.runOnUiThread(new Runnable() {
-								@Override public void run() {
-									Toast.makeText(getApplicationContext(), R.string.pengunduhan_dibatalkan, Toast.LENGTH_SHORT).show();
-								}
-							});
-							pd.dismiss();
-						}
-					};
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						final DownloadThread downloadThread = AddonManager.getDownloadThread(getApplicationContext());
-						final Element e = downloadThread.enqueue(mv.url, AddonManager.getVersionPath(mv.presetFilename), downloadListener);
-
-						pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-						pd.setCancelable(true);
-						pd.setIndeterminate(true);
-						pd.setTitle(getString(R.string.mengunduh_nama, mv.presetFilename));
-						pd.setMessage(getString(R.string.mulai_mengunduh));
-						pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
-							@Override
-							public void onCancel(DialogInterface dialog) {
-								e.cancelled = true;
-							}
-						});
-						pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
-							@Override
-							public void onDismiss(DialogInterface dialog) {
-								if (!e.cancelled && AddonManager.hasVersion(mv.presetFilename)) {
-									mv.setActive(true);
-								}
-								adapter.initYesVersionList();
-								adapter.notifyDataSetChanged();
-							}
-						});
-
-						pd.show();
-					}
-				};
-				
-				new AlertDialog.Builder(VersionsActivity.this)
-				.setMessage(getString(R.string.file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya, AddonManager.getVersionPath(mv.presetFilename)))
-				.setPositiveButton(R.string.yes, clickListener)
-				.setNegativeButton(R.string.no, null)
-				.show();
-			}
+			return;
 		}
+
+		if (mv.hasDataFile()) {
+			mv.setActive(true);
+			return;
+		}
+
+		final ProgressDialog pd = new ProgressDialog(VersionsActivity.this);
+		final DownloadListener downloadListener = new DownloadListener() {
+			@Override
+			public void onDownloadFinished(Element e) {
+				VersionsActivity.this.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						Toast.makeText(App.context,
+						getString(R.string.selesai_mengunduh_edisi_judul_disimpan_di_path, mv.longName, AddonManager.getVersionPath(mv.presetFilename)),
+						Toast.LENGTH_LONG).show();
+
+						final String locale = mv.locale;
+						if ("ta".equals(locale) || "te".equals(locale) || "my".equals(locale) || "el".equals(locale)) {
+							new AlertDialog.Builder(VersionsActivity.this)
+							.setMessage(R.string.version_download_need_fonts)
+							.setPositiveButton(R.string.ok, null)
+							.show();
+						}
+					}
+				});
+				pd.dismiss();
+			}
+
+			@Override
+			public void onDownloadFailed(Element e, final String description, final Throwable t) {
+				VersionsActivity.this.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						Toast.makeText(
+						App.context,
+						description != null? description: getString(R.string.gagal_mengunduh_edisi_judul_ex_pastikan_internet, mv.longName,
+						t == null? "null": t.getClass().getCanonicalName() + ": " + t.getMessage()), Toast.LENGTH_LONG
+						).show();
+					}
+				});
+				pd.dismiss();
+			}
+
+			@Override
+			public void onDownloadProgress(Element e, final int sampe, int total) {
+				VersionsActivity.this.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						if (sampe >= 0) {
+							pd.setMessage(getString(R.string.terunduh_sampe_byte, sampe));
+						} else {
+							pd.setMessage(getString(R.string.sedang_mendekompres_harap_tunggu));
+						}
+					}
+				});
+				Log.d(TAG, "onProgress " + sampe); //$NON-NLS-1$
+			}
+
+			@Override
+			public void onDownloadCancelled(Element e) {
+				VersionsActivity.this.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						Toast.makeText(App.context, R.string.pengunduhan_dibatalkan, Toast.LENGTH_SHORT).show();
+					}
+				});
+				pd.dismiss();
+			}
+		};
+
+		final DownloadThread downloadThread = AddonManager.getDownloadThread();
+		final Element e = downloadThread.enqueue(mv.url, AddonManager.getVersionPath(mv.presetFilename), downloadListener);
+
+		pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		pd.setCancelable(true);
+		pd.setIndeterminate(true);
+		pd.setTitle(getString(R.string.mengunduh_nama, mv.presetFilename));
+		pd.setMessage(getString(R.string.mulai_mengunduh));
+		pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
+			@Override
+			public void onCancel(DialogInterface dialog) {
+				e.cancelled = true;
+			}
+		});
+		pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				if (!e.cancelled && AddonManager.hasVersion(mv.presetFilename)) {
+					mv.setActive(true);
+				}
+				adapter.initYesVersionList();
+				adapter.notifyDataSetChanged();
+			}
+		});
+
+		pd.show();
 	}
 
 	void clickOnYesVersion(final CheckBox cActive, final MVersionYes mv) {
@@ -575,7 +570,7 @@ public class VersionsActivity extends BaseActivity {
 			config.title = getString(R.string.ed_choose_pdb_or_yes_file);
 			config.pattern = ".*\\.(?i:pdb|yes|yes\\.gz)"; //$NON-NLS-1$
 			
-			startActivityForResult(FileChooserActivity.createIntent(getApplicationContext(), config), REQCODE_openFile);
+			startActivityForResult(FileChooserActivity.createIntent(App.context, config), REQCODE_openFile);
 		} else {
 			new AlertDialog.Builder(this)
 			.setMessage(R.string.ed_no_external_storage)
@@ -642,7 +637,7 @@ public class VersionsActivity extends BaseActivity {
 			} else if (filename.toLowerCase(Locale.US).endsWith(".pdb")) { //$NON-NLS-1$
 				handleFileOpenPdb(filename);
 			} else {
-				Toast.makeText(getApplicationContext(), R.string.ed_invalid_file_selected, Toast.LENGTH_SHORT).show();
+				Toast.makeText(App.context, R.string.ed_invalid_file_selected, Toast.LENGTH_SHORT).show();
 			}
 		} else if (requestCode == REQCODE_share) {
 			ShareActivity.Result result = ShareActivity.obtainResult(data);
@@ -788,7 +783,7 @@ public class VersionsActivity extends BaseActivity {
 								publishProgress(null, null);
 							}
 						});
-						return converter.convert(getApplicationContext(), pdbFilename, yesFilename, params);
+						return converter.convert(App.context, pdbFilename, yesFilename, params);
 					}
 					
 					@Override protected void onProgressUpdate(Object... values) {
