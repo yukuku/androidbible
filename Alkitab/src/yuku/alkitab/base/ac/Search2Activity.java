@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build.VERSION;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.util.SparseBooleanArray;
@@ -101,6 +102,10 @@ public class Search2Activity extends BaseActivity {
 			inputManager.hideSoftInputFromWindow(searchView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 			searchView.clearFocus();
 		}
+
+		public void setQueryHint(final String hint) {
+			searchView.setQueryHint(hint);
+		}
 	}
 	
 	Api11_compat api11_compat;
@@ -118,7 +123,7 @@ public class Search2Activity extends BaseActivity {
 		tFilterAdvanced = V.get(this, R.id.tFilterAdvanced);
 		bEditFilter = V.get(this, R.id.bEditFilter);
 		
-		if (useSearchView()) {
+		if (usingSearchView()) {
 			api11_compat = new Api11_compat();
 			api11_compat.configureSearchView();
 		} else {
@@ -145,7 +150,7 @@ public class Search2Activity extends BaseActivity {
 		lsSearchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				int ari = adapter.getSearchResults().get(position);
-				startActivity(Launcher.openAppAtBibleLocation(ari));
+				startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
 			}
 		});
 		bEditFilter.setOnClickListener(new OnClickListener() {
@@ -173,9 +178,29 @@ public class Search2Activity extends BaseActivity {
 		if (usingRevIndex()) {
 			Search2Engine.preloadRevIndex();
 		}
+
+		// show current version on search placeholder
+		final ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			final String placeholderVersion;
+			final String shortName = S.activeVersion.getShortName();
+			if (shortName != null) {
+				placeholderVersion = shortName;
+			} else {
+				placeholderVersion = S.activeVersion.getLongName();
+			}
+
+			final String placeholder = getString(R.string.search_in_version_short_name_placeholder, placeholderVersion);
+
+			if (usingSearchView()) {
+				api11_compat.setQueryHint(placeholder);
+			} else {
+				searchBar.getSearchField().setHint(placeholder);
+			}
+		}
 	}
 	
-	boolean useSearchView() {
+	boolean usingSearchView() {
 		return VERSION.SDK_INT >= 11;
 	}
 	
@@ -322,7 +347,7 @@ public class Search2Activity extends BaseActivity {
 	
 	protected Query getQuery() {
 		Query res = new Query();
-		if (!useSearchView()) {
+		if (!usingSearchView()) {
 			res.query_string = searchBar.getText().toString();
 		} else {
 			res.query_string = api11_compat.getSearchViewQuery();
@@ -455,7 +480,7 @@ public class Search2Activity extends BaseActivity {
 				if (result.size() > 0) {
 					//# close soft keyboard
 					InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-					if (!useSearchView()) {
+					if (!usingSearchView()) {
 						inputManager.hideSoftInputFromWindow(searchBar.getSearchField().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 					} else {
 						api11_compat.hideSoftInputFromSearchView(inputManager);

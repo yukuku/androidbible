@@ -281,6 +281,11 @@ public abstract class VerseAdapter extends BaseAdapter {
 		return verses_.getVerse(verse_1 - 1);
 	}
 
+	public int getVerseCount() {
+		if (verses_ == null) return 0;
+		return verses_.getVerseCount();
+	}
+
 	@Override public boolean areAllItemsEnabled() {
 		return false;
 	}

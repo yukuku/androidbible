@@ -138,7 +138,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 				activity.lastTryToDisplay = kini;
 			}
 			
-			activity.goTo(true, 0);
+			activity.goTo(true);
 			
 			if (!activity.renderSucceeded) {
 				activity.displayRepeater.sendEmptyMessageDelayed(0, 12000);
@@ -195,14 +195,13 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		popup = new DevotionSelectPopup(this);
 		popup.setDevotionSelectListener(popup_listener);
 		
-		if (Temporaries.devotion_date == null) Temporaries.devotion_date = new Date();
-		if (Temporaries.devotion_kind == null) Temporaries.devotion_kind = DEFAULT_DEVOTION_KIND;
+		final DevotionKind storedKind = DevotionKind.getByName(Preferences.getString(Prefkey.devotion_last_kind_name, DEFAULT_DEVOTION_KIND.name));
 
-		currentKind = Temporaries.devotion_kind;
-		currentDate = Temporaries.devotion_date;
-		
+		currentKind = storedKind == null? DEFAULT_DEVOTION_KIND: storedKind;
+		currentDate = new Date();
+
 		// Workaround for crashes due to html tags in the title
-		// We remove all rows that contain '<' in the judul
+		// We remove all rows that contain '<' in the title
 		if (Preferences.getBoolean(Prefkey.patch_devotionSlippedHtmlTags, false) == false) {
 			int deleted = S.getDb().deleteDevotionsWithLessThanInTitle();
 			Log.d(TAG, "patch_devotionSlippedHtmlTags: deleted " + deleted);
@@ -217,7 +216,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			}
 		}
 		
-		display(Temporaries.devotion_scroll);
+		display();
 	}
 	
 	@Override protected void onStart() {
@@ -227,15 +226,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			lContent.setKeepScreenOn(true);
 		}
 	}
-	
-	@Override protected void onDestroy() {
-		super.onDestroy();
 
-		Temporaries.devotion_kind = currentKind;
-		Temporaries.devotion_date = currentDate;
-		Temporaries.devotion_scroll = scrollContent.getScrollY();
-	}
-		
 	private void buildMenu(Menu menu) {
 		menu.clear();
 		getMenuInflater().inflate(R.menu.activity_devotion, menu);
@@ -338,40 +329,41 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			int id = v.getId();
 			if (id == R.id.bPrev) {
 				currentDate.setTime(currentDate.getTime() - 3600*24*1000);
-				display(0);
+				display();
 			} else if (id == R.id.bNext) {
 				currentDate.setTime(currentDate.getTime() + 3600*24*1000);
-				display(0);
+				display();
 			} else if (id == R.id.bChange) {
 				int index = currentKind.ordinal();
 				final DevotionKind[] values = DevotionKind.values();
 				index = (index + 1) % values.length;
 				currentKind = values[index];
-				display(0);
+				Preferences.setString(Prefkey.devotion_last_kind_name, currentKind.name);
+				display();
 			}
 		}
 	};
 
 	
-	void display(int scroll) {
+	void display() {
 		displayRepeater.removeMessages(0);
 		
-		goTo(true, scroll);
+		goTo(true);
 	}
 
-	void goTo(boolean prioritize, int scroll) {
+	void goTo(boolean prioritize) {
 		String date = date_format.get().format(currentDate);
 		DevotionArticle article = S.getDb().tryGetDevotion(currentKind.name, date);
 		if (article == null || !article.getReadyToUse()) {
 			willNeed(currentKind, date, prioritize);
-			render(article, scroll);
+			render(article);
 			
 			displayRepeater.sendEmptyMessageDelayed(0, 3000);
 		} else {
 			Log.d(TAG, "sudah siap tampil, kita syuh yang tersisa dari pengulang tampil"); //$NON-NLS-1$
 			displayRepeater.removeMessages(0);
 			
-			render(article, scroll);
+			render(article);
 		}
 	}
 
@@ -413,7 +405,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		}
 	};
 
-	private void render(DevotionArticle article, final int skrol) {
+	private void render(DevotionArticle article) {
 		if (article == null) {
 			Log.d(TAG, "rendering null article"); //$NON-NLS-1$
 		} else {
@@ -426,14 +418,6 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			lContent.setText(article.getContent(verseClickListener), BufferType.SPANNABLE);
 			lContent.setLinksClickable(true);
 			lContent.setMovementMethod(LinkMovementMethod.getInstance());
-			
-			if (skrol != 0) {
-				scrollContent.post(new Runnable() {
-					@Override public void run() {
-						scrollContent.scrollTo(0, skrol);
-					}
-				});
-			}
 		} else {
 			renderSucceeded  = false;
 			
@@ -447,7 +431,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		String title = currentKind.title;
 
 		{ // widget texts
-			String dateDisplay = namaHari(currentDate) + ", " + DateFormat.getDateFormat(this).format(currentDate);  //$NON-NLS-1$
+			String dateDisplay = dayOfWeekName(currentDate) + ", " + DateFormat.getDateFormat(this).format(currentDate);  //$NON-NLS-1$
 			
 			// action bar
 			getSupportActionBar().setTitle(title);
@@ -461,7 +445,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 	private static final int[] WEEKDAY_NAMES_RESIDS = {R.string.hari_minggu, R.string.hari_senin, R.string.hari_selasa, R.string.hari_rabu, R.string.hari_kamis, R.string.hari_jumat, R.string.hari_sabtu};
 
-	private String namaHari(Date date) {
+	private String dayOfWeekName(Date date) {
 		@SuppressWarnings("deprecation") int day = date.getDay();
 		return getString(WEEKDAY_NAMES_RESIDS[day]);
 	}
@@ -529,18 +513,6 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		}
 	}
 
-	/**
-	 * Settings that are still alive even when activities are destroyed.
-	 * Ensure there is no references to any activity to prevent memory leak.
-	 * 
-	 * TODO this is not a good practice
-	 */
-	public static class Temporaries {
-		public static DevotionKind devotion_kind = null;
-		public static Date devotion_date = null;
-		public static int devotion_scroll = 0;
-	}
-	
 	public static DevotionDownloader devotionDownloader;
 
 	@Override public void onDownloadStatus(final String s) {

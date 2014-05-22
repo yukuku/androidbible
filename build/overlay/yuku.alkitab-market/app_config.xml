@@ -78,6 +78,7 @@
 		<preset locale="pon"  shortName="PON"     longName="Pohnpeian Bible (Old)" filename_preset="pon-old.yes" url="https://alkitab-host.appspot.com/addon/yes2/pon-old--1.yes.gz" />
 		<preset locale="pt"   shortName="AA"      longName="Almeida Atualizada" filename_preset="pt-aa.yes" url="https://alkitab-host.appspot.com/addon/yes2/pt-aa--1.yes.gz" />
 		<preset locale="ro"   shortName="VDC"     longName="Cornilescu" filename_preset="ro-cornilescu.yes" url="https://alkitab-host.appspot.com/addon/yes2/ro-cornilescu--1.yes.gz" />
+		<preset locale="ro"   shortName="RCCV"    longName="Corrected Cornilescu" filename_preset="ro-rccv.yes" url="https://alkitab-host.appspot.com/addon/yes2/ro-rccv--1.yes.gz" />
 		<preset locale="ro"   shortName="ORTDX"   longName="Biblia Ortodoxa" filename_preset="ro-ortodoxa.yes" url="https://alkitab-host.appspot.com/addon/yes2/ro-ortodoxa--1.yes.gz" />
 		<preset locale="ro"   shortName="GBV2001" longName="Gute Botschaft Verlag" filename_preset="ro-gbv2001.yes" url="https://alkitab-host.appspot.com/addon/yes2/ro-gbv2001--1.yes.gz" />
 		<preset locale="ro"   shortName="BTF"     longName="Traducerea FIDELA" filename_preset="ro-fidela.yes" url="https://alkitab-host.appspot.com/addon/yes2/ro-fidela--1.yes.gz" />
