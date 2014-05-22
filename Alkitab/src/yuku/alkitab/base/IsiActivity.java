@@ -291,6 +291,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	static class IntentResult {
 		public int ari;
+		public boolean selectVerse;
 
 		public IntentResult(final int ari) {
 			this.ari = ari;
@@ -410,6 +411,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		final IntentResult intentResult = processIntent(getIntent(), "onCreate");
 		final int openingAri;
+		final boolean selectVerse;
 
 		if (intentResult == null) {
 			// restore the last (version; book; chapter and verse).
@@ -417,9 +419,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			final int lastChapter = instant_pref.getInt(PREFKEY_lastChapter, 0);
 			final int lastVerse = instant_pref.getInt(PREFKEY_lastVerse, 0);
 			openingAri = Ari.encode(lastBookId, lastChapter, lastVerse);
+			selectVerse = false;
 			Log.d(TAG, "Going to the last: bookId=" + lastBookId + " chapter=" + lastChapter + " verse=" + lastVerse);
 		} else {
 			openingAri = intentResult.ari;
+			selectVerse = intentResult.selectVerse;
 		}
 
 		final String lastVersionId = instant_pref.getString(PREFKEY_lastVersionId, null);
@@ -459,11 +463,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				}
 			}
 		}
+
+		if (selectVerse) {
+			lsText.setVerseSelected(Ari.toVerse(openingAri), true);
+		}
 	}
-	
+
 	@Override protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		
+
 		processIntent(intent, "onNewIntent");
 	}
 
@@ -500,10 +508,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private IntentResult tryGetIntentResultFromView(Intent intent) {
 		if (!U.equals(intent.getAction(), "yuku.alkitab.action.VIEW")) return null;
 
+		final boolean selectVerse = intent.getBooleanExtra("selectVerse", false);
+
 		if (intent.hasExtra("ari")) {
 			int ari = intent.getIntExtra("ari", 0);
 			if (ari != 0) {
-				return new IntentResult(ari);
+				final IntentResult res = new IntentResult(ari);
+				res.selectVerse = selectVerse;
+				return res;
 			} else {
 				new AlertDialog.Builder(this)
 				.setMessage("Invalid ari: " + ari)
@@ -517,7 +529,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if (ari != 0) {
 				jumpToAri(ari);
 				history.add(ari);
-				return new IntentResult(ari);
+				final IntentResult res = new IntentResult(ari);
+				res.selectVerse = selectVerse;
+				return res;
 			} else {
 				new AlertDialog.Builder(this)
 				.setMessage("Invalid lid: " + lid)

@@ -447,7 +447,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		String title = currentKind.title;
 
 		{ // widget texts
-			String dateDisplay = namaHari(currentDate) + ", " + DateFormat.getDateFormat(this).format(currentDate);  //$NON-NLS-1$
+			String dateDisplay = dayOfWeekName(currentDate) + ", " + DateFormat.getDateFormat(this).format(currentDate);  //$NON-NLS-1$
 			
 			// action bar
 			getSupportActionBar().setTitle(title);
@@ -461,7 +461,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 	private static final int[] WEEKDAY_NAMES_RESIDS = {R.string.hari_minggu, R.string.hari_senin, R.string.hari_selasa, R.string.hari_rabu, R.string.hari_kamis, R.string.hari_jumat, R.string.hari_sabtu};
 
-	private String namaHari(Date date) {
+	private String dayOfWeekName(Date date) {
 		@SuppressWarnings("deprecation") int day = date.getDay();
 		return getString(WEEKDAY_NAMES_RESIDS[day]);
 	}

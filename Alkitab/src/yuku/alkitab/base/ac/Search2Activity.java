@@ -150,7 +150,7 @@ public class Search2Activity extends BaseActivity {
 		lsSearchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				int ari = adapter.getSearchResults().get(position);
-				startActivity(Launcher.openAppAtBibleLocation(ari));
+				startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
 			}
 		});
 		bEditFilter.setOnClickListener(new OnClickListener() {
