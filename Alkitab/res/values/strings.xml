@@ -61,7 +61,6 @@
     <string name="selesai_mengunduh_edisi_judul_disimpan_di_path">Completed downloading version: %1$s\nSaved in: %2$s</string>
     <string name="mulai_mengunduh">Starting download…</string>
     <string name="mengunduh_nama">Downloading %s</string>
-    <string name="file_edisipath_tidak_ditemukan_apakah_anda_mau_mengunduhnya">Could not find file \'%s\'. Do you want to download it?</string>
     <string name="tuju_v">Go to</string>
     <string name="bagikan_alamat">Share %s</string>
     <string name="alamat_sudah_disalin">%s has been copied.</string>
@@ -336,4 +335,5 @@
 
     <string name="beta_tester_program_title">Beta Tester</string>
     <string name="beta_tester_program_desc">Join our Beta Tester program and get early access to new features and have opportunity to shape Quick Bible: goo.gl/JjYTK1</string>
+    <string name="search_in_version_short_name_placeholder">Search in %s</string>
 </resources>

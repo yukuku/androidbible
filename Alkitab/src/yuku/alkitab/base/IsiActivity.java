@@ -275,6 +275,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	};
 
+	static class IntentResult {
+		public int ari;
+		public boolean selectVerse;
+
+		public IntentResult(final int ari) {
+			this.ari = ari;
+		}
+	}
+
 	public static Intent createIntent(int ari) {
 		Intent res = new Intent(App.context, IsiActivity.class);
 		res.setAction("yuku.alkitab.action.VIEW");
@@ -309,6 +318,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		readingPlanFloatMenu = V.get(this, R.id.readingPlanFloatMenu);
 
 		applyPreferences(false);
+
+		lsText.setName("lsText");
+		lsSplit1.setName("lsSplit1");
 
 		splitRoot.setInterceptTouchEventListener(splitRoot_interceptTouch);
 		
@@ -370,28 +382,41 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		history = History.getInstance();
 
-		// configure devotion
-		instant_pref = App.getInstantPreferences();
-		{
-			String devotion_name = instant_pref.getString(PREFKEY_devotion_name, null);
-			if (devotion_name != null) {
-				final DevotionActivity.DevotionKind kind = DevotionActivity.DevotionKind.getByName(devotion_name);
-				if (kind != null) {
-					DevotionActivity.Temporaries.devotion_kind = kind;
-				}
-			}
+		initNfcIfAvailable();
+
+		if (S.getDb().countAllBookmarks() != 0) {
+			BackupManager.startAutoBackup();
 		}
 
-		// restore the last (version; book; chapter and verse).
-		final int lastBookId = instant_pref.getInt(PREFKEY_lastBookId, 0);
-		final int lastChapter = instant_pref.getInt(PREFKEY_lastChapter, 0);
-		final int lastVerse = instant_pref.getInt(PREFKEY_lastVerse, 0);
+		final IntentResult intentResult = processIntent(getIntent(), "onCreate");
+		final int openingAri;
+		final boolean selectVerse;
+
+		instant_pref = App.getInstantPreferences();
+		if (intentResult == null) {
+			// restore the last (version; book; chapter and verse).
+			final int lastBookId = instant_pref.getInt(PREFKEY_lastBookId, 0);
+			final int lastChapter = instant_pref.getInt(PREFKEY_lastChapter, 0);
+			final int lastVerse = instant_pref.getInt(PREFKEY_lastVerse, 0);
+			openingAri = Ari.encode(lastBookId, lastChapter, lastVerse);
+			selectVerse = false;
+			Log.d(TAG, "Going to the last: bookId=" + lastBookId + " chapter=" + lastChapter + " verse=" + lastVerse);
+		} else {
+			openingAri = intentResult.ari;
+			selectVerse = intentResult.selectVerse;
+		}
+
 		final String lastVersionId = instant_pref.getString(PREFKEY_lastVersionId, null);
-		Log.d(TAG, "Going to the last: versionId=" + lastVersionId + " bookId=" + lastBookId + " chapter=" + lastChapter + " verse=" + lastVerse); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		loadLastVersion(lastVersionId, false);
+		final MVersion mv = getVersionFromVersionId(lastVersionId);
+
+		if (mv != null) {
+			loadVersion(mv, false);
+		} else {
+			loadVersion(new MVersionInternal(), false);
+		}
 
 		{ // load book
-			Book book = S.activeVersion.getBook(lastBookId);
+			final Book book = S.activeVersion.getBook(Ari.toBook(openingAri));
 			if (book != null) {
 				this.activeBook = book;
 			} else { // can't load last book or bookId 0
@@ -400,31 +425,40 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 
 		// load chapter and verse
-		display(lastChapter, lastVerse);
+		display(Ari.toChapter(openingAri), Ari.toVerse(openingAri));
+
+		if (intentResult != null) { // also add to history if not opening the last seen verse
+			history.add(openingAri);
+		}
 
 		{ // load last split version. This must be after load book, chapter, and verse.
 			final String lastSplitVersionId = instant_pref.getString(PREFKEY_lastSplitVersionId, null);
 			if (lastSplitVersionId != null) {
-				loadLastVersion(lastSplitVersionId, true);
+				final MVersion splitMv = getVersionFromVersionId(lastSplitVersionId);
+				final MVersion splitMvActual = splitMv == null? new MVersionInternal(): splitMv;
+
+				if (loadSplitVersion(splitMvActual)) {
+					openSplitDisplay();
+					displaySplitFollowingMaster(Ari.toVerse(openingAri));
+				}
 			}
 		}
 
-		initNfcIfAvailable();
-
-		if (S.getDb().countAllBookmarks() != 0) {
-			BackupManager.startAutoBackup();
+		if (selectVerse) {
+			lsText.setVerseSelected(Ari.toVerse(openingAri), true);
 		}
-
-		processIntent(getIntent(), "onCreate");
 	}
-	
+
 	@Override protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		
+
 		processIntent(intent, "onNewIntent");
 	}
 
-	private void processIntent(Intent intent, String via) {
+	/**
+	 * @return non-null if the intent is handled by any of the intent handler (e.g. nfc or VIEW)
+	 */
+	private IntentResult processIntent(Intent intent, String via) {
 		Log.d(TAG, "Got intent via " + via);
 		Log.d(TAG, "  action: " + intent.getAction());
 		Log.d(TAG, "  data uri: " + intent.getData());
@@ -439,25 +473,35 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 		}
 		
-		checkAndProcessBeamIntent(intent);
+		if (Build.VERSION.SDK_INT >= 14) {
+			final IntentResult result = tryGetIntentResultFromBeam(intent);
+			if (result != null) return result;
+		}
 
-		checkAndProcessViewIntent(intent);
+		final IntentResult result = tryGetIntentResultFromView(intent);
+		if (result != null) return result;
+
+		return result;
 	}
 	
 	/** did we get here from VIEW intent? */
-	private void checkAndProcessViewIntent(Intent intent) {
-		if (!U.equals(intent.getAction(), "yuku.alkitab.action.VIEW")) return;
+	private IntentResult tryGetIntentResultFromView(Intent intent) {
+		if (!U.equals(intent.getAction(), "yuku.alkitab.action.VIEW")) return null;
+
+		final boolean selectVerse = intent.getBooleanExtra("selectVerse", false);
 
 		if (intent.hasExtra("ari")) {
 			int ari = intent.getIntExtra("ari", 0);
 			if (ari != 0) {
-				jumpToAri(ari);
-				history.add(ari);
+				final IntentResult res = new IntentResult(ari);
+				res.selectVerse = selectVerse;
+				return res;
 			} else {
 				new AlertDialog.Builder(this)
 				.setMessage("Invalid ari: " + ari)
 				.setPositiveButton(R.string.ok, null)
 				.show();
+				return null;
 			}
 		} else if (intent.hasExtra("lid")) {
 			int lid = intent.getIntExtra("lid", 0);
@@ -465,12 +509,18 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if (ari != 0) {
 				jumpToAri(ari);
 				history.add(ari);
+				final IntentResult res = new IntentResult(ari);
+				res.selectVerse = selectVerse;
+				return res;
 			} else {
 				new AlertDialog.Builder(this)
 				.setMessage("Invalid lid: " + lid)
 				.setPositiveButton(R.string.ok, null)
 				.show();
+				return null;
 			}
+		} else {
+			return null;
 		}
 	}
 
@@ -523,87 +573,63 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 
-	private void checkAndProcessBeamIntent(Intent intent) {
+	private IntentResult checkAndProcessBeamIntent(Intent intent) {
 		String action = intent.getAction();
-		if (U.equals(action, NfcAdapter.ACTION_NDEF_DISCOVERED)) {
-			Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-			// only one message sent during the beam
-			if (rawMsgs != null && rawMsgs.length > 0) {
-				NdefMessage msg = (NdefMessage) rawMsgs[0];
-				// record 0 contains the MIME type, record 1 is the AAR, if present
-				NdefRecord[] records = msg.getRecords();
-				if (records != null && records.length > 0) {
-					String json = new String(records[0].getPayload());
-					try {
-						JSONObject obj = new JSONObject(json);
-						int ari = obj.optInt("ari", -1); //$NON-NLS-1$
-						if (ari != -1) {
-							jumpToAri(ari);
-							history.add(ari);
-						}
-					} catch (JSONException e) {
-						Log.e(TAG, "Malformed json from nfc", e); //$NON-NLS-1$
-					}
-				}
-			}
+		if (!U.equals(action, NfcAdapter.ACTION_NDEF_DISCOVERED)) return null;
+
+		Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+		// only one message sent during the beam
+		if (rawMsgs == null || rawMsgs.length <= 0) return null;
+
+		NdefMessage msg = (NdefMessage) rawMsgs[0];
+		// record 0 contains the MIME type, record 1 is the AAR, if present
+		NdefRecord[] records = msg.getRecords();
+		if (records == null || records.length <= 0) return null;
+
+		String json = new String(records[0].getPayload());
+		try {
+			JSONObject obj = new JSONObject(json);
+			final int ari = obj.optInt("ari", -1); //$NON-NLS-1$
+			if (ari == -1) return null;
+
+			return new IntentResult(ari);
+		} catch (JSONException e) {
+			Log.e(TAG, "Malformed json from nfc", e); //$NON-NLS-1$
+			return null;
 		}
 	}
 
-	void loadLastVersion(String versionId, boolean isSplit) {
-		final AppConfig c = AppConfig.get();
+	MVersion getVersionFromVersionId(String versionId) {
 		if (versionId == null || MVersionInternal.getVersionInternalId().equals(versionId)) {
-			// we are now already on internal
-			if (!isSplit) {
-				splitHandleButton.setLabel1("\u25b2 " + c.internalShortName);
-			} else {
-				if (loadSplitVersion(new MVersionInternal())) {
-					openSplitDisplay();
-					displaySplitFollowingMaster();
-					splitHandleButton.setLabel2(c.internalShortName + " \u25bc");
-				}
-			}
-			return;
+			return null; // internal is made the same as null
 		}
 
 		// try preset versions first
+		final AppConfig c = AppConfig.get();
 		for (MVersionPreset preset: c.presets) { // 2. preset
 			if (preset.getVersionId().equals(versionId)) {
 				if (preset.hasDataFile()) {
-					if (!isSplit) {
-						if (loadVersion(preset, false)) return;
-					} else {
-						if (loadSplitVersion(preset)) {
-							openSplitDisplay();
-							displaySplitFollowingMaster();
-							return;
-						}
-					}
+					return preset;
 				} else {
-					return; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
+					return null; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
 				}
 			}
 		}
-		
+
 		// still no match, let's look at yes versions
 		for (MVersionYes yes: S.getDb().listAllVersions()) {
 			if (yes.getVersionId().equals(versionId)) {
 				if (yes.hasDataFile()) {
-					if (!isSplit) {
-						if (loadVersion(yes, false)) return;
-					} else {
-						if (loadSplitVersion(yes)) {
-							openSplitDisplay();
-							displaySplitFollowingMaster();
-							return;
-						}
-					}
+					return yes;
 				} else {
-					return; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
+					return null; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
 				}
 			}
 		}
+
+		return null; // not known
 	}
-	
+
 	boolean loadVersion(final MVersion mv, boolean display) {
 		try {
 			Version version = mv.getVersion();
@@ -691,7 +717,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 		
 		PressResult pressResult = lsText.press(keyCode);
-		switch (pressResult) {
+		switch (pressResult.kind) {
 		case left:
 			bLeft_click();
 			return true;
@@ -699,6 +725,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			bRight_click();
 			return true;
 		case consumed:
+			if (activeSplitVersion != null) {
+				lsSplit1.scrollToVerse(pressResult.targetVerse_1);
+			}
 			return true;
 		default:
 			return false;
@@ -843,9 +872,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		editor.putInt(PREFKEY_lastBookId, this.activeBook.bookId);
 		editor.putInt(PREFKEY_lastChapter, chapter_1);
 		editor.putInt(PREFKEY_lastVerse, lsText.getVerseBasedOnScroll());
-		if (DevotionActivity.Temporaries.devotion_kind != null) {
-			editor.putString(PREFKEY_devotion_name, DevotionActivity.Temporaries.devotion_kind.name);
-		}
 		editor.putString(PREFKEY_lastVersionId, S.activeVersionId);
 		if (activeSplitVersion == null) {
 			editor.putString(PREFKEY_lastSplitVersionId, null);
@@ -1423,6 +1449,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 			// tell activity
 			this.chapter_1 = chapter_1;
+
 			lsText.scrollToVerse(verse_1);
 		}
 		
@@ -1492,8 +1519,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 	
 	@Override public boolean onKeyUp(int keyCode, KeyEvent event) {
-		String volumeButtonsForNavigation = Preferences.getString(getString(R.string.pref_volumeButtonNavigation_key), getString(R.string.pref_volumeButtonNavigation_default));
-		if (! U.equals(volumeButtonsForNavigation, "default")) { // consume here //$NON-NLS-1$
+		final String volumeButtonsForNavigation = Preferences.getString(getString(R.string.pref_volumeButtonNavigation_key), getString(R.string.pref_volumeButtonNavigation_default));
+		if (! U.equals(volumeButtonsForNavigation, "default")) { // consume here
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) return true;
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) return true;
 		}

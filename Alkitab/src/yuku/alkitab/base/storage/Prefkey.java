@@ -32,4 +32,7 @@ public enum Prefkey {
 
 	/** marker (bookmark) list selected sorting option */
 	marker_list_sort_column, marker_list_sort_ascending,
+
+	/** Last devotion kind */
+	devotion_last_kind_name,
 }

@@ -393,7 +393,7 @@ public class BookmarkListActivity extends BaseActivity {
 		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 			Bookmark2 bookmark = adapter.getItem(position);
 
-			startActivity(Launcher.openAppAtBibleLocation(bookmark.ari));
+			startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(bookmark.ari));
 		}
 	};
 	

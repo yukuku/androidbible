@@ -7,6 +7,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+<<<<<<< HEAD
+=======
+import android.support.v7.app.ActionBar;
+import android.text.Editable;
+>>>>>>> hotfix/3.5.6
 import android.text.SpannableStringBuilder;
 import android.util.SparseBooleanArray;
 import android.view.View;
@@ -69,6 +74,43 @@ public class Search2Activity extends BaseActivity {
 		return res;
 	}
 
+<<<<<<< HEAD
+=======
+	@TargetApi(11) class Api11_compat {
+		SearchView searchView;
+
+		public void configureSearchView() {
+			searchView = V.get(Search2Activity.this, R.id.searchView);
+			searchView.setSubmitButtonEnabled(true);
+			searchView.setOnQueryTextListener(new OnQueryTextListener() {
+				@Override public boolean onQueryTextSubmit(String query) {
+					search(query);
+					return true;
+				}
+				
+				@Override public boolean onQueryTextChange(String newText) {
+					return false;
+				}
+			});
+		}
+
+		public String getSearchViewQuery() {
+			return searchView.getQuery().toString();
+		}
+
+		public void hideSoftInputFromSearchView(InputMethodManager inputManager) {
+			inputManager.hideSoftInputFromWindow(searchView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+			searchView.clearFocus();
+		}
+
+		public void setQueryHint(final String hint) {
+			searchView.setQueryHint(hint);
+		}
+	}
+	
+	Api11_compat api11_compat;
+	
+>>>>>>> hotfix/3.5.6
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
@@ -81,6 +123,7 @@ public class Search2Activity extends BaseActivity {
 		cFilterSingleBook = V.get(this, R.id.cFilterSingleBook);
 		tFilterAdvanced = V.get(this, R.id.tFilterAdvanced);
 		bEditFilter = V.get(this, R.id.bEditFilter);
+<<<<<<< HEAD
 
 		searchView = V.get(Search2Activity.this, R.id.searchView);
 		searchView.setSubmitButtonEnabled(true);
@@ -95,6 +138,28 @@ public class Search2Activity extends BaseActivity {
 			}
 		});
 
+=======
+		
+		if (usingSearchView()) {
+			api11_compat = new Api11_compat();
+			api11_compat.configureSearchView();
+		} else {
+			searchBar = V.get(this, R.id.searchBar);
+			((ViewGroup) panelFilter.getParent()).removeView(panelFilter);
+			searchBar.setBottomView(panelFilter);
+			searchBar.setOnSearchListener(new OnSearchListener() {
+				@Override public void onSearch(SearchBar searchBar, Editable text) {
+					search(text.toString());
+				}
+			});
+			// the background of the search bar is bright, so let's make all text black
+			cFilterOlds.setTextColor(0xff000000);
+			cFilterNews.setTextColor(0xff000000);
+			cFilterSingleBook.setTextColor(0xff000000);
+			tFilterAdvanced.setTextColor(0xff000000);
+		}
+		
+>>>>>>> hotfix/3.5.6
 		lsSearchResults.setBackgroundColor(S.applied.backgroundColor);
 		lsSearchResults.setCacheColorHint(S.applied.backgroundColor);
 		
@@ -103,7 +168,7 @@ public class Search2Activity extends BaseActivity {
 		lsSearchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				int ari = adapter.getSearchResults().get(position);
-				startActivity(Launcher.openAppAtBibleLocation(ari));
+				startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
 			}
 		});
 		bEditFilter.setOnClickListener(new OnClickListener() {
@@ -131,8 +196,36 @@ public class Search2Activity extends BaseActivity {
 		if (usingRevIndex()) {
 			Search2Engine.preloadRevIndex();
 		}
-	}
 
+		// show current version on search placeholder
+		final ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			final String placeholderVersion;
+			final String shortName = S.activeVersion.getShortName();
+			if (shortName != null) {
+				placeholderVersion = shortName;
+			} else {
+				placeholderVersion = S.activeVersion.getLongName();
+			}
+
+			final String placeholder = getString(R.string.search_in_version_short_name_placeholder, placeholderVersion);
+
+			if (usingSearchView()) {
+				api11_compat.setQueryHint(placeholder);
+			} else {
+				searchBar.getSearchField().setHint(placeholder);
+			}
+		}
+	}
+<<<<<<< HEAD
+
+=======
+	
+	boolean usingSearchView() {
+		return VERSION.SDK_INT >= 11;
+	}
+	
+>>>>>>> hotfix/3.5.6
 	void configureFilterDisplayOldNewTest() {
 		// the following variables will have value:
 		// if some are off and some are on -> null.
@@ -276,7 +369,15 @@ public class Search2Activity extends BaseActivity {
 	
 	protected Query getQuery() {
 		Query res = new Query();
+<<<<<<< HEAD
 		res.query_string = searchView.getQuery().toString();
+=======
+		if (!usingSearchView()) {
+			res.query_string = searchBar.getText().toString();
+		} else {
+			res.query_string = api11_compat.getSearchViewQuery();
+		}
+>>>>>>> hotfix/3.5.6
 		res.bookIds = selectedBookIds;
 		return res;
 	}
@@ -405,9 +506,18 @@ public class Search2Activity extends BaseActivity {
 				if (result.size() > 0) {
 					//# close soft keyboard
 					InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+<<<<<<< HEAD
 					inputManager.hideSoftInputFromWindow(searchView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 					searchView.clearFocus();
 					lsSearchResults.requestFocus();
+=======
+					if (!usingSearchView()) {
+						inputManager.hideSoftInputFromWindow(searchBar.getSearchField().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+					} else {
+						api11_compat.hideSoftInputFromSearchView(inputManager);
+						lsSearchResults.requestFocus();
+					}
+>>>>>>> hotfix/3.5.6
 				}
 				
 				pd.setOnDismissListener(null);

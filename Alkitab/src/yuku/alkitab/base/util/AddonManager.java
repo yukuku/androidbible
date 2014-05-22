@@ -54,53 +54,51 @@ public class AddonManager {
 	}
 	
 	public static class DownloadThread extends Thread {
-		final Context appContext;
 		Semaphore sema = new Semaphore(0);
 		LinkedList<Element> queue = new LinkedList<Element>();
-		
-		public DownloadThread(Context appContext) {
-			this.appContext = appContext;
+		boolean isFinished = false;
+
+		public boolean isFinished() {
+			return isFinished;
 		}
-		
+
 		@Override
 		public void run() {
+			sema.acquireUninterruptibly();
+			Log.d(TAG, "DownloadThread sema count: " + sema.availablePermits()); //$NON-NLS-1$
+
 			while (true) {
-				sema.acquireUninterruptibly();
-				Log.d(TAG, "DownloadThread sema count: " + sema.availablePermits()); //$NON-NLS-1$
-				
-				while (true) {
-					Element e;
-					synchronized (this) {
-						if (queue.size() == 0) {
-							Log.d(TAG, "tiada lagi antrian donlot"); //$NON-NLS-1$
-							break;
-						}
-						
-						e = queue.poll();
+				Element e;
+				synchronized (this) {
+					if (queue.size() == 0) {
+						Log.d(TAG, "No more to download");
+						break;
 					}
-					
-					download(e);
+
+					e = queue.poll();
 				}
+
+				download(e);
 			}
+
+			isFinished = true;
 		}
 		
 		private void download(Element e) {
-			new File(e.dest).delete(); // hapus dulu.. jangan2 kacau
-			
-			String tmpfile = e.dest + "-" + (int)(Math.random() * 100000) + ".tmp";  //$NON-NLS-1$//$NON-NLS-2$
-			
+			final AtomicFile atomicFile = new AtomicFile(new File(e.dest));
+			atomicFile.delete(); // delete it first, just in case
+
 			boolean mkdirOk = mkYesDir();
 			if (!mkdirOk) {
-				if (e.listener != null) e.listener.onDownloadFailed(e, appContext.getString(R.string.tidak_bisa_membuat_folder, getYesPath()), null);
+				if (e.listener != null) e.listener.onDownloadFailed(e, App.context.getString(R.string.tidak_bisa_membuat_folder, getYesPath()), null);
 				return;
 			}
-			
-			PowerManager pm = (PowerManager) appContext.getSystemService(Context.POWER_SERVICE);
+
+			PowerManager pm = (PowerManager) App.context.getSystemService(Context.POWER_SERVICE);
 			WakeLock wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "donlot"); //$NON-NLS-1$
 			wakelock.setReferenceCounted(false);
 			wakelock.acquire();
 
-			final AtomicFile atomicFile = new AtomicFile(new File(e.dest));
 			FileOutputStream os = null;
 			try {
 				os = atomicFile.startWrite();
@@ -143,9 +141,6 @@ public class AddonManager {
 				if (e.listener != null) e.listener.onDownloadFailed(e, null, ex);
 			} finally {
 				wakelock.release();
-				
-				Log.d(TAG, "deleting tmpfile: " + tmpfile); //$NON-NLS-1$
-				new File(tmpfile).delete();
 			}
 		}
 
@@ -174,10 +169,9 @@ public class AddonManager {
 	
 	private static DownloadThread downloadThread;
 	
-	public synchronized static DownloadThread getDownloadThread(Context appContext) {
-		if (downloadThread == null) {
-			downloadThread = new DownloadThread(appContext);
-			downloadThread.start();
+	public synchronized static DownloadThread getDownloadThread() {
+		if (downloadThread == null || downloadThread.isFinished()) {
+			downloadThread = new DownloadThread();
 		}
 		return downloadThread;
 	}

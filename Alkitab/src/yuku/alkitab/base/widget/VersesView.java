@@ -82,11 +82,30 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		void onVerseScrollStateChange(VersesView versesView, int scrollState);
 	}
 	
-	public enum PressResult {
+	public enum PressKind {
 		left,
 		right,
 		consumed,
 		nop,
+	}
+
+	public static class PressResult {
+		public final PressKind kind;
+		public final int targetVerse_1;
+
+		public static PressResult LEFT = new PressResult(PressKind.left);
+		public static PressResult RIGHT = new PressResult(PressKind.right);
+		public static PressResult NOP = new PressResult(PressKind.nop);
+
+		private PressResult(final PressKind kind) {
+			this.kind = kind;
+			this.targetVerse_1 = 0;
+		}
+
+		public PressResult(final PressKind kind, final int targetVerse_1) {
+			this.kind = kind;
+			this.targetVerse_1 = targetVerse_1;
+		}
 	}
 
 	private VerseAdapter adapter;
@@ -98,15 +117,24 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	private AbsListView.OnScrollListener userOnScrollListener;
 	private int scrollState = 0;
 	private View[] scrollToVerseConvertViews;
-	
+	private String name;
+	private boolean firstTimeScroll = true;
+
 	public VersesView(Context context) {
 		super(context);
 		init();
 	}
-	
+
 	public VersesView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init();
+	}
+
+	/**
+	 * Set the name of this VersesView for debugging.
+	 */
+	public void setName(final String name) {
+		this.name = name;
 	}
 
 	private void init() {
@@ -268,7 +296,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		
 		SparseBooleanArray checkedPositions = getCheckedItemPositions();
 		boolean anyChecked = false;
-		for (int i = 0; i < checkedPositions.size(); i++) if (checkedPositions.valueAt(i)) {
+		if (checkedPositions != null) for (int i = 0; i < checkedPositions.size(); i++) if (checkedPositions.valueAt(i)) {
 			anyChecked = true;
 			break;
 		}
@@ -320,10 +348,10 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		String volumeButtonsForNavigation = Preferences.getString(getContext().getString(R.string.pref_volumeButtonNavigation_key), getContext().getString(R.string.pref_volumeButtonNavigation_default));
 		if (U.equals(volumeButtonsForNavigation, "pasal" /* chapter */)) { //$NON-NLS-1$
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-				return PressResult.right;
+				return PressResult.LEFT;
 			}
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-				return PressResult.left;
+				return PressResult.RIGHT;
 			}
 		} else if (U.equals(volumeButtonsForNavigation, "ayat" /* verse */)) { //$NON-NLS-1$
 			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) keyCode = KeyEvent.KEYCODE_DPAD_DOWN;
@@ -331,29 +359,32 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		}
 
 		if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-			int oldPos = getPositionBasedOnScroll();
-			if (oldPos < adapter.getCount() - 1) {
-				stopFling();
-				setSelectionFromTop(oldPos+1, getVerticalFadingEdgeLength());
-			}
-			return PressResult.consumed;
-		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-			int oldPos = getPositionBasedOnScroll();
-			if (oldPos >= 1) {
-				int newPos = oldPos - 1;
-				while (newPos > 0) { // cek disabled, kalo iya, mundurin lagi
-					if (adapter.isEnabled(newPos)) break;
-					newPos--;
-				}
-				stopFling();
-				setSelectionFromTop(newPos, getVerticalFadingEdgeLength());
+			final int oldVerse_1 = getVerseBasedOnScroll();
+			final int newVerse_1;
+
+			stopFling();
+			if (oldVerse_1 < adapter.getVerseCount()) {
+				newVerse_1 = oldVerse_1 + 1;
 			} else {
-				stopFling();
-				setSelectionFromTop(0, getVerticalFadingEdgeLength());
+				newVerse_1 = oldVerse_1;
 			}
-			return PressResult.consumed;
+			scrollToVerse(newVerse_1);
+			return new PressResult(PressKind.consumed, newVerse_1);
+		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+			final int oldVerse_1 = getVerseBasedOnScroll();
+			final int newVerse_1;
+
+			stopFling();
+			if (oldVerse_1 > 1) { // can still go prev
+				newVerse_1 = oldVerse_1 - 1;
+			} else {
+				newVerse_1 = oldVerse_1;
+			}
+			scrollToVerse(newVerse_1);
+			return new PressResult(PressKind.consumed, newVerse_1);
 		}
-		return PressResult.nop;
+
+		return PressResult.NOP;
 	}
 
 	public void setDataWithRetainSelectedVerses(boolean retainSelectedVerses, Book book, int chapter_1, int[] pericope_aris, PericopeBlock[] pericope_blocks, int nblock, SingleChapterVerses verses) {
@@ -383,21 +414,45 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		}
 	}
 
-	public void scrollToVerse(int verse_1) {
+	public void setVerseSelected(final int verse_1, final boolean selected) {
+		int pos = adapter.getPositionIgnoringPericopeFromVerse(verse_1);
+		if (pos != -1) {
+			setItemChecked(pos, selected);
+			if (listener != null) {
+				final IntArrayList selectedVerses_1 = getSelectedVerses_1();
+				if (selectedVerses_1.size() > 0) {
+					listener.onSomeVersesSelected(this);
+				} else {
+					listener.onNoVersesSelected(this);
+				}
+			}
+		}
+	}
+
+	public void scrollToVerse(final int verse_1) {
 		final int position = adapter.getPositionOfPericopeBeginningFromVerse(verse_1);
-		
+
+		if (BuildConfig.DEBUG) Log.d(TAG, this + " @@scrollToVerse begin verse_1=" + verse_1 + " position=" + position, new Throwable().fillInStackTrace());
+
 		if (position == -1) {
-			Log.w(TAG, "could not find verse=" + verse_1 + ", weird!"); //$NON-NLS-1$ //$NON-NLS-2$
+			Log.w(TAG, "could not find verse_1=" + verse_1 + ", weird!");
 		} else {
-			post(new Runnable() {
-				@Override public void run() {
+			final int delay = firstTimeScroll? 34: 0;
+
+			postDelayed(new Runnable() {
+				@Override
+				public void run() {
 					// this may happen async from above, so check first if pos is still valid
 					if (position >= getCount()) return;
-					
+
+					if (BuildConfig.DEBUG) Log.d(TAG, VersesView.this + " @@scrollToVerse post verse_1=" + verse_1 + " position=" + position, new Throwable().fillInStackTrace());
+
 					stopFling();
 					setSelectionFromTop(position, getVerticalFadingEdgeLength());
+
+					firstTimeScroll = false;
 				}
-			});
+			}, delay);
 		}
 	}
 	
@@ -405,7 +460,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		final int position = adapter.getPositionIgnoringPericopeFromVerse(verse_1);
 		
 		if (position == -1) {
-			Log.w(TAG, "could not find verse=" + verse_1 + ", weird!"); //$NON-NLS-1$ //$NON-NLS-2$
+			Log.w(TAG, "could not find verse_1=" + verse_1 + ", weird!");
 		} else {
 			post(new Runnable() {
 				@Override public void run() {
@@ -522,5 +577,10 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 
 	public void updateAdapter() {
 		adapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public String toString() {
+		return name != null? ("VersesView{name=" + name + "}"): "VersesView";
 	}
 }
