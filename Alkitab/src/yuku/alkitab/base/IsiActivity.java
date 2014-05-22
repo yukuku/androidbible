@@ -573,7 +573,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 
-	private IntentResult checkAndProcessBeamIntent(Intent intent) {
+	private IntentResult tryGetIntentResultFromBeam(Intent intent) {
 		String action = intent.getAction();
 		if (!U.equals(action, NfcAdapter.ACTION_NDEF_DISCOVERED)) return null;
 
