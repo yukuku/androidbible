@@ -3,10 +3,12 @@ package yuku.alkitab.base.widget;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -69,6 +71,13 @@ public class TextAppearancePanel {
 		this.reqcodeGetFonts = reqcodeGetFonts;
 		this.reqcodeCustomColors = reqcodeCustomColors;
 		this.content = inflater.inflate(R.layout.panel_text_appearance, parent, false);
+
+		this.content.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(final View v, final MotionEvent event) {
+				return true; // prevent click-through
+			}
+		});
 	    
 	    cbTypeface = V.get(content, R.id.cbTypeface);
 	    cBold = V.get(content, R.id.cBold);
@@ -249,7 +258,12 @@ public class TextAppearancePanel {
 			TextView text1 = V.get(view, android.R.id.text1);
 			
 			if (position < 3) {
-				text1.setText(new String[] {"Sans-serif", "Serif", "Monospace"}[position]);
+				final String[] defaultFontNames = {"Roboto", "Droid Serif", "Droid Mono"};
+				if (Build.VERSION.SDK_INT < 14) {
+					defaultFontNames[0] = "Droid Sans";
+				}
+
+				text1.setText(defaultFontNames[position]);
 				text1.setTypeface(new Typeface[] {Typeface.SANS_SERIF, Typeface.SERIF, Typeface.MONOSPACE}[position]);
 			} else if (position == getCount() - 1) {
 				text1.setText(App.context.getString(R.string.get_more_fonts));
