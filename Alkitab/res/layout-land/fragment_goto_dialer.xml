@@ -35,7 +35,8 @@
                 android:minWidth="48sp"
                 android:text="1"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                tools:ignore="HardcodedText" />
+                tools:ignore="HardcodedText"
+                android:fontFamily="sans-serif-light"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -53,7 +54,8 @@
                 android:minWidth="48sp"
                 android:text="1"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                tools:ignore="HardcodedText" />
+                tools:ignore="HardcodedText"
+                android:fontFamily="sans-serif-light"/>
         </LinearLayout>
 
         <include

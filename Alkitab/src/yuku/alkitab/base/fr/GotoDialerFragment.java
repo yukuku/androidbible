@@ -297,7 +297,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 	}
 
 	private void colorize() {
-		if (active != null) active.setBackgroundColor(0xff33b5e5);
+		if (active != null) active.setBackgroundColor(0xffcfcfcf);
 		if (passive != null) passive.setBackgroundColor(0x0);
 	}
 
@@ -340,18 +340,22 @@ public class GotoDialerFragment extends BaseGotoFragment {
 
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
 			TextView res = (TextView) (convertView != null ? convertView : LayoutInflater.from(getActivity()).inflate(android.R.layout.simple_spinner_item, parent, false));
+
+			final Book book = getItem(position);
 			res.setText(booksc_[position].shortName);
 			res.setTextSize(18);
+			res.setTextColor(U.getForegroundColorByBookId(book.bookId));
+
 			return res;
 		}
 
 		@Override public View getDropDownView(int position, View convertView, ViewGroup parent) {
 			CheckedTextView res = (CheckedTextView) (convertView != null ? convertView : LayoutInflater.from(getActivity()).inflate(android.R.layout.simple_spinner_dropdown_item, parent, false));
 
-			Book k = getItem(position);
-			res.setText(k.shortName);
+			final Book book = getItem(position);
+			res.setText(book.shortName);
 			res.setTextSize(18);
-			res.setTextColor(U.getColorBasedOnBookId(k.bookId));
+			res.setTextColor(U.getForegroundColorByBookId(book.bookId));
 
 			return res;
 		}

@@ -2,6 +2,10 @@ package yuku.alkitab.base.fr;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.InsetDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.style.UnderlineSpan;
@@ -153,7 +157,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 	
 	protected void displaySelectedBookAndChapter() {
 		lSelectedBook.setText(underline(selectedBook.shortName));
-		lSelectedBook.setTextColor(U.getColorBasedOnBookId(selectedBook.bookId));
+		lSelectedBook.setTextColor(U.getForegroundColorByBookId(selectedBook.bookId));
 		if (selectedChapter == 0) {
 			lSelectedChapter.setVisibility(View.GONE);
 		} else {
@@ -199,13 +203,11 @@ public class GotoGridFragment extends BaseGotoFragment {
 	}
 	
 	abstract class GridAdapter extends EasyAdapter {
-		float density = getResources().getDisplayMetrics().density;
-		
 		@Override public View newView(int position, ViewGroup parent) {
 			TextView res = new TextView(getActivity());
 			res.setLayoutParams(new GridView.LayoutParams(getResources().getDimensionPixelSize(R.dimen.goto_grid_cell_width), getResources().getDimensionPixelSize(R.dimen.goto_grid_cell_height)));
 			res.setGravity(Gravity.CENTER);
-			res.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
+			res.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
 			return res;
 		}
 		
@@ -213,12 +215,19 @@ public class GotoGridFragment extends BaseGotoFragment {
 			TextView lName = (TextView) view;
 			lName.setText(textForView(position));
 			lName.setTextColor(textColorForView(position));
+			final ColorDrawable color = new ColorDrawable(backgroundColorForView(position));
+			final InsetDrawable bg = new InsetDrawable(color, getResources().getDimensionPixelOffset(R.dimen.goto_grid_cell_inset));
+			lName.setBackgroundDrawable(bg);
 		}
 		
 		abstract CharSequence textForView(int position);
 		
 		int textColorForView(int position) {
-			return 0xff000000;
+			return 0xffffffff;
+		}
+
+		int backgroundColorForView(int position) {
+			return 0xff666666;
 		}
 	}
 	
@@ -247,11 +256,11 @@ public class GotoGridFragment extends BaseGotoFragment {
 			
 			return BookNameSorter.getBookAbbr(book);
 		}
-		
-		@Override int textColorForView(int position) {
-			Book book = getItem(position);
-			
-			return U.getColorBasedOnBookId(book.bookId);
+
+		@Override
+		int backgroundColorForView(final int position) {
+			final Book book = getItem(position);
+			return U.getBackgroundColorByBookId(book.bookId);
 		}
 	}
 	

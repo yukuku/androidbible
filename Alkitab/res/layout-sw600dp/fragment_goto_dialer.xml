@@ -55,7 +55,8 @@
                     android:text="1"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="36sp"
-                    tools:ignore="HardcodedText" />
+                    tools:ignore="HardcodedText"
+                    android:fontFamily="sans-serif-light"/>
 
                 <TextView
                     android:id="@+id/tVerseLabel"
@@ -80,7 +81,8 @@
                     android:text="2"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="36sp"
-                    tools:ignore="HardcodedText" />
+                    tools:ignore="HardcodedText"
+                    android:fontFamily="sans-serif-light"/>
             </LinearLayout>
         </LinearLayout>
 
