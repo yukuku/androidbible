@@ -643,7 +643,7 @@ public class VersionsActivity extends BaseActivity {
 	}
 	
 	void handleFileOpenYes(String filename, String originalpdbname) {
-		{ // cari dup
+		{ // look for duplicates
 			boolean dup = false;
 			AppConfig c = AppConfig.get();
 			for (MVersionPreset preset: c.presets) {
@@ -696,7 +696,7 @@ public class VersionsActivity extends BaseActivity {
 	private void handleFileOpenPdb(final String pdbFilename) {
 		final String yesName = yesName(pdbFilename);
 		
-		// cek apakah sudah ada.
+		// check if it exists previously
 		if (S.getDb().hasYesVersionWithFilename(AddonManager.getVersionPath(yesName))) {
 			new AlertDialog.Builder(this)
 			.setMessage(R.string.ed_this_file_is_already_on_the_list)
