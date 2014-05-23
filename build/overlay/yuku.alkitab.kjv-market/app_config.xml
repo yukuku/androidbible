@@ -13,6 +13,7 @@
 		<preset locale="en"   shortName="BBE"     longName="Bible in Basic English" filename_preset="en-bbe.yes" url="https://alkitab-host.appspot.com/addon/yes2/en-bbe--1.yes.gz" />
 		<preset locale="en"   shortName="DARBY"   longName="Darby" filename_preset="en-darby.yes" url="https://alkitab-host.appspot.com/addon/yes2/en-darby--1.yes.gz" />
 		<preset locale="en"   shortName="DRA"     longName="Douay-Rheims" filename_preset="en-douayrheims.yes" url="https://alkitab-host.appspot.com/addon/yes2/en-douayrheims--1.yes.gz" />
+		<preset locale="en"   shortName="KJ2000"  longName="King James 2000" filename_preset="en-kj2000.yes" url="https://alkitab-host.appspot.com/addon/yes2/en-kj2000--1.yes.gz" />
 		<preset locale="en"   shortName="LEB"     longName="Lexham English Bible" filename_preset="en-leb.yes" url="https://alkitab-host.appspot.com/addon/yes2/en-leb--1.yes.gz" />
 		<preset locale="en"   shortName="NET"     longName="New English Translation" filename_preset="en-net.yes" url="https://alkitab-host.appspot.com/addon/yes2/en-net--1.yes.gz" />
 		<preset locale="en"   shortName="WBS"     longName="Webster" filename_preset="en-webster.yes" url="https://alkitab-host.appspot.com/addon/yes2/en-webster--1.yes.gz" />

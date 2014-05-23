@@ -39,7 +39,8 @@
                     android:layout_height="fill_parent"
                     android:layout_marginRight="8dp"
                     android:gravity="fill_vertical"
-                    android:text="@string/pasal_sebelumangka" />
+                    android:text="@string/pasal_sebelumangka"
+                    />
 
                 <TextView
                     android:id="@+id/tChapter"
@@ -54,7 +55,8 @@
                     android:text="1"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="24sp"
-                    tools:ignore="HardcodedText" />
+                    tools:ignore="HardcodedText"
+                    android:fontFamily="sans-serif-light"/>
 
                 <TextView
                     android:id="@+id/tVerseLabel"
@@ -63,7 +65,8 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="8dp"
                     android:gravity="center_vertical"
-                    android:text="@string/ayat_sebelumangka" />
+                    android:text="@string/ayat_sebelumangka"
+                    />
 
                 <TextView
                     android:id="@+id/tVerse"
@@ -78,7 +81,8 @@
                     android:text="2"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="24sp"
-                    tools:ignore="HardcodedText" />
+                    tools:ignore="HardcodedText"
+                    android:fontFamily="sans-serif-light"/>
             </LinearLayout>
         </LinearLayout>
 
