@@ -12,6 +12,7 @@ import android.os.SystemClock;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.widget.PopupMenu;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -30,6 +31,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.devotion.ArticleMeidA;
 import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
@@ -55,7 +57,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 	private static final int REQCODE_share = 1;
 
-	static ThreadLocal<SimpleDateFormat> date_format = new ThreadLocal<SimpleDateFormat>() {
+	static final ThreadLocal<SimpleDateFormat> date_format = new ThreadLocal<SimpleDateFormat>() {
 		@Override protected SimpleDateFormat initialValue() {
 			return new SimpleDateFormat("yyyyMMdd", Locale.US); //$NON-NLS-1$
 		}
@@ -67,6 +69,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 	public enum DevotionKind {
 		SH("sh", "Santapan Harian"),
+		MEID_A("meid-a", "Renungan Pagi"),
 		RH("rh", "Renungan Harian"),
 		ME_EN("me-en", "Morning & Evening"),
 		;
@@ -93,6 +96,8 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			switch (this) {
 				case SH:
 					return new ArticleSantapanHarian(date);
+				case MEID_A:
+					return new ArticleMeidA(date);
 				case RH:
 					return new ArticleRenunganHarian(date);
 				case ME_EN:
@@ -334,12 +339,23 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 				currentDate.setTime(currentDate.getTime() + 3600*24*1000);
 				display();
 			} else if (id == R.id.bChange) {
-				int index = currentKind.ordinal();
-				final DevotionKind[] values = DevotionKind.values();
-				index = (index + 1) % values.length;
-				currentKind = values[index];
-				Preferences.setString(Prefkey.devotion_last_kind_name, currentKind.name);
-				display();
+				final PopupMenu pop = new PopupMenu(DevotionActivity.this, lContent);
+				final Menu menu = pop.getMenu();
+				for (final DevotionKind kind : DevotionKind.values()) {
+					menu.add(0, kind.ordinal(), 0, kind.title);
+				}
+				pop.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+					@Override
+					public boolean onMenuItemClick(final MenuItem menuItem) {
+						final int itemId = menuItem.getItemId();
+						final DevotionKind[] values = DevotionKind.values();
+						currentKind = values[itemId];
+						Preferences.setString(Prefkey.devotion_last_kind_name, currentKind.name);
+						display();
+						return true;
+					}
+				});
+				pop.show();
 			}
 		}
 	};
@@ -409,7 +425,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		if (article == null) {
 			Log.d(TAG, "rendering null article"); //$NON-NLS-1$
 		} else {
-			Log.d(TAG, "rendering article name=" + article.getName() + " date=" + article.getDate() + " readyToUse=" + article.getReadyToUse()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Log.d(TAG, "rendering article name=" + article.getKind().name + " date=" + article.getDate() + " readyToUse=" + article.getReadyToUse());
 		}
 		
 		if (article != null && article.getReadyToUse()) {
@@ -538,6 +554,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 							case ME_EN:
 								chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.ccel.org/ccel/spurgeon/morneve.d" + date_format.get().format(currentDate) + "am.html"); // change text to url //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 								break;
+							// TODO
 						}
 					}
 					startActivity(chosenIntent);

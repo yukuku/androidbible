@@ -1,5 +1,6 @@
 package yuku.alkitab.base.devotion;
 
+import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.widget.CallbackSpan;
 
 
@@ -8,10 +9,8 @@ public interface DevotionArticle {
 	String getDate();
 	boolean getReadyToUse();
 	
-	//# dipake buat orang luar
-	String getName();
-	String getDevotionTitle();
-	String getUrl();
+	//# used by external
+	DevotionActivity.DevotionKind getKind();
 	String getRawEncoding();
 	
 	/**
