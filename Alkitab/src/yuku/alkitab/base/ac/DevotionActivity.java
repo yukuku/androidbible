@@ -12,7 +12,6 @@ import android.os.SystemClock;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.widget.PopupMenu;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -197,7 +196,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 		scrollContent.setBackgroundColor(S.applied.backgroundColor);
 		
-		popup = new DevotionSelectPopup(this);
+		popup = new DevotionSelectPopup(getSupportActionBar().getThemedContext());
 		popup.setDevotionSelectListener(popup_listener);
 		
 		final DevotionKind storedKind = DevotionKind.getByName(Preferences.getString(Prefkey.devotion_last_kind_name, DEFAULT_DEVOTION_KIND.name));
@@ -338,29 +337,17 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			} else if (id == R.id.bNext) {
 				currentDate.setTime(currentDate.getTime() + 3600*24*1000);
 				display();
-			} else if (id == R.id.bChange) {
-				final PopupMenu pop = new PopupMenu(DevotionActivity.this, lContent);
-				final Menu menu = pop.getMenu();
-				for (final DevotionKind kind : DevotionKind.values()) {
-					menu.add(0, kind.ordinal(), 0, kind.title);
-				}
-				pop.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-					@Override
-					public boolean onMenuItemClick(final MenuItem menuItem) {
-						final int itemId = menuItem.getItemId();
-						final DevotionKind[] values = DevotionKind.values();
-						currentKind = values[itemId];
-						Preferences.setString(Prefkey.devotion_last_kind_name, currentKind.name);
-						display();
-						return true;
-					}
-				});
-				pop.show();
 			}
+		}
+
+		@Override
+		public void onDevotionSelect(final DevotionSelectPopup popup, final DevotionKind kind) {
+			currentKind = kind;
+			Preferences.setString(Prefkey.devotion_last_kind_name, currentKind.name);
+			display();
 		}
 	};
 
-	
 	void display() {
 		displayRepeater.removeMessages(0);
 		
@@ -454,7 +441,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			getSupportActionBar().setSubtitle(dateDisplay);
 			
 			// popup texts
-			popup.setDevotionName(title);
+			popup.setDevotionKind(currentKind);
 			popup.setDevotionDate(dateDisplay);
 		}
 	}

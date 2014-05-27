@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" >
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -11,40 +11,40 @@
         android:background="@drawable/popup"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="12dp" >
+        android:padding="12dp">
 
-        <Button
-            android:id="@+id/bChange"
-            style="@style/DevotionSelectChangeButton"
+        <Spinner
+            android:id="@+id/cbKind"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:spinnerMode="dialog"
             android:text="*devotion name"
-            tools:ignore="HardcodedText" />
+            tools:ignore="HardcodedText"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/bPrev"
-                style="@style/DevotionSelectNavButton"
                 android:contentDescription="@string/desc_previous_day"
-                android:src="@drawable/ic_nav_left_dark" />
+                android:src="@drawable/ic_nav_left_dark"
+                style="@style/DevotionSelectNavButton"/>
 
             <TextView
                 android:id="@+id/tCurrentDate"
-                style="@style/DevotionSelectCurrentDate"
                 android:text="*current date"
                 android:textAppearance="?android:attr/textAppearanceSmallInverse"
                 android:textColor="#ddd"
-                tools:ignore="HardcodedText" />
+                style="@style/DevotionSelectCurrentDate"
+                tools:ignore="HardcodedText"/>
 
             <ImageButton
                 android:id="@+id/bNext"
-                style="@style/DevotionSelectNavButton"
                 android:contentDescription="@string/desc_next_day"
-                android:src="@drawable/ic_nav_right_dark" />
+                android:src="@drawable/ic_nav_right_dark"
+                style="@style/DevotionSelectNavButton"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -53,6 +53,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/arrow_up"
-        tools:ignore="ContentDescription" />
+        tools:ignore="ContentDescription"/>
 
 </RelativeLayout>
