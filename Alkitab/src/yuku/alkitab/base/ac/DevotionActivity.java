@@ -67,18 +67,20 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	}
 
 	public enum DevotionKind {
-		SH("sh", "Santapan Harian"),
-		MEID_A("meid-a", "Renungan Pagi"),
-		RH("rh", "Renungan Harian"),
-		ME_EN("me-en", "Morning & Evening"),
+		SH("sh", "Santapan Harian", "Persekutuan Pembaca Alkitab"),
+		MEID_A("meid-a", "Renungan Pagi", "Charles H. Spurgeon"),
+		RH("rh", "Renungan Harian", "Yayasan Gloria"),
+		ME_EN("me-en", "Morning & Evening", "Charles H. Spurgeon"),
 		;
 
 		public final String name;
 		public final String title;
+		public final String subtitle;
 
-		DevotionKind(final String name, final String title) {
+		DevotionKind(final String name, final String title, final String subtitle) {
 			this.name = name;
 			this.title = title;
+			this.subtitle = subtitle;
 		}
 
 		public static DevotionKind getByName(String name) {
@@ -382,7 +384,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 				ari = Integer.parseInt(reference.substring(4));
 			} else {
 				Jumper jumper = new Jumper(reference);
-				if (! jumper.getParseSucceeded()) {
+				if (!jumper.getParseSucceeded()) {
 					new AlertDialog.Builder(DevotionActivity.this)
 					.setMessage(getString(R.string.alamat_tidak_sah_alamat, reference))
 					.setPositiveButton(R.string.ok, null)
@@ -391,20 +393,19 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 				}
 
 				// Make sure references are parsed using Indonesian book names.
-				// TODO support english devotions too
 				String[] bookNames = getResources().getStringArray(R.array.standard_book_names_in);
 				int[] bookIds = new int[bookNames.length];
 				for (int i = 0, len = bookNames.length; i < len; i++) {
 					bookIds[i] = i;
 				}
-	
+
 				int bookId = jumper.getBookId(bookNames, bookIds);
 				int chapter_1 = jumper.getChapter();
 				int verse_1 = jumper.getVerse();
 				ari = Ari.encode(bookId, chapter_1, verse_1);
 			}
 
-			startActivity(Launcher.openAppAtBibleLocation(ari));
+			startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
 		}
 	};
 

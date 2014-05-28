@@ -2,6 +2,8 @@ package yuku.alkitab.base.widget;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.text.SpannableStringBuilder;
+import android.text.style.RelativeSizeSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,12 +64,21 @@ public class DevotionSelectPopup extends PopupWindows implements PopupWindow.OnD
 
 			@Override
 			public void bindView(final View view, final int position, final ViewGroup parent) {
-				((TextView) view).setText(DevotionActivity.DevotionKind.values()[position].title);
+				final DevotionActivity.DevotionKind kind = DevotionActivity.DevotionKind.values()[position];
+				final SpannableStringBuilder sb = new SpannableStringBuilder();
+				sb.append(kind.title);
+				sb.append("\n");
+				final int sb_len = sb.length();
+				sb.append(kind.subtitle);
+				sb.setSpan(new RelativeSizeSpan(0.6f), sb_len, sb.length(), 0);
+				((TextView) view).setText(sb);
 			}
 
 			@Override
 			public View newDropDownView(final int position, final ViewGroup parent) {
-				return LayoutInflater.from(context).inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
+				final TextView res = (TextView) LayoutInflater.from(context).inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
+				res.setSingleLine(false);
+				return res;
 			}
 
 			@Override
