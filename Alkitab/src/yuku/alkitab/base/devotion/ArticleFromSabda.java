@@ -108,7 +108,7 @@ public abstract class ArticleFromSabda implements DevotionArticle {
 		
 		ArticleFromSabda x = (ArticleFromSabda) o;
 		
-		if (x.date.equals(date) && x.getName().equals(getName())) {
+		if (x.date.equals(date) && x.getKind().equals(getKind())) {
 			return true;
 		}
 		
@@ -117,7 +117,7 @@ public abstract class ArticleFromSabda implements DevotionArticle {
 	
 	@Override
 	public int hashCode() {
-		return date.hashCode() * 31 + getName().hashCode();
+		return date.hashCode() * 31 + getKind().name.hashCode();
 	}
 	
 	@Override
@@ -128,11 +128,6 @@ public abstract class ArticleFromSabda implements DevotionArticle {
 	@Override
 	public String getDate() {
 		return date;
-	}
-	
-	@Override
-	public String getUrl() {
-		return "https://alkitab-host.appspot.com/devotion/get?name=" + getName() + "&date=" + date; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	@Override public String[] getHeaderTitleBody() {

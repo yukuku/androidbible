@@ -16,7 +16,9 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 import yuku.afw.D;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.BookmarkListActivity;
+import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
+import yuku.alkitab.base.devotion.ArticleMeidA;
 import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
@@ -451,10 +453,10 @@ public class InternalDb {
 		db.beginTransaction();
 		try {
 			// first delete the existing
-			db.delete(Db.TABLE_Devotion, Db.Devotion.name + "=? and " + Db.Devotion.date + "=?", new String[] {article.getName(), article.getDate()}); //$NON-NLS-1$ //$NON-NLS-2$
+			db.delete(Db.TABLE_Devotion, Db.Devotion.name + "=? and " + Db.Devotion.date + "=?", new String[] {article.getKind().name, article.getDate()});
 
 			ContentValues values = new ContentValues();
-			values.put(Db.Devotion.name, article.getName());
+			values.put(Db.Devotion.name, article.getKind().name);
 			values.put(Db.Devotion.date, article.getDate());
 			values.put(Db.Devotion.readyToUse, article.getReadyToUse()? 1: 0);
 
@@ -495,31 +497,38 @@ public class InternalDb {
 			int col_body = c.getColumnIndexOrThrow(Db.Devotion.body);
 			int col_readyToUse = c.getColumnIndexOrThrow(Db.Devotion.readyToUse);
 
-			if (c.moveToNext()) {
-				DevotionArticle res = null;
-				if (name.equals("rh")) { //$NON-NLS-1$
-					res = new ArticleRenunganHarian(
-					date,
-					c.getString(col_title),
-					c.getString(col_header),
-					c.getString(col_body),
-					c.getInt(col_readyToUse) > 0
-					);
-				} else if (name.equals("sh")) { //$NON-NLS-1$
-					res = new ArticleSantapanHarian(
-					date,
-					c.getString(col_title),
-					c.getString(col_header),
-					c.getString(col_body),
-					c.getInt(col_readyToUse) > 0
-					);
-				} else if (name.equals("me-en")) {
-					res = new ArticleMorningEveningEnglish(date, c.getString(col_body), true);
-				}
-
-				return res;
-			} else {
+			if (!c.moveToNext()) {
 				return null;
+			}
+
+			final DevotionActivity.DevotionKind kind = DevotionActivity.DevotionKind.getByName(name);
+			switch (kind) {
+				case RH: {
+					return new ArticleRenunganHarian(
+					date,
+					c.getString(col_title),
+					c.getString(col_header),
+					c.getString(col_body),
+					c.getInt(col_readyToUse) > 0
+					);
+				}
+				case SH: {
+					return new ArticleSantapanHarian(
+					date,
+					c.getString(col_title),
+					c.getString(col_header),
+					c.getString(col_body),
+					c.getInt(col_readyToUse) > 0
+					);
+				}
+				case ME_EN: {
+					return new ArticleMorningEveningEnglish(date, c.getString(col_body), true);
+				}
+				case MEID_A: {
+					return new ArticleMeidA(date, c.getString(col_body), c.getInt(col_readyToUse) > 0);
+				}
+				default:
+					return null;
 			}
 		} finally {
 			c.close();

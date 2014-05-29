@@ -3,11 +3,13 @@ package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
@@ -17,6 +19,7 @@ import android.util.Log;
 import android.util.Xml;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -41,7 +44,7 @@ import org.xml.sax.ext.DefaultHandler2;
 import yuku.afw.D;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.debug.R;
+import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -50,12 +53,13 @@ import yuku.alkitab.base.dialog.ChooseBackupFileDialog;
 import yuku.alkitab.base.dialog.ExportBookmarkDialog;
 import yuku.alkitab.base.dialog.LabelEditorDialog;
 import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
-import yuku.alkitab.model.Bookmark2;
-import yuku.alkitab.model.Label;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.BackupManager;
 import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.model.Bookmark2;
+import yuku.alkitab.model.Label;
 import yuku.ambilwarna.AmbilWarnaDialog;
 import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
 
@@ -234,22 +238,56 @@ public class BookmarkActivity extends BaseActivity implements ExportBookmarkDial
 			.show();
 			
 			return true;
-		} else if (itemId == R.id.menuSendBackup) {
+		} else if (itemId == R.id.menuTransfer) {
 			if (S.getDb().countAllBookmarks() == 0) {
 				msgbox(getString(R.string.no_bookmarks_for_backup));
 				return true;
 			}
-			
-			new AlertDialog.Builder(this)
-			.setMessage(R.string.bl_send_backup_confirmation)
-			.setNegativeButton(R.string.no, null)
-			.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-				@Override public void onClick(DialogInterface dialog, int which) {
-					exportBookmarks(true);
+
+
+			final AlertDialog.Builder b = new AlertDialog.Builder(this);
+			final Context dialogContext;
+			if (Build.VERSION.SDK_INT >= 11) {
+				dialogContext = b.getContext();
+			} else {
+				dialogContext = this;
+			}
+			b.setAdapter(new EasyAdapter() {
+				@Override
+				public View newView(final int position, final ViewGroup parent) {
+					return LayoutInflater.from(dialogContext).inflate(R.layout.item_marker_transfer_choice, parent, false);
 				}
-			})
-			.show();
-			
+
+				@Override
+				public void bindView(final View view, final int position, final ViewGroup parent) {
+					TextView tTitle = V.get(view, R.id.tTitle);
+					TextView tDescription = V.get(view, R.id.tDescription);
+
+					if (position == 0) {
+						tTitle.setText(R.string.marker_transfer_to_device_title);
+						tDescription.setText(R.string.marker_transfer_to_device_description);
+					} else {
+						tTitle.setText(R.string.marker_transfer_to_computer_title);
+						tDescription.setText(R.string.marker_transfer_to_computer_description);
+					}
+				}
+
+				@Override
+				public int getCount() {
+					return 2;
+				}
+			}, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(final DialogInterface dialog, final int which) {
+					if (which == 0) {
+						exportBookmarks(true);
+					} else {
+						final FragmentManager fm = getSupportFragmentManager();
+						new ExportBookmarkDialog().show(fm, "export_dialog");
+					}
+				}
+			});
+			b.show();
 			return true;
 		} else if (itemId == android.R.id.home) {
 			Intent upIntent = new Intent(this, IsiActivity.class);
@@ -264,11 +302,6 @@ public class BookmarkActivity extends BaseActivity implements ExportBookmarkDial
                 // sample code uses this: NavUtils.navigateUpTo(this, upIntent);
             	finish();
             }
-			return true;
-		} else if (itemId == R.id.menuExportBookmarks) {
-			FragmentManager fm = getSupportFragmentManager();
-			ExportBookmarkDialog dialog = new ExportBookmarkDialog();
-			dialog.show(fm, "export_dialog");
 			return true;
 		}
 		
@@ -419,10 +452,10 @@ public class BookmarkActivity extends BaseActivity implements ExportBookmarkDial
 
 						Intent intent = ShareCompat.IntentBuilder.from(BookmarkActivity.this)
 						.setStream(uri)
-						.setType("text/xml") //$NON-NLS-1$
-						.createChooserIntent();
+						.setType("text/xml")
+						.getIntent();
 
-						startActivity(intent);
+						startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bl_send_backup)), REQCODE_share);
 					}
 				} else if (result instanceof Throwable) {
 					msgbox(getString(R.string.terjadi_kesalahan_ketika_mengekspor_pesan, ((Throwable) result).getMessage()));

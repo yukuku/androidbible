@@ -5,6 +5,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.util.Log;
+import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.widget.CallbackSpan;
 
 import java.util.regex.Matcher;
@@ -21,13 +22,8 @@ public class ArticleRenunganHarian extends ArticleFromSabda {
 	}
 
 	@Override
-	public String getName() {
-		return "rh"; //$NON-NLS-1$
-	}
-	
-	@Override
-	public String getDevotionTitle() {
-		return "Renungan Harian"; //$NON-NLS-1$
+	public DevotionActivity.DevotionKind getKind() {
+		return DevotionActivity.DevotionKind.RH;
 	}
 
 	@Override public CharSequence getContent(CallbackSpan.OnClickListener verseClickListener) {
@@ -72,7 +68,7 @@ public class ArticleRenunganHarian extends ArticleFromSabda {
 		String copyrightHtml = "__________<br/>" +
 		"<small>Renungan Harian / e-Renungan Harian<br/>" +
 		"Bahan renungan yang diterbitkan secara teratur oleh Yayasan Gloria dan diterbitkan secara elektronik oleh Yayasan Lembaga SABDA (YLSA).<br/>" +
-		"© 1999-2013 Yayasan Lembaga SABDA (YLSA). <br/>" +
+		"© 1999-2014 Yayasan Lembaga SABDA (YLSA). <br/>" +
 		"Isi boleh disimpan untuk tujuan pribadi atau non-komersial. Atas setiap publikasi atau pencetakan wajib menyebutkan alamat situs SABDA.org sebagai sumber tulisan dan mengirim pemberitahuan ke webmaster@sabda.org</small>";
 
 		sb.append(Html.fromHtml(copyrightHtml));
