@@ -30,6 +30,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.devotion.ArticleMeidA;
 import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
@@ -55,7 +56,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 	private static final int REQCODE_share = 1;
 
-	static ThreadLocal<SimpleDateFormat> date_format = new ThreadLocal<SimpleDateFormat>() {
+	static final ThreadLocal<SimpleDateFormat> date_format = new ThreadLocal<SimpleDateFormat>() {
 		@Override protected SimpleDateFormat initialValue() {
 			return new SimpleDateFormat("yyyyMMdd", Locale.US); //$NON-NLS-1$
 		}
@@ -66,17 +67,20 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	}
 
 	public enum DevotionKind {
-		SH("sh", "Santapan Harian"),
-		RH("rh", "Renungan Harian"),
-		ME_EN("me-en", "Morning & Evening"),
+		SH("sh", "Santapan Harian", "Persekutuan Pembaca Alkitab"),
+		MEID_A("meid-a", "Renungan Pagi", "Charles H. Spurgeon"),
+		RH("rh", "Renungan Harian", "Yayasan Gloria"),
+		ME_EN("me-en", "Morning & Evening", "Charles H. Spurgeon"),
 		;
 
 		public final String name;
 		public final String title;
+		public final String subtitle;
 
-		DevotionKind(final String name, final String title) {
+		DevotionKind(final String name, final String title, final String subtitle) {
 			this.name = name;
 			this.title = title;
+			this.subtitle = subtitle;
 		}
 
 		public static DevotionKind getByName(String name) {
@@ -93,6 +97,8 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			switch (this) {
 				case SH:
 					return new ArticleSantapanHarian(date);
+				case MEID_A:
+					return new ArticleMeidA(date);
 				case RH:
 					return new ArticleRenunganHarian(date);
 				case ME_EN:
@@ -192,7 +198,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 		scrollContent.setBackgroundColor(S.applied.backgroundColor);
 		
-		popup = new DevotionSelectPopup(this);
+		popup = new DevotionSelectPopup(getSupportActionBar().getThemedContext());
 		popup.setDevotionSelectListener(popup_listener);
 		
 		final DevotionKind storedKind = DevotionKind.getByName(Preferences.getString(Prefkey.devotion_last_kind_name, DEFAULT_DEVOTION_KIND.name));
@@ -333,18 +339,17 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			} else if (id == R.id.bNext) {
 				currentDate.setTime(currentDate.getTime() + 3600*24*1000);
 				display();
-			} else if (id == R.id.bChange) {
-				int index = currentKind.ordinal();
-				final DevotionKind[] values = DevotionKind.values();
-				index = (index + 1) % values.length;
-				currentKind = values[index];
-				Preferences.setString(Prefkey.devotion_last_kind_name, currentKind.name);
-				display();
 			}
+		}
+
+		@Override
+		public void onDevotionSelect(final DevotionSelectPopup popup, final DevotionKind kind) {
+			currentKind = kind;
+			Preferences.setString(Prefkey.devotion_last_kind_name, currentKind.name);
+			display();
 		}
 	};
 
-	
 	void display() {
 		displayRepeater.removeMessages(0);
 		
@@ -379,7 +384,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 				ari = Integer.parseInt(reference.substring(4));
 			} else {
 				Jumper jumper = new Jumper(reference);
-				if (! jumper.getParseSucceeded()) {
+				if (!jumper.getParseSucceeded()) {
 					new AlertDialog.Builder(DevotionActivity.this)
 					.setMessage(getString(R.string.alamat_tidak_sah_alamat, reference))
 					.setPositiveButton(R.string.ok, null)
@@ -388,20 +393,19 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 				}
 
 				// Make sure references are parsed using Indonesian book names.
-				// TODO support english devotions too
 				String[] bookNames = getResources().getStringArray(R.array.standard_book_names_in);
 				int[] bookIds = new int[bookNames.length];
 				for (int i = 0, len = bookNames.length; i < len; i++) {
 					bookIds[i] = i;
 				}
-	
+
 				int bookId = jumper.getBookId(bookNames, bookIds);
 				int chapter_1 = jumper.getChapter();
 				int verse_1 = jumper.getVerse();
 				ari = Ari.encode(bookId, chapter_1, verse_1);
 			}
 
-			startActivity(Launcher.openAppAtBibleLocation(ari));
+			startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
 		}
 	};
 
@@ -409,7 +413,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		if (article == null) {
 			Log.d(TAG, "rendering null article"); //$NON-NLS-1$
 		} else {
-			Log.d(TAG, "rendering article name=" + article.getName() + " date=" + article.getDate() + " readyToUse=" + article.getReadyToUse()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Log.d(TAG, "rendering article name=" + article.getKind().name + " date=" + article.getDate() + " readyToUse=" + article.getReadyToUse());
 		}
 		
 		if (article != null && article.getReadyToUse()) {
@@ -438,7 +442,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			getSupportActionBar().setSubtitle(dateDisplay);
 			
 			// popup texts
-			popup.setDevotionName(title);
+			popup.setDevotionKind(currentKind);
 			popup.setDevotionDate(dateDisplay);
 		}
 	}
@@ -538,6 +542,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 							case ME_EN:
 								chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.ccel.org/ccel/spurgeon/morneve.d" + date_format.get().format(currentDate) + "am.html"); // change text to url //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 								break;
+							// TODO
 						}
 					}
 					startActivity(chosenIntent);

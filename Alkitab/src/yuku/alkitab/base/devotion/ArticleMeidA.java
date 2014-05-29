@@ -3,21 +3,20 @@ package yuku.alkitab.base.devotion;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.style.URLSpan;
-
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.widget.CallbackSpan;
 
-public class ArticleMorningEveningEnglish implements DevotionArticle {
-	public static final String TAG = ArticleMorningEveningEnglish.class.getSimpleName();
+public class ArticleMeidA implements DevotionArticle {
+	public static final String TAG = ArticleMeidA.class.getSimpleName();
 	private String date;
 	private String bodyHtml;
 	private boolean readyToUse;
-	
-	public ArticleMorningEveningEnglish(String date) {
+
+	public ArticleMeidA(String date) {
 		this.date = date;
 	}
 
-	public ArticleMorningEveningEnglish(String date, String bodyHtml, boolean readyToUse) {
+	public ArticleMeidA(String date, String bodyHtml, boolean readyToUse) {
 		this.date = date;
 		this.bodyHtml = bodyHtml;
 		this.readyToUse = readyToUse;
@@ -33,7 +32,7 @@ public class ArticleMorningEveningEnglish implements DevotionArticle {
 
 	@Override
 	public DevotionActivity.DevotionKind getKind() {
-		return DevotionActivity.DevotionKind.ME_EN;
+		return DevotionActivity.DevotionKind.MEID_A;
 	}
 
 	@Override public String getRawEncoding() {

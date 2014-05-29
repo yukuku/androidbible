@@ -2,31 +2,34 @@ package yuku.alkitab.base.widget;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.text.SpannableStringBuilder;
+import android.text.style.RelativeSizeSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
-import android.widget.Button;
+import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.PopupWindow.OnDismissListener;
+import android.widget.PopupWindow;
+import android.widget.Spinner;
 import android.widget.TextView;
-
 import net.londatiga.android.PopupWindows;
 import yuku.afw.V;
+import yuku.afw.widget.EasyAdapter;
+import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.debug.R;
 
-public class DevotionSelectPopup extends PopupWindows implements OnDismissListener {
+public class DevotionSelectPopup extends PopupWindows implements PopupWindow.OnDismissListener {
 	public interface DevotionSelectPopupListener {
 		void onDismiss(DevotionSelectPopup popup);
 		void onButtonClick(DevotionSelectPopup popup, View v);
+		void onDevotionSelect(DevotionSelectPopup popup, DevotionActivity.DevotionKind kind);
 	}
 
 	private final Context context;
 	
-	Button bChange;
+	Spinner cbKind;
 	View bPrev;
 	View bNext;
 	TextView tCurrentDate;
@@ -45,19 +48,50 @@ public class DevotionSelectPopup extends PopupWindows implements OnDismissListen
 	public void setRootViewId(int id) {
 		mRootView = LayoutInflater.from(context).inflate(id, null);
 		mArrowUp = (ImageView) mRootView.findViewById(R.id.arrow_up);
-		bChange = V.get(mRootView, R.id.bChange);
+		cbKind = V.get(mRootView, R.id.cbKind);
 		bPrev = V.get(mRootView, R.id.bPrev);
 		bNext = V.get(mRootView, R.id.bNext);
 		tCurrentDate = V.get(mRootView, R.id.tCurrentDate);
 
-		bChange.setOnClickListener(button_click);
 		bPrev.setOnClickListener(button_click);
 		bNext.setOnClickListener(button_click);
-		
+
+		cbKind.setAdapter(new EasyAdapter() {
+			@Override
+			public View newView(final int position, final ViewGroup parent) {
+				return LayoutInflater.from(context).inflate(android.R.layout.simple_spinner_item, parent, false);
+			}
+
+			@Override
+			public void bindView(final View view, final int position, final ViewGroup parent) {
+				final DevotionActivity.DevotionKind kind = DevotionActivity.DevotionKind.values()[position];
+				final SpannableStringBuilder sb = new SpannableStringBuilder();
+				sb.append(kind.title);
+				sb.append("\n");
+				final int sb_len = sb.length();
+				sb.append(kind.subtitle);
+				sb.setSpan(new RelativeSizeSpan(0.6f), sb_len, sb.length(), 0);
+				((TextView) view).setText(sb);
+			}
+
+			@Override
+			public View newDropDownView(final int position, final ViewGroup parent) {
+				final TextView res = (TextView) LayoutInflater.from(context).inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
+				res.setSingleLine(false);
+				return res;
+			}
+
+			@Override
+			public int getCount() {
+				return DevotionActivity.DevotionKind.values().length;
+			}
+		});
+		cbKind.setOnItemSelectedListener(cbKind_itemSelected);
+
 		// This was previously defined on show() method, moved here to prevent force close that occured
 		// when tapping fastly on a view to show quickaction dialog.
 		// Thanx to zammbi (github.com/zammbi)
-		mRootView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		mRootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
 		setContentView(mRootView);
 	}
@@ -78,7 +112,7 @@ public class DevotionSelectPopup extends PopupWindows implements OnDismissListen
 			anchorRect = new Rect(location[0], location[1], location[0] + (int)(d * 50.f), location[1] + (int)(d * 50.f));
 		}
 
-		mRootView.measure(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		mRootView.measure(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
 		if (rootWidth == 0) {
 			rootWidth = mRootView.getMeasuredWidth();
@@ -145,8 +179,11 @@ public class DevotionSelectPopup extends PopupWindows implements OnDismissListen
 		tCurrentDate.setText(date);
 	}
 	
-	public void setDevotionName(CharSequence name) {
-		bChange.setText(name);
+	public void setDevotionKind(final DevotionActivity.DevotionKind kind) {
+		final AdapterView.OnItemSelectedListener backup = cbKind.getOnItemSelectedListener();
+		cbKind.setOnItemSelectedListener(null);
+		cbKind.setSelection(kind.ordinal());
+		cbKind.setOnItemSelectedListener(backup);
 	}
 
 	@Override public void onDismiss() {
@@ -155,11 +192,23 @@ public class DevotionSelectPopup extends PopupWindows implements OnDismissListen
 		}
 	}
 	
-	OnClickListener button_click = new OnClickListener() {
+	View.OnClickListener button_click = new View.OnClickListener() {
 		@Override public void onClick(View v) {
 			if (listener != null) {
 				listener.onButtonClick(DevotionSelectPopup.this, v);
 			}
 		}
+	};
+
+	AdapterView.OnItemSelectedListener cbKind_itemSelected = new AdapterView.OnItemSelectedListener() {
+		@Override
+		public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
+			if (listener != null) {
+				listener.onDevotionSelect(DevotionSelectPopup.this, DevotionActivity.DevotionKind.values()[position]);
+			}
+		}
+
+		@Override
+		public void onNothingSelected(final AdapterView<?> parent) {}
 	};
 }
