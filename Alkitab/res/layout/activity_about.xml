@@ -6,7 +6,7 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#e5e5e5"
+    android:background="#d0d0d0"
     android:clickable="false">
 
     <LinearLayout
@@ -21,7 +21,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="16dp"
-            android:background="#fff"
+            android:background="#f0f0f0"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:paddingLeft="24dp"
@@ -66,45 +66,45 @@
 
 
         <LinearLayout
+            android:id="@+id/bHelp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="16dp"
-            android:background="#fff"
+            android:background="@drawable/about_linebutton_bg"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:paddingLeft="24dp"
-            android:paddingRight="24dp"
-            android:id="@+id/bHelp">
+            android:paddingRight="24dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:text="@string/menuBantuan"
                 android:gravity="center_vertical"
+                android:text="@string/menuBantuan"
                 android:textAppearance="?android:textAppearanceMedium"/>
 
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/bDonation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="16dp"
-            android:background="#fff"
+            android:background="@drawable/about_linebutton_bg"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:paddingLeft="24dp"
-            android:paddingRight="24dp"
-            android:id="@+id/bDonation">
+            android:paddingRight="24dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:text="@string/menuDonasi"
                 android:gravity="center_vertical"
+                android:text="@string/menuDonasi"
                 android:textAppearance="?android:textAppearanceMedium"/>
 
         </LinearLayout>
@@ -116,7 +116,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="16dp"
-            android:background="#fff"
+            android:background="#f0f0f0"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:paddingLeft="24dp"
