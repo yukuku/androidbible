@@ -1,23 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="#efff"
     android:orientation="vertical"
     tools:context=".base.IsiActivity"
-    tools:ignore="Overdraw" >
+    tools:ignore="Overdraw">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp" >
+        android:layout_height="48dp">
+
+        <CheckBox
+            android:id="@+id/cNightMode"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/menuNightMode"/>
+
+        <CheckBox
+            android:id="@+id/cFullScreen"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/menuFullScreen"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
 
         <Spinner
             android:id="@+id/cbTypeface"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+            tools:listitem="@android:layout/simple_spinner_dropdown_item"/>
 
         <ToggleButton
             android:id="@+id/cBold"
@@ -25,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:textOff="@string/text_appearance_bold_switch_off"
-            android:textOn="@string/text_appearance_bold_switch_on" />
+            android:textOn="@string/text_appearance_bold_switch_on"/>
     </LinearLayout>
 
     <LinearLayout
@@ -33,13 +54,13 @@
         android:layout_height="48dp"
         android:gravity="center_vertical"
         android:paddingLeft="8dp"
-        android:paddingRight="8dp" >
+        android:paddingRight="8dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/text_appearance_text_size"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
         <SeekBar
             android:id="@+id/sbTextSize"
@@ -48,7 +69,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_weight="1"
-            android:max="80" />
+            android:max="80"/>
 
         <TextView
             android:id="@+id/lTextSize"
@@ -56,7 +77,7 @@
             android:layout_height="wrap_content"
             android:text="*17.0"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:ignore="HardcodedText" />
+            tools:ignore="HardcodedText"/>
     </LinearLayout>
 
     <LinearLayout
@@ -64,13 +85,13 @@
         android:layout_height="48dp"
         android:gravity="center_vertical"
         android:paddingLeft="8dp"
-        android:paddingRight="8dp" >
+        android:paddingRight="8dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/text_appearance_line_spacing"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
         <SeekBar
             android:id="@+id/sbLineSpacing"
@@ -79,7 +100,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_weight="1"
-            android:max="20" />
+            android:max="20"/>
 
         <TextView
             android:id="@+id/lLineSpacing"
@@ -87,28 +108,28 @@
             android:layout_height="wrap_content"
             android:text="*1.05"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:ignore="HardcodedText" />
+            tools:ignore="HardcodedText"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:gravity="center_vertical"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <Spinner
             android:id="@+id/cbColorTheme"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+            tools:listitem="@android:layout/simple_spinner_dropdown_item"/>
 
         <Button
             android:id="@+id/bCustomColors"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="…"
-            tools:ignore="HardcodedText" />
+            tools:ignore="HardcodedText"/>
     </LinearLayout>
 
 </LinearLayout>

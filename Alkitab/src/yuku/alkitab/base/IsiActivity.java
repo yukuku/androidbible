@@ -911,11 +911,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 	
 	@Override public void onBackPressed() {
-		if (fullScreen) {
-			setFullScreen(false);
-		} else if (textAppearancePanel != null) {
+		if (textAppearancePanel != null) {
 			textAppearancePanel.hide();
 			textAppearancePanel = null;
+		} else if (fullScreen) {
+			setFullScreen(false);
 		} else {
 			super.onBackPressed();
 		}
@@ -1014,10 +1014,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		menu.findItem(R.id.menuHelp).setVisible(c.menuHelp);
 		menu.findItem(R.id.menuDonation).setVisible(c.menuDonation);
 		menu.findItem(R.id.menuSongs).setVisible(c.menuSongs);
-		
-		// checkable menu items
-		menu.findItem(R.id.menuNightMode).setChecked(Preferences.getBoolean(Prefkey.is_night_mode, false));
-		menu.findItem(R.id.menuFullScreen).setChecked(fullScreen);
 	}
 	
 	@Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -1062,15 +1058,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		case R.id.menuAbout:
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
-		case R.id.menuFullScreen:
-			setFullScreen(!item.isChecked());
-			return true;
 		case R.id.menuTextAppearance:
 			setShowTextAppearancePanel(textAppearancePanel == null);
 			return true;
-		case R.id.menuNightMode: {
-			setNightMode(! Preferences.getBoolean(Prefkey.is_night_mode, false));
-		} return true;
 		case R.id.menuSettings:
 			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
 			return true;
@@ -1121,17 +1111,25 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 			fullScreen = false;
 		}
+
+		if (textAppearancePanel != null) {
+			textAppearancePanel.setFullScreen(yes);
+		}
 	}
 
 	void setShowTextAppearancePanel(boolean yes) {
 		if (yes) {
 			if (textAppearancePanel == null) { // not showing yet
 				textAppearancePanel = new TextAppearancePanel(this, getLayoutInflater(), overlayContainer, new TextAppearancePanel.Listener() {
-					@Override public void onValueChanged() {
+					@Override public void onValueChanged(TextAppearancePanel.ValueGet valueGet) {
 						S.calculateAppliedValuesBasedOnPreferences();
 						applyPreferences(false);
+
+						setFullScreen(valueGet.fullScreenChecked());
+						setNightMode(Preferences.getBoolean(Prefkey.is_night_mode, false));
 					}
 				}, REQCODE_textAppearanceGetFonts, REQCODE_textAppearanceCustomColors);
+				textAppearancePanel.setFullScreen(fullScreen);
 				textAppearancePanel.show();
 			}
 		} else {
@@ -1145,8 +1143,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	void setNightMode(boolean yes) {
 		final boolean previousValue = Preferences.getBoolean(Prefkey.is_night_mode, false);
 		if (previousValue == yes) return;
-
-		Preferences.setBoolean(Prefkey.is_night_mode, yes);
 
 		S.calculateAppliedValuesBasedOnPreferences();
 		applyPreferences(false);
