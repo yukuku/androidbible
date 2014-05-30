@@ -27,7 +27,10 @@ public class SongCodePopup extends PopupWindows implements OnDismissListener {
 	View mRootView;
 	ImageView mArrowUp;
 	Button bOk;
-	
+	Button bDigitA;
+	Button bDigitB;
+	Button bDigitC;
+
 	SongCodePopupListener listener;
 	int rootWidth = 0;
 
@@ -42,7 +45,10 @@ public class SongCodePopup extends PopupWindows implements OnDismissListener {
 		mRootView = LayoutInflater.from(context).inflate(id, null);
 		mArrowUp = (ImageView) mRootView.findViewById(R.id.arrow_up);
 		bOk = (Button) mRootView.findViewById(R.id.bOk);
-		
+		bDigitA = (Button) mRootView.findViewById(R.id.bDigitA);
+		bDigitB = (Button) mRootView.findViewById(R.id.bDigitB);
+		bDigitC = (Button) mRootView.findViewById(R.id.bDigitC);
+
 		// all buttons
 		for (int buttonId: new int[] {
 		R.id.bDigit0, 
@@ -55,7 +61,10 @@ public class SongCodePopup extends PopupWindows implements OnDismissListener {
 		R.id.bDigit7, 
 		R.id.bDigit8, 
 		R.id.bDigit9, 
-		R.id.bOk, 
+		R.id.bDigitA,
+		R.id.bDigitB,
+		R.id.bDigitC,
+		R.id.bOk,
 		}) {
 			mRootView.findViewById(buttonId).setOnClickListener(button_click);
 		}
@@ -155,5 +164,17 @@ public class SongCodePopup extends PopupWindows implements OnDismissListener {
 
 	public void setOkButtonEnabled(boolean enabled) {
 		bOk.setEnabled(enabled);
+	}
+
+	public void setAButtonEnabled(boolean enabled) {
+		bDigitA.setEnabled(enabled);
+	}
+
+	public void setBButtonEnabled(boolean enabled) {
+		bDigitB.setEnabled(enabled);
+	}
+
+	public void setCButtonEnabled(boolean enabled) {
+		bDigitC.setEnabled(enabled);
 	}
 }

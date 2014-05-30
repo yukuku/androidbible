@@ -33,6 +33,11 @@
                 android:id="@+id/bDigit3"
                 style="@style/SongCodeKeypadButton"
                 android:text="3" />
+
+            <Button
+                android:id="@+id/bDigitA"
+                style="@style/SongCodeKeypadButton"
+                android:text="A" />
         </LinearLayout>
 
         <LinearLayout
@@ -55,6 +60,11 @@
                 android:id="@+id/bDigit6"
                 style="@style/SongCodeKeypadButton"
                 android:text="6" />
+
+            <Button
+                android:id="@+id/bDigitB"
+                style="@style/SongCodeKeypadButton"
+                android:text="B" />
         </LinearLayout>
 
         <LinearLayout
@@ -77,6 +87,11 @@
                 android:id="@+id/bDigit9"
                 style="@style/SongCodeKeypadButton"
                 android:text="9" />
+
+            <Button
+                android:id="@+id/bDigitC"
+                style="@style/SongCodeKeypadButton"
+                android:text="C" />
         </LinearLayout>
 
         <LinearLayout
@@ -87,7 +102,7 @@
 
             <Button
                 android:id="@+id/bDigit0"
-                style="@style/SongCodeKeypadButton"
+                style="@style/SongCodeKeypadButton.DoubleWidth"
                 android:text="0" />
 
             <Button
