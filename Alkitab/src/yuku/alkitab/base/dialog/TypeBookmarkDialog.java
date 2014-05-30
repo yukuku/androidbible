@@ -184,10 +184,34 @@ public class TypeBookmarkDialog {
 				if (listener != null) listener.onOk();
 			}
 		})
-		.setNegativeButton(R.string.cancel, null)
+		.setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				bDelete_click(bookmark);
+			}
+		})
 		.show();
 	}
-	
+
+	protected void bDelete_click(final Bookmark2 bookmark) {
+		if (bookmark == null) {
+			return; // bookmark not saved, so no need to confirm
+		}
+
+		new AlertDialog.Builder(context)
+		.setMessage(R.string.bookmark_delete_confirmation)
+		.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				S.getDb().deleteBookmarkById(bookmark._id);
+
+				if (listener != null) listener.onOk();
+			}
+		})
+		.setNegativeButton(R.string.no, null)
+		.show();
+	}
+
 	void setLabelsText() {
 		// remove all first
 		final int childCount = panelLabels.getChildCount();

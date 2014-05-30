@@ -34,10 +34,9 @@
     <string name="search_bookname_only">%s only</string>
     <string name="ayat_sebelumangka">Verse</string>
     <string name="pasal_sebelumangka">Chapter</string>
-    <string name="loncat_ke_alamat_titikdua">Jump to: (Example: %s)</string>
-    <string name="tidak_ada_catatan">(no notes)</string>
+    <string name="loncat_ke_alamat_titikdua">JUMP TO (Example: %s)</string>
     <string name="belum_ada_pembatas_buku">No bookmarks yet.\nSelect a verse to add a bookmark.</string>
-    <string name="judul_titikdua">Title:</string>
+    <string name="judul_titikdua">TITLE</string>
     <string name="gagal_mengunduh_namaumum_tgl_tgl">Failed to download %1$s dated %2$s</string>
     <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Error in downloading %1$s dated %2$s: %3$s</string>
     <string name="berhasil_mengunduh_namaumum_tgl_tgl">Succeeded in downloading %1$s dated %2$s</string>
@@ -67,7 +66,7 @@
     <string name="alamat_tidak_sah_alamat">Invalid address: %s</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
-    <string name="anda_yakin_mau_menghapus_catatan_ini">Are you sure you want to delete this note?</string>
+    <string name="anda_yakin_mau_menghapus_catatan_ini">Delete this note?</string>
     <string name="hapus_catatan">Delete note</string>
     <string name="catatan_alamat">Note on %s</string>
     <string name="delete">Delete</string>
@@ -142,7 +141,7 @@
     <string name="create_label_titik3">Create label…</string>
     <string name="select_books_to_search">Select books to search</string>
     <string name="rename_label_title">Rename label</string>
-    <string name="are_you_sure_you_want_to_delete_the_label_label">"Are you sure you want to delete the label '%1$s'? This label will be removed from %2$s bookmarks."</string>
+    <string name="are_you_sure_you_want_to_delete_the_label_label">"Delete the label '%1$s'? This label will be removed from %2$s bookmarks."</string>
     <string name="bmcat_all_bookmarks">All bookmarks</string>
     <string name="bmcat_notes">Notes</string>
     <string name="bmcat_highlights">Highlights</string>
@@ -158,7 +157,7 @@
     <string name="bl_send_backup">Transfer</string>
     <string name="bl_file_not_found_filename">File not found: %s</string>
     <string name="bl_send_backup_confirmation">Create and send backup of bookmarks, notes, and highlights? You can, for example, send the attached file by email to a new device, or just for archiving purposes.</string>
-    <string name="labels_titikdua">Labels:</string>
+    <string name="labels_titikdua">LABELS</string>
     <string name="tambah_titiktiga">Add…</string>
     <string name="nama_label_titikdua">Label name:</string>
     <string name="change_label_color">Change label color</string>
@@ -341,4 +340,5 @@
     <string name="marker_transfer_to_device_description">Move all bookmarks, notes, and highlights to another phone or tablet. We recommend using Gmail/Email.</string>
     <string name="marker_transfer_to_computer_title">Transfer for editing</string>
     <string name="marker_transfer_to_computer_description">Save bookmarks, notes, and highlights to a HTML file for further editing or printing from your computer.</string>
+    <string name="bookmark_delete_confirmation">Delete this bookmark?</string>
 </resources>
