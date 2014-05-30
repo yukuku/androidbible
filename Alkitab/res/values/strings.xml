@@ -181,7 +181,7 @@
     <string name="menuAddSomething">Add marker</string>
     <string name="color_settings_title">Colors</string>
     <string name="color_settings_night_title">Colors (Night mode)</string>
-    <string name="menuTextAppearance">Text appearance</string>
+    <string name="menuAppearance">Appearance</string>
     <string name="text_appearance_theme_custom">Custom…</string>
     <string name="text_appearance_text_size">Text size</string>
     <string name="text_appearance_line_spacing">Line spacing</string>
