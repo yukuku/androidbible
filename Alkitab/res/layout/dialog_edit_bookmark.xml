@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp" >
+        android:padding="8dp">
 
         <TextView
             android:id="@+id/lTitle"
@@ -16,7 +17,8 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:text="@string/judul_titikdua"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"/>
 
         <EditText
             android:id="@+id/tCaption"
@@ -27,7 +29,7 @@
             android:imeOptions="actionGo"
             android:inputType="textCapSentences"
             android:selectAllOnFocus="true"
-            android:singleLine="true" />
+            android:singleLine="true"/>
 
         <yuku.devoxx.flowlayout.FlowLayout
             android:id="@+id/panelLabels"
@@ -36,22 +38,23 @@
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/tCaption"
             app:horizontalSpacing="8dp"
-            app:verticalSpacing="6dp" >
+            app:verticalSpacing="6dp">
 
             <TextView
+                android:id="@+id/lLabels"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="8dp"
                 android:paddingTop="8dp"
                 android:text="@string/labels_titikdua"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:id="@+id/lLabels"/>
+                android:textStyle="bold"/>
 
             <Button
                 android:id="@+id/bAddLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tambah_titiktiga" />
+                android:text="@string/tambah_titiktiga"/>
         </yuku.devoxx.flowlayout.FlowLayout>
     </RelativeLayout>
 
