@@ -172,7 +172,7 @@
   <string name="intent_filter_import_from_backup">Récupérer depuis une sauvegarde</string>
   <string name="redownload">Télécharger à nouveau</string>
   <string name="read_faq_before_suggest">Merci de lire la FAQ ci-dessus avant d\'envoyer une suggestion. Poursuivre l\'envoi d\'une suggestion ?</string>
-  <string name="no_bookmarks_for_backup">Aucun signet, note, ou texte surligné à sauvegarder.</string>
+  <string name="no_bookmarks_for_backup">Vous n\'avez aucun marque-page, note ou surligné.</string>
   <string name="pdb_error_not_palmbible">Ce fichier PDB n\'est pas au format de PalmBible+. Ce PDB a un type de \'%1$s\' et un identifiant de créateur \'%2$s\' non supporté par cette application.</string>
   <string name="pdb_error_corrupted">Ce fichier PDB est défectueux.</string>
   <string name="pdb_error_not_pdb_file">Le fichier choisi n\'est pas un fichier PDB.</string>
@@ -317,4 +317,9 @@
   <string name="song_player_error_description">Erreur lors de l\'écoute de ce chant : %1$d, %2$d.</string>
   <string name="beta_tester_program_title">Beta Testeur</string>
   <string name="beta_tester_program_desc">Joignez-vous au groupe des Beta Testeurs du programme. Vous serez parmi les premiers à accéder aux nouvelles fonctionnalités de Quick Bible et participerez à sa croissance : goo.gl/JjYTK1</string>
+  <string name="search_in_version_short_name_placeholder">Chercher dans %s</string>
+  <string name="marker_transfer_to_device_title">Transfert sur un autre support</string>
+  <string name="marker_transfer_to_device_description">Déplacer tous les marque-pages, notes, et surlignés vers un autre téléphone ou tablette. Nous recommendons d\'utiliser Gmail/email.</string>
+  <string name="marker_transfer_to_computer_title">Transfert pour édition</string>
+  <string name="marker_transfer_to_computer_description">Sauvegarder vos marque-pages, notes et surlignés dans un fichier HTML pour les éditer ou les imprimer depuis votre ordinateur.</string>
 </resources>

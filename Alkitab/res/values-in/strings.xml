@@ -35,10 +35,9 @@
   <string name="search_bookname_only">%s saja</string>
   <string name="ayat_sebelumangka">Ayat</string>
   <string name="pasal_sebelumangka">Pasal</string>
-  <string name="loncat_ke_alamat_titikdua">Loncat ke: (Contoh: %s)</string>
-  <string name="tidak_ada_catatan">(tidak ada catatan)</string>
+  <string name="loncat_ke_alamat_titikdua">LONCAT KE (Contoh: %s)</string>
   <string name="belum_ada_pembatas_buku">Belum ada pembatas buku.\nPilih satu ayat untuk menambah pembatas buku.</string>
-  <string name="judul_titikdua">Judul:</string>
+  <string name="judul_titikdua">JUDUL</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Gagal mengunduh %1$s tgl %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Kesalahan dalam mengunduh %1$s tgl %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">Berhasil mengunduh %1$s tgl %2$s</string>
@@ -68,7 +67,7 @@
   <string name="alamat_tidak_sah_alamat">Alamat tidak sah: %s</string>
   <string name="no">Tidak</string>
   <string name="yes">Ya</string>
-  <string name="anda_yakin_mau_menghapus_catatan_ini">Anda yakin mau menghapus catatan ini?</string>
+  <string name="anda_yakin_mau_menghapus_catatan_ini">Hapus catatan ini?</string>
   <string name="hapus_catatan">Hapus catatan</string>
   <string name="catatan_alamat">Catatan %s</string>
   <string name="delete">Hapus</string>
@@ -143,7 +142,7 @@
   <string name="create_label_titik3">Buat label&#8230;</string>
   <string name="select_books_to_search">Pilih kitab untuk dicari</string>
   <string name="rename_label_title">Ganti nama label</string>
-  <string name="are_you_sure_you_want_to_delete_the_label_label">"Apakah Anda mau menghapus label \'%1$s\'? Label ini akan dilepaskan dari %2$s pembatas buku."</string>
+  <string name="are_you_sure_you_want_to_delete_the_label_label">"Hapus label \'%1$s\'? Label ini akan dilepas dari %2$s pembatas buku."</string>
   <string name="bmcat_all_bookmarks">Semua pembatas buku</string>
   <string name="bmcat_notes">Catatan</string>
   <string name="bmcat_highlights">Sorotan</string>
@@ -156,10 +155,10 @@
   <string name="bl_clear_filter">Hapus saringan</string>
   <string name="bl_filtering_titiktiga">Menyaring&#8230;</string>
   <string name="bl_no_items_match_the_filter_above">Tidak ada yang cocok dengan saringan di atas.</string>
-  <string name="bl_send_backup">Pindahkan</string>
+  <string name="bl_send_backup">Transfer</string>
   <string name="bl_file_not_found_filename">File tidak ditemukan: %s</string>
   <string name="bl_send_backup_confirmation">Buat dan kirimkan cadangan semua marka? Misalnya, anda dapat mengirimkannya lewat imel ke perangkat yang baru, atau sekedar untuk dimasukkan ke dalam arsip.</string>
-  <string name="labels_titikdua">Label:</string>
+  <string name="labels_titikdua">LABEL</string>
   <string name="tambah_titiktiga">Tambah&#8230;</string>
   <string name="nama_label_titikdua">Nama label:</string>
   <string name="change_label_color">Ganti warna label</string>
@@ -172,7 +171,7 @@
   <string name="intent_filter_import_from_backup">Impor dari cadangan</string>
   <string name="redownload">Unduh ulang</string>
   <string name="read_faq_before_suggest">Harap membaca tanya jawab di atas sebelum mengirim saran. Tetap lanjut ke pengiriman saran?</string>
-  <string name="no_bookmarks_for_backup">Tidak ada pembatas buku, catatan, atau sorotan yang perlu dibuat cadangannya.</string>
+  <string name="no_bookmarks_for_backup">Anda tidak mempunyai pembatas buku, catatan, maupun sorotan.</string>
   <string name="pdb_error_not_palmbible">File PDB ini bukan dalam format PalmBible+. File PDB ini bertipe \'%1$s\' dan creator idnya \'%2$s\', tidak didukung dalam aplikasi ini.</string>
   <string name="pdb_error_corrupted">File PDB-nya rusak.</string>
   <string name="pdb_error_not_pdb_file">File yang dipilih bukan file PDB.</string>
@@ -318,4 +317,9 @@
   <string name="beta_tester_program_title">Beta Tester</string>
   <string name="beta_tester_program_desc">Ikuti program Beta Tester untuk mendapatkan fitur baru lebih awal dan kesempatan untuk membentuk aplikasi Alkitab. goo.gl/JjYTK1</string>
   <string name="search_in_version_short_name_placeholder">Cari dalam %s</string>
+  <string name="marker_transfer_to_device_title">Transfer ke perangkat lain</string>
+  <string name="marker_transfer_to_device_description">Pindahkan semua pembatas buku, catatan, dan sorotan ke ponsel atau tablet lain. Kami menyarankan menggunakan Gmail/Email.</string>
+  <string name="marker_transfer_to_computer_title">Transfer ke komputer</string>
+  <string name="marker_transfer_to_computer_description">Simpan pembatas buku, catatan, dan sorotan ke dalam satu file HTML sehingga Anda bisa mengeditnya atau mencetaknya dari komputer.</string>
+  <string name="bookmark_delete_confirmation">Hapus pembatas buku ini?</string>
 </resources>

@@ -23,8 +23,8 @@
   <string name="versi">Versie</string>
   <string name="renungan">Devotie</string>
   <string name="cari_v">Zoeken</string>
-  <string name="judul_bukmak_activity">Bladwijzers e.d</string>
-  <string name="menu_markers">Bladwijzers, notities en markeringen</string>
+  <string name="judul_bukmak_activity">Bladwijzers, notities, e.d.</string>
+  <string name="menu_markers">Bladwijzers, notities, e.d.</string>
   <string name="hapus_pembatas_buku">Verwijder bladwijzer</string>
   <string name="bagikan">Deel</string>
   <string name="tulis_catatan">Schrijf notitie</string>
@@ -132,9 +132,9 @@
   <string name="menuSort">Sorteren</string>
   <string name="menuSortWaktuTambah">Aanmaakdatum</string>
   <string name="menuSortWaktuUbah">Wijzigdatum</string>
-  <string name="menuSortAri">Vers adres</string>
+  <string name="menuSortAri">Bijbelboek</string>
   <string name="menuSortTulisan">Titel</string>
-  <string name="menuSortTulisan_warna">Markeer kleur</string>
+  <string name="menuSortTulisan_warna">Markeerkleur</string>
   <string name="waktuTambah_edited_waktuUbah">%1$s\n(bewerkt %2$s)</string>
   <string name="the_file_for_this_version_is_no_longer_available_file">Het bestand voor deze versie is niet langer beschikbaar. Wil je deze verwijderen van de lijst? \nBestand: %s</string>
   <string name="create_label_title">Maak label aan</string>
@@ -143,8 +143,7 @@
   <string name="create_label_titik3">Maak label&#8230;</string>
   <string name="select_books_to_search">Selecteer boeken om te zoeken</string>
   <string name="rename_label_title">Hernoem label</string>
-  <string name="are_you_sure_you_want_to_delete_the_label_label">"Weet je zeker dat je label \'%1$s\' wilt verwijderen? Dit label zal worden verwijderd van %2$s bladwijzers."</string>
-  <string name="bmcat_all_bookmarks">Alle bladwijzers</string>
+  <string name="bmcat_all_bookmarks">Bladwijzers</string>
   <string name="bmcat_notes">Notities</string>
   <string name="bmcat_highlights">Markeringen</string>
   <string name="bmcat_unlabeled_bookmarks">Ongelabelde bladwijzers</string>
@@ -172,7 +171,7 @@
   <string name="intent_filter_import_from_backup">Importeer van reservekopie</string>
   <string name="redownload">Download opnieuw</string>
   <string name="read_faq_before_suggest">Lees alsjeblieft de FAQ voordat je een suggestie instuurt. Doorgaan met verzenden van een suggestie?</string>
-  <string name="no_bookmarks_for_backup">Er zijn geen bladwijzers, notities of markeringen om een reservekopie van te maken.</string>
+  <string name="no_bookmarks_for_backup">Je hebt geen bladwijzers, notities of markeringen.</string>
   <string name="pdb_error_not_palmbible">Dit PDB bestand is niet in PalmBible+ formaat. Dit PDB bestand heeft het type van \'%1$s\' en aanmaak-id van \'%2$s\', wat niet ondersteund word door deze app.</string>
   <string name="pdb_error_corrupted">Het PDB bestand is corrupt.</string>
   <string name="pdb_error_not_pdb_file">Het geselecteerde bestand is niet een PDB bestand.</string>
@@ -182,7 +181,7 @@
   <string name="generic_verse_not_available_in_this_version">Niet beschikbaar in deze Bijbelversie.</string>
   <string name="menuAddSomething">Voeg markering toe</string>
   <string name="color_settings_title">Kleuren</string>
-  <string name="color_settings_night_title">Kleuren (nacht modus)</string>
+  <string name="color_settings_night_title">Kleuren (nachtmodus)</string>
   <string name="menuTextAppearance">Tekstweergave</string>
   <string name="text_appearance_theme_custom">Aangepast&#8230;</string>
   <string name="text_appearance_text_size">Tekstgrootte</string>
@@ -310,11 +309,16 @@
   <string name="rp_download_reading_plan_failed">Downloaden van het geselecteerde leesplan is mislukt. Probeer het opnieuw met een werkende internetverbinding.</string>
   <string name="rp_download_reading_plan_data_corrupted">Het gedownloade leesplan is corrupt. Probeer het opnieuw met een werkende internetverbinding.</string>
   <string name="version_download_need_fonts">"De gedownloade versie kan moeten worden weergegeven in een bepaald lettertype. Ga naar het menu \"Tekstweergave\" en selecteer een lettertype. Grieks heeft het lettertype Ubuntu nodig. Birmese gebruikt Parabaik, ParabaikSans of Myanmar3. Tamil gebruikt Akshar en Telugu gebruikt het lettertype Suranna."</string>
-  <string name="menuNightMode">Nacht modus</string>
+  <string name="menuNightMode">Nachtmodus</string>
   <string name="delete_highlight">Verwijder markering</string>
   <string name="menu_compare">Vergelijken</string>
   <string name="about_version_name">versie %s</string>
   <string name="song_player_error_description">Er is een fout opgetreden bij het afspelen van dit lied: %1$d, %2$d.</string>
   <string name="beta_tester_program_title">Bèta tester</string>
   <string name="beta_tester_program_desc">Schrijf je in voor ons Beta Tester Program en ontvang als eerste toegang tot nieuwe functionaliteiten en de mogelijkheid om mee te werken aan nieuwe updates voor Quick Bible: goo.gl/JjYTK1</string>
+  <string name="search_in_version_short_name_placeholder">Zoek in %s</string>
+  <string name="marker_transfer_to_device_title">Verplaats naar een ander apparaat</string>
+  <string name="marker_transfer_to_device_description">Verplaats alle bladwijzers, notities en markeringen naar een andere telefoon of tablet. We raden aan dit via Gmail/e-mail te doen.</string>
+  <string name="marker_transfer_to_computer_title">Verplaats om te bewerken</string>
+  <string name="marker_transfer_to_computer_description">Bewaar bladwijzers, notities en markeringen in een HTML bestand om verder te bewerken of te printen vanaf een computer.</string>
 </resources>

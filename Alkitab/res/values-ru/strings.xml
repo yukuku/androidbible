@@ -172,7 +172,7 @@
   <string name="intent_filter_import_from_backup">Импорт из резервной копии</string>
   <string name="redownload">Загрузить повторно</string>
   <string name="read_faq_before_suggest">Пожалуйста, прочитайте часто задаваемые вопросы (выше) перед отсылкой предложения. Отослать предложение сейчас?</string>
-  <string name="no_bookmarks_for_backup">Нет ни закладок, ни примечаний, ни меток для резервного копирования.</string>
+  <string name="no_bookmarks_for_backup">У вас нет закладок, примечаний или выделений цветом.</string>
   <string name="pdb_error_not_palmbible">Этот PDB-файл - не в формате PalmBible+. Файл имеет тип \'%1$s\' и создан \'%2$s\', что не поддерживается данным приложением.</string>
   <string name="pdb_error_corrupted">PDB-файл поврежден.</string>
   <string name="pdb_error_not_pdb_file">Указанный файл не является PDB-файлом.</string>
@@ -314,7 +314,12 @@
   <string name="delete_highlight">Снять выделение</string>
   <string name="menu_compare">Сравнить</string>
   <string name="about_version_name">версия %s</string>
-  <string name="song_player_error_description">При воспроизведении этой песни произошла ошибка: %1$d, %2$d.</string>
+  <string name="song_player_error_description">Произошла ошибка при воспроизведении этой песни : %1$d, %2$d.</string>
   <string name="beta_tester_program_title">Бета-тестировщик</string>
   <string name="beta_tester_program_desc">Присоединяйтесь к нашей программе бета-тестирования - получите ранний доступ к новым функциям Quick Bible и возможность делиться этой программой: goo.gl/JjYTK1</string>
+  <string name="search_in_version_short_name_placeholder">Искать в %s</string>
+  <string name="marker_transfer_to_device_title">Передать на другое устройство</string>
+  <string name="marker_transfer_to_device_description">Переместить все закладки, примечания, и выделение цветом на другой смартфон или планшет. Рекомендуем использовать  Gmail/Email.</string>
+  <string name="marker_transfer_to_computer_title">Передать для редактирования</string>
+  <string name="marker_transfer_to_computer_description">Сохранить все закладки, примечания и выделения цветом в HTML-файл для последующего редактирования или печати на Вашем компьютере.</string>
 </resources>

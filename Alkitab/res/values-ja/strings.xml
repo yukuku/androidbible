@@ -172,7 +172,7 @@
   <string name="intent_filter_import_from_backup">バックアップからインポート</string>
   <string name="redownload">再度ダウンロード</string>
   <string name="read_faq_before_suggest">提案をお寄せになる前に、FAQをぜひ読んでください. このまま提案をお寄せになりますか?</string>
-  <string name="no_bookmarks_for_backup">ブックマーク、ノート、マーカーがないのでバックアップできません.</string>
+  <string name="no_bookmarks_for_backup">ブックマーク、メモ、マーカーがありません.</string>
   <string name="pdb_error_not_palmbible">PDBファイルがPalmBible+形式ではありません. PDBの種別： \'%1$s\'　作成id： \'%2$s\' はサポート外です.</string>
   <string name="pdb_error_corrupted">PDBファイルが壊れています.</string>
   <string name="pdb_error_not_pdb_file">選択したファイルはPDBファイルではありません.</string>
@@ -317,4 +317,10 @@
   <string name="song_player_error_description">聖歌 %1$d %2$d 再生中にエラーになりました</string>
   <string name="beta_tester_program_title">ベータテスト参加者</string>
   <string name="beta_tester_program_desc">ベータテストプログラムに参加して、新機能をリリース前に体験しQuickBibleの開発に貢献してください: goo.gl/JjYTK1</string>
+  <string name="search_in_version_short_name_placeholder">%s 内を検索</string>
+  <string name="marker_transfer_to_device_title">別のデバイスに転送</string>
+  <string name="marker_transfer_to_device_description">全てのブックマーク、メモ、マーカーを別のデバイスに移動します. GmailかEmailを推奨します.</string>
+  <string name="marker_transfer_to_computer_title">編集のため転送</string>
+  <string name="marker_transfer_to_computer_description">パソコンで編集/印刷するために、ブックマーク、メモ、マーカーをHTMLファイルに保存します.
+</string>
 </resources>
