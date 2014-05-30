@@ -54,7 +54,7 @@ public class BackupManager {
 
 			@Override
 			protected Object doInBackground(Void... params) {
-				File out = getFileBackup(autoBackup);
+				File out = autoBackup? getBackupFile(): getAutobackupFile();
 				try {
 					FileOutputStream fos = new FileOutputStream(out);
 
@@ -162,18 +162,27 @@ public class BackupManager {
 		}
 	}
 
-	public static File getFileBackup() {
-		File dir = getFileDirectory();
+	public static File getBackupFile() {
+		File dir = getBackupDir();
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
 		return new File(dir, App.context.getPackageName() + "-backup.xml");
 	}
 
+	public static File getAutobackupFile() {
+		File dir = getBackupDir();
+		if (!dir.exists()) {
+			dir.mkdir();
+		}
+		String time = new SimpleDateFormat("yyyyMMdd-hhmmss", Locale.US).format(new Date());
+		return new File(dir, autobackupBaseName + "-" + time + ".xml");
+	}
+
 	public static List<File> listBackupFiles() {
-		File dir = getFileDirectory();
+		File dir = getBackupDir();
 		List<File> backupFiles = new ArrayList<File>();
-		File manualBackupFile = getFileBackup();
+		File manualBackupFile = getBackupFile();
 		if (manualBackupFile.exists()) {
 			backupFiles.add(manualBackupFile);
 		}
@@ -191,7 +200,7 @@ public class BackupManager {
 		return backupFiles;
 	}
 
-	public static File getFileDirectory() {
+	public static File getBackupDir() {
 		return new File(Environment.getExternalStorageDirectory(), "bible");
 	}
 
