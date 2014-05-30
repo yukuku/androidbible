@@ -111,6 +111,24 @@ public class BackupManager {
 					xml.endDocument();
 					fos.close();
 
+					// remove old backup files
+					List<File> backupFiles = listBackupFiles();
+					if (backupFiles.size() == 0) {
+						int count = 0;
+						File oldestFile = null;
+						for (File file : backupFiles) {
+							if (file.getName().startsWith(autobackupBaseName)) {
+								count++;
+								if (oldestFile == null || file.lastModified() < oldestFile.lastModified()) {
+									oldestFile = file;
+								}
+							}
+						}
+						if (count > 9 && oldestFile != null) {
+							oldestFile.delete();
+						}
+					}
+
 					return out.getAbsolutePath();
 				} catch (Exception e) {
 					return e;
@@ -144,39 +162,18 @@ public class BackupManager {
 		}
 	}
 
-	public static File getFileBackup(boolean autoBackup) {
+	public static File getFileBackup() {
 		File dir = getFileDirectory();
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
-		if (autoBackup) {
-			List<File> backupFiles = listBackupFiles();
-			if (backupFiles.size() == 0) {
-				int count = 0;
-				File oldestFile = null;
-				for (File file : backupFiles) {
-					if (file.getName().startsWith(autobackupBaseName)) {
-						count++;
-						if (oldestFile == null || file.lastModified() < oldestFile.lastModified()) {
-							oldestFile = file;
-						}
-					}
-				}
-				if (count > 9 && oldestFile != null) {
-					oldestFile.delete();
-				}
-			}
-			String time = new SimpleDateFormat("yyyyMMdd-hhmmss", Locale.US).format(new Date());
-			return new File(dir, autobackupBaseName + "-" + time + ".xml");
-		} else {
-			return new File(dir, App.context.getPackageName() + "-backup.xml");
-		}
+		return new File(dir, App.context.getPackageName() + "-backup.xml");
 	}
 
 	public static List<File> listBackupFiles() {
 		File dir = getFileDirectory();
 		List<File> backupFiles = new ArrayList<File>();
-		File manualBackupFile = new File(dir, App.context.getPackageName() + "-backup.xml");
+		File manualBackupFile = getFileBackup();
 		if (manualBackupFile.exists()) {
 			backupFiles.add(manualBackupFile);
 		}

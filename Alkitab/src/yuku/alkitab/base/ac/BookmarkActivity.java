@@ -337,7 +337,7 @@ public class BookmarkActivity extends BaseActivity implements ExportBookmarkDial
 					InputStream fis;
 					
 					if (inputStream == null) {
-						File in = BackupManager.getFileBackup(false);
+						File in = BackupManager.getFileBackup();
 						fis = new FileInputStream(in);
 					} else {
 						fis = inputStream;
