@@ -6,7 +6,7 @@
     <string name="pref_warna_nomor_ayat">Verse numbers</string>
     <string name="pref_redTextColor_title">Words of Jesus</string>
     <string name="pref_penggunaan">Usage</string>
-    <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">Show list of books in alphabetical order (a-z) instead of the original</string>
+    <string name="pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya">List books in alphabetical order (a-z) instead of the original</string>
     <string name="pref_kitab_menurut_abjad">Sort books alphabetically</string>
     <string name="pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab">Device screen will not turn off when reading the Bible</string>
     <string name="pref_biarkan_layar_menyala">Keep screen on</string>
@@ -15,6 +15,6 @@
     <string name="pref_volumeButtonNavigation_summary">Use hardware volume buttons to navigate between verses or chapters</string>
     <string name="pref_copyWithVerseNumbers_title">Include verse numbers</string>
     <string name="pref_copyWithVerseNumbers_summary">Put verse numbers on every verse when copying/sharing</string>
-    <string name="pref_help_text_appearance_title">Text appearance</string>
-    <string name="pref_help_text_appearance_summary">Change text size, typeface, colors and spacing</string>
+    <string name="pref_help_text_appearance_title">Appearance</string>
+    <string name="pref_help_text_appearance_summary">Text size, typeface, colors and line spacing</string>
 </resources>

@@ -47,20 +47,8 @@
         app:showAsAction="never"
         android:title="@string/menuPengaturan"/>
     <item
-        android:id="@+id/menuDonation"
+        android:id="@+id/menuSupport"
         app:showAsAction="never"
-        android:title="@string/menuDonasi"/>
-    <item
-        android:id="@+id/menuHelp"
-        app:showAsAction="never"
-        android:title="@string/menuBantuan"/>
-    <item
-        android:id="@+id/menuSendMessage"
-        app:showAsAction="never"
-        android:title="@string/beri_saran_title"/>
-    <item
-        android:id="@+id/menuAbout"
-        app:showAsAction="never"
-        android:title="@string/menuTentang"/>
+        android:title="@string/menuSupport"/>
 
 </menu>

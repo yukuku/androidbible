@@ -3,6 +3,7 @@
 <resources>
     <string name="highlight_stabilo">Highlight</string>
     <string name="menuDonasi">Donation</string>
+    <string name="menuSupport">Support</string>
     <string name="mengimpor_titiktiga">Restoring…</string>
     <string name="mengekspor_titiktiga">Creating backup…</string>
     <string name="bagikan_renungan">Share devotion</string>
