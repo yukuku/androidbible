@@ -651,7 +651,10 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 			
 			codeKeypad.show(v);
 			codeKeypad.setOkButtonEnabled(false);
-			
+			codeKeypad.setAButtonEnabled(false);
+			codeKeypad.setBButtonEnabled(false);
+			codeKeypad.setCButtonEnabled(false);
+
 			codeKeypad.setSongCodePopupListener(new SongCodePopupListener() { // do not make this a field. Need to create a new instance to init fields correctly.
 				CharSequence originalCode = bChangeCode.getText();
 				String tempCode = ""; //$NON-NLS-1$
@@ -665,24 +668,41 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 				}
 				
 				@Override public void onButtonClick(SongCodePopup songCodePopup, View v) {
-					int[] numIds = {
+					final int[] numIds = {
 					R.id.bDigit0, R.id.bDigit1, R.id.bDigit2, R.id.bDigit3, R.id.bDigit4,
 					R.id.bDigit5, R.id.bDigit6, R.id.bDigit7, R.id.bDigit8, R.id.bDigit9,
+					};
+
+					final int[] alphaIds = {
+					R.id.bDigitA, R.id.bDigitB, R.id.bDigitC,
+					// num = 10, 11, 12
 					};
 					
 					int id = v.getId();
 					int num = -1;
 					for (int i = 0; i < numIds.length; i++) if (id == numIds[i]) num = i;
-					
-					if (num >= 0) { // digits
-						if (tempCode.length() >= 4) tempCode = ""; // can't be more than 4 digits //$NON-NLS-1$
-						if (tempCode.length() == 0 && num == 0) { // nothing has been pressed and 0 is now pressed
-						} else {
-							tempCode += num;
+					for (int i = 0; i < alphaIds.length; i++) if (id == alphaIds[i]) num = 10 + i;
+
+					if (num >= 0) { // digits or letters
+						if (tempCode.length() >= 4) tempCode = ""; // can't be more than 4 digits
+
+						if (num <= 9) { // digits
+							if (tempCode.length() == 0 && num == 0) { // nothing has been pressed and 0 is now pressed
+							} else {
+								tempCode += num;
+							}
+						} else { // letters
+							final char letter = (char) ('A' + num - 10);
+							if (tempCode.length() != 0) {
+								tempCode += letter;
+							}
 						}
 						bChangeCode.setText(tempCode);
-						
+
 						songCodePopup.setOkButtonEnabled(S.getSongDb().songExists(bookName, tempCode));
+						songCodePopup.setAButtonEnabled(tempCode.length() <= 3 && S.getSongDb().songExists(bookName, tempCode + "A"));
+						songCodePopup.setBButtonEnabled(tempCode.length() <= 3 && S.getSongDb().songExists(bookName, tempCode + "B"));
+						songCodePopup.setCButtonEnabled(tempCode.length() <= 3 && S.getSongDb().songExists(bookName, tempCode + "C"));
 					} else if (id == R.id.bOk) {
 						if (tempCode.length() > 0) {
 							Song song = S.getSongDb().getSong(bookName, tempCode);
