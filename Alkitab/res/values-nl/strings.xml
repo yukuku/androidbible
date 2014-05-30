@@ -35,10 +35,9 @@
   <string name="search_bookname_only">Alleen in %s</string>
   <string name="ayat_sebelumangka">Vers</string>
   <string name="pasal_sebelumangka">Hoofdstuk</string>
-  <string name="loncat_ke_alamat_titikdua">Spring naar: (Voorbeeld: %s)</string>
-  <string name="tidak_ada_catatan">(geen notities)</string>
+  <string name="loncat_ke_alamat_titikdua">GA NAAR (Example: %s)</string>
   <string name="belum_ada_pembatas_buku">Er zijn nog geen bladwijzers.\nSelecteer een vers om een bladwijzer toe te voegen.</string>
-  <string name="judul_titikdua">Titel:</string>
+  <string name="judul_titikdua">TITEL</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Download mislukt van %1$s gedateerd op %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Fout in downloaden van %1$s gedateerd op %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">Downloaden van %1$s gedateerd op %2$s is gelukt</string>
@@ -68,7 +67,7 @@
   <string name="alamat_tidak_sah_alamat">Ongeldig adres: %s</string>
   <string name="no">Nee</string>
   <string name="yes">Ja</string>
-  <string name="anda_yakin_mau_menghapus_catatan_ini">Weet je zeker dat je deze notitie wilt verwijderen?</string>
+  <string name="anda_yakin_mau_menghapus_catatan_ini">Deze notitie verwijderen?</string>
   <string name="hapus_catatan">Verwijder notitie</string>
   <string name="catatan_alamat">Notitie op %s</string>
   <string name="delete">Verwijderen</string>
@@ -143,6 +142,7 @@
   <string name="create_label_titik3">Maak label&#8230;</string>
   <string name="select_books_to_search">Selecteer boeken om te zoeken</string>
   <string name="rename_label_title">Hernoem label</string>
+  <string name="are_you_sure_you_want_to_delete_the_label_label">"Het label \'%1$s\' verwijderen? Dit label zal worden verwijderd van %2$s bladwijzers."</string>
   <string name="bmcat_all_bookmarks">Bladwijzers</string>
   <string name="bmcat_notes">Notities</string>
   <string name="bmcat_highlights">Markeringen</string>
@@ -158,7 +158,7 @@
   <string name="bl_send_backup">Overzetten</string>
   <string name="bl_file_not_found_filename">Bestand %s niet gevonden</string>
   <string name="bl_send_backup_confirmation">Maak en verzend reservekopiën van bladwijzers, notities en markeringen. Je kunt het bestand als bijlage verzenden via email naar bijvoorbeeld een nieuw apparaat of voor archiveringsdoeleinden.</string>
-  <string name="labels_titikdua">Labels:</string>
+  <string name="labels_titikdua">LABELS</string>
   <string name="tambah_titiktiga">Toevoegen&#8230;</string>
   <string name="nama_label_titikdua">Label naam:</string>
   <string name="change_label_color">Wijzig labelkleur</string>
@@ -182,7 +182,6 @@
   <string name="menuAddSomething">Voeg markering toe</string>
   <string name="color_settings_title">Kleuren</string>
   <string name="color_settings_night_title">Kleuren (nachtmodus)</string>
-  <string name="menuTextAppearance">Tekstweergave</string>
   <string name="text_appearance_theme_custom">Aangepast&#8230;</string>
   <string name="text_appearance_text_size">Tekstgrootte</string>
   <string name="text_appearance_line_spacing">Regelafstand</string>
@@ -321,4 +320,5 @@
   <string name="marker_transfer_to_device_description">Verplaats alle bladwijzers, notities en markeringen naar een andere telefoon of tablet. We raden aan dit via Gmail/e-mail te doen.</string>
   <string name="marker_transfer_to_computer_title">Verplaats om te bewerken</string>
   <string name="marker_transfer_to_computer_description">Bewaar bladwijzers, notities en markeringen in een HTML bestand om verder te bewerken of te printen vanaf een computer.</string>
+  <string name="bookmark_delete_confirmation">Deze bladwijzer verwijderen?</string>
 </resources>

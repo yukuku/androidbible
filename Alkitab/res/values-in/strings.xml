@@ -4,6 +4,7 @@
 <resources>
   <string name="highlight_stabilo">Sorot</string>
   <string name="menuDonasi">Donasi</string>
+  <string name="menuSupport">Bantuan</string>
   <string name="mengimpor_titiktiga">Memulihkan&#8230;</string>
   <string name="mengekspor_titiktiga">Membuat cadangan&#8230;</string>
   <string name="bagikan_renungan">Bagikan renungan</string>
@@ -182,7 +183,7 @@
   <string name="menuAddSomething">Tambah marka</string>
   <string name="color_settings_title">Warna</string>
   <string name="color_settings_night_title">Warna (Mode gelap)</string>
-  <string name="menuTextAppearance">Penampilan teks</string>
+  <string name="menuAppearance">Penampilan</string>
   <string name="text_appearance_theme_custom">Lainnya&#8230;</string>
   <string name="text_appearance_text_size">Ukuran teks</string>
   <string name="text_appearance_line_spacing">Jarak antarbaris</string>

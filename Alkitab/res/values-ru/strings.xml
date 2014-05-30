@@ -35,10 +35,9 @@
   <string name="search_bookname_only">Только %s</string>
   <string name="ayat_sebelumangka">Стих</string>
   <string name="pasal_sebelumangka">Глава</string>
-  <string name="loncat_ke_alamat_titikdua">Переход к: (например: %s)</string>
-  <string name="tidak_ada_catatan">(примечаний нет)</string>
+  <string name="loncat_ke_alamat_titikdua">ПЕРЕЙТИ К (Пример: %s)</string>
   <string name="belum_ada_pembatas_buku">Закладок пока нет.\nЧтобы добавить закладку, выберите стих.</string>
-  <string name="judul_titikdua">Заглавие:</string>
+  <string name="judul_titikdua">ЗАГОЛОВОК</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Не удалось загрузить %1$s от %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Ошибка при загрузке %1$s от %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">Загружена %1$s от %2$s</string>
@@ -68,7 +67,7 @@
   <string name="alamat_tidak_sah_alamat">Недействительны адрес: %s</string>
   <string name="no">Нет</string>
   <string name="yes">Да</string>
-  <string name="anda_yakin_mau_menghapus_catatan_ini">Удалить это примечание, вы уверены?</string>
+  <string name="anda_yakin_mau_menghapus_catatan_ini">Удалить эту заметку?</string>
   <string name="hapus_catatan">Удалить примечание</string>
   <string name="catatan_alamat">Примечание к %s</string>
   <string name="delete">Удалить</string>
@@ -143,7 +142,7 @@
   <string name="create_label_titik3">Создать метку&#8230;</string>
   <string name="select_books_to_search">Выбор книг для поиска</string>
   <string name="rename_label_title">Переименовать метку</string>
-  <string name="are_you_sure_you_want_to_delete_the_label_label">"Удалить метку \'%1$s\'? Это метка будет удалена с %2$s закладок."</string>
+  <string name="are_you_sure_you_want_to_delete_the_label_label">"Удалить метку \'%1$s\'? Эта метка будет удалена с %2$s закладок."</string>
   <string name="bmcat_all_bookmarks">Все закладки</string>
   <string name="bmcat_notes">Примечания</string>
   <string name="bmcat_highlights">Выделение</string>
@@ -159,7 +158,7 @@
   <string name="bl_send_backup">Переместить</string>
   <string name="bl_file_not_found_filename">Файл не найден: %s</string>
   <string name="bl_send_backup_confirmation">Создать и отослать резервную копию закладок, примечаний и выделений? Вы можете, к примеру, отослать такой файл на новое устройство или использовать его для целей архивирования.</string>
-  <string name="labels_titikdua">Метки:</string>
+  <string name="labels_titikdua">МЕТКИ</string>
   <string name="tambah_titiktiga">Добавить&#8230;</string>
   <string name="nama_label_titikdua">Имя метки:</string>
   <string name="change_label_color">Изменить цвет метки</string>
@@ -183,7 +182,6 @@
   <string name="menuAddSomething">Добавить отметку</string>
   <string name="color_settings_title">Цвета</string>
   <string name="color_settings_night_title">Цвета (ночной режим)</string>
-  <string name="menuTextAppearance">Вид текста</string>
   <string name="text_appearance_theme_custom">Настроить&#8230;</string>
   <string name="text_appearance_text_size">Размер текста</string>
   <string name="text_appearance_line_spacing">Межстрочное расстояние</string>
@@ -322,4 +320,5 @@
   <string name="marker_transfer_to_device_description">Переместить все закладки, примечания, и выделение цветом на другой смартфон или планшет. Рекомендуем использовать  Gmail/Email.</string>
   <string name="marker_transfer_to_computer_title">Передать для редактирования</string>
   <string name="marker_transfer_to_computer_description">Сохранить все закладки, примечания и выделения цветом в HTML-файл для последующего редактирования или печати на Вашем компьютере.</string>
+  <string name="bookmark_delete_confirmation">Удалить эту закладку?</string>
 </resources>

@@ -38,7 +38,7 @@
   <string name="loncat_ke_alamat_titikdua">Gehe zu: (Beispiel: %s)</string>
   <string name="tidak_ada_catatan">(kein Notiz)</string>
   <string name="belum_ada_pembatas_buku">Keine Lesezeichen vorhanden.\nSelektiere einen Vers, um ein Lesezeichen hinzufügen.</string>
-  <string name="judul_titikdua">Titel:</string>
+  <string name="judul_titikdua">TITEL</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Fehler beim Herunterladen von %1$s vom %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Fehler beim Herunterladen von %1$s vom %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">%1$s für das Datum %2$s erfolgreich heruntergeladen</string>
@@ -68,7 +68,7 @@
   <string name="alamat_tidak_sah_alamat">Adresse ungültig: %s</string>
   <string name="no">Nein</string>
   <string name="yes">Ja</string>
-  <string name="anda_yakin_mau_menghapus_catatan_ini">Möchten Sie diese Notiz wirklich löschen?</string>
+  <string name="anda_yakin_mau_menghapus_catatan_ini">Diese Notitz löschen?</string>
   <string name="hapus_catatan">Notiz löschen</string>
   <string name="catatan_alamat">Notiz zu %s</string>
   <string name="delete">Löschen</string>
@@ -322,4 +322,5 @@
   <string name="marker_transfer_to_device_description">Überträgt alle Lesezeichen, Notizen und Hervorhebungen auf ein anderes Smartphone oder Tablet. Für die Übertragung empfehlen wir Gmail/E-Mail.</string>
   <string name="marker_transfer_to_computer_title">Zum Bearbeiten übertragen</string>
   <string name="marker_transfer_to_computer_description">Speichert alle Lesezeichen, Notizen und Hervorhebungen in eine HTML-Datei für eine weitere Bearbeitung oder das Drucken auf Ihrem Computer.</string>
+  <string name="bookmark_delete_confirmation">Dieses Lesezeichen löschen?</string>
 </resources>
