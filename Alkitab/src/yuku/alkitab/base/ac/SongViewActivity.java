@@ -325,12 +325,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 	}
 
 	static String getAudioFilename(String bookName, String code) {
-		try {
-			final int code_int = Integer.parseInt(code);
-			return String.format("songs/v1/%s_%04d", bookName, code_int);
-		} catch (NumberFormatException e) {
-			return String.format("songs/v1/%s_%s", bookName, code);
-		}
+		return String.format("songs/v2/%s_%s", bookName, code);
 	}
 
 	void checkAudioExistance() {
