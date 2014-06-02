@@ -172,7 +172,7 @@
   <string name="intent_filter_import_from_backup">进口从备份</string>
   <string name="redownload">重新下载</string>
   <string name="read_faq_before_suggest">在提出建议前，请先阅读以上常见问题解答。继续提出建议？</string>
-  <string name="no_bookmarks_for_backup">你没有任何书签、笔记与标记要作备份。</string>
+  <string name="no_bookmarks_for_backup">你没有任何书籤、笔记和标记。</string>
   <string name="pdb_error_not_palmbible">此PDB档案并不是PalmBible+格式。此PDB档案有\'%1$s\'格式与建构者id \'%2$s\'，本程式并不支援此档案。</string>
   <string name="pdb_error_corrupted">这PDB档已损坏</string>
   <string name="pdb_error_not_pdb_file">所选的档案不是PDB档案</string>
@@ -317,4 +317,9 @@
   <string name="song_player_error_description">播放歌曲%1$d, %2$d的时候遇到问题。</string>
   <string name="beta_tester_program_title">试版测试员</string>
   <string name="beta_tester_program_desc">请参与我们的测试者计划，测试者可优先使用新功能，并一起去优化神速圣经这程式：goo.gl/JjYTK1</string>
+  <string name="search_in_version_short_name_placeholder">在%s搜寻</string>
+  <string name="marker_transfer_to_device_title">转移到另一台设备</string>
+  <string name="marker_transfer_to_device_description">移动所有书籤、笔记和标记到另一台手机或平板，我们建议你使用谷歌电邮或其他电邮。</string>
+  <string name="marker_transfer_to_computer_title">转移以便编辑</string>
+  <string name="marker_transfer_to_computer_description">把书籤、笔记及标记储存为一个HTML档桉，以便于电脑上编辑和列印之用。</string>
 </resources>

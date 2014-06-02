@@ -35,10 +35,9 @@
   <string name="search_bookname_only">%s alleenlik </string>
   <string name="ayat_sebelumangka">Vers</string>
   <string name="pasal_sebelumangka">Hoofstuk</string>
-  <string name="loncat_ke_alamat_titikdua">Gaan na: (Voorbeeld: %s)</string>
-  <string name="tidak_ada_catatan">(geen notas)</string>
+  <string name="loncat_ke_alamat_titikdua">Spring na (Voorbeeld: %s)</string>
   <string name="belum_ada_pembatas_buku">Tans geen boekmerke.\nKies \'n vers om by boekmerk te voeg.</string>
-  <string name="judul_titikdua">Titel:</string>
+  <string name="judul_titikdua">Titel</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Gefaal om af te laai %1$s dateer %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Fout in aflaai %1$s dateer %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">Aflaai geslaag %1$s dateer %2$s</string>
@@ -68,7 +67,7 @@
   <string name="alamat_tidak_sah_alamat">Ongeldige adres: %s</string>
   <string name="no">Nee</string>
   <string name="yes">Ja</string>
-  <string name="anda_yakin_mau_menghapus_catatan_ini">Seker U wil die nota uitvee?</string>
+  <string name="anda_yakin_mau_menghapus_catatan_ini">Vee die nota uit?</string>
   <string name="hapus_catatan">Vee nota uit</string>
   <string name="catatan_alamat">Nota aan %s</string>
   <string name="delete">Vee uit</string>
@@ -143,7 +142,7 @@
   <string name="create_label_titik3">Skep etiket</string>
   <string name="select_books_to_search">Kies boeke vir soektog</string>
   <string name="rename_label_title">Hernoem etiket</string>
-  <string name="are_you_sure_you_want_to_delete_the_label_label">Seker U wil etiket verwyder \'%1$s\'?Hierdie etiket word verwyder van %2$s boekmerke.\"</string>
+  <string name="are_you_sure_you_want_to_delete_the_label_label">"Vee die opskrif uit \'%1$s\'? Hierdie opskrif sal verwyder word van %2$s boekmerke."</string>
   <string name="bmcat_all_bookmarks">Alle boekmerke</string>
   <string name="bmcat_notes">Notas</string>
   <string name="bmcat_highlights">Beklemtoning</string>
@@ -159,7 +158,7 @@
   <string name="bl_send_backup">Oordrag</string>
   <string name="bl_file_not_found_filename">Lêer nie gevind: %s</string>
   <string name="bl_send_backup_confirmation">Skep en stuur rugsteun van boekmerke,notas en beklemtonings? U kan bv die aangehegde lêer per epos aanstuur na nuwe hand stuk of slegs vir argief doeleindes.</string>
-  <string name="labels_titikdua">Etikette:</string>
+  <string name="labels_titikdua">Opskrifte</string>
   <string name="tambah_titiktiga">Voeg by</string>
   <string name="nama_label_titikdua">Etiket naam:</string>
   <string name="change_label_color">Verander etiket kleur</string>
@@ -172,7 +171,7 @@
   <string name="intent_filter_import_from_backup">Voer in vanaf rugsteun</string>
   <string name="redownload">Heraflaai</string>
   <string name="read_faq_before_suggest">Lees asb FAQ alvorens U \'n voorstel instuur. Gaan aan met voorstel?</string>
-  <string name="no_bookmarks_for_backup">U het geen boekmerke,notas of beklemtonings om te rugsteun nie.</string>
+  <string name="no_bookmarks_for_backup">Jy het geen boekmerke, notas of beklemtonings nie.</string>
   <string name="pdb_error_not_palmbible">Hierdie PDB lêer is nie in Palm Bybel+ formaat nie. Hierdie PDB het tipe%1$s en skepper id%2$s, wta nie deur program ondersteun word nie.</string>
   <string name="pdb_error_corrupted">Hierdie PDB lêer is korrup.</string>
   <string name="pdb_error_not_pdb_file">Die verkose lêer is nie in PDB lêer formaat nie.</string>
@@ -183,7 +182,6 @@
   <string name="menuAddSomething">Voeg merker by</string>
   <string name="color_settings_title">Kleure</string>
   <string name="color_settings_night_title">Kleure (Nag Modus)</string>
-  <string name="menuTextAppearance">Teks voorkoms</string>
   <string name="text_appearance_theme_custom">Persoonlike</string>
   <string name="text_appearance_text_size">Teks grootte</string>
   <string name="text_appearance_line_spacing">Spasiëring</string>
@@ -317,4 +315,10 @@
   <string name="song_player_error_description">\'n Fout het ontstaan met die speel van die lied:%1$d, %2$d.</string>
   <string name="beta_tester_program_title">Beta Toetser</string>
   <string name="beta_tester_program_desc">Sluit aan by ons Beta Toets program en kry vroeë toegang tot nuwe kenmerke en help om Quick Bible te vorm: goo.gl/JjYTK1</string>
+  <string name="search_in_version_short_name_placeholder">Soek in %s</string>
+  <string name="marker_transfer_to_device_title">Stuur na ander toestel</string>
+  <string name="marker_transfer_to_device_description">Stuur alle boekmerke, notas en beklemtonings na \'n ander toestel. Ons stel voor jy gebruik Gmail/E-pos.</string>
+  <string name="marker_transfer_to_computer_title">Stuur vir redigering</string>
+  <string name="marker_transfer_to_computer_description">Stoor boekmerke, notas en beklemtonings in HTML formaat vir verdere redigering of drukwerk vanaf jou rekenaar.</string>
+  <string name="bookmark_delete_confirmation">Vee boekmerk uit?</string>
 </resources>

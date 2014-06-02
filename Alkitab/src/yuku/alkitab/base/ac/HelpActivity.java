@@ -88,6 +88,12 @@ public class HelpActivity extends BaseActivity {
 					return true;
 				}
 
+				if ("suggest".equals(scheme)) {
+					startActivity(new Intent(App.context, com.example.android.wizardpager.MainActivity.class));
+					finish();
+					return true;
+				}
+
 				if ("bible".equals(scheme)) {
 					// try to decode using OSIS format
 					final String ssp = uri.getSchemeSpecificPart();
