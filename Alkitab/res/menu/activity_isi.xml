@@ -39,38 +39,16 @@
         android:showAsAction="never"
         android:title="@string/rp_menuReadingPlan"/>
     <item
-        android:id="@+id/menuFullScreen"
+        android:id="@+id/menuAppearance"
         android:showAsAction="never"
-        android:title="@string/menuFullScreen" 
-        android:checkable="true" />
-    <item
-        android:id="@+id/menuTextAppearance"
-        android:showAsAction="never"
-        android:title="@string/menuTextAppearance" />
-    <item
-        android:id="@+id/menuNightMode"
-        android:showAsAction="never"
-        android:title="@string/menuNightMode"
-        android:checkable="true" />
+        android:title="@string/menuAppearance" />
     <item
         android:id="@+id/menuSettings"
         android:showAsAction="never"
         android:title="@string/menuPengaturan"/>
     <item
-        android:id="@+id/menuDonation"
+        android:id="@+id/menuSupport"
         android:showAsAction="never"
-        android:title="@string/menuDonasi"/>
-    <item
-        android:id="@+id/menuHelp"
-        android:showAsAction="never"
-        android:title="@string/menuBantuan"/>
-    <item
-        android:id="@+id/menuSendMessage"
-        android:showAsAction="never"
-        android:title="@string/beri_saran_title"/>
-    <item
-        android:id="@+id/menuAbout"
-        android:showAsAction="never"
-        android:title="@string/menuTentang"/>
+        android:title="@string/menuSupport"/>
 
 </menu>

@@ -1,7 +1,9 @@
 package yuku.alkitab.base.ac;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
@@ -14,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import yuku.afw.V;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.debug.R;
 
@@ -25,6 +28,9 @@ public class AboutActivity extends BaseActivity {
 	TextView tTranslators;
 	ImageView imgLogo;
 
+	View bHelp;
+	View bDonation;
+
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_about);
@@ -35,6 +41,8 @@ public class AboutActivity extends BaseActivity {
 		tVersion = V.get(this, R.id.tVersion);
 		tTranslators = V.get(this, R.id.tTranslators);
 		imgLogo = V.get(this, R.id.imgLogo);
+		bHelp = V.get(this, R.id.bHelp);
+		bDonation = V.get(this, R.id.bDonation);
 
 		Drawable logoDrawable;
 		if (Build.VERSION.SDK_INT >= 15) {
@@ -45,6 +53,9 @@ public class AboutActivity extends BaseActivity {
 		imgLogo.setImageDrawable(logoDrawable);
 
 		tVersion.setText(getString(R.string.about_version_name, App.getVersionName()));
+
+		bHelp.setOnClickListener(bHelp_click);
+		bDonation.setOnClickListener(bDonation_click);
 
 		String[] translators = getResources().getStringArray(R.array.translators_list);
 		SpannableStringBuilder sb = new SpannableStringBuilder();
@@ -75,6 +86,29 @@ public class AboutActivity extends BaseActivity {
 			}
 
 			return false;
+		}
+	};
+
+	View.OnClickListener bHelp_click = new View.OnClickListener() {
+		@Override
+		public void onClick(final View v) {
+			String page;
+			if (U.equals("in", getResources().getConfiguration().locale.getLanguage())) {
+				page = "help/html-in/index.html";
+			} else {
+				page = "help/html-en/index.html";
+			}
+
+			startActivity(HelpActivity.createIntent(page, false, null, null));
+		}
+	};
+
+	View.OnClickListener bDonation_click = new View.OnClickListener() {
+		@Override
+		public void onClick(final View v) {
+			String donation_url = getString(R.string.alamat_donasi);
+			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(donation_url));
+			startActivity(HelpActivity.createIntent("help/donation.html", true, getString(R.string.send_donation_confirmation), intent));
 		}
 	};
 }

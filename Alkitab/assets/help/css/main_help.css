@@ -4,6 +4,10 @@ html, body {
 	font-family: sans-serif;
 }
 
+h2 {
+    font-family: sans-serif-light, sans-serif;
+}
+
 .kod {
 	background-color: #beb;
 	font-size: 10pt;
@@ -18,16 +22,14 @@ kbd {
 	padding: 2px 5px;
 	white-space: nowrap;
 	min-width: 1em;
-	border-left: 1px solid #BBB;
-	border-top: 1px solid #BBB;
-	border-right: 1px solid #666;
-	border-bottom: 1px solid #666;
-	font-family: sans-serif;
+    border: 1px solid #BBB;
+    border-right-color: #666;
+    border-bottom-color: #666;
+    font-family: sans-serif;
 	line-height: 120%;
 }
 
-.daftarIsi {
-	background: #CCC;
+.toc {
 	border: 1px solid #666;
 	padding: 4px;
 }

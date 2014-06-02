@@ -11,7 +11,6 @@ import android.content.IntentFilter.MalformedMimeTypeException;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -54,7 +53,6 @@ import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.BookmarkActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.GotoActivity;
-import yuku.alkitab.base.ac.HelpActivity;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.ac.Search2Activity;
 import yuku.alkitab.base.ac.SettingsActivity;
@@ -894,11 +892,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 	
 	@Override public void onBackPressed() {
-		if (fullScreen) {
-			setFullScreen(false);
-		} else if (textAppearancePanel != null) {
+		if (textAppearancePanel != null) {
 			textAppearancePanel.hide();
 			textAppearancePanel = null;
+		} else if (fullScreen) {
+			setFullScreen(false);
 		} else {
 			super.onBackPressed();
 		}
@@ -994,13 +992,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		//# build config
 		menu.findItem(R.id.menuDevotion).setVisible(c.menuDevotion);
 		menu.findItem(R.id.menuVersions).setVisible(c.menuVersions);
-		menu.findItem(R.id.menuHelp).setVisible(c.menuHelp);
-		menu.findItem(R.id.menuDonation).setVisible(c.menuDonation);
 		menu.findItem(R.id.menuSongs).setVisible(c.menuSongs);
-		
-		// checkable menu items
-		menu.findItem(R.id.menuNightMode).setChecked(Preferences.getBoolean(Prefkey.is_night_mode, false));
-		menu.findItem(R.id.menuFullScreen).setChecked(fullScreen);
 	}
 	
 	@Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -1046,46 +1038,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		case R.id.menuReadingPlan:
 			startActivityForResult(new Intent(this, ReadingPlanActivity.class), REQCODE_readingPlan);
 			return true;
-		case R.id.menuAbout:
+		case R.id.menuSupport:
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
-		case R.id.menuFullScreen:
-			setFullScreen(!item.isChecked());
-			return true;
-		case R.id.menuTextAppearance:
+		case R.id.menuAppearance:
 			setShowTextAppearancePanel(textAppearancePanel == null);
 			return true;
-		case R.id.menuNightMode: {
-			setNightMode(! Preferences.getBoolean(Prefkey.is_night_mode, false));
-		} return true;
 		case R.id.menuSettings:
 			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
 			return true;
-		case R.id.menuHelp: {
-			String page;
-			if (U.equals("in", getResources().getConfiguration().locale.getLanguage())) {
-				page = "help/html-in/index.html";
-			} else {
-				page = "help/html-en/index.html";
-			}
-
-			startActivity(HelpActivity.createIntent(page, false, null, null));
-		} return true;
-		case R.id.menuSendMessage: {
-			String page;
-			if (U.equals("in", getResources().getConfiguration().locale.getLanguage())) {
-				page = "help/html-in/faq.html";
-			} else {
-				page = "help/html-en/faq.html";
-			}
-
-			startActivity(HelpActivity.createIntent(page, true, getString(R.string.read_faq_before_suggest), new Intent(yuku.afw.App.context, com.example.android.wizardpager.MainActivity.class)));
-		} return true;
-			case R.id.menuDonation: {
-				String donation_url = getString(R.string.alamat_donasi);
-				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(donation_url));
-				startActivity(HelpActivity.createIntent("help/donation.html", true, getString(R.string.send_donation_confirmation), intent));
-			} return true;
 		}
 		
 		return super.onOptionsItemSelected(item);
@@ -1108,17 +1069,25 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 			fullScreen = false;
 		}
+
+		if (textAppearancePanel != null) {
+			textAppearancePanel.setFullScreen(yes);
+		}
 	}
 
 	void setShowTextAppearancePanel(boolean yes) {
 		if (yes) {
 			if (textAppearancePanel == null) { // not showing yet
 				textAppearancePanel = new TextAppearancePanel(this, getLayoutInflater(), overlayContainer, new TextAppearancePanel.Listener() {
-					@Override public void onValueChanged() {
+					@Override public void onValueChanged(TextAppearancePanel.ValueGet valueGet) {
 						S.calculateAppliedValuesBasedOnPreferences();
 						applyPreferences(false);
+
+						setFullScreen(valueGet.fullScreenChecked());
+						setNightMode(Preferences.getBoolean(Prefkey.is_night_mode, false));
 					}
 				}, REQCODE_textAppearanceGetFonts, REQCODE_textAppearanceCustomColors);
+				textAppearancePanel.setFullScreen(fullScreen);
 				textAppearancePanel.show();
 			}
 		} else {
@@ -1132,8 +1101,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	void setNightMode(boolean yes) {
 		final boolean previousValue = Preferences.getBoolean(Prefkey.is_night_mode, false);
 		if (previousValue == yes) return;
-
-		Preferences.setBoolean(Prefkey.is_night_mode, yes);
 
 		S.calculateAppliedValuesBasedOnPreferences();
 		applyPreferences(false);

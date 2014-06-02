@@ -3,6 +3,7 @@
 <resources>
     <string name="highlight_stabilo">Highlight</string>
     <string name="menuDonasi">Donation</string>
+    <string name="menuSupport">Support</string>
     <string name="mengimpor_titiktiga">Restoring…</string>
     <string name="mengekspor_titiktiga">Creating backup…</string>
     <string name="bagikan_renungan">Share devotion</string>
@@ -181,7 +182,7 @@
     <string name="menuAddSomething">Add marker</string>
     <string name="color_settings_title">Colors</string>
     <string name="color_settings_night_title">Colors (Night mode)</string>
-    <string name="menuTextAppearance">Text appearance</string>
+    <string name="menuAppearance">Appearance</string>
     <string name="text_appearance_theme_custom">Custom…</string>
     <string name="text_appearance_text_size">Text size</string>
     <string name="text_appearance_line_spacing">Line spacing</string>
