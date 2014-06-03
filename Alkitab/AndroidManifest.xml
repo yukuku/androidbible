@@ -32,6 +32,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
@@ -252,6 +253,17 @@
         <service android:name="yuku.alkitab.base.sv.DailyVerseAppWidgetService"
                  android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
+        <uses-library
+            android:name="com.sec.android.app.multiwindow"
+            android:required="false"/>
+
+        <meta-data
+            android:name="com.samsung.android.sdk.multiwindow.enable"
+            android:value="true"/>
+
+        <meta-data
+            android:name="com.sec.android.support.multiwindow"
+            android:value="true"/>
     </application>
 
 </manifest>
