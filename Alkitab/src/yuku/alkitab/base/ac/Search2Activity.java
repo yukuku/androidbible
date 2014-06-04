@@ -429,7 +429,7 @@ public class Search2Activity extends BaseActivity {
 			
 			Book book = getItem(position);
 			text.setText(book.shortName);
-			text.setTextColor(U.getForegroundColorByBookId(book.bookId));
+			text.setTextColor(U.getForegroundColorOnLightBackgroundByBookId(book.bookId));
 		}
 	}
 
