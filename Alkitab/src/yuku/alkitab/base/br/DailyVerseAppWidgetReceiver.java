@@ -21,6 +21,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import yuku.afw.App;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity;
@@ -89,6 +90,14 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 
 		//------Set Intent to update widget
 		int[] ids = {appWidgetId};
+		//--App logo button
+		{
+			Intent intent = new Intent(App.context, IsiActivity.class);
+
+			PendingIntent pi = PendingIntent.getActivity(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+			remoteViews.setOnClickPendingIntent(R.id.imgLogo, pi);
+		}
+
 		//--Prev button
 		{
 			Intent intentPrev = new Intent(context, ClickReceiver.class);
