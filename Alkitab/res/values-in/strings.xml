@@ -311,7 +311,7 @@
   <string name="rp_download_reading_plan_data_corrupted">Rencana baca yang diunduh datanya rusak. Harap coba lagi lain kali dengan terkoneksi ke Internet.</string>
   <string name="version_download_need_fonts">"Versi yang diunduh mungkin perlu ditampilkan dengan jenis huruf tertentu. Bukalah menu \'Penampilan teks\' dan pilih jenis hurufnya. Yunani butuh jenis huruf Ubuntu. Myanmar butuh Parabaik, ParabaikSans, atau Myanmar3. Tamil butuh Akshar. Telugu butuh Suranna."</string>
   <string name="menuNightMode">Mode gelap</string>
-  <string name="delete_highlight">Hapus sorotan</string>
+    <string name="highlight_custom_color">Warna lain</string>
   <string name="menu_compare">Bandingkan</string>
   <string name="about_version_name">versi %s</string>
   <string name="song_player_error_description">Ada kesalahan ketika memainkan lagu ini: %1$d, %2$d.</string>

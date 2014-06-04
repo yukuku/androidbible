@@ -18,5 +18,11 @@
         <CheckBox android:id="@+id/c08" android:background="#a00080ff" android:button="@drawable/highlight_color" android:layout_margin="2dp" android:layout_height="36dp" android:layout_width="36dp" />
         <CheckBox android:id="@+id/c07" android:background="#a000ffff" android:button="@drawable/highlight_color" android:layout_margin="2dp" android:layout_height="36dp" android:layout_width="36dp" />
     </LinearLayout>
-    <Button android:layout_width="wrap_content" android:layout_margin="4dp" android:id="@+id/c00" android:layout_height="wrap_content" android:drawableLeft="@drawable/highlight_color_cross" android:text="@string/delete_highlight" />
+
+    <Button
+        android:id="@+id/bOtherColors"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:text="@string/highlight_custom_color"/>
 </LinearLayout>
