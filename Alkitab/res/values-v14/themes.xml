@@ -5,7 +5,9 @@
         <item name="android:actionButtonStyle">@style/Widget.Alkitab.ActionButton</item>
     </style>
 
-	<style name="Theme.Alkitab.Content" parent="@style/Theme.Alkitab">
+    <style name="Theme.Alkitab.Dark" parent="Theme.AppCompat" />
+
+    <style name="Theme.Alkitab.Content" parent="@style/Theme.Alkitab">
 	    <item name="android:windowContentOverlay">@null</item>
 	    <item name="android:windowBackground">@null</item>
 	</style>
