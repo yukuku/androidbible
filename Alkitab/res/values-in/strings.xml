@@ -183,7 +183,7 @@
   <string name="menuAddSomething">Tambah marka</string>
   <string name="color_settings_title">Warna</string>
   <string name="color_settings_night_title">Warna (Mode gelap)</string>
-  <string name="menuAppearance">Penampilan</string>
+  <string name="menuDisplay">Penampilan</string>
   <string name="text_appearance_theme_custom">Lainnya&#8230;</string>
   <string name="text_appearance_text_size">Ukuran teks</string>
   <string name="text_appearance_line_spacing">Jarak antarbaris</string>

@@ -1054,7 +1054,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		case R.id.menuSupport:
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
-		case R.id.menuAppearance:
+		case R.id.menuDisplay:
 			setShowTextAppearancePanel(textAppearancePanel == null);
 			return true;
 		case R.id.menuSettings:
