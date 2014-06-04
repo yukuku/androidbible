@@ -4,6 +4,7 @@
 <resources>
   <string name="highlight_stabilo">マーカー</string>
   <string name="menuDonasi">寄付</string>
+  <string name="menuSupport">サポート</string>
   <string name="mengimpor_titiktiga">復元しています...</string>
   <string name="mengekspor_titiktiga">バックアップ作成中&#8230;</string>
   <string name="bagikan_renungan">デボーションをシェア</string>
@@ -35,10 +36,8 @@
   <string name="search_bookname_only">%s のみ</string>
   <string name="ayat_sebelumangka">節</string>
   <string name="pasal_sebelumangka">章</string>
-  <string name="loncat_ke_alamat_titikdua">ジャンプ: (例: %s)</string>
-  <string name="tidak_ada_catatan">(ノート無し)</string>
   <string name="belum_ada_pembatas_buku">ブックマークがありません.\nブックマークを追加するには、節を選択します.</string>
-  <string name="judul_titikdua">タイトル:</string>
+  <string name="judul_titikdua">題名</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">ダウンロード失敗 %1$s 日時 %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">%1$s のダウンロードにてエラーが発生しました 日時 %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">%1$s のダウンロードに成功しました. 日時 %2$s</string>
@@ -68,7 +67,7 @@
   <string name="alamat_tidak_sah_alamat">アドレス %s が無効です.</string>
   <string name="no">いいえ</string>
   <string name="yes">はい</string>
-  <string name="anda_yakin_mau_menghapus_catatan_ini">このノートを削除していいですか?</string>
+  <string name="anda_yakin_mau_menghapus_catatan_ini">このノートを削除しますか?</string>
   <string name="hapus_catatan">ノートを削除する</string>
   <string name="catatan_alamat">%s に関するノート</string>
   <string name="delete">削除</string>
@@ -143,7 +142,7 @@
   <string name="create_label_titik3">ラベルの作成...</string>
   <string name="select_books_to_search">検索対象の書を選択</string>
   <string name="rename_label_title">ラベル名を変更</string>
-  <string name="are_you_sure_you_want_to_delete_the_label_label">"ラベル \'%1$s\' を削除していいですか?  %2$s 個のブックマークからラベルが削除されます。"</string>
+  <string name="are_you_sure_you_want_to_delete_the_label_label">"ラベル \'%1$s\' を削除しますか? %2$s 個のブックマークからこのラベルを削除します."</string>
   <string name="bmcat_all_bookmarks">全ブックマーク</string>
   <string name="bmcat_notes">ノート</string>
   <string name="bmcat_highlights">マーカー</string>
@@ -159,7 +158,7 @@
   <string name="bl_send_backup">転送</string>
   <string name="bl_file_not_found_filename">ファイル %s が見つかりません.</string>
   <string name="bl_send_backup_confirmation">ブックマーク、ノート、マーカーのバックアップを作成しますか?  例： 別のデバイスにemailでバックアップファイルを送付したり、アーカイヴを作成したりできます.</string>
-  <string name="labels_titikdua">ラベル：</string>
+  <string name="labels_titikdua">ラベル</string>
   <string name="tambah_titiktiga">追加...</string>
   <string name="nama_label_titikdua">ラベル名：</string>
   <string name="change_label_color">ラベルの色を変更</string>
@@ -183,7 +182,6 @@
   <string name="menuAddSomething">ブックマーク等の追加</string>
   <string name="color_settings_title">色</string>
   <string name="color_settings_night_title">色（夜間モード）</string>
-  <string name="menuTextAppearance">文字表示の設定</string>
   <string name="text_appearance_theme_custom">カスタム...</string>
   <string name="text_appearance_text_size">文字の大きさ</string>
   <string name="text_appearance_line_spacing">行間</string>
@@ -245,7 +243,7 @@
   <string name="me_section_highlights">マーカー</string>
   <string name="me_no_labels">ラベルなし</string>
   <string name="me_edited_modify_date">(変更 %s)</string>
-  <string name="pm_progress_1">しおり1</string>
+  <string name="pm_progress_1">しおり 1</string>
   <string name="pm_progress_2">しおり 2</string>
   <string name="pm_progress_3">しおり 3</string>
   <string name="pm_progress_4">しおり 4</string>
@@ -311,7 +309,6 @@
   <string name="rp_download_reading_plan_data_corrupted">ダウンロードした読書プランのデータは壊れています。インターネット接続を確認し、再度実行してください。</string>
   <string name="version_download_need_fonts">”ダウンロードした版は、特定のフォントで表示する必要があるかもしれません。「文字表示の設定」 メニューでフォントを選択してください。ギリシャ語にはUbuntuフォントが必要です。ビルマ語にはParabaik, ParabaikSansまたはMyanmar3フォントが必要です。タミル語にはAksharフォントが必要です。テルグ語にはSurannaフォントが必要です。\"</string>
   <string name="menuNightMode">夜間モード</string>
-  <string name="delete_highlight">マーカーを削除</string>
   <string name="menu_compare">比較する</string>
   <string name="about_version_name">バージョン %s</string>
   <string name="song_player_error_description">聖歌 %1$d %2$d 再生中にエラーになりました</string>
@@ -323,4 +320,5 @@
   <string name="marker_transfer_to_computer_title">編集のため転送</string>
   <string name="marker_transfer_to_computer_description">パソコンで編集/印刷するために、ブックマーク、メモ、マーカーをHTMLファイルに保存します.
 </string>
+  <string name="bookmark_delete_confirmation">このブックマークを削除しますか?</string>
 </resources>

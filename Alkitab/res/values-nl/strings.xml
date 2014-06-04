@@ -4,6 +4,7 @@
 <resources>
   <string name="highlight_stabilo">Markeer</string>
   <string name="menuDonasi">Doneren</string>
+  <string name="menuSupport">Ondersteuning</string>
   <string name="mengimpor_titiktiga">Terugzetten...</string>
   <string name="mengekspor_titiktiga">Maken van een reservekopie&#8230;</string>
   <string name="bagikan_renungan">Deel devotie</string>
@@ -35,7 +36,7 @@
   <string name="search_bookname_only">Alleen in %s</string>
   <string name="ayat_sebelumangka">Vers</string>
   <string name="pasal_sebelumangka">Hoofdstuk</string>
-  <string name="loncat_ke_alamat_titikdua">GA NAAR (Example: %s)</string>
+  <string name="jump_to_prompt"><b>GA NAAR</b> — Voorbeeld: ^1</string>
   <string name="belum_ada_pembatas_buku">Er zijn nog geen bladwijzers.\nSelecteer een vers om een bladwijzer toe te voegen.</string>
   <string name="judul_titikdua">TITEL</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Download mislukt van %1$s gedateerd op %2$s</string>
@@ -182,6 +183,7 @@
   <string name="menuAddSomething">Voeg markering toe</string>
   <string name="color_settings_title">Kleuren</string>
   <string name="color_settings_night_title">Kleuren (nachtmodus)</string>
+  <string name="menuDisplay">Scherm</string>
   <string name="text_appearance_theme_custom">Aangepast&#8230;</string>
   <string name="text_appearance_text_size">Tekstgrootte</string>
   <string name="text_appearance_line_spacing">Regelafstand</string>
@@ -309,13 +311,16 @@
   <string name="rp_download_reading_plan_data_corrupted">Het gedownloade leesplan is corrupt. Probeer het opnieuw met een werkende internetverbinding.</string>
   <string name="version_download_need_fonts">"De gedownloade versie kan moeten worden weergegeven in een bepaald lettertype. Ga naar het menu \"Tekstweergave\" en selecteer een lettertype. Grieks heeft het lettertype Ubuntu nodig. Birmese gebruikt Parabaik, ParabaikSans of Myanmar3. Tamil gebruikt Akshar en Telugu gebruikt het lettertype Suranna."</string>
   <string name="menuNightMode">Nachtmodus</string>
-  <string name="delete_highlight">Verwijder markering</string>
+  <string name="highlight_custom_color">Andere kleuren</string>
   <string name="menu_compare">Vergelijken</string>
   <string name="about_version_name">versie %s</string>
   <string name="song_player_error_description">Er is een fout opgetreden bij het afspelen van dit lied: %1$d, %2$d.</string>
   <string name="beta_tester_program_title">Bèta tester</string>
   <string name="beta_tester_program_desc">Schrijf je in voor ons Beta Tester Program en ontvang als eerste toegang tot nieuwe functionaliteiten en de mogelijkheid om mee te werken aan nieuwe updates voor Quick Bible: goo.gl/JjYTK1</string>
   <string name="search_in_version_short_name_placeholder">Zoek in %s</string>
+  <string name="search_syntax_tips"><i>Zoektips:</i>\n\n<b>+woord</b> voor dat exacte woord\n<b>"Heere God"</b> voor deze exacte zin</string>
+  <string name="search_no_result">Geen verzen gevonden voor <b>^1</b>.</string>
+  <string name="search_no_result_fallback">Klik hier om naar <u>^1</u> te gaan.</string>
   <string name="marker_transfer_to_device_title">Verplaats naar een ander apparaat</string>
   <string name="marker_transfer_to_device_description">Verplaats alle bladwijzers, notities en markeringen naar een andere telefoon of tablet. We raden aan dit via Gmail/e-mail te doen.</string>
   <string name="marker_transfer_to_computer_title">Verplaats om te bewerken</string>

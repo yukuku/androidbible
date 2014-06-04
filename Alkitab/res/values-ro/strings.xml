@@ -4,6 +4,7 @@
 <resources>
   <string name="highlight_stabilo">Evidenţiază</string>
   <string name="menuDonasi">Donează</string>
+  <string name="menuSupport">Suport</string>
   <string name="mengimpor_titiktiga">Restabilire&#8230;</string>
   <string name="mengekspor_titiktiga">Creează rezervă&#8230;</string>
   <string name="bagikan_renungan">Devoţional</string>
@@ -35,10 +36,8 @@
   <string name="search_bookname_only">Numai %s</string>
   <string name="ayat_sebelumangka">Verset</string>
   <string name="pasal_sebelumangka">Capitol</string>
-  <string name="loncat_ke_alamat_titikdua">Mergi la: (Exemplu: %s)</string>
-  <string name="tidak_ada_catatan">(Nu sunt note)</string>
   <string name="belum_ada_pembatas_buku">Nu sunt marcaje.\nSelectează un verset pentru adăugare în marcaje.</string>
-  <string name="judul_titikdua">Titlu:</string>
+  <string name="judul_titikdua">TITLU</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Eroare la descărcare %1$s data %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Eroare în descărcare %1$s data %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">Descărcare reuşită %1$s data %2$s</string>
@@ -68,7 +67,7 @@
   <string name="alamat_tidak_sah_alamat">Adresă greşită: %s</string>
   <string name="no">Nu</string>
   <string name="yes">Da</string>
-  <string name="anda_yakin_mau_menghapus_catatan_ini">Eşti sigur că vrei să ştergi această notă?</string>
+  <string name="anda_yakin_mau_menghapus_catatan_ini">Ștergeți această notiță?</string>
   <string name="hapus_catatan">Şterge nota</string>
   <string name="catatan_alamat">Nota la %s</string>
   <string name="delete">Şterge</string>
@@ -143,7 +142,7 @@
   <string name="create_label_titik3">Creează etichetă&#8230;</string>
   <string name="select_books_to_search">Selectează cartea pentru căutare</string>
   <string name="rename_label_title">Redenumeşte eticheta</string>
-  <string name="are_you_sure_you_want_to_delete_the_label_label">"Sunteţi sigur ca vreţi să ştergeţi eticheta \'%1$s\'? Eticheta va fi ştearsă din %2$s favorit."</string>
+  <string name="are_you_sure_you_want_to_delete_the_label_label">"Ștergeți eticheta \'%1$s\'? Această etichetă va fi ștearsă din %2$s însemnări."</string>
   <string name="bmcat_all_bookmarks">Versete favorite</string>
   <string name="bmcat_notes">Note</string>
   <string name="bmcat_highlights">Marcaje</string>
@@ -159,7 +158,7 @@
   <string name="bl_send_backup">Transferă</string>
   <string name="bl_file_not_found_filename">Fişierul nu este găsit: %s</string>
   <string name="bl_send_backup_confirmation">Creați și trimiteți o copie de rezervă a marcajelor, notelor, și evidențierilor? Puteți de exemplu, să trimiteți fișierul atașat prin e-mail la un dispozitiv nou, sau doar pentru arhivare.</string>
-  <string name="labels_titikdua">Etichete:</string>
+  <string name="labels_titikdua">ETICHETE</string>
   <string name="tambah_titiktiga">Adaugă&#8230;</string>
   <string name="nama_label_titikdua">Nume etichetă</string>
   <string name="change_label_color">Schimba culoarea etichetei</string>
@@ -172,7 +171,7 @@
   <string name="intent_filter_import_from_backup">Importă din copia de rezervă</string>
   <string name="redownload">Descărcare nouă</string>
   <string name="read_faq_before_suggest">Vă rog să citiți FAQ înainte de a trimite o sugestie. Continuați cu trimiterea sugestiei?</string>
-  <string name="no_bookmarks_for_backup">Nu sunt marcaje, note sau evidențieri pentru copia de rezervă.</string>
+  <string name="no_bookmarks_for_backup">Nu aveți adăugate favorite, notițe sau marcaje.</string>
   <string name="pdb_error_not_palmbible">Acest fișier PDB nu este în format PalmBible+. Acest PDB este de tip \'%1$s\' și creatorul ID-ul de \'%2$s\', care nu este acceptat de această aplicație.</string>
   <string name="pdb_error_corrupted">Fişierul PDB are erori.</string>
   <string name="pdb_error_not_pdb_file">Fişierul selectat nu este de tip PDB.</string>
@@ -183,7 +182,6 @@
   <string name="menuAddSomething">Adaugă însemn</string>
   <string name="color_settings_title">Culori</string>
   <string name="color_settings_night_title">Culori (Mod nocturn)</string>
-  <string name="menuTextAppearance">Aspect text</string>
   <string name="text_appearance_theme_custom">Personalizat...</string>
   <string name="text_appearance_text_size">Dimensiune text</string>
   <string name="text_appearance_line_spacing">Spațiu rânduri</string>
@@ -311,11 +309,15 @@
   <string name="rp_download_reading_plan_data_corrupted">Planul de citire descărcat este corupt. Încearcă încă o dată având o conexiune la internet.</string>
   <string name="version_download_need_fonts">"Versiunea ce s-a descărcat, ar putea avea nevoie de anumite fonturi. Mergi la meniul \"aspect Text \" și selectați un font. Grec are nevoie de fontul Ubuntu. Pentru limba birmaneză Parabaik, ParabaikSans sau Myanmar3. Tamil are nevoie de Akshar. Telugu are nevoie de Suranna."</string>
   <string name="menuNightMode">Mod nocturn</string>
-  <string name="delete_highlight">Șterge selecție</string>
   <string name="menu_compare">Compară</string>
   <string name="about_version_name">versiune %s</string>
   <string name="song_player_error_description">O eroare a fost întâlnită în timpul redării acestui cântec: %1$d, %2$d.</string>
   <string name="beta_tester_program_title">Beta Tester</string>
   <string name="beta_tester_program_desc">Alăturați-vă programului nostru de Beta Tester și veți primi acces la noi caracteristici, având posibilitatea să optimizați Quick Bible: goo.gl/JjYTK1</string>
   <string name="search_in_version_short_name_placeholder">Caută în %s</string>
+  <string name="marker_transfer_to_device_title">Transfer pe alt dispozitiv</string>
+  <string name="marker_transfer_to_device_description">Mută toate favorite, note și marcaje pe un alt telefon sau tabletă. Recomandăm utilizarea Gmail/Email.</string>
+  <string name="marker_transfer_to_computer_title">Transferă pentru editare</string>
+  <string name="marker_transfer_to_computer_description">Salvează  favorite, note și marcaje într-un fișier HTML pentru o editare ulterioară sau tipărire din calculator.</string>
+  <string name="bookmark_delete_confirmation">Ștergeți acest marcaj?</string>
 </resources>

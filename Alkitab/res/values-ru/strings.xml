@@ -4,6 +4,7 @@
 <resources>
   <string name="highlight_stabilo">Выделить</string>
   <string name="menuDonasi">Пожертвование</string>
+  <string name="menuSupport">Поддержка</string>
   <string name="mengimpor_titiktiga">Восстановление&#8230;</string>
   <string name="mengekspor_titiktiga">Создание резервной копии&#8230;</string>
   <string name="bagikan_renungan">Поделиться стихами</string>
@@ -35,7 +36,6 @@
   <string name="search_bookname_only">Только %s</string>
   <string name="ayat_sebelumangka">Стих</string>
   <string name="pasal_sebelumangka">Глава</string>
-  <string name="loncat_ke_alamat_titikdua">ПЕРЕЙТИ К (Пример: %s)</string>
   <string name="belum_ada_pembatas_buku">Закладок пока нет.\nЧтобы добавить закладку, выберите стих.</string>
   <string name="judul_titikdua">ЗАГОЛОВОК</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Не удалось загрузить %1$s от %2$s</string>
@@ -309,7 +309,6 @@
   <string name="rp_download_reading_plan_data_corrupted">Загруженный план чтения поврежден. Пожалуйста, повторите попытку при работающем соединении с Интернетом.</string>
   <string name="version_download_need_fonts">Загруженная вами версия может потребовать особых шрифтов. Перейдите в меню \'Вид текста\' и выберите шрифт.</string>
   <string name="menuNightMode">Ночной режим</string>
-  <string name="delete_highlight">Снять выделение</string>
   <string name="menu_compare">Сравнить</string>
   <string name="about_version_name">версия %s</string>
   <string name="song_player_error_description">Произошла ошибка при воспроизведении этой песни : %1$d, %2$d.</string>

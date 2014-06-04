@@ -4,6 +4,7 @@
 <resources>
   <string name="highlight_stabilo">A surligner</string>
   <string name="menuDonasi">Dons</string>
+  <string name="menuSupport">Aide</string>
   <string name="mengimpor_titiktiga">Restauration en cours&#8230;</string>
   <string name="mengekspor_titiktiga">Back-up en cours&#8230;</string>
   <string name="bagikan_renungan">Méditation à partager</string>
@@ -35,10 +36,8 @@
   <string name="search_bookname_only">%s seulement</string>
   <string name="ayat_sebelumangka">Verset</string>
   <string name="pasal_sebelumangka">Chapitre</string>
-  <string name="loncat_ke_alamat_titikdua">Aller à : (Exemple:%s)</string>
-  <string name="tidak_ada_catatan">(Aucune note)</string>
   <string name="belum_ada_pembatas_buku">Il n\'y a aucun marque-page.\nChoisissez un verset pour ajouter un marque-page.</string>
-  <string name="judul_titikdua">Titre :</string>
+  <string name="judul_titikdua">TITRE</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Impossible de Télécharger %1$s le %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Erreur dans le téléchargement %1$s du %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">Téléchargement %1$s du %2$s réussi</string>
@@ -68,7 +67,7 @@
   <string name="alamat_tidak_sah_alamat">Adresse erronée : %s</string>
   <string name="no">Non</string>
   <string name="yes">Oui</string>
-  <string name="anda_yakin_mau_menghapus_catatan_ini">Voulez-vous vraiment effacer cette note ?</string>
+  <string name="anda_yakin_mau_menghapus_catatan_ini">Supprimer cette note ?</string>
   <string name="hapus_catatan">Détruire la note</string>
   <string name="catatan_alamat">Note sur %s</string>
   <string name="delete">Détruire</string>
@@ -143,7 +142,7 @@
   <string name="create_label_titik3">Création d\'une catégorie&#8230;</string>
   <string name="select_books_to_search">Sélectionner les livres à chercher</string>
   <string name="rename_label_title">Modifier un libellé</string>
-  <string name="are_you_sure_you_want_to_delete_the_label_label">"Etes-vous sûr de vouloir supprimer l\'étiquette \'%1$s\'? Cette étiquette va être supprimée des marque-pages %2$s."</string>
+  <string name="are_you_sure_you_want_to_delete_the_label_label">"Effacer le libellé \'%1$s\' ? Ce libellé sera retiré des %2$s marque-pages."</string>
   <string name="bmcat_all_bookmarks">Tous les signets</string>
   <string name="bmcat_notes">Notes</string>
   <string name="bmcat_highlights">Surlignés</string>
@@ -159,7 +158,7 @@
   <string name="bl_send_backup">Transfert</string>
   <string name="bl_file_not_found_filename">Fichier non trouvé : %s</string>
   <string name="bl_send_backup_confirmation">Créer et envoyer une sauvegarde des signets, notes et surlignés ? Vous pouvez, par exemple, envoyer le fichier joint par eMail ou vers un nouveau support, ou juste pour archivage.</string>
-  <string name="labels_titikdua">Libellés :</string>
+  <string name="labels_titikdua">LIBELLES</string>
   <string name="tambah_titiktiga">Ajout&#8230;</string>
   <string name="nama_label_titikdua">Nom du libellé :</string>
   <string name="change_label_color">Changer la couleur du libellé</string>
@@ -183,7 +182,6 @@
   <string name="menuAddSomething">Ajouter un marque-page</string>
   <string name="color_settings_title">Couleurs</string>
   <string name="color_settings_night_title">Couleurs (Mode Nuit)</string>
-  <string name="menuTextAppearance">Apparence du texte</string>
   <string name="text_appearance_theme_custom">Usage&#8230;</string>
   <string name="text_appearance_text_size">Taille du texte</string>
   <string name="text_appearance_line_spacing">Interligne</string>
@@ -311,7 +309,6 @@
   <string name="rp_download_reading_plan_data_corrupted">Le plan de lecture téléchergé est corrompu. Merci de relancer le téléchargement avec une connexion internet active.</string>
   <string name="version_download_need_fonts">"La version que vous avez téléchargée exige certaines polices de caractères pour être affichée. Allez au menu \'apparence du texte\' et sélectionnez une police de caractère. Le Grec exige les polices de caractère de Ubuntu. Burmese exige Parabaik, ParabaikSans, or Myanmar3. Tamil exige Akshar. Telugu exige Suranna."</string>
   <string name="menuNightMode">Mode nuit</string>
-  <string name="delete_highlight">Supprimer le surligné</string>
   <string name="menu_compare">Comparer</string>
   <string name="about_version_name">version %s</string>
   <string name="song_player_error_description">Erreur lors de l\'écoute de ce chant : %1$d, %2$d.</string>
@@ -322,4 +319,5 @@
   <string name="marker_transfer_to_device_description">Déplacer tous les marque-pages, notes, et surlignés vers un autre téléphone ou tablette. Nous recommendons d\'utiliser Gmail/email.</string>
   <string name="marker_transfer_to_computer_title">Transfert pour édition</string>
   <string name="marker_transfer_to_computer_description">Sauvegarder vos marque-pages, notes et surlignés dans un fichier HTML pour les éditer ou les imprimer depuis votre ordinateur.</string>
+  <string name="bookmark_delete_confirmation">Détruire ce marque-page ?</string>
 </resources>

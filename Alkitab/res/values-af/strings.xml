@@ -4,6 +4,7 @@
 <resources>
   <string name="highlight_stabilo">Beklemtoon</string>
   <string name="menuDonasi">Donasie</string>
+  <string name="menuSupport">Ondersteuning</string>
   <string name="mengimpor_titiktiga">Herstel</string>
   <string name="mengekspor_titiktiga">Skep rugsteun</string>
   <string name="bagikan_renungan">Deel toewyding</string>
@@ -35,7 +36,7 @@
   <string name="search_bookname_only">%s alleenlik </string>
   <string name="ayat_sebelumangka">Vers</string>
   <string name="pasal_sebelumangka">Hoofstuk</string>
-  <string name="loncat_ke_alamat_titikdua">Spring na (Voorbeeld: %s)</string>
+  <string name="jump_to_prompt"><b>SPRING NA</b> - Voorbeeld: ^1</string>
   <string name="belum_ada_pembatas_buku">Tans geen boekmerke.\nKies \'n vers om by boekmerk te voeg.</string>
   <string name="judul_titikdua">Titel</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Gefaal om af te laai %1$s dateer %2$s</string>
@@ -182,6 +183,7 @@
   <string name="menuAddSomething">Voeg merker by</string>
   <string name="color_settings_title">Kleure</string>
   <string name="color_settings_night_title">Kleure (Nag Modus)</string>
+  <string name="menuDisplay">Vertoon</string>
   <string name="text_appearance_theme_custom">Persoonlike</string>
   <string name="text_appearance_text_size">Teks grootte</string>
   <string name="text_appearance_line_spacing">Spasiëring</string>
@@ -309,7 +311,7 @@
   <string name="rp_download_reading_plan_data_corrupted">Gelaaide lees plan se data is korrup. Probeer asseblief weer later met \'n werkende internet konneksie.</string>
   <string name="version_download_need_fonts">"Die weergawe wat jy afgelaai het mag dalk \'n sekere lettertipe benodig. Gaan na \'Teks voorkoms\' menu en kies lettertipe. Grieks benodig Ubuntu lettertipe. Burmees benodig Parabaik, ParabaikSans, of Myanmar3. Tamil benodig Akshar en Tekugu benodig Suranna."</string>
   <string name="menuNightMode">Nag modus</string>
-  <string name="delete_highlight">Verwyder beklemtoning</string>
+  <string name="highlight_custom_color">Ander Kleure</string>
   <string name="menu_compare">Vergelyk</string>
   <string name="about_version_name">weergawe %s</string>
   <string name="song_player_error_description">\'n Fout het ontstaan met die speel van die lied:%1$d, %2$d.</string>
