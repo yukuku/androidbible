@@ -44,6 +44,7 @@ public class TextAppearancePanel {
 
 	public interface Listener {
 		void onValueChanged(ValueGet valueGet);
+		void onCloseButtonClick();
 	}
 	
 	final Activity activity;
@@ -64,6 +65,7 @@ public class TextAppearancePanel {
 	View bCustomColors;
 	CheckBox cFullScreen;
 	CheckBox cNightMode;
+	View bClose;
 
 	TypefaceAdapter typefaceAdapter;
 	ColorThemeAdapter colorThemeAdapter;
@@ -103,6 +105,7 @@ public class TextAppearancePanel {
 		bCustomColors = V.get(content, R.id.bCustomColors);
 		cFullScreen = V.get(content, R.id.cFullScreen);
 		cNightMode = V.get(content, R.id.cNightMode);
+		bClose = V.get(content, R.id.bClose);
 
 		cbTypeface.setAdapter(typefaceAdapter = new TypefaceAdapter());
 		cbTypeface.setOnItemSelectedListener(cbTypeface_itemSelected);
@@ -114,6 +117,7 @@ public class TextAppearancePanel {
 		bCustomColors.setOnClickListener(bCustomColors_click);
 		cFullScreen.setOnCheckedChangeListener(cFullScreen_checkedChange);
 		cNightMode.setOnCheckedChangeListener(cNightMode_checkedChange);
+		bClose.setOnClickListener(bClose_click);
 
 	    displayValues();
 	}
@@ -225,6 +229,13 @@ public class TextAppearancePanel {
 		public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
 			Preferences.setBoolean(Prefkey.is_night_mode, isChecked);
 			listener.onValueChanged(valueGet);
+		}
+	};
+
+	View.OnClickListener bClose_click = new View.OnClickListener() {
+		@Override
+		public void onClick(final View v) {
+			listener.onCloseButtonClick();
 		}
 	};
 

@@ -1099,6 +1099,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						setFullScreen(valueGet.fullScreenChecked());
 						setNightMode(Preferences.getBoolean(Prefkey.is_night_mode, false));
 					}
+
+					@Override
+					public void onCloseButtonClick() {
+						textAppearancePanel.hide();
+						textAppearancePanel = null;
+					}
 				}, REQCODE_textAppearanceGetFonts, REQCODE_textAppearanceCustomColors);
 				textAppearancePanel.setFullScreen(fullScreen);
 				textAppearancePanel.show();
