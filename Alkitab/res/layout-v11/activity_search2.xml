@@ -1,27 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <SearchView
         android:id="@+id/searchView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:iconifiedByDefault="false"
-        android:orientation="horizontal" />
+        android:orientation="horizontal"/>
 
     <include
         android:id="@+id/panelFilter"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        layout="@layout/search2_panel_filter" />
+        layout="@layout/search2_panel_filter"/>
 
-    <ListView
-        android:id="@+id/lsSearchResults"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:fastScrollEnabled="true" />
+    <include
+        layout="@layout/search2_results"/>
 
 </LinearLayout>

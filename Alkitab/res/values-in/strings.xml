@@ -318,7 +318,8 @@
   <string name="beta_tester_program_title">Beta Tester</string>
   <string name="beta_tester_program_desc">Ikuti program Beta Tester untuk mendapatkan fitur baru lebih awal dan kesempatan untuk membentuk aplikasi Alkitab. goo.gl/JjYTK1</string>
   <string name="search_in_version_short_name_placeholder">Cari dalam %s</string>
-  <string name="marker_transfer_to_device_title">Transfer ke perangkat lain</string>
+    <string name="search_syntax_tips"><i>Tip pencarian:</i>\n\n<b>+kata</b> untuk kata itu sendiri\n<b>\"tuhan allah\"</b> untuk urutan kata persis seperti itu</string>
+    <string name="marker_transfer_to_device_title">Transfer ke perangkat lain</string>
   <string name="marker_transfer_to_device_description">Pindahkan semua pembatas buku, catatan, dan sorotan ke ponsel atau tablet lain. Kami menyarankan menggunakan Gmail/Email.</string>
   <string name="marker_transfer_to_computer_title">Transfer ke komputer</string>
   <string name="marker_transfer_to_computer_description">Simpan pembatas buku, catatan, dan sorotan ke dalam satu file HTML sehingga Anda bisa mengeditnya atau mencetaknya dari komputer.</string>

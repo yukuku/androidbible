@@ -163,9 +163,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="yuku.alkitab.base.ac.Search2Activity"
-                  android:label="@string/cari_v"
-                  android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"/>
+        <activity
+            android:name="yuku.alkitab.base.ac.Search2Activity"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+            android:label="@string/cari_v"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name="yuku.alkitab.base.ac.DevotionActivity"
                   android:label="@string/renungan"
                   android:parentActivityName="yuku.alkitab.base.IsiActivity"
