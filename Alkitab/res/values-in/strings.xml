@@ -36,7 +36,7 @@
   <string name="search_bookname_only">%s saja</string>
   <string name="ayat_sebelumangka">Ayat</string>
   <string name="pasal_sebelumangka">Pasal</string>
-  <string name="loncat_ke_alamat_titikdua">LONCAT KE (Contoh: %s)</string>
+  <string name="jump_to_prompt"><b>LONCAT KE</b> — Contoh: ^1</string>
   <string name="belum_ada_pembatas_buku">Belum ada pembatas buku.\nPilih satu ayat untuk menambah pembatas buku.</string>
   <string name="judul_titikdua">JUDUL</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Gagal mengunduh %1$s tgl %2$s</string>
