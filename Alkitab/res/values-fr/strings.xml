@@ -36,6 +36,7 @@
   <string name="search_bookname_only">%s seulement</string>
   <string name="ayat_sebelumangka">Verset</string>
   <string name="pasal_sebelumangka">Chapitre</string>
+  <string name="jump_to_prompt"><b>ALLER A</b> — Exemple : ^1</string>
   <string name="belum_ada_pembatas_buku">Il n\'y a aucun marque-page.\nChoisissez un verset pour ajouter un marque-page.</string>
   <string name="judul_titikdua">TITRE</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Impossible de Télécharger %1$s le %2$s</string>
@@ -182,6 +183,7 @@
   <string name="menuAddSomething">Ajouter un marque-page</string>
   <string name="color_settings_title">Couleurs</string>
   <string name="color_settings_night_title">Couleurs (Mode Nuit)</string>
+  <string name="menuDisplay">Affichage</string>
   <string name="text_appearance_theme_custom">Usage&#8230;</string>
   <string name="text_appearance_text_size">Taille du texte</string>
   <string name="text_appearance_line_spacing">Interligne</string>
@@ -309,12 +311,16 @@
   <string name="rp_download_reading_plan_data_corrupted">Le plan de lecture téléchergé est corrompu. Merci de relancer le téléchargement avec une connexion internet active.</string>
   <string name="version_download_need_fonts">"La version que vous avez téléchargée exige certaines polices de caractères pour être affichée. Allez au menu \'apparence du texte\' et sélectionnez une police de caractère. Le Grec exige les polices de caractère de Ubuntu. Burmese exige Parabaik, ParabaikSans, or Myanmar3. Tamil exige Akshar. Telugu exige Suranna."</string>
   <string name="menuNightMode">Mode nuit</string>
+  <string name="highlight_custom_color">Autres couleurs</string>
   <string name="menu_compare">Comparer</string>
   <string name="about_version_name">version %s</string>
   <string name="song_player_error_description">Erreur lors de l\'écoute de ce chant : %1$d, %2$d.</string>
   <string name="beta_tester_program_title">Beta Testeur</string>
   <string name="beta_tester_program_desc">Joignez-vous au groupe des Beta Testeurs du programme. Vous serez parmi les premiers à accéder aux nouvelles fonctionnalités de Quick Bible et participerez à sa croissance : goo.gl/JjYTK1</string>
   <string name="search_in_version_short_name_placeholder">Chercher dans %s</string>
+  <string name="search_syntax_tips"><i>Critères de recherche :</i>\n\n<b>+mot</b> pour ce mot exact\n<b>[q]Seigneur Dieu[q]</b> pour cette phrase exacte</string>
+  <string name="search_no_result">Aucun verset trouvé pour <b>^1</b>.</string>
+  <string name="search_no_result_fallback">Cliquer ici pour aller à  <u>^1</u>.</string>
   <string name="marker_transfer_to_device_title">Transfert sur un autre support</string>
   <string name="marker_transfer_to_device_description">Déplacer tous les marque-pages, notes, et surlignés vers un autre téléphone ou tablette. Nous recommendons d\'utiliser Gmail/email.</string>
   <string name="marker_transfer_to_computer_title">Transfert pour édition</string>

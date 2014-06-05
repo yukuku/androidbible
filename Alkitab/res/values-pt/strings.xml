@@ -36,6 +36,7 @@
   <string name="search_bookname_only">%s apenas</string>
   <string name="ayat_sebelumangka">Versículo</string>
   <string name="pasal_sebelumangka">Capítulo</string>
+  <string name="jump_to_prompt"><b>IR PARA</b> — Exemplo: ^1</string>
   <string name="belum_ada_pembatas_buku">Nenhum marcador ainda.\nSelecione um versículo para adicionar um marcador.</string>
   <string name="judul_titikdua">TÍTULO</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Falha ao baixar %1$s datado %2$s</string>
@@ -182,6 +183,7 @@
   <string name="menuAddSomething">Adicionar marcador</string>
   <string name="color_settings_title">Cores</string>
   <string name="color_settings_night_title">Cores (Modo noturno)</string>
+  <string name="menuDisplay">Tela</string>
   <string name="text_appearance_theme_custom">Personalizar&#8230;</string>
   <string name="text_appearance_text_size">Tamanho do texto</string>
   <string name="text_appearance_line_spacing">Espaçamento</string>
@@ -309,12 +311,16 @@
   <string name="rp_download_reading_plan_data_corrupted">O arquivo do plano de leitura que foi baixado está corrompido. Tente novamente mais tarde com uma conexão de Internet ativa.</string>
   <string name="version_download_need_fonts">"A versão que você baixou talvez necessite ser exibida com certas fontes. Vá até o menu \'Aparência do texto\' e selecione a fonte correta. Grego necessita a fonte Ubuntu. Birmanês necessita Parabaik, ParabaikSans, ou Myanmar3. Tâmil necessita Akshar. Telugu necessita Suranna."</string>
   <string name="menuNightMode">Modo noturno</string>
+  <string name="highlight_custom_color">Outras cores</string>
   <string name="menu_compare">Comparar</string>
   <string name="about_version_name">versão %s</string>
   <string name="song_player_error_description">Ocorreu um erro ao reproduzir esta canção: %1$d, %2$d.</string>
   <string name="beta_tester_program_title">Testador Beta</string>
   <string name="beta_tester_program_desc">Participe do nosso programa Testador Beta e obtenha acesso prévio a novas funcionalidades e tenha a oportunidade de dar forma ao Quick Bible: goo.gl/JjYTK1</string>
   <string name="search_in_version_short_name_placeholder">Pesquisar em %s</string>
+  <string name="search_syntax_tips"><i>Dicas de pesquisa:</i>\n\n<b>+palavra</b> para exatamente essa palavra\n<b>[q]senhor deus[q]</b> para exatamente essa frase</string>
+  <string name="search_no_result">Nenhum versículo encontrado para <b>^1</b>.</string>
+  <string name="search_no_result_fallback">Pressione aqui para ir para <u>^1</u>.</string>
   <string name="marker_transfer_to_device_title">Transferir para outro dispositivo</string>
   <string name="marker_transfer_to_device_description">Mover todos os marcadores, anotações e realces para outro telefone ou tablet. Recomendamos o uso do Gmail/Email.</string>
   <string name="marker_transfer_to_computer_title">Transferir para edição</string>

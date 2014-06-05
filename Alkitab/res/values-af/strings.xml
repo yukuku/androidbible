@@ -318,6 +318,9 @@
   <string name="beta_tester_program_title">Beta Toetser</string>
   <string name="beta_tester_program_desc">Sluit aan by ons Beta Toets program en kry vroeë toegang tot nuwe kenmerke en help om Quick Bible te vorm: goo.gl/JjYTK1</string>
   <string name="search_in_version_short_name_placeholder">Soek in %s</string>
+  <string name="search_syntax_tips"><i>Soek wenke:</i>\n\n<b>+woord</b> vir die presiese woord\n<b>[q]Here God[q]</b> vir die presiese frase</string>
+  <string name="search_no_result">Geen verse gevind vir <b>^1</b>.</string>
+  <string name="search_no_result_fallback">Tik hier om na <u>^1</u> te gaan.</string>
   <string name="marker_transfer_to_device_title">Stuur na ander toestel</string>
   <string name="marker_transfer_to_device_description">Stuur alle boekmerke, notas en beklemtonings na \'n ander toestel. Ons stel voor jy gebruik Gmail/E-pos.</string>
   <string name="marker_transfer_to_computer_title">Stuur vir redigering</string>

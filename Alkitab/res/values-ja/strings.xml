@@ -36,6 +36,7 @@
   <string name="search_bookname_only">%s のみ</string>
   <string name="ayat_sebelumangka">節</string>
   <string name="pasal_sebelumangka">章</string>
+  <string name="jump_to_prompt"><b>書章節に移動</b> — 例: ^1</string>
   <string name="belum_ada_pembatas_buku">ブックマークがありません.\nブックマークを追加するには、節を選択します.</string>
   <string name="judul_titikdua">題名</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">ダウンロード失敗 %1$s 日時 %2$s</string>
@@ -182,6 +183,7 @@
   <string name="menuAddSomething">ブックマーク等の追加</string>
   <string name="color_settings_title">色</string>
   <string name="color_settings_night_title">色（夜間モード）</string>
+  <string name="menuDisplay">表示</string>
   <string name="text_appearance_theme_custom">カスタム...</string>
   <string name="text_appearance_text_size">文字の大きさ</string>
   <string name="text_appearance_line_spacing">行間</string>
@@ -309,12 +311,16 @@
   <string name="rp_download_reading_plan_data_corrupted">ダウンロードした読書プランのデータは壊れています。インターネット接続を確認し、再度実行してください。</string>
   <string name="version_download_need_fonts">”ダウンロードした版は、特定のフォントで表示する必要があるかもしれません。「文字表示の設定」 メニューでフォントを選択してください。ギリシャ語にはUbuntuフォントが必要です。ビルマ語にはParabaik, ParabaikSansまたはMyanmar3フォントが必要です。タミル語にはAksharフォントが必要です。テルグ語にはSurannaフォントが必要です。\"</string>
   <string name="menuNightMode">夜間モード</string>
+  <string name="highlight_custom_color">その他の色</string>
   <string name="menu_compare">比較する</string>
   <string name="about_version_name">バージョン %s</string>
   <string name="song_player_error_description">聖歌 %1$d %2$d 再生中にエラーになりました</string>
   <string name="beta_tester_program_title">ベータテスト参加者</string>
   <string name="beta_tester_program_desc">ベータテストプログラムに参加して、新機能をリリース前に体験しQuickBibleの開発に貢献してください: goo.gl/JjYTK1</string>
   <string name="search_in_version_short_name_placeholder">%s 内を検索</string>
+  <string name="search_syntax_tips"><i>検索のヒント:</i>\n\n<b>+ワード</b> そのワードに一致する箇所を表示\n<b>[q]lord god[q]</b> フレーズ全体に一致する箇所を表示</string>
+  <string name="search_no_result"><b>^1</b>に一致する箇所がありません.</string>
+  <string name="search_no_result_fallback">タップして <u>^1</u> に移動する.</string>
   <string name="marker_transfer_to_device_title">別のデバイスに転送</string>
   <string name="marker_transfer_to_device_description">全てのブックマーク、メモ、マーカーを別のデバイスに移動します. GmailかEmailを推奨します.</string>
   <string name="marker_transfer_to_computer_title">編集のため転送</string>

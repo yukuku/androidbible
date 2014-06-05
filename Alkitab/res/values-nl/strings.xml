@@ -318,7 +318,7 @@
   <string name="beta_tester_program_title">Bèta tester</string>
   <string name="beta_tester_program_desc">Schrijf je in voor ons Beta Tester Program en ontvang als eerste toegang tot nieuwe functionaliteiten en de mogelijkheid om mee te werken aan nieuwe updates voor Quick Bible: goo.gl/JjYTK1</string>
   <string name="search_in_version_short_name_placeholder">Zoek in %s</string>
-  <string name="search_syntax_tips"><i>Zoektips:</i>\n\n<b>+woord</b> voor dat exacte woord\n<b>"Heere God"</b> voor deze exacte zin</string>
+  <string name="search_syntax_tips"><i>Zoektips:</i>\n\n<b>+woord</b> voor dat exacte woord\n<b>[q]Heere God[q]</b> voor deze exacte zin</string>
   <string name="search_no_result">Geen verzen gevonden voor <b>^1</b>.</string>
   <string name="search_no_result_fallback">Klik hier om naar <u>^1</u> te gaan.</string>
   <string name="marker_transfer_to_device_title">Verplaats naar een ander apparaat</string>
