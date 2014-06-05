@@ -125,7 +125,7 @@ public class Search2Activity extends BaseActivity {
 		cFilterSingleBook = V.get(this, R.id.cFilterSingleBook);
 		tFilterAdvanced = V.get(this, R.id.tFilterAdvanced);
 		bEditFilter = V.get(this, R.id.bEditFilter);
-		
+
 		{
 			SpannableStringBuilder sb = new SpannableStringBuilder(tSearchTips.getText());
 			while (true) {
@@ -529,7 +529,11 @@ public class Search2Activity extends BaseActivity {
 						tSearchTips.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(final View v) {
-								startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(fallbackAri));
+								if (Ari.toVerse(fallbackAri) == 0) {
+									startActivity(Launcher.openAppAtBibleLocation(fallbackAri));
+								} else {
+									startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(fallbackAri));
+								}
 							}
 						});
 					} else {

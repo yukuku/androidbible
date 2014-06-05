@@ -116,7 +116,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private static final String PREFKEY_lastVerse = "ayatTerakhir"; //$NON-NLS-1$
 	private static final String PREFKEY_lastVersionId = "edisiTerakhir"; //$NON-NLS-1$
 	private static final String PREFKEY_lastSplitVersionId = "lastSplitVersionId"; //$NON-NLS-1$
-	private static final String PREFKEY_devotion_name = "renungan_nama"; //$NON-NLS-1$
 
 	private static final int REQCODE_goto = 1;
 	private static final int REQCODE_bookmark = 2;
