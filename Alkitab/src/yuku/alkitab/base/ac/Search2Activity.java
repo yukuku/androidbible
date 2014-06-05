@@ -126,6 +126,16 @@ public class Search2Activity extends BaseActivity {
 		tFilterAdvanced = V.get(this, R.id.tFilterAdvanced);
 		bEditFilter = V.get(this, R.id.bEditFilter);
 		
+		{
+			SpannableStringBuilder sb = new SpannableStringBuilder(tSearchTips.getText());
+			while (true) {
+				final int pos = TextUtils.indexOf(sb, "[q]");
+				if (pos < 0) break;
+				sb.replace(pos, pos + 3, "\"");
+			}
+			tSearchTips.setText(sb);
+		}
+
 		if (usingSearchView()) {
 			api11_compat = new Api11_compat();
 			api11_compat.configureSearchView();
