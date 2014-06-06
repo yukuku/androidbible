@@ -198,7 +198,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 		scrollContent.setBackgroundColor(S.applied.backgroundColor);
 		
-		popup = new DevotionSelectPopup(getSupportActionBar().getThemedContext());
+		popup = new DevotionSelectPopup(getActionBar().getThemedContext());
 		popup.setDevotionSelectListener(popup_listener);
 		
 		final DevotionKind storedKind = DevotionKind.getByName(Preferences.getString(Prefkey.devotion_last_kind_name, DEFAULT_DEVOTION_KIND.name));

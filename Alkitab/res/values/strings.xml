@@ -35,7 +35,7 @@
     <string name="search_bookname_only">%s only</string>
     <string name="ayat_sebelumangka">Verse</string>
     <string name="pasal_sebelumangka">Chapter</string>
-    <string name="loncat_ke_alamat_titikdua">JUMP TO (Example: %s)</string>
+    <string name="jump_to_prompt"><b>JUMP TO</b> — Example: ^1</string>
     <string name="belum_ada_pembatas_buku">No bookmarks yet.\nSelect a verse to add a bookmark.</string>
     <string name="judul_titikdua">TITLE</string>
     <string name="gagal_mengunduh_namaumum_tgl_tgl">Failed to download %1$s dated %2$s</string>
@@ -182,7 +182,7 @@
     <string name="menuAddSomething">Add marker</string>
     <string name="color_settings_title">Colors</string>
     <string name="color_settings_night_title">Colors (Night mode)</string>
-    <string name="menuAppearance">Appearance</string>
+    <string name="menuDisplay">Display</string>
     <string name="text_appearance_theme_custom">Custom…</string>
     <string name="text_appearance_text_size">Text size</string>
     <string name="text_appearance_line_spacing">Line spacing</string>
@@ -328,7 +328,7 @@
 
     <string name="version_download_need_fonts">"The version you downloaded might need to be displayed with certain fonts. Go to the 'Text appearance' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
     <string name="menuNightMode">Night mode</string>
-    <string name="delete_highlight">Remove highlight</string>
+    <string name="highlight_custom_color">Other colors</string>
     <string name="menu_compare">Compare</string>
     <string name="about_version_name">version %s</string>
     <string name="song_player_error_description">An error was encountered when playing this song: %1$d, %2$d.</string>
@@ -336,6 +336,9 @@
     <string name="beta_tester_program_title">Beta Tester</string>
     <string name="beta_tester_program_desc">Join our Beta Tester program and get early access to new features and have opportunity to shape Quick Bible: goo.gl/JjYTK1</string>
     <string name="search_in_version_short_name_placeholder">Search in %s</string>
+    <string name="search_syntax_tips"><i>Search tips:</i>\n\n<b>+word</b> for that exact word\n<b>[q]lord god[q]</b> for that exact phrase</string>
+    <string name="search_no_result">No verses found for <b>^1</b>.</string>
+    <string name="search_no_result_fallback">Tap here to go to <u>^1</u>.</string>
 
     <string name="marker_transfer_to_device_title">Transfer to another device</string>
     <string name="marker_transfer_to_device_description">Move all bookmarks, notes, and highlights to another phone or tablet. We recommend using Gmail/Email.</string>

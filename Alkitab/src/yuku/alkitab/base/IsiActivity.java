@@ -116,7 +116,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private static final String PREFKEY_lastVerse = "ayatTerakhir"; //$NON-NLS-1$
 	private static final String PREFKEY_lastVersionId = "edisiTerakhir"; //$NON-NLS-1$
 	private static final String PREFKEY_lastSplitVersionId = "lastSplitVersionId"; //$NON-NLS-1$
-	private static final String PREFKEY_devotion_name = "renungan_nama"; //$NON-NLS-1$
 
 	private static final int REQCODE_goto = 1;
 	private static final int REQCODE_bookmark = 2;
@@ -1041,7 +1040,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		case R.id.menuSupport:
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
-		case R.id.menuAppearance:
+		case R.id.menuDisplay:
 			setShowTextAppearancePanel(textAppearancePanel == null);
 			return true;
 		case R.id.menuSettings:
@@ -1085,6 +1084,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 						setFullScreen(valueGet.fullScreenChecked());
 						setNightMode(Preferences.getBoolean(Prefkey.is_night_mode, false));
+					}
+
+					@Override
+					public void onCloseButtonClick() {
+						textAppearancePanel.hide();
+						textAppearancePanel = null;
 					}
 				}, REQCODE_textAppearanceGetFonts, REQCODE_textAppearanceCustomColors);
 				textAppearancePanel.setFullScreen(fullScreen);

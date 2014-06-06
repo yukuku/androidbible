@@ -27,6 +27,15 @@
             android:layout_weight="1"
             android:text="@string/menuFullScreen"/>
 
+        <ImageButton
+            android:id="@+id/bClose"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_weight="0"
+            android:background="?android:actionBarItemBackground"
+            android:scaleType="center"
+            android:src="@drawable/ic_action_remove"/>
+
     </LinearLayout>
 
     <LinearLayout

@@ -4,6 +4,7 @@
 <resources>
   <string name="highlight_stabilo">Hervorheben</string>
   <string name="menuDonasi">Spende</string>
+  <string name="menuSupport">Support</string>
   <string name="mengimpor_titiktiga">Stelle wieder her&#8230;</string>
   <string name="mengekspor_titiktiga">Erstelle Sicherung&#8230;</string>
   <string name="bagikan_renungan">Andacht teilen</string>
@@ -35,8 +36,7 @@
   <string name="search_bookname_only">Nur %s</string>
   <string name="ayat_sebelumangka">Vers</string>
   <string name="pasal_sebelumangka">Kapitel</string>
-  <string name="loncat_ke_alamat_titikdua">Gehe zu: (Beispiel: %s)</string>
-  <string name="tidak_ada_catatan">(kein Notiz)</string>
+  <string name="jump_to_prompt"><b>GEHE ZU</b> — Beispiel: ^1</string>
   <string name="belum_ada_pembatas_buku">Keine Lesezeichen vorhanden.\nSelektiere einen Vers, um ein Lesezeichen hinzufügen.</string>
   <string name="judul_titikdua">TITEL</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Fehler beim Herunterladen von %1$s vom %2$s</string>
@@ -143,7 +143,7 @@
   <string name="create_label_titik3">Stichwort erstellen&#8230;</string>
   <string name="select_books_to_search">Bücher zur Suche auswählen</string>
   <string name="rename_label_title">Stichwort umbenennen</string>
-  <string name="are_you_sure_you_want_to_delete_the_label_label">"Möchten Sie das Stichwort \'%1$s\' wirklich löschen? Das Stichwort wird dadurch von %2$s Lesezeichen entfernt."</string>
+  <string name="are_you_sure_you_want_to_delete_the_label_label">"Das Stichwort \'%1$s\' wirklich löschen? Es wird dann von %2$s Lesezeichen entfernt."</string>
   <string name="bmcat_all_bookmarks">Alle Lesezeichen</string>
   <string name="bmcat_notes">Notizen</string>
   <string name="bmcat_highlights">Hervorhebungen</string>
@@ -159,7 +159,7 @@
   <string name="bl_send_backup">Übertragen</string>
   <string name="bl_file_not_found_filename">Datei nicht gefunden: %s</string>
   <string name="bl_send_backup_confirmation">Soll eine Sicherung der Lesezeichen, Notizen und Hervorhebungen erstellt und gesendet werden? Sie können die Datei z. B. als Anhang einer E-Mail an ein neues Gerät senden. Oder die Datei erstellen, um sie anschließend zu archivieren.</string>
-  <string name="labels_titikdua">Stichwörter:</string>
+  <string name="labels_titikdua">STICHWÖRTER</string>
   <string name="tambah_titiktiga">Hinzufügen&#8230;</string>
   <string name="nama_label_titikdua">Stichwort-Name:</string>
   <string name="change_label_color">Stichwortfarbe ändern</string>
@@ -183,7 +183,7 @@
   <string name="menuAddSomething">Markierung hinzufügen</string>
   <string name="color_settings_title">Farben</string>
   <string name="color_settings_night_title">Farben (Nachtmodus)</string>
-  <string name="menuTextAppearance">Textdarstellung</string>
+  <string name="menuDisplay">Anzeige</string>
   <string name="text_appearance_theme_custom">Benutzerdefiniert&#8230;</string>
   <string name="text_appearance_text_size">Textgröße</string>
   <string name="text_appearance_line_spacing">Zeilenabstand</string>
@@ -311,13 +311,16 @@
   <string name="rp_download_reading_plan_data_corrupted">Der heruntergeladene Leseplan ist beschädigt. Versuchen Sie es mit einer funktionierenden Internetverbindung erneut.</string>
   <string name="version_download_need_fonts">"Die Übersetzung, die Sie heruntergeladen haben, kann nur mit speziellen Schriftarten angezeigt werden. Gehen Sie zum Menü \'Textdarstellung\' und wählen Sie eine passende Schriftart. Burmese benötigt Parabaik, ParabaikSans oder Myanmar3. Tamil benötigt Akshar. Telugu benötigt Suranna."</string>
   <string name="menuNightMode">Nachtmodus</string>
-  <string name="delete_highlight">Hervorhebung entfernen</string>
+  <string name="highlight_custom_color">Weitere Farben</string>
   <string name="menu_compare">Vergleichen</string>
   <string name="about_version_name">Version %s</string>
   <string name="song_player_error_description">Beim Abspielen dieses Liedes ist ein Fehler aufgetreten: %1$d, %2$d.</string>
   <string name="beta_tester_program_title">Betatester</string>
   <string name="beta_tester_program_desc">Nehmen Sie am Programm für Betatester teil! Sie erhalten dann vorzeitigen Zugang zu neuen Features und haben die Möglichkeit, auf die Entwicklung von Quick Bible Einfluss zu nehmen: goo.gl/JjYTK1</string>
   <string name="search_in_version_short_name_placeholder">In %s suchen</string>
+  <string name="search_syntax_tips"><i>Hinweise für die Suche:</i>\n\n<b>+wort</b> für genau dieses Wort\n<b>[q]Mein Gott[q]</b> für genau diesen Ausdruck</string>
+  <string name="search_no_result">Kein Verse mit <b>^1</b> gefunden.</string>
+  <string name="search_no_result_fallback">Hier tippen, um zu <u>^1</u> zu gehen.</string>
   <string name="marker_transfer_to_device_title">Auf anderes Gerät übertragen</string>
   <string name="marker_transfer_to_device_description">Überträgt alle Lesezeichen, Notizen und Hervorhebungen auf ein anderes Smartphone oder Tablet. Für die Übertragung empfehlen wir Gmail/E-Mail.</string>
   <string name="marker_transfer_to_computer_title">Zum Bearbeiten übertragen</string>

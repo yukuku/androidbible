@@ -4,6 +4,7 @@
 <resources>
   <string name="highlight_stabilo">Выделить</string>
   <string name="menuDonasi">Пожертвование</string>
+  <string name="menuSupport">Поддержка</string>
   <string name="mengimpor_titiktiga">Восстановление&#8230;</string>
   <string name="mengekspor_titiktiga">Создание резервной копии&#8230;</string>
   <string name="bagikan_renungan">Поделиться стихами</string>
@@ -35,7 +36,7 @@
   <string name="search_bookname_only">Только %s</string>
   <string name="ayat_sebelumangka">Стих</string>
   <string name="pasal_sebelumangka">Глава</string>
-  <string name="loncat_ke_alamat_titikdua">ПЕРЕЙТИ К (Пример: %s)</string>
+  <string name="jump_to_prompt"><b>ПЕРЕХОД К</b> — Пример: ^1</string>
   <string name="belum_ada_pembatas_buku">Закладок пока нет.\nЧтобы добавить закладку, выберите стих.</string>
   <string name="judul_titikdua">ЗАГОЛОВОК</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Не удалось загрузить %1$s от %2$s</string>
@@ -182,6 +183,7 @@
   <string name="menuAddSomething">Добавить отметку</string>
   <string name="color_settings_title">Цвета</string>
   <string name="color_settings_night_title">Цвета (ночной режим)</string>
+  <string name="menuDisplay">Отображение</string>
   <string name="text_appearance_theme_custom">Настроить&#8230;</string>
   <string name="text_appearance_text_size">Размер текста</string>
   <string name="text_appearance_line_spacing">Межстрочное расстояние</string>
@@ -309,13 +311,16 @@
   <string name="rp_download_reading_plan_data_corrupted">Загруженный план чтения поврежден. Пожалуйста, повторите попытку при работающем соединении с Интернетом.</string>
   <string name="version_download_need_fonts">Загруженная вами версия может потребовать особых шрифтов. Перейдите в меню \'Вид текста\' и выберите шрифт.</string>
   <string name="menuNightMode">Ночной режим</string>
-  <string name="delete_highlight">Снять выделение</string>
+  <string name="highlight_custom_color">Другие цвета</string>
   <string name="menu_compare">Сравнить</string>
   <string name="about_version_name">версия %s</string>
   <string name="song_player_error_description">Произошла ошибка при воспроизведении этой песни : %1$d, %2$d.</string>
   <string name="beta_tester_program_title">Бета-тестировщик</string>
   <string name="beta_tester_program_desc">Присоединяйтесь к нашей программе бета-тестирования - получите ранний доступ к новым функциям Quick Bible и возможность делиться этой программой: goo.gl/JjYTK1</string>
   <string name="search_in_version_short_name_placeholder">Искать в %s</string>
+  <string name="search_syntax_tips"><i>Подсказка по поиску:</i>\n\n<b>+слово</b> чтобы найти именно это слово\n<b>[q]благ господь[q]</b> чтобы найти именно эту фразу</string>
+  <string name="search_no_result">Не найдены стихи, содержащие <b>^1</b>.</string>
+  <string name="search_no_result_fallback">Нажмите здесь чтобы перейти к <u>^`</u>.</string>
   <string name="marker_transfer_to_device_title">Передать на другое устройство</string>
   <string name="marker_transfer_to_device_description">Переместить все закладки, примечания, и выделение цветом на другой смартфон или планшет. Рекомендуем использовать  Gmail/Email.</string>
   <string name="marker_transfer_to_computer_title">Передать для редактирования</string>

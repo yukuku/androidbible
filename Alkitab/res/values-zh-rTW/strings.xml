@@ -4,6 +4,7 @@
 <resources>
   <string name="highlight_stabilo">新增標記</string>
   <string name="menuDonasi">捐款</string>
+  <string name="menuSupport">支援</string>
   <string name="mengimpor_titiktiga">回復</string>
   <string name="mengekspor_titiktiga">新增備份&#8230;</string>
   <string name="bagikan_renungan">分享靈修心得</string>
@@ -35,10 +36,9 @@
   <string name="search_bookname_only">只有%s</string>
   <string name="ayat_sebelumangka">節</string>
   <string name="pasal_sebelumangka">章</string>
-  <string name="loncat_ke_alamat_titikdua">跳到：（例子：%s）</string>
-  <string name="tidak_ada_catatan">（沒有筆記）</string>
+  <string name="jump_to_prompt"><b>跳至</b> — 範例: ^1</string>
   <string name="belum_ada_pembatas_buku">尚未有任何書籤。\n選取一節經文以新增書籤。</string>
-  <string name="judul_titikdua">標題：</string>
+  <string name="judul_titikdua">標題</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">下載 %1$s 失敗. 日期: %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">下載 %1$s 時失敗, 日期 %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">下載 %1$s 檔案成功, 日期 %2$s</string>
@@ -68,7 +68,7 @@
   <string name="alamat_tidak_sah_alamat">錯誤位置: %s</string>
   <string name="no">否</string>
   <string name="yes">是</string>
-  <string name="anda_yakin_mau_menghapus_catatan_ini">你確定要刪除此筆記？</string>
+  <string name="anda_yakin_mau_menghapus_catatan_ini">刪除這個筆記？</string>
   <string name="hapus_catatan">刪除筆記</string>
   <string name="catatan_alamat"> %s的筆記</string>
   <string name="delete">刪除</string>
@@ -143,7 +143,7 @@
   <string name="create_label_titik3">新增標籤&#8230;</string>
   <string name="select_books_to_search">選擇要搜尋的書卷</string>
   <string name="rename_label_title">重新命名標籤</string>
-  <string name="are_you_sure_you_want_to_delete_the_label_label">"你確定要刪除此\'%1$s\'的標記？這標記將從書籤%2$s中被移除。"</string>
+  <string name="are_you_sure_you_want_to_delete_the_label_label">"要刪除這個\'%1$s\'的標籤？這個標籤會從書籤%2$s之中被刪除。"</string>
   <string name="bmcat_all_bookmarks">所有書籤</string>
   <string name="bmcat_notes">筆記</string>
   <string name="bmcat_highlights">標記</string>
@@ -159,7 +159,7 @@
   <string name="bl_send_backup">傳送</string>
   <string name="bl_file_not_found_filename">找不到檔案: %s</string>
   <string name="bl_send_backup_confirmation">新增並傳送書籤、筆記與標記的備份？舉例，你可以電子郵件的方式傳送附件到新的設備，或作保存資料用途。</string>
-  <string name="labels_titikdua">標籤：</string>
+  <string name="labels_titikdua">標籤</string>
   <string name="tambah_titiktiga">新增&#8230;</string>
   <string name="nama_label_titikdua">標籤名稱：</string>
   <string name="change_label_color">更改標籤顏色</string>
@@ -183,7 +183,7 @@
   <string name="menuAddSomething">新增標記</string>
   <string name="color_settings_title">配色</string>
   <string name="color_settings_night_title">配色（夜間模式）</string>
-  <string name="menuTextAppearance">文字外觀</string>
+  <string name="menuDisplay">顯示</string>
   <string name="text_appearance_theme_custom">設置</string>
   <string name="text_appearance_text_size">文字大小</string>
   <string name="text_appearance_line_spacing">行距</string>
@@ -312,15 +312,19 @@
   <string name="rp_download_reading_plan_data_corrupted">已下載的閱讀計劃資料損毀，請以有效的互聯網連線再次嘗試。</string>
   <string name="version_download_need_fonts">"您下載的版本需要某種字體以正確顯示。請到「文字外觀」目錄，並選擇某種字體。希臘語需要 Ubuntu 字體。緬甸語需要Parabaik，ParabaikSans 或 Myanmar3。泰米爾語需要 Akshar。泰盧固語需要 Suranna。"</string>
   <string name="menuNightMode">夜間模式</string>
-  <string name="delete_highlight">移除標記</string>
+  <string name="highlight_custom_color">其他顏色</string>
   <string name="menu_compare">比較</string>
   <string name="about_version_name">版本 %s</string>
   <string name="song_player_error_description">播放歌曲%1$d, %2$d的時候遇到問題。</string>
   <string name="beta_tester_program_title">試版測試員</string>
   <string name="beta_tester_program_desc">請參與我們的測試者計劃，測試者可優先使用新功能，並一起去優化神速聖經這程式：goo.gl/JjYTK1</string>
   <string name="search_in_version_short_name_placeholder">在%s搜尋</string>
+  <string name="search_syntax_tips"><i>搜尋訣竅:</i>\n\n<b>+字</b>找精確的字\n<b>[q]主神[q]</b> 找精確的詞</string>
+  <string name="search_no_result">找不到這經節 <b>^1</b>.</string>
+  <string name="search_no_result_fallback">點此跳到 <u>^1</u>.</string>
   <string name="marker_transfer_to_device_title">轉移到另一台設備</string>
   <string name="marker_transfer_to_device_description">移動所有書籤、筆記和標記到另一台手機或平板，我們建議你使用谷歌電郵或其他電郵。</string>
   <string name="marker_transfer_to_computer_title">轉移以便編輯</string>
   <string name="marker_transfer_to_computer_description">把書籤、筆記及標記儲存為一個HTML檔案，以便於電腦上編輯和列印之用。</string>
+  <string name="bookmark_delete_confirmation">要刪除這個書籤？</string>
 </resources>

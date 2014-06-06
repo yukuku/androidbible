@@ -12,9 +12,41 @@
         <preset locale="in"   shortName="BIMK"    longName="Bahasa Indonesia Masa Kini" filename_preset="in-bimk.yes" url="https://alkitab-host.appspot.com/addon/yes2/in-bimk--1.yes.gz" />
         <preset locale="in"   shortName="TSI"     longName="Terjemahan Sederhana Indonesia" filename_preset="in-tsi.yes" url="https://alkitab-host.appspot.com/addon/yes2/in-tsi--1.yes.gz" />
         <preset locale="in"   shortName="TBD"     longName="TB Deuterokanonika" filename_preset="in-tbd.yes" url="https://alkitab-host.appspot.com/addon/yes2/in-tbd--1.yes.gz" />
-        <preset locale="jw"   shortName="JAWA"    longName="Jawa" filename_preset="jv-jawa.yes" url="https://alkitab-host.appspot.com/addon/yes2/jv-jawa--1.yes.gz" />
+
+        <preset locale="ace" shortName="ACEH" longName="Aceh" filename_preset="ace-aceh.yes" url="https://alkitab-host.appspot.com/addon/yes2/ace-aceh--1.yes.gz" />
+        <preset locale="blz" shortName="BLNTK" longName="Balantak" filename_preset="blz-balantak.yes" url="https://alkitab-host.appspot.com/addon/yes2/blz-balantak--1.yes.gz" />
+        <preset locale="ban" shortName="BALI" longName="Bali" filename_preset="ban-bali.yes" url="https://alkitab-host.appspot.com/addon/yes2/ban-bali--1.yes.gz" />
+        <preset locale="ban" shortName="BALI90" longName="Bali 1990" filename_preset="ban-bali90.yes" url="https://alkitab-host.appspot.com/addon/yes2/ban-bali90--1.yes.gz" />
+        <preset locale="ptu" shortName="BAMBAM" longName="Bambam" filename_preset="ptu-bambam.yes" url="https://alkitab-host.appspot.com/addon/yes2/ptu-bambam--1.yes.gz" />
+        <preset locale="btd" shortName="DAIRI" longName="Batak-Dairi" filename_preset="btd-dairi.yes" url="https://alkitab-host.appspot.com/addon/yes2/btd-dairi--1.yes.gz" />
+        <preset locale="btx" shortName="KARO" longName="Batak-Karo" filename_preset="btx-karo.yes" url="https://alkitab-host.appspot.com/addon/yes2/btx-karo--1.yes.gz" />
+        <preset locale="bbc"  shortName="TOBA"    longName="Batak-Toba" filename_preset="bbc-toba.yes" url="https://alkitab-host.appspot.com/addon/yes2/bbc-toba--1.yes.gz" />
+        <preset locale="bts" shortName="SIMA" longName="Batak-Simalungun" filename_preset="bts-simalungun.yes" url="https://alkitab-host.appspot.com/addon/yes2/bts-simalungun--1.yes.gz" />
+        <preset locale="bug" shortName="BUGIS" longName="Bugis" filename_preset="bug-bugis.yes" url="https://alkitab-host.appspot.com/addon/yes2/bug-bugis--1.yes.gz" />
+        <preset locale="nij" shortName="NGAJU" longName="Dayak-Ngaju" filename_preset="nij-ngaju.yes" url="https://alkitab-host.appspot.com/addon/yes2/nij-ngaju--1.yes.gz" />
+        <preset locale="mvp" shortName="DURI" longName="Duri" filename_preset="mvp-duri.yes" url="https://alkitab-host.appspot.com/addon/yes2/mvp-duri--1.yes.gz" />
+        <preset locale="gor" shortName="GOR" longName="Gorontalo" filename_preset="gor-gorontalo.yes" url="https://alkitab-host.appspot.com/addon/yes2/gor-gorontalo--1.yes.gz" />
+        <preset locale="gor" shortName="GOR06" longName="Gorontalo 2006" filename_preset="gor-gorontalo2006.yes" url="https://alkitab-host.appspot.com/addon/yes2/gor-gorontalo2006--1.yes.gz" />
+        <preset locale="jv"   shortName="JAWA"    longName="Jawa" filename_preset="jv-jawa.yes" url="https://alkitab-host.appspot.com/addon/yes2/jv-jawa--1.yes.gz" />
+        <preset locale="jv" shortName="JAWA94" longName="Jawa-1994" filename_preset="jv-jawa94.yes" url="https://alkitab-host.appspot.com/addon/yes2/jv-jawa94--1.yes.gz" />
+        <preset locale="jv" shortName="JAWA06" longName="Jawa-2006" filename_preset="jv-jawa2006.yes" url="https://alkitab-host.appspot.com/addon/yes2/jv-jawa2006--1.yes.gz" />
+        <preset locale="jv" shortName="JAWSUR" longName="Jawa-Suriname" filename_preset="jv-suriname.yes" url="https://alkitab-host.appspot.com/addon/yes2/jv-suriname--1.yes.gz" />
+        <preset locale="kzf" shortName="KLD" longName="Kaili Da'a 1998" filename_preset="kzf-kailidaa.yes" url="https://alkitab-host.appspot.com/addon/yes2/kzf-kailidaa--1.yes.gz" />
+        <preset locale="ljp" shortName="LAM" longName="Lampung" filename_preset="ljp-lampung.yes" url="https://alkitab-host.appspot.com/addon/yes2/ljp-lampung--1.yes.gz" />
+        <preset locale="mad" shortName="MAD" longName="Madura" filename_preset="mad-madura.yes" url="https://alkitab-host.appspot.com/addon/yes2/mad-madura--1.yes.gz" />
+        <preset locale="mak" shortName="MAK" longName="Makasar" filename_preset="mak-makasar.yes" url="https://alkitab-host.appspot.com/addon/yes2/mak-makasar--1.yes.gz" />
+        <preset locale="mwv" shortName="MTWI" longName="Mentawai" filename_preset="mwv-mentawai.yes" url="https://alkitab-host.appspot.com/addon/yes2/mwv-mentawai--1.yes.gz" />
+        <preset locale="min" shortName="MIN" longName="Minangkabau" filename_preset="min-minangkabau.yes" url="https://alkitab-host.appspot.com/addon/yes2/min-minangkabau--1.yes.gz" />
+        <preset locale="mog" shortName="MONG" longName="Mongondow" filename_preset="mog-mongondow.yes" url="https://alkitab-host.appspot.com/addon/yes2/mog-mongondow--1.yes.gz" />
+        <preset locale="npy" shortName="NAPU" longName="Napu" filename_preset="npy-napu.yes" url="https://alkitab-host.appspot.com/addon/yes2/npy-napu--1.yes.gz" />
+        <preset locale="nia" shortName="NIAS" longName="Nias" filename_preset="nia-nias.yes" url="https://alkitab-host.appspot.com/addon/yes2/nia-nias--1.yes.gz" />
+        <preset locale="zzz" shortName="ROTE" longName="Rote" filename_preset="zzz-rote.yes" url="https://alkitab-host.appspot.com/addon/yes2/zzz-rote--1.yes.gz" />
+        <preset locale="sxn" shortName="SANGIR" longName="Sangir" filename_preset="sxn-sangir.yes" url="https://alkitab-host.appspot.com/addon/yes2/sxn-sangir--1.yes.gz" />
+        <preset locale="sas" shortName="SAS" longName="Sasak" filename_preset="sas-sasak.yes" url="https://alkitab-host.appspot.com/addon/yes2/sas-sasak--1.yes.gz" />
         <preset locale="su"   shortName="SUNDA"   longName="Sunda" filename_preset="su-sunda.yes" url="https://alkitab-host.appspot.com/addon/yes2/su-sunda--1.yes.gz" />
-        <preset locale="bbc"  shortName="TOBA"    longName="Batak Toba" filename_preset="bbc-toba.yes" url="https://alkitab-host.appspot.com/addon/yes2/bbc-toba--1.yes.gz" />
+        <preset locale="su" shortName="SUN97" longName="Sunda-1997-formal" filename_preset="su-sunda1997.yes" url="https://alkitab-host.appspot.com/addon/yes2/su-sunda1997--1.yes.gz" />
+        <preset locale="tby" shortName="TAB" longName="Tabaru" filename_preset="tby-tabaru.yes" url="https://alkitab-host.appspot.com/addon/yes2/tby-tabaru--1.yes.gz" />
+        <preset locale="yli" shortName="YLI" longName="Yali-Angguruk" filename_preset="yli-yali.yes" url="https://alkitab-host.appspot.com/addon/yes2/yli-yali--1.yes.gz" />
 
         <preset locale="ar"   shortName="AVD"     longName="Van Dyke" filename_preset="ar-vandyke.yes" url="https://alkitab-host.appspot.com/addon/yes2/ar-vandyke--1.yes.gz" />
         <preset locale="cs"   shortName="CSBKR"   longName="Bible Kralická" filename_preset="cs-kralicka.yes" url="https://alkitab-host.appspot.com/addon/yes2/cs-kralicka--1.yes.gz" />

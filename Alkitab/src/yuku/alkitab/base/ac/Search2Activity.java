@@ -8,19 +8,17 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CheckedTextView;
 import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import yuku.afw.V;
@@ -33,11 +31,12 @@ import yuku.alkitab.base.ac.VersionsActivity.MVersionInternal;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.BookNameSorter;
+import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.Search2Engine;
-import yuku.alkitab.base.util.Search2Engine.Query;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
+import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.display.Launcher;
@@ -50,6 +49,8 @@ public class Search2Activity extends BaseActivity {
 	private static final String EXTRA_openedBookId = "openedBookId"; //$NON-NLS-1$
 	SearchView searchView;
 	ListView lsSearchResults;
+	View empty;
+	TextView tSearchTips;
 	View panelFilter;
 	CheckBox cFilterOlds;
 	CheckBox cFilterNews;
@@ -62,6 +63,7 @@ public class Search2Activity extends BaseActivity {
 	int openedBookId;
 	int filterUserAction = 0; // when it's not user action, set to nonzero
 	Search2Adapter adapter;
+	Toast resultCountToast;
 
 	public static Intent createIntent(int openedBookId) {
 		Intent res = new Intent(App.context, Search2Activity.class);
@@ -69,13 +71,14 @@ public class Search2Activity extends BaseActivity {
 		return res;
 	}
 
-
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_search2);
 
 		lsSearchResults = V.get(this, R.id.lsSearchResults);
+		empty = V.get(this, android.R.id.empty);
+		tSearchTips = V.get(this, R.id.tSearchTips);
 		panelFilter = V.get(this, R.id.panelFilter);
 		cFilterOlds = V.get(this, R.id.cFilterOlds);
 		cFilterNews = V.get(this, R.id.cFilterNews);
@@ -85,7 +88,7 @@ public class Search2Activity extends BaseActivity {
 
 		searchView = V.get(Search2Activity.this, R.id.searchView);
 		searchView.setSubmitButtonEnabled(true);
-		searchView.setOnQueryTextListener(new OnQueryTextListener() {
+		searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 			@Override
 			public boolean onQueryTextSubmit(String query1) {
 				search(query1);
@@ -98,9 +101,22 @@ public class Search2Activity extends BaseActivity {
 			}
 		});
 
+		{
+			SpannableStringBuilder sb = new SpannableStringBuilder(tSearchTips.getText());
+			while (true) {
+				final int pos = TextUtils.indexOf(sb, "[q]");
+				if (pos < 0) break;
+				sb.replace(pos, pos + 3, "\"");
+			}
+			tSearchTips.setText(sb);
+		}
+
+		empty.setBackgroundColor(S.applied.backgroundColor);
 		lsSearchResults.setBackgroundColor(S.applied.backgroundColor);
 		lsSearchResults.setCacheColorHint(S.applied.backgroundColor);
-
+		lsSearchResults.setEmptyView(empty);
+		Appearances.applyTextAppearance(tSearchTips);
+		
 		hiliteColor = U.getHighlightColorByBrightness(S.applied.backgroundBrightness);
 
 		lsSearchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -110,9 +126,8 @@ public class Search2Activity extends BaseActivity {
 				startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
 			}
 		});
-		bEditFilter.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
+		bEditFilter.setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View v) {
 				bEditFilter_click();
 			}
 		});
@@ -238,7 +253,7 @@ public class Search2Activity extends BaseActivity {
 		}
 	}
 
-	private OnCheckedChangeListener cFilterOlds_checkedChange = new OnCheckedChangeListener() {
+	private CompoundButton.OnCheckedChangeListener cFilterOlds_checkedChange = new CompoundButton.OnCheckedChangeListener() {
 		@Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			if (filterUserAction != 0) return;
 			
@@ -254,7 +269,7 @@ public class Search2Activity extends BaseActivity {
 		}
 	};
 	
-	private OnCheckedChangeListener cFilterNews_checkedChange = new OnCheckedChangeListener() {
+	private CompoundButton.OnCheckedChangeListener cFilterNews_checkedChange = new CompoundButton.OnCheckedChangeListener() {
 		@Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			if (filterUserAction != 0) return;
 			
@@ -270,7 +285,7 @@ public class Search2Activity extends BaseActivity {
 		}
 	};
 	
-	private OnCheckedChangeListener cFilterSingleBook_checkedChange = new OnCheckedChangeListener() {
+	private CompoundButton.OnCheckedChangeListener cFilterSingleBook_checkedChange = new CompoundButton.OnCheckedChangeListener() {
 		@Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			if (filterUserAction != 0) return;
 			
@@ -292,8 +307,8 @@ public class Search2Activity extends BaseActivity {
 		if (cFilterSingleBook.isChecked()) selectedBookIds.put(openedBookId, true);
 	}
 	
-	protected Query getQuery() {
-		Query res = new Query();
+	protected Search2Engine.Query getQuery() {
+		Search2Engine.Query res = new Search2Engine.Query();
 		res.query_string = searchView.getQuery().toString();
 		res.bookIds = selectedBookIds;
 		return res;
@@ -372,11 +387,11 @@ public class Search2Activity extends BaseActivity {
 			
 			Book book = getItem(position);
 			text.setText(book.shortName);
-			text.setTextColor(U.getForegroundColorByBookId(book.bookId));
+			text.setTextColor(U.getForegroundColorOnLightBackgroundByBookId(book.bookId));
 		}
 	}
 
-	protected void search(String query) {
+	protected void search(final String query) {
 		if (query.trim().length() == 0) {
 			return;
 		}
@@ -418,7 +433,14 @@ public class Search2Activity extends BaseActivity {
 				}
 				
 				lsSearchResults.setAdapter(adapter = new Search2Adapter(result, tokens));
-				Toast.makeText(Search2Activity.this, getString(R.string.size_hasil, result.size()), Toast.LENGTH_SHORT).show();
+
+				final String resultCount = getString(R.string.size_hasil, result.size());
+				if (resultCountToast == null) {
+					resultCountToast = Toast.makeText(Search2Activity.this, resultCount, Toast.LENGTH_SHORT);
+				} else {
+					resultCountToast.setText(resultCount);
+				}
+				resultCountToast.show();
 				
 				if (result.size() > 0) {
 					//# close soft keyboard
@@ -426,10 +448,69 @@ public class Search2Activity extends BaseActivity {
 					inputManager.hideSoftInputFromWindow(searchView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 					searchView.clearFocus();
 					lsSearchResults.requestFocus();
+				} else {
+					final Jumper jumper = new Jumper(query);
+					CharSequence noresult = getText(R.string.search_no_result);
+					noresult = TextUtils.expandTemplate(noresult, query);
+
+					final int fallbackAri = shouldShowFallback(jumper);
+
+					if (fallbackAri != 0) {
+						final SpannableStringBuilder sb = new SpannableStringBuilder();
+						sb.append(noresult);
+						sb.append("\n\n");
+
+						CharSequence fallback = getText(R.string.search_no_result_fallback);
+						fallback = TextUtils.expandTemplate(fallback, S.activeVersion.reference(fallbackAri));
+						sb.append(fallback);
+
+						tSearchTips.setText(sb);
+						tSearchTips.setOnClickListener(new View.OnClickListener() {
+							@Override
+							public void onClick(final View v) {
+								if (Ari.toVerse(fallbackAri) == 0) {
+									startActivity(Launcher.openAppAtBibleLocation(fallbackAri));
+								} else {
+									startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(fallbackAri));
+								}
+							}
+						});
+					} else {
+						tSearchTips.setText(noresult);
+						tSearchTips.setClickable(false);
+						tSearchTips.setOnClickListener(null);
+					}
 				}
 				
 				pd.setOnDismissListener(null);
 				pd.dismiss();
+			}
+
+			/**
+			 * @return ari not 0 if fallback is to be shown
+			 */
+			int shouldShowFallback(final Jumper jumper) {
+				if (!jumper.getParseSucceeded()) {
+					return 0;
+				}
+
+				final int chapter_1 = jumper.getChapter();
+				if (chapter_1 == 0) return 0;
+
+				final Version version = S.activeVersion;
+
+				final int bookId = jumper.getBookId(version.getConsecutiveBooks());
+				if (bookId == -1) return 0;
+
+				final Book book = version.getBook(bookId);
+				if (book == null) return 0;
+
+				if (chapter_1 > book.chapter_count) return 0;
+
+				final int verse_1 = jumper.getVerse();
+				if (verse_1 != 0 && verse_1 > book.verse_counts[chapter_1 - 1]) return 0;
+
+				return Ari.encode(bookId, chapter_1, verse_1);
 			}
 		}.execute();
 	}
