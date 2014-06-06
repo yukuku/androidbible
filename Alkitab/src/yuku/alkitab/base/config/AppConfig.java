@@ -18,7 +18,6 @@ public class AppConfig {
 	public String internalShortName;
 	public String internalLongName;
 	public boolean menuDevotion;
-	public boolean menuVersions;
 	public boolean menuHelp;
 	public boolean menuDonation;
 	public boolean menuSongs;
@@ -56,7 +55,6 @@ public class AppConfig {
 			if (next == XmlPullParser.START_TAG && "menu".equals(parser.getName())) { //$NON-NLS-1$
 				res.menuHelp = parser.getAttributeBooleanValue(null, "help", false); //$NON-NLS-1$
 				res.menuDonation = parser.getAttributeBooleanValue(null, "donation", false); //$NON-NLS-1$
-				res.menuVersions = parser.getAttributeBooleanValue(null, "versions", false); //$NON-NLS-1$
 				res.menuDevotion = parser.getAttributeBooleanValue(null, "devotion", false); //$NON-NLS-1$
 				res.menuSongs = parser.getAttributeBooleanValue(null, "songs", false); //$NON-NLS-1$
 			} else if (next == XmlPullParser.START_TAG && "internal".equals(parser.getName())) { //$NON-NLS-1$

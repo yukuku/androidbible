@@ -2,7 +2,6 @@
 <config>
     <menu
         devotion="true"
-        versions="true"
         help="true"
         donation="true"
         songs="true" />

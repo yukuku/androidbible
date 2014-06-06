@@ -1,39 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ImageButton
-            android:id="@+id/bLeft"
-            style="?android:actionButtonStyle"
-            android:layout_width="24dp"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/desc_previous_chapter"
-            android:padding="16dp"
-            android:scaleType="center"
-            android:src="@drawable/ic_nav_left_light"/>
+        android:id="@+id/bLeft"
+        android:layout_width="32dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:contentDescription="@string/desc_previous_chapter"
+        android:padding="16dp"
+        android:scaleType="center"
+        android:src="@drawable/ic_nav_left_light"
+        style="?android:actionButtonStyle"/>
 
     <yuku.alkitab.base.widget.GotoButton
-            android:id="@+id/bGoto"
-            style="?android:actionButtonStyle"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:text="*Long Name Of Book 123"
-            android:textSize="16sp"
-            android:paddingLeft="0dp"
-            android:paddingRight="0dp"
-            tools:ignore="HardcodedText"/>
+        android:id="@+id/bGoto"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:text="*Long Name Of Book 123"
+        android:textSize="16sp"
+        style="?android:actionButtonStyle"
+        tools:ignore="HardcodedText"/>
 
     <ImageButton
-            android:id="@+id/bRight"
-            style="?android:actionButtonStyle"
-            android:layout_width="24dp"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/desc_next_chapter"
-            android:padding="16dp"
-            android:scaleType="center"
-            android:src="@drawable/ic_nav_right_light"/>
+        android:id="@+id/bRight"
+        android:layout_width="32dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:contentDescription="@string/desc_next_chapter"
+        android:padding="16dp"
+        android:scaleType="center"
+        android:src="@drawable/ic_nav_right_light"
+        style="?android:actionButtonStyle"/>
+
+    <Button
+        android:id="@+id/bVersion"
+        android:layout_width="72dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:gravity="center"
+        android:text="*SHTNM"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        style="?android:spinnerStyle"/>
 </LinearLayout>

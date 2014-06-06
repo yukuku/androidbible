@@ -39,6 +39,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AbsListView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
@@ -239,6 +240,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	GotoButton bGoto;
 	ImageButton bLeft;
 	ImageButton bRight;
+	Button bVersion;
 	Floater floater;
 	ReadingPlanFloatMenu readingPlanFloatMenu;
 	
@@ -298,6 +300,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		bGoto = V.get(actionCustomView, R.id.bGoto);
 		bLeft = V.get(actionCustomView, R.id.bLeft);
 		bRight = V.get(actionCustomView, R.id.bRight);
+		bVersion = V.get(actionCustomView, R.id.bVersion);
 		actionBar.setCustomView(actionCustomView);
 		actionBar.setDisplayShowCustomEnabled(true);
 		actionBar.setDisplayShowTitleEnabled(false);
@@ -339,6 +342,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		});
 		bRight.setOnClickListener(new View.OnClickListener() {
 			@Override public void onClick(View v) { bRight_click(); }
+		});
+		bVersion.setOnClickListener(new View.OnClickListener() {
+			@Override public void onClick(View v) { bVersion_click(); }
 		});
 
 		floater.setListener(floater_listener);
@@ -643,6 +649,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				}
 				S.activeVersion = version;
 				S.activeVersionId = mv.getVersionId();
+				{
+					final String shortName = version.getShortName();
+					if (shortName != null) {
+						bVersion.setText(shortName);
+					} else {
+						bVersion.setText(version.getLongName());
+					}
+				}
 				splitHandleButton.setLabel1("\u25b2 " + getSplitHandleVersionName(mv, version));
 				
 				if (display) {
@@ -990,7 +1004,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		//# build config
 		menu.findItem(R.id.menuDevotion).setVisible(c.menuDevotion);
-		menu.findItem(R.id.menuVersions).setVisible(c.menuVersions);
 		menu.findItem(R.id.menuSongs).setVisible(c.menuSongs);
 	}
 	
@@ -1017,9 +1030,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			return true;
 		case R.id.menuSearch:
 			menuSearch_click();
-			return true;
-		case R.id.menuVersions:
-			openVersionsDialog();
 			return true;
 		case R.id.menuSplitVersion:
 			openSplitVersionsDialog();
@@ -1540,6 +1550,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			int newChapter = chapter_1 + 1;
 			display(newChapter, 1);
 		}
+	}
+
+	void bVersion_click() {
+		openVersionsDialog();
 	}
 	
 	@Override public boolean onSearchRequested() {
