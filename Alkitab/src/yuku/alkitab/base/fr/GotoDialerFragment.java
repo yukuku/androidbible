@@ -297,7 +297,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 	}
 
 	private void colorize() {
-		if (active != null) active.setBackgroundColor(0xffcfcfcf);
+		if (active != null) active.setBackgroundColor(0xff313131);
 		if (passive != null) passive.setBackgroundColor(0x0);
 	}
 
@@ -344,7 +344,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 			final Book book = getItem(position);
 			res.setText(booksc_[position].shortName);
 			res.setTextSize(18);
-			res.setTextColor(U.getForegroundColorByBookId(book.bookId));
+			res.setTextColor(U.getForegroundColorOnDarkBackgroundByBookId(book.bookId));
 
 			return res;
 		}
@@ -355,7 +355,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 			final Book book = getItem(position);
 			res.setText(book.shortName);
 			res.setTextSize(18);
-			res.setTextColor(U.getForegroundColorByBookId(book.bookId));
+			res.setTextColor(U.getForegroundColorOnDarkBackgroundByBookId(book.bookId));
 
 			return res;
 		}

@@ -34,9 +34,6 @@
   <string name="search_bookname_only">%s pouze</string>
   <string name="ayat_sebelumangka">Verš</string>
   <string name="pasal_sebelumangka">Kapitola</string>
-  <string name="loncat_ke_alamat_titikdua">Jít na: (Příklad:%s)</string>
-  <string name="tidak_ada_catatan">(žádná poznámka)</string>
-  <string name="judul_titikdua">Titul:</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Nepodařilo se stáhnout %1$s datováno %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Chyba při stahování %1$s datováno %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">Úspěšné stahování  %1$s datováno %2$s</string>
@@ -65,7 +62,6 @@
   <string name="alamat_tidak_sah_alamat">Neplatná adresa: %s</string>
   <string name="no">Ne</string>
   <string name="yes">Ano</string>
-  <string name="anda_yakin_mau_menghapus_catatan_ini">Opravdu chcete smazat tuto poznámku?</string>
   <string name="hapus_catatan">Smazat poznámku</string>
   <string name="catatan_alamat">Na vědomí %s</string>
   <string name="delete">Smazat</string>
@@ -140,7 +136,6 @@
   <string name="create_label_titik3">Vytvořit štítek...</string>
   <string name="select_books_to_search">Výběr knihy pro hledání</string>
   <string name="rename_label_title">Přejmenování štítku</string>
-  <string name="are_you_sure_you_want_to_delete_the_label_label">!Opravdu chcete smazat tento štítek \'%1$s\'? Tento štítek byl vymazán ze %2$s záložek.\"</string>
   <string name="bmcat_all_bookmarks">Všechny záložky</string>
   <string name="bmcat_notes">Poznámky</string>
   <string name="bmcat_highlights">Zvýraznění</string>
@@ -156,7 +151,6 @@
   <string name="bl_send_backup">Přenos</string>
   <string name="bl_file_not_found_filename">Soubor nenalezen: %s</string>
   <string name="bl_send_backup_confirmation">Vytvoření a odeslání zálohy pro záložky, poznámky a zvýraznění? Můžete například poslat přiložený soubor e-mailem na nové zařízení, nebo jen pro účely archivace.</string>
-  <string name="labels_titikdua">Štítky:</string>
   <string name="tambah_titiktiga">Přidat...</string>
   <string name="nama_label_titikdua">Název štítku:</string>
   <string name="change_label_color">Změna barvy štítku</string>
@@ -168,7 +162,6 @@
   <string name="intent_filter_import_from_backup">Import ze zálohy</string>
   <string name="redownload">Opětovné stažení</string>
   <string name="read_faq_before_suggest">Prosím, přečtěte si výše uvedené FAQ před odesláním vašeho dotazu . Pokračovat v odesílání dotazu?</string>
-  <string name="no_bookmarks_for_backup">Nemáte žádné záložky, poznámky nebo zvýraznění pro zálohování.</string>
   <string name="pdb_error_not_palmbible">Tento soubor PDB není v PalmBible+ formátu. Tento PDB má typ \'%1$s\' a tvůrce id \'%2$s\', který není podporován touto aplikací.</string>
   <string name="pdb_error_corrupted">Tento PDB soubor je poškozen.</string>
   <string name="pdb_error_not_pdb_file">Vybrané soubory nejsou ve formátu PDB.</string>
@@ -176,7 +169,6 @@
   <string name="split_version_none">Žádný</string>
   <string name="split_version_cant_display_verse">%1$s není k dispozici v %2$s.</string>
   <string name="menuAddSomething">Přidat značku</string>
-  <string name="menuTextAppearance">Vzhled textu</string>
   <string name="text_appearance_theme_custom">Přizpůsobení...</string>
   <string name="text_appearance_text_size">Velikost textu</string>
   <string name="text_appearance_line_spacing">Rozestup řádků</string>

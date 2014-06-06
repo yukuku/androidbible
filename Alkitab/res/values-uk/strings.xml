@@ -4,6 +4,7 @@
 <resources>
   <string name="highlight_stabilo">Виділення, підкреслення</string>
   <string name="menuDonasi">Пожертва</string>
+  <string name="menuSupport">Підтримка</string>
   <string name="mengimpor_titiktiga"> Відновлення...</string>
   <string name="mengekspor_titiktiga">Створення резервної копії...</string>
   <string name="bagikan_renungan">Поділитися знаннями</string>
@@ -35,10 +36,8 @@
   <string name="search_bookname_only">Тільки %s</string>
   <string name="ayat_sebelumangka">Вірш</string>
   <string name="pasal_sebelumangka">Розділ</string>
-  <string name="loncat_ke_alamat_titikdua">Перейти до (наприклад: %s)</string>
-  <string name="tidak_ada_catatan">(нема нотаток)</string>
   <string name="belum_ada_pembatas_buku">Ще немає закладок.\nВиберіть вірш щоб додати закладку.</string>
-  <string name="judul_titikdua">Заголовок:</string>
+  <string name="judul_titikdua">НАЗВА</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Не вдалося завантажити %1$s з дати %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Помилка при завантаженні %1$s датована %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">Вдалі завантаження %1$s датовані %2$s</string>
@@ -68,7 +67,7 @@
   <string name="alamat_tidak_sah_alamat">Недійсна адреса: %s</string>
   <string name="no">Ні</string>
   <string name="yes">Так</string>
-  <string name="anda_yakin_mau_menghapus_catatan_ini">Ви дійсно хочете видалити цю нотатку?</string>
+  <string name="anda_yakin_mau_menghapus_catatan_ini">Видалити цю нотатку?</string>
   <string name="hapus_catatan">Видалити нотатку</string>
   <string name="catatan_alamat">Нотатка до %s</string>
   <string name="delete">Видалити</string>
@@ -143,7 +142,7 @@
   <string name="create_label_titik3">Створення позначок...</string>
   <string name="select_books_to_search">Виберіть книги для пошуку</string>
   <string name="rename_label_title">Перейменувати позначку</string>
-  <string name="are_you_sure_you_want_to_delete_the_label_label">"Ви дійсно бажаєте видалити позначку \'%1$s\'? Цю позначку буде видалено з %2$s закладок."</string>
+  <string name="are_you_sure_you_want_to_delete_the_label_label">"Видалити мітку \'%1$s\'? Ця мітка буде видалена з %2$s закладок."</string>
   <string name="bmcat_all_bookmarks">Всі закладки</string>
   <string name="bmcat_notes">Нотатки</string>
   <string name="bmcat_highlights">Виділення, підкреслення</string>
@@ -159,7 +158,7 @@
   <string name="bl_send_backup">Перехід</string>
   <string name="bl_file_not_found_filename">Файл не знайдено: %s</string>
   <string name="bl_send_backup_confirmation">Створити та надіслати резервну копію закладок, нотаток та виділень, підкреслень? Ви можете, наприклад надіслати прикріплений файл по електронній пошті на інший пристрій, або заархівувати його.</string>
-  <string name="labels_titikdua">Позначки:</string>
+  <string name="labels_titikdua">ПОЗНАЧКИ</string>
   <string name="tambah_titiktiga">Додати...</string>
   <string name="nama_label_titikdua">Назва позначки:</string>
   <string name="change_label_color">Змінити колір позначки</string>
@@ -172,7 +171,7 @@
   <string name="intent_filter_import_from_backup">Імпорт з резервної копії</string>
   <string name="redownload">Перезавантажити</string>
   <string name="read_faq_before_suggest">Будь ласка читайте вище FAQ перед відсиланням пропозиції або запитання. Продовжити надсилання пропозиції або запитання?</string>
-  <string name="no_bookmarks_for_backup">У вас немає жодної закладки, нотатки,виділення або підкреслення для резервного копіювання.</string>
+  <string name="no_bookmarks_for_backup">Ви поки що не маєте будь-яких закладок, нотаток,  виділень або підкреслень.</string>
   <string name="pdb_error_not_palmbible">Цей  PDB файл не в форматі PalmBible +. Цей PDB має тип \"%1$s\'   створює ід
 \'%2$s\' , що не підтримується цим додотком.</string>
   <string name="pdb_error_corrupted">PDB файл пошкоджений.</string>
@@ -184,7 +183,6 @@
   <string name="menuAddSomething">Додати позначку</string>
   <string name="color_settings_title">Кольори</string>
   <string name="color_settings_night_title">Кольори (Нічний режим)</string>
-  <string name="menuTextAppearance">Вигляд тексту</string>
   <string name="text_appearance_theme_custom">Індивідуалізація...</string>
   <string name="text_appearance_text_size">Розмір тексту</string>
   <string name="text_appearance_line_spacing">Міжрядковий інтервал</string>
@@ -312,7 +310,15 @@
   <string name="rp_download_reading_plan_data_corrupted">Завантажені дані плану читання пошкоджено. Будь ласка спробуйте ще раз з доступним підключенням до інтернету.</string>
   <string name="version_download_need_fonts">"Версія яку ви завантажили можливо потребує для коректного відображення деякі шрифти. Перейдіть в меню до \"Вигляд тексту\" та виберіть потрібний шрифт. Грецька потребує шрифт Ubuntu. Бурмезька потребує Parabaik, ParabaikSans чи Myanmar3. Тамільська потребує Akshar. Телузька потребує Suranna."</string>
   <string name="menuNightMode">Нічний режим</string>
-  <string name="delete_highlight">Видалити підкреслення, виділення</string>
   <string name="menu_compare">Порівняти</string>
   <string name="about_version_name">Версія складання %s</string>
+  <string name="song_player_error_description">Сталася помилка при відтворенні цієї пісні: %1$d, %2$d.</string>
+  <string name="beta_tester_program_title">Бета тестування</string>
+  <string name="beta_tester_program_desc">Приєднуйтесь до нашої програми бета тестування та отримайте доступ до нових функцій і можливість формувати програму Quick Bible: goo.gl/JjYTK1</string>
+  <string name="search_in_version_short_name_placeholder">Шукати в %s</string>
+  <string name="marker_transfer_to_device_title">Передати на інший пристрій</string>
+  <string name="marker_transfer_to_device_description">Перемістити всі закладки, замітки, виділення та підкреслення на інший телефон або планшет. Ми рекомендуємо використовувати Gmail / Email.</string>
+  <string name="marker_transfer_to_computer_title">Передати для редагування</string>
+  <string name="marker_transfer_to_computer_description">Зберегти закладки, нотатки, виділення або підкреслення в HTML файл для подальшого редагування або друку на вашому комп\'ютері.</string>
+  <string name="bookmark_delete_confirmation">Видалити цю закладку?</string>
 </resources>

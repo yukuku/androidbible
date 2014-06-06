@@ -35,10 +35,7 @@
   <string name="search_bookname_only">Tylko %s</string>
   <string name="ayat_sebelumangka">Wers</string>
   <string name="pasal_sebelumangka">Rozdział</string>
-  <string name="loncat_ke_alamat_titikdua">Idź do: (Np.: %s)</string>
-  <string name="tidak_ada_catatan">(brak notatek)</string>
   <string name="belum_ada_pembatas_buku">Brak zakładek.\nWybierz wers, aby dodać do zakładek.</string>
-  <string name="judul_titikdua">Tytuł:</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Błąd pobierania: %1$s z dnia %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Błąd pobierania %1$s z dnia %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">Udane pobieranie %1$s z dnia %2$s</string>
@@ -68,7 +65,6 @@
   <string name="alamat_tidak_sah_alamat">Niewłaściwy adres: %s</string>
   <string name="no">Nie</string>
   <string name="yes">Tak</string>
-  <string name="anda_yakin_mau_menghapus_catatan_ini">Czy jesteś pewien, że chcesz usunąć tę notatkę?</string>
   <string name="hapus_catatan">Usuń notatkę</string>
   <string name="catatan_alamat">Notatka do %s</string>
   <string name="delete">Usuń</string>
@@ -143,7 +139,6 @@
   <string name="create_label_titik3">Stwórz etykietę&#8230;</string>
   <string name="select_books_to_search">Wybierz księgi do przeszukania</string>
   <string name="rename_label_title">Zmień nazwę etykiety</string>
-  <string name="are_you_sure_you_want_to_delete_the_label_label">"Czy jesteś pewien, że chcesz usunąć etykietę \'%1$s\'? Ta etykieta zostanie usunięta z %2$s zakładek."</string>
   <string name="bmcat_all_bookmarks">Wszystkie zakładki</string>
   <string name="bmcat_notes">Notatki</string>
   <string name="bmcat_highlights">Podkreślenia</string>
@@ -159,7 +154,6 @@
   <string name="bl_send_backup">Transfer</string>
   <string name="bl_file_not_found_filename">Nie znaleziono pliku: %s</string>
   <string name="bl_send_backup_confirmation">Czy stworzyć i wysłać kopię zakładek, notatek i podkreśleń? Możesz np. wysłać załączony plik pocztą na nowe urządzenie, albo po prostu dla celów archiwizacji.</string>
-  <string name="labels_titikdua">Etykiety:</string>
   <string name="tambah_titiktiga">Dodaj&#8230;</string>
   <string name="nama_label_titikdua">Nazwa etykiety:</string>
   <string name="change_label_color">Zmień kolor etykiety</string>
@@ -172,7 +166,6 @@
   <string name="intent_filter_import_from_backup">Import z kopii</string>
   <string name="redownload">Pobierz ponownie</string>
   <string name="read_faq_before_suggest">Proszę przeczytaj powyższe FAQ nim wyślesz sugestię. Czy nadal chcesz wysłać sugestię?</string>
-  <string name="no_bookmarks_for_backup">Nie posiadasz żadnych zakładek, notatek lub podkreśleń, aby wykonać kopię.</string>
   <string name="pdb_error_not_palmbible">Ten plik PDB nie jest w formacie PalmBible+. Ten plik PDB ma typ \'%1$s\' i id twórcy \'%2$s\', które nie są obsługiwane przez tę aplikację.</string>
   <string name="pdb_error_corrupted">Plik PDB jest uszkodzony.</string>
   <string name="pdb_error_not_pdb_file">Wybrany plik nie jest plikiem PDB.</string>
@@ -183,7 +176,6 @@
   <string name="menuAddSomething">Dodaj znacznik</string>
   <string name="color_settings_title">Kolory</string>
   <string name="color_settings_night_title">Kolory (tryb nocny)</string>
-  <string name="menuTextAppearance">Wygląd tekstu</string>
   <string name="text_appearance_theme_custom">Własne&#8230;</string>
   <string name="text_appearance_text_size">Rozmiar tekstu</string>
   <string name="text_appearance_line_spacing">Odstęp między liniami</string>
@@ -311,7 +303,6 @@
   <string name="rp_download_reading_plan_data_corrupted">Pobrany plik plan czytań jest uszkodzony. Proszę spróbować później, gdy będzie dostępne połączenie internetowe.</string>
   <string name="version_download_need_fonts">"Wersja którą pobrałeś może wymagać konkretnej czcionki do wyświetlania. Udaj się do menu \'Wygląd tekstu\' i wybierz czcionkę. Grecki wymaga czcionki Ubuntu. Burmański wymaga Parabaik, ParabaikSans, lub Myanmar3. Tamil wymaga Akshar. Telugu wymaga Suranna."</string>
   <string name="menuNightMode">Tryb nocny</string>
-  <string name="delete_highlight">Usuń podkreślenie</string>
   <string name="menu_compare">Porównaj</string>
   <string name="about_version_name">Wersja %s</string>
   <string name="song_player_error_description">Wystąpił błąd podczas odtwarzania pieśni: %1$d, %2$d.</string>

@@ -4,6 +4,7 @@
 <resources>
   <string name="highlight_stabilo">Realce</string>
   <string name="menuDonasi">Doação</string>
+  <string name="menuSupport">Suporte</string>
   <string name="mengimpor_titiktiga">Restaurando&#8230;</string>
   <string name="mengekspor_titiktiga">Criando cópia de segurança&#8230;</string>
   <string name="bagikan_renungan">Compartilhar devocional</string>
@@ -35,10 +36,9 @@
   <string name="search_bookname_only">%s apenas</string>
   <string name="ayat_sebelumangka">Versículo</string>
   <string name="pasal_sebelumangka">Capítulo</string>
-  <string name="loncat_ke_alamat_titikdua">Pular para: (Exemplo: %s)</string>
-  <string name="tidak_ada_catatan">(nenhuma anotação)</string>
+  <string name="jump_to_prompt"><b>IR PARA</b> — Exemplo: ^1</string>
   <string name="belum_ada_pembatas_buku">Nenhum marcador ainda.\nSelecione um versículo para adicionar um marcador.</string>
-  <string name="judul_titikdua">Título:</string>
+  <string name="judul_titikdua">TÍTULO</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Falha ao baixar %1$s datado %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Erro ao baixar %1$s datado %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">Sucesso ao baixar %1$s datado %2$s</string>
@@ -68,7 +68,7 @@
   <string name="alamat_tidak_sah_alamat">Endereço inválido: %s</string>
   <string name="no">Não</string>
   <string name="yes">Sim</string>
-  <string name="anda_yakin_mau_menghapus_catatan_ini">Tem certeza que deseja remover esta anotação?</string>
+  <string name="anda_yakin_mau_menghapus_catatan_ini">Remover esta anotação?</string>
   <string name="hapus_catatan">Remover anotação</string>
   <string name="catatan_alamat">Anotação em %s</string>
   <string name="delete">Remover</string>
@@ -143,7 +143,7 @@
   <string name="create_label_titik3">Criar etiqueta&#8230;</string>
   <string name="select_books_to_search">Selecione os livros a pesquisar</string>
   <string name="rename_label_title">Renomear etiqueta</string>
-  <string name="are_you_sure_you_want_to_delete_the_label_label">"Tem certeza que deseja remover a etiqueta \'%1$s\'? Ela será removida de %2$s marcador(es)."</string>
+  <string name="are_you_sure_you_want_to_delete_the_label_label">"Remover a etiqueta \'%1$s\'? Esta etiqueta será removida de %2$s marcadores."</string>
   <string name="bmcat_all_bookmarks">Todos os marcadores</string>
   <string name="bmcat_notes">Anotações</string>
   <string name="bmcat_highlights">Realces</string>
@@ -159,7 +159,7 @@
   <string name="bl_send_backup">Tranferir</string>
   <string name="bl_file_not_found_filename">Arquivo não encontrado: %s</string>
   <string name="bl_send_backup_confirmation">Criar e enviar cópia de segurança dos marcadores, notas, e realces? Você pode, por exemplo, enviar o arquivo anexo por e-mail para um outro dispositivo, ou apenas para arquivá-los.</string>
-  <string name="labels_titikdua">Etiquetas:</string>
+  <string name="labels_titikdua">ETIQUETAS</string>
   <string name="tambah_titiktiga">Adicionar&#8230;</string>
   <string name="nama_label_titikdua">Nome da etiqueta:</string>
   <string name="change_label_color">Mudar a cor da etiqueta</string>
@@ -172,7 +172,7 @@
   <string name="intent_filter_import_from_backup">Importar da cópia de segurança</string>
   <string name="redownload">Baixar novamente</string>
   <string name="read_faq_before_suggest">Por favor, leia o FAQ acima antes de enviar uma sugestão. Deseja continuar com o envio da sugestão?</string>
-  <string name="no_bookmarks_for_backup">Você não tem marcadores, anotações ou realces para fazer cópia de segurança.</string>
+  <string name="no_bookmarks_for_backup">Você não tem marcadores, anotações ou realces.</string>
   <string name="pdb_error_not_palmbible">Este arquivo PDB não está no formato PalmBible+. Este PDB tem o tipo \'%1$s\' e a identificação do criador é \'%2$s\', que não é suportado por este aplicativo.</string>
   <string name="pdb_error_corrupted">O arquivo PDB está corrompido.</string>
   <string name="pdb_error_not_pdb_file">O arquivo selecionado não é um arquivo PDB.</string>
@@ -183,7 +183,7 @@
   <string name="menuAddSomething">Adicionar marcador</string>
   <string name="color_settings_title">Cores</string>
   <string name="color_settings_night_title">Cores (Modo noturno)</string>
-  <string name="menuTextAppearance">Aparência do texto</string>
+  <string name="menuDisplay">Tela</string>
   <string name="text_appearance_theme_custom">Personalizar&#8230;</string>
   <string name="text_appearance_text_size">Tamanho do texto</string>
   <string name="text_appearance_line_spacing">Espaçamento</string>
@@ -311,10 +311,19 @@
   <string name="rp_download_reading_plan_data_corrupted">O arquivo do plano de leitura que foi baixado está corrompido. Tente novamente mais tarde com uma conexão de Internet ativa.</string>
   <string name="version_download_need_fonts">"A versão que você baixou talvez necessite ser exibida com certas fontes. Vá até o menu \'Aparência do texto\' e selecione a fonte correta. Grego necessita a fonte Ubuntu. Birmanês necessita Parabaik, ParabaikSans, ou Myanmar3. Tâmil necessita Akshar. Telugu necessita Suranna."</string>
   <string name="menuNightMode">Modo noturno</string>
-  <string name="delete_highlight">Remover realce</string>
+  <string name="highlight_custom_color">Outras cores</string>
   <string name="menu_compare">Comparar</string>
   <string name="about_version_name">versão %s</string>
   <string name="song_player_error_description">Ocorreu um erro ao reproduzir esta canção: %1$d, %2$d.</string>
   <string name="beta_tester_program_title">Testador Beta</string>
   <string name="beta_tester_program_desc">Participe do nosso programa Testador Beta e obtenha acesso prévio a novas funcionalidades e tenha a oportunidade de dar forma ao Quick Bible: goo.gl/JjYTK1</string>
+  <string name="search_in_version_short_name_placeholder">Pesquisar em %s</string>
+  <string name="search_syntax_tips"><i>Dicas de pesquisa:</i>\n\n<b>+palavra</b> para exatamente essa palavra\n<b>[q]senhor deus[q]</b> para exatamente essa frase</string>
+  <string name="search_no_result">Nenhum versículo encontrado para <b>^1</b>.</string>
+  <string name="search_no_result_fallback">Pressione aqui para ir para <u>^1</u>.</string>
+  <string name="marker_transfer_to_device_title">Transferir para outro dispositivo</string>
+  <string name="marker_transfer_to_device_description">Mover todos os marcadores, anotações e realces para outro telefone ou tablet. Recomendamos o uso do Gmail/Email.</string>
+  <string name="marker_transfer_to_computer_title">Transferir para edição</string>
+  <string name="marker_transfer_to_computer_description">Salvar marcadores, anotações e realces em um arquivo HTML para posterior edição ou impressão no seu computador.</string>
+  <string name="bookmark_delete_confirmation">Remover este marcador?</string>
 </resources>

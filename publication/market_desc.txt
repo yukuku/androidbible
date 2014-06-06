@@ -1,0 +1,20 @@
+A one-stop Bible application, feature-packed with reading plans, bookmarks, notes, highlights, progress markers, and many more. Read the Scriptures without Internet connection, without any purchases, and without ads. With Quick Bible you can access the Bible anytime, anywhere, as quick as reaching your pocket.
+
+Features:
+– Read more than 90 Bible versions offline
+– Fully customizable colors and fonts
+– Compare two versions at a time with Split Version
+– Bookmarks, notes, and highlights
+– Search words or phrases in a flash
+– Various choices of reading plans
+– Progress markers to track your daily Bible reading
+– Verse widgets for quick access
+– Super-easy navigation between verses
+
+More:
+– Open source project http://github.com/yukuku/androidbible
+– Blog http://androidbible.blogspot.com
+– Beta testing (get the latest version before released) http://goo.gl/JjYTK1
+– Donation to developers http://j.mp/bibledonate
+
+Glory to God alone – Soli Deo Gloria

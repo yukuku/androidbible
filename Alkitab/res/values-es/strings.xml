@@ -35,10 +35,7 @@
   <string name="search_bookname_only">Solo %s</string>
   <string name="ayat_sebelumangka">Versículo</string>
   <string name="pasal_sebelumangka">Capítulo</string>
-  <string name="loncat_ke_alamat_titikdua">Saltar a: (Ejemplo: %s)</string>
-  <string name="tidak_ada_catatan">(sin notas)</string>
   <string name="belum_ada_pembatas_buku">Aún no hay marcadores.\nSeleccione un versículo para agregar marcador.</string>
-  <string name="judul_titikdua">Título:</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Falló la descarga de %1$s que data de %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">Error al descargar %1$s que data de %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">Se ha descargado %1$s que data de %2$s</string>
@@ -68,7 +65,6 @@
   <string name="alamat_tidak_sah_alamat">Dirección inválida: %s</string>
   <string name="no">No</string>
   <string name="yes">Sí</string>
-  <string name="anda_yakin_mau_menghapus_catatan_ini">¿Está seguro que desea eliminar esta nota?</string>
   <string name="hapus_catatan">Eliminar nota</string>
   <string name="catatan_alamat">Nota en %s</string>
   <string name="delete">Eliminar</string>
@@ -143,7 +139,6 @@
   <string name="create_label_titik3">Crear etiqueta&#8230;</string>
   <string name="select_books_to_search">Elegir libros para buscar</string>
   <string name="rename_label_title">Renombrar etiqueta</string>
-  <string name="are_you_sure_you_want_to_delete_the_label_label">"¿Esta seguro que desea eliminar la etiqueta \'%1$s\'? Esta etiqueta será removida de %2$s marcadores."</string>
   <string name="bmcat_all_bookmarks">Todos los marcadores</string>
   <string name="bmcat_notes">Notas</string>
   <string name="bmcat_highlights">Resaltos</string>
@@ -159,7 +154,6 @@
   <string name="bl_send_backup">Transferir</string>
   <string name="bl_file_not_found_filename">Archivo no encontrado: %s</string>
   <string name="bl_send_backup_confirmation">¿Crear y enviar respaldos de marcadores, notas y resaltos? Por ejemplo puede enviar el archivo como un adjunto en un email o a un nuevo dispositivo, o simplemente para archivarlo.</string>
-  <string name="labels_titikdua">Etiquetas:</string>
   <string name="tambah_titiktiga">Agregar&#8230;</string>
   <string name="nama_label_titikdua">Nombre de etiqueta:</string>
   <string name="change_label_color">Cambiar el color de la etiqueta</string>
@@ -172,7 +166,6 @@
   <string name="intent_filter_import_from_backup">Importar desde respaldo</string>
   <string name="redownload">Re-descargar</string>
   <string name="read_faq_before_suggest">Por favor lea el FAQ anterior antes de enviar una sugerencia. ¿Continuar enviando sugerencia?</string>
-  <string name="no_bookmarks_for_backup">No hay ningún marcador, nota o resalto para respaldar.</string>
   <string name="pdb_error_not_palmbible">Este archivo PDB no está en formato PalmBible+. Este PDB es del tipo \'%1$s\' y con el id de creador \'%2$s\', el cual no es soportado por esta aplicación.</string>
   <string name="pdb_error_corrupted">El archivo PDB está corrupto.</string>
   <string name="pdb_error_not_pdb_file">El archivo seleccionado no es un archivo PDB.</string>
@@ -183,7 +176,6 @@
   <string name="menuAddSomething">Agregar marcador</string>
   <string name="color_settings_title">Colores</string>
   <string name="color_settings_night_title">Colores (Modo nocturno)</string>
-  <string name="menuTextAppearance">Apariencia del texto</string>
   <string name="text_appearance_theme_custom">Personalizado&#8230;</string>
   <string name="text_appearance_text_size">Tamaño de texto</string>
   <string name="text_appearance_line_spacing">Espaciado de líneas</string>
@@ -311,7 +303,6 @@
   <string name="rp_download_reading_plan_data_corrupted">Los datos del plan de lectura descargado están dañados. Por favor trate de nuevo con una conexión a Internet que funcione.</string>
   <string name="version_download_need_fonts">"La versión que descargaste puede necesitar ciertas fuentes para mostrarse. Ve al menú de \'Apariencia de texto\' y elige una fuente. Griego necesita la fuente Ubuntu. Birmano necesita Parabaik, ParabaikSans o Myanmar3. Tamil necesita Suranna."</string>
   <string name="menuNightMode">Modo nocturno</string>
-  <string name="delete_highlight">Remover resalto</string>
   <string name="menu_compare">Comparar</string>
   <string name="about_version_name">versión %s</string>
   <string name="song_player_error_description">Se encontró un error mientras se reproducía está canción: %1$d, %2$d.</string>

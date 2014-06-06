@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ShareCompat;
@@ -348,7 +349,13 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 								@Override
 								public void run() {
 									if (mediaPlayerController.canHaveNewUrl()) {
-										final String url = "https://alkitab-host.appspot.com/addon/audio/" + getAudioFilename(currentBookName, currentSong.code);
+										final String baseUrl;
+										if (Build.VERSION.SDK_INT >= 14) {
+											baseUrl = "https://alkitab-host.appspot.com/addon/audio/";
+										} else {
+											baseUrl = "http://alkitab-host.appspot.com/addon/audio/"; // no streaming https support in old Android
+										}
+										final String url = baseUrl + getAudioFilename(currentBookName, currentSong.code);
 										if (response.contains("extension=mp3")) {
 											mediaPlayerController.mediaKnownToExist(url, false);
 										} else {

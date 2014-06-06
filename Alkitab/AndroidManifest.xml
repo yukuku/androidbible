@@ -3,8 +3,8 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="yuku.alkitab.debug"
           android:installLocation="auto"
-          android:versionCode="154"
-          android:versionName="3.6.0">
+          android:versionCode="155"
+          android:versionName="3.6.1">
     <uses-sdk android:minSdkVersion="7"
               android:targetSdkVersion="19"/>
 
@@ -32,6 +32,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
@@ -44,10 +45,12 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="yuku.alkitab.base.ac.GotoActivity"
-                  android:label="@string/tuju_v"
-                  android:configChanges="locale|layoutDirection"
-                  android:windowSoftInputMode="adjustNothing"/>
+        <activity
+            android:name="yuku.alkitab.base.ac.GotoActivity"
+            android:configChanges="locale|layoutDirection"
+            android:label="@string/tuju_v"
+            android:theme="@style/Theme.Alkitab.Dark"
+            android:windowSoftInputMode="adjustNothing"/>
         <activity android:name="yuku.alkitab.base.ac.SettingsActivity"
                   android:label="@string/pengaturan_alkitab"
                   android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"/>
@@ -160,9 +163,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="yuku.alkitab.base.ac.Search2Activity"
-                  android:label="@string/cari_v"
-                  android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"/>
+        <activity
+            android:name="yuku.alkitab.base.ac.Search2Activity"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+            android:label="@string/cari_v"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name="yuku.alkitab.base.ac.DevotionActivity"
                   android:label="@string/renungan"
                   android:parentActivityName="yuku.alkitab.base.IsiActivity"
@@ -252,6 +257,17 @@
         <service android:name="yuku.alkitab.base.sv.DailyVerseAppWidgetService"
                  android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
+        <uses-library
+            android:name="com.sec.android.app.multiwindow"
+            android:required="false"/>
+
+        <meta-data
+            android:name="com.samsung.android.sdk.multiwindow.enable"
+            android:value="true"/>
+
+        <meta-data
+            android:name="com.sec.android.support.multiwindow"
+            android:value="true"/>
     </application>
 
 </manifest>

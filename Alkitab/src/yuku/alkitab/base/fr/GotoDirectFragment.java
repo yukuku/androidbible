@@ -2,22 +2,20 @@ package yuku.alkitab.base.fr;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
-import android.text.style.StyleSpan;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TextView.BufferType;
 import yuku.afw.V;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.fr.base.BaseGotoFragment;
 import yuku.alkitab.base.util.Jumper;
+import yuku.alkitab.debug.R;
 
 public class GotoDirectFragment extends BaseGotoFragment {
 	public static final String TAG = GotoDirectFragment.class.getSimpleName();
@@ -82,19 +80,12 @@ public class GotoDirectFragment extends BaseGotoFragment {
 	@Override public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		{
-			String example = S.activeVersion.reference(bookId, chapter_1, verse_1);
-			String text = getString(R.string.loncat_ke_alamat_titikdua);
-			int pos = text.indexOf("%s"); //$NON-NLS-1$
-			if (pos >= 0) {
-				SpannableStringBuilder sb = new SpannableStringBuilder();
-				sb.append(text.substring(0, pos));
-				sb.append(example);
-				sb.append(text.substring(pos + 2));
-				sb.setSpan(new StyleSpan(Typeface.BOLD), pos, pos + example.length(), 0);
-				lDirectSample.setText(sb, BufferType.SPANNABLE);
-			}
-		}
+		final String example = S.activeVersion.reference(bookId, chapter_1, verse_1);
+		final CharSequence text = getText(R.string.jump_to_prompt);
+		SpannableStringBuilder sb = new SpannableStringBuilder();
+		sb.append(text);
+		final CharSequence text2 = TextUtils.expandTemplate(text, example);
+		lDirectSample.setText(text2);
 	}
 	
 	View.OnClickListener bOk_click = new View.OnClickListener() {

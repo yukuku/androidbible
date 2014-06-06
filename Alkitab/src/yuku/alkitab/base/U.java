@@ -183,7 +183,7 @@ public class U {
 		clipboardManager.setText(text);
 	}
 
-	public static int getForegroundColorByBookId(int bookId) {
+	public static int getForegroundColorOnLightBackgroundByBookId(int bookId) {
 		if (bookId >= 0 && bookId < 39) { // OT
 			return 0xffcc0000;
 		} else if (bookId >= 39 && bookId < 66) { // NT
@@ -193,11 +193,21 @@ public class U {
 		}
 	}
 
+	public static int getForegroundColorOnDarkBackgroundByBookId(int bookId) {
+		if (bookId >= 0 && bookId < 39) { // OT
+			return 0xffff9494;
+		} else if (bookId >= 39 && bookId < 66) { // NT
+			return 0xff6dcaec;
+		} else { // others
+			return 0xffdddddd;
+		}
+	}
+
 	public static int getBackgroundColorByBookId(int bookId) {
 		if (bookId >= 0 && bookId < 39) { // OT
-			return 0xffff4444;
+			return 0xff871212;
 		} else if (bookId >= 39 && bookId < 66) { // NT
-			return 0xff33b5e5;
+			return 0xff0d617f;
 		} else { // others
 			return 0xff666666;
 		}

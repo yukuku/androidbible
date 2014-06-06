@@ -39,9 +39,9 @@
         android:showAsAction="never"
         android:title="@string/rp_menuReadingPlan"/>
     <item
-        android:id="@+id/menuAppearance"
+        android:id="@+id/menuDisplay"
         app:showAsAction="never"
-        android:title="@string/menuAppearance" />
+        android:title="@string/menuDisplay" />
     <item
         android:id="@+id/menuSettings"
         app:showAsAction="never"

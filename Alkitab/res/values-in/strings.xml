@@ -4,7 +4,7 @@
 <resources>
   <string name="highlight_stabilo">Sorot</string>
   <string name="menuDonasi">Donasi</string>
-  <string name="menuSupport">Bantuan</string>
+  <string name="menuSupport">Tentang</string>
   <string name="mengimpor_titiktiga">Memulihkan&#8230;</string>
   <string name="mengekspor_titiktiga">Membuat cadangan&#8230;</string>
   <string name="bagikan_renungan">Bagikan renungan</string>
@@ -36,7 +36,7 @@
   <string name="search_bookname_only">%s saja</string>
   <string name="ayat_sebelumangka">Ayat</string>
   <string name="pasal_sebelumangka">Pasal</string>
-  <string name="loncat_ke_alamat_titikdua">LONCAT KE (Contoh: %s)</string>
+  <string name="jump_to_prompt"><b>LONCAT KE</b> — Contoh: ^1</string>
   <string name="belum_ada_pembatas_buku">Belum ada pembatas buku.\nPilih satu ayat untuk menambah pembatas buku.</string>
   <string name="judul_titikdua">JUDUL</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Gagal mengunduh %1$s tgl %2$s</string>
@@ -183,7 +183,7 @@
   <string name="menuAddSomething">Tambah marka</string>
   <string name="color_settings_title">Warna</string>
   <string name="color_settings_night_title">Warna (Mode gelap)</string>
-  <string name="menuAppearance">Penampilan</string>
+  <string name="menuDisplay">Tampilan</string>
   <string name="text_appearance_theme_custom">Lainnya&#8230;</string>
   <string name="text_appearance_text_size">Ukuran teks</string>
   <string name="text_appearance_line_spacing">Jarak antarbaris</string>
@@ -311,13 +311,16 @@
   <string name="rp_download_reading_plan_data_corrupted">Rencana baca yang diunduh datanya rusak. Harap coba lagi lain kali dengan terkoneksi ke Internet.</string>
   <string name="version_download_need_fonts">"Versi yang diunduh mungkin perlu ditampilkan dengan jenis huruf tertentu. Bukalah menu \'Penampilan teks\' dan pilih jenis hurufnya. Yunani butuh jenis huruf Ubuntu. Myanmar butuh Parabaik, ParabaikSans, atau Myanmar3. Tamil butuh Akshar. Telugu butuh Suranna."</string>
   <string name="menuNightMode">Mode gelap</string>
-  <string name="delete_highlight">Hapus sorotan</string>
+  <string name="highlight_custom_color">Warna lainnya</string>
   <string name="menu_compare">Bandingkan</string>
   <string name="about_version_name">versi %s</string>
   <string name="song_player_error_description">Ada kesalahan ketika memainkan lagu ini: %1$d, %2$d.</string>
   <string name="beta_tester_program_title">Beta Tester</string>
   <string name="beta_tester_program_desc">Ikuti program Beta Tester untuk mendapatkan fitur baru lebih awal dan kesempatan untuk membentuk aplikasi Alkitab. goo.gl/JjYTK1</string>
   <string name="search_in_version_short_name_placeholder">Cari dalam %s</string>
+  <string name="search_syntax_tips"><i>Tip pencarian:</i>\n\n<b>+kata</b> untuk kata itu sendiri\n<b>[q]tuhan allah[q]</b> untuk urutan kata persis seperti itu</string>
+  <string name="search_no_result"><b>^1</b> tidak ditemukan.</string>
+  <string name="search_no_result_fallback">Tap di sini untuk membuka <u>^1</u>.</string>
   <string name="marker_transfer_to_device_title">Transfer ke perangkat lain</string>
   <string name="marker_transfer_to_device_description">Pindahkan semua pembatas buku, catatan, dan sorotan ke ponsel atau tablet lain. Kami menyarankan menggunakan Gmail/Email.</string>
   <string name="marker_transfer_to_computer_title">Transfer ke komputer</string>

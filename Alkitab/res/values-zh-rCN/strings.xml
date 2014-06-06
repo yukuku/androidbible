@@ -4,6 +4,7 @@
 <resources>
   <string name="highlight_stabilo">新增标记</string>
   <string name="menuDonasi">捐款</string>
+  <string name="menuSupport">支援</string>
   <string name="mengimpor_titiktiga">正在进行恢复...</string>
   <string name="mengekspor_titiktiga">新增备份&#8230;</string>
   <string name="bagikan_renungan">共享灵修</string>
@@ -35,10 +36,8 @@
   <string name="search_bookname_only">只有%s</string>
   <string name="ayat_sebelumangka">诗句</string>
   <string name="pasal_sebelumangka">章</string>
-  <string name="loncat_ke_alamat_titikdua">跳到：（例子：%s）</string>
-  <string name="tidak_ada_catatan">（没有笔记）</string>
   <string name="belum_ada_pembatas_buku">尚未有任何书签。\n选取一节经文以新增书签。</string>
-  <string name="judul_titikdua">标题：</string>
+  <string name="judul_titikdua">标题</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">下载 %1$s 失败, 日期 %2$s</string>
   <string name="kesalahan_dalam_mengunduh_namaumum_tgl_tgl_output">错误发生在 %1$s 文件下载 日期 %2$s: %3$s</string>
   <string name="berhasil_mengunduh_namaumum_tgl_tgl">完成下载 %1$s 日期 %2$s</string>
@@ -68,7 +67,7 @@
   <string name="alamat_tidak_sah_alamat">地址无效: %s</string>
   <string name="no">不是</string>
   <string name="yes">是</string>
-  <string name="anda_yakin_mau_menghapus_catatan_ini">你确定要删除此笔记？</string>
+  <string name="anda_yakin_mau_menghapus_catatan_ini">删除这个笔记？</string>
   <string name="hapus_catatan">删除笔记</string>
   <string name="catatan_alamat">%s的笔记</string>
   <string name="delete">删除</string>
@@ -143,7 +142,7 @@
   <string name="create_label_titik3">新增标签&#8230;</string>
   <string name="select_books_to_search">选择要搜寻的书卷</string>
   <string name="rename_label_title">重新命名标签</string>
-  <string name="are_you_sure_you_want_to_delete_the_label_label">"你确定要删除此\'%1$s\'的标记？这标记将从书签%2$s中被移除。"</string>
+  <string name="are_you_sure_you_want_to_delete_the_label_label">"要删除这个\'%1$s\'的标籤？这个标籤会从书籤%2$s之中被删除。"</string>
   <string name="bmcat_all_bookmarks">所有书签</string>
   <string name="bmcat_notes">笔记</string>
   <string name="bmcat_highlights">标记</string>
@@ -159,7 +158,7 @@
   <string name="bl_send_backup">传送</string>
   <string name="bl_file_not_found_filename">找不到文件: %s</string>
   <string name="bl_send_backup_confirmation">新增并传送书签、笔记与标记的备份？举例，你可以电子邮件的方式传送附件到新的设备，或作保存资料用途。</string>
-  <string name="labels_titikdua">标签：</string>
+  <string name="labels_titikdua">标籤</string>
   <string name="tambah_titiktiga">新增&#8230;</string>
   <string name="nama_label_titikdua">标签名称：</string>
   <string name="change_label_color">更改标签颜色</string>
@@ -183,7 +182,6 @@
   <string name="menuAddSomething">新增标记</string>
   <string name="color_settings_title">配色</string>
   <string name="color_settings_night_title">配色（夜间模式）</string>
-  <string name="menuTextAppearance">文字外观</string>
   <string name="text_appearance_theme_custom">设置</string>
   <string name="text_appearance_text_size">文字大小</string>
   <string name="text_appearance_line_spacing">行距</string>
@@ -311,7 +309,6 @@
   <string name="rp_download_reading_plan_data_corrupted">已下载的阅读计划资料损毁，请以有效的互联网连线再次尝试。</string>
   <string name="version_download_need_fonts">"您下载的版本需要某种字体以正确显示。请到「文字外观」目录，并选择某种字体。希腊语需要 Ubuntu 字体。缅甸语需要Parabaik，ParabaikSans 或 Myanmar3。泰米尔语需要 Akshar。泰卢固语需要 Suranna。"</string>
   <string name="menuNightMode">夜间模式</string>
-  <string name="delete_highlight">移除标记</string>
   <string name="menu_compare">比较</string>
   <string name="about_version_name">版本 %s</string>
   <string name="song_player_error_description">播放歌曲%1$d, %2$d的时候遇到问题。</string>
@@ -322,4 +319,5 @@
   <string name="marker_transfer_to_device_description">移动所有书籤、笔记和标记到另一台手机或平板，我们建议你使用谷歌电邮或其他电邮。</string>
   <string name="marker_transfer_to_computer_title">转移以便编辑</string>
   <string name="marker_transfer_to_computer_description">把书籤、笔记及标记储存为一个HTML档桉，以便于电脑上编辑和列印之用。</string>
+  <string name="bookmark_delete_confirmation">要删除这个书籤？</string>
 </resources>
