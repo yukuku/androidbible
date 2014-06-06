@@ -46,6 +46,7 @@
         <preset locale="su"   shortName="SUNDA"   longName="Sunda" filename_preset="su-sunda.yes" url="https://alkitab-host.appspot.com/addon/yes2/su-sunda--1.yes.gz" />
         <preset locale="su" shortName="SUN97" longName="Sunda-1997-formal" filename_preset="su-sunda1997.yes" url="https://alkitab-host.appspot.com/addon/yes2/su-sunda1997--1.yes.gz" />
         <preset locale="tby" shortName="TAB" longName="Tabaru" filename_preset="tby-tabaru.yes" url="https://alkitab-host.appspot.com/addon/yes2/tby-tabaru--1.yes.gz" />
+        <preset locale="sda" shortName="TOR" longName="Toraja" filename_preset="sda-toraja.yes" url="https://alkitab-host.appspot.com/addon/yes2/sda-toraja--1.yes.gz" />
         <preset locale="yli" shortName="YLI" longName="Yali-Angguruk" filename_preset="yli-yali.yes" url="https://alkitab-host.appspot.com/addon/yes2/yli-yali--1.yes.gz" />
 
         <preset locale="ar"   shortName="AVD"     longName="Van Dyke" filename_preset="ar-vandyke.yes" url="https://alkitab-host.appspot.com/addon/yes2/ar-vandyke--1.yes.gz" />
