@@ -345,4 +345,6 @@
     <string name="marker_transfer_to_computer_title">Transfer for editing</string>
     <string name="marker_transfer_to_computer_description">Save bookmarks, notes, and highlights to a HTML file for further editing or printing from your computer.</string>
     <string name="bookmark_delete_confirmation">Delete this bookmark?</string>
+    <string name="drawer_open">Open drawer</string>
+    <string name="drawer_close">Close drawer</string>
 </resources>

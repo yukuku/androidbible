@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/overlayContainer"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:id="@+id/root"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        tools:ignore="UselessParent" >
+
+        <yuku.alkitab.base.widget.TouchInterceptLinearLayout
+            android:id="@+id/splitRoot"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            tools:ignore="NestedWeights" >
+
+            <yuku.alkitab.base.widget.VersesView
+                android:id="@+id/lsSplit0"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <FrameLayout
+                android:id="@+id/splitHandle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/split_handle_height"
+                android:visibility="gone" >
+
+                <yuku.alkitab.base.widget.LabeledSplitHandleButton
+                    android:id="@+id/splitHandleButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:ignore="ContentDescription" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <yuku.alkitab.base.widget.VersesView
+                    android:id="@+id/lsSplit1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/tSplitEmpty"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:paddingLeft="32dp"
+                    android:paddingRight="32dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    tools:ignore="SelectableText" />
+            </FrameLayout>
+        </yuku.alkitab.base.widget.TouchInterceptLinearLayout>
+
+    </LinearLayout>
+
+    <yuku.alkitab.base.widget.Floater
+            android:id="@+id/floater"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:visibility="gone"/>
+
+    <yuku.alkitab.base.widget.ReadingPlanFloatMenu
+            android:id="@+id/readingPlanFloatMenu"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:background="#dd202020"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="60dp"
+            android:layout_marginRight="8dp"
+            android:visibility="gone"
+            />
+
+</FrameLayout>

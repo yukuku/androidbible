@@ -3,47 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menuBookmark"
-        android:icon="@drawable/ic_menu_bookmark"
-        android:showAsAction="ifRoom"
-        android:title="@string/menu_markers"/>
-    <item
-        android:id="@+id/menuListProgressMark"
-        android:icon="@drawable/ic_menu_see_progress"
-        android:showAsAction="ifRoom"
-        android:title="@string/pm_menu_view_progress"/>
-    <item
         android:id="@+id/menuSearch"
         android:icon="@drawable/ic_menu_search"
         android:showAsAction="always"
         android:title="@string/cari_v"/>
-    <item
-        android:id="@+id/menuSplitVersion"
-        android:showAsAction="never"
-        android:title="@string/menu_split_version"/>
-    <item
-        android:id="@+id/menuDevotion"
-        android:showAsAction="never"
-        android:title="@string/renungan"/>
-    <item
-        android:id="@+id/menuSongs"
-        android:showAsAction="never"
-        android:title="@string/menuSongs"/>
-    <item
-        android:id="@+id/menuReadingPlan"
-        android:showAsAction="never"
-        android:title="@string/rp_menuReadingPlan"/>
-    <item
-        android:id="@+id/menuDisplay"
-        android:showAsAction="never"
-        android:title="@string/menuDisplay"/>
-    <item
-        android:id="@+id/menuSettings"
-        android:showAsAction="never"
-        android:title="@string/menuPengaturan"/>
-    <item
-        android:id="@+id/menuSupport"
-        android:showAsAction="never"
-        android:title="@string/menuSupport"/>
-
 </menu>

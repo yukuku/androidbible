@@ -11,6 +11,7 @@ import android.content.IntentFilter.MalformedMimeTypeException;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Configuration;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -19,9 +20,11 @@ import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.view.MotionEventCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
@@ -31,6 +34,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.ActionMode;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -39,10 +43,12 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONException;
@@ -229,6 +235,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		reloadVerse();
 	}
 
+	DrawerLayout drawerLayout;
+	ActionBarDrawerToggle drawerToggle;
+	DrawerAdapter drawerAdapter;
+	ListView lsLeftDrawer;
+
 	FrameLayout overlayContainer;
 	View root;
 	VersesView lsText;
@@ -289,22 +300,121 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		res.putExtra("ari", ari);
 		return res;
 	}
-	
+
+	static class DrawerAdapter extends EasyAdapter {
+		final LayoutInflater inflater;
+
+		String[] tmpitems = {
+		"(user)",
+		"(Alkitab)",
+		"Renungan",
+		"Marka",
+		"Rencana baca",
+		"(Lihat jejak)",
+		"Tampilan",
+		"Tentang",
+		"(split version)",
+		"Settings",
+		};
+
+		DrawerAdapter(LayoutInflater inflater) {
+			this.inflater = inflater;
+		}
+
+		@Override
+		public View newView(final int position, final ViewGroup parent) {
+			return inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+		}
+
+		@Override
+		public void bindView(final View view, final int position, final ViewGroup parent) {
+			final TextView text1 = V.get(view, android.R.id.text1);
+			text1.setTextColor(0xffffffff);
+			text1.setText(tmpitems[position]);
+		}
+
+		@Override
+		public int getCount() {
+			return tmpitems.length;
+		}
+	}
+
+	AdapterView.OnItemClickListener lsLeftDrawer_itemClick = new AdapterView.OnItemClickListener() {
+		@Override
+		public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+			switch (position) {
+				case 2:
+					startActivity(DevotionActivity.createIntent());
+					break;
+				case 3:
+					startActivityForResult(new Intent(App.context, BookmarkActivity.class), REQCODE_bookmark);
+					break;
+				case 5:
+					openProgressMarkDialog();
+					break;
+				case 8:
+					openSplitVersionsDialog();
+					break;
+				case 4:
+					startActivityForResult(new Intent(App.context, ReadingPlanActivity.class), REQCODE_readingPlan);
+					break;
+				case 7:
+					startActivity(new Intent(App.context, AboutActivity.class));
+					break;
+				case 6:
+					setShowTextAppearancePanel(textAppearancePanel == null);
+					break;
+				case 9:
+					startActivityForResult(new Intent(App.context, SettingsActivity.class), REQCODE_settings);
+					break;
+			}
+		}
+	};
+
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState, false);
 		
 		setContentView(R.layout.activity_isi);
 
+		drawerLayout = V.get(this, R.id.drawerLayout);
+		lsLeftDrawer = V.get(this, R.id.lsLeftDrawer);
+		lsLeftDrawer.setAdapter(drawerAdapter = new DrawerAdapter(getLayoutInflater()));
+		lsLeftDrawer.setOnItemClickListener(lsLeftDrawer_itemClick);
+
+		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_navigation_drawer, R.string.drawer_open, R.string.drawer_close) {
+			/** Called when a drawer has settled in a completely closed state. */
+			@Override
+			public void onDrawerClosed(View view) {
+				super.onDrawerClosed(view);
+				// TODO getActionBar().setTitle(mTitle);
+				invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+			}
+
+			/** Called when a drawer has settled in a completely open state. */
+			@Override
+			public void onDrawerOpened(View drawerView) {
+				super.onDrawerOpened(drawerView);
+				// TODO getActionBar().setTitle(mDrawerTitle);
+				invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+			}
+		};
+
+		// Set the drawer toggle as the DrawerListener
+		drawerLayout.setDrawerListener(drawerToggle);
+
 		final ActionBar actionBar = getActionBar();
+		actionBar.setDisplayShowCustomEnabled(true);
+		actionBar.setDisplayShowTitleEnabled(false);
+		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setHomeButtonEnabled(true);
+
 		final View actionCustomView = getLayoutInflater().cloneInContext(actionBar.getThemedContext()).inflate(R.layout.activity_isi_action_custom_view, null);
 		bGoto = V.get(actionCustomView, R.id.bGoto);
 		bLeft = V.get(actionCustomView, R.id.bLeft);
 		bRight = V.get(actionCustomView, R.id.bRight);
 		bVersion = V.get(actionCustomView, R.id.bVersion);
 		actionBar.setCustomView(actionCustomView);
-		actionBar.setDisplayShowCustomEnabled(true);
-		actionBar.setDisplayShowTitleEnabled(false);
-		actionBar.setDisplayShowHomeEnabled(false);
 
 		overlayContainer = V.get(this, R.id.overlayContainer);
 		root = V.get(this, R.id.root);
@@ -450,6 +560,19 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		if (selectVerse) {
 			lsText.setVerseSelected(Ari.toVerse(openingAri), true);
 		}
+	}
+
+	@Override
+	protected void onPostCreate(final Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		// Sync the toggle state after onRestoreInstanceState has occurred.
+		drawerToggle.syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(final Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		drawerToggle.onConfigurationChanged(newConfig);
 	}
 
 	@Override protected void onNewIntent(Intent intent) {
@@ -999,12 +1122,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	public void buildMenu(Menu menu) {
 		menu.clear();
 		getMenuInflater().inflate(R.menu.activity_isi, menu);
-		
-		AppConfig c = AppConfig.get();
-
-		//# build config
-		menu.findItem(R.id.menuDevotion).setVisible(c.menuDevotion);
-		menu.findItem(R.id.menuSongs).setVisible(c.menuSongs);
 	}
 	
 	@Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -1021,40 +1138,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 	
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
+		// Pass the event to ActionBarDrawerToggle, if it returns true, then it has handled the app icon touch event
+		if (drawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
+
 		switch (item.getItemId()) {
-		case R.id.menuBookmark:
-			startActivityForResult(new Intent(this, BookmarkActivity.class), REQCODE_bookmark);
-			return true;
-		case R.id.menuListProgressMark:
-			openProgressMarkDialog();
-			return true;
 		case R.id.menuSearch:
 			menuSearch_click();
-			return true;
-		case R.id.menuSplitVersion:
-			openSplitVersionsDialog();
-			return true;
-		case R.id.menuDevotion:
-			startActivity(DevotionActivity.createIntent());
-			return true;
-		case R.id.menuSongs: {
-			// TODO fix
-			new AlertDialog.Builder(this)
-			.setMessage("Kidung has been moved to a separate app")
-			.setPositiveButton("OK", null)
-			.show();
-		} return true;
-		case R.id.menuReadingPlan:
-			startActivityForResult(new Intent(this, ReadingPlanActivity.class), REQCODE_readingPlan);
-			return true;
-		case R.id.menuSupport:
-			startActivity(new Intent(this, AboutActivity.class));
-			return true;
-		case R.id.menuDisplay:
-			setShowTextAppearancePanel(textAppearancePanel == null);
-			return true;
-		case R.id.menuSettings:
-			startActivityForResult(new Intent(this, SettingsActivity.class), REQCODE_settings);
 			return true;
 		}
 		
