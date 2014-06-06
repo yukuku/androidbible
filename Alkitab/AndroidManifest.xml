@@ -57,7 +57,6 @@
             android:name="yuku.alkitab.base.ac.GotoActivity"
             android:configChanges="locale|layoutDirection"
             android:label="@string/tuju_v"
-            android:theme="@style/Theme.Alkitab.Dark"
             android:windowSoftInputMode="adjustNothing"/>
         <activity
             android:name="yuku.alkitab.base.ac.SettingsActivity"
