@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<view
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	class="yuku.alkitab.base.widget.LeftDrawer$Text"
+	android:layout_width="240dp"
+	android:layout_height="match_parent"
+	android:background="#a000">
+
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:showDividers="middle">
+
+		<include
+			layout="@layout/left_drawer_header"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="JEJAK"
+			android:textStyle="bold"
+			android:textSize="14sp"
+			android:layout_marginTop="8dp"
+			android:layout_marginLeft="4dp"
+			android:layout_marginRight="4dp"/>
+
+		<ImageView
+			android:layout_width="match_parent"
+			android:layout_height="2dp"
+			android:src="#5c5c5c"
+			android:layout_marginLeft="4dp"
+			android:layout_marginRight="4dp"
+			android:layout_marginTop="2dp"
+			tools:ignore="ContentDescription"/>
+
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:showDividers="middle"
+			android:divider="@android:drawable/divider_horizontal_dark"
+			android:dividerPadding="2dp"
+			>
+
+			<ImageButton
+				android:layout_width="wrap_content"
+				android:layout_height="48dp"
+				android:id="@+id/bProgress1"
+				android:src="@drawable/ic_attr_progress_mark_1"
+				style="?android:buttonBarButtonStyle"
+				android:layout_weight="1"/>
+
+			<ImageButton
+				android:layout_width="wrap_content"
+				android:layout_height="48dp"
+				android:id="@+id/bProgress2"
+				android:src="@drawable/ic_attr_progress_mark_2"
+				style="?android:buttonBarButtonStyle"
+				android:layout_weight="1"/>
+
+			<ImageButton
+				android:layout_width="wrap_content"
+				android:layout_height="48dp"
+				android:id="@+id/bProgress3"
+				android:src="@drawable/ic_attr_progress_mark_3"
+				style="?android:buttonBarButtonStyle"
+				android:layout_weight="1"/>
+
+			<ImageButton
+				android:layout_width="wrap_content"
+				android:layout_height="48dp"
+				android:id="@+id/bProgress4"
+				android:src="@drawable/ic_attr_progress_mark_4"
+				style="?android:buttonBarButtonStyle"
+				android:layout_weight="1"/>
+
+			<ImageButton
+				android:layout_width="wrap_content"
+				android:layout_height="48dp"
+				android:id="@+id/bProgress5"
+				android:src="@drawable/ic_attr_progress_mark_5"
+				style="?android:buttonBarButtonStyle"
+				android:layout_weight="1"/>
+
+		</LinearLayout>
+
+		<Button
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/menuDisplay"
+			android:drawableLeft="@android:drawable/ic_menu_view"
+			android:drawablePadding="8dp"
+			android:id="@+id/bDisplay"
+			style="?android:buttonBarButtonStyle"
+			android:gravity="left|center_vertical"/>
+
+		<Switch
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:text="@string/menuFullScreen"
+			android:id="@+id/cFullScreen"
+			android:paddingLeft="4dp"
+			android:paddingRight="4dp"/>
+
+		<Switch
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:text="@string/menuNightMode"
+			android:id="@+id/cNightMode"
+			android:paddingLeft="4dp"
+			android:paddingRight="4dp"/>
+
+
+		<include
+			layout="@layout/left_drawer_footer"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+	</LinearLayout>
+
+</view>

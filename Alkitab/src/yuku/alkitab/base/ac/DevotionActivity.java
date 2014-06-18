@@ -1,17 +1,19 @@
 package yuku.alkitab.base.ac;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.support.v4.app.NavUtils;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.ShareCompat;
-import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.widget.DrawerLayout;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -25,6 +27,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
+import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -40,8 +43,7 @@ import yuku.alkitab.base.devotion.DevotionDownloader.OnStatusDonlotListener;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.widget.CallbackSpan;
-import yuku.alkitab.base.widget.DevotionSelectPopup;
-import yuku.alkitab.base.widget.DevotionSelectPopup.DevotionSelectPopupListener;
+import yuku.alkitab.base.widget.LeftDrawer;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.util.Ari;
 import yuku.alkitabintegration.display.Launcher;
@@ -51,12 +53,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class DevotionActivity extends BaseActivity implements OnStatusDonlotListener {
+public class DevotionActivity extends BaseActivity implements OnStatusDonlotListener, LeftDrawer.Devotion.Listener {
 	public static final String TAG = DevotionActivity.class.getSimpleName();
 
 	private static final int REQCODE_share = 1;
 
-	static final ThreadLocal<SimpleDateFormat> date_format = new ThreadLocal<SimpleDateFormat>() {
+	static final ThreadLocal<SimpleDateFormat> yyyymmdd = new ThreadLocal<SimpleDateFormat>() {
 		@Override protected SimpleDateFormat initialValue() {
 			return new SimpleDateFormat("yyyyMMdd", Locale.US); //$NON-NLS-1$
 		}
@@ -64,6 +66,25 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 	public static Intent createIntent() {
 		return new Intent(App.context, DevotionActivity.class);
+	}
+
+	@Override
+	public void bPrev_click(final TextView tCurrentDate) {
+		currentDate.setTime(currentDate.getTime() - 3600*24*1000);
+		display();
+	}
+
+	@Override
+	public void bNext_click(final TextView tCurrentDate) {
+		currentDate.setTime(currentDate.getTime() + 3600*24*1000);
+		display();
+	}
+
+	@Override
+	public void cbKind_itemSelected(final DevotionKind kind) {
+		currentKind = kind;
+		Preferences.setString(Prefkey.devotion_last_kind_name, currentKind.name);
+		display();
 	}
 
 	public enum DevotionKind {
@@ -110,11 +131,13 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 	public static final DevotionKind DEFAULT_DEVOTION_KIND = DevotionKind.SH;
 
+	DrawerLayout drawerLayout;
+	ActionBarDrawerToggle drawerToggle;
+	LeftDrawer.Devotion leftDrawer;
+
 	TextView lContent;
 	ScrollView scrollContent;
 	TextView lStatus;
-	
-	DevotionSelectPopup popup;
 	
 	boolean renderSucceeded = false;
 	long lastTryToDisplay = 0;
@@ -144,7 +167,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 				activity.lastTryToDisplay = kini;
 			}
 			
-			activity.goTo(true);
+			activity.goTo();
 			
 			if (!activity.renderSucceeded) {
 				activity.displayRepeater.sendEmptyMessageDelayed(0, 12000);
@@ -179,16 +202,28 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
+		super.onCreate(savedInstanceState, false);
+
 		setContentView(R.layout.activity_devotion);
-		
+
+		drawerLayout = V.get(this, R.id.drawerLayout);
+		leftDrawer = V.get(this, R.id.left_drawer);
+		leftDrawer.configure(this, drawerLayout);
+
+		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_navigation_drawer, R.string.drawer_open, R.string.drawer_close);
+		drawerLayout.setDrawerListener(drawerToggle);
+
+		final ActionBar actionBar = getActionBar();
+		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setHomeButtonEnabled(true);
+
 		fadeOutAnim = AnimationUtils.loadAnimation(this, R.anim.fade_out);
 
 		lContent = (TextView) findViewById(R.id.lContent);
 		scrollContent = (ScrollView) findViewById(R.id.scrollContent);
 		lStatus = (TextView) findViewById(R.id.lStatus);
-		
+
 		// text formats
 		lContent.setTextColor(S.applied.fontColor);
 		lContent.setBackgroundColor(S.applied.backgroundColor);
@@ -197,10 +232,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		lContent.setLineSpacing(0, S.applied.lineSpacingMult);
 
 		scrollContent.setBackgroundColor(S.applied.backgroundColor);
-		
-		popup = new DevotionSelectPopup(getActionBar().getThemedContext());
-		popup.setDevotionSelectListener(popup_listener);
-		
+
 		final DevotionKind storedKind = DevotionKind.getByName(Preferences.getString(Prefkey.devotion_last_kind_name, DEFAULT_DEVOTION_KIND.name));
 
 		currentKind = storedKind == null? DEFAULT_DEVOTION_KIND: storedKind;
@@ -224,7 +256,19 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		
 		display();
 	}
-	
+
+	@Override
+	protected void onPostCreate(final Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		drawerToggle.syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(final Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		drawerToggle.onConfigurationChanged(newConfig);
+	}
+
 	@Override protected void onStart() {
 		super.onStart();
 		
@@ -255,43 +299,28 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		int itemId = item.getItemId();
-
-		if (itemId == android.R.id.home) {
-			// must try to create the back stack, since it is possible behind this activity is not the main activity
-			final Intent upIntent = NavUtils.getParentActivityIntent(this);
-			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-				TaskStackBuilder.create(this)
-				.addNextIntentWithParentStack(upIntent)
-				.startActivities();
-			} else {
-				NavUtils.navigateUpTo(this, upIntent);
-			}
-
+		if (drawerToggle.onOptionsItemSelected(item)) {
 			return true;
-		} else if (itemId == R.id.menuChangeDate) {
-			View anchor = findViewById(R.id.menuChangeDate);
-			popup.show(anchor);
-			
-			return true;
-		} else if (itemId == R.id.menuCopy) {
-			String toCopy = getActionBar().getTitle() + "\n" + lContent.getText();
-			U.copyToClipboard(toCopy);
+		}
+
+		final int itemId = item.getItemId();
+		if (itemId == R.id.menuCopy) {
+			U.copyToClipboard(currentKind.title + "\n" + lContent.getText());
 			
 			Toast.makeText(this, R.string.renungan_sudah_disalin, Toast.LENGTH_SHORT).show();
 			
 			return true;
 		} else if (itemId == R.id.menuShare) {
-			Intent intent = ShareCompat.IntentBuilder.from(DevotionActivity.this)
-			.setType("text/plain") //$NON-NLS-1$
-			.setSubject(getActionBar().getTitle().toString())
-			.setText(getActionBar().getTitle().toString() + '\n' + lContent.getText())
+			final Intent intent = ShareCompat.IntentBuilder.from(DevotionActivity.this)
+			.setType("text/plain")
+			.setSubject(currentKind.title)
+			.setText(getCurrentDateDisplay() + "\n\n" + lContent.getText())
 			.getIntent();
 			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_renungan)), REQCODE_share);
 			
 			return true;
 		} else if (itemId == R.id.menuRedownload) {
-			willNeed(this.currentKind, date_format.get().format(currentDate), true);
+			willNeed(this.currentKind, yyyymmdd.get().format(currentDate), true);
 			
 			return true;
 		} else if (itemId == R.id.menuReminder) {
@@ -327,49 +356,64 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		.show();
 	}
 
-	DevotionSelectPopupListener popup_listener = new DevotionSelectPopupListener() {
-		@Override public void onDismiss(DevotionSelectPopup popup) {
-		}
-		
-		@Override public void onButtonClick(DevotionSelectPopup popup, View v) {
-			int id = v.getId();
-			if (id == R.id.bPrev) {
-				currentDate.setTime(currentDate.getTime() - 3600*24*1000);
-				display();
-			} else if (id == R.id.bNext) {
-				currentDate.setTime(currentDate.getTime() + 3600*24*1000);
-				display();
-			}
-		}
-
-		@Override
-		public void onDevotionSelect(final DevotionSelectPopup popup, final DevotionKind kind) {
-			currentKind = kind;
-			Preferences.setString(Prefkey.devotion_last_kind_name, currentKind.name);
-			display();
-		}
-	};
-
 	void display() {
 		displayRepeater.removeMessages(0);
 		
-		goTo(true);
+		goTo();
 	}
 
-	void goTo(boolean prioritize) {
-		String date = date_format.get().format(currentDate);
+	void goTo() {
+		String date = yyyymmdd.get().format(currentDate);
 		DevotionArticle article = S.getDb().tryGetDevotion(currentKind.name, date);
 		if (article == null || !article.getReadyToUse()) {
-			willNeed(currentKind, date, prioritize);
-			render(article);
-			
+			willNeed(currentKind, date, true);
 			displayRepeater.sendEmptyMessageDelayed(0, 3000);
 		} else {
 			Log.d(TAG, "sudah siap tampil, kita syuh yang tersisa dari pengulang tampil"); //$NON-NLS-1$
 			displayRepeater.removeMessages(0);
-			
-			render(article);
 		}
+
+		if (article == null) {
+			Log.d(TAG, "rendering null article"); //$NON-NLS-1$
+		} else {
+			Log.d(TAG, "rendering article name=" + article.getKind().name + " date=" + article.getDate() + " readyToUse=" + article.getReadyToUse());
+		}
+
+		if (article != null && article.getReadyToUse()) {
+			renderSucceeded = true;
+
+			lContent.setText(article.getContent(verseClickListener), BufferType.SPANNABLE);
+			lContent.setLinksClickable(true);
+			lContent.setMovementMethod(LinkMovementMethod.getInstance());
+		} else {
+			renderSucceeded  = false;
+
+			if (article == null) {
+				lContent.setText(R.string.belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada);
+			} else { // berarti belum siap pakai
+				lContent.setText(R.string.belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan);
+			}
+		}
+
+		{ // widget texts
+			final String dateDisplay = getCurrentDateDisplay();
+
+			// action bar
+			final ActionBar actionBar = getActionBar();
+			if (actionBar != null) {
+				actionBar.setTitle(currentKind.title);
+				actionBar.setSubtitle(dateDisplay);
+			}
+
+			// drawer texts
+			final LeftDrawer.Devotion.Handle handle = leftDrawer.getHandle();
+			handle.setDevotionKind(currentKind);
+			handle.setDevotionDate(dateDisplay);
+		}
+	}
+
+	private String getCurrentDateDisplay() {
+		return dayOfWeekName(currentDate) + ", " + DateFormat.getDateFormat(this).format(currentDate);
 	}
 
 	CallbackSpan.OnClickListener verseClickListener = new CallbackSpan.OnClickListener() {
@@ -408,44 +452,6 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
 		}
 	};
-
-	private void render(DevotionArticle article) {
-		if (article == null) {
-			Log.d(TAG, "rendering null article"); //$NON-NLS-1$
-		} else {
-			Log.d(TAG, "rendering article name=" + article.getKind().name + " date=" + article.getDate() + " readyToUse=" + article.getReadyToUse());
-		}
-		
-		if (article != null && article.getReadyToUse()) {
-			renderSucceeded = true;
-			
-			lContent.setText(article.getContent(verseClickListener), BufferType.SPANNABLE);
-			lContent.setLinksClickable(true);
-			lContent.setMovementMethod(LinkMovementMethod.getInstance());
-		} else {
-			renderSucceeded  = false;
-			
-			if (article == null) {
-				lContent.setText(R.string.belum_tersedia_menunggu_pengambilan_data_lewat_internet_pastikan_ada);
-			} else { // berarti belum siap pakai
-				lContent.setText(R.string.belum_tersedia_mungkin_tanggal_yang_diminta_belum_disiapkan);
-			}
-		}
-
-		String title = currentKind.title;
-
-		{ // widget texts
-			String dateDisplay = dayOfWeekName(currentDate) + ", " + DateFormat.getDateFormat(this).format(currentDate);  //$NON-NLS-1$
-			
-			// action bar
-			getActionBar().setTitle(title);
-			getActionBar().setSubtitle(dateDisplay);
-			
-			// popup texts
-			popup.setDevotionKind(currentKind);
-			popup.setDevotionDate(dateDisplay);
-		}
-	}
 
 	private static final int[] WEEKDAY_NAMES_RESIDS = {R.string.hari_minggu, R.string.hari_senin, R.string.hari_selasa, R.string.hari_rabu, R.string.hari_kamis, R.string.hari_jumat, R.string.hari_sabtu};
 
@@ -498,7 +504,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 				}
 
 				for (int i = 0; i < DAYS; i++) {
-					String date = date_format.get().format(today);
+					String date = yyyymmdd.get().format(today);
 					if (S.getDb().tryGetDevotion(prefetchKind.name, date) == null) {
 						Log.d(TAG, "Prefetcher need to get " + date); //$NON-NLS-1$
 						willNeed(prefetchKind, date, false);
@@ -534,13 +540,13 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 					if (U.equals(chosenIntent.getComponent().getPackageName(), "com.facebook.katana")) { //$NON-NLS-1$
 						switch (currentKind) {
 							case SH:
-								chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-sh/print/?edisi=" + date_format.get().format(currentDate)); // change text to url //$NON-NLS-1$ //$NON-NLS-2$
+								chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-sh/print/?edisi=" + yyyymmdd.get().format(currentDate)); // change text to url //$NON-NLS-1$ //$NON-NLS-2$
 								break;
 							case RH:
-								chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-rh/print/?edisi=" + date_format.get().format(currentDate)); // change text to url //$NON-NLS-1$ //$NON-NLS-2$
+								chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-rh/print/?edisi=" + yyyymmdd.get().format(currentDate)); // change text to url //$NON-NLS-1$ //$NON-NLS-2$
 								break;
 							case ME_EN:
-								chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.ccel.org/ccel/spurgeon/morneve.d" + date_format.get().format(currentDate) + "am.html"); // change text to url //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.ccel.org/ccel/spurgeon/morneve.d" + yyyymmdd.get().format(currentDate) + "am.html"); // change text to url //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 								break;
 							// TODO
 						}

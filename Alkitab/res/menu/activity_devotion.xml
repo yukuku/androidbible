@@ -1,26 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
-	xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-	<item
-		android:title="@string/devotion_change_date"
-		android:id="@+id/menuChangeDate"
-		android:icon="@drawable/ic_menu_change_date" 
-		android:showAsAction="ifRoom" />
+	xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
 		android:title="@string/salin_renungan"
 		android:id="@+id/menuCopy"
-		android:showAsAction="never" />
+		android:showAsAction="never"/>
 	<item
-		android:title="@string/bagikan" 
+		android:title="@string/bagikan"
 		android:id="@+id/menuShare"
-		android:showAsAction="never" />
+		android:showAsAction="never"/>
 	<item
-		android:title="@string/redownload" 
+		android:title="@string/redownload"
 		android:id="@+id/menuRedownload"
-		android:showAsAction="never" />
-    <item
-        android:title="@string/dr_reminder"
-        android:id="@+id/menuReminder"
-        android:showAsAction="never" />
+		android:showAsAction="never"/>
+	<item
+		android:title="@string/dr_reminder"
+		android:id="@+id/menuReminder"
+		android:showAsAction="never"/>
 </menu>

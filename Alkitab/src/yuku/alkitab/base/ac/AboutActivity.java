@@ -111,4 +111,8 @@ public class AboutActivity extends BaseActivity {
 			startActivity(HelpActivity.createIntent("help/donation.html", true, getString(R.string.send_donation_confirmation), intent));
 		}
 	};
+
+	public static Intent createIntent() {
+		return new Intent(App.context, AboutActivity.class);
+	}
 }

@@ -83,8 +83,12 @@ public class ReadingPlanActivity extends BaseActivity {
 	private Button bDownload;
 	private boolean showDetails;
 
+	public static Intent createIntent() {
+		return new Intent(App.context, ReadingPlanActivity.class);
+	}
+
 	public static Intent createIntent(int dayNumber) {
-		Intent intent = new Intent(App.context, ReadingPlanActivity.class);
+		final Intent intent = new Intent(App.context, ReadingPlanActivity.class);
 		intent.putExtra(READING_PLAN_DAY_NUMBER, dayNumber);
 		return intent;
 	}

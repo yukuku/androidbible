@@ -1,10 +1,11 @@
 package yuku.alkitab.base.ac;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
-
-import yuku.alkitab.debug.R;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BasePreferenceActivity;
+import yuku.alkitab.debug.R;
 
 public class SettingsActivity extends BasePreferenceActivity {
 	public static final int RESULT_openTextAppearance = 1;
@@ -28,5 +29,9 @@ public class SettingsActivity extends BasePreferenceActivity {
 				return true;
 			}
 		});
+	}
+
+	public static Intent createIntent() {
+		return new Intent(App.context, ReadingPlanActivity.class);
 	}
 }

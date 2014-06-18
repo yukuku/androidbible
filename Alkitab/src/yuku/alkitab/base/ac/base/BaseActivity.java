@@ -8,7 +8,8 @@ import com.google.analytics.tracking.android.EasyTracker;
 
 public abstract class BaseActivity extends FragmentActivity {
 	public static final String TAG = BaseActivity.class.getSimpleName();
-	
+	private boolean withUpButton;
+
 	/**
 	 * By default we put the up button on each activity.
 	 * And the behavior is to just finish() the current activity.
@@ -21,6 +22,8 @@ public abstract class BaseActivity extends FragmentActivity {
 	}
 	
 	protected void onCreate(Bundle savedInstanceState, boolean withUpButton) {
+		this.withUpButton = withUpButton;
+
 		super.onCreate(savedInstanceState);
 		
 		if (withUpButton) {
@@ -32,7 +35,7 @@ public abstract class BaseActivity extends FragmentActivity {
 	}
 	
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == android.R.id.home) {
+		if (withUpButton && item.getItemId() == android.R.id.home) {
 			finish();
             return true;
 		}

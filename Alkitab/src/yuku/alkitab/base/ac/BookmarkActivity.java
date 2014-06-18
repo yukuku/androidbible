@@ -17,14 +17,8 @@ import android.support.v4.app.ShareCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.util.Xml;
-import android.view.ContextMenu;
+import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -45,6 +39,7 @@ import yuku.afw.D;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -475,6 +470,10 @@ public class BookmarkActivity extends BaseActivity implements ExportBookmarkDial
 		.getIntent();
 
 		startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.me_export_markers)), REQCODE_share);
+	}
+
+	public static Intent createIntent() {
+		return new Intent(App.context, BookmarkActivity.class);
 	}
 
 

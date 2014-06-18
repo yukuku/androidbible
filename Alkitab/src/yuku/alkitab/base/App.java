@@ -3,6 +3,7 @@ package yuku.alkitab.base;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.internal.http.HttpEngine;
@@ -22,9 +23,9 @@ public class App extends yuku.afw.App {
 
 	enum OkHttpClientWrapper {
 		INSTANCE;
+
 		OkHttpClient httpClient = new OkHttpClient();
 	}
-
 	public static HttpURLConnection openHttp(URL url) {
 		final HttpURLConnection conn = OkHttpClientWrapper.INSTANCE.httpClient.open(url);
 		// enable gzip to save bandwidth on server
@@ -34,7 +35,7 @@ public class App extends yuku.afw.App {
 
 	@Override public void onCreate() {
 		super.onCreate();
-		
+
 		Log.d(TAG, "@@onCreate");
 
 		staticInit();
@@ -53,8 +54,8 @@ public class App extends yuku.afw.App {
 			}
 		});
 		oldFeedbackSender.cobaKirim();
-		
-		// transfer installationId from pengirimfidbek to feedbacksender 
+
+		// transfer installationId from pengirimfidbek to feedbacksender
 		FeedbackSender fs = FeedbackSender.getInstance(context);
 		fs.setOverrideInstallationId(oldFeedbackSender.getUniqueId());
 		fs.trySend();
@@ -66,7 +67,7 @@ public class App extends yuku.afw.App {
 
 		// all activities need at least the activeVersion from S, so initialize it here.
 		S.prepareInternalVersion();
-		
+
 		// also pre-calculate calculated preferences value here
 		S.calculateAppliedValuesBasedOnPreferences();
 	}
@@ -106,5 +107,9 @@ public class App extends yuku.afw.App {
 
 	public static SharedPreferences getInstantPreferences() {
 		return context.getSharedPreferences(context.getPackageName(), 0);
+	}
+
+	public static LocalBroadcastManager getLbm() {
+		return LocalBroadcastManager.getInstance(context);
 	}
 }

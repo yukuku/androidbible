@@ -4,6 +4,8 @@ import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -33,6 +35,7 @@ import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.util.Pair;
 import android.view.ActionMode;
+import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -48,7 +51,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONException;
@@ -56,9 +58,6 @@ import org.json.JSONObject;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
-import yuku.alkitab.base.ac.AboutActivity;
-import yuku.alkitab.base.ac.BookmarkActivity;
-import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.GotoActivity;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.ac.Search2Activity;
@@ -91,6 +90,7 @@ import yuku.alkitab.base.widget.Floater;
 import yuku.alkitab.base.widget.FormattedTextRenderer;
 import yuku.alkitab.base.widget.GotoButton;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
+import yuku.alkitab.base.widget.LeftDrawer;
 import yuku.alkitab.base.widget.ReadingPlanFloatMenu;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
@@ -100,12 +100,7 @@ import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.PressResult;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.model.Book;
-import yuku.alkitab.model.FootnoteEntry;
-import yuku.alkitab.model.PericopeBlock;
-import yuku.alkitab.model.ProgressMark;
-import yuku.alkitab.model.SingleChapterVerses;
-import yuku.alkitab.model.Version;
+import yuku.alkitab.model.*;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 
@@ -115,25 +110,26 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
-public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener, ProgressMarkDialog.ProgressMarkDialogListener {
+public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener, ProgressMarkDialog.ProgressMarkDialogListener, LeftDrawer.Text.Listener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
-	
+
+	public static final String ACTION_ATTRIBUTE_MAP_CHANGED = "yuku.alkitab.action.ATTRIBUTE_MAP_CHANGED";
+
 	// The followings are for instant_pref
 	private static final String PREFKEY_lastBookId = "kitabTerakhir"; //$NON-NLS-1$
 	private static final String PREFKEY_lastChapter = "pasalTerakhir"; //$NON-NLS-1$
 	private static final String PREFKEY_lastVerse = "ayatTerakhir"; //$NON-NLS-1$
 	private static final String PREFKEY_lastVersionId = "edisiTerakhir"; //$NON-NLS-1$
-	private static final String PREFKEY_lastSplitVersionId = "lastSplitVersionId"; //$NON-NLS-1$
 
+	private static final String PREFKEY_lastSplitVersionId = "lastSplitVersionId"; //$NON-NLS-1$
 	private static final int REQCODE_goto = 1;
-	private static final int REQCODE_bookmark = 2;
 	private static final int REQCODE_settings = 4;
 	private static final int REQCODE_share = 7;
 	private static final int REQCODE_textAppearanceGetFonts = 9;
 	private static final int REQCODE_textAppearanceCustomColors = 10;
-	private static final int REQCODE_readingPlan = 11;
 
-	private static final String EXTRA_verseUrl = "verseUrl"; //$NON-NLS-1$
+	private static final int REQCODE_readingPlan = 11;
+	private static final String EXTRA_verseUrl = "verseUrl";
 	private boolean uncheckVersesWhenActionModeDestroyed = true;
 
 	private GotoButton.FloaterDragListener bGoto_floaterDrag = new GotoButton.FloaterDragListener() {
@@ -238,8 +234,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	DrawerLayout drawerLayout;
 	ActionBarDrawerToggle drawerToggle;
-	DrawerAdapter drawerAdapter;
-	ListView lsLeftDrawer;
+	LeftDrawer.Text leftDrawer;
 
 	FrameLayout overlayContainer;
 	View root;
@@ -289,10 +284,13 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	static class IntentResult {
 		public int ari;
 		public boolean selectVerse;
-
 		public IntentResult(final int ari) {
 			this.ari = ari;
 		}
+	}
+
+	public static Intent createIntent() {
+		return new Intent(App.context, IsiActivity.class);
 	}
 
 	public static Intent createIntent(int ari) {
@@ -302,80 +300,26 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		return res;
 	}
 
-	enum DrawerItem {
-		user,
-		devotion,
-		markers,
-		reading_plan,
-		view_progress,
-
-	}
-
-	static class DrawerAdapter extends EasyAdapter {
-		final LayoutInflater inflater;
-
-		String[] tmpitems = {
-		"(user)",
-		"(Alkitab)",
-		"Renungan",
-		"Marka",
-		"Rencana baca",
-		"(Lihat jejak)",
-		"Tampilan",
-		"Tentang",
-		"(split version)",
-		"Settings",
-		};
-
-		DrawerAdapter(LayoutInflater inflater) {
-			this.inflater = inflater;
-		}
-
+	final BroadcastReceiver reloadAttributeMapReceiver = new BroadcastReceiver() {
 		@Override
-		public View newView(final int position, final ViewGroup parent) {
-			return inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-		}
+		public void onReceive(final Context context, final Intent intent) {
+			lsText.reloadAttributeMap();
 
-		@Override
-		public void bindView(final View view, final int position, final ViewGroup parent) {
-			final TextView text1 = V.get(view, android.R.id.text1);
-			text1.setTextColor(0xffffffff);
-			text1.setText(tmpitems[position]);
+			if (activeSplitVersion != null) {
+				lsSplit1.reloadAttributeMap();
+			}
 		}
-
-		@Override
-		public int getCount() {
-			return tmpitems.length;
-		}
-	}
+	};
 
 	AdapterView.OnItemClickListener lsLeftDrawer_itemClick = new AdapterView.OnItemClickListener() {
 		@Override
 		public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 			switch (position) {
-				case 2:
-					startActivity(DevotionActivity.createIntent());
-					break;
-				case 3:
-					startActivityForResult(new Intent(App.context, BookmarkActivity.class), REQCODE_bookmark);
-					break;
 				case 5:
 					openProgressMarkDialog();
 					break;
 				case 8:
 					openSplitVersionsDialog();
-					break;
-				case 4:
-					startActivityForResult(new Intent(App.context, ReadingPlanActivity.class), REQCODE_readingPlan);
-					break;
-				case 7:
-					startActivity(new Intent(App.context, AboutActivity.class));
-					break;
-				case 6:
-					setShowTextAppearancePanel(textAppearancePanel == null);
-					break;
-				case 9:
-					startActivityForResult(new Intent(App.context, SettingsActivity.class), REQCODE_settings);
 					break;
 			}
 		}
@@ -387,29 +331,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		setContentView(R.layout.activity_isi);
 
 		drawerLayout = V.get(this, R.id.drawerLayout);
-		lsLeftDrawer = V.get(this, R.id.lsLeftDrawer);
-		lsLeftDrawer.setAdapter(drawerAdapter = new DrawerAdapter(getLayoutInflater()));
-		lsLeftDrawer.setOnItemClickListener(lsLeftDrawer_itemClick);
+		leftDrawer = V.get(this, R.id.left_drawer);
+		leftDrawer.configure(this, drawerLayout);
 
-		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_navigation_drawer, R.string.drawer_open, R.string.drawer_close) {
-			/** Called when a drawer has settled in a completely closed state. */
-			@Override
-			public void onDrawerClosed(View view) {
-				super.onDrawerClosed(view);
-				// TODO getActionBar().setTitle(mTitle);
-				invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-			}
-
-			/** Called when a drawer has settled in a completely open state. */
-			@Override
-			public void onDrawerOpened(View drawerView) {
-				super.onDrawerOpened(drawerView);
-				// TODO getActionBar().setTitle(mDrawerTitle);
-				invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-			}
-		};
-
-		// Set the drawer toggle as the DrawerListener
+		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_navigation_drawer, R.string.drawer_open, R.string.drawer_close);
 		drawerLayout.setDrawerListener(drawerToggle);
 
 		final ActionBar actionBar = getActionBar();
@@ -570,12 +495,13 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		if (selectVerse) {
 			lsText.setVerseSelected(Ari.toVerse(openingAri), true);
 		}
+
+		App.getLbm().registerReceiver(reloadAttributeMapReceiver, new IntentFilter(ACTION_ATTRIBUTE_MAP_CHANGED));
 	}
 
 	@Override
 	protected void onPostCreate(final Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		// Sync the toggle state after onRestoreInstanceState has occurred.
 		drawerToggle.syncState();
 	}
 
@@ -589,6 +515,13 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		super.onNewIntent(intent);
 
 		processIntent(intent, "onNewIntent");
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		App.getLbm().unregisterReceiver(reloadAttributeMapReceiver);
 	}
 
 	/**
@@ -1188,7 +1121,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	void setShowTextAppearancePanel(boolean yes) {
 		if (yes) {
 			if (textAppearancePanel == null) { // not showing yet
-				textAppearancePanel = new TextAppearancePanel(this, getLayoutInflater(), overlayContainer, new TextAppearancePanel.Listener() {
+				textAppearancePanel = new TextAppearancePanel(this, LayoutInflater.from(new ContextThemeWrapper(this, android.R.style.Theme_Holo_Light)), overlayContainer, new TextAppearancePanel.Listener() {
 					@Override public void onValueChanged(TextAppearancePanel.ValueGet valueGet) {
 						S.calculateAppliedValuesBasedOnPreferences();
 						applyPreferences(false);
@@ -1383,12 +1316,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					int ari_cv = display(result.chapter_1, result.verse_1);
 					history.add(Ari.encode(result.bookId, ari_cv));
 				}
-			}
-		} else if (requestCode == REQCODE_bookmark) {
-			lsText.reloadAttributeMap();
-
-			if (activeSplitVersion != null) {
-				lsSplit1.reloadAttributeMap();
 			}
 		} else if (requestCode == REQCODE_settings) {
 			// MUST reload preferences
@@ -2231,4 +2158,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 		}
 	};
+
+	@Override
+	public void bDisplay_click() {
+		setShowTextAppearancePanel(textAppearancePanel == null);
+	}
 }

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:showDividers="middle"
+	android:divider="@android:drawable/divider_horizontal_dark"
+	android:dividerPadding="2dp"
+	android:background="#2c2c2c">
+
+	<Button
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="PENGATURAN"
+		android:id="@+id/bSettings"
+		android:drawableLeft="@android:drawable/ic_menu_preferences"
+		android:drawablePadding="8dp"
+		style="?android:buttonBarButtonStyle"
+		android:gravity="left|center_vertical"
+		android:textSize="14sp"/>
+
+	<Button
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="BANTUAN"
+		android:drawableLeft="@android:drawable/ic_menu_help"
+		android:drawablePadding="8dp"
+		android:id="@+id/bHelp"
+		style="?android:buttonBarButtonStyle"
+		android:gravity="left|center_vertical"
+		android:textSize="14sp"/>
+
+</LinearLayout>

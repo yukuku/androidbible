@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:showDividers="middle"
+	android:divider="@android:drawable/divider_horizontal_dark"
+	android:dividerPadding="2dp"
+	android:background="#2c2c2c">
+
+	<Button
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="user@domain.com"
+		android:id="@+id/bUser"
+		android:drawableLeft="@drawable/ic_menu_bookmark"
+		android:drawablePadding="8dp"
+		style="?android:spinnerStyle"/>
+
+	<Button
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="Alkitab"
+		android:id="@+id/bBible"
+		android:drawableLeft="@drawable/ic_menu_bookmark"
+		android:drawablePadding="8dp"
+		style="?android:buttonBarButtonStyle"
+		android:gravity="left|center_vertical"/>
+
+	<Button
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="Marka"
+		android:drawableLeft="@drawable/ic_menu_bookmark"
+		android:drawablePadding="8dp"
+		android:id="@+id/bMarkers"
+		style="?android:buttonBarButtonStyle"
+		android:gravity="left|center_vertical"/>
+
+	<Button
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="Renungan"
+		android:drawableLeft="@drawable/ic_menu_bookmark"
+		android:drawablePadding="8dp"
+		android:id="@+id/bDevotion"
+		style="?android:buttonBarButtonStyle"
+		android:gravity="left|center_vertical"/>
+
+	<Button
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="Rencana baca"
+		android:id="@+id/bReadingPlan"
+		android:drawableLeft="@drawable/ic_menu_bookmark"
+		android:drawablePadding="8dp"
+		style="?android:buttonBarButtonStyle"
+		android:gravity="left|center_vertical"/>
+</LinearLayout>

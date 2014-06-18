@@ -25,6 +25,8 @@ import android.widget.TextView;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
+import yuku.alkitab.base.App;
+import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -427,10 +429,11 @@ public class BookmarkListActivity extends BaseActivity {
 					@Override public void onOk() {
 						loadAndFilter();
 						if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
+						App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
 					}
 				});
 				dialog.show();
-				
+
 			} else if (filter_kind == Db.Bookmark2.kind_note) {
 				final int ari = bookmark.ari;
 
@@ -439,6 +442,7 @@ public class BookmarkListActivity extends BaseActivity {
 					public void onDone() {
 						loadAndFilter();
 						if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
+						App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
 					}
 				});
 				dialog.show();
@@ -452,6 +456,7 @@ public class BookmarkListActivity extends BaseActivity {
 					@Override public void onOk(int warnaRgb) {
 						loadAndFilter();
 						if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
+						App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
 					}
 				}, colorRgb, reference).show();
 			}
