@@ -11,8 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.ScrollView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
@@ -139,14 +141,49 @@ public abstract class LeftDrawer extends ScrollView {
 	public static class Text extends LeftDrawer {
 		public interface Listener {
 			void bDisplay_click();
+			void cFullScreen_onCheckedChanged(boolean isChecked);
+			void cNightMode_onCheckedChanged(boolean isChecked);
+			void bProgress_click(int preset_id);
 		}
 
-		Listener listener;
+		public interface Handle {
+			void setFullScreen(boolean fullScreen);
+			void setNightMode(boolean nightMode);
+		}
 
 		View bDisplay;
+		Switch cFullScreen;
+		Switch cNightMode;
+
+		View bProgress1;
+		View bProgress2;
+		View bProgress3;
+		View bProgress4;
+		View bProgress5;
+
+		Listener listener;
+		Handle handle = new Handle() {
+			@Override
+			public void setFullScreen(final boolean fullScreen) {
+				cFullScreen.setOnCheckedChangeListener(null);
+				cFullScreen.setChecked(fullScreen);
+				cFullScreen.setOnCheckedChangeListener(cFullScreen_checkedChange);
+			}
+
+			@Override
+			public void setNightMode(final boolean nightMode) {
+				cNightMode.setOnCheckedChangeListener(null);
+				cNightMode.setChecked(nightMode);
+				cNightMode.setOnCheckedChangeListener(cNightMode_checkedChange);
+			}
+		};
 
 		public Text(final Context context, final AttributeSet attrs) {
 			super(context, attrs);
+		}
+
+		public Handle getHandle() {
+			return handle;
 		}
 
 		@Override
@@ -154,6 +191,27 @@ public abstract class LeftDrawer extends ScrollView {
 			super.onFinishInflate();
 
 			bDisplay = V.get(this, R.id.bDisplay);
+			cFullScreen = V.get(this, R.id.cFullScreen);
+			cNightMode = V.get(this, R.id.cNightMode);
+
+			bProgress1 = V.get(this, R.id.bProgress1);
+			bProgress2 = V.get(this, R.id.bProgress2);
+			bProgress3 = V.get(this, R.id.bProgress3);
+			bProgress4 = V.get(this, R.id.bProgress4);
+			bProgress5 = V.get(this, R.id.bProgress5);
+
+			final View[] views = new View[]{bProgress1, bProgress2, bProgress3, bProgress4, bProgress5};
+			for (int i = 0; i < views.length; i++) {
+				final View b = views[i];
+				final int preset_id = i;
+				b.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(final View v) {
+						listener.bProgress_click(preset_id);
+						closeDrawer();
+					}
+				});
+			}
 
 			bDisplay.setOnClickListener(new OnClickListener() {
 				@Override
@@ -162,7 +220,26 @@ public abstract class LeftDrawer extends ScrollView {
 					closeDrawer();
 				}
 			});
+
+			cFullScreen.setOnCheckedChangeListener(cFullScreen_checkedChange);
+
+			cNightMode.setOnCheckedChangeListener(cNightMode_checkedChange);
 		}
+
+
+		CompoundButton.OnCheckedChangeListener cFullScreen_checkedChange = new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+				listener.cFullScreen_onCheckedChanged(isChecked);
+			}
+		};
+
+		CompoundButton.OnCheckedChangeListener cNightMode_checkedChange = new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+				listener.cNightMode_onCheckedChanged(isChecked);
+			}
+		};
 
 		public <T extends Activity & Listener> void configure(T listener, DrawerLayout drawerLayout) {
 			this.activity = listener;

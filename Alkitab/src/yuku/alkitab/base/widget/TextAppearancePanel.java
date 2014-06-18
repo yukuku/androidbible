@@ -227,7 +227,6 @@ public class TextAppearancePanel {
 	CompoundButton.OnCheckedChangeListener cNightMode_checkedChange = new CompoundButton.OnCheckedChangeListener() {
 		@Override
 		public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-			Preferences.setBoolean(Prefkey.is_night_mode, isChecked);
 			listener.onValueChanged(valueGet);
 		}
 	};
@@ -432,6 +431,12 @@ public class TextAppearancePanel {
 		cFullScreen.setOnCheckedChangeListener(null);
 		cFullScreen.setChecked(fullScreen);
 		cFullScreen.setOnCheckedChangeListener(cFullScreen_checkedChange);
+	}
+
+	public void setNightMode(final boolean nightMode) {
+		cNightMode.setOnCheckedChangeListener(null);
+		cNightMode.setChecked(nightMode);
+		cNightMode.setOnCheckedChangeListener(cNightMode_checkedChange);
 	}
 
 	static class ColorThemes {

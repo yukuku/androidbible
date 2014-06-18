@@ -46,7 +46,6 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -100,7 +99,12 @@ import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.PressResult;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.model.*;
+import yuku.alkitab.model.Book;
+import yuku.alkitab.model.FootnoteEntry;
+import yuku.alkitab.model.PericopeBlock;
+import yuku.alkitab.model.ProgressMark;
+import yuku.alkitab.model.SingleChapterVerses;
+import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 
@@ -307,20 +311,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 			if (activeSplitVersion != null) {
 				lsSplit1.reloadAttributeMap();
-			}
-		}
-	};
-
-	AdapterView.OnItemClickListener lsLeftDrawer_itemClick = new AdapterView.OnItemClickListener() {
-		@Override
-		public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-			switch (position) {
-				case 5:
-					openProgressMarkDialog();
-					break;
-				case 8:
-					openSplitVersionsDialog();
-					break;
 			}
 		}
 	};
@@ -1126,8 +1116,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						S.calculateAppliedValuesBasedOnPreferences();
 						applyPreferences(false);
 
-						setFullScreen(valueGet.fullScreenChecked());
-						setNightMode(Preferences.getBoolean(Prefkey.is_night_mode, false));
+						final boolean fullScreen = valueGet.fullScreenChecked();
+						final boolean nightMode = Preferences.getBoolean(Prefkey.is_night_mode, false);
+
+						setFullScreen(fullScreen);
+						setNightMode(nightMode);
+
+						final LeftDrawer.Text.Handle handle = leftDrawer.getHandle();
+						handle.setFullScreen(fullScreen);
+						handle.setNightMode(nightMode);
 					}
 
 					@Override
@@ -1150,6 +1147,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	void setNightMode(boolean yes) {
 		final boolean previousValue = Preferences.getBoolean(Prefkey.is_night_mode, false);
 		if (previousValue == yes) return;
+
+		Preferences.setBoolean(Prefkey.is_night_mode, yes);
 
 		S.calculateAppliedValuesBasedOnPreferences();
 		applyPreferences(false);
@@ -2162,5 +2161,26 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	@Override
 	public void bDisplay_click() {
 		setShowTextAppearancePanel(textAppearancePanel == null);
+	}
+
+	@Override
+	public void cFullScreen_onCheckedChanged(final boolean isChecked) {
+		setFullScreen(isChecked);
+		if (textAppearancePanel != null) {
+			textAppearancePanel.setFullScreen(isChecked);
+		}
+	}
+
+	@Override
+	public void cNightMode_onCheckedChanged(final boolean isChecked) {
+		setNightMode(isChecked);
+		if (textAppearancePanel != null) {
+			textAppearancePanel.setNightMode(isChecked);
+		}
+	}
+
+	@Override
+	public void bProgress_click(final int preset_id) {
+		openProgressMarkDialog();
 	}
 }
