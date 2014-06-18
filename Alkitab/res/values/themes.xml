@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Holo.DarkActionBar" parent="android:Theme.Holo">
-        <item name="android:windowContentOverlay">@drawable/ab_solid_shadow_holo</item>
-        <item name="android:actionBarStyle">@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse</item>
-        <item name="android:actionBarWidgetTheme">@android:style/Theme.Holo</item>
-
-        <item name="android:actionButtonStyle">@android:style/Widget.Holo.ActionButton</item>
-        <item name="android:actionOverflowButtonStyle">@android:style/Widget.Holo.ActionButton.Overflow</item>
-        <item name="android:actionMenuTextColor">?android:attr/textColorPrimaryInverse</item>
-        <item name="android:actionModeStyle">@android:style/Widget.Holo.Light.ActionMode.Inverse</item>
-        <item name="android:actionModeCloseButtonStyle">@android:style/Widget.Holo.ActionButton.CloseMode</item>
-    </style>
-
-	<style name="Theme.Alkitab" parent="Theme.Holo.DarkActionBar">
+	<style name="Theme.Alkitab" parent="android:Theme.Holo">
         <item name="android:actionButtonStyle">@style/Widget.Alkitab.ActionButton</item>
+		<item name="android:actionBarStyle">@style/AlkitabActionBar</item>
     </style>
+
+	<style name="AlkitabActionBar" parent="android:Widget.ActionBar">
+		<item name="android:background">#222</item>
+		<item name="android:divider">#111</item>
+	</style>
 
 	<style name="Theme.Alkitab.Content">
 	    <item name="android:windowContentOverlay">@null</item>
