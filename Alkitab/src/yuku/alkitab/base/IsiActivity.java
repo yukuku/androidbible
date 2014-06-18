@@ -71,6 +71,7 @@ import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.config.AppConfig;
+import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.dialog.ProgressMarkDialog;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeHighlightDialog;
@@ -299,6 +300,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		res.setAction("yuku.alkitab.action.VIEW");
 		res.putExtra("ari", ari);
 		return res;
+	}
+
+	enum DrawerItem {
+		user,
+		devotion,
+		markers,
+		reading_plan,
+		view_progress,
+
 	}
 
 	static class DrawerAdapter extends EasyAdapter {
@@ -731,7 +741,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 
 		// try preset versions first
-		final AppConfig c = AppConfig.get();
+		final VersionConfig c = VersionConfig.get();
 		for (MVersionPreset preset: c.presets) { // 2. preset
 			if (preset.getVersionId().equals(versionId)) {
 				if (preset.hasDataFile()) {

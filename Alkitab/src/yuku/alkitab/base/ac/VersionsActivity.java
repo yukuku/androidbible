@@ -16,21 +16,11 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
-import android.view.ContextMenu;
+import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -38,8 +28,7 @@ import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.config.AppConfig;
-import yuku.alkitab.model.Version;
+import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes2;
@@ -51,6 +40,7 @@ import yuku.alkitab.base.util.AddonManager.DownloadThread;
 import yuku.alkitab.base.util.AddonManager.Element;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.BibleReader;
+import yuku.alkitab.model.Version;
 import yuku.androidcrypto.DigestType;
 import yuku.androidcrypto.Digester;
 import yuku.filechooser.FileChooserActivity;
@@ -58,21 +48,8 @@ import yuku.filechooser.FileChooserConfig;
 import yuku.filechooser.FileChooserConfig.Mode;
 import yuku.filechooser.FileChooserResult;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 
 public class VersionsActivity extends BaseActivity {
@@ -645,7 +622,7 @@ public class VersionsActivity extends BaseActivity {
 	void handleFileOpenYes(String filename, String originalpdbname) {
 		{ // look for duplicates
 			boolean dup = false;
-			AppConfig c = AppConfig.get();
+			final VersionConfig c = VersionConfig.get();
 			for (MVersionPreset preset: c.presets) {
 				if (filename.equals(AddonManager.getVersionPath(preset.presetFilename))) {
 					dup = true;
@@ -941,7 +918,7 @@ public class VersionsActivity extends BaseActivity {
 		List<MVersionYes> yeses;
 		
 		public void init() {
-			AppConfig c = AppConfig.get();
+			final VersionConfig c = VersionConfig.get();
 			
 			internal = new MVersionInternal();
 			internal.setActive(true);
@@ -949,7 +926,7 @@ public class VersionsActivity extends BaseActivity {
 			internal.longName = c.internalLongName;
 			internal.ordering = 1;
 			
-			presets = new ArrayList<MVersionPreset>();
+			presets = new ArrayList<>();
 			presets.addAll(c.presets);
 			
 			// fix the active state based on whether the file exists and also preferences

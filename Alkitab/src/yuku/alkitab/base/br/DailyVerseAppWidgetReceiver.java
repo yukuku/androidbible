@@ -23,7 +23,7 @@ import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity;
-import yuku.alkitab.base.config.AppConfig;
+import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.sv.DailyVerseAppWidgetService;
 import yuku.alkitab.debug.R;
@@ -218,13 +218,12 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 			return S.activeVersion;
 		}
 
-		AppConfig c = AppConfig.get();
-
 		if (VersionsActivity.MVersionInternal.getVersionInternalId().equals(version)) {
 			return VersionImpl.getInternalVersion();
 		}
 
-		// coba preset dulu!
+		// try preset first
+		final VersionConfig c = VersionConfig.get();
 		for (VersionsActivity.MVersionPreset preset: c.presets) { // 2. preset
 			if (preset.getVersionId().equals(version)) {
 				if (preset.hasDataFile()) {
@@ -235,7 +234,7 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 			}
 		}
 
-		// masih belum cocok, mari kita cari di daftar yes
+		// not correct yet, try yes versions
 		List<VersionsActivity.MVersionYes> yeses = S.getDb().listAllVersions();
 		for (VersionsActivity.MVersionYes yes: yeses) {
 			if (yes.getVersionId().equals(version)) {

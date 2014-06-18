@@ -7,14 +7,14 @@ import android.util.Pair;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.ac.VersionsActivity;
-import yuku.alkitab.base.config.AppConfig;
+import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.model.VersionImpl;
-import yuku.alkitab.debug.R;
-import yuku.alkitab.model.Version;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.InternalDbHelper;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.FontManager;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.model.Version;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -153,7 +153,7 @@ public class S {
 		final List<String> options = new ArrayList<>(); // sync with below line
 		final List<VersionsActivity.MVersion> data = new ArrayList<>();  // sync with above line
 
-		final AppConfig c = AppConfig.get();
+		final VersionConfig c = VersionConfig.get();
 		options.add(c.internalLongName); // 1. internal
 		data.add(new VersionsActivity.MVersionInternal());
 

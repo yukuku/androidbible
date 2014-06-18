@@ -13,14 +13,14 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
-import yuku.alkitab.base.config.AppConfig;
-import yuku.alkitab.util.Ari;
-import yuku.alkitab.model.Book;
-import yuku.alkitab.model.SingleChapterVerses;
-import yuku.alkitab.util.IntArrayList;
+import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
+import yuku.alkitab.model.Book;
+import yuku.alkitab.model.SingleChapterVerses;
+import yuku.alkitab.util.Ari;
+import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.AlkitabIntegrationUtil;
 import yuku.alkitabintegration.provider.VerseProvider;
 
@@ -303,14 +303,13 @@ public class Provider extends ContentProvider {
 	private Cursor getCursorForBibleVersions() {
 		MatrixCursor res = new MatrixCursor(new String[] {"_id", "type", "available", "shortName", "longName", "description"});
 
+		final VersionConfig c = VersionConfig.get();
 		long _id = 0;
 		{ // internal
-			AppConfig c = AppConfig.get();
 			res.addRow(new Object[] {++_id, "internal", 1, c.internalShortName, c.internalLongName, c.internalLongName});
 		}
 		{ // presets
-			List<MVersionPreset> presets = AppConfig.get().presets;
-			for (MVersionPreset preset: presets) {
+			for (MVersionPreset preset: c.presets) {
 				res.addRow(new Object[] {++_id, "preset", preset.hasDataFile()? 1: 0, preset.shortName != null? preset.shortName: preset.longName, preset.longName, preset.longName});
 			}
 		}
