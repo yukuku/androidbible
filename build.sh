@@ -159,6 +159,7 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 		echo "Overlaying files from $PKGDIST..."
 		overlay 'analytics_trackingId.xml' 'res/values/analytics_trackingId.xml'
 		overlay 'app_config.xml' 'res/xml/app_config.xml'
+		overlay 'version_config.xml' 'res/xml/version_config.xml'
 		overlay 'app_name.xml' 'res/values/app_name.xml'
 		overlay 'pref_language_default.xml' 'res/values/pref_language_default.xml'
 		overlay 'drawable-mdpi/ic_launcher.png' 'res/drawable-mdpi/ic_launcher.png'
