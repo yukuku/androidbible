@@ -14,7 +14,7 @@
     <string name="terjadi_kesalahan_ketika_mengekspor_pesan">There were error(s) when creating backup: %s</string>
     <string name="ekspor_pembatas_buku_dan_catatan_tanya">Create backup of bookmarks, notes, and highlights to SD Card or USB Storage? Existing backups will be overwritten.</string>
     <string name="terjadi_kesalahan_ketika_mengimpor_pesan">There were error(s) when restoring: %s</string>
-    <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Do you want to overwrite the bookmarks, notes, and highlights you currently have?</string>
+    <string name="apakah_anda_mau_menumpuk_pembatas_buku_dan_catatan_tanya">Overwrite the bookmarks, notes, and highlights you currently have?</string>
     <string name="file_tidak_bisa_dibaca_file">The file does not exist or could not be read: %s</string>
     <string name="impor_dari_sd_card">Restore</string>
     <string name="ekspor_ke_sd_card">Backup</string>
@@ -135,9 +135,9 @@
     <string name="menuSortTulisan">Title</string>
     <string name="menuSortTulisan_warna">Highlight color</string>
     <string name="waktuTambah_edited_waktuUbah">%1$s\n(edited %2$s)</string>
-    <string name="the_file_for_this_version_is_no_longer_available_file">The file for this version is no longer available. Do you want to remove this version from the list?\nFile: %s</string>
+    <string name="the_file_for_this_version_is_no_longer_available_file">The file for this version is no longer available. Remove this version from the list?\nFile: %s</string>
     <string name="create_label_title">Create label</string>
-    <string name="do_you_want_to_remove_the_label_label_from_this_bookmark">"Do you want to remove the label '%s' from this bookmark?"</string>
+    <string name="do_you_want_to_remove_the_label_label_from_this_bookmark">"Remove the label '%s' from this bookmark?"</string>
     <string name="add_label_title">Add label</string>
     <string name="create_label_titik3">Create label…</string>
     <string name="select_books_to_search">Select books to search</string>
@@ -199,7 +199,7 @@
     <!-- Font Manager -->
     <string name="fm_activity_title">Font Manager</string>
     <string name="fm_need_to_log_in_to_wifi">You need to log-in to your (Wi-Fi) network first.</string>
-    <string name="fm_do_you_want_to_delete">Do you want to delete %s?</string>
+    <string name="fm_do_you_want_to_delete">Delete font %s?</string>
     <string name="fm_error_when_extracting_font">Error when extracting font %1$s: %2$s</string>
     <string name="fm_loading_ellipsis">Loading…</string>
     <string name="dl_failed_to_rename_temporary_file">Failed to rename temporary file</string>
@@ -267,7 +267,7 @@
     <string name="pm_edit_name">Edit name</string>
     <string name="pm_delete_progress">Delete progress</string>
     <string name="pm_activate_tutorial">Long-press and drag to place a progress on a verse.</string>
-    <string name="pm_delete_progress_confirm">Do you want to remove <b>^1</b>?</string>
+    <string name="pm_delete_progress_confirm">Remove <b>^1</b>?</string>
 
     <string name="copy_share">Copy or share</string>
 
@@ -325,7 +325,7 @@
     <string name="rp_download_reading_plan_failed">Failed to download the selected reading plan. Please try again with a working Internet connection.</string>
     <string name="rp_download_reading_plan_data_corrupted">Downloaded reading plan data is corrupted. Please try again later with a working Internet connection.</string>
 
-    <string name="version_download_need_fonts">"The version you downloaded might need to be displayed with certain fonts. Go to the 'Text appearance' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
+    <string name="version_download_need_fonts">"The version downloaded might need to be displayed with certain fonts. Go to the 'Text appearance' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
     <string name="menuNightMode">Night mode</string>
     <string name="highlight_custom_color">Other colors</string>
     <string name="menu_compare">Compare</string>
