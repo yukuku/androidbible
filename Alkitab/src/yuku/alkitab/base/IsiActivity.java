@@ -50,6 +50,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONException;
@@ -1111,7 +1112,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						applyPreferences(false);
 
 						final boolean fullScreen = valueGet.fullScreenChecked();
-						final boolean nightMode = Preferences.getBoolean(Prefkey.is_night_mode, false);
+						final boolean nightMode = valueGet.nightModeChecked();
 
 						setFullScreen(fullScreen);
 						setNightMode(nightMode);
@@ -1189,7 +1190,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	void openSplitVersionsDialog() {
-		Pair<List<String>, List<MVersion>> versions = S.getAvailableVersions();
+		final Pair<List<String>, List<MVersion>> versions = S.getAvailableVersions();
 		final List<String> options = versions.first;
 		final List<MVersion> data = versions.second;
 		
@@ -1267,6 +1268,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				lsSplit1.setVisibility(View.VISIBLE);
 			}
 		});
+
+		bVersion.setVisibility(View.GONE);
+		leftDrawer.getHandle().setSplitVersion(true);
 	}
 
 	void closeSplitDisplay() {
@@ -1279,6 +1283,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		ViewGroup.LayoutParams lp = lsText.getLayoutParams();
 		lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
 		lsText.setLayoutParams(lp);
+
+		bVersion.setVisibility(View.VISIBLE);
+		leftDrawer.getHandle().setSplitVersion(false);
 	}
 
 	private void menuSearch_click() {
@@ -2122,7 +2129,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	@Override
-	public void cFullScreen_onCheckedChanged(final boolean isChecked) {
+	public void cFullScreen_checkedChange(final boolean isChecked) {
 		setFullScreen(isChecked);
 		if (textAppearancePanel != null) {
 			textAppearancePanel.setFullScreen(isChecked);
@@ -2130,10 +2137,22 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	@Override
-	public void cNightMode_onCheckedChanged(final boolean isChecked) {
+	public void cNightMode_checkedChange(final boolean isChecked) {
 		setNightMode(isChecked);
 		if (textAppearancePanel != null) {
 			textAppearancePanel.setNightMode(isChecked);
+		}
+	}
+
+	@Override
+	public void cSplitVersion_checkedChange(final Switch cSplitVersion, final boolean isChecked) {
+		if (isChecked) {
+			cSplitVersion.setChecked(false); // do it later, at the version chooser dialog
+			openSplitVersionsDialog();
+		} else {
+			activeSplitVersion = null;
+			activeSplitVersionId = null;
+			closeSplitDisplay();
 		}
 	}
 

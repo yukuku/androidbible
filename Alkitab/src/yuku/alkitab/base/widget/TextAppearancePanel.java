@@ -40,6 +40,7 @@ public class TextAppearancePanel {
 
 	public interface ValueGet {
 		boolean fullScreenChecked();
+		boolean nightModeChecked();
 	}
 
 	public interface Listener {
@@ -77,6 +78,11 @@ public class TextAppearancePanel {
 		public boolean fullScreenChecked() {
 			return cFullScreen.isChecked();
 		}
+
+		@Override
+		public boolean nightModeChecked() {
+			return cNightMode.isChecked();
+		}
 	};
 
 	public TextAppearancePanel(Activity activity, LayoutInflater inflater, FrameLayout parent, Listener listener, int reqcodeGetFonts, int reqcodeCustomColors) {
@@ -108,18 +114,19 @@ public class TextAppearancePanel {
 		bClose = V.get(content, R.id.bClose);
 
 		cbTypeface.setAdapter(typefaceAdapter = new TypefaceAdapter());
+		cbColorTheme.setAdapter(colorThemeAdapter = new ColorThemeAdapter());
+
+		displayValues();
+
 		cbTypeface.setOnItemSelectedListener(cbTypeface_itemSelected);
 		sbTextSize.setOnSeekBarChangeListener(sbTextSize_seekBarChange);
 		sbLineSpacing.setOnSeekBarChangeListener(sbLineSpacing_seekBarChange);
 		cBold.setOnCheckedChangeListener(cBold_checkedChange);
-		cbColorTheme.setAdapter(colorThemeAdapter = new ColorThemeAdapter());
 		cbColorTheme.setOnItemSelectedListener(cbColorTheme_itemSelected);
 		bCustomColors.setOnClickListener(bCustomColors_click);
 		cFullScreen.setOnCheckedChangeListener(cFullScreen_checkedChange);
 		cNightMode.setOnCheckedChangeListener(cNightMode_checkedChange);
 		bClose.setOnClickListener(bClose_click);
-
-	    displayValues();
 	}
 	
 	public void displayValues() {
@@ -354,7 +361,7 @@ public class TextAppearancePanel {
 		List<String> themeNames;
 
 		public ColorThemeAdapter() {
-			themes = new ArrayList<int[]>();
+			themes = new ArrayList<>();
 			for (String themeString: activity.getResources().getStringArray(R.array.pref_colorTheme_values)) {
 				themes.add(ColorThemes.themeStringToColors(themeString));
 			}

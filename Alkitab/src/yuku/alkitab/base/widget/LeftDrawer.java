@@ -20,12 +20,14 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import yuku.afw.V;
+import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.ac.SettingsActivity;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.debug.R;
 
 public abstract class LeftDrawer extends ScrollView {
@@ -140,20 +142,23 @@ public abstract class LeftDrawer extends ScrollView {
 		public interface Listener {
 			void bMarkers_click();
 			void bDisplay_click();
-			void cFullScreen_onCheckedChanged(boolean isChecked);
-			void cNightMode_onCheckedChanged(boolean isChecked);
+			void cFullScreen_checkedChange(boolean isChecked);
+			void cNightMode_checkedChange(boolean isChecked);
+			void cSplitVersion_checkedChange(final Switch cSplitVersion, boolean isChecked);
 			void bProgress_click(int preset_id);
 		}
 
 		public interface Handle {
 			void setFullScreen(boolean fullScreen);
 			void setNightMode(boolean nightMode);
+			void setSplitVersion(boolean splitVersion);
 		}
 
 		View bMarkers;
 		View bDisplay;
 		Switch cFullScreen;
 		Switch cNightMode;
+		Switch cSplitVersion;
 
 		View bProgress1;
 		View bProgress2;
@@ -176,6 +181,13 @@ public abstract class LeftDrawer extends ScrollView {
 				cNightMode.setChecked(nightMode);
 				cNightMode.setOnCheckedChangeListener(cNightMode_checkedChange);
 			}
+
+			@Override
+			public void setSplitVersion(final boolean splitVersion) {
+				cSplitVersion.setOnCheckedChangeListener(null);
+				cSplitVersion.setChecked(splitVersion);
+				cSplitVersion.setOnCheckedChangeListener(cSplitVersion_checkedChange);
+			}
 		};
 
 		public Text(final Context context, final AttributeSet attrs) {
@@ -194,12 +206,15 @@ public abstract class LeftDrawer extends ScrollView {
 			bDisplay = V.get(this, R.id.bDisplay);
 			cFullScreen = V.get(this, R.id.cFullScreen);
 			cNightMode = V.get(this, R.id.cNightMode);
+			cSplitVersion = V.get(this, R.id.cSplitVersion);
 
 			bProgress1 = V.get(this, R.id.bProgress1);
 			bProgress2 = V.get(this, R.id.bProgress2);
 			bProgress3 = V.get(this, R.id.bProgress3);
 			bProgress4 = V.get(this, R.id.bProgress4);
 			bProgress5 = V.get(this, R.id.bProgress5);
+
+			cNightMode.setChecked(Preferences.getBoolean(Prefkey.is_night_mode, false));
 
 			final View[] views = new View[]{bProgress1, bProgress2, bProgress3, bProgress4, bProgress5};
 			for (int i = 0; i < views.length; i++) {
@@ -245,20 +260,30 @@ public abstract class LeftDrawer extends ScrollView {
 			cFullScreen.setOnCheckedChangeListener(cFullScreen_checkedChange);
 
 			cNightMode.setOnCheckedChangeListener(cNightMode_checkedChange);
+
+			cSplitVersion.setOnCheckedChangeListener(cSplitVersion_checkedChange);
 		}
 
 
 		CompoundButton.OnCheckedChangeListener cFullScreen_checkedChange = new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-				listener.cFullScreen_onCheckedChanged(isChecked);
+				listener.cFullScreen_checkedChange(isChecked);
 			}
 		};
 
 		CompoundButton.OnCheckedChangeListener cNightMode_checkedChange = new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-				listener.cNightMode_onCheckedChanged(isChecked);
+				listener.cNightMode_checkedChange(isChecked);
+			}
+		};
+
+		CompoundButton.OnCheckedChangeListener cSplitVersion_checkedChange = new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+				listener.cSplitVersion_checkedChange(cSplitVersion, isChecked);
+				closeDrawer();
 			}
 		};
 

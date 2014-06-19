@@ -125,6 +125,14 @@
 			android:paddingLeft="4dp"
 			android:paddingRight="4dp"/>
 
+		<Switch
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:text="@string/menuSplitVersion"
+			android:id="@+id/cSplitVersion"
+			android:paddingLeft="4dp"
+			android:paddingRight="4dp"/>
+
 
 		<include
 			layout="@layout/left_drawer_footer"

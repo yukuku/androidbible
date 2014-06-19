@@ -346,4 +346,5 @@
     <string name="bookmark_delete_confirmation">Delete this bookmark?</string>
     <string name="drawer_open">Open drawer</string>
     <string name="drawer_close">Close drawer</string>
+	<string name="menuSplitVersion">Split</string>
 </resources>
