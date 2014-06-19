@@ -37,10 +37,9 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				checked = ((ListView) parent).isItemChecked(position);
 			}
 
-			VerseItem res;
-			if (convertView == null || convertView.getId() != R.layout.item_verse) {
+			final VerseItem res;
+			if (convertView == null || convertView.getId() != R.id.itemVerse) {
 				res = (VerseItem) inflater_.inflate(R.layout.item_verse, parent, false);
-				res.setId(R.layout.item_verse);
 			} else {
 				res = (VerseItem) convertView;
 			}
@@ -85,9 +84,8 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			// PERICOPE. not verse.
 
 			final PericopeHeaderItem res;
-			if (convertView == null || convertView.getId() != R.layout.item_pericope_header) {
+			if (convertView == null || convertView.getId() != R.id.itemPericopeHeader) {
 				res = (PericopeHeaderItem) inflater_.inflate(R.layout.item_pericope_header, parent, false);
-				res.setId(R.layout.item_pericope_header);
 			} else {
 				res = (PericopeHeaderItem) convertView;
 			}
