@@ -1,18 +1,16 @@
 package yuku.alkitab.base.widget;
 
 import android.content.Context;
-import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
-import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.S;
-import yuku.alkitab.util.Ari;
+import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.SingleChapterVerses;
-import yuku.alkitab.base.storage.InternalDb;
+import yuku.alkitab.util.Ari;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,33 +19,8 @@ public abstract class VerseAdapter extends BaseAdapter {
 	public static final String TAG = VerseAdapter.class.getSimpleName();
 
 	public static class Factory {
-		int impl = 0; // 0 need check, 1 new (single view), 2 legacy
-		
 		public VerseAdapter create(Context context) {
-			if (impl == 0) {
-				String useLegacyVerseRenderer = Preferences.getString("useLegacyVerseRenderer", "auto");
-				if ("auto".equals(useLegacyVerseRenderer)) { // determine based on device
-					if ("SEMC".equals(Build.BRAND) && Build.VERSION.SDK_INT >= 9 && Build.VERSION.SDK_INT <= 10) {
-						impl = 2;
-					} else {
-						impl = 1;
-					}
-				} else if ("never".equals(useLegacyVerseRenderer)) {
-					impl = 1;
-				} else if ("always".equals(useLegacyVerseRenderer)) {
-					impl = 2;
-				} else { // just in case
-					impl = 1;
-				}
-			}
-			
-			if (impl == 1) {
-				return new SingleViewVerseAdapter(context);
-			} else if (impl == 2) {
-				return new LegacyVerseAdapter(context);
-			}
-			
-			return null;
+			return new SingleViewVerseAdapter(context);
 		}
 	}
 
@@ -321,7 +294,6 @@ public abstract class VerseAdapter extends BaseAdapter {
 			// uda ga ada perikop, ATAU belom saatnya perikop. Maka masukin ayat.
 			res[pos_itemPointer++] = pos_verse;
 			pos_verse++;
-			continue;
 		}
 
 		if (res.length != pos_itemPointer) {
