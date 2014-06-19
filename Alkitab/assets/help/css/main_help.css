@@ -2,27 +2,34 @@
 
 html, body {
 	font-family: sans-serif;
+    background-color: #000;
+    color: #eee;
 }
 
 h2 {
     font-family: sans-serif-light, sans-serif;
 }
 
+a {
+    color: #9ce;
+}
+
 .kod {
-	background-color: #beb;
+	background-color: #7a7;
+    color: #000;
 	font-size: 10pt;
-	border-top: #0C0 solid 1px;
-	border-bottom: #0C0 solid 1px;
+	border-top: #090 solid 1px;
+	border-bottom: #090 solid 1px;
 	font-family: monospace;
 	white-space: nowrap;
 }
 
 kbd {
-	background: #EEE;
+	background: #333;
 	padding: 2px 5px;
 	white-space: nowrap;
 	min-width: 1em;
-    border: 1px solid #BBB;
+    border: 1px solid #bbb;
     border-right-color: #666;
     border-bottom-color: #666;
     font-family: sans-serif;
@@ -41,10 +48,6 @@ kbd {
 	line-height: 120%;
 }
 
-.faq .q {
-	font-weight: bold;
-}
-
 .faq .a {
-	color: #111;
+	color: #999;
 }

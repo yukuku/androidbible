@@ -22,8 +22,8 @@
 		<Button
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:text="Marka"
-			android:drawableLeft="@drawable/ic_menu_bookmark"
+			android:text="@string/menu_markers"
+			android:drawableLeft="@drawable/ic_drawer_markers"
 			android:drawablePadding="8dp"
 			android:id="@+id/bMarkers"
 			style="?android:buttonBarButtonStyle"
@@ -32,7 +32,7 @@
 		<TextView
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:text="JEJAK"
+			android:text="@string/menuProgress"
 			android:textStyle="bold"
 			android:textSize="14sp"
 			android:layout_marginTop="8dp"

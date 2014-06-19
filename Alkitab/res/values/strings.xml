@@ -21,7 +21,7 @@
     <string name="menuBantuan">Help</string>
     <string name="beri_saran_title">Suggest</string>
     <string name="versi">Version</string>
-    <string name="renungan">Devotion</string>
+    <string name="menuDevotion">Devotion</string>
     <string name="cari_v">Search</string>
     <string name="judul_bukmak_activity">Markers</string>
     <string name="menu_markers">Markers</string>
@@ -347,4 +347,7 @@
     <string name="drawer_open">Open drawer</string>
     <string name="drawer_close">Close drawer</string>
 	<string name="menuSplitVersion">Split</string>
+	<string name="about_beta_feedback">Beta version feedback</string>
+	<string name="menuBible">Bible</string>
+	<string name="menuProgress">PROGRESS</string>
 </resources>

@@ -15,16 +15,16 @@
 		android:layout_height="wrap_content"
 		android:text="user@domain.com"
 		android:id="@+id/bUser"
-		android:drawableLeft="@drawable/ic_menu_bookmark"
+		android:drawableLeft="@android:drawable/ic_menu_myplaces"
 		android:drawablePadding="8dp"
 		style="?android:spinnerStyle"/>
 
 	<Button
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:text="Alkitab"
+		android:text="@string/menuBible"
 		android:id="@+id/bBible"
-		android:drawableLeft="@drawable/ic_menu_bookmark"
+		android:drawableLeft="@drawable/ic_drawer_bible"
 		android:drawablePadding="8dp"
 		style="?android:buttonBarButtonStyle"
 		android:gravity="left|center_vertical"/>
@@ -32,8 +32,8 @@
 	<Button
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:text="Renungan"
-		android:drawableLeft="@drawable/ic_menu_bookmark"
+		android:text="@string/menuDevotion"
+		android:drawableLeft="@drawable/ic_drawer_devotion"
 		android:drawablePadding="8dp"
 		android:id="@+id/bDevotion"
 		style="?android:buttonBarButtonStyle"
@@ -42,9 +42,9 @@
 	<Button
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:text="Rencana baca"
+		android:text="@string/rp_menuReadingPlan"
 		android:id="@+id/bReadingPlan"
-		android:drawableLeft="@drawable/ic_menu_bookmark"
+		android:drawableLeft="@drawable/ic_drawer_reading_plan"
 		android:drawablePadding="8dp"
 		style="?android:buttonBarButtonStyle"
 		android:gravity="left|center_vertical"/>

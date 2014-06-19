@@ -7,7 +7,7 @@
 
     <ImageButton
         android:id="@+id/bLeft"
-        android:layout_width="32dp"
+        android:layout_width="48dp"
         android:layout_height="match_parent"
         android:layout_weight="0"
         android:contentDescription="@string/desc_previous_chapter"
@@ -30,7 +30,7 @@
 
     <ImageButton
         android:id="@+id/bRight"
-        android:layout_width="32dp"
+        android:layout_width="48dp"
         android:layout_height="match_parent"
         android:layout_weight="0"
         android:contentDescription="@string/desc_next_chapter"
