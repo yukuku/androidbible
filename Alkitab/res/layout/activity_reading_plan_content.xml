@@ -23,7 +23,7 @@
                     android:contentDescription="@string/rp_navigationPreviousDay"
                     android:padding="16dp"
                     android:scaleType="center"
-                    android:src="@drawable/ic_nav_left_dark" />
+                    android:src="@drawable/ic_nav_left_light" />
 
             <View android:layout_height="fill_parent"
                   android:layout_width="1dp"
@@ -54,7 +54,7 @@
                     android:contentDescription="@string/rp_navigationNextDay"
                     android:padding="16dp"
                     android:scaleType="center"
-                    android:src="@drawable/ic_nav_right_dark" />
+                    android:src="@drawable/ic_nav_right_light" />
         </LinearLayout>
 
         <View android:layout_height="1dp"

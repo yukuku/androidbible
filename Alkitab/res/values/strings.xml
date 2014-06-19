@@ -350,4 +350,6 @@
 	<string name="about_beta_feedback">Beta version feedback</string>
 	<string name="menuBible">Bible</string>
 	<string name="menuProgress">PROGRESS</string>
+	<string name="switch_off">OFF</string>
+	<string name="switch_on">ON</string>
 </resources>

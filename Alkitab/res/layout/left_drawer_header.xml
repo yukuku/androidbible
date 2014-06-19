@@ -1,51 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:showDividers="middle"
+	android:background="#2c2c2c"
 	android:divider="@android:drawable/divider_horizontal_dark"
 	android:dividerPadding="2dp"
-	android:background="#2c2c2c">
+	android:orientation="vertical"
+	android:showDividers="middle">
 
 	<Button
+		android:id="@+id/bUser"
+		style="?android:spinnerStyle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:text="user@domain.com"
-		android:id="@+id/bUser"
 		android:drawableLeft="@android:drawable/ic_menu_myplaces"
 		android:drawablePadding="8dp"
-		style="?android:spinnerStyle"/>
+		android:text="user@domain.com" />
 
 	<Button
+		android:id="@+id/bBible"
+		style="?android:buttonBarButtonStyle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:text="@string/menuBible"
-		android:id="@+id/bBible"
 		android:drawableLeft="@drawable/ic_drawer_bible"
 		android:drawablePadding="8dp"
-		style="?android:buttonBarButtonStyle"
-		android:gravity="left|center_vertical"/>
+		android:fontFamily="sans-serif-light"
+		android:gravity="left|center_vertical"
+		android:text="@string/menuBible" />
 
 	<Button
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:text="@string/menuDevotion"
-		android:drawableLeft="@drawable/ic_drawer_devotion"
-		android:drawablePadding="8dp"
 		android:id="@+id/bDevotion"
 		style="?android:buttonBarButtonStyle"
-		android:gravity="left|center_vertical"/>
-
-	<Button
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:text="@string/rp_menuReadingPlan"
+		android:drawableLeft="@drawable/ic_drawer_devotion"
+		android:drawablePadding="8dp"
+		android:fontFamily="sans-serif-light"
+		android:gravity="left|center_vertical"
+		android:text="@string/menuDevotion" />
+
+	<Button
 		android:id="@+id/bReadingPlan"
+		style="?android:buttonBarButtonStyle"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
 		android:drawableLeft="@drawable/ic_drawer_reading_plan"
 		android:drawablePadding="8dp"
-		style="?android:buttonBarButtonStyle"
-		android:gravity="left|center_vertical"/>
+		android:fontFamily="sans-serif-light"
+		android:gravity="left|center_vertical"
+		android:text="@string/rp_menuReadingPlan" />
 </LinearLayout>
