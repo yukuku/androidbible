@@ -296,11 +296,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	final BroadcastReceiver reloadAttributeMapReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
-			lsText.reloadAttributeMap();
-
-			if (activeSplitVersion != null) {
-				lsSplit1.reloadAttributeMap();
-			}
+			reloadBothAttributeMaps();
 		}
 	};
 
@@ -1651,11 +1647,13 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			ProgressMarkDialog.showRenameDialog(IsiActivity.this, progressMark, new ProgressMarkDialog.Listener() {
 				@Override
 				public void onOked() {
+					lsText.uncheckAllVerses(true);
 					reloadBothAttributeMaps();
 				}
 
 				@Override
 				public void onDeleted() {
+					lsText.uncheckAllVerses(true);
 					reloadBothAttributeMaps();
 				}
 			});
@@ -1944,6 +1942,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, IsiActivity.this.activeBook.reference(IsiActivity.this.chapter_1, mainVerse_1), ari);
 				dialog.setListener(new TypeBookmarkDialog.Listener() {
 					@Override public void onOk() {
+						lsText.uncheckAllVerses(true);
 						reloadBothAttributeMaps();
 					}
 				});
@@ -1961,6 +1960,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				
 				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, IsiActivity.this.activeBook, IsiActivity.this.chapter_1, mainVerse_1, new TypeNoteDialog.Listener() {
 					@Override public void onDone() {
+						lsText.uncheckAllVerses(true);
 						reloadBothAttributeMaps();
 					}
 				});
@@ -1973,6 +1973,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				
 				new TypeHighlightDialog(IsiActivity.this, ariKp, selected, new TypeHighlightDialog.Listener() {
 					@Override public void onOk(int colorRgb) {
+						lsText.uncheckAllVerses(true);
 						reloadBothAttributeMaps();
 					}
 				}, colorRgb, reference).show();
@@ -2036,8 +2037,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	};
 
-	private void reloadBothAttributeMaps() {
-		lsText.uncheckAllVerses(true);
+	void reloadBothAttributeMaps() {
 		lsText.reloadAttributeMap();
 
 		if (activeSplitVersion != null) {
@@ -2059,6 +2059,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 				@Override
 				public void onDeleted() {
+					lsText.uncheckAllVerses(true);
 					reloadBothAttributeMaps();
 				}
 			});
@@ -2072,6 +2073,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		progressMark.modifyTime = new Date();
 		S.getDb().updateProgressMark(progressMark);
 		AttributeView.startAnimationForProgressMark(position);
+		lsText.uncheckAllVerses(true);
 		reloadBothAttributeMaps();
 	}
 

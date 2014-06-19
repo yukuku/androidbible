@@ -43,7 +43,7 @@ public class ProgressMarkDialog extends DialogFragment {
 				@Override
 				public void onClick(final DialogInterface dialog, final int which) {
 					new AlertDialog.Builder(activity)
-						.setMessage(activity.getString(R.string.pm_delete_progress_confirm, progressMark.caption))
+						.setMessage(TextUtils.expandTemplate(activity.getText(R.string.pm_delete_progress_confirm), progressMark.caption))
 						.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(final DialogInterface dialog, final int which) {

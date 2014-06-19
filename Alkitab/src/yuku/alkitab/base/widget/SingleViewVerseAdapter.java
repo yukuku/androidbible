@@ -47,12 +47,12 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			VerseTextView lText = (VerseTextView) res.findViewById(R.id.lText);
 			TextView lVerseNumber = (TextView) res.findViewById(R.id.lVerseNumber);
 
-			int ari = Ari.encode(book_.bookId, chapter_1_, verse_1);
-			String text = verses_.getVerse(id);
-			String verseNumberText = verses_.getVerseNumberText(id);
-			boolean dontPutSpacingBefore = (position > 0 && itemPointer_[position - 1] < 0) || position == 0;
-			boolean withHighlight = attributeMap_ != null && (attributeMap_[id] & 0x4) != 0;
-			int highlightColor = withHighlight ? (highlightMap_ == null ? 0 : U.alphaMixHighlight(highlightMap_[id])) : 0;
+			final int ari = Ari.encode(book_.bookId, chapter_1_, verse_1);
+			final String text = verses_.getVerse(id);
+			final String verseNumberText = verses_.getVerseNumberText(id);
+			final boolean dontPutSpacingBefore = (position > 0 && itemPointer_[position - 1] < 0) || position == 0;
+			final boolean withHighlight = attributeMap_ != null && (attributeMap_[id] & 0x4) != 0;
+			final int highlightColor = withHighlight ? (highlightMap_ == null ? 0 : U.alphaMixHighlight(highlightMap_[id])) : 0;
 			VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightColor, checked, dontPutSpacingBefore, inlineLinkSpanFactory_, owner_);
 
 			Appearances.applyTextAppearance(lText);
@@ -67,6 +67,8 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			attributeView.setAttributeListener(attributeListener_, book_, chapter_1_, verse_1);
 
 			res.setCollapsed(text.length() == 0 && !attributeView.isShowingSomething());
+
+			res.setAri(ari);
 
 //			{ // DUMP
 //				Log.d(TAG, "==== DUMP verse " + (id + 1));

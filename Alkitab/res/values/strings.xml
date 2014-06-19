@@ -266,8 +266,8 @@
     <string name="pm_progress_name">Progress name</string>
     <string name="pm_edit_name">Edit name</string>
     <string name="pm_delete_progress">Delete progress</string>
-    <string name="pm_activate_tutorial">Select a verse to save a progress.</string>
-    <string name="pm_delete_progress_confirm">Do you want to remove %s?</string>
+    <string name="pm_activate_tutorial">Long-press and drag to place a progress on a verse.</string>
+    <string name="pm_delete_progress_confirm">Do you want to remove <b>^1</b>?</string>
 
     <string name="copy_share">Copy or share</string>
 

@@ -1,12 +1,15 @@
 package yuku.alkitab.base.widget;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Context;
 import android.support.v4.widget.DrawerLayout;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
+import android.view.DragEvent;
 import android.view.Gravity;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,6 +100,16 @@ public abstract class LeftDrawer extends ScrollView {
 				closeDrawer();
 			}
 		});
+	}
+
+	@Override
+	public boolean onDragEvent(final DragEvent event) {
+		if (event.getAction() == DragEvent.ACTION_DRAG_STARTED) {
+			if (event.getClipDescription().hasMimeType(VerseItem.PROGRESS_MARK_DRAG_MIME_TYPE)) {
+				return true; // Just to that the progress pin is not dropped to the verses
+			}
+		}
+		return false;
 	}
 
 	void closeDrawer() {
@@ -197,6 +210,18 @@ public abstract class LeftDrawer extends ScrollView {
 					public void onClick(final View v) {
 						listener.bProgress_click(preset_id);
 						closeDrawer();
+					}
+				});
+				b.setOnLongClickListener(new OnLongClickListener() {
+					@Override
+					public boolean onLongClick(final View v) {
+						final ClipData dragData = new ClipData("progress_mark", new String[]{VerseItem.PROGRESS_MARK_DRAG_MIME_TYPE}, new ClipData.Item("" + preset_id));
+						b.setPressed(false);
+						final DragShadowBuilder dragShadowBuilder = new DragShadowBuilder(b);
+						performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+						v.startDrag(dragData, dragShadowBuilder, null, 0);
+
+						return true;
 					}
 				});
 			}
