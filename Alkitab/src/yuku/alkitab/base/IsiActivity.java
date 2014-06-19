@@ -83,7 +83,6 @@ import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.base.util.OsisBookNames;
-import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.AttributeView;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.Floater;
@@ -115,7 +114,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
-public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener, ProgressMarkDialog.ProgressMarkDialogListener, LeftDrawer.Text.Listener {
+public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener, LeftDrawer.Text.Listener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
 
 	public static final String ACTION_ATTRIBUTE_MAP_CHANGED = "yuku.alkitab.action.ATTRIBUTE_MAP_CHANGED";
@@ -225,17 +224,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			return false;
 		}
 	};
-
-	@Override
-	public void onProgressMarkSelected(final int ari) {
-		jumpToAri(ari);
-		history.add(ari);
-	}
-
-	@Override
-	public void onProgressMarkDeleted(final int ari) {
-		reloadVerse();
-	}
 
 	DrawerLayout drawerLayout;
 	ActionBarDrawerToggle drawerToggle;
@@ -1195,12 +1183,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		.show();
 	}
 
-	private void openProgressMarkDialog() {
-		FragmentManager fm = getSupportFragmentManager();
-		ProgressMarkDialog dialog = new ProgressMarkDialog();
-		dialog.show(fm, "progress_mark_dialog");
-	}
-
 	void openSplitVersionsDialog() {
 		Pair<List<String>, List<MVersion>> versions = S.getAvailableVersions();
 		final List<String> options = versions.first;
@@ -1664,33 +1646,19 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		@Override
 		public void onProgressMarkAttributeClick(final int preset_id) {
-			ProgressMark progressMark = S.getDb().getProgressMarkByPresetId(preset_id);
+			final ProgressMark progressMark = S.getDb().getProgressMarkByPresetId(preset_id);
 
-			int iconRes = AttributeView.getProgressMarkIconResource(preset_id);
-			String title;
+			ProgressMarkDialog.showRenameDialog(IsiActivity.this, progressMark, new ProgressMarkDialog.Listener() {
+				@Override
+				public void onOked() {
+					reloadBothAttributeMaps();
+				}
 
-			if (progressMark.ari == 0 || TextUtils.isEmpty(progressMark.caption)) {
-				title = getString(AttributeView.getDefaultProgressMarkStringResource(preset_id));
-			} else {
-				title = progressMark.caption;
-			}
-
-			String verseText = "";
-			int ari = progressMark.ari;
-			if (ari != 0) {
-				String date = Sqlitil.toLocaleDateMedium(progressMark.modifyTime);
-
-				String reference = S.activeVersion.reference(ari);
-				verseText = getString(R.string.pm_icon_click_message, reference, date)
-				;
-			}
-
-			new AlertDialog.Builder(IsiActivity.this)
-			.setPositiveButton(getString(R.string.ok), null)
-			.setIcon(iconRes)
-			.setTitle(title)
-			.setMessage(verseText)
-			.show();
+				@Override
+				public void onDeleted() {
+					reloadBothAttributeMaps();
+				}
+			});
 		}
 	};
 
@@ -1976,7 +1944,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, IsiActivity.this.activeBook.reference(IsiActivity.this.chapter_1, mainVerse_1), ari);
 				dialog.setListener(new TypeBookmarkDialog.Listener() {
 					@Override public void onOk() {
-						reloadVerse();
+						reloadBothAttributeMaps();
 					}
 				});
 				dialog.show();
@@ -1993,7 +1961,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				
 				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, IsiActivity.this.activeBook, IsiActivity.this.chapter_1, mainVerse_1, new TypeNoteDialog.Listener() {
 					@Override public void onDone() {
-						reloadVerse();
+						reloadBothAttributeMaps();
 					}
 				});
 				dialog.show();
@@ -2005,7 +1973,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				
 				new TypeHighlightDialog(IsiActivity.this, ariKp, selected, new TypeHighlightDialog.Listener() {
 					@Override public void onOk(int colorRgb) {
-						reloadVerse();
+						reloadBothAttributeMaps();
 					}
 				}, colorRgb, reference).show();
 				mode.finish();
@@ -2068,7 +2036,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	};
 
-	private void reloadVerse() {
+	private void reloadBothAttributeMaps() {
 		lsText.uncheckAllVerses(true);
 		lsText.reloadAttributeMap();
 
@@ -2079,41 +2047,23 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	private void updateProgressMark(final int mainVerse_1, final int position) {
 		final int ari = Ari.encode(this.activeBook.bookId, this.chapter_1, mainVerse_1);
-		List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
+		final List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
 		final ProgressMark progressMark = progressMarks.get(position);
-		if (progressMark.ari == ari) {
-			int icon = AttributeView.getProgressMarkIconResource(position);
-			String title = progressMark.caption;
-			if (TextUtils.isEmpty(title)) {
-				title = getString(AttributeView.getDefaultProgressMarkStringResource(position));
-			}
 
-			new AlertDialog.Builder(IsiActivity.this)
-			.setIcon(icon)
-			.setTitle(title)
-			.setMessage(getString(R.string.pm_delete_progress_confirm, title))
-			.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+		if (progressMark.caption == null) {
+				ProgressMarkDialog.showRenameDialog(this, progressMark, new ProgressMarkDialog.Listener() {
 				@Override
-				public void onClick(final DialogInterface dialog, final int which) {
-					progressMark.ari = 0;
-					progressMark.caption = null;
-					S.getDb().updateProgressMark(progressMark);
-					reloadVerse();
+				public void onOked() {
+					saveProgress(progressMark, ari, position);
 				}
-			})
-			.setNegativeButton(getString(R.string.cancel), null)
-			.show();
+
+				@Override
+				public void onDeleted() {
+					reloadBothAttributeMaps();
+				}
+			});
 		} else {
-			if (progressMark.caption == null) {
-				ProgressMarkDialog.showRenameProgressDialog(this, progressMark, new ProgressMarkDialog.OnRenameListener() {
-					@Override
-					public void okClick() {
-						saveProgress(progressMark, ari, position);
-					}
-				});
-			} else {
-				saveProgress(progressMark, ari, position);
-			}
+			saveProgress(progressMark, ari, position);
 		}
 	}
 
@@ -2122,7 +2072,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		progressMark.modifyTime = new Date();
 		S.getDb().updateProgressMark(progressMark);
 		AttributeView.startAnimationForProgressMark(position);
-		reloadVerse();
+		reloadBothAttributeMaps();
 	}
 
 	SplitHandleButton.SplitHandleButtonListener splitHandleButton_listener = new SplitHandleButton.SplitHandleButtonListener() {
@@ -2187,6 +2137,17 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	@Override
 	public void bProgress_click(final int preset_id) {
-		openProgressMarkDialog();
+		final ProgressMark progressMark = S.getDb().getProgressMarkByPresetId(preset_id);
+		final int ari = progressMark.ari;
+
+		if (ari != 0) {
+			jumpToAri(ari);
+			history.add(ari);
+		} else {
+			new AlertDialog.Builder(this)
+				.setMessage(R.string.pm_activate_tutorial)
+				.setPositiveButton(R.string.ok, null)
+				.show();
+		}
 	}
 }
