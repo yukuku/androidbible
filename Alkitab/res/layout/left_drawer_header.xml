@@ -32,16 +32,6 @@
 	<Button
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:text="Marka"
-		android:drawableLeft="@drawable/ic_menu_bookmark"
-		android:drawablePadding="8dp"
-		android:id="@+id/bMarkers"
-		style="?android:buttonBarButtonStyle"
-		android:gravity="left|center_vertical"/>
-
-	<Button
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
 		android:text="Renungan"
 		android:drawableLeft="@drawable/ic_menu_bookmark"
 		android:drawablePadding="8dp"

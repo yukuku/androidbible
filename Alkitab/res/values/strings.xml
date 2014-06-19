@@ -318,7 +318,7 @@
     <string name="rp_showDetails">Show details</string>
     <string name="rp_hideDetails">Hide details</string>
     <string name="rp_aboutPlan">About plan</string>
-    <string name="rp_aboutPlanMessage">Title: %1$s \nDescription: %2$s \nDuration: %3$s days</string>
+    <string name="rp_description_rendering"><b>^1</b> (^2 days)\n^3</string>
     <string name="rp_download_day_count_days">%s days</string>
     <string name="rp_download_reading_plan_list_progress">Downloading list of reading plans…</string>
     <string name="rp_download_reading_plan_list_failed">Failed to download reading plan list. Please try again with a working Internet connection.</string>

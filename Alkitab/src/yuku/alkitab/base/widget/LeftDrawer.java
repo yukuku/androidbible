@@ -20,7 +20,6 @@ import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.ac.AboutActivity;
-import yuku.alkitab.base.ac.BookmarkActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.ac.SettingsActivity;
@@ -30,7 +29,6 @@ public abstract class LeftDrawer extends ScrollView {
 
 	// mandatory
 	View bBible;
-	View bMarkers;
 	View bDevotion;
 	View bReadingPlan;
 	View bSettings;
@@ -55,7 +53,6 @@ public abstract class LeftDrawer extends ScrollView {
 		}
 
 		bBible = V.get(this, R.id.bBible);
-		bMarkers = V.get(this, R.id.bMarkers);
 		bDevotion = V.get(this, R.id.bDevotion);
 		bReadingPlan = V.get(this, R.id.bReadingPlan);
 		bSettings = V.get(this, R.id.bSettings);
@@ -65,14 +62,6 @@ public abstract class LeftDrawer extends ScrollView {
 			@Override
 			public void onClick(final View v) {
 				bBible_click();
-				closeDrawer();
-			}
-		});
-
-		bMarkers.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				bMarkers_click();
 				closeDrawer();
 			}
 		});
@@ -130,16 +119,13 @@ public abstract class LeftDrawer extends ScrollView {
 		activity.startActivity(DevotionActivity.createIntent());
 	}
 
-	void bMarkers_click() {
-		activity.startActivity(BookmarkActivity.createIntent());
-	}
-
 	void bBible_click() {
 		activity.startActivity(IsiActivity.createIntent());
 	}
 
 	public static class Text extends LeftDrawer {
 		public interface Listener {
+			void bMarkers_click();
 			void bDisplay_click();
 			void cFullScreen_onCheckedChanged(boolean isChecked);
 			void cNightMode_onCheckedChanged(boolean isChecked);
@@ -151,6 +137,7 @@ public abstract class LeftDrawer extends ScrollView {
 			void setNightMode(boolean nightMode);
 		}
 
+		View bMarkers;
 		View bDisplay;
 		Switch cFullScreen;
 		Switch cNightMode;
@@ -190,6 +177,7 @@ public abstract class LeftDrawer extends ScrollView {
 		protected void onFinishInflate() {
 			super.onFinishInflate();
 
+			bMarkers = V.get(this, R.id.bMarkers);
 			bDisplay = V.get(this, R.id.bDisplay);
 			cFullScreen = V.get(this, R.id.cFullScreen);
 			cNightMode = V.get(this, R.id.cNightMode);
@@ -212,6 +200,14 @@ public abstract class LeftDrawer extends ScrollView {
 					}
 				});
 			}
+
+			bMarkers.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					listener.bMarkers_click();
+					closeDrawer();
+				}
+			});
 
 			bDisplay.setOnClickListener(new OnClickListener() {
 				@Override
@@ -368,6 +364,71 @@ public abstract class LeftDrawer extends ScrollView {
 		@Override
 		void bDevotion_click() {
 			closeDrawer();
+		}
+	}
+
+	public static class ReadingPlan extends LeftDrawer {
+		public interface Listener {
+			void bCatchMeUp_click();
+		}
+
+		public interface Handle {
+			void setDescription(CharSequence description);
+		}
+
+		ScrollView scrollDescription;
+		TextView tDescription;
+		View bCatchMeUp;
+
+		Listener listener;
+		Handle handle = new Handle() {
+			@Override
+			public void setDescription(final CharSequence description) {
+				if (description == null) {
+					bCatchMeUp.setVisibility(GONE);
+					scrollDescription.setVisibility(GONE);
+					tDescription.setText("");
+				} else {
+					bCatchMeUp.setVisibility(VISIBLE);
+					scrollDescription.setVisibility(VISIBLE);
+					tDescription.setText(description);
+				}
+			}
+		};
+
+		public ReadingPlan(final Context context, final AttributeSet attrs) {
+			super(context, attrs);
+		}
+
+		public Handle getHandle() {
+			return handle;
+		}
+
+		@Override
+		protected void onFinishInflate() {
+			super.onFinishInflate();
+
+			scrollDescription = V.get(this, R.id.scrollDescription);
+			tDescription = V.get(this, R.id.tDescription);
+			bCatchMeUp = V.get(this, R.id.bCatchMeUp);
+
+			bCatchMeUp.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					listener.bCatchMeUp_click();
+				}
+			});
+		}
+
+		@Override
+		void bReadingPlan_click() {
+			closeDrawer();
+		}
+
+		public <T extends Activity & Listener> void configure(T listener, DrawerLayout drawerLayout) {
+			this.activity = listener;
+			this.listener = listener;
+			this.drawerLayout = drawerLayout;
 		}
 	}
 }

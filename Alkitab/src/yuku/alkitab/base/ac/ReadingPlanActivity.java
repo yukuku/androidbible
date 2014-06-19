@@ -6,8 +6,12 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.Menu;
@@ -39,6 +43,7 @@ import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.ReadingPlanManager;
 import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.base.widget.LeftDrawer;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
@@ -57,12 +62,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ReadingPlanActivity extends BaseActivity {
+public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.ReadingPlan.Listener {
 	public static final String TAG = ReadingPlanActivity.class.getSimpleName();
 
 	public static final String READING_PLAN_ARI_RANGES = "reading_plan_ari_ranges";
 	public static final String READING_PLAN_ID = "reading_plan_id";
 	public static final String READING_PLAN_DAY_NUMBER = "reading_plan_day_number";
+
+	DrawerLayout drawerLayout;
+	ActionBarDrawerToggle drawerToggle;
+	LeftDrawer.ReadingPlan leftDrawer;
 
 	private ReadingPlan readingPlan;
 	private List<ReadingPlan.ReadingPlanInfo> downloadedReadingPlanInfos;
@@ -71,7 +80,6 @@ public class ReadingPlanActivity extends BaseActivity {
 	private IntArrayList readingCodes;
 	private boolean newDropDownItems;
 
-	private Menu menu;
 	private ImageButton bLeft;
 	private ImageButton bRight;
 	private Button bToday;
@@ -95,9 +103,17 @@ public class ReadingPlanActivity extends BaseActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState, false);
 
 		setContentView(R.layout.activity_reading_plan);
+
+		drawerLayout = V.get(this, R.id.drawerLayout);
+		leftDrawer = V.get(this, R.id.left_drawer);
+		leftDrawer.configure(this, drawerLayout);
+
+		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_navigation_drawer, R.string.drawer_open, R.string.drawer_close);
+		drawerLayout.setDrawerListener(drawerToggle);
+
 		llNavigations = V.get(this, R.id.llNavigations);
 		flNoData = V.get(this, R.id.flNoDataContainer);
 
@@ -107,7 +123,9 @@ public class ReadingPlanActivity extends BaseActivity {
 		bRight = V.get(this, R.id.bRight);
 		bDownload = V.get(this, R.id.bDownload);
 		actionBar = getActionBar();
+		actionBar.setDisplayShowHomeEnabled(false);
 		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setHomeButtonEnabled(true);
 
 		long id = Preferences.getLong(Prefkey.active_reading_plan_id, 0);
 		loadReadingPlan(id);
@@ -115,40 +133,56 @@ public class ReadingPlanActivity extends BaseActivity {
 		prepareDropDownNavigation();
 		loadDayNumber(false);
 		prepareDisplay();
+	}
 
+	@Override
+	protected void onPostCreate(final Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		drawerToggle.syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(final Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		drawerToggle.onConfigurationChanged(newConfig);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_reading_plan, menu);
-		this.menu = menu;
-		setReadingPlanMenuVisibility();
+		return true;
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(final Menu menu) {
+		final boolean anyReadingPlan = downloadedReadingPlanInfos.size() != 0;
+		menu.findItem(R.id.menuDelete).setVisible(anyReadingPlan);
+
+		if (!anyReadingPlan) {
+			leftDrawer.getHandle().setDescription(null);
+		}
+
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		int itemId = item.getItemId();
-		if (itemId == android.R.id.home) {
-			finish();
+		if (drawerToggle.onOptionsItemSelected(item)) {
 			return true;
-		} else if (itemId == R.id.menuReset) {
-			resetReadingPlan();
-			return true;
-		} else if (itemId == R.id.menuDownload) {
+		}
+
+		final int itemId = item.getItemId();
+		if (itemId == R.id.menuDownload) {
 			downloadReadingPlanList();
 			return true;
 		} else if (itemId == R.id.menuDelete) {
 			deleteReadingPlan();
 			return true;
-		} else if (itemId == R.id.menuAbout) {
-			showAbout();
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
 	private void loadReadingPlan(long id) {
-
 		downloadedReadingPlanInfos = S.getDb().listAllReadingPlanInfo();
 
 		if (downloadedReadingPlanInfos.size() == 0) {
@@ -171,12 +205,14 @@ public class ReadingPlanActivity extends BaseActivity {
 			}
 		}
 
-		InputStream inputStream = new ByteArrayInputStream(binaryReadingPlan);
-		ReadingPlan res = ReadingPlanManager.readVersion1(inputStream);
+		final InputStream inputStream = new ByteArrayInputStream(binaryReadingPlan);
+		final ReadingPlan res = ReadingPlanManager.readVersion1(inputStream);
 		res.info.id = id;
 		res.info.startTime = startTime;
 		readingPlan = res;
 		Preferences.setLong(Prefkey.active_reading_plan_id, id);
+
+		leftDrawer.getHandle().setDescription(TextUtils.expandTemplate(getText(R.string.rp_description_rendering), readingPlan.info.title, String.valueOf(readingPlan.info.duration), readingPlan.info.description));
 	}
 
 	private void loadReadingPlanProgress() {
@@ -264,7 +300,7 @@ public class ReadingPlanActivity extends BaseActivity {
 			}
 		}
 
-		ArrayAdapter<String> navigationAdapter = new ArrayAdapter<String>(actionBar.getThemedContext(), android.R.layout.simple_spinner_dropdown_item, titles);
+		final ArrayAdapter<String> navigationAdapter = new ArrayAdapter<>(actionBar.getThemedContext(), android.R.layout.simple_spinner_dropdown_item, titles);
 
 		newDropDownItems = false;
 		actionBar.setListNavigationCallbacks(navigationAdapter, new ActionBar.OnNavigationListener() {
@@ -282,13 +318,6 @@ public class ReadingPlanActivity extends BaseActivity {
 		});
 		actionBar.setSelectedNavigationItem(itemNumber);
 		return false;
-	}
-
-	private void setReadingPlanMenuVisibility() {
-		boolean visible = downloadedReadingPlanInfos.size() != 0;
-		menu.findItem(R.id.menuReset).setVisible(visible);
-		menu.findItem(R.id.menuDelete).setVisible(visible);
-		menu.findItem(R.id.menuAbout).setVisible(visible);
 	}
 
 	public void prepareDisplay() {
@@ -460,19 +489,10 @@ public class ReadingPlanActivity extends BaseActivity {
 				loadDayNumber(true);
 				prepareDropDownNavigation();
 				prepareDisplay();
-				setReadingPlanMenuVisibility();
+				supportInvalidateOptionsMenu();
 			}
 		})
 		.setNegativeButton(R.string.cancel, null)
-		.show();
-	}
-
-	private void showAbout() {
-		String message = getString(R.string.rp_aboutPlanMessage, readingPlan.info.title, readingPlan.info.description, readingPlan.info.duration);
-
-		new AlertDialog.Builder(ReadingPlanActivity.this)
-		.setMessage(message)
-		.setPositiveButton(R.string.ok, null)
 		.show();
 	}
 
@@ -496,7 +516,12 @@ public class ReadingPlanActivity extends BaseActivity {
 
 	}
 
-	class ReadingPlanServerEntry {
+	@Override
+	public void bCatchMeUp_click() {
+		resetReadingPlan();
+	}
+
+	static class ReadingPlanServerEntry {
 		public String name;
 		public String title;
 		public String description;
@@ -675,7 +700,7 @@ public class ReadingPlanActivity extends BaseActivity {
 				loadDayNumber(true);
 				prepareDropDownNavigation();
 				prepareDisplay();
-				setReadingPlanMenuVisibility();
+				supportInvalidateOptionsMenu();
 			}
 		}.start();
 	}

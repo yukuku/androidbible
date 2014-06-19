@@ -2,15 +2,15 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menuReset"
-        android:title="@string/rp_menuCatchMeUp"/>
-    <item
         android:id="@+id/menuDownload"
-        android:title="@string/rp_menuDownload"/>
+        android:title="@string/rp_menuDownload"
+		android:icon="@drawable/ic_menu_add_light"
+		android:showAsAction="always"
+		/>
     <item
         android:id="@+id/menuDelete"
-        android:title="@string/rp_menuDelete"/>
-    <item
-        android:id="@+id/menuAbout"
-        android:title="@string/rp_aboutPlan"/>
+        android:title="@string/rp_menuDelete"
+		android:icon="@android:drawable/ic_menu_delete"
+		android:showAsAction="always"
+		/>
 </menu>

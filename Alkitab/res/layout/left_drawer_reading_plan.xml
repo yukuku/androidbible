@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<view
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	class="yuku.alkitab.base.widget.LeftDrawer$ReadingPlan"
+	android:layout_width="240dp"
+	android:layout_height="match_parent"
+	android:background="#a000">
+
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:showDividers="middle">
+
+		<include
+			layout="@layout/left_drawer_header"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+		<ScrollView
+			android:id="@+id/scrollDescription"
+			android:layout_width="match_parent"
+			android:layout_height="96dp"
+			android:padding="8dp"
+			android:clipToPadding="false">
+
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:textAppearance="?android:textAppearanceSmall"
+				android:text="*Info Bla bla bla, bla bla, bla bla, bla bla, bla bla, blablabla, blablablabla."
+				android:id="@+id/tDescription"/>
+
+		</ScrollView>
+
+		<Button
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/rp_menuCatchMeUp"
+			android:drawableLeft="@android:drawable/ic_menu_revert"
+			android:drawablePadding="8dp"
+			android:id="@+id/bCatchMeUp"
+			style="?android:buttonBarButtonStyle"
+			android:gravity="left|center_vertical"/>
+
+		<include
+			layout="@layout/left_drawer_footer"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+	</LinearLayout>
+
+</view>

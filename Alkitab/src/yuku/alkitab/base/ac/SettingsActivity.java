@@ -32,6 +32,6 @@ public class SettingsActivity extends BasePreferenceActivity {
 	}
 
 	public static Intent createIntent() {
-		return new Intent(App.context, ReadingPlanActivity.class);
+		return new Intent(App.context, SettingsActivity.class);
 	}
 }

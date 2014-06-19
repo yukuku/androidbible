@@ -57,6 +57,7 @@ import org.json.JSONObject;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
+import yuku.alkitab.base.ac.BookmarkActivity;
 import yuku.alkitab.base.ac.GotoActivity;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.ac.Search2Activity;
@@ -2157,6 +2158,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 		}
 	};
+
+	@Override
+	public void bMarkers_click() {
+		startActivity(BookmarkActivity.createIntent());
+	}
 
 	@Override
 	public void bDisplay_click() {
