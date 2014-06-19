@@ -61,7 +61,6 @@ import yuku.alkitab.base.ac.BookmarkActivity;
 import yuku.alkitab.base.ac.GotoActivity;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.ac.Search2Activity;
-import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.ac.VersionsActivity.MVersion;
@@ -118,21 +117,21 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	public static final String TAG = IsiActivity.class.getSimpleName();
 
 	public static final String ACTION_ATTRIBUTE_MAP_CHANGED = "yuku.alkitab.action.ATTRIBUTE_MAP_CHANGED";
+	public static final String ACTION_SETTINGS_CHANGED = "yuku.alkitab.action.SETTINGS_CHANGED";
 
 	// The followings are for instant_pref
-	private static final String PREFKEY_lastBookId = "kitabTerakhir"; //$NON-NLS-1$
-	private static final String PREFKEY_lastChapter = "pasalTerakhir"; //$NON-NLS-1$
-	private static final String PREFKEY_lastVerse = "ayatTerakhir"; //$NON-NLS-1$
-	private static final String PREFKEY_lastVersionId = "edisiTerakhir"; //$NON-NLS-1$
+	private static final String PREFKEY_lastBookId = "kitabTerakhir";
+	private static final String PREFKEY_lastChapter = "pasalTerakhir";
+	private static final String PREFKEY_lastVerse = "ayatTerakhir";
+	private static final String PREFKEY_lastVersionId = "edisiTerakhir";
 
-	private static final String PREFKEY_lastSplitVersionId = "lastSplitVersionId"; //$NON-NLS-1$
+	private static final String PREFKEY_lastSplitVersionId = "lastSplitVersionId";
 	private static final int REQCODE_goto = 1;
-	private static final int REQCODE_settings = 4;
 	private static final int REQCODE_share = 7;
 	private static final int REQCODE_textAppearanceGetFonts = 9;
 	private static final int REQCODE_textAppearanceCustomColors = 10;
-
 	private static final int REQCODE_readingPlan = 11;
+
 	private static final String EXTRA_verseUrl = "verseUrl";
 	private boolean uncheckVersesWhenActionModeDestroyed = true;
 
@@ -297,6 +296,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
 			reloadBothAttributeMaps();
+		}
+	};
+
+	final BroadcastReceiver applyPreferencesReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			S.calculateAppliedValuesBasedOnPreferences();
+			applyPreferences(true);
 		}
 	};
 
@@ -472,6 +479,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 
 		App.getLbm().registerReceiver(reloadAttributeMapReceiver, new IntentFilter(ACTION_ATTRIBUTE_MAP_CHANGED));
+		App.getLbm().registerReceiver(applyPreferencesReceiver, new IntentFilter(ACTION_SETTINGS_CHANGED));
 	}
 
 	@Override
@@ -497,6 +505,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		super.onDestroy();
 
 		App.getLbm().unregisterReceiver(reloadAttributeMapReceiver);
+		App.getLbm().unregisterReceiver(applyPreferencesReceiver);
 	}
 
 	/**
@@ -1294,15 +1303,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					int ari_cv = display(result.chapter_1, result.verse_1);
 					history.add(Ari.encode(result.bookId, ari_cv));
 				}
-			}
-		} else if (requestCode == REQCODE_settings) {
-			// MUST reload preferences
-			S.calculateAppliedValuesBasedOnPreferences();
-
-			applyPreferences(true);
-
-			if (resultCode == SettingsActivity.RESULT_openTextAppearance) {
-				setShowTextAppearancePanel(true);
 			}
 		} else if (requestCode == REQCODE_share) {
 			if (resultCode == RESULT_OK) {

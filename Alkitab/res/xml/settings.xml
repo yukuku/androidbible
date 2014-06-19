@@ -1,45 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <Preference
-        android:key="@string/pref_help_text_appearance_key"
-        android:persistent="false"
-        android:summary="@string/pref_help_text_appearance_summary"
-        android:title="@string/pref_help_text_appearance_title" />
+	<PreferenceCategory android:title="@string/pref_penampilan_layar">
+		<ListPreference
+			android:defaultValue="@string/pref_bahasa_default"
+			android:entries="@array/pref_language_labels"
+			android:entryValues="@array/pref_language_values"
+			android:key="@string/pref_language_key"
+			android:title="@string/pref_bahasa_language" />
 
-    <PreferenceCategory android:title="@string/pref_penampilan_layar" >
-        <ListPreference
-            android:defaultValue="@string/pref_bahasa_default"
-            android:entries="@array/pref_language_labels"
-            android:entryValues="@array/pref_language_values"
-            android:key="@string/pref_language_key"
-            android:title="@string/pref_bahasa_language" />
+		<CheckBoxPreference
+			android:defaultValue="@bool/pref_keepScreenOn_default"
+			android:key="@string/pref_keepScreenOn_key"
+			android:summary="@string/pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab"
+			android:title="@string/pref_biarkan_layar_menyala" />
+	</PreferenceCategory>
+	<PreferenceCategory android:title="@string/pref_penggunaan">
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="@string/pref_alphabeticBookSort_key"
+			android:summary="@string/pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya"
+			android:title="@string/pref_kitab_menurut_abjad" />
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="@string/pref_copyWithVerseNumbers_key"
+			android:summary="@string/pref_copyWithVerseNumbers_summary"
+			android:title="@string/pref_copyWithVerseNumbers_title" />
 
-        <CheckBoxPreference
-            android:defaultValue="@bool/pref_keepScreenOn_default"
-            android:key="@string/pref_keepScreenOn_key"
-            android:summary="@string/pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab"
-            android:title="@string/pref_biarkan_layar_menyala" />
-    </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_penggunaan" >
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="@string/pref_alphabeticBookSort_key"
-            android:summary="@string/pref_tampilkan_kitab_dalam_urutan_abjad_bukan_urutan_aslinya"
-            android:title="@string/pref_kitab_menurut_abjad" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="@string/pref_copyWithVerseNumbers_key"
-            android:summary="@string/pref_copyWithVerseNumbers_summary"
-            android:title="@string/pref_copyWithVerseNumbers_title" />
-
-        <ListPreference
-            android:defaultValue="@string/pref_volumeButtonNavigation_default"
-            android:entries="@array/pref_volumeButtonNavigation_labels"
-            android:entryValues="@array/pref_volumeButtonNavigation_values"
-            android:key="@string/pref_volumeButtonNavigation_key"
-            android:summary="@string/pref_volumeButtonNavigation_summary"
-            android:title="@string/pref_volumeButtonNavigation_title" />
-    </PreferenceCategory>
+		<ListPreference
+			android:defaultValue="@string/pref_volumeButtonNavigation_default"
+			android:entries="@array/pref_volumeButtonNavigation_labels"
+			android:entryValues="@array/pref_volumeButtonNavigation_values"
+			android:key="@string/pref_volumeButtonNavigation_key"
+			android:summary="@string/pref_volumeButtonNavigation_summary"
+			android:title="@string/pref_volumeButtonNavigation_title" />
+	</PreferenceCategory>
 
 </PreferenceScreen>
