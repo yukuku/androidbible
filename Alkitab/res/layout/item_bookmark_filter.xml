@@ -1,54 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:minHeight="64dp" >
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:minHeight="48dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:gravity="center_vertical"
-        android:paddingLeft="8dp"
-        android:paddingRight="64dp" >
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_vertical"
+		android:gravity="center_vertical"
+		android:paddingLeft="8dp"
+		android:paddingRight="64dp">
 
-        <ImageView
-            android:id="@+id/imgFilterIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="8dp"
-            android:src="@drawable/ic_attr_note"
-            tools:ignore="ContentDescription" />
+		<ImageView
+			android:id="@+id/imgFilterIcon"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginRight="8dp"
+			android:src="@drawable/ic_attr_note"
+			tools:ignore="ContentDescription" />
 
-        <TextView
-            android:id="@+id/lFilterLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/label_filter_bg"
-            android:paddingBottom="4dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="4dp"
-            android:text="*label"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#000"
-            tools:ignore="HardcodedText" />
+		<TextView
+			android:id="@+id/lFilterLabel"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:background="@drawable/label_filter_bg"
+			android:paddingBottom="4dp"
+			android:paddingLeft="8dp"
+			android:paddingRight="8dp"
+			android:paddingTop="4dp"
+			android:text="*label"
+			android:textColor="#fff"
+			android:textSize="16sp"
+			tools:ignore="HardcodedText" />
 
-        <TextView
-            android:id="@+id/lFilterCaption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="*nonlabel"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            tools:ignore="HardcodedText" />
-    </LinearLayout>
+		<TextView
+			android:id="@+id/lFilterCaption"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="*nonlabel"
+			android:textSize="16sp"
+			tools:ignore="HardcodedText" />
+	</LinearLayout>
 
-    <!-- using include for API<=10 compat -->
-
-    <include
-        android:id="@+id/drag_handle"
-        layout="@layout/bookmark_filter_drag_handle"
-        android:contentDescription="@string/desc_drag_to_reorder_labels" />
+	<yuku.alkitab.base.widget.DragGripView
+		android:id="@+id/drag_handle"
+		android:layout_width="64dp"
+		android:layout_height="match_parent"
+		android:layout_gravity="fill_vertical|right"
+		android:color="#5c5c5c"
+		android:contentDescription="@string/desc_drag_to_reorder_labels"
+		android:gravity="right"
+		android:paddingBottom="12dp"
+		android:paddingRight="16dp"
+		android:paddingTop="12dp" />
 
 </FrameLayout>

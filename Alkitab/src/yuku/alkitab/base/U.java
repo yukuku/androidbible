@@ -234,7 +234,7 @@ public class U {
 	public static void applyLabelColor(Label label, TextView view) {
 		int bgColorRgb = U.decodeLabelBackgroundColor(label.backgroundColor);
 		if (bgColorRgb == -1) {
-			bgColorRgb = 0x777777; // standard color
+			bgColorRgb = 0x444444; // default color
 		}
 		
 		GradientDrawable grad = null;

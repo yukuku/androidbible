@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:paddingLeft="8dp" >
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:gravity="center_vertical"
+	android:minHeight="48dp"
+	android:paddingLeft="8dp">
 
-    <TextView
-        android:id="@android:id/text1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/label_filter_bg"
-        android:paddingBottom="4dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="4dp"
-        android:text="Suatu label"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#000"
-        tools:ignore="HardcodedText" />
+	<TextView
+		android:id="@android:id/text1"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:background="@drawable/label_filter_bg"
+		android:paddingBottom="4dp"
+		android:paddingLeft="8dp"
+		android:paddingRight="8dp"
+		android:paddingTop="4dp"
+		android:text="*Label name"
+		android:textColor="#fff"
+		android:textSize="16sp"
+		tools:ignore="HardcodedText" />
 
 </LinearLayout>
