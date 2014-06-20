@@ -119,7 +119,7 @@ public abstract class LeftDrawer extends ScrollView {
 		return false;
 	}
 
-	void closeDrawer() {
+	public void closeDrawer() {
 		drawerLayout.closeDrawer(Gravity.LEFT);
 	}
 

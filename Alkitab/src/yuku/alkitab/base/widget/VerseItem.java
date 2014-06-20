@@ -141,7 +141,9 @@ public class VerseItem extends LinearLayout implements Checkable {
 				progressMark.modifyTime = new Date();
 				S.getDb().updateProgressMark(progressMark);
 
-				App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
+				final Intent intent = new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED);
+				intent.putExtra(IsiActivity.EXTRA_CLOSE_DRAWER, true);
+				App.getLbm().sendBroadcast(intent);
 
 				return true;
 		}

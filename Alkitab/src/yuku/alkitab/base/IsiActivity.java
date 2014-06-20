@@ -118,6 +118,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	public static final String TAG = IsiActivity.class.getSimpleName();
 
 	public static final String ACTION_ATTRIBUTE_MAP_CHANGED = "yuku.alkitab.action.ATTRIBUTE_MAP_CHANGED";
+	public static final String EXTRA_CLOSE_DRAWER = "close_drawer";
+
 	public static final String ACTION_SETTINGS_CHANGED = "yuku.alkitab.action.SETTINGS_CHANGED";
 
 	// The followings are for instant_pref
@@ -297,6 +299,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
 			reloadBothAttributeMaps();
+
+			if (intent.getBooleanExtra(EXTRA_CLOSE_DRAWER, false)) {
+				leftDrawer.closeDrawer();
+			}
 		}
 	};
 
