@@ -55,9 +55,10 @@
                 android:layout_marginBottom="16dp"
                 android:layout_marginTop="32dp"
                 android:gravity="center_horizontal"
-                android:text="100% free Bible app, licensed under Apache License 2.0"
+                android:text="100% free Bible app, licensed under Apache License 2.0\nwww.bibleforandroid.com"
                 android:textSize="16sp"
-                tools:ignore="HardcodedText"/>
+                tools:ignore="HardcodedText"
+				android:autoLink="all" />
 
 
         </LinearLayout>
@@ -177,23 +178,7 @@
                 android:textSize="16sp"
                 tools:ignore="HardcodedText"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:tag="bold"
-                android:text="@string/beta_tester_program_title"
-                android:textSize="16sp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:autoLink="web"
-                android:gravity="center_horizontal"
-                android:text="@string/beta_tester_program_desc"
-                android:textSize="16sp"/>
-
-            <TextView
+			<TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
