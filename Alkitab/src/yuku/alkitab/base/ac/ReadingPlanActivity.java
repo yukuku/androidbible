@@ -47,6 +47,7 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
+import yuku.alkitabintegration.display.Launcher;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -63,10 +64,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.ReadingPlan.Listener {
 	public static final String TAG = ReadingPlanActivity.class.getSimpleName();
-
-	public static final String READING_PLAN_ARI_RANGES = "reading_plan_ari_ranges";
-	public static final String READING_PLAN_ID = "reading_plan_id";
-	public static final String READING_PLAN_DAY_NUMBER = "reading_plan_day_number";
 
 	DrawerLayout drawerLayout;
 	ActionBarDrawerToggle drawerToggle;
@@ -92,12 +89,6 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 
 	public static Intent createIntent() {
 		return new Intent(App.context, ReadingPlanActivity.class);
-	}
-
-	public static Intent createIntent(int dayNumber) {
-		final Intent intent = new Intent(App.context, ReadingPlanActivity.class);
-		intent.putExtra(READING_PLAN_DAY_NUMBER, dayNumber);
-		return intent;
 	}
 
 	@Override
@@ -130,7 +121,7 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 		loadReadingPlan(id);
 		loadReadingPlanProgress();
 		prepareDropDownNavigation();
-		loadDayNumber(false);
+		loadDayNumber();
 		prepareDisplay();
 	}
 
@@ -223,19 +214,12 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 
 	public void goToIsiActivity(final int dayNumber, final int sequence) {
 		final int[] selectedVerses = readingPlan.dailyVerses[dayNumber];
-		int ari = selectedVerses[sequence * 2];
+		final int ari = selectedVerses[sequence * 2];
 
-		Intent intent = new Intent();
-		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		intent.putExtra("ari", ari);
-		intent.putExtra(READING_PLAN_ID, readingPlan.info.id);
-		intent.putExtra(READING_PLAN_DAY_NUMBER, dayNumber);
-		intent.putExtra(READING_PLAN_ARI_RANGES, selectedVerses);
-		setResult(RESULT_OK, intent);
-		finish();
+		startActivity(Launcher.openAppAtBibleLocation(ari));
 	}
 
-	private void loadDayNumber(boolean setAsToday) {
+	private void loadDayNumber() {
 		if (readingPlan == null) {
 			return;
 		}
@@ -250,14 +234,7 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 			todayNumber = 0;
 		}
 
-		if (setAsToday) {
-			dayNumber = todayNumber;
-		} else {
-			dayNumber = getIntent().getIntExtra(READING_PLAN_DAY_NUMBER, -1);
-			if (dayNumber == -1) {
-				dayNumber = todayNumber;
-			}
-		}
+		dayNumber = todayNumber;
 	}
 
 	private int calculateDaysDiff(Calendar startCalendar, Calendar endCalendar) {
@@ -308,7 +285,7 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 				if (newDropDownItems) {
 					loadReadingPlan(downloadedReadingPlanInfos.get(i).id);
 					loadReadingPlanProgress();
-					loadDayNumber(true);
+					loadDayNumber();
 					prepareDisplay();
 				}
 				newDropDownItems = true;
@@ -372,7 +349,7 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 			}
 
 			private void gotoToday() {
-				loadDayNumber(true);
+				loadDayNumber();
 				changeDay(0);
 			}
 
@@ -387,22 +364,22 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 				calendar.add(Calendar.DATE, dayNumber);
 
 				DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-			        @Override
-			        public void onDateSet(final DatePicker view, final int year, final int monthOfYear, final int dayOfMonth) {
-				        Calendar newCalendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
-				        Calendar startCalendar = GregorianCalendar.getInstance();
-				        startCalendar.setTimeInMillis(readingPlan.info.startTime);
+					@Override
+					public void onDateSet(final DatePicker view, final int year, final int monthOfYear, final int dayOfMonth) {
+						Calendar newCalendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+						Calendar startCalendar = GregorianCalendar.getInstance();
+						startCalendar.setTimeInMillis(readingPlan.info.startTime);
 
-				        int newDay = calculateDaysDiff(startCalendar, newCalendar);
-				        if (newDay < 0) {
-					        newDay = 0;
-				        } else if (newDay >= readingPlan.info.duration) {
-					        newDay = readingPlan.info.duration - 1;
-				        }
-				        dayNumber = newDay;
-				        changeDay(0);
-			        }
-		        };
+						int newDay = calculateDaysDiff(startCalendar, newCalendar);
+						if (newDay < 0) {
+							newDay = 0;
+						} else if (newDay >= readingPlan.info.duration) {
+							newDay = readingPlan.info.duration - 1;
+						}
+						dayNumber = newDay;
+						changeDay(0);
+					}
+				};
 
 				DatePickerDialog datePickerDialog = new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 				datePickerDialog.show();
@@ -435,7 +412,7 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 				calendar.add(Calendar.DATE, -firstUnreadDay);
 				S.getDb().updateStartDate(readingPlan.info.id, calendar.getTime().getTime());
 				loadReadingPlan(readingPlan.info.id);
-				loadDayNumber(true);
+				loadDayNumber();
 				readingPlanAdapter.load();
 				readingPlanAdapter.notifyDataSetChanged();
 
@@ -471,7 +448,7 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 				Preferences.remove(Prefkey.active_reading_plan_id);
 				loadReadingPlan(0);
 				loadReadingPlanProgress();
-				loadDayNumber(true);
+				loadDayNumber();
 				prepareDropDownNavigation();
 				prepareDisplay();
 				supportInvalidateOptionsMenu();
@@ -561,7 +538,7 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 
 			/** run on ui thread */
 			void onReadingPlanListDownloadFinished(final ReadingPlanServerEntry[] entries) {
-				final List<ReadingPlanServerEntry> readingPlanDownloadableEntries = new ArrayList<ReadingPlanServerEntry>();
+				final List<ReadingPlanServerEntry> readingPlanDownloadableEntries = new ArrayList<>();
 				final List<String> downloadedNames = S.getDb().listReadingPlanNames();
 				for (final ReadingPlanServerEntry entry : entries) {
 					if (!downloadedNames.contains(entry.name)) {
@@ -682,7 +659,7 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 				Preferences.setLong(Prefkey.active_reading_plan_id, id);
 				loadReadingPlan(id);
 				loadReadingPlanProgress();
-				loadDayNumber(true);
+				loadDayNumber();
 				prepareDropDownNavigation();
 				prepareDisplay();
 				supportInvalidateOptionsMenu();
@@ -691,13 +668,11 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 	}
 
 	private float getActualPercentage() {
-		float res = 100.f * countRead() / countAllReadings();
-		return res;
+		return 100.f * countRead() / countAllReadings();
 	}
 
 	private float getTargetPercentage() {
-		float res = 100.f * countTarget() / countAllReadings();
-		return res;
+		return 100.f * countTarget() / countAllReadings();
 	}
 
 	private int countRead() {
@@ -726,8 +701,7 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 		calendar.setTimeInMillis(readingPlan.info.startTime);
 		calendar.add(Calendar.DATE, dayNumber);
 
-		String date = getString(R.string.rp_dayHeader, (dayNumber + 1), Sqlitil.toLocaleDateMedium(calendar.getTime()));
-		return date;
+		return getString(R.string.rp_dayHeader, (dayNumber + 1), Sqlitil.toLocaleDateMedium(calendar.getTime()));
 	}
 
 	public static StringBuilder getReference(final Version version, final int ari_start, final int ari_end) {

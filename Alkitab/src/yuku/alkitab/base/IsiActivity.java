@@ -45,7 +45,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -60,7 +59,6 @@ import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.ac.BookmarkActivity;
 import yuku.alkitab.base.ac.GotoActivity;
-import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.ac.Search2Activity;
 import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.ac.VersionsActivity;
@@ -90,7 +88,6 @@ import yuku.alkitab.base.widget.FormattedTextRenderer;
 import yuku.alkitab.base.widget.GotoButton;
 import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.LeftDrawer;
-import yuku.alkitab.base.widget.ReadingPlanFloatMenu;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
 import yuku.alkitab.base.widget.TouchInterceptLinearLayout;
@@ -244,8 +241,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	ImageButton bRight;
 	Button bVersion;
 	Floater floater;
-	ReadingPlanFloatMenu readingPlanFloatMenu;
-	
+
 	Book activeBook;
 	int chapter_1 = 0;
 	SharedPreferences instant_pref;
@@ -349,7 +345,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		splitHandle = V.get(this, R.id.splitHandle);
 		splitHandleButton = V.get(this, R.id.splitHandleButton);
 		floater = V.get(this, R.id.floater);
-		readingPlanFloatMenu = V.get(this, R.id.readingPlanFloatMenu);
 
 		applyPreferences(false);
 
@@ -401,7 +396,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsText.setInlineLinkSpanFactory(new VerseInlineLinkSpanFactory(lsText));
 		lsText.setSelectedVersesListener(lsText_selectedVerses);
 		lsText.setOnVerseScrollListener(lsText_verseScroll);
-		lsText.setOnVerseScrollStateChangeListener(verseScrollState);
 
 		// additional setup for split1
 		lsSplit1.setVerseSelectionMode(VersesView.VerseSelectionMode.multiple);
@@ -411,7 +405,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsSplit1.setInlineLinkSpanFactory(new VerseInlineLinkSpanFactory(lsSplit1));
 		lsSplit1.setSelectedVersesListener(lsSplit1_selectedVerses);
 		lsSplit1.setOnVerseScrollListener(lsSplit1_verseScroll);
-		lsSplit1.setOnVerseScrollStateChangeListener(verseScrollState);
 
 		// for splitting
 		splitHandleButton.setListener(splitHandleButton_listener);
@@ -541,7 +534,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		final IntentResult result = tryGetIntentResultFromView(intent);
 		if (result != null) return result;
 
-		return result;
+		return null;
 	}
 	
 	/** did we get here from VIEW intent? */
@@ -1344,77 +1337,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			S.calculateAppliedValuesBasedOnPreferences();
 
 			applyPreferences(true);
-		} else if (requestCode == REQCODE_readingPlan) {
-			if (data == null && !readingPlanFloatMenu.isActive) {
-				return;
-			} else if (data == null) {
-				if (readingPlanFloatMenu.getReadingPlanId() != Preferences.getLong(Prefkey.active_reading_plan_id, 0)) {
-					readingPlanFloatMenu.setVisibility(View.GONE);
-					readingPlanFloatMenu.isActive = false;
-					return;
-				}
-				readingPlanFloatMenu.setVisibility(View.VISIBLE);
-				readingPlanFloatMenu.fadeoutAnimation(5000);
-				readingPlanFloatMenu.updateProgress();
-				readingPlanFloatMenu.updateLayout();
-				return;
-			}
-
-			readingPlanFloatMenu.setVisibility(View.VISIBLE);
-			readingPlanFloatMenu.fadeoutAnimation(5000);
-			readingPlanFloatMenu.isActive = true;
-
-			final int ari = data.getIntExtra("ari", 0);
-			final long id = data.getLongExtra(ReadingPlanActivity.READING_PLAN_ID, 0L);
-			final int dayNumber = data.getIntExtra(ReadingPlanActivity.READING_PLAN_DAY_NUMBER, 0);
-			final int[] ariRanges = data.getIntArrayExtra(ReadingPlanActivity.READING_PLAN_ARI_RANGES);
-
-			if (ari != 0 && ariRanges != null) {
-				for (int i = 0; i < ariRanges.length; i++) {
-					if (ariRanges[i] == ari) {
-						jumpToAri(ari);
-						history.add(ari);
-
-						lsText.updateAdapter();
-						lsSplit1.updateAdapter();
-
-						readingPlanFloatMenu.load(id, dayNumber, ariRanges, i / 2);
-						final ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener navigationClickListener = new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
-							@Override
-							public void onClick(final int ari_start, final int ari_end) {
-								int ari_jump = ari_start;
-								if (Ari.toVerse(ari_start) == 0) {
-									ari_jump |= 1;
-								}
-								jumpToAri(ari_jump);
-								history.add(ari_jump);
-								lsText.updateAdapter();
-								lsSplit1.updateAdapter();
-							}
-						};
-						readingPlanFloatMenu.setLeftNavigationClickListener(navigationClickListener);
-						readingPlanFloatMenu.setRightNavigationClickListener(navigationClickListener);
-						readingPlanFloatMenu.setDescriptionListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
-							@Override
-							public void onClick(final int ari_start, final int ari_end) {
-								startActivityForResult(ReadingPlanActivity.createIntent(dayNumber), REQCODE_readingPlan);
-							}
-						});
-						readingPlanFloatMenu.setCloseReadingModeClickListener(new ReadingPlanFloatMenu.ReadingPlanFloatMenuClickListener() {
-							@Override
-							public void onClick(final int ari_start, final int ari_end) {
-								readingPlanFloatMenu.clearAnimation();
-								readingPlanFloatMenu.setVisibility(View.GONE);
-								readingPlanFloatMenu.isActive = false;
-								lsText.updateAdapter();
-								lsSplit1.updateAdapter();
-							}
-						});
-
-						break;
-					}
-				}
-			}
 		}
 	}
 
@@ -1776,24 +1698,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 
 		@Override public void onVerseSingleClick(VersesView v, int verse_1) {}
-	};
-
-	VersesView.OnVerseScrollStateChangeListener verseScrollState = new VersesView.OnVerseScrollStateChangeListener() {
-		@Override
-		public void onVerseScrollStateChange(final VersesView versesView, final int scrollState) {
-			if (!readingPlanFloatMenu.isActive) {
-				return;
-			}
-			if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-				readingPlanFloatMenu.isAnimating = false;
-				readingPlanFloatMenu.clearAnimation();
-				readingPlanFloatMenu.setVisibility(View.VISIBLE);
-			} else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
-				readingPlanFloatMenu.setVisibility(View.VISIBLE);
-			} else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && readingPlanFloatMenu.getVisibility() != View.GONE) {
-				readingPlanFloatMenu.fadeoutAnimation(3000);
-			}
-		}
 	};
 
 	VersesView.OnVerseScrollListener lsText_verseScroll = new VersesView.OnVerseScrollListener() {
