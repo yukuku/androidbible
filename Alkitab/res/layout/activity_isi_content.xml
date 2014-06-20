@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-			 xmlns:tools="http://schemas.android.com/tools"
-			 android:id="@+id/overlayContainer"
-			 android:layout_width="fill_parent"
-			 android:layout_height="fill_parent">
+<FrameLayout
+	android:id="@+id/overlayContainer"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
 
 	<LinearLayout
 		android:id="@+id/root"
@@ -24,12 +25,12 @@
 				android:id="@+id/lsSplit0"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
+				android:clipToPadding="false"
+				android:paddingBottom="@dimen/text_topbottom_padding"
 				android:paddingLeft="@dimen/text_side_padding"
 				android:paddingRight="@dimen/text_side_padding"
 				android:paddingTop="@dimen/text_topbottom_padding"
-				android:paddingBottom="@dimen/text_topbottom_padding"
-				android:clipToPadding="false"
-				android:scrollbarStyle="outsideOverlay"/>
+				android:scrollbarStyle="outsideOverlay" />
 
 			<FrameLayout
 				android:id="@+id/splitHandle"
@@ -40,8 +41,7 @@
 				<yuku.alkitab.base.widget.LabeledSplitHandleButton
 					android:id="@+id/splitHandleButton"
 					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					tools:ignore="ContentDescription"/>
+					android:layout_height="match_parent" />
 			</FrameLayout>
 
 			<FrameLayout
@@ -52,12 +52,12 @@
 					android:id="@+id/lsSplit1"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
+					android:clipToPadding="false"
+					android:paddingBottom="@dimen/text_topbottom_padding"
 					android:paddingLeft="@dimen/text_side_padding"
 					android:paddingRight="@dimen/text_side_padding"
 					android:paddingTop="@dimen/text_topbottom_padding"
-					android:paddingBottom="@dimen/text_topbottom_padding"
-					android:clipToPadding="false"
-					android:scrollbarStyle="outsideOverlay"/>
+					android:scrollbarStyle="outsideOverlay" />
 
 				<TextView
 					android:id="@+id/tSplitEmpty"
@@ -67,7 +67,7 @@
 					android:paddingLeft="32dp"
 					android:paddingRight="32dp"
 					android:textAppearance="?android:attr/textAppearanceMedium"
-					tools:ignore="SelectableText"/>
+					tools:ignore="SelectableText" />
 			</FrameLayout>
 		</yuku.alkitab.base.widget.TouchInterceptLinearLayout>
 
@@ -78,17 +78,16 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:padding="8dp"
-		android:visibility="gone"/>
+		android:visibility="gone" />
 
 	<yuku.alkitab.base.widget.ReadingPlanFloatMenu
 		android:id="@+id/readingPlanFloatMenu"
 		android:layout_width="300dp"
 		android:layout_height="40dp"
-		android:background="#dd202020"
 		android:layout_gravity="bottom|right"
 		android:layout_marginBottom="60dp"
 		android:layout_marginRight="8dp"
-		android:visibility="gone"
-		/>
+		android:background="#dd202020"
+		android:visibility="gone" />
 
 </FrameLayout>

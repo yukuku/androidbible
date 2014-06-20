@@ -1,15 +1,11 @@
 package yuku.alkitab.base.widget;
 
-import static android.view.MotionEvent.ACTION_CANCEL;
-import static android.view.MotionEvent.ACTION_DOWN;
-import static android.view.MotionEvent.ACTION_MASK;
-import static android.view.MotionEvent.ACTION_MOVE;
-import static android.view.MotionEvent.ACTION_UP;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.Button;
+
+import static android.view.MotionEvent.*;
 
 public class SplitHandleButton extends Button {
 	public static final String TAG = SplitHandleButton.class.getSimpleName();

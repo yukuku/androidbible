@@ -3,11 +3,10 @@ package yuku.alkitab.base.widget;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
 
 
 public class LabeledSplitHandleButton extends SplitHandleButton {
@@ -18,7 +17,7 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 	String label2 = null;
 	Paint labelPaint = new Paint();
 	Paint bezelPaint = new Paint();
-	float textSize = 11.5f;
+	float textSize = 14f;
 	float label1width = 0;
 	float label2width = 0;
 	boolean label1pressed = false;
@@ -43,6 +42,7 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 		labelPaint.setColor(0xffffffff);
 		labelPaint.setShadowLayer(2.f * density, 0, 0, 0xff000000);
 		labelPaint.setTextSize(textSize * density);
+		labelPaint.setTypeface(Typeface.DEFAULT_BOLD);
 		labelPaint.setAntiAlias(true);
 		bezelPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 	}
@@ -110,9 +110,6 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 	@Override protected void onDraw(Canvas canvas) {
 		// DO NOT CALL super.onDraw(canvas);
 
-		U.rgbToHsl(S.applied.backgroundColor, tmp_hsl);
-		float orig_l = tmp_hsl[2];
-		
 		// always draw unpressed bg color first
 		canvas.drawColor(0xff222222);
 
@@ -131,10 +128,8 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 			}
 		}
 
-		// bezels: very dark and light version
-		int bezelHeight = (int) (1.5f * density + 0.5);
-		tmp_hsl[2] = (1.f + orig_l) * 0.5f;
-		bezelPaint.setColor(U.hslToRgb(tmp_hsl) | 0xff000000);
+		bezelPaint.setColor(0xff111111);
+		final int bezelHeight = (int) (1.5f * density + 0.5);
 		canvas.drawRect(0, getHeight() - bezelHeight, getWidth(), getHeight(), bezelPaint);
 		
 		if (label1 != null) {
