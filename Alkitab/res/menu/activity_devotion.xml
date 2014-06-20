@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu
-	xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
 	<item
-		android:title="@string/salin_renungan"
-		android:id="@+id/menuCopy"
-		android:showAsAction="never"/>
+		android:id="@+id/menuCopyShare"
+		android:icon="@drawable/ic_menu_copyshare"
+		android:showAsAction="always"
+		android:title="@string/copy_share">
+		<menu>
+			<item
+				android:id="@+id/menuCopy"
+				android:icon="@drawable/ic_menu_copy"
+				android:showAsAction="always"
+				android:title="@string/salin_renungan" />
+			<item
+				android:id="@+id/menuShare"
+				android:icon="@drawable/ic_menu_share"
+				android:showAsAction="always"
+				android:title="@string/bagikan" />
+		</menu>
+	</item>
+
 	<item
-		android:title="@string/bagikan"
-		android:id="@+id/menuShare"
-		android:showAsAction="never"/>
-	<item
-		android:title="@string/redownload"
-		android:id="@+id/menuRedownload"
-		android:showAsAction="never"/>
-	<item
-		android:title="@string/dr_reminder"
 		android:id="@+id/menuReminder"
-		android:showAsAction="never"/>
+		android:icon="@drawable/ic_action_reminder"
+		android:showAsAction="always"
+		android:title="@string/dr_reminder" />
 </menu>

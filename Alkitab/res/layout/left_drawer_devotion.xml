@@ -1,67 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <view
+	class="yuku.alkitab.base.widget.LeftDrawer$Devotion"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	class="yuku.alkitab.base.widget.LeftDrawer$Devotion"
 	android:layout_width="240dp"
 	android:layout_height="match_parent"
 	android:background="#a000">
 
 	<LinearLayout
-		android:orientation="vertical"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:orientation="vertical"
 		android:showDividers="middle">
 
 		<include
 			layout="@layout/left_drawer_header"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"/>
+			android:layout_height="wrap_content" />
 
 		<Spinner
 			android:id="@+id/cbKind"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
 			android:text="*devotion name"
-			tools:ignore="HardcodedText"/>
+			tools:ignore="HardcodedText" />
 
 		<TextView
+			android:id="@+id/tCurrentDate"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
-			android:id="@+id/tCurrentDate"
+			android:gravity="center"
 			android:text="*current date"
-			tools:ignore="HardcodedText"
-			android:gravity="center"/>
+			android:textSize="16sp"
+			tools:ignore="HardcodedText" />
 
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
-			android:orientation="horizontal">
+			android:divider="@android:drawable/divider_horizontal_dark"
+			android:dividerPadding="2dp"
+			android:orientation="horizontal"
+			android:showDividers="middle">
 
 			<ImageButton
 				android:id="@+id/bPrev"
-				android:contentDescription="@string/desc_previous_day"
-				android:src="@drawable/ic_nav_left_light"
+				style="?android:buttonBarButtonStyle"
 				android:layout_width="0dp"
 				android:layout_height="match_parent"
 				android:layout_weight="1"
-				style="?android:buttonBarButtonStyle"/>
+				android:contentDescription="@string/desc_previous_day"
+				android:src="@drawable/ic_nav_left_light" />
+
+			<ImageButton
+				android:id="@+id/bReload"
+				style="?android:buttonBarButtonStyle"
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_weight="1"
+				android:contentDescription="@string/redownload"
+				android:src="@drawable/ic_action_reload" />
 
 			<ImageButton
 				android:id="@+id/bNext"
-				android:contentDescription="@string/desc_next_day"
-				android:src="@drawable/ic_nav_right_light"
+				style="?android:buttonBarButtonStyle"
 				android:layout_width="0dp"
 				android:layout_height="match_parent"
 				android:layout_weight="1"
-				style="?android:buttonBarButtonStyle"/>
+				android:contentDescription="@string/desc_next_day"
+				android:src="@drawable/ic_nav_right_light" />
 		</LinearLayout>
 
 		<include
 			layout="@layout/left_drawer_footer"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"/>
+			android:layout_height="wrap_content" />
 
 	</LinearLayout>
 

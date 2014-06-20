@@ -81,6 +81,11 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	}
 
 	@Override
+	public void bReload_click() {
+		willNeed(this.currentKind, yyyymmdd.get().format(currentDate), true);
+	}
+
+	@Override
 	public void cbKind_itemSelected(final DevotionKind kind) {
 		currentKind = kind;
 		Preferences.setString(Prefkey.devotion_last_kind_name, currentKind.name);
@@ -317,10 +322,6 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			.setText(getCurrentDateDisplay() + "\n\n" + lContent.getText())
 			.getIntent();
 			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_renungan)), REQCODE_share);
-			
-			return true;
-		} else if (itemId == R.id.menuRedownload) {
-			willNeed(this.currentKind, yyyymmdd.get().format(currentDate), true);
 			
 			return true;
 		} else if (itemId == R.id.menuReminder) {

@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -33,9 +34,9 @@ import yuku.alkitab.debug.R;
 public abstract class LeftDrawer extends ScrollView {
 
 	// mandatory
-	View bBible;
-	View bDevotion;
-	View bReadingPlan;
+	Button bBible;
+	Button bDevotion;
+	Button bReadingPlan;
 	View bSettings;
 	View bHelp;
 
@@ -62,6 +63,10 @@ public abstract class LeftDrawer extends ScrollView {
 		bReadingPlan = V.get(this, R.id.bReadingPlan);
 		bSettings = V.get(this, R.id.bSettings);
 		bHelp = V.get(this, R.id.bHelp);
+
+		if (this instanceof Text) bBible.setTextColor(0xff33b5e5);
+		if (this instanceof Devotion) bDevotion.setTextColor(0xff33b5e5);
+		if (this instanceof ReadingPlan) bReadingPlan.setTextColor(0xff33b5e5);
 
 		bBible.setOnClickListener(new OnClickListener() {
 			@Override
@@ -303,18 +308,20 @@ public abstract class LeftDrawer extends ScrollView {
 		public interface Listener {
 			void bPrev_click(TextView tCurrentDate);
 			void bNext_click(TextView tCurrentDate);
+			void bReload_click();
 			void cbKind_itemSelected(DevotionActivity.DevotionKind kind);
 		}
 
 		public interface Handle {
 			void setDevotionDate(CharSequence date);
-			void setDevotionKind(final DevotionActivity.DevotionKind kind);
+			void setDevotionKind(DevotionActivity.DevotionKind kind);
 		}
 
 		Spinner cbKind;
 		TextView tCurrentDate;
 		View bPrev;
 		View bNext;
+		View bReload;
 
 		Listener listener;
 		Handle handle = new Handle() {
@@ -348,6 +355,7 @@ public abstract class LeftDrawer extends ScrollView {
 			tCurrentDate = V.get(this, R.id.tCurrentDate);
 			bPrev = V.get(this, R.id.bPrev);
 			bNext = V.get(this, R.id.bNext);
+			bReload = V.get(this, R.id.bReload);
 
 			cbKind.setAdapter(new EasyAdapter() {
 				@Override
@@ -401,6 +409,14 @@ public abstract class LeftDrawer extends ScrollView {
 				@Override
 				public void onClick(final View v) {
 					listener.bNext_click(tCurrentDate);
+				}
+			});
+
+			bReload.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					listener.bReload_click();
+					closeDrawer();
 				}
 			});
 		}
