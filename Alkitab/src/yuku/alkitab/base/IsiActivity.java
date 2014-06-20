@@ -961,6 +961,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			textAppearancePanel = null;
 		} else if (fullScreen) {
 			setFullScreen(false);
+			leftDrawer.getHandle().setFullScreen(false);
 		} else {
 			super.onBackPressed();
 		}
