@@ -12,7 +12,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="jdk" jdkName="1.7" jdkType="JavaSDK" />
+    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="module" module-name="BintexWriter" exported="" />
     <orderEntry type="module" module-name="BintexReader" exported="" />
     <orderEntry type="module" module-name="Snappy" exported="" />
