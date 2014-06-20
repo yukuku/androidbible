@@ -18,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -343,21 +342,7 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 		readingPlanAdapter.load();
 		lsReadingPlan.setAdapter(readingPlanAdapter);
 
-		lsReadingPlan.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-				final int todayReadingsSize = readingPlan.dailyVerses[dayNumber].length / 2;
-				if (position < todayReadingsSize) {
-					goToIsiActivity(dayNumber, position);
-				} else if (position > todayReadingsSize) {
-					goToIsiActivity(position - todayReadingsSize - 1, 0);
-				}
-			}
-
-		});
-
 		//buttons
-
 		updateButtonStatus();
 
 		bToday.setOnClickListener(new View.OnClickListener() {
@@ -795,14 +780,26 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 			final View res;
 			if (itemViewType == 0) {
 				res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_reading_plan_one_reading, parent, false);
+				final Button bReference = V.get(res, R.id.bReference);
 				final CheckBox checkbox = V.get(res, R.id.checkbox);
 
 				final boolean[] readMarks = new boolean[todayReadings.length / 2];
 				ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, dayNumber);
 
+				bReference.setText(getReference(S.activeVersion, todayReadings[position * 2], todayReadings[position * 2 + 1]));
+				bReference.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(final View v) {
+						final int todayReadingsSize = readingPlan.dailyVerses[dayNumber].length / 2;
+						if (position < todayReadingsSize) {
+							goToIsiActivity(dayNumber, position);
+						} else if (position > todayReadingsSize) {
+							goToIsiActivity(position - todayReadingsSize - 1, 0);
+						}
+					}
+				});
 				checkbox.setOnCheckedChangeListener(null);
 				checkbox.setChecked(readMarks[position]);
-				checkbox.setText(getReference(S.activeVersion, todayReadings[position * 2], todayReadings[position * 2 + 1]));
 
 				checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 					@Override
@@ -813,7 +810,6 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 						notifyDataSetChanged();
 					}
 				});
-
 			} else if (itemViewType == 1) {
 				res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_reading_plan_summary, parent, false);
 
@@ -940,6 +936,11 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 			} else {
 				return 2;
 			}
+		}
+
+		@Override
+		public boolean isEnabled(final int position) {
+			return false;
 		}
 	}
 

@@ -1,54 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:padding="16dp">
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:padding="16dp">
 
-    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/rp_headingProgress"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/textView"
-            android:gravity="center_horizontal"
-            android:paddingBottom="4dp"/>
-    <ProgressBar
-            android:id="@+id/pbReadingProgress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:progressDrawable="@drawable/progressbar_reading_plan"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/tActual"
-            android:paddingTop="4dp"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/tTarget"
-            android:paddingTop="4dp"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/tComment"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/tDetail"
-            android:text="@string/rp_showDetails"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp" android:textStyle="italic"
-            android:textColor="#35b5e6"/>
+	<TextView
+		android:id="@+id/textView"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center_horizontal"
+		android:paddingBottom="4dp"
+		android:text="@string/rp_headingProgress"
+		android:textAllCaps="true"
+		android:textSize="14sp"
+		android:textStyle="bold" />
+
+	<ProgressBar
+		android:id="@+id/pbReadingProgress"
+		style="?android:attr/progressBarStyleHorizontal"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:paddingBottom="4dp"
+		android:paddingTop="4dp"
+		android:progressDrawable="@drawable/progressbar_reading_plan" />
+
+	<TextView
+		android:id="@+id/tActual"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:paddingTop="4dp"
+		android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	<TextView
+		android:id="@+id/tTarget"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:paddingTop="4dp"
+		android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	<TextView
+		android:id="@+id/tComment"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:paddingBottom="4dp"
+		android:paddingTop="4dp"
+		android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	<TextView
+		android:id="@+id/tDetail"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:paddingBottom="4dp"
+		android:paddingTop="4dp"
+		android:text="@string/rp_showDetails"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textColor="#35b5e6"
+		android:textStyle="italic" />
 
 </LinearLayout>
