@@ -42,8 +42,9 @@ public class ProgressMarkDialog extends DialogFragment {
 			.setNegativeButton(activity.getString(R.string.delete), new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(final DialogInterface dialog, final int which) {
+					final String caption = progressMark.caption != null ? progressMark.caption : activity.getString(AttributeView.getDefaultProgressMarkStringResource(progressMark.preset_id));
 					new AlertDialog.Builder(activity)
-						.setMessage(TextUtils.expandTemplate(activity.getText(R.string.pm_delete_progress_confirm), progressMark.caption))
+						.setMessage(TextUtils.expandTemplate(activity.getText(R.string.pm_delete_progress_confirm), caption))
 						.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(final DialogInterface dialog, final int which) {
