@@ -10,15 +10,6 @@
 	android:showDividers="middle">
 
 	<Button
-		android:id="@+id/bUser"
-		style="?android:spinnerStyle"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:drawableLeft="@android:drawable/ic_menu_myplaces"
-		android:drawablePadding="8dp"
-		android:text="user@domain.com" />
-
-	<Button
 		android:id="@+id/bBible"
 		style="?android:buttonBarButtonStyle"
 		android:layout_width="match_parent"
