@@ -13,9 +13,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -25,8 +28,6 @@ import yuku.alkitab.base.sv.DownloadService.DownloadBinder;
 import yuku.alkitab.base.sv.DownloadService.DownloadEntry;
 import yuku.alkitab.base.sv.DownloadService.DownloadListener;
 import yuku.alkitab.base.util.FontManager;
-import yuku.alkitab.base.widget.UrlImageView;
-import yuku.alkitab.base.widget.UrlImageView.OnStateChangeListener;
 import yuku.alkitab.debug.R;
 
 import java.io.BufferedInputStream;
@@ -181,23 +182,26 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 		}
 
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
-			View res = convertView != null ? convertView : getLayoutInflater().inflate(R.layout.item_font_download, null);
+			View res = convertView != null ? convertView : getLayoutInflater().inflate(R.layout.item_font_download, parent, false);
 
-			UrlImageView imgPreview = V.get(res, R.id.imgPreview);
-			TextView lFontName = V.get(res, R.id.lFontName);
-			View bDownload = V.get(res, R.id.bDownload);
-			View bDelete = V.get(res, R.id.bDelete);
-			ProgressBar progressbar = V.get(res, R.id.progressbar);
-			TextView lErrorMsg = V.get(res, R.id.lErrorMsg);
+			final ImageView imgPreview = V.get(res, R.id.imgPreview);
+			final TextView lFontName = V.get(res, R.id.lFontName);
+			final View bDownload = V.get(res, R.id.bDownload);
+			final View bDelete = V.get(res, R.id.bDelete);
+			final ProgressBar progressbar = V.get(res, R.id.progressbar);
+			final TextView lErrorMsg = V.get(res, R.id.lErrorMsg);
 			
-			FontItem item = getItem(position);
-			String dlkey = getFontDownloadKey(item.name);
+			final FontItem item = getItem(position);
+			final String dlkey = getFontDownloadKey(item.name);
 			
 			lFontName.setText(item.name);
 			lFontName.setVisibility(View.VISIBLE);
-			imgPreview.setTag(R.id.TAG_fontName, lFontName);
-			imgPreview.setOnStateChangeListener(imgPreview_stateChange);
-			imgPreview.setUrl(String.format(URL_fontPreview, item.name));
+			Picasso.with(FontManagerActivity.this).load(String.format(URL_fontPreview, item.name)).into(imgPreview, new Callback.EmptyCallback() {
+				@Override
+				public void onSuccess() {
+					lFontName.setVisibility(View.GONE);
+				}
+			});
 			bDownload.setTag(R.id.TAG_fontItem, item);
 			bDownload.setOnClickListener(bDownload_click);
 			bDelete.setTag(R.id.TAG_fontItem, item);
@@ -306,15 +310,6 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 				})
 				.setNegativeButton(R.string.no, null)
 				.show();
-			}
-		};
-		
-		private OnStateChangeListener imgPreview_stateChange = new OnStateChangeListener() {
-			@Override public void onStateChange(UrlImageView v, UrlImageView.State newState, String url) {
-				if (newState.isLoaded()) {
-					TextView lFontName = (TextView) v.getTag(R.id.TAG_fontName);
-					lFontName.setVisibility(View.GONE);
-				}
 			}
 		};
 	}

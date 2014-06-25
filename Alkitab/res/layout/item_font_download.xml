@@ -19,7 +19,7 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp">
 
-        <yuku.alkitab.base.widget.UrlImageView
+        <ImageView
             android:id="@+id/imgPreview"
             android:layout_width="182.85dp"
             android:layout_height="40dp"
