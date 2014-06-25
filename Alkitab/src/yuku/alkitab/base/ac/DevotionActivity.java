@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -207,7 +208,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState, false);
+		super.onCreate(savedInstanceState, true);
 
 		setContentView(R.layout.activity_devotion);
 
@@ -219,7 +220,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		drawerLayout.setDrawerListener(drawerToggle);
 
 		final ActionBar actionBar = getActionBar();
-		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setDisplayShowHomeEnabled(Build.VERSION.SDK_INT < 18);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
 

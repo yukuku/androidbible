@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -93,7 +94,7 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState, false);
+		super.onCreate(savedInstanceState, true);
 
 		setContentView(R.layout.activity_reading_plan);
 
@@ -112,8 +113,9 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 		bLeft = V.get(this, R.id.bLeft);
 		bRight = V.get(this, R.id.bRight);
 		bDownload = V.get(this, R.id.bDownload);
+
 		actionBar = getActionBar();
-		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setDisplayShowHomeEnabled(Build.VERSION.SDK_INT < 18);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
 

@@ -130,7 +130,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	private static final int REQCODE_share = 7;
 	private static final int REQCODE_textAppearanceGetFonts = 9;
 	private static final int REQCODE_textAppearanceCustomColors = 10;
-	private static final int REQCODE_readingPlan = 11;
 
 	private static final String EXTRA_verseUrl = "verseUrl";
 	private boolean uncheckVersesWhenActionModeDestroyed = true;
@@ -311,7 +310,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	};
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState, false);
+		super.onCreate(savedInstanceState, true);
 		
 		setContentView(R.layout.activity_isi);
 
@@ -325,7 +324,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		final ActionBar actionBar = getActionBar();
 		actionBar.setDisplayShowCustomEnabled(true);
 		actionBar.setDisplayShowTitleEnabled(false);
-		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setDisplayShowHomeEnabled(Build.VERSION.SDK_INT < 18);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
 
