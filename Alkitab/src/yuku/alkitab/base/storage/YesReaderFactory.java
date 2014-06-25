@@ -18,10 +18,14 @@ public class YesReaderFactory {
 	 */
 	public static BibleReader createYesReader(String filename) {
 		try {
-			RandomAccessFile f = new RandomAccessFile(filename, "r");
 			byte[] header = new byte[8];
-			f.read(header);
-			
+
+			{
+				RandomAccessFile f = new RandomAccessFile(filename, "r");
+				f.read(header);
+				f.close();
+			}
+
 			if (header[0] != (byte) 0x98 
 			|| header[1] != (byte) 0x58 
 			|| header[2] != (byte) 0x0d 
@@ -34,9 +38,9 @@ public class YesReaderFactory {
 			}
 			
 			if (header[7] == 0x01) { // VERSION 1 YES
-				return new Yes1Reader(f);
+				return new Yes1Reader(filename);
 			} else if (header[7] == 0x02) { // VERSION 2 YES
-				return new Yes2Reader(new RandomAccessFileRandomInputStream(f));
+				return new Yes2Reader(new RandomAccessFileRandomInputStream(filename));
 			} else {
 				Log.e(TAG, "Yes file version unsupported: " + header[7]);
 				return null;

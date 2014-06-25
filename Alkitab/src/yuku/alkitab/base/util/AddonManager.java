@@ -110,24 +110,27 @@ public class AddonManager {
 
 				Log.d(TAG, "Download starting. Length: " + length);
 				final InputStream content = new OptionalGzipInputStream(conn.getInputStream());
+				try {
+					byte[] b = new byte[4096 * 4];
+					while (true) {
+						int read = content.read(b);
 
-				byte[] b = new byte[4096 * 4];
-				while (true) {
-					int read = content.read(b);
+						if (read <= 0) break;
+						os.write(b, 0, read);
 
-					if (read <= 0) break;
-					os.write(b, 0, read);
+						e.downloaded += read;
+						if (e.listener != null) e.listener.onDownloadProgress(e, e.downloaded, length);
 
-					e.downloaded += read;
-					if (e.listener != null) e.listener.onDownloadProgress(e, e.downloaded, length);
-
-					if (e.cancelled) {
-						conn.disconnect();
-						atomicFile.failWrite(os);
-						if (e.listener != null) e.listener.onDownloadCancelled(e);
-						os.close();
-						return;
+						if (e.cancelled) {
+							conn.disconnect();
+							atomicFile.failWrite(os);
+							if (e.listener != null) e.listener.onDownloadCancelled(e);
+							os.close();
+							return;
+						}
 					}
+				} finally {
+					content.close();
 				}
 
 				atomicFile.finishWrite(os);

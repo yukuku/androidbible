@@ -57,27 +57,33 @@ public class ReadingPlanManager {
 	public static ReadingPlan readVersion1(InputStream inputStream) {
 		ReadingPlan readingPlan = new ReadingPlan();
 		try {
-			BintexReader reader = new BintexReader(inputStream);
-			if (!readInfo(readingPlan.info, reader)) return null;
-			if (readingPlan.info.version != 1) return null;
+			final BintexReader reader = new BintexReader(inputStream);
+			try {
+				if (!readInfo(readingPlan.info, reader)) return null;
+				if (readingPlan.info.version != 1) return null;
 
-			int[][] dailyVerses = new int[readingPlan.info.duration][];
-			int counter = 0;
-			while (counter < readingPlan.info.duration) {
-				int count = reader.readUint8();
-				if (count == -1) {
-					Log.d(TAG, "Error reading.");
-					return null;
+				int[][] dailyVerses = new int[readingPlan.info.duration][];
+				int counter = 0;
+
+				while (counter < readingPlan.info.duration) {
+					int count = reader.readUint8();
+					if (count == -1) {
+						Log.d(TAG, "Error reading.");
+						return null;
+					}
+
+					int[] aris = new int[count];
+					for (int j = 0; j < count; j++) {
+						aris[j] = reader.readInt();
+					}
+					dailyVerses[counter] = aris;
+					counter++;
 				}
 
-				int[] aris = new int[count];
-				for (int j = 0; j < count; j++) {
-					aris[j] = reader.readInt();
-				}
-				dailyVerses[counter] = aris;
-				counter++;
+				readingPlan.dailyVerses = dailyVerses;
+			} finally {
+				reader.close();
 			}
-			readingPlan.dailyVerses = dailyVerses;
 
 			if (reader.readUint8() != 0) {
 				Log.d(TAG, "No footer.");

@@ -583,11 +583,13 @@ public class Search2Engine {
 					break;
 				}
 			}
+
+			br.close();
 		} catch (IOException e) {	
 			return null;
 		}
 		
-		cache_revIndex = new SoftReference<RevIndex>(res);
+		cache_revIndex = new SoftReference<>(res);
 		return res;
 	}
 

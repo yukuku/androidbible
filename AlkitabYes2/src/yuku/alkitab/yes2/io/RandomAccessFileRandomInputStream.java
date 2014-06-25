@@ -8,8 +8,8 @@ public class RandomAccessFileRandomInputStream extends RandomInputStream {
 
 	private final RandomAccessFile f;
 
-	public RandomAccessFileRandomInputStream(RandomAccessFile f) {
-		this.f = f;
+	public RandomAccessFileRandomInputStream(String filename) throws IOException {
+		this.f = new RandomAccessFile(filename, "r");
 	}
 
 	@Override public int read() throws IOException {

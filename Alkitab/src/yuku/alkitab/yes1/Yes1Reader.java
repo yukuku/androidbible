@@ -54,8 +54,8 @@ public class Yes1Reader implements BibleReader {
 		}
 	}
 	
-	public Yes1Reader(RandomAccessFile f) {
-		this.f = f;
+	public Yes1Reader(String filename) throws IOException {
+		this.f = new RandomAccessFile(filename, "r");
 	}
 	
 	/**
