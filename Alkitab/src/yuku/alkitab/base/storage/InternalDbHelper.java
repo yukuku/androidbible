@@ -12,7 +12,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	public static final String TAG = InternalDbHelper.class.getSimpleName();
 	
 	public InternalDbHelper(Context context) {
-		super(context, "AlkitabDb", null, App.getVersionCode()); //$NON-NLS-1$
+		super(context, "AlkitabDb", null, App.getVersionCode());
 	}
 	
 	@Override
@@ -21,7 +21,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	}
 
 	@Override public void onCreate(SQLiteDatabase db) {
-		Log.d(TAG, "@@onCreate"); //$NON-NLS-1$
+		Log.d(TAG, "@@onCreate");
 		
 		createTableMarker(db);
 		createIndexMarker(db);
@@ -44,7 +44,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	}
 
 	@Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		Log.d(TAG, "@@onUpgrade oldVersion=" + oldVersion + " newVersion=" + newVersion); //$NON-NLS-1$ //$NON-NLS-2$
+		Log.d(TAG, "@@onUpgrade oldVersion=" + oldVersion + " newVersion=" + newVersion);
 
 		// No more support for Bukmak version 1 table (last published: 2010-06-14)
 		// if (oldVersion <= 23) {
@@ -144,55 +144,55 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	}
 
 	private void createTableDevotion(SQLiteDatabase db) {
-		db.execSQL("create table if not exists " + Db.TABLE_Devotion + " (" + //$NON-NLS-1$
-		"_id integer primary key autoincrement, " + //$NON-NLS-1$
-		Db.Devotion.name + " text, " + //$NON-NLS-1$
-		Db.Devotion.date + " text, " + //$NON-NLS-1$
-		Db.Devotion.header + " text, " + //$NON-NLS-1$
-		Db.Devotion.title + " text, " + //$NON-NLS-1$
-		Db.Devotion.body + " text, " + //$NON-NLS-1$
-		Db.Devotion.readyToUse + " integer," + //$NON-NLS-1$
-		Db.Devotion.touchTime + " integer)"); //$NON-NLS-1$
+		db.execSQL("create table if not exists " + Db.TABLE_Devotion + " (" +
+		"_id integer primary key autoincrement, " +
+		Db.Devotion.name + " text, " +
+		Db.Devotion.date + " text, " +
+		Db.Devotion.header + " text, " +
+		Db.Devotion.title + " text, " +
+		Db.Devotion.body + " text, " +
+		Db.Devotion.readyToUse + " integer," +
+		Db.Devotion.touchTime + " integer)");
 	}
 
 	private void createIndexDevotion(SQLiteDatabase db) {
-		db.execSQL("create index if not exists index_101 on " + Db.TABLE_Devotion + " (" + Db.Devotion.name + ")"); //$NON-NLS-1$
-		db.execSQL("create index if not exists index_102 on " + Db.TABLE_Devotion + " (" + Db.Devotion.name + ", " + Db.Devotion.date + ")"); //$NON-NLS-1$
-		db.execSQL("create index if not exists index_103 on " + Db.TABLE_Devotion + " (" + Db.Devotion.date + ")"); //$NON-NLS-1$
-		db.execSQL("create index if not exists index_104 on " + Db.TABLE_Devotion + " (" + Db.Devotion.touchTime + ")"); //$NON-NLS-1$
+		db.execSQL("create index if not exists index_101 on " + Db.TABLE_Devotion + " (" + Db.Devotion.name + ")");
+		db.execSQL("create index if not exists index_102 on " + Db.TABLE_Devotion + " (" + Db.Devotion.name + ", " + Db.Devotion.date + ")");
+		db.execSQL("create index if not exists index_103 on " + Db.TABLE_Devotion + " (" + Db.Devotion.date + ")");
+		db.execSQL("create index if not exists index_104 on " + Db.TABLE_Devotion + " (" + Db.Devotion.touchTime + ")");
 	}
 
 	private void createTableVersion(SQLiteDatabase db) {
-		db.execSQL("create table if not exists " + Db.TABLE_Version + " (" + //$NON-NLS-1$ //$NON-NLS-2$
-		"_id integer primary key autoincrement, " + //$NON-NLS-1$
-		Db.Version.shortName + " text, " + //$NON-NLS-1$
-		Db.Version.title + " text, " + //$NON-NLS-1$
-		Db.Version.kind + " text, " + //$NON-NLS-1$
-		Db.Version.description + " text, " + //$NON-NLS-1$
-		Db.Version.filename + " text, " + //$NON-NLS-1$
-		Db.Version.filename_originalpdb + " text, " + //$NON-NLS-1$
-		Db.Version.active + " integer, " + //$NON-NLS-1$
-		Db.Version.ordering + " integer)"); //$NON-NLS-1$
+		db.execSQL("create table if not exists " + Db.TABLE_Version + " (" +
+		"_id integer primary key autoincrement, " +
+		Db.Version.shortName + " text, " +
+		Db.Version.title + " text, " +
+		Db.Version.kind + " text, " +
+		Db.Version.description + " text, " +
+		Db.Version.filename + " text, " +
+		Db.Version.filename_originalpdb + " text, " +
+		Db.Version.active + " integer, " +
+		Db.Version.ordering + " integer)");
 	}
 
 	private void createIndexVersion(SQLiteDatabase db) {
-		db.execSQL("create index if not exists index_301 on " + Db.TABLE_Version + " (" + Db.Version.ordering + ")"); //$NON-NLS-1$
+		db.execSQL("create index if not exists index_301 on " + Db.TABLE_Version + " (" + Db.Version.ordering + ")");
 
 		// make sure these two matches the ones on addShortNameColumnAndIndexToVersion()
-		db.execSQL("create index if not exists index_302 on " + Db.TABLE_Version + " (" + Db.Version.shortName + ")"); //$NON-NLS-1$
-		db.execSQL("create index if not exists index_303 on " + Db.TABLE_Version + " (" + Db.Version.title + ")"); //$NON-NLS-1$
+		db.execSQL("create index if not exists index_302 on " + Db.TABLE_Version + " (" + Db.Version.shortName + ")");
+		db.execSQL("create index if not exists index_303 on " + Db.TABLE_Version + " (" + Db.Version.title + ")");
 	}
 
 	private void createTableLabel(SQLiteDatabase db) {
-		db.execSQL("create table if not exists " + Db.TABLE_Label + " (" + //$NON-NLS-1$ //$NON-NLS-2$
-		"_id integer primary key autoincrement, " + //$NON-NLS-1$
-		Db.Label.title + " text, " + //$NON-NLS-1$
-		Db.Label.ordering + " integer, " + //$NON-NLS-1$
-		Db.Label.backgroundColor + " text)"); //$NON-NLS-1$
+		db.execSQL("create table if not exists " + Db.TABLE_Label + " (" +
+		"_id integer primary key autoincrement, " +
+		Db.Label.title + " text, " +
+		Db.Label.ordering + " integer, " +
+		Db.Label.backgroundColor + " text)");
 	}
 
 	private void createIndexLabel(SQLiteDatabase db) {
-		db.execSQL("create index if not exists index_401 on " + Db.TABLE_Label + " (" + Db.Label.ordering + ")"); //$NON-NLS-1$
+		db.execSQL("create index if not exists index_401 on " + Db.TABLE_Label + " (" + Db.Label.ordering + ")");
 	}
 
 	private void createTableMarker_Label(SQLiteDatabase db) {
@@ -219,7 +219,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	}
 
 	private void createIndexProgressMark(SQLiteDatabase db) {
-		db.execSQL("create index if not exists index_601 on " + Db.TABLE_ProgressMark + " (" + Db.ProgressMark.preset_id + ")"); //$NON-NLS-1$
+		db.execSQL("create index if not exists index_601 on " + Db.TABLE_ProgressMark + " (" + Db.ProgressMark.preset_id + ")");
 	}
 
 	private void createTableProgressMarkHistory(SQLiteDatabase db) {
@@ -272,8 +272,8 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL("alter table " + Db.TABLE_Version + " add column " + Db.Version.shortName + " text");
 
 		// make sure these two matches the ones in createIndexVersion()
-		db.execSQL("create index if not exists index_302 on " + Db.TABLE_Version + " (" + Db.Version.shortName + ")"); //$NON-NLS-1$
-		db.execSQL("create index if not exists index_303 on " + Db.TABLE_Version + " (" + Db.Version.title + ")"); //$NON-NLS-1$
+		db.execSQL("create index if not exists index_302 on " + Db.TABLE_Version + " (" + Db.Version.shortName + ")");
+		db.execSQL("create index if not exists index_303 on " + Db.TABLE_Version + " (" + Db.Version.title + ")");
 	}
 
 	/**
@@ -281,19 +281,19 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	 * and Bookmark2_Label to Marker_Label
 	 */
 	private void convertFromBookmark2ToMarker(final SQLiteDatabase db) {
-		final String TABLE_Bookmark2 = "Bukmak2"; //$NON-NLS-1$
+		final String TABLE_Bookmark2 = "Bukmak2";
 		class Bookmark2 {
-			public static final String ari = "ari"; //$NON-NLS-1$
-			public static final String kind = "jenis"; //$NON-NLS-1$
-			public static final String caption = "tulisan"; //$NON-NLS-1$
-			public static final String addTime = "waktuTambah"; //$NON-NLS-1$
-			public static final String modifyTime = "waktuUbah"; //$NON-NLS-1$
+			public static final String ari = "ari";
+			public static final String kind = "jenis";
+			public static final String caption = "tulisan";
+			public static final String addTime = "waktuTambah";
+			public static final String modifyTime = "waktuUbah";
 		}
 
-		final String TABLE_Bookmark2_Label = "Bukmak2_Label"; //$NON-NLS-1$
+		final String TABLE_Bookmark2_Label = "Bukmak2_Label";
 		class Bookmark2_Label {
-			public static final String bookmark2_id = "bukmak2_id"; //$NON-NLS-1$
-			public static final String label_id = "label_id"; //$NON-NLS-1$
+			public static final String bookmark2_id = "bukmak2_id";
+			public static final String label_id = "label_id";
 		}
 
 		// We need to maintain _id to prevent complications with Marker_Label
