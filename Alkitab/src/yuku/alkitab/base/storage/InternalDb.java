@@ -178,37 +178,29 @@ public class InternalDb {
 		return (int) DatabaseUtils.queryNumEntries(helper.getReadableDatabase(), Db.TABLE_Marker);
 	}
 
-	private SQLiteStatement stmt_countAttribute = null;
+	private SQLiteStatement stmt_countMarkersForBookChapter = null;
 
-	public int countAttributes(int ari_bookchapter) {
-		int ariMin = ari_bookchapter & 0x00ffff00;
-		int ariMax = ari_bookchapter | 0x000000ff;
+	public int countMarkersForBookChapter(int ari_bookchapter) {
+		final int ariMin = ari_bookchapter & 0x00ffff00;
+		final int ariMax = ari_bookchapter | 0x000000ff;
 
-		if (stmt_countAttribute == null) {
-			stmt_countAttribute = helper.getReadableDatabase().compileStatement("select count(*) from " + Db.TABLE_Marker + " where " + Db.Marker.ari + ">=? and " + Db.Marker.ari + "<?");
+		if (stmt_countMarkersForBookChapter == null) {
+			stmt_countMarkersForBookChapter = helper.getReadableDatabase().compileStatement("select count(*) from " + Db.TABLE_Marker + " where " + Db.Marker.ari + ">=? and " + Db.Marker.ari + "<?");
 		}
 
-		stmt_countAttribute.clearBindings();
-		stmt_countAttribute.bindLong(1, ariMin);
-		stmt_countAttribute.bindLong(2, ariMax);
+		stmt_countMarkersForBookChapter.bindLong(1, ariMin);
+		stmt_countMarkersForBookChapter.bindLong(2, ariMax);
 
-		return (int) stmt_countAttribute.simpleQueryForLong();
+		return (int) stmt_countMarkersForBookChapter.simpleQueryForLong();
 	}
 
 
 	/**
-	 * Put attributes for each verse. Attributes are as follows:
-	 * bit 0-2 is unused (legacy)
-	 * bit 7 is on when there is a highlight (more than one highlight is considered one)
-	 * bit 8-15 are number of bookmarks *starting on* that verse (one verse can have max 255 bookmarks)
-	 * bit 16-23 are number of notes *starting on* that verse (one verse can have max 255 notes)
-	 * @param map_0 the verses 0-based.
-	 * @return null if no highlights, or colors when there are highlights according to offsets of map_0.
+	 * Put attributes (bookmark count, note count, and highlight color) for each verse.
 	 */
-	public int[] putAttributes(int ari_bookchapter, int[] map_0) {
-		int ariMin = ari_bookchapter & 0x00ffff00;
-		int ariMax = ari_bookchapter | 0x000000ff;
-		int[] res = null;
+	public void putAttributes(final int ari_bookchapter, final int[] bookmarkCountMap, final int[] noteCountMap, final int[] highlightColorMap) {
+		final int ariMin = ari_bookchapter & 0x00ffff00;
+		final int ariMax = ari_bookchapter | 0x000000ff;
 
 		final String[] params = {
 			String.valueOf(ariMin),
@@ -221,42 +213,39 @@ public class InternalDb {
 			final int col_ari = cursor.getColumnIndexOrThrow(Db.Marker.ari);
 			final int col_caption = cursor.getColumnIndexOrThrow(Db.Marker.caption);
 			final int col_verseCount = cursor.getColumnIndexOrThrow(Db.Marker.verseCount);
+
 			while (cursor.moveToNext()) {
 				final int ari = cursor.getInt(col_ari);
 				final int kind = cursor.getInt(col_kind);
 
 				int mapOffset = Ari.toVerse(ari) - 1;
-				if (mapOffset >= map_0.length) {
+				if (mapOffset >= bookmarkCountMap.length) {
 					Log.e(TAG, "mapOffset too many " + mapOffset + " happens on ari 0x" + Integer.toHexString(ari));
 					continue;
 				}
 
 				if (kind == Marker.Kind.bookmark.code) {
-					map_0[mapOffset] += 1 << 8;
+					bookmarkCountMap[mapOffset] += 1;
 				} else if (kind == Marker.Kind.note.code) {
-					map_0[mapOffset] += 1 << 16;
+					noteCountMap[mapOffset] += 1;
 				} else if (kind == Marker.Kind.highlight.code) {
 					// traverse as far as verseCount
 					final int verseCount = cursor.getInt(col_verseCount);
 
 					for (int i = 0; i < verseCount; i++) {
 						int mapOffset2 = mapOffset + i;
-						if (mapOffset2 >= map_0.length) break; // do not go past number of verses in this chapter
-
-						map_0[mapOffset2] |= 1 << 7;
+						if (mapOffset2 >= highlightColorMap.length) break; // do not go past number of verses in this chapter
 
 						final String caption = cursor.getString(col_caption);
 						final int colorRgb = U.decodeHighlight(caption);
 
-						if (res == null) res = new int[map_0.length];
-						res[mapOffset2] = colorRgb;
+						highlightColorMap[mapOffset2] = colorRgb;
 					}
 				}
 			}
 		} finally {
 			cursor.close();
 		}
-		return res;
 	}
 
 	public void updateOrInsertHighlights(int ari_bookchapter, IntArrayList selectedVerses_1, int colorRgb) {

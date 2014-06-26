@@ -13,7 +13,6 @@ import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.util.Ari;
 
 import java.util.Arrays;
-import java.util.List;
 
 public abstract class VerseAdapter extends BaseAdapter {
 	public static final String TAG = VerseAdapter.class.getSimpleName();
@@ -36,16 +35,20 @@ public abstract class VerseAdapter extends BaseAdapter {
 	int chapter_1_;
 	SingleChapterVerses verses_;
 	PericopeBlock[] pericopeBlocks_;
+
 	/**
-	 * Tiap elemen, kalo 0 sampe positif, berarti menunjuk ke AYAT di rendered_
-	 * kalo negatif, -1 berarti index 0 di perikop_*, -2 (a) berarti index 1 (b) di perikop_*
-	 * 
-	 * Konvert a ke b: -(a+1); // -a-1 juga sih sebetulnya. gubrak.
-	 * Konvert b ke a: -b-1;
+	 * For each element, if 0 or more, it refers to the 0-based verse number.
+	 * If negative, -1 is the index 0 of pericope, -2 (a) is index 1 (b) of pericope, etc.
+	 *
+	 * Convert a to b: b = -a-1;
+	 * Convert b to a: a = -b-1;
 	 */
 	int[] itemPointer_;
-	int[] attributeMap_; // bit 0(0x1) = bookmark; bit 1(0x2) = notes; bit 2(0x4) = highlight; bit 8-12 = progress mark
-	int[] highlightMap_; // null atau warna stabilo
+
+	int[] bookmarkCountMap_;
+	int[] noteCountMap_;
+	int[] highlightColorMap_;
+	int[] progressMarkBitsMap_;
 
 	LayoutInflater inflater_;
 	VersesView owner_;
@@ -80,38 +83,51 @@ public abstract class VerseAdapter extends BaseAdapter {
 		// book_ can be empty when the selected (book, chapter) is not available in this version
 		if (book_ == null) return;
 
-		int[] attributeMap = null;
-		int[] highlightMap = null;
+		// 1/2: Attributes
+		final int[] bookmarkCountMap;
+		final int[] noteCountMap;
+		final int[] highlightColorMap;
 
-		int ariBc = Ari.encode(book_.bookId, chapter_1_, 0x00);
-		if (S.getDb().countAttributes(ariBc) > 0) {
-			attributeMap = new int[verses_.getVerseCount()];
-			highlightMap = S.getDb().putAttributes(ariBc, attributeMap);
+		final int verseCount = verses_.getVerseCount();
+		final int ariBc = Ari.encode(book_.bookId, chapter_1_, 0x00);
+		if (S.getDb().countMarkersForBookChapter(ariBc) > 0) {
+			bookmarkCountMap = new int[verseCount];
+			noteCountMap = new int[verseCount];
+			highlightColorMap = new int[verseCount];
+
+			S.getDb().putAttributes(ariBc, bookmarkCountMap, noteCountMap, highlightColorMap);
+		} else {
+			bookmarkCountMap = noteCountMap = highlightColorMap = null;
 		}
 
-		int ariMin = ariBc & 0x00ffff00;
-		int ariMax = ariBc | 0x000000ff;
+		final int ariMin = ariBc & 0x00ffff00;
+		final int ariMax = ariBc | 0x000000ff;
 
-		List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
-
-		for (ProgressMark progressMark: progressMarks) {
+		// 2/2: Progress marks
+		int[] progressMarkBitsMap = null;
+		for (final ProgressMark progressMark: S.getDb().listAllProgressMarks()) {
 			final int ari = progressMark.ari;
-			if (ari >= ariMin && ari < ariMax) {
-				if (attributeMap == null) {
-					attributeMap = new int[verses_.getVerseCount()];
-				}
+			if (ari < ariMin || ari >= ariMax) {
+				continue;
+			}
 
-				int mapOffset = Ari.toVerse(ari) - 1;
-				if (mapOffset >= attributeMap.length) {
-					Log.e(InternalDb.TAG, "ofsetMap kebanyakan " + mapOffset + " terjadi pada ari 0x" + Integer.toHexString(ari));
-				} else {
-					attributeMap[mapOffset] |= 1 << (progressMark.preset_id + 8);
-				}
+			if (progressMarkBitsMap == null) {
+				progressMarkBitsMap = new int[verseCount];
+			}
+
+			int mapOffset = Ari.toVerse(ari) - 1;
+			if (mapOffset >= progressMarkBitsMap.length) {
+				Log.e(InternalDb.TAG, "mapOffset out of bounds: " + mapOffset + " happened on ari 0x" + Integer.toHexString(ari));
+			} else {
+				progressMarkBitsMap[mapOffset] |= 1 << (progressMark.preset_id + AttributeView.PROGRESS_MARK_BITS_START);
 			}
 		}
 
-		attributeMap_ = attributeMap;
-		highlightMap_ = highlightMap;
+		// Finish calculating
+		bookmarkCountMap_ = bookmarkCountMap;
+		noteCountMap_ = noteCountMap;
+		highlightColorMap_ = highlightColorMap;
+		progressMarkBitsMap_ = progressMarkBitsMap;
 
 		notifyDataSetChanged();
 	}

@@ -5,11 +5,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
+import yuku.alkitab.base.App;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 
@@ -23,17 +25,26 @@ public class AttributeView extends View {
 	static Bitmap noteBitmap = null;
 	static Bitmap[] progressMarkBitmap = new Bitmap[PROGRESS_MARK_TOTAL_COUNT];
 	static Paint alphaPaint = new Paint();
+	static Paint attributeCountPaint = new Paint();
 
-	private boolean showBookmark;
-	private boolean showNote;
-	private int attribute;
+	static {
+		attributeCountPaint.setTypeface(Typeface.DEFAULT_BOLD);
+		attributeCountPaint.setColor(0xff222222);
+		attributeCountPaint.setTextSize(App.context.getResources().getDisplayMetrics().density * 14.f);
+		attributeCountPaint.setAntiAlias(true);
+		attributeCountPaint.setTextAlign(Paint.Align.CENTER);
+	}
+
+	int bookmark_count;
+	int note_count;
+	int progress_mark_bits;
 
 	private VersesView.AttributeListener attributeListener;
 	private Book book;
 	private int chapter_1;
 	private int verse_1;
 
-	private static SparseArray<Long> progressMarkAnimationStartTimes = new SparseArray<Long>();
+	private static SparseArray<Long> progressMarkAnimationStartTimes = new SparseArray<>();
 	private int drawOffsetLeft;
 
 	public AttributeView(final Context context) {
@@ -50,26 +61,26 @@ public class AttributeView extends View {
 		drawOffsetLeft = Math.round(1 * getResources().getDisplayMetrics().density);
 	}
 
-	public void showBookmark(final boolean showBookmark) {
-		this.showBookmark = showBookmark;
+	public void setBookmarkCount(final int bookmark_count) {
+		this.bookmark_count = bookmark_count;
 		requestLayout();
 		invalidate();
 	}
 
-	public void showNote(final boolean showNote) {
-		this.showNote = showNote;
+	public void setNoteCount(final int note_count) {
+		this.note_count = note_count;
 		requestLayout();
 		invalidate();
 	}
 
-	public void showProgressMarks(final int attribute) {
-		this.attribute = attribute;
+	public void setProgressMarkBits(final int progress_mark_bits) {
+		this.progress_mark_bits = progress_mark_bits;
 		requestLayout();
 		invalidate();
 	}
 
 	public boolean isShowingSomething() {
-		return showBookmark || showNote || ((attribute & PROGRESS_MARK_BIT_MASK) != 0);
+		return bookmark_count > 0 || note_count > 0 || ((progress_mark_bits & PROGRESS_MARK_BIT_MASK) != 0);
 	}
 
 	Bitmap getBookmarkBitmap() {
@@ -97,21 +108,21 @@ public class AttributeView extends View {
 	protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
 		int totalHeight = 0;
 		int totalWidth = 0;
-		if (showBookmark) {
+		if (bookmark_count > 0) {
 			final Bitmap bookmarkBitmap = getBookmarkBitmap();
 			totalHeight += bookmarkBitmap.getHeight();
 			if (totalWidth < bookmarkBitmap.getWidth()) {
 				totalWidth = bookmarkBitmap.getWidth();
 			}
 		}
-		if (showNote) {
+		if (note_count > 0) {
 			final Bitmap noteBitmap = getNoteBitmap();
 			totalHeight += noteBitmap.getHeight();
 			if (totalWidth < noteBitmap.getWidth()) {
 				totalWidth = noteBitmap.getWidth();
 			}
 		}
-		if (attribute != 0) {
+		if (progress_mark_bits != 0) {
 			for (int preset_id = 0; preset_id < PROGRESS_MARK_TOTAL_COUNT; preset_id++) {
 				if (isProgressMarkSetFromAttribute(preset_id)) {
 					final Bitmap progressMarkBitmapById = getProgressMarkBitmapByPresetId(preset_id);
@@ -127,23 +138,29 @@ public class AttributeView extends View {
 	}
 
 	private boolean isProgressMarkSetFromAttribute(final int preset_id) {
-		return (attribute & (1 << (preset_id + PROGRESS_MARK_BITS_START))) != 0;
+		return (progress_mark_bits & (1 << (preset_id + PROGRESS_MARK_BITS_START))) != 0;
 	}
 
 	@Override
 	protected void onDraw(final Canvas canvas) {
 		int totalHeight = 0;
-		if (showBookmark) {
+		if (bookmark_count > 0) {
 			final Bitmap bookmarkBitmap = getBookmarkBitmap();
 			canvas.drawBitmap(bookmarkBitmap, drawOffsetLeft, totalHeight, null);
+			if (bookmark_count > 1) {
+				canvas.drawText(String.valueOf(bookmark_count), drawOffsetLeft + bookmarkBitmap.getWidth() / 2, totalHeight + bookmarkBitmap.getHeight() / 2, attributeCountPaint);
+			}
 			totalHeight += bookmarkBitmap.getHeight();
 		}
-		if (showNote) {
+		if (note_count > 0) {
 			final Bitmap noteBitmap = getNoteBitmap();
 			canvas.drawBitmap(noteBitmap, drawOffsetLeft, totalHeight, null);
+			if (note_count > 1) {
+				canvas.drawText(String.valueOf(note_count), drawOffsetLeft + noteBitmap.getWidth() / 2, totalHeight + noteBitmap.getHeight() / 2, attributeCountPaint);
+			}
 			totalHeight += noteBitmap.getHeight();
 		}
-		if (attribute != 0) {
+		if (progress_mark_bits != 0) {
 			for (int preset_id = 0; preset_id < PROGRESS_MARK_TOTAL_COUNT; preset_id++) {
 				if (isProgressMarkSetFromAttribute(preset_id)) {
 					final Bitmap progressMarkBitmapById = getProgressMarkBitmapByPresetId(preset_id);
@@ -174,7 +191,7 @@ public class AttributeView extends View {
 		float y = event.getY();
 		int totalHeight = 0;
 		if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_UP) {
-			if (showBookmark) {
+			if (bookmark_count > 0) {
 				final Bitmap bookmarkBitmap = getBookmarkBitmap();
 				totalHeight += bookmarkBitmap.getHeight();
 				if (totalHeight > y) {
@@ -182,7 +199,7 @@ public class AttributeView extends View {
 					return true;
 				}
 			}
-			if (showNote) {
+			if (note_count > 0) {
 				final Bitmap noteBitmap = getNoteBitmap();
 				totalHeight += noteBitmap.getHeight();
 				if (totalHeight > y) {
@@ -190,7 +207,7 @@ public class AttributeView extends View {
 					return true;
 				}
 			}
-			if (attribute != 0) {
+			if (progress_mark_bits != 0) {
 				for (int preset_id = 0; preset_id < PROGRESS_MARK_TOTAL_COUNT; preset_id++) {
 					if (isProgressMarkSetFromAttribute(preset_id)) {
 						final Bitmap progressMarkBitmapById = getProgressMarkBitmapByPresetId(preset_id);
