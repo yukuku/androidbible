@@ -25,7 +25,6 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="module" module-name="KirimFidbek" />
     <orderEntry type="library" scope="PROVIDED" name="android-support-v4" level="project" />
     <orderEntry type="library" name="okhttp" level="project" />
   </component>

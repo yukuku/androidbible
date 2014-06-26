@@ -24,7 +24,6 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="module" module-name="KirimFidbek" />
     <orderEntry type="module" module-name="BiblePlus" />
     <orderEntry type="module" module-name="AlkitabIntegration" exported="" />
     <orderEntry type="module" module-name="Snappy" />

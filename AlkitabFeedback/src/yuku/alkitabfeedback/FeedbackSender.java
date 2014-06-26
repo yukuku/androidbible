@@ -11,7 +11,6 @@ import com.squareup.okhttp.OkHttpClient;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.message.BasicNameValuePair;
-import yuku.capjempol.HitungCapJempol;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -38,7 +37,6 @@ public class FeedbackSender {
 		String feedback_body;
 		int package_versionCode;
 		int build_version_sdk;
-		String capjempol;
 	}
 
 	static final OkHttpClient client = new OkHttpClient();
@@ -80,7 +78,6 @@ public class FeedbackSender {
 		e.feedback_body = feedback_body;
 		e.package_versionCode = getPackageVersionCode();
 		e.build_version_sdk = getBuildVersionSdk();
-		e.capjempol = HitungCapJempol.hitung(context_);
 
 		entries_.add(e);
 
@@ -104,7 +101,6 @@ public class FeedbackSender {
 				e.feedback_body = pref_.getString(base + i + "/feedback_body", null);
 				e.package_versionCode = pref_.getInt(base + i + "/package_versionCode", 0);
 				e.build_version_sdk = pref_.getInt(base + i + "/build_version_sdk", 0);
-				e.capjempol = pref_.getString(base + i + "/capjempol", null);
 
 				entries_.add(e);
 			}
@@ -129,7 +125,6 @@ public class FeedbackSender {
 				editor.putString(base + i + "/feedback_body", entry.feedback_body);
 				editor.putInt(base + i + "/package_versionCode", entry.package_versionCode);
 				editor.putInt(base + i + "/build_version_sdk", entry.build_version_sdk);
-				editor.putString(base + i + "/capjempol", entry.capjempol);
 			}
 		}
 
@@ -169,7 +164,6 @@ public class FeedbackSender {
 					params.add(new BasicNameValuePair("build_device[]", "" + getBuildDevice()));
 					params.add(new BasicNameValuePair("build_model[]", "" + getBuildModel()));
 					params.add(new BasicNameValuePair("build_version_sdk[]", "" + e.build_version_sdk));
-					params.add(new BasicNameValuePair("capjempol[]", "" + e.capjempol));
 				}
 
 				new UrlEncodedFormEntity(params, "utf-8").writeTo(conn.getOutputStream());

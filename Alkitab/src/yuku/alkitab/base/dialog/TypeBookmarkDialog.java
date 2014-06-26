@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +15,9 @@ import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
-import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.debug.R;
-import yuku.alkitab.model.Bookmark2;
 import yuku.alkitab.model.Label;
+import yuku.alkitab.model.Marker;
 import yuku.devoxx.flowlayout.FlowLayout;
 
 import java.util.Date;
@@ -31,41 +29,131 @@ public class TypeBookmarkDialog {
 	public interface Listener {
 		void onOk();
 	}
-	
+
 	final Context context;
+	final AlertDialog dialog;
 	FlowLayout panelLabels;
 	LabelAdapter adapter;
+	EditText tCaption;
 
-	// init this...
-	String reference = null;
-	int ari = 0;
-	//... or this
-	long id = -1;
-	
+	Marker marker;
+	int ariForNewBookmark;
+	String defaultCaption;
+
 	// optional
 	Listener listener;
 
 	// current labels (can be not in the db)
-	SortedSet<Label> labels = new TreeSet<Label>();
-	
-	public TypeBookmarkDialog(Context context, String reference, int ari) {
-		// required
-		this.context = context;
-		
-		// optional
-		this.reference = reference;
-		this.ari = ari;
+	SortedSet<Label> labels = new TreeSet<>();
+
+	/**
+	 * Open the bookmark edit dialog, editing existing bookmark.
+	 * @param context Activity context to create dialogs
+	 */
+	public TypeBookmarkDialog(Context context, long _id) {
+		this(context, S.getDb().getMarkerById(_id), null);
 	}
 
-	public TypeBookmarkDialog(Context context, long id) {
-		// required
-		this.context = context;
-
-		// optional
-		this.reference = null;
-		this.id = id;
+	/**
+	 * Open the bookmark edit dialog for an existing note by ari and ordering (starting from 0).
+	 */
+	public TypeBookmarkDialog(Context context, int ari, int ordering) {
+		this(context, S.getDb().getMarker(ari, Marker.Kind.bookmark, ordering), null);
 	}
-	
+
+	/**
+	 * Open the bookmark edit dialog for a new bookmark by ari.
+	 */
+	public TypeBookmarkDialog(Context context, int ari) {
+		this(context, null, S.activeVersion.reference(ari));
+		this.ariForNewBookmark = ari;
+	}
+
+	private TypeBookmarkDialog(final Context context, final Marker marker, String reference) {
+		this.context = context;
+		this.marker = marker;
+
+		if (reference == null) {
+			reference = S.activeVersion.reference(marker.ari);
+		}
+		defaultCaption = reference;
+
+		View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_bookmark, null);
+		this.panelLabels = V.get(dialogView, R.id.panelLabels);
+
+		tCaption = V.get(dialogView, R.id.tCaption);
+		final Button bAddLabel = V.get(dialogView, R.id.bAddLabel);
+
+		bAddLabel.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				adapter = new LabelAdapter();
+
+				AlertDialog.Builder b = new AlertDialog.Builder(context)
+				.setTitle(R.string.add_label_title)
+				.setAdapter(adapter, bAddLabel_dialog_itemSelected)
+				.setNegativeButton(R.string.cancel, null);
+
+				adapter.setDialogContext(b.getContext());
+
+				b.show();
+			}
+		});
+
+		if (marker != null) {
+			labels = new TreeSet<>();
+			List<Label> ll = S.getDb().listLabelsByMarkerId(marker._id);
+			if (ll != null) labels.addAll(ll);
+		}
+		setLabelsText();
+
+		tCaption.setText(marker != null? marker.caption: reference);
+
+		this.dialog = new AlertDialog.Builder(context)
+			.setView(dialogView)
+			.setTitle(reference)
+			.setIcon(R.drawable.ic_attr_bookmark)
+			.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					bOk_click();
+				}
+			})
+			.setNegativeButton(R.string.delete, new OnClickListener() {
+				@Override
+				public void onClick(final DialogInterface dialog, final int which) {
+					bDelete_click(marker);
+				}
+			})
+			.create();
+	}
+
+	void bOk_click() {
+		String caption = tCaption.getText().toString();
+
+		// If there is no caption, show reference
+		if (caption.length() == 0 || caption.trim().length() == 0) {
+			caption = defaultCaption;
+		}
+
+		final Date now = new Date();
+		if (marker != null) { // update existing
+			marker.caption = caption;
+			marker.modifyTime = now;
+			S.getDb().updateMarker(marker);
+		} else { // add new
+			marker = S.getDb().insertMarker(ariForNewBookmark, Marker.Kind.bookmark, caption, 1, now, now);
+		}
+
+		S.getDb().updateLabels(marker, labels);
+
+		if (listener != null) listener.onOk();
+	}
+
+	public void show() {
+		dialog.show();
+	}
+
 	public void setListener(Listener listener) {
 		this.listener = listener;
 	}
@@ -90,7 +178,7 @@ public class TypeBookmarkDialog {
 		}
 	};
 	
-	private View.OnClickListener lJudul_click = new View.OnClickListener() {
+	private View.OnClickListener label_click = new View.OnClickListener() {
 		@Override public void onClick(View v) {
 			final Label label = (Label) v.getTag(R.id.TAG_label);
 			if (label == null) return;
@@ -108,89 +196,8 @@ public class TypeBookmarkDialog {
 		}
 	};
 
-	public void show() {
-		final Bookmark2 bookmark = this.ari == 0? S.getDb().getBookmarkById(id): S.getDb().getBookmarkByAri(ari, Db.Bookmark2.kind_bookmark);
-		
-		// set yang belum diset
-		if (this.ari == 0 && bookmark != null) {
-			this.ari = bookmark.ari;
-			this.reference = S.activeVersion.reference(bookmark.ari);
-		}
-
-		final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-		final Context contextForLayout = Build.VERSION.SDK_INT >= 11? builder.getContext(): context;
-
-		View dialogView = LayoutInflater.from(contextForLayout).inflate(R.layout.dialog_edit_bookmark, null);
-		this.panelLabels = V.get(dialogView, R.id.panelLabels);
-		
-		final EditText tCaption = V.get(dialogView, R.id.tCaption);
-		final Button bAddLabel = V.get(dialogView, R.id.bAddLabel);
-		
-		bAddLabel.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				adapter = new LabelAdapter();
-
-				AlertDialog.Builder b = new AlertDialog.Builder(context)
-				.setTitle(R.string.add_label_title)
-				.setAdapter(adapter, bAddLabel_dialog_itemSelected)
-				.setNegativeButton(R.string.cancel, null);
-
-				adapter.setDialogContext(b.getContext());
-
-				b.show();
-			}
-		});
-		
-		if (bookmark != null) {
-			labels = new TreeSet<Label>();
-			List<Label> ll = S.getDb().listLabelsByBookmarkId(bookmark._id);
-			if (ll != null) labels.addAll(ll);
-		}
-		setLabelsText();
-		
-		tCaption.setText(bookmark != null? bookmark.caption: reference);
-		
-		builder
-		.setView(dialogView)
-		.setTitle(reference)
-		.setIcon(R.drawable.ic_attr_bookmark)
-		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-			@Override public void onClick(DialogInterface dialog, int which) {
-				Bookmark2 nonfinalBookmark = bookmark;
-				String caption = tCaption.getText().toString();
-				
-				// If there is no caption, show reference
-				if (caption.length() == 0 || caption.trim().length() == 0) {
-					caption = reference;
-				}
-				
-				if (nonfinalBookmark != null) {
-					nonfinalBookmark.caption = caption;
-					nonfinalBookmark.modifyTime = new Date();
-					S.getDb().updateBookmark(nonfinalBookmark);
-				} else {
-					nonfinalBookmark = S.getDb().insertBookmark(ari, Db.Bookmark2.kind_bookmark, caption, new Date(), new Date());
-				}
-				
-				if (nonfinalBookmark != null) {
-					S.getDb().updateLabels(nonfinalBookmark, labels);
-				}
-				
-				if (listener != null) listener.onOk();
-			}
-		})
-		.setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				bDelete_click(bookmark);
-			}
-		})
-		.show();
-	}
-
-	protected void bDelete_click(final Bookmark2 bookmark) {
-		if (bookmark == null) {
+	protected void bDelete_click(final Marker marker) {
+		if (marker == null) {
 			return; // bookmark not saved, so no need to confirm
 		}
 
@@ -199,7 +206,7 @@ public class TypeBookmarkDialog {
 		.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				S.getDb().deleteBookmarkById(bookmark._id);
+				S.getDb().deleteBookmarkById(marker._id);
 
 				if (listener != null) listener.onOk();
 			}
@@ -226,7 +233,7 @@ public class TypeBookmarkDialog {
 		res.setLayoutParams(panelLabels.generateDefaultLayoutParams());
 		res.setText(label.title);
 		res.setTag(R.id.TAG_label, label);
-		res.setOnClickListener(lJudul_click);
+		res.setOnClickListener(label_click);
 		
 		U.applyLabelColor(label, res);
 		

@@ -10,7 +10,6 @@ import com.squareup.okhttp.internal.http.HttpEngine;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.debug.R;
 import yuku.alkitabfeedback.FeedbackSender;
-import yuku.kirimfidbek.PengirimFidbek;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -45,19 +44,7 @@ public class App extends yuku.afw.App {
 		if (initted) return;
 		initted = true;
 
-		final PengirimFidbek oldFeedbackSender = new PengirimFidbek(context, getInstantPreferences());
-		oldFeedbackSender.activateDefaultUncaughtExceptionHandler();
-		oldFeedbackSender.setOnSuccessListener(new PengirimFidbek.OnSuccessListener() {
-			@Override
-			public void onSuccess(final byte[] response) {
-				Log.e(TAG, "KirimFidbek respon: " + new String(response, 0, response.length)); //$NON-NLS-1$
-			}
-		});
-		oldFeedbackSender.cobaKirim();
-
-		// transfer installationId from pengirimfidbek to feedbacksender
 		FeedbackSender fs = FeedbackSender.getInstance(context);
-		fs.setOverrideInstallationId(oldFeedbackSender.getUniqueId());
 		fs.trySend();
 
 		PreferenceManager.setDefaultValues(context, R.xml.settings, false);
