@@ -5,8 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 import yuku.afw.App;
+
+import java.util.UUID;
 
 public class InternalDbHelper extends SQLiteOpenHelper {
 	public static final String TAG = InternalDbHelper.class.getSimpleName();
@@ -113,6 +116,8 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		}
 
 		if (oldVersion < 14000163) { // last version that don't use Marker table
+			addGidColumnToLabel(db);
+
 			createTableMarker(db);
 			createIndexMarker(db);
 			createTableMarker_Label(db);
@@ -125,13 +130,15 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	private void createTableMarker(SQLiteDatabase db) {
 		db.execSQL(
 			"create table if not exists " + Db.TABLE_Marker + " (" +
-			"_id integer primary key autoincrement, " +
-			Db.Marker.ari + " integer, " +
-			Db.Marker.kind + " integer, " +
-			Db.Marker.caption + " text, " +
-			Db.Marker.verseCount + " integer, " +
-			Db.Marker.createTime + " integer, " +
-			Db.Marker.modifyTime + " integer)"
+				"_id integer primary key autoincrement, " +
+				Db.Marker.gid + " text," +
+				Db.Marker.ari + " integer, " +
+				Db.Marker.kind + " integer, " +
+				Db.Marker.caption + " text, " +
+				Db.Marker.verseCount + " integer, " +
+				Db.Marker.createTime + " integer, " +
+				Db.Marker.modifyTime + " integer" +
+				")"
 		);
 	}
 
@@ -141,6 +148,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL("create index if not exists index_Marker_03 on " + Db.TABLE_Marker + " (" + Db.Marker.kind + ", " + Db.Marker.modifyTime + ")");
 		db.execSQL("create index if not exists index_Marker_04 on " + Db.TABLE_Marker + " (" + Db.Marker.kind + ", " + Db.Marker.createTime + ")");
 		db.execSQL("create index if not exists index_Marker_05 on " + Db.TABLE_Marker + " (" + Db.Marker.kind + ", " + Db.Marker.caption + " collate NOCASE)");
+		db.execSQL("create index if not exists index_Marker_06 on " + Db.TABLE_Marker + " (" + Db.Marker.gid + ")");
 	}
 
 	private void createTableDevotion(SQLiteDatabase db) {
@@ -185,28 +193,35 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 
 	private void createTableLabel(SQLiteDatabase db) {
 		db.execSQL("create table if not exists " + Db.TABLE_Label + " (" +
-		"_id integer primary key autoincrement, " +
-		Db.Label.title + " text, " +
-		Db.Label.ordering + " integer, " +
-		Db.Label.backgroundColor + " text)");
+				"_id integer primary key autoincrement, " +
+				Db.Label.gid + " text," +
+				Db.Label.title + " text, " +
+				Db.Label.ordering + " integer, " +
+				Db.Label.backgroundColor + " text" +
+				")"
+		);
 	}
 
 	private void createIndexLabel(SQLiteDatabase db) {
 		db.execSQL("create index if not exists index_401 on " + Db.TABLE_Label + " (" + Db.Label.ordering + ")");
+		db.execSQL("create index if not exists index_402 on " + Db.TABLE_Label + " (" + Db.Label.gid + ")");
 	}
 
 	private void createTableMarker_Label(SQLiteDatabase db) {
 		db.execSQL("create table if not exists " + Db.TABLE_Marker_Label + " (" +
-			"_id integer primary key autoincrement, " +
-			Db.Marker_Label.marker_id + " integer, " +
-			Db.Marker_Label.label_id + " integer)"
+				"_id integer primary key autoincrement, " +
+				Db.Marker_Label.gid + " text," +
+				Db.Marker_Label.marker_gid + " text, " +
+				Db.Marker_Label.label_gid + " text" +
+				")"
 		);
 	}
 
 	private void createIndexMarker_Label(SQLiteDatabase db) {
-		db.execSQL("create        index if not exists index_Marker_Label_01 on " + Db.TABLE_Marker_Label + " (" + Db.Marker_Label.marker_id + ")");
-		db.execSQL("create        index if not exists index_Marker_Label_02 on " + Db.TABLE_Marker_Label + " (" + Db.Marker_Label.label_id + ")");
-		db.execSQL("create unique index if not exists index_Marker_Label_03 on " + Db.TABLE_Marker_Label + " (" + Db.Marker_Label.marker_id + ", " + Db.Marker_Label.label_id + ")");
+		db.execSQL("create        index if not exists index_Marker_Label_01 on " + Db.TABLE_Marker_Label + " (" + Db.Marker_Label.marker_gid + ")");
+		db.execSQL("create        index if not exists index_Marker_Label_02 on " + Db.TABLE_Marker_Label + " (" + Db.Marker_Label.label_gid + ")");
+		db.execSQL("create unique index if not exists index_Marker_Label_03 on " + Db.TABLE_Marker_Label + " (" + Db.Marker_Label.marker_gid + ", " + Db.Marker_Label.label_gid + ")");
+		db.execSQL("create unique index if not exists index_Marker_Label_04 on " + Db.TABLE_Marker_Label + " (" + Db.Marker_Label.gid + ")");
 	}
 
 	private void createTableProgressMark(SQLiteDatabase db) {
@@ -276,9 +291,17 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL("create index if not exists index_303 on " + Db.TABLE_Version + " (" + Db.Version.title + ")");
 	}
 
+	private void addGidColumnToLabel(SQLiteDatabase db) {
+		db.execSQL("alter table " + Db.TABLE_Label + " add column " + Db.Label.gid + " text");
+
+		// make sure this one matches the one in createIndexLabel()
+		db.execSQL("create index if not exists index_402 on " + Db.TABLE_Label + " (" + Db.Label.gid + ")");
+	}
+
 	/**
 	 * Converts Bookmark2 to Marker table
-	 * and Bookmark2_Label to Marker_Label
+	 * and Bookmark2_Label to Marker_Label table
+	 * and add gid to all labels
 	 */
 	private void convertFromBookmark2ToMarker(final SQLiteDatabase db) {
 		final String TABLE_Bookmark2 = "Bukmak2";
@@ -299,22 +322,52 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		// We need to maintain _id to prevent complications with Marker_Label
 		db.beginTransaction();
 		try {
-			{ // Marker -> Marker
+			final LongSparseArray<String> idToGid_marker = new LongSparseArray<>();
+			final LongSparseArray<String> idToGid_label = new LongSparseArray<>();
+
+			{ // Bookmark2 -> Marker
 				final Cursor c = db.query(TABLE_Bookmark2,
-					new String[] {"_id", Bookmark2.ari, Bookmark2.kind, Bookmark2.caption, Bookmark2.addTime, Bookmark2.modifyTime},
+					new String[]{"_id", Bookmark2.ari, Bookmark2.kind, Bookmark2.caption, Bookmark2.addTime, Bookmark2.modifyTime},
 					null, null, null, null, "_id asc"
 				);
 				final ContentValues cv = new ContentValues();
-				while (c.moveToNext()) {
-					cv.put("_id", c.getLong(0));
+				while(c.moveToNext())
+
+				{
+					final long _id = c.getLong(0);
+					final String gid = newGid();
+
+					idToGid_marker.put(_id, gid);
+
+					cv.put("_id", _id);
 					cv.put(Db.Marker.ari, c.getInt(1));
 					cv.put(Db.Marker.kind, c.getInt(2));
 					cv.put(Db.Marker.caption, c.getString(3));
 					cv.put(Db.Marker.createTime, c.getLong(4));
 					cv.put(Db.Marker.modifyTime, c.getLong(5));
 					cv.put(Db.Marker.verseCount, 1);
+					cv.put(Db.Marker.gid, gid);
 					db.insert(Db.TABLE_Marker, null, cv);
 				}
+
+				c.close();
+			}
+
+			{ // add gid to all Labels
+				final String[] args = {null};
+				final Cursor c = db.query(Db.TABLE_Label, new String[]{"_id"}, null, null, null, null, null);
+				final ContentValues cv = new ContentValues();
+				while (c.moveToNext()) {
+					final long _id = c.getLong(0);
+					final String gid = newGid();
+
+					idToGid_label.put(_id, gid);
+
+					cv.put(Db.Label.gid, gid);
+					args[0] = String.valueOf(_id);
+					db.update(Db.TABLE_Label, cv, "_id = ?", args);
+				}
+				c.close();
 			}
 
 			{ // Bookmark2_Label -> Marker_Label
@@ -324,9 +377,16 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 				);
 				final ContentValues cv = new ContentValues();
 				while (c.moveToNext()) {
-					cv.put("_id", c.getLong(0));
-					cv.put(Db.Marker_Label.marker_id, c.getLong(1));
-					cv.put(Db.Marker_Label.label_id, c.getLong(2));
+					final long _id = c.getLong(0);
+					final long marker_id = c.getLong(1);
+					final long label_id = c.getLong(2);
+
+					final String marker_gid = idToGid_marker.get(marker_id);
+					final String label_gid = idToGid_label.get(label_id);
+
+					cv.put("_id", _id);
+					cv.put(Db.Marker_Label.marker_gid, marker_gid);
+					cv.put(Db.Marker_Label.label_gid, label_gid);
 					db.insert(Db.TABLE_Marker_Label, null, cv);
 				}
 			}
@@ -335,5 +395,9 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		} finally {
 			db.endTransaction();
 		}
+	}
+
+	static String newGid() {
+		return "g1:" + UUID.randomUUID().toString();
 	}
 }

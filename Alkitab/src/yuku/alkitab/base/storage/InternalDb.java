@@ -443,7 +443,6 @@ public class InternalDb {
 			while (cursor.moveToNext()) {
 				MVersionYes yes = new MVersionYes();
 				yes.cache_active = cursor.getInt(col_active) != 0;
-				yes.type = Db.Version.kind_yes;
 				yes.description = cursor.getString(col_description);
 				yes.shortName = cursor.getString(col_shortName);
 				yes.longName = cursor.getString(col_title);

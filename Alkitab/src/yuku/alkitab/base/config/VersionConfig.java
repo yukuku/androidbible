@@ -4,7 +4,6 @@ import android.content.res.XmlResourceParser;
 import org.xmlpull.v1.XmlPullParser;
 import yuku.afw.App;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
-import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.debug.R;
 
 import java.util.ArrayList;
@@ -51,8 +50,7 @@ public class VersionConfig {
 				res.internalPrefix = parser.getAttributeValue(null, "prefix"); 
 			} else if (next == XmlPullParser.START_TAG && "preset".equals(tagName)) {
 				MVersionPreset preset = new MVersionPreset();
-				preset.type = Db.Version.kind_preset;
-				preset.shortName = parser.getAttributeValue(null, "shortName"); 
+				preset.shortName = parser.getAttributeValue(null, "shortName");
 				preset.longName = parser.getAttributeValue(null, "longName"); 
 				preset.presetFilename = parser.getAttributeValue(null, "filename_preset"); 
 				preset.url = parser.getAttributeValue(null, "url"); 

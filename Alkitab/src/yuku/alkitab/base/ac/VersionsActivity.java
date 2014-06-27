@@ -16,11 +16,21 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
-import android.view.*;
+import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.*;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -32,7 +42,6 @@ import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes2;
-import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.storage.YesReaderFactory;
 import yuku.alkitab.base.util.AddonManager;
 import yuku.alkitab.base.util.AddonManager.DownloadListener;
@@ -48,8 +57,21 @@ import yuku.filechooser.FileChooserConfig;
 import yuku.filechooser.FileChooserConfig.Mode;
 import yuku.filechooser.FileChooserResult;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 public class VersionsActivity extends BaseActivity {
@@ -650,7 +672,6 @@ public class VersionsActivity extends BaseActivity {
 			if (maxOrdering == 0) maxOrdering = 100; // default
 			
 			MVersionYes yes = new MVersionYes();
-			yes.type = Db.Version.kind_yes;
 			yes.shortName = pembaca.getShortName();
 			yes.longName = pembaca.getLongName();
 			yes.description = pembaca.getDescription();
@@ -702,7 +723,7 @@ public class VersionsActivity extends BaseActivity {
 				.setMessage(exception instanceof ConvertOptionsDialog.PdbKnownErrorException? exception.getMessage(): (getString(R.string.ed_details) + sw.toString()))
 				.setPositiveButton(R.string.ok, null)
 				.show();
-			};
+			}
 
 			private void showResult(final String filenamepdb, final String filenameyes, Throwable exception, List<String> wronglyConvertedBookNames) {
 				if (exception != null) {
@@ -795,7 +816,6 @@ public class VersionsActivity extends BaseActivity {
 	public static abstract class MVersion {
 		public String shortName;
 		public String longName;
-		public int type;
 		public int ordering;
 		
 		/** unique id for comparison purposes */
@@ -922,7 +942,6 @@ public class VersionsActivity extends BaseActivity {
 			
 			internal = new MVersionInternal();
 			internal.setActive(true);
-			internal.type = Db.Version.kind_internal;
 			internal.longName = c.internalLongName;
 			internal.ordering = 1;
 			
