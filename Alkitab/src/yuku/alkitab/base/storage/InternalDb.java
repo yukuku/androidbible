@@ -79,7 +79,7 @@ public class InternalDb {
 		Cursor cursor = helper.getReadableDatabase().query(
 		Db.TABLE_Marker,
 		null,
-		"_id=?", //$NON-NLS-1$
+		"_id=?",
 		new String[] {String.valueOf(_id)},
 		null, null, null
 		);
@@ -115,7 +115,7 @@ public class InternalDb {
 	}
 
 	public int updateMarker(Marker marker) {
-		return helper.getWritableDatabase().update(Db.TABLE_Marker, markerToContentValues(marker), "_id=?", new String[] {String.valueOf(marker._id)}); //$NON-NLS-1$
+		return helper.getWritableDatabase().update(Db.TABLE_Marker, markerToContentValues(marker), "_id=?", new String[] {String.valueOf(marker._id)});
 	}
 
 	public Marker insertMarker(int ari, Marker.Kind kind, String caption, int verseCount, Date createTime, Date modifyTime) {
@@ -135,8 +135,8 @@ public class InternalDb {
 		db.beginTransaction();
 		try {
 			final String[] params = new String[] {String.valueOf(_id)};
-			db.delete(Db.TABLE_Marker_Label, Db.Marker_Label.marker_id + "=?", params); //$NON-NLS-1$
-			db.delete(Db.TABLE_Marker, "_id=?", params); //$NON-NLS-1$
+			db.delete(Db.TABLE_Marker_Label, Db.Marker_Label.marker_id + "=?", params);
+			db.delete(Db.TABLE_Marker, "_id=?", params);
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
@@ -150,13 +150,13 @@ public class InternalDb {
 
 	public List<Marker> listMarkers(Marker.Kind kind, long labelId, String sortColumn, boolean sortAscending) {
 		final SQLiteDatabase db = helper.getReadableDatabase();
-		final String sortClause = sortColumn + (Db.Marker.caption.equals(sortColumn)? " collate NOCASE ": "") + (sortAscending? " asc": " desc"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		final String sortClause = sortColumn + (Db.Marker.caption.equals(sortColumn)? " collate NOCASE ": "") + (sortAscending? " asc": " desc");
 
 		List<Marker> res = new ArrayList<>();
 
 		Cursor c;
 		if (labelId == 0) { // no restrictions
-			c = db.query(Db.TABLE_Marker, null, Db.Marker.kind + "=?", new String[] {String.valueOf(kind.code)}, null, null, sortClause); //$NON-NLS-1$
+			c = db.query(Db.TABLE_Marker, null, Db.Marker.kind + "=?", new String[] {String.valueOf(kind.code)}, null, null, sortClause);
 		} else if (labelId == BookmarkListActivity.LABELID_noLabel) { // only without label
 			c = db.rawQuery("select " + Db.TABLE_Marker + ".* from " + Db.TABLE_Marker + " where " + Db.TABLE_Marker + "." + Db.Marker.kind + "=? and " + Db.TABLE_Marker + "._id not in (select " + Db.Marker_Label.marker_id + " from " + Db.TABLE_Marker_Label + ") order by " + Db.TABLE_Marker + "." + sortClause, new String[] {String.valueOf(kind.code)});
 		} else { // filter by labelId
@@ -267,10 +267,10 @@ public class InternalDb {
 						marker.modifyTime = new Date();
 						if (colorRgb != -1) {
 							marker.caption = U.encodeHighlight(colorRgb);
-							db.update(Db.TABLE_Marker, markerToContentValues(marker), "_id=?", new String[] {String.valueOf(marker._id)}); //$NON-NLS-1$
+							db.update(Db.TABLE_Marker, markerToContentValues(marker), "_id=?", new String[] {String.valueOf(marker._id)});
 						} else {
 							// delete
-							db.delete(Db.TABLE_Marker, "_id=?", new String[] {String.valueOf(marker._id)}); //$NON-NLS-1$
+							db.delete(Db.TABLE_Marker, "_id=?", new String[] {String.valueOf(marker._id)});
 						}
 					} else {
 						if (colorRgb == -1) {
@@ -376,14 +376,14 @@ public class InternalDb {
 
 	public int deleteDevotionsWithTouchTimeBefore(Date date) {
 		SQLiteDatabase db = helper.getWritableDatabase();
-		return db.delete(Db.TABLE_Devotion, Db.Devotion.touchTime + "<?", new String[] {String.valueOf(Sqlitil.toInt(date))}); //$NON-NLS-1$
+		return db.delete(Db.TABLE_Devotion, Db.Devotion.touchTime + "<?", new String[] {String.valueOf(Sqlitil.toInt(date))});
 	}
 
 	/**
 	 * Try to get article from local db. Non ready-to-use article will be returned too.
 	 */
 	public DevotionArticle tryGetDevotion(String name, String date) {
-		Cursor c = helper.getReadableDatabase().query(Db.TABLE_Devotion, null, Db.Devotion.name + "=? and " + Db.Devotion.date + "=?", new String[] {name, date}, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
+		Cursor c = helper.getReadableDatabase().query(Db.TABLE_Devotion, null, Db.Devotion.name + "=? and " + Db.Devotion.date + "=?", new String[] {name, date}, null, null, null);
 		try {
 			int col_title = c.getColumnIndexOrThrow(Db.Devotion.title);
 			int col_header = c.getColumnIndexOrThrow(Db.Devotion.header);
@@ -430,7 +430,7 @@ public class InternalDb {
 
 	public List<MVersionYes> listAllVersions() {
 		List<MVersionYes> res = new ArrayList<MVersionYes>();
-		Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Version, null, null, null, null, null, Db.Version.ordering + " asc"); //$NON-NLS-1$
+		Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Version, null, null, null, null, null, Db.Version.ordering + " asc");
 		try {
 			int col_active = cursor.getColumnIndexOrThrow(Db.Version.active);
 			int col_shortName = cursor.getColumnIndexOrThrow(Db.Version.shortName);
@@ -461,12 +461,12 @@ public class InternalDb {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		ContentValues cv = new ContentValues();
 		cv.put(Db.Version.active, active? 1: 0);
-		db.update(Db.TABLE_Version, cv, Db.Version.kind + "=? and " + Db.Version.filename + "=?", new String[] {String.valueOf(Db.Version.kind_yes), filename}); //$NON-NLS-1$ //$NON-NLS-2$
+		db.update(Db.TABLE_Version, cv, Db.Version.kind + "=? and " + Db.Version.filename + "=?", new String[] {String.valueOf(Db.Version.kind_yes), filename});
 	}
 
 	public int getYesVersionMaxOrdering() {
 		SQLiteDatabase db = helper.getReadableDatabase();
-		SQLiteStatement stmt = db.compileStatement("select max(" + Db.Version.ordering + ") from " + Db.TABLE_Version);  //$NON-NLS-1$//$NON-NLS-2$
+		SQLiteStatement stmt = db.compileStatement("select max(" + Db.Version.ordering + ") from " + Db.TABLE_Version); //$NON-NLS-2$
 		try {
 			return (int) stmt.simpleQueryForLong();
 		} finally {
@@ -490,7 +490,7 @@ public class InternalDb {
 
 	public boolean hasYesVersionWithFilename(String filename) {
 		SQLiteDatabase db = helper.getReadableDatabase();
-		SQLiteStatement stmt = db.compileStatement("select count(*) from " + Db.TABLE_Version + " where " + Db.Version.kind + "=? and " + Db.Version.filename + "=?");    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
+		SQLiteStatement stmt = db.compileStatement("select count(*) from " + Db.TABLE_Version + " where " + Db.Version.kind + "=? and " + Db.Version.filename + "=?");   //$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
 		try {
 			stmt.clearBindings();
 			stmt.bindLong(1, Db.Version.kind_yes);
@@ -503,12 +503,12 @@ public class InternalDb {
 
 	public void deleteYesVersion(MVersionYes version) {
 		SQLiteDatabase db = helper.getWritableDatabase();
-		db.delete(Db.TABLE_Version, Db.Version.filename + "=?", new String[] {version.filename}); //$NON-NLS-1$
+		db.delete(Db.TABLE_Version, Db.Version.filename + "=?", new String[] {version.filename});
 	}
 
 	public List<Label> listAllLabels() {
 		List<Label> res = new ArrayList<Label>();
-		Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Label, null, null, null, null, null, Db.Label.ordering + " asc"); //$NON-NLS-1$
+		Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Label, null, null, null, null, null, Db.Label.ordering + " asc");
 		try {
 			while (cursor.moveToNext()) {
 				res.add(labelFromCursor(cursor));
@@ -599,7 +599,7 @@ public class InternalDb {
 
     public Label getLabelById(long labelId) {
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.query(Db.TABLE_Label, null, BaseColumns._ID + "=?", new String[] {String.valueOf(labelId)}, null, null, null); //$NON-NLS-1$
+        Cursor cursor = db.query(Db.TABLE_Label, null, BaseColumns._ID + "=?", new String[] {String.valueOf(labelId)}, null, null, null);
         try {
             if (cursor.moveToNext()) {
                 return labelFromCursor(cursor);
