@@ -114,7 +114,7 @@ public class BookmarkListActivity extends BaseActivity {
 		// default sort ...
 		sort_column = Db.Marker.createTime;
 		sort_ascending = false;
-		sort_columnId = R.string.menuSortWaktuTambah;
+		sort_columnId = R.string.menuSortCreateTime;
 
 		{ // .. but probably there is a stored preferences about the last sort used
 			String pref_sort_column = Preferences.getString(Prefkey.marker_list_sort_column);
@@ -123,11 +123,11 @@ public class BookmarkListActivity extends BaseActivity {
 				switch (pref_sort_column) {
 					case "waktuTambah": // add time
 						sort_column = pref_sort_column;
-						sort_columnId = R.string.menuSortWaktuTambah;
+						sort_columnId = R.string.menuSortCreateTime;
 						break;
 					case "waktuUbah": // modify time
 						sort_column = pref_sort_column;
-						sort_columnId = R.string.menuSortWaktuUbah;
+						sort_columnId = R.string.menuSortModifyTime;
 						break;
 					case "ari":
 						sort_column = pref_sort_column;
@@ -135,7 +135,7 @@ public class BookmarkListActivity extends BaseActivity {
 						break;
 					case "tulisan": // caption
 						sort_column = pref_sort_column;
-						sort_columnId = R.string.menuSortTulisan;
+						sort_columnId = R.string.menuSortCaption;
 						break;
 					default:
 						// do nothing!
@@ -325,20 +325,20 @@ public class BookmarkListActivity extends BaseActivity {
 		values.add(R.string.menuSortAri);
 
 		if (filter_kind == Marker.Kind.bookmark) {
-			labels.add(getString(R.string.menuSortTulisan));
-			values.add(R.string.menuSortTulisan);
+			labels.add(getString(R.string.menuSortCaption));
+			values.add(R.string.menuSortCaption);
 		} else if (filter_kind == Marker.Kind.note) {
 			// nop
 		} else if (filter_kind == Marker.Kind.highlight) {
-			labels.add(getString(R.string.menuSortTulisan_warna));
-			values.add(R.string.menuSortTulisan);
+			labels.add(getString(R.string.menuSortCaption_color));
+			values.add(R.string.menuSortCaption);
 		}
 
-		labels.add(getString(R.string.menuSortWaktuTambah));
-		values.add(R.string.menuSortWaktuTambah);
+		labels.add(getString(R.string.menuSortCreateTime));
+		values.add(R.string.menuSortCreateTime);
 
-		labels.add(getString(R.string.menuSortWaktuUbah));
-		values.add(R.string.menuSortWaktuUbah);
+		labels.add(getString(R.string.menuSortModifyTime));
+		values.add(R.string.menuSortModifyTime);
 
 		int selected = -1;
 		for (int i = 0, len = values.size(); i < len; i++) {
@@ -357,13 +357,13 @@ public class BookmarkListActivity extends BaseActivity {
 						case R.string.menuSortAri:
 							sort(Db.Marker.ari, true, value);
 							break;
-						case R.string.menuSortTulisan:
+						case R.string.menuSortCaption:
 							sort(Db.Marker.caption, true, value);
 							break;
-						case R.string.menuSortWaktuTambah:
+						case R.string.menuSortCreateTime:
 							sort(Db.Marker.createTime, false, value);
 							break;
-						case R.string.menuSortWaktuUbah:
+						case R.string.menuSortModifyTime:
 							sort(Db.Marker.modifyTime, false, value);
 							break;
 					}
@@ -400,18 +400,18 @@ public class BookmarkListActivity extends BaseActivity {
 		getMenuInflater().inflate(R.menu.context_bookmark_list, menu);
 
 		// sesuaikan string berdasarkan jenis.
-		android.view.MenuItem menuDeleteBookmark = menu.findItem(R.id.menuDeleteBookmark);
+		MenuItem menuDeleteBookmark = menu.findItem(R.id.menuDeleteBookmark);
 		if (filter_kind == Marker.Kind.bookmark) menuDeleteBookmark.setTitle(R.string.hapus_pembatas_buku);
 		if (filter_kind == Marker.Kind.note) menuDeleteBookmark.setTitle(R.string.hapus_catatan);
 		if (filter_kind == Marker.Kind.highlight) menuDeleteBookmark.setTitle(R.string.hapus_stabilo);
 
-		android.view.MenuItem menuModifyBookmark = menu.findItem(R.id.menuModifyBookmark);
-		if (filter_kind == Marker.Kind.bookmark) menuModifyBookmark.setTitle(R.string.ubah_bukmak);
-		if (filter_kind == Marker.Kind.note) menuModifyBookmark.setTitle(R.string.ubah_catatan);
-		if (filter_kind == Marker.Kind.highlight) menuModifyBookmark.setTitle(R.string.ubah_stabilo);
+		MenuItem menuModifyBookmark = menu.findItem(R.id.menuModifyBookmark);
+		if (filter_kind == Marker.Kind.bookmark) menuModifyBookmark.setTitle(R.string.edit_bookmark);
+		if (filter_kind == Marker.Kind.note) menuModifyBookmark.setTitle(R.string.edit_note);
+		if (filter_kind == Marker.Kind.highlight) menuModifyBookmark.setTitle(R.string.edit_highlight);
 	}
 
-	@Override public boolean onContextItemSelected(android.view.MenuItem item) {
+	@Override public boolean onContextItemSelected(MenuItem item) {
 		final Marker bookmark = adapter.getItem(((AdapterContextMenuInfo) item.getMenuInfo()).position);
 		final int itemId = item.getItemId();
 
@@ -568,7 +568,7 @@ public class BookmarkListActivity extends BaseActivity {
 				if (addTime.equals(modifyTime)) {
 					lDate.setText(Sqlitil.toLocaleDateMedium(addTime));
 				} else {
-					lDate.setText(getString(R.string.waktuTambah_edited_waktuUbah, Sqlitil.toLocaleDateMedium(addTime), Sqlitil.toLocaleDateMedium(modifyTime)));
+					lDate.setText(getString(R.string.create_edited_modified_time, Sqlitil.toLocaleDateMedium(addTime), Sqlitil.toLocaleDateMedium(modifyTime)));
 				}
 
 				Appearances.applyBookmarkDateTextAppearance(lDate);

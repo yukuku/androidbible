@@ -12,6 +12,12 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
+import com.compactbyte.android.bible.PDBFileStream;
+import com.compactbyte.bibleplus.reader.BiblePlusPDB;
+import com.compactbyte.bibleplus.reader.BookInfo;
+import yuku.afw.App;
+import yuku.afw.V;
+import yuku.alkitab.debug.R;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -19,13 +25,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-
-import yuku.afw.App;
-import yuku.alkitab.debug.R;
-
-import com.compactbyte.android.bible.PDBFileStream;
-import com.compactbyte.bibleplus.reader.BiblePlusPDB;
-import com.compactbyte.bibleplus.reader.BookInfo;
 
 public class ConvertOptionsDialog {
 	public static final String TAG = ConvertOptionsDialog.class.getSimpleName();
@@ -104,9 +103,9 @@ public class ConvertOptionsDialog {
 		.setNegativeButton(R.string.cancel, null)
 		.create();
 
-		cbEncoding = (Spinner) dialogLayout.findViewById(R.id.cbEncoding);
-		lSample = (TextView) dialogLayout.findViewById(R.id.lSample);
-		cAddlTitle = (CheckBox) dialogLayout.findViewById(R.id.cAddlTitle);
+		cbEncoding = V.get(dialogLayout, R.id.cbEncoding);
+		lSample = V.get(dialogLayout, R.id.lSample);
+		cAddlTitle = V.get(dialogLayout, R.id.cAddlTitle);
 		
 		String tabEncoding = null;
 		if (pdb.isGreek()) {

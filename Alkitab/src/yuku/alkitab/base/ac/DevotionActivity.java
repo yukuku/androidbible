@@ -226,9 +226,9 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 		fadeOutAnim = AnimationUtils.loadAnimation(this, R.anim.fade_out);
 
-		lContent = (TextView) findViewById(R.id.lContent);
-		scrollContent = (ScrollView) findViewById(R.id.scrollContent);
-		lStatus = (TextView) findViewById(R.id.lStatus);
+		lContent = V.get(this, R.id.lContent);
+		scrollContent = V.get(this, R.id.scrollContent);
+		lStatus = V.get(this, R.id.lStatus);
 
 		// text formats
 		lContent.setTextColor(S.applied.fontColor);

@@ -89,18 +89,18 @@ public class GotoDialerFragment extends BaseGotoFragment {
 			tVerseLabel.setOnClickListener(tVerse_click);
 		}
 
-		res.findViewById(R.id.bDigit0).setOnClickListener(button_click);
-		res.findViewById(R.id.bDigit1).setOnClickListener(button_click);
-		res.findViewById(R.id.bDigit2).setOnClickListener(button_click);
-		res.findViewById(R.id.bDigit3).setOnClickListener(button_click);
-		res.findViewById(R.id.bDigit4).setOnClickListener(button_click);
-		res.findViewById(R.id.bDigit5).setOnClickListener(button_click);
-		res.findViewById(R.id.bDigit6).setOnClickListener(button_click);
-		res.findViewById(R.id.bDigit7).setOnClickListener(button_click);
-		res.findViewById(R.id.bDigit8).setOnClickListener(button_click);
-		res.findViewById(R.id.bDigit9).setOnClickListener(button_click);
-		res.findViewById(R.id.bDigitC).setOnClickListener(button_click);
-		res.findViewById(R.id.bDigitSwitch).setOnClickListener(button_click);
+		V.get(res, R.id.bDigit0).setOnClickListener(button_click);
+		V.get(res, R.id.bDigit1).setOnClickListener(button_click);
+		V.get(res, R.id.bDigit2).setOnClickListener(button_click);
+		V.get(res, R.id.bDigit3).setOnClickListener(button_click);
+		V.get(res, R.id.bDigit4).setOnClickListener(button_click);
+		V.get(res, R.id.bDigit5).setOnClickListener(button_click);
+		V.get(res, R.id.bDigit6).setOnClickListener(button_click);
+		V.get(res, R.id.bDigit7).setOnClickListener(button_click);
+		V.get(res, R.id.bDigit8).setOnClickListener(button_click);
+		V.get(res, R.id.bDigit9).setOnClickListener(button_click);
+		V.get(res, R.id.bDigitC).setOnClickListener(button_click);
+		V.get(res, R.id.bDigitSwitch).setOnClickListener(button_click);
 
 		return res;
 	}

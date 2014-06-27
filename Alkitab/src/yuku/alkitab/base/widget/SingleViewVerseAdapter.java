@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
+import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.util.Appearances;
@@ -44,8 +45,8 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 				res = (VerseItem) convertView;
 			}
 
-			final VerseTextView lText = (VerseTextView) res.findViewById(R.id.lText);
-			final TextView lVerseNumber = (TextView) res.findViewById(R.id.lVerseNumber);
+			final VerseTextView lText = V.get(res, R.id.lText);
+			final TextView lVerseNumber = V.get(res, R.id.lVerseNumber);
 
 			final int ari = Ari.encode(book_.bookId, chapter_1_, verse_1);
 			final String text = verses_.getVerse(id);

@@ -3,17 +3,13 @@ package yuku.alkitab.base.dialog;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.EditText;
+import yuku.afw.V;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.storage.Db;
-import yuku.alkitab.debug.R;
-import yuku.alkitab.model.Book;
-import yuku.alkitab.util.Ari;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Marker;
 
@@ -89,7 +85,7 @@ public class TypeNoteDialog {
 
 		this.dialog.setTitle(context.getString(R.string.catatan_alamat, reference));
 
-		tCaption = (EditText) dialogLayout.findViewById(R.id.tCaption);
+		tCaption = V.get(dialogLayout, R.id.tCaption);
 
 		tCaption.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override

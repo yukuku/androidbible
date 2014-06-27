@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import yuku.afw.App;
@@ -88,7 +87,7 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 				actionBar.setSelectedNavigationItem(position);
 
 				if (okToHideKeyboard && position != 1) {
-					final View editText = findViewById(R.id.tDirectReference);
+					final View editText = V.get(GotoActivity.this, R.id.tDirectReference);
 					if (editText != null) {
 						final InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 						imm.hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);

@@ -48,7 +48,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	@Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.d(TAG, "@@onUpgrade oldVersion=" + oldVersion + " newVersion=" + newVersion);
 
-		// No more support for Bukmak version 1 table (last published: 2010-06-14)
+		// No more support for Bookmark (Bukmak) version 1 table (last published: 2010-06-14)
 		// if (oldVersion <= 23) {
 		//	convertFromBookmarkToBookmark2(db);
 		// }
