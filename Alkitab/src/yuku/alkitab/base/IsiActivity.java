@@ -57,8 +57,8 @@ import org.json.JSONObject;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
-import yuku.alkitab.base.ac.MarkersActivity;
 import yuku.alkitab.base.ac.GotoActivity;
+import yuku.alkitab.base.ac.MarkersActivity;
 import yuku.alkitab.base.ac.SearchActivity;
 import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.ac.VersionsActivity;
@@ -97,6 +97,7 @@ import yuku.alkitab.base.widget.VersesView.PressResult;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
+import yuku.alkitab.model.Marker;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.SingleChapterVerses;
@@ -104,11 +105,13 @@ import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener, LeftDrawer.Text.Listener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
@@ -1542,35 +1545,85 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		@Override
 		public void onBookmarkAttributeClick(final Book book, final int chapter_1, final int verse_1) {
 			final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
-			String reference = book.reference(chapter_1, verse_1);
-			TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, ari, 0 /* TODO support multi bookmark */);
-			dialog.setListener(new TypeBookmarkDialog.Listener() {
-				@Override public void onOk() {
-					lsText.reloadAttributeMap();
 
-					if (activeSplitVersion != null) {
-						lsSplit1.reloadAttributeMap();
-					}
+			final int marker_count = S.getDb().countMarkersForAriKind(ari, Marker.Kind.bookmark);
+			final AtomicInteger ordering = new AtomicInteger(0);
+
+			final Runnable r = new Runnable() {
+				@Override
+				public void run() {
+					final TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, ari, ordering.get());
+					dialog.setListener(new TypeBookmarkDialog.Listener() {
+						@Override public void onOk() {
+							lsText.reloadAttributeMap();
+
+							if (activeSplitVersion != null) {
+								lsSplit1.reloadAttributeMap();
+							}
+						}
+					});
+					dialog.show();
 				}
-			});
-			dialog.show();
+			};
+
+			// TODO
+			if (marker_count <= 1) {
+				r.run();
+			} else {
+				final String[] options = new String[marker_count];
+				Arrays.fill(options, "<TODO bookmark>");
+				new AlertDialog.Builder(IsiActivity.this)
+					.setItems(options, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(final DialogInterface dialog, final int which) {
+							ordering.set(which);
+							r.run();
+						}
+					})
+					.show();
+			}
 		}
 
 		@Override
 		public void onNoteAttributeClick(final Book book, final int chapter_1, final int verse_1) {
 			final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
 
-			TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, ari, 0 /* TODO support multi note */, new TypeNoteDialog.Listener() {
-				@Override
-				public void onDone() {
-					lsText.reloadAttributeMap();
+			final int marker_count = S.getDb().countMarkersForAriKind(ari, Marker.Kind.bookmark);
+			final AtomicInteger ordering = new AtomicInteger(0);
 
-					if (activeSplitVersion != null) {
-						lsSplit1.reloadAttributeMap();
-					}
+			final Runnable r = new Runnable() {
+				@Override
+				public void run() {
+					final TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, ari, ordering.get(), new TypeNoteDialog.Listener() {
+						@Override
+						public void onDone() {
+							lsText.reloadAttributeMap();
+
+							if (activeSplitVersion != null) {
+								lsSplit1.reloadAttributeMap();
+							}
+						}
+					});
+					dialog.show();
 				}
-			});
-			dialog.show();
+			};
+
+			// TODO
+			if (marker_count <= 1) {
+				r.run();
+			} else {
+				final String[] options = new String[marker_count];
+				Arrays.fill(options, "<TODO note>");
+				new AlertDialog.Builder(IsiActivity.this)
+					.setItems(options, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(final DialogInterface dialog, final int which) {
+							ordering.set(which);
+							r.run();
+						}
+					})
+					.show();
+			}
 		}
 
 		@Override
