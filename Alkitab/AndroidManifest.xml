@@ -66,7 +66,7 @@
             android:name="yuku.alkitab.base.ac.ColorSettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"/>
         <activity
-            android:name="yuku.alkitab.base.ac.BookmarkActivity"
+            android:name="yuku.alkitab.base.ac.MarkersActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
             android:label="@string/activity_title_markers"
             tools:ignore="ExportedActivity">
@@ -101,7 +101,7 @@
         </activity>
 
         <activity
-            android:name="yuku.alkitab.base.ac.BookmarkListActivity"
+            android:name="yuku.alkitab.base.ac.MarkerListActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity
@@ -190,7 +190,7 @@
         </activity>
 
         <activity
-            android:name="yuku.alkitab.base.ac.Search2Activity"
+            android:name="yuku.alkitab.base.ac.SearchActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
             android:label="@string/cari_v"
             android:windowSoftInputMode="adjustResize"/>

@@ -9,7 +9,7 @@ import android.provider.BaseColumns;
 import android.util.Log;
 import yuku.afw.D;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.ac.BookmarkListActivity;
+import yuku.alkitab.base.ac.MarkerListActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
 import yuku.alkitab.base.devotion.ArticleMeidA;
@@ -75,11 +75,11 @@ public class InternalDb {
 
 	public Marker getMarkerById(long _id) {
 		Cursor cursor = helper.getReadableDatabase().query(
-		Db.TABLE_Marker,
-		null,
-		"_id=?",
-		new String[] {String.valueOf(_id)},
-		null, null, null
+			Db.TABLE_Marker,
+			null,
+			"_id=?",
+			new String[]{String.valueOf(_id)},
+			null, null, null
 		);
 
 		try {
@@ -141,7 +141,7 @@ public class InternalDb {
 
 	public void deleteNonBookmarkMarkerById(long _id) {
 		SQLiteDatabase db = helper.getWritableDatabase();
-		db.delete(Db.TABLE_Marker, "_id=?", new String[] {String.valueOf(_id)});
+		db.delete(Db.TABLE_Marker, "_id=?", new String[]{String.valueOf(_id)});
 	}
 
 	public List<Marker> listMarkers(Marker.Kind kind, long label_id, String sortColumn, boolean sortAscending) {
@@ -152,7 +152,7 @@ public class InternalDb {
 		final Cursor c;
 		if (label_id == 0) { // no restrictions
 			c = db.query(Db.TABLE_Marker, null, Db.Marker.kind + "=?", new String[] {String.valueOf(kind.code)}, null, null, sortClause);
-		} else if (label_id == BookmarkListActivity.LABELID_noLabel) { // only without label
+		} else if (label_id == MarkerListActivity.LABELID_noLabel) { // only without label
 			c = db.rawQuery("select " + Db.TABLE_Marker + ".* from " + Db.TABLE_Marker + " where " + Db.TABLE_Marker + "." + Db.Marker.kind + "=? and " + Db.TABLE_Marker + "." + Db.Marker.gid + " not in (select distinct " + Db.Marker_Label.marker_gid + " from " + Db.TABLE_Marker_Label + ") order by " + Db.TABLE_Marker + "." + sortClause, new String[] {String.valueOf(kind.code)});
 		} else { // filter by label_id
 			final Label label = getLabelById(label_id);
@@ -379,7 +379,7 @@ public class InternalDb {
 	 * Try to get article from local db. Non ready-to-use article will be returned too.
 	 */
 	public DevotionArticle tryGetDevotion(String name, String date) {
-		Cursor c = helper.getReadableDatabase().query(Db.TABLE_Devotion, null, Db.Devotion.name + "=? and " + Db.Devotion.date + "=?", new String[] {name, date}, null, null, null);
+		Cursor c = helper.getReadableDatabase().query(Db.TABLE_Devotion, null, Db.Devotion.name + "=? and " + Db.Devotion.date + "=?", new String[]{name, date}, null, null, null);
 		try {
 			int col_title = c.getColumnIndexOrThrow(Db.Devotion.title);
 			int col_header = c.getColumnIndexOrThrow(Db.Devotion.header);
@@ -499,7 +499,7 @@ public class InternalDb {
 
 	public void deleteYesVersion(MVersionYes version) {
 		SQLiteDatabase db = helper.getWritableDatabase();
-		db.delete(Db.TABLE_Version, Db.Version.filename + "=?", new String[] {version.filename});
+		db.delete(Db.TABLE_Version, Db.Version.filename + "=?", new String[]{version.filename});
 	}
 
 	public List<Label> listAllLabels() {
@@ -709,11 +709,11 @@ public class InternalDb {
 
 	public ProgressMark getProgressMarkByPresetId(final int preset_id) {
 		Cursor cursor = helper.getReadableDatabase().query(
-		Db.TABLE_ProgressMark,
-		null,
-		Db.ProgressMark.preset_id + "=?",
-		new String[] {String.valueOf(preset_id)},
-		null, null, null
+			Db.TABLE_ProgressMark,
+			null,
+			Db.ProgressMark.preset_id + "=?",
+			new String[]{String.valueOf(preset_id)},
+			null, null, null
 		);
 
 		try {
@@ -862,7 +862,7 @@ public class InternalDb {
 
 	public void deleteReadingPlanById(long id) {
 		helper.getWritableDatabase().delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_id + "=?", new String[] {String.valueOf(id)});
-		helper.getWritableDatabase().delete(Db.TABLE_ReadingPlan, "_id=?", new String[] {String.valueOf(id)});
+		helper.getWritableDatabase().delete(Db.TABLE_ReadingPlan, "_id=?", new String[]{String.valueOf(id)});
 	}
 
 	public int updateStartDate(long id, long startDate) {

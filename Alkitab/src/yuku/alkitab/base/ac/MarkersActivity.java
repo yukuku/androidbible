@@ -36,8 +36,8 @@ import yuku.ambilwarna.AmbilWarnaDialog.OnAmbilWarnaListener;
 
 import java.util.List;
 
-public class BookmarkActivity extends BaseActivity {
-	public static final String TAG = BookmarkActivity.class.getSimpleName();
+public class MarkersActivity extends BaseActivity {
+	public static final String TAG = MarkersActivity.class.getSimpleName();
 	
 	private static final int REQCODE_markerList = 1;
 	private static final int REQCODE_share = 2;
@@ -47,13 +47,13 @@ public class BookmarkActivity extends BaseActivity {
 	BookmarkFilterAdapter adapter;
 
 	public static Intent createIntent() {
-		return new Intent(App.context, BookmarkActivity.class);
+		return new Intent(App.context, MarkersActivity.class);
 	}
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.activity_bookmark);
+		setContentView(R.layout.activity_markers);
 		setTitle(R.string.activity_title_markers);
 		
 		adapter = new BookmarkFilterAdapter();
@@ -75,17 +75,17 @@ public class BookmarkActivity extends BaseActivity {
 		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 			Intent intent;
 			if (position == 0) {
-				intent = BookmarkListActivity.createIntent(App.context, Marker.Kind.bookmark, 0);
+				intent = MarkerListActivity.createIntent(App.context, Marker.Kind.bookmark, 0);
 			} else if (position == 1) {
-				intent = BookmarkListActivity.createIntent(App.context, Marker.Kind.note, 0);
+				intent = MarkerListActivity.createIntent(App.context, Marker.Kind.note, 0);
 			} else if (position == 2) {
-				intent = BookmarkListActivity.createIntent(App.context, Marker.Kind.highlight, 0);
+				intent = MarkerListActivity.createIntent(App.context, Marker.Kind.highlight, 0);
 			} else if (position == 3) {
-				intent = BookmarkListActivity.createIntent(App.context, Marker.Kind.bookmark, BookmarkListActivity.LABELID_noLabel);
+				intent = MarkerListActivity.createIntent(App.context, Marker.Kind.bookmark, MarkerListActivity.LABELID_noLabel);
 			} else {
 				Label label = adapter.getItem(position);
 				if (label != null) {
-					intent = BookmarkListActivity.createIntent(getApplicationContext(), Marker.Kind.bookmark, label._id);
+					intent = MarkerListActivity.createIntent(getApplicationContext(), Marker.Kind.bookmark, label._id);
 				} else {
 					return;
 				}
@@ -98,7 +98,7 @@ public class BookmarkActivity extends BaseActivity {
 
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
 		if (info.position >= 4) {
-			getMenuInflater().inflate(R.menu.context_bookmark, menu);
+			getMenuInflater().inflate(R.menu.context_markers, menu);
 		}
 	}
 
@@ -154,7 +154,7 @@ public class BookmarkActivity extends BaseActivity {
 			}
 			
 			int warnaLatarRgb = U.decodeLabelBackgroundColor(label.backgroundColor);
-			new AmbilWarnaDialog(BookmarkActivity.this, 0xff000000 | warnaLatarRgb, new OnAmbilWarnaListener() {
+			new AmbilWarnaDialog(MarkersActivity.this, 0xff000000 | warnaLatarRgb, new OnAmbilWarnaListener() {
 				@Override public void onOk(AmbilWarnaDialog dialog, int color) {
 					if (color == -1) {
 						label.backgroundColor = null;
@@ -292,7 +292,7 @@ public class BookmarkActivity extends BaseActivity {
 		}
 
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
-			final View res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_bookmark_filter, parent, false);
+			final View res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_marker_filter, parent, false);
 			
 			ImageView imgFilterIcon = V.get(res, R.id.imgFilterIcon);
 			if (position < 3) {

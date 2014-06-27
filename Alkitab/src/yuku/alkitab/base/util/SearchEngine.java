@@ -26,8 +26,8 @@ import java.lang.ref.SoftReference;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 
-public class Search2Engine {
-	public static final String TAG = Search2Engine.class.getSimpleName();
+public class SearchEngine {
+	public static final String TAG = SearchEngine.class.getSimpleName();
 
 	public static class Query implements Parcelable {
 		public String query_string;

@@ -57,9 +57,9 @@ import org.json.JSONObject;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
-import yuku.alkitab.base.ac.BookmarkActivity;
+import yuku.alkitab.base.ac.MarkersActivity;
 import yuku.alkitab.base.ac.GotoActivity;
-import yuku.alkitab.base.ac.Search2Activity;
+import yuku.alkitab.base.ac.SearchActivity;
 import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.ac.VersionsActivity.MVersion;
@@ -1283,7 +1283,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	private void menuSearch_click() {
-		startActivity(Search2Activity.createIntent(this.activeBook.bookId));
+		startActivity(SearchActivity.createIntent(this.activeBook.bookId));
 	}
 	
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -2032,7 +2032,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	@Override
 	public void bMarkers_click() {
-		startActivity(BookmarkActivity.createIntent());
+		startActivity(MarkersActivity.createIntent());
 	}
 
 	@Override

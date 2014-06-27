@@ -38,7 +38,7 @@ import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.QueryTokenizer;
-import yuku.alkitab.base.util.Search2Engine;
+import yuku.alkitab.base.util.SearchEngine;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
@@ -54,8 +54,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class BookmarkListActivity extends BaseActivity {
-	public static final String TAG = BookmarkListActivity.class.getSimpleName();
+public class MarkerListActivity extends BaseActivity {
+	public static final String TAG = MarkerListActivity.class.getSimpleName();
 
 	// in
 	private static final String EXTRA_filter_kind = "filter_kind"; //$NON-NLS-1$
@@ -86,7 +86,7 @@ public class BookmarkListActivity extends BaseActivity {
 
 
 	public static Intent createIntent(Context context, Marker.Kind filter_kind, long filter_labelId) {
-		Intent res = new Intent(context, BookmarkListActivity.class);
+		Intent res = new Intent(context, MarkerListActivity.class);
 		res.putExtra(EXTRA_filter_kind, filter_kind.code);
 		res.putExtra(EXTRA_filter_labelId, filter_labelId);
 		return res;
@@ -95,7 +95,7 @@ public class BookmarkListActivity extends BaseActivity {
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.activity_bookmark_list);
+		setContentView(R.layout.activity_marker_list);
 
 		panelList = V.get(this, R.id.panelList);
 		empty = V.get(this, android.R.id.empty);
@@ -267,7 +267,7 @@ public class BookmarkListActivity extends BaseActivity {
 
 	private void buildMenu(Menu menu) {
 		menu.clear();
-		getMenuInflater().inflate(R.menu.activity_bookmark_list, menu);
+		getMenuInflater().inflate(R.menu.activity_marker_list, menu);
 
 		final MenuItem menuSearch = menu.findItem(R.id.menuSearch);
 		if (menuSearch != null) {
@@ -397,7 +397,7 @@ public class BookmarkListActivity extends BaseActivity {
 	};
 
 	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		getMenuInflater().inflate(R.menu.context_bookmark_list, menu);
+		getMenuInflater().inflate(R.menu.context_marker_list, menu);
 
 		// sesuaikan string berdasarkan jenis.
 		MenuItem menuDeleteBookmark = menu.findItem(R.id.menuDeleteBookmark);
@@ -478,7 +478,7 @@ public class BookmarkListActivity extends BaseActivity {
 		for (final Marker marker : allMarkers) {
 			if (filter_kind != Marker.Kind.highlight) { // "caption" in highlights only stores color information, so it's useless to check
 				String caption_lc = marker.caption.toLowerCase(Locale.getDefault());
-				if (Search2Engine.satisfiesQuery(caption_lc, tokens)) {
+				if (SearchEngine.satisfiesQuery(caption_lc, tokens)) {
 					res.add(marker);
 					continue;
 				}
@@ -488,7 +488,7 @@ public class BookmarkListActivity extends BaseActivity {
 			String verseText = S.activeVersion.loadVerseText(marker.ari);
 			if (verseText != null) { // this can be null! so beware.
 				String verseText_lc = verseText.toLowerCase(Locale.getDefault());
-				if (Search2Engine.satisfiesQuery(verseText_lc, tokens)) {
+				if (SearchEngine.satisfiesQuery(verseText_lc, tokens)) {
 					res.add(marker);
 				}
 			}
@@ -521,8 +521,8 @@ public class BookmarkListActivity extends BaseActivity {
 		}
 
 		public void filterAsync(final String query, final Runnable callback) {
-			final List<Marker> allMarkers = BookmarkListActivity.this.allMarkers;
-			final Marker.Kind filter_kind = BookmarkListActivity.this.filter_kind;
+			final List<Marker> allMarkers = MarkerListActivity.this.allMarkers;
+			final Marker.Kind filter_kind = MarkerListActivity.this.filter_kind;
 
 			new Thread(new Runnable() {
 				@Override
@@ -549,7 +549,7 @@ public class BookmarkListActivity extends BaseActivity {
 
 		@Override
 		public View newView(final int position, final ViewGroup parent) {
-			return getLayoutInflater().inflate(R.layout.item_bookmark, parent, false);
+			return getLayoutInflater().inflate(R.layout.item_marker, parent, false);
 		}
 
 		@Override
@@ -587,9 +587,9 @@ public class BookmarkListActivity extends BaseActivity {
 
 			final String caption = bookmark.caption;
 			if (filter_kind == Marker.Kind.bookmark) {
-				lCaption.setText(currentlyUsedFilter != null? Search2Engine.hilite(caption, tokens, hiliteColor): caption);
+				lCaption.setText(currentlyUsedFilter != null? SearchEngine.hilite(caption, tokens, hiliteColor): caption);
 				Appearances.applyBookmarkTitleTextAppearance(lCaption);
-				CharSequence snippet = currentlyUsedFilter != null? Search2Engine.hilite(verseText, tokens, hiliteColor): verseText;
+				CharSequence snippet = currentlyUsedFilter != null? SearchEngine.hilite(verseText, tokens, hiliteColor): verseText;
 
 				Appearances.applyBookmarkSnippetContentAndAppearance(lSnippet, reference, snippet);
 
@@ -607,14 +607,14 @@ public class BookmarkListActivity extends BaseActivity {
 			} else if (filter_kind == Marker.Kind.note) {
 				lCaption.setText(reference);
 				Appearances.applyBookmarkTitleTextAppearance(lCaption);
-				lSnippet.setText(currentlyUsedFilter != null? Search2Engine.hilite(caption, tokens, hiliteColor): caption);
+				lSnippet.setText(currentlyUsedFilter != null? SearchEngine.hilite(caption, tokens, hiliteColor): caption);
 				Appearances.applyTextAppearance(lSnippet);
 
 			} else if (filter_kind == Marker.Kind.highlight) {
 				lCaption.setText(reference);
 				Appearances.applyBookmarkTitleTextAppearance(lCaption);
 
-				SpannableStringBuilder snippet = currentlyUsedFilter != null? Search2Engine.hilite(verseText, tokens, hiliteColor): new SpannableStringBuilder(verseText);
+				SpannableStringBuilder snippet = currentlyUsedFilter != null? SearchEngine.hilite(verseText, tokens, hiliteColor): new SpannableStringBuilder(verseText);
 				int highlightColor = U.decodeHighlight(caption);
 				if (highlightColor != -1) {
 					snippet.setSpan(new BackgroundColorSpan(U.alphaMixHighlight(highlightColor)), 0, snippet.length(), 0);

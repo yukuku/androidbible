@@ -33,7 +33,7 @@ import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.BookNameSorter;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.QueryTokenizer;
-import yuku.alkitab.base.util.Search2Engine;
+import yuku.alkitab.base.util.SearchEngine;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.Version;
@@ -43,8 +43,8 @@ import yuku.alkitabintegration.display.Launcher;
 
 import java.util.Arrays;
 
-public class Search2Activity extends BaseActivity {
-	public static final String TAG = Search2Activity.class.getSimpleName();
+public class SearchActivity extends BaseActivity {
+	public static final String TAG = SearchActivity.class.getSimpleName();
 	
 	private static final String EXTRA_openedBookId = "openedBookId"; //$NON-NLS-1$
 	SearchView searchView;
@@ -62,11 +62,11 @@ public class Search2Activity extends BaseActivity {
 	SparseBooleanArray selectedBookIds = new SparseBooleanArray();
 	int openedBookId;
 	int filterUserAction = 0; // when it's not user action, set to nonzero
-	Search2Adapter adapter;
+	SearchAdapter adapter;
 	Toast resultCountToast;
 
 	public static Intent createIntent(int openedBookId) {
-		Intent res = new Intent(App.context, Search2Activity.class);
+		Intent res = new Intent(App.context, SearchActivity.class);
 		res.putExtra(EXTRA_openedBookId, openedBookId);
 		return res;
 	}
@@ -74,7 +74,7 @@ public class Search2Activity extends BaseActivity {
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.activity_search2);
+		setContentView(R.layout.activity_search);
 
 		lsSearchResults = V.get(this, R.id.lsSearchResults);
 		empty = V.get(this, android.R.id.empty);
@@ -86,7 +86,7 @@ public class Search2Activity extends BaseActivity {
 		tFilterAdvanced = V.get(this, R.id.tFilterAdvanced);
 		bEditFilter = V.get(this, R.id.bEditFilter);
 
-		searchView = V.get(Search2Activity.this, R.id.searchView);
+		searchView = V.get(SearchActivity.this, R.id.searchView);
 		searchView.setSubmitButtonEnabled(true);
 		searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 			@Override
@@ -149,7 +149,7 @@ public class Search2Activity extends BaseActivity {
 		}
 
 		if (usingRevIndex()) {
-			Search2Engine.preloadRevIndex();
+			SearchEngine.preloadRevIndex();
 		}
 
 		// show current version on search placeholder
@@ -307,8 +307,8 @@ public class Search2Activity extends BaseActivity {
 		if (cFilterSingleBook.isChecked()) selectedBookIds.put(openedBookId, true);
 	}
 	
-	protected Search2Engine.Query getQuery() {
-		Search2Engine.Query res = new Search2Engine.Query();
+	protected SearchEngine.Query getQuery() {
+		SearchEngine.Query res = new SearchEngine.Query();
 		res.query_string = searchView.getQuery().toString();
 		res.bookIds = selectedBookIds;
 		return res;
@@ -418,11 +418,11 @@ public class Search2Activity extends BaseActivity {
 		
 		new AsyncTask<Void, Void, IntArrayList>() {
 			@Override protected IntArrayList doInBackground(Void... params) {
-				synchronized (Search2Activity.this) {
+				synchronized (SearchActivity.this) {
 					if (usingRevIndex()) {
-						return Search2Engine.searchByRevIndex(getQuery());
+						return SearchEngine.searchByRevIndex(getQuery());
 					} else {
-						return Search2Engine.searchByGrep(getQuery());
+						return SearchEngine.searchByGrep(getQuery());
 					}
 				}
 			}
@@ -432,11 +432,11 @@ public class Search2Activity extends BaseActivity {
 					result = new IntArrayList(); // empty result
 				}
 				
-				lsSearchResults.setAdapter(adapter = new Search2Adapter(result, tokens));
+				lsSearchResults.setAdapter(adapter = new SearchAdapter(result, tokens));
 
 				final String resultCount = getString(R.string.size_hasil, result.size());
 				if (resultCountToast == null) {
-					resultCountToast = Toast.makeText(Search2Activity.this, resultCount, Toast.LENGTH_SHORT);
+					resultCountToast = Toast.makeText(SearchActivity.this, resultCount, Toast.LENGTH_SHORT);
 				} else {
 					resultCountToast.setText(resultCount);
 				}
@@ -519,11 +519,11 @@ public class Search2Activity extends BaseActivity {
 		return S.activeVersionId == null || S.activeVersionId.equals(MVersionInternal.getVersionInternalId());
 	}
 
-	class Search2Adapter extends EasyAdapter {
+	class SearchAdapter extends EasyAdapter {
 		IntArrayList searchResults;
 		String[] tokens;
 		
-		public Search2Adapter(IntArrayList searchResults, String[] tokens) {
+		public SearchAdapter(IntArrayList searchResults, String[] tokens) {
 			this.searchResults = searchResults;
 			this.tokens = tokens;
 		}
@@ -534,7 +534,7 @@ public class Search2Activity extends BaseActivity {
 		}
 		
 		@Override public View newView(int position, ViewGroup parent) {
-			return getLayoutInflater().inflate(R.layout.item_search2, parent, false);
+			return getLayoutInflater().inflate(R.layout.item_search_result, parent, false);
 		}
 		
 		@Override public void bindView(View view, int position, ViewGroup parent) {
@@ -550,7 +550,7 @@ public class Search2Activity extends BaseActivity {
 			
 			String verseText = S.activeVersion.loadVerseText(book, chapter_1, verse_1);
 			verseText = U.removeSpecialCodes(verseText);
-			lSnippet.setText(Search2Engine.hilite(verseText, tokens, hiliteColor));
+			lSnippet.setText(SearchEngine.hilite(verseText, tokens, hiliteColor));
 			Appearances.applyTextAppearance(lSnippet);
 		}
 		
