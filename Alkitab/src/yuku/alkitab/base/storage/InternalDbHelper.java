@@ -384,6 +384,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 					final String label_gid = idToGid_label.get(label_id);
 
 					cv.put("_id", _id);
+					cv.put(Db.Marker_Label.gid, Gid.newGid());
 					cv.put(Db.Marker_Label.marker_gid, marker_gid);
 					cv.put(Db.Marker_Label.label_gid, label_gid);
 					db.insert(Db.TABLE_Marker_Label, null, cv);
