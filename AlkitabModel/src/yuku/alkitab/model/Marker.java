@@ -1,10 +1,13 @@
 package yuku.alkitab.model;
 
+import yuku.alkitab.model.util.Gid;
+
 import java.util.Date;
 
 public class Marker {
 
 	public long _id;
+	public String gid;
 	public int ari;
 	public Kind kind;
 	public String caption;
@@ -31,15 +34,24 @@ public class Marker {
 		}
 	}
 
+	private Marker() {}
+
 	/**
 	 * Create without _id
 	 */
-	public Marker(int ari, Kind kind, String caption, int verseCount, Date createTime, Date modifyTime) {
-		this.ari = ari;
-		this.kind = kind;
-		this.caption = caption;
-		this.verseCount = verseCount;
-		this.createTime = createTime;
-		this.modifyTime = modifyTime;
+	public static Marker createNewMarker(int ari, Kind kind, String caption, int verseCount, Date createTime, Date modifyTime) {
+		final Marker res = new Marker();
+		res.gid = Gid.newGid();
+		res.ari = ari;
+		res.kind = kind;
+		res.caption = caption;
+		res.verseCount = verseCount;
+		res.createTime = createTime;
+		res.modifyTime = modifyTime;
+		return res;
+	}
+
+	public static Marker createEmptyMarker() {
+		return new Marker();
 	}
 }

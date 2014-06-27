@@ -8,8 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 import yuku.afw.App;
-
-import java.util.UUID;
+import yuku.alkitab.model.util.Gid;
 
 public class InternalDbHelper extends SQLiteOpenHelper {
 	public static final String TAG = InternalDbHelper.class.getSimpleName();
@@ -335,7 +334,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 
 				{
 					final long _id = c.getLong(0);
-					final String gid = newGid();
+					final String gid = Gid.newGid();
 
 					idToGid_marker.put(_id, gid);
 
@@ -359,7 +358,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 				final ContentValues cv = new ContentValues();
 				while (c.moveToNext()) {
 					final long _id = c.getLong(0);
-					final String gid = newGid();
+					final String gid = Gid.newGid();
 
 					idToGid_label.put(_id, gid);
 
@@ -397,7 +396,4 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		}
 	}
 
-	static String newGid() {
-		return "g1:" + UUID.randomUUID().toString();
-	}
 }

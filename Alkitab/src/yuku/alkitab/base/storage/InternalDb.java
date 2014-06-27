@@ -23,6 +23,7 @@ import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.ProgressMarkHistory;
+import yuku.alkitab.model.util.Gid;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 
@@ -47,6 +48,7 @@ public class InternalDb {
 		final ContentValues res = new ContentValues();
 
 		res.put(Db.Marker.ari, marker.ari);
+		res.put(Db.Marker.gid, marker.gid);
 		res.put(Db.Marker.kind, marker.kind.code);
 		res.put(Db.Marker.caption, marker.caption);
 		res.put(Db.Marker.verseCount, marker.verseCount);
@@ -57,21 +59,17 @@ public class InternalDb {
 	}
 
 	public static Marker markerFromCursor(Cursor cursor) {
-		final int ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.ari));
-		final Marker.Kind kind = Marker.Kind.fromCode(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.kind)));
+		final Marker res = Marker.createEmptyMarker();
 
-		return markerFromCursor(cursor, ari, kind);
-	}
+		res._id = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
+		res.gid = cursor.getString(cursor.getColumnIndexOrThrow(Db.Marker.gid));
+		res.ari = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.ari));
+		res.kind = Marker.Kind.fromCode(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.kind)));
+		res.caption = cursor.getString(cursor.getColumnIndexOrThrow(Db.Marker.caption));
+		res.verseCount = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.verseCount));
+		res.createTime = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.createTime)));
+		res.modifyTime = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.modifyTime)));
 
-	private static Marker markerFromCursor(Cursor cursor, int ari, Marker.Kind kind) {
-		final long _id = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
-		final String caption = cursor.getString(cursor.getColumnIndexOrThrow(Db.Marker.caption));
-		final int verseCount = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.verseCount));
-		final Date createTime = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.createTime)));
-		final Date modifyTime = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.modifyTime)));
-
-		final Marker res = new Marker(ari, kind, caption, verseCount, createTime, modifyTime);
-		res._id = _id;
 		return res;
 	}
 
@@ -119,24 +117,22 @@ public class InternalDb {
 	}
 
 	public Marker insertMarker(int ari, Marker.Kind kind, String caption, int verseCount, Date createTime, Date modifyTime) {
-		Marker res = new Marker(ari, kind, caption, verseCount, createTime, modifyTime);
-		SQLiteDatabase db = helper.getWritableDatabase();
-		long _id = db.insert(Db.TABLE_Marker, null, markerToContentValues(res));
-		if (_id == -1) {
-			return null;
-		} else {
-			res._id = _id;
-			return res;
-		}
+		final Marker res = Marker.createNewMarker(ari, kind, caption, verseCount, createTime, modifyTime);
+		final SQLiteDatabase db = helper.getWritableDatabase();
+
+		res._id = db.insert(Db.TABLE_Marker, null, markerToContentValues(res));
+
+		return res;
 	}
 
 	public void deleteBookmarkById(long _id) {
-		SQLiteDatabase db = helper.getWritableDatabase();
+		final Marker marker = getMarkerById(_id);
+
+		final SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
 		try {
-			final String[] params = new String[] {String.valueOf(_id)};
-			db.delete(Db.TABLE_Marker_Label, Db.Marker_Label.marker_id + "=?", params);
-			db.delete(Db.TABLE_Marker, "_id=?", params);
+			db.delete(Db.TABLE_Marker_Label, Db.Marker_Label.marker_gid + "=?", new String[]{marker.gid});
+			db.delete(Db.TABLE_Marker, "_id=?", new String[]{String.valueOf(_id)});
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
@@ -148,19 +144,19 @@ public class InternalDb {
 		db.delete(Db.TABLE_Marker, "_id=?", new String[] {String.valueOf(_id)});
 	}
 
-	public List<Marker> listMarkers(Marker.Kind kind, long labelId, String sortColumn, boolean sortAscending) {
+	public List<Marker> listMarkers(Marker.Kind kind, long label_id, String sortColumn, boolean sortAscending) {
 		final SQLiteDatabase db = helper.getReadableDatabase();
 		final String sortClause = sortColumn + (Db.Marker.caption.equals(sortColumn)? " collate NOCASE ": "") + (sortAscending? " asc": " desc");
 
-		List<Marker> res = new ArrayList<>();
-
-		Cursor c;
-		if (labelId == 0) { // no restrictions
+		final List<Marker> res = new ArrayList<>();
+		final Cursor c;
+		if (label_id == 0) { // no restrictions
 			c = db.query(Db.TABLE_Marker, null, Db.Marker.kind + "=?", new String[] {String.valueOf(kind.code)}, null, null, sortClause);
-		} else if (labelId == BookmarkListActivity.LABELID_noLabel) { // only without label
-			c = db.rawQuery("select " + Db.TABLE_Marker + ".* from " + Db.TABLE_Marker + " where " + Db.TABLE_Marker + "." + Db.Marker.kind + "=? and " + Db.TABLE_Marker + "._id not in (select " + Db.Marker_Label.marker_id + " from " + Db.TABLE_Marker_Label + ") order by " + Db.TABLE_Marker + "." + sortClause, new String[] {String.valueOf(kind.code)});
-		} else { // filter by labelId
-			c = db.rawQuery("select " + Db.TABLE_Marker + ".* from " + Db.TABLE_Marker + ", " + Db.TABLE_Marker_Label + " where " + Db.Marker.kind + "=? and " + Db.TABLE_Marker + "._id = " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.marker_id + " and " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.label_id + "=? order by " + Db.TABLE_Marker + "." + sortClause, new String[]{String.valueOf(kind.code), String.valueOf(labelId)});
+		} else if (label_id == BookmarkListActivity.LABELID_noLabel) { // only without label
+			c = db.rawQuery("select " + Db.TABLE_Marker + ".* from " + Db.TABLE_Marker + " where " + Db.TABLE_Marker + "." + Db.Marker.kind + "=? and " + Db.TABLE_Marker + "." + Db.Marker.gid + " not in (select distinct " + Db.Marker_Label.marker_gid + " from " + Db.TABLE_Marker_Label + ") order by " + Db.TABLE_Marker + "." + sortClause, new String[] {String.valueOf(kind.code)});
+		} else { // filter by label_id
+			final Label label = getLabelById(label_id);
+			c = db.rawQuery("select " + Db.TABLE_Marker + ".* from " + Db.TABLE_Marker + ", " + Db.TABLE_Marker_Label + " where " + Db.Marker.kind + "=? and " + Db.TABLE_Marker + "." + Db.Marker.gid + " = " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.marker_gid + " and " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.label_gid + "=? order by " + Db.TABLE_Marker + "." + sortClause, new String[]{String.valueOf(kind.code), label.gid});
 		}
 
 		try {
@@ -277,7 +273,7 @@ public class InternalDb {
 							// no need to do, from no color to no color
 						} else {
 							final Date now = new Date();
-							Marker marker = new Marker(ari, Marker.Kind.highlight, U.encodeHighlight(colorRgb), 1, now, now);
+							final Marker marker = Marker.createNewMarker(ari, Marker.Kind.highlight, U.encodeHighlight(colorRgb), 1, now, now);
 							db.insert(Db.TABLE_Marker, null, markerToContentValues(marker));
 						}
 					}
@@ -519,15 +515,13 @@ public class InternalDb {
 		return res;
 	}
 
-	/**
-	 * @return null when not found
-	 */
 	public List<Label> listLabelsByMarkerId(long marker_id) {
-		List<Label> res = null;
-		final Cursor cursor = helper.getReadableDatabase().rawQuery("select " + Db.TABLE_Label + ".* from " + Db.TABLE_Label + ", " + Db.TABLE_Marker_Label + " where " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.label_id + " = " + Db.TABLE_Label + "._id and " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.marker_id + "=? order by " + Db.TABLE_Label + "." + Db.Label.ordering + " asc", new String[] {String.valueOf(marker_id)});
+		final Marker marker = getMarkerById(marker_id);
+
+		final List<Label> res = new ArrayList<>();
+		final Cursor cursor = helper.getReadableDatabase().rawQuery("select " + Db.TABLE_Label + ".* from " + Db.TABLE_Label + ", " + Db.TABLE_Marker_Label + " where " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.label_gid + " = " + Db.TABLE_Label + "." + Db.Label.gid + " and " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.marker_gid + "=? order by " + Db.TABLE_Label + "." + Db.Label.ordering + " asc", new String[]{marker.gid});
 		try {
 			while (cursor.moveToNext()) {
-				if (res == null) res = new ArrayList<>();
 				res.add(labelFromCursor(cursor));
 			}
 		} finally {
@@ -537,20 +531,28 @@ public class InternalDb {
 	}
 
 	public static Label labelFromCursor(Cursor c) {
-		Label res = new Label();
-		res._id = c.getLong(c.getColumnIndexOrThrow(BaseColumns._ID));
+		final Label res = Label.createEmptyLabel();
+
+		res._id = c.getLong(c.getColumnIndexOrThrow("_id"));
+		res.gid = c.getString(c.getColumnIndexOrThrow(Db.Label.gid));
 		res.title = c.getString(c.getColumnIndexOrThrow(Db.Label.title));
 		res.ordering = c.getInt(c.getColumnIndexOrThrow(Db.Label.ordering));
 		res.backgroundColor = c.getString(c.getColumnIndexOrThrow(Db.Label.backgroundColor));
+
 		return res;
 	}
 
-	public ContentValues labelToContentValues(Label label) {
-		ContentValues res = new ContentValues();
-		// skip _id
+	/**
+	 * _id is not stored
+	 */
+	private ContentValues labelToContentValues(Label label) {
+		final ContentValues res = new ContentValues();
+
+		res.put(Db.Label.gid, label.gid);
 		res.put(Db.Label.title, label.title);
 		res.put(Db.Label.ordering, label.ordering);
 		res.put(Db.Label.backgroundColor, label.backgroundColor);
+
 		return res;
 	}
 
@@ -565,29 +567,45 @@ public class InternalDb {
 	}
 
 	public Label insertLabel(String title, String bgColor) {
-		Label res = new Label(-1, title, getLabelMaxOrdering() + 1, bgColor);
-		SQLiteDatabase db = helper.getWritableDatabase();
-		long _id = db.insert(Db.TABLE_Label, null, labelToContentValues(res));
-		if (_id == -1) {
-			return null;
-		} else {
-			res._id = _id;
-			return res;
-		}
+		final Label res = Label.createNewLabel(title, getLabelMaxOrdering() + 1, bgColor);
+		final SQLiteDatabase db = helper.getWritableDatabase();
+
+		res._id = db.insert(Db.TABLE_Label, null, labelToContentValues(res));
+		return res;
 	}
 
-	public void updateLabels(Marker marker, Set<Label> labels) {
-		SQLiteDatabase db = helper.getWritableDatabase();
+	public void updateLabels(Marker marker, Set<Label> newLabels) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+
+		final List<Label> oldLabels = listLabelsByMarkerId(marker._id);
+
+		final List<Label> addLabels = new ArrayList<>();
+		for (final Label newLabel : newLabels) {
+			if (!oldLabels.contains(newLabel)) {
+				addLabels.add(newLabel);
+			}
+		}
+
+		final List<Label> removeLabels = new ArrayList<>();
+		for (final Label oldLabel : oldLabels) {
+			if (!newLabels.contains(oldLabel)) {
+				removeLabels.add(oldLabel);
+			}
+		}
+
 		db.beginTransaction();
 		try {
-			// remove all
-			db.delete(Db.TABLE_Marker_Label, Db.Marker_Label.marker_id + "=?", new String[] {String.valueOf(marker._id)});
+			// remove
+			for (final Label removeLabel : removeLabels) {
+				db.delete(Db.TABLE_Marker_Label, Db.Marker_Label.marker_gid + "=? and " + Db.Marker_Label.label_gid + "=?", new String[]{marker.gid, removeLabel.gid});
+			}
 
-			// add all
+			// add
 			final ContentValues cv = new ContentValues();
-			for (Label label : labels) {
-				cv.put(Db.Marker_Label.marker_id, marker._id);
-				cv.put(Db.Marker_Label.label_id, label._id);
+			for (final Label addLabel : addLabels) {
+				cv.put(Db.Marker_Label.gid, Gid.newGid());
+				cv.put(Db.Marker_Label.marker_gid, marker.gid);
+				cv.put(Db.Marker_Label.label_gid, addLabel.gid);
 				db.insert(Db.TABLE_Marker_Label, null, cv);
 			}
 
@@ -597,10 +615,10 @@ public class InternalDb {
 		}
 	}
 
-    public Label getLabelById(long labelId) {
+    public Label getLabelById(long _id) {
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.query(Db.TABLE_Label, null, BaseColumns._ID + "=?", new String[] {String.valueOf(labelId)}, null, null, null);
-        try {
+		Cursor cursor = db.query(Db.TABLE_Label, null, "_id=?", new String[]{String.valueOf(_id)}, null, null, null);
+		try {
             if (cursor.moveToNext()) {
                 return labelFromCursor(cursor);
             } else {
@@ -611,13 +629,13 @@ public class InternalDb {
         }
     }
 
-	public void deleteLabelById(long id) {
-		SQLiteDatabase db = helper.getWritableDatabase();
+	public void deleteLabelById(long _id) {
+		final Label label = getLabelById(_id);
+		final SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
 		try {
-			String[] params = new String[] {String.valueOf(id)};
-			db.delete(Db.TABLE_Marker_Label, Db.Marker_Label.label_id + "=?", params);
-			db.delete(Db.TABLE_Label, "_id=?", params);
+			db.delete(Db.TABLE_Marker_Label, Db.Marker_Label.label_gid + "=?", new String[]{label.gid});
+			db.delete(Db.TABLE_Label, "_id=?", new String[]{String.valueOf(_id)});
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
@@ -631,14 +649,8 @@ public class InternalDb {
 	}
 
 	public int countMarkersWithLabel(Label label) {
-		SQLiteDatabase db = helper.getReadableDatabase();
-		SQLiteStatement stmt = db.compileStatement("select count(*) from " + Db.TABLE_Marker_Label + " where " + Db.Marker_Label.label_id + "=?");
-		try {
-			stmt.bindLong(1, label._id);
-			return (int) stmt.simpleQueryForLong();
-		} finally {
-			stmt.close();
-		}
+		final SQLiteDatabase db = helper.getReadableDatabase();
+		return (int) DatabaseUtils.longForQuery(db, "select count(*) from " + Db.TABLE_Marker_Label + " where " + Db.Marker_Label.label_gid + "=?", new String[]{label.gid});
 	}
 
 	public int deleteDevotionsWithLessThanInTitle() {

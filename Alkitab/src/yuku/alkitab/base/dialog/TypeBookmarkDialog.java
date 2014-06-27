@@ -102,8 +102,8 @@ public class TypeBookmarkDialog {
 
 		if (marker != null) {
 			labels = new TreeSet<>();
-			List<Label> ll = S.getDb().listLabelsByMarkerId(marker._id);
-			if (ll != null) labels.addAll(ll);
+			final List<Label> ll = S.getDb().listLabelsByMarkerId(marker._id);
+			labels.addAll(ll);
 		}
 		setLabelsText();
 

@@ -593,8 +593,8 @@ public class BookmarkListActivity extends BaseActivity {
 
 				Appearances.applyBookmarkSnippetContentAndAppearance(lSnippet, reference, snippet);
 
-				List<Label> labels = S.getDb().listLabelsByMarkerId(bookmark._id);
-				if (labels != null && labels.size() != 0) {
+				final List<Label> labels = S.getDb().listLabelsByMarkerId(bookmark._id);
+				if (labels.size() != 0) {
 					panelLabels.setVisibility(View.VISIBLE);
 					panelLabels.removeAllViews();
 					for (Label label : labels) {
