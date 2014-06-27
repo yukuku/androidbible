@@ -68,7 +68,7 @@
         <activity
             android:name="yuku.alkitab.base.ac.BookmarkActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-            android:label="@string/judul_bukmak_activity"
+            android:label="@string/activity_title_markers"
             tools:ignore="ExportedActivity">
             <intent-filter android:label="@string/intent_filter_import_from_backup">
                 <action android:name="android.intent.action.VIEW"/>

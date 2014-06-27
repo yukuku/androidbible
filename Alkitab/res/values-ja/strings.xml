@@ -24,7 +24,7 @@
   <string name="versi">版</string>
   <string name="menuDevotion">デボーション</string>
   <string name="cari_v">検索</string>
-  <string name="judul_bukmak_activity">ブックマークなど</string>
+  <string name="activity_title_markers">ブックマークなど</string>
   <string name="menu_markers">ブックマークなど</string>
   <string name="hapus_pembatas_buku">ブックマークを削除</string>
   <string name="bagikan">共有</string>

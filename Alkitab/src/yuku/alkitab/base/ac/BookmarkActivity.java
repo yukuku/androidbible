@@ -39,7 +39,7 @@ import java.util.List;
 public class BookmarkActivity extends BaseActivity {
 	public static final String TAG = BookmarkActivity.class.getSimpleName();
 	
-	private static final int REQCODE_bukmakList = 1;
+	private static final int REQCODE_markerList = 1;
 	private static final int REQCODE_share = 2;
 
 	DragSortListView lv;
@@ -54,7 +54,7 @@ public class BookmarkActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.activity_bookmark);
-		setTitle(R.string.judul_bukmak_activity);
+		setTitle(R.string.activity_title_markers);
 		
 		adapter = new BookmarkFilterAdapter();
 		adapter.reload();
@@ -90,7 +90,7 @@ public class BookmarkActivity extends BaseActivity {
 					return;
 				}
 			}
-			startActivityForResult(intent, REQCODE_bukmakList);
+			startActivityForResult(intent, REQCODE_markerList);
 		}
 	};
 
@@ -127,15 +127,15 @@ public class BookmarkActivity extends BaseActivity {
 				return true;
 			}
 			
-			int nbukmak = S.getDb().countMarkersWithLabel(label);
+			final int marker_count = S.getDb().countMarkersWithLabel(label);
 
-			if (nbukmak == 0) {
-				// tiada, langsung hapus aja!
+			if (marker_count == 0) {
+				// no markers, just delete straight away
 				S.getDb().deleteLabelById(label._id);
 				adapter.reload();
 			} else {
 				new AlertDialog.Builder(this)
-				.setMessage(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, nbukmak))
+				.setMessage(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, marker_count))
 				.setNegativeButton(R.string.cancel, null)
 				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
@@ -177,7 +177,7 @@ public class BookmarkActivity extends BaseActivity {
 	}
 	
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == REQCODE_bukmakList) {
+		if (requestCode == REQCODE_markerList) {
 			adapter.reload();
 		} else if (requestCode == REQCODE_share && resultCode == RESULT_OK) {
 			final ShareActivity.Result result = ShareActivity.obtainResult(data);
@@ -292,7 +292,7 @@ public class BookmarkActivity extends BaseActivity {
 		}
 
 		@Override public View getView(int position, View convertView, ViewGroup parent) {
-			View res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_bookmark_filter, null);
+			final View res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_bookmark_filter, parent, false);
 			
 			ImageView imgFilterIcon = V.get(res, R.id.imgFilterIcon);
 			if (position < 3) {

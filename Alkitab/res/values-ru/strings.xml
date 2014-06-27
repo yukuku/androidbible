@@ -24,7 +24,7 @@
   <string name="versi">Версия</string>
   <string name="menuDevotion">Сегодняшнее чтение</string>
   <string name="cari_v">Поиск</string>
-  <string name="judul_bukmak_activity">Маркеры</string>
+  <string name="activity_title_markers">Маркеры</string>
   <string name="menu_markers">Маркеры</string>
   <string name="hapus_pembatas_buku">Удалить закладку</string>
   <string name="bagikan">Поделиться</string>

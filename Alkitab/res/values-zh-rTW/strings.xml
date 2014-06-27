@@ -24,7 +24,7 @@
   <string name="versi">版本</string>
   <string name="menuDevotion">靈修心得</string>
   <string name="cari_v">搜尋</string>
-  <string name="judul_bukmak_activity">記號</string>
+  <string name="activity_title_markers">記號</string>
   <string name="menu_markers">標記</string>
   <string name="hapus_pembatas_buku">刪除書籤</string>
   <string name="bagikan">分享</string>

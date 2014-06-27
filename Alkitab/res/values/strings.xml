@@ -23,7 +23,7 @@
     <string name="versi">Version</string>
     <string name="menuDevotion">Devotion</string>
     <string name="cari_v">Search</string>
-    <string name="judul_bukmak_activity">Markers</string>
+    <string name="activity_title_markers">Markers</string>
     <string name="menu_markers">Markers</string>
     <string name="hapus_pembatas_buku">Delete bookmark</string>
     <string name="bagikan">Share</string>

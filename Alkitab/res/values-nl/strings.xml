@@ -24,7 +24,7 @@
   <string name="versi">Versie</string>
   <string name="menuDevotion">Devotie</string>
   <string name="cari_v">Zoeken</string>
-  <string name="judul_bukmak_activity">Bladwijzers, notities, e.d.</string>
+  <string name="activity_title_markers">Bladwijzers, notities, e.d.</string>
   <string name="menu_markers">Bladwijzers, notities, e.d.</string>
   <string name="hapus_pembatas_buku">Verwijder bladwijzer</string>
   <string name="bagikan">Deel</string>

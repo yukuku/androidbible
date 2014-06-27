@@ -24,7 +24,7 @@
   <string name="versi">Versiune</string>
   <string name="menuDevotion">Devoţional</string>
   <string name="cari_v">Caută</string>
-  <string name="judul_bukmak_activity">Însemnări</string>
+  <string name="activity_title_markers">Însemnări</string>
   <string name="menu_markers">Însemnări</string>
   <string name="hapus_pembatas_buku">Şterge favorit</string>
   <string name="bagikan">Trimite</string>

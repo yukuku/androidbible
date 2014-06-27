@@ -24,7 +24,7 @@
   <string name="versi">Versi</string>
   <string name="menuDevotion">Renungan</string>
   <string name="cari_v">Cari</string>
-  <string name="judul_bukmak_activity">Marka</string>
+  <string name="activity_title_markers">Marka</string>
   <string name="menu_markers">Marka</string>
   <string name="hapus_pembatas_buku">Hapus pembatas buku</string>
   <string name="bagikan">Bagikan</string>

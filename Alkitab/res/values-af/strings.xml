@@ -24,7 +24,7 @@
   <string name="versi">Weergawe</string>
   <string name="menuDevotion">Toewyding</string>
   <string name="cari_v">Soek</string>
-  <string name="judul_bukmak_activity">Merkers</string>
+  <string name="activity_title_markers">Merkers</string>
   <string name="menu_markers">Merkers</string>
   <string name="hapus_pembatas_buku">Verwyder boekmerk</string>
   <string name="bagikan">Deel</string>

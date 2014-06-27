@@ -24,7 +24,7 @@
   <string name="versi">Versão</string>
   <string name="menuDevotion">Devocional</string>
   <string name="cari_v">Pesquisar</string>
-  <string name="judul_bukmak_activity">Marcadores</string>
+  <string name="activity_title_markers">Marcadores</string>
   <string name="menu_markers">Marcadores</string>
   <string name="hapus_pembatas_buku">Remover marcador</string>
   <string name="bagikan">Compartilhar</string>

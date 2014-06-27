@@ -24,7 +24,7 @@
   <string name="versi">Версія</string>
   <string name="menuDevotion">Вивчення Біблії</string>
   <string name="cari_v">Пошук</string>
-  <string name="judul_bukmak_activity">Закладки</string>
+  <string name="activity_title_markers">Закладки</string>
   <string name="menu_markers">Закладки</string>
   <string name="hapus_pembatas_buku">Видалити закладку</string>
   <string name="bagikan">Поділитись</string>
