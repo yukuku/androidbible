@@ -164,10 +164,13 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	};
 
 	TwofingerLinearLayout.Listener splitRoot_listener = new TwofingerLinearLayout.Listener() {
-		public float startFontSize;
+		float startFontSize;
+		float startDx = Float.MIN_VALUE;
+		float chapterSwipeCellWidth; // initted later
 
 		@Override
 		public void onTwofingerStart() {
+			chapterSwipeCellWidth = 24.f * getResources().getDisplayMetrics().density;
 			startFontSize = Preferences.getFloat(Prefkey.ukuranHuruf2, (float) App.context.getResources().getInteger(R.integer.pref_ukuranHuruf2_default));
 		}
 
@@ -190,17 +193,41 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		@Override
 		public void onTwofingerDragX(final float dx) {
+			if (startDx == Float.MIN_VALUE) { // just started
+				startDx = dx;
 
+				if (dx < 0) {
+					bRight_click();
+				} else {
+					bLeft_click();
+				}
+			} else { // more
+				// more to the left
+				while (dx < startDx - chapterSwipeCellWidth) {
+					startDx -= chapterSwipeCellWidth;
+					bRight_click();
+				}
+
+				while (dx > startDx + chapterSwipeCellWidth) {
+					startDx += chapterSwipeCellWidth;
+					bLeft_click();
+				}
+			}
 		}
 
 		@Override
 		public void onTwofingerDragY(final float dy) {
-
+			if (dy < 0) {
+				setFullScreen(true);
+			} else {
+				setFullScreen(false);
+			}
 		}
 
 		@Override
 		public void onTwofingerEnd(final TwofingerLinearLayout.Mode mode) {
-
+			startFontSize = 0;
+			startDx = Float.MIN_VALUE;
 		}
 	};
 
@@ -1058,6 +1085,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	@TargetApi(19)
 	void setFullScreen(boolean yes) {
+		if (fullScreen == yes) return; // no change
+
 		if (yes) {
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			getActionBar().hide();
