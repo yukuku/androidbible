@@ -6,6 +6,7 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.support.v4.util.AtomicFile;
 import android.util.Log;
+import com.squareup.okhttp.Call;
 import yuku.alkitab.base.App;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.OptionalGzipInputStream;
@@ -14,8 +15,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.concurrent.Semaphore;
 
@@ -34,7 +33,7 @@ public class AddonManager {
 	public interface DownloadListener {
 		void onDownloadFinished(Element e);
 		void onDownloadFailed(Element e, String caption, Throwable t);
-		void onDownloadProgress(Element e, int progress, int total);
+		void onDownloadProgress(Element e, int progress);
 		void onDownloadCancelled(Element e);
 	}
 
@@ -103,13 +102,10 @@ public class AddonManager {
 			try {
 				os = atomicFile.startWrite();
 
-				final HttpURLConnection conn = App.openHttp(new URL(e.url));
+				final Call call = App.downloadCall(e.url);
 				Log.d(TAG, "Start downloading " + e.url);
 
-				final int length = conn.getContentLength();
-
-				Log.d(TAG, "Download starting. Length: " + length);
-				final InputStream content = new OptionalGzipInputStream(conn.getInputStream());
+				final InputStream content = new OptionalGzipInputStream(call.execute().body().byteStream());
 				try {
 					byte[] b = new byte[4096 * 4];
 					while (true) {
@@ -119,10 +115,10 @@ public class AddonManager {
 						os.write(b, 0, read);
 
 						e.downloaded += read;
-						if (e.listener != null) e.listener.onDownloadProgress(e, e.downloaded, length);
+						if (e.listener != null) e.listener.onDownloadProgress(e, e.downloaded);
 
 						if (e.cancelled) {
-							conn.disconnect();
+							call.cancel();
 							atomicFile.failWrite(os);
 							if (e.listener != null) e.listener.onDownloadCancelled(e);
 							os.close();

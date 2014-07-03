@@ -7,16 +7,12 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.util.Log;
+import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.message.BasicNameValuePair;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -147,39 +143,25 @@ public class FeedbackSender {
 			Log.d(TAG, "feedback sending thread started");
 
 			try {
-				final HttpURLConnection conn = client.open(new URL("https://alkitab-host.appspot.com/laban/submit"));
-				conn.setDoOutput(true);
-				List<NameValuePair> params = new ArrayList<>();
-
+				final FormEncodingBuilder form = new FormEncodingBuilder();
 				for (Entry e : entries_) {
-					params.add(new BasicNameValuePair("timestamp[]", "" + e.timestamp));
-					params.add(new BasicNameValuePair("installationId[]", "" + getInstallationId()));
-					params.add(new BasicNameValuePair("feedback_id[]", "" + e.feedback_id));
-					params.add(new BasicNameValuePair("feedback_from_name[]", "" + e.feedback_from_name));
-					params.add(new BasicNameValuePair("feedback_from_email[]", "" + e.feedback_from_email));
-					params.add(new BasicNameValuePair("feedback_body[]", "" + e.feedback_body));
-					params.add(new BasicNameValuePair("package_name[]", "" + context_.getPackageName()));
-					params.add(new BasicNameValuePair("package_versionCode[]", "" + e.package_versionCode));
-					params.add(new BasicNameValuePair("build_product[]", "" + getBuildProduct()));
-					params.add(new BasicNameValuePair("build_device[]", "" + getBuildDevice()));
-					params.add(new BasicNameValuePair("build_model[]", "" + getBuildModel()));
-					params.add(new BasicNameValuePair("build_version_sdk[]", "" + e.build_version_sdk));
+					form.add("timestamp[]", "" + e.timestamp);
+					form.add("installationId[]", "" + getInstallationId());
+					form.add("feedback_id[]", "" + e.feedback_id);
+					form.add("feedback_from_name[]", "" + e.feedback_from_name);
+					form.add("feedback_from_email[]", "" + e.feedback_from_email);
+					form.add("feedback_body[]", "" + e.feedback_body);
+					form.add("package_name[]", "" + context_.getPackageName());
+					form.add("package_versionCode[]", "" + e.package_versionCode);
+					form.add("build_product[]", "" + getBuildProduct());
+					form.add("build_device[]", "" + getBuildDevice());
+					form.add("build_model[]", "" + getBuildModel());
+					form.add("build_version_sdk[]", "" + e.build_version_sdk);
 				}
 
-				new UrlEncodedFormEntity(params, "utf-8").writeTo(conn.getOutputStream());
 
-				InputStream content = conn.getInputStream();
-				ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
-
-				while (true) {
-					byte[] b = new byte[4096];
-					int read = content.read(b);
-
-					if (read <= 0) break;
-					baos.write(b, 0, read);
-				}
-
-				byte[] out = baos.toByteArray();
+				final Response resp = client.newCall(new Request.Builder().url("https://alkitab-host.appspot.com/laban/submit").post(form.build()).build()).execute();
+				final byte[] out = resp.body().bytes();
 
 				if (out.length >= 2 && out[0] == 'O' && out[1] == 'K') {
 					success = true;

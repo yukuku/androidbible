@@ -51,11 +51,7 @@ import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.display.Launcher;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -525,8 +521,8 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 
 			/** run on bg thread */
 			void download() throws Exception {
-				final HttpURLConnection conn = App.openHttp(new URL("https://alkitab-host.appspot.com/rp/list"));
-				final ReadingPlanServerEntry[] entries = new GsonBuilder().create().fromJson(new InputStreamReader(conn.getInputStream(), "utf-8"), ReadingPlanServerEntry[].class);
+				final String json = App.downloadString("https://alkitab-host.appspot.com/rp/list");
+				final ReadingPlanServerEntry[] entries = new GsonBuilder().create().fromJson(json, ReadingPlanServerEntry[].class);
 
 				if (entries == null) return;
 				if (cancelled.get()) return;
@@ -627,21 +623,13 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 
 			/** run on bg thread */
 			void download() throws Exception {
-				final HttpURLConnection conn = App.openHttp(new URL("https://alkitab-host.appspot.com/rp/get_rp?name=" + entry.name));
-				final InputStream input = conn.getInputStream();
-				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				final byte[] buf = new byte[1024];
-				while (true) {
-					final int read = input.read(buf);
-					if (read < 0) break;
-					baos.write(buf, 0, read);
-				}
+				final byte[] bytes = App.downloadBytes("https://alkitab-host.appspot.com/rp/get_rp?name=" + entry.name);
 
 				if (cancelled.get()) return;
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						onReadingPlanDownloadFinished(baos.toByteArray());
+						onReadingPlanDownloadFinished(bytes);
 					}
 				});
 			}

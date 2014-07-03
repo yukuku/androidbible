@@ -5,13 +5,10 @@ import android.os.SystemClock;
 import android.util.Log;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.debug.R;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.LinkedList;
 
 public class DevotionDownloader extends Thread {
@@ -92,8 +89,7 @@ public class DevotionDownloader extends Thread {
 				listener_.onDownloadStatus(context_.getString(R.string.mengunduh_namaumum_tgl_tgl, kind.title, article.getDate()));
 
 				try {
-					final HttpURLConnection conn = App.openHttp(new URL(url));
-					String output = U.inputStreamToString(conn.getInputStream(), article.getRawEncoding());
+					final String output = App.downloadString(url);
 
 					// success!
 					listener_.onDownloadStatus(context_.getString(R.string.berhasil_mengunduh_namaumum_tgl_tgl, kind.title, article.getDate()));

@@ -34,9 +34,7 @@ import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.util.Pair;
 import android.view.ActionMode;
-import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -1102,29 +1100,15 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 			fullScreen = false;
 		}
-
-		if (textAppearancePanel != null) {
-			textAppearancePanel.setFullScreen(yes);
-		}
 	}
 
 	void setShowTextAppearancePanel(boolean yes) {
 		if (yes) {
 			if (textAppearancePanel == null) { // not showing yet
-				textAppearancePanel = new TextAppearancePanel(this, LayoutInflater.from(new ContextThemeWrapper(this, android.R.style.Theme_Holo_Light)), overlayContainer, new TextAppearancePanel.Listener() {
-					@Override public void onValueChanged(TextAppearancePanel.ValueGet valueGet) {
+				textAppearancePanel = new TextAppearancePanel(this, getLayoutInflater(), overlayContainer, new TextAppearancePanel.Listener() {
+					@Override public void onValueChanged() {
 						S.calculateAppliedValuesBasedOnPreferences();
 						applyPreferences(false);
-
-						final boolean fullScreen = valueGet.fullScreenChecked();
-						final boolean nightMode = valueGet.nightModeChecked();
-
-						setFullScreen(fullScreen);
-						setNightMode(nightMode);
-
-						final LeftDrawer.Text.Handle handle = leftDrawer.getHandle();
-						handle.setFullScreen(fullScreen);
-						handle.setNightMode(nightMode);
 					}
 
 					@Override
@@ -1133,7 +1117,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						textAppearancePanel = null;
 					}
 				}, REQCODE_textAppearanceGetFonts, REQCODE_textAppearanceCustomColors);
-				textAppearancePanel.setFullScreen(fullScreen);
 				textAppearancePanel.show();
 			}
 		} else {
@@ -2104,17 +2087,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	@Override
 	public void cFullScreen_checkedChange(final boolean isChecked) {
 		setFullScreen(isChecked);
-		if (textAppearancePanel != null) {
-			textAppearancePanel.setFullScreen(isChecked);
-		}
 	}
 
 	@Override
 	public void cNightMode_checkedChange(final boolean isChecked) {
 		setNightMode(isChecked);
-		if (textAppearancePanel != null) {
-			textAppearancePanel.setNightMode(isChecked);
-		}
 	}
 
 	@Override

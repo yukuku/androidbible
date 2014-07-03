@@ -5,14 +5,14 @@ import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import com.squareup.okhttp.Call;
 import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.internal.http.HttpEngine;
+import com.squareup.okhttp.Request;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.debug.R;
 import yuku.alkitabfeedback.FeedbackSender;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.IOException;
 import java.util.Locale;
 
 public class App extends yuku.afw.App {
@@ -25,11 +25,17 @@ public class App extends yuku.afw.App {
 
 		OkHttpClient httpClient = new OkHttpClient();
 	}
-	public static HttpURLConnection openHttp(URL url) {
-		final HttpURLConnection conn = OkHttpClientWrapper.INSTANCE.httpClient.open(url);
-		// enable gzip to save bandwidth on server
-		conn.setRequestProperty("User-Agent", HttpEngine.getDefaultUserAgent() + " gzip");
-		return conn;
+
+	public static String downloadString(String url) throws IOException {
+		return OkHttpClientWrapper.INSTANCE.httpClient.newCall(new Request.Builder().url(url).build()).execute().body().string();
+	}
+
+	public static byte[] downloadBytes(String url) throws IOException {
+		return OkHttpClientWrapper.INSTANCE.httpClient.newCall(new Request.Builder().url(url).build()).execute().body().bytes();
+	}
+
+	public static Call downloadCall(String url) throws IOException {
+		return OkHttpClientWrapper.INSTANCE.httpClient.newCall(new Request.Builder().url(url).build());
 	}
 
 	@Override public void onCreate() {

@@ -20,7 +20,6 @@ import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -38,13 +37,8 @@ import java.util.List;
 public class TextAppearancePanel {
 	public static final String TAG = TextAppearancePanel.class.getSimpleName();
 
-	public interface ValueGet {
-		boolean fullScreenChecked();
-		boolean nightModeChecked();
-	}
-
 	public interface Listener {
-		void onValueChanged(ValueGet valueGet);
+		void onValueChanged();
 		void onCloseButtonClick();
 	}
 	
@@ -61,29 +55,15 @@ public class TextAppearancePanel {
 	SeekBar sbTextSize;
 	TextView lLineSpacing;
 	SeekBar sbLineSpacing;
-	ToggleButton cBold;
+	CheckBox cBold;
 	Spinner cbColorTheme;
 	View bCustomColors;
-	CheckBox cFullScreen;
-	CheckBox cNightMode;
 	View bClose;
 
 	TypefaceAdapter typefaceAdapter;
 	ColorThemeAdapter colorThemeAdapter;
 	boolean shown = false;
 	boolean initialColorThemeSelection = true;
-
-	ValueGet valueGet = new ValueGet() {
-		@Override
-		public boolean fullScreenChecked() {
-			return cFullScreen.isChecked();
-		}
-
-		@Override
-		public boolean nightModeChecked() {
-			return cNightMode.isChecked();
-		}
-	};
 
 	public TextAppearancePanel(Activity activity, LayoutInflater inflater, FrameLayout parent, Listener listener, int reqcodeGetFonts, int reqcodeCustomColors) {
 		this.activity = activity;
@@ -109,8 +89,6 @@ public class TextAppearancePanel {
 	    sbLineSpacing = V.get(content, R.id.sbLineSpacing);
 	    cbColorTheme = V.get(content, R.id.cbColorTheme);
 		bCustomColors = V.get(content, R.id.bCustomColors);
-		cFullScreen = V.get(content, R.id.cFullScreen);
-		cNightMode = V.get(content, R.id.cNightMode);
 		bClose = V.get(content, R.id.bClose);
 
 		cbTypeface.setAdapter(typefaceAdapter = new TypefaceAdapter());
@@ -124,8 +102,6 @@ public class TextAppearancePanel {
 		cBold.setOnCheckedChangeListener(cBold_checkedChange);
 		cbColorTheme.setOnItemSelectedListener(cbColorTheme_itemSelected);
 		bCustomColors.setOnClickListener(bCustomColors_click);
-		cFullScreen.setOnCheckedChangeListener(cFullScreen_checkedChange);
-		cNightMode.setOnCheckedChangeListener(cNightMode_checkedChange);
 		bClose.setOnClickListener(bClose_click);
 	}
 	
@@ -159,8 +135,6 @@ public class TextAppearancePanel {
 			}
 			colorThemeAdapter.notifyDataSetChanged();
 		}
-
-		cNightMode.setChecked(Preferences.getBoolean(Prefkey.is_night_mode, false));
 	}
 
 	public void show() {
@@ -191,7 +165,7 @@ public class TextAppearancePanel {
 				activity.startActivityForResult(FontManagerActivity.createIntent(), reqcodeGetFonts);
 			} else {
 				Preferences.setString(Prefkey.jenisHuruf, name);
-				listener.onValueChanged(valueGet);
+				listener.onValueChanged();
 			}
 		}
 		
@@ -208,7 +182,7 @@ public class TextAppearancePanel {
 			if (position != colorThemeAdapter.getPositionOfCustomColors()) {
 				int[] colors = colorThemeAdapter.getColorsAtPosition(position);
 				ColorThemes.setCurrentColors(colors, Preferences.getBoolean(Prefkey.is_night_mode, false));
-				listener.onValueChanged(valueGet);
+				listener.onValueChanged();
 				colorThemeAdapter.notifyDataSetChanged();
 			} else {
 				// we are at the last item
@@ -221,20 +195,6 @@ public class TextAppearancePanel {
 	View.OnClickListener bCustomColors_click = new View.OnClickListener() {
 		@Override public void onClick(View v) {
 			activity.startActivityForResult(ColorSettingsActivity.createIntent(Preferences.getBoolean(Prefkey.is_night_mode, false)), reqcodeCustomColors);
-		}
-	};
-
-	CompoundButton.OnCheckedChangeListener cFullScreen_checkedChange = new CompoundButton.OnCheckedChangeListener() {
-		@Override
-		public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-			listener.onValueChanged(valueGet);
-		}
-	};
-
-	CompoundButton.OnCheckedChangeListener cNightMode_checkedChange = new CompoundButton.OnCheckedChangeListener() {
-		@Override
-		public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-			listener.onValueChanged(valueGet);
 		}
 	};
 
@@ -254,7 +214,7 @@ public class TextAppearancePanel {
 			float textSize = progress * 0.5f + 2.f;
 			Preferences.setFloat(Prefkey.ukuranHuruf2, textSize);
 			displayTextSizeText(textSize);
-			listener.onValueChanged(valueGet);
+			listener.onValueChanged();
 		}
 	};
 	
@@ -271,7 +231,7 @@ public class TextAppearancePanel {
 			float lineSpacing = 1.f + progress * 0.05f;
 			Preferences.setFloat(Prefkey.lineSpacingMult, lineSpacing);
 			displayLineSpacingText(lineSpacing);
-			listener.onValueChanged(valueGet);
+			listener.onValueChanged();
 		}
 	};
 	
@@ -282,7 +242,7 @@ public class TextAppearancePanel {
 	CompoundButton.OnCheckedChangeListener cBold_checkedChange = new CompoundButton.OnCheckedChangeListener() {
 		@Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			Preferences.setBoolean(Prefkey.boldHuruf, isChecked);
-			listener.onValueChanged(valueGet);
+			listener.onValueChanged();
 		}
 	};
 	
@@ -432,18 +392,6 @@ public class TextAppearancePanel {
 		public int getPositionOfCustomColors() {
 			return themes.size();
 		}
-	}
-
-	public void setFullScreen(final boolean fullScreen) {
-		cFullScreen.setOnCheckedChangeListener(null);
-		cFullScreen.setChecked(fullScreen);
-		cFullScreen.setOnCheckedChangeListener(cFullScreen_checkedChange);
-	}
-
-	public void setNightMode(final boolean nightMode) {
-		cNightMode.setOnCheckedChangeListener(null);
-		cNightMode.setChecked(nightMode);
-		cNightMode.setOnCheckedChangeListener(cNightMode_checkedChange);
 	}
 
 	static class ColorThemes {

@@ -485,12 +485,12 @@ public class VersionsActivity extends BaseActivity {
 			}
 
 			@Override
-			public void onDownloadProgress(Element e, final int sampe, int total) {
+			public void onDownloadProgress(final Element e, final int progress) {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						if (sampe >= 0) {
-							pd.setMessage(getString(R.string.terunduh_sampe_byte, sampe));
+						if (progress >= 0) {
+							pd.setMessage(getString(R.string.terunduh_sampe_byte, progress));
 						} else {
 							pd.setMessage(getString(R.string.sedang_mendekompres_harap_tunggu));
 						}

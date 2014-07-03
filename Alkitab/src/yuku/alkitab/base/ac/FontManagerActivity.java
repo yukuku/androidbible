@@ -22,7 +22,6 @@ import com.squareup.picasso.Picasso;
 import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.rpc.SimpleHttpConnection;
 import yuku.alkitab.base.sv.DownloadService;
 import yuku.alkitab.base.sv.DownloadService.DownloadBinder;
 import yuku.alkitab.base.sv.DownloadService.DownloadEntry;
@@ -34,7 +33,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -101,35 +100,24 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 			String errorMsg;
 			
 			@Override protected List<FontItem> doInBackground(Void... params) {
-				SimpleHttpConnection conn = new SimpleHttpConnection(URL_fontList);
 				try {
-					InputStream in = conn.load();
-					if (in == null) {
-						Exception ex = conn.getException();
-						errorMsg = ex.getClass().getSimpleName() + " " + ex.getMessage(); //$NON-NLS-1$
-						return null;
-					} else {
-						if (conn.isSameHost()) {
-							List<FontItem> list = new ArrayList<FontItem>();
-							Scanner sc = new Scanner(in);
-							if (sc.hasNextLine() && sc.nextLine().startsWith("OK")) { //$NON-NLS-1$
-								while (sc.hasNextLine()) {
-									String line = sc.nextLine().trim();
-									if (line.length() > 0) {
-										FontItem item = new FontItem();
-										item.name = line.split(" ")[0]; //$NON-NLS-1$
-										list.add(item);
-									}
-								}
+					final String listString = App.downloadString(URL_fontList);
+					final List<FontItem> list = new ArrayList<>();
+					final Scanner sc = new Scanner(listString);
+					if (sc.hasNextLine() && sc.nextLine().startsWith("OK")) {
+						while (sc.hasNextLine()) {
+							String line = sc.nextLine().trim();
+							if (line.length() > 0) {
+								FontItem item = new FontItem();
+								item.name = line.split(" ")[0];
+								list.add(item);
 							}
-							return list;
-						} else {
-							errorMsg = getString(R.string.fm_need_to_log_in_to_wifi);
 						}
-						return null;
 					}
-				} finally {
-					conn.close();
+					return list;
+				} catch (IOException e) {
+					errorMsg = e.getMessage();
+					return null;
 				}
 			}
 			
@@ -140,7 +128,7 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 				} else {
 					lEmptyError.setText(errorMsg);
 				}
-			};
+			}
 		}.execute();
 	}
 	

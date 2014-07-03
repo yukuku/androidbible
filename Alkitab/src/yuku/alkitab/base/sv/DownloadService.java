@@ -8,6 +8,10 @@ import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 import android.util.Pair;
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.ResponseBody;
+import yuku.alkitab.base.App;
+import yuku.alkitab.debug.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,10 +22,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import yuku.afw.App;
-import yuku.alkitab.debug.R;
-import yuku.alkitab.base.rpc.SimpleHttpConnection;
 
 public class DownloadService extends Service {
 	public static final String TAG = DownloadService.class.getSimpleName();
@@ -40,7 +40,7 @@ public class DownloadService extends Service {
 		private WeakReference<DownloadService> sv;
 
 		public ListenerHandler(DownloadService sv) {
-			this.sv = new WeakReference<DownloadService>(sv);
+			this.sv = new WeakReference<>(sv);
 		}
 
 		@Override public void handleMessage(Message msg) {
@@ -166,17 +166,14 @@ public class DownloadService extends Service {
 				FileOutputStream tempOut = new FileOutputStream(entry.tempFile);
 				
 				// download
-				SimpleHttpConnection conn = new SimpleHttpConnection(entry.url);
+				final Call call = App.downloadCall(entry.url);
+				final ResponseBody body = call.execute().body();
 				try {
-					InputStream is = conn.load();
-					if (is == null) {
-						throw conn.getException();
-					}
-					
 					changeState(State.downloading);
-					entry.progress = conn.getContentLength();
+					entry.progress = 0;
 					dispatchProgress(entry);
-					
+
+					final InputStream is = body.byteStream();
 					byte[] buf = new byte[16384];
 					while (true) {
 						int read = is.read(buf);
@@ -187,10 +184,11 @@ public class DownloadService extends Service {
 						Log.d(TAG, "Entry " + entry.key + " progress " + entry.progress + "/" + entry.length); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
 					tempOut.close();
+					is.close();
 				} finally {
-					conn.close();
+					body.close();
 				}
-				
+
 				// move
 				entry.completeFile.delete();
 				boolean renameOk = entry.tempFile.renameTo(entry.completeFile);
