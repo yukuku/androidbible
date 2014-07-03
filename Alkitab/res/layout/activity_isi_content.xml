@@ -13,7 +13,7 @@
 		android:orientation="vertical"
 		tools:ignore="UselessParent">
 
-		<yuku.alkitab.base.widget.TouchInterceptLinearLayout
+		<yuku.alkitab.base.widget.TwofingerLinearLayout
 			android:id="@+id/splitRoot"
 			android:layout_width="fill_parent"
 			android:layout_height="0dp"
@@ -69,7 +69,7 @@
 					android:textAppearance="?android:attr/textAppearanceMedium"
 					tools:ignore="SelectableText" />
 			</FrameLayout>
-		</yuku.alkitab.base.widget.TouchInterceptLinearLayout>
+		</yuku.alkitab.base.widget.TwofingerLinearLayout>
 
 	</LinearLayout>
 

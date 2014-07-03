@@ -25,7 +25,6 @@ import android.os.Parcelable;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -40,9 +39,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -89,7 +86,7 @@ import yuku.alkitab.base.widget.LabeledSplitHandleButton;
 import yuku.alkitab.base.widget.LeftDrawer;
 import yuku.alkitab.base.widget.SplitHandleButton;
 import yuku.alkitab.base.widget.TextAppearancePanel;
-import yuku.alkitab.base.widget.TouchInterceptLinearLayout;
+import yuku.alkitab.base.widget.TwofingerLinearLayout;
 import yuku.alkitab.base.widget.VerseInlineLinkSpan;
 import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.base.widget.VersesView;
@@ -166,62 +163,44 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	};
 
-	private View.OnTouchListener splitRoot_interceptTouch = new View.OnTouchListener() {
-		long lastDownTime;
-		float lastDownX;
-		float lastDownY;
-		long lastUpTime;
-		float lastUpX;
-		float lastUpY;
+	TwofingerLinearLayout.Listener splitRoot_listener = new TwofingerLinearLayout.Listener() {
+		public float startFontSize;
 
-		int maxDoubleTapDelay = ViewConfiguration.getDoubleTapTimeout();
-		int maxDoubleTapDistance = -1;
-
-		final int[] locationOnScreen = new int[2];
-
-		float distSquared(float dx, float dy) {
-			return dx * dx + dy * dy;
+		@Override
+		public void onTwofingerStart() {
+			startFontSize = Preferences.getFloat(Prefkey.ukuranHuruf2, (float) App.context.getResources().getInteger(R.integer.pref_ukuranHuruf2_default));
 		}
 
 		@Override
-		public boolean onTouch(final View v, final MotionEvent event) {
-			final int action = MotionEventCompat.getActionMasked(event);
+		public void onTwofingerScale(final float scale) {
+			float nowFontSize = startFontSize * scale;
 
-			// lazy
-			if (maxDoubleTapDistance == -1) {
-				maxDoubleTapDistance = ViewConfiguration.get(IsiActivity.this).getScaledDoubleTapSlop();
+			if (nowFontSize < 2.f) nowFontSize = 2.f;
+			if (nowFontSize > 42.f) nowFontSize = 42.f;
+
+			Preferences.setFloat(Prefkey.ukuranHuruf2, nowFontSize);
+
+			S.calculateAppliedValuesBasedOnPreferences();
+			applyPreferences(false);
+
+			if (textAppearancePanel != null) {
+				textAppearancePanel.displayValues();
 			}
+		}
 
-			v.getLocationOnScreen(locationOnScreen);
+		@Override
+		public void onTwofingerDragX(final float dx) {
 
-			if (action == MotionEvent.ACTION_DOWN) { // check for double click
-				if (lastUpTime - lastDownTime < maxDoubleTapDelay) { // first tap down to up must be fast enough
-					long thisDownTime = event.getEventTime();
-					if (thisDownTime - lastUpTime < maxDoubleTapDelay) { // second tap must be fast enough
-						if (distSquared(lastUpX - lastDownX, lastUpY - lastDownY) < maxDoubleTapDistance) { // first tap down to up must be within distance
-							float thisDownX = event.getX() + locationOnScreen[0];
-							float thisDownY = event.getY() + locationOnScreen[1];
-							if (distSquared(thisDownX - lastUpX, thisDownY - lastUpY) < maxDoubleTapDistance) { // second tap must be fast enough
-								// double tap success!
-								setFullScreen(!fullScreen);
-								return true;
-							}
-						}
-					}
-				}
-			}
+		}
 
-			if (action == MotionEvent.ACTION_DOWN) {
-				lastDownTime = event.getEventTime();
-				lastDownX = event.getX() + locationOnScreen[0];
-				lastDownY = event.getY() + locationOnScreen[1];
-			} else if (action == MotionEvent.ACTION_UP) {
-				lastUpTime = event.getEventTime();
-				lastUpX = event.getX() + locationOnScreen[0];
-				lastUpY = event.getY() + locationOnScreen[1];
-			}
+		@Override
+		public void onTwofingerDragY(final float dy) {
 
-			return false;
+		}
+
+		@Override
+		public void onTwofingerEnd(final TwofingerLinearLayout.Mode mode) {
+
 		}
 	};
 
@@ -234,7 +213,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	VersesView lsText;
 	VersesView lsSplit1;
 	TextView tSplitEmpty;
-	TouchInterceptLinearLayout splitRoot;
+	TwofingerLinearLayout splitRoot;
 	View splitHandle;
 	LabeledSplitHandleButton splitHandleButton;
 	GotoButton bGoto;
@@ -352,8 +331,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsText.setName("lsText");
 		lsSplit1.setName("lsSplit1");
 
-		splitRoot.setInterceptTouchEventListener(splitRoot_interceptTouch);
-		
+		splitRoot.setListener(splitRoot_listener);
+
 		bGoto.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) { bGoto_click(); }
