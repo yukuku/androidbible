@@ -31,6 +31,7 @@
 			android:layout_height="48dp"
 			android:layout_weight="0"
 			android:background="?android:actionBarItemBackground"
+			android:contentDescription="@string/desc_close"
 			android:scaleType="center"
 			android:src="@drawable/ic_action_remove" />
 
@@ -39,6 +40,7 @@
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:baselineAligned="false"
 		android:paddingLeft="8dp"
 		android:paddingRight="8dp">
 
@@ -50,17 +52,17 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="48dp"
+				android:gravity="center_vertical|left"
 				android:text="@string/text_appearance_text_size"
-				android:textAllCaps="true"
-				android:gravity="center_vertical|left" />
+				android:textAllCaps="true" />
 
 
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="48dp"
+				android:gravity="center_vertical|left"
 				android:text="@string/text_appearance_line_spacing"
-				android:textAllCaps="true"
-				android:gravity="center_vertical|left" />
+				android:textAllCaps="true" />
 
 		</LinearLayout>
 
@@ -70,25 +72,37 @@
 			android:layout_weight="1"
 			android:orientation="vertical">
 
-
-			<SeekBar
-				android:id="@+id/sbTextSize"
+			<FrameLayout
 				android:layout_width="match_parent"
 				android:layout_height="48dp"
 				android:layout_marginLeft="8dp"
-				android:layout_marginRight="8dp"
-				android:layout_weight="1"
-				android:max="80" />
+				android:layout_marginRight="8dp">
 
+				<SeekBar
+					android:id="@+id/sbTextSize"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:max="80" />
 
-			<SeekBar
-				android:id="@+id/sbLineSpacing"
+			</FrameLayout>
+
+			<FrameLayout
 				android:layout_width="match_parent"
 				android:layout_height="48dp"
 				android:layout_marginLeft="8dp"
-				android:layout_marginRight="8dp"
-				android:layout_weight="1"
-				android:max="20" />
+				android:layout_marginRight="8dp">
+
+
+				<SeekBar
+					android:id="@+id/sbLineSpacing"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:max="20" />
+
+			</FrameLayout>
+
 
 		</LinearLayout>
 
@@ -102,19 +116,19 @@
 				android:id="@+id/lTextSize"
 				android:layout_width="wrap_content"
 				android:layout_height="48dp"
+				android:gravity="center_vertical|right"
 				android:text="*17.0"
 				android:textAppearance="?android:attr/textAppearanceMedium"
-				tools:ignore="HardcodedText"
-				android:gravity="center_vertical|right" />
+				tools:ignore="HardcodedText" />
 
 			<TextView
 				android:id="@+id/lLineSpacing"
 				android:layout_width="wrap_content"
 				android:layout_height="48dp"
+				android:gravity="center_vertical|right"
 				android:text="*1.05"
 				android:textAppearance="?android:attr/textAppearanceMedium"
-				tools:ignore="HardcodedText"
-				android:gravity="center_vertical|right" />
+				tools:ignore="HardcodedText" />
 
 		</LinearLayout>
 
