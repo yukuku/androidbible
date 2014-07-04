@@ -167,6 +167,16 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		float chapterSwipeCellWidth; // initted later
 
 		@Override
+		public void onOnefingerLeft() {
+			bRight_click();
+		}
+
+		@Override
+		public void onOnefingerRight() {
+			bLeft_click();
+		}
+
+		@Override
 		public void onTwofingerStart() {
 			chapterSwipeCellWidth = 24.f * getResources().getDisplayMetrics().density;
 			startFontSize = Preferences.getFloat(Prefkey.ukuranHuruf2, (float) App.context.getResources().getInteger(R.integer.pref_ukuranHuruf2_default));

@@ -15,6 +15,9 @@ public class TwofingerLinearLayout extends LinearLayout {
 	Mode mode = null;
 	Listener listener;
 
+	// position of one finger (for swiping left and right)
+	PointF onefingerStart = new PointF();
+
 	// distance when twofinger starts
 	float startDist;
 	// distance when twofinger enters scale mode
@@ -22,6 +25,9 @@ public class TwofingerLinearLayout extends LinearLayout {
 
 	// average position when twofinger starts
 	PointF startAvg = new PointF();
+
+	// minimum distance to be considered swipe
+	float threshold_twofinger_swipe;
 
 	// minimum distance to be considered drag
 	float threshold_twofinger_drag;
@@ -41,6 +47,7 @@ public class TwofingerLinearLayout extends LinearLayout {
 
 	private void init() {
 		final float density = getResources().getDisplayMetrics().density;
+		threshold_twofinger_swipe = 48.f * density;
 		threshold_twofinger_drag = 48.f * density;
 		threshold_twofinger_scale = 72.f * density;
 	}
@@ -56,23 +63,31 @@ public class TwofingerLinearLayout extends LinearLayout {
 		final int pointerCount = event.getPointerCount();
 		if (BuildConfig.DEBUG) Log.d(TAG, "Touch (((" + actionToString(action) + " pointer_count=" + pointerCount + "))) " + state);
 
-		float x1 = 0;
+		float x1 = event.getX(0);
+		float y1 = event.getY(0);
 		float x2 = 0;
-		float y1 = 0;
 		float y2 = 0;
 
 		if (pointerCount >= 2) {
-			x1 = event.getX(0);
 			x2 = event.getX(1);
-			y1 = event.getY(0);
 			y2 = event.getY(1);
 
 			if (BuildConfig.DEBUG) Log.d(TAG, String.format("--- " + pointerCount + " pointer: (%f,%f) (%f,%f)", x1, y1, x2, y2));
 		}
 
-		if (state == State.twofinger_start) {
+		if (state == State.onefinger_left) {
+			listener.onOnefingerLeft();
+			state = State.none;
+			mode = null;
+			return true;
+		} else if (state == State.onefinger_right) {
+			listener.onOnefingerRight();
+			state = State.none;
+			mode = null;
+			return true;
+		} else if (state == State.twofinger_start) {
 			if (pointerCount >= 2) {
-				startDist = distSquared(x1 - x2, y1 - y2);
+				startDist = dist(x1 - x2, y1 - y2);
 				startAvg.x = 0.5f * (x1 + x2);
 				startAvg.y = 0.5f * (y1 + y2);
 
@@ -84,7 +99,7 @@ public class TwofingerLinearLayout extends LinearLayout {
 			return true;
 		} else if (state == State.twofinger_performing) {
 			if (pointerCount >= 2) {
-				float nowDist = distSquared(x1 - x2, y1 - y2);
+				float nowDist = dist(x1 - x2, y1 - y2);
 
 				float nowAvgX = 0.5f * (x1 + x2);
 				float nowAvgY = 0.5f * (y1 + y2);
@@ -149,7 +164,7 @@ public class TwofingerLinearLayout extends LinearLayout {
 		}
 	}
 
-	float distSquared(float dx, float dy) {
+	float dist(float dx, float dy) {
 		return (float) Math.sqrt(dx * dx + dy * dy);
 	}
 
@@ -158,6 +173,33 @@ public class TwofingerLinearLayout extends LinearLayout {
 		final int action = event.getActionMasked();
 
 		if (BuildConfig.DEBUG) Log.d(TAG, "Intercept (((" + actionToString(action) + " pointer_count=" + event.getPointerCount() + ")))" + state);
+
+		// one finger for swipe left/right
+		if (action == MotionEvent.ACTION_DOWN) {
+			onefingerStart.x = event.getX();
+			onefingerStart.y = event.getY();
+		} else if (action == MotionEvent.ACTION_MOVE) {
+			if (onefingerStart.x == Float.MIN_VALUE) {
+				// invalidated
+			} else {
+				float dx = event.getX() - onefingerStart.x;
+				float dy = event.getY() - onefingerStart.y;
+				float ady = Math.abs(dy);
+
+				if (dx > threshold_twofinger_swipe && ady < 0.5f * threshold_twofinger_swipe) {
+					// swipe to right
+					state = State.onefinger_right;
+					return true;
+				} else if (dx < -threshold_twofinger_swipe && ady < 0.5f * threshold_twofinger_swipe) {
+					// swipe to left
+					state = State.onefinger_left;
+					return true;
+				} else if (ady > threshold_twofinger_swipe) {
+					// invalidate
+					onefingerStart.x = Float.MIN_VALUE;
+				}
+			}
+		}
 
 		if (action == MotionEvent.ACTION_POINTER_DOWN && event.getPointerCount() == 2) {
 			state = State.twofinger_start;
@@ -169,6 +211,8 @@ public class TwofingerLinearLayout extends LinearLayout {
 
 	enum State {
 		none,
+		onefinger_left,
+		onefinger_right,
 		twofinger_start,
 		twofinger_performing,
 	}
@@ -180,6 +224,8 @@ public class TwofingerLinearLayout extends LinearLayout {
 	}
 
 	public interface Listener {
+		void onOnefingerLeft();
+		void onOnefingerRight();
 		void onTwofingerStart();
 		void onTwofingerScale(float scale);
 		void onTwofingerDragX(float dx);
