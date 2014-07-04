@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
+import yuku.alkitab.debug.BuildConfig;
 
 public class TwofingerLinearLayout extends LinearLayout {
 	public static final String TAG = TwofingerLinearLayout.class.getSimpleName();
@@ -43,7 +44,7 @@ public class TwofingerLinearLayout extends LinearLayout {
 		final int action = event.getActionMasked();
 
 		final int pointerCount = event.getPointerCount();
-		Log.d(TAG, "Touch (((" + MotionEvent.actionToString(action) + " pointer_count=" + pointerCount + "))) " + state);
+		if (BuildConfig.DEBUG) Log.d(TAG, "Touch (((" + actionToString(action) + " pointer_count=" + pointerCount + "))) " + state);
 
 		float x1 = 0;
 		float x2 = 0;
@@ -56,7 +57,7 @@ public class TwofingerLinearLayout extends LinearLayout {
 			y1 = event.getY(0);
 			y2 = event.getY(1);
 
-			Log.d(TAG, String.format("--- " + pointerCount + " pointer: (%f,%f) (%f,%f)", x1, y1, x2, y2));
+			if (BuildConfig.DEBUG) Log.d(TAG, String.format("--- " + pointerCount + " pointer: (%f,%f) (%f,%f)", x1, y1, x2, y2));
 		}
 
 		if (state == State.twofinger_start) {
@@ -65,7 +66,7 @@ public class TwofingerLinearLayout extends LinearLayout {
 				startAvg.x = 0.5f * (x1 + x2);
 				startAvg.y = 0.5f * (y1 + y2);
 
-				Log.d(TAG, "### Start dist=" + startDist + " avg=" + startAvg);
+				if (BuildConfig.DEBUG) Log.d(TAG, "### Start dist=" + startDist + " avg=" + startAvg);
 
 				listener.onTwofingerStart();
 				state = State.twofinger_performing;
@@ -76,14 +77,14 @@ public class TwofingerLinearLayout extends LinearLayout {
 				float nowDist = distSquared(x1 - x2, y1 - y2);
 				float scale = nowDist / startDist;
 
-				Log.d(TAG, ">>>>>> scale=" + scale);
+				if (BuildConfig.DEBUG) Log.d(TAG, ">>>>>> scale=" + scale);
 
 				float nowAvgX = 0.5f * (x1 + x2);
 				float nowAvgY = 0.5f * (y1 + y2);
 				float dx = nowAvgX - startAvg.x;
 				float dy = nowAvgY - startAvg.y;
 
-				Log.d(TAG, ">>>>>> drag=(" + dx + "," + dy + ")");
+				if (BuildConfig.DEBUG) Log.d(TAG, ">>>>>> drag=(" + dx + "," + dy + ")");
 
 				// start condition
 				if (mode == null) {
@@ -105,7 +106,7 @@ public class TwofingerLinearLayout extends LinearLayout {
 				}
 
 				if (mode != null) {
-					Log.d(TAG, " RESULT: " + mode);
+					if (BuildConfig.DEBUG) Log.d(TAG, " RESULT: " + mode);
 
 					if (mode == Mode.scale) {
 						listener.onTwofingerScale(scale);
@@ -141,7 +142,7 @@ public class TwofingerLinearLayout extends LinearLayout {
 	public boolean onInterceptTouchEvent(MotionEvent event) {
 		final int action = event.getActionMasked();
 
-		Log.d(TAG, "Intercept (((" + MotionEvent.actionToString(action) + " pointer_count=" + event.getPointerCount() + ")))" + state);
+		if (BuildConfig.DEBUG) Log.d(TAG, "Intercept (((" + actionToString(action) + " pointer_count=" + event.getPointerCount() + ")))" + state);
 
 		if (action == MotionEvent.ACTION_POINTER_DOWN && event.getPointerCount() == 2) {
 			state = State.twofinger_start;
@@ -169,5 +170,47 @@ public class TwofingerLinearLayout extends LinearLayout {
 		void onTwofingerDragX(float dx);
 		void onTwofingerDragY(float dy);
 		void onTwofingerEnd(Mode mode);
+	}
+
+	// From API 19
+	/**
+	 * Returns a string that represents the symbolic name of the specified unmasked action
+	 * such as "ACTION_DOWN", "ACTION_POINTER_DOWN(3)" or an equivalent numeric constant
+	 * such as "35" if unknown.
+	 *
+	 * @param action The unmasked action.
+	 * @return The symbolic name of the specified action.
+	 * @see android.view.MotionEvent#getAction()
+	 */
+	public static String actionToString(int action) {
+		switch (action) {
+			case MotionEvent.ACTION_DOWN:
+				return "ACTION_DOWN";
+			case MotionEvent.ACTION_UP:
+				return "ACTION_UP";
+			case MotionEvent.ACTION_CANCEL:
+				return "ACTION_CANCEL";
+			case MotionEvent.ACTION_OUTSIDE:
+				return "ACTION_OUTSIDE";
+			case MotionEvent.ACTION_MOVE:
+				return "ACTION_MOVE";
+			case MotionEvent.ACTION_HOVER_MOVE:
+				return "ACTION_HOVER_MOVE";
+			case MotionEvent.ACTION_SCROLL:
+				return "ACTION_SCROLL";
+			case MotionEvent.ACTION_HOVER_ENTER:
+				return "ACTION_HOVER_ENTER";
+			case MotionEvent.ACTION_HOVER_EXIT:
+				return "ACTION_HOVER_EXIT";
+		}
+		int index = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+		switch (action & MotionEvent.ACTION_MASK) {
+			case MotionEvent.ACTION_POINTER_DOWN:
+				return "ACTION_POINTER_DOWN(" + index + ")";
+			case MotionEvent.ACTION_POINTER_UP:
+				return "ACTION_POINTER_UP(" + index + ")";
+			default:
+				return Integer.toString(action);
+		}
 	}
 }
