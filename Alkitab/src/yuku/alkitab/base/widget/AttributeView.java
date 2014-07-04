@@ -29,8 +29,8 @@ public class AttributeView extends View {
 
 	static {
 		attributeCountPaint.setTypeface(Typeface.DEFAULT_BOLD);
-		attributeCountPaint.setColor(0xff222222);
-		attributeCountPaint.setTextSize(App.context.getResources().getDisplayMetrics().density * 14.f);
+		attributeCountPaint.setColor(0xff404040);
+		attributeCountPaint.setTextSize(App.context.getResources().getDisplayMetrics().density * 12.f);
 		attributeCountPaint.setAntiAlias(true);
 		attributeCountPaint.setTextAlign(Paint.Align.CENTER);
 	}
