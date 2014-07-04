@@ -17,9 +17,17 @@ public class TwofingerLinearLayout extends LinearLayout {
 
 	// distance when twofinger starts
 	float startDist;
+	// distance when twofinger enters scale mode
+	float startScaleDist;
+
 	// average position when twofinger starts
 	PointF startAvg = new PointF();
+
+	// minimum distance to be considered drag
 	float threshold_twofinger_drag;
+
+	// minimum distance change to be considered scale
+	float threshold_twofinger_scale;
 
 	public TwofingerLinearLayout(Context context) {
 		super(context);
@@ -32,7 +40,9 @@ public class TwofingerLinearLayout extends LinearLayout {
 	}
 
 	private void init() {
-		threshold_twofinger_drag = 48.f * getResources().getDisplayMetrics().density;
+		final float density = getResources().getDisplayMetrics().density;
+		threshold_twofinger_drag = 48.f * density;
+		threshold_twofinger_scale = 72.f * density;
 	}
 
 	public void setListener(final Listener listener) {
@@ -75,9 +85,6 @@ public class TwofingerLinearLayout extends LinearLayout {
 		} else if (state == State.twofinger_performing) {
 			if (pointerCount >= 2) {
 				float nowDist = distSquared(x1 - x2, y1 - y2);
-				float scale = nowDist / startDist;
-
-				if (BuildConfig.DEBUG) Log.d(TAG, ">>>>>> scale=" + scale);
 
 				float nowAvgX = 0.5f * (x1 + x2);
 				float nowAvgY = 0.5f * (y1 + y2);
@@ -88,8 +95,16 @@ public class TwofingerLinearLayout extends LinearLayout {
 
 				// start condition
 				if (mode == null) {
-					if (scale < 0.85f || scale >= 1.15f) {
+					float scale = nowDist / startDist;
+					float distChange = Math.abs(nowDist - startDist);
+
+					if (BuildConfig.DEBUG) Log.d(TAG, ">>>>>> scale=" + scale);
+
+					// Scale mode is started when scale differs by 10~15% or more
+					// and distance between two fingers changes by a certain threshold
+					if ((scale < 0.9f || scale >= 1.15f) && (distChange > threshold_twofinger_scale)) {
 						mode = Mode.scale;
+						startScaleDist = nowDist;
 					}
 				}
 				if (mode == null) {
@@ -109,7 +124,7 @@ public class TwofingerLinearLayout extends LinearLayout {
 					if (BuildConfig.DEBUG) Log.d(TAG, " RESULT: " + mode);
 
 					if (mode == Mode.scale) {
-						listener.onTwofingerScale(scale);
+						listener.onTwofingerScale(nowDist / startScaleDist);
 					} else if (mode == Mode.drag_x) {
 						listener.onTwofingerDragX(dx);
 					} else if (mode == Mode.drag_y) {
