@@ -45,3 +45,6 @@
 
 # OkHttp referencing Java 8 methods
 -dontwarn com.squareup.okhttp.internal.**
+# OkIo referencing Java 7 methods
+-dontwarn java.nio.file.*
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
