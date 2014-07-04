@@ -43,9 +43,9 @@ import java.util.zip.ZipInputStream;
 public class FontManagerActivity extends BaseActivity implements DownloadListener {
 	public static final String TAG = FontManagerActivity.class.getSimpleName();
 	
-	private static final String URL_fontList = "https://alkitab-host.appspot.com/addon/fonts/v1/list-v2.txt"; //$NON-NLS-1$
-	private static final String URL_fontData = "https://alkitab-host.appspot.com/addon/fonts/v1/data/%s.zip"; //$NON-NLS-1$
-	private static final String URL_fontPreview = "https://alkitab-host.appspot.com/addon/fonts/v1/preview-black/%s-384x84.png"; //$NON-NLS-1$
+	private static final String URL_fontList = "https://alkitab-host.appspot.com/addon/fonts/v1/list-v2.txt";
+	private static final String URL_fontData = "https://alkitab-host.appspot.com/addon/fonts/v1/data/%s.zip";
+	private static final String URL_fontPreview = "https://alkitab-host.appspot.com/addon/fonts/v1/preview/%s-384x84.png";
 
 	public static Intent createIntent() {
 		return new Intent(App.context, FontManagerActivity.class);
@@ -190,6 +190,8 @@ public class FontManagerActivity extends BaseActivity implements DownloadListene
 					lFontName.setVisibility(View.GONE);
 				}
 			});
+			imgPreview.setContentDescription(item.name);
+
 			bDownload.setTag(R.id.TAG_fontItem, item);
 			bDownload.setOnClickListener(bDownload_click);
 			bDelete.setTag(R.id.TAG_fontItem, item);

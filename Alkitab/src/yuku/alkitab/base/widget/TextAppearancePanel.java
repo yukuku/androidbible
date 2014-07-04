@@ -372,7 +372,7 @@ public class TextAppearancePanel {
 				text1.setBackgroundColor(colors[1]);
 			} else {
 				text1.setText(R.string.text_appearance_theme_custom);
-				text1.setBackgroundColor(0xffffffff);
+				text1.setBackgroundColor(0x0);
 			}
 		}
 		

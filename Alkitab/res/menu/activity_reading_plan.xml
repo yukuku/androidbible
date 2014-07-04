@@ -10,7 +10,7 @@
     <item
         android:id="@+id/menuDelete"
         android:title="@string/rp_menuDelete"
-		android:icon="@android:drawable/ic_menu_delete"
+		android:icon="@drawable/ic_action_discard"
 		android:showAsAction="always"
 		/>
 </menu>

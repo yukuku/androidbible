@@ -1,80 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="64dp"
-    android:descendantFocusability="blocksDescendants"
-    android:gravity="center_vertical"
-    android:minHeight="64dp"
-    android:orientation="horizontal"
-    >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="64dp"
+	android:descendantFocusability="blocksDescendants"
+	android:gravity="center_vertical"
+	android:minHeight="64dp"
+	android:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp">
+	<LinearLayout
+		android:layout_width="0dp"
+		android:layout_height="match_parent"
+		android:layout_weight="1"
+		android:gravity="center_vertical"
+		android:orientation="vertical"
+		android:paddingLeft="8dp"
+		android:paddingRight="8dp">
 
-        <ImageView
-            android:id="@+id/imgPreview"
-            android:layout_width="182.85dp"
-            android:layout_height="40dp"
-            android:scaleType="fitStart"/>
+		<ImageView
+			android:id="@+id/imgPreview"
+			android:layout_width="182.85dp"
+			android:layout_height="40dp"
+			android:scaleType="fitStart"
+			tools:ignore="ContentDescription" />
 
-        <TextView
-            android:id="@+id/lFontName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:text="FontName"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:ignore="HardcodedText"/>
+		<TextView
+			android:id="@+id/lFontName"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:gravity="center_vertical"
+			android:text="FontName"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			tools:ignore="HardcodedText" />
 
-        <ProgressBar
-            android:id="@+id/progressbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="?android:attr/progressBarStyleHorizontal"/>
+		<ProgressBar
+			android:id="@+id/progressbar"
+			style="?android:attr/progressBarStyleHorizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" />
 
 
-        <TextView
-            android:id="@+id/lErrorMsg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="*error msg"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:visibility="gone"/>
+		<TextView
+			android:id="@+id/lErrorMsg"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="*error msg"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:visibility="gone" />
 
-    </LinearLayout>
+	</LinearLayout>
 
-    <ImageView
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="4dp"
-        android:layout_marginTop="4dp"
-        android:src="#ccc"
-        tools:ignore="ContentDescription"/>
+	<ImageView
+		android:layout_width="1dp"
+		android:layout_height="match_parent"
+		android:layout_marginBottom="4dp"
+		android:layout_marginTop="4dp"
+		android:src="#4ccc"
+		tools:ignore="ContentDescription" />
 
-    <ImageButton
-        android:id="@+id/bDownload"
-        android:layout_width="64dp"
-        android:layout_height="match_parent"
-        android:background="?android:actionBarItemBackground"
-        android:contentDescription="@string/desc_download"
-        android:scaleType="center"
-        android:src="@drawable/ic_action_download"/>
+	<ImageButton
+		android:id="@+id/bDownload"
+		android:layout_width="64dp"
+		android:layout_height="match_parent"
+		android:background="?android:actionBarItemBackground"
+		android:contentDescription="@string/desc_download"
+		android:scaleType="center"
+		android:src="@drawable/ic_action_download" />
 
-    <ImageButton
-        android:id="@+id/bDelete"
-        android:layout_width="64dp"
-        android:layout_height="match_parent"
-        android:background="?android:actionBarItemBackground"
-        android:contentDescription="@string/desc_delete"
-        android:scaleType="center"
-        android:src="@drawable/ic_action_remove"/>
+	<ImageButton
+		android:id="@+id/bDelete"
+		android:layout_width="64dp"
+		android:layout_height="match_parent"
+		android:background="?android:actionBarItemBackground"
+		android:contentDescription="@string/desc_delete"
+		android:scaleType="center"
+		android:src="@drawable/ic_action_discard" />
 
 </LinearLayout>
