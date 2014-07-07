@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<view
+	class="yuku.alkitab.base.widget.LeftDrawer$Songs"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="240dp"
+	android:layout_height="match_parent"
+	android:background="#a000"
+	tools:context="yuku.alkitab.base.ac.SongViewActivity">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:showDividers="middle">
+
+		<include
+			layout="@layout/left_drawer_header"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" />
+
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center_vertical"
+			android:orientation="horizontal">
+
+			<Button
+				android:id="@+id/bChangeBook"
+				style="?android:spinnerStyle"
+				android:layout_width="96dp"
+				android:layout_height="match_parent"
+				android:gravity="center"
+				android:padding="0dp"
+				android:text="––––"
+				android:textSize="18sp"
+				tools:ignore="HardcodedText" />
+
+			<TextView
+				android:id="@+id/bChangeCode"
+				android:layout_width="96dp"
+				android:layout_height="match_parent"
+				android:gravity="center"
+				android:text="––––"
+				android:textAppearance="?android:textAppearanceLarge"
+				android:textSize="18sp"
+				tools:ignore="HardcodedText" />
+
+			<ImageButton
+				android:id="@+id/bPlayPause"
+				style="?android:buttonBarButtonStyle"
+				android:layout_width="48dp"
+				android:layout_height="match_parent"
+				android:contentDescription="@string/desc_play"
+				android:enabled="false"
+				android:src="@drawable/ic_action_play" />
+
+		</LinearLayout>
+
+
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			tools:ignore="HardcodedText">
+
+			<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center_horizontal"
+				android:orientation="horizontal">
+
+				<Button
+					android:id="@+id/bDigit1"
+					style="@style/SongCodeKeypadButton"
+					android:text="1" />
+
+				<Button
+					android:id="@+id/bDigit2"
+					style="@style/SongCodeKeypadButton"
+					android:text="2" />
+
+				<Button
+					android:id="@+id/bDigit3"
+					style="@style/SongCodeKeypadButton"
+					android:text="3" />
+
+				<Button
+					android:id="@+id/bDigitA"
+					style="@style/SongCodeKeypadButton"
+					android:text="A" />
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center_horizontal"
+				android:orientation="horizontal">
+
+				<Button
+					android:id="@+id/bDigit4"
+					style="@style/SongCodeKeypadButton"
+					android:text="4" />
+
+				<Button
+					android:id="@+id/bDigit5"
+					style="@style/SongCodeKeypadButton"
+					android:text="5" />
+
+				<Button
+					android:id="@+id/bDigit6"
+					style="@style/SongCodeKeypadButton"
+					android:text="6" />
+
+				<Button
+					android:id="@+id/bDigitB"
+					style="@style/SongCodeKeypadButton"
+					android:text="B" />
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center_horizontal"
+				android:orientation="horizontal">
+
+				<Button
+					android:id="@+id/bDigit7"
+					style="@style/SongCodeKeypadButton"
+					android:text="7" />
+
+				<Button
+					android:id="@+id/bDigit8"
+					style="@style/SongCodeKeypadButton"
+					android:text="8" />
+
+				<Button
+					android:id="@+id/bDigit9"
+					style="@style/SongCodeKeypadButton"
+					android:text="9" />
+
+				<Button
+					android:id="@+id/bDigitC"
+					style="@style/SongCodeKeypadButton"
+					android:text="C" />
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center_horizontal"
+				android:orientation="horizontal">
+
+				<Button
+					android:id="@+id/bDigit0"
+					style="@style/SongCodeKeypadButton.DoubleWidth"
+					android:text="0" />
+
+				<Button
+					android:id="@+id/bOk"
+					style="@style/SongCodeKeypadButton.DoubleWidth"
+					android:text="OK"
+					android:textStyle="bold" />
+			</LinearLayout>
+		</LinearLayout>
+
+		<include
+			layout="@layout/left_drawer_footer"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" />
+
+	</LinearLayout>
+
+</view>

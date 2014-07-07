@@ -23,11 +23,11 @@
   <string name="beri_saran_title">Beri saran</string>
   <string name="versi">Versi</string>
   <string name="menuDevotion">Renungan</string>
-  <string name="cari_v">Cari</string>
+  <string name="search">Cari</string>
   <string name="activity_title_markers">Marka</string>
   <string name="menu_markers">Marka</string>
   <string name="hapus_pembatas_buku">Hapus pembatas buku</string>
-  <string name="bagikan">Bagikan</string>
+  <string name="menuShare">Bagikan</string>
   <string name="tulis_catatan">Tulis catatan</string>
   <string name="tambah_pembatas_buku">Tambah pembatas buku</string>
   <string name="salin_ayat">Salin ayat</string>

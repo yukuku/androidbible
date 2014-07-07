@@ -6,5 +6,5 @@
         android:id="@+id/menuSearch"
         android:icon="@drawable/ic_menu_search"
         android:showAsAction="always"
-        android:title="@string/cari_v"/>
+        android:title="@string/search"/>
 </menu>

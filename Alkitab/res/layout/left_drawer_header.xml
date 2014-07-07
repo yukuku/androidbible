@@ -41,4 +41,16 @@
 		android:fontFamily="sans-serif-light"
 		android:gravity="left|center_vertical"
 		android:text="@string/rp_menuReadingPlan" />
+
+	<Button
+		android:id="@+id/bSongs"
+		style="?android:buttonBarButtonStyle"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:drawableLeft="@drawable/ic_drawer_songs"
+		android:drawablePadding="8dp"
+		android:fontFamily="sans-serif-light"
+		android:gravity="left|center_vertical"
+		android:text="@string/menuSongs" />
+
 </LinearLayout>

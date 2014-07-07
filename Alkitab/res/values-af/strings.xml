@@ -23,11 +23,11 @@
   <string name="beri_saran_title">Voorstel</string>
   <string name="versi">Weergawe</string>
   <string name="menuDevotion">Toewyding</string>
-  <string name="cari_v">Soek</string>
+  <string name="search">Soek</string>
   <string name="activity_title_markers">Merkers</string>
   <string name="menu_markers">Merkers</string>
   <string name="hapus_pembatas_buku">Verwyder boekmerk</string>
-  <string name="bagikan">Deel</string>
+  <string name="menuShare">Deel</string>
   <string name="tulis_catatan">Skryf nota</string>
   <string name="tambah_pembatas_buku">Voeg boekmerk by</string>
   <string name="salin_ayat">Kopiëer vers</string>

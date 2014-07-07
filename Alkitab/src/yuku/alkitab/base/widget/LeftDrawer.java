@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -28,7 +30,9 @@ import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.ac.SettingsActivity;
+import yuku.alkitab.base.ac.SongViewActivity;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.SongBookUtil;
 import yuku.alkitab.debug.R;
 
 public abstract class LeftDrawer extends ScrollView {
@@ -37,16 +41,18 @@ public abstract class LeftDrawer extends ScrollView {
 	Button bBible;
 	Button bDevotion;
 	Button bReadingPlan;
+	Button bSongs;
 	View bSettings;
 	View bHelp;
 
 	// for launching other activities
-	Activity activity;
+	final Activity activity;
 	// for closing drawer
 	DrawerLayout drawerLayout;
 
 	public LeftDrawer(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
+		activity = isInEditMode()? null: (Activity) context;
 	}
 
 	@Override
@@ -61,6 +67,7 @@ public abstract class LeftDrawer extends ScrollView {
 		bBible = V.get(this, R.id.bBible);
 		bDevotion = V.get(this, R.id.bDevotion);
 		bReadingPlan = V.get(this, R.id.bReadingPlan);
+		bSongs = V.get(this, R.id.bSongs);
 		bSettings = V.get(this, R.id.bSettings);
 		bHelp = V.get(this, R.id.bHelp);
 
@@ -88,6 +95,14 @@ public abstract class LeftDrawer extends ScrollView {
 			@Override
 			public void onClick(final View v) {
 				bReadingPlan_click();
+				closeDrawer();
+			}
+		});
+
+		bSongs.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				bSongs_click();
 				closeDrawer();
 			}
 		});
@@ -133,6 +148,10 @@ public abstract class LeftDrawer extends ScrollView {
 
 	void bReadingPlan_click() {
 		activity.startActivity(ReadingPlanActivity.createIntent());
+	}
+
+	void bSongs_click() {
+		activity.startActivity(SongViewActivity.createIntent());
 	}
 
 	void bDevotion_click() {
@@ -293,7 +312,6 @@ public abstract class LeftDrawer extends ScrollView {
 		};
 
 		public <T extends Activity & Listener> void configure(T listener, DrawerLayout drawerLayout) {
-			this.activity = listener;
 			this.listener = listener;
 			this.drawerLayout = drawerLayout;
 		}
@@ -422,7 +440,6 @@ public abstract class LeftDrawer extends ScrollView {
 		}
 
 		public <T extends Activity & Listener> void configure(T listener, DrawerLayout drawerLayout) {
-			this.activity = listener;
 			this.listener = listener;
 			this.drawerLayout = drawerLayout;
 		}
@@ -492,7 +509,163 @@ public abstract class LeftDrawer extends ScrollView {
 		}
 
 		public <T extends Activity & Listener> void configure(T listener, DrawerLayout drawerLayout) {
-			this.activity = listener;
+			this.listener = listener;
+			this.drawerLayout = drawerLayout;
+		}
+	}
+
+	public static class Songs extends LeftDrawer {
+		public interface Listener {
+			void bPlayPause_click();
+			void songKeypadButton_click(View v);
+			void songBookSelected(boolean all, SongBookUtil.SongBookInfo songBookInfo);
+		}
+
+		public interface Handle {
+			void setOkButtonEnabled(boolean enabled);
+			void setAButtonEnabled(boolean enabled);
+			void setBButtonEnabled(boolean enabled);
+			void setCButtonEnabled(boolean enabled);
+			ImageButton getPlayPauseButton();
+			void setBookName(String bookName);
+			void setCode(String code);
+			void clickChangeBook();
+		}
+
+		Listener listener;
+		Handle handle = new Handle() {
+			@Override
+			public void setOkButtonEnabled(boolean enabled) {
+				bOk.setEnabled(enabled);
+			}
+
+			@Override
+			public void setAButtonEnabled(boolean enabled) {
+				bDigitA.setEnabled(enabled);
+			}
+
+			@Override
+			public void setBButtonEnabled(boolean enabled) {
+				bDigitB.setEnabled(enabled);
+			}
+
+			@Override
+			public void setCButtonEnabled(boolean enabled) {
+				bDigitC.setEnabled(enabled);
+			}
+
+			@Override
+			public ImageButton getPlayPauseButton() {
+				return bPlayPause;
+			}
+
+			@Override
+			public void setBookName(final String bookName) {
+				bChangeBook.setText(bookName);
+			}
+
+			@Override
+			public void setCode(final String code) {
+				bChangeCode.setText(code);
+			}
+
+			@Override
+			public void clickChangeBook() {
+				bChangeBook.performClick();
+			}
+		};
+
+		public Songs(final Context context, final AttributeSet attrs) {
+			super(context, attrs);
+		}
+
+		PopupMenu popupChangeBook;
+
+		Button bChangeBook;
+		TextView bChangeCode;
+		ImageButton bPlayPause;
+
+		Button bOk;
+		Button bDigitA;
+		Button bDigitB;
+		Button bDigitC;
+
+		public Handle getHandle() {
+			return handle;
+		}
+
+		@Override
+		protected void onFinishInflate() {
+			super.onFinishInflate();
+
+			bChangeBook = V.get(this, R.id.bChangeBook);
+			bChangeCode = V.get(this, R.id.bChangeCode);
+			bPlayPause = V.get(this, R.id.bPlayPause);
+
+			bOk = V.get(this, R.id.bOk);
+			bDigitA = V.get(this, R.id.bDigitA);
+			bDigitB = V.get(this, R.id.bDigitB);
+			bDigitC = V.get(this, R.id.bDigitC);
+
+			bChangeBook.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					popupChangeBook.show();
+				}
+			});
+
+			if (!isInEditMode()) {
+				popupChangeBook = SongBookUtil.getSongBookPopupMenu(activity, false, bChangeBook);
+				popupChangeBook.setOnMenuItemClickListener(SongBookUtil.getSongBookOnMenuItemClickListener(new SongBookUtil.OnSongBookSelectedListener() {
+					@Override
+					public void onSongBookSelected(final boolean all, final SongBookUtil.SongBookInfo songBookInfo) {
+						listener.songBookSelected(all, songBookInfo);
+					}
+				}));
+			}
+
+			bPlayPause.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					listener.bPlayPause_click();
+				}
+			});
+
+			// all buttons
+			for (int buttonId: new int[] {
+				R.id.bDigit0,
+				R.id.bDigit1,
+				R.id.bDigit2,
+				R.id.bDigit3,
+				R.id.bDigit4,
+				R.id.bDigit5,
+				R.id.bDigit6,
+				R.id.bDigit7,
+				R.id.bDigit8,
+				R.id.bDigit9,
+				R.id.bDigitA,
+				R.id.bDigitB,
+				R.id.bDigitC,
+				R.id.bOk,
+			}) {
+				V.get(this, buttonId).setOnClickListener(button_click);
+			}
+		}
+
+		OnClickListener button_click = new OnClickListener() {
+			@Override public void onClick(View v) {
+				if (listener != null) {
+					listener.songKeypadButton_click(v);
+				}
+			}
+		};
+
+		@Override
+		void bSongs_click() {
+			closeDrawer();
+		}
+
+		public <T extends Activity & Listener> void configure(T listener, DrawerLayout drawerLayout) {
 			this.listener = listener;
 			this.drawerLayout = drawerLayout;
 		}

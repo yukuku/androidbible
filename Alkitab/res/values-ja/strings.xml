@@ -23,11 +23,11 @@
   <string name="beri_saran_title">提案する</string>
   <string name="versi">版</string>
   <string name="menuDevotion">デボーション</string>
-  <string name="cari_v">検索</string>
+  <string name="search">検索</string>
   <string name="activity_title_markers">ブックマークなど</string>
   <string name="menu_markers">ブックマークなど</string>
   <string name="hapus_pembatas_buku">ブックマークを削除</string>
-  <string name="bagikan">共有</string>
+  <string name="menuShare">共有</string>
   <string name="tulis_catatan">ノートを書く</string>
   <string name="tambah_pembatas_buku">ブックーマークの追加</string>
   <string name="salin_ayat">節をコピー</string>

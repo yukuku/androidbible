@@ -23,11 +23,11 @@
   <string name="beri_saran_title">Sugestie</string>
   <string name="versi">Versiune</string>
   <string name="menuDevotion">Devoţional</string>
-  <string name="cari_v">Caută</string>
+  <string name="search">Caută</string>
   <string name="activity_title_markers">Însemnări</string>
   <string name="menu_markers">Însemnări</string>
   <string name="hapus_pembatas_buku">Şterge favorit</string>
-  <string name="bagikan">Trimite</string>
+  <string name="menuShare">Trimite</string>
   <string name="tulis_catatan">Scrie o notă</string>
   <string name="tambah_pembatas_buku">Adaugă la favorite</string>
   <string name="salin_ayat">Copiază versetul</string>

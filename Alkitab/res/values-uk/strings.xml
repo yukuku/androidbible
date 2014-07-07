@@ -23,11 +23,11 @@
   <string name="beri_saran_title">Запропонувати</string>
   <string name="versi">Версія</string>
   <string name="menuDevotion">Вивчення Біблії</string>
-  <string name="cari_v">Пошук</string>
+  <string name="search">Пошук</string>
   <string name="activity_title_markers">Закладки</string>
   <string name="menu_markers">Закладки</string>
   <string name="hapus_pembatas_buku">Видалити закладку</string>
-  <string name="bagikan">Поділитись</string>
+  <string name="menuShare">Поділитись</string>
   <string name="tulis_catatan">Написати нотатку</string>
   <string name="tambah_pembatas_buku">Додати закладку</string>
   <string name="salin_ayat">Скопіювати вірш</string>

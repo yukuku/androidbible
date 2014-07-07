@@ -12,6 +12,8 @@ import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.InternalDbHelper;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.storage.SongDb;
+import yuku.alkitab.base.storage.SongDbHelper;
 import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
@@ -141,6 +143,15 @@ public class S {
 		}
 		
 		return db;
+	}
+
+	private static SongDb songDb;
+	public static synchronized SongDb getSongDb() {
+		if (songDb == null) {
+			songDb = new SongDb(new SongDbHelper());
+		}
+
+		return songDb;
 	}
 
 	/**

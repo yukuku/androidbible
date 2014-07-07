@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:minHeight="?android:attr/listPreferredItemHeight">
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_vertical"
+		android:padding="8dp"
+		tools:ignore="UselessParent">
+
+		<TextView
+			android:id="@+id/lTitle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_toLeftOf="@+id/lBookName"
+			android:textAppearance="?android:attr/textAppearanceMedium" />
+
+		<TextView
+			android:id="@+id/lBookName"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:layout_centerVertical="true"
+			android:textAppearance="?android:attr/textAppearanceSmall" />
+
+		<TextView
+			android:id="@+id/lTitleOriginal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignLeft="@+id/lTitle"
+			android:layout_below="@+id/lTitle"
+			android:layout_toLeftOf="@+id/lBookName"
+			android:textAppearance="?android:attr/textAppearanceSmall" />
+
+	</RelativeLayout>
+
+</FrameLayout>

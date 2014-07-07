@@ -22,11 +22,11 @@
     <string name="beri_saran_title">Suggest</string>
     <string name="versi">Version</string>
     <string name="menuDevotion">Devotion</string>
-    <string name="cari_v">Search</string>
+    <string name="search">Search</string>
     <string name="activity_title_markers">Markers</string>
     <string name="menu_markers">Markers</string>
     <string name="hapus_pembatas_buku">Delete bookmark</string>
-    <string name="bagikan">Share</string>
+    <string name="menuShare">Share</string>
     <string name="tulis_catatan">Write note</string>
     <string name="tambah_pembatas_buku">Add bookmark</string>
     <string name="salin_ayat">Copy verse</string>
@@ -231,6 +231,7 @@
     <string name="desc_next_chapter">Next chapter</string>
     <string name="desc_drag_to_reorder_labels">Drag to reorder labels</string>
 	<string name="desc_close">Close</string>
+	<string name="desc_play">Play</string>
 
 	<string name="intent_filter_open_yes_file">Open YES file</string>
     <string name="intent_filter_open_pdb_file">Open PDB file</string>
@@ -352,4 +353,5 @@
 	<string name="menuProgress">PROGRESS</string>
 	<string name="switch_off">OFF</string>
 	<string name="switch_on">ON</string>
+	<string name="sn_menu_copy">Copy song</string>
 </resources>

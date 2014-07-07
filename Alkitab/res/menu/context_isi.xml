@@ -15,7 +15,7 @@
             <item android:id="@+id/menuShare"
                   android:icon="@drawable/ic_menu_share"
                   android:showAsAction="always"
-                  android:title="@string/bagikan"/>
+                  android:title="@string/menuShare"/>
         </menu>
     </item>
 

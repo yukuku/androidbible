@@ -23,11 +23,11 @@
   <string name="beri_saran_title">建议</string>
   <string name="versi">版本</string>
   <string name="menuDevotion">灵修</string>
-  <string name="cari_v">搜索</string>
+  <string name="search">搜索</string>
   <string name="activity_title_markers">记号</string>
   <string name="menu_markers">标记</string>
   <string name="hapus_pembatas_buku">删除书签</string>
-  <string name="bagikan">共享</string>
+  <string name="menuShare">共享</string>
   <string name="tulis_catatan">书写笔记</string>
   <string name="tambah_pembatas_buku">新增书签</string>
   <string name="salin_ayat">复制诗句</string>

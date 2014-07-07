@@ -23,11 +23,11 @@
   <string name="beri_saran_title">Suggesties</string>
   <string name="versi">Versie</string>
   <string name="menuDevotion">Devotie</string>
-  <string name="cari_v">Zoeken</string>
+  <string name="search">Zoeken</string>
   <string name="activity_title_markers">Bladwijzers, notities, e.d.</string>
   <string name="menu_markers">Bladwijzers, notities, e.d.</string>
   <string name="hapus_pembatas_buku">Verwijder bladwijzer</string>
-  <string name="bagikan">Deel</string>
+  <string name="menuShare">Deel</string>
   <string name="tulis_catatan">Schrijf notitie</string>
   <string name="tambah_pembatas_buku">Voeg bladwijzer toe</string>
   <string name="salin_ayat">Kopiëer vers</string>

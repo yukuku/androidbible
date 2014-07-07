@@ -10,13 +10,11 @@
 			<item
 				android:id="@+id/menuCopy"
 				android:icon="@drawable/ic_menu_copy"
-				android:showAsAction="always"
 				android:title="@string/salin_renungan" />
 			<item
 				android:id="@+id/menuShare"
 				android:icon="@drawable/ic_menu_share"
-				android:showAsAction="always"
-				android:title="@string/bagikan" />
+				android:title="@string/menuShare" />
 		</menu>
 	</item>
 

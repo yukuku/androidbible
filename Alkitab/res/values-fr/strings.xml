@@ -23,11 +23,11 @@
   <string name="beri_saran_title">Suggestion</string>
   <string name="versi">Version</string>
   <string name="menuDevotion">Méditation</string>
-  <string name="cari_v">Recherche</string>
+  <string name="search">Recherche</string>
   <string name="activity_title_markers">Marqueurs</string>
   <string name="menu_markers">Marque-pages</string>
   <string name="hapus_pembatas_buku">Supprimer le marque-page</string>
-  <string name="bagikan">Partage</string>
+  <string name="menuShare">Partage</string>
   <string name="tulis_catatan">Créer une note</string>
   <string name="tambah_pembatas_buku">Ajouter un marque-page</string>
   <string name="salin_ayat">Copie du verset</string>

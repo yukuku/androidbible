@@ -1,0 +1,798 @@
+package yuku.alkitab.base.ac;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ShareCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ImageButton;
+import android.widget.Toast;
+import yuku.afw.V;
+import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.App;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.dialog.VersesDialog;
+import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.FontManager;
+import yuku.alkitab.base.util.OsisBookNames;
+import yuku.alkitab.base.util.SongBookUtil;
+import yuku.alkitab.base.util.TargetDecoder;
+import yuku.alkitab.base.widget.LeftDrawer;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.model.Book;
+import yuku.alkitab.util.IntArrayList;
+import yuku.alkitabintegration.display.Launcher;
+import yuku.kpri.model.Lyric;
+import yuku.kpri.model.Song;
+import yuku.kpri.model.Verse;
+import yuku.kpri.model.VerseKind;
+import yuku.kpriviewer.fr.SongFragment;
+
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.ref.WeakReference;
+import java.util.Locale;
+
+public class SongViewActivity extends BaseActivity implements SongFragment.ShouldOverrideUrlLoadingHandler, LeftDrawer.Songs.Listener {
+	public static final String TAG = SongViewActivity.class.getSimpleName();
+
+	private static final String PROTOCOL = "bible";
+	private static final int REQCODE_songList = 1;
+	private static final int REQCODE_share = 2;
+
+	DrawerLayout drawerLayout;
+	ActionBarDrawerToggle drawerToggle;
+	LeftDrawer.Songs leftDrawer;
+
+	ViewGroup song_container;
+	ViewGroup no_song_data_container;
+	View bDownload;
+
+	ActionBar actionBar;
+
+	Bundle templateCustomVars;
+	String currentBookName;
+	Song currentSong;
+
+	// for initially populating the search song activity
+	SongListActivity.SearchState last_searchState = null;
+
+	// state for keypad
+	String state_originalCode;
+	String state_tempCode;
+
+	static class MediaPlayerController {
+		MediaPlayer mp = new MediaPlayer();
+
+		// 0 = reset
+		// 1 = reset but media known to exist
+		// 2 = preparing
+		// 3 = playing
+		// 4 = pausing
+		// 5 = complete
+		// 6 = error
+		int state = 0;
+
+		// if this is a midi file, we need to manually download to local first
+		boolean isMidiFile;
+
+		String url;
+		WeakReference<Activity> activityRef;
+		WeakReference<ImageButton> bPlayPauseRef;
+
+		void setUI(Activity activity, ImageButton bPlayPause) {
+			activityRef = new WeakReference<>(activity);
+			bPlayPauseRef = new WeakReference<>(bPlayPause);
+		}
+
+		private void setState(int newState) {
+			Log.d(TAG, "@@setState newState=" + newState);
+			state = newState;
+			updateUIByState();
+		}
+
+		void updateUIByState() {
+			final ImageButton bPlayPause = bPlayPauseRef.get();
+
+			if (state == 0) {
+				if (bPlayPause != null) {
+					bPlayPause.setEnabled(false);
+					bPlayPause.setImageResource(R.drawable.ic_action_play);
+				}
+			} else if (state == 1) {
+				if (bPlayPause != null) {
+					bPlayPause.setEnabled(true);
+				}
+			} else if (state == 3) {
+				if (bPlayPause != null) {
+					bPlayPause.setImageResource(R.drawable.ic_action_pause);
+				}
+			} else if (state == 4 || state == 5) {
+				if (bPlayPause != null) {
+					bPlayPause.setImageResource(R.drawable.ic_action_play);
+				}
+			}
+		}
+
+		void reset() {
+			setState(0);
+			mp.reset();
+		}
+
+		void mediaKnownToExist(String url, boolean isMidiFile) {
+			setState(1);
+			this.url = url;
+			this.isMidiFile = isMidiFile;
+		}
+
+		void playOrPause() {
+			if (state == 0) {
+				// play button should be disabled
+			} else if (state == 1 || state == 5 || state == 6) {
+				if (isMidiFile) {
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								setState(2);
+
+								final byte[] bytes = App.downloadBytes(url);
+
+								final File cacheFile = new File(App.context.getCacheDir(), "song_player_local_cache.mid");
+								final OutputStream output = new FileOutputStream(cacheFile);
+								output.write(bytes);
+								output.close();
+
+								mediaPlayerPrepare(true, cacheFile.getAbsolutePath());
+							} catch (IOException e) {
+								Log.e(TAG, "buffering to local cache", e);
+								setState(6);
+							}
+						}
+					}).start();
+				} else {
+					mediaPlayerPrepare(false, url);
+				}
+			} else if (state == 2) {
+				// this is preparing. Don't do anything.
+			} else if (state == 3) {
+				// pause button pressed
+				mp.pause();
+				setState(4);
+			} else if (state == 4) {
+				// play button pressed when paused
+				mp.start();
+				setState(3);
+			}
+		}
+
+		/**
+		 * @param url local path if isLocalPath is true, url (http/https) if isLocalPath is false
+		 */
+		private void mediaPlayerPrepare(boolean isLocalPath, final String url) {
+			try {
+				setState(2);
+
+				mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+					@Override
+					public void onPrepared(final MediaPlayer mp) {
+						mp.start();
+						setState(3);
+					}
+				});
+				mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+					@Override
+					public void onCompletion(final MediaPlayer mp) {
+						mp.reset();
+						setState(5);
+					}
+				});
+				mp.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+					@Override
+					public boolean onError(final MediaPlayer mp, final int what, final int extra) {
+						final Activity activity = activityRef.get();
+						if (activity != null) {
+							if (!activity.isFinishing()) {
+								new AlertDialog.Builder(activity)
+								.setMessage(activity.getString(R.string.song_player_error_description, what, extra))
+								.setPositiveButton(R.string.ok, null)
+								.show();
+							}
+						}
+						setState(6);
+						return false; // let OnCompletionListener be called.
+					}
+				});
+
+				if (isLocalPath) {
+					final FileInputStream fis = new FileInputStream(url);
+					final FileDescriptor fd = fis.getFD();
+					mp.setDataSource(fd);
+					fis.close();
+				} else {
+					mp.setDataSource(url);
+				}
+
+				mp.prepareAsync();
+			} catch (IOException e) {
+				Log.e(TAG, "mp setDataSource", e);
+				setState(6);
+			}
+		}
+
+		boolean canHaveNewUrl() {
+			return state == 0 || state == 1;
+		}
+	}
+
+	// this have to be static to prevent double media player
+	static MediaPlayerController mediaPlayerController = new MediaPlayerController();
+
+	public static Intent createIntent() {
+		return new Intent(App.context, SongViewActivity.class);
+	}
+
+	@Override protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState, true);
+
+		setContentView(R.layout.activity_song_view);
+
+		setTitle(R.string.sn_songs_activity_title);
+
+		drawerLayout = V.get(this, R.id.drawerLayout);
+		leftDrawer = V.get(this, R.id.left_drawer);
+		leftDrawer.configure(this, drawerLayout);
+
+		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_navigation_drawer, R.string.drawer_open, R.string.drawer_close) {
+			@Override
+			public void onDrawerOpened(final View drawerView) {
+				drawer_opened();
+			}
+		};
+		drawerLayout.setDrawerListener(drawerToggle);
+
+		song_container = V.get(this, R.id.song_container);
+		no_song_data_container = V.get(this, R.id.no_song_data_container);
+		bDownload = V.get(this, R.id.bDownload);
+
+		actionBar = getActionBar();
+		actionBar.setDisplayShowHomeEnabled(Build.VERSION.SDK_INT < 18);
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setHomeButtonEnabled(true);
+
+		bDownload.setOnClickListener(bDownload_click);
+		
+		// for colors of bg, text, etc
+		V.get(this, android.R.id.content).setBackgroundColor(S.applied.backgroundColor);
+
+		mediaPlayerController.setUI(this, leftDrawer.getHandle().getPlayPauseButton());
+		mediaPlayerController.updateUIByState();
+
+		templateCustomVars = new Bundle();
+		templateCustomVars.putString("background_color", String.format("#%06x", S.applied.backgroundColor & 0xffffff));
+		templateCustomVars.putString("text_color", String.format("#%06x", S.applied.fontColor & 0xffffff));
+		templateCustomVars.putString("verse_number_color", String.format("#%06x", S.applied.verseNumberColor & 0xffffff));
+		templateCustomVars.putString("text_size", S.applied.fontSize2dp + "px"); // somehow this is automatically scaled to dp.
+		templateCustomVars.putString("line_spacing_mult", String.valueOf(S.applied.lineSpacingMult));
+		
+		{
+			String fontName = Preferences.getString(Prefkey.jenisHuruf, null);
+			if (FontManager.isCustomFont(fontName)) {
+				templateCustomVars.putString("custom_font_loader", String.format("@font-face{ font-family: '%s'; src: url('%s'); }", fontName, FontManager.getCustomFontUri(fontName)));
+			} else {
+				templateCustomVars.putString("custom_font_loader", "");
+			}
+			templateCustomVars.putString("text_font", fontName);
+		}
+		
+		{ // show latest viewed song
+			String bookName = Preferences.getString(Prefkey.song_last_bookName, null); // let KJ become the default.
+			String code = Preferences.getString(Prefkey.song_last_code, null);
+			
+			if (bookName == null || code == null) {
+				displaySong(null, null, true);
+			} else {
+				displaySong(bookName, S.getSongDb().getSong(bookName, code), true);
+			}
+		}
+	}
+
+	@Override
+	protected void onPostCreate(final Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		drawerToggle.syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(final Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		drawerToggle.onConfigurationChanged(newConfig);
+	}
+
+	static String getAudioFilename(String bookName, String code) {
+		return String.format("songs/v2/%s_%s", bookName, code);
+	}
+
+	void checkAudioExistance() {
+		if (currentBookName == null || currentSong == null) return;
+
+		final String checkedBookName = currentBookName;
+		final String checkedCode = currentSong.code;
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					final String filename = getAudioFilename(checkedBookName, checkedCode);
+					final String response = App.downloadString("https://alkitab-host.appspot.com/addon/audio/exists?filename=" + Uri.encode(filename));
+					if (response.startsWith("OK")) {
+						// make sure this is the correct one due to possible race condition
+						if (U.equals(currentBookName, checkedBookName) && currentSong != null && U.equals(currentSong.code, checkedCode)) {
+							runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									if (mediaPlayerController.canHaveNewUrl()) {
+										final String baseUrl;
+										if (Build.VERSION.SDK_INT >= 14) {
+											baseUrl = "https://alkitab-host.appspot.com/addon/audio/";
+										} else {
+											baseUrl = "http://alkitab-host.appspot.com/addon/audio/"; // no streaming https support in old Android
+										}
+										final String url = baseUrl + getAudioFilename(currentBookName, currentSong.code);
+										if (response.contains("extension=mp3")) {
+											mediaPlayerController.mediaKnownToExist(url, false);
+										} else {
+											mediaPlayerController.mediaKnownToExist(url, true);
+										}
+									} else {
+										Log.d(TAG, "mediaPlayerController can't have new URL at this moment.");
+									}
+								}
+							});
+						}
+					} else {
+						Log.d(TAG, "@@checkAudioExistance response: " + response);
+					}
+				} catch (IOException e) {
+					Log.e(TAG, "@@checkAudioExistance", e);
+				}
+			}
+		}).start();
+	}
+
+	private void buildMenu(Menu menu) {
+		menu.clear();
+		getMenuInflater().inflate(R.menu.activity_song_view, menu);
+	}
+	
+	@Override public boolean onCreateOptionsMenu(Menu menu) {
+		buildMenu(menu);
+		return true;
+	}
+	
+	@Override public boolean onPrepareOptionsMenu(Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+		if (menu != null) buildMenu(menu);
+		return true;
+	}
+	
+	@Override public boolean onOptionsItemSelected(MenuItem item) {
+		if (drawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
+
+		switch (item.getItemId()) {
+		case R.id.menuCopy: {
+			if (currentSong != null) {
+				U.copyToClipboard(convertSongToText(currentSong));
+
+				Toast.makeText(this, R.string.sn_copied, Toast.LENGTH_SHORT).show();
+			}
+		} return true;
+		case R.id.menuShare: {
+			if (currentSong != null) {
+				Intent intent = ShareCompat.IntentBuilder.from(SongViewActivity.this)
+				.setType("text/plain")
+				.setSubject(currentBookName + ' ' + currentSong.code + ' ' + currentSong.title)
+				.setText(convertSongToText(currentSong).toString())
+				.getIntent();
+				startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.sn_share_title)), REQCODE_share);
+			}
+		} return true;
+		case R.id.menuSearch: {
+			startActivityForResult(SongListActivity.createIntent(last_searchState), REQCODE_songList);
+		} return true;
+		}
+		
+		return super.onOptionsItemSelected(item);
+	}
+
+	private StringBuilder convertSongToText(Song song) {
+		// build text to copy
+		StringBuilder sb = new StringBuilder();
+		sb.append(song.code).append(". ");
+		sb.append(song.title).append('\n');
+		if (song.title_original != null) sb.append('(').append(song.title_original).append(')').append('\n');
+		sb.append('\n');
+		
+		if (song.authors_lyric != null && song.authors_lyric.size() > 0) sb.append(TextUtils.join("; ", song.authors_lyric)).append('\n');
+		if (song.authors_music != null && song.authors_music.size() > 0) sb.append(TextUtils.join("; ", song.authors_music)).append('\n');
+		if (song.tune != null) sb.append(song.tune.toUpperCase(Locale.getDefault())).append('\n');
+		sb.append('\n');
+		
+		if (song.scriptureReferences != null) sb.append(renderScriptureReferences(null, song.scriptureReferences)).append('\n');
+
+		if (song.keySignature != null) sb.append(song.keySignature).append('\n');
+		if (song.timeSignature != null) sb.append(song.timeSignature).append('\n');
+		sb.append('\n');
+
+		for (int i = 0; i < song.lyrics.size(); i++) {
+			Lyric lyric = song.lyrics.get(i);
+			
+			if (song.lyrics.size() > 1 || lyric.caption != null) { // otherwise, only lyric and has no name
+				if (lyric.caption != null) {
+					sb.append(lyric.caption).append('\n');
+				} else {
+					sb.append(getString(R.string.sn_lyric_version_version, i+1)).append('\n');
+				}
+			}
+			
+			int verse_normal_no = 0;
+			for (Verse verse: lyric.verses) {
+				if (verse.kind == VerseKind.NORMAL) {
+					verse_normal_no++;
+				}
+				
+				boolean skipPad = false;
+				if (verse.kind == VerseKind.REFRAIN) {
+					sb.append(getString(R.string.sn_lyric_refrain_marker)).append('\n');
+				} else {
+					sb.append(String.format("%2d: ", verse_normal_no));
+					skipPad = true;
+				}
+
+				for (String line: verse.lines) {
+					if (!skipPad) {
+						sb.append("    ");
+					} else {
+						skipPad = false;
+					}
+					sb.append(line).append("\n"); 
+				}
+				sb.append('\n');
+			}
+			sb.append('\n');
+		}
+		return sb;
+	}
+	
+	/**
+	 * Convert scripture ref lines like
+	 * B1.C1.V1-B2.C2.V2; B3.C3.V3 to:
+	 * <a href="protocol:B1.C1.V1-B2.C2.V2">Book 1 c1:v1-v2</a>; <a href="protocol:B3.C3.V3>Book 3 c3:v3</a>
+	 * @param protocol null to output text
+	 * @param line scripture ref in osis
+	 */
+	String renderScriptureReferences(String protocol, String line) {
+		if (line == null || line.trim().length() == 0) return "";
+		
+		StringBuilder sb = new StringBuilder();
+
+		String[] ranges = line.split("\\s*;\\s*");
+		for (String range: ranges) {
+			String[] osisIds;
+			if (range.indexOf('-') >= 0) {
+				osisIds = range.split("\\s*-\\s*");
+			} else {
+				osisIds = new String[] {range};
+			}
+			
+			if (osisIds.length == 1) {
+				if (sb.length() != 0) {
+					sb.append("; ");
+				}
+				
+				String osisId = osisIds[0];
+				String readable = osisIdToReadable(line, osisId, null, null);
+				if (readable != null) {
+					appendScriptureReferenceLink(sb, protocol, osisId, readable);
+				}
+			} else if (osisIds.length == 2) {
+				if (sb.length() != 0) {
+					sb.append("; ");
+				}
+
+				int[] bcv = {-1, 0, 0};
+				
+				String osisId0 = osisIds[0];
+				String readable0 = osisIdToReadable(line, osisId0, null, bcv);
+				String osisId1 = osisIds[1];
+				String readable1 = osisIdToReadable(line, osisId1, bcv, null);
+				if (readable0 != null && readable1 != null) {
+					appendScriptureReferenceLink(sb, protocol, osisId0 + '-' + osisId1, readable0 + '-' + readable1);
+				}
+			}
+		}
+		
+		return sb.toString();
+	}
+
+	private void appendScriptureReferenceLink(StringBuilder sb, String protocol, String osisId, String readable) {
+		if (protocol != null) {
+			sb.append("<a href='");
+			sb.append(protocol);
+			sb.append(':');
+			sb.append(osisId);
+			sb.append("'>");
+		}
+		sb.append(readable);
+		if (protocol != null) {
+			sb.append("</a>");
+		}
+	}
+
+	/**
+	 * @param compareWithRangeStart if this is the second part of a range, set this to non-null, with [0] is bookId and [1] chapter_1.
+	 * @param outBcv if not null and length is >= 3, will be filled with parsed bcv
+	 */
+	private String osisIdToReadable(String line, String osisId, int[] compareWithRangeStart, int[] outBcv) {
+		String res = null;
+		
+		String[] parts = osisId.split("\\.");
+		if (parts.length != 2 && parts.length != 3) {
+			Log.w(TAG, "osisId invalid: " + osisId + " in " + line);
+		} else {
+			String bookName = parts[0];
+			int chapter_1 = Integer.parseInt(parts[1]);
+			int verse_1 = parts.length < 3? 0: Integer.parseInt(parts[2]);
+			
+			int bookId = OsisBookNames.osisBookNameToBookId(bookName);
+			
+			if (outBcv != null && outBcv.length >= 3) {
+				outBcv[0] = bookId;
+				outBcv[1] = chapter_1;
+				outBcv[2] = verse_1;
+			}
+			
+			if (bookId < 0) {
+				Log.w(TAG, "osisBookName invalid: " + bookName + " in " + line);
+			} else {
+				Book book = S.activeVersion.getBook(bookId);
+				
+				if (book != null) {
+					boolean full = true;
+					if (compareWithRangeStart != null) {
+						if (compareWithRangeStart[0] == bookId) {
+							if (compareWithRangeStart[1] == chapter_1) {
+								res = String.valueOf(verse_1);
+								full = false;
+							} else {
+								res = String.valueOf(chapter_1) + ':' + String.valueOf(verse_1);
+								full = false;
+							}
+						}
+					}
+					
+					if (full) {
+						res = verse_1 == 0? book.reference(chapter_1): book.reference(chapter_1, verse_1);
+					}
+				}
+			}
+		}
+		return res;
+	}
+
+	void displaySong(String bookName, Song song) {
+		displaySong(bookName, song, false);
+	}
+
+	void displaySong(String bookName, Song song, boolean onCreate) {
+		song_container.setVisibility(song != null? View.VISIBLE: View.GONE);
+		no_song_data_container.setVisibility(song != null? View.GONE: View.VISIBLE);
+
+		if (!onCreate) {
+			mediaPlayerController.reset();
+		}
+
+		if (song == null) return;
+
+		final LeftDrawer.Songs.Handle handle = leftDrawer.getHandle();
+		handle.setBookName(bookName);
+		handle.setCode(song.code);
+
+		setTitle(bookName + ' ' + song.code);
+
+		// construct rendition of scripture references
+		String scripture_references = renderScriptureReferences(PROTOCOL, song.scriptureReferences);
+		templateCustomVars.putString("scripture_references", scripture_references);
+		templateCustomVars.putString("copyright", SongBookUtil.getCopyright(bookName));
+
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		ft.replace(R.id.song_container, SongFragment.create(song, "templates/song.html", templateCustomVars));
+		ft.commitAllowingStateLoss();
+
+		currentBookName = bookName;
+		currentSong = song;
+
+		{ // save latest viewed song
+			Preferences.setString(Prefkey.song_last_bookName, bookName);
+			Preferences.setString(Prefkey.song_last_code, song.code);
+		}
+
+		checkAudioExistance();
+	}
+
+	OnClickListener bDownload_click = new OnClickListener() {
+		@Override public void onClick(View v) {
+			leftDrawer.getHandle().clickChangeBook();
+		}
+	};
+
+	void drawer_opened() {
+		if (currentBookName == null) return;
+
+		final LeftDrawer.Songs.Handle handle = leftDrawer.getHandle();
+		handle.setOkButtonEnabled(false);
+		handle.setAButtonEnabled(false);
+		handle.setBButtonEnabled(false);
+		handle.setCButtonEnabled(false);
+
+		final String originalCode = currentSong == null ? "––––" : currentSong.code;
+		handle.setCode(originalCode);
+
+		state_originalCode = originalCode;
+		state_tempCode = "";
+	}
+
+	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQCODE_songList) {
+			if (resultCode == RESULT_OK) {
+				SongListActivity.Result result = SongListActivity.obtainResult(data);
+				if (result != null) {
+					displaySong(result.bookName, S.getSongDb().getSong(result.bookName, result.code));
+					// store this for next search
+					last_searchState = result.last_searchState;
+				}
+			}
+		} else if (requestCode == REQCODE_share) {
+			if (resultCode == RESULT_OK) {
+				ShareActivity.Result result = ShareActivity.obtainResult(data);
+				if (result != null && result.chosenIntent != null) {
+					startActivity(result.chosenIntent);
+				}
+			}
+		}
+	}
+
+	@Override public boolean shouldOverrideUrlLoading(WebViewClient client, WebView view, String url) {
+		Uri uri = Uri.parse(url);
+		if (U.equals(uri.getScheme(), PROTOCOL)) {
+			final IntArrayList ariRanges = TargetDecoder.decode("o:" + uri.getSchemeSpecificPart());
+			final VersesDialog versesDialog = VersesDialog.newInstance(ariRanges);
+			versesDialog.setListener(new VersesDialog.VersesDialogListener() {
+				@Override
+				public void onVerseSelected(final VersesDialog dialog, final int ari) {
+					startActivity(Launcher.openAppAtBibleLocation(ari));
+				}
+			});
+			versesDialog.show(getSupportFragmentManager(), VersesDialog.class.getSimpleName());
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void bPlayPause_click() {
+		if (currentBookName == null || currentSong == null) return;
+
+		mediaPlayerController.playOrPause();
+	}
+
+	@Override
+	public void songKeypadButton_click(final View v) {
+		if (currentBookName == null) return;
+
+		final int[] numIds = {
+			R.id.bDigit0, R.id.bDigit1, R.id.bDigit2, R.id.bDigit3, R.id.bDigit4,
+			R.id.bDigit5, R.id.bDigit6, R.id.bDigit7, R.id.bDigit8, R.id.bDigit9,
+		};
+
+		final int[] alphaIds = {
+			R.id.bDigitA, R.id.bDigitB, R.id.bDigitC,
+			// num = 10, 11, 12
+		};
+
+		final int id = v.getId();
+		int num = -1;
+		for (int i = 0; i < numIds.length; i++) if (id == numIds[i]) num = i;
+		for (int i = 0; i < alphaIds.length; i++) if (id == alphaIds[i]) num = 10 + i;
+
+		final LeftDrawer.Songs.Handle handle = leftDrawer.getHandle();
+
+		if (num >= 0) { // digits or letters
+			if (state_tempCode.length() >= 4) state_tempCode = ""; // can't be more than 4 digits
+
+			if (num <= 9) { // digits
+				//noinspection StatementWithEmptyBody
+				if (state_tempCode.length() == 0 && num == 0) { // nothing has been pressed and 0 is now pressed
+				} else {
+					state_tempCode += num;
+				}
+			} else { // letters
+				final char letter = (char) ('A' + num - 10);
+				if (state_tempCode.length() != 0) {
+					state_tempCode += letter;
+				}
+			}
+
+			handle.setCode(state_tempCode);
+
+			handle.setOkButtonEnabled(S.getSongDb().songExists(currentBookName, state_tempCode));
+			handle.setAButtonEnabled(state_tempCode.length() <= 3 && S.getSongDb().songExists(currentBookName, state_tempCode + "A"));
+			handle.setBButtonEnabled(state_tempCode.length() <= 3 && S.getSongDb().songExists(currentBookName, state_tempCode + "B"));
+			handle.setCButtonEnabled(state_tempCode.length() <= 3 && S.getSongDb().songExists(currentBookName, state_tempCode + "C"));
+		} else if (id == R.id.bOk) {
+			if (state_tempCode.length() > 0) {
+				final Song song = S.getSongDb().getSong(currentBookName, state_tempCode);
+				if (song != null) {
+					displaySong(currentBookName, song);
+				} else {
+					handle.setCode(state_originalCode); // revert
+				}
+			} else {
+				handle.setCode(state_originalCode); // revert
+			}
+			leftDrawer.closeDrawer();
+		}
+	}
+
+	@Override
+	public void songBookSelected(final boolean all, final SongBookUtil.SongBookInfo songBookInfo) {
+		if (all) return; // should not happen
+
+		Song song = S.getSongDb().getFirstSongFromBook(songBookInfo.bookName);
+
+		if (song != null) {
+			displaySong(songBookInfo.bookName, song);
+		} else {
+			SongBookUtil.downloadSongBook(SongViewActivity.this, songBookInfo, new SongBookUtil.OnDownloadSongBookListener() {
+				@Override public void onFailedOrCancelled(SongBookUtil.SongBookInfo songBookInfo, Exception e) {
+					if (e != null) {
+						new AlertDialog.Builder(SongViewActivity.this)
+							.setMessage(e.getClass().getSimpleName() + ' ' + e.getMessage())
+							.setPositiveButton(R.string.ok, null)
+							.show();
+					}
+				}
+
+				@Override public void onDownloadedAndInserted(SongBookUtil.SongBookInfo songBookInfo) {
+					Song song = S.getSongDb().getFirstSongFromBook(songBookInfo.bookName);
+					displaySong(songBookInfo.bookName, song);
+				}
+			});
+		}
+	}
+}

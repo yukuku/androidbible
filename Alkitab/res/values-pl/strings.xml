@@ -22,11 +22,11 @@
   <string name="beri_saran_title">Sugestie</string>
   <string name="versi">Przekład</string>
   <string name="menuDevotion">Rozważania</string>
-  <string name="cari_v">Szukaj</string>
+  <string name="search">Szukaj</string>
   <string name="activity_title_markers">Znaczniki</string>
   <string name="menu_markers">Znaczniki</string>
   <string name="hapus_pembatas_buku">Usuń zakładkę</string>
-  <string name="bagikan">Podziel się</string>
+  <string name="menuShare">Podziel się</string>
   <string name="tulis_catatan">Utwórz notatkę</string>
   <string name="tambah_pembatas_buku">Dodaj zakładkę</string>
   <string name="salin_ayat">Skopiuj wers</string>

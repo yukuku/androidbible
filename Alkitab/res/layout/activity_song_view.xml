@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+	android:id="@+id/drawerLayout"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<!-- The main content view -->
+	<include
+		layout="@layout/activity_song_view_content"/>
+
+	<!-- The navigation drawer -->
+	<include
+		android:id="@+id/left_drawer"
+		layout="@layout/left_drawer_songs"
+		android:layout_width="240dp"
+		android:layout_height="match_parent"
+		android:layout_gravity="start"/>
+</android.support.v4.widget.DrawerLayout>

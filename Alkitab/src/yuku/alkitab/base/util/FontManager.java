@@ -1,6 +1,7 @@
 package yuku.alkitab.base.util;
 
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
@@ -132,5 +133,14 @@ public class FontManager {
 			}
 		}
 		return res;
+	}
+
+	public static boolean isCustomFont(String name) {
+		return !(name == null || name.equals("DEFAULT") || name.equals("SANS_SERIF") || name.equals("SERIF") || name.equals("MONOSPACE")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	}
+
+	public static String getCustomFontUri(String name) {
+		File path = getRegularPath(name);
+		return Uri.fromFile(path).toString();
 	}
 }

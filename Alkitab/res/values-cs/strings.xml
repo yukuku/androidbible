@@ -22,10 +22,10 @@
   <string name="beri_saran_title">Navrhnout</string>
   <string name="versi">Překlad</string>
   <string name="menuDevotion">Co mne oslovilo</string>
-  <string name="cari_v">Hledání</string>
+  <string name="search">Hledání</string>
   <string name="activity_title_markers">Zvýrazňovače</string>
   <string name="hapus_pembatas_buku">Smazat záložku</string>
-  <string name="bagikan">Sdílet</string>
+  <string name="menuShare">Sdílet</string>
   <string name="tulis_catatan">Zapsat poznámku</string>
   <string name="tambah_pembatas_buku">Přidat záložku</string>
   <string name="salin_ayat">Kopírovat verš</string>

@@ -23,11 +23,11 @@
   <string name="beri_saran_title">Предложение по улучшению</string>
   <string name="versi">Версия</string>
   <string name="menuDevotion">Сегодняшнее чтение</string>
-  <string name="cari_v">Поиск</string>
+  <string name="search">Поиск</string>
   <string name="activity_title_markers">Маркеры</string>
   <string name="menu_markers">Маркеры</string>
   <string name="hapus_pembatas_buku">Удалить закладку</string>
-  <string name="bagikan">Поделиться</string>
+  <string name="menuShare">Поделиться</string>
   <string name="tulis_catatan">Написать примечание</string>
   <string name="tambah_pembatas_buku">Добавить закладку</string>
   <string name="salin_ayat">Скопировать стих</string>
