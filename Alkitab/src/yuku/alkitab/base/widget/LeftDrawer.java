@@ -74,6 +74,7 @@ public abstract class LeftDrawer extends ScrollView {
 		if (this instanceof Text) bBible.setTextColor(0xff33b5e5);
 		if (this instanceof Devotion) bDevotion.setTextColor(0xff33b5e5);
 		if (this instanceof ReadingPlan) bReadingPlan.setTextColor(0xff33b5e5);
+		if (this instanceof Songs) bSongs.setTextColor(0xff33b5e5);
 
 		bBible.setOnClickListener(new OnClickListener() {
 			@Override
