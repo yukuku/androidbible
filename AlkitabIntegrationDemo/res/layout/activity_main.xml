@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	tools:ignore="HardcodedText">
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="From (BookId – Chapter – Verse)"
+		android:textAllCaps="true"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textStyle="bold" />
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+
+		<EditText
+			android:id="@+id/tBookIdFrom"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:gravity="right"
+			android:inputType="number"
+			android:text="0" />
+
+		<EditText
+			android:id="@+id/tChapterFrom"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:gravity="right"
+			android:inputType="number"
+			android:text="1" />
+
+		<EditText
+			android:id="@+id/tVerseFrom"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:gravity="right"
+			android:inputType="number"
+			android:text="1" />
+	</LinearLayout>
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="To (BookId – Chapter – Verse)"
+		android:textAllCaps="true"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textStyle="bold" />
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+
+		<EditText
+			android:id="@+id/tBookIdTo"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:gravity="right"
+			android:inputType="number"
+			android:text="0" />
+
+		<EditText
+			android:id="@+id/tChapterTo"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:gravity="right"
+			android:inputType="number"
+			android:text="2" />
+
+		<EditText
+			android:id="@+id/tVerseTo"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:gravity="right"
+			android:inputType="number"
+			android:text="10" />
+	</LinearLayout>
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="16dp"
+		android:text="Check"
+		android:textAllCaps="true"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textStyle="bold" />
+
+	<Button
+		android:id="@+id/bCheck"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Check availability" />
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="16dp"
+		android:text="Launcher"
+		android:textAllCaps="true"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textStyle="bold" />
+
+	<Button
+		android:id="@+id/bLaunch"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Launch (from)" />
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="16dp"
+		android:text="Provider"
+		android:textAllCaps="true"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textStyle="bold" />
+
+	<!-- in the future -->
+	<CheckBox
+		android:id="@+id/cFormatting"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:enabled="false"
+		android:text="With formatting" />
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+
+		<Button
+			android:id="@+id/bProvideOne"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Get 1 verse (from)"
+			tools:ignore="ButtonStyle" />
+
+		<Button
+			android:id="@+id/bProvideRange"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Range (from-to)"
+			tools:ignore="ButtonStyle" />
+	</LinearLayout>
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="16dp"
+		android:text="Verses Dialog"
+		android:textAllCaps="true"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textStyle="bold" />
+
+	<Button
+		android:id="@+id/bVersesDialog"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Show verses in a dialog" />
+
+</LinearLayout>
+
