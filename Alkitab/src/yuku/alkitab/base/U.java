@@ -26,6 +26,7 @@ public class U {
 	 * Otherwise, remove all @'s and one character after that and also text between @&lt; and @&gt;.
 	 */
 	public static String removeSpecialCodes(String text, boolean force) {
+		if (text == null) return null;
 		if (text.length() == 0) return text;
 		if (!force && text.charAt(0) != '@') return text;
 

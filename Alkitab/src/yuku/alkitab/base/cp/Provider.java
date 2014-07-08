@@ -16,7 +16,6 @@ import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
 import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.debug.BuildConfig;
-import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.util.Ari;
@@ -45,7 +44,7 @@ public class Provider extends ContentProvider {
 
 		final String authority;
 		if (BuildConfig.DEBUG) {
-			authority = context.getString(R.string.file_provider_authority);
+			authority = info.authority;
 		} else {
 			if (!U.equals(info.authority, AlkitabIntegrationUtil.DEFAULT_ALKITAB_PROVIDER_AUTHORITY)) {
 				throw new RuntimeException("Bad build: DEFAULT_ALKITAB_PROVIDER_AUTHORITY and manifest authority are not the same");
@@ -195,10 +194,12 @@ public class Provider extends ContentProvider {
 			Book book = S.activeVersion.getBook(Ari.toBook(ari));
 			if (book != null) {
 				String text = S.activeVersion.loadVerseText(ari);
-				if (formatting == false) {
-					text = U.removeSpecialCodes(text);
+				if (text != null) {
+					if (!formatting) {
+						text = U.removeSpecialCodes(text);
+					}
+					res.addRow(new Object[]{1, ari, book.shortName, text});
 				}
-				res.addRow(new Object[] {1, ari, book.shortName, text});
 			}
 		}
 		

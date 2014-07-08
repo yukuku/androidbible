@@ -52,4 +52,7 @@ public class AlkitabIntegrationUtil {
 		}
 	}
 
+	public static void setOverridenProviderAuthority(final String overridenProviderAuthority) {
+		AlkitabIntegrationUtil.overridenProviderAuthority = overridenProviderAuthority;
+	}
 }

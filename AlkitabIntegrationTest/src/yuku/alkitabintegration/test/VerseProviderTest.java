@@ -2,15 +2,25 @@ package yuku.alkitabintegration.test;
 
 import android.content.ContentResolver;
 import android.test.AndroidTestCase;
+import yuku.alkitabintegration.AlkitabIntegrationUtil;
+import yuku.alkitabintegration.ConnectionResult;
 import yuku.alkitabintegration.provider.VerseProvider;
 import yuku.alkitabintegration.provider.VerseProvider.Verse;
 import yuku.alkitabintegration.provider.VerseProvider.VerseRanges;
 
 import java.util.List;
 
-import static junit.framework.Assert.*;
-
 public class VerseProviderTest extends AndroidTestCase {
+
+	@Override
+	public void setUp() throws Exception {
+		AlkitabIntegrationUtil.setOverridenProviderAuthority("yuku.alkitab.provider.debug");
+	}
+
+	public void testAvailable() throws Exception {
+		assertEquals(ConnectionResult.SUCCESS, AlkitabIntegrationUtil.isIntegrationAvailable(getContext()));
+	}
+
 	public void testSingleVerse() throws Throwable {
 		ContentResolver cr = getContext().getContentResolver();
 		VerseProvider vp = new VerseProvider(cr);
@@ -26,11 +36,12 @@ public class VerseProviderTest extends AndroidTestCase {
 		
 		assertNotNull(v.toString());
 		assertEquals(v.toString().substring(0, v.bookName.length()), v.bookName);
-		
-		assertNotNull(vp.getVerse(0x000132));
-		
-		// TODO this should return null instead of "[?]" 
-		// assertNull(vp.getVerse(0x000133));
+
+		// Gen 1:31 should have text
+		assertNotNull(vp.getVerse(0x00011f));
+
+		// Gen 1:32 should be null
+		assertNull(vp.getVerse(0x000120));
 	}
 	
 	public void testVerseRanges() throws Throwable {
