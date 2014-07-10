@@ -29,3 +29,4 @@ Second column contains PalmBible+ PDB book numbers.
 86    980           Additions to Esther
 87    991           Psalm 151
 88   1802           Epistle to the Laodicaeans
+89    900           Additions to Daniel (combined)
