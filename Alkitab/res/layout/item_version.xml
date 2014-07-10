@@ -1,50 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:minHeight="64dp"
-    android:orientation="horizontal"
-    android:padding="8dp" >
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical" >
+	<FrameLayout
+		android:id="@+id/header"
+		android:layout_width="match_parent"
+		android:layout_height="48dp">
 
-        <TextView
-            android:id="@+id/lLanguage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="*Language"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            tools:ignore="HardcodedText" />
+		<TextView
+			android:id="@+id/tLanguage"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="bottom"
+			android:layout_marginBottom="4dp"
+			android:text="*Language Name"
+			android:textAllCaps="true"
+			android:textSize="14sp"
+			android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/lLongTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawablePadding="6dp"
-            android:text="*Long version name"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:ignore="HardcodedText" />
+		<ImageView
+			android:layout_width="match_parent"
+			android:layout_height="2dp"
+			android:layout_gravity="bottom"
+			android:src="#666"
+			tools:ignore="ContentDescription" />
+	</FrameLayout>
 
-        <TextView
-            android:id="@+id/lDescription"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="*Description"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            tools:ignore="HardcodedText" />
-    </LinearLayout>
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:descendantFocusability="blocksDescendants"
+		android:gravity="center_vertical"
+		android:minHeight="48dp"
+		android:orientation="horizontal">
 
-    <CheckBox
-        android:id="@+id/cActive"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical" />
+		<TextView
+			android:id="@+id/tLongName"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="*Long version name"
+			android:textAppearance="?android:textAppearanceMedium"
+			tools:ignore="HardcodedText" />
+
+		<CheckBox
+			android:id="@+id/cActive"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_gravity="center_vertical"
+			android:minWidth="48dp" />
+
+	</LinearLayout>
 
 </LinearLayout>

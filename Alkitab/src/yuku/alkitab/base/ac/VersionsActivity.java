@@ -15,6 +15,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -26,7 +27,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,6 +34,7 @@ import android.widget.Toast;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
+import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -69,6 +70,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -86,6 +89,34 @@ public class VersionsActivity extends BaseActivity {
 	
 	Map<String, String> cache_displayLanguage = new HashMap<>();
 	
+	String getDisplayLanguage(String locale) {
+		if (TextUtils.isEmpty(locale)) {
+			return "not specified";
+		}
+
+		String display = cache_displayLanguage.get(locale);
+		if (display != null) {
+			return display;
+		}
+
+		display = new Locale(locale).getDisplayLanguage();
+		if (display == null) {
+			display = locale;
+		}
+		cache_displayLanguage.put(locale, display);
+
+		return display;
+	}
+
+	static class Item {
+		MVersion mv;
+		boolean firstInGroup;
+
+		public Item(final MVersion mv) {
+			this.mv = mv;
+		}
+	}
+	
 	public static Intent createIntent() {
 		return new Intent(App.context, VersionsActivity.class);
 	}
@@ -98,8 +129,7 @@ public class VersionsActivity extends BaseActivity {
 		setTitle(R.string.kelola_versi);
 
 		adapter = new VersionAdapter();
-		adapter.init();
-		
+
 		lsVersions = V.get(this, R.id.lsVersions);
 		lsVersions.setAdapter(adapter);
 		lsVersions.setOnItemClickListener(lsVersions_itemClick);
@@ -182,51 +212,58 @@ public class VersionsActivity extends BaseActivity {
 		try {
 			if (isYesFile == null) { // can't be determined
 				new AlertDialog.Builder(this)
-				.setMessage(R.string.open_file_unknown_file_format)
-				.setPositiveButton(R.string.ok, null)
-				.show();
+					.setMessage(R.string.open_file_unknown_file_format)
+					.setPositiveButton(R.string.ok, null)
+					.show();
 				return;
-			} else if (!isYesFile) { // pdb file
+			}
+
+			if (!isYesFile) { // pdb file
 				// copy the file to cache first
 				File cacheFile = new File(getCacheDir(), "datafile");
 				InputStream input = getContentResolver().openInputStream(uri);
 				copyStreamToFile(input, cacheFile);
 				input.close();
-				
+
 				handleFileOpenPdb(cacheFile.getAbsolutePath());
-			} else if (isLocalFile) { // opening a local yes file
+				return;
+			}
+
+			if (isLocalFile) { // opening a local yes file
 				handleFileOpenYes(uri.getPath(), null);
-			} else { // opening a nonlocal yes file
-				boolean mkdirOk = AddonManager.mkYesDir();
-				if (!mkdirOk) {
-					new AlertDialog.Builder(this)
+				return;
+			}
+
+			// opening a nonlocal yes file
+			boolean mkdirOk = AddonManager.mkYesDir();
+			if (!mkdirOk) {
+				new AlertDialog.Builder(this)
 					.setMessage(getString(R.string.tidak_bisa_membuat_folder, AddonManager.getYesPath()))
 					.setPositiveButton(R.string.ok, null)
 					.show();
-					return;
-				}
+				return;
+			}
 
-				File localFile = new File(AddonManager.getYesPath(), filelastname);
-				if (localFile.exists()) {
-					new AlertDialog.Builder(this)
+			File localFile = new File(AddonManager.getYesPath(), filelastname);
+			if (localFile.exists()) {
+				new AlertDialog.Builder(this)
 					.setMessage(getString(R.string.open_yes_file_name_conflict, filelastname, AddonManager.getYesPath()))
 					.setPositiveButton(R.string.ok, null)
 					.show();
-					return;
-				}
-				
-				InputStream input = getContentResolver().openInputStream(uri);
-				copyStreamToFile(input, localFile);
-				input.close();
-				
-				handleFileOpenYes(localFile.getAbsolutePath(), null);
+				return;
 			}
+
+			InputStream input = getContentResolver().openInputStream(uri);
+			copyStreamToFile(input, localFile);
+			input.close();
+
+			handleFileOpenYes(localFile.getAbsolutePath(), null);
+
 		} catch (Exception e) {
 			new AlertDialog.Builder(this)
 			.setMessage(R.string.open_file_cant_read_source)
 			.setPositiveButton(R.string.ok, null)
 			.show();
-			return;
 		}
 	}
 
@@ -241,23 +278,9 @@ public class VersionsActivity extends BaseActivity {
 		output.close();
 	}
 
-	private void buildMenu(Menu menu) {
-		menu.clear();
-		getMenuInflater().inflate(R.menu.activity_versions, menu);
-	}
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		buildMenu(menu);
-		
-		return true;
-	}
-	
-	@Override public boolean onPrepareOptionsMenu(Menu menu) {
-		if (menu != null) {
-			buildMenu(menu);
-		}
-		
+		getMenuInflater().inflate(R.menu.activity_versions, menu);
 		return true;
 	}
 
@@ -287,14 +310,15 @@ public class VersionsActivity extends BaseActivity {
 	
 	private OnItemClickListener lsVersions_itemClick = new OnItemClickListener() {
 		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-			MVersion item = adapter.getItem(position);
+			final Item item = adapter.getItem(position);
+			final MVersion mv = item.mv;
 			
-			if (item instanceof MVersionInternal) {
+			if (mv instanceof MVersionInternal) {
 				// nothing to do, this is internal version
-			} else if (item instanceof MVersionPreset) {
-				clickOnPresetVersion(V.<CheckBox>get(v, R.id.cActive), (MVersionPreset) item);
-			} else if (item instanceof MVersionYes) {
-				clickOnYesVersion(V.<CheckBox>get(v, R.id.cActive), (MVersionYes) item);
+			} else if (mv instanceof MVersionPreset) {
+				clickOnPresetVersion(V.<CheckBox>get(v, R.id.cActive), (MVersionPreset) mv);
+			} else if (mv instanceof MVersionYes) {
+				clickOnYesVersion(V.<CheckBox>get(v, R.id.cActive), (MVersionYes) mv);
 			} else if (position == adapter.getCount() - 1) {
 				clickOnOpenFile();
 			}
@@ -306,47 +330,45 @@ public class VersionsActivity extends BaseActivity {
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		if (menu == null) return;
-		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-		if (info.position == adapter.getCount() - 1) {
-			// no context menu for "open pdb"
-		} else {
-			getMenuInflater().inflate(R.menu.context_version, menu);
-		
-			android.view.MenuItem menuDelete = menu.findItem(R.id.menuDelete);
-			if (menuDelete != null) {
-				MVersion mv = adapter.getItem(info.position);
-				if (mv instanceof MVersionInternal) {
+
+		getMenuInflater().inflate(R.menu.context_version, menu);
+
+		final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+		final Item item = adapter.getItem(info.position);
+		final MVersion mv = item.mv;
+
+		final MenuItem menuDelete = menu.findItem(R.id.menuDelete);
+		if (menuDelete != null) {
+			if (mv instanceof MVersionInternal) {
+				menuDelete.setEnabled(false);
+			} else if (mv instanceof MVersionPreset) {
+				if (!AddonManager.hasVersion(((MVersionPreset) mv).presetFilename)) {
 					menuDelete.setEnabled(false);
-				} else if (mv instanceof MVersionPreset) {
-					if (!AddonManager.hasVersion(((MVersionPreset) mv).presetFilename)) {
-						menuDelete.setEnabled(false);
-					}
 				}
 			}
-			
-			android.view.MenuItem menuSend = menu.findItem(R.id.menuShare);
-			if (menuSend != null) {
-				MVersion mv = adapter.getItem(info.position);
-				if (mv instanceof MVersionInternal) {
+		}
+
+		final MenuItem menuSend = menu.findItem(R.id.menuShare);
+		if (menuSend != null) {
+			if (mv instanceof MVersionInternal) {
+				menuSend.setEnabled(false);
+			} else if (mv instanceof MVersionPreset) {
+				if (!AddonManager.hasVersion(((MVersionPreset) mv).presetFilename)) {
 					menuSend.setEnabled(false);
-				} else if (mv instanceof MVersionPreset) {
-					if (!AddonManager.hasVersion(((MVersionPreset) mv).presetFilename)) {
-						menuSend.setEnabled(false);
-					}
-				} else if (mv instanceof MVersionYes) {
-					if (!mv.hasDataFile()) {
-						menuSend.setEnabled(false);
-					}
+				}
+			} else if (mv instanceof MVersionYes) {
+				if (!mv.hasDataFile()) {
+					menuSend.setEnabled(false);
 				}
 			}
 		}
 	}
 	
-	@Override public boolean onContextItemSelected(android.view.MenuItem item) {
-		int itemId = item.getItemId();
+	@Override public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-		final MVersion mv = adapter.getItem(info.position);
-		
+		final MVersion mv = adapter.getItem(info.position).mv;
+
+		final int itemId = item.getItemId();
 		if (itemId == R.id.menuDelete) {
 			if (mv instanceof MVersionYes) {
 				final MVersionYes mvYes = (MVersionYes) mv;
@@ -564,7 +586,7 @@ public class VersionsActivity extends BaseActivity {
 			config.initialDir = Environment.getExternalStorageDirectory().getAbsolutePath();
 			config.title = getString(R.string.ed_choose_pdb_or_yes_file);
 			config.pattern = ".*\\.(?i:pdb|yes|yes\\.gz)"; //$NON-NLS-1$
-			
+
 			startActivityForResult(FileChooserActivity.createIntent(App.context, config), REQCODE_openFile);
 		} else {
 			new AlertDialog.Builder(this)
@@ -624,7 +646,7 @@ public class VersionsActivity extends BaseActivity {
 							pd.dismiss();
 							
 							handleFileOpenYes(result.getAbsolutePath(), null);
-						};
+						}
 					}.execute();
 				}
 			} else if (filename.toLowerCase(Locale.US).endsWith(".yes")) { //$NON-NLS-1$
@@ -788,7 +810,7 @@ public class VersionsActivity extends BaseActivity {
 							String message = (String) values[1];
 							pd.setMessage("(" + at + ") " + message + "...");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 						}
-					};
+					}
 					
 					@Override protected void onPostExecute(ConvertPdbToYes2.ConvertResult result) {
 						pd.dismiss();
@@ -815,6 +837,7 @@ public class VersionsActivity extends BaseActivity {
 
 	// model
 	public static abstract class MVersion {
+		public String locale;
 		public String shortName;
 		public String longName;
 		public String description;
@@ -861,8 +884,7 @@ public class VersionsActivity extends BaseActivity {
 	public static class MVersionPreset extends MVersion {
 		public String download_url;
 		public String presetFilename;
-		public String locale;
-		
+
 		@Override public boolean getActive() {
 			return Preferences.getBoolean("edisi/preset/" + this.presetFilename + "/aktif", true); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -934,121 +956,126 @@ public class VersionsActivity extends BaseActivity {
 		}
 	}
 	
-	public class VersionAdapter extends BaseAdapter {
-		MVersionInternal internal;
-		List<MVersionPreset> presets;
-		List<MVersionYes> yeses;
-		
-		public void init() {
-			final AppConfig ac = AppConfig.get();
-			internal = new MVersionInternal();
-			internal.setActive(true);
-			internal.longName = ac.internalLongName;
-			internal.ordering = 1;
+	public class VersionAdapter extends EasyAdapter {
+		List<Item> items;
 
-			final VersionConfig vc = VersionConfig.get();
-			presets = new ArrayList<>();
-			presets.addAll(vc.presets);
+		VersionAdapter() {
+			items = new ArrayList<>();
 
-			// fix the active state based on whether the file exists and also preferences
-			for (MVersionPreset preset : presets) {
-				if (!AddonManager.hasVersion(preset.presetFilename)) {
-					preset.setActive(false);
+			{ // internal
+				final AppConfig ac = AppConfig.get();
+				final MVersionInternal internal = new MVersionInternal();
+				internal.setActive(true);
+				internal.locale = ac.internalLocale;
+				internal.longName = ac.internalLongName;
+				internal.ordering = 1;
+
+				items.add(new Item(internal));
+			}
+
+			{ // presets
+				final VersionConfig vc = VersionConfig.get();
+
+				for (MVersionPreset preset : vc.presets) {
+					items.add(new Item(preset));
+
+					// fix the active state based on whether the file exists and also preferences
+					if (!AddonManager.hasVersion(preset.presetFilename)) {
+						preset.setActive(false);
+					}
 				}
 			}
 
 			initYesVersionList();
+			sortItems();
 		}
 		
 		public void initYesVersionList() {
-			yeses = S.getDb().listAllVersions();
+			final List<Item> newItems = new ArrayList<>();
+			for (Item item : items) {
+				if (!(item.mv instanceof MVersionYes)) {
+					newItems.add(item);
+				}
+			}
+			for (MVersionYes mv: S.getDb().listAllVersions()) {
+				newItems.add(new Item(mv));
+			}
+			items = newItems;
+			sortItems();
+		}
+
+		void sortItems() {
+			Collections.sort(items, new Comparator<Item>() {
+				@Override
+				public int compare(final Item a, final Item b) {
+					final String locale_a = a.mv.locale;
+					final String locale_b = b.mv.locale;
+					if (U.equals(locale_a, locale_b)) {
+						return a.mv.longName.compareToIgnoreCase(b.mv.longName);
+					}
+					if (locale_a == null) {
+						return +1;
+					} else if (locale_b == null) {
+						return -1;
+					}
+
+					return getDisplayLanguage(locale_a).compareToIgnoreCase(getDisplayLanguage(locale_b));
+				}
+			});
+			
+			// first item in group marked
+			String lastLocale = "<sentinel>";
+			for (Item item : items) {
+				item.firstInGroup = !U.equals(item.mv.locale, lastLocale);
+				lastLocale = item.mv.locale;
+			}
+			
+			notifyDataSetChanged();
 		}
 
 		@Override
 		public int getCount() {
-			return 1 /* internal */ + presets.size() + yeses.size() + 1 /* open */;
+			return items.size();
 		}
 
 		@Override
-		public MVersion getItem(int position) {
-			if (position < 1) return internal;
-			if (position < 1 + presets.size()) return presets.get(position - 1);
-			if (position < 1 + presets.size() + yeses.size()) return yeses.get(position - 1 - presets.size());
-			if (position < 1 + presets.size() + yeses.size() + 1) return null; /* open */
-			return null;
+		public Item getItem(int position) {
+			return items.get(position);
 		}
 
 		@Override
-		public long getItemId(int position) {
-			return position;
+		public View newView(final int position, final ViewGroup parent) {
+			return getLayoutInflater().inflate(R.layout.item_version, parent, false);
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_version, null);
+		public void bindView(final View view, final int position, final ViewGroup parent) {
+			final CheckBox cActive = V.get(view, R.id.cActive);
+			final TextView tLongName = V.get(view, R.id.tLongName);
+			final View header = V.get(view, R.id.header);
+			final TextView tLanguage = V.get(view, R.id.tLanguage);
+
+			final Item item = getItem(position);
+			final MVersion mv = item.mv;
+
+			cActive.setChecked(mv.getActive());
 			
-			CheckBox cActive = V.get(res, R.id.cActive);
-			TextView lLongTitle = V.get(res, R.id.lLongTitle);
-			TextView lDescription = V.get(res, R.id.lDescription);
-			TextView lLanguage = V.get(res, R.id.lLanguage);
+			tLongName.setText(mv.longName);
+			tLanguage.setText(getDisplayLanguage(mv.locale));
 			
-			if (position == getCount() - 1) { // open file
-				cActive.setVisibility(View.GONE);
-				lLongTitle.setText(R.string.ed_buka_file_pdb_yes_lainnya);
-				lLongTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_add_light, 0, 0, 0);
-				lDescription.setVisibility(View.GONE);
-				lLanguage.setVisibility(View.GONE);
-			} else { // one of the available versions
-				MVersion mv = getItem(position);
-				cActive.setVisibility(View.VISIBLE);
-				cActive.setFocusable(false);
-				cActive.setClickable(false);
-				cActive.setChecked(mv.getActive());
-				lLongTitle.setText(mv.longName);
-				lLongTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-				if (mv instanceof MVersionInternal) {
-					cActive.setEnabled(false);
-					lDescription.setVisibility(View.GONE);
-					lLanguage.setVisibility(View.GONE);
-				} else if (mv instanceof MVersionPreset) {
-					cActive.setEnabled(true);
-					String locale = ((MVersionPreset) mv).locale;
-					lDescription.setVisibility(View.GONE);
-					
-					if (locale != null && locale.length() > 0) {
-						String display = cache_displayLanguage.get(locale);
-						if (display == null) {
-							display = new Locale(locale).getDisplayLanguage();
-							if (U.equals(display, locale)) {
-								display = null; // no data, let's just hide it
-							}
-							cache_displayLanguage.put(locale, display);
-						}
-						
-						if (display != null) {
-							lLanguage.setVisibility(View.VISIBLE);
-							lLanguage.setText(display);
-						} else {
-							lLanguage.setVisibility(View.GONE);
-						}
-					} else {
-						lLanguage.setVisibility(View.GONE);
-					}
-				} else if (mv instanceof MVersionYes) {
-					cActive.setEnabled(true);
-					lDescription.setVisibility(View.VISIBLE);
-					lLanguage.setVisibility(View.GONE);
-					MVersionYes yes = (MVersionYes) mv;
-					String extra = ""; //$NON-NLS-1$
-					if (yes.description != null) {
-						extra += yes.description;
-					}
-					lDescription.setText(extra);
-				}
+			if (mv instanceof MVersionInternal) {
+				cActive.setEnabled(false);
+			} else if (mv instanceof MVersionPreset) {
+				cActive.setEnabled(true);
+			} else if (mv instanceof MVersionYes) {
+				cActive.setEnabled(true);
 			}
-			
-			return res;
+
+			if (item.firstInGroup) {
+				header.setVisibility(View.VISIBLE);
+			} else {
+				header.setVisibility(View.GONE);
+			}
 		}
-		
 	}
 }

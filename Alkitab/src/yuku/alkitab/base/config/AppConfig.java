@@ -15,6 +15,7 @@ public class AppConfig {
 	public String shareUrlFormat;
 
 	public String internalPrefix;
+	public String internalLocale;
 	public String internalShortName;
 	public String internalLongName;
 
@@ -43,6 +44,7 @@ public class AppConfig {
 			int next = parser.next();
 			final String tagName = parser.getName();
 			if (next == XmlPullParser.START_TAG && "internal".equals(tagName)) {
+				res.internalLocale = parser.getAttributeValue(null, "locale");
 				res.internalShortName = parser.getAttributeValue(null, "shortName");
 				res.internalLongName = parser.getAttributeValue(null, "longName");
 				res.internalPrefix = parser.getAttributeValue(null, "prefix");
