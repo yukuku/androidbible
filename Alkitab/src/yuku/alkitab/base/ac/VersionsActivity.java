@@ -995,7 +995,7 @@ public class VersionsActivity extends BaseActivity {
 			if (position == getCount() - 1) { // open file
 				cActive.setVisibility(View.GONE);
 				lLongTitle.setText(R.string.ed_buka_file_pdb_yes_lainnya);
-				lLongTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_add_dark, 0, 0, 0);
+				lLongTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_add_light, 0, 0, 0);
 				lDescription.setVisibility(View.GONE);
 				lLanguage.setVisibility(View.GONE);
 			} else { // one of the available versions
