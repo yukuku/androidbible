@@ -7,6 +7,7 @@ import android.util.Pair;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.ac.VersionsActivity;
+import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.storage.InternalDb;
@@ -164,11 +165,12 @@ public class S {
 		final List<String> options = new ArrayList<>(); // sync with below line
 		final List<VersionsActivity.MVersion> data = new ArrayList<>();  // sync with above line
 
-		final VersionConfig c = VersionConfig.get();
-		options.add(c.internalLongName); // 1. internal
+		final AppConfig ac = AppConfig.get();
+		options.add(ac.internalLongName); // 1. internal
 		data.add(new VersionsActivity.MVersionInternal());
 
-		for (VersionsActivity.MVersionPreset preset: c.presets) { // 2. preset
+		final VersionConfig vc = VersionConfig.get();
+		for (VersionsActivity.MVersionPreset preset: vc.presets) { // 2. preset
 			if (preset.hasDataFile() && preset.getActive()) {
 				options.add(preset.longName);
 				data.add(preset);

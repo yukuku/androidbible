@@ -14,6 +14,10 @@ public class AppConfig {
 	public boolean menuSongs;
 	public String shareUrlFormat;
 
+	public String internalPrefix;
+	public String internalShortName;
+	public String internalLongName;
+
 	private static AppConfig lastAppConfig;
 
 	private AppConfig() {}
@@ -37,16 +41,22 @@ public class AppConfig {
 		
 		while (true) {
 			int next = parser.next();
-			if (next == XmlPullParser.START_TAG && "menu".equals(parser.getName())) { //$NON-NLS-1$
+			final String tagName = parser.getName();
+			if (next == XmlPullParser.START_TAG && "internal".equals(tagName)) {
+				res.internalShortName = parser.getAttributeValue(null, "shortName");
+				res.internalLongName = parser.getAttributeValue(null, "longName");
+				res.internalPrefix = parser.getAttributeValue(null, "prefix");
+			} else if (next == XmlPullParser.START_TAG && "menu".equals(tagName)) { //$NON-NLS-1$
 				res.menuHelp = parser.getAttributeBooleanValue(null, "help", false); //$NON-NLS-1$
 				res.menuDonation = parser.getAttributeBooleanValue(null, "donation", false); //$NON-NLS-1$
 				res.menuDevotion = parser.getAttributeBooleanValue(null, "devotion", false); //$NON-NLS-1$
 				res.menuSongs = parser.getAttributeBooleanValue(null, "songs", false); //$NON-NLS-1$
-			} else if (next == XmlPullParser.START_TAG && "url".equals(parser.getName())) { //$NON-NLS-1$
+			} else if (next == XmlPullParser.START_TAG && "url".equals(tagName)) { //$NON-NLS-1$
 				res.shareUrlFormat = parser.getAttributeValue(null, "format"); //$NON-NLS-1$
 			} else if (next == XmlPullParser.END_DOCUMENT) {
 				break;
 			}
+
 		}
 		
 		return res;

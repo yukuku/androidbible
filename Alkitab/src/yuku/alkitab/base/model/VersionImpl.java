@@ -2,12 +2,17 @@ package yuku.alkitab.base.model;
 
 import android.util.Log;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.config.VersionConfig;
+import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.storage.InternalReader;
 import yuku.alkitab.base.storage.OldVerseTextDecoder;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.BibleReader;
-import yuku.alkitab.model.*;
+import yuku.alkitab.model.Book;
+import yuku.alkitab.model.FootnoteEntry;
+import yuku.alkitab.model.PericopeBlock;
+import yuku.alkitab.model.SingleChapterVerses;
+import yuku.alkitab.model.Version;
+import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 
@@ -31,7 +36,7 @@ public class VersionImpl implements Version {
 
 	public static synchronized Version getInternalVersion() {
 		if (internalVersion == null) {
-			final VersionConfig c = VersionConfig.get();
+			final AppConfig c = AppConfig.get();
 			internalVersion = new VersionImpl(new InternalReader(c.internalPrefix, c.internalShortName, c.internalLongName, new OldVerseTextDecoder.Utf8()));
 		}
 		return internalVersion;

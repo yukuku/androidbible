@@ -3,9 +3,14 @@ package yuku.alkitab.base.storage;
 import android.util.Log;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.config.VersionConfig;
+import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.io.BibleReader;
-import yuku.alkitab.model.*;
+import yuku.alkitab.model.Book;
+import yuku.alkitab.model.FootnoteEntry;
+import yuku.alkitab.model.InternalBook;
+import yuku.alkitab.model.PericopeBlock;
+import yuku.alkitab.model.SingleChapterVerses;
+import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.yes1.Yes1PericopeIndex;
 import yuku.alkitab.yes2.io.RandomInputStream;
@@ -273,7 +278,7 @@ public class InternalReader implements BibleReader {
 		if (xrefsKnownNotAvailable) return null;
 
 		if (xrefsSection_ == null) {
-			final int resId = App.context.getResources().getIdentifier(VersionConfig.get().internalPrefix + "_xrefs_bt", "raw", App.context.getPackageName());
+			final int resId = App.context.getResources().getIdentifier(AppConfig.get().internalPrefix + "_xrefs_bt", "raw", App.context.getPackageName());
 			if (resId == 0) {
 				Log.d(TAG, "Can't load xrefs from internal, marking it as not available.");
 				xrefsKnownNotAvailable = true;
@@ -295,7 +300,7 @@ public class InternalReader implements BibleReader {
 		if (footnotesKnownNotAvailable) return null;
 
 		if (footnotesSection_ == null) {
-			final int resId = App.context.getResources().getIdentifier(VersionConfig.get().internalPrefix + "_footnotes_bt", "raw", App.context.getPackageName());
+			final int resId = App.context.getResources().getIdentifier(AppConfig.get().internalPrefix + "_footnotes_bt", "raw", App.context.getPackageName());
 			if (resId == 0) {
 				Log.d(TAG, "Can't load footnotes from internal, marking it as not available.");
 				footnotesKnownNotAvailable = true;

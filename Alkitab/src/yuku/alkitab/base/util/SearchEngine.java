@@ -12,7 +12,7 @@ import android.util.SparseBooleanArray;
 import android.util.TimingLogger;
 import yuku.afw.D;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.config.VersionConfig;
+import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.util.Ari;
@@ -23,7 +23,14 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.SoftReference;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Semaphore;
 
 public class SearchEngine {
@@ -541,7 +548,7 @@ public class SearchEngine {
 		
 		RevIndex res = new RevIndex();
 		
-		InputStream raw = new BufferedInputStream(S.openRaw(VersionConfig.get().internalPrefix + "_revindex_bt"), 65536);
+		InputStream raw = new BufferedInputStream(S.openRaw(AppConfig.get().internalPrefix + "_revindex_bt"), 65536);
 		
 		byte[] buf = new byte[256];
 		try {

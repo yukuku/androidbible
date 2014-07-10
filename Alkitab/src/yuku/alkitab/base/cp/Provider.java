@@ -13,6 +13,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
 import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
+import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.debug.BuildConfig;
@@ -304,13 +305,15 @@ public class Provider extends ContentProvider {
 	private Cursor getCursorForBibleVersions() {
 		MatrixCursor res = new MatrixCursor(new String[] {"_id", "type", "available", "shortName", "longName", "description"});
 
-		final VersionConfig c = VersionConfig.get();
+		final AppConfig ac = AppConfig.get();
 		long _id = 0;
 		{ // internal
-			res.addRow(new Object[] {++_id, "internal", 1, c.internalShortName, c.internalLongName, c.internalLongName});
+			res.addRow(new Object[] {++_id, "internal", 1, ac.internalShortName, ac.internalLongName, ac.internalLongName});
 		}
+
+		final VersionConfig vc = VersionConfig.get();
 		{ // presets
-			for (MVersionPreset preset: c.presets) {
+			for (MVersionPreset preset: vc.presets) {
 				res.addRow(new Object[] {++_id, "preset", preset.hasDataFile()? 1: 0, preset.shortName != null? preset.shortName: preset.longName, preset.longName, preset.longName});
 			}
 		}

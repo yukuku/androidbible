@@ -6,7 +6,9 @@
         donation="true"
         songs="true" />
 
-    <share>
+	<internal locale="in" shortName="TB"      longName="Terjemahan Baru" prefix="tb" />
+
+	<share>
         <url format="https://alkitab.me/{book.osis}/{chapter}/{verses}" />
     </share>
 </config>

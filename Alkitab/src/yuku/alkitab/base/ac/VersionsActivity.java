@@ -38,6 +38,7 @@ import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
@@ -395,7 +396,7 @@ public class VersionsActivity extends BaseActivity {
 					details.append(getString(R.string.ed_stored_in_file, AddonManager.getVersionPath(preset.presetFilename)) + '\n');
 				} else {
 					details.append(getString(R.string.ed_default_filename_file, preset.presetFilename) + '\n');
-					details.append(getString(R.string.ed_download_url_url, preset.url) + '\n');
+					details.append(getString(R.string.ed_download_url_url, preset.download_url) + '\n');
 				}
 			}
 			if (mv instanceof MVersionYes) {
@@ -511,7 +512,7 @@ public class VersionsActivity extends BaseActivity {
 		};
 
 		final DownloadThread downloadThread = AddonManager.getDownloadThread();
-		final Element e = downloadThread.enqueue(mv.url, AddonManager.getVersionPath(mv.presetFilename), downloadListener);
+		final Element e = downloadThread.enqueue(mv.download_url, AddonManager.getVersionPath(mv.presetFilename), downloadListener);
 
 		downloadThread.start();
 
@@ -816,6 +817,7 @@ public class VersionsActivity extends BaseActivity {
 	public static abstract class MVersion {
 		public String shortName;
 		public String longName;
+		public String description;
 		public int ordering;
 		
 		/** unique id for comparison purposes */
@@ -857,7 +859,7 @@ public class VersionsActivity extends BaseActivity {
 	}
 	
 	public static class MVersionPreset extends MVersion {
-		public String url;
+		public String download_url;
 		public String presetFilename;
 		public String locale;
 		
@@ -938,23 +940,23 @@ public class VersionsActivity extends BaseActivity {
 		List<MVersionYes> yeses;
 		
 		public void init() {
-			final VersionConfig c = VersionConfig.get();
-			
+			final AppConfig ac = AppConfig.get();
 			internal = new MVersionInternal();
 			internal.setActive(true);
-			internal.longName = c.internalLongName;
+			internal.longName = ac.internalLongName;
 			internal.ordering = 1;
-			
+
+			final VersionConfig vc = VersionConfig.get();
 			presets = new ArrayList<>();
-			presets.addAll(c.presets);
-			
+			presets.addAll(vc.presets);
+
 			// fix the active state based on whether the file exists and also preferences
-			for (MVersionPreset preset: presets) {
+			for (MVersionPreset preset : presets) {
 				if (!AddonManager.hasVersion(preset.presetFilename)) {
 					preset.setActive(false);
 				}
 			}
-			
+
 			initYesVersionList();
 		}
 		
