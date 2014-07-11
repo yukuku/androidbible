@@ -36,7 +36,10 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.config.VersionConfig;
-import yuku.alkitab.base.model.VersionImpl;
+import yuku.alkitab.base.model.MVersion;
+import yuku.alkitab.base.model.MVersionDb;
+import yuku.alkitab.base.model.MVersionInternal;
+import yuku.alkitab.base.model.MVersionPreset;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes2;
 import yuku.alkitab.base.storage.YesReaderFactory;
@@ -44,7 +47,6 @@ import yuku.alkitab.base.util.AddonManager;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.BibleReader;
-import yuku.alkitab.model.Version;
 import yuku.alkitab.util.IntArrayList;
 import yuku.filechooser.FileChooserActivity;
 import yuku.filechooser.FileChooserConfig;
@@ -223,7 +225,7 @@ public class VersionsActivity extends BaseActivity {
 			}
 
 			if (isLocalFile) { // opening a local yes file
-				handleFileOpenYes(uri.getPath(), null);
+				handleFileOpenYes(uri.getPath());
 				return;
 			}
 
@@ -250,7 +252,7 @@ public class VersionsActivity extends BaseActivity {
 			copyStreamToFile(input, localFile);
 			input.close();
 
-			handleFileOpenYes(localFile.getAbsolutePath(), null);
+			handleFileOpenYes(localFile.getAbsolutePath());
 
 		} catch (Exception e) {
 			new AlertDialog.Builder(this)
@@ -306,9 +308,7 @@ public class VersionsActivity extends BaseActivity {
 			final Item item = adapter.getItem(position);
 			final MVersion mv = item.mv;
 			
-			if (mv instanceof MVersionInternal) {
-				// nothing to do, this is internal version
-			} else if (mv instanceof MVersionPreset) {
+			if (mv instanceof MVersionPreset) {
 				clickOnPresetVersion(V.<CheckBox>get(v, R.id.cActive), (MVersionPreset) mv);
 			} else if (mv instanceof MVersionDb) {
 				clickOnDbVersion(V.<CheckBox>get(v, R.id.cActive), (MVersionDb) mv);
@@ -576,7 +576,7 @@ public class VersionsActivity extends BaseActivity {
 				// decompress or see if the same filename without .gz exists
 				final File maybeDecompressed = new File(filename.substring(0, filename.length() - 3));
 				if (maybeDecompressed.exists() && !maybeDecompressed.isDirectory() && maybeDecompressed.canRead()) {
-					handleFileOpenYes(maybeDecompressed.getAbsolutePath(), null);
+					handleFileOpenYes(maybeDecompressed.getAbsolutePath());
 				} else {
 					final ProgressDialog pd = ProgressDialog.show(VersionsActivity.this, null, getString(R.string.sedang_mendekompres_harap_tunggu), true, false);
 					new AsyncTask<Void, Void, File>() {
@@ -612,12 +612,12 @@ public class VersionsActivity extends BaseActivity {
 						@Override protected void onPostExecute(File result) {
 							pd.dismiss();
 							
-							handleFileOpenYes(result.getAbsolutePath(), null);
+							handleFileOpenYes(result.getAbsolutePath());
 						}
 					}.execute();
 				}
 			} else if (filename.toLowerCase(Locale.US).endsWith(".yes")) { //$NON-NLS-1$
-				handleFileOpenYes(filename, null);
+				handleFileOpenYes(filename);
 			} else if (filename.toLowerCase(Locale.US).endsWith(".pdb")) { //$NON-NLS-1$
 				handleFileOpenPdb(filename);
 			} else {
@@ -631,7 +631,7 @@ public class VersionsActivity extends BaseActivity {
 		}
 	}
 	
-	void handleFileOpenYes(String filename, String originalpdbname) {
+	void handleFileOpenYes(String filename) {
 		{ // look for duplicates
 			if (S.getDb().hasVersionWithFilename(filename)) {
 				new AlertDialog.Builder(this)
@@ -712,12 +712,12 @@ public class VersionsActivity extends BaseActivity {
 				.show();
 			}
 
-			private void showResult(final String filenamepdb, final String filenameyes, Throwable exception, List<String> wronglyConvertedBookNames) {
+			private void showResult(final String filenameyes, Throwable exception, List<String> wronglyConvertedBookNames) {
 				if (exception != null) {
 					showPdbReadErrorDialog(exception);
 				} else {
 					// sukses.
-					handleFileOpenYes(filenameyes, new File(filenamepdb).getName());
+					handleFileOpenYes(filenameyes);
 					
 					if (wronglyConvertedBookNames != null && wronglyConvertedBookNames.size() > 0) {
 						StringBuilder msg = new StringBuilder(getString(R.string.ed_the_following_books_from_the_pdb_file_are_not_recognized) + '\n');
@@ -771,7 +771,7 @@ public class VersionsActivity extends BaseActivity {
 					@Override protected void onPostExecute(ConvertPdbToYes2.ConvertResult result) {
 						pd.dismiss();
 						
-						showResult(pdbFilename, yesFilename, result.exception, result.wronglyConvertedBookNames);
+						showResult(yesFilename, result.exception, result.wronglyConvertedBookNames);
 					}
 				}.execute();
 			}
@@ -798,122 +798,6 @@ public class VersionsActivity extends BaseActivity {
 		return "pdb-" + base + ".yes";
 	}
 
-	// models
-	public static abstract class MVersion {
-		public String locale;
-		public String shortName;
-		public String longName;
-		public String description;
-		public int ordering;
-		
-		/** unique id for comparison purposes */
-		public abstract String getVersionId();
-		/** return version so that it can be read. Null when not possible */
-		public abstract Version getVersion();
-		public abstract boolean getActive();
-		public abstract boolean hasDataFile();
-	}
-
-	/**
-	 * Internal version, only one
-	 */
-	public static class MVersionInternal extends MVersion {
-		public static String getVersionInternalId() {
-			return "internal";
-		}
-		
-		@Override public String getVersionId() {
-			return getVersionInternalId();
-		}
-
-		@Override
-		public Version getVersion() {
-			return VersionImpl.getInternalVersion();
-		}
-
-		@Override
-		public boolean getActive() {
-			return true; // always active
-		}
-
-		@Override public boolean hasDataFile() {
-			return true; // always has
-		}
-	}
-
-	/**
-	 * Version that is defined in the version_config.json, but not activated by the user.
-	 */
-	public static class MVersionPreset extends MVersion {
-		public String download_url;
-		public String preset_name;
-
-		@Override public boolean getActive() {
-			return false; // preset can't be active, because there is no data file activated by the user.
-		}
-
-		@Override
-		public String getVersionId() {
-			return "preset/" + preset_name;
-		}
-
-		@Override
-		public Version getVersion() {
-			throw new RuntimeException("THIS SHOULD NOT HAPPEN: preset should not have any actual data file to read from.");
-		}
-
-		@Override public boolean hasDataFile() {
-			return AddonManager.hasVersion(preset_name + ".yes");
-		}
-	}
-
-	/**
-	 * Version that is defined in the database.
-	 * If the version is downloaded from a definition in the preset list, the {@link #preset_name} will be non-null.
-	 */
-	public static class MVersionDb extends MVersion {
-		public String filename;
-		public String preset_name;
-		public boolean cache_active; // so we don't need to keep reading/writing from/to db
-		
-		@Override
-		public String getVersionId() {
-			if (preset_name != null) {
-				return "preset/" + preset_name;
-			}
-			return "file/" + filename;
-		}
-
-		@Override
-		public Version getVersion() {
-			if (hasDataFile()) {
-				final BibleReader reader = YesReaderFactory.createYesReader(filename);
-				if (reader == null) {
-					Log.e(TAG, "YesReaderFactory failed to open the yes file");
-					return null;
-				}
-				return new VersionImpl(reader);
-			} else {
-				return null;
-			}
-		}
-
-		private void setActive(boolean active) {
-			this.cache_active = active;
-			S.getDb().setVersionActive(this, active);
-		}
-
-		@Override
-		public boolean getActive() {
-			return this.cache_active;
-		}
-
-		@Override public boolean hasDataFile() {
-			final File f = new File(filename);
-			return f.exists() && f.canRead();
-		}
-	}
-	
 	public class VersionAdapter extends EasyAdapter implements SectionIndexer {
 		final List<Item> items = new ArrayList<>();
 		String[] section_labels;
@@ -925,10 +809,10 @@ public class VersionsActivity extends BaseActivity {
 
 		/**
 		 * The list of versions are loaded as follows:
-		 * - Internal version {@link yuku.alkitab.base.ac.VersionsActivity.MVersionInternal}, is always there
-		 * - Versions stored in database {@link yuku.alkitab.base.ac.VersionsActivity.MVersionDb} is all loaded
-		 * - For each {@link yuku.alkitab.base.ac.VersionsActivity.MVersionPreset} defined in {@link yuku.alkitab.base.config.VersionConfig},
-		 *   check if the {@link yuku.alkitab.base.ac.VersionsActivity.MVersionPreset#preset_name} corresponds to one of the
+		 * - Internal version {@link yuku.alkitab.base.model.MVersionInternal}, is always there
+		 * - Versions stored in database {@link yuku.alkitab.base.model.MVersionDb} is all loaded
+		 * - For each {@link yuku.alkitab.base.model.MVersionPreset} defined in {@link yuku.alkitab.base.config.VersionConfig},
+		 *   check if the {@link yuku.alkitab.base.model.MVersionPreset#preset_name} corresponds to one of the
 		 *   database version above. If it does, do not add to the resulting list. Otherwise, add it so user can download it.
 		 *
 		 * Note: Downloaded preset version will become database version after added.

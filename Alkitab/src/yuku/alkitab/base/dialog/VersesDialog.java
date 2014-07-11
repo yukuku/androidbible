@@ -11,8 +11,8 @@ import android.widget.TextView;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.dialog.base.BaseDialog;
+import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.widget.VersesView;
 import yuku.alkitab.base.widget.VersesView.VerseSelectionMode;
@@ -44,7 +44,7 @@ public class VersesDialog extends BaseDialog {
 
 	public static abstract class VersesDialogListener {
 		public void onVerseSelected(VersesDialog dialog, int ari) {}
-		public void onComparedVerseSelected(VersesDialog dialog, int ari, VersionsActivity.MVersion mversion) {}
+		public void onComparedVerseSelected(VersesDialog dialog, int ari, MVersion mversion) {}
 	}
 
 	TextView tReference;
@@ -191,25 +191,25 @@ public class VersesDialog extends BaseDialog {
 			final List<String> displayedVerseTexts = new ArrayList<>();
 			customCallbackData = new ArrayList<>();
 
-			final List<VersionsActivity.MVersion> mversions = new ArrayList<>();
+			final List<MVersion> mversions = new ArrayList<>();
 			{
-				final Pair<List<String>, List<VersionsActivity.MVersion>> versionPairsTmp = S.getAvailableVersions();
+				final Pair<List<String>, List<MVersion>> versionPairsTmp = S.getAvailableVersions();
 				for (int i = 0; i < versionPairsTmp.first.size(); i++) {
 					mversions.add(versionPairsTmp.second.get(i));
 				}
 			}
 
 			// sort such that sourceVersion is first
-			Collections.sort(mversions, new Comparator<VersionsActivity.MVersion>() {
+			Collections.sort(mversions, new Comparator<MVersion>() {
 				@Override
-				public int compare(final VersionsActivity.MVersion lhs, final VersionsActivity.MVersion rhs) {
+				public int compare(final MVersion lhs, final MVersion rhs) {
 					int a = U.equals(lhs.getVersionId(), sourceVersionId)? -1: 0;
 					int b = U.equals(rhs.getVersionId(), sourceVersionId)? -1: 0;
 					return a - b;
 				}
 			});
 
-			for (final VersionsActivity.MVersion mversion : mversions) {
+			for (final MVersion mversion : mversions) {
 				final Version version = mversion.getVersion();
 
 				String shortName = version.getShortName();
@@ -263,7 +263,7 @@ public class VersesDialog extends BaseDialog {
 				if (!compareMode) {
 					listener.onVerseSelected(VersesDialog.this, (Integer) customCallbackData.get(verse_1 - 1));
 				} else {
-					listener.onComparedVerseSelected(VersesDialog.this, ari, (VersionsActivity.MVersion) customCallbackData.get(verse_1 - 1));
+					listener.onComparedVerseSelected(VersesDialog.this, ari, (MVersion) customCallbackData.get(verse_1 - 1));
 				}
 			}
 		}

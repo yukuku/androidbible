@@ -11,8 +11,8 @@ import android.net.Uri;
 import android.util.Log;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.config.AppConfig;
+import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.model.Book;
@@ -309,7 +309,7 @@ public class Provider extends ContentProvider {
 		}
 
 		{ // database versions
-			for (VersionsActivity.MVersionDb mvDb: S.getDb().listAllVersions()) {
+			for (MVersionDb mvDb: S.getDb().listAllVersions()) {
 				res.addRow(new Object[]{++_id, "yes", mvDb.hasDataFile() ? 1 : 0, mvDb.shortName != null ? mvDb.shortName : mvDb.longName, mvDb.longName, mvDb.description});
 			}
 		}

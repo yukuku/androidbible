@@ -22,7 +22,8 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.ac.VersionsActivity;
+import yuku.alkitab.base.model.MVersionDb;
+import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.sv.DailyVerseAppWidgetService;
 import yuku.alkitab.debug.R;
@@ -216,12 +217,12 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 			return S.activeVersion;
 		}
 
-		if (VersionsActivity.MVersionInternal.getVersionInternalId().equals(versionId)) {
+		if (MVersionInternal.getVersionInternalId().equals(versionId)) {
 			return VersionImpl.getInternalVersion();
 		}
 
 		// try database versions
-		for (final VersionsActivity.MVersionDb mvDb: S.getDb().listAllVersions()) {
+		for (final MVersionDb mvDb: S.getDb().listAllVersions()) {
 			if (mvDb.getVersionId().equals(versionId)) {
 				if (mvDb.hasDataFile()) {
 					return mvDb.getVersion();

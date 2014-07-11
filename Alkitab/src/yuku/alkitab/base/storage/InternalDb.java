@@ -11,12 +11,12 @@ import yuku.afw.D;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.MarkerListActivity;
-import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.devotion.ArticleMeidA;
 import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
 import yuku.alkitab.base.devotion.DevotionArticle;
+import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.model.Label;
@@ -429,8 +429,8 @@ public class InternalDb {
 		}
 	}
 
-	public List<VersionsActivity.MVersionDb> listAllVersions() {
-		List<VersionsActivity.MVersionDb> res = new ArrayList<>();
+	public List<MVersionDb> listAllVersions() {
+		List<MVersionDb> res = new ArrayList<>();
 		Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Version, null, null, null, null, null, Db.Version.ordering + " asc");
 		try {
 			int col_locale = cursor.getColumnIndexOrThrow(Db.Version.locale);
@@ -443,7 +443,7 @@ public class InternalDb {
 			int col_ordering = cursor.getColumnIndexOrThrow(Db.Version.ordering);
 
 			while (cursor.moveToNext()) {
-				final VersionsActivity.MVersionDb mv = new VersionsActivity.MVersionDb();
+				final MVersionDb mv = new MVersionDb();
 				mv.locale = cursor.getString(col_locale);
 				mv.shortName = cursor.getString(col_shortName);
 				mv.longName = cursor.getString(col_longName);
@@ -460,7 +460,7 @@ public class InternalDb {
 		return res;
 	}
 
-	public void setVersionActive(VersionsActivity.MVersionDb mv, boolean active) {
+	public void setVersionActive(MVersionDb mv, boolean active) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 		final ContentValues cv = new ContentValues();
 		cv.put(Db.Version.active, active? 1: 0);
@@ -477,7 +477,7 @@ public class InternalDb {
 		return (int) DatabaseUtils.longForQuery(db, "select max(" + Db.Version.ordering + ") from " + Db.TABLE_Version, null);
 	}
 
-	public void insertVersionWithActive(VersionsActivity.MVersionDb mv, boolean active) {
+	public void insertVersionWithActive(MVersionDb mv, boolean active) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 		final ContentValues cv = new ContentValues();
 		cv.put(Db.Version.locale, mv.locale);
@@ -496,7 +496,7 @@ public class InternalDb {
 		return DatabaseUtils.longForQuery(db, "select count(*) from " + Db.TABLE_Version + " where " + Db.Version.filename + "=?", new String[] {filename}) > 0;
 	}
 
-	public void deleteVersion(VersionsActivity.MVersionDb mv) {
+	public void deleteVersion(MVersionDb mv) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 
 		// delete preset by preset_name

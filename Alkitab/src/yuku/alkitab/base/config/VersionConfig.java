@@ -2,7 +2,7 @@ package yuku.alkitab.base.config;
 
 import com.google.gson.Gson;
 import yuku.afw.App;
-import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
+import yuku.alkitab.base.model.MVersionPreset;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;
