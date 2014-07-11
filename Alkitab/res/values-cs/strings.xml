@@ -53,7 +53,7 @@
   <string name="sedang_mendekompres_harap_tunggu">Rozbaluji. Prosím čekejte...</string>
   <string name="terunduh_sampe_byte">Staženo: %d bytů</string>
   <string name="gagal_mengunduh_edisi_judul_ex_pastikan_internet">Nepodařené stahování překladu:%1$s (%2$s).\nZkontrolujte, zda Internet funguje správně.</string>
-  <string name="selesai_mengunduh_edisi_judul_disimpan_di_path">Dokončené stahování překladu: %1$s\nUloženo v: %2$s</string>
+  <string name="version_download_complete">Dokončené stahování překladu: %1$s\nUloženo v: %2$s</string>
   <string name="mulai_mengunduh">Zahájeno stahování...</string>
   <string name="mengunduh_nama">Stahování %s</string>
   <string name="tuju_v">Jděte na</string>

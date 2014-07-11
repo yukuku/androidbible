@@ -21,6 +21,7 @@ import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.br.DailyVerseAppWidgetReceiver;
+import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.debug.R;
 
 import java.util.List;
@@ -157,7 +158,7 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 	};
 
 	class VersionAdapter extends EasyAdapter {
-		private Pair<List<String>,List<VersionsActivity.MVersion>> versions;
+		private Pair<List<String>,List<MVersion>> versions;
 
 		void load() {
 			versions = S.getAvailableVersions();

@@ -6,8 +6,10 @@ import android.graphics.Typeface;
 import android.util.Pair;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.config.AppConfig;
+import yuku.alkitab.base.model.MVersion;
+import yuku.alkitab.base.model.MVersionDb;
+import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.InternalDbHelper;
@@ -159,16 +161,16 @@ public class S {
 	 * 1. internal
 	 * 2. database versions that have the data file and active
 	 **/
-	public static Pair<List<String>, List<VersionsActivity.MVersion>> getAvailableVersions() {
+	public static Pair<List<String>, List<MVersion>> getAvailableVersions() {
 		final List<String> options = new ArrayList<>(); // sync with below line
-		final List<VersionsActivity.MVersion> data = new ArrayList<>();  // sync with above line
+		final List<MVersion> data = new ArrayList<>();  // sync with above line
 
 		final AppConfig ac = AppConfig.get();
 		options.add(ac.internalLongName); // 1. internal
-		data.add(new VersionsActivity.MVersionInternal());
+		data.add(new MVersionInternal());
 
 		// 2. database versions
-		for (VersionsActivity.MVersionDb mvDb: S.getDb().listAllVersions()) {
+		for (MVersionDb mvDb: S.getDb().listAllVersions()) {
 			if (mvDb.hasDataFile() && mvDb.getActive()) {
 				options.add(mvDb.longName);
 				data.add(mvDb);

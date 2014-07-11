@@ -58,7 +58,7 @@
     <string name="sedang_mendekompres_harap_tunggu">Decompressing. Please wait…</string>
     <string name="terunduh_sampe_byte">Downloaded: %d bytes</string>
     <string name="gagal_mengunduh_edisi_judul_ex_pastikan_internet">Failed in downloading version: %1$s (%2$s).\nMake sure that Internet is working correctly.</string>
-    <string name="selesai_mengunduh_edisi_judul_disimpan_di_path">Completed downloading version: %1$s\nSaved in: %2$s</string>
+    <string name="version_download_complete">Downloaded <b>^1</b></string>
     <string name="mulai_mengunduh">Starting download…</string>
     <string name="mengunduh_nama">Downloading %s</string>
     <string name="tuju_v">Go to</string>
@@ -105,7 +105,7 @@
     <string name="ed_shortName_shortName">Short name: %s</string>
     <string name="ed_title_title">Title: %s</string>
     <string name="ed_stored_in_file">Stored in: %s</string>
-    <string name="ed_default_filename_file">Default filename: %s</string>
+    <string name="ed_default_filename_file">Preset name: %s</string>
     <string name="ed_download_url_url">Download URL: %s</string>
     <string name="ed_pdb_file_name_original_file">PDB file name (original): %s</string>
     <string name="ed_version_info_info">Version info: %s</string>
@@ -327,6 +327,7 @@
     <string name="rp_download_reading_plan_data_corrupted">Downloaded reading plan data is corrupted. Please try again later with a working Internet connection.</string>
 
     <string name="version_download_need_fonts">"The version downloaded might need to be displayed with certain fonts. Go to the 'Text appearance' menu and select a font. Greek needs Ubuntu font. Burmese needs Parabaik, ParabaikSans, or Myanmar3. Tamil needs Akshar. Telugu needs Suranna."</string>
+    <string name="version_download_corrupted_file">Downloaded file seems to be corrupt.</string>
     <string name="menuNightMode">Night mode</string>
     <string name="highlight_custom_color">Other colors</string>
     <string name="menu_compare">Compare</string>

@@ -59,7 +59,7 @@
   <string name="sedang_mendekompres_harap_tunggu">Uitpakken. Even geduld&#8230;</string>
   <string name="terunduh_sampe_byte">%d bytes gedownload</string>
   <string name="gagal_mengunduh_edisi_judul_ex_pastikan_internet">Downloaden van versie %1$s (%2$s) is mislukt.\nWees verzekerd van een werkende internetverbinding.</string>
-  <string name="selesai_mengunduh_edisi_judul_disimpan_di_path">Downloaden van versie %1$s is gelukt.\nOpgeslagen in: %2$s</string>
+  <string name="version_download_complete">Downloaden van versie %1$s is gelukt.\nOpgeslagen in: %2$s</string>
   <string name="mulai_mengunduh">Starten van de download&#8230;</string>
   <string name="mengunduh_nama">Downloaden van %s</string>
   <string name="tuju_v">Ga naar</string>

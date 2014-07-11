@@ -29,7 +29,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import yuku.afw.App;
 import yuku.afw.V;
-import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
@@ -37,7 +36,10 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.config.VersionConfig;
-import yuku.alkitab.base.model.VersionImpl;
+import yuku.alkitab.base.model.MVersion;
+import yuku.alkitab.base.model.MVersionDb;
+import yuku.alkitab.base.model.MVersionInternal;
+import yuku.alkitab.base.model.MVersionPreset;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes2;
 import yuku.alkitab.base.storage.YesReaderFactory;
@@ -45,7 +47,6 @@ import yuku.alkitab.base.util.AddonManager;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.BibleReader;
-import yuku.alkitab.model.Version;
 import yuku.alkitab.util.IntArrayList;
 import yuku.filechooser.FileChooserActivity;
 import yuku.filechooser.FileChooserConfig;
@@ -224,7 +225,7 @@ public class VersionsActivity extends BaseActivity {
 			}
 
 			if (isLocalFile) { // opening a local yes file
-				handleFileOpenYes(uri.getPath(), null);
+				handleFileOpenYes(uri.getPath());
 				return;
 			}
 
@@ -251,7 +252,7 @@ public class VersionsActivity extends BaseActivity {
 			copyStreamToFile(input, localFile);
 			input.close();
 
-			handleFileOpenYes(localFile.getAbsolutePath(), null);
+			handleFileOpenYes(localFile.getAbsolutePath());
 
 		} catch (Exception e) {
 			new AlertDialog.Builder(this)
@@ -307,9 +308,7 @@ public class VersionsActivity extends BaseActivity {
 			final Item item = adapter.getItem(position);
 			final MVersion mv = item.mv;
 			
-			if (mv instanceof MVersionInternal) {
-				// nothing to do, this is internal version
-			} else if (mv instanceof MVersionPreset) {
+			if (mv instanceof MVersionPreset) {
 				clickOnPresetVersion(V.<CheckBox>get(v, R.id.cActive), (MVersionPreset) mv);
 			} else if (mv instanceof MVersionDb) {
 				clickOnDbVersion(V.<CheckBox>get(v, R.id.cActive), (MVersionDb) mv);
@@ -391,7 +390,7 @@ public class VersionsActivity extends BaseActivity {
 			if (mv instanceof MVersionPreset) {
 				final MVersionPreset preset = (MVersionPreset) mv;
 				details.append(getString(R.string.ed_default_filename_file, preset.preset_name)).append('\n');
-				if (AddonManager.hasVersion(preset.preset_name)) {
+				if (AddonManager.hasVersion(preset.preset_name + ".yes")) {
 					details.append("THIS SHOULD NOT HAPPEN\n"); // because a version with the file should be MVersionDb
 				} else {
 					details.append(getString(R.string.ed_download_url_url, preset.download_url)).append('\n');
@@ -430,82 +429,83 @@ public class VersionsActivity extends BaseActivity {
 	
 	void clickOnPresetVersion(final CheckBox cActive, final MVersionPreset mv) {
 		if (cActive.isChecked()) {
-			mv.setActive(false);
-			return;
-		}
-
-		if (mv.hasDataFile()) {
-			mv.setActive(true);
-			return;
+			throw new RuntimeException("THIS SHOULD NOT HAPPEN: preset may not have the active checkbox checked.");
 		}
 
 		final ProgressDialog pd = ProgressDialog.show(this, getString(R.string.mengunduh_nama, mv.longName), getString(R.string.mulai_mengunduh), true, true);
 
 		final AddonManager.DownloadListener downloadListener = new AddonManager.DownloadListener() {
 			@Override
-			public void onDownloadFinished(AddonManager.Element e) {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						Toast.makeText(App.context,
-						getString(R.string.selesai_mengunduh_edisi_judul_disimpan_di_path, mv.longName, AddonManager.getVersionPath(mv.preset_name)),
-						Toast.LENGTH_LONG).show();
-
-						final String locale = mv.locale;
-						if ("ta".equals(locale) || "te".equals(locale) || "my".equals(locale) || "el".equals(locale)) {
-							new AlertDialog.Builder(VersionsActivity.this)
-							.setMessage(R.string.version_download_need_fonts)
-							.setPositiveButton(R.string.ok, null)
-							.show();
-						}
-					}
-				});
+			public void onDownloadFinished(final AddonManager.Element e) {
 				pd.dismiss();
+
+				final BibleReader reader = YesReaderFactory.createYesReader(e.dest);
+				if (reader == null) {
+					new File(e.dest).delete();
+
+					new AlertDialog.Builder(VersionsActivity.this)
+						.setMessage(R.string.version_download_corrupted_file)
+						.setPositiveButton(R.string.ok, null)
+						.show();
+
+					return;
+				}
+
+				// success!
+				Toast.makeText(App.context, TextUtils.expandTemplate(getText(R.string.version_download_complete), mv.longName), Toast.LENGTH_LONG).show();
+
+				int maxOrdering = S.getDb().getVersionMaxOrdering();
+				if (maxOrdering == 0) maxOrdering = 100; // default
+
+				final MVersionDb mvDb = new MVersionDb();
+				mvDb.locale = reader.getLocale();
+				mvDb.shortName = reader.getShortName();
+				mvDb.longName = reader.getLongName();
+				mvDb.description = reader.getDescription();
+				mvDb.filename = e.dest;
+				mvDb.preset_name = mv.preset_name;
+				mvDb.ordering = maxOrdering + 1;
+
+				S.getDb().insertVersionWithActive(mvDb, true);
+
+				final String locale = mv.locale;
+				if ("ta".equals(locale) || "te".equals(locale) || "my".equals(locale) || "el".equals(locale)) {
+					new AlertDialog.Builder(VersionsActivity.this)
+						.setMessage(R.string.version_download_need_fonts)
+						.setPositiveButton(R.string.ok, null)
+						.show();
+				}
 			}
 
 			@Override
 			public void onDownloadFailed(AddonManager.Element e, final String description, final Throwable t) {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						Toast.makeText(
-						App.context,
-						description != null? description: getString(R.string.gagal_mengunduh_edisi_judul_ex_pastikan_internet, mv.longName,
-						t == null? "null": t.getClass().getCanonicalName() + ": " + t.getMessage()), Toast.LENGTH_LONG
-						).show();
-					}
-				});
+				Toast.makeText(
+					App.context,
+					description != null ? description : getString(R.string.gagal_mengunduh_edisi_judul_ex_pastikan_internet, mv.longName,
+						t == null ? "null" : t.getClass().getCanonicalName() + ": " + t.getMessage()), Toast.LENGTH_LONG
+				).show();
+
 				pd.dismiss();
 			}
 
 			@Override
 			public void onDownloadProgress(final AddonManager.Element e, final int progress) {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						if (progress >= 0) {
-							pd.setMessage(getString(R.string.terunduh_sampe_byte, progress));
-						} else {
-							pd.setMessage(getString(R.string.sedang_mendekompres_harap_tunggu));
-						}
-					}
-				});
+				if (progress >= 0) {
+					pd.setMessage(getString(R.string.terunduh_sampe_byte, progress));
+				} else {
+					pd.setMessage(getString(R.string.sedang_mendekompres_harap_tunggu));
+				}
 			}
 
 			@Override
 			public void onDownloadCancelled(AddonManager.Element e) {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						Toast.makeText(App.context, R.string.pengunduhan_dibatalkan, Toast.LENGTH_SHORT).show();
-					}
-				});
+				Toast.makeText(App.context, R.string.pengunduhan_dibatalkan, Toast.LENGTH_SHORT).show();
 				pd.dismiss();
 			}
 		};
 
 		final AddonManager.DownloadThread downloadThread = AddonManager.getDownloadThread();
-		final AddonManager.Element e = downloadThread.enqueue(mv.download_url, AddonManager.getVersionPath(mv.preset_name), downloadListener);
+		final AddonManager.Element e = downloadThread.enqueue(mv.download_url, AddonManager.getVersionPath(mv.preset_name + ".yes"), downloadListener);
 
 		downloadThread.start();
 
@@ -518,9 +518,6 @@ public class VersionsActivity extends BaseActivity {
 		pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
 			@Override
 			public void onDismiss(DialogInterface dialog) {
-				if (!e.cancelled && AddonManager.hasVersion(mv.preset_name)) {
-					mv.setActive(true);
-				}
 				adapter.reload();
 			}
 		});
@@ -534,15 +531,16 @@ public class VersionsActivity extends BaseActivity {
 				mv.setActive(true);
 			} else {
 				new AlertDialog.Builder(this)
-				.setMessage(getString(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename))
-				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-					@Override public void onClick(DialogInterface dialog, int which) {
-						S.getDb().deleteVersion(mv);
-						adapter.reload();
-					}
-				})
-				.setNegativeButton(R.string.no, null)
-				.show();
+					.setMessage(getString(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename))
+					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							S.getDb().deleteVersion(mv);
+							adapter.reload();
+						}
+					})
+					.setNegativeButton(R.string.no, null)
+					.show();
 			}
 		}
 	}
@@ -578,7 +576,7 @@ public class VersionsActivity extends BaseActivity {
 				// decompress or see if the same filename without .gz exists
 				final File maybeDecompressed = new File(filename.substring(0, filename.length() - 3));
 				if (maybeDecompressed.exists() && !maybeDecompressed.isDirectory() && maybeDecompressed.canRead()) {
-					handleFileOpenYes(maybeDecompressed.getAbsolutePath(), null);
+					handleFileOpenYes(maybeDecompressed.getAbsolutePath());
 				} else {
 					final ProgressDialog pd = ProgressDialog.show(VersionsActivity.this, null, getString(R.string.sedang_mendekompres_harap_tunggu), true, false);
 					new AsyncTask<Void, Void, File>() {
@@ -614,12 +612,12 @@ public class VersionsActivity extends BaseActivity {
 						@Override protected void onPostExecute(File result) {
 							pd.dismiss();
 							
-							handleFileOpenYes(result.getAbsolutePath(), null);
+							handleFileOpenYes(result.getAbsolutePath());
 						}
 					}.execute();
 				}
 			} else if (filename.toLowerCase(Locale.US).endsWith(".yes")) { //$NON-NLS-1$
-				handleFileOpenYes(filename, null);
+				handleFileOpenYes(filename);
 			} else if (filename.toLowerCase(Locale.US).endsWith(".pdb")) { //$NON-NLS-1$
 				handleFileOpenPdb(filename);
 			} else {
@@ -633,7 +631,7 @@ public class VersionsActivity extends BaseActivity {
 		}
 	}
 	
-	void handleFileOpenYes(String filename, String originalpdbname) {
+	void handleFileOpenYes(String filename) {
 		{ // look for duplicates
 			if (S.getDb().hasVersionWithFilename(filename)) {
 				new AlertDialog.Builder(this)
@@ -664,7 +662,7 @@ public class VersionsActivity extends BaseActivity {
 			// check if this yes file is one already mentioned in the preset list
 			String preset_name = null;
 			for (MVersionPreset preset : VersionConfig.get().presets) {
-				if (U.equals(AddonManager.getVersionPath(preset.preset_name), filename)) {
+				if (U.equals(AddonManager.getVersionPath(preset.preset_name + ".yes"), filename)) {
 					preset_name = preset.preset_name;
 				}
 			}
@@ -714,12 +712,12 @@ public class VersionsActivity extends BaseActivity {
 				.show();
 			}
 
-			private void showResult(final String filenamepdb, final String filenameyes, Throwable exception, List<String> wronglyConvertedBookNames) {
+			private void showResult(final String filenameyes, Throwable exception, List<String> wronglyConvertedBookNames) {
 				if (exception != null) {
 					showPdbReadErrorDialog(exception);
 				} else {
 					// sukses.
-					handleFileOpenYes(filenameyes, new File(filenamepdb).getName());
+					handleFileOpenYes(filenameyes);
 					
 					if (wronglyConvertedBookNames != null && wronglyConvertedBookNames.size() > 0) {
 						StringBuilder msg = new StringBuilder(getString(R.string.ed_the_following_books_from_the_pdb_file_are_not_recognized) + '\n');
@@ -773,7 +771,7 @@ public class VersionsActivity extends BaseActivity {
 					@Override protected void onPostExecute(ConvertPdbToYes2.ConvertResult result) {
 						pd.dismiss();
 						
-						showResult(pdbFilename, yesFilename, result.exception, result.wronglyConvertedBookNames);
+						showResult(yesFilename, result.exception, result.wronglyConvertedBookNames);
 					}
 				}.execute();
 			}
@@ -800,140 +798,6 @@ public class VersionsActivity extends BaseActivity {
 		return "pdb-" + base + ".yes";
 	}
 
-	// models
-	public static abstract class MVersion {
-		public String locale;
-		public String shortName;
-		public String longName;
-		public String description;
-		public int ordering;
-		
-		/** unique id for comparison purposes */
-		public abstract String getVersionId();
-		/** return version so that it can be read. Null when not possible */
-		public abstract Version getVersion();
-		public abstract void setActive(boolean active);
-		public abstract boolean getActive();
-		public abstract boolean hasDataFile();
-	}
-
-	/**
-	 * Internal version, only one
-	 */
-	public static class MVersionInternal extends MVersion {
-		public static String getVersionInternalId() {
-			return "internal";
-		}
-		
-		@Override public String getVersionId() {
-			return getVersionInternalId();
-		}
-
-		@Override
-		public Version getVersion() {
-			return VersionImpl.getInternalVersion();
-		}
-
-		@Override
-		public void setActive(boolean active) {
-			// NOOP
-		}
-
-		@Override
-		public boolean getActive() {
-			return true; // always active
-		}
-
-		@Override public boolean hasDataFile() {
-			return true; // always has
-		}
-	}
-
-	/**
-	 * Version that is defined in the version_config.json.
-	 * User may not have the data file available.
-	 */
-	public static class MVersionPreset extends MVersion {
-		public String download_url;
-		public String preset_name;
-
-		@Override public boolean getActive() {
-			return Preferences.getBoolean("edisi/preset/" + this.preset_name + "/aktif", true); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		
-		@Override public void setActive(boolean active) {
-			Preferences.setBoolean("edisi/preset/" + this.preset_name + "/aktif", active); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-
-		@Override
-		public String getVersionId() {
-			return "preset/" + preset_name;
-		}
-
-		@Override
-		public Version getVersion() {
-			if (hasDataFile()) {
-				final VersionImpl res = new VersionImpl(YesReaderFactory.createYesReader(AddonManager.getVersionPath(preset_name)));
-				res.setFallbackShortName(shortName);
-				return res;
-			} else {
-				return null;
-			}
-		}
-
-		@Override public boolean hasDataFile() {
-			return AddonManager.hasVersion(preset_name);
-		}
-	}
-
-	/**
-	 * Version that is defined in the database.
-	 * If the version is downloaded from a definition in the preset list, the {@link #preset_name} will be non-null.
-	 */
-	public static class MVersionDb extends MVersion {
-		public String filename;
-		public String preset_name;
-		public boolean cache_active; // so we don't need to keep reading/writing from/to db
-		
-		@Override
-		public String getVersionId() {
-			if (preset_name != null) {
-				return "preset/" + preset_name;
-			}
-			return "file/" + filename;
-		}
-
-		@Override
-		public Version getVersion() {
-			if (hasDataFile()) {
-				final BibleReader reader = YesReaderFactory.createYesReader(filename);
-				if (reader == null) {
-					Log.e(TAG, "YesReaderFactory failed to open the yes file");
-					return null;
-				}
-				return new VersionImpl(reader);
-			} else {
-				return null;
-			}
-		}
-
-		@Override
-		public void setActive(boolean active) {
-			this.cache_active = active;
-			S.getDb().setVersionActive(this, active);
-		}
-
-		@Override
-		public boolean getActive() {
-			return this.cache_active;
-		}
-
-		@Override public boolean hasDataFile() {
-			final File f = new File(filename);
-			return f.exists() && f.canRead();
-		}
-	}
-	
 	public class VersionAdapter extends EasyAdapter implements SectionIndexer {
 		final List<Item> items = new ArrayList<>();
 		String[] section_labels;
@@ -945,10 +809,10 @@ public class VersionsActivity extends BaseActivity {
 
 		/**
 		 * The list of versions are loaded as follows:
-		 * - Internal version {@link yuku.alkitab.base.ac.VersionsActivity.MVersionInternal}, is always there
-		 * - Versions stored in database {@link yuku.alkitab.base.ac.VersionsActivity.MVersionDb} is all loaded
-		 * - For each {@link yuku.alkitab.base.ac.VersionsActivity.MVersionPreset} defined in {@link yuku.alkitab.base.config.VersionConfig},
-		 *   check if the {@link yuku.alkitab.base.ac.VersionsActivity.MVersionPreset#preset_name} corresponds to one of the
+		 * - Internal version {@link yuku.alkitab.base.model.MVersionInternal}, is always there
+		 * - Versions stored in database {@link yuku.alkitab.base.model.MVersionDb} is all loaded
+		 * - For each {@link yuku.alkitab.base.model.MVersionPreset} defined in {@link yuku.alkitab.base.config.VersionConfig},
+		 *   check if the {@link yuku.alkitab.base.model.MVersionPreset#preset_name} corresponds to one of the
 		 *   database version above. If it does, do not add to the resulting list. Otherwise, add it so user can download it.
 		 *
 		 * Note: Downloaded preset version will become database version after added.
@@ -959,7 +823,6 @@ public class VersionsActivity extends BaseActivity {
 			{ // internal
 				final AppConfig ac = AppConfig.get();
 				final MVersionInternal internal = new MVersionInternal();
-				internal.setActive(true);
 				internal.locale = ac.internalLocale;
 				internal.shortName = ac.internalShortName;
 				internal.longName = ac.internalLongName;
@@ -979,17 +842,11 @@ public class VersionsActivity extends BaseActivity {
 				}
 			}
 
-			{ // presets
-				for (MVersionPreset preset : VersionConfig.get().presets) {
-					if (presetNamesInDb.contains(preset.preset_name)) continue;
+			// presets
+			for (MVersionPreset preset : VersionConfig.get().presets) {
+				if (presetNamesInDb.contains(preset.preset_name)) continue;
 
-					items.add(new Item(preset));
-
-					// fix the active state based on whether the file exists and also preferences
-					if (!AddonManager.hasVersion(preset.preset_name)) {
-						preset.setActive(false);
-					}
-				}
+				items.add(new Item(preset));
 			}
 
 			// sort items

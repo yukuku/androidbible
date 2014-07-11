@@ -65,6 +65,9 @@ import yuku.alkitab.base.dialog.TypeHighlightDialog;
 import yuku.alkitab.base.dialog.TypeNoteDialog;
 import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.dialog.XrefDialog;
+import yuku.alkitab.base.model.MVersion;
+import yuku.alkitab.base.model.MVersionDb;
+import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Jumper;
@@ -443,12 +446,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 
 		final String lastVersionId = instant_pref.getString(PREFKEY_lastVersionId, null);
-		final VersionsActivity.MVersion mv = getVersionFromVersionId(lastVersionId);
+		final MVersion mv = getVersionFromVersionId(lastVersionId);
 
 		if (mv != null) {
 			loadVersion(mv, false);
 		} else {
-			loadVersion(new VersionsActivity.MVersionInternal(), false);
+			loadVersion(new MVersionInternal(), false);
 		}
 
 		{ // load book
@@ -470,8 +473,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		{ // load last split version. This must be after load book, chapter, and verse.
 			final String lastSplitVersionId = instant_pref.getString(PREFKEY_lastSplitVersionId, null);
 			if (lastSplitVersionId != null) {
-				final VersionsActivity.MVersion splitMv = getVersionFromVersionId(lastSplitVersionId);
-				final VersionsActivity.MVersion splitMvActual = splitMv == null? new VersionsActivity.MVersionInternal(): splitMv;
+				final MVersion splitMv = getVersionFromVersionId(lastSplitVersionId);
+				final MVersion splitMvActual = splitMv == null? new MVersionInternal(): splitMv;
 
 				if (loadSplitVersion(splitMvActual)) {
 					openSplitDisplay();
@@ -658,13 +661,13 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 
-	VersionsActivity.MVersion getVersionFromVersionId(String versionId) {
-		if (versionId == null || VersionsActivity.MVersionInternal.getVersionInternalId().equals(versionId)) {
+	MVersion getVersionFromVersionId(String versionId) {
+		if (versionId == null || MVersionInternal.getVersionInternalId().equals(versionId)) {
 			return null; // internal is made the same as null
 		}
 
 		// let's look at yes versions
-		for (VersionsActivity.MVersionDb mvDb: S.getDb().listAllVersions()) {
+		for (MVersionDb mvDb: S.getDb().listAllVersions()) {
 			if (mvDb.getVersionId().equals(versionId)) {
 				if (mvDb.hasDataFile()) {
 					return mvDb;
@@ -677,7 +680,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		return null; // not known
 	}
 
-	boolean loadVersion(final VersionsActivity.MVersion mv, boolean display) {
+	boolean loadVersion(final MVersion mv, boolean display) {
 		try {
 			Version version = mv.getVersion();
 			
@@ -723,7 +726,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 	
-	boolean loadSplitVersion(final VersionsActivity.MVersion mv) {
+	boolean loadSplitVersion(final MVersion mv) {
 		try {
 			Version version = mv.getVersion();
 			
@@ -748,7 +751,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 	
-	String getSplitHandleVersionName(VersionsActivity.MVersion mv, Version version) {
+	String getSplitHandleVersionName(MVersion mv, Version version) {
 		String shortName = version.getShortName();
 		if (shortName != null) {
 			return shortName;
@@ -1135,16 +1138,16 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	void openVersionsDialog() {
-		Pair<List<String>, List<VersionsActivity.MVersion>> versions = S.getAvailableVersions();
+		Pair<List<String>, List<MVersion>> versions = S.getAvailableVersions();
 		final List<String> options = versions.first;
-		final List<VersionsActivity.MVersion> data = versions.second;
+		final List<MVersion> data = versions.second;
 		
 		int selected = -1;
 		if (S.activeVersionId == null) {
 			selected = 0;
 		} else {
 			for (int i = 0; i < data.size(); i++) {
-				VersionsActivity.MVersion mv = data.get(i);
+				MVersion mv = data.get(i);
 				if (mv.getVersionId().equals(S.activeVersionId)) {
 					selected = i;
 					break;
@@ -1155,7 +1158,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		new AlertDialog.Builder(this)
 		.setSingleChoiceItems(options.toArray(new String[options.size()]), selected, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
-				final VersionsActivity.MVersion mv = data.get(which);
+				final MVersion mv = data.get(which);
 				
 				loadVersion(mv, true);
 				dialog.dismiss();
@@ -1171,9 +1174,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	void openSplitVersionsDialog() {
-		final Pair<List<String>, List<VersionsActivity.MVersion>> versions = S.getAvailableVersions();
+		final Pair<List<String>, List<MVersion>> versions = S.getAvailableVersions();
 		final List<String> options = versions.first;
-		final List<VersionsActivity.MVersion> data = versions.second;
+		final List<MVersion> data = versions.second;
 		
 		options.add(0, getString(R.string.split_version_none));
 		data.add(0, null);
@@ -1183,7 +1186,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			selected = 0;
 		} else {
 			for (int i = 1 /* because 0 is null */; i < data.size(); i++) {
-				VersionsActivity.MVersion mv = data.get(i);
+				MVersion mv = data.get(i);
 				if (mv.getVersionId().equals(this.activeSplitVersionId)) {
 					selected = i;
 					break;
@@ -1194,7 +1197,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		new AlertDialog.Builder(this)
 		.setSingleChoiceItems(options.toArray(new String[options.size()]), selected, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
-				final VersionsActivity.MVersion mv = data.get(which);
+				final MVersion mv = data.get(which);
 				
 				if (mv == null) { // closing split version
 					activeSplitVersion = null;

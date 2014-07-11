@@ -59,7 +59,7 @@
   <string name="sedang_mendekompres_harap_tunggu">解凍中、お待ちください。</string>
   <string name="terunduh_sampe_byte">ダウンロード終了: %d バイト</string>
   <string name="gagal_mengunduh_edisi_judul_ex_pastikan_internet">「%1$s (%2$s)」のダウンロードに失敗しました.\nインターネット接続を確認してください. </string>
-  <string name="selesai_mengunduh_edisi_judul_disimpan_di_path">「 %1$s\n」のダウンロード完了。保存場所は: %2$s</string>
+  <string name="version_download_complete">「 %1$s\n」のダウンロード完了。保存場所は: %2$s</string>
   <string name="mulai_mengunduh">ダウンロードの準備中です...</string>
   <string name="mengunduh_nama">聖書ファイル %s をダウンロードしています.</string>
   <string name="tuju_v">移動</string>
