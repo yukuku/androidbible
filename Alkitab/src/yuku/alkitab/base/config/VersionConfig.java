@@ -22,7 +22,7 @@ public class VersionConfig {
 		public String shortName;
 		public String longName;
 		public String description;
-		public String filename_preset;
+		public String preset_name;
 		public int modifyTime;
 	}
 
@@ -61,8 +61,8 @@ public class VersionConfig {
 			preset.shortName = presetJson.shortName;
 			preset.longName = presetJson.longName;
 			preset.description = presetJson.description;
-			preset.preset_name = presetJson.filename_preset;
-			preset.download_url = root.download_url_format.replace("$FILENAME_PRESET", presetJson.filename_preset);
+			preset.preset_name = presetJson.preset_name;
+			preset.download_url = root.download_url_format.replace("$PRESET_NAME", presetJson.preset_name);
 			preset.ordering = ++presetOrdering;
 			presets.add(preset);
 		}
