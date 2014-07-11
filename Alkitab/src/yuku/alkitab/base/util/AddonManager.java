@@ -2,6 +2,8 @@ package yuku.alkitab.base.util;
 
 import android.content.Context;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.support.v4.util.AtomicFile;
@@ -57,8 +59,9 @@ public class AddonManager {
 	
 	public static class DownloadThread extends Thread {
 		Semaphore sema = new Semaphore(0);
-		LinkedList<Element> queue = new LinkedList<Element>();
+		LinkedList<Element> queue = new LinkedList<>();
 		boolean isFinished = false;
+		Handler mainHandler = new Handler(Looper.getMainLooper());
 
 		public boolean isFinished() {
 			return isFinished;
@@ -86,13 +89,20 @@ public class AddonManager {
 			isFinished = true;
 		}
 		
-		private void download(Element e) {
+		private void download(final Element e) {
 			final AtomicFile atomicFile = new AtomicFile(new File(e.dest));
 			atomicFile.delete(); // delete it first, just in case
 
 			boolean mkdirOk = mkYesDir();
 			if (!mkdirOk) {
-				if (e.listener != null) e.listener.onDownloadFailed(e, App.context.getString(R.string.tidak_bisa_membuat_folder, getYesPath()), null);
+				if (e.listener != null) {
+					mainHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							e.listener.onDownloadFailed(e, App.context.getString(R.string.tidak_bisa_membuat_folder, getYesPath()), null);
+						}
+					});
+				}
 				return;
 			}
 
@@ -118,12 +128,27 @@ public class AddonManager {
 						os.write(b, 0, read);
 
 						e.downloaded += read;
-						if (e.listener != null) e.listener.onDownloadProgress(e, e.downloaded);
+
+						if (e.listener != null) {
+							mainHandler.post(new Runnable() {
+								@Override
+								public void run() {
+									e.listener.onDownloadProgress(e, e.downloaded);
+								}
+							});
+						}
 
 						if (e.cancelled) {
 							call.cancel();
 							atomicFile.failWrite(os);
-							if (e.listener != null) e.listener.onDownloadCancelled(e);
+							if (e.listener != null) {
+								mainHandler.post(new Runnable() {
+									@Override
+									public void run() {
+										e.listener.onDownloadCancelled(e);
+									}
+								});
+							}
 							os.close();
 							return;
 						}
@@ -134,13 +159,27 @@ public class AddonManager {
 
 				atomicFile.finishWrite(os);
 
-				if (e.listener != null) e.listener.onDownloadFinished(e);
+				if (e.listener != null) {
+					mainHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							e.listener.onDownloadFinished(e);
+						}
+					});
+				}
 				e.finished = true;
-			} catch (IOException ex) {
+			} catch (final IOException ex) {
 				atomicFile.failWrite(os);
 
 				Log.w(TAG, "Error downloading", ex);
-				if (e.listener != null) e.listener.onDownloadFailed(e, null, ex);
+				if (e.listener != null) {
+					mainHandler.post(new Runnable() {
+						@Override
+						public void run() {
+							e.listener.onDownloadFailed(e, null, ex);
+						}
+					});
+				}
 			} finally {
 				wakelock.release();
 			}

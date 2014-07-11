@@ -29,7 +29,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import yuku.afw.App;
 import yuku.afw.V;
-import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
@@ -430,13 +429,7 @@ public class VersionsActivity extends BaseActivity {
 	
 	void clickOnPresetVersion(final CheckBox cActive, final MVersionPreset mv) {
 		if (cActive.isChecked()) {
-			mv.setActive(false);
-			return;
-		}
-
-		if (mv.hasDataFile()) {
-			mv.setActive(true);
-			return;
+			throw new RuntimeException("THIS SHOULD NOT HAPPEN: preset may not have the active checkbox checked.");
 		}
 
 		final ProgressDialog pd = ProgressDialog.show(this, getString(R.string.mengunduh_nama, mv.longName), getString(R.string.mulai_mengunduh), true, true);
@@ -444,87 +437,69 @@ public class VersionsActivity extends BaseActivity {
 		final AddonManager.DownloadListener downloadListener = new AddonManager.DownloadListener() {
 			@Override
 			public void onDownloadFinished(final AddonManager.Element e) {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						final BibleReader reader = YesReaderFactory.createYesReader(e.dest);
-						if (reader == null) {
-							new File(e.dest).delete();
-
-							new AlertDialog.Builder(VersionsActivity.this)
-								.setMessage(R.string.version_download_corrupted_file)
-								.setPositiveButton(R.string.ok, null)
-								.show();
-
-							return;
-						}
-
-						// success!
-						Toast.makeText(App.context, TextUtils.expandTemplate(getText(R.string.version_download_complete), mv.longName), Toast.LENGTH_LONG).show();
-
-						int maxOrdering = S.getDb().getVersionMaxOrdering();
-						if (maxOrdering == 0) maxOrdering = 100; // default
-
-						final MVersionDb mvDb = new MVersionDb();
-						mvDb.locale = reader.getLocale();
-						mvDb.shortName = reader.getShortName();
-						mvDb.longName = reader.getLongName();
-						mvDb.description = reader.getDescription();
-						mvDb.filename = e.dest;
-						mvDb.preset_name = mv.preset_name;
-						mvDb.ordering = maxOrdering + 1;
-
-						S.getDb().insertVersionWithActive(mvDb, true);
-
-						final String locale = mv.locale;
-						if ("ta".equals(locale) || "te".equals(locale) || "my".equals(locale) || "el".equals(locale)) {
-							new AlertDialog.Builder(VersionsActivity.this)
-							.setMessage(R.string.version_download_need_fonts)
-							.setPositiveButton(R.string.ok, null)
-							.show();
-						}
-					}
-				});
 				pd.dismiss();
+
+				final BibleReader reader = YesReaderFactory.createYesReader(e.dest);
+				if (reader == null) {
+					new File(e.dest).delete();
+
+					new AlertDialog.Builder(VersionsActivity.this)
+						.setMessage(R.string.version_download_corrupted_file)
+						.setPositiveButton(R.string.ok, null)
+						.show();
+
+					return;
+				}
+
+				// success!
+				Toast.makeText(App.context, TextUtils.expandTemplate(getText(R.string.version_download_complete), mv.longName), Toast.LENGTH_LONG).show();
+
+				int maxOrdering = S.getDb().getVersionMaxOrdering();
+				if (maxOrdering == 0) maxOrdering = 100; // default
+
+				final MVersionDb mvDb = new MVersionDb();
+				mvDb.locale = reader.getLocale();
+				mvDb.shortName = reader.getShortName();
+				mvDb.longName = reader.getLongName();
+				mvDb.description = reader.getDescription();
+				mvDb.filename = e.dest;
+				mvDb.preset_name = mv.preset_name;
+				mvDb.ordering = maxOrdering + 1;
+
+				S.getDb().insertVersionWithActive(mvDb, true);
+
+				final String locale = mv.locale;
+				if ("ta".equals(locale) || "te".equals(locale) || "my".equals(locale) || "el".equals(locale)) {
+					new AlertDialog.Builder(VersionsActivity.this)
+						.setMessage(R.string.version_download_need_fonts)
+						.setPositiveButton(R.string.ok, null)
+						.show();
+				}
 			}
 
 			@Override
 			public void onDownloadFailed(AddonManager.Element e, final String description, final Throwable t) {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						Toast.makeText(
-						App.context,
-						description != null? description: getString(R.string.gagal_mengunduh_edisi_judul_ex_pastikan_internet, mv.longName,
-						t == null? "null": t.getClass().getCanonicalName() + ": " + t.getMessage()), Toast.LENGTH_LONG
-						).show();
-					}
-				});
+				Toast.makeText(
+					App.context,
+					description != null ? description : getString(R.string.gagal_mengunduh_edisi_judul_ex_pastikan_internet, mv.longName,
+						t == null ? "null" : t.getClass().getCanonicalName() + ": " + t.getMessage()), Toast.LENGTH_LONG
+				).show();
+
 				pd.dismiss();
 			}
 
 			@Override
 			public void onDownloadProgress(final AddonManager.Element e, final int progress) {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						if (progress >= 0) {
-							pd.setMessage(getString(R.string.terunduh_sampe_byte, progress));
-						} else {
-							pd.setMessage(getString(R.string.sedang_mendekompres_harap_tunggu));
-						}
-					}
-				});
+				if (progress >= 0) {
+					pd.setMessage(getString(R.string.terunduh_sampe_byte, progress));
+				} else {
+					pd.setMessage(getString(R.string.sedang_mendekompres_harap_tunggu));
+				}
 			}
 
 			@Override
 			public void onDownloadCancelled(AddonManager.Element e) {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						Toast.makeText(App.context, R.string.pengunduhan_dibatalkan, Toast.LENGTH_SHORT).show();
-					}
-				});
+				Toast.makeText(App.context, R.string.pengunduhan_dibatalkan, Toast.LENGTH_SHORT).show();
 				pd.dismiss();
 			}
 		};
@@ -543,9 +518,6 @@ public class VersionsActivity extends BaseActivity {
 		pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
 			@Override
 			public void onDismiss(DialogInterface dialog) {
-				if (!e.cancelled && AddonManager.hasVersion(mv.preset_name + ".yes")) {
-					mv.setActive(true);
-				}
 				adapter.reload();
 			}
 		});
@@ -559,15 +531,16 @@ public class VersionsActivity extends BaseActivity {
 				mv.setActive(true);
 			} else {
 				new AlertDialog.Builder(this)
-				.setMessage(getString(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename))
-				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-					@Override public void onClick(DialogInterface dialog, int which) {
-						S.getDb().deleteVersion(mv);
-						adapter.reload();
-					}
-				})
-				.setNegativeButton(R.string.no, null)
-				.show();
+					.setMessage(getString(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename))
+					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							S.getDb().deleteVersion(mv);
+							adapter.reload();
+						}
+					})
+					.setNegativeButton(R.string.no, null)
+					.show();
 			}
 		}
 	}
@@ -837,7 +810,6 @@ public class VersionsActivity extends BaseActivity {
 		public abstract String getVersionId();
 		/** return version so that it can be read. Null when not possible */
 		public abstract Version getVersion();
-		public abstract void setActive(boolean active);
 		public abstract boolean getActive();
 		public abstract boolean hasDataFile();
 	}
@@ -860,11 +832,6 @@ public class VersionsActivity extends BaseActivity {
 		}
 
 		@Override
-		public void setActive(boolean active) {
-			// NOOP
-		}
-
-		@Override
 		public boolean getActive() {
 			return true; // always active
 		}
@@ -875,19 +842,14 @@ public class VersionsActivity extends BaseActivity {
 	}
 
 	/**
-	 * Version that is defined in the version_config.json.
-	 * User may not have the data file available.
+	 * Version that is defined in the version_config.json, but not activated by the user.
 	 */
 	public static class MVersionPreset extends MVersion {
 		public String download_url;
 		public String preset_name;
 
 		@Override public boolean getActive() {
-			return Preferences.getBoolean("edisi/preset/" + this.preset_name + "/aktif", true); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		
-		@Override public void setActive(boolean active) {
-			Preferences.setBoolean("edisi/preset/" + this.preset_name + "/aktif", active); //$NON-NLS-1$ //$NON-NLS-2$
+			return false; // preset can't be active, because there is no data file activated by the user.
 		}
 
 		@Override
@@ -936,8 +898,7 @@ public class VersionsActivity extends BaseActivity {
 			}
 		}
 
-		@Override
-		public void setActive(boolean active) {
+		private void setActive(boolean active) {
 			this.cache_active = active;
 			S.getDb().setVersionActive(this, active);
 		}
@@ -978,7 +939,6 @@ public class VersionsActivity extends BaseActivity {
 			{ // internal
 				final AppConfig ac = AppConfig.get();
 				final MVersionInternal internal = new MVersionInternal();
-				internal.setActive(true);
 				internal.locale = ac.internalLocale;
 				internal.shortName = ac.internalShortName;
 				internal.longName = ac.internalLongName;
