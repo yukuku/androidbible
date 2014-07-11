@@ -29,8 +29,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		createIndexMarker(db);
 		createTableDevotion(db);
 		createIndexDevotion(db);
-		createTableVersion(db);
-		createIndexVersion(db);
+		createTableEdisi(db);
 		createTableLabel(db);
 		createIndexLabel(db);
 		createTableMarker_Label(db);
@@ -43,6 +42,8 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		createTableReadingPlan(db);
 		createTableReadingPlanProgress(db);
 		createIndexReadingPlanProgress(db);
+		createTableVersion(db);
+		createIndexVersion(db);
 	}
 
 	@Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -55,7 +56,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 
 		if (oldVersion <= 50) {
 			// new table Version
-			createTableVersion(db);
+			createTableEdisi(db);
 			createIndexVersion(db);
 		}
 
@@ -76,7 +77,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		}
 
 		if (oldVersion > 50 && oldVersion <= 102) { // 103: 2.7.1
-			addShortNameColumnAndIndexToVersion(db);
+			addShortNameColumnAndIndexToEdisi(db);
 		}
 
 		if (oldVersion <= 126) { // 127: 3.2.0
@@ -114,7 +115,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			createIndexReadingPlanProgress(db);
 		}
 
-		if (oldVersion < 14000163) { // last version that don't use Marker table
+		if (oldVersion < 14000163) { // last version that doesn't use Marker table
 			addGidColumnToLabel(db);
 
 			createTableMarker(db);
@@ -123,6 +124,10 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			createIndexMarker_Label(db);
 
 			convertFromBookmark2ToMarker(db);
+		}
+
+		if (oldVersion < 14000165) { // last version that doesn't use the new Version table
+			convertFromEdisiToVersion(db);
 		}
 	}
 
@@ -169,25 +174,37 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL("create index if not exists index_104 on " + Db.TABLE_Devotion + " (" + Db.Devotion.touchTime + ")");
 	}
 
-	private void createTableVersion(SQLiteDatabase db) {
-		db.execSQL("create table if not exists " + Db.TABLE_Version + " (" +
+	private void createTableEdisi(SQLiteDatabase db) {
+		db.execSQL("create table if not exists Edisi (" +
 		"_id integer primary key autoincrement, " +
-		Db.Version.shortName + " text, " +
-		Db.Version.title + " text, " +
-		Db.Version.kind + " text, " +
-		Db.Version.description + " text, " +
-		Db.Version.filename + " text, " +
-		Db.Version.filename_originalpdb + " text, " +
-		Db.Version.active + " integer, " +
-		Db.Version.ordering + " integer)");
+		"shortName text, " +
+		"judul text, " +
+		"jenis text, " +
+		"keterangan text, " +
+		Db.Version.filename + "namafile text, " +
+		"namafile_pdbasal text, " +
+		"aktif integer, " +
+		"urutan integer)");
 	}
 
-	private void createIndexVersion(SQLiteDatabase db) {
-		db.execSQL("create index if not exists index_301 on " + Db.TABLE_Version + " (" + Db.Version.ordering + ")");
+	void createTableVersion(SQLiteDatabase db) {
+		db.execSQL("create table if not exists " + Db.TABLE_Version + " (" +
+				"_id integer primary key autoincrement, " +
+				Db.Version.locale + " text," +
+				Db.Version.shortName + " text," +
+				Db.Version.longName + " text," +
+				Db.Version.description + " text," +
+				Db.Version.filename + " text," +
+				Db.Version.preset_name + " text," +
+				Db.Version.active + " integer," +
+				Db.Version.ordering + " integer)"
+		);
+	}
 
-		// make sure these two matches the ones on addShortNameColumnAndIndexToVersion()
-		db.execSQL("create index if not exists index_302 on " + Db.TABLE_Version + " (" + Db.Version.shortName + ")");
-		db.execSQL("create index if not exists index_303 on " + Db.TABLE_Version + " (" + Db.Version.title + ")");
+	void createIndexVersion(SQLiteDatabase db) {
+		db.execSQL("create index if not exists index_Version_01 on " + Db.TABLE_Version + " (" + Db.Version.ordering + ")");
+		db.execSQL("create index if not exists index_Version_02 on " + Db.TABLE_Version + " (" + Db.Version.active + "," + Db.Version.longName + ")");
+		db.execSQL("create index if not exists index_Version_03 on " + Db.TABLE_Version + " (" + Db.Version.preset_name + ")");
 	}
 
 	private void createTableLabel(SQLiteDatabase db) {
@@ -282,12 +299,9 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL("create unique index if not exists index_901 on " + Db.TABLE_ReadingPlanProgress + " (" + Db.ReadingPlanProgress.reading_plan_id + ", " + Db.ReadingPlanProgress.reading_code + ")");
 	}
 
-	private void addShortNameColumnAndIndexToVersion(SQLiteDatabase db) {
-		db.execSQL("alter table " + Db.TABLE_Version + " add column " + Db.Version.shortName + " text");
-
-		// make sure these two matches the ones in createIndexVersion()
-		db.execSQL("create index if not exists index_302 on " + Db.TABLE_Version + " (" + Db.Version.shortName + ")");
-		db.execSQL("create index if not exists index_303 on " + Db.TABLE_Version + " (" + Db.Version.title + ")");
+	// This needs to be kept, for upgrading from version 51-102 to 14000165
+	private void addShortNameColumnAndIndexToEdisi(SQLiteDatabase db) {
+		db.execSQL("alter table Edisi add column shortName text");
 	}
 
 	private void addGidColumnToLabel(SQLiteDatabase db) {
@@ -329,10 +343,9 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 					new String[]{"_id", Bookmark2.ari, Bookmark2.kind, Bookmark2.caption, Bookmark2.addTime, Bookmark2.modifyTime},
 					null, null, null, null, "_id asc"
 				);
-				final ContentValues cv = new ContentValues();
-				while(c.moveToNext())
 
-				{
+				final ContentValues cv = new ContentValues();
+				while (c.moveToNext()) {
 					final long _id = c.getLong(0);
 					final String gid = Gid.newGid();
 
@@ -397,4 +410,51 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		}
 	}
 
+	/**
+	 * Converts the old version (Edisi) table, to the new Version table.
+	 *
+	 * This will keep user's added yes file (excluding the preset versions)
+	 */
+	private void convertFromEdisiToVersion(final SQLiteDatabase db) {
+		final String TABLE_Edisi = "Edisi";
+		class Edisi {
+			public static final String shortName = "shortName";
+			public static final String title = "judul";
+			public static final String description = "keterangan";
+			public static final String kind = "jenis";
+			public static final String filename = "namafile";
+			// unused: public static final String filename_originalpdb = "namafile_pdbasal";
+			public static final String active = "aktif";
+			public static final String ordering = "urutan";
+		}
+
+		db.beginTransaction();
+		try {
+			// Edisi -> Version
+			final Cursor c = db.query(TABLE_Edisi,
+				new String[]{Edisi.shortName, Edisi.title, Edisi.description, Edisi.filename, Edisi.active},
+				null, null, null, null, Edisi.ordering + " asc"
+			);
+			final ContentValues cv = new ContentValues();
+			while(c.moveToNext()) {
+				final long _id = c.getLong(0);
+				cv.put("_id", _id);
+				cv.put(Db.Version.locale, (String) null);
+				cv.put(Db.Version.shortName, c.getString(0));
+				cv.put(Db.Version.longName, c.getString(1));
+				cv.put(Db.Version.description, c.getString(2));
+				cv.put(Db.Version.filename, c.getString(3));
+				cv.put(Db.Version.active, c.getInt(4));
+				db.insert(Db.TABLE_Version, null, cv);
+			}
+
+			c.close();
+
+			db.execSQL("drop table " + TABLE_Edisi);
+
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+	}
 }

@@ -4,7 +4,6 @@ package yuku.alkitab.base.ac;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -897,7 +896,7 @@ public class VersionsActivity extends BaseActivity {
 
 		@Override
 		public String getVersionId() {
-			return "preset/" + presetFilename; //$NON-NLS-1$
+			return "preset/" + presetFilename;
 		}
 
 		@Override
@@ -915,27 +914,26 @@ public class VersionsActivity extends BaseActivity {
 			return AddonManager.hasVersion(presetFilename);
 		}
 	}
-	
-	public static class MVersionYes extends MVersion {
-		public String description;
+
+	public static class MVersionDb extends MVersion {
 		public String filename;
-		public String originalPdbFilename;
+		public String preset_name;
 		public boolean cache_active; // so we don't need to keep reading/writing from/to db
 		
 		@Override
 		public String getVersionId() {
-			return "yes/" + filename; //$NON-NLS-1$
+			return "yes/" + filename;
 		}
 
 		@Override
 		public Version getVersion() {
 			if (hasDataFile()) {
-				BibleReader yesReader = YesReaderFactory.createYesReader(filename);
-				if (yesReader == null) {
+				final BibleReader reader = YesReaderFactory.createYesReader(filename);
+				if (reader == null) {
 					Log.e(TAG, "YesReaderFactory failed to open the yes file");
 					return null;
 				}
-				return new VersionImpl(yesReader);
+				return new VersionImpl(reader);
 			} else {
 				return null;
 			}
@@ -953,7 +951,7 @@ public class VersionsActivity extends BaseActivity {
 		}
 
 		@Override public boolean hasDataFile() {
-			File f = new File(filename);
+			final File f = new File(filename);
 			return f.exists() && f.canRead();
 		}
 	}

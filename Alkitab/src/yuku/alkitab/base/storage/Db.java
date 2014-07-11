@@ -23,17 +23,16 @@ public class Db {
 		public static final String touchTime = "waktuSentuh";
 	}
 	
-	public static final String TABLE_Version = "Edisi";
+	public static final String TABLE_Version = "Version";
 	public static final class Version {
+		public static final String locale = "locale";
 		public static final String shortName = "shortName";
-		public static final String title = "judul";
-		public static final String description = "keterangan";
-		public static final String kind = "jenis";
-		public static final String filename = "namafile";
-		public static final String filename_originalpdb = "namafile_pdbasal";
-		public static final String active = "aktif";
-		public static final String ordering = "urutan";
-		public static final int kind_yes = 3;
+		public static final String longName = "longName";
+		public static final String description = "description";
+		public static final String filename = "filename";
+		public static final String preset_name = "preset_name";
+		public static final String active = "active";
+		public static final String ordering = "ordering";
 	}
 	
 	public static final String TABLE_Label = "Label";

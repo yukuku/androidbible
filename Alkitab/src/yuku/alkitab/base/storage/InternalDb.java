@@ -9,9 +9,9 @@ import android.provider.BaseColumns;
 import android.util.Log;
 import yuku.afw.D;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.ac.MarkerListActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
-import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
+import yuku.alkitab.base.ac.MarkerListActivity;
+import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.devotion.ArticleMeidA;
 import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
@@ -429,28 +429,30 @@ public class InternalDb {
 		}
 	}
 
-	public List<MVersionYes> listAllVersions() {
-		List<MVersionYes> res = new ArrayList<MVersionYes>();
+	public List<VersionsActivity.MVersionDb> listAllVersions() {
+		List<VersionsActivity.MVersionDb> res = new ArrayList<>();
 		Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Version, null, null, null, null, null, Db.Version.ordering + " asc");
 		try {
-			int col_active = cursor.getColumnIndexOrThrow(Db.Version.active);
+			int col_locale = cursor.getColumnIndexOrThrow(Db.Version.locale);
 			int col_shortName = cursor.getColumnIndexOrThrow(Db.Version.shortName);
-			int col_title = cursor.getColumnIndexOrThrow(Db.Version.title);
+			int col_longName = cursor.getColumnIndexOrThrow(Db.Version.longName);
 			int col_description = cursor.getColumnIndexOrThrow(Db.Version.description);
 			int col_filename = cursor.getColumnIndexOrThrow(Db.Version.filename);
-			int col_filename_originalpdb = cursor.getColumnIndexOrThrow(Db.Version.filename_originalpdb);
+			int col_preset_name = cursor.getColumnIndexOrThrow(Db.Version.preset_name);
+			int col_active = cursor.getColumnIndexOrThrow(Db.Version.active);
 			int col_ordering = cursor.getColumnIndexOrThrow(Db.Version.ordering);
 
 			while (cursor.moveToNext()) {
-				MVersionYes yes = new MVersionYes();
-				yes.cache_active = cursor.getInt(col_active) != 0;
-				yes.description = cursor.getString(col_description);
-				yes.shortName = cursor.getString(col_shortName);
-				yes.longName = cursor.getString(col_title);
-				yes.filename = cursor.getString(col_filename);
-				yes.originalPdbFilename = cursor.getString(col_filename_originalpdb);
-				yes.ordering = cursor.getInt(col_ordering);
-				res.add(yes);
+				final VersionsActivity.MVersionDb mv = new VersionsActivity.MVersionDb();
+				mv.locale = cursor.getString(col_locale);
+				mv.shortName = cursor.getString(col_shortName);
+				mv.longName = cursor.getString(col_longName);
+				mv.description = cursor.getString(col_description);
+				mv.filename = cursor.getString(col_filename);
+				mv.preset_name = cursor.getString(col_preset_name);
+				mv.cache_active = cursor.getInt(col_active) != 0;
+				mv.ordering = cursor.getInt(col_ordering);
+				res.add(mv);
 			}
 		} finally {
 			cursor.close();
@@ -458,53 +460,49 @@ public class InternalDb {
 		return res;
 	}
 
-	public void setYesVersionActive(String filename, boolean active) {
-		SQLiteDatabase db = helper.getWritableDatabase();
-		ContentValues cv = new ContentValues();
+	public void setPresetVersionActive(String preset_name, boolean active) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+		final ContentValues cv = new ContentValues();
 		cv.put(Db.Version.active, active? 1: 0);
-		db.update(Db.TABLE_Version, cv, Db.Version.kind + "=? and " + Db.Version.filename + "=?", new String[] {String.valueOf(Db.Version.kind_yes), filename});
+		db.update(Db.TABLE_Version, cv, Db.Version.preset_name + "=?", new String[] {preset_name});
 	}
 
-	public int getYesVersionMaxOrdering() {
-		SQLiteDatabase db = helper.getReadableDatabase();
-		SQLiteStatement stmt = db.compileStatement("select max(" + Db.Version.ordering + ") from " + Db.TABLE_Version); //$NON-NLS-2$
-		try {
-			return (int) stmt.simpleQueryForLong();
-		} finally {
-			stmt.close();
-		}
+	public int getVersionMaxOrdering() {
+		final SQLiteDatabase db = helper.getReadableDatabase();
+		return (int) DatabaseUtils.longForQuery(db, "select max(" + Db.Version.ordering + ") from " + Db.TABLE_Version, null);
 	}
 
-	public void insertYesVersionWithActive(MVersionYes version, boolean active) {
-		SQLiteDatabase db = helper.getWritableDatabase();
-		ContentValues cv = new ContentValues();
-		cv.put(Db.Version.active, active);
-		cv.put(Db.Version.kind, Db.Version.kind_yes);
-		cv.put(Db.Version.shortName, version.shortName);
-		cv.put(Db.Version.title, version.longName);
-		cv.put(Db.Version.description, version.description);
-		cv.put(Db.Version.filename, version.filename);
-		cv.put(Db.Version.filename_originalpdb, version.originalPdbFilename);
-		cv.put(Db.Version.ordering, version.ordering);
+	public void insertVersionWithActive(VersionsActivity.MVersionDb mv, boolean active) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+		final ContentValues cv = new ContentValues();
+		cv.put(Db.Version.locale, mv.locale);
+		cv.put(Db.Version.shortName, mv.shortName);
+		cv.put(Db.Version.longName, mv.longName);
+		cv.put(Db.Version.description, mv.description);
+		cv.put(Db.Version.filename, mv.filename);
+		cv.put(Db.Version.preset_name, mv.preset_name);
+		cv.put(Db.Version.active, active); // special
+		cv.put(Db.Version.ordering, mv.ordering);
 		db.insert(Db.TABLE_Version, null, cv);
 	}
 
-	public boolean hasYesVersionWithFilename(String filename) {
-		SQLiteDatabase db = helper.getReadableDatabase();
-		SQLiteStatement stmt = db.compileStatement("select count(*) from " + Db.TABLE_Version + " where " + Db.Version.kind + "=? and " + Db.Version.filename + "=?");   //$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
-		try {
-			stmt.clearBindings();
-			stmt.bindLong(1, Db.Version.kind_yes);
-			stmt.bindString(2, filename);
-			return stmt.simpleQueryForLong() > 0;
-		} finally {
-			stmt.close();
-		}
+	public boolean hasVersionWithFilename(String filename) {
+		final SQLiteDatabase db = helper.getReadableDatabase();
+		return DatabaseUtils.longForQuery(db, "select count(*) from " + Db.TABLE_Version + " where " + Db.Version.filename + "=?", new String[] {filename}) > 0;
 	}
 
-	public void deleteYesVersion(MVersionYes version) {
-		SQLiteDatabase db = helper.getWritableDatabase();
-		db.delete(Db.TABLE_Version, Db.Version.filename + "=?", new String[]{version.filename});
+	public void deleteVersion(VersionsActivity.MVersionDb mv) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+
+		// delete preset by preset_name
+		if (mv.preset_name != null) {
+			final int deleted = db.delete(Db.TABLE_Version, Db.Version.preset_name + "=?", new String[]{mv.preset_name});
+			if (deleted > 0) {
+				return; // finished! if not, we fallback to filename
+			}
+		}
+
+		db.delete(Db.TABLE_Version, Db.Version.filename + "=?", new String[]{mv.filename});
 	}
 
 	public List<Label> listAllLabels() {
