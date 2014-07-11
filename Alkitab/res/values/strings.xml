@@ -100,8 +100,8 @@
     <string name="cp_reading_book_info">Reading book info: %s</string>
     <string name="cp_writing_text_of_book_chapters">Writing text of book %1$s (%2$s chapters)</string>
     <string name="ed_type_built_in">Type: Built-in</string>
-    <string name="ed_type_preset">Type: Preset</string>
-    <string name="ed_type_add_on">Type: Add-on</string>
+    <string name="ed_type_preset">Type: Downloadable</string>
+    <string name="ed_type_add_on">Type: Added</string>
     <string name="ed_shortName_shortName">Short name: %s</string>
     <string name="ed_title_title">Title: %s</string>
     <string name="ed_stored_in_file">Stored in: %s</string>
@@ -110,7 +110,7 @@
     <string name="ed_pdb_file_name_original_file">PDB file name (original): %s</string>
     <string name="ed_version_info_info">Version info: %s</string>
     <string name="ed_version_details">Version details</string>
-    <string name="ed_choose_pdb_or_yes_file">Choose an .pdb or .yes file</string>
+    <string name="ed_choose_pdb_or_yes_file">Choose a .pdb or .yes file</string>
     <string name="ed_no_external_storage">No SD Card or USB storage found.</string>
     <string name="ed_invalid_file_selected">Invalid file selected.</string>
     <string name="ed_file_file_sudah_ada_dalam_daftar_versi">File %s is already on the list.</string>

@@ -23,7 +23,6 @@ import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.VersionsActivity;
-import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.sv.DailyVerseAppWidgetService;
 import yuku.alkitab.debug.R;
@@ -36,7 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.Random;
 
 public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
@@ -213,33 +211,20 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 	}
 
 	public static Version getVersion(int appWidgetId) {
-		String version = Preferences.getString("app_widget_" + appWidgetId + "_version", S.activeVersionId);
-		if (version == null) {
+		final String versionId = Preferences.getString("app_widget_" + appWidgetId + "_version", S.activeVersionId);
+		if (versionId == null) {
 			return S.activeVersion;
 		}
 
-		if (VersionsActivity.MVersionInternal.getVersionInternalId().equals(version)) {
+		if (VersionsActivity.MVersionInternal.getVersionInternalId().equals(versionId)) {
 			return VersionImpl.getInternalVersion();
 		}
 
-		// try preset first
-		final VersionConfig c = VersionConfig.get();
-		for (VersionsActivity.MVersionPreset preset: c.presets) { // 2. preset
-			if (preset.getVersionId().equals(version)) {
-				if (preset.hasDataFile()) {
-					return preset.getVersion();
-				} else {
-					return null;
-				}
-			}
-		}
-
-		// not correct yet, try yes versions
-		List<VersionsActivity.MVersionYes> yeses = S.getDb().listAllVersions();
-		for (VersionsActivity.MVersionYes yes: yeses) {
-			if (yes.getVersionId().equals(version)) {
-				if (yes.hasDataFile()) {
-					return yes.getVersion();
+		// try database versions
+		for (final VersionsActivity.MVersionDb mvDb: S.getDb().listAllVersions()) {
+			if (mvDb.getVersionId().equals(versionId)) {
+				if (mvDb.hasDataFile()) {
+					return mvDb.getVersion();
 				} else {
 					return null;
 				}

@@ -7,6 +7,7 @@ import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.XrefEntry;
 
 public interface BibleReader {
+	String getLocale();
 	String getShortName();
 	String getLongName();
 	String getDescription();

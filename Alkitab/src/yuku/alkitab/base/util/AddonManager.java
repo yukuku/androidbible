@@ -40,10 +40,13 @@ public class AddonManager {
 	public static String getYesPath() {
 		return new File(Environment.getExternalStorageDirectory(), "bible/yes").getAbsolutePath(); //$NON-NLS-1$
 	}
-	
-	public static String getVersionPath(String yesName) {
+
+	/**
+	 * @param preset_name can be a preset name, or an added yes filename without the path.
+	 */
+	public static String getVersionPath(String preset_name) {
 		String yesPath = getYesPath();
-		File yes = new File(yesPath, yesName);
+		File yes = new File(yesPath, preset_name);
 		return yes.getAbsolutePath();
 	}
 	

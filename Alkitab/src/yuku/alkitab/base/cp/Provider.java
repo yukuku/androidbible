@@ -11,10 +11,8 @@ import android.net.Uri;
 import android.util.Log;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
-import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
+import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.config.AppConfig;
-import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.model.Book;
@@ -25,7 +23,6 @@ import yuku.alkitabintegration.AlkitabIntegrationUtil;
 import yuku.alkitabintegration.provider.VerseProvider;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 public class Provider extends ContentProvider {
@@ -311,16 +308,9 @@ public class Provider extends ContentProvider {
 			res.addRow(new Object[] {++_id, "internal", 1, ac.internalShortName, ac.internalLongName, ac.internalLongName});
 		}
 
-		final VersionConfig vc = VersionConfig.get();
-		{ // presets
-			for (MVersionPreset preset: vc.presets) {
-				res.addRow(new Object[] {++_id, "preset", preset.hasDataFile()? 1: 0, preset.shortName != null? preset.shortName: preset.longName, preset.longName, preset.longName});
-			}
-		}
-		{ // yes
-			List<MVersionYes> yeses = S.getDb().listAllVersions();
-			for (MVersionYes yes: yeses) {
-				res.addRow(new Object[] {++_id, "yes", yes.hasDataFile()? 1:0, yes.shortName != null? yes.shortName: yes.longName, yes.longName, yes.description});
+		{ // database versions
+			for (VersionsActivity.MVersionDb mvDb: S.getDb().listAllVersions()) {
+				res.addRow(new Object[]{++_id, "yes", mvDb.hasDataFile() ? 1 : 0, mvDb.shortName != null ? mvDb.shortName : mvDb.longName, mvDb.longName, mvDb.description});
 			}
 		}
 		
@@ -345,7 +335,6 @@ public class Provider extends ContentProvider {
 	}
 
 	@Override public String getType(Uri uri) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

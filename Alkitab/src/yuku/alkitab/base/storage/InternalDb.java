@@ -460,11 +460,16 @@ public class InternalDb {
 		return res;
 	}
 
-	public void setPresetVersionActive(String preset_name, boolean active) {
+	public void setVersionActive(VersionsActivity.MVersionDb mv, boolean active) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 		final ContentValues cv = new ContentValues();
 		cv.put(Db.Version.active, active? 1: 0);
-		db.update(Db.TABLE_Version, cv, Db.Version.preset_name + "=?", new String[] {preset_name});
+
+		if (mv.preset_name != null) {
+			db.update(Db.TABLE_Version, cv, Db.Version.preset_name + "=?", new String[] {mv.preset_name});
+		} else {
+			db.update(Db.TABLE_Version, cv, Db.Version.filename + "=?", new String[] {mv.filename});
+		}
 	}
 
 	public int getVersionMaxOrdering() {

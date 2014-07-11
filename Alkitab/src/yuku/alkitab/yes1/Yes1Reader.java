@@ -28,10 +28,10 @@ public class Yes1Reader implements BibleReader {
 	private long text_baseOffset;
 	private long pericopeBlock_baseOffset;
 	
+	private String locale;
 	private String shortName;
 	private String longName;
 	private String description;
-	@SuppressWarnings("unused") private String locale;
 	private int book_count;
 	private int has_pericopes = 0; // default ga ada
 	private int encoding = 1; // 1 = ascii; 2 = utf-8;
@@ -106,7 +106,12 @@ public class Yes1Reader implements BibleReader {
 			Log.d(TAG, "text_baseOffset = " + text_baseOffset); //$NON-NLS-1$
 		}
 	}
-	
+
+	@Override
+	public String getLocale() {
+		return locale;
+	}
+
 	@Override
 	public String getShortName() {
 		try {

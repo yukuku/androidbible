@@ -8,7 +8,6 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.config.AppConfig;
-import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.InternalDbHelper;
@@ -158,8 +157,7 @@ public class S {
 	/**
 	 * Returns the list of versions that are:
 	 * 1. internal
-	 * 2. presets that have been DOWNLOADED and ACTIVE
-	 * 3. yeses that are ACTIVE
+	 * 2. database versions that have the data file and active
 	 **/
 	public static Pair<List<String>, List<VersionsActivity.MVersion>> getAvailableVersions() {
 		final List<String> options = new ArrayList<>(); // sync with below line
@@ -169,20 +167,11 @@ public class S {
 		options.add(ac.internalLongName); // 1. internal
 		data.add(new VersionsActivity.MVersionInternal());
 
-		final VersionConfig vc = VersionConfig.get();
-		for (VersionsActivity.MVersionPreset preset: vc.presets) { // 2. preset
-			if (preset.hasDataFile() && preset.getActive()) {
-				options.add(preset.longName);
-				data.add(preset);
-			}
-		}
-
-		// 3. active yeses
-		List<VersionsActivity.MVersionYes> yeses = S.getDb().listAllVersions();
-		for (VersionsActivity.MVersionYes yes: yeses) {
-			if (yes.hasDataFile() && yes.getActive()) {
-				options.add(yes.longName);
-				data.add(yes);
+		// 2. database versions
+		for (VersionsActivity.MVersionDb mvDb: S.getDb().listAllVersions()) {
+			if (mvDb.hasDataFile() && mvDb.getActive()) {
+				options.add(mvDb.longName);
+				data.add(mvDb);
 			}
 		}
 

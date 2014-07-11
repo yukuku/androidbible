@@ -157,6 +157,17 @@ public class Yes2Reader implements BibleReader {
 		}
 	}
 
+	@Override
+	public String getLocale() {
+		try {
+			loadVersionInfo();
+			return versionInfo_.locale;
+		} catch (Exception e) {
+			Log.e(TAG, "yes load version info error", e); //$NON-NLS-1$
+			return "";
+		}
+	}
+
 	@Override public String getShortName() {
 		try {
 			loadVersionInfo();

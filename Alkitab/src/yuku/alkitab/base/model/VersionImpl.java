@@ -37,7 +37,7 @@ public class VersionImpl implements Version {
 	public static synchronized Version getInternalVersion() {
 		if (internalVersion == null) {
 			final AppConfig c = AppConfig.get();
-			internalVersion = new VersionImpl(new InternalReader(c.internalPrefix, c.internalShortName, c.internalLongName, new OldVerseTextDecoder.Utf8()));
+			internalVersion = new VersionImpl(new InternalReader(c.internalPrefix, c.internalLocale, c.internalShortName, c.internalLongName, new OldVerseTextDecoder.Utf8()));
 		}
 		return internalVersion;
 	}

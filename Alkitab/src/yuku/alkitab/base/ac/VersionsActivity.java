@@ -17,15 +17,11 @@ import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
@@ -46,18 +42,13 @@ import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes2;
 import yuku.alkitab.base.storage.YesReaderFactory;
 import yuku.alkitab.base.util.AddonManager;
-import yuku.alkitab.base.util.AddonManager.DownloadListener;
-import yuku.alkitab.base.util.AddonManager.DownloadThread;
-import yuku.alkitab.base.util.AddonManager.Element;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.IntArrayList;
-import yuku.androidcrypto.DigestType;
-import yuku.androidcrypto.Digester;
 import yuku.filechooser.FileChooserActivity;
 import yuku.filechooser.FileChooserConfig;
-import yuku.filechooser.FileChooserConfig.Mode;
 import yuku.filechooser.FileChooserResult;
 
 import java.io.BufferedOutputStream;
@@ -74,9 +65,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 public class VersionsActivity extends BaseActivity {
@@ -309,7 +302,7 @@ public class VersionsActivity extends BaseActivity {
 		return super.onOptionsItemSelected(item);
 	}
 	
-	private OnItemClickListener lsVersions_itemClick = new OnItemClickListener() {
+	private AdapterView.OnItemClickListener lsVersions_itemClick = new AdapterView.OnItemClickListener() {
 		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 			final Item item = adapter.getItem(position);
 			final MVersion mv = item.mv;
@@ -318,8 +311,8 @@ public class VersionsActivity extends BaseActivity {
 				// nothing to do, this is internal version
 			} else if (mv instanceof MVersionPreset) {
 				clickOnPresetVersion(V.<CheckBox>get(v, R.id.cActive), (MVersionPreset) mv);
-			} else if (mv instanceof MVersionYes) {
-				clickOnYesVersion(V.<CheckBox>get(v, R.id.cActive), (MVersionYes) mv);
+			} else if (mv instanceof MVersionDb) {
+				clickOnDbVersion(V.<CheckBox>get(v, R.id.cActive), (MVersionDb) mv);
 			} else if (position == adapter.getCount() - 1) {
 				clickOnOpenFile();
 			}
@@ -329,12 +322,12 @@ public class VersionsActivity extends BaseActivity {
 	};
 	
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
 		if (menu == null) return;
 
 		getMenuInflater().inflate(R.menu.context_version, menu);
 
-		final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 		final Item item = adapter.getItem(info.position);
 		final MVersion mv = item.mv;
 
@@ -343,113 +336,90 @@ public class VersionsActivity extends BaseActivity {
 			if (mv instanceof MVersionInternal) {
 				menuDelete.setEnabled(false);
 			} else if (mv instanceof MVersionPreset) {
-				if (!AddonManager.hasVersion(((MVersionPreset) mv).presetFilename)) {
-					menuDelete.setEnabled(false);
-				}
+				menuDelete.setEnabled(false);
+			} else if (mv instanceof MVersionDb) {
+				menuDelete.setEnabled(true);
 			}
 		}
 
-		final MenuItem menuSend = menu.findItem(R.id.menuShare);
-		if (menuSend != null) {
+		final MenuItem menuShare = menu.findItem(R.id.menuShare);
+		if (menuShare != null) {
 			if (mv instanceof MVersionInternal) {
-				menuSend.setEnabled(false);
+				menuShare.setEnabled(false);
 			} else if (mv instanceof MVersionPreset) {
-				if (!AddonManager.hasVersion(((MVersionPreset) mv).presetFilename)) {
-					menuSend.setEnabled(false);
-				}
-			} else if (mv instanceof MVersionYes) {
-				if (!mv.hasDataFile()) {
-					menuSend.setEnabled(false);
-				}
+				menuShare.setEnabled(false);
+			} else if (mv instanceof MVersionDb) {
+				menuShare.setEnabled(mv.hasDataFile());
 			}
 		}
 	}
 	
 	@Override public boolean onContextItemSelected(MenuItem item) {
-		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 		final MVersion mv = adapter.getItem(info.position).mv;
 
 		final int itemId = item.getItemId();
 		if (itemId == R.id.menuDelete) {
-			if (mv instanceof MVersionYes) {
-				final MVersionYes mvYes = (MVersionYes) mv;
+			if (mv instanceof MVersionDb) {
+				final MVersionDb mvDb = (MVersionDb) mv;
 				new AlertDialog.Builder(this)
-				.setMessage(getString(R.string.juga_hapus_file_datanya_file, mvYes.filename))
+				.setMessage(getString(R.string.juga_hapus_file_datanya_file, mvDb.filename))
 				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
-						S.getDb().deleteYesVersion(mvYes);
-						adapter.initYesVersionList();
-						adapter.notifyDataSetChanged();
-						new File(mvYes.filename).delete();
+						S.getDb().deleteVersion(mvDb);
+						adapter.reload();
+						new File(mvDb.filename).delete();
 					}
 				})
 				.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
-						S.getDb().deleteYesVersion(mvYes);
-						adapter.initYesVersionList();
-						adapter.notifyDataSetChanged();
+						S.getDb().deleteVersion(mvDb);
+						adapter.reload();
 					}
 				})
-				.show();
-			} else if (mv instanceof MVersionPreset) {
-				final MVersionPreset mvPreset = (MVersionPreset) mv;
-				new AlertDialog.Builder(this)
-				.setMessage(getString(R.string.version_preset_delete_filename, mvPreset.presetFilename))
-				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-					@Override public void onClick(DialogInterface dialog, int which) {
-						mvPreset.setActive(false);
-						new File(AddonManager.getVersionPath(mvPreset.presetFilename)).delete();
-						adapter.notifyDataSetChanged();
-					}
-				})
-				.setNegativeButton(R.string.no, null)
 				.show();
 			}
 			return true;
 		} else if (itemId == R.id.menuDetails) {
 			StringBuilder details = new StringBuilder();
-			if (mv instanceof MVersionInternal) details.append(getString(R.string.ed_type_built_in) + '\n');
-			if (mv instanceof MVersionPreset) details.append(getString(R.string.ed_type_preset) + '\n');
-			if (mv instanceof MVersionYes) details.append(getString(R.string.ed_type_add_on) + '\n');
-			if (mv.shortName != null) details.append(getString(R.string.ed_shortName_shortName, mv.shortName) + '\n');
-			details.append(getString(R.string.ed_title_title, mv.longName) + '\n');
+			if (mv instanceof MVersionInternal) details.append(getString(R.string.ed_type_built_in)).append('\n');
+			if (mv instanceof MVersionPreset) details.append(getString(R.string.ed_type_preset)).append('\n');
+			if (mv instanceof MVersionDb) details.append(getString(R.string.ed_type_add_on)).append('\n');
+			if (mv.shortName != null) details.append(getString(R.string.ed_shortName_shortName, mv.shortName)).append('\n');
+			details.append(getString(R.string.ed_title_title, mv.longName)).append('\n');
+
 			if (mv instanceof MVersionPreset) {
-				MVersionPreset preset = (MVersionPreset) mv;
-				if (AddonManager.hasVersion(preset.presetFilename)) {
-					details.append(getString(R.string.ed_stored_in_file, AddonManager.getVersionPath(preset.presetFilename)) + '\n');
+				final MVersionPreset preset = (MVersionPreset) mv;
+				details.append(getString(R.string.ed_default_filename_file, preset.preset_name)).append('\n');
+				if (AddonManager.hasVersion(preset.preset_name)) {
+					details.append("THIS SHOULD NOT HAPPEN\n"); // because a version with the file should be MVersionDb
 				} else {
-					details.append(getString(R.string.ed_default_filename_file, preset.presetFilename) + '\n');
-					details.append(getString(R.string.ed_download_url_url, preset.download_url) + '\n');
+					details.append(getString(R.string.ed_download_url_url, preset.download_url)).append('\n');
 				}
 			}
-			if (mv instanceof MVersionYes) {
-				MVersionYes yes = (MVersionYes) mv;
-				if (yes.originalPdbFilename != null) {
-					details.append(getString(R.string.ed_pdb_file_name_original_file, yes.originalPdbFilename) + '\n');
-				}
-				details.append(getString(R.string.ed_stored_in_file, yes.filename) + '\n');
-				if (yes.description != null) {
-					details.append(getString(R.string.ed_version_info_info, yes.description) + '\n');
-				}
+			if (mv instanceof MVersionDb) {
+				MVersionDb mvDb = (MVersionDb) mv;
+				details.append(getString(R.string.ed_stored_in_file, mvDb.filename)).append('\n');
 			}
+			if (mv.description != null) details.append('\n').append(mv.description).append('\n');
+
 			new AlertDialog.Builder(this)
-			.setTitle(R.string.ed_version_details)
-			.setMessage(details)
-			.setPositiveButton(R.string.ok, null)
-			.show();
+				.setTitle(R.string.ed_version_details)
+				.setMessage(details)
+				.setPositiveButton(R.string.ok, null)
+				.show();
+
 			return true;
 		} else if (itemId == R.id.menuShare) {
-			ShareCompat.IntentBuilder builder = ShareCompat.IntentBuilder.from(this)
-			.setType("application/octet-stream");
-			
-			if (mv instanceof MVersionYes) {
-				MVersionYes mvYes = (MVersionYes) mv;
-				builder.addStream(Uri.fromFile(new File(mvYes.filename)));
-				startActivityForResult(ShareActivity.createIntent(builder.getIntent(), getString(R.string.version_share_title)), REQCODE_share);
-			} else if (mv instanceof MVersionPreset) {
-				MVersionPreset mvPreset = (MVersionPreset) mv;
-				builder.addStream(Uri.fromFile(new File(AddonManager.getVersionPath(mvPreset.presetFilename))));
-				startActivityForResult(ShareActivity.createIntent(builder.getIntent(), getString(R.string.version_share_title)), REQCODE_share);
+			if (mv instanceof MVersionDb) {
+				final MVersionDb mvDb = (MVersionDb) mv;
+
+				final Intent intent = ShareCompat.IntentBuilder.from(this)
+					.setType("application/octet-stream")
+					.addStream(Uri.fromFile(new File(mvDb.filename)))
+					.getIntent();
+
+				startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.version_share_title)), REQCODE_share);
 			}
 			
 			return true;
@@ -471,14 +441,14 @@ public class VersionsActivity extends BaseActivity {
 
 		final ProgressDialog pd = ProgressDialog.show(this, getString(R.string.mengunduh_nama, mv.longName), getString(R.string.mulai_mengunduh), true, true);
 
-		final DownloadListener downloadListener = new DownloadListener() {
+		final AddonManager.DownloadListener downloadListener = new AddonManager.DownloadListener() {
 			@Override
-			public void onDownloadFinished(Element e) {
+			public void onDownloadFinished(AddonManager.Element e) {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
 						Toast.makeText(App.context,
-						getString(R.string.selesai_mengunduh_edisi_judul_disimpan_di_path, mv.longName, AddonManager.getVersionPath(mv.presetFilename)),
+						getString(R.string.selesai_mengunduh_edisi_judul_disimpan_di_path, mv.longName, AddonManager.getVersionPath(mv.preset_name)),
 						Toast.LENGTH_LONG).show();
 
 						final String locale = mv.locale;
@@ -494,7 +464,7 @@ public class VersionsActivity extends BaseActivity {
 			}
 
 			@Override
-			public void onDownloadFailed(Element e, final String description, final Throwable t) {
+			public void onDownloadFailed(AddonManager.Element e, final String description, final Throwable t) {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
@@ -509,7 +479,7 @@ public class VersionsActivity extends BaseActivity {
 			}
 
 			@Override
-			public void onDownloadProgress(final Element e, final int progress) {
+			public void onDownloadProgress(final AddonManager.Element e, final int progress) {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
@@ -523,7 +493,7 @@ public class VersionsActivity extends BaseActivity {
 			}
 
 			@Override
-			public void onDownloadCancelled(Element e) {
+			public void onDownloadCancelled(AddonManager.Element e) {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
@@ -534,8 +504,8 @@ public class VersionsActivity extends BaseActivity {
 			}
 		};
 
-		final DownloadThread downloadThread = AddonManager.getDownloadThread();
-		final Element e = downloadThread.enqueue(mv.download_url, AddonManager.getVersionPath(mv.presetFilename), downloadListener);
+		final AddonManager.DownloadThread downloadThread = AddonManager.getDownloadThread();
+		final AddonManager.Element e = downloadThread.enqueue(mv.download_url, AddonManager.getVersionPath(mv.preset_name), downloadListener);
 
 		downloadThread.start();
 
@@ -548,16 +518,15 @@ public class VersionsActivity extends BaseActivity {
 		pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
 			@Override
 			public void onDismiss(DialogInterface dialog) {
-				if (!e.cancelled && AddonManager.hasVersion(mv.presetFilename)) {
+				if (!e.cancelled && AddonManager.hasVersion(mv.preset_name)) {
 					mv.setActive(true);
 				}
-				adapter.initYesVersionList();
-				adapter.notifyDataSetChanged();
+				adapter.reload();
 			}
 		});
 	}
 
-	void clickOnYesVersion(final CheckBox cActive, final MVersionYes mv) {
+	void clickOnDbVersion(final CheckBox cActive, final MVersionDb mv) {
 		if (cActive.isChecked()) {
 			mv.setActive(false);
 		} else {
@@ -568,9 +537,8 @@ public class VersionsActivity extends BaseActivity {
 				.setMessage(getString(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename))
 				.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override public void onClick(DialogInterface dialog, int which) {
-						S.getDb().deleteYesVersion(mv);
-						adapter.initYesVersionList();
-						adapter.notifyDataSetChanged();
+						S.getDb().deleteVersion(mv);
+						adapter.reload();
 					}
 				})
 				.setNegativeButton(R.string.no, null)
@@ -583,7 +551,7 @@ public class VersionsActivity extends BaseActivity {
 		String state = Environment.getExternalStorageState();
 		if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
 			FileChooserConfig config = new FileChooserConfig();
-			config.mode = Mode.Open;
+			config.mode = FileChooserConfig.Mode.Open;
 			config.initialDir = Environment.getExternalStorageDirectory().getAbsolutePath();
 			config.title = getString(R.string.ed_choose_pdb_or_yes_file);
 			config.pattern = ".*\\.(?i:pdb|yes|yes\\.gz)"; //$NON-NLS-1$
@@ -667,21 +635,7 @@ public class VersionsActivity extends BaseActivity {
 	
 	void handleFileOpenYes(String filename, String originalpdbname) {
 		{ // look for duplicates
-			boolean dup = false;
-			final VersionConfig c = VersionConfig.get();
-			for (MVersionPreset preset: c.presets) {
-				if (filename.equals(AddonManager.getVersionPath(preset.presetFilename))) {
-					dup = true;
-					// automatically activate it (THIS IS A SIDE EFFECT!)
-					preset.setActive(true);
-					adapter.notifyDataSetChanged();
-					break;
-				}
-			}
-			
-			if (!dup) dup = S.getDb().hasYesVersionWithFilename(filename);
-			
-			if (dup) {
+			if (S.getDb().hasVersionWithFilename(filename)) {
 				new AlertDialog.Builder(this)
 				.setMessage(getString(R.string.ed_file_file_sudah_ada_dalam_daftar_versi, filename))
 				.setPositiveButton(R.string.ok, null)
@@ -691,21 +645,33 @@ public class VersionsActivity extends BaseActivity {
 		}
 		
 		try {
-			BibleReader pembaca = YesReaderFactory.createYesReader(filename);
-			int maxOrdering = S.getDb().getYesVersionMaxOrdering();
+			final BibleReader reader = YesReaderFactory.createYesReader(filename);
+			if (reader == null) {
+				throw new Exception("Not a valid YES file.");
+			}
+
+			int maxOrdering = S.getDb().getVersionMaxOrdering();
 			if (maxOrdering == 0) maxOrdering = 100; // default
-			
-			MVersionYes yes = new MVersionYes();
-			yes.shortName = pembaca.getShortName();
-			yes.longName = pembaca.getLongName();
-			yes.description = pembaca.getDescription();
-			yes.filename = filename;
-			yes.originalPdbFilename = originalpdbname;
-			yes.ordering = maxOrdering + 1;
-			
-			S.getDb().insertYesVersionWithActive(yes, true);
-			adapter.initYesVersionList();
-			adapter.notifyDataSetChanged();
+
+			final MVersionDb mvDb = new MVersionDb();
+			mvDb.locale = reader.getLocale();
+			mvDb.shortName = reader.getShortName();
+			mvDb.longName = reader.getLongName();
+			mvDb.description = reader.getDescription();
+			mvDb.filename = filename;
+			mvDb.ordering = maxOrdering + 1;
+
+			// check if this yes file is one already mentioned in the preset list
+			String preset_name = null;
+			for (MVersionPreset preset : VersionConfig.get().presets) {
+				if (U.equals(AddonManager.getVersionPath(preset.preset_name), filename)) {
+					preset_name = preset.preset_name;
+				}
+			}
+			mvDb.preset_name = preset_name;
+
+			S.getDb().insertVersionWithActive(mvDb, true);
+			adapter.reload();
 		} catch (Exception e) {
 			new AlertDialog.Builder(this)
 			.setTitle(R.string.ed_error_encountered)
@@ -716,19 +682,18 @@ public class VersionsActivity extends BaseActivity {
 	}
 
 	private void handleFileOpenPdb(final String pdbFilename) {
-		final String yesName = yesName(pdbFilename);
+		final String yesName = yesNameForPdb(pdbFilename);
 		
 		// check if it exists previously
-		if (S.getDb().hasYesVersionWithFilename(AddonManager.getVersionPath(yesName))) {
+		if (S.getDb().hasVersionWithFilename(AddonManager.getVersionPath(yesName))) {
 			new AlertDialog.Builder(this)
-			.setMessage(R.string.ed_this_file_is_already_on_the_list)
-			.setPositiveButton(R.string.ok, null)
-			.show();
+				.setMessage(R.string.ed_this_file_is_already_on_the_list)
+				.setPositiveButton(R.string.ok, null)
+				.show();
 			return;
 		}
-		
-		boolean mkdirOk = AddonManager.mkYesDir();
-		if (!mkdirOk) {
+
+		if (!AddonManager.mkYesDir()) {
 			new AlertDialog.Builder(this)
 			.setMessage(getString(R.string.tidak_bisa_membuat_folder, AddonManager.getYesPath()))
 			.setPositiveButton(R.string.ok, null)
@@ -777,15 +742,7 @@ public class VersionsActivity extends BaseActivity {
 			@Override public void onOkYes2(final ConvertPdbToYes2.ConvertParams params) {
 				final String yesFilename = AddonManager.getVersionPath(yesName);
 				final ProgressDialog pd = ProgressDialog.show(VersionsActivity.this, null, getString(R.string.ed_reading_pdb_file), true, false);
-				pd.setOnKeyListener(new OnKeyListener() {
-					@Override public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-						if (keyCode == KeyEvent.KEYCODE_SEARCH) {
-							return true;
-						}
-						return false;
-					}
-				});
-				
+
 				new AsyncTask<String, Object, ConvertPdbToYes2.ConvertResult>() {
 					@Override protected ConvertPdbToYes2.ConvertResult doInBackground(String... _unused_) {
 						ConvertPdbToYes2 converter = new ConvertPdbToYes2();
@@ -827,16 +784,23 @@ public class VersionsActivity extends BaseActivity {
 	}
 
 	/**
-	 * @return a filename for yes that will be converted from pdb file, such as "pdb-1234abcd-1.yes". Path not included.
+	 * @return a filename for yes that will be converted from pdb file, such as "pdb-XXX.yes"
+	 * XXX is the original filename without the .pdb or .PDB ending, converted to lowercase.
+	 * All except alphanumeric and . - _ are stripped.
+	 * Path not included.
+	 *
+	 * Previously it was like "pdb-1234abcd-1.yes".
 	 */
-	private String yesName(String filenamepdb) {
-		byte[] digest = Digester.digestFile(DigestType.SHA1, new File(filenamepdb));
-		if (digest == null) return null;
-		String hash = Digester.toHex(digest).substring(0, 8);
-		return "pdb-" + hash + "-1.yes";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+	private String yesNameForPdb(String filenamepdb) {
+		String base = filenamepdb.toLowerCase(Locale.US);
+		if (base.endsWith(".pdb")) {
+			base = base.substring(0, base.length() - 4);
+		}
+		base = base.replaceAll("[^0-9A-Z_\\.-]", "");
+		return "pdb-" + base + ".yes";
 	}
 
-	// model
+	// models
 	public static abstract class MVersion {
 		public String locale;
 		public String shortName;
@@ -853,9 +817,12 @@ public class VersionsActivity extends BaseActivity {
 		public abstract boolean hasDataFile();
 	}
 
+	/**
+	 * Internal version, only one
+	 */
 	public static class MVersionInternal extends MVersion {
 		public static String getVersionInternalId() {
-			return "internal"; //$NON-NLS-1$
+			return "internal";
 		}
 		
 		@Override public String getVersionId() {
@@ -881,28 +848,32 @@ public class VersionsActivity extends BaseActivity {
 			return true; // always has
 		}
 	}
-	
+
+	/**
+	 * Version that is defined in the version_config.json.
+	 * User may not have the data file available.
+	 */
 	public static class MVersionPreset extends MVersion {
 		public String download_url;
-		public String presetFilename;
+		public String preset_name;
 
 		@Override public boolean getActive() {
-			return Preferences.getBoolean("edisi/preset/" + this.presetFilename + "/aktif", true); //$NON-NLS-1$ //$NON-NLS-2$
+			return Preferences.getBoolean("edisi/preset/" + this.preset_name + "/aktif", true); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		@Override public void setActive(boolean active) {
-			Preferences.setBoolean("edisi/preset/" + this.presetFilename + "/aktif", active); //$NON-NLS-1$ //$NON-NLS-2$
+			Preferences.setBoolean("edisi/preset/" + this.preset_name + "/aktif", active); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		@Override
 		public String getVersionId() {
-			return "preset/" + presetFilename;
+			return "preset/" + preset_name;
 		}
 
 		@Override
 		public Version getVersion() {
 			if (hasDataFile()) {
-				final VersionImpl res = new VersionImpl(YesReaderFactory.createYesReader(AddonManager.getVersionPath(presetFilename)));
+				final VersionImpl res = new VersionImpl(YesReaderFactory.createYesReader(AddonManager.getVersionPath(preset_name)));
 				res.setFallbackShortName(shortName);
 				return res;
 			} else {
@@ -911,10 +882,14 @@ public class VersionsActivity extends BaseActivity {
 		}
 
 		@Override public boolean hasDataFile() {
-			return AddonManager.hasVersion(presetFilename);
+			return AddonManager.hasVersion(preset_name);
 		}
 	}
 
+	/**
+	 * Version that is defined in the database.
+	 * If the version is downloaded from a definition in the preset list, the {@link #preset_name} will be non-null.
+	 */
 	public static class MVersionDb extends MVersion {
 		public String filename;
 		public String preset_name;
@@ -922,7 +897,10 @@ public class VersionsActivity extends BaseActivity {
 		
 		@Override
 		public String getVersionId() {
-			return "yes/" + filename;
+			if (preset_name != null) {
+				return "preset/" + preset_name;
+			}
+			return "file/" + filename;
 		}
 
 		@Override
@@ -942,7 +920,7 @@ public class VersionsActivity extends BaseActivity {
 		@Override
 		public void setActive(boolean active) {
 			this.cache_active = active;
-			S.getDb().setYesVersionActive(this.filename, active);
+			S.getDb().setVersionActive(this, active);
 		}
 
 		@Override
@@ -957,56 +935,64 @@ public class VersionsActivity extends BaseActivity {
 	}
 	
 	public class VersionAdapter extends EasyAdapter implements SectionIndexer {
-		List<Item> items;
+		final List<Item> items = new ArrayList<>();
 		String[] section_labels;
 		int[] section_indexes;
 
 		VersionAdapter() {
-			items = new ArrayList<>();
+			reload();
+		}
+
+		/**
+		 * The list of versions are loaded as follows:
+		 * - Internal version {@link yuku.alkitab.base.ac.VersionsActivity.MVersionInternal}, is always there
+		 * - Versions stored in database {@link yuku.alkitab.base.ac.VersionsActivity.MVersionDb} is all loaded
+		 * - For each {@link yuku.alkitab.base.ac.VersionsActivity.MVersionPreset} defined in {@link yuku.alkitab.base.config.VersionConfig},
+		 *   check if the {@link yuku.alkitab.base.ac.VersionsActivity.MVersionPreset#preset_name} corresponds to one of the
+		 *   database version above. If it does, do not add to the resulting list. Otherwise, add it so user can download it.
+		 *
+		 * Note: Downloaded preset version will become database version after added.
+		 */
+		void reload() {
+			items.clear();
 
 			{ // internal
 				final AppConfig ac = AppConfig.get();
 				final MVersionInternal internal = new MVersionInternal();
 				internal.setActive(true);
 				internal.locale = ac.internalLocale;
+				internal.shortName = ac.internalShortName;
 				internal.longName = ac.internalLongName;
+				internal.description = null;
 				internal.ordering = 1;
 
 				items.add(new Item(internal));
 			}
 
-			{ // presets
-				final VersionConfig vc = VersionConfig.get();
+			final Set<String> presetNamesInDb = new HashSet<>();
 
-				for (MVersionPreset preset : vc.presets) {
+			// db
+			for (MVersionDb mv : S.getDb().listAllVersions()) {
+				items.add(new Item(mv));
+				if (mv.preset_name != null) {
+					presetNamesInDb.add(mv.preset_name);
+				}
+			}
+
+			{ // presets
+				for (MVersionPreset preset : VersionConfig.get().presets) {
+					if (presetNamesInDb.contains(preset.preset_name)) continue;
+
 					items.add(new Item(preset));
 
 					// fix the active state based on whether the file exists and also preferences
-					if (!AddonManager.hasVersion(preset.presetFilename)) {
+					if (!AddonManager.hasVersion(preset.preset_name)) {
 						preset.setActive(false);
 					}
 				}
 			}
 
-			initYesVersionList();
-			sortItems();
-		}
-		
-		public void initYesVersionList() {
-			final List<Item> newItems = new ArrayList<>();
-			for (Item item : items) {
-				if (!(item.mv instanceof MVersionYes)) {
-					newItems.add(item);
-				}
-			}
-			for (MVersionYes mv: S.getDb().listAllVersions()) {
-				newItems.add(new Item(mv));
-			}
-			items = newItems;
-			sortItems();
-		}
-
-		void sortItems() {
+			// sort items
 			Collections.sort(items, new Comparator<Item>() {
 				@Override
 				public int compare(final Item a, final Item b) {
@@ -1025,7 +1011,7 @@ public class VersionsActivity extends BaseActivity {
 				}
 			});
 			
-			// first item in group marked
+			// mark first item in each group
 			String lastLocale = "<sentinel>";
 			for (Item item : items) {
 				item.firstInGroup = !U.equals(item.mv.locale, lastLocale);
@@ -1053,8 +1039,10 @@ public class VersionsActivity extends BaseActivity {
 				}
 			}
 
-			Log.d(TAG, "section labels: " + section_labels);
-			Log.d(TAG, "section indexes: " + section_indexes);
+			if (BuildConfig.DEBUG) {
+				Log.d(TAG, "section labels: " + section_labels);
+				Log.d(TAG, "section indexes: " + section_indexes);
+			}
 
 			this.section_labels = section_labels.toArray(new String[section_labels.size()]);
 			this.section_indexes = new int[section_indexes.size()];
@@ -1097,7 +1085,7 @@ public class VersionsActivity extends BaseActivity {
 				cActive.setEnabled(false);
 			} else if (mv instanceof MVersionPreset) {
 				cActive.setEnabled(true);
-			} else if (mv instanceof MVersionYes) {
+			} else if (mv instanceof MVersionDb) {
 				cActive.setEnabled(true);
 			}
 

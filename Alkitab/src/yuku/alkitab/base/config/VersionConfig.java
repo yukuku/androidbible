@@ -61,7 +61,7 @@ public class VersionConfig {
 			preset.shortName = presetJson.shortName;
 			preset.longName = presetJson.longName;
 			preset.description = presetJson.description;
-			preset.presetFilename = presetJson.filename_preset;
+			preset.preset_name = presetJson.filename_preset;
 			preset.download_url = root.download_url_format.replace("$FILENAME_PRESET", presetJson.filename_preset);
 			preset.ordering = ++presetOrdering;
 			presets.add(preset);

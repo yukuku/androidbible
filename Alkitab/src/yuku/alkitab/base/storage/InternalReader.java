@@ -30,6 +30,7 @@ public class InternalReader implements BibleReader {
 	private static int cache_posInput = -1;
 
 	private final String versionPrefix;
+	private final String versionLocale;
 	private final String versionShortName;
 	private final String versionLongName;
 	private final VerseTextDecoder verseTextDecoder;
@@ -40,8 +41,9 @@ public class InternalReader implements BibleReader {
 	private FootnotesSection footnotesSection_;
 	private boolean footnotesKnownNotAvailable;
 
-	public InternalReader(String versionPrefix, String versionShortName, String versionLongName, VerseTextDecoder verseTextDecoder) {
+	public InternalReader(String versionPrefix, String versionLocale, String versionShortName, String versionLongName, VerseTextDecoder verseTextDecoder) {
 		this.versionPrefix = versionPrefix;
+		this.versionLocale = versionLocale;
 		this.versionShortName = versionShortName;
 		this.versionLongName = versionLongName;
 		this.verseTextDecoder = verseTextDecoder;
@@ -61,6 +63,11 @@ public class InternalReader implements BibleReader {
 		@Override public int getVerseCount() {
 			return verses.length;
 		}
+	}
+
+	@Override
+	public String getLocale() {
+		return versionLocale;
 	}
 
 	@Override public String getShortName() {

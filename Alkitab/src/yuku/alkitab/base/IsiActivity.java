@@ -57,13 +57,8 @@ import yuku.alkitab.base.ac.MarkersActivity;
 import yuku.alkitab.base.ac.SearchActivity;
 import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.ac.VersionsActivity;
-import yuku.alkitab.base.ac.VersionsActivity.MVersion;
-import yuku.alkitab.base.ac.VersionsActivity.MVersionInternal;
-import yuku.alkitab.base.ac.VersionsActivity.MVersionPreset;
-import yuku.alkitab.base.ac.VersionsActivity.MVersionYes;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.config.AppConfig;
-import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.dialog.ProgressMarkDialog;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeHighlightDialog;
@@ -448,12 +443,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 
 		final String lastVersionId = instant_pref.getString(PREFKEY_lastVersionId, null);
-		final MVersion mv = getVersionFromVersionId(lastVersionId);
+		final VersionsActivity.MVersion mv = getVersionFromVersionId(lastVersionId);
 
 		if (mv != null) {
 			loadVersion(mv, false);
 		} else {
-			loadVersion(new MVersionInternal(), false);
+			loadVersion(new VersionsActivity.MVersionInternal(), false);
 		}
 
 		{ // load book
@@ -475,8 +470,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		{ // load last split version. This must be after load book, chapter, and verse.
 			final String lastSplitVersionId = instant_pref.getString(PREFKEY_lastSplitVersionId, null);
 			if (lastSplitVersionId != null) {
-				final MVersion splitMv = getVersionFromVersionId(lastSplitVersionId);
-				final MVersion splitMvActual = splitMv == null? new MVersionInternal(): splitMv;
+				final VersionsActivity.MVersion splitMv = getVersionFromVersionId(lastSplitVersionId);
+				final VersionsActivity.MVersion splitMvActual = splitMv == null? new VersionsActivity.MVersionInternal(): splitMv;
 
 				if (loadSplitVersion(splitMvActual)) {
 					openSplitDisplay();
@@ -663,28 +658,16 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 
-	MVersion getVersionFromVersionId(String versionId) {
-		if (versionId == null || MVersionInternal.getVersionInternalId().equals(versionId)) {
+	VersionsActivity.MVersion getVersionFromVersionId(String versionId) {
+		if (versionId == null || VersionsActivity.MVersionInternal.getVersionInternalId().equals(versionId)) {
 			return null; // internal is made the same as null
 		}
 
-		// try preset versions first
-		final VersionConfig c = VersionConfig.get();
-		for (MVersionPreset preset: c.presets) { // 2. preset
-			if (preset.getVersionId().equals(versionId)) {
-				if (preset.hasDataFile()) {
-					return preset;
-				} else {
-					return null; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
-				}
-			}
-		}
-
-		// still no match, let's look at yes versions
-		for (MVersionYes yes: S.getDb().listAllVersions()) {
-			if (yes.getVersionId().equals(versionId)) {
-				if (yes.hasDataFile()) {
-					return yes;
+		// let's look at yes versions
+		for (VersionsActivity.MVersionDb mvDb: S.getDb().listAllVersions()) {
+			if (mvDb.getVersionId().equals(versionId)) {
+				if (mvDb.hasDataFile()) {
+					return mvDb;
 				} else {
 					return null; // this is the one that should have been chosen, but the data file is not available, so let's fallback.
 				}
@@ -694,7 +677,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		return null; // not known
 	}
 
-	boolean loadVersion(final MVersion mv, boolean display) {
+	boolean loadVersion(final VersionsActivity.MVersion mv, boolean display) {
 		try {
 			Version version = mv.getVersion();
 			
@@ -740,7 +723,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 	
-	boolean loadSplitVersion(final MVersion mv) {
+	boolean loadSplitVersion(final VersionsActivity.MVersion mv) {
 		try {
 			Version version = mv.getVersion();
 			
@@ -765,7 +748,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	}
 	
-	String getSplitHandleVersionName(MVersion mv, Version version) {
+	String getSplitHandleVersionName(VersionsActivity.MVersion mv, Version version) {
 		String shortName = version.getShortName();
 		if (shortName != null) {
 			return shortName;
@@ -1152,16 +1135,16 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	void openVersionsDialog() {
-		Pair<List<String>, List<MVersion>> versions = S.getAvailableVersions();
+		Pair<List<String>, List<VersionsActivity.MVersion>> versions = S.getAvailableVersions();
 		final List<String> options = versions.first;
-		final List<MVersion> data = versions.second;
+		final List<VersionsActivity.MVersion> data = versions.second;
 		
 		int selected = -1;
 		if (S.activeVersionId == null) {
 			selected = 0;
 		} else {
 			for (int i = 0; i < data.size(); i++) {
-				MVersion mv = data.get(i);
+				VersionsActivity.MVersion mv = data.get(i);
 				if (mv.getVersionId().equals(S.activeVersionId)) {
 					selected = i;
 					break;
@@ -1172,7 +1155,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		new AlertDialog.Builder(this)
 		.setSingleChoiceItems(options.toArray(new String[options.size()]), selected, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
-				final MVersion mv = data.get(which);
+				final VersionsActivity.MVersion mv = data.get(which);
 				
 				loadVersion(mv, true);
 				dialog.dismiss();
@@ -1188,9 +1171,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	void openSplitVersionsDialog() {
-		final Pair<List<String>, List<MVersion>> versions = S.getAvailableVersions();
+		final Pair<List<String>, List<VersionsActivity.MVersion>> versions = S.getAvailableVersions();
 		final List<String> options = versions.first;
-		final List<MVersion> data = versions.second;
+		final List<VersionsActivity.MVersion> data = versions.second;
 		
 		options.add(0, getString(R.string.split_version_none));
 		data.add(0, null);
@@ -1200,7 +1183,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			selected = 0;
 		} else {
 			for (int i = 1 /* because 0 is null */; i < data.size(); i++) {
-				MVersion mv = data.get(i);
+				VersionsActivity.MVersion mv = data.get(i);
 				if (mv.getVersionId().equals(this.activeSplitVersionId)) {
 					selected = i;
 					break;
@@ -1211,7 +1194,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		new AlertDialog.Builder(this)
 		.setSingleChoiceItems(options.toArray(new String[options.size()]), selected, new DialogInterface.OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
-				final MVersion mv = data.get(which);
+				final VersionsActivity.MVersion mv = data.get(which);
 				
 				if (mv == null) { // closing split version
 					activeSplitVersion = null;
@@ -1880,10 +1863,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					verseUrl = createVerseUrl(S.activeVersion.getShortName(), IsiActivity.this.activeBook, IsiActivity.this.chapter_1, sb.toString()); // use verse range
 				}
 				
-				Intent intent = ShareCompat.IntentBuilder.from(IsiActivity.this)
+				final Intent intent = ShareCompat.IntentBuilder.from(IsiActivity.this)
 				.setType("text/plain") //$NON-NLS-1$
 				.setSubject(reference.toString())
-				.setText(textToShare.toString())
+				.setText(textToShare)
 				.getIntent();
 				intent.putExtra(EXTRA_verseUrl, verseUrl);
 				startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_alamat, reference)), REQCODE_share);

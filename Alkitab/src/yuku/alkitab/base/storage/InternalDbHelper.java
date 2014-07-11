@@ -126,7 +126,9 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			convertFromBookmark2ToMarker(db);
 		}
 
-		if (oldVersion < 14000165) { // last version that doesn't use the new Version table
+		if (oldVersion < 14000166) { // last version that doesn't use the new Version table
+			createTableVersion(db);
+			createIndexVersion(db);
 			convertFromEdisiToVersion(db);
 		}
 	}
