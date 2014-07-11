@@ -29,6 +29,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 import android.widget.Toast;
 import yuku.afw.App;
@@ -52,6 +53,7 @@ import yuku.alkitab.base.util.AddonManager.Element;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.model.Version;
+import yuku.alkitab.util.IntArrayList;
 import yuku.androidcrypto.DigestType;
 import yuku.androidcrypto.Digester;
 import yuku.filechooser.FileChooserActivity;
@@ -133,7 +135,7 @@ public class VersionsActivity extends BaseActivity {
 		lsVersions = V.get(this, R.id.lsVersions);
 		lsVersions.setAdapter(adapter);
 		lsVersions.setOnItemClickListener(lsVersions_itemClick);
-		
+
 		registerForContextMenu(lsVersions);
 		
 		processIntent(getIntent(), "onCreate");
@@ -956,8 +958,10 @@ public class VersionsActivity extends BaseActivity {
 		}
 	}
 	
-	public class VersionAdapter extends EasyAdapter {
+	public class VersionAdapter extends EasyAdapter implements SectionIndexer {
 		List<Item> items;
+		String[] section_labels;
+		int[] section_indexes;
 
 		VersionAdapter() {
 			items = new ArrayList<>();
@@ -1029,7 +1033,35 @@ public class VersionsActivity extends BaseActivity {
 				item.firstInGroup = !U.equals(item.mv.locale, lastLocale);
 				lastLocale = item.mv.locale;
 			}
-			
+
+			// generate sections
+			final List<String> section_labels = new ArrayList<>();
+			final IntArrayList section_indexes = new IntArrayList();
+			char lastChar = 0;
+			for (int i = 0; i < items.size(); i++) {
+				final Item item = items.get(i);
+				final char c;
+				if (!TextUtils.isEmpty(item.mv.locale)) {
+					final String display = getDisplayLanguage(item.mv.locale);
+					c = Character.toUpperCase(display.charAt(0));
+				} else {
+					c = 1; // special value
+				}
+
+				if (lastChar != c) {
+					section_labels.add(c == 1? "…": ("" + c));
+					section_indexes.add(i);
+					lastChar = c;
+				}
+			}
+
+			Log.d(TAG, "section labels: " + section_labels);
+			Log.d(TAG, "section indexes: " + section_indexes);
+
+			this.section_labels = section_labels.toArray(new String[section_labels.size()]);
+			this.section_indexes = new int[section_indexes.size()];
+			System.arraycopy(section_indexes.buffer(), 0, this.section_indexes, 0, section_indexes.size());
+
 			notifyDataSetChanged();
 		}
 
@@ -1076,6 +1108,22 @@ public class VersionsActivity extends BaseActivity {
 			} else {
 				header.setVisibility(View.GONE);
 			}
+		}
+
+		@Override
+		public String[] getSections() {
+			return section_labels;
+		}
+
+		@Override
+		public int getPositionForSection(final int sectionIndex) {
+			return section_indexes[sectionIndex];
+		}
+
+		@Override
+		public int getSectionForPosition(final int position) {
+			final int pos = Arrays.binarySearch(section_indexes, position);
+			return pos >= 0 ? pos : (-pos - 1);
 		}
 	}
 }

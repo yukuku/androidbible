@@ -346,5 +346,5 @@
         {"locale": "zh", "filename_preset": "zh-ncvs.yes", "modifyTime": 1404691200, "shortName": "NCVS", "longName": "新譯本 - New Chinese Simplified", "description": "新譯本 - New Chinese Version Simplified, 1992"},
         {"locale": "zh", "filename_preset": "zh-ncvt.yes", "modifyTime": 1404691200, "shortName": "NCVT", "longName": "新譯本 - Chinese New Version", "description": "新譯本 - Chinese New Version, 1992"}
     ],
-    "download_url_format": "https://alkitab-host.appspot.com/addon/yes2/$FILENAME_PRESET.yes.gz"
+    "download_url_format": "https://alkitab-host.appspot.com/addon/yes2/$FILENAME_PRESET.gz"
 }
