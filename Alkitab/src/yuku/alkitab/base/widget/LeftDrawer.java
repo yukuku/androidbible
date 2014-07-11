@@ -175,7 +175,6 @@ public abstract class LeftDrawer extends ScrollView {
 
 		public interface Handle {
 			void setFullScreen(boolean fullScreen);
-			void setNightMode(boolean nightMode);
 			void setSplitVersion(boolean splitVersion);
 		}
 
@@ -198,13 +197,6 @@ public abstract class LeftDrawer extends ScrollView {
 				cFullScreen.setOnCheckedChangeListener(null);
 				cFullScreen.setChecked(fullScreen);
 				cFullScreen.setOnCheckedChangeListener(cFullScreen_checkedChange);
-			}
-
-			@Override
-			public void setNightMode(final boolean nightMode) {
-				cNightMode.setOnCheckedChangeListener(null);
-				cNightMode.setChecked(nightMode);
-				cNightMode.setOnCheckedChangeListener(cNightMode_checkedChange);
 			}
 
 			@Override

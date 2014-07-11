@@ -225,8 +225,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		public void onTwofingerDragY(final float dy) {
 			if (dy < 0) {
 				setFullScreen(true);
+				leftDrawer.getHandle().setFullScreen(true);
 			} else {
 				setFullScreen(false);
+				leftDrawer.getHandle().setFullScreen(false);
 			}
 		}
 
