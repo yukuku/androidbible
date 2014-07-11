@@ -42,11 +42,11 @@ public class AddonManager {
 	}
 
 	/**
-	 * @param preset_name can be a preset name, or an added yes filename without the path.
+	 * @param yesName an added yes filename without the path.
 	 */
-	public static String getVersionPath(String preset_name) {
+	public static String getVersionPath(String yesName) {
 		String yesPath = getYesPath();
-		File yes = new File(yesPath, preset_name);
+		File yes = new File(yesPath, yesName);
 		return yes.getAbsolutePath();
 	}
 	

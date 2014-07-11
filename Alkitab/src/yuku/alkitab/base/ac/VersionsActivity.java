@@ -391,7 +391,7 @@ public class VersionsActivity extends BaseActivity {
 			if (mv instanceof MVersionPreset) {
 				final MVersionPreset preset = (MVersionPreset) mv;
 				details.append(getString(R.string.ed_default_filename_file, preset.preset_name)).append('\n');
-				if (AddonManager.hasVersion(preset.preset_name)) {
+				if (AddonManager.hasVersion(preset.preset_name + ".yes")) {
 					details.append("THIS SHOULD NOT HAPPEN\n"); // because a version with the file should be MVersionDb
 				} else {
 					details.append(getString(R.string.ed_download_url_url, preset.download_url)).append('\n');
@@ -443,13 +443,38 @@ public class VersionsActivity extends BaseActivity {
 
 		final AddonManager.DownloadListener downloadListener = new AddonManager.DownloadListener() {
 			@Override
-			public void onDownloadFinished(AddonManager.Element e) {
+			public void onDownloadFinished(final AddonManager.Element e) {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						Toast.makeText(App.context,
-						getString(R.string.selesai_mengunduh_edisi_judul_disimpan_di_path, mv.longName, AddonManager.getVersionPath(mv.preset_name)),
-						Toast.LENGTH_LONG).show();
+						final BibleReader reader = YesReaderFactory.createYesReader(e.dest);
+						if (reader == null) {
+							new File(e.dest).delete();
+
+							new AlertDialog.Builder(VersionsActivity.this)
+								.setMessage(R.string.version_download_corrupted_file)
+								.setPositiveButton(R.string.ok, null)
+								.show();
+
+							return;
+						}
+
+						// success!
+						Toast.makeText(App.context, TextUtils.expandTemplate(getText(R.string.version_download_complete), mv.longName), Toast.LENGTH_LONG).show();
+
+						int maxOrdering = S.getDb().getVersionMaxOrdering();
+						if (maxOrdering == 0) maxOrdering = 100; // default
+
+						final MVersionDb mvDb = new MVersionDb();
+						mvDb.locale = reader.getLocale();
+						mvDb.shortName = reader.getShortName();
+						mvDb.longName = reader.getLongName();
+						mvDb.description = reader.getDescription();
+						mvDb.filename = e.dest;
+						mvDb.preset_name = mv.preset_name;
+						mvDb.ordering = maxOrdering + 1;
+
+						S.getDb().insertVersionWithActive(mvDb, true);
 
 						final String locale = mv.locale;
 						if ("ta".equals(locale) || "te".equals(locale) || "my".equals(locale) || "el".equals(locale)) {
@@ -505,7 +530,7 @@ public class VersionsActivity extends BaseActivity {
 		};
 
 		final AddonManager.DownloadThread downloadThread = AddonManager.getDownloadThread();
-		final AddonManager.Element e = downloadThread.enqueue(mv.download_url, AddonManager.getVersionPath(mv.preset_name), downloadListener);
+		final AddonManager.Element e = downloadThread.enqueue(mv.download_url, AddonManager.getVersionPath(mv.preset_name + ".yes"), downloadListener);
 
 		downloadThread.start();
 
@@ -518,7 +543,7 @@ public class VersionsActivity extends BaseActivity {
 		pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
 			@Override
 			public void onDismiss(DialogInterface dialog) {
-				if (!e.cancelled && AddonManager.hasVersion(mv.preset_name)) {
+				if (!e.cancelled && AddonManager.hasVersion(mv.preset_name + ".yes")) {
 					mv.setActive(true);
 				}
 				adapter.reload();
@@ -664,7 +689,7 @@ public class VersionsActivity extends BaseActivity {
 			// check if this yes file is one already mentioned in the preset list
 			String preset_name = null;
 			for (MVersionPreset preset : VersionConfig.get().presets) {
-				if (U.equals(AddonManager.getVersionPath(preset.preset_name), filename)) {
+				if (U.equals(AddonManager.getVersionPath(preset.preset_name + ".yes"), filename)) {
 					preset_name = preset.preset_name;
 				}
 			}
@@ -872,17 +897,11 @@ public class VersionsActivity extends BaseActivity {
 
 		@Override
 		public Version getVersion() {
-			if (hasDataFile()) {
-				final VersionImpl res = new VersionImpl(YesReaderFactory.createYesReader(AddonManager.getVersionPath(preset_name)));
-				res.setFallbackShortName(shortName);
-				return res;
-			} else {
-				return null;
-			}
+			throw new RuntimeException("THIS SHOULD NOT HAPPEN: preset should not have any actual data file to read from.");
 		}
 
 		@Override public boolean hasDataFile() {
-			return AddonManager.hasVersion(preset_name);
+			return AddonManager.hasVersion(preset_name + ".yes");
 		}
 	}
 
@@ -979,17 +998,11 @@ public class VersionsActivity extends BaseActivity {
 				}
 			}
 
-			{ // presets
-				for (MVersionPreset preset : VersionConfig.get().presets) {
-					if (presetNamesInDb.contains(preset.preset_name)) continue;
+			// presets
+			for (MVersionPreset preset : VersionConfig.get().presets) {
+				if (presetNamesInDb.contains(preset.preset_name)) continue;
 
-					items.add(new Item(preset));
-
-					// fix the active state based on whether the file exists and also preferences
-					if (!AddonManager.hasVersion(preset.preset_name)) {
-						preset.setActive(false);
-					}
-				}
+				items.add(new Item(preset));
 			}
 
 			// sort items

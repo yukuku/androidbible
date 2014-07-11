@@ -59,7 +59,7 @@
   <string name="sedang_mendekompres_harap_tunggu">Descompactando. Por favor, aguarde&#8230;</string>
   <string name="terunduh_sampe_byte">Baixado: %d bytes</string>
   <string name="gagal_mengunduh_edisi_judul_ex_pastikan_internet">Falha ao baixar a versão: %1$s (%2$s).\nCertifique-se de que a Internet está funcionando corretamente.</string>
-  <string name="selesai_mengunduh_edisi_judul_disimpan_di_path">Completado o download da versão: %1$s\nSalvo em: %2$s</string>
+  <string name="version_download_complete">Completado o download da versão: %1$s\nSalvo em: %2$s</string>
   <string name="mulai_mengunduh">Iniciando o download&#8230;</string>
   <string name="mengunduh_nama">Baixando %s</string>
   <string name="tuju_v">Vá para</string>
