@@ -160,13 +160,10 @@ public class SearchEngine {
 				res.add(av);
 				apos++;
 				bpos++;
-				continue;
 			} else if (av > bv) {
 				bpos++;
-				continue;
 			} else { // av < bv
 				apos++;
-				continue;
 			}
 		}
 		
@@ -211,7 +208,7 @@ public class SearchEngine {
 	
 		if (source == null) {
 			for (Book book: S.activeVersion.getConsecutiveBooks()) {
-				if (bookIds.get(book.bookId, false) == false) {
+				if (!bookIds.get(book.bookId, false)) {
 					continue; // the book is not included in selected books to be searched
 				}
 				
@@ -376,7 +373,7 @@ public class SearchEngine {
 		} else {
 			for (int i = 0; i < 66; i++) {
 				searchedBookIds[i] = query.bookIds.get(i, false);
-				if (searchedBookIds[i] == false) {
+				if (!searchedBookIds[i]) {
 					wholeBibleSearched = false;
 				}
 			}

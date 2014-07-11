@@ -74,7 +74,7 @@ public class ConvertOptionsDialog {
 		try {
 			pdb = new BiblePlusPDB(new PDBFileStream(filenamepdb), Tabs.hebrewTab, Tabs.greekTab);
 			boolean versionInfoOk = pdb.loadVersionInfo();
-			if (versionInfoOk == false) {
+			if (!versionInfoOk) {
 				throw new PdbKnownErrorException(pdb);
 			}
 			pdb.loadWordIndex();

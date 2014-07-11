@@ -238,7 +238,7 @@ public class SearchActivity extends BaseActivity {
 					tFilterAdvanced.setVisibility(View.VISIBLE);
 					StringBuilder sb = new StringBuilder();
 					for (int i = 0, len = selectedBookIds.size(); i < len; i++) {
-						if (selectedBookIds.valueAt(i) == true) {
+						if (selectedBookIds.valueAt(i)) {
 							int bookId = selectedBookIds.keyAt(i);
 							Book book = S.activeVersion.getBook(bookId);
 							if (book != null) {
@@ -327,7 +327,7 @@ public class SearchActivity extends BaseActivity {
 				selectedBookIds.clear();
 				SparseBooleanArray poses = lv.getCheckedItemPositions();
 				for (int i = 0, len = poses.size(); i < len; i++) {
-					if (poses.valueAt(i) == true) {
+					if (poses.valueAt(i)) {
 						int position = poses.keyAt(i);
 						Book book = adapter.getItem(position);
 						if (book != null) {
@@ -351,7 +351,7 @@ public class SearchActivity extends BaseActivity {
 		// set checked items
 		for (int position = 0, count = adapter.getCount(); position < count; position++) {
 			Book book = adapter.getItem(position);
-			if (book != null && selectedBookIds.get(book.bookId, false) == true) {
+			if (book != null && selectedBookIds.get(book.bookId, false)) {
 				lv.setItemChecked(position, true);
 			}
 		}

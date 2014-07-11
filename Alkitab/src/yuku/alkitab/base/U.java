@@ -106,15 +106,11 @@ public class U {
 	public static int getLabelForegroundColorBasedOnBackgroundColor(int colorRgb) {
 		float[] hsl = {0.f, 0.f, 0.f};
 		rgbToHsl(colorRgb, hsl);
-		//Log.d("getWarnaDepanBerdasarWarnaLatar", String.format("#%06x -> %3d %.2f %.2f", warnaRgb & 0xffffff, (int)hsl[0], hsl[1], hsl[2]));
-		
+
 		if (hsl[2] > 0.5f) hsl[2] -= 0.44f;
 		else hsl[2] += 0.44f;
-		
-		int res = hslToRgb(hsl);
-		//Log.d("getWarnaDepanBerdasarWarnaLatar", String.format("%3d %.2f %.2f -> #%06x", (int)hsl[0], hsl[1], hsl[2], res));
-		
-		return res;
+
+		return hslToRgb(hsl);
 	}
 	
 	public static void rgbToHsl(int rgb, float[] hsl) {

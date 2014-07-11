@@ -19,7 +19,8 @@
 			android:text="*Language Name"
 			android:textAllCaps="true"
 			android:textSize="14sp"
-			android:textStyle="bold" />
+			android:textStyle="bold"
+			tools:ignore="HardcodedText" />
 
 		<ImageView
 			android:layout_width="match_parent"

@@ -49,7 +49,7 @@ public class VersionConfig {
 		}
 	}
 
-	private static VersionConfig loadConfig(VersionConfigJson root) throws Exception {
+	private static VersionConfig loadConfig(VersionConfigJson root) {
 		final VersionConfig res = new VersionConfig();
 		
 		final List<MVersionPreset> presets = new ArrayList<>();

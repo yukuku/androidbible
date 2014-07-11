@@ -232,11 +232,12 @@ public class Provider extends ContentProvider {
 			
 			if (ari_start == ari_end) {
 				// case: single verse
+				//noinspection UnnecessaryLocalVariable
 				int ari = ari_start;
 				Book book = S.activeVersion.getBook(Ari.toBook(ari));
 				if (book != null) {
 					String text = S.activeVersion.loadVerseText(ari);
-					if (formatting == false) {
+					if (!formatting) {
 						text = U.removeSpecialCodes(text);
 					}
 					res.addRow(new Object[] {++c, ari, book.shortName, text});
@@ -286,7 +287,7 @@ public class Provider extends ContentProvider {
 			if (v_0 < verses.getVerseCount()) {
 				int ari = ari_bc | v_1;
 				String text = verses.getVerse(v_0);
-				if (formatting == false) {
+				if (!formatting) {
 					text = U.removeSpecialCodes(text);
 				}
 				count++;

@@ -7,7 +7,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/daily_verse_app_widget_dark_bg"
-    android:orientation="vertical">
+    android:orientation="vertical"
+	tools:ignore="Overdraw">
 
     <RelativeLayout
         android:layout_width="match_parent"

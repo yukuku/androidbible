@@ -49,7 +49,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	        if (mFlingEndMethod != null) {
 	            try {
 	                mFlingEndMethod.invoke(mFlingEndField.get(list));
-	            } catch (Exception e) {
+	            } catch (Exception ignored) {
 	            }
 	        }
 	    }

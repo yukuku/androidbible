@@ -107,12 +107,8 @@ public abstract class ArticleFromSabda implements DevotionArticle {
 		if (this == o) return true;
 		
 		ArticleFromSabda x = (ArticleFromSabda) o;
-		
-		if (x.date.equals(date) && x.getKind().equals(getKind())) {
-			return true;
-		}
-		
-		return false;
+
+		return x.date.equals(date) && x.getKind().equals(getKind());
 	}
 	
 	@Override

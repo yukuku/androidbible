@@ -46,7 +46,8 @@
 			android:layout_height="wrap_content"
 			android:text="*error msg"
 			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:visibility="gone" />
+			android:visibility="gone"
+			tools:ignore="HardcodedText" />
 
 	</LinearLayout>
 

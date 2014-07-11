@@ -8,17 +8,13 @@ public class CallbackSpan extends ClickableSpan {
 		void onClick(View widget, Object data);
 	}
 	
-	private Object data_;
+	final Object data_;
 	private OnClickListener onClickListener_;
 	
 	public CallbackSpan() {
-		this(null);
+		data_ = null;
 	}
-	
-	public CallbackSpan(Object data) {
-		data_ = data;
-	}
-	
+
 	public CallbackSpan(Object data, OnClickListener onClickListener) {
 		data_ = data;
 		onClickListener_ = onClickListener;

@@ -246,7 +246,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 		// Workaround for crashes due to html tags in the title
 		// We remove all rows that contain '<' in the title
-		if (Preferences.getBoolean(Prefkey.patch_devotionSlippedHtmlTags, false) == false) {
+		if (!Preferences.getBoolean(Prefkey.patch_devotionSlippedHtmlTags, false)) {
 			int deleted = S.getDb().deleteDevotionsWithLessThanInTitle();
 			Log.d(TAG, "patch_devotionSlippedHtmlTags: deleted " + deleted);
 			Preferences.setBoolean(Prefkey.patch_devotionSlippedHtmlTags, true);

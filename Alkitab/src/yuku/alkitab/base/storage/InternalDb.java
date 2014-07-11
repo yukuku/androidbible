@@ -297,8 +297,8 @@ public class InternalDb {
 	 * @return the color rgb or -1 if there are multiple colors.
 	 */
 	public int getHighlightColorRgb(int ari_bookchapter, IntArrayList selectedVerses_1) {
-		int ariMin = ari_bookchapter;
-		int ariMax = ari_bookchapter | 0xff;
+		int ariMin = ari_bookchapter & 0xffffff00;
+		int ariMax = ari_bookchapter | 0x000000ff;
 		int[] colors = new int[256];
 		int res = -2;
 

@@ -1,7 +1,6 @@
 package yuku.alkitab.base.util;
 
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.util.Log;
 import yuku.alkitab.base.App;
 

@@ -5,7 +5,8 @@
 	android:layout_height="wrap_content"
 	android:background="#333"
 	android:orientation="vertical"
-	tools:context=".base.IsiActivity">
+	tools:context=".base.IsiActivity"
+	tools:ignore="Overdraw">
 
 	<LinearLayout
 		android:layout_width="match_parent"

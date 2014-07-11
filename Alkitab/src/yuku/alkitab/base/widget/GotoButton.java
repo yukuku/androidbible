@@ -22,20 +22,14 @@ public class GotoButton extends Button {
 
 	public GotoButton(final Context context) {
 		super(context);
-		init();
 	}
 
 	public GotoButton(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
-		init();
 	}
 
 	public GotoButton(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		init();
-	}
-
-	private void init() {
 	}
 
 	@Override

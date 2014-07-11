@@ -232,6 +232,11 @@
     <string name="desc_drag_to_reorder_labels">Drag to reorder labels</string>
 	<string name="desc_close">Close</string>
 	<string name="desc_play">Play</string>
+	<string name="desc_progress_1">First progress</string>
+	<string name="desc_progress_2">Second progress</string>
+	<string name="desc_progress_3">Third progress</string>
+	<string name="desc_progress_4">Fourth progress</string>
+	<string name="desc_progress_5">Fifth progress</string>
 
 	<string name="intent_filter_open_yes_file">Open YES file</string>
     <string name="intent_filter_open_pdb_file">Open PDB file</string>

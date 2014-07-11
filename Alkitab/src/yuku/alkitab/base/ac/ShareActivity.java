@@ -21,16 +21,15 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import yuku.afw.V;
+import yuku.alkitab.base.App;
+import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.debug.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-
-import yuku.afw.V;
-import yuku.alkitab.debug.R;
-import yuku.alkitab.base.App;
-import yuku.alkitab.base.ac.base.BaseActivity;
 
 public class ShareActivity extends BaseActivity {
 	public static final String TAG = ShareActivity.class.getSimpleName();
@@ -328,7 +327,7 @@ public class ShareActivity extends BaseActivity {
 							}
 							// clear listeners
 							info.loadedListeners = null;
-						};
+						}
 					}.execute();
 				} else {
 					// udah loading, tambah listener aja

@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:background="#2c2c2c"
 	android:divider="@android:drawable/divider_horizontal_dark"
 	android:dividerPadding="2dp"
 	android:orientation="vertical"
-	android:showDividers="middle">
+	android:showDividers="middle"
+	tools:ignore="Overdraw">
 
 	<Button
 		android:id="@+id/bBible"

@@ -52,8 +52,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 	
 	private AdapterView.OnItemClickListener gridBook_itemClick = new AdapterView.OnItemClickListener() {
 		@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-			Book book = bookAdapter.getItem(position);
-			selectedBook = book;
+			selectedBook = bookAdapter.getItem(position);
 			transitionBookToChapter();
 		}
 	};

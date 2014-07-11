@@ -195,6 +195,7 @@ public class VersionImpl implements Version {
 
 			if (ari_start == ari_end) {
 				// case: single verse
+				//noinspection UnnecessaryLocalVariable
 				int ari = ari_start;
 				Book book = getBook(Ari.toBook(ari));
 				if (book != null) {

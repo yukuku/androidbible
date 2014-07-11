@@ -40,7 +40,8 @@
                     android:layout_marginRight="8dp"
                     android:gravity="fill_vertical"
                     android:text="@string/pasal_sebelumangka"
-                    android:textSize="24sp" />
+                    android:textSize="24sp"
+					tools:ignore="InconsistentLayout" />
 
                 <TextView
                     android:id="@+id/tChapter"

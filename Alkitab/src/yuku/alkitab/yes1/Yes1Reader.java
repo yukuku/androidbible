@@ -85,26 +85,28 @@ public class Yes1Reader implements BibleReader {
 	}
 	
 	private synchronized void init() throws Exception {
-		if (initted == false) {
-			initted = true;
-			
-			f.seek(0);
-			
-			// cek header
-			{
-				byte[] buf = new byte[8];
-				f.read(buf);
-				if (!Arrays.equals(buf, new byte[] {(byte) 0x98, 0x58, 0x0d, 0x0a, 0x00, 0x5d, (byte) 0xe0, 0x01})) {
-					throw new RuntimeException("Header ga betul. Ketemunya: " + Arrays.toString(buf)); //$NON-NLS-1$
-				}
-			}
-			
-			readVersionInfo();
-			
-			skipUntilSection("teks________"); //$NON-NLS-1$
-			text_baseOffset = f.getFilePointer();
-			Log.d(TAG, "text_baseOffset = " + text_baseOffset); //$NON-NLS-1$
+		if (initted) {
+			return;
 		}
+
+		initted = true;
+
+		f.seek(0);
+
+		// cek header
+		{
+			byte[] buf = new byte[8];
+			f.read(buf);
+			if (!Arrays.equals(buf, new byte[] {(byte) 0x98, 0x58, 0x0d, 0x0a, 0x00, 0x5d, (byte) 0xe0, 0x01})) {
+				throw new RuntimeException("Header ga betul. Ketemunya: " + Arrays.toString(buf)); //$NON-NLS-1$
+			}
+		}
+
+		readVersionInfo();
+
+		skipUntilSection("teks________"); //$NON-NLS-1$
+		text_baseOffset = f.getFilePointer();
+		Log.d(TAG, "text_baseOffset = " + text_baseOffset); //$NON-NLS-1$
 	}
 
 	@Override

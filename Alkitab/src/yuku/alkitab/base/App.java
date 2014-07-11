@@ -34,7 +34,7 @@ public class App extends yuku.afw.App {
 		return OkHttpClientWrapper.INSTANCE.httpClient.newCall(new Request.Builder().url(url).build()).execute().body().bytes();
 	}
 
-	public static Call downloadCall(String url) throws IOException {
+	public static Call downloadCall(String url) {
 		return OkHttpClientWrapper.INSTANCE.httpClient.newCall(new Request.Builder().url(url).build());
 	}
 
