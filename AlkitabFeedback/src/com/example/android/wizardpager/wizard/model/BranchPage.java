@@ -29,7 +29,7 @@ import java.util.List;
  * next set of steps in the wizard may change.
  */
 public class BranchPage extends SingleFixedChoicePage {
-    private List<Branch> mBranches = new ArrayList<Branch>();
+    private List<Branch> mBranches = new ArrayList<>();
 
     public BranchPage(ModelCallbacks callbacks, String title) {
         super(callbacks, title);
@@ -76,11 +76,13 @@ public class BranchPage extends SingleFixedChoicePage {
         return SingleChoiceFragment.create(getKey());
     }
 
-    public String getOptionAt(int position) {
+    @Override
+	public String getOptionAt(int position) {
         return mBranches.get(position).choice;
     }
 
-    public int getOptionCount() {
+    @Override
+	public int getOptionCount() {
         return mBranches.size();
     }
 
@@ -100,7 +102,8 @@ public class BranchPage extends SingleFixedChoicePage {
         super.notifyDataChanged();
     }
 
-    public BranchPage setValue(String value) {
+    @Override
+	public BranchPage setValue(String value) {
         mData.putString(SIMPLE_DATA_KEY, value);
         return this;
     }

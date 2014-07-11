@@ -22,8 +22,8 @@ public class ColProses {
 	};
 	
 	public ArrayList<Rec> parse(String nf) throws Exception {
-		LinkedHashMap<Integer, Integer> nn = new LinkedHashMap<Integer, Integer>();
-		ArrayList<Rec> res = new ArrayList<Rec>();
+		LinkedHashMap<Integer, Integer> nn = new LinkedHashMap<>();
+		ArrayList<Rec> res = new ArrayList<>();
 		
 		Scanner sc = new Scanner(new File(nf), "utf-8");
 		

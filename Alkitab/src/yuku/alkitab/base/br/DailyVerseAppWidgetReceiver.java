@@ -45,7 +45,6 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 
 	@Override
 	public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
-		final int N = appWidgetIds.length;
 		for (int appWidgetId : appWidgetIds) {
 			buildUpdate(context, appWidgetManager, appWidgetId);
 		}

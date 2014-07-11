@@ -24,31 +24,23 @@ package com.mobeta.android.dslv;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.DataSetObserver;
-import android.graphics.Bitmap;
-import android.graphics.PixelFormat;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Environment;
 import android.os.SystemClock;
-import android.text.method.MovementMethod;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.SparseIntArray;
 import android.view.*;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.widget.*;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.ChoiceFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 
 /**

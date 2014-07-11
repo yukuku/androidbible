@@ -56,7 +56,7 @@ public class PDBBookmark {
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(bookNumber).append(" "); //$NON-NLS-1$
 		sb.append(chapter).append(":"); //$NON-NLS-1$
 		sb.append(verse).append(" "); //$NON-NLS-1$

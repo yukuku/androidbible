@@ -35,9 +35,9 @@ public class Proses1 {
 	private void u() throws Exception {
 		Scanner sc = new Scanner(new File(INPUT_TEKS_1), INPUT_TEKS_ENCODING);
 		
-		List<Rec> xrec = new ArrayList<Rec>();
+		List<Rec> xrec = new ArrayList<>();
 		PericopeData pericopeData = new PericopeData();
-		pericopeData.entries = new ArrayList<PericopeData.Entry>();
+		pericopeData.entries = new ArrayList<>();
 		
 		int kitab_1 = 1;
 		int pasal_1 = 1;

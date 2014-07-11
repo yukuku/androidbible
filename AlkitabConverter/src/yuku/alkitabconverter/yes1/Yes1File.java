@@ -305,7 +305,7 @@ public class Yes1File {
 			int _offset = -1;
 			
 			public void addParallel(String parallel) {
-				if (parallels == null) parallels = new ArrayList<String>();
+				if (parallels == null) parallels = new ArrayList<>();
 				parallels.add(parallel);
 			}
 		}
@@ -313,7 +313,7 @@ public class Yes1File {
 		public List<Entry> entries;
 		
 		public void addEntry(Entry e) {
-			if (entries == null) entries = new ArrayList<Entry>();
+			if (entries == null) entries = new ArrayList<>();
 			entries.add(e);
 		}
 	}

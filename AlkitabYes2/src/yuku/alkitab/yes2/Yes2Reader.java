@@ -188,6 +188,7 @@ public class Yes2Reader implements BibleReader {
 		}
 	}
 
+	@Override
 	public String getDescription() {
 		try {
 			loadVersionInfo();

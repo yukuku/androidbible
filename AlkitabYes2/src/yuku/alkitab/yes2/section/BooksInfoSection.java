@@ -38,7 +38,7 @@ public class BooksInfoSection extends SectionContent implements SectionContent.W
 			
 			BooksInfoSection res = new BooksInfoSection();
 			int book_count = br.readInt();
-			res.yes2Books = new ArrayList<Yes2Book>(book_count);
+			res.yes2Books = new ArrayList<>(book_count);
 			for (int i = 0; i < book_count; i++) {
 				res.yes2Books.add(Yes2Book.fromBytes(br));
 			}

@@ -246,7 +246,6 @@ public class ConvertPdbToYes2 {
 	 * Replaces (0x0e 'b' 0x0e) with (at 9) to start, or (at 7) to end.
 	 * Replaces (0x0e 'n' 0x0e) with (at 8).
 	 * and will add (at at) on the beginning of such verses.
-	 * @return
 	 */
 	String[] getCompleteVerseWithPreprocess(BookInfo pdbBookInfo, int chapter_0, int verse_0) {
 		String[] ss = pdbBookInfo.getCompleteVerse(chapter_0 + 1, verse_0 + 1);

@@ -31,7 +31,7 @@ import java.util.List;
 public abstract class AbstractWizardModel implements ModelCallbacks {
     protected Context mContext;
 
-    private List<ModelCallbacks> mListeners = new ArrayList<ModelCallbacks>();
+    private List<ModelCallbacks> mListeners = new ArrayList<>();
     private PageList mRootPageList;
 
     public AbstractWizardModel(Context context) {
@@ -89,7 +89,7 @@ public abstract class AbstractWizardModel implements ModelCallbacks {
      * user's choices.
      */
     public List<Page> getCurrentPageSequence() {
-        ArrayList<Page> flattened = new ArrayList<Page>();
+        ArrayList<Page> flattened = new ArrayList<>();
         mRootPageList.flattenCurrentPageSequence(flattened);
         return flattened;
     }

@@ -16,18 +16,18 @@ public class FootnoteDb {
 		void process(FootnoteEntry fe, int ari, int entryIndex);
 	}
 
-	final Map<Integer, List<FootnoteEntry>> map = new TreeMap<Integer, List<FootnoteEntry>>();
+	final Map<Integer, List<FootnoteEntry>> map = new TreeMap<>();
 
 	public FootnoteDb() {}
 
 	public FootnoteDb(final LinkedHashMap<Integer, FootnoteEntry> footnoteEntries) {
 		// make sure it's sorted
-		for (final Map.Entry<Integer, FootnoteEntry> entry : new TreeMap<Integer, FootnoteEntry>(footnoteEntries).entrySet()) {
+		for (final Map.Entry<Integer, FootnoteEntry> entry : new TreeMap<>(footnoteEntries).entrySet()) {
 			final int arif = entry.getKey();
 			final int ari = arif >> 8;
 			List<FootnoteEntry> fes = map.get(ari);
 			if (fes == null) {
-				fes = new ArrayList<FootnoteEntry>();
+				fes = new ArrayList<>();
 				map.put(ari, fes);
 			}
 			final FootnoteEntry fe = entry.getValue();
@@ -37,7 +37,7 @@ public class FootnoteDb {
 
 
 	public LinkedHashMap<Integer, FootnoteEntry> toEntries() {
-		final LinkedHashMap<Integer, FootnoteEntry> res = new LinkedHashMap<Integer, FootnoteEntry>();
+		final LinkedHashMap<Integer, FootnoteEntry> res = new LinkedHashMap<>();
 		processEach(new FootnoteProcessor() {
 			@Override
 			public void process(final FootnoteEntry fe, final int ari, final int entryIndex) {
@@ -53,7 +53,7 @@ public class FootnoteDb {
 	public int addBegin(int ari) {
 		List<FootnoteEntry> list = map.get(ari);
 		if (list == null) {
-			list = new ArrayList<FootnoteEntry>();
+			list = new ArrayList<>();
 			map.put(ari, list);
 		}
 

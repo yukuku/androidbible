@@ -28,7 +28,7 @@ public class VersionInfoSection extends SectionContent implements SectionContent
 	@Override public void write(RandomOutputStream output) throws IOException {
 		BintexWriter bw = new BintexWriter(output);
 		
-		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		Map<String, Object> map = new LinkedHashMap<>();
 		map.put("version", 3);
 		if (shortName != null) map.put("shortName", shortName);
 		if (longName != null) map.put("longName", longName);

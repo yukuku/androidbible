@@ -27,7 +27,7 @@ import java.util.Set;
 public class UnboundBatchConverter {
 	static String DATA_DIR = "/Users/yuku/j/operasi/unbound";
 	
-	List<String> appConfigEntries = new ArrayList<String>();
+	List<String> appConfigEntries = new ArrayList<>();
 	
 	public static void main(String[] args) throws Exception {
 		new UnboundBatchConverter().convertAll();
@@ -103,7 +103,7 @@ public class UnboundBatchConverter {
 		
 		// read booknames file
 		Scanner sc = new Scanner(new File(superdir, dir.getName() + ".booknames.txt"));
-		List<String> bookNames = new ArrayList<String>();
+		List<String> bookNames = new ArrayList<>();
 		while (sc.hasNextLine()) {
 			bookNames.add(sc.nextLine());
 		}
@@ -139,9 +139,9 @@ public class UnboundBatchConverter {
 	}
 
 	TextDb processTextFile(String categoryName, String versionName, File textFile, boolean mapped) throws Exception {
-		List<String> rawLines = new ArrayList<String>();
-		List<String[]> brokenLines = new ArrayList<String[]>();
-		Map<String, Integer> columns = new LinkedHashMap<String, Integer>();
+		List<String> rawLines = new ArrayList<>();
+		List<String[]> brokenLines = new ArrayList<>();
+		Map<String, Integer> columns = new LinkedHashMap<>();
 
 		BufferedReader sc = new BufferedReader(new InputStreamReader(new FileInputStream(textFile), "utf-8"));
 		while (true) {
@@ -232,7 +232,7 @@ public class UnboundBatchConverter {
 			// Some of the files contain invalid NRSVA bcvs on the book of psalms,
 			// we need to register that and make the NRSVA verses 1+2 -> KJV verse 1
 			// and subsequent NRSVA verses n -> KJV verse (n-1)
-			Set<Integer> psalmChaptersWithInvalidNrsvaBcv = new LinkedHashSet<Integer>();
+			Set<Integer> psalmChaptersWithInvalidNrsvaBcv = new LinkedHashSet<>();
 			int[] psalmChaptersCanHaveInvalidNrsvaBcv = {30,51,52,54,60,84,85};
 			
 			for (String[] brokenLine : brokenLines) {
@@ -345,7 +345,7 @@ public class UnboundBatchConverter {
 					lids[KjvUtils.ariToLid(ari) - 1] = true;
 				}
 			});
-			List<Integer> notexists = new ArrayList<Integer>();
+			List<Integer> notexists = new ArrayList<>();
 			for (int i = 0; i < lids.length; i++) {
 				boolean exist = lids[i];
 				if (!exist) {
@@ -401,7 +401,7 @@ public class UnboundBatchConverter {
 		{ // look for <I> (italics)
 			if (verseText.contains("<I>") && verseText.contains("</I>")) {
 				verseText = verseText.replaceAll("<I>", "@9").replaceAll("</I>", "@7");
-			} else if ((verseText.contains("<I>") ^ verseText.contains("</I>")) == true) {
+			} else if ((verseText.contains("<I>") ^ verseText.contains("</I>"))) {
 				throw new RuntimeException("Verse contains <I> or </I> but no corresponding tag");
 			}
 		}

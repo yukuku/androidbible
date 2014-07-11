@@ -46,7 +46,7 @@ public class Proses2 {
 
 	PericopeData pericopeData = new PericopeData();
 	{
-		pericopeData.entries = new ArrayList<PericopeData.Entry>();
+		pericopeData.entries = new ArrayList<>();
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -160,14 +160,14 @@ public class Proses2 {
 		String[] tree = new String[80];
 		int depth = 0;
 		
-		Stack<Object> tujuanTulis = new Stack<Object>();
+		Stack<Object> tujuanTulis = new Stack<>();
 		Object tujuanTulis_misteri = new Object();
 		Object tujuanTulis_teks = new Object();
 		Object tujuanTulis_judulPerikop = new Object();
 		Object tujuanTulis_xref = new Object();
 		Object tujuanTulis_footnote = new Object();
 		
-		List<PericopeData.Entry> perikopBuffer = new ArrayList<PericopeData.Entry>();
+		List<PericopeData.Entry> perikopBuffer = new ArrayList<>();
 		boolean afterThisMustStartNewPerikop = true; // if true, we have done with a pericope title, so the next text must become a new pericope title instead of appending to existing one
 		
 		// states
@@ -215,37 +215,47 @@ public class Proses2 {
 			} else if (alamat.endsWith("/p")) {
 				String sfm = attributes.getValue("sfm");
 				if (sfm != null) {
-					if (sfm.equals("r")) {
-						tujuanTulis.push(tujuanTulis_judulPerikop);
-						sLevel = LEVEL_p_r;
-					} else if (sfm.equals("mt")) {
-						tujuanTulis.push(tujuanTulis_misteri);
-					} else if (sfm.equals("ms")) {
-						tujuanTulis.push(tujuanTulis_judulPerikop);
-						sLevel = LEVEL_p_ms;
-					} else if (sfm.equals("mr")) {
-						tujuanTulis.push(tujuanTulis_judulPerikop);
-						sLevel = LEVEL_p_mr;
-					} else if (sfm.equals("mi")) {
-						tujuanTulis.push(tujuanTulis_teks);
-						menjorokTeks = 2;
-					} else if (sfm.equals("pi")) { // Indented para
-						tujuanTulis.push(tujuanTulis_teks);
-						menjorokTeks = 1;
-					} else if (sfm.equals("pc")) { // Centered para
-						tujuanTulis.push(tujuanTulis_teks);
-						menjorokTeks = 2;
-					} else if (sfm.equals("m")) {
+					switch (sfm) {
+						case "r":
+							tujuanTulis.push(tujuanTulis_judulPerikop);
+							sLevel = LEVEL_p_r;
+							break;
+						case "mt":
+							tujuanTulis.push(tujuanTulis_misteri);
+							break;
+						case "ms":
+							tujuanTulis.push(tujuanTulis_judulPerikop);
+							sLevel = LEVEL_p_ms;
+							break;
+						case "mr":
+							tujuanTulis.push(tujuanTulis_judulPerikop);
+							sLevel = LEVEL_p_mr;
+							break;
+						case "mi":
+							tujuanTulis.push(tujuanTulis_teks);
+							menjorokTeks = 2;
+							break;
+						case "pi":  // Indented para
+							tujuanTulis.push(tujuanTulis_teks);
+							menjorokTeks = 1;
+							break;
+						case "pc":  // Centered para
+							tujuanTulis.push(tujuanTulis_teks);
+							menjorokTeks = 2;
+							break;
+						case "m":
 						/*
 						 * Flush left (margin) paragraph.
 						 * • No first line indent.
 						 * • Followed immediately by a space and paragraph text, or by a new line and a verse marker.
 						 * • Usually used to resume prose at the margin (without indent) after poetry or OT quotation (i.e. continuation of the previous paragraph).
 						 */
-						tujuanTulis.push(tujuanTulis_teks);
-						menjorokTeks = 0; // inden 0
-					} else {
-						throw new RuntimeException("p@sfm ga dikenal: " + sfm);
+							tujuanTulis.push(tujuanTulis_teks);
+							menjorokTeks = 0; // inden 0
+
+							break;
+						default:
+							throw new RuntimeException("p@sfm ga dikenal: " + sfm);
 					}
 				} else {
 					tujuanTulis.push(tujuanTulis_teks);
@@ -439,7 +449,7 @@ public class Proses2 {
 	 * (2Taw. 34:3-7, 35:1-27) -> [2Taw. 34:3-7, 2Taw. 35:1-27]
 	 */
 	static List<String> parseParalel(String judul) {
-		List<String> res = new ArrayList<String>();
+		List<String> res = new ArrayList<>();
 
 		judul = judul.trim();
 		if (judul.startsWith("(")) judul = judul.substring(1);

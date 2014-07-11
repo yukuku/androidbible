@@ -151,7 +151,7 @@ public class ShareActivity extends BaseActivity {
 					Collections.sort(rList, rComparator);
 				}
 
-				mList = new ArrayList<DisplayResolveInfo>();
+				mList = new ArrayList<>();
 
 				// First put the initial items at the top.
 				if (initialIntents != null) {
@@ -219,7 +219,7 @@ public class ShareActivity extends BaseActivity {
 				}
 				if (!usePkg) {
 					// Use HashSet to track duplicates
-					HashSet<CharSequence> duplicates = new HashSet<CharSequence>();
+					HashSet<CharSequence> duplicates = new HashSet<>();
 					duplicates.add(startApp);
 					for (int j = start + 1; j <= end; j++) {
 						ResolveInfo jRi = rList.get(j);
@@ -308,7 +308,7 @@ public class ShareActivity extends BaseActivity {
 				icon.setImageDrawable(null); // kosongin dulu
 				
 				if (info.loadedListeners == null) {
-					info.loadedListeners = new ArrayList<ImageView>();
+					info.loadedListeners = new ArrayList<>();
 					info.loadedListeners.add(icon);
 					
 					new AsyncTask<Void, Void, Drawable>() {

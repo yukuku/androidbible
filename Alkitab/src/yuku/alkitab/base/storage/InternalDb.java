@@ -511,7 +511,7 @@ public class InternalDb {
 	}
 
 	public List<Label> listAllLabels() {
-		List<Label> res = new ArrayList<Label>();
+		List<Label> res = new ArrayList<>();
 		Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Label, null, null, null, null, null, Db.Label.ordering + " asc");
 		try {
 			while (cursor.moveToNext()) {
@@ -703,7 +703,7 @@ public class InternalDb {
 	}
 
 	public List<ProgressMark> listAllProgressMarks() {
-		List<ProgressMark> res = new ArrayList<ProgressMark>();
+		List<ProgressMark> res = new ArrayList<>();
 		Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_ProgressMark, null, null, null, null, null, null);
 		try {
 			while (cursor.moveToNext()) {
@@ -750,7 +750,7 @@ public class InternalDb {
 	public List<ProgressMarkHistory> listProgressMarkHistoryByPresetId(final int preset_id) {
 		final Cursor c = helper.getReadableDatabase().rawQuery("select * from " + Db.TABLE_ProgressMarkHistory + " where " + Db.ProgressMarkHistory.progress_mark_preset_id + "=? order by " + Db.ProgressMarkHistory.createTime + " asc", new String[] {String.valueOf(preset_id)});
 		try {
-			final List<ProgressMarkHistory> res = new ArrayList<ProgressMarkHistory>();
+			final List<ProgressMarkHistory> res = new ArrayList<>();
 			while (c.moveToNext()) {
 				res.add(progressMarkHistoryFromCursor(c));
 			}
@@ -832,7 +832,7 @@ public class InternalDb {
 		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan,
 		new String[] {"_id", Db.ReadingPlan.version, Db.ReadingPlan.name, Db.ReadingPlan.title, Db.ReadingPlan.description, Db.ReadingPlan.duration, Db.ReadingPlan.startTime},
 		null, null, null, null, null);
-		List<ReadingPlan.ReadingPlanInfo> infos = new ArrayList<ReadingPlan.ReadingPlanInfo>();
+		List<ReadingPlan.ReadingPlanInfo> infos = new ArrayList<>();
 		while (c.moveToNext()) {
 			ReadingPlan.ReadingPlanInfo info = new ReadingPlan.ReadingPlanInfo();
 			info.id = c.getLong(0);
@@ -880,7 +880,7 @@ public class InternalDb {
 	}
 
 	public List<String> listReadingPlanNames() {
-		final List<String> res = new ArrayList<String>();
+		final List<String> res = new ArrayList<>();
 		final Cursor c = helper.getReadableDatabase().query(Db.TABLE_ReadingPlan, new String[] {Db.ReadingPlan.name}, null, null, null, null, null);
 		try {
 			while (c.moveToNext()) {

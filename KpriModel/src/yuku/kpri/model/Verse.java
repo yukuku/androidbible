@@ -21,7 +21,7 @@ public class Verse implements Serializable, Parcelable {
     public Verse(Parcel in) {
     	ordering = in.readInt();
     	kind = VerseKind.values()[in.readInt()];
-		in.readStringList(lines = new ArrayList<String>());
+		in.readStringList(lines = new ArrayList<>());
 	}
 
 	@Override public void writeToParcel(Parcel out, int flags) {

@@ -27,9 +27,9 @@ public class KonvertPerikop {
 
 		String judul = null;
 		String perikop = null;
-		ArrayList<String> xparalel = new ArrayList<String>();
-		ArrayList<Integer> xofset = new ArrayList<Integer>();
-		ArrayList<Integer> xari = new ArrayList<Integer>();
+		ArrayList<String> xparalel = new ArrayList<>();
+		ArrayList<Integer> xofset = new ArrayList<>();
+		ArrayList<Integer> xari = new ArrayList<>();
 		
 		while (sc.hasNextLine()) {
 			String line = sc.nextLine().trim();

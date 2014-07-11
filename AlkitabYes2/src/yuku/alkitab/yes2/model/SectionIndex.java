@@ -32,7 +32,7 @@ public class SectionIndex {
 		}
 		
 		SectionIndex res = new SectionIndex();
-		res.entries = new LinkedHashMap<String, Entry>();
+		res.entries = new LinkedHashMap<>();
 		
 		int section_count = br.readInt();
 		

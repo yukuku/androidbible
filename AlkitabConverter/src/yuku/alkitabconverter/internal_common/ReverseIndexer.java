@@ -25,7 +25,7 @@ public class ReverseIndexer {
 	public static void createReverseIndex(File outDir, String prefix, TextDb teksDb) {
 		Pattern p_word = Pattern.compile("[A-Za-z]+(?:[-'][A-Za-z]+)*");
 
-		Map<String, Set<Integer>> map = new TreeMap<String, Set<Integer>>(new Comparator<String>() {
+		Map<String, Set<Integer>> map = new TreeMap<>(new Comparator<String>() {
 			@Override public int compare(String o1, String o2) {
 				int lenc = o1.length() - o2.length();
 				if (lenc == 0) {
@@ -48,7 +48,7 @@ public class ReverseIndexer {
 					String word = m.group();
 					Set<Integer> locations = map.get(word);
 					if (locations == null) {
-						locations = new TreeSet<Integer>();
+						locations = new TreeSet<>();
 						map.put(word, locations);
 					}
 					locations.add(lid);
@@ -78,7 +78,7 @@ public class ReverseIndexer {
 			
 			// split based on word length
 			for (int i = 1; i <= maxwordlen; i++) {
-				Map<String, Set<Integer>> lenmap = new TreeMap<String, Set<Integer>>();
+				Map<String, Set<Integer>> lenmap = new TreeMap<>();
 				for (Map.Entry<String, Set<Integer>> e: map.entrySet()) {
 					String word = e.getKey();
 					if (i == word.length()) {

@@ -20,7 +20,7 @@ import java.util.Scanner;
 public class TheWordBatchConverter {
 	static String DATA_DIR = "/Users/yuku/j/operasi/theword";
 	
-	List<String> appConfigEntries = new ArrayList<String>();
+	List<String> appConfigEntries = new ArrayList<>();
 	
 	public static void main(String[] args) throws Exception {
 		new TheWordBatchConverter().convertAll();
@@ -83,7 +83,7 @@ public class TheWordBatchConverter {
 		
 		// read booknames file
 		Scanner sc = new Scanner(new File(superdir, dir.getName() + ".booknames.txt"));
-		List<String> bookNames = new ArrayList<String>();
+		List<String> bookNames = new ArrayList<>();
 		while (sc.hasNextLine()) {
 			bookNames.add(sc.nextLine());
 		}
@@ -108,7 +108,7 @@ public class TheWordBatchConverter {
 	}
 
 	TextDb processTextFile(File textFile) throws Exception {
-		List<Rec> recs = new ArrayList<Rec>();
+		List<Rec> recs = new ArrayList<>();
 
 		Scanner sc = new Scanner(textFile, "utf-8");
 		int lid = 0;

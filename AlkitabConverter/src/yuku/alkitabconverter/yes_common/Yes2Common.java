@@ -60,7 +60,7 @@ public class Yes2Common {
 		}
 
 		public void setBookNamesFromFile(final String inputBookNames) throws IOException {
-			List<String> bookNames = new ArrayList<String>();
+			List<String> bookNames = new ArrayList<>();
 			final Scanner sc = new Scanner(new File(inputBookNames), "utf-8");
 			int c = 0;
 			while (sc.hasNextLine()) {
@@ -74,7 +74,7 @@ public class Yes2Common {
 
 	private static BooksInfoSection getBooksInfoSection(VersionInfo versionInfo, TextDb textDb) throws IOException {
 		// no nulls allowed
-		final List<Yes2Book> yes2books = new ArrayList<Yes2Book>();
+		final List<Yes2Book> yes2books = new ArrayList<>();
 		
 		// for the text offset from the beginning of text section
 		int offsetTotal = 0;

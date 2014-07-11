@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 public class YetToYes2 {
-	@Parameter private List<String> params = new ArrayList<String>();
+	@Parameter private List<String> params = new ArrayList<>();
 	@Parameter(names = "--help", help = true, description = "Show this help") private boolean help = false;
 	@Parameter(names = "--no-compress", description = "Disable compression on the resultant yes file") private boolean nocompress = false;
 	
@@ -71,7 +71,7 @@ public class YetToYes2 {
 		}
 		
 		{ // check if all book names are available
-			Set<Integer> books_1 = new HashSet<Integer>();
+			Set<Integer> books_1 = new HashSet<>();
 			for (Rec rec: result.recs) {
 				books_1.add(rec.book_1);
 			}

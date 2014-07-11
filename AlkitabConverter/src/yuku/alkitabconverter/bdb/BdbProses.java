@@ -19,8 +19,8 @@ public class BdbProses {
 	boolean combineSameVerse = false;
 	
 	public ArrayList<Rec> parse(String nf, String charsetName) throws Exception {
-		LinkedHashMap<Integer, Integer> nversePerChapter = new LinkedHashMap<Integer, Integer>();
-		ArrayList<Rec> res = new ArrayList<Rec>();
+		LinkedHashMap<Integer, Integer> nversePerChapter = new LinkedHashMap<>();
+		ArrayList<Rec> res = new ArrayList<>();
 		
 		Scanner sc = new Scanner(new File(nf), charsetName);
 		
@@ -47,7 +47,7 @@ public class BdbProses {
 				if (pe != null) {
 					if (pericopeData == null) {
 						pericopeData = new PericopeData();
-						pericopeData.entries = new ArrayList<PericopeData.Entry>();
+						pericopeData.entries = new ArrayList<>();
 					}
 					pericopeData.entries.add(pe);
 					continue; // let's continue with next line

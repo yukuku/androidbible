@@ -10,7 +10,7 @@ public class BisPerikop0Proses {
 		Scanner sc = new Scanner(new File("../Alkitab/publikasi/bis_perikop_0.txt"));
 		PrintWriter pw = new PrintWriter(new File("../Alkitab/publikasi/bis_perikop_1.txt"), "ascii");
 		
-		TreeSet<String> kiwod = new TreeSet<String>();
+		TreeSet<String> kiwod = new TreeSet<>();
 		int mode = 0; // 0 == abai
 		
 		while (sc.hasNextLine()) {

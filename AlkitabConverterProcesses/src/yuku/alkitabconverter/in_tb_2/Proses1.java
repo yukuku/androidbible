@@ -1,17 +1,17 @@
 package yuku.alkitabconverter.in_tb_2;
 
-import java.io.RandomAccessFile;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-
+import yuku.alkitabconverter.bdb.BdbProses;
+import yuku.alkitabconverter.util.Rec;
+import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.yes1.Yes1File;
 import yuku.alkitabconverter.yes1.Yes1File.InfoEdisi;
 import yuku.alkitabconverter.yes1.Yes1File.InfoKitab;
 import yuku.alkitabconverter.yes1.Yes1File.Teks;
-import yuku.alkitabconverter.bdb.BdbProses;
-import yuku.alkitabconverter.util.Rec;
-import yuku.alkitabconverter.util.RecUtil;
 import yuku.alkitabconverter.yes_common.Yes1Common;
+
+import java.io.RandomAccessFile;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 
 public class Proses1 {
 	static String INPUT_TEKS_1 = "./bahan/in-tb-2/in/TB(2)-utf8.txt";
@@ -87,14 +87,13 @@ public class Proses1 {
 		
 		// post-process
 		// cari semua \p di tengah2 ayat, ganti dengan @8@8
-		for (int i = 0; i < xrec.size(); i++) {
-			Rec rec = xrec.get(i);
+		for (Rec rec : xrec) {
 			if (rec.text.contains("\\p")) {
 				System.out.println("\\p di tengah2: " + rec.book_1 + " " + rec.chapter_1 + " " + rec.verse_1 + " " + rec.text);
 				rec.text = rec.text.replace("\\p", "@8@8");
 				if (!rec.text.startsWith("@@")) {
 					rec.text = "@@" + rec.text;
-				}	
+				}
 			}
 		}
 		

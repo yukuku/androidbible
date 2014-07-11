@@ -17,18 +17,18 @@ public class XrefDb {
 		void process(XrefEntry xe, int ari, int entryIndex);
 	}
 
-	Map<Integer, List<XrefEntry>> map = new TreeMap<Integer, List<XrefEntry>>();
+	Map<Integer, List<XrefEntry>> map = new TreeMap<>();
 
 	public XrefDb() {}
 
 	public XrefDb(final LinkedHashMap<Integer, XrefEntry> xrefEntries) {
 		// make sure it's sorted
-		for (final Map.Entry<Integer, XrefEntry> entry : new TreeMap<Integer, XrefEntry>(xrefEntries).entrySet()) {
+		for (final Map.Entry<Integer, XrefEntry> entry : new TreeMap<>(xrefEntries).entrySet()) {
 			final int arif = entry.getKey();
 			final int ari = arif >> 8;
 			List<XrefEntry> xes = map.get(ari);
 			if (xes == null) {
-				xes = new ArrayList<XrefEntry>();
+				xes = new ArrayList<>();
 				map.put(ari, xes);
 			}
 			final XrefEntry xe = entry.getValue();
@@ -37,7 +37,7 @@ public class XrefDb {
 	}
 
 	public LinkedHashMap<Integer, XrefEntry> toEntries() {
-		final LinkedHashMap<Integer, XrefEntry> res = new LinkedHashMap<Integer, XrefEntry>();
+		final LinkedHashMap<Integer, XrefEntry> res = new LinkedHashMap<>();
 		processEach(new XrefProcessor() {
 			@Override
 			public void process(final XrefEntry xe, final int ari, final int entryIndex) {
@@ -53,7 +53,7 @@ public class XrefDb {
 	public int addBegin(int ari) {
 		List<XrefEntry> list = map.get(ari);
 		if (list == null) {
-			list = new ArrayList<XrefEntry>();
+			list = new ArrayList<>();
 			map.put(ari, list);
 		}
 		
@@ -96,7 +96,7 @@ public class XrefDb {
 
 		List<XrefEntry> list = map.get(ari);
 		if (list == null) {
-			list = new ArrayList<XrefEntry>();
+			list = new ArrayList<>();
 			map.put(ari, list);
 		}
 
@@ -156,7 +156,7 @@ public class XrefDb {
 
 	public static XrefProcessor defaultShiftTbProcessor = new XrefDb.XrefProcessor() {
 		@Override public void process(XrefEntry xe, int ari_location, int entryIndex) {
-			final List<int[]> pairs = new ArrayList<int[]>();
+			final List<int[]> pairs = new ArrayList<>();
 			DesktopVerseFinder.findInText(xe.content, new DesktopVerseFinder.DetectorListener() {
 				@Override public boolean onVerseDetected(int start, int end, String verse) {
 					pairs.add(new int[] {start, end});

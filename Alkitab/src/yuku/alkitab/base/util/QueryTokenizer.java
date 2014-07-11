@@ -39,8 +39,7 @@ public class QueryTokenizer {
 
 		//# process raw tokens
 		List<String> processed = new ArrayList<>(raw_tokens.size());
-		for (int i = 0, len = raw_tokens.size(); i < len; i++) {
-			String raw_token = raw_tokens.get(i);
+		for (String raw_token : raw_tokens) {
 			if (isPlussedToken(raw_token)) {
 				String tokenWithoutPlus = tokenWithoutPlus(raw_token);
 				if (tokenWithoutPlus.length() > 0) {

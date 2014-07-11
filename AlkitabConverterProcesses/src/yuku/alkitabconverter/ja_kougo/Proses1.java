@@ -33,10 +33,10 @@ public class Proses1 {
 	final SAXParserFactory factory = SAXParserFactory.newInstance();
 	Handler handler;
 
-	List<Rec> xrec = new ArrayList<Rec>();
+	List<Rec> xrec = new ArrayList<>();
 	PericopeData pericopeData = new PericopeData();
 	{
-		pericopeData.entries = new ArrayList<PericopeData.Entry>();
+		pericopeData.entries = new ArrayList<>();
 	}
 
 	public static void main(String[] args) throws Exception {

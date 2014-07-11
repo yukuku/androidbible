@@ -75,6 +75,7 @@ public class IntArrayList implements Parcelable {
 	}
 
 	public static final Parcelable.Creator<IntArrayList> CREATOR = new Parcelable.Creator<IntArrayList>() {
+		@Override
 		public IntArrayList createFromParcel(Parcel in) {
 			int len = in.readInt();
 			
@@ -87,6 +88,7 @@ public class IntArrayList implements Parcelable {
 			return res;
 		}
 
+		@Override
 		public IntArrayList[] newArray(int size) {
 			return new IntArrayList[size];
 		}

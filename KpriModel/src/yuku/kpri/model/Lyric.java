@@ -19,7 +19,7 @@ public class Lyric implements Serializable, Parcelable {
 	
     public Lyric(Parcel in) {
     	caption = in.readString();
-		in.readList(verses = new ArrayList<Verse>(), getClass().getClassLoader());
+		in.readList(verses = new ArrayList<>(), getClass().getClassLoader());
 	}
 
 	@Override public void writeToParcel(Parcel out, int flags) {

@@ -91,7 +91,7 @@ public class CuvColProses {
 
 
 	private static Teks teks(ArrayList<Rec> xrec) {
-		final ArrayList<String> ss = new ArrayList<String>();
+		final ArrayList<String> ss = new ArrayList<>();
 		for (Rec rec: xrec) {
 			ss.add(rec.text);
 		}

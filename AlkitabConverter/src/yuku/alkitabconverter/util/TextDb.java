@@ -17,7 +17,7 @@ import java.util.TreeSet;
 public class TextDb {
 	public static final String TAG = TextDb.class.getSimpleName();
 
-	TreeMap<Integer, VerseState> map = new TreeMap<Integer, VerseState>();
+	TreeMap<Integer, VerseState> map = new TreeMap<>();
 
 	public TextDb() {
 	}
@@ -122,7 +122,7 @@ public class TextDb {
 	}
 	
 	public void normalize() {
-		Set<Integer> keys = new TreeSet<Integer>(map.keySet());
+		Set<Integer> keys = new TreeSet<>(map.keySet());
 		int last_bookId = -1;
 		int last_chapter_1 = 0;
 		int last_verse_1 = 0;
@@ -194,7 +194,7 @@ public class TextDb {
 	}
 
 	public List<Rec> toRecList() {
-		List<Rec> res = new ArrayList<Rec>();
+		List<Rec> res = new ArrayList<>();
 		for (Entry<Integer, VerseState> e: map.entrySet()) {
 			Rec rec = new Rec();
 			int ari = e.getKey();
@@ -214,7 +214,7 @@ public class TextDb {
 	}
 
 	public int getBookCount() {
-		Set<Integer> bookIds = new LinkedHashSet<Integer>();
+		Set<Integer> bookIds = new LinkedHashSet<>();
 		for (Map.Entry<Integer, VerseState> e: map.entrySet()) {
 			int bookId = Ari.toBook(e.getKey());
 			bookIds.add(bookId);
@@ -223,7 +223,7 @@ public class TextDb {
 	}
 	
 	public int[] getBookIds() {
-		Set<Integer> bookIds = new TreeSet<Integer>();
+		Set<Integer> bookIds = new TreeSet<>();
 		for (Map.Entry<Integer, VerseState> e: map.entrySet()) {
 			int bookId = Ari.toBook(e.getKey());
 			bookIds.add(bookId);

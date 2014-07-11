@@ -73,7 +73,7 @@ public class Yes2Writer {
 		}
 	}
 
-	public List<SectionContent> sections = new ArrayList<SectionContent>();
+	public List<SectionContent> sections = new ArrayList<>();
 
 	public void writeToFile(RandomOutputStream output) throws IOException {
 		BintexWriter bw = new BintexWriter(output);
@@ -87,10 +87,10 @@ public class Yes2Writer {
 		
 		///////// SECTION INDEX ///////////
 		
-		long savedpos_sectionIndexSize = -1;
-		long savedpos_startOfSectionIndex = -1;
+		long savedpos_sectionIndexSize;
+		long savedpos_startOfSectionIndex;
 		long[] savedpos_sectionIndexSizeEntries = new long[section_count];
-		long savedpos_startOfSections = -1;
+		long savedpos_startOfSections;
 		int[] saved_sectionOffset = new int[section_count];
 		int[] savedsizes_sectionAttributes = new int[section_count];
 		int[] savedsizes_sectionContent = new int[section_count];

@@ -319,17 +319,17 @@ public class SearchEngine {
 		List<String> tokens; // this will be: "a" "b" "c" "+d" "+e" "+f"
 		List<String> multiwords = null; // this will be: "a b" "+d e"
 		{
-			Set<String> tokenSet = new LinkedHashSet<String>(Arrays.asList(QueryTokenizer.tokenize(query.query_string)));
+			Set<String> tokenSet = new LinkedHashSet<>(Arrays.asList(QueryTokenizer.tokenize(query.query_string)));
 			Log.d(TAG, "Tokens before retokenization:");
 			for (String token: tokenSet) {
 				Log.d(TAG, "- token: " + token);
 			}
 			
-			Set<String> tokenSet2 = new LinkedHashSet<String>();
+			Set<String> tokenSet2 = new LinkedHashSet<>();
 			for (String token: tokenSet) {
 				if (QueryTokenizer.isMultiwordToken(token)) {
 					if (multiwords == null) {
-						multiwords = new ArrayList<String>();
+						multiwords = new ArrayList<>();
 					}
 					multiwords.add(token);
 					boolean token_plussed = QueryTokenizer.isPlussedToken(token);
@@ -360,7 +360,7 @@ public class SearchEngine {
 				}
 			}
 			
-			tokens = new ArrayList<String>(tokenSet2);
+			tokens = new ArrayList<>(tokenSet2);
 		}
 		
 		timing.addSplit("Tokenize query");
@@ -392,7 +392,7 @@ public class SearchEngine {
 				if (plussed) {
 					if (word.equals(token_bare)) match = true;
 				} else {
-					if (word.indexOf(token_bare) >= 0) match = true;
+					if (word.contains(token_bare)) match = true;
 				}
 				
 				if (match) {
@@ -472,7 +472,7 @@ public class SearchEngine {
 							String multiword_bare = multiwords_bare[j];
 							boolean multiword_plussed = multiwords_plussed[j];
 							
-							if ((multiword_plussed && indexOfWholeWord(text, multiword_bare, 0) < 0) || (!multiword_plussed && text.indexOf(multiword_bare) < 0)) {
+							if ((multiword_plussed && indexOfWholeWord(text, multiword_bare, 0) < 0) || (!multiword_plussed && !text.contains(multiword_bare))) {
 								passed = false;
 								break;
 							}

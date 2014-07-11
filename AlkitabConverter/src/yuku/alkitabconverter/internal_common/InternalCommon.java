@@ -42,7 +42,7 @@ public class InternalCommon {
 	 * @param prefix e.g. "tb"
 	 */
 	public static void createInternalFiles(File outDir, String prefix, List<String> bookNames, List<Rec> _recs, PericopeData pericopeData, XrefDb xrefDb, FootnoteDb footnoteDb) {
-		List<List<Rec>> books = new ArrayList<List<Rec>>();
+		List<List<Rec>> books = new ArrayList<>();
 		
 		for (int i = 1; i <= 66; i++) {
 			books.add(new ArrayList<Rec>());
@@ -190,7 +190,7 @@ public class InternalCommon {
 	
 	public static List<String> fileToBookNames(String filename) throws FileNotFoundException {
 		// parse file nama kitab
-		List<String> res = new ArrayList<String>(); // indexnya sama dengan kitabPos
+		List<String> res = new ArrayList<>(); // indexnya sama dengan kitabPos
 		Scanner sc = new Scanner(new File(filename));
 		while (sc.hasNextLine()) {
 			String judul = sc.nextLine().trim();

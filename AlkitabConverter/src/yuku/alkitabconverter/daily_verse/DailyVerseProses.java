@@ -14,8 +14,8 @@ public class DailyVerseProses {
 
 	private static final String INPUT_FILE = System.getProperty("user.dir") + "/AlkitabConverter/file/daily_verses_bt.csv";
 	private static final String OUTPUT_FILE = System.getProperty("user.dir") + "/AlkitabConverter/file/daily_verses_bt.bt";
-	private List<Integer> aris = new ArrayList<Integer>();
-	private List<Integer> verseCounts = new ArrayList<Integer>();
+	private List<Integer> aris = new ArrayList<>();
+	private List<Integer> verseCounts = new ArrayList<>();
 
 	public static void main(String[] args) {
 		DailyVerseProses proses = new DailyVerseProses();

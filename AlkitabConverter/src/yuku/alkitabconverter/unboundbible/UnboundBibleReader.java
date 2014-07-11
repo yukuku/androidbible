@@ -11,8 +11,8 @@ import yuku.alkitabconverter.util.Rec;
 
 public class UnboundBibleReader {
 	public static List<Rec> parse(String nf, int kolom_orig_book_index, int kolom_pasal_1, int kolom_ayat_1, int kolom_isi) throws Exception {
-		LinkedHashMap<Integer, Integer> nn = new LinkedHashMap<Integer, Integer>();
-		List<Rec> res = new ArrayList<Rec>();
+		LinkedHashMap<Integer, Integer> nn = new LinkedHashMap<>();
+		List<Rec> res = new ArrayList<>();
 		
 		Scanner sc = new Scanner(new File(nf), "utf-8");
 		

@@ -28,7 +28,7 @@ public class YetFileInput {
 		public LinkedHashMap<Integer, FootnoteEntry> footnoteEntries;
 
 		void addInfo(String k, String v) {
-			if (infos == null) infos = new LinkedHashMap<String, String>();
+			if (infos == null) infos = new LinkedHashMap<>();
 			infos.put(k, v);
 		}
 		
@@ -38,14 +38,14 @@ public class YetFileInput {
 		}
 		
 		void addRec(Rec rec) {
-			if (recs == null) recs = new ArrayList<Rec>();
+			if (recs == null) recs = new ArrayList<>();
 			recs.add(rec);
 		}
 		
 		void addBookName(int book_1, String bookName, String bookAbbreviation) {
 			if (bookNames == null) {
-				bookNames = new TreeMap<Integer, String>();
-				bookAbbreviations = new TreeMap<Integer, String>();
+				bookNames = new TreeMap<>();
+				bookAbbreviations = new TreeMap<>();
 			}
 
 			bookNames.put(book_1, bookName);
@@ -58,14 +58,14 @@ public class YetFileInput {
 
 		public void addXrefEntry(final int arif, final XrefEntry xe) {
 			if (xrefEntries == null) {
-				xrefEntries = new LinkedHashMap<Integer, XrefEntry>();
+				xrefEntries = new LinkedHashMap<>();
 			}
 			xrefEntries.put(arif, xe);
 		}
 
 		public void addFootnoteEntry(final int arif, final FootnoteEntry fe) {
 			if (footnoteEntries == null) {
-				footnoteEntries = new LinkedHashMap<Integer, FootnoteEntry>();
+				footnoteEntries = new LinkedHashMap<>();
 			}
 			footnoteEntries.put(arif, fe);
 		}
@@ -74,7 +74,7 @@ public class YetFileInput {
 		 * @return book names indexed from 0
 		 */
 		public List<String> getBookNamesAsList() {
-			final List<String> res = new ArrayList<String>();
+			final List<String> res = new ArrayList<>();
 			for (Map.Entry<Integer, String> e : bookNames.entrySet()) {
 				final int index = e.getKey() - 1;
 				while (index + 1 > res.size()) {
@@ -86,7 +86,7 @@ public class YetFileInput {
 		}
 
 		public List<String> getBookAbbreviationsAsList() {
-			final List<String> res = new ArrayList<String>();
+			final List<String> res = new ArrayList<>();
 			for (Map.Entry<Integer, String> e : bookAbbreviations.entrySet()) {
 				final int index = e.getKey() - 1;
 				while (index + 1 > res.size()) {
@@ -99,7 +99,7 @@ public class YetFileInput {
 	}
 	
 	public YetFileInputResult parse(String nf) throws Exception {
-		LinkedHashMap<Integer, Integer> nversePerBook = new LinkedHashMap<Integer, Integer>();
+		LinkedHashMap<Integer, Integer> nversePerBook = new LinkedHashMap<>();
 		
 		
 		int lastBook_1 = 1;

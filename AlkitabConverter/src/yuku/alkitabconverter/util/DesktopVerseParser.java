@@ -93,7 +93,7 @@ public class DesktopVerseParser {
 		"wahyu|why|wah|revelations|revelation|rev|re|rv",
 	};
 	
-	static HashMap<String, Integer> bookNameToId = new HashMap<String, Integer>(512);
+	static HashMap<String, Integer> bookNameToId = new HashMap<>(512);
 	
 	static {
 		for (int i = 0, len = orderedBooks.length; i < len; i++) {

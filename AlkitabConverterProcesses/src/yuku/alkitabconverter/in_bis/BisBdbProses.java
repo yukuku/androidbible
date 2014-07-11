@@ -93,7 +93,7 @@ public class BisBdbProses {
 
 
 	private static Teks bisTeks(ArrayList<Rec> xrec) {
-		final ArrayList<String> ss = new ArrayList<String>();
+		final ArrayList<String> ss = new ArrayList<>();
 		for (Rec rec: xrec) {
 			ss.add(rec.text);
 		}

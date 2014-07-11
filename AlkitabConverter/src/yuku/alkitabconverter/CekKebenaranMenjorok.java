@@ -6,8 +6,7 @@ import java.util.Scanner;
 public class CekKebenaranMenjorok {
 
 	/**
-	 * @param args
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
 		new CekKebenaranMenjorok().cek("/Users/Yuku/operasi/tb_k19-asli.txt", "/Users/Yuku/operasi/tb_k19-semua-proses.txt");

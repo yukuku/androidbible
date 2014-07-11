@@ -71,12 +71,13 @@ public class App extends yuku.afw.App {
 			lang = Locale.getDefault().getLanguage();
 		}
 
-		if ("zh-CN".equals(lang)) {
-			return Locale.SIMPLIFIED_CHINESE;
-		} else if ("zh-TW".equals(lang)) {
-			return Locale.TRADITIONAL_CHINESE;
-		} else {
-			return new Locale(lang);
+		switch (lang) {
+			case "zh-CN":
+				return Locale.SIMPLIFIED_CHINESE;
+			case "zh-TW":
+				return Locale.TRADITIONAL_CHINESE;
+			default:
+				return new Locale(lang);
 		}
 	}
 

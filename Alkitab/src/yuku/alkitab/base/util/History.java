@@ -31,7 +31,7 @@ public class History {
 	private History() {
 		this.preferences = App.getInstantPreferences();
 
-		entries = new ArrayList<ClientHistoryEntry>();
+		entries = new ArrayList<>();
 
 		try {
 			int n = preferences.getInt(HISTORY_PREFIX + "n", 0); //$NON-NLS-1$
@@ -117,7 +117,7 @@ public class History {
 	}
 
 	public synchronized List<HistoryEntry> getEntriesToSend() {
-		List<HistoryEntry> res = new ArrayList<HistoryEntry>();
+		List<HistoryEntry> res = new ArrayList<>();
 		for (ClientHistoryEntry entry : entries) {
 			if (!entry.savedInServer) {
 				res.add(entry.toHistoryEntry());

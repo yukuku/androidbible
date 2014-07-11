@@ -47,11 +47,6 @@ public class MemoryRandomOutputStream extends RandomOutputStream {
 	}
 
 	@Override public void close() throws IOException {
-		return;
-	}
-	
-	@Override protected void finalize() throws Throwable {
-		return;
 	}
 
     /**

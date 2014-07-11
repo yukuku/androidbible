@@ -114,7 +114,7 @@ public class ConvertOptionsDialog {
 			tabEncoding = context.getString(R.string.hebrew_charset);
 		}
 		
-		List<String> charsets = new ArrayList<String>();
+		List<String> charsets = new ArrayList<>();
 		if (tabEncoding == null) {
 			for (Map.Entry<String, Charset> charset: Charset.availableCharsets().entrySet()) {
 				String key = charset.getKey();
@@ -143,7 +143,7 @@ public class ConvertOptionsDialog {
 			cbEncoding.setEnabled(false);
 		}
 		
-		encodingAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, charsets);
+		encodingAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, charsets);
 		encodingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		cbEncoding.setAdapter(encodingAdapter);
 		

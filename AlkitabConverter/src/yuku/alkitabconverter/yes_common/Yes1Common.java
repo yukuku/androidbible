@@ -22,7 +22,7 @@ public class Yes1Common {
 	public final static Charset ascii = Charset.forName("ascii");
 
 	public static Teks teks(List<Rec> xrec, String _encoding) {
-		final ArrayList<String> ss = new ArrayList<String>();
+		final ArrayList<String> ss = new ArrayList<>();
 		for (Rec rec: xrec) {
 			ss.add(rec.text);
 		}
@@ -48,7 +48,7 @@ public class Yes1Common {
 
 	public static InfoKitab infoKitab(List<Rec> xrec, String _namafileInputKitab, String _encoding, int _encodingYes) throws Exception {
 		// parse file nama kitab
-		List<String> xnamaKitab = new ArrayList<String>(); // indexnya sama dengan kitabPos
+		List<String> xnamaKitab = new ArrayList<>(); // indexnya sama dengan kitabPos
 		Scanner sc = new Scanner(new File(_namafileInputKitab));
 		while (sc.hasNextLine()) {
 			String judul = sc.nextLine().trim();
@@ -63,7 +63,7 @@ public class Yes1Common {
 
 	public static InfoKitab infoKitab(List<Rec> xrec, String _encoding, List<String> xnamaKitab) throws Exception {
 		// sapu xrec, liat ada kitab apa aja
-		List<Integer> xkitab_1 = new ArrayList<Integer>();
+		List<Integer> xkitab_1 = new ArrayList<>();
 		for (Rec rec: xrec) {
 			if (!xkitab_1.contains(rec.book_1)) {
 				xkitab_1.add(rec.book_1);

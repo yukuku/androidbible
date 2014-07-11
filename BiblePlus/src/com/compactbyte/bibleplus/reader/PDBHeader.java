@@ -101,7 +101,7 @@ public class PDBHeader {
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("Name: ").append(getName("UTF-8")).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		sb.append("type_str: ").append(type_str).append("\n");  //$NON-NLS-1$//$NON-NLS-2$
 		sb.append("creator_str: ").append(creator_str).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$

@@ -29,7 +29,7 @@ public class BareToYet {
 	private void u() throws Exception {
 		Scanner sc = new Scanner(new File(INPUT_TEXT_1), INPUT_TEXT_ENCODING);
 		
-		List<Rec> recs = new ArrayList<Rec>();
+		List<Rec> recs = new ArrayList<>();
 		int offset_0 = 0;
 		
 		while (sc.hasNextLine()) {

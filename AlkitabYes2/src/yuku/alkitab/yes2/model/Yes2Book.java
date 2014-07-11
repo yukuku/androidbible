@@ -14,7 +14,7 @@ public class Yes2Book extends Book {
 	public int[] chapter_offsets;
 	
 	public void toBytes(BintexWriter bw) throws IOException {
-		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		Map<String, Object> map = new LinkedHashMap<>();
 		map.put("version", 3);
 		map.put("bookId", bookId);
 		map.put("shortName", shortName);

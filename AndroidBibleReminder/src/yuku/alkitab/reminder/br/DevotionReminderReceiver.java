@@ -16,6 +16,7 @@ import yuku.alkitab.reminder.util.DevotionReminder;
 public class DevotionReminderReceiver extends BroadcastReceiver {
 	public static final String TAG = DevotionReminderReceiver.class.getSimpleName();
 
+	@Override
 	public void onReceive(Context context, Intent intent) {
 
 		PendingIntent pi = PendingIntent.getActivity(context, 0, new Intent("yuku.alkitab.ACTION_OPEN_DEVOTION"), PendingIntent.FLAG_UPDATE_CURRENT);

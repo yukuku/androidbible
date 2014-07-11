@@ -29,7 +29,7 @@ public class Proses2 {
 
 	private void muatNomerKitab() throws Exception {
 		Scanner sc = new Scanner(new FileInputStream("./bahan/en-kjv-thml/in/kjv.nomerkitab"), "utf-8");
-		nomerKitab = new TreeMap<String, Integer>();
+		nomerKitab = new TreeMap<>();
 		while (sc.hasNext()) {
 			String k = sc.next();
 			int v = sc.nextInt();

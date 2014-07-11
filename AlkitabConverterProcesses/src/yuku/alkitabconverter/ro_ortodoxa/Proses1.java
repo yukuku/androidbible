@@ -26,7 +26,7 @@ public class Proses1 {
 	static String INFO_JUDUL = "Biblia Ortodoxă";
 	static String INFO_KETERANGAN = "Biblia Ortodoxă (Biblia Sinodală / Bible of the Holy Synod)";
 
-	List<Rec> xrec = new ArrayList<Rec>();
+	List<Rec> xrec = new ArrayList<>();
 
 	public static void main(String[] args) throws Exception {
 		new Proses1().u();
@@ -35,7 +35,7 @@ public class Proses1 {
 	private void u() throws Exception {
 		Scanner sc = new Scanner(new File(INPUT_TEKS_1), INPUT_TEKS_ENCODING);
 		
-		List<Rec> xrec = new ArrayList<Rec>();
+		List<Rec> xrec = new ArrayList<>();
 		int offset_0 = 0;
 		
 		while (sc.hasNextLine()) {

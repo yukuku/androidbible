@@ -80,8 +80,8 @@ public class VerseProviderTest extends AndroidTestCase {
 			ranges.addRange(64, 1, 1, 64, 1, 1);
 			ranges.addRange(65, 1, 1, 65, 1, 1);
 			List<Verse> verses = vp.getVerses(ranges);
-			for (int i = 0, len = verses.size(); i < len; i++) {
-				assertFalse(verses.get(i).text.contains("@"));
+			for (Verse verse : verses) {
+				assertFalse(verse.text.contains("@"));
 			}
 		}
 	}

@@ -77,8 +77,8 @@ public class SongFilter {
 		if (ps == null) return true; // empty filter? consider it passes
 		
 		int matches = 0;
-		for (int i = 0; i < ps.length; i++) {
-			if (match(song, ps[i])) matches++;
+		for (final Pattern p : ps) {
+			if (match(song, p)) matches++;
 		}
 		return matches == ps.length;
 	}

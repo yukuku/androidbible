@@ -60,7 +60,7 @@ public class YetFileOutput {
 		final PrintWriter pw = new PrintWriter(new OutputStreamWriter(output, "utf-8"));
 
 		// info
-        final Map<String, String> info = new LinkedHashMap<String, String>();
+        final Map<String, String> info = new LinkedHashMap<>();
         if (versionInfo.locale != null) info.put("locale", versionInfo.locale);
         if (versionInfo.shortName != null) info.put("shortName", versionInfo.shortName);
         if (versionInfo.longName != null) info.put("longName", versionInfo.longName);

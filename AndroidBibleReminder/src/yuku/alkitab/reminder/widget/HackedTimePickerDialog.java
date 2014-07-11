@@ -103,7 +103,8 @@ public class HackedTimePickerDialog extends AlertDialog
         mTimePicker.setOnTimeChangedListener(this);
     }
 
-    public void onClick(DialogInterface dialog, int which) {
+    @Override
+	public void onClick(DialogInterface dialog, int which) {
         if (mCallback != null) {
         	mTimePicker.clearFocus();
         	if (which == AlertDialog.BUTTON_POSITIVE) {
@@ -120,7 +121,8 @@ public class HackedTimePickerDialog extends AlertDialog
         mTimePicker.setCurrentMinute(minutOfHour);
     }
 
-    public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+    @Override
+	public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
         /* do nothing */
     }
 

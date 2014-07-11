@@ -37,12 +37,12 @@ public class Song implements Serializable, Parcelable {
 		res.code = in.readString();                    
 		res.title = in.readString();                 
 		res.title_original = in.readString();            
-		in.readStringList(res.authors_lyric = new ArrayList<String>());
-		in.readStringList(res.authors_music = new ArrayList<String>());
+		in.readStringList(res.authors_lyric = new ArrayList<>());
+		in.readStringList(res.authors_music = new ArrayList<>());
 		res.tune = in.readString();                  
 		res.keySignature = in.readString();             
 		res.timeSignature = in.readString();                
-		in.readList(res.lyrics = new ArrayList<Lyric>(), res.getClass().getClassLoader());
+		in.readList(res.lyrics = new ArrayList<>(), res.getClass().getClassLoader());
 
     	if (dataFormatVersion >= 2) {
     		res.scriptureReferences = in.readString();

@@ -26,9 +26,8 @@ public class OldVerseTextDecoder {
 			
 			//# WARNING: This will work only if all bytes are less than 0x80. 
 			int len = ba.length;
-			for (int pos = 0; pos < len; pos++) {
-				byte c = ba[pos];
-				if (c == (byte)0x0a) {
+			for (byte c : ba) {
+				if (c == (byte) 0x0a) {
 					String single = new String(verseBuf, 0, i);
 					versesBuf.add(single);
 					i = 0;

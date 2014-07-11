@@ -84,7 +84,7 @@ public class FeedbackSender {
 		if (entries_ == null) {
 			final String base = "feedback/";
 
-			entries_ = new ArrayList<Entry>();
+			entries_ = new ArrayList<>();
 			int nfeedback = pref_.getInt(base + "n", 0); //$NON-NLS-1$
 
 			for (int i = 0; i < nfeedback; i++) {
@@ -230,8 +230,6 @@ public class FeedbackSender {
 
 	/**
 	 * Set the uniqueId to use rather than the generated one
-	 * 
-	 * @param installationId
 	 */
 	public void setOverrideInstallationId(String installationId) {
 		overrideInstallationId_ = installationId;
