@@ -13,7 +13,7 @@ public class BookNameSorter {
 	static final String[] numberedBookStartsWithNumbers = {null, "1", "2", "3", "4", "5"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	static final String[] numberedBookReplaceWiths = {null, "1", "2", "3", "4", "5"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	static final int[] numberedBookMap;
-	static final HashMap<String, String> hardcodedAbbrs = new HashMap<String, String>();
+	static final HashMap<String, String> hardcodedAbbrs = new HashMap<>();
 	
 	static {
 		// for these book numbers, replace "I", "II", "III", "IV", "V" with numbers 

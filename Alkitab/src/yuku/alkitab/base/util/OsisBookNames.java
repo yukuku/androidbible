@@ -84,7 +84,7 @@ public class OsisBookNames {
 	};
 	
 	static {
-		bookNameToBookIdMap = new TObjectIntHashMap<String>(250, 0.75f, -1);
+		bookNameToBookIdMap = new TObjectIntHashMap<>(250, 0.75f, -1);
 		for (int i = 0; i < names.length; i++) {
 			bookNameToBookIdMap.put(names[i], i);
 		}

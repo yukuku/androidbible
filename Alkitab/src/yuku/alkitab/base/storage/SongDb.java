@@ -162,7 +162,7 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 
 	public List<SongInfo> getSongInfosByBookName(String bookName) {
 		SQLiteDatabase db = helper.getReadableDatabase();
-		List<SongInfo> res = new ArrayList<SongInfo>();
+		List<SongInfo> res = new ArrayList<>();
 
 		String[] columns = { // column indexes!
 		Table.SongInfo.bookName.name(), // 0
@@ -190,7 +190,7 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 	public List<SongInfo> getSongInfosByBookNameAndDeepFilter(String bookName, String filter_string) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		
-		List<SongInfo> res = new ArrayList<SongInfo>();
+		List<SongInfo> res = new ArrayList<>();
 
 		String[] columns = { // column indexes!
 		Table.SongInfo.bookName.name(), // 0

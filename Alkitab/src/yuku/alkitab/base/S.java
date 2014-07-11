@@ -119,7 +119,7 @@ public class S {
 		applied.pericopeSpacingBottom = (int) (scaleBasedOnFontSize * res.getDimensionPixelOffset(R.dimen.pericopeSpacingBottom) + 0.5f);
 	}
 	
-	private static TObjectIntHashMap<String> cache_rawResId = new TObjectIntHashMap<String>(32);
+	private static TObjectIntHashMap<String> cache_rawResId = new TObjectIntHashMap<>(32);
 	
 	public static InputStream openRaw(String name) {
 		Resources resources = App.context.getResources();

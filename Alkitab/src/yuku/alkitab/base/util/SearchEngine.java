@@ -92,7 +92,7 @@ public class SearchEngine {
 		
 		// remove duplicates
 		{
-			ArrayList<String> awords = new ArrayList<String>();
+			ArrayList<String> awords = new ArrayList<>();
 			String last = null;
 			for (String word: words) {
 				if (!word.equals(last)) {

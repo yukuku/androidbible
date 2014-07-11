@@ -32,7 +32,6 @@ public abstract class ArticleFromSabda implements DevotionArticle {
 	
 	/**
 	 * Pulih dari db
-	 * @param readyToUse
 	 */
 	public ArticleFromSabda(String date, String title, String headerHtml, String bodyHtml, boolean readyToUse) {
 		this.date = date;

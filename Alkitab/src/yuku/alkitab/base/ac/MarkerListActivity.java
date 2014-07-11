@@ -327,9 +327,9 @@ public class MarkerListActivity extends BaseActivity {
 		if (filter_kind == Marker.Kind.bookmark) {
 			labels.add(getString(R.string.menuSortCaption));
 			values.add(R.string.menuSortCaption);
-		} else if (filter_kind == Marker.Kind.note) {
-			// nop
-		} else if (filter_kind == Marker.Kind.highlight) {
+		}
+
+		if (filter_kind == Marker.Kind.highlight) {
 			labels.add(getString(R.string.menuSortCaption_color));
 			values.add(R.string.menuSortCaption);
 		}

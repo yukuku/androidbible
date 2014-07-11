@@ -20,7 +20,7 @@ public class DevotionDownloader extends Thread {
 	
 	private Context context_;
 	private OnStatusDonlotListener listener_;
-	private LinkedList<DevotionArticle> queue_ = new LinkedList<DevotionArticle>();
+	private LinkedList<DevotionArticle> queue_ = new LinkedList<>();
 	private boolean idle_;
 
 	public DevotionDownloader(Context context, OnStatusDonlotListener listener) {

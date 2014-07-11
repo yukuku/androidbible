@@ -32,7 +32,7 @@ public class VerseTextView extends TextView {
 	public static ThreadLocal<List<SpanEntry>> spanEntriesBuffer = new ThreadLocal<List<SpanEntry>>() {
 		@Override
 		protected List<SpanEntry> initialValue() {
-			return new ArrayList<SpanEntry>(8);
+			return new ArrayList<>(8);
 		}
 	};
 

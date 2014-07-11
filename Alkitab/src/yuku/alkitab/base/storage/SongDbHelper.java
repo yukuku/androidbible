@@ -10,8 +10,7 @@ public class SongDbHelper extends yuku.afw.storage.InternalDbHelper {
 	}
 	
 	@Override public void createTables(SQLiteDatabase db) {
-		StringBuilder sb = new StringBuilder(200);
-		sb.append("create table " + Table.SongInfo.tableName() + " ( _id integer primary key ");
+		StringBuilder sb = new StringBuilder("create table " + Table.SongInfo.tableName() + " ( _id integer primary key ");
 		for (Table.SongInfo field: Table.SongInfo.values()) {
 			sb.append(',');
 			sb.append(field.name());

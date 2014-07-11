@@ -30,7 +30,7 @@ public class QueryTokenizer {
 	 * @return list of tokens, starting with the character '+' if it is to be matched in a whole-word/whole-phrase manner.
 	 */
 	public static String[] tokenize(String query) {
-		List<String> raw_tokens = new ArrayList<String>();
+		List<String> raw_tokens = new ArrayList<>();
 
 		Matcher matcher = QueryTokenizer.oneToken.matcher(query.toLowerCase(Locale.getDefault()));
 		while (matcher.find()) {
@@ -38,7 +38,7 @@ public class QueryTokenizer {
 		}
 
 		//# process raw tokens
-		List<String> processed = new ArrayList<String>(raw_tokens.size());
+		List<String> processed = new ArrayList<>(raw_tokens.size());
 		for (int i = 0, len = raw_tokens.size(); i < len; i++) {
 			String raw_token = raw_tokens.get(i);
 			if (isPlussedToken(raw_token)) {
@@ -115,7 +115,7 @@ public class QueryTokenizer {
 	 * For tokens such as "abc.,- def", which will be re-tokenized to "abc" "def"
 	 */
 	static List<String> tokenizeMultiwordToken(String token) {
-		List<String> res = new ArrayList<String>();
+		List<String> res = new ArrayList<>();
 		Matcher m = pattern_letters.matcher(token);
 		while (m.find()) {
 			res.add(m.group());

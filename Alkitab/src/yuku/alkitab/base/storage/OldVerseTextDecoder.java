@@ -16,7 +16,7 @@ public class OldVerseTextDecoder {
 		}
 		
 		@Override public String[] separateIntoVerses(byte[] ba, boolean lowercased) {
-			ArrayList<String> versesBuf = new ArrayList<String>(60);
+			ArrayList<String> versesBuf = new ArrayList<>(60);
 			char[] verseBuf = new char[4000];
 			int i = 0;
 			
@@ -51,7 +51,7 @@ public class OldVerseTextDecoder {
 	
 	public static class Utf8 implements VerseTextDecoder {
 		@Override public String[] separateIntoVerses(byte[] ba, boolean lowercased) {
-			ArrayList<String> versesBuf = new ArrayList<String>(60);
+			ArrayList<String> versesBuf = new ArrayList<>(60);
 			
 			int len = ba.length;
 			int from = 0;

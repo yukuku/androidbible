@@ -184,8 +184,6 @@ public class TextAppearancePanel {
 				ColorThemes.setCurrentColors(colors, Preferences.getBoolean(Prefkey.is_night_mode, false));
 				listener.onValueChanged();
 				colorThemeAdapter.notifyDataSetChanged();
-			} else {
-				// we are at the last item
 			}
 		}
 
@@ -299,18 +297,20 @@ public class TextAppearancePanel {
 		}
 		
 		public int getPositionByName(String name) {
-			if ("DEFAULT".equals(name)) {
-				return 0;
-			} else if ("SERIF".equals(name)) {
-				return 1;
-			} else if ("MONOSPACE".equals(name)) {
-				return 2;
-			} else {
-				for (int i = 0; i < fontEntries.size(); i++) {
-					if (fontEntries.get(i).name.equals(name)) {
-						return i + 3;
+			switch (name) {
+				case "DEFAULT":
+					return 0;
+				case "SERIF":
+					return 1;
+				case "MONOSPACE":
+					return 2;
+				default:
+					for (int i = 0; i < fontEntries.size(); i++) {
+						if (fontEntries.get(i).name.equals(name)) {
+							return i + 3;
+						}
 					}
-				}
+					break;
 			}
 			return -1;
 		}

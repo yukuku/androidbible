@@ -62,8 +62,8 @@ public class MultiColorView extends TextView {
 			float box_w = (r_inner - l_inner - 2 * density * (colors.length - 1)) / colors.length;
 			float box_off = (r_inner - l_inner + 2 * density) / colors.length;
 			float l_current = l_inner;
-			for (int i = 0; i < colors.length; i++) {
-				p.setColor(colors[i]);
+			for (final int color : colors) {
+				p.setColor(color);
 				canvas.drawRect(l_current, t_inner, l_current + box_w, b_inner, p);
 				l_current += box_off;
 			}

@@ -155,8 +155,8 @@ public class XrefDialog extends BaseDialog {
 			Log.d(TAG, "linkPos " + linkPos + " target=" + encodedTarget + " ranges=" + ranges);
 		}
 		
-		displayedVerseTexts = new ArrayList<String>();
-		displayedVerseNumberTexts = new ArrayList<String>();
+		displayedVerseTexts = new ArrayList<>();
+		displayedVerseNumberTexts = new ArrayList<>();
 		displayedRealAris = new IntArrayList();
 
 		int verse_count = sourceVersion.loadVersesByAriRanges(ranges, displayedRealAris, displayedVerseTexts);

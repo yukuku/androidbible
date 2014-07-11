@@ -1,14 +1,14 @@
 package yuku.alkitab.base.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import yuku.alkitab.model.SongInfo;
 import yuku.kpri.model.Lyric;
 import yuku.kpri.model.Song;
 import yuku.kpri.model.Verse;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class SongFilter {
@@ -41,7 +41,7 @@ public class SongFilter {
 	}
 	
 	public static List<SongInfo> filterSongInfosByString(List<SongInfo> songInfos, String filter_string) {
-		List<SongInfo> res = new ArrayList<SongInfo>();
+		List<SongInfo> res = new ArrayList<>();
 		
 		if (filter_string == null) {
 			res.addAll(songInfos);
@@ -57,7 +57,7 @@ public class SongFilter {
 	}
 	
 	public static List<Song> filterSongsByString(List<Song> songs, String filter_string) {
-		List<Song> res = new ArrayList<Song>();
+		List<Song> res = new ArrayList<>();
 		
 		if (filter_string == null) {
 			res.addAll(songs);
@@ -88,8 +88,8 @@ public class SongFilter {
 		if (ps == null) return true; // empty filter? consider it passes
 
 		int matches = 0;
-		for (int i = 0; i < ps.length; i++) {
-			if (match(song, ps[i])) matches++;
+		for (final Pattern p : ps) {
+			if (match(song, p)) matches++;
 		}
 		return matches == ps.length;
 	}

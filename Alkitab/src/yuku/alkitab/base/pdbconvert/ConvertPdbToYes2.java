@@ -98,7 +98,7 @@ public class ConvertPdbToYes2 {
 					if (bookId < 0) {
 						Log.w(TAG, "bookNumber " + bookNumber + " GA DIKENAL"); //$NON-NLS-1$ //$NON-NLS-2$
 						if (res.wronglyConvertedBookNames == null) {
-							res.wronglyConvertedBookNames = new ArrayList<String>();
+							res.wronglyConvertedBookNames = new ArrayList<>();
 						}
 						res.wronglyConvertedBookNames.add(pdbBookInfo.getFullName() + " (" + bookNumber + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
@@ -119,7 +119,7 @@ public class ConvertPdbToYes2 {
 					if (bookIdToPdbBookPosMap_.containsKey(bookId)) {
 						// just a warning of duplicate
 						if (res.wronglyConvertedBookNames == null) {
-							res.wronglyConvertedBookNames = new ArrayList<String>();
+							res.wronglyConvertedBookNames = new ArrayList<>();
 						}
 						res.wronglyConvertedBookNames.add(pdbBookInfo.getFullName() + " (" + pdbBookNumber + "): duplicate"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
@@ -185,7 +185,7 @@ public class ConvertPdbToYes2 {
 
 	private BooksInfoSection getBooksInfo(final Context context, int baseProgress, boolean includeAddlTitle, int[] sortedBookIds) throws Exception {
 		// no nulls allowed
-		final List<Yes2Book> yes2books = new ArrayList<Yes2Book>();
+		final List<Yes2Book> yes2books = new ArrayList<>();
 		
 		// for the text offset from the beginning of text section
 		int offsetTotal = 0;
@@ -265,7 +265,7 @@ public class ConvertPdbToYes2 {
 			boolean prependAtAt = false;
 			
 			// look for 0x0e 'n' 0x0e
-			if (s.indexOf("\u000en\u000e") >= 0) { //$NON-NLS-1$
+			if (s.contains("\u000en\u000e")) { //$NON-NLS-1$
 				prependAtAt = true;
 				s = s.replaceAll("\\s*\u000en\u000e\\s*", "@8"); //$NON-NLS-1$ //$NON-NLS-2$
 			}

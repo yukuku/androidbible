@@ -46,8 +46,7 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 	@Override
 	public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
 		final int N = appWidgetIds.length;
-		for (int i = 0; i < N; i++) {
-			int appWidgetId = appWidgetIds[i];
+		for (int appWidgetId : appWidgetIds) {
 			buildUpdate(context, appWidgetManager, appWidgetId);
 		}
 		ComponentName componentName = new ComponentName(context, DailyVerseAppWidgetReceiver.class);

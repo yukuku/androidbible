@@ -25,8 +25,8 @@ public class FontManager {
 	}
 	
 	public static class TypefaceCreateFromFileCacher {
-		static ArrayList<String> keys = new ArrayList<String>();
-		static ArrayList<Typeface> values = new ArrayList<Typeface>();
+		static ArrayList<String> keys = new ArrayList<>();
+		static ArrayList<Typeface> values = new ArrayList<>();
 		static int max = 9;
 		
 		public static Typeface createFromFile(String path) {
@@ -78,7 +78,7 @@ public class FontManager {
 	}
 	
 	public static List<FontEntry> getInstalledFonts() {
-		List<FontEntry> res = new ArrayList<FontEntry>();
+		List<FontEntry> res = new ArrayList<>();
 		
 		// enum the bible/fonts directory
     	File fontsDir = new File(getFontsPath());

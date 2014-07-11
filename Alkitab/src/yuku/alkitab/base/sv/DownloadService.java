@@ -30,7 +30,7 @@ public class DownloadService extends Service {
 	private static final int MSG_stateChanged = 2;
 	private static final int MSG_stopSelf = 3;
 
-	LinkedHashMap<String, DownloadEntry> db = new LinkedHashMap<String, DownloadEntry>();
+	LinkedHashMap<String, DownloadEntry> db = new LinkedHashMap<>();
 	ExecutorService executor = Executors.newFixedThreadPool(3);
 	/** waiting or running */
 	AtomicInteger nwaiting = new AtomicInteger(0);

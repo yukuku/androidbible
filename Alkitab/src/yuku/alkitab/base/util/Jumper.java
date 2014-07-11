@@ -33,7 +33,7 @@ public class Jumper {
 		}
 	}
 	
-	private static WeakHashMap<Book[], List<BookRef>> condensedCache = new WeakHashMap<Book[], List<BookRef>>();
+	private static WeakHashMap<Book[], List<BookRef>> condensedCache = new WeakHashMap<>();
 	
 	public Jumper(String referenceToParse) {
 		parseSucceeded = parse(referenceToParse);
@@ -208,7 +208,7 @@ public class Jumper {
 		//# STAGE 20: Expand cases like Joh3 to Joh 3
 		//# Sample output: [Kisah, rasul, 34, 6, -, 7, 8]
 		{
-			ArrayList<String> bel = new ArrayList<String>();
+			ArrayList<String> bel = new ArrayList<>();
 			
 			for (String b: parts) {
 				if (isWord(b)) {
@@ -263,7 +263,7 @@ public class Jumper {
 		
 		//# STAGE 30: Morph something like "3" "john" to "3 john"
 		{
-			ArrayList<String> bel = new ArrayList<String>(); 
+			ArrayList<String> bel = new ArrayList<>();
 			
 			int startWord = 0;
 			
@@ -357,7 +357,7 @@ public class Jumper {
 	
 	private List<BookRef> createBookCandidates(String[] bookNames, int[] bookIds) {
 		// create cache of condensed book titles where all spaces are stripped and lowercased and "1" becomes "I", "2" becomes "II" etc.
-		final List<BookRef> res = new ArrayList<BookRef>();
+		final List<BookRef> res = new ArrayList<>();
 		
 		for (int i = 0, len = bookNames.length; i < len; i++) {
 			String condensed = bookNames[i].replaceAll("(\\s|-|_)+", "").toLowerCase(Locale.getDefault()); //$NON-NLS-1$ //$NON-NLS-2$
