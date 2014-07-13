@@ -31,6 +31,7 @@ public class Db {
 		public static final String description = "description";
 		public static final String filename = "filename";
 		public static final String preset_name = "preset_name";
+		public static final String modifyTime = "modifyTime";
 		public static final String active = "active";
 		public static final String ordering = "ordering";
 	}

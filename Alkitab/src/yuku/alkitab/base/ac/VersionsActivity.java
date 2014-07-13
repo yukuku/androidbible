@@ -464,6 +464,7 @@ public class VersionsActivity extends BaseActivity {
 				mvDb.description = reader.getDescription();
 				mvDb.filename = e.dest;
 				mvDb.preset_name = mv.preset_name;
+				mvDb.modifyTime = mv.modifyTime;
 				mvDb.ordering = maxOrdering + 1;
 
 				S.getDb().insertVersionWithActive(mvDb, true);

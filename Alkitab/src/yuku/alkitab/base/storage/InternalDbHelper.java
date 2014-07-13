@@ -198,6 +198,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 				Db.Version.description + " text," +
 				Db.Version.filename + " text," +
 				Db.Version.preset_name + " text," +
+				Db.Version.modifyTime + " integer," +
 				Db.Version.active + " integer," +
 				Db.Version.ordering + " integer)"
 		);

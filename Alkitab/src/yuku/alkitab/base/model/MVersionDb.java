@@ -17,6 +17,12 @@ public class MVersionDb extends MVersion {
 	public String filename;
 	public String preset_name;
 	public boolean cache_active; // so we don't need to keep reading/writing from/to db
+	/**
+	 * The last-known update time of the version, so we can notify the user if their downloaded versions has update.
+	 * If this is 0, it means the version does not support update notification, because the version is converted from legacy version of this app,
+	 * or added from pdb/yes files manually.
+	 */
+	public int modifyTime;
 
 	@Override
 	public String getVersionId() {

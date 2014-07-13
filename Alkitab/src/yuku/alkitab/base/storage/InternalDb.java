@@ -439,6 +439,7 @@ public class InternalDb {
 			int col_description = cursor.getColumnIndexOrThrow(Db.Version.description);
 			int col_filename = cursor.getColumnIndexOrThrow(Db.Version.filename);
 			int col_preset_name = cursor.getColumnIndexOrThrow(Db.Version.preset_name);
+			int col_modifyTime = cursor.getColumnIndexOrThrow(Db.Version.modifyTime);
 			int col_active = cursor.getColumnIndexOrThrow(Db.Version.active);
 			int col_ordering = cursor.getColumnIndexOrThrow(Db.Version.ordering);
 
@@ -450,6 +451,7 @@ public class InternalDb {
 				mv.description = cursor.getString(col_description);
 				mv.filename = cursor.getString(col_filename);
 				mv.preset_name = cursor.getString(col_preset_name);
+				mv.modifyTime = cursor.getInt(col_modifyTime);
 				mv.cache_active = cursor.getInt(col_active) != 0;
 				mv.ordering = cursor.getInt(col_ordering);
 				res.add(mv);
@@ -486,6 +488,7 @@ public class InternalDb {
 		cv.put(Db.Version.description, mv.description);
 		cv.put(Db.Version.filename, mv.filename);
 		cv.put(Db.Version.preset_name, mv.preset_name);
+		cv.put(Db.Version.modifyTime, mv.modifyTime);
 		cv.put(Db.Version.active, active); // special
 		cv.put(Db.Version.ordering, mv.ordering);
 		db.insert(Db.TABLE_Version, null, cv);
