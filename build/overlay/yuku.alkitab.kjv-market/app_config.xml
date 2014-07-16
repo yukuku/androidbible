@@ -6,6 +6,9 @@
 		help="true"
 		donation="true"
 		songs="false" />
+
+	<internal locale="en" shortName="KJV"     longName="King James" prefix="kjv" />
+
 	<share>
 		<url format="http://ref.ly/{book.osis}.{chapter}.{verses};{version.shortName}" />
 	</share>
