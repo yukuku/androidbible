@@ -53,6 +53,7 @@ import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.ac.GotoActivity;
+import yuku.alkitab.base.ac.MarkerListActivity;
 import yuku.alkitab.base.ac.MarkersActivity;
 import yuku.alkitab.base.ac.SearchActivity;
 import yuku.alkitab.base.ac.ShareActivity;
@@ -69,10 +70,12 @@ import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.base.util.OsisBookNames;
+import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.base.widget.AttributeView;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.Floater;
@@ -90,6 +93,7 @@ import yuku.alkitab.base.widget.VersesView.PressResult;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
+import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.alkitab.model.PericopeBlock;
 import yuku.alkitab.model.ProgressMark;
@@ -97,14 +101,13 @@ import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
+import yuku.devoxx.flowlayout.FlowLayout;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener, LeftDrawer.Text.Listener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
@@ -1529,89 +1532,149 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		return format;
 	}
-	
+
 	VersesView.AttributeListener attributeListener = new VersesView.AttributeListener() {
+		void openBookmarkDialog(int ari, int ordering) {
+			final TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, ari, ordering);
+			dialog.setListener(new TypeBookmarkDialog.Listener() {
+				@Override public void onOk() {
+					lsText.reloadAttributeMap();
+
+					if (activeSplitVersion != null) {
+						lsSplit1.reloadAttributeMap();
+					}
+				}
+			});
+			dialog.show();
+		}
+
 		@Override
 		public void onBookmarkAttributeClick(final Book book, final int chapter_1, final int verse_1) {
 			final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
 
-			final int marker_count = S.getDb().countMarkersForAriKind(ari, Marker.Kind.bookmark);
-			final AtomicInteger ordering = new AtomicInteger(0);
-
-			final Runnable r = new Runnable() {
-				@Override
-				public void run() {
-					final TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, ari, ordering.get());
-					dialog.setListener(new TypeBookmarkDialog.Listener() {
-						@Override public void onOk() {
-							lsText.reloadAttributeMap();
-
-							if (activeSplitVersion != null) {
-								lsSplit1.reloadAttributeMap();
-							}
-						}
-					});
-					dialog.show();
-				}
-			};
-
-			// TODO
-			if (marker_count <= 1) {
-				r.run();
+			if (S.getDb().countMarkersForAriKind(ari, Marker.Kind.bookmark) == 1) {
+				openBookmarkDialog(ari, 0);
 			} else {
-				final String[] options = new String[marker_count];
-				Arrays.fill(options, "<TODO bookmark>");
+				final List<Marker> markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.bookmark);
 				new AlertDialog.Builder(IsiActivity.this)
-					.setItems(options, new DialogInterface.OnClickListener() {
+					.setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.bookmark), new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(final DialogInterface dialog, final int which) {
-							ordering.set(which);
-							r.run();
+							openBookmarkDialog(ari, which);
 						}
 					})
 					.show();
 			}
 		}
 
+		void openNoteDialog(int ari, int ordering) {
+			final TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, ari, ordering, new TypeNoteDialog.Listener() {
+				@Override
+				public void onDone() {
+					lsText.reloadAttributeMap();
+
+					if (activeSplitVersion != null) {
+						lsSplit1.reloadAttributeMap();
+					}
+				}
+			});
+			dialog.show();
+		}
+
 		@Override
 		public void onNoteAttributeClick(final Book book, final int chapter_1, final int verse_1) {
 			final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
 
-			final int marker_count = S.getDb().countMarkersForAriKind(ari, Marker.Kind.bookmark);
-			final AtomicInteger ordering = new AtomicInteger(0);
-
-			final Runnable r = new Runnable() {
-				@Override
-				public void run() {
-					final TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, ari, ordering.get(), new TypeNoteDialog.Listener() {
-						@Override
-						public void onDone() {
-							lsText.reloadAttributeMap();
-
-							if (activeSplitVersion != null) {
-								lsSplit1.reloadAttributeMap();
-							}
-						}
-					});
-					dialog.show();
-				}
-			};
-
-			// TODO
-			if (marker_count <= 1) {
-				r.run();
+			if (S.getDb().countMarkersForAriKind(ari, Marker.Kind.note) == 1) {
+				openNoteDialog(ari, 0);
 			} else {
-				final String[] options = new String[marker_count];
-				Arrays.fill(options, "<TODO note>");
+				final List<Marker> markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.note);
 				new AlertDialog.Builder(IsiActivity.this)
-					.setItems(options, new DialogInterface.OnClickListener() {
+					.setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.note), new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(final DialogInterface dialog, final int which) {
-							ordering.set(which);
-							r.run();
+							openNoteDialog(ari, which);
 						}
 					})
 					.show();
+			}
+		}
+
+		class MultipleMarkerSelectAdapter extends EasyAdapter {
+			final List<Marker> markers;
+			final Marker.Kind kind;
+
+			public MultipleMarkerSelectAdapter(final List<Marker> markers, final Marker.Kind kind) {
+				this.markers = markers;
+				this.kind = kind;
+			}
+
+			@Override
+			public Marker getItem(final int position) {
+				return markers.get(position);
+			}
+
+			@Override
+			public View newView(final int position, final ViewGroup parent) {
+				return getLayoutInflater().inflate(R.layout.item_marker, parent, false);
+			}
+
+			@Override
+			public void bindView(final View view, final int position, final ViewGroup parent) {
+				final TextView lDate = V.get(view, R.id.lDate);
+				final TextView lCaption = V.get(view, R.id.lCaption);
+				final TextView lSnippet = V.get(view, R.id.lSnippet);
+				final FlowLayout panelLabels = V.get(view, R.id.panelLabels);
+
+				final Marker marker = getItem(position);
+
+				{
+					final Date addTime = marker.createTime;
+					final Date modifyTime = marker.modifyTime;
+
+					if (addTime.equals(modifyTime)) {
+						lDate.setText(Sqlitil.toLocaleDateMedium(addTime));
+					} else {
+						lDate.setText(getString(R.string.create_edited_modified_time, Sqlitil.toLocaleDateMedium(addTime), Sqlitil.toLocaleDateMedium(modifyTime)));
+					}
+
+					Appearances.applyBookmarkDateTextAppearance(lDate);
+				}
+
+				final int ari = marker.ari;
+				final String reference = S.activeVersion.reference(ari);
+				final String caption = marker.caption;
+
+				if (kind == Marker.Kind.bookmark) {
+					lCaption.setText(caption);
+					Appearances.applyBookmarkTitleTextAppearance(lCaption);
+
+					lSnippet.setVisibility(View.GONE);
+
+					final List<Label> labels = S.getDb().listLabelsByMarkerId(marker._id);
+					if (labels.size() != 0) {
+						panelLabels.setVisibility(View.VISIBLE);
+						panelLabels.removeAllViews();
+						for (Label label : labels) {
+							panelLabels.addView(MarkerListActivity.getLabelView(getLayoutInflater(), panelLabels, label));
+						}
+					} else {
+						panelLabels.setVisibility(View.GONE);
+					}
+
+				} else if (kind == Marker.Kind.note) {
+					lCaption.setText(reference);
+					Appearances.applyBookmarkTitleTextAppearance(lCaption);
+					lSnippet.setText(caption);
+					Appearances.applyTextAppearance(lSnippet);
+				}
+
+				view.setBackgroundColor(S.applied.backgroundColor);
+			}
+
+			@Override
+			public int getCount() {
+				return markers.size();
 			}
 		}
 

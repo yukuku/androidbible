@@ -18,8 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="2dp"
-            android:gravity="top|right"
+			android:gravity="top|right"
             android:text="2099-12-32"
             tools:ignore="HardcodedText" />
 
@@ -30,10 +29,11 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_toLeftOf="@+id/lDate"
-            android:text="Keterangan atau Alamat Ayat dsb"
+            android:text="*Caption or verse reference, etc."
             android:textColor="#fff"
             android:textSize="18sp"
-            tools:ignore="HardcodedText" />
+            tools:ignore="HardcodedText"
+			android:layout_marginRight="8dp" />
 
     </RelativeLayout>
 
@@ -41,9 +41,11 @@
         android:id="@+id/lSnippet"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:text="Cuplikan ayat kalau bisa ditampilin Cuplikan ayat kalau bisa ditampilin Cuplikan ayat kalau bisa ditampilin Cuplikan ayat kalau bisa ditampilin "
-        tools:ignore="HardcodedText" />
+        android:layout_marginTop="8dp"
+        android:text="*Verse snippet or note content, etc. Verse snippet or note content, etc. Verse snippet or note content, etc. Verse snippet or note content, etc. Verse snippet or note content, etc. Verse snippet or note content, etc. Verse snippet or note content, etc. Verse snippet or note content, etc. "
+        tools:ignore="HardcodedText"
+		android:maxLines="4"
+		android:ellipsize="end" />
 
     <yuku.devoxx.flowlayout.FlowLayout
         android:id="@+id/panelLabels"

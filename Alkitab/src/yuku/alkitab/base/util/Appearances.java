@@ -13,10 +13,10 @@ import yuku.alkitab.base.S;
 public class Appearances {
 	public static final String TAG = Appearances.class.getSimpleName();
 
-	public static void applyBookmarkSnippetContentAndAppearance(TextView t, String alamat, CharSequence isi) {
-		SpannableStringBuilder sb = new SpannableStringBuilder(alamat);
-		sb.setSpan(new UnderlineSpan(), 0, alamat.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-		sb.append(' ').append(isi);
+	public static void applyBookmarkSnippetContentAndAppearance(TextView t, String reference, CharSequence verseText) {
+		SpannableStringBuilder sb = new SpannableStringBuilder(reference);
+		sb.setSpan(new UnderlineSpan(), 0, reference.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+		sb.append(' ').append(verseText);
 		t.setText(sb);
 		applyTextAppearance(t);
 	}

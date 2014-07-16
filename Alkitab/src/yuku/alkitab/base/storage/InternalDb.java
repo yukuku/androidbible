@@ -114,7 +114,21 @@ public class InternalDb {
 
 	public int countMarkersForAriKind(final int ari, final Marker.Kind kind) {
 		final SQLiteDatabase db = helper.getReadableDatabase();
-		return (int) DatabaseUtils.longForQuery(db, "select count(*) from " + Db.TABLE_Marker + " where " + Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", new String[]{String.valueOf(ari), String.valueOf(kind.code)});
+		return (int) DatabaseUtils.queryNumEntries(db, Db.TABLE_Marker, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", new String[]{String.valueOf(ari), String.valueOf(kind.code)});
+	}
+
+	public List<Marker> listMarkersForAriKind(final int ari, final Marker.Kind kind) {
+		final SQLiteDatabase db = helper.getReadableDatabase();
+		final Cursor c = db.query(Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", new String[]{String.valueOf(ari), String.valueOf(kind.code)}, null, null, "_id asc", null);
+		try {
+			final List<Marker> res = new ArrayList<>();
+			while (c.moveToNext()) {
+				res.add(markerFromCursor(c));
+			}
+			return res;
+		} finally {
+			c.close();
+		}
 	}
 
 	public int updateMarker(Marker marker) {

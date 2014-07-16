@@ -253,14 +253,14 @@ public class MarkerListActivity extends BaseActivity {
 		}
 	};
 
-	protected View getLabelView(FlowLayout panelLabels, Label label) {
-		View res = LayoutInflater.from(this).inflate(R.layout.label, panelLabels, false);
+	public static View getLabelView(LayoutInflater inflater, FlowLayout panelLabels, Label label) {
+		final View res = inflater.inflate(R.layout.label, panelLabels, false);
 		res.setLayoutParams(panelLabels.generateDefaultLayoutParams());
 
-		TextView lJudul = V.get(res, R.id.lCaption);
-		lJudul.setText(label.title);
+		final TextView lCaption = V.get(res, R.id.lCaption);
+		lCaption.setText(label.title);
 
-		U.applyLabelColor(label, lJudul);
+		U.applyLabelColor(label, lCaption);
 
 		return res;
 	}
@@ -554,16 +554,16 @@ public class MarkerListActivity extends BaseActivity {
 
 		@Override
 		public void bindView(final View view, final int position, final ViewGroup parent) {
-			TextView lDate = V.get(view, R.id.lDate);
-			TextView lCaption = V.get(view, R.id.lCaption);
-			TextView lSnippet = V.get(view, R.id.lSnippet);
-			FlowLayout panelLabels = V.get(view, R.id.panelLabels);
+			final TextView lDate = V.get(view, R.id.lDate);
+			final TextView lCaption = V.get(view, R.id.lCaption);
+			final TextView lSnippet = V.get(view, R.id.lSnippet);
+			final FlowLayout panelLabels = V.get(view, R.id.panelLabels);
 
-			final Marker bookmark = filteredMarkers.get(position);
+			final Marker marker = getItem(position);
 
 			{
-				final Date addTime = bookmark.createTime;
-				final Date modifyTime = bookmark.modifyTime;
+				final Date addTime = marker.createTime;
+				final Date modifyTime = marker.modifyTime;
 
 				if (addTime.equals(modifyTime)) {
 					lDate.setText(Sqlitil.toLocaleDateMedium(addTime));
@@ -574,9 +574,10 @@ public class MarkerListActivity extends BaseActivity {
 				Appearances.applyBookmarkDateTextAppearance(lDate);
 			}
 
-			final int ari = bookmark.ari;
-			Book book = S.activeVersion.getBook(Ari.toBook(ari));
-			String reference = S.activeVersion.reference(ari);
+			final int ari = marker.ari;
+			final Book book = S.activeVersion.getBook(Ari.toBook(ari));
+			final String reference = S.activeVersion.reference(ari);
+			final String caption = marker.caption;
 
 			String verseText = S.activeVersion.loadVerseText(book, Ari.toChapter(ari), Ari.toVerse(ari));
 			if (verseText == null) {
@@ -585,7 +586,6 @@ public class MarkerListActivity extends BaseActivity {
 				verseText = U.removeSpecialCodes(verseText);
 			}
 
-			final String caption = bookmark.caption;
 			if (filter_kind == Marker.Kind.bookmark) {
 				lCaption.setText(currentlyUsedFilter != null? SearchEngine.hilite(caption, tokens, hiliteColor): caption);
 				Appearances.applyBookmarkTitleTextAppearance(lCaption);
@@ -593,12 +593,12 @@ public class MarkerListActivity extends BaseActivity {
 
 				Appearances.applyBookmarkSnippetContentAndAppearance(lSnippet, reference, snippet);
 
-				final List<Label> labels = S.getDb().listLabelsByMarkerId(bookmark._id);
+				final List<Label> labels = S.getDb().listLabelsByMarkerId(marker._id);
 				if (labels.size() != 0) {
 					panelLabels.setVisibility(View.VISIBLE);
 					panelLabels.removeAllViews();
 					for (Label label : labels) {
-						panelLabels.addView(getLabelView(panelLabels, label));
+						panelLabels.addView(getLabelView(getLayoutInflater(), panelLabels, label));
 					}
 				} else {
 					panelLabels.setVisibility(View.GONE);
