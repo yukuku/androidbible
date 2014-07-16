@@ -32,13 +32,16 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.AlphanumComparator;
 import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.base.util.OsisBookNames;
 import yuku.alkitab.base.util.SongBookUtil;
 import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.base.widget.LeftDrawer;
+import yuku.alkitab.base.widget.TwofingerLinearLayout;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
+import yuku.alkitab.model.SongInfo;
 import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.display.Launcher;
 import yuku.kpri.model.Lyric;
@@ -54,7 +57,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class SongViewActivity extends BaseActivity implements SongFragment.ShouldOverrideUrlLoadingHandler, LeftDrawer.Songs.Listener {
 	public static final String TAG = SongViewActivity.class.getSimpleName();
@@ -67,7 +75,7 @@ public class SongViewActivity extends BaseActivity implements SongFragment.Shoul
 	ActionBarDrawerToggle drawerToggle;
 	LeftDrawer.Songs leftDrawer;
 
-	ViewGroup song_container;
+	TwofingerLinearLayout song_container;
 	ViewGroup no_song_data_container;
 	View bDownload;
 
@@ -83,6 +91,57 @@ public class SongViewActivity extends BaseActivity implements SongFragment.Shoul
 	// state for keypad
 	String state_originalCode;
 	String state_tempCode;
+
+	// cache of song codes for each book
+	Map<String /* bookName */, List<String> /* ordered codes */> cache_codes = new HashMap<>();
+
+	TwofingerLinearLayout.Listener song_container_listener = new TwofingerLinearLayout.OnefingerListener() {
+		@Override
+		public void onOnefingerLeft() {
+			goTo(+1);
+		}
+
+		@Override
+		public void onOnefingerRight() {
+			goTo(-1);
+		}
+	};
+
+	void goTo(final int dir) {
+		if (currentBookName == null) return;
+		if (currentSong == null) return;
+
+		List<String> codes = cache_codes.get(currentBookName);
+		if (codes == null) {
+			final List<SongInfo> songInfos = S.getSongDb().listSongInfosByBookName(currentBookName);
+			codes = new ArrayList<>();
+			for (SongInfo songInfo : songInfos) {
+				codes.add(songInfo.code);
+			}
+			// sort codes based on numeric
+			Collections.sort(codes, new AlphanumComparator());
+			cache_codes.put(currentBookName, codes);
+		}
+
+		// find index of current song
+		final int pos = codes.indexOf(currentSong.code);
+		if (pos == -1) {
+			return; // should not happen
+		}
+
+		final int newPos = pos + dir;
+		if (newPos < 0 || newPos >= codes.size()) {
+			return; // can't go left or right
+		}
+
+		final String newCode = codes.get(newPos);
+		final Song newSong = S.getSongDb().getSong(currentBookName, newCode);
+		if (newSong == null) {
+			return; // should not happen
+		}
+
+		displaySong(currentBookName, newSong);
+	}
 
 	static class MediaPlayerController {
 		MediaPlayer mp = new MediaPlayer();
@@ -277,6 +336,9 @@ public class SongViewActivity extends BaseActivity implements SongFragment.Shoul
 		song_container = V.get(this, R.id.song_container);
 		no_song_data_container = V.get(this, R.id.no_song_data_container);
 		bDownload = V.get(this, R.id.bDownload);
+
+		song_container.setTwofingerEnabled(false);
+		song_container.setListener(song_container_listener);
 
 		actionBar = getActionBar();
 		actionBar.setDisplayShowHomeEnabled(Build.VERSION.SDK_INT < 18);

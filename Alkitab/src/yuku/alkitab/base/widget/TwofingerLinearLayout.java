@@ -35,6 +35,9 @@ public class TwofingerLinearLayout extends LinearLayout {
 	// minimum distance change to be considered scale
 	float threshold_twofinger_scale;
 
+	// if not enabled, two finger gestures are not captured
+	boolean twofingerEnabled;
+
 	public TwofingerLinearLayout(Context context) {
 		super(context);
 		init();
@@ -50,6 +53,14 @@ public class TwofingerLinearLayout extends LinearLayout {
 		threshold_twofinger_swipe = 48.f * density;
 		threshold_twofinger_drag = 48.f * density;
 		threshold_twofinger_scale = 72.f * density;
+	}
+
+	public boolean isTwofingerEnabled() {
+		return twofingerEnabled;
+	}
+
+	public void setTwofingerEnabled(final boolean twofingerEnabled) {
+		this.twofingerEnabled = twofingerEnabled;
 	}
 
 	public void setListener(final Listener listener) {
@@ -201,7 +212,7 @@ public class TwofingerLinearLayout extends LinearLayout {
 			}
 		}
 
-		if (action == MotionEvent.ACTION_POINTER_DOWN && event.getPointerCount() == 2) {
+		if (action == MotionEvent.ACTION_POINTER_DOWN && twofingerEnabled && event.getPointerCount() == 2) {
 			state = State.twofinger_start;
 			return true;
 		}
@@ -231,6 +242,23 @@ public class TwofingerLinearLayout extends LinearLayout {
 		void onTwofingerDragX(float dx);
 		void onTwofingerDragY(float dy);
 		void onTwofingerEnd(Mode mode);
+	}
+
+	public abstract static class OnefingerListener implements Listener {
+		@Override
+		public void onTwofingerStart() {}
+
+		@Override
+		public void onTwofingerScale(final float scale) {}
+
+		@Override
+		public void onTwofingerDragX(final float dx) {}
+
+		@Override
+		public void onTwofingerDragY(final float dy) {}
+
+		@Override
+		public void onTwofingerEnd(final Mode mode) {}
 	}
 
 	// From API 19

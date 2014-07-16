@@ -5,14 +5,13 @@ import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.util.TimingLogger;
+import yuku.alkitab.base.util.SongFilter;
+import yuku.alkitab.base.util.SongFilter.CompiledFilter;
+import yuku.alkitab.model.SongInfo;
+import yuku.kpri.model.Song;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import yuku.alkitab.model.SongInfo;
-import yuku.alkitab.base.util.SongFilter;
-import yuku.alkitab.base.util.SongFilter.CompiledFilter;
-import yuku.kpri.model.Song;
 
 public class SongDb extends yuku.afw.storage.InternalDb {
 	public static final String TAG = SongDb.class.getSimpleName();
@@ -160,7 +159,7 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 		}
 	}
 
-	public List<SongInfo> getSongInfosByBookName(String bookName) {
+	public List<SongInfo> listSongInfosByBookName(String bookName) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		List<SongInfo> res = new ArrayList<>();
 
@@ -187,7 +186,7 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 		return res;
 	}
 
-	public List<SongInfo> getSongInfosByBookNameAndDeepFilter(String bookName, String filter_string) {
+	public List<SongInfo> listSongInfosByBookNameAndDeepFilter(String bookName, String filter_string) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		
 		List<SongInfo> res = new ArrayList<>();

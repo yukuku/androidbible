@@ -400,10 +400,10 @@ public class SongListActivity extends BaseActivity {
 		@Override public List<SongInfo> loadInBackground() {
 			List<SongInfo> res;
 			if (!deepSearch) {
-				List<SongInfo> songInfos = S.getSongDb().getSongInfosByBookName(getSelectedBookName());
+				List<SongInfo> songInfos = S.getSongDb().listSongInfosByBookName(getSelectedBookName());
 				res = SongFilter.filterSongInfosByString(songInfos, filter_string);
 			} else {
-				res = S.getSongDb().getSongInfosByBookNameAndDeepFilter(getSelectedBookName(), filter_string);
+				res = S.getSongDb().listSongInfosByBookNameAndDeepFilter(getSelectedBookName(), filter_string);
 			}
 			return res;
 		}
