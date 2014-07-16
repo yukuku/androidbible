@@ -95,8 +95,14 @@ public class VersionsActivity extends BaseActivity {
 		}
 
 		display = new Locale(locale).getDisplayLanguage();
-		if (display == null) {
-			display = locale;
+		if (display == null || U.equals(display, locale)) {
+
+			// try asking version config locale display
+			display = VersionConfig.get().locale_display.get(locale);
+
+			if (display == null) {
+				display = locale; // can't be null now
+			}
 		}
 		cache_displayLanguage.put(locale, display);
 

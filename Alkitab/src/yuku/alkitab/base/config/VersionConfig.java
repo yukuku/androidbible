@@ -4,14 +4,17 @@ import com.google.gson.Gson;
 import yuku.afw.App;
 import yuku.alkitab.base.model.MVersionPreset;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class VersionConfig {
 	public static final String TAG = VersionConfig.class.getSimpleName();
 
 	public List<MVersionPreset> presets;
+	public Map<String, String> locale_display;
 
 	private static VersionConfig lastVersionConfig;
 
@@ -29,6 +32,7 @@ public class VersionConfig {
 	static class VersionConfigJson {
 		public List<PresetJson> presets;
 		public String download_url_format;
+		public Map<String, String> locale_display;
 	}
 
 	public static VersionConfig get() {
@@ -44,7 +48,7 @@ public class VersionConfig {
 			VersionConfig res = loadConfig(versionConfigJson);
 			lastVersionConfig = res;
 			return res;
-		} catch (Exception e) {
+		} catch (IOException e) {
 			throw new RuntimeException("error in loading version config", e);
 		}
 	}
@@ -67,7 +71,8 @@ public class VersionConfig {
 			preset.ordering = ++presetOrdering;
 			presets.add(preset);
 		}
-		
+
+		res.locale_display = root.locale_display;
 		res.presets = presets;
 
 		return res;
