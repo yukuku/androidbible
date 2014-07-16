@@ -162,8 +162,8 @@ public class TypeBookmarkDialog {
 		@Override public void onClick(DialogInterface _unused_, int which) {
 			if (which == adapter.getCount() - 1) { // new label
 				LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), new OkListener() { //$NON-NLS-1$
-					@Override public void onOk(String judul) {
-						Label labelBaru = S.getDb().insertLabel(judul, null);
+					@Override public void onOk(String title) {
+						Label labelBaru = S.getDb().insertLabel(title, null);
 						if (labelBaru != null) {
 							labels.add(labelBaru);
 							setLabelsText();

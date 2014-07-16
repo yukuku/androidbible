@@ -240,8 +240,8 @@ public abstract class VerseAdapter extends BaseAdapter {
 				return id + 1;
 			}
 		}
-		
-		Log.w(TAG, "masa judul perikop di paling bawah? Ga masuk akal."); //$NON-NLS-1$
+
+		Log.w(TAG, "pericope title at the last position? does not make sense.");
 		return 0;
 	}
 	

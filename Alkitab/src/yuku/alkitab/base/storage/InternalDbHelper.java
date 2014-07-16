@@ -29,7 +29,6 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		createIndexMarker(db);
 		createTableDevotion(db);
 		createIndexDevotion(db);
-		createTableEdisi(db);
 		createTableLabel(db);
 		createIndexLabel(db);
 		createTableMarker_Label(db);

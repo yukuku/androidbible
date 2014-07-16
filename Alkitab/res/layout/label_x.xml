@@ -12,6 +12,6 @@
     android:paddingLeft="6dp"
     android:paddingRight="6dp"
     android:paddingTop="4dp"
-    android:text="Judul"
+	android:text="*label caption"
     android:textColor="#000"
     tools:ignore="HardcodedText" />

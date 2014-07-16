@@ -12,25 +12,24 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import yuku.afw.V;
+import yuku.alkitab.base.S;
+import yuku.alkitab.debug.R;
+import yuku.alkitab.model.Label;
 
 import java.util.List;
-
-import yuku.afw.V;
-import yuku.alkitab.debug.R;
-import yuku.alkitab.base.S;
-import yuku.alkitab.model.Label;
 
 public class LabelEditorDialog {
 	public static final String TAG = LabelEditorDialog.class.getSimpleName();
 	
 	public interface OkListener {
-		void onOk(String judul);
+		void onOk(String title);
 	}
 	
 	public static void show(Context context, String initialText, String title, final OkListener okListener) {
 		View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_label, null);
-		final EditText tJudul = V.get(dialogView, R.id.tCaption);
-		tJudul.setText(initialText);
+		final EditText tCaption = V.get(dialogView, R.id.tCaption);
+		tCaption.setText(initialText);
 		
 		final AlertDialog dialog = new AlertDialog.Builder(context)
 		.setView(dialogView)
@@ -38,7 +37,7 @@ public class LabelEditorDialog {
 		.setPositiveButton(R.string.ok, new OnClickListener() {
 			@Override public void onClick(DialogInterface dialog, int which) {
 				if (okListener != null) {
-					okListener.onOk(tJudul.getText().toString().trim());
+					okListener.onOk(tCaption.getText().toString().trim());
 				}
 			}
 		})
@@ -52,23 +51,26 @@ public class LabelEditorDialog {
 		final Button bOk = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
 		bOk.setEnabled(false);
 		
-		final List<Label> semuaLabel = S.getDb().listAllLabels();
+		final List<Label> allLabels = S.getDb().listAllLabels();
 		
-		tJudul.addTextChangedListener(new TextWatcher() {
-			@Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+		tCaption.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
 			}
-			
-			@Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 			}
-			
-			@Override public void afterTextChanged(Editable s) {
+
+			@Override
+			public void afterTextChanged(Editable s) {
 				if (s.length() == 0 || s.toString().trim().length() == 0) {
 					bOk.setEnabled(false);
 					return;
 				} else {
-					String judulBaruTrim = s.toString().trim();
-					for (Label label: semuaLabel) {
-						if (label.title.trim().equals(judulBaruTrim)) {
+					String newTitleTrimmed = s.toString().trim();
+					for (Label label : allLabels) {
+						if (label.title.trim().equals(newTitleTrimmed)) {
 							bOk.setEnabled(false);
 							return;
 						}

@@ -113,8 +113,8 @@ public class MarkersActivity extends BaseActivity {
 			}
 			
 			LabelEditorDialog.show(this, label.title, getString(R.string.rename_label_title), new OkListener() {
-				@Override public void onOk(String judul) {
-					label.title = judul;
+				@Override public void onOk(String title) {
+					label.title = title;
 					S.getDb().updateLabel(label);
 					adapter.notifyDataSetChanged();
 				}
