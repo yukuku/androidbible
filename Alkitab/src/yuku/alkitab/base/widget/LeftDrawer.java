@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -509,7 +508,6 @@ public abstract class LeftDrawer extends ScrollView {
 
 	public static class Songs extends LeftDrawer {
 		public interface Listener {
-			void bPlayPause_click();
 			void songKeypadButton_click(View v);
 			void songBookSelected(boolean all, SongBookUtil.SongBookInfo songBookInfo);
 		}
@@ -519,7 +517,6 @@ public abstract class LeftDrawer extends ScrollView {
 			void setAButtonEnabled(boolean enabled);
 			void setBButtonEnabled(boolean enabled);
 			void setCButtonEnabled(boolean enabled);
-			ImageButton getPlayPauseButton();
 			void setBookName(String bookName);
 			void setCode(String code);
 			void clickChangeBook();
@@ -548,11 +545,6 @@ public abstract class LeftDrawer extends ScrollView {
 			}
 
 			@Override
-			public ImageButton getPlayPauseButton() {
-				return bPlayPause;
-			}
-
-			@Override
 			public void setBookName(final String bookName) {
 				bChangeBook.setText(bookName);
 			}
@@ -576,7 +568,6 @@ public abstract class LeftDrawer extends ScrollView {
 
 		Button bChangeBook;
 		TextView bChangeCode;
-		ImageButton bPlayPause;
 
 		Button bOk;
 		Button bDigitA;
@@ -593,7 +584,6 @@ public abstract class LeftDrawer extends ScrollView {
 
 			bChangeBook = V.get(this, R.id.bChangeBook);
 			bChangeCode = V.get(this, R.id.bChangeCode);
-			bPlayPause = V.get(this, R.id.bPlayPause);
 
 			bOk = V.get(this, R.id.bOk);
 			bDigitA = V.get(this, R.id.bDigitA);
@@ -616,13 +606,6 @@ public abstract class LeftDrawer extends ScrollView {
 					}
 				}));
 			}
-
-			bPlayPause.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					listener.bPlayPause_click();
-				}
-			});
 
 			// all buttons
 			for (int buttonId: new int[] {

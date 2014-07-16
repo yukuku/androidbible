@@ -20,9 +20,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageButton;
 import android.widget.Toast;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -64,7 +64,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class SongViewActivity extends BaseActivity implements SongFragment.ShouldOverrideUrlLoadingHandler, LeftDrawer.Songs.Listener {
+public class SongViewActivity extends BaseActivity implements SongFragment.ShouldOverrideUrlLoadingHandler, LeftDrawer.Songs.Listener, MediaStateListener {
 	public static final String TAG = SongViewActivity.class.getSimpleName();
 
 	private static final String PROTOCOL = "bible";
@@ -106,6 +106,36 @@ public class SongViewActivity extends BaseActivity implements SongFragment.Shoul
 			goTo(-1);
 		}
 	};
+
+	static class MediaState {
+		boolean enabled;
+		int icon;
+		int label;
+		boolean loading;
+	}
+
+	final MediaState mediaState = new MediaState();
+
+	@Override
+	public void setMediaState(int state) {
+		if (state == 0) {
+			mediaState.enabled = false;
+			mediaState.icon = R.drawable.ic_action_hollowplay;
+			mediaState.label = R.string.menuPlay;
+		} else if (state == 1 || state == 4 || state == 5) {
+			mediaState.enabled = true;
+			mediaState.icon = R.drawable.ic_action_play;
+			mediaState.label = R.string.menuPlay;
+		} else if (state == 3) {
+			mediaState.enabled = true;
+			mediaState.icon = R.drawable.ic_action_pause;
+			mediaState.label = R.string.menuPause;
+		}
+
+		mediaState.loading = (state == 2);
+
+		invalidateOptionsMenu();
+	}
 
 	void goTo(final int dir) {
 		if (currentBookName == null) return;
@@ -160,40 +190,26 @@ public class SongViewActivity extends BaseActivity implements SongFragment.Shoul
 
 		String url;
 		WeakReference<Activity> activityRef;
-		WeakReference<ImageButton> bPlayPauseRef;
+		WeakReference<MediaStateListener> mediaStateListenerRef;
 
-		void setUI(Activity activity, ImageButton bPlayPause) {
+		void setUI(Activity activity, MediaStateListener mediaStateListener) {
 			activityRef = new WeakReference<>(activity);
-			bPlayPauseRef = new WeakReference<>(bPlayPause);
+			mediaStateListenerRef = new WeakReference<>(mediaStateListener);
 		}
 
 		private void setState(int newState) {
 			Log.d(TAG, "@@setState newState=" + newState);
 			state = newState;
-			updateUIByState();
+			updateMediaState();
 		}
 
-		void updateUIByState() {
-			final ImageButton bPlayPause = bPlayPauseRef.get();
+		void updateMediaState() {
+			if (mediaStateListenerRef == null) return;
 
-			if (state == 0) {
-				if (bPlayPause != null) {
-					bPlayPause.setEnabled(false);
-					bPlayPause.setImageResource(R.drawable.ic_action_play);
-				}
-			} else if (state == 1) {
-				if (bPlayPause != null) {
-					bPlayPause.setEnabled(true);
-				}
-			} else if (state == 3) {
-				if (bPlayPause != null) {
-					bPlayPause.setImageResource(R.drawable.ic_action_pause);
-				}
-			} else if (state == 4 || state == 5) {
-				if (bPlayPause != null) {
-					bPlayPause.setImageResource(R.drawable.ic_action_play);
-				}
-			}
+			final MediaStateListener mediaStateListener = mediaStateListenerRef.get();
+			if (mediaStateListener == null) return;
+
+			mediaStateListener.setMediaState(state);
 		}
 
 		void reset() {
@@ -315,8 +331,10 @@ public class SongViewActivity extends BaseActivity implements SongFragment.Shoul
 	}
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState, true);
-
+		setProgressBarIndeterminate(true);
+		setProgressBarIndeterminateVisibility(false);
 		setContentView(R.layout.activity_song_view);
 
 		setTitle(R.string.sn_songs_activity_title);
@@ -350,8 +368,8 @@ public class SongViewActivity extends BaseActivity implements SongFragment.Shoul
 		// for colors of bg, text, etc
 		V.get(this, android.R.id.content).setBackgroundColor(S.applied.backgroundColor);
 
-		mediaPlayerController.setUI(this, leftDrawer.getHandle().getPlayPauseButton());
-		mediaPlayerController.updateUIByState();
+		mediaPlayerController.setUI(this, this);
+		mediaPlayerController.updateMediaState();
 
 		templateCustomVars = new Bundle();
 		templateCustomVars.putString("background_color", String.format("#%06x", S.applied.backgroundColor & 0xffffff));
@@ -445,9 +463,21 @@ public class SongViewActivity extends BaseActivity implements SongFragment.Shoul
 		}).start();
 	}
 
-	private void buildMenu(Menu menu) {
+	void buildMenu(Menu menu) {
 		menu.clear();
 		getMenuInflater().inflate(R.menu.activity_song_view, menu);
+
+		final MenuItem menuMediaControl = menu.findItem(R.id.menuMediaControl);
+		menuMediaControl.setEnabled(mediaState.enabled);
+		if (mediaState.icon != 0) menuMediaControl.setIcon(mediaState.icon);
+		if (mediaState.label != 0) menuMediaControl.setTitle(mediaState.label);
+		if (mediaState.loading) {
+			setProgressBarIndeterminateVisibility(true);
+			menuMediaControl.setVisible(false);
+		} else {
+			setProgressBarIndeterminateVisibility(false);
+			menuMediaControl.setVisible(true);
+		}
 	}
 	
 	@Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -486,6 +516,11 @@ public class SongViewActivity extends BaseActivity implements SongFragment.Shoul
 		} return true;
 		case R.id.menuSearch: {
 			startActivityForResult(SongListActivity.createIntent(last_searchState), REQCODE_songList);
+		} return true;
+		case R.id.menuMediaControl: {
+			if (currentBookName != null && currentSong != null) {
+				mediaPlayerController.playOrPause();
+			}
 		} return true;
 		}
 		
@@ -767,13 +802,6 @@ public class SongViewActivity extends BaseActivity implements SongFragment.Shoul
 	}
 
 	@Override
-	public void bPlayPause_click() {
-		if (currentBookName == null || currentSong == null) return;
-
-		mediaPlayerController.playOrPause();
-	}
-
-	@Override
 	public void songKeypadButton_click(final View v) {
 		if (currentBookName == null) return;
 
@@ -858,3 +886,8 @@ public class SongViewActivity extends BaseActivity implements SongFragment.Shoul
 		}
 	}
 }
+
+interface MediaStateListener {
+	void setMediaState(int state);
+}
+

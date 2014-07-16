@@ -2,6 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
+		android:id="@+id/menuMediaControl"
+		android:enabled="false"
+		android:icon="@drawable/ic_action_hollowplay"
+		android:showAsAction="always"
+		android:title="@string/menuPlay" />
+
+	<item
 		android:id="@+id/menuCopyShare"
 		android:icon="@drawable/ic_menu_copyshare"
 		android:showAsAction="always"

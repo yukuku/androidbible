@@ -48,15 +48,6 @@
 				android:textSize="18sp"
 				tools:ignore="HardcodedText" />
 
-			<ImageButton
-				android:id="@+id/bPlayPause"
-				style="?android:buttonBarButtonStyle"
-				android:layout_width="48dp"
-				android:layout_height="match_parent"
-				android:contentDescription="@string/desc_play"
-				android:enabled="false"
-				android:src="@drawable/ic_action_play" />
-
 		</LinearLayout>
 
 

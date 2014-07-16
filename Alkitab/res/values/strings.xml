@@ -360,4 +360,6 @@
 	<string name="switch_off">OFF</string>
 	<string name="switch_on">ON</string>
 	<string name="sn_menu_copy">Copy song</string>
+	<string name="menuPlay">Play</string>
+	<string name="menuPause">Pause</string>
 </resources>
