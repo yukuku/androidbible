@@ -254,7 +254,6 @@
         {"locale": "kek", "preset_name": "kek-kekb", "shortName": "KEKB", "longName": "Kekchi", "modifyTime": 1404777600, "description": "Kekchi Bible, 2000"},
         {"locale": "km", "preset_name": "km-khnt", "shortName": "KHNT", "longName": "Khmer Christian NT", "modifyTime": 1404691200, "description": "Khmer Christian New Testament, 2012"},
         {"locale": "kn", "preset_name": "kn-erv", "shortName": "ERV-KN", "longName": "ಕ್ರೈಸ್ತರ ಧರ್ಮಗ್ರಂಥ (Easy to Read)", "modifyTime": 1404691200, "description": "ಕ್ರೈಸ್ತರ ಧರ್ಮಗ್ರಂಥ, Kannada Bible: Easy-to-Read Version, 2007"},
-        {"locale": "kn", "preset_name": "kn-kbsi", "shortName": "KBSI", "longName": "ಕ್ರೈಸ್ತರ ಧರ್ಮಗ್ರಂಥ", "modifyTime": 1404691200, "description": "ಕ್ರೈಸ್ತರ ಧರ್ಮಗ್ರಂಥ, Kannada Bible"},
         {"locale": "ko", "preset_name": "ko-aeb", "shortName": "AEB", "longName": "아가페 쉬운 성경", "modifyTime": 1404691200, "description": "아가페 쉬운 성경, Agape Easy Bible, 1994"},
         {"locale": "ko", "preset_name": "ko-ctb", "shortName": "CTB", "longName": "공동번역, Common Translation", "modifyTime": 1404691200, "description": "공동번역, Common Translation Bible, 1977"},
         {"locale": "ko", "preset_name": "ko-kcb", "shortName": "KCB", "longName": "성경, Catholic", "modifyTime": 1404691200, "description": "성경, Korean Catholic Bible, 2005"},
@@ -276,7 +275,6 @@
         {"locale": "lus", "preset_name": "lus-mizb", "shortName": "MIZB", "longName": "Baibul, Mizo", "modifyTime": 1404777600, "description": "Baibul, Mizo Bible"},
         {"locale": "mg", "preset_name": "mg-mg65", "shortName": "MG65", "longName": "Ny Baiboly Malagasy", "modifyTime": 1404691200, "description": "Ny Baiboly Malagasy, 1865"},
         {"locale": "ml", "preset_name": "ml-erv", "shortName": "ERV-ML", "longName": "Malayalam NT (Easy to Read)", "modifyTime": 1404691200, "description": "Malayalam Bible: Easy to Read NT, 2007"},
-        {"locale": "ml", "preset_name": "ml-mbsi", "shortName": "MBSI", "longName": "Malayalam", "modifyTime": 1404691200, "description": "Malayalam Bible, 1956"},
         {"locale": "mn", "preset_name": "mn-mnkjv", "shortName": "MNKJV", "longName": "Библийн (NT)", "modifyTime": 1404691200, "description": "Библийн, Mongolian KJV NT, 2012"},
         {"locale": "mr", "preset_name": "mr-erv", "shortName": "ERV-MR", "longName": "Marathi Bible (Easy to Read) ", "modifyTime": 1404691200, "description": "Marathi Bible: Easy to Read, 1998"},
         {"locale": "my", "preset_name": "my-bjb", "shortName": "BJB", "longName": "Burmese (1840)", "modifyTime": 1404691200, "description": "Burmese Bible, 1840"},
@@ -333,7 +331,6 @@
         {"locale": "vi", "preset_name": "vi-viet", "shortName": "VIET", "longName": "Kinh Thánh Tin Lành", "modifyTime": 1404691200, "description": "Kinh Thánh Tin Lành, 1926"},
         {"locale": "wo", "preset_name": "wo-fl", "shortName": "FL", "longName": "Téereb Injiil di Kàddug Yàlla", "modifyTime": 1404691200, "description": "Téereb Injiil di Kàddug Yàlla, 2004"},
         {"locale": "wo", "preset_name": "wo-shob", "shortName": "SHOB", "longName": "Shona", "modifyTime": 1404691200, "description": "Shona Bible, 2009"},
-        {"locale": "zh", "preset_name": "zh-lzz", "shortName": "LZZ", "longName": "新译本 - Lü Zheng Zhong", "modifyTime": 1404691200, "description": "新译本 - Chinese Bible Lü Zheng Zhong, 1970"},
         {"locale": "zh", "preset_name": "zh-ncvs", "shortName": "NCVS", "longName": "新譯本 - New Chinese Simplified", "modifyTime": 1404691200, "description": "新譯本 - New Chinese Version Simplified, 1992"},
         {"locale": "zh", "preset_name": "zh-ncvt", "shortName": "NCVT", "longName": "新譯本 - Chinese New Version", "modifyTime": 1404691200, "description": "新譯本 - Chinese New Version, 1992"}
     ],
