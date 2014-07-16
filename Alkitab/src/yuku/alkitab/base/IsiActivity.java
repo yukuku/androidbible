@@ -1557,6 +1557,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			} else {
 				final List<Marker> markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.bookmark);
 				new AlertDialog.Builder(IsiActivity.this)
+					.setTitle(R.string.edit_bookmark)
 					.setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.bookmark), new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(final DialogInterface dialog, final int which) {
@@ -1590,6 +1591,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			} else {
 				final List<Marker> markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.note);
 				new AlertDialog.Builder(IsiActivity.this)
+					.setTitle(R.string.edit_note)
 					.setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.note), new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(final DialogInterface dialog, final int which) {
