@@ -1,37 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+<yuku.alkitab.base.widget.TwofingerLinearLayout
+	android:id="@+id/devotion_root"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
 
-    <ScrollView
-        android:id="@+id/scrollContent"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:focusable="true" >
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/lContent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="*Devotion content here."
-            android:textColorLink="#33b5e5"
-            android:textIsSelectable="true"
-            tools:ignore="HardcodedText" />
-    </ScrollView>
+		<ScrollView
+			android:id="@+id/scrollContent"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/lStatus"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="#444"
-        android:padding="4dp"
-        android:text="*status"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#fff"
-        android:visibility="invisible"
-        tools:ignore="HardcodedText" />
+			<TextView
+				android:id="@+id/lContent"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:padding="8dp"
+				android:text="*Devotion content here."
+				android:textColorLink="#33b5e5"
+				android:textIsSelectable="true"
+				tools:ignore="HardcodedText" />
+		</ScrollView>
 
-</RelativeLayout>
+		<TextView
+			android:id="@+id/lStatus"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="bottom"
+			android:background="#222"
+			android:padding="4dp"
+			android:text="*status"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="#ccc"
+			android:visibility="invisible"
+			tools:ignore="HardcodedText" />
+
+	</FrameLayout>
+</yuku.alkitab.base.widget.TwofingerLinearLayout>

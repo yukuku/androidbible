@@ -45,6 +45,7 @@ import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.LeftDrawer;
+import yuku.alkitab.base.widget.TwofingerLinearLayout;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.util.Ari;
 import yuku.alkitabintegration.display.Launcher;
@@ -65,18 +66,30 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		}
 	};
 
+	TwofingerLinearLayout.Listener devotion_root_listener = new TwofingerLinearLayout.OnefingerListener() {
+		@Override
+		public void onOnefingerLeft() {
+			bNext_click();
+		}
+
+		@Override
+		public void onOnefingerRight() {
+			bPrev_click();
+		}
+	};
+
 	public static Intent createIntent() {
 		return new Intent(App.context, DevotionActivity.class);
 	}
 
 	@Override
-	public void bPrev_click(final TextView tCurrentDate) {
+	public void bPrev_click() {
 		currentDate.setTime(currentDate.getTime() - 3600*24*1000);
 		display();
 	}
 
 	@Override
-	public void bNext_click(final TextView tCurrentDate) {
+	public void bNext_click() {
 		currentDate.setTime(currentDate.getTime() + 3600*24*1000);
 		display();
 	}
@@ -141,6 +154,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	ActionBarDrawerToggle drawerToggle;
 	LeftDrawer.Devotion leftDrawer;
 
+	TwofingerLinearLayout devotion_root;
 	TextView lContent;
 	ScrollView scrollContent;
 	TextView lStatus;
@@ -165,12 +179,12 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			if (activity == null) return;
 			
 			{
-				long kini = SystemClock.currentThreadTimeMillis();
-				if (kini - activity.lastTryToDisplay < 500) {
+				long now = SystemClock.currentThreadTimeMillis();
+				if (now - activity.lastTryToDisplay < 500) {
 					return; // ANEH. Terlalu cepat.
 				}
 				
-				activity.lastTryToDisplay = kini;
+				activity.lastTryToDisplay = now;
 			}
 			
 			activity.goTo();
@@ -226,9 +240,13 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 		fadeOutAnim = AnimationUtils.loadAnimation(this, R.anim.fade_out);
 
+		devotion_root = V.get(this, R.id.devotion_root);
 		lContent = V.get(this, R.id.lContent);
 		scrollContent = V.get(this, R.id.scrollContent);
 		lStatus = V.get(this, R.id.lStatus);
+
+		devotion_root.setTwofingerEnabled(false);
+		devotion_root.setListener(devotion_root_listener);
 
 		// text formats
 		lContent.setTextColor(S.applied.fontColor);

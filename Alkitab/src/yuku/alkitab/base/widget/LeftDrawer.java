@@ -316,8 +316,8 @@ public abstract class LeftDrawer extends ScrollView {
 
 	public static class Devotion extends LeftDrawer {
 		public interface Listener {
-			void bPrev_click(TextView tCurrentDate);
-			void bNext_click(TextView tCurrentDate);
+			void bPrev_click();
+			void bNext_click();
 			void bReload_click();
 			void cbKind_itemSelected(DevotionActivity.DevotionKind kind);
 		}
@@ -411,14 +411,14 @@ public abstract class LeftDrawer extends ScrollView {
 			bPrev.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(final View v) {
-					listener.bPrev_click(tCurrentDate);
+					listener.bPrev_click();
 				}
 			});
 
 			bNext.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(final View v) {
-					listener.bNext_click(tCurrentDate);
+					listener.bNext_click();
 				}
 			});
 
