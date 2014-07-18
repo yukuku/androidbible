@@ -36,7 +36,8 @@ public class TwofingerLinearLayout extends LinearLayout {
 	float threshold_twofinger_scale;
 
 	// if not enabled, two finger gestures are not captured
-	boolean twofingerEnabled;
+	// by default it's true
+	boolean twofingerEnabled = true;
 
 	public TwofingerLinearLayout(Context context) {
 		super(context);
