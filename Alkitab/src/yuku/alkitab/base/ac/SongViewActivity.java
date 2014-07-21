@@ -368,9 +368,6 @@ public class SongViewActivity extends BaseActivity implements SongFragment.Shoul
 		// for colors of bg, text, etc
 		V.get(this, android.R.id.content).setBackgroundColor(S.applied.backgroundColor);
 
-		mediaPlayerController.setUI(this, this);
-		mediaPlayerController.updateMediaState();
-
 		templateCustomVars = new Bundle();
 		templateCustomVars.putString("background_color", String.format("#%06x", S.applied.backgroundColor & 0xffffff));
 		templateCustomVars.putString("text_color", String.format("#%06x", S.applied.fontColor & 0xffffff));
@@ -410,6 +407,14 @@ public class SongViewActivity extends BaseActivity implements SongFragment.Shoul
 	public void onConfigurationChanged(final Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		drawerToggle.onConfigurationChanged(newConfig);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		mediaPlayerController.setUI(this, this);
+		mediaPlayerController.updateMediaState();
 	}
 
 	static String getAudioFilename(String bookName, String code) {
