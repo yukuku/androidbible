@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<TextView
+		android:layout_width="0dp"
+		android:layout_height="match_parent"
+		android:layout_weight="1"
+		android:gravity="right|center_vertical"
+		android:padding="8dp"
+		android:text="Temukan dalam:"
+		android:textAppearance="?android:textAppearanceSmall" />
+
+	<Button
+		android:id="@+id/bVersion"
+		style="?android:spinnerStyle"
+		android:layout_width="72dp"
+		android:layout_height="match_parent"
+		android:layout_weight="0"
+		android:gravity="center"
+		android:text="*SHTNM"
+		android:textSize="14sp"
+		android:textStyle="bold"
+		tools:ignore="HardcodedText" />
+</LinearLayout>

@@ -228,5 +228,26 @@ public class S {
 			.show();
 	}
 
+	public static String getVersionInitials(final Version version) {
+		final String shortName = version.getShortName();
+		if (shortName != null) {
+			return shortName;
+		} else {
+			final String longName = version.getLongName();
+			if (longName.length() <= 6) {
+				return longName.toUpperCase();
+			}
 
+			// try to get the first letter of each word
+			final String[] words = longName.split("[^A-Za-z0-9]+");
+			final char[] chars = new char[words.length];
+			int cnt = 0;
+			for (int i = 0; i < chars.length; i++) {
+				if (words[i].length() > 0) {
+					chars[cnt++] = Character.toUpperCase(words[i].charAt(0));
+				}
+			}
+			return new String(chars, 0, cnt);
+		}
+	}
 }

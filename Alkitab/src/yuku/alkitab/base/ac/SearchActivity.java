@@ -1,5 +1,6 @@
 package yuku.alkitab.base.ac;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CheckedTextView;
 import android.widget.CompoundButton;
@@ -28,6 +30,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.BookNameSorter;
@@ -46,7 +49,9 @@ import java.util.Arrays;
 public class SearchActivity extends BaseActivity {
 	public static final String TAG = SearchActivity.class.getSimpleName();
 	
-	private static final String EXTRA_openedBookId = "openedBookId"; //$NON-NLS-1$
+	private static final String EXTRA_openedBookId = "openedBookId";
+
+	Button bVersion;
 	SearchView searchView;
 	ListView lsSearchResults;
 	View empty;
@@ -57,13 +62,15 @@ public class SearchActivity extends BaseActivity {
 	CheckBox cFilterSingleBook;
 	TextView tFilterAdvanced;
 	View bEditFilter;
-	
+
 	int hiliteColor;
 	SparseBooleanArray selectedBookIds = new SparseBooleanArray();
 	int openedBookId;
 	int filterUserAction = 0; // when it's not user action, set to nonzero
 	SearchAdapter adapter;
 	Toast resultCountToast;
+	Version searchInVersion;
+	String searchInVersionId;
 
 	public static Intent createIntent(int openedBookId) {
 		Intent res = new Intent(App.context, SearchActivity.class);
@@ -85,6 +92,17 @@ public class SearchActivity extends BaseActivity {
 		cFilterSingleBook = V.get(this, R.id.cFilterSingleBook);
 		tFilterAdvanced = V.get(this, R.id.tFilterAdvanced);
 		bEditFilter = V.get(this, R.id.bEditFilter);
+
+		final ActionBar actionBar = getActionBar();
+		actionBar.setDisplayShowCustomEnabled(true);
+
+		final View actionCustomView = getLayoutInflater().cloneInContext(actionBar.getThemedContext()).inflate(R.layout.activity_search_action_custom_view, null);
+		bVersion = V.get(actionCustomView, R.id.bVersion);
+		actionBar.setCustomView(actionCustomView);
+
+		searchInVersion = S.activeVersion;
+		searchInVersionId = S.activeVersionId;
+		bVersion.setOnClickListener(bVersion_click);
 
 		searchView = V.get(SearchActivity.this, R.id.searchView);
 		searchView.setSubmitButtonEnabled(true);
@@ -138,10 +156,10 @@ public class SearchActivity extends BaseActivity {
 		{
 			openedBookId = getIntent().getIntExtra(EXTRA_openedBookId, -1);
 
-			Book book = S.activeVersion.getBook(openedBookId);
+			Book book = searchInVersion.getBook(openedBookId);
 			cFilterSingleBook.setText(getString(R.string.search_bookname_only, book.shortName));
 
-			for (Book k : S.activeVersion.getConsecutiveBooks()) {
+			for (Book k : searchInVersion.getConsecutiveBooks()) {
 				selectedBookIds.put(k.bookId, true);
 			}
 
@@ -152,18 +170,18 @@ public class SearchActivity extends BaseActivity {
 			SearchEngine.preloadRevIndex();
 		}
 
-		// show current version on search placeholder
-		final String placeholderVersion;
-		final String shortName = S.activeVersion.getShortName();
-		if (shortName != null) {
-			placeholderVersion = shortName;
-		} else {
-			placeholderVersion = S.activeVersion.getLongName();
+		displaySearchInVersion();
+	}
+
+	void displaySearchInVersion() {
+		final String versionInitials = S.getVersionInitials(searchInVersion);
+
+		bVersion.setText(versionInitials);
+		searchView.setQueryHint(getString(R.string.search_in_version_short_name_placeholder, versionInitials));
+
+		if (adapter != null) {
+			adapter.notifyDataSetChanged();
 		}
-
-		final String placeholder = getString(R.string.search_in_version_short_name_placeholder, placeholderVersion);
-
-		searchView.setQueryHint(placeholder);
 	}
 
 	void configureFilterDisplayOldNewTest() {
@@ -240,7 +258,7 @@ public class SearchActivity extends BaseActivity {
 					for (int i = 0, len = selectedBookIds.size(); i < len; i++) {
 						if (selectedBookIds.valueAt(i)) {
 							int bookId = selectedBookIds.keyAt(i);
-							Book book = S.activeVersion.getBook(bookId);
+							Book book = searchInVersion.getBook(bookId);
 							if (book != null) {
 								if (sb.length() != 0) sb.append(", "); //$NON-NLS-1$
 								sb.append(book.shortName);
@@ -299,7 +317,26 @@ public class SearchActivity extends BaseActivity {
 			} filterUserAction--;
 		}
 	};
-	
+
+	View.OnClickListener bVersion_click = new View.OnClickListener() {
+		@Override
+		public void onClick(final View v) {
+			S.openVersionsDialog(SearchActivity.this, false, searchInVersionId, new S.VersionDialogListener() {
+				@Override
+				public void onVersionSelected(final MVersion mv) {
+					searchInVersion = mv.getVersion();
+					searchInVersionId = mv.getVersionId();
+
+					displaySearchInVersion();
+					bVersion.setText(S.getVersionInitials(searchInVersion));
+					if (adapter != null) {
+						adapter.notifyDataSetChanged();
+					}
+				}
+			});
+		}
+	};
+
 	protected void setSelectedBookIdsBasedOnFilter() {
 		selectedBookIds.clear();
 		if (cFilterOlds.isChecked()) for (int i = 0; i < 39; i++) selectedBookIds.put(i, true);
@@ -361,7 +398,7 @@ public class SearchActivity extends BaseActivity {
 		private Book[] books;
 
 		public SearchFilterAdapter() {
-			Book[] books_original = S.activeVersion.getConsecutiveBooks();
+			Book[] books_original = searchInVersion.getConsecutiveBooks();
 			
 			if (Preferences.getBoolean(App.context.getString(R.string.pref_alphabeticBookSort_key), App.context.getResources().getBoolean(R.bool.pref_alphabeticBookSort_default))) {
 				books = BookNameSorter.sortAlphabetically(books_original);
@@ -461,7 +498,7 @@ public class SearchActivity extends BaseActivity {
 						sb.append("\n\n");
 
 						CharSequence fallback = getText(R.string.search_no_result_fallback);
-						fallback = TextUtils.expandTemplate(fallback, S.activeVersion.reference(fallbackAri));
+						fallback = TextUtils.expandTemplate(fallback, searchInVersion.reference(fallbackAri));
 						sb.append(fallback);
 
 						tSearchTips.setText(sb);
@@ -497,7 +534,7 @@ public class SearchActivity extends BaseActivity {
 				final int chapter_1 = jumper.getChapter();
 				if (chapter_1 == 0) return 0;
 
-				final Version version = S.activeVersion;
+				final Version version = searchInVersion;
 
 				final int bookId = jumper.getBookId(version.getConsecutiveBooks());
 				if (bookId == -1) return 0;
@@ -516,7 +553,7 @@ public class SearchActivity extends BaseActivity {
 	}
 	
 	boolean usingRevIndex() {
-		return S.activeVersionId == null || S.activeVersionId.equals(MVersionInternal.getVersionInternalId());
+		return searchInVersionId == null || searchInVersionId.equals(MVersionInternal.getVersionInternalId());
 	}
 
 	class SearchAdapter extends EasyAdapter {
@@ -542,15 +579,17 @@ public class SearchActivity extends BaseActivity {
 			TextView lSnippet = V.get(view, R.id.lSnippet);
 			
 			int ari = searchResults.get(position);
-			Book book = S.activeVersion.getBook(Ari.toBook(ari));
-			int chapter_1 = Ari.toChapter(ari);
-			int verse_1 = Ari.toVerse(ari);
-			SpannableStringBuilder sb = new SpannableStringBuilder(book.reference(chapter_1, verse_1));
+
+			final SpannableStringBuilder sb = new SpannableStringBuilder(searchInVersion.reference(ari));
 			Appearances.applySearchResultReferenceAppearance(lReference, sb);
-			
-			String verseText = S.activeVersion.loadVerseText(book, chapter_1, verse_1);
-			verseText = U.removeSpecialCodes(verseText);
-			lSnippet.setText(SearchEngine.hilite(verseText, tokens, hiliteColor));
+
+			final String verseText = U.removeSpecialCodes(searchInVersion.loadVerseText(ari));
+			if (verseText != null) {
+				lSnippet.setText(SearchEngine.hilite(verseText, tokens, hiliteColor));
+			} else {
+				lSnippet.setText(R.string.generic_verse_not_available_in_this_version);
+			}
+
 			Appearances.applyTextAppearance(lSnippet);
 		}
 		

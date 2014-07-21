@@ -699,14 +699,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				}
 				S.activeVersion = version;
 				S.activeVersionId = mv.getVersionId();
-				{
-					final String shortName = version.getShortName();
-					if (shortName != null) {
-						bVersion.setText(shortName);
-					} else {
-						bVersion.setText(version.getLongName());
-					}
-				}
+				bVersion.setText(S.getVersionInitials(version));
 				splitHandleButton.setLabel1("\u25b2 " + getSplitHandleVersionName(mv, version));
 				
 				if (display) {
