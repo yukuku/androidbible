@@ -32,7 +32,6 @@ import android.text.format.DateFormat;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
-import android.util.Pair;
 import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -57,7 +56,6 @@ import yuku.alkitab.base.ac.MarkerListActivity;
 import yuku.alkitab.base.ac.MarkersActivity;
 import yuku.alkitab.base.ac.SearchActivity;
 import yuku.alkitab.base.ac.ShareActivity;
-import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.dialog.ProgressMarkDialog;
@@ -1143,67 +1141,18 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	void openVersionsDialog() {
-		Pair<List<String>, List<MVersion>> versions = S.getAvailableVersions();
-		final List<String> options = versions.first;
-		final List<MVersion> data = versions.second;
-		
-		int selected = -1;
-		if (S.activeVersionId == null) {
-			selected = 0;
-		} else {
-			for (int i = 0; i < data.size(); i++) {
-				MVersion mv = data.get(i);
-				if (mv.getVersionId().equals(S.activeVersionId)) {
-					selected = i;
-					break;
-				}
-			}
-		}
-		
-		new AlertDialog.Builder(this)
-		.setSingleChoiceItems(options.toArray(new String[options.size()]), selected, new DialogInterface.OnClickListener() {
-			@Override public void onClick(DialogInterface dialog, int which) {
-				final MVersion mv = data.get(which);
-				
+		S.openVersionsDialog(this, false, S.activeVersionId, new S.VersionDialogListener() {
+			@Override
+			public void onVersionSelected(final MVersion mv) {
 				loadVersion(mv, true);
-				dialog.dismiss();
 			}
-		})
-		.setPositiveButton(R.string.versi_lainnya, new DialogInterface.OnClickListener() {
-			@Override public void onClick(DialogInterface dialog, int which) {
-				startActivity(VersionsActivity.createIntent());
-			}
-		})
-		.setNegativeButton(R.string.cancel, null)
-		.show();
+		});
 	}
 
 	void openSplitVersionsDialog() {
-		final Pair<List<String>, List<MVersion>> versions = S.getAvailableVersions();
-		final List<String> options = versions.first;
-		final List<MVersion> data = versions.second;
-		
-		options.add(0, getString(R.string.split_version_none));
-		data.add(0, null);
-		
-		int selected = -1;
-		if (this.activeSplitVersionId == null) {
-			selected = 0;
-		} else {
-			for (int i = 1 /* because 0 is null */; i < data.size(); i++) {
-				MVersion mv = data.get(i);
-				if (mv.getVersionId().equals(this.activeSplitVersionId)) {
-					selected = i;
-					break;
-				}
-			}
-		}
-		
-		new AlertDialog.Builder(this)
-		.setSingleChoiceItems(options.toArray(new String[options.size()]), selected, new DialogInterface.OnClickListener() {
-			@Override public void onClick(DialogInterface dialog, int which) {
-				final MVersion mv = data.get(which);
-				
+		S.openVersionsDialog(this, true, activeSplitVersionId, new S.VersionDialogListener() {
+			@Override
+			public void onVersionSelected(final MVersion mv) {
 				if (mv == null) { // closing split version
 					activeSplitVersion = null;
 					activeSplitVersionId = null;
@@ -1219,17 +1168,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 						closeSplitDisplay();
 					}
 				}
-				
-				dialog.dismiss();
 			}
-		})
-		.setPositiveButton(R.string.versi_lainnya, new DialogInterface.OnClickListener() {
-			@Override public void onClick(DialogInterface dialog, int which) {
-				startActivity(VersionsActivity.createIntent());
-			}
-		})
-		.setNegativeButton(R.string.cancel, null)
-		.show();
+		});
 	}
 
 	void openSplitDisplay() {

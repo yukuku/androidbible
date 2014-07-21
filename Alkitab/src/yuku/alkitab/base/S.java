@@ -1,11 +1,15 @@
 package yuku.alkitab.base;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.Pair;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionDb;
@@ -179,4 +183,50 @@ public class S {
 
 		return Pair.create(options, data);
 	}
+
+	public interface VersionDialogListener {
+		void onVersionSelected(MVersion mv);
+	}
+
+	public static void openVersionsDialog(final Context activity, final boolean withNone, final String selectedVersionId, final VersionDialogListener listener) {
+		final Pair<List<String>, List<MVersion>> versions = getAvailableVersions();
+		final List<String> options = versions.first;
+		final List<MVersion> data = versions.second;
+
+		if (withNone) {
+			options.add(0, activity.getString(R.string.split_version_none));
+			data.add(0, null);
+		}
+
+		int selected = -1;
+		if (selectedVersionId == null) {
+			selected = 0;
+		} else {
+			for (int i = (withNone? 1: 0) /* because 0 is None */; i < data.size(); i++) {
+				final MVersion mv = data.get(i);
+				if (mv.getVersionId().equals(selectedVersionId)) {
+					selected = i;
+					break;
+				}
+			}
+		}
+
+		new AlertDialog.Builder(activity)
+			.setSingleChoiceItems(options.toArray(new String[options.size()]), selected, new DialogInterface.OnClickListener() {
+				@Override public void onClick(DialogInterface dialog, int which) {
+					final MVersion mv = data.get(which);
+					listener.onVersionSelected(mv);
+					dialog.dismiss();
+				}
+			})
+			.setPositiveButton(R.string.versi_lainnya, new DialogInterface.OnClickListener() {
+				@Override public void onClick(DialogInterface dialog, int which) {
+					activity.startActivity(VersionsActivity.createIntent());
+				}
+			})
+			.setNegativeButton(R.string.cancel, null)
+			.show();
+	}
+
+
 }
