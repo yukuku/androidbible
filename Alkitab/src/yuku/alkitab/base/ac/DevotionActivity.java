@@ -248,15 +248,6 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		devotion_root.setTwofingerEnabled(false);
 		devotion_root.setListener(devotion_root_listener);
 
-		// text formats
-		lContent.setTextColor(S.applied.fontColor);
-		lContent.setBackgroundColor(S.applied.backgroundColor);
-		lContent.setTypeface(S.applied.fontFace, S.applied.fontBold);
-		lContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
-		lContent.setLineSpacing(0, S.applied.lineSpacingMult);
-
-		scrollContent.setBackgroundColor(S.applied.backgroundColor);
-
 		final DevotionKind storedKind = DevotionKind.getByName(Preferences.getString(Prefkey.devotion_last_kind_name, DEFAULT_DEVOTION_KIND.name));
 
 		currentKind = storedKind == null? DEFAULT_DEVOTION_KIND: storedKind;
@@ -272,7 +263,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		
 		new Prefetcher(currentKind).start();
 		
-		{ // betulin ui update
+		{ // fix  ui update
 			if (devotionDownloader != null) {
 				devotionDownloader.setListener(this);
 			}
@@ -295,29 +286,24 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 
 	@Override protected void onStart() {
 		super.onStart();
-		
+
+		// text formats
+		lContent.setTextColor(S.applied.fontColor);
+		lContent.setBackgroundColor(S.applied.backgroundColor);
+		lContent.setTypeface(S.applied.fontFace, S.applied.fontBold);
+		lContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
+		lContent.setLineSpacing(0, S.applied.lineSpacingMult);
+
+		scrollContent.setBackgroundColor(S.applied.backgroundColor);
+
 		if (Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default))) {
 			lContent.setKeepScreenOn(true);
 		}
 	}
 
-	private void buildMenu(Menu menu) {
-		menu.clear();
-		getMenuInflater().inflate(R.menu.activity_devotion, menu);
-	}
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		buildMenu(menu);
-		
-		return true;
-	}
-	
-	@Override public boolean onPrepareOptionsMenu(Menu menu) {
-		if (menu != null) {
-			buildMenu(menu);
-		}
-		
+		getMenuInflater().inflate(R.menu.activity_devotion, menu);
 		return true;
 	}
 	
