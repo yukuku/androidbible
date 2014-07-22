@@ -9,6 +9,7 @@ import com.squareup.okhttp.Call;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.debug.R;
 import yuku.alkitabfeedback.FeedbackSender;
 
@@ -59,7 +60,11 @@ public class App extends yuku.afw.App {
 		updateConfigurationWithPreferencesLocale();
 
 		// all activities need at least the activeVersion from S, so initialize it here.
-		S.prepareInternalVersion();
+		synchronized (S.class) {
+			if (S.activeVersion == null) {
+				S.activeVersion = VersionImpl.getInternalVersion();
+			}
+		}
 
 		// also pre-calculate calculated preferences value here
 		S.calculateAppliedValuesBasedOnPreferences();

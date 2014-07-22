@@ -14,7 +14,6 @@ import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.MVersionInternal;
-import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.InternalDbHelper;
 import yuku.alkitab.base.storage.Prefkey;
@@ -67,13 +66,7 @@ public class S {
 	//# 22nya harus siap di siapinKitab
 	public static Version activeVersion;
 	public static String activeVersionId;
-	
-	public static synchronized void prepareInternalVersion() {
-		if (activeVersion == null) {
-			activeVersion = VersionImpl.getInternalVersion();
-		}
-	}
-	
+
 	public static void calculateAppliedValuesBasedOnPreferences() {
 		//# configure font size
 		{

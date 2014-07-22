@@ -113,8 +113,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	public static final String ACTION_ATTRIBUTE_MAP_CHANGED = "yuku.alkitab.action.ATTRIBUTE_MAP_CHANGED";
 	public static final String EXTRA_CLOSE_DRAWER = "close_drawer";
 
-	public static final String ACTION_SETTINGS_CHANGED = "yuku.alkitab.action.SETTINGS_CHANGED";
-
 	// The followings are for instant_pref
 	private static final String PREFKEY_lastBookId = "kitabTerakhir";
 	private static final String PREFKEY_lastChapter = "pasalTerakhir";
@@ -190,7 +188,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 			Preferences.setFloat(Prefkey.ukuranHuruf2, nowFontSize);
 
-			S.calculateAppliedValuesBasedOnPreferences();
 			applyPreferences(false);
 
 			if (textAppearancePanel != null) {
@@ -318,14 +315,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 	};
 
-	final BroadcastReceiver applyPreferencesReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(final Context context, final Intent intent) {
-			S.calculateAppliedValuesBasedOnPreferences();
-			applyPreferences(true);
-		}
-	};
-
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState, true);
 		
@@ -361,8 +350,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		splitHandle = V.get(this, R.id.splitHandle);
 		splitHandleButton = V.get(this, R.id.splitHandleButton);
 		floater = V.get(this, R.id.floater);
-
-		applyPreferences(false);
 
 		lsText.setName("lsText");
 		lsSplit1.setName("lsSplit1");
@@ -491,7 +478,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 
 		App.getLbm().registerReceiver(reloadAttributeMapReceiver, new IntentFilter(ACTION_ATTRIBUTE_MAP_CHANGED));
-		App.getLbm().registerReceiver(applyPreferencesReceiver, new IntentFilter(ACTION_SETTINGS_CHANGED));
 	}
 
 	@Override
@@ -517,7 +503,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		super.onDestroy();
 
 		App.getLbm().unregisterReceiver(reloadAttributeMapReceiver);
-		App.getLbm().unregisterReceiver(applyPreferencesReceiver);
 	}
 
 	/**
@@ -903,6 +888,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	}
 
 	private void applyPreferences(boolean languageToo) {
+		// make sure S applied variables are set first
+		S.calculateAppliedValuesBasedOnPreferences();
+
 		// appliance of background color
 		{
 			root.setBackgroundColor(S.applied.backgroundColor);
@@ -941,7 +929,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	
 	@Override protected void onStart() {
 		super.onStart();
-		
+
+		applyPreferences(false);
+
 		if (Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default))) {
 			lsText.setKeepScreenOn(true);
 		}
@@ -1099,7 +1089,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if (textAppearancePanel == null) { // not showing yet
 				textAppearancePanel = new TextAppearancePanel(this, getLayoutInflater(), overlayContainer, new TextAppearancePanel.Listener() {
 					@Override public void onValueChanged() {
-						S.calculateAppliedValuesBasedOnPreferences();
 						applyPreferences(false);
 					}
 
@@ -1125,7 +1114,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		Preferences.setBoolean(Prefkey.is_night_mode, yes);
 
-		S.calculateAppliedValuesBasedOnPreferences();
 		applyPreferences(false);
 
 		if (textAppearancePanel != null) {
@@ -1254,11 +1242,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode, resultCode, data);
 		} else if (requestCode == REQCODE_textAppearanceCustomColors) {
 			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode, resultCode, data);
-
-			// MUST reload preferences
-			S.calculateAppliedValuesBasedOnPreferences();
-
-			applyPreferences(true);
 		}
 	}
 
