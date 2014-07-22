@@ -27,6 +27,7 @@ public class AboutActivity extends BaseActivity {
 	TextView tVersion;
 	TextView tTranslators;
 	ImageView imgLogo;
+	TextView tAboutTextDesc;
 
 	View bHelp;
 	View bDonation;
@@ -42,6 +43,7 @@ public class AboutActivity extends BaseActivity {
 		tVersion = V.get(this, R.id.tVersion);
 		tTranslators = V.get(this, R.id.tTranslators);
 		imgLogo = V.get(this, R.id.imgLogo);
+		tAboutTextDesc = V.get(this, R.id.tAboutTextDesc);
 		bHelp = V.get(this, R.id.bHelp);
 		bDonation = V.get(this, R.id.bDonation);
 		bSuggest = V.get(this, R.id.bSuggest);
@@ -53,6 +55,8 @@ public class AboutActivity extends BaseActivity {
 			logoDrawable = getResources().getDrawable(R.drawable.ic_launcher);
 		}
 		imgLogo.setImageDrawable(logoDrawable);
+
+		tAboutTextDesc.setMovementMethod(LinkMovementMethod.getInstance());
 
 		tVersion.setText(getString(R.string.about_version_name, App.getVersionName()));
 
