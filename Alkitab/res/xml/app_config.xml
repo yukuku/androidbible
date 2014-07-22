@@ -13,6 +13,8 @@
         <preset locale="in"   shortName="TSI"     longName="Terjemahan Sederhana Indonesia" filename_preset="in-tsi.yes" url="https://alkitab-host.appspot.com/addon/yes2/in-tsi--1.yes.gz" />
         <preset locale="in"   shortName="TBD"     longName="TB Deuterokanonika" filename_preset="in-tbd.yes" url="https://alkitab-host.appspot.com/addon/yes2/in-tbd--1.yes.gz" />
 
+        <preset locale="ms"   shortName="BM"      longName="Alkitab Berita Baik" filename_preset="ms-bsm.yes" url="https://alkitab-host.appspot.com/addon/yes2/ms-bsm--1.yes.gz" />
+
         <preset locale="ace" shortName="ACEH" longName="Aceh" filename_preset="ace-aceh.yes" url="https://alkitab-host.appspot.com/addon/yes2/ace-aceh--1.yes.gz" />
         <preset locale="blz" shortName="BLNTK" longName="Balantak" filename_preset="blz-balantak.yes" url="https://alkitab-host.appspot.com/addon/yes2/blz-balantak--1.yes.gz" />
         <preset locale="ban" shortName="BALI" longName="Bali" filename_preset="ban-bali.yes" url="https://alkitab-host.appspot.com/addon/yes2/ban-bali--1.yes.gz" />
