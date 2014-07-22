@@ -30,6 +30,7 @@ public class AboutActivity extends BaseActivity {
 
 	View bHelp;
 	View bDonation;
+	View bSuggest;
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -43,6 +44,7 @@ public class AboutActivity extends BaseActivity {
 		imgLogo = V.get(this, R.id.imgLogo);
 		bHelp = V.get(this, R.id.bHelp);
 		bDonation = V.get(this, R.id.bDonation);
+		bSuggest = V.get(this, R.id.bSuggest);
 
 		Drawable logoDrawable;
 		if (Build.VERSION.SDK_INT >= 15) {
@@ -56,6 +58,7 @@ public class AboutActivity extends BaseActivity {
 
 		bHelp.setOnClickListener(bHelp_click);
 		bDonation.setOnClickListener(bDonation_click);
+		bSuggest.setOnClickListener(bSuggest_click);
 
 		String[] translators = getResources().getStringArray(R.array.translators_list);
 		SpannableStringBuilder sb = new SpannableStringBuilder();
@@ -109,6 +112,13 @@ public class AboutActivity extends BaseActivity {
 			String donation_url = getString(R.string.alamat_donasi);
 			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(donation_url));
 			startActivity(HelpActivity.createIntent("help/donation.html", true, getString(R.string.send_donation_confirmation), intent));
+		}
+	};
+
+	View.OnClickListener bSuggest_click = new View.OnClickListener() {
+		@Override
+		public void onClick(final View v) {
+			startActivity(com.example.android.wizardpager.MainActivity.createIntent(App.context));
 		}
 	};
 }
