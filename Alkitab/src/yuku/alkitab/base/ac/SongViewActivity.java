@@ -364,37 +364,6 @@ public class SongViewActivity extends BaseActivity implements SongFragment.Shoul
 		actionBar.setHomeButtonEnabled(true);
 
 		bDownload.setOnClickListener(bDownload_click);
-		
-		// for colors of bg, text, etc
-		V.get(this, android.R.id.content).setBackgroundColor(S.applied.backgroundColor);
-
-		templateCustomVars = new Bundle();
-		templateCustomVars.putString("background_color", String.format("#%06x", S.applied.backgroundColor & 0xffffff));
-		templateCustomVars.putString("text_color", String.format("#%06x", S.applied.fontColor & 0xffffff));
-		templateCustomVars.putString("verse_number_color", String.format("#%06x", S.applied.verseNumberColor & 0xffffff));
-		templateCustomVars.putString("text_size", S.applied.fontSize2dp + "px"); // somehow this is automatically scaled to dp.
-		templateCustomVars.putString("line_spacing_mult", String.valueOf(S.applied.lineSpacingMult));
-		
-		{
-			String fontName = Preferences.getString(Prefkey.jenisHuruf, null);
-			if (FontManager.isCustomFont(fontName)) {
-				templateCustomVars.putString("custom_font_loader", String.format("@font-face{ font-family: '%s'; src: url('%s'); }", fontName, FontManager.getCustomFontUri(fontName)));
-			} else {
-				templateCustomVars.putString("custom_font_loader", "");
-			}
-			templateCustomVars.putString("text_font", fontName);
-		}
-		
-		{ // show latest viewed song
-			String bookName = Preferences.getString(Prefkey.song_last_bookName, null); // let KJ become the default.
-			String code = Preferences.getString(Prefkey.song_last_code, null);
-			
-			if (bookName == null || code == null) {
-				displaySong(null, null, true);
-			} else {
-				displaySong(bookName, S.getSongDb().getSong(bookName, code), true);
-			}
-		}
 	}
 
 	@Override
@@ -407,6 +376,42 @@ public class SongViewActivity extends BaseActivity implements SongFragment.Shoul
 	public void onConfigurationChanged(final Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		drawerToggle.onConfigurationChanged(newConfig);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+		// for colors of bg, text, etc
+		V.get(this, android.R.id.content).setBackgroundColor(S.applied.backgroundColor);
+
+		templateCustomVars = new Bundle();
+		templateCustomVars.putString("background_color", String.format("#%06x", S.applied.backgroundColor & 0xffffff));
+		templateCustomVars.putString("text_color", String.format("#%06x", S.applied.fontColor & 0xffffff));
+		templateCustomVars.putString("verse_number_color", String.format("#%06x", S.applied.verseNumberColor & 0xffffff));
+		templateCustomVars.putString("text_size", S.applied.fontSize2dp + "px");
+		templateCustomVars.putString("line_spacing_mult", String.valueOf(S.applied.lineSpacingMult));
+
+		{
+			String fontName = Preferences.getString(Prefkey.jenisHuruf, null);
+			if (FontManager.isCustomFont(fontName)) {
+				templateCustomVars.putString("custom_font_loader", String.format("@font-face{ font-family: '%s'; src: url('%s'); }", fontName, FontManager.getCustomFontUri(fontName)));
+			} else {
+				templateCustomVars.putString("custom_font_loader", "");
+			}
+			templateCustomVars.putString("text_font", fontName);
+		}
+
+		{ // show latest viewed song
+			String bookName = Preferences.getString(Prefkey.song_last_bookName, null);
+			String code = Preferences.getString(Prefkey.song_last_code, null);
+
+			if (bookName == null || code == null) {
+				displaySong(null, null, true);
+			} else {
+				displaySong(bookName, S.getSongDb().getSong(bookName, code), true);
+			}
+		}
 	}
 
 	@Override
