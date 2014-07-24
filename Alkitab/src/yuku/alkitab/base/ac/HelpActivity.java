@@ -89,7 +89,7 @@ public class HelpActivity extends BaseActivity {
 				}
 
 				if ("suggest".equals(scheme)) {
-					startActivity(new Intent(App.context, com.example.android.wizardpager.MainActivity.class));
+					startActivity(com.example.android.wizardpager.MainActivity.createIntent(App.context));
 					finish();
 					return true;
 				}

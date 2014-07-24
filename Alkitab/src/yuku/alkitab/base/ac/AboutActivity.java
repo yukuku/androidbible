@@ -27,6 +27,8 @@ public class AboutActivity extends BaseActivity {
 	TextView tVersion;
 	TextView tTranslators;
 	ImageView imgLogo;
+	ImageView imgBetaRibbon;
+	TextView tAboutTextDesc;
 
 	View bHelp;
 	View bDonation;
@@ -42,17 +44,28 @@ public class AboutActivity extends BaseActivity {
 		tVersion = V.get(this, R.id.tVersion);
 		tTranslators = V.get(this, R.id.tTranslators);
 		imgLogo = V.get(this, R.id.imgLogo);
+		imgBetaRibbon = V.get(this, R.id.imgBetaRibbon);
+		tAboutTextDesc = V.get(this, R.id.tAboutTextDesc);
 		bHelp = V.get(this, R.id.bHelp);
 		bDonation = V.get(this, R.id.bDonation);
 		bBetaFeedback = V.get(this, R.id.bBetaFeedback);
 
-		Drawable logoDrawable;
+		final Drawable logoDrawable;
 		if (Build.VERSION.SDK_INT >= 15) {
 			logoDrawable = getResources().getDrawableForDensity(R.drawable.ic_launcher, DisplayMetrics.DENSITY_XXXHIGH);
 		} else {
 			logoDrawable = getResources().getDrawable(R.drawable.ic_launcher);
 		}
 		imgLogo.setImageDrawable(logoDrawable);
+
+		imgBetaRibbon.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://goo.gl/JjYTK1")));
+			}
+		});
+
+		tAboutTextDesc.setMovementMethod(LinkMovementMethod.getInstance());
 
 		tVersion.setText(getString(R.string.about_version_name, App.getVersionName()));
 
@@ -109,7 +122,7 @@ public class AboutActivity extends BaseActivity {
 	View.OnClickListener bDonation_click = new View.OnClickListener() {
 		@Override
 		public void onClick(final View v) {
-			String donation_url = getString(R.string.alamat_donasi);
+			String donation_url = getString(R.string.donation_url);
 			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(donation_url));
 			startActivity(HelpActivity.createIntent("help/donation.html", true, getString(R.string.send_donation_confirmation), intent));
 		}
