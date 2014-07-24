@@ -36,6 +36,7 @@
   <string name="search_bookname_only">只有%s</string>
   <string name="ayat_sebelumangka">诗句</string>
   <string name="pasal_sebelumangka">章</string>
+  <string name="jump_to_prompt"><b>跳至</b> — 范例: ^1</string>
   <string name="belum_ada_pembatas_buku">尚未有任何书签。\n选取一节经文以新增书签。</string>
   <string name="judul_titikdua">标题</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">下载 %1$s 失败, 日期 %2$s</string>
@@ -182,6 +183,7 @@
   <string name="menuAddSomething">新增标记</string>
   <string name="color_settings_title">配色</string>
   <string name="color_settings_night_title">配色（夜间模式）</string>
+  <string name="menuDisplay">显示</string>
   <string name="text_appearance_theme_custom">设置</string>
   <string name="text_appearance_text_size">文字大小</string>
   <string name="text_appearance_line_spacing">行距</string>
@@ -309,12 +311,16 @@
   <string name="rp_download_reading_plan_data_corrupted">已下载的阅读计划资料损毁，请以有效的互联网连线再次尝试。</string>
   <string name="version_download_need_fonts">"您下载的版本需要某种字体以正确显示。请到「文字外观」目录，并选择某种字体。希腊语需要 Ubuntu 字体。缅甸语需要Parabaik，ParabaikSans 或 Myanmar3。泰米尔语需要 Akshar。泰卢固语需要 Suranna。"</string>
   <string name="menuNightMode">夜间模式</string>
+  <string name="highlight_custom_color">其他颜色</string>
   <string name="menu_compare">比较</string>
   <string name="about_version_name">版本 %s</string>
   <string name="song_player_error_description">播放歌曲%1$d, %2$d的时候遇到问题。</string>
   <string name="beta_tester_program_title">试版测试员</string>
   <string name="beta_tester_program_desc">请参与我们的测试者计划，测试者可优先使用新功能，并一起去优化神速圣经这程式：goo.gl/JjYTK1</string>
   <string name="search_in_version_short_name_placeholder">在%s搜寻</string>
+  <string name="search_syntax_tips"><i>搜尋訣竅:</i>\n\n<b>+字</b>找精確的字\n<b>[q]主神[q]</b> 找精確的詞</string>
+  <string name="search_no_result">找不到这经节 <b>^1</b>.</string>
+  <string name="search_no_result_fallback">点此跳到 <u>^1</u>.</string>
   <string name="marker_transfer_to_device_title">转移到另一台设备</string>
   <string name="marker_transfer_to_device_description">移动所有书籤、笔记和标记到另一台手机或平板，我们建议你使用谷歌电邮或其他电邮。</string>
   <string name="marker_transfer_to_computer_title">转移以便编辑</string>

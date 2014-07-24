@@ -36,6 +36,7 @@
   <string name="search_bookname_only">Тільки %s</string>
   <string name="ayat_sebelumangka">Вірш</string>
   <string name="pasal_sebelumangka">Розділ</string>
+  <string name="jump_to_prompt"><b>ШВИДКИЙ ПЕРЕХІД</b> — Приклад: ^1</string>
   <string name="belum_ada_pembatas_buku">Ще немає закладок.\nВиберіть вірш щоб додати закладку.</string>
   <string name="judul_titikdua">НАЗВА</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Не вдалося завантажити %1$s з дати %2$s</string>
@@ -183,6 +184,7 @@
   <string name="menuAddSomething">Додати позначку</string>
   <string name="color_settings_title">Кольори</string>
   <string name="color_settings_night_title">Кольори (Нічний режим)</string>
+  <string name="menuDisplay">Екран</string>
   <string name="text_appearance_theme_custom">Індивідуалізація...</string>
   <string name="text_appearance_text_size">Розмір тексту</string>
   <string name="text_appearance_line_spacing">Міжрядковий інтервал</string>
@@ -310,12 +312,16 @@
   <string name="rp_download_reading_plan_data_corrupted">Завантажені дані плану читання пошкоджено. Будь ласка спробуйте ще раз з доступним підключенням до інтернету.</string>
   <string name="version_download_need_fonts">"Версія яку ви завантажили можливо потребує для коректного відображення деякі шрифти. Перейдіть в меню до \"Вигляд тексту\" та виберіть потрібний шрифт. Грецька потребує шрифт Ubuntu. Бурмезька потребує Parabaik, ParabaikSans чи Myanmar3. Тамільська потребує Akshar. Телузька потребує Suranna."</string>
   <string name="menuNightMode">Нічний режим</string>
+  <string name="highlight_custom_color">Інші кольори</string>
   <string name="menu_compare">Порівняти</string>
   <string name="about_version_name">Версія складання %s</string>
   <string name="song_player_error_description">Сталася помилка при відтворенні цієї пісні: %1$d, %2$d.</string>
   <string name="beta_tester_program_title">Бета тестування</string>
   <string name="beta_tester_program_desc">Приєднуйтесь до нашої програми бета тестування та отримайте доступ до нових функцій і можливість формувати програму Quick Bible: goo.gl/JjYTK1</string>
   <string name="search_in_version_short_name_placeholder">Шукати в %s</string>
+  <string name="search_syntax_tips"><i>Поради з пошуку:</i>\n\n<b>+слово</b> для цього точне слово\n<b>[q]Господь Бог[q]</b> для цього точна фраза</string>
+  <string name="search_no_result">Не знайдено вірші які містять <b>^1</b>.</string>
+  <string name="search_no_result_fallback">Натисніть тут для переходу до <u>^1</u>.</string>
   <string name="marker_transfer_to_device_title">Передати на інший пристрій</string>
   <string name="marker_transfer_to_device_description">Перемістити всі закладки, замітки, виділення та підкреслення на інший телефон або планшет. Ми рекомендуємо використовувати Gmail / Email.</string>
   <string name="marker_transfer_to_computer_title">Передати для редагування</string>
