@@ -327,10 +327,16 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		final ActionBar actionBar = getActionBar();
 		actionBar.setDisplayShowCustomEnabled(true);
-		actionBar.setDisplayShowTitleEnabled(false);
-		actionBar.setDisplayShowHomeEnabled(Build.VERSION.SDK_INT < 18);
+		if (getResources().getConfiguration().smallestScreenWidthDp >= 360) {
+			actionBar.setDisplayShowTitleEnabled(true);
+			actionBar.setDisplayShowHomeEnabled(true);
+		} else {
+			actionBar.setDisplayShowTitleEnabled(false);
+			actionBar.setDisplayShowHomeEnabled(Build.VERSION.SDK_INT < 18);
+		}
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
+		actionBar.setTitle("");
 
 		final View actionCustomView = getLayoutInflater().cloneInContext(actionBar.getThemedContext()).inflate(R.layout.activity_isi_action_custom_view, null);
 		bGoto = V.get(actionCustomView, R.id.bGoto);
