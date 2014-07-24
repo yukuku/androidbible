@@ -38,4 +38,7 @@ public enum Prefkey {
 
 	/** Last devotion kind */
 	devotion_last_kind_name,
+
+	/** Search history (JSON: {@link yuku.alkitab.base.ac.SearchActivity.SearchHistory}) */
+	searchHistory,
 }

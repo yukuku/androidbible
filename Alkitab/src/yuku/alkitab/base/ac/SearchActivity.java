@@ -6,6 +6,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
@@ -15,14 +17,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CheckedTextView;
 import android.widget.CompoundButton;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.gson.Gson;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
@@ -32,6 +37,7 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionInternal;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.BookNameSorter;
 import yuku.alkitab.base.util.Jumper;
@@ -44,12 +50,15 @@ import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.display.Launcher;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class SearchActivity extends BaseActivity {
 	public static final String TAG = SearchActivity.class.getSimpleName();
 	
 	private static final String EXTRA_openedBookId = "openedBookId";
+	final String COLUMN_QUERY_STRING = "query_string";
 
 	Button bVersion;
 	SearchView searchView;
@@ -71,6 +80,62 @@ public class SearchActivity extends BaseActivity {
 	Toast resultCountToast;
 	Version searchInVersion;
 	String searchInVersionId;
+	SearchHistoryAdapter searchHistoryAdapter;
+
+	static class SearchHistory {
+		public static class Entry {
+			public String query_string;
+		}
+
+		public List<Entry> entries = new ArrayList<>();
+	}
+
+	class SearchHistoryAdapter extends CursorAdapter {
+		List<SearchHistory.Entry> entries = new ArrayList<>();
+		String query_string;
+
+		public SearchHistoryAdapter() {
+			super(App.context, null, 0);
+		}
+
+		@Override
+		public View newView(final Context context, final Cursor cursor, final ViewGroup parent) {
+			return getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+		}
+
+		@Override
+		public void bindView(final View view, final Context context, final Cursor cursor) {
+			TextView text1 = V.get(view, android.R.id.text1);
+			text1.setText(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_QUERY_STRING)));
+		}
+
+		@Override
+		public CharSequence convertToString(final Cursor cursor) {
+			return cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_QUERY_STRING));
+		}
+
+		public void setData(final SearchHistory searchHistory) {
+			entries.clear();
+			entries.addAll(searchHistory.entries);
+			filter();
+		}
+
+		public void setQuery(final String query_string) {
+			this.query_string = query_string;
+			filter();
+		}
+
+		private void filter() {
+			final MatrixCursor mc = new MatrixCursor(new String[]{"_id", COLUMN_QUERY_STRING});
+			for (int i = 0; i < entries.size(); i++) {
+				final SearchHistory.Entry entry = entries.get(i);
+				if (TextUtils.isEmpty(query_string) || entry.query_string.toLowerCase().startsWith(query_string.toLowerCase())) {
+					mc.addRow(new Object[]{(long) i, entry.query_string});
+				}
+			}
+			swapCursor(mc);
+		}
+	}
 
 	public static Intent createIntent(int openedBookId) {
 		Intent res = new Intent(App.context, SearchActivity.class);
@@ -106,6 +171,30 @@ public class SearchActivity extends BaseActivity {
 
 		searchView = V.get(SearchActivity.this, R.id.searchView);
 		searchView.setSubmitButtonEnabled(true);
+		final AutoCompleteTextView autoCompleteTextView = findAutoCompleteTextView(searchView);
+		if (autoCompleteTextView != null) {
+			autoCompleteTextView.setThreshold(0);
+		}
+		searchView.setSuggestionsAdapter(searchHistoryAdapter = new SearchHistoryAdapter());
+		searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+			@Override
+			public boolean onSuggestionSelect(final int position) {
+				return false;
+			}
+
+			@Override
+			public boolean onSuggestionClick(final int position) {
+				final Cursor c = searchHistoryAdapter.getCursor();
+				if (c == null) return false;
+
+				final boolean ok = c.moveToPosition(position);
+				if (!ok) return false;
+
+				searchView.setQuery(c.getString(c.getColumnIndexOrThrow(COLUMN_QUERY_STRING)), true);
+
+				return true;
+			}
+		});
 		searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 			@Override
 			public boolean onQueryTextSubmit(String query1) {
@@ -115,6 +204,7 @@ public class SearchActivity extends BaseActivity {
 
 			@Override
 			public boolean onQueryTextChange(String newText) {
+				searchHistoryAdapter.setQuery(newText);
 				return false;
 			}
 		});
@@ -171,6 +261,25 @@ public class SearchActivity extends BaseActivity {
 		}
 
 		displaySearchInVersion();
+	}
+
+	AutoCompleteTextView findAutoCompleteTextView(ViewGroup group) {
+		for (int i = 0, len = group.getChildCount(); i < len; i++) {
+			final View child = group.getChildAt(i);
+			if (child instanceof AutoCompleteTextView) {
+				return (AutoCompleteTextView) child;
+			} else if (child instanceof ViewGroup) {
+				return findAutoCompleteTextView((ViewGroup) child);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+		searchHistoryAdapter.setData(loadSearchHistory());
 	}
 
 	void displaySearchInVersion() {
@@ -428,8 +537,8 @@ public class SearchActivity extends BaseActivity {
 		}
 	}
 
-	protected void search(final String query) {
-		if (query.trim().length() == 0) {
+	protected void search(final String query_string) {
+		if (query_string.trim().length() == 0) {
 			return;
 		}
 		
@@ -445,7 +554,7 @@ public class SearchActivity extends BaseActivity {
 			}
 		}
 		
-		final String[] tokens = QueryTokenizer.tokenize(query);
+		final String[] tokens = QueryTokenizer.tokenize(query_string);
 		
 		final ProgressDialog pd = new ProgressDialog(this);
 		pd.setMessage(getString(R.string.search_searching_tokens, Arrays.toString(tokens)));
@@ -455,6 +564,8 @@ public class SearchActivity extends BaseActivity {
 		
 		new AsyncTask<Void, Void, IntArrayList>() {
 			@Override protected IntArrayList doInBackground(Void... params) {
+				searchHistoryAdapter.setData(addSearchHistoryEntry(query_string));
+
 				synchronized (SearchActivity.this) {
 					if (usingRevIndex()) {
 						return SearchEngine.searchByRevIndex(getQuery());
@@ -486,9 +597,9 @@ public class SearchActivity extends BaseActivity {
 					searchView.clearFocus();
 					lsSearchResults.requestFocus();
 				} else {
-					final Jumper jumper = new Jumper(query);
+					final Jumper jumper = new Jumper(query_string);
 					CharSequence noresult = getText(R.string.search_no_result);
-					noresult = TextUtils.expandTemplate(noresult, query);
+					noresult = TextUtils.expandTemplate(noresult, query_string);
 
 					final int fallbackAri = shouldShowFallback(jumper);
 
@@ -551,7 +662,42 @@ public class SearchActivity extends BaseActivity {
 			}
 		}.execute();
 	}
-	
+
+	SearchHistory loadSearchHistory() {
+		final String json = Preferences.getString(Prefkey.searchHistory, null);
+		if (json == null) {
+			return new SearchHistory();
+		}
+
+		return new Gson().fromJson(json, SearchHistory.class);
+	}
+
+	void saveSearchHistory(SearchHistory sh) {
+		final String json = new Gson().toJson(sh);
+		Preferences.setString(Prefkey.searchHistory, json);
+	}
+
+	// returns the modified SearchHistory
+	SearchHistory addSearchHistoryEntry(final String query_string) {
+		final SearchHistory sh = loadSearchHistory();
+		// look for this query_string and remove
+		for (int i = sh.entries.size() - 1; i >= 0; i--) {
+			if (U.equals(sh.entries.get(i).query_string, query_string)) {
+				sh.entries.remove(i);
+			}
+		}
+		final SearchHistory.Entry entry = new SearchHistory.Entry();
+		entry.query_string = query_string;
+		sh.entries.add(0, entry);
+
+		// if more than MAX, remove last
+		while (sh.entries.size() > 20) {
+			sh.entries.remove(sh.entries.size() - 1);
+		}
+		saveSearchHistory(sh);
+		return sh;
+	}
+
 	boolean usingRevIndex() {
 		return searchInVersionId == null || searchInVersionId.equals(MVersionInternal.getVersionInternalId());
 	}
