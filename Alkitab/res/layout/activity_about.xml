@@ -1,220 +1,219 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+	android:id="@+id/root"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="16dp"
+			android:layout_marginRight="16dp"
+			android:layout_marginTop="16dp"
+			android:background="#151515"
 			android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp"
-			android:background="#151515">
+			android:orientation="vertical"
+			android:paddingLeft="24dp"
+			android:paddingRight="24dp">
 
-            <ImageView
-                android:id="@+id/imgLogo"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:layout_marginTop="24dp"
-                android:src="#f00"
-                tools:ignore="ContentDescription"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:tag="bold"
-                android:text="@string/app_name"
-                android:textSize="24sp"/>
-
-            <TextView
-                android:id="@+id/tVersion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="versi x.y.z"
-                android:textSize="18sp"
-                tools:ignore="HardcodedText"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="32dp"
-                android:gravity="center_horizontal"
-                android:text="@string/about_text_desc"
-                android:textSize="16sp"
-                tools:ignore="HardcodedText"
-				android:autoLink="all" />
-
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:id="@+id/bHelp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/about_linebutton_bg"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:gravity="center_vertical"
-                android:text="@string/menuBantuan"
-                android:textAppearance="?android:textAppearanceMedium"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/bDonation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/about_linebutton_bg"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:gravity="center_vertical"
-                android:text="@string/menuDonasi"
-                android:textAppearance="?android:textAppearanceMedium"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/bBetaFeedback"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/about_linebutton_bg"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:gravity="center_vertical"
-                android:text="@string/about_beta_feedback"
-                android:textAppearance="?android:textAppearanceMedium"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:background="#ff151515"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:tag="bold"
-                android:text="Team"
-                android:textSize="18sp"
-                tools:ignore="HardcodedText"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="Randy Sugianto (Yuku) – developer\nRudy Kurniawan – developer\nJaya Satrio Hendrick – graphics\nYohanes Nugroho – PDB Reader"
-                android:textSize="16sp"
-                tools:ignore="HardcodedText"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:tag="bold"
-                android:text="Project Page"
-                android:textSize="16sp"
-                tools:ignore="HardcodedText"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:autoLink="web"
-                android:gravity="center_horizontal"
-                android:text="github.com/yukuku/androidbible"
-                android:textSize="16sp"
-                tools:ignore="HardcodedText"/>
+			<ImageView
+				android:id="@+id/imgLogo"
+				android:layout_width="96dp"
+				android:layout_height="96dp"
+				android:layout_marginTop="24dp"
+				android:src="#f00"
+				tools:ignore="ContentDescription" />
 
 			<TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:tag="bold"
-                android:text="Development Blog"
-                android:textSize="16sp"
-                tools:ignore="HardcodedText"/>
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="16dp"
+				android:tag="bold"
+				android:text="@string/app_name"
+				android:textSize="24sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:autoLink="web"
-                android:gravity="center_horizontal"
-                android:text="androidbible.blogspot.com"
-                android:textSize="16sp"
-                tools:ignore="HardcodedText"/>
+			<TextView
+				android:id="@+id/tVersion"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="versi x.y.z"
+				android:textSize="18sp"
+				tools:ignore="HardcodedText" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:tag="bold"
-                android:text="@string/about_translators"
-                android:textSize="18sp"/>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="16dp"
+				android:layout_marginTop="32dp"
+				android:autoLink="all"
+				android:gravity="center_horizontal"
+				android:text="@string/about_text_desc"
+				android:textSize="16sp"
+				tools:ignore="HardcodedText"
+				android:id="@+id/tAboutTextDesc" />
 
-            <TextView
-                android:id="@+id/tTranslators"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
-                android:gravity="center_horizontal"
-                android:text="Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. "
-                android:textSize="16sp"
-                tools:ignore="HardcodedText"
-                />
 
-        </LinearLayout>
-    </LinearLayout>
+		</LinearLayout>
+
+
+		<LinearLayout
+			android:id="@+id/bHelp"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="16dp"
+			android:layout_marginRight="16dp"
+			android:layout_marginTop="16dp"
+			android:background="@drawable/about_linebutton_bg"
+			android:gravity="center_horizontal"
+			android:orientation="vertical"
+			android:paddingLeft="24dp"
+			android:paddingRight="24dp">
+
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="48dp"
+				android:gravity="center_vertical"
+				android:text="@string/menuBantuan"
+				android:textAppearance="?android:textAppearanceMedium" />
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/bDonation"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="16dp"
+			android:layout_marginRight="16dp"
+			android:layout_marginTop="16dp"
+			android:background="@drawable/about_linebutton_bg"
+			android:gravity="center_horizontal"
+			android:orientation="vertical"
+			android:paddingLeft="24dp"
+			android:paddingRight="24dp">
+
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="48dp"
+				android:gravity="center_vertical"
+				android:text="@string/menuDonasi"
+				android:textAppearance="?android:textAppearanceMedium" />
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/bBetaFeedback"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="16dp"
+			android:layout_marginRight="16dp"
+			android:layout_marginTop="16dp"
+			android:background="@drawable/about_linebutton_bg"
+			android:gravity="center_horizontal"
+			android:orientation="vertical"
+			android:paddingLeft="24dp"
+			android:paddingRight="24dp">
+
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="48dp"
+				android:gravity="center_vertical"
+				android:text="@string/about_beta_feedback"
+				android:textAppearance="?android:textAppearanceMedium" />
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="32dp"
+			android:layout_marginLeft="16dp"
+			android:layout_marginRight="16dp"
+			android:layout_marginTop="16dp"
+			android:background="#ff151515"
+			android:gravity="center_horizontal"
+			android:orientation="vertical"
+			android:paddingLeft="24dp"
+			android:paddingRight="24dp">
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="32dp"
+				android:tag="bold"
+				android:text="Team"
+				android:textSize="18sp"
+				tools:ignore="HardcodedText" />
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center_horizontal"
+				android:text="Randy Sugianto (Yuku) – developer\nRudy Kurniawan – developer\nJaya Satrio Hendrick – graphics\nYohanes Nugroho – PDB Reader"
+				android:textSize="16sp"
+				tools:ignore="HardcodedText" />
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="32dp"
+				android:tag="bold"
+				android:text="Project Page"
+				android:textSize="16sp"
+				tools:ignore="HardcodedText" />
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:autoLink="web"
+				android:gravity="center_horizontal"
+				android:text="github.com/yukuku/androidbible"
+				android:textSize="16sp"
+				tools:ignore="HardcodedText" />
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="32dp"
+				android:tag="bold"
+				android:text="Development Blog"
+				android:textSize="16sp"
+				tools:ignore="HardcodedText" />
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:autoLink="web"
+				android:gravity="center_horizontal"
+				android:text="androidbible.blogspot.com"
+				android:textSize="16sp"
+				tools:ignore="HardcodedText" />
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="32dp"
+				android:tag="bold"
+				android:text="@string/about_translators"
+				android:textSize="18sp" />
+
+			<TextView
+				android:id="@+id/tTranslators"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="32dp"
+				android:gravity="center_horizontal"
+				android:text="Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. "
+				android:textSize="16sp"
+				tools:ignore="HardcodedText" />
+
+		</LinearLayout>
+	</LinearLayout>
 </ScrollView>
