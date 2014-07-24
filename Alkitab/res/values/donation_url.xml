@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <string name="alamat_donasi" tools:ignore="MissingTranslation">https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=ZAL5U7AQCHJDE</string>
+	<string name="donation_url" tools:ignore="MissingTranslation">http://www.bibleforandroid.com/donate</string>
 
 </resources>

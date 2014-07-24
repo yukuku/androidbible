@@ -333,8 +333,6 @@
     <string name="about_version_name">version %s</string>
     <string name="song_player_error_description">An error was encountered when playing this song: %1$d, %2$d.</string>
 
-    <string name="beta_tester_program_title">Beta Tester</string>
-    <string name="beta_tester_program_desc">Join our Beta Tester program and get early access to new features and have opportunity to shape Quick Bible: goo.gl/JjYTK1</string>
     <string name="search_in_version_short_name_placeholder">Search in %s</string>
     <string name="search_syntax_tips"><i>Search tips:</i>\n\n<b>+word</b> for that exact word\n<b>[q]lord god[q]</b> for that exact phrase</string>
     <string name="search_no_result">No verses found for <b>^1</b>.</string>
@@ -345,4 +343,5 @@
     <string name="marker_transfer_to_computer_title">Transfer for editing</string>
     <string name="marker_transfer_to_computer_description">Save bookmarks, notes, and highlights to a HTML file for further editing or printing from your computer.</string>
     <string name="bookmark_delete_confirmation">Delete this bookmark?</string>
+	<string name="about_text_desc" translatable="false">100% free Bible app, licensed under Apache License 2.0\n<a href="http://www.bibleforandroid.com/guide?utm_source=app&amp;utm_medium=button&amp;utm_campaign=about">www.bibleforandroid.com</a></string>
 </resources>

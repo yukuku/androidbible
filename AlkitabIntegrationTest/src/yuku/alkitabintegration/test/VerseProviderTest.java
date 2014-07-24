@@ -8,8 +8,6 @@ import yuku.alkitabintegration.provider.VerseProvider.VerseRanges;
 
 import java.util.List;
 
-import static junit.framework.Assert.*;
-
 public class VerseProviderTest extends AndroidTestCase {
 	public void testSingleVerse() throws Throwable {
 		ContentResolver cr = getContext().getContentResolver();
@@ -27,10 +25,8 @@ public class VerseProviderTest extends AndroidTestCase {
 		assertNotNull(v.toString());
 		assertEquals(v.toString().substring(0, v.bookName.length()), v.bookName);
 		
-		assertNotNull(vp.getVerse(0x000132));
-		
-		// TODO this should return null instead of "[?]" 
-		// assertNull(vp.getVerse(0x000133));
+		assertNotNull(vp.getVerse(0x00011f));
+		assertNull(vp.getVerse(0x000120));
 	}
 	
 	public void testVerseRanges() throws Throwable {

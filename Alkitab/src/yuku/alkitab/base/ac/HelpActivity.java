@@ -10,8 +10,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
-import yuku.afw.App;
 import yuku.afw.V;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.util.TargetDecoder;
@@ -89,7 +89,7 @@ public class HelpActivity extends BaseActivity {
 				}
 
 				if ("suggest".equals(scheme)) {
-					startActivity(new Intent(App.context, com.example.android.wizardpager.MainActivity.class));
+					startActivity(com.example.android.wizardpager.MainActivity.createIntent(App.context));
 					finish();
 					return true;
 				}

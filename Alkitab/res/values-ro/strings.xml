@@ -36,6 +36,7 @@
   <string name="search_bookname_only">Numai %s</string>
   <string name="ayat_sebelumangka">Verset</string>
   <string name="pasal_sebelumangka">Capitol</string>
+  <string name="jump_to_prompt"><b>MERGI LA</b> — Exemplu: ^1</string>
   <string name="belum_ada_pembatas_buku">Nu sunt marcaje.\nSelectează un verset pentru adăugare în marcaje.</string>
   <string name="judul_titikdua">TITLU</string>
   <string name="gagal_mengunduh_namaumum_tgl_tgl">Eroare la descărcare %1$s data %2$s</string>
@@ -182,6 +183,7 @@
   <string name="menuAddSomething">Adaugă însemn</string>
   <string name="color_settings_title">Culori</string>
   <string name="color_settings_night_title">Culori (Mod nocturn)</string>
+  <string name="menuDisplay">Afişare</string>
   <string name="text_appearance_theme_custom">Personalizat...</string>
   <string name="text_appearance_text_size">Dimensiune text</string>
   <string name="text_appearance_line_spacing">Spațiu rânduri</string>
@@ -309,12 +311,16 @@
   <string name="rp_download_reading_plan_data_corrupted">Planul de citire descărcat este corupt. Încearcă încă o dată având o conexiune la internet.</string>
   <string name="version_download_need_fonts">"Versiunea ce s-a descărcat, ar putea avea nevoie de anumite fonturi. Mergi la meniul \"aspect Text \" și selectați un font. Grec are nevoie de fontul Ubuntu. Pentru limba birmaneză Parabaik, ParabaikSans sau Myanmar3. Tamil are nevoie de Akshar. Telugu are nevoie de Suranna."</string>
   <string name="menuNightMode">Mod nocturn</string>
+  <string name="highlight_custom_color">Alte culori</string>
   <string name="menu_compare">Compară</string>
   <string name="about_version_name">versiune %s</string>
   <string name="song_player_error_description">O eroare a fost întâlnită în timpul redării acestui cântec: %1$d, %2$d.</string>
   <string name="beta_tester_program_title">Beta Tester</string>
   <string name="beta_tester_program_desc">Alăturați-vă programului nostru de Beta Tester și veți primi acces la noi caracteristici, având posibilitatea să optimizați Quick Bible: goo.gl/JjYTK1</string>
   <string name="search_in_version_short_name_placeholder">Caută în %s</string>
+  <string name="search_syntax_tips"><i>Sfaturi pentru căutare:</i>\n\n<b>+word</b> pentru cuvântul\n<b>[q]lord god[q]</b> pentru fraza</string>
+  <string name="search_no_result">Nu au fost găsite versetele <b>^1</b>.</string>
+  <string name="search_no_result_fallback">Apăsați aici pentru a merge la <u>^1</u>.</string>
   <string name="marker_transfer_to_device_title">Transfer pe alt dispozitiv</string>
   <string name="marker_transfer_to_device_description">Mută toate favorite, note și marcaje pe un alt telefon sau tabletă. Recomandăm utilizarea Gmail/Email.</string>
   <string name="marker_transfer_to_computer_title">Transferă pentru editare</string>
