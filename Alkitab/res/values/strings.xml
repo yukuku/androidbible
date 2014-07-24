@@ -267,7 +267,6 @@
     <string name="pm_progress_4">Progress 4</string>
     <string name="pm_progress_5">Progress 5</string>
     <string name="pm_menu_save_progress">Save %s</string>
-    <string name="pm_menu_save_progresses">Save progress</string>
     <string name="pm_menu_view_progress">View progress</string>
     <string name="pm_progress_name">Progress name</string>
     <string name="pm_edit_name">Edit name</string>

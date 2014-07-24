@@ -27,7 +27,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.SpannableStringBuilder;
-import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
@@ -74,7 +73,6 @@ import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.LidToAri;
 import yuku.alkitab.base.util.OsisBookNames;
 import yuku.alkitab.base.util.Sqlitil;
-import yuku.alkitab.base.widget.AttributeView;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.Floater;
 import yuku.alkitab.base.widget.FormattedTextRenderer;
@@ -1767,25 +1765,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				if (esvsb != null) esvsb.setVisible(true);
 			}
 
-			List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
-			MenuItem item1 = menu.findItem(R.id.menuProgress1);
-			setProgressMarkMenuItemTitle(progressMarks, item1, 0);
-			MenuItem item2 = menu.findItem(R.id.menuProgress2);
-			setProgressMarkMenuItemTitle(progressMarks, item2, 1);
-			MenuItem item3 = menu.findItem(R.id.menuProgress3);
-			setProgressMarkMenuItemTitle(progressMarks, item3, 2);
-			MenuItem item4 = menu.findItem(R.id.menuProgress4);
-			setProgressMarkMenuItemTitle(progressMarks, item4, 3);
-			MenuItem item5 = menu.findItem(R.id.menuProgress5);
-			setProgressMarkMenuItemTitle(progressMarks, item5, 4);
-
 			return true;
 		}
 
 		@Override public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 			MenuItem menuAddBookmark = menu.findItem(R.id.menuAddBookmark);
 			MenuItem menuAddNote = menu.findItem(R.id.menuAddNote);
-			MenuItem menuProgressMark = menu.findItem(R.id.menuProgressMark);
 			MenuItem menuCompare = menu.findItem(R.id.menuCompare);
 
 			IntArrayList selected = lsText.getSelectedVerses_1();
@@ -1793,14 +1778,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			
 			boolean changed1 = menuAddBookmark.isVisible() != single;
 			boolean changed2 = menuAddNote.isVisible() != single;
-			boolean changed3 = menuProgressMark.isVisible() != single;
 			boolean changed4 = menuCompare.isVisible() != single;
-			boolean changed = changed1 || changed2 || changed3 || changed4;
+			boolean changed = changed1 || changed2 || changed4;
 			
 			if (changed) {
 				menuAddBookmark.setVisible(single);
 				menuAddNote.setVisible(single);
-				menuProgressMark.setVisible(single);
 				menuCompare.setVisible(single);
 			}
 
@@ -1932,21 +1915,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					Log.e(TAG, "ESVSB starting", e); //$NON-NLS-1$
 				}
 			} return true;
-			case R.id.menuProgress1: {
-				updateProgressMark(mainVerse_1, 0);
-			} return true;
-			case R.id.menuProgress2: {
-				updateProgressMark(mainVerse_1, 1);
-			} return true;
-			case R.id.menuProgress3: {
-				updateProgressMark(mainVerse_1, 2);
-			} return true;
-			case R.id.menuProgress4: {
-				updateProgressMark(mainVerse_1, 3);
-			} return true;
-			case R.id.menuProgress5: {
-				updateProgressMark(mainVerse_1, 4);
-			} return true;
 
 			}
 			return false;
@@ -1971,12 +1939,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				lsText.uncheckAllVerses(true);
 			}
 		}
-
-		private void setProgressMarkMenuItemTitle(final List<ProgressMark> progressMarks, final MenuItem item, int position) {
-			String title = (progressMarks.get(position).ari == 0 || TextUtils.isEmpty(progressMarks.get(position).caption)) ? getString(AttributeView.getDefaultProgressMarkStringResource(position)): progressMarks.get(position).caption;
-
-			item.setTitle(getString(R.string.pm_menu_save_progress, title));
-		}
 	};
 
 	void reloadBothAttributeMaps() {
@@ -1985,38 +1947,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		if (activeSplitVersion != null) {
 			lsSplit1.reloadAttributeMap();
 		}
-	}
-
-	private void updateProgressMark(final int mainVerse_1, final int position) {
-		final int ari = Ari.encode(this.activeBook.bookId, this.chapter_1, mainVerse_1);
-		final List<ProgressMark> progressMarks = S.getDb().listAllProgressMarks();
-		final ProgressMark progressMark = progressMarks.get(position);
-
-		if (progressMark.caption == null) {
-				ProgressMarkDialog.showRenameDialog(this, progressMark, new ProgressMarkDialog.Listener() {
-				@Override
-				public void onOked() {
-					saveProgress(progressMark, ari, position);
-				}
-
-				@Override
-				public void onDeleted() {
-					lsText.uncheckAllVerses(true);
-					reloadBothAttributeMaps();
-				}
-			});
-		} else {
-			saveProgress(progressMark, ari, position);
-		}
-	}
-
-	public void saveProgress(final ProgressMark progressMark, final int ari, final int position) {
-		progressMark.ari = ari;
-		progressMark.modifyTime = new Date();
-		S.getDb().updateProgressMark(progressMark);
-		AttributeView.startAnimationForProgressMark(position);
-		lsText.uncheckAllVerses(true);
-		reloadBothAttributeMaps();
 	}
 
 	SplitHandleButton.SplitHandleButtonListener splitHandleButton_listener = new SplitHandleButton.SplitHandleButtonListener() {
