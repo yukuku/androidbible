@@ -18,6 +18,9 @@ public class Jumper {
 	private String p_book;
 	private int p_chapter;
 	private int p_verse;
+
+	/** The reference string is a verse range, with dash as delimiter */
+	private boolean p_hasRange = false;
 	
 	/** If bookId found from OSIS book names, set this to other than -1 and this will be returned */
 	private int p_bookIdFromOsis = -1;
@@ -127,7 +130,7 @@ public class Jumper {
 		}
 		
 		//# STAGE 5: Remove spaces on the left and right of "-"
-		if (reference.contains("-")) { //$NON-NLS-1$
+		if (reference.indexOf('-') >= 0) {
 			reference = reference.replaceAll("\\s+-\\s+|\\s+-|-\\s+", "-"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (BuildConfig.DEBUG) Log.d(TAG, "jumper stage 5: " + reference); //$NON-NLS-1$
@@ -143,11 +146,12 @@ public class Jumper {
 			
 			String osisId;
 			if (reference.indexOf('-') >= 0) { // optionally a '-'
-				String[] osisIds = reference.split("-"); //$NON-NLS-1$
+				final String[] osisIds = reference.split("-");
 				if (osisIds.length != 2) { 
 					break notosis; // wrong format
 				}
 				osisId = osisIds[0];
+				p_hasRange = true;
 			} else {
 				osisId = reference;
 			}
@@ -256,6 +260,8 @@ public class Jumper {
 				String[] bel = new String[at];
 				System.arraycopy(parts, 0, bel, 0, at);
 				parts = bel;
+
+				p_hasRange = true;
 
 				if (BuildConfig.DEBUG) Log.d(TAG, "jumper stage 25: " + Arrays.toString(parts)); //$NON-NLS-1$
 			}
@@ -506,5 +512,10 @@ public class Jumper {
 	
 	public int getVerse() {
 		return p_verse;
+	}
+
+	/** The reference string is a verse range, with dash as delimiter */
+	public boolean getHasRange() {
+		return p_hasRange;
 	}
 }
