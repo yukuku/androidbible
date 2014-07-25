@@ -36,6 +36,7 @@
 			android:layout_marginLeft="4dp"
 			android:layout_marginRight="4dp"
 			android:layout_marginTop="8dp"
+			android:textAllCaps="true"
 			android:text="@string/menuProgress"
 			android:textSize="14sp"
 			android:textStyle="bold" />

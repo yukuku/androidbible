@@ -354,7 +354,7 @@
 	<string name="menuSplitVersion">Split</string>
 	<string name="about_beta_feedback">Beta version feedback</string>
 	<string name="menuBible">Bible</string>
-	<string name="menuProgress">PROGRESS</string>
+	<string name="menuProgress">Progress</string>
 	<string name="switch_off">OFF</string>
 	<string name="switch_on">ON</string>
 	<string name="sn_menu_copy">Copy song</string>
@@ -376,5 +376,5 @@
 	<string name="book_filter_new_apocalypse">Apocalypse</string>
 
 	<string name="search_filter_multiple_books_selected">%s books selected</string>
-	<string name="search_version_select_label">Temukan dalam:</string>
+	<string name="search_version_select_label">Search in:</string>
 </resources>
