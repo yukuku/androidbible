@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:focusable="true"
+	android:focusableInTouchMode="true"
+	android:orientation="vertical">
 
-    <SearchView
-        android:id="@+id/searchView"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:iconifiedByDefault="false"
-        android:orientation="horizontal"/>
+	<SearchView
+		android:id="@+id/searchView"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:iconifiedByDefault="false"
+		android:orientation="horizontal" />
 
-    <include
-        android:id="@+id/panelFilter"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/search_panel_filter"/>
+	<include
+		android:id="@+id/panelFilter"
+		layout="@layout/search_panel_filter"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" />
 
-    <include
-        layout="@layout/search_results"/>
+	<include layout="@layout/search_results" />
 
 </LinearLayout>
