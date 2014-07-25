@@ -102,6 +102,7 @@
     <string name="ed_type_built_in">Type: Built-in</string>
     <string name="ed_type_preset">Type: Downloadable</string>
     <string name="ed_type_add_on">Type: Added</string>
+	<string name="ed_locale_locale">Language code: %s</string>
     <string name="ed_shortName_shortName">Short name: %s</string>
     <string name="ed_title_title">Title: %s</string>
     <string name="ed_stored_in_file">Stored in: %s</string>

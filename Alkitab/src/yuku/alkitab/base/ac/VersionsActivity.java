@@ -390,6 +390,7 @@ public class VersionsActivity extends BaseActivity {
 			if (mv instanceof MVersionInternal) details.append(getString(R.string.ed_type_built_in)).append('\n');
 			if (mv instanceof MVersionPreset) details.append(getString(R.string.ed_type_preset)).append('\n');
 			if (mv instanceof MVersionDb) details.append(getString(R.string.ed_type_add_on)).append('\n');
+			if (mv.locale != null) details.append(getString(R.string.ed_locale_locale, mv.locale)).append('\n');
 			if (mv.shortName != null) details.append(getString(R.string.ed_shortName_shortName, mv.shortName)).append('\n');
 			details.append(getString(R.string.ed_title_title, mv.longName)).append('\n');
 
