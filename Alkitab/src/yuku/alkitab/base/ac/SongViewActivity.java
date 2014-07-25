@@ -116,6 +116,7 @@ public class SongViewActivity extends BaseActivity implements SongFragment.Shoul
 
 	final MediaState mediaState = new MediaState();
 
+	/** This method might be called from non-UI thread. Be careful when manipulating UI. */
 	@Override
 	public void setMediaState(int state) {
 		if (state == 0) {
@@ -134,7 +135,12 @@ public class SongViewActivity extends BaseActivity implements SongFragment.Shoul
 
 		mediaState.loading = (state == 2);
 
-		invalidateOptionsMenu();
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				invalidateOptionsMenu();
+			}
+		});
 	}
 
 	void goTo(final int dir) {
