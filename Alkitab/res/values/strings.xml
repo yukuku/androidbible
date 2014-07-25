@@ -362,4 +362,19 @@
 	<string name="menuPause">Pause</string>
 
 	<string name="about_text_desc" translatable="false">100% free Bible app, licensed under Apache License 2.0\n<a href="http://www.bibleforandroid.com/guide?utm_source=app&amp;utm_medium=button&amp;utm_campaign=about">www.bibleforandroid.com</a></string>
+	<string name="book_filter_old_testament">Old Testament</string>
+	<string name="book_filter_old_pentateuch">Pentateuch</string>
+	<string name="book_filter_old_history">History</string>
+	<string name="book_filter_old_wisdom">Wisdom</string>
+	<string name="book_filter_old_major_prophets">Major Prophets</string>
+	<string name="book_filter_old_minor_prophets">Minor Prophets</string>
+	<string name="book_filter_new_testament">New Testament</string>
+	<string name="book_filter_new_gospels">Gospels</string>
+	<string name="book_filter_new_acts">Apostolic History</string>
+	<string name="book_filter_new_pauline_epistles">Pauline Epistles</string>
+	<string name="book_filter_new_general_epistles">General Epistles</string>
+	<string name="book_filter_new_apocalypse">Apocalypse</string>
+
+	<string name="search_filter_multiple_books_selected">%s books selected</string>
+	<string name="search_version_select_label">Temukan dalam:</string>
 </resources>

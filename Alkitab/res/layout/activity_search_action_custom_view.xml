@@ -10,7 +10,7 @@
 		android:layout_weight="1"
 		android:gravity="right|center_vertical"
 		android:padding="8dp"
-		android:text="Temukan dalam:"
+		android:text="@string/search_version_select_label"
 		android:textAppearance="?android:textAppearanceSmall" />
 
 	<Button

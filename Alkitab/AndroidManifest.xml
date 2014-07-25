@@ -251,11 +251,18 @@
 			</intent-filter>
 		</activity>
 
-		<activity android:name="yuku.alkitab.base.ac.DailyVerseAppWidgetConfigurationActivity">
+		<activity
+			android:name="yuku.alkitab.base.ac.DailyVerseAppWidgetConfigurationActivity"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
 			</intent-filter>
 		</activity>
+
+		<activity
+			android:name="yuku.alkitab.base.ac.SearchBookFilterActivity"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+			android:label="@string/select_books_to_search" />
 
 		<service android:name="yuku.alkitab.base.sv.DownloadService" />
 

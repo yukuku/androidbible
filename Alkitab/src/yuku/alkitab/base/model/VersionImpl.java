@@ -335,7 +335,11 @@ public class VersionImpl implements Version {
 			if (bookId >= 0 && bookId < UnavailableBookNames.names.length) {
 				final String placeholderBookName = "[[" + UnavailableBookNames.names[bookId] + "]]";
 				if (verse_1 == 0) {
-					return Book.reference(placeholderBookName, chapter_1);
+					if (chapter_1 == 0) {
+						return placeholderBookName;
+					} else {
+						return Book.reference(placeholderBookName, chapter_1);
+					}
 				} else {
 					return Book.reference(placeholderBookName, chapter_1, verse_1);
 				}
@@ -345,7 +349,11 @@ public class VersionImpl implements Version {
 		}
 
 		if (verse_1 == 0) {
-			return book.reference(chapter_1);
+			if (chapter_1 == 0) {
+				return book.shortName;
+			} else {
+				return book.reference(chapter_1);
+			}
 		} else {
 			return book.reference(chapter_1, verse_1);
 		}

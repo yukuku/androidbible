@@ -4,7 +4,6 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -20,7 +19,6 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CheckedTextView;
 import android.widget.CompoundButton;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
@@ -39,7 +37,6 @@ import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Appearances;
-import yuku.alkitab.base.util.BookNameSorter;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.base.util.SearchEngine;
@@ -58,6 +55,8 @@ public class SearchActivity extends BaseActivity {
 	public static final String TAG = SearchActivity.class.getSimpleName();
 	
 	private static final String EXTRA_openedBookId = "openedBookId";
+	private static int REQCODE_bookFilter = 1;
+
 	final String COLUMN_QUERY_STRING = "query_string";
 
 	Button bVersion;
@@ -243,18 +242,13 @@ public class SearchActivity extends BaseActivity {
 		cFilterNews.setOnCheckedChangeListener(cFilterNews_checkedChange);
 		cFilterSingleBook.setOnCheckedChangeListener(cFilterSingleBook_checkedChange);
 
-		{
-			openedBookId = getIntent().getIntExtra(EXTRA_openedBookId, -1);
+		openedBookId = getIntent().getIntExtra(EXTRA_openedBookId, -1);
 
-			Book book = searchInVersion.getBook(openedBookId);
-			cFilterSingleBook.setText(getString(R.string.search_bookname_only, book.shortName));
-
-			for (Book k : searchInVersion.getConsecutiveBooks()) {
-				selectedBookIds.put(k.bookId, true);
-			}
-
-			configureFilterDisplayOldNewTest();
+		for (final Book book : searchInVersion.getConsecutiveBooks()) {
+			selectedBookIds.put(book.bookId, true);
 		}
+
+		configureFilterDisplayOldNewTest();
 
 		if (usingRevIndex()) {
 			SearchEngine.preloadRevIndex();
@@ -338,7 +332,7 @@ public class SearchActivity extends BaseActivity {
 		}
 		
 		filterUserAction++; {
-			if (olds != null && news != null) {	// 22nya true atau false
+			if (olds != null && news != null) {	// both are either true or false
 				cFilterOlds.setVisibility(View.VISIBLE);
 				cFilterOlds.setChecked(olds);
 				cFilterNews.setVisibility(View.VISIBLE);
@@ -356,28 +350,32 @@ public class SearchActivity extends BaseActivity {
 					cFilterSingleBook.setChecked(true);
 					tFilterAdvanced.setVisibility(View.GONE);
 				} else {
-					// tidak demikian, kita tulis label saja.
 					cFilterOlds.setVisibility(View.VISIBLE);
 					cFilterOlds.setChecked(false);
 					cFilterNews.setVisibility(View.VISIBLE);
 					cFilterNews.setChecked(false);
 					cFilterSingleBook.setVisibility(View.GONE);
 					tFilterAdvanced.setVisibility(View.VISIBLE);
-					StringBuilder sb = new StringBuilder();
+
+					int cnt = 0;
+					int bookId = 0;
 					for (int i = 0, len = selectedBookIds.size(); i < len; i++) {
 						if (selectedBookIds.valueAt(i)) {
-							int bookId = selectedBookIds.keyAt(i);
-							Book book = searchInVersion.getBook(bookId);
-							if (book != null) {
-								if (sb.length() != 0) sb.append(", "); //$NON-NLS-1$
-								sb.append(book.shortName);
-							}
+							cnt++;
+							bookId = selectedBookIds.keyAt(i);
 						}
 					}
-					tFilterAdvanced.setText(sb);
+					if (cnt != 1) {
+						tFilterAdvanced.setText(getString(R.string.search_filter_multiple_books_selected, cnt));
+					} else {
+						tFilterAdvanced.setText(searchInVersion.reference(bookId, 0, 0));
+					}
 				}
 			} filterUserAction--;
 		}
+
+		final String singleBookReference = searchInVersion.reference(openedBookId);
+		cFilterSingleBook.setText(getString(R.string.search_bookname_only, singleBookReference));
 	}
 
 	private CompoundButton.OnCheckedChangeListener cFilterOlds_checkedChange = new CompoundButton.OnCheckedChangeListener() {
@@ -437,6 +435,7 @@ public class SearchActivity extends BaseActivity {
 					searchInVersionId = mv.getVersionId();
 
 					displaySearchInVersion();
+					configureFilterDisplayOldNewTest();
 					bVersion.setText(S.getVersionInitials(searchInVersion));
 					if (adapter != null) {
 						adapter.notifyDataSetChanged();
@@ -461,80 +460,22 @@ public class SearchActivity extends BaseActivity {
 	}
 
 	public void bEditFilter_click() {
-		final SearchFilterAdapter adapter = new SearchFilterAdapter();
-		
-		final AlertDialog[] dialog = new AlertDialog[1];
-		dialog[0] = new AlertDialog.Builder(this)
-		.setTitle(R.string.select_books_to_search)
-		.setAdapter(adapter, null)
-		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-			@Override public void onClick(DialogInterface _unused_, int which) {
-				ListView lv = dialog[0].getListView();
-				selectedBookIds.clear();
-				SparseBooleanArray poses = lv.getCheckedItemPositions();
-				for (int i = 0, len = poses.size(); i < len; i++) {
-					if (poses.valueAt(i)) {
-						int position = poses.keyAt(i);
-						Book book = adapter.getItem(position);
-						if (book != null) {
-							selectedBookIds.put(book.bookId, true);
-						}
-					}
-				}
+		startActivityForResult(SearchBookFilterActivity.createIntent(selectedBookIds, searchInVersion.getConsecutiveBooks()), REQCODE_bookFilter);
+	}
+
+	@Override
+	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		if (requestCode == REQCODE_bookFilter && resultCode == RESULT_OK) {
+			final SearchBookFilterActivity.Result result = SearchBookFilterActivity.obtainResult(data);
+			if (result != null) {
+				selectedBookIds = result.selectedBookIds;
 				configureFilterDisplayOldNewTest();
 			}
-		})
-		.setNegativeButton(R.string.cancel, null)
-		.show();
-		
-		final ListView lv = dialog[0].getListView();
-		
-		// Enable automatic support for multi choice, and also prevent dismissing the dialog because of
-		// the click handler set by the alertdialog builder.
-		lv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-		lv.setOnItemClickListener(null);
-		
-		// set checked items
-		for (int position = 0, count = adapter.getCount(); position < count; position++) {
-			Book book = adapter.getItem(position);
-			if (book != null && selectedBookIds.get(book.bookId, false)) {
-				lv.setItemChecked(position, true);
-			}
-		}
-	}
-	
-	class SearchFilterAdapter extends EasyAdapter {
-		private Book[] books;
 
-		public SearchFilterAdapter() {
-			Book[] books_original = searchInVersion.getConsecutiveBooks();
-			
-			if (Preferences.getBoolean(App.context.getString(R.string.pref_alphabeticBookSort_key), App.context.getResources().getBoolean(R.bool.pref_alphabeticBookSort_default))) {
-				books = BookNameSorter.sortAlphabetically(books_original);
-			} else {
-				books = books_original.clone();
-			}
-		}
-		
-		@Override public Book getItem(int position) {
-			return books[position];
+			return;
 		}
 
-		@Override public int getCount() {
-			return books.length;
-		}
-
-		@Override public View newView(int position, ViewGroup parent) {
-			return getLayoutInflater().inflate(android.R.layout.simple_list_item_multiple_choice, parent, false);
-		}
-
-		@Override public void bindView(View view, int position, ViewGroup parent) {
-			CheckedTextView text = (CheckedTextView) view;
-			
-			Book book = getItem(position);
-			text.setText(book.shortName);
-			text.setTextColor(U.getForegroundColorOnLightBackgroundByBookId(book.bookId));
-		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	protected void search(final String query_string) {
@@ -542,8 +483,7 @@ public class SearchActivity extends BaseActivity {
 			return;
 		}
 		
-		// check if there is anything chosen
-		{
+		{ // check if there is anything chosen
 			int firstSelected = selectedBookIds.indexOfValue(true);
 			if (firstSelected < 0) {
 				new AlertDialog.Builder(this)
