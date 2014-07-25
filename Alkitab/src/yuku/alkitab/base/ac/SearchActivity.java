@@ -374,7 +374,7 @@ public class SearchActivity extends BaseActivity {
 			} filterUserAction--;
 		}
 
-		final String singleBookReference = searchInVersion.reference(openedBookId);
+		final String singleBookReference = searchInVersion.reference(openedBookId, 0, 0);
 		cFilterSingleBook.setText(getString(R.string.search_bookname_only, singleBookReference));
 	}
 
