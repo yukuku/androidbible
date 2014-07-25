@@ -432,8 +432,10 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			int ari;
 			if (reference.startsWith("ari:")) {
 				ari = Integer.parseInt(reference.substring(4));
-			} else {
-				Jumper jumper = new Jumper(reference);
+				startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
+
+			} else { // we need to parse it manually by text
+				final Jumper jumper = new Jumper(reference);
 				if (!jumper.getParseSucceeded()) {
 					new AlertDialog.Builder(DevotionActivity.this)
 					.setMessage(getString(R.string.alamat_tidak_sah_alamat, reference))
@@ -449,13 +451,18 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 					bookIds[i] = i;
 				}
 
-				int bookId = jumper.getBookId(bookNames, bookIds);
-				int chapter_1 = jumper.getChapter();
-				int verse_1 = jumper.getVerse();
+				final int bookId = jumper.getBookId(bookNames, bookIds);
+				final int chapter_1 = jumper.getChapter();
+				final int verse_1 = jumper.getVerse();
 				ari = Ari.encode(bookId, chapter_1, verse_1);
-			}
 
-			startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
+				final boolean hasRange = jumper.getHasRange();
+				if (hasRange) {
+					startActivity(Launcher.openAppAtBibleLocation(ari));
+				} else {
+					startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
+				}
+			}
 		}
 	};
 
