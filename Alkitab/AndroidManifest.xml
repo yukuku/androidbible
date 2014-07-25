@@ -4,8 +4,8 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:installLocation="auto"
-	android:versionCode="14000167"
-	android:versionName="4.0.0-beta6">
+	android:versionCode="14000168"
+	android:versionName="4.0.0-beta7">
 
 	<uses-sdk
 		android:minSdkVersion="14"
