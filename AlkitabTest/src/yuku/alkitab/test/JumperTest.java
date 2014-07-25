@@ -7,6 +7,7 @@ import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.model.Book;
 
 public class JumperTest extends AndroidTestCase {
+	public static final String TAG = JumperTest.class.getSimpleName();
 	static Book[] books;
 
 	static {
@@ -88,7 +89,7 @@ public class JumperTest extends AndroidTestCase {
 		}
 	}
 
-	void testParse(String reference, boolean ok, int kitab, int pasal, int ayat) {
+	void testParse(String reference, boolean ok, int expectBookId, int expectChapter_1, int expectVerse_1) {
 		long startTime = System.currentTimeMillis();
 
 		try {
@@ -97,22 +98,22 @@ public class JumperTest extends AndroidTestCase {
 			boolean ok1 = jumper.getParseSucceeded();
 			if (ok1) {
 				int bookId = jumper.getBookId(books);
-				Assert.assertEquals(kitab, bookId);
+				Assert.assertEquals(expectBookId, bookId);
 
 				int chapter_1 = jumper.getChapter();
-				Assert.assertEquals(pasal, chapter_1);
+				Assert.assertEquals(expectChapter_1, chapter_1);
 
 				int verse_1 = jumper.getVerse();
-				Assert.assertEquals(ayat, verse_1);
+				Assert.assertEquals(expectVerse_1, verse_1);
 
-				Log.d(JumperTest.class.getSimpleName(), reference + " -> " + kitab + " " + pasal + " " + ayat);
+				Log.d(TAG, reference + " -> " + expectBookId + " " + expectChapter_1 + " " + expectVerse_1);
 			} else {
 				Assert.assertEquals(ok, ok1);
 
-				Log.d(JumperTest.class.getSimpleName(), reference + " -> false");
+				Log.d(TAG, reference + " -> false");
 			}
 		} finally {
-			Log.d(JumperTest.class.getSimpleName(), "need " + (System.currentTimeMillis() - startTime) + " ms");
+			Log.d(TAG, "need " + (System.currentTimeMillis() - startTime) + " ms");
 		}
 	}
 
