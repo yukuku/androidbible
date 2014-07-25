@@ -1,13 +1,13 @@
-# Google Android
+# Legacy Android
 bin/
 gen/
-xtend-gen/
-local.properties
+
+# Android Studio
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/artifacts
+/build
 
 # Mac
 .DS_Store
-
-# IntelliJ
-.idea/workspace.xml
-/out/
-.idea/artifacts/

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Alkitab" />
+            <option value="$PROJECT_DIR$/AlkitabFeedback" />
+            <option value="$PROJECT_DIR$/AlkitabIntegration" />
+            <option value="$PROJECT_DIR$/AlkitabIo" />
+            <option value="$PROJECT_DIR$/AlkitabModel" />
+            <option value="$PROJECT_DIR$/AlkitabYes2" />
+            <option value="$PROJECT_DIR$/BiblePlus" />
+            <option value="$PROJECT_DIR$/DragSortListView" />
+            <option value="$PROJECT_DIR$/KpriModel" />
+            <option value="$PROJECT_DIR$/KpriViewerLib" />
+            <option value="$PROJECT_DIR$/../yuku-android-util/ATree" />
+            <option value="$PROJECT_DIR$/../yuku-android-util/Afw" />
+            <option value="$PROJECT_DIR$/../yuku-android-util/AmbilWarna" />
+            <option value="$PROJECT_DIR$/../yuku-android-util/BintexReader" />
+            <option value="$PROJECT_DIR$/../yuku-android-util/BintexWriter" />
+            <option value="$PROJECT_DIR$/../yuku-android-util/FileChooser" />
+            <option value="$PROJECT_DIR$/../yuku-android-util/FlowLayout" />
+            <option value="$PROJECT_DIR$/../yuku-android-util/Snappy" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+    <option name="offlineWork" value="true" />
+  </component>
+</project>
+
