@@ -65,10 +65,11 @@
     <orderEntry type="library" exported="" name="trove4j-3.0.3" level="project" />
     <orderEntry type="library" exported="" name="support-v4-19.1.0" level="project" />
     <orderEntry type="library" exported="" name="okio-1.0.0" level="project" />
-    <orderEntry type="library" exported="" name="play-services-5.0.77" level="project" />
     <orderEntry type="library" exported="" name="okhttp-2.0.0" level="project" />
+    <orderEntry type="library" exported="" name="play-services-5.0.89" level="project" />
     <orderEntry type="library" exported="" name="libGoogleAnalyticsV2" level="project" />
     <orderEntry type="library" exported="" name="picasso-2.3.3" level="project" />
+    <orderEntry type="library" exported="" name="support-v13-19.1.0" level="project" />
     <orderEntry type="module" module-name="DragSortListView" exported="" />
     <orderEntry type="module" module-name="AlkitabFeedback" exported="" />
     <orderEntry type="module" module-name="FlowLayout" exported="" />
