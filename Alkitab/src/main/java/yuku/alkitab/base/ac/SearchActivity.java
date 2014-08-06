@@ -249,7 +249,17 @@ public class SearchActivity extends BaseActivity {
 		cFilterNews.setOnCheckedChangeListener(cFilterNews_checkedChange);
 		cFilterSingleBook.setOnCheckedChangeListener(cFilterSingleBook_checkedChange);
 
-		openedBookId = getIntent().getIntExtra(EXTRA_openedBookId, -1);
+		{
+			openedBookId = getIntent().getIntExtra(EXTRA_openedBookId, -1);
+
+			final Book book = S.activeVersion.getBook(openedBookId);
+			if (book == null) { // active version has changed somehow when this activity fainted. so, invalidate openedBookId
+				openedBookId = -1;
+				cFilterSingleBook.setEnabled(false);
+			} else {
+				cFilterSingleBook.setText(getString(R.string.search_bookname_only, book.shortName));
+			}
+		}
 
 		for (final Book book : searchInVersion.getConsecutiveBooks()) {
 			selectedBookIds.put(book.bookId, true);
@@ -456,7 +466,9 @@ public class SearchActivity extends BaseActivity {
 		selectedBookIds.clear();
 		if (cFilterOlds.isChecked()) for (int i = 0; i < 39; i++) selectedBookIds.put(i, true);
 		if (cFilterNews.isChecked()) for (int i = 39; i < 66; i++) selectedBookIds.put(i, true);
-		if (cFilterSingleBook.isChecked()) selectedBookIds.put(openedBookId, true);
+		if (openedBookId != -1) {
+			if (cFilterSingleBook.isChecked()) selectedBookIds.put(openedBookId, true);
+		}
 	}
 	
 	protected SearchEngine.Query getQuery() {
