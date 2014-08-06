@@ -16,6 +16,7 @@
         <preset locale="ms"   shortName="BM"      longName="Alkitab Berita Baik" filename_preset="ms-bsm.yes" url="https://alkitab-host.appspot.com/addon/yes2/ms-bsm--1.yes.gz" />
 
         <preset locale="ace" shortName="ACEH" longName="Aceh" filename_preset="ace-aceh.yes" url="https://alkitab-host.appspot.com/addon/yes2/ace-aceh--1.yes.gz" />
+        <preset locale="alp" shortName="ALP" longName="Janji Beluke" filename_preset="alp-alune5.yes" url="https://alkitab-host.appspot.com/addon/yes2/alp-alune5--1.yes.gz" />
         <preset locale="blz" shortName="BLNTK" longName="Balantak" filename_preset="blz-balantak.yes" url="https://alkitab-host.appspot.com/addon/yes2/blz-balantak--1.yes.gz" />
         <preset locale="ban" shortName="BALI" longName="Bali" filename_preset="ban-bali.yes" url="https://alkitab-host.appspot.com/addon/yes2/ban-bali--1.yes.gz" />
         <preset locale="ban" shortName="BALI90" longName="Bali 1990" filename_preset="ban-bali90.yes" url="https://alkitab-host.appspot.com/addon/yes2/ban-bali90--1.yes.gz" />
@@ -33,6 +34,7 @@
         <preset locale="jv" shortName="JAWA94" longName="Jawa-1994" filename_preset="jv-jawa94.yes" url="https://alkitab-host.appspot.com/addon/yes2/jv-jawa94--1.yes.gz" />
         <preset locale="jv" shortName="JAWA06" longName="Jawa-2006" filename_preset="jv-jawa2006.yes" url="https://alkitab-host.appspot.com/addon/yes2/jv-jawa2006--1.yes.gz" />
         <preset locale="jv" shortName="JAWSUR" longName="Jawa-Suriname" filename_preset="jv-suriname.yes" url="https://alkitab-host.appspot.com/addon/yes2/jv-suriname--1.yes.gz" />
+        <preset locale="kje" shortName="KJE" longName="Makromod Lalap Lirna Wawan" filename_preset="kje-kisar5.yes" url="https://alkitab-host.appspot.com/addon/yes2/kje-kisar5--1.yes.gz" />
         <preset locale="kzf" shortName="KLD" longName="Kaili Da'a 1998" filename_preset="kzf-kailidaa.yes" url="https://alkitab-host.appspot.com/addon/yes2/kzf-kailidaa--1.yes.gz" />
         <preset locale="ljp" shortName="LAM" longName="Lampung" filename_preset="ljp-lampung.yes" url="https://alkitab-host.appspot.com/addon/yes2/ljp-lampung--1.yes.gz" />
         <preset locale="mad" shortName="MAD" longName="Madura" filename_preset="mad-madura.yes" url="https://alkitab-host.appspot.com/addon/yes2/mad-madura--1.yes.gz" />
