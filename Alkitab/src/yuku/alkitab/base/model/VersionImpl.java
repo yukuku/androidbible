@@ -122,8 +122,9 @@ public class VersionImpl implements Version {
 	 */
 	@Override
 	public synchronized Book getBook(int bookId) {
-		Book[] books = getBooks();
 		if (bookId < 0) return null;
+		final Book[] books = getBooks();
+		if (books == null) return null;
 		if (bookId < books.length) {
 			// fast path for OT+NT complete versions
 			Book book = books[bookId];

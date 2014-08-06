@@ -70,6 +70,7 @@ import yuku.alkitab.base.dialog.TypeHighlightDialog;
 import yuku.alkitab.base.dialog.TypeNoteDialog;
 import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.dialog.XrefDialog;
+import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.BackupManager;
 import yuku.alkitab.base.util.History;
@@ -428,6 +429,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			} else { // can't load last book or bookId 0
 				this.activeBook = S.activeVersion.getFirstBook();
 			}
+
+			if (this.activeBook == null) { // version failed to load, so books are also failed to load. Fallback!
+				S.activeVersion = VersionImpl.getInternalVersion();
+				this.activeBook = S.activeVersion.getFirstBook();
+			}
 		}
 
 		// load chapter and verse
@@ -673,7 +679,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()))
 			.setPositiveButton(R.string.ok, null)
 			.show();
-			
+
 			return false;
 		}
 	}
