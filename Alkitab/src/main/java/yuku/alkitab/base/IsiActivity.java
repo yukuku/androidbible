@@ -1184,6 +1184,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		});
 
 		bVersion.setVisibility(View.GONE);
+		if (actionMode != null) actionMode.invalidate();
 		leftDrawer.getHandle().setSplitVersion(true);
 	}
 
@@ -1199,6 +1200,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		lsText.setLayoutParams(lp);
 
 		bVersion.setVisibility(View.VISIBLE);
+		if (actionMode != null) actionMode.invalidate();
 		leftDrawer.getHandle().setSplitVersion(false);
 	}
 
@@ -1792,6 +1794,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				menuAddNote.setVisible(single);
 				menuCompare.setVisible(single);
 			}
+
+			final MenuItem menuVersions = menu.findItem(R.id.menuVersions);
+			menuVersions.setVisible(activeSplitVersion == null);
 
 			return changed;
 		}
