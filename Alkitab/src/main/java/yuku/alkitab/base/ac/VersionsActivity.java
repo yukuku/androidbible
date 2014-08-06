@@ -3,6 +3,7 @@ package yuku.alkitab.base.ac;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -53,6 +54,7 @@ import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes2;
 import yuku.alkitab.base.storage.YesReaderFactory;
 import yuku.alkitab.base.util.AddonManager;
+import yuku.alkitab.base.util.DownloadMapper;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.BibleReader;
@@ -76,6 +78,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -631,8 +634,9 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 		 * The fragment argument representing the section number for this
 		 * fragment.
 		 */
-		private static final String ARG_DOWNLOADED_ONLY = "section_number";
-		private static final String ACTION_RELOAD = VersionListFragment.class.getName() + ".action.RELOAD";
+		private static final String ARG_DOWNLOADED_ONLY = "downloaded_only";
+
+		public static final String ACTION_RELOAD = VersionListFragment.class.getName() + ".action.RELOAD";
 
 		private static final int REQCODE_share = 2;
 		private LayoutInflater inflater;
@@ -853,96 +857,23 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 				throw new RuntimeException("THIS SHOULD NOT HAPPEN: preset may not have the active checkbox checked.");
 			}
 
-			final ProgressDialog pd = ProgressDialog.show(getActivity(), getString(R.string.mengunduh_nama, mv.longName), getString(R.string.mulai_mengunduh), true, true);
+			final String downloadKey = "version:preset_name:" + mv.preset_name;
 
-			final AddonManager.DownloadListener downloadListener = new AddonManager.DownloadListener() {
-				@Override
-				public void onDownloadFinished(final AddonManager.Element e) {
-					pd.dismiss();
+			final int status = DownloadMapper.instance.getStatus(downloadKey);
+			if (status == DownloadManager.STATUS_PENDING || status == DownloadManager.STATUS_RUNNING) {
+				// it's downloading!
+				return;
+			}
 
-					final BibleReader reader = YesReaderFactory.createYesReader(e.dest);
-					if (reader == null) {
-						new File(e.dest).delete();
+			final DownloadManager.Request req = new DownloadManager.Request(Uri.parse(mv.download_url))
+				.setTitle(mv.longName)
+				.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
 
-						new AlertDialog.Builder(getActivity())
-							.setMessage(R.string.version_download_corrupted_file)
-							.setPositiveButton(R.string.ok, null)
-							.show();
+			final Map<String, String> attrs = new LinkedHashMap<>();
+			attrs.put("preset_name", mv.preset_name);
+			attrs.put("modifyTime", "" + mv.modifyTime);
 
-						return;
-					}
-
-					// success!
-					Toast.makeText(App.context, TextUtils.expandTemplate(getText(R.string.version_download_complete), mv.longName), Toast.LENGTH_LONG).show();
-
-					int maxOrdering = S.getDb().getVersionMaxOrdering();
-					if (maxOrdering == 0) maxOrdering = 100; // default
-
-					final MVersionDb mvDb = new MVersionDb();
-					mvDb.locale = reader.getLocale();
-					mvDb.shortName = reader.getShortName();
-					mvDb.longName = reader.getLongName();
-					mvDb.description = reader.getDescription();
-					mvDb.filename = e.dest;
-					mvDb.preset_name = mv.preset_name;
-					mvDb.modifyTime = mv.modifyTime;
-					mvDb.ordering = maxOrdering + 1;
-
-					S.getDb().insertVersionWithActive(mvDb, true);
-
-					final String locale = mv.locale;
-					if ("ta".equals(locale) || "te".equals(locale) || "my".equals(locale) || "el".equals(locale)) {
-						new AlertDialog.Builder(getActivity())
-							.setMessage(R.string.version_download_need_fonts)
-							.setPositiveButton(R.string.ok, null)
-							.show();
-					}
-				}
-
-				@Override
-				public void onDownloadFailed(AddonManager.Element e, final String description, final Throwable t) {
-					Toast.makeText(
-						App.context,
-						description != null ? description : getString(R.string.gagal_mengunduh_edisi_judul_ex_pastikan_internet, mv.longName,
-							t == null ? "null" : t.getClass().getCanonicalName() + ": " + t.getMessage()), Toast.LENGTH_LONG
-					).show();
-
-					pd.dismiss();
-				}
-
-				@Override
-				public void onDownloadProgress(final AddonManager.Element e, final int progress) {
-					if (progress >= 0) {
-						pd.setMessage(getString(R.string.terunduh_sampe_byte, progress));
-					} else {
-						pd.setMessage(getString(R.string.sedang_mendekompres_harap_tunggu));
-					}
-				}
-
-				@Override
-				public void onDownloadCancelled(AddonManager.Element e) {
-					Toast.makeText(App.context, R.string.pengunduhan_dibatalkan, Toast.LENGTH_SHORT).show();
-					pd.dismiss();
-				}
-			};
-
-			final AddonManager.DownloadThread downloadThread = AddonManager.getDownloadThread();
-			final AddonManager.Element e = downloadThread.enqueue(mv.download_url, AddonManager.getVersionPath(mv.preset_name + ".yes"), downloadListener);
-
-			downloadThread.start();
-
-			pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
-				@Override
-				public void onCancel(DialogInterface dialog) {
-					e.cancelled = true;
-				}
-			});
-			pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
-				@Override
-				public void onDismiss(DialogInterface dialog) {
-					App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
-				}
-			});
+			DownloadMapper.instance.enqueue(downloadKey, req, attrs);
 		}
 
 		void clickOnDbVersion(final CheckBox cActive, final MVersionDb mv) {

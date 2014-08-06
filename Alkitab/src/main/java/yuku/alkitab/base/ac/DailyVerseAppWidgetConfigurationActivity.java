@@ -2,8 +2,11 @@ package yuku.alkitab.base.ac;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.View;
@@ -19,6 +22,7 @@ import android.widget.TextView;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.br.DailyVerseAppWidgetReceiver;
 import yuku.alkitab.base.model.MVersion;
@@ -36,6 +40,15 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 	SeekBar sbTextSize;
 	TextView tTextSize;
 	private CheckBox cTransparentBackground;
+
+	final BroadcastReceiver br = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			if (VersionsActivity.VersionListFragment.ACTION_RELOAD.equals(intent.getAction())) {
+				if (adapter != null) adapter.reload();
+			}
+		}
+	};
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -63,13 +76,14 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 		// If they gave us an intent without the widget id, just bail.
 		if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
 			finish();
+			return;
 		}
 
 		String key = "app_widget_" + mAppWidgetId + "_click";
 		Preferences.setInt(key, 0);
 
 		adapter = new VersionAdapter();
-		adapter.load();
+		adapter.reload();
 		lsVersionsAppWidget.setAdapter(adapter);
 		lsVersionsAppWidget.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
@@ -99,6 +113,15 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 			public void onStopTrackingTouch(final SeekBar seekBar) {}
 		});
 		sbTextSize_progressChanged(sbTextSize.getProgress());
+
+		App.getLbm().registerReceiver(br, new IntentFilter(VersionsActivity.VersionListFragment.ACTION_RELOAD));
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		App.getLbm().unregisterReceiver(br);
 	}
 
 	void sbTextSize_progressChanged(final int progress) {
@@ -160,8 +183,9 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 	class VersionAdapter extends EasyAdapter {
 		private Pair<List<String>,List<MVersion>> versions;
 
-		void load() {
+		void reload() {
 			versions = S.getAvailableVersions();
+			notifyDataSetChanged();
 		}
 
 		@Override
