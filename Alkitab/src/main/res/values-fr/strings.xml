@@ -94,7 +94,7 @@
   <string name="cp_writing_translated_file">Ecriture du fichier traduit</string>
   <string name="cp_reading_book_info">Lecture de l\'info. du livre : %s</string>
   <string name="cp_writing_text_of_book_chapters">Ecriture du texte du livre %1$s (%2$s chapitres)</string>
-  <string name="ed_type_built_in">Type : Réglages de base</string>
+  <string name="ed_type_internal">Type : Réglages de base</string>
   <string name="ed_shortName_shortName">Nom abrégé : %s</string>
   <string name="ed_title_title">Titre : %s</string>
   <string name="ed_stored_in_file">Stocké dans : %s</string>

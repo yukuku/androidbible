@@ -94,7 +94,7 @@
   <string name="cp_writing_translated_file">Schrijven vertaling</string>
   <string name="cp_reading_book_info">Lezen boek info: %s</string>
   <string name="cp_writing_text_of_book_chapters">Schrijven tekst van boek %1$s (%2$s chapters)</string>
-  <string name="ed_type_built_in">Type: ingebouwd</string>
+  <string name="ed_type_internal">Type: ingebouwd</string>
   <string name="ed_shortName_shortName">Verkorte naam: %s</string>
   <string name="ed_title_title">Titel: %s</string>
   <string name="ed_stored_in_file">Opgeslagen in: %s</string>

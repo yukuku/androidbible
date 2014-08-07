@@ -94,7 +94,7 @@
   <string name="cp_writing_translated_file">Schreibe konvertierte Datei</string>
   <string name="cp_reading_book_info">Lese Buchinformationen: %s</string>
   <string name="cp_writing_text_of_book_chapters">Schreibe Text des Buches %1$s (%2$s Kapitel)</string>
-  <string name="ed_type_built_in">Typ: Fest eingebaut</string>
+  <string name="ed_type_internal">Typ: Fest eingebaut</string>
   <string name="ed_shortName_shortName">Kürzel: %s</string>
   <string name="ed_title_title">Bezeichnung: %s</string>
   <string name="ed_stored_in_file">Gespeichert in: %s</string>

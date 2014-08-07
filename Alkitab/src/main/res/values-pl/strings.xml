@@ -90,7 +90,7 @@
   <string name="cp_writing_translated_file">Zapisywanie przetłumaczonego pliku</string>
   <string name="cp_reading_book_info">Odczytywanie informacji o księdze: %s</string>
   <string name="cp_writing_text_of_book_chapters">Zapisywanie tekstu księgi %1$s (%2$s rozdziałów)</string>
-  <string name="ed_type_built_in">Typ: Wbudowany</string>
+  <string name="ed_type_internal">Typ: Wbudowany</string>
   <string name="ed_shortName_shortName">Krótka nazwa: %s</string>
   <string name="ed_title_title">Tytuł: %s</string>
   <string name="ed_stored_in_file">Przechowywane w: %s</string>

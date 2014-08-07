@@ -94,7 +94,7 @@
   <string name="cp_writing_translated_file">Skryf vertaalde lêer</string>
   <string name="cp_reading_book_info">Lees boek info:%s</string>
   <string name="cp_writing_text_of_book_chapters">Skryf teks van boek %1$s (%2$s hoofstukke)</string>
-  <string name="ed_type_built_in">Tipe: Ingebou</string>
+  <string name="ed_type_internal">Tipe: Ingebou</string>
   <string name="ed_shortName_shortName">Kort naam:%s</string>
   <string name="ed_title_title">Titel: %s</string>
   <string name="ed_stored_in_file">Gestoor in: %s</string>

@@ -100,9 +100,9 @@
   <string name="cp_writing_translated_file">Menulis file hasil pengubahan</string>
   <string name="cp_reading_book_info">Membaca informasi kitab: %s</string>
   <string name="cp_writing_text_of_book_chapters">Menulis isi kitab %1$s (%2$s pasal)</string>
-  <string name="ed_type_built_in">Jenis: Terlampir</string>
+  <string name="ed_type_internal">Jenis: Terlampir</string>
   <string name="ed_type_preset">Jenis: Bisa diunduh</string>
-  <string name="ed_type_add_on">Jenis: Ditambahkan</string>
+  <string name="ed_type_db">Jenis: Ditambahkan</string>
   <string name="ed_shortName_shortName">Nama singkat: %s</string>
   <string name="ed_title_title">Judul: %s</string>
   <string name="ed_stored_in_file">Disimpan di: %s</string>

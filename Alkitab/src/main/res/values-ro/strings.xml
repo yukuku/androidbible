@@ -94,7 +94,7 @@
   <string name="cp_writing_translated_file">Scriere fişier tradus</string>
   <string name="cp_reading_book_info">Citeşte info carte: %s</string>
   <string name="cp_writing_text_of_book_chapters">Scrie textul cărţii %1$s (%2$s capitole)</string>
-  <string name="ed_type_built_in">Tip: Intern</string>
+  <string name="ed_type_internal">Tip: Intern</string>
   <string name="ed_shortName_shortName">Prescurtare: %s</string>
   <string name="ed_title_title">Titlu: %s</string>
   <string name="ed_stored_in_file">Stocat în: %s</string>

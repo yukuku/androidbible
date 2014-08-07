@@ -87,7 +87,7 @@
   <string name="cp_writing_translated_file">Zápis přeloženého souboru</string>
   <string name="cp_reading_book_info">Čtení info o knize: %s</string>
   <string name="cp_writing_text_of_book_chapters">Zápis textu knihy %1$s (%2$s kapitoly)</string>
-  <string name="ed_type_built_in">Druh: Vestavěné</string>
+  <string name="ed_type_internal">Druh: Vestavěné</string>
   <string name="ed_shortName_shortName">Název zkratky: %s</string>
   <string name="ed_title_title">Titul: %s</string>
   <string name="ed_stored_in_file">Uchováno v: %s</string>

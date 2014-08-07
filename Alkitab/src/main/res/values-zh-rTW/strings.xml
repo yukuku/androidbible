@@ -94,7 +94,7 @@
   <string name="cp_writing_translated_file">寫入翻譯檔案</string>
   <string name="cp_reading_book_info">讀取書卷資訊中: %s</string>
   <string name="cp_writing_text_of_book_chapters">寫入書卷文字 %1$s (%2$s 章)</string>
-  <string name="ed_type_built_in">型態: 內建</string>
+  <string name="ed_type_internal">型態: 內建</string>
   <string name="ed_shortName_shortName">短名: %s</string>
   <string name="ed_title_title">標題: %s</string>
   <string name="ed_stored_in_file">儲存在: %s</string>

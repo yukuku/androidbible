@@ -94,7 +94,7 @@
   <string name="cp_writing_translated_file">Escribiendo archivo traducido</string>
   <string name="cp_reading_book_info">Leyendo información del libro: %s</string>
   <string name="cp_writing_text_of_book_chapters">Escribiendo texto del libro %1$s (%2$s capítulos)</string>
-  <string name="ed_type_built_in">Tipo: Integrado</string>
+  <string name="ed_type_internal">Tipo: Integrado</string>
   <string name="ed_shortName_shortName">Nombre corto: %s</string>
   <string name="ed_title_title">Título: %s</string>
   <string name="ed_stored_in_file">Almacenado en: %s</string>

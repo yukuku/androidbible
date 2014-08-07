@@ -94,7 +94,7 @@
   <string name="cp_writing_translated_file">Запись преобразованного файла</string>
   <string name="cp_reading_book_info">Чтение информации о книге: %s</string>
   <string name="cp_writing_text_of_book_chapters">Запись текста книги %1$s (%2$s глав)</string>
-  <string name="ed_type_built_in">Тип: встроенный</string>
+  <string name="ed_type_internal">Тип: встроенный</string>
   <string name="ed_shortName_shortName">Краткое название: %s</string>
   <string name="ed_title_title">Заголовок: %s</string>
   <string name="ed_stored_in_file">Хранится в: %s</string>

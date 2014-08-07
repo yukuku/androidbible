@@ -94,7 +94,7 @@
   <string name="cp_writing_translated_file">正在写作翻译文件</string>
   <string name="cp_reading_book_info">正在读图书信息 %s</string>
   <string name="cp_writing_text_of_book_chapters">写这本书的文字： %1$s (%2$s 章)</string>
-  <string name="ed_type_built_in">类型： 内建的</string>
+  <string name="ed_type_internal">类型： 内建的</string>
   <string name="ed_shortName_shortName">简短名称: %s</string>
   <string name="ed_title_title">标题： %s</string>
   <string name="ed_stored_in_file">存储在： %s</string>

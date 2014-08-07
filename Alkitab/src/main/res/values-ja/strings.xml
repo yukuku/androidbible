@@ -94,7 +94,7 @@
   <string name="cp_writing_translated_file">変換したファイルを書き込んでいます.</string>
   <string name="cp_reading_book_info">%s の情報を読み出しています.</string>
   <string name="cp_writing_text_of_book_chapters">%1$s 書 (%2$s 章) のテキストを書き込んでいます.</string>
-  <string name="ed_type_built_in">種別: ビルトイン</string>
+  <string name="ed_type_internal">種別: ビルトイン</string>
   <string name="ed_shortName_shortName">略称：%s</string>
   <string name="ed_title_title">タイトル：%s</string>
   <string name="ed_stored_in_file">保存ファイル: %s</string>
