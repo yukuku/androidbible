@@ -33,27 +33,36 @@
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:descendantFocusability="blocksDescendants"
 		android:gravity="center_vertical"
 		android:minHeight="48dp"
 		android:orientation="horizontal">
 
-		<TextView
-			android:id="@+id/tLongName"
+		<Button
+			android:id="@+id/bLongName"
+			style="?android:buttonBarButtonStyle"
 			android:layout_width="0dp"
-			android:layout_height="wrap_content"
+			android:layout_height="match_parent"
 			android:layout_weight="1"
+			android:gravity="center_vertical"
 			android:text="*Long version name"
 			android:textAppearance="?android:textAppearanceMedium"
 			tools:ignore="HardcodedText" />
 
-		<CheckBox
-			android:id="@+id/cActive"
-			android:layout_width="wrap_content"
+		<FrameLayout
+			android:id="@+id/panelRight"
+			android:layout_width="48dp"
 			android:layout_height="match_parent"
-			android:layout_gravity="center_vertical"
-			android:clickable="false"
-			android:minWidth="48dp" />
+			android:layout_weight="0">
+
+			<CheckBox
+				android:id="@+id/cActive"
+				style="?android:buttonBarButtonStyle"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_gravity="center_vertical"
+				android:clickable="false" />
+
+		</FrameLayout>
 
 	</LinearLayout>
 

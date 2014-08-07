@@ -32,7 +32,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
@@ -694,8 +694,6 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 
 			lsVersions = V.get(rootView, R.id.lsVersions);
 			lsVersions.setAdapter(adapter);
-			lsVersions.setOnItemClickListener(lsVersions_itemClick);
-			lsVersions.setOnItemLongClickListener(lsVersions_itemLongClick);
 
 			return rootView;
 		}
@@ -736,121 +734,112 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 			}
 		}
 
-		private AdapterView.OnItemClickListener lsVersions_itemClick = new AdapterView.OnItemClickListener() {
-			@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-				final Item item = adapter.getItem(position);
-				final MVersion mv = item.mv;
+		void itemCheckboxClick(final Item item, final View itemView) {
+			final MVersion mv = item.mv;
 
-				if (mv instanceof MVersionPreset) {
-					clickOnPresetVersion(V.<CheckBox>get(v, R.id.cActive), (MVersionPreset) mv);
-				} else if (mv instanceof MVersionDb) {
-					clickOnDbVersion(V.<CheckBox>get(v, R.id.cActive), (MVersionDb) mv);
-				}
-
-				adapter.notifyDataSetChanged();
+			if (mv instanceof MVersionPreset) {
+				clickOnPresetVersion(V.<CheckBox>get(itemView, R.id.cActive), (MVersionPreset) mv);
+			} else if (mv instanceof MVersionDb) {
+				clickOnDbVersion(V.<CheckBox>get(itemView, R.id.cActive), (MVersionDb) mv);
 			}
-		};
 
-		final AdapterView.OnItemLongClickListener lsVersions_itemLongClick = new AdapterView.OnItemLongClickListener() {
-			@Override
-			public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-				final Item item = adapter.getItem(position);
-				final MVersion mv = item.mv;
+			App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
+		}
 
-				final List<Pair<Integer, String>> menu = new ArrayList<>();
+		void itemNameClick(final Item item) {
+			final MVersion mv = item.mv;
 
-				if (mv instanceof MVersionDb && mv.hasDataFile()) {
-					menu.add(Pair.create(1, getString(R.string.version_menu_share)));
-				}
+			final List<Pair<Integer, String>> menu = new ArrayList<>();
 
-				menu.add(Pair.create(2, getString(R.string.info_terperinci)));
+			if (mv instanceof MVersionDb && mv.hasDataFile()) {
+				menu.add(Pair.create(1, getString(R.string.version_menu_share)));
+			}
 
-				if (mv instanceof MVersionDb) {
-					menu.add(Pair.create(3, getString(R.string.buang_dari_daftar)));
-				}
+			menu.add(Pair.create(2, getString(R.string.info_terperinci)));
 
-				final String[] items = new String[menu.size()];
+			if (mv instanceof MVersionDb) {
+				menu.add(Pair.create(3, getString(R.string.buang_dari_daftar)));
+			}
 
-				for (int i = 0; i < menu.size(); i++) {
-					final Pair<Integer, String> menuItem = menu.get(i);
-					items[i] = menuItem.second;
-				}
+			final String[] items = new String[menu.size()];
 
-				new AlertDialog.Builder(getActivity())
-					.setItems(items, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(final DialogInterface dialog, final int which) {
-							final Pair<Integer, String> menuItem = menu.get(which);
-							final int itemId = menuItem.first;
+			for (int i = 0; i < menu.size(); i++) {
+				final Pair<Integer, String> menuItem = menu.get(i);
+				items[i] = menuItem.second;
+			}
 
-							if (itemId == 3) {
-								if (mv instanceof MVersionDb) {
-									final MVersionDb mvDb = (MVersionDb) mv;
-									new AlertDialog.Builder(getActivity())
-										.setMessage(getString(R.string.juga_hapus_file_datanya_file, mvDb.filename))
-										.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-											@Override public void onClick(DialogInterface dialog, int which) {
-												S.getDb().deleteVersion(mvDb);
-												App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
-												new File(mvDb.filename).delete();
-											}
-										})
-										.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-											@Override public void onClick(DialogInterface dialog, int which) {
-												S.getDb().deleteVersion(mvDb);
-												App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
-											}
-										})
-										.show();
-								}
-							} else if (itemId == 2) {
-								StringBuilder details = new StringBuilder();
-								if (mv instanceof MVersionInternal) details.append(getString(R.string.ed_type_built_in)).append('\n');
-								if (mv instanceof MVersionPreset) details.append(getString(R.string.ed_type_preset)).append('\n');
-								if (mv instanceof MVersionDb) details.append(getString(R.string.ed_type_add_on)).append('\n');
-								if (mv.locale != null) details.append(getString(R.string.ed_locale_locale, mv.locale)).append('\n');
-								if (mv.shortName != null) details.append(getString(R.string.ed_shortName_shortName, mv.shortName)).append('\n');
-								details.append(getString(R.string.ed_title_title, mv.longName)).append('\n');
+			new AlertDialog.Builder(getActivity())
+				.setItems(items, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(final DialogInterface dialog, final int which) {
+						final Pair<Integer, String> menuItem = menu.get(which);
+						final int itemId = menuItem.first;
 
-								if (mv instanceof MVersionPreset) {
-									final MVersionPreset preset = (MVersionPreset) mv;
-									details.append(getString(R.string.ed_default_filename_file, preset.preset_name)).append('\n');
-									if (AddonManager.hasVersion(preset.preset_name + ".yes")) {
-										details.append("THIS SHOULD NOT HAPPEN\n"); // because a version with the file should be MVersionDb
-									} else {
-										details.append(getString(R.string.ed_download_url_url, preset.download_url)).append('\n');
-									}
-								}
-								if (mv instanceof MVersionDb) {
-									MVersionDb mvDb = (MVersionDb) mv;
-									details.append(getString(R.string.ed_stored_in_file, mvDb.filename)).append('\n');
-								}
-								if (mv.description != null) details.append('\n').append(mv.description).append('\n');
-
+						if (itemId == 3) {
+							if (mv instanceof MVersionDb) {
+								final MVersionDb mvDb = (MVersionDb) mv;
 								new AlertDialog.Builder(getActivity())
-									.setTitle(R.string.ed_version_details)
-									.setMessage(details)
-									.setPositiveButton(R.string.ok, null)
+									.setMessage(getString(R.string.juga_hapus_file_datanya_file, mvDb.filename))
+									.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+										@Override public void onClick(DialogInterface dialog, int which) {
+											S.getDb().deleteVersion(mvDb);
+											App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
+											new File(mvDb.filename).delete();
+										}
+									})
+									.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+										@Override public void onClick(DialogInterface dialog, int which) {
+											S.getDb().deleteVersion(mvDb);
+											App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
+										}
+									})
 									.show();
-							} else if (itemId == 1) {
-								if (mv instanceof MVersionDb) {
-									final MVersionDb mvDb = (MVersionDb) mv;
+							}
+						} else if (itemId == 2) {
+							StringBuilder details = new StringBuilder();
+							if (mv instanceof MVersionInternal) details.append(getString(R.string.ed_type_built_in)).append('\n');
+							if (mv instanceof MVersionPreset) details.append(getString(R.string.ed_type_preset)).append('\n');
+							if (mv instanceof MVersionDb) details.append(getString(R.string.ed_type_add_on)).append('\n');
+							if (mv.locale != null) details.append(getString(R.string.ed_locale_locale, mv.locale)).append('\n');
+							if (mv.shortName != null) details.append(getString(R.string.ed_shortName_shortName, mv.shortName)).append('\n');
+							details.append(getString(R.string.ed_title_title, mv.longName)).append('\n');
 
-									final Intent intent = ShareCompat.IntentBuilder.from(getActivity())
-										.setType("application/octet-stream")
-										.addStream(Uri.fromFile(new File(mvDb.filename)))
-										.getIntent();
-
-									startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.version_share_title)), REQCODE_share);
+							if (mv instanceof MVersionPreset) {
+								final MVersionPreset preset = (MVersionPreset) mv;
+								details.append(getString(R.string.ed_default_filename_file, preset.preset_name)).append('\n');
+								if (AddonManager.hasVersion(preset.preset_name + ".yes")) {
+									details.append("THIS SHOULD NOT HAPPEN\n"); // because a version with the file should be MVersionDb
+								} else {
+									details.append(getString(R.string.ed_download_url_url, preset.download_url)).append('\n');
 								}
 							}
-						}
-					})
-					.show();
+							if (mv instanceof MVersionDb) {
+								MVersionDb mvDb = (MVersionDb) mv;
+								details.append(getString(R.string.ed_stored_in_file, mvDb.filename)).append('\n');
+							}
+							if (mv.description != null) details.append('\n').append(mv.description).append('\n');
 
-				return true;
-			}
-		};
+							new AlertDialog.Builder(getActivity())
+								.setTitle(R.string.ed_version_details)
+								.setMessage(details)
+								.setPositiveButton(R.string.ok, null)
+								.show();
+						} else if (itemId == 1) {
+							if (mv instanceof MVersionDb) {
+								final MVersionDb mvDb = (MVersionDb) mv;
+
+								final Intent intent = ShareCompat.IntentBuilder.from(getActivity())
+									.setType("application/octet-stream")
+									.addStream(Uri.fromFile(new File(mvDb.filename)))
+									.getIntent();
+
+								startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.version_share_title)), REQCODE_share);
+							}
+						}
+					}
+				})
+				.show();
+		}
 
 		void clickOnPresetVersion(final CheckBox cActive, final MVersionPreset mv) {
 			if (cActive.isChecked()) {
@@ -1041,17 +1030,32 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 
 			@Override
 			public void bindView(final View view, final int position, final ViewGroup parent) {
+				final View panelRight = V.get(view, R.id.panelRight);
 				final CheckBox cActive = V.get(view, R.id.cActive);
-				final TextView tLongName = V.get(view, R.id.tLongName);
+				final Button bLongName = V.get(view, R.id.bLongName);
 				final View header = V.get(view, R.id.header);
 				final TextView tLanguage = V.get(view, R.id.tLanguage);
 
 				final Item item = getItem(position);
 				final MVersion mv = item.mv;
 
+				bLongName.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(final View v) {
+						itemNameClick(item);
+					}
+				});
+
+				panelRight.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(final View v) {
+						itemCheckboxClick(item, view);
+					}
+				});
+
 				cActive.setChecked(mv.getActive());
 
-				tLongName.setText(mv.longName);
+				bLongName.setText(mv.longName);
 				tLanguage.setText(getDisplayLanguage(mv.locale));
 
 				if (mv instanceof MVersionInternal) {
