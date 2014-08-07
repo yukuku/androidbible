@@ -897,6 +897,7 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 
 			final DownloadManager.Request req = new DownloadManager.Request(Uri.parse(mv.download_url))
 				.setTitle(mv.longName)
+				.setVisibleInDownloadsUi(false)
 				.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
 
 			final Map<String, String> attrs = new LinkedHashMap<>();
@@ -904,6 +905,8 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 			attrs.put("modifyTime", "" + mv.modifyTime);
 
 			DownloadMapper.instance.enqueue(downloadKey, req, attrs);
+
+			App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
 		}
 
 		void clickOnDbVersion(final CheckBox cActive, final MVersionDb mv) {
@@ -1073,6 +1076,7 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 			public void bindView(final View view, final int position, final ViewGroup parent) {
 				final View panelRight = V.get(view, R.id.panelRight);
 				final CheckBox cActive = V.get(view, R.id.cActive);
+				final View progress = V.get(view, R.id.progress);
 				final Button bLongName = V.get(view, R.id.bLongName);
 				final View header = V.get(view, R.id.header);
 				final TextView tLanguage = V.get(view, R.id.tLanguage);
@@ -1118,6 +1122,30 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 					bLongName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_version_update, 0, 0, 0);
 				} else {
 					bLongName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+				}
+
+				// downloading or not?
+				final boolean downloading;
+				if (mv instanceof MVersionInternal) {
+					downloading = false;
+				} else if (mv instanceof MVersionPreset) {
+					final String downloadKey = "version:preset_name:" + ((MVersionPreset) mv).preset_name;
+					final int status = DownloadMapper.instance.getStatus(downloadKey);
+					downloading = (status == DownloadManager.STATUS_PENDING || status == DownloadManager.STATUS_RUNNING);
+				} else if (mv instanceof MVersionDb && ((MVersionDb) mv).preset_name != null) { // probably downloading, in case of updating
+					final String downloadKey = "version:preset_name:" + ((MVersionDb) mv).preset_name;
+					final int status = DownloadMapper.instance.getStatus(downloadKey);
+					downloading = (status == DownloadManager.STATUS_PENDING || status == DownloadManager.STATUS_RUNNING);
+				} else {
+					downloading = false;
+				}
+
+				if (downloading) {
+					cActive.setVisibility(View.INVISIBLE);
+					progress.setVisibility(View.VISIBLE);
+				} else {
+					cActive.setVisibility(View.VISIBLE);
+					progress.setVisibility(View.INVISIBLE);
 				}
 			}
 
