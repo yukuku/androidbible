@@ -27,7 +27,9 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.DynamicDrawableSpan;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.ImageSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
@@ -789,10 +791,25 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 			if (mv.description != null) details.append('\n').append(mv.description).append('\n');
 
 			final AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
-			b.setTitle(R.string.ed_version_details);
-			b.setMessage(details);
 
 			int button_count = 0;
+
+			// can we update?
+			if (hasUpdateAvailable(mv)) {
+				button_count++;
+				b.setPositiveButton(R.string.ed_update_button, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(final DialogInterface dialog, final int which) {
+						startDownload(VersionConfig.get().getPreset(((MVersionDb) mv).preset_name));
+					}
+				});
+
+				details.append("\n");
+				final int details_len = details.length();
+				details.append("  ");
+				details.setSpan(new ImageSpan(App.context, R.drawable.ic_version_update, DynamicDrawableSpan.ALIGN_BASELINE), details_len, details_len + 1, 0);
+				details.append(getString(R.string.ed_details_update_available));
+			}
 
 			// can we share?
 			if (mv instanceof MVersionDb && mv.hasDataFile()) {
@@ -856,6 +873,8 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 				b.setPositiveButton(R.string.ok, null);
 			}
 
+			b.setTitle(R.string.ed_version_details);
+			b.setMessage(details);
 			b.show();
 		}
 
@@ -1093,6 +1112,13 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 				} else {
 					header.setVisibility(View.GONE);
 				}
+
+				// Update icon
+				if (hasUpdateAvailable(mv)) {
+					bLongName.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_version_update, 0, 0, 0);
+				} else {
+					bLongName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+				}
 			}
 
 			@Override
@@ -1110,6 +1136,26 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 				final int pos = Arrays.binarySearch(section_indexes, position);
 				return pos >= 0 ? pos : (-pos - 1);
 			}
+		}
+
+		private boolean hasUpdateAvailable(final MVersion mv) {
+			final boolean updateIcon;
+			if (mv instanceof MVersionDb) {
+				final MVersionDb mvDb = (MVersionDb) mv;
+				if (mvDb.preset_name == null || mvDb.modifyTime == 0) {
+					updateIcon = false;
+				} else {
+					final int available = VersionConfig.get().getModifyTime(mvDb.preset_name);
+					if (available == 0 || available <= mvDb.modifyTime) {
+						updateIcon = false;
+					} else {
+						updateIcon = true;
+					}
+				}
+			} else {
+				updateIcon = false;
+			}
+			return updateIcon;
 		}
 
 	}

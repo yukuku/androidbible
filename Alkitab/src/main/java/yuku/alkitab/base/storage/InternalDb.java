@@ -505,7 +505,20 @@ public class InternalDb {
 		cv.put(Db.Version.modifyTime, mv.modifyTime);
 		cv.put(Db.Version.active, active); // special
 		cv.put(Db.Version.ordering, mv.ordering);
-		db.insert(Db.TABLE_Version, null, cv);
+
+		db.beginTransaction();
+		try { // prevent insert for the same filename (absolute path), update instead
+			final long count = DatabaseUtils.queryNumEntries(db, Db.TABLE_Version, Db.Version.filename + "=?", new String[]{mv.filename});
+			if (count == 0) {
+				db.insert(Db.TABLE_Version, null, cv);
+			} else {
+				db.update(Db.TABLE_Version, cv, Db.Version.filename + "=?", new String[]{mv.filename});
+			}
+
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
 	}
 
 	public boolean hasVersionWithFilename(String filename) {

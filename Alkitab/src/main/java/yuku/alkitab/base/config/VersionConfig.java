@@ -53,6 +53,34 @@ public class VersionConfig {
 		}
 	}
 
+	/**
+	 * Modify time for the version available for download.
+	 * @return 0 if preset_name not known, or no updates supported.
+	 */
+	public int getModifyTime(final String preset_name) {
+		if (preset_name == null) return 0;
+
+		for (final MVersionPreset preset : presets) {
+			if (preset_name.equals(preset.preset_name)) {
+				return preset.modifyTime;
+			}
+		}
+
+		return 0;
+	}
+
+	public MVersionPreset getPreset(final String preset_name) {
+		if (preset_name == null) return null;
+
+		for (final MVersionPreset preset : presets) {
+			if (preset_name.equals(preset.preset_name)) {
+				return preset;
+			}
+		}
+
+		return null;
+	}
+
 	private static VersionConfig loadConfig(VersionConfigJson root) {
 		final VersionConfig res = new VersionConfig();
 		
