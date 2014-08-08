@@ -41,7 +41,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
-import android.widget.SectionIndexer;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 import yuku.afw.V;
@@ -61,6 +61,7 @@ import yuku.alkitab.base.pdbconvert.ConvertPdbToYes2;
 import yuku.alkitab.base.storage.YesReaderFactory;
 import yuku.alkitab.base.util.AddonManager;
 import yuku.alkitab.base.util.DownloadMapper;
+import yuku.alkitab.base.util.QueryTokenizer;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.BibleReader;
@@ -89,6 +90,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.zip.GZIPInputStream;
 
 
@@ -111,6 +113,7 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 	 * The {@link android.support.v4.view.ViewPager} that will host the section contents.
 	 */
 	ViewPager mViewPager;
+	String query_text;
 
 	public static Intent createIntent() {
 		return new Intent(App.context, VersionsActivity.class);
@@ -156,8 +159,6 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 
 		processIntent(getIntent(), "onCreate");
 	}
-
-
 
 	private void processIntent(Intent intent, String via) {
 		Log.d(TAG, "Got intent via " + via);
@@ -298,10 +299,73 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 		output.close();
 	}
 
+	// taken from FragmentPagerAdapter
+	private static String makeFragmentName(int viewId, int index) {
+		return "android:switcher:" + viewId + ":" + index;
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_versions, menu);
 		return true;
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(final Menu menu) {
+		final MenuItem menuSearch = menu.findItem(R.id.menuSearch);
+		menuSearch.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+			@Override
+			public boolean onMenuItemActionExpand(final MenuItem item) {
+				setOthersVisible(item, false);
+				return true;
+			}
+
+			@Override
+			public boolean onMenuItemActionCollapse(final MenuItem item) {
+				setOthersVisible(item, true);
+				return true;
+			}
+
+			private void setOthersVisible(final MenuItem except, final boolean visible) {
+				for (int i = 0, len = menu.size(); i < len; i++) {
+					final MenuItem other = menu.getItem(i);
+					if (except != other) {
+						other.setVisible(visible);
+					}
+				}
+			}
+		});
+
+		final SearchView searchView = (SearchView) menuSearch.getActionView();
+		searchView.setOnQueryTextListener(searchView_change);
+
+		return true;
+	}
+
+	final SearchView.OnQueryTextListener searchView_change = new SearchView.OnQueryTextListener() {
+		@Override
+		public boolean onQueryTextSubmit(final String query) {
+			query_text = query;
+			startSearch();
+			return false;
+		}
+
+		@Override
+		public boolean onQueryTextChange(final String newText) {
+			query_text = newText;
+			startSearch();
+			return false;
+		}
+	};
+
+	private void startSearch() {
+		// broadcast to all fragments that we have a new query_text
+		for (final String tag : new String[]{makeFragmentName(R.id.viewPager, 0), makeFragmentName(R.id.viewPager, 1)}) {
+			final Fragment f = getFragmentManager().findFragmentByTag(tag);
+			if (f instanceof QueryTextReceiver) {
+				((QueryTextReceiver) f).setQueryText(query_text);
+			}
+		}
 	}
 
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
@@ -373,7 +437,7 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 
 		@Override
 		public Fragment getItem(int position) {
-			return VersionListFragment.newInstance(position == 1);
+			return VersionListFragment.newInstance(position == 1, query_text);
 		}
 
 		@Override
@@ -635,12 +699,13 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
-	public static class VersionListFragment extends Fragment {
+	public static class VersionListFragment extends Fragment implements QueryTextReceiver {
 		/**
 		 * The fragment argument representing the section number for this
 		 * fragment.
 		 */
 		private static final String ARG_DOWNLOADED_ONLY = "downloaded_only";
+		private static final String ARG_INITIAL_QUERY_TEXT = "initial_query_text";
 
 		public static final String ACTION_RELOAD = VersionListFragment.class.getName() + ".action.RELOAD";
 
@@ -650,15 +715,17 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 		ListView lsVersions;
 		VersionAdapter adapter;
 		private boolean downloadedOnly;
+		private String query_text;
 
 		/**
 		 * Returns a new instance of this fragment for the given section
 		 * number.
 		 */
-		public static VersionListFragment newInstance(final boolean downloadedOnly) {
+		public static VersionListFragment newInstance(final boolean downloadedOnly, final String initial_query_text) {
 			final VersionListFragment res = new VersionListFragment();
 			final Bundle args = new Bundle();
 			args.putBoolean(ARG_DOWNLOADED_ONLY, downloadedOnly);
+			args.putString(ARG_INITIAL_QUERY_TEXT, initial_query_text);
 			res.setArguments(args);
 			return res;
 		}
@@ -682,6 +749,7 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 			App.getLbm().registerReceiver(br, new IntentFilter(ACTION_RELOAD));
 
 			downloadedOnly = getArguments().getBoolean(ARG_DOWNLOADED_ONLY);
+			query_text = getArguments().getString(ARG_INITIAL_QUERY_TEXT);
 		}
 
 		@Override
@@ -729,6 +797,12 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 			cache_displayLanguage.put(locale, display);
 
 			return display;
+		}
+
+		@Override
+		public void setQueryText(final String query_text) {
+			this.query_text = query_text;
+			adapter.reload(); // do not broadcast, since the query only changes this fragment
 		}
 
 		static class Item {
@@ -945,10 +1019,8 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 			super.onActivityResult(requestCode, resultCode, data);
 		}
 
-		public class VersionAdapter extends EasyAdapter implements SectionIndexer {
+		public class VersionAdapter extends EasyAdapter {
 			final List<Item> items = new ArrayList<>();
-			String[] section_labels;
-			int[] section_indexes;
 
 			VersionAdapter() {
 				reload();
@@ -995,6 +1067,16 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 						if (presetNamesInDb.contains(preset.preset_name)) continue;
 
 						items.add(new Item(preset));
+					}
+				}
+
+				if (!TextUtils.isEmpty(query_text)) { // filter items based on query_text
+					final Matcher[] matchers = QueryTokenizer.matcherizeTokens(QueryTokenizer.tokenize(query_text));
+					for (int i = items.size() - 1; i >= 0; i--) {
+						final Item item = items.get(i);
+						if (!matchMatchers(item.mv, matchers)) {
+							items.remove(i);
+						}
 					}
 				}
 
@@ -1050,11 +1132,31 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 					Log.d(TAG, "section indexes: " + section_indexes);
 				}
 
-				this.section_labels = section_labels.toArray(new String[section_labels.size()]);
-				this.section_indexes = new int[section_indexes.size()];
-				System.arraycopy(section_indexes.buffer(), 0, this.section_indexes, 0, section_indexes.size());
-
 				notifyDataSetChanged();
+			}
+
+			private boolean matchMatchers(final MVersion mv, final Matcher[] matchers) {
+				// have to match all tokens
+				for (final Matcher m : matchers) {
+					if (m.reset(mv.longName).find()) {
+						continue;
+					}
+
+					if (mv.shortName != null && m.reset(mv.shortName).find()) {
+						continue;
+					}
+
+					if (mv.description != null && m.reset(mv.description).find()) {
+						continue;
+					}
+
+					if (mv.locale != null && m.reset(getDisplayLanguage(mv.locale)).find()) {
+						continue;
+					}
+
+					return false;
+				}
+				return true;
 			}
 
 			@Override
@@ -1148,22 +1250,6 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 					progress.setVisibility(View.INVISIBLE);
 				}
 			}
-
-			@Override
-			public String[] getSections() {
-				return section_labels;
-			}
-
-			@Override
-			public int getPositionForSection(final int sectionIndex) {
-				return section_indexes[sectionIndex];
-			}
-
-			@Override
-			public int getSectionForPosition(final int position) {
-				final int pos = Arrays.binarySearch(section_indexes, position);
-				return pos >= 0 ? pos : (-pos - 1);
-			}
 		}
 
 		private boolean hasUpdateAvailable(final MVersion mv) {
@@ -1174,11 +1260,7 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 					updateIcon = false;
 				} else {
 					final int available = VersionConfig.get().getModifyTime(mvDb.preset_name);
-					if (available == 0 || available <= mvDb.modifyTime) {
-						updateIcon = false;
-					} else {
-						updateIcon = true;
-					}
+					updateIcon = !(available == 0 || available <= mvDb.modifyTime);
 				}
 			} else {
 				updateIcon = false;
@@ -1187,5 +1269,9 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 		}
 
 	}
-
 }
+
+interface QueryTextReceiver {
+	void setQueryText(String query_text);
+}
+

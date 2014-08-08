@@ -7,4 +7,11 @@
 		android:showAsAction="always|withText"
 		android:title="@string/tambah" />
 
+	<item
+		android:id="@+id/menuSearch"
+		android:actionViewClass="android.widget.SearchView"
+		android:icon="@drawable/ic_menu_search"
+		android:showAsAction="always|collapseActionView"
+		android:title="@string/search" />
+
 </menu>

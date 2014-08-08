@@ -94,6 +94,19 @@ public class QueryTokenizer {
 		return token.substring(pos);
 	}
 
+	public static Matcher[] matcherizeTokens(String[] tokens) {
+		final Matcher[] res = new Matcher[tokens.length];
+		for (int i = 0; i < tokens.length; i++) {
+			final String token = tokens[i];
+			if (isPlussedToken(token)) {
+				res[i] = Pattern.compile("\\b" + Pattern.quote(tokenWithoutPlus(token)) + "\\b", Pattern.CASE_INSENSITIVE).matcher("");
+			} else {
+				res[i] = Pattern.compile(Pattern.quote(token), Pattern.CASE_INSENSITIVE).matcher("");
+			}
+		}
+		return res;
+	}
+
 	static boolean isMultiwordToken(String token) {
 		int start = 0;
 		if (isPlussedToken(token)) {
