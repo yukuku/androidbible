@@ -186,7 +186,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 			Preferences.setFloat(Prefkey.ukuranHuruf2, nowFontSize);
 
-			applyPreferences(false);
+			applyPreferences();
 
 			if (textAppearancePanel != null) {
 				textAppearancePanel.displayValues();
@@ -902,7 +902,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		return res.toString();
 	}
 
-	private void applyPreferences(boolean languageToo) {
+	private void applyPreferences() {
 		// make sure S applied variables are set first
 		S.calculateAppliedValuesBasedOnPreferences();
 
@@ -911,10 +911,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			root.setBackgroundColor(S.applied.backgroundColor);
 			lsText.setCacheColorHint(S.applied.backgroundColor);
 			lsSplit1.setCacheColorHint(S.applied.backgroundColor);
-		}
-		
-		if (languageToo) {
-			App.updateConfigurationWithPreferencesLocale();
 		}
 		
 		// necessary
@@ -945,7 +941,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	@Override protected void onStart() {
 		super.onStart();
 
-		applyPreferences(false);
+		applyPreferences();
 
 		if (Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default))) {
 			lsText.setKeepScreenOn(true);
@@ -1104,7 +1100,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if (textAppearancePanel == null) { // not showing yet
 				textAppearancePanel = new TextAppearancePanel(this, getLayoutInflater(), overlayContainer, new TextAppearancePanel.Listener() {
 					@Override public void onValueChanged() {
-						applyPreferences(false);
+						applyPreferences();
 					}
 
 					@Override
@@ -1129,7 +1125,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 		Preferences.setBoolean(Prefkey.is_night_mode, yes);
 
-		applyPreferences(false);
+		applyPreferences();
 
 		if (textAppearancePanel != null) {
 			textAppearancePanel.displayValues();
