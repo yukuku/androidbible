@@ -1463,7 +1463,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 	VersesView.AttributeListener attributeListener = new VersesView.AttributeListener() {
 		void openBookmarkDialog(int ari, int ordering) {
-			final TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, ari, ordering);
+			final TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExistingWithOrdering(IsiActivity.this, ari, ordering);
 			dialog.setListener(new TypeBookmarkDialog.Listener() {
 				@Override public void onOk() {
 					lsText.reloadAttributeMap();
@@ -1497,7 +1497,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 
 		void openNoteDialog(int ari, int ordering) {
-			final TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, ari, ordering, new TypeNoteDialog.Listener() {
+			final TypeNoteDialog dialog = TypeNoteDialog.EditExistingWithOrdering(IsiActivity.this, ari, ordering, new TypeNoteDialog.Listener() {
 				@Override
 				public void onDone() {
 					lsText.reloadAttributeMap();
@@ -1787,41 +1787,40 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			MenuItem menuAddNote = menu.findItem(R.id.menuAddNote);
 			MenuItem menuCompare = menu.findItem(R.id.menuCompare);
 
-			IntArrayList selected = lsText.getSelectedVerses_1();
-			boolean single = selected.size() == 1;
-			
-			boolean changed1 = menuAddBookmark.isVisible() != single;
-			boolean changed2 = menuAddNote.isVisible() != single;
-			boolean changed4 = menuCompare.isVisible() != single;
-			boolean changed = changed1 || changed2 || changed4;
-			
-			if (changed) {
-				menuAddBookmark.setVisible(single);
-				menuAddNote.setVisible(single);
-				menuCompare.setVisible(single);
+			final IntArrayList selected = lsText.getSelectedVerses_1();
+			final boolean single = selected.size() == 1;
+
+			boolean contiguous = true;
+			if (!single) {
+				int next = selected.get(0) + 1;
+				for (int i = 1, len = selected.size(); i < len; i++) {
+					final int cur = selected.get(i);
+					if (next != cur) {
+						contiguous = false;
+						break;
+					}
+					next = cur + 1;
+				}
 			}
+
+			menuAddBookmark.setVisible(contiguous);
+			menuAddNote.setVisible(contiguous);
+			menuCompare.setVisible(single);
 
 			final MenuItem menuVersions = menu.findItem(R.id.menuVersions);
 			menuVersions.setVisible(activeSplitVersion == null);
 
-			return changed;
+			return true;
 		}
 
 		@Override public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-			IntArrayList selected = lsText.getSelectedVerses_1();
+			final IntArrayList selected = lsText.getSelectedVerses_1();
 
 			if (selected.size() == 0) return true;
 
-			CharSequence reference = referenceFromSelectedVerses(selected, activeBook);
+			final CharSequence reference = referenceFromSelectedVerses(selected, activeBook);
 
-			// the main verse (0 if not exist), which is only when only one verse is selected
-			int mainVerse_1 = 0;
-			if (selected.size() == 1) {
-				mainVerse_1 = selected.get(0);
-			}
-			
-			int itemId = item.getItemId();
-			switch (itemId) {
+			switch (item.getItemId()) {
 			case R.id.menuCopy: { // copy, can be multiple
 				String textToCopy = prepareTextForCopyShare(selected, reference, false);
 				if (activeSplitVersion != null) {
@@ -1861,24 +1860,23 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				mode.finish();
 			} return true;
 			case R.id.menuCompare: {
-				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, mainVerse_1);
+				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
 				VersesDialog.newCompareInstance(ari).show(getSupportFragmentManager(), "compare_dialog");
 			} return true;
 			case R.id.menuVersions: {
 				openVersionsDialog();
 			} return true;
 			case R.id.menuAddBookmark: {
-				if (mainVerse_1 == 0) {
-					// no main verse, scroll to show the relevant one!
-					mainVerse_1 = selected.get(0);
-					
-					lsText.scrollToShowVerse(mainVerse_1);
+				// contract: this menu only appears when contiguous verses are selected
+				if (selected.get(selected.size() - 1) - selected.get(0) != selected.size() - 1) {
+					throw new RuntimeException("Non contiguous verses when adding bookmark: " + selected);
 				}
-				
-				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, mainVerse_1);
+
+				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
+				final int verseCount = selected.size();
 
 				// always create a new bookmark
-				TypeBookmarkDialog dialog = new TypeBookmarkDialog(IsiActivity.this, ari);
+				TypeBookmarkDialog dialog = TypeBookmarkDialog.NewBookmark(IsiActivity.this, ari, verseCount);
 				dialog.setListener(new TypeBookmarkDialog.Listener() {
 					@Override public void onOk() {
 						lsText.uncheckAllVerses(true);
@@ -1890,18 +1888,18 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				mode.finish();
 			} return true;
 			case R.id.menuAddNote: {
-				if (mainVerse_1 == 0) {
-					// no main verse, scroll to show the relevant one!
-					mainVerse_1 = selected.get(0);
-
-					lsText.scrollToShowVerse(mainVerse_1);
+				// contract: this menu only appears when contiguous verses are selected
+				if (selected.get(selected.size() - 1) - selected.get(0) != selected.size() - 1) {
+					throw new RuntimeException("Non contiguous verses when adding note: " + selected);
 				}
 
-				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, mainVerse_1);
+				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
+				final int verseCount = selected.size();
 
 				// always create a new note
-				TypeNoteDialog dialog = new TypeNoteDialog(IsiActivity.this, ari, new TypeNoteDialog.Listener() {
-					@Override public void onDone() {
+				TypeNoteDialog dialog = TypeNoteDialog.NewNote(IsiActivity.this, ari, verseCount, new TypeNoteDialog.Listener() {
+					@Override
+					public void onDone() {
 						lsText.uncheckAllVerses(true);
 						reloadBothAttributeMaps();
 					}
@@ -1922,7 +1920,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				mode.finish();
 			} return true;
 			case R.id.menuEsvsb: {
-				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, mainVerse_1);
+				final int ari = Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, selected.get(0));
 
 				try {
 					Intent intent = new Intent("yuku.esvsbasal.action.GOTO"); //$NON-NLS-1$

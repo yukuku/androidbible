@@ -432,7 +432,7 @@ public class MarkerListActivity extends BaseActivity {
 			return true;
 		} else if (itemId == R.id.menuModifyBookmark) {
 			if (filter_kind == Marker.Kind.bookmark) {
-				TypeBookmarkDialog dialog = new TypeBookmarkDialog(this, bookmark._id);
+				TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExisting(this, bookmark._id);
 				dialog.setListener(new Listener() {
 					@Override
 					public void onOk() {
@@ -444,7 +444,7 @@ public class MarkerListActivity extends BaseActivity {
 				dialog.show();
 
 			} else if (filter_kind == Marker.Kind.note) {
-				TypeNoteDialog dialog = new TypeNoteDialog(this, bookmark._id, new TypeNoteDialog.Listener() {
+				TypeNoteDialog dialog = TypeNoteDialog.EditExisting(this, bookmark._id, new TypeNoteDialog.Listener() {
 					@Override
 					public void onDone() {
 						loadAndFilter();

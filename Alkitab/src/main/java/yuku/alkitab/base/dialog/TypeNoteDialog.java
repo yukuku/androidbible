@@ -24,6 +24,7 @@ public class TypeNoteDialog {
 	
 	Marker marker;
 	int ariForNewNote;
+	int verseCountForNewNote;
 
 	public interface Listener {
 		void onDone();
@@ -33,23 +34,25 @@ public class TypeNoteDialog {
 	 * Open the note edit dialog, editing existing note.
 	 * @param context Activity context to create dialogs
 	 */
-	public TypeNoteDialog(Context context, long _id, Listener listener) {
-		this(context, S.getDb().getMarkerById(_id), null, listener);
+	public static TypeNoteDialog EditExisting(Context context, long _id, Listener listener) {
+		return new TypeNoteDialog(context, S.getDb().getMarkerById(_id), null, listener);
 	}
 
 	/**
 	 * Open the note edit dialog for an existing note by ari and ordering (starting from 0).
 	 */
-	public TypeNoteDialog(Context context, int ari, int ordering, Listener listener) {
-		this(context, S.getDb().getMarker(ari, Marker.Kind.note, ordering), null, listener);
+	public static TypeNoteDialog EditExistingWithOrdering(Context context, int ari, int ordering, Listener listener) {
+		return new TypeNoteDialog(context, S.getDb().getMarker(ari, Marker.Kind.note, ordering), null, listener);
 	}
 
 	/**
 	 * Open the note edit dialog for a new note by ari.
 	 */
-	public TypeNoteDialog(Context context, int ari, Listener listener) {
-		this(context, null, S.activeVersion.reference(ari), listener);
-		this.ariForNewNote = ari;
+	public static TypeNoteDialog NewNote(Context context, int ari, int verseCount, Listener listener) {
+		final TypeNoteDialog res = new TypeNoteDialog(context, null, S.activeVersion.reference(ari), listener);
+		res.ariForNewNote = ari;
+		res.verseCountForNewNote = verseCount;
+		return res;
 	}
 
 	private TypeNoteDialog(Context context, Marker marker, String reference, Listener listener) {
@@ -127,7 +130,7 @@ public class TypeNoteDialog {
 			}
 		} else { // marker == null; not existing, so only insert when there is some text
 			if (caption.length() > 0) {
-				marker = S.getDb().insertMarker(ariForNewNote, Marker.Kind.note, caption, 1, now, now);
+				marker = S.getDb().insertMarker(ariForNewNote, Marker.Kind.note, caption, verseCountForNewNote, now, now);
 			}
 		}
 		
@@ -157,9 +160,9 @@ public class TypeNoteDialog {
 				public void onClick(DialogInterface _unused_, int which) {
 					TypeNoteDialog dialog;
 					if (marker == null) { // we're in process of creating a new note
-						dialog = new TypeNoteDialog(context, ariForNewNote, listener);
+						dialog = TypeNoteDialog.NewNote(context, ariForNewNote, verseCountForNewNote, listener);
 					} else { // we're in process of editing an existing note
-						dialog = new TypeNoteDialog(context, marker._id, listener);
+						dialog = TypeNoteDialog.EditExisting(context, marker._id, listener);
 					}
 					dialog.setCaption(tCaption.getText());
 					dialog.show();

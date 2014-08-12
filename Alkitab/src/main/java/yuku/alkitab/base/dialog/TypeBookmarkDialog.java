@@ -38,6 +38,7 @@ public class TypeBookmarkDialog {
 
 	Marker marker;
 	int ariForNewBookmark;
+	int verseCountForNewBookmark;
 	String defaultCaption;
 
 	// optional
@@ -50,23 +51,25 @@ public class TypeBookmarkDialog {
 	 * Open the bookmark edit dialog, editing existing bookmark.
 	 * @param context Activity context to create dialogs
 	 */
-	public TypeBookmarkDialog(Context context, long _id) {
-		this(context, S.getDb().getMarkerById(_id), null);
+	public static TypeBookmarkDialog EditExisting(Context context, long _id) {
+		return new TypeBookmarkDialog(context, S.getDb().getMarkerById(_id), null);
 	}
 
 	/**
 	 * Open the bookmark edit dialog for an existing note by ari and ordering (starting from 0).
 	 */
-	public TypeBookmarkDialog(Context context, int ari, int ordering) {
-		this(context, S.getDb().getMarker(ari, Marker.Kind.bookmark, ordering), null);
+	public static TypeBookmarkDialog EditExistingWithOrdering(Context context, int ari, int ordering) {
+		return new TypeBookmarkDialog(context, S.getDb().getMarker(ari, Marker.Kind.bookmark, ordering), null);
 	}
 
 	/**
 	 * Open the bookmark edit dialog for a new bookmark by ari.
 	 */
-	public TypeBookmarkDialog(Context context, int ari) {
-		this(context, null, S.activeVersion.reference(ari));
-		this.ariForNewBookmark = ari;
+	public static TypeBookmarkDialog NewBookmark(Context context, int ari, final int verseCount) {
+		final TypeBookmarkDialog res = new TypeBookmarkDialog(context, null, S.activeVersion.reference(ari));
+		res.ariForNewBookmark = ari;
+		res.verseCountForNewBookmark = verseCount;
+		return res;
 	}
 
 	private TypeBookmarkDialog(final Context context, final Marker marker, String reference) {
@@ -142,7 +145,7 @@ public class TypeBookmarkDialog {
 			marker.modifyTime = now;
 			S.getDb().updateMarker(marker);
 		} else { // add new
-			marker = S.getDb().insertMarker(ariForNewBookmark, Marker.Kind.bookmark, caption, 1, now, now);
+			marker = S.getDb().insertMarker(ariForNewBookmark, Marker.Kind.bookmark, caption, verseCountForNewBookmark, now, now);
 		}
 
 		S.getDb().updateLabels(marker, labels);
