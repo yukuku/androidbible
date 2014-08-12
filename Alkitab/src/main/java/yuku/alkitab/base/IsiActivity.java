@@ -1429,7 +1429,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	/**
 	 * If verse_1_ranges is null, verses will be ignored.
 	 */
-	public static String createVerseUrl(final String versionShortName, Book book, int chapter_1, String verse_1_ranges) {
+	public static String createVerseUrl(final Version version, final String versionId, final Book book, final int chapter_1, final String verse_1_ranges) {
 		final AppConfig c = AppConfig.get();
 		String format = c.shareUrlFormat;
 
@@ -1441,16 +1441,22 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		format = format.replace("{chapter}", String.valueOf(chapter_1));
 		format = format.replace("{verses}", verse_1_ranges == null? "": verse_1_ranges);
 
-		String versionShortName2;
-		if (versionShortName == null) {
-			versionShortName2 = "";
-		} else if ("DRA".equals(versionShortName)) {
-			versionShortName2 = "DOUAYRHEIMS";
+		// Try internal first. Then preset_name if possible. If not, short name. If not, long name.
+		final String versionString;
+		if (U.equals(MVersionInternal.getVersionInternalId(), versionId)) {
+			versionString = AppConfig.get().internalPresetName;
 		} else {
-			versionShortName2 = versionShortName;
+			final String presetName = MVersionDb.presetNameFromVersionId(versionId);
+			if (presetName != null) {
+				versionString = presetName;
+			} else if (version.getShortName() != null) {
+				versionString = version.getShortName();
+			} else {
+				versionString = version.getLongName();
+			}
 		}
 
-		format = format.replace("{version.shortName}", versionShortName2);
+		format = format.replace("{version}", versionString);
 
 		return format;
 	}
@@ -1836,11 +1842,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 				String verseUrl;
 				if (selected.size() == 1) {
-					verseUrl = createVerseUrl(S.activeVersion.getShortName(), IsiActivity.this.activeBook, IsiActivity.this.chapter_1, String.valueOf(selected.get(0)));
+					verseUrl = createVerseUrl(S.activeVersion, S.activeVersionId, IsiActivity.this.activeBook, IsiActivity.this.chapter_1, String.valueOf(selected.get(0)));
 				} else {
 					StringBuilder sb = new StringBuilder();
 					Book.writeVerseRange(selected, sb);
-					verseUrl = createVerseUrl(S.activeVersion.getShortName(), IsiActivity.this.activeBook, IsiActivity.this.chapter_1, sb.toString()); // use verse range
+					verseUrl = createVerseUrl(S.activeVersion, S.activeVersionId, IsiActivity.this.activeBook, IsiActivity.this.chapter_1, sb.toString()); // use verse range
 				}
 				
 				final Intent intent = ShareCompat.IntentBuilder.from(IsiActivity.this)

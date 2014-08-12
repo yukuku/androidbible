@@ -24,12 +24,30 @@ public class MVersionDb extends MVersion {
 	 */
 	public int modifyTime;
 
+	/**
+	 * The version id for MVersionDb can be "preset/" followed by preset_name,
+	 * or "file/" followed by absolute path name of the yes file.
+	 *
+	 * Therefore, the id starting with "preset/" does not always indicate MVersionPreset,
+	 * since it probably indicate MVersionDb as well.
+	 */
 	@Override
 	public String getVersionId() {
 		if (preset_name != null) {
 			return "preset/" + preset_name;
 		}
 		return "file/" + filename;
+	}
+
+	/**
+	 * Return the preset_name of a version id, if possible. Null otherwise.
+	 */
+	public static String presetNameFromVersionId(String versionId) {
+		if (versionId != null && versionId.startsWith("preset/")) {
+			return versionId.substring(7);
+		} else {
+			return null;
+		}
 	}
 
 	@Override

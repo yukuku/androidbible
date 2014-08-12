@@ -6,9 +6,9 @@
         donation="true"
         songs="true" />
 
-	<internal locale="in" shortName="TB"      longName="Terjemahan Baru" prefix="tb" />
+	<internal locale="in" shortName="DDD"      longName="Dummy Debug Data" prefix="tb"  preset_name='in-ddd' />
 
 	<share>
-        <url format="https://alkitab.me/{book.osis}/{chapter}/{verses}" />
+        <url format="http://www.bibleforandroid.com/v/{book.osis}/{chapter}/{verses}?a=share&amp;v={version}" />
     </share>
 </config>

@@ -18,6 +18,7 @@ public class AppConfig {
 	public String internalLocale;
 	public String internalShortName;
 	public String internalLongName;
+	public String internalPresetName;
 
 	private static AppConfig lastAppConfig;
 
@@ -48,6 +49,7 @@ public class AppConfig {
 				res.internalShortName = parser.getAttributeValue(null, "shortName");
 				res.internalLongName = parser.getAttributeValue(null, "longName");
 				res.internalPrefix = parser.getAttributeValue(null, "prefix");
+				res.internalPresetName = parser.getAttributeValue(null, "preset_name");
 			} else if (next == XmlPullParser.START_TAG && "menu".equals(tagName)) { //$NON-NLS-1$
 				res.menuHelp = parser.getAttributeBooleanValue(null, "help", false); //$NON-NLS-1$
 				res.menuDonation = parser.getAttributeBooleanValue(null, "donation", false); //$NON-NLS-1$
