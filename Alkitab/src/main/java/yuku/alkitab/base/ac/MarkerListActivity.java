@@ -400,7 +400,7 @@ public class MarkerListActivity extends BaseActivity {
 		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 			Marker marker = adapter.getItem(position);
 
-			startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(marker.ari));
+			startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(marker.ari, marker.verseCount));
 		}
 	};
 

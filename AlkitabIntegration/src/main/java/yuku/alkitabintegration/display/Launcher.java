@@ -79,7 +79,21 @@ public class Launcher {
 		res.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
 		return res;
 	}
-	
+
+	/**
+	 * Returns an intent that can be used to open the app at the specific ari.
+	 * The verse that is represented in the ari, and the following verses, as many as verseCount, are selected.
+	 * Call {@link Context#startActivity(Intent)} with the returned intent from your activity to open it.
+	 */
+	public static Intent openAppAtBibleLocationWithVerseSelected(int ari, int verseCount) {
+		Intent res = new Intent("yuku.alkitab.action.VIEW");
+		res.putExtra("ari", ari);
+		res.putExtra("selectVerse", true);
+		res.putExtra("selectVerseCount", verseCount);
+		res.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+		return res;
+	}
+
 	/**
 	 * Returns an intent that can be used to open the Google Play app on the page for the user to download the app. 
 	 * Call {@link Context#startActivity(Intent)} with the returned intent from your activity to open it.

@@ -286,6 +286,8 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 	static class IntentResult {
 		public int ari;
 		public boolean selectVerse;
+		public int selectVerseCount;
+
 		public IntentResult(final int ari) {
 			this.ari = ari;
 		}
@@ -424,6 +426,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		final IntentResult intentResult = processIntent(getIntent(), "onCreate");
 		final int openingAri;
 		final boolean selectVerse;
+		final int selectVerseCount;
 
 		instant_pref = App.getInstantPreferences();
 		if (intentResult == null) {
@@ -433,10 +436,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			final int lastVerse = instant_pref.getInt(PREFKEY_lastVerse, 0);
 			openingAri = Ari.encode(lastBookId, lastChapter, lastVerse);
 			selectVerse = false;
+			selectVerseCount = 1;
 			Log.d(TAG, "Going to the last: bookId=" + lastBookId + " chapter=" + lastChapter + " verse=" + lastVerse);
 		} else {
 			openingAri = intentResult.ari;
 			selectVerse = intentResult.selectVerse;
+			selectVerseCount = intentResult.selectVerseCount;
 		}
 
 		final String lastVersionId = instant_pref.getString(PREFKEY_lastVersionId, null);
@@ -478,7 +483,10 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 
 		if (selectVerse) {
-			lsText.setVerseSelected(Ari.toVerse(openingAri), true);
+			for (int i = 0; i < selectVerseCount; i++) {
+				final int verse_1 = Ari.toVerse(openingAri) + i;
+				lsText.setVerseSelected(verse_1, true);
+			}
 		}
 
 		App.getLbm().registerReceiver(reloadAttributeMapReceiver, new IntentFilter(ACTION_ATTRIBUTE_MAP_CHANGED));
@@ -543,12 +551,14 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		if (!U.equals(intent.getAction(), "yuku.alkitab.action.VIEW")) return null;
 
 		final boolean selectVerse = intent.getBooleanExtra("selectVerse", false);
+		final int selectVerseCount = intent.getIntExtra("selectVerseCount", 1);
 
 		if (intent.hasExtra("ari")) {
 			int ari = intent.getIntExtra("ari", 0);
 			if (ari != 0) {
 				final IntentResult res = new IntentResult(ari);
 				res.selectVerse = selectVerse;
+				res.selectVerseCount = selectVerseCount;
 				return res;
 			} else {
 				new AlertDialog.Builder(this)
@@ -565,6 +575,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 				history.add(ari);
 				final IntentResult res = new IntentResult(ari);
 				res.selectVerse = selectVerse;
+				res.selectVerseCount = selectVerseCount;
 				return res;
 			} else {
 				new AlertDialog.Builder(this)
