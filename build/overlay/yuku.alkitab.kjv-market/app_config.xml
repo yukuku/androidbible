@@ -97,6 +97,6 @@
 		<preset locale="zh"   shortName="PINYIN"  longName="Pinyin" filename_preset="zh-pinyin.yes" url="https://alkitab-host.appspot.com/addon/yes2/zh-pinyin--1.yes.gz" />
 	</versions>
 	<share>
-		<url format="http://ref.ly/{book.osis}.{chapter}.{verses};{version.shortName}" />
+		<url format="http://www.bibleforandroid.com/v/{book.osis}/{chapter}/{verses}/{version}?a=share" />
 	</share>
 </config>

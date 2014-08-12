@@ -1314,8 +1314,9 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 					Intent chosenIntent = result.chosenIntent;
 					final String packageName = chosenIntent.getComponent().getPackageName();
 					if (U.equals(packageName, "com.facebook.katana")) { //$NON-NLS-1$
-						String verseUrl = chosenIntent.getStringExtra(EXTRA_verseUrl);
+						final String verseUrl = chosenIntent.getStringExtra(EXTRA_verseUrl);
 						if (verseUrl != null) {
+							Log.d(TAG, "verseUrl to share: " + verseUrl);
 							chosenIntent.putExtra(Intent.EXTRA_TEXT, verseUrl); // change text to url
 						}
 					} else if (U.equals(packageName, "com.whatsapp")) {
@@ -1582,10 +1583,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		history.add(ari_target);
 	}
 
+
 	/**
 	 * If verse_1_ranges is null, verses will be ignored.
 	 */
-	public static String createVerseUrl(final String versionShortName, Book book, int chapter_1, String verse_1_ranges) {
+	public String createVerseUrl(final Version version, final String versionId, final Book book, final int chapter_1, final String verse_1_ranges) {
 		final AppConfig c = AppConfig.get();
 		String format = c.shareUrlFormat;
 
@@ -1597,16 +1599,22 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		format = format.replace("{chapter}", String.valueOf(chapter_1));
 		format = format.replace("{verses}", verse_1_ranges == null? "": verse_1_ranges);
 
-		String versionShortName2;
-		if (versionShortName == null) {
-			versionShortName2 = "";
-		} else if ("DRA".equals(versionShortName)) {
-			versionShortName2 = "DOUAYRHEIMS";
+		// Try internal first. Then preset_name if possible. If not, short name. If not, long name.
+		final String versionString;
+		if (U.equals(MVersionInternal.getVersionInternalId(), versionId)) {
+			versionString = U.equals(getPackageName(), "yuku.alkitab")? "in-tb": "en-kjv"; // hardcode, since we are not going to update this branch in the future.
 		} else {
-			versionShortName2 = versionShortName;
+			// hardcode, since we are not going to update this branch in the future.
+			if (versionId.startsWith("preset/")) {
+				versionString = versionId.substring(7);
+			} else if (version.getShortName() != null) {
+				versionString = version.getShortName();
+			} else {
+				versionString = version.getLongName();
+			}
 		}
 
-		format = format.replace("{version.shortName}", versionShortName2);
+		format = format.replace("{version}", versionString);
 
 		return format;
 	}
@@ -1919,11 +1927,11 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 
 				String verseUrl;
 				if (selected.size() == 1) {
-					verseUrl = createVerseUrl(S.activeVersion.getShortName(), IsiActivity.this.activeBook, IsiActivity.this.chapter_1, String.valueOf(selected.get(0)));
+					verseUrl = createVerseUrl(S.activeVersion, S.activeVersionId, IsiActivity.this.activeBook, IsiActivity.this.chapter_1, String.valueOf(selected.get(0)));
 				} else {
 					StringBuilder sb = new StringBuilder();
 					Book.writeVerseRange(selected, sb);
-					verseUrl = createVerseUrl(S.activeVersion.getShortName(), IsiActivity.this.activeBook, IsiActivity.this.chapter_1, sb.toString()); // use verse range
+					verseUrl = createVerseUrl(S.activeVersion, S.activeVersionId, IsiActivity.this.activeBook, IsiActivity.this.chapter_1, sb.toString()); // use verse range
 				}
 				
 				Intent intent = ShareCompat.IntentBuilder.from(IsiActivity.this)
