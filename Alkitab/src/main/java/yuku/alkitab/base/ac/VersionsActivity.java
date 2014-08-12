@@ -1030,7 +1030,7 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 			 * The list of versions are loaded as follows:
 			 * - Internal version {@link yuku.alkitab.base.model.MVersionInternal}, is always there
 			 * - Versions stored in database {@link yuku.alkitab.base.model.MVersionDb} is all loaded
-			 * - For each {@link yuku.alkitab.base.model.MVersionPreset} defined in {@link yuku.alkitab.base.config.VersionConfig},
+			 * - For each non-hidden {@link yuku.alkitab.base.model.MVersionPreset} defined in {@link yuku.alkitab.base.config.VersionConfig},
 			 *   check if the {@link yuku.alkitab.base.model.MVersionPreset#preset_name} corresponds to one of the
 			 *   database version above. If it does, do not add to the resulting list. Otherwise, add it so user can download it.
 			 *
@@ -1064,6 +1064,7 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 				// presets (only for "all" tab)
 				if (!downloadedOnly) {
 					for (MVersionPreset preset : VersionConfig.get().presets) {
+						if (preset.hidden) continue;
 						if (presetNamesInDb.contains(preset.preset_name)) continue;
 
 						items.add(new Item(preset));

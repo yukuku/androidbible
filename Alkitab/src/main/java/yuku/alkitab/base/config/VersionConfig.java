@@ -27,6 +27,7 @@ public class VersionConfig {
 		public String description;
 		public String preset_name;
 		public int modifyTime;
+		public boolean hidden;
 	}
 
 	static class VersionConfigJson {
@@ -95,6 +96,7 @@ public class VersionConfig {
 			preset.description = presetJson.description;
 			preset.preset_name = presetJson.preset_name;
 			preset.modifyTime = presetJson.modifyTime;
+			preset.hidden = presetJson.hidden;
 			preset.download_url = root.download_url_format.replace("$PRESET_NAME", presetJson.preset_name);
 			preset.ordering = ++presetOrdering;
 			presets.add(preset);
