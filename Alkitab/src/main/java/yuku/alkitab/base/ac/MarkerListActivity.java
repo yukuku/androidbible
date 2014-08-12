@@ -420,19 +420,19 @@ public class MarkerListActivity extends BaseActivity {
 	}
 
 	@Override public boolean onContextItemSelected(MenuItem item) {
-		final Marker bookmark = adapter.getItem(((AdapterContextMenuInfo) item.getMenuInfo()).position);
+		final Marker marker = adapter.getItem(((AdapterContextMenuInfo) item.getMenuInfo()).position);
 		final int itemId = item.getItemId();
 
 		if (itemId == R.id.menuDeleteBookmark) {
 			// whatever the kind is, the way to delete is the same
-			S.getDb().deleteBookmarkById(bookmark._id);
+			S.getDb().deleteBookmarkById(marker._id);
 			loadAndFilter();
 			if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
 
 			return true;
 		} else if (itemId == R.id.menuModifyBookmark) {
 			if (filter_kind == Marker.Kind.bookmark) {
-				TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExisting(this, bookmark._id);
+				TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExisting(this, marker._id);
 				dialog.setListener(new Listener() {
 					@Override
 					public void onOk() {
@@ -444,7 +444,7 @@ public class MarkerListActivity extends BaseActivity {
 				dialog.show();
 
 			} else if (filter_kind == Marker.Kind.note) {
-				TypeNoteDialog dialog = TypeNoteDialog.EditExisting(this, bookmark._id, new TypeNoteDialog.Listener() {
+				TypeNoteDialog dialog = TypeNoteDialog.EditExisting(this, marker._id, new TypeNoteDialog.Listener() {
 					@Override
 					public void onDone() {
 						loadAndFilter();
@@ -455,9 +455,9 @@ public class MarkerListActivity extends BaseActivity {
 				dialog.show();
 
 			} else if (filter_kind == Marker.Kind.highlight) {
-				final int ari = bookmark.ari;
-				int colorRgb = U.decodeHighlight(bookmark.caption);
-				String reference = S.activeVersion.reference(ari);
+				final int ari = marker.ari;
+				int colorRgb = U.decodeHighlight(marker.caption);
+				String reference = S.activeVersion.referenceWithVerseCount(ari, marker.verseCount);
 
 				new TypeHighlightDialog(this, ari, new TypeHighlightDialog.Listener() {
 					@Override public void onOk(int warnaRgb) {
@@ -584,7 +584,7 @@ public class MarkerListActivity extends BaseActivity {
 
 			final int ari = marker.ari;
 			final Book book = S.activeVersion.getBook(Ari.toBook(ari));
-			final String reference = S.activeVersion.reference(ari);
+			final String reference = S.activeVersion.referenceWithVerseCount(ari, marker.verseCount);
 			final String caption = marker.caption;
 
 			String verseText = S.activeVersion.loadVerseText(book, Ari.toChapter(ari), Ari.toVerse(ari));

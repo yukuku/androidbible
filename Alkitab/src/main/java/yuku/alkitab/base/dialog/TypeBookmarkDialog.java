@@ -66,7 +66,7 @@ public class TypeBookmarkDialog {
 	 * Open the bookmark edit dialog for a new bookmark by ari.
 	 */
 	public static TypeBookmarkDialog NewBookmark(Context context, int ari, final int verseCount) {
-		final TypeBookmarkDialog res = new TypeBookmarkDialog(context, null, S.activeVersion.reference(ari));
+		final TypeBookmarkDialog res = new TypeBookmarkDialog(context, null, S.activeVersion.referenceWithVerseCount(ari, verseCount));
 		res.ariForNewBookmark = ari;
 		res.verseCountForNewBookmark = verseCount;
 		return res;
@@ -77,7 +77,7 @@ public class TypeBookmarkDialog {
 		this.marker = marker;
 
 		if (reference == null) {
-			reference = S.activeVersion.reference(marker.ari);
+			reference = S.activeVersion.referenceWithVerseCount(marker.ari, marker.verseCount);
 		}
 		defaultCaption = reference;
 
@@ -166,15 +166,15 @@ public class TypeBookmarkDialog {
 			if (which == adapter.getCount() - 1) { // new label
 				LabelEditorDialog.show(context, "", context.getString(R.string.create_label_title), new OkListener() { //$NON-NLS-1$
 					@Override public void onOk(String title) {
-						Label labelBaru = S.getDb().insertLabel(title, null);
-						if (labelBaru != null) {
-							labels.add(labelBaru);
+						final Label newLabel = S.getDb().insertLabel(title, null);
+						if (newLabel != null) {
+							labels.add(newLabel);
 							setLabelsText();
 						}
 					}
 				});
 			} else {
-				Label label = adapter.getItem(which);
+				final Label label = adapter.getItem(which);
 				labels.add(label);
 				setLabelsText();
 			}

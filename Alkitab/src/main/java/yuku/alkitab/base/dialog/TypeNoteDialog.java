@@ -49,7 +49,7 @@ public class TypeNoteDialog {
 	 * Open the note edit dialog for a new note by ari.
 	 */
 	public static TypeNoteDialog NewNote(Context context, int ari, int verseCount, Listener listener) {
-		final TypeNoteDialog res = new TypeNoteDialog(context, null, S.activeVersion.reference(ari), listener);
+		final TypeNoteDialog res = new TypeNoteDialog(context, null, S.activeVersion.referenceWithVerseCount(ari, verseCount), listener);
 		res.ariForNewNote = ari;
 		res.verseCountForNewNote = verseCount;
 		return res;
@@ -83,7 +83,7 @@ public class TypeNoteDialog {
 		this.dialog = builder.create();
 
 		if (reference == null) {
-			reference = S.activeVersion.reference(marker.ari); // TODO multi verse
+			reference = S.activeVersion.referenceWithVerseCount(marker.ari, marker.verseCount);
 		}
 
 		this.dialog.setTitle(context.getString(R.string.catatan_alamat, reference));

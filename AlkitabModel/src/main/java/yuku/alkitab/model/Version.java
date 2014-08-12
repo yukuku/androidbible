@@ -83,5 +83,7 @@ public interface Version {
 
 	public abstract String reference(int ari);
 
+	public abstract String referenceWithVerseCount(int ari, int verseCount);
+
 	public abstract String reference(int bookId, int chapter_1, int verse_1);
 }

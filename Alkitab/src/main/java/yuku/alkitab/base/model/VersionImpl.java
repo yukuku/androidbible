@@ -329,6 +329,19 @@ public class VersionImpl implements Version {
 	}
 
 	@Override
+	public String referenceWithVerseCount(final int ari, final int verseCount) {
+		int bookId = Ari.toBook(ari);
+		int chapter_1 = Ari.toChapter(ari);
+		int verse_1 = Ari.toVerse(ari);
+
+		if (verse_1 == 0 || verseCount == 1) { // verseCount does not matter
+			return reference(bookId, chapter_1, verse_1);
+		} else {
+			return reference(bookId, chapter_1, verse_1) + "-" + (verse_1 + verseCount - 1);
+		}
+	}
+
+	@Override
 	public String reference(int bookId, int chapter_1, int verse_1) {
 		final Book book = getBook(bookId);
 		if (book == null) {
