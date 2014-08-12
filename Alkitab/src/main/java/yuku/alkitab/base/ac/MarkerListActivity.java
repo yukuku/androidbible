@@ -121,20 +121,23 @@ public class MarkerListActivity extends BaseActivity {
 			if (pref_sort_column != null) {
 				sort_ascending = Preferences.getBoolean(Prefkey.marker_list_sort_ascending, false);
 				switch (pref_sort_column) {
-					case "waktuTambah": // add time
-						sort_column = pref_sort_column;
+					case "waktuTambah": // add time (for compat when upgrading from prev ver)
+					case Db.Marker.createTime:
+						sort_column = Db.Marker.createTime;
 						sort_columnId = R.string.menuSortCreateTime;
 						break;
-					case "waktuUbah": // modify time
-						sort_column = pref_sort_column;
+					case "waktuUbah": // modify time (for compat when upgrading from prev ver)
+					case Db.Marker.modifyTime:
+						sort_column = Db.Marker.modifyTime;
 						sort_columnId = R.string.menuSortModifyTime;
 						break;
-					case "ari":
-						sort_column = pref_sort_column;
+					case Db.Marker.ari:
+						sort_column = Db.Marker.ari;
 						sort_columnId = R.string.menuSortAri;
 						break;
-					case "tulisan": // caption
-						sort_column = pref_sort_column;
+					case "tulisan": // caption (for compat when upgrading from prev ver)
+					case Db.Marker.caption:
+						sort_column = Db.Marker.caption;
 						sort_columnId = R.string.menuSortCaption;
 						break;
 					default:
@@ -143,20 +146,25 @@ public class MarkerListActivity extends BaseActivity {
 			}
 		}
 
-		adapter = new BookmarkListAdapter();
-		loadAndFilter();
-
 		panelList.setBackgroundColor(S.applied.backgroundColor);
 		tEmpty.setTextColor(S.applied.fontColor);
 
 		hiliteColor = U.getHighlightColorByBrightness(S.applied.backgroundBrightness);
 
+		adapter = new BookmarkListAdapter();
 		lv.setAdapter(adapter);
 		lv.setCacheColorHint(S.applied.backgroundColor);
 		lv.setOnItemClickListener(lv_click);
 		lv.setEmptyView(emptyView);
 
 		registerForContextMenu(lv);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+		loadAndFilter();
 	}
 
 	private void loadAndFilter() {
