@@ -1,8 +1,12 @@
 package yuku.alkitab.base.ac;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.CheckBoxPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BasePreferenceActivity;
@@ -21,7 +25,8 @@ public class SettingsActivity extends BasePreferenceActivity {
 		addPreferencesFromResource(R.xml.settings);
 		setTitle(R.string.pengaturan_alkitab);
 
-		findPreference(getString(R.string.pref_language_key)).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+		final ListPreference pref_language = (ListPreference) findPreference(getString(R.string.pref_language_key));
+		pref_language.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 			@Override
 			public boolean onPreferenceChange(final Preference preference, final Object newValue) {
 				// do this after this method returns true
@@ -34,6 +39,10 @@ public class SettingsActivity extends BasePreferenceActivity {
 				return true;
 			}
 		});
+		autoDisplayListPreference(pref_language);
+
+		final ListPreference pref_volumeButtonNavigation = (ListPreference) findPreference(getString(R.string.pref_volumeButtonNavigation_key));
+		autoDisplayListPreference(pref_volumeButtonNavigation);
 
 		final CheckBoxPreference pref_showHiddenVersion = (CheckBoxPreference) findPreference(getString(R.string.pref_showHiddenVersion_key));
 		pref_showHiddenVersion.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -50,6 +59,36 @@ public class SettingsActivity extends BasePreferenceActivity {
 					})
 					.show();
 				return false;
+			}
+		});
+	}
+
+	static void autoDisplayListPreference(final ListPreference pref) {
+		final CharSequence label = pref.getEntry();
+		if (label != null) {
+			pref.setSummary(label);
+		}
+
+		final Preference.OnPreferenceChangeListener originalChangeListener = pref.getOnPreferenceChangeListener();
+		pref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+			@Override
+			public boolean onPreferenceChange(final Preference preference, final Object newValue) {
+				final boolean changed;
+
+				if (originalChangeListener != null) {
+					changed = originalChangeListener.onPreferenceChange(preference, newValue);
+				} else {
+					changed = true;
+				}
+
+				if (changed) {
+					final int index = pref.findIndexOfValue((String) newValue);
+					if (index >= 0) {
+						pref.setSummary(pref.getEntries()[index]);
+					}
+				}
+
+				return changed;
 			}
 		});
 	}

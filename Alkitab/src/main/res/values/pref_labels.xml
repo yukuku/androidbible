@@ -12,7 +12,6 @@
     <string name="pref_biarkan_layar_menyala">Keep screen on</string>
     <string name="pref_penampilan_layar">Display</string>
     <string name="pref_volumeButtonNavigation_title">Volume button navigation</string>
-    <string name="pref_volumeButtonNavigation_summary">Use hardware volume buttons to navigate between verses or chapters</string>
     <string name="pref_copyWithVerseNumbers_title">Include verse numbers</string>
     <string name="pref_copyWithVerseNumbers_summary">Put verse numbers on every verse when copying/sharing</string>
     <string name="pref_showHiddenVersion_title">Non-free versions</string>
