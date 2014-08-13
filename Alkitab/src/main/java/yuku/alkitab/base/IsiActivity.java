@@ -9,15 +9,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.IntentFilter.MalformedMimeTypeException;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
-import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
@@ -86,7 +83,6 @@ import yuku.alkitab.base.widget.TwofingerLinearLayout;
 import yuku.alkitab.base.widget.VerseInlineLinkSpan;
 import yuku.alkitab.base.widget.VerseRenderer;
 import yuku.alkitab.base.widget.VersesView;
-import yuku.alkitab.base.widget.VersesView.PressResult;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.FootnoteEntry;
@@ -600,7 +596,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	private void initNfcIfAvailable() {
 		nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
 		if (nfcAdapter != null) {
-			nfcAdapter.setNdefPushMessageCallback(new CreateNdefMessageCallback() {
+			nfcAdapter.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
 				@Override public NdefMessage createNdefMessage(NfcEvent event) {
 					JSONObject obj = new JSONObject();
 					try {
@@ -638,7 +634,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
 			try {
 			    ndef.addDataType("application/vnd.yuku.alkitab.nfc.beam"); //$NON-NLS-1$
-			} catch (MalformedMimeTypeException e) {
+			} catch (IntentFilter.MalformedMimeTypeException e) {
 			    throw new RuntimeException("fail mime type", e); //$NON-NLS-1$
 			}
 			IntentFilter[] intentFiltersArray = new IntentFilter[] {ndef, };
@@ -778,7 +774,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			return true;
 		}
 		
-		PressResult pressResult = lsText.press(keyCode);
+		VersesView.PressResult pressResult = lsText.press(keyCode);
 		switch (pressResult.kind) {
 		case left:
 			bLeft_click();
@@ -929,7 +925,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	@Override protected void onStop() {
 		super.onStop();
 		
-		final Editor editor = instant_pref.edit();
+		final SharedPreferences.Editor editor = instant_pref.edit();
 		editor.putInt(PREFKEY_lastBookId, this.activeBook.bookId);
 		editor.putInt(PREFKEY_lastChapter, chapter_1);
 		editor.putInt(PREFKEY_lastVerse, lsText.getVerseBasedOnScroll());
@@ -1809,7 +1805,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				try {
 					getPackageManager().getApplicationInfo("yuku.esvsbasal", 0); //$NON-NLS-1$
 					hasEsvsbAsal = true;
-				} catch (NameNotFoundException e) {
+				} catch (PackageManager.NameNotFoundException e) {
 					hasEsvsbAsal = false;
 				}
 			}
