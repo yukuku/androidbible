@@ -22,8 +22,6 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
@@ -161,8 +159,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	
 	boolean renderSucceeded = false;
 	long lastTryToDisplay = 0;
-	Animation fadeOutAnim;
-	
+
 	// currently shown
 	DevotionKind currentKind;
 	Date currentDate;
@@ -199,20 +196,28 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	
 	static class DownloadStatusDisplayer extends Handler {
 		private WeakReference<DevotionActivity> ac;
+		static int MSG_SHOW = 1;
+		static int MSG_HIDE = 2;
 
 		public DownloadStatusDisplayer(DevotionActivity ac) {
 			this.ac = new WeakReference<>(ac);
 		}
 		
 		@Override public void handleMessage(Message msg) {
-			DevotionActivity ac = this.ac.get();
+			final DevotionActivity ac = this.ac.get();
 			if (ac == null) return;
-			
-			String s = (String) msg.obj;
-			if (s != null) {
-				ac.lStatus.setText(s);
-				ac.lStatus.setVisibility(View.VISIBLE);
-				ac.lStatus.startAnimation(ac.fadeOutAnim);
+
+			if (msg.what == MSG_SHOW) {
+				final String s = (String) msg.obj;
+				if (s != null) {
+					ac.lStatus.setText(s);
+					ac.lStatus.setVisibility(View.VISIBLE);
+
+					removeMessages(MSG_HIDE);
+					sendEmptyMessageDelayed(MSG_HIDE, 2000);
+				}
+			} else if (msg.what == MSG_HIDE) {
+				ac.lStatus.setVisibility(View.GONE);
 			}
 		}
 	}
@@ -237,8 +242,6 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		actionBar.setDisplayShowHomeEnabled(Build.VERSION.SDK_INT < 18);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
-
-		fadeOutAnim = AnimationUtils.loadAnimation(this, R.anim.fade_out);
 
 		devotion_root = V.get(this, R.id.devotion_root);
 		lContent = V.get(this, R.id.lContent);
@@ -539,7 +542,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	public static DevotionDownloader devotionDownloader;
 
 	@Override public void onDownloadStatus(final String s) {
-		Message msg = Message.obtain(downloadStatusDisplayer);
+		final Message msg = Message.obtain(downloadStatusDisplayer, DownloadStatusDisplayer.MSG_SHOW);
 		msg.obj = s;
 		msg.sendToTarget();
 	}
