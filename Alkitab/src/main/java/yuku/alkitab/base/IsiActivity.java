@@ -161,6 +161,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		float startFontSize;
 		float startDx = Float.MIN_VALUE;
 		float chapterSwipeCellWidth; // initted later
+		boolean moreSwipeYAllowed = true; // to prevent setting and unsetting fullscreen many times within one gesture
 
 		@Override
 		public void onOnefingerLeft() {
@@ -220,12 +221,16 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		@Override
 		public void onTwofingerDragY(final float dy) {
+			if (!moreSwipeYAllowed) return;
+
 			if (dy < 0) {
 				setFullScreen(true);
 				leftDrawer.getHandle().setFullScreen(true);
+				moreSwipeYAllowed = false;
 			} else {
 				setFullScreen(false);
 				leftDrawer.getHandle().setFullScreen(false);
+				moreSwipeYAllowed = false;
 			}
 		}
 
@@ -233,6 +238,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		public void onTwofingerEnd(final TwofingerLinearLayout.Mode mode) {
 			startFontSize = 0;
 			startDx = Float.MIN_VALUE;
+			moreSwipeYAllowed = true;
 		}
 	};
 
