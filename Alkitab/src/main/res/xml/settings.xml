@@ -7,6 +7,8 @@
 			android:entries="@array/pref_language_labels"
 			android:entryValues="@array/pref_language_values"
 			android:key="@string/pref_language_key"
+			android:negativeButtonText="@null"
+			android:positiveButtonText="@null"
 			android:title="@string/pref_bahasa_language" />
 
 		<CheckBoxPreference
@@ -15,6 +17,7 @@
 			android:summary="@string/pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab"
 			android:title="@string/pref_biarkan_layar_menyala" />
 	</PreferenceCategory>
+
 	<PreferenceCategory android:title="@string/pref_penggunaan">
 		<CheckBoxPreference
 			android:defaultValue="false"
@@ -33,6 +36,8 @@
 			android:entryValues="@array/pref_volumeButtonNavigation_values"
 			android:key="@string/pref_volumeButtonNavigation_key"
 			android:summary="@string/pref_volumeButtonNavigation_summary"
+			android:negativeButtonText="@null"
+			android:positiveButtonText="@null"
 			android:title="@string/pref_volumeButtonNavigation_title" />
 	</PreferenceCategory>
 
