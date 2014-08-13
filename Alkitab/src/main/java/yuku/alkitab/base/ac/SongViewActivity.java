@@ -29,7 +29,7 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.AlphanumComparator;
@@ -64,7 +64,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class SongViewActivity extends BaseActivity implements SongFragment.ShouldOverrideUrlLoadingHandler, LeftDrawer.Songs.Listener, MediaStateListener {
+public class SongViewActivity extends BaseLeftDrawerActivity implements SongFragment.ShouldOverrideUrlLoadingHandler, LeftDrawer.Songs.Listener, MediaStateListener {
 	public static final String TAG = SongViewActivity.class.getSimpleName();
 
 	private static final String PROTOCOL = "bible";
@@ -106,6 +106,11 @@ public class SongViewActivity extends BaseActivity implements SongFragment.Shoul
 			goTo(-1);
 		}
 	};
+
+	@Override
+	protected LeftDrawer getLeftDrawer() {
+		return leftDrawer;
+	}
 
 	static class MediaState {
 		boolean enabled;

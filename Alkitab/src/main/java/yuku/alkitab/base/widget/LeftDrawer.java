@@ -134,6 +134,14 @@ public abstract class LeftDrawer extends ScrollView {
 		return false;
 	}
 
+	public void toggleDrawer() {
+		if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+			drawerLayout.closeDrawer(Gravity.LEFT);
+		} else {
+			drawerLayout.openDrawer(Gravity.LEFT);
+		}
+	}
+
 	public void closeDrawer() {
 		drawerLayout.closeDrawer(Gravity.LEFT);
 	}

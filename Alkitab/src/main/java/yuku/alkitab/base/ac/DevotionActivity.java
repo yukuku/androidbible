@@ -31,7 +31,7 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.devotion.ArticleMeidA;
 import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
@@ -53,7 +53,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class DevotionActivity extends BaseActivity implements OnStatusDonlotListener, LeftDrawer.Devotion.Listener {
+public class DevotionActivity extends BaseLeftDrawerActivity implements OnStatusDonlotListener, LeftDrawer.Devotion.Listener {
 	public static final String TAG = DevotionActivity.class.getSimpleName();
 
 	private static final int REQCODE_share = 1;
@@ -102,6 +102,11 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		currentKind = kind;
 		Preferences.setString(Prefkey.devotion_last_kind_name, currentKind.name);
 		display();
+	}
+
+	@Override
+	protected LeftDrawer getLeftDrawer() {
+		return leftDrawer;
 	}
 
 	public enum DevotionKind {

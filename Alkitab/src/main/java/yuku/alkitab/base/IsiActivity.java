@@ -55,7 +55,7 @@ import yuku.alkitab.base.ac.MarkerListActivity;
 import yuku.alkitab.base.ac.MarkersActivity;
 import yuku.alkitab.base.ac.SearchActivity;
 import yuku.alkitab.base.ac.ShareActivity;
-import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.dialog.ProgressMarkDialog;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
@@ -105,7 +105,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
-public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogListener, LeftDrawer.Text.Listener {
+public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.XrefDialogListener, LeftDrawer.Text.Listener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
 
 	public static final String ACTION_ATTRIBUTE_MAP_CHANGED = "yuku.alkitab.action.ATTRIBUTE_MAP_CHANGED";
@@ -1374,7 +1374,12 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		}
 		return super.onKeyUp(keyCode, event);
 	}
-	
+
+	@Override
+	protected LeftDrawer getLeftDrawer() {
+		return leftDrawer;
+	}
+
 	void bLeft_click() {
 		Book currentBook = this.activeBook;
 		if (chapter_1 == 1) {

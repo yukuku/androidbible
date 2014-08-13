@@ -38,7 +38,7 @@ import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
-import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.ReadingPlanManager;
@@ -59,7 +59,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.ReadingPlan.Listener {
+public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftDrawer.ReadingPlan.Listener {
 	public static final String TAG = ReadingPlanActivity.class.getSimpleName();
 
 	DrawerLayout drawerLayout;
@@ -479,6 +479,11 @@ public class ReadingPlanActivity extends BaseActivity implements LeftDrawer.Read
 	@Override
 	public void bCatchMeUp_click() {
 		resetReadingPlan();
+	}
+
+	@Override
+	protected LeftDrawer getLeftDrawer() {
+		return leftDrawer;
 	}
 
 	static class ReadingPlanServerEntry {
