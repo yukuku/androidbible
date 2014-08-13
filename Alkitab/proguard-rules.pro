@@ -43,13 +43,10 @@
 
 
 
-# http://stackoverflow.com/questions/22246280/android-studio-0-5-0-rebuild-not-working-with-proguard
-# This shouldn't be a problem as BuildConfig is only constants that should get inlined in the code anyway. You can do a temp fix with excluding only BuildConfig:
-
--dontwarn ***.BuildConfig
-
-# OkHttp referencing Java 8 methods
--dontwarn com.squareup.okhttp.internal.**
 # OkIo referencing Java 7 methods
 -dontwarn java.nio.file.*
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+
+
+# As mentioned in picasso homepage.
+-dontwarn com.squareup.okhttp.**

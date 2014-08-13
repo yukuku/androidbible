@@ -39,11 +39,12 @@ if [ \! \( -d "$MAIN_PROJECT_NAME" \) ] ; then
 	exit 1
 fi
 
-# get the value of an xml attribute (of arbritrary tag)
+# get the value of a gradle attribute
 get_attr() {
 	FILE="$1"
 	ATTR="$2"
-	cat "$FILE" | grep -E "$ATTR=\"[^\"]*\"" | sed -E "s/^.*$ATTR=\"([^\"]*)\".*$/\1/"
+	REGEX="s/^.*$ATTR +'?([^']+)'?.*$/\\1/"
+	cat "$FILE" | grep -E "$ATTR" | sed -E "$REGEX"
 }
 
 # replace '0000000' on the specified filename with the last commit hash of the git repo
@@ -58,12 +59,12 @@ overlay() {
 	P_DST="$2"
 
 	SRC="$THIS_SCRIPT_DIR/ybuild/overlay/$PKGDIST/$P_SRC"
-	DST="$BUILD_MAIN_PROJECT_DIR/$P_DST"
+	DST="$BUILD_MAIN_PROJECT_DIR/src/main/$P_DST"
 
 	echo "Overlaying $P_DST with $P_SRC..."
 
 	if [ \! -e `dirname "$DST"` ] ; then
-		echo 'Making dir for overlay destination...'
+		echo 'Making dir for overlay destination: ' "`dirname "$DST"`" '...'
 		mkdir -p "`dirname "$DST"`"
 	fi
 
@@ -116,7 +117,7 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 
 	BUILD_MAIN_PROJECT_DIR=$BUILD_DIR/$SUPER_PROJECT_NAME/$MAIN_PROJECT_NAME
 
-	pushd $MAIN_PROJECT_NAME
+	pushd $MAIN_PROJECT_NAME/src/main
 
 		# START BUILD-SPECIFIC
 
@@ -129,14 +130,8 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 		echo '  PKGDIST               = ' $PKGDIST
 		echo '========================================='
 
-		echo 'Replacing package name in AndroidManifest.xml...'
-		sed -i '' 's/package="yuku.alkitab.debug"/package="'$BUILD_PACKAGE_NAME'"/' AndroidManifest.xml
-
-		echo 'Replacing R references in Java files...'
-		find src/ -name '*.java' -exec sed -i '' 's/import yuku.alkitab.debug.R/import '$BUILD_PACKAGE_NAME'.R/g' {} \; 
-
-		echo 'Replacing BuildConfig references in Java files...'
-		find src/ -name '*.java' -exec sed -i '' 's/import yuku.alkitab.debug.BuildConfig/import '$BUILD_PACKAGE_NAME'.BuildConfig/g' {} \; 
+		echo 'Replacing applicationId in build.gradle...'
+		sed -i '' "s/applicationId .*/applicationId '$BUILD_PACKAGE_NAME'/" ../../build.gradle
 
 		echo 'Replacing provider name to the official one "yuku.alkitab.provider"'
 		sed -i '' 's/android:authorities="yuku.alkitab.provider.debug"/android:authorities="yuku.alkitab.provider"/' AndroidManifest.xml
@@ -170,12 +165,12 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 
 		# END BUILD-SPECIFIC
 
-		MANIFEST_PACKAGE_NAME=`get_attr AndroidManifest.xml package`
-		MANIFEST_VERSION_CODE=`get_attr AndroidManifest.xml versionCode`
-		MANIFEST_VERSION_NAME=`get_attr AndroidManifest.xml versionName`
+		MANIFEST_PACKAGE_NAME=`get_attr ../../build.gradle applicationId`
+		MANIFEST_VERSION_CODE=`get_attr ../../build.gradle versionCode`
+		MANIFEST_VERSION_NAME=`get_attr ../../build.gradle versionName`
 
 		echo '========================================='
-		echo 'From AndroidManifest.xml:'
+		echo 'From build.gradle:'
 		echo '  Package name    = ' $MANIFEST_PACKAGE_NAME
 		echo '  Version code    = ' $MANIFEST_VERSION_CODE
 		echo '  Version name    = ' $MANIFEST_VERSION_NAME
@@ -189,36 +184,23 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 			write_last_commit_hash res/values/last_commit.xml
 		fi
 
-		ant clean
-		ant release
-
-		if [ \! -r $BUILD_MAIN_PROJECT_DIR/bin/$MAIN_PROJECT_NAME-release-unsigned.apk ] ; then
-			echo $BUILD_MAIN_PROJECT_DIR/bin/$MAIN_PROJECT_NAME-release-unsigned.apk ' not found. '
-			echo 'Ant FAILED'
-			exit 1
-		fi
-
-		jarsigner -digestalg SHA1 -sigalg MD5withRSA -keystore "$SIGN_KEYSTORE" -storepass "$SIGN_PASSWORD" -keypass "$SIGN_PASSWORD" -signedjar $BUILD_MAIN_PROJECT_DIR/bin/$MAIN_PROJECT_NAME-release-signed.apk $BUILD_MAIN_PROJECT_DIR/bin/$MAIN_PROJECT_NAME-release-unsigned.apk "$SIGN_ALIAS"
-
-		if [ \! -r $BUILD_MAIN_PROJECT_DIR/bin/$MAIN_PROJECT_NAME-release-signed.apk ] ; then
-			echo $BUILD_MAIN_PROJECT_DIR/bin/$MAIN_PROJECT_NAME-release-signed.apk ' not found. '
-			echo 'Sign FAILED'
-			exit 1
-		fi
-
-		zipalign 4 $BUILD_MAIN_PROJECT_DIR/bin/$MAIN_PROJECT_NAME-release-signed.apk $BUILD_MAIN_PROJECT_DIR/bin/$MAIN_PROJECT_NAME-release-signed-aligned.apk
-
-		if [ \! -r $BUILD_MAIN_PROJECT_DIR/bin/$MAIN_PROJECT_NAME-release-signed-aligned.apk ] ; then
-			echo $BUILD_MAIN_PROJECT_DIR/bin/$MAIN_PROJECT_NAME-release-signed-aligned.apk ' not found. '
-			echo 'zipalign FAILED'
-			exit 1
-		fi
-
-		OUTPUT=$BUILD_DIR/$MAIN_PROJECT_NAME-$MANIFEST_VERSION_CODE-$MANIFEST_VERSION_NAME-$LAST_COMMIT_HASH-$PKGDIST.apk
-		mv $BUILD_MAIN_PROJECT_DIR/bin/$MAIN_PROJECT_NAME-release-signed-aligned.apk "$OUTPUT"
-		echo 'BUILD SUCCESSFUL. Output:' $OUTPUT
-
 	popd
+
+	chmod +x ./gradlew
+	echo 'Running gradlew from' `pwd`
+	./gradlew clean assembleRelease
+
+	FINAL_APK="$BUILD_MAIN_PROJECT_DIR/build/outputs/apk/$MAIN_PROJECT_NAME-release.apk"
+
+	if [ \! -r "$FINAL_APK" ] ; then
+		echo "$FINAL_APK" 'not found.'
+		exit 1
+	fi
+
+	OUTPUT="$BUILD_DIR/$MAIN_PROJECT_NAME-$MANIFEST_VERSION_CODE-$MANIFEST_VERSION_NAME-$LAST_COMMIT_HASH-$PKGDIST.apk"
+	mv "$FINAL_APK" "$OUTPUT"
+	echo 'BUILD SUCCESSFUL. Output:' "$OUTPUT"
+
 popd
 
 
