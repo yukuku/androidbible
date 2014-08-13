@@ -41,4 +41,10 @@ public enum Prefkey {
 
 	/** Search history (JSON: {@link yuku.alkitab.base.ac.SearchActivity.SearchHistory}) */
 	searchHistory,
+
+	/** Version config updater: the modify time we have currently. Unix time. */
+	version_config_current_modify_time,
+
+	/** Version config updater: last update check (auto only). Unix time. */
+	version_config_last_update_check,
 }

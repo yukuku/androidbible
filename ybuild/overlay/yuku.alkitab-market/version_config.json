@@ -370,5 +370,5 @@
         "yli": "Yali-Angguruk"
     },
 
-    "download_url_format": "https://alkitab-host.appspot.com/addon/yes2/$PRESET_NAME--1.yes.gz"
+    "download_url_format": "https://alkitab-host.appspot.com/versions/get_yes?preset_name=$PRESET_NAME"
 }

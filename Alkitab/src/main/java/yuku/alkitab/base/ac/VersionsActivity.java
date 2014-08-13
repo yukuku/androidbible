@@ -25,6 +25,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.DynamicDrawableSpan;
@@ -60,6 +61,7 @@ import yuku.alkitab.base.model.MVersionPreset;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes2;
 import yuku.alkitab.base.storage.YesReaderFactory;
+import yuku.alkitab.base.sv.VersionConfigUpdaterService;
 import yuku.alkitab.base.util.AddonManager;
 import yuku.alkitab.base.util.DownloadMapper;
 import yuku.alkitab.base.util.QueryTokenizer;
@@ -159,6 +161,9 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 		}
 
 		processIntent(getIntent(), "onCreate");
+
+		// try to auto-update version list
+		VersionConfigUpdaterService.checkUpdate(true);
 	}
 
 	private void processIntent(Intent intent, String via) {
@@ -709,10 +714,13 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 		private static final String ARG_INITIAL_QUERY_TEXT = "initial_query_text";
 
 		public static final String ACTION_RELOAD = VersionListFragment.class.getName() + ".action.RELOAD";
+		public static final String ACTION_UPDATE_REFRESHING_STATUS = VersionListFragment.class.getName() + ".action.UPDATE_REFRESHING_STATUS";
+		public static final String EXTRA_refreshing = "refreshing";
 
 		private static final int REQCODE_share = 2;
 		private LayoutInflater inflater;
 
+		SwipeRefreshLayout swiper;
 		ListView lsVersions;
 		VersionAdapter adapter;
 		private boolean downloadedOnly;
@@ -737,8 +745,14 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 		final BroadcastReceiver br = new BroadcastReceiver() {
 			@Override
 			public void onReceive(final Context context, final Intent intent) {
-				if (ACTION_RELOAD.equals(intent.getAction())) {
+				final String action = intent.getAction();
+				if (ACTION_RELOAD.equals(action)) {
 					if (adapter != null) adapter.reload();
+				} else if (ACTION_UPDATE_REFRESHING_STATUS.equals(action)) {
+					final boolean refreshing = intent.getBooleanExtra(EXTRA_refreshing, false);
+					if (swiper != null) {
+						swiper.setRefreshing(refreshing);
+					}
 				}
 			}
 		};
@@ -748,6 +762,7 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 			super.onCreate(savedInstanceState);
 
 			App.getLbm().registerReceiver(br, new IntentFilter(ACTION_RELOAD));
+			App.getLbm().registerReceiver(br, new IntentFilter(ACTION_UPDATE_REFRESHING_STATUS));
 
 			downloadedOnly = getArguments().getBoolean(ARG_DOWNLOADED_ONLY);
 			query_text = getArguments().getString(ARG_INITIAL_QUERY_TEXT);
@@ -767,11 +782,22 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 
 			adapter = new VersionAdapter();
 
+			swiper = V.get(rootView, R.id.swiper);
 			lsVersions = V.get(rootView, R.id.lsVersions);
+
+			swiper.setColorSchemeColors(0xff33b5e5, 0xffcbcbcb, 0xff33b5e5, 0xffcbcbcb);
+			swiper.setOnRefreshListener(swiper_refresh);
 			lsVersions.setAdapter(adapter);
 
 			return rootView;
 		}
+
+		final SwipeRefreshLayout.OnRefreshListener swiper_refresh = new SwipeRefreshLayout.OnRefreshListener() {
+			@Override
+			public void onRefresh() {
+				VersionConfigUpdaterService.checkUpdate(false);
+			}
+		};
 
 		Map<String, String> cache_displayLanguage = new HashMap<>();
 
