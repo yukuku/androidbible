@@ -17,6 +17,9 @@ import yuku.alkitab.base.fr.base.BaseGotoFragment;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.debug.R;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class GotoDirectFragment extends BaseGotoFragment {
 	public static final String TAG = GotoDirectFragment.class.getSimpleName();
 	
@@ -89,14 +92,40 @@ public class GotoDirectFragment extends BaseGotoFragment {
 	}
 	
 	View.OnClickListener bOk_click = new View.OnClickListener() {
+		public Pattern nobookPattern;
+
 		@Override public void onClick(View v) {
 			String reference = tDirectReference.getText().toString();
 			
 			if (reference.trim().length() == 0) {
 				return; // do nothing
 			}
-			
-			Jumper jumper = new Jumper(reference);
+
+			// typing chapter or chapter:verse was broken sometime. Let us make a special case to handle this.
+			if (nobookPattern == null) {
+				nobookPattern = Pattern.compile("(\\d+)(?:[ :.]+(\\d+))?");
+			}
+
+			final Matcher m = nobookPattern.matcher(reference.trim());
+			if (m.matches()) {
+				try {
+					final String chapter_s = m.group(1);
+					final int chapter_1 = Integer.parseInt(chapter_s);
+
+					final String verse_s = m.group(2);
+					final int verse_1;
+					if (verse_s != null) {
+						verse_1 = Integer.parseInt(verse_s);
+					} else {
+						verse_1 = 0;
+					}
+
+					((GotoFinishListener) activity).onGotoFinished(GotoFinishListener.GOTO_TAB_direct, bookId, chapter_1, verse_1);
+					return;
+				} catch (NumberFormatException ignored) {}
+			}
+
+			final Jumper jumper = new Jumper(reference);
 			if (! jumper.getParseSucceeded()) {
 				new AlertDialog.Builder(getActivity())
 				.setMessage(getString(R.string.alamat_tidak_sah_alamat, reference))

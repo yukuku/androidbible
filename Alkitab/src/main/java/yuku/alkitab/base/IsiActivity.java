@@ -1222,16 +1222,22 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			if (resultCode == RESULT_OK) {
 				GotoActivity.Result result = GotoActivity.obtainResult(data);
 				if (result != null) {
-					// change book
-					Book book = S.activeVersion.getBook(result.bookId);
-					if (book != null) {
-						this.activeBook = book;
-					} else { // no book, just chapter and verse.
-						result.bookId = this.activeBook.bookId;
-					}
+					if (result.bookId == -1) {
+						// stay on the same book
+						final int ari_cv = display(result.chapter_1, result.verse_1);
+						history.add(Ari.encode(this.activeBook.bookId, ari_cv));
+					} else {
+						// change book
+						final Book book = S.activeVersion.getBook(result.bookId);
+						if (book != null) {
+							this.activeBook = book;
+						} else { // no book, just chapter and verse.
+							result.bookId = this.activeBook.bookId;
+						}
 
-					int ari_cv = display(result.chapter_1, result.verse_1);
-					history.add(Ari.encode(result.bookId, ari_cv));
+						final int ari_cv = display(result.chapter_1, result.verse_1);
+						history.add(Ari.encode(result.bookId, ari_cv));
+					}
 				}
 			}
 		} else if (requestCode == REQCODE_share) {
