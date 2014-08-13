@@ -32,6 +32,7 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.ActionMode;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -257,6 +258,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	int chapter_1 = 0;
 	SharedPreferences instant_pref;
 	boolean fullScreen;
+	Toast fullScreenToast;
 
 	History history;
 	NfcAdapter nfcAdapter;
@@ -267,7 +269,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	Boolean hasEsvsbAsal;
 	Version activeSplitVersion;
 	String activeSplitVersionId;
-	
+
 	CallbackSpan.OnClickListener parallelListener = new CallbackSpan.OnClickListener() {
 		@Override public void onClick(View widget, Object data) {
             if (data instanceof String) {
@@ -1311,8 +1313,22 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			// TODO show something to indicate user can long press on goto button
 			bGoto.setText(reference);
 		}
+
+		if (fullScreen) {
+			showFullScreenToast(reference);
+		}
 		
 		return Ari.encode(0, chapter_1, verse_1);
+	}
+
+	void showFullScreenToast(final CharSequence s) {
+		if (fullScreenToast == null) {
+			fullScreenToast = Toast.makeText(this, s, Toast.LENGTH_SHORT);
+			fullScreenToast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 0);
+		} else {
+			fullScreenToast.setText(s);
+		}
+		fullScreenToast.show();
 	}
 
 	void displaySplitFollowingMaster() {
@@ -1403,12 +1419,12 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 	
 	void bRight_click() {
-		Book currentBook = this.activeBook;
+		final Book currentBook = this.activeBook;
 		if (chapter_1 >= currentBook.chapter_count) {
-			int maxBookId = S.activeVersion.getMaxBookIdPlusOne();
+			final int maxBookId = S.activeVersion.getMaxBookIdPlusOne();
 			int tryBookId = currentBook.bookId + 1;
 			while (tryBookId < maxBookId) {
-				Book newBook = S.activeVersion.getBook(tryBookId);
+				final Book newBook = S.activeVersion.getBook(tryBookId);
 				if (newBook != null) {
 					this.activeBook = newBook;
 					display(1, 1);
