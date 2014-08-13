@@ -1,5 +1,6 @@
 package yuku.alkitabconverter.yet;
 
+import gnu.trove.list.array.TIntArrayList;
 import yuku.alkitab.model.FootnoteEntry;
 import yuku.alkitab.model.XrefEntry;
 import yuku.alkitab.util.Ari;
@@ -15,6 +16,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class YetFileInput {
 	public static class YetFileInputResult {
@@ -24,8 +27,8 @@ public class YetFileInput {
 		public int numberOfBooks;
 		public Map<Integer, String> bookNames; // key is book_1
 		public Map<Integer, String> bookAbbreviations; // key is book_1
-		public LinkedHashMap<Integer, XrefEntry> xrefEntries;
-		public LinkedHashMap<Integer, FootnoteEntry> footnoteEntries;
+		public LinkedHashMap<Integer /* arif */, XrefEntry> xrefEntries;
+		public LinkedHashMap<Integer /* arif */, FootnoteEntry> footnoteEntries;
 
 		void addInfo(String k, String v) {
 			if (infos == null) infos = new LinkedHashMap<>();
@@ -97,7 +100,10 @@ public class YetFileInput {
 			return res;
 		}
 	}
-	
+
+	static Matcher xrefMatcher = Pattern.compile("@<x([0-9]+)@>").matcher("");
+	static Matcher footnoteMatcher = Pattern.compile("@<f([0-9]+)@>").matcher("");
+
 	public YetFileInputResult parse(String nf) throws Exception {
 		LinkedHashMap<Integer, Integer> nversePerBook = new LinkedHashMap<>();
 		
@@ -189,7 +195,7 @@ public class YetFileInput {
 					rec.chapter_1 = chapter_1;
 					rec.verse_1 = verse_1;
 					rec.text = text;
-					
+
 					res.addRec(rec);
 					nversePerBook.put(book_1, (nversePerBook.get(book_1) == null? 0: nversePerBook.get(book_1)) + 1);
 					
@@ -231,7 +237,57 @@ public class YetFileInput {
 			System.err.println("Error in line " + report_line_number + ": " + report_line_text);
 			throw e;
 		}
-			
+
+		{ // verify footnotes and xref entries exist
+			TIntArrayList footnoteArifs = new TIntArrayList();
+			TIntArrayList xrefArifs = new TIntArrayList();
+			List<String> errors = new ArrayList<>();
+
+			for (final Rec rec : res.recs) {
+				final int ari = Ari.encode(rec.book_1 - 1, rec.chapter_1, rec.verse_1);
+				final String text = rec.text;
+
+				footnoteMatcher.reset(text);
+				while (footnoteMatcher.find()) {
+					final int field = Integer.parseInt(footnoteMatcher.group(1));
+					if (field < 1 || field > 255) {
+						throw new RuntimeException("footnote field not in 1-255: " + text);
+					}
+					footnoteArifs.add(ari << 8 | field);
+				}
+
+				xrefMatcher.reset(text);
+				while (xrefMatcher.find()) {
+					final int field = Integer.parseInt(xrefMatcher.group(1));
+					if (field < 1 || field > 255) {
+						throw new RuntimeException("xref field not in 1-255: " + text);
+					}
+					xrefArifs.add(ari << 8 | field);
+				}
+			}
+
+			for (final int arif : footnoteArifs.toArray()) {
+				if (!res.footnoteEntries.containsKey(arif)) {
+					final int ari = arif >>> 8;
+					errors.add(String.format("footnote referenced in verse text not found: arif 0x%08x (book_1=%d, chapter_1=%d, verse_1=%d, field=%d)", arif, Ari.toBook(ari) + 1, Ari.toChapter(ari), Ari.toVerse(ari), arif & 0xff));
+				}
+			}
+
+			for (final int arif : xrefArifs.toArray()) {
+				if (!res.xrefEntries.containsKey(arif)) {
+					final int ari = arif >>> 8;
+					errors.add(String.format("xref referenced in verse text not found: arif 0x%08x (book_1=%d, chapter_1=%d, verse_1=%d, field=%d)", arif, Ari.toBook(ari) + 1, Ari.toChapter(ari), Ari.toVerse(ari), arif & 0xff));
+				}
+			}
+
+			if (errors.size() != 0) {
+				for (final String error : errors) {
+					System.err.println(error);
+				}
+				throw new RuntimeException("there are footnotes and/or xrefs not resolved");
+			}
+		}
+
 		for (Entry<Integer, Integer> e: nversePerBook.entrySet()) {
 			System.err.println("book_1 " + e.getKey() + ": " + e.getValue() + " verses");
 		}
