@@ -65,10 +65,8 @@ import yuku.alkitab.base.sv.VersionConfigUpdaterService;
 import yuku.alkitab.base.util.AddonManager;
 import yuku.alkitab.base.util.DownloadMapper;
 import yuku.alkitab.base.util.QueryTokenizer;
-import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.BibleReader;
-import yuku.alkitab.util.IntArrayList;
 import yuku.filechooser.FileChooserActivity;
 import yuku.filechooser.FileChooserConfig;
 import yuku.filechooser.FileChooserResult;
@@ -1133,32 +1131,6 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 				for (Item item : items) {
 					item.firstInGroup = !U.equals(item.mv.locale, lastLocale);
 					lastLocale = item.mv.locale;
-				}
-
-				// generate sections
-				final List<String> section_labels = new ArrayList<>();
-				final IntArrayList section_indexes = new IntArrayList();
-				char lastChar = 0;
-				for (int i = 0; i < items.size(); i++) {
-					final Item item = items.get(i);
-					final char c;
-					if (!TextUtils.isEmpty(item.mv.locale)) {
-						final String display = getDisplayLanguage(item.mv.locale);
-						c = Character.toUpperCase(display.charAt(0));
-					} else {
-						c = 1; // special value
-					}
-
-					if (lastChar != c) {
-						section_labels.add(c == 1? "…": ("" + c));
-						section_indexes.add(i);
-						lastChar = c;
-					}
-				}
-
-				if (BuildConfig.DEBUG) {
-					Log.d(TAG, "section labels: " + section_labels);
-					Log.d(TAG, "section indexes: " + section_indexes);
 				}
 
 				notifyDataSetChanged();
