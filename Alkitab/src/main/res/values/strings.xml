@@ -382,4 +382,5 @@
 
     <string name="search_filter_multiple_books_selected">%s books selected</string>
     <string name="search_version_select_label">Search in:</string>
+	<string name="show_hidden_version_warning">Enabling this allows you to download Bible versions that are non-free in certain regions. Please check that you are allowed to download and use it. You are fully responsible for downloading and using such versions. Tap OK if you agree.</string>
 </resources>

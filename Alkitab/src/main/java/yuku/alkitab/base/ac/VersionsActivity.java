@@ -45,6 +45,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 import yuku.afw.V;
+import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
@@ -1063,8 +1064,9 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 
 				// presets (only for "all" tab)
 				if (!downloadedOnly) {
+					final boolean showHidden = Preferences.getBoolean(getString(R.string.pref_showHiddenVersion_key), false);
 					for (MVersionPreset preset : VersionConfig.get().presets) {
-						if (preset.hidden) continue;
+						if (!showHidden && preset.hidden) continue;
 						if (presetNamesInDb.contains(preset.preset_name)) continue;
 
 						items.add(new Item(preset));

@@ -20,4 +20,5 @@
 	<string name="pref_redTextColor_night_key">redTextColor_night</string>
 
 	<string name="pref_copyWithVerseNumbers_key">copyWithVerseNumbers</string>
+	<string name="pref_showHiddenVersion_key">showHiddenVersion</string>
 </resources>
