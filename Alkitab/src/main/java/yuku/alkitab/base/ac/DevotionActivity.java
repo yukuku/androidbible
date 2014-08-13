@@ -24,7 +24,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.TextView.BufferType;
 import android.widget.Toast;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -38,7 +37,6 @@ import yuku.alkitab.base.devotion.ArticleRenunganHarian;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
 import yuku.alkitab.base.devotion.DevotionArticle;
 import yuku.alkitab.base.devotion.DevotionDownloader;
-import yuku.alkitab.base.devotion.DevotionDownloader.OnStatusDonlotListener;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.widget.CallbackSpan;
@@ -53,7 +51,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class DevotionActivity extends BaseLeftDrawerActivity implements OnStatusDonlotListener, LeftDrawer.Devotion.Listener {
+public class DevotionActivity extends BaseLeftDrawerActivity implements DevotionDownloader.DownloadStatusListener, LeftDrawer.Devotion.Listener {
 	public static final String TAG = DevotionActivity.class.getSimpleName();
 
 	private static final int REQCODE_share = 1;
@@ -396,7 +394,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements OnStatus
 		if (article != null && article.getReadyToUse()) {
 			renderSucceeded = true;
 
-			lContent.setText(article.getContent(verseClickListener), BufferType.SPANNABLE);
+			lContent.setText(article.getContent(verseClickListener), TextView.BufferType.SPANNABLE);
 			lContent.setLinksClickable(true);
 			lContent.setMovementMethod(LinkMovementMethod.getInstance());
 		} else {

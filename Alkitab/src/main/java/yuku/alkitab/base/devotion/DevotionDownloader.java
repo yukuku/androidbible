@@ -14,21 +14,21 @@ import java.util.LinkedList;
 public class DevotionDownloader extends Thread {
 	private static final String TAG = DevotionDownloader.class.getSimpleName();
 	
-	public interface OnStatusDonlotListener {
+	public interface DownloadStatusListener {
 		void onDownloadStatus(String s);
 	}
 	
 	private Context context_;
-	private OnStatusDonlotListener listener_;
+	private DownloadStatusListener listener_;
 	private LinkedList<DevotionArticle> queue_ = new LinkedList<>();
 	private boolean idle_;
 
-	public DevotionDownloader(Context context, OnStatusDonlotListener listener) {
+	public DevotionDownloader(Context context, DownloadStatusListener listener) {
 		context_ = context;
 		listener_ = listener;
 	}
 	
-	public void setListener(OnStatusDonlotListener listener) {
+	public void setListener(DownloadStatusListener listener) {
 		this.listener_ = listener;
 	}
 	
