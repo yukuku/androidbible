@@ -884,7 +884,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	public void songBookSelected(final boolean all, final SongBookUtil.SongBookInfo songBookInfo) {
 		if (all) return; // should not happen
 
-		Song song = S.getSongDb().getFirstSongFromBook(songBookInfo.bookName);
+		final Song song = S.getSongDb().getFirstSongFromBook(songBookInfo.bookName);
 
 		if (song != null) {
 			displaySong(songBookInfo.bookName, song);
@@ -905,6 +905,8 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				}
 			});
 		}
+
+		state_tempCode = "";
 	}
 }
 
