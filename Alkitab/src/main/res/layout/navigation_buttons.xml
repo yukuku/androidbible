@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="wrap_content"
+	android:layout_height="match_parent"
+	tools:showIn="@layout/activity_isi_action_custom_view">
+
+	<yuku.alkitab.base.widget.GotoButton
+		android:id="@+id/bGoto"
+		style="?android:actionButtonStyle"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_marginLeft="32dp"
+		android:layout_marginRight="32dp"
+		android:paddingLeft="0dp"
+		android:paddingRight="0dp"
+		android:text="*Long Name Of Book 123"
+		android:textSize="16sp"
+		tools:ignore="HardcodedText" />
+
+	<ImageButton
+		android:id="@+id/bLeft"
+		style="?android:actionButtonStyle"
+		android:layout_width="48dp"
+		android:layout_height="match_parent"
+		android:layout_gravity="left"
+		android:contentDescription="@string/desc_previous_chapter"
+		android:scaleType="center"
+		android:src="@drawable/ic_nav_left_light" />
+
+	<ImageButton
+		android:id="@+id/bRight"
+		style="?android:actionButtonStyle"
+		android:layout_width="48dp"
+		android:layout_height="match_parent"
+		android:layout_gravity="right"
+		android:contentDescription="@string/desc_next_chapter"
+		android:padding="16dp"
+		android:scaleType="center"
+		android:src="@drawable/ic_nav_right_light" />
+</FrameLayout>
