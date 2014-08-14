@@ -5,7 +5,7 @@ android {
         release {
             keyAlias System.getenv("SIGN_ALIAS")
             keyPassword System.getenv("SIGN_PASSWORD")
-            storeFile file(System.getenv("SIGN_KEYSTORE") != null? System.getenv("SIGN_KEYSTORE"): "/dev/null")
+            storeFile file(System.getenv("SIGN_KEYSTORE") != null ? System.getenv("SIGN_KEYSTORE") : "/dev/null")
             storePassword System.getenv("SIGN_PASSWORD")
         }
     }
@@ -32,6 +32,8 @@ android {
     lintOptions {
         checkReleaseBuilds false
     }
+    productFlavors {
+    }
 }
 
 dependencies {
@@ -53,6 +55,8 @@ dependencies {
     compile project(':FileChooser')
     compile 'com.android.support:support-v4:20.0.0'
     compile 'com.squareup.picasso:picasso:2.3.3'
+    compile 'com.squareup.okhttp:okhttp:2.0.0'
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     compile 'net.sf.trove4j:trove4j:3.0.3'
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'com.android.support:support-v13:20.0.0'
