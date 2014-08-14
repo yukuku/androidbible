@@ -48,17 +48,23 @@ public class SettingsActivity extends BasePreferenceActivity {
 		pref_showHiddenVersion.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 			@Override
 			public boolean onPreferenceChange(final Preference preference, final Object newValue) {
-				new AlertDialog.Builder(SettingsActivity.this)
-					.setMessage(R.string.show_hidden_version_warning)
-					.setNegativeButton(R.string.cancel, null)
-					.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(final DialogInterface dialog, final int which) {
-							pref_showHiddenVersion.setChecked(true);
-						}
-					})
-					.show();
-				return false;
+				final boolean value = (boolean) newValue;
+
+				if (value) {
+					new AlertDialog.Builder(SettingsActivity.this)
+						.setMessage(R.string.show_hidden_version_warning)
+						.setNegativeButton(R.string.cancel, null)
+						.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(final DialogInterface dialog, final int which) {
+								pref_showHiddenVersion.setChecked(true);
+							}
+						})
+						.show();
+					return false;
+				}
+
+				return true;
 			}
 		});
 	}
