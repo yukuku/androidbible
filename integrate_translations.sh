@@ -3,7 +3,7 @@ if [ "$1" == "" ] ; then
 	exit 1
 fi
 
-DST="Alkitab/res/"
+DST="Alkitab/src/main/res/"
 SRC="$1"
 
 if [ ! -e "$DST" ] ; then
