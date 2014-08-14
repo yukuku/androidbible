@@ -132,7 +132,14 @@ public class SearchActivity extends BaseActivity {
 					mc.addRow(new Object[]{(long) i, entry.query_string});
 				}
 			}
-			swapCursor(mc);
+
+			// sometimes this is called from bg. So we need to make sure this is run on UI thread.
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					swapCursor(mc);
+				}
+			});
 		}
 	}
 
@@ -508,9 +515,9 @@ public class SearchActivity extends BaseActivity {
 
 				synchronized (SearchActivity.this) {
 					if (usingRevIndex()) {
-						return SearchEngine.searchByRevIndex(getQuery());
+						return SearchEngine.searchByRevIndex(searchInVersion, getQuery());
 					} else {
-						return SearchEngine.searchByGrep(getQuery());
+						return SearchEngine.searchByGrep(searchInVersion, getQuery());
 					}
 				}
 			}

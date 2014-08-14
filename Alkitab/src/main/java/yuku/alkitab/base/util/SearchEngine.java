@@ -10,11 +10,12 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TimingLogger;
-import yuku.afw.D;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.config.AppConfig;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.SingleChapterVerses;
+import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 import yuku.bintex.BintexReader;
@@ -72,7 +73,7 @@ public class SearchEngine {
 	private static SoftReference<RevIndex> cache_revIndex;
 	private static Semaphore revIndexLoading = new Semaphore(1);
 	
-	public static IntArrayList searchByGrep(Query query) {
+	public static IntArrayList searchByGrep(final Version version, final Query query) {
 		String[] words = QueryTokenizer.tokenize(query.query_string);
 		
 		// urutkan berdasarkan panjang, lalu abjad
@@ -101,7 +102,7 @@ public class SearchEngine {
 				last = word;
 			}
 			words = awords.toArray(new String[awords.size()]);
-			if (D.EBUG) Log.d(TAG, "words = " + Arrays.toString(words)); //$NON-NLS-1$
+			if (BuildConfig.DEBUG) Log.d(TAG, "words = " + Arrays.toString(words));
 		}
 		
 		// really search
@@ -121,7 +122,7 @@ public class SearchEngine {
 	
 				{
 					long ms = System.currentTimeMillis();
-					result = searchByGrepInside(word, prev, query.bookIds);
+					result = searchByGrepInside(version, word, prev, query.bookIds);
 					Log.d(TAG, "search word '" + word + "' needed: " + (System.currentTimeMillis() - ms) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 	
@@ -197,8 +198,8 @@ public class SearchEngine {
 		}
 	}
 
-	static IntArrayList searchByGrepInside(String word, IntArrayList source, SparseBooleanArray bookIds) {
-		IntArrayList res = new IntArrayList();
+	static IntArrayList searchByGrepInside(final Version version, String word, final IntArrayList source, final SparseBooleanArray bookIds) {
+		final IntArrayList res = new IntArrayList();
 		boolean hasPlus = false;
 		
 		if (QueryTokenizer.isPlussedToken(word)) {
@@ -207,7 +208,7 @@ public class SearchEngine {
 		}
 	
 		if (source == null) {
-			for (Book book: S.activeVersion.getConsecutiveBooks()) {
+			for (Book book: version.getConsecutiveBooks()) {
 				if (!bookIds.get(book.bookId, false)) {
 					continue; // the book is not included in selected books to be searched
 				}
@@ -216,14 +217,14 @@ public class SearchEngine {
 				
 				for (int chapter_1 = 1; chapter_1 <= chapter_count; chapter_1++) {
 					// try to find it wholly in a chapter
-					String oneChapter = S.activeVersion.loadChapterTextLowercasedWithoutSplit(book, chapter_1);
+					String oneChapter = version.loadChapterTextLowercasedWithoutSplit(book, chapter_1);
 					if (oneChapter.contains(word)) {
 						// only do the following when inside a chapter, word is found
 						searchByGrepInChapter(oneChapter, word, res, Ari.encode(book.bookId, chapter_1, 0), hasPlus);
 					}
 				}
 	
-				if (D.EBUG) Log.d(TAG, "searchByGrepInside book " + book.shortName + " done. res.size = " + res.size()); //$NON-NLS-1$ //$NON-NLS-2$
+				if (BuildConfig.DEBUG) Log.d(TAG, "searchByGrepInside book " + book.shortName + " done. res.size = " + res.size()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else {
 			// search only on book-chapters that are in the source
@@ -238,10 +239,10 @@ public class SearchEngine {
 				
 				// No need to check null book, because we go here only after searching a previous token which is based on
 				// getConsecutiveBooks which is impossible to have null books.
-				Book book = S.activeVersion.getBook(Ari.toBook(curAriBc));
+				final Book book = version.getBook(Ari.toBook(curAriBc));
 				int chapter_1 = Ari.toChapter(curAriBc);
 				
-				String oneChapter = S.activeVersion.loadChapterTextLowercasedWithoutSplit(book, chapter_1);
+				final String oneChapter = version.loadChapterTextLowercasedWithoutSplit(book, chapter_1);
 				if (oneChapter.contains(word)) {
 					// Only to the following if inside a chapter we find the word.
 					searchByGrepInChapter(oneChapter, word, res, curAriBc, hasPlus);
@@ -250,7 +251,7 @@ public class SearchEngine {
 				count++;
 			}
 			
-			if (D.EBUG) Log.d(TAG, "searchByGrepInside book with source " + source.size() + " needed to read as many as " + count + " book-chapter. res.size=" + res.size()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (BuildConfig.DEBUG) Log.d(TAG, "searchByGrepInside book with source " + source.size() + " needed to read as many as " + count + " book-chapter. res.size=" + res.size()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		
 		return res;
@@ -296,7 +297,7 @@ public class SearchEngine {
 		}
 	}
 	
-	public static IntArrayList searchByRevIndex(Query query) {
+	public static IntArrayList searchByRevIndex(final Version version, final Query query) {
 		TimingLogger timing = new TimingLogger("RevIndex", "searchByRevIndex");
 		RevIndex revIndex;
 		revIndexLoading.acquireUninterruptibly();
@@ -304,7 +305,7 @@ public class SearchEngine {
 			revIndex = loadRevIndex();
 			if (revIndex == null) {
 				Log.w(TAG, "Cannot load revindex (internal error)!");
-				return searchByGrep(query);
+				return searchByGrep(version, query);
 			}
 		} finally {
 			revIndexLoading.release();
@@ -346,7 +347,7 @@ public class SearchEngine {
 				}
 			}
 			
-			if (D.EBUG) {
+			if (BuildConfig.DEBUG) {
 				Log.d(TAG, "Tokens after retokenization:");
 				for (String token: tokenSet2) {
 					Log.d(TAG, "- token: " + token);
@@ -456,9 +457,9 @@ public class SearchEngine {
 				
 				int ariCv = Ari.toBookChapter(ari);
 				if (ariCv != loadedAriCv) { // we can't reuse, we need to load from disk
-					Book book = S.activeVersion.getBook(Ari.toBook(ari));
+					Book book = version.getBook(Ari.toBook(ari));
 					if (book != null) {
-						loadedChapter = S.activeVersion.loadChapterTextLowercased(book, Ari.toChapter(ari));
+						loadedChapter = version.loadChapterTextLowercased(book, Ari.toChapter(ari));
 						loadedAriCv = ariCv;
 					}
 				}
