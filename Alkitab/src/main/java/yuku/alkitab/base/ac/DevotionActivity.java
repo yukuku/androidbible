@@ -26,6 +26,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import yuku.afw.V;
+import com.google.analytics.tracking.android.EasyTracker;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -42,6 +43,7 @@ import yuku.alkitab.base.util.Jumper;
 import yuku.alkitab.base.widget.CallbackSpan;
 import yuku.alkitab.base.widget.LeftDrawer;
 import yuku.alkitab.base.widget.TwofingerLinearLayout;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.util.Ari;
 import yuku.alkitabintegration.display.Launcher;
@@ -195,8 +197,51 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 		}
 	}
 
-	Handler displayRepeater = new DisplayRepeater(this);
-	
+	final Handler displayRepeater = new DisplayRepeater(this);
+
+	static class LongReadChecker extends Handler {
+		DevotionKind startKind;
+		String startDate;
+
+		final WeakReference<DevotionActivity> ac;
+
+		public LongReadChecker(DevotionActivity activity) {
+			ac = new WeakReference<>(activity);
+		}
+
+		/** This will be called 30 seconds after startKind and startDate are set. */
+		@Override
+		public void handleMessage(final Message msg) {
+			final DevotionActivity ac = this.ac.get();
+			if (ac == null) return;
+			if (ac.isFinishing()) {
+				Log.d(TAG, "Activity is already closed");
+				return;
+			}
+
+			final String currentDate = yyyymmdd.get().format(ac.currentDate);
+			if (U.equals(startKind, ac.currentKind) && U.equals(startDate, currentDate)) {
+				Log.d(TAG, "Long read detected: now=[" + ac.currentKind + " " + currentDate + "]");
+				EasyTracker.getTracker().sendEvent("devotion-longread", startKind.name, startDate, 30L);
+			} else {
+				Log.d(TAG, "Not long enough for long read: previous=[" + startKind + " " + startDate + "] now=[" + ac.currentKind + " " + currentDate + "]");
+			}
+		}
+
+		public void start() {
+			final DevotionActivity ac = this.ac.get();
+			if (ac == null) return;
+
+			startKind = ac.currentKind;
+			startDate = yyyymmdd.get().format(ac.currentDate);
+
+			removeMessages(1);
+			sendEmptyMessageDelayed(1, BuildConfig.DEBUG ? 10000 : 30000);
+		}
+	}
+
+	final LongReadChecker longReadChecker = new LongReadChecker(this);
+
 	static class DownloadStatusDisplayer extends Handler {
 		private WeakReference<DevotionActivity> ac;
 		static int MSG_SHOW = 1;
@@ -421,6 +466,11 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 			final LeftDrawer.Devotion.Handle handle = leftDrawer.getHandle();
 			handle.setDevotionKind(currentKind);
 			handle.setDevotionDate(dateDisplay);
+		}
+
+		if (renderSucceeded) {
+			EasyTracker.getTracker().sendEvent("devotion-render", currentKind.name, yyyymmdd.get().format(currentDate), 0L);
+			longReadChecker.start();
 		}
 	}
 
