@@ -60,6 +60,7 @@ public class SongBookUtil {
 			"NKB  :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/nkb-4.ser.gz  :: Nyanyikanlah Kidung Baru              :: (c) Badan Pengerja Majelis Sinode Gereja Kristen Indonesia (GKI)",
 			"NKI  :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/nki-4.ser.gz  :: Nyanyian Kemenangan Iman              :: (c) Kalam Hidup",
 			"NP   :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/np-4.ser.gz   :: Nyanyian Pujian                       :: (c) Lembaga Literatur Baptis",
+			"NR   :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/nr-4.ser.gz   :: Nafiri Rohani                         :: (c) Sinode Gereja Kristus",
 			"PKJ  :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/pkj-4.ser.gz  :: Pelengkap Kidung Jemaat               :: (c) Yayasan Musik Gereja di Indonesia (YAMUGER)",
 			"PPK  :: 3 :: https://alkitab-host.appspot.com/addon/songs/v1/data/ppk-4.ser.gz  :: Puji-pujian Kristen                   :: (c) Seminari Alkitab Asia Tenggara (SAAT)",
 		}) {
