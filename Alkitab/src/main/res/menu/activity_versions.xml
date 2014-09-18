@@ -4,8 +4,20 @@
 	<item
 		android:id="@+id/menuAdd"
 		android:icon="@drawable/ic_menu_add_light"
-		android:showAsAction="always|withText"
-		android:title="@string/tambah" />
+		android:title="@string/tambah"
+		android:showAsAction="ifRoom|withText">
+
+		<menu>
+			<item
+				android:id="@+id/menuAddFromLocal"
+				android:title="@string/version_download_add_from_local" />
+			<item
+				android:id="@+id/menuAddFromUrl"
+				android:title="@string/version_download_add_from_url" />
+		</menu>
+
+	</item>
+
 
 	<item
 		android:id="@+id/menuSearch"

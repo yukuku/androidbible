@@ -46,22 +46,49 @@ public class VersionDownloadCompleteReceiver extends BroadcastReceiver {
 		}
 
 		final Map<String, String> attrs = DownloadMapper.instance.getAttrs(id);
-		if (attrs == null || !attrs.containsKey("preset_name")) {
-			Log.w(TAG, "preset_name attr not found for " + id);
+		if (attrs == null) {
+			Log.w(TAG, "No download attrs");
 			return;
 		}
 
-		final String preset_name = attrs.get("preset_name");
-
-		int modifyTime = 0;
-		if (!attrs.containsKey("modifyTime")) {
-			Log.w(TAG, "modifyTime attr not found for " + id);
+		if (!attrs.containsKey("download_type")) {
+			Log.w(TAG, "download_type attr not found for " + id);
 			return;
 		}
 
-		modifyTime = Integer.parseInt(attrs.get("modifyTime"));
+		final String download_type = attrs.get("download_type");
 
-		final String destPath = AddonManager.getVersionPath(preset_name + ".yes");
+		String preset_name = null;
+		int modifyTime = (int) (System.currentTimeMillis() / 1000L);
+
+		final String destPath;
+		if ("preset".equals(download_type)) {
+			if (!attrs.containsKey("preset_name")) {
+				Log.w(TAG, "preset_name attr not found for " + id);
+				return;
+			}
+
+			preset_name = attrs.get("preset_name");
+
+			if (!attrs.containsKey("modifyTime")) {
+				Log.w(TAG, "modifyTime attr not found for " + id);
+				return;
+			}
+
+			modifyTime = Integer.parseInt(attrs.get("modifyTime"));
+			destPath = AddonManager.getVersionPath(preset_name + ".yes");
+		} else if ("url".equals(download_type)) {
+			if (!attrs.containsKey("filename_last_segment")) {
+				Log.w(TAG, "filename_last_segment attr not found for " + id);
+				return;
+			}
+
+			final String filename_last_segment = attrs.get("filename_last_segment");
+			destPath = AddonManager.getVersionPath(filename_last_segment);
+		} else {
+			Log.w(TAG, "unknown download_type for " + id + ": " + download_type);
+			return;
+		}
 
 		// transfer from dm to the actual file
 		final DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
@@ -81,8 +108,8 @@ public class VersionDownloadCompleteReceiver extends BroadcastReceiver {
 			af.finishWrite(fos);
 			pfd.close();
 		} catch (IOException e) {
-			Log.e(TAG, "Error when opening " + preset_name, e);
-			Toast.makeText(context, "Error when opening " + preset_name, Toast.LENGTH_SHORT).show(); // TODO proper msg
+			Log.e(TAG, "I/O error when saving downloaded version", e);
+			Toast.makeText(context, "I/O error when saving downloaded version", Toast.LENGTH_SHORT).show(); // TODO proper msg
 			return;
 		} finally {
 			DownloadMapper.instance.remove(id);
@@ -107,7 +134,9 @@ public class VersionDownloadCompleteReceiver extends BroadcastReceiver {
 		mvDb.longName = reader.getLongName();
 		mvDb.description = reader.getDescription();
 		mvDb.filename = destPath;
-		mvDb.preset_name = preset_name;
+		if ("preset".equals(download_type)) {
+			mvDb.preset_name = preset_name;
+		}
 		mvDb.modifyTime = modifyTime;
 		mvDb.ordering = maxOrdering + 1;
 

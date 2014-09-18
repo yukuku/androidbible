@@ -17,6 +17,7 @@ import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -41,6 +42,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -374,8 +376,11 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.menuAdd:
+			case R.id.menuAddFromLocal:
 				clickOnOpenFile();
+				return true;
+			case R.id.menuAddFromUrl:
+				openUrlInputDialog();
 				return true;
 			case android.R.id.home:
 				Intent upIntent = new Intent(this, IsiActivity.class);
@@ -630,6 +635,67 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 		return "pdb-" + base + ".yes";
 	}
 
+	void openUrlInputDialog() {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		final Context contextForLayout = Build.VERSION.SDK_INT >= 11? builder.getContext(): this;
+
+		final View dialogView = LayoutInflater.from(contextForLayout).inflate(R.layout.dialog_version_add_from_url, null);
+		final EditText tUrl = V.get(dialogView, R.id.tUrl);
+
+		builder
+			.setView(dialogView)
+			.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(final DialogInterface dialog, final int which) {
+					final String url = tUrl.getText().toString().trim();
+					if (url.length() == 0) {
+						return;
+					}
+
+					final Uri uri = Uri.parse(url);
+					final String scheme = uri.getScheme();
+					if (!U.equals(scheme, "http") && !U.equals(scheme, "https")) {
+						new AlertDialog.Builder(VersionsActivity.this)
+							.setMessage(R.string.version_download_invalid_url)
+							.setPositiveButton(R.string.ok, null)
+							.show();
+						return;
+					}
+
+					// guess destination filename
+					String last = uri.getLastPathSegment();
+					if (TextUtils.isEmpty(last) || !last.toLowerCase(Locale.US).endsWith(".yes")) {
+						new AlertDialog.Builder(VersionsActivity.this)
+							.setMessage(R.string.version_download_not_yes)
+							.setPositiveButton(R.string.ok, null)
+							.show();
+						return;
+					}
+
+					{
+						final String downloadKey = "version:url:" + url;
+
+						final int status = DownloadMapper.instance.getStatus(downloadKey);
+						if (status == DownloadManager.STATUS_PENDING || status == DownloadManager.STATUS_RUNNING) {
+							// it's downloading!
+							return;
+						}
+
+						final DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url))
+							.setTitle(last)
+							.setVisibleInDownloadsUi(false)
+							.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
+
+						final Map<String, String> attrs = new LinkedHashMap<>();
+						attrs.put("download_type", "url");
+						attrs.put("filename_last_segment", last);
+
+						DownloadMapper.instance.enqueue(downloadKey, req, attrs);
+					}
+				}
+			})
+			.show();
+	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1000,6 +1066,7 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 				.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
 
 			final Map<String, String> attrs = new LinkedHashMap<>();
+			attrs.put("download_type", "preset");
 			attrs.put("preset_name", mv.preset_name);
 			attrs.put("modifyTime", "" + mv.modifyTime);
 

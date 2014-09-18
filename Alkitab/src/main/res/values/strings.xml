@@ -392,4 +392,11 @@
 	<string name="version_config_updater_updated">Version list updated!</string>
 	<string name="version_config_cannot_write_updated_list">Failed to store updated list.</string>
 	<string name="version_config_updater_error_modify_time_cannot_parse">Failed to parse version list update checker.</string>
+
+	<string name="version_download_add_from_local">From local storage</string>
+	<string name="version_download_add_from_url">From Internet URL</string>
+	<string name="version_download_add_from_url_prompt_yes_only">.yes FILE URL</string>
+	<string name="version_download_invalid_url">Invalid URL.</string>
+	<string name="version_download_not_yes">The Internet URL must have the .yes ending.</string>
+
 </resources>
