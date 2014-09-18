@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content">
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:padding="8dp">
+
+		<TextView
+			android:id="@+id/lTitle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentTop="true"
+			android:text="@string/version_download_add_from_url_prompt"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textStyle="bold" />
+
+		<EditText
+			android:id="@+id/tUrl"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_below="@+id/lTitle"
+			android:imeOptions="actionGo"
+			android:inputType="textCapSentences"
+			android:selectAllOnFocus="true"
+			android:singleLine="true" />
+
+	</RelativeLayout>
+
+</ScrollView>

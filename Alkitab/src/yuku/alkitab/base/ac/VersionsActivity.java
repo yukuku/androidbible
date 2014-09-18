@@ -1,24 +1,29 @@
 
 package yuku.alkitab.base.ac;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +33,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,7 +45,6 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.config.AppConfig;
-import yuku.alkitab.model.Version;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes2;
@@ -51,6 +56,8 @@ import yuku.alkitab.base.util.AddonManager.DownloadThread;
 import yuku.alkitab.base.util.AddonManager.Element;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.BibleReader;
+import yuku.alkitab.io.OptionalGzipInputStream;
+import yuku.alkitab.model.Version;
 import yuku.androidcrypto.DigestType;
 import yuku.androidcrypto.Digester;
 import yuku.filechooser.FileChooserActivity;
@@ -73,7 +80,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
+import java.util.UUID;
 
 public class VersionsActivity extends BaseActivity {
 	public static final String TAG = VersionsActivity.class.getSimpleName();
@@ -263,23 +270,26 @@ public class VersionsActivity extends BaseActivity {
 
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menuAdd:
-			clickOnOpenFile();
-			return true;
-		case android.R.id.home:
-			Intent upIntent = new Intent(this, IsiActivity.class);
-            if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-                // This activity is not part of the application's task, so create a new task
-                // with a synthesized back stack.
-                TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
-                finish();
-            } else {
-                // This activity is part of the application's task, so simply
-                // navigate up to the hierarchical parent activity.
-                // sample code uses this: NavUtils.navigateUpTo(this, upIntent);
-            	finish();
-            }
-			return true;
+			case R.id.menuAddFromLocal:
+				clickOnOpenFile();
+				return true;
+			case R.id.menuAddFromUrl:
+				openUrlInputDialog();
+				return true;
+			case android.R.id.home:
+				Intent upIntent = new Intent(this, IsiActivity.class);
+				if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+					// This activity is not part of the application's task, so create a new task
+					// with a synthesized back stack.
+					TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
+					finish();
+				} else {
+					// This activity is part of the application's task, so simply
+					// navigate up to the hierarchical parent activity.
+					// sample code uses this: NavUtils.navigateUpTo(this, upIntent);
+					finish();
+				}
+				return true;
 		}
 		
 		return super.onOptionsItemSelected(item);
@@ -446,7 +456,16 @@ public class VersionsActivity extends BaseActivity {
 			return;
 		}
 
-		final ProgressDialog pd = ProgressDialog.show(this, getString(R.string.mengunduh_nama, mv.longName), getString(R.string.mulai_mengunduh), true, true);
+		startDownload(mv.url, mv.longName, AddonManager.getVersionPath(mv.presetFilename), mv.locale, new Runnable() {
+			@Override
+			public void run() {
+				mv.setActive(true);
+			}
+		});
+	}
+
+	void startDownload(final String url, final String downloadLabel, final String destFilename, final String downloadLocale, final Runnable successListener) {
+		final ProgressDialog pd = ProgressDialog.show(this, getString(R.string.mengunduh_nama, downloadLabel), getString(R.string.mulai_mengunduh), true, true);
 
 		final DownloadListener downloadListener = new DownloadListener() {
 			@Override
@@ -455,11 +474,10 @@ public class VersionsActivity extends BaseActivity {
 					@Override
 					public void run() {
 						Toast.makeText(App.context,
-						getString(R.string.selesai_mengunduh_edisi_judul_disimpan_di_path, mv.longName, AddonManager.getVersionPath(mv.presetFilename)),
-						Toast.LENGTH_LONG).show();
+							getString(R.string.selesai_mengunduh_edisi_judul_disimpan_di_path, downloadLabel, destFilename),
+							Toast.LENGTH_LONG).show();
 
-						final String locale = mv.locale;
-						if ("ta".equals(locale) || "te".equals(locale) || "my".equals(locale) || "el".equals(locale)) {
+						if ("ta".equals(downloadLocale) || "te".equals(downloadLocale) || "my".equals(downloadLocale) || "el".equals(downloadLocale)) {
 							new AlertDialog.Builder(VersionsActivity.this)
 							.setMessage(R.string.version_download_need_fonts)
 							.setPositiveButton(R.string.ok, null)
@@ -471,15 +489,17 @@ public class VersionsActivity extends BaseActivity {
 			}
 
 			@Override
-			public void onDownloadFailed(Element e, final String description, final Throwable t) {
+			public void onDownloadFailed(final Element e, final String description, final Throwable t) {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						Toast.makeText(
-						App.context,
-						description != null? description: getString(R.string.gagal_mengunduh_edisi_judul_ex_pastikan_internet, mv.longName,
-						t == null? "null": t.getClass().getCanonicalName() + ": " + t.getMessage()), Toast.LENGTH_LONG
-						).show();
+						new AlertDialog.Builder(VersionsActivity.this)
+							.setMessage(
+								description != null ? description : getString(R.string.gagal_mengunduh_edisi_judul_ex_pastikan_internet, downloadLabel,
+									t == null ? "null" : t.getClass().getSimpleName() + ": " + t.getMessage())
+							)
+							.setPositiveButton(R.string.ok, null)
+							.show();
 					}
 				});
 				pd.dismiss();
@@ -512,7 +532,7 @@ public class VersionsActivity extends BaseActivity {
 		};
 
 		final DownloadThread downloadThread = AddonManager.getDownloadThread();
-		final Element e = downloadThread.enqueue(mv.url, AddonManager.getVersionPath(mv.presetFilename), downloadListener);
+		final Element e = downloadThread.enqueue(url, destFilename, downloadListener);
 
 		downloadThread.start();
 
@@ -525,8 +545,8 @@ public class VersionsActivity extends BaseActivity {
 		pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
 			@Override
 			public void onDismiss(DialogInterface dialog) {
-				if (!e.cancelled && AddonManager.hasVersion(mv.presetFilename)) {
-					mv.setActive(true);
+				if (!e.cancelled && new File(destFilename).exists()) {
+					successListener.run();
 				}
 				adapter.initYesVersionList();
 				adapter.notifyDataSetChanged();
@@ -573,6 +593,52 @@ public class VersionsActivity extends BaseActivity {
 			.show();
 		}
 	}
+
+	@TargetApi(11)
+	void openUrlInputDialog() {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		final Context contextForLayout = Build.VERSION.SDK_INT >= 11? builder.getContext(): this;
+
+		final View dialogView = LayoutInflater.from(contextForLayout).inflate(R.layout.dialog_version_add_from_url, null);
+		final EditText tUrl = V.get(dialogView, R.id.tUrl);
+
+		builder
+			.setView(dialogView)
+			.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(final DialogInterface dialog, final int which) {
+					final String url = tUrl.getText().toString().trim();
+					if (url.length() == 0) {
+						return;
+					}
+
+					final Uri uri = Uri.parse(url);
+					final String scheme = uri.getScheme();
+					if (!U.equals(scheme, "http") && !U.equals(scheme, "https")) {
+						new AlertDialog.Builder(VersionsActivity.this)
+							.setMessage(R.string.version_download_invalid_url)
+							.setPositiveButton(R.string.ok, null)
+							.show();
+						return;
+					}
+
+					// guess destination filename
+					String last = uri.getLastPathSegment();
+					if (TextUtils.isEmpty(last)) {
+						last = UUID.randomUUID().toString().substring(0, 8) + ".yes";
+					}
+
+					final String destFilename = new File(AddonManager.getYesPath(), last).getAbsolutePath();
+					startDownload(url, last, destFilename, null, new Runnable() {
+						@Override
+						public void run() {
+							handleOpenFileAny(destFilename);
+						}
+					});
+				}
+			})
+			.show();
+	}
 	
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQCODE_openFile) {
@@ -580,60 +646,8 @@ public class VersionsActivity extends BaseActivity {
 			if (result == null) {
 				return;
 			}
-		
-			final String filename = result.firstFilename;
-			
-			if (filename.toLowerCase(Locale.US).endsWith(".yes.gz")) { //$NON-NLS-1$
-				// decompress or see if the same filename without .gz exists
-				final File maybeDecompressed = new File(filename.substring(0, filename.length() - 3));
-				if (maybeDecompressed.exists() && !maybeDecompressed.isDirectory() && maybeDecompressed.canRead()) {
-					handleFileOpenYes(maybeDecompressed.getAbsolutePath(), null);
-				} else {
-					final ProgressDialog pd = ProgressDialog.show(VersionsActivity.this, null, getString(R.string.sedang_mendekompres_harap_tunggu), true, false);
-					new AsyncTask<Void, Void, File>() {
-						@Override protected File doInBackground(Void... params) {
-							String tmpfile3 = filename + "-" + (int)(Math.random() * 100000) + ".tmp3"; //$NON-NLS-1$ //$NON-NLS-2$
-							try {
-								GZIPInputStream in = new GZIPInputStream(new FileInputStream(filename));
-								FileOutputStream out = new FileOutputStream(tmpfile3); // decompressed file
-								
-								// Transfer bytes from the compressed file to the output file
-								byte[] buf = new byte[4096 * 4];
-								while (true) {
-									int len = in.read(buf);
-									if (len <= 0) break;
-									out.write(buf, 0, len);
-								}
-								out.close();
-								in.close();
-								
-								boolean renameOk = new File(tmpfile3).renameTo(maybeDecompressed);
-								if (!renameOk) {
-									throw new RuntimeException("Failed to rename!"); //$NON-NLS-1$
-								}
-							} catch (Exception e) {
-								return null;
-							} finally {
-								Log.d(TAG, "menghapus tmpfile3: " + tmpfile3); //$NON-NLS-1$
-								new File(tmpfile3).delete();
-							}
-							return maybeDecompressed;
-						}
-						
-						@Override protected void onPostExecute(File result) {
-							pd.dismiss();
-							
-							handleFileOpenYes(result.getAbsolutePath(), null);
-						};
-					}.execute();
-				}
-			} else if (filename.toLowerCase(Locale.US).endsWith(".yes")) { //$NON-NLS-1$
-				handleFileOpenYes(filename, null);
-			} else if (filename.toLowerCase(Locale.US).endsWith(".pdb")) { //$NON-NLS-1$
-				handleFileOpenPdb(filename);
-			} else {
-				Toast.makeText(App.context, R.string.ed_invalid_file_selected, Toast.LENGTH_SHORT).show();
-			}
+
+			handleOpenFileAny(result.firstFilename);
 		} else if (requestCode == REQCODE_share) {
 			ShareActivity.Result result = ShareActivity.obtainResult(data);
 			if (result != null && result.chosenIntent != null) {
@@ -641,7 +655,67 @@ public class VersionsActivity extends BaseActivity {
 			}
 		}
 	}
-	
+
+	void handleOpenFileAny(final String filename) {
+		if (filename.toLowerCase(Locale.US).endsWith(".yes.gz")) { //$NON-NLS-1$
+			// decompress or see if the same filename without .gz exists
+			final File maybeDecompressed = new File(filename.substring(0, filename.length() - 3));
+			if (maybeDecompressed.exists() && !maybeDecompressed.isDirectory() && maybeDecompressed.canRead()) {
+				handleFileOpenYes(maybeDecompressed.getAbsolutePath(), null);
+			} else {
+				final ProgressDialog pd = ProgressDialog.show(VersionsActivity.this, null, getString(R.string.sedang_mendekompres_harap_tunggu), true, false);
+				new AsyncTask<Void, Void, File>() {
+					@Override protected File doInBackground(Void... params) {
+						final String tmpfile3 = filename + "-" + UUID.randomUUID().toString().substring(0, 8) + ".tmp3";
+						try {
+							final OptionalGzipInputStream in = new OptionalGzipInputStream(new FileInputStream(filename)); // use optional, since it's possible that it's automatically decompressed during download
+							final FileOutputStream out = new FileOutputStream(tmpfile3); // decompressed file
+
+							// Transfer bytes from the compressed file to the output file
+							byte[] buf = new byte[4096 * 4];
+							while (true) {
+								int len = in.read(buf);
+								if (len <= 0) break;
+								out.write(buf, 0, len);
+							}
+							out.close();
+							in.close();
+
+							boolean renameOk = new File(tmpfile3).renameTo(maybeDecompressed);
+							if (!renameOk) {
+								throw new RuntimeException("Failed to rename!"); //$NON-NLS-1$
+							}
+						} catch (Exception e) {
+							Log.e(TAG, "Error in decompressing", e);
+							return null;
+						} finally {
+							Log.d(TAG, "menghapus tmpfile3: " + tmpfile3); //$NON-NLS-1$
+							new File(tmpfile3).delete();
+						}
+						return maybeDecompressed;
+					}
+
+					@Override protected void onPostExecute(File result) {
+						pd.dismiss();
+
+						if (result != null) {
+							handleFileOpenYes(result.getAbsolutePath(), null);
+						}
+					}
+				}.execute();
+			}
+		} else if (filename.toLowerCase(Locale.US).endsWith(".yes")) { //$NON-NLS-1$
+			handleFileOpenYes(filename, null);
+		} else if (filename.toLowerCase(Locale.US).endsWith(".pdb")) { //$NON-NLS-1$
+			handleFileOpenPdb(filename);
+		} else {
+			new AlertDialog.Builder(this)
+				.setMessage(R.string.ed_invalid_file_selected)
+				.setPositiveButton(R.string.ok, null)
+				.show();
+		}
+	}
+
 	void handleFileOpenYes(String filename, String originalpdbname) {
 		{ // look for duplicates
 			boolean dup = false;

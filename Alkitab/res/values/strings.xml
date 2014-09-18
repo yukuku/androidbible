@@ -344,4 +344,9 @@
     <string name="marker_transfer_to_computer_description">Save bookmarks, notes, and highlights to a HTML file for further editing or printing from your computer.</string>
     <string name="bookmark_delete_confirmation">Delete this bookmark?</string>
 	<string name="about_text_desc" translatable="false">100% free Bible app, licensed under Apache License 2.0\n<a href="http://www.bibleforandroid.com/guide?utm_source=app&amp;utm_medium=button&amp;utm_campaign=about">www.bibleforandroid.com</a></string>
+
+	<string name="version_download_add_from_local">From local storage</string>
+	<string name="version_download_add_from_url">From Internet URL</string>
+	<string name="version_download_add_from_url_prompt">.pdb, .yes, OR .yes.gz FILE URL</string>
+	<string name="version_download_invalid_url">Invalid URL.</string>
 </resources>

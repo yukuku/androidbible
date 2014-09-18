@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto">
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/menuAdd"
-          android:icon="@drawable/ic_menu_add_light"
-          app:showAsAction="ifRoom|withText"
-          android:title="@string/tambah"/>
+	<item
+		android:id="@+id/menuAdd"
+		android:icon="@drawable/ic_menu_add_light"
+		android:title="@string/tambah"
+		app:showAsAction="ifRoom|withText">
+
+		<menu>
+			<item
+				android:id="@+id/menuAddFromLocal"
+				android:title="@string/version_download_add_from_local" />
+			<item
+				android:id="@+id/menuAddFromUrl"
+				android:title="@string/version_download_add_from_url" />
+		</menu>
+
+	</item>
 
 </menu>
