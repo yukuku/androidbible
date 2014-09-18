@@ -10,6 +10,7 @@
 		<internal locale="in" shortName="TB"      longName="Terjemahan Baru" prefix="tb" />
 		<preset locale="in"   shortName="TL"      longName="Terjemahan Lama" filename_preset="in-tl.yes" url="https://alkitab-host.appspot.com/addon/yes2/in-tl--1.yes.gz" />
 		<preset locale="in"   shortName="BIMK"    longName="Bahasa Indonesia Masa Kini" filename_preset="in-bimk.yes" url="https://alkitab-host.appspot.com/addon/yes2/in-bimk--1.yes.gz" />
+		<preset locale="in"   shortName="ILT"     longName="Indonesian Literal Translation" filename_preset="in-ilt.yes" url="https://alkitab-host.appspot.com/addon/yes2/in-ilt--1.yes.gz" />
 		<preset locale="in"   shortName="TSI"     longName="Terjemahan Sederhana Indonesia" filename_preset="in-tsi.yes" url="https://alkitab-host.appspot.com/addon/yes2/in-tsi--1.yes.gz" />
 		<preset locale="in"   shortName="TBD"     longName="TB Deuterokanonika" filename_preset="in-tbd.yes" url="https://alkitab-host.appspot.com/addon/yes2/in-tbd--1.yes.gz" />
 

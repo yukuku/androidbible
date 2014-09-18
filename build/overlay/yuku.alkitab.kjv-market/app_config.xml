@@ -53,8 +53,12 @@
 		<preset locale="hi"   shortName="HBSI"    longName="Hindi Bible (BSI)" filename_preset="hi-bsi.yes" url="https://alkitab-host.appspot.com/addon/yes2/hi-bsi--1.yes.gz" />
 		<preset locale="hr"   shortName="CRO"     longName="Croatian" filename_preset="hr-croatian.yes" url="https://alkitab-host.appspot.com/addon/yes2/hr-croatian--1.yes.gz" />
 		<preset locale="hu"   shortName="KAR"     longName="Karoli" filename_preset="hu-karoli.yes" url="https://alkitab-host.appspot.com/addon/yes2/hu-karoli--1.yes.gz" />
+		<preset locale="in"   shortName="TB"      longName="Terjemahan Baru" filename_preset="in-tb.yes" url="https://alkitab-host.appspot.com/addon/yes2/in-tb--1.yes.gz" />
 		<preset locale="in"   shortName="TL"      longName="Terjemahan Lama" filename_preset="in-tl.yes" url="https://alkitab-host.appspot.com/addon/yes2/in-tl--1.yes.gz" />
+		<preset locale="in"   shortName="BIMK"    longName="Bahasa Indonesia Masa Kini" filename_preset="in-bimk.yes" url="https://alkitab-host.appspot.com/addon/yes2/in-bimk--1.yes.gz" />
+		<preset locale="in"   shortName="ILT"     longName="Indonesian Literal Translation" filename_preset="in-ilt.yes" url="https://alkitab-host.appspot.com/addon/yes2/in-ilt--1.yes.gz" />
 		<preset locale="in"   shortName="TSI"     longName="Terjemahan Sederhana Indonesia" filename_preset="in-tsi.yes" url="https://alkitab-host.appspot.com/addon/yes2/in-tsi--1.yes.gz" />
+		<preset locale="in"   shortName="TBD"     longName="TB Deuterokanonika" filename_preset="in-tbd.yes" url="https://alkitab-host.appspot.com/addon/yes2/in-tbd--1.yes.gz" />
 		<preset locale="it"   shortName="IGD"     longName="Diodati Bibbia" filename_preset="it-diodati.yes" url="https://alkitab-host.appspot.com/addon/yes2/it-diodati--1.yes.gz" />
 		<preset locale="it"   shortName="ITRIV"   longName="Riveduta" filename_preset="it-riveduta.yes" url="https://alkitab-host.appspot.com/addon/yes2/it-riveduta--1.yes.gz" />
 		<preset locale="ja"   shortName="KOUGO"   longName="口語訳" filename_preset="ja-kougo.yes" url="https://alkitab-host.appspot.com/addon/yes2/ja-kougo--1.yes.gz" />
