@@ -69,10 +69,50 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 	}
 
 	public enum DevotionKind {
-		SH("sh", "Santapan Harian", "Persekutuan Pembaca Alkitab"),
-		MEID_A("meid-a", "Renungan Pagi", "Charles H. Spurgeon"),
-		RH("rh", "Renungan Harian", "Yayasan Gloria"),
-		ME_EN("me-en", "Morning & Evening", "Charles H. Spurgeon"),
+		SH("sh", "Santapan Harian", "Persekutuan Pembaca Alkitab") {
+			@Override
+			public DevotionArticle getArticle(final String date) {
+				return new ArticleSantapanHarian(date);
+			}
+
+			@Override
+			public String getShareUrl(final SimpleDateFormat format, final Date date) {
+				return "http://www.sabda.org/publikasi/e-sh/print/?edisi=" + date_format.get().format(date);
+			}
+		},
+		MEID_A("meid-a", "Renungan Pagi", "Charles H. Spurgeon") {
+			@Override
+			public DevotionArticle getArticle(final String date) {
+				return new ArticleMeidA(date);
+			}
+
+			@Override
+			public String getShareUrl(final SimpleDateFormat format, final Date date) {
+				return "http://www.bibleforandroid.com/renunganpagi/" + date_format.get().format(date).substring(4);
+			}
+		},
+		RH("rh", "Renungan Harian", "Yayasan Gloria") {
+			@Override
+			public DevotionArticle getArticle(final String date) {
+				return new ArticleRenunganHarian(date);
+			}
+
+			@Override
+			public String getShareUrl(final SimpleDateFormat format, final Date date) {
+				return "http://www.sabda.org/publikasi/e-rh/print/?edisi=" + date_format.get().format(date);
+			}
+		},
+		ME_EN("me-en", "Morning & Evening", "Charles H. Spurgeon") {
+			@Override
+			public DevotionArticle getArticle(final String date) {
+				return new ArticleMorningEveningEnglish(date);
+			}
+
+			@Override
+			public String getShareUrl(final SimpleDateFormat format, final Date date) {
+				return "http://www.ccel.org/ccel/spurgeon/morneve.d" + date_format.get().format(date) + "am.html";
+			}
+		},
 		;
 
 		public final String name;
@@ -95,19 +135,9 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			return null;
 		}
 
-		public DevotionArticle getArticle(final String date) {
-			switch (this) {
-				case SH:
-					return new ArticleSantapanHarian(date);
-				case MEID_A:
-					return new ArticleMeidA(date);
-				case RH:
-					return new ArticleRenunganHarian(date);
-				case ME_EN:
-					return new ArticleMorningEveningEnglish(date);
-			}
-			throw new RuntimeException("@@getArticle enum not complete");
-		}
+		public abstract DevotionArticle getArticle(final String date);
+
+		public abstract String getShareUrl(SimpleDateFormat format, Date date);
 	}
 
 	public static final DevotionKind DEFAULT_DEVOTION_KIND = DevotionKind.SH;
@@ -328,12 +358,12 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			return true;
 		} else if (itemId == R.id.menuShare) {
 			Intent intent = ShareCompat.IntentBuilder.from(DevotionActivity.this)
-			.setType("text/plain") //$NON-NLS-1$
-			.setSubject(getSupportActionBar().getTitle().toString())
-			.setText(getSupportActionBar().getTitle().toString() + '\n' + lContent.getText())
-			.getIntent();
+				.setType("text/plain")
+				.setSubject(currentKind.title)
+				.setText(currentKind.title + '\n' + currentKind.getShareUrl(date_format.get(), currentDate) + "\n\n" + lContent.getText())
+				.getIntent();
 			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_renungan)), REQCODE_share);
-			
+
 			return true;
 		} else if (itemId == R.id.menuRedownload) {
 			willNeed(this.currentKind, date_format.get().format(currentDate), true);
@@ -581,19 +611,8 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 				ShareActivity.Result result = ShareActivity.obtainResult(data);
 				if (result != null && result.chosenIntent != null) {
 					Intent chosenIntent = result.chosenIntent;
-					if (U.equals(chosenIntent.getComponent().getPackageName(), "com.facebook.katana")) { //$NON-NLS-1$
-						switch (currentKind) {
-							case SH:
-								chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-sh/print/?edisi=" + date_format.get().format(currentDate)); // change text to url //$NON-NLS-1$ //$NON-NLS-2$
-								break;
-							case RH:
-								chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.sabda.org/publikasi/e-rh/print/?edisi=" + date_format.get().format(currentDate)); // change text to url //$NON-NLS-1$ //$NON-NLS-2$
-								break;
-							case ME_EN:
-								chosenIntent.putExtra(Intent.EXTRA_TEXT, "http://www.ccel.org/ccel/spurgeon/morneve.d" + date_format.get().format(currentDate) + "am.html"); // change text to url //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-								break;
-							// TODO
-						}
+					if (U.equals(chosenIntent.getComponent().getPackageName(), "com.facebook.katana")) {
+						chosenIntent.putExtra(Intent.EXTRA_TEXT, currentKind.getShareUrl(date_format.get(), currentDate));
 					}
 					startActivity(chosenIntent);
 				}
