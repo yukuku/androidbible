@@ -269,35 +269,40 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 			return S.activeVersion;
 		}
 
-		AppConfig c = AppConfig.get();
+		tryOpenVersion:
+		{
+			AppConfig c = AppConfig.get();
 
-		if (VersionsActivity.MVersionInternal.getVersionInternalId().equals(version)) {
-			return VersionImpl.getInternalVersion();
-		}
+			if (VersionsActivity.MVersionInternal.getVersionInternalId().equals(version)) {
+				return VersionImpl.getInternalVersion();
+			}
 
-		// coba preset dulu!
-		for (VersionsActivity.MVersionPreset preset: c.presets) { // 2. preset
-			if (preset.getVersionId().equals(version)) {
-				if (preset.hasDataFile()) {
-					return preset.getVersion();
-				} else {
-					return null;
+			// coba preset dulu!
+			for (VersionsActivity.MVersionPreset preset : c.presets) { // 2. preset
+				if (preset.getVersionId().equals(version)) {
+					if (preset.hasDataFile()) {
+						return preset.getVersion();
+					} else {
+						break tryOpenVersion;
+					}
+				}
+			}
+
+			// masih belum cocok, mari kita cari di daftar yes
+			List<VersionsActivity.MVersionYes> yeses = S.getDb().listAllVersions();
+			for (VersionsActivity.MVersionYes yes : yeses) {
+				if (yes.getVersionId().equals(version)) {
+					if (yes.hasDataFile()) {
+						return yes.getVersion();
+					} else {
+						break tryOpenVersion;
+					}
 				}
 			}
 		}
 
-		// masih belum cocok, mari kita cari di daftar yes
-		List<VersionsActivity.MVersionYes> yeses = S.getDb().listAllVersions();
-		for (VersionsActivity.MVersionYes yes: yeses) {
-			if (yes.getVersionId().equals(version)) {
-				if (yes.hasDataFile()) {
-					return yes.getVersion();
-				} else {
-					return null;
-				}
-			}
-		}
-		return null;
+		Log.w(TAG, "Version selected for widget id " + appWidgetId + ": " + version + " is no longer available. Reverting to internal version.");
+		return VersionImpl.getInternalVersion();
 	}
 
 	public static int[] getVerse(int appWidgetId) {
