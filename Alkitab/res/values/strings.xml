@@ -349,6 +349,9 @@
 	<string name="version_download_add_from_url">From Internet URL</string>
 	<string name="version_download_add_from_url_prompt">.pdb, .yes, OR .yes.gz FILE URL</string>
 	<string name="version_download_invalid_url">Invalid URL.</string>
+
 	<string name="patch_text_intro">Please edit the parts of the text that you think can be corrected or made better.\n\nDo not change the other parts.\n\nTap <b><small>SEND</small></b> when finished.</string>
 	<string name="patch_text_error_no_edits">Please make some edits before sending.</string>
+	<string name="patch_text_menu_reference">Reference</string>
+	<string name="patch_text_menu_send">Send</string>
 </resources>
