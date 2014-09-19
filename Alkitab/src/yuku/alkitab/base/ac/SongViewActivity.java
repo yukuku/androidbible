@@ -9,6 +9,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ShareCompat;
+import android.text.Html;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -21,6 +23,7 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
+import com.google.gson.Gson;
 import net.londatiga.android.QuickAction;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -61,12 +64,13 @@ import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.Locale;
 
 public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlLoadingHandler {
 	public static final String TAG = SongViewActivity.class.getSimpleName();
 
-	private static final String PROTOCOL = "bible"; //$NON-NLS-1$
+	private static final String BIBLE_PROTOCOL = "bible";
 	private static final int REQCODE_songList = 1;
 	private static final int REQCODE_share = 2;
 
@@ -610,7 +614,7 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		bChangeCode.setText(song.code);
 
 		// construct rendition of scripture references
-		String scripture_references = renderScriptureReferences(PROTOCOL, song.scriptureReferences);
+		String scripture_references = renderScriptureReferences(BIBLE_PROTOCOL, song.scriptureReferences);
 		templateCustomVars.putString("scripture_references", scripture_references); //$NON-NLS-1$
 		templateCustomVars.putString("copyright", SongBookUtil.getCopyright(bookName)); //$NON-NLS-1$
 
@@ -781,9 +785,39 @@ public class SongViewActivity extends BaseActivity implements ShouldOverrideUrlL
 		}
 	}
 
+	static class PatchTextExtraInfoJson {
+		String type;
+		String bookName;
+		String code;
+	}
+
+	static String nonullbr(String s) {
+		if (s == null) return "";
+		return "<br/>" + s;
+	}
+
+	static String nonullbr(List<String> s) {
+		if (s == null || s.size() == 0) return "";
+		return "<br/>" + s.toString();
+	}
+
 	@Override public boolean shouldOverrideUrlLoading(WebViewClient client, WebView view, String url) {
 		Uri uri = Uri.parse(url);
-		if (U.equals(uri.getScheme(), PROTOCOL)) {
+		final String scheme = uri.getScheme();
+		if ("patchtext".equals(scheme)) {
+			final Song song = currentSong;
+
+			final PatchTextExtraInfoJson extraInfo = new PatchTextExtraInfoJson();
+			extraInfo.type = "song";
+			extraInfo.bookName = currentBookName;
+			extraInfo.code = song.code;
+
+			final String songHeader = song.code + " " + song.title + nonullbr(song.title_original) + nonullbr(song.tune) + nonullbr(song.keySignature) + nonullbr(song.timeSignature) + nonullbr(song.authors_lyric) + nonullbr(song.authors_music);
+			final String songHtml = SongFragment.songToHtml(song, true);
+			final Spanned baseBody = Html.fromHtml(songHeader + "\n\n" + songHtml);
+			startActivity(PatchTextActivity.createIntent(baseBody, new Gson().toJson(extraInfo)));
+			return true;
+		} else if (BIBLE_PROTOCOL.equals(scheme)) {
 			final IntArrayList ariRanges = TargetDecoder.decode("o:" + uri.getSchemeSpecificPart());
 			final VersesDialog versesDialog = VersesDialog.newInstance(ariRanges);
 			versesDialog.setListener(new VersesDialog.VersesDialogListener() {

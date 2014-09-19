@@ -27,11 +27,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
-
-import yuku.alkitabfeedback.R;
-
 import com.example.android.wizardpager.wizard.model.Page;
 import com.example.android.wizardpager.wizard.model.TextareaPage;
+import yuku.alkitabfeedback.R;
 
 public class TextareaFragment extends Fragment {
     private static final String ARG_KEY = "key";
@@ -70,6 +68,9 @@ public class TextareaFragment extends Fragment {
 
         mMessageView = ((TextView) rootView.findViewById(R.id.message));
         mMessageView.setText(mPage.getData().getString(Page.SIMPLE_DATA_KEY));
+		if (mPage.getData().getBoolean(TextareaPage.DISABLE_EDITING)) {
+			mMessageView.setEnabled(false);
+		}
         return rootView;
     }
 

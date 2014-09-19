@@ -197,6 +197,9 @@
                   android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"/>
         <activity android:name="yuku.alkitab.base.ac.ReadingPlanActivity"
                   android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"/>
+        <activity android:name="yuku.alkitab.base.ac.PatchTextActivity"
+                  android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+	              android:windowSoftInputMode="adjustResize"/>
         <activity android:name="yuku.filechooser.FileChooserActivity"
                   android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"/>
         <activity android:name="com.example.android.wizardpager.MainActivity"

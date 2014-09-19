@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+	style="?buttonBarStyle"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:gravity="right"
+	android:orientation="horizontal">
+
+	<Button
+		android:id="@+id/bReference"
+		style="?buttonBarButtonStyle"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:paddingLeft="16dp"
+		android:paddingRight="16dp"
+		android:text="Reference"
+		android:textAllCaps="true"
+		android:textSize="14sp"
+		android:textStyle="bold" />
+
+	<Button
+		android:id="@+id/bSend"
+		style="?buttonBarButtonStyle"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:paddingLeft="16dp"
+		android:paddingRight="16dp"
+		android:text="Send"
+		android:textAllCaps="true"
+		android:textSize="14sp"
+		android:textStyle="bold" />
+
+</LinearLayout>

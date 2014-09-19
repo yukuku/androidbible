@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.gson.Gson;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -447,6 +448,12 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		}
 	}
 
+	static class PatchTextExtraInfoJson {
+		String type;
+		String kind;
+		String date;
+	}
+
 	CallbackSpan.OnClickListener verseClickListener = new CallbackSpan.OnClickListener() {
 		@Override
 		public void onClick(View widget, Object _data) {
@@ -454,33 +461,41 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			
 			Log.d(TAG, "Clicked verse reference inside devotion: " + reference); //$NON-NLS-1$
 
-			int ari;
-			if (reference.startsWith("ari:")) {
-				ari = Integer.parseInt(reference.substring(4));
+			if (reference.startsWith("patchtext:")) {
+				final PatchTextExtraInfoJson extraInfo = new PatchTextExtraInfoJson();
+				extraInfo.type = "devotion";
+				extraInfo.kind = currentKind.name;
+				extraInfo.date = date_format.get().format(currentDate);
+				startActivity(PatchTextActivity.createIntent(lContent.getText(), new Gson().toJson(extraInfo)));
 			} else {
-				Jumper jumper = new Jumper(reference);
-				if (!jumper.getParseSucceeded()) {
-					new AlertDialog.Builder(DevotionActivity.this)
-					.setMessage(getString(R.string.alamat_tidak_sah_alamat, reference))
-					.setPositiveButton(R.string.ok, null)
-					.show();
-					return;
+				int ari;
+				if (reference.startsWith("ari:")) {
+					ari = Integer.parseInt(reference.substring(4));
+				} else {
+					Jumper jumper = new Jumper(reference);
+					if (!jumper.getParseSucceeded()) {
+						new AlertDialog.Builder(DevotionActivity.this)
+							.setMessage(getString(R.string.alamat_tidak_sah_alamat, reference))
+							.setPositiveButton(R.string.ok, null)
+							.show();
+						return;
+					}
+
+					// Make sure references are parsed using Indonesian book names.
+					String[] bookNames = getResources().getStringArray(R.array.standard_book_names_in);
+					int[] bookIds = new int[bookNames.length];
+					for (int i = 0, len = bookNames.length; i < len; i++) {
+						bookIds[i] = i;
+					}
+
+					int bookId = jumper.getBookId(bookNames, bookIds);
+					int chapter_1 = jumper.getChapter();
+					int verse_1 = jumper.getVerse();
+					ari = Ari.encode(bookId, chapter_1, verse_1);
 				}
 
-				// Make sure references are parsed using Indonesian book names.
-				String[] bookNames = getResources().getStringArray(R.array.standard_book_names_in);
-				int[] bookIds = new int[bookNames.length];
-				for (int i = 0, len = bookNames.length; i < len; i++) {
-					bookIds[i] = i;
-				}
-
-				int bookId = jumper.getBookId(bookNames, bookIds);
-				int chapter_1 = jumper.getChapter();
-				int verse_1 = jumper.getVerse();
-				ari = Ari.encode(bookId, chapter_1, verse_1);
+				startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
 			}
-
-			startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
 		}
 	};
 

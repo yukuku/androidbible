@@ -26,7 +26,9 @@ import java.util.ArrayList;
  * A page asking for a name and an email.
  */
 public class TextareaPage extends Page {
-    private final String key;
+	public static final String DISABLE_EDITING = "disable_editing";
+
+	private final String key;
 
 	public TextareaPage(String key, ModelCallbacks callbacks, String title) {
         super(callbacks, title);

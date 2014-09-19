@@ -46,7 +46,7 @@ public class ArticleMeidA implements DevotionArticle {
 
 	@Override public CharSequence getContent(CallbackSpan.OnClickListener verseClickListener) {
 		SpannableStringBuilder sb = new SpannableStringBuilder();
-		sb.append(Html.fromHtml(bodyHtml));
+		sb.append(Html.fromHtml(bodyHtml + "<br/><small><a href='patchtext:'>Kirim perbaikan</a></small>"));
 		
 		// replace URLSpans with CallbackSpans
 		URLSpan[] spans = sb.getSpans(0, sb.length(), URLSpan.class);
