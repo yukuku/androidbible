@@ -462,11 +462,14 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			Log.d(TAG, "Clicked verse reference inside devotion: " + reference); //$NON-NLS-1$
 
 			if (reference.startsWith("patchtext:")) {
+				final Uri uri = Uri.parse(reference);
+				final String referenceUrl = uri.getQueryParameter("referenceUrl");
+
 				final PatchTextExtraInfoJson extraInfo = new PatchTextExtraInfoJson();
 				extraInfo.type = "devotion";
 				extraInfo.kind = currentKind.name;
 				extraInfo.date = date_format.get().format(currentDate);
-				startActivity(PatchTextActivity.createIntent(lContent.getText(), new Gson().toJson(extraInfo)));
+				startActivity(PatchTextActivity.createIntent(lContent.getText(), new Gson().toJson(extraInfo), referenceUrl));
 			} else {
 				int ari;
 				if (reference.startsWith("ari:")) {
