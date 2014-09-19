@@ -326,4 +326,14 @@
   <string name="marker_transfer_to_computer_title">Transfer ke komputer</string>
   <string name="marker_transfer_to_computer_description">Simpan pembatas buku, catatan, dan sorotan ke dalam satu file HTML sehingga Anda bisa mengeditnya atau mencetaknya dari komputer.</string>
   <string name="bookmark_delete_confirmation">Hapus pembatas buku ini?</string>
+
+	<string name="version_download_add_from_local">Dari perangkat</string>
+	<string name="version_download_add_from_url">Dari URL Internet</string>
+	<string name="version_download_add_from_url_prompt">URL FILE .pdb, .yes, ATAU .yes.gz</string>
+	<string name="version_download_invalid_url">URL tidak sah.</string>
+
+	<string name="patch_text_intro">Editlah bagian-bagian dari teks yang menurut Anda bisa dibetulkan atau diperbaiki. \n\nJangan mengubah bagian-bagian lainnya.\n\nTekan <b><small>KIRIM</small></b> setelah selesai.</string>
+	<string name="patch_text_error_no_edits">Lakukanlah beberapa perubahan sebelum mengirim.</string>
+	<string name="patch_text_menu_reference">Referensi</string>
+	<string name="patch_text_menu_send">Kirim</string>
 </resources>
