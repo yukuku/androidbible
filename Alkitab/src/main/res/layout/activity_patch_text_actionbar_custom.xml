@@ -15,7 +15,7 @@
 		android:layout_height="match_parent"
 		android:paddingLeft="16dp"
 		android:paddingRight="16dp"
-		android:text="Reference"
+		android:text="@string/patch_text_menu_reference"
 		android:textAllCaps="true"
 		android:textSize="14sp"
 		android:textStyle="bold" />
@@ -27,7 +27,7 @@
 		android:layout_height="match_parent"
 		android:paddingLeft="16dp"
 		android:paddingRight="16dp"
-		android:text="Send"
+		android:text="@string/patch_text_menu_send"
 		android:textAllCaps="true"
 		android:textSize="14sp"
 		android:textStyle="bold" />
