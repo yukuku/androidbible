@@ -71,7 +71,11 @@ public class MainActivity extends FragmentActivity implements
 		return new Intent(context, MainActivity.class);
 	}
 
-    @Override public void onCreate(Bundle savedInstanceState) {
+	public static Intent createIntent(Context context, String patchTextMessage) {
+		return new Intent(context, MainActivity.class).putExtra("patchTextMessage", patchTextMessage);
+	}
+
+	@Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alkitabfeedback_activity_main);
 
@@ -79,7 +83,16 @@ public class MainActivity extends FragmentActivity implements
         
         if (savedInstanceState != null) {
             mWizardModel.load(savedInstanceState.getBundle("model"));
-        }
+		} else {
+			final String patchTextMessage = getIntent().getStringExtra("patchTextMessage");
+			if (patchTextMessage != null) {
+				final Page message = mWizardModel.findByKey("message");
+				final Bundle bundle = new Bundle();
+				bundle.putString(TextareaPage.SIMPLE_DATA_KEY, patchTextMessage);
+				bundle.putBoolean(TextareaPage.DISABLE_EDITING, true);
+				message.resetData(bundle);
+			}
+		}
 
         mWizardModel.registerListener(this);
 

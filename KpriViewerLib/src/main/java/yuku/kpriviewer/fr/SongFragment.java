@@ -4,20 +4,12 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.List;
-
 import yuku.afw.V;
 import yuku.kpri.model.Lyric;
 import yuku.kpri.model.Song;
@@ -25,6 +17,12 @@ import yuku.kpri.model.Verse;
 import yuku.kpri.model.VerseKind;
 import yuku.kpriviewer.R;
 import yuku.kpriviewer.fr.base.BaseFragment;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.List;
 
 public class SongFragment extends BaseFragment {
 	public static final String TAG = SongFragment.class.getSimpleName();
@@ -127,48 +125,9 @@ public class SongFragment extends BaseFragment {
 			template = templateDivReplace(template, "timeSignature", song.timeSignature);
 			template = templateDivReplace(template, "authors_lyric", song.authors_lyric);
 			template = templateDivReplace(template, "authors_music", song.authors_music);
-		
-			SpannableStringBuilder sb = new SpannableStringBuilder();
-			for (int i = 0; i < song.lyrics.size(); i++) {
-				Lyric lyric = song.lyrics.get(i);
-				
-				sb.append("<div class='lyric'>");
-				
-				if (song.lyrics.size() > 1 || lyric.caption != null) { // otherwise, only lyric and has no name
-					if (lyric.caption != null) {
-						sb.append("<div class='lyric_caption'>" + lyric.caption + "</div>");
-					} else {
-						sb.append("<div class='lyric_caption'>Versi " + (i+1) + "</div>");
-					}
-				}
-				
-				int bait_normal_no = 0;
-				int bait_reff_no = 0;
-				for (Verse verse: lyric.verses) {
-					sb.append("<div class='verse" + (verse.kind == VerseKind.REFRAIN? " refrain": "") + "'>");
-					{
-						if (verse.kind == VerseKind.REFRAIN) {
-							bait_reff_no++;
-						} else {
-							bait_normal_no++;
-						}
-						
-						sb.append("<div class='verse_ordering'>" + (verse.kind == VerseKind.REFRAIN? bait_reff_no: bait_normal_no) + "</div>");
-		
-						sb.append("<div class='verse_content'>");
-						for (String line: verse.lines) {
-							sb.append("<p class='line'>").append(line).append("</p>");
-						}
-						sb.append("</div>");
-					}				
-					sb.append("</div>");
-				}
-				
-				sb.append("</div>");
-			}
-			
-			template = templateDivReplace(template, "lyrics", sb.toString());
-		
+
+			template = templateDivReplace(template, "lyrics", songToHtml(song, false));
+
 			webView.loadDataWithBaseURL("file:///android_asset/" + templateFile, template, "text/html", "utf-8", null);
 		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
@@ -176,6 +135,58 @@ public class SongFragment extends BaseFragment {
 			e.printStackTrace(pw);
 			webView.loadDataWithBaseURL(null, sw.toString(), "text/plain", "utf-8", null);
 		}
+	}
+
+	public static String songToHtml(final Song song, final boolean forPatchText) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < song.lyrics.size(); i++) {
+			Lyric lyric = song.lyrics.get(i);
+
+			sb.append("<div class='lyric'>");
+
+			if (song.lyrics.size() > 1 || lyric.caption != null) { // otherwise, only lyric and has no name
+				if (lyric.caption != null) {
+					sb.append("<div class='lyric_caption'>" + lyric.caption + "</div>");
+				} else {
+					sb.append("<div class='lyric_caption'>Versi " + (i+1) + "</div>");
+				}
+			}
+
+			int bait_normal_no = 0;
+			int bait_reff_no = 0;
+			for (Verse verse: lyric.verses) {
+				sb.append("<div class='verse" + (verse.kind == VerseKind.REFRAIN? " refrain": "") + "'>");
+				{
+					if (verse.kind == VerseKind.REFRAIN) {
+						bait_reff_no++;
+					} else {
+						bait_normal_no++;
+					}
+
+					if (forPatchText) {
+						sb.append(verse.kind == VerseKind.REFRAIN ? ("reff " + bait_reff_no) : bait_normal_no);
+					} else {
+						sb.append("<div class='verse_ordering'>" + (verse.kind == VerseKind.REFRAIN? bait_reff_no: bait_normal_no) + "</div>");
+					}
+
+					sb.append("<div class='verse_content'>");
+
+					for (String line : verse.lines) {
+						if (forPatchText) {
+							sb.append(line).append("<br/>");
+						} else {
+							sb.append("<p class='line'>").append(line).append("</p>");
+						}
+					}
+
+					sb.append("</div>");
+				}
+				sb.append("</div>");
+			}
+
+			sb.append("</div>");
+		}
+		return sb.toString();
 	}
 	
 	private String templateDivReplace(String template, String name, String value) {

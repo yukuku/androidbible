@@ -70,6 +70,9 @@ public class TextareaFragment extends Fragment {
 
         mMessageView = ((TextView) rootView.findViewById(R.id.message));
         mMessageView.setText(mPage.getData().getString(Page.SIMPLE_DATA_KEY));
+		if (mPage.getData().getBoolean(TextareaPage.DISABLE_EDITING)) {
+			mMessageView.setEnabled(false);
+		}
         return rootView;
     }
 
