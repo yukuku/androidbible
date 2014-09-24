@@ -215,21 +215,26 @@ public class DailyVerseAppWidgetReceiver extends AppWidgetProvider {
 			return S.activeVersion;
 		}
 
-		if (MVersionInternal.getVersionInternalId().equals(versionId)) {
-			return VersionImpl.getInternalVersion();
-		}
+		tryOpenVersion:
+		{
+			if (MVersionInternal.getVersionInternalId().equals(versionId)) {
+				return VersionImpl.getInternalVersion();
+			}
 
-		// try database versions
-		for (final MVersionDb mvDb: S.getDb().listAllVersions()) {
-			if (mvDb.getVersionId().equals(versionId)) {
-				if (mvDb.hasDataFile()) {
-					return mvDb.getVersion();
-				} else {
-					return null;
+			// try database versions
+			for (final MVersionDb mvDb : S.getDb().listAllVersions()) {
+				if (mvDb.getVersionId().equals(versionId)) {
+					if (mvDb.hasDataFile()) {
+						return mvDb.getVersion();
+					} else {
+						break tryOpenVersion;
+					}
 				}
 			}
 		}
-		return null;
+
+		Log.w(TAG, "Version selected for widget id " + appWidgetId + ": " + versionId + " is no longer available. Reverting to internal version.");
+		return VersionImpl.getInternalVersion();
 	}
 
 	public static int[] getVerse(int appWidgetId) {
