@@ -838,7 +838,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			final String songHeader = song.code + " " + song.title + nonullbr(song.title_original) + nonullbr(song.tune) + nonullbr(song.keySignature) + nonullbr(song.timeSignature) + nonullbr(song.authors_lyric) + nonullbr(song.authors_music);
 			final String songHtml = SongFragment.songToHtml(song, true);
 			final Spanned baseBody = Html.fromHtml(songHeader + "\n\n" + songHtml);
-			startActivity(PatchTextActivity.createIntent(baseBody, new Gson().toJson(extraInfo)));
+			startActivity(PatchTextActivity.createIntent(baseBody, new Gson().toJson(extraInfo), null));
 			return true;
 		} else if (BIBLE_PROTOCOL.equals(scheme)) {
 			final IntArrayList ariRanges = TargetDecoder.decode("o:" + uri.getSchemeSpecificPart());

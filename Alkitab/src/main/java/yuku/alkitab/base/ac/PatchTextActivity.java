@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ import java.util.LinkedList;
 public class PatchTextActivity extends BaseActivity {
 	public static final String EXTRA_baseBody = "baseBody";
 	public static final String EXTRA_extraInfo = "extraInfo";
+	public static final String EXTRA_referenceUrl = "referenceUrl";
 	public static final int REQCODE_send = 1;
 
 	EditText tBody;
@@ -33,10 +35,11 @@ public class PatchTextActivity extends BaseActivity {
 	CharSequence baseBody;
 	String extraInfo;
 
-	public static Intent createIntent(final CharSequence baseBody, final String extraInfo) {
+	public static Intent createIntent(final CharSequence baseBody, final String extraInfo, final String referenceUrl) {
 		final Intent res = new Intent(App.context, PatchTextActivity.class);
 		res.putExtra(EXTRA_baseBody, baseBody);
 		res.putExtra(EXTRA_extraInfo, extraInfo);
+		res.putExtra(EXTRA_referenceUrl, referenceUrl);
 		return res;
 	}
 
@@ -63,12 +66,23 @@ public class PatchTextActivity extends BaseActivity {
 		bReference = V.get(customView, R.id.bReference);
 		bSend = V.get(customView, R.id.bSend);
 
-		bReference.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				bReference_click();
-			}
-		});
+		baseBody = getIntent().getCharSequenceExtra(EXTRA_baseBody);
+		tBody.setText(baseBody, TextView.BufferType.EDITABLE);
+
+		extraInfo = getIntent().getStringExtra(EXTRA_extraInfo);
+		final String referenceUrl = getIntent().getStringExtra(EXTRA_referenceUrl);
+
+		if (referenceUrl != null) {
+			bReference.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(referenceUrl)));
+				}
+			});
+		} else {
+			bReference.setVisibility(View.GONE);
+		}
+
 		bSend.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
@@ -76,19 +90,10 @@ public class PatchTextActivity extends BaseActivity {
 			}
 		});
 
-		baseBody = getIntent().getCharSequenceExtra(EXTRA_baseBody);
-		tBody.setText(baseBody, TextView.BufferType.EDITABLE);
-
-		extraInfo = getIntent().getStringExtra(EXTRA_extraInfo);
-
 		new AlertDialog.Builder(this)
 			.setMessage(R.string.patch_text_intro)
 			.setPositiveButton(R.string.ok, null)
 			.show();
-	}
-
-	void bReference_click() {
-
 	}
 
 	void bSend_click() {
@@ -102,6 +107,7 @@ public class PatchTextActivity extends BaseActivity {
 		dmp.diff_cleanupSemanticLossless(diffs);
 
 		final StringBuilder sb = new StringBuilder();
+		boolean hasEdits = false;
 		for (diff_match_patch.Diff diff : diffs) {
 			switch (diff.operation) {
 				case EQUAL:
@@ -109,11 +115,21 @@ public class PatchTextActivity extends BaseActivity {
 					break;
 				case DELETE:
 					sb.append("<del>").append(diff.text).append("</del>");
+					hasEdits = true;
 					break;
 				case INSERT:
 					sb.append("<ins>").append(diff.text).append("</ins>");
+					hasEdits = true;
 					break;
 			}
+		}
+
+		if (!hasEdits) {
+			new AlertDialog.Builder(this)
+				.setMessage(R.string.patch_text_error_no_edits)
+				.setPositiveButton(R.string.ok, null)
+				.show();
+			return;
 		}
 
 		final String patchTextMessage = "PATCHTEXT\n\n" + extraInfo + "\n\n" + sb.toString();

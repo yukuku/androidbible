@@ -400,4 +400,5 @@
 	<string name="version_download_not_yes">The Internet URL must have the .yes ending.</string>
 
 	<string name="patch_text_intro">Please edit the parts of the text that you think can be corrected or made better.\n\nDo not change the other parts.\n\nTap <b><small>SEND</small></b> when finished.</string>
+	<string name="patch_text_error_no_edits">Please make some edits before sending.</string>
 </resources>

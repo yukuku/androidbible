@@ -1,5 +1,6 @@
 package yuku.alkitab.base.devotion;
 
+import android.net.Uri;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.style.URLSpan;
@@ -46,7 +47,7 @@ public class ArticleMeidA implements DevotionArticle {
 
 	@Override public CharSequence getContent(CallbackSpan.OnClickListener verseClickListener) {
 		SpannableStringBuilder sb = new SpannableStringBuilder();
-		sb.append(Html.fromHtml(bodyHtml + "<br/><small><a href='patchtext:'>Kirim perbaikan</a></small>"));
+		sb.append(Html.fromHtml(bodyHtml + "<br/><small><a href='patchtext://host/?referenceUrl=" + Uri.encode("http://m.ccel.org/ccel/spurgeon/morneve.d" + date.substring(4, 8) + "am.html") + "'>Kirim perbaikan</a></small>"));
 		
 		// replace URLSpans with CallbackSpans
 		URLSpan[] spans = sb.getSpans(0, sb.length(), URLSpan.class);
