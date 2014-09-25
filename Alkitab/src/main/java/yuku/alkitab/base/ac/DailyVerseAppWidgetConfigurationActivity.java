@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -136,9 +135,9 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 	private View.OnClickListener bOk_click = new View.OnClickListener() {
 		@Override
 		public void onClick(final View v) {
-			final DailyVerseAppWidgetConfigurationActivity context = DailyVerseAppWidgetConfigurationActivity.this;
+			final Context context = DailyVerseAppWidgetConfigurationActivity.this;
 			AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-			String versionId = adapter.versions.second.get(selectedVersionPosition).getVersionId();
+			String versionId = adapter.versions.get(selectedVersionPosition).getVersionId();
 
 			Preferences.hold();
 			try {
@@ -181,7 +180,7 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 	};
 
 	class VersionAdapter extends EasyAdapter {
-		private Pair<List<String>,List<MVersion>> versions;
+		private List<MVersion> versions;
 
 		void reload() {
 			versions = S.getAvailableVersions();
@@ -196,14 +195,14 @@ public class DailyVerseAppWidgetConfigurationActivity extends Activity {
 		@Override
 		public void bindView(final View view, final int position, final ViewGroup parent) {
 			CheckedTextView text1 = V.get(view, android.R.id.text1);
-			text1.setText(versions.first.get(position));
+			text1.setText(versions.get(position).longName);
 
 			text1.setChecked(position == selectedVersionPosition);
 		}
 
 		@Override
 		public int getCount() {
-			return versions.second.size();
+			return versions.size();
 		}
 	}
 }

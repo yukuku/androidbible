@@ -52,7 +52,7 @@ public enum Prefkey {
 	 * The ordering of internal version.
 	 * For {@link yuku.alkitab.base.model.MVersionDb}, the ordering is stored in a table on the database.
 	 * However for internal version, the ordering is stored in the preferences.
-	 * Default is 1.
+	 * Default is {@link yuku.alkitab.base.model.MVersionInternal#DEFAULT_ORDERING}.
 	 */
 	internal_version_ordering,
 }

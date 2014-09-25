@@ -759,7 +759,7 @@ public class InternalDb {
 		db.beginTransaction();
 		try {
 			{
-				final int internal_ordering = Preferences.getInt(Prefkey.internal_version_ordering, 1);
+				final int internal_ordering = Preferences.getInt(Prefkey.internal_version_ordering, MVersionInternal.DEFAULT_ORDERING);
 				if (from.ordering > to.ordering) { // move up
 					db.execSQL("update " + Db.TABLE_Version + " set " + Db.Version.ordering + "=(" + Db.Version.ordering + "+1) where ?<=" + Db.Version.ordering + " and " + Db.Version.ordering + "<?", new Object[]{to.ordering, from.ordering});
 					if (to.ordering <= internal_ordering && internal_ordering < from.ordering) {

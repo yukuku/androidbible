@@ -1,12 +1,11 @@
 package yuku.alkitab.base;
 
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.util.Pair;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.config.AppConfig;
@@ -23,6 +22,8 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -134,48 +135,65 @@ public class S {
 
 	/**
 	 * Returns the list of versions that are:
-	 * 1. internal
+	 * 1. internal, or
 	 * 2. database versions that have the data file and active
 	 **/
-	public static Pair<List<String>, List<MVersion>> getAvailableVersions() {
-		final List<String> options = new ArrayList<>(); // sync with below line
-		final List<MVersion> data = new ArrayList<>();  // sync with above line
+	public static List<MVersion> getAvailableVersions() {
+		final List<MVersion> res = new ArrayList<>();
 
-		final AppConfig ac = AppConfig.get();
-		options.add(ac.internalLongName); // 1. internal
-		data.add(new MVersionInternal());
+		// 1. Internal version
+		res.add(S.getMVersionInternal());
 
-		// 2. database versions
+		// 2. Database versions
 		for (MVersionDb mvDb: S.getDb().listAllVersions()) {
 			if (mvDb.hasDataFile() && mvDb.getActive()) {
-				options.add(mvDb.longName);
-				data.add(mvDb);
+				res.add(mvDb);
 			}
 		}
 
-		return Pair.create(options, data);
+		// sort based on ordering
+		Collections.sort(res, new Comparator<MVersion>() {
+			@Override
+			public int compare(final MVersion lhs, final MVersion rhs) {
+				return lhs.ordering - rhs.ordering;
+			}
+		});
+
+		return res;
+	}
+
+	/**
+	 * Get the internal version model. This does not return a singleton. The ordering is the latest taken from preferences.
+	 */
+	public static MVersionInternal getMVersionInternal() {
+		final AppConfig ac = AppConfig.get();
+		final MVersionInternal res = new MVersionInternal();
+		res.locale = ac.internalLocale;
+		res.shortName = ac.internalShortName;
+		res.longName = ac.internalLongName;
+		res.description = null;
+		res.ordering = Preferences.getInt(Prefkey.internal_version_ordering, MVersionInternal.DEFAULT_ORDERING);
+		return res;
 	}
 
 	public interface VersionDialogListener {
 		void onVersionSelected(MVersion mv);
 	}
 
-	public static void openVersionsDialog(final Context activity, final boolean withNone, final String selectedVersionId, final VersionDialogListener listener) {
-		final Pair<List<String>, List<MVersion>> versions = getAvailableVersions();
-		final List<String> options = versions.first;
-		final List<MVersion> data = versions.second;
+	public static void openVersionsDialog(final Activity activity, final boolean withNone, final String selectedVersionId, final VersionDialogListener listener) {
+		final List<MVersion> versions = getAvailableVersions();
 
 		if (withNone) {
-			options.add(0, activity.getString(R.string.split_version_none));
-			data.add(0, null);
+			versions.add(0, null);
 		}
 
+		// determine the currently selected one
 		int selected = -1;
-		if (selectedVersionId == null) {
-			selected = 0;
+		if (withNone && selectedVersionId == null) {
+			selected = 0; // "none"
 		} else {
-			for (int i = (withNone? 1: 0) /* because 0 is None */; i < data.size(); i++) {
-				final MVersion mv = data.get(i);
+			for (int i = (withNone? 1: 0) /* because 0 is None */; i < versions.size(); i++) {
+				final MVersion mv = versions.get(i);
 				if (mv.getVersionId().equals(selectedVersionId)) {
 					selected = i;
 					break;
@@ -183,10 +201,16 @@ public class S {
 			}
 		}
 
+		final String[] options = new String[versions.size()];
+		for (int i = 0; i < versions.size(); i++) {
+			final MVersion version = versions.get(i);
+			options[i] = version == null ? activity.getString(R.string.split_version_none) : version.longName;
+		}
+
 		new AlertDialog.Builder(activity)
-			.setSingleChoiceItems(options.toArray(new String[options.size()]), selected, new DialogInterface.OnClickListener() {
+			.setSingleChoiceItems(options, selected, new DialogInterface.OnClickListener() {
 				@Override public void onClick(DialogInterface dialog, int which) {
-					final MVersion mv = data.get(which);
+					final MVersion mv = versions.get(which);
 					listener.onVersionSelected(mv);
 					dialog.dismiss();
 				}

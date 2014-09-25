@@ -56,7 +56,6 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
-import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionDb;
@@ -64,7 +63,6 @@ import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.model.MVersionPreset;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes2;
-import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.storage.YesReaderFactory;
 import yuku.alkitab.base.sv.VersionConfigUpdaterService;
 import yuku.alkitab.base.util.AddonManager;
@@ -1143,15 +1141,7 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 				items.clear();
 
 				{ // internal
-					final AppConfig ac = AppConfig.get();
-					final MVersionInternal internal = new MVersionInternal();
-					internal.locale = ac.internalLocale;
-					internal.shortName = ac.internalShortName;
-					internal.longName = ac.internalLongName;
-					internal.description = null;
-					internal.ordering = Preferences.getInt(Prefkey.internal_version_ordering, 1);
-
-					items.add(new Item(internal));
+					items.add(new Item(S.getMVersionInternal()));
 				}
 
 				final Set<String> presetNamesInDb = new HashSet<>();

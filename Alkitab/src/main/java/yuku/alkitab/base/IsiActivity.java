@@ -455,7 +455,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		if (mv != null) {
 			loadVersion(mv, false);
 		} else {
-			loadVersion(new MVersionInternal(), false);
+			loadVersion(S.getMVersionInternal(), false);
 		}
 
 		{ // load book
@@ -483,7 +483,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			final String lastSplitVersionId = instant_pref.getString(PREFKEY_lastSplitVersionId, null);
 			if (lastSplitVersionId != null) {
 				final MVersion splitMv = getVersionFromVersionId(lastSplitVersionId);
-				final MVersion splitMvActual = splitMv == null? new MVersionInternal(): splitMv;
+				final MVersion splitMvActual = splitMv == null? S.getMVersionInternal(): splitMv;
 
 				if (loadSplitVersion(splitMvActual)) {
 					openSplitDisplay();
