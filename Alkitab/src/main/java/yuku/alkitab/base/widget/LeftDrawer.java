@@ -177,6 +177,7 @@ public abstract class LeftDrawer extends ScrollView {
 			void cFullScreen_checkedChange(boolean isChecked);
 			void cNightMode_checkedChange(boolean isChecked);
 			void cSplitVersion_checkedChange(final Switch cSplitVersion, boolean isChecked);
+			void bProgressMarkList_click();
 			void bProgress_click(int preset_id);
 		}
 
@@ -191,6 +192,7 @@ public abstract class LeftDrawer extends ScrollView {
 		Switch cNightMode;
 		Switch cSplitVersion;
 
+		View bProgressMarkList;
 		View bProgress1;
 		View bProgress2;
 		View bProgress3;
@@ -232,13 +234,21 @@ public abstract class LeftDrawer extends ScrollView {
 			cNightMode = V.get(this, R.id.cNightMode);
 			cSplitVersion = V.get(this, R.id.cSplitVersion);
 
+			bProgressMarkList = V.get(this, R.id.bProgressMarkList);
 			bProgress1 = V.get(this, R.id.bProgress1);
 			bProgress2 = V.get(this, R.id.bProgress2);
 			bProgress3 = V.get(this, R.id.bProgress3);
 			bProgress4 = V.get(this, R.id.bProgress4);
 			bProgress5 = V.get(this, R.id.bProgress5);
 
-			cNightMode.setChecked(Preferences.getBoolean(Prefkey.is_night_mode, false));
+			cNightMode.setChecked(!isInEditMode() && Preferences.getBoolean(Prefkey.is_night_mode, false));
+
+			bProgressMarkList.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					listener.bProgressMarkList_click();
+				}
+			});
 
 			final View[] views = new View[]{bProgress1, bProgress2, bProgress3, bProgress4, bProgress5};
 			for (int i = 0; i < views.length; i++) {

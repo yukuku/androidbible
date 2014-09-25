@@ -55,7 +55,8 @@ import yuku.alkitab.base.ac.SearchActivity;
 import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.config.AppConfig;
-import yuku.alkitab.base.dialog.ProgressMarkDialog;
+import yuku.alkitab.base.dialog.ProgressMarkListDialog;
+import yuku.alkitab.base.dialog.ProgressMarkRenameDialog;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeHighlightDialog;
 import yuku.alkitab.base.dialog.TypeNoteDialog;
@@ -103,7 +104,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
-public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.XrefDialogListener, LeftDrawer.Text.Listener {
+public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.XrefDialogListener, LeftDrawer.Text.Listener, ProgressMarkListDialog.Listener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
 
 	public static final String ACTION_ATTRIBUTE_MAP_CHANGED = "yuku.alkitab.action.ATTRIBUTE_MAP_CHANGED";
@@ -1654,17 +1655,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		public void onProgressMarkAttributeClick(final int preset_id) {
 			final ProgressMark progressMark = S.getDb().getProgressMarkByPresetId(preset_id);
 
-			ProgressMarkDialog.showRenameDialog(IsiActivity.this, progressMark, new ProgressMarkDialog.Listener() {
+			ProgressMarkRenameDialog.show(IsiActivity.this, progressMark, new ProgressMarkRenameDialog.Listener() {
 				@Override
 				public void onOked() {
 					lsText.uncheckAllVerses(true);
-					reloadBothAttributeMaps();
 				}
 
 				@Override
 				public void onDeleted() {
 					lsText.uncheckAllVerses(true);
-					reloadBothAttributeMaps();
 				}
 			});
 		}
@@ -2073,7 +2072,24 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	@Override
+	public void bProgressMarkList_click() {
+		if (S.getDb().countAllProgressMarks() > 0) {
+			final ProgressMarkListDialog dialog = new ProgressMarkListDialog();
+			dialog.show(getSupportFragmentManager(), "dialog_progress_mark_list");
+		} else {
+			new AlertDialog.Builder(this)
+				.setMessage(R.string.pm_activate_tutorial)
+				.setPositiveButton(R.string.ok, null)
+				.show();
+		}
+	}
+
+	@Override
 	public void bProgress_click(final int preset_id) {
+		gotoProgressMark(preset_id);
+	}
+
+	private void gotoProgressMark(final int preset_id) {
 		final ProgressMark progressMark = S.getDb().getProgressMarkByPresetId(preset_id);
 		final int ari = progressMark.ari;
 
@@ -2086,5 +2102,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				.setPositiveButton(R.string.ok, null)
 				.show();
 		}
+	}
+
+	@Override
+	public void onProgressMarkSelected(final int preset_id) {
+		gotoProgressMark(preset_id);
+	}
+
+	@Override
+	public void onProgressMarkDeleted() {
+		App.getLbm().sendBroadcast(new Intent(ACTION_ATTRIBUTE_MAP_CHANGED));
 	}
 }

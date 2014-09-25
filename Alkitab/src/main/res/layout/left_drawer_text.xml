@@ -30,23 +30,40 @@
 			android:gravity="left|center_vertical"
 			android:text="@string/menu_markers" />
 
-		<TextView
+		<FrameLayout
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginLeft="4dp"
-			android:layout_marginRight="4dp"
-			android:layout_marginTop="8dp"
-			android:textAllCaps="true"
-			android:text="@string/menuProgress"
-			android:textSize="14sp"
-			android:textStyle="bold" />
+			android:layout_height="32dp">
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="bottom"
+				android:layout_marginBottom="4dp"
+				android:layout_marginLeft="8dp"
+				android:text="@string/menuProgress"
+				android:textAllCaps="true"
+				android:textColor="#bebebe"
+				android:textSize="14sp"
+				android:textStyle="bold" />
+
+			<ImageButton
+				android:id="@+id/bProgressMarkList"
+				style="?android:buttonBarButtonStyle"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_gravity="right"
+				android:gravity="bottom|right"
+				android:minWidth="64dp"
+				android:paddingRight="8dp"
+				android:src="@drawable/ic_progress_mark_list" />
+
+		</FrameLayout>
 
 		<ImageView
 			android:layout_width="match_parent"
 			android:layout_height="2dp"
 			android:layout_marginLeft="4dp"
 			android:layout_marginRight="4dp"
-			android:layout_marginTop="2dp"
 			android:src="#5c5c5c"
 			tools:ignore="ContentDescription" />
 

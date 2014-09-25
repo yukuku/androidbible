@@ -786,9 +786,13 @@ public class InternalDb {
 		}
 	}
 
+	/**
+	 * Lists all progress marks that are not empty.
+	 * (Empty ones will have an ari of 0. They will be excluded.)
+	 */
 	public List<ProgressMark> listAllProgressMarks() {
-		List<ProgressMark> res = new ArrayList<>();
-		Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_ProgressMark, null, null, null, null, null, null);
+		final List<ProgressMark> res = new ArrayList<>();
+		final Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_ProgressMark, null, Db.ProgressMark.ari + " != 0", null, null, null, null);
 		try {
 			while (cursor.moveToNext()) {
 				res.add(progressMarkFromCursor(cursor));
@@ -796,7 +800,16 @@ public class InternalDb {
 		} finally {
 			cursor.close();
 		}
+
 		return res;
+	}
+
+	/**
+	 * Count the number of progress marks that are not empty.
+	 * (Empty ones will have an ari of 0. They will be excluded.)
+	 */
+	public int countAllProgressMarks() {
+		return (int) DatabaseUtils.queryNumEntries(helper.getReadableDatabase(), Db.TABLE_ProgressMark, Db.ProgressMark.ari + " != 0");
 	}
 
 	public ProgressMark getProgressMarkByPresetId(final int preset_id) {

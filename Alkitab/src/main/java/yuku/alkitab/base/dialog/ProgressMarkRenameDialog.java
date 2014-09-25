@@ -3,12 +3,15 @@ package yuku.alkitab.base.dialog;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import yuku.afw.V;
+import yuku.alkitab.base.App;
+import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.widget.AttributeView;
 import yuku.alkitab.debug.R;
@@ -16,15 +19,15 @@ import yuku.alkitab.model.ProgressMark;
 
 import java.util.Date;
 
-public class ProgressMarkDialog extends DialogFragment {
-	public static final String TAG = ProgressMarkDialog.class.getSimpleName();
+public class ProgressMarkRenameDialog extends DialogFragment {
+	public static final String TAG = ProgressMarkRenameDialog.class.getSimpleName();
 
 	public interface Listener {
 		void onOked();
 		void onDeleted();
 	}
 
-	public static void showRenameDialog(final Activity activity, final ProgressMark progressMark, final Listener listener) {
+	public static void show(final Activity activity, final ProgressMark progressMark, final Listener listener) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 		final View v = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_progress_mark_edit, null);
 		final TextView tCaption = V.get(v, R.id.tCaption);
@@ -53,10 +56,13 @@ public class ProgressMarkDialog extends DialogFragment {
 								progressMark.modifyTime = new Date();
 								S.getDb().updateProgressMark(progressMark);
 
+								// Since updating database is the responsibility here,
+								// announcing it will also be here.
+								App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
+
 								if (listener != null) {
 									listener.onDeleted();
 								}
-
 							}
 						})
 						.setNegativeButton(R.string.cancel, null)
@@ -75,6 +81,11 @@ public class ProgressMarkDialog extends DialogFragment {
 						}
 						progressMark.modifyTime = new Date();
 						S.getDb().updateProgressMark(progressMark);
+
+						// Since updating database is the responsibility here,
+						// announcing it will also be here.
+						App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
+
 						if (listener != null) {
 							listener.onOked();
 						}
