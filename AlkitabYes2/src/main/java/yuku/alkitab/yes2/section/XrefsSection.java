@@ -30,7 +30,7 @@ public class XrefsSection extends SectionContent {
 	int[] index_offset; // pos to content offset
 	int content_start_offset; // file offset of the start of content
 
-	XrefsSection(final RandomInputStream input) throws Exception {
+	XrefsSection(final RandomInputStream input) throws IOException {
 		super(SECTION_NAME);
 
 		final BintexReader br = new BintexReader(input);
@@ -77,7 +77,7 @@ public class XrefsSection extends SectionContent {
 	}
 
 	public static class Reader implements SectionContent.Reader<XrefsSection> {
-		@Override public XrefsSection read(RandomInputStream input) throws Exception {
+		@Override public XrefsSection read(RandomInputStream input) throws IOException {
 			return new XrefsSection(input);
 		}
 	}

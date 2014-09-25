@@ -2,7 +2,6 @@ package yuku.alkitab.base.storage;
 
 import android.util.Log;
 import yuku.alkitab.base.App;
-import yuku.alkitab.base.S;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.io.BibleReader;
 import yuku.alkitab.model.Book;
@@ -83,9 +82,11 @@ public class InternalReader implements BibleReader {
 	}
 
 	@Override public Book[] loadBooks() {
-		final InputStream is = S.openRaw(versionPrefix + "_index_bt"); //$NON-NLS-1$
-		final BintexReader br = new BintexReader(is);
+		BintexReader br = null;
 		try {
+			final InputStream is = App.context.getAssets().open("internal/" + versionPrefix + "_index_bt.bt");
+			br = new BintexReader(is);
+
 			// uint8 version = 3
 			// uint8 book_count
 			final int version = br.readUint8();
@@ -99,7 +100,7 @@ public class InternalReader implements BibleReader {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		} finally {
-			br.close();
+			if (br != null) br.close();
 		}
 	}
 
@@ -147,10 +148,11 @@ public class InternalReader implements BibleReader {
 
 			if (cache_inputStream == null) {
 				// case 1: haven't opened anything
-				in = S.openRaw(internalBook.resName);
+				in = App.context.getAssets().open("internal/" + internalBook.resName + ".txt");
 				cache_inputStream = in;
 				cache_file = internalBook.resName;
 
+				//noinspection ResultOfMethodCallIgnored
 				in.skip(offset);
 				cache_posInput = offset;
 			} else {
@@ -161,15 +163,17 @@ public class InternalReader implements BibleReader {
 						// we can go forward
 						in = cache_inputStream;
 
+						//noinspection ResultOfMethodCallIgnored
 						in.skip(offset - cache_posInput);
 						cache_posInput = offset;
 					} else {
 						// but can't go backward, so we close the stream and reopen it
 						cache_inputStream.close();
 
-						in = S.openRaw(internalBook.resName);
+						in = App.context.getAssets().open("internal/" + internalBook.resName + ".txt");
 						cache_inputStream = in;
 
+						//noinspection ResultOfMethodCallIgnored
 						in.skip(offset);
 						cache_posInput = offset;
 					}
@@ -177,10 +181,11 @@ public class InternalReader implements BibleReader {
 					// case 2.2: different file. So close current and open the new one
 					cache_inputStream.close();
 
-					in = S.openRaw(internalBook.resName);
+					in = App.context.getAssets().open("internal/" + internalBook.resName + ".txt");
 					cache_inputStream = in;
 					cache_file = internalBook.resName;
 
+					//noinspection ResultOfMethodCallIgnored
 					in.skip(offset);
 					cache_posInput = offset;
 				}
@@ -214,9 +219,11 @@ public class InternalReader implements BibleReader {
 		}
 
 		final long startTime = System.currentTimeMillis();
-		
-		InputStream is = S.openRaw(versionPrefix + "_pericope_index_bt"); //$NON-NLS-1$
-		if (is == null) {
+
+		final InputStream is;
+		try {
+			is = App.context.getAssets().open("internal/" + versionPrefix + "_pericope_index_bt.bt");
+		} catch (IOException e) {
 			return null;
 		}
 
@@ -253,13 +260,14 @@ public class InternalReader implements BibleReader {
 
 		int kini = pertama;
 
-		BintexReader in = new BintexReader(S.openRaw(versionPrefix + "_pericope_blocks_bt")); //$NON-NLS-1$
+		BintexReader in = null;
 		try {
+			in = new BintexReader(App.context.getAssets().open("internal/" + versionPrefix + "_pericope_blocks_bt.bt"));
 			while (true) {
 				int ari = pericopeIndex.getAri(kini);
 
 				if (ari >= ariMax) {
-					// habis. Uda ga relevan
+					// That's all. No longer relevant.
 					break;
 				}
 
@@ -274,8 +282,10 @@ public class InternalReader implements BibleReader {
 					break;
 				}
 			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		} finally {
-			in.close();
+			if (in != null) in.close();
 		}
 
 		return res;
@@ -285,18 +295,20 @@ public class InternalReader implements BibleReader {
 		if (xrefsKnownNotAvailable) return null;
 
 		if (xrefsSection_ == null) {
-			final int resId = App.context.getResources().getIdentifier(AppConfig.get().internalPrefix + "_xrefs_bt", "raw", App.context.getPackageName());
-			if (resId == 0) {
+			final String assetName = "internal/" + AppConfig.get().internalPrefix + "_xrefs_bt.bt";
+
+			try {
+				App.context.getAssets().list(assetName);
+			} catch (IOException e) {
 				Log.d(TAG, "Can't load xrefs from internal, marking it as not available.");
 				xrefsKnownNotAvailable = true;
 				return null;
 			}
 
 			try {
-				xrefsSection_ = new XrefsSection.Reader().read(new RawResourceRandomInputStream(resId));
-			} catch (Exception e) {
-				Log.e(TAG, "Error reading xrefs section from internal", e);
-				return null;
+				xrefsSection_ = new XrefsSection.Reader().read(new AssetRandomInputStream(assetName));
+			} catch (IOException e) {
+				throw new RuntimeException("Error reading xrefs section from internal", e);
 			}
 		}
 
@@ -307,15 +319,18 @@ public class InternalReader implements BibleReader {
 		if (footnotesKnownNotAvailable) return null;
 
 		if (footnotesSection_ == null) {
-			final int resId = App.context.getResources().getIdentifier(AppConfig.get().internalPrefix + "_footnotes_bt", "raw", App.context.getPackageName());
-			if (resId == 0) {
+			final String assetName = "internal/" + AppConfig.get().internalPrefix + "_footnotes_bt.bt";
+
+			try {
+				App.context.getAssets().list(assetName);
+			} catch (IOException e) {
 				Log.d(TAG, "Can't load footnotes from internal, marking it as not available.");
 				footnotesKnownNotAvailable = true;
 				return null;
 			}
 
 			try {
-				footnotesSection_ = new FootnotesSection.Reader().read(new RawResourceRandomInputStream(resId));
+				footnotesSection_ = new FootnotesSection.Reader().read(new AssetRandomInputStream(assetName));
 			} catch (Exception e) {
 				Log.e(TAG, "Error reading footnotes section from internal", e);
 				return null;
@@ -326,20 +341,23 @@ public class InternalReader implements BibleReader {
 	}
 }
 
-class RawResourceRandomInputStream extends RandomInputStream {
-	public static final String TAG = RawResourceRandomInputStream.class.getSimpleName();
-
-	final int resId;
+class AssetRandomInputStream extends RandomInputStream {
+	final String assetName;
 	InputStream in;
 	int pos;
 
-	public RawResourceRandomInputStream(final int resId) {
-		this.resId = resId;
+	public AssetRandomInputStream(final String assetName) {
+		this.assetName = assetName;
 		reopen();
 	}
 
 	private void reopen() {
-		this.in = App.context.getResources().openRawResource(resId);
+		try {
+			this.in = App.context.getAssets().open(assetName);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
 		this.pos = 0;
 	}
 
@@ -371,9 +389,11 @@ class RawResourceRandomInputStream extends RandomInputStream {
 
 	@Override public void seek(long n) throws IOException {
 		if (n >= pos) {
+			//noinspection ResultOfMethodCallIgnored
 			skip(n - pos);
 		} else {
 			reopen();
+			//noinspection ResultOfMethodCallIgnored
 			skip(n);
 		}
 	}

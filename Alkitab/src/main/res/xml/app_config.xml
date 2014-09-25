@@ -6,7 +6,7 @@
         donation="true"
         songs="true" />
 
-	<internal locale="in" shortName="DDD"      longName="Dummy Debug Data" prefix="tb"  preset_name='in-ddd' />
+	<internal locale="in" shortName="DDD"      longName="Dummy Debug Data" prefix="ddd"  preset_name='in-ddd' />
 
 	<share>
         <url format="http://www.bibleforandroid.com/v/{book.osis}/{chapter}/{verses}?a=share&amp;v={version}" />
