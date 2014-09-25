@@ -345,13 +345,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
 		actionBar.setTitle("");
+		actionBar.setCustomView(R.layout.activity_isi_action_custom_view);
 
-		final View actionCustomView = getLayoutInflater().cloneInContext(actionBar.getThemedContext()).inflate(R.layout.activity_isi_action_custom_view, null);
+		final View actionCustomView = actionBar.getCustomView();
 		bGoto = V.get(actionCustomView, R.id.bGoto);
 		bLeft = V.get(actionCustomView, R.id.bLeft);
 		bRight = V.get(actionCustomView, R.id.bRight);
 		bVersion = V.get(actionCustomView, R.id.bVersion);
-		actionBar.setCustomView(actionCustomView);
 
 		overlayContainer = V.get(this, R.id.overlayContainer);
 		root = V.get(this, R.id.root);
