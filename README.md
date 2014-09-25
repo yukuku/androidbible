@@ -33,6 +33,7 @@ You'll need `http://code.google.com/p/yuku-android-util/` cloned to a directory 
 as this repo's cloned directory. So you will have `yuku-android-util` and `androidbible` side-by-side.
 
 The `v3` branch is the currently stable version, version 3.x.x. `develop` branch contains the latest updates.
+Note: please use the `studio` branch for `yuku-android-util`.
 
 By the way, Alkitab is the Indonesian word for Bible.
 
