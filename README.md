@@ -3,11 +3,11 @@ Bible for Android
 
 **100% Free, Open-Source, Quick and Friendly Bible App.**
 
-- <a href="http://androidbible.blogspot.com">Development Blog</a>
-- <a href="https://plus.google.com/109017775855333478187">Google+</a>
-- <a href="http://groups.google.com/group/androidbible">Discussion list</a>
-- <a href="https://play.google.com/store/apps/details?id=yuku.alkitab">Official app with Indonesian as default, "Alkitab"</a>
-- <a href="https://play.google.com/store/apps/details?id=yuku.alkitab.kjv">Official app with English KJV as default, "Quick Bible"</a>
+- <a href="http://www.bibleforandroid.com">Official Website</a>
+- <a href="http://blog.bibleforandroid.com">Development Blog</a>
+- <a href="http://groups.google.com/group/bibleforandroid">Discussion List and Beta Testers</a>
+- <a href="https://play.google.com/store/apps/details?id=yuku.alkitab">Official app with Indonesian as default, "Alkitab" on Google Play</a>
+- <a href="https://play.google.com/store/apps/details?id=yuku.alkitab.kjv">Official app with English KJV as default, "Quick Bible" on Google Play</a>
 
 Bible translations/versions
 ---------------------------
@@ -30,15 +30,16 @@ Building
 --------
 
 You'll need `http://code.google.com/p/yuku-android-util/` cloned to a directory in the same level
-as this repo's cloned directory. So you will have `yuku-android-util` and `androidbible` side-by-side. 
-The main project is `Alkitab` inside `androidbible`. By the way, Alkitab is the Indonesian word for Bible.
+as this repo's cloned directory. So you will have `yuku-android-util` and `androidbible` side-by-side.
 
-This repository does not contain Bible text.
+The `v3` branch is the currently stable version, version 3.x.x. `develop` branch contains the latest updates.
+
+By the way, Alkitab is the Indonesian word for Bible.
 
 License
 --------
 
-    Copyright 2009-2013 The Alkitab Authors.
+    Copyright 2009-2014 The Alkitab Authors.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
