@@ -47,4 +47,12 @@ public enum Prefkey {
 
 	/** Version config updater: last update check (auto only). Unix time. */
 	version_config_last_update_check,
+
+	/**
+	 * The ordering of internal version.
+	 * For {@link yuku.alkitab.base.model.MVersionDb}, the ordering is stored in a table on the database.
+	 * However for internal version, the ordering is stored in the preferences.
+	 * Default is 1.
+	 */
+	internal_version_ordering,
 }

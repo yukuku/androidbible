@@ -75,6 +75,18 @@
 
 		</FrameLayout>
 
+		<yuku.alkitab.base.widget.DragGripView
+			android:id="@+id/drag_handle"
+			android:layout_width="48dp"
+			android:layout_height="match_parent"
+			android:layout_gravity="fill_vertical|right"
+			android:color="#5c5c5c"
+			android:contentDescription="@string/desc_drag_to_reorder_versions"
+			android:gravity="right"
+			android:paddingBottom="12dp"
+			android:paddingRight="16dp"
+			android:paddingTop="12dp" />
+
 	</LinearLayout>
 
 </LinearLayout>

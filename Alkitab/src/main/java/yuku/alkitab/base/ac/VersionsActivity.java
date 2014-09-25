@@ -38,15 +38,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.mobeta.android.dslv.DragSortController;
+import com.mobeta.android.dslv.DragSortListView;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
@@ -62,11 +64,13 @@ import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.model.MVersionPreset;
 import yuku.alkitab.base.pdbconvert.ConvertOptionsDialog;
 import yuku.alkitab.base.pdbconvert.ConvertPdbToYes2;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.storage.YesReaderFactory;
 import yuku.alkitab.base.sv.VersionConfigUpdaterService;
 import yuku.alkitab.base.util.AddonManager;
 import yuku.alkitab.base.util.DownloadMapper;
 import yuku.alkitab.base.util.QueryTokenizer;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.io.BibleReader;
 import yuku.filechooser.FileChooserActivity;
@@ -785,7 +789,7 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 		private LayoutInflater inflater;
 
 		SwipeRefreshLayout swiper;
-		ListView lsVersions;
+		DragSortListView lsVersions;
 		VersionAdapter adapter;
 		private boolean downloadedOnly;
 		private String query_text;
@@ -842,16 +846,23 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 			this.inflater = inflater;
-			final View rootView = inflater.inflate(R.layout.fragment_versions, container, false);
+			final View rootView = inflater.inflate(downloadedOnly? R.layout.fragment_versions_downloaded: R.layout.fragment_versions_all, container, false);
 
 			adapter = new VersionAdapter();
 
-			swiper = V.get(rootView, R.id.swiper);
 			lsVersions = V.get(rootView, R.id.lsVersions);
-
-			swiper.setColorSchemeColors(0xff33b5e5, 0xffcbcbcb, 0xff33b5e5, 0xffcbcbcb);
-			swiper.setOnRefreshListener(swiper_refresh);
 			lsVersions.setAdapter(adapter);
+			if (downloadedOnly) {
+				final VersionOrderingController c = new VersionOrderingController(lsVersions);
+				lsVersions.setFloatViewManager(c);
+				lsVersions.setOnTouchListener(c);
+			}
+
+			swiper = V.get(rootView, R.id.swiper);
+			if (swiper != null) { // Can be null, if the layout used is fragment_versions_downloaded.
+				swiper.setColorSchemeColors(0xff33b5e5, 0xffcbcbcb, 0xff33b5e5, 0xffcbcbcb);
+				swiper.setOnRefreshListener(swiper_refresh);
+			}
 
 			return rootView;
 		}
@@ -1111,7 +1122,7 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 			super.onActivityResult(requestCode, resultCode, data);
 		}
 
-		public class VersionAdapter extends EasyAdapter {
+		public class VersionAdapter extends EasyAdapter implements DragSortListView.DropListener {
 			final List<Item> items = new ArrayList<>();
 
 			VersionAdapter() {
@@ -1138,7 +1149,7 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 					internal.shortName = ac.internalShortName;
 					internal.longName = ac.internalLongName;
 					internal.description = null;
-					internal.ordering = 1;
+					internal.ordering = Preferences.getInt(Prefkey.internal_version_ordering, 1);
 
 					items.add(new Item(internal));
 				}
@@ -1174,24 +1185,41 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 					}
 				}
 
-				// sort items
-				Collections.sort(items, new Comparator<Item>() {
-					@Override
-					public int compare(final Item a, final Item b) {
-						final String locale_a = a.mv.locale;
-						final String locale_b = b.mv.locale;
-						if (U.equals(locale_a, locale_b)) {
-							return a.mv.longName.compareToIgnoreCase(b.mv.longName);
-						}
-						if (locale_a == null) {
-							return +1;
-						} else if (locale_b == null) {
-							return -1;
-						}
+				// Sort items. For "all" tab, sort is based on display language. For "downloaded" tab, sort is based on ordering.
+				if (!downloadedOnly) {
+					Collections.sort(items, new Comparator<Item>() {
+						@Override
+						public int compare(final Item a, final Item b) {
+							final String locale_a = a.mv.locale;
+							final String locale_b = b.mv.locale;
+							if (U.equals(locale_a, locale_b)) {
+								return a.mv.longName.compareToIgnoreCase(b.mv.longName);
+							}
+							if (locale_a == null) {
+								return +1;
+							} else if (locale_b == null) {
+								return -1;
+							}
 
-						return getDisplayLanguage(locale_a).compareToIgnoreCase(getDisplayLanguage(locale_b));
+							return getDisplayLanguage(locale_a).compareToIgnoreCase(getDisplayLanguage(locale_b));
+						}
+					});
+				} else {
+					Collections.sort(items, new Comparator<Item>() {
+						@Override
+						public int compare(final Item a, final Item b) {
+							return a.mv.ordering - b.mv.ordering;
+						}
+					});
+
+					if (BuildConfig.DEBUG) {
+						Log.d(TAG, "ordering   type                   versionId");
+						Log.d(TAG, "========   ===================    =================");
+						for (final Item item : items) {
+							Log.d(TAG, String.format("%8d   %-20s   %s", item.mv.ordering, item.mv.getClass().getSimpleName(), item.mv.getVersionId()));
+						}
 					}
-				});
+				}
 
 				// mark first item in each group
 				String lastLocale = "<sentinel>";
@@ -1250,6 +1278,7 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 				final Button bLongName = V.get(view, R.id.bLongName);
 				final View header = V.get(view, R.id.header);
 				final TextView tLanguage = V.get(view, R.id.tLanguage);
+				final View drag_handle = V.get(view, R.id.drag_handle);
 
 				final Item item = getItem(position);
 				final MVersion mv = item.mv;
@@ -1317,6 +1346,23 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 					cActive.setVisibility(View.VISIBLE);
 					progress.setVisibility(View.INVISIBLE);
 				}
+
+				if (downloadedOnly) {
+					drag_handle.setVisibility(View.VISIBLE);
+				} else {
+					drag_handle.setVisibility(View.GONE);
+				}
+			}
+
+			@Override
+			public void drop(final int from, final int to) {
+				if (from == to) return;
+
+				final Item fromItem = getItem(from);
+				final Item toItem = getItem(to);
+
+				S.getDb().reorderVersions(fromItem.mv, toItem.mv);
+				App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
 			}
 		}
 
@@ -1336,6 +1382,33 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 			return updateIcon;
 		}
 
+		private class VersionOrderingController extends DragSortController {
+			final DragSortListView lv;
+			final int dragHandleId;
+
+			public VersionOrderingController(DragSortListView lv) {
+				super(lv, R.id.drag_handle, DragSortController.ON_DOWN, 0);
+				this.dragHandleId = R.id.drag_handle;
+				this.lv = lv;
+
+				setRemoveEnabled(false);
+			}
+
+			@Override public int startDragPosition(MotionEvent ev) {
+				return super.dragHandleHitPosition(ev);
+			}
+
+			@Override public View onCreateFloatView(int position) {
+				final View res = adapter.getView(position, null, lv);
+				res.setBackgroundColor(0x22ffffff);
+				return res;
+			}
+
+			@Override public void onDestroyFloatView(View floatView) {
+				// Do not call super and do not remove this override.
+				floatView.setBackgroundColor(0);
+			}
+		}
 	}
 }
 

@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteStatement;
 import android.provider.BaseColumns;
 import android.util.Log;
 import yuku.afw.D;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.MarkerListActivity;
@@ -16,9 +17,12 @@ import yuku.alkitab.base.devotion.ArticleMorningEveningEnglish;
 import yuku.alkitab.base.devotion.ArticleRenunganHarian;
 import yuku.alkitab.base.devotion.ArticleSantapanHarian;
 import yuku.alkitab.base.devotion.DevotionArticle;
+import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionDb;
+import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.alkitab.model.ProgressMark;
@@ -724,6 +728,56 @@ public class InternalDb {
 			} else if (from.ordering < to.ordering) { // move down
 				db.execSQL("update " + Db.TABLE_Label + " set " + Db.Label.ordering + "=(" + Db.Label.ordering + "-1) where ?<" + Db.Label.ordering + " and " + Db.Label.ordering + "<=?", new Object[] {from.ordering, to.ordering});
 				db.execSQL("update " + Db.TABLE_Label + " set " + Db.Label.ordering + "=? where _id=?", new Object[] {to.ordering, from._id});
+			}
+
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+	}
+
+	public void reorderVersions(MVersion from, MVersion to) {
+		// original order: A101 B[102] C103 D[104] E105
+
+		// case: move up from=104 to=102:
+		//   increase ordering for (to <= ordering < from)
+		//   A101 B[103] C104 D[104] E105
+		//   replace ordering of 'from' to 'to'
+		//   A101 B[103] C104 D[102] E105
+
+		// case: move down from=102 to=104:
+		//   decrease ordering for (from < ordering <= to)
+		//   A101 B[102] C102 D[103] E105
+		//   replace ordering of 'from' to 'to'
+		//   A101 B[104] C102 D[103] E105
+
+		if (BuildConfig.DEBUG) {
+			Log.d(TAG, "@@reorderVersions from id=" + from.getVersionId() + " ordering=" + from.ordering + " to id=" + to.getVersionId() + " ordering=" + to.ordering);
+		}
+
+		SQLiteDatabase db = helper.getWritableDatabase();
+		db.beginTransaction();
+		try {
+			{
+				final int internal_ordering = Preferences.getInt(Prefkey.internal_version_ordering, 1);
+				if (from.ordering > to.ordering) { // move up
+					db.execSQL("update " + Db.TABLE_Version + " set " + Db.Version.ordering + "=(" + Db.Version.ordering + "+1) where ?<=" + Db.Version.ordering + " and " + Db.Version.ordering + "<?", new Object[]{to.ordering, from.ordering});
+					if (to.ordering <= internal_ordering && internal_ordering < from.ordering) {
+						Preferences.setInt(Prefkey.internal_version_ordering, internal_ordering + 1);
+					}
+				} else if (from.ordering < to.ordering) { // move down
+					db.execSQL("update " + Db.TABLE_Version + " set " + Db.Version.ordering + "=(" + Db.Version.ordering + "-1) where ?<" + Db.Version.ordering + " and " + Db.Version.ordering + "<=?", new Object[]{from.ordering, to.ordering});
+					if (from.ordering < internal_ordering && internal_ordering <= to.ordering) {
+						Preferences.setInt(Prefkey.internal_version_ordering, internal_ordering - 1);
+					}
+				}
+			}
+
+			// both move up and move down arrives at this final step
+			if (from instanceof MVersionDb) {
+				db.execSQL("update " + Db.TABLE_Version + " set " + Db.Version.ordering + "=? where " + Db.Version.filename + "=?", new Object[]{to.ordering, ((MVersionDb) from).filename});
+			} else if (from instanceof MVersionInternal) {
+				Preferences.setInt(Prefkey.internal_version_ordering, to.ordering);
 			}
 
 			db.setTransactionSuccessful();

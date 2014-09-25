@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Must make sure this file is in sync with fragment_versions_downloaded.xml -->
+<android.support.v4.widget.SwipeRefreshLayout
+	android:id="@+id/swiper"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:paddingBottom="0dp"
+	android:paddingLeft="@dimen/activity_horizontal_margin"
+	android:paddingRight="@dimen/activity_horizontal_margin"
+	android:paddingTop="0dp"
+	tools:context="yuku.alkitab.base.ac.VersionsActivity$VersionListFragment">
+
+	<com.mobeta.android.dslv.DragSortListView
+		android:id="@+id/lsVersions"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:fastScrollEnabled="true"
+		android:scrollbarStyle="outsideOverlay"
+		tools:listitem="@layout/item_version" />
+</android.support.v4.widget.SwipeRefreshLayout>
