@@ -7,7 +7,6 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.Pair;
-import gnu.trove.map.hash.TObjectIntHashMap;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.ac.VersionsActivity;
 import yuku.alkitab.base.config.AppConfig;
@@ -23,7 +22,6 @@ import yuku.alkitab.base.util.FontManager;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Version;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,25 +112,6 @@ public class S {
 		applied.paragraphSpacingBefore = (int) (scaleBasedOnFontSize * res.getDimensionPixelOffset(R.dimen.paragraphSpacingBefore) + 0.5f);
 		applied.pericopeSpacingTop = (int) (scaleBasedOnFontSize * res.getDimensionPixelOffset(R.dimen.pericopeSpacingTop) + 0.5f);
 		applied.pericopeSpacingBottom = (int) (scaleBasedOnFontSize * res.getDimensionPixelOffset(R.dimen.pericopeSpacingBottom) + 0.5f);
-	}
-	
-	private static TObjectIntHashMap<String> cache_rawResId = new TObjectIntHashMap<>(32);
-	
-	public static InputStream openRaw(String name) {
-		Resources resources = App.context.getResources();
-		
-		int resId = cache_rawResId.get(name);
-		if (resId != 0) {
-			return resources.openRawResource(resId);
-		}
-		
-		resId = resources.getIdentifier(name, "raw", App.context.getPackageName()); //$NON-NLS-1$
-		if (resId == 0) {
-			return null;
-		}
-		
-		cache_rawResId.put(name, resId);
-		return resources.openRawResource(resId);
 	}
 	
 	private static InternalDb db;

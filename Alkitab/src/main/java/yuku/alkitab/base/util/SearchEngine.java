@@ -10,7 +10,7 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TimingLogger;
-import yuku.alkitab.base.S;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.model.Book;
@@ -491,7 +491,7 @@ public class SearchEngine {
 		}
 
 		timing.dumpToLog();
-		
+
 		return res;
 	}
 	
@@ -543,10 +543,17 @@ public class SearchEngine {
 				return res;
 			}
 		}
-		
-		RevIndex res = new RevIndex();
-		
-		InputStream raw = new BufferedInputStream(S.openRaw(AppConfig.get().internalPrefix + "_revindex_bt"), 65536);
+
+		final InputStream assetInputStream;
+		try {
+			assetInputStream = App.context.getAssets().open("internal/" + AppConfig.get().internalPrefix + "_revindex_bt.bt");
+		} catch (IOException e) {
+			Log.d(TAG, "RevIndex is not available");
+			return null;
+		}
+
+		final RevIndex res = new RevIndex();
+		final InputStream raw = new BufferedInputStream(assetInputStream, 65536);
 		
 		byte[] buf = new byte[256];
 		try {
