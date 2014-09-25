@@ -361,7 +361,7 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 			Intent intent = ShareCompat.IntentBuilder.from(DevotionActivity.this)
 				.setType("text/plain")
 				.setSubject(currentKind.title)
-				.setText(currentKind.title + '\n' + currentKind.getShareUrl(date_format.get(), currentDate) + "\n\n" + lContent.getText())
+				.setText(currentKind.title + '\n' + getCurrentDateDisplay() + '\n' + currentKind.getShareUrl(date_format.get(), currentDate) + "\n\n" + lContent.getText())
 				.getIntent();
 			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_renungan)), REQCODE_share);
 
@@ -452,6 +452,10 @@ public class DevotionActivity extends BaseActivity implements OnStatusDonlotList
 		String type;
 		String kind;
 		String date;
+	}
+
+	private String getCurrentDateDisplay() {
+		return dayOfWeekName(currentDate) + ", " + DateFormat.getDateFormat(this).format(currentDate);
 	}
 
 	CallbackSpan.OnClickListener verseClickListener = new CallbackSpan.OnClickListener() {
