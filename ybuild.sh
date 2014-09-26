@@ -140,13 +140,13 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 		echo 'Replacing file provider name to the official one "yuku.alkitab.file_provider"'
 		sed -i '' 's/yuku.alkitab.file_provider.debug/yuku.alkitab.file_provider/' res/values/file_providers.xml
 
-		echo 'Removing (mockedup) res/raw...'
-		rm -rf res/raw
+		echo 'Removing dummy version on assets/internal...'
+		rm -rf assets/internal
 
 		TEXT_RAW="$ALKITAB_PROPRIETARY_DIR/overlay/$BUILD_PACKAGE_NAME/text_raw/"
-		mkdir res/raw
+		mkdir assets/internal
 		echo "Copying text overlay from $TEXT_RAW..."
-		if ! cp -R $TEXT_RAW res/raw ; then
+		if ! cp -R $TEXT_RAW assets/internal ; then
 			echo 'Copy text overlay FAILED'
 			exit 1
 		fi
