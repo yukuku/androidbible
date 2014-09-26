@@ -9,6 +9,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ShareCompat;
@@ -245,6 +246,8 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				// play button should be disabled
 			} else if (state == ControllerState.reset_media_known_to_exist || state == ControllerState.complete || state == ControllerState.error) {
 				if (isMidiFile) {
+					final Handler handler = new Handler();
+
 					new Thread(new Runnable() {
 						@Override
 						public void run() {
@@ -258,7 +261,15 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 								output.write(bytes);
 								output.close();
 
-								mediaPlayerPrepare(true, cacheFile.getAbsolutePath());
+								// this is a background thread. We must go back to main thread, and check again if state is OK to prepare.
+								handler.post(new Runnable() {
+									@Override
+									public void run() {
+										if (state == ControllerState.reset_media_known_to_exist || state == ControllerState.complete || state == ControllerState.error) {
+											mediaPlayerPrepare(true, cacheFile.getAbsolutePath());
+										}
+									}
+								});
 							} catch (IOException e) {
 								Log.e(TAG, "buffering to local cache", e);
 								setState(ControllerState.error);
@@ -291,8 +302,11 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 					@Override
 					public void onPrepared(final MediaPlayer mp) {
-						mp.start();
-						setState(ControllerState.playing);
+						// only start playing if the current state is preparing, i.e., not error or reset.
+						if (state == ControllerState.preparing) {
+							mp.start();
+							setState(ControllerState.playing);
+						}
 					}
 				});
 				mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -305,15 +319,20 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				mp.setOnErrorListener(new MediaPlayer.OnErrorListener() {
 					@Override
 					public boolean onError(final MediaPlayer mp, final int what, final int extra) {
-						final Activity activity = activityRef.get();
-						if (activity != null) {
-							if (!activity.isFinishing()) {
-								new AlertDialog.Builder(activity)
-								.setMessage(activity.getString(R.string.song_player_error_description, what, extra))
-								.setPositiveButton(R.string.ok, null)
-								.show();
+						Log.e(TAG, "@@onError controller_state=" + state + " what=" + what + " extra=" + extra);
+
+						if (state != ControllerState.reset) { // Errors can happen if we call MediaPlayer#reset when MediaPlayer state is Preparing. In this case, do not show error message.
+							final Activity activity = activityRef.get();
+							if (activity != null) {
+								if (!activity.isFinishing()) {
+									new AlertDialog.Builder(activity)
+										.setMessage(activity.getString(R.string.song_player_error_description, what, extra))
+										.setPositiveButton(R.string.ok, null)
+										.show();
+								}
 							}
 						}
+
 						setState(ControllerState.error);
 						return false; // let OnCompletionListener be called.
 					}
@@ -336,7 +355,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		}
 
 		boolean canHaveNewUrl() {
-			return state == ControllerState.reset || state == ControllerState.reset_media_known_to_exist;
+			return state == ControllerState.reset || state == ControllerState.reset_media_known_to_exist || state == ControllerState.error;
 		}
 	}
 
