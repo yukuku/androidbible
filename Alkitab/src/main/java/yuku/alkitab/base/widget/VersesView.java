@@ -227,7 +227,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 				return pos;
 			}
 			int bottom = child.getBottom();
-			if (bottom > getVerticalFadingEdgeLength()) {
+			if (bottom > getPaddingTop()) {
 				return pos;
 			} else {
 				return pos+1;
@@ -448,7 +448,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 					if (BuildConfig.DEBUG) Log.d(TAG, VersesView.this + " @@scrollToVerse post verse_1=" + verse_1 + " position=" + position, new Throwable().fillInStackTrace());
 
 					stopFling();
-					setSelectionFromTop(position, getVerticalFadingEdgeLength());
+					setSelection(position);
 
 					firstTimeScroll = false;
 				}
@@ -460,46 +460,38 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		final int position = adapter.getPositionIgnoringPericopeFromVerse(verse_1);
 		
 		if (position == -1) {
-			Log.w(TAG, "could not find verse_1=" + verse_1 + ", weird!");
-		} else {
-			post(new Runnable() {
-				@Override public void run() {
-					// this may happen async from above, so check first if pos is still valid
-					if (position >= getCount()) return;
-					
-					boolean needMeasure = false;
-					int shifty = getVerticalFadingEdgeLength();
-					int firstPos = getFirstVisiblePosition();
-					if (position >= firstPos) {
-						int lastPos = getLastVisiblePosition();
-						if (position <= lastPos) {
-							// we have this on screen, no need to measure again
-							View child = getChildAt(position - firstPos);
-							stopFling();
-							setSelectionFromTop(position, shifty - (int) (prop * child.getHeight()));
-						} else {
-							needMeasure = true;
-						}
-					} else {
-						needMeasure = true;
-					}
-					
-					if (needMeasure) {
-						// initialize scrollToVerseConvertViews if needed
-						if (scrollToVerseConvertViews == null) {
-							scrollToVerseConvertViews = new View[adapter.getViewTypeCount()];
-						}
-						int itemType = adapter.getItemViewType(position);
-						View convertView = scrollToVerseConvertViews[itemType];
-						View child = adapter.getView(position, convertView, VersesView.this);
-				        child.measure(MeasureSpec.makeMeasureSpec(VersesView.this.getWidth() - VersesView.this.getPaddingLeft() - VersesView.this.getPaddingRight(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-				        scrollToVerseConvertViews[itemType] = child;
-						stopFling();
-				        setSelectionFromTop(position, shifty - (int) (prop * child.getMeasuredHeight()));
-					}
-				}
-			});
+			Log.d(TAG, "could not find verse_1: " + verse_1);
+			return;
 		}
+
+		post(new Runnable() {
+			@Override public void run() {
+				// this may happen async from above, so check first if pos is still valid
+				if (position >= getCount()) return;
+
+				final int firstPos = getFirstVisiblePosition();
+				final int lastPos = getLastVisiblePosition();
+				if (position >= firstPos && position <= lastPos) {
+					// we have this on screen, no need to measure again
+					View child = getChildAt(position - firstPos);
+					stopFling();
+					setSelectionFromTop(position, - (int) (prop * child.getHeight()));
+					return;
+				}
+
+				// initialize scrollToVerseConvertViews if needed
+				if (scrollToVerseConvertViews == null) {
+					scrollToVerseConvertViews = new View[adapter.getViewTypeCount()];
+				}
+				int itemType = adapter.getItemViewType(position);
+				View convertView = scrollToVerseConvertViews[itemType];
+				View child = adapter.getView(position, convertView, VersesView.this);
+				child.measure(MeasureSpec.makeMeasureSpec(VersesView.this.getWidth() - VersesView.this.getPaddingLeft() - VersesView.this.getPaddingRight(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+				scrollToVerseConvertViews[itemType] = child;
+				stopFling();
+				setSelectionFromTop(position, - (int) (prop * child.getMeasuredHeight()));
+			}
+		});
 	}
 	
 	public void scrollToTop() {
@@ -531,38 +523,37 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		if (userOnScrollListener != null) userOnScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
 		
 		if (onVerseScrollListener == null) return;
-		
-		if (view.getChildCount() > 0) {
-			float prop = 0.f;
-			int position = -1;
-			
-			View firstChild = view.getChildAt(0);
-			// if first child is on top, top == fading edge length
-			int bottom = firstChild.getBottom();
-			int remaining = bottom - view.getVerticalFadingEdgeLength();
-			if (remaining >= 0) {
-				position = firstVisibleItem;
-				prop = 1.f - (float) remaining / firstChild.getHeight();
-			} else { // we should have a second child
-				if (view.getChildCount() > 1) {
-					View secondChild = view.getChildAt(1);
-					position = firstVisibleItem + 1;
-					prop = (float) -remaining / secondChild.getHeight();
-				}
+
+		if (view.getChildCount() == 0) return;
+
+		float prop = 0.f;
+		int position = -1;
+
+		final View firstChild = view.getChildAt(0);
+		final int bottom = firstChild.getBottom();
+		final int remaining = bottom - view.getPaddingTop();
+		if (remaining >= 0) { // bottom of first child is lower than top padding
+			position = firstVisibleItem;
+			prop = 1.f - (float) remaining / firstChild.getHeight();
+		} else { // we should have a second child
+			if (view.getChildCount() > 1) {
+				final View secondChild = view.getChildAt(1);
+				position = firstVisibleItem + 1;
+				prop = (float) -remaining / secondChild.getHeight();
 			}
-			
-			int verse_1 = adapter.getVerseOrPericopeFromPosition(position);
-			
-			if (scrollState != AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-				if (verse_1 > 0) {
-					onVerseScrollListener.onVerseScroll(this, false, verse_1, prop);
-				} else {
-					onVerseScrollListener.onVerseScroll(this, true, 0, 0);
-				}
-				
-				if (position == 0 && prop == 0.f) {
-					onVerseScrollListener.onScrollToTop(this);
-				}
+		}
+
+		final int verse_1 = adapter.getVerseOrPericopeFromPosition(position);
+
+		if (scrollState != AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+			if (verse_1 > 0) {
+				onVerseScrollListener.onVerseScroll(this, false, verse_1, prop);
+			} else {
+				onVerseScrollListener.onVerseScroll(this, true, 0, 0);
+			}
+
+			if (position == 0 && prop == 0.f) {
+				onVerseScrollListener.onScrollToTop(this);
 			}
 		}
 	}
