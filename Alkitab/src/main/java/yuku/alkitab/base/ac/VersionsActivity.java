@@ -588,7 +588,7 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 			}
 
 			int maxOrdering = S.getDb().getVersionMaxOrdering();
-			if (maxOrdering == 0) maxOrdering = 100; // default
+			if (maxOrdering == 0) maxOrdering = MVersionDb.DEFAULT_ORDERING_START;
 
 			final MVersionDb mvDb = new MVersionDb();
 			mvDb.locale = reader.getLocale();

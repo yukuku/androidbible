@@ -14,6 +14,8 @@ import java.io.File;
  * If the version is downloaded from a definition in the preset list, the {@link #preset_name} will be non-null.
  */
 public class MVersionDb extends MVersion {
+	public static final int DEFAULT_ORDERING_START = 100;
+
 	public String filename;
 	public String preset_name;
 	public boolean cache_active; // so we don't need to keep reading/writing from/to db
