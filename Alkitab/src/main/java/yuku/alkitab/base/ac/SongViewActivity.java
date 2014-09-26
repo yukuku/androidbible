@@ -126,22 +126,22 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 	/** This method might be called from non-UI thread. Be careful when manipulating UI. */
 	@Override
-	public void setMediaState(int state) {
-		if (state == 0) {
+	public void setMediaState(final MediaPlayerController.ControllerState state) {
+		if (state == MediaPlayerController.ControllerState.reset) {
 			mediaState.enabled = false;
 			mediaState.icon = R.drawable.ic_action_hollowplay;
 			mediaState.label = R.string.menuPlay;
-		} else if (state == 1 || state == 4 || state == 5) {
+		} else if (state == MediaPlayerController.ControllerState.reset_media_known_to_exist || state == MediaPlayerController.ControllerState.paused || state == MediaPlayerController.ControllerState.complete) {
 			mediaState.enabled = true;
 			mediaState.icon = R.drawable.ic_action_play;
 			mediaState.label = R.string.menuPlay;
-		} else if (state == 3) {
+		} else if (state == MediaPlayerController.ControllerState.playing) {
 			mediaState.enabled = true;
 			mediaState.icon = R.drawable.ic_action_pause;
 			mediaState.label = R.string.menuPause;
 		}
 
-		mediaState.loading = (state == 2);
+		mediaState.loading = (state == MediaPlayerController.ControllerState.preparing);
 
 		runOnUiThread(new Runnable() {
 			@Override
@@ -190,14 +190,17 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	static class MediaPlayerController {
 		MediaPlayer mp = new MediaPlayer();
 
-		// 0 = reset
-		// 1 = reset but media known to exist
-		// 2 = preparing
-		// 3 = playing
-		// 4 = pausing
-		// 5 = complete
-		// 6 = error
-		int state = 0;
+		enum ControllerState {
+			reset,
+			reset_media_known_to_exist,
+			preparing,
+			playing,
+			paused,
+			complete,
+			error,
+		}
+
+		ControllerState state = ControllerState.reset;
 
 		// if this is a midi file, we need to manually download to local first
 		boolean isMidiFile;
@@ -211,7 +214,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			mediaStateListenerRef = new WeakReference<>(mediaStateListener);
 		}
 
-		private void setState(int newState) {
+		private void setState(final ControllerState newState) {
 			Log.d(TAG, "@@setState newState=" + newState);
 			state = newState;
 			updateMediaState();
@@ -227,26 +230,26 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		}
 
 		void reset() {
-			setState(0);
+			setState(ControllerState.reset);
 			mp.reset();
 		}
 
 		void mediaKnownToExist(String url, boolean isMidiFile) {
-			setState(1);
+			setState(ControllerState.reset_media_known_to_exist);
 			this.url = url;
 			this.isMidiFile = isMidiFile;
 		}
 
 		void playOrPause() {
-			if (state == 0) {
+			if (state == ControllerState.reset) {
 				// play button should be disabled
-			} else if (state == 1 || state == 5 || state == 6) {
+			} else if (state == ControllerState.reset_media_known_to_exist || state == ControllerState.complete || state == ControllerState.error) {
 				if (isMidiFile) {
 					new Thread(new Runnable() {
 						@Override
 						public void run() {
 							try {
-								setState(2);
+								setState(ControllerState.preparing);
 
 								final byte[] bytes = App.downloadBytes(url);
 
@@ -258,23 +261,23 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 								mediaPlayerPrepare(true, cacheFile.getAbsolutePath());
 							} catch (IOException e) {
 								Log.e(TAG, "buffering to local cache", e);
-								setState(6);
+								setState(ControllerState.error);
 							}
 						}
 					}).start();
 				} else {
 					mediaPlayerPrepare(false, url);
 				}
-			} else if (state == 2) {
+			} else if (state == ControllerState.preparing) {
 				// this is preparing. Don't do anything.
-			} else if (state == 3) {
+			} else if (state == ControllerState.playing) {
 				// pause button pressed
 				mp.pause();
-				setState(4);
-			} else if (state == 4) {
+				setState(ControllerState.paused);
+			} else if (state == ControllerState.paused) {
 				// play button pressed when paused
 				mp.start();
-				setState(3);
+				setState(ControllerState.playing);
 			}
 		}
 
@@ -283,20 +286,20 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		 */
 		private void mediaPlayerPrepare(boolean isLocalPath, final String url) {
 			try {
-				setState(2);
+				setState(ControllerState.preparing);
 
 				mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 					@Override
 					public void onPrepared(final MediaPlayer mp) {
 						mp.start();
-						setState(3);
+						setState(ControllerState.playing);
 					}
 				});
 				mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 					@Override
 					public void onCompletion(final MediaPlayer mp) {
 						mp.reset();
-						setState(5);
+						setState(ControllerState.complete);
 					}
 				});
 				mp.setOnErrorListener(new MediaPlayer.OnErrorListener() {
@@ -311,7 +314,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 								.show();
 							}
 						}
-						setState(6);
+						setState(ControllerState.error);
 						return false; // let OnCompletionListener be called.
 					}
 				});
@@ -328,12 +331,12 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				mp.prepareAsync();
 			} catch (IOException e) {
 				Log.e(TAG, "mp setDataSource", e);
-				setState(6);
+				setState(ControllerState.error);
 			}
 		}
 
 		boolean canHaveNewUrl() {
-			return state == 0 || state == 1;
+			return state == ControllerState.reset || state == ControllerState.reset_media_known_to_exist;
 		}
 	}
 
@@ -944,6 +947,6 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 }
 
 interface MediaStateListener {
-	void setMediaState(int state);
+	void setMediaState(SongViewActivity.MediaPlayerController.ControllerState state);
 }
 
