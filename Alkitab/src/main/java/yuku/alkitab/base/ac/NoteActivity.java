@@ -113,7 +113,7 @@ public class NoteActivity extends BaseActivity {
 								}
 
 								setResult(RESULT_OK);
-								finish();
+								realFinish();
 							}
 						})
 						.setNegativeButton(R.string.no, null)
@@ -123,29 +123,44 @@ public class NoteActivity extends BaseActivity {
 			}
 			return true;
 			case R.id.menuOk: {
-				final String caption = tCaption.getText().toString();
-				final Date now = new Date();
-
-				if (marker != null) { // update existing marker
-					if (caption.length() == 0) { // delete instead of update
-						S.getDb().deleteNonBookmarkMarkerById(marker._id);
-					} else {
-						marker.caption = caption;
-						marker.modifyTime = now;
-						S.getDb().updateMarker(marker);
-					}
-				} else { // marker == null; not existing, so only insert when there is some text
-					if (caption.length() > 0) {
-						marker = S.getDb().insertMarker(ariForNewNote, Marker.Kind.note, caption, verseCountForNewNote, now, now);
-					}
-				}
-
-				setResult(RESULT_OK);
-				finish();
+				ok_click();
 			}
 			return true;
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	void ok_click() {
+		final String caption = tCaption.getText().toString();
+		final Date now = new Date();
+
+		if (marker != null) { // update existing marker
+			if (caption.length() == 0) { // delete instead of update
+				S.getDb().deleteNonBookmarkMarkerById(marker._id);
+			} else {
+				marker.caption = caption;
+				marker.modifyTime = now;
+				S.getDb().updateMarker(marker);
+			}
+		} else { // marker == null; not existing, so only insert when there is some text
+			if (caption.length() > 0) {
+				marker = S.getDb().insertMarker(ariForNewNote, Marker.Kind.note, caption, verseCountForNewNote, now, now);
+			}
+		}
+
+		setResult(RESULT_OK);
+		realFinish();
+	}
+
+	@Override
+	public void finish() {
+		// make sure we save it before exiting this screen
+		ok_click();
+		realFinish();
+	}
+
+	void realFinish() {
+		super.finish();
 	}
 }
