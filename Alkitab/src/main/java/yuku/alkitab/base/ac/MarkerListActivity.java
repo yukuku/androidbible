@@ -31,9 +31,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
-import yuku.alkitab.base.dialog.TypeBookmarkDialog.Listener;
 import yuku.alkitab.base.dialog.TypeHighlightDialog;
-import yuku.alkitab.base.dialog.TypeNoteDialog;
 import yuku.alkitab.base.storage.Db;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Appearances;
@@ -56,6 +54,8 @@ import java.util.Locale;
 
 public class MarkerListActivity extends BaseActivity {
 	public static final String TAG = MarkerListActivity.class.getSimpleName();
+
+	private static final int REQCODE_edit_note = 1;
 
 	// in
 	private static final String EXTRA_filter_kind = "filter_kind"; //$NON-NLS-1$
@@ -325,6 +325,17 @@ public class MarkerListActivity extends BaseActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	@Override
+	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		if (requestCode == REQCODE_edit_note && resultCode == RESULT_OK) {
+			loadAndFilter();
+			if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
+			App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
+		}
+
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
 	private void openSortDialog() {
 		final List<String> labels = new ArrayList<>();
 		final IntArrayList values = new IntArrayList();
@@ -433,7 +444,7 @@ public class MarkerListActivity extends BaseActivity {
 		} else if (itemId == R.id.menuModifyBookmark) {
 			if (filter_kind == Marker.Kind.bookmark) {
 				TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExisting(this, marker._id);
-				dialog.setListener(new Listener() {
+				dialog.setListener(new TypeBookmarkDialog.Listener() {
 					@Override
 					public void onOk() {
 						loadAndFilter();
@@ -444,15 +455,7 @@ public class MarkerListActivity extends BaseActivity {
 				dialog.show();
 
 			} else if (filter_kind == Marker.Kind.note) {
-				TypeNoteDialog dialog = TypeNoteDialog.EditExisting(this, marker._id, new TypeNoteDialog.Listener() {
-					@Override
-					public void onDone() {
-						loadAndFilter();
-						if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
-						App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
-					}
-				});
-				dialog.show();
+				startActivityForResult(NoteActivity.createEditExistingIntent(marker._id), REQCODE_edit_note);
 
 			} else if (filter_kind == Marker.Kind.highlight) {
 				final int ari = marker.ari;

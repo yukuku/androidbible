@@ -51,6 +51,7 @@ import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.ac.GotoActivity;
 import yuku.alkitab.base.ac.MarkerListActivity;
 import yuku.alkitab.base.ac.MarkersActivity;
+import yuku.alkitab.base.ac.NoteActivity;
 import yuku.alkitab.base.ac.SearchActivity;
 import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
@@ -59,7 +60,6 @@ import yuku.alkitab.base.dialog.ProgressMarkListDialog;
 import yuku.alkitab.base.dialog.ProgressMarkRenameDialog;
 import yuku.alkitab.base.dialog.TypeBookmarkDialog;
 import yuku.alkitab.base.dialog.TypeHighlightDialog;
-import yuku.alkitab.base.dialog.TypeNoteDialog;
 import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.dialog.XrefDialog;
 import yuku.alkitab.base.model.MVersion;
@@ -117,10 +117,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	private static final String PREFKEY_lastVersionId = "edisiTerakhir";
 
 	private static final String PREFKEY_lastSplitVersionId = "lastSplitVersionId";
+
 	private static final int REQCODE_goto = 1;
 	private static final int REQCODE_share = 7;
 	private static final int REQCODE_textAppearanceGetFonts = 9;
 	private static final int REQCODE_textAppearanceCustomColors = 10;
+	private static final int REQCODE_edit_note_1 = 11;
+	private static final int REQCODE_edit_note_2 = 12;
 
 	private static final String EXTRA_verseUrl = "verseUrl";
 	private boolean uncheckVersesWhenActionModeDestroyed = true;
@@ -1227,52 +1230,53 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 	
 	@Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-
-		if (requestCode == REQCODE_goto) {
-			if (resultCode == RESULT_OK) {
-				GotoActivity.Result result = GotoActivity.obtainResult(data);
-				if (result != null) {
-					if (result.bookId == -1) {
-						// stay on the same book
-						final int ari_cv = display(result.chapter_1, result.verse_1);
-						history.add(Ari.encode(this.activeBook.bookId, ari_cv));
-					} else {
-						// change book
-						final Book book = S.activeVersion.getBook(result.bookId);
-						if (book != null) {
-							this.activeBook = book;
-						} else { // no book, just chapter and verse.
-							result.bookId = this.activeBook.bookId;
-						}
-
-						final int ari_cv = display(result.chapter_1, result.verse_1);
-						history.add(Ari.encode(result.bookId, ari_cv));
+		if (requestCode == REQCODE_goto && resultCode == RESULT_OK) {
+			GotoActivity.Result result = GotoActivity.obtainResult(data);
+			if (result != null) {
+				if (result.bookId == -1) {
+					// stay on the same book
+					final int ari_cv = display(result.chapter_1, result.verse_1);
+					history.add(Ari.encode(this.activeBook.bookId, ari_cv));
+				} else {
+					// change book
+					final Book book = S.activeVersion.getBook(result.bookId);
+					if (book != null) {
+						this.activeBook = book;
+					} else { // no book, just chapter and verse.
+						result.bookId = this.activeBook.bookId;
 					}
+
+					final int ari_cv = display(result.chapter_1, result.verse_1);
+					history.add(Ari.encode(result.bookId, ari_cv));
 				}
 			}
-		} else if (requestCode == REQCODE_share) {
-			if (resultCode == RESULT_OK) {
-				ShareActivity.Result result = ShareActivity.obtainResult(data);
-				if (result != null && result.chosenIntent != null) {
-					Intent chosenIntent = result.chosenIntent;
-					final String packageName = chosenIntent.getComponent().getPackageName();
-					if (U.equals(packageName, "com.facebook.katana")) { //$NON-NLS-1$
-						String verseUrl = chosenIntent.getStringExtra(EXTRA_verseUrl);
-						if (verseUrl != null) {
-							chosenIntent.putExtra(Intent.EXTRA_TEXT, verseUrl); // change text to url
-						}
-					} else if (U.equals(packageName, "com.whatsapp")) {
-						chosenIntent.removeExtra(Intent.EXTRA_SUBJECT);
+		} else if (requestCode == REQCODE_share && resultCode == RESULT_OK) {
+			ShareActivity.Result result = ShareActivity.obtainResult(data);
+			if (result != null && result.chosenIntent != null) {
+				Intent chosenIntent = result.chosenIntent;
+				final String packageName = chosenIntent.getComponent().getPackageName();
+				if (U.equals(packageName, "com.facebook.katana")) { //$NON-NLS-1$
+					String verseUrl = chosenIntent.getStringExtra(EXTRA_verseUrl);
+					if (verseUrl != null) {
+						chosenIntent.putExtra(Intent.EXTRA_TEXT, verseUrl); // change text to url
 					}
-					startActivity(chosenIntent);
+				} else if (U.equals(packageName, "com.whatsapp")) {
+					chosenIntent.removeExtra(Intent.EXTRA_SUBJECT);
 				}
+				startActivity(chosenIntent);
 			}
 		} else if (requestCode == REQCODE_textAppearanceGetFonts) {
 			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode, resultCode, data);
 		} else if (requestCode == REQCODE_textAppearanceCustomColors) {
 			if (textAppearancePanel != null) textAppearancePanel.onActivityResult(requestCode, resultCode, data);
+		} else if (requestCode == REQCODE_edit_note_1 && resultCode == RESULT_OK) {
+			reloadBothAttributeMaps();
+		} else if (requestCode == REQCODE_edit_note_2 && resultCode == RESULT_OK) {
+			lsText.uncheckAllVerses(true);
+			reloadBothAttributeMaps();
 		}
+
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	/**
@@ -1426,7 +1430,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			display(newChapter, 1);
 		}
 	}
-	
+
 	void bRight_click() {
 		final Book currentBook = this.activeBook;
 		if (chapter_1 >= currentBook.chapter_count) {
@@ -1451,10 +1455,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	void bVersion_click() {
 		openVersionsDialog();
 	}
-	
+
 	@Override public boolean onSearchRequested() {
 		menuSearch_click();
-		
+
 		return true;
 	}
 
@@ -1540,17 +1544,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		void openNoteDialog(int ari, int ordering) {
-			final TypeNoteDialog dialog = TypeNoteDialog.EditExistingWithOrdering(IsiActivity.this, ari, ordering, new TypeNoteDialog.Listener() {
-				@Override
-				public void onDone() {
-					lsText.reloadAttributeMap();
-
-					if (activeSplitVersion != null) {
-						lsSplit1.reloadAttributeMap();
-					}
-				}
-			});
-			dialog.show();
+			startActivityForResult(NoteActivity.createEditExistingWithOrderingIntent(ari, ordering), REQCODE_edit_note_1);
 		}
 
 		@Override
@@ -1938,14 +1932,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				final int verseCount = selected.size();
 
 				// always create a new note
-				TypeNoteDialog dialog = TypeNoteDialog.NewNote(IsiActivity.this, ari, verseCount, new TypeNoteDialog.Listener() {
-					@Override
-					public void onDone() {
-						lsText.uncheckAllVerses(true);
-						reloadBothAttributeMaps();
-					}
-				});
-				dialog.show();
+				startActivityForResult(NoteActivity.createNewNoteIntent(S.activeVersion.referenceWithVerseCount(ari, verseCount), ari, verseCount), REQCODE_edit_note_2);
 				mode.finish();
 			} return true;
 			case R.id.menuAddHighlight: {

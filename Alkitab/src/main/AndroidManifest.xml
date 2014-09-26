@@ -263,6 +263,11 @@
             android:name="yuku.alkitab.base.ac.SearchBookFilterActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
             android:label="@string/select_books_to_search" />
+        <activity
+            android:name="yuku.alkitab.base.ac.NoteActivity"
+			android:icon="@drawable/ic_attr_note"
+			android:windowSoftInputMode="adjustResize"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 
         <service android:name="yuku.alkitab.base.sv.DownloadService" />
 
