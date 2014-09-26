@@ -53,6 +53,7 @@ dependencies {
     compile project(':FlowLayout')
     compile project(':AmbilWarna')
     compile project(':FileChooser')
+    compile project(':ImportedDesktopVerseUtil')
     compile 'com.android.support:support-v4:20.0.0'
     compile 'com.squareup.picasso:picasso:2.3.3'
     compile 'com.squareup.okhttp:okhttp:2.0.0'

@@ -3,7 +3,7 @@
   <component name="FacetManager">
     <facet type="android-gradle" name="Android-Gradle">
       <configuration>
-        <option name="GRADLE_PROJECT_PATH" value=":Alkitab" />
+        <option name="GRADLE_PROJECT_PATH" value=":ImportedDesktopVerseUtil" />
       </configuration>
     </facet>
     <facet type="android" name="Android">
@@ -19,6 +19,7 @@
         <option name="RES_FOLDER_RELATIVE_PATH" value="/src/main/res" />
         <option name="RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/src/main/res" />
         <option name="ASSETS_FOLDER_RELATIVE_PATH" value="/src/main/assets" />
+        <option name="LIBRARY_PROJECT" value="true" />
       </configuration>
     </facet>
   </component>
@@ -77,34 +78,10 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/rs" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/symbols" />
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
+      <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
     <orderEntry type="jdk" jdkName="Android 4.4 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="support-v13-20.0.0" level="project" />
-    <orderEntry type="library" exported="" name="okhttp-urlconnection-2.0.0" level="project" />
-    <orderEntry type="library" exported="" name="gson-2.2.4" level="project" />
-    <orderEntry type="library" exported="" name="trove4j-3.0.3" level="project" />
-    <orderEntry type="library" exported="" name="okio-1.0.0" level="project" />
-    <orderEntry type="library" exported="" name="okhttp-2.0.0" level="project" />
-    <orderEntry type="library" exported="" name="support-annotations-20.0.0" level="project" />
-    <orderEntry type="library" exported="" name="support-v4-20.0.0" level="project" />
-    <orderEntry type="library" exported="" name="libGoogleAnalyticsV2" level="project" />
-    <orderEntry type="library" exported="" name="picasso-2.3.3" level="project" />
-    <orderEntry type="module" module-name="DragSortListView" exported="" />
-    <orderEntry type="module" module-name="AlkitabFeedback" exported="" />
-    <orderEntry type="module" module-name="FlowLayout" exported="" />
-    <orderEntry type="module" module-name="AlkitabIntegration" exported="" />
-    <orderEntry type="module" module-name="BintexReader" exported="" />
-    <orderEntry type="module" module-name="BintexWriter" exported="" />
-    <orderEntry type="module" module-name="KpriModel" exported="" />
-    <orderEntry type="module" module-name="BiblePlus" exported="" />
-    <orderEntry type="module" module-name="ImportedDesktopVerseUtil" exported="" />
-    <orderEntry type="module" module-name="Afw" exported="" />
-    <orderEntry type="module" module-name="AlkitabYes2" exported="" />
-    <orderEntry type="module" module-name="AmbilWarna" exported="" />
-    <orderEntry type="module" module-name="FileChooser" exported="" />
-    <orderEntry type="module" module-name="KpriViewerLib" exported="" />
-    <orderEntry type="module" module-name="AlkitabIo" exported="" />
     <orderEntry type="module" module-name="AlkitabModel" exported="" />
   </component>
 </module>
