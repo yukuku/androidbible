@@ -194,6 +194,16 @@ public class VersionImpl implements Version {
 				continue;
 			}
 
+			if (Ari.toVerse(ari_start) == 0) {
+				// if start has verse 0, it means the start is verse 1.
+				ari_start |= 0x01;
+			}
+
+			if (Ari.toVerse(ari_end) == 0) {
+				// if end has verse 0, it means until the end of chapter.
+				ari_end |= 0xff;
+			}
+
 			if (ari_start == ari_end) {
 				// case: single verse
 				//noinspection UnnecessaryLocalVariable
