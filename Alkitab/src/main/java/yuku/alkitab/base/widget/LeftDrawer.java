@@ -3,6 +3,7 @@ package yuku.alkitab.base.widget;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
@@ -154,20 +155,65 @@ public abstract class LeftDrawer extends ScrollView {
 		activity.startActivity(SettingsActivity.createIntent());
 	}
 
+	/**
+	 * When the current activity is not {@link yuku.alkitab.base.IsiActivity},
+	 * this clears all activity on this stack,
+	 * starts {@link yuku.alkitab.base.IsiActivity} on the background,
+	 * and then starts {@link yuku.alkitab.base.ac.ReadingPlanActivity}.
+	 */
 	void bReadingPlan_click() {
-		activity.startActivity(ReadingPlanActivity.createIntent());
+		if (getContext() instanceof IsiActivity) {
+			activity.startActivity(ReadingPlanActivity.createIntent());
+		} else {
+			final Intent baseIntent = IsiActivity.createIntent();
+			baseIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			baseIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			final Intent intent = ReadingPlanActivity.createIntent();
+			activity.startActivities(new Intent[]{baseIntent, intent});
+		}
 	}
 
+	/**
+	 * When the current activity is not {@link yuku.alkitab.base.IsiActivity},
+	 * this clears all activity on this stack,
+	 * starts {@link yuku.alkitab.base.IsiActivity} on the background,
+	 * and then starts {@link yuku.alkitab.base.ac.SongViewActivity}.
+	 */
 	void bSongs_click() {
-		activity.startActivity(SongViewActivity.createIntent());
+		if (getContext() instanceof IsiActivity) {
+			activity.startActivity(SongViewActivity.createIntent());
+		} else {
+			final Intent baseIntent = IsiActivity.createIntent();
+			baseIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			baseIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			final Intent intent = SongViewActivity.createIntent();
+			activity.startActivities(new Intent[]{baseIntent, intent});
+		}
 	}
 
+	/**
+	 * When the current activity is not {@link yuku.alkitab.base.IsiActivity},
+	 * this clears all activity on this stack,
+	 * starts {@link yuku.alkitab.base.IsiActivity} on the background,
+	 * and then starts {@link yuku.alkitab.base.ac.DevotionActivity}.
+	 */
 	void bDevotion_click() {
-		activity.startActivity(DevotionActivity.createIntent());
-	}
+		if (getContext() instanceof IsiActivity) {
+			activity.startActivity(DevotionActivity.createIntent());
+		} else {
+			final Intent baseIntent = IsiActivity.createIntent();
+			baseIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			baseIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			final Intent intent = DevotionActivity.createIntent();
+			activity.startActivities(new Intent[]{baseIntent, intent});
+		}	}
 
+	/** This clears all activity on this stack and starts {@link yuku.alkitab.base.IsiActivity}. */
 	void bBible_click() {
-		activity.startActivity(IsiActivity.createIntent());
+		final Intent intent = IsiActivity.createIntent();
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		activity.startActivity(intent);
 	}
 
 	public static class Text extends LeftDrawer {
