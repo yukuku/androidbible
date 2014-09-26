@@ -7,12 +7,19 @@ public class DesktopVerseFinder {
 	public static final String TAG = DesktopVerseFinder.class.getSimpleName();
 
 	public interface DetectorListener {
+		/**
+		 * A verse reference is detected.
+		 * @param start Start position of the found verse reference
+		 * @param end End position of the found verse reference
+		 * @param verse The string containing verse reference
+		 * @return true if you want to continue
+		 */
 		boolean onVerseDetected(int start, int end, String verse);
+
+		/**
+		 * We have scanned till the end of text and found no more verse reference.
+		 */
 		void onNoMoreDetected();
-	}
-	
-	public interface VerseClickListener {
-		void onVerseClicked(int position, CharSequence s, int start, int end, String verse);
 	}
 	
 	// this array contains books that start with number, ex: 1 Kor
