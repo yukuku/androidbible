@@ -2,13 +2,18 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
+		android:id="@+id/menuEdit"
+		android:icon="@drawable/ic_action_edit"
+		android:showAsAction="always|withText"
+		android:title="@string/note_actionbar_edit" />
+	<item
 		android:id="@+id/menuDelete"
 		android:icon="@drawable/ic_action_discard"
 		android:showAsAction="always|withText"
-		android:title="@string/delete" />
+		android:title="@string/note_actionbar_delete" />
 	<item
 		android:id="@+id/menuOk"
 		android:icon="@drawable/ic_action_ok"
 		android:showAsAction="always|withText"
-		android:title="@string/ok" />
+		android:title="@string/note_actionbar_ok" />
 </menu>
