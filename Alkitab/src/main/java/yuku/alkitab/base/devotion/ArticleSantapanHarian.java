@@ -17,10 +17,10 @@ public class ArticleSantapanHarian extends ArticleFromSabda {
 		super(date, title, headerHtml, bodyHtml, readyToUse);
 	}
 
-	@Override public CharSequence getContent(CallbackSpan.OnClickListener verseClickListener) {
+	@Override public CharSequence getContent(CallbackSpan.OnClickListener<String> verseClickListener) {
 		SpannableStringBuilder sb = new SpannableStringBuilder();
 		sb.append(Html.fromHtml("<h3>" + title + "</h3>")); //$NON-NLS-1$ //$NON-NLS-2$
-		sb.setSpan(new CallbackSpan(title, verseClickListener), 0, title.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		sb.setSpan(new CallbackSpan<>(title, verseClickListener), 0, title.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		
 		sb.append(Html.fromHtml(bodyHtml));
 

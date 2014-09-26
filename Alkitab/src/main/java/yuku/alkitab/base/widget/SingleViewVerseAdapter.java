@@ -166,13 +166,13 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 
                 // if we reach this, data and display should have values, and we must not go to fallback below
                 sb.append(display);
-                sb.setSpan(new CallbackSpan(ariRanges.get(0), parallelListener_), sb_len, sb.length(), 0);
+                sb.setSpan(new CallbackSpan<>(ariRanges.get(0), parallelListener_), sb_len, sb.length(), 0);
                 return; // do not remove this
             }
         }
 
         // fallback if the above code fails
         sb.append(parallel);
-        sb.setSpan(new CallbackSpan(parallel, parallelListener_), sb_len, sb.length(), 0);
+        sb.setSpan(new CallbackSpan<>(parallel, parallelListener_), sb_len, sb.length(), 0);
     }
 }

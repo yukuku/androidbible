@@ -25,7 +25,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 
 	// # field ctor
 	final Context context_;
-	CallbackSpan.OnClickListener parallelListener_;
+	CallbackSpan.OnClickListener<Object> parallelListener_;
 	VersesView.AttributeListener attributeListener_;
 	VerseInlineLinkSpan.Factory inlineLinkSpanFactory_;
 	final float density_;
@@ -152,7 +152,7 @@ public abstract class VerseAdapter extends BaseAdapter {
 		return itemPointer_[position];
 	}
 
-	public void setParallelListener(CallbackSpan.OnClickListener parallelListener) {
+	public void setParallelListener(CallbackSpan.OnClickListener<Object> parallelListener) {
 		parallelListener_ = parallelListener;
 		notifyDataSetChanged();
 	}

@@ -277,7 +277,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	Version activeSplitVersion;
 	String activeSplitVersionId;
 
-	CallbackSpan.OnClickListener parallelListener = new CallbackSpan.OnClickListener() {
+	CallbackSpan.OnClickListener<Object> parallelListener = new CallbackSpan.OnClickListener<Object>() {
 		@Override public void onClick(View widget, Object data) {
             if (data instanceof String) {
                 final int ari = jumpTo((String) data);

@@ -45,7 +45,7 @@ public class ArticleMeidA implements DevotionArticle {
 		readyToUse = !raw.startsWith("NG");
 	}
 
-	@Override public CharSequence getContent(CallbackSpan.OnClickListener verseClickListener) {
+	@Override public CharSequence getContent(CallbackSpan.OnClickListener<String> verseClickListener) {
 		SpannableStringBuilder sb = new SpannableStringBuilder();
 		sb.append(Html.fromHtml(bodyHtml + "<br/><small><a href='patchtext://host/?referenceUrl=" + Uri.encode("http://m.ccel.org/ccel/spurgeon/morneve.d" + date.substring(4, 8) + "am.html") + "'>Kirim perbaikan</a></small>"));
 		
@@ -53,7 +53,7 @@ public class ArticleMeidA implements DevotionArticle {
 		URLSpan[] spans = sb.getSpans(0, sb.length(), URLSpan.class);
 		for (URLSpan oldSpan: spans) {
 			String url = oldSpan.getURL();
-			CallbackSpan newSpan = new CallbackSpan(url, verseClickListener);
+			CallbackSpan<String> newSpan = new CallbackSpan<>(url, verseClickListener);
 			sb.setSpan(newSpan, sb.getSpanStart(oldSpan), sb.getSpanEnd(oldSpan), 0);
 			sb.removeSpan(oldSpan);
 		}

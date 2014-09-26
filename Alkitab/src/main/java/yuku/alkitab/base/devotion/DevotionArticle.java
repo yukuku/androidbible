@@ -5,7 +5,7 @@ import yuku.alkitab.base.widget.CallbackSpan;
 
 
 public interface DevotionArticle {
-	CharSequence getContent(CallbackSpan.OnClickListener listener);
+	CharSequence getContent(CallbackSpan.OnClickListener<String> listener);
 	String getDate();
 	boolean getReadyToUse();
 	

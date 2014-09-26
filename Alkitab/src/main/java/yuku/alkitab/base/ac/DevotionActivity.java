@@ -514,11 +514,9 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 		String date;
 	}
 
-	CallbackSpan.OnClickListener verseClickListener = new CallbackSpan.OnClickListener() {
+	CallbackSpan.OnClickListener<String> verseClickListener = new CallbackSpan.OnClickListener<String>() {
 		@Override
-		public void onClick(View widget, Object _data) {
-			String reference = (String) _data;
-			
+		public void onClick(View widget, String reference) {
 			Log.d(TAG, "Clicked verse reference inside devotion: " + reference); //$NON-NLS-1$
 
 			if (reference.startsWith("patchtext:")) {

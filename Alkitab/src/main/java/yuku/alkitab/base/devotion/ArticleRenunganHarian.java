@@ -26,7 +26,7 @@ public class ArticleRenunganHarian extends ArticleFromSabda {
 		return DevotionActivity.DevotionKind.RH;
 	}
 
-	@Override public CharSequence getContent(CallbackSpan.OnClickListener verseClickListener) {
+	@Override public CharSequence getContent(CallbackSpan.OnClickListener<String> verseClickListener) {
 		SpannableStringBuilder sb = new SpannableStringBuilder();
 		
 		Spanned header = Html.fromHtml(headerHtml);
@@ -43,7 +43,7 @@ public class ArticleRenunganHarian extends ArticleFromSabda {
 				
 				while (n.find()) {
 					Log.d(TAG, "Ketemu salah satu bacaan setahun: #" + n.group(1) + "#"); //$NON-NLS-1$ //$NON-NLS-2$
-					CallbackSpan span = new CallbackSpan(n.group(1), verseClickListener);
+					CallbackSpan<String> span = new CallbackSpan<>(n.group(1), verseClickListener);
 					sb.setSpan(span, m.start(1) + n.start(1), m.start(1) + n.end(1), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 				}
 			}
@@ -60,7 +60,7 @@ public class ArticleRenunganHarian extends ArticleFromSabda {
 			Matcher m = Pattern.compile("Bacaan\\s*:\\s*(.*?)\\s*$", Pattern.MULTILINE).matcher(body); //$NON-NLS-1$
 			while (m.find()) {
 				Log.d(TAG, "Ketemu \"Bacaan : \": #" + m.group(1) + "#"); //$NON-NLS-1$ //$NON-NLS-2$
-				CallbackSpan span = new CallbackSpan(m.group(1), verseClickListener);
+				CallbackSpan<String> span = new CallbackSpan<>(m.group(1), verseClickListener);
 				sb.setSpan(span, sb_len + m.start(1), sb_len + m.end(1), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 			}
 		}

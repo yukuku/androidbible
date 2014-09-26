@@ -160,7 +160,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		return adapter;
 	}
 
-	public void setParallelListener(CallbackSpan.OnClickListener parallelListener) {
+	public void setParallelListener(CallbackSpan.OnClickListener<Object> parallelListener) {
 		adapter.setParallelListener(parallelListener);
 	}
 
