@@ -1,5 +1,6 @@
 package yuku.alkitab.base.model;
 
+import android.support.annotation.Nullable;
 import yuku.alkitab.model.Version;
 
 // models
@@ -13,7 +14,7 @@ public abstract class MVersion {
 	/** unique id for comparison purposes */
 	public abstract String getVersionId();
 	/** return version so that it can be read. Null when not possible */
-	public abstract Version getVersion();
+	@Nullable public abstract Version getVersion();
 	public abstract boolean getActive();
 	public abstract boolean hasDataFile();
 }

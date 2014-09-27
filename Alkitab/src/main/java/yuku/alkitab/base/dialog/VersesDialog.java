@@ -204,6 +204,7 @@ public class VersesDialog extends BaseDialog {
 
 			for (final MVersion mversion : mversions) {
 				final Version version = mversion.getVersion();
+				if (version == null) continue;
 
 				String shortName = version.getShortName();
 				if (shortName == null) {

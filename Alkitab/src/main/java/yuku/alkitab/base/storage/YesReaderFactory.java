@@ -33,7 +33,7 @@ public class YesReaderFactory {
 			|| header[4] != (byte) 0x00 
 			|| header[5] != (byte) 0x5d 
 			|| header[6] != (byte) 0xe0) {
-				Log.e(TAG, "Yes file has not a correct header. Header is: " + Arrays.toString(header));
+				Log.e(TAG, "Yes file '" + filename + "' has not a correct header. Header is: " + Arrays.toString(header));
 				return null;
 			}
 			
