@@ -699,38 +699,38 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	boolean loadVersion(final MVersion mv, boolean display) {
 		try {
-			Version version = mv.getVersion();
-			
-			if (version != null) {
-				if (this.activeBook != null) { // we already have some other version loaded, so make the new version open the same book
-					int bookId = this.activeBook.bookId;
-					Book book = version.getBook(bookId);
-					if (book != null) { // we load the new book succesfully
-						this.activeBook = book;
-					} else { // too bad, this book was not found, get any book
-						this.activeBook = version.getFirstBook();
-					}
-				}
-				S.activeVersion = version;
-				S.activeVersionId = mv.getVersionId();
-				bVersion.setText(S.getVersionInitials(version));
-				splitHandleButton.setLabel1("\u25b2 " + getSplitHandleVersionName(mv, version));
-				
-				if (display) {
-					display(chapter_1, lsText.getVerseBasedOnScroll(), false);
-				}
-				
-				return true;
-			} else {
+			final Version version = mv.getVersion();
+
+			if (version == null) {
 				throw new RuntimeException(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()));
 			}
+
+			if (this.activeBook != null) { // we already have some other version loaded, so make the new version open the same book
+				int bookId = this.activeBook.bookId;
+				Book book = version.getBook(bookId);
+				if (book != null) { // we load the new book succesfully
+					this.activeBook = book;
+				} else { // too bad, this book was not found, get any book
+					this.activeBook = version.getFirstBook();
+				}
+			}
+			S.activeVersion = version;
+			S.activeVersionId = mv.getVersionId();
+			bVersion.setText(S.getVersionInitials(version));
+			splitHandleButton.setLabel1("\u25b2 " + getSplitHandleVersionName(mv, version));
+
+			if (display) {
+				display(chapter_1, lsText.getVerseBasedOnScroll(), false);
+			}
+
+			return true;
 		} catch (Throwable e) { // so we don't crash on the beginning of the app
 			Log.e(TAG, "Error opening main version", e);
 
 			new AlertDialog.Builder(IsiActivity.this)
-			.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()))
-			.setPositiveButton(R.string.ok, null)
-			.show();
+				.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()))
+				.setPositiveButton(R.string.ok, null)
+				.show();
 
 			return false;
 		}

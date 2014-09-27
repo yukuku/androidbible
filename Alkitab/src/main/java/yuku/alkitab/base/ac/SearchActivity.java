@@ -442,13 +442,23 @@ public class SearchActivity extends BaseActivity {
 		}
 	};
 
-	View.OnClickListener bVersion_click = new View.OnClickListener() {
+	final View.OnClickListener bVersion_click = new View.OnClickListener() {
 		@Override
 		public void onClick(final View v) {
 			S.openVersionsDialog(SearchActivity.this, false, searchInVersionId, new S.VersionDialogListener() {
 				@Override
 				public void onVersionSelected(final MVersion mv) {
-					searchInVersion = mv.getVersion();
+					final Version selectedVersion = mv.getVersion();
+
+					if (selectedVersion == null) {
+						new AlertDialog.Builder(SearchActivity.this)
+							.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()))
+							.setPositiveButton(R.string.ok, null)
+							.show();
+						return;
+					}
+
+					searchInVersion = selectedVersion;
 					searchInVersionId = mv.getVersionId();
 
 					displaySearchInVersion();
