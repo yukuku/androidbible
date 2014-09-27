@@ -265,8 +265,11 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 								handler.post(new Runnable() {
 									@Override
 									public void run() {
-										if (state == ControllerState.reset_media_known_to_exist || state == ControllerState.complete || state == ControllerState.error) {
+										if (state == ControllerState.preparing) {
+											// the following should be synchronous, since we are loading from local.
 											mediaPlayerPrepare(true, cacheFile.getAbsolutePath());
+										} else {
+											Log.d(TAG, "wrong state after downloading song file: " + state);
 										}
 									}
 								});
@@ -343,11 +346,11 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 					final FileDescriptor fd = fis.getFD();
 					mp.setDataSource(fd);
 					fis.close();
+					mp.prepare();
 				} else {
 					mp.setDataSource(url);
+					mp.prepareAsync();
 				}
-
-				mp.prepareAsync();
 			} catch (IOException e) {
 				Log.e(TAG, "mp setDataSource", e);
 				setState(ControllerState.error);
