@@ -452,7 +452,7 @@ public class SearchActivity extends BaseActivity {
 
 					if (selectedVersion == null) {
 						new AlertDialog.Builder(SearchActivity.this)
-							.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()))
+							.setMessage(getString(R.string.version_error_opening, mv.longName))
 							.setPositiveButton(R.string.ok, null)
 							.show();
 						return;

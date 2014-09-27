@@ -702,7 +702,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			final Version version = mv.getVersion();
 
 			if (version == null) {
-				throw new RuntimeException(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()));
+				throw new RuntimeException(); // caught below
 			}
 
 			if (this.activeBook != null) { // we already have some other version loaded, so make the new version open the same book
@@ -714,6 +714,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					this.activeBook = version.getFirstBook();
 				}
 			}
+
 			S.activeVersion = version;
 			S.activeVersionId = mv.getVersionId();
 			bVersion.setText(S.getVersionInitials(version));
@@ -728,7 +729,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			Log.e(TAG, "Error opening main version", e);
 
 			new AlertDialog.Builder(IsiActivity.this)
-				.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()))
+				.setMessage(getString(R.string.version_error_opening, mv.longName))
 				.setPositiveButton(R.string.ok, null)
 				.show();
 
@@ -738,25 +739,25 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	
 	boolean loadSplitVersion(final MVersion mv) {
 		try {
-			Version version = mv.getVersion();
-			
-			if (version != null) {
-				activeSplitVersion = version;
-				activeSplitVersionId = mv.getVersionId();
-				splitHandleButton.setLabel2(getSplitHandleVersionName(mv, version) + " \u25bc");
-				
-				return true;
-			} else {
-				throw new RuntimeException(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()));
+			final Version version = mv.getVersion();
+
+			if (version == null) {
+				throw new RuntimeException(); // caught below
 			}
+
+			activeSplitVersion = version;
+			activeSplitVersionId = mv.getVersionId();
+			splitHandleButton.setLabel2(getSplitHandleVersionName(mv, version) + " \u25bc");
+
+			return true;
 		} catch (Throwable e) { // so we don't crash on the beginning of the app
 			Log.e(TAG, "Error opening split version", e);
 
 			new AlertDialog.Builder(IsiActivity.this)
-			.setMessage(getString(R.string.ada_kegagalan_membuka_edisiid, mv.getVersionId()))
-			.setPositiveButton(R.string.ok, null)
-			.show();
-			
+				.setMessage(getString(R.string.version_error_opening, mv.longName))
+				.setPositiveButton(R.string.ok, null)
+				.show();
+
 			return false;
 		}
 	}

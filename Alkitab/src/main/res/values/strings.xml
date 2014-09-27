@@ -82,6 +82,7 @@
     <string name="tambah">Add</string>
     <string name="versi_lainnya">Other versions…</string>
     <string name="ada_kegagalan_membuka_edisiid">Error opening %s</string>
+    <string name="version_error_opening">Error opening %s.</string>
     <string name="pdb_file_options">PDB file options</string>
     <string name="greek_charset">Greek charset</string>
     <string name="hebrew_charset">Hebrew charset</string>
