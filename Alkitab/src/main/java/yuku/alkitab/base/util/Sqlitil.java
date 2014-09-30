@@ -23,11 +23,13 @@ public class Sqlitil {
 	public static int nowDateTime() {
 		return (int) (new Date().getTime() / 1000);
 	}
-	
+
+	/** Convert Date to unix time */
 	public static int toInt(Date date) {
 		return (int) (date.getTime() / 1000);
 	}
-	
+
+	/** Convert unix time to Date */
 	public static Date toDate(int date) {
 		return new Date((long)date * 1000);
 	}
