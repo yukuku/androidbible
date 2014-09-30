@@ -40,4 +40,27 @@ public class Table {
 			return SongInfo.class.getSimpleName();
 		}
 	}
+
+	public enum SyncShadow {
+		syncSetName(text),
+		revno(integer),
+		data(blob),
+		;
+
+		public final Type type;
+		public final String suffix;
+
+		private SyncShadow(Type type) {
+			this(type, null);
+		}
+
+		private SyncShadow(Type type, String suffix) {
+			this.type = type;
+			this.suffix = suffix;
+		}
+
+		public static String tableName() {
+			return SyncShadow.class.getSimpleName();
+		}
+	}
 }

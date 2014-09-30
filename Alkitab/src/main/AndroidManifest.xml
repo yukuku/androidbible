@@ -230,6 +230,10 @@
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
             android:label="Secret settings" />
         <activity
+            android:name="yuku.alkitab.base.ac.SecretSyncDebugActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+            android:label="Secret sync debug" />
+        <activity
             android:name="yuku.alkitab.base.ac.ReadingPlanActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.PatchTextActivity"

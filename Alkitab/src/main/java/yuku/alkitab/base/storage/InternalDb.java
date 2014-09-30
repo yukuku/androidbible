@@ -6,6 +6,7 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.provider.BaseColumns;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import yuku.afw.D;
 import yuku.afw.storage.Preferences;
@@ -21,10 +22,12 @@ import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.model.ReadingPlan;
+import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
+import yuku.alkitab.model.Marker_Label;
 import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.ProgressMarkHistory;
 import yuku.alkitab.model.util.Gid;
@@ -35,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import static yuku.alkitab.base.util.Literals.Array;
 
 public class InternalDb {
 	public static final String TAG = InternalDb.class.getSimpleName();
@@ -73,6 +78,16 @@ public class InternalDb {
 		res.verseCount = cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.verseCount));
 		res.createTime = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.createTime)));
 		res.modifyTime = Sqlitil.toDate(cursor.getInt(cursor.getColumnIndexOrThrow(Db.Marker.modifyTime)));
+
+		return res;
+	}
+
+	public static Marker_Label marker_LabelFromCursor(Cursor cursor) {
+		final Marker_Label res = Marker_Label.createEmptyMarker_Label();
+
+		res.gid = cursor.getString(cursor.getColumnIndexOrThrow(Db.Marker_Label.gid));
+		res.marker_gid = cursor.getString(cursor.getColumnIndexOrThrow(Db.Marker_Label.marker_gid));
+		res.label_gid = cursor.getString(cursor.getColumnIndexOrThrow(Db.Marker_Label.label_gid));
 
 		return res;
 	}
@@ -181,6 +196,22 @@ public class InternalDb {
 			final Label label = getLabelById(label_id);
 			c = db.rawQuery("select " + Db.TABLE_Marker + ".* from " + Db.TABLE_Marker + ", " + Db.TABLE_Marker_Label + " where " + Db.Marker.kind + "=? and " + Db.TABLE_Marker + "." + Db.Marker.gid + " = " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.marker_gid + " and " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.label_gid + "=? order by " + Db.TABLE_Marker + "." + sortClause, new String[]{String.valueOf(kind.code), label.gid});
 		}
+
+		try {
+			while (c.moveToNext()) {
+				res.add(markerFromCursor(c));
+			}
+		} finally {
+			c.close();
+		}
+
+		return res;
+	}
+
+	public List<Marker> listAllMarkers() {
+		final SQLiteDatabase db = helper.getReadableDatabase();
+		final Cursor c = db.query(Db.TABLE_Marker, null, null, null, null, null, null);
+		final List<Marker> res = new ArrayList<>();
 
 		try {
 			while (c.moveToNext()) {
@@ -550,6 +581,19 @@ public class InternalDb {
 		try {
 			while (cursor.moveToNext()) {
 				res.add(labelFromCursor(cursor));
+			}
+		} finally {
+			cursor.close();
+		}
+		return res;
+	}
+
+	public List<Marker_Label> listAllMarker_Labels() {
+		final List<Marker_Label> res = new ArrayList<>();
+		final Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Marker_Label, null, null, null, null, null, null);
+		try {
+			while (cursor.moveToNext()) {
+				res.add(marker_LabelFromCursor(cursor));
 			}
 		} finally {
 			cursor.close();
@@ -989,5 +1033,24 @@ public class InternalDb {
 		}
 	}
 
-
+	@Nullable public SyncShadow getSyncShadowBySyncSetName(final String syncSetName) {
+		final SQLiteDatabase db = helper.getReadableDatabase();
+		final Cursor c = db.query(Table.SyncShadow.tableName(), Array(
+			Table.SyncShadow.syncSetName.name(),
+			Table.SyncShadow.revno.name(),
+			Table.SyncShadow.data.name()
+		), Table.SyncShadow.syncSetName + "=?", Array(syncSetName), null, null, null);
+		try {
+			if (c.moveToNext()) {
+				final SyncShadow res = new SyncShadow();
+				res.syncSetName = c.getString(0);
+				res.revno = c.getInt(1);
+				res.data = c.getBlob(2);
+				return res;
+			}
+		} finally {
+			c.close();
+		}
+		return null;
+	}
 }
