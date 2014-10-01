@@ -384,7 +384,7 @@
 
     <string name="search_filter_multiple_books_selected">%s books selected</string>
     <string name="search_version_select_label">Search in:</string>
-	<string name="show_hidden_version_warning">Enabling this allows you to download Bible versions that are non-free in certain regions. Please check that you are allowed to download and use it. You are fully responsible for downloading and using such versions. Tap OK if you agree.</string>
+	<string name="show_hidden_version_warning">Enabling this option allows you to download Bible versions which may be subject to certain regional or monetary requirements. Before downloading them, please make sure you are allowed to do so. You are fully responsible for downloading and using such versions and I cannot be held accountable for this. Tap OK if you agree to the above terms.</string>
 
 	<string name="version_config_updater_error_download_modify_time">Failed to check version list.</string>
 	<string name="version_config_updater_error_modify_time_failed">Version list not available: %s</string>

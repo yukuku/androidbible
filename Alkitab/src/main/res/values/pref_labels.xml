@@ -14,5 +14,5 @@
     <string name="pref_volumeButtonNavigation_title">Volume button navigation</string>
     <string name="pref_copyWithVerseNumbers_title">Include verse numbers</string>
     <string name="pref_copyWithVerseNumbers_summary">Put verse numbers on every verse when copying/sharing</string>
-    <string name="pref_showHiddenVersion_title">Non-free versions</string>
+    <string name="pref_showHiddenVersion_title">Enable possibly restricted versions</string>
 </resources>

@@ -359,7 +359,6 @@
   <string name="book_filter_new_apocalypse">Apokalips</string>
   <string name="search_filter_multiple_books_selected">%s buku dipilih</string>
   <string name="search_version_select_label">Cari dalam:</string>
-  <string name="show_hidden_version_warning">Membolehkan ini membolehkan anda untuk memuat turun versi Bible yang bukan percuma di kawasan-kawasan tertentu. Sila pastikan bahawa anda dibenarkan untuk memuat turun dan menggunakannya. Anda bertanggungjawab sepenuhnya untuk memuat turun dan menggunakan versi tersebut. Ketik OK jika anda bersetuju.</string>
   <string name="version_config_updater_error_download_modify_time">Gagal untuk memeriksa senarai versi.</string>
   <string name="version_config_updater_error_modify_time_failed">Senarai versi tidak tersedia: %s</string>
   <string name="version_config_updater_no_newer_available">Tiada versi kemas kini dijumpai.</string>

@@ -359,7 +359,7 @@
   <string name="book_filter_new_apocalypse">Apokalips</string>
   <string name="search_filter_multiple_books_selected">%s kitab dipilih</string>
   <string name="search_version_select_label">Temukan dalam:</string>
-  <string name="show_hidden_version_warning">Menyalakan ini akan membuat Anda bisa mengunduh versi-versi Alkitab yang tidak bebas dalam wilayah tertentu. Harap pastikan Anda boleh mengunduh dan menggunakannya. Anda bertanggung jawab sepenuhnya atas pengunduhan dan penggunaan versi-versi tersebut. Tekan OK jika Anda setuju.</string>
+  <string name="show_hidden_version_warning">Menyalakan pilihan ini memungkinkan Anda mengunduh versi Alkitab yang mungkin memerlukan persyaratan regional atau pembayaran. Sebelum mengunduh versi-versi Alkitab tersebut, pastikan Anda diperbolehkan melakukannya. Anda sepenuhnya bertanggung jawab dalam mengunduh dan menggunakan versi-versi sedemikian dan saya tidak dapat bertanggung jawab untuk hal ini. Tekan OK jika Anda setuju dengan ketentuan di atas.</string>
   <string name="version_config_updater_error_download_modify_time">Gagal mengecek daftar versi.</string>
   <string name="version_config_updater_error_modify_time_failed">Daftar versi tidak tersedia: %s</string>
   <string name="version_config_updater_no_newer_available">Tidak ditemukan pembaruan versi.</string>
