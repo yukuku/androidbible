@@ -8,7 +8,9 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -16,6 +18,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.util.Sqlitil;
@@ -46,6 +49,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		V.get(this, R.id.bGenerateDummies).setOnClickListener(bGenerateDummies_click);
 		V.get(this, R.id.bRegisterNewUser).setOnClickListener(bRegisterNewUser_click);
 		V.get(this, R.id.bLogout).setOnClickListener(bLogout_click);
+		V.get(this, R.id.bSync).setOnClickListener(bSync_click);
 
 		displayUser();
 	}
@@ -141,8 +145,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 			@Override
 			public void onResponse(final Response response) throws IOException {
+				final DebugCreateUserResponseJson debugCreateUserResponse = new Gson().fromJson(response.body().charStream(), DebugCreateUserResponseJson.class);
 				runOnUiThread(() -> {
-					final DebugCreateUserResponseJson debugCreateUserResponse = new Gson().fromJson(response.body().charStream(), DebugCreateUserResponseJson.class);
 					if (debugCreateUserResponse.success) {
 						final String email = debugCreateUserResponse.user.email;
 						final String simpleToken = debugCreateUserResponse.simpleToken;
@@ -181,5 +185,65 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		Preferences.remove(Prefkey.sync_token_obtained_time);
 		Preferences.unhold();
 		displayUser();
+	};
+
+	static class DebugSyncResponseJson extends ResponseJson {
+		public int final_revno;
+		public Sync.Delta<Sync.MabelContent> append_delta;
+	}
+
+	View.OnClickListener bSync_click = v -> {
+		final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
+		if (simpleToken == null) {
+			new AlertDialog.Builder(this)
+				.setMessage("not logged in")
+				.setPositiveButton(R.string.ok, null)
+				.show();
+			return;
+		}
+
+		final RequestBody requestBody = new FormEncodingBuilder()
+			.add("simpleToken", simpleToken)
+			.add("syncSetName", SyncShadow.SYNC_SET_MABEL)
+			.add("clientState", new Gson().toJson(Sync.getMabelClientState()))
+			.build();
+
+		final Call call = App.getOkHttpClient().newCall(
+			new Request.Builder()
+				.url(getServer() + "/sync/api/debug_sync")
+				.post(requestBody)
+				.build()
+		);
+
+		call.enqueue(new Callback() {
+			@Override
+			public void onFailure(final Request request, final IOException e) {
+				runOnUiThread(() -> new AlertDialog.Builder(SecretSyncDebugActivity.this)
+					.setMessage("Error: " + e.getMessage())
+					.setPositiveButton(R.string.ok, null)
+					.show());
+			}
+
+			@Override
+			public void onResponse(final Response response) throws IOException {
+				final DebugSyncResponseJson debugSyncResponse = new Gson().fromJson(response.body().charStream(), DebugSyncResponseJson.class);
+				runOnUiThread(() -> {
+					if (debugSyncResponse.success) {
+						final int final_revno = debugSyncResponse.final_revno;
+						final Sync.Delta<Sync.MabelContent> append_delta = debugSyncResponse.append_delta;
+
+						new AlertDialog.Builder(SecretSyncDebugActivity.this)
+							.setMessage("Final revno: " + final_revno + "\nAppend delta: " + append_delta)
+							.setPositiveButton(R.string.ok, null)
+							.show();
+					} else {
+						new AlertDialog.Builder(SecretSyncDebugActivity.this)
+							.setMessage(debugSyncResponse.message)
+							.setPositiveButton(R.string.ok, null)
+							.show();
+					}
+				});
+			}
+		});
 	};
 }

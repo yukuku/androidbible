@@ -39,6 +39,10 @@ public class App extends yuku.afw.App {
 		return OkHttpClientWrapper.INSTANCE.httpClient.newCall(new Request.Builder().url(url).build());
 	}
 
+	public static OkHttpClient getOkHttpClient() {
+		return OkHttpClientWrapper.INSTANCE.httpClient;
+	}
+
 	@Override public void onCreate() {
 		super.onCreate();
 

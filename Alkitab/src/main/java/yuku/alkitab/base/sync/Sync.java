@@ -50,6 +50,13 @@ public class Sync {
 		public Delta() {
 			operations = new ArrayList<>();
 		}
+
+		@Override
+		public String toString() {
+			return "Delta{" +
+				"operations=" + operations +
+				'}';
+		}
 	}
 
 	public static class Entity<C> {
