@@ -74,14 +74,14 @@ public class Sync {
 	 * Entity content for {@link yuku.alkitab.model.Marker} and {@link yuku.alkitab.model.Label}.
 	 */
 	public static class MabelContent {
-		public int ari; // marker
-		public int kind; // marker
+		public Integer ari; // marker
+		public Integer kind; // marker
 		public String caption; // marker
-		public int verseCount; // marker
-		public int createTime; // marker
-		public int modifyTime; // marker
+		public Integer verseCount; // marker
+		public Integer createTime; // marker
+		public Integer modifyTime; // marker
 		public String title; // label
-		public int ordering; // label
+		public Integer ordering; // label
 		public String backgroundColor; // label
 		public String marker_gid; // marker_label
 		public String label_gid; // marker_label
@@ -129,14 +129,14 @@ public class Sync {
 		@Override
 		public String toString() {
 			final StringBuilder sb = new StringBuilder("{");
-			if (ari != 0) sb.append(ari).append(' ');
-			if (kind != 0) sb.append(kind).append(' ');
+			if (ari != null) sb.append(ari).append(' ');
+			if (kind != null) sb.append(kind).append(' ');
 			if (caption != null) sb.append(q(caption)).append(' ');
-			if (verseCount != 0) sb.append(verseCount).append(' ');
-			if (createTime != 0) sb.append(createTime).append(' ');
-			if (modifyTime != 0) sb.append(modifyTime).append(' ');
+			if (verseCount != null) sb.append(verseCount).append(' ');
+			if (createTime != null) sb.append(createTime).append(' ');
+			if (modifyTime != null) sb.append(modifyTime).append(' ');
 			if (title != null) sb.append(q(title)).append(' ');
-			if (ordering != 0) sb.append(ordering).append(' ');
+			if (ordering != null) sb.append(ordering).append(' ');
 			if (backgroundColor != null) sb.append(backgroundColor).append(' ');
 			if (marker_gid != null) sb.append(marker_gid.substring(0, 10)).append(' ');
 			if (label_gid != null) sb.append(label_gid.substring(0, 10)).append(' ');
