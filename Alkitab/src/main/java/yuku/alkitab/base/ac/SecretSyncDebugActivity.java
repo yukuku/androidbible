@@ -184,6 +184,9 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		Preferences.remove(Prefkey.sync_simpleToken);
 		Preferences.remove(Prefkey.sync_token_obtained_time);
 		Preferences.unhold();
+
+		S.getDb().deleteSyncShadowBySyncSetName(SyncShadow.SYNC_SET_MABEL);
+
 		displayUser();
 	};
 

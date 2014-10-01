@@ -1053,4 +1053,9 @@ public class InternalDb {
 		}
 		return null;
 	}
+
+	public void deleteSyncShadowBySyncSetName(final String syncSetName) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+		db.delete(Table.SyncShadow.tableName(), Table.SyncShadow.syncSetName + "=?", Array(syncSetName));
+	}
 }
