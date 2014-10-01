@@ -55,4 +55,19 @@ public enum Prefkey {
 	 * Default is {@link yuku.alkitab.base.model.MVersionInternal#DEFAULT_ORDERING}.
 	 */
 	internal_version_ordering,
+
+	/**
+	 * Sync user email.
+	 */
+	sync_user_email,
+
+	/**
+	 * Sync simple token, used to access user specific data.
+	 */
+	sync_simpleToken,
+
+	/**
+	 * The unix time the access token is obtained
+	 */
+	sync_token_obtained_time,
 }

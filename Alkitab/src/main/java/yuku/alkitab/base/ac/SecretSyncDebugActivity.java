@@ -3,15 +3,27 @@ package yuku.alkitab.base.ac;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
+import com.google.gson.Gson;
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 import yuku.afw.V;
+import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Sync;
+import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,12 +31,27 @@ import java.util.Set;
 public class SecretSyncDebugActivity extends BaseActivity {
 	public static final String TAG = SecretSyncDebugActivity.class.getSimpleName();
 
-	@Override protected void onCreate(Bundle savedInstanceState) {
+	EditText tServer;
+	TextView tUser;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_secret_sync_debug);
 
+		tServer = V.get(this, R.id.tServer);
+		tUser = V.get(this, R.id.tUser);
+
 		V.get(this, R.id.bMabelClientState).setOnClickListener(bMabelClientState_click);
 		V.get(this, R.id.bGenerateDummies).setOnClickListener(bGenerateDummies_click);
+		V.get(this, R.id.bRegisterNewUser).setOnClickListener(bRegisterNewUser_click);
+		V.get(this, R.id.bLogout).setOnClickListener(bLogout_click);
+
+		displayUser();
+	}
+
+	String getServer() {
+		return tServer.getText().toString();
 	}
 
 	View.OnClickListener bMabelClientState_click = v -> {
@@ -86,4 +113,73 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		}
 		return sb.toString();
 	}
+
+	static class ResponseJson {
+		public boolean success;
+		public String message;
+	}
+
+	static class UserJson {
+		public String email;
+	}
+
+	static class DebugCreateUserResponseJson extends ResponseJson {
+		public UserJson user;
+		public String simpleToken;
+	}
+
+	View.OnClickListener bRegisterNewUser_click = v -> {
+		final Call call = App.downloadCall(getServer() + "/sync/api/debug_create_user");
+		call.enqueue(new Callback() {
+			@Override
+			public void onFailure(final Request request, final IOException e) {
+				runOnUiThread(() -> new AlertDialog.Builder(SecretSyncDebugActivity.this)
+					.setMessage("Error: " + e.getMessage())
+					.setPositiveButton(R.string.ok, null)
+					.show());
+			}
+
+			@Override
+			public void onResponse(final Response response) throws IOException {
+				runOnUiThread(() -> {
+					final DebugCreateUserResponseJson debugCreateUserResponse = new Gson().fromJson(response.body().charStream(), DebugCreateUserResponseJson.class);
+					if (debugCreateUserResponse.success) {
+						final String email = debugCreateUserResponse.user.email;
+						final String simpleToken = debugCreateUserResponse.simpleToken;
+
+						Preferences.hold();
+						Preferences.setString(Prefkey.sync_user_email, email);
+						Preferences.setString(Prefkey.sync_simpleToken, simpleToken);
+						Preferences.setInt(Prefkey.sync_token_obtained_time, Sqlitil.nowDateTime());
+						Preferences.unhold();
+
+						displayUser();
+
+						new AlertDialog.Builder(SecretSyncDebugActivity.this)
+							.setMessage("User email: " + email + "\nsimpleToken: " + simpleToken)
+							.setPositiveButton(R.string.ok, null)
+							.show();
+					} else {
+						new AlertDialog.Builder(SecretSyncDebugActivity.this)
+							.setMessage(debugCreateUserResponse.message)
+							.setPositiveButton(R.string.ok, null)
+							.show();
+					}
+				});
+			}
+		});
+	};
+
+	void displayUser() {
+		tUser.setText(Preferences.getString(Prefkey.sync_user_email, "not logged in") + ": " + Preferences.getString(Prefkey.sync_simpleToken));
+	}
+
+	View.OnClickListener bLogout_click = v -> {
+		Preferences.hold();
+		Preferences.remove(Prefkey.sync_user_email);
+		Preferences.remove(Prefkey.sync_simpleToken);
+		Preferences.remove(Prefkey.sync_token_obtained_time);
+		Preferences.unhold();
+		displayUser();
+	};
 }
