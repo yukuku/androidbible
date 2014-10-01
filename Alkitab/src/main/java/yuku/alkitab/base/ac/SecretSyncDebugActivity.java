@@ -2,7 +2,6 @@ package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.util.Pair;
 import android.view.View;
 import yuku.afw.V;
 import yuku.alkitab.base.S;
@@ -30,12 +29,12 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 	View.OnClickListener bMabelClientState_click = v -> {
 		final StringBuilder sb = new StringBuilder();
-		final Pair<Integer, Sync.Delta<Sync.MabelContent>> clientState = Sync.getMabelClientState();
+		final Sync.MabelClientState clientState = Sync.getMabelClientState();
 
-		sb.append("Base revno: ").append(clientState.first).append('\n');
+		sb.append("Base revno: ").append(clientState.base_revno).append('\n');
 		sb.append("Delta operations: \n");
 
-		for (final Sync.Operation<Sync.MabelContent> operation : clientState.second.operations) {
+		for (final Sync.Operation<Sync.MabelContent> operation : clientState.delta.operations) {
 			sb.append("\u2022 ").append(operation).append('\n');
 		}
 

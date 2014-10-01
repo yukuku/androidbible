@@ -2,7 +2,6 @@ package yuku.alkitab.base.sync;
 
 
 import android.support.annotation.NonNull;
-import android.util.Pair;
 import com.google.gson.Gson;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -155,10 +154,20 @@ public class Sync {
 		public List<Entity<MabelContent>> entities;
 	}
 
+	public static class MabelClientState {
+		public int base_revno;
+		@NonNull public Delta<MabelContent> delta;
+
+		public MabelClientState(final int base_revno, final @NonNull Delta<MabelContent> delta) {
+			this.base_revno = base_revno;
+			this.delta = delta;
+		}
+	}
+
 	/**
 	 * @return base revno, delta of shadow -> current.
 	 */
-	public static Pair<Integer, Delta<MabelContent>> getMabelClientState() {
+	public static MabelClientState getMabelClientState() {
 		final SyncShadow ss = S.getDb().getSyncShadowBySyncSetName(SyncShadow.SYNC_SET_MABEL);
 
 		final List<Entity<MabelContent>> srcs = ss == null? List(): getMabelEntitiesFromShadow(ss);
@@ -187,7 +196,7 @@ public class Sync {
 			}
 		}
 
-		return Pair.create(ss == null ? 0 : ss.revno, delta);
+		return new MabelClientState(ss == null ? 0 : ss.revno, delta);
 	}
 
 	private static boolean isSameMabelContent(final Entity<MabelContent> a, final Entity<MabelContent> b) {
