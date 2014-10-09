@@ -94,31 +94,31 @@ public class Sync {
 
 			final MabelContent that = (MabelContent) o;
 
-			if (ari != that.ari) return false;
-			if (createTime != that.createTime) return false;
-			if (kind != that.kind) return false;
-			if (modifyTime != that.modifyTime) return false;
-			if (ordering != that.ordering) return false;
-			if (verseCount != that.verseCount) return false;
+			if (ari != null ? !ari.equals(that.ari) : that.ari != null) return false;
 			if (backgroundColor != null ? !backgroundColor.equals(that.backgroundColor) : that.backgroundColor != null) return false;
 			if (caption != null ? !caption.equals(that.caption) : that.caption != null) return false;
+			if (createTime != null ? !createTime.equals(that.createTime) : that.createTime != null) return false;
+			if (kind != null ? !kind.equals(that.kind) : that.kind != null) return false;
 			if (label_gid != null ? !label_gid.equals(that.label_gid) : that.label_gid != null) return false;
 			if (marker_gid != null ? !marker_gid.equals(that.marker_gid) : that.marker_gid != null) return false;
+			if (modifyTime != null ? !modifyTime.equals(that.modifyTime) : that.modifyTime != null) return false;
+			if (ordering != null ? !ordering.equals(that.ordering) : that.ordering != null) return false;
 			if (title != null ? !title.equals(that.title) : that.title != null) return false;
+			if (verseCount != null ? !verseCount.equals(that.verseCount) : that.verseCount != null) return false;
 
 			return true;
 		}
 
 		@Override
 		public int hashCode() {
-			int result = ari;
-			result = 31 * result + kind;
+			int result = ari != null ? ari.hashCode() : 0;
+			result = 31 * result + (kind != null ? kind.hashCode() : 0);
 			result = 31 * result + (caption != null ? caption.hashCode() : 0);
-			result = 31 * result + verseCount;
-			result = 31 * result + createTime;
-			result = 31 * result + modifyTime;
+			result = 31 * result + (verseCount != null ? verseCount.hashCode() : 0);
+			result = 31 * result + (createTime != null ? createTime.hashCode() : 0);
+			result = 31 * result + (modifyTime != null ? modifyTime.hashCode() : 0);
 			result = 31 * result + (title != null ? title.hashCode() : 0);
-			result = 31 * result + ordering;
+			result = 31 * result + (ordering != null ? ordering.hashCode() : 0);
 			result = 31 * result + (backgroundColor != null ? backgroundColor.hashCode() : 0);
 			result = 31 * result + (marker_gid != null ? marker_gid.hashCode() : 0);
 			result = 31 * result + (label_gid != null ? label_gid.hashCode() : 0);
