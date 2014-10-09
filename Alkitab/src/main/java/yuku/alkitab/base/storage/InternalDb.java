@@ -253,10 +253,6 @@ public class InternalDb {
 		return res;
 	}
 
-	public int countAllMarkers() {
-		return (int) DatabaseUtils.queryNumEntries(helper.getReadableDatabase(), Db.TABLE_Marker);
-	}
-
 	private SQLiteStatement stmt_countMarkersForBookChapter = null;
 
 	public int countMarkersForBookChapter(int ari_bookchapter) {
@@ -1174,13 +1170,19 @@ public class InternalDb {
 	/**
 	 * Makes the current database updated with patches (append delta) from server.
 	 * Also updates the shadow (both data and the revno).
-	 * TODO check if database is dirty. if so reject changes.
-	 * @return true if database and sync shadow are updated. False if something wrong happens.
+	 * @return {@link yuku.alkitab.base.storage.InternalDb.ApplyAppendDeltaResult#ok} if database and sync shadow are updated. Otherwise else.
 	 */
-	public ApplyAppendDeltaResult applyAppendDelta(final int final_revno, @NonNull final Sync.Delta<Sync.MabelContent> append_delta) {
+	@NonNull public ApplyAppendDeltaResult applyAppendDelta(final int final_revno, @NonNull final Sync.Delta<Sync.MabelContent> append_delta, @NonNull final List<Sync.Entity<Sync.MabelContent>> entitiesBeforeSync) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
 		try {
+			{ // if the current entities are not the same as the ones had when contacting server, reject this append delta.
+				final List<Sync.Entity<Sync.MabelContent>> currentEntities = Sync.getMabelEntitiesFromCurrent();
+				if (!Sync.entitiesEqual(currentEntities, entitiesBeforeSync)) {
+					return ApplyAppendDeltaResult.dirty;
+				}
+			}
+
 			for (final Sync.Operation<Sync.MabelContent> o : append_delta.operations) {
 				switch (o.opkind) {
 					case del:

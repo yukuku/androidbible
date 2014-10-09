@@ -2,6 +2,7 @@ package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -19,6 +20,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.SyncShadow;
+import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.util.Sqlitil;
@@ -29,6 +31,7 @@ import yuku.alkitab.model.Marker;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class SecretSyncDebugActivity extends BaseActivity {
@@ -63,7 +66,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 	View.OnClickListener bMabelClientState_click = v -> {
 		final StringBuilder sb = new StringBuilder();
-		final Sync.MabelClientState clientState = Sync.getMabelClientState();
+		final Pair<Sync.MabelClientState, List<Sync.Entity<Sync.MabelContent>>> pair = Sync.getMabelClientStateAndCurrentEntities();
+		final Sync.MabelClientState clientState = pair.first;
 
 		sb.append("Base revno: ").append(clientState.base_revno).append('\n');
 		sb.append("Delta operations: \n");
@@ -266,10 +270,14 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			return;
 		}
 
+		final Pair<Sync.MabelClientState, List<Sync.Entity<Sync.MabelContent>>> pair = Sync.getMabelClientStateAndCurrentEntities();
+		final Sync.MabelClientState clientState = pair.first;
+		final List<Sync.Entity<Sync.MabelContent>> entitiesBeforeSync = pair.second;
+
 		final RequestBody requestBody = new FormEncodingBuilder()
 			.add("simpleToken", simpleToken)
 			.add("syncSetName", SyncShadow.SYNC_SET_MABEL)
-			.add("clientState", new Gson().toJson(Sync.getMabelClientState()))
+			.add("clientState", new Gson().toJson(clientState))
 			.build();
 
 		final Call call = App.getOkHttpClient().newCall(
@@ -296,12 +304,12 @@ public class SecretSyncDebugActivity extends BaseActivity {
 						final int final_revno = debugSyncResponse.final_revno;
 						final Sync.Delta<Sync.MabelContent> append_delta = debugSyncResponse.append_delta;
 
+						final InternalDb.ApplyAppendDeltaResult applyResult = S.getDb().applyAppendDelta(final_revno, append_delta, entitiesBeforeSync);
+
 						new AlertDialog.Builder(SecretSyncDebugActivity.this)
-							.setMessage("Final revno: " + final_revno + "\nAppend delta: " + append_delta)
+							.setMessage("Final revno: " + final_revno + "\nApply result: " + applyResult + "\nAppend delta: " + append_delta)
 							.setPositiveButton(R.string.ok, null)
 							.show();
-
-						S.getDb().applyAppendDelta(final_revno, append_delta);
 					} else {
 						new AlertDialog.Builder(SecretSyncDebugActivity.this)
 							.setMessage(debugSyncResponse.message)

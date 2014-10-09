@@ -3,6 +3,7 @@ package yuku.alkitab.base.sync;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Pair;
 import com.google.gson.Gson;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -13,6 +14,8 @@ import yuku.alkitab.model.Marker;
 import yuku.alkitab.model.Marker_Label;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static yuku.alkitab.base.util.Literals.List;
@@ -69,6 +72,30 @@ public class Sync {
 		public String kind;
 		public String gid;
 		public C content;
+
+		//region Boilerplate equals and hashCode
+		@Override
+		public boolean equals(final Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			final Entity entity = (Entity) o;
+
+			if (content != null ? !content.equals(entity.content) : entity.content != null) return false;
+			if (gid != null ? !gid.equals(entity.gid) : entity.gid != null) return false;
+			if (kind != null ? !kind.equals(entity.kind) : entity.kind != null) return false;
+
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			int result = kind != null ? kind.hashCode() : 0;
+			result = 31 * result + (gid != null ? gid.hashCode() : 0);
+			result = 31 * result + (content != null ? content.hashCode() : 0);
+			return result;
+		}
+		//endregion
 	}
 
 	/**
@@ -163,10 +190,10 @@ public class Sync {
 	}
 
 	public static class MabelClientState {
-		public int base_revno;
-		@NonNull public Delta<MabelContent> delta;
+		public final int base_revno;
+		@NonNull public final Delta<MabelContent> delta;
 
-		public MabelClientState(final int base_revno, final @NonNull Delta<MabelContent> delta) {
+		public MabelClientState(final int base_revno, @NonNull final Delta<MabelContent> delta) {
 			this.base_revno = base_revno;
 			this.delta = delta;
 		}
@@ -175,7 +202,7 @@ public class Sync {
 	/**
 	 * @return base revno, delta of shadow -> current.
 	 */
-	public static MabelClientState getMabelClientState() {
+	public static Pair<MabelClientState, List<Entity<MabelContent>>> getMabelClientStateAndCurrentEntities() {
 		final SyncShadow ss = S.getDb().getSyncShadowBySyncSetName(SyncShadow.SYNC_SET_MABEL);
 
 		final List<Entity<MabelContent>> srcs = ss == null? List(): mabelEntitiesFromShadow(ss);
@@ -204,7 +231,7 @@ public class Sync {
 			}
 		}
 
-		return new MabelClientState(ss == null ? 0 : ss.revno, delta);
+		return Pair.create(new MabelClientState(ss == null ? 0 : ss.revno, delta), dsts);
 	}
 
 	private static boolean isSameMabelContent(final Entity<MabelContent> a, final Entity<MabelContent> b) {
@@ -239,7 +266,7 @@ public class Sync {
 		return res;
 	}
 
-	public static List<Entity<MabelContent>> getMabelEntitiesFromCurrent() {
+	@NonNull public static List<Entity<MabelContent>> getMabelEntitiesFromCurrent() {
 		final List<Entity<MabelContent>> res = new ArrayList<>();
 
 		{ // markers
@@ -342,4 +369,19 @@ public class Sync {
 		return res;
 	}
 
+	/**
+	 * Ignoring order, check if all the entities are the same.
+	 */
+	public static <C> boolean entitiesEqual(@NonNull final List<Entity<C>> a_, @NonNull final List<Entity<C>> b_) {
+		if (a_.size() != b_.size()) return false;
+
+		final ArrayList<Entity<C>> a = new ArrayList<>(a_);
+		final ArrayList<Entity<C>> b = new ArrayList<>(b_);
+
+		final Comparator<Entity<C>> cmp = (lhs, rhs) -> lhs.gid.compareTo(rhs.gid);
+		Collections.sort(a, cmp);
+		Collections.sort(b, cmp);
+
+		return a.equals(b);
+	}
 }
