@@ -85,6 +85,7 @@ public class InternalDb {
 	public static Marker_Label marker_LabelFromCursor(Cursor cursor) {
 		final Marker_Label res = Marker_Label.createEmptyMarker_Label();
 
+		res._id = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
 		res.gid = cursor.getString(cursor.getColumnIndexOrThrow(Db.Marker_Label.gid));
 		res.marker_gid = cursor.getString(cursor.getColumnIndexOrThrow(Db.Marker_Label.marker_gid));
 		res.label_gid = cursor.getString(cursor.getColumnIndexOrThrow(Db.Marker_Label.label_gid));
