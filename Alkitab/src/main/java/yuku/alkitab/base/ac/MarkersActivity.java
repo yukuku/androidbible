@@ -115,7 +115,7 @@ public class MarkersActivity extends BaseActivity {
 			LabelEditorDialog.show(this, label.title, getString(R.string.rename_label_title), new OkListener() {
 				@Override public void onOk(String title) {
 					label.title = title;
-					S.getDb().updateLabel(label);
+					S.getDb().insertOrUpdateLabel(label);
 					adapter.notifyDataSetChanged();
 				}
 			});
@@ -161,7 +161,7 @@ public class MarkersActivity extends BaseActivity {
 					} else {
 						label.backgroundColor = U.encodeLabelBackgroundColor(0x00ffffff & color);
 					}
-					S.getDb().updateLabel(label);
+					S.getDb().insertOrUpdateLabel(label);
 					adapter.notifyDataSetChanged();
 				}
 				

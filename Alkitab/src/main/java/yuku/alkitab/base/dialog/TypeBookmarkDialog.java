@@ -143,7 +143,7 @@ public class TypeBookmarkDialog {
 		if (marker != null) { // update existing
 			marker.caption = caption;
 			marker.modifyTime = now;
-			S.getDb().updateMarker(marker);
+			S.getDb().insertOrUpdateMarker(marker);
 		} else { // add new
 			marker = S.getDb().insertMarker(ariForNewBookmark, Marker.Kind.bookmark, caption, verseCountForNewBookmark, now, now);
 		}

@@ -245,7 +245,7 @@ public class NoteActivity extends BaseActivity {
 			} else {
 				marker.caption = caption;
 				marker.modifyTime = now;
-				S.getDb().updateMarker(marker);
+				S.getDb().insertOrUpdateMarker(marker);
 			}
 		} else { // marker == null; not existing, so only insert when there is some text
 			if (caption.length() > 0) {

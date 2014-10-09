@@ -150,8 +150,17 @@ public class InternalDb {
 		}
 	}
 
-	public int updateMarker(Marker marker) {
-		return helper.getWritableDatabase().update(Db.TABLE_Marker, markerToContentValues(marker), "_id=?", new String[] {String.valueOf(marker._id)});
+	/**
+	 * Insert a new marker or update an existing marker.
+	 * @param marker if the _id is 0, this marker will be inserted. Otherwise, updated.
+	 */
+	public void insertOrUpdateMarker(@NonNull final Marker marker) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+		if (marker._id != 0) {
+			db.update(Db.TABLE_Marker, markerToContentValues(marker), "_id=?", Array(String.valueOf(marker._id)));
+		} else {
+			db.insert(Db.TABLE_Marker, null, markerToContentValues(marker));
+		}
 	}
 
 	public Marker insertMarker(int ari, Marker.Kind kind, String caption, int verseCount, Date createTime, Date modifyTime) {
@@ -728,10 +737,19 @@ public class InternalDb {
 		}
 	}
 
-	public void updateLabel(Label label) {
-		SQLiteDatabase db = helper.getWritableDatabase();
-		ContentValues cv = labelToContentValues(label);
-		db.update(Db.TABLE_Label, cv, "_id=?", new String[] {String.valueOf(label._id)});
+	/**
+	 * Insert a new label or update an existing label.
+	 * @param label if the _id is 0, this label will be inserted. Otherwise, updated.
+	 */
+	public void insertOrUpdateLabel(@NonNull final Label label) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+		if (label._id != 0) {
+			db.update(Db.TABLE_Label, labelToContentValues(label), "_id=?", Array(String.valueOf(label._id)));
+		} else {
+			db.insert(Db.TABLE_Label, null, labelToContentValues(label));
+		}
+	}
+
 	}
 
 	public int countMarkersWithLabel(Label label) {
