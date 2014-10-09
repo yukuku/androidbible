@@ -36,6 +36,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 	EditText tServer;
 	TextView tUser;
+	EditText tUserEmail;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +45,12 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 		tServer = V.get(this, R.id.tServer);
 		tUser = V.get(this, R.id.tUser);
+		tUserEmail = V.get(this, R.id.tUserEmail);
 
 		V.get(this, R.id.bMabelClientState).setOnClickListener(bMabelClientState_click);
 		V.get(this, R.id.bGenerateDummies).setOnClickListener(bGenerateDummies_click);
 		V.get(this, R.id.bRegisterNewUser).setOnClickListener(bRegisterNewUser_click);
+		V.get(this, R.id.bGetAuthToken).setOnClickListener(bGetAuthToken_click);
 		V.get(this, R.id.bLogout).setOnClickListener(bLogout_click);
 		V.get(this, R.id.bSync).setOnClickListener(bSync_click);
 
@@ -172,6 +175,64 @@ public class SecretSyncDebugActivity extends BaseActivity {
 				});
 			}
 		});
+	};
+
+	static class DebugGetAuthTokenResponseJson extends ResponseJson {
+		public String simpleToken;
+	}
+
+	View.OnClickListener bGetAuthToken_click = v -> {
+		final String user_email = tUserEmail.getText().toString();
+
+		final RequestBody requestBody = new FormEncodingBuilder()
+			.add("user_email", user_email)
+			.build();
+
+		final Call call = App.getOkHttpClient().newCall(
+			new Request.Builder()
+				.url(getServer() + "/sync/api/debug_get_auth_token")
+				.post(requestBody)
+				.build()
+		);
+
+		call.enqueue(new Callback() {
+			@Override
+			public void onFailure(final Request request, final IOException e) {
+				runOnUiThread(() -> new AlertDialog.Builder(SecretSyncDebugActivity.this)
+					.setMessage("Error: " + e.getMessage())
+					.setPositiveButton(R.string.ok, null)
+					.show());
+			}
+
+			@Override
+			public void onResponse(final Response response) throws IOException {
+				final DebugGetAuthTokenResponseJson debugCreateUserResponse = new Gson().fromJson(response.body().charStream(), DebugGetAuthTokenResponseJson.class);
+				runOnUiThread(() -> {
+					if (debugCreateUserResponse.success) {
+						final String simpleToken = debugCreateUserResponse.simpleToken;
+
+						Preferences.hold();
+						Preferences.setString(Prefkey.sync_user_email, user_email);
+						Preferences.setString(Prefkey.sync_simpleToken, simpleToken);
+						Preferences.setInt(Prefkey.sync_token_obtained_time, Sqlitil.nowDateTime());
+						Preferences.unhold();
+
+						displayUser();
+
+						new AlertDialog.Builder(SecretSyncDebugActivity.this)
+							.setMessage("User email: " + user_email + "\nsimpleToken: " + simpleToken)
+							.setPositiveButton(R.string.ok, null)
+							.show();
+					} else {
+						new AlertDialog.Builder(SecretSyncDebugActivity.this)
+							.setMessage(debugCreateUserResponse.message)
+							.setPositiveButton(R.string.ok, null)
+							.show();
+					}
+				});
+			}
+		});
+
 	};
 
 	void displayUser() {
