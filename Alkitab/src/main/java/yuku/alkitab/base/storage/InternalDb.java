@@ -6,6 +6,7 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.provider.BaseColumns;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import yuku.afw.D;
@@ -23,6 +24,7 @@ import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.model.SyncShadow;
+import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.model.Label;
@@ -48,6 +50,12 @@ public class InternalDb {
 
 	public InternalDb(InternalDbHelper helper) {
 		this.helper = helper;
+	}
+
+	public enum ApplyAppendDeltaResult {
+		ok,
+		unknown_kind,
+		dirty,
 	}
 
 	/**
@@ -101,6 +109,17 @@ public class InternalDb {
 			new String[]{String.valueOf(_id)},
 			null, null, null
 		);
+
+		try {
+			if (!cursor.moveToNext()) return null;
+			return markerFromCursor(cursor);
+		} finally {
+			cursor.close();
+		}
+	}
+
+	@Nullable public Marker getMarkerByGid(@NonNull final String gid) {
+		final Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Marker, null, Db.Marker.gid + "=?", Array(gid), null, null, null);
 
 		try {
 			if (!cursor.moveToNext()) return null;
@@ -652,6 +671,19 @@ public class InternalDb {
 		return res;
 	}
 
+	/**
+	 * _id is not stored
+	 */
+	@NonNull private ContentValues marker_labelToContentValues(@NonNull Marker_Label marker_label) {
+		final ContentValues res = new ContentValues();
+
+		res.put(Db.Marker_Label.gid, marker_label.gid);
+		res.put(Db.Marker_Label.marker_gid, marker_label.marker_gid);
+		res.put(Db.Marker_Label.label_gid, marker_label.label_gid);
+
+		return res;
+	}
+
 	public int getLabelMaxOrdering() {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		SQLiteStatement stmt = db.compileStatement("select max(" + Db.Label.ordering + ") from " + Db.TABLE_Label);
@@ -725,6 +757,28 @@ public class InternalDb {
         }
     }
 
+    @Nullable public Label getLabelByGid(@NonNull final String gid) {
+		final Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Label, null, Db.Label.gid + "=?", Array(gid), null, null, null);
+
+		try {
+			if (!cursor.moveToNext()) return null;
+			return labelFromCursor(cursor);
+		} finally {
+			cursor.close();
+		}
+	}
+
+    @Nullable public Marker_Label getMarker_LabelByGid(@NonNull final String gid) {
+		final Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Marker_Label, null, Db.Marker_Label.gid + "=?", Array(gid), null, null, null);
+
+		try {
+			if (!cursor.moveToNext()) return null;
+			return marker_LabelFromCursor(cursor);
+		} finally {
+			cursor.close();
+		}
+	}
+
 	public void deleteLabelById(long _id) {
 		final Label label = getLabelById(_id);
 		final SQLiteDatabase db = helper.getWritableDatabase();
@@ -751,6 +805,17 @@ public class InternalDb {
 		}
 	}
 
+	/**
+	 * Insert a new marker-label association or update an existing one.
+	 * @param marker_label if the _id is 0, this label will be inserted. Otherwise, updated.
+	 */
+	public void insertOrUpdateMarker_Label(@NonNull final Marker_Label marker_label) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+		if (marker_label._id != 0) {
+			db.update(Db.TABLE_Marker_Label, marker_labelToContentValues(marker_label), "_id=?", Array(String.valueOf(marker_label._id)));
+		} else {
+			db.insert(Db.TABLE_Marker_Label, null, marker_labelToContentValues(marker_label));
+		}
 	}
 
 	public int countMarkersWithLabel(Label label) {
@@ -1073,8 +1138,124 @@ public class InternalDb {
 		return null;
 	}
 
+	@NonNull private ContentValues syncShadowToContentValues(@NonNull final SyncShadow ss) {
+		final ContentValues res = new ContentValues();
+		res.put(Table.SyncShadow.syncSetName.name(), ss.syncSetName);
+		res.put(Table.SyncShadow.revno.name(), ss.revno);
+		res.put(Table.SyncShadow.data.name(), ss.data);
+		return res;
+	}
+
+	/**
+	 * Create or update a sync shadow, based on the sync set name.
+	 * @param ss if the {@link yuku.alkitab.base.model.SyncShadow#syncSetName} is already on the database, this method will replace it. Otherwise, this method will insert a new one.
+	 */
+	public void insertOrUpdateSyncShadowBySyncSetName(@NonNull final SyncShadow ss) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+		db.beginTransaction();
+		try {
+			final long count = DatabaseUtils.queryNumEntries(db, Table.SyncShadow.tableName(), Table.SyncShadow.syncSetName + "=?", Array(ss.syncSetName));
+			if (count > 0) {
+				db.update(Table.SyncShadow.tableName(), syncShadowToContentValues(ss), Table.SyncShadow.syncSetName + "=?", Array(ss.syncSetName));
+			} else {
+				db.insert(Table.SyncShadow.tableName(), null, syncShadowToContentValues(ss));
+			}
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+	}
+
 	public void deleteSyncShadowBySyncSetName(final String syncSetName) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 		db.delete(Table.SyncShadow.tableName(), Table.SyncShadow.syncSetName + "=?", Array(syncSetName));
+	}
+
+	/**
+	 * Makes the current database updated with patches (append delta) from server.
+	 * Also updates the shadow (both data and the revno).
+	 * TODO check if database is dirty. if so reject changes.
+	 * @return true if database and sync shadow are updated. False if something wrong happens.
+	 */
+	public ApplyAppendDeltaResult applyAppendDelta(final int final_revno, @NonNull final Sync.Delta<Sync.MabelContent> append_delta) {
+		final SQLiteDatabase db = helper.getWritableDatabase();
+		db.beginTransaction();
+		try {
+			for (final Sync.Operation<Sync.MabelContent> o : append_delta.operations) {
+				switch (o.opkind) {
+					case del:
+						switch (o.kind) {
+							case Sync.Entity.KIND_MARKER:
+								deleteMarkerByGid(o.gid);
+								break;
+							case Sync.Entity.KIND_LABEL:
+								deleteLabelByGid(o.gid);
+								break;
+							case Sync.Entity.KIND_MARKER_LABEL:
+								deleteMarker_LabelByGid(o.gid);
+								break;
+							default:
+								return ApplyAppendDeltaResult.unknown_kind;
+						}
+						break;
+					case add:
+					case mod:
+						switch (o.kind) {
+							case Sync.Entity.KIND_MARKER:
+								final Marker marker = getMarkerByGid(o.gid);
+								final Marker newMarker = Sync.updateMarkerWithEntityContent(marker, o.gid, o.content);
+								insertOrUpdateMarker(newMarker);
+								break;
+							case Sync.Entity.KIND_LABEL:
+								final Label label = getLabelByGid(o.gid);
+								final Label newLabel = Sync.updateLabelWithEntityContent(label, o.gid, o.content);
+								insertOrUpdateLabel(newLabel);
+								break;
+							case Sync.Entity.KIND_MARKER_LABEL:
+								final Marker_Label marker_label = getMarker_LabelByGid(o.gid);
+								final Marker_Label newMarker_label = Sync.updateMarker_LabelWithEntityContent(marker_label, o.gid, o.content);
+								insertOrUpdateMarker_Label(newMarker_label);
+								break;
+							default:
+								return ApplyAppendDeltaResult.unknown_kind;
+						}
+						break;
+				}
+			}
+
+			// if we reach here, the local database has been updated with the append delta.
+			final SyncShadow ss = Sync.shadowFromMabelEntities(Sync.getMabelEntitiesFromCurrent(), final_revno);
+			insertOrUpdateSyncShadowBySyncSetName(ss);
+
+			db.setTransactionSuccessful();
+
+			return ApplyAppendDeltaResult.ok;
+		} finally {
+			db.endTransaction();
+		}
+	}
+
+	/**
+	 * Deletes a marker by gid.
+	 * @return true when deleted.
+	 */
+	public boolean deleteMarkerByGid(final String gid) {
+		return helper.getWritableDatabase().delete(Db.TABLE_Marker, Db.Marker.gid + "=?", Array(gid)) > 0;
+	}
+
+	/**
+	 * Deletes a label by gid.
+	 * @return true when deleted.
+	 */
+	public boolean deleteLabelByGid(final String gid) {
+		return helper.getWritableDatabase().delete(Db.TABLE_Label, Db.Label.gid + "=?", Array(gid)) > 0;
+	}
+
+	/**
+	 * Deletes a marker-label association by gid.
+	 * @return true when deleted.
+	 */
+	public boolean deleteMarker_LabelByGid(final String gid) {
+		return helper.getWritableDatabase().delete(Db.TABLE_Marker_Label, Db.Marker_Label.gid + "=?", Array(gid)) > 0;
 	}
 }

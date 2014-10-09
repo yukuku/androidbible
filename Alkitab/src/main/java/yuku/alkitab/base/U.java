@@ -273,6 +273,14 @@ public class U {
 		}
 	}
 
+	public static byte[] stringToUtf8Bytes(final String s) {
+		try {
+			return s.getBytes("utf-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public static String inputStreamToString(final InputStream input, final String encoding) throws IOException {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		final byte[] buf = new byte[1024];

@@ -239,6 +239,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 							.setMessage("Final revno: " + final_revno + "\nAppend delta: " + append_delta)
 							.setPositiveButton(R.string.ok, null)
 							.show();
+
+						S.getDb().applyAppendDelta(final_revno, append_delta);
 					} else {
 						new AlertDialog.Builder(SecretSyncDebugActivity.this)
 							.setMessage(debugSyncResponse.message)

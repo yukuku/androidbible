@@ -2,6 +2,7 @@ package yuku.alkitab.base.sync;
 
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
@@ -18,7 +19,7 @@ import static yuku.alkitab.base.util.Literals.List;
 
 public class Sync {
 	public enum Opkind {
-		add, mod, del,
+		add, mod, del, // do not change the enum value names here. This will be un/serialized by gson.
 	}
 
 	public static class Operation<C> {
@@ -45,7 +46,7 @@ public class Sync {
 	}
 
 	public static class Delta<C> {
-		public List<Operation<C>> operations;
+		@NonNull public List<Operation<C>> operations;
 
 		public Delta() {
 			operations = new ArrayList<>();
@@ -177,7 +178,7 @@ public class Sync {
 	public static MabelClientState getMabelClientState() {
 		final SyncShadow ss = S.getDb().getSyncShadowBySyncSetName(SyncShadow.SYNC_SET_MABEL);
 
-		final List<Entity<MabelContent>> srcs = ss == null? List(): getMabelEntitiesFromShadow(ss);
+		final List<Entity<MabelContent>> srcs = ss == null? List(): mabelEntitiesFromShadow(ss);
 		final List<Entity<MabelContent>> dsts = getMabelEntitiesFromCurrent();
 
 		final Delta<MabelContent> delta = new Delta<>();
@@ -222,12 +223,23 @@ public class Sync {
 		return null;
 	}
 
-	private static List<Entity<MabelContent>> getMabelEntitiesFromShadow(@NonNull final SyncShadow ss) {
+	private static List<Entity<MabelContent>> mabelEntitiesFromShadow(@NonNull final SyncShadow ss) {
 		final SyncShadowMabelDataJson data = new Gson().fromJson(U.utf8BytesToString(ss.data), SyncShadowMabelDataJson.class);
 		return data.entities;
 	}
 
-	private static List<Entity<MabelContent>> getMabelEntitiesFromCurrent() {
+	@NonNull public static SyncShadow shadowFromMabelEntities(@NonNull final List<Entity<MabelContent>> entities, final int revno) {
+		final SyncShadowMabelDataJson data = new SyncShadowMabelDataJson();
+		data.entities = entities;
+		final String s = new Gson().toJson(data);
+		final SyncShadow res = new SyncShadow();
+		res.data = U.stringToUtf8Bytes(s);
+		res.syncSetName = SyncShadow.SYNC_SET_MABEL;
+		res.revno = revno;
+		return res;
+	}
+
+	public static List<Entity<MabelContent>> getMabelEntitiesFromCurrent() {
 		final List<Entity<MabelContent>> res = new ArrayList<>();
 
 		{ // markers
@@ -273,4 +285,61 @@ public class Sync {
 
 		return res;
 	}
+
+	/**
+	 * Modify or create a marker from an entity content. This is called when the server append delta
+	 * asks for an add or a mod operation.
+	 * This will not merge content, will only overwrite.
+	 * @param marker an existing marker (content will be modified), or null to create a new marker
+	 * @param content entity content, containing the new data.
+	 */
+	@NonNull public static Marker updateMarkerWithEntityContent(@Nullable final Marker marker, @NonNull final String gid, @NonNull final MabelContent content) {
+		final Marker res = marker != null ? marker : Marker.createEmptyMarker();
+
+		res.gid = gid;
+		res.ari = content.ari;
+		res.kind = Marker.Kind.fromCode(content.kind);
+		res.caption = content.caption;
+		res.verseCount = content.verseCount;
+		res.createTime = Sqlitil.toDate(content.createTime);
+		res.modifyTime = Sqlitil.toDate(content.modifyTime);
+
+		return res;
+	}
+
+	/**
+	 * Modify or create a label from an entity content. This is called when the server append delta
+	 * asks for an add or a mod operation.
+	 * This will not merge content, will only overwrite.
+	 * @param label an existing label (content will be modified), or null to create a new label
+	 * @param content entity content, containing the new data.
+	 */
+	@NonNull public static Label updateLabelWithEntityContent(@Nullable final Label label, @NonNull final String gid, @NonNull final MabelContent content) {
+		final Label res = label != null ? label : Label.createEmptyLabel();
+
+		res.gid = gid;
+		res.title = content.title;
+		res.ordering = content.ordering;
+		res.backgroundColor = content.backgroundColor;
+
+		return res;
+	}
+
+	/**
+	 * Modify or create a marker-label association from an entity content. This is called when the server append delta
+	 * asks for an add or a mod operation.
+	 * This will not merge content, will only overwrite.
+	 * @param marker_label an existing marker-label association (content will be modified), or null to create a new marker-label association
+	 * @param content entity content, containing the new data.
+	 */
+	@NonNull public static Marker_Label updateMarker_LabelWithEntityContent(@Nullable final Marker_Label marker_label, @NonNull final String gid, @NonNull final MabelContent content) {
+		final Marker_Label res = marker_label != null ? marker_label : Marker_Label.createEmptyMarker_Label();
+
+		res.gid = gid;
+		res.marker_gid = content.marker_gid;
+		res.label_gid = content.label_gid;
+
+		return res;
+	}
+
 }
