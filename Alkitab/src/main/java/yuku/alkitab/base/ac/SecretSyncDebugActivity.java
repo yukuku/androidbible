@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.google.gson.Gson;
@@ -27,6 +28,8 @@ import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
+import yuku.alkitab.model.Marker_Label;
+import yuku.alkitab.model.util.Gid;
 
 import java.io.IOException;
 import java.util.Date;
@@ -40,6 +43,9 @@ public class SecretSyncDebugActivity extends BaseActivity {
 	EditText tServer;
 	TextView tUser;
 	EditText tUserEmail;
+	CheckBox cMakeDirtyMarker;
+	CheckBox cMakeDirtyLabel;
+	CheckBox cMakeDirtyMarker_Label;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +55,9 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		tServer = V.get(this, R.id.tServer);
 		tUser = V.get(this, R.id.tUser);
 		tUserEmail = V.get(this, R.id.tUserEmail);
+		cMakeDirtyMarker = V.get(this, R.id.cMakeDirtyMarker);
+		cMakeDirtyLabel = V.get(this, R.id.cMakeDirtyLabel);
+		cMakeDirtyMarker_Label = V.get(this, R.id.cMakeDirtyMarker_Label);
 
 		V.get(this, R.id.bMabelClientState).setOnClickListener(bMabelClientState_click);
 		V.get(this, R.id.bGenerateDummies).setOnClickListener(bGenerateDummies_click);
@@ -286,6 +295,32 @@ public class SecretSyncDebugActivity extends BaseActivity {
 				.post(requestBody)
 				.build()
 		);
+
+		if (cMakeDirtyMarker.isChecked()) {
+			S.getDb().insertMarker(0x000101 + rand(30), Marker.Kind.values()[rand(3)], randomString("MMD0_", rand(2) + 1, 4, 7), rand(2) + 1, new Date(), new Date());
+		}
+
+		if (cMakeDirtyLabel.isChecked()) {
+			S.getDb().insertLabel(randomString("LMD_", 1, 3, 8), U.encodeLabelBackgroundColor(rand(0xffffff)));
+		}
+
+		if (cMakeDirtyMarker_Label.isChecked()) {
+			final List<Label> labels = S.getDb().listAllLabels();
+			final List<Marker> markers = S.getDb().listAllMarkers();
+			if (labels.size() > 0 && markers.size() > 0) {
+				final Marker_Label marker_label = Marker_Label.createEmptyMarker_Label();
+				marker_label.gid = Gid.newGid();
+				marker_label.marker_gid = markers.get(0).gid;
+				marker_label.label_gid = labels.get(0).gid;
+				S.getDb().insertOrUpdateMarker_Label(marker_label);
+			} else {
+				new AlertDialog.Builder(this)
+					.setMessage("not enough markers and labels to create marker_label")
+					.setPositiveButton(R.string.ok, null)
+					.show();
+				return;
+			}
+		}
 
 		call.enqueue(new Callback() {
 			@Override
