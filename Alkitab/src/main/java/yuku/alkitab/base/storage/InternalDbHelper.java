@@ -144,6 +144,10 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			createTableSyncShadow(db);
 			createIndexSyncShadow(db);
 		}
+
+		if (oldVersion >= 14000163 && oldVersion < 14000172) {
+			db.execSQL("drop index if exists index_Marker_Label_03");
+		}
 	}
 
 	private void createTableMarker(SQLiteDatabase db) {
@@ -272,7 +276,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	private void createIndexMarker_Label(SQLiteDatabase db) {
 		db.execSQL("create        index if not exists index_Marker_Label_01 on " + Db.TABLE_Marker_Label + " (" + Db.Marker_Label.marker_gid + ")");
 		db.execSQL("create        index if not exists index_Marker_Label_02 on " + Db.TABLE_Marker_Label + " (" + Db.Marker_Label.label_gid + ")");
-		db.execSQL("create unique index if not exists index_Marker_Label_03 on " + Db.TABLE_Marker_Label + " (" + Db.Marker_Label.marker_gid + ", " + Db.Marker_Label.label_gid + ")");
+		// unique index index_Marker_Label_03 on Marker_Label (marker_gid, label_gid) is no longer used as of versionCode 14000172
 		db.execSQL("create unique index if not exists index_Marker_Label_04 on " + Db.TABLE_Marker_Label + " (" + Db.Marker_Label.gid + ")");
 	}
 
