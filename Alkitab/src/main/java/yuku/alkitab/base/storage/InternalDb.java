@@ -181,6 +181,7 @@ public class InternalDb {
 		} else {
 			marker._id = db.insert(Db.TABLE_Marker, null, markerToContentValues(marker));
 		}
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
 	}
 
 	public Marker insertMarker(int ari, Marker.Kind kind, String caption, int verseCount, Date createTime, Date modifyTime) {
@@ -188,6 +189,7 @@ public class InternalDb {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 
 		res._id = db.insert(Db.TABLE_Marker, null, markerToContentValues(res));
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
 
 		return res;
 	}
@@ -204,11 +206,13 @@ public class InternalDb {
 		} finally {
 			db.endTransaction();
 		}
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
 	}
 
 	public void deleteNonBookmarkMarkerById(long _id) {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.delete(Db.TABLE_Marker, "_id=?", new String[]{String.valueOf(_id)});
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
 	}
 
 	public List<Marker> listMarkers(Marker.Kind kind, long label_id, String sortColumn, boolean sortAscending) {
@@ -364,6 +368,8 @@ public class InternalDb {
 		} finally {
 			db.endTransaction();
 		}
+
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
 	}
 
 	/**
@@ -695,6 +701,7 @@ public class InternalDb {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 
 		res._id = db.insert(Db.TABLE_Label, null, labelToContentValues(res));
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
 		return res;
 	}
 
@@ -737,6 +744,7 @@ public class InternalDb {
 		} finally {
 			db.endTransaction();
 		}
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
 	}
 
     public Label getLabelById(long _id) {
@@ -786,6 +794,7 @@ public class InternalDb {
 		} finally {
 			db.endTransaction();
 		}
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
 	}
 
 	/**
@@ -799,6 +808,7 @@ public class InternalDb {
 		} else {
 			label._id = db.insert(Db.TABLE_Label, null, labelToContentValues(label));
 		}
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
 	}
 
 	/**
@@ -812,6 +822,7 @@ public class InternalDb {
 		} else {
 			marker_label._id = db.insert(Db.TABLE_Marker_Label, null, marker_labelToContentValues(marker_label));
 		}
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
 	}
 
 	public int countMarkersWithLabel(Label label) {
@@ -858,6 +869,7 @@ public class InternalDb {
 		} finally {
 			db.endTransaction();
 		}
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
 	}
 
 	public void reorderVersions(MVersion from, MVersion to) {
@@ -1175,6 +1187,7 @@ public class InternalDb {
 	@NonNull public ApplyAppendDeltaResult applyAppendDelta(final int final_revno, @NonNull final Sync.Delta<Sync.MabelContent> append_delta, @NonNull final List<Sync.Entity<Sync.MabelContent>> entitiesBeforeSync) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
+		Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_MABEL, true);
 		try {
 			{ // if the current entities are not the same as the ones had when contacting server, reject this append delta.
 				final List<Sync.Entity<Sync.MabelContent>> currentEntities = Sync.getMabelEntitiesFromCurrent();
@@ -1233,6 +1246,7 @@ public class InternalDb {
 
 			return ApplyAppendDeltaResult.ok;
 		} finally {
+			Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_MABEL, false);
 			db.endTransaction();
 		}
 	}
@@ -1242,7 +1256,11 @@ public class InternalDb {
 	 * @return true when deleted.
 	 */
 	public boolean deleteMarkerByGid(final String gid) {
-		return helper.getWritableDatabase().delete(Db.TABLE_Marker, Db.Marker.gid + "=?", Array(gid)) > 0;
+		final boolean deleted = helper.getWritableDatabase().delete(Db.TABLE_Marker, Db.Marker.gid + "=?", Array(gid)) > 0;
+		if (deleted) {
+			Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
+		}
+		return deleted;
 	}
 
 	/**
@@ -1250,7 +1268,11 @@ public class InternalDb {
 	 * @return true when deleted.
 	 */
 	public boolean deleteLabelByGid(final String gid) {
-		return helper.getWritableDatabase().delete(Db.TABLE_Label, Db.Label.gid + "=?", Array(gid)) > 0;
+		final boolean deleted = helper.getWritableDatabase().delete(Db.TABLE_Label, Db.Label.gid + "=?", Array(gid)) > 0;
+		if (deleted) {
+			Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
+		}
+		return deleted;
 	}
 
 	/**
@@ -1258,6 +1280,10 @@ public class InternalDb {
 	 * @return true when deleted.
 	 */
 	public boolean deleteMarker_LabelByGid(final String gid) {
-		return helper.getWritableDatabase().delete(Db.TABLE_Marker_Label, Db.Marker_Label.gid + "=?", Array(gid)) > 0;
+		final boolean deleted = helper.getWritableDatabase().delete(Db.TABLE_Marker_Label, Db.Marker_Label.gid + "=?", Array(gid)) > 0;
+		if (deleted) {
+			Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
+		}
+		return deleted;
 	}
 }
