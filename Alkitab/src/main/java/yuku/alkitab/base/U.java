@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
+import android.util.Log;
 import android.widget.TextView;
 import yuku.alkitab.model.Label;
 
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class U {
+	static final String TAG = U.class.getSimpleName();
 
 	/**
 	 * If verse doesn't start with @: don't do anything.
@@ -69,12 +71,18 @@ public class U {
 	}
 
 	/**
-	 * @return colorRgb (without alpha) or -1 if can't decode
+	 * Decodes color code for highlight. It starts with the string "c" then 6 hex digits rrggbb.
+	 * @return colorRgb (without alpha) or -1 if can't decode. If the 6 hex digits can't be decoded, this will return 0.
 	 */
 	public static int decodeHighlight(String text) {
 		if (text == null) return -1;
 		if (text.length() >= 7 && text.charAt(0) == 'c') {
-			return Integer.parseInt(text.substring(1, 7), 16);
+			try {
+				return Integer.parseInt(text.substring(1, 7), 16);
+			} catch (NumberFormatException e) {
+				Log.e(TAG, "@@decodeHighlight", e);
+				return 0;
+			}
 		} else {
 			return -1;
 		}

@@ -52,7 +52,7 @@ public class SingleViewVerseAdapter extends VerseAdapter {
 			final String text = verses_.getVerse(id);
 			final String verseNumberText = verses_.getVerseNumberText(id);
 			final boolean dontPutSpacingBefore = (position > 0 && itemPointer_[position - 1] < 0) || position == 0;
-			final int highlightColor = (highlightColorMap_ != null && highlightColorMap_[id] != 0) ? U.alphaMixHighlight(highlightColorMap_[id]) : 0;
+			final int highlightColor = (highlightColorMap_ != null && highlightColorMap_[id] != -1) ? U.alphaMixHighlight(highlightColorMap_[id]) : -1;
 
 			VerseRenderer.render(lText, lVerseNumber, ari, text, verseNumberText, highlightColor, checked, dontPutSpacingBefore, inlineLinkSpanFactory_, owner_);
 

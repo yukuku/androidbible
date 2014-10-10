@@ -259,7 +259,7 @@ public class VerseRenderer {
 		// apply unapplied
 		applyParaStyle(sb, paraType, startPara, verseNumberText, startPosAfterVerseNumber > 0, dontPutSpacingBefore && startPara <= startPosAfterVerseNumber, startPara <= startPosAfterVerseNumber, lVerseNumber);
 	
-		if (highlightColor != 0) {
+		if (highlightColor != -1) {
 			sb.setSpan(new BackgroundColorSpan(highlightColor), startPosAfterVerseNumber == 0? 0: verseNumberText.length() + 1, sb.length(), 0);
 		}
 
@@ -374,7 +374,7 @@ public class VerseRenderer {
 		// verse text
 		sb.setSpan(createLeadingMarginSpan(0, S.applied.indentParagraphRest), 0, sb.length(), 0);
 	
-		if (highlightColor != 0) {
+		if (highlightColor != -1) {
 			sb.setSpan(new BackgroundColorSpan(highlightColor), verseNumberText.length() + 1, sb.length(), 0);
 		}
 		

@@ -94,6 +94,8 @@ public abstract class VerseAdapter extends BaseAdapter {
 			bookmarkCountMap = new int[verseCount];
 			noteCountMap = new int[verseCount];
 			highlightColorMap = new int[verseCount];
+			// The default value of highlightColorMap is -1, indicating no highlight color set. It is not 0, because 0 means black #000000.
+			Arrays.fill(highlightColorMap, -1);
 
 			S.getDb().putAttributes(ariBc, bookmarkCountMap, noteCountMap, highlightColorMap);
 		} else {
