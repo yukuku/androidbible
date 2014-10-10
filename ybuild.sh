@@ -133,12 +133,15 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 		echo 'Replacing applicationId in build.gradle...'
 		sed -i '' "s/applicationId .*/applicationId '$BUILD_PACKAGE_NAME'/" ../../build.gradle
 
-		echo 'Replacing provider name to the official one "yuku.alkitab.provider"'
+		echo 'Replacing verse provider name to the official one "yuku.alkitab.provider"'
 		sed -i '' 's/android:authorities="yuku.alkitab.provider.debug"/android:authorities="yuku.alkitab.provider"/' AndroidManifest.xml
 
 		if [ ! -f res/values/file_providers.xml ] ; then echo 'file_providers.xml does not exist!' ; exit 1 ; fi
 		echo 'Replacing file provider name to the official one "yuku.alkitab.file_provider"'
 		sed -i '' 's/yuku.alkitab.file_provider.debug/yuku.alkitab.file_provider/' res/values/file_providers.xml
+
+		echo 'Replacing sync provider name to the official one "yuku.alkitab.sync_provider"'
+		sed -i '' 's/yuku.alkitab.sync_provider.debug/yuku.alkitab.sync_provider/' res/values/sync_providers.xml
 
 		echo 'Removing dummy version on assets/internal...'
 		rm -rf assets/internal

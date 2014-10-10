@@ -1,14 +1,21 @@
 package yuku.alkitab.base.sync;
 
 
+import android.accounts.Account;
+import android.content.ContentResolver;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.ArrayMap;
+import android.util.Log;
 import android.util.Pair;
 import com.google.gson.Gson;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.alkitab.model.Marker_Label;
@@ -17,10 +24,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static yuku.alkitab.base.util.Literals.List;
 
 public class Sync {
+	static final String TAG = Sync.class.getSimpleName();
+
 	public enum Opkind {
 		add, mod, del, // do not change the enum value names here. This will be un/serialized by gson.
 	}
@@ -383,5 +397,72 @@ public class Sync {
 		Collections.sort(b, cmp);
 
 		return a.equals(b);
+	}
+
+	private static final ArrayMap<String, AtomicInteger> syncUpdatesOngoingCounters = new ArrayMap<>();
+	private static final ScheduledExecutorService syncExecutor = Executors.newSingleThreadScheduledExecutor();
+	private static final ConcurrentLinkedQueue<String> syncSetNameQueue = new ConcurrentLinkedQueue<>();
+
+	/**
+	 * Notify that we need to sync with server.
+	 * @param syncSetName The name of the sync set that needs sync with server. Should be {@link yuku.alkitab.base.model.SyncShadow#SYNC_SET_MABEL} or others.
+	 */
+	public static synchronized void notifySyncNeeded(final String syncSetName) {
+		AtomicInteger counter = syncUpdatesOngoingCounters.get(syncSetName);
+		if (counter != null && counter.get() != 0) {
+			Log.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: ongoing counter != 0");
+			return;
+		}
+
+		// check if we can omit queueing sync request for this sync set name.
+		synchronized (syncSetNameQueue) {
+			if (syncSetNameQueue.contains(syncSetName)) {
+				Log.d(TAG, "@@notifySyncNeeded " + syncSetName + " ignored: sync queue already contains it");
+				return;
+			}
+			syncSetNameQueue.add(syncSetName);
+		}
+
+		syncExecutor.schedule(() -> {
+			while (true) {
+				final String extraSyncSetName = syncSetNameQueue.poll();
+				if (extraSyncSetName == null) {
+					return;
+				}
+
+				final Account account = SyncUtils.getOrCreateSyncAccount();
+				final String authority = App.context.getString(R.string.sync_provider_authority);
+
+				// make sure sync is enabled.
+				final boolean syncAutomatically = ContentResolver.getSyncAutomatically(account, authority);
+				if (!syncAutomatically) {
+					ContentResolver.setSyncAutomatically(account, authority, true);
+				}
+
+				// request sync.
+				final Bundle extras = new Bundle();
+				extras.putString("syncSetName", extraSyncSetName);
+				ContentResolver.requestSync(account, authority, extras);
+			}
+		}, 5, TimeUnit.SECONDS);
+	}
+
+	/**
+	 * Call this method(true) when updating local storage because of sync. Call this method(false) when finished.
+	 * Calls to {@link #notifySyncNeeded(String)} will be a no-op when sync updates are ongoing (marked by this method being called).
+	 * @param isRunning true to start, false to stop.
+	 */
+	public static synchronized void notifySyncUpdatesOngoing(final String syncSetName, final boolean isRunning) {
+		AtomicInteger counter = syncUpdatesOngoingCounters.get(syncSetName);
+		if (counter == null) {
+			counter = new AtomicInteger(0);
+			syncUpdatesOngoingCounters.put(syncSetName, counter);
+		}
+
+		if (isRunning) {
+			counter.incrementAndGet();
+		} else {
+			counter.decrementAndGet();
+		}
 	}
 }

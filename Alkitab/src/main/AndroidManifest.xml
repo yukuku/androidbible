@@ -11,7 +11,13 @@
     <uses-permission android:name="android.permission.NFC" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <uses-feature
+	<!-- sync permissions -->
+	<uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+	<uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
+	<uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+
+	<uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
     <uses-feature
@@ -352,6 +358,34 @@
             android:name="yuku.alkitab.base.sv.VersionConfigUpdaterService"
             android:exported="false" >
         </service>
-    </application>
+
+		<!-- sync components -->
+		<service android:name="yuku.alkitab.base.sync.AuthenticatorService">
+			<intent-filter>
+				<action android:name="android.accounts.AccountAuthenticator" />
+			</intent-filter>
+			<meta-data
+				android:name="android.accounts.AccountAuthenticator"
+				android:resource="@xml/authenticator" />
+		</service>
+
+		<provider
+			android:name="yuku.alkitab.base.sync.StubProvider"
+			android:authorities="@string/sync_provider_authority"
+			android:exported="false"
+			android:syncable="true" />
+
+		<service
+			android:name="yuku.alkitab.base.sync.SyncService"
+			android:exported="true"
+			android:process=":sync">
+			<intent-filter>
+				<action android:name="android.content.SyncAdapter" />
+			</intent-filter>
+			<meta-data
+				android:name="android.content.SyncAdapter"
+				android:resource="@xml/syncadapter" />
+		</service>
+	</application>
 
 </manifest>
