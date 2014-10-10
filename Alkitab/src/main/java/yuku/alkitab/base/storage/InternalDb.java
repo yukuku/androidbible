@@ -179,7 +179,7 @@ public class InternalDb {
 		if (marker._id != 0) {
 			db.update(Db.TABLE_Marker, markerToContentValues(marker), "_id=?", Array(String.valueOf(marker._id)));
 		} else {
-			db.insert(Db.TABLE_Marker, null, markerToContentValues(marker));
+			marker._id = db.insert(Db.TABLE_Marker, null, markerToContentValues(marker));
 		}
 	}
 
@@ -797,7 +797,7 @@ public class InternalDb {
 		if (label._id != 0) {
 			db.update(Db.TABLE_Label, labelToContentValues(label), "_id=?", Array(String.valueOf(label._id)));
 		} else {
-			db.insert(Db.TABLE_Label, null, labelToContentValues(label));
+			label._id = db.insert(Db.TABLE_Label, null, labelToContentValues(label));
 		}
 	}
 
@@ -810,7 +810,7 @@ public class InternalDb {
 		if (marker_label._id != 0) {
 			db.update(Db.TABLE_Marker_Label, marker_labelToContentValues(marker_label), "_id=?", Array(String.valueOf(marker_label._id)));
 		} else {
-			db.insert(Db.TABLE_Marker_Label, null, marker_labelToContentValues(marker_label));
+			marker_label._id = db.insert(Db.TABLE_Marker_Label, null, marker_labelToContentValues(marker_label));
 		}
 	}
 
