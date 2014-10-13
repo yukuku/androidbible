@@ -287,7 +287,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		displayUser();
 	};
 
-	static class DebugSyncResponseJson extends ResponseJson {
+	public static class DebugSyncResponseJson extends ResponseJson {
 		public int final_revno;
 		public Sync.Delta<Sync.MabelContent> append_delta;
 	}
