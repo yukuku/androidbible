@@ -10,11 +10,14 @@ import android.support.v4.util.ArrayMap;
 import android.util.Log;
 import android.util.Pair;
 import com.google.gson.Gson;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.model.SyncShadow;
+import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Sqlitil;
+import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
@@ -441,7 +444,7 @@ public class Sync {
 
 				// request sync.
 				final Bundle extras = new Bundle();
-				extras.putString("syncSetName", extraSyncSetName);
+				extras.putString(SyncAdapter.EXTRA_SYNC_SET_NAME, extraSyncSetName);
 				ContentResolver.requestSync(account, authority, extras);
 			}
 		}, 5, TimeUnit.SECONDS);
@@ -463,6 +466,23 @@ public class Sync {
 			counter.incrementAndGet();
 		} else {
 			counter.decrementAndGet();
+		}
+	}
+
+	/**
+	 * Returns the effective server prefix for syncing.
+	 * @return scheme, host, port, without the trailing slash.
+	 */
+	public static String getEffectiveServerPrefix() {
+		final String override = Preferences.getString(Prefkey.sync_server_prefix);
+		if (override != null) {
+			return override;
+		}
+
+		if (BuildConfig.DEBUG) {
+			return "http://10.0.3.2:9080";
+		} else {
+			return "http://sync.bibleforandroid.com";
 		}
 	}
 }

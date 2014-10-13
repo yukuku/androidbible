@@ -57,6 +57,13 @@ public enum Prefkey {
 	internal_version_ordering,
 
 	/**
+	 * Sync server prefix.
+	 * Example: http://10.0.3.2:9080
+	 * Should not end with slash.
+	 */
+	sync_server_prefix,
+
+	/**
 	 * Sync user email.
 	 */
 	sync_user_email,

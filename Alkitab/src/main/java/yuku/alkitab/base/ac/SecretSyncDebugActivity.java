@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -41,6 +42,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 	public static final String TAG = SecretSyncDebugActivity.class.getSimpleName();
 
 	EditText tServer;
+	Button bServerSave;
+	Button bServerReset;
 	TextView tUser;
 	EditText tUserEmail;
 	CheckBox cMakeDirtyMarker;
@@ -59,6 +62,30 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		cMakeDirtyLabel = V.get(this, R.id.cMakeDirtyLabel);
 		cMakeDirtyMarker_Label = V.get(this, R.id.cMakeDirtyMarker_Label);
 
+		V.get(this, R.id.bServerSave).setOnClickListener(v -> new AlertDialog.Builder(this)
+			.setMessage("This will reset your synced shadow to revision 0.")
+			.setPositiveButton(R.string.ok, (d, w) -> {
+				Preferences.setString(Prefkey.sync_server_prefix, tServer.getText().toString().trim());
+
+				// do the same as logging out
+				bLogout_click.onClick(null);
+			})
+			.setNegativeButton(R.string.cancel, null)
+			.show());
+
+		V.get(this, R.id.bServerReset).setOnClickListener(v -> new AlertDialog.Builder(this)
+			.setMessage("This will reset your synced shadow to revision 0.")
+			.setPositiveButton(R.string.ok, (d, w) -> {
+				Preferences.remove(Prefkey.sync_server_prefix);
+
+				// do the same as logging out
+				bLogout_click.onClick(null);
+
+				tServer.setText("");
+			})
+			.setNegativeButton(R.string.cancel, null)
+			.show());
+
 		V.get(this, R.id.bMabelClientState).setOnClickListener(bMabelClientState_click);
 		V.get(this, R.id.bGenerateDummies).setOnClickListener(bGenerateDummies_click);
 		V.get(this, R.id.bRegisterNewUser).setOnClickListener(bRegisterNewUser_click);
@@ -67,10 +94,6 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		V.get(this, R.id.bSync).setOnClickListener(bSync_click);
 
 		displayUser();
-	}
-
-	String getServer() {
-		return tServer.getText().toString();
 	}
 
 	View.OnClickListener bMabelClientState_click = v -> {
@@ -149,7 +172,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 	}
 
 	View.OnClickListener bRegisterNewUser_click = v -> {
-		final Call call = App.downloadCall(getServer() + "/sync/api/debug_create_user");
+		final Call call = App.downloadCall(Sync.getEffectiveServerPrefix() + "/sync/api/debug_create_user");
 		call.enqueue(new Callback() {
 			@Override
 			public void onFailure(final Request request, final IOException e) {
@@ -203,7 +226,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 		final Call call = App.getOkHttpClient().newCall(
 			new Request.Builder()
-				.url(getServer() + "/sync/api/debug_get_auth_token")
+				.url(Sync.getEffectiveServerPrefix() + "/sync/api/debug_get_auth_token")
 				.post(requestBody)
 				.build()
 		);
@@ -291,7 +314,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 		final Call call = App.getOkHttpClient().newCall(
 			new Request.Builder()
-				.url(getServer() + "/sync/api/debug_sync")
+				.url(Sync.getEffectiveServerPrefix() + "/sync/api/debug_sync")
 				.post(requestBody)
 				.build()
 		);

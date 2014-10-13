@@ -14,6 +14,7 @@ import android.util.Log;
  */
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	static final String TAG = SyncAdapter.class.getSimpleName();
+	public static final String EXTRA_SYNC_SET_NAME = "syncSetName";
 
 	/**
 	 * Set up the sync adapter
