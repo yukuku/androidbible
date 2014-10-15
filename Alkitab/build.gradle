@@ -76,6 +76,7 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.0.0'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     compile 'net.sf.trove4j:trove4j:3.0.3'
-    compile 'com.google.code.gson:gson:2.2.4'
+    compile 'com.google.code.gson:gson:2.3'
     compile 'com.android.support:support-v13:20.0.0'
+    compile "com.google.android.gms:play-services:6.1.11"
 }
