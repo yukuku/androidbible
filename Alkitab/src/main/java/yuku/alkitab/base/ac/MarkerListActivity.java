@@ -607,7 +607,7 @@ public class MarkerListActivity extends BaseActivity {
 
 				Appearances.applyBookmarkSnippetContentAndAppearance(lSnippet, reference, snippet);
 
-				final List<Label> labels = S.getDb().listLabelsByMarkerId(marker._id);
+				final List<Label> labels = S.getDb().listLabelsByMarker(marker);
 				if (labels.size() != 0) {
 					panelLabels.setVisibility(View.VISIBLE);
 					panelLabels.removeAllViews();
