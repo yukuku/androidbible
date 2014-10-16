@@ -646,6 +646,19 @@ public class InternalDb {
 		return res;
 	}
 
+	public List<Marker_Label> listMarker_LabelsByMarker(final Marker marker) {
+		final List<Marker_Label> res = new ArrayList<>();
+		final Cursor cursor = helper.getReadableDatabase().query(Db.TABLE_Marker_Label, null, Db.Marker_Label.marker_gid + "=?", ToStringArray(marker.gid), null, null, null);
+		try {
+			while (cursor.moveToNext()) {
+				res.add(marker_LabelFromCursor(cursor));
+			}
+		} finally {
+			cursor.close();
+		}
+		return res;
+	}
+
 	public List<Label> listLabelsByMarker(final Marker marker) {
 		final List<Label> res = new ArrayList<>();
 		final Cursor cursor = helper.getReadableDatabase().rawQuery("select " + Db.TABLE_Label + ".* from " + Db.TABLE_Label + ", " + Db.TABLE_Marker_Label + " where " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.label_gid + " = " + Db.TABLE_Label + "." + Db.Label.gid + " and " + Db.TABLE_Marker_Label + "." + Db.Marker_Label.marker_gid + "=? order by " + Db.TABLE_Label + "." + Db.Label.ordering + " asc", Array(marker.gid));
@@ -717,30 +730,57 @@ public class InternalDb {
 		return res;
 	}
 
-	public void updateLabels(Marker marker, Set<Label> newLabels) {
+	public void updateLabels(final Marker marker, final Set<Label> newLabels) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
-
-		final List<Label> oldLabels = listLabelsByMarkerId(marker._id);
-
-		final List<Label> addLabels = new ArrayList<>();
-		for (final Label newLabel : newLabels) {
-			if (!oldLabels.contains(newLabel)) {
-				addLabels.add(newLabel);
-			}
-		}
-
-		final List<Label> removeLabels = new ArrayList<>();
-		for (final Label oldLabel : oldLabels) {
-			if (!newLabels.contains(oldLabel)) {
-				removeLabels.add(oldLabel);
-			}
-		}
 
 		db.beginTransaction();
 		try {
+			final List<Marker_Label> oldMls = listMarker_LabelsByMarker(marker);
+
+			// helper list
+			final List<String> oldMlLabelGids = new ArrayList<>();
+			for (final Marker_Label oldMl : oldMls) {
+				oldMlLabelGids.add(oldMl.label_gid);
+			}
+
+
+			// calculate labels to be added
+			final List<Label> addLabels = new ArrayList<>();
+
+			for (final Label newLabel : newLabels) {
+				if (!oldMlLabelGids.contains(newLabel.gid)) {
+					addLabels.add(newLabel);
+				}
+			}
+
+			// calculate marker_labels to be removed
+			final List<Marker_Label> removeMls = new ArrayList<>();
+			{
+				// helper list
+				final List<String> newLabelGids = new ArrayList<>();
+				for (final Label newLabel : newLabels) {
+					newLabelGids.add(newLabel.gid);
+				}
+
+				for (int i = 0; i < oldMls.size(); i++) {
+					final Marker_Label oldMl = oldMls.get(i);
+
+					// look for duplicate labels
+					if (oldMlLabelGids.subList(i + 1, oldMlLabelGids.size()).contains(oldMl.label_gid)) {
+						removeMls.add(oldMl);
+						continue;
+					}
+
+					// if the old one is not in the new ones
+					if (!newLabelGids.contains(oldMl.label_gid)) {
+						removeMls.add(oldMl);
+					}
+				}
+			}
+
 			// remove
-			for (final Label removeLabel : removeLabels) {
-				db.delete(Db.TABLE_Marker_Label, Db.Marker_Label.marker_gid + "=? and " + Db.Marker_Label.label_gid + "=?", new String[]{marker.gid, removeLabel.gid});
+			for (final Marker_Label removeMl : removeMls) {
+				db.delete(Db.TABLE_Marker_Label, "_id=?", ToStringArray(removeMl._id));
 			}
 
 			// add
