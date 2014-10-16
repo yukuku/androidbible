@@ -7,7 +7,7 @@
 		donation="true"
 		songs="true" />
 
-	<internal locale="in" shortName="TB"      longName="Terjemahan Baru" prefix="tb"  preset_name='in-ddd'  />
+	<internal locale="in" shortName="TB"      longName="Terjemahan Baru" prefix="tb"  preset_name='in-tb'  />
 
 	<share>
 		<url format="http://www.bibleforandroid.com/v/{book.osis}/{chapter}/{verses}?a=share&amp;v={version}" />
