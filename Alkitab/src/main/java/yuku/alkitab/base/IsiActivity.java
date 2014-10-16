@@ -1522,7 +1522,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		void openBookmarkDialog(int ari, int ordering) {
 			final TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExistingWithOrdering(IsiActivity.this, ari, ordering);
 			dialog.setListener(new TypeBookmarkDialog.Listener() {
-				@Override public void onOk() {
+				@Override public void onModifiedOrDeleted() {
 					lsText.reloadAttributeMap();
 
 					if (activeSplitVersion != null) {
@@ -1923,7 +1923,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				// always create a new bookmark
 				TypeBookmarkDialog dialog = TypeBookmarkDialog.NewBookmark(IsiActivity.this, ari, verseCount);
 				dialog.setListener(new TypeBookmarkDialog.Listener() {
-					@Override public void onOk() {
+					@Override public void onModifiedOrDeleted() {
 						lsText.uncheckAllVerses(true);
 						reloadBothAttributeMaps();
 					}

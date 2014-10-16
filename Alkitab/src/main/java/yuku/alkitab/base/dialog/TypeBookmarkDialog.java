@@ -27,7 +27,8 @@ import java.util.TreeSet;
 
 public class TypeBookmarkDialog {
 	public interface Listener {
-		void onOk();
+		/** Called when this dialog is closed with the bookmark modified or deleted */
+		void onModifiedOrDeleted();
 	}
 
 	final Context context;
@@ -150,7 +151,7 @@ public class TypeBookmarkDialog {
 
 		S.getDb().updateLabels(marker, labels);
 
-		if (listener != null) listener.onOk();
+		if (listener != null) listener.onModifiedOrDeleted();
 	}
 
 	public void show() {
@@ -211,7 +212,7 @@ public class TypeBookmarkDialog {
 			public void onClick(DialogInterface dialog, int which) {
 				S.getDb().deleteBookmarkById(marker._id);
 
-				if (listener != null) listener.onOk();
+				if (listener != null) listener.onModifiedOrDeleted();
 			}
 		})
 		.setNegativeButton(R.string.no, null)

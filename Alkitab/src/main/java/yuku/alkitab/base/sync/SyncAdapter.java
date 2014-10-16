@@ -20,6 +20,8 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.ac.MarkerListActivity;
+import yuku.alkitab.base.ac.MarkersActivity;
 import yuku.alkitab.base.ac.SecretSyncDebugActivity;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.InternalDb;
@@ -139,8 +141,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 				}
 			}
 
-			// success!
+			// success! Tell our world.
 			App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
+			App.getLbm().sendBroadcast(new Intent(MarkersActivity.ACTION_RELOAD));
+			App.getLbm().sendBroadcast(new Intent(MarkerListActivity.ACTION_RELOAD));
 
 			Log.d(TAG, "Final revno: " + final_revno + " Apply result: " + applyResult + " Append delta: " + append_delta);
 		} catch (JsonSyntaxException e) {

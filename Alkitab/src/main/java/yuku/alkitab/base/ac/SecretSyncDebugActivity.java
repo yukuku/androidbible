@@ -363,6 +363,8 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 						if (applyResult == InternalDb.ApplyAppendDeltaResult.ok) {
 							App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
+							App.getLbm().sendBroadcast(new Intent(MarkersActivity.ACTION_RELOAD));
+							App.getLbm().sendBroadcast(new Intent(MarkerListActivity.ACTION_RELOAD));
 						}
 					} else {
 						new AlertDialog.Builder(SecretSyncDebugActivity.this)
