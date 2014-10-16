@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Set;
 
 import static yuku.alkitab.base.util.Literals.Array;
+import static yuku.alkitab.base.util.Literals.ToStringArray;
 
 public class InternalDb {
 	public static final String TAG = InternalDb.class.getSimpleName();
@@ -289,7 +290,8 @@ public class InternalDb {
 			String.valueOf(ariMax),
 		};
 
-		final Cursor cursor = helper.getReadableDatabase().rawQuery("select * from " + Db.TABLE_Marker + " where " + Db.Marker.ari + ">=? and " + Db.Marker.ari + "<?", params);
+		// order by modifyTime, so in case a verse has more than one highlight, the latest one is shown
+		final Cursor cursor = helper.getReadableDatabase().rawQuery("select * from " + Db.TABLE_Marker + " where " + Db.Marker.ari + ">=? and " + Db.Marker.ari + "<? order by " + Db.Marker.modifyTime, params);
 		try {
 			final int col_kind = cursor.getColumnIndexOrThrow(Db.Marker.kind);
 			final int col_ari = cursor.getColumnIndexOrThrow(Db.Marker.ari);
@@ -335,24 +337,33 @@ public class InternalDb {
 
 		db.beginTransaction();
 		try {
-			final String[] params = {null /* for the ari */, String.valueOf(Marker.Kind.highlight.code)};
+			final String[] params = ToStringArray(null /* for the ari */, Marker.Kind.highlight.code);
 
 			// every requested verses
 			for (int i = 0; i < selectedVerses_1.size(); i++) {
 				final int ari = Ari.encodeWithBc(ari_bookchapter, selectedVerses_1.get(i));
 				params[0] = String.valueOf(ari);
 
-				Cursor c = db.query(Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", params, null, null, null);
+				// order by modifyTime desc so we modify the latest one and remove earlier ones if they exist.
+				final Cursor c = db.query(Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", params, null, null, Db.Marker.modifyTime + " desc");
 				try {
 					if (c.moveToNext()) { // check if marker exists
-						final Marker marker = markerFromCursor(c);
-						marker.modifyTime = new Date();
-						if (colorRgb != -1) {
-							marker.caption = U.encodeHighlight(colorRgb);
-							db.update(Db.TABLE_Marker, markerToContentValues(marker), "_id=?", new String[] {String.valueOf(marker._id)});
-						} else {
-							// delete
-							db.delete(Db.TABLE_Marker, "_id=?", new String[] {String.valueOf(marker._id)});
+						{ // modify the latest one
+							final Marker marker = markerFromCursor(c);
+							marker.modifyTime = new Date();
+							if (colorRgb != -1) {
+								marker.caption = U.encodeHighlight(colorRgb);
+								db.update(Db.TABLE_Marker, markerToContentValues(marker), "_id=?", ToStringArray(marker._id));
+							} else {
+								// delete entry
+								db.delete(Db.TABLE_Marker, "_id=?", ToStringArray(marker._id));
+							}
+						}
+
+						// remove earlier ones if they exist (caused by sync)
+						while (c.moveToNext()) {
+							final long _id = c.getLong(c.getColumnIndexOrThrow("_id"));
+							db.delete(Db.TABLE_Marker, "_id=?", ToStringArray(_id));
 						}
 					} else {
 						if (colorRgb == -1) {
