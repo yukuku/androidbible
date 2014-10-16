@@ -21,4 +21,7 @@
 
 	<string name="pref_copyWithVerseNumbers_key">copyWithVerseNumbers</string>
 	<string name="pref_showHiddenVersion_key">showHiddenVersion</string>
+	<string name="pref_syncAccountName_key">syncAccountName</string>
+	<string name="pref_sync_key">sync</string>
+	<string name="pref_syncLogout_key">syncLogout</string>
 </resources>

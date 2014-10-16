@@ -3,6 +3,7 @@ package yuku.alkitab.base.sync;
 
 import android.accounts.Account;
 import android.content.ContentResolver;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +11,12 @@ import android.support.v4.util.ArrayMap;
 import android.util.Log;
 import android.util.Pair;
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -23,10 +30,12 @@ import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.alkitab.model.Marker_Label;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -37,6 +46,23 @@ import static yuku.alkitab.base.util.Literals.List;
 
 public class Sync {
 	static final String TAG = Sync.class.getSimpleName();
+
+	/** From developer console: Client ID for web application */
+	public static final String CLIENT_ID = "979768394162-d3ev7tnali57es0tca97snvl24d2jbl2.apps.googleusercontent.com";
+
+	/**
+	 * The reason we use an installation id instead of just the simpleToken
+	 * to identify originating device, is so that the GCM messages does not
+	 * contain simpleToken, which is sensitive.
+	 */
+	public synchronized static String getInstallationId() {
+		String res = Preferences.getString(Prefkey.installation_id, null);
+		if (res == null) {
+			res = "i1:" + UUID.randomUUID().toString();
+			Preferences.setString(Prefkey.installation_id, res);
+		}
+		return res;
+	}
 
 	public enum Opkind {
 		add, mod, del, // do not change the enum value names here. This will be un/serialized by gson.
@@ -484,5 +510,148 @@ public class Sync {
 		} else {
 			return "http://sync.bibleforandroid.com";
 		}
+	}
+
+	static class RegisterGcmClientResponseJson extends ResponseJson {
+		public boolean is_new_registration_id;
+	}
+
+	public static void notifyNewGcmRegistrationId(final String newRegistrationId) {
+		// must send to server if we are logged in
+		final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
+		if (simpleToken == null) {
+			Log.d(TAG, "Got new GCM registration id, but sync is not logged in");
+			return;
+		}
+
+		new Thread(() -> sendGcmRegistrationId(simpleToken, newRegistrationId)).start();
+	}
+
+	public static boolean sendGcmRegistrationId(final String simpleToken, final String registration_id) {
+		final RequestBody requestBody = new FormEncodingBuilder()
+			.add("simpleToken", simpleToken)
+			.add("registration_id", registration_id)
+			.build();
+
+		try {
+			final Call call = App.getOkHttpClient().newCall(
+				new Request.Builder()
+					.url(getEffectiveServerPrefix() + "/sync/api/debug_register_gcm_client")
+					.post(requestBody)
+					.build()
+			);
+
+			final RegisterGcmClientResponseJson response = new Gson().fromJson(call.execute().body().charStream(), RegisterGcmClientResponseJson.class);
+
+			if (!response.success) {
+				Log.d(TAG, "GCM registration id rejected by server: " + response.message);
+				return false;
+			}
+
+			Log.d(TAG, "GCM registration id accepted by server: is_new_registration_id=" + response.is_new_registration_id);
+			return true;
+
+		} catch (IOException | JsonIOException e) {
+			Log.d(TAG, "Failed to send GCM registration id to server", e);
+			return false;
+		} catch (JsonSyntaxException e) {
+			Log.d(TAG, "Server response is not valid JSON", e);
+			return false;
+		}
+	}
+
+	static class InstallationInfoJson {
+		public String installation_id;
+		public String app_packageName;
+		public int app_versionCode;
+		public boolean app_debug;
+		public String build_model;
+		public String build_device;
+		public String build_product;
+		public int os_sdk_int;
+		public String os_release;
+	}
+
+	/**
+	 * Return a JSON string that contains information about the app installation on this particular device.
+	 */
+	public static String getInstallationInfoJson() {
+		final InstallationInfoJson obj = new InstallationInfoJson();
+		obj.installation_id = getInstallationId();
+		obj.app_packageName = App.context.getPackageName();
+		obj.app_versionCode = App.getVersionCode();
+		obj.app_debug = BuildConfig.DEBUG;
+		obj.build_model = Build.MODEL;
+		obj.build_device = Build.DEVICE;
+		obj.build_product = Build.PRODUCT;
+		obj.os_sdk_int = Build.VERSION.SDK_INT;
+		obj.os_release = Build.VERSION.RELEASE;
+		return new Gson().toJson(obj);
+	}
+
+	public static class ResponseJson {
+		public boolean success;
+		public String message;
+	}
+
+	public static class LoginResult {
+		public boolean success;
+		public String message;
+		public String simpleToken;
+		public String user_email;
+	}
+
+	/**
+	 * Log in using ID Token. If successful, stored the user account name and simpleToken on the preferences.
+	 * Must be called from a background thread.
+	 */
+	@NonNull public static LoginResult login(@NonNull final String id_token) {
+		final LoginResult res = new LoginResult();
+
+		final RequestBody requestBody = new FormEncodingBuilder()
+			.add("id_token", id_token)
+			.add("installation_info", getInstallationInfoJson())
+			.build();
+
+		try {
+			final Call call = App.getOkHttpClient().newCall(
+				new Request.Builder()
+					.url(getEffectiveServerPrefix() + "/sync/api/login")
+					.post(requestBody)
+					.build()
+			);
+
+			final LoginResponseJson response = new Gson().fromJson(call.execute().body().charStream(), LoginResponseJson.class);
+
+			if (!response.success) {
+				Log.d(TAG, "Login rejected: " + response.message);
+				res.message = response.message;
+				return res;
+			}
+
+			res.success = true;
+			res.user_email = response.user.email;
+			res.simpleToken = response.simpleToken;
+			return res;
+
+		} catch (IOException | JsonIOException e) {
+			res.message = "Failed to send login";
+			Log.d(TAG, res.message, e);
+			return res;
+
+		} catch (JsonSyntaxException e) {
+			res.message = "Server response is not a valid JSON";
+			Log.d(TAG, res.message, e);
+			return res;
+		}
+	}
+
+	public static class UserJson {
+		public String email;
+	}
+
+	public static class LoginResponseJson extends ResponseJson {
+		public String simpleToken;
+		public UserJson user;
 	}
 }

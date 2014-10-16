@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +18,7 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.ac.SecretSyncDebugActivity;
 import yuku.alkitab.base.model.SyncShadow;
@@ -89,6 +91,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		final RequestBody requestBody = new FormEncodingBuilder()
 			.add("simpleToken", simpleToken)
 			.add("syncSetName", SyncShadow.SYNC_SET_MABEL)
+			.add("installation_id", Sync.getInstallationId())
 			.add("clientState", new Gson().toJson(clientState))
 			.build();
 
@@ -120,7 +123,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 				return;
 			}
 
-			final InternalDb.ApplyAppendDeltaResult applyResult = S.getDb().applyAppendDelta(final_revno, append_delta, entitiesBeforeSync);
+			final InternalDb.ApplyAppendDeltaResult applyResult = S.getDb().applyAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
 			if (applyResult != InternalDb.ApplyAppendDeltaResult.ok) {
 				Log.w(TAG, "@@syncMabel append delta result is not ok, but " + applyResult);
 				sr.stats.numIoExceptions++;
@@ -137,6 +140,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			}
 
 			// success!
+			App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
+
 			Log.d(TAG, "Final revno: " + final_revno + " Apply result: " + applyResult + " Append delta: " + append_delta);
 		} catch (JsonSyntaxException e) {
 			Log.w(TAG, "@@syncMabel exception when parsing json from server", e);

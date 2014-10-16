@@ -55,7 +55,10 @@ public class InternalDb {
 	public enum ApplyAppendDeltaResult {
 		ok,
 		unknown_kind,
-		dirty,
+		/** Entities have changed during sync request */
+		dirty_entities,
+		/** Sync user account has changed during sync request */
+		dirty_sync_account,
 	}
 
 	/**
@@ -1184,7 +1187,7 @@ public class InternalDb {
 	 * Also updates the shadow (both data and the revno).
 	 * @return {@link yuku.alkitab.base.storage.InternalDb.ApplyAppendDeltaResult#ok} if database and sync shadow are updated. Otherwise else.
 	 */
-	@NonNull public ApplyAppendDeltaResult applyAppendDelta(final int final_revno, @NonNull final Sync.Delta<Sync.MabelContent> append_delta, @NonNull final List<Sync.Entity<Sync.MabelContent>> entitiesBeforeSync) {
+	@NonNull public ApplyAppendDeltaResult applyAppendDelta(final int final_revno, @NonNull final Sync.Delta<Sync.MabelContent> append_delta, @NonNull final List<Sync.Entity<Sync.MabelContent>> entitiesBeforeSync, @NonNull final String simpleTokenBeforeSync) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
 		Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_MABEL, true);
@@ -1192,7 +1195,14 @@ public class InternalDb {
 			{ // if the current entities are not the same as the ones had when contacting server, reject this append delta.
 				final List<Sync.Entity<Sync.MabelContent>> currentEntities = Sync.getMabelEntitiesFromCurrent();
 				if (!Sync.entitiesEqual(currentEntities, entitiesBeforeSync)) {
-					return ApplyAppendDeltaResult.dirty;
+					return ApplyAppendDeltaResult.dirty_entities;
+				}
+			}
+
+			{ // if the current simpleToken has changed (sync user logged off or changed), reject this append delta
+				final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
+				if (!U.equals(simpleToken, simpleTokenBeforeSync)) {
+					return ApplyAppendDeltaResult.dirty_sync_account;
 				}
 			}
 

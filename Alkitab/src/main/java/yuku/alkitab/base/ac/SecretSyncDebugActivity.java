@@ -1,10 +1,10 @@
 package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -18,6 +18,7 @@ import com.squareup.okhttp.Response;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
@@ -42,8 +43,6 @@ public class SecretSyncDebugActivity extends BaseActivity {
 	public static final String TAG = SecretSyncDebugActivity.class.getSimpleName();
 
 	EditText tServer;
-	Button bServerSave;
-	Button bServerReset;
 	TextView tUser;
 	EditText tUserEmail;
 	CheckBox cMakeDirtyMarker;
@@ -157,16 +156,11 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		return sb.toString();
 	}
 
-	static class ResponseJson {
-		public boolean success;
-		public String message;
-	}
-
 	static class UserJson {
 		public String email;
 	}
 
-	static class DebugCreateUserResponseJson extends ResponseJson {
+	static class DebugCreateUserResponseJson extends Sync.ResponseJson {
 		public UserJson user;
 		public String simpleToken;
 	}
@@ -191,7 +185,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 						final String simpleToken = debugCreateUserResponse.simpleToken;
 
 						Preferences.hold();
-						Preferences.setString(Prefkey.sync_user_email, email);
+						Preferences.setString(getString(R.string.pref_syncAccountName_key), email);
 						Preferences.setString(Prefkey.sync_simpleToken, simpleToken);
 						Preferences.setInt(Prefkey.sync_token_obtained_time, Sqlitil.nowDateTime());
 						Preferences.unhold();
@@ -212,10 +206,6 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			}
 		});
 	};
-
-	static class DebugGetAuthTokenResponseJson extends ResponseJson {
-		public String simpleToken;
-	}
 
 	View.OnClickListener bGetAuthToken_click = v -> {
 		final String user_email = tUserEmail.getText().toString();
@@ -242,13 +232,13 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 			@Override
 			public void onResponse(final Response response) throws IOException {
-				final DebugGetAuthTokenResponseJson debugCreateUserResponse = new Gson().fromJson(response.body().charStream(), DebugGetAuthTokenResponseJson.class);
+				final Sync.LoginResponseJson debugCreateUserResponse = new Gson().fromJson(response.body().charStream(), Sync.LoginResponseJson.class);
 				runOnUiThread(() -> {
 					if (debugCreateUserResponse.success) {
 						final String simpleToken = debugCreateUserResponse.simpleToken;
 
 						Preferences.hold();
-						Preferences.setString(Prefkey.sync_user_email, user_email);
+						Preferences.setString(getString(R.string.pref_syncAccountName_key), user_email);
 						Preferences.setString(Prefkey.sync_simpleToken, simpleToken);
 						Preferences.setInt(Prefkey.sync_token_obtained_time, Sqlitil.nowDateTime());
 						Preferences.unhold();
@@ -272,22 +262,24 @@ public class SecretSyncDebugActivity extends BaseActivity {
 	};
 
 	void displayUser() {
-		tUser.setText(Preferences.getString(Prefkey.sync_user_email, "not logged in") + ": " + Preferences.getString(Prefkey.sync_simpleToken));
+		tUser.setText(Preferences.getString(getString(R.string.pref_syncAccountName_key), "not logged in") + ": " + Preferences.getString(Prefkey.sync_simpleToken));
 	}
 
 	View.OnClickListener bLogout_click = v -> {
 		Preferences.hold();
-		Preferences.remove(Prefkey.sync_user_email);
+		Preferences.remove(getString(R.string.pref_syncAccountName_key));
 		Preferences.remove(Prefkey.sync_simpleToken);
 		Preferences.remove(Prefkey.sync_token_obtained_time);
 		Preferences.unhold();
 
-		S.getDb().deleteSyncShadowBySyncSetName(SyncShadow.SYNC_SET_MABEL);
+		for (final String syncSetName : SyncShadow.ALL_SYNC_SETS) {
+			S.getDb().deleteSyncShadowBySyncSetName(syncSetName);
+		}
 
 		displayUser();
 	};
 
-	public static class DebugSyncResponseJson extends ResponseJson {
+	public static class DebugSyncResponseJson extends Sync.ResponseJson {
 		public int final_revno;
 		public Sync.Delta<Sync.MabelContent> append_delta;
 	}
@@ -309,6 +301,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		final RequestBody requestBody = new FormEncodingBuilder()
 			.add("simpleToken", simpleToken)
 			.add("syncSetName", SyncShadow.SYNC_SET_MABEL)
+			.add("installation_id", Sync.getInstallationId())
 			.add("clientState", new Gson().toJson(clientState))
 			.build();
 
@@ -362,12 +355,15 @@ public class SecretSyncDebugActivity extends BaseActivity {
 						final int final_revno = debugSyncResponse.final_revno;
 						final Sync.Delta<Sync.MabelContent> append_delta = debugSyncResponse.append_delta;
 
-						final InternalDb.ApplyAppendDeltaResult applyResult = S.getDb().applyAppendDelta(final_revno, append_delta, entitiesBeforeSync);
-
+						final InternalDb.ApplyAppendDeltaResult applyResult = S.getDb().applyAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
 						new AlertDialog.Builder(SecretSyncDebugActivity.this)
 							.setMessage("Final revno: " + final_revno + "\nApply result: " + applyResult + "\nAppend delta: " + append_delta)
 							.setPositiveButton(R.string.ok, null)
 							.show();
+
+						if (applyResult == InternalDb.ApplyAppendDeltaResult.ok) {
+							App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
+						}
 					} else {
 						new AlertDialog.Builder(SecretSyncDebugActivity.this)
 							.setMessage(debugSyncResponse.message)

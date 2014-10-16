@@ -65,8 +65,10 @@ import yuku.alkitab.base.dialog.XrefDialog;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.MVersionInternal;
+import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Jumper;
@@ -504,6 +506,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		App.getLbm().registerReceiver(reloadAttributeMapReceiver, new IntentFilter(ACTION_ATTRIBUTE_MAP_CHANGED));
+
+		// sync on app start, if we are logged in
+		if (Preferences.contains(Prefkey.sync_simpleToken)) {
+			for (final String syncSetName : SyncShadow.ALL_SYNC_SETS) {
+				Sync.notifySyncNeeded(syncSetName);
+			}
+		}
 	}
 
 	@Override

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+	<Preference
+		android:key="@string/pref_sync_key"
+		android:persistent="false"
+		android:title="@string/pref_sync_title" />
+
 	<PreferenceCategory android:title="@string/pref_penampilan_layar">
 		<ListPreference
 			android:defaultValue="@string/pref_bahasa_default"
