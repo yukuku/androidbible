@@ -90,4 +90,9 @@ public enum Prefkey {
 	 * so we do not send GCM messages to self.
 	 */
 	installation_id,
+
+	/**
+	 * URL of profile picture used in sync. Null if not available.
+	 */
+	sync_profile_picture_url,
 }

@@ -599,6 +599,7 @@ public class Sync {
 		public String message;
 		public String simpleToken;
 		public String user_email;
+		public String profile_picture_url;
 	}
 
 	/**
@@ -631,6 +632,7 @@ public class Sync {
 
 			res.success = true;
 			res.user_email = response.user.email;
+			res.profile_picture_url = response.profile_picture_url;
 			res.simpleToken = response.simpleToken;
 			return res;
 
@@ -653,5 +655,6 @@ public class Sync {
 	public static class LoginResponseJson extends ResponseJson {
 		public String simpleToken;
 		public UserJson user;
+		public String profile_picture_url;
 	}
 }

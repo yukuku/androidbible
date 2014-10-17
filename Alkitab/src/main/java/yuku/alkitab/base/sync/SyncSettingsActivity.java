@@ -4,6 +4,9 @@ import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.util.Log;
@@ -12,6 +15,8 @@ import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
@@ -35,7 +40,21 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 	private static final int REQUEST_RECOVER_FROM_PLAY_SERVICES_ERROR = 102;
 
 	private Preference pref_syncAccountName;
-	private Preference pref_syncLogout;
+
+	final Target profilePictureTarget = new Target() {
+		@Override
+		public void onBitmapLoaded(final Bitmap bitmap, final Picasso.LoadedFrom from) {
+			if (pref_syncAccountName != null && Preferences.getString(getString(R.string.pref_syncAccountName_key)) != null) {
+				pref_syncAccountName.setIcon(new BitmapDrawable(getResources(), bitmap));
+			}
+		}
+
+		@Override
+		public void onBitmapFailed(final Drawable errorDrawable) {}
+
+		@Override
+		public void onPrepareLoad(final Drawable placeHolderDrawable) {}
+	};
 
 	@Override
 	@SuppressWarnings("deprecation")
@@ -63,6 +82,7 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 					Preferences.remove(getString(R.string.pref_syncAccountName_key));
 					Preferences.remove(Prefkey.sync_simpleToken);
 					Preferences.remove(Prefkey.sync_token_obtained_time);
+					Preferences.remove(Prefkey.sync_profile_picture_url);
 
 					for (final String syncSetName : SyncShadow.ALL_SYNC_SETS) {
 						S.getDb().deleteSyncShadowBySyncSetName(syncSetName);
@@ -139,6 +159,7 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 				// Success!
 				Preferences.hold();
 				Preferences.setString(App.context.getString(R.string.pref_syncAccountName_key), loginResult.user_email);
+				Preferences.setString(Prefkey.sync_profile_picture_url, loginResult.profile_picture_url);
 				Preferences.setString(Prefkey.sync_simpleToken, loginResult.simpleToken);
 				Preferences.setInt(Prefkey.sync_token_obtained_time, Sqlitil.nowDateTime());
 				Preferences.unhold();
@@ -167,5 +188,12 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 	void updateSyncAccountNameSummary() {
 		final String syncAccountName = Preferences.getString(getString(R.string.pref_syncAccountName_key));
 		pref_syncAccountName.setSummary(syncAccountName != null ? syncAccountName : getString(R.string.sync_account_not_selected));
+
+		final String profile_picture_url = Preferences.getString(Prefkey.sync_profile_picture_url);
+		if (profile_picture_url == null) {
+			pref_syncAccountName.setIcon(null);
+		} else {
+			Picasso.with(this).load(profile_picture_url).into(profilePictureTarget);
+		}
 	}
 }
