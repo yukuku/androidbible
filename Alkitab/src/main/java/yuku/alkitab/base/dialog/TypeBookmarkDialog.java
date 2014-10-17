@@ -57,13 +57,6 @@ public class TypeBookmarkDialog {
 	}
 
 	/**
-	 * Open the bookmark edit dialog for an existing note by ari and ordering (starting from 0).
-	 */
-	public static TypeBookmarkDialog EditExistingWithOrdering(Context context, int ari, int ordering) {
-		return new TypeBookmarkDialog(context, S.getDb().getMarker(ari, Marker.Kind.bookmark, ordering), null);
-	}
-
-	/**
 	 * Open the bookmark edit dialog for a new bookmark by ari.
 	 */
 	public static TypeBookmarkDialog NewBookmark(Context context, int ari, final int verseCount) {

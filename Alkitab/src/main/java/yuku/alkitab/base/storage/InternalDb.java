@@ -134,35 +134,11 @@ public class InternalDb {
 	}
 
 	/**
-	 * Get a marker based on ari, kind, and ordering.
-	 * @param ordering (starting from 0) in case of there are multiple markers with the same kind on a verse.
-	 * @return null if not found
+	 * Ordered by modified time, the newest is first.
 	 */
-	public Marker getMarker(int ari, Marker.Kind kind, int ordering) {
-		final Cursor cursor = helper.getReadableDatabase().query(
-			Db.TABLE_Marker,
-			null,
-			Db.Marker.ari + "=? and " + Db.Marker.kind + "=?",
-			new String[] {String.valueOf(ari), String.valueOf(kind.code)},
-			null, null, "_id asc", ordering + ",1"
-		);
-
-		try {
-			if (!cursor.moveToNext()) return null;
-			return markerFromCursor(cursor);
-		} finally {
-			cursor.close();
-		}
-	}
-
-	public int countMarkersForAriKind(final int ari, final Marker.Kind kind) {
-		final SQLiteDatabase db = helper.getReadableDatabase();
-		return (int) DatabaseUtils.queryNumEntries(db, Db.TABLE_Marker, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", new String[]{String.valueOf(ari), String.valueOf(kind.code)});
-	}
-
 	public List<Marker> listMarkersForAriKind(final int ari, final Marker.Kind kind) {
 		final SQLiteDatabase db = helper.getReadableDatabase();
-		final Cursor c = db.query(Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", new String[]{String.valueOf(ari), String.valueOf(kind.code)}, null, null, "_id asc", null);
+		final Cursor c = db.query(Db.TABLE_Marker, null, Db.Marker.ari + "=? and " + Db.Marker.kind + "=?", ToStringArray(ari, kind.code), null, null, Db.Marker.modifyTime + " desc", null);
 		try {
 			final List<Marker> res = new ArrayList<>();
 			while (c.moveToNext()) {

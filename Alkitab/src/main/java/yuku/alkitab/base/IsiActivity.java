@@ -1519,8 +1519,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	VersesView.AttributeListener attributeListener = new VersesView.AttributeListener() {
-		void openBookmarkDialog(int ari, int ordering) {
-			final TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExistingWithOrdering(IsiActivity.this, ari, ordering);
+		void openBookmarkDialog(final long _id) {
+			final TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExisting(IsiActivity.this, _id);
 			dialog.setListener(new TypeBookmarkDialog.Listener() {
 				@Override public void onModifiedOrDeleted() {
 					lsText.reloadAttributeMap();
@@ -1537,42 +1537,32 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		public void onBookmarkAttributeClick(final Book book, final int chapter_1, final int verse_1) {
 			final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
 
-			if (S.getDb().countMarkersForAriKind(ari, Marker.Kind.bookmark) == 1) {
-				openBookmarkDialog(ari, 0);
+			final List<Marker> markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.bookmark);
+			if (markers.size() == 1) {
+				openBookmarkDialog(markers.get(0)._id);
 			} else {
-				final List<Marker> markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.bookmark);
 				new AlertDialog.Builder(IsiActivity.this)
 					.setTitle(R.string.edit_bookmark)
-					.setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.bookmark), new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(final DialogInterface dialog, final int which) {
-							openBookmarkDialog(ari, which);
-						}
-					})
+					.setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.bookmark), (dialog, which) -> openBookmarkDialog(markers.get(which)._id))
 					.show();
 			}
 		}
 
-		void openNoteDialog(int ari, int ordering) {
-			startActivityForResult(NoteActivity.createEditExistingWithOrderingIntent(ari, ordering), REQCODE_edit_note_1);
+		void openNoteDialog(final long _id) {
+			startActivityForResult(NoteActivity.createEditExistingIntent(_id), REQCODE_edit_note_1);
 		}
 
 		@Override
 		public void onNoteAttributeClick(final Book book, final int chapter_1, final int verse_1) {
 			final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
 
-			if (S.getDb().countMarkersForAriKind(ari, Marker.Kind.note) == 1) {
-				openNoteDialog(ari, 0);
+			final List<Marker> markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.note);
+			if (markers.size() == 1) {
+				openNoteDialog(markers.get(0)._id);
 			} else {
-				final List<Marker> markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.note);
 				new AlertDialog.Builder(IsiActivity.this)
 					.setTitle(R.string.edit_note)
-					.setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.note), new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(final DialogInterface dialog, final int which) {
-							openNoteDialog(ari, which);
-						}
-					})
+					.setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.note), (dialog, which) -> openNoteDialog(markers.get(which)._id))
 					.show();
 			}
 		}
