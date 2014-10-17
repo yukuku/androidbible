@@ -465,9 +465,12 @@ public class Sync {
 
 		syncExecutor.schedule(() -> {
 			while (true) {
-				final String extraSyncSetName = syncSetNameQueue.poll();
-				if (extraSyncSetName == null) {
-					return;
+				final String extraSyncSetName;
+				synchronized (syncSetNameQueue) {
+					extraSyncSetName = syncSetNameQueue.poll();
+					if (extraSyncSetName == null) {
+						return;
+					}
 				}
 
 				final Account account = SyncUtils.getOrCreateSyncAccount();
@@ -671,5 +674,25 @@ public class Sync {
 
 	public static String prefkeyForSyncSetEnabled(final String syncSetName) {
 		return "syncSet_" + syncSetName + "_enabled";
+	}
+
+	public static void forceSyncNow() {
+		final Account account = SyncUtils.getOrCreateSyncAccount();
+		final String authority = App.context.getString(R.string.sync_provider_authority);
+
+		// make sure sync is enabled.
+		final boolean syncAutomatically = ContentResolver.getSyncAutomatically(account, authority);
+		if (!syncAutomatically) {
+			ContentResolver.setSyncAutomatically(account, authority, true);
+		}
+
+		// request sync.
+		for (final String syncSetName : SyncShadow.ALL_SYNC_SETS) {
+			final Bundle extras = new Bundle();
+			extras.putString(SyncAdapter.EXTRA_SYNC_SET_NAME, syncSetName);
+			extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+			extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+			ContentResolver.requestSync(account, authority, extras);
+		}
 	}
 }

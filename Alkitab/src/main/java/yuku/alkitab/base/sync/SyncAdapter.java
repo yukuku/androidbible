@@ -47,8 +47,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 	/**
 	 * Set up the sync adapter. This form of the constructor maintains compatibility with Android 3.0
-	 * and later platform versions
+	 * and later platform versions, so do not delete.
 	 */
+	@SuppressWarnings("UnusedDeclaration")
 	public SyncAdapter(Context context, boolean autoInitialize, boolean allowParallelSyncs) {
 		super(context, autoInitialize, allowParallelSyncs);
 	}
@@ -62,16 +63,25 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	public void onPerformSync(final Account account, final Bundle extras, final String authority, final ContentProviderClient provider, final SyncResult syncResult) {
 		Log.d(TAG, "@@onPerformSync account:" + account + " extras:" + extras + " authority:" + authority);
 
-		final String syncSetName = extras.getString(EXTRA_SYNC_SET_NAME);
-		if (syncSetName != null) {
+		try {
+			final String syncSetName = extras.getString(EXTRA_SYNC_SET_NAME);
+			if (syncSetName == null) {
+				return;
+			}
+
+			if (!Preferences.getBoolean(Sync.prefkeyForSyncSetEnabled(syncSetName), true)) {
+				Log.d(TAG, "Sync for " + syncSetName + " is not enabled in sync settings. Exiting.");
+				return;
+			}
+
 			Log.d(TAG, "Syncing: " + syncSetName);
 
 			if (SyncShadow.SYNC_SET_MABEL.equals(syncSetName)) {
 				syncMabel(syncResult);
 			}
+		} finally {
+			Log.d(TAG, "Sync result: " + syncResult);
 		}
-
-		Log.d(TAG, "Sync result: " + syncResult);
 	}
 
 	void syncMabel(final SyncResult sr) {

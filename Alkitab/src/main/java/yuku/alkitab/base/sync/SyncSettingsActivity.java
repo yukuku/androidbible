@@ -10,6 +10,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
@@ -65,6 +67,21 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 		pref_syncAccountName = findPreference(getString(R.string.pref_syncAccountName_key));
 		pref_syncAccountName.setOnPreferenceClickListener(pref_syncAccountName_click);
 		updateDisplay();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_sync_settings, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		if (item.getItemId() == R.id.menuSyncNow) {
+			Sync.forceSyncNow();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	Preference.OnPreferenceClickListener pref_syncAccountName_click = preference -> {
