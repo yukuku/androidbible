@@ -26,6 +26,7 @@ import yuku.alkitab.base.ac.SecretSyncDebugActivity;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.Sqlitil;
 
 import java.io.IOException;
 import java.util.List;
@@ -157,6 +158,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			App.getLbm().sendBroadcast(new Intent(MarkerListActivity.ACTION_RELOAD));
 
 			Log.d(TAG, "Final revno: " + final_revno + " Apply result: " + applyResult + " Append delta: " + append_delta);
+			SyncRecorder.saveLastSuccessTime(SyncShadow.SYNC_SET_MABEL, Sqlitil.nowDateTime());
+			App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
 		} catch (JsonSyntaxException e) {
 			Log.w(TAG, "@@syncMabel exception when parsing json from server", e);
 			sr.stats.numParseExceptions++;

@@ -95,4 +95,7 @@ public enum Prefkey {
 	 * URL of profile picture used in sync. Null if not available.
 	 */
 	sync_profile_picture_url,
+
+	/** Stores information about last syncs */
+	sync_last_infos,
 }

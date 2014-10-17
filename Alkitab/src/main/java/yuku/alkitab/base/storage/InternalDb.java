@@ -1174,6 +1174,21 @@ public class InternalDb {
 		return null;
 	}
 
+	@Nullable public int getRevnoFromSyncShadowBySyncSetName(final String syncSetName) {
+		final SQLiteDatabase db = helper.getReadableDatabase();
+		final Cursor c = db.query(Table.SyncShadow.tableName(), Array(
+			Table.SyncShadow.revno.name()
+		), Table.SyncShadow.syncSetName + "=?", Array(syncSetName), null, null, null);
+		try {
+			if (c.moveToNext()) {
+				return c.getInt(0);
+			}
+		} finally {
+			c.close();
+		}
+		return 0;
+	}
+
 	@NonNull private ContentValues syncShadowToContentValues(@NonNull final SyncShadow ss) {
 		final ContentValues res = new ContentValues();
 		res.put(Table.SyncShadow.syncSetName.name(), ss.syncSetName);

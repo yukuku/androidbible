@@ -3,7 +3,10 @@ package yuku.alkitab.base.sync;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -29,6 +32,8 @@ import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.R;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static yuku.alkitab.base.util.Literals.Array;
@@ -41,7 +46,33 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 	private static final int REQUEST_RECOVER_FROM_AUTH_ERROR = 101;
 	private static final int REQUEST_RECOVER_FROM_PLAY_SERVICES_ERROR = 102;
 
+	/** Action to broadcast when sync status needs to be refreshed */
+	public static final String ACTION_RELOAD = SyncSettingsActivity.class.getName() + ".action.RELOAD";
+
 	private Preference pref_syncAccountName;
+
+	final BroadcastReceiver br = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			if (ACTION_RELOAD.equals(intent.getAction())) {
+				updateDisplay();
+			}
+		}
+	};
+
+	static final ThreadLocal<DateFormat> lastSyncDateFormat = new ThreadLocal<DateFormat>() {
+		@Override
+		protected DateFormat initialValue() {
+			return android.text.format.DateFormat.getDateFormat(App.context);
+		}
+	};
+
+	static final ThreadLocal<DateFormat> lastSyncTimeFormat = new ThreadLocal<DateFormat>() {
+		@Override
+		protected DateFormat initialValue() {
+			return android.text.format.DateFormat.getTimeFormat(App.context);
+		}
+	};
 
 	final Target profilePictureTarget = new Target() {
 		@Override
@@ -67,6 +98,15 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 		pref_syncAccountName = findPreference(getString(R.string.pref_syncAccountName_key));
 		pref_syncAccountName.setOnPreferenceClickListener(pref_syncAccountName_click);
 		updateDisplay();
+
+		App.getLbm().registerReceiver(br, new IntentFilter(ACTION_RELOAD));
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		App.getLbm().unregisterReceiver(br);
 	}
 
 	@Override
@@ -106,6 +146,8 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 					}
 
 					Preferences.unhold();
+
+					SyncRecorder.removeAllLastSuccessTimes();
 
 					updateDisplay();
 				})
@@ -202,6 +244,7 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 		}).start();
 	}
 
+	@SuppressWarnings("deprecation")
 	void updateDisplay() {
 		final String syncAccountName = Preferences.getString(getString(R.string.pref_syncAccountName_key));
 		pref_syncAccountName.setSummary(syncAccountName != null ? syncAccountName : getString(R.string.sync_account_not_selected));
@@ -213,12 +256,18 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 			Picasso.with(this).load(profile_picture_url).into(profilePictureTarget);
 		}
 
-		for (final String syncSet : SyncShadow.ALL_SYNC_SETS) {
-			final Preference pref = findPreference(Sync.prefkeyForSyncSetEnabled(syncSet));
+		for (final String syncSetName : SyncShadow.ALL_SYNC_SETS) {
+			final Preference pref = findPreference(Sync.prefkeyForSyncSetEnabled(syncSetName));
 			pref.setEnabled(syncAccountName != null);
 
 			if (syncAccountName != null) {
-				pref.setSummary("Last synced XXX XX XXXX, XX:XX (rYYY)");
+				final int time = SyncRecorder.getLastSuccessTime(syncSetName);
+				if (time == 0) {
+					pref.setSummary(getString(R.string.sync_sync_set_pref_summary_never));
+				} else {
+					final Date date = Sqlitil.toDate(time);
+					pref.setSummary(getString(R.string.sync_sync_set_pref_summary_last_synced, lastSyncDateFormat.get().format(date), lastSyncTimeFormat.get().format(date), S.getDb().getRevnoFromSyncShadowBySyncSetName(syncSetName)));
+				}
 			} else {
 				pref.setSummary(null);
 			}
