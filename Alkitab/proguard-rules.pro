@@ -50,3 +50,7 @@
 
 # As mentioned in picasso homepage.
 -dontwarn com.squareup.okhttp.**
+
+
+# retrolambda
+-dontwarn java.lang.invoke.**

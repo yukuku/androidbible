@@ -136,7 +136,7 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 		echo 'Replacing verse provider name to the official one "yuku.alkitab.provider"'
 		sed -i '' 's/android:authorities="yuku.alkitab.provider.debug"/android:authorities="yuku.alkitab.provider"/' AndroidManifest.xml
 
-		echo 'Replacing GCM component names to this app's package name:' $BUILD_PACKAGE_NAME
+		echo 'Replacing GCM component names to this app package name:' $BUILD_PACKAGE_NAME
 		sed -i '' 's/<category android:name="yuku.alkitab.debug"/<category android:name="'$BUILD_PACKAGE_NAME'"/' AndroidManifest.xml
 		sed -i '' 's/yuku.alkitab.debug.permission.C2D_MESSAGE/'$BUILD_PACKAGE_NAME'.permission.C2D_MESSAGE/' AndroidManifest.xml
 
