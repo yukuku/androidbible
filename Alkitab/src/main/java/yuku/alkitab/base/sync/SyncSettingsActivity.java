@@ -36,6 +36,7 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 	private static final int REQUEST_RECOVER_FROM_PLAY_SERVICES_ERROR = 102;
 
 	private Preference pref_syncAccountName;
+	private Preference pref_syncLogout;
 
 	@Override
 	@SuppressWarnings("deprecation")
@@ -47,7 +48,9 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 		pref_syncAccountName.setOnPreferenceClickListener(pref_syncAccountName_click);
 		updateSyncAccountNameSummary();
 
-		findPreference(getString(R.string.pref_syncLogout_key)).setOnPreferenceClickListener(pref_syncLogout_click);
+		pref_syncLogout = findPreference(getString(R.string.pref_syncLogout_key));
+		pref_syncLogout.setOnPreferenceClickListener(pref_syncLogout_click);
+		updateSyncLogoutEnabledness();
 	}
 
 	Preference.OnPreferenceClickListener pref_syncAccountName_click = preference -> {
@@ -76,6 +79,7 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 				Preferences.unhold();
 
 				updateSyncAccountNameSummary();
+				updateSyncLogoutEnabledness();
 			})
 			.setNegativeButton(R.string.cancel, null)
 			.show();
@@ -172,5 +176,10 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 	void updateSyncAccountNameSummary() {
 		final String syncAccountName = Preferences.getString(getString(R.string.pref_syncAccountName_key));
 		pref_syncAccountName.setSummary(syncAccountName != null ? syncAccountName : getString(R.string.sync_account_not_selected));
+	}
+
+	void updateSyncLogoutEnabledness() {
+		final String syncAccountName = Preferences.getString(getString(R.string.pref_syncAccountName_key));
+		pref_syncLogout.setEnabled(syncAccountName != null);
 	}
 }
