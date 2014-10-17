@@ -64,7 +64,7 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 
 		pref_syncAccountName = findPreference(getString(R.string.pref_syncAccountName_key));
 		pref_syncAccountName.setOnPreferenceClickListener(pref_syncAccountName_click);
-		updateSyncAccountNameSummary();
+		updateDisplay();
 	}
 
 	Preference.OnPreferenceClickListener pref_syncAccountName_click = preference -> {
@@ -90,7 +90,7 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 
 					Preferences.unhold();
 
-					updateSyncAccountNameSummary();
+					updateDisplay();
 				})
 				.setNegativeButton(R.string.cancel, null)
 				.show();
@@ -168,7 +168,7 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 					Sync.notifySyncNeeded(syncSetName);
 				}
 
-				runOnUiThread(this::updateSyncAccountNameSummary);
+				runOnUiThread(this::updateDisplay);
 
 			} catch (GooglePlayServicesAvailabilityException e) {
 				runOnUiThread(() -> GooglePlayServicesUtil.getErrorDialog(e.getConnectionStatusCode(), this, REQUEST_RECOVER_FROM_PLAY_SERVICES_ERROR).show());
@@ -185,7 +185,7 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 		}).start();
 	}
 
-	void updateSyncAccountNameSummary() {
+	void updateDisplay() {
 		final String syncAccountName = Preferences.getString(getString(R.string.pref_syncAccountName_key));
 		pref_syncAccountName.setSummary(syncAccountName != null ? syncAccountName : getString(R.string.sync_account_not_selected));
 
@@ -194,6 +194,17 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 			pref_syncAccountName.setIcon(null);
 		} else {
 			Picasso.with(this).load(profile_picture_url).into(profilePictureTarget);
+		}
+
+		for (final String syncSet : SyncShadow.ALL_SYNC_SETS) {
+			final Preference pref = findPreference(Sync.prefkeyForSyncSetEnabled(syncSet));
+			pref.setEnabled(syncAccountName != null);
+
+			if (syncAccountName != null) {
+				pref.setSummary("Last synced XXX XX XXXX, XX:XX (rYYY)");
+			} else {
+				pref.setSummary(null);
+			}
 		}
 	}
 }

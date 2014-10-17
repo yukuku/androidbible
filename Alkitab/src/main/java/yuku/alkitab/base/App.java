@@ -62,6 +62,7 @@ public class App extends yuku.afw.App {
 
 		PreferenceManager.setDefaultValues(context, R.xml.settings, false);
 		PreferenceManager.setDefaultValues(context, R.xml.secret_settings, false);
+		PreferenceManager.setDefaultValues(context, R.xml.sync_settings, false);
 
 		updateConfigurationWithPreferencesLocale();
 
@@ -76,7 +77,7 @@ public class App extends yuku.afw.App {
 		S.calculateAppliedValuesBasedOnPreferences();
 
 		{ // GCM
-			Gcm.renewGcmRegistrationIdIfNeeded(newRegistrationId -> Sync.notifyNewGcmRegistrationId(newRegistrationId));
+			Gcm.renewGcmRegistrationIdIfNeeded(Sync::notifyNewGcmRegistrationId);
 		}
 	}
 

@@ -443,6 +443,17 @@ public class Sync {
 			return;
 		}
 
+		// if not logged in, do nothing
+		if (Preferences.getString(Prefkey.sync_simpleToken) == null) {
+			return;
+		}
+
+		{ // check if preferences prevent syncing
+			if (!Preferences.getBoolean(prefkeyForSyncSetEnabled(syncSetName), true)) {
+				return;
+			}
+		}
+
 		// check if we can omit queueing sync request for this sync set name.
 		synchronized (syncSetNameQueue) {
 			if (syncSetNameQueue.contains(syncSetName)) {
@@ -656,5 +667,9 @@ public class Sync {
 		public String simpleToken;
 		public UserJson user;
 		public String profile_picture_url;
+	}
+
+	public static String prefkeyForSyncSetEnabled(final String syncSetName) {
+		return "syncSet_" + syncSetName + "_enabled";
 	}
 }
