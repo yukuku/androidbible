@@ -1,6 +1,5 @@
 package yuku.alkitab.base.sync;
 
-import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -47,43 +46,35 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 		pref_syncAccountName = findPreference(getString(R.string.pref_syncAccountName_key));
 		pref_syncAccountName.setOnPreferenceClickListener(pref_syncAccountName_click);
 		updateSyncAccountNameSummary();
-
-		pref_syncLogout = findPreference(getString(R.string.pref_syncLogout_key));
-		pref_syncLogout.setOnPreferenceClickListener(pref_syncLogout_click);
-		updateSyncLogoutEnabledness();
 	}
 
 	Preference.OnPreferenceClickListener pref_syncAccountName_click = preference -> {
 		final String syncAccountName = Preferences.getString(getString(R.string.pref_syncAccountName_key));
-		final Account currentAccount = syncAccountName == null ? null : new Account(syncAccountName, "com.google");
 
-		final Intent accountChooser = AccountManager.newChooseAccountIntent(currentAccount, null, Array("com.google"), true, null, null, null, null);
-		startActivityForResult(accountChooser, REQCODE_accountChooser);
+		if (syncAccountName == null) {
+			final Intent accountChooser = AccountManager.newChooseAccountIntent(null, null, Array("com.google"), true, null, null, null, null);
+			startActivityForResult(accountChooser, REQCODE_accountChooser);
 
-		return true;
-	};
+		} else { // show logout instead
+			new AlertDialog.Builder(this)
+				.setMessage(R.string.sync_logout_warning)
+				.setPositiveButton(R.string.ok, (d, w) -> {
+					Preferences.hold();
+					Preferences.remove(getString(R.string.pref_syncAccountName_key));
+					Preferences.remove(Prefkey.sync_simpleToken);
+					Preferences.remove(Prefkey.sync_token_obtained_time);
 
-	Preference.OnPreferenceClickListener pref_syncLogout_click = preference -> {
-		new AlertDialog.Builder(this)
-			.setMessage(R.string.sync_logout_warning)
-			.setPositiveButton(R.string.ok, (d, w) -> {
-				Preferences.hold();
-				Preferences.remove(getString(R.string.pref_syncAccountName_key));
-				Preferences.remove(Prefkey.sync_simpleToken);
-				Preferences.remove(Prefkey.sync_token_obtained_time);
+					for (final String syncSetName : SyncShadow.ALL_SYNC_SETS) {
+						S.getDb().deleteSyncShadowBySyncSetName(syncSetName);
+					}
 
-				for (final String syncSetName : SyncShadow.ALL_SYNC_SETS) {
-					S.getDb().deleteSyncShadowBySyncSetName(syncSetName);
-				}
+					Preferences.unhold();
 
-				Preferences.unhold();
-
-				updateSyncAccountNameSummary();
-				updateSyncLogoutEnabledness();
-			})
-			.setNegativeButton(R.string.cancel, null)
-			.show();
-
+					updateSyncAccountNameSummary();
+				})
+				.setNegativeButton(R.string.cancel, null)
+				.show();
+		}
 		return true;
 	};
 
@@ -176,10 +167,5 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 	void updateSyncAccountNameSummary() {
 		final String syncAccountName = Preferences.getString(getString(R.string.pref_syncAccountName_key));
 		pref_syncAccountName.setSummary(syncAccountName != null ? syncAccountName : getString(R.string.sync_account_not_selected));
-	}
-
-	void updateSyncLogoutEnabledness() {
-		final String syncAccountName = Preferences.getString(getString(R.string.pref_syncAccountName_key));
-		pref_syncLogout.setEnabled(syncAccountName != null);
 	}
 }
