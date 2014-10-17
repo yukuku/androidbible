@@ -8,6 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -78,8 +83,24 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 		@Override
 		public void onBitmapLoaded(final Bitmap bitmap, final Picasso.LoadedFrom from) {
 			if (pref_syncAccountName != null && Preferences.getString(getString(R.string.pref_syncAccountName_key)) != null) {
-				pref_syncAccountName.setIcon(new BitmapDrawable(getResources(), bitmap));
+				pref_syncAccountName.setIcon(new BitmapDrawable(getResources(), circled(bitmap)));
 			}
+		}
+
+		Bitmap circled(Bitmap bitmap) {
+			final int w = bitmap.getWidth();
+			final int h = bitmap.getHeight();
+			final Bitmap output = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+			final Canvas canvas = new Canvas(output);
+			final Paint paint = new Paint();
+			paint.setColor(0xffffffff);
+			paint.setAntiAlias(true);
+			canvas.drawColor(0x0);
+			canvas.drawCircle(w / 2, h / 2, w / 2, paint);
+			paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+			final Rect rect = new Rect(0, 0, w, h);
+			canvas.drawBitmap(bitmap, rect, rect, paint);
+			return output;
 		}
 
 		@Override
