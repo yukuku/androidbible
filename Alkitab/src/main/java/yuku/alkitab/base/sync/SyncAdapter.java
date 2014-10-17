@@ -70,12 +70,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 				return;
 			}
 
+			SyncRecorder.log(SyncRecorder.EventKind.sync_adapter_on_perform, syncSetName);
+
 			if (!Preferences.getBoolean(Sync.prefkeyForSyncSetEnabled(syncSetName), true)) {
-				Log.d(TAG, "Sync for " + syncSetName + " is not enabled in sync settings. Exiting.");
+				SyncRecorder.log(SyncRecorder.EventKind.sync_adapter_set_not_enabled, syncSetName);
+
 				return;
 			}
-
-			Log.d(TAG, "Syncing: " + syncSetName);
 
 			if (SyncShadow.SYNC_SET_MABEL.equals(syncSetName)) {
 				syncMabel(syncResult);
@@ -89,7 +90,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
 		if (simpleToken == null) {
 			sr.stats.numAuthExceptions++;
-			Log.w(TAG, "@@syncMabel no simpleToken, we are not set for sync");
+			SyncRecorder.log(SyncRecorder.EventKind.error_no_simple_token, SyncShadow.SYNC_SET_MABEL);
 			return;
 		}
 
@@ -98,6 +99,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		final Sync.MabelClientState clientState = pair.first;
 		final List<Sync.Entity<Sync.MabelContent>> entitiesBeforeSync = pair.second;
 
+		SyncRecorder.log(SyncRecorder.EventKind.current_entities_gathered, SyncShadow.SYNC_SET_MABEL, "base_revno", clientState.base_revno, "client_delta_operations_size", clientState.delta.operations.size(), "client_entities_size", entitiesBeforeSync.size());
 
 		final String serverPrefix = Sync.getEffectiveServerPrefix();
 		Log.d(TAG, "@@syncMabel step 20: building http request. Server prefix: " + serverPrefix);
@@ -119,9 +121,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		Log.d(TAG, "@@syncMabel step 30: doing actual http request in this thread (" + Thread.currentThread().getId() + ":" + Thread.currentThread().toString() + ")");
 		try {
 			// arbritrary amount of time may pass on the next line. It is possible that marker/labels be modified during this operation.
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, SyncShadow.SYNC_SET_MABEL);
+			final long startTime = System.currentTimeMillis();
 			final SecretSyncDebugActivity.DebugSyncResponseJson response = new Gson().fromJson(call.execute().body().charStream(), SecretSyncDebugActivity.DebugSyncResponseJson.class);
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, SyncShadow.SYNC_SET_MABEL, "duration", System.currentTimeMillis() - startTime);
 
 			if (!response.success) {
+				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_not_success, SyncShadow.SYNC_SET_MABEL, "message", response.message);
 				Log.d(TAG, "@@syncMabel server response is not success. Message: " + response.message);
 				sr.stats.numIoExceptions++;
 				return;
@@ -132,11 +138,17 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 			if (append_delta == null) {
 				Log.w(TAG, "@@syncMabel append delta is null. This should not happen.");
+				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_error_append_delta_null, SyncShadow.SYNC_SET_MABEL);
 				sr.stats.numIoExceptions++;
 				return;
 			}
 
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_got_success_data, SyncShadow.SYNC_SET_MABEL, "final_revno", final_revno, "append_delta_operations_size", append_delta.operations.size());
+
 			final InternalDb.ApplyAppendDeltaResult applyResult = S.getDb().applyAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
+
+			SyncRecorder.log(SyncRecorder.EventKind.apply_result, SyncShadow.SYNC_SET_MABEL, "apply_result", applyResult.name());
+
 			if (applyResult != InternalDb.ApplyAppendDeltaResult.ok) {
 				Log.w(TAG, "@@syncMabel append delta result is not ok, but " + applyResult);
 				sr.stats.numIoExceptions++;
@@ -146,13 +158,21 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			// Based on operations in append_delta, fill in SyncStats
 			for (final Sync.Operation<Sync.MabelContent> o : append_delta.operations) {
 				switch (o.opkind) {
-					case add: sr.stats.numInserts++; break;
-					case mod: sr.stats.numUpdates++; break;
-					case del: sr.stats.numDeletes++; break;
+					case add:
+						sr.stats.numInserts++;
+						break;
+					case mod:
+						sr.stats.numUpdates++;
+						break;
+					case del:
+						sr.stats.numDeletes++;
+						break;
 				}
 			}
 
 			// success! Tell our world.
+			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, SyncShadow.SYNC_SET_MABEL, "insert_count", sr.stats.numInserts, "update_count", sr.stats.numUpdates, "delete_count", sr.stats.numDeletes);
+
 			App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
 			App.getLbm().sendBroadcast(new Intent(MarkersActivity.ACTION_RELOAD));
 			App.getLbm().sendBroadcast(new Intent(MarkerListActivity.ACTION_RELOAD));
@@ -162,10 +182,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
 		} catch (JsonSyntaxException e) {
 			Log.w(TAG, "@@syncMabel exception when parsing json from server", e);
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, SyncShadow.SYNC_SET_MABEL);
 			sr.stats.numParseExceptions++;
 
 		} catch (JsonIOException | IOException e) {
 			Log.w(TAG, "@@syncMabel exception when executing http call", e);
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_io, SyncShadow.SYNC_SET_MABEL);
 			sr.stats.numIoExceptions++;
 		}
 	}

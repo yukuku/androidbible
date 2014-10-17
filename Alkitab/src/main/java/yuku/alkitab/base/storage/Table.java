@@ -63,4 +63,28 @@ public class Table {
 			return SyncShadow.class.getSimpleName();
 		}
 	}
+
+	public enum SyncLog {
+		createTime(integer),
+		kind(integer),
+		syncSetName(text),
+		params(text),
+		;
+
+		public final Type type;
+		public final String suffix;
+
+		private SyncLog(Type type) {
+			this(type, null);
+		}
+
+		private SyncLog(Type type, String suffix) {
+			this.type = type;
+			this.suffix = suffix;
+		}
+
+		public static String tableName() {
+			return SyncLog.class.getSimpleName();
+		}
+	}
 }

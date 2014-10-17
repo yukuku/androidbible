@@ -25,6 +25,7 @@ import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.model.ReadingPlan;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.sync.Sync;
+import yuku.alkitab.base.sync.SyncRecorder;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.model.Label;
@@ -1076,7 +1077,7 @@ public class InternalDb {
 		ContentValues cv = new ContentValues();
 		cv.put(Db.ReadingPlanProgress.reading_plan_id, readingPlanId);
 		cv.put(Db.ReadingPlanProgress.reading_code, readingCode);
-		return helper.getWritableDatabase().delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_id + "=? AND " + Db.ReadingPlanProgress.reading_code + "=?", new String[] {String.valueOf(readingPlanId), String.valueOf(readingCode)});
+		return helper.getWritableDatabase().delete(Db.TABLE_ReadingPlanProgress, Db.ReadingPlanProgress.reading_plan_id + "=? AND " + Db.ReadingPlanProgress.reading_code + "=?", new String[]{String.valueOf(readingPlanId), String.valueOf(readingCode)});
 	}
 
 	public IntArrayList getReadingPlanProgressId(final long readingPlanId, final int readingCode) {
@@ -1335,5 +1336,14 @@ public class InternalDb {
 			Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
 		}
 		return deleted;
+	}
+
+	public void insertSyncLog(final int createTime, final SyncRecorder.EventKind kind, final String syncSetName, final String params) {
+		final ContentValues cv = new ContentValues(4);
+		cv.put(Table.SyncLog.createTime.name(), createTime);
+		cv.put(Table.SyncLog.kind.name(), kind.code);
+		cv.put(Table.SyncLog.syncSetName.name(), syncSetName);
+		cv.put(Table.SyncLog.params.name(), params);
+		helper.getWritableDatabase().insert(Table.SyncLog.tableName(), null, cv);
 	}
 }

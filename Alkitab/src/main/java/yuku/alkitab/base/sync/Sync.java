@@ -454,6 +454,8 @@ public class Sync {
 			}
 		}
 
+		SyncRecorder.log(SyncRecorder.EventKind.sync_needed_notified, syncSetName);
+
 		// check if we can omit queueing sync request for this sync set name.
 		synchronized (syncSetNameQueue) {
 			if (syncSetNameQueue.contains(syncSetName)) {
@@ -679,6 +681,8 @@ public class Sync {
 	public static void forceSyncNow() {
 		final Account account = SyncUtils.getOrCreateSyncAccount();
 		final String authority = App.context.getString(R.string.sync_provider_authority);
+
+		SyncRecorder.log(SyncRecorder.EventKind.sync_forced, null);
 
 		// make sure sync is enabled.
 		final boolean syncAutomatically = ContentResolver.getSyncAutomatically(account, authority);

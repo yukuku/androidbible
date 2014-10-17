@@ -4,7 +4,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.S;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.Sqlitil;
 
 import java.util.HashMap;
 
@@ -12,20 +14,59 @@ import java.util.HashMap;
  * Class that helps record sync events and status.
  */
 public class SyncRecorder {
-	public enum EventType {
-		login(1),
-		logout(2),
+	public enum EventKind {
+		login_attempt(10),
+		login_failed(12),
+		login_gcm_sending_failed(13),
+		login_gcm_not_possessed_yet(14),
+		login_success_pre(15),
+		login_success_post(16),
+		sync_forced(80),
+		sync_needed_notified(81),
+		sync_adapter_on_perform(82),
+		sync_adapter_set_not_enabled(83),
+		error_no_simple_token(100),
+		current_entities_gathered(101),
+		sync_to_server_pre(102),
+		sync_to_server_post_response_ok(103),
+		sync_to_server_post_error_syntax(110),
+		sync_to_server_post_error_io(111),
+		sync_to_server_not_success(120),
+		sync_to_server_error_append_delta_null(121),
+		sync_to_server_got_success_data(122),
+		apply_result(140),
+		all_succeeded(141),
+		logout_pre(200),
+		logout_post(201),
 		;
 
-		int code;
+		public int code;
 
-		EventType(final int code) {
+		EventKind(final int code) {
 			this.code = code;
 		}
 	}
 
-	public static void log(@NonNull final EventType type, @Nullable final String syncSetName, final Object... kvpairs) {
+	static final Gson gson = new Gson();
+	static final HashMap<String, Object> reusedMap = new HashMap<>();
 
+	public static void log(@NonNull final EventKind kind, @Nullable final String syncSetName, final Object... kvpairs) {
+		final String params;
+		if (kvpairs.length == 0) {
+			params = null;
+		} else {
+			synchronized (reusedMap) {
+				reusedMap.clear();
+				for (int i = 0; i < kvpairs.length; i += 2) {
+					final String k = kvpairs[i].toString();
+					final Object v = kvpairs[i + 1];
+					reusedMap.put(k, v);
+				}
+				params = gson.toJson(reusedMap);
+			}
+		}
+
+		S.getDb().insertSyncLog(Sqlitil.nowDateTime(), kind, syncSetName, params);
 	}
 
 	static class LastSyncInfoEntryJson {

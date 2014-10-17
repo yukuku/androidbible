@@ -156,6 +156,8 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 			new AlertDialog.Builder(this)
 				.setMessage(R.string.sync_logout_warning)
 				.setPositiveButton(R.string.ok, (d, w) -> {
+					SyncRecorder.log(SyncRecorder.EventKind.logout_pre, null, "accountName", syncAccountName);
+
 					Preferences.hold();
 					Preferences.remove(getString(R.string.pref_syncAccountName_key));
 					Preferences.remove(Prefkey.sync_simpleToken);
@@ -169,6 +171,8 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 					Preferences.unhold();
 
 					SyncRecorder.removeAllLastSuccessTimes();
+
+					SyncRecorder.log(SyncRecorder.EventKind.logout_post, null, "accountName", syncAccountName);
 
 					updateDisplay();
 				})
@@ -210,10 +214,11 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 
 				// Save auth token.
 				Log.d(TAG, "Sending token to server for log in...");
-
+				SyncRecorder.log(SyncRecorder.EventKind.login_attempt, null, "accountName", accountName);
 				final Sync.LoginResult loginResult = Sync.login(id_token);
 
 				if (!loginResult.success) {
+					SyncRecorder.log(SyncRecorder.EventKind.login_failed, null, "accountName", accountName, "message", loginResult.message);
 					runOnUiThread(() -> new AlertDialog.Builder(this)
 						.setMessage(getString(R.string.sync_login_failed_with_reason, loginResult.message))
 						.setPositiveButton(R.string.ok, null)
@@ -226,6 +231,7 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 				if (registration_id != null) {
 					final boolean ok = Sync.sendGcmRegistrationId(loginResult.simpleToken, registration_id);
 					if (!ok) {
+						SyncRecorder.log(SyncRecorder.EventKind.login_gcm_sending_failed, null, "accountName", accountName);
 						runOnUiThread(() -> new AlertDialog.Builder(this)
 							.setMessage(getString(R.string.sync_login_failed_with_reason, "Could not send GCM registration id"))
 							.setPositiveButton(R.string.ok, null)
@@ -234,15 +240,20 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 					}
 				} else {
 					// if not, ignore. Later eventually we will have it.
+					SyncRecorder.log(SyncRecorder.EventKind.login_gcm_not_possessed_yet, null, "accountName", accountName);
 				}
 
 				// Success!
+				SyncRecorder.log(SyncRecorder.EventKind.login_success_pre, null, "accountName", accountName, "profile_picture_url", loginResult.profile_picture_url);
+
 				Preferences.hold();
 				Preferences.setString(App.context.getString(R.string.pref_syncAccountName_key), loginResult.user_email);
 				Preferences.setString(Prefkey.sync_profile_picture_url, loginResult.profile_picture_url);
 				Preferences.setString(Prefkey.sync_simpleToken, loginResult.simpleToken);
 				Preferences.setInt(Prefkey.sync_token_obtained_time, Sqlitil.nowDateTime());
 				Preferences.unhold();
+
+				SyncRecorder.log(SyncRecorder.EventKind.login_success_post, null, "accountName", accountName);
 
 				for (final String syncSetName : SyncShadow.ALL_SYNC_SETS) {
 					Sync.notifySyncNeeded(syncSetName);
