@@ -20,6 +20,7 @@ import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.MarkerListActivity;
 import yuku.alkitab.base.ac.MarkersActivity;
 import yuku.alkitab.base.ac.SecretSyncDebugActivity;
@@ -123,7 +124,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			// arbritrary amount of time may pass on the next line. It is possible that marker/labels be modified during this operation.
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, SyncShadow.SYNC_SET_MABEL);
 			final long startTime = System.currentTimeMillis();
-			final SecretSyncDebugActivity.DebugSyncResponseJson response = new Gson().fromJson(call.execute().body().charStream(), SecretSyncDebugActivity.DebugSyncResponseJson.class);
+			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
+			Log.d(TAG, "@@syncMabel server response string: " + response_s);
+			final SecretSyncDebugActivity.DebugSyncResponseJson response = new Gson().fromJson(response_s, SecretSyncDebugActivity.DebugSyncResponseJson.class);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, SyncShadow.SYNC_SET_MABEL, "duration", System.currentTimeMillis() - startTime);
 
 			if (!response.success) {
