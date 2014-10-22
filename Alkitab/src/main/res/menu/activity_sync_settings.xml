@@ -4,4 +4,9 @@
 		android:id="@+id/menuSyncNow"
 		android:showAsAction="never"
 		android:title="@string/sync_menu_item_sync_now" />
+
+	<item
+		android:id="@+id/menuSyncLog"
+		android:showAsAction="never"
+		android:title="@string/sync_menu_item_sync_log" />
 </menu>

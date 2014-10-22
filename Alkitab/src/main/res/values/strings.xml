@@ -421,6 +421,8 @@
 	<string name="sync_category_title_data_types">Data types</string>
 	<string name="pref_syncSet_mabel_enabled_title">Markers and labels</string>
 	<string name="sync_menu_item_sync_now">Sync now</string>
+	<string name="sync_menu_item_sync_log">View log</string>
 	<string name="sync_sync_set_pref_summary_last_synced">Last synced %1$s, %2$s (r%3$s)</string>
 	<string name="sync_sync_set_pref_summary_never">Not synced yet</string>
+	<string name="sync_log_activity_title">Sync log</string>
 </resources>

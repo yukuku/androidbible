@@ -252,6 +252,9 @@
 			android:windowSoftInputMode="adjustResize"/>
 		<activity android:name="yuku.alkitab.base.sync.SyncSettingsActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
+		<activity android:name="yuku.alkitab.base.sync.SyncLogActivity"
+			android:label="@string/sync_log_activity_title"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
         <activity
             android:name="yuku.filechooser.FileChooserActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />

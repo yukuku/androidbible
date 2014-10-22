@@ -126,7 +126,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
 			Log.d(TAG, "@@syncMabel server response string: " + response_s);
 			final SecretSyncDebugActivity.DebugSyncResponseJson response = App.getDefaultGson().fromJson(response_s, SecretSyncDebugActivity.DebugSyncResponseJson.class);
-			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, SyncShadow.SYNC_SET_MABEL, "duration", System.currentTimeMillis() - startTime);
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, SyncShadow.SYNC_SET_MABEL, "duration_ms", System.currentTimeMillis() - startTime);
 
 			if (!response.success) {
 				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_not_success, SyncShadow.SYNC_SET_MABEL, "message", response.message);

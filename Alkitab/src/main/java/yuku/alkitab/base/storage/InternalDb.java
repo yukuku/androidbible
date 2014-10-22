@@ -9,8 +9,10 @@ import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import com.google.gson.reflect.TypeToken;
 import yuku.afw.D;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.MarkerListActivity;
@@ -23,6 +25,7 @@ import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.MVersionInternal;
 import yuku.alkitab.base.model.ReadingPlan;
+import yuku.alkitab.base.model.SyncLog;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.sync.SyncRecorder;
@@ -40,6 +43,7 @@ import yuku.alkitab.util.IntArrayList;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static yuku.alkitab.base.util.Literals.Array;
@@ -1345,5 +1349,35 @@ public class InternalDb {
 		cv.put(Table.SyncLog.syncSetName.name(), syncSetName);
 		cv.put(Table.SyncLog.params.name(), params);
 		helper.getWritableDatabase().insert(Table.SyncLog.tableName(), null, cv);
+	}
+
+	public List<SyncLog> listLatestSyncLog(final int maxrows) {
+		final Cursor c = helper.getReadableDatabase().query(Table.SyncLog.tableName(),
+			ToStringArray(
+				Table.SyncLog.createTime,
+				Table.SyncLog.kind,
+				Table.SyncLog.syncSetName,
+				Table.SyncLog.params
+			),
+			null, null, null, null, Table.SyncLog.createTime + " desc", "" + maxrows);
+		try {
+			final List<SyncLog> res = new ArrayList<>();
+			while (c.moveToNext()) {
+				final SyncLog row = new SyncLog();
+				row.createTime = Sqlitil.toDate(c.getInt(0));
+				row.kind_code = c.getInt(1);
+				row.syncSetName = c.getString(2);
+				final String params_s = c.getString(3);
+				if (params_s == null) {
+					row.params = null;
+				} else {
+					row.params = App.getDefaultGson().fromJson(params_s, new TypeToken<Map<String, Object>>() {}.getType());
+				}
+				res.add(row);
+			}
+			return res;
+		} finally {
+			c.close();
+		}
 	}
 }
