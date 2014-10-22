@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.Gson;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.U;
 
 import java.util.List;
@@ -55,7 +56,7 @@ public class GcmIntentService extends IntentService {
 						Log.d(TAG, "Gcm message sourced from self is ignored");
 					} else {
 						final String encoded_data = intent.getStringExtra(Gcm.GCM_MESSAGE_KEY_encoded_data);
-						final GcmMessageEncodedDataJson data = new Gson().fromJson(encoded_data, GcmMessageEncodedDataJson.class);
+						final GcmMessageEncodedDataJson data = App.getDefaultGson().fromJson(encoded_data, GcmMessageEncodedDataJson.class);
 						if ("sync".equals(data.kind)) {
 							if (data.syncSetNames != null) {
 								for (final String syncSetName : data.syncSetNames) {

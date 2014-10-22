@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import com.google.gson.Gson;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -27,6 +28,12 @@ public class App extends yuku.afw.App {
 		INSTANCE;
 
 		OkHttpClient httpClient = new OkHttpClient();
+	}
+
+	enum GsonWrapper {
+		INSTANCE;
+
+		Gson gson = new Gson();
 	}
 
 	public static String downloadString(String url) throws IOException {
@@ -121,5 +128,9 @@ public class App extends yuku.afw.App {
 
 	public static LocalBroadcastManager getLbm() {
 		return LocalBroadcastManager.getInstance(context);
+	}
+
+	public static Gson getDefaultGson() {
+		return GsonWrapper.INSTANCE.gson;
 	}
 }

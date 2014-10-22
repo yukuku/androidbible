@@ -2,9 +2,8 @@ package yuku.alkitab.base.config;
 
 import android.support.v4.util.AtomicFile;
 import android.util.Log;
-import com.google.gson.Gson;
-import yuku.afw.App;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.model.MVersionPreset;
 import yuku.alkitab.base.storage.Prefkey;
 
@@ -18,7 +17,6 @@ import java.util.Map;
 
 public class VersionConfig {
 	public static final String TAG = VersionConfig.class.getSimpleName();
-	private static final Gson gson = new Gson();
 
 	public List<MVersionPreset> presets;
 	public Map<String, String> locale_display;
@@ -61,7 +59,7 @@ public class VersionConfig {
 			try {
 				final AtomicFile file = new AtomicFile(updatedFile);
 				final String json = new String(file.readFully(), "utf-8");
-				final VersionConfigJson obj = gson.fromJson(json, VersionConfigJson.class);
+				final VersionConfigJson obj = App.getDefaultGson().fromJson(json, VersionConfigJson.class);
 				return convertConfig(obj);
 			} catch (Exception e) {
 				// failed to load updated file, fallback to embedded
@@ -73,7 +71,7 @@ public class VersionConfig {
 
 		try {
 			final InputStreamReader reader = new InputStreamReader(App.context.getAssets().open("version_config.json"), "utf-8");
-			final VersionConfigJson obj = gson.fromJson(reader, VersionConfigJson.class);
+			final VersionConfigJson obj = App.getDefaultGson().fromJson(reader, VersionConfigJson.class);
 			reader.close();
 
 			return convertConfig(obj);
@@ -147,7 +145,7 @@ public class VersionConfig {
 	/** Checks if the given json is a valid version config file */
 	public static boolean isValid(final String json) {
 		try {
-			convertConfig(gson.fromJson(json, VersionConfigJson.class));
+			convertConfig(App.getDefaultGson().fromJson(json, VersionConfigJson.class));
 			return true;
 		} catch (Exception e) {
 			Log.d(TAG, "@@isValid not valid json file", e);

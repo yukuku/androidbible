@@ -26,7 +26,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.analytics.tracking.android.EasyTracker;
-import com.google.gson.Gson;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -527,7 +526,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 				extraInfo.type = "devotion";
 				extraInfo.kind = currentKind.name;
 				extraInfo.date = yyyymmdd.get().format(currentDate);
-				startActivity(PatchTextActivity.createIntent(lContent.getText(), new Gson().toJson(extraInfo), referenceUrl));
+				startActivity(PatchTextActivity.createIntent(lContent.getText(), App.getDefaultGson().toJson(extraInfo), referenceUrl));
 			} else {
 				int ari;
 				if (reference.startsWith("ari:")) {

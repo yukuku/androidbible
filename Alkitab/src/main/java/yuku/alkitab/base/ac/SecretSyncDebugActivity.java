@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.google.gson.Gson;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
@@ -178,7 +177,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 			@Override
 			public void onResponse(final Response response) throws IOException {
-				final DebugCreateUserResponseJson debugCreateUserResponse = new Gson().fromJson(response.body().charStream(), DebugCreateUserResponseJson.class);
+				final DebugCreateUserResponseJson debugCreateUserResponse = App.getDefaultGson().fromJson(response.body().charStream(), DebugCreateUserResponseJson.class);
 				runOnUiThread(() -> {
 					if (debugCreateUserResponse.success) {
 						final String email = debugCreateUserResponse.user.email;
@@ -232,7 +231,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 			@Override
 			public void onResponse(final Response response) throws IOException {
-				final Sync.LoginResponseJson debugCreateUserResponse = new Gson().fromJson(response.body().charStream(), Sync.LoginResponseJson.class);
+				final Sync.LoginResponseJson debugCreateUserResponse = App.getDefaultGson().fromJson(response.body().charStream(), Sync.LoginResponseJson.class);
 				runOnUiThread(() -> {
 					if (debugCreateUserResponse.success) {
 						final String simpleToken = debugCreateUserResponse.simpleToken;
@@ -302,7 +301,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			.add("simpleToken", simpleToken)
 			.add("syncSetName", SyncShadow.SYNC_SET_MABEL)
 			.add("installation_id", Sync.getInstallationId())
-			.add("clientState", new Gson().toJson(clientState))
+			.add("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
 		final Call call = App.getOkHttpClient().newCall(
@@ -349,7 +348,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 			@Override
 			public void onResponse(final Response response) throws IOException {
-				final DebugSyncResponseJson debugSyncResponse = new Gson().fromJson(response.body().charStream(), DebugSyncResponseJson.class);
+				final DebugSyncResponseJson debugSyncResponse = App.getDefaultGson().fromJson(response.body().charStream(), DebugSyncResponseJson.class);
 				runOnUiThread(() -> {
 					if (debugSyncResponse.success) {
 						final int final_revno = debugSyncResponse.final_revno;

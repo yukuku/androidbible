@@ -9,7 +9,6 @@ import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
-import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.squareup.okhttp.Call;
@@ -108,7 +107,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			.add("simpleToken", simpleToken)
 			.add("syncSetName", SyncShadow.SYNC_SET_MABEL)
 			.add("installation_id", Sync.getInstallationId())
-			.add("clientState", new Gson().toJson(clientState))
+			.add("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
 
 		final Call call = App.getOkHttpClient().newCall(
@@ -126,7 +125,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			final long startTime = System.currentTimeMillis();
 			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
 			Log.d(TAG, "@@syncMabel server response string: " + response_s);
-			final SecretSyncDebugActivity.DebugSyncResponseJson response = new Gson().fromJson(response_s, SecretSyncDebugActivity.DebugSyncResponseJson.class);
+			final SecretSyncDebugActivity.DebugSyncResponseJson response = App.getDefaultGson().fromJson(response_s, SecretSyncDebugActivity.DebugSyncResponseJson.class);
 			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, SyncShadow.SYNC_SET_MABEL, "duration", System.currentTimeMillis() - startTime);
 
 			if (!response.success) {

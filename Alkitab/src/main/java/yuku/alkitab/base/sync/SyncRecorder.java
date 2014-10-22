@@ -2,8 +2,8 @@ package yuku.alkitab.base.sync;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.google.gson.Gson;
 import yuku.afw.storage.Preferences;
+import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Sqlitil;
@@ -47,7 +47,6 @@ public class SyncRecorder {
 		}
 	}
 
-	static final Gson gson = new Gson();
 	static final HashMap<String, Object> reusedMap = new HashMap<>();
 
 	public static void log(@NonNull final EventKind kind, @Nullable final String syncSetName, final Object... kvpairs) {
@@ -62,7 +61,7 @@ public class SyncRecorder {
 					final Object v = kvpairs[i + 1];
 					reusedMap.put(k, v);
 				}
-				params = gson.toJson(reusedMap);
+				params = App.getDefaultGson().toJson(reusedMap);
 			}
 		}
 
@@ -77,13 +76,12 @@ public class SyncRecorder {
 	}
 
 	public static void saveLastSuccessTime(@NonNull final String syncSetName, final int successTime) {
-		final Gson gson = new Gson();
 		final String infos_s = Preferences.getString(Prefkey.sync_last_infos);
 		final LastSyncInfosJson obj;
 		if (infos_s == null) {
 			obj = new LastSyncInfosJson();
 		} else {
-			obj = gson.fromJson(infos_s, LastSyncInfosJson.class);
+			obj = App.getDefaultGson().fromJson(infos_s, LastSyncInfosJson.class);
 		}
 
 		if (successTime == 0) {
@@ -94,17 +92,16 @@ public class SyncRecorder {
 			obj.put(syncSetName, entry);
 		}
 
-		Preferences.setString(Prefkey.sync_last_infos, gson.toJson(obj));
+		Preferences.setString(Prefkey.sync_last_infos, App.getDefaultGson().toJson(obj));
 	}
 
 	public static int getLastSuccessTime(@NonNull final String syncSetName) {
-		final Gson gson = new Gson();
 		final String infos_s = Preferences.getString(Prefkey.sync_last_infos);
 		if (infos_s == null) {
 			return 0;
 		}
 
-		final LastSyncInfosJson obj = gson.fromJson(infos_s, LastSyncInfosJson.class);
+		final LastSyncInfosJson obj = App.getDefaultGson().fromJson(infos_s, LastSyncInfosJson.class);
 		final LastSyncInfoEntryJson entry = obj.get(syncSetName);
 		if (entry == null) {
 			return 0;

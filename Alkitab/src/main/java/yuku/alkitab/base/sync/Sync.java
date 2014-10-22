@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
 import android.util.Log;
 import android.util.Pair;
-import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.squareup.okhttp.Call;
@@ -294,14 +293,14 @@ public class Sync {
 	}
 
 	private static List<Entity<MabelContent>> mabelEntitiesFromShadow(@NonNull final SyncShadow ss) {
-		final SyncShadowMabelDataJson data = new Gson().fromJson(U.utf8BytesToString(ss.data), SyncShadowMabelDataJson.class);
+		final SyncShadowMabelDataJson data = App.getDefaultGson().fromJson(U.utf8BytesToString(ss.data), SyncShadowMabelDataJson.class);
 		return data.entities;
 	}
 
 	@NonNull public static SyncShadow shadowFromMabelEntities(@NonNull final List<Entity<MabelContent>> entities, final int revno) {
 		final SyncShadowMabelDataJson data = new SyncShadowMabelDataJson();
 		data.entities = entities;
-		final String s = new Gson().toJson(data);
+		final String s = App.getDefaultGson().toJson(data);
 		final SyncShadow res = new SyncShadow();
 		res.data = U.stringToUtf8Bytes(s);
 		res.syncSetName = SyncShadow.SYNC_SET_MABEL;
@@ -557,7 +556,7 @@ public class Sync {
 					.build()
 			);
 
-			final RegisterGcmClientResponseJson response = new Gson().fromJson(call.execute().body().charStream(), RegisterGcmClientResponseJson.class);
+			final RegisterGcmClientResponseJson response = App.getDefaultGson().fromJson(call.execute().body().charStream(), RegisterGcmClientResponseJson.class);
 
 			if (!response.success) {
 				Log.d(TAG, "GCM registration id rejected by server: " + response.message);
@@ -602,7 +601,7 @@ public class Sync {
 		obj.build_product = Build.PRODUCT;
 		obj.os_sdk_int = Build.VERSION.SDK_INT;
 		obj.os_release = Build.VERSION.RELEASE;
-		return new Gson().toJson(obj);
+		return App.getDefaultGson().toJson(obj);
 	}
 
 	public static class ResponseJson {
@@ -638,7 +637,7 @@ public class Sync {
 					.build()
 			);
 
-			final LoginResponseJson response = new Gson().fromJson(call.execute().body().charStream(), LoginResponseJson.class);
+			final LoginResponseJson response = App.getDefaultGson().fromJson(call.execute().body().charStream(), LoginResponseJson.class);
 
 			if (!response.success) {
 				Log.d(TAG, "Login rejected: " + response.message);
