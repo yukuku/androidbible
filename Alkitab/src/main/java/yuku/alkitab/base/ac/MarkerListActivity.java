@@ -2,9 +2,11 @@ package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.style.BackgroundColorSpan;
@@ -62,6 +64,9 @@ public class MarkerListActivity extends BaseActivity {
 	private static final String EXTRA_filter_labelId = "filter_labelId"; //$NON-NLS-1$
 
 	public static final int LABELID_noLabel = -1;
+
+	/** Action to broadcast when marker list needs to be reloaded due to some background changes */
+	public static final String ACTION_RELOAD = MarkerListActivity.class.getName() + ".action.RELOAD";
 
 	View panelList;
 	View empty;
@@ -158,7 +163,25 @@ public class MarkerListActivity extends BaseActivity {
 		lv.setEmptyView(emptyView);
 
 		registerForContextMenu(lv);
+
+		App.getLbm().registerReceiver(br, new IntentFilter(ACTION_RELOAD));
 	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		App.getLbm().unregisterReceiver(br);
+	}
+
+	BroadcastReceiver br = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			if (ACTION_RELOAD.equals(intent.getAction())) {
+				loadAndFilter();
+			}
+		}
+	};
 
 	@Override
 	protected void onStart() {
@@ -186,12 +209,7 @@ public class MarkerListActivity extends BaseActivity {
 
 	void filterUsingCurrentlyUsedFilter() {
 		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.bl_filtering_titiktiga), true, false);
-		adapter.filterAsync(currentlyUsedFilter, new Runnable() {
-			@Override
-			public void run() {
-				pd.dismiss();
-			}
-		});
+		adapter.filterAsync(currentlyUsedFilter, pd::dismiss);
 	}
 
 	void setTitleAndNothingText() {
@@ -444,13 +462,10 @@ public class MarkerListActivity extends BaseActivity {
 		} else if (itemId == R.id.menuModifyBookmark) {
 			if (filter_kind == Marker.Kind.bookmark) {
 				TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExisting(this, marker._id);
-				dialog.setListener(new TypeBookmarkDialog.Listener() {
-					@Override
-					public void onOk() {
-						loadAndFilter();
-						if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
-						App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
-					}
+				dialog.setListener(() -> {
+					loadAndFilter();
+					if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
+					App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
 				});
 				dialog.show();
 
@@ -462,12 +477,10 @@ public class MarkerListActivity extends BaseActivity {
 				int colorRgb = U.decodeHighlight(marker.caption);
 				String reference = S.activeVersion.referenceWithVerseCount(ari, marker.verseCount);
 
-				new TypeHighlightDialog(this, ari, new TypeHighlightDialog.Listener() {
-					@Override public void onOk(int warnaRgb) {
-						loadAndFilter();
-						if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
-						App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
-					}
+				new TypeHighlightDialog(this, ari, newColorRgb -> {
+					loadAndFilter();
+					if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
+					App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
 				}, colorRgb, reference).show();
 			}
 
@@ -524,13 +537,6 @@ public class MarkerListActivity extends BaseActivity {
 			}
 		}
 
-		public void filterSync(String query) {
-			setupTokens(query);
-
-			filteredMarkers = filterEngine(allMarkers, filter_kind, tokens);
-			notifyDataSetChanged();
-		}
-
 		public void filterAsync(final String query, final Runnable callback) {
 			final List<Marker> allMarkers = MarkerListActivity.this.allMarkers;
 			final Marker.Kind filter_kind = MarkerListActivity.this.filter_kind;
@@ -542,12 +548,9 @@ public class MarkerListActivity extends BaseActivity {
 
 					filteredMarkers = filterEngine(allMarkers, filter_kind, tokens);
 
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							notifyDataSetChanged();
-							callback.run();
-						}
+					runOnUiThread(() -> {
+						notifyDataSetChanged();
+						callback.run();
 					});
 				}
 			}).start();
@@ -604,7 +607,7 @@ public class MarkerListActivity extends BaseActivity {
 
 				Appearances.applyBookmarkSnippetContentAndAppearance(lSnippet, reference, snippet);
 
-				final List<Label> labels = S.getDb().listLabelsByMarkerId(marker._id);
+				final List<Label> labels = S.getDb().listLabelsByMarker(marker);
 				if (labels.size() != 0) {
 					panelLabels.setVisibility(View.VISIBLE);
 					panelLabels.removeAllViews();

@@ -27,7 +27,8 @@ import java.util.TreeSet;
 
 public class TypeBookmarkDialog {
 	public interface Listener {
-		void onOk();
+		/** Called when this dialog is closed with the bookmark modified or deleted */
+		void onModifiedOrDeleted();
 	}
 
 	final Context context;
@@ -53,13 +54,6 @@ public class TypeBookmarkDialog {
 	 */
 	public static TypeBookmarkDialog EditExisting(Context context, long _id) {
 		return new TypeBookmarkDialog(context, S.getDb().getMarkerById(_id), null);
-	}
-
-	/**
-	 * Open the bookmark edit dialog for an existing note by ari and ordering (starting from 0).
-	 */
-	public static TypeBookmarkDialog EditExistingWithOrdering(Context context, int ari, int ordering) {
-		return new TypeBookmarkDialog(context, S.getDb().getMarker(ari, Marker.Kind.bookmark, ordering), null);
 	}
 
 	/**
@@ -105,7 +99,7 @@ public class TypeBookmarkDialog {
 
 		if (marker != null) {
 			labels = new TreeSet<>();
-			final List<Label> ll = S.getDb().listLabelsByMarkerId(marker._id);
+			final List<Label> ll = S.getDb().listLabelsByMarker(marker);
 			labels.addAll(ll);
 		}
 		setLabelsText();
@@ -143,14 +137,14 @@ public class TypeBookmarkDialog {
 		if (marker != null) { // update existing
 			marker.caption = caption;
 			marker.modifyTime = now;
-			S.getDb().updateMarker(marker);
+			S.getDb().insertOrUpdateMarker(marker);
 		} else { // add new
 			marker = S.getDb().insertMarker(ariForNewBookmark, Marker.Kind.bookmark, caption, verseCountForNewBookmark, now, now);
 		}
 
 		S.getDb().updateLabels(marker, labels);
 
-		if (listener != null) listener.onOk();
+		if (listener != null) listener.onModifiedOrDeleted();
 	}
 
 	public void show() {
@@ -211,7 +205,7 @@ public class TypeBookmarkDialog {
 			public void onClick(DialogInterface dialog, int which) {
 				S.getDb().deleteBookmarkById(marker._id);
 
-				if (listener != null) listener.onOk();
+				if (listener != null) listener.onModifiedOrDeleted();
 			}
 		})
 		.setNegativeButton(R.string.no, null)

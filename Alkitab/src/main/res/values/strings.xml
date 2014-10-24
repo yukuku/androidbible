@@ -410,4 +410,19 @@
 	<string name="note_actionbar_delete">Delete</string>
 	<string name="note_actionbar_ok">Done</string>
 	<string name="note_activity_cannot_parse_verse">Sorry, we do not understand this verse link.</string>
+
+	<string name="sync_account_not_selected">Not selected</string>
+	<string name="pref_syncAccountName_title">Account</string>
+	<string name="sync_logout_warning">Do you want to log out? Your current markers and other local data will not be deleted.</string>
+	<string name="sync_logging_in">Logging in…</string>
+	<string name="sync_login_failed_with_reason">Failed to log in. Please try again later.\n\nReason: %s</string>
+	<string name="pref_sync_title">Sync</string>
+	<string name="pref_screen_sync_settings_title">Sync settings</string>
+	<string name="sync_category_title_data_types">Data types</string>
+	<string name="pref_syncSet_mabel_enabled_title">Markers and labels</string>
+	<string name="sync_menu_item_sync_now">Sync now</string>
+	<string name="sync_menu_item_sync_log">View log</string>
+	<string name="sync_sync_set_pref_summary_last_synced">Last synced %1$s, %2$s (r%3$s)</string>
+	<string name="sync_sync_set_pref_summary_never">Not synced yet</string>
+	<string name="sync_log_activity_title">Sync log</string>
 </resources>

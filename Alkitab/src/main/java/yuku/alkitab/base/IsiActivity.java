@@ -65,8 +65,10 @@ import yuku.alkitab.base.dialog.XrefDialog;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.model.MVersionInternal;
+import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.util.Appearances;
 import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Jumper;
@@ -504,6 +506,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		App.getLbm().registerReceiver(reloadAttributeMapReceiver, new IntentFilter(ACTION_ATTRIBUTE_MAP_CHANGED));
+
+		// sync on app start, if we are logged in
+		if (Preferences.contains(Prefkey.sync_simpleToken)) {
+			for (final String syncSetName : SyncShadow.ALL_SYNC_SETS) {
+				Sync.notifySyncNeeded(syncSetName);
+			}
+		}
 	}
 
 	@Override
@@ -1510,10 +1519,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	VersesView.AttributeListener attributeListener = new VersesView.AttributeListener() {
-		void openBookmarkDialog(int ari, int ordering) {
-			final TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExistingWithOrdering(IsiActivity.this, ari, ordering);
+		void openBookmarkDialog(final long _id) {
+			final TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExisting(IsiActivity.this, _id);
 			dialog.setListener(new TypeBookmarkDialog.Listener() {
-				@Override public void onOk() {
+				@Override public void onModifiedOrDeleted() {
 					lsText.reloadAttributeMap();
 
 					if (activeSplitVersion != null) {
@@ -1528,42 +1537,32 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		public void onBookmarkAttributeClick(final Book book, final int chapter_1, final int verse_1) {
 			final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
 
-			if (S.getDb().countMarkersForAriKind(ari, Marker.Kind.bookmark) == 1) {
-				openBookmarkDialog(ari, 0);
+			final List<Marker> markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.bookmark);
+			if (markers.size() == 1) {
+				openBookmarkDialog(markers.get(0)._id);
 			} else {
-				final List<Marker> markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.bookmark);
 				new AlertDialog.Builder(IsiActivity.this)
 					.setTitle(R.string.edit_bookmark)
-					.setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.bookmark), new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(final DialogInterface dialog, final int which) {
-							openBookmarkDialog(ari, which);
-						}
-					})
+					.setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.bookmark), (dialog, which) -> openBookmarkDialog(markers.get(which)._id))
 					.show();
 			}
 		}
 
-		void openNoteDialog(int ari, int ordering) {
-			startActivityForResult(NoteActivity.createEditExistingWithOrderingIntent(ari, ordering), REQCODE_edit_note_1);
+		void openNoteDialog(final long _id) {
+			startActivityForResult(NoteActivity.createEditExistingIntent(_id), REQCODE_edit_note_1);
 		}
 
 		@Override
 		public void onNoteAttributeClick(final Book book, final int chapter_1, final int verse_1) {
 			final int ari = Ari.encode(book.bookId, chapter_1, verse_1);
 
-			if (S.getDb().countMarkersForAriKind(ari, Marker.Kind.note) == 1) {
-				openNoteDialog(ari, 0);
+			final List<Marker> markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.note);
+			if (markers.size() == 1) {
+				openNoteDialog(markers.get(0)._id);
 			} else {
-				final List<Marker> markers = S.getDb().listMarkersForAriKind(ari, Marker.Kind.note);
 				new AlertDialog.Builder(IsiActivity.this)
 					.setTitle(R.string.edit_note)
-					.setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.note), new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(final DialogInterface dialog, final int which) {
-							openNoteDialog(ari, which);
-						}
-					})
+					.setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.note), (dialog, which) -> openNoteDialog(markers.get(which)._id))
 					.show();
 			}
 		}
@@ -1619,7 +1618,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 					lSnippet.setVisibility(View.GONE);
 
-					final List<Label> labels = S.getDb().listLabelsByMarkerId(marker._id);
+					final List<Label> labels = S.getDb().listLabelsByMarker(marker);
 					if (labels.size() != 0) {
 						panelLabels.setVisibility(View.VISIBLE);
 						panelLabels.removeAllViews();
@@ -1914,7 +1913,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				// always create a new bookmark
 				TypeBookmarkDialog dialog = TypeBookmarkDialog.NewBookmark(IsiActivity.this, ari, verseCount);
 				dialog.setListener(new TypeBookmarkDialog.Listener() {
-					@Override public void onOk() {
+					@Override public void onModifiedOrDeleted() {
 						lsText.uncheckAllVerses(true);
 						reloadBothAttributeMaps();
 					}

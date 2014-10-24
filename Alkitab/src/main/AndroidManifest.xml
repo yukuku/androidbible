@@ -11,7 +11,18 @@
     <uses-permission android:name="android.permission.NFC" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <uses-feature
+	<!-- sync permissions -->
+	<uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+	<uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
+	<uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+
+	<!-- gcm -->
+	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+	<permission android:name="yuku.alkitab.debug.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+	<uses-permission android:name="yuku.alkitab.debug.permission.C2D_MESSAGE" />
+
+	<uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
     <uses-feature
@@ -230,11 +241,20 @@
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
             android:label="Secret settings" />
         <activity
+            android:name="yuku.alkitab.base.ac.SecretSyncDebugActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+            android:label="Secret sync debug" />
+        <activity
             android:name="yuku.alkitab.base.ac.ReadingPlanActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.PatchTextActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
 			android:windowSoftInputMode="adjustResize"/>
+		<activity android:name="yuku.alkitab.base.sync.SyncSettingsActivity"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
+		<activity android:name="yuku.alkitab.base.sync.SyncLogActivity"
+			android:label="@string/sync_log_activity_title"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
         <activity
             android:name="yuku.filechooser.FileChooserActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
@@ -348,6 +368,51 @@
             android:name="yuku.alkitab.base.sv.VersionConfigUpdaterService"
             android:exported="false" >
         </service>
-    </application>
+
+		<!-- sync components -->
+		<service android:name="yuku.alkitab.base.sync.AuthenticatorService">
+			<intent-filter>
+				<action android:name="android.accounts.AccountAuthenticator" />
+			</intent-filter>
+			<meta-data
+				android:name="android.accounts.AccountAuthenticator"
+				android:resource="@xml/authenticator" />
+		</service>
+
+		<provider
+			android:name="yuku.alkitab.base.sync.StubProvider"
+			android:authorities="@string/sync_provider_authority"
+			android:exported="false"
+			android:syncable="true" />
+
+		<service
+			android:name="yuku.alkitab.base.sync.SyncService"
+			android:exported="true">
+			<!--
+			This service is not run in a separate process, because the singleton Preferences might not work well when accessed by multiple processes.
+			Moreover, local broadcast manager is in-process only (for example, the sync service asks the app UI to update something using LBM, it won't work.
+			 -->
+			<intent-filter>
+				<action android:name="android.content.SyncAdapter" />
+			</intent-filter>
+			<meta-data
+				android:name="android.content.SyncAdapter"
+				android:resource="@xml/syncadapter" />
+		</service>
+
+		<!-- gcm -->
+		<receiver
+			android:name="yuku.alkitab.base.sync.GcmBroadcastReceiver"
+			android:permission="com.google.android.c2dm.permission.SEND" >
+			<intent-filter>
+				<action android:name="com.google.android.c2dm.intent.RECEIVE" />
+				<category android:name="yuku.alkitab.debug" />
+			</intent-filter>
+		</receiver>
+		<service android:name="yuku.alkitab.base.sync.GcmIntentService" />
+
+		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+
+	</application>
 
 </manifest>

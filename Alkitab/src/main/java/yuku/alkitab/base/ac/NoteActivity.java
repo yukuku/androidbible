@@ -50,14 +50,6 @@ public class NoteActivity extends BaseActivity {
 	}
 
 	/**
-	 * Open the note edit dialog for an existing note by ari and ordering (starting from 0).
-	 */
-	public static Intent createEditExistingWithOrderingIntent(int ari, int ordering) {
-		final Marker marker = S.getDb().getMarker(ari, Marker.Kind.note, ordering);
-		return createIntent(marker._id, null, 0, 0);
-	}
-
-	/**
 	 * Open the note edit dialog for a new note by ari.
 	 */
 	public static Intent createNewNoteIntent(String reference, int ari, int verseCount) {
@@ -245,7 +237,7 @@ public class NoteActivity extends BaseActivity {
 			} else {
 				marker.caption = caption;
 				marker.modifyTime = now;
-				S.getDb().updateMarker(marker);
+				S.getDb().insertOrUpdateMarker(marker);
 			}
 		} else { // marker == null; not existing, so only insert when there is some text
 			if (caption.length() > 0) {

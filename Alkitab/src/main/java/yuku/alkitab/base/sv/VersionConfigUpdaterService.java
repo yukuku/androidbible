@@ -104,7 +104,7 @@ public class VersionConfigUpdaterService extends IntentService {
 
 		final ModifyTimeJson modifyTimeObj;
 		try {
-			modifyTimeObj = new Gson().fromJson(modifyTimeBody, ModifyTimeJson.class);
+			modifyTimeObj = App.getDefaultGson().fromJson(modifyTimeBody, ModifyTimeJson.class);
 		} catch (JsonSyntaxException e) {
 			Log.e(TAG, "failed to parse modify time file", e);
 

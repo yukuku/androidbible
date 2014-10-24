@@ -11,6 +11,7 @@ import yuku.alkitab.model.Label;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 public class U {
 	static final String TAG = U.class.getSimpleName();
@@ -262,6 +263,22 @@ public class U {
 
 	public static String inputStreamUtf8ToString(InputStream input) throws IOException {
 		return inputStreamToString(input, "utf-8");
+	}
+
+	public static String utf8BytesToString(final byte[] bytes) {
+		try {
+			return new String(bytes, "utf-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static byte[] stringToUtf8Bytes(final String s) {
+		try {
+			return s.getBytes("utf-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static String inputStreamToString(final InputStream input, final String encoding) throws IOException {

@@ -5,15 +5,15 @@ public enum Prefkey {
 	song_last_code,
 
 	goto_last_tab,
-	
+
 	patch_devotionSlippedHtmlTags,
-	
+
 	/**
 	 * When this is true, the user has understood that the middle button can be used
 	 * to open history. So let us remove the hint.
 	 */
 	history_button_understood,
-	
+
 	// Moved from prefkey.xml, since we're not using it via PreferenceActivity any more.
 	/** Bold */
 	boldHuruf,
@@ -55,4 +55,47 @@ public enum Prefkey {
 	 * Default is {@link yuku.alkitab.base.model.MVersionInternal#DEFAULT_ORDERING}.
 	 */
 	internal_version_ordering,
+
+	/**
+	 * Sync server prefix.
+	 * Example: http://10.0.3.2:9080
+	 * Should not end with slash.
+	 */
+	sync_server_prefix,
+
+	/**
+	 * Sync simple token, used to access user specific data.
+	 */
+	sync_simpleToken,
+
+	/**
+	 * The unix time the access token is obtained
+	 */
+	sync_token_obtained_time,
+
+	/**
+	 * The last known GCM registration id
+	 */
+	gcm_registration_id,
+
+	/**
+	 * The app versionCode when the GCM registration id is obtained.
+	 * If the current app versionCode is not equal to this, try to get GCM registration id
+	 * again, since the existing registration id is not guaranteed to work with the new app version.
+	 */
+	gcm_last_app_version_code,
+
+	/**
+	 * This installation id is used to differentiate app installations,
+	 * so we do not send GCM messages to self.
+	 */
+	installation_id,
+
+	/**
+	 * URL of profile picture used in sync. Null if not available.
+	 */
+	sync_profile_picture_url,
+
+	/** Stores information about last syncs */
+	sync_last_infos,
 }

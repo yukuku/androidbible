@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+		android:id="@+id/menuSyncNow"
+		android:showAsAction="never"
+		android:title="@string/sync_menu_item_sync_now" />
+
+	<item
+		android:id="@+id/menuSyncLog"
+		android:showAsAction="never"
+		android:title="@string/sync_menu_item_sync_log" />
+</menu>

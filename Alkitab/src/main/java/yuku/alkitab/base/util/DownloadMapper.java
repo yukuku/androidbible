@@ -4,7 +4,6 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import com.google.gson.Gson;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 
@@ -26,7 +25,6 @@ public enum DownloadMapper implements SharedPreferences.OnSharedPreferenceChange
 		public Row[] rows;
 	}
 
-	final Gson gson = new Gson();
 	final Map<String, Row> currentByKey = new LinkedHashMap<>();
 	final Map<Long, Row> currentById = new LinkedHashMap<>();
 	final DownloadManager dm;
@@ -41,7 +39,7 @@ public enum DownloadMapper implements SharedPreferences.OnSharedPreferenceChange
 	void load() {
 		final String json = Preferences.getString(PREFERENCES_KEY);
 		if (json != null) {
-			final ValueJson value = gson.fromJson(json, ValueJson.class);
+			final ValueJson value = App.getDefaultGson().fromJson(json, ValueJson.class);
 			if (value != null && value.rows != null) {
 				currentByKey.clear();
 				currentById.clear();
@@ -60,7 +58,7 @@ public enum DownloadMapper implements SharedPreferences.OnSharedPreferenceChange
 		for (final Row row : currentByKey.values()) {
 			value.rows[c++] = row;
 		}
-		final String json = gson.toJson(value);
+		final String json = App.getDefaultGson().toJson(value);
 		Preferences.setString(PREFERENCES_KEY, json);
 	}
 

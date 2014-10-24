@@ -2,8 +2,10 @@
 package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,7 +29,6 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.LabelEditorDialog;
-import yuku.alkitab.base.dialog.LabelEditorDialog.OkListener;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
@@ -41,6 +42,9 @@ public class MarkersActivity extends BaseActivity {
 	
 	private static final int REQCODE_markerList = 1;
 	private static final int REQCODE_share = 2;
+
+	/** Action to broadcast when label list needs to be reloaded due to some background changes */
+	public static final String ACTION_RELOAD = MarkersActivity.class.getName() + ".action.RELOAD";
 
 	DragSortListView lv;
 	
@@ -69,7 +73,25 @@ public class MarkersActivity extends BaseActivity {
         lv.setOnTouchListener(c);
 
 		registerForContextMenu(lv);
+
+		App.getLbm().registerReceiver(br, new IntentFilter(ACTION_RELOAD));
 	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		App.getLbm().unregisterReceiver(br);
+	}
+
+	BroadcastReceiver br = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			if (ACTION_RELOAD.equals(intent.getAction())) {
+				adapter.reload();
+			}
+		}
+	};
 
 	private OnItemClickListener lv_click = new OnItemClickListener() {
 		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -112,12 +134,10 @@ public class MarkersActivity extends BaseActivity {
 				return true;
 			}
 			
-			LabelEditorDialog.show(this, label.title, getString(R.string.rename_label_title), new OkListener() {
-				@Override public void onOk(String title) {
-					label.title = title;
-					S.getDb().updateLabel(label);
-					adapter.notifyDataSetChanged();
-				}
+			LabelEditorDialog.show(this, label.title, getString(R.string.rename_label_title), title -> {
+				label.title = title;
+				S.getDb().insertOrUpdateLabel(label);
+				adapter.notifyDataSetChanged();
 			});
 
 			return true;
@@ -137,11 +157,9 @@ public class MarkersActivity extends BaseActivity {
 				new AlertDialog.Builder(this)
 				.setMessage(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, marker_count))
 				.setNegativeButton(R.string.cancel, null)
-				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-					@Override public void onClick(DialogInterface dialog, int which) {
-						S.getDb().deleteLabelById(label._id);
-						adapter.reload();
-					}
+				.setPositiveButton(R.string.ok, (dialog, which) -> {
+					S.getDb().deleteLabelById(label._id);
+					adapter.reload();
 				})
 				.show();
 			}
@@ -161,7 +179,7 @@ public class MarkersActivity extends BaseActivity {
 					} else {
 						label.backgroundColor = U.encodeLabelBackgroundColor(0x00ffffff & color);
 					}
-					S.getDb().updateLabel(label);
+					S.getDb().insertOrUpdateLabel(label);
 					adapter.notifyDataSetChanged();
 				}
 				

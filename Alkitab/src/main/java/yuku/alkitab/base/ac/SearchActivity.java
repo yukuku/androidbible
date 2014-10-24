@@ -25,7 +25,6 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.gson.Gson;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.afw.widget.EasyAdapter;
@@ -638,11 +637,11 @@ public class SearchActivity extends BaseActivity {
 			return new SearchHistory();
 		}
 
-		return new Gson().fromJson(json, SearchHistory.class);
+		return App.getDefaultGson().fromJson(json, SearchHistory.class);
 	}
 
 	void saveSearchHistory(SearchHistory sh) {
-		final String json = new Gson().toJson(sh);
+		final String json = App.getDefaultGson().toJson(sh);
 		Preferences.setString(Prefkey.searchHistory, json);
 	}
 

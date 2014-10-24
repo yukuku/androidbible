@@ -10,6 +10,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BasePreferenceActivity;
+import yuku.alkitab.base.sync.SyncSettingsActivity;
 import yuku.alkitab.debug.R;
 
 public class SettingsActivity extends BasePreferenceActivity {
@@ -67,6 +68,8 @@ public class SettingsActivity extends BasePreferenceActivity {
 				return true;
 			}
 		});
+
+		findPreference(getString(R.string.pref_sync_key)).setIntent(new Intent(App.context, SyncSettingsActivity.class));
 	}
 
 	static void autoDisplayListPreference(final ListPreference pref) {

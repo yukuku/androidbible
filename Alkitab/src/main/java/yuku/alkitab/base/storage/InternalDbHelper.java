@@ -50,6 +50,10 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		createIndexReadingPlanProgress(db);
 		createTableVersion(db);
 		createIndexVersion(db);
+		createTableSyncShadow(db);
+		createIndexSyncShadow(db);
+		createTableSyncLog(db);
+		createIndexSyncLog(db);
 	}
 
 	@Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -137,6 +141,20 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 			createIndexVersion(db);
 			convertFromEdisiToVersion(db);
 		}
+
+		if (oldVersion <= 14000170) { // support for sync starting from 4-beta10
+			createTableSyncShadow(db);
+			createIndexSyncShadow(db);
+		}
+
+		if (oldVersion < 14000173) { // sync logs
+			createTableSyncLog(db);
+			createIndexSyncLog(db);
+		}
+
+		if (oldVersion >= 14000163 && oldVersion < 14000172) {
+			db.execSQL("drop index if exists index_Marker_Label_03");
+		}
 	}
 
 	private void createTableMarker(SQLiteDatabase db) {
@@ -216,6 +234,47 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 		db.execSQL("create index if not exists index_Version_03 on " + Db.TABLE_Version + " (" + Db.Version.preset_name + ")");
 	}
 
+	void createTableSyncShadow(final SQLiteDatabase db) {
+		final StringBuilder sb = new StringBuilder("create table " + Table.SyncShadow.tableName() + " ( _id integer primary key ");
+		for (Table.SyncShadow field: Table.SyncShadow.values()) {
+			sb.append(',');
+			sb.append(field.name());
+			sb.append(' ');
+			sb.append(field.type.name());
+			if (field.suffix != null) {
+				sb.append(' ');
+				sb.append(field.suffix);
+			}
+		}
+		sb.append(")");
+		db.execSQL(sb.toString());
+	}
+
+	void createIndexSyncShadow(final SQLiteDatabase db) {
+		db.execSQL("create index if not exists index_SyncShadow_01 on " + Table.SyncShadow.tableName() + " (" + Table.SyncShadow.syncSetName + ")");
+	}
+
+	void createTableSyncLog(final SQLiteDatabase db) {
+		final StringBuilder sb = new StringBuilder("create table " + Table.SyncLog.tableName() + " ( _id integer primary key ");
+		for (Table.SyncLog field: Table.SyncLog.values()) {
+			sb.append(',');
+			sb.append(field.name());
+			sb.append(' ');
+			sb.append(field.type.name());
+			if (field.suffix != null) {
+				sb.append(' ');
+				sb.append(field.suffix);
+			}
+		}
+		sb.append(")");
+		db.execSQL(sb.toString());
+	}
+
+	void createIndexSyncLog(final SQLiteDatabase db) {
+		// do not create many indexes for SyncLog
+		db.execSQL("create index if not exists index_SyncLog_01 on " + Table.SyncLog.tableName() + " (" + Table.SyncLog.createTime + ")");
+	}
+
 	private void createTableLabel(SQLiteDatabase db) {
 		db.execSQL("create table if not exists " + Db.TABLE_Label + " (" +
 				"_id integer primary key autoincrement, " +
@@ -245,7 +304,7 @@ public class InternalDbHelper extends SQLiteOpenHelper {
 	private void createIndexMarker_Label(SQLiteDatabase db) {
 		db.execSQL("create        index if not exists index_Marker_Label_01 on " + Db.TABLE_Marker_Label + " (" + Db.Marker_Label.marker_gid + ")");
 		db.execSQL("create        index if not exists index_Marker_Label_02 on " + Db.TABLE_Marker_Label + " (" + Db.Marker_Label.label_gid + ")");
-		db.execSQL("create unique index if not exists index_Marker_Label_03 on " + Db.TABLE_Marker_Label + " (" + Db.Marker_Label.marker_gid + ", " + Db.Marker_Label.label_gid + ")");
+		// unique index index_Marker_Label_03 on Marker_Label (marker_gid, label_gid) is no longer used as of versionCode 14000172
 		db.execSQL("create unique index if not exists index_Marker_Label_04 on " + Db.TABLE_Marker_Label + " (" + Db.Marker_Label.gid + ")");
 	}
 
