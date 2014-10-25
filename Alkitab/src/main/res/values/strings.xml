@@ -424,5 +424,6 @@
 	<string name="sync_menu_item_sync_log">View log</string>
 	<string name="sync_sync_set_pref_summary_last_synced">Last synced %1$s, %2$s (r%3$s)</string>
 	<string name="sync_sync_set_pref_summary_never">Not synced yet</string>
+	<string name="sync_sync_set_pref_summary_syncing">Syncing now…</string>
 	<string name="sync_log_activity_title">Sync log</string>
 </resources>

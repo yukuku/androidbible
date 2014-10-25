@@ -29,7 +29,10 @@ import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.Sqlitil;
 
 import java.io.IOException;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.Stack;
 
 /**
  * Handle the transfer of data between a server and an
@@ -38,6 +41,8 @@ import java.util.List;
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	static final String TAG = SyncAdapter.class.getSimpleName();
 	public static final String EXTRA_SYNC_SET_NAME = "syncSetName";
+
+	final static Stack<String> syncSetsRunning = new Stack<>(); // need guard when accessing this
 
 	/**
 	 * Set up the sync adapter
@@ -63,12 +68,17 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	@Override
 	public void onPerformSync(final Account account, final Bundle extras, final String authority, final ContentProviderClient provider, final SyncResult syncResult) {
 		Log.d(TAG, "@@onPerformSync account:" + account + " extras:" + extras + " authority:" + authority);
+		final String syncSetName = extras.getString(EXTRA_SYNC_SET_NAME);
+		if (syncSetName == null) {
+			return;
+		}
+
+		synchronized (syncSetsRunning) {
+			syncSetsRunning.add(syncSetName);
+		}
 
 		try {
-			final String syncSetName = extras.getString(EXTRA_SYNC_SET_NAME);
-			if (syncSetName == null) {
-				return;
-			}
+			App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
 
 			SyncRecorder.log(SyncRecorder.EventKind.sync_adapter_on_perform, syncSetName);
 
@@ -83,7 +93,24 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			}
 		} finally {
 			Log.d(TAG, "Sync result: " + syncResult);
+
+			synchronized (syncSetsRunning) {
+				final String popped = syncSetsRunning.pop();
+				if (!popped.equals(syncSetName)) {
+					throw new RuntimeException("syncSetsRunning not balanced: popped=" + popped + " actual=" + syncSetName);
+				}
+			}
+
+			App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
 		}
+	}
+
+	public static Set<String> getRunningSyncs() {
+		final Set<String> res = new LinkedHashSet<>();
+		synchronized (syncSetsRunning) {
+			res.addAll(syncSetsRunning);
+		}
+		return res;
 	}
 
 	void syncMabel(final SyncResult sr) {

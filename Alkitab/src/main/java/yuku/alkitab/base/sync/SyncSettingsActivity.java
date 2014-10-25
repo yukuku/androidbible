@@ -39,6 +39,7 @@ import yuku.alkitab.debug.R;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static yuku.alkitab.base.util.Literals.Array;
@@ -298,12 +299,17 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 			pref.setEnabled(syncAccountName != null);
 
 			if (syncAccountName != null) {
-				final int time = SyncRecorder.getLastSuccessTime(syncSetName);
-				if (time == 0) {
-					pref.setSummary(getString(R.string.sync_sync_set_pref_summary_never));
+				final Set<String> runningSyncs = SyncAdapter.getRunningSyncs();
+				if (runningSyncs.contains(syncSetName)) {
+					pref.setSummary(getString(R.string.sync_sync_set_pref_summary_syncing));
 				} else {
-					final Date date = Sqlitil.toDate(time);
-					pref.setSummary(getString(R.string.sync_sync_set_pref_summary_last_synced, lastSyncDateFormat.get().format(date), lastSyncTimeFormat.get().format(date), S.getDb().getRevnoFromSyncShadowBySyncSetName(syncSetName)));
+					final int time = SyncRecorder.getLastSuccessTime(syncSetName);
+					if (time == 0) {
+						pref.setSummary(getString(R.string.sync_sync_set_pref_summary_never));
+					} else {
+						final Date date = Sqlitil.toDate(time);
+						pref.setSummary(getString(R.string.sync_sync_set_pref_summary_last_synced, lastSyncDateFormat.get().format(date), lastSyncTimeFormat.get().format(date), S.getDb().getRevnoFromSyncShadowBySyncSetName(syncSetName)));
+					}
 				}
 			} else {
 				pref.setSummary(null);
