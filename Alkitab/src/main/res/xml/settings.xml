@@ -8,7 +8,7 @@
 
 	<PreferenceCategory android:title="@string/pref_penampilan_layar">
 		<ListPreference
-			android:defaultValue="@string/pref_bahasa_default"
+			android:defaultValue="@string/pref_language_default"
 			android:entries="@array/pref_language_labels"
 			android:entryValues="@array/pref_language_values"
 			android:key="@string/pref_language_key"
