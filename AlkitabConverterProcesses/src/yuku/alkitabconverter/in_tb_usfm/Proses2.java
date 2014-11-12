@@ -30,13 +30,13 @@ import java.util.regex.Pattern;
 public class Proses2 {
 	final SAXParserFactory factory = SAXParserFactory.newInstance();
 	
-	static String INPUT_BOOK_NAMES = "../../../bahan-alkitab/in-tb-usfm/in/in-tb-usfm-kitab.txt";
-	static String OUTPUT_YET = "../../../bahan-alkitab/in-tb-usfm/out/in-tb-usfm.yet";
+	static String INPUT_BOOK_NAMES = "../../../bahan-alkitab/in-tb/in/in-tb-usfm-kitab.txt";
+	static String OUTPUT_YET = "../../../bahan-alkitab/in-tb/out/in-tb-usfm.yet";
 	static String INFO_SHORT_NAME = "TB";
 	static String INFO_LONG_NAME = "Terjemahan Baru";
 	static String INFO_DESCRIPTION = "Terjemahan Baru (1974), Lembaga Alkitab Indonesia";
 	static String INFO_LOCALE = "in";
-	static String INPUT_TEKS_2 = "../../../bahan-alkitab/in-tb-usfm/mid/";
+	static String INPUT_TEKS_2 = "../../../bahan-alkitab/in-tb/mid/";
 
 
 	TextDb teksDb = new TextDb();

@@ -11,9 +11,9 @@ import java.io.File;
 
 // Process from yet file to internal and revindex
 public class Proses3 {
-	static String INPUT_YET = "../../../bahan-alkitab/in-tb-usfm/out/in-tb-usfm-revyuku2.yet";
+	static String INPUT_YET = "../../../bahan-alkitab/in-tb/in-tb.yet";
 	static String OUTPUT_PREFIX = "tb";
-	static String OUTPUT_INTERNAL = "../../../bahan-alkitab/in-tb-usfm/raw/";
+	static String OUTPUT_INTERNAL = "../../../bahan-alkitab/in-tb/raw/";
 
 	public static void main(String[] args) throws Exception {
 		new Proses3().u();
