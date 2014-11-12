@@ -76,6 +76,7 @@ public class VersionDownloadCompleteReceiver extends BroadcastReceiver {
 			}
 
 			modifyTime = Integer.parseInt(attrs.get("modifyTime"));
+			AddonManager.mkYesDir(); // ensure that the directories exist first.
 			destPath = AddonManager.getVersionPath(preset_name + ".yes");
 		} else if ("url".equals(download_type)) {
 			if (!attrs.containsKey("filename_last_segment")) {
