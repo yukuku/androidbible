@@ -1321,10 +1321,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		if (requestCode == REQCODE_goto && resultCode == RESULT_OK) {
 			GotoActivity.Result result = GotoActivity.obtainResult(data);
 			if (result != null) {
+				final int ari_cv;
+
 				if (result.bookId == -1) {
 					// stay on the same book
-					final int ari_cv = display(result.chapter_1, result.verse_1);
-					history.add(Ari.encode(this.activeBook.bookId, ari_cv));
+					ari_cv = display(result.chapter_1, result.verse_1);
 
 					// select the verse only if the displayed verse is equal to the requested verse
 					if (Ari.encode(0, result.chapter_1, result.verse_1) == ari_cv) {
@@ -1339,13 +1340,20 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						result.bookId = this.activeBook.bookId;
 					}
 
-					final int ari_cv = display(result.chapter_1, result.verse_1);
-					history.add(Ari.encode(result.bookId, ari_cv));
+					ari_cv = display(result.chapter_1, result.verse_1);
 
 					// select the verse only if the displayed verse is equal to the requested verse
 					if (Ari.encode(result.bookId, result.chapter_1, result.verse_1) == Ari.encode(this.activeBook.bookId, ari_cv)) {
 						lsText.setVerseSelected(result.verse_1, true);
 					}
+				}
+
+				if (result.verse_1 == 0 && Ari.toVerse(ari_cv) == 1) {
+					// verse 0 requested, but display method causes it to show verse_1 1.
+					// However we want to store verse_1 0 on the history.
+					history.add(Ari.encode(this.activeBook.bookId, Ari.toChapter(ari_cv), 0));
+				} else {
+					history.add(Ari.encode(this.activeBook.bookId, ari_cv));
 				}
 			}
 		} else if (requestCode == REQCODE_share && resultCode == RESULT_OK) {

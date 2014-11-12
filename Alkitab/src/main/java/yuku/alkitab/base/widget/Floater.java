@@ -401,14 +401,14 @@ public class Floater extends View {
 		if (state == State.selectBook) {
 			if (activeBookIndex != -1) {
 				final Book book = books[activeBookIndex];
-				listener.onSelectComplete(Ari.encode(book.bookId, 1, 1));
+				listener.onSelectComplete(Ari.encode(book.bookId, 1, 0));
 			}
 		}
 
 		if (state == State.selectChapter) {
 			if (activeBookIndex != -1 && activeChapterIndex != -1) {
 				final Book book = books[activeBookIndex];
-				listener.onSelectComplete(Ari.encode(book.bookId, activeChapterIndex + 1, 1));
+				listener.onSelectComplete(Ari.encode(book.bookId, activeChapterIndex + 1, 0));
 			}
 		}
 
