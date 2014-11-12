@@ -1324,6 +1324,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 					// stay on the same book
 					final int ari_cv = display(result.chapter_1, result.verse_1);
 					history.add(Ari.encode(this.activeBook.bookId, ari_cv));
+
+					// select the verse only if the displayed verse is equal to the requested verse
+					if (Ari.encode(0, result.chapter_1, result.verse_1) == ari_cv) {
+						lsText.setVerseSelected(result.verse_1, true);
+					}
 				} else {
 					// change book
 					final Book book = S.activeVersion.getBook(result.bookId);
@@ -1335,6 +1340,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 					final int ari_cv = display(result.chapter_1, result.verse_1);
 					history.add(Ari.encode(result.bookId, ari_cv));
+
+					// select the verse only if the displayed verse is equal to the requested verse
+					if (Ari.encode(result.bookId, result.chapter_1, result.verse_1) == Ari.encode(this.activeBook.bookId, ari_cv)) {
+						lsText.setVerseSelected(result.verse_1, true);
+					}
 				}
 			}
 		} else if (requestCode == REQCODE_share && resultCode == RESULT_OK) {

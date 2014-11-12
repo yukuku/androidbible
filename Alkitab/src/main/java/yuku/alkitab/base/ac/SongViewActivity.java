@@ -27,7 +27,6 @@ import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
-import com.google.gson.Gson;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -871,7 +870,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			versesDialog.setListener(new VersesDialog.VersesDialogListener() {
 				@Override
 				public void onVerseSelected(final VersesDialog dialog, final int ari) {
-					startActivity(Launcher.openAppAtBibleLocation(ari));
+					startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
 				}
 			});
 			versesDialog.show(getSupportFragmentManager(), VersesDialog.class.getSimpleName());

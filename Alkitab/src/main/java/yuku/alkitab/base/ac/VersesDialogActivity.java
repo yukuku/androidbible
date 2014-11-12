@@ -1,7 +1,6 @@
 package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
@@ -32,12 +31,7 @@ public class VersesDialogActivity extends BaseActivity {
 			.setMessage("Could not understand target: " + target)
 			.setPositiveButton("OK", null)
 			.show()
-			.setOnDismissListener(new DialogInterface.OnDismissListener() {
-				@Override
-				public void onDismiss(final DialogInterface dialog) {
-					finish();
-				}
-			});
+			.setOnDismissListener(dialog -> finish());
 			return;
 		}
 
@@ -45,16 +39,11 @@ public class VersesDialogActivity extends BaseActivity {
 		versesDialog.setListener(new VersesDialog.VersesDialogListener() {
 			@Override
 			public void onVerseSelected(final VersesDialog dialog, final int ari) {
-				startActivity(Launcher.openAppAtBibleLocation(ari));
+				startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
 				finish();
 			}
 		});
-		versesDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-			@Override
-			public void onDismiss(final DialogInterface dialog) {
-				finish();
-			}
-		});
+		versesDialog.setOnDismissListener(dialog -> finish());
 
 		versesDialog.show(getSupportFragmentManager(), VersesDialog.class.getSimpleName());
 	}
