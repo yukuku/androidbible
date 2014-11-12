@@ -8,9 +8,9 @@ import android.util.AttributeSet;
 import android.util.FloatMath;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
-import yuku.alkitab.util.Ari;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.Version;
+import yuku.alkitab.util.Ari;
 
 public class Floater extends View {
 	public static final String TAG = Floater.class.getSimpleName();
@@ -50,25 +50,19 @@ public class Floater extends View {
 	State state;
 	Listener listener;
 
-	Runnable checkLongPressBook = new Runnable() {
-		@Override
-		public void run() {
-			if (activeBookIndex == longPressBookIndex) {
-				// we have been at the same bookIndex since a few ms ago!
-				performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-				commitBook();
-			}
+	Runnable checkLongPressBook = () -> {
+		if (activeBookIndex == longPressBookIndex) {
+			// we have been at the same bookIndex since a few ms ago!
+			performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+			commitBook();
 		}
 	};
 
-	Runnable checkLongPressChapter = new Runnable() {
-		@Override
-		public void run() {
-			if (activeChapterIndex == longPressChapterIndex) {
-				// we have been at the same chapterIndex since a few ms ago!
-				performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-				commitChapter();
-			}
+	Runnable checkLongPressChapter = () -> {
+		if (activeChapterIndex == longPressChapterIndex) {
+			// we have been at the same chapterIndex since a few ms ago!
+			performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+			commitChapter();
 		}
 	};
 
@@ -372,8 +366,11 @@ public class Floater extends View {
 
 		final Book book = books[activeBookIndex];
 		if (book.chapter_count == 1) {
-			listener.onSelectComplete(Ari.encode(book.bookId, 1, 1));
-			hide();
+			// Handle books with single chapter (e.g. Jude and many more):
+			// Set chapter to 0 (first chapter) and immediately go to verse selection
+			activeChapterIndex = 0;
+			state = State.selectVerse;
+			invalidate();
 		} else {
 			state = State.selectChapter;
 			invalidate();
