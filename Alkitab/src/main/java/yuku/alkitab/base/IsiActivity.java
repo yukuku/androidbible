@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -154,10 +153,10 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	};
 
-	private Floater.Listener floater_listener = new Floater.Listener() {
+	final Floater.Listener floater_listener = new Floater.Listener() {
 		@Override
 		public void onSelectComplete(final int ari) {
-			jumpToAri(ari);
+			jumpToAri(ari, true);
 			history.add(ari);
 		}
 	};
@@ -290,7 +289,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
                 }
             } else if (data instanceof Integer) {
 	            final int ari = (Integer) data;
-	            jumpToAri(ari);
+	            jumpToAri(ari, false);
 	            history.add(ari);
             }
 		}
@@ -596,7 +595,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			int lid = intent.getIntExtra("lid", 0);
 			int ari = LidToAri.lidToAri(lid);
 			if (ari != 0) {
-				jumpToAri(ari);
+				jumpToAri(ari, true);
 				history.add(ari);
 				final IntentResult res = new IntentResult(ari);
 				res.selectVerse = selectVerse;
@@ -863,22 +862,26 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	/**
 	 * Jump to a given ari
 	 */
-	void jumpToAri(int ari) {
+	void jumpToAri(final int ari, final boolean selectVerse) {
 		if (ari == 0) return;
 		
-		Log.d(TAG, "will jump to ari 0x" + Integer.toHexString(ari)); //$NON-NLS-1$
-		
-		int bookId = Ari.toBook(ari);
-		Book book = S.activeVersion.getBook(bookId);
-		
-		if (book != null) {
-			this.activeBook = book;
-		} else {
-			Log.w(TAG, "bookId=" + bookId + " not found for ari=" + ari); //$NON-NLS-1$ //$NON-NLS-2$
+		final int bookId = Ari.toBook(ari);
+		final Book book = S.activeVersion.getBook(bookId);
+
+		if (book == null) {
+			Log.w(TAG, "bookId=" + bookId + " not found for ari=" + ari);
 			return;
 		}
-		
-		display(Ari.toChapter(ari), Ari.toVerse(ari));
+
+		this.activeBook = book;
+		final int ari_cv = display(Ari.toChapter(ari), Ari.toVerse(ari));
+
+		if (selectVerse) {
+			// select the verse only if the displayed verse is equal to the requested verse
+			if (ari == Ari.encode(this.activeBook.bookId, ari_cv)) {
+				lsText.setVerseSelected(Ari.toVerse(ari), true);
+			}
+		}
 	}
 	
 	private CharSequence referenceFromSelectedVerses(IntArrayList selectedVerses, Book book) {
@@ -993,13 +996,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	void bGoto_longClick() {
 		if (history.getSize() > 0) {
 			new AlertDialog.Builder(this)
-			.setAdapter(historyAdapter, new DialogInterface.OnClickListener() {
-				@Override public void onClick(DialogInterface dialog, int which) {
-					int ari = history.getAri(which);
-					jumpToAri(ari);
-					history.add(ari);
-					Preferences.setBoolean(Prefkey.history_button_understood, true);
-				}
+			.setAdapter(historyAdapter, (dialog, which) -> {
+				int ari = history.getAri(which);
+				jumpToAri(ari, true);
+				history.add(ari);
+				Preferences.setBoolean(Prefkey.history_button_understood, true);
 			})
 			.setNegativeButton(R.string.cancel, null)
 			.show();
@@ -1563,7 +1564,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		final int ari_source = arif_source >>> 8;
 
 		dialog.dismiss();
-		jumpToAri(ari_target);
+		jumpToAri(ari_target, true);
 
 		// add both xref source and target, so user can go back to source easily
 		history.add(ari_source);
@@ -2168,7 +2169,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		final int ari = progressMark.ari;
 
 		if (ari != 0) {
-			jumpToAri(ari);
+			jumpToAri(ari, false);
 			history.add(ari);
 		} else {
 			new AlertDialog.Builder(this)
