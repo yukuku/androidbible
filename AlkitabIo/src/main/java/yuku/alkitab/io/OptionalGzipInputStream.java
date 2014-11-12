@@ -117,7 +117,12 @@ public class OptionalGzipInputStream extends InputStream {
 
 			final int read = source.read(buffer, newOffset, remainingToRead);
 			if (read == -1) {
-				return newOffset - byteOffset;
+				final int res = newOffset - byteOffset;
+				if (res == 0) {
+					// about to return 0, but source says we are EOF. Return -1 instead
+					return -1;
+				}
+				return res;
 			}
 
 			return read + newOffset - byteOffset;
