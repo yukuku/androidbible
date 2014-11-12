@@ -261,9 +261,8 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 
 				SyncRecorder.log(SyncRecorder.EventKind.login_success_post, null, "accountName", accountName);
 
-				for (final String syncSetName : SyncShadow.ALL_SYNC_SETS) {
-					Sync.notifySyncNeeded(syncSetName);
-				}
+				// force sync immediately after login
+				Sync.forceSyncNow();
 
 				runOnUiThread(this::updateDisplay);
 
