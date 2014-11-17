@@ -53,7 +53,13 @@ public class GotoGridFragment extends BaseGotoFragment {
 	private AdapterView.OnItemClickListener gridBook_itemClick = new AdapterView.OnItemClickListener() {
 		@Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			selectedBook = bookAdapter.getItem(position);
-			transitionBookToChapter();
+			if (selectedBook.chapter_count == 1) {
+				// for single-chapter books, jump directly to verse selection
+				selectedChapter = 1;
+				transitionBookToVerse();
+			} else {
+				transitionBookToChapter();
+			}
 		}
 	};
 	
@@ -94,6 +100,20 @@ public class GotoGridFragment extends BaseGotoFragment {
 		gridVerse.setVisibility(View.INVISIBLE);
 		
 		animateFadeOutAndSlideLeft(gridBook, gridChapter);
+		lSelectedBook.setAlpha(0.f);
+		lSelectedBook.animate().alpha(1.f).setDuration(ANIM_DURATION);
+
+		displaySelectedBookAndChapter();
+	}
+
+	void transitionBookToVerse() {
+		gridBook.setVisibility(View.INVISIBLE);
+		panelChapterVerse.setVisibility(View.VISIBLE);
+		gridVerse.setVisibility(View.VISIBLE);
+		gridVerse.setAdapter(verseAdapter = new VerseAdapter(selectedBook, selectedChapter));
+		gridChapter.setVisibility(View.INVISIBLE);
+
+		animateFadeOutAndSlideLeft(gridBook, gridVerse);
 		lSelectedBook.setAlpha(0.f);
 		lSelectedBook.animate().alpha(1.f).setDuration(ANIM_DURATION);
 
