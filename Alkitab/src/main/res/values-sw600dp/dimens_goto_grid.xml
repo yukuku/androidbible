@@ -2,6 +2,7 @@
 <resources>
 
     <dimen name="goto_grid_cell_width">75dp</dimen>
+	<integer name="goto_grid_numeric_num_columns">10</integer>
     <dimen name="goto_grid_cell_height">56dp</dimen>
 
 </resources>

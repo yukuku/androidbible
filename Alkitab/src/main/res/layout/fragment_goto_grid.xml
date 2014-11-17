@@ -1,68 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content">
 
-    <GridView
-        android:id="@+id/gridBook"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:columnWidth="@dimen/goto_grid_cell_width"
-        android:listSelector="@drawable/goto_grid_selector"
-        android:numColumns="auto_fit" />
+	<GridView
+		android:id="@+id/gridBook"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:columnWidth="@dimen/goto_grid_cell_width"
+		android:listSelector="@drawable/goto_grid_selector"
+		android:stretchMode="spacingWidthUniform"
+		android:gravity="center"
+		android:numColumns="auto_fit" />
 
-    <LinearLayout
-        android:id="@+id/panelChapterVerse"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+	<LinearLayout
+		android:id="@+id/panelChapterVerse"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/lSelectedBook"
-                style="?android:actionButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:gravity="center"
-                android:text="*Selected book"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                tools:ignore="HardcodedText" />
+			<TextView
+				android:id="@+id/lSelectedBook"
+				style="?android:actionButtonStyle"
+				android:layout_width="wrap_content"
+				android:layout_height="48dp"
+				android:gravity="center"
+				android:text="*Selected book"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				tools:ignore="HardcodedText" />
 
-            <TextView
-                android:id="@+id/lSelectedChapter"
-                style="?android:actionButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:gravity="center"
-                android:text="*chap"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                tools:ignore="HardcodedText" />
-        </LinearLayout>
+			<TextView
+				android:id="@+id/lSelectedChapter"
+				style="?android:actionButtonStyle"
+				android:layout_width="wrap_content"
+				android:layout_height="48dp"
+				android:gravity="center"
+				android:text="*chap"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				tools:ignore="HardcodedText" />
+		</LinearLayout>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+		<FrameLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
 
-            <GridView
-                android:id="@+id/gridChapter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:columnWidth="@dimen/goto_grid_cell_width"
-                android:listSelector="@drawable/goto_grid_selector"
-                android:numColumns="auto_fit" />
+			<GridView
+				android:id="@+id/gridChapter"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:columnWidth="@dimen/goto_grid_cell_width"
+				android:listSelector="@drawable/goto_grid_selector"
+				android:stretchMode="spacingWidthUniform"
+				android:gravity="center"
+				android:numColumns="@integer/goto_grid_numeric_num_columns" />
 
-            <GridView
-                android:id="@+id/gridVerse"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:columnWidth="@dimen/goto_grid_cell_width"
-                android:listSelector="@drawable/goto_grid_selector"
-                android:numColumns="auto_fit" />
-        </FrameLayout>
-    </LinearLayout>
+			<GridView
+				android:id="@+id/gridVerse"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:columnWidth="@dimen/goto_grid_cell_width"
+				android:listSelector="@drawable/goto_grid_selector"
+				android:stretchMode="spacingWidthUniform"
+				android:gravity="center"
+				android:numColumns="@integer/goto_grid_numeric_num_columns" />
+		</FrameLayout>
+	</LinearLayout>
 
 </FrameLayout>
