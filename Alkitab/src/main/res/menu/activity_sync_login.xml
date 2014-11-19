@@ -5,4 +5,8 @@
 		android:showAsAction="never"
 		android:title="@string/sync_login_change_password_menu_item" />
 
+	<item
+		android:id="@+id/menuSyncLog"
+		android:showAsAction="never"
+		android:title="@string/sync_menu_item_sync_log" />
 </menu>

@@ -24,11 +24,18 @@ public class SyncRecorder {
 
 	public enum EventKind {
 		login_attempt(10, INFO),
+		register_attempt(11, INFO),
 		login_failed(12, ERROR),
 		login_gcm_sending_failed(13, ERROR),
 		login_gcm_not_possessed_yet(14, NORMAL_RESULT),
 		login_success_pre(15, OK),
 		login_success_post(16, OK),
+		register_failed(17, ERROR),
+		gcm_send_attempt(20, INFO),
+		gcm_send_success(21, INFO),
+		gcm_send_not_success(22, ERROR),
+		gcm_send_error_io(25, ERROR),
+		gcm_send_error_json(26, ERROR),
 		sync_forced(80, INFO),
 		sync_needed_notified(81, INFO),
 		sync_adapter_on_perform(82, INFO),

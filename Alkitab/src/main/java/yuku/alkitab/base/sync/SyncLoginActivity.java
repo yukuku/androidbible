@@ -1,8 +1,12 @@
 package yuku.alkitab.base.sync;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
+import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +18,7 @@ import android.widget.TextView;
 import yuku.afw.V;
 import yuku.afw.widget.EasyAdapter;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.debug.R;
 
@@ -82,35 +87,232 @@ public class SyncLoginActivity extends BaseActivity {
 				panelRegister.setVisibility(View.VISIBLE);
 				panelRegister.setTag(/* opened: */ true);
 				bLogin.setVisibility(View.GONE);
-			} else {
-				if (tEmail.length() == 0) {
-					tEmail.setError(getString(R.string.sync_login_error_required));
-				} else {
-					tEmail.setError(null);
-				}
-
-				if (tPassword.length() == 0) {
-					tPassword.setError(getString(R.string.sync_login_error_required));
-				} else {
-					tPassword.setError(null);
-				}
-
-				// TODO really register
+				return;
 			}
-		});
 
-		tPassword.setOnFocusChangeListener((v,hasFocus) -> bForgot.setVisibility(tPassword.length() > 0 || hasFocus ? View.GONE : View.VISIBLE));
+			final String email = tEmail.getText().toString().trim();
 
-		bForgot.setOnClickListener(v -> {
-			if (tEmail.length() == 0) {
-				tEmail.setError(getString(R.string.sync_login_error_required));
+			if (email.length() == 0) {
+				tEmail.setError(getString(R.string.sync_login_form_error_required));
+				return;
+			} else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+				tEmail.setError(getString(R.string.sync_login_form_error_email_pattern));
+				return;
 			} else {
 				tEmail.setError(null);
 			}
+
+			if (tPassword.length() == 0) {
+				tPassword.setError(getString(R.string.sync_login_form_error_required));
+				return;
+			} else {
+				tPassword.setError(null);
+			}
+
+			final String password = tPassword.getText().toString();
+
+			confirmPassword(password, () -> {
+				final String religion = (String) cbReligion.getSelectedItem();
+				final String city = tCity.length() == 0 ? null : tCity.getText().toString().trim();
+				final String church = tChurch.length() == 0 ? null : tChurch.getText().toString().trim();
+
+				final Sync.RegisterForm form = new Sync.RegisterForm();
+				form.email = email;
+				form.password = password;
+				form.city = city;
+				form.church = church;
+				form.religion = religion;
+
+				startThreadWithProgressDialog(getString(R.string.sync_progress_register), () -> {
+					try {
+						Log.d(TAG, "Sending form to server for creating new account...");
+						SyncRecorder.log(SyncRecorder.EventKind.register_attempt, null, "serverPrefix", Sync.getEffectiveServerPrefix(), "email", email);
+
+						final Sync.LoginResponseJson response = Sync.register(form);
+
+						gotSimpleToken(email, response.simpleToken, true);
+					} catch (Sync.NotOkException e) {
+						Log.d(TAG, "Register failed: " + e.getMessage());
+						SyncRecorder.log(SyncRecorder.EventKind.register_failed, null, "email", email, "message", e.getMessage());
+
+						runOnUiThread(() -> new AlertDialog.Builder(this)
+								.setMessage(getString(R.string.sync_register_failed_with_reason, e.getMessage()))
+								.setPositiveButton(R.string.ok, null)
+								.show()
+						);
+					}
+				});
+			});
+		});
+
+		bLogin.setOnClickListener(v -> {
+			final String email = tEmail.getText().toString().trim();
+
+			if (email.length() == 0) {
+				tEmail.setError(getString(R.string.sync_login_form_error_required));
+				return;
+			} else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+				tEmail.setError(getString(R.string.sync_login_form_error_email_pattern));
+				return;
+			} else {
+				tEmail.setError(null);
+			}
+
+			if (tPassword.length() == 0) {
+				tPassword.setError(getString(R.string.sync_login_form_error_required));
+				return;
+			} else {
+				tPassword.setError(null);
+			}
+
+			final String password = tPassword.getText().toString();
+
+			startThreadWithProgressDialog(getString(R.string.sync_progress_login), () -> {
+				try {
+					Log.d(TAG, "Sending form to server for login...");
+					SyncRecorder.log(SyncRecorder.EventKind.login_attempt, null, "serverPrefix", Sync.getEffectiveServerPrefix(), "email", email);
+
+					final Sync.LoginResponseJson response = Sync.login(email, password);
+
+					gotSimpleToken(email, response.simpleToken, false);
+				} catch (Sync.NotOkException e) {
+					Log.d(TAG, "Login failed: " + e.getMessage());
+					SyncRecorder.log(SyncRecorder.EventKind.login_failed, null, "email", email, "message", e.getMessage());
+
+					runOnUiThread(() -> new AlertDialog.Builder(this)
+							.setMessage(getString(R.string.sync_login_failed_with_reason, e.getMessage()))
+							.setPositiveButton(R.string.ok, null)
+							.show()
+					);
+				}
+			});
+		});
+
+		tPassword.setOnFocusChangeListener((v, hasFocus) -> bForgot.setVisibility(tPassword.length() > 0 || hasFocus ? View.GONE : View.VISIBLE));
+
+		bForgot.setOnClickListener(v -> {
+			final String email = tEmail.getText().toString().trim();
+
+			if (email.length() == 0) {
+				tEmail.setError(getString(R.string.sync_login_form_error_required));
+				return;
+			} else {
+				tEmail.setError(null);
+			}
+
+			startThreadWithProgressDialog(getString(R.string.sync_progress_processing), () -> {
+				try {
+					Log.d(TAG, "Sending form to server for forgot password...");
+
+					Sync.forgotPassword(email);
+
+					runOnUiThread(() -> new AlertDialog.Builder(this)
+							.setMessage(R.string.sync_login_form_forgot_password_success)
+							.setPositiveButton(R.string.ok, null)
+							.show()
+					);
+				} catch (Sync.NotOkException e) {
+					Log.d(TAG, "Forgot password failed: " + e.getMessage());
+
+					runOnUiThread(() -> new AlertDialog.Builder(this)
+							.setMessage(e.getMessage())
+							.setPositiveButton(R.string.ok, null)
+							.show()
+					);
+				}
+			});
+		});
+
+		bChangePassword.setOnClickListener(v -> {
+			final String email = tEmail.getText().toString().trim();
+
+			if (email.length() == 0) {
+				tEmail.setError(getString(R.string.sync_login_form_error_required));
+				return;
+			} else {
+				tEmail.setError(null);
+			}
+
+			final String password = tPassword.getText().toString();
+			if (password.length() == 0) {
+				tPassword.setError(getString(R.string.sync_login_form_error_required));
+				return;
+			} else {
+				tPassword.setError(null);
+			}
+
+			final String passwordNew = tPasswordNew.getText().toString();
+			if (passwordNew.length() == 0) {
+				tPasswordNew.setError(getString(R.string.sync_login_form_error_required));
+				return;
+			} else {
+				tPasswordNew.setError(null);
+			}
+
+			confirmPassword(passwordNew, () -> {
+				startThreadWithProgressDialog(getString(R.string.sync_progress_processing), () -> {
+					try {
+						Log.d(TAG, "Sending form to server for changing password...");
+
+						Sync.changePassword(email, password, passwordNew);
+
+						runOnUiThread(() -> new AlertDialog.Builder(this)
+								.setMessage(R.string.sync_login_form_change_password_success)
+								.setPositiveButton(R.string.ok, null)
+								.show()
+								.setOnDismissListener(dialog -> finish())
+						);
+					} catch (Sync.NotOkException e) {
+						Log.d(TAG, "Change password failed: " + e.getMessage());
+
+						runOnUiThread(() -> new AlertDialog.Builder(this)
+							.setMessage(e.getMessage())
+							.setPositiveButton(R.string.ok, null)
+							.show()
+						);
+					}
+				});
+			});
+
 		});
 
 		tIntro.setMovementMethod(LinkMovementMethod.getInstance());
 		tPrivacy.setMovementMethod(LinkMovementMethod.getInstance());
+	}
+
+	void startThreadWithProgressDialog(final String message, final Runnable task) {
+		final ProgressDialog pd = ProgressDialog.show(this, null, message, true, false);
+
+		new Thread(() -> {
+			try {
+				task.run();
+			} finally {
+				pd.dismiss();
+			}
+		}).start();
+	}
+
+	void confirmPassword(final String correctPassword, final Runnable whenCorrect) {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		final View dialogView = View.inflate(builder.getContext(), R.layout.dialog_sync_confirm_password, null);
+		final EditText tPassword2 = V.get(dialogView, R.id.tPassword2);
+		builder
+			.setView(dialogView)
+			.setPositiveButton(R.string.ok, (dialog, which) -> {
+
+				final String password2 = tPassword2.getText().toString();
+
+				if (!U.equals(correctPassword, password2)) {
+					new AlertDialog.Builder(this)
+						.setMessage(R.string.sync_login_form_passwords_do_not_match)
+						.setPositiveButton(R.string.ok, null)
+						.show();
+					return;
+				}
+
+				whenCorrect.run();
+			})
+			.show();
 	}
 
 	@Override
@@ -121,21 +323,66 @@ public class SyncLoginActivity extends BaseActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		if (item.getItemId() == R.id.menuChangePassword) {
-			bLogin.setVisibility(View.GONE);
-			bRegister.setVisibility(View.GONE);
-			bChangePassword.setVisibility(View.VISIBLE);
+		final int itemId = item.getItemId();
+		switch (itemId) {
+			case R.id.menuChangePassword:
+				bLogin.setVisibility(View.GONE);
+				bRegister.setVisibility(View.GONE);
+				bChangePassword.setVisibility(View.VISIBLE);
 
-			tPasswordNew.setVisibility(View.VISIBLE);
-			panelRegister.setVisibility(View.GONE);
-			return true;
+				tPasswordNew.setVisibility(View.VISIBLE);
+				panelRegister.setVisibility(View.GONE);
+				return true;
+
+			case R.id.menuSyncLog:
+				startActivity(SyncLogActivity.createIntent());
+				return true;
 		}
 
 		return super.onOptionsItemSelected(item);
 	}
 
+	/**
+	 * We created account or logged in successfully. Call this method from a background thread!
+	 * Close this activity and report success.
+	 */
+	void gotSimpleToken(final String accountName, final String simpleToken, final boolean isRegister) {
+		// send GCM registration id, if we already have it.
+		final String registration_id = Gcm.renewGcmRegistrationIdIfNeeded(Sync::notifyNewGcmRegistrationId);
+		if (registration_id != null) {
+			final boolean ok = Sync.sendGcmRegistrationId(simpleToken, registration_id);
+			if (!ok) {
+				SyncRecorder.log(SyncRecorder.EventKind.login_gcm_sending_failed, null, "accountName", accountName);
+
+				if (isRegister) {
+					runOnUiThread(() -> new AlertDialog.Builder(this)
+						.setMessage(R.string.sync_registered_but_no_gcm)
+						.setPositiveButton(R.string.ok, null)
+						.show());
+				} else {
+					runOnUiThread(() -> new AlertDialog.Builder(this)
+						.setMessage(getString(R.string.sync_login_failed_with_reason, "Could not send GCM registration id. Please try again."))
+						.setPositiveButton(R.string.ok, null)
+						.show());
+				}
+				return;
+			}
+		} else {
+			// if not, ignore. Later eventually we will have it.
+			SyncRecorder.log(SyncRecorder.EventKind.login_gcm_not_possessed_yet, null, "accountName", accountName);
+		}
+
+		runOnUiThread(() -> {
+			final Intent data = new Intent();
+			data.putExtra("accountName", accountName);
+			data.putExtra("simpleToken", simpleToken);
+			setResult(RESULT_OK, data);
+			finish();
+		});
+	}
+
 	class ReligionAdapter extends EasyAdapter {
-		Object[][] choices = {
+		final Object[][] choices = {
 			{null, R.string.sync_login_survey_religion_select_one},
 			{"christianity", R.string.sync_login_survey_religion_christianity},
 			{"christianity.protestant", R.string.sync_login_survey_religion_christianity_protestant},
@@ -152,6 +399,12 @@ public class SyncLoginActivity extends BaseActivity {
 			{"atheist", R.string.sync_login_survey_religion_atheist},
 			{"agnostic", R.string.sync_login_survey_religion_agnostic},
 		};
+
+		@Override
+		public String getItem(final int position) {
+			// used by getSelectedItem
+			return (String) choices[position][0];
+		}
 
 		@Override
 		public View newView(final int position, final ViewGroup parent) {

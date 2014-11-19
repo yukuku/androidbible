@@ -411,11 +411,15 @@
 	<string name="note_actionbar_ok">Done</string>
 	<string name="note_activity_cannot_parse_verse">Sorry, we do not understand this verse link.</string>
 
-	<string name="sync_account_not_selected">Not selected</string>
+	<string name="sync_account_not_selected">Not signed in</string>
 	<string name="pref_syncAccountName_title">Account</string>
 	<string name="sync_logout_warning">Do you want to log out? Your current markers and other local data will not be deleted.</string>
-	<string name="sync_logging_in">Logging in…</string>
+	<string name="sync_progress_register">Creating new account…</string>
+	<string name="sync_progress_login">Logging in…</string>
+	<string name="sync_progress_processing">Processing…</string>
 	<string name="sync_login_failed_with_reason">Failed to log in. Please try again later.\n\nReason: %s</string>
+	<string name="sync_register_failed_with_reason">Failed to create a new account. Please try again.\n\nReason: %s</string>
+	<string name="sync_registered_but_no_gcm">Your account has been created, but we failed to send GCM registration id. Please try to log in (do not register again).</string>
 	<string name="pref_sync_title">Sync</string>
 	<string name="pref_screen_sync_settings_title">Sync settings</string>
 	<string name="sync_category_title_data_types">Data types</string>
@@ -443,9 +447,9 @@
 	<string name="sync_login_survey_religion_other">Other religion</string>
 	<string name="sync_login_survey_religion_atheist">Atheist</string>
 	<string name="sync_login_survey_religion_agnostic">Agnostic</string>
-	<string name="sync_login_error_required">Required.</string>
 	<string name="sync_login_change_password_menu_item">Change password</string>
 	<string name="sync_login_change_password_button">Change password</string>
+	<string name="sync_login_form_error_required">Please fill this in.</string>
 	<string name="sync_login_form_password_hint">Password</string>
 	<string name="sync_login_form_new_password_hint">New password</string>
 	<string name="sync_login_form_intro_text">Sync protects your markers and other data.\n<a href='http://www.bibleforandroid.com/guide/sync'>More information</a></string>
@@ -456,6 +460,11 @@
 	<string name="sync_login_form_city">City</string>
 	<string name="sync_login_form_register_button">Register</string>
 	<string name="sync_login_form_login_button">Login</string>
-	<string name="sync_login_form_privacy_text">By pressing any of the button below, you agree to the <a href='http://www.bibleforandroid.com/privacy_policy'>privacy policy</a>.</string>
+	<string name="sync_login_form_privacy_text">By pressing any of the buttons below, you agree to the <a href='http://www.bibleforandroid.com/privacy_policy'>privacy policy</a>.</string>
+	<string name="sync_login_form_error_email_pattern">Invalid email address.</string>
+	<string name="sync_login_form_passwords_do_not_match">Please type the same password on the confirmation dialog.</string>
+	<string name="sync_login_dialog_confirm_password_hint">Confirm password</string>
+	<string name="sync_login_form_forgot_password_success">Please check your email for further instructions.</string>
+	<string name="sync_login_form_change_password_success">Your password has been changed.</string>
 
 </resources>

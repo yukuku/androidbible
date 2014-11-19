@@ -551,25 +551,32 @@ public class Sync {
 		try {
 			final Call call = App.getOkHttpClient().newCall(
 				new Request.Builder()
-					.url(getEffectiveServerPrefix() + "/sync/api/debug_register_gcm_client")
+					.url(getEffectiveServerPrefix() + "/sync/api/register_gcm_client")
 					.post(requestBody)
 					.build()
 			);
 
+			SyncRecorder.log(SyncRecorder.EventKind.gcm_send_attempt, null);
 			final RegisterGcmClientResponseJson response = App.getDefaultGson().fromJson(call.execute().body().charStream(), RegisterGcmClientResponseJson.class);
 
 			if (!response.success) {
+				SyncRecorder.log(SyncRecorder.EventKind.gcm_send_not_success, null, "message", response.message);
 				Log.d(TAG, "GCM registration id rejected by server: " + response.message);
 				return false;
 			}
 
+			SyncRecorder.log(SyncRecorder.EventKind.gcm_send_success, null, "is_new_registration_id", response.is_new_registration_id);
 			Log.d(TAG, "GCM registration id accepted by server: is_new_registration_id=" + response.is_new_registration_id);
+
 			return true;
 
 		} catch (IOException | JsonIOException e) {
+			SyncRecorder.log(SyncRecorder.EventKind.gcm_send_error_io, null);
 			Log.d(TAG, "Failed to send GCM registration id to server", e);
 			return false;
+
 		} catch (JsonSyntaxException e) {
+			SyncRecorder.log(SyncRecorder.EventKind.gcm_send_error_json, null);
 			Log.d(TAG, "Server response is not valid JSON", e);
 			return false;
 		}
@@ -609,30 +616,43 @@ public class Sync {
 		public String message;
 	}
 
-	public static class LoginResult {
-		public boolean success;
-		public String message;
-		public String simpleToken;
-		public String user_email;
-		public String profile_picture_url;
+	public static class RegisterForm {
+		public String email;
+		public String password;
+		public String church;
+		public String city;
+		public String religion;
 	}
 
 	/**
-	 * Log in using ID Token. If successful, stored the user account name and simpleToken on the preferences.
+	 * Exception thrown by calls to server that has io/parse exception or when server returns success==false.
+	 */
+	static class NotOkException extends Exception {
+		public NotOkException(final String msg) {
+			super(msg);
+		}
+	}
+
+	/**
+	 * Create an own user account.
 	 * Must be called from a background thread.
 	 */
-	@NonNull public static LoginResult login(@NonNull final String id_token) {
-		final LoginResult res = new LoginResult();
+	@NonNull public static LoginResponseJson register(@NonNull final RegisterForm form) throws NotOkException {
+		final FormEncodingBuilder b = new FormEncodingBuilder();
+		if (form.church != null) b.add("church", form.church);
+		if (form.city != null) b.add("city", form.city);
+		if (form.religion != null) b.add("religion", form.religion);
 
-		final RequestBody requestBody = new FormEncodingBuilder()
-			.add("id_token", id_token)
+		final RequestBody requestBody = b
+			.add("email", form.email)
+			.add("password", form.password)
 			.add("installation_info", getInstallationInfoJson())
 			.build();
 
 		try {
 			final Call call = App.getOkHttpClient().newCall(
 				new Request.Builder()
-					.url(getEffectiveServerPrefix() + "/sync/api/login")
+					.url(getEffectiveServerPrefix() + "/sync/api/create_own_user")
 					.post(requestBody)
 					.build()
 			);
@@ -640,37 +660,116 @@ public class Sync {
 			final LoginResponseJson response = App.getDefaultGson().fromJson(call.execute().body().charStream(), LoginResponseJson.class);
 
 			if (!response.success) {
-				Log.d(TAG, "Login rejected: " + response.message);
-				res.message = response.message;
-				return res;
+				throw new NotOkException(response.message);
 			}
 
-			res.success = true;
-			res.user_email = response.user.email;
-			res.profile_picture_url = response.profile_picture_url;
-			res.simpleToken = response.simpleToken;
-			return res;
+			return response;
 
 		} catch (IOException | JsonIOException e) {
-			res.message = "Failed to send login";
-			Log.d(TAG, res.message, e);
-			return res;
-
+			throw new NotOkException("Failed to send data");
 		} catch (JsonSyntaxException e) {
-			res.message = "Server response is not a valid JSON";
-			Log.d(TAG, res.message, e);
-			return res;
+			throw new NotOkException("Server response is not a valid JSON");
 		}
 	}
 
-	public static class UserJson {
-		public String email;
+	/**
+	 * Log in to own user account using email and password.
+	 * Must be called from a background thread.
+	 */
+	@NonNull public static LoginResponseJson login(@NonNull final String email, @NonNull final String password) throws NotOkException {
+		final RequestBody requestBody = new FormEncodingBuilder()
+			.add("email", email)
+			.add("password", password)
+			.add("installation_info", getInstallationInfoJson())
+			.build();
+
+		try {
+			final Call call = App.getOkHttpClient().newCall(
+				new Request.Builder()
+					.url(getEffectiveServerPrefix() + "/sync/api/login_own_user")
+					.post(requestBody)
+					.build()
+			);
+
+			final LoginResponseJson response = App.getDefaultGson().fromJson(call.execute().body().charStream(), LoginResponseJson.class);
+
+			if (!response.success) {
+				throw new NotOkException(response.message);
+			}
+
+			return response;
+
+		} catch (IOException | JsonIOException e) {
+			throw new NotOkException("Failed to send data");
+		} catch (JsonSyntaxException e) {
+			throw new NotOkException("Server response is not a valid JSON");
+		}
+	}
+
+	/**
+	 * Ask the server to allow user to reset password.
+	 * Must be called from a background thread.
+	 */
+	public static void forgotPassword(@NonNull final String email) throws NotOkException {
+		final RequestBody requestBody = new FormEncodingBuilder()
+			.add("email", email)
+			.build();
+
+		try {
+			final Call call = App.getOkHttpClient().newCall(
+				new Request.Builder()
+					.url(getEffectiveServerPrefix() + "/sync/api/forgot_password")
+					.post(requestBody)
+					.build()
+			);
+
+			final ResponseJson response = App.getDefaultGson().fromJson(call.execute().body().charStream(), ResponseJson.class);
+
+			if (!response.success) {
+				throw new NotOkException(response.message);
+			}
+
+		} catch (IOException | JsonIOException e) {
+			throw new NotOkException("Failed to send data");
+		} catch (JsonSyntaxException e) {
+			throw new NotOkException("Server response is not a valid JSON");
+		}
+	}
+
+	/**
+	 * Ask the server to change password.
+	 * Must be called from a background thread.
+	 */
+	public static void changePassword(@NonNull final String email, @NonNull final String password_old, @NonNull final String password_new) throws NotOkException {
+		final RequestBody requestBody = new FormEncodingBuilder()
+			.add("email", email)
+			.add("password_old", password_old)
+			.add("password_new", password_new)
+			.build();
+
+		try {
+			final Call call = App.getOkHttpClient().newCall(
+				new Request.Builder()
+					.url(getEffectiveServerPrefix() + "/sync/api/change_password")
+					.post(requestBody)
+					.build()
+			);
+
+			final ResponseJson response = App.getDefaultGson().fromJson(call.execute().body().charStream(), ResponseJson.class);
+
+			if (!response.success) {
+				throw new NotOkException(response.message);
+			}
+
+		} catch (IOException | JsonIOException e) {
+			throw new NotOkException("Failed to send data");
+		} catch (JsonSyntaxException e) {
+			throw new NotOkException("Server response is not a valid JSON");
+		}
 	}
 
 	public static class LoginResponseJson extends ResponseJson {
 		public String simpleToken;
-		public UserJson user;
-		public String profile_picture_url;
 	}
 
 	public static String prefkeyForSyncSetEnabled(final String syncSetName) {
