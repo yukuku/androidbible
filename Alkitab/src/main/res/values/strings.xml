@@ -426,4 +426,36 @@
 	<string name="sync_sync_set_pref_summary_never">Not synced yet</string>
 	<string name="sync_sync_set_pref_summary_syncing">Syncing now…</string>
 	<string name="sync_log_activity_title">Sync log</string>
+
+	<string name="sync_login_activity_title">Login or create account</string>
+	<string name="sync_login_survey_religion_select_one">Select religion</string>
+	<string name="sync_login_survey_religion_christianity">Christianity</string>
+	<string name="sync_login_survey_religion_christianity_protestant">Protestant</string>
+	<string name="sync_login_survey_religion_christianity_lutheran">Lutheran</string>
+	<string name="sync_login_survey_religion_christianity_methodist">Methodist</string>
+	<string name="sync_login_survey_religion_christianity_anglican">Anglican</string>
+	<string name="sync_login_survey_religion_christianity_pentecostal">Pentecostal/Charismatic</string>
+	<string name="sync_login_survey_religion_christianity_roman">Roman Catholic</string>
+	<string name="sync_login_survey_religion_christianity_other">Other denomination</string>
+	<string name="sync_login_survey_religion_islam">Islam</string>
+	<string name="sync_login_survey_religion_buddha">Buddha</string>
+	<string name="sync_login_survey_religion_hindu">Hinduism</string>
+	<string name="sync_login_survey_religion_other">Other religion</string>
+	<string name="sync_login_survey_religion_atheist">Atheist</string>
+	<string name="sync_login_survey_religion_agnostic">Agnostic</string>
+	<string name="sync_login_error_required">Required.</string>
+	<string name="sync_login_change_password_menu_item">Change password</string>
+	<string name="sync_login_change_password_button">Change password</string>
+	<string name="sync_login_form_password_hint">Password</string>
+	<string name="sync_login_form_new_password_hint">New password</string>
+	<string name="sync_login_form_intro_text">Sync protects your markers and other data.\n<a href='http://www.bibleforandroid.com/guide/sync'>More information</a></string>
+	<string name="sync_login_form_email_hint">Email</string>
+	<string name="sync_login_form_forgot_button">Forgot?</string>
+	<string name="sync_login_form_optional_header">Optional</string>
+	<string name="sync_login_form_church">Church affiliation</string>
+	<string name="sync_login_form_city">City</string>
+	<string name="sync_login_form_register_button">Register</string>
+	<string name="sync_login_form_login_button">Login</string>
+	<string name="sync_login_form_privacy_text">By pressing any of the button below, you agree to the <a href='http://www.bibleforandroid.com/privacy_policy'>privacy policy</a>.</string>
+
 </resources>

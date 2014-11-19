@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:clipToPadding="false"
+	android:paddingBottom="@dimen/padding_medium"
+	android:paddingTop="@dimen/padding_medium">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft="@dimen/padding_medium"
+		android:layout_marginRight="@dimen/padding_medium"
+		android:animateLayoutChanges="true"
+		android:orientation="vertical">
+
+
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal"
+			android:adjustViewBounds="true"
+			android:scaleType="fitStart"
+			android:src="@drawable/sync_intro"
+			tools:ignore="ContentDescription"
+			android:paddingLeft="@dimen/padding_large"
+			android:paddingRight="@dimen/padding_large" />
+
+		<TextView
+			android:id="@+id/tIntro"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal"
+			android:layout_marginTop="@dimen/padding_medium"
+			android:fontFamily="sans-serif-light"
+			android:gravity="center_horizontal"
+			android:text="@string/sync_login_form_intro_text"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="#fff" />
+
+		<EditText
+			android:id="@+id/tEmail"
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:layout_marginTop="@dimen/padding_large"
+			android:hint="@string/sync_login_form_email_hint"
+			android:inputType="textEmailAddress" />
+
+		<FrameLayout
+			android:layout_width="match_parent"
+			android:layout_height="48dp">
+
+			<EditText
+				android:id="@+id/tPassword"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:fontFamily="sans-serif"
+				android:hint="@string/sync_login_form_password_hint"
+				android:inputType="textPassword" />
+
+			<Button
+				android:id="@+id/bForgot"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_gravity="end"
+				android:background="@null"
+				android:focusable="false"
+				android:paddingLeft="@dimen/padding_medium"
+				android:paddingRight="@dimen/padding_medium"
+				android:text="@string/sync_login_form_forgot_button"
+				android:textAppearance="?android:textAppearanceSmall" />
+
+		</FrameLayout>
+
+		<EditText
+			android:id="@+id/tPasswordNew"
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:fontFamily="sans-serif"
+			android:hint="@string/sync_login_form_new_password_hint"
+			android:inputType="textPassword"
+			android:visibility="gone" />
+
+		<LinearLayout
+			android:id="@+id/panelRegister"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="46dp"
+				android:gravity="bottom"
+				android:paddingBottom="2dp"
+				android:paddingLeft="4dp"
+				android:text="@string/sync_login_form_optional_header"
+				android:textAllCaps="true"
+				android:textSize="14sp"
+				android:textStyle="bold" />
+
+			<ImageView
+				android:layout_width="match_parent"
+				android:layout_height="2dp"
+				android:src="#666"
+				tools:ignore="ContentDescription" />
+
+			<EditText
+				android:id="@+id/tChurch"
+				android:layout_width="match_parent"
+				android:layout_height="48dp"
+				android:hint="@string/sync_login_form_church"
+				android:inputType="textPersonName" />
+
+			<EditText
+				android:id="@+id/tCity"
+				android:layout_width="match_parent"
+				android:layout_height="48dp"
+				android:hint="@string/sync_login_form_city"
+				android:inputType="textPersonName" />
+
+			<Spinner
+				android:id="@+id/cbReligion"
+				android:layout_width="match_parent"
+				android:layout_height="48dp"
+				android:spinnerMode="dropdown"
+				tools:listitem="@android:layout/simple_dropdown_item_1line" />
+		</LinearLayout>
+
+		<TextView
+			android:id="@+id/tPrivacy"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="8dp"
+			android:fontFamily="sans-serif-light"
+			android:text="@string/sync_login_form_privacy_text"
+			android:textAppearance="?android:attr/textAppearanceSmall" />
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="8dp"
+			android:orientation="horizontal">
+
+			<Button
+				android:id="@+id/bRegister"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/sync_login_form_register_button" />
+
+			<Button
+				android:id="@+id/bLogin"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal"
+				android:layout_weight="1"
+				android:text="@string/sync_login_form_login_button" />
+
+			<Button
+				android:id="@+id/bChangePassword"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/sync_login_change_password_button"
+				android:visibility="gone" />
+		</LinearLayout>
+	</LinearLayout>
+
+</ScrollView>
