@@ -1,19 +1,18 @@
 package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
-import android.text.method.ArrowKeyMovementMethod;
-import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.ViewFlipper;
 import yuku.afw.V;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.VersesDialog;
 import yuku.alkitab.base.widget.CallbackSpan;
@@ -63,6 +62,8 @@ public class NoteActivity extends BaseActivity {
 
 	boolean editingMode;
 
+	ViewFlipper viewFlipper;
+	TextView tCaptionReadOnly;
 	EditText tCaption;
 
 	@Override
@@ -85,10 +86,14 @@ public class NoteActivity extends BaseActivity {
 
 		setTitle(reference);
 
+		viewFlipper = V.get(this, R.id.viewFlipper);
+		tCaptionReadOnly = V.get(this, R.id.tCaptionReadOnly);
 		tCaption = V.get(this, R.id.tCaption);
 
 		if (marker != null) {
+			tCaptionReadOnly.setText(marker.caption);
 			tCaption.setText(marker.caption);
+
 			// editing existing note. Make the note read-only at first.
 			setEditingMode(false);
 		} else {
@@ -103,52 +108,36 @@ public class NoteActivity extends BaseActivity {
 		}
 	}
 
-	final CallbackSpan.OnClickListener<String> verseClickListener = new CallbackSpan.OnClickListener<String>() {
-		@Override
-		public void onClick(final View widget, final String verse) {
-			final IntArrayList verseRanges = DesktopVerseParser.verseStringToAri(verse);
-			if (verseRanges == null || verseRanges.size() == 0) {
-				new AlertDialog.Builder(widget.getContext())
-					.setMessage(R.string.note_activity_cannot_parse_verse)
-					.setPositiveButton(R.string.ok, null)
-					.show();
-				return;
-			}
-
-			final VersesDialog versesDialog = VersesDialog.newInstance(verseRanges);
-			versesDialog.setListener(new VersesDialog.VersesDialogListener() {
-				@Override
-				public void onVerseSelected(final VersesDialog dialog, final int ari) {
-					startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
-					versesDialog.dismiss();
-				}
-			});
-			versesDialog.show(getSupportFragmentManager(), "dialog_verses");
+	final CallbackSpan.OnClickListener<String> verseClickListener = (widget, verse) -> {
+		final IntArrayList verseRanges = DesktopVerseParser.verseStringToAri(verse);
+		if (verseRanges == null || verseRanges.size() == 0) {
+			new AlertDialog.Builder(widget.getContext())
+				.setMessage(R.string.note_activity_cannot_parse_verse)
+				.setPositiveButton(R.string.ok, null)
+				.show();
+			return;
 		}
+
+		final VersesDialog versesDialog = VersesDialog.newInstance(verseRanges);
+		versesDialog.setListener(new VersesDialog.VersesDialogListener() {
+			@Override
+			public void onVerseSelected(final VersesDialog dialog, final int ari) {
+				startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
+				versesDialog.dismiss();
+			}
+		});
+		versesDialog.show(getSupportFragmentManager(), "dialog_verses");
 	};
 
 	void setEditingMode(final boolean editingMode) {
 		if (editingMode) {
-			tCaption.setMovementMethod(ArrowKeyMovementMethod.getInstance());
-			tCaption.setFocusable(true);
-			tCaption.setFocusableInTouchMode(true);
-			tCaption.setClickable(true);
+			viewFlipper.setDisplayedChild(1);
 
-			// remove all verse links
-			final SpannableStringBuilder text = new SpannableStringBuilder(tCaption.getText());
-			final VerseSpan[] spans = text.getSpans(0, text.length(), VerseSpan.class);
-			if (spans != null) for (final VerseSpan span : spans) {
-				text.removeSpan(span);
-			}
-			tCaption.setText(text);
 		} else {
-			tCaption.setMovementMethod(LinkMovementMethod.getInstance());
-			tCaption.setFocusable(false);
-			tCaption.setFocusableInTouchMode(false);
-			tCaption.setClickable(true);
+			viewFlipper.setDisplayedChild(0);
 
 			// put verse links
-			final SpannableStringBuilder text = new SpannableStringBuilder(tCaption.getText());
+			final SpannableStringBuilder text = new SpannableStringBuilder(tCaptionReadOnly.getText());
 			DesktopVerseFinder.findInText(text, new DesktopVerseFinder.DetectorListener() {
 				@Override
 				public boolean onVerseDetected(final int start, final int end, final String verse) {
@@ -157,9 +146,10 @@ public class NoteActivity extends BaseActivity {
 				}
 
 				@Override
-				public void onNoMoreDetected() {}
+				public void onNoMoreDetected() {
+				}
 			});
-			tCaption.setText(text);
+			tCaptionReadOnly.setText(text);
 		}
 
 		this.editingMode = editingMode;
@@ -198,19 +188,16 @@ public class NoteActivity extends BaseActivity {
 				if (marker != null || tCaption.length() > 0) {
 					new AlertDialog.Builder(this)
 						.setMessage(R.string.anda_yakin_mau_menghapus_catatan_ini)
-						.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								if (marker != null) {
-									// really delete from db
-									S.getDb().deleteNonBookmarkMarkerById(marker._id);
-								} else {
-									// do nothing, because it's indeed not in the db, only in editor buffer
-								}
-
-								setResult(RESULT_OK);
-								realFinish();
+						.setPositiveButton(R.string.yes, (dialog, which) -> {
+							if (marker != null) {
+								// really delete from db
+								S.getDb().deleteNonBookmarkMarkerById(marker._id);
+							} else {
+								// do nothing, because it's indeed not in the db, only in editor buffer
 							}
+
+							setResult(RESULT_OK);
+							realFinish();
 						})
 						.setNegativeButton(R.string.no, null)
 						.show();
@@ -228,24 +215,31 @@ public class NoteActivity extends BaseActivity {
 	}
 
 	void ok_click() {
-		final String caption = tCaption.getText().toString();
-		final Date now = new Date();
+		if (editingMode) { // if we are not editing, do not bother checking and saving.
+			final String caption = tCaption.getText().toString();
+			final Date now = new Date();
 
-		if (marker != null) { // update existing marker
-			if (caption.length() == 0) { // delete instead of update
-				S.getDb().deleteNonBookmarkMarkerById(marker._id);
-			} else {
-				marker.caption = caption;
-				marker.modifyTime = now;
-				S.getDb().insertOrUpdateMarker(marker);
+			if (marker != null) { // update existing marker
+				if (U.equals(marker.caption, caption)) {
+					// when there is no change, do nothing
+				} else {
+					if (caption.length() == 0) { // delete instead of update
+						S.getDb().deleteNonBookmarkMarkerById(marker._id);
+					} else {
+						marker.caption = caption;
+						marker.modifyTime = now;
+						S.getDb().insertOrUpdateMarker(marker);
+					}
+				}
+			} else { // marker == null; not existing, so only insert when there is some text
+				if (caption.length() > 0) {
+					marker = S.getDb().insertMarker(ariForNewNote, Marker.Kind.note, caption, verseCountForNewNote, now, now);
+				}
 			}
-		} else { // marker == null; not existing, so only insert when there is some text
-			if (caption.length() > 0) {
-				marker = S.getDb().insertMarker(ariForNewNote, Marker.Kind.note, caption, verseCountForNewNote, now, now);
-			}
+
+			setResult(RESULT_OK);
 		}
 
-		setResult(RESULT_OK);
 		realFinish();
 	}
 

@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<EditText
-	android:id="@+id/tCaption"
+<ViewFlipper
+	android:id="@+id/viewFlipper"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="@null"
-	android:gravity="top"
-	android:inputType="text|textAutoCorrect|textCapSentences|textMultiLine"
-	android:paddingLeft="8dp"
-	android:paddingRight="8dp" />
+	android:layout_height="match_parent">
+
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<TextView
+			android:id="@+id/tCaptionReadOnly"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="@null"
+			android:gravity="top"
+			android:paddingLeft="8dp"
+			android:paddingRight="8dp"
+			android:textAppearance="?android:textAppearanceMedium" />
+
+	</ScrollView>
+
+	<EditText
+		android:id="@+id/tCaption"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@null"
+		android:gravity="top"
+		android:inputType="text|textAutoCorrect|textCapSentences|textMultiLine"
+		android:paddingLeft="8dp"
+		android:paddingRight="8dp"
+		android:textAppearance="?android:textAppearanceMedium" />
+</ViewFlipper>
