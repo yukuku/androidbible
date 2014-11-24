@@ -6,6 +6,8 @@
       <root url="file://$PROJECT_DIR$/Alkitab/build/intermediates/exploded-aar/com.android.support/support-v13/20.0.0/res" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar:///Developer/android-sdk-macosx/extras/android/m2repository/com/android/support/support-v13/20.0.0/support-v13-20.0.0-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>
