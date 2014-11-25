@@ -6,8 +6,8 @@ Bible for Android
 - <a href="http://www.bibleforandroid.com">Official Website</a>
 - <a href="http://blog.bibleforandroid.com">Development Blog</a>
 - <a href="http://groups.google.com/group/bibleforandroid">Discussion List and Beta Testers</a>
-- <a href="https://play.google.com/store/apps/details?id=yuku.alkitab">Official app with Indonesian as default, "Alkitab" on Google Play</a>
-- <a href="https://play.google.com/store/apps/details?id=yuku.alkitab.kjv">Official app with English KJV as default, "Quick Bible" on Google Play</a>
+
+As of 14 November 2014, the apps are no longer available on Google Play. Visit the <a href="http://www.bibleforandroid.com/">official website</a> for news and downloads.
 
 Bible translations/versions
 ---------------------------
