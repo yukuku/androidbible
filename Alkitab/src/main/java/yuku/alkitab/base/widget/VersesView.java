@@ -15,7 +15,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.U;
-import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.PericopeBlock;
@@ -227,10 +226,10 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 				return pos;
 			}
 			int bottom = child.getBottom();
-			if (bottom > getPaddingTop()) {
+			if (bottom > 0) {
 				return pos;
 			} else {
-				return pos+1;
+				return pos + 1;
 			}
 		}
 		
@@ -429,33 +428,38 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		}
 	}
 
+	/**
+	 * This is different from {@link #scrollToVerse(int, float)} in that if the requested
+	 * verse has a pericope header, this will scroll to the top of the pericope header,
+	 * not to the top of the verse.
+	 */
 	public void scrollToVerse(final int verse_1) {
 		final int position = adapter.getPositionOfPericopeBeginningFromVerse(verse_1);
-
-		if (BuildConfig.DEBUG) Log.d(TAG, this + " @@scrollToVerse begin verse_1=" + verse_1 + " position=" + position, new Throwable().fillInStackTrace());
 
 		if (position == -1) {
 			Log.w(TAG, "could not find verse_1=" + verse_1 + ", weird!");
 		} else {
 			final int delay = firstTimeScroll? 34: 0;
 
-			postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					// this may happen async from above, so check first if pos is still valid
-					if (position >= getCount()) return;
+			postDelayed(() -> {
+				// this may happen async from above, so check first if pos is still valid
+				if (position >= getCount()) return;
 
-					if (BuildConfig.DEBUG) Log.d(TAG, VersesView.this + " @@scrollToVerse post verse_1=" + verse_1 + " position=" + position, new Throwable().fillInStackTrace());
+				// negate padding offset, unless this is the first verse
+				final int paddingNegator = position == 0? 0 : -this.getPaddingTop();
 
-					stopFling();
-					setSelection(position);
+				stopFling();
+				setSelectionFromTop(position, paddingNegator);
 
-					firstTimeScroll = false;
-				}
+				firstTimeScroll = false;
 			}, delay);
 		}
 	}
-	
+
+	/**
+	 * This is different from {@link #scrollToVerse(int)} in that if the requested
+	 * verse has a pericope header, this will scroll to the verse, ignoring the pericope header.
+	 */
 	public void scrollToVerse(int verse_1, final float prop) {
 		final int position = adapter.getPositionIgnoringPericopeFromVerse(verse_1);
 		
@@ -464,42 +468,40 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 			return;
 		}
 
-		post(new Runnable() {
-			@Override public void run() {
-				// this may happen async from above, so check first if pos is still valid
-				if (position >= getCount()) return;
+		post(() -> {
+			// this may happen async from above, so check first if pos is still valid
+			if (position >= getCount()) return;
 
-				final int firstPos = getFirstVisiblePosition();
-				final int lastPos = getLastVisiblePosition();
-				if (position >= firstPos && position <= lastPos) {
-					// we have this on screen, no need to measure again
-					View child = getChildAt(position - firstPos);
-					stopFling();
-					setSelectionFromTop(position, - (int) (prop * child.getHeight()));
-					return;
-				}
+			// negate padding offset, unless this is the first verse
+			final int paddingNegator = position == 0? 0 : -this.getPaddingTop();
 
-				// initialize scrollToVerseConvertViews if needed
-				if (scrollToVerseConvertViews == null) {
-					scrollToVerseConvertViews = new View[adapter.getViewTypeCount()];
-				}
-				int itemType = adapter.getItemViewType(position);
-				View convertView = scrollToVerseConvertViews[itemType];
-				View child = adapter.getView(position, convertView, VersesView.this);
-				child.measure(MeasureSpec.makeMeasureSpec(VersesView.this.getWidth() - VersesView.this.getPaddingLeft() - VersesView.this.getPaddingRight(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-				scrollToVerseConvertViews[itemType] = child;
+			final int firstPos = getFirstVisiblePosition();
+			final int lastPos = getLastVisiblePosition();
+			if (position >= firstPos && position <= lastPos) {
+				// we have the child on screen, no need to measure
+				View child = getChildAt(position - firstPos);
 				stopFling();
-				setSelectionFromTop(position, - (int) (prop * child.getMeasuredHeight()));
+				setSelectionFromTop(position, -(int) (prop * child.getHeight()) + paddingNegator);
+				return;
 			}
+
+			// child needed is not on screen, we need to measure
+			if (scrollToVerseConvertViews == null) {
+				// initialize scrollToVerseConvertViews if needed
+				scrollToVerseConvertViews = new View[adapter.getViewTypeCount()];
+			}
+			int itemType = adapter.getItemViewType(position);
+			View convertView = scrollToVerseConvertViews[itemType];
+			View child = adapter.getView(position, convertView, VersesView.this);
+			child.measure(MeasureSpec.makeMeasureSpec(VersesView.this.getWidth() - VersesView.this.getPaddingLeft() - VersesView.this.getPaddingRight(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+			scrollToVerseConvertViews[itemType] = child;
+			stopFling();
+			setSelectionFromTop(position, -(int) (prop * child.getMeasuredHeight()) + paddingNegator);
 		});
 	}
 	
 	public void scrollToTop() {
-		post(new Runnable() {
-			@Override public void run() {
-		        setSelectionFromTop(0, 0);
-			}
-		});
+		post(() -> setSelectionFromTop(0, 0));
 	}
 
 	public void setSelectedVersesListener(SelectedVersesListener listener) {
@@ -530,8 +532,7 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 		int position = -1;
 
 		final View firstChild = view.getChildAt(0);
-		final int bottom = firstChild.getBottom();
-		final int remaining = bottom - view.getPaddingTop();
+		final int remaining = firstChild.getBottom(); // padding top is ignored
 		if (remaining >= 0) { // bottom of first child is lower than top padding
 			position = firstVisibleItem;
 			prop = 1.f - (float) remaining / firstChild.getHeight();
@@ -552,7 +553,8 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 				onVerseScrollListener.onVerseScroll(this, true, 0, 0);
 			}
 
-			if (position == 0 && prop == 0.f) {
+			if (position == 0 && firstChild.getTop() == this.getPaddingTop()) {
+				// we are really at the top
 				onVerseScrollListener.onScrollToTop(this);
 			}
 		}
@@ -564,10 +566,6 @@ public class VersesView extends ListView implements AbsListView.OnScrollListener
 	
 	public void stopFling() {
 		StopListFling.stop(this);
-	}
-
-	public void updateAdapter() {
-		adapter.notifyDataSetChanged();
 	}
 
 	@Override
