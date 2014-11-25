@@ -375,6 +375,8 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 		lContent.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
 		lContent.setLineSpacing(0, S.applied.lineSpacingMult);
 
+		SettingsActivity.setPaddingBasedOnPreferences(lContent);
+
 		scrollContent.setBackgroundColor(S.applied.backgroundColor);
 
 		if (Preferences.getBoolean(getString(R.string.pref_keepScreenOn_key), getResources().getBoolean(R.bool.pref_keepScreenOn_default))) {

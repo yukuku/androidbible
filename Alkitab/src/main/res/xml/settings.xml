@@ -21,6 +21,12 @@
 			android:key="@string/pref_keepScreenOn_key"
 			android:summary="@string/pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab"
 			android:title="@string/pref_biarkan_layar_menyala" />
+
+		<CheckBoxPreference
+			android:defaultValue="@bool/pref_textPadding_default"
+			android:key="@string/pref_textPadding_key"
+			android:summary="@string/pref_textPadding_summary"
+			android:title="@string/pref_textPadding_title" />
 	</PreferenceCategory>
 
 	<PreferenceCategory android:title="@string/pref_penggunaan">

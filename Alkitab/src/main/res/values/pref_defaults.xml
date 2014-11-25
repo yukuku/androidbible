@@ -4,6 +4,7 @@
     <integer name="pref_ukuranHuruf2_default">18</integer>
 
     <bool name="pref_keepScreenOn_default">true</bool>
+    <bool name="pref_textPadding_default">true</bool>
 
     <string name="pref_volumeButtonNavigation_default" translatable="false">default</string>
 

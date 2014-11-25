@@ -53,6 +53,7 @@ import yuku.alkitab.base.ac.MarkerListActivity;
 import yuku.alkitab.base.ac.MarkersActivity;
 import yuku.alkitab.base.ac.NoteActivity;
 import yuku.alkitab.base.ac.SearchActivity;
+import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.ShareActivity;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.config.AppConfig;
@@ -374,41 +375,27 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		splitRoot.setListener(splitRoot_listener);
 
-		bGoto.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) { bGoto_click(); }
-		});
-		bGoto.setOnLongClickListener(new View.OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				bGoto_longClick();
-				return true;
-			}
+		bGoto.setOnClickListener(v -> bGoto_click());
+		bGoto.setOnLongClickListener(v -> {
+			bGoto_longClick();
+			return true;
 		});
 		bGoto.setFloaterDragListener(bGoto_floaterDrag);
 
-		bLeft.setOnClickListener(new View.OnClickListener() {
-			@Override public void onClick(View v) { bLeft_click(); }
-		});
-		bRight.setOnClickListener(new View.OnClickListener() {
-			@Override public void onClick(View v) { bRight_click(); }
-		});
-		bVersion.setOnClickListener(new View.OnClickListener() {
-			@Override public void onClick(View v) { bVersion_click(); }
-		});
+		bLeft.setOnClickListener(v -> bLeft_click());
+		bRight.setOnClickListener(v -> bRight_click());
+		bVersion.setOnClickListener(v -> bVersion_click());
 
 		floater.setListener(floater_listener);
 
-		lsText.setOnKeyListener(new View.OnKeyListener() {
-			@Override public boolean onKey(View v, int keyCode, KeyEvent event) {
-				int action = event.getAction();
-				if (action == KeyEvent.ACTION_DOWN) {
-					return press(keyCode);
-				} else if (action == KeyEvent.ACTION_MULTIPLE) {
-					return press(keyCode);
-				}
-				return false;
+		lsText.setOnKeyListener((v, keyCode, event) -> {
+			int action = event.getAction();
+			if (action == KeyEvent.ACTION_DOWN) {
+				return press(keyCode);
+			} else if (action == KeyEvent.ACTION_MULTIPLE) {
+				return press(keyCode);
 			}
+			return false;
 		});
 
 		// listeners
@@ -945,6 +932,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		// necessary
 		lsText.invalidateViews();
 		lsSplit1.invalidateViews();
+
+		SettingsActivity.setPaddingBasedOnPreferences(lsText);
+		SettingsActivity.setPaddingBasedOnPreferences(lsSplit1);
 	}
 	
 	@Override protected void onStop() {

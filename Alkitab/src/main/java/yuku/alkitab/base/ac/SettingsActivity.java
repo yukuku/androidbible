@@ -3,11 +3,14 @@ package yuku.alkitab.base.ac;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.view.View;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
 import yuku.alkitab.base.ac.base.BasePreferenceActivity;
 import yuku.alkitab.base.sync.SyncSettingsActivity;
@@ -69,6 +72,12 @@ public class SettingsActivity extends BasePreferenceActivity {
 			}
 		});
 
+		// show textPadding preference only when there is nonzero side padding on this configuration
+		if (getResources().getDimensionPixelSize(R.dimen.text_side_padding) == 0) {
+			final Preference preference = findPreference(getString(R.string.pref_textPadding_key));
+			getPreferenceScreen().removePreference(preference);
+		}
+
 		findPreference(getString(R.string.pref_sync_key)).setIntent(new Intent(App.context, SyncSettingsActivity.class));
 	}
 
@@ -100,5 +109,17 @@ public class SettingsActivity extends BasePreferenceActivity {
 				return changed;
 			}
 		});
+	}
+
+	public static void setPaddingBasedOnPreferences(final View view) {
+		final Resources r = App.context.getResources();
+		if (Preferences.getBoolean(r.getString(R.string.pref_textPadding_key), r.getBoolean(R.bool.pref_textPadding_default))) {
+			final int tb = r.getDimensionPixelOffset(R.dimen.text_topbottom_padding);
+			final int lr = r.getDimensionPixelOffset(R.dimen.text_side_padding);
+			view.setPadding(lr, tb, lr, tb);
+		} else {
+			final int no = r.getDimensionPixelOffset(R.dimen.text_nopadding);
+			view.setPadding(no, no, no, no);
+		}
 	}
 }
