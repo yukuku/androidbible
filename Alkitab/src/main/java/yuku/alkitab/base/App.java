@@ -67,7 +67,8 @@ public class App extends yuku.afw.App {
 		FeedbackSender fs = FeedbackSender.getInstance(context);
 		fs.trySend();
 
-		PreferenceManager.setDefaultValues(context, R.xml.settings, false);
+		PreferenceManager.setDefaultValues(context, R.xml.settings_display, false);
+		PreferenceManager.setDefaultValues(context, R.xml.settings_usage, false);
 		PreferenceManager.setDefaultValues(context, R.xml.secret_settings, false);
 		PreferenceManager.setDefaultValues(context, R.xml.sync_settings, false);
 

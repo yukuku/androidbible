@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<ListPreference
+		android:defaultValue="@string/pref_language_default"
+		android:entries="@array/pref_language_labels"
+		android:entryValues="@array/pref_language_values"
+		android:key="@string/pref_language_key"
+		android:negativeButtonText="@null"
+		android:positiveButtonText="@null"
+		android:title="@string/pref_bahasa_language" />
+
+	<CheckBoxPreference
+		android:defaultValue="@bool/pref_keepScreenOn_default"
+		android:key="@string/pref_keepScreenOn_key"
+		android:summary="@string/pref_layar_tidak_akan_padam_ketika_membaca_teks_alkitab"
+		android:title="@string/pref_biarkan_layar_menyala" />
+
+	<CheckBoxPreference
+		android:defaultValue="@bool/pref_textPadding_default"
+		android:key="@string/pref_textPadding_key"
+		android:summary="@string/pref_textPadding_summary"
+		android:title="@string/pref_textPadding_title" />
+</PreferenceScreen>
