@@ -523,7 +523,7 @@ public class Sync {
 		if (BuildConfig.DEBUG) {
 			return "http://10.0.3.2:9080";
 		} else {
-			return "http://sync.bibleforandroid.com";
+			return "https://alkitab-host.appspot.com";
 		}
 	}
 

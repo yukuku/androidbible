@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class Gcm {
 	static final String TAG = Gcm.class.getSimpleName();
 
-	public static final String SENDER_ID = "979768394162";
+	public static final String SENDER_ID = "596544549791";
 
 	public static final String GCM_MESSAGE_KEY_source_installation_id = "source_installation_id";
 	public static final String GCM_MESSAGE_KEY_encoded_data = "encoded_data";
