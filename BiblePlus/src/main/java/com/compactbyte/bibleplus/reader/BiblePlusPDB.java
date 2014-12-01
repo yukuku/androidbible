@@ -302,9 +302,9 @@ public class BiblePlusPDB {
 	 *            verse number
 	 */
 	private void AddResult(Vector result, int b, int c, int v) {
-		result.addElement(new Integer(b));
-		result.addElement(new Integer(c));
-		result.addElement(new Integer(v));
+		result.addElement(b);
+		result.addElement(c);
+		result.addElement(v);
 	}
 
 	/**

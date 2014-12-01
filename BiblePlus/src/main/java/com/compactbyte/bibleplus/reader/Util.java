@@ -56,7 +56,7 @@ public class Util {
 		if (s == null || charsToReplace == null) {
 			return null;
 		}
-		StringBuffer res = new StringBuffer();
+		StringBuilder res = new StringBuilder();
 		for (int i = 0; i < s.length(); i++) {
 			char c = s.charAt(i);
 			if (c == prefix || charsToReplace.indexOf(c) >= 0) {
@@ -222,7 +222,7 @@ public class Util {
 		if (s == null) {
 			return null;
 		}
-		StringBuffer res = new StringBuffer();
+		StringBuilder res = new StringBuilder();
 		int i = 0;
 		while (i < s.length()) {
 			char c = s.charAt(i);
