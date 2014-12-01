@@ -2,41 +2,30 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/ATree/ATree.iml" filepath="$PROJECT_DIR$/../yuku-android-util/ATree/ATree.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/Afw/Afw.iml" filepath="$PROJECT_DIR$/../yuku-android-util/Afw/Afw.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ATree/ATree.iml" filepath="$PROJECT_DIR$/ATree/ATree.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Afw/Afw.iml" filepath="$PROJECT_DIR$/Afw/Afw.iml" />
       <module fileurl="file://$PROJECT_DIR$/Alkitab/Alkitab.iml" filepath="$PROJECT_DIR$/Alkitab/Alkitab.iml" />
-      <module fileurl="file://$PROJECT_DIR$/AlkitabConverter/AlkitabConverter.iml" filepath="$PROJECT_DIR$/AlkitabConverter/AlkitabConverter.iml" />
-      <module fileurl="file://$PROJECT_DIR$/AlkitabConverterProcesses/AlkitabConverterProcesses.iml" filepath="$PROJECT_DIR$/AlkitabConverterProcesses/AlkitabConverterProcesses.iml" />
-      <module fileurl="file://$PROJECT_DIR$/AlkitabConverterTest/AlkitabConverterTest.iml" filepath="$PROJECT_DIR$/AlkitabConverterTest/AlkitabConverterTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabFeedback/AlkitabFeedback.iml" filepath="$PROJECT_DIR$/AlkitabFeedback/AlkitabFeedback.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabIntegration/AlkitabIntegration.iml" filepath="$PROJECT_DIR$/AlkitabIntegration/AlkitabIntegration.iml" />
-      <module fileurl="file://$PROJECT_DIR$/AlkitabIntegrationTest/AlkitabIntegrationTest.iml" filepath="$PROJECT_DIR$/AlkitabIntegrationTest/AlkitabIntegrationTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabIo/AlkitabIo.iml" filepath="$PROJECT_DIR$/AlkitabIo/AlkitabIo.iml" />
-      <module fileurl="file://$PROJECT_DIR$/AlkitabIoTest/AlkitabIoTest.iml" filepath="$PROJECT_DIR$/AlkitabIoTest/AlkitabIoTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabModel/AlkitabModel.iml" filepath="$PROJECT_DIR$/AlkitabModel/AlkitabModel.iml" />
-      <module fileurl="file://$PROJECT_DIR$/AlkitabTest/AlkitabTest.iml" filepath="$PROJECT_DIR$/AlkitabTest/AlkitabTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/AlkitabYes2/AlkitabYes2.iml" filepath="$PROJECT_DIR$/AlkitabYes2/AlkitabYes2.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/AmbilWarna/AmbilWarna.iml" filepath="$PROJECT_DIR$/../yuku-android-util/AmbilWarna/AmbilWarna.iml" />
-      <module fileurl="file://$PROJECT_DIR$/AndroidBibleReminder/AndroidBibleReminder.iml" filepath="$PROJECT_DIR$/AndroidBibleReminder/AndroidBibleReminder.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/AndroidCrypto/AndroidCrypto.iml" filepath="$PROJECT_DIR$/../yuku-android-util/AndroidCrypto/AndroidCrypto.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AmbilWarna/AmbilWarna.iml" filepath="$PROJECT_DIR$/AmbilWarna/AmbilWarna.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AndroidCrypto/AndroidCrypto.iml" filepath="$PROJECT_DIR$/AndroidCrypto/AndroidCrypto.iml" />
       <module fileurl="file://$PROJECT_DIR$/BiblePlus/BiblePlus.iml" filepath="$PROJECT_DIR$/BiblePlus/BiblePlus.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/BintexReader/BintexReader.iml" filepath="$PROJECT_DIR$/../yuku-android-util/BintexReader/BintexReader.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/BintexWriter/BintexWriter.iml" filepath="$PROJECT_DIR$/../yuku-android-util/BintexWriter/BintexWriter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BintexReader/BintexReader.iml" filepath="$PROJECT_DIR$/BintexReader/BintexReader.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BintexWriter/BintexWriter.iml" filepath="$PROJECT_DIR$/BintexWriter/BintexWriter.iml" />
       <module fileurl="file://$PROJECT_DIR$/DragSortListView/DragSortListView.iml" filepath="$PROJECT_DIR$/DragSortListView/DragSortListView.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/FileChooser/FileChooser.iml" filepath="$PROJECT_DIR$/../yuku-android-util/FileChooser/FileChooser.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/FlowLayout/FlowLayout.iml" filepath="$PROJECT_DIR$/../yuku-android-util/FlowLayout/FlowLayout.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/KirimFidbek/KirimFidbek.iml" filepath="$PROJECT_DIR$/../yuku-android-util/KirimFidbek/KirimFidbek.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FileChooser/FileChooser.iml" filepath="$PROJECT_DIR$/FileChooser/FileChooser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FlowLayout/FlowLayout.iml" filepath="$PROJECT_DIR$/FlowLayout/FlowLayout.iml" />
+      <module fileurl="file://$PROJECT_DIR$/KirimFidbek/KirimFidbek.iml" filepath="$PROJECT_DIR$/KirimFidbek/KirimFidbek.iml" />
       <module fileurl="file://$PROJECT_DIR$/KpriModel/KpriModel.iml" filepath="$PROJECT_DIR$/KpriModel/KpriModel.iml" />
       <module fileurl="file://$PROJECT_DIR$/KpriViewerLib/KpriViewerLib.iml" filepath="$PROJECT_DIR$/KpriViewerLib/KpriViewerLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/NewQuickAction3DLib/NewQuickAction3DLib.iml" filepath="$PROJECT_DIR$/NewQuickAction3DLib/NewQuickAction3DLib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/RpaToRpb/RpaToRpb.iml" filepath="$PROJECT_DIR$/RpaToRpb/RpaToRpb.iml" />
-      <module fileurl="file://$PROJECT_DIR$/RpbTester/RpbTester.iml" filepath="$PROJECT_DIR$/RpbTester/RpbTester.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/Salsa20/Salsa20.iml" filepath="$PROJECT_DIR$/../yuku-android-util/Salsa20/Salsa20.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/SdkSearchBar/SdkSearchBar.iml" filepath="$PROJECT_DIR$/../yuku-android-util/SdkSearchBar/SdkSearchBar.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/SimpleTrove/SimpleTrove.iml" filepath="$PROJECT_DIR$/../yuku-android-util/SimpleTrove/SimpleTrove.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../yuku-android-util/Snappy/Snappy.iml" filepath="$PROJECT_DIR$/../yuku-android-util/Snappy/Snappy.iml" />
-      <module fileurl="file://$PROJECT_DIR$/YetToYes2/YetToYes2.iml" filepath="$PROJECT_DIR$/YetToYes2/YetToYes2.iml" />
-      <module fileurl="file://$PROJECT_DIR$/AppCompat/android-support-v7-appcompat.iml" filepath="$PROJECT_DIR$/AppCompat/android-support-v7-appcompat.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SdkSearchBar/SdkSearchBar.iml" filepath="$PROJECT_DIR$/SdkSearchBar/SdkSearchBar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SimpleTrove/SimpleTrove.iml" filepath="$PROJECT_DIR$/SimpleTrove/SimpleTrove.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Snappy/Snappy.iml" filepath="$PROJECT_DIR$/Snappy/Snappy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/androidbible.iml" filepath="$PROJECT_DIR$/androidbible.iml" />
     </modules>
   </component>
 </project>
