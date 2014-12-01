@@ -1,13 +1,6 @@
-# Google Android
-bin/
-gen/
-xtend-gen/
-local.properties
-
-# Mac
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
 .DS_Store
-
-# IntelliJ
-.idea/workspace.xml
-/out/
-.idea/artifacts/
+/build
