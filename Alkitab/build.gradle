@@ -4,12 +4,21 @@ android {
     compileSdkVersion 19
     buildToolsVersion "21.1.1"
 
+    signingConfigs {
+        release {
+            keyAlias System.getenv("SIGN_ALIAS")
+            keyPassword System.getenv("SIGN_PASSWORD")
+            storeFile file(System.getenv("SIGN_KEYSTORE") != null ? System.getenv("SIGN_KEYSTORE") : "/dev/null")
+            storePassword System.getenv("SIGN_PASSWORD")
+        }
+    }
+
     defaultConfig {
         applicationId "yuku.alkitab.debug"
         minSdkVersion 7
         targetSdkVersion 19
         versionCode 160
-        versionName "3.6.4"
+        versionName '3.6.4'
     }
 
     compileOptions {
@@ -21,6 +30,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 
@@ -36,6 +46,10 @@ android {
         }
 
         instrumentTest.setRoot('tests')
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
     }
 }
 
