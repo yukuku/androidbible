@@ -333,9 +333,11 @@
   <string name="search_no_result_fallback">Naciśnij tutaj, aby przejść do <u>^1</u>.</string>
   <string name="marker_transfer_to_device_title">Prześlij na inne urządzenie</string>
   <string name="marker_transfer_to_device_description">Przenieś wszystkie zakładki, notatki i podkreślenia na inny telefon lub tablet. Zalecamy użycie Gmail/Email.</string>
+  <string name="marker_transfer_to_computer_title">Prześlij do edycji</string>
   <string name="marker_transfer_to_computer_description">Zapisz zakładki, notatki i podkreślenia w pliku HTML do dalszej edycji lub wydruku ze swojego komputera.</string>
   <string name="bookmark_delete_confirmation">Usunąć tę zakładkę?</string>
-  <string name="drawer_open">Prześlij na inne urządzenie</string>
+  <string name="drawer_open">Otwórz szufladę</string>
+  <string name="drawer_close">Zamknij szufladę</string>
   <string name="menuSplitVersion">Interlinia</string>
   <string name="about_beta_feedback">Wiadomość zwrotna dla wersji beta</string>
   <string name="menuBible">Biblia</string>
@@ -359,6 +361,7 @@
   <string name="book_filter_new_apocalypse">Apokalipsa</string>
   <string name="search_filter_multiple_books_selected">%s zaznaczonych ksiąg</string>
   <string name="search_version_select_label">Szukaj w:</string>
+  <string name="show_hidden_version_warning">Włączenie tej opcji, pozwala ci pobrać przekłady Biblii, które mogą podlegać pewnym regionalnym lub pieniężnym wymaganiom. Zanim je pobierzesz, proszę, upewnij się, że masz pozwolenie, aby to zrobić. Jesteś w pełni odpowiedzialny za pobieranie i używanie takich przekładów i jako autor tej aplikacji, nie mogę być za to rozliczany. Kliknij OK jeżeli zgadzasz się z powyższymi warunkami.</string>
   <string name="version_config_updater_error_download_modify_time">Problem w sprawdzeniu listy przekładów.</string>
   <string name="version_config_updater_error_modify_time_failed">Lista przekładów nie jest dostępna: %s</string>
   <string name="version_config_updater_no_newer_available">Nie znaleziono aktualizacji przekładu.</string>
@@ -374,6 +377,7 @@
   <string name="version_download_not_yes">Adres internetowy musi mieć zakończenie .yes.</string>
   <string name="patch_text_intro">Proszę wyedytuj części tekstu, ktore uważasz, że mogłyby zostać poprawione lub lepsze.\n\nNie zmieniaj innych części.\n\nKliknij <b><small>WYŚLIJ</small></b> kiedy skończysz.</string>
   <string name="patch_text_error_no_edits">Proszę o dokonanie edycji, zanim wyślesz.</string>
+  <string name="patch_text_menu_reference">Odnośnik</string>
   <string name="patch_text_menu_send">Wyślij</string>
   <string name="note_actionbar_edit">Edytuj</string>
   <string name="note_actionbar_delete">Usuń</string>

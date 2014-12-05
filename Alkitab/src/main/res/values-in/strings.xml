@@ -409,6 +409,7 @@
   <string name="sync_login_survey_religion_christianity_lutheran">Lutheran</string>
   <string name="sync_login_survey_religion_christianity_methodist">Methodis</string>
   <string name="sync_login_survey_religion_christianity_anglican">Anglikan</string>
+  <string name="sync_login_survey_religion_christianity_adventist">Advent</string>
   <string name="sync_login_survey_religion_christianity_pentecostal">Pentakosta/Karismatik</string>
   <string name="sync_login_survey_religion_christianity_roman">Katolik Roma</string>
   <string name="sync_login_survey_religion_christianity_other">Denominasi lain</string>

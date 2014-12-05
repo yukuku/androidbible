@@ -409,6 +409,7 @@
   <string name="sync_login_survey_religion_christianity_lutheran">Lutherse</string>
   <string name="sync_login_survey_religion_christianity_methodist">Metodis</string>
   <string name="sync_login_survey_religion_christianity_anglican">Anglikaan</string>
+  <string name="sync_login_survey_religion_christianity_adventist">Adventis</string>
   <string name="sync_login_survey_religion_christianity_pentecostal">Pinkster/Charismaties</string>
   <string name="sync_login_survey_religion_christianity_roman">Rooms</string>
   <string name="sync_login_survey_religion_christianity_other">Ander Denominasie</string>
