@@ -13,9 +13,6 @@
   <string name="pref_biarkan_layar_menyala">Display angeschaltet lassen</string>
   <string name="pref_penampilan_layar">Display</string>
   <string name="pref_volumeButtonNavigation_title">Navigation mit Lautstärkewippe</string>
-  <string name="pref_volumeButtonNavigation_summary">Lautstärkewippe zur Navigation zwischen Versen oder Kapiteln benutzen</string>
   <string name="pref_copyWithVerseNumbers_title">Füge Versnummern hinzu</string>
   <string name="pref_copyWithVerseNumbers_summary">Setze beim Kopieren/Teilen vor jeden Vers die Versnummer</string>
-  <string name="pref_help_text_appearance_title">Textdarstellung</string>
-  <string name="pref_help_text_appearance_summary">Ändere Größe, Schriftart, Farbe und Zeilenabstand des Textes</string>
 </resources>

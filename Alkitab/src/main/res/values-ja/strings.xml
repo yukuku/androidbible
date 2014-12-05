@@ -83,6 +83,7 @@
   <string name="tambah">追加</string>
   <string name="versi_lainnya">その他の版...</string>
   <string name="ada_kegagalan_membuka_edisiid">%s が見つかりません</string>
+  <string name="version_error_opening">%s が開けません.</string>
   <string name="pdb_file_options">PDBファイルのオプション</string>
   <string name="greek_charset">ギリシャ語</string>
   <string name="hebrew_charset">ヘブライ語</string>
@@ -100,6 +101,16 @@
   <string name="cp_writing_translated_file">変換したファイルを書き込んでいます.</string>
   <string name="cp_reading_book_info">%s の情報を読み出しています.</string>
   <string name="cp_writing_text_of_book_chapters">%1$s 書 (%2$s 章) のテキストを書き込んでいます.</string>
+  <string name="ed_type_key">種類</string>
+  <string name="ed_type_internal">ビルトイン</string>
+  <string name="ed_type_preset">ダウンロード可能</string>
+  <string name="ed_type_db">ダウンロード済</string>
+  <string name="ed_locale_locale">言語コード</string>
+  <string name="ed_shortName_shortName">略称</string>
+  <string name="ed_title_title">タイトル</string>
+  <string name="ed_stored_in_file">ファイルの場所</string>
+  <string name="ed_default_filename_file">プリセット名</string>
+  <string name="ed_download_url_url">ダウンロードURL</string>
   <string name="ed_version_details">バージョンの詳細</string>
   <string name="ed_choose_pdb_or_yes_file">.pdbか.yesファイルを選択</string>
   <string name="ed_no_external_storage">SDカードか USBストレージが見つかりません。</string>
@@ -113,7 +124,13 @@
   <string name="ed_error_reading_pdb_file">PDBファイルの読み込みでエラーが発生しました</string>
   <string name="ed_details">詳細： </string>
   <string name="ed_buka_file_pdb_yes_lainnya">.pdb/.yesファイルをオープンする...</string>
+  <string name="ed_section_all">すべて</string>
+  <string name="ed_section_downloaded">ダウンロード済</string>
+  <string name="ed_download_button">ダウンロード</string>
+  <string name="ed_update_button">アップデート</string>
+  <string name="ed_details_update_available">アップデート利用可能</string>
   <string name="info_terperinci">詳細</string>
+  <string name="buang_dari_daftar">削除</string>
   <string name="edit_bookmark">ブックマークの編集</string>
   <string name="hapus_stabilo">マーカーの削除</string>
   <string name="edit_note">ノートの編集</string>
@@ -212,6 +229,7 @@
   <string name="desc_previous_chapter">前の章</string>
   <string name="desc_next_chapter">次の章</string>
   <string name="desc_drag_to_reorder_labels">ラベルを並べ替えるにはドラッグする</string>
+  <string name="desc_drag_to_reorder_versions">書巻を並べかえるにはドラッグしてください。</string>
   <string name="desc_close">閉じる</string>
   <string name="desc_play">再生</string>
   <string name="desc_progress_1">しおり1</string>
@@ -341,4 +359,17 @@
   <string name="book_filter_new_acts">12使徒の歴史</string>
   <string name="book_filter_new_pauline_epistles">パウロの手紙</string>
   <string name="book_filter_new_general_epistles">一般の書簡</string>
+  <string name="book_filter_new_apocalypse">黙示録</string>
+  <string name="search_filter_multiple_books_selected">%s 書を選択中</string>
+  <string name="search_version_select_label">検索対象:</string>
+  <string name="version_config_updater_error_download_modify_time">バージョンリストの確認に失敗しました。</string>
+  <string name="version_config_updater_error_modify_time_failed">バージョンリストは利用できません: %s</string>
+  <string name="version_config_updater_no_newer_available">版のアップデートはありません。</string>
+  <string name="version_config_updater_error_download_list">版のリストのダウンロードに失敗しました。</string>
+  <string name="version_config_updater_error_parsing_list">ダウンロードした版のリストは破損しています。</string>
+  <string name="version_config_updater_updated">版のリストを更新しました!</string>
+  <string name="version_config_cannot_write_updated_list">更新リストの保存に失敗しました。</string>
+  <string name="version_config_updater_error_modify_time_cannot_parse">版のリストの更新確認に失敗しました。</string>
+  <string name="version_download_add_from_local">ローカルストレージから</string>
+  <string name="version_download_add_from_url">インターネットURLから</string>
 </resources>

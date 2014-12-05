@@ -13,9 +13,7 @@
   <string name="pref_biarkan_layar_menyala">Layar selalu menyala</string>
   <string name="pref_penampilan_layar">Penampilan Layar</string>
   <string name="pref_volumeButtonNavigation_title">Pindah dengan volume</string>
-  <string name="pref_volumeButtonNavigation_summary">Pakai tombol volume untuk berpindah ayat atau pasal</string>
   <string name="pref_copyWithVerseNumbers_title">Bubuhi nomor ayat</string>
   <string name="pref_copyWithVerseNumbers_summary">Awali tiap ayat dengan nomornya saat menyalin dan membagikan</string>
-  <string name="pref_help_text_appearance_title">Penampilan teks</string>
-  <string name="pref_help_text_appearance_summary">Ubah ukuran teks, jenis huruf, warna, dan jarak antar baris</string>
+  <string name="pref_showHiddenVersion_title">Versi yang mungkin terbatas</string>
 </resources>

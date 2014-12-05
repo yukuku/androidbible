@@ -100,6 +100,16 @@
   <string name="cp_writing_translated_file">Escribiendo archivo traducido</string>
   <string name="cp_reading_book_info">Leyendo información del libro: %s</string>
   <string name="cp_writing_text_of_book_chapters">Escribiendo texto del libro %1$s (%2$s capítulos)</string>
+  <string name="ed_type_key">Tipo</string>
+  <string name="ed_type_internal">Incorporado</string>
+  <string name="ed_type_preset">Descargable</string>
+  <string name="ed_type_db">Descargado</string>
+  <string name="ed_locale_locale">Código de lenguaje</string>
+  <string name="ed_shortName_shortName">Nombre corto</string>
+  <string name="ed_title_title">Titulo</string>
+  <string name="ed_stored_in_file">Ubicación del archivo</string>
+  <string name="ed_default_filename_file">Nombre del preajuste</string>
+  <string name="ed_download_url_url">Descargar URL</string>
   <string name="ed_version_details">Detalles de la Versión</string>
   <string name="ed_choose_pdb_or_yes_file">Elija un archivo .pdb o .yes</string>
   <string name="ed_no_external_storage">No se encontró Tarjeta SD ni Almacenamiento USB.</string>
@@ -113,7 +123,13 @@
   <string name="ed_error_reading_pdb_file">Error leyendo archivo PDB</string>
   <string name="ed_details">Detalles: </string>
   <string name="ed_buka_file_pdb_yes_lainnya">Abrir un archivo .pdb/.yes&#8230;</string>
+  <string name="ed_section_all">Todo</string>
+  <string name="ed_section_downloaded">Descargado</string>
+  <string name="ed_download_button">Descargar</string>
+  <string name="ed_update_button">Actualizar</string>
+  <string name="ed_details_update_available">Actualización disponible</string>
   <string name="info_terperinci">Detalles</string>
+  <string name="buang_dari_daftar">Remover</string>
   <string name="edit_bookmark">Editar marcador</string>
   <string name="hapus_stabilo">Remover resalto</string>
   <string name="edit_note">Editar nota</string>
@@ -343,4 +359,12 @@
   <string name="book_filter_new_apocalypse">Apocalipsis</string>
   <string name="search_filter_multiple_books_selected">%s libros seleccionados</string>
   <string name="search_version_select_label">Buscar en:</string>
+  <string name="version_config_updater_error_download_modify_time">Fallo al revisar la lista de versiones.</string>
+  <string name="version_config_updater_error_modify_time_failed">Lista de versiones no disponible: %s</string>
+  <string name="version_config_updater_no_newer_available">Actualizaciones de versión no encontradas.</string>
+  <string name="version_config_updater_error_download_list">Fallo al descargar la lista de versiones.</string>
+  <string name="version_config_updater_error_parsing_list">La lista de versiones descargada está corrupta.</string>
+  <string name="version_config_updater_updated">¡Lista de versiones actualizada!</string>
+  <string name="version_config_cannot_write_updated_list">Fallo al almacenar lista actualizada.</string>
+  <string name="version_config_updater_error_modify_time_cannot_parse">Fallo al analizar el corrector de la lista de actualización de versiones.</string>
 </resources>
