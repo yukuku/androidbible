@@ -139,7 +139,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 		final Call call = App.getOkHttpClient().newCall(
 			new Request.Builder()
-				.url(serverPrefix + "/sync/api/debug_sync")
+				.url(serverPrefix + "/sync/api/sync")
 				.post(requestBody)
 				.build()
 		);
