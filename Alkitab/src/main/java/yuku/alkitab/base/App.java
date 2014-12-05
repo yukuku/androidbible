@@ -1,8 +1,10 @@
 package yuku.alkitab.base;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
+import android.support.multidex.MultiDex;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import com.google.gson.Gson;
@@ -133,5 +135,10 @@ public class App extends yuku.afw.App {
 
 	public static Gson getDefaultGson() {
 		return GsonWrapper.INSTANCE.gson;
+	}
+
+	protected void attachBaseContext(Context base) {
+		super.attachBaseContext(base);
+		MultiDex.install(this);
 	}
 }

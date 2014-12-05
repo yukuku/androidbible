@@ -1,12 +1,12 @@
 package yuku.alkitab.base.ac.base;
 
-import android.app.ActionBar;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 
-public abstract class BaseActivity extends FragmentActivity {
+public abstract class BaseActivity extends ActionBarActivity {
 	public static final String TAG = BaseActivity.class.getSimpleName();
 	private boolean withUpButton;
 
@@ -27,7 +27,7 @@ public abstract class BaseActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		
 		if (withUpButton) {
-			ActionBar actionBar = getActionBar();
+			ActionBar actionBar = getSupportActionBar();
 			if (actionBar != null) {
 				actionBar.setDisplayHomeAsUpEnabled(true);
 			}
@@ -45,11 +45,11 @@ public abstract class BaseActivity extends FragmentActivity {
 	
 	@Override protected void onStart() {
 		super.onStart();
-	    EasyTracker.getInstance().activityStart(this);
+	    EasyTracker.getInstance(this).activityStart(this);
 	}
 	
 	@Override protected void onStop() {
 		super.onStop();
-		EasyTracker.getInstance().activityStop(this);
+		EasyTracker.getInstance(this).activityStop(this);
 	}
 }

@@ -6,6 +6,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
@@ -25,6 +26,7 @@ public class AboutActivity extends BaseActivity {
 
 	View root;
 	TextView tVersion;
+	TextView tBuild;
 	TextView tTranslators;
 	ImageView imgLogo;
 	TextView tAboutTextDesc;
@@ -36,11 +38,16 @@ public class AboutActivity extends BaseActivity {
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_about);
-		setTitle(String.format("%s %s", getString(R.string.app_name), App.getVersionName()));
-		getActionBar().setSubtitle(String.format("%s %s", App.getVersionCode(), getString(R.string.last_commit_hash)));
+
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		toolbar.setTitle(null);
+		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+		toolbar.setNavigationOnClickListener(v -> finish());
 
 		root = V.get(this, R.id.root);
 		tVersion = V.get(this, R.id.tVersion);
+		tBuild = V.get(this, R.id.tBuild);
 		tTranslators = V.get(this, R.id.tTranslators);
 		imgLogo = V.get(this, R.id.imgLogo);
 		tAboutTextDesc = V.get(this, R.id.tAboutTextDesc);
@@ -59,6 +66,7 @@ public class AboutActivity extends BaseActivity {
 		tAboutTextDesc.setMovementMethod(LinkMovementMethod.getInstance());
 
 		tVersion.setText(getString(R.string.about_version_name, App.getVersionName()));
+		tBuild.setText(String.format("%s %s", App.getVersionCode(), getString(R.string.last_commit_hash)));
 
 		bHelp.setOnClickListener(bHelp_click);
 		bDonation.setOnClickListener(bDonation_click);

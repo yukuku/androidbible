@@ -132,9 +132,9 @@ public class SongListActivity extends BaseActivity {
 	}
 	
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
-		setProgressBarIndeterminate(true);
+		setSupportProgressBarIndeterminate(true);
 		
 		setContentView(R.layout.activity_song_list);
 		
@@ -174,7 +174,7 @@ public class SongListActivity extends BaseActivity {
 	    			bChangeBook.setText(searchState.bookName);
 	    		}
         	} stillUsingInitialSearchState = false;
-        	setProgressBarIndeterminateVisibility(false); // somehow this is needed.
+        	setSupportProgressBarIndeterminateVisibility(false); // somehow this is needed.
         } else {
         	startSearch();
         }
@@ -186,12 +186,12 @@ public class SongListActivity extends BaseActivity {
         	
         	@Override public void onLoadFinished(Loader<List<SongInfo>> loader, List<SongInfo> data) {
         		adapter.setData(data);
-        		setProgressBarIndeterminateVisibility(false);
+        		setSupportProgressBarIndeterminateVisibility(false);
         	}
         	
         	@Override public void onLoaderReset(Loader<List<SongInfo>> loader) {
         		adapter.setData(null);
-        		setProgressBarIndeterminateVisibility(false);
+        		setSupportProgressBarIndeterminateVisibility(false);
         	}
         });
 	}
@@ -242,7 +242,7 @@ public class SongListActivity extends BaseActivity {
 
 	void startSearch() {
 		if (stillUsingInitialSearchState) return;
-		setProgressBarIndeterminateVisibility(true);
+		setSupportProgressBarIndeterminateVisibility(true);
 		loader.setFilterString(searchView.getQuery().toString());
 		loader.setDeepSearch(cDeepSearch.isChecked());
 		loader.forceLoad();

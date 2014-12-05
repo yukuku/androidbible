@@ -26,14 +26,15 @@ android {
             storePassword System.getenv("SIGN_PASSWORD")
         }
     }
-    compileSdkVersion 19
-    buildToolsVersion '20.0.0'
+    compileSdkVersion 21
+    buildToolsVersion '21.1.1'
     defaultConfig {
         applicationId 'yuku.alkitab.debug'
         minSdkVersion 14
-        targetSdkVersion 19
+        targetSdkVersion 21
         versionCode 14000173
         versionName '4.0.0-beta10pre'
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -50,6 +51,9 @@ android {
         checkReleaseBuilds false
     }
     productFlavors {
+        emulator_v21 {
+            minSdkVersion 21
+        }
     }
 }
 
@@ -71,12 +75,14 @@ dependencies {
     compile project(':AmbilWarna')
     compile project(':FileChooser')
     compile project(':ImportedDesktopVerseUtil')
-    compile 'com.android.support:support-v4:20.0.0'
-    compile 'com.squareup.picasso:picasso:2.3.3'
-    compile 'com.squareup.okhttp:okhttp:2.0.0'
-    compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
+    compile 'com.android.support:support-v4:21.0.2'
+    compile 'com.squareup.picasso:picasso:2.4.0'
+    compile 'com.squareup.okhttp:okhttp:2.1.0'
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.1.0'
     compile 'net.sf.trove4j:trove4j:3.0.3'
-    compile 'com.google.code.gson:gson:2.3'
+    compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.android.support:support-v13:20.0.0'
-    compile "com.google.android.gms:play-services:6.1.11"
+    compile 'com.google.android.gms:play-services:6.1.71'
+    compile 'com.android.support:appcompat-v7:21.0.2'
+    compile 'com.android.support:multidex:1.0.0'
 }

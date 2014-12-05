@@ -1,11 +1,11 @@
 package yuku.alkitab.base.ac;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,7 +55,7 @@ public class PatchTextActivity extends BaseActivity {
 		tBody.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp);
 		tBody.setLineSpacing(0, S.applied.lineSpacingMult);
 
-		final ActionBar actionBar = getActionBar();
+		final ActionBar actionBar = getSupportActionBar();
 		final Context actionBarContext = actionBar.getThemedContext();
 		final View customView = LayoutInflater.from(actionBarContext).inflate(R.layout.activity_patch_text_actionbar_custom, null, false);
 		actionBar.setDisplayShowCustomEnabled(true);

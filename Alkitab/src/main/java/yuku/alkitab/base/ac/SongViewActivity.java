@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -10,10 +9,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -369,10 +370,10 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	}
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState, true);
-		setProgressBarIndeterminate(true);
-		setProgressBarIndeterminateVisibility(false);
+		setSupportProgressBarIndeterminate(true);
+		setSupportProgressBarIndeterminateVisibility(false);
 		setContentView(R.layout.activity_song_view);
 
 		setTitle(R.string.sn_songs_activity_title);
@@ -381,7 +382,10 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		leftDrawer = V.get(this, R.id.left_drawer);
 		leftDrawer.configure(this, drawerLayout);
 
-		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_navigation_drawer, R.string.drawer_open, R.string.drawer_close) {
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+
+		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
 			@Override
 			public void onDrawerOpened(final View drawerView) {
 				drawer_opened();
@@ -396,7 +400,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		song_container.setTwofingerEnabled(false);
 		song_container.setListener(song_container_listener);
 
-		actionBar = getActionBar();
+		actionBar = getSupportActionBar();
 		actionBar.setDisplayShowHomeEnabled(Build.VERSION.SDK_INT < 18);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
@@ -520,10 +524,10 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		if (mediaState.icon != 0) menuMediaControl.setIcon(mediaState.icon);
 		if (mediaState.label != 0) menuMediaControl.setTitle(mediaState.label);
 		if (mediaState.loading) {
-			setProgressBarIndeterminateVisibility(true);
+			setSupportProgressBarIndeterminateVisibility(true);
 			menuMediaControl.setVisible(false);
 		} else {
-			setProgressBarIndeterminateVisibility(false);
+			setSupportProgressBarIndeterminateVisibility(false);
 			menuMediaControl.setVisible(true);
 		}
 	}

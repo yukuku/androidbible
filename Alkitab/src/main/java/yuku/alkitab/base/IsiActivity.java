@@ -1,7 +1,6 @@
 package yuku.alkitab.base;
 
 import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -19,16 +18,18 @@ import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.view.ActionMode;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.format.DateFormat;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
-import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -337,10 +338,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		leftDrawer = V.get(this, R.id.left_drawer);
 		leftDrawer.configure(this, drawerLayout);
 
-		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_navigation_drawer, R.string.drawer_open, R.string.drawer_close);
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+
+		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
 		drawerLayout.setDrawerListener(drawerToggle);
 
-		final ActionBar actionBar = getActionBar();
+		final ActionBar actionBar = getSupportActionBar();
 		actionBar.setDisplayShowCustomEnabled(true);
 		if (getResources().getConfiguration().smallestScreenWidthDp >= 360) {
 			actionBar.setDisplayShowTitleEnabled(true);
@@ -1099,7 +1103,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		if (yes) {
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-			getActionBar().hide();
+			getSupportActionBar().hide();
 			if (Build.VERSION.SDK_INT >= 19) {
 				decorView.setSystemUiVisibility(
 					View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -1160,7 +1164,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			fullScreen = true;
 		} else {
 			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-			getActionBar().show();
+			getSupportActionBar().show();
 			if (Build.VERSION.SDK_INT >= 19) {
 				decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
 				decorView.setOnSystemUiVisibilityChangeListener(null);
@@ -1816,7 +1820,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			}
 			
 			if (actionMode == null) {
-				actionMode = startActionMode(actionMode_callback);
+				actionMode = startSupportActionMode(actionMode_callback);
 			}
 			
 			if (actionMode != null) {
@@ -1882,7 +1886,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	
 	ActionMode.Callback actionMode_callback = new ActionMode.Callback() {
 		@Override public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-			mode.getMenuInflater().inflate(R.menu.context_isi, menu);
+			getMenuInflater().inflate(R.menu.context_isi, menu);
 			
 			/* The following "esvsbasal" thing is a personal thing by yuku that doesn't matter to anyone else.
 			 * Please ignore it and leave it intact. */

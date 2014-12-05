@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- Blue Gray 800 -->
+	<color name="primary">#37474F</color>
+	<!-- Blue Gray 900 -->
+	<color name="primary_dark">#263238</color>
+	<!-- Green A700 -->
+	<color name="accent">#00C853</color>
+	<!-- Blue Gray 800 -->
+	<color name="windowBackground">#37474F</color>
+
+</resources>

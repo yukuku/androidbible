@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<style name="Theme.Alkitab" parent="android:Theme.Holo">
-        <item name="android:actionButtonStyle">@style/Widget.Alkitab.ActionButton</item>
-		<item name="android:actionBarStyle">@style/AlkitabActionBar</item>
-    </style>
+	<style name="Theme.Alkitab.Base" parent="Theme.AppCompat.NoActionBar">
+        <item name="actionButtonStyle">@style/Widget.Alkitab.ActionButton</item>
+		<item name="actionBarStyle">@style/AlkitabActionBar</item>
+		<item name="colorPrimary">@color/primary</item>
+		<item name="colorPrimaryDark">@color/primary_dark</item>
+		<item name="colorAccent">@color/accent</item>
+		<item name="windowActionModeOverlay">true</item>
+		<item name="android:windowBackground">@color/windowBackground</item>
+	</style>
 
 	<style name="AlkitabActionBar" parent="android:Widget.ActionBar">
 		<item name="android:background">#222</item>
@@ -14,11 +19,6 @@
 	<style name="StandardWidthIndeterminateProgress" parent="@android:style/Widget.Holo.ProgressBar.Small">
 		<item name="android:minWidth">48dp</item>
 		<item name="android:maxWidth">48dp</item>
-	</style>
-
-	<style name="Theme.Alkitab.Content">
-	    <item name="android:windowContentOverlay">@null</item>
-	    <item name="android:windowBackground">@null</item>
 	</style>
 
     <style name="Theme.Alkitab.Transparent" parent="Theme.Alkitab">

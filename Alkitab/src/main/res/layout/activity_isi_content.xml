@@ -11,6 +11,7 @@
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:orientation="vertical"
+		android:layout_marginTop="?attr/actionBarSize"
 		tools:ignore="UselessParent">
 
 		<yuku.alkitab.base.widget.TwofingerLinearLayout
@@ -72,6 +73,15 @@
 		</yuku.alkitab.base.widget.TwofingerLinearLayout>
 
 	</LinearLayout>
+
+	<!-- We use a Toolbar so that our drawer can be displayed
+	 in front of the action bar -->
+	<android.support.v7.widget.Toolbar
+		android:id="@+id/toolbar"
+		android:layout_height="?attr/actionBarSize"
+		android:layout_width="match_parent"
+		android:background="?attr/colorPrimary" />
+
 
 	<yuku.alkitab.base.widget.Floater
 		android:id="@+id/floater"

@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 	<item
 		android:id="@+id/menuEdit"
 		android:icon="@drawable/ic_action_edit"
-		android:showAsAction="always|withText"
+		app:showAsAction="always|withText"
 		android:title="@string/note_actionbar_edit" />
 	<item
 		android:id="@+id/menuDelete"
 		android:icon="@drawable/ic_action_discard"
-		android:showAsAction="always|withText"
+		app:showAsAction="always|withText"
 		android:title="@string/note_actionbar_delete" />
 	<item
 		android:id="@+id/menuOk"
 		android:icon="@drawable/ic_action_ok"
-		android:showAsAction="always|withText"
+		app:showAsAction="always|withText"
 		android:title="@string/note_actionbar_ok" />
 </menu>

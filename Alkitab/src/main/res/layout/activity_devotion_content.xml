@@ -1,46 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<yuku.alkitab.base.widget.TwofingerLinearLayout
-	android:id="@+id/devotion_root"
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+	android:layout_height="match_parent"
+	android:orientation="vertical">
 
-	<FrameLayout
+	<android.support.v7.widget.Toolbar
+		android:id="@+id/toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?attr/actionBarSize"
+		android:background="?attr/colorPrimary" />
+
+	<yuku.alkitab.base.widget.TwofingerLinearLayout
+		android:id="@+id/devotion_root"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 
-		<ScrollView
-			android:id="@+id/scrollContent"
+		<FrameLayout
 			android:layout_width="match_parent"
 			android:layout_height="match_parent">
 
+			<ScrollView
+				android:id="@+id/scrollContent"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+
+				<TextView
+					android:id="@+id/lContent"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:paddingBottom="@dimen/text_topbottom_padding"
+					android:paddingLeft="@dimen/text_side_padding"
+					android:paddingRight="@dimen/text_side_padding"
+					android:paddingTop="@dimen/text_topbottom_padding"
+					android:text="*Devotion content here."
+					android:textColorLink="#33b5e5"
+					android:textIsSelectable="true"
+					tools:ignore="HardcodedText" />
+			</ScrollView>
+
 			<TextView
-				android:id="@+id/lContent"
-				android:layout_width="wrap_content"
+				android:id="@+id/lStatus"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:paddingBottom="@dimen/text_topbottom_padding"
-				android:paddingLeft="@dimen/text_side_padding"
-				android:paddingRight="@dimen/text_side_padding"
-				android:paddingTop="@dimen/text_topbottom_padding"
-				android:text="*Devotion content here."
-				android:textColorLink="#33b5e5"
-				android:textIsSelectable="true"
+				android:layout_gravity="bottom"
+				android:background="#222"
+				android:padding="4dp"
+				android:text="*status"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textColor="#ccc"
+				android:visibility="invisible"
 				tools:ignore="HardcodedText" />
-		</ScrollView>
 
-		<TextView
-			android:id="@+id/lStatus"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_gravity="bottom"
-			android:background="#222"
-			android:padding="4dp"
-			android:text="*status"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textColor="#ccc"
-			android:visibility="invisible"
-			tools:ignore="HardcodedText" />
-
-	</FrameLayout>
-</yuku.alkitab.base.widget.TwofingerLinearLayout>
+		</FrameLayout>
+	</yuku.alkitab.base.widget.TwofingerLinearLayout>
+</LinearLayout>
