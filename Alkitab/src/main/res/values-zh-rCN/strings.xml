@@ -100,6 +100,16 @@
   <string name="cp_writing_translated_file">正在写作翻译文件</string>
   <string name="cp_reading_book_info">正在读图书信息 %s</string>
   <string name="cp_writing_text_of_book_chapters">写这本书的文字： %1$s (%2$s 章)</string>
+  <string name="ed_type_key">类别</string>
+  <string name="ed_type_internal">内置</string>
+  <string name="ed_type_preset">可供下载</string>
+  <string name="ed_type_db">已下载</string>
+  <string name="ed_locale_locale">语言编号</string>
+  <string name="ed_shortName_shortName">缩写</string>
+  <string name="ed_title_title">标题</string>
+  <string name="ed_stored_in_file">档桉位置</string>
+  <string name="ed_default_filename_file">预设名称</string>
+  <string name="ed_download_url_url">下载网址</string>
   <string name="ed_version_details">版本详细信息</string>
   <string name="ed_choose_pdb_or_yes_file">选择一个.pdb或.yes档案</string>
   <string name="ed_no_external_storage">没有SD卡或USB存储设备发现。</string>
@@ -113,7 +123,13 @@
   <string name="ed_error_reading_pdb_file">读取PDB文件时出错</string>
   <string name="ed_details">详细说明： </string>
   <string name="ed_buka_file_pdb_yes_lainnya">开启一个.pdb/.yes档案</string>
+  <string name="ed_section_all">全部</string>
+  <string name="ed_section_downloaded">已下载</string>
+  <string name="ed_download_button">下载</string>
+  <string name="ed_update_button">更新</string>
+  <string name="ed_details_update_available">可供安装的更新</string>
   <string name="info_terperinci">详细说明</string>
+  <string name="buang_dari_daftar">移除</string>
   <string name="edit_bookmark">编辑书籤</string>
   <string name="hapus_stabilo">移除标记</string>
   <string name="edit_note">编辑笔记</string>
@@ -343,4 +359,12 @@
   <string name="book_filter_new_apocalypse">启示书</string>
   <string name="search_filter_multiple_books_selected">已选取%s书</string>
   <string name="search_version_select_label">搜寻范围：</string>
+  <string name="version_config_updater_error_download_modify_time">检查版本清单失败。</string>
+  <string name="version_config_updater_error_modify_time_failed">没有可提供的版本清单: %s</string>
+  <string name="version_config_updater_no_newer_available">没有可更供新的版本。</string>
+  <string name="version_config_updater_error_download_list">下载版本清单失败。</string>
+  <string name="version_config_updater_error_parsing_list">已下载的版本清单损毁。</string>
+  <string name="version_config_updater_updated">已更新版本清单！</string>
+  <string name="version_config_cannot_write_updated_list">储存更新清单收败。</string>
+  <string name="version_config_updater_error_modify_time_cannot_parse">分析检查更新版本清单失败。</string>
 </resources>

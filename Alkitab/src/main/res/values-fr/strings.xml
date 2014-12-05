@@ -27,7 +27,7 @@
   <string name="activity_title_markers">Balises</string>
   <string name="menu_markers">Marque-pages</string>
   <string name="hapus_pembatas_buku">Supprimer le marque-page</string>
-  <string name="menuShare">Partager</string>
+  <string name="menuShare">Menu de Partage</string>
   <string name="tulis_catatan">Créer une note</string>
   <string name="tambah_pembatas_buku">Ajouter un marque-page</string>
   <string name="salin_ayat">Copie du verset</string>
@@ -100,6 +100,16 @@
   <string name="cp_writing_translated_file">Ecriture du fichier traduit</string>
   <string name="cp_reading_book_info">Lecture de l\'info. du livre : %s</string>
   <string name="cp_writing_text_of_book_chapters">Ecriture du texte du livre %1$s (%2$s chapitres)</string>
+  <string name="ed_type_key">Modèle</string>
+  <string name="ed_type_internal">Natif</string>
+  <string name="ed_type_preset">Téléchargeable</string>
+  <string name="ed_type_db">Téléchargé</string>
+  <string name="ed_locale_locale">Code du Langage</string>
+  <string name="ed_shortName_shortName">Nom court</string>
+  <string name="ed_title_title">Titre</string>
+  <string name="ed_stored_in_file">Emplacement du fichier</string>
+  <string name="ed_default_filename_file">Nom originel</string>
+  <string name="ed_download_url_url">URL de téléchargement</string>
   <string name="ed_version_details">Détails de la version</string>
   <string name="ed_choose_pdb_or_yes_file">Choisir un fichier .pdb/.yes</string>
   <string name="ed_no_external_storage">Aucune carte SD ou disque USB trouvé.</string>
@@ -113,7 +123,13 @@
   <string name="ed_error_reading_pdb_file">Erreur rencontrée à la lecture du fichier PDB</string>
   <string name="ed_details">Détails :</string>
   <string name="ed_buka_file_pdb_yes_lainnya">Ouvrir un fichier .pdb/.yes&#8230;</string>
+  <string name="ed_section_all">Tout</string>
+  <string name="ed_section_downloaded">Téléchargé</string>
+  <string name="ed_download_button">Téléchargement</string>
+  <string name="ed_update_button">Mise à jour</string>
+  <string name="ed_details_update_available">Mise à jour disponible</string>
   <string name="info_terperinci">Détails</string>
+  <string name="buang_dari_daftar">Effacement</string>
   <string name="edit_bookmark">Editer le signet</string>
   <string name="hapus_stabilo">Suppression du surligné</string>
   <string name="edit_note">Editer la note</string>
@@ -343,4 +359,12 @@
   <string name="book_filter_new_apocalypse">Apocalypse</string>
   <string name="search_filter_multiple_books_selected">%s de livres sélectionnés</string>
   <string name="search_version_select_label">Recherche :</string>
+  <string name="version_config_updater_error_download_modify_time">La vérification de la liste des versions a échoué.</string>
+  <string name="version_config_updater_error_modify_time_failed">Liste des versions non valide : %s</string>
+  <string name="version_config_updater_no_newer_available">Aucune mise à jour de versions trouvée.</string>
+  <string name="version_config_updater_error_download_list">Echec lors du téléchargement de la liste des versions.</string>
+  <string name="version_config_updater_error_parsing_list">La liste des versions téléchargée est défectueuse.</string>
+  <string name="version_config_updater_updated">Liste des versions mise à jour !</string>
+  <string name="version_config_cannot_write_updated_list">Impossible de classer la liste des versions.</string>
+  <string name="version_config_updater_error_modify_time_cannot_parse">L\'analyse de la vérification de la liste des versions a échoué.</string>
 </resources>

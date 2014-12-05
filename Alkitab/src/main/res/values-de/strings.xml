@@ -100,6 +100,16 @@
   <string name="cp_writing_translated_file">Schreibe konvertierte Datei</string>
   <string name="cp_reading_book_info">Lese Buchinformationen: %s</string>
   <string name="cp_writing_text_of_book_chapters">Schreibe Text des Buches %1$s (%2$s Kapitel)</string>
+  <string name="ed_type_key">Typ</string>
+  <string name="ed_type_internal">Eingebaut</string>
+  <string name="ed_type_preset">Herunterladbar</string>
+  <string name="ed_type_db">Heruntergeladen</string>
+  <string name="ed_locale_locale">Sprachcode</string>
+  <string name="ed_shortName_shortName">Kürzel</string>
+  <string name="ed_title_title">Titel</string>
+  <string name="ed_stored_in_file">Gespeichert in</string>
+  <string name="ed_default_filename_file">Standardname</string>
+  <string name="ed_download_url_url">Download-URL</string>
   <string name="ed_version_details">Übersetzungsdetails</string>
   <string name="ed_choose_pdb_or_yes_file">Eine .pdb- or .yes-Datei auswählen</string>
   <string name="ed_no_external_storage">Keine SD-Karte oder USB-Stick gefunden.</string>
@@ -113,7 +123,13 @@
   <string name="ed_error_reading_pdb_file">Fehler beim Lesen der PDB-Datei</string>
   <string name="ed_details">Details: </string>
   <string name="ed_buka_file_pdb_yes_lainnya">Eine .pdb/.yes-Datei öffnen&#8230;</string>
+  <string name="ed_section_all">Alle</string>
+  <string name="ed_section_downloaded">Heruntergeladen</string>
+  <string name="ed_download_button">Herunterladen</string>
+  <string name="ed_update_button">Update</string>
+  <string name="ed_details_update_available">Update verfügbar</string>
   <string name="info_terperinci">Details</string>
+  <string name="buang_dari_daftar">Entfernen</string>
   <string name="edit_bookmark">Lesezeichen bearbeiten</string>
   <string name="hapus_stabilo">Hervorhebung entfernen</string>
   <string name="edit_note">Notiz bearbeiten</string>
@@ -343,4 +359,12 @@
   <string name="book_filter_new_apocalypse">Offenbarung</string>
   <string name="search_filter_multiple_books_selected">%s Bücher ausgewählt</string>
   <string name="search_version_select_label">Suche in:</string>
+  <string name="version_config_updater_error_download_modify_time">Überprüfung der Liste mit Übersetzungen fehlgeschlagen.</string>
+  <string name="version_config_updater_error_modify_time_failed">Liste mit Übersetzungen ist nicht verfügbar: %s</string>
+  <string name="version_config_updater_no_newer_available">Keine Updates für Übersetzungen gefunden.</string>
+  <string name="version_config_updater_error_download_list">Download der Liste mit Übersetzungen fehlgeschlagen.</string>
+  <string name="version_config_updater_error_parsing_list">Die heruntergeladene Liste mit Übersetzungen ist fehlerhaft.</string>
+  <string name="version_config_updater_updated">Liste der Übersetzungen upgedatet!</string>
+  <string name="version_config_cannot_write_updated_list">Speichern der upgedateten Liste mit Übersetzungen fehlgeschlagen.</string>
+  <string name="version_config_updater_error_modify_time_cannot_parse">Parsen der Liste mit Übersetzungen für Updates fehlgeschlagen.</string>
 </resources>

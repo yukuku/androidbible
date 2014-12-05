@@ -13,9 +13,6 @@
   <string name="pref_biarkan_layar_menyala">Manter a tela ligada</string>
   <string name="pref_penampilan_layar">Tela</string>
   <string name="pref_volumeButtonNavigation_title">Navegação com botões de volume</string>
-  <string name="pref_volumeButtonNavigation_summary">Usar os botões de volume do aparelho para navegar entre versículos ou capítulos</string>
   <string name="pref_copyWithVerseNumbers_title">Incluir números dos versículos</string>
   <string name="pref_copyWithVerseNumbers_summary">Inserir números de versículos em cada versículo quando copiando/compartilhando</string>
-  <string name="pref_help_text_appearance_title">Aparência do texto</string>
-  <string name="pref_help_text_appearance_summary">Modificar tamanho do texto, tipo de fonte, cor e espaçamento</string>
 </resources>

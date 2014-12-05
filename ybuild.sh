@@ -195,9 +195,9 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 
 	chmod +x ./gradlew
 	echo 'Running gradlew from' `pwd`
-	./gradlew clean assembleRelease
+	./gradlew --offline clean assemblePlainRelease
 
-	FINAL_APK="$BUILD_MAIN_PROJECT_DIR/build/outputs/apk/$MAIN_PROJECT_NAME-release.apk"
+	FINAL_APK="$BUILD_MAIN_PROJECT_DIR/build/outputs/apk/$MAIN_PROJECT_NAME-plain-release.apk"
 
 	if [ \! -r "$FINAL_APK" ] ; then
 		echo "$FINAL_APK" 'not found.'

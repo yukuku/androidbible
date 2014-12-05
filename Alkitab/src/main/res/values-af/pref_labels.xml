@@ -14,9 +14,7 @@
   <string name="pref_biarkan_layar_menyala">Hou skerm aan</string>
   <string name="pref_penampilan_layar">Vertoon</string>
   <string name="pref_volumeButtonNavigation_title">Volume knoppie navigasie</string>
-  <string name="pref_volumeButtonNavigation_summary">Gebruik volume knoppie om tussen vers en hoofstuk te navigeer</string>
   <string name="pref_copyWithVerseNumbers_title">Sluit vers nommers in</string>
   <string name="pref_copyWithVerseNumbers_summary">Vertoon vers nommers by elke vers indien gekopieër/gedeel</string>
-  <string name="pref_help_text_appearance_title">Teks voorkoms</string>
-  <string name="pref_help_text_appearance_summary">Verander teks grootte, lettertipe, kleur en spasiëring </string>
+  <string name="pref_showHiddenVersion_title">Aktiveer moontlik beperkte/geslote weergawes</string>
 </resources>

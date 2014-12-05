@@ -389,6 +389,7 @@ public class SyncLoginActivity extends BaseActivity {
 			{"christianity.lutheran", R.string.sync_login_survey_religion_christianity_lutheran},
 			{"christianity.methodist", R.string.sync_login_survey_religion_christianity_methodist},
 			{"christianity.anglican", R.string.sync_login_survey_religion_christianity_anglican},
+			{"christianity.adventist", R.string.sync_login_survey_religion_christianity_adventist},
 			{"christianity.pentecostal", R.string.sync_login_survey_religion_christianity_pentecostal},
 			{"christianity.roman", R.string.sync_login_survey_religion_christianity_roman},
 			{"christianity.other", R.string.sync_login_survey_religion_christianity_other},

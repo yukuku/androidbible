@@ -100,6 +100,16 @@
   <string name="cp_writing_translated_file">Запись преобразованного файла</string>
   <string name="cp_reading_book_info">Чтение информации о книге: %s</string>
   <string name="cp_writing_text_of_book_chapters">Запись текста книги %1$s (%2$s глав)</string>
+  <string name="ed_type_key">Тип</string>
+  <string name="ed_type_internal">Встроенный</string>
+  <string name="ed_type_preset">Загружаемый</string>
+  <string name="ed_type_db">Загруженный</string>
+  <string name="ed_locale_locale">Код языка</string>
+  <string name="ed_shortName_shortName">Краткое название</string>
+  <string name="ed_title_title">Заглавие</string>
+  <string name="ed_stored_in_file">Размещение файла</string>
+  <string name="ed_default_filename_file">Предопределеное имя</string>
+  <string name="ed_download_url_url">Адрес загрузки</string>
   <string name="ed_version_details">Подробности о версии</string>
   <string name="ed_choose_pdb_or_yes_file">Выберите .pdb-файл или .yes-файл</string>
   <string name="ed_no_external_storage">Не обнаружено ни SD-карты, ни USB-накопителя.</string>
@@ -113,7 +123,13 @@
   <string name="ed_error_reading_pdb_file">Ошибка при чтении PDB-файла</string>
   <string name="ed_details">Подробности: </string>
   <string name="ed_buka_file_pdb_yes_lainnya">Открыть файл .pdb/.yes&#8230;</string>
+  <string name="ed_section_all">Все</string>
+  <string name="ed_section_downloaded">Загружаемые</string>
+  <string name="ed_download_button">Загруженные</string>
+  <string name="ed_update_button">Обновить</string>
+  <string name="ed_details_update_available">Доступно обновление</string>
   <string name="info_terperinci">Подробности</string>
+  <string name="buang_dari_daftar">Удалить</string>
   <string name="edit_bookmark">Редактировать закладку</string>
   <string name="hapus_stabilo">Снять выделение</string>
   <string name="edit_note">Редактировать заметку</string>
@@ -343,4 +359,12 @@
   <string name="book_filter_new_apocalypse">Откровение</string>
   <string name="search_filter_multiple_books_selected">Выбрано %s книг</string>
   <string name="search_version_select_label">Искать в:</string>
+  <string name="version_config_updater_error_download_modify_time">Не удалось проверить список переводов Библии.</string>
+  <string name="version_config_updater_error_modify_time_failed">Список переводов Библии недоступен: %s</string>
+  <string name="version_config_updater_no_newer_available">Обновления модулей не найдены.</string>
+  <string name="version_config_updater_error_download_list">Не удалось загрузить список переводов Библии.</string>
+  <string name="version_config_updater_error_parsing_list">Список переводов Библии поврежден.</string>
+  <string name="version_config_updater_updated">Список переводов Библии обновлен!</string>
+  <string name="version_config_cannot_write_updated_list">Не удалось сохранить обновленный список переводов.</string>
+  <string name="version_config_updater_error_modify_time_cannot_parse">Не удалось выполнить процедуру проверки списка переводов Библии.</string>
 </resources>

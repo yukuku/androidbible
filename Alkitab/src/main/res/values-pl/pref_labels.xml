@@ -13,9 +13,7 @@
   <string name="pref_biarkan_layar_menyala">Utrzymuj ekran włączony</string>
   <string name="pref_penampilan_layar">Wyświetlacz</string>
   <string name="pref_volumeButtonNavigation_title">Nawigacja przyciskami głośności</string>
-  <string name="pref_volumeButtonNavigation_summary">Używaj sprzętowych przycisków głośności do nawigacji pomiędzy wersami i rozdziałami</string>
   <string name="pref_copyWithVerseNumbers_title">Dołącz numer wersu</string>
   <string name="pref_copyWithVerseNumbers_summary">Umieszaj numer każdego wersu przy kopiowaniu/dzieleniu się</string>
-  <string name="pref_help_text_appearance_title">Wygląd tekstu</string>
-  <string name="pref_help_text_appearance_summary">Zmień rozmiar tekstu, czcionkę, kolory i odstępy</string>
+  <string name="pref_showHiddenVersion_title">Uaktywnia wersje, z możliwymi ograniczeniami</string>
 </resources>
