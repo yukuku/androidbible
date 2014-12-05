@@ -27,7 +27,7 @@ android {
         }
     }
     compileSdkVersion 19
-    buildToolsVersion '20.0.0'
+    buildToolsVersion '21.1.1'
     defaultConfig {
         applicationId 'yuku.alkitab.debug'
         minSdkVersion 14
@@ -50,6 +50,12 @@ android {
         checkReleaseBuilds false
     }
     productFlavors {
+        emulator_v21 {
+            minSdkVersion 21
+            multiDexEnabled true
+        }
+        plain {
+        }
     }
 }
 
