@@ -14,24 +14,28 @@
 	<Button
 		android:id="@+id/bSettings"
 		style="?android:buttonBarButtonStyle"
+		android:textColor="?android:textColorPrimary"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:drawableLeft="@android:drawable/ic_menu_preferences"
 		android:drawablePadding="8dp"
 		android:gravity="left|center_vertical"
 		android:text="@string/menuPengaturan"
+		android:fontFamily="sans-serif-light"
 		android:textAllCaps="true"
 		android:textSize="14sp" />
 
 	<Button
 		android:id="@+id/bHelp"
 		style="?android:buttonBarButtonStyle"
+		android:textColor="?android:textColorPrimary"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:drawableLeft="@android:drawable/ic_menu_help"
 		android:drawablePadding="8dp"
 		android:gravity="left|center_vertical"
 		android:text="@string/menuBantuan"
+		android:fontFamily="sans-serif-light"
 		android:textAllCaps="true"
 		android:textSize="14sp" />
 

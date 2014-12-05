@@ -87,6 +87,7 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 		});
 
 		slidingTabs = V.get(this, R.id.sliding_tabs);
+		slidingTabs.setCustomTabColorizer(position -> getResources().getColor(R.color.accent));
 		slidingTabs.setViewPager(viewPager);
 
 		if (savedInstanceState == null) {

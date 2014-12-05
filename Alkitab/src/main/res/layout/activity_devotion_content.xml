@@ -34,7 +34,6 @@
 					android:paddingRight="@dimen/text_side_padding"
 					android:paddingTop="@dimen/text_topbottom_padding"
 					android:text="*Devotion content here."
-					android:textColorLink="#33b5e5"
 					android:textIsSelectable="true"
 					tools:ignore="HardcodedText" />
 			</ScrollView>

@@ -144,6 +144,7 @@ public class VersionsActivity extends BaseActivity implements ActionBar.TabListe
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 
 		slidingTabs = V.get(this, R.id.sliding_tabs);
+		slidingTabs.setCustomTabColorizer(position -> getResources().getColor(R.color.accent));
 		slidingTabs.setViewPager(mViewPager);
 
 		processIntent(getIntent(), "onCreate");
@@ -839,7 +840,7 @@ public class VersionsActivity extends BaseActivity implements ActionBar.TabListe
 
 			swiper = V.get(rootView, R.id.swiper);
 			if (swiper != null) { // Can be null, if the layout used is fragment_versions_downloaded.
-				swiper.setColorSchemeColors(0xff33b5e5, 0xffcbcbcb, 0xff33b5e5, 0xffcbcbcb);
+				swiper.setColorSchemeColors(getResources().getColor(R.color.accent), 0xffcbcbcb, getResources().getColor(R.color.accent), 0xffcbcbcb);
 				swiper.setOnRefreshListener(swiper_refresh);
 			}
 

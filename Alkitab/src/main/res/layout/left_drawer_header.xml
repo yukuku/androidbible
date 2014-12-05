@@ -14,6 +14,7 @@
 	<Button
 		android:id="@+id/bBible"
 		style="?android:buttonBarButtonStyle"
+		android:textColor="?android:textColorPrimary"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:drawableLeft="@drawable/ic_drawer_bible"
@@ -25,6 +26,7 @@
 	<Button
 		android:id="@+id/bDevotion"
 		style="?android:buttonBarButtonStyle"
+		android:textColor="?android:textColorPrimary"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:drawableLeft="@drawable/ic_drawer_devotion"
@@ -36,6 +38,7 @@
 	<Button
 		android:id="@+id/bReadingPlan"
 		style="?android:buttonBarButtonStyle"
+		android:textColor="?android:textColorPrimary"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:drawableLeft="@drawable/ic_drawer_reading_plan"
@@ -47,6 +50,7 @@
 	<Button
 		android:id="@+id/bSongs"
 		style="?android:buttonBarButtonStyle"
+		android:textColor="?android:textColorPrimary"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:drawableLeft="@drawable/ic_drawer_songs"
