@@ -8,7 +8,9 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -16,14 +18,11 @@ import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.CursorAdapter;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 import yuku.afw.V;
@@ -134,12 +133,7 @@ public class SearchActivity extends BaseActivity {
 			}
 
 			// sometimes this is called from bg. So we need to make sure this is run on UI thread.
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					swapCursor(mc);
-				}
-			});
+			runOnUiThread(() -> swapCursor(mc));
 		}
 	}
 
@@ -170,7 +164,7 @@ public class SearchActivity extends BaseActivity {
 		final ActionBar actionBar = getSupportActionBar();
 		actionBar.setDisplayShowCustomEnabled(true);
 
-		final View actionCustomView = getLayoutInflater().cloneInContext(actionBar.getThemedContext()).inflate(R.layout.activity_search_action_custom_view, null);
+		final View actionCustomView = View.inflate(actionBar.getThemedContext(), R.layout.activity_search_action_custom_view, null);
 		bVersion = V.get(actionCustomView, R.id.bVersion);
 		actionBar.setCustomView(actionCustomView);
 
@@ -236,18 +230,11 @@ public class SearchActivity extends BaseActivity {
 		
 		hiliteColor = U.getHighlightColorByBrightness(S.applied.backgroundBrightness);
 
-		lsSearchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				int ari = adapter.getSearchResults().get(position);
-				startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
-			}
+		lsSearchResults.setOnItemClickListener((parent, view, position, id) -> {
+			int ari = adapter.getSearchResults().get(position);
+			startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(ari));
 		});
-		bEditFilter.setOnClickListener(new View.OnClickListener() {
-			@Override public void onClick(View v) {
-				bEditFilter_click();
-			}
-		});
+		bEditFilter.setOnClickListener(v -> bEditFilter_click());
 		cFilterOlds.setOnCheckedChangeListener(cFilterOlds_checkedChange);
 		cFilterNews.setOnCheckedChangeListener(cFilterNews_checkedChange);
 		cFilterSingleBook.setOnCheckedChangeListener(cFilterSingleBook_checkedChange);
@@ -585,14 +572,11 @@ public class SearchActivity extends BaseActivity {
 						sb.append(fallback);
 
 						tSearchTips.setText(sb);
-						tSearchTips.setOnClickListener(new View.OnClickListener() {
-							@Override
-							public void onClick(final View v) {
-								if (Ari.toVerse(fallbackAri) == 0) {
-									startActivity(Launcher.openAppAtBibleLocation(fallbackAri));
-								} else {
-									startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(fallbackAri));
-								}
+						tSearchTips.setOnClickListener(v -> {
+							if (Ari.toVerse(fallbackAri) == 0) {
+								startActivity(Launcher.openAppAtBibleLocation(fallbackAri));
+							} else {
+								startActivity(Launcher.openAppAtBibleLocationWithVerseSelected(fallbackAri));
 							}
 						});
 					} else {

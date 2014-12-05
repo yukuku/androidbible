@@ -4,27 +4,24 @@ import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.app.ProgressDialog;
 import android.content.AsyncTaskLoader;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.PopupMenu;
-import android.widget.SearchView;
 import android.widget.TextView;
 import yuku.afw.App;
 import yuku.afw.V;
@@ -155,8 +152,8 @@ public class SongListActivity extends BaseActivity {
 		popupChangeBook = SongBookUtil.getSongBookPopupMenu(this, true, searchView);
 		popupChangeBook.setOnMenuItemClickListener(SongBookUtil.getSongBookOnMenuItemClickListener(songBookSelected));
 		
-		bChangeBook.setOnClickListener(bChangeBook_click);
-		cDeepSearch.setOnCheckedChangeListener(cDeepSearch_checkedChange);
+		bChangeBook.setOnClickListener(v -> popupChangeBook.show());
+		cDeepSearch.setOnCheckedChangeListener((buttonView, isChecked) -> startSearch());
 		
 		loader = new SongLoader();
         
@@ -205,11 +202,7 @@ public class SongListActivity extends BaseActivity {
 		if (item.getItemId() == R.id.menuDeleteAll) {
 			new AlertDialog.Builder(this)
 			.setMessage(R.string.sn_delete_all_songs_explanation)
-			.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-				@Override public void onClick(DialogInterface dialog, int which) {
-					deleteAllSongs();
-				}
-			})
+			.setPositiveButton(R.string.ok, (dialog, which) -> deleteAllSongs())
 			.setNegativeButton(R.string.cancel, null)
 			.show();
 		}
@@ -224,17 +217,15 @@ public class SongListActivity extends BaseActivity {
 			@Override public void run() {
 				final int count = S.getSongDb().deleteAllSongs();
 				
-				runOnUiThread(new Runnable() {
-					@Override public void run() {
-						pd.dismiss();
-						
-						startSearch();
-						
-						new AlertDialog.Builder(SongListActivity.this)
-						.setMessage(getString(R.string.sn_delete_all_songs_result, count))
-						.setPositiveButton(R.string.ok, null)
-						.show();
-					}
+				runOnUiThread(() -> {
+					pd.dismiss();
+
+					startSearch();
+
+					new AlertDialog.Builder(SongListActivity.this)
+					.setMessage(getString(R.string.sn_delete_all_songs_result, count))
+					.setPositiveButton(R.string.ok, null)
+					.show();
 				});
 			}
 		}.start();
@@ -252,18 +243,6 @@ public class SongListActivity extends BaseActivity {
 		loader.setSelectedBookName(selectedBookName);
 		startSearch();
 	}
-	
-	OnClickListener bChangeBook_click = new OnClickListener() {
-		@Override public void onClick(View v) {
-			popupChangeBook.show();
-		}
-	};
-	
-	CompoundButton.OnCheckedChangeListener cDeepSearch_checkedChange = new CompoundButton.OnCheckedChangeListener() {
-		@Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-			startSearch();
-		}
-	};
 
 	SongBookUtil.OnSongBookSelectedListener songBookSelected = new SongBookUtil.OnSongBookSelectedListener() {
 		@Override public void onSongBookSelected(boolean all, SongBookUtil.SongBookInfo songBookInfo) {
