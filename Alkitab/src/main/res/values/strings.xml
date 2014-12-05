@@ -438,6 +438,7 @@
 	<string name="sync_login_survey_religion_christianity_lutheran">Lutheran</string>
 	<string name="sync_login_survey_religion_christianity_methodist">Methodist</string>
 	<string name="sync_login_survey_religion_christianity_anglican">Anglican</string>
+	<string name="sync_login_survey_religion_christianity_adventist">Adventist</string>
 	<string name="sync_login_survey_religion_christianity_pentecostal">Pentecostal/Charismatic</string>
 	<string name="sync_login_survey_religion_christianity_roman">Roman Catholic</string>
 	<string name="sync_login_survey_religion_christianity_other">Other denomination</string>

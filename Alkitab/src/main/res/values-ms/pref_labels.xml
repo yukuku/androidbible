@@ -15,9 +15,6 @@ Latar belakang
   <string name="pref_biarkan_layar_menyala">Pastikan skrin terbuka</string>
   <string name="pref_penampilan_layar">Paparan</string>
   <string name="pref_volumeButtonNavigation_title">Navigasi butang kelantangan</string>
-  <string name="pref_volumeButtonNavigation_summary">Gunakan butang kelantangan perkakasan untuk mengemudi antara ayat-ayat atau bab</string>
   <string name="pref_copyWithVerseNumbers_title">Termasuk nombor nombor ayat</string>
   <string name="pref_copyWithVerseNumbers_summary">Letakkan nombor nombor ayat pada setiap ayat apabila menyalin / perkongsian</string>
-  <string name="pref_help_text_appearance_title">Penampilan teks</string>
-  <string name="pref_help_text_appearance_summary">Perubahan saiz teks, muka taip, warna dan jarak</string>
 </resources>

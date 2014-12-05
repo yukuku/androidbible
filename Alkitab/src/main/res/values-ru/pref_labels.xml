@@ -13,9 +13,6 @@
   <string name="pref_biarkan_layar_menyala">Предотвращать выключение экрана</string>
   <string name="pref_penampilan_layar">Экран</string>
   <string name="pref_volumeButtonNavigation_title">Переход с помощью кнопок громкости</string>
-  <string name="pref_volumeButtonNavigation_summary">Использовать кнопки громкости для перехода по стихам или по главам</string>
   <string name="pref_copyWithVerseNumbers_title">Включать номера стихов</string>
   <string name="pref_copyWithVerseNumbers_summary">Указывать номер для каждого стиха при копировании/отсылке</string>
-  <string name="pref_help_text_appearance_title">Вид текста</string>
-  <string name="pref_help_text_appearance_summary">Настроить размер, шрифт, цвет текста и межстрочное расстояие</string>
 </resources>
