@@ -5,8 +5,6 @@
       <root url="file://$PROJECT_DIR$/Alkitab/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.2/res" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES>
-      <root url="file:///Developer/android-sdk-macosx/sources/android-21" />
-    </SOURCES>
+    <SOURCES />
   </library>
 </component>
