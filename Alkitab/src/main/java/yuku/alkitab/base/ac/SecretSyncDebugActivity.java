@@ -25,7 +25,6 @@ import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Sync;
-import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
@@ -86,8 +85,6 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 		V.get(this, R.id.bMabelClientState).setOnClickListener(bMabelClientState_click);
 		V.get(this, R.id.bGenerateDummies).setOnClickListener(bGenerateDummies_click);
-		V.get(this, R.id.bRegisterNewUser).setOnClickListener(bRegisterNewUser_click);
-		V.get(this, R.id.bGetAuthToken).setOnClickListener(bGetAuthToken_click);
 		V.get(this, R.id.bLogout).setOnClickListener(bLogout_click);
 		V.get(this, R.id.bSync).setOnClickListener(bSync_click);
 
@@ -155,111 +152,6 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		return sb.toString();
 	}
 
-	static class UserJson {
-		public String email;
-	}
-
-	static class DebugCreateUserResponseJson extends Sync.ResponseJson {
-		public UserJson user;
-		public String simpleToken;
-	}
-
-	View.OnClickListener bRegisterNewUser_click = v -> {
-		final Call call = App.downloadCall(Sync.getEffectiveServerPrefix() + "/sync/api/debug_create_user");
-		call.enqueue(new Callback() {
-			@Override
-			public void onFailure(final Request request, final IOException e) {
-				runOnUiThread(() -> new AlertDialog.Builder(SecretSyncDebugActivity.this)
-					.setMessage("Error: " + e.getMessage())
-					.setPositiveButton(R.string.ok, null)
-					.show());
-			}
-
-			@Override
-			public void onResponse(final Response response) throws IOException {
-				final DebugCreateUserResponseJson debugCreateUserResponse = App.getDefaultGson().fromJson(response.body().charStream(), DebugCreateUserResponseJson.class);
-				runOnUiThread(() -> {
-					if (debugCreateUserResponse.success) {
-						final String email = debugCreateUserResponse.user.email;
-						final String simpleToken = debugCreateUserResponse.simpleToken;
-
-						Preferences.hold();
-						Preferences.setString(getString(R.string.pref_syncAccountName_key), email);
-						Preferences.setString(Prefkey.sync_simpleToken, simpleToken);
-						Preferences.setInt(Prefkey.sync_token_obtained_time, Sqlitil.nowDateTime());
-						Preferences.unhold();
-
-						displayUser();
-
-						new AlertDialog.Builder(SecretSyncDebugActivity.this)
-							.setMessage("User email: " + email + "\nsimpleToken: " + simpleToken)
-							.setPositiveButton(R.string.ok, null)
-							.show();
-					} else {
-						new AlertDialog.Builder(SecretSyncDebugActivity.this)
-							.setMessage(debugCreateUserResponse.message)
-							.setPositiveButton(R.string.ok, null)
-							.show();
-					}
-				});
-			}
-		});
-	};
-
-	View.OnClickListener bGetAuthToken_click = v -> {
-		final String user_email = tUserEmail.getText().toString();
-
-		final RequestBody requestBody = new FormEncodingBuilder()
-			.add("user_email", user_email)
-			.build();
-
-		final Call call = App.getOkHttpClient().newCall(
-			new Request.Builder()
-				.url(Sync.getEffectiveServerPrefix() + "/sync/api/debug_get_auth_token")
-				.post(requestBody)
-				.build()
-		);
-
-		call.enqueue(new Callback() {
-			@Override
-			public void onFailure(final Request request, final IOException e) {
-				runOnUiThread(() -> new AlertDialog.Builder(SecretSyncDebugActivity.this)
-					.setMessage("Error: " + e.getMessage())
-					.setPositiveButton(R.string.ok, null)
-					.show());
-			}
-
-			@Override
-			public void onResponse(final Response response) throws IOException {
-				final Sync.LoginResponseJson debugCreateUserResponse = App.getDefaultGson().fromJson(response.body().charStream(), Sync.LoginResponseJson.class);
-				runOnUiThread(() -> {
-					if (debugCreateUserResponse.success) {
-						final String simpleToken = debugCreateUserResponse.simpleToken;
-
-						Preferences.hold();
-						Preferences.setString(getString(R.string.pref_syncAccountName_key), user_email);
-						Preferences.setString(Prefkey.sync_simpleToken, simpleToken);
-						Preferences.setInt(Prefkey.sync_token_obtained_time, Sqlitil.nowDateTime());
-						Preferences.unhold();
-
-						displayUser();
-
-						new AlertDialog.Builder(SecretSyncDebugActivity.this)
-							.setMessage("User email: " + user_email + "\nsimpleToken: " + simpleToken)
-							.setPositiveButton(R.string.ok, null)
-							.show();
-					} else {
-						new AlertDialog.Builder(SecretSyncDebugActivity.this)
-							.setMessage(debugCreateUserResponse.message)
-							.setPositiveButton(R.string.ok, null)
-							.show();
-					}
-				});
-			}
-		});
-
-	};
-
 	void displayUser() {
 		tUser.setText(Preferences.getString(getString(R.string.pref_syncAccountName_key), "not logged in") + ": " + Preferences.getString(Prefkey.sync_simpleToken));
 	}
@@ -306,7 +198,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 		final Call call = App.getOkHttpClient().newCall(
 			new Request.Builder()
-				.url(Sync.getEffectiveServerPrefix() + "/sync/api/debug_sync")
+				.url(Sync.getEffectiveServerPrefix() + "/sync/api/sync")
 				.post(requestBody)
 				.build()
 		);
