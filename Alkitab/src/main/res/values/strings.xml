@@ -345,7 +345,7 @@
     <string name="about_version_name">version %s</string>
     <string name="song_player_error_description">An error was encountered when playing this song: %1$d, %2$d.</string>
 
-    <string name="search_in_version_short_name_placeholder">Search in %s</string>
+    <string name="search_in_version_short_name_placeholder">Find in %s</string>
     <string name="search_syntax_tips"><i>Search tips:</i>\n\n<b>+word</b> for that exact word\n<b>[q]lord god[q]</b> for that exact phrase</string>
     <string name="search_no_result">No verses found for <b>^1</b>.</string>
     <string name="search_no_result_fallback">Tap here to go to <u>^1</u>.</string>
@@ -383,7 +383,7 @@
     <string name="book_filter_new_apocalypse">Apocalypse</string>
 
     <string name="search_filter_multiple_books_selected">%s books selected</string>
-    <string name="search_version_select_label">Search in:</string>
+    <string name="search_version_select_label">Find in:</string>
 	<string name="show_hidden_version_warning">Enabling this option allows you to download Bible versions which may be subject to certain regional or monetary requirements. Before downloading them, please make sure you are allowed to do so. You are fully responsible for downloading and using such versions and I cannot be held accountable for this. Tap OK if you agree to the above terms.</string>
 
 	<string name="version_config_updater_error_download_modify_time">Failed to check version list.</string>
