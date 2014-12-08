@@ -69,7 +69,7 @@ public class NoteActivity extends BaseActivity {
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState, true);
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_note);
 
 		final long _id = getIntent().getLongExtra(EXTRA_marker_id, 0L);

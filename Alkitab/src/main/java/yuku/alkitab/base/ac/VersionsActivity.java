@@ -133,6 +133,8 @@ public class VersionsActivity extends BaseActivity implements ActionBar.TabListe
 		setTitle(R.string.kelola_versi);
 
 		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+		toolbar.setNavigationOnClickListener(v -> navigateUp());
 		setSupportActionBar(toolbar);
 
 		// Create the adapter that will return a fragment for each of the three

@@ -37,7 +37,7 @@ public class SyncLogActivity extends BaseActivity {
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState, true);
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sync_log);
 
 		lsLog = V.get(this, R.id.lsLog);

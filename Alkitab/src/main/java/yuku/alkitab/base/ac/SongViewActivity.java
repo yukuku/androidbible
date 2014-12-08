@@ -371,7 +371,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		super.onCreate(savedInstanceState, true);
+		super.onCreate(savedInstanceState);
 		setSupportProgressBarIndeterminate(true);
 		setSupportProgressBarIndeterminateVisibility(false);
 		setContentView(R.layout.activity_song_view);

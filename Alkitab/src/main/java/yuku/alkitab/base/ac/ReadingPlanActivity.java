@@ -91,8 +91,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState, true);
-
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_reading_plan);
 
 		drawerLayout = V.get(this, R.id.drawerLayout);

@@ -328,8 +328,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	};
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState, true);
-		
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_isi);
 
 		drawerLayout = V.get(this, R.id.drawerLayout);

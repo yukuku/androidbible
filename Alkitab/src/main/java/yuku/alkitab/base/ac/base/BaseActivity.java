@@ -1,48 +1,14 @@
 package yuku.alkitab.base.ac.base;
 
-import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+import android.content.Intent;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBarActivity;
-import android.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 
 public abstract class BaseActivity extends ActionBarActivity {
 	public static final String TAG = BaseActivity.class.getSimpleName();
-	private boolean withUpButton;
 
-	/**
-	 * By default we put the up button on each activity.
-	 * And the behavior is to just finish() the current activity.
-	 * If we don't want this, e.g. on the root activity, change
-	 * super.onCreate(Bundle) to super.onCreate(Bundle, boolean)
-	 * on subclasses
-	 */
-	@Override protected void onCreate(Bundle savedInstanceState) {
-		onCreate(savedInstanceState, true);
-	}
-	
-	protected void onCreate(Bundle savedInstanceState, boolean withUpButton) {
-		this.withUpButton = withUpButton;
-
-		super.onCreate(savedInstanceState);
-		
-		if (withUpButton) {
-			ActionBar actionBar = getSupportActionBar();
-			if (actionBar != null) {
-				actionBar.setDisplayHomeAsUpEnabled(true);
-			}
-		}
-	}
-	
-	@Override public boolean onOptionsItemSelected(MenuItem item) {
-		if (withUpButton && item.getItemId() == android.R.id.home) {
-			finish();
-            return true;
-		}
-		
-		return super.onOptionsItemSelected(item);
-	}
-	
 	@Override protected void onStart() {
 		super.onStart();
 	    EasyTracker.getInstance(this).activityStart(this);
@@ -51,5 +17,16 @@ public abstract class BaseActivity extends ActionBarActivity {
 	@Override protected void onStop() {
 		super.onStop();
 		EasyTracker.getInstance(this).activityStop(this);
+	}
+
+	protected void navigateUp() {
+		final Intent upIntent = NavUtils.getParentActivityIntent(this);
+		if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+			TaskStackBuilder.create(this)
+				.addNextIntentWithParentStack(upIntent)
+				.startActivities();
+		} else {
+			NavUtils.navigateUpTo(this, upIntent);
+		}
 	}
 }
