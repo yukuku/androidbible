@@ -80,7 +80,7 @@
     <string name="pengaturan_alkitab">Bible Settings</string>
     <string name="kelola_versi">Manage Versions</string>
     <string name="tambah">Add</string>
-    <string name="versi_lainnya">Other versions…</string>
+    <string name="versi_lainnya">Other versions</string>
     <string name="ada_kegagalan_membuka_edisiid">Error opening %s</string>
     <string name="version_error_opening">Error opening %s.</string>
     <string name="pdb_file_options">PDB file options</string>
