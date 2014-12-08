@@ -21,7 +21,6 @@ import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
@@ -37,7 +36,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
@@ -263,7 +261,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	GotoButton bGoto;
 	ImageButton bLeft;
 	ImageButton bRight;
-	Button bVersion;
+	TextView bVersion;
 	Floater floater;
 
 	Book activeBook;
@@ -340,29 +338,15 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		final Toolbar toolbar = V.get(this, R.id.toolbar);
 		setSupportActionBar(toolbar);
+		setTitle("");
 
 		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
 		drawerLayout.setDrawerListener(drawerToggle);
 
-		final ActionBar actionBar = getSupportActionBar();
-		actionBar.setDisplayShowCustomEnabled(true);
-		if (getResources().getConfiguration().smallestScreenWidthDp >= 360) {
-			actionBar.setDisplayShowTitleEnabled(true);
-			actionBar.setDisplayShowHomeEnabled(true);
-		} else {
-			actionBar.setDisplayShowTitleEnabled(false);
-			actionBar.setDisplayShowHomeEnabled(Build.VERSION.SDK_INT < 18);
-		}
-		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setHomeButtonEnabled(true);
-		actionBar.setTitle("");
-		actionBar.setCustomView(R.layout.activity_isi_action_custom_view);
-
-		final View actionCustomView = actionBar.getCustomView();
-		bGoto = V.get(actionCustomView, R.id.bGoto);
-		bLeft = V.get(actionCustomView, R.id.bLeft);
-		bRight = V.get(actionCustomView, R.id.bRight);
-		bVersion = V.get(actionCustomView, R.id.bVersion);
+		bGoto = V.get(this, R.id.bGoto);
+		bLeft = V.get(this, R.id.bLeft);
+		bRight = V.get(this, R.id.bRight);
+		bVersion = V.get(this, R.id.bVersion);
 
 		overlayContainer = V.get(this, R.id.overlayContainer);
 		root = V.get(this, R.id.root);

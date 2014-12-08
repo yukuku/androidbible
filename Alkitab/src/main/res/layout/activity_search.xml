@@ -20,7 +20,6 @@
 			android:layout_width="72dp"
 			android:layout_height="match_parent"
 			android:layout_gravity="end"
-			android:layout_weight="0"
 			android:gravity="center"
 			android:textSize="14sp"
 			android:textStyle="bold"
