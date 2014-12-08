@@ -66,6 +66,7 @@
         <activity
             android:name="yuku.alkitab.base.ac.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+			android:theme="@style/Theme.Alkitab.WithActionBar.Native"
             android:label="@string/pengaturan_alkitab" />
         <activity
             android:name="yuku.alkitab.base.ac.ColorSettingsActivity"
@@ -251,12 +252,15 @@
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
 			android:windowSoftInputMode="adjustResize"/>
 		<activity android:name="yuku.alkitab.base.sync.SyncSettingsActivity"
+			android:theme="@style/Theme.Alkitab.WithActionBar.Native"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.sync.SyncLogActivity"
 			android:label="@string/sync_log_activity_title"
+			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.sync.SyncLoginActivity"
 			android:label="@string/sync_login_activity_title"
+			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
         <activity
             android:name="yuku.filechooser.FileChooserActivity"
@@ -290,6 +294,7 @@
             android:name="yuku.alkitab.base.ac.NoteActivity"
 			android:icon="@drawable/ic_attr_note"
 			android:windowSoftInputMode="adjustResize"
+			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 
         <service android:name="yuku.alkitab.base.sv.DownloadService" />
