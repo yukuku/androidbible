@@ -9,7 +9,6 @@ import android.database.MatrixCursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
@@ -19,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
@@ -58,7 +56,7 @@ public class SearchActivity extends BaseActivity {
 
 	final String COLUMN_QUERY_STRING = "query_string";
 
-	Button bVersion;
+	TextView bVersion;
 	SearchView searchView;
 	ListView lsSearchResults;
 	View empty;
@@ -159,14 +157,11 @@ public class SearchActivity extends BaseActivity {
 		bEditFilter = V.get(this, R.id.bEditFilter);
 
 		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+		toolbar.setNavigationOnClickListener(v -> finish());
 		setSupportActionBar(toolbar);
 
-		final ActionBar actionBar = getSupportActionBar();
-		actionBar.setDisplayShowCustomEnabled(true);
-
-		final View actionCustomView = View.inflate(actionBar.getThemedContext(), R.layout.activity_search_action_custom_view, null);
-		bVersion = V.get(actionCustomView, R.id.bVersion);
-		actionBar.setCustomView(actionCustomView);
+		bVersion = V.get(this, R.id.bVersion);
 
 		searchInVersion = S.activeVersion;
 		searchInVersionId = S.activeVersionId;

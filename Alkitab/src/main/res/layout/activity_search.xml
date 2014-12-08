@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:focusable="true"
@@ -9,16 +10,39 @@
 
 	<android.support.v7.widget.Toolbar
 		android:id="@+id/toolbar"
-		android:layout_height="?attr/actionBarSize"
 		android:layout_width="match_parent"
-		android:background="?attr/colorPrimary" />
+		android:layout_height="?attr/actionBarSize"
+		android:background="?attr/colorPrimary">
+
+		<TextView
+			android:id="@+id/bVersion"
+			style="@style/Widget.AppCompat.Spinner"
+			android:layout_width="72dp"
+			android:layout_height="match_parent"
+			android:layout_gravity="end"
+			android:layout_weight="0"
+			android:gravity="center"
+			android:textSize="14sp"
+			android:textStyle="bold"
+			tools:text="VERSNM" />
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_gravity="end"
+			android:gravity="center_vertical"
+			android:padding="8dp"
+			android:text="@string/search_version_select_label"
+			android:textAppearance="?android:textAppearanceSmall" />
+
+	</android.support.v7.widget.Toolbar>
 
 	<android.support.v7.widget.SearchView
 		android:id="@+id/searchView"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		app:iconifiedByDefault="false"
-		android:orientation="horizontal" />
+		android:orientation="horizontal"
+		app:iconifiedByDefault="false" />
 
 	<include
 		android:id="@+id/panelFilter"
