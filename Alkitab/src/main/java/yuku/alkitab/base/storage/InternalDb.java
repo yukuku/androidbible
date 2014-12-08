@@ -179,7 +179,7 @@ public class InternalDb {
 		return res;
 	}
 
-	public void deleteBookmarkById(long _id) {
+	public void deleteMarkerById(long _id) {
 		final Marker marker = getMarkerById(_id);
 
 		final SQLiteDatabase db = helper.getWritableDatabase();

@@ -131,7 +131,7 @@ public class ProgressMarkListDialog extends DialogFragment {
 			} else {
 				tCaption.setText(progressMark.caption);
 			}
-			Appearances.applyBookmarkTitleTextAppearance(tCaption);
+			Appearances.applyMarkerTitleTextAppearance(tCaption);
 
 			int ari = progressMark.ari;
 			String verseText = "";
@@ -142,14 +142,14 @@ public class ProgressMarkListDialog extends DialogFragment {
 
 				String reference = S.activeVersion.reference(ari);
 				verseText = U.removeSpecialCodes(S.activeVersion.loadVerseText(ari));
-				Appearances.applyBookmarkSnippetContentAndAppearance(tVerseText, reference, verseText);
+				Appearances.applyMarkerSnippetContentAndAppearance(tVerseText, reference, verseText);
 				view.setEnabled(false);
 			} else {
 				tVerseText.setText(verseText);
 				view.setEnabled(true);
 			}
 			tDate.setText(date);
-			Appearances.applyBookmarkDateTextAppearance(tDate);
+			Appearances.applyMarkerDateTextAppearance(tDate);
 		}
 	}
 

@@ -1695,7 +1695,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						lDate.setText(getString(R.string.create_edited_modified_time, Sqlitil.toLocaleDateMedium(addTime), Sqlitil.toLocaleDateMedium(modifyTime)));
 					}
 
-					Appearances.applyBookmarkDateTextAppearance(lDate);
+					Appearances.applyMarkerDateTextAppearance(lDate);
 				}
 
 				final int ari = marker.ari;
@@ -1704,7 +1704,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 				if (kind == Marker.Kind.bookmark) {
 					lCaption.setText(caption);
-					Appearances.applyBookmarkTitleTextAppearance(lCaption);
+					Appearances.applyMarkerTitleTextAppearance(lCaption);
 
 					lSnippet.setVisibility(View.GONE);
 
@@ -1721,7 +1721,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 				} else if (kind == Marker.Kind.note) {
 					lCaption.setText(reference);
-					Appearances.applyBookmarkTitleTextAppearance(lCaption);
+					Appearances.applyMarkerTitleTextAppearance(lCaption);
 					lSnippet.setText(caption);
 					Appearances.applyTextAppearance(lSnippet);
 				}
