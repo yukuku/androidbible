@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -150,6 +151,7 @@ public class NoteActivity extends BaseActivity {
 				}
 			});
 			tCaptionReadOnly.setText(text);
+			tCaptionReadOnly.setMovementMethod(LinkMovementMethod.getInstance());
 		}
 
 		this.editingMode = editingMode;
