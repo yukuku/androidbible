@@ -46,9 +46,6 @@ import static yuku.alkitab.base.util.Literals.List;
 public class Sync {
 	static final String TAG = Sync.class.getSimpleName();
 
-	/** From developer console: Client ID for web application */
-	public static final String CLIENT_ID = "979768394162-d3ev7tnali57es0tca97snvl24d2jbl2.apps.googleusercontent.com";
-
 	/**
 	 * The reason we use an installation id instead of just the simpleToken
 	 * to identify originating device, is so that the GCM messages does not
@@ -545,6 +542,7 @@ public class Sync {
 	public static boolean sendGcmRegistrationId(final String simpleToken, final String registration_id) {
 		final RequestBody requestBody = new FormEncodingBuilder()
 			.add("simpleToken", simpleToken)
+			.add("sender_id", Gcm.SENDER_ID)  // not really needed, but for logging on server
 			.add("registration_id", registration_id)
 			.build();
 
