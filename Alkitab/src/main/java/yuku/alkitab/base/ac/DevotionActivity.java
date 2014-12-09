@@ -26,7 +26,6 @@ import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.analytics.HitBuilders;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -254,7 +253,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 			final String currentDate = yyyymmdd.get().format(ac.currentDate);
 			if (U.equals(startKind, ac.currentKind) && U.equals(startDate, currentDate)) {
 				Log.d(TAG, "Long read detected: now=[" + ac.currentKind + " " + currentDate + "]");
-				EasyTracker.getInstance(ac).send(new HitBuilders.EventBuilder("devotion-longread", startKind.name).setLabel(startDate).setValue(30L).build());
+				App.getTracker().send(new HitBuilders.EventBuilder("devotion-longread", startKind.name).setLabel(startDate).setValue(30L).build());
 			} else {
 				Log.d(TAG, "Not long enough for long read: previous=[" + startKind + " " + startDate + "] now=[" + ac.currentKind + " " + currentDate + "]");
 			}
@@ -504,7 +503,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 		}
 
 		if (renderSucceeded) {
-			EasyTracker.getInstance(this).send(new HitBuilders.EventBuilder("devotion-render", currentKind.name).setLabel(yyyymmdd.get().format(currentDate)).setValue(0L).build());
+			App.getTracker().send(new HitBuilders.EventBuilder("devotion-render", currentKind.name).setLabel(yyyymmdd.get().format(currentDate)).setValue(0L).build());
 			longReadChecker.start();
 		}
 	}
