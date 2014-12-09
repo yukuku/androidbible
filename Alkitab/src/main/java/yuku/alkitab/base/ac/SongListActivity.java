@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,7 +19,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.PopupMenu;
@@ -50,7 +50,7 @@ public class SongListActivity extends BaseActivity {
 	
 	SearchView searchView;
 	ListView lsSong;
-	Button bChangeBook;
+	TextView bChangeBook;
 	CheckBox cDeepSearch;
 	View panelFilter;
 	
@@ -131,12 +131,15 @@ public class SongListActivity extends BaseActivity {
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
-		setSupportProgressBarIndeterminate(true);
-		
 		setContentView(R.layout.activity_song_list);
-		
-		setTitle(R.string.sn_songs_activity_title);
-		
+
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar); // must be done first before below lines
+		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+		toolbar.setNavigationOnClickListener(v -> navigateUp());
+
+		setSupportProgressBarIndeterminate(true);
+
 		searchView = V.get(this, R.id.searchView);
 		lsSong = V.get(this, R.id.lsSong);
 		bChangeBook = V.get(this, R.id.bChangeBook);
@@ -156,7 +159,10 @@ public class SongListActivity extends BaseActivity {
 		cDeepSearch.setOnCheckedChangeListener((buttonView, isChecked) -> startSearch());
 		
 		loader = new SongLoader();
-        
+
+		// initial
+		bChangeBook.setText(R.string.sn_bookselector_all);
+
         SearchState searchState = getIntent().getParcelableExtra(EXTRA_searchState);
         if (searchState != null) {
         	stillUsingInitialSearchState = true; { // prevent triggering
