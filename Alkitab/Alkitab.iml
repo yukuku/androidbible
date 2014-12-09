@@ -109,6 +109,7 @@
     <orderEntry type="library" exported="" name="support-v13-20.0.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-21.0.2" level="project" />
     <orderEntry type="library" exported="" name="okio-1.0.1" level="project" />
+    <orderEntry type="library" exported="" name="play-services-base-6.5.87" level="project" />
     <orderEntry type="library" exported="" name="multidex-1.0.0" level="project" />
     <orderEntry type="library" exported="" name="gson-2.3.1" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-21.0.2" level="project" />
@@ -118,7 +119,6 @@
     <orderEntry type="library" exported="" name="okhttp-2.1.0" level="project" />
     <orderEntry type="library" exported="" name="picasso-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-21.0.2" level="project" />
-    <orderEntry type="library" exported="" name="play-services-6.1.71" level="project" />
     <orderEntry type="module" module-name="DragSortListView" exported="" />
     <orderEntry type="module" module-name="AlkitabFeedback" exported="" />
     <orderEntry type="module" module-name="FlowLayout" exported="" />
