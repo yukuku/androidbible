@@ -75,7 +75,6 @@
     <string name="ok">OK</string>
     <string name="tidak_bisa_membuat_folder">Could not create folder %s</string>
     <string name="menuPengaturan">Settings</string>
-    <string name="pilihKitab_s">Choose a Book</string>
     <string name="menuTentang">About</string>
     <string name="pengaturan_alkitab">Bible Settings</string>
     <string name="kelola_versi">Manage Versions</string>
