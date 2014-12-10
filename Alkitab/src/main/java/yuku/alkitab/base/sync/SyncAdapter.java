@@ -122,9 +122,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		}
 
 		Log.d(TAG, "@@syncMabel step 10: gathering client state");
-		final Pair<Sync.MabelClientState, List<Sync.Entity<Sync.MabelContent>>> pair = Sync.getMabelClientStateAndCurrentEntities();
-		final Sync.MabelClientState clientState = pair.first;
-		final List<Sync.Entity<Sync.MabelContent>> entitiesBeforeSync = pair.second;
+		final Pair<Sync_Mabel.ClientState, List<Sync.Entity<Sync_Mabel.Content>>> pair = Sync_Mabel.getClientStateAndCurrentEntities();
+		final Sync_Mabel.ClientState clientState = pair.first;
+		final List<Sync.Entity<Sync_Mabel.Content>> entitiesBeforeSync = pair.second;
 
 		SyncRecorder.log(SyncRecorder.EventKind.current_entities_gathered, SyncShadow.SYNC_SET_MABEL, "base_revno", clientState.base_revno, "client_delta_operations_size", clientState.delta.operations.size(), "client_entities_size", entitiesBeforeSync.size());
 
@@ -163,7 +163,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			}
 
 			final int final_revno = response.final_revno;
-			final Sync.Delta<Sync.MabelContent> append_delta = response.append_delta;
+			final Sync.Delta<Sync_Mabel.Content> append_delta = response.append_delta;
 
 			if (append_delta == null) {
 				Log.w(TAG, "@@syncMabel append delta is null. This should not happen.");
@@ -185,7 +185,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			}
 
 			// Based on operations in append_delta, fill in SyncStats
-			for (final Sync.Operation<Sync.MabelContent> o : append_delta.operations) {
+			for (final Sync.Operation<Sync_Mabel.Content> o : append_delta.operations) {
 				switch (o.opkind) {
 					case add:
 						sr.stats.numInserts++;

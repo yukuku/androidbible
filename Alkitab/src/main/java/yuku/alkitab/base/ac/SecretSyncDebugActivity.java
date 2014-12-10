@@ -25,6 +25,7 @@ import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Sync;
+import yuku.alkitab.base.sync.Sync_Mabel;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
@@ -93,13 +94,13 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 	View.OnClickListener bMabelClientState_click = v -> {
 		final StringBuilder sb = new StringBuilder();
-		final Pair<Sync.MabelClientState, List<Sync.Entity<Sync.MabelContent>>> pair = Sync.getMabelClientStateAndCurrentEntities();
-		final Sync.MabelClientState clientState = pair.first;
+		final Pair<Sync_Mabel.ClientState, List<Sync.Entity<Sync_Mabel.Content>>> pair = Sync_Mabel.getClientStateAndCurrentEntities();
+		final Sync_Mabel.ClientState clientState = pair.first;
 
 		sb.append("Base revno: ").append(clientState.base_revno).append('\n');
 		sb.append("Delta operations: \n");
 
-		for (final Sync.Operation<Sync.MabelContent> operation : clientState.delta.operations) {
+		for (final Sync.Operation<Sync_Mabel.Content> operation : clientState.delta.operations) {
 			sb.append("\u2022 ").append(operation).append('\n');
 		}
 
@@ -172,7 +173,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 	public static class DebugSyncResponseJson extends Sync.ResponseJson {
 		public int final_revno;
-		public Sync.Delta<Sync.MabelContent> append_delta;
+		public Sync.Delta<Sync_Mabel.Content> append_delta;
 	}
 
 	View.OnClickListener bSync_click = v -> {
@@ -185,9 +186,9 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			return;
 		}
 
-		final Pair<Sync.MabelClientState, List<Sync.Entity<Sync.MabelContent>>> pair = Sync.getMabelClientStateAndCurrentEntities();
-		final Sync.MabelClientState clientState = pair.first;
-		final List<Sync.Entity<Sync.MabelContent>> entitiesBeforeSync = pair.second;
+		final Pair<Sync_Mabel.ClientState, List<Sync.Entity<Sync_Mabel.Content>>> pair = Sync_Mabel.getClientStateAndCurrentEntities();
+		final Sync_Mabel.ClientState clientState = pair.first;
+		final List<Sync.Entity<Sync_Mabel.Content>> entitiesBeforeSync = pair.second;
 
 		final RequestBody requestBody = new FormEncodingBuilder()
 			.add("simpleToken", simpleToken)
@@ -244,7 +245,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 				runOnUiThread(() -> {
 					if (debugSyncResponse.success) {
 						final int final_revno = debugSyncResponse.final_revno;
-						final Sync.Delta<Sync.MabelContent> append_delta = debugSyncResponse.append_delta;
+						final Sync.Delta<Sync_Mabel.Content> append_delta = debugSyncResponse.append_delta;
 
 						final InternalDb.ApplyAppendDeltaResult applyResult = S.getDb().applyAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
 						new AlertDialog.Builder(SecretSyncDebugActivity.this)
