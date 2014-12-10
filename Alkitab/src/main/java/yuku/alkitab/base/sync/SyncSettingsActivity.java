@@ -116,7 +116,7 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 					Preferences.remove(Prefkey.sync_simpleToken);
 					Preferences.remove(Prefkey.sync_token_obtained_time);
 
-					for (final String syncSetName : SyncShadow.ALL_SYNC_SETS) {
+					for (final String syncSetName : SyncShadow.ALL_SYNC_SET_NAMES) {
 						S.getDb().deleteSyncShadowBySyncSetName(syncSetName);
 					}
 
@@ -173,7 +173,7 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 		final String syncAccountName = Preferences.getString(getString(R.string.pref_syncAccountName_key));
 		pref_syncAccountName.setSummary(syncAccountName != null ? syncAccountName : getString(R.string.sync_account_not_selected));
 
-		for (final String syncSetName : SyncShadow.ALL_SYNC_SETS) {
+		for (final String syncSetName : SyncShadow.ALL_SYNC_SET_NAMES) {
 			final Preference pref = findPreference(Sync.prefkeyForSyncSetEnabled(syncSetName));
 			pref.setEnabled(syncAccountName != null);
 

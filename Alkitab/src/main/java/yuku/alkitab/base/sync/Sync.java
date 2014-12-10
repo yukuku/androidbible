@@ -54,11 +54,21 @@ public class Sync {
 		add, mod, del, // do not change the enum value names here. This will be un/serialized by gson.
 	}
 
+	public enum ApplyAppendDeltaResult {
+		ok,
+		unknown_kind,
+		/** Entities have changed during sync request */
+		dirty_entities,
+		/** Sync user account has changed during sync request */
+		dirty_sync_account,
+	}
+
 	public static class Operation<C> {
 		public Opkind opkind;
 		public String kind;
 		public String gid;
 		public C content;
+		public String creator_id; // for now, only used when receiving from server, not sending
 
 		public Operation(final Opkind opkind, final String kind, final String gid, final C content) {
 			this.opkind = opkind;
@@ -96,8 +106,11 @@ public class Sync {
 		public static final String KIND_MARKER = "Marker";
 		public static final String KIND_LABEL = "Label";
 		public static final String KIND_MARKER_LABEL = "Marker_Label";
+		public static final String KIND_HISTORY_ENTRY = "HistoryEntry";
 
-		/** Kind of this entity. Currently can be {@link #KIND_MARKER}, {@link #KIND_LABEL}, {@link #KIND_MARKER_LABEL}. */
+		/**
+		 * Kind of this entity. One of the <code>KIND_</code> constants on {@link yuku.alkitab.base.sync.Sync.Entity}.
+		 */
 		public String kind;
 		public String gid;
 		public C content;
@@ -506,7 +519,7 @@ public class Sync {
 		}
 
 		// request sync.
-		for (final String syncSetName : SyncShadow.ALL_SYNC_SETS) {
+		for (final String syncSetName : SyncShadow.ALL_SYNC_SET_NAMES) {
 			final Bundle extras = new Bundle();
 			extras.putString(SyncAdapter.EXTRA_SYNC_SET_NAME, syncSetName);
 			extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);

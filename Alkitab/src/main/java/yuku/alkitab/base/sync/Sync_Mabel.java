@@ -288,4 +288,9 @@ public class Sync_Mabel {
 			this.delta = delta;
 		}
 	}
+
+	public static class SyncResponseJson extends Sync.ResponseJson {
+		public int final_revno;
+		public Sync.Delta<Content> append_delta;
+	}
 }

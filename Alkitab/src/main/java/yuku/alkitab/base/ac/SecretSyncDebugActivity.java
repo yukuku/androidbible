@@ -22,7 +22,6 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.model.SyncShadow;
-import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.sync.Sync_Mabel;
@@ -164,17 +163,12 @@ public class SecretSyncDebugActivity extends BaseActivity {
 		Preferences.remove(Prefkey.sync_token_obtained_time);
 		Preferences.unhold();
 
-		for (final String syncSetName : SyncShadow.ALL_SYNC_SETS) {
+		for (final String syncSetName : SyncShadow.ALL_SYNC_SET_NAMES) {
 			S.getDb().deleteSyncShadowBySyncSetName(syncSetName);
 		}
 
 		displayUser();
 	};
-
-	public static class DebugSyncResponseJson extends Sync.ResponseJson {
-		public int final_revno;
-		public Sync.Delta<Sync_Mabel.Content> append_delta;
-	}
 
 	View.OnClickListener bSync_click = v -> {
 		final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
@@ -241,19 +235,19 @@ public class SecretSyncDebugActivity extends BaseActivity {
 
 			@Override
 			public void onResponse(final Response response) throws IOException {
-				final DebugSyncResponseJson debugSyncResponse = App.getDefaultGson().fromJson(response.body().charStream(), DebugSyncResponseJson.class);
+				final Sync_Mabel.SyncResponseJson debugSyncResponse = App.getDefaultGson().fromJson(response.body().charStream(), Sync_Mabel.SyncResponseJson.class);
 				runOnUiThread(() -> {
 					if (debugSyncResponse.success) {
 						final int final_revno = debugSyncResponse.final_revno;
 						final Sync.Delta<Sync_Mabel.Content> append_delta = debugSyncResponse.append_delta;
 
-						final InternalDb.ApplyAppendDeltaResult applyResult = S.getDb().applyAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
+						final Sync.ApplyAppendDeltaResult applyResult = S.getDb().applyMabelAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
 						new AlertDialog.Builder(SecretSyncDebugActivity.this)
 							.setMessage("Final revno: " + final_revno + "\nApply result: " + applyResult + "\nAppend delta: " + append_delta)
 							.setPositiveButton(R.string.ok, null)
 							.show();
 
-						if (applyResult == InternalDb.ApplyAppendDeltaResult.ok) {
+						if (applyResult == Sync.ApplyAppendDeltaResult.ok) {
 							App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
 							App.getLbm().sendBroadcast(new Intent(MarkersActivity.ACTION_RELOAD));
 							App.getLbm().sendBroadcast(new Intent(MarkerListActivity.ACTION_RELOAD));

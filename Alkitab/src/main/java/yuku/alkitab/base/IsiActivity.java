@@ -472,7 +472,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		// sync on app start, if we are logged in
 		if (Preferences.contains(Prefkey.sync_simpleToken)) {
-			for (final String syncSetName : SyncShadow.ALL_SYNC_SETS) {
+			for (final String syncSetName : SyncShadow.ALL_SYNC_SET_NAMES) {
 				Sync.notifySyncNeeded(syncSetName);
 			}
 		}

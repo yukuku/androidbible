@@ -59,15 +59,6 @@ public class InternalDb {
 		this.helper = helper;
 	}
 
-	public enum ApplyAppendDeltaResult {
-		ok,
-		unknown_kind,
-		/** Entities have changed during sync request */
-		dirty_entities,
-		/** Sync user account has changed during sync request */
-		dirty_sync_account,
-	}
-
 	/**
 	 * _id is not stored
 	 */
@@ -1231,9 +1222,9 @@ public class InternalDb {
 	/**
 	 * Makes the current database updated with patches (append delta) from server.
 	 * Also updates the shadow (both data and the revno).
-	 * @return {@link yuku.alkitab.base.storage.InternalDb.ApplyAppendDeltaResult#ok} if database and sync shadow are updated. Otherwise else.
+	 * @return {@link yuku.alkitab.base.sync.Sync.ApplyAppendDeltaResult#ok} if database and sync shadow are updated. Otherwise else.
 	 */
-	@NonNull public ApplyAppendDeltaResult applyAppendDelta(final int final_revno, @NonNull final Sync.Delta<Sync_Mabel.Content> append_delta, @NonNull final List<Sync.Entity<Sync_Mabel.Content>> entitiesBeforeSync, @NonNull final String simpleTokenBeforeSync) {
+	@NonNull public Sync.ApplyAppendDeltaResult applyMabelAppendDelta(final int final_revno, @NonNull final Sync.Delta<Sync_Mabel.Content> append_delta, @NonNull final List<Sync.Entity<Sync_Mabel.Content>> entitiesBeforeSync, @NonNull final String simpleTokenBeforeSync) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
 		Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_MABEL, true);
@@ -1241,14 +1232,14 @@ public class InternalDb {
 			{ // if the current entities are not the same as the ones had when contacting server, reject this append delta.
 				final List<Sync.Entity<Sync_Mabel.Content>> currentEntities = Sync_Mabel.getEntitiesFromCurrent();
 				if (!Sync.entitiesEqual(currentEntities, entitiesBeforeSync)) {
-					return ApplyAppendDeltaResult.dirty_entities;
+					return Sync.ApplyAppendDeltaResult.dirty_entities;
 				}
 			}
 
 			{ // if the current simpleToken has changed (sync user logged off or changed), reject this append delta
 				final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
 				if (!U.equals(simpleToken, simpleTokenBeforeSync)) {
-					return ApplyAppendDeltaResult.dirty_sync_account;
+					return Sync.ApplyAppendDeltaResult.dirty_sync_account;
 				}
 			}
 
@@ -1266,7 +1257,7 @@ public class InternalDb {
 								deleteMarker_LabelByGid(o.gid);
 								break;
 							default:
-								return ApplyAppendDeltaResult.unknown_kind;
+								return Sync.ApplyAppendDeltaResult.unknown_kind;
 						}
 						break;
 					case add:
@@ -1288,7 +1279,7 @@ public class InternalDb {
 								insertOrUpdateMarker_Label(newMarker_label);
 								break;
 							default:
-								return ApplyAppendDeltaResult.unknown_kind;
+								return Sync.ApplyAppendDeltaResult.unknown_kind;
 						}
 						break;
 				}
@@ -1300,7 +1291,7 @@ public class InternalDb {
 
 			db.setTransactionSuccessful();
 
-			return ApplyAppendDeltaResult.ok;
+			return Sync.ApplyAppendDeltaResult.ok;
 		} finally {
 			Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_MABEL, false);
 			db.endTransaction();
