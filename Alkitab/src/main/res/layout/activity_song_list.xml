@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:orientation="vertical">
+
+	<android.support.v7.widget.Toolbar
+		android:id="@+id/toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?attr/actionBarSize"
+		android:background="?attr/colorPrimary" />
 
 	<LinearLayout
 		android:layout_width="match_parent"
@@ -20,24 +27,27 @@
 	<LinearLayout
 		android:id="@+id/panelFilter"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="?attr/actionBarSize"
 		android:layout_gravity="center_vertical"
-		android:paddingLeft="12dp">
+		android:paddingLeft="@dimen/padding_medium">
 
-		<Button
+		<TextView
 			android:id="@+id/bChangeBook"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:height="48dp"
-			android:minEms="3"
-			android:text="@string/sn_bookselector_all"
-			android:textSize="18sp" />
+			style="@style/Widget.AppCompat.Spinner"
+			android:layout_width="72dp"
+			android:layout_height="match_parent"
+			android:layout_gravity="end"
+			android:gravity="center"
+			android:textSize="14sp"
+			android:textStyle="bold"
+			tools:text="@string/sn_bookselector_all" />
 
 		<CheckBox
 			android:id="@+id/cDeepSearch"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/sn_deep_search_enabled" />
+			android:layout_height="match_parent"
+			android:text="@string/sn_deep_search_enabled"
+			android:layout_marginLeft="@dimen/padding_medium" />
 
 	</LinearLayout>
 

@@ -228,6 +228,7 @@
         <activity
             android:name="yuku.alkitab.base.ac.SongListActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+			android:label="@string/sn_songs_activity_title"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name="yuku.alkitab.base.ac.SongViewActivity"

@@ -10,6 +10,11 @@ public abstract class BaseActivity extends ActionBarActivity {
 
 	protected void navigateUp() {
 		final Intent upIntent = NavUtils.getParentActivityIntent(this);
+		if (upIntent == null) { // not defined in manifest, let us finish() instead.
+			finish();
+			return;
+		}
+
 		if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
 			TaskStackBuilder.create(this)
 				.addNextIntentWithParentStack(upIntent)

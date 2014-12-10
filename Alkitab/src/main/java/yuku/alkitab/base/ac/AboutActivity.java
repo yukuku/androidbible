@@ -40,10 +40,10 @@ public class AboutActivity extends BaseActivity {
 		setContentView(R.layout.activity_about);
 
 		final Toolbar toolbar = V.get(this, R.id.toolbar);
-		setSupportActionBar(toolbar);
+		setSupportActionBar(toolbar); // must be done first before below lines
 		toolbar.setTitle(null);
 		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-		toolbar.setNavigationOnClickListener(v -> finish());
+		toolbar.setNavigationOnClickListener(v -> navigateUp());
 
 		root = V.get(this, R.id.root);
 		tVersion = V.get(this, R.id.tVersion);

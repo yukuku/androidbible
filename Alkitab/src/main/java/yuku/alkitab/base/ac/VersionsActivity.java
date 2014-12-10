@@ -17,14 +17,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v13.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
@@ -99,7 +97,7 @@ import java.util.regex.Matcher;
 import java.util.zip.GZIPInputStream;
 
 
-public class VersionsActivity extends BaseActivity implements ActionBar.TabListener {
+public class VersionsActivity extends BaseActivity {
 	public static final String TAG = VersionsActivity.class.getSimpleName();
 
 	private static final int REQCODE_openFile = 1;
@@ -133,9 +131,9 @@ public class VersionsActivity extends BaseActivity implements ActionBar.TabListe
 		setTitle(R.string.kelola_versi);
 
 		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar); // must be done first before below lines
 		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
 		toolbar.setNavigationOnClickListener(v -> navigateUp());
-		setSupportActionBar(toolbar);
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the activity.
@@ -406,21 +404,6 @@ public class VersionsActivity extends BaseActivity implements ActionBar.TabListe
 				.setPositiveButton(R.string.ok, null)
 				.show();
 		}
-	}
-
-	@Override
-	public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-		// When the given tab is selected, switch to the corresponding page in
-		// the ViewPager.
-		mViewPager.setCurrentItem(tab.getPosition());
-	}
-
-	@Override
-	public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-	}
-
-	@Override
-	public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
 	}
 
 	/**

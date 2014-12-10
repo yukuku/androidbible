@@ -23,7 +23,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minWidth="480dp"
-                android:prompt="@string/pilihKitab_s"
                 tools:listitem="@android:layout/simple_spinner_dropdown_item" />
 
             <LinearLayout
