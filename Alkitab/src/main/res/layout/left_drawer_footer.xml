@@ -17,13 +17,15 @@
 		android:textColor="?android:textColorPrimary"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:drawableLeft="@android:drawable/ic_menu_preferences"
-		android:drawablePadding="8dp"
+		android:drawableLeft="@drawable/ic_menu_preferences"
+		android:drawablePadding="16dp"
 		android:gravity="left|center_vertical"
 		android:text="@string/menuPengaturan"
 		android:fontFamily="sans-serif-light"
 		android:textAllCaps="true"
-		android:textSize="14sp" />
+		android:textSize="14sp"
+        android:clickable="true"
+        android:elegantTextHeight="true" />
 
 	<Button
 		android:id="@+id/bHelp"
@@ -31,12 +33,13 @@
 		android:textColor="?android:textColorPrimary"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:drawableLeft="@android:drawable/ic_menu_help"
-		android:drawablePadding="8dp"
+		android:drawableLeft="@drawable/ic_menu_help"
+		android:drawablePadding="16dp"
 		android:gravity="left|center_vertical"
 		android:text="@string/menuBantuan"
 		android:fontFamily="sans-serif-light"
 		android:textAllCaps="true"
-		android:textSize="14sp" />
+		android:textSize="14sp"
+        android:clickable="true" />
 
 </LinearLayout>

@@ -43,7 +43,7 @@
 			style="?android:buttonBarButtonStyle"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:drawableLeft="@android:drawable/ic_menu_revert"
+			android:drawableLeft="@drawable/ic_menu_revert"
 			android:drawablePadding="8dp"
 			android:gravity="left|center_vertical"
 			android:text="@string/rp_menuCatchMeUp" />

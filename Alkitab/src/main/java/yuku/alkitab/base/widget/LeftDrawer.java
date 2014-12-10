@@ -38,10 +38,10 @@ import yuku.alkitab.debug.R;
 public abstract class LeftDrawer extends ScrollView {
 
 	// mandatory
-	Button bBible;
-	Button bDevotion;
-	Button bReadingPlan;
-	Button bSongs;
+	TextView bBible;
+	TextView bDevotion;
+	TextView bReadingPlan;
+	TextView bSongs;
 	View bSettings;
 	View bHelp;
 
