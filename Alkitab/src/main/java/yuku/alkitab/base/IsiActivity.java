@@ -13,7 +13,6 @@ import android.graphics.Point;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
-import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -579,20 +578,18 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	private void initNfcIfAvailable() {
 		nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
 		if (nfcAdapter != null) {
-			nfcAdapter.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
-				@Override public NdefMessage createNdefMessage(NfcEvent event) {
-					JSONObject obj = new JSONObject();
-					try {
-						obj.put("ari", Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, lsText.getVerseBasedOnScroll())); //$NON-NLS-1$
-					} catch (JSONException e) { // won't happen
-					}
-					byte[] payload = obj.toString().getBytes();
-					NdefRecord record = new NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".getBytes(), new byte[0], payload); //$NON-NLS-1$
-					return new NdefMessage(new NdefRecord[] {
-						record,
-						NdefRecord.createApplicationRecord(getPackageName()),
-					});
+			nfcAdapter.setNdefPushMessageCallback(event -> {
+				JSONObject obj = new JSONObject();
+				try {
+					obj.put("ari", Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, lsText.getVerseBasedOnScroll())); //$NON-NLS-1$
+				} catch (JSONException e) { // won't happen
 				}
+				byte[] payload = obj.toString().getBytes();
+				NdefRecord record = new NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".getBytes(), new byte[0], payload); //$NON-NLS-1$
+				return new NdefMessage(new NdefRecord[] {
+					record,
+					NdefRecord.createApplicationRecord(getPackageName()),
+				});
 			}, this);
 		}
 	}
@@ -636,7 +633,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		NdefMessage msg = (NdefMessage) rawMsgs[0];
 		// record 0 contains the MIME type, record 1 is the AAR, if present
 		NdefRecord[] records = msg.getRecords();
-		if (records == null || records.length <= 0) return null;
+		if (records.length <= 0) return null;
 
 		String json = new String(records[0].getPayload());
 		try {
@@ -1200,32 +1197,24 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	void openVersionsDialog() {
-		S.openVersionsDialog(this, false, S.activeVersionId, new S.VersionDialogListener() {
-			@Override
-			public void onVersionSelected(final MVersion mv) {
-				loadVersion(mv, true);
-			}
-		});
+		S.openVersionsDialog(this, false, S.activeVersionId, mv -> loadVersion(mv, true));
 	}
 
 	void openSplitVersionsDialog() {
-		S.openVersionsDialog(this, true, activeSplitVersionId, new S.VersionDialogListener() {
-			@Override
-			public void onVersionSelected(final MVersion mv) {
-				if (mv == null) { // closing split version
+		S.openVersionsDialog(this, true, activeSplitVersionId, mv -> {
+			if (mv == null) { // closing split version
+				activeSplitVersion = null;
+				activeSplitVersionId = null;
+				closeSplitDisplay();
+			} else {
+				boolean ok = loadSplitVersion(mv);
+				if (ok) {
+					openSplitDisplay();
+					displaySplitFollowingMaster();
+				} else {
 					activeSplitVersion = null;
 					activeSplitVersionId = null;
 					closeSplitDisplay();
-				} else {
-					boolean ok = loadSplitVersion(mv);
-					if (ok) {
-						openSplitDisplay();
-						displaySplitFollowingMaster();
-					} else {
-						activeSplitVersion = null;
-						activeSplitVersionId = null;
-						closeSplitDisplay();
-					}
 				}
 			}
 		});
@@ -1238,23 +1227,20 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		// do it on after the layout pass
 		overlayContainer.requestLayout();
-		overlayContainer.post(new Runnable() {
-			@Override
-			public void run() {
-				splitHandle.setVisibility(View.VISIBLE);
-				int splitHandleHeight = getResources().getDimensionPixelSize(R.dimen.split_handle_height);
-				int totalHeight = splitRoot.getHeight();
-				int masterHeight = totalHeight / 2 - splitHandleHeight / 2;
+		overlayContainer.post(() -> {
+			splitHandle.setVisibility(View.VISIBLE);
+			int splitHandleHeight = getResources().getDimensionPixelSize(R.dimen.split_handle_height);
+			int totalHeight = splitRoot.getHeight();
+			int masterHeight = totalHeight / 2 - splitHandleHeight / 2;
 
-				// divide by 2 the screen space
-				ViewGroup.LayoutParams lp = lsText.getLayoutParams();
-				lp.height = masterHeight;
-				lsText.setLayoutParams(lp);
+			// divide by 2 the screen space
+			ViewGroup.LayoutParams lp = lsText.getLayoutParams();
+			lp.height = masterHeight;
+			lsText.setLayoutParams(lp);
 
-				// no need to set height, because it has been set to match_parent, so it takes
-				// the remaining space.
-				lsSplit1.setVisibility(View.VISIBLE);
-			}
+			// no need to set height, because it has been set to match_parent, so it takes
+			// the remaining space.
+			lsSplit1.setVisibility(View.VISIBLE);
 		});
 
 		bVersion.setVisibility(View.GONE);
@@ -2076,14 +2062,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	};
 
-	LabeledSplitHandleButton.OnLabelPressed splitHandleButton_labelPressed = new LabeledSplitHandleButton.OnLabelPressed() {
-		@Override
-		public void onLabelPressed(final int which) {
-			if (which == 1) { // left
-				openVersionsDialog();
-			} else if (which == 2) { // right
-				openSplitVersionsDialog();
-			}
+	LabeledSplitHandleButton.OnLabelPressed splitHandleButton_labelPressed = which -> {
+		if (which == 1) { // left
+			openVersionsDialog();
+		} else if (which == 2) { // right
+			openSplitVersionsDialog();
 		}
 	};
 
