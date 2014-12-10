@@ -1,23 +1,29 @@
 package yuku.alkitab.base.util;
 
-import android.content.SharedPreferences;
-import android.util.Log;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.sync.Sync;
+import yuku.alkitab.model.util.Gid;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 public class History {
-	private static final String TAG = History.class.getSimpleName();
-	private static final String HISTORY_PREFIX = "sejarah/"; //$NON-NLS-1$
-	private static final int MAX = 20;
-	private static final String FIELD_SEPARATOR_STRING = ":";
-	private static final Pattern FIELD_SEPARATOR_PATTERN = Pattern.compile(FIELD_SEPARATOR_STRING);
+	private static final int MAX_HISTORY_ENTRIES = 20;
 
-	final SharedPreferences preferences;
-	final List<ClientHistoryEntry> entries;
+	static class HistoryEntry {
+		public String gid;
+		public int ari;
+		public long timestamp;
+		public String creator_id;
+	}
+
+	static class HistoryJson {
+		public List<HistoryEntry> entries;
+	}
+
+	final List<HistoryEntry> entries;
 
 	private static History instance;
 
@@ -29,78 +35,43 @@ public class History {
 	}
 
 	private History() {
-		this.preferences = App.getInstantPreferences();
-
 		entries = new ArrayList<>();
 
-		try {
-			int n = preferences.getInt(HISTORY_PREFIX + "n", 0); //$NON-NLS-1$
-
-			final Map<String, ?> all = preferences.getAll();
-
-			for (int i = 0; i < n; i++) {
-				final ClientHistoryEntry entry = new ClientHistoryEntry();
-				final Object val = all.get(HISTORY_PREFIX + i);
-				if (val instanceof Integer) {
-					// for compatibility when upgrading from older version without sync and timestamp support
-					entry.ari = (Integer) val;
-					entry.savedInServer = false;
-					entry.timestamp = System.currentTimeMillis();
-				} else if (val instanceof String) {
-					// v1:ari:timestamp:(int)savedinserver
-					final String[] splits = FIELD_SEPARATOR_PATTERN.split((String) val);
-					entry.ari = Integer.parseInt(splits[1]);
-					entry.timestamp = Long.parseLong(splits[2]);
-					entry.savedInServer = Integer.parseInt(splits[3]) != 0;
-				}
-				entries.add(entry);
-			}
-		} catch (Exception e) {
-			Log.e(TAG, "eror waktu muat preferences sejarah", e); //$NON-NLS-1$
+		final String s = Preferences.getString(Prefkey.history);
+		if (s != null) {
+			final HistoryJson obj = App.getDefaultGson().fromJson(s, HistoryJson.class);
+			entries.addAll(obj.entries);
 		}
 	}
 
 	public synchronized void save() {
-		final int n = entries.size();
-		final SharedPreferences.Editor editor = preferences.edit();
-
-		editor.putInt(HISTORY_PREFIX + "n", n); //$NON-NLS-1$
-		for (int i = 0; i < n; i++) {
-			ClientHistoryEntry entry = entries.get(i);
-			editor.putString(HISTORY_PREFIX + i,
-			"v1" + FIELD_SEPARATOR_STRING
-			+ entry.ari + FIELD_SEPARATOR_STRING
-			+ entry.timestamp + FIELD_SEPARATOR_STRING
-			+ (entry.savedInServer? "1": "0")
-			);
-		}
-
-		editor.apply();
+		final HistoryJson obj = new HistoryJson();
+		obj.entries = this.entries;
+		final String s = App.getDefaultGson().toJson(obj);
+		Preferences.setString(Prefkey.history, s);
 	}
-	
+
 	public synchronized void add(int ari) {
 		// check: do we have this previously?
-		for (int i = 0, len = entries.size(); i < len; i++) {
-			final ClientHistoryEntry entry = entries.get(i);
+		for (int i = entries.size() - 1; i >= 0; i--) {
+			final HistoryEntry entry = entries.get(i);
 			if (entry.ari == ari) {
-				// YES. Move this to the front and update timestamp
+				// YES. Remove this.
 				entries.remove(i);
-				entry.timestamp = System.currentTimeMillis();
-				entry.savedInServer = false;
-				entries.add(0, entry);
-				return;
 			}
 		}
-		
-		// NO. Add it to the front and remove if overflow
-		ClientHistoryEntry entry = new ClientHistoryEntry();
+
+		// Add it to the front
+		final HistoryEntry entry = new HistoryEntry();
+		entry.gid = Gid.newGid();
 		entry.ari = ari;
 		entry.timestamp = System.currentTimeMillis();
-		entry.savedInServer = false;
+		entry.creator_id = Sync.getInstallationId();
 		entries.add(0, entry);
 
-		if (entries.size() > MAX) {
-			entries.remove(MAX);
+		// and remove if overflow
+		while (entries.size() > MAX_HISTORY_ENTRIES) {
+			entries.remove(MAX_HISTORY_ENTRIES);
 		}
 	}
 
@@ -115,49 +86,5 @@ public class History {
 	public synchronized long getTimestamp(final int position) {
 		return entries.get(position).timestamp;
 	}
-
-	public synchronized List<HistoryEntry> getEntriesToSend() {
-		List<HistoryEntry> res = new ArrayList<>();
-		for (ClientHistoryEntry entry : entries) {
-			if (!entry.savedInServer) {
-				res.add(entry.toHistoryEntry());
-			}
-		}
-		return res;
-	}
-
-	public synchronized void replaceAllWithServerData(final List<HistoryEntry> serverEntries) {
-		entries.clear();
-		for (HistoryEntry serverEntry : serverEntries) {
-			final ClientHistoryEntry clientEntry = ClientHistoryEntry.fromHistoryEntry(true, serverEntry);
-			entries.add(clientEntry);
-		}
-	}
-
 }
 
-// temporarily here for preparation of sync
-class HistoryEntry {
-	public int ari;
-	public long timestamp;
-}
-
-// temporarily here for preparation of sync
-class ClientHistoryEntry extends HistoryEntry {
-	public boolean savedInServer;
-
-	public static ClientHistoryEntry fromHistoryEntry(boolean savedInServer, HistoryEntry historyEntry) {
-		ClientHistoryEntry res = new ClientHistoryEntry();
-		res.ari = historyEntry.ari;
-		res.timestamp = historyEntry.timestamp;
-		res.savedInServer = savedInServer;
-		return res;
-	}
-
-	public HistoryEntry toHistoryEntry() {
-		HistoryEntry res = new HistoryEntry();
-		res.ari = this.ari;
-		res.timestamp = this.timestamp;
-		return res;
-	}
-}

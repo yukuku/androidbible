@@ -1,7 +1,6 @@
 package yuku.alkitab.base;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.support.multidex.MultiDex;
@@ -134,10 +133,6 @@ public class App extends yuku.afw.App {
 			config.locale = locale;
 			context.getResources().updateConfiguration(config, null);
 		}
-	}
-
-	public static SharedPreferences getInstantPreferences() {
-		return context.getSharedPreferences(context.getPackageName(), 0);
 	}
 
 	public static LocalBroadcastManager getLbm() {

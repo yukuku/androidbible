@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Point;
@@ -112,14 +111,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	public static final String ACTION_ATTRIBUTE_MAP_CHANGED = "yuku.alkitab.action.ATTRIBUTE_MAP_CHANGED";
 	public static final String EXTRA_CLOSE_DRAWER = "close_drawer";
-
-	// The followings are for instant_pref
-	private static final String PREFKEY_lastBookId = "kitabTerakhir";
-	private static final String PREFKEY_lastChapter = "pasalTerakhir";
-	private static final String PREFKEY_lastVerse = "ayatTerakhir";
-	private static final String PREFKEY_lastVersionId = "edisiTerakhir";
-
-	private static final String PREFKEY_lastSplitVersionId = "lastSplitVersionId";
 
 	private static final int REQCODE_goto = 1;
 	private static final int REQCODE_share = 7;
@@ -266,7 +257,6 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 	Book activeBook;
 	int chapter_1 = 0;
-	SharedPreferences instant_pref;
 	boolean fullScreen;
 	Toast fullScreenToast;
 
@@ -414,12 +404,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		final boolean selectVerse;
 		final int selectVerseCount;
 
-		instant_pref = App.getInstantPreferences();
 		if (intentResult == null) {
 			// restore the last (version; book; chapter and verse).
-			final int lastBookId = instant_pref.getInt(PREFKEY_lastBookId, 0);
-			final int lastChapter = instant_pref.getInt(PREFKEY_lastChapter, 0);
-			final int lastVerse = instant_pref.getInt(PREFKEY_lastVerse, 0);
+			final int lastBookId = Preferences.getInt(Prefkey.lastBookId, 0);
+			final int lastChapter = Preferences.getInt(Prefkey.lastChapter, 0);
+			final int lastVerse = Preferences.getInt(Prefkey.lastVerse, 0);
 			openingAri = Ari.encode(lastBookId, lastChapter, lastVerse);
 			selectVerse = false;
 			selectVerseCount = 1;
@@ -430,7 +419,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			selectVerseCount = intentResult.selectVerseCount;
 		}
 
-		final String lastVersionId = instant_pref.getString(PREFKEY_lastVersionId, null);
+		final String lastVersionId = Preferences.getString(Prefkey.lastVersionId);
 		final MVersion mv = getVersionFromVersionId(lastVersionId);
 
 		if (mv != null) {
@@ -461,7 +450,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		{ // load last split version. This must be after load book, chapter, and verse.
-			final String lastSplitVersionId = instant_pref.getString(PREFKEY_lastSplitVersionId, null);
+			final String lastSplitVersionId = Preferences.getString(Prefkey.lastSplitVersionId, null);
 			if (lastSplitVersionId != null) {
 				final MVersion splitMv = getVersionFromVersionId(lastSplitVersionId);
 				final MVersion splitMvActual = splitMv == null? S.getMVersionInternal(): splitMv;
@@ -926,18 +915,17 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	
 	@Override protected void onStop() {
 		super.onStop();
-		
-		final SharedPreferences.Editor editor = instant_pref.edit();
-		editor.putInt(PREFKEY_lastBookId, this.activeBook.bookId);
-		editor.putInt(PREFKEY_lastChapter, chapter_1);
-		editor.putInt(PREFKEY_lastVerse, lsText.getVerseBasedOnScroll());
-		editor.putString(PREFKEY_lastVersionId, S.activeVersionId);
-		if (activeSplitVersion == null) {
-			editor.putString(PREFKEY_lastSplitVersionId, null);
-		} else {
-			editor.putString(PREFKEY_lastSplitVersionId, activeSplitVersionId);
+
+		Preferences.hold();
+		try {
+			Preferences.setInt(Prefkey.lastBookId, this.activeBook.bookId);
+			Preferences.setInt(Prefkey.lastChapter, chapter_1);
+			Preferences.setInt(Prefkey.lastVerse, lsText.getVerseBasedOnScroll());
+			Preferences.setString(Prefkey.lastVersionId, S.activeVersionId);
+			Preferences.setString(Prefkey.lastSplitVersionId, activeSplitVersion == null ? null : activeSplitVersionId);
+		} finally {
+			Preferences.unhold();
 		}
-		editor.apply();
 
 		history.save();
 
