@@ -4,9 +4,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:background="#2c2c2c"
-	android:divider="@android:drawable/divider_horizontal_dark"
-	android:dividerPadding="2dp"
+	android:background="#303030"
 	android:orientation="vertical"
 	android:showDividers="middle"
 	tools:ignore="Overdraw">
@@ -21,6 +19,7 @@
 		android:drawableLeft="@drawable/ic_drawer_bible"
 		android:drawablePadding="16dp"
         android:paddingLeft="16dp"
+        android:textSize="16sp"
 		android:gravity="left|center_vertical"
 		android:text="@string/menuBible"
         android:focusable="false" />
@@ -35,6 +34,7 @@
 		android:drawableLeft="@drawable/ic_drawer_devotion"
 		android:drawablePadding="16dp"
         android:paddingLeft="16dp"
+        android:textSize="16sp"
 		android:gravity="left|center_vertical"
 		android:text="@string/menuDevotion" />
 
@@ -48,6 +48,7 @@
 		android:drawableLeft="@drawable/ic_drawer_reading_plan"
 		android:drawablePadding="16dp"
         android:paddingLeft="16dp"
+        android:textSize="16sp"
 		android:gravity="left|center_vertical"
 		android:text="@string/rp_menuReadingPlan" />
 
@@ -61,6 +62,7 @@
 		android:drawableLeft="@drawable/ic_drawer_songs"
 		android:drawablePadding="16dp"
         android:paddingLeft="16dp"
+        android:textSize="16sp"
 		android:gravity="left|center_vertical"
 		android:text="@string/menuSongs" />
 

@@ -7,6 +7,6 @@
 	<!-- Light blue primary -->
 	<color name="accent">#03a9f4</color>
 	<!-- Black -->
-	<color name="windowBackground">#000000</color>
+	<color name="windowBackground">#303030</color>
 
 </resources>

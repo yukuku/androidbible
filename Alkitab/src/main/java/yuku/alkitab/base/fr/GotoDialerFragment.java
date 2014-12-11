@@ -297,7 +297,7 @@ public class GotoDialerFragment extends BaseGotoFragment {
 	}
 
 	private void colorize() {
-		if (active != null) active.setBackgroundColor(0xff313131);
+		if (active != null) active.setBackgroundResource(R.color.goto_dialer_active);
 		if (passive != null) passive.setBackgroundColor(0x0);
 	}
 

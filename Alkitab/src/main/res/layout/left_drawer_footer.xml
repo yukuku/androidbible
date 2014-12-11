@@ -4,9 +4,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:background="#2c2c2c"
-	android:divider="@android:drawable/divider_horizontal_dark"
-	android:dividerPadding="2dp"
+	android:background="#303030"
 	android:orientation="vertical"
 	android:showDividers="middle"
 	tools:ignore="Overdraw">
@@ -21,9 +19,8 @@
 		android:drawablePadding="16dp"
 		android:gravity="left|center_vertical"
 		android:text="@string/menuPengaturan"
-		android:fontFamily="sans-serif-light"
-		android:textAllCaps="true"
-		android:textSize="14sp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textSize="16sp"
         android:clickable="true"
         android:elegantTextHeight="true" />
 
@@ -37,9 +34,8 @@
 		android:drawablePadding="16dp"
 		android:gravity="left|center_vertical"
 		android:text="@string/menuBantuan"
-		android:fontFamily="sans-serif-light"
-		android:textAllCaps="true"
-		android:textSize="14sp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textSize="16sp"
         android:clickable="true" />
 
 </LinearLayout>

@@ -191,9 +191,9 @@ public class U {
 
 	public static int getForegroundColorOnDarkBackgroundByBookId(int bookId) {
 		if (bookId >= 0 && bookId < 39) { // OT
-			return 0xff_f48fb1; // Pink 200
+			return 0xff_ef5350; // Pink
 		} else if (bookId >= 39 && bookId < 66) { // NT
-			return 0xff_90caf9; // Blue 200
+			return 0xff_42a5f5; // Blue
 		} else { // others
 			return 0xff_eeeeee; // Grey 200
 		}
@@ -201,9 +201,9 @@ public class U {
 
 	public static int getBackgroundColorByBookId(int bookId) {
 		if (bookId >= 0 && bookId < 39) { // OT
-			return 0xff_880e4f; // Pink 900
+			return 0xff_ef5350; // Pink
 		} else if (bookId >= 39 && bookId < 66) { // NT
-			return 0xff_0d47a1; // Blue 900
+			return 0xff_42a5f5; // Blue
 		} else { // others
 			return 0xff_212121; // Grey 900
 		}
