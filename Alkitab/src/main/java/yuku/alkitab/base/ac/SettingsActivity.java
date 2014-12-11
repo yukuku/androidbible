@@ -25,6 +25,7 @@ public class SettingsActivity extends BasePreferenceActivity {
 		DisplayFragment.class.getName(),
 		UsageFragment.class.getName()
 	);
+	Header firstHeaderWithFragment;
 
 	public static Intent createIntent() {
 		return new Intent(App.context, SettingsActivity.class);
@@ -36,11 +37,24 @@ public class SettingsActivity extends BasePreferenceActivity {
 
 		loadHeadersFromResource(R.xml.settings_headers, target);
 
+		// look for first header with a fragment
+		for (final Header header : target) {
+			if (header.fragment != null) {
+				firstHeaderWithFragment = header;
+				break;
+			}
+		}
+
 		for (final Header header : target) {
 			if (header.id == R.id.header_id_sync) {
 				header.intent = new Intent(App.context, SyncSettingsActivity.class);
 			}
 		}
+	}
+
+	@Override
+	public Header onGetInitialHeader() {
+		return firstHeaderWithFragment;
 	}
 
 	@Override

@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Point;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -27,6 +26,7 @@ import android.text.format.DateFormat;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -103,7 +103,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.XrefDialogListener, LeftDrawer.Text.Listener, ProgressMarkListDialog.Listener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
@@ -1072,71 +1071,33 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		if (yes) {
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			getSupportActionBar().hide();
+
+			final ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) root.getLayoutParams();
+			lp.topMargin = 0;
+			root.setLayoutParams(lp);
+
 			if (Build.VERSION.SDK_INT >= 19) {
 				decorView.setSystemUiVisibility(
-					View.SYSTEM_UI_FLAG_FULLSCREEN
-						| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-						| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+					View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+						| View.SYSTEM_UI_FLAG_IMMERSIVE
 				);
-
-				decorView.setOnSystemUiVisibilityChangeListener(visibility -> {
-					Log.d(TAG, "@@onSystemUiVisibilityChange " + Integer.toHexString(visibility));
-
-					final int reallyFullscreenFlags = View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-
-					if ((visibility & reallyFullscreenFlags) == reallyFullscreenFlags) {
-						// we know that we are fullscreen (no status bar) and navigation is hidden.
-						// so mark this layout as stable (action bar will not move)
-						// However, those flags are set even when our root is not really fullscreen yet!
-
-						final AtomicInteger retries = new AtomicInteger(0);
-
-						final Runnable makeLayoutStable = new Runnable() {
-							@Override
-							public void run() {
-								final int systemUiVisibility = decorView.getSystemUiVisibility();
-								Log.d(TAG, "@@onSystemUiVisibilityChange (2) " + Integer.toHexString(systemUiVisibility));
-
-								if ((systemUiVisibility & reallyFullscreenFlags) != reallyFullscreenFlags) {
-									// we are no longer really fullscreen, let's stop trying
-								}
-
-								final Point rootSize = new Point(root.getWidth(), root.getHeight());
-								final Point screenSize = new Point();
-								getWindowManager().getDefaultDisplay().getRealSize(screenSize);
-
-								if (rootSize.equals(screenSize)) {
-									Log.d(TAG, "@@onSystemUiVisibilityChange finally same root and screen size: " + rootSize);
-
-									decorView.setSystemUiVisibility(
-										View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-											| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-											| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-											| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-											| View.SYSTEM_UI_FLAG_FULLSCREEN
-											| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-									);
-								} else {
-									Log.d(TAG, "@@onSystemUiVisibilityChange different root and screen size: " + rootSize + " " + screenSize + " retry " + retries.get());
-									retries.incrementAndGet();
-									decorView.getHandler().postDelayed(this, 50);
-								}
-							}
-						};
-
-						decorView.getHandler().post(makeLayoutStable);
-					}
-				});
 			}
 
 			fullScreen = true;
 		} else {
 			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			getSupportActionBar().show();
+
+			final ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) root.getLayoutParams();
+			final TypedValue tv = new TypedValue();
+			getTheme().resolveAttribute(R.attr.actionBarSize, tv, true);
+			lp.topMargin = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+			root.setLayoutParams(lp);
+
 			if (Build.VERSION.SDK_INT >= 19) {
 				decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-				decorView.setOnSystemUiVisibilityChangeListener(null);
 			}
+
 			fullScreen = false;
 		}
 	}
@@ -1145,18 +1106,19 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	public void onWindowFocusChanged(final boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 
+		final View decorView = getWindow().getDecorView();
+		Log.d(TAG, "@@onWindowFocusChanged bef hasFocus=" + hasFocus + " 0x" + Integer.toHexString(decorView.getSystemUiVisibility()));
+
 		if (hasFocus && fullScreen) {
 			if (Build.VERSION.SDK_INT >= 19) {
-				getWindow().getDecorView().setSystemUiVisibility(
-					View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-						| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-						| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-						| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-						| View.SYSTEM_UI_FLAG_FULLSCREEN
-						| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+				decorView.setSystemUiVisibility(
+					View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+						| View.SYSTEM_UI_FLAG_IMMERSIVE
 				);
 			}
 		}
+
+		Log.d(TAG, "@@onWindowFocusChanged aft hasFocus=" + hasFocus + " 0x" + Integer.toHexString(decorView.getSystemUiVisibility()));
 	}
 
 	void setShowTextAppearancePanel(boolean yes) {
