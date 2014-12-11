@@ -74,6 +74,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
         <activity
             android:name="yuku.alkitab.base.ac.MarkersActivity"
+			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
             android:label="@string/activity_title_markers" >
             <intent-filter android:label="@string/intent_filter_import_from_backup" >
@@ -107,6 +108,7 @@
         </activity>
         <activity
             android:name="yuku.alkitab.base.ac.MarkerListActivity"
+			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
@@ -225,6 +227,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
         <activity
             android:name="yuku.alkitab.base.ac.FontManagerActivity"
+			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
         <activity
             android:name="yuku.alkitab.base.ac.SongListActivity"
