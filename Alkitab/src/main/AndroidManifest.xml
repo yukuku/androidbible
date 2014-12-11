@@ -220,7 +220,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
         <activity
             android:name="yuku.alkitab.base.ac.AboutActivity"
-			android:label=""
+			android:label="@string/menuBantuan"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
         <activity
             android:name="yuku.alkitab.base.ac.ShareActivity"
