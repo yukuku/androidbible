@@ -66,10 +66,11 @@
         <activity
             android:name="yuku.alkitab.base.ac.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-			android:theme="@style/Theme.Alkitab.WithActionBar.Native"
+			android:theme="@style/Theme.MaterialOrHolo"
             android:label="@string/pengaturan_alkitab" />
         <activity
             android:name="yuku.alkitab.base.ac.ColorSettingsActivity"
+			android:theme="@style/Theme.MaterialOrHolo"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
         <activity
             android:name="yuku.alkitab.base.ac.MarkersActivity"
@@ -235,6 +236,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
         <activity
             android:name="yuku.alkitab.base.ac.SecretSettingsActivity"
+			android:theme="@style/Theme.MaterialOrHolo"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
             android:label="Secret settings" />
         <activity
@@ -248,7 +250,7 @@
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
 			android:windowSoftInputMode="adjustResize"/>
 		<activity android:name="yuku.alkitab.base.sync.SyncSettingsActivity"
-			android:theme="@style/Theme.Alkitab.WithActionBar.Native"
+			android:theme="@style/Theme.MaterialOrHolo"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.sync.SyncLogActivity"
 			android:label="@string/sync_log_activity_title"
