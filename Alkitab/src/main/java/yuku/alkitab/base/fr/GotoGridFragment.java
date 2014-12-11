@@ -244,7 +244,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 		}
 
 		int backgroundColorForView(int position) {
-			return 0xff303030;
+			return 0x0; // transparent
 		}
 	}
 	
