@@ -22,7 +22,7 @@
 				android:layout_marginLeft="16dp"
 				android:layout_marginRight="16dp"
 				android:layout_marginTop="16dp"
-				android:background="#151515"
+                android:paddingTop="36dp"
 				android:gravity="center_horizontal"
 				android:orientation="vertical"
 				android:paddingLeft="24dp"
@@ -40,33 +40,33 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginTop="16dp"
-					android:tag="bold"
+                    android:textColor="#fff"
+                    android:fontFamily="sans-serif-medium"
 					android:text="@string/app_name"
-					android:textSize="24sp" />
+					android:textSize="20sp" />
 
 				<TextView
 					android:id="@+id/tVersion"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:text="versi x.y.z"
-					android:textSize="18sp"
-					tools:ignore="HardcodedText" />
+                    tools:ignore="HardcodedText" />
 
 				<TextView
 					android:id="@+id/tBuild"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:text="999 1234abc"
-					android:textSize="14sp"
-					tools:ignore="HardcodedText" />
+                    tools:ignore="HardcodedText" />
 
 				<TextView
 					android:id="@+id/tAboutTextDesc"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginBottom="16dp"
-					android:layout_marginTop="32dp"
+					android:layout_marginTop="16dp"
 					android:autoLink="all"
+                    android:textColor="#fff"
 					android:gravity="center_horizontal"
 					android:text="@string/about_text_desc"
 					android:textSize="16sp"
@@ -82,10 +82,9 @@
 				android:layout_height="wrap_content"
 				android:layout_marginLeft="16dp"
 				android:layout_marginRight="16dp"
-				android:layout_marginTop="16dp"
-				android:background="@drawable/about_linebutton_bg"
 				android:gravity="center_horizontal"
 				android:orientation="vertical"
+                android:background="#262626"
 				android:paddingLeft="24dp"
 				android:paddingRight="24dp">
 
@@ -94,6 +93,7 @@
 					android:layout_height="48dp"
 					android:gravity="center_vertical"
 					android:text="@string/menuBantuan"
+                    android:textColor="#fff"
 					android:textAppearance="?android:textAppearanceMedium" />
 
 			</LinearLayout>
@@ -105,8 +105,8 @@
 				android:layout_marginLeft="16dp"
 				android:layout_marginRight="16dp"
 				android:layout_marginTop="16dp"
-				android:background="@drawable/about_linebutton_bg"
-				android:gravity="center_horizontal"
+                android:background="#262626"
+                android:gravity="center_horizontal"
 				android:orientation="vertical"
 				android:paddingLeft="24dp"
 				android:paddingRight="24dp">
@@ -116,6 +116,7 @@
 					android:layout_height="48dp"
 					android:gravity="center_vertical"
 					android:text="@string/menuDonasi"
+                    android:textColor="#fff"
 					android:textAppearance="?android:textAppearanceMedium" />
 
 			</LinearLayout>
@@ -127,8 +128,8 @@
 				android:layout_marginLeft="16dp"
 				android:layout_marginRight="16dp"
 				android:layout_marginTop="16dp"
-				android:background="@drawable/about_linebutton_bg"
-				android:gravity="center_horizontal"
+                android:background="#262626"
+                android:gravity="center_horizontal"
 				android:orientation="vertical"
 				android:paddingLeft="24dp"
 				android:paddingRight="24dp">
@@ -138,6 +139,7 @@
 					android:layout_height="48dp"
 					android:gravity="center_vertical"
 					android:text="@string/about_beta_feedback"
+                    android:textColor="#fff"
 					android:textAppearance="?android:textAppearanceMedium" />
 
 			</LinearLayout>
@@ -145,11 +147,9 @@
 			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginBottom="32dp"
+				android:layout_marginBottom="16dp"
 				android:layout_marginLeft="16dp"
 				android:layout_marginRight="16dp"
-				android:layout_marginTop="16dp"
-				android:background="#ff151515"
 				android:gravity="center_horizontal"
 				android:orientation="vertical"
 				android:paddingLeft="24dp"
@@ -158,10 +158,10 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_marginTop="32dp"
-					android:tag="bold"
+					android:layout_marginTop="16dp"
 					android:text="Team"
-					android:textSize="18sp"
+					android:textSize="14sp"
+                    android:fontFamily="sans-serif-medium"
 					tools:ignore="HardcodedText" />
 
 				<TextView
@@ -170,15 +170,15 @@
 					android:gravity="center_horizontal"
 					android:text="Randy Sugianto (Yuku) – developer\nRudy Kurniawan – developer\nJaya Satrio Hendrick – graphics\nYohanes Nugroho – PDB Reader"
 					android:textSize="16sp"
+                    android:textColor="#fff"
 					tools:ignore="HardcodedText" />
 
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_marginTop="32dp"
-					android:tag="bold"
-					android:text="Project Page"
-					android:textSize="16sp"
+					android:layout_marginTop="16dp"
+                    android:fontFamily="sans-serif-medium"					android:text="Project Page"
+					android:textSize="14sp"
 					tools:ignore="HardcodedText" />
 
 				<TextView
@@ -188,15 +188,14 @@
 					android:gravity="center_horizontal"
 					android:text="github.com/yukuku/androidbible"
 					android:textSize="16sp"
-					tools:ignore="HardcodedText" />
+                    tools:ignore="HardcodedText" />
 
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_marginTop="32dp"
-					android:tag="bold"
-					android:text="Development Blog"
-					android:textSize="16sp"
+					android:layout_marginTop="16dp"
+                    android:fontFamily="sans-serif-medium"					android:text="Development Blog"
+					android:textSize="14sp"
 					tools:ignore="HardcodedText" />
 
 				<TextView
@@ -206,25 +205,26 @@
 					android:gravity="center_horizontal"
 					android:text="androidbible.blogspot.com"
 					android:textSize="16sp"
-					tools:ignore="HardcodedText" />
+                    tools:ignore="HardcodedText" />
 
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_marginTop="32dp"
-					android:tag="bold"
+					android:layout_marginTop="16dp"
 					android:text="@string/about_translators"
-					android:textSize="18sp" />
+                    android:fontFamily="sans-serif-medium"
+					android:textSize="14sp" />
 
 				<TextView
 					android:id="@+id/tTranslators"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_marginBottom="32dp"
+					android:layout_marginBottom="16dp"
 					android:gravity="center_horizontal"
 					android:text="Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. "
 					android:textSize="16sp"
-					tools:ignore="HardcodedText" />
+                    android:textColor="#fff"
+                    tools:ignore="HardcodedText" />
 
 			</LinearLayout>
 		</LinearLayout>
@@ -234,6 +234,6 @@
 		android:id="@+id/toolbar"
 		android:layout_width="match_parent"
 		android:layout_height="?attr/actionBarSize"
-		android:background="#0000" />
+		android:background="@color/primary" />
 
 </FrameLayout>

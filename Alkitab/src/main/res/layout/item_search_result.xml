@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:padding="8dip" >
+    android:padding="16dip" >
 
     <TextView
         android:id="@+id/lReference"
@@ -23,6 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:textSize="14dp"
         android:layout_alignWithParentIfMissing="true"
         android:layout_below="@id/lReference"
         android:gravity="top"

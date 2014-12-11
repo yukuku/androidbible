@@ -5,7 +5,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="8dp" >
+    android:padding="16dp" >
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -19,6 +19,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
 			android:gravity="top|right"
+            android:textSize="14sp"
             android:text="2099-12-32"
             tools:ignore="HardcodedText" />
 
@@ -31,7 +32,7 @@
             android:layout_toLeftOf="@+id/lDate"
             android:text="*Caption or verse reference, etc."
             android:textColor="#fff"
-            android:textSize="18sp"
+            android:textSize="16sp"
             tools:ignore="HardcodedText"
 			android:layout_marginRight="8dp" />
 
@@ -44,6 +45,7 @@
         android:layout_marginTop="8dp"
         android:text="*Verse snippet or note content, etc. Verse snippet or note content, etc. Verse snippet or note content, etc. Verse snippet or note content, etc. Verse snippet or note content, etc. Verse snippet or note content, etc. Verse snippet or note content, etc. Verse snippet or note content, etc. "
         tools:ignore="HardcodedText"
+        android:textSize="14sp"
 		android:maxLines="4"
 		android:ellipsize="end" />
 
@@ -51,7 +53,7 @@
         android:id="@+id/panelLabels"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="7dp"
+        android:paddingTop="8dp"
         app:horizontalSpacing="8dp"
         app:verticalSpacing="6dp" />
 
