@@ -27,10 +27,10 @@
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:clipToPadding="false"
-				android:paddingBottom="@dimen/text_topbottom_padding"
+				android:paddingBottom="@dimen/text_bottom_padding"
 				android:paddingLeft="@dimen/text_side_padding"
 				android:paddingRight="@dimen/text_side_padding"
-				android:paddingTop="@dimen/text_topbottom_padding"
+				android:paddingTop="@dimen/text_top_padding"
 				android:scrollbarStyle="outsideOverlay" />
 
 			<FrameLayout
@@ -54,10 +54,10 @@
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
 					android:clipToPadding="false"
-					android:paddingBottom="@dimen/text_topbottom_padding"
+					android:paddingBottom="@dimen/text_bottom_padding"
 					android:paddingLeft="@dimen/text_side_padding"
 					android:paddingRight="@dimen/text_side_padding"
-					android:paddingTop="@dimen/text_topbottom_padding"
+					android:paddingTop="@dimen/text_top_padding"
 					android:scrollbarStyle="outsideOverlay" />
 
 				<TextView

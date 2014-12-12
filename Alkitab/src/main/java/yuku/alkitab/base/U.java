@@ -193,7 +193,7 @@ public class U {
 		if (bookId >= 0 && bookId < 39) { // OT
 			return 0xff_ef5350; // Pink
 		} else if (bookId >= 39 && bookId < 66) { // NT
-			return 0xff_42a5f5; // Blue
+			return 0xff_42a5f5; // Blue 400
 		} else { // others
 			return 0xff_eeeeee; // Grey 200
 		}
@@ -203,7 +203,7 @@ public class U {
 		if (bookId >= 0 && bookId < 39) { // OT
 			return 0xff_ef5350; // Pink
 		} else if (bookId >= 39 && bookId < 66) { // NT
-			return 0xff_42a5f5; // Blue
+			return 0xff_1e88e5; // Blue 600
 		} else { // others
 			return 0xff_212121; // Grey 900
 		}
