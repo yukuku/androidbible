@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
+
+	<TextView
+		android:id="@+id/tImportDesc"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft="@dimen/padding_medium"
+		android:layout_marginRight="@dimen/padding_medium"
+		android:layout_marginTop="@dimen/padding_small"
+		android:text="We detected a backup file from the old v3 Yuku Quick Bible that contains bookmarks, notes, highlights, and labels.\n\nDo you want to import them, so you can access them from this app?"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		tools:ignore="HardcodedText" />
+
+	<ListView
+		android:id="@+id/lsBackupFiles"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_marginLeft="@dimen/padding_medium"
+		android:layout_marginRight="@dimen/padding_medium"
+		android:layout_marginTop="@dimen/padding_small"
+		android:layout_weight="1" />
+
+	<LinearLayout
+		style="?buttonBarStyle"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:baselineAligned="false"
+		android:gravity="center_vertical"
+		android:orientation="horizontal">
+
+		<Button
+			android:id="@+id/bNoMore"
+			style="?android:buttonBarButtonStyle"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:checked="false"
+			android:text="Don&apos;t ask again"
+			tools:ignore="HardcodedText" />
+
+		<Button
+			android:id="@+id/bCancel"
+			style="?android:buttonBarButtonStyle"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="Not now"
+			tools:ignore="HardcodedText" />
+
+	</LinearLayout>
+</LinearLayout>

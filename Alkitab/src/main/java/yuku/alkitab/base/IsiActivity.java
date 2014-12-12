@@ -14,6 +14,7 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
@@ -52,6 +53,7 @@ import yuku.alkitab.base.ac.NoteActivity;
 import yuku.alkitab.base.ac.SearchActivity;
 import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.ShareActivity;
+import yuku.alkitab.base.ac.YukuAlkitabImportOfferActivity;
 import yuku.alkitab.base.ac.base.BaseLeftDrawerActivity;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.dialog.ProgressMarkListDialog;
@@ -98,11 +100,15 @@ import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 import yuku.devoxx.flowlayout.FlowLayout;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.XrefDialogListener, LeftDrawer.Text.Listener, ProgressMarkListDialog.Listener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
@@ -468,6 +474,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				final int verse_1 = Ari.toVerse(openingAri) + i;
 				lsText.setVerseSelected(verse_1, true);
 			}
+
+			if (!U.equals(getPackageName(), "yuku.alkitab") /* prevent self-import */
+				&& !U.equals(getPackageName(), "yuku.alkitab.kjv") /* prevent self-import */
+				&& Preferences.getInt(Prefkey.stop_import_yuku_alkitab_backups, 0) == 0
+				&& thereIsYukuAlkitabBackupFiles()) {
+				startActivity(YukuAlkitabImportOfferActivity.createIntent());
+			}
 		}
 
 		App.getLbm().registerReceiver(reloadAttributeMapReceiver, new IntentFilter(ACTION_ATTRIBUTE_MAP_CHANGED));
@@ -478,6 +491,27 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 				Sync.notifySyncNeeded(syncSetName);
 			}
 		}
+
+		if (!U.equals(getPackageName(), "yuku.alkitab") /* prevent self-import */ && Preferences.getInt(Prefkey.stop_import_yuku_alkitab_backups, 0) == 0 && thereIsYukuAlkitabBackupFiles()) {
+			startActivity(YukuAlkitabImportOfferActivity.createIntent());
+		}
+	}
+
+	private boolean thereIsYukuAlkitabBackupFiles() {
+		final File dir = new File(Environment.getExternalStorageDirectory(), "bible");
+		if (!dir.exists()) return false;
+
+		final File[] files = dir.listFiles(new FilenameFilter() {
+			final Matcher m = Pattern.compile("yuku.alkitab(\\.kjv)-(backup|autobackup-[0-9-]+)\\.xml").matcher("");
+
+			@Override
+			public boolean accept(final File dir, final String filename) {
+				m.reset(filename);
+				return m.matches();
+			}
+		});
+
+		return files != null && files.length != 0;
 	}
 
 	@Override

@@ -29,7 +29,6 @@ import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
 import yuku.alkitab.model.Marker_Label;
-import yuku.alkitab.model.util.Gid;
 
 import java.io.IOException;
 import java.util.Date;
@@ -210,10 +209,7 @@ public class SecretSyncDebugActivity extends BaseActivity {
 			final List<Label> labels = S.getDb().listAllLabels();
 			final List<Marker> markers = S.getDb().listAllMarkers();
 			if (labels.size() > 0 && markers.size() > 0) {
-				final Marker_Label marker_label = Marker_Label.createEmptyMarker_Label();
-				marker_label.gid = Gid.newGid();
-				marker_label.marker_gid = markers.get(0).gid;
-				marker_label.label_gid = labels.get(0).gid;
+				final Marker_Label marker_label = Marker_Label.createNewMarker_Label(markers.get(0).gid, labels.get(0).gid);
 				S.getDb().insertOrUpdateMarker_Label(marker_label);
 			} else {
 				new AlertDialog.Builder(this)
