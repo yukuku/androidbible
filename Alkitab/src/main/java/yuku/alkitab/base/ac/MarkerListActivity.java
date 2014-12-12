@@ -95,7 +95,7 @@ public class MarkerListActivity extends BaseActivity {
 	}
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreateWithNonToolbarUpButton(savedInstanceState);
 
 		setContentView(R.layout.activity_marker_list);
 
