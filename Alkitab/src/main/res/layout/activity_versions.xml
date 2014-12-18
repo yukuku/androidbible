@@ -1,7 +1,24 @@
-<android.support.v4.view.ViewPager
-	android:id="@+id/viewPager"
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	tools:context="yuku.alkitab.base.ac.VersionsActivity" />
+	android:orientation="vertical">
+
+	<android.support.v7.widget.Toolbar
+		android:id="@+id/toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?attr/actionBarSize"
+		android:background="?attr/colorPrimary" />
+
+	<com.google.samples.apps.iosched.ui.widget.SlidingTabLayout
+		android:id="@+id/sliding_tabs"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" />
+
+	<android.support.v4.view.ViewPager
+		android:id="@+id/viewPager"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		tools:context="yuku.alkitab.base.ac.VersionsActivity" />
+
+</LinearLayout>

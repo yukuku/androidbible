@@ -6,7 +6,8 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="240dp"
 	android:layout_height="match_parent"
-	android:background="#a000"
+	android:background="#262626"
+	android:fitsSystemWindows="true"
 	tools:ignore="Overdraw">
 
 	<LinearLayout
@@ -23,7 +24,7 @@
 		<ScrollView
 			android:id="@+id/scrollDescription"
 			android:layout_width="match_parent"
-			android:layout_height="96dp"
+			android:layout_height="128dp"
 			android:clipToPadding="false"
 			android:padding="8dp">
 
@@ -42,7 +43,7 @@
 			style="?android:buttonBarButtonStyle"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:drawableLeft="@android:drawable/ic_menu_revert"
+			android:drawableLeft="@drawable/ic_menu_revert"
 			android:drawablePadding="8dp"
 			android:gravity="left|center_vertical"
 			android:text="@string/rp_menuCatchMeUp" />

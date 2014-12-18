@@ -1,23 +1,43 @@
 package yuku.alkitab.base.util;
 
-import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.util.Log;
+import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.S;
+import yuku.alkitab.base.U;
+import yuku.alkitab.base.model.SyncShadow;
+import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.sync.Sync;
+import yuku.alkitab.base.sync.Sync_History;
+import yuku.alkitab.debug.BuildConfig;
+import yuku.alkitab.model.util.Gid;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 public class History {
-	private static final String TAG = History.class.getSimpleName();
-	private static final String HISTORY_PREFIX = "sejarah/"; //$NON-NLS-1$
-	private static final int MAX = 20;
-	private static final String FIELD_SEPARATOR_STRING = ":";
-	private static final Pattern FIELD_SEPARATOR_PATTERN = Pattern.compile(FIELD_SEPARATOR_STRING);
+	static final String TAG = History.class.getSimpleName();
 
-	final SharedPreferences preferences;
-	final List<ClientHistoryEntry> entries;
+	private static final int MAX_HISTORY_ENTRIES = 20;
+
+	public static class HistoryEntry {
+		public String gid;
+		public int ari;
+		public long timestamp;
+		public String creator_id;
+
+		public static HistoryEntry createEmptyEntry() {
+			return new HistoryEntry();
+		}
+	}
+
+	static class HistoryJson {
+		public List<HistoryEntry> entries;
+	}
+
+	final List<HistoryEntry> entries;
 
 	private static History instance;
 
@@ -29,78 +49,45 @@ public class History {
 	}
 
 	private History() {
-		this.preferences = App.getInstantPreferences();
-
 		entries = new ArrayList<>();
 
-		try {
-			int n = preferences.getInt(HISTORY_PREFIX + "n", 0); //$NON-NLS-1$
-
-			final Map<String, ?> all = preferences.getAll();
-
-			for (int i = 0; i < n; i++) {
-				final ClientHistoryEntry entry = new ClientHistoryEntry();
-				final Object val = all.get(HISTORY_PREFIX + i);
-				if (val instanceof Integer) {
-					// for compatibility when upgrading from older version without sync and timestamp support
-					entry.ari = (Integer) val;
-					entry.savedInServer = false;
-					entry.timestamp = System.currentTimeMillis();
-				} else if (val instanceof String) {
-					// v1:ari:timestamp:(int)savedinserver
-					final String[] splits = FIELD_SEPARATOR_PATTERN.split((String) val);
-					entry.ari = Integer.parseInt(splits[1]);
-					entry.timestamp = Long.parseLong(splits[2]);
-					entry.savedInServer = Integer.parseInt(splits[3]) != 0;
-				}
-				entries.add(entry);
-			}
-		} catch (Exception e) {
-			Log.e(TAG, "eror waktu muat preferences sejarah", e); //$NON-NLS-1$
+		final String s = Preferences.getString(Prefkey.history);
+		if (s != null) {
+			final HistoryJson obj = App.getDefaultGson().fromJson(s, HistoryJson.class);
+			entries.addAll(obj.entries);
 		}
 	}
 
 	public synchronized void save() {
-		final int n = entries.size();
-		final SharedPreferences.Editor editor = preferences.edit();
+		final HistoryJson obj = new HistoryJson();
+		obj.entries = this.entries;
+		final String s = App.getDefaultGson().toJson(obj);
+		Preferences.setString(Prefkey.history, s);
 
-		editor.putInt(HISTORY_PREFIX + "n", n); //$NON-NLS-1$
-		for (int i = 0; i < n; i++) {
-			ClientHistoryEntry entry = entries.get(i);
-			editor.putString(HISTORY_PREFIX + i,
-			"v1" + FIELD_SEPARATOR_STRING
-			+ entry.ari + FIELD_SEPARATOR_STRING
-			+ entry.timestamp + FIELD_SEPARATOR_STRING
-			+ (entry.savedInServer? "1": "0")
-			);
-		}
-
-		editor.apply();
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_HISTORY);
 	}
-	
+
 	public synchronized void add(int ari) {
 		// check: do we have this previously?
-		for (int i = 0, len = entries.size(); i < len; i++) {
-			final ClientHistoryEntry entry = entries.get(i);
+		for (int i = entries.size() - 1; i >= 0; i--) {
+			final HistoryEntry entry = entries.get(i);
 			if (entry.ari == ari) {
-				// YES. Move this to the front and update timestamp
+				// YES. Remove this.
 				entries.remove(i);
-				entry.timestamp = System.currentTimeMillis();
-				entry.savedInServer = false;
-				entries.add(0, entry);
-				return;
 			}
 		}
-		
-		// NO. Add it to the front and remove if overflow
-		ClientHistoryEntry entry = new ClientHistoryEntry();
+
+		// Add it to the front
+		final HistoryEntry entry = new HistoryEntry();
+		entry.gid = Gid.newGid();
 		entry.ari = ari;
 		entry.timestamp = System.currentTimeMillis();
-		entry.savedInServer = false;
+		entry.creator_id = Sync.getInstallationId();
 		entries.add(0, entry);
 
-		if (entries.size() > MAX) {
-			entries.remove(MAX);
+		// and remove if overflow
+		while (entries.size() > MAX_HISTORY_ENTRIES) {
+			entries.remove(MAX_HISTORY_ENTRIES);
 		}
 	}
 
@@ -116,48 +103,108 @@ public class History {
 		return entries.get(position).timestamp;
 	}
 
-	public synchronized List<HistoryEntry> getEntriesToSend() {
-		List<HistoryEntry> res = new ArrayList<>();
-		for (ClientHistoryEntry entry : entries) {
-			if (!entry.savedInServer) {
-				res.add(entry.toHistoryEntry());
+	public List<HistoryEntry> listAllEntries() {
+		return new ArrayList<>(entries);
+	}
+
+
+	/**
+	 * Makes the current history updated with patches (append delta) from server.
+	 * Also updates the shadow (both data and the revno).
+	 * TODO merge with {@link yuku.alkitab.base.storage.InternalDb#applyMabelAppendDelta(int, yuku.alkitab.base.sync.Sync.Delta, java.util.List, String)}
+	 * @return {@link yuku.alkitab.base.sync.Sync.ApplyAppendDeltaResult#ok} if history and sync shadow are updated. Otherwise else.
+	 */
+	@NonNull public Sync.ApplyAppendDeltaResult applyHistoryAppendDelta(final int final_revno, @NonNull final Sync.Delta<Sync_History.Content> append_delta, @NonNull final List<Sync.Entity<Sync_History.Content>> entitiesBeforeSync, @NonNull final String simpleTokenBeforeSync) {
+		final ArrayList<HistoryEntry> entriesCopy = new ArrayList<>(entries);
+
+		Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_HISTORY, true);
+		try {
+			{ // if the current entities are not the same as the ones had when contacting server, reject this append delta.
+				final List<Sync.Entity<Sync_History.Content>> currentEntities = Sync_History.getEntitiesFromCurrent();
+				if (!Sync.entitiesEqual(currentEntities, entitiesBeforeSync)) {
+					return Sync.ApplyAppendDeltaResult.dirty_entities;
+				}
+			}
+
+			{ // if the current simpleToken has changed (sync user logged off or changed), reject this append delta
+				final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
+				if (!U.equals(simpleToken, simpleTokenBeforeSync)) {
+					return Sync.ApplyAppendDeltaResult.dirty_sync_account;
+				}
+			}
+
+			for (final Sync.Operation<Sync_History.Content> o : append_delta.operations) {
+				switch (o.opkind) {
+					case del:
+						deleteByGid(entriesCopy, o.gid);
+						break;
+					case add:
+					case mod:
+						addOrModByGid(entriesCopy, o.gid, o.content, o.creator_id);
+						break;
+				}
+			}
+
+			// sort by timestamp desc
+			Collections.sort(entriesCopy, (a, b) -> (a.timestamp < b.timestamp) ? +1 : ((a.timestamp > b.timestamp) ? -1 : 0));
+
+			// commit changes
+			this.entries.clear();
+			this.entries.addAll(new ArrayList<>(entriesCopy));
+
+			// if we reach here, the local database has been updated with the append delta.
+			final SyncShadow ss = Sync_History.shadowFromEntities(Sync_History.getEntitiesFromCurrent(), final_revno);
+			S.getDb().insertOrUpdateSyncShadowBySyncSetName(ss);
+			this.save();
+
+			// when debugging, print
+			if (BuildConfig.DEBUG) {
+				Log.d(TAG, "After sync, the history entries are:");
+				Log.d(TAG, String.format("  ari ====   timestamp ===============   %-40s   %-40s", "gid", "creator_id"));
+				for (final HistoryEntry entry : entries) {
+					Log.d(TAG, String.format("- 0x%06x   %tF %<tT %<tz   %-40s   %-40s", entry.ari, entry.timestamp, entry.gid, entry.creator_id));
+				}
+			}
+
+			return Sync.ApplyAppendDeltaResult.ok;
+		} finally {
+			Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_HISTORY, false);
+		}
+	}
+
+	private static void deleteByGid(@NonNull final ArrayList<HistoryEntry> entries, @NonNull final String gid) {
+		for (int i = 0; i < entries.size(); i++) {
+			final HistoryEntry entry = entries.get(i);
+			if (U.equals(entry.gid, gid)) {
+				// delete and exit
+				entries.remove(i);
+				return;
 			}
 		}
-		return res;
 	}
 
-	public synchronized void replaceAllWithServerData(final List<HistoryEntry> serverEntries) {
-		entries.clear();
-		for (HistoryEntry serverEntry : serverEntries) {
-			final ClientHistoryEntry clientEntry = ClientHistoryEntry.fromHistoryEntry(true, serverEntry);
-			entries.add(clientEntry);
+	private static void addOrModByGid(@NonNull final ArrayList<HistoryEntry> entries, @NonNull final String gid, @NonNull final Sync_History.Content content, @NonNull final String creator_id) {
+		for (int i = 0; i < entries.size(); i++) {
+			final HistoryEntry entry = entries.get(i);
+			if (U.equals(entry.gid, gid)) {
+				// update!
+				entry.ari = content.ari;
+				entry.timestamp = content.timestamp;
+				entry.creator_id = creator_id;
+				return;
+			}
 		}
+
+		// not found, create new one
+		final HistoryEntry entry = HistoryEntry.createEmptyEntry();
+
+		entry.gid = gid;
+		entry.ari = content.ari;
+		entry.timestamp = content.timestamp;
+		entry.creator_id = creator_id;
+
+		entries.add(entry);
 	}
 
 }
 
-// temporarily here for preparation of sync
-class HistoryEntry {
-	public int ari;
-	public long timestamp;
-}
-
-// temporarily here for preparation of sync
-class ClientHistoryEntry extends HistoryEntry {
-	public boolean savedInServer;
-
-	public static ClientHistoryEntry fromHistoryEntry(boolean savedInServer, HistoryEntry historyEntry) {
-		ClientHistoryEntry res = new ClientHistoryEntry();
-		res.ari = historyEntry.ari;
-		res.timestamp = historyEntry.timestamp;
-		res.savedInServer = savedInServer;
-		return res;
-	}
-
-	public HistoryEntry toHistoryEntry() {
-		HistoryEntry res = new HistoryEntry();
-		res.ari = this.ari;
-		res.timestamp = this.timestamp;
-		return res;
-	}
-}

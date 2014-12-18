@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools">
 
 	<item
 		android:id="@+id/menuCopyShare"
 		android:icon="@drawable/ic_menu_copyshare"
-		android:showAsAction="always"
+		app:showAsAction="always"
 		android:title="@string/copy_share"
 		tools:ignore="AlwaysShowAction">
 		<menu>
 			<item
 				android:id="@+id/menuCopy"
 				android:icon="@drawable/ic_menu_copy"
-				android:showAsAction="always"
 				android:title="@string/salin_ayat" />
 			<item
 				android:id="@+id/menuShare"
 				android:icon="@drawable/ic_menu_share"
-				android:showAsAction="always"
 				android:title="@string/menuShare" />
 		</menu>
 	</item>
@@ -25,41 +24,38 @@
 	<item
 		android:id="@+id/menuCompare"
 		android:icon="@drawable/ic_menu_compare"
-		android:showAsAction="always"
+		app:showAsAction="always"
 		android:title="@string/menu_compare" />
 
 	<item
 		android:id="@+id/menuVersions"
 		android:icon="@drawable/ic_menu_versions"
-		android:showAsAction="always"
+		app:showAsAction="always"
 		android:title="@string/versi" />
 	<item
 		android:id="@+id/menuAddSomething"
 		android:icon="@drawable/ic_menu_add_light"
-		android:showAsAction="always"
+		app:showAsAction="always"
 		android:title="@string/menuAddSomething">
 		<menu>
 			<item
 				android:id="@+id/menuAddBookmark"
 				android:icon="@drawable/ic_menu_add_bookmark"
-				android:showAsAction="always"
 				android:title="@string/tambah_pembatas_buku" />
 			<item
 				android:id="@+id/menuAddNote"
 				android:icon="@drawable/ic_menu_add_note"
-				android:showAsAction="always"
 				android:title="@string/tulis_catatan" />
 			<item
 				android:id="@+id/menuAddHighlight"
 				android:icon="@drawable/ic_menu_add_highlight"
-				android:showAsAction="always"
 				android:title="@string/highlight_stabilo" />
 		</menu>
 	</item>
 	<item
 		android:id="@+id/menuEsvsb"
 		android:icon="@android:drawable/ic_menu_call"
-		android:showAsAction="ifRoom"
+		app:showAsAction="ifRoom"
 		android:title="ESV Study Bible"
 		android:visible="false"
 		tools:ignore="HardcodedText" />

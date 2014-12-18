@@ -38,8 +38,7 @@
         android:theme="@style/Theme.Alkitab" >
         <activity
             android:name="yuku.alkitab.base.IsiActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-            android:theme="@style/Theme.Alkitab.Content" >
+            android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -67,12 +66,15 @@
         <activity
             android:name="yuku.alkitab.base.ac.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+			android:theme="@style/Theme.MaterialOrHolo"
             android:label="@string/pengaturan_alkitab" />
         <activity
             android:name="yuku.alkitab.base.ac.ColorSettingsActivity"
+			android:theme="@style/Theme.MaterialOrHolo"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
         <activity
             android:name="yuku.alkitab.base.ac.MarkersActivity"
+			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
             android:label="@string/activity_title_markers" >
             <intent-filter android:label="@string/intent_filter_import_from_backup" >
@@ -106,6 +108,7 @@
         </activity>
         <activity
             android:name="yuku.alkitab.base.ac.MarkerListActivity"
+			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
@@ -205,39 +208,38 @@
         <activity
             android:name="yuku.alkitab.base.ac.DevotionActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
-            android:label="@string/menuDevotion"
-            android:parentActivityName="yuku.alkitab.base.IsiActivity" >
+            android:label="@string/menuDevotion">
             <intent-filter>
                 <action android:name="yuku.alkitab.ACTION_OPEN_DEVOTION" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="yuku.alkitab.base.IsiActivity" />
         </activity>
         <activity
             android:name="yuku.alkitab.base.ac.HelpActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
         <activity
             android:name="yuku.alkitab.base.ac.AboutActivity"
+			android:label="@string/menuBantuan"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
         <activity
             android:name="yuku.alkitab.base.ac.ShareActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
         <activity
             android:name="yuku.alkitab.base.ac.FontManagerActivity"
+			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
         <activity
             android:name="yuku.alkitab.base.ac.SongListActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+			android:label="@string/sn_songs_activity_title"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name="yuku.alkitab.base.ac.SongViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
         <activity
             android:name="yuku.alkitab.base.ac.SecretSettingsActivity"
+			android:theme="@style/Theme.MaterialOrHolo"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
             android:label="Secret settings" />
         <activity
@@ -251,12 +253,15 @@
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
 			android:windowSoftInputMode="adjustResize"/>
 		<activity android:name="yuku.alkitab.base.sync.SyncSettingsActivity"
+			android:theme="@style/Theme.MaterialOrHolo"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.sync.SyncLogActivity"
 			android:label="@string/sync_log_activity_title"
+			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.sync.SyncLoginActivity"
 			android:label="@string/sync_login_activity_title"
+			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
         <activity
             android:name="yuku.filechooser.FileChooserActivity"
@@ -290,6 +295,7 @@
             android:name="yuku.alkitab.base.ac.NoteActivity"
 			android:icon="@drawable/ic_attr_note"
 			android:windowSoftInputMode="adjustResize"
+			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 
         <service android:name="yuku.alkitab.base.sv.DownloadService" />
@@ -319,17 +325,17 @@
             </intent-filter>
         </receiver>
 
-        <!-- Used for install referral measurement -->
-        <service android:name="com.google.analytics.tracking.android.CampaignTrackingService" />
+		<!-- Used for Google Play Store Campaign Measurement-->
+		<service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
 
-        <receiver
-            android:name="com.google.analytics.tracking.android.CampaignTrackingReceiver"
-            android:exported="true"
-            tools:ignore="ExportedReceiver" >
-            <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER" />
-            </intent-filter>
-        </receiver>
+		<receiver android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+			android:exported="true"
+			tools:ignore="ExportedReceiver">
+			<intent-filter>
+				<action android:name="com.android.vending.INSTALL_REFERRER" />
+			</intent-filter>
+		</receiver>
+
         <receiver
             android:name="yuku.alkitab.base.br.DailyVerseAppWidgetReceiver"
             android:icon="@drawable/ic_launcher" >

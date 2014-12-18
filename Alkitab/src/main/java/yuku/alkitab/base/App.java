@@ -1,10 +1,13 @@
 package yuku.alkitab.base;
 
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
+import android.support.multidex.MultiDex;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.OkHttpClient;
@@ -23,6 +26,7 @@ public class App extends yuku.afw.App {
 	public static final String TAG = App.class.getSimpleName();
 
 	private static boolean initted = false;
+	private static Tracker APP_TRACKER;
 
 	enum OkHttpClientWrapper {
 		INSTANCE;
@@ -55,9 +59,17 @@ public class App extends yuku.afw.App {
 	@Override public void onCreate() {
 		super.onCreate();
 
-		Log.d(TAG, "@@onCreate");
-
 		staticInit();
+
+		{ // Google Analytics V4
+			// This can't be in staticInit because we need the Application instance.
+			final GoogleAnalytics analytics = GoogleAnalytics.getInstance(context);
+			final Tracker t = analytics.newTracker(context.getString(R.string.ga_trackingId));
+			t.enableAutoActivityTracking(true);
+			t.enableExceptionReporting(true);
+			APP_TRACKER = t;
+			analytics.enableAutoActivityReports(this);
+		}
 	}
 
 	public synchronized static void staticInit() {
@@ -123,15 +135,20 @@ public class App extends yuku.afw.App {
 		}
 	}
 
-	public static SharedPreferences getInstantPreferences() {
-		return context.getSharedPreferences(context.getPackageName(), 0);
-	}
-
 	public static LocalBroadcastManager getLbm() {
 		return LocalBroadcastManager.getInstance(context);
 	}
 
 	public static Gson getDefaultGson() {
 		return GsonWrapper.INSTANCE.gson;
+	}
+
+	protected void attachBaseContext(Context base) {
+		super.attachBaseContext(base);
+		MultiDex.install(this);
+	}
+
+	public synchronized static Tracker getTracker() {
+		return APP_TRACKER;
 	}
 }

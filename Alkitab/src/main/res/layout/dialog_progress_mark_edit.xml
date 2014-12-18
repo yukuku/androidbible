@@ -1,24 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="horizontal"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:padding="6dp">
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="horizontal"
+	android:padding="@dimen/padding_small">
 
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/pm_progress_name"
-            android:layout_weight="0"
-            android:layout_marginRight="4dp"/>
-    <EditText
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/tCaption"
-            android:layout_weight="1"
-            android:selectAllOnFocus="true"
-            android:inputType="textCapWords|textAutoCorrect"
-            android:maxLength="32"/>
+	<EditText
+		android:id="@+id/tCaption"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:inputType="textCapWords|textAutoCorrect"
+		android:hint="@string/pm_progress_name"
+		android:maxLength="32"
+		android:selectAllOnFocus="true" />
+
 </LinearLayout>

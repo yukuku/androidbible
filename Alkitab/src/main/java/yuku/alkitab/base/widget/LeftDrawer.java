@@ -38,10 +38,10 @@ import yuku.alkitab.debug.R;
 public abstract class LeftDrawer extends ScrollView {
 
 	// mandatory
-	Button bBible;
-	Button bDevotion;
-	Button bReadingPlan;
-	Button bSongs;
+	TextView bBible;
+	TextView bDevotion;
+	TextView bReadingPlan;
+	TextView bSongs;
 	View bSettings;
 	View bHelp;
 
@@ -71,57 +71,40 @@ public abstract class LeftDrawer extends ScrollView {
 		bSettings = V.get(this, R.id.bSettings);
 		bHelp = V.get(this, R.id.bHelp);
 
-		if (this instanceof Text) bBible.setTextColor(0xff33b5e5);
-		if (this instanceof Devotion) bDevotion.setTextColor(0xff33b5e5);
-		if (this instanceof ReadingPlan) bReadingPlan.setTextColor(0xff33b5e5);
-		if (this instanceof Songs) bSongs.setTextColor(0xff33b5e5);
+		final int selectedTextColor = getResources().getColor(R.color.accent);
+		if (this instanceof Text) bBible.setTextColor(selectedTextColor);
+		if (this instanceof Devotion) bDevotion.setTextColor(selectedTextColor);
+		if (this instanceof ReadingPlan) bReadingPlan.setTextColor(selectedTextColor);
+		if (this instanceof Songs) bSongs.setTextColor(selectedTextColor);
 
-		bBible.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				bBible_click();
-				closeDrawer();
-			}
+		bBible.setOnClickListener(v -> {
+			bBible_click();
+			closeDrawer();
 		});
 
-		bDevotion.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				bDevotion_click();
-				closeDrawer();
-			}
+		bDevotion.setOnClickListener(v -> {
+			bDevotion_click();
+			closeDrawer();
 		});
 
-		bReadingPlan.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				bReadingPlan_click();
-				closeDrawer();
-			}
+		bReadingPlan.setOnClickListener(v -> {
+			bReadingPlan_click();
+			closeDrawer();
 		});
 
-		bSongs.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				bSongs_click();
-				closeDrawer();
-			}
+		bSongs.setOnClickListener(v -> {
+			bSongs_click();
+			closeDrawer();
 		});
 
-		bSettings.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				bSettings_click();
-				closeDrawer();
-			}
+		bSettings.setOnClickListener(v -> {
+			bSettings_click();
+			closeDrawer();
 		});
 
-		bHelp.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				bHelp_click();
-				closeDrawer();
-			}
+		bHelp.setOnClickListener(v -> {
+			bHelp_click();
+			closeDrawer();
 		});
 	}
 
@@ -136,15 +119,15 @@ public abstract class LeftDrawer extends ScrollView {
 	}
 
 	public void toggleDrawer() {
-		if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
-			drawerLayout.closeDrawer(Gravity.LEFT);
+		if (drawerLayout.isDrawerOpen(Gravity.START)) {
+			drawerLayout.closeDrawer(Gravity.START);
 		} else {
-			drawerLayout.openDrawer(Gravity.LEFT);
+			drawerLayout.openDrawer(Gravity.START);
 		}
 	}
 
 	public void closeDrawer() {
-		drawerLayout.closeDrawer(Gravity.LEFT);
+		drawerLayout.closeDrawer(Gravity.START);
 	}
 
 	void bHelp_click() {
@@ -289,52 +272,35 @@ public abstract class LeftDrawer extends ScrollView {
 
 			cNightMode.setChecked(!isInEditMode() && Preferences.getBoolean(Prefkey.is_night_mode, false));
 
-			bProgressMarkList.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					listener.bProgressMarkList_click();
-				}
-			});
+			bProgressMarkList.setOnClickListener(v -> listener.bProgressMarkList_click());
 
 			final View[] views = new View[]{bProgress1, bProgress2, bProgress3, bProgress4, bProgress5};
 			for (int i = 0; i < views.length; i++) {
 				final View b = views[i];
 				final int preset_id = i;
-				b.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(final View v) {
-						listener.bProgress_click(preset_id);
-						closeDrawer();
-					}
+				b.setOnClickListener(v -> {
+					listener.bProgress_click(preset_id);
+					closeDrawer();
 				});
-				b.setOnLongClickListener(new OnLongClickListener() {
-					@Override
-					public boolean onLongClick(final View v) {
-						final ClipData dragData = new ClipData("progress_mark", new String[]{VerseItem.PROGRESS_MARK_DRAG_MIME_TYPE}, new ClipData.Item("" + preset_id));
-						b.setPressed(false);
-						final DragShadowBuilder dragShadowBuilder = new DragShadowBuilder(b);
-						performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-						v.startDrag(dragData, dragShadowBuilder, null, 0);
+				b.setOnLongClickListener(v -> {
+					final ClipData dragData = new ClipData("progress_mark", new String[]{VerseItem.PROGRESS_MARK_DRAG_MIME_TYPE}, new ClipData.Item("" + preset_id));
+					b.setPressed(false);
+					final DragShadowBuilder dragShadowBuilder = new DragShadowBuilder(b);
+					performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+					v.startDrag(dragData, dragShadowBuilder, null, 0);
 
-						return true;
-					}
+					return true;
 				});
 			}
 
-			bMarkers.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					listener.bMarkers_click();
-					closeDrawer();
-				}
+			bMarkers.setOnClickListener(v -> {
+				listener.bMarkers_click();
+				closeDrawer();
 			});
 
-			bDisplay.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					listener.bDisplay_click();
-					closeDrawer();
-				}
+			bDisplay.setOnClickListener(v -> {
+				listener.bDisplay_click();
+				closeDrawer();
 			});
 
 			cFullScreen.setOnCheckedChangeListener(cFullScreen_checkedChange);
@@ -472,26 +438,13 @@ public abstract class LeftDrawer extends ScrollView {
 			});
 
 
-			bPrev.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					listener.bPrev_click();
-				}
-			});
+			bPrev.setOnClickListener(v -> listener.bPrev_click());
 
-			bNext.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					listener.bNext_click();
-				}
-			});
+			bNext.setOnClickListener(v -> listener.bNext_click());
 
-			bReload.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					listener.bReload_click();
-					closeDrawer();
-				}
+			bReload.setOnClickListener(v -> {
+				listener.bReload_click();
+				closeDrawer();
 			});
 		}
 
@@ -551,12 +504,7 @@ public abstract class LeftDrawer extends ScrollView {
 			tDescription = V.get(this, R.id.tDescription);
 			bCatchMeUp = V.get(this, R.id.bCatchMeUp);
 
-			bCatchMeUp.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					listener.bCatchMeUp_click();
-				}
-			});
+			bCatchMeUp.setOnClickListener(v -> listener.bCatchMeUp_click());
 		}
 
 		@Override
@@ -654,21 +602,12 @@ public abstract class LeftDrawer extends ScrollView {
 			bDigitB = V.get(this, R.id.bDigitB);
 			bDigitC = V.get(this, R.id.bDigitC);
 
-			bChangeBook.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					popupChangeBook.show();
-				}
-			});
+			bChangeBook.setOnClickListener(v -> popupChangeBook.show());
 
 			if (!isInEditMode()) {
 				popupChangeBook = SongBookUtil.getSongBookPopupMenu(activity, false, bChangeBook);
-				popupChangeBook.setOnMenuItemClickListener(SongBookUtil.getSongBookOnMenuItemClickListener(new SongBookUtil.OnSongBookSelectedListener() {
-					@Override
-					public void onSongBookSelected(final boolean all, final SongBookUtil.SongBookInfo songBookInfo) {
-						listener.songBookSelected(all, songBookInfo);
-					}
-				}));
+				//noinspection Convert2MethodRef
+				popupChangeBook.setOnMenuItemClickListener(SongBookUtil.getSongBookOnMenuItemClickListener((all, songBookInfo) -> listener.songBookSelected(all, songBookInfo)));
 			}
 
 			// all buttons

@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,6 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 import yuku.afw.App;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
@@ -23,11 +23,11 @@ import yuku.alkitab.debug.R;
 public class GotoActivity extends BaseActivity implements GotoFinishListener {
 	public static final String TAG = GotoActivity.class.getSimpleName();
 
-	private static final String EXTRA_bookId = "bookId"; //$NON-NLS-1$
-	private static final String EXTRA_chapter = "chapter"; //$NON-NLS-1$
-	private static final String EXTRA_verse = "verse"; //$NON-NLS-1$
+	private static final String EXTRA_bookId = "bookId";
+	private static final String EXTRA_chapter = "chapter";
+	private static final String EXTRA_verse = "verse";
 
-	private static final String INSTANCE_STATE_tab = "tab"; //$NON-NLS-1$
+	private static final String INSTANCE_STATE_tab = "tab";
 
 	public static class Result {
 		public int bookId;
@@ -52,6 +52,7 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 	}
 
 	ViewPager viewPager;
+	SlidingTabLayout slidingTabs;
 	GotoPagerAdapter pagerAdapter;
 
 	boolean okToHideKeyboard = false;
@@ -68,24 +69,12 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 		chapter_1 = getIntent().getIntExtra(EXTRA_chapter, 0);
 		verse_1 = getIntent().getIntExtra(EXTRA_verse, 0);
 
-		final ActionBar actionBar = getActionBar();
-
-		if (!getResources().getBoolean(R.bool.screen_sw_check_min_600dp)) {
-	        // The following three options trigger the collapsing of the main action bar view.
-			actionBar.setDisplayHomeAsUpEnabled(false);
-	        actionBar.setDisplayShowHomeEnabled(false);
-	        actionBar.setDisplayShowTitleEnabled(false);
-		}
-
 		// ViewPager and its adapters use support library fragments, so use getSupportFragmentManager.
 		viewPager = V.get(this, R.id.viewPager);
 		viewPager.setAdapter(pagerAdapter = new GotoPagerAdapter(getSupportFragmentManager()));
 		viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 			@Override
 			public void onPageSelected(int position) {
-				// When swiping between pages, select the corresponding tab.
-				actionBar.setSelectedNavigationItem(position);
-
 				if (okToHideKeyboard && position != 1) {
 					final View editText = V.get(GotoActivity.this, R.id.tDirectReference);
 					if (editText != null) {
@@ -97,63 +86,37 @@ public class GotoActivity extends BaseActivity implements GotoFinishListener {
 			}
 		});
 
-		// Specify that tabs should be displayed in the action bar.
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-		// Create a tab listener that is called when the user changes tabs.
-		ActionBar.TabListener tabListener = new ActionBar.TabListener() {
-			@Override
-			public void onTabSelected(final ActionBar.Tab tab, final android.app.FragmentTransaction ft) {
-				// When the tab is selected, switch to the corresponding page in the ViewPager.
-				viewPager.setCurrentItem(tab.getPosition());
-			}
-
-			@Override
-			public void onTabUnselected(final ActionBar.Tab tab, final android.app.FragmentTransaction ft) {
-				// hide the given tab
-			}
-
-			@Override
-			public void onTabReselected(final ActionBar.Tab tab, final android.app.FragmentTransaction ft) {
-				// probably ignore this event
-			}
-		};
-
-		// Add 3 tabs, specifying the tab's text and TabListener
-		actionBar.addTab(actionBar.newTab().setText(R.string.goto_tab_dialer_label).setTabListener(tabListener));
-		actionBar.addTab(actionBar.newTab().setText(R.string.goto_tab_direct_label).setTabListener(tabListener));
-		actionBar.addTab(actionBar.newTab().setText(R.string.goto_tab_grid_label).setTabListener(tabListener));
+		slidingTabs = V.get(this, R.id.sliding_tabs);
+		slidingTabs.setCustomTabColorizer(position -> getResources().getColor(R.color.accent));
+		slidingTabs.setViewPager(viewPager);
 
 		if (savedInstanceState == null) {
 			// get from preferences
 			int tabUsed = Preferences.getInt(Prefkey.goto_last_tab, 0);
 			if (tabUsed >= 1 && tabUsed <= 3) {
-				actionBar.setSelectedNavigationItem(tabUsed - 1 /* to make it 0-based */);
+				viewPager.setCurrentItem(tabUsed - 1 /* to make it 0-based */, false);
 			}
 
 			if (tabUsed == 2) {
-				viewPager.postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						final View editText = V.get(GotoActivity.this, R.id.tDirectReference);
-						if (editText != null) {
-							InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-							imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
-						}
-						okToHideKeyboard = true;
+				viewPager.postDelayed(() -> {
+					final View editText = V.get(GotoActivity.this, R.id.tDirectReference);
+					if (editText != null) {
+						InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+						imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
 					}
+					okToHideKeyboard = true;
 				}, 100);
 			} else {
 				okToHideKeyboard = true;
 			}
 		} else {
-			actionBar.setSelectedNavigationItem(savedInstanceState.getInt(INSTANCE_STATE_tab, 0));
+			viewPager.setCurrentItem(savedInstanceState.getInt(INSTANCE_STATE_tab, 0), false);
 		}
 	}
 
 	@Override protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putInt(INSTANCE_STATE_tab, getActionBar().getSelectedNavigationIndex());
+		outState.putInt(INSTANCE_STATE_tab, viewPager.getCurrentItem());
 	}
 
 	public class GotoPagerAdapter extends FragmentPagerAdapter {

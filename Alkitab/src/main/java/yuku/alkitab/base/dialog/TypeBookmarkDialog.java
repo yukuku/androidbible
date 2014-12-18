@@ -203,7 +203,7 @@ public class TypeBookmarkDialog {
 		.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				S.getDb().deleteBookmarkById(marker._id);
+				S.getDb().deleteMarkerById(marker._id);
 
 				if (listener != null) listener.onModifiedOrDeleted();
 			}

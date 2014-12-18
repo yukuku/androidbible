@@ -4,7 +4,13 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <yuku.alkitab.base.widget.TwofingerLinearLayout
+	<android.support.v7.widget.Toolbar
+		android:id="@+id/toolbar"
+		android:layout_height="?attr/actionBarSize"
+		android:layout_width="match_parent"
+		android:background="?attr/colorPrimary" />
+
+	<yuku.alkitab.base.widget.TwofingerLinearLayout
         android:id="@+id/song_container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />

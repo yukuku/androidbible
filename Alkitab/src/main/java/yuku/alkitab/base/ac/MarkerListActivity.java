@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.style.BackgroundColorSpan;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,8 +18,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -60,8 +57,8 @@ public class MarkerListActivity extends BaseActivity {
 	private static final int REQCODE_edit_note = 1;
 
 	// in
-	private static final String EXTRA_filter_kind = "filter_kind"; //$NON-NLS-1$
-	private static final String EXTRA_filter_labelId = "filter_labelId"; //$NON-NLS-1$
+	private static final String EXTRA_filter_kind = "filter_kind";
+	private static final String EXTRA_filter_labelId = "filter_labelId";
 
 	public static final int LABELID_noLabel = -1;
 
@@ -76,7 +73,7 @@ public class MarkerListActivity extends BaseActivity {
 	ListView lv;
 	View emptyView;
 
-	BookmarkListAdapter adapter;
+	MarkerListAdapter adapter;
 
 	String sort_column;
 	boolean sort_ascending;
@@ -98,7 +95,7 @@ public class MarkerListActivity extends BaseActivity {
 	}
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreateWithNonToolbarUpButton(savedInstanceState);
 
 		setContentView(R.layout.activity_marker_list);
 
@@ -156,7 +153,7 @@ public class MarkerListActivity extends BaseActivity {
 
 		hiliteColor = U.getHighlightColorByBrightness(S.applied.backgroundBrightness);
 
-		adapter = new BookmarkListAdapter();
+		adapter = new MarkerListAdapter();
 		lv.setAdapter(adapter);
 		lv.setCacheColorHint(S.applied.backgroundColor);
 		lv.setOnItemClickListener(lv_click);
@@ -425,7 +422,7 @@ public class MarkerListActivity extends BaseActivity {
 			.show();
 	}
 
-	private OnItemClickListener lv_click = new OnItemClickListener() {
+	private AdapterView.OnItemClickListener lv_click = new AdapterView.OnItemClickListener() {
 		@Override public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 			Marker marker = adapter.getItem(position);
 
@@ -433,33 +430,50 @@ public class MarkerListActivity extends BaseActivity {
 		}
 	};
 
-	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+	@Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
 		getMenuInflater().inflate(R.menu.context_marker_list, menu);
 
-		// sesuaikan string berdasarkan jenis.
-		MenuItem menuDeleteBookmark = menu.findItem(R.id.menuDeleteBookmark);
-		if (filter_kind == Marker.Kind.bookmark) menuDeleteBookmark.setTitle(R.string.hapus_pembatas_buku);
-		if (filter_kind == Marker.Kind.note) menuDeleteBookmark.setTitle(R.string.hapus_catatan);
-		if (filter_kind == Marker.Kind.highlight) menuDeleteBookmark.setTitle(R.string.hapus_stabilo);
+		// set menu item titles based on the kind of marker
+		final MenuItem menuDeleteMarker = menu.findItem(R.id.menuDeleteMarker);
+		switch (filter_kind) {
+			case bookmark:
+				menuDeleteMarker.setTitle(R.string.hapus_pembatas_buku);
+				break;
+			case note:
+				menuDeleteMarker.setTitle(R.string.hapus_catatan);
+				break;
+			case highlight:
+				menuDeleteMarker.setTitle(R.string.hapus_stabilo);
+				break;
+		}
 
-		MenuItem menuModifyBookmark = menu.findItem(R.id.menuModifyBookmark);
-		if (filter_kind == Marker.Kind.bookmark) menuModifyBookmark.setTitle(R.string.edit_bookmark);
-		if (filter_kind == Marker.Kind.note) menuModifyBookmark.setTitle(R.string.edit_note);
-		if (filter_kind == Marker.Kind.highlight) menuModifyBookmark.setTitle(R.string.edit_highlight);
+		final MenuItem menuEditMarker = menu.findItem(R.id.menuEditMarker);
+		switch (filter_kind) {
+			case bookmark:
+				menuEditMarker.setTitle(R.string.edit_bookmark);
+				break;
+			case note:
+				menuEditMarker.setTitle(R.string.edit_note);
+				break;
+			case highlight:
+				menuEditMarker.setTitle(R.string.edit_highlight);
+				break;
+		}
 	}
 
 	@Override public boolean onContextItemSelected(MenuItem item) {
-		final Marker marker = adapter.getItem(((AdapterContextMenuInfo) item.getMenuInfo()).position);
+		final Marker marker = adapter.getItem(((AdapterView.AdapterContextMenuInfo) item.getMenuInfo()).position);
 		final int itemId = item.getItemId();
 
-		if (itemId == R.id.menuDeleteBookmark) {
+		if (itemId == R.id.menuDeleteMarker) {
 			// whatever the kind is, the way to delete is the same
-			S.getDb().deleteBookmarkById(marker._id);
+			S.getDb().deleteMarkerById(marker._id);
 			loadAndFilter();
 			if (currentlyUsedFilter != null) filterUsingCurrentlyUsedFilter();
+			App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
 
 			return true;
-		} else if (itemId == R.id.menuModifyBookmark) {
+		} else if (itemId == R.id.menuEditMarker) {
 			if (filter_kind == Marker.Kind.bookmark) {
 				TypeBookmarkDialog dialog = TypeBookmarkDialog.EditExisting(this, marker._id);
 				dialog.setListener(() -> {
@@ -522,7 +536,7 @@ public class MarkerListActivity extends BaseActivity {
 	}
 
 
-	class BookmarkListAdapter extends EasyAdapter {
+	class MarkerListAdapter extends EasyAdapter {
 		List<Marker> filteredMarkers = new ArrayList<>();
 		String[] tokens;
 
@@ -585,7 +599,7 @@ public class MarkerListActivity extends BaseActivity {
 					lDate.setText(getString(R.string.create_edited_modified_time, Sqlitil.toLocaleDateMedium(addTime), Sqlitil.toLocaleDateMedium(modifyTime)));
 				}
 
-				Appearances.applyBookmarkDateTextAppearance(lDate);
+				Appearances.applyMarkerDateTextAppearance(lDate);
 			}
 
 			final int ari = marker.ari;
@@ -602,10 +616,10 @@ public class MarkerListActivity extends BaseActivity {
 
 			if (filter_kind == Marker.Kind.bookmark) {
 				lCaption.setText(currentlyUsedFilter != null? SearchEngine.hilite(caption, tokens, hiliteColor): caption);
-				Appearances.applyBookmarkTitleTextAppearance(lCaption);
+				Appearances.applyMarkerTitleTextAppearance(lCaption);
 				CharSequence snippet = currentlyUsedFilter != null? SearchEngine.hilite(verseText, tokens, hiliteColor): verseText;
 
-				Appearances.applyBookmarkSnippetContentAndAppearance(lSnippet, reference, snippet);
+				Appearances.applyMarkerSnippetContentAndAppearance(lSnippet, reference, snippet);
 
 				final List<Label> labels = S.getDb().listLabelsByMarker(marker);
 				if (labels.size() != 0) {
@@ -620,13 +634,13 @@ public class MarkerListActivity extends BaseActivity {
 
 			} else if (filter_kind == Marker.Kind.note) {
 				lCaption.setText(reference);
-				Appearances.applyBookmarkTitleTextAppearance(lCaption);
+				Appearances.applyMarkerTitleTextAppearance(lCaption);
 				lSnippet.setText(currentlyUsedFilter != null? SearchEngine.hilite(caption, tokens, hiliteColor): caption);
 				Appearances.applyTextAppearance(lSnippet);
 
 			} else if (filter_kind == Marker.Kind.highlight) {
 				lCaption.setText(reference);
-				Appearances.applyBookmarkTitleTextAppearance(lCaption);
+				Appearances.applyMarkerTitleTextAppearance(lCaption);
 
 				SpannableStringBuilder snippet = currentlyUsedFilter != null? SearchEngine.hilite(verseText, tokens, hiliteColor): new SpannableStringBuilder(verseText);
 				int highlightColor = U.decodeHighlight(caption);

@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menuDownload"
         android:title="@string/rp_menuDownload"
 		android:icon="@drawable/ic_menu_add_light"
-		android:showAsAction="always"
+		app:showAsAction="always"
 		/>
     <item
         android:id="@+id/menuDelete"
         android:title="@string/rp_menuDelete"
 		android:icon="@drawable/ic_action_discard"
-		android:showAsAction="always"
+		app:showAsAction="always"
 		/>
 </menu>

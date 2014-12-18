@@ -13,7 +13,7 @@ import yuku.alkitab.base.S;
 public class Appearances {
 	public static final String TAG = Appearances.class.getSimpleName();
 
-	public static void applyBookmarkSnippetContentAndAppearance(TextView t, String reference, CharSequence verseText) {
+	public static void applyMarkerSnippetContentAndAppearance(TextView t, String reference, CharSequence verseText) {
 		SpannableStringBuilder sb = new SpannableStringBuilder(reference);
 		sb.setSpan(new UnderlineSpan(), 0, reference.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 		sb.append(' ').append(verseText);
@@ -47,19 +47,19 @@ public class Appearances {
 	}
 	
 	public static void applySearchResultReferenceAppearance(TextView t, SpannableStringBuilder sb) {
-		applyBookmarkTitleTextAppearance(t);
+		applyMarkerTitleTextAppearance(t);
 		sb.setSpan(new UnderlineSpan(), 0, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 		t.setText(sb);
 		t.setLineSpacing(0.f, S.applied.lineSpacingMult);
 	}
 
-	public static void applyBookmarkTitleTextAppearance(TextView t) {
+	public static void applyMarkerTitleTextAppearance(TextView t) {
 		t.setTypeface(S.applied.fontFace, S.applied.fontBold);
 		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp * 1.2f);
 		t.setTextColor(S.applied.fontColor);
 	}
 
-	public static void applyBookmarkDateTextAppearance(TextView t) {
+	public static void applyMarkerDateTextAppearance(TextView t) {
 		t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, S.applied.fontSize2dp * 0.8f);
 		t.setTextColor(S.applied.fontColor);
 	}

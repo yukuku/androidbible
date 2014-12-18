@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -12,9 +11,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -25,7 +26,7 @@ import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.analytics.tracking.android.EasyTracker;
+import com.google.android.gms.analytics.HitBuilders;
 import yuku.afw.V;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
@@ -252,7 +253,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 			final String currentDate = yyyymmdd.get().format(ac.currentDate);
 			if (U.equals(startKind, ac.currentKind) && U.equals(startDate, currentDate)) {
 				Log.d(TAG, "Long read detected: now=[" + ac.currentKind + " " + currentDate + "]");
-				EasyTracker.getTracker().sendEvent("devotion-longread", startKind.name, startDate, 30L);
+				App.getTracker().send(new HitBuilders.EventBuilder("devotion-longread", startKind.name).setLabel(startDate).setValue(30L).build());
 			} else {
 				Log.d(TAG, "Not long enough for long read: previous=[" + startKind + " " + startDate + "] now=[" + ac.currentKind + " " + currentDate + "]");
 			}
@@ -305,18 +306,20 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState, true);
-
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_devotion);
 
 		drawerLayout = V.get(this, R.id.drawerLayout);
 		leftDrawer = V.get(this, R.id.left_drawer);
 		leftDrawer.configure(this, drawerLayout);
 
-		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_navigation_drawer, R.string.drawer_open, R.string.drawer_close);
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+
+		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
 		drawerLayout.setDrawerListener(drawerToggle);
 
-		final ActionBar actionBar = getActionBar();
+		final ActionBar actionBar = getSupportActionBar();
 		actionBar.setDisplayShowHomeEnabled(Build.VERSION.SDK_INT < 18);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
@@ -487,7 +490,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 			final String dateDisplay = getCurrentDateDisplay();
 
 			// action bar
-			final ActionBar actionBar = getActionBar();
+			final ActionBar actionBar = getSupportActionBar();
 			if (actionBar != null) {
 				actionBar.setTitle(currentKind.title);
 				actionBar.setSubtitle(dateDisplay);
@@ -500,7 +503,7 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 		}
 
 		if (renderSucceeded) {
-			EasyTracker.getTracker().sendEvent("devotion-render", currentKind.name, yyyymmdd.get().format(currentDate), 0L);
+			App.getTracker().send(new HitBuilders.EventBuilder("devotion-render", currentKind.name).setLabel(yyyymmdd.get().format(currentDate)).setValue(0L).build());
 			longReadChecker.start();
 		}
 	}

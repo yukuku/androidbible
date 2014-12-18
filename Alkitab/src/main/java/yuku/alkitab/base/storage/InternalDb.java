@@ -29,6 +29,7 @@ import yuku.alkitab.base.model.SyncLog;
 import yuku.alkitab.base.model.SyncShadow;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.base.sync.SyncRecorder;
+import yuku.alkitab.base.sync.Sync_Mabel;
 import yuku.alkitab.base.util.Sqlitil;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.model.Label;
@@ -56,15 +57,6 @@ public class InternalDb {
 
 	public InternalDb(InternalDbHelper helper) {
 		this.helper = helper;
-	}
-
-	public enum ApplyAppendDeltaResult {
-		ok,
-		unknown_kind,
-		/** Entities have changed during sync request */
-		dirty_entities,
-		/** Sync user account has changed during sync request */
-		dirty_sync_account,
 	}
 
 	/**
@@ -179,7 +171,7 @@ public class InternalDb {
 		return res;
 	}
 
-	public void deleteBookmarkById(long _id) {
+	public void deleteMarkerById(long _id) {
 		final Marker marker = getMarkerById(_id);
 
 		final SQLiteDatabase db = helper.getWritableDatabase();
@@ -1230,28 +1222,28 @@ public class InternalDb {
 	/**
 	 * Makes the current database updated with patches (append delta) from server.
 	 * Also updates the shadow (both data and the revno).
-	 * @return {@link yuku.alkitab.base.storage.InternalDb.ApplyAppendDeltaResult#ok} if database and sync shadow are updated. Otherwise else.
+	 * @return {@link yuku.alkitab.base.sync.Sync.ApplyAppendDeltaResult#ok} if database and sync shadow are updated. Otherwise else.
 	 */
-	@NonNull public ApplyAppendDeltaResult applyAppendDelta(final int final_revno, @NonNull final Sync.Delta<Sync.MabelContent> append_delta, @NonNull final List<Sync.Entity<Sync.MabelContent>> entitiesBeforeSync, @NonNull final String simpleTokenBeforeSync) {
+	@NonNull public Sync.ApplyAppendDeltaResult applyMabelAppendDelta(final int final_revno, @NonNull final Sync.Delta<Sync_Mabel.Content> append_delta, @NonNull final List<Sync.Entity<Sync_Mabel.Content>> entitiesBeforeSync, @NonNull final String simpleTokenBeforeSync) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
 		Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_MABEL, true);
 		try {
 			{ // if the current entities are not the same as the ones had when contacting server, reject this append delta.
-				final List<Sync.Entity<Sync.MabelContent>> currentEntities = Sync.getMabelEntitiesFromCurrent();
+				final List<Sync.Entity<Sync_Mabel.Content>> currentEntities = Sync_Mabel.getEntitiesFromCurrent();
 				if (!Sync.entitiesEqual(currentEntities, entitiesBeforeSync)) {
-					return ApplyAppendDeltaResult.dirty_entities;
+					return Sync.ApplyAppendDeltaResult.dirty_entities;
 				}
 			}
 
 			{ // if the current simpleToken has changed (sync user logged off or changed), reject this append delta
 				final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
 				if (!U.equals(simpleToken, simpleTokenBeforeSync)) {
-					return ApplyAppendDeltaResult.dirty_sync_account;
+					return Sync.ApplyAppendDeltaResult.dirty_sync_account;
 				}
 			}
 
-			for (final Sync.Operation<Sync.MabelContent> o : append_delta.operations) {
+			for (final Sync.Operation<Sync_Mabel.Content> o : append_delta.operations) {
 				switch (o.opkind) {
 					case del:
 						switch (o.kind) {
@@ -1265,7 +1257,7 @@ public class InternalDb {
 								deleteMarker_LabelByGid(o.gid);
 								break;
 							default:
-								return ApplyAppendDeltaResult.unknown_kind;
+								return Sync.ApplyAppendDeltaResult.unknown_kind;
 						}
 						break;
 					case add:
@@ -1273,33 +1265,33 @@ public class InternalDb {
 						switch (o.kind) {
 							case Sync.Entity.KIND_MARKER:
 								final Marker marker = getMarkerByGid(o.gid);
-								final Marker newMarker = Sync.updateMarkerWithEntityContent(marker, o.gid, o.content);
+								final Marker newMarker = Sync_Mabel.updateMarkerWithEntityContent(marker, o.gid, o.content);
 								insertOrUpdateMarker(newMarker);
 								break;
 							case Sync.Entity.KIND_LABEL:
 								final Label label = getLabelByGid(o.gid);
-								final Label newLabel = Sync.updateLabelWithEntityContent(label, o.gid, o.content);
+								final Label newLabel = Sync_Mabel.updateLabelWithEntityContent(label, o.gid, o.content);
 								insertOrUpdateLabel(newLabel);
 								break;
 							case Sync.Entity.KIND_MARKER_LABEL:
 								final Marker_Label marker_label = getMarker_LabelByGid(o.gid);
-								final Marker_Label newMarker_label = Sync.updateMarker_LabelWithEntityContent(marker_label, o.gid, o.content);
+								final Marker_Label newMarker_label = Sync_Mabel.updateMarker_LabelWithEntityContent(marker_label, o.gid, o.content);
 								insertOrUpdateMarker_Label(newMarker_label);
 								break;
 							default:
-								return ApplyAppendDeltaResult.unknown_kind;
+								return Sync.ApplyAppendDeltaResult.unknown_kind;
 						}
 						break;
 				}
 			}
 
 			// if we reach here, the local database has been updated with the append delta.
-			final SyncShadow ss = Sync.shadowFromMabelEntities(Sync.getMabelEntitiesFromCurrent(), final_revno);
+			final SyncShadow ss = Sync_Mabel.shadowFromEntities(Sync_Mabel.getEntitiesFromCurrent(), final_revno);
 			insertOrUpdateSyncShadowBySyncSetName(ss);
 
 			db.setTransactionSuccessful();
 
-			return ApplyAppendDeltaResult.ok;
+			return Sync.ApplyAppendDeltaResult.ok;
 		} finally {
 			Sync.notifySyncUpdatesOngoing(SyncShadow.SYNC_SET_MABEL, false);
 			db.endTransaction();

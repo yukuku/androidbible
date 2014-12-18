@@ -6,7 +6,8 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="240dp"
 	android:layout_height="match_parent"
-	android:background="#a000"
+	android:background="#262626"
+	android:fitsSystemWindows="true"
 	tools:ignore="Overdraw">
 
 	<LinearLayout
@@ -26,9 +27,15 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:drawableLeft="@drawable/ic_drawer_markers"
-			android:drawablePadding="8dp"
+			android:drawablePadding="16dp"
+            android:textColor="#ffffff"
+            android:paddingLeft="16dp"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-regular"
 			android:gravity="left|center_vertical"
-			android:text="@string/menu_markers" />
+			android:text="@string/menu_markers"
+            android:elegantTextHeight="true" />
 
 		<FrameLayout
 			android:layout_width="match_parent"
@@ -128,7 +135,12 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:drawableLeft="@drawable/ic_drawer_display"
-			android:drawablePadding="8dp"
+			android:drawablePadding="16dp"
+            android:textColor="#ffffff"
+            android:paddingLeft="16dp"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-regular"
 			android:gravity="left|center_vertical"
 			android:text="@string/menuDisplay" />
 
@@ -136,8 +148,12 @@
 			android:id="@+id/cFullScreen"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
-			android:paddingLeft="4dp"
+            android:textColor="#ffffff"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="16dp"
 			android:paddingRight="4dp"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-regular"
 			android:text="@string/menuFullScreen"
 			android:textOff="@string/switch_off"
 			android:textOn="@string/switch_on" />
@@ -146,8 +162,12 @@
 			android:id="@+id/cNightMode"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
-			android:paddingLeft="4dp"
+            android:textColor="#ffffff"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="16dp"
 			android:paddingRight="4dp"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-regular"
 			android:text="@string/menuNightMode"
 			android:textOff="@string/switch_off"
 			android:textOn="@string/switch_on" />
@@ -156,8 +176,12 @@
 			android:id="@+id/cSplitVersion"
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
-			android:paddingLeft="4dp"
+            android:textColor="#ffffff"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="16dp"
 			android:paddingRight="4dp"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-regular"
 			android:text="@string/menuSplitVersion"
 			android:textOff="@string/switch_off"
 			android:textOn="@string/switch_on" />

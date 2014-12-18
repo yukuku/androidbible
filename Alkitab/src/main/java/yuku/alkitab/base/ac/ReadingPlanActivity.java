@@ -1,6 +1,5 @@
 package yuku.alkitab.base.ac;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
@@ -9,8 +8,10 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.RelativeSizeSpan;
@@ -90,15 +91,17 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState, true);
-
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_reading_plan);
 
 		drawerLayout = V.get(this, R.id.drawerLayout);
 		leftDrawer = V.get(this, R.id.left_drawer);
 		leftDrawer.configure(this, drawerLayout);
 
-		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_navigation_drawer, R.string.drawer_open, R.string.drawer_close);
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+
+		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
 		drawerLayout.setDrawerListener(drawerToggle);
 
 		llNavigations = V.get(this, R.id.llNavigations);
@@ -110,7 +113,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		bRight = V.get(this, R.id.bRight);
 		bDownload = V.get(this, R.id.bDownload);
 
-		actionBar = getActionBar();
+		actionBar = getSupportActionBar();
 		actionBar.setDisplayShowHomeEnabled(Build.VERSION.SDK_INT < 18);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);

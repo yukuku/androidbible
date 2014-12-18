@@ -93,4 +93,20 @@ public enum Prefkey {
 
 	/** Stores information about last syncs */
 	sync_last_infos,
+
+	/**
+	 * Last version, book, chapter, and verse.
+	 * These were moved from instant_preferences. Now I don't think we need 2 separate preference files.
+	 */
+	lastBookId,
+	lastChapter,
+	lastVerse,
+	lastVersionId,
+	lastSplitVersionId,
+
+	/**
+	 * The whole history (with many entries)
+	 * This was moved from instant_preferences.
+	 */
+	history,
 }

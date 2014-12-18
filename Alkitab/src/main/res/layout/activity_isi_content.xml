@@ -10,6 +10,7 @@
 		android:id="@+id/root"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
+		android:layout_marginTop="?attr/actionBarSize"
 		android:orientation="vertical"
 		tools:ignore="UselessParent">
 
@@ -72,6 +73,67 @@
 		</yuku.alkitab.base.widget.TwofingerLinearLayout>
 
 	</LinearLayout>
+
+	<!-- We use a Toolbar so that our drawer can be displayed
+	 in front of the action bar -->
+	<android.support.v7.widget.Toolbar
+		android:id="@+id/toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?attr/actionBarSize"
+		android:background="?attr/colorPrimary">
+
+		<TextView
+			android:id="@+id/bVersion"
+			style="@style/Widget.AppCompat.Spinner"
+			android:layout_width="72dp"
+			android:layout_height="24dp"
+			android:layout_gravity="end"
+			android:gravity="center"
+			android:textSize="14sp"
+			android:textStyle="bold"
+			tools:text="VERSNM" />
+
+		<yuku.alkitab.base.widget.NavFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			xmlns:tools="http://schemas.android.com/tools"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
+
+			<yuku.alkitab.base.widget.GotoButton
+				android:id="@+id/bGoto"
+				style="?actionButtonStyle"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_marginLeft="32dp"
+				android:layout_marginRight="32dp"
+				android:paddingLeft="0dp"
+				android:paddingRight="0dp"
+				android:textSize="16sp"
+				tools:text="Long Name Of Book 123" />
+
+			<ImageButton
+				android:id="@+id/bLeft"
+				style="?actionButtonStyle"
+				android:layout_width="48dp"
+				android:layout_height="match_parent"
+				android:layout_gravity="start"
+				android:contentDescription="@string/desc_previous_chapter"
+				android:scaleType="center"
+				android:src="@drawable/ic_nav_left_light" />
+
+			<ImageButton
+				android:id="@+id/bRight"
+				style="?actionButtonStyle"
+				android:layout_width="48dp"
+				android:layout_height="match_parent"
+				android:layout_gravity="end"
+				android:contentDescription="@string/desc_next_chapter"
+				android:padding="16dp"
+				android:scaleType="center"
+				android:src="@drawable/ic_nav_right_light" />
+		</yuku.alkitab.base.widget.NavFrameLayout>
+
+	</android.support.v7.widget.Toolbar>
+
 
 	<yuku.alkitab.base.widget.Floater
 		android:id="@+id/floater"

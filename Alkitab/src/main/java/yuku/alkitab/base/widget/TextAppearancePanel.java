@@ -6,9 +6,7 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -74,12 +72,7 @@ public class TextAppearancePanel {
 		this.reqcodeCustomColors = reqcodeCustomColors;
 		this.content = inflater.inflate(R.layout.panel_text_appearance, parent, false);
 
-		this.content.setOnTouchListener(new View.OnTouchListener() {
-			@Override
-			public boolean onTouch(final View v, final MotionEvent event) {
-				return true; // prevent click-through
-			}
-		});
+		this.content.setOnTouchListener((v, event) -> true); // prevent click-through
 	    
 	    cbTypeface = V.get(content, R.id.cbTypeface);
 	    cBold = V.get(content, R.id.cBold);
@@ -139,7 +132,7 @@ public class TextAppearancePanel {
 
 	public void show() {
 		if (shown) return;
-		parent.addView(content, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM));
+		parent.addView(content);
 		shown = true;
 	}
 	
@@ -297,16 +290,21 @@ public class TextAppearancePanel {
 		}
 		
 		public int getPositionByName(String name) {
-			if ("DEFAULT".equals(name)) {
-				return 0;
-			} else if ("SERIF".equals(name)) {
-				return 1;
-			} else if ("MONOSPACE".equals(name)) {
-				return 2;
-			} else for (int i = 0; i < fontEntries.size(); i++) {
-				if (fontEntries.get(i).name.equals(name)) {
-					return i + 3;
-				}
+			if (name == null) return -1;
+			switch (name) {
+				case "DEFAULT":
+					return 0;
+				case "SERIF":
+					return 1;
+				case "MONOSPACE":
+					return 2;
+				default:
+					for (int i = 0; i < fontEntries.size(); i++) {
+						if (fontEntries.get(i).name.equals(name)) {
+							return i + 3;
+						}
+					}
+					break;
 			}
 			return -1;
 		}
@@ -318,7 +316,7 @@ public class TextAppearancePanel {
 
 		public ColorThemeAdapter() {
 			themes = new ArrayList<>();
-			for (String themeString: activity.getResources().getStringArray(R.array.pref_colorTheme_values)) {
+			for (String themeString : activity.getResources().getStringArray(R.array.pref_colorTheme_values)) {
 				themes.add(ColorThemes.themeStringToColors(themeString));
 			}
 			themeNames = Arrays.asList(activity.getResources().getStringArray(R.array.pref_colorTheme_labels));

@@ -134,12 +134,12 @@ public class U {
 		if (c == 0) {
 			h_ = 0;
 		} else if (max == r) {
-			h_ = (float)(g-b) / c;
+			h_ = (g-b) / c;
 			if (h_ < 0) h_ += 6.f;
 		} else if (max == g) {
-			h_ = (float)(b-r) / c + 2.f;
+			h_ = (b-r) / c + 2.f;
 		} else if (max == b) {
-			h_ = (float)(r-g) / c + 4.f;
+			h_ = (r-g) / c + 4.f;
 		}
 		float h = 60.f * h_;
 		
@@ -189,33 +189,23 @@ public class U {
 		clipboardManager.setText(text);
 	}
 
-	public static int getForegroundColorOnLightBackgroundByBookId(int bookId) {
-		if (bookId >= 0 && bookId < 39) { // OT
-			return 0xffcc0000;
-		} else if (bookId >= 39 && bookId < 66) { // NT
-			return 0xff0099cc;
-		} else { // others
-			return 0xff000000;
-		}
-	}
-
 	public static int getForegroundColorOnDarkBackgroundByBookId(int bookId) {
 		if (bookId >= 0 && bookId < 39) { // OT
-			return 0xffff9494;
+			return 0xff_ef5350; // Pink
 		} else if (bookId >= 39 && bookId < 66) { // NT
-			return 0xff6dcaec;
+			return 0xff_42a5f5; // Blue
 		} else { // others
-			return 0xffdddddd;
+			return 0xff_eeeeee; // Grey 200
 		}
 	}
 
 	public static int getBackgroundColorByBookId(int bookId) {
 		if (bookId >= 0 && bookId < 39) { // OT
-			return 0xff871212;
+			return 0xff_ef5350; // Pink
 		} else if (bookId >= 39 && bookId < 66) { // NT
-			return 0xff0d617f;
+			return 0xff_42a5f5; // Blue
 		} else { // others
-			return 0xff666666;
+			return 0xff_212121; // Grey 900
 		}
 	}
 
@@ -225,9 +215,9 @@ public class U {
 
 	public static int getHighlightColorByBrightness(float brightness) {
 		if (brightness < 0.5f) {
-			return 0xff66ff66;
+			return 0xff_69f0ae; // Green A200
 		} else {
-			return 0xff990099;
+			return 0xff_00c853; // Green A700
 		}
 	}
 
@@ -240,7 +230,7 @@ public class U {
 	public static void applyLabelColor(Label label, TextView view) {
 		int bgColorRgb = U.decodeLabelBackgroundColor(label.backgroundColor);
 		if (bgColorRgb == -1) {
-			bgColorRgb = 0x444444; // default color
+			bgColorRgb = 0x212121; // default color Grey 900
 		}
 		
 		GradientDrawable grad = null;

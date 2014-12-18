@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -68,7 +69,7 @@ public class NoteActivity extends BaseActivity {
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState, true);
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_note);
 
 		final long _id = getIntent().getLongExtra(EXTRA_marker_id, 0L);
@@ -150,6 +151,7 @@ public class NoteActivity extends BaseActivity {
 				}
 			});
 			tCaptionReadOnly.setText(text);
+			tCaptionReadOnly.setMovementMethod(LinkMovementMethod.getInstance());
 		}
 
 		this.editingMode = editingMode;

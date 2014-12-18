@@ -6,7 +6,8 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="240dp"
 	android:layout_height="match_parent"
-	android:background="#a000"
+	android:background="#262626"
+	android:fitsSystemWindows="true"
 	tools:ignore="Overdraw">
 
 	<LinearLayout

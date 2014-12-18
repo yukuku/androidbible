@@ -22,10 +22,9 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.MarkerListActivity;
 import yuku.alkitab.base.ac.MarkersActivity;
-import yuku.alkitab.base.ac.SecretSyncDebugActivity;
 import yuku.alkitab.base.model.SyncShadow;
-import yuku.alkitab.base.storage.InternalDb;
 import yuku.alkitab.base.storage.Prefkey;
+import yuku.alkitab.base.util.History;
 import yuku.alkitab.base.util.Sqlitil;
 
 import java.io.IOException;
@@ -88,8 +87,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 				return;
 			}
 
-			if (SyncShadow.SYNC_SET_MABEL.equals(syncSetName)) {
-				syncMabel(syncResult);
+			switch (syncSetName) {
+				case SyncShadow.SYNC_SET_MABEL:
+					syncMabel(syncResult);
+					break;
+				case SyncShadow.SYNC_SET_HISTORY:
+					syncHistory(syncResult);
+					break;
 			}
 		} finally {
 			Log.d(TAG, "Sync result: " + syncResult);
@@ -114,25 +118,27 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	}
 
 	void syncMabel(final SyncResult sr) {
+		final String syncSetName = SyncShadow.SYNC_SET_MABEL;
+
 		final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
 		if (simpleToken == null) {
 			sr.stats.numAuthExceptions++;
-			SyncRecorder.log(SyncRecorder.EventKind.error_no_simple_token, SyncShadow.SYNC_SET_MABEL);
+			SyncRecorder.log(SyncRecorder.EventKind.error_no_simple_token, syncSetName);
 			return;
 		}
 
 		Log.d(TAG, "@@syncMabel step 10: gathering client state");
-		final Pair<Sync.MabelClientState, List<Sync.Entity<Sync.MabelContent>>> pair = Sync.getMabelClientStateAndCurrentEntities();
-		final Sync.MabelClientState clientState = pair.first;
-		final List<Sync.Entity<Sync.MabelContent>> entitiesBeforeSync = pair.second;
+		final Pair<Sync_Mabel.ClientState, List<Sync.Entity<Sync_Mabel.Content>>> pair = Sync_Mabel.getClientStateAndCurrentEntities();
+		final Sync_Mabel.ClientState clientState = pair.first;
+		final List<Sync.Entity<Sync_Mabel.Content>> entitiesBeforeSync = pair.second;
 
-		SyncRecorder.log(SyncRecorder.EventKind.current_entities_gathered, SyncShadow.SYNC_SET_MABEL, "base_revno", clientState.base_revno, "client_delta_operations_size", clientState.delta.operations.size(), "client_entities_size", entitiesBeforeSync.size());
+		SyncRecorder.log(SyncRecorder.EventKind.current_entities_gathered, syncSetName, "base_revno", clientState.base_revno, "client_delta_operations_size", clientState.delta.operations.size(), "client_entities_size", entitiesBeforeSync.size());
 
 		final String serverPrefix = Sync.getEffectiveServerPrefix();
 		Log.d(TAG, "@@syncMabel step 20: building http request. Server prefix: " + serverPrefix);
 		final RequestBody requestBody = new FormEncodingBuilder()
 			.add("simpleToken", simpleToken)
-			.add("syncSetName", SyncShadow.SYNC_SET_MABEL)
+			.add("syncSetName", syncSetName)
 			.add("installation_id", Sync.getInstallationId())
 			.add("clientState", App.getDefaultGson().toJson(clientState))
 			.build();
@@ -148,44 +154,44 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		Log.d(TAG, "@@syncMabel step 30: doing actual http request in this thread (" + Thread.currentThread().getId() + ":" + Thread.currentThread().toString() + ")");
 		try {
 			// arbritrary amount of time may pass on the next line. It is possible that marker/labels be modified during this operation.
-			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, SyncShadow.SYNC_SET_MABEL);
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName);
 			final long startTime = System.currentTimeMillis();
 			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
 			Log.d(TAG, "@@syncMabel server response string: " + response_s);
-			final SecretSyncDebugActivity.DebugSyncResponseJson response = App.getDefaultGson().fromJson(response_s, SecretSyncDebugActivity.DebugSyncResponseJson.class);
-			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, SyncShadow.SYNC_SET_MABEL, "duration_ms", System.currentTimeMillis() - startTime);
+			final Sync_Mabel.SyncResponseJson response = App.getDefaultGson().fromJson(response_s, Sync_Mabel.SyncResponseJson.class);
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, syncSetName, "duration_ms", System.currentTimeMillis() - startTime);
 
 			if (!response.success) {
-				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_not_success, SyncShadow.SYNC_SET_MABEL, "message", response.message);
+				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_not_success, syncSetName, "message", response.message);
 				Log.d(TAG, "@@syncMabel server response is not success. Message: " + response.message);
 				sr.stats.numIoExceptions++;
 				return;
 			}
 
 			final int final_revno = response.final_revno;
-			final Sync.Delta<Sync.MabelContent> append_delta = response.append_delta;
+			final Sync.Delta<Sync_Mabel.Content> append_delta = response.append_delta;
 
 			if (append_delta == null) {
 				Log.w(TAG, "@@syncMabel append delta is null. This should not happen.");
-				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_error_append_delta_null, SyncShadow.SYNC_SET_MABEL);
+				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_error_append_delta_null, syncSetName);
 				sr.stats.numIoExceptions++;
 				return;
 			}
 
-			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_got_success_data, SyncShadow.SYNC_SET_MABEL, "final_revno", final_revno, "append_delta_operations_size", append_delta.operations.size());
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_got_success_data, syncSetName, "final_revno", final_revno, "append_delta_operations_size", append_delta.operations.size());
 
-			final InternalDb.ApplyAppendDeltaResult applyResult = S.getDb().applyAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
+			final Sync.ApplyAppendDeltaResult applyResult = S.getDb().applyMabelAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
 
-			SyncRecorder.log(SyncRecorder.EventKind.apply_result, SyncShadow.SYNC_SET_MABEL, "apply_result", applyResult.name());
+			SyncRecorder.log(SyncRecorder.EventKind.apply_result, syncSetName, "apply_result", applyResult.name());
 
-			if (applyResult != InternalDb.ApplyAppendDeltaResult.ok) {
+			if (applyResult != Sync.ApplyAppendDeltaResult.ok) {
 				Log.w(TAG, "@@syncMabel append delta result is not ok, but " + applyResult);
 				sr.stats.numIoExceptions++;
 				return;
 			}
 
 			// Based on operations in append_delta, fill in SyncStats
-			for (final Sync.Operation<Sync.MabelContent> o : append_delta.operations) {
+			for (final Sync.Operation<Sync_Mabel.Content> o : append_delta.operations) {
 				switch (o.opkind) {
 					case add:
 						sr.stats.numInserts++;
@@ -200,23 +206,129 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			}
 
 			// success! Tell our world.
-			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, SyncShadow.SYNC_SET_MABEL, "insert_count", sr.stats.numInserts, "update_count", sr.stats.numUpdates, "delete_count", sr.stats.numDeletes);
+			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", sr.stats.numInserts, "update_count", sr.stats.numUpdates, "delete_count", sr.stats.numDeletes);
 
 			App.getLbm().sendBroadcast(new Intent(IsiActivity.ACTION_ATTRIBUTE_MAP_CHANGED));
 			App.getLbm().sendBroadcast(new Intent(MarkersActivity.ACTION_RELOAD));
 			App.getLbm().sendBroadcast(new Intent(MarkerListActivity.ACTION_RELOAD));
 
 			Log.d(TAG, "Final revno: " + final_revno + " Apply result: " + applyResult + " Append delta: " + append_delta);
-			SyncRecorder.saveLastSuccessTime(SyncShadow.SYNC_SET_MABEL, Sqlitil.nowDateTime());
+			SyncRecorder.saveLastSuccessTime(syncSetName, Sqlitil.nowDateTime());
 			App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
 		} catch (JsonSyntaxException e) {
 			Log.w(TAG, "@@syncMabel exception when parsing json from server", e);
-			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, SyncShadow.SYNC_SET_MABEL);
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, syncSetName);
 			sr.stats.numParseExceptions++;
 
 		} catch (JsonIOException | IOException e) {
 			Log.w(TAG, "@@syncMabel exception when executing http call", e);
-			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_io, SyncShadow.SYNC_SET_MABEL);
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_io, syncSetName);
+			sr.stats.numIoExceptions++;
+		}
+	}
+
+	void syncHistory(final SyncResult sr) {
+		final String syncSetName = SyncShadow.SYNC_SET_HISTORY;
+
+		final String simpleToken = Preferences.getString(Prefkey.sync_simpleToken);
+		if (simpleToken == null) {
+			sr.stats.numAuthExceptions++;
+			SyncRecorder.log(SyncRecorder.EventKind.error_no_simple_token, syncSetName);
+			return;
+		}
+
+		Log.d(TAG, "@@syncHistory step 10: gathering client state");
+		final Pair<Sync_History.ClientState, List<Sync.Entity<Sync_History.Content>>> pair = Sync_History.getClientStateAndCurrentEntities();
+		final Sync_History.ClientState clientState = pair.first;
+		final List<Sync.Entity<Sync_History.Content>> entitiesBeforeSync = pair.second;
+
+		SyncRecorder.log(SyncRecorder.EventKind.current_entities_gathered, syncSetName, "base_revno", clientState.base_revno, "client_delta_operations_size", clientState.delta.operations.size(), "client_entities_size", entitiesBeforeSync.size());
+
+		final String serverPrefix = Sync.getEffectiveServerPrefix();
+		Log.d(TAG, "@@syncHistory step 20: building http request. Server prefix: " + serverPrefix);
+		final RequestBody requestBody = new FormEncodingBuilder()
+			.add("simpleToken", simpleToken)
+			.add("syncSetName", syncSetName)
+			.add("installation_id", Sync.getInstallationId())
+			.add("clientState", App.getDefaultGson().toJson(clientState))
+			.build();
+
+		final Call call = App.getOkHttpClient().newCall(
+			new Request.Builder()
+				.url(serverPrefix + "/sync/api/sync")
+				.post(requestBody)
+				.build()
+		);
+
+
+		Log.d(TAG, "@@syncHistory step 30: doing actual http request in this thread (" + Thread.currentThread().getId() + ":" + Thread.currentThread().toString() + ")");
+		try {
+			// arbritrary amount of time may pass on the next line. It is possible that marker/labels be modified during this operation.
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_pre, syncSetName);
+			final long startTime = System.currentTimeMillis();
+			final String response_s = U.inputStreamUtf8ToString(call.execute().body().byteStream());
+			Log.d(TAG, "@@syncHistory server response string: " + response_s);
+			final Sync_History.SyncResponseJson response = App.getDefaultGson().fromJson(response_s, Sync_History.SyncResponseJson.class);
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_response_ok, syncSetName, "duration_ms", System.currentTimeMillis() - startTime);
+
+			if (!response.success) {
+				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_not_success, syncSetName, "message", response.message);
+				Log.d(TAG, "@@syncHistory server response is not success. Message: " + response.message);
+				sr.stats.numIoExceptions++;
+				return;
+			}
+
+			final int final_revno = response.final_revno;
+			final Sync.Delta<Sync_History.Content> append_delta = response.append_delta;
+
+			if (append_delta == null) {
+				Log.w(TAG, "@@syncHistory append delta is null. This should not happen.");
+				SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_error_append_delta_null, syncSetName);
+				sr.stats.numIoExceptions++;
+				return;
+			}
+
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_got_success_data, syncSetName, "final_revno", final_revno, "append_delta_operations_size", append_delta.operations.size());
+
+			final Sync.ApplyAppendDeltaResult applyResult = History.getInstance().applyHistoryAppendDelta(final_revno, append_delta, entitiesBeforeSync, simpleToken);
+
+			SyncRecorder.log(SyncRecorder.EventKind.apply_result, syncSetName, "apply_result", applyResult.name());
+
+			if (applyResult != Sync.ApplyAppendDeltaResult.ok) {
+				Log.w(TAG, "@@syncHistory append delta result is not ok, but " + applyResult);
+				sr.stats.numIoExceptions++;
+				return;
+			}
+
+			// Based on operations in append_delta, fill in SyncStats
+			for (final Sync.Operation<Sync_History.Content> o : append_delta.operations) {
+				switch (o.opkind) {
+					case add:
+						sr.stats.numInserts++;
+						break;
+					case mod:
+						sr.stats.numUpdates++;
+						break;
+					case del:
+						sr.stats.numDeletes++;
+						break;
+				}
+			}
+
+			// success! Tell our world.
+			SyncRecorder.log(SyncRecorder.EventKind.all_succeeded, syncSetName, "insert_count", sr.stats.numInserts, "update_count", sr.stats.numUpdates, "delete_count", sr.stats.numDeletes);
+
+			Log.d(TAG, "Final revno: " + final_revno + " Apply result: " + applyResult + " Append delta: " + append_delta);
+			SyncRecorder.saveLastSuccessTime(syncSetName, Sqlitil.nowDateTime());
+			App.getLbm().sendBroadcast(new Intent(SyncSettingsActivity.ACTION_RELOAD));
+		} catch (JsonSyntaxException e) {
+			Log.w(TAG, "@@syncHistory exception when parsing json from server", e);
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_syntax, syncSetName);
+			sr.stats.numParseExceptions++;
+
+		} catch (JsonIOException | IOException e) {
+			Log.w(TAG, "@@syncHistory exception when executing http call", e);
+			SyncRecorder.log(SyncRecorder.EventKind.sync_to_server_post_error_io, syncSetName);
 			sr.stats.numIoExceptions++;
 		}
 	}

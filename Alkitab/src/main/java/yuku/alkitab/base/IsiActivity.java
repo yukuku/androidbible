@@ -1,34 +1,32 @@
 package yuku.alkitab.base;
 
 import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Point;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
-import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.view.ActionMode;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.format.DateFormat;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
-import android.view.ActionMode;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -36,7 +34,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
@@ -106,21 +103,12 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.XrefDialogListener, LeftDrawer.Text.Listener, ProgressMarkListDialog.Listener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
 
 	public static final String ACTION_ATTRIBUTE_MAP_CHANGED = "yuku.alkitab.action.ATTRIBUTE_MAP_CHANGED";
 	public static final String EXTRA_CLOSE_DRAWER = "close_drawer";
-
-	// The followings are for instant_pref
-	private static final String PREFKEY_lastBookId = "kitabTerakhir";
-	private static final String PREFKEY_lastChapter = "pasalTerakhir";
-	private static final String PREFKEY_lastVerse = "ayatTerakhir";
-	private static final String PREFKEY_lastVersionId = "edisiTerakhir";
-
-	private static final String PREFKEY_lastSplitVersionId = "lastSplitVersionId";
 
 	private static final int REQCODE_goto = 1;
 	private static final int REQCODE_share = 7;
@@ -262,12 +250,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	GotoButton bGoto;
 	ImageButton bLeft;
 	ImageButton bRight;
-	Button bVersion;
+	TextView bVersion;
 	Floater floater;
 
 	Book activeBook;
 	int chapter_1 = 0;
-	SharedPreferences instant_pref;
 	boolean fullScreen;
 	Toast fullScreenToast;
 
@@ -329,36 +316,24 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	};
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState, true);
-		
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_isi);
 
 		drawerLayout = V.get(this, R.id.drawerLayout);
 		leftDrawer = V.get(this, R.id.left_drawer);
 		leftDrawer.configure(this, drawerLayout);
 
-		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_navigation_drawer, R.string.drawer_open, R.string.drawer_close);
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar);
+		setTitle("");
+
+		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
 		drawerLayout.setDrawerListener(drawerToggle);
 
-		final ActionBar actionBar = getActionBar();
-		actionBar.setDisplayShowCustomEnabled(true);
-		if (getResources().getConfiguration().smallestScreenWidthDp >= 360) {
-			actionBar.setDisplayShowTitleEnabled(true);
-			actionBar.setDisplayShowHomeEnabled(true);
-		} else {
-			actionBar.setDisplayShowTitleEnabled(false);
-			actionBar.setDisplayShowHomeEnabled(Build.VERSION.SDK_INT < 18);
-		}
-		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setHomeButtonEnabled(true);
-		actionBar.setTitle("");
-		actionBar.setCustomView(R.layout.activity_isi_action_custom_view);
-
-		final View actionCustomView = actionBar.getCustomView();
-		bGoto = V.get(actionCustomView, R.id.bGoto);
-		bLeft = V.get(actionCustomView, R.id.bLeft);
-		bRight = V.get(actionCustomView, R.id.bRight);
-		bVersion = V.get(actionCustomView, R.id.bVersion);
+		bGoto = V.get(this, R.id.bGoto);
+		bLeft = V.get(this, R.id.bLeft);
+		bRight = V.get(this, R.id.bRight);
+		bVersion = V.get(this, R.id.bVersion);
 
 		overlayContainer = V.get(this, R.id.overlayContainer);
 		root = V.get(this, R.id.root);
@@ -427,12 +402,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		final boolean selectVerse;
 		final int selectVerseCount;
 
-		instant_pref = App.getInstantPreferences();
 		if (intentResult == null) {
 			// restore the last (version; book; chapter and verse).
-			final int lastBookId = instant_pref.getInt(PREFKEY_lastBookId, 0);
-			final int lastChapter = instant_pref.getInt(PREFKEY_lastChapter, 0);
-			final int lastVerse = instant_pref.getInt(PREFKEY_lastVerse, 0);
+			final int lastBookId = Preferences.getInt(Prefkey.lastBookId, 0);
+			final int lastChapter = Preferences.getInt(Prefkey.lastChapter, 0);
+			final int lastVerse = Preferences.getInt(Prefkey.lastVerse, 0);
 			openingAri = Ari.encode(lastBookId, lastChapter, lastVerse);
 			selectVerse = false;
 			selectVerseCount = 1;
@@ -443,7 +417,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			selectVerseCount = intentResult.selectVerseCount;
 		}
 
-		final String lastVersionId = instant_pref.getString(PREFKEY_lastVersionId, null);
+		final String lastVersionId = Preferences.getString(Prefkey.lastVersionId);
 		final MVersion mv = getVersionFromVersionId(lastVersionId);
 
 		if (mv != null) {
@@ -474,7 +448,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 
 		{ // load last split version. This must be after load book, chapter, and verse.
-			final String lastSplitVersionId = instant_pref.getString(PREFKEY_lastSplitVersionId, null);
+			final String lastSplitVersionId = Preferences.getString(Prefkey.lastSplitVersionId, null);
 			if (lastSplitVersionId != null) {
 				final MVersion splitMv = getVersionFromVersionId(lastSplitVersionId);
 				final MVersion splitMvActual = splitMv == null? S.getMVersionInternal(): splitMv;
@@ -497,7 +471,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		// sync on app start, if we are logged in
 		if (Preferences.contains(Prefkey.sync_simpleToken)) {
-			for (final String syncSetName : SyncShadow.ALL_SYNC_SETS) {
+			for (final String syncSetName : SyncShadow.ALL_SYNC_SET_NAMES) {
 				Sync.notifySyncNeeded(syncSetName);
 			}
 		}
@@ -603,20 +577,18 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	private void initNfcIfAvailable() {
 		nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
 		if (nfcAdapter != null) {
-			nfcAdapter.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
-				@Override public NdefMessage createNdefMessage(NfcEvent event) {
-					JSONObject obj = new JSONObject();
-					try {
-						obj.put("ari", Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, lsText.getVerseBasedOnScroll())); //$NON-NLS-1$
-					} catch (JSONException e) { // won't happen
-					}
-					byte[] payload = obj.toString().getBytes();
-					NdefRecord record = new NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".getBytes(), new byte[0], payload); //$NON-NLS-1$
-					return new NdefMessage(new NdefRecord[] {
-						record,
-						NdefRecord.createApplicationRecord(getPackageName()),
-					});
+			nfcAdapter.setNdefPushMessageCallback(event -> {
+				JSONObject obj = new JSONObject();
+				try {
+					obj.put("ari", Ari.encode(IsiActivity.this.activeBook.bookId, IsiActivity.this.chapter_1, lsText.getVerseBasedOnScroll())); //$NON-NLS-1$
+				} catch (JSONException e) { // won't happen
 				}
+				byte[] payload = obj.toString().getBytes();
+				NdefRecord record = new NdefRecord(NdefRecord.TNF_MIME_MEDIA, "application/vnd.yuku.alkitab.nfc.beam".getBytes(), new byte[0], payload); //$NON-NLS-1$
+				return new NdefMessage(new NdefRecord[] {
+					record,
+					NdefRecord.createApplicationRecord(getPackageName()),
+				});
 			}, this);
 		}
 	}
@@ -660,7 +632,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		NdefMessage msg = (NdefMessage) rawMsgs[0];
 		// record 0 contains the MIME type, record 1 is the AAR, if present
 		NdefRecord[] records = msg.getRecords();
-		if (records == null || records.length <= 0) return null;
+		if (records.length <= 0) return null;
 
 		String json = new String(records[0].getPayload());
 		try {
@@ -939,18 +911,17 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	
 	@Override protected void onStop() {
 		super.onStop();
-		
-		final SharedPreferences.Editor editor = instant_pref.edit();
-		editor.putInt(PREFKEY_lastBookId, this.activeBook.bookId);
-		editor.putInt(PREFKEY_lastChapter, chapter_1);
-		editor.putInt(PREFKEY_lastVerse, lsText.getVerseBasedOnScroll());
-		editor.putString(PREFKEY_lastVersionId, S.activeVersionId);
-		if (activeSplitVersion == null) {
-			editor.putString(PREFKEY_lastSplitVersionId, null);
-		} else {
-			editor.putString(PREFKEY_lastSplitVersionId, activeSplitVersionId);
+
+		Preferences.hold();
+		try {
+			Preferences.setInt(Prefkey.lastBookId, this.activeBook.bookId);
+			Preferences.setInt(Prefkey.lastChapter, chapter_1);
+			Preferences.setInt(Prefkey.lastVerse, lsText.getVerseBasedOnScroll());
+			Preferences.setString(Prefkey.lastVersionId, S.activeVersionId);
+			Preferences.setString(Prefkey.lastSplitVersionId, activeSplitVersion == null ? null : activeSplitVersionId);
+		} finally {
+			Preferences.unhold();
 		}
-		editor.apply();
 
 		history.save();
 
@@ -1099,72 +1070,34 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		if (yes) {
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-			getActionBar().hide();
+			getSupportActionBar().hide();
+
+			final ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) root.getLayoutParams();
+			lp.topMargin = 0;
+			root.setLayoutParams(lp);
+
 			if (Build.VERSION.SDK_INT >= 19) {
 				decorView.setSystemUiVisibility(
-					View.SYSTEM_UI_FLAG_FULLSCREEN
-						| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-						| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+					View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+						| View.SYSTEM_UI_FLAG_IMMERSIVE
 				);
-
-				decorView.setOnSystemUiVisibilityChangeListener(visibility -> {
-					Log.d(TAG, "@@onSystemUiVisibilityChange " + Integer.toHexString(visibility));
-
-					final int reallyFullscreenFlags = View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-
-					if ((visibility & reallyFullscreenFlags) == reallyFullscreenFlags) {
-						// we know that we are fullscreen (no status bar) and navigation is hidden.
-						// so mark this layout as stable (action bar will not move)
-						// However, those flags are set even when our root is not really fullscreen yet!
-
-						final AtomicInteger retries = new AtomicInteger(0);
-
-						final Runnable makeLayoutStable = new Runnable() {
-							@Override
-							public void run() {
-								final int systemUiVisibility = decorView.getSystemUiVisibility();
-								Log.d(TAG, "@@onSystemUiVisibilityChange (2) " + Integer.toHexString(systemUiVisibility));
-
-								if ((systemUiVisibility & reallyFullscreenFlags) != reallyFullscreenFlags) {
-									// we are no longer really fullscreen, let's stop trying
-								}
-
-								final Point rootSize = new Point(root.getWidth(), root.getHeight());
-								final Point screenSize = new Point();
-								getWindowManager().getDefaultDisplay().getRealSize(screenSize);
-
-								if (rootSize.equals(screenSize)) {
-									Log.d(TAG, "@@onSystemUiVisibilityChange finally same root and screen size: " + rootSize);
-
-									decorView.setSystemUiVisibility(
-										View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-											| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-											| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-											| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-											| View.SYSTEM_UI_FLAG_FULLSCREEN
-											| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-									);
-								} else {
-									Log.d(TAG, "@@onSystemUiVisibilityChange different root and screen size: " + rootSize + " " + screenSize + " retry " + retries.get());
-									retries.incrementAndGet();
-									decorView.getHandler().postDelayed(this, 50);
-								}
-							}
-						};
-
-						decorView.getHandler().post(makeLayoutStable);
-					}
-				});
 			}
 
 			fullScreen = true;
 		} else {
 			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-			getActionBar().show();
+			getSupportActionBar().show();
+
+			final ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) root.getLayoutParams();
+			final TypedValue tv = new TypedValue();
+			getTheme().resolveAttribute(R.attr.actionBarSize, tv, true);
+			lp.topMargin = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+			root.setLayoutParams(lp);
+
 			if (Build.VERSION.SDK_INT >= 19) {
 				decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-				decorView.setOnSystemUiVisibilityChangeListener(null);
 			}
+
 			fullScreen = false;
 		}
 	}
@@ -1173,18 +1106,19 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	public void onWindowFocusChanged(final boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 
+		final View decorView = getWindow().getDecorView();
+		Log.d(TAG, "@@onWindowFocusChanged bef hasFocus=" + hasFocus + " 0x" + Integer.toHexString(decorView.getSystemUiVisibility()));
+
 		if (hasFocus && fullScreen) {
 			if (Build.VERSION.SDK_INT >= 19) {
-				getWindow().getDecorView().setSystemUiVisibility(
-					View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-						| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-						| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-						| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-						| View.SYSTEM_UI_FLAG_FULLSCREEN
-						| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+				decorView.setSystemUiVisibility(
+					View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+						| View.SYSTEM_UI_FLAG_IMMERSIVE
 				);
 			}
 		}
+
+		Log.d(TAG, "@@onWindowFocusChanged aft hasFocus=" + hasFocus + " 0x" + Integer.toHexString(decorView.getSystemUiVisibility()));
 	}
 
 	void setShowTextAppearancePanel(boolean yes) {
@@ -1225,32 +1159,24 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	}
 
 	void openVersionsDialog() {
-		S.openVersionsDialog(this, false, S.activeVersionId, new S.VersionDialogListener() {
-			@Override
-			public void onVersionSelected(final MVersion mv) {
-				loadVersion(mv, true);
-			}
-		});
+		S.openVersionsDialog(this, false, S.activeVersionId, mv -> loadVersion(mv, true));
 	}
 
 	void openSplitVersionsDialog() {
-		S.openVersionsDialog(this, true, activeSplitVersionId, new S.VersionDialogListener() {
-			@Override
-			public void onVersionSelected(final MVersion mv) {
-				if (mv == null) { // closing split version
+		S.openVersionsDialog(this, true, activeSplitVersionId, mv -> {
+			if (mv == null) { // closing split version
+				activeSplitVersion = null;
+				activeSplitVersionId = null;
+				closeSplitDisplay();
+			} else {
+				boolean ok = loadSplitVersion(mv);
+				if (ok) {
+					openSplitDisplay();
+					displaySplitFollowingMaster();
+				} else {
 					activeSplitVersion = null;
 					activeSplitVersionId = null;
 					closeSplitDisplay();
-				} else {
-					boolean ok = loadSplitVersion(mv);
-					if (ok) {
-						openSplitDisplay();
-						displaySplitFollowingMaster();
-					} else {
-						activeSplitVersion = null;
-						activeSplitVersionId = null;
-						closeSplitDisplay();
-					}
 				}
 			}
 		});
@@ -1263,23 +1189,20 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 		// do it on after the layout pass
 		overlayContainer.requestLayout();
-		overlayContainer.post(new Runnable() {
-			@Override
-			public void run() {
-				splitHandle.setVisibility(View.VISIBLE);
-				int splitHandleHeight = getResources().getDimensionPixelSize(R.dimen.split_handle_height);
-				int totalHeight = splitRoot.getHeight();
-				int masterHeight = totalHeight / 2 - splitHandleHeight / 2;
+		overlayContainer.post(() -> {
+			splitHandle.setVisibility(View.VISIBLE);
+			int splitHandleHeight = getResources().getDimensionPixelSize(R.dimen.split_handle_height);
+			int totalHeight = splitRoot.getHeight();
+			int masterHeight = totalHeight / 2 - splitHandleHeight / 2;
 
-				// divide by 2 the screen space
-				ViewGroup.LayoutParams lp = lsText.getLayoutParams();
-				lp.height = masterHeight;
-				lsText.setLayoutParams(lp);
+			// divide by 2 the screen space
+			ViewGroup.LayoutParams lp = lsText.getLayoutParams();
+			lp.height = masterHeight;
+			lsText.setLayoutParams(lp);
 
-				// no need to set height, because it has been set to match_parent, so it takes
-				// the remaining space.
-				lsSplit1.setVisibility(View.VISIBLE);
-			}
+			// no need to set height, because it has been set to match_parent, so it takes
+			// the remaining space.
+			lsSplit1.setVisibility(View.VISIBLE);
 		});
 
 		bVersion.setVisibility(View.GONE);
@@ -1691,7 +1614,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 						lDate.setText(getString(R.string.create_edited_modified_time, Sqlitil.toLocaleDateMedium(addTime), Sqlitil.toLocaleDateMedium(modifyTime)));
 					}
 
-					Appearances.applyBookmarkDateTextAppearance(lDate);
+					Appearances.applyMarkerDateTextAppearance(lDate);
 				}
 
 				final int ari = marker.ari;
@@ -1700,7 +1623,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 				if (kind == Marker.Kind.bookmark) {
 					lCaption.setText(caption);
-					Appearances.applyBookmarkTitleTextAppearance(lCaption);
+					Appearances.applyMarkerTitleTextAppearance(lCaption);
 
 					lSnippet.setVisibility(View.GONE);
 
@@ -1717,7 +1640,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 
 				} else if (kind == Marker.Kind.note) {
 					lCaption.setText(reference);
-					Appearances.applyBookmarkTitleTextAppearance(lCaption);
+					Appearances.applyMarkerTitleTextAppearance(lCaption);
 					lSnippet.setText(caption);
 					Appearances.applyTextAppearance(lSnippet);
 				}
@@ -1816,7 +1739,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			}
 			
 			if (actionMode == null) {
-				actionMode = startActionMode(actionMode_callback);
+				actionMode = startSupportActionMode(actionMode_callback);
 			}
 			
 			if (actionMode != null) {
@@ -1882,7 +1805,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	
 	ActionMode.Callback actionMode_callback = new ActionMode.Callback() {
 		@Override public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-			mode.getMenuInflater().inflate(R.menu.context_isi, menu);
+			getMenuInflater().inflate(R.menu.context_isi, menu);
 			
 			/* The following "esvsbasal" thing is a personal thing by yuku that doesn't matter to anyone else.
 			 * Please ignore it and leave it intact. */
@@ -2101,14 +2024,11 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		}
 	};
 
-	LabeledSplitHandleButton.OnLabelPressed splitHandleButton_labelPressed = new LabeledSplitHandleButton.OnLabelPressed() {
-		@Override
-		public void onLabelPressed(final int which) {
-			if (which == 1) { // left
-				openVersionsDialog();
-			} else if (which == 2) { // right
-				openSplitVersionsDialog();
-			}
+	LabeledSplitHandleButton.OnLabelPressed splitHandleButton_labelPressed = which -> {
+		if (which == 1) { // left
+			openVersionsDialog();
+		} else if (which == 2) { // right
+			openSplitVersionsDialog();
 		}
 	};
 

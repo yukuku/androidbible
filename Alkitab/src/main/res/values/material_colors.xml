@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- Dark 800 -->
+	<color name="primary">#212121</color>
+	<!-- Black -->
+	<color name="primary_dark">#000000</color>
+	<!-- Light blue primary -->
+	<color name="accent">#03a9f4</color>
+	<!-- Black -->
+	<color name="windowBackground">#303030</color>
+
+</resources>

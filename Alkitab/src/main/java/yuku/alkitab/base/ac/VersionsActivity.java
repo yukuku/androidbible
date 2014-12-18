@@ -1,23 +1,18 @@
 package yuku.alkitab.base.ac;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -25,8 +20,11 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.DynamicDrawableSpan;
@@ -44,9 +42,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 import com.mobeta.android.dslv.DragSortController;
 import com.mobeta.android.dslv.DragSortListView;
 import yuku.afw.V;
@@ -56,6 +54,7 @@ import yuku.alkitab.base.App;
 import yuku.alkitab.base.IsiActivity;
 import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
+import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.config.VersionConfig;
 import yuku.alkitab.base.model.MVersion;
 import yuku.alkitab.base.model.MVersionDb;
@@ -87,7 +86,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -99,7 +97,7 @@ import java.util.regex.Matcher;
 import java.util.zip.GZIPInputStream;
 
 
-public class VersionsActivity extends Activity implements ActionBar.TabListener {
+public class VersionsActivity extends BaseActivity {
 	public static final String TAG = VersionsActivity.class.getSimpleName();
 
 	private static final int REQCODE_openFile = 1;
@@ -118,6 +116,7 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 	 * The {@link android.support.v4.view.ViewPager} that will host the section contents.
 	 */
 	ViewPager mViewPager;
+	SlidingTabLayout slidingTabs;
 	String query_text;
 
 	public static Intent createIntent() {
@@ -131,9 +130,10 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 
 		setTitle(R.string.kelola_versi);
 
-		// Set up the action bar.
-		final ActionBar actionBar = getActionBar();
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar); // must be done first before below lines
+		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+		toolbar.setNavigationOnClickListener(v -> navigateUp());
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the activity.
@@ -143,24 +143,9 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 		mViewPager = V.get(this, R.id.viewPager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 
-		// When swiping between different sections, select the corresponding
-		// tab. We can also use ActionBar.Tab#select() to do this if we have
-		// a reference to the Tab.
-		mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-			@Override
-			public void onPageSelected(int position) {
-				actionBar.setSelectedNavigationItem(position);
-			}
-		});
-
-		// For each of the sections in the app, add a tab to the action bar.
-		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-			// Create a tab with text corresponding to the page title defined by
-			// the adapter. Also specify this Activity object, which implements
-			// the TabListener interface, as the callback (listener) for when
-			// this tab is selected.
-			actionBar.addTab(actionBar.newTab().setText(mSectionsPagerAdapter.getPageTitle(i)).setTabListener(this));
-		}
+		slidingTabs = V.get(this, R.id.sliding_tabs);
+		slidingTabs.setCustomTabColorizer(position -> getResources().getColor(R.color.accent));
+		slidingTabs.setViewPager(mViewPager);
 
 		processIntent(getIntent(), "onCreate");
 
@@ -321,7 +306,7 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
 		final MenuItem menuSearch = menu.findItem(R.id.menuSearch);
-		menuSearch.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+		MenuItemCompat.setOnActionExpandListener(menuSearch, new MenuItemCompat.OnActionExpandListener() {
 			@Override
 			public boolean onMenuItemActionExpand(final MenuItem item) {
 				setOthersVisible(item, false);
@@ -419,21 +404,6 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 				.setPositiveButton(R.string.ok, null)
 				.show();
 		}
-	}
-
-	@Override
-	public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-		// When the given tab is selected, switch to the corresponding page in
-		// the ViewPager.
-		mViewPager.setCurrentItem(tab.getPosition());
-	}
-
-	@Override
-	public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-	}
-
-	@Override
-	public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
 	}
 
 	/**
@@ -639,61 +609,58 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 
 	void openUrlInputDialog() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		final Context contextForLayout = Build.VERSION.SDK_INT >= 11? builder.getContext(): this;
+		final Context contextForLayout = builder.getContext();
 
-		final View dialogView = LayoutInflater.from(contextForLayout).inflate(R.layout.dialog_version_add_from_url, null);
+		final View dialogView = View.inflate(contextForLayout, R.layout.dialog_version_add_from_url, null);
 		final EditText tUrl = V.get(dialogView, R.id.tUrl);
 
 		builder
 			.setView(dialogView)
-			.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(final DialogInterface dialog, final int which) {
-					final String url = tUrl.getText().toString().trim();
-					if (url.length() == 0) {
+			.setPositiveButton(R.string.ok, (dialog, which) -> {
+				final String url = tUrl.getText().toString().trim();
+				if (url.length() == 0) {
+					return;
+				}
+
+				final Uri uri = Uri.parse(url);
+				final String scheme = uri.getScheme();
+				if (!U.equals(scheme, "http") && !U.equals(scheme, "https")) {
+					new AlertDialog.Builder(VersionsActivity.this)
+						.setMessage(R.string.version_download_invalid_url)
+						.setPositiveButton(R.string.ok, null)
+						.show();
+					return;
+				}
+
+				// guess destination filename
+				String last = uri.getLastPathSegment();
+				if (TextUtils.isEmpty(last) || !last.toLowerCase(Locale.US).endsWith(".yes")) {
+					new AlertDialog.Builder(VersionsActivity.this)
+						.setMessage(R.string.version_download_not_yes)
+						.setPositiveButton(R.string.ok, null)
+						.show();
+					return;
+				}
+
+				{
+					final String downloadKey = "version:url:" + url;
+
+					final int status = DownloadMapper.instance.getStatus(downloadKey);
+					if (status == DownloadManager.STATUS_PENDING || status == DownloadManager.STATUS_RUNNING) {
+						// it's downloading!
 						return;
 					}
 
-					final Uri uri = Uri.parse(url);
-					final String scheme = uri.getScheme();
-					if (!U.equals(scheme, "http") && !U.equals(scheme, "https")) {
-						new AlertDialog.Builder(VersionsActivity.this)
-							.setMessage(R.string.version_download_invalid_url)
-							.setPositiveButton(R.string.ok, null)
-							.show();
-						return;
-					}
+					final DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url))
+						.setTitle(last)
+						.setVisibleInDownloadsUi(false)
+						.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
 
-					// guess destination filename
-					String last = uri.getLastPathSegment();
-					if (TextUtils.isEmpty(last) || !last.toLowerCase(Locale.US).endsWith(".yes")) {
-						new AlertDialog.Builder(VersionsActivity.this)
-							.setMessage(R.string.version_download_not_yes)
-							.setPositiveButton(R.string.ok, null)
-							.show();
-						return;
-					}
+					final Map<String, String> attrs = new LinkedHashMap<>();
+					attrs.put("download_type", "url");
+					attrs.put("filename_last_segment", last);
 
-					{
-						final String downloadKey = "version:url:" + url;
-
-						final int status = DownloadMapper.instance.getStatus(downloadKey);
-						if (status == DownloadManager.STATUS_PENDING || status == DownloadManager.STATUS_RUNNING) {
-							// it's downloading!
-							return;
-						}
-
-						final DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url))
-							.setTitle(last)
-							.setVisibleInDownloadsUi(false)
-							.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
-
-						final Map<String, String> attrs = new LinkedHashMap<>();
-						attrs.put("download_type", "url");
-						attrs.put("filename_last_segment", last);
-
-						DownloadMapper.instance.enqueue(downloadKey, req, attrs);
-					}
+					DownloadMapper.instance.enqueue(downloadKey, req, attrs);
 				}
 			})
 			.show();
@@ -858,19 +825,14 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 
 			swiper = V.get(rootView, R.id.swiper);
 			if (swiper != null) { // Can be null, if the layout used is fragment_versions_downloaded.
-				swiper.setColorSchemeColors(0xff33b5e5, 0xffcbcbcb, 0xff33b5e5, 0xffcbcbcb);
+				swiper.setColorSchemeColors(getResources().getColor(R.color.accent), 0xffcbcbcb, getResources().getColor(R.color.accent), 0xffcbcbcb);
 				swiper.setOnRefreshListener(swiper_refresh);
 			}
 
 			return rootView;
 		}
 
-		final SwipeRefreshLayout.OnRefreshListener swiper_refresh = new SwipeRefreshLayout.OnRefreshListener() {
-			@Override
-			public void onRefresh() {
-				VersionConfigUpdaterService.checkUpdate(false);
-			}
-		};
+		final SwipeRefreshLayout.OnRefreshListener swiper_refresh = () -> VersionConfigUpdaterService.checkUpdate(false);
 
 		Map<String, String> cache_displayLanguage = new HashMap<>();
 
@@ -971,12 +933,8 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 			// can we update?
 			if (hasUpdateAvailable(mv)) {
 				button_count++;
-				b.setPositiveButton(R.string.ed_update_button, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(final DialogInterface dialog, final int which) {
-						startDownload(VersionConfig.get().getPreset(((MVersionDb) mv).preset_name));
-					}
-				});
+				//noinspection ConstantConditions
+				b.setPositiveButton(R.string.ed_update_button, (dialog, which) -> startDownload(VersionConfig.get().getPreset(((MVersionDb) mv).preset_name)));
 
 				details.append("\n");
 				final int details_len = details.length();
@@ -988,58 +946,43 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 			// can we share?
 			if (mv instanceof MVersionDb && mv.hasDataFile()) {
 				button_count++;
-				b.setNeutralButton(R.string.version_menu_share, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(final DialogInterface dialog, final int which) {
-						final MVersionDb mvDb = (MVersionDb) mv;
+				b.setNeutralButton(R.string.version_menu_share, (dialog, which) -> {
+					final MVersionDb mvDb = (MVersionDb) mv;
 
-						final Intent intent = ShareCompat.IntentBuilder.from(getActivity())
-							.setType("application/octet-stream")
-							.addStream(Uri.fromFile(new File(mvDb.filename)))
-							.getIntent();
+					final Intent intent = ShareCompat.IntentBuilder.from(getActivity())
+						.setType("application/octet-stream")
+						.addStream(Uri.fromFile(new File(mvDb.filename)))
+						.getIntent();
 
-						startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.version_share_title)), REQCODE_share);
-					}
+					startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.version_share_title)), REQCODE_share);
 				});
 			}
 
 			// can we delete?
 			if (mv instanceof MVersionDb) {
 				button_count++;
-				b.setNegativeButton(R.string.buang_dari_daftar, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(final DialogInterface dialog, final int which) {
-						final MVersionDb mvDb = (MVersionDb) mv;
-						new AlertDialog.Builder(getActivity())
-							.setMessage(getString(R.string.juga_hapus_file_datanya_file, mvDb.filename))
-							.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-								@Override public void onClick(DialogInterface dialog, int which) {
-									S.getDb().deleteVersion(mvDb);
-									App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
-									new File(mvDb.filename).delete();
-								}
-							})
-							.setNeutralButton(R.string.no, new DialogInterface.OnClickListener() {
-								@Override public void onClick(DialogInterface dialog, int which) {
-									S.getDb().deleteVersion(mvDb);
-									App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
-								}
-							})
-							.setNegativeButton(R.string.cancel, null)
-							.show();
-					}
+				b.setNegativeButton(R.string.buang_dari_daftar, (dialog, which) -> {
+					final MVersionDb mvDb = (MVersionDb) mv;
+					new AlertDialog.Builder(getActivity())
+						.setMessage(getString(R.string.juga_hapus_file_datanya_file, mvDb.filename))
+						.setPositiveButton(R.string.yes, (dialog1, which1) -> {
+							S.getDb().deleteVersion(mvDb);
+							App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
+							new File(mvDb.filename).delete();
+						})
+						.setNeutralButton(R.string.no, (dialog1, which1) -> {
+							S.getDb().deleteVersion(mvDb);
+							App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
+						})
+						.setNegativeButton(R.string.cancel, null)
+						.show();
 				});
 			}
 
 			// can we download?
 			if (mv instanceof MVersionPreset) {
 				button_count++;
-				b.setPositiveButton(R.string.ed_download_button, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(final DialogInterface dialog, final int which) {
-						startDownload((MVersionPreset) mv);
-					}
-				});
+				b.setPositiveButton(R.string.ed_download_button, (dialog, which) -> startDownload((MVersionPreset) mv));
 			}
 
 			// if we have no buttons at all, add a no-op OK
@@ -1093,12 +1036,9 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 				} else {
 					new AlertDialog.Builder(getActivity())
 						.setMessage(getString(R.string.the_file_for_this_version_is_no_longer_available_file, mv.filename))
-						.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								S.getDb().deleteVersion(mv);
-								App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
-							}
+						.setPositiveButton(R.string.yes, (dialog, which) -> {
+							S.getDb().deleteVersion(mv);
+							App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
 						})
 						.setNegativeButton(R.string.no, null)
 						.show();
@@ -1177,30 +1117,22 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 
 				// Sort items. For "all" tab, sort is based on display language. For "downloaded" tab, sort is based on ordering.
 				if (!downloadedOnly) {
-					Collections.sort(items, new Comparator<Item>() {
-						@Override
-						public int compare(final Item a, final Item b) {
-							final String locale_a = a.mv.locale;
-							final String locale_b = b.mv.locale;
-							if (U.equals(locale_a, locale_b)) {
-								return a.mv.longName.compareToIgnoreCase(b.mv.longName);
-							}
-							if (locale_a == null) {
-								return +1;
-							} else if (locale_b == null) {
-								return -1;
-							}
-
-							return getDisplayLanguage(locale_a).compareToIgnoreCase(getDisplayLanguage(locale_b));
+					Collections.sort(items, (a, b) -> {
+						final String locale_a = a.mv.locale;
+						final String locale_b = b.mv.locale;
+						if (U.equals(locale_a, locale_b)) {
+							return a.mv.longName.compareToIgnoreCase(b.mv.longName);
 						}
+						if (locale_a == null) {
+							return +1;
+						} else if (locale_b == null) {
+							return -1;
+						}
+
+						return getDisplayLanguage(locale_a).compareToIgnoreCase(getDisplayLanguage(locale_b));
 					});
 				} else {
-					Collections.sort(items, new Comparator<Item>() {
-						@Override
-						public int compare(final Item a, final Item b) {
-							return a.mv.ordering - b.mv.ordering;
-						}
-					});
+					Collections.sort(items, (a, b) -> a.mv.ordering - b.mv.ordering);
 
 					if (BuildConfig.DEBUG) {
 						Log.d(TAG, "ordering   type                   versionId");
@@ -1273,19 +1205,9 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 				final Item item = getItem(position);
 				final MVersion mv = item.mv;
 
-				bLongName.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(final View v) {
-						itemNameClick(item);
-					}
-				});
+				bLongName.setOnClickListener(v -> itemNameClick(item));
 
-				panelRight.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(final View v) {
-						itemCheckboxClick(item, view);
-					}
-				});
+				panelRight.setOnClickListener(v -> itemCheckboxClick(item, view));
 
 				cActive.setChecked(mv.getActive());
 
@@ -1357,19 +1279,17 @@ public class VersionsActivity extends Activity implements ActionBar.TabListener 
 		}
 
 		private boolean hasUpdateAvailable(final MVersion mv) {
-			final boolean updateIcon;
-			if (mv instanceof MVersionDb) {
-				final MVersionDb mvDb = (MVersionDb) mv;
-				if (mvDb.preset_name == null || mvDb.modifyTime == 0) {
-					updateIcon = false;
-				} else {
-					final int available = VersionConfig.get().getModifyTime(mvDb.preset_name);
-					updateIcon = !(available == 0 || available <= mvDb.modifyTime);
-				}
-			} else {
-				updateIcon = false;
+			if (!(mv instanceof MVersionDb)) {
+				return false;
 			}
-			return updateIcon;
+
+			final MVersionDb mvDb = (MVersionDb) mv;
+			if (mvDb.preset_name == null || mvDb.modifyTime == 0) {
+				return false;
+			}
+
+			final int available = VersionConfig.get().getModifyTime(mvDb.preset_name);
+			return !(available == 0 || available <= mvDb.modifyTime);
 		}
 
 		private class VersionOrderingController extends DragSortController {
