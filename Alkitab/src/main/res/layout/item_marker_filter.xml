@@ -40,6 +40,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
             android:paddingRight="24dp"
+            android:textColor="#fff"
 			android:text="*nonlabel"
 			tools:ignore="HardcodedText"
 			android:textAppearance="?android:textAppearanceMedium" />

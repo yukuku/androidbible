@@ -15,7 +15,8 @@
 		android:layout_weight="1"
 		android:gravity="left|center_vertical"
 		android:paddingLeft="16dp"
-		android:textAppearance="?android:attr/textAppearanceMedium" />
+		android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#fff" />
 
 	<CheckBox
 		android:id="@+id/checkbox"

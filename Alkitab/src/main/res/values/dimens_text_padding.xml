@@ -2,5 +2,7 @@
 <resources>
 	<dimen name="text_nopadding">0dp</dimen>
 	<dimen name="text_side_padding">16dp</dimen>
-	<dimen name="text_topbottom_padding">16dp</dimen>
+	<dimen name="text_top_padding">8dp</dimen>
+    <dimen name="text_bottom_padding">16dp</dimen>
+    <dimen name="text_topbottom_padding">16dp</dimen>
 </resources>

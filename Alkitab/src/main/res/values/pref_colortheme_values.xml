@@ -4,6 +4,8 @@
     <!-- text color, bg color, verse number color, red text color -->
     <string-array name="pref_colorTheme_values" translatable="false">
 
+        <!-- dark material -->
+        <item>ffeeeeee ff303030 ff757575 ff03a9f4</item>
         <!-- paper -->
         <item>ff000000 ffeeeeee ff6666ff ffd11712</item>
         <!-- blackboard -->
