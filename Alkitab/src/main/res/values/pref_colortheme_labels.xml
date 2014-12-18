@@ -3,6 +3,10 @@
     <!-- Names of the color themes -->
 	<string-array name="pref_colorTheme_labels">
         <item>Dark Material</item>
+        <item>Lollipop</item>
+        <item>Bubble Gum</item>
+        <item>Wood</item>
+        <item>Sakura</item>
 		<item>Clean Paper</item>
 		<item>Blackboard</item>
 		<item>Tropic Lush</item>

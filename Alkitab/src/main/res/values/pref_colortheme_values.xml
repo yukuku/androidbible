@@ -6,6 +6,14 @@
 
         <!-- dark material -->
         <item>ffeeeeee ff303030 ff757575 ff03a9f4</item>
+        <!--lollipop-->
+        <item>fff23d4c fff5f5f5 fff48fb1 ff673ab7</item>
+        <!--bubblegum-->
+        <item>ff03a9f4 fff7fcff ff0277bd fff50057</item>
+        <!--wood-->
+        <item>fffff3e0 ff3e2723 ff8d6e63 ff8bc34a</item>
+        <!--sakura-->
+        <item>fff06292 fffafafa ff8bc34a ff3e2723</item>
         <!-- paper -->
         <item>ff000000 ffeeeeee ff6666ff ffd11712</item>
         <!-- blackboard -->

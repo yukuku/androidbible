@@ -25,15 +25,18 @@ public class AttributeView extends View {
 	static Bitmap noteBitmap = null;
 	static Bitmap[] progressMarkBitmap = new Bitmap[PROGRESS_MARK_TOTAL_COUNT];
 	static Paint alphaPaint = new Paint();
-	static Paint attributeCountPaint = new Paint();
+	static Paint attributeCountPaintBookmark = new Paint();
+    static Paint attributeCountPaintNote;
 
-	static {
-		attributeCountPaint.setTypeface(Typeface.DEFAULT_BOLD);
-		attributeCountPaint.setColor(0xff404040);
-		attributeCountPaint.setTextSize(App.context.getResources().getDisplayMetrics().density * 12.f);
-		attributeCountPaint.setAntiAlias(true);
-		attributeCountPaint.setTextAlign(Paint.Align.CENTER);
-	}
+    static {
+        attributeCountPaintBookmark.setTypeface(Typeface.DEFAULT_BOLD);
+        attributeCountPaintBookmark.setColor(0xff000000);
+        attributeCountPaintBookmark.setTextSize(App.context.getResources().getDisplayMetrics().density * 12.f);
+        attributeCountPaintBookmark.setAntiAlias(true);
+        attributeCountPaintBookmark.setTextAlign(Paint.Align.CENTER);
+
+        attributeCountPaintNote = new Paint(attributeCountPaintBookmark);
+    }
 
 	int bookmark_count;
 	int note_count;
@@ -58,7 +61,10 @@ public class AttributeView extends View {
 	}
 
 	private void init() {
-		drawOffsetLeft = Math.round(1 * getResources().getDisplayMetrics().density);
+        float density = getResources().getDisplayMetrics().density;
+
+		drawOffsetLeft = Math.round(1 * density);
+        attributeCountPaintNote.setShadowLayer(density*4, 0, 0, 0xffffffff);
 	}
 
 	public void setBookmarkCount(final int bookmark_count) {
@@ -148,7 +154,7 @@ public class AttributeView extends View {
 			final Bitmap bookmarkBitmap = getBookmarkBitmap();
 			canvas.drawBitmap(bookmarkBitmap, drawOffsetLeft, totalHeight, null);
 			if (bookmark_count > 1) {
-				canvas.drawText(String.valueOf(bookmark_count), drawOffsetLeft + bookmarkBitmap.getWidth() / 2, totalHeight + bookmarkBitmap.getHeight() / 2, attributeCountPaint);
+				canvas.drawText(String.valueOf(bookmark_count), drawOffsetLeft + bookmarkBitmap.getWidth() / 2, totalHeight + bookmarkBitmap.getHeight() * 3/4, attributeCountPaintBookmark);
 			}
 			totalHeight += bookmarkBitmap.getHeight();
 		}
@@ -156,7 +162,7 @@ public class AttributeView extends View {
 			final Bitmap noteBitmap = getNoteBitmap();
 			canvas.drawBitmap(noteBitmap, drawOffsetLeft, totalHeight, null);
 			if (note_count > 1) {
-				canvas.drawText(String.valueOf(note_count), drawOffsetLeft + noteBitmap.getWidth() / 2, totalHeight + noteBitmap.getHeight() / 2, attributeCountPaint);
+				canvas.drawText(String.valueOf(note_count), drawOffsetLeft + noteBitmap.getWidth() / 2, totalHeight + noteBitmap.getHeight() * 7/10, attributeCountPaintNote);
 			}
 			totalHeight += noteBitmap.getHeight();
 		}
