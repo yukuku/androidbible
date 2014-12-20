@@ -25,16 +25,15 @@ import java.util.Stack;
 
 public class Proses2 {
 	final SAXParserFactory factory = SAXParserFactory.newInstance();
-	
-	public static String INPUT_TEKS_ENCODING = "utf-8";
-	public static int INPUT_TEKS_ENCODING_YES = 2; // 1: ascii; 2: utf-8;
-	public static String INPUT_BOOK_NAMES = "../../../bahan-alkitab/in-tsi-usfm/in/in-tsi-usfm-kitab.txt";
-	static String INPUT_TEXT_2 = "../../../bahan-alkitab/in-tsi-usfm/mid/";
-	static String OUTPUT_YET = "../../../bahan-alkitab/in-tsi-usfm/out/in-tsi.yet";
+
+	static String INPUT_BOOK_NAMES = "../../../bahan-alkitab/in-tsi/in/in-tsi-usfm-kitab.txt";
+	static String INPUT_TEXT_2 = "../../../bahan-alkitab/in-tsi/mid/";
+	static String OUTPUT_YET = "../../../bahan-alkitab/in-tsi/in-tsi.yet";
+	static String OUTPUT_INTERNAL_DIR = "../../../bahan-alkitab/in-tsi/raw/";
 	static String INFO_LOCALE = "in";
 	static String INFO_SHORT_NAME = "TSI";
 	static String INFO_LONG_NAME = "Terjemahan Sederhana Indonesia";
-	static String INFO_DESCRIPTION = "Terjemahan Sederhana Indonesia. Copyright Yayasan Alkitab BahasaKita (Albata). Lihat http://albata.info.";
+	static String INFO_DESCRIPTION = "Terjemahan Sederhana Indonesia 2nd Edition. Copyright Yayasan Alkitab BahasaKita (Albata). Lihat http://albata.info.";
 
 	TextDb teksDb = new TextDb();
 	StringBuilder misteri = new StringBuilder();
@@ -94,14 +93,17 @@ public class Proses2 {
 		////////// PROSES KE INTERNAL
 
 		{
-			File outDir = new File("../../../bahan-alkitab/in-tsi-usfm/raw/");
+			File outDir = new File(OUTPUT_INTERNAL_DIR);
 			outDir.mkdir();
 			InternalCommon.createInternalFiles(outDir, "tsi", InternalCommon.fileToBookNames(INPUT_BOOK_NAMES), teksDb.toRecList(), pericopeData, xrefDb, footnoteDb);
 		}
 
 		////////// PROSES KE YET
 
-		final YetFileOutput yet = new YetFileOutput(new File(OUTPUT_YET));
+		final File yetOutputFile = new File(OUTPUT_YET);
+		//noinspection ResultOfMethodCallIgnored
+		yetOutputFile.getParentFile().mkdir();
+		final YetFileOutput yet = new YetFileOutput(yetOutputFile);
 		final Yes2Common.VersionInfo versionInfo = new Yes2Common.VersionInfo();
 		versionInfo.locale = INFO_LOCALE;
 		versionInfo.shortName = INFO_SHORT_NAME;
