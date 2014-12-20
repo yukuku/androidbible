@@ -43,6 +43,12 @@ public class Provider extends ContentProvider {
 	public void attachInfo(final Context context, final ProviderInfo info) {
 		super.attachInfo(context, info);
 
+		Log.d(TAG, "@@attachInfo");
+
+		if (!info.enabled) {
+			return;
+		}
+
 		final String authority;
 		if (BuildConfig.DEBUG) {
 			authority = context.getString(R.string.file_provider_authority);
