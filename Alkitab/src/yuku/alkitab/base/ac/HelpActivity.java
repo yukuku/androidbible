@@ -18,15 +18,6 @@ import yuku.alkitab.base.util.TargetDecoder;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.util.IntArrayList;
 import yuku.alkitabintegration.display.Launcher;
-import yuku.afw.App;
-import yuku.afw.V;
-import yuku.alkitab.base.U;
-import yuku.alkitab.base.ac.base.BaseActivity;
-import yuku.alkitab.base.dialog.VersesDialog;
-import yuku.alkitab.base.util.TargetDecoder;
-import yuku.alkitab.debug.R;
-import yuku.alkitab.util.IntArrayList;
-import yuku.alkitabintegration.display.Launcher;
 
 public class HelpActivity extends BaseActivity {
 	private static final String EXTRA_page = "customPage";

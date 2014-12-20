@@ -52,6 +52,7 @@ import yuku.alkitab.base.ac.AboutActivity;
 import yuku.alkitab.base.ac.BookmarkActivity;
 import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.GotoActivity;
+import yuku.alkitab.base.ac.HelpActivity;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.ac.Search2Activity;
 import yuku.alkitab.base.ac.SettingsActivity;
@@ -1074,11 +1075,6 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 			}
 
 			startActivity(HelpActivity.createIntent(page, true, getString(R.string.read_faq_before_suggest), new Intent(yuku.afw.App.context, com.example.android.wizardpager.MainActivity.class)));
-		} return true;
-		case R.id.menuDonation: {
-			String donation_url = getString(R.string.alamat_donasi);
-			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(donation_url));
-			startActivity(HelpActivity.createIntent("help/donation.html", true, getString(R.string.send_donation_confirmation), intent));
 		} return true;
 		case R.id.menuTsiIntro: {
 			startActivity(HelpActivity.createIntent("help/PrakataTSI.html", false, null, null));
