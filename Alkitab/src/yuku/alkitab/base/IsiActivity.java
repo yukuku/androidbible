@@ -1016,6 +1016,7 @@ public class IsiActivity extends BaseActivity implements XrefDialog.XrefDialogLi
 		menu.findItem(R.id.menuDevotion).setVisible(c.menuDevotion);
 		menu.findItem(R.id.menuVersions).setVisible(c.menuVersions);
 		menu.findItem(R.id.menuSongs).setVisible(c.menuSongs);
+		menu.findItem(R.id.menuSupport).setVisible(c.menuHelp);
 	}
 	
 	@Override public boolean onCreateOptionsMenu(Menu menu) {
