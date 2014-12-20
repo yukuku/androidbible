@@ -75,7 +75,7 @@ overlay_optional() {
 	P_SRC="$1"
 	P_DST="$2"
 
-	SRC="$THIS_SCRIPT_DIR/build/overlay/$PKGDIST/$P_SRC"
+	SRC="$THIS_SCRIPT_DIR/ybuild/overlay/$PKGDIST/$P_SRC"
 	DST="$BUILD_MAIN_PROJECT_DIR/$P_DST"
 
 	if [ \! -e "$SRC" ] ; then
@@ -147,22 +147,16 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 		echo 'Replacing applicationId in build.gradle...'
 		sed -i '' "s/applicationId .*/applicationId '$BUILD_PACKAGE_NAME'/" build.gradle
 
-		echo 'Replacing R references in Java files...'
-		find src/ -name '*.java' -exec sed -i '' 's/import yuku.alkitab.debug.R/import '$BUILD_PACKAGE_NAME'.R/g' {} \; 
-
-		echo 'Replacing BuildConfig references in Java files...'
-		find src/ -name '*.java' -exec sed -i '' 's/import yuku.alkitab.debug.BuildConfig/import '$BUILD_PACKAGE_NAME'.BuildConfig/g' {} \; 
-
 		PROVIDER_AUTHORITY=yuku.alkitab.provider
-		if [ $BUILD_PACKAGE_NAME == "yuku.alkitab.tsi" ] ; then
-			PROVIDER_AUTHORITY=yuku.alkitab.provider.tsi
+		if [ $BUILD_PACKAGE_NAME == "info.albata.tsi" ] ; then
+			PROVIDER_AUTHORITY=info.albata.provider.tsi
 		fi
 		echo 'Replacing provider name to '$PROVIDER_AUTHORITY
 		sed -i '' 's/android:authorities="yuku.alkitab.provider.debug"/android:authorities="'$PROVIDER_AUTHORITY'"/' AndroidManifest.xml
 
 		FILE_PROVIDER_AUTHORITY=yuku.alkitab.file_provider
-		if [ $BUILD_PACKAGE_NAME == "yuku.alkitab.tsi" ] ; then
-			FILE_PROVIDER_AUTHORITY=yuku.alkitab.file_provider.tsi
+		if [ $BUILD_PACKAGE_NAME == "info.albata.tsi" ] ; then
+			FILE_PROVIDER_AUTHORITY=info.albata.file_provider.tsi
 		fi
 
 		echo 'Replacing file provider name to '$FILE_PROVIDER_AUTHORITY
