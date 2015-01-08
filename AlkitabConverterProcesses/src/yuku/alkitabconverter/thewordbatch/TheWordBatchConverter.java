@@ -5,6 +5,7 @@ import yuku.alkitabconverter.util.KjvUtils;
 import yuku.alkitabconverter.util.Rec;
 import yuku.alkitabconverter.util.TextDb;
 import yuku.alkitabconverter.yes_common.Yes2Common;
+import yuku.alkitabconverter.yet.YetFileOutput;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -96,7 +97,15 @@ public class TheWordBatchConverter {
 		textDb.dump(ps);
 		ps.close();
 
-		Yes2Common.createYesFile(new File("/tmp", outputName + ".yes"), versionInfo, textDb, null, true);
+		////////// Output to yet
+
+		final File yetOutputFile = new File("/tmp/" + outputName + ".yet");
+		//noinspection ResultOfMethodCallIgnored
+		yetOutputFile.getParentFile().mkdir();
+		final YetFileOutput yet = new YetFileOutput(yetOutputFile);
+		yet.setVersionInfo(versionInfo);
+		yet.setTextDb(textDb);
+		yet.write();
 		
 		appConfigEntries.add(String.format("<preset locale=%-6s shortName=%-9s longName=%s filename_preset=%s url=%s />", q(versionInfo.locale), q(versionInfo.shortName), q(versionInfo.longName), q(outputName + ".yes"), q("https://alkitab-host.appspot.com/addon/yes2/" + outputName + "--1.yes.gz")));
 		
