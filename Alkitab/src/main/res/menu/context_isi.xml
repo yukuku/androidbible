@@ -3,23 +3,17 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools">
 
-	<item
-		android:id="@+id/menuCopyShare"
-		android:icon="@drawable/ic_menu_copyshare"
-		app:showAsAction="always"
-		android:title="@string/copy_share"
-		tools:ignore="AlwaysShowAction">
-		<menu>
-			<item
-				android:id="@+id/menuCopy"
-				android:icon="@drawable/ic_menu_copy"
-				android:title="@string/salin_ayat" />
-			<item
-				android:id="@+id/menuShare"
-				android:icon="@drawable/ic_menu_share"
-				android:title="@string/menuShare" />
-		</menu>
-	</item>
+    <item
+        android:id="@+id/menuCopy"
+        android:icon="@drawable/ic_menu_copy"
+        app:showAsAction="never"
+        android:title="@string/salin_ayat" />
+
+    <item
+        android:id="@+id/menuShare"
+        android:icon="@drawable/ic_menu_share"
+        app:showAsAction="never"
+        android:title="@string/menuShare" />
 
 	<item
 		android:id="@+id/menuCompare"
@@ -32,6 +26,7 @@
 		android:icon="@drawable/ic_menu_versions"
 		app:showAsAction="always"
 		android:title="@string/versi" />
+
 	<item
 		android:id="@+id/menuAddSomething"
 		android:icon="@drawable/ic_menu_add_light"
@@ -52,6 +47,7 @@
 				android:title="@string/highlight_stabilo" />
 		</menu>
 	</item>
+
 	<item
 		android:id="@+id/menuEsvsb"
 		android:icon="@android:drawable/ic_menu_call"
