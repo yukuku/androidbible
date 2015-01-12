@@ -21,22 +21,6 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content" />
 
-		<Button
-			android:id="@+id/bMarkers"
-			style="?android:buttonBarButtonStyle"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:drawableLeft="@drawable/ic_drawer_markers"
-			android:drawablePadding="16dp"
-            android:textColor="#ffffff"
-            android:paddingLeft="16dp"
-            android:textAllCaps="false"
-            android:textSize="16sp"
-            android:fontFamily="sans-serif-regular"
-			android:gravity="left|center_vertical"
-			android:text="@string/menu_markers"
-            android:elegantTextHeight="true" />
-
 		<FrameLayout
 			android:layout_width="match_parent"
 			android:layout_height="32dp">
@@ -129,6 +113,21 @@
 
 		</LinearLayout>
 
+        <Button
+            android:id="@+id/bMarkers"
+            style="?android:buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_drawer_markers"
+            android:drawablePadding="16dp"
+            android:textColor="#ffffff"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-regular"
+            android:gravity="left|center_vertical"
+            android:text="@string/menu_markers"
+            android:elegantTextHeight="true" />
+
 		<Button
 			android:id="@+id/bDisplay"
 			style="?android:buttonBarButtonStyle"
@@ -137,7 +136,6 @@
 			android:drawableLeft="@drawable/ic_drawer_display"
 			android:drawablePadding="16dp"
             android:textColor="#ffffff"
-            android:paddingLeft="16dp"
             android:textAllCaps="false"
             android:textSize="16sp"
             android:fontFamily="sans-serif-regular"
