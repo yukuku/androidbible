@@ -2,6 +2,7 @@ package yuku.alkitab.base.ac;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
@@ -556,6 +557,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				Toast.makeText(this, R.string.sn_copied, Toast.LENGTH_SHORT).show();
 			}
 		} return true;
+
 		case R.id.menuShare: {
 			if (currentSong != null) {
 				Intent intent = ShareCompat.IntentBuilder.from(SongViewActivity.this)
@@ -566,18 +568,64 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.sn_share_title)), REQCODE_share);
 			}
 		} return true;
+
 		case R.id.menuSearch: {
 			startActivityForResult(SongListActivity.createIntent(last_searchState), REQCODE_songList);
 		} return true;
+
 		case R.id.menuMediaControl: {
 			if (currentBookName != null && currentSong != null) {
 				mediaPlayerController.playOrPause();
 			}
 		} return true;
+
+        case R.id.menuUpdateBook: {
+            new AlertDialog.Builder(this)
+                    .setMessage(R.string.sn_update_song_explanation)
+                    .setPositiveButton("update", (dialog, which) -> Halohalo())
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
+        } return true;
+
+		case R.id.menuDeleteAll: {
+            new AlertDialog.Builder(this)
+                    .setMessage(R.string.sn_delete_all_songs_explanation)
+                    .setPositiveButton(R.string.ok, (dialog, which) -> deleteAllSongs())
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
+		} return true;
 		}
 		
 		return super.onOptionsItemSelected(item);
 	}
+
+    protected void Halohalo() {
+        new AlertDialog.Builder(SongViewActivity.this)
+                .setMessage(getString(R.string.sn_Halo_apa_kabar))
+                .setPositiveButton(R.string.ok, null)
+                .show();
+    }
+
+    protected void deleteAllSongs() {
+        final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.please_wait_titik3), true, false);
+
+        new Thread() {
+            @Override public void run() {
+                final int count = S.getSongDb().deleteAllSongs();
+
+                runOnUiThread(() -> {
+                    pd.dismiss();
+
+                    finish(); // TODO
+
+                    new AlertDialog.Builder(SongViewActivity.this)
+                            .setMessage(getString(R.string.sn_delete_all_songs_result, count))
+                            .setPositiveButton(R.string.ok, null)
+                            .show();
+                });
+            }
+        }.start();
+    }
 
 	private StringBuilder convertSongToText(Song song) {
 		// build text to copy

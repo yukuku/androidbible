@@ -198,44 +198,6 @@ public class SongListActivity extends BaseActivity {
         	}
         });
 	}
-	
-	@Override public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_song_list, menu);
-		return true;
-	}
-	
-	@Override public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.menuDeleteAll) {
-			new AlertDialog.Builder(this)
-			.setMessage(R.string.sn_delete_all_songs_explanation)
-			.setPositiveButton(R.string.ok, (dialog, which) -> deleteAllSongs())
-			.setNegativeButton(R.string.cancel, null)
-			.show();
-		}
-		
-		return super.onOptionsItemSelected(item);
-	}
-	
-	protected void deleteAllSongs() {
-		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.please_wait_titik3), true, false);
-		
-		new Thread() {
-			@Override public void run() {
-				final int count = S.getSongDb().deleteAllSongs();
-				
-				runOnUiThread(() -> {
-					pd.dismiss();
-
-					startSearch();
-
-					new AlertDialog.Builder(SongListActivity.this)
-					.setMessage(getString(R.string.sn_delete_all_songs_result, count))
-					.setPositiveButton(R.string.ok, null)
-					.show();
-				});
-			}
-		}.start();
-	}
 
 	void startSearch() {
 		if (stillUsingInitialSearchState) return;
