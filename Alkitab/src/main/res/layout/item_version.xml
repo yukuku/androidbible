@@ -39,7 +39,7 @@
 
 		<Button
 			android:id="@+id/bLongName"
-			style="?android:buttonBarButtonStyle"
+			android:background="?selectableItemBackground"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_weight="1"
