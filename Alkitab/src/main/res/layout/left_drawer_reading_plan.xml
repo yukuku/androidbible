@@ -41,10 +41,12 @@
 		<Button
 			android:id="@+id/bCatchMeUp"
 			style="?android:buttonBarButtonStyle"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="@color/keypad_text_color"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:drawableLeft="@drawable/ic_menu_revert"
-			android:drawablePadding="8dp"
+			android:drawablePadding="16dp"
 			android:gravity="left|center_vertical"
 			android:text="@string/rp_menuCatchMeUp" />
 
