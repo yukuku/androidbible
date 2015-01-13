@@ -3,6 +3,7 @@ package yuku.alkitab.base.ac;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.view.Menu;
@@ -90,6 +91,11 @@ public class NoteActivity extends BaseActivity {
 		viewFlipper = V.get(this, R.id.viewFlipper);
 		tCaptionReadOnly = V.get(this, R.id.tCaptionReadOnly);
 		tCaption = V.get(this, R.id.tCaption);
+
+		final Toolbar toolbar = V.get(this, R.id.toolbar);
+		setSupportActionBar(toolbar); // must be done first before below lines
+		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+		toolbar.setNavigationOnClickListener(v -> navigateUp());
 
 		if (marker != null) {
 			tCaptionReadOnly.setText(marker.caption);

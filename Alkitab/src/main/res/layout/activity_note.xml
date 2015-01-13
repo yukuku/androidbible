@@ -1,37 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ViewFlipper
-	android:id="@+id/viewFlipper"
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+	android:layout_height="match_parent"
+	android:orientation="vertical">
 
-	<ScrollView
+	<android.support.v7.widget.Toolbar
+		android:id="@+id/toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?attr/actionBarSize"
+		android:background="?attr/colorPrimary" />
+
+	<ViewFlipper
+		android:id="@+id/viewFlipper"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 
-		<TextView
-			android:id="@+id/tCaptionReadOnly"
+		<ScrollView
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
+			android:layout_height="match_parent">
+
+			<TextView
+				android:id="@+id/tCaptionReadOnly"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:background="@null"
+				android:gravity="top"
+				android:paddingLeft="16dp"
+				android:paddingRight="16dp"
+				android:paddingTop="16dp"
+				android:textAppearance="?android:textAppearanceMedium" />
+
+		</ScrollView>
+
+		<EditText
+			android:id="@+id/tCaption"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
 			android:background="@null"
 			android:gravity="top"
+			android:inputType="text|textAutoCorrect|textCapSentences|textMultiLine"
 			android:paddingLeft="16dp"
 			android:paddingRight="16dp"
-            android:paddingTop="16dp"
-			android:textAppearance="?android:textAppearanceMedium" />
+			android:paddingTop="16dp"
+			android:textAppearance="?android:textAppearanceMedium"
+			tools:ignore="LabelFor" />
+	</ViewFlipper>
 
-	</ScrollView>
-
-	<EditText
-		android:id="@+id/tCaption"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:background="@null"
-		android:gravity="top"
-		android:inputType="text|textAutoCorrect|textCapSentences|textMultiLine"
-		android:paddingLeft="16dp"
-		android:paddingRight="16dp"
-        android:paddingTop="16dp"
-		android:textAppearance="?android:textAppearanceMedium" />
-</ViewFlipper>
+</LinearLayout>

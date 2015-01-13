@@ -296,7 +296,6 @@
             android:name="yuku.alkitab.base.ac.NoteActivity"
 			android:icon="@drawable/ic_attr_note"
 			android:windowSoftInputMode="adjustResize"
-			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 
         <service android:name="yuku.alkitab.base.sv.DownloadService" />
