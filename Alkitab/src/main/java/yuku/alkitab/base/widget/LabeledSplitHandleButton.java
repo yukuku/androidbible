@@ -14,7 +14,6 @@ import yuku.alkitab.debug.R;
 public class LabeledSplitHandleButton extends SplitHandleButton {
 	public static final String TAG = LabeledSplitHandleButton.class.getSimpleName();
 
-	float[] tmp_hsl = {0.f, 0.f, 0.f};
 	String label1 = null;
 	String label2 = null;
 	Paint labelPaint = new Paint();
