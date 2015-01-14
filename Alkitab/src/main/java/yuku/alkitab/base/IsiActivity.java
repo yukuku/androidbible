@@ -1550,12 +1550,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (markers.size() == 1) {
 				openBookmarkDialog(markers.get(0)._id);
 			} else {
-				new AlertDialog.Builder(IsiActivity.this)
-					.setTitle(R.string.edit_bookmark)
-					.setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.bookmark), (dialog, which) -> openBookmarkDialog(markers.get(which)._id))
-					.show();
-			}
-		}
+                AlertDialog dialog = new AlertDialog.Builder(IsiActivity.this)
+                    .setTitle(R.string.edit_bookmark)
+                    .setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.bookmark), (_dialog_, which) -> openBookmarkDialog(markers.get(which)._id))
+                    .show();
+                dialog.getListView().setDrawSelectorOnTop(true);
+            }
+        }
 
 		void openNoteDialog(final long _id) {
 			startActivityForResult(NoteActivity.createEditExistingIntent(_id), REQCODE_edit_note_1);
@@ -1569,12 +1570,13 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 			if (markers.size() == 1) {
 				openNoteDialog(markers.get(0)._id);
 			} else {
-				new AlertDialog.Builder(IsiActivity.this)
-					.setTitle(R.string.edit_note)
-					.setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.note), (dialog, which) -> openNoteDialog(markers.get(which)._id))
-					.show();
-			}
-		}
+                AlertDialog dialog = new AlertDialog.Builder(IsiActivity.this)
+                    .setTitle(R.string.edit_note)
+                    .setAdapter(new MultipleMarkerSelectAdapter(markers, Marker.Kind.note), (_dialog_, which) -> openNoteDialog(markers.get(which)._id))
+                    .show();
+                dialog.getListView().setDrawSelectorOnTop(true);
+            }
+        }
 
 		class MultipleMarkerSelectAdapter extends EasyAdapter {
 			final List<Marker> markers;
