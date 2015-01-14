@@ -29,6 +29,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.LabelEditorDialog;
+import yuku.alkitab.base.sync.SyncSettingsActivity;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
@@ -47,6 +48,7 @@ public class MarkersActivity extends BaseActivity {
 	public static final String ACTION_RELOAD = MarkersActivity.class.getName() + ".action.RELOAD";
 
 	DragSortListView lv;
+    View bGotoSync;
 	
 	BookmarkFilterAdapter adapter;
 
@@ -73,6 +75,9 @@ public class MarkersActivity extends BaseActivity {
         lv.setOnTouchListener(c);
 
 		registerForContextMenu(lv);
+
+        bGotoSync = V.get(this, R.id.bGotoSync);
+        bGotoSync.setOnClickListener(v -> startActivity(SyncSettingsActivity.createIntent()));
 
 		App.getLbm().registerReceiver(br, new IntentFilter(ACTION_RELOAD));
 	}

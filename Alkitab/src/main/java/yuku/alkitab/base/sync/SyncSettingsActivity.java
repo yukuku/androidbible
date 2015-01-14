@@ -195,4 +195,8 @@ public class SyncSettingsActivity extends BasePreferenceActivity {
 			}
 		}
 	}
+
+    public static Intent createIntent() {
+        return new Intent(App.context, SyncSettingsActivity.class);
+    }
 }

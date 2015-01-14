@@ -1,6 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.mobeta.android.dslv.DragSortListView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.mobeta.android.dslv.DragSortListView
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@android:id/list"/>
+        android:layout_height="0dp"
+        android:id="@android:id/list"
+        android:layout_weight="1" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="#3a3a3a">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/padding_medium"
+            android:layout_centerVertical="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Simpan marka dengan sync"
+            android:textColor="#fff"
+            />
+
+        <ImageButton
+            android:id="@+id/bGotoSync"
+            android:background="?selectableItemBackgroundBorderless"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_nav_forward"
+            android:layout_alignParentRight="true"
+            />
+    </RelativeLayout>
+
+
+
+</LinearLayout>
