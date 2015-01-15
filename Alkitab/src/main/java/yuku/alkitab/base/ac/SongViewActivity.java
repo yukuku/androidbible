@@ -625,6 +625,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			@Override
 			public void onDownloadedAndInserted(SongBookUtil.SongBookInfo songBookInfo) {
 				final Song song = S.getSongDb().getSong(songBookInfo.bookName, currentSongCode);
+				cache_codes.remove(songBookInfo.bookName);
 				displaySong(songBookInfo.bookName, song);
 			}
 		});
