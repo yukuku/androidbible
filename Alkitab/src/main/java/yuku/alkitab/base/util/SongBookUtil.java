@@ -33,7 +33,7 @@ public class SongBookUtil {
 	public interface OnSongBookSelectedListener {
 		void onSongBookSelected(boolean all, SongBookInfo songBookInfo);
 	}
-	
+
 	public interface OnDownloadSongBookListener {
 		void onDownloadedAndInserted(SongBookInfo songBookInfo);
 		void onFailedOrCancelled(SongBookInfo songBookInfo, Exception e);
@@ -76,6 +76,15 @@ public class SongBookUtil {
 			bookInfo.copyright = ss[4].trim();
 			knownSongBooks.add(bookInfo);
 		}
+	}
+
+	public static SongBookInfo getSongBookInfo(final String bookName) {
+		for (final SongBookInfo songBookInfo : knownSongBooks) {
+			if (U.equals(songBookInfo.bookName, bookName)) {
+				return songBookInfo;
+			}
+		}
+		return null;
 	}
 
 	public static PopupMenu getSongBookPopupMenu(Context context, boolean withAll, View anchor) {

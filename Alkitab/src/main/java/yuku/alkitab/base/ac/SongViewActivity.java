@@ -516,10 +516,12 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		}).start();
 	}
 
-	void buildMenu(Menu menu) {
-		menu.clear();
+	@Override public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_song_view, menu);
-
+		return true;
+	}
+	
+	@Override public boolean onPrepareOptionsMenu(Menu menu) {
 		final MenuItem menuMediaControl = menu.findItem(R.id.menuMediaControl);
 		menuMediaControl.setEnabled(mediaState.enabled);
 		if (mediaState.icon != 0) menuMediaControl.setIcon(mediaState.icon);
@@ -531,16 +533,18 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			setSupportProgressBarIndeterminateVisibility(false);
 			menuMediaControl.setVisible(true);
 		}
-	}
-	
-	@Override public boolean onCreateOptionsMenu(Menu menu) {
-		buildMenu(menu);
-		return true;
-	}
-	
-	@Override public boolean onPrepareOptionsMenu(Menu menu) {
-		super.onPrepareOptionsMenu(menu);
-		if (menu != null) buildMenu(menu);
+
+		final boolean songShown = currentBookName != null;
+
+		final MenuItem menuCopy = menu.findItem(R.id.menuCopy);
+		menuCopy.setVisible(songShown);
+		final MenuItem menuShare = menu.findItem(R.id.menuShare);
+		menuShare.setVisible(songShown);
+		final MenuItem menuUpdateBook = menu.findItem(R.id.menuUpdateBook);
+		menuUpdateBook.setVisible(songShown);
+		final MenuItem menuDeleteAll = menu.findItem(R.id.menuDeleteAll);
+		menuDeleteAll.setVisible(songShown);
+
 		return true;
 	}
 	
@@ -580,31 +584,51 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		} return true;
 
         case R.id.menuUpdateBook: {
-            new AlertDialog.Builder(this)
-                    .setMessage(R.string.sn_update_song_explanation)
-                    .setPositiveButton("update", (dialog, which) -> Halohalo())
-                    .setNegativeButton(R.string.cancel, null)
-                    .show();
-        } return true;
+			new AlertDialog.Builder(this)
+				.setMessage(TextUtils.expandTemplate(getString(R.string.sn_update_book_explanation), currentBookName))
+				.setPositiveButton(R.string.ok, (dialog, which) -> updateSongBook())
+				.setNegativeButton(R.string.cancel, null)
+				.show();
+		} return true;
 
 		case R.id.menuDeleteAll: {
-            new AlertDialog.Builder(this)
-                    .setMessage(R.string.sn_delete_all_songs_explanation)
-                    .setPositiveButton(R.string.ok, (dialog, which) -> deleteAllSongs())
-                    .setNegativeButton(R.string.cancel, null)
-                    .show();
+			new AlertDialog.Builder(this)
+				.setMessage(R.string.sn_delete_all_songs_explanation)
+				.setPositiveButton(R.string.ok, (dialog, which) -> deleteAllSongs())
+				.setNegativeButton(R.string.cancel, null)
+				.show();
 		} return true;
 		}
 		
 		return super.onOptionsItemSelected(item);
 	}
 
-    protected void Halohalo() {
-        new AlertDialog.Builder(SongViewActivity.this)
-                .setMessage(getString(R.string.sn_Halo_apa_kabar))
-                .setPositiveButton(R.string.ok, null)
-                .show();
-    }
+    protected void updateSongBook() {
+		final SongBookUtil.SongBookInfo songBookInfo = SongBookUtil.getSongBookInfo(currentBookName);
+		if (songBookInfo == null) {
+			throw new RuntimeException("SongBookInfo named " + currentBookName + " was not found");
+		}
+
+		final String currentSongCode = currentSong.code;
+
+		SongBookUtil.downloadSongBook(SongViewActivity.this, songBookInfo, new SongBookUtil.OnDownloadSongBookListener() {
+			@Override
+			public void onFailedOrCancelled(SongBookUtil.SongBookInfo songBookInfo, Exception e) {
+				if (e != null) {
+					new AlertDialog.Builder(SongViewActivity.this)
+						.setMessage(e.getClass().getSimpleName() + ' ' + e.getMessage())
+						.setPositiveButton(R.string.ok, null)
+						.show();
+				}
+			}
+
+			@Override
+			public void onDownloadedAndInserted(SongBookUtil.SongBookInfo songBookInfo) {
+				final Song song = S.getSongDb().getSong(songBookInfo.bookName, currentSongCode);
+				displaySong(songBookInfo.bookName, song);
+			}
+		});
+	}
 
     protected void deleteAllSongs() {
         final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.please_wait_titik3), true, false);

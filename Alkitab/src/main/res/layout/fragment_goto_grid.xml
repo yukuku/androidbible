@@ -8,11 +8,10 @@
 		android:id="@+id/gridBook"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:columnWidth="@dimen/goto_grid_cell_width"
 		android:listSelector="@drawable/goto_grid_selector"
-		android:stretchMode="spacingWidthUniform"
+		android:stretchMode="columnWidth"
 		android:gravity="center"
-		android:numColumns="auto_fit" />
+		android:numColumns="6" />
 
 	<LinearLayout
 		android:id="@+id/panelChapterVerse"
@@ -53,7 +52,7 @@
 				android:id="@+id/gridChapter"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:columnWidth="@dimen/goto_grid_cell_width"
+				android:columnWidth="@dimen/goto_grid_cell_width_numeric"
 				android:listSelector="@drawable/goto_grid_selector"
 				android:stretchMode="spacingWidthUniform"
 				android:gravity="center"
@@ -63,7 +62,7 @@
 				android:id="@+id/gridVerse"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:columnWidth="@dimen/goto_grid_cell_width"
+				android:columnWidth="@dimen/goto_grid_cell_width_numeric"
 				android:listSelector="@drawable/goto_grid_selector"
 				android:stretchMode="spacingWidthUniform"
 				android:gravity="center"
