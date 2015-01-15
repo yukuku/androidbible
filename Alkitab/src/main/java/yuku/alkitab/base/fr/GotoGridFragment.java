@@ -222,7 +222,7 @@ public class GotoGridFragment extends BaseGotoFragment {
 	abstract class GridAdapter extends EasyAdapter {
 		@Override public View newView(int position, ViewGroup parent) {
 			TextView res = new TextView(getActivity());
-			res.setLayoutParams(new GridView.LayoutParams(getResources().getDimensionPixelSize(R.dimen.goto_grid_cell_width), getResources().getDimensionPixelSize(R.dimen.goto_grid_cell_height)));
+			res.setLayoutParams(new GridView.LayoutParams(getResources().getDimensionPixelSize(R.dimen.goto_grid_cell_width_book), getResources().getDimensionPixelSize(R.dimen.goto_grid_cell_height)));
 			res.setGravity(Gravity.CENTER);
 			res.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
 			return res;
