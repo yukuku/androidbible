@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:orientation="vertical">
@@ -27,15 +28,14 @@
 				android:id="@+id/llNavigations"
 				android:layout_width="match_parent"
 				android:layout_height="?android:actionBarSize"
-				android:divider="@android:drawable/divider_horizontal_dark"
-				android:dividerPadding="2dp"
-				android:showDividers="middle">
+				android:paddingLeft="@dimen/reading_plan_day_heading_side_padding"
+				android:paddingRight="@dimen/reading_plan_day_heading_side_padding">
 
 				<ImageButton
 					android:id="@+id/bLeft"
-					style="?android:actionButtonStyle"
 					android:layout_width="48dp"
 					android:layout_height="match_parent"
+					android:background="?selectableItemBackgroundBorderless"
 					android:contentDescription="@string/rp_navigationPreviousDay"
 					android:padding="16dp"
 					android:scaleType="center"
@@ -43,18 +43,18 @@
 
 				<Button
 					android:id="@+id/bToday"
-					style="?android:actionButtonStyle"
 					android:layout_width="0dp"
 					android:layout_height="match_parent"
 					android:layout_weight="1"
+					android:background="?selectableItemBackground"
 					android:contentDescription="@string/rp_navigationGoToDate"
-					android:textSize="18sp" />
+					tools:text="Dayname, 13 February 2015" />
 
 				<ImageButton
 					android:id="@+id/bRight"
-					style="?android:actionButtonStyle"
 					android:layout_width="48dp"
 					android:layout_height="match_parent"
+					android:background="?selectableItemBackgroundBorderless"
 					android:contentDescription="@string/rp_navigationNextDay"
 					android:padding="16dp"
 					android:scaleType="center"

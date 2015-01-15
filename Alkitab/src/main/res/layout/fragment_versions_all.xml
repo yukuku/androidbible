@@ -7,8 +7,8 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:paddingBottom="0dp"
-	android:paddingLeft="@dimen/activity_horizontal_margin"
-	android:paddingRight="@dimen/activity_horizontal_margin"
+	android:paddingLeft="@dimen/padding_medium"
+	android:paddingRight="@dimen/padding_medium"
 	android:paddingTop="0dp"
 	tools:context="yuku.alkitab.base.ac.VersionsActivity$VersionListFragment">
 
