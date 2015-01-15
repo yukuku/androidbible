@@ -83,6 +83,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	TwofingerLinearLayout song_container;
 	ViewGroup no_song_data_container;
 	View bDownload;
+	View circular_progress;
 
 	ActionBar actionBar;
 
@@ -373,9 +374,12 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
-		setSupportProgressBarIndeterminate(true);
-		setSupportProgressBarIndeterminateVisibility(false);
 		setContentView(R.layout.activity_song_view);
+
+		circular_progress = V.get(this, R.id.progress_circular);
+
+		setSupportProgressBarIndeterminate(true);
+		setCustomProgressBarIndeterminateVisible(false);
 
 		setTitle(R.string.sn_songs_activity_title);
 
@@ -527,10 +531,10 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		if (mediaState.icon != 0) menuMediaControl.setIcon(mediaState.icon);
 		if (mediaState.label != 0) menuMediaControl.setTitle(mediaState.label);
 		if (mediaState.loading) {
-			setSupportProgressBarIndeterminateVisibility(true);
+			setCustomProgressBarIndeterminateVisible(true);
 			menuMediaControl.setVisible(false);
 		} else {
-			setSupportProgressBarIndeterminateVisibility(false);
+			setCustomProgressBarIndeterminateVisible(false);
 			menuMediaControl.setVisible(true);
 		}
 
@@ -1041,6 +1045,10 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		}
 
 		state_tempCode = "";
+	}
+
+	void setCustomProgressBarIndeterminateVisible(final boolean visible) {
+		circular_progress.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
 	}
 }
 
