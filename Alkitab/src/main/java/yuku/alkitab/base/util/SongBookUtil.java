@@ -12,7 +12,6 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
 import com.squareup.okhttp.Call;
@@ -139,27 +138,19 @@ public class SongBookUtil {
 	}
 
 	public static PopupMenu.OnMenuItemClickListener getSongBookOnMenuItemClickListener(final OnSongBookSelectedListener listener) {
-		return new PopupMenu.OnMenuItemClickListener() {
-			@Override
-			public boolean onMenuItemClick(final MenuItem item) {
-				final int itemId = item.getItemId();
-				if (itemId == 0) {
-					listener.onSongBookSelected(true, null);
-				} else {
-					listener.onSongBookSelected(false, knownSongBooks.get(itemId - 1));
-				}
-				return true;
+		return item -> {
+			final int itemId = item.getItemId();
+			if (itemId == 0) {
+				listener.onSongBookSelected(true, null);
+			} else {
+				listener.onSongBookSelected(false, knownSongBooks.get(itemId - 1));
 			}
+			return true;
 		};
 	}
 
 	public static Dialog.OnClickListener getSongBookOnDialogClickListener(final OnSongBookSelectedListener listener) {
-		return new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(final DialogInterface dialog, final int which) {
-				listener.onSongBookSelected(false, knownSongBooks.get(which));
-			}
-		};
+		return (dialog, which) -> listener.onSongBookSelected(false, knownSongBooks.get(which));
 	}
 
 	public static void downloadSongBook(final Activity activity, final SongBookInfo songBookInfo, final OnDownloadSongBookListener listener) {
@@ -169,11 +160,7 @@ public class SongBookUtil {
 			
 			@Override protected void onPreExecute() {
 				pd = ProgressDialog.show(activity, null, activity.getString(R.string.sn_downloading_ellipsis), true, true);
-				pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
-					@Override public void onDismiss(DialogInterface dialog) {
-						cancel(false);
-					}
-				});
+				pd.setOnDismissListener(dialog -> cancel(false));
 			}
 			
 			@SuppressWarnings("unchecked") @Override protected List<Song> doInBackground(Void... params) {

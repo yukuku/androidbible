@@ -145,12 +145,8 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 		mediaState.loading = (state == MediaPlayerController.ControllerState.preparing);
 
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				invalidateOptionsMenu();
-			}
-		});
+		//noinspection Convert2MethodRef
+		runOnUiThread(() -> invalidateOptionsMenu());
 	}
 
 	void goTo(final int dir) {
@@ -249,35 +245,29 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				if (isMidiFile) {
 					final Handler handler = new Handler();
 
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							try {
-								setState(ControllerState.preparing);
+					new Thread(() -> {
+						try {
+							setState(ControllerState.preparing);
 
-								final byte[] bytes = App.downloadBytes(url);
+							final byte[] bytes = App.downloadBytes(url);
 
-								final File cacheFile = new File(App.context.getCacheDir(), "song_player_local_cache.mid");
-								final OutputStream output = new FileOutputStream(cacheFile);
-								output.write(bytes);
-								output.close();
+							final File cacheFile = new File(App.context.getCacheDir(), "song_player_local_cache.mid");
+							final OutputStream output = new FileOutputStream(cacheFile);
+							output.write(bytes);
+							output.close();
 
-								// this is a background thread. We must go back to main thread, and check again if state is OK to prepare.
-								handler.post(new Runnable() {
-									@Override
-									public void run() {
-										if (state == ControllerState.preparing) {
-											// the following should be synchronous, since we are loading from local.
-											mediaPlayerPrepare(true, cacheFile.getAbsolutePath());
-										} else {
-											Log.d(TAG, "wrong state after downloading song file: " + state);
-										}
-									}
-								});
-							} catch (IOException e) {
-								Log.e(TAG, "buffering to local cache", e);
-								setState(ControllerState.error);
-							}
+							// this is a background thread. We must go back to main thread, and check again if state is OK to prepare.
+							handler.post(() -> {
+								if (state == ControllerState.preparing) {
+									// the following should be synchronous, since we are loading from local.
+									mediaPlayerPrepare(true, cacheFile.getAbsolutePath());
+								} else {
+									Log.d(TAG, "wrong state after downloading song file: " + state);
+								}
+							});
+						} catch (IOException e) {
+							Log.e(TAG, "buffering to local cache", e);
+							setState(ControllerState.error);
 						}
 					}).start();
 				} else {
@@ -303,43 +293,34 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			try {
 				setState(ControllerState.preparing);
 
-				mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-					@Override
-					public void onPrepared(final MediaPlayer mp) {
-						// only start playing if the current state is preparing, i.e., not error or reset.
-						if (state == ControllerState.preparing) {
-							mp.start();
-							setState(ControllerState.playing);
-						}
+				mp.setOnPreparedListener(player -> {
+					// only start playing if the current state is preparing, i.e., not error or reset.
+					if (state == ControllerState.preparing) {
+						player.start();
+						setState(ControllerState.playing);
 					}
 				});
-				mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-					@Override
-					public void onCompletion(final MediaPlayer mp) {
-						mp.reset();
-						setState(ControllerState.complete);
-					}
+				mp.setOnCompletionListener(player -> {
+					player.reset();
+					setState(ControllerState.complete);
 				});
-				mp.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-					@Override
-					public boolean onError(final MediaPlayer mp, final int what, final int extra) {
-						Log.e(TAG, "@@onError controller_state=" + state + " what=" + what + " extra=" + extra);
+				mp.setOnErrorListener((mp1, what, extra) -> {
+					Log.e(TAG, "@@onError controller_state=" + state + " what=" + what + " extra=" + extra);
 
-						if (state != ControllerState.reset) { // Errors can happen if we call MediaPlayer#reset when MediaPlayer state is Preparing. In this case, do not show error message.
-							final Activity activity = activityRef.get();
-							if (activity != null) {
-								if (!activity.isFinishing()) {
-									new AlertDialog.Builder(activity)
-										.setMessage(activity.getString(R.string.song_player_error_description, what, extra))
-										.setPositiveButton(R.string.ok, null)
-										.show();
-								}
+					if (state != ControllerState.reset) { // Errors can happen if we call MediaPlayer#reset when MediaPlayer state is Preparing. In this case, do not show error message.
+						final Activity activity = activityRef.get();
+						if (activity != null) {
+							if (!activity.isFinishing()) {
+								new AlertDialog.Builder(activity)
+									.setMessage(activity.getString(R.string.song_player_error_description, what, extra))
+									.setPositiveButton(R.string.ok, null)
+									.show();
 							}
 						}
-
-						setState(ControllerState.error);
-						return false; // let OnCompletionListener be called.
 					}
+
+					setState(ControllerState.error);
+					return false; // let OnCompletionListener be called.
 				});
 
 				if (isLocalPath) {
@@ -478,43 +459,37 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		final String checkedBookName = currentBookName;
 		final String checkedCode = currentSong.code;
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					final String filename = getAudioFilename(checkedBookName, checkedCode);
-					final String response = App.downloadString("https://alkitab-host.appspot.com/addon/audio/exists?filename=" + Uri.encode(filename));
-					if (response.startsWith("OK")) {
-						// make sure this is the correct one due to possible race condition
-						if (U.equals(currentBookName, checkedBookName) && currentSong != null && U.equals(currentSong.code, checkedCode)) {
-							runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									if (mediaPlayerController.canHaveNewUrl()) {
-										final String baseUrl;
-										if (Build.VERSION.SDK_INT >= 14) {
-											baseUrl = "https://alkitab-host.appspot.com/addon/audio/";
-										} else {
-											baseUrl = "http://alkitab-host.appspot.com/addon/audio/"; // no streaming https support in old Android
-										}
-										final String url = baseUrl + getAudioFilename(currentBookName, currentSong.code);
-										if (response.contains("extension=mp3")) {
-											mediaPlayerController.mediaKnownToExist(url, false);
-										} else {
-											mediaPlayerController.mediaKnownToExist(url, true);
-										}
-									} else {
-										Log.d(TAG, "mediaPlayerController can't have new URL at this moment.");
-									}
+		new Thread(() -> {
+			try {
+				final String filename = getAudioFilename(checkedBookName, checkedCode);
+				final String response = App.downloadString("https://alkitab-host.appspot.com/addon/audio/exists?filename=" + Uri.encode(filename));
+				if (response.startsWith("OK")) {
+					// make sure this is the correct one due to possible race condition
+					if (U.equals(currentBookName, checkedBookName) && currentSong != null && U.equals(currentSong.code, checkedCode)) {
+						runOnUiThread(() -> {
+							if (mediaPlayerController.canHaveNewUrl()) {
+								final String baseUrl;
+								if (Build.VERSION.SDK_INT >= 14) {
+									baseUrl = "https://alkitab-host.appspot.com/addon/audio/";
+								} else {
+									baseUrl = "http://alkitab-host.appspot.com/addon/audio/"; // no streaming https support in old Android
 								}
-							});
-						}
-					} else {
-						Log.d(TAG, "@@checkAudioExistance response: " + response);
+								final String url = baseUrl + getAudioFilename(currentBookName, currentSong.code);
+								if (response.contains("extension=mp3")) {
+									mediaPlayerController.mediaKnownToExist(url, false);
+								} else {
+									mediaPlayerController.mediaKnownToExist(url, true);
+								}
+							} else {
+								Log.d(TAG, "mediaPlayerController can't have new URL at this moment.");
+							}
+						});
 					}
-				} catch (IOException e) {
-					Log.e(TAG, "@@checkAudioExistance", e);
+				} else {
+					Log.d(TAG, "@@checkAudioExistance response: " + response);
 				}
+			} catch (IOException e) {
+				Log.e(TAG, "@@checkAudioExistance", e);
 			}
 		}).start();
 	}
