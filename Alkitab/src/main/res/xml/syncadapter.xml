@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
-	android:accountType="yuku.alkitab"
+	android:accountType="@string/account_type"
 	android:allowParallelSyncs="false"
 	android:contentAuthority="@string/sync_provider_authority"
 	android:isAlwaysSyncable="true"

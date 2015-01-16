@@ -4,20 +4,18 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 import yuku.alkitab.base.App;
+import yuku.alkitab.debug.R;
 
 import static yuku.alkitab.base.util.Literals.List;
 
 public class SyncUtils {
-	// An account type, in the form of a domain name
-	public static final String ACCOUNT_TYPE = "yuku.alkitab";
-	// The account name
-	public static final String ACCOUNT_NAME = "dummy_account_name";
-
-
 	/**
 	 * Create a new dummy account for the sync adapter
 	 */
 	public static Account getOrCreateSyncAccount() {
+		final String ACCOUNT_TYPE = App.context.getString(R.string.account_type);
+		final String ACCOUNT_NAME = "dummy_account_name";
+
 		// Get an instance of the Android account manager
 		final AccountManager accountManager = (AccountManager) App.context.getSystemService(Context.ACCOUNT_SERVICE);
 
