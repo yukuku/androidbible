@@ -393,6 +393,9 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		splitHandleButton.setListener(splitHandleButton_listener);
 		splitHandleButton.setOnLabelPressed(splitHandleButton_labelPressed);
 
+		// migrate old history?
+		History.migrateOldHistoryWhenNeeded();
+
 		history = History.getInstance();
 
 		initNfcIfAvailable();

@@ -1,5 +1,6 @@
 package yuku.alkitab.base.util;
 
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import yuku.afw.storage.Preferences;
@@ -16,6 +17,8 @@ import yuku.alkitab.model.util.Gid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 public class History {
 	static final String TAG = History.class.getSimpleName();
@@ -61,13 +64,22 @@ public class History {
 	public synchronized void save() {
 		final HistoryJson obj = new HistoryJson();
 		obj.entries = this.entries;
-		final String s = App.getDefaultGson().toJson(obj);
-		Preferences.setString(Prefkey.history, s);
+		final String new_json = App.getDefaultGson().toJson(obj);
 
-		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_HISTORY);
+		final String old_json = Preferences.getString(Prefkey.history);
+		if (!U.equals(old_json, new_json)) {
+			Preferences.setString(Prefkey.history, new_json);
+			Sync.notifySyncNeeded(SyncShadow.SYNC_SET_HISTORY);
+		} else {
+			Log.d(TAG, "History not changed.");
+		}
 	}
 
 	public synchronized void add(int ari) {
+		add(ari, System.currentTimeMillis());
+	}
+
+	synchronized void add(int ari, long timestamp) {
 		// check: do we have this previously?
 		for (int i = entries.size() - 1; i >= 0; i--) {
 			final HistoryEntry entry = entries.get(i);
@@ -81,7 +93,7 @@ public class History {
 		final HistoryEntry entry = new HistoryEntry();
 		entry.gid = Gid.newGid();
 		entry.ari = ari;
-		entry.timestamp = System.currentTimeMillis();
+		entry.timestamp = timestamp;
 		entry.creator_id = Sync.getInstallationId();
 		entries.add(0, entry);
 
@@ -206,5 +218,86 @@ public class History {
 		entries.add(entry);
 	}
 
+	public static void migrateOldHistoryWhenNeeded() {
+		if (OldHistoryMigrator.needsMigration()) {
+			OldHistoryMigrator.migrate();
+		}
+	}
+
+	static class OldHistoryMigrator {
+		private static final String HISTORY_PREFIX = "sejarah/";
+		private static final String FIELD_SEPARATOR_STRING = ":";
+		private static final Pattern FIELD_SEPARATOR_PATTERN = Pattern.compile(FIELD_SEPARATOR_STRING);
+
+		static class ClientHistoryEntry {
+			public int ari;
+			public long timestamp;
+			public boolean savedInServer;
+		}
+
+		static List<ClientHistoryEntry> load() {
+			final List<ClientHistoryEntry> entries = new ArrayList<>();
+
+			// instant preferences
+			final SharedPreferences preferences = App.context.getSharedPreferences(App.context.getPackageName(), 0);
+
+			int n = preferences.getInt(HISTORY_PREFIX + "n", 0);
+
+			final Map<String, ?> all = preferences.getAll();
+
+			for (int i = n - 1; i >= 0; i--) {
+				final ClientHistoryEntry entry = new ClientHistoryEntry();
+				final Object val = all.get(HISTORY_PREFIX + i);
+				if (val instanceof Integer) {
+					// for compatibility when upgrading from older version without sync and timestamp support
+					entry.ari = (Integer) val;
+					entry.savedInServer = false;
+					entry.timestamp = System.currentTimeMillis();
+				} else if (val instanceof String) {
+					// v1:ari:timestamp:(int)savedinserver
+					final String[] splits = FIELD_SEPARATOR_PATTERN.split((String) val);
+					entry.ari = Integer.parseInt(splits[1]);
+					entry.timestamp = Long.parseLong(splits[2]);
+					entry.savedInServer = Integer.parseInt(splits[3]) != 0;
+				}
+				entries.add(entry);
+			}
+
+			return entries;
+		}
+
+		static void deleteAll() {
+			// instant preferences
+			final SharedPreferences preferences = App.context.getSharedPreferences(App.context.getPackageName(), 0);
+
+			int n = preferences.getInt(HISTORY_PREFIX + "n", 0);
+
+			final SharedPreferences.Editor editor = preferences.edit();
+			for (int i = 0; i < n; i++) {
+				editor.remove(HISTORY_PREFIX + i);
+			}
+			editor.remove(HISTORY_PREFIX + "n");
+			editor.apply();
+		}
+
+		static boolean needsMigration() {
+			// to prevent accessing/creating the instant preferences, we check the default preferences instead.
+			return !Preferences.contains(Prefkey.history);
+		}
+
+		static void migrate() {
+			try {
+				final History history = History.getInstance();
+				final List<ClientHistoryEntry> entries = load();
+				for (final ClientHistoryEntry entry : entries) {
+					history.add(entry.ari, entry.timestamp);
+				}
+				deleteAll();
+				history.save();
+			} catch (Exception e) {
+				Log.e(TAG, "Error when migrating history", e);
+			}
+		}
+	}
 }
 
