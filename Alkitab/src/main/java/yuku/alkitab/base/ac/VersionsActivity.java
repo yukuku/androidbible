@@ -174,6 +174,9 @@ public class VersionsActivity extends BaseActivity {
 	private void checkAndProcessOpenFileIntent(Intent intent) {
 		if (!U.equals(intent.getAction(), Intent.ACTION_VIEW)) return;
 
+		// we are trying to open a file, so let's go to the DOWNLOADED tab, as it is more relevant.
+		mViewPager.setCurrentItem(1);
+
 		Uri uri = intent.getData();
 
 		final boolean isLocalFile = U.equals("file", uri.getScheme());
