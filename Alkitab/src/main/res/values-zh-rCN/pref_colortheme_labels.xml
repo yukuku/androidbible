@@ -3,21 +3,21 @@
 <resources>
   <string-array name="pref_colorTheme_labels">
       <item>Dark Material</item>
+      <item>白纸</item>
       <item>Lollipop</item>
       <item>Bubble Gum</item>
-      <item>Wood</item>
       <item>Sakura</item>
-      <item>白纸</item>
-    <item>黑板</item>
     <item>翠绿的热带</item>
     <item>苔藓的湖泊</item>
     <item>暖灰</item>
     <item>鲜甜的橘子</item>
     <item>干旱的沙漠</item>
-    <item>巧克力</item>
+      <item>Wood</item>
+      <item>巧克力</item>
     <item>湿湿的石溜</item>
     <item>清澈的黑夜</item>
     <item>星光闪闪的黑夜</item>
-    <item>淡淡的光芒</item>
+      <item>黑板</item>
+      <item>淡淡的光芒</item>
   </string-array>
 </resources>

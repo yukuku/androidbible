@@ -3,21 +3,21 @@
 <resources>
   <string-array name="pref_colorTheme_labels">
       <item>Dark Material</item>
+      <item>Papier</item>
       <item>Lollipop</item>
       <item>Bubble Gum</item>
-      <item>Wood</item>
       <item>Sakura</item>
-      <item>Papier</item>
-    <item>Schoolbord</item>
     <item>Tropish</item>
     <item>Mos</item>
     <item>Warm</item>
     <item>Oranje</item>
     <item>Woestijn</item>
-    <item>Chocolade</item>
+      <item>Wood</item>
+      <item>Chocolade</item>
     <item>Guava</item>
     <item>Heldere hemel</item>
     <item>Sterrenhemel</item>
-    <item>Zacht licht</item>
+      <item>Schoolbord</item>
+      <item>Zacht licht</item>
   </string-array>
 </resources>

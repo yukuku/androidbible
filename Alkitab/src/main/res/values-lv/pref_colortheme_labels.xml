@@ -3,21 +3,21 @@
 <resources>
   <string-array name="pref_colorTheme_labels">
       <item>Dark Material</item>
+      <item>Tīrs Papīrs</item>
       <item>Lollipop</item>
       <item>Bubble Gum</item>
-      <item>Wood</item>
       <item>Sakura</item>
-      <item>Tīrs Papīrs</item>
-    <item>Tāfele</item>
     <item>Tropu Svaigums</item>
     <item>Sūnu Ezers</item>
     <item>Silti Pelni</item>
     <item>Saldais Apelsīns</item>
     <item>Sausais Tuksnesis</item>
-    <item>Šokolāde</item>
+      <item>Wood</item>
+      <item>Šokolāde</item>
     <item>Mitrā Gvajave</item>
     <item>Skaidrā Nakts</item>
     <item>Zvaigžņotā Nakts</item>
-    <item>Maigā Gaisma</item>
+      <item>Tāfele</item>
+      <item>Maigā Gaisma</item>
   </string-array>
 </resources>

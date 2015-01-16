@@ -3,21 +3,21 @@
 <resources>
   <string-array name="pref_colorTheme_labels">
       <item>Dark Material</item>
+      <item>Papel Claro</item>
       <item>Lollipop</item>
       <item>Bubble Gum</item>
-      <item>Wood</item>
       <item>Sakura</item>
-      <item>Papel Claro</item>
-    <item>Pizarra</item>
     <item>Trópico Exuberante</item>
     <item>Lago de Musgo</item>
     <item>Ceniza Caliente</item>
     <item>Naranja Dulce</item>
     <item>Desierto Seco</item>
-    <item>Chocolate</item>
+      <item>Wood</item>
+      <item>Chocolate</item>
     <item>Guayaba Húmeda</item>
     <item>Noche Clara</item>
     <item>Noche Estrellada</item>
-    <item>Luz Tenue</item>
+      <item>Pizarra</item>
+      <item>Luz Tenue</item>
   </string-array>
 </resources>

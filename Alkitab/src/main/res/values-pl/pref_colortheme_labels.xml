@@ -3,21 +3,21 @@
 <resources>
   <string-array name="pref_colorTheme_labels">
       <item>Dark Material</item>
+      <item>Zwykły papier</item>
       <item>Lollipop</item>
       <item>Bubble Gum</item>
-      <item>Wood</item>
       <item>Sakura</item>
-      <item>Zwykły papier</item>
-    <item>Tablica</item>
     <item>Bujne tropiki</item>
     <item>Mech nad jeziorem</item>
     <item>Ciepły jesion</item>
     <item>Słodka pomarańcza</item>
     <item>Sucha pustynia</item>
-    <item>Czekolada</item>
+      <item>Wood</item>
+      <item>Czekolada</item>
     <item>Mokra guawa</item>
     <item>Jasna noc</item>
     <item>Gwieździsta noc</item>
-    <item>Miękkie światło</item>
+      <item>Tablica</item>
+      <item>Miękkie światło</item>
   </string-array>
 </resources>

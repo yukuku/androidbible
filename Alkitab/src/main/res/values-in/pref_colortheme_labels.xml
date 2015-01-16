@@ -3,21 +3,21 @@
 <resources>
   <string-array name="pref_colorTheme_labels">
       <item>Material Gelap</item>
+      <item>Kertas HVS</item>
       <item>Gula-gula</item>
       <item>Permen karet</item>
-      <item>Batang Kayu</item>
       <item>Bunga Sakura</item>
-      <item>Kertas HVS</item>
-    <item>Papan Tulis</item>
     <item>Hutan Tropis</item>
     <item>Danau Lumut</item>
     <item>Abu Hangat</item>
     <item>Jeruk Manis</item>
     <item>Padang Pasir</item>
-    <item>Coklat</item>
+      <item>Batang Kayu</item>
+      <item>Coklat</item>
     <item>Jambu Air</item>
     <item>Malam Cerah</item>
     <item>Malam Berbintang</item>
-    <item>Remang Redup</item>
+      <item>Papan Tulis</item>
+      <item>Remang Redup</item>
   </string-array>
 </resources>

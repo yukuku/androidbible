@@ -6,18 +6,14 @@
 
         <!-- dark material -->
         <item>ffeeeeee ff303030 ff757575 ff03a9f4</item>
+        <!-- paper -->
+        <item>ff000000 ffeeeeee ff6666ff ffd11712</item>
         <!--lollipop-->
         <item>fff23d4c fff5f5f5 fff48fb1 ff673ab7</item>
         <!--bubblegum-->
         <item>ff03a9f4 fff7fcff ff0277bd fff50057</item>
-        <!--wood-->
-        <item>fffff3e0 ff3e2723 ff8d6e63 ff8bc34a</item>
         <!--sakura-->
         <item>fff06292 fffafafa ff8bc34a ff3e2723</item>
-        <!-- paper -->
-        <item>ff000000 ffeeeeee ff6666ff ffd11712</item>
-        <!-- blackboard -->
-        <item>fff0f0f0 ff000000 ff9090ff ffff9090</item>
         <!-- forest -->
         <item>ff1c5009 ffe9fee7 ff543703 ffcd610a</item>
         <!-- lake -->
@@ -28,6 +24,8 @@
         <item>ff3f5765 fffffcde ff25a81e ffea550b</item>
         <!-- desert -->
         <item>ff562707 fff3eddb ffe36b09 ffb45b16</item>
+        <!--wood-->
+        <item>fffff3e0 ff3e2723 ff8d6e63 ff8bc34a</item>
         <!-- chocolate -->
         <item>ffd4995e ff1d130f ffd8d7d7 ffede36f</item>
         <!-- guava -->
@@ -36,6 +34,8 @@
         <item>ffe1e6fa ff122641 ffd08e11 fffeaeae</item>
         <!-- starry night -->
         <item>ffffe985 ff0b1829 ffe3f5ff ffffffff</item>
+        <!-- blackboard -->
+        <item>fff0f0f0 ff000000 ff9090ff ffff9090</item>
         <!-- dark -->
         <item>ffaeaeae ff000000 ff6c6cb3 ffa25c5c</item>
     </string-array>
