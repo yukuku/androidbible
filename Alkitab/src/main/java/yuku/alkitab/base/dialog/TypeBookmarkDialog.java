@@ -4,6 +4,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -231,11 +234,14 @@ public class TypeBookmarkDialog {
 		res.setText(label.title);
 		res.setTag(R.id.TAG_label, label);
 		res.setOnClickListener(label_click);
-		
-		U.applyLabelColor(label, res);
-		
-		return res;
-	}
+        final Drawable drawableRight = res.getCompoundDrawables()[2];
+        final int labelColor = U.applyLabelColor(label, res);
+        if (drawableRight != null && labelColor != 0) {
+            drawableRight.mutate();
+            drawableRight.setColorFilter(labelColor, PorterDuff.Mode.MULTIPLY);
+        }
+        return res;
+    }
 
 	class LabelAdapter extends BaseAdapter {
 		private List<Label> labels;
