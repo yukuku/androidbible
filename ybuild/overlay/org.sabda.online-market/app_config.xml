@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<menu
+		devotion="false"
+		versions="true"
+		help="true"
+		donation="true"
+		songs="false" />
+
+	<internal locale="en" shortName="KJV"     longName="King James" prefix="kjv" preset_name='en-kjv' />
+
+	<share>
+		<url format="http://www.bibleforandroid.com/v/{book.osis}/{chapter}/{verses}?a=share&amp;v={version}" />
+	</share>
+</config>
