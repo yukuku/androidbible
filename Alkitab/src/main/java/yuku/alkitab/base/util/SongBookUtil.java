@@ -1,6 +1,8 @@
 package yuku.alkitab.base.util;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -111,6 +113,22 @@ public class SongBookUtil {
 		return res;
 	}
 
+	public static AlertDialog getSongBookDialog(Context context, final DialogInterface.OnClickListener listener) {
+		final CharSequence[] items = new CharSequence[knownSongBooks.size()];
+		for (int i = 0; i < knownSongBooks.size(); i++) {
+			final SongBookInfo bookInfo = knownSongBooks.get(i);
+			SpannableStringBuilder sb = new SpannableStringBuilder(bookInfo.bookName + '\n');
+			int sb_len = sb.length();
+			sb.append(Html.fromHtml(bookInfo.description));
+			sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
+			sb.setSpan(new ForegroundColorSpan(0xffa0a0a0), sb_len, sb.length(), 0);
+			items[i] = sb;
+		}
+		return new AlertDialog.Builder(context)
+			.setItems(items, listener)
+			.create();
+	}
+
 	public static String getCopyright(final String bookName) {
 		for (final SongBookInfo knownSongBook : knownSongBooks) {
 			if (U.equals(bookName, knownSongBook.bookName)) {
@@ -131,6 +149,15 @@ public class SongBookUtil {
 					listener.onSongBookSelected(false, knownSongBooks.get(itemId - 1));
 				}
 				return true;
+			}
+		};
+	}
+
+	public static Dialog.OnClickListener getSongBookOnDialogClickListener(final OnSongBookSelectedListener listener) {
+		return new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(final DialogInterface dialog, final int which) {
+				listener.onSongBookSelected(false, knownSongBooks.get(which));
 			}
 		};
 	}

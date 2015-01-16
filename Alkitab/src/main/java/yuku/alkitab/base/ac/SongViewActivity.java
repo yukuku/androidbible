@@ -23,7 +23,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.webkit.WebView;
@@ -410,7 +409,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
 
-		bDownload.setOnClickListener(bDownload_click);
+		bDownload.setOnClickListener(v -> SongBookUtil.getSongBookDialog(this, SongBookUtil.getSongBookOnDialogClickListener(this::songBookSelected)).show());
 	}
 
 	@Override
@@ -870,12 +869,6 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 		checkAudioExistance();
 	}
-
-	OnClickListener bDownload_click = new OnClickListener() {
-		@Override public void onClick(View v) {
-			leftDrawer.getHandle().clickChangeBook();
-		}
-	};
 
 	void drawer_opened() {
 		if (currentBookName == null) return;

@@ -531,7 +531,6 @@ public abstract class LeftDrawer extends ScrollView {
 			void setCButtonEnabled(boolean enabled);
 			void setBookName(String bookName);
 			void setCode(String code);
-			void clickChangeBook();
 		}
 
 		Listener listener;
@@ -566,10 +565,6 @@ public abstract class LeftDrawer extends ScrollView {
 				bChangeCode.setText(code);
 			}
 
-			@Override
-			public void clickChangeBook() {
-				bChangeBook.performClick();
-			}
 		};
 
 		public Songs(final Context context, final AttributeSet attrs) {
