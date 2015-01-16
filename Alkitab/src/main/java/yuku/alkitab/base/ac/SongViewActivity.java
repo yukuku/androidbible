@@ -644,13 +644,12 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
                 runOnUiThread(() -> {
                     pd.dismiss();
 
-                    finish(); // TODO
-
-                    new AlertDialog.Builder(SongViewActivity.this)
-                            .setMessage(getString(R.string.sn_delete_all_songs_result, count))
-                            .setPositiveButton(R.string.ok, null)
-                            .show();
-                });
+					new AlertDialog.Builder(SongViewActivity.this)
+						.setMessage(getString(R.string.sn_delete_all_songs_result, count))
+						.setPositiveButton(R.string.ok, null)
+						.show()
+						.setOnDismissListener(dialog -> finish());
+				});
             }
         }.start();
     }
