@@ -677,6 +677,9 @@ public class VersionsActivity extends BaseActivity {
 				return;
 			}
 
+			// we are trying to open a file, so let's go to the DOWNLOADED tab, as it is more relevant.
+			mViewPager.setCurrentItem(1);
+
 			final String filename = result.firstFilename;
 
 			if (filename.toLowerCase(Locale.US).endsWith(".yes.gz")) { //$NON-NLS-1$
