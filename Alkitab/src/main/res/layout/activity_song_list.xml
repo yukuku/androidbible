@@ -10,7 +10,17 @@
 		android:id="@+id/toolbar"
 		android:layout_width="match_parent"
 		android:layout_height="?attr/actionBarSize"
-		android:background="?attr/colorPrimary" />
+		android:background="?attr/colorPrimary">
+
+		<ProgressBar
+			android:id="@+id/progress_circular"
+			style="?android:attr/progressBarStyleSmallTitle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical|end"
+			android:layout_margin="16dp" />
+
+	</android.support.v7.widget.Toolbar>
 
 	<LinearLayout
 		android:layout_width="match_parent"

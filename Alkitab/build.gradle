@@ -77,7 +77,7 @@ dependencies {
     compile project(':AmbilWarna')
     compile project(':FileChooser')
     compile project(':ImportedDesktopVerseUtil')
-    compile 'com.android.support:support-v4:21.0.2'
+    compile 'com.android.support:support-v4:21.0.3'
     compile 'com.squareup.picasso:picasso:2.4.0'
     compile 'com.squareup.okhttp:okhttp:2.1.0'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.1.0'
@@ -85,6 +85,6 @@ dependencies {
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.android.support:support-v13:20.0.0'
     compile 'com.google.android.gms:play-services-base:6.5.87'
-    compile 'com.android.support:appcompat-v7:21.0.2'
+    compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:multidex:1.0.0'
 }

@@ -3,7 +3,6 @@ package yuku.alkitab.base.ac;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -21,11 +20,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -85,6 +81,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	private Button bDownload;
 	private boolean showDetails;
 
+	float density;
+
 	public static Intent createIntent() {
 		return new Intent(App.context, ReadingPlanActivity.class);
 	}
@@ -93,6 +91,8 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_reading_plan);
+
+		density = getResources().getDisplayMetrics().density;
 
 		drawerLayout = V.get(this, R.id.drawerLayout);
 		leftDrawer = V.get(this, R.id.left_drawer);
@@ -280,18 +280,15 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		final ArrayAdapter<String> navigationAdapter = new ArrayAdapter<>(actionBar.getThemedContext(), android.R.layout.simple_spinner_dropdown_item, titles);
 
 		newDropDownItems = false;
-		actionBar.setListNavigationCallbacks(navigationAdapter, new ActionBar.OnNavigationListener() {
-			@Override
-			public boolean onNavigationItemSelected(final int i, final long l) {
-				if (newDropDownItems) {
-					loadReadingPlan(downloadedReadingPlanInfos.get(i).id);
-					loadReadingPlanProgress();
-					loadDayNumber();
-					prepareDisplay();
-				}
-				newDropDownItems = true;
-				return true;
+		actionBar.setListNavigationCallbacks(navigationAdapter, (i, l) -> {
+			if (newDropDownItems) {
+				loadReadingPlan(downloadedReadingPlanInfos.get(i).id);
+				loadReadingPlanProgress();
+				loadDayNumber();
+				prepareDisplay();
 			}
+			newDropDownItems = true;
+			return true;
 		});
 		actionBar.setSelectedNavigationItem(itemNumber);
 		return false;
@@ -303,12 +300,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			lsReadingPlan.setVisibility(View.GONE);
 			flNoData.setVisibility(View.VISIBLE);
 
-			bDownload.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					downloadReadingPlanList();
-				}
-			});
+			bDownload.setOnClickListener(v -> downloadReadingPlanList());
 			return;
 		}
 		llNavigations.setVisibility(View.VISIBLE);
@@ -331,20 +323,17 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				popupMenu.getMenu().add(Menu.NONE, 2, 2, getString(R.string.rp_gotoFirstUnread));
 				popupMenu.getMenu().add(Menu.NONE, 3, 3, getString(R.string.rp_gotoToday));
 
-				popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-					@Override
-					public boolean onMenuItemClick(final MenuItem menuItem) {
-						popupMenu.dismiss();
-						int itemId = menuItem.getItemId();
-						if (itemId == 1) {
-							showCalendar();
-						} else if (itemId == 2) {
-							gotoFirstUnread();
-						} else if (itemId == 3) {
-							gotoToday();
-						}
-						return true;
+				popupMenu.setOnMenuItemClickListener(menuItem -> {
+					popupMenu.dismiss();
+					int itemId = menuItem.getItemId();
+					if (itemId == 1) {
+						showCalendar();
+					} else if (itemId == 2) {
+						gotoFirstUnread();
+					} else if (itemId == 3) {
+						gotoToday();
 					}
+					return true;
 				});
 				popupMenu.show();
 			}
@@ -364,22 +353,19 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				calendar.setTimeInMillis(readingPlan.info.startTime);
 				calendar.add(Calendar.DATE, dayNumber);
 
-				DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-					@Override
-					public void onDateSet(final DatePicker view, final int year, final int monthOfYear, final int dayOfMonth) {
-						Calendar newCalendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
-						Calendar startCalendar = GregorianCalendar.getInstance();
-						startCalendar.setTimeInMillis(readingPlan.info.startTime);
+				DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
+					Calendar newCalendar = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+					Calendar startCalendar = GregorianCalendar.getInstance();
+					startCalendar.setTimeInMillis(readingPlan.info.startTime);
 
-						int newDay = calculateDaysDiff(startCalendar, newCalendar);
-						if (newDay < 0) {
-							newDay = 0;
-						} else if (newDay >= readingPlan.info.duration) {
-							newDay = readingPlan.info.duration - 1;
-						}
-						dayNumber = newDay;
-						changeDay(0);
+					int newDay = calculateDaysDiff(startCalendar, newCalendar);
+					if (newDay < 0) {
+						newDay = 0;
+					} else if (newDay >= readingPlan.info.duration) {
+						newDay = readingPlan.info.duration - 1;
 					}
+					dayNumber = newDay;
+					changeDay(0);
 				};
 
 				DatePickerDialog datePickerDialog = new DatePickerDialog(ReadingPlanActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
@@ -387,38 +373,25 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 			}
 		});
 
-		bLeft.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				changeDay(-1);
-			}
-		});
+		bLeft.setOnClickListener(v -> changeDay(-1));
 
-		bRight.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				changeDay(+1);
-			}
-		});
+		bRight.setOnClickListener(v -> changeDay(+1));
 	}
 
 	private void resetReadingPlan() {
 		new AlertDialog.Builder(this)
 		.setMessage(getString(R.string.rp_reset))
-		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(final DialogInterface dialog, final int which) {
-				int firstUnreadDay = findFirstUnreadDay();
-				Calendar calendar = GregorianCalendar.getInstance();
-				calendar.add(Calendar.DATE, -firstUnreadDay);
-				S.getDb().updateStartDate(readingPlan.info.id, calendar.getTime().getTime());
-				loadReadingPlan(readingPlan.info.id);
-				loadDayNumber();
-				readingPlanAdapter.load();
-				readingPlanAdapter.notifyDataSetChanged();
+		.setPositiveButton(R.string.ok, (dialog, which) -> {
+			int firstUnreadDay = findFirstUnreadDay();
+			Calendar calendar = GregorianCalendar.getInstance();
+			calendar.add(Calendar.DATE, -firstUnreadDay);
+			S.getDb().updateStartDate(readingPlan.info.id, calendar.getTime().getTime());
+			loadReadingPlan(readingPlan.info.id);
+			loadDayNumber();
+			readingPlanAdapter.load();
+			readingPlanAdapter.notifyDataSetChanged();
 
-				updateButtonStatus();
-			}
+			updateButtonStatus();
 		})
 		.setNegativeButton(R.string.cancel, null)
 		.show();
@@ -441,19 +414,16 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	private void deleteReadingPlan() {
 		new AlertDialog.Builder(this)
 		.setMessage(getString(R.string.rp_deletePlan, readingPlan.info.title))
-		.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(final DialogInterface dialog, final int which) {
-				S.getDb().deleteReadingPlanById(readingPlan.info.id);
-				readingPlan = null;
-				Preferences.remove(Prefkey.active_reading_plan_id);
-				loadReadingPlan(0);
-				loadReadingPlanProgress();
-				loadDayNumber();
-				prepareDropDownNavigation();
-				prepareDisplay();
-				supportInvalidateOptionsMenu();
-			}
+		.setPositiveButton(R.string.ok, (dialog, which) -> {
+			S.getDb().deleteReadingPlanById(readingPlan.info.id);
+			readingPlan = null;
+			Preferences.remove(Prefkey.active_reading_plan_id);
+			loadReadingPlan(0);
+			loadReadingPlanProgress();
+			loadDayNumber();
+			prepareDropDownNavigation();
+			prepareDisplay();
+			supportInvalidateOptionsMenu();
 		})
 		.setNegativeButton(R.string.cancel, null)
 		.show();
@@ -499,12 +469,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	private void downloadReadingPlanList() {
 		final AtomicBoolean cancelled = new AtomicBoolean(false);
 		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.rp_download_reading_plan_list_progress), true, true);
-		pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
-			@Override
-			public void onDismiss(final DialogInterface dialog) {
-				cancelled.set(true);
-			}
-		});
+		pd.setOnDismissListener(dialog -> cancelled.set(true));
 
 		new Thread() {
 			@Override
@@ -513,15 +478,10 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 					download();
 				} catch (Exception e) {
 					Log.e(TAG, "downloading reading plan list", e);
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							new AlertDialog.Builder(ReadingPlanActivity.this)
-							.setMessage(getString(R.string.rp_download_reading_plan_list_failed))
-							.setPositiveButton(R.string.ok, null)
-							.show();
-						}
-					});
+					runOnUiThread(() -> new AlertDialog.Builder(ReadingPlanActivity.this)
+					.setMessage(getString(R.string.rp_download_reading_plan_list_failed))
+					.setPositiveButton(R.string.ok, null)
+					.show());
 				} finally {
 					pd.dismiss();
 				}
@@ -534,12 +494,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 				if (entries == null) return;
 				if (cancelled.get()) return;
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						onReadingPlanListDownloadFinished(entries);
-					}
-				});
+				runOnUiThread(() -> onReadingPlanListDownloadFinished(entries));
 			}
 
 			/** run on ui thread */
@@ -586,12 +541,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 					public int getCount() {
 						return readingPlanDownloadableEntries.size();
 					}
-				}, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(final DialogInterface dialog, final int which) {
-						onReadingPlanSelected(readingPlanDownloadableEntries.get(which));
-					}
-				})
+				}, (dialog, which) -> onReadingPlanSelected(readingPlanDownloadableEntries.get(which)))
 				.setNegativeButton(R.string.cancel, null)
 				.show();
 			}
@@ -606,12 +556,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	void downloadReadingPlanFromServer(final ReadingPlanServerEntry entry) {
 		final AtomicBoolean cancelled = new AtomicBoolean(false);
 		final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.rp_download_reading_plan_progress), true, true);
-		pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
-			@Override
-			public void onDismiss(final DialogInterface dialog) {
-				cancelled.set(true);
-			}
-		});
+		pd.setOnDismissListener(dialog -> cancelled.set(true));
 
 		new Thread() {
 			@Override
@@ -634,12 +579,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				final byte[] bytes = App.downloadBytes("https://alkitab-host.appspot.com/rp/get_rp?name=" + entry.name);
 
 				if (cancelled.get()) return;
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						onReadingPlanDownloadFinished(bytes);
-					}
-				});
+				runOnUiThread(() -> onReadingPlanDownloadFinished(bytes));
 			}
 
 			/** run on ui thread */
@@ -729,7 +669,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		return sb;
 	}
 
-	class ReadingPlanAdapter extends BaseAdapter {
+	class ReadingPlanAdapter extends EasyAdapter {
 
 		private int[] todayReadings;
 
@@ -747,11 +687,22 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 		}
 
 		@Override
-		public View getView(final int position, View convertView, final ViewGroup parent) {
+		public View newView(final int position, final ViewGroup parent) {
 			final int itemViewType = getItemViewType(position);
-			final View res;
 			if (itemViewType == 0) {
-				res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_reading_plan_one_reading, parent, false);
+				return getLayoutInflater().inflate(R.layout.item_reading_plan_one_reading, parent, false);
+			} else if (itemViewType == 1) {
+				return getLayoutInflater().inflate(R.layout.item_reading_plan_summary, parent, false);
+			} else if (itemViewType == 2) {
+				return getLayoutInflater().inflate(R.layout.item_reading_plan_one_day, parent, false);
+			}
+			return null;
+		}
+
+		@Override
+		public void bindView(final View res, final int position, final ViewGroup parent) {
+			final int itemViewType = getItemViewType(position);
+			if (itemViewType == 0) {
 				final Button bReference = V.get(res, R.id.bReference);
 				final CheckBox checkbox = V.get(res, R.id.checkbox);
 
@@ -759,32 +710,24 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 				ReadingPlanManager.writeReadMarksByDay(readingCodes, readMarks, dayNumber);
 
 				bReference.setText(getReference(S.activeVersion, todayReadings[position * 2], todayReadings[position * 2 + 1]));
-				bReference.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(final View v) {
-						final int todayReadingsSize = readingPlan.dailyVerses[dayNumber].length / 2;
-						if (position < todayReadingsSize) {
-							goToIsiActivity(dayNumber, position);
-						} else if (position > todayReadingsSize) {
-							goToIsiActivity(position - todayReadingsSize - 1, 0);
-						}
+				bReference.setOnClickListener(v -> {
+					final int todayReadingsSize = readingPlan.dailyVerses[dayNumber].length / 2;
+					if (position < todayReadingsSize) {
+						goToIsiActivity(dayNumber, position);
+					} else if (position > todayReadingsSize) {
+						goToIsiActivity(position - todayReadingsSize - 1, 0);
 					}
 				});
 				checkbox.setOnCheckedChangeListener(null);
 				checkbox.setChecked(readMarks[position]);
 
-				checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-						ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, dayNumber, position, isChecked);
-						loadReadingPlanProgress();
-						load();
-						notifyDataSetChanged();
-					}
+				checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+					ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, dayNumber, position, isChecked);
+					loadReadingPlanProgress();
+					load();
+					notifyDataSetChanged();
 				});
 			} else if (itemViewType == 1) {
-				res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_reading_plan_summary, parent, false);
-
 				final ProgressBar pbReadingProgress = V.get(res, R.id.pbReadingProgress);
 				final TextView tActual = V.get(res, R.id.tActual);
 				final TextView tTarget = V.get(res, R.id.tTarget);
@@ -811,22 +754,17 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 				tComment.setText(comment);
 
-				tDetail.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(final View v) {
-						showDetails = !showDetails;
-						if (showDetails) {
-							tDetail.setText(R.string.rp_hideDetails);
-						} else {
-							tDetail.setText(R.string.rp_showDetails);
-						}
-						notifyDataSetChanged();
+				tDetail.setOnClickListener(v -> {
+					showDetails = !showDetails;
+					if (showDetails) {
+						tDetail.setText(R.string.rp_hideDetails);
+					} else {
+						tDetail.setText(R.string.rp_showDetails);
 					}
+					notifyDataSetChanged();
 				});
 
 			} else if (itemViewType == 2) {
-				res = convertView != null? convertView: getLayoutInflater().inflate(R.layout.item_reading_plan_one_day, parent, false);
-
 				final LinearLayout layout = V.get(res, R.id.llOneDayReadingPlan);
 
 				final int currentViewTypePosition = position - todayReadings.length / 2 - 1;
@@ -857,41 +795,25 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 
 					CheckBox checkBox = (CheckBox) layout.findViewWithTag(i);
 					if (checkBox == null) {
-					    checkBox = new CheckBox(ReadingPlanActivity.this);
-						checkBox.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+						checkBox = new CheckBox(ReadingPlanActivity.this);
+						checkBox.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, (int) (48 * density)));
 						checkBox.setTag(i);
 						checkBox.setFocusable(false);
+						checkBox.setTextSize(16.f);
 						layout.addView(checkBox);
 					}
 
 					checkBox.setOnCheckedChangeListener(null);
 					checkBox.setChecked(readMarks[sequence]);
 					checkBox.setText(getReference(S.activeVersion, ariRanges[sequence * 2], ariRanges[sequence * 2 + 1]));
-					checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-						@Override
-						public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-							ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, currentViewTypePosition, sequence, isChecked);
-							loadReadingPlanProgress();
-							load();
-							notifyDataSetChanged();
-						}
+					checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+						ReadingPlanManager.updateReadingPlanProgress(readingPlan.info.id, currentViewTypePosition, sequence, isChecked);
+						loadReadingPlanProgress();
+						load();
+						notifyDataSetChanged();
 					});
 				}
-			} else {
-				res = null;
 			}
-
-			return res;
-		}
-
-		@Override
-		public Object getItem(final int position) {
-			return null;
-		}
-
-		@Override
-		public long getItemId(final int position) {
-			return 0;
 		}
 
 		@Override

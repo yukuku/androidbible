@@ -2,7 +2,6 @@ package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
 import android.app.LoaderManager;
-import android.app.ProgressDialog;
 import android.content.AsyncTaskLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -12,8 +11,6 @@ import android.os.Parcelable;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -53,7 +50,8 @@ public class SongListActivity extends BaseActivity {
 	TextView bChangeBook;
 	CheckBox cDeepSearch;
 	View panelFilter;
-	
+	View circular_progress;
+
 	SongAdapter adapter;
 	SongLoader loader;
 
@@ -133,6 +131,8 @@ public class SongListActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_song_list);
 
+		circular_progress = V.get(this, R.id.progress_circular);
+
 		final Toolbar toolbar = V.get(this, R.id.toolbar);
 		setSupportActionBar(toolbar); // must be done first before below lines
 		toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
@@ -177,7 +177,7 @@ public class SongListActivity extends BaseActivity {
 	    			bChangeBook.setText(searchState.bookName);
 	    		}
         	} stillUsingInitialSearchState = false;
-        	setSupportProgressBarIndeterminateVisibility(false); // somehow this is needed.
+        	setCustomProgressBarIndeterminateVisible(false); // somehow this is needed.
         } else {
         	startSearch();
         }
@@ -189,19 +189,19 @@ public class SongListActivity extends BaseActivity {
         	
         	@Override public void onLoadFinished(Loader<List<SongInfo>> loader, List<SongInfo> data) {
         		adapter.setData(data);
-        		setSupportProgressBarIndeterminateVisibility(false);
+        		setCustomProgressBarIndeterminateVisible(false);
         	}
         	
         	@Override public void onLoaderReset(Loader<List<SongInfo>> loader) {
         		adapter.setData(null);
-        		setSupportProgressBarIndeterminateVisibility(false);
+        		setCustomProgressBarIndeterminateVisible(false);
         	}
         });
 	}
 
 	void startSearch() {
 		if (stillUsingInitialSearchState) return;
-		setSupportProgressBarIndeterminateVisibility(true);
+		setCustomProgressBarIndeterminateVisible(true);
 		loader.setFilterString(searchView.getQuery().toString());
 		loader.setDeepSearch(cDeepSearch.isChecked());
 		loader.forceLoad();
@@ -354,5 +354,9 @@ public class SongListActivity extends BaseActivity {
 			}
 			return res;
 		}
+	}
+
+	void setCustomProgressBarIndeterminateVisible(final boolean visible) {
+		circular_progress.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
 	}
 }
