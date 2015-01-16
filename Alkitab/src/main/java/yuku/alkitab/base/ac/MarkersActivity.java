@@ -179,11 +179,8 @@ public class MarkersActivity extends BaseActivity {
 			int warnaLatarRgb = U.decodeLabelBackgroundColor(label.backgroundColor);
 			new AmbilWarnaDialog(MarkersActivity.this, 0xff000000 | warnaLatarRgb, new OnAmbilWarnaListener() {
 				@Override public void onOk(AmbilWarnaDialog dialog, int color) {
-					if (color == -1) {
-						label.backgroundColor = null;
-					} else {
-						label.backgroundColor = U.encodeLabelBackgroundColor(0x00ffffff & color);
-					}
+					label.backgroundColor = U.encodeLabelBackgroundColor(0x00ffffff & color);
+
 					S.getDb().insertOrUpdateLabel(label);
 					adapter.notifyDataSetChanged();
 				}
