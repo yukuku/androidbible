@@ -3,21 +3,21 @@
 <resources>
   <string-array name="pref_colorTheme_labels">
       <item>Dark Material</item>
+      <item>Чистий Папір</item>
       <item>Lollipop</item>
       <item>Bubble Gum</item>
-      <item>Wood</item>
       <item>Sakura</item>
-      <item>Чистий Папір</item>
-    <item>Темна дошка</item>
     <item>Насичений Тропічний</item>
     <item>Заросле озеро</item>
     <item>Теплий попіл</item>
     <item>Солодкий помаранч</item>
     <item>Суха пустеля</item>
-    <item>Шоколад</item>
+      <item>Wood</item>
+      <item>Шоколад</item>
     <item>Волога гуава</item>
     <item>Ясна ніч</item>
     <item>Зоряна ніч</item>
-    <item>М\'яке світло</item>
+      <item>Темна дошка</item>
+      <item>М\'яке світло</item>
   </string-array>
 </resources>
