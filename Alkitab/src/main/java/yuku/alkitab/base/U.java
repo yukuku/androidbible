@@ -227,7 +227,7 @@ public class U {
 		return a.equals(b);
 	}
 	
-	public static void applyLabelColor(Label label, TextView view) {
+	public static int applyLabelColor(Label label, TextView view) {
 		int bgColorRgb = U.decodeLabelBackgroundColor(label.backgroundColor);
 		if (bgColorRgb == -1) {
 			bgColorRgb = 0x212121; // default color Grey 900
@@ -247,9 +247,12 @@ public class U {
 		}
 		if (grad != null) {
 			grad.setColor(0xff000000 | bgColorRgb);
-			view.setTextColor(0xff000000 | U.getLabelForegroundColorBasedOnBackgroundColor(bgColorRgb));
+            final int labelColor = 0xff000000 | U.getLabelForegroundColorBasedOnBackgroundColor(bgColorRgb);
+            view.setTextColor(labelColor);
+            return labelColor;
 		}
-	}
+        return 0;
+    }
 
 	public static String inputStreamUtf8ToString(InputStream input) throws IOException {
 		return inputStreamToString(input, "utf-8");

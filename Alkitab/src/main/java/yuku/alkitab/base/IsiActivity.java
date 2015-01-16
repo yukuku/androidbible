@@ -145,7 +145,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 	final Floater.Listener floater_listener = new Floater.Listener() {
 		@Override
 		public void onSelectComplete(final int ari) {
-			jumpToAri(ari, true);
+			jumpToAri(ari, false);
 			history.add(ari);
 		}
 	};
