@@ -976,11 +976,11 @@ public class VersionsActivity extends BaseActivity {
 							App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
 							new File(mvDb.filename).delete();
 						})
-						.setNeutralButton(R.string.no, (dialog1, which1) -> {
+						.setNegativeButton(R.string.no, (dialog1, which1) -> {
 							S.getDb().deleteVersion(mvDb);
 							App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
 						})
-						.setNegativeButton(R.string.cancel, null)
+						.setNeutralButton(R.string.cancel, null)
 						.show();
 				});
 			}
