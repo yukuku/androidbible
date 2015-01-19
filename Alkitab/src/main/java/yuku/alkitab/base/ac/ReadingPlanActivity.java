@@ -414,7 +414,7 @@ public class ReadingPlanActivity extends BaseLeftDrawerActivity implements LeftD
 	private void deleteReadingPlan() {
 		new AlertDialog.Builder(this)
 		.setMessage(getString(R.string.rp_deletePlan, readingPlan.info.title))
-		.setPositiveButton(R.string.ok, (dialog, which) -> {
+		.setPositiveButton(R.string.delete, (dialog, which) -> {
 			S.getDb().deleteReadingPlanById(readingPlan.info.id);
 			readingPlan = null;
 			Preferences.remove(Prefkey.active_reading_plan_id);
