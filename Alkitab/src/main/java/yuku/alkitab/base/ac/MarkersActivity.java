@@ -162,7 +162,7 @@ public class MarkersActivity extends BaseActivity {
 				new AlertDialog.Builder(this)
 				.setMessage(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, marker_count))
 				.setNegativeButton(R.string.cancel, null)
-				.setPositiveButton(R.string.ok, (dialog, which) -> {
+				.setPositiveButton(R.string.delete, (dialog, which) -> {
 					S.getDb().deleteLabelById(label._id);
 					adapter.reload();
 				})
