@@ -572,7 +572,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		case R.id.menuDeleteAll: {
 			new AlertDialog.Builder(this)
 				.setMessage(R.string.sn_delete_all_songs_explanation)
-				.setPositiveButton(R.string.ok, (dialog, which) -> deleteAllSongs())
+				.setPositiveButton(R.string.delete, (dialog, which) -> deleteAllSongs())
 				.setNegativeButton(R.string.cancel, null)
 				.show();
 		} return true;
