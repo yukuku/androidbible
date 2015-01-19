@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.provider.Settings;
@@ -16,6 +15,7 @@ import android.text.TextUtils;
 import android.text.format.DateFormat;
 import yuku.afw.storage.Preferences;
 import yuku.alkitab.base.App;
+import yuku.alkitab.base.ac.base.BasePreferenceActivity;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.reminder.util.DevotionReminder;
 import yuku.alkitab.reminder.widget.ReminderTimePreference;
@@ -23,7 +23,7 @@ import yuku.alkitab.reminder.widget.ReminderTimePreference;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class DevotionReminderActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
+public class DevotionReminderActivity extends BasePreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
 	public static Intent createIntent() {
 		return new Intent(App.context, DevotionReminderActivity.class);

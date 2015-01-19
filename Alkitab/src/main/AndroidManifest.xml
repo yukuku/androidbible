@@ -425,7 +425,10 @@
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 
 		<!-- from a separate app: devotion reminder -->
-		<activity android:name="yuku.alkitab.reminder.ac.DevotionReminderActivity" />
+		<activity android:name="yuku.alkitab.reminder.ac.DevotionReminderActivity"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+			android:theme="@style/Theme.MaterialOrHolo"
+			android:label="@string/dr_app_name" />
 		<receiver android:name="yuku.alkitab.reminder.br.DevotionReminderReceiver"/>
 		<receiver android:name="yuku.alkitab.reminder.br.BootCompleteReceiver">
 			<intent-filter>
