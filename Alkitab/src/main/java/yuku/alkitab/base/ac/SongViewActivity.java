@@ -564,7 +564,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
         case R.id.menuUpdateBook: {
 			new AlertDialog.Builder(this)
 				.setMessage(TextUtils.expandTemplate(getString(R.string.sn_update_book_explanation), currentBookName))
-				.setPositiveButton(R.string.ok, (dialog, which) -> updateSongBook())
+				.setPositiveButton(R.string.sn_update_book_confirm_button, (dialog, which) -> updateSongBook())
 				.setNegativeButton(R.string.cancel, null)
 				.show();
 		} return true;
