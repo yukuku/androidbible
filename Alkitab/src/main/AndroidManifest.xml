@@ -22,6 +22,10 @@
 	<permission android:name="yuku.alkitab.debug.permission.C2D_MESSAGE" android:protectionLevel="signature" />
 	<uses-permission android:name="yuku.alkitab.debug.permission.C2D_MESSAGE" />
 
+	<!-- from a separate app: devotion reminder -->
+	<uses-permission android:name="android.permission.VIBRATE"/>
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
 	<uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
@@ -209,12 +213,10 @@
             android:name="yuku.alkitab.base.ac.DevotionActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
             android:label="@string/menuDevotion">
-            <intent-filter>
-                <action android:name="yuku.alkitab.ACTION_OPEN_DEVOTION" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value="yuku.alkitab.base.IsiActivity" />
+		</activity>
         <activity
             android:name="yuku.alkitab.base.ac.HelpActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
@@ -421,6 +423,18 @@
 		<service android:name="yuku.alkitab.base.sync.GcmIntentService" />
 
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+
+		<!-- from a separate app: devotion reminder -->
+		<activity android:name="yuku.alkitab.reminder.ac.DevotionReminderActivity"
+			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
+			android:theme="@style/Theme.MaterialOrHolo"
+			android:label="@string/dr_app_name" />
+		<receiver android:name="yuku.alkitab.reminder.br.DevotionReminderReceiver"/>
+		<receiver android:name="yuku.alkitab.reminder.br.BootCompleteReceiver">
+			<intent-filter>
+				<action android:name="android.intent.action.BOOT_COMPLETED"/>
+			</intent-filter>
+		</receiver>
 
 	</application>
 

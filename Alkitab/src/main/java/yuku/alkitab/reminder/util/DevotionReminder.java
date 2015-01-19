@@ -6,8 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.reminder.App;
-import yuku.alkitab.reminder.R;
+import yuku.alkitab.base.App;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.reminder.br.DevotionReminderReceiver;
 
 import java.util.Calendar;

@@ -25,7 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TimePicker;
 import android.widget.TimePicker.OnTimeChangedListener;
-import yuku.alkitab.reminder.R;
+import yuku.alkitab.debug.R;
 
 /**
  * A dialog that prompts the user for the time of day using a {@link android.widget.TimePicker}.

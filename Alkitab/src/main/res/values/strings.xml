@@ -473,4 +473,15 @@
 	<string name="pref_textPadding_title">Margins around text</string>
 	<string name="pref_textPadding_summary">Make text in a line narrower to ease reading</string>
 
+	<!-- devotion reminder -->
+	<string name="dr_app_name">Reminder</string>
+	<string name="dr_notification_title">Daily devotion</string>
+	<string name="dr_notification_text">Read today\'s devotion now.</string>
+	<string name="dr_off">Off</string>
+	<string name="dr_alarm">Alarm</string>
+	<string name="dr_sound">Sound</string>
+	<string name="dr_vibrate">Vibrate</string>
+	<string name="dr_pref_notification_message">Reminder message</string>
+	<string name="dr_default_sound">Default sound</string>
+
 </resources>

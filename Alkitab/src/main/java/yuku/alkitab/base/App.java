@@ -17,6 +17,7 @@ import yuku.alkitab.base.model.VersionImpl;
 import yuku.alkitab.base.sync.Gcm;
 import yuku.alkitab.base.sync.Sync;
 import yuku.alkitab.debug.R;
+import yuku.alkitab.reminder.util.DevotionReminder;
 import yuku.alkitabfeedback.FeedbackSender;
 
 import java.io.IOException;
@@ -99,6 +100,8 @@ public class App extends yuku.afw.App {
 		{ // GCM
 			Gcm.renewGcmRegistrationIdIfNeeded(Sync::notifyNewGcmRegistrationId);
 		}
+
+		DevotionReminder.scheduleAlarm(context);
 	}
 
 	private static Locale getLocaleFromPreferences() {
