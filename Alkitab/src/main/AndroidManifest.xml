@@ -213,12 +213,10 @@
             android:name="yuku.alkitab.base.ac.DevotionActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"
             android:label="@string/menuDevotion">
-            <intent-filter>
-                <action android:name="yuku.alkitab.ACTION_OPEN_DEVOTION" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value="yuku.alkitab.base.IsiActivity" />
+		</activity>
         <activity
             android:name="yuku.alkitab.base.ac.HelpActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />

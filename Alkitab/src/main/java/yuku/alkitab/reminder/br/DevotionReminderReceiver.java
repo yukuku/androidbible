@@ -10,7 +10,8 @@ import android.net.Uri;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import yuku.afw.storage.Preferences;
-import yuku.alkitab.reminder.R;
+import yuku.alkitab.base.ac.DevotionActivity;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.reminder.util.DevotionReminder;
 
 public class DevotionReminderReceiver extends BroadcastReceiver {
@@ -19,14 +20,14 @@ public class DevotionReminderReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 
-		PendingIntent pi = PendingIntent.getActivity(context, 0, new Intent("yuku.alkitab.ACTION_OPEN_DEVOTION"), PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent pi = PendingIntent.getActivity(context, 0, DevotionActivity.createIntent(), PendingIntent.FLAG_UPDATE_CURRENT);
 
 		NotificationCompat.Builder b = new NotificationCompat.Builder(context)
-		.setAutoCancel(true)
-		.setContentText(DevotionReminder.getNotificationText())
-		.setContentTitle(context.getString(R.string.dr_notification_title))
-		.setContentIntent(pi)
-		.setSmallIcon(R.drawable.ic_stat_reminder);
+			.setAutoCancel(true)
+			.setContentText(DevotionReminder.getNotificationText())
+			.setContentTitle(context.getString(R.string.dr_notification_title))
+			.setContentIntent(pi)
+			.setSmallIcon(R.drawable.ic_stat_reminder);
 
 		String reminder_sound = Preferences.getString(DevotionReminder.REMINDER_SOUND);
 		boolean reminder_vibrate = Preferences.getBoolean(DevotionReminder.REMINDER_VIBRATE, false);
@@ -48,8 +49,5 @@ public class DevotionReminderReceiver extends BroadcastReceiver {
 
 		NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		nm.notify(0, n);
-
 	}
-
-
 }

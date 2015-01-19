@@ -46,6 +46,7 @@ import yuku.alkitab.base.widget.LeftDrawer;
 import yuku.alkitab.base.widget.TwofingerLinearLayout;
 import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.debug.R;
+import yuku.alkitab.reminder.ac.DevotionReminderActivity;
 import yuku.alkitab.util.Ari;
 import yuku.alkitabintegration.display.Launcher;
 
@@ -415,36 +416,11 @@ public class DevotionActivity extends BaseLeftDrawerActivity implements Devotion
 			startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.bagikan_renungan)), REQCODE_share);
 			return true;
 		} else if (itemId == R.id.menuReminder) {
-			openReminderPackage();
+			startActivity(DevotionReminderActivity.createIntent());
 			return true;
 		}
 		
 		return super.onOptionsItemSelected(item);
-	}
-
-	private void openReminderPackage() {
-		final String reminderPackage = "yuku.alkitab.reminder";
-		try {
-			getPackageManager().getPackageInfo(reminderPackage, 0);
-			startActivity(new Intent("yuku.alkitab.reminder.ACTION_REMINDER_SETTINGS"));
-		} catch (PackageManager.NameNotFoundException nnfe) {
-			try {
-				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + reminderPackage)));
-			} catch (ActivityNotFoundException anfe) {
-				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + reminderPackage)));
-			} catch (Exception e) {
-				displayError();
-			}
-		} catch (Exception e) {
-			displayError();
-		}
-	}
-
-	private void displayError() {
-		new AlertDialog.Builder(this)
-		.setMessage(R.string.dr_error_contact_reminder)
-		.setPositiveButton(R.string.ok, null)
-		.show();
 	}
 
 	void display() {
