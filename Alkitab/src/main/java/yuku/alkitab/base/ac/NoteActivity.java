@@ -196,7 +196,7 @@ public class NoteActivity extends BaseActivity {
 				if (marker != null || tCaption.length() > 0) {
 					new AlertDialog.Builder(this)
 						.setMessage(R.string.anda_yakin_mau_menghapus_catatan_ini)
-						.setPositiveButton(R.string.yes, (dialog, which) -> {
+						.setPositiveButton(R.string.delete, (dialog, which) -> {
 							if (marker != null) {
 								// really delete from db
 								S.getDb().deleteNonBookmarkMarkerById(marker._id);
