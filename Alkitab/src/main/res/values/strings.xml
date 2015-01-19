@@ -223,7 +223,7 @@
     <string name="sn_delete_all_songs">Delete all songs</string>
     <string name="sn_delete_all_songs_explanation">Delete all songs from local storage? This may save some space.</string>
     <string name="sn_delete_all_songs_result">Deletion completed. Songs deleted: %s</string>
-    <string name="sn_update_book_explanation">Update the book ^1 to the latest version.</string>
+    <string name="sn_update_book_explanation">Update the book ^1 to the latest version?</string>
     <string name="sn_update_book_confirm_button">Update</string>
     <string name="sn_update_book">Update song book</string>
 
