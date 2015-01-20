@@ -76,12 +76,10 @@
   <string name="ok">OK</string>
   <string name="tidak_bisa_membuat_folder">フォルダ %s が作成できません.</string>
   <string name="menuPengaturan">設定</string>
-  <string name="pilihKitab_s">聖書を選択する</string>
   <string name="menuTentang">このアプリについて</string>
   <string name="pengaturan_alkitab">聖書の設定</string>
   <string name="kelola_versi">聖書版の管理</string>
   <string name="tambah">追加</string>
-  <string name="versi_lainnya">その他の版...</string>
   <string name="ada_kegagalan_membuka_edisiid">%s が見つかりません</string>
   <string name="version_error_opening">%s が開けません.</string>
   <string name="pdb_file_options">PDBファイルのオプション</string>
@@ -327,8 +325,6 @@
   <string name="menu_compare">比較する</string>
   <string name="about_version_name">バージョン %s</string>
   <string name="song_player_error_description">聖歌 %1$d %2$d 再生中にエラーになりました</string>
-  <string name="search_in_version_short_name_placeholder">%s 内を検索</string>
-  <string name="search_syntax_tips"><i>検索のヒント:</i>\n\n<b>+ワード</b> そのワードに一致する箇所を表示\n<b>[q]lord god[q]</b> フレーズ全体に一致する箇所を表示</string>
   <string name="search_no_result"><b>^1</b>に一致する箇所がありません.</string>
   <string name="search_no_result_fallback">タップして <u>^1</u> に移動する.</string>
   <string name="marker_transfer_to_device_title">別のデバイスに転送</string>
@@ -361,7 +357,6 @@
   <string name="book_filter_new_general_epistles">一般の書簡</string>
   <string name="book_filter_new_apocalypse">黙示録</string>
   <string name="search_filter_multiple_books_selected">%s 書を選択中</string>
-  <string name="search_version_select_label">検索対象:</string>
   <string name="version_config_updater_error_download_modify_time">バージョンリストの確認に失敗しました。</string>
   <string name="version_config_updater_error_modify_time_failed">バージョンリストは利用できません: %s</string>
   <string name="version_config_updater_no_newer_available">版のアップデートはありません。</string>

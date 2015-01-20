@@ -76,13 +76,13 @@
   <string name="ok">ТАК</string>
   <string name="tidak_bisa_membuat_folder">Неможливо створити теку %s</string>
   <string name="menuPengaturan">Налаштування</string>
-  <string name="pilihKitab_s">Виберіть книгу</string>
   <string name="menuTentang">Про</string>
   <string name="pengaturan_alkitab">Налаштування Біблії</string>
   <string name="kelola_versi">Змінити версії</string>
   <string name="tambah">Додати</string>
-  <string name="versi_lainnya">Інші версії...</string>
+  <string name="versi_lainnya">Інші версії</string>
   <string name="ada_kegagalan_membuka_edisiid">Помилка відкриття %s</string>
+  <string name="version_error_opening">Помилка відкриття %s.</string>
   <string name="pdb_file_options">Опції PDB файлу</string>
   <string name="greek_charset">Грецький алфавіт</string>
   <string name="hebrew_charset">Іудейський алфавіт</string>
@@ -219,6 +219,9 @@
   <string name="sn_delete_all_songs">Видалити всі пісні</string>
   <string name="sn_delete_all_songs_explanation">Видалити всі пісні з внутрішньої пам\'яті? Це може звільнити місце на диску.</string>
   <string name="sn_delete_all_songs_result">Видалення завершене. Видалені пісні: %s</string>
+  <string name="sn_update_book_explanation">Оновіть книгу  ^1 до останньої версії.</string>
+  <string name="sn_update_book_confirm_button">Оновлення</string>
+  <string name="sn_update_book">Оновлення книги псалмів</string>
   <string name="desc_previous_day">Попередній день</string>
   <string name="desc_next_day">Наступний день</string>
   <string name="desc_open_bookmark">Відкрити закладки</string>
@@ -229,6 +232,7 @@
   <string name="desc_previous_chapter">Попередній розділ</string>
   <string name="desc_next_chapter">Наступний розділ</string>
   <string name="desc_drag_to_reorder_labels">Перетягніть, щоб змінити порядок позначок</string>
+  <string name="desc_drag_to_reorder_versions">Перетягніть, щоб змінити порядок версії</string>
   <string name="desc_close">Закрити</string>
   <string name="desc_play">Грати</string>
   <string name="desc_progress_1">Перші досягнення</string>
@@ -267,6 +271,7 @@
   <string name="pm_progress_name">Назва прогресу</string>
   <string name="pm_edit_name">Редагувати назву</string>
   <string name="pm_delete_progress">Видалити прогрес</string>
+  <string name="pm_activate_tutorial">Довше притримайте та перетягніть щоб розмістити прогрес у вірші.</string>
   <string name="pm_delete_progress_confirm">Видалити <b>^1</b>?</string>
   <string name="copy_share">Копіювати або поділитись</string>
   <string name="backup_last_time">Остання резервна копія: %s</string>
@@ -325,8 +330,8 @@
   <string name="menu_compare">Порівняти</string>
   <string name="about_version_name">Версія складання %s</string>
   <string name="song_player_error_description">Сталася помилка при відтворенні цієї пісні: %1$d, %2$d.</string>
-  <string name="search_in_version_short_name_placeholder">Шукати в %s</string>
-  <string name="search_syntax_tips"><i>Поради з пошуку:</i>\n\n<b>+слово</b> для цього точне слово\n<b>[q]Господь Бог[q]</b> для цього точна фраза</string>
+  <string name="search_in_version_short_name_placeholder">Знайти в %s</string>
+  <string name="search_syntax_tips"><i>Поради з пошуку:</i>\n\n<b>+слово</b> для цього точне слово\n<b>[q]місто Давидове[q]</b> для цього точна фраза</string>
   <string name="search_no_result">Не знайдено вірші які містять <b>^1</b>.</string>
   <string name="search_no_result_fallback">Натисніть тут для переходу до <u>^1</u>.</string>
   <string name="marker_transfer_to_device_title">Передати на інший пристрій</string>
@@ -334,7 +339,10 @@
   <string name="marker_transfer_to_computer_title">Передати для редагування</string>
   <string name="marker_transfer_to_computer_description">Зберегти закладки, нотатки, виділення або підкреслення в HTML файл для подальшого редагування або друку на вашому комп\'ютері.</string>
   <string name="bookmark_delete_confirmation">Видалити цю закладку?</string>
+  <string name="drawer_open">Відкрити записник</string>
+  <string name="drawer_close">Закрити записник</string>
   <string name="menuSplitVersion">Подвійний</string>
+  <string name="about_beta_feedback">Зворотній звязок бета версії</string>
   <string name="menuBible">Біблія</string>
   <string name="menuProgress">Прогрес</string>
   <string name="switch_off">ВИМКНУТИ</string>
@@ -355,6 +363,12 @@
   <string name="book_filter_new_general_epistles">Соборні послання</string>
   <string name="book_filter_new_apocalypse">Откровення</string>
   <string name="search_filter_multiple_books_selected">%s книг вибрано</string>
-  <string name="search_version_select_label">Пошук в:</string>
+  <string name="search_version_select_label">Шукати в:</string>
+  <string name="version_config_updater_error_download_modify_time">Помилка при перевірці списку версії.</string>
+  <string name="version_config_updater_error_modify_time_failed">Список версій недоступний: %s</string>
   <string name="version_config_cannot_write_updated_list">Не вдалося зберегти оновлений список.</string>
+  <string name="patch_text_menu_send">Надіслати</string>
+  <string name="note_actionbar_edit">Редагувати</string>
+  <string name="note_actionbar_delete">Видалити</string>
+  <string name="note_actionbar_ok">Зроблено</string>
 </resources>

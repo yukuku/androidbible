@@ -79,12 +79,10 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="ok">Labi</string>
   <string name="tidak_bisa_membuat_folder">Neizdodas izveidot mapi %s</string>
   <string name="menuPengaturan">Iestatījumi</string>
-  <string name="pilihKitab_s">Izvēlieties grāmatu</string>
   <string name="menuTentang">Par</string>
   <string name="pengaturan_alkitab">Bībeles iestatījumi</string>
   <string name="kelola_versi">Pārvaldīt versijas</string>
   <string name="tambah">Pievienot</string>
-  <string name="versi_lainnya">Citas versijas&#8230;</string>
   <string name="ada_kegagalan_membuka_edisiid">Kļūda atverot %s</string>
   <string name="version_error_opening">Kļūda atverot %s.</string>
   <string name="pdb_file_options">PDB faila iespējas</string>
@@ -330,8 +328,6 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="menu_compare">Salīdzināt</string>
   <string name="about_version_name">versija %s</string>
   <string name="song_player_error_description">Atskaņojot šo dziesmu ir radusies kļūda: %1$d, %2$d.</string>
-  <string name="search_in_version_short_name_placeholder">Meklēt iekš %s</string>
-  <string name="search_syntax_tips"><i>Meklēšanas padomi:</i>\n\n<b>+vārds</b> tieši priekš šī vārda\n<b>[q]kungs Dievs[q]</b> šai frāzei</string>
   <string name="search_no_result">Nav atrasti panti <b>^1</b>.</string>
   <string name="search_no_result_fallback">Lai ietu uz <u>^1</u>, uzsit šeit.</string>
   <string name="marker_transfer_to_device_title">Pārvietot uz citu ierīci</string>
@@ -363,7 +359,6 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="book_filter_new_general_epistles">Galvenās Vēstules</string>
   <string name="book_filter_new_apocalypse">Pasaules gals</string>
   <string name="search_filter_multiple_books_selected">Ir izvēlētas %s grāmatas</string>
-  <string name="search_version_select_label">Meklēt:</string>
   <string name="show_hidden_version_warning">Šī iespēja ļaus lejupielādēt Bībeles versijas, kas varētu būt saistīta ar zināmiem reģionāliem vai autortiesību prasībām. Pirms lejupielādēšanas, lūdzu, pārliecinieties, vai jums ir atļauts to darīt. Jūs esat pilnībā atbildīgs par lejupielādi un šādu versiju izmantošanu, un programmas izstādātājs par to neuzņemas atbildību. Spiediet OK, ja jūs piekrītat iepriekš minētajiem nosacījumiem.</string>
   <string name="version_config_updater_error_download_modify_time">Neizdevās pārbaudīt versiju sarakstu.</string>
   <string name="version_config_updater_error_modify_time_failed">Versiju saraksts nav pieejams: %s</string>

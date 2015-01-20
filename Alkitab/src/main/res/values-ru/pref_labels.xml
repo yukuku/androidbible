@@ -15,4 +15,5 @@
   <string name="pref_volumeButtonNavigation_title">Переход с помощью кнопок громкости</string>
   <string name="pref_copyWithVerseNumbers_title">Включать номера стихов</string>
   <string name="pref_copyWithVerseNumbers_summary">Указывать номер для каждого стиха при копировании/отсылке</string>
+  <string name="pref_showHiddenVersion_title">Разрешить версии, распространение которых может быть ограничено</string>
 </resources>

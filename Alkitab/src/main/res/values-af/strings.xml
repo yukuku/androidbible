@@ -76,12 +76,11 @@
   <string name="ok">OK</string>
   <string name="tidak_bisa_membuat_folder">Kon nie lêer skep %s</string>
   <string name="menuPengaturan">Instellings</string>
-  <string name="pilihKitab_s">Kies \'n Boek</string>
   <string name="menuTentang">Omtrent</string>
   <string name="pengaturan_alkitab">Bybel instellings</string>
   <string name="kelola_versi">Bestuur weergawes</string>
   <string name="tambah">Voeg by</string>
-  <string name="versi_lainnya">Alternatiewe weergawes</string>
+  <string name="versi_lainnya">Ander weergawes</string>
   <string name="ada_kegagalan_membuka_edisiid">Fout met oopmaak%s</string>
   <string name="version_error_opening">Fout met oopmaak%s.</string>
   <string name="pdb_file_options">VOB lêer opsies</string>
@@ -219,6 +218,9 @@
   <string name="sn_delete_all_songs">Vee musiek uit</string>
   <string name="sn_delete_all_songs_explanation">Vee alle liedere uit van lokale stoor?Mag plek bespaar.</string>
   <string name="sn_delete_all_songs_result">Uitvee klaar.Liedere uitgevee: %s</string>
+  <string name="sn_update_book_explanation">Dateer die boek ^1 op tot die nuutste weergawe.</string>
+  <string name="sn_update_book_confirm_button">Dateer op</string>
+  <string name="sn_update_book">Dateer gesange boek op</string>
   <string name="desc_previous_day">Vorige dag</string>
   <string name="desc_next_day">Volgende dag</string>
   <string name="desc_open_bookmark">Maak boekmerk oop</string>
@@ -327,8 +329,8 @@
   <string name="menu_compare">Vergelyk</string>
   <string name="about_version_name">weergawe %s</string>
   <string name="song_player_error_description">\'n Fout het ontstaan met die speel van die lied:%1$d, %2$d.</string>
-  <string name="search_in_version_short_name_placeholder">Soek in %s</string>
-  <string name="search_syntax_tips"><i>Soek wenke:</i>\n\n<b>+woord</b> vir die presiese woord\n<b>[q]Here God[q]</b> vir die presiese frase</string>
+  <string name="search_in_version_short_name_placeholder">Vind in %s</string>
+  <string name="search_syntax_tips"><i>Soek wenke:</i>\n\n<b>+woord</b> vir die presiese woord\n<b>[q]stad van Dawid[q]</b>vir die presiese frase</string>
   <string name="search_no_result">Geen verse gevind vir <b>^1</b>.</string>
   <string name="search_no_result_fallback">Tik hier om na <u>^1</u> te gaan.</string>
   <string name="marker_transfer_to_device_title">Stuur na ander toestel</string>
@@ -360,7 +362,7 @@
   <string name="book_filter_new_general_epistles">Algemene Sendbriewe</string>
   <string name="book_filter_new_apocalypse">Openbaring/Apokalips</string>
   <string name="search_filter_multiple_books_selected">%s boeke geselekteer</string>
-  <string name="search_version_select_label">Soek in:</string>
+  <string name="search_version_select_label">Vind in:</string>
   <string name="show_hidden_version_warning">Deur hierdie opsie te aktiveer laat jou toe om weergawes wat moontlik sekere beperkinge het in jou area/streek het af te laai. Voordat jy dit aflaai maak asseblief seker dat jy die nodige toestemming het. U is alleen verantwoordelik vir die aflaai en gebruik van sulke weergawes, en ek kan nie daarvoor verantwoordelik gehou word nie. Klik op OK indien jy saamstem met die voorafgaande.</string>
   <string name="version_config_updater_error_download_modify_time">Misluk om weergawe lys te merk.</string>
   <string name="version_config_updater_error_modify_time_failed">Weergawe lys is nie beskikbaar nie: %s</string>
@@ -396,6 +398,7 @@
   <string name="pref_screen_sync_settings_title">Synch instellings</string>
   <string name="sync_category_title_data_types">Data tipes</string>
   <string name="pref_syncSet_mabel_enabled_title">Merkers en etikette</string>
+  <string name="pref_syncSet_history_enabled_title">Onlangse verse</string>
   <string name="sync_menu_item_sync_now">Synch nou</string>
   <string name="sync_menu_item_sync_log">Sien log</string>
   <string name="sync_sync_set_pref_summary_last_synced">Laas gesinchroniseer %1$s, %2$s (r%3$s) </string>
@@ -440,4 +443,13 @@
   <string name="sync_login_form_change_password_success">Jou wagwoord het verander.</string>
   <string name="pref_textPadding_title">Marges rondom teks</string>
   <string name="pref_textPadding_summary">Maak teks inlyn smaller om lees te vergemaklik</string>
+  <string name="dr_app_name">Herinnering</string>
+  <string name="dr_notification_title">Daaglikse toewyding</string>
+  <string name="dr_notification_text">Lees vandag se toewyding nou.</string>
+  <string name="dr_off">Af</string>
+  <string name="dr_alarm">Alarm</string>
+  <string name="dr_sound">Klank</string>
+  <string name="dr_vibrate">Vibreer</string>
+  <string name="dr_pref_notification_message">Herinnering boodskap</string>
+  <string name="dr_default_sound">Verstek klank</string>
 </resources>

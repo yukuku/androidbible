@@ -76,12 +76,10 @@
   <string name="ok">OK</string>
   <string name="tidak_bisa_membuat_folder">Não foi possível criar a pasta %s</string>
   <string name="menuPengaturan">Configurações</string>
-  <string name="pilihKitab_s">Escolha um Livro</string>
   <string name="menuTentang">Sobre</string>
   <string name="pengaturan_alkitab">Configurações da Bíblia</string>
   <string name="kelola_versi">Gerenciar Versões</string>
   <string name="tambah">Adicionar</string>
-  <string name="versi_lainnya">Outras versões&#8230;</string>
   <string name="ada_kegagalan_membuka_edisiid">Erro ao abrir %s</string>
   <string name="version_error_opening">Erro ao abrir %s.</string>
   <string name="pdb_file_options">Opções de arquivo PDB</string>
@@ -327,8 +325,6 @@
   <string name="menu_compare">Comparar</string>
   <string name="about_version_name">versão %s</string>
   <string name="song_player_error_description">Ocorreu um erro ao reproduzir esta canção: %1$d, %2$d.</string>
-  <string name="search_in_version_short_name_placeholder">Pesquisar em %s</string>
-  <string name="search_syntax_tips"><i>Dicas de pesquisa:</i>\n\n<b>+palavra</b> para exatamente essa palavra\n<b>[q]senhor deus[q]</b> para exatamente essa frase</string>
   <string name="search_no_result">Nenhum versículo encontrado para <b>^1</b>.</string>
   <string name="search_no_result_fallback">Pressione aqui para ir para <u>^1</u>.</string>
   <string name="marker_transfer_to_device_title">Transferir para outro dispositivo</string>
@@ -360,7 +356,6 @@
   <string name="book_filter_new_general_epistles">Cartas Gerais</string>
   <string name="book_filter_new_apocalypse">Apocalipse</string>
   <string name="search_filter_multiple_books_selected">%s livros selecionados</string>
-  <string name="search_version_select_label">Buscar em:</string>
   <string name="version_config_updater_error_download_modify_time">Falha ao verificar a lista de versões.</string>
   <string name="version_config_updater_error_modify_time_failed">Lista de versões não disponível: %s</string>
   <string name="version_config_updater_no_newer_available">Atualizações de versão não encontradas.</string>
