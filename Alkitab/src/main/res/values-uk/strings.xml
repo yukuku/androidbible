@@ -173,7 +173,6 @@
   <string name="please_wait_titik3">Будь-ласка зачекайте...</string>
   <string name="juga_hapus_file_datanya_file">Також видалити файл даних %s\'? </string>
   <string name="get_more_fonts">Завантажити більше шрифтів...</string>
-  <string name="about_translators">Перекладачі</string>
   <string name="intent_filter_import_from_backup">Імпорт з резервної копії</string>
   <string name="redownload">Перезавантажити</string>
   <string name="read_faq_before_suggest">Будь ласка читайте вище FAQ перед відсиланням пропозиції або запитання. Продовжити надсилання пропозиції або запитання?</string>
@@ -328,7 +327,6 @@
   <string name="menuNightMode">Нічний режим</string>
   <string name="highlight_custom_color">Інші кольори</string>
   <string name="menu_compare">Порівняти</string>
-  <string name="about_version_name">Версія складання %s</string>
   <string name="song_player_error_description">Сталася помилка при відтворенні цієї пісні: %1$d, %2$d.</string>
   <string name="search_in_version_short_name_placeholder">Знайти в %s</string>
   <string name="search_syntax_tips"><i>Поради з пошуку:</i>\n\n<b>+слово</b> для цього точне слово\n<b>[q]місто Давидове[q]</b> для цього точна фраза</string>
@@ -342,7 +340,6 @@
   <string name="drawer_open">Відкрити записник</string>
   <string name="drawer_close">Закрити записник</string>
   <string name="menuSplitVersion">Подвійний</string>
-  <string name="about_beta_feedback">Зворотній звязок бета версії</string>
   <string name="menuBible">Біблія</string>
   <string name="menuProgress">Прогрес</string>
   <string name="switch_off">ВИМКНУТИ</string>
@@ -371,4 +368,6 @@
   <string name="note_actionbar_edit">Редагувати</string>
   <string name="note_actionbar_delete">Видалити</string>
   <string name="note_actionbar_ok">Зроблено</string>
+  <string name="about_translators">Перекладачі</string>
+  <string name="about_version_name">Версія складання %s</string>
 </resources>

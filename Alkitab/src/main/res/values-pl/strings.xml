@@ -173,7 +173,6 @@
   <string name="please_wait_titik3">Proszę czekać&#8230;</string>
   <string name="juga_hapus_file_datanya_file">Czy usunąć również plik \'%s\'?</string>
   <string name="get_more_fonts">Pobierz więcej czcionek&#8230;</string>
-  <string name="about_translators">Tłumacze</string>
   <string name="intent_filter_import_from_backup">Import z kopii</string>
   <string name="redownload">Pobierz ponownie</string>
   <string name="read_faq_before_suggest">Proszę, przeczytaj powyższe FAQ, nim wyślesz sugestię. Czy nadal chcesz wysłać sugestię?</string>
@@ -327,7 +326,6 @@
   <string name="menuNightMode">Tryb nocny</string>
   <string name="highlight_custom_color">Inne kolory</string>
   <string name="menu_compare">Porównaj</string>
-  <string name="about_version_name">przekład %s</string>
   <string name="song_player_error_description">Wystąpił błąd podczas odtwarzania pieśni: %1$d, %2$d.</string>
   <string name="search_in_version_short_name_placeholder">Znajdź w %s</string>
   <string name="search_syntax_tips"><i>Wskazówki szukania:</i>\n\n<b>+słowo</b> dla konkretnego słowa\n<b>[q]miasto dawida[q]</b> dla konkretnego wyrażenia</string>
@@ -341,7 +339,6 @@
   <string name="drawer_open">Otwórz szufladę</string>
   <string name="drawer_close">Zamknij szufladę</string>
   <string name="menuSplitVersion">Interlinia</string>
-  <string name="about_beta_feedback">Wiadomość zwrotna dla wersji beta</string>
   <string name="menuBible">Biblia</string>
   <string name="menuProgress">Postęp</string>
   <string name="switch_off">Wyłącz</string>
@@ -452,4 +449,6 @@
   <string name="dr_vibrate">Wibracje</string>
   <string name="dr_pref_notification_message">Wiadomość przypomnienia</string>
   <string name="dr_default_sound">Domyślny dźwięk</string>
+  <string name="about_translators">Tłumacze</string>
+  <string name="about_version_name">przekład %s</string>
 </resources>

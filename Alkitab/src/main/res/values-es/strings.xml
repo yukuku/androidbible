@@ -171,7 +171,6 @@
   <string name="please_wait_titik3">Por favor espere&#8230;</string>
   <string name="juga_hapus_file_datanya_file">¿También eliminar el archivo de datos\'%s\'?</string>
   <string name="get_more_fonts">Descargar más fuentes&#8230;</string>
-  <string name="about_translators">Traductores</string>
   <string name="intent_filter_import_from_backup">Importar desde respaldo</string>
   <string name="redownload">Re-descargar</string>
   <string name="read_faq_before_suggest">Por favor lea el FAQ anterior antes de enviar una sugerencia. ¿Continuar enviando sugerencia?</string>
@@ -321,7 +320,6 @@
   <string name="menuNightMode">Modo nocturno</string>
   <string name="highlight_custom_color">Otros colores</string>
   <string name="menu_compare">Comparar</string>
-  <string name="about_version_name">versión %s</string>
   <string name="song_player_error_description">Se encontró un error mientras se reproducía está canción: %1$d, %2$d.</string>
   <string name="search_no_result">No se encontró ningún versículo para <b>^1</b>.</string>
   <string name="search_no_result_fallback">Toque aquí para ir a <u>^1</u>.</string>
@@ -333,7 +331,6 @@
   <string name="drawer_open">Abrir gaveta</string>
   <string name="drawer_close">Cerrar gaveta</string>
   <string name="menuSplitVersion">Dividir</string>
-  <string name="about_beta_feedback">Comentarios de la versión beta</string>
   <string name="menuBible">Biblia</string>
   <string name="menuProgress">Progreso</string>
   <string name="switch_off">Apagado</string>
@@ -362,4 +359,6 @@
   <string name="version_config_updater_updated">¡Lista de versiones actualizada!</string>
   <string name="version_config_cannot_write_updated_list">Fallo al almacenar lista actualizada.</string>
   <string name="version_config_updater_error_modify_time_cannot_parse">Fallo al analizar el corrector de la lista de actualización de versiones.</string>
+  <string name="about_translators">Traductores</string>
+  <string name="about_version_name">versión %s</string>
 </resources>

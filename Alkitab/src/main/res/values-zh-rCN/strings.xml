@@ -173,7 +173,6 @@
   <string name="please_wait_titik3">请稍候&#8230;</string>
   <string name="juga_hapus_file_datanya_file">也删除资料档案\'%s\'？</string>
   <string name="get_more_fonts">下载更多的字体...</string>
-  <string name="about_translators">译者</string>
   <string name="intent_filter_import_from_backup">进口从备份</string>
   <string name="redownload">重新下载</string>
   <string name="read_faq_before_suggest">在提出建议前，请先阅读以上常见问题解答。继续提出建议？</string>
@@ -326,7 +325,6 @@
   <string name="menuNightMode">夜间模式</string>
   <string name="highlight_custom_color">其他颜色</string>
   <string name="menu_compare">比较</string>
-  <string name="about_version_name">版本 %s</string>
   <string name="song_player_error_description">播放歌曲%1$d, %2$d的时候遇到问题。</string>
   <string name="search_in_version_short_name_placeholder">在%s中搜寻</string>
   <string name="search_syntax_tips"><i>搜寻提示：</i>\n\n<b>+字词</b>以搜寻准确的单字\n<b>[q]大卫城[q]</b>以搜寻准确的语句</string>
@@ -340,7 +338,6 @@
   <string name="drawer_open">开启抽屉</string>
   <string name="drawer_close">关闭抽屉</string>
   <string name="menuSplitVersion">分隔</string>
-  <string name="about_beta_feedback">测试版回馈</string>
   <string name="menuBible">圣经</string>
   <string name="menuProgress">进度</string>
   <string name="switch_off">关闭</string>
@@ -442,4 +439,6 @@
   <string name="sync_login_form_change_password_success">你已成功更改密码。</string>
   <string name="pref_textPadding_title">文字四周的边缘</string>
   <string name="pref_textPadding_summary">缩窄同一行的文字距离以方便阅读</string>
+  <string name="about_translators">译者</string>
+  <string name="about_version_name">版本 %s</string>
 </resources>

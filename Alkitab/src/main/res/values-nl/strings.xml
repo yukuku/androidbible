@@ -171,7 +171,6 @@
   <string name="please_wait_titik3">Even geduld&#8230;</string>
   <string name="juga_hapus_file_datanya_file">Verwijder ook het databestand \'%s\'?</string>
   <string name="get_more_fonts">Download meer lettertypen&#8230;</string>
-  <string name="about_translators">Vertalers</string>
   <string name="intent_filter_import_from_backup">Importeer van reservekopie</string>
   <string name="redownload">Download opnieuw</string>
   <string name="read_faq_before_suggest">Lees alsjeblieft de FAQ voordat je een suggestie instuurt. Doorgaan met verzenden van een suggestie?</string>
@@ -312,7 +311,6 @@
   <string name="menuNightMode">Nachtmodus</string>
   <string name="highlight_custom_color">Andere kleuren</string>
   <string name="menu_compare">Vergelijken</string>
-  <string name="about_version_name">versie %s</string>
   <string name="song_player_error_description">Er is een fout opgetreden bij het afspelen van dit lied: %1$d, %2$d.</string>
   <string name="search_no_result">Geen verzen gevonden voor <b>^1</b>.</string>
   <string name="search_no_result_fallback">Klik hier om naar <u>^1</u> te gaan.</string>
@@ -334,4 +332,6 @@
   <string name="version_config_updater_updated">Versielijst geupdate!</string>
   <string name="version_config_cannot_write_updated_list">Fout bij opslaan bijgewerkte lijst.</string>
   <string name="version_config_updater_error_modify_time_cannot_parse">Fout bij controleren updates voor lijst met Bijbelversies.</string>
+  <string name="about_translators">Vertalers</string>
+  <string name="about_version_name">versie %s</string>
 </resources>

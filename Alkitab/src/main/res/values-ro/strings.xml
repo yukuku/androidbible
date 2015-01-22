@@ -173,7 +173,6 @@
   <string name="please_wait_titik3">Vă rugăm să aşteptaţi...</string>
   <string name="juga_hapus_file_datanya_file">Ştergeţi fișierul de date \'%s\'?</string>
   <string name="get_more_fonts">Descarca mai multe fonturi&#8230;</string>
-  <string name="about_translators">Traducători</string>
   <string name="intent_filter_import_from_backup">Importă din copia de rezervă</string>
   <string name="redownload">Descărcare nouă</string>
   <string name="read_faq_before_suggest">Vă rog să citiți FAQ înainte de a trimite o sugestie. Continuați cu trimiterea sugestiei?</string>
@@ -327,7 +326,6 @@
   <string name="menuNightMode">Mod nocturn</string>
   <string name="highlight_custom_color">Alte culori</string>
   <string name="menu_compare">Compară</string>
-  <string name="about_version_name">versiune %s</string>
   <string name="song_player_error_description">O eroare a fost întâlnită în timpul redării acestui cântec: %1$d, %2$d.</string>
   <string name="search_in_version_short_name_placeholder">Găseșe în %s</string>
   <string name="search_syntax_tips"><i>Sfaturi pentru căutare:</i>\n\n<b>+word</b> pentru cuvântul\n<b>[q]city of david[q]</b> pentru fraza</string>
@@ -341,7 +339,6 @@
   <string name="drawer_open">Deschide folder</string>
   <string name="drawer_close">Închide folder</string>
   <string name="menuSplitVersion">Împarte</string>
-  <string name="about_beta_feedback">Feedback-ul versiune Beta</string>
   <string name="menuBible">Biblia</string>
   <string name="menuProgress">Progres</string>
   <string name="switch_off">Oprit</string>
@@ -452,4 +449,6 @@
   <string name="dr_vibrate">Vibrează</string>
   <string name="dr_pref_notification_message">Mesaj memento</string>
   <string name="dr_default_sound">Sunet implicit</string>
+  <string name="about_translators">Traducători</string>
+  <string name="about_version_name">versiune %s</string>
 </resources>

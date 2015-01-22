@@ -172,7 +172,6 @@
   <string name="please_wait_titik3">Por favor, aguarde&#8230;</string>
   <string name="juga_hapus_file_datanya_file">Remover também o arquivo de dados \'%s\'?</string>
   <string name="get_more_fonts">Baixar mais fontes&#8230;</string>
-  <string name="about_translators">Tradutores</string>
   <string name="intent_filter_import_from_backup">Importar da cópia de segurança</string>
   <string name="redownload">Baixar novamente</string>
   <string name="read_faq_before_suggest">Por favor, leia o FAQ acima antes de enviar uma sugestão. Deseja continuar com o envio da sugestão?</string>
@@ -323,7 +322,6 @@
   <string name="menuNightMode">Modo noturno</string>
   <string name="highlight_custom_color">Outras cores</string>
   <string name="menu_compare">Comparar</string>
-  <string name="about_version_name">versão %s</string>
   <string name="song_player_error_description">Ocorreu um erro ao reproduzir esta canção: %1$d, %2$d.</string>
   <string name="search_no_result">Nenhum versículo encontrado para <b>^1</b>.</string>
   <string name="search_no_result_fallback">Pressione aqui para ir para <u>^1</u>.</string>
@@ -335,7 +333,6 @@
   <string name="drawer_open">Abrir gaveta</string>
   <string name="drawer_close">Fechar gaveta</string>
   <string name="menuSplitVersion">Dividir</string>
-  <string name="about_beta_feedback">Feedback da versão beta</string>
   <string name="menuBible">Bíblia</string>
   <string name="menuProgress">Progresso</string>
   <string name="switch_off">Desligar</string>
@@ -376,4 +373,6 @@
   <string name="sync_progress_login">Entrando&#8230;</string>
   <string name="sync_progress_processing">Processando&#8230;</string>
   <string name="sync_login_failed_with_reason">Falha no login. Por favor tente novamente mais tarde.\n\nRazão: %s</string>
+  <string name="about_translators">Tradutores</string>
+  <string name="about_version_name">versão %s</string>
 </resources>

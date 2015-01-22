@@ -172,7 +172,6 @@
   <string name="please_wait_titik3">お待ちください...</string>
   <string name="juga_hapus_file_datanya_file">聖書データファイル \'%s\' も削除しますか?</string>
   <string name="get_more_fonts">他のフォントをダウンロード...</string>
-  <string name="about_translators">翻訳者</string>
   <string name="intent_filter_import_from_backup">バックアップからインポート</string>
   <string name="redownload">再度ダウンロード</string>
   <string name="read_faq_before_suggest">提案をお寄せになる前に、FAQをぜひ読んでください. このまま提案をお寄せになりますか?</string>
@@ -323,7 +322,6 @@
   <string name="menuNightMode">夜間モード</string>
   <string name="highlight_custom_color">その他の色</string>
   <string name="menu_compare">比較する</string>
-  <string name="about_version_name">バージョン %s</string>
   <string name="song_player_error_description">聖歌 %1$d %2$d 再生中にエラーになりました</string>
   <string name="search_no_result"><b>^1</b>に一致する箇所がありません.</string>
   <string name="search_no_result_fallback">タップして <u>^1</u> に移動する.</string>
@@ -336,7 +334,6 @@
   <string name="drawer_open">引き出しを開ける</string>
   <string name="drawer_close">引き出しを閉める</string>
   <string name="menuSplitVersion">分割画面</string>
-  <string name="about_beta_feedback">ベータ版のフィードバック</string>
   <string name="menuBible">聖書</string>
   <string name="menuProgress">しおり</string>
   <string name="switch_off">OFF</string>
@@ -367,4 +364,6 @@
   <string name="version_config_updater_error_modify_time_cannot_parse">版のリストの更新確認に失敗しました。</string>
   <string name="version_download_add_from_local">ローカルストレージから</string>
   <string name="version_download_add_from_url">インターネットURLから</string>
+  <string name="about_translators">翻訳者</string>
+  <string name="about_version_name">バージョン %s</string>
 </resources>

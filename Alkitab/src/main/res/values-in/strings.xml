@@ -173,7 +173,6 @@
   <string name="please_wait_titik3">Harap tunggu&#8230;</string>
   <string name="juga_hapus_file_datanya_file">Juga hapus file datanya \'%s\'?</string>
   <string name="get_more_fonts">Dapatkan huruf lainnya&#8230;</string>
-  <string name="about_translators">Penerjemah</string>
   <string name="intent_filter_import_from_backup">Impor dari cadangan</string>
   <string name="redownload">Unduh ulang</string>
   <string name="read_faq_before_suggest">Harap membaca tanya jawab di atas sebelum mengirim saran. Tetap lanjut ke pengiriman saran?</string>
@@ -327,7 +326,6 @@
   <string name="menuNightMode">Mode gelap</string>
   <string name="highlight_custom_color">Warna lainnya</string>
   <string name="menu_compare">Bandingkan</string>
-  <string name="about_version_name">versi %s</string>
   <string name="song_player_error_description">Ada kesalahan ketika memainkan lagu ini: %1$d, %2$d.</string>
   <string name="search_in_version_short_name_placeholder">Temukan dalam %s</string>
   <string name="search_syntax_tips"><i>Tip pencarian:</i>\n\n<b>+kata</b> untuk kata itu sendiri\n<b>[q]kota daud[q]</b> untuk urutan kata persis seperti itu</string>
@@ -341,7 +339,6 @@
   <string name="drawer_open">Buka laci</string>
   <string name="drawer_close">Tutup laci</string>
   <string name="menuSplitVersion">Belah</string>
-  <string name="about_beta_feedback">Kotak masukan versi beta</string>
   <string name="menuBible">Alkitab</string>
   <string name="menuProgress">Jejak</string>
   <string name="switch_off">OFF</string>
@@ -452,4 +449,10 @@
   <string name="dr_vibrate">Getar</string>
   <string name="dr_pref_notification_message">Pesan pengingat</string>
   <string name="dr_default_sound">Suara default</string>
+  <string name="about_translators">Penerjemah</string>
+  <string name="about_user_guide">Petunjuk Pemakaian</string>
+  <string name="about_beta_feedback">Kotak Saran Versi Beta</string>
+  <string name="about_version_name">versi %s</string>
+  <string name="about_material_sources">Sumber Bahan</string>
+  <string name="about_credits">Kredit / Terima Kasih</string>
 </resources>

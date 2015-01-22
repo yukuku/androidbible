@@ -171,7 +171,6 @@
   <string name="please_wait_titik3">Patientez&#8230;</string>
   <string name="juga_hapus_file_datanya_file">Supprimer aussi le fichier de données \'%s\' ?</string>
   <string name="get_more_fonts">Télécharger plus de fontes&#8230;</string>
-  <string name="about_translators">Traducteurs</string>
   <string name="intent_filter_import_from_backup">Récupérer depuis une sauvegarde</string>
   <string name="redownload">Télécharger à nouveau</string>
   <string name="read_faq_before_suggest">Merci de lire la FAQ ci-dessus avant d\'envoyer une suggestion. Poursuivre l\'envoi d\'une suggestion ?</string>
@@ -321,7 +320,6 @@
   <string name="menuNightMode">Mode nuit</string>
   <string name="highlight_custom_color">Autres couleurs</string>
   <string name="menu_compare">Comparer</string>
-  <string name="about_version_name">version %s</string>
   <string name="song_player_error_description">Erreur lors de l\'écoute de ce chant : %1$d, %2$d.</string>
   <string name="search_no_result">Aucun verset trouvé pour <b>^1</b>.</string>
   <string name="search_no_result_fallback">Cliquer ici pour aller à  <u>^1</u>.</string>
@@ -333,7 +331,6 @@
   <string name="drawer_open">Ouvrir le dessinateur</string>
   <string name="drawer_close">Fermer le dessinateur</string>
   <string name="menuSplitVersion">Scinder</string>
-  <string name="about_beta_feedback">Remontées d\'informations sur la version Beta</string>
   <string name="menuBible">Bible</string>
   <string name="menuProgress">Progrès</string>
   <string name="switch_off">Eteindre</string>
@@ -362,4 +359,6 @@
   <string name="version_config_updater_updated">Liste des versions mise à jour !</string>
   <string name="version_config_cannot_write_updated_list">Impossible de classer la liste des versions.</string>
   <string name="version_config_updater_error_modify_time_cannot_parse">L\'analyse de la vérification de la liste des versions a échoué.</string>
+  <string name="about_translators">Traducteurs</string>
+  <string name="about_version_name">version %s</string>
 </resources>

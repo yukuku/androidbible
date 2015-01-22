@@ -175,7 +175,6 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="please_wait_titik3">Lūdzu uzgaidiet&#8230;</string>
   <string name="juga_hapus_file_datanya_file">Vai dzēst arī datu failu \'%s\'?</string>
   <string name="get_more_fonts">Lejupielādēt vairāk fontus&#8230;</string>
-  <string name="about_translators">Tulkotāji</string>
   <string name="intent_filter_import_from_backup">Importēt no arhīva</string>
   <string name="redownload">Vēlreiz lejupielādēt</string>
   <string name="read_faq_before_suggest">Pirms sūtat ieteikumu, lūdzu, izlasiet augstāk redzamos FAQ (biežāk uzdotos jautājumus). Vai sūtīt ieteikumu?</string>
@@ -326,7 +325,6 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="menuNightMode">Nakts režīms</string>
   <string name="highlight_custom_color">Citas krāsas</string>
   <string name="menu_compare">Salīdzināt</string>
-  <string name="about_version_name">versija %s</string>
   <string name="song_player_error_description">Atskaņojot šo dziesmu ir radusies kļūda: %1$d, %2$d.</string>
   <string name="search_no_result">Nav atrasti panti <b>^1</b>.</string>
   <string name="search_no_result_fallback">Lai ietu uz <u>^1</u>, uzsit šeit.</string>
@@ -338,7 +336,6 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="drawer_open">Atvērt atvilktni</string>
   <string name="drawer_close">Aizvērt atvilktni</string>
   <string name="menuSplitVersion">Sadalīt</string>
-  <string name="about_beta_feedback">Beta versijas atgriezeniskā saite</string>
   <string name="menuBible">Bībele</string>
   <string name="menuProgress">Progress</string>
   <string name="switch_off">IZSLĒGT</string>
@@ -438,4 +435,6 @@ Esošās rezerves kopijas tiks pārrakstītas.</string>
   <string name="sync_login_form_change_password_success">Jūsu parole ir nomainīta.</string>
   <string name="pref_textPadding_title">Atstarpes apkārt tekstam</string>
   <string name="pref_textPadding_summary">Padara rindstarpas šaurākā lai atvieglotu lasīšanu</string>
+  <string name="about_translators">Tulkotāji</string>
+  <string name="about_version_name">versija %s</string>
 </resources>

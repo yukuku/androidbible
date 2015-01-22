@@ -173,7 +173,6 @@
   <string name="please_wait_titik3">Wag asseblief</string>
   <string name="juga_hapus_file_datanya_file">Vee data leêr ook uit \'%s\'?</string>
   <string name="get_more_fonts">Laai meer lettertipes af</string>
-  <string name="about_translators">Vertalers</string>
   <string name="intent_filter_import_from_backup">Voer in vanaf rugsteun</string>
   <string name="redownload">Heraflaai</string>
   <string name="read_faq_before_suggest">Lees asb FAQ alvorens U \'n voorstel instuur. Gaan aan met voorstel?</string>
@@ -327,7 +326,6 @@
   <string name="menuNightMode">Nag modus</string>
   <string name="highlight_custom_color">Ander Kleure</string>
   <string name="menu_compare">Vergelyk</string>
-  <string name="about_version_name">weergawe %s</string>
   <string name="song_player_error_description">\'n Fout het ontstaan met die speel van die lied:%1$d, %2$d.</string>
   <string name="search_in_version_short_name_placeholder">Vind in %s</string>
   <string name="search_syntax_tips"><i>Soek wenke:</i>\n\n<b>+woord</b> vir die presiese woord\n<b>[q]stad van Dawid[q]</b>vir die presiese frase</string>
@@ -341,7 +339,6 @@
   <string name="drawer_open">Maak laai oop</string>
   <string name="drawer_close">Maak laai toe</string>
   <string name="menuSplitVersion">Verdeel</string>
-  <string name="about_beta_feedback">Beta weergawe terugvoer</string>
   <string name="menuBible">Bybel</string>
   <string name="menuProgress">Vordering</string>
   <string name="switch_off">Af</string>
@@ -452,4 +449,6 @@
   <string name="dr_vibrate">Vibreer</string>
   <string name="dr_pref_notification_message">Herinnering boodskap</string>
   <string name="dr_default_sound">Verstek klank</string>
+  <string name="about_translators">Vertalers</string>
+  <string name="about_version_name">weergawe %s</string>
 </resources>

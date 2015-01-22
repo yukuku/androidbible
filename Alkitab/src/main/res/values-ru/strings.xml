@@ -173,7 +173,6 @@
   <string name="please_wait_titik3">Подождите, пожалуйста&#8230;</string>
   <string name="juga_hapus_file_datanya_file">Удалить также файл данных \'%s\'?</string>
   <string name="get_more_fonts">Загрузить дополнительные шрифты&#8230;</string>
-  <string name="about_translators">Переводчики</string>
   <string name="intent_filter_import_from_backup">Импорт из резервной копии</string>
   <string name="redownload">Загрузить повторно</string>
   <string name="read_faq_before_suggest">Пожалуйста, прочитайте часто задаваемые вопросы (выше) перед отсылкой предложения. Отослать предложение сейчас?</string>
@@ -326,7 +325,6 @@
   <string name="menuNightMode">Ночной режим</string>
   <string name="highlight_custom_color">Другие цвета</string>
   <string name="menu_compare">Сравнить</string>
-  <string name="about_version_name">версия %s</string>
   <string name="song_player_error_description">Произошла ошибка при воспроизведении этой песни : %1$d, %2$d.</string>
   <string name="search_in_version_short_name_placeholder">Найти в файлах %s</string>
   <string name="search_syntax_tips"><i>Подсказки по поиску:</i>\n\n<b>+слово</b> для поиска в точности этого слова\n<b>[q]город Давида[q]</b> для поиска в точности этой фразы</string>
@@ -340,7 +338,6 @@
   <string name="drawer_open">Открыть ящик</string>
   <string name="drawer_close">Закрыть ящик</string>
   <string name="menuSplitVersion">Разделить</string>
-  <string name="about_beta_feedback">Отзывы о бета-версии</string>
   <string name="menuBible">Библия</string>
   <string name="menuProgress">Продвижение</string>
   <string name="switch_off">ВЫКЛ</string>
@@ -442,4 +439,6 @@
   <string name="sync_login_form_change_password_success">Ваш пароль был изменен.</string>
   <string name="pref_textPadding_title">Границы вокруг текста</string>
   <string name="pref_textPadding_summary">Сделать текст в строке уже для более удобного чтения</string>
+  <string name="about_translators">Переводчики</string>
+  <string name="about_version_name">версия %s</string>
 </resources>

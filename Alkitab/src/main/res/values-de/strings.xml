@@ -173,7 +173,6 @@
   <string name="please_wait_titik3">Bitte warten&#8230;</string>
   <string name="juga_hapus_file_datanya_file">Soll auch die Datendatei \'%s\' gelöscht werden?</string>
   <string name="get_more_fonts">Weitere Schriftarten herunterladen&#8230;</string>
-  <string name="about_translators">Übersetzer</string>
   <string name="intent_filter_import_from_backup">Aus Sicherung importieren</string>
   <string name="redownload">Erneut herunterladen</string>
   <string name="read_faq_before_suggest">Lesen Sie zuerst die häufig gestellten Fragen, bevor Sie einen Vorschlag senden. Mit dem Senden eines Vorschlag fortfahren?</string>
@@ -327,7 +326,6 @@
   <string name="menuNightMode">Nachtmodus</string>
   <string name="highlight_custom_color">Weitere Farben</string>
   <string name="menu_compare">Vergleichen</string>
-  <string name="about_version_name">Version %s</string>
   <string name="song_player_error_description">Beim Abspielen dieses Liedes ist ein Fehler aufgetreten: %1$d, %2$d.</string>
   <string name="search_in_version_short_name_placeholder">In %s suchen</string>
   <string name="search_syntax_tips"><i>Hinweise für die Suche:</i>\n\n<b>+wort</b> für genau dieses Wort\n<b>[q]Stadt Davids[q]</b> für genau diesen Ausdruck</string>
@@ -341,7 +339,6 @@
   <string name="drawer_open">Seitenmenü öffnen</string>
   <string name="drawer_close">Seitenmenü schließen</string>
   <string name="menuSplitVersion">Geteilte Ansicht</string>
-  <string name="about_beta_feedback">Feedback zur Betaversion</string>
   <string name="menuBible">Bibel</string>
   <string name="menuProgress">Lesefortschritt</string>
   <string name="switch_off">AUS</string>
@@ -452,4 +449,6 @@
   <string name="dr_vibrate">Vibrieren</string>
   <string name="dr_pref_notification_message">Erinnerungsmeldung</string>
   <string name="dr_default_sound">Standardton</string>
+  <string name="about_translators">Übersetzer</string>
+  <string name="about_version_name">Version %s</string>
 </resources>
