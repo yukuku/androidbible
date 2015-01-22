@@ -219,6 +219,7 @@
 		</activity>
         <activity
             android:name="yuku.alkitab.base.ac.HelpActivity"
+			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
             android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
         <activity
             android:name="yuku.alkitab.base.ac.AboutActivity"
