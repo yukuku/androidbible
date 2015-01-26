@@ -15,4 +15,5 @@
   <string name="pref_volumeButtonNavigation_title">Navigation mit Lautstärkewippe</string>
   <string name="pref_copyWithVerseNumbers_title">Füge Versnummern hinzu</string>
   <string name="pref_copyWithVerseNumbers_summary">Setze beim Kopieren/Teilen vor jeden Vers die Versnummer</string>
+  <string name="pref_showHiddenVersion_title">Bibelübersetzungen mit Copyright aktivieren</string>
 </resources>

@@ -172,7 +172,6 @@
     <string name="please_wait_titik3">Please wait…</string>
     <string name="juga_hapus_file_datanya_file">Also delete the data file \'%s\'?</string>
     <string name="get_more_fonts">Download more fonts…</string>
-    <string name="about_translators">Translators</string>
     <string name="intent_filter_import_from_backup">Import from backup</string>
     <string name="redownload">Redownload</string>
     <string name="read_faq_before_suggest">Please read the above FAQ before sending a suggestion. Continue with sending a suggestion?</string>
@@ -344,7 +343,6 @@
     <string name="menuNightMode">Night mode</string>
     <string name="highlight_custom_color">Other colors</string>
     <string name="menu_compare">Compare</string>
-    <string name="about_version_name">version %s</string>
     <string name="song_player_error_description">An error was encountered when playing this song: %1$d, %2$d.</string>
 
     <string name="search_in_version_short_name_placeholder">Find in %s</string>
@@ -361,7 +359,6 @@
     <string name="drawer_open">Open drawer</string>
     <string name="drawer_close">Close drawer</string>
     <string name="menuSplitVersion">Split</string>
-    <string name="about_beta_feedback">Beta version feedback</string>
     <string name="menuBible">Bible</string>
     <string name="menuProgress">Progress</string>
     <string name="switch_off">OFF</string>
@@ -370,7 +367,6 @@
     <string name="menuPlay">Play</string>
     <string name="menuPause">Pause</string>
 
-    <string name="about_text_desc" translatable="false">100% free Bible app, licensed under Apache License 2.0\n<a href="http://www.bibleforandroid.com/guide?utm_source=app&amp;utm_medium=button&amp;utm_campaign=about">www.bibleforandroid.com</a></string>
     <string name="book_filter_old_testament">Old Testament</string>
     <string name="book_filter_old_pentateuch">Pentateuch</string>
     <string name="book_filter_old_history">History</string>
@@ -484,5 +480,14 @@
 	<string name="dr_vibrate">Vibrate</string>
 	<string name="dr_pref_notification_message">Reminder message</string>
 	<string name="dr_default_sound">Default sound</string>
+
+	<!-- about -->
+	<string name="about_text_desc" translatable="false">100% free Bible app, licensed under Apache License 2.0\n<a href="http://www.bibleforandroid.com/guide?utm_source=app&amp;utm_medium=button&amp;utm_campaign=about">www.bibleforandroid.com</a></string>
+	<string name="about_translators">Translators</string>
+	<string name="about_user_guide">User\'s Guide</string>
+	<string name="about_beta_feedback">Beta Version Feedback</string>
+	<string name="about_version_name">version %s</string>
+	<string name="about_material_sources">Material Sources</string>
+	<string name="about_credits">Credits</string>
 
 </resources>
