@@ -128,9 +128,8 @@
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
 		android:layout_weight="1"
-		android:columnWidth="@dimen/goto_grid_cell_width"
 		android:listSelector="@drawable/goto_grid_selector"
-		android:numColumns="auto_fit"
+		android:numColumns="6"
 		tools:listitem="@android:layout/simple_list_item_1" />
 
 	<LinearLayout

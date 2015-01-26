@@ -14,6 +14,8 @@ MAIN_PROJECT_NAME=Alkitab
 THIS_SCRIPT_FILE=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)/`basename "${BASH_SOURCE[0]}"`
 THIS_SCRIPT_DIR=`dirname $THIS_SCRIPT_FILE`
 
+set -e  # Exit the script as soon as one of the commands failed
+
 if [ "$ALKITAB_PROPRIETARY_DIR" == "" ] ; then
 	echo 'ALKITAB_PROPRIETARY_DIR not defined'
 	exit 1
@@ -133,19 +135,22 @@ pushd $BUILD_DIR/$SUPER_PROJECT_NAME
 		echo 'Replacing applicationId in build.gradle...'
 		sed -i '' "s/applicationId .*/applicationId '$BUILD_PACKAGE_NAME'/" ../../build.gradle
 
-		echo 'Replacing verse provider name to the official one "yuku.alkitab.provider"'
-		sed -i '' 's/android:authorities="yuku.alkitab.provider.debug"/android:authorities="yuku.alkitab.provider"/' AndroidManifest.xml
+		echo "Replacing verse provider name following package name: '$BUILD_PACKAGE_NAME.provider'"
+		sed -i '' 's/android:authorities="yuku.alkitab.provider.debug"/android:authorities="'$BUILD_PACKAGE_NAME.provider'"/' AndroidManifest.xml
 
 		echo 'Replacing GCM component names to this app package name:' $BUILD_PACKAGE_NAME
 		sed -i '' 's/<category android:name="yuku.alkitab.debug"/<category android:name="'$BUILD_PACKAGE_NAME'"/' AndroidManifest.xml
 		sed -i '' 's/yuku.alkitab.debug.permission.C2D_MESSAGE/'$BUILD_PACKAGE_NAME'.permission.C2D_MESSAGE/' AndroidManifest.xml
 
 		if [ ! -f res/values/file_providers.xml ] ; then echo 'file_providers.xml does not exist!' ; exit 1 ; fi
-		echo 'Replacing file provider name to the official one "yuku.alkitab.file_provider"'
-		sed -i '' 's/yuku.alkitab.file_provider.debug/yuku.alkitab.file_provider/' res/values/file_providers.xml
+		echo "Replacing file provider name following package name: '$BUILD_PACKAGE_NAME.file_provider'"
+		sed -i '' 's/yuku.alkitab.file_provider.debug/'$BUILD_PACKAGE_NAME'.file_provider/' res/values/file_providers.xml
 
-		echo 'Replacing sync provider name to the official one "yuku.alkitab.sync_provider"'
-		sed -i '' 's/yuku.alkitab.sync_provider.debug/yuku.alkitab.sync_provider/' res/values/sync_providers.xml
+		echo "Replacing sync provider name following package name: '$BUILD_PACKAGE_NAME.sync_provider'"
+		sed -i '' 's/yuku.alkitab.sync_provider.debug/'$BUILD_PACKAGE_NAME'.sync_provider/' res/values/sync_providers.xml
+
+		echo "Replacing account type / authority name following package name: '$BUILD_PACKAGE_NAME'"
+		sed -i '' 's/yuku.alkitab.debug/'$BUILD_PACKAGE_NAME'/' res/values/account_type.xml
 
 		echo 'Removing dummy version on assets/internal...'
 		rm -rf assets/internal

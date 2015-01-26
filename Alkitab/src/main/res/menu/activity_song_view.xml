@@ -10,26 +10,30 @@
 		android:title="@string/menuPlay" />
 
 	<item
-		android:id="@+id/menuCopyShare"
-		android:icon="@drawable/ic_menu_copyshare"
-		app:showAsAction="always"
-		android:title="@string/copy_share">
-		<menu>
-			<item
-				android:id="@+id/menuCopy"
-				android:icon="@drawable/ic_menu_copy"
-				android:title="@string/sn_menu_copy" />
-			<item
-				android:id="@+id/menuShare"
-				android:icon="@drawable/ic_menu_share"
-				android:title="@string/menuShare" />
-		</menu>
-	</item>
-
-	<item
 		android:id="@+id/menuSearch"
 		android:icon="@drawable/ic_menu_search"
 		app:showAsAction="always"
 		android:title="@string/search" />
+
+    <item
+        android:id="@+id/menuCopy"
+        android:icon="@drawable/ic_menu_copy"
+        android:title="@string/sn_menu_copy"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/menuShare"
+        android:icon="@drawable/ic_menu_share"
+        android:title="@string/menuShare"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menuUpdateBook"
+        android:title="@string/sn_update_book"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menuDeleteAll"
+        android:title="@string/sn_delete_all_songs"
+        app:showAsAction="never" />
 
 </menu>

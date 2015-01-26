@@ -40,7 +40,7 @@ public class HelpActivity extends BaseActivity {
 	}
 
 	@Override protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreateWithNonToolbarUpButton(savedInstanceState);
 		setContentView(R.layout.activity_help);
 
 		webview = V.get(this, R.id.webView);
@@ -137,9 +137,5 @@ public class HelpActivity extends BaseActivity {
 		}
 	};
 
-	View.OnClickListener bCancel_click = new View.OnClickListener() {
-		@Override public void onClick(View v) {
-			finish();
-		}
-	};
+	View.OnClickListener bCancel_click = v -> finish();
 }

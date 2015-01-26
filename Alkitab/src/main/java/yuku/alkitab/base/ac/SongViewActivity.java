@@ -2,6 +2,7 @@ package yuku.alkitab.base.ac;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
@@ -22,7 +23,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.webkit.WebView;
@@ -82,6 +82,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	TwofingerLinearLayout song_container;
 	ViewGroup no_song_data_container;
 	View bDownload;
+	View circular_progress;
 
 	ActionBar actionBar;
 
@@ -144,12 +145,8 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 
 		mediaState.loading = (state == MediaPlayerController.ControllerState.preparing);
 
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				invalidateOptionsMenu();
-			}
-		});
+		//noinspection Convert2MethodRef
+		runOnUiThread(() -> invalidateOptionsMenu());
 	}
 
 	void goTo(final int dir) {
@@ -248,35 +245,29 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				if (isMidiFile) {
 					final Handler handler = new Handler();
 
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							try {
-								setState(ControllerState.preparing);
+					new Thread(() -> {
+						try {
+							setState(ControllerState.preparing);
 
-								final byte[] bytes = App.downloadBytes(url);
+							final byte[] bytes = App.downloadBytes(url);
 
-								final File cacheFile = new File(App.context.getCacheDir(), "song_player_local_cache.mid");
-								final OutputStream output = new FileOutputStream(cacheFile);
-								output.write(bytes);
-								output.close();
+							final File cacheFile = new File(App.context.getCacheDir(), "song_player_local_cache.mid");
+							final OutputStream output = new FileOutputStream(cacheFile);
+							output.write(bytes);
+							output.close();
 
-								// this is a background thread. We must go back to main thread, and check again if state is OK to prepare.
-								handler.post(new Runnable() {
-									@Override
-									public void run() {
-										if (state == ControllerState.preparing) {
-											// the following should be synchronous, since we are loading from local.
-											mediaPlayerPrepare(true, cacheFile.getAbsolutePath());
-										} else {
-											Log.d(TAG, "wrong state after downloading song file: " + state);
-										}
-									}
-								});
-							} catch (IOException e) {
-								Log.e(TAG, "buffering to local cache", e);
-								setState(ControllerState.error);
-							}
+							// this is a background thread. We must go back to main thread, and check again if state is OK to prepare.
+							handler.post(() -> {
+								if (state == ControllerState.preparing) {
+									// the following should be synchronous, since we are loading from local.
+									mediaPlayerPrepare(true, cacheFile.getAbsolutePath());
+								} else {
+									Log.d(TAG, "wrong state after downloading song file: " + state);
+								}
+							});
+						} catch (IOException e) {
+							Log.e(TAG, "buffering to local cache", e);
+							setState(ControllerState.error);
 						}
 					}).start();
 				} else {
@@ -302,43 +293,34 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 			try {
 				setState(ControllerState.preparing);
 
-				mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-					@Override
-					public void onPrepared(final MediaPlayer mp) {
-						// only start playing if the current state is preparing, i.e., not error or reset.
-						if (state == ControllerState.preparing) {
-							mp.start();
-							setState(ControllerState.playing);
-						}
+				mp.setOnPreparedListener(player -> {
+					// only start playing if the current state is preparing, i.e., not error or reset.
+					if (state == ControllerState.preparing) {
+						player.start();
+						setState(ControllerState.playing);
 					}
 				});
-				mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-					@Override
-					public void onCompletion(final MediaPlayer mp) {
-						mp.reset();
-						setState(ControllerState.complete);
-					}
+				mp.setOnCompletionListener(player -> {
+					player.reset();
+					setState(ControllerState.complete);
 				});
-				mp.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-					@Override
-					public boolean onError(final MediaPlayer mp, final int what, final int extra) {
-						Log.e(TAG, "@@onError controller_state=" + state + " what=" + what + " extra=" + extra);
+				mp.setOnErrorListener((mp1, what, extra) -> {
+					Log.e(TAG, "@@onError controller_state=" + state + " what=" + what + " extra=" + extra);
 
-						if (state != ControllerState.reset) { // Errors can happen if we call MediaPlayer#reset when MediaPlayer state is Preparing. In this case, do not show error message.
-							final Activity activity = activityRef.get();
-							if (activity != null) {
-								if (!activity.isFinishing()) {
-									new AlertDialog.Builder(activity)
-										.setMessage(activity.getString(R.string.song_player_error_description, what, extra))
-										.setPositiveButton(R.string.ok, null)
-										.show();
-								}
+					if (state != ControllerState.reset) { // Errors can happen if we call MediaPlayer#reset when MediaPlayer state is Preparing. In this case, do not show error message.
+						final Activity activity = activityRef.get();
+						if (activity != null) {
+							if (!activity.isFinishing()) {
+								new AlertDialog.Builder(activity)
+									.setMessage(activity.getString(R.string.song_player_error_description, what, extra))
+									.setPositiveButton(R.string.ok, null)
+									.show();
 							}
 						}
-
-						setState(ControllerState.error);
-						return false; // let OnCompletionListener be called.
 					}
+
+					setState(ControllerState.error);
+					return false; // let OnCompletionListener be called.
 				});
 
 				if (isLocalPath) {
@@ -372,9 +354,12 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 	@Override protected void onCreate(Bundle savedInstanceState) {
 		supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
-		setSupportProgressBarIndeterminate(true);
-		setSupportProgressBarIndeterminateVisibility(false);
 		setContentView(R.layout.activity_song_view);
+
+		circular_progress = V.get(this, R.id.progress_circular);
+
+		setSupportProgressBarIndeterminate(true);
+		setCustomProgressBarIndeterminateVisible(false);
 
 		setTitle(R.string.sn_songs_activity_title);
 
@@ -405,7 +390,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
 
-		bDownload.setOnClickListener(bDownload_click);
+		bDownload.setOnClickListener(v -> SongBookUtil.getSongBookDialog(this, SongBookUtil.getSongBookOnDialogClickListener(this::songBookSelected)).show());
 	}
 
 	@Override
@@ -474,72 +459,70 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		final String checkedBookName = currentBookName;
 		final String checkedCode = currentSong.code;
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					final String filename = getAudioFilename(checkedBookName, checkedCode);
-					final String response = App.downloadString("https://alkitab-host.appspot.com/addon/audio/exists?filename=" + Uri.encode(filename));
-					if (response.startsWith("OK")) {
-						// make sure this is the correct one due to possible race condition
-						if (U.equals(currentBookName, checkedBookName) && currentSong != null && U.equals(currentSong.code, checkedCode)) {
-							runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									if (mediaPlayerController.canHaveNewUrl()) {
-										final String baseUrl;
-										if (Build.VERSION.SDK_INT >= 14) {
-											baseUrl = "https://alkitab-host.appspot.com/addon/audio/";
-										} else {
-											baseUrl = "http://alkitab-host.appspot.com/addon/audio/"; // no streaming https support in old Android
-										}
-										final String url = baseUrl + getAudioFilename(currentBookName, currentSong.code);
-										if (response.contains("extension=mp3")) {
-											mediaPlayerController.mediaKnownToExist(url, false);
-										} else {
-											mediaPlayerController.mediaKnownToExist(url, true);
-										}
-									} else {
-										Log.d(TAG, "mediaPlayerController can't have new URL at this moment.");
-									}
+		new Thread(() -> {
+			try {
+				final String filename = getAudioFilename(checkedBookName, checkedCode);
+				final String response = App.downloadString("https://alkitab-host.appspot.com/addon/audio/exists?filename=" + Uri.encode(filename));
+				if (response.startsWith("OK")) {
+					// make sure this is the correct one due to possible race condition
+					if (U.equals(currentBookName, checkedBookName) && currentSong != null && U.equals(currentSong.code, checkedCode)) {
+						runOnUiThread(() -> {
+							if (mediaPlayerController.canHaveNewUrl()) {
+								final String baseUrl;
+								if (Build.VERSION.SDK_INT >= 14) {
+									baseUrl = "https://alkitab-host.appspot.com/addon/audio/";
+								} else {
+									baseUrl = "http://alkitab-host.appspot.com/addon/audio/"; // no streaming https support in old Android
 								}
-							});
-						}
-					} else {
-						Log.d(TAG, "@@checkAudioExistance response: " + response);
+								final String url = baseUrl + getAudioFilename(currentBookName, currentSong.code);
+								if (response.contains("extension=mp3")) {
+									mediaPlayerController.mediaKnownToExist(url, false);
+								} else {
+									mediaPlayerController.mediaKnownToExist(url, true);
+								}
+							} else {
+								Log.d(TAG, "mediaPlayerController can't have new URL at this moment.");
+							}
+						});
 					}
-				} catch (IOException e) {
-					Log.e(TAG, "@@checkAudioExistance", e);
+				} else {
+					Log.d(TAG, "@@checkAudioExistance response: " + response);
 				}
+			} catch (IOException e) {
+				Log.e(TAG, "@@checkAudioExistance", e);
 			}
 		}).start();
 	}
 
-	void buildMenu(Menu menu) {
-		menu.clear();
+	@Override public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_song_view, menu);
-
+		return true;
+	}
+	
+	@Override public boolean onPrepareOptionsMenu(Menu menu) {
 		final MenuItem menuMediaControl = menu.findItem(R.id.menuMediaControl);
 		menuMediaControl.setEnabled(mediaState.enabled);
 		if (mediaState.icon != 0) menuMediaControl.setIcon(mediaState.icon);
 		if (mediaState.label != 0) menuMediaControl.setTitle(mediaState.label);
 		if (mediaState.loading) {
-			setSupportProgressBarIndeterminateVisibility(true);
+			setCustomProgressBarIndeterminateVisible(true);
 			menuMediaControl.setVisible(false);
 		} else {
-			setSupportProgressBarIndeterminateVisibility(false);
+			setCustomProgressBarIndeterminateVisible(false);
 			menuMediaControl.setVisible(true);
 		}
-	}
-	
-	@Override public boolean onCreateOptionsMenu(Menu menu) {
-		buildMenu(menu);
-		return true;
-	}
-	
-	@Override public boolean onPrepareOptionsMenu(Menu menu) {
-		super.onPrepareOptionsMenu(menu);
-		if (menu != null) buildMenu(menu);
+
+		final boolean songShown = currentBookName != null;
+
+		final MenuItem menuCopy = menu.findItem(R.id.menuCopy);
+		menuCopy.setVisible(songShown);
+		final MenuItem menuShare = menu.findItem(R.id.menuShare);
+		menuShare.setVisible(songShown);
+		final MenuItem menuUpdateBook = menu.findItem(R.id.menuUpdateBook);
+		menuUpdateBook.setVisible(songShown);
+		final MenuItem menuDeleteAll = menu.findItem(R.id.menuDeleteAll);
+		menuDeleteAll.setVisible(songShown);
+
 		return true;
 	}
 	
@@ -556,6 +539,7 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				Toast.makeText(this, R.string.sn_copied, Toast.LENGTH_SHORT).show();
 			}
 		} return true;
+
 		case R.id.menuShare: {
 			if (currentSong != null) {
 				Intent intent = ShareCompat.IntentBuilder.from(SongViewActivity.this)
@@ -566,18 +550,84 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 				startActivityForResult(ShareActivity.createIntent(intent, getString(R.string.sn_share_title)), REQCODE_share);
 			}
 		} return true;
+
 		case R.id.menuSearch: {
 			startActivityForResult(SongListActivity.createIntent(last_searchState), REQCODE_songList);
 		} return true;
+
 		case R.id.menuMediaControl: {
 			if (currentBookName != null && currentSong != null) {
 				mediaPlayerController.playOrPause();
 			}
 		} return true;
+
+        case R.id.menuUpdateBook: {
+			new AlertDialog.Builder(this)
+				.setMessage(TextUtils.expandTemplate(getString(R.string.sn_update_book_explanation), currentBookName))
+				.setPositiveButton(R.string.sn_update_book_confirm_button, (dialog, which) -> updateSongBook())
+				.setNegativeButton(R.string.cancel, null)
+				.show();
+		} return true;
+
+		case R.id.menuDeleteAll: {
+			new AlertDialog.Builder(this)
+				.setMessage(R.string.sn_delete_all_songs_explanation)
+				.setPositiveButton(R.string.delete, (dialog, which) -> deleteAllSongs())
+				.setNegativeButton(R.string.cancel, null)
+				.show();
+		} return true;
 		}
 		
 		return super.onOptionsItemSelected(item);
 	}
+
+    protected void updateSongBook() {
+		final SongBookUtil.SongBookInfo songBookInfo = SongBookUtil.getSongBookInfo(currentBookName);
+		if (songBookInfo == null) {
+			throw new RuntimeException("SongBookInfo named " + currentBookName + " was not found");
+		}
+
+		final String currentSongCode = currentSong.code;
+
+		SongBookUtil.downloadSongBook(SongViewActivity.this, songBookInfo, new SongBookUtil.OnDownloadSongBookListener() {
+			@Override
+			public void onFailedOrCancelled(SongBookUtil.SongBookInfo songBookInfo, Exception e) {
+				if (e != null) {
+					new AlertDialog.Builder(SongViewActivity.this)
+						.setMessage(e.getClass().getSimpleName() + ' ' + e.getMessage())
+						.setPositiveButton(R.string.ok, null)
+						.show();
+				}
+			}
+
+			@Override
+			public void onDownloadedAndInserted(SongBookUtil.SongBookInfo songBookInfo) {
+				final Song song = S.getSongDb().getSong(songBookInfo.bookName, currentSongCode);
+				cache_codes.remove(songBookInfo.bookName);
+				displaySong(songBookInfo.bookName, song);
+			}
+		});
+	}
+
+    protected void deleteAllSongs() {
+        final ProgressDialog pd = ProgressDialog.show(this, null, getString(R.string.please_wait_titik3), true, false);
+
+        new Thread() {
+            @Override public void run() {
+                final int count = S.getSongDb().deleteAllSongs();
+
+                runOnUiThread(() -> {
+                    pd.dismiss();
+
+					new AlertDialog.Builder(SongViewActivity.this)
+						.setMessage(getString(R.string.sn_delete_all_songs_result, count))
+						.setPositiveButton(R.string.ok, null)
+						.show()
+						.setOnDismissListener(dialog -> finish());
+				});
+            }
+        }.start();
+    }
 
 	private StringBuilder convertSongToText(Song song) {
 		// build text to copy
@@ -794,12 +844,6 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		checkAudioExistance();
 	}
 
-	OnClickListener bDownload_click = new OnClickListener() {
-		@Override public void onClick(View v) {
-			leftDrawer.getHandle().clickChangeBook();
-		}
-	};
-
 	void drawer_opened() {
 		if (currentBookName == null) return;
 
@@ -968,6 +1012,10 @@ public class SongViewActivity extends BaseLeftDrawerActivity implements SongFrag
 		}
 
 		state_tempCode = "";
+	}
+
+	void setCustomProgressBarIndeterminateVisible(final boolean visible) {
+		circular_progress.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
 	}
 }
 

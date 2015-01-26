@@ -14,12 +14,10 @@ import yuku.alkitab.base.U;
 import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.model.MVersionDb;
 import yuku.alkitab.base.util.LidToAri;
-import yuku.alkitab.debug.BuildConfig;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.SingleChapterVerses;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
-import yuku.alkitabintegration.AlkitabIntegrationUtil;
 import yuku.alkitabintegration.provider.VerseProvider;
 
 import java.util.Arrays;
@@ -40,15 +38,7 @@ public class Provider extends ContentProvider {
 	public void attachInfo(final Context context, final ProviderInfo info) {
 		super.attachInfo(context, info);
 
-		final String authority;
-		if (BuildConfig.DEBUG) {
-			authority = info.authority;
-		} else {
-			if (!U.equals(info.authority, AlkitabIntegrationUtil.DEFAULT_ALKITAB_PROVIDER_AUTHORITY)) {
-				throw new RuntimeException("Bad build: DEFAULT_ALKITAB_PROVIDER_AUTHORITY and manifest authority are not the same");
-			}
-			authority = AlkitabIntegrationUtil.DEFAULT_ALKITAB_PROVIDER_AUTHORITY;
-		}
+		final String authority = info.authority;
 
 		if (uriMatcher == null) {
 			uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);

@@ -174,6 +174,9 @@ public class VersionsActivity extends BaseActivity {
 	private void checkAndProcessOpenFileIntent(Intent intent) {
 		if (!U.equals(intent.getAction(), Intent.ACTION_VIEW)) return;
 
+		// we are trying to open a file, so let's go to the DOWNLOADED tab, as it is more relevant.
+		mViewPager.setCurrentItem(1);
+
 		Uri uri = intent.getData();
 
 		final boolean isLocalFile = U.equals("file", uri.getScheme());
@@ -674,6 +677,9 @@ public class VersionsActivity extends BaseActivity {
 				return;
 			}
 
+			// we are trying to open a file, so let's go to the DOWNLOADED tab, as it is more relevant.
+			mViewPager.setCurrentItem(1);
+
 			final String filename = result.firstFilename;
 
 			if (filename.toLowerCase(Locale.US).endsWith(".yes.gz")) { //$NON-NLS-1$
@@ -970,11 +976,11 @@ public class VersionsActivity extends BaseActivity {
 							App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
 							new File(mvDb.filename).delete();
 						})
-						.setNeutralButton(R.string.no, (dialog1, which1) -> {
+						.setNegativeButton(R.string.no, (dialog1, which1) -> {
 							S.getDb().deleteVersion(mvDb);
 							App.getLbm().sendBroadcast(new Intent(ACTION_RELOAD));
 						})
-						.setNegativeButton(R.string.cancel, null)
+						.setNeutralButton(R.string.cancel, null)
 						.show();
 				});
 			}

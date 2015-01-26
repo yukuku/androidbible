@@ -2,12 +2,12 @@ package yuku.kpriviewer.fr;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import yuku.afw.V;
@@ -59,23 +59,22 @@ public class SongFragment extends BaseFragment {
 		customVars = getArguments().getBundle(ARG_customVars);
 	}
 	
-	@SuppressLint("NewApi") @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	@SuppressLint("SetJavaScriptEnabled")
+	@Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View res = inflater.inflate(R.layout.fragment_song, container, false);
 		webView = V.get(res, R.id.webView);
 		webView.setBackgroundColor(0x00000000);
-		webView.getSettings().setJavaScriptEnabled(true);
 		webView.setWebViewClient(webViewClient);
-		
-		if (Build.VERSION.SDK_INT >= 11) {
-			webView.getSettings().setSupportZoom(true);
-			webView.getSettings().setBuiltInZoomControls(true);
-			webView.getSettings().setDisplayZoomControls(false);
-		} else {
-			webView.getSettings().setSupportZoom(true);
-			webView.getSettings().setBuiltInZoomControls(true);
-			// TODO do not show zoom buttons on devices with pinch.
-			// possible solution: http://stackoverflow.com/questions/5125851/enable-disable-zoom-in-android-webview
-		}
+
+		final WebSettings settings = webView.getSettings();
+		settings.setJavaScriptEnabled(true);
+		settings.setSupportZoom(true);
+		settings.setBuiltInZoomControls(true);
+		settings.setDisplayZoomControls(false);
+
+		// prevent user system-wide display settings (sp scaling) from changing the actual text size inside webview.
+		settings.setTextZoom(100);
+
 		return res;
 	}
 	
@@ -96,7 +95,7 @@ public class SongFragment extends BaseFragment {
 			} else {
 				return super.shouldOverrideUrlLoading(view, url);
 			}
-		};
+		}
 	};
 
 	private void renderLagu(Song song) {
@@ -194,7 +193,7 @@ public class SongFragment extends BaseFragment {
 	}
 
 	private String templateDivReplace(String template, String name, List<String> value) {
-		return templateDivReplace(template, name, value == null? null: TextUtils.join("; ", value.toArray(new String[0])));
+		return templateDivReplace(template, name, value == null? null: TextUtils.join("; ", value.toArray(new String[value.size()])));
 	}
 
 	private String templateVarReplace(String template, String name, Object value) {

@@ -76,12 +76,10 @@
   <string name="ok">OK</string>
   <string name="tidak_bisa_membuat_folder">Tidak dapat mencipta folder %s</string>
   <string name="menuPengaturan">Tetapan</string>
-  <string name="pilihKitab_s">Pilih sebuah Kitab</string>
   <string name="menuTentang">Mengenai</string>
   <string name="pengaturan_alkitab">Tetapan Alkitab</string>
   <string name="kelola_versi">Mrnguruskan versi</string>
   <string name="tambah">Tambah</string>
-  <string name="versi_lainnya">Versi Lain...</string>
   <string name="ada_kegagalan_membuka_edisiid">Ralat membuka %s</string>
   <string name="pdb_file_options">Pilihan fail PDB</string>
   <string name="greek_charset">Set aksara yunani</string>
@@ -173,7 +171,6 @@
   <string name="please_wait_titik3">Sila tunggu...</string>
   <string name="juga_hapus_file_datanya_file">Juga memadam fail data \'%s\'?</string>
   <string name="get_more_fonts">Memuat turun lebih banyak fon...</string>
-  <string name="about_translators">Penterjemah</string>
   <string name="intent_filter_import_from_backup">Import dari sandaran</string>
   <string name="redownload">Memuat turun sekali lagi</string>
   <string name="read_faq_before_suggest">Sila baca FAQ di atas sebelum menghantar cadangan. Teruskan dengan menghantar cadangan?</string>
@@ -323,10 +320,7 @@
   <string name="menuNightMode">Mod malam</string>
   <string name="highlight_custom_color">Warna lain</string>
   <string name="menu_compare">Bandingkan</string>
-  <string name="about_version_name">versi %s</string>
   <string name="song_player_error_description">Ralat berlaku semasa bermain lagu ini: %1$d, %2$d.</string>
-  <string name="search_in_version_short_name_placeholder">Cari dalam %s</string>
-  <string name="search_syntax_tips"><i>Cari tips:</i>\n\n<b>+perkataan</b>untuk itu perkataan yang tepat\n<b>[q]tuan tuhan[q]</b> untuk itu frasa tepat</string>
   <string name="search_no_result">Tiada ayat-ayat dijumpai untuk <b>^1</b>.</string>
   <string name="search_no_result_fallback">Ketik disini untuk pergi ke <u>^1</u>.</string>
   <string name="marker_transfer_to_device_title">Pemindahan ke peranti lain</string>
@@ -337,7 +331,6 @@
   <string name="drawer_open">Laci terbuka</string>
   <string name="drawer_close">Tutup laci</string>
   <string name="menuSplitVersion">Split</string>
-  <string name="about_beta_feedback">Maklum balas versi beta</string>
   <string name="menuBible">Alkitab</string>
   <string name="menuProgress">Kemajuan</string>
   <string name="switch_off">TUTUP</string>
@@ -358,7 +351,6 @@
   <string name="book_filter_new_general_epistles">Ketua Epistles</string>
   <string name="book_filter_new_apocalypse">Apokalips</string>
   <string name="search_filter_multiple_books_selected">%s buku dipilih</string>
-  <string name="search_version_select_label">Cari dalam:</string>
   <string name="version_config_updater_error_download_modify_time">Gagal untuk memeriksa senarai versi.</string>
   <string name="version_config_updater_error_modify_time_failed">Senarai versi tidak tersedia: %s</string>
   <string name="version_config_updater_no_newer_available">Tiada versi kemas kini dijumpai.</string>
@@ -367,4 +359,6 @@
   <string name="version_config_updater_updated">Senarai versi dikemas kini!</string>
   <string name="version_config_cannot_write_updated_list">Gagal untuk menyimpan senarai terkini.</string>
   <string name="version_config_updater_error_modify_time_cannot_parse">Gagal menghantar senarai penyemak versi kemas kini.</string>
+  <string name="about_translators">Penterjemah</string>
+  <string name="about_version_name">versi %s</string>
 </resources>

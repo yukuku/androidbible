@@ -1,6 +1,8 @@
 package yuku.alkitab.base.util;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,7 +12,6 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
 import com.squareup.okhttp.Call;
@@ -33,7 +34,7 @@ public class SongBookUtil {
 	public interface OnSongBookSelectedListener {
 		void onSongBookSelected(boolean all, SongBookInfo songBookInfo);
 	}
-	
+
 	public interface OnDownloadSongBookListener {
 		void onDownloadedAndInserted(SongBookInfo songBookInfo);
 		void onFailedOrCancelled(SongBookInfo songBookInfo, Exception e);
@@ -78,6 +79,15 @@ public class SongBookUtil {
 		}
 	}
 
+	public static SongBookInfo getSongBookInfo(final String bookName) {
+		for (final SongBookInfo songBookInfo : knownSongBooks) {
+			if (U.equals(songBookInfo.bookName, bookName)) {
+				return songBookInfo;
+			}
+		}
+		return null;
+	}
+
 	public static PopupMenu getSongBookPopupMenu(Context context, boolean withAll, View anchor) {
 		final PopupMenu res = new PopupMenu(context, anchor);
 		final Menu menu = res.getMenu();
@@ -102,6 +112,22 @@ public class SongBookUtil {
 		return res;
 	}
 
+	public static AlertDialog getSongBookDialog(Context context, final DialogInterface.OnClickListener listener) {
+		final CharSequence[] items = new CharSequence[knownSongBooks.size()];
+		for (int i = 0; i < knownSongBooks.size(); i++) {
+			final SongBookInfo bookInfo = knownSongBooks.get(i);
+			SpannableStringBuilder sb = new SpannableStringBuilder(bookInfo.bookName + '\n');
+			int sb_len = sb.length();
+			sb.append(Html.fromHtml(bookInfo.description));
+			sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
+			sb.setSpan(new ForegroundColorSpan(0xffa0a0a0), sb_len, sb.length(), 0);
+			items[i] = sb;
+		}
+		return new AlertDialog.Builder(context)
+			.setItems(items, listener)
+			.create();
+	}
+
 	public static String getCopyright(final String bookName) {
 		for (final SongBookInfo knownSongBook : knownSongBooks) {
 			if (U.equals(bookName, knownSongBook.bookName)) {
@@ -112,18 +138,19 @@ public class SongBookUtil {
 	}
 
 	public static PopupMenu.OnMenuItemClickListener getSongBookOnMenuItemClickListener(final OnSongBookSelectedListener listener) {
-		return new PopupMenu.OnMenuItemClickListener() {
-			@Override
-			public boolean onMenuItemClick(final MenuItem item) {
-				final int itemId = item.getItemId();
-				if (itemId == 0) {
-					listener.onSongBookSelected(true, null);
-				} else {
-					listener.onSongBookSelected(false, knownSongBooks.get(itemId - 1));
-				}
-				return true;
+		return item -> {
+			final int itemId = item.getItemId();
+			if (itemId == 0) {
+				listener.onSongBookSelected(true, null);
+			} else {
+				listener.onSongBookSelected(false, knownSongBooks.get(itemId - 1));
 			}
+			return true;
 		};
+	}
+
+	public static Dialog.OnClickListener getSongBookOnDialogClickListener(final OnSongBookSelectedListener listener) {
+		return (dialog, which) -> listener.onSongBookSelected(false, knownSongBooks.get(which));
 	}
 
 	public static void downloadSongBook(final Activity activity, final SongBookInfo songBookInfo, final OnDownloadSongBookListener listener) {
@@ -133,11 +160,7 @@ public class SongBookUtil {
 			
 			@Override protected void onPreExecute() {
 				pd = ProgressDialog.show(activity, null, activity.getString(R.string.sn_downloading_ellipsis), true, true);
-				pd.setOnDismissListener(new DialogInterface.OnDismissListener() {
-					@Override public void onDismiss(DialogInterface dialog) {
-						cancel(false);
-					}
-				});
+				pd.setOnDismissListener(dialog -> cancel(false));
 			}
 			
 			@SuppressWarnings("unchecked") @Override protected List<Song> doInBackground(Void... params) {

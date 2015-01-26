@@ -4,15 +4,16 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import yuku.alkitab.debug.R;
 
 
 public class LabeledSplitHandleButton extends SplitHandleButton {
 	public static final String TAG = LabeledSplitHandleButton.class.getSimpleName();
 
-	float[] tmp_hsl = {0.f, 0.f, 0.f};
 	String label1 = null;
 	String label2 = null;
 	Paint labelPaint = new Paint();
@@ -27,6 +28,8 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 	float density;
 
 	OnLabelPressed onLabelPressed;
+	int primaryColor;
+	int accentColor;
 
 	public interface OnLabelPressed {
 		void onLabelPressed(int which);
@@ -45,6 +48,9 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 		labelPaint.setTypeface(Typeface.DEFAULT_BOLD);
 		labelPaint.setAntiAlias(true);
 		bezelPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+
+		primaryColor = getResources().getColor(R.color.primary);
+		accentColor = getResources().getColor(R.color.accent);
 	}
 
 	public void setOnLabelPressed(final OnLabelPressed onLabelPressed) {
@@ -107,11 +113,11 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 		return res;
 	}
 
-	@Override protected void onDraw(Canvas canvas) {
+	@Override protected void onDraw(@NonNull Canvas canvas) {
 		// DO NOT CALL super.onDraw(canvas);
 
 		// always draw unpressed bg color first
-		canvas.drawColor(0xff222222);
+		canvas.drawColor(primaryColor);
 
 		if (label1down || label2down) {
 			canvas.save();
@@ -120,11 +126,11 @@ public class LabeledSplitHandleButton extends SplitHandleButton {
 			} else if (label2down) {
 				canvas.clipRect(getWidth() - label2width, 0, getWidth(), getHeight());
 			}
-			canvas.drawColor(0xff247c94);
+			canvas.drawColor(accentColor);
 			canvas.restore();
 		} else {
 			if (isPressed()) { // not label1 nor label2
-				canvas.drawColor(0xff247c94);
+				canvas.drawColor(accentColor);
 			}
 		}
 

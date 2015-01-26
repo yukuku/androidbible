@@ -45,35 +45,35 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginTop="16dp"
-                    android:textColor="#fff"
-                    android:fontFamily="sans-serif-medium"
+					android:fontFamily="sans-serif-medium"
 					android:text="@string/app_name"
-					android:textSize="20sp" />
+					android:textColor="#fff"
+					android:textSize="24sp" />
 
 				<TextView
 					android:id="@+id/tVersion"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:text="versi x.y.z"
-                    tools:ignore="HardcodedText" />
+					tools:ignore="HardcodedText" />
 
 				<TextView
 					android:id="@+id/tBuild"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:text="999 1234abc"
-                    tools:ignore="HardcodedText" />
+					tools:ignore="HardcodedText" />
 
 				<TextView
 					android:id="@+id/tAboutTextDesc"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_marginBottom="16dp"
+					android:layout_marginBottom="32dp"
 					android:layout_marginTop="16dp"
 					android:autoLink="all"
-                    android:textColor="#fff"
 					android:gravity="center_horizontal"
 					android:text="@string/about_text_desc"
+					android:textColor="#fff"
 					android:textSize="16sp"
 					tools:ignore="HardcodedText" />
 
@@ -87,9 +87,9 @@
 				android:layout_height="wrap_content"
 				android:layout_marginLeft="16dp"
 				android:layout_marginRight="16dp"
+				android:background="#262626"
 				android:gravity="center_horizontal"
 				android:orientation="vertical"
-                android:background="#262626"
 				android:paddingLeft="24dp"
 				android:paddingRight="24dp">
 
@@ -97,21 +97,21 @@
 					android:layout_width="match_parent"
 					android:layout_height="48dp"
 					android:gravity="center_vertical"
-					android:text="@string/menuBantuan"
-                    android:textColor="#fff"
-					android:textAppearance="?android:textAppearanceMedium" />
+					android:text="@string/about_user_guide"
+					android:textAppearance="?android:textAppearanceMedium"
+					android:textColor="#fff" />
 
 			</LinearLayout>
 
 			<LinearLayout
-				android:id="@+id/bDonation"
+				android:id="@+id/bMaterialSources"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginLeft="16dp"
 				android:layout_marginRight="16dp"
 				android:layout_marginTop="16dp"
-                android:background="#262626"
-                android:gravity="center_horizontal"
+				android:background="#262626"
+				android:gravity="center_horizontal"
 				android:orientation="vertical"
 				android:paddingLeft="24dp"
 				android:paddingRight="24dp">
@@ -120,9 +120,32 @@
 					android:layout_width="match_parent"
 					android:layout_height="48dp"
 					android:gravity="center_vertical"
-					android:text="@string/menuDonasi"
-                    android:textColor="#fff"
-					android:textAppearance="?android:textAppearanceMedium" />
+					android:text="@string/about_material_sources"
+					android:textAppearance="?android:textAppearanceMedium"
+					android:textColor="#fff" />
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/bCredits"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="16dp"
+				android:layout_marginRight="16dp"
+				android:layout_marginTop="16dp"
+				android:background="#262626"
+				android:gravity="center_horizontal"
+				android:orientation="vertical"
+				android:paddingLeft="24dp"
+				android:paddingRight="24dp">
+
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="48dp"
+					android:gravity="center_vertical"
+					android:text="@string/about_credits"
+					android:textAppearance="?android:textAppearanceMedium"
+					android:textColor="#fff" />
 
 			</LinearLayout>
 
@@ -133,8 +156,8 @@
 				android:layout_marginLeft="16dp"
 				android:layout_marginRight="16dp"
 				android:layout_marginTop="16dp"
-                android:background="#262626"
-                android:gravity="center_horizontal"
+				android:background="#262626"
+				android:gravity="center_horizontal"
 				android:orientation="vertical"
 				android:paddingLeft="24dp"
 				android:paddingRight="24dp">
@@ -144,15 +167,15 @@
 					android:layout_height="48dp"
 					android:gravity="center_vertical"
 					android:text="@string/about_beta_feedback"
-                    android:textColor="#fff"
-					android:textAppearance="?android:textAppearanceMedium" />
+					android:textAppearance="?android:textAppearanceMedium"
+					android:textColor="#fff" />
 
 			</LinearLayout>
 
 			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginBottom="16dp"
+				android:layout_marginBottom="32dp"
 				android:layout_marginLeft="16dp"
 				android:layout_marginRight="16dp"
 				android:gravity="center_horizontal"
@@ -163,26 +186,27 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_marginTop="16dp"
-					android:text="Team"
+					android:layout_marginTop="32dp"
+					android:fontFamily="sans-serif-medium"
+					android:text="Official Website"
 					android:textSize="14sp"
-                    android:fontFamily="sans-serif-medium"
 					tools:ignore="HardcodedText" />
 
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:autoLink="web"
 					android:gravity="center_horizontal"
-					android:text="Randy Sugianto (Yuku) – developer\nRudy Kurniawan – developer\nJaya Satrio Hendrick – graphics\nYohanes Nugroho – PDB Reader"
+					android:text="www.bibleforandroid.com"
 					android:textSize="16sp"
-                    android:textColor="#fff"
 					tools:ignore="HardcodedText" />
 
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginTop="16dp"
-                    android:fontFamily="sans-serif-medium"					android:text="Project Page"
+					android:fontFamily="sans-serif-medium"
+					android:text="Project Page"
 					android:textSize="14sp"
 					tools:ignore="HardcodedText" />
 
@@ -193,43 +217,7 @@
 					android:gravity="center_horizontal"
 					android:text="github.com/yukuku/androidbible"
 					android:textSize="16sp"
-                    tools:ignore="HardcodedText" />
-
-				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginTop="16dp"
-                    android:fontFamily="sans-serif-medium"					android:text="Development Blog"
-					android:textSize="14sp"
 					tools:ignore="HardcodedText" />
-
-				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:autoLink="web"
-					android:gravity="center_horizontal"
-					android:text="androidbible.blogspot.com"
-					android:textSize="16sp"
-                    tools:ignore="HardcodedText" />
-
-				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginTop="16dp"
-					android:text="@string/about_translators"
-                    android:fontFamily="sans-serif-medium"
-					android:textSize="14sp" />
-
-				<TextView
-					android:id="@+id/tTranslators"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginBottom="16dp"
-					android:gravity="center_horizontal"
-					android:text="Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. "
-					android:textSize="16sp"
-                    android:textColor="#fff"
-                    tools:ignore="HardcodedText" />
 
 			</LinearLayout>
 		</LinearLayout>

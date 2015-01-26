@@ -21,21 +21,19 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content" />
 
-		<Button
-			android:id="@+id/bMarkers"
-			style="?android:buttonBarButtonStyle"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:drawableLeft="@drawable/ic_drawer_markers"
-			android:drawablePadding="16dp"
+        <Button
+            android:id="@+id/bMarkers"
+            style="?android:buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_drawer_markers"
+            android:drawablePadding="16dp"
             android:textColor="#ffffff"
-            android:paddingLeft="16dp"
             android:textAllCaps="false"
             android:textSize="16sp"
             android:fontFamily="sans-serif-regular"
-			android:gravity="left|center_vertical"
-			android:text="@string/menu_markers"
-            android:elegantTextHeight="true" />
+            android:gravity="left|center_vertical"
+            android:text="@string/menu_markers"/>
 
 		<FrameLayout
 			android:layout_width="match_parent"
@@ -44,47 +42,32 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_gravity="bottom"
-				android:layout_marginBottom="4dp"
-				android:layout_marginLeft="8dp"
+				android:layout_gravity="center_vertical"
+				android:layout_marginLeft="16dp"
 				android:text="@string/menuProgress"
-				android:textAllCaps="true"
 				android:textColor="#bebebe"
-				android:textSize="14sp"
-				android:textStyle="bold" />
+				android:textSize="12sp" />
 
 			<ImageButton
 				android:id="@+id/bProgressMarkList"
-				style="?android:buttonBarButtonStyle"
+				android:background="?selectableItemBackgroundBorderless"
 				android:layout_width="wrap_content"
 				android:layout_height="match_parent"
 				android:layout_gravity="right"
-				android:gravity="bottom|right"
-				android:minWidth="64dp"
-				android:paddingRight="8dp"
+				android:gravity="center"
+				android:minWidth="48dp"
 				android:src="@drawable/ic_progress_mark_list" />
 
 		</FrameLayout>
 
-		<ImageView
-			android:layout_width="match_parent"
-			android:layout_height="2dp"
-			android:layout_marginLeft="4dp"
-			android:layout_marginRight="4dp"
-			android:src="#5c5c5c"
-			tools:ignore="ContentDescription" />
-
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:divider="@android:drawable/divider_horizontal_dark"
-			android:dividerPadding="2dp"
-			android:orientation="horizontal"
-			android:showDividers="middle">
+			android:orientation="horizontal">
 
 			<ImageButton
 				android:id="@+id/bProgress1"
-				style="?android:buttonBarButtonStyle"
+				android:background="?selectableItemBackgroundBorderless"
 				android:layout_width="wrap_content"
 				android:layout_height="48dp"
 				android:layout_weight="1"
@@ -93,7 +76,7 @@
 
 			<ImageButton
 				android:id="@+id/bProgress2"
-				style="?android:buttonBarButtonStyle"
+                android:background="?selectableItemBackgroundBorderless"
 				android:layout_width="wrap_content"
 				android:layout_height="48dp"
 				android:layout_weight="1"
@@ -102,7 +85,7 @@
 
 			<ImageButton
 				android:id="@+id/bProgress3"
-				style="?android:buttonBarButtonStyle"
+                android:background="?selectableItemBackgroundBorderless"
 				android:layout_width="wrap_content"
 				android:layout_height="48dp"
 				android:layout_weight="1"
@@ -111,7 +94,7 @@
 
 			<ImageButton
 				android:id="@+id/bProgress4"
-				style="?android:buttonBarButtonStyle"
+                android:background="?selectableItemBackgroundBorderless"
 				android:layout_width="wrap_content"
 				android:layout_height="48dp"
 				android:layout_weight="1"
@@ -120,7 +103,7 @@
 
 			<ImageButton
 				android:id="@+id/bProgress5"
-				style="?android:buttonBarButtonStyle"
+                android:background="?selectableItemBackgroundBorderless"
 				android:layout_width="wrap_content"
 				android:layout_height="48dp"
 				android:layout_weight="1"
@@ -129,20 +112,19 @@
 
 		</LinearLayout>
 
-		<Button
-			android:id="@+id/bDisplay"
-			style="?android:buttonBarButtonStyle"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:drawableLeft="@drawable/ic_drawer_display"
-			android:drawablePadding="16dp"
+        <Button
+            android:id="@+id/bDisplay"
+            style="?android:buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_drawer_display"
+            android:drawablePadding="16dp"
             android:textColor="#ffffff"
-            android:paddingLeft="16dp"
             android:textAllCaps="false"
             android:textSize="16sp"
             android:fontFamily="sans-serif-regular"
-			android:gravity="left|center_vertical"
-			android:text="@string/menuDisplay" />
+            android:gravity="left|center_vertical"
+            android:text="@string/menuDisplay" />
 
 		<Switch
 			android:id="@+id/cFullScreen"

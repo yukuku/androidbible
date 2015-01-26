@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.util.FloatMath;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
+import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Book;
 import yuku.alkitab.model.Version;
 import yuku.alkitab.util.Ari;
@@ -94,13 +95,15 @@ public class Floater extends View {
 		activePaint.setColor(0xffffffff);
 		activePaint.setTypeface(Typeface.DEFAULT_BOLD);
 
+		final int accentColor = getResources().getColor(R.color.accent);
+
 		currentPaint = new Paint();
-		currentPaint.setColor(0xff247c94);
+		currentPaint.setColor(accentColor);
 		currentPaint.setStrokeWidth(1 * density);
 		currentPaint.setStyle(Paint.Style.STROKE);
 
 		activeBoxPaint = new Paint();
-		activeBoxPaint.setColor(0xff247c94);
+		activeBoxPaint.setColor(accentColor);
 		activeBoxPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
 		separatorPaint = new Paint();

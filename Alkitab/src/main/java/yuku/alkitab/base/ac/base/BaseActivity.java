@@ -50,7 +50,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 			return;
 		}
 
-		if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+		if (NavUtils.shouldUpRecreateTask(this, upIntent) || isTaskRoot()) {
 			TaskStackBuilder.create(this)
 				.addNextIntentWithParentStack(upIntent)
 				.startActivities();

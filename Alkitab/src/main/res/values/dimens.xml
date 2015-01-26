@@ -2,9 +2,8 @@
 <resources>
 
 	<dimen name="split_handle_height">24dp</dimen>
-	<dimen name="activity_horizontal_margin">16dp</dimen>
-	<dimen name="activity_vertical_margin">16dp</dimen>
 
 	<dimen name="panel_text_appearance_width">320dp</dimen>
 
+	<dimen name="reading_plan_day_heading_side_padding">0dp</dimen>
 </resources>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<dimen name="reading_plan_day_heading_side_padding">@dimen/padding_medium</dimen>
+</resources>

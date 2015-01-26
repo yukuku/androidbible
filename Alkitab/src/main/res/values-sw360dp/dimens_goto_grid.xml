@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <dimen name="goto_grid_cell_width">60dp</dimen>
-	<integer name="goto_grid_numeric_num_columns">5</integer>
-    <dimen name="goto_grid_cell_height">46dp</dimen>
-
-</resources>

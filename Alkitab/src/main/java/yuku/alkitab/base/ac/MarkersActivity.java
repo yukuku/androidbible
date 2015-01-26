@@ -29,6 +29,7 @@ import yuku.alkitab.base.S;
 import yuku.alkitab.base.U;
 import yuku.alkitab.base.ac.base.BaseActivity;
 import yuku.alkitab.base.dialog.LabelEditorDialog;
+import yuku.alkitab.base.sync.SyncSettingsActivity;
 import yuku.alkitab.debug.R;
 import yuku.alkitab.model.Label;
 import yuku.alkitab.model.Marker;
@@ -47,6 +48,7 @@ public class MarkersActivity extends BaseActivity {
 	public static final String ACTION_RELOAD = MarkersActivity.class.getName() + ".action.RELOAD";
 
 	DragSortListView lv;
+    View bGotoSync;
 	
 	BookmarkFilterAdapter adapter;
 
@@ -73,6 +75,9 @@ public class MarkersActivity extends BaseActivity {
         lv.setOnTouchListener(c);
 
 		registerForContextMenu(lv);
+
+        bGotoSync = V.get(this, R.id.bGotoSync);
+        bGotoSync.setOnClickListener(v -> startActivity(SyncSettingsActivity.createIntent()));
 
 		App.getLbm().registerReceiver(br, new IntentFilter(ACTION_RELOAD));
 	}
@@ -157,7 +162,7 @@ public class MarkersActivity extends BaseActivity {
 				new AlertDialog.Builder(this)
 				.setMessage(getString(R.string.are_you_sure_you_want_to_delete_the_label_label, label.title, marker_count))
 				.setNegativeButton(R.string.cancel, null)
-				.setPositiveButton(R.string.ok, (dialog, which) -> {
+				.setPositiveButton(R.string.delete, (dialog, which) -> {
 					S.getDb().deleteLabelById(label._id);
 					adapter.reload();
 				})
@@ -174,11 +179,8 @@ public class MarkersActivity extends BaseActivity {
 			int warnaLatarRgb = U.decodeLabelBackgroundColor(label.backgroundColor);
 			new AmbilWarnaDialog(MarkersActivity.this, 0xff000000 | warnaLatarRgb, new OnAmbilWarnaListener() {
 				@Override public void onOk(AmbilWarnaDialog dialog, int color) {
-					if (color == -1) {
-						label.backgroundColor = null;
-					} else {
-						label.backgroundColor = U.encodeLabelBackgroundColor(0x00ffffff & color);
-					}
+					label.backgroundColor = U.encodeLabelBackgroundColor(0x00ffffff & color);
+
 					S.getDb().insertOrUpdateLabel(label);
 					adapter.notifyDataSetChanged();
 				}

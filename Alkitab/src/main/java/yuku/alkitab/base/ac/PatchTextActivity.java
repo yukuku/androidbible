@@ -1,15 +1,12 @@
 package yuku.alkitab.base.ac;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.example.android.wizardpager.MainActivity;
@@ -56,13 +53,12 @@ public class PatchTextActivity extends BaseActivity {
 		tBody.setLineSpacing(0, S.applied.lineSpacingMult);
 
 		final ActionBar actionBar = getSupportActionBar();
-		final Context actionBarContext = actionBar.getThemedContext();
-		final View customView = LayoutInflater.from(actionBarContext).inflate(R.layout.activity_patch_text_actionbar_custom, null, false);
 		actionBar.setDisplayShowCustomEnabled(true);
 		actionBar.setDisplayHomeAsUpEnabled(false);
 		actionBar.setDisplayShowTitleEnabled(false);
-		actionBar.setCustomView(customView, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+		actionBar.setCustomView(R.layout.activity_patch_text_actionbar_custom);
 
+		final View customView = actionBar.getCustomView();
 		bReference = V.get(customView, R.id.bReference);
 		bSend = V.get(customView, R.id.bSend);
 
@@ -73,22 +69,12 @@ public class PatchTextActivity extends BaseActivity {
 		final String referenceUrl = getIntent().getStringExtra(EXTRA_referenceUrl);
 
 		if (referenceUrl != null) {
-			bReference.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(referenceUrl)));
-				}
-			});
+			bReference.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(referenceUrl))));
 		} else {
 			bReference.setVisibility(View.GONE);
 		}
 
-		bSend.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				bSend_click();
-			}
-		});
+		bSend.setOnClickListener(v -> bSend_click());
 
 		new AlertDialog.Builder(this)
 			.setMessage(R.string.patch_text_intro)

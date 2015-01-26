@@ -10,14 +10,14 @@
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_vertical"
 		android:gravity="center_vertical"
-		android:paddingLeft="16dp"
+		android:paddingLeft="14dp"
 		android:paddingRight="64dp">
 
 		<ImageView
 			android:id="@+id/imgFilterIcon"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginRight="8dp"
+			android:layout_marginRight="16dp"
 			android:src="@drawable/ic_attr_note"
 			tools:ignore="ContentDescription" />
 
@@ -40,21 +40,19 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
             android:paddingRight="24dp"
+            android:textColor="#fff"
 			android:text="*nonlabel"
 			tools:ignore="HardcodedText"
 			android:textAppearance="?android:textAppearanceMedium" />
 	</LinearLayout>
 
-	<yuku.alkitab.base.widget.DragGripView
+	<ImageView
 		android:id="@+id/drag_handle"
-		android:layout_width="64dp"
+		android:layout_width="48dp"
 		android:layout_height="match_parent"
-		android:layout_gravity="fill_vertical|right"
-		android:color="#5c5c5c"
-		android:contentDescription="@string/desc_drag_to_reorder_labels"
-		android:gravity="right"
-		android:paddingBottom="12dp"
-		android:paddingRight="16dp"
-		android:paddingTop="12dp" />
+		android:layout_gravity="fill_vertical|end"
+		android:src="@drawable/ic_drag_handle"
+		android:contentDescription="@string/desc_drag_to_reorder_versions"
+		android:scaleType="center" />
 
 </FrameLayout>

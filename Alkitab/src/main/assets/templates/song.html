@@ -33,12 +33,12 @@
 		</script>
 	</head>
 
-	<body onload="body_load()">
+	<body onload="body_load()" style="padding: 16px 8px">
 		<div class='song'>
 			{{div:code}}
 			{{div:title}}
 			{{div:title_original}}
-			<div class='break'></div>
+			<div style='padding-bottom: 8px'></div>
 			{{div:tune}}
 			<div class='break'></div>
 			{{div:authors_lyric}}
@@ -56,7 +56,8 @@
 			{{div:lyrics}}
 
             <div>
-                <span class="copyright">{{$copyright}}</span><br/>
+                <span class="copyright">{{$copyright}}</span>
+                <div style='padding-bottom: 8px'></div>
                 <span class="patchtext"><a href="patchtext:">Kirim perbaikan</a></span>
             </div>
 		</div>

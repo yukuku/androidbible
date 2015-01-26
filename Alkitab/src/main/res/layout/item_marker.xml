@@ -19,7 +19,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
 			android:gravity="top|right"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:text="2099-12-32"
             tools:ignore="HardcodedText" />
 

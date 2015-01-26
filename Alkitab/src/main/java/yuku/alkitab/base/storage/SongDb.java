@@ -13,6 +13,8 @@ import yuku.kpri.model.Song;
 import java.util.ArrayList;
 import java.util.List;
 
+import static yuku.alkitab.base.util.Literals.ToStringArray;
+
 public class SongDb extends yuku.afw.storage.InternalDb {
 	public static final String TAG = SongDb.class.getSimpleName();
 
@@ -36,20 +38,21 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 		p.recycle();
 		return res;
 	}
-	
+
+	/**
+	 * Store to db songs in a book. Before the songs are stored, all songs of the specified book are deleted.
+	 */
 	public void storeSongs(String bookName, List<Song> songs, int dataFormatVersion) {
-		TimingLogger tl = new TimingLogger(TAG, "storeSongs"); //$NON-NLS-1$
+		TimingLogger tl = new TimingLogger(TAG, "storeSongs");
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.beginTransaction();
 		try {
-			// remove existing one if exists
-			for (Song song: songs) {
-				db.delete(Table.SongInfo.tableName(), 
-				Table.SongInfo.bookName + "=? and " + Table.SongInfo.code + "=? and " + Table.SongInfo.dataFormatVersion + "=?", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				new String[] {bookName, song.code, "" + dataFormatVersion} //$NON-NLS-1$
-				);
-			}
-			tl.addSplit("finished deleting existings (if any)"); //$NON-NLS-1$
+			// remove existing songs from the same book if any
+			db.delete(Table.SongInfo.tableName(),
+				Table.SongInfo.bookName + "=? and " + Table.SongInfo.dataFormatVersion + "=?",
+				ToStringArray(bookName, dataFormatVersion)
+			);
+			tl.addSplit("finished deleting existings (if any)");
 			
 			int ordering = 1; // ordering of the songs for display
 			
@@ -64,7 +67,7 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 			int col_dataFormatVersion = ih.getColumnIndex(Table.SongInfo.dataFormatVersion.name());
 			int col_data = ih.getColumnIndex(Table.SongInfo.data.name());
 			
-			tl.addSplit("The real insertion of " + songs.size()); //$NON-NLS-1$
+			tl.addSplit("The real insertion of " + songs.size());
 			
 			for (Song song: songs) {
 				ih.prepareForInsert();
@@ -78,7 +81,7 @@ public class SongDb extends yuku.afw.storage.InternalDb {
 				ih.execute();
 			}
 			
-			tl.addSplit("Real insertion finished"); //$NON-NLS-1$
+			tl.addSplit("Real insertion finished");
 			
 			db.setTransactionSuccessful();
 		} finally {

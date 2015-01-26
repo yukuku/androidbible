@@ -3,17 +3,22 @@
 <LinearLayout
 	android:id="@+id/llOneDayReadingPlan"
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
-	android:paddingLeft="8dp">
+	android:paddingLeft="@dimen/padding_medium">
 
 	<TextView
 		android:id="@android:id/text1"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:focusable="false"
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textStyle="bold" />
+		android:layout_gravity="bottom"
+		android:gravity="bottom"
+		android:minHeight="48dp"
+		android:paddingBottom="4dp"
+		android:textColor="#898989"
+		android:textSize="12sp"
+		tools:text="Dayname, 13 February 2015" />
 
 </LinearLayout>
