@@ -62,7 +62,7 @@ public class YukuAlkitabImportOfferActivity extends BaseActivity {
 				Preferences.setInt(Prefkey.stop_import_yuku_alkitab_backups, 2);
 			} catch (FileNotFoundException e) {
 				new AlertDialog.Builder(YukuAlkitabImportOfferActivity.this)
-					.setMessage("Tidak bisa mengakses file itu")
+					.setMessage(R.string.marker_migrate_error_opening_backup_file)
 					.setPositiveButton(R.string.ok, null)
 					.show();
 			}
@@ -71,7 +71,7 @@ public class YukuAlkitabImportOfferActivity extends BaseActivity {
 		bCancel.setOnClickListener(v -> finish());
 
 		bNoMore.setOnClickListener(v -> new AlertDialog.Builder(this)
-			.setMessage("Are you sure you don't need to import the old data?")
+			.setMessage(R.string.marker_migrate_no_more_confirmation)
 			.setPositiveButton(R.string.ok, (dialog, which) -> {
 				Preferences.setInt(Prefkey.stop_import_yuku_alkitab_backups, 1);
 				finish();
@@ -130,11 +130,11 @@ public class YukuAlkitabImportOfferActivity extends BaseActivity {
 			text1.setTextAppearance(text1.getContext(), tv.data);
 
 			if (position == 0) {
-				text1.setText("Yes, import from the newest (recommended)");
+				text1.setText(R.string.marker_migrate_import_from_newest);
 			} else {
-				text1.setText("Other backups");
+				text1.setText(R.string.marker_migrate_import_from_other);
 			}
-			text2.setText(file.getName() + " dated " + sdf.format(new Date(file.lastModified())));
+			text2.setText(getString(R.string.marker_migrate_filename_dated, file.getName(), sdf.format(new Date(file.lastModified()))));
 		}
 
 		@Override
@@ -145,5 +145,9 @@ public class YukuAlkitabImportOfferActivity extends BaseActivity {
 		File getFile(int position) {
 			return files.get(position);
 		}
+	}
+
+	public static Matcher getBackupFilenameMatcher() {
+		return Pattern.compile("yuku.alkitab(\\.kjv)-(backup|autobackup-[0-9-]+)\\.xml").matcher("");
 	}
 }

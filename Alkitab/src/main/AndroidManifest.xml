@@ -268,7 +268,7 @@
 			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection" />
 		<activity android:name="yuku.alkitab.base.ac.YukuAlkitabImportOfferActivity"
-			android:label="Import old markers"
+			android:label="@string/marker_migrate_title"
 			android:theme="@style/Theme.Alkitab.WithActionBar.AppCompat"
 			android:configChanges="keyboardHidden|orientation|screenSize|locale|layoutDirection"/>
         <activity

@@ -12,9 +12,8 @@
 		android:layout_marginLeft="@dimen/padding_medium"
 		android:layout_marginRight="@dimen/padding_medium"
 		android:layout_marginTop="@dimen/padding_small"
-		android:text="We detected a backup file from the old v3 Yuku Quick Bible that contains bookmarks, notes, highlights, and labels.\n\nDo you want to import them, so you can access them from this app?"
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		tools:ignore="HardcodedText" />
+		android:text="@string/marker_migrate_introduction"
+		android:textAppearance="?android:attr/textAppearanceMedium" />
 
 	<ListView
 		android:id="@+id/lsBackupFiles"
@@ -40,8 +39,7 @@
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:checked="false"
-			android:text="Don&apos;t ask again"
-			tools:ignore="HardcodedText" />
+			android:text="@string/marker_migrate_no_more" />
 
 		<Button
 			android:id="@+id/bCancel"
@@ -49,8 +47,7 @@
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
-			android:text="Not now"
-			tools:ignore="HardcodedText" />
+			android:text="@string/marker_migrate_later" />
 
 	</LinearLayout>
 </LinearLayout>
