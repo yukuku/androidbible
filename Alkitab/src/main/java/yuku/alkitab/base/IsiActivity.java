@@ -108,7 +108,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.XrefDialogListener, LeftDrawer.Text.Listener, ProgressMarkListDialog.Listener {
 	public static final String TAG = IsiActivity.class.getSimpleName();
@@ -502,7 +501,7 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		if (!dir.exists()) return false;
 
 		final File[] files = dir.listFiles(new FilenameFilter() {
-			final Matcher m = Pattern.compile("yuku.alkitab(\\.kjv)-(backup|autobackup-[0-9-]+)\\.xml").matcher("");
+			final Matcher m = YukuAlkitabImportOfferActivity.getBackupFilenameMatcher();
 
 			@Override
 			public boolean accept(final File dir, final String filename) {

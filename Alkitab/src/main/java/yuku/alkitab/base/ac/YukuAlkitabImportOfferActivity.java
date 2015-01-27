@@ -89,7 +89,7 @@ public class YukuAlkitabImportOfferActivity extends BaseActivity {
 			if (!dir.exists()) return;
 
 			final File[] files = dir.listFiles(new FilenameFilter() {
-				final Matcher m = Pattern.compile("yuku.alkitab(\\.kjv)-(backup|autobackup-[0-9-]+)\\.xml").matcher("");
+				final Matcher m = getBackupFilenameMatcher();
 
 				@Override
 				public boolean accept(final File dir, final String filename) {
