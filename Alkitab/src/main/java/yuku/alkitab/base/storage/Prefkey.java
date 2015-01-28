@@ -109,4 +109,11 @@ public enum Prefkey {
 	 * This was moved from instant_preferences.
 	 */
 	history,
+
+	/**
+	 * (int) Do not offer importing yuku.alkitab or yuku.alkitab.kjv backup files any more.
+	 * 1: user suppressed it
+	 * 2: imported already
+	 */
+	stop_import_yuku_alkitab_backups,
 }

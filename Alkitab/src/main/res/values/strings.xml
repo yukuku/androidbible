@@ -490,4 +490,15 @@
 	<string name="about_material_sources">Material Sources</string>
 	<string name="about_credits">Credits</string>
 
+	<!-- marker and label migration -->
+	<string name="marker_migrate_introduction">We detected a backup file from the old v3 Yuku Quick Bible that contains bookmarks, notes, highlights, and labels.\n\nDo you want to import them, so you can access them from this app?</string>
+	<string name="marker_migrate_no_more">Don\'t ask again</string>
+	<string name="marker_migrate_later">Not now</string>
+	<string name="marker_migrate_title">Import old markers</string>
+	<string name="marker_migrate_no_more_confirmation">Are you sure you don\'t need to import the old data?</string>
+	<string name="marker_migrate_error_opening_backup_file">Could not access that backup file.</string>
+	<string name="marker_migrate_import_from_newest">Yes, import from the newest (recommended)</string>
+	<string name="marker_migrate_import_from_other">Other backup</string>
+	<string name="marker_migrate_filename_dated">%1$s dated %2$s</string>
+
 </resources>

@@ -450,5 +450,9 @@
   <string name="dr_pref_notification_message">Herinnering boodskap</string>
   <string name="dr_default_sound">Verstek klank</string>
   <string name="about_translators">Vertalers</string>
+  <string name="about_user_guide">Gebruikers Gids</string>
+  <string name="about_beta_feedback">Beta Weergawe Terugvoer</string>
   <string name="about_version_name">weergawe %s</string>
+  <string name="about_material_sources">Materiaal Bronne</string>
+  <string name="about_credits">Krediete</string>
 </resources>

@@ -218,6 +218,7 @@
   <string name="sn_delete_all_songs_explanation">從本地媒體刪去所有詩歌? 這能節省空間</string>
   <string name="sn_delete_all_songs_result">完成刪除以下詩歌: %s</string>
   <string name="sn_update_book_explanation">更新書目^1到最新版本。</string>
+  <string name="sn_update_book_confirm_button">更新</string>
   <string name="sn_update_book">更新歌書。</string>
   <string name="desc_previous_day">前一天</string>
   <string name="desc_next_day">後一天</string>
@@ -440,6 +441,19 @@
   <string name="sync_login_form_change_password_success">你已成功更改密碼。</string>
   <string name="pref_textPadding_title">文字四周的邊緣</string>
   <string name="pref_textPadding_summary">縮窄同一行的文字距離以方便閱讀</string>
+  <string name="dr_app_name">提醒</string>
+  <string name="dr_notification_title">每日靈修</string>
+  <string name="dr_notification_text">現在閱讀今日靈修。</string>
+  <string name="dr_off">關閉</string>
+  <string name="dr_alarm">鬧鐘</string>
+  <string name="dr_sound">聲音</string>
+  <string name="dr_vibrate">震動</string>
+  <string name="dr_pref_notification_message">提醒訊息</string>
+  <string name="dr_default_sound">預設聲音</string>
   <string name="about_translators">譯者</string>
+  <string name="about_user_guide">使用者指引</string>
+  <string name="about_beta_feedback">測試版本回饋</string>
   <string name="about_version_name">版本 %s</string>
+  <string name="about_material_sources">資料來源</string>
+  <string name="about_credits">工作人員</string>
 </resources>
