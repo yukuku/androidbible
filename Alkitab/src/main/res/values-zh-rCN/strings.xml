@@ -218,6 +218,7 @@
   <string name="sn_delete_all_songs_explanation">删除本地存储的所有歌曲？这可以节省一些空间</string>
   <string name="sn_delete_all_songs_result">删除完成。删除的歌曲数目：%s</string>
   <string name="sn_update_book_explanation">更新书目^1到最新版本。</string>
+  <string name="sn_update_book_confirm_button">更新</string>
   <string name="sn_update_book">更新歌书。</string>
   <string name="desc_previous_day">前天</string>
   <string name="desc_next_day">后天</string>
@@ -439,6 +440,19 @@
   <string name="sync_login_form_change_password_success">你已成功更改密码。</string>
   <string name="pref_textPadding_title">文字四周的边缘</string>
   <string name="pref_textPadding_summary">缩窄同一行的文字距离以方便阅读</string>
+  <string name="dr_app_name">提醒</string>
+  <string name="dr_notification_title">每日灵修</string>
+  <string name="dr_notification_text">现在阅读今日灵修。</string>
+  <string name="dr_off">关闭</string>
+  <string name="dr_alarm">闹钟</string>
+  <string name="dr_sound">声音</string>
+  <string name="dr_vibrate">震动</string>
+  <string name="dr_pref_notification_message">提醒讯息</string>
+  <string name="dr_default_sound">预设声音</string>
   <string name="about_translators">译者</string>
+  <string name="about_user_guide">使用者指引</string>
+  <string name="about_beta_feedback">测试版本回馈</string>
   <string name="about_version_name">版本 %s</string>
+  <string name="about_material_sources">资料来源</string>
+  <string name="about_credits">工作人员</string>
 </resources>
