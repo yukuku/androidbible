@@ -450,5 +450,9 @@
   <string name="dr_pref_notification_message">Mesaj memento</string>
   <string name="dr_default_sound">Sunet implicit</string>
   <string name="about_translators">Traducători</string>
+  <string name="about_user_guide">Ghidul utilizatorului</string>
+  <string name="about_beta_feedback">Feedback-ul versiunii Beta</string>
   <string name="about_version_name">versiune %s</string>
+  <string name="about_material_sources">Surse materiale</string>
+  <string name="about_credits">Credite</string>
 </resources>

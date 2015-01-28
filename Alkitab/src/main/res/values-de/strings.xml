@@ -450,5 +450,9 @@
   <string name="dr_pref_notification_message">Erinnerungsmeldung</string>
   <string name="dr_default_sound">Standardton</string>
   <string name="about_translators">Übersetzer</string>
+  <string name="about_user_guide">Handbuch</string>
+  <string name="about_beta_feedback">Feedback zur Betaversion</string>
   <string name="about_version_name">Version %s</string>
+  <string name="about_material_sources">Material-Quellen</string>
+  <string name="about_credits">Danksagungen</string>
 </resources>
