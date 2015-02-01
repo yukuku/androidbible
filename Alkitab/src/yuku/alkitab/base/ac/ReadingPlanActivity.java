@@ -185,6 +185,12 @@ public class ReadingPlanActivity extends ActionBarActivity {
 		startCalendar.setTime(new Date(readingPlan.info.startDate));
 
 		todayNumber = calculateDaysDiff(startCalendar, GregorianCalendar.getInstance());
+		if (todayNumber >= readingPlan.info.duration) {
+			todayNumber = readingPlan.info.duration - 1;
+		} else if (todayNumber < 0) {
+			todayNumber = 0;
+		}
+
 		dayNumber = getIntent().getIntExtra(READING_PLAN_DAY_NUMBER, -1);
 		if (dayNumber == -1) {
 			dayNumber = todayNumber;
@@ -228,7 +234,7 @@ public class ReadingPlanActivity extends ActionBarActivity {
 			}
 		}
 
-		ArrayAdapter<String> navigationAdapter = new ArrayAdapter<String>(this, R.layout.item_dropdown_reading_plan, titles);
+		ArrayAdapter<String> navigationAdapter = new ArrayAdapter<String>(getActionBar().getThemedContext(), R.layout.support_simple_spinner_dropdown_item, titles);
 
 		newDropDownItems = false;
 		actionBar.setListNavigationCallbacks(navigationAdapter, new ActionBar.OnNavigationListener() {
