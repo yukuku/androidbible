@@ -76,13 +76,13 @@
   <string name="ok">OK</string>
   <string name="tidak_bisa_membuat_folder">Tidak dapat mencipta folder %s</string>
   <string name="menuPengaturan">Tetapan</string>
-  <string name="pilihKitab_s">Pilih sebuah Kitab</string>
   <string name="menuTentang">Mengenai</string>
   <string name="pengaturan_alkitab">Tetapan Alkitab</string>
   <string name="kelola_versi">Mrnguruskan versi</string>
   <string name="tambah">Tambah</string>
-  <string name="versi_lainnya">Versi Lain...</string>
+  <string name="versi_lainnya">Versi-versi lain</string>
   <string name="ada_kegagalan_membuka_edisiid">Ralat membuka %s</string>
+  <string name="version_error_opening">Ralat membuka %s.</string>
   <string name="pdb_file_options">Pilihan fail PDB</string>
   <string name="greek_charset">Set aksara yunani</string>
   <string name="hebrew_charset">Set aksara ibrani</string>
@@ -173,7 +173,6 @@
   <string name="please_wait_titik3">Sila tunggu...</string>
   <string name="juga_hapus_file_datanya_file">Juga memadam fail data \'%s\'?</string>
   <string name="get_more_fonts">Memuat turun lebih banyak fon...</string>
-  <string name="about_translators">Penterjemah</string>
   <string name="intent_filter_import_from_backup">Import dari sandaran</string>
   <string name="redownload">Memuat turun sekali lagi</string>
   <string name="read_faq_before_suggest">Sila baca FAQ di atas sebelum menghantar cadangan. Teruskan dengan menghantar cadangan?</string>
@@ -218,6 +217,9 @@
   <string name="sn_delete_all_songs">Padam semua lagu</string>
   <string name="sn_delete_all_songs_explanation">Padam semua lagu daripada simpanan tempatan? Ini boleh menjimatkan ruang.</string>
   <string name="sn_delete_all_songs_result">Pemotongan selesai. Lagu dipadam: %s</string>
+  <string name="sn_update_book_explanation">Kemaskini buku ^1 kepada versi yang terkini?</string>
+  <string name="sn_update_book_confirm_button">Kemaskini</string>
+  <string name="sn_update_book">Kemaskini buku lagu</string>
   <string name="desc_previous_day">Hari sebelumnya</string>
   <string name="desc_next_day">Hari seterusnya</string>
   <string name="desc_open_bookmark">Buka penanda buku</string>
@@ -228,6 +230,7 @@
   <string name="desc_previous_chapter">Bab sebelumnya</string>
   <string name="desc_next_chapter">Bab seterusnya</string>
   <string name="desc_drag_to_reorder_labels">Seret untuk menyusun semula label</string>
+  <string name="desc_drag_to_reorder_versions">Seret untuk menyusun semula versi</string>
   <string name="desc_close">Tutup</string>
   <string name="desc_play">Bermain</string>
   <string name="desc_progress_1">Kemajuan pertama</string>
@@ -323,10 +326,9 @@
   <string name="menuNightMode">Mod malam</string>
   <string name="highlight_custom_color">Warna lain</string>
   <string name="menu_compare">Bandingkan</string>
-  <string name="about_version_name">versi %s</string>
   <string name="song_player_error_description">Ralat berlaku semasa bermain lagu ini: %1$d, %2$d.</string>
   <string name="search_in_version_short_name_placeholder">Cari dalam %s</string>
-  <string name="search_syntax_tips"><i>Cari tips:</i>\n\n<b>+perkataan</b>untuk itu perkataan yang tepat\n<b>[q]tuan tuhan[q]</b> untuk itu frasa tepat</string>
+  <string name="search_syntax_tips"><i>Tips carian:</i>\n\n<b>+perkataan</b>untuk perkataan yang tepat\n<b>[q]tuan tuhan[q]</b> untuk frasa tepat itu</string>
   <string name="search_no_result">Tiada ayat-ayat dijumpai untuk <b>^1</b>.</string>
   <string name="search_no_result_fallback">Ketik disini untuk pergi ke <u>^1</u>.</string>
   <string name="marker_transfer_to_device_title">Pemindahan ke peranti lain</string>
@@ -337,7 +339,6 @@
   <string name="drawer_open">Laci terbuka</string>
   <string name="drawer_close">Tutup laci</string>
   <string name="menuSplitVersion">Split</string>
-  <string name="about_beta_feedback">Maklum balas versi beta</string>
   <string name="menuBible">Alkitab</string>
   <string name="menuProgress">Kemajuan</string>
   <string name="switch_off">TUTUP</string>
@@ -367,4 +368,10 @@
   <string name="version_config_updater_updated">Senarai versi dikemas kini!</string>
   <string name="version_config_cannot_write_updated_list">Gagal untuk menyimpan senarai terkini.</string>
   <string name="version_config_updater_error_modify_time_cannot_parse">Gagal menghantar senarai penyemak versi kemas kini.</string>
+  <string name="version_download_add_from_local">Dari penyimpanan setempat</string>
+  <string name="version_download_add_from_url">Dari URL Internet</string>
+  <string name="version_download_add_from_url_prompt_yes_only">.ya FAIL URL</string>
+  <string name="version_download_invalid_url">URL tidak sah.</string>
+  <string name="about_translators">Penterjemah</string>
+  <string name="about_version_name">versi %s</string>
 </resources>

@@ -21,7 +21,7 @@
             android:paddingLeft="@dimen/padding_medium"
             android:layout_centerVertical="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Simpan marka dengan sync"
+            android:text="@string/bl_sync_suggest"
             android:textColor="#fff"
             />
 

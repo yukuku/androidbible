@@ -63,12 +63,10 @@
   <string name="ok">Ok</string>
   <string name="tidak_bisa_membuat_folder">Nemohu vytvořit adresář %s</string>
   <string name="menuPengaturan">Nastavení</string>
-  <string name="pilihKitab_s">Vybrat knihu</string>
   <string name="menuTentang">O...</string>
   <string name="pengaturan_alkitab">Nastavení Bible</string>
   <string name="kelola_versi">Správa překladů</string>
   <string name="tambah">Přidat</string>
-  <string name="versi_lainnya">Jiné překlady</string>
   <string name="ada_kegagalan_membuka_edisiid">Chyba při otevírání %s</string>
   <string name="pdb_file_options">Možnosti souboru PDB</string>
   <string name="greek_charset">Řecká znaková sada</string>

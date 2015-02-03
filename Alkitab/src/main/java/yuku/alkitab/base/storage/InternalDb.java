@@ -37,7 +37,6 @@ import yuku.alkitab.model.Marker;
 import yuku.alkitab.model.Marker_Label;
 import yuku.alkitab.model.ProgressMark;
 import yuku.alkitab.model.ProgressMarkHistory;
-import yuku.alkitab.model.util.Gid;
 import yuku.alkitab.util.Ari;
 import yuku.alkitab.util.IntArrayList;
 
@@ -91,7 +90,7 @@ public class InternalDb {
 		return res;
 	}
 
-	public static Marker_Label marker_LabelFromCursor(Cursor cursor) {
+	private static Marker_Label marker_LabelFromCursor(Cursor cursor) {
 		final Marker_Label res = Marker_Label.createEmptyMarker_Label();
 
 		res._id = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
@@ -169,6 +168,14 @@ public class InternalDb {
 		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
 
 		return res;
+	}
+
+	/** Used in migration from v3 */
+	public static long insertMarker(final SQLiteDatabase db, final Marker marker) {
+		marker._id = db.insert(Db.TABLE_Marker, null, markerToContentValues(marker));
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
+
+		return marker._id;
 	}
 
 	public void deleteMarkerById(long _id) {
@@ -660,7 +667,7 @@ public class InternalDb {
 	/**
 	 * _id is not stored
 	 */
-	private ContentValues labelToContentValues(Label label) {
+	private static ContentValues labelToContentValues(Label label) {
 		final ContentValues res = new ContentValues();
 
 		res.put(Db.Label.gid, label.gid);
@@ -674,7 +681,7 @@ public class InternalDb {
 	/**
 	 * _id is not stored
 	 */
-	@NonNull private ContentValues marker_labelToContentValues(@NonNull Marker_Label marker_label) {
+	@NonNull private static ContentValues marker_labelToContentValues(@NonNull Marker_Label marker_label) {
 		final ContentValues res = new ContentValues();
 
 		res.put(Db.Marker_Label.gid, marker_label.gid);
@@ -757,12 +764,9 @@ public class InternalDb {
 			}
 
 			// add
-			final ContentValues cv = new ContentValues();
 			for (final Label addLabel : addLabels) {
-				cv.put(Db.Marker_Label.gid, Gid.newGid());
-				cv.put(Db.Marker_Label.marker_gid, marker.gid);
-				cv.put(Db.Marker_Label.label_gid, addLabel.gid);
-				db.insert(Db.TABLE_Marker_Label, null, cv);
+				final Marker_Label marker_label = Marker_Label.createNewMarker_Label(marker.gid, addLabel.gid);
+				db.insert(Db.TABLE_Marker_Label, null, marker_labelToContentValues(marker_label));
 			}
 
 			db.setTransactionSuccessful();
@@ -843,11 +847,19 @@ public class InternalDb {
 	public void insertOrUpdateMarker_Label(@NonNull final Marker_Label marker_label) {
 		final SQLiteDatabase db = helper.getWritableDatabase();
 		if (marker_label._id != 0) {
-			db.update(Db.TABLE_Marker_Label, marker_labelToContentValues(marker_label), "_id=?", Array(String.valueOf(marker_label._id)));
+			db.update(Db.TABLE_Marker_Label, marker_labelToContentValues(marker_label), "_id=?", ToStringArray(marker_label._id));
 		} else {
 			marker_label._id = db.insert(Db.TABLE_Marker_Label, null, marker_labelToContentValues(marker_label));
 		}
 		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
+	}
+
+	/** Used in migration from v3 */
+	public static long insertMarker_Label(final SQLiteDatabase db, final Marker_Label marker_label) {
+		marker_label._id = db.insert(Db.TABLE_Marker_Label, null, marker_labelToContentValues(marker_label));
+		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
+
+		return marker_label._id;
 	}
 
 	public int countMarkersWithLabel(Label label) {
@@ -1186,7 +1198,7 @@ public class InternalDb {
 		return 0;
 	}
 
-	@NonNull private ContentValues syncShadowToContentValues(@NonNull final SyncShadow ss) {
+	@NonNull private static ContentValues syncShadowToContentValues(@NonNull final SyncShadow ss) {
 		final ContentValues res = new ContentValues();
 		res.put(Table.SyncShadow.syncSetName.name(), ss.syncSetName);
 		res.put(Table.SyncShadow.revno.name(), ss.revno);
@@ -1371,5 +1383,10 @@ public class InternalDb {
 		} finally {
 			c.close();
 		}
+	}
+
+	// Do not use this except in rare circumstances
+	public SQLiteDatabase getWritableDatabase() {
+		return helper.getWritableDatabase();
 	}
 }

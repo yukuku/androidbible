@@ -1,6 +1,7 @@
 package yuku.alkitab.base.devotion;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.SystemClock;
 import android.util.Log;
 import yuku.alkitab.base.App;
@@ -83,7 +84,7 @@ public class DevotionDownloader extends Thread {
 				}
 			} else {
 				final DevotionActivity.DevotionKind kind = article.getKind();
-				String url = "https://alkitab-host.appspot.com/devotion/get?name=" + kind.name + "&date=" + article.getDate();
+				final String url = "https://alkitab-host.appspot.com/devotion/get?name=" + kind.name + "&date=" + article.getDate() + "&app_versionCode=" + App.getVersionCode() + "&app_versionName=" + Uri.encode(App.getVersionName());
 
 				Log.d(TAG, "Downloader starts downloading name=" + kind.name + " date=" + article.getDate());
 				listener_.onDownloadStatus(context_.getString(R.string.mengunduh_namaumum_tgl_tgl, kind.title, article.getDate()));

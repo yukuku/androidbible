@@ -31,9 +31,13 @@ import yuku.alkitab.base.ac.DevotionActivity;
 import yuku.alkitab.base.ac.ReadingPlanActivity;
 import yuku.alkitab.base.ac.SettingsActivity;
 import yuku.alkitab.base.ac.SongViewActivity;
+import yuku.alkitab.base.config.AppConfig;
 import yuku.alkitab.base.storage.Prefkey;
 import yuku.alkitab.base.util.SongBookUtil;
 import yuku.alkitab.debug.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class LeftDrawer extends ScrollView {
 
@@ -76,6 +80,10 @@ public abstract class LeftDrawer extends ScrollView {
 		if (this instanceof Devotion) bDevotion.setTextColor(selectedTextColor);
 		if (this instanceof ReadingPlan) bReadingPlan.setTextColor(selectedTextColor);
 		if (this instanceof Songs) bSongs.setTextColor(selectedTextColor);
+
+		// hide and show according to app config
+		bSongs.setVisibility(AppConfig.get().menuSongs? VISIBLE: GONE);
+		bDevotion.setVisibility(AppConfig.get().menuDevotion? VISIBLE: GONE);
 
 		bBible.setOnClickListener(v -> {
 			bBible_click();
@@ -345,6 +353,9 @@ public abstract class LeftDrawer extends ScrollView {
 	}
 
 	public static class Devotion extends LeftDrawer {
+
+		DevotionKindAdapter adapter;
+
 		public interface Listener {
 			void bPrev_click();
 			void bNext_click();
@@ -374,7 +385,7 @@ public abstract class LeftDrawer extends ScrollView {
 			public void setDevotionKind(final DevotionActivity.DevotionKind kind) {
 				final AdapterView.OnItemSelectedListener backup = cbKind.getOnItemSelectedListener();
 				cbKind.setOnItemSelectedListener(null);
-				cbKind.setSelection(kind.ordinal());
+				cbKind.setSelection(adapter.getPositionForKind(kind));
 				cbKind.setOnItemSelectedListener(backup);
 			}
 		};
@@ -397,40 +408,12 @@ public abstract class LeftDrawer extends ScrollView {
 			bNext = V.get(this, R.id.bNext);
 			bReload = V.get(this, R.id.bReload);
 
-			cbKind.setAdapter(new EasyAdapter() {
-				@Override
-				public View newView(final int position, final ViewGroup parent) {
-					return LayoutInflater.from(getContext()).inflate(android.R.layout.simple_spinner_item, parent, false);
-				}
 
-				@Override
-				public void bindView(final View view, final int position, final ViewGroup parent) {
-					final DevotionActivity.DevotionKind kind = DevotionActivity.DevotionKind.values()[position];
-					final SpannableStringBuilder sb = new SpannableStringBuilder();
-					sb.append(kind.title);
-					sb.append("\n");
-					final int sb_len = sb.length();
-					sb.append(kind.subtitle);
-					sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
-					((TextView) view).setText(sb);
-				}
-
-				@Override
-				public View newDropDownView(final int position, final ViewGroup parent) {
-					final TextView res = (TextView) LayoutInflater.from(getContext()).inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
-					res.setSingleLine(false);
-					return res;
-				}
-
-				@Override
-				public int getCount() {
-					return DevotionActivity.DevotionKind.values().length;
-				}
-			});
+			cbKind.setAdapter(adapter = new DevotionKindAdapter());
 			cbKind.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 				@Override
 				public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
-					listener.cbKind_itemSelected(DevotionActivity.DevotionKind.values()[position]);
+					listener.cbKind_itemSelected(adapter.getItem(position));
 				}
 
 				@Override
@@ -456,6 +439,55 @@ public abstract class LeftDrawer extends ScrollView {
 		@Override
 		void bDevotion_click() {
 			closeDrawer();
+		}
+
+		class DevotionKindAdapter extends EasyAdapter {
+			final List<DevotionActivity.DevotionKind> kinds = new ArrayList<>();
+
+			{
+				// gather available devotions based on app config
+				for (String devotionName : AppConfig.get().devotionNames) {
+					kinds.add(DevotionActivity.DevotionKind.getByName(devotionName));
+				}
+			}
+
+			@Override
+			public View newView(final int position, final ViewGroup parent) {
+				return LayoutInflater.from(getContext()).inflate(android.R.layout.simple_spinner_item, parent, false);
+			}
+
+			@Override
+			public DevotionActivity.DevotionKind getItem(final int position) {
+				return kinds.get(position);
+			}
+
+			@Override
+			public void bindView(final View view, final int position, final ViewGroup parent) {
+				final DevotionActivity.DevotionKind kind = getItem(position);
+				final SpannableStringBuilder sb = new SpannableStringBuilder();
+				sb.append(kind.title);
+				sb.append("\n");
+				final int sb_len = sb.length();
+				sb.append(kind.subtitle);
+				sb.setSpan(new RelativeSizeSpan(0.7f), sb_len, sb.length(), 0);
+				((TextView) view).setText(sb);
+			}
+
+			@Override
+			public View newDropDownView(final int position, final ViewGroup parent) {
+				final TextView res = (TextView) LayoutInflater.from(getContext()).inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
+				res.setSingleLine(false);
+				return res;
+			}
+
+			@Override
+			public int getCount() {
+				return kinds.size();
+			}
+
+			public int getPositionForKind(final DevotionActivity.DevotionKind kind) {
+				return kinds.indexOf(kind);
+			}
 		}
 	}
 
