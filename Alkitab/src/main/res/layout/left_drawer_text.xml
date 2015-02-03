@@ -7,6 +7,7 @@
 	android:layout_width="240dp"
 	android:layout_height="match_parent"
 	android:background="#262626"
+	android:elevation="4dp"
 	android:fitsSystemWindows="true"
 	tools:ignore="Overdraw">
 
@@ -77,7 +78,7 @@
 			<ImageButton
 				android:id="@+id/bProgress2"
                 android:background="?selectableItemBackgroundBorderless"
-				android:layout_width="wrap_content"
+                android:layout_width="wrap_content"
 				android:layout_height="48dp"
 				android:layout_weight="1"
 				android:contentDescription="@string/desc_progress_2"
@@ -86,7 +87,7 @@
 			<ImageButton
 				android:id="@+id/bProgress3"
                 android:background="?selectableItemBackgroundBorderless"
-				android:layout_width="wrap_content"
+                android:layout_width="wrap_content"
 				android:layout_height="48dp"
 				android:layout_weight="1"
 				android:contentDescription="@string/desc_progress_3"
@@ -95,7 +96,7 @@
 			<ImageButton
 				android:id="@+id/bProgress4"
                 android:background="?selectableItemBackgroundBorderless"
-				android:layout_width="wrap_content"
+                android:layout_width="wrap_content"
 				android:layout_height="48dp"
 				android:layout_weight="1"
 				android:contentDescription="@string/desc_progress_4"
@@ -104,7 +105,7 @@
 			<ImageButton
 				android:id="@+id/bProgress5"
                 android:background="?selectableItemBackgroundBorderless"
-				android:layout_width="wrap_content"
+                android:layout_width="wrap_content"
 				android:layout_height="48dp"
 				android:layout_weight="1"
 				android:contentDescription="@string/desc_progress_5"
@@ -136,7 +137,7 @@
 			android:paddingRight="4dp"
             android:textSize="16sp"
             android:fontFamily="sans-serif-regular"
-			android:text="@string/menuFullScreen"
+            android:text="@string/menuFullScreen"
 			android:textOff="@string/switch_off"
 			android:textOn="@string/switch_on" />
 
@@ -150,7 +151,7 @@
 			android:paddingRight="4dp"
             android:textSize="16sp"
             android:fontFamily="sans-serif-regular"
-			android:text="@string/menuNightMode"
+            android:text="@string/menuNightMode"
 			android:textOff="@string/switch_off"
 			android:textOn="@string/switch_on" />
 
@@ -164,7 +165,7 @@
 			android:paddingRight="4dp"
             android:textSize="16sp"
             android:fontFamily="sans-serif-regular"
-			android:text="@string/menuSplitVersion"
+            android:text="@string/menuSplitVersion"
 			android:textOff="@string/switch_off"
 			android:textOn="@string/switch_on" />
 
