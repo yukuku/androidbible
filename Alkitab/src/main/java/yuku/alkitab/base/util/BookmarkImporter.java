@@ -290,7 +290,7 @@ public class BookmarkImporter {
 									final Marker marker = S.getDb().getMarkerById(marker_id);
 									final Label label = S.getDb().getLabelById(label_id);
 									final Marker_Label marker_label = Marker_Label.createNewMarker_Label(marker.gid, label.gid);
-									InternalDb.insertMarker_Label(db, marker_label);
+									InternalDb.insertMarker_LabelIfNotExists(db, marker_label);
 								} else {
 									Log.w(TAG, "label_id is invalid!: " + label_id);
 								}

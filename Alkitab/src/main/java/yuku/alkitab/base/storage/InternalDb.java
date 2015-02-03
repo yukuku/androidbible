@@ -855,8 +855,25 @@ public class InternalDb {
 	}
 
 	/** Used in migration from v3 */
-	public static long insertMarker_Label(final SQLiteDatabase db, final Marker_Label marker_label) {
-		marker_label._id = db.insert(Db.TABLE_Marker_Label, null, marker_labelToContentValues(marker_label));
+	public static long insertMarker_LabelIfNotExists(final SQLiteDatabase db, final Marker_Label marker_label) {
+		db.beginTransaction();
+		try {
+			final Cursor cursor = db.rawQuery("select _id from " + Db.TABLE_Marker_Label + " where " + Db.Marker_Label.marker_gid + "=? and " + Db.Marker_Label.label_gid + "=?", Array(marker_label.marker_gid, marker_label.label_gid));
+			try {
+				if (cursor.moveToNext()) {
+					final long _id = cursor.getLong(0);
+					marker_label._id = _id;
+				} else {
+					marker_label._id = db.insert(Db.TABLE_Marker_Label, null, marker_labelToContentValues(marker_label));
+				}
+			} finally {
+				cursor.close();
+			}
+			db.setTransactionSuccessful();
+		} finally {
+            db.endTransaction();
+		}
+
 		Sync.notifySyncNeeded(SyncShadow.SYNC_SET_MABEL);
 
 		return marker_label._id;
