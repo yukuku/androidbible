@@ -58,7 +58,7 @@ public class YukuAlkitabImportOfferActivity extends BaseActivity {
 			final FileInputStream fis;
 			try {
 				fis = new FileInputStream(adapter.getFile(position));
-				BookmarkImporter.importBookmarks(YukuAlkitabImportOfferActivity.this, fis, true, null);
+				BookmarkImporter.importBookmarks(YukuAlkitabImportOfferActivity.this, fis, true);
 				Preferences.setInt(Prefkey.stop_import_yuku_alkitab_backups, 2);
 			} catch (FileNotFoundException e) {
 				new AlertDialog.Builder(YukuAlkitabImportOfferActivity.this)
