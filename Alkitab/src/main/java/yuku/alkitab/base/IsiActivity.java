@@ -930,8 +930,8 @@ public class IsiActivity extends BaseLeftDrawerActivity implements XrefDialog.Xr
 		// make sure S applied variables are set first
 		S.calculateAppliedValuesBasedOnPreferences();
 
-		// appliance of background color
-		{
+		{ // apply background color, and clear window background to prevent overdraw
+			getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 			root.setBackgroundColor(S.applied.backgroundColor);
 			lsText.setCacheColorHint(S.applied.backgroundColor);
 			lsSplit1.setCacheColorHint(S.applied.backgroundColor);
