@@ -164,6 +164,7 @@
   <string name="bl_send_backup">Oordrag</string>
   <string name="bl_file_not_found_filename">Lêer nie gevind: %s</string>
   <string name="bl_send_backup_confirmation">Skep en stuur rugsteun van boekmerke,notas en beklemtonings? U kan bv die aangehegde lêer per epos aanstuur na nuwe hand stuk of slegs vir argief doeleindes.</string>
+  <string name="bl_sync_suggest">Beskerm jou merkers met synch </string>
   <string name="labels_titikdua">Opskrifte</string>
   <string name="tambah_titiktiga">Voeg by</string>
   <string name="nama_label_titikdua">Etiket naam:</string>
@@ -455,4 +456,13 @@
   <string name="about_version_name">weergawe %s</string>
   <string name="about_material_sources">Materiaal Bronne</string>
   <string name="about_credits">Krediete</string>
+  <string name="marker_migrate_introduction">Ons bemerk \'n rugsteun lêer van die ou v3 Yuku Quick Bible wat boekmerke, notas, ens bevat.\n\nWil jy dit graag invoer dat jy dit kan gebruik in die nuwe weergawe?</string>
+  <string name="marker_migrate_no_more">Moet nie weer vra nie</string>
+  <string name="marker_migrate_later">Nie nou nie</string>
+  <string name="marker_migrate_title">Voer ou merkers in</string>
+  <string name="marker_migrate_no_more_confirmation">Is jy seker jy wil nie die ou data invoer nie?</string>
+  <string name="marker_migrate_error_opening_backup_file">Kon nie die rugsteun lêer oopmaak nie.</string>
+  <string name="marker_migrate_import_from_newest">Ja, voer die nuutste in (aanbeveel)</string>
+  <string name="marker_migrate_import_from_other">Ander rugsteun</string>
+  <string name="marker_migrate_filename_dated">%1$s gedateer %2$s</string>
 </resources>

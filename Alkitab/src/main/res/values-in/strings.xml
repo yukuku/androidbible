@@ -195,6 +195,8 @@
   <string name="text_appearance_bold">Tebal</string>
   <string name="devotion_change_date">Ganti tanggal</string>
   <string name="bookmark_search">Cari</string>
+  <string name="verse_select_one_verse_selected">1 ayat dipilih</string>
+  <string name="verse_select_multiple_verse_selected">%s ayat dipilih</string>
   <string name="goto_tab_dialer_label">Telusuri</string>
   <string name="goto_tab_direct_label">Ketik</string>
   <string name="goto_tab_grid_label">Pilih</string>
