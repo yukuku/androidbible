@@ -18,15 +18,6 @@ public class Label implements Comparable<Label> {
 		return this.ordering - another.ordering;
 	}
 
-	@Override
-	public boolean equals(final Object o) {
-		if (this == o) return true;
-		if (!(o instanceof Label)) return false;
-
-		final Label label = (Label) o;
-		return _id == label._id;
-	}
-
 	/**
 	 * Create without _id
 	 */
